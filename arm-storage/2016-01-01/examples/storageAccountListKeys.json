@@ -1,0 +1,13 @@
+{
+  "parameters":{
+    "resourceGroupName":"resourcegroupname",
+    "accountName": "accountname",
+    "api-version": "2016-01-01",
+    "subscriptionId": "subcriptionID"
+  },
+  "responses":{
+    "200":{
+      "body": {"keys":[{"keyName":"key1","permissions":"Full","value":"key1value"},{"keyName":"key2","permissions":"Full","value":"key2value"}]}
+    }
+  }
+}
