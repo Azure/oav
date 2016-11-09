@@ -1,0 +1,17 @@
+{
+  "parameters":{
+    "resourceGroupName":"resourcegroupname",
+    "accountName": "accountname",
+    "api-version": "2016-01-01",
+    "subscriptionId": "subcriptionID",
+    "parameters":{"sku":{"name":"Standard_LRS"},"kind":"Storage","location":"westus","properties":{}}
+  },
+  "responses":{
+    "202": {
+        "headers": {"location" : "https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/337358c9-9644-4b6c-a652-542a0295601d?monitor=true&api-version=2016-01-01"}
+    },
+    "200":{ 
+      "body": {"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage56e236d65ef043378","kind":"Storage","location":"westus","name":"storage56e236d65ef043378","properties":{"creationTime":"2016-05-19T18:03:45.4141415Z","primaryEndpoints":{"blob":"https://storage56e236d65ef043378.blob.core.windows.net/","file":"https://storage56e236d65ef043378.file.core.windows.net/","queue":"https://storage56e236d65ef043378.queue.core.windows.net/","table":"https://storage56e236d65ef043378.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+    }
+  }
+}
