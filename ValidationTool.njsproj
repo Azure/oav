@@ -1,0 +1,109 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{4b66fcde-3ae4-41ab-9455-1e995c19c78a}</ProjectGuid>
+    <ProjectHome />
+    <ProjectView>ShowAllFiles</ProjectView>
+    <StartupFile>index.js</StartupFile>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{349c5851-65df-11da-9384-00065b846f21};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">14.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <ItemGroup>
+    <Compile Include="index.js" />
+    <Compile Include="lib\utils.js" />
+    <Content Include="LICENSE.txt" />
+    <Content Include="package.json" />
+    <Content Include="README.md" />
+    <Compile Include="lib\dataValidator1.js" />
+    <Compile Include="lib\specValidator.js" />
+    <Content Include="arm-search\2015-02-28\swagger\search.json" />
+    <Content Include="arm-search\2015-08-19\swagger\search.json" />
+    <Content Include="arm-storage\2015-05-01-preview\swagger\storage.json" />
+    <Content Include="arm-storage\2015-06-15\swagger\storage.json" />
+    <Content Include="arm-storage\2016-01-01\examples\storageAccountCheckNameAvailability.json" />
+    <Content Include="arm-storage\2016-01-01\examples\storageAccountCreate.json" />
+    <Content Include="arm-storage\2016-01-01\examples\storageAccountDelete.json" />
+    <Content Include="arm-storage\2016-01-01\examples\storageAccountGetProperties.json" />
+    <Content Include="arm-storage\2016-01-01\examples\storageAccountList.json" />
+    <Content Include="arm-storage\2016-01-01\examples\storageAccountListByRG.json" />
+    <Content Include="arm-storage\2016-01-01\examples\storageAccountListKeys.json" />
+    <Content Include="arm-storage\2016-01-01\examples\storageAccountListUsages.json" />
+    <Content Include="arm-storage\2016-01-01\examples\storageAccountRegenerateKeys.json" />
+    <Content Include="arm-storage\2016-01-01\examples\storageAccountUpdate.json" />
+    <Content Include="arm-storage\2016-01-01\swagger\storage.json" />
+    <Content Include="search\2015-02-28\swagger\searchindex.json" />
+    <Content Include="search\2015-02-28\swagger\searchservice.json" />
+    <Content Include="search\2015-02-28-Preview\swagger\searchindex.json" />
+    <Content Include="search\2015-02-28-Preview\swagger\searchservice.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="arm-search" />
+    <Folder Include="arm-search\2015-02-28" />
+    <Folder Include="arm-search\2015-02-28\swagger" />
+    <Folder Include="arm-search\2015-08-19" />
+    <Folder Include="arm-search\2015-08-19\swagger" />
+    <Folder Include="arm-storage" />
+    <Folder Include="arm-storage\2015-05-01-preview" />
+    <Folder Include="arm-storage\2015-05-01-preview\swagger" />
+    <Folder Include="arm-storage\2015-06-15" />
+    <Folder Include="arm-storage\2015-06-15\swagger" />
+    <Folder Include="arm-storage\2016-01-01" />
+    <Folder Include="arm-storage\2016-01-01\examples" />
+    <Folder Include="arm-storage\2016-01-01\swagger" />
+    <Folder Include="lib" />
+    <Folder Include="search" />
+    <Folder Include="search\2015-02-28" />
+    <Folder Include="search\2015-02-28\swagger" />
+    <Folder Include="search\2015-02-28-Preview" />
+    <Folder Include="search\2015-02-28-Preview\swagger" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <!--Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them.-->
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />
+  <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsTools.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>0</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:48022/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>True</UseCustomServer>
+          <CustomServerUrl>http://localhost:1337</CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}" User="">
+        <WebProjectProperties>
+          <StartPageUrl>
+          </StartPageUrl>
+          <StartAction>CurrentPage</StartAction>
+          <AspNetDebugging>True</AspNetDebugging>
+          <SilverlightDebugging>False</SilverlightDebugging>
+          <NativeDebugging>False</NativeDebugging>
+          <SQLDebugging>False</SQLDebugging>
+          <ExternalProgram>
+          </ExternalProgram>
+          <StartExternalURL>
+          </StartExternalURL>
+          <StartCmdLineArguments>
+          </StartCmdLineArguments>
+          <StartWorkingDirectory>
+          </StartWorkingDirectory>
+          <EnableENC>False</EnableENC>
+          <AlwaysStartWebServerOnDebug>False</AlwaysStartWebServerOnDebug>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>
