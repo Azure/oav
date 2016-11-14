@@ -8,6 +8,16 @@
 # Linux trash folder which might appear on any partition or disk
 .Trash-*
 
+/obj/*
+/node_modules
+.ntvs_analysis.dat
+.ntvs_analysis.*
+npm-debug.log
+tmp/*
+packages/*
+*.njsperf
+.vs/
+bin/*
 
 #### win gitignore
 
