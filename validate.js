@@ -49,14 +49,19 @@ if (cmd === 'example') {
   validator = new SpecValidator(specPath);
   finalValidationResult[specPath] = validator.specValidationResult;
   validator.validateDataModels(function (err, result) {
-    return printResult(validator);
+    if (err) console.log(err);
+    printResult(validator);
+    if (!validator.specValidationResult.validityStatus) process.exit(2);
+    return;
   });
 } else if (cmd === 'spec') {
   console.log(`\n> Semantically validating  ${specPath}:\n`);
   validator = new SpecValidator(specPath);
   finalValidationResult[specPath] = validator.specValidationResult;
   validator.validateSpec(function (err, result) {
-    return printResult(validator);
+    printResult(validator);
+    if (!validator.specValidationResult.validityStatus) process.exit(1);
+    return;
   });
 }
 
