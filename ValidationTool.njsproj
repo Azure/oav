@@ -6,18 +6,25 @@
     <ProjectGuid>{4b66fcde-3ae4-41ab-9455-1e995c19c78a}</ProjectGuid>
     <ProjectHome />
     <ProjectView>ShowAllFiles</ProjectView>
-    <StartupFile>index.js</StartupFile>
+    <StartupFile>validate.js</StartupFile>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{349c5851-65df-11da-9384-00065b846f21};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">14.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <ScriptArguments>example .\search\2015-02-28\swagger\searchindex.json --details</ScriptArguments>
+    <StartWebBrowser>True</StartWebBrowser>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
   <ItemGroup>
-    <Compile Include="index.js" />
-    <Compile Include="lib\utils.js" />
+    <Compile Include="validate.js" />
+    <Compile Include="lib\specValidatorTemp.js" />
+    <Compile Include="lib\specValidator1 - Copy.js" />
+    <Compile Include="lib\util\constants.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="lib\util\utils.js" />
     <Content Include="LICENSE.txt" />
     <Content Include="package.json" />
     <Content Include="README.md" />
@@ -58,6 +65,7 @@
     <Folder Include="arm-storage\2016-01-01\examples" />
     <Folder Include="arm-storage\2016-01-01\swagger" />
     <Folder Include="lib" />
+    <Folder Include="lib\util\" />
     <Folder Include="search" />
     <Folder Include="search\2015-02-28" />
     <Folder Include="search\2015-02-28\swagger" />
