@@ -13,10 +13,11 @@ finalValidationResult = {};
 var cmd = process.argv[2];
 exports.printUsage = function printUsage() {
   console.log('');
-  console.log('Usage: node validate.js <command> <spec-path> [--json]\n\n');
+  console.log('Usage: node validate.js <command> <spec-path> [--json]\n');
   console.log('Commands:\n');
   console.log('  - spec <raw-github-url OR local file-path to the swagger spec> [--json]    | Description: Performs semantic validation of the spec.\n')
-  console.log('  - example <raw-github-url OR local file-path to the swagger spec> [--json] | Description: Performs validation of x-ms-examples and examples present in the spec.\n')
+  console.log('  - example <raw-github-url OR local file-path to the swagger spec> [--json] | Description: Performs validation of x-ms-examples and examples present in the spec.')
+  console.log('\nOptions:\n  --json - Provides the json object with detailed status report.\n')
   process.exit(1);
 }
 
@@ -56,7 +57,7 @@ if (cmd === 'example') {
   finalValidationResult[specPath] = validator.specValidationResult;
   validator.validateDataModels(function (err, result) {
     printResult(validator);
-    if (!validator.specValidationResult.validityStatus) process.exit(2);
+    if (!validator.specValidationResult.validityStatus) process.exit(3);
     return;
   });
 } else if (cmd === 'spec') {
@@ -65,7 +66,7 @@ if (cmd === 'example') {
   finalValidationResult[specPath] = validator.specValidationResult;
   validator.validateSpec(function (err, result) {
     printResult(validator);
-    if (!validator.specValidationResult.validityStatus) process.exit(1);
+    if (!validator.specValidationResult.validityStatus) process.exit(2);
     return;
   });
 }
