@@ -30,9 +30,14 @@ if (cmd !== 'spec' && cmd !== 'example') {
   if (cmd) console.error(`${cmd} is not a valid command.`)
   exports.printUsage();
 }
-if (!specPath) {
-  console.error(`<spec-path> (raw-github url or a local file path to the swagger spec) is required.`);
+if (!specPath || (specPath && typeof specPath.valueOf() !== 'string')) {
+  console.error(`<spec-path> (raw-github url or a local file path to the swagger spec) is required and must be of type string.`);
   exports.printUsage();
+}
+//If the spec path is a url starting with https://github then let us auto convert it to an https://raw.githubusercontent url.
+if (specPath.startsWith('https://github')) {
+  console.warn('Warning: Converting the github url to raw github user content url.');
+  specPath = specPath.replace(/^https:\/\/(github.com)(.*)blob\/(.*)/ig, 'https://raw.githubusercontent.com$2$3');
 }
 
 function printResult(validator) {
@@ -40,6 +45,7 @@ function printResult(validator) {
     console.log('\n> Detailed Validation Result:\n')
     console.dir(finalValidationResult, { depth: null, colors: true });
   }
+  if (validator.specValidationResult.validityStatus) console.log('\n> No Errors were found.');
   console.log('\n> Validation Complete.');
 }
 
