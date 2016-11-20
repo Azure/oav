@@ -37,7 +37,7 @@ if (!specPath) {
 
 function printResult(validator) {
   if (jsonOutput && jsonOutput === '--json') {
-    console.log('\n> Final Validation Result object:\n')
+    console.log('\n> Detailed Validation Result:\n')
     console.dir(finalValidationResult, { depth: null, colors: true });
   }
   console.log('\n> Validation Complete.');
