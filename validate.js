@@ -96,7 +96,12 @@ async.waterfall([
         if (doc.startsWith('.')) {
           doc = doc.substring(1);
         }
-        let individualPath = basePath + doc;
+        let individualPath = '';
+        if (doc.startsWith('http')) {
+          individualPath = doc;
+        } else {
+          individualPath = basePath + doc;
+        }
         return validateSingleSpec(individualPath, loopCallback);
       }, function (err) {
         return callback(null, false); //this callback is called after the eachSeries(for) loopis over.
