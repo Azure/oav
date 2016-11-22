@@ -5,10 +5,11 @@
 
 var glob = require('glob'),
 path = require('path'),
+async = require('async'),
 SpecValidator = require('./lib/specValidator'),
 RefParser = require('json-schema-ref-parser'),
 swt = require('swagger-tools').specs.v2,
-finalValidationResult = {};
+finalValidationResult = { validityStatus: true };
 
 var cmd = process.argv[2];
 exports.printUsage = function printUsage() {
@@ -41,34 +42,86 @@ if (specPath.startsWith('https://github')) {
   specPath = specPath.replace(/^https:\/\/(github.com)(.*)blob\/(.*)/ig, 'https://raw.githubusercontent.com$2$3');
 }
 
-function printResult(validator) {
+function updateEndResultOfSingleValidation(validator) {
+  if (validator.specValidationResult.validityStatus) console.log('\n> No Errors were found.');
+  if (!validator.specValidationResult.validityStatus) {
+    finalValidationResult.validityStatus = validator.specValidationResult.validityStatus;
+  }
+  return;
+}
+
+var validator;
+
+function validateSingleSpec(singleSpecPath, callback) {
+  if (cmd === 'example') {
+    console.log(`\n> Validating "examples" and "x-ms-examples" in ${singleSpecPath}:\n`);
+    validator = new SpecValidator(singleSpecPath);
+    finalValidationResult[singleSpecPath] = validator.specValidationResult;
+    validator.validateDataModels(function (err, result) {
+      updateEndResultOfSingleValidation(validator);
+      return callback(null);
+    });
+  } else if (cmd === 'spec') {
+    console.log(`\n> Semantically validating  ${singleSpecPath}:\n`);
+    validator = new SpecValidator(singleSpecPath);
+    finalValidationResult[singleSpecPath] = validator.specValidationResult;
+    validator.validateSpec(function (err, result) {
+      updateEndResultOfSingleValidation(validator);
+      return callback(null);
+    });
+  }
+}
+
+async.waterfall([
+  function (callback) {
+    if (specPath.match(/.*composite.*/ig) !== null) {
+      RefParser.bundle(specPath, function (bundleErr, bundleResult) {
+        if (bundleErr) {
+          let msg = `Error occurred in parsing the spec "${specPath}". \t${bundleErr.message}.`;
+          bundleErr.code = 'PARSE_SPEC_ERROR';
+          bundleErr.message = msg;
+          console.log(`${bundleErr.code} - ${bundleErr.message}`);
+          throw bundleErr;
+        }
+        return callback(null, bundleResult.documents);
+      });
+    } else {
+      return callback(null, undefined);
+    }
+  },
+  function (docs, callback) {
+    if (docs) {
+      async.eachSeries(docs, function (doc, loopCallback) {
+        let basePath = path.dirname(specPath);
+        if (doc.startsWith('.')) {
+          doc = doc.substring(1);
+        }
+        let individualPath = basePath + doc;
+        return validateSingleSpec(individualPath, loopCallback);
+      }, function (err) {
+        return callback(null, false); //this callback is called after the eachSeries(for) loopis over.
+      });
+    } else {
+      return callback(null, true); //this callback is called when the given spec is not a composite spec.
+    }
+  },
+  function (isNonCompositeSpec, callback) {
+    if (isNonCompositeSpec) {
+      return validateSingleSpec(specPath, callback);
+    } else {
+      return callback(null);
+    }
+  }
+], function (err, result) {
+
   if (jsonOutput && jsonOutput === '--json') {
     console.log('\n> Detailed Validation Result:\n')
     console.dir(finalValidationResult, { depth: null, colors: true });
   }
-  if (validator.specValidationResult.validityStatus) console.log('\n> No Errors were found.');
   console.log('\n> Validation Complete.');
-}
+  if (!finalValidationResult.validityStatus) process.exit(2);
+});
 
-var validator;
-if (cmd === 'example') {
-  console.log(`\n> Validating "examples" and "x-ms-examples" in ${specPath}:\n`);
-  validator = new SpecValidator(specPath);
-  finalValidationResult[specPath] = validator.specValidationResult;
-  validator.validateDataModels(function (err, result) {
-    printResult(validator);
-    if (!validator.specValidationResult.validityStatus) process.exit(3);
-    return;
-  });
-} else if (cmd === 'spec') {
-  console.log(`\n> Semantically validating  ${specPath}:\n`);
-  validator = new SpecValidator(specPath);
-  finalValidationResult[specPath] = validator.specValidationResult;
-  validator.validateSpec(function (err, result) {
-    printResult(validator);
-    if (!validator.specValidationResult.validityStatus) process.exit(2);
-    return;
-  });
-}
+
 
 exports = module.exports;
