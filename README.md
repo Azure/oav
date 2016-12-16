@@ -1,34 +1,6 @@
 # openapi-validation-tools
 Tools for validating OpenAPI (Swagger) files.
 
-### Requirements
-- node version > 4.x
-
-You can install the latest stable release of node.js from [here](https://nodejs.org/en/download/). For a machine with a linux flavored OS, please follow the node.js installation instructions over [here](https://nodejs.org/en/download/package-manager/)
-
-
-### How to run the tool 
-- After cloning the repo execute following steps from your terminal/cmd prompt
-
-```
-npm install
-node validate.js
-```
-
-#### Command usage:
-```
-D:\sdk\openapi-validation-tools>node validate.js
-
-Usage: node validate.js <command> <spec-path> [--json]
-
-
-Commands:
-
-  - spec <raw-github-url OR local file-path to the swagger spec> [--json]    | Description: Performs semantic validation of the spec.
-
-  - example <raw-github-url OR local file-path to the swagger spec> [--json] | Description: Performs validation of x-ms-examples and examples present in the spec.
-```
-
 ### What does the tool do? What issues does the tool catch?
 
 Model validation checks whether definitions for request parameters and responses, match an expected input/output payload of the service.
@@ -57,6 +29,34 @@ In the context of “azure-rest-api-specs” repo:
   - #2 and #3 are performed by the tool currently in openapi-validation-tools repo and by AutoRest linter. We’re working towards integrating them into CI for “azure-rest-api-specs” repo.
   -	#4 is not available yet, though we’re starting to work on it. 
   -	#5 will be done by the approvers of PRs in “azure-rest-api-specs”, as this won’t be automated. 
+
+### Requirements
+- node version > 4.x
+
+You can install the latest stable release of node.js from [here](https://nodejs.org/en/download/). For a machine with a linux flavored OS, please follow the node.js installation instructions over [here](https://nodejs.org/en/download/package-manager/)
+
+
+### How to run the tool 
+- After cloning the repo execute following steps from your terminal/cmd prompt
+
+```
+npm install
+node validate.js
+```
+
+#### Command usage:
+```
+D:\sdk\openapi-validation-tools>node validate.js
+
+Usage: node validate.js <command> <spec-path> [--json]
+
+
+Commands:
+
+  - spec <raw-github-url OR local file-path to the swagger spec> [--json]    | Description: Performs semantic validation of the spec.
+
+  - example <raw-github-url OR local file-path to the swagger spec> [--json] | Description: Performs validation of x-ms-examples and examples present in the spec.
+```
 
 ---
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
