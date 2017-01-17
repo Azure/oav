@@ -3,130 +3,124 @@
 
 'use strict';
 
-var glob = require('glob'),
-path = require('path'),
-async = require('async'),
-SpecValidator = require('./lib/specValidator'),
-RefParser = require('json-schema-ref-parser'),
-swt = require('swagger-tools').specs.v2,
-finalValidationResult = { validityStatus: true };
+var log = require('./lib/util/logging'),
+  utils = require('./lib/util/utils'),
+  path = require('path'),
+  SpecValidator = require('./lib/specValidator');
 
-var cmd = process.argv[2];
-exports.printUsage = function printUsage() {
-  console.log('');
-  console.log('Usage: node validate.js <command> <spec-path> [--json]\n');
-  console.log('Commands:\n');
-  console.log('  - spec <raw-github-url OR local file-path to the swagger spec> [--json]    | Description: Performs semantic validation of the spec.\n')
-  console.log('  - example <raw-github-url OR local file-path to the swagger spec> [--json] | Description: Performs validation of x-ms-examples and examples present in the spec.')
-  console.log('\nOptions:\n  --json - Provides the json object with detailed status report.\n')
-  process.exit(1);
-}
+exports.finalValidationResult = { validityStatus: true };
 
-if (cmd === '-h' || cmd === '--help' || cmd === 'help') {
-  exports.printUsage();
-}
+exports.getDocumentsFromCompositeSwagger = function getDocumentsFromCompositeSwagger(compositeSpecPath) {
+  let compositeSwagger;
+  let finalDocs = [];
+  return utils.parseJson(compositeSpecPath).then(function (result) {
+    compositeSwagger = result;
+    if (!(compositeSwagger.documents && Array.isArray(compositeSwagger.documents) && compositeSwagger.documents.length > 0)) {
+      throw new Error(`CompositeSwagger - ${compositeSpecPath} must contain a documents property and it must be of type array and it must be a non empty array.`);
+    }
+    let docs = compositeSwagger.documents;
+    let basePath = path.dirname(compositeSpecPath);
+    for (let i=0; i<docs.length; i++) {
+      if (docs[i].startsWith('.')) {
+        docs[i] = docs[i].substring(1);
+      }
+      let individualPath = '';
+      if (docs[i].startsWith('http')) {
+        individualPath = docs[i];
+      } else {
+        individualPath = basePath + docs[i];
+      }
+      finalDocs.push(individualPath);
+    }
+    return finalDocs;
+  }).catch(function (err) {
+    return Promise.reject(err);
+  });
+};
 
-var specPath = process.argv[3];
-var jsonOutput = process.argv[4];
-if (cmd !== 'spec' && cmd !== 'example') {
-  if (cmd) console.error(`${cmd} is not a valid command.`)
-  exports.printUsage();
-}
-if (!specPath || (specPath && typeof specPath.valueOf() !== 'string')) {
-  console.error(`<spec-path> (raw-github url or a local file path to the swagger spec) is required and must be of type string.`);
-  exports.printUsage();
-}
-//If the spec path is a url starting with https://github then let us auto convert it to an https://raw.githubusercontent url.
-if (specPath.startsWith('https://github')) {
-  console.warn('Warning: Converting the github url to raw github user content url.');
-  specPath = specPath.replace(/^https:\/\/(github.com)(.*)blob\/(.*)/ig, 'https://raw.githubusercontent.com$2$3');
-}
+exports.validateSpec = function validateSpec(specPath, json) {
+  let validator = new SpecValidator(specPath);
+  exports.finalValidationResult[specPath] = validator.specValidationResult;
+  validator.initialize().then(function() {
+    log.info(`\n> Semantically validating  ${specPath}:\n`);
+    validator.validateSpec();
+    exports.updateEndResultOfSingleValidation(validator);
+    exports.logDetailedInfo(validator, json);
+    return;
+  }).catch(function(err) {
+    log.error(err);
+    return;
+  });
+};
 
-function updateEndResultOfSingleValidation(validator) {
-  if (validator.specValidationResult.validityStatus) console.log('\n> No Errors were found.');
+exports.executeSequentially = function executeSequentially(promiseFactories) {
+  var result = Promise.resolve();
+  promiseFactories.forEach(function (promiseFactory) {
+    result = result.then(promiseFactory);
+  });
+  return result;
+};
+
+exports.validateCompositeSpec = function validateCompositeSpec(compositeSpecPath, json){
+  return exports.getDocumentsFromCompositeSwagger(compositeSpecPath).then(function(docs) {
+    let promiseFactories = docs.map(function(doc) {
+      return exports.validateSpec(doc, json);
+    });
+    return exports.executeSequentially(promiseFactories);
+  }).catch(function (err) {
+    log.error(err);
+  });
+};
+
+exports.validateExamples = function validateExamples(specPath, operationIds, json) {
+  let validator = new SpecValidator(specPath);
+  exports.finalValidationResult[specPath] = validator.specValidationResult;
+  validator.initialize().then(function() {
+    log.info(`\n> Validating "examples" and "x-ms-examples" in  ${specPath}:\n`);
+    validator.validateOperations(operationIds);
+    exports.updateEndResultOfSingleValidation(validator);
+    exports.logDetailedInfo(validator, json);
+    return;
+  }).catch(function (err) {
+    log.error(err);
+  });
+};
+
+exports.validateExamplesInCompositeSpec = function validateExamplesInCompositeSpec(compositeSpecPath, json){
+  return exports.getDocumentsFromCompositeSwagger(compositeSpecPath).then(function(docs) {
+    let promiseFactories = docs.map(function(doc) {
+      return exports.validateExamples(doc, json);
+    });
+    return exports.executeSequentially(promiseFactories);
+  }).catch(function (err) {
+    log.error(err);
+  });
+};
+
+exports.updateEndResultOfSingleValidation = function updateEndResultOfSingleValidation(validator) {
+  if (validator.specValidationResult.validityStatus) {
+    log.transports.console.level = 'info';
+    log.info('No Errors were found.');
+    log.transports.console.level = 'warn';
+  }
   if (!validator.specValidationResult.validityStatus) {
-    finalValidationResult.validityStatus = validator.specValidationResult.validityStatus;
+    exports.finalValidationResult.validityStatus = validator.specValidationResult.validityStatus;
   }
   return;
 }
 
-var validator;
-
-function validateSingleSpec(singleSpecPath, callback) {
-  if (cmd === 'example') {
-    console.log(`\n> Validating "examples" and "x-ms-examples" in ${singleSpecPath}:\n`);
-    validator = new SpecValidator(singleSpecPath);
-    finalValidationResult[singleSpecPath] = validator.specValidationResult;
-    validator.validateDataModels(function (err, result) {
-      updateEndResultOfSingleValidation(validator);
-      return callback(null);
-    });
-  } else if (cmd === 'spec') {
-    console.log(`\n> Semantically validating  ${singleSpecPath}:\n`);
-    validator = new SpecValidator(singleSpecPath);
-    finalValidationResult[singleSpecPath] = validator.specValidationResult;
-    validator.validateSpec(function (err, result) {
-      updateEndResultOfSingleValidation(validator);
-      return callback(null);
-    });
+exports.logDetailedInfo = function logDetailedInfo(validator, json) {
+  if (json) {
+    log.transports.console.level = 'info';
+    log.info('############################');
+    log.info(validator.specValidationResult);
+    log.info('----------------------------');
+    log.transports.console.level = 'warn';
+  } else {
+    log.silly('############################');
+    log.silly(validator.specValidationResult);
+    log.silly('----------------------------');
   }
-}
-
-async.waterfall([
-  function (callback) {
-    if (specPath.match(/.*composite.*/ig) !== null) {
-      RefParser.bundle(specPath, function (bundleErr, bundleResult) {
-        if (bundleErr) {
-          let msg = `Error occurred in parsing the spec "${specPath}". \t${bundleErr.message}.`;
-          bundleErr.code = 'PARSE_SPEC_ERROR';
-          bundleErr.message = msg;
-          console.log(`${bundleErr.code} - ${bundleErr.message}`);
-          throw bundleErr;
-        }
-        return callback(null, bundleResult.documents);
-      });
-    } else {
-      return callback(null, undefined);
-    }
-  },
-  function (docs, callback) {
-    if (docs) {
-      async.eachSeries(docs, function (doc, loopCallback) {
-        let basePath = path.dirname(specPath);
-        if (doc.startsWith('.')) {
-          doc = doc.substring(1);
-        }
-        let individualPath = '';
-        if (doc.startsWith('http')) {
-          individualPath = doc;
-        } else {
-          individualPath = basePath + doc;
-        }
-        return validateSingleSpec(individualPath, loopCallback);
-      }, function (err) {
-        return callback(null, false); //this callback is called after the eachSeries(for) loopis over.
-      });
-    } else {
-      return callback(null, true); //this callback is called when the given spec is not a composite spec.
-    }
-  },
-  function (isNonCompositeSpec, callback) {
-    if (isNonCompositeSpec) {
-      return validateSingleSpec(specPath, callback);
-    } else {
-      return callback(null);
-    }
-  }
-], function (err, result) {
-
-  if (jsonOutput && jsonOutput === '--json') {
-    console.log('\n> Detailed Validation Result:\n')
-    console.dir(finalValidationResult, { depth: null, colors: true });
-  }
-  console.log('\n> Validation Complete.');
-  if (!finalValidationResult.validityStatus) process.exit(2);
-});
-
-
+};
 
 exports = module.exports;

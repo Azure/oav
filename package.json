@@ -10,12 +10,14 @@
   "description": "Validate Azure REST API Specifications",
   "license": "MIT",
   "dependencies": {
-    "async": "^2.1.2",
-    "glob": "^5.0.14",
-    "json-schema-ref-parser": "^3.1.2",
-    "lodash": "^3.10.1",
     "moment": "^2.14.1",
-    "swagger-tools": "^0.10.1"
+    "request": "^2.79.0",
+    "swagger-tools": "^0.10.1",
+    "sway": "^1.0.0",
+    "winston": "^2.3.0",
+    "yargs": "^6.6.0",
+    "ms-rest": "^1.15.2",
+    "ms-rest-azure": "^1.15.2"
   },
   "homepage": "https://github.com/azure/openapi-validator-tools",
   "repository": {

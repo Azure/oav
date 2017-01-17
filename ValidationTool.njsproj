@@ -6,21 +6,25 @@
     <ProjectGuid>{4b66fcde-3ae4-41ab-9455-1e995c19c78a}</ProjectGuid>
     <ProjectHome />
     <ProjectView>ShowAllFiles</ProjectView>
-    <StartupFile>validate.js</StartupFile>
+    <StartupFile>cli.js</StartupFile>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{349c5851-65df-11da-9384-00065b846f21};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">14.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
-    <ScriptArguments>example https://github.com/Azure/azure-rest-api-specs/blob/master/insights/compositeInsightsClient.json</ScriptArguments>
+    <ScriptArguments>validate-spec arm-storage/2016-01-01/swagger/storage.json -j</ScriptArguments>
     <StartWebBrowser>True</StartWebBrowser>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
   <ItemGroup>
+    <Compile Include="lib\specValidator.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Content Include="cli.js" />
     <Compile Include="validate.js" />
     <Compile Include="lib\specValidatorTemp.js" />
-    <Compile Include="lib\specValidator1 - Copy.js" />
+    <Compile Include="lib\specValidator.js" />
     <Compile Include="lib\util\constants.js">
       <SubType>Code</SubType>
     </Compile>
@@ -29,7 +33,7 @@
     <Content Include="package.json" />
     <Content Include="README.md" />
     <Compile Include="lib\dataValidator.js" />
-    <Compile Include="lib\specValidator.js" />
+    <Compile Include="lib\specValidator-old.js" />
     <Content Include="arm-search\2015-02-28\swagger\search.json" />
     <Content Include="arm-search\2015-08-19\swagger\search.json" />
     <Content Include="arm-storage\2015-05-01-preview\swagger\storage.json" />

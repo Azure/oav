@@ -46,16 +46,18 @@ node validate.js
 
 #### Command usage:
 ```
-D:\sdk\openapi-validation-tools>node validate.js
-
-Usage: node validate.js <command> <spec-path> [--json]
-
-
+MacBook-Pro:openapi-validation-tools someUser$ node cli.js -h
 Commands:
+  live-test <spec-path>         Performs validation of x-ms-examples and
+                                examples present in the spec.
+  validate-example <spec-path>  Performs validation of x-ms-examples and
+                                examples present in the spec.
+  validate-spec <spec-path>     Performs semantic validation of the spec.
 
-  - spec <raw-github-url OR local file-path to the swagger spec> [--json]    | Description: Performs semantic validation of the spec.
-
-  - example <raw-github-url OR local file-path to the swagger spec> [--json] | Description: Performs validation of x-ms-examples and examples present in the spec.
+Options:
+  --version   Show version number                                      [boolean]
+  -j, --json  Show json output                                         [boolean]
+  -h, --help  Show help                                                [boolean]
 ```
 
 ---

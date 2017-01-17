@@ -18,6 +18,9 @@ packages/*
 *.njsperf
 .vs/
 bin/*
+/.vscode/*
+ValidationTool.njsproj
+ValidationTool.sln
 
 #### win gitignore
 
@@ -76,3 +79,5 @@ node_modules
 
 # ignore code gen virtual env folder
 SdkCodeGen
+
+output/*

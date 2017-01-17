@@ -8,8 +8,13 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "program": "${workspaceRoot}/lib/dataValidator.js",
-            "cwd": "${workspaceRoot}"
+            "program": "${workspaceRoot}/cli.js",
+            "cwd": "${workspaceRoot}",
+            "args": [
+                "validate-spec",
+                "arm-storage/2016-01-01/swagger/storage.json",
+                "-j"
+            ]
         },
         {
             "type": "node",
