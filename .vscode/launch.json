@@ -11,10 +11,14 @@
             "program": "${workspaceRoot}/cli.js",
             "cwd": "${workspaceRoot}",
             "args": [
-                "validate-spec",
-                "arm-storage/2016-01-01/swagger/storage.json",
+                "validate-example",
+                "..\\upstream\\azure-rest-api-specs\\arm-customer-insights\\2016-01-01\\swagger\\customer-insights.json",
+                "-o",
+                "Interactions_CreateOrUpdate",
                 "-j"
-            ]
+            ],
+            "env": {
+            }
         },
         {
             "type": "node",
