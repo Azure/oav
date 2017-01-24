@@ -18,11 +18,6 @@
                 "-j"
             ],
             "env": {
-                "CLIENT_ID":"99edf981-74c0-4284-bddf-3e9d092ba4e2",
-                "APPLICATION_SECRET":"EZP9Y8jVvA5q5gZdtvSKwa69kxJEDSBUil9Myky6vCk=",
-                "DOMAIN":"54826b22-38d6-4fb2-bad9-b7b93a3e9c5a",
-                "AZURE_SUBSCRIPTION_ID":"0b1f6471-1bf0-4dda-aec3-cb9272f09590",
-                "AZURE_RESOURCE_GROUP":"vmssrg45454545"
             }
         },
         {
