@@ -96,9 +96,10 @@ exports.validateExamplesInCompositeSpec = function validateExamplesInCompositeSp
 
 exports.updateEndResultOfSingleValidation = function updateEndResultOfSingleValidation(validator) {
   if (validator.specValidationResult.validityStatus) {
-    log.transports.console.level = 'info';
+    let consoleLevel = log.consoleLogLevel;
+    log.consoleLogLevel = 'info';
     log.info('No Errors were found.');
-    log.transports.console.level = 'warn';
+    log.consoleLogLevel = consoleLevel;
   }
   if (!validator.specValidationResult.validityStatus) {
     exports.finalValidationResult.validityStatus = validator.specValidationResult.validityStatus;
@@ -108,11 +109,12 @@ exports.updateEndResultOfSingleValidation = function updateEndResultOfSingleVali
 
 exports.logDetailedInfo = function logDetailedInfo(validator, json) {
   if (json) {
-    log.transports.console.level = 'info';
+    let consoleLevel = log.consoleLogLevel;
+    log.consoleLogLevel = 'info';
     log.info('############################');
     log.info(validator.specValidationResult);
     log.info('----------------------------');
-    log.transports.console.level = 'warn';
+    log.consoleLogLevel = consoleLevel;
   } else {
     log.silly('############################');
     log.silly(validator.specValidationResult);
