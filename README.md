@@ -55,9 +55,12 @@ Commands:
   validate-spec <spec-path>     Performs semantic validation of the spec.
 
 Options:
-  --version   Show version number                                      [boolean]
-  -j, --json  Show json output                                         [boolean]
-  -h, --help  Show help                                                [boolean]
+  --version       Show version number                                  [boolean]
+  -j, --json      Show json output                                     [boolean]
+  -l, --logLevel  Set the logging level for console.
+       [choices: "error", "warn", "info", "verbose", "debug", "silly"] [default:
+                                                                         "warn"]
+  -h, --help      Show help                                            [boolean]
 ```
 
 ---

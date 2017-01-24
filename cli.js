@@ -11,10 +11,14 @@ yargs
   .commandDir('lib/commands')
   .option('h', {alias: 'help'})
   .option('j', {alias: 'json', describe: 'Show json output', boolean: true})
-  .global(['h', 'j'])
+  .option('l', {alias: 'logLevel', describe: 'Set the logging level for console.', choices: ['error', 'warn', 'info' , 'verbose', 'debug', 'silly'], default: 'warn'})
+  .global(['h', 'j', 'l'])
   .help()
   .argv;
 
- if (yargs.argv._.length === 0 && yargs.argv.h === false && yargs.argv.j === false) {
-   yargs.coerce('help', function(arg) {return true;}).argv;
- }
+//setting console logging level to the value provided by the user.
+log.consoleLogLevel = yargs.argv.l;
+
+if (yargs.argv._.length === 0 && yargs.argv.h === false && yargs.argv.j === false) {
+  yargs.coerce('help', function(arg) {return true;}).argv;
+}

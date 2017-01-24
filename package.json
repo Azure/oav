@@ -15,7 +15,6 @@
     "ms-rest": "^1.15.2",
     "ms-rest-azure": "^1.15.2",
     "request": "^2.79.0",
-    "swagger-tools": "^0.10.1",
     "sway": "^1.0.0",
     "winston": "^2.3.0",
     "yargs": "^6.6.0"
