@@ -11,6 +11,7 @@
   "license": "MIT",
   "dependencies": {
     "azure-arm-resource": "^1.6.1-preview",
+    "json-pointer": "^0.6.0",
     "moment": "^2.14.1",
     "ms-rest": "^1.15.2",
     "ms-rest-azure": "^1.15.2",

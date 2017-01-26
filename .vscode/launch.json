@@ -12,7 +12,7 @@
             "cwd": "${workspaceRoot}",
             "args": [
                 "validate-example",
-                "..\\upstream\\azure-rest-api-specs\\arm-customer-insights\\2016-01-01\\swagger\\customer-insights.json",
+                "https://github.com/Azure/azure-rest-api-specs/blob/master/arm-network/2016-09-01/swagger/loadBalancer.json",
                 "-o",
                 "Interactions_CreateOrUpdate",
                 "-j"
