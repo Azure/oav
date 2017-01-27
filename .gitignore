@@ -21,6 +21,7 @@ bin/*
 /.vscode/*
 ValidationTool.njsproj
 ValidationTool.sln
+.vscode/launch.json
 
 #### win gitignore
 
