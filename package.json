@@ -1,5 +1,5 @@
 {
-  "name": "openapi-validator-tools",
+  "name": "openapi-validaton-tools",
   "private": true,
   "version": "0.1.0",
   "author": {
@@ -13,10 +13,10 @@
     "azure-arm-resource": "^1.6.1-preview",
     "json-pointer": "^0.6.0",
     "moment": "^2.14.1",
-    "ms-rest": "^1.15.2",
-    "ms-rest-azure": "^1.15.2",
+    "ms-rest": "^1.15.3",
+    "ms-rest-azure": "^1.15.3",
     "request": "^2.79.0",
-    "sway": "^1.0.0",
+    "sway": "amarzavery/sway#validation",
     "winston": "^2.3.0",
     "yargs": "^6.6.0"
   },
@@ -31,5 +31,7 @@
   "scripts": {
     "pretest": "npm install -g mocha && npm install",
     "test": "mocha"
-  }
+  },
+  "main": "./cli.js",
+  "bin": { "swag": "./cli.js" }
 }
