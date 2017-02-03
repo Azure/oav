@@ -33,5 +33,5 @@
     "test": "mocha"
   },
   "main": "./cli.js",
-  "bin": { "swag": "./cli.js" }
+  "bin": { "oav": "./cli.js" }
 }
