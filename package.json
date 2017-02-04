@@ -1,5 +1,5 @@
 {
-  "name": "openapi-validator-tools",
+  "name": "openapi-validaton-tools",
   "private": true,
   "version": "0.1.0",
   "author": {
@@ -10,12 +10,15 @@
   "description": "Validate Azure REST API Specifications",
   "license": "MIT",
   "dependencies": {
-    "async": "^2.1.2",
-    "glob": "^5.0.14",
-    "json-schema-ref-parser": "^3.1.2",
-    "lodash": "^3.10.1",
+    "azure-arm-resource": "^1.6.1-preview",
+    "json-pointer": "^0.6.0",
     "moment": "^2.14.1",
-    "swagger-tools": "^0.10.1"
+    "ms-rest": "^1.15.3",
+    "ms-rest-azure": "^1.15.3",
+    "request": "^2.79.0",
+    "sway": "amarzavery/sway#validation",
+    "winston": "^2.3.0",
+    "yargs": "^6.6.0"
   },
   "homepage": "https://github.com/azure/openapi-validator-tools",
   "repository": {
@@ -28,5 +31,7 @@
   "scripts": {
     "pretest": "npm install -g mocha && npm install",
     "test": "mocha"
-  }
+  },
+  "main": "./cli.js",
+  "bin": { "swag": "./cli.js" }
 }

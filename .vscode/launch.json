@@ -8,8 +8,15 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "program": "${workspaceRoot}/lib/dataValidator.js",
-            "cwd": "${workspaceRoot}"
+            "program": "${workspaceRoot}/cli.js",
+            "cwd": "${workspaceRoot}",
+            "args": [
+                "validate-example",
+                "https://github.com/Azure/azure-rest-api-specs/blob/master/arm-redis/2016-04-01/swagger/redis.json",
+                "-j"
+            ],
+            "env": {
+            }
         },
         {
             "type": "node",
