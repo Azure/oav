@@ -25,7 +25,7 @@ exports.getDocumentsFromCompositeSwagger = function getDocumentsFromCompositeSwa
     }
     let docs = compositeSwagger.documents;
     let basePath = path.dirname(compositeSpecPath);
-    for (let i=0; i<docs.length; i++) {
+    for (let i = 0; i < docs.length; i++) {
       if (docs[i].startsWith('.')) {
         docs[i] = docs[i].substring(1);
       }
@@ -39,58 +39,75 @@ exports.getDocumentsFromCompositeSwagger = function getDocumentsFromCompositeSwa
     }
     return finalDocs;
   }).catch(function (err) {
+    log.error(err);
     return Promise.reject(err);
   });
 };
 
-exports.validateSpec = function validateSpec(specPath, json) {
+exports.validateSpec = function validateSpec(specPath, json, consoleLogLevel, logFilepath) {
+  if (consoleLogLevel) { log.consoleLogLevel = consoleLogLevel; }
+  if (logFilepath) {
+    log.filepath = logFilepath;
+  } else {
+    log.filepath = log.filepath;
+  }
   let validator = new SpecValidator(specPath);
   exports.finalValidationResult[specPath] = validator.specValidationResult;
-  validator.initialize().then(function() {
+  return validator.initialize().then(function () {
     log.info(`Semantically validating  ${specPath}:\n`);
-    validator.validateSpec();
-    exports.updateEndResultOfSingleValidation(validator);
-    exports.logDetailedInfo(validator, json);
-    return;
-  }).catch(function(err) {
+    validator.validateSpec().then(function (result) {
+      exports.updateEndResultOfSingleValidation(validator);
+      exports.logDetailedInfo(validator, json);
+      return Promise.resolve(result);
+    });
+  }).catch(function (err) {
     log.error(err);
-    return;
+    return Promise.reject(err);
   });
 };
 
-exports.validateCompositeSpec = function validateCompositeSpec(compositeSpecPath, json){
-  return exports.getDocumentsFromCompositeSwagger(compositeSpecPath).then(function(docs) {
-    let promiseFactories = docs.map(function(doc) {
+exports.validateCompositeSpec = function validateCompositeSpec(compositeSpecPath, json) {
+  return exports.getDocumentsFromCompositeSwagger(compositeSpecPath).then(function (docs) {
+    let promiseFactories = docs.map(function (doc) {
       return exports.validateSpec(doc, json);
     });
     return utils.executePromisesSequentially(promiseFactories);
   }).catch(function (err) {
     log.error(err);
+    return Promise.reject(err);
   });
 };
 
-exports.validateExamples = function validateExamples(specPath, operationIds, json) {
+exports.validateExamples = function validateExamples(specPath, operationIds, json, consoleLogLevel, logFilepath) {
+  if (consoleLogLevel) { log.consoleLogLevel = consoleLogLevel; }
+  if (logFilepath) {
+    log.filepath = logFilepath;
+  } else {
+    log.filepath = log.filepath;
+  }
   let validator = new SpecValidator(specPath);
   exports.finalValidationResult[specPath] = validator.specValidationResult;
-  validator.initialize().then(function() {
+  return validator.initialize().then(function () {
     log.info(`Validating "examples" and "x-ms-examples" in  ${specPath}:\n`);
     validator.validateOperations(operationIds);
     exports.updateEndResultOfSingleValidation(validator);
     exports.logDetailedInfo(validator, json);
-    return;
+    return Promise.resolve(validator.specValidationResult);
   }).catch(function (err) {
     log.error(err);
+    return Promise.reject(err);
   });
 };
 
-exports.validateExamplesInCompositeSpec = function validateExamplesInCompositeSpec(compositeSpecPath, json){
-  return exports.getDocumentsFromCompositeSwagger(compositeSpecPath).then(function(docs) {
-    let promiseFactories = docs.map(function(doc) {
+exports.validateExamplesInCompositeSpec = function validateExamplesInCompositeSpec(compositeSpecPath, json) {
+  return exports.getDocumentsFromCompositeSwagger(compositeSpecPath).then(function (docs) {
+    let promiseFactories = docs.map(function (doc) {
       return exports.validateExamples(doc, json);
     });
     return utils.executePromisesSequentially(promiseFactories);
   }).catch(function (err) {
     log.error(err);
+    return Promise.reject(err);
   });
 };
 
