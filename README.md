@@ -15,6 +15,13 @@ References: https://github.com/Azure/azure-rest-api-specs/issues/778 , https://g
 Model validation *requires* example payloads (request/response) of the service, so the data can be matched with the defined models. See [x-ms-examples extension](https://github.com/Azure/azure-rest-api-specs/issues/648) on how to specify the examples/payloads. Swagger “examples” is also supported and data included there is validated as well. To get the most benefit from this tool, make sure to have the simplest and most complex examples possible as part of x-ms-examples.
 The tool relies on swagger-tools package to perform model validation.
 
+- Please take a look at the redis-cache swagger spec as an example for providing "x-ms-examples" over [here](https://github.com/Azure/azure-rest-api-specs/blob/master/arm-redis/2016-04-01/swagger/redis.json#L45).
+- The examples need to be provided in a separate file in the examples directory under the api-version directory `azure-rest-api-specs/arm-<yourService>/<api-version>/examples/<exampleName>.json`. You can take a look over [here](https://github.com/Azure/azure-rest-api-specs/tree/master/arm-redis/2016-04-01/examples) for the structure of examples.
+- We require you to provide us a minimum (just required properties/parameters of the request/response) and a maximum (full blown) example. Feel free to provide more examples as deemed necessary. 
+- We have provided schemas for examples to be provided in the examples directory. It can be found over [here](https://github.com/Azure/autorest/blob/master/schema/example-schema.json). This will help you with intellisene and validation.
+  - If you are using **vscode** to edit your swaggers in the azure-rest-api-specs repo then everything should work out of the box as the schemas have been added in the `.vscode/settings.json` file over [here](https://github.com/Azure/azure-rest-api-specs/blob/master/.vscode/settings.json).
+  - If you are using **Visual Studio** then you can use the urls provided in the settings.json file and put them in the drop down list at the top of a json file when the file is opened in VS.
+
 ### How does this tool fit with others?
 
 Swagger specs validation could be split in the following:
@@ -31,7 +38,7 @@ In the context of “azure-rest-api-specs” repo:
   -	#5 will be done by the approvers of PRs in “azure-rest-api-specs”, as this won’t be automated. 
 
 ### Requirements
-- node version > 4.x
+- **node version > 6.x**
 
 You can install the latest stable release of node.js from [here](https://nodejs.org/en/download/). For a machine with a linux flavored OS, please follow the node.js installation instructions over [here](https://nodejs.org/en/download/package-manager/)
 
@@ -41,26 +48,31 @@ You can install the latest stable release of node.js from [here](https://nodejs.
 
 ```
 npm install
-node validate.js
+node cli.js
 ```
 
 #### Command usage:
 ```
-MacBook-Pro:openapi-validation-tools someUser$ node cli.js -h
+MacBook-Pro:openapi-validation-tools someUser$ >node cli.js -h
 Commands:
-  live-test <spec-path>         Performs validation of x-ms-examples and
-                                examples present in the spec.
+  live-test <spec-path>         Performs live testing of x-ms-examples provided
+                                for operations in the spec. This command will be
+                                making live calls to the service that is
+                                described in the given swagger spec.
   validate-example <spec-path>  Performs validation of x-ms-examples and
                                 examples present in the spec.
   validate-spec <spec-path>     Performs semantic validation of the spec.
 
 Options:
-  --version       Show version number                                  [boolean]
-  -j, --json      Show json output                                     [boolean]
-  -l, --logLevel  Set the logging level for console.
+  --version          Show version number                               [boolean]
+  -j, --json         Show json output                                  [boolean]
+  -l, --logLevel     Set the logging level for console.
        [choices: "error", "warn", "info", "verbose", "debug", "silly"] [default:
-                                                                         "warn"]
-  -h, --help      Show help                                            [boolean]
+                                                                        "error"]
+  -f, --logFilepath  Set the log file path. It must be an absolute filepath. By
+                     default the logs will stored in a timestamp based log file
+                     at "C:\Users\<username>\oav_output".
+  -h, --help         Show help                                         [boolean]
 ```
 
 ---

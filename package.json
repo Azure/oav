@@ -1,5 +1,5 @@
 {
-  "name": "openapi-validaton-tools",
+  "name": "openapi-validation-tools",
   "private": true,
   "version": "0.1.0",
   "author": {
@@ -32,6 +32,6 @@
     "pretest": "npm install -g mocha && npm install",
     "test": "mocha"
   },
-  "main": "./cli.js",
-  "bin": { "swag": "./cli.js" }
+  "main": "./index.js",
+  "bin": { "oav": "./cli.js" }
 }
