@@ -55,7 +55,7 @@ exports.validateSpec = function validateSpec(specPath, json, consoleLogLevel, lo
   exports.finalValidationResult[specPath] = validator.specValidationResult;
   return validator.initialize().then(function () {
     log.info(`Semantically validating  ${specPath}:\n`);
-    validator.validateSpec().then(function (result) {
+    return validator.validateSpec().then(function (result) {
       exports.updateEndResultOfSingleValidation(validator);
       exports.logDetailedInfo(validator, json);
       return Promise.resolve(result);
