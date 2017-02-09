@@ -15,8 +15,7 @@
                 "https://github.com/Azure/azure-rest-api-specs/blob/master/arm-redis/2016-04-01/swagger/redis.json",
                 "-j"
             ],
-            "env": {
-            }
+            "env": {}
         },
         {
             "type": "node",
