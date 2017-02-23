@@ -51,6 +51,9 @@ exports.validateSpec = function validateSpec(specPath, json, consoleLogLevel, lo
   } else {
     log.filepath = log.filepath;
   }
+  if (json) {
+    log.consoleLogLevel = 'json';
+  }
   let validator = new SpecValidator(specPath);
   exports.finalValidationResult[specPath] = validator.specValidationResult;
   return validator.initialize().then(function () {
@@ -58,7 +61,7 @@ exports.validateSpec = function validateSpec(specPath, json, consoleLogLevel, lo
     return validator.validateSpec().then(function (result) {
       exports.updateEndResultOfSingleValidation(validator);
       exports.logDetailedInfo(validator, json);
-      return Promise.resolve(result);
+      return Promise.resolve(validator.specValidationResult);
     });
   }).catch(function (err) {
     log.error(err);
@@ -84,6 +87,9 @@ exports.validateExamples = function validateExamples(specPath, operationIds, jso
     log.filepath = logFilepath;
   } else {
     log.filepath = log.filepath;
+  }
+  if (json) {
+    log.consoleLogLevel = 'json';
   }
   let validator = new SpecValidator(specPath);
   exports.finalValidationResult[specPath] = validator.specValidationResult;
@@ -113,10 +119,12 @@ exports.validateExamplesInCompositeSpec = function validateExamplesInCompositeSp
 
 exports.updateEndResultOfSingleValidation = function updateEndResultOfSingleValidation(validator) {
   if (validator.specValidationResult.validityStatus) {
-    let consoleLevel = log.consoleLogLevel;
-    log.consoleLogLevel = 'info';
-    log.info('No Errors were found.');
-    log.consoleLogLevel = consoleLevel;
+    if (log.consoleLogLevel !== 'json') {
+      let consoleLevel = log.consoleLogLevel;
+      log.consoleLogLevel = 'info';
+      log.info('No Errors were found.');
+      log.consoleLogLevel = consoleLevel;
+    }
   }
   if (!validator.specValidationResult.validityStatus) {
     exports.finalValidationResult.validityStatus = validator.specValidationResult.validityStatus;
@@ -126,17 +134,11 @@ exports.updateEndResultOfSingleValidation = function updateEndResultOfSingleVali
 
 exports.logDetailedInfo = function logDetailedInfo(validator, json) {
   if (json) {
-    let consoleLevel = log.consoleLogLevel;
-    log.consoleLogLevel = 'info';
-    log.info('############################');
-    log.info(validator.specValidationResult);
-    log.info('----------------------------');
-    log.consoleLogLevel = consoleLevel;
-  } else {
-    log.silly('############################');
-    log.silly(validator.specValidationResult);
-    log.silly('----------------------------');
+    console.dir(validator.specValidationResult, { depth: null, colors: true });
   }
+  log.silly('############################');
+  log.silly(validator.specValidationResult);
+  log.silly('----------------------------');
 };
 
 exports = module.exports;

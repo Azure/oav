@@ -11,8 +11,8 @@
             "program": "${workspaceRoot}/cli.js",
             "cwd": "${workspaceRoot}",
             "args": [
-                "validate-example",
-                "https://github.com/Azure/azure-rest-api-specs/blob/master/arm-redis/2016-04-01/swagger/redis.json",
+                "validate-spec",
+                "arm-storage/2016-01-01/swagger/storage.json",
                 "-j"
             ],
             "env": {}

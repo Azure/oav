@@ -20,8 +20,8 @@ yargs
   .option('l', {
     alias: 'logLevel',
     describe: 'Set the logging level for console.',
-    choices: ['error', 'warn', 'info' , 'verbose', 'debug', 'silly'], 
-    default: 'error'
+    choices: ['json', 'error', 'warn', 'info' , 'verbose', 'debug', 'silly'], 
+    default: 'warn'
   })
   .option('f', {
     alias: 'logFilepath',
@@ -33,7 +33,7 @@ yargs
   .argv;
 
 //setting console logging level to the value provided by the user.
-log.consoleLogLevel = yargs.argv.l;
+//log.consoleLogLevel = yargs.argv.l;
 
 //setting the logFilePath if provided.
 log.filepath = yargs.argv.f || logFilepath;
