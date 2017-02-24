@@ -44,21 +44,17 @@ exports.getDocumentsFromCompositeSwagger = function getDocumentsFromCompositeSwa
   });
 };
 
-exports.validateSpec = function validateSpec(specPath, json, consoleLogLevel, logFilepath) {
-  if (consoleLogLevel) { log.consoleLogLevel = consoleLogLevel; }
-  if (logFilepath) {
-    log.filepath = logFilepath;
-  } else {
-    log.filepath = log.filepath;
-  }
+exports.validateSpec = function validateSpec(specPath, consoleLogLevel, logFilepath) {
+  log.consoleLogLevel = consoleLogLevel || log.consoleLevel;
+  log.filepath = logFilepath || log.filepath;
   let validator = new SpecValidator(specPath);
   exports.finalValidationResult[specPath] = validator.specValidationResult;
   return validator.initialize().then(function () {
     log.info(`Semantically validating  ${specPath}:\n`);
     return validator.validateSpec().then(function (result) {
       exports.updateEndResultOfSingleValidation(validator);
-      exports.logDetailedInfo(validator, json);
-      return Promise.resolve(result);
+      exports.logDetailedInfo(validator);
+      return Promise.resolve(validator.specValidationResult);
     });
   }).catch(function (err) {
     log.error(err);
@@ -66,10 +62,12 @@ exports.validateSpec = function validateSpec(specPath, json, consoleLogLevel, lo
   });
 };
 
-exports.validateCompositeSpec = function validateCompositeSpec(compositeSpecPath, json) {
+exports.validateCompositeSpec = function validateCompositeSpec(compositeSpecPath, consoleLogLevel, logFilepath) {
+  log.consoleLogLevel = consoleLogLevel || log.consoleLevel;
+  log.filepath = logFilepath || log.filepath;
   return exports.getDocumentsFromCompositeSwagger(compositeSpecPath).then(function (docs) {
     let promiseFactories = docs.map(function (doc) {
-      return exports.validateSpec(doc, json);
+      return function () { return exports.validateSpec(doc, consoleLogLevel, logFilepath) };
     });
     return utils.executePromisesSequentially(promiseFactories);
   }).catch(function (err) {
@@ -78,20 +76,16 @@ exports.validateCompositeSpec = function validateCompositeSpec(compositeSpecPath
   });
 };
 
-exports.validateExamples = function validateExamples(specPath, operationIds, json, consoleLogLevel, logFilepath) {
-  if (consoleLogLevel) { log.consoleLogLevel = consoleLogLevel; }
-  if (logFilepath) {
-    log.filepath = logFilepath;
-  } else {
-    log.filepath = log.filepath;
-  }
+exports.validateExamples = function validateExamples(specPath, operationIds, consoleLogLevel, logFilepath) {
+  log.consoleLogLevel = consoleLogLevel || log.consoleLevel;
+  log.filepath = logFilepath || log.filepath;
   let validator = new SpecValidator(specPath);
   exports.finalValidationResult[specPath] = validator.specValidationResult;
   return validator.initialize().then(function () {
     log.info(`Validating "examples" and "x-ms-examples" in  ${specPath}:\n`);
     validator.validateOperations(operationIds);
     exports.updateEndResultOfSingleValidation(validator);
-    exports.logDetailedInfo(validator, json);
+    exports.logDetailedInfo(validator);
     return Promise.resolve(validator.specValidationResult);
   }).catch(function (err) {
     log.error(err);
@@ -99,10 +93,12 @@ exports.validateExamples = function validateExamples(specPath, operationIds, jso
   });
 };
 
-exports.validateExamplesInCompositeSpec = function validateExamplesInCompositeSpec(compositeSpecPath, json) {
+exports.validateExamplesInCompositeSpec = function validateExamplesInCompositeSpec(compositeSpecPath, consoleLogLevel, logFilepath) {
+  log.consoleLogLevel = consoleLogLevel || log.consoleLevel;
+  log.filepath = logFilepath || log.filepath;
   return exports.getDocumentsFromCompositeSwagger(compositeSpecPath).then(function (docs) {
     let promiseFactories = docs.map(function (doc) {
-      return exports.validateExamples(doc, json);
+      return function () { return exports.validateExamples(doc, consoleLogLevel, logFilepath); }
     });
     return utils.executePromisesSequentially(promiseFactories);
   }).catch(function (err) {
@@ -113,10 +109,12 @@ exports.validateExamplesInCompositeSpec = function validateExamplesInCompositeSp
 
 exports.updateEndResultOfSingleValidation = function updateEndResultOfSingleValidation(validator) {
   if (validator.specValidationResult.validityStatus) {
-    let consoleLevel = log.consoleLogLevel;
-    log.consoleLogLevel = 'info';
-    log.info('No Errors were found.');
-    log.consoleLogLevel = consoleLevel;
+    if (!(log.consoleLogLevel === 'json' || log.consoleLogLevel === 'off')) {
+      let consoleLevel = log.consoleLogLevel;
+      log.consoleLogLevel = 'info';
+      log.info('No Errors were found.');
+      log.consoleLogLevel = consoleLevel;
+    }
   }
   if (!validator.specValidationResult.validityStatus) {
     exports.finalValidationResult.validityStatus = validator.specValidationResult.validityStatus;
@@ -124,19 +122,13 @@ exports.updateEndResultOfSingleValidation = function updateEndResultOfSingleVali
   return;
 };
 
-exports.logDetailedInfo = function logDetailedInfo(validator, json) {
-  if (json) {
-    let consoleLevel = log.consoleLogLevel;
-    log.consoleLogLevel = 'info';
-    log.info('############################');
-    log.info(validator.specValidationResult);
-    log.info('----------------------------');
-    log.consoleLogLevel = consoleLevel;
-  } else {
-    log.silly('############################');
-    log.silly(validator.specValidationResult);
-    log.silly('----------------------------');
+exports.logDetailedInfo = function logDetailedInfo(validator) {
+  if (log.consoleLogLevel === 'json') {
+    console.dir(validator.specValidationResult, { depth: null, colors: true });
   }
+  log.silly('############################');
+  log.silly(validator.specValidationResult);
+  log.silly('----------------------------');
 };
 
 exports = module.exports;

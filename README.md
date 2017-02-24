@@ -53,26 +53,23 @@ node cli.js
 
 #### Command usage:
 ```
-MacBook-Pro:openapi-validation-tools someUser$ >node cli.js -h
+bash-3.2$ node cli.js
 Commands:
-  live-test <spec-path>         Performs live testing of x-ms-examples provided
-                                for operations in the spec. This command will be
-                                making live calls to the service that is
-                                described in the given swagger spec.
   validate-example <spec-path>  Performs validation of x-ms-examples and
                                 examples present in the spec.
   validate-spec <spec-path>     Performs semantic validation of the spec.
 
 Options:
   --version          Show version number                               [boolean]
-  -j, --json         Show json output                                  [boolean]
   -l, --logLevel     Set the logging level for console.
-       [choices: "error", "warn", "info", "verbose", "debug", "silly"] [default:
-                                                                        "error"]
+  [choices: "off", "json", "error", "warn", "info", "verbose", "debug", "silly"]
+                                                               [default: "warn"]
   -f, --logFilepath  Set the log file path. It must be an absolute filepath. By
                      default the logs will stored in a timestamp based log file
-                     at "C:\Users\<username>\oav_output".
+                     at "/Users/amarz/oav_output".
   -h, --help         Show help                                         [boolean]
+
+bash-3.2$
 ```
 
 ---
