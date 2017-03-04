@@ -12,6 +12,7 @@
   "dependencies": {
     "azure-arm-resource": "^1.6.1-preview",
     "json-pointer": "^0.6.0",
+    "js-yaml": "^3.8.2",
     "moment": "^2.14.1",
     "ms-rest": "^1.15.3",
     "ms-rest-azure": "^1.15.3",
