@@ -25,11 +25,11 @@ The tool relies on swagger-tools package to perform model validation.
 ### How does this tool fit with others?
 
 Swagger specs validation could be split in the following:
-   - 1.	Schema validation
-   - 2.	Semantic validation 
-   - 3.	Model definition validation
-   - 4.	Swagger operations execution (against mocked data or live tests)
-   - 5.	Human-eye review to complement the above
+   1.	Schema validation
+   2.	Semantic validation 
+   3.	Model definition validation
+   4.	Swagger operations execution (against mocked data or live tests)
+   5.	Human-eye review to complement the above
 
 In the context of “azure-rest-api-specs” repo:
   - #1 is being performed on every PR as part of CI.
@@ -47,13 +47,12 @@ You can install the latest stable release of node.js from [here](https://nodejs.
 - After cloning the repo execute following steps from your terminal/cmd prompt
 
 ```
-npm install
-node cli.js
+npm install -g oav
 ```
 
 #### Command usage:
 ```
-bash-3.2$ node cli.js
+bash-3.2$ oav -h
 Commands:
   validate-example <spec-path>  Performs validation of x-ms-examples and
                                 examples present in the spec.
