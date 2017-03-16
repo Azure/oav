@@ -1,6 +1,5 @@
 {
-  "name": "openapi-validation-tools",
-  "private": true,
+  "name": "oav",
   "version": "0.1.0",
   "author": {
     "name": "Microsoft Corporation",
@@ -28,10 +27,6 @@
   },
   "bugs": {
     "url": "http://github.com/azure/openapi-validator-tools/issues"
-  },
-  "scripts": {
-    "pretest": "npm install -g mocha && npm install",
-    "test": "mocha"
   },
   "main": "./index.js",
   "bin": { "oav": "./cli.js" }
