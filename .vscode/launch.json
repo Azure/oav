@@ -30,6 +30,17 @@
         },
         {
             "type": "node",
+            "request": "launch",
+            "name": "Live Validator",
+            "program": "${workspaceRoot}/lib/liveValidator.js",
+            "cwd": "${workspaceRoot}",
+            "args": [
+                
+            ],
+            "env": {}
+        },
+        {
+            "type": "node",
             "request": "attach",
             "name": "Attach to Process",
             "port": 5858
