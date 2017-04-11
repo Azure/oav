@@ -18,7 +18,8 @@
     "request": "^2.79.0",
     "sway": "amarzavery/sway#validation",
     "winston": "^2.3.0",
-    "yargs": "^6.6.0"
+    "yargs": "^6.6.0",
+    "glob": "^5.0.14"
   },
   "homepage": "https://github.com/azure/openapi-validaton-tools",
   "repository": {
