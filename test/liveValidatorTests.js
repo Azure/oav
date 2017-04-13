@@ -1,8 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-var assert = require('assert');
-var LiveValidator = require('../lib/liveValidator.js');
+var assert = require('assert'),
+  path = require('path'),
+  os = require('os'),
+  LiveValidator = require('../lib/liveValidator.js'),
+  Constants = require('../lib/util/constants');
 
 describe('Live Validator', function () {
   describe('Initialization', function () {
@@ -13,7 +16,7 @@ describe('Live Validator', function () {
           "url": "https://github.com/Azure/azure-rest-api-specs.git",
           "shouldClone": false
         },
-        "directory": "./repo"
+        "directory": path.resolve(os.homedir(), 'repo')
       };
       let validator = new LiveValidator();
       assert.deepEqual(validator.cache, {});
@@ -27,7 +30,7 @@ describe('Live Validator', function () {
           "url": "https://github.com/Azure/azure-rest-api-specs.git",
           "shouldClone": false
         },
-        "directory": "./repo"
+        "directory": path.resolve(os.homedir(), 'repo')
       };
       let validator = new LiveValidator({ "swaggerPaths": swaggerPaths });
       assert.deepEqual(validator.cache, {});
@@ -85,19 +88,19 @@ describe('Live Validator', function () {
     it('should throw on invalid options types', function () {
       assert.throws(() => {
         new LiveValidator('string');
-      }, /must be of type object/);
+      }, /must be of type "object"/);
       assert.throws(() => {
         new LiveValidator({ "swaggerPaths": "should be array" });
-      }, /must be of type array/);
+      }, /must be of type "array"/);
       assert.throws(() => {
         new LiveValidator({ "git": 1 });
-      }, /must be of type object/);
+      }, /must be of type "object"/);
       assert.throws(() => {
         new LiveValidator({ "git": { "url": [] } });
-      }, /must be of type string/);
+      }, /must be of type "string"/);
       assert.throws(() => {
         new LiveValidator({ "git": { "url": "url", "shouldClone": "no" } });
-      }, /must be of type boolean/);
+      }, /must be of type "boolean"/);
     });
   });
   describe('Initialize cache', function () {
@@ -133,15 +136,22 @@ describe('Live Validator', function () {
       let validator = new LiveValidator(options);
       validator.initialize().then(function () {
         assert.equal(true, expectedProvider in validator.cache);
-        assert.equal(1, Object.keys(validator.cache).length);
+        assert.equal(2, Object.keys(validator.cache).length);
         assert.equal(true, expectedApiVersion in (validator.cache[expectedProvider]));
         assert.equal(1, Object.keys(validator.cache[expectedProvider]).length);
-        assert.equal(13, validator.cache[expectedProvider][expectedApiVersion]['get'].length);
-        assert.equal(6, validator.cache[expectedProvider][expectedApiVersion]['put'].length);
-        assert.equal(1, validator.cache[expectedProvider][expectedApiVersion]['patch'].length);
-        assert.equal(6, validator.cache[expectedProvider][expectedApiVersion]['delete'].length);
-        assert.equal(7, validator.cache[expectedProvider][expectedApiVersion]['post'].length);
-        assert.equal(4, validator.cache[expectedProvider][expectedApiVersion]['head'].length);
+        // 'microsoft.resources' -> '2016-09-01'
+        assert.equal(2, validator.cache[expectedProvider][expectedApiVersion]['get'].length);
+        assert.equal(1, validator.cache[expectedProvider][expectedApiVersion]['delete'].length);
+        assert.equal(3, validator.cache[expectedProvider][expectedApiVersion]['post'].length);
+        assert.equal(1, validator.cache[expectedProvider][expectedApiVersion]['head'].length);
+        assert.equal(1, validator.cache[expectedProvider][expectedApiVersion]['put'].length);
+        // 'microsoft.unknown' -> 'unknown-api-version'
+        assert.equal(4, validator.cache[Constants.unknownResourceProvider][Constants.unknownApiVersion]['post'].length);
+        assert.equal(11, validator.cache[Constants.unknownResourceProvider][Constants.unknownApiVersion]['get'].length);
+        assert.equal(3, validator.cache[Constants.unknownResourceProvider][Constants.unknownApiVersion]['head'].length);
+        assert.equal(5, validator.cache[Constants.unknownResourceProvider][Constants.unknownApiVersion]['put'].length);
+        assert.equal(5, validator.cache[Constants.unknownResourceProvider][Constants.unknownApiVersion]['delete'].length);
+        assert.equal(1, validator.cache[Constants.unknownResourceProvider][Constants.unknownApiVersion]['patch'].length);
         done();
       }).catch((err) => {
         assert.ifError(err);
@@ -154,9 +164,9 @@ describe('Live Validator', function () {
       };
       let validator = new LiveValidator(options);
       validator.initialize().then(function () {
-        assert.equal(4, Object.keys(validator.cache).length);
-        assert.equal(13, validator.cache['microsoft.resources']['2016-09-01']['get'].length);
-        assert.equal(4, validator.cache['microsoft.resources']['2016-09-01']['head'].length);
+        assert.equal(5, Object.keys(validator.cache).length);
+        assert.equal(2, validator.cache['microsoft.resources']['2016-09-01']['get'].length);
+        assert.equal(1, validator.cache['microsoft.resources']['2016-09-01']['head'].length);
         assert.equal(1, validator.cache['microsoft.media']['2015-10-01']['patch'].length);
         assert.equal(4, validator.cache['microsoft.media']['2015-10-01']['post'].length);
         assert.equal(2, validator.cache['microsoft.search']['2015-02-28']['get'].length);

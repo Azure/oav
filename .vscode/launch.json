@@ -34,9 +34,6 @@
             "name": "Live Validator",
             "program": "${workspaceRoot}/lib/liveValidator.js",
             "cwd": "${workspaceRoot}",
-            "args": [
-                "${workspaceRoot}/test/utilsTests.js"
-            ],
             "env": {}
         },
         {
