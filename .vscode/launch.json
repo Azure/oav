@@ -35,7 +35,19 @@
             "program": "${workspaceRoot}/lib/liveValidator.js",
             "cwd": "${workspaceRoot}",
             "args": [
-                
+                "${workspaceRoot}/test/utilsTests.js"
+            ],
+            "env": {}
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Mocha Tests",
+            "program": "${workspaceRoot}/node_modules/mocha/bin/mocha",
+            "cwd": "${workspaceRoot}",
+            "stopOnEntry": false,
+            "args": [
+                "test/utilsTests.js"
             ],
             "env": {}
         },

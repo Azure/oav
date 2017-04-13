@@ -21,6 +21,13 @@
     "yargs": "^6.6.0",
     "glob": "^5.0.14"
   },
+  "devDependencies": {
+    "jshint": "2.9.4",
+    "mocha": "^3.2.0",
+    "should": "5.2.0",
+    "@types/mocha": "^2.2.40",
+    "@types/should": "^8.1.30"
+  },
   "homepage": "https://github.com/azure/openapi-validaton-tools",
   "repository": {
     "type": "git",
