@@ -37,5 +37,8 @@
     "url": "http://github.com/azure/openapi-validaton-tools/issues"
   },
   "main": "./index.js",
-  "bin": { "oav": "./cli.js" }
+  "bin": { "oav": "./cli.js" },
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha test/*"
+  }
 }

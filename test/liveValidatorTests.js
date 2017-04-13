@@ -148,7 +148,7 @@ describe('Live Validator', function () {
                 done();
             }).catch(done);
         });
-        it.only('should initialize for all swaggers', function (done) {
+        it('should initialize for all swaggers', function (done) {
             let expectedProvider = '';
             let expectedApiVersion = '';
             let options = {
