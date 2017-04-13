@@ -149,8 +149,6 @@ describe('Live Validator', function () {
             }).catch(done);
         });
         it('should initialize for all swaggers', function (done) {
-            let expectedProvider = '';
-            let expectedApiVersion = '';
             let options = {
                 "directory": "./test/swaggers"
             };
@@ -166,6 +164,37 @@ describe('Live Validator', function () {
                 assert.equal(1, validator.cache['microsoft.storage']['2015-05-01-preview']['patch'].length);
                 assert.equal(4, validator.cache['microsoft.storage']['2015-06-15']['get'].length);
                 assert.equal(3, validator.cache['microsoft.storage']['2016-01-01']['post'].length);
+                done();
+            }).catch((err) => {
+                assert.ifError(err);
+                done();
+            }).catch(done);
+        });
+    });
+    describe('Initialize cache and search', function () {
+        it('should return one matched operation for arm-storage', function (done) {
+            let options = {
+                "directory": "./test/swaggers/arm-storage"
+            };
+            let listRequestUrl = "https://management.azure.com/subscriptions/subscriptionId/providers/Microsoft.Storage/storageAccounts?api-version=2015-06-15";
+            let postRequestUrl = "https://management.azure.com/subscriptions/subscriptionId/providers/Microsoft.Storage/checkNameAvailability?api-version=2015-06-15";
+            let deleteRequestUrl = "https://management.azure.com/subscriptions/subscriptionId/resourceGroups/myRG/providers/Microsoft.Storage/storageAccounts/accname?api-version=2015-06-15";
+            let validator = new LiveValidator(options);
+            validator.initialize().then(function () {
+                // Operations to match is StorageAccounts_List
+                let operations = validator.getPotentialOperations(listRequestUrl, 'Get');
+                assert.equal(1, operations.length);
+                assert.equal("/subscriptions/{subscriptionId}/providers/Microsoft.Storage/storageAccounts", operations[0].pathObject.path);
+
+                // Operations to match is StorageAccounts_CheckNameAvailability
+                operations = validator.getPotentialOperations(postRequestUrl, 'PoSt');
+                assert.equal(1, operations.length);
+                assert.equal("/subscriptions/{subscriptionId}/providers/Microsoft.Storage/checkNameAvailability", operations[0].pathObject.path);
+
+                // Operations to match is StorageAccounts_Delete
+                operations = validator.getPotentialOperations(deleteRequestUrl, 'delete');
+                assert.equal(1, operations.length);
+                assert.equal("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}", operations[0].pathObject.path);
                 done();
             }).catch((err) => {
                 assert.ifError(err);
