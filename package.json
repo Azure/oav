@@ -1,6 +1,6 @@
 {
   "name": "oav",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "author": {
     "name": "Microsoft Corporation",
     "email": "azsdkteam@microsoft.com",
@@ -13,8 +13,8 @@
     "json-pointer": "^0.6.0",
     "js-yaml": "^3.8.2",
     "moment": "^2.14.1",
-    "ms-rest": "^2.0.0",
-    "ms-rest-azure": "^2.1.0",
+    "ms-rest": "^2.1.0",
+    "ms-rest-azure": "^2.1.1",
     "request": "^2.79.0",
     "sway": "amarzavery/sway#validation",
     "winston": "^2.3.0",
