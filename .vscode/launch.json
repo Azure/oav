@@ -12,7 +12,7 @@
             "cwd": "${workspaceRoot}",
             "args": [
                 "validate-spec",
-                "arm-storage/2016-01-01/swagger/storage.json"
+                "test/swaggers/arm-storage/2016-01-01/swagger/storage.json"
             ],
             "env": {}
         },
@@ -24,7 +24,7 @@
             "cwd": "${workspaceRoot}",
             "args": [
                 "validate-example",
-                "arm-storage/2016-01-01/swagger/storage.json"
+                "test/swaggers/arm-storage/2016-01-01/swagger/storage.json"
             ],
             "env": {}
         },
