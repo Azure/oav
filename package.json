@@ -39,6 +39,6 @@
   "main": "./index.js",
   "bin": { "oav": "./cli.js" },
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha test/*"
+    "test": "mocha -t 50000"
   }
 }
