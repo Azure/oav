@@ -3,7 +3,7 @@
 
 'use strict';
 
-var validate = require('./validate');
+var validate = require('./lib/validate');
 var utils = require('./lib/util/utils');
 
 exports.getDocumentsFromCompositeSwagger = validate.getDocumentsFromCompositeSwagger;
@@ -14,3 +14,5 @@ exports.validateExamplesInCompositeSpec = validate.validateExamplesInCompositeSp
 exports.Validator = require('./lib/specValidator');
 exports.log = require('./lib/util/logging');
 exports.executePromisesSequentially = utils.executePromisesSequentially;
+exports.resolveSpec = validate.resolveSpec;
+exports.resolveCompositeSpec = validate.resolveCompositeSpec;
