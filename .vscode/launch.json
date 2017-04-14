@@ -30,6 +30,26 @@
         },
         {
             "type": "node",
+            "request": "launch",
+            "name": "Live Validator",
+            "program": "${workspaceRoot}/lib/liveValidator.js",
+            "cwd": "${workspaceRoot}",
+            "env": {}
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Mocha Tests",
+            "program": "${workspaceRoot}/node_modules/mocha/bin/mocha",
+            "cwd": "${workspaceRoot}",
+            "stopOnEntry": false,
+            "args": [
+                "test/utilsTests.js"
+            ],
+            "env": {}
+        },
+        {
+            "type": "node",
             "request": "attach",
             "name": "Attach to Process",
             "port": 5858

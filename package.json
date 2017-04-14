@@ -18,7 +18,15 @@
     "request": "^2.79.0",
     "sway": "amarzavery/sway#validation",
     "winston": "^2.3.0",
-    "yargs": "^6.6.0"
+    "yargs": "^6.6.0",
+    "glob": "^5.0.14"
+  },
+  "devDependencies": {
+    "jshint": "2.9.4",
+    "mocha": "^3.2.0",
+    "should": "5.2.0",
+    "@types/mocha": "^2.2.40",
+    "@types/should": "^8.1.30"
   },
   "homepage": "https://github.com/azure/openapi-validaton-tools",
   "repository": {
@@ -29,5 +37,8 @@
     "url": "http://github.com/azure/openapi-validaton-tools/issues"
   },
   "main": "./index.js",
-  "bin": { "oav": "./cli.js" }
+  "bin": { "oav": "./cli.js" },
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha test/*"
+  }
 }
