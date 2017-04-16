@@ -1,0 +1,36 @@
+{
+  "request": {
+    "rawResponse": false,
+    "queryString": {},
+    "url": "https://management.azure.com/subscriptions/subcriptionID/providers/Microsoft.Storage/usages?api-version=2016-01-01",
+    "method": "GET",
+    "headers": {
+      "Content-Type": "application/json; charset=utf-8",
+      "accept-language": "en-US",
+      "x-ms-client-request-id": "cd4cc3ca-4794-4d78-bf14-47220f8c06c8"
+    },
+    "body": null,
+    "query": {
+      "api-version": "2016-01-01"
+    }
+  },
+  "response": {
+    "statusCode": "200",
+    "body": {
+      "value": [
+        {
+          "unit": "Count",
+          "currentValue": 3,
+          "limit": 100,
+          "name": {
+            "value": "StorageAccounts",
+            "localizedValue": "Storage Accounts"
+          }
+        }
+      ]
+    },
+    "headers": {
+      "content-type": "application/json"
+    }
+  }
+}

@@ -4,8 +4,11 @@
 var assert = require('assert'),
   path = require('path'),
   os = require('os'),
-  LiveValidator = require('../lib/liveValidator.js'),
+  glob = require('glob'),
+  LiveValidator = require('../lib/validators/liveValidator.js'),
   Constants = require('../lib/util/constants');
+
+const livePaths = glob.sync(path.join(__dirname, 'swaggers/**/live/*.json'));
 
 describe('Live Validator', function () {
   describe('Initialization', function () {
@@ -210,6 +213,29 @@ describe('Live Validator', function () {
         assert.ifError(err);
         done();
       }).catch(done);
+    });
+  });
+  describe('Initialize cache and validate', function () {
+    livePaths.forEach((livePath) => {
+      it(`should validate request and response for "${livePath}"`, function (done) {
+        let options = {
+          "directory": "./test/swaggers/arm-storage"
+        };
+        let validator = new LiveValidator(options);
+        validator.initialize().then(function () {
+          let reqRes = require(livePath);
+          let requestResponseObj = {
+            liveRequest: reqRes.request,
+            liveResponse: reqRes.response
+          }
+          let validationResult = validator.validateLiveRequestResponse(requestResponseObj);
+          console.dir(validationResult, { depth: null, colors: true });
+          done();
+        }).catch((err) => {
+          assert.ifError(err);
+          done();
+        }).catch(done);
+      });
     });
   });
 });

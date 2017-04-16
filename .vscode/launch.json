@@ -24,7 +24,9 @@
             "cwd": "${workspaceRoot}",
             "args": [
                 "validate-example",
-                "test/swaggers/arm-storage/2016-01-01/swagger/storage.json"
+                "test/swaggers/arm-storage/2016-01-01/swagger/storage.json",
+                "-o",
+                "StorageAccounts_CheckNameAvailability"
             ],
             "env": {}
         },
@@ -32,7 +34,7 @@
             "type": "node",
             "request": "launch",
             "name": "Live Validator",
-            "program": "${workspaceRoot}/lib/liveValidator.js",
+            "program": "${workspaceRoot}/test/sample.js",
             "cwd": "${workspaceRoot}",
             "env": {}
         },
@@ -44,7 +46,7 @@
             "cwd": "${workspaceRoot}",
             "stopOnEntry": false,
             "args": [
-                "test/utilsTests.js"
+                "test/liveValidatorTests.js"
             ],
             "env": {}
         },

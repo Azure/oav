@@ -1,0 +1,23 @@
+{
+  "request": {
+    "rawResponse": false,
+    "queryString": {},
+    "url": "https://management.azure.com/subscriptions/subcriptionID/resourceGroups/resourcegroupname/providers/Microsoft.Storage/storageAccounts/accountname?api-version=2016-01-01",
+    "method": "DELETE",
+    "headers": {
+      "Content-Type": "application/json; charset=utf-8",
+      "accept-language": "en-US",
+      "x-ms-client-request-id": "65e6abbc-ec9d-4cb3-8ae4-48a116337a40"
+    },
+    "body": null,
+    "query": {
+      "api-version": "2016-01-01"
+    }
+  },
+  "response": {
+    "statusCode": "204",
+    "headers": {
+      "content-type": "application/json"
+    }
+  }
+}
