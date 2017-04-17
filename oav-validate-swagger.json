@@ -7,7 +7,7 @@
   },
   "host": "localhost:1337",
   "schemes": [
-    "http",    
+    "http",
     "https"
   ],
   "consumes": [
@@ -42,7 +42,7 @@
           "default": {
             "description": "Describes the error response for negative scenarios.",
             "schema": {
-              "$ref": "#/definitions/ErrorResponse"
+              "$ref": "#/definitions/LiveValidationError"
             }
           }
         }
@@ -137,7 +137,10 @@
     "OperationInfo": {
       "description": "Describes the operation against which the live request and response validation happened.",
       "type": "object",
-      "required": ["operationId", "apiVersion"],
+      "required": [
+        "operationId",
+        "apiVersion"
+      ],
       "properties": {
         "operationId": {
           "type": "string",
@@ -170,8 +173,11 @@
         },
         "errors": {
           "description": "Provides more information about validation for scenarios where no potential operation was found or multiple operations were found or the input was invalid.",
-          "type": "object",
-          "properties": {}
+          "type": "array",
+          "readOnly": true,
+          "items": {
+            "$ref": "#/definitions/ErrorWrapper"
+          }
         }
       }
     },
@@ -185,13 +191,19 @@
         },
         "operationInfo": {
           "readOnly": true,
-          "description": "The corresponding operation in openapi spec that was used for validating the request.",
-          "$ref": "#/definitions/OperationInfo"
+          "description": "The corresponding operation(s) in openapi spec that was used for validating the request.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OperationInfo"
+          }
         },
         "errors": {
+          "readOnly": true,
           "description": "Provides more information about live response validation.",
-          "type": "object",
-          "properties": {}
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ErrorWrapper"
+          }
         }
       }
     },
@@ -205,18 +217,24 @@
         },
         "operationInfo": {
           "readOnly": true,
-          "description": "The corresponding operation in openapi spec that was used for validating the response.",
-          "$ref": "#/definitions/OperationInfo"
+          "description": "The corresponding operation(s) in openapi spec that was used for validating the response.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OperationInfo"
+          }
         },
         "errors": {
+          "readOnly": true,
           "description": "Provides more information about live response validation.",
-          "type": "object",
-          "properties": {}
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ErrorWrapper"
+          }
         }
       }
     },
-    "ErrorResponse": {
-      "description": "Describes the error response for negative scenarios.",
+    "LiveValidationError": {
+      "description": "Describes the error occurred while performing validation on live request/response.",
       "type": "object",
       "properties": {
         "code": {
@@ -228,6 +246,52 @@
           "type": "string"
         }
       }
+    },
+    "ErrorResponse": {
+      "description": "Describes the error response for negative scenarios.",
+      "type": "object",
+      "properties": {
+        "description": {
+          "description": "Description of the model property or the parameter in the swagger spec that causes validation failure.",
+          "type": "string"
+        },
+        "params": {
+          "description": "The parameters used when validation failed (z-schema construct).",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "path": {
+          "description": "The path to the location in the document or the model where the error/warning occurred.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "allOf": [
+        {
+          "$ref": "#/definitions/LiveValidationError"
+        }
+      ]
+    },
+    "ErrorWrapper": {
+      "description": "Wrapper object",
+      "properties": {
+        "errors": {
+          "description": "An array of inner errors.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ErrorResponse"
+          }
+        }
+      },
+      "allOf": [
+        {
+          "$ref": "#/definitions/ErrorResponse"
+        }
+      ]
     }
   }
 }
