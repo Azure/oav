@@ -1,0 +1,39 @@
+{
+  "request": {
+    "rawResponse": false,
+    "queryString": {},
+    "url": "https://management.azure.com/subscriptions/subcriptionID/resourceGroups/resourcegroupname/providers/Microsoft.Storage/storageAccounts/accountname/regenerateKey?api-version=2016-01-01",
+    "method": "POST",
+    "headers": {
+      "Content-Type": "application/json; charset=utf-8",
+      "accept-language": "en-US",
+      "x-ms-client-request-id": "33ed12c2-c6f3-4d3d-ba6a-c0bd97058338"
+    },
+    "body": {
+      "keyName": "key1"
+    },
+    "query": {
+      "api-version": "2016-01-01"
+    }
+  },
+  "response": {
+    "statusCode": "200",
+    "body": {
+      "keys": [
+        {
+          "keyName": "key1",
+          "permissions": "Full",
+          "value": "v3n81UPv5EivAXLav/YCVo+t8sLMWecXmUVN9siJn4bFR38Fx1hElZOnHXV42drrCThqOmgTJgFKnR0zUGe4dA=="
+        },
+        {
+          "keyName": "key2",
+          "permissions": "Full",
+          "value": "IRBjhmQr+tnUQtlFAiyi7HK93YfMovmdPUsKEI8P458cfP9AG+9CgxgJOm4EJWOEb87Ml3dr9+p40njjRApduA=="
+        }
+      ]
+    },
+    "headers": {
+      "content-type": "application/json"
+    }
+  }
+}
