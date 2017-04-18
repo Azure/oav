@@ -281,3 +281,21 @@ export interface ValidationResult {
   readonly responseValidationResult?: ResponseValidationResult;
   readonly errors?: ErrorWrapper[];
 }
+
+/**
+ * @class
+ * Initializes a new instance of the PotentialOperationsResult class.
+ * 
+ * @constructor
+ * Provides information about the issue that occured while performing
+ * live request and response validation.
+ *
+ * @member {Array<Operation>} List of potential operations found.
+ *
+ * @member {LiveValidationError} Reason when potential operations were empty.
+ *
+ */
+export interface PotentialOperationsResult {
+  operations: Array<any>;
+  reason: LiveValidationError;
+}
