@@ -231,28 +231,28 @@ describe('Live Validator', function () {
         let operations = result.operations;
         let reason = result.reason;
         assert.equal(0, operations.length);
-        assert.equal(Constants.ErrorCodes.OperationNotFoundInCacheWithApi, result.reason.code);
+        assert.equal(Constants.ErrorCodes.OperationNotFoundInCacheWithApi, reason.code);
 
         // Operations to match is StorageAccounts_CheckNameAvailability with provider "Hello.World" [non cached provider]
         result = validator.getPotentialOperations(nonCachedProviderUrl, 'PoSt');
         operations = result.operations;
         reason = result.reason;
         assert.equal(0, operations.length);
-        assert.equal(Constants.ErrorCodes.OperationNotFoundInCacheWithProvider, result.reason.code);
+        assert.equal(Constants.ErrorCodes.OperationNotFoundInCacheWithProvider, reason.code);
 
         // Operations to match is StorageAccounts_Delete with verb "head" [non cached http verb]
         result = validator.getPotentialOperations(nonCachedVerbUrl, 'head');
         operations = result.operations;
         reason = result.reason;
         assert.equal(0, operations.length);
-        assert.equal(Constants.ErrorCodes.OperationNotFoundInCacheWithVerb, result.reason.code);
+        assert.equal(Constants.ErrorCodes.OperationNotFoundInCacheWithVerb, reason.code);
 
         // Operations to match is with path "subscriptions/subscriptionId/providers/Microsoft.Storage/storageAccounts/storageAccounts/accountName/properties/" [non cached path]
         result = validator.getPotentialOperations(nonCachedPath, 'get');
         operations = result.operations;
         reason = result.reason;
         assert.equal(0, operations.length);
-        assert.equal(Constants.ErrorCodes.OperationNotFoundInCache, result.reason.code);
+        assert.equal(Constants.ErrorCodes.OperationNotFoundInCache, reason.code);
         done();
       }).catch((err) => {
         assert.ifError(err);
