@@ -21,3 +21,6 @@ exports.resolveCompositeSpec = validate.resolveCompositeSpec;
 exports.Validator = require('./lib/validators/specValidator');
 exports.LiveValidator = require('./lib/validators/liveValidator');
 exports.SpecResolver = require('./lib/validators/specResolver');
+
+// Constants
+exports.Constants = require('./lib/util/constants');
