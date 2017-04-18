@@ -39,6 +39,7 @@
   "main": "./index.js",
   "bin": { "oav": "./cli.js" },
   "scripts": {
-    "test": "mocha -t 50000"
+    "jshint": "jshint index.js --reporter=jslint",
+    "test": "npm -s run-script jshint && mocha -t 50000"
   }
 }
