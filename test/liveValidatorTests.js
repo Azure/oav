@@ -106,6 +106,7 @@ describe('Live Validator', function () {
       }, /must be of type "boolean"/);
     });
   });
+
   describe('Initialize cache', function () {
     it('should initialize for arm-mediaservices', function (done) {
       let expectedProvider = 'microsoft.media';
@@ -184,6 +185,7 @@ describe('Live Validator', function () {
       }).catch(done);
     });
   });
+
   describe('Initialize cache and search', function () {
     it('should return one matched operation for arm-storage', function (done) {
       let options = {
@@ -195,17 +197,17 @@ describe('Live Validator', function () {
       let validator = new LiveValidator(options);
       validator.initialize().then(function () {
         // Operations to match is StorageAccounts_List
-        let operations = validator.getPotentialOperations(listRequestUrl, 'Get');
+        let operations = validator.getPotentialOperations(listRequestUrl, 'Get').operations;
         assert.equal(1, operations.length);
         assert.equal("/subscriptions/{subscriptionId}/providers/Microsoft.Storage/storageAccounts", operations[0].pathObject.path);
 
         // Operations to match is StorageAccounts_CheckNameAvailability
-        operations = validator.getPotentialOperations(postRequestUrl, 'PoSt');
+        operations = validator.getPotentialOperations(postRequestUrl, 'PoSt').operations;
         assert.equal(1, operations.length);
         assert.equal("/subscriptions/{subscriptionId}/providers/Microsoft.Storage/checkNameAvailability", operations[0].pathObject.path);
 
         // Operations to match is StorageAccounts_Delete
-        operations = validator.getPotentialOperations(deleteRequestUrl, 'delete');
+        operations = validator.getPotentialOperations(deleteRequestUrl, 'delete').operations;
         assert.equal(1, operations.length);
         assert.equal("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}", operations[0].pathObject.path);
         done();
@@ -214,7 +216,51 @@ describe('Live Validator', function () {
         done();
       }).catch(done);
     });
+    it('should return reason for not matched operations', function (done) {
+      let options = {
+        "directory": "./test/swaggers/arm-storage"
+      };
+      let nonCachedApiUrl = "https://management.azure.com/subscriptions/subscriptionId/providers/Microsoft.Storage/storageAccounts?api-version=2015-08-15";
+      let nonCachedProviderUrl = "https://management.azure.com/subscriptions/subscriptionId/providers/Hello.World/checkNameAvailability?api-version=2015-06-15";
+      let nonCachedVerbUrl = "https://management.azure.com/subscriptions/subscriptionId/resourceGroups/myRG/providers/Microsoft.Storage/storageAccounts/accname?api-version=2015-06-15";
+      let nonCachedPath = "https://management.azure.com/subscriptions/subscriptionId/providers/Microsoft.Storage/storageAccounts/accountName/properties?api-version=2015-06-15";
+      let validator = new LiveValidator(options);
+      validator.initialize().then(function () {
+        // Operations to match is StorageAccounts_List with api-version 2015-08-15 [non cached api version]
+        let result = validator.getPotentialOperations(nonCachedApiUrl, 'Get');
+        let operations = result.operations;
+        let reason = result.reason;
+        assert.equal(0, operations.length);
+        assert.equal(Constants.ErrorCodes.OperationNotFoundInCacheWithApi, reason.code);
+
+        // Operations to match is StorageAccounts_CheckNameAvailability with provider "Hello.World" [non cached provider]
+        result = validator.getPotentialOperations(nonCachedProviderUrl, 'PoSt');
+        operations = result.operations;
+        reason = result.reason;
+        assert.equal(0, operations.length);
+        assert.equal(Constants.ErrorCodes.OperationNotFoundInCacheWithProvider, reason.code);
+
+        // Operations to match is StorageAccounts_Delete with verb "head" [non cached http verb]
+        result = validator.getPotentialOperations(nonCachedVerbUrl, 'head');
+        operations = result.operations;
+        reason = result.reason;
+        assert.equal(0, operations.length);
+        assert.equal(Constants.ErrorCodes.OperationNotFoundInCacheWithVerb, reason.code);
+
+        // Operations to match is with path "subscriptions/subscriptionId/providers/Microsoft.Storage/storageAccounts/storageAccounts/accountName/properties/" [non cached path]
+        result = validator.getPotentialOperations(nonCachedPath, 'get');
+        operations = result.operations;
+        reason = result.reason;
+        assert.equal(0, operations.length);
+        assert.equal(Constants.ErrorCodes.OperationNotFoundInCache, reason.code);
+        done();
+      }).catch((err) => {
+        assert.ifError(err);
+        done();
+      }).catch(done);
+    });
   });
+
   describe('Initialize cache and validate', function () {
     livePaths.forEach((livePath) => {
       it(`should validate request and response for "${livePath}"`, function (done) {
