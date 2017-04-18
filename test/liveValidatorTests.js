@@ -270,11 +270,7 @@ describe('Live Validator', function () {
         let validator = new LiveValidator(options);
         validator.initialize().then(function () {
           let reqRes = require(livePath);
-          let requestResponseObj = {
-            liveRequest: reqRes.request,
-            liveResponse: reqRes.response
-          }
-          let validationResult = validator.validateLiveRequestResponse(requestResponseObj);
+          let validationResult = validator.validateLiveRequestResponse(reqRes);
           console.dir(validationResult, { depth: null, colors: true });
           done();
         }).catch((err) => {

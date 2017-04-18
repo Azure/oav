@@ -1,13 +1,13 @@
 {
-  "request": {
+  "liveRequest": {
     "rawResponse": false,
     "queryString": {},
     "url": "https://management.azure.com/subscriptions/subcriptionID/providers/Microsoft.Storage/checkNameAvailability?api-version=2016-01-01",
     "method": "POST",
     "headers": {
-      "Content-Type": "application/json; charset=utf-8",
+      "Content-Type": "application/json",
       "accept-language": "en-US",
-      "x-ms-client-request-id": "81161439-5d0a-4f6c-a41d-08d20985bee7"
+      "x-ms-client-request-id": "cf886655-7387-491d-9b96-9fb4372dc00c"
     },
     "body": {
       "name": "storage4db9202c66274d529",
@@ -17,7 +17,7 @@
       "api-version": "2016-01-01"
     }
   },
-  "response": {
+  "liveResponse": {
     "statusCode": "200",
     "body": {
       "nameAvailable": true
