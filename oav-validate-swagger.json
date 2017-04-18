@@ -236,6 +236,10 @@
     "LiveValidationError": {
       "description": "Describes the error occurred while performing validation on live request/response.",
       "type": "object",
+      "required": [
+        "code",
+        "message"
+      ],
       "properties": {
         "code": {
           "description": "The unique error code describing an error.",
