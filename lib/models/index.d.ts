@@ -216,36 +216,6 @@ export interface ResponseValidationResult {
  * @constructor
  * Describes the validation result of the live request, response validation.
  *
- * @member {object} [input] Provides the body parameter back in the response.
- * This makes it easier to generate reports by correlating input and validation
- * output in one object.
- *
- * @member {object} [input.liveRequest] Schema for the live request to be
- * validated
- *
- * @member {object} [input.liveRequest.headers] Headers of the request.
- *
- * @member {string} [input.liveRequest.method] Http verb of the request.
- * Possible values include: 'GET', 'PUT', 'PATCH', 'POST', 'DELETE', 'HEAD',
- * 'OPTIONS', 'TRACE'
- *
- * @member {string} [input.liveRequest.url] Url of the request.
- *
- * @member {object} [input.liveRequest.body] Parsed body of the request as a
- * JSON.
- *
- * @member {object} [input.liveResponse] Schema for the live response to be
- * validated
- *
- * @member {string} [input.liveResponse.statusCode] The Response status code.
- *
- * @member {object} [input.liveResponse.headers] Headers of the response.
- *
- * @member {object} [input.liveResponse.body] Body of the response.
- *
- * @member {string} [input.liveResponse.encoding] The encoding of the response
- * body when the body is a buffer.
- *
  * @member {object} [requestValidationResult] Describes the validation result
  * of the live request.
  *
@@ -276,7 +246,6 @@ export interface ResponseValidationResult {
  *
  */
 export interface ValidationResult {
-  readonly input?: RequestResponse;
   readonly requestValidationResult?: RequestValidationResult;
   readonly responseValidationResult?: ResponseValidationResult;
   readonly errors?: ErrorWrapper[];
