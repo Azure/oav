@@ -1,20 +1,20 @@
 {
-  "request": {
+  "liveRequest": {
     "rawResponse": false,
     "queryString": {},
     "url": "https://management.azure.com/subscriptions/subcriptionID/resourceGroups/resourcegroupname/providers/Microsoft.Storage/storageAccounts/accountname?api-version=2016-01-01",
     "method": "GET",
     "headers": {
-      "Content-Type": "application/json; charset=utf-8",
+      "Content-Type": "application/json",
       "accept-language": "en-US",
-      "x-ms-client-request-id": "9f2e2a54-797c-4060-9f67-bcc6105cc378"
+      "x-ms-client-request-id": "3f0193ac-db99-4645-b132-489606d1f62b"
     },
     "body": null,
     "query": {
       "api-version": "2016-01-01"
     }
   },
-  "response": {
+  "liveResponse": {
     "statusCode": "200",
     "body": {
       "id": "/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968",

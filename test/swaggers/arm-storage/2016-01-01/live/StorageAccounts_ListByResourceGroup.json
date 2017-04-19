@@ -1,20 +1,20 @@
 {
-  "request": {
+  "liveRequest": {
     "rawResponse": false,
     "queryString": {},
     "url": "https://management.azure.com/subscriptions/subcriptionID/resourceGroups/resourcegroupname/providers/Microsoft.Storage/storageAccounts?api-version=2016-01-01",
     "method": "GET",
     "headers": {
-      "Content-Type": "application/json; charset=utf-8",
+      "Content-Type": "application/json",
       "accept-language": "en-US",
-      "x-ms-client-request-id": "e13bd411-3d37-4dcd-a894-d51d41eba365"
+      "x-ms-client-request-id": "5f97ffa4-9d46-4a91-a08f-cd46222eba57"
     },
     "body": null,
     "query": {
       "api-version": "2016-01-01"
     }
   },
-  "response": {
+  "liveResponse": {
     "statusCode": "200",
     "body": {
       "value": [

@@ -1,6 +1,6 @@
 {
   "name": "oav",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "author": {
     "name": "Microsoft Corporation",
     "email": "azsdkteam@microsoft.com",
@@ -39,6 +39,7 @@
   "main": "./index.js",
   "bin": { "oav": "./cli.js" },
   "scripts": {
-    "test": "mocha -t 50000"
+    "jshint": "jshint index.js --reporter=jslint",
+    "test": "npm -s run-script jshint && mocha -t 50000"
   }
 }
