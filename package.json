@@ -1,10 +1,10 @@
 {
   "name": "oav",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "author": {
     "name": "Microsoft Corporation",
     "email": "azsdkteam@microsoft.com",
-    "url": "https://github.com/azure/openapi-validaton-tools"
+    "url": "https://github.com/azure/oav"
   },
   "description": "Validate Azure REST API Specifications",
   "license": "MIT",
@@ -13,8 +13,8 @@
     "json-pointer": "^0.6.0",
     "js-yaml": "^3.8.2",
     "moment": "^2.14.1",
-    "ms-rest": "^2.1.0",
-    "ms-rest-azure": "^2.1.1",
+    "ms-rest": "^2.2.0",
+    "ms-rest-azure": "^2.1.2",
     "request": "^2.79.0",
     "sway": "amarzavery/sway#validation",
     "winston": "^2.3.0",
@@ -29,13 +29,13 @@
     "@types/mocha": "^2.2.40",
     "@types/should": "^8.1.30"
   },
-  "homepage": "https://github.com/azure/openapi-validaton-tools",
+  "homepage": "https://github.com/azure/oav",
   "repository": {
     "type": "git",
-    "url": "https://github.com/azure/openapi-validaton-tools.git"
+    "url": "https://github.com/azure/oav.git"
   },
   "bugs": {
-    "url": "http://github.com/azure/openapi-validaton-tools/issues"
+    "url": "http://github.com/azure/oav/issues"
   },
   "main": "./index.js",
   "bin": { "oav": "./cli.js" },
