@@ -11,20 +11,21 @@ var yargs = require('yargs'),
 
 var defaultLogDir = log.directory;
 var logFilepath = log.filepath;
+var packageVersion = require('./package.json').version;
 
 yargs
-  .version("0.1.0")
+  .version(packageVersion)
   .commandDir('lib/commands')
-  .option('h', {alias: 'help'})
+  .option('h', { alias: 'help' })
   .option('l', {
     alias: 'logLevel',
     describe: 'Set the logging level for console.',
-    choices: ['off', 'json', 'error', 'warn', 'info' , 'verbose', 'debug', 'silly'], 
+    choices: ['off', 'json', 'error', 'warn', 'info', 'verbose', 'debug', 'silly'],
     default: 'warn'
   })
   .option('f', {
     alias: 'logFilepath',
-    describe: `Set the log file path. It must be an absolute filepath. ` + 
+    describe: `Set the log file path. It must be an absolute filepath. ` +
     `By default the logs will stored in a timestamp based log file at "${defaultLogDir}".`
   })
   .global(['h', 'l', 'f'])
@@ -32,5 +33,5 @@ yargs
   .argv;
 
 if (yargs.argv._.length === 0 && yargs.argv.h === false) {
-  yargs.coerce('help', function(arg) {return true;}).argv;
+  yargs.coerce('help', function (arg) { return true; }).argv;
 }

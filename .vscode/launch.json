@@ -33,6 +33,18 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "generate wireformat",
+            "program": "${workspaceRoot}/cli.js",
+            "cwd": "${workspaceRoot}",
+            "args": [
+                "generate-wireformat",
+                "test/swaggers/arm-storage/2016-01-01/swagger/storage.json"
+            ],
+            "env": {}
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Live Validator",
             "program": "${workspaceRoot}/test/sample.js",
             "cwd": "${workspaceRoot}",
