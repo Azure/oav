@@ -62,7 +62,8 @@ Commands:
                                             request/response format and saves
                                             them in a markdown file.
   resolve-spec <spec-path>                  Resolves the swagger spec based on
-                                            the selected options.
+                                            the selected options like allOfs,
+                                            relativePaths, examples etc.
   validate-example <spec-path>              Performs validation of x-ms-examples
                                             and examples present in the spec.
   validate-spec <spec-path>                 Performs semantic validation of the
