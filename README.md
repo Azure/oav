@@ -1,4 +1,4 @@
-# openapi-validation-tools
+# openapi-validation-tools [oav]
 Tools for validating OpenAPI (Swagger) files.
 
 ### What does the tool do? What issues does the tool catch?
@@ -54,9 +54,20 @@ npm install -g oav
 ```
 bash-3.2$ oav -h
 Commands:
-  validate-example <spec-path>  Performs validation of x-ms-examples and
-                                examples present in the spec.
-  validate-spec <spec-path>     Performs semantic validation of the spec.
+  extract-xmsexamples <spec-path>           Extracts the x-ms-examples for a
+  <recordings>                              given swagger from the .NET session
+                                            recordings and saves them in a file.
+  generate-wireformat <spec-path>           Transforms the x-ms-examples for a
+                                            given operation into raw
+                                            request/response format and saves
+                                            them in a markdown file.
+  resolve-spec <spec-path>                  Resolves the swagger spec based on
+                                            the selected options like allOfs,
+                                            relativePaths, examples etc.
+  validate-example <spec-path>              Performs validation of x-ms-examples
+                                            and examples present in the spec.
+  validate-spec <spec-path>                 Performs semantic validation of the
+                                            spec.
 
 Options:
   --version          Show version number                               [boolean]
@@ -65,7 +76,7 @@ Options:
                                                                [default: "warn"]
   -f, --logFilepath  Set the log file path. It must be an absolute filepath. By
                      default the logs will stored in a timestamp based log file
-                     at "/Users/amarz/oav_output".
+                     at "/Users/{username}/oav_output".
   -h, --help         Show help                                         [boolean]
 
 bash-3.2$
