@@ -1,6 +1,6 @@
 {
   "name": "oav",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "author": {
     "name": "Microsoft Corporation",
     "email": "azsdkteam@microsoft.com",
@@ -20,17 +20,17 @@
     "winston": "^2.3.0",
     "yargs": "^6.6.0",
     "glob": "^5.0.14",
-    "uuid": "^3.0.1"
+    "uuid": "^3.0.1",
+    "recursive-readdir": "^2.1.0",
+    "swagger-parser": "^3.4.1",
+    "swagger-tools": "^0.10.1"
   },
   "devDependencies": {
     "jshint": "2.9.4",
     "mocha": "^3.2.0",
     "should": "5.2.0",
     "@types/mocha": "^2.2.40",
-    "@types/should": "^8.1.30",
-    "recursive-readdir": "^2.1.0",
-    "swagger-parser": "^3.4.1",
-    "swagger-tools": "^0.10.1"
+    "@types/should": "^8.1.30"
   },
   "homepage": "https://github.com/azure/oav",
   "repository": {
