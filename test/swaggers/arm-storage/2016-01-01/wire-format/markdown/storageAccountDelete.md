@@ -5,7 +5,7 @@ DELETE https://management.azure.com/subscriptions/subcriptionID/resourceGroups/r
 Authorization: Bearer <token>
 Content-Type: application/json
 accept-language: en-US
-x-ms-client-request-id: 8c3c0d2d-fbc1-4597-8054-40599de1480a
+x-ms-client-request-id: 7cc95247-f49f-422e-adc9-d910c0038490
 host: management.azure.com
 Connection: close
 
@@ -19,7 +19,7 @@ curl -X DELETE 'https://management.azure.com/subscriptions/subcriptionID/resourc
 -H 'authorization: bearer <token>' \
 -H 'Content-Type: application/json' \
 -H 'accept-language: en-US' \
--H 'x-ms-client-request-id: 8c3c0d2d-fbc1-4597-8054-40599de1480a' \
+-H 'x-ms-client-request-id: 7cc95247-f49f-422e-adc9-d910c0038490' \
 ```
 
 ## Response
@@ -32,12 +32,12 @@ Cache-Control: no-cache
 Pragma: no-cache
 Expires: -1
 x-ms-ratelimit-remaining-subscription-writes: 1199
-x-ms-request-id: 6c22886a-9209-4d79-83ed-2213d5abf6a6
-x-ms-correlation-request-id: 6c22886a-9209-4d79-83ed-2213d5abf6a6
-x-ms-routing-request-id: WESTUS2:20170429T031120342Z:6c22886a-9209-4d79-83ed-2213d5abf6a6
+x-ms-request-id: aa9c3391-d065-4db9-b32d-b06143096172
+x-ms-correlation-request-id: aa9c3391-d065-4db9-b32d-b06143096172
+x-ms-routing-request-id: WESTUS2:20170626T175630022Z:aa9c3391-d065-4db9-b32d-b06143096172
 Strict-Transport-Security: max-age=31536000; includeSubDomains
 content-type: application/json
-Date: Sat, 29 Apr 2017 03:11:20 GMT
+Date: Mon, 26 Jun 2017 17:56:30 GMT
 Connection: close
 
 

@@ -5,7 +5,7 @@ GET https://management.azure.com/subscriptions/subcriptionID/providers/Microsoft
 Authorization: Bearer <token>
 Content-Type: application/json
 accept-language: en-US
-x-ms-client-request-id: 6726cdc4-00eb-4774-b1b5-c994ca47a0c7
+x-ms-client-request-id: 45e2d7a1-6e27-47f4-ac36-35ffe9ec6ab9
 host: management.azure.com
 Connection: close
 
@@ -19,7 +19,7 @@ curl -X GET 'https://management.azure.com/subscriptions/subcriptionID/providers/
 -H 'authorization: bearer <token>' \
 -H 'Content-Type: application/json' \
 -H 'accept-language: en-US' \
--H 'x-ms-client-request-id: 6726cdc4-00eb-4774-b1b5-c994ca47a0c7' \
+-H 'x-ms-client-request-id: 45e2d7a1-6e27-47f4-ac36-35ffe9ec6ab9' \
 ```
 
 ## Response
@@ -32,13 +32,13 @@ Cache-Control: no-cache
 Pragma: no-cache
 Expires: -1
 x-ms-ratelimit-remaining-subscription-writes: 1199
-x-ms-request-id: 2be01d32-9fed-4d32-b98e-bd65f1d8b78b
-x-ms-correlation-request-id: 2be01d32-9fed-4d32-b98e-bd65f1d8b78b
-x-ms-routing-request-id: WESTUS2:20170429T031120372Z:2be01d32-9fed-4d32-b98e-bd65f1d8b78b
+x-ms-request-id: 5ff1b683-b956-43c1-89e9-c150898ce475
+x-ms-correlation-request-id: 5ff1b683-b956-43c1-89e9-c150898ce475
+x-ms-routing-request-id: WESTUS2:20170626T175630025Z:5ff1b683-b956-43c1-89e9-c150898ce475
 Strict-Transport-Security: max-age=31536000; includeSubDomains
 Content-Length: 128
 content-type: application/json
-Date: Sat, 29 Apr 2017 03:11:20 GMT
+Date: Mon, 26 Jun 2017 17:56:30 GMT
 Connection: close
 
 {"value":[{"unit":"Count","currentValue":3,"limit":100,"name":{"value":"StorageAccounts","localizedValue":"Storage Accounts"}}]}
