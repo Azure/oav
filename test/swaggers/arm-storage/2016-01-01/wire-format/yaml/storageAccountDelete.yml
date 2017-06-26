@@ -1,0 +1,38 @@
+#Request
+request: |
+  DELETE https://management.azure.com/subscriptions/subcriptionID/resourceGroups/resourcegroupname/providers/Microsoft.Storage/storageAccounts/accountname?api-version=2016-01-01 HTTP/1.1
+  Authorization: Bearer <token>
+  Content-Type: application/json
+  accept-language: en-US
+  x-ms-client-request-id: 10104384-7c82-4535-99a2-dd9d496425f8
+  host: management.azure.com
+  Connection: close
+
+  
+
+#Curl
+curl: |
+  curl -X DELETE 'https://management.azure.com/subscriptions/subcriptionID/resourceGroups/resourcegroupname/providers/Microsoft.Storage/storageAccounts/accountname?api-version=2016-01-01' \
+  -H 'authorization: bearer <token>' \
+  -H 'Content-Type: application/json' \
+  -H 'accept-language: en-US' \
+  -H 'x-ms-client-request-id: 10104384-7c82-4535-99a2-dd9d496425f8' \
+
+#Response
+response:
+  #200
+  200: |
+    HTTP 1.1 200
+    Cache-Control: no-cache
+    Pragma: no-cache
+    Expires: -1
+    x-ms-ratelimit-remaining-subscription-writes: 1199
+    x-ms-request-id: f8f491bc-28cb-47e1-8814-6164349908da
+    x-ms-correlation-request-id: f8f491bc-28cb-47e1-8814-6164349908da
+    x-ms-routing-request-id: WESTUS2:20170626T175847840Z:f8f491bc-28cb-47e1-8814-6164349908da
+    Strict-Transport-Security: max-age=31536000; includeSubDomains
+    content-type: application/json
+    Date: Mon, 26 Jun 2017 17:58:47 GMT
+    Connection: close
+
+    

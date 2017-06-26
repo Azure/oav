@@ -1,0 +1,39 @@
+#Request
+request: |
+  GET https://management.azure.com/subscriptions/subcriptionID/providers/Microsoft.Storage/usages?api-version=2016-01-01 HTTP/1.1
+  Authorization: Bearer <token>
+  Content-Type: application/json
+  accept-language: en-US
+  x-ms-client-request-id: 7f9ea5ab-30ff-46d7-8ec4-876a49935773
+  host: management.azure.com
+  Connection: close
+
+  
+
+#Curl
+curl: |
+  curl -X GET 'https://management.azure.com/subscriptions/subcriptionID/providers/Microsoft.Storage/usages?api-version=2016-01-01' \
+  -H 'authorization: bearer <token>' \
+  -H 'Content-Type: application/json' \
+  -H 'accept-language: en-US' \
+  -H 'x-ms-client-request-id: 7f9ea5ab-30ff-46d7-8ec4-876a49935773' \
+
+#Response
+response:
+  #200
+  200: |
+    HTTP 1.1 200
+    Cache-Control: no-cache
+    Pragma: no-cache
+    Expires: -1
+    x-ms-ratelimit-remaining-subscription-writes: 1199
+    x-ms-request-id: 763b9cf8-a360-4100-a3b6-d2a8745b25cd
+    x-ms-correlation-request-id: 763b9cf8-a360-4100-a3b6-d2a8745b25cd
+    x-ms-routing-request-id: WESTUS2:20170626T175847844Z:763b9cf8-a360-4100-a3b6-d2a8745b25cd
+    Strict-Transport-Security: max-age=31536000; includeSubDomains
+    Content-Length: 128
+    content-type: application/json
+    Date: Mon, 26 Jun 2017 17:58:47 GMT
+    Connection: close
+
+    {"value":[{"unit":"Count","currentValue":3,"limit":100,"name":{"value":"StorageAccounts","localizedValue":"Storage Accounts"}}]}

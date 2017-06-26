@@ -1,0 +1,39 @@
+#Request
+request: |
+  POST https://management.azure.com/subscriptions/subcriptionID/resourceGroups/resourcegroupname/providers/Microsoft.Storage/storageAccounts/accountname/listKeys?api-version=2016-01-01 HTTP/1.1
+  Authorization: Bearer <token>
+  Content-Type: application/json
+  accept-language: en-US
+  x-ms-client-request-id: fb45cbbb-8ef0-4aae-a66f-1764552caf6a
+  host: management.azure.com
+  Connection: close
+
+  
+
+#Curl
+curl: |
+  curl -X POST 'https://management.azure.com/subscriptions/subcriptionID/resourceGroups/resourcegroupname/providers/Microsoft.Storage/storageAccounts/accountname/listKeys?api-version=2016-01-01' \
+  -H 'authorization: bearer <token>' \
+  -H 'Content-Type: application/json' \
+  -H 'accept-language: en-US' \
+  -H 'x-ms-client-request-id: fb45cbbb-8ef0-4aae-a66f-1764552caf6a' \
+
+#Response
+response:
+  #200
+  200: |
+    HTTP 1.1 200
+    Cache-Control: no-cache
+    Pragma: no-cache
+    Expires: -1
+    x-ms-ratelimit-remaining-subscription-writes: 1199
+    x-ms-request-id: df5e832b-f3bc-4bd4-a892-39b7a69342c1
+    x-ms-correlation-request-id: df5e832b-f3bc-4bd4-a892-39b7a69342c1
+    x-ms-routing-request-id: WESTUS2:20170626T175847843Z:df5e832b-f3bc-4bd4-a892-39b7a69342c1
+    Strict-Transport-Security: max-age=31536000; includeSubDomains
+    Content-Length: 130
+    content-type: application/json
+    Date: Mon, 26 Jun 2017 17:58:47 GMT
+    Connection: close
+
+    {"keys":[{"keyName":"key1","permissions":"Full","value":"key1value"},{"keyName":"key2","permissions":"Full","value":"key2value"}]}
