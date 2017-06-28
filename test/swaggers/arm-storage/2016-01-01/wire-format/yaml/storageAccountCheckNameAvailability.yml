@@ -5,7 +5,7 @@ request: |
   Content-Length: 78
   Content-Type: application/json
   accept-language: en-US
-  x-ms-client-request-id: bec0ce8e-5eff-4cdb-838c-6a253a01c67c
+  x-ms-client-request-id: fce4dfb0-83f8-4095-a28d-221584399a6d
   host: management.azure.com
   Connection: close
 
@@ -18,7 +18,7 @@ curl: |
   -H 'Content-Length: 78' \
   -H 'Content-Type: application/json' \
   -H 'accept-language: en-US' \
-  -H 'x-ms-client-request-id: bec0ce8e-5eff-4cdb-838c-6a253a01c67c' \
+  -H 'x-ms-client-request-id: fce4dfb0-83f8-4095-a28d-221584399a6d' \
   -d @- << EOF
   {
     "name": "storage4db9202c66274d529",
@@ -35,13 +35,13 @@ response:
     Pragma: no-cache
     Expires: -1
     x-ms-ratelimit-remaining-subscription-writes: 1199
-    x-ms-request-id: 2c26b739-8915-4e6f-b9d0-a67124d69b76
-    x-ms-correlation-request-id: 2c26b739-8915-4e6f-b9d0-a67124d69b76
-    x-ms-routing-request-id: WESTUS2:20170626T175847838Z:2c26b739-8915-4e6f-b9d0-a67124d69b76
+    x-ms-request-id: d743bb27-e843-41eb-8bcf-1e5d38f02d12
+    x-ms-correlation-request-id: d743bb27-e843-41eb-8bcf-1e5d38f02d12
+    x-ms-routing-request-id: WESTUS2:20170628T164639699Z:d743bb27-e843-41eb-8bcf-1e5d38f02d12
     Strict-Transport-Security: max-age=31536000; includeSubDomains
     Content-Length: 22
     content-type: application/json
-    Date: Mon, 26 Jun 2017 17:58:47 GMT
+    Date: Wed, 28 Jun 2017 16:46:39 GMT
     Connection: close
 
     {"nameAvailable":true}

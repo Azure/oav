@@ -4,7 +4,7 @@ request: |
   Authorization: Bearer <token>
   Content-Type: application/json
   accept-language: en-US
-  x-ms-client-request-id: 0feac01e-ff64-4567-9635-7e665f6cf9c9
+  x-ms-client-request-id: 523a47c0-8cd0-4596-bc00-c679f819e9df
   host: management.azure.com
   Connection: close
 
@@ -16,7 +16,7 @@ curl: |
   -H 'authorization: bearer <token>' \
   -H 'Content-Type: application/json' \
   -H 'accept-language: en-US' \
-  -H 'x-ms-client-request-id: 0feac01e-ff64-4567-9635-7e665f6cf9c9' \
+  -H 'x-ms-client-request-id: 523a47c0-8cd0-4596-bc00-c679f819e9df' \
 
 #Response
 response:
@@ -27,13 +27,13 @@ response:
     Pragma: no-cache
     Expires: -1
     x-ms-ratelimit-remaining-subscription-writes: 1199
-    x-ms-request-id: 65c2f1a6-ad12-47dc-91e0-5d19784cbc53
-    x-ms-correlation-request-id: 65c2f1a6-ad12-47dc-91e0-5d19784cbc53
-    x-ms-routing-request-id: WESTUS2:20170626T175847842Z:65c2f1a6-ad12-47dc-91e0-5d19784cbc53
+    x-ms-request-id: d4f1cdc8-5d1e-42a1-aff8-2b2988e13124
+    x-ms-correlation-request-id: d4f1cdc8-5d1e-42a1-aff8-2b2988e13124
+    x-ms-routing-request-id: WESTUS2:20170628T164639702Z:d4f1cdc8-5d1e-42a1-aff8-2b2988e13124
     Strict-Transport-Security: max-age=31536000; includeSubDomains
     Content-Length: 1994
     content-type: application/json
-    Date: Mon, 26 Jun 2017 17:58:47 GMT
+    Date: Wed, 28 Jun 2017 16:46:39 GMT
     Connection: close
 
     {"value":[{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/vishrutrg/providers/Microsoft.Storage/storageAccounts/vishrutrg","kind":"Storage","location":"westus","name":"vishrutrg","properties":{"creationTime":"2016-03-18T01:58:17.4992360Z","primaryEndpoints":{"blob":"https://vishrutrg.blob.core.windows.net/","file":"https://vishrutrg.file.core.windows.net/","queue":"https://vishrutrg.queue.core.windows.net/","table":"https://vishrutrg.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"},{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/vishrutrg/providers/Microsoft.Storage/storageAccounts/vishrutsa","kind":"Storage","location":"westus","name":"vishrutsa","properties":{"creationTime":"2016-03-16T17:21:57.7793489Z","primaryEndpoints":{"blob":"https://vishrutsa.blob.core.windows.net/","file":"https://vishrutsa.file.core.windows.net/","queue":"https://vishrutsa.queue.core.windows.net/","table":"https://vishrutsa.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"},{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/vishrutrg/providers/Microsoft.Storage/storageAccounts/vishrutsa1","kind":"Storage","location":"westus","name":"vishrutsa1","properties":{"creationTime":"2016-04-21T20:49:38.2606433Z","primaryEndpoints":{"blob":"https://vishrutsa1.blob.core.windows.net/","file":"https://vishrutsa1.file.core.windows.net/","queue":"https://vishrutsa1.queue.core.windows.net/","table":"https://vishrutsa1.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}]}
