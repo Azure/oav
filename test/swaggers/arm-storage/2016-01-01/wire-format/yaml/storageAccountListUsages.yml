@@ -4,7 +4,7 @@ request: |
   Authorization: Bearer <token>
   Content-Type: application/json
   accept-language: en-US
-  x-ms-client-request-id: 7f9ea5ab-30ff-46d7-8ec4-876a49935773
+  x-ms-client-request-id: 97c44a9a-f103-4e1c-9d11-5a8c13090707
   host: management.azure.com
   Connection: close
 
@@ -16,7 +16,7 @@ curl: |
   -H 'authorization: bearer <token>' \
   -H 'Content-Type: application/json' \
   -H 'accept-language: en-US' \
-  -H 'x-ms-client-request-id: 7f9ea5ab-30ff-46d7-8ec4-876a49935773' \
+  -H 'x-ms-client-request-id: 97c44a9a-f103-4e1c-9d11-5a8c13090707' \
 
 #Response
 response:
@@ -27,13 +27,13 @@ response:
     Pragma: no-cache
     Expires: -1
     x-ms-ratelimit-remaining-subscription-writes: 1199
-    x-ms-request-id: 763b9cf8-a360-4100-a3b6-d2a8745b25cd
-    x-ms-correlation-request-id: 763b9cf8-a360-4100-a3b6-d2a8745b25cd
-    x-ms-routing-request-id: WESTUS2:20170626T175847844Z:763b9cf8-a360-4100-a3b6-d2a8745b25cd
+    x-ms-request-id: ec503cc3-d85a-4777-84a8-073f945bcb57
+    x-ms-correlation-request-id: ec503cc3-d85a-4777-84a8-073f945bcb57
+    x-ms-routing-request-id: WESTUS2:20170628T164639705Z:ec503cc3-d85a-4777-84a8-073f945bcb57
     Strict-Transport-Security: max-age=31536000; includeSubDomains
     Content-Length: 128
     content-type: application/json
-    Date: Mon, 26 Jun 2017 17:58:47 GMT
+    Date: Wed, 28 Jun 2017 16:46:39 GMT
     Connection: close
 
     {"value":[{"unit":"Count","currentValue":3,"limit":100,"name":{"value":"StorageAccounts","localizedValue":"Storage Accounts"}}]}

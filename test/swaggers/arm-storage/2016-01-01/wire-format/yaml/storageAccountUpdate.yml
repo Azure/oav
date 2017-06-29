@@ -5,7 +5,7 @@ request: |
   Content-Length: 24
   Content-Type: application/json
   accept-language: en-US
-  x-ms-client-request-id: 7a6cc4f7-158e-4bf5-bb90-c1ce503dd322
+  x-ms-client-request-id: 759c4f1c-1388-4afb-af9c-f3d5dfa0ef54
   host: management.azure.com
   Connection: close
 
@@ -18,7 +18,7 @@ curl: |
   -H 'Content-Length: 24' \
   -H 'Content-Type: application/json' \
   -H 'accept-language: en-US' \
-  -H 'x-ms-client-request-id: 7a6cc4f7-158e-4bf5-bb90-c1ce503dd322' \
+  -H 'x-ms-client-request-id: 759c4f1c-1388-4afb-af9c-f3d5dfa0ef54' \
   -d @- << EOF
   {
     "tags": {
@@ -36,13 +36,13 @@ response:
     Pragma: no-cache
     Expires: -1
     x-ms-ratelimit-remaining-subscription-writes: 1199
-    x-ms-request-id: ec51f507-ece9-4c03-b1e9-f0ea6cff92e8
-    x-ms-correlation-request-id: ec51f507-ece9-4c03-b1e9-f0ea6cff92e8
-    x-ms-routing-request-id: WESTUS2:20170626T175847842Z:ec51f507-ece9-4c03-b1e9-f0ea6cff92e8
+    x-ms-request-id: cc8e0b33-66c0-494a-8085-26536650bd65
+    x-ms-correlation-request-id: cc8e0b33-66c0-494a-8085-26536650bd65
+    x-ms-routing-request-id: WESTUS2:20170628T164639702Z:cc8e0b33-66c0-494a-8085-26536650bd65
     Strict-Transport-Security: max-age=31536000; includeSubDomains
     Content-Length: 782
     content-type: application/json
-    Date: Mon, 26 Jun 2017 17:58:47 GMT
+    Date: Wed, 28 Jun 2017 16:46:39 GMT
     Connection: close
 
     {"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage3b8b8f628a1c4d868","kind":"Storage","location":"westus","name":"storage3b8b8f628a1c4d868","properties":{"creationTime":"2016-05-19T18:35:27.5236635Z","primaryEndpoints":{"blob":"https://storage3b8b8f628a1c4d868.blob.core.windows.net/","file":"https://storage3b8b8f628a1c4d868.file.core.windows.net/","queue":"https://storage3b8b8f628a1c4d868.queue.core.windows.net/","table":"https://storage3b8b8f628a1c4d868.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{"tag1":"val1"},"type":"Microsoft.Storage/storageAccounts"}
