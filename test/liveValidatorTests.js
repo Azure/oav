@@ -112,12 +112,12 @@ describe('Live Validator', function () {
       let expectedProvider = 'microsoft.media';
       let expectedApiVersion = '2015-10-01';
       let options = {
-        "directory": "./test/swaggers/arm-mediaservices"
+        "directory": "./test/swaggers/"
       };
       let validator = new LiveValidator(options);
       validator.initialize().then(function () {
         assert.equal(true, expectedProvider in validator.cache);
-        assert.equal(1, Object.keys(validator.cache).length);
+        assert.equal(5, Object.keys(validator.cache).length);
         assert.equal(true, expectedApiVersion in (validator.cache[expectedProvider]));
         assert.equal(1, Object.keys(validator.cache[expectedProvider]).length);
         assert.equal(2, validator.cache[expectedProvider][expectedApiVersion]['get'].length);
@@ -135,12 +135,12 @@ describe('Live Validator', function () {
       let expectedProvider = 'microsoft.resources';
       let expectedApiVersion = '2016-09-01';
       let options = {
-        "directory": "./test/swaggers/arm-resources"
+        "directory": "./test/swaggers/"
       };
       let validator = new LiveValidator(options);
       validator.initialize().then(function () {
         assert.equal(true, expectedProvider in validator.cache);
-        assert.equal(2, Object.keys(validator.cache).length);
+        assert.equal(5, Object.keys(validator.cache).length);
         assert.equal(true, expectedApiVersion in (validator.cache[expectedProvider]));
         assert.equal(1, Object.keys(validator.cache[expectedProvider]).length);
         // 'microsoft.resources' -> '2016-09-01'
@@ -164,7 +164,7 @@ describe('Live Validator', function () {
     });
     it('should initialize for all swaggers', function (done) {
       let options = {
-        "directory": "./test/swaggers"
+        "directory": "./test/swaggers/"
       };
       let validator = new LiveValidator(options);
       validator.initialize().then(function () {
@@ -189,7 +189,7 @@ describe('Live Validator', function () {
   describe('Initialize cache and search', function () {
     it('should return one matched operation for arm-storage', function (done) {
       let options = {
-        "directory": "./test/swaggers/arm-storage"
+        "directory": "./test/swaggers/"
       };
       let listRequestUrl = "https://management.azure.com/subscriptions/subscriptionId/providers/Microsoft.Storage/storageAccounts?api-version=2015-06-15";
       let postRequestUrl = "https://management.azure.com/subscriptions/subscriptionId/providers/Microsoft.Storage/checkNameAvailability?api-version=2015-06-15";
@@ -218,7 +218,7 @@ describe('Live Validator', function () {
     });
     it('should return reason for not matched operations', function (done) {
       let options = {
-        "directory": "./test/swaggers/arm-storage"
+        "directory": "./test/swaggers/"
       };
       let nonCachedApiUrl = "https://management.azure.com/subscriptions/subscriptionId/providers/Microsoft.Storage/storageAccounts?api-version=2015-08-15";
       let nonCachedProviderUrl = "https://management.azure.com/subscriptions/subscriptionId/providers/Hello.World/checkNameAvailability?api-version=2015-06-15";
@@ -265,7 +265,7 @@ describe('Live Validator', function () {
     livePaths.forEach((livePath) => {
       it(`should validate request and response for "${livePath}"`, function (done) {
         let options = {
-          "directory": "./test/swaggers/arm-storage"
+          "directory": "./test/swaggers/specification/storage"
         };
         let validator = new LiveValidator(options);
         validator.initialize().then(function () {
