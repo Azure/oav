@@ -1,3 +1,6 @@
+### 07/11/2017 0.4.7
+ - Fixed Live validator for reorg branch of azure-rest-api-specs #137
+ 
 ### 07/03/2017 0.4.6
 - Fixed issue #134
 
