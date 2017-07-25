@@ -23,7 +23,11 @@
     "uuid": "^3.0.1",
     "recursive-readdir": "^2.1.0",
     "swagger-parser": "^3.4.1",
-    "swagger-tools": "^0.10.1"
+    "swagger-tools": "^0.10.1",
+    "linq":"^3.0.8",
+    "jsonpath": "^0.2.11",
+    "vscode-jsonrpc": "^3.2.0",
+    "yaml-ast-parser": "https://github.com/olydis/yaml-ast-parser/releases/download/0.0.34/yaml-ast-parser-0.0.34.tgz"
   },
   "devDependencies": {
     "jshint": "2.9.4",
