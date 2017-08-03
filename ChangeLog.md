@@ -1,3 +1,6 @@
+### 08/03/2017 0.4.8
+ - [Live Validator] Before cloning the rest api specs repo if directory named 'repo' exists we delete it and then create an empty directory to clone repo inside it.
+ 
 ### 07/11/2017 0.4.7
  - Fixed Live validator for reorg branch of azure-rest-api-specs #137
  
