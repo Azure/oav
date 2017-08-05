@@ -23,7 +23,11 @@
     "uuid": "^3.0.1",
     "recursive-readdir": "^2.1.0",
     "swagger-parser": "^3.4.1",
-    "swagger-tools": "^0.10.1"
+    "swagger-tools": "^0.10.1",
+    "linq": "^3.0.8",
+    "jsonpath": "^0.2.11",
+    "vscode-jsonrpc": "^3.2.0",
+    "autorest-extension-base": "git+https://github.com/olydis/autorest-extension-base.git"
   },
   "devDependencies": {
     "jshint": "2.9.4",
@@ -41,7 +45,9 @@
     "url": "http://github.com/azure/oav/issues"
   },
   "main": "./index.js",
-  "bin": { "oav": "./cli.js" },
+  "bin": {
+    "oav": "./cli.js"
+  },
   "scripts": {
     "jshint": "jshint index.js --reporter=jslint",
     "test": "npm -s run-script jshint && mocha -t 50000"
