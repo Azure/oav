@@ -1,4 +1,8 @@
-### 08/03/2017 0.4.8
+### 08/23/2017 0.4.10
+ - [Wire Format Generator] Removed condition for checking 200 & 204 in final status code for non-LRO. #159
+ - [Wire Format Generator] Updated default directory to be the api-version folder of the swagger spec. #159
+
+### 08/03/2017 0.4.9
  - [Live Validator] Shallow clone the azure-rest-api-spec repo.
  - [Model Validator] Improve pluggability of oav into vs-code. #143
  
