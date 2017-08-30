@@ -27,7 +27,8 @@
     "linq": "^3.0.8",
     "jsonpath": "^0.2.11",
     "vscode-jsonrpc": "^3.2.0",
-    "autorest-extension-base": "olydis/autorest-extension-base"
+    "autorest-extension-base": "olydis/autorest-extension-base",
+    "loadash": "^1.0.0"
   },
   "devDependencies": {
     "jshint": "2.9.4",
