@@ -1,5 +1,10 @@
+### 09/12/2017 0.4.12
+- [Model Validator] Should handle forward slashes in path parameters. #165
+- [Model Validator] Should handle question mark in paths that are defined in x-ms-paths. #140
+
 ### 08/30/2017 0.4.11
 - [Wire Format Generator] Should handle resolved x-ms-examples. #161
+
 ### 08/23/2017 0.4.10
  - [Wire Format Generator] Removed condition for checking 200 & 204 in final status code for non-LRO. #159
  - [Wire Format Generator] Updated default directory to be the api-version folder of the swagger spec. #159
