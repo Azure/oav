@@ -117,7 +117,7 @@ describe('Live Validator', function () {
       let validator = new LiveValidator(options);
       validator.initialize().then(function () {
         assert.equal(true, expectedProvider in validator.cache);
-        assert.equal(5, Object.keys(validator.cache).length);
+        assert.equal(6, Object.keys(validator.cache).length);
         assert.equal(true, expectedApiVersion in (validator.cache[expectedProvider]));
         assert.equal(1, Object.keys(validator.cache[expectedProvider]).length);
         assert.equal(2, validator.cache[expectedProvider][expectedApiVersion]['get'].length);
@@ -140,7 +140,7 @@ describe('Live Validator', function () {
       let validator = new LiveValidator(options);
       validator.initialize().then(function () {
         assert.equal(true, expectedProvider in validator.cache);
-        assert.equal(5, Object.keys(validator.cache).length);
+        assert.equal(6, Object.keys(validator.cache).length);
         assert.equal(true, expectedApiVersion in (validator.cache[expectedProvider]));
         assert.equal(1, Object.keys(validator.cache[expectedProvider]).length);
         // 'microsoft.resources' -> '2016-09-01'
@@ -168,7 +168,7 @@ describe('Live Validator', function () {
       };
       let validator = new LiveValidator(options);
       validator.initialize().then(function () {
-        assert.equal(5, Object.keys(validator.cache).length);
+        assert.equal(6, Object.keys(validator.cache).length);
         assert.equal(2, validator.cache['microsoft.resources']['2016-09-01']['get'].length);
         assert.equal(1, validator.cache['microsoft.resources']['2016-09-01']['head'].length);
         assert.equal(1, validator.cache['microsoft.media']['2015-10-01']['patch'].length);
@@ -178,6 +178,7 @@ describe('Live Validator', function () {
         assert.equal(1, validator.cache['microsoft.storage']['2015-05-01-preview']['patch'].length);
         assert.equal(4, validator.cache['microsoft.storage']['2015-06-15']['get'].length);
         assert.equal(3, validator.cache['microsoft.storage']['2016-01-01']['post'].length);
+        assert.equal(4, validator.cache['microsoft.test']['2016-01-01']['post'].length);
         done();
       }).catch((err) => {
         assert.ifError(err);
