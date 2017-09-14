@@ -18,7 +18,7 @@
     "text/json"
   ],
   "paths": {
-    "/subscriptions/{subscriptionId}/providers/Microsoft.Test/checkNameAvailability": {
+    "/subscriptions/{scope}/providers/Microsoft.Test/checkNameAvailability": {
       "post": {
         "tags": [
           "StorageAccounts"
@@ -42,7 +42,11 @@
             "$ref": "#/parameters/ApiVersionParameter"
           },
           {
-            "$ref": "#/parameters/SubscriptionIdParameter"
+            "name": "scope",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "The scope. Can be \"/foo/foo1/foo2\""
           }
         ],
         "responses": {
@@ -55,7 +59,7 @@
         }
       }
     },
-    "/subscriptions/{subscriptionId}/providers/Microsoft.Test/pathParameterhasforwardslashes": {
+    "/subscriptions/{scope}/providers/Microsoft.Test/pathParameterhasforwardslashes": {
       "post": {
         "tags": [
           "StorageAccounts"
@@ -79,7 +83,11 @@
             "$ref": "#/parameters/ApiVersionParameter"
           },
           {
-            "$ref": "#/parameters/SubscriptionIdParameter"
+            "name": "scope",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "The scope. Can be \"/foo/foo1/foo2\""
           }
         ],
         "responses": {
@@ -92,7 +100,7 @@
         }
       }
     },
-    "/subscriptions/{subscriptionId}/providers/Microsoft.Test/duplicateforwardslashes": {
+    "/subscriptions/{scope}/providers/Microsoft.Test/duplicateforwardslashes": {
       "post": {
         "tags": [
           "StorageAccounts"
@@ -116,7 +124,11 @@
             "$ref": "#/parameters/ApiVersionParameter"
           },
           {
-            "$ref": "#/parameters/SubscriptionIdParameter"
+            "name": "scope",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "The scope. Can be \"/foo/foo1/foo2\""
           }
         ],
         "responses": {
@@ -131,7 +143,7 @@
     }
   },
   "x-ms-paths": {
-    "/subscriptions/{subscriptionId}/providers/Microsoft.Test/pathParameterhasforwardslashes?query=bar": {
+    "/subscriptions/{scope}/providers/Microsoft.Test/pathParameterhasforwardslashes?query=bar": {
       "post": {
         "tags": [
           "StorageAccounts"
@@ -155,7 +167,11 @@
             "$ref": "#/parameters/ApiVersionParameter"
           },
           {
-            "$ref": "#/parameters/SubscriptionIdParameter"
+            "name": "scope",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "The scope. Can be \"/foo/foo1/foo2\""
           }
         ],
         "responses": {
@@ -206,13 +222,6 @@
     }
   },
   "parameters": {
-    "SubscriptionIdParameter": {
-      "name": "subscriptionId",
-      "in": "path",
-      "required": true,
-      "type": "string",
-      "description": "Gets subscription credentials which uniquely identify the Microsoft Azure subscription. The subscription ID forms part of the URI for every service call."
-    },
     "ApiVersionParameter": {
       "name": "api-version",
       "in": "query",
