@@ -1,3 +1,6 @@
+### 09/12/2017 0.4.13
+- Provide the filepath of the file that has an incorrect json. This makes it easy for customers to find out the faulty file among numerous files.
+
 ### 09/12/2017 0.4.12
 - [Model Validator] Should handle forward slashes in path parameters. #165
 - [Model Validator] Should handle question mark in paths that are defined in x-ms-paths. #140
