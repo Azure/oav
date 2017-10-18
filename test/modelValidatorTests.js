@@ -9,7 +9,7 @@ describe('Model Validation', function () {
   it('should pass when path parameter has forward slashes', function (done) {
     let operationIds = "StorageAccounts_pathParameterWithForwardSlashes";
     validate.validateExamples(specPath, operationIds, { consoleLogLevel: 'error' }).then((result) => {
-      assert(result.validityStatus === true, `swagger "${specPath}" with operation "${operationIds}"contains model validation errors.`);
+      assert(result.validityStatus === true, `swagger "${specPath}" with operation "${operationIds}" contains model validation errors.`);
       console.log(result);
       done();
     }).catch((err) => {
@@ -20,7 +20,7 @@ describe('Model Validation', function () {
   it('should pass for paths in x-ms-paths with question mark', function (done) {
     let operationIds = "StorageAccounts_pathParameterWithQuestionMark";
     validate.validateExamples(specPath, operationIds, { consoleLogLevel: 'error' }).then((result) => {
-      assert(result.validityStatus === true, `swagger "${specPath}" with operation "${operationIds}"contains model validation errors.`);
+      assert(result.validityStatus === true, `swagger "${specPath}" with operation "${operationIds}" contains model validation errors.`);
       console.log(result);
       done();
     }).catch((err) => {
@@ -31,7 +31,7 @@ describe('Model Validation', function () {
   it('should fail for paths with path parameter value resulting in duplicate forward slashes', function (done) {
     let operationIds = "StorageAccounts_duplicateforwardslashes";
     validate.validateExamples(specPath, operationIds, { consoleLogLevel: 'error' }).then((result) => {
-      assert(result.validityStatus === false, `swagger "${specPath}" with operation "${operationIds}"contains passed incorrectly.`);
+      assert(result.validityStatus === false, `swagger "${specPath}" with operation "${operationIds}" contains passed incorrectly.`);
       console.log(result);
       done();
     }).catch((err) => {
@@ -42,6 +42,20 @@ describe('Model Validation', function () {
       } catch (er) {
         done(er);
       }
+    });
+  });
+
+  describe('Polymorphic models - ', function () {
+    it('should pass for Activities', function (done) {
+      let specPath = `${__dirname}/swaggers/specification/polymorphic/myswagger.json`;
+      let operationIds = "Foo_List";
+      validate.validateExamples(specPath, operationIds, { consoleLogLevel: 'error' }).then((result) => {
+        assert(result.validityStatus === true, `swagger "${specPath}" with operation "${operationIds}" contains model validation errors.`);
+        console.log(result);
+        done();
+      }).catch((err) => {
+        done(err);
+      });
     });
   });
 });
