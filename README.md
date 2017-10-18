@@ -90,7 +90,6 @@ AutoRest needs the below config to pick this up as a plug-in - see https://githu
 pipeline:
   swagger-document/model-validator:
     input: swagger-document/identity
-    scope: azure-validator-composed
 ```
 
 
