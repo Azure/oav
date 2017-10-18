@@ -1,3 +1,6 @@
+### 10/17/2017 0.4.14
+- Updating model validator to plugin to autorest.
+
 ### 09/12/2017 0.4.13
 - Provide the filepath of the file that has an incorrect json. This makes it easy for customers to find out the faulty file among numerous files.
 
