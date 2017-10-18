@@ -1,0 +1,32 @@
+{
+  "parameters": {
+    "api-version": "2017-09-01-preview"
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "value": {
+          "exampleActivity": {
+            "type": "Activity",
+            "name": "exampleActivity"
+          },
+          "exampleCopyActivity": {
+            "type": "Copy",
+            "name": "exampleCopyActivity",
+            "copyActivityProperty": "copyActivityProperty",
+            "executionActivityProperty": "executionActivityProperty"
+          },
+          "exampleExecutionActivity": {
+            "type": "Execution",
+            "name": "exampleExecutionActivity",
+            "executionActivityProperty": "executionActivityProperty"
+          },
+          "exampleExecutionActivity1": {
+            "type": "Execution",
+            "name": "exampleExecutionActivity1"
+          }
+        }
+      }
+    }
+  }
+}
