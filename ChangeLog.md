@@ -1,3 +1,6 @@
+### 10/18/2017 0.4.15
+- Updating model validator to resolve polymorphic types using oneOf. #171
+
 ### 10/17/2017 0.4.14
 - Updating model validator to plugin to autorest.
 

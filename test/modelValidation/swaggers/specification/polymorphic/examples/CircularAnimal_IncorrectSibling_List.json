@@ -1,0 +1,81 @@
+{
+  "parameters": {
+    "api-version": "2017-09-01-preview"
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "value": [
+          {
+            "animalType": "Microsoft.Mammal",
+            "name": "Tiger"
+          },
+          {
+            "animalType": "Microsoft.Mammal",
+            "name": "MeatTiger",
+            "eats": {
+              "catFood": {
+                "name": "Cat",
+                "foodType": "Meat"
+              },
+              "dogFood": {
+                "name": "Dog",
+                "foodType": "Meat",
+                "isOrganic": false
+              }
+            }
+          },
+          {
+            "animalType": "Tiger",
+            "name": "JainTiger",
+            "eats": {
+              "plants": {
+                "name": "Corriander",
+                "foodType": "Microsoft.Jain",
+                "flavor": "cilantro"
+              },
+              "plantains": {
+                "name": "plantains",
+                "foodType": "Microsoft.Jain"
+              }
+            }
+          },
+          {
+            "animalType": "Tiger",
+            "name": "TigerWithSiblings",
+            "eats": {
+              "plants": {
+                "name": "Corriander",
+                "foodType": "Microsoft.Jain",
+                "flavor": "cilantro"
+              },
+              "plantains": {
+                "name": "plantains",
+                "foodType": "Microsoft.Jain"
+              }
+            },
+            "siblings": [
+              {
+                "animalType": "Microsoft.Mammal",
+                "name": "BabyTiger",
+                "sanctuary": "Ranthambore",
+                "eats": {
+                  "plantFood": {
+                    "name": "Corriander",
+                    "foodType": "Microsoft.Jain",
+                    "flavor": "cilantro"
+                  },
+                  "dogFood": {
+                    "name": "Dog",
+                    "foodType": "Meat",
+                    "isOrganic": false
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

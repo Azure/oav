@@ -1,0 +1,363 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "PolymorphicClient",
+    "version": "2017-09-01-preview"
+  },
+  "host": "management.azure.com",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "security": [
+    {
+      "azure_auth": [
+        "user_impersonation"
+      ]
+    }
+  ],
+  "securityDefinitions": {
+    "azure_auth": {
+      "type": "oauth2",
+      "authorizationUrl": "https://login.microsoftonline.com/common/oauth2/authorize",
+      "flow": "implicit",
+      "description": "Azure Active Directory OAuth2 Flow.",
+      "scopes": {
+        "user_impersonation": "impersonate your user account"
+      }
+    }
+  },
+  "paths": {
+    "/activityAsList": {
+      "get": {
+        "tags": [
+          "Activity"
+        ],
+        "operationId": "Activity_List",
+        "x-ms-examples": {
+          "Activity_List": {
+            "$ref": "./examples/Activity_List.json"
+          }
+        },
+        "description": "Lists the available Activities.",
+        "parameters": [
+          {
+            "$ref": "#/parameters/api-version"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK.",
+            "schema": {
+              "$ref": "#/definitions/ActivityListResponse"
+            }
+          }
+        }
+      }
+    },
+    "/activityAsDictionary": {
+      "get": {
+        "tags": [
+          "Activity"
+        ],
+        "operationId": "Activity_Dictionary",
+        "x-ms-examples": {
+          "Activity_Dictionary": {
+            "$ref": "./examples/Activity_Dictionary.json"
+          }
+        },
+        "description": "Dictionary of the available Activities.",
+        "parameters": [
+          {
+            "$ref": "#/parameters/api-version"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK.",
+            "schema": {
+              "$ref": "#/definitions/ActivityDictionaryResponse"
+            }
+          }
+        }
+      }
+    },
+    "/circularAnimal": {
+      "get": {
+        "tags": [
+          "CircularAnimal"
+        ],
+        "operationId": "CircularAnimal_List",
+        "x-ms-examples": {
+          "Tests ploymorphic circular array, dictionary of animals": {
+            "$ref": "./examples/CircularAnimal_List.json"
+          }
+        },
+        "description": "Lists the available Animals.",
+        "parameters": [
+          {
+            "$ref": "#/parameters/api-version"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK.",
+            "schema": {
+              "$ref": "#/definitions/AnimalListResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "CircularAnimal"
+        ],
+        "operationId": "CircularAnimal_IncorrectSibling_List",
+        "x-ms-examples": {
+          "Tests ploymorphic circular array, dictionary of animals with incorrect sibling (negative)": {
+            "$ref": "./examples/CircularAnimal_IncorrectSibling_List.json"
+          }
+        },
+        "description": "Lists the available Animals.",
+        "parameters": [
+          {
+            "$ref": "#/parameters/api-version"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK.",
+            "schema": {
+              "$ref": "#/definitions/AnimalListResponse"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "ActivityListResponse": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Activity"
+          }
+        }
+      }
+    },
+    "ActivityDictionaryResponse": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "$ref": "#/definitions/Activity"
+          }
+        }
+      }
+    },
+    "Activity": {
+      "discriminator": "type",
+      "description": "A pipeline activity.",
+      "properties": {
+        "name": {
+          "description": "Activity name.",
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "description": "Type of activity."
+        }
+      },
+      "required": [
+        "name",
+        "type"
+      ]
+    },
+    "ExecutionActivity": {
+      "x-ms-discriminator-value": "Execution",
+      "description": "Base class for all execution activities.",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Activity"
+        }
+      ],
+      "properties": {
+        "executionActivityProperty": {
+          "description": "Linked service reference.",
+          "type": "string"
+        }
+      }
+    },
+    "CopyActivity": {
+      "x-ms-discriminator-value": "Copy",
+      "description": "Copy activity.",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ExecutionActivity"
+        }
+      ],
+      "properties": {
+        "copyActivityProperty": {
+          "type": "string",
+          "description": "Type of activity."
+        }
+      }
+    },
+    "AnimalListResponse": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Animal"
+          }
+        }
+      }
+    },
+    "Animal": {
+      "discriminator": "animalType",
+      "description": "An animal.",
+      "properties": {
+        "name": {
+          "description": "Animal name.",
+          "type": "string"
+        },
+        "animalType": {
+          "type": "string",
+          "description": "Type of activity."
+        },
+        "siblings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Animal"
+          }
+        }
+      },
+      "required": [
+        "name",
+        "animalType"
+      ]
+    },
+    "Mammal": {
+      "x-ms-discriminator-value": "Microsoft.Mammal",
+      "description": "Base class for all Mammals.",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Animal"
+        }
+      ],
+      "properties": {
+        "makeNoise": {
+          "description": "Whether make noise or not.",
+          "type": "boolean"
+        },
+        "eats": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "$ref": "#/definitions/Food"
+          }
+        }
+      }
+    },
+    "Mouse": {
+      "x-ms-discriminator-value": "Microsoft.Mouse",
+      "description": "class for Mouse mammal animal.",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Mammal"
+        }
+      ]
+    },
+    "Cat": {
+      "x-ms-discriminator-value": "Microsoft.Cat",
+      "description": "class for Cat.",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Mammal"
+        }
+      ],
+      "properties": {
+        "color": {
+          "type": "string"
+        }
+      }
+    },
+    "Tiger": {
+      "description": "class for Tiger.",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Cat"
+        }
+      ],
+      "properties": {
+        "sanctuary": {
+          "type": "string"
+        }
+      }
+    },
+    "Food": {
+      "discriminator": "foodType",
+      "description": "food.",
+      "properties": {
+        "name": {
+          "description": "Name of the food.",
+          "type": "string"
+        },
+        "foodType": {
+          "type": "string",
+          "description": "Type of food."
+        }
+      },
+      "required": [
+        "name",
+        "foodType"
+      ]
+    },
+    "Jain": {
+      "x-ms-discriminator-value": "Microsoft.Jain",
+      "description": "class for Jain Food.",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Food"
+        }
+      ],
+      "properties": {
+        "flavor": {
+          "type": "string"
+        }
+      }
+    },
+    "Meat": {
+      "description": "class for Meat Food.",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Food"
+        }
+      ],
+      "properties": {
+        "isOrganic": {
+          "type": "boolean"
+        }
+      }
+    }
+  },
+  "parameters": {
+    "api-version": {
+      "name": "api-version",
+      "description": "The API version.",
+      "in": "query",
+      "required": true,
+      "type": "string"
+    }
+  }
+}

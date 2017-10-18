@@ -4,6 +4,7 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+
         {
             "type": "node",
             "request": "launch",
@@ -27,6 +28,21 @@
                 "test/swaggers/arm-storage/2016-01-01/swagger/storage.json",
                 "-o",
                 "StorageAccounts_CheckNameAvailability"
+            ],
+            "env": {}
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Resolve Spec",
+            "program": "${workspaceRoot}/cli.js",
+            "cwd": "${workspaceRoot}",
+            "args": [
+                "resolve-spec",
+                "/Users/vishrut/git-repos/oav/myswagger.json",
+                "-caproe",
+                "-d",
+                "/Users/vishrut/git-repos/azure-rest-api-specs/my_resolved"
             ],
             "env": {}
         },
