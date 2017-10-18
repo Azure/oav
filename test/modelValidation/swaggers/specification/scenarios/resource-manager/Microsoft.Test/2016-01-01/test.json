@@ -1,0 +1,233 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "StorageManagementClient",
+    "description": "The Storage Management Client.",
+    "version": "2016-01-01"
+  },
+  "host": "management.azure.com",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json",
+    "text/json"
+  ],
+  "produces": [
+    "application/json",
+    "text/json"
+  ],
+  "paths": {
+    "/subscriptions/{scope}/providers/Microsoft.Test/checkNameAvailability": {
+      "post": {
+        "tags": [
+          "StorageAccounts"
+        ],
+        "operationId": "StorageAccounts_CheckNameAvailability",
+        "description": "Checks that the storage account name is valid and is not already in use.",
+        "x-ms-examples": {
+          "storageAccountCheckNameAvailability": {"$ref": "./examples/storageAccountCheckNameAvailability.json"}
+        },
+        "parameters": [
+          {
+            "name": "accountName",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/StorageAccountCheckNameAvailabilityParameters"
+            },
+            "description": "The name of the storage account within the specified resource group. Storage account names must be between 3 and 24 characters in length and use numbers and lower-case letters only."
+          },
+          {
+            "$ref": "#/parameters/ApiVersionParameter"
+          },
+          {
+            "name": "scope",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "The scope. Can be \"/foo/foo1/foo2\""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK -- Operation to check the storage account name availability was successful.",
+            "schema": {
+              "$ref": "#/definitions/CheckNameAvailabilityResult"
+            }
+          }
+        }
+      }
+    },
+    "/subscriptions/{scope}/providers/Microsoft.Test/pathParameterhasforwardslashes": {
+      "post": {
+        "tags": [
+          "StorageAccounts"
+        ],
+        "operationId": "StorageAccounts_pathParameterWithForwardSlashes",
+        "description": "Checks that the storage account name is valid and is not already in use.",
+        "x-ms-examples": {
+          "storageAccountPathParameterForwardSlash": {"$ref": "./examples/storageAccountPathParameterForwardSlash.json"}
+        },
+        "parameters": [
+          {
+            "name": "accountName",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/StorageAccountCheckNameAvailabilityParameters"
+            },
+            "description": "The name of the storage account within the specified resource group. Storage account names must be between 3 and 24 characters in length and use numbers and lower-case letters only."
+          },
+          {
+            "$ref": "#/parameters/ApiVersionParameter"
+          },
+          {
+            "name": "scope",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "The scope. Can be \"/foo/foo1/foo2\""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK -- Operation to check the storage account name availability was successful.",
+            "schema": {
+              "$ref": "#/definitions/CheckNameAvailabilityResult"
+            }
+          }
+        }
+      }
+    },
+    "/subscriptions/{scope}/providers/Microsoft.Test/duplicateforwardslashes": {
+      "post": {
+        "tags": [
+          "StorageAccounts"
+        ],
+        "operationId": "StorageAccounts_duplicateforwardslashes",
+        "description": "Checks that the storage account name is valid and is not already in use.",
+        "x-ms-examples": {
+          "storageAccountduplicateforwardslashes": {"$ref": "./examples/storageAccountduplicateforwardslashes.json"}
+        },
+        "parameters": [
+          {
+            "name": "accountName",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/StorageAccountCheckNameAvailabilityParameters"
+            },
+            "description": "The name of the storage account within the specified resource group. Storage account names must be between 3 and 24 characters in length and use numbers and lower-case letters only."
+          },
+          {
+            "$ref": "#/parameters/ApiVersionParameter"
+          },
+          {
+            "name": "scope",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "The scope. Can be \"/foo/foo1/foo2\""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK -- Operation to check the storage account name availability was successful.",
+            "schema": {
+              "$ref": "#/definitions/CheckNameAvailabilityResult"
+            }
+          }
+        }
+      }
+    }
+  },
+  "x-ms-paths": {
+    "/subscriptions/{scope}/providers/Microsoft.Test/pathParameterhasforwardslashes?query=bar": {
+      "post": {
+        "tags": [
+          "StorageAccounts"
+        ],
+        "operationId": "StorageAccounts_pathParameterWithQuestionMark",
+        "description": "Checks that the storage account name is valid and is not already in use.",
+        "x-ms-examples": {
+          "storageAccountXmsPaths": {"$ref": "./examples/storageAccountXmsPaths.json"}
+        },
+        "parameters": [
+          {
+            "name": "accountName",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/StorageAccountCheckNameAvailabilityParameters"
+            },
+            "description": "The name of the storage account within the specified resource group. Storage account names must be between 3 and 24 characters in length and use numbers and lower-case letters only."
+          },
+          {
+            "$ref": "#/parameters/ApiVersionParameter"
+          },
+          {
+            "name": "scope",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "The scope. Can be \"/foo/foo1/foo2\""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK -- Operation to check the storage account name availability was successful.",
+            "schema": {
+              "$ref": "#/definitions/CheckNameAvailabilityResult"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "StorageAccountCheckNameAvailabilityParameters": {
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "type"
+      ]
+    },
+    "CheckNameAvailabilityResult": {
+      "properties": {
+        "nameAvailable": {
+          "readOnly": true,
+          "type": "boolean",
+          "description": "Gets a boolean value that indicates whether the name is available for you to use. If true, the name is available. If false, the name has already been taken or is invalid and cannot be used."
+        },
+        "reason": {
+          "readOnly": true,
+          "type": "string",
+          "description": "Gets the reason that a storage account name could not be used. The Reason element is only returned if NameAvailable is false."
+        },
+        "message": {
+          "readOnly": true,
+          "type": "string",
+          "description": "Gets an error message explaining the Reason value in more detail."
+        }
+      },
+      "description": "The CheckNameAvailability operation response."
+    }
+  },
+  "parameters": {
+    "ApiVersionParameter": {
+      "name": "api-version",
+      "in": "query",
+      "required": true,
+      "type": "string",
+      "description": "Client Api Version."
+    }
+  }
+}

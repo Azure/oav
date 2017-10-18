@@ -4,7 +4,7 @@
 const assert = require('assert');
 const validate = require('../lib/validate');
 
-const specPath = `${__dirname}/swaggers/specification/scenarios/resource-manager/Microsoft.Test/2016-01-01/test.json`;
+const specPath = `${__dirname}/modelValidation/swaggers/specification/scenarios/resource-manager/Microsoft.Test/2016-01-01/test.json`;
 describe('Model Validation', function () {
   it('should pass when path parameter has forward slashes', function (done) {
     let operationIds = "StorageAccounts_pathParameterWithForwardSlashes";
@@ -47,7 +47,7 @@ describe('Model Validation', function () {
 
   describe('Polymorphic models - ', function () {
     it('should pass for Activity_List', function (done) {
-      let specPath = `${__dirname}/swaggers/specification/polymorphic/polymorphicSwagger.json`;
+      let specPath = `${__dirname}/modelValidation/swaggers/specification/polymorphic/polymorphicSwagger.json`;
       let operationIds = "Activity_List";
       validate.validateExamples(specPath, operationIds, { consoleLogLevel: 'off' }).then((result) => {
         assert(result.validityStatus === true, `swagger "${specPath}" with operation "${operationIds}" contains model validation errors.`);
@@ -59,7 +59,7 @@ describe('Model Validation', function () {
     });
 
     it('should pass for Activity_Dictionary', function (done) {
-      let specPath = `${__dirname}/swaggers/specification/polymorphic/polymorphicSwagger.json`;
+      let specPath = `${__dirname}/modelValidation/swaggers/specification/polymorphic/polymorphicSwagger.json`;
       let operationIds = "Activity_Dictionary";
       validate.validateExamples(specPath, operationIds, { consoleLogLevel: 'off' }).then((result) => {
         assert(result.validityStatus === true, `swagger "${specPath}" with operation "${operationIds}" contains model validation errors.`);
@@ -71,7 +71,7 @@ describe('Model Validation', function () {
     });
 
     it('should pass for CircularAnimal_List', function (done) {
-      let specPath = `${__dirname}/swaggers/specification/polymorphic/polymorphicSwagger.json`;
+      let specPath = `${__dirname}/modelValidation/swaggers/specification/polymorphic/polymorphicSwagger.json`;
       let operationIds = "CircularAnimal_List";
       validate.validateExamples(specPath, operationIds, { consoleLogLevel: 'off' }).then((result) => {
         assert(result.validityStatus === true, `swagger "${specPath}" with operation "${operationIds}" contains model validation errors.`);
@@ -83,7 +83,7 @@ describe('Model Validation', function () {
     });
 
     it('should fail for CircularAnimal_IncorrectSibling_List', function (done) {
-      let specPath = `${__dirname}/swaggers/specification/polymorphic/polymorphicSwagger.json`;
+      let specPath = `${__dirname}/modelValidation/swaggers/specification/polymorphic/polymorphicSwagger.json`;
       let operationIds = "CircularAnimal_IncorrectSibling_List";
       validate.validateExamples(specPath, operationIds, { consoleLogLevel: 'off' }).then((result) => {
         assert(result.validityStatus === false, `swagger "${specPath}" with operation "${operationIds}" contains model validation errors.`);

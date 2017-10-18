@@ -8,7 +8,7 @@ var assert = require('assert'),
   LiveValidator = require('../lib/validators/liveValidator.js'),
   Constants = require('../lib/util/constants');
 
-const livePaths = glob.sync(path.join(__dirname, 'swaggers/**/live/*.json'));
+const livePaths = glob.sync(path.join(__dirname, 'liveValidation/swaggers/**/live/*.json'));
 
 describe('Live Validator', function () {
   describe('Initialization', function () {
@@ -112,7 +112,7 @@ describe('Live Validator', function () {
       let expectedProvider = 'microsoft.media';
       let expectedApiVersion = '2015-10-01';
       let options = {
-        "directory": "./test/swaggers/"
+        "directory": "./test/liveValidation/swaggers/"
       };
       let validator = new LiveValidator(options);
       validator.initialize().then(function () {
@@ -135,7 +135,7 @@ describe('Live Validator', function () {
       let expectedProvider = 'microsoft.resources';
       let expectedApiVersion = '2016-09-01';
       let options = {
-        "directory": "./test/swaggers/"
+        "directory": "./test/liveValidation/swaggers/"
       };
       let validator = new LiveValidator(options);
       validator.initialize().then(function () {
@@ -150,8 +150,8 @@ describe('Live Validator', function () {
         assert.equal(1, validator.cache[expectedProvider][expectedApiVersion]['head'].length);
         assert.equal(1, validator.cache[expectedProvider][expectedApiVersion]['put'].length);
         // 'microsoft.unknown' -> 'unknown-api-version'
-        assert.equal(5, validator.cache[Constants.unknownResourceProvider][Constants.unknownApiVersion]['post'].length);
-        assert.equal(14, validator.cache[Constants.unknownResourceProvider][Constants.unknownApiVersion]['get'].length);
+        assert.equal(4, validator.cache[Constants.unknownResourceProvider][Constants.unknownApiVersion]['post'].length);
+        assert.equal(11, validator.cache[Constants.unknownResourceProvider][Constants.unknownApiVersion]['get'].length);
         assert.equal(3, validator.cache[Constants.unknownResourceProvider][Constants.unknownApiVersion]['head'].length);
         assert.equal(5, validator.cache[Constants.unknownResourceProvider][Constants.unknownApiVersion]['put'].length);
         assert.equal(5, validator.cache[Constants.unknownResourceProvider][Constants.unknownApiVersion]['delete'].length);
@@ -164,7 +164,7 @@ describe('Live Validator', function () {
     });
     it('should initialize for all swaggers', function (done) {
       let options = {
-        "directory": "./test/swaggers/"
+        "directory": "./test/liveValidation/swaggers/"
       };
       let validator = new LiveValidator(options);
       validator.initialize().then(function () {
@@ -190,7 +190,7 @@ describe('Live Validator', function () {
   describe('Initialize cache and search', function () {
     it('should return one matched operation for arm-storage', function (done) {
       let options = {
-        "directory": "./test/swaggers/"
+        "directory": "./test/liveValidation/swaggers/"
       };
       let listRequestUrl = "https://management.azure.com/subscriptions/subscriptionId/providers/Microsoft.Storage/storageAccounts?api-version=2015-06-15";
       let postRequestUrl = "https://management.azure.com/subscriptions/subscriptionId/providers/Microsoft.Storage/checkNameAvailability?api-version=2015-06-15";
@@ -219,7 +219,7 @@ describe('Live Validator', function () {
     });
     it('should return reason for not matched operations', function (done) {
       let options = {
-        "directory": "./test/swaggers/"
+        "directory": "./test/liveValidation/swaggers/"
       };
       let nonCachedApiUrl = "https://management.azure.com/subscriptions/subscriptionId/providers/Microsoft.Storage/storageAccounts?api-version=2015-08-15";
       let nonCachedProviderUrl = "https://management.azure.com/subscriptions/subscriptionId/providers/Hello.World/checkNameAvailability?api-version=2015-06-15";
@@ -266,7 +266,7 @@ describe('Live Validator', function () {
     livePaths.forEach((livePath) => {
       it(`should validate request and response for "${livePath}"`, function (done) {
         let options = {
-          "directory": "./test/swaggers/specification/storage"
+          "directory": "./test/liveValidation/swaggers/specification/storage"
         };
         let validator = new LiveValidator(options);
         validator.initialize().then(function () {
