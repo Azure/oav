@@ -151,7 +151,7 @@ describe('Live Validator', function () {
         assert.equal(1, validator.cache[expectedProvider][expectedApiVersion]['put'].length);
         // 'microsoft.unknown' -> 'unknown-api-version'
         assert.equal(4, validator.cache[Constants.unknownResourceProvider][Constants.unknownApiVersion]['post'].length);
-        assert.equal(11, validator.cache[Constants.unknownResourceProvider][Constants.unknownApiVersion]['get'].length);
+        assert.equal(12, validator.cache[Constants.unknownResourceProvider][Constants.unknownApiVersion]['get'].length);
         assert.equal(3, validator.cache[Constants.unknownResourceProvider][Constants.unknownApiVersion]['head'].length);
         assert.equal(5, validator.cache[Constants.unknownResourceProvider][Constants.unknownApiVersion]['put'].length);
         assert.equal(5, validator.cache[Constants.unknownResourceProvider][Constants.unknownApiVersion]['delete'].length);
