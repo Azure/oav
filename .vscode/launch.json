@@ -1,88 +1,85 @@
 {
-    // Use IntelliSense to learn about possible Node.js debug attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Validate Spec",
-            "program": "${workspaceRoot}/cli.js",
-            "cwd": "${workspaceRoot}",
-            "args": [
-                "validate-spec",
-                "test/swaggers/arm-storage/2016-01-01/swagger/storage.json"
-            ],
-            "env": {}
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Validate example",
-            "program": "${workspaceRoot}/cli.js",
-            "cwd": "${workspaceRoot}",
-            "args": [
-                "validate-example",
-                "test/swaggers/arm-storage/2016-01-01/swagger/storage.json",
-                "-o",
-                "StorageAccounts_CheckNameAvailability"
-            ],
-            "env": {}
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Resolve Spec",
-            "program": "${workspaceRoot}/cli.js",
-            "cwd": "${workspaceRoot}",
-            "args": [
-                "resolve-spec",
-                "/Users/vishrut/git-repos/oav/myswagger.json",
-                "-caproe",
-                "-d",
-                "/Users/vishrut/git-repos/azure-rest-api-specs/my_resolved"
-            ],
-            "env": {}
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "generate wireformat",
-            "program": "${workspaceRoot}/cli.js",
-            "cwd": "${workspaceRoot}",
-            "args": [
-                "generate-wireformat",
-                "test/swaggers/arm-storage/2016-01-01/swagger/storage.json"
-            ],
-            "env": {}
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Live Validator",
-            "program": "${workspaceRoot}/test/sample.js",
-            "cwd": "${workspaceRoot}",
-            "env": {}
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Mocha Tests",
-            "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
-            "cwd": "${workspaceRoot}",
-            "stopOnEntry": false,
-            "args": [
-                "test/liveValidatorTests.js"
-            ],
-            "env": {}
-        },
-        {
-            "type": "node",
-            "request": "attach",
-            "name": "Attach to Process",
-            "port": 5858
-        }
-    ]
+  // Use IntelliSense to learn about possible Node.js debug attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Validate Spec",
+      "program": "${workspaceRoot}/cli.js",
+      "cwd": "${workspaceRoot}",
+      "args": [
+        "validate-spec",
+        "test/swaggers/arm-storage/2016-01-01/swagger/storage.json"
+      ],
+      "env": {}
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Validate example",
+      "program": "${workspaceRoot}/cli.js",
+      "cwd": "${workspaceRoot}",
+      "args": [
+        "validate-example",
+        "test/swaggers/arm-storage/2016-01-01/swagger/storage.json",
+        "-o",
+        "StorageAccounts_CheckNameAvailability"
+      ],
+      "env": {}
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Resolve Spec",
+      "program": "${workspaceRoot}/cli.js",
+      "cwd": "${workspaceRoot}",
+      "args": [
+        "resolve-spec",
+        "../upstream/azure-rest-api-specs/specification/cognitiveservices/data-plane/EntitySearch/v1.0/EntitySearch.json",
+        "-capro"
+      ],
+      "env": {}
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "generate wireformat",
+      "program": "${workspaceRoot}/cli.js",
+      "cwd": "${workspaceRoot}",
+      "args": [
+        "generate-wireformat",
+        "test/swaggers/arm-storage/2016-01-01/swagger/storage.json"
+      ],
+      "env": {}
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Live Validator",
+      "program": "${workspaceRoot}/test/sample.js",
+      "cwd": "${workspaceRoot}",
+      "env": {}
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Mocha Tests",
+      "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
+      "cwd": "${workspaceRoot}",
+      "stopOnEntry": false,
+      "args": [
+        "test/liveValidatorTests.js"
+      ],
+      "env": {}
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Attach to Process",
+      "port": 5858
+    }
+  ]
 }
