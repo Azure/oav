@@ -97,5 +97,17 @@ describe('Model Validation', function () {
         done(err);
       });
     });
+
+    it('should pass for Entities_Search', function (done) {
+      let specPath = `${__dirname}/modelValidation/swaggers/specification/polymorphic/EntitySearch.json`;
+      let operationIds = "Entities_Search";
+      validate.validateExamples(specPath, operationIds, { consoleLogLevel: 'off' }).then((result) => {
+        assert(result.validityStatus === true, `swagger "${specPath}" with operation "${operationIds}" contains model validation errors.`);
+        console.log(result);
+        done();
+      }).catch((err) => {
+        done(err);
+      });
+    });
   });
 });
