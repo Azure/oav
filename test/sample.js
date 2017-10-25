@@ -13,7 +13,7 @@ let options = {
 };
 let validator = new LiveValidator(options);
 validator.initialize().then(function () {
-  let reqRes = require(__dirname + '/swaggers/arm-storage/2016-01-01/live/StorageAccounts_CheckNameAvailability.json');
+  let reqRes = require(__dirname + '/liveValidation/swaggers/specification/storage/resource-manager/Microsoft.Storage/2016-01-01/live/StorageAccounts_CheckNameAvailability.json');
   let requestResponseObj = {
     liveRequest: reqRes.request,
     liveResponse: reqRes.response

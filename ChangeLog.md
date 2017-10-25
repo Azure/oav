@@ -1,3 +1,6 @@
+### 10/24/2017 0.4.17
+- Disable resolving discriminators while performing semantic validation for an open api specification that conforms to 2.0 version.
+
 ### 10/20/2017 0.4.16
 - Entire tree except the leaf nodes need to be traversed for replacing references of (an uber(root) or intermediate) parent with a `"oneof"` array containing references to itself and all its children. #175
 
