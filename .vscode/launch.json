@@ -71,7 +71,7 @@
       "cwd": "${workspaceRoot}",
       "stopOnEntry": false,
       "args": [
-        "test/liveValidatorTests.js"
+        "test/modelValidatorTests.js"
       ],
       "env": {}
     },
