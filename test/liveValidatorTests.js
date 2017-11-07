@@ -58,7 +58,7 @@ describe('Live Validator', function () {
       let swaggerPaths = ["swaggerPath1", "swaggerPath2"];
       let directory = "/Users/username/repos/"
       let git = {
-        "url": "https://github.com/vishrutshah/azure-rest-api-specs.git"
+        "url": "https://github.com/Azure/azure-rest-api-specs.git"
       }
       let options = {
         "swaggerPaths": swaggerPaths,
@@ -76,8 +76,9 @@ describe('Live Validator', function () {
       let swaggerPaths = ["swaggerPath1", "swaggerPath2"];
       let directory = "/Users/username/repos/"
       let git = {
-        "url": "https://github.com/vishrutshah/azure-rest-api-specs.git",
-        "shouldClone": true
+        "url": "https://github.com/vladbarosan/azure-rest-api-specs.git",
+        "shouldClone": true,
+        "branch": "oav-test-branch"
       }
       let options = {
         "swaggerPaths": swaggerPaths,
