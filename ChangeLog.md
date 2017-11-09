@@ -1,3 +1,6 @@
+### 11/09/2017 0.4.18
+- Ensure scheme, host and basePath are used to construct the base url #180.
+
 ### 10/24/2017 0.4.17
 - Disable resolving discriminators while performing semantic validation for an open api specification that conforms to 2.0 version.
 
