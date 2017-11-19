@@ -1,0 +1,29 @@
+# Node #
+node_modules
+
+# vs code #
+.vscode/
+
+# Git #
+.git*
+
+# Tests #
+test/
+tests/
+
+# Tools and dev scripts #
+tools/
+tasks/
+scripts/
+gruntfile.js
+gulpfile.js
+gulpFile.js
+
+# Nuget packages #
+.nuget/
+packages/
+packages.config
+
+# VS #
+.ntvs_analysis.*
+*.sln
