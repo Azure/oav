@@ -1,3 +1,6 @@
+### 11/20/2017 0.4.19
+- Added support for validating examples for parameters `"in": "formData"`.
+
 ### 11/09/2017 0.4.18
 - Ensure scheme, host and basePath are used to construct the base url #180.
 
