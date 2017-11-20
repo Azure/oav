@@ -112,9 +112,23 @@ describe('Model Validation', function () {
   });
 
   describe('for parameters in formdata', function () {
-    it('should validate correclty', (done) => {
+    it('should validate correctly', (done) => {
       let specPath = `${__dirname}/modelValidation/swaggers/specification/formdata/spellCheck.json`;
       validate.validateExamples(specPath, undefined, { consoleLogLevel: 'off' }).then((result) => {
+        assert(result.validityStatus === true, `swagger "${specPath}" contains model validation errors.`);
+        console.log(result);
+        done();
+      }).catch((err) => {
+        done(err);
+      });
+    });
+  });
+
+  describe('for parameters in x-ms-parameterized-host', function () {
+    it('should validate correctly', (done) => {
+      let specPath = `${__dirname}/modelValidation/swaggers/specification/parameterizedhost/face.json`;
+      validate.validateExamples(specPath, undefined, { consoleLogLevel: 'off' }).then((result) => {
+        console.dir(result, { depth: null });
         assert(result.validityStatus === true, `swagger "${specPath}" contains model validation errors.`);
         console.log(result);
         done();
