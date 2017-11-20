@@ -1,4 +1,7 @@
-### 11/20/2017 0.4.19
+### 11/20/2017 0.4.20
+- Added support for processing [`"x-ms-parameterized-host": {}`](https://github.com/Azure/autorest/tree/master/docs/extensions#x-ms-parameterized-host) extension if present in the 2.0 swagger spec.
+
+### 11/19/2017 0.4.19
 - Added support for validating examples for parameters `"in": "formData"`.
 
 ### 11/09/2017 0.4.18
