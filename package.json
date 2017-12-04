@@ -28,7 +28,8 @@
     "jsonpath": "^0.2.11",
     "vscode-jsonrpc": "^3.2.0",
     "autorest-extension-base": "olydis/autorest-extension-base",
-    "lodash": "^1.0.0"
+    "lodash": "^1.0.0",
+    "yuml2svg": "^3.1.0"
   },
   "devDependencies": {
     "jshint": "2.9.4",

@@ -46,6 +46,18 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "generate uml",
+      "program": "${workspaceRoot}/cli.js",
+      "cwd": "${workspaceRoot}",
+      "args": [
+        "generate-uml",
+        "D:/sdk/azure-rest-api-specs-pr/specification/datamigration/resource-manager/Microsoft.DataMigration/2017-11-15-preview/datamigration.json"
+      ],
+      "env": {}
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "generate wireformat",
       "program": "${workspaceRoot}/cli.js",
       "cwd": "${workspaceRoot}",
