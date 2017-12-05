@@ -232,7 +232,7 @@
           "type": "string"
         },
         "animalType": {
-          "type": "string",
+          "$ref": "#/definitions/AnimalType",
           "description": "Type of activity."
         },
         "siblings": {
@@ -292,6 +292,16 @@
         }
       }
     },
+    "AnimalType": {
+      "description": "Animal type.",
+      "type": "string",
+      "enum": [
+        "Tiger",
+        "Cat",
+        "Mouse",
+        "Mammal"
+      ]
+    },
     "Tiger": {
       "description": "class for Tiger.",
       "allOf": [
@@ -315,7 +325,11 @@
         },
         "foodType": {
           "type": "string",
-          "description": "Type of food."
+          "description": "Type of food.",
+          "enum": [
+            "Meat",
+            "Jain"
+          ]
         }
       },
       "required": [
