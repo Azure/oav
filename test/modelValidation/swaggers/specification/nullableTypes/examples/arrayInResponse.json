@@ -1,0 +1,16 @@
+{
+    "parameters": {
+    },
+    "responses": {
+      "200": {
+        "headers": {},
+        "body": {
+            "value": [
+              {
+                "id": null
+              }
+            ]
+        }
+    }
+  }
+}
