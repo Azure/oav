@@ -1,0 +1,12 @@
+{
+    "parameters": {
+    },
+    "responses": {
+      "200": {
+        "headers": {},
+        "body": {
+            "state": "New"
+        }
+    }
+  }
+}
