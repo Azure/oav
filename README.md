@@ -7,9 +7,7 @@ Tools for validating OpenAPI (Swagger) files.
 You can install the latest stable release of node.js from [here](https://nodejs.org/en/download/). For a machine with a linux flavored OS, please follow the node.js installation instructions over [here](https://nodejs.org/en/download/package-manager/)
 
 
-### How to run the tool 
-- After cloning the repo execute following steps from your terminal/cmd prompt
-
+### How to install the tool 
 ```
 npm install -g oav
 ```
