@@ -1,5 +1,8 @@
+### 12/11/2017 0.4.22
+- Added support to generate class diagram from a given swagger spec #188.
+- Fixed #190, #191.
 ### 12/4/2017 0.4.21
-- Remove the enum constraint or reference to an enum on the discriminator property if previously present before making it a constant.
+- Removed the enum constraint or reference to an enum on the discriminator property if previously present before making it a constant.
 
 ### 11/20/2017 0.4.20
 - Added support for processing [`"x-ms-parameterized-host": {}`](https://github.com/Azure/autorest/tree/master/docs/extensions#x-ms-parameterized-host) extension if present in the 2.0 swagger spec.

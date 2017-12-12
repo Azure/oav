@@ -1,6 +1,6 @@
 {
   "name": "oav",
-  "version": "0.4.21",
+  "version": "0.4.22",
   "author": {
     "name": "Microsoft Corporation",
     "email": "azsdkteam@microsoft.com",
@@ -28,7 +28,8 @@
     "jsonpath": "^0.2.11",
     "vscode-jsonrpc": "^3.2.0",
     "autorest-extension-base": "olydis/autorest-extension-base",
-    "lodash": "^1.0.0"
+    "lodash": "^1.0.0",
+    "yuml2svg": "^3.1.0"
   },
   "devDependencies": {
     "jshint": "2.9.4",
