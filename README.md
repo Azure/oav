@@ -1,6 +1,54 @@
 # openapi-validation-tools [oav]
 Tools for validating OpenAPI (Swagger) files.
 
+### Requirements
+- **node.js version > 6.x**
+
+You can install the latest stable release of node.js from [here](https://nodejs.org/en/download/). For a machine with a linux flavored OS, please follow the node.js installation instructions over [here](https://nodejs.org/en/download/package-manager/)
+
+
+### How to run the tool 
+- After cloning the repo execute following steps from your terminal/cmd prompt
+
+```
+npm install -g oav
+```
+
+#### Command usage:
+```
+bash-3.2$ oav -h
+Commands:
+  extract-xmsexamples <spec-path>           Extracts the x-ms-examples for a
+  <recordings>                              given swagger from the .NET session
+                                            recordings and saves them in a file.
+  generate-uml <spec-path>                  Generates a class diagram of the
+                                            model definitions in the given
+                                            swagger spec.
+  generate-wireformat <spec-path>           Transforms the x-ms-examples for a
+                                            given operation into raw
+                                            request/response format and saves
+                                            them in a markdown file.
+  resolve-spec <spec-path>                  Resolves the swagger spec based on
+                                            the selected options like allOfs,
+                                            relativePaths, examples etc.
+  validate-example <spec-path>              Performs validation of x-ms-examples
+                                            and examples present in the spec.
+  validate-spec <spec-path>                 Performs semantic validation of the
+                                            spec.
+
+Options:
+  --version          Show version number                               [boolean]
+  -l, --logLevel     Set the logging level for console.
+  [choices: "off", "json", "error", "warn", "info", "verbose", "debug", "silly"]
+                                                               [default: "warn"]
+  -f, --logFilepath  Set the log file path. It must be an absolute filepath. By
+                     default the logs will stored in a timestamp based log file
+                     at "C:\Users\amzavery\oav_output".
+  -h, --help         Show help                                         [boolean]
+
+bash-3.2$
+```
+
 ### What does the tool do? What issues does the tool catch?
 
 Model validation checks whether definitions for request parameters and responses, match an expected input/output payload of the service.
@@ -37,50 +85,7 @@ In the context of “azure-rest-api-specs” repo:
   -	#4 is not available yet, though we’re starting to work on it. 
   -	#5 will be done by the approvers of PRs in “azure-rest-api-specs”, as this won’t be automated. 
 
-### Requirements
-- **node version > 6.x**
 
-You can install the latest stable release of node.js from [here](https://nodejs.org/en/download/). For a machine with a linux flavored OS, please follow the node.js installation instructions over [here](https://nodejs.org/en/download/package-manager/)
-
-
-### How to run the tool 
-- After cloning the repo execute following steps from your terminal/cmd prompt
-
-```
-npm install -g oav
-```
-
-#### Command usage:
-```
-bash-3.2$ oav -h
-Commands:
-  extract-xmsexamples <spec-path>           Extracts the x-ms-examples for a
-  <recordings>                              given swagger from the .NET session
-                                            recordings and saves them in a file.
-  generate-wireformat <spec-path>           Transforms the x-ms-examples for a
-                                            given operation into raw
-                                            request/response format and saves
-                                            them in a markdown file.
-  resolve-spec <spec-path>                  Resolves the swagger spec based on
-                                            the selected options like allOfs,
-                                            relativePaths, examples etc.
-  validate-example <spec-path>              Performs validation of x-ms-examples
-                                            and examples present in the spec.
-  validate-spec <spec-path>                 Performs semantic validation of the
-                                            spec.
-
-Options:
-  --version          Show version number                               [boolean]
-  -l, --logLevel     Set the logging level for console.
-  [choices: "off", "json", "error", "warn", "info", "verbose", "debug", "silly"]
-                                                               [default: "warn"]
-  -f, --logFilepath  Set the log file path. It must be an absolute filepath. By
-                     default the logs will stored in a timestamp based log file
-                     at "/Users/{username}/oav_output".
-  -h, --help         Show help                                         [boolean]
-
-bash-3.2$
-```
 
 ### Autorest plugin configuration
 - Please don't edit this section unless you're re-configuring how oav plugs in to AutoRest
