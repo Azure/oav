@@ -359,6 +359,29 @@
           }
         }
       }
+    },
+    "foo/itemsWithAdditionalProperties": {
+      "get": {
+        "tags": [
+          "getTag"
+        ],
+        "operationId": "itemsWithAdditionalProperties_Get",
+        "description": "Operation to test invalid_type for nulls",
+        "x-ms-examples": {
+          "required prop operation": {
+            "$ref": "./examples/itemsWithAdditionalProperties.json"
+          }
+        },
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "success response",
+            "schema": {
+              "$ref": "#/definitions/ItemsWithAdditionalProperties"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -508,6 +531,16 @@
         }
       },
       "description": "nullable top level object"
+    },
+    "ItemsWithAdditionalProperties": {
+      "description": "An array of Dictionaries with value null",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "string"
+        }
+      }
     }
   },
   "parameters": {
