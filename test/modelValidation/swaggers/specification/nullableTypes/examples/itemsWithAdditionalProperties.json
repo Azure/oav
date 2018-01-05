@@ -1,0 +1,15 @@
+{
+  "parameters": {},
+  "responses": {
+    "200": {
+      "headers": {},
+      "body": [
+        {
+          "key": "value",
+          "key1": "value1",
+          "key2": null
+        }
+      ]
+    }
+  }
+}

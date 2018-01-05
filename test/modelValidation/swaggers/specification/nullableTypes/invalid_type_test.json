@@ -1,0 +1,558 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "title",
+    "description": "",
+    "version": "2017-11-01"
+  },
+  "host": "host",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/foo/regularOperation": {
+      "get": {
+        "tags": [
+          "getTag"
+        ],
+        "operationId": "regularOperation_Get",
+        "description": "Operation to test invalid_type for nulls",
+        "x-ms-examples": {
+          "Regular Operation": {
+            "$ref": "./examples/regularOperation.json"
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/ApiVersionParameter"
+          },
+          {
+            "type": "string",
+            "in": "query",
+            "name": "queryParam",
+            "description": "query param description"
+          },
+          {
+            "type": "object",
+            "in": "body",
+            "name": "bodyParam",
+            "schema": {
+              "$ref": "#/definitions/Model1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success response",
+            "schema": {
+              "$ref": "#/definitions/Result"
+            }
+          }
+        }
+      }
+    },
+    "/foo/formatInDefinition": {
+      "get": {
+        "tags": [
+          "getTag"
+        ],
+        "operationId": "formatInDefinition_Get",
+        "description": "Operation to test format in model",
+        "x-ms-examples": {
+          "Format in Definition": {
+            "$ref": "./examples/formatInDefinition.json"
+          }
+        },
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "success response",
+            "schema": {
+              "$ref": "#/definitions/SkuModel"
+            }
+          }
+        }
+      }
+    },
+    "/foo/enumInResponse": {
+      "get": {
+        "tags": [
+          "getTag"
+        ],
+        "operationId": "enumInResponse_Get",
+        "description": "Operation to test enum in model",
+        "x-ms-examples": {
+          "Create or Update Configuration": {
+            "$ref": "./examples/enumInResponse.json"
+          }
+        },
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "success response",
+            "schema": {
+              "$ref": "#/definitions/Configuration"
+            }
+          }
+        }
+      }
+    },
+    "/foo/readOnlyProp": {
+      "get": {
+        "tags": [
+          "getTag"
+        ],
+        "operationId": "readOnlyProp_Get",
+        "description": "Operation to test read-only prop in model",
+        "x-ms-examples": {
+          "Create or Update Configuration": {
+            "$ref": "./examples/readonlyInResponse.json"
+          }
+        },
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "success response",
+            "schema": {
+              "$ref": "#/definitions/ReadOnlyPropModel"
+            }
+          }
+        }
+      }
+    },
+    "/foo/arrayInResponse": {
+      "get": {
+        "tags": [
+          "getTag"
+        ],
+        "operationId": "arrayInResponse_List",
+        "description": "Operation to test array in response model",
+        "x-ms-examples": {
+          "Create or Update Configuration": {
+            "$ref": "./examples/arrayInResponse.json"
+          }
+        },
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "success response",
+            "schema": {
+              "$ref": "#/definitions/ResultList"
+            }
+          }
+        }
+      }
+    },
+    "/foo/objectInResponse": {
+      "get": {
+        "tags": [
+          "getTag"
+        ],
+        "operationId": "objectInResponse_Get",
+        "description": "Operation to test array in response model",
+        "x-ms-examples": {
+          "Create or Update Configuration": {
+            "$ref": "./examples/objectInResponse.json"
+          }
+        },
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "success response",
+            "schema": {
+              "$ref": "#/definitions/ResultObject"
+            }
+          }
+        }
+      }
+    },
+    "/foo/typeArrayInResponse": {
+      "get": {
+        "tags": [
+          "getTag"
+        ],
+        "operationId": "typeArrayInResponse_Get",
+        "description": "Operation to test array in response model",
+        "x-ms-examples": {
+          "Create or Update Configuration": {
+            "$ref": "./examples/typeArrayInResponse.json"
+          }
+        },
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "success response",
+            "schema": {
+              "$ref": "#/definitions/ArrayResults"
+            }
+          }
+        }
+      }
+    },
+    "/foo/xnullableFalse": {
+      "get": {
+        "tags": [
+          "getTag"
+        ],
+        "operationId": "xnullableFalse_Get",
+        "description": "Operation to test invalid_type for nulls",
+        "x-ms-examples": {
+          "x-nullable false operation": {
+            "$ref": "./examples/xnullableFalseOperation.json"
+          }
+        },
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "success response",
+            "schema": {
+              "$ref": "#/definitions/ModelWithXNullableFalse"
+            }
+          }
+        }
+      }
+    },
+    "/foo/requiredProp": {
+      "get": {
+        "tags": [
+          "getTag"
+        ],
+        "operationId": "requiredProp_Get",
+        "description": "Operation to test invalid_type for nulls",
+        "x-ms-examples": {
+          "required prop operation": {
+            "$ref": "./examples/requiredPropOperation.json"
+          }
+        },
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "success response",
+            "schema": {
+              "$ref": "#/definitions/RequiredProp"
+            }
+          }
+        }
+      }
+    },
+    "/foo/inlineResponse": {
+      "get": {
+        "tags": [
+          "getTag"
+        ],
+        "operationId": "inlineResponse_Get",
+        "description": "Operation to test invalid_type for nulls",
+        "x-ms-examples": {
+          "required prop operation": {
+            "$ref": "./examples/inlineResponse.json"
+          }
+        },
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "success response",
+            "schema": {
+              "name": "inlineProp",
+              "type": "string",
+              "description": "inlineresponse",
+              "x-nullable": true
+            }
+          }
+        }
+      }
+    },
+    "/foo/refWithNullableAtTopLevelOperation": {
+      "get": {
+        "tags": [
+          "getTag"
+        ],
+        "operationId": "RefWithNullableAtTopLevelOperation_Get",
+        "description": "Operation to test invalid_type for nulls",
+        "x-ms-examples": {
+          "required prop operation": {
+            "$ref": "./examples/nullableTopLevel.json"
+          }
+        },
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "success response",
+            "schema": {
+              "$ref": "#/definitions/Model1",
+              "x-nullable": true
+            }
+          }
+        }
+      }
+    },
+    "/foo/definitionWithReferenceOperation": {
+      "get": {
+        "tags": [
+          "getTag"
+        ],
+        "operationId": "definitionWithReference_Get",
+        "description": "Operation to test invalid_type for nulls",
+        "x-ms-examples": {
+          "required prop operation": {
+            "$ref": "./examples/definitionWithReferenceOperation.json"
+          }
+        },
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "success response",
+            "schema": {
+              "$ref": "#/definitions/DefinitionWithReference"
+            }
+          }
+        }
+      }
+    },
+    "/foo/definitionWithReferenceNotNullableOperation": {
+      "get": {
+        "tags": [
+          "getTag"
+        ],
+        "operationId": "definitionWithReferenceNotNullableOperation_Get",
+        "description": "Operation to test invalid_type for nulls",
+        "x-ms-examples": {
+          "required prop operation": {
+            "$ref": "./examples/definitionWithReferenceNotNullableOperation.json"
+          }
+        },
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "success response",
+            "schema": {
+              "$ref": "#/definitions/DefinitionWithReferenceNotNullable"
+            }
+          }
+        }
+      }
+    },
+    "/foo/nullableTopLevel": {
+      "get": {
+        "tags": [
+          "getTag"
+        ],
+        "operationId": "nullableTopLevel_Get",
+        "description": "Operation to test invalid_type for nulls",
+        "x-ms-examples": {
+          "required prop operation": {
+            "$ref": "./examples/nullableTopLevel.json"
+          }
+        },
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "success response",
+            "schema": {
+              "$ref": "#/definitions/NullableTopLevelObject"
+            }
+          }
+        }
+      }
+    },
+    "foo/itemsWithAdditionalProperties": {
+      "get": {
+        "tags": [
+          "getTag"
+        ],
+        "operationId": "itemsWithAdditionalProperties_Get",
+        "description": "Operation to test invalid_type for nulls",
+        "x-ms-examples": {
+          "items with additional properties being null": {
+            "$ref": "./examples/itemsWithAdditionalProperties.json"
+          },
+          "items with null object": {
+            "$ref": "./examples/itemsWithNull.json"
+          }
+        },
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "success response",
+            "schema": {
+              "$ref": "#/definitions/ItemsWithAdditionalProperties"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Result": {
+      "description": "Result decription",
+      "properties": {
+        "prop1": {
+          "type": "string",
+          "description": "prop1 dummy description."
+        },
+        "prop2": {
+          "type": "integer",
+          "description": "prop2 dummy description"
+        }
+      },
+      "allOf": [
+        {
+          "$ref": "#/definitions/Model1"
+        }
+      ]
+    },
+    "Model1": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Model Id"
+        }
+      },
+      "description": "Model1 definition."
+    },
+    "SkuModel": {
+      "properties": {
+        "capacity": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Gets or sets the SKU capacity."
+        }
+      },
+      "description": "dummy description."
+    },
+    "Configuration": {
+      "properties": {
+        "state": {
+          "type": "string",
+          "description": "Gets or sets the state of the configuration.",
+          "enum": [
+            "New",
+            "Edit",
+            "Published"
+          ],
+          "x-ms-enum": {
+            "name": "DscConfigurationState",
+            "modelAsString": true
+          }
+        }
+      },
+      "description": "dummy description."
+    },
+    "ReadOnlyPropModel": {
+      "properties": {
+        "readOnlyProp": {
+          "type": "string",
+          "description": "read only prop",
+          "readOnly": true
+        }
+      },
+      "description": "dummy description."
+    },
+    "ResultList": {
+      "properties": {
+        "value": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Model1"
+          },
+          "description": "Gets or sets a list of configurations."
+        }
+      },
+      "description": "dummy description."
+    },
+    "ResultObject": {
+      "type": "object",
+      "properties": {
+        "resultProp": {
+          "type": "string",
+          "description": "dummy description."
+        }
+      },
+      "description": "dummy description."
+    },
+    "ArrayResults": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Model1"
+      },
+      "description": "dummy description."
+    },
+    "ModelWithXNullableFalse": {
+      "properties": {
+        "notNullable": {
+          "type": "string",
+          "description": "property that shouldn't be null.",
+          "x-nullable": false
+        }
+      },
+      "description": "Model with non-nullable property."
+    },
+    "RequiredProp": {
+      "properties": {
+        "requiredProp": {
+          "type": "string",
+          "description": "required property.",
+          "x-nullable": true
+        }
+      },
+      "required": [
+        "requiredProp"
+      ],
+      "description": "model with required property."
+    },
+    "DefinitionWithReference": {
+      "properties": {
+        "namedProp": {
+          "$ref": "#/definitions/Model1",
+          "description": "property with reference to model"
+        }
+      },
+      "description": "model with ref property."
+    },
+    "DefinitionWithReferenceNotNullable": {
+      "properties": {
+        "namedProp": {
+          "$ref": "#/definitions/Model1",
+          "description": "property with reference to model not nullable",
+          "x-nullable": false
+        }
+      },
+      "description": "model with reF property not nullable."
+    },
+    "NullableTopLevelObject": {
+      "type": "object",
+      "x-nullable": true,
+      "properties": {
+        "refProp": {
+          "$ref": "#/definitions/Model1",
+          "description": "ref to Model1 model"
+        }
+      },
+      "description": "nullable top level object"
+    },
+    "ItemsWithAdditionalProperties": {
+      "description": "An array of Dictionaries with value null",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "parameters": {
+    "ApiVersionParameter": {
+      "name": "api-version",
+      "in": "query",
+      "type": "string",
+      "required": true,
+      "description": "Client Api Version."
+    }
+  }
+}

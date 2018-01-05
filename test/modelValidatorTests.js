@@ -137,4 +137,174 @@ describe('Model Validation', function () {
       });
     });
   });
+
+  describe('Nullable models - ', function () {
+    it('should pass for regularOperation_Get', function (done) {
+      let specPath = `${__dirname}/modelValidation/swaggers/specification/nullableTypes/invalid_type_test.json`;
+      let operationIds = "regularOperation_Get";
+      validate.validateExamples(specPath, operationIds, { consoleLogLevel: 'off' }).then((result) => {
+        assert(result.validityStatus === true, `swagger "${specPath}" with operation "${operationIds}" contains model validation errors.`);
+        console.log(result);
+        done();
+      }).catch((err) => {
+        done(err);
+      });
+    });
+
+    it('should pass for formatInDefinition_Get', function (done) {
+      let specPath = `${__dirname}/modelValidation/swaggers/specification/nullableTypes/invalid_type_test.json`;
+      let operationIds = "formatInDefinition_Get";
+      validate.validateExamples(specPath, operationIds, { consoleLogLevel: 'off' }).then((result) => {
+        assert(result.validityStatus === true, `swagger "${specPath}" with operation "${operationIds}" contains model validation errors.`);
+        console.log(result);
+        done();
+      }).catch((err) => {
+        done(err);
+      });
+    });
+
+    it('should pass for enumInResponse_Get', function (done) {
+      let specPath = `${__dirname}/modelValidation/swaggers/specification/nullableTypes/invalid_type_test.json`;
+      let operationIds = "enumInResponse_Get";
+      validate.validateExamples(specPath, operationIds, { consoleLogLevel: 'off' }).then((result) => {
+        assert(result.validityStatus === true, `swagger "${specPath}" with operation "${operationIds}" contains model validation errors.`);
+        console.log(result);
+        done();
+      }).catch((err) => {
+        done(err);
+      });
+    });
+
+    it('should pass for readOnlyProp_Get', function (done) {
+      let specPath = `${__dirname}/modelValidation/swaggers/specification/nullableTypes/invalid_type_test.json`;
+      let operationIds = "readOnlyProp_Get";
+      validate.validateExamples(specPath, operationIds, { consoleLogLevel: 'off' }).then((result) => {
+        assert(result.validityStatus === true, `swagger "${specPath}" with operation "${operationIds}" contains model validation errors.`);
+        console.log(result);
+        done();
+      }).catch((err) => {
+        done(err);
+      });
+    });
+
+    it('should pass for arrayInResponse_List', function (done) {
+      let specPath = `${__dirname}/modelValidation/swaggers/specification/nullableTypes/invalid_type_test.json`;
+      let operationIds = "arrayInResponse_List";
+      validate.validateExamples(specPath, operationIds, { consoleLogLevel: 'off' }).then((result) => {
+        assert(result.validityStatus === true, `swagger "${specPath}" with operation "${operationIds}" contains model validation errors.`);
+        console.log(result);
+        done();
+      }).catch((err) => {
+        done(err);
+      });
+    });
+
+    it('should pass for objectInResponse_Get', function (done) {
+      let specPath = `${__dirname}/modelValidation/swaggers/specification/nullableTypes/invalid_type_test.json`;
+      let operationIds = "objectInResponse_Get";
+      validate.validateExamples(specPath, operationIds, { consoleLogLevel: 'off' }).then((result) => {
+        assert(result.validityStatus === true, `swagger "${specPath}" with operation "${operationIds}" contains model validation errors.`);
+        console.log(result);
+        done();
+      }).catch((err) => {
+        done(err);
+      });
+    });
+
+    it('should pass for typeArrayInResponse_Get', function (done) {
+      let specPath = `${__dirname}/modelValidation/swaggers/specification/nullableTypes/invalid_type_test.json`;
+      let operationIds = "typeArrayInResponse_Get";
+      validate.validateExamples(specPath, operationIds, { consoleLogLevel: 'off' }).then((result) => {
+        assert(result.validityStatus === true, `swagger "${specPath}" with operation "${operationIds}" contains model validation errors.`);
+        console.log(result);
+        done();
+      }).catch((err) => {
+        done(err);
+      });
+    });
+
+    it('should pass for xnullableFalse_Get', function (done) {
+      let specPath = `${__dirname}/modelValidation/swaggers/specification/nullableTypes/invalid_type_test.json`;
+      let operationIds = "xnullableFalse_Get";
+      validate.validateExamples(specPath, operationIds, { consoleLogLevel: 'off' }).then((result) => {
+        assert(result.validityStatus === true, `swagger "${specPath}" with operation "${operationIds}" contains model validation errors.`);
+        console.log(result);
+        done();
+      }).catch((err) => {
+        done(err);
+      });
+    });
+
+    it('should pass for requiredProp_Get', function (done) {
+      let specPath = `${__dirname}/modelValidation/swaggers/specification/nullableTypes/invalid_type_test.json`;
+      let operationIds = "requiredProp_Get";
+      validate.validateExamples(specPath, operationIds, { consoleLogLevel: 'off' }).then((result) => {
+        assert(result.validityStatus === true, `swagger "${specPath}" with operation "${operationIds}" contains model validation errors.`);
+        console.log(result);
+        done();
+      }).catch((err) => {
+        done(err);
+      });
+    });
+
+    it('should pass for inlineResponse_Get', function (done) {
+      let specPath = `${__dirname}/modelValidation/swaggers/specification/nullableTypes/invalid_type_test.json`;
+      let operationIds = "inlineResponse_Get";
+      validate.validateExamples(specPath, operationIds, { consoleLogLevel: 'off' }).then((result) => {
+        assert(result.validityStatus === true, `swagger "${specPath}" with operation "${operationIds}" contains model validation errors.`);
+        console.log(result);
+        done();
+      }).catch((err) => {
+        done(err);
+      });
+    });
+
+    it('should pass for RefWithNullableAtTopLevelOperation_Get', function (done) {
+      let specPath = `${__dirname}/modelValidation/swaggers/specification/nullableTypes/invalid_type_test.json`;
+      let operationIds = "RefWithNullableAtTopLevelOperation_Get";
+      validate.validateExamples(specPath, operationIds, { consoleLogLevel: 'off' }).then((result) => {
+        assert(result.validityStatus === true, `swagger "${specPath}" with operation "${operationIds}" contains model validation errors.`);
+        console.log(result);
+        done();
+      }).catch((err) => {
+        done(err);
+      });
+    });
+
+    it('should pass for definitionWithReference_Get', function (done) {
+      let specPath = `${__dirname}/modelValidation/swaggers/specification/nullableTypes/invalid_type_test.json`;
+      let operationIds = "definitionWithReference_Get";
+      validate.validateExamples(specPath, operationIds, { consoleLogLevel: 'off' }).then((result) => {
+        assert(result.validityStatus === true, `swagger "${specPath}" with operation "${operationIds}" contains model validation errors.`);
+        console.log(result);
+        done();
+      }).catch((err) => {
+        done(err);
+      });
+    });
+
+    it('should pass for definitionWithReferenceNotNullableOperation_Get', function (done) {
+      let specPath = `${__dirname}/modelValidation/swaggers/specification/nullableTypes/invalid_type_test.json`;
+      let operationIds = "definitionWithReferenceNotNullableOperation_Get";
+      validate.validateExamples(specPath, operationIds, { consoleLogLevel: 'off' }).then((result) => {
+        assert(result.validityStatus === true, `swagger "${specPath}" with operation "${operationIds}" contains model validation errors.`);
+        console.log(result);
+        done();
+      }).catch((err) => {
+        done(err);
+      });
+    });
+
+    it('should pass for nullableTopLevel_Get', function (done) {
+      let specPath = `${__dirname}/modelValidation/swaggers/specification/nullableTypes/invalid_type_test.json`;
+      let operationIds = "nullableTopLevel_Get";
+      validate.validateExamples(specPath, operationIds, { consoleLogLevel: 'off' }).then((result) => {
+        assert(result.validityStatus === true, `swagger "${specPath}" with operation "${operationIds}" contains model validation errors.`);
+        console.log(result);
+        done();
+      }).catch((err) => {
+        done(err);
+      });
+    });
+  });
 });

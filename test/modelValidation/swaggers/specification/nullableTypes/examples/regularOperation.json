@@ -1,0 +1,17 @@
+{
+    "parameters": {
+      "api-version": "2017-12-01",
+      "queryParam": null,
+      "bodyParam": null
+    },
+    "responses": {
+      "200": {
+        "headers": {},
+        "body": {
+            "prop1": null,
+            "prop2": null,
+            "id": "ResultId"
+        }
+    }
+  }
+}

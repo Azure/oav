@@ -1,3 +1,6 @@
+### 01/05/2018 0.4.23
+- Addressing INVALID_TYPE issues reported by model validation due to nullable types/properties. [#155](https://github.com/Azure/oav/issues/155). In order to allow null types, we relax types to be 'oneOf' `null` or its type, for the cases where properties/models have x-nullable set or x-nullable is not defined and property is not required.
+
 ### 12/11/2017 0.4.22
 - Added support to generate class diagram from a given swagger spec #188.
 - Fixed #190, #191.
