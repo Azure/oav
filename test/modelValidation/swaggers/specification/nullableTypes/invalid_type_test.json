@@ -368,8 +368,11 @@
         "operationId": "itemsWithAdditionalProperties_Get",
         "description": "Operation to test invalid_type for nulls",
         "x-ms-examples": {
-          "required prop operation": {
+          "items with additional properties being null": {
             "$ref": "./examples/itemsWithAdditionalProperties.json"
+          },
+          "items with null object": {
+            "$ref": "./examples/itemsWithNull.json"
           }
         },
         "parameters": [],
