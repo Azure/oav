@@ -307,4 +307,36 @@ describe('Model Validation', function () {
       });
     });
   });
+
+  describe('Content type - ', function () {
+    it('should pass for consumes application/octet-stream', function (done) {
+      let specPath = `${__dirname}/modelValidation/swaggers/specification/contenttype/datalake.json`;
+      let operationIds = "Content_Consume";
+      validate.validateExamples(specPath, operationIds, { consoleLogLevel: 'off' }).then((result) => {
+        assert(result.validityStatus === true, `swagger "${specPath}" with operation "${operationIds}" contains model validation errors.`);
+        console.log(result);
+        done();
+      }).catch((err) => {
+        done(err);
+      });
+    });
+
+    it('should fail for invalid type response in produces application/octet-stream', function (done) {
+      let specPath = `${__dirname}/modelValidation/swaggers/specification/contenttype/datalake.json`;
+      let operationIds = "Content_Produce";
+      validate.validateExamples(specPath, operationIds, { consoleLogLevel: 'off' }).then((result) => {
+        assert(result.validityStatus === false, `swagger "${specPath}" with operation "${operationIds}" contains passed incorrectly.`);
+        console.log(result);
+        done();
+      }).catch((err) => {
+        try {
+          assert.equal(err.code, 'INVALID_RESPONSE_BODY');
+          assert.equal(err.innerErrors[0].code, 'INVALID_TYPE');
+          done();
+        } catch (er) {
+          done(er);
+        }
+      });
+    });
+  });
 });

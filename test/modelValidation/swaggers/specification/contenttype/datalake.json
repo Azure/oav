@@ -1,0 +1,80 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "title",
+    "description": "",
+    "version": "2016-11-01"
+  },
+  "host": "host",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/open": {
+      "get": {
+        "tags": [
+          "Content"
+        ],
+        "operationId": "Content_Produce",
+        "description": "Operation to test produce application/octet-stream",
+        "x-ms-examples": {
+          "Downloads stream": {
+            "$ref": "./examples/download.json"
+          }
+        },
+        "produces": [
+          "application/octet-stream"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/append": {
+      "post": {
+        "tags": [
+          "Content"
+        ],
+        "consumes": [
+          "application/octet-stream"
+        ],
+        "operationId": "Content_Consume",
+        "description": "Operation to test consume application/octet-stream",
+        "x-ms-examples": {
+          "Uploads stream": {
+            "$ref": "./examples/upload.json"
+          }
+        },
+        "parameters": [
+          {
+            "name": "streamContents",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "format": "file"
+            },
+            "required": true,
+            "description": "Stream parameter description"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {}
+}
