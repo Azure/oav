@@ -16,4 +16,16 @@ describe('Semantic validation', function () {
       done(err);
     });
   });
+
+  it('should validate correctly when the spec does not contain a definitions section', (done) => {
+    let specPath = `${__dirname}/semanticValidation/specification/definitions/definitions.json`;
+    validate.validateSpec(specPath, undefined, { consoleLogLevel: 'off' }).then((result) => {
+      console.dir(result, { depth: null });
+      assert(result.validityStatus === true, `swagger "${specPath}" contains model validation errors.`);
+      console.log(result);
+      done();
+    }).catch((err) => {
+      done(err);
+    });
+  });
 });
