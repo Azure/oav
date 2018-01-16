@@ -121,23 +121,16 @@
             "type": "string"
           },
           {
-            "name": "ResponseFilter",
+            "name": "srs",
             "in": "query",
-            "description": "A comma-delimited list of answers to include in the response. If you do not specify this parameter, the response includes all search answers for which there's relevant data.",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string",
-              "enum": [
-                "Entities",
-                "Places"
-              ],
-              "x-ms-enum": {
-                "name": "AnswerType",
-                "modelAsString": false
-              }
-            },
-            "collectionFormat": "csv"
+            "description": "Projection used in describing the bbox",
+            "required": true,
+            "default": "EPSG:4326",
+            "enum": [
+              "EPSG:4326",
+              "EPSG:3857"
+            ],
+            "type": "string"
           },
           {
             "name": "ResponseFormat",

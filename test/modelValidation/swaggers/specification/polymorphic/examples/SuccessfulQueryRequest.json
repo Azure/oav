@@ -1,7 +1,9 @@
 {
   "parameters": {
     "Ocp-Apim-Subscription-Key": "{API key}",
-    "q": "tom cruise"
+    "q": "tom cruise",
+    "SafeSearch": "Strict",
+    "srs": "EPSG:4326"
   },
   "responses": {
     "200": {
