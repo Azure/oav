@@ -1,3 +1,7 @@
+### 01/17/2018 0.4.24
+- The tool does not error on missing definitions in the swagger spec #194
+- Added support for application/octet-stream or file upload/download scenarios #192
+
 ### 01/05/2018 0.4.23
 - Addressing INVALID_TYPE issues reported by model validation due to nullable types/properties. [#155](https://github.com/Azure/oav/issues/155). In order to allow null types, we relax types to be 'oneOf' `null` or its type, for the cases where properties/models have x-nullable set or x-nullable is not defined and property is not required.
 
