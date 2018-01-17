@@ -1,0 +1,8 @@
+{
+  "parameters": {
+    "streamContents": "This is actually a byte stream. This request/response is being presented as a string for readability in the example"
+  },
+  "responses": {
+    "200": {}
+  }
+}

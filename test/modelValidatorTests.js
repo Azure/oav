@@ -307,4 +307,18 @@ describe('Model Validation', function () {
       });
     });
   });
+
+  describe('Content type - ', function () {
+    it('should pass for consumes application/octet-stream', function (done) {
+      let specPath = `${__dirname}/modelValidation/swaggers/specification/contenttype/datalake.json`;
+      validate.validateExamples(specPath, undefined, { consoleLogLevel: 'off' }).then((result) => {
+        console.dir(result, { depth: null });
+        assert(result.validityStatus === true, `swagger "${specPath}" contains model validation errors.`);
+        console.log(result);
+        done();
+      }).catch((err) => {
+        done(err);
+      });
+    });
+  });
 });
