@@ -10,10 +10,10 @@
     "https"
   ],
   "consumes": [
-    "application/json"
+    "application/octet-stream"
   ],
   "produces": [
-    "application/json"
+    "application/octet-stream"
   ],
   "paths": {
     "/open/object": {
@@ -28,6 +28,7 @@
             "$ref": "./examples/download.json"
           }
         },
+        "consumes": [],
         "produces": [
           "application/octet-stream"
         ],
@@ -53,9 +54,7 @@
             "$ref": "./examples/download.json"
           }
         },
-        "produces": [
-          "application/octet-stream"
-        ],
+        "consumes": [],
         "responses": {
           "200": {
             "description": "OK",
@@ -78,6 +77,7 @@
             "$ref": "./examples/download.json"
           }
         },
+        "consumes": [],
         "produces": [
           "application/octet-stream"
         ],
@@ -129,9 +129,6 @@
       "post": {
         "tags": [
           "Content"
-        ],
-        "consumes": [
-          "application/octet-stream"
         ],
         "operationId": "Content_ConsumeTypeFile",
         "description": "Operation to test consume application/octet-stream",
