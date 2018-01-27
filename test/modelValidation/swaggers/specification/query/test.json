@@ -1,0 +1,275 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "QueryTests",
+    "description": "Tests for query parameters"
+  },
+  "host": "management.azure.com",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [],
+  "produces": [],
+  "paths": {
+    "/query/string/encoded": {
+      "post": {
+        "tags": [
+          "Query"
+        ],
+        "operationId": "Query_StringEncoded",
+        "description": "The parameter is a query, an encoded string",
+        "x-ms-examples": {
+          "queryStringEncoded": {
+            "$ref": "./examples/string.json"
+          }
+        },
+        "parameters": [
+          {
+            "name": "hello",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "Encoded query string",
+            "x-ms-skip-url-encoding": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/query/string/notEncoded": {
+      "post": {
+        "tags": [
+          "Query"
+        ],
+        "operationId": "Query_StringNotEncoded",
+        "description": "The parameter is a query, a not encoded string",
+        "x-ms-examples": {
+          "queryStringNotEncoded": {
+            "$ref": "./examples/string.json"
+          }
+        },
+        "parameters": [
+          {
+            "name": "hello",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "Not encoded query string",
+            "x-ms-skip-url-encoding": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/query/bool/encoded": {
+      "post": {
+        "tags": [
+          "Query"
+        ],
+        "operationId": "Query_BoolEncoded",
+        "description": "The parameter is a query, an encoded bool",
+        "x-ms-examples": {
+          "queryBoolEncoded": {
+            "$ref": "./examples/bool.json"
+          }
+        },
+        "parameters": [
+          {
+            "name": "hello",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "description": "Encoded query bool",
+            "x-ms-skip-url-encoding": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/query/bool/notEncoded": {
+      "post": {
+        "tags": [
+          "Query"
+        ],
+        "operationId": "Query_BoolNotEncoded",
+        "description": "The parameter is a query, a not encoded bool",
+        "x-ms-examples": {
+          "queryBoolNotEncoded": {
+            "$ref": "./examples/bool.json"
+          }
+        },
+        "parameters": [
+          {
+            "name": "hello",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "description": "Not encoded query bool",
+            "x-ms-skip-url-encoding": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/query/array/encoded": {
+      "post": {
+        "tags": [
+          "Query"
+        ],
+        "operationId": "Query_ArrayEncoded",
+        "description": "The parameter is a query, an encoded array",
+        "x-ms-examples": {
+          "queryArrayEncoded": {
+            "$ref": "./examples/array.json"
+          }
+        },
+        "parameters": [
+          {
+            "name": "hello",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "description": "Encoded query array",
+            "x-ms-skip-url-encoding": false,
+            "collectionFormat": "csv",
+            "items": {
+              "type": "string",
+              "x-nullable": false,
+              "x-ms-enum": {
+                "name": "Hello",
+                "modelAsString": true
+              },
+              "enum": [
+                "Wake up at 3:14:16 AM",
+                "World"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/query/array/notEncoded": {
+      "post": {
+        "tags": [
+          "Query"
+        ],
+        "operationId": "Query_ArrayNotEncoded",
+        "description": "The parameter is a query, a not encoded array",
+        "x-ms-examples": {
+          "queryArrayNotEncoded": {
+            "$ref": "./examples/array.json"
+          }
+        },
+        "parameters": [
+          {
+            "name": "hello",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "description": "Encoded query array",
+            "x-ms-skip-url-encoding": true,
+            "collectionFormat": "csv",
+            "items": {
+              "type": "string",
+              "x-nullable": false,
+              "x-ms-enum": {
+                "name": "Hello",
+                "modelAsString": true
+              },
+              "enum": [
+                "Wake up at 3:14:16 AM",
+                "World"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/query/integer/encoded": {
+      "post": {
+        "tags": [
+          "Query"
+        ],
+        "operationId": "Query_IntegerEncoded",
+        "description": "The parameter is a query, an encoded integer",
+        "x-ms-examples": {
+          "queryIntegerEncoded": {
+            "$ref": "./examples/integer.json"
+          }
+        },
+        "parameters": [
+          {
+            "name": "hello",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "description": "Encoded query integer",
+            "x-ms-skip-url-encoding": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/query/integer/notEncoded": {
+      "post": {
+        "tags": [
+          "Query"
+        ],
+        "operationId": "Query_IntegerNotEncoded",
+        "description": "The parameter is a query, a not encoded integer",
+        "x-ms-examples": {
+          "queryIntegerNotEncoded": {
+            "$ref": "./examples/integer.json"
+          }
+        },
+        "parameters": [
+          {
+            "name": "hello",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "description": "Not encoded query integer",
+            "x-ms-skip-url-encoding": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {},
+  "parameters": {}
+}

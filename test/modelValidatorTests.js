@@ -321,4 +321,18 @@ describe('Model Validation', function () {
       });
     });
   });
+
+  describe('Queries - ', function () {
+    it('should pass for various query parameters', function (done) {
+      let specPath = `${__dirname}/modelValidation/swaggers/specification/query/test.json`;
+      validate.validateExamples(specPath, undefined, { consoleLogLevel: 'off' }).then((result) => {
+        console.dir(result, { depth: null });
+        assert(result.validityStatus === true, `swagger "${specPath}" contains model validation errors.`);
+        console.log(result);
+        done();
+      }).catch((err) => {
+        done(err);
+      });
+    });
+  });
 });
