@@ -1,7 +1,6 @@
 {
   "parameters": {
-    "hello": 31416,
-    "$top": 1
+    "hello": true
   },
   "responses": {
     "200": {}
