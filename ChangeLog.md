@@ -1,3 +1,6 @@
+### 01/30/2018 0.4.25
+- Fixed a typo in the variable name while resolving nullable types.
+
 ### 01/17/2018 0.4.24
 - The tool does not error on missing definitions in the swagger spec #194
 - Added support for application/octet-stream or file upload/download scenarios #192
