@@ -1,3 +1,7 @@
+### 01/31/2018 0.4.26
+- Fix all linter issues. [#201](https://github.com/Azure/oav/issues/201)
+- Add option to do case insensitive regex matches on swagger paths to the SpecValidator and LiveValidator. [#203](https://github.com/Azure/oav/issues/203)
+
 ### 01/30/2018 0.4.25
 - Fixed a typo in the variable name while resolving nullable types.
 
@@ -52,13 +56,13 @@
 ### 08/03/2017 0.4.9
  - [Live Validator] Shallow clone the azure-rest-api-spec repo.
  - [Model Validator] Improve pluggability of oav into vs-code. #143
- 
+
 ### 08/03/2017 0.4.8
  - [Live Validator] Before cloning the rest api specs repo if directory named 'repo' exists we delete it and then create an empty directory to clone repo inside it.
- 
+
 ### 07/11/2017 0.4.7
  - Fixed Live validator for reorg branch of azure-rest-api-specs #137
- 
+
 ### 07/03/2017 0.4.6
 - Fixed issue #134
 
