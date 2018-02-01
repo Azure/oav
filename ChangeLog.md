@@ -1,3 +1,6 @@
+### 01/31/2018 0.4.27
+- Updating dependency of lodash to 4.17.4.
+
 ### 01/31/2018 0.4.26
 - Fix all linter issues. [#201](https://github.com/Azure/oav/issues/201)
 - Add option to do case insensitive regex matches on swagger paths to the SpecValidator and LiveValidator. [#203](https://github.com/Azure/oav/issues/203)
