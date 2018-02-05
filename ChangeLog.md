@@ -1,3 +1,7 @@
+### 02/05/2018 0.4.29
+- Add support for live validation to support status code string along the status code number.
+- Update to use package autorest-extension-base from npm.
+
 ### 02/01/2018 0.4.28
 - Fix undefined headers issue when the spec does not define consumes values.
 
