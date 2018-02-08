@@ -1,3 +1,6 @@
+### 02/05/2018 0.4.32
+- Fix bug for resolve external references introduced part of #202.
+
 ### 02/05/2018 0.4.31
 - Bug fix for the fix made to resolve jshint issues in #202.
 
