@@ -1,3 +1,6 @@
+### 02/05/2018 0.4.31
+- Bug fix for the fix made to resolve jshint issues in #202.
+
 ### 02/05/2018 0.4.30
 - Improve matching for status code string for live validation.
 
