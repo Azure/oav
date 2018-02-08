@@ -1,3 +1,6 @@
+### 02/05/2018 0.4.30
+- Improve matching for status code string for live validation.
+
 ### 02/05/2018 0.4.29
 - Add support for live validation to support status code string along the status code number.
 - Update to use package autorest-extension-base from npm.
