@@ -266,7 +266,7 @@ describe('Live Validator', function () {
     livePaths.forEach((livePath) => {
       it(`should validate request and response for "${livePath}"`, function (done) {
         let options = {
-          "directory": "./test/liveValidation/swaggers/specification",
+          "directory": "./test/liveValidation/swaggers/specification/storage",
           "swaggerPathsPattern": "**/*.json"
         };
         let validator = new LiveValidator(options);

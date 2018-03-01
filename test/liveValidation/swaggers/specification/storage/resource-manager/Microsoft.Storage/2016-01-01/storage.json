@@ -26,9 +26,7 @@
         "operationId": "StorageAccounts_CheckNameAvailability",
         "description": "Checks that the storage account name is valid and is not already in use.",
         "x-ms-examples": {
-          "storageAccountCheckNameAvailability": {
-            "$ref": "./examples/storageAccountCheckNameAvailability.json"
-          }
+          "storageAccountCheckNameAvailability": {"$ref": "./examples/storageAccountCheckNameAvailability.json"}
         },
         "parameters": [
           {
@@ -65,9 +63,7 @@
         "operationId": "StorageAccounts_Create",
         "description": "Asynchronously creates a new storage account with the specified parameters. If an account is already created and a subsequent create request is issued with different properties, the account properties will be updated. If an account is already created and a subsequent create or update request is issued with the exact same set of properties, the request will succeed.",
         "x-ms-examples": {
-          "storageAccountCreate": {
-            "$ref": "./examples/storageAccountCreate.json"
-          }
+          "storageAccountCreate": {"$ref": "./examples/storageAccountCreate.json"}
         },
         "parameters": [
           {
@@ -122,9 +118,7 @@
         "operationId": "StorageAccounts_Delete",
         "description": "Deletes a storage account in Microsoft Azure.",
         "x-ms-examples": {
-          "storageAccountDelete": {
-            "$ref": "./examples/storageAccountDelete.json"
-          }
+          "storageAccountDelete": {"$ref": "./examples/storageAccountDelete.json"}
         },
         "parameters": [
           {
@@ -166,9 +160,7 @@
         "operationId": "StorageAccounts_GetProperties",
         "description": "Returns the properties for the specified storage account including but not limited to name, SKU name, location, and account status. The ListKeys operation should be used to retrieve storage keys.",
         "x-ms-examples": {
-          "GetProperties": {
-            "$ref": "./examples/storageAccountGetProperties.json"
-          }
+          "GetProperties": {"$ref": "./examples/storageAccountGetProperties.json"}
         },
         "parameters": [
           {
@@ -210,9 +202,7 @@
         "operationId": "StorageAccounts_Update",
         "description": "The update operation can be used to update the SKU, encryption, access tier, or tags for a storage account. It can also be used to map the account to a custom domain. Only one custom domain is supported per storage account; the replacement/change of custom domain is not supported. In order to replace an old custom domain, the old value must be cleared/unregistered before a new value can be set. The update of multiple properties is supported. This call does not change the storage keys for the account. If you want to change the storage account keys, use the regenerate keys operation. The location and name of the storage account cannot be changed after creation.",
         "x-ms-examples": {
-          "UpdateStorageAccount": {
-            "$ref": "./examples/storageAccountUpdate.json"
-          }
+          "UpdateStorageAccount": {"$ref": "./examples/storageAccountUpdate.json"}
         },
         "parameters": [
           {
@@ -265,9 +255,7 @@
         "operationId": "StorageAccounts_List",
         "description": "Lists all the storage accounts available under the subscription. Note that storage keys are not returned; use the ListKeys operation for this.",
         "x-ms-examples": {
-          "ListStorageAccounts": {
-            "$ref": "./examples/StorageAccountList.json"
-          }
+          "ListStorageAccounts": {"$ref": "./examples/storageAccountList.json"}
         },
         "parameters": [
           {
@@ -305,9 +293,7 @@
         "operationId": "StorageAccounts_ListByResourceGroup",
         "description": "Lists all the storage accounts available under the given resource group. Note that storage keys are not returned; use the ListKeys operation for this.",
         "x-ms-examples": {
-          "ListByResourceGroup": {
-            "$ref": "./examples/storageAccountListByRG.json"
-          }
+            "ListByResourceGroup": {"$ref": "./examples/storageAccountListByRG.json"}
         },
         "parameters": [
           {
@@ -345,9 +331,7 @@
         "operationId": "StorageAccounts_ListKeys",
         "description": "Lists the access keys for the specified storage account.",
         "x-ms-examples": {
-          "ListKeys": {
-            "$ref": "./examples/storageAccountListKeys.json"
-          }
+          "ListKeys": {"$ref": "./examples/storageAccountListKeys.json"}
         },
         "parameters": [
           {
@@ -391,9 +375,7 @@
         "operationId": "StorageAccounts_RegenerateKey",
         "description": "Regenerates one of the access keys for the specified storage account.",
         "x-ms-examples": {
-          "RegenerateKeys": {
-            "$ref": "./examples/storageAccountRegenerateKeys.json"
-          }
+          "RegenerateKeys": {"$ref": "./examples/storageAccountRegenerateKeys.json"}
         },
         "parameters": [
           {
@@ -446,9 +428,7 @@
         "operationId": "Usage_List",
         "description": "Gets the current usage count and the limit for the resources under the subscription.",
         "x-ms-examples": {
-          "ListUsages": {
-            "$ref": "./examples/storageAccountListUsages.json"
-          }
+          "ListUsages": {"$ref": "./examples/storageAccountListUsages.json"}
         },
         "parameters": [
           {
@@ -480,9 +460,7 @@
         },
         "type": {
           "type": "string",
-          "enum": [
-            "Microsoft.Storage/storageAccounts"
-          ]
+          "enum": [ "Microsoft.Storage/storageAccounts" ]
         }
       },
       "required": [
@@ -603,14 +581,10 @@
         "keySource": {
           "type": "string",
           "description": "The encryption keySource (provider). Possible values (case-insensitive):  Microsoft.Storage",
-          "enum": [
-            "Microsoft.Storage"
-          ]
+          "enum": [ "Microsoft.Storage" ]
         }
       },
-      "required": [
-        "keySource"
-      ],
+      "required": [ "keySource" ],
       "description": "The encryption settings on the storage account."
     },
     "StorageAccountPropertiesCreateParameters": {
