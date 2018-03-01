@@ -1,5 +1,4 @@
 ### 02/28/2018 0.4.33
-- Fix bug for optional query parameters where reporting invalid type [#220](https://github.com/Azure/oav/issues/220)
 - Don't validate pure objects.
 
 ### 02/05/2018 0.4.32
