@@ -2,7 +2,7 @@
   "liveRequest": {
     "rawResponse": false,
     "queryString": {},
-    "url": "https://management.azure.com/subscriptions/subcriptionID/providers/Microsoft.Storage/storageAccounts?api-version=2016-01-01",
+    "url": "https://management.azure.com/subscriptions/subcriptionID/providers/Microsoft.Storage/storageAccounts?$top=2&api-version=2016-01-01",
     "method": "GET",
     "headers": {
       "Content-Type": "application/json",
@@ -11,7 +11,8 @@
     },
     "body": null,
     "query": {
-      "api-version": "2016-01-01"
+      "api-version": "2016-01-01",
+      "$top": "1"
     }
   },
   "liveResponse": {
