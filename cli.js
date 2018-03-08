@@ -22,7 +22,7 @@ yargs
     alias: 'logLevel',
     describe: 'Set the logging level for console.',
     choices: ['off', 'json', 'error', 'warn', 'info', 'verbose', 'debug', 'silly'],
-    default: 'warn'
+    default: 'info'
   })
   .option('f', {
     alias: 'logFilepath',
