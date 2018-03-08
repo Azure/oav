@@ -1,3 +1,7 @@
+### 03/08/2018 0.4.34
+- Updating default output level to info.
+- Fixing issue #225, where output verbosity wasn't respected in one case. 
+
 ### 02/28/2018 0.4.33
 - Don't validate pure objects.
 
