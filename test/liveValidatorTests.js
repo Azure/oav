@@ -6,7 +6,8 @@ var assert = require('assert'),
   os = require('os'),
   glob = require('glob'),
   LiveValidator = require('../lib/validators/liveValidator.js'),
-  Constants = require('../lib/util/constants');
+  Constants = require('../lib/util/constants'),
+  utils = require('../lib/util/utils');
 
 const livePaths = glob.sync(path.join(__dirname, 'liveValidation/swaggers/**/live/*.json'));
 describe('Live Validator', function () {
@@ -254,6 +255,29 @@ describe('Live Validator', function () {
         reason = result.reason;
         assert.equal(0, operations.length);
         assert.equal(Constants.ErrorCodes.OperationNotFoundInCache.name, reason.code);
+        done();
+      }).catch((err) => {
+        assert.ifError(err);
+        done();
+      }).catch(done);
+    });
+    it('it should create an implicit default response and find it', function (done) {
+      let options = {
+        "directory": "./test/liveValidation/swaggers/specification/scenarios",
+        "swaggerPathsPattern": "**/*.json",
+        "shouldModelImplicitDefaultResponse": true
+      };
+      let apiUrl = "https://management.azure.com/subscriptions/subscriptionId/providers/Microsoft.Test/storageAccounts?api-version=2016-01-01";
+
+      let validator = new LiveValidator(options);
+      validator.initialize().then(() => {
+        // Operations to match is StorageAccounts_List
+        let operations = validator.cache['microsoft.test']['2016-01-01']['post'];
+
+        for (const operation of operations) {
+          assert(operation.responses.default);
+          assert.deepEqual(operation.responses.default.schema.properties.error, utils.CloudError);
+        }
         done();
       }).catch((err) => {
         assert.ifError(err);
