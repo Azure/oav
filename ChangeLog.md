@@ -1,6 +1,10 @@
+### 03/15/2018 0.4.35
+- Validate default responses. [#228](https://github.com/Azure/oav/issues/228)
+- Add option to model an implicit default cloud error response. [#224](https://github.com/Azure/oav/issues/224)
+
 ### 03/08/2018 0.4.34
 - Updating default output level to info.
-- Fixing issue #225, where output verbosity wasn't respected in one case. 
+- Fixing issue #225, where output verbosity wasn't respected in one case.
 
 ### 02/28/2018 0.4.33
 - Don't validate pure objects.
