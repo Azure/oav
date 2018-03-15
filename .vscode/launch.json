@@ -83,6 +83,7 @@
       "cwd": "${workspaceRoot}",
       "stopOnEntry": false,
       "args": [
+        "--no-timeouts",
         "test/modelValidatorTests.js"
       ],
       "env": {}
