@@ -1,0 +1,115 @@
+{
+  "liveRequest": {
+    "body": {
+      "location": "SoutheastAsia",
+      "tags": {
+        "RG": "rg",
+        "testTag": "1"
+      },
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "Standard_A0"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "MicrosoftWindowsServer",
+            "offer": "WindowsServer",
+            "sku": "2012-R2-Datacenter",
+            "version": "4.0.201505"
+          },
+          "osDisk": {
+            "name": "test",
+            "vhd": {
+              "uri": "https://randomuri.blob.core.windows.net/pslibtest1846/ospslibtest7802.vhd"
+            },
+            "caching": "None",
+            "createOption": "fromImage"
+          }
+        },
+        "osProfile": {
+          "computerName": "test",
+          "adminUsername": "Foo12",
+          "adminPassword": "[PLACEHOLDER]",
+          "customData": "ZWNobyAnSGVsbG8gV29ybGQn",
+          "windowsConfiguration": {
+            "provisionVMAgent": true,
+            "enableAutomaticUpdates": false,
+            "timeZone": "Pacific Standard Time",
+            "additionalUnattendContent": [
+              {
+                "passName": "oobeSystem",
+                "componentName": "Microsoft-Windows-Shell-Setup",
+                "settingName": "AutoLogon",
+                "content": "<AutoLogon><Enabled>true</Enabled><LogonCount>5</LogonCount><Username>Foo12</Username><Password><Value>[PLACEHOLDER]</Value><PlainText>true</PlainText></Password></AutoLogon>"
+              }
+            ],
+            "winRM": {
+              "listeners": [
+                {
+                  "protocol": "Http"
+                },
+                {
+                  "protocol": "Https",
+                  "certificateUrl": "https://randomkeyvault.vault.azure.net/secrets/WinRM/24c727e7449b47cb9d2f385113f59a63"
+                }
+              ]
+            }
+          },
+          "secrets": [
+            {
+              "sourceVault": {
+                "id": "/subscriptions/sub1/resourceGroups/pslibtestosprofile/providers/Microsoft.KeyVault/vaults/pslibtestkeyvault"
+              },
+              "vaultCertificates": [
+                {
+                  "certificateUrl": "https://randomkeyvault.vault.azure.net/secrets/WinRM/24c727e7449b47cb9d2f385113f59a63",
+                  "certificateStore": "My"
+                }
+              ]
+            }
+          ]
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "/subscriptions/randomsub1/resourceGroups/pslibtest9279/providers/Microsoft.Network/networkInterfaces/azsmnet504"
+            }
+          ]
+        },
+        "availabilitySet": {
+          "id": "/subscriptions/randomsub1/resourceGroups/pslibtest9279/providers/Microsoft.Compute/availabilitySets/as9002"
+        }
+      }
+    },
+    "method": "PUT",
+    "url": "/subscriptions/randomsub1/resourceGroups/pslibtest9279/providers/Microsoft.Compute/virtualMachines/vm1827?api-version=2017-12-01",
+    "headers": {
+      "Content-Type": "application/json; charset=utf-8",
+      "Content-Length": "2687",
+      "x-ms-client-request-id": "random x-ms client id",
+      "accept-language": "en-US",
+      "User-Agent": "Microsoft.Azure.Management.Compute.ComputeManagementClient/9.0.0.0"
+    }
+  },
+  "liveResponse": {
+    "body": {
+      "error": {
+        "code": "LinkedAuthorizationFailed",
+        "message": "random message"
+      }
+    },
+    "statusCode": "403",
+    "headers": {
+      "Content-Length": "628",
+      "Content-Type": "application/json; charset=utf-8",
+      "Expires": "-1",
+      "Pragma": "no-cache",
+      "x-ms-failure-cause": "gateway",
+      "x-ms-correlation-request-id": "requestid",
+      "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+      "Connection": "close",
+      "Cache-Control": "no-cache",
+      "Date": "Wed, 05 Aug 2015 23:15:01 GMT"
+    }
+  }
+}
