@@ -96,7 +96,7 @@ pipeline:
 ```
 ### Live Validation Mode
 - A **Live Validation** mode has been added to OAV with the purpose of enabling validation of live traffic.
-- Usage (here is a sample of a [request-response pair]()):
+- Usage (here is a sample of a [request-response pair](./test/sampleRequestResponsePair.json)):
 ```javascript
   const liveValidatorOptions = {
     git: {
