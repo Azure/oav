@@ -1,3 +1,6 @@
+### 04/19/2018 0.4.36
+- If enums mismatch only in casing the new error ENUM_CASE_MISMATCH will be returned.
+
 ### 03/15/2018 0.4.35
 - Validate default responses. [#228](https://github.com/Azure/oav/issues/228)
 - Add option to model an implicit default cloud error response. [#224](https://github.com/Azure/oav/issues/224)
