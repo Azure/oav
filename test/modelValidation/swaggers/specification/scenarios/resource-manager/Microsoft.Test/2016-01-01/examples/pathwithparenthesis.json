@@ -1,0 +1,8 @@
+{
+  "parameters": {
+    "parenthesis": "coolparameter"
+  },
+  "responses": {
+    "200": {}
+  }
+}

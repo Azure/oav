@@ -18,6 +18,31 @@
     "text/json"
   ],
   "paths": {
+    "/param('{parenthesis}')": {
+      "put": {
+        "operationId": "Path_WithParenthesis",
+        "description": "The path has a parameter between quotes and parenthesis",
+        "x-ms-examples": {
+          "PathWithParenthesis": {
+            "$ref": "./examples/pathwithparenthesis.json"
+          }
+        },
+        "parameters": [
+          {
+            "name": "parenthesis",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Parameter meant to be between quotes and parenthesis"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/subscriptions/{scope}/providers/Microsoft.Test/checkNameAvailability": {
       "post": {
         "tags": [
@@ -26,7 +51,9 @@
         "operationId": "StorageAccounts_CheckNameAvailability",
         "description": "Checks that the storage account name is valid and is not already in use.",
         "x-ms-examples": {
-          "storageAccountCheckNameAvailability": {"$ref": "./examples/storageAccountCheckNameAvailability.json"}
+          "storageAccountCheckNameAvailability": {
+            "$ref": "./examples/storageAccountCheckNameAvailability.json"
+          }
         },
         "parameters": [
           {
@@ -67,7 +94,9 @@
         "operationId": "StorageAccounts_pathParameterWithForwardSlashes",
         "description": "Checks that the storage account name is valid and is not already in use.",
         "x-ms-examples": {
-          "storageAccountPathParameterForwardSlash": {"$ref": "./examples/storageAccountPathParameterForwardSlash.json"}
+          "storageAccountPathParameterForwardSlash": {
+            "$ref": "./examples/storageAccountPathParameterForwardSlash.json"
+          }
         },
         "parameters": [
           {
@@ -108,7 +137,9 @@
         "operationId": "StorageAccounts_duplicateforwardslashes",
         "description": "Checks that the storage account name is valid and is not already in use.",
         "x-ms-examples": {
-          "storageAccountduplicateforwardslashes": {"$ref": "./examples/storageAccountduplicateforwardslashes.json"}
+          "storageAccountduplicateforwardslashes": {
+            "$ref": "./examples/storageAccountduplicateforwardslashes.json"
+          }
         },
         "parameters": [
           {
@@ -151,7 +182,9 @@
         "operationId": "StorageAccounts_pathParameterWithQuestionMark",
         "description": "Checks that the storage account name is valid and is not already in use.",
         "x-ms-examples": {
-          "storageAccountXmsPaths": {"$ref": "./examples/storageAccountXmsPaths.json"}
+          "storageAccountXmsPaths": {
+            "$ref": "./examples/storageAccountXmsPaths.json"
+          }
         },
         "parameters": [
           {
