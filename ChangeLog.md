@@ -1,3 +1,9 @@
+### 04/23/2018 0.4.37
+- Update dependencies.
+- Bug fixes:
+    - Path parameters can include single quotes and be evaluated succesfully.
+    - Enums with non-string values are properly evaluated.
+
 ### 04/19/2018 0.4.36
 - If enums mismatch only in casing the new error ENUM_CASE_MISMATCH will be returned.
 
