@@ -29,8 +29,8 @@ describe('Model Validation', function () {
       });
     });
 
-    it('should pass for paths with parenthesis or quotes', function (done) {
-      let operationIds = "Path_WithParenthesis";
+    it('should pass for paths with quotes', function (done) {
+      let operationIds = "Path_WithQuotes";
       validate.validateExamples(specPath, operationIds, { consoleLogLevel: 'off' }).then((result) => {
         assert(result.validityStatus === true, `swagger "${specPath}" with operation "${operationIds}" contains model validation errors.`);
         console.log(result);

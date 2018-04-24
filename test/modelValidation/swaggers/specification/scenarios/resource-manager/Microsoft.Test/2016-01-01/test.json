@@ -18,22 +18,22 @@
     "text/json"
   ],
   "paths": {
-    "/param('{parenthesis}')": {
+    "/param('{quotes}')": {
       "put": {
-        "operationId": "Path_WithParenthesis",
-        "description": "The path has a parameter between quotes and parenthesis",
+        "operationId": "Path_WithQuotes",
+        "description": "The path has a parameter between quotes",
         "x-ms-examples": {
-          "PathWithParenthesis": {
-            "$ref": "./examples/pathwithparenthesis.json"
+          "PathWithQuotes": {
+            "$ref": "./examples/pathwithquotes.json"
           }
         },
         "parameters": [
           {
-            "name": "parenthesis",
+            "name": "quotes",
             "in": "path",
             "required": true,
             "type": "string",
-            "description": "Parameter meant to be between quotes and parenthesis"
+            "description": "Parameter meant to be between quotes"
           }
         ],
         "responses": {

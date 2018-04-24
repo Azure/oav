@@ -1,6 +1,6 @@
 {
   "parameters": {
-    "parenthesis": "coolparameter"
+    "quotes": "coolparameter"
   },
   "responses": {
     "200": {}
