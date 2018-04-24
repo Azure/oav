@@ -1,0 +1,8 @@
+{
+  "parameters": {
+    "quotes": "coolparameter"
+  },
+  "responses": {
+    "200": {}
+  }
+}
