@@ -1,0 +1,8 @@
+{
+  "parameters": {
+    "hello": 5
+  },
+  "responses": {
+    "200": {}
+  }
+}

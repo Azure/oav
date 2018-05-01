@@ -1,0 +1,13 @@
+{
+  "parameters": {},
+  "responses": {
+    "200": {
+      "headers": {
+        "hello": [
+          "world",
+          "galaxy"
+        ]
+      }
+    }
+  }
+}
