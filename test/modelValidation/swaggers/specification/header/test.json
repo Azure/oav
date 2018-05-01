@@ -175,6 +175,88 @@
           }
         }
       }
+    },
+    "/header/integer/required": {
+      "post": {
+        "tags": [
+          "Header"
+        ],
+        "operationId": "Header_IntegerRequestRequired",
+        "description": "The parameter is a required header",
+        "x-ms-examples": {
+          "headerIntegerRequestRequired": {
+            "$ref": "./examples/integerReqRequired.json"
+          }
+        },
+        "parameters": [
+          {
+            "name": "hello",
+            "in": "header",
+            "required": true,
+            "type": "integer",
+            "description": "Required integer header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/header/integer/notRequired": {
+      "post": {
+        "tags": [
+          "Header"
+        ],
+        "operationId": "Header_IntegerRequestNotRequired",
+        "description": "The parameter is a not required header",
+        "x-ms-examples": {
+          "headerIntegerRequestNotRequired": {
+            "$ref": "./examples/integerReqNotRequired.json"
+          }
+        },
+        "parameters": [
+          {
+            "name": "hello",
+            "in": "header",
+            "required": false,
+            "type": "integer",
+            "description": "Not required integer header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/header/integer": {
+      "get": {
+        "tags": [
+          "Header"
+        ],
+        "operationId": "Header_IntegerResponseNotRequired",
+        "description": "Returns a header",
+        "x-ms-examples": {
+          "headerIntegerResponse": {
+            "$ref": "./examples/integerResp.json"
+          }
+        },
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "hello": {
+                "type": "integer",
+                "description": "Response integer header"
+              }
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {},
