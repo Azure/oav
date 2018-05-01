@@ -257,6 +257,97 @@
           }
         }
       }
+    },
+    "/header/array/required": {
+      "post": {
+        "tags": [
+          "Header"
+        ],
+        "operationId": "Header_ArrayRequestRequired",
+        "description": "The parameter is a required header",
+        "x-ms-examples": {
+          "headerArrayRequestRequired": {
+            "$ref": "./examples/arrayReqRequired.json"
+          }
+        },
+        "parameters": [
+          {
+            "name": "hello",
+            "in": "header",
+            "required": true,
+            "type": "array",
+            "description": "Required array header",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/header/array/notRequired": {
+      "post": {
+        "tags": [
+          "Header"
+        ],
+        "operationId": "Header_ArrayRequestNotRequired",
+        "description": "The parameter is a not required header",
+        "x-ms-examples": {
+          "headerArrayRequestNotRequired": {
+            "$ref": "./examples/arrayReqNotRequired.json"
+          }
+        },
+        "parameters": [
+          {
+            "name": "hello",
+            "in": "header",
+            "required": false,
+            "type": "array",
+            "description": "Not required array header",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/header/array": {
+      "get": {
+        "tags": [
+          "Header"
+        ],
+        "operationId": "Header_ArrayResponseNotRequired",
+        "description": "Returns a header",
+        "x-ms-examples": {
+          "headerArrayResponse": {
+            "$ref": "./examples/arrayResp.json"
+          }
+        },
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "hello": {
+                "type": "array",
+                "description": "Response array header",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {},
