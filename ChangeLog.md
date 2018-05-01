@@ -1,3 +1,6 @@
+### 05/01/2018 0.4.38
+- Bug fix: `oav extract-xmsexamples` also extracts request headers.
+
 ### 04/23/2018 0.4.37
 - Update dependencies.
 - Bug fixes:
