@@ -93,6 +93,88 @@
           }
         }
       }
+    },
+    "/header/boolean/required": {
+      "post": {
+        "tags": [
+          "Header"
+        ],
+        "operationId": "Header_BoolRequestRequired",
+        "description": "The parameter is a required header",
+        "x-ms-examples": {
+          "headerBoolRequestRequired": {
+            "$ref": "./examples/booleanReqRequired.json"
+          }
+        },
+        "parameters": [
+          {
+            "name": "hello",
+            "in": "header",
+            "required": true,
+            "type": "boolean",
+            "description": "Required boolean header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/header/boolean/notRequired": {
+      "post": {
+        "tags": [
+          "Header"
+        ],
+        "operationId": "Header_BoolRequestNotRequired",
+        "description": "The parameter is a not required header",
+        "x-ms-examples": {
+          "headerBoolRequestNotRequired": {
+            "$ref": "./examples/booleanReqNotRequired.json"
+          }
+        },
+        "parameters": [
+          {
+            "name": "hello",
+            "in": "header",
+            "required": false,
+            "type": "boolean",
+            "description": "Not required boolean header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/header/boolean": {
+      "get": {
+        "tags": [
+          "Header"
+        ],
+        "operationId": "Header_BoolResponseNotRequired",
+        "description": "Returns a header",
+        "x-ms-examples": {
+          "headerBoolResponse": {
+            "$ref": "./examples/booleanResp.json"
+          }
+        },
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "hello": {
+                "type": "boolean",
+                "description": "Response boolean header"
+              }
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {},
