@@ -348,4 +348,18 @@ describe('Model Validation', function () {
       });
     });
   });
+
+  describe('Headers - ', function () {
+    it('should pass for various header parameters', function (done) {
+      let specPath = `${__dirname}/modelValidation/swaggers/specification/header/test.json`;
+      validate.validateExamples(specPath, undefined, { consoleLogLevel: 'off' }).then((result) => {
+        console.dir(result, { depth: null });
+        assert(result.validityStatus === true, `swagger "${specPath}" contains model validation errors.`);
+        console.log(result);
+        done();
+      }).catch((err) => {
+        done(err);
+      });
+    });
+  });
 });

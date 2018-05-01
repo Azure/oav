@@ -1,0 +1,99 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "HeaderTests",
+    "description": "Tests for header parameters"
+  },
+  "host": "management.azure.com",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [],
+  "produces": [],
+  "paths": {
+    "/header/string/required": {
+      "post": {
+        "tags": [
+          "Header"
+        ],
+        "operationId": "Header_StringRequestRequired",
+        "description": "The parameter is a required header",
+        "x-ms-examples": {
+          "headerStringRequestRequired": {
+            "$ref": "./examples/stringReqRequired.json"
+          }
+        },
+        "parameters": [
+          {
+            "name": "hello",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "Required string header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/header/string/notRequired": {
+      "post": {
+        "tags": [
+          "Header"
+        ],
+        "operationId": "Header_StringRequestNotRequired",
+        "description": "The parameter is a not required header",
+        "x-ms-examples": {
+          "headerStringRequestNotRequired": {
+            "$ref": "./examples/stringReqNotRequired.json"
+          }
+        },
+        "parameters": [
+          {
+            "name": "hello",
+            "in": "header",
+            "required": false,
+            "type": "string",
+            "description": "Not required string header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/header/string": {
+      "get": {
+        "tags": [
+          "Header"
+        ],
+        "operationId": "Header_StringResponseNotRequired",
+        "description": "Returns a header",
+        "x-ms-examples": {
+          "headerStringResponse": {
+            "$ref": "./examples/stringResp.json"
+          }
+        },
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "hello": {
+                "type": "string",
+                "description": "Response string header"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {},
+  "parameters": {}
+}
