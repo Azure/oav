@@ -2,7 +2,8 @@
   "swagger": "2.0",
   "info": {
     "title": "HeaderTests",
-    "description": "Tests for header parameters"
+    "description": "Tests for header parameters",
+    "version": "1.0"
   },
   "host": "management.azure.com",
   "schemes": [
