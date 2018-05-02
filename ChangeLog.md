@@ -1,9 +1,9 @@
 ### 05/01/2018 0.4.38
-- Bug fix: `oav extract-xmsexamples` also extracts request headers.
+- Bug fix: `oav extract-xmsexamples` also extracts request headers. [#241](https://github.com/Azure/oav/pull/241)
 
 ### 04/23/2018 0.4.37
 - Update dependencies.
-- Bug fixes:
+- Bug fixes: [#238](https://github.com/Azure/oav/pull/238)
     - Path parameters can include single quotes and be evaluated succesfully.
     - Enums with non-string values are properly evaluated.
 
