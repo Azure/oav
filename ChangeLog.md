@@ -1,5 +1,6 @@
-### 05/01/2018 0.4.38
+### 05/14/2018 0.4.38
 - Bug fix: `oav extract-xmsexamples` also extracts request headers. [#241](https://github.com/Azure/oav/pull/241)
+- Bug fix: x-ms-parametrized-host is not validated correctly [#240](https://github.com/Azure/oav/issues/240)
 
 ### 04/23/2018 0.4.37
 - Update dependencies.
