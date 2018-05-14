@@ -1,0 +1,251 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "SearchServiceClient",
+    "description": "Client that can be used to manage and query indexes and documents, as well as manage other resources, on an Azure Search service.",
+    "version": "2017-11-11",
+    "x-ms-code-generation-settings": {
+      "useDateTimeOffset": true
+    }
+  },
+  "x-ms-parameterized-host": {
+    "hostTemplate": "https://{searchServiceName}.{searchDnsSuffix}",
+    "useSchemePrefix": false,
+    "parameters": [
+      {
+        "$ref": "#/parameters/SearchServiceNameParameter"
+      },
+      {
+        "$ref": "#/parameters/SearchDnsSuffixParameter"
+      }
+    ]
+  },
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/datasources('{dataSourceName}')": {
+      "put": {
+        "tags": [
+          "DataSources"
+        ],
+        "operationId": "DataSources_CreateOrUpdate",
+        "x-ms-examples": {
+          "SearchServiceCreateOrUpdateDataSource": {
+            "$ref": "./examples/SearchServiceCreateOrUpdateDataSource.json"
+          }
+        },
+        "description": "Creates a new Azure Search datasource or updates a datasource if it already exists.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/searchservice/Update-Data-Source"
+        },
+        "parameters": [
+          {
+            "name": "dataSourceName",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "The name of the datasource to create or update."
+          },
+          {
+            "name": "dataSource",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DataSource"
+            },
+            "description": "The definition of the datasource to create or update."
+          },
+          {
+            "$ref": "#/parameters/ClientRequestIdParameter"
+          },
+          {
+            "$ref": "#/parameters/IfMatchParameter"
+          },
+          {
+            "$ref": "#/parameters/IfNoneMatchParameter"
+          },
+          {
+            "$ref": "#/parameters/PreferHeaderParameter"
+          },
+          {
+            "$ref": "#/parameters/ApiVersionParameter"
+          }
+        ],
+        "x-ms-request-id": "request-id",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/DataSource"
+            }
+          },
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/DataSource"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "DataSource": {
+      "properties": {
+        "name": {
+          "externalDocs": {
+            "url": "https://docs.microsoft.com/rest/api/searchservice/Naming-rules"
+          },
+          "type": "string",
+          "description": "The name of the datasource."
+        },
+        "description": {
+          "type": "string",
+          "description": "The description of the datasource."
+        },
+        "type": {
+          "$ref": "#/definitions/DataSourceType",
+          "description": "The type of the datasource."
+        },
+        "credentials": {
+          "$ref": "#/definitions/DataSourceCredentials",
+          "description": "Credentials for the datasource."
+        },
+        "container": {
+          "$ref": "#/definitions/DataContainer",
+          "description": "The data container for the datasource."
+        },
+        "@odata.etag": {
+          "x-ms-client-name": "ETag",
+          "type": "string",
+          "description": "The ETag of the DataSource."
+        }
+      },
+      "required": [
+        "name",
+        "type",
+        "credentials",
+        "container"
+      ],
+      "description": "Represents a datasource definition in Azure Search, which can be used to configure an indexer."
+    },
+    "DataSourceType": {
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      },
+      "description": "Defines the type of an Azure Search datasource.",
+      "x-ms-external": true
+    },
+    "DataSourceCredentials": {
+      "properties": {
+        "connectionString": {
+          "externalDocs": {
+            "url": "https://docs.microsoft.com/rest/api/searchservice/Create-Data-Source"
+          },
+          "type": "string",
+          "description": "The connection string for the datasource."
+        }
+      },
+      "required": [
+        "connectionString"
+      ],
+      "description": "Represents credentials that can be used to connect to a datasource."
+    },
+    "DataContainer": {
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the table or view (for Azure SQL data source) or collection (for DocumentDB data source) that will be indexed."
+        },
+        "query": {
+          "type": "string",
+          "description": "A query that is applied to this data container. The syntax and meaning of this parameter is datasource-specific. Not supported by Azure SQL datasources."
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "description": "Represents information about the entity (such as Azure SQL table or DocumentDb collection) that will be indexed."
+    }
+  },
+  "parameters": {
+    "ClientRequestIdParameter": {
+      "name": "client-request-id",
+      "in": "header",
+      "required": false,
+      "type": "string",
+      "format": "uuid",
+      "description": "The tracking ID sent with the request to help with debugging.",
+      "x-ms-client-request-id": true,
+      "x-ms-parameter-grouping": {
+        "name": "search-request-options"
+      },
+      "x-ms-parameter-location": "method"
+    },
+    "IfMatchParameter": {
+      "name": "If-Match",
+      "in": "header",
+      "required": false,
+      "type": "string",
+      "description": "Defines the If-Match condition. The operation will be performed only if the ETag on the server matches this value.",
+      "x-ms-parameter-grouping": {
+        "name": "access-condition"
+      },
+      "x-ms-parameter-location": "method"
+    },
+    "IfNoneMatchParameter": {
+      "name": "If-None-Match",
+      "in": "header",
+      "required": false,
+      "type": "string",
+      "description": "Defines the If-None-Match condition. The operation will be performed only if the ETag on the server does not match this value.",
+      "x-ms-parameter-grouping": {
+        "name": "access-condition"
+      },
+      "x-ms-parameter-location": "method"
+    },
+    "PreferHeaderParameter": {
+      "name": "Prefer",
+      "in": "header",
+      "required": true,
+      "type": "string",
+      "enum": [
+        "return=representation"
+      ],
+      "description": "For HTTP PUT requests, instructs the service to return the created/updated resource on success.",
+      "x-ms-parameter-location": "method"
+    },
+    "ApiVersionParameter": {
+      "name": "api-version",
+      "in": "query",
+      "required": true,
+      "type": "string",
+      "description": "Client Api Version."
+    },
+    "SearchServiceNameParameter": {
+      "name": "searchServiceName",
+      "in": "path",
+      "required": true,
+      "type": "string",
+      "x-ms-skip-url-encoding": true,
+      "description": "The name of the Azure Search service.",
+      "x-ms-parameter-location": "client"
+    },
+    "SearchDnsSuffixParameter": {
+      "name": "searchDnsSuffix",
+      "in": "path",
+      "required": true,
+      "type": "string",
+      "default": "search.windows.net",
+      "x-ms-skip-url-encoding": true,
+      "description": "The DNS suffix of the Azure Search service. The default is search.windows.net.",
+      "x-ms-parameter-location": "client"
+    }
+  }
+}

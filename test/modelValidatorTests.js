@@ -149,6 +149,18 @@ describe('Model Validation', function () {
         done(err);
       });
     });
+
+    it('should validate the presence of parameters', (done) => {
+      let specPath = `${__dirname}/modelValidation/swaggers/specification/parameterizedhost/searchservice.json`;
+      validate.validateExamples(specPath, undefined, { consoleLogLevel: 'off' }).then((result) => {
+        console.dir(result, { depth: null });
+        assert(result.validityStatus === true, `swagger "${specPath}" contains model validation errors.`);
+        console.log(result);
+        done();
+      }).catch((err) => {
+        done(err);
+      });
+    });
   });
 
   describe('Nullable models - ', function () {
