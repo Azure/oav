@@ -1,6 +1,6 @@
 {
   "name": "oav",
-  "version": "0.4.38",
+  "version": "0.4.39",
   "author": {
     "name": "Microsoft Corporation",
     "email": "azsdkteam@microsoft.com",
@@ -50,9 +50,11 @@
   "bin": {
     "oav": "./cli.js"
   },
+  "files": [ "**/*.js" ],
   "scripts": {
     "tsc": "tsc",
     "test": "tsc && mocha -t 100000 --reporter min",
-    "start": "node ./lib/autorestPlugin/pluginHost.js"
+    "start": "node ./lib/autorestPlugin/pluginHost.js",
+    "prepack": "tsc"
   }
 }
