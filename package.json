@@ -50,7 +50,7 @@
   "bin": {
     "oav": "./cli.js"
   },
-  "files": [ "**/*.js" ],
+  "files": [ "**/*.js", "**/*.d.ts" ],
   "scripts": {
     "tsc": "tsc",
     "test": "tsc && mocha -t 100000 --reporter min",
