@@ -14,7 +14,7 @@ import log = require('../util/logging')
 import utils = require('../util/utils')
 import models = require('../models')
 import http = require('http')
-import PotentialOperationsResult = require('../models/potentialOperationsResult')
+import { PotentialOperationsResult } from '../models/potentialOperationsResult'
 
 /**
  * @class

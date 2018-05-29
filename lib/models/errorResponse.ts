@@ -1,4 +1,4 @@
-import LiveValidationError = require('./liveValidationError')
+import { LiveValidationError } from './liveValidationError'
 
 /**
  * @class
@@ -16,7 +16,7 @@ import LiveValidationError = require('./liveValidationError')
  * where the error/warning occurred.
  *
  */
-class ErrorResponse extends LiveValidationError {
+export class ErrorResponse extends LiveValidationError {
   constructor() {
     super();
   }
@@ -90,4 +90,3 @@ class ErrorResponse extends LiveValidationError {
   }
 }
 
-export = ErrorResponse;

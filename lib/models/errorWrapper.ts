@@ -8,7 +8,7 @@
  * regenerated.
  */
 
-import ErrorResponse = require('./errorResponse');
+import { ErrorResponse } from './errorResponse';
 
 /**
  * @class
@@ -19,7 +19,7 @@ import ErrorResponse = require('./errorResponse');
  * @member {array} [errors] An array of inner errors.
  *
  */
-class ErrorWrapper extends ErrorResponse {
+export class ErrorWrapper extends ErrorResponse {
   constructor() {
     super();
   }
@@ -107,5 +107,3 @@ class ErrorWrapper extends ErrorResponse {
     };
   }
 }
-
-export = ErrorWrapper;

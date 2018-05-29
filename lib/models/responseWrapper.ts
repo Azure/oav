@@ -5,7 +5,7 @@
  * @class
  * A Response wrapper that encapsulates basic info that can be validated for an HTTP(s) response.
  */
-class ResponseWrapper {
+export class ResponseWrapper {
   /*
    * @constructor
    * Initializes an instance of the ResponseWrapper class.
@@ -27,4 +27,3 @@ class ResponseWrapper {
     public encoding?: string) {
   }
 }
-export = ResponseWrapper

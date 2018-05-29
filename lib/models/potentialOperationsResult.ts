@@ -17,7 +17,7 @@
  * @member {LiveValidationError} Reason when potential operations were empty.
  *
  */
-class PotentialOperationsResult {
+export class PotentialOperationsResult {
   operations: any[]
   reason: any
   constructor(operations: any[], reason: any) {
@@ -27,5 +27,3 @@ class PotentialOperationsResult {
     }
   }
 }
-
-export = PotentialOperationsResult

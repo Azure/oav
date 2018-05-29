@@ -17,7 +17,7 @@
  * information.
  *
  */
-class LiveValidationError {
+export class LiveValidationError {
   constructor(public code?: string, public message?: string) {
   }
 
@@ -55,4 +55,3 @@ class LiveValidationError {
   }
 }
 
-export = LiveValidationError

@@ -24,7 +24,7 @@
  * @member {object} [body] Parsed body of the request as a JSON.
  *
  */
-class LiveRequest {
+export class LiveRequest {
   constructor() {
   }
 
@@ -82,5 +82,3 @@ class LiveRequest {
     };
   }
 }
-
-export = LiveRequest;

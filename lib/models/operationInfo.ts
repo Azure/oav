@@ -24,7 +24,7 @@
  * api-version and will be useful in preparing report.
  *
  */
-class OperationInfo {
+export class OperationInfo {
   constructor() {
   }
 
@@ -61,5 +61,3 @@ class OperationInfo {
     };
   }
 }
-
-export = OperationInfo

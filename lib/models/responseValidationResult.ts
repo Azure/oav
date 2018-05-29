@@ -24,7 +24,7 @@
  * validation.
  *
  */
-class ResponseValidationResult {
+export class ResponseValidationResult {
   constructor() {
   }
 
@@ -87,5 +87,3 @@ class ResponseValidationResult {
     }
   }
 }
-
-export = ResponseValidationResult

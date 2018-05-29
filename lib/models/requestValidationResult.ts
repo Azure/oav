@@ -24,7 +24,7 @@
  * validation.
  *
  */
-class RequestValidationResult {
+export class RequestValidationResult {
   constructor() {
   }
 
@@ -87,5 +87,3 @@ class RequestValidationResult {
     };
   }
 }
-
-export = RequestValidationResult

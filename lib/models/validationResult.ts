@@ -43,7 +43,7 @@
  * found or the input was invalid.
  *
  */
-class ValidationResult {
+export class ValidationResult {
   constructor() {
   }
 
@@ -100,5 +100,3 @@ class ValidationResult {
     }
   }
 }
-
-export = ValidationResult

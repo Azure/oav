@@ -38,7 +38,7 @@
  * when the body is a buffer.
  *
  */
-class RequestResponse {
+export class RequestResponse {
   constructor() {
   }
 
@@ -77,5 +77,3 @@ class RequestResponse {
     };
   }
 }
-
-export = RequestResponse

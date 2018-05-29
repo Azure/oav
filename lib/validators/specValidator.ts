@@ -13,7 +13,7 @@ import SpecResolver = require('./specResolver')
 import utils = require('../util/utils')
 import Constants = require('../util/constants')
 import log = require('../util/logging')
-import ResponseWrapper = require('../models/responseWrapper')
+import { ResponseWrapper } from '../models/responseWrapper'
 import ValidationResponse = require('../util/validationResponse')
 
 let ErrorCodes = Constants.ErrorCodes;

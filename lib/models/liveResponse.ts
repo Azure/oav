@@ -24,7 +24,7 @@
  * is a buffer.
  *
  */
-class LiveResponse {
+export class LiveResponse {
   constructor() {
   }
 
@@ -82,5 +82,3 @@ class LiveResponse {
     };
   }
 }
-
-export = LiveResponse
