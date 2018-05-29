@@ -108,4 +108,4 @@ class ErrorWrapper extends ErrorResponse {
   }
 }
 
-module.exports = ErrorWrapper;
+export = ErrorWrapper;

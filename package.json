@@ -32,8 +32,16 @@
     "yuml2svg": "^3.1.0"
   },
   "devDependencies": {
+    "@types/glob": "^5.0.35",
+    "@types/js-yaml": "^3.11.1",
+    "@types/json-pointer": "^1.0.30",
+    "@types/jsonpath": "^0.2.0",
+    "@types/lodash": "^4.14.109",
     "@types/mocha": "^2.2.46",
+    "@types/recursive-readdir": "^2.2.0",
     "@types/should": "^8.1.30",
+    "@types/winston": "^2.3.9",
+    "@types/yargs": "^11.0.0",
     "mocha": "^4.1.0",
     "should": "5.2.0",
     "typescript": "^2.8.3"
@@ -50,7 +58,10 @@
   "bin": {
     "oav": "./cli.js"
   },
-  "files": [ "**/*.js", "**/*.d.ts" ],
+  "files": [
+    "**/*.js",
+    "**/*.d.ts"
+  ],
   "scripts": {
     "tsc": "tsc",
     "test": "tsc && mocha -t 100000 --reporter min",

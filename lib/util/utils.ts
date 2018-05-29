@@ -1,28 +1,29 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-var fs = require('fs'),
-  execSync = require('child_process').execSync,
-  util = require('util'),
-  path = require('path'),
-  jsonPointer = require('json-pointer'),
-  YAML = require('js-yaml'),
-  log = require('./logging'),
-  request = require('request'),
-  lodash = require('lodash'),
-  http = require('http');
+import fs = require('fs')
+import { execSync } from 'child_process'
+import util = require('util')
+import path = require('path')
+import jsonPointer from 'json-pointer'
+import YAML = require('js-yaml')
+import log = require('./logging')
+import request = require('request')
+import lodash from 'lodash'
+import http = require('http')
 
 /*
  * Caches the json docs that were successfully parsed by parseJson(). This avoids, fetching them again.
  * key: docPath
  * value: parsed doc in JSON format
  */
-export let docCache: any = {};
+export let docCache: any = {}
 
 export function clearCache() {
-  docCache = {};
-  return;
-};
+  docCache = {}
+  return
+}
+
 /*
  * Removes byte order marker. This catches EF BB BF (the UTF-8 BOM)
  * because the buffer-to-string conversion in `fs.readFile()`
@@ -30,13 +31,13 @@ export function clearCache() {
  */
 export function stripBOM(content: any) {
   if (Buffer.isBuffer(content)) {
-    content = content.toString();
+    content = content.toString()
   }
   if (content.charCodeAt(0) === 0xFEFF || content.charCodeAt(0) === 0xFFFE) {
-    content = content.slice(1);
+    content = content.slice(1)
   }
-  return content;
-};
+  return content
+}
 
 /*
  * Provides a parsed JSON from the given file path or a url.
@@ -48,36 +49,39 @@ export function stripBOM(content: any) {
  */
 export function parseJson(specPath: string) {
   if (!specPath || (specPath && typeof specPath.valueOf() !== 'string')) {
-    let err = new Error('A (github) url or a local file path to the swagger spec is required and must be of type string.');
-    return Promise.reject(err);
+    let err = new Error(
+      'A (github) url or a local file path to the swagger spec is required and must be of type string.')
+    return Promise.reject(err)
   }
   if (docCache[specPath]) {
-    return Promise.resolve(docCache[specPath]);
+    return Promise.resolve(docCache[specPath])
   }
   //url
   if (specPath.match(/^http.*/ig) !== null) {
     //If the spec path is a url starting with https://github then let us auto convert it to an https://raw.githubusercontent url.
     if (specPath.startsWith('https://github')) {
-      specPath = specPath.replace(/^https:\/\/(github.com)(.*)blob\/(.*)/ig, 'https://raw.githubusercontent.com$2$3');
+      specPath = specPath.replace(
+        /^https:\/\/(github.com)(.*)blob\/(.*)/ig, 'https://raw.githubusercontent.com$2$3')
     }
-    let res = makeRequest({ url: specPath, errorOnNon200Response: true });
-    docCache[specPath] = res;
-    return res;
+    let res = makeRequest({ url: specPath, errorOnNon200Response: true })
+    docCache[specPath] = res
+    return res
   } else {
     //local filepath
     try {
-      let fileContent = stripBOM(fs.readFileSync(specPath, 'utf8'));
-      let result = parseContent(specPath, fileContent);
-      docCache[specPath] = result;
-      return Promise.resolve(result);
+      let fileContent = stripBOM(fs.readFileSync(specPath, 'utf8'))
+      let result = parseContent(specPath, fileContent)
+      docCache[specPath] = result
+      return Promise.resolve(result)
     } catch (err) {
-      let msg = `Unable to read the content or execute "JSON.parse()" on the content of file "${specPath}". The error is:\n${err}`;
-      let e = new Error(msg);
-      log.error(e);
-      return Promise.reject(e);
+      let msg =
+        `Unable to read the content or execute "JSON.parse()" on the content of file "${specPath}". The error is:\n${err}`
+      let e: any = new Error(msg)
+      log.error(e)
+      return Promise.reject(e)
     }
   }
-};
+}
 
 /*
  * Provides a parsed JSON from the given content.
@@ -89,18 +93,19 @@ export function parseJson(specPath: string) {
  * @returns {object} jsonDoc - Parsed document in JSON format.
  */
 export function parseContent(filePath: string, fileContent: string) {
-  let result = null;
+  let result = null
   if (/.*\.json$/ig.test(filePath)) {
-    result = JSON.parse(fileContent);
+    result = JSON.parse(fileContent)
   } else if (/.*\.ya?ml$/ig.test(filePath)) {
-    result = YAML.safeLoad(fileContent);
+    result = YAML.safeLoad(fileContent)
   } else {
-    let msg = `We currently support "*.json" and "*.yaml | *.yml" file formats for validating swaggers.\n` +
-      `The current file extension in "${filePath}" is not supported.`;
-    throw new Error(msg);
+    let msg =
+      `We currently support "*.json" and "*.yaml | *.yml" file formats for validating swaggers.\n` +
+      `The current file extension in "${filePath}" is not supported.`
+    throw new Error(msg)
   }
-  return result;
-};
+  return result
+}
 
 /*
  * A utility function to help us acheive stuff in the same way as async/await but with yield statement and generator functions.
@@ -109,16 +114,16 @@ export function parseContent(filePath: string, fileContent: string) {
  */
 export function run(genfun: any) {
   // instantiate the generator object
-  var gen = genfun();
+  let gen = genfun()
   // This is the async loop pattern
   function next(err?: any, answer?: any) {
-    var res;
+    let res
     if (err) {
       // if err, throw it into the wormhole
-      return gen.throw(err);
+      return gen.throw(err)
     } else {
       // if good value, send it
-      res = gen.next(answer);
+      res = gen.next(answer)
     }
     if (!res.done) {
       // if we are not at the end
@@ -128,12 +133,12 @@ export function run(genfun: any) {
       // and passing it a callback
       // that receives err, answer
       // for which we'll just use `next()`
-      res.value(next);
+      res.value(next)
     }
   }
   // Kick off the async loop
-  next();
-};
+  next()
+}
 
 /*
  * Makes a generic request. It is a wrapper on top of request.js library that provides a promise instead of a callback.
@@ -148,28 +153,29 @@ export function makeRequest(options: any) {
   var promise = new Promise(function (resolve, reject) {
     request(options, function (err: any, response: any, responseBody: any) {
       if (err) {
-        reject(err);
+        reject(err)
       }
       if (options.errorOnNon200Response && response.statusCode !== 200) {
-        var msg = `StatusCode: "${response.statusCode}", ResponseBody: "${responseBody}."`;
-        reject(new Error(msg));
+        var msg = `StatusCode: "${response.statusCode}", ResponseBody: "${responseBody}."`
+        reject(new Error(msg))
       }
-      let res = responseBody;
+      let res = responseBody
       try {
         if (typeof responseBody.valueOf() === 'string') {
-          res = parseContent(options.url, responseBody);
+          res = parseContent(options.url, responseBody)
         }
       } catch (error) {
-        let msg = `An error occurred while parsing the file ${options.url}. The error is:\n ${util.inspect(error, { depth: null })}.`;
-        let e = new Error(msg);
-        reject(e);
+        let msg =
+          `An error occurred while parsing the file ${options.url}. The error is:\n ${util.inspect(error, { depth: null })}.`
+        let e = new Error(msg)
+        reject(e)
       }
 
-      resolve(res);
-    });
-  });
-  return promise;
-};
+      resolve(res)
+    })
+  })
+  return promise
+}
 
 /*
  * Executes an array of promises sequentially. Inspiration of this method is here:
@@ -180,11 +186,11 @@ export function makeRequest(options: any) {
  * @return A chain of resolved or rejected promises
  */
 export function executePromisesSequentially(promiseFactories: any[]) {
-  let result = Promise.resolve();
+  let result = Promise.resolve()
   promiseFactories.forEach(function (promiseFactory) {
-    result = result.then(promiseFactory);
-  });
-  return result;
+    result = result.then(promiseFactory)
+  })
+  return result
 };
 
 /*
@@ -198,17 +204,17 @@ export function executePromisesSequentially(promiseFactories: any[]) {
  * @return {string} result A random string
  */
 export function generateRandomId(prefix: string, existingIds: any) {
-  let randomStr;
+  let randomStr
   while (true) {
-    randomStr = Math.random().toString(36).substr(2, 12);
+    randomStr = Math.random().toString(36).substr(2, 12)
     if (prefix && typeof prefix.valueOf() === 'string') {
-      randomStr = prefix + randomStr;
+      randomStr = prefix + randomStr
     }
     if (!existingIds || !(randomStr in existingIds)) {
-      break;
+      break
     }
   }
-  return randomStr;
+  return randomStr
 };
 
 /*
@@ -232,31 +238,31 @@ export function generateRandomId(prefix: string, existingIds: any) {
  */
 export function parseReferenceInSwagger(reference: string) {
   if (!reference || (reference && reference.trim().length === 0)) {
-    throw new Error('reference cannot be null or undefined and it must be a non-empty string.');
+    throw new Error('reference cannot be null or undefined and it must be a non-empty string.')
   }
 
-  let result: any = {};
+  let result: any = {}
   if (reference.includes('#')) {
     //local reference in the doc
     if (reference.startsWith('#/')) {
-      result.localReference = {};
-      result.localReference.value = reference;
-      result.localReference.accessorProperty = reference.slice(2).replace('/', '.');
+      result.localReference = {}
+      result.localReference.value = reference
+      result.localReference.accessorProperty = reference.slice(2).replace('/', '.')
     } else {
       //filePath+localReference
-      let segments = reference.split('#');
-      result.filePath = segments[0];
-      result.localReference = {};
-      result.localReference.value = '#' + segments[1];
-      result.localReference.accessorProperty = segments[1].slice(1).replace('/', '.');
+      let segments = reference.split('#')
+      result.filePath = segments[0]
+      result.localReference = {}
+      result.localReference.value = '#' + segments[1]
+      result.localReference.accessorProperty = segments[1].slice(1).replace('/', '.')
     }
   } else {
     //we are assuming that the string is a relative filePath
-    result.filePath = reference;
+    result.filePath = reference
   }
 
-  return result;
-};
+  return result
+}
 
 /*
  * Same as path.join(), however, it converts backward slashes to forward slashes.
@@ -272,11 +278,11 @@ export function parseReferenceInSwagger(reference: string) {
  * @return {string} resolved path
  */
 export function joinPath(...args: string[]) {
-  let finalPath = path.join(...args);
-  finalPath = finalPath.replace(/\\/gi, '/');
-  finalPath = finalPath.replace(/^(http|https):\/(.*)/gi, '$1://$2');
-  return finalPath;
-};
+  let finalPath = path.join(...args)
+  finalPath = finalPath.replace(/\\/gi, '/')
+  finalPath = finalPath.replace(/^(http|https):\/(.*)/gi, '$1://$2')
+  return finalPath
+}
 
 /*
  * Provides a parsed JSON from the given file path or a url. Same as parseJson(). However,
@@ -288,9 +294,9 @@ export function joinPath(...args: string[]) {
  * @returns {object} jsonDoc - Parsed document in JSON format.
  */
 export function parseJsonWithPathFragments(...args: string[]) {
-  let specPath = joinPath(...args);
-  return parseJson(specPath);
-};
+  let specPath = joinPath(...args)
+  return parseJson(specPath)
+}
 
 /*
  * Merges source object into the target object
@@ -304,18 +310,18 @@ export function mergeObjects(source: any, target: any) {
   Object.keys(source).forEach(function (key) {
     if (Array.isArray(source[key])) {
       if (target[key] && !Array.isArray(target[key])) {
-        throw new Error(`Cannot merge ${key} from source object into target object because the same property in target object is not (of the same type) an Array.`);
+        throw new Error(`Cannot merge ${key} from source object into target object because the same property in target object is not (of the same type) an Array.`)
       }
       if (!target[key]) {
-        target[key] = [];
+        target[key] = []
       }
-      target[key] = mergeArrays(source[key], target[key]);
+      target[key] = mergeArrays(source[key], target[key])
     } else {
-      target[key] = lodash.cloneDeep(source[key]);
+      target[key] = lodash.cloneDeep(source[key])
     }
   });
-  return target;
-};
+  return target
+}
 
 /*
  * Merges source array into the target array
@@ -327,12 +333,12 @@ export function mergeObjects(source: any, target: any) {
  */
 export function mergeArrays(source: any[], target: any[]) {
   if (!Array.isArray(target) || (!Array.isArray(source))) {
-    return target;
+    return target
   }
   source.forEach((item) => {
-    target.push(lodash.cloneDeep(item));
-  });
-  return target;
+    target.push(lodash.cloneDeep(item))
+  })
+  return target
 };
 
 /*
@@ -345,15 +351,15 @@ export function mergeArrays(source: any[], target: any[]) {
  * @returns {any} result - Returns the value that the ptr points to, in the doc.
  */
 export function getObject(doc: any, ptr: string) {
-  let result;
+  let result
   try {
-    result = jsonPointer.get(doc, ptr);
+    result = jsonPointer.get(doc, ptr)
   } catch (err) {
-    log.error(err);
-    throw err;
+    log.error(err)
+    throw err
   }
-  return result;
-};
+  return result
+}
 
 /*
  * Sets the given value at the location provided by the ptr in the given doc.
@@ -365,14 +371,14 @@ export function getObject(doc: any, ptr: string) {
  * location provided by the ptr in the doc.
  */
 export function setObject(doc: any, ptr: string, value: any) {
-  let result;
+  let result
   try {
-    result = jsonPointer.set(doc, ptr, value);
+    result = jsonPointer.set(doc, ptr, value)
   } catch (err) {
-    log.error(err);
+    log.error(err)
   }
-  return result;
-};
+  return result
+}
 
 /*
  * Removes the location pointed by the json pointer in the given doc.
@@ -381,14 +387,14 @@ export function setObject(doc: any, ptr: string, value: any) {
  * @param {string} ptr The json reference pointer.
  */
 export function removeObject(doc: any, ptr: string) {
-  let result;
+  let result
   try {
-    result = jsonPointer.remove(doc, ptr);
+    result = jsonPointer.remove(doc, ptr)
   } catch (err) {
-    log.error(err);
+    log.error(err)
   }
-  return result;
-};
+  return result
+}
 
 /**
 /*
@@ -400,22 +406,22 @@ export function removeObject(doc: any, ptr: string) {
  *
  * @returns {string} result - provider namespace from the given path.
  */
-export function getProvider(path: string) {
+export function getProvider(path?: string|null) {
   if (path === null || path === undefined || typeof path.valueOf() !== 'string' || !path.trim().length) {
-    throw new Error('path is a required parameter of type string and it cannot be an empty string.');
+    throw new Error('path is a required parameter of type string and it cannot be an empty string.')
   }
 
-  let providerRegEx = new RegExp('/providers/(\:?[^{/]+)', 'gi');
-  let result;
-  let pathMatch;
+  let providerRegEx = new RegExp('/providers/(\:?[^{/]+)', 'gi')
+  let result
+  let pathMatch
 
   // Loop over the paths to find the last matched provider namespace
   while ((pathMatch = providerRegEx.exec(path)) !== null) {
-    result = pathMatch[1];
+    result = pathMatch[1]
   }
 
-  return result;
-};
+  return result
+}
 
 /**
 /*
@@ -430,45 +436,52 @@ export function getProvider(path: string) {
  */
 export function gitClone(directory: string, url: string, branch: string) {
   if (url === null || url === undefined || typeof url.valueOf() !== 'string' || !url.trim().length) {
-    throw new Error('url is a required parameter of type string and it cannot be an empty string.');
+    throw new Error('url is a required parameter of type string and it cannot be an empty string.')
   }
 
-  if (directory === null || directory === undefined || typeof directory.valueOf() !== 'string' || !directory.trim().length) {
-    throw new Error('directory is a required parameter of type string and it cannot be an empty string.');
+  if (directory === null
+    || directory === undefined
+    || typeof directory.valueOf() !== 'string'
+    || !directory.trim().length) {
+    throw new Error('directory is a required parameter of type string and it cannot be an empty string.')
   }
 
   // If the directory exists then we assume that the repo to be cloned is already present.
   if (fs.existsSync(directory)) {
     if (fs.lstatSync(directory).isDirectory()) {
       try {
-        removeDirSync(directory);
+        removeDirSync(directory)
       } catch (err) {
-        throw new Error(`An error occurred while deleting directory ${directory}: ${util.inspect(err, { depth: null })}.`);
+        throw new Error(
+          `An error occurred while deleting directory ${directory}: ${util.inspect(err, { depth: null })}.`)
       }
     } else {
       try {
-        fs.unlinkSync(directory);
+        fs.unlinkSync(directory)
       } catch (err) {
-        throw new Error(`An error occurred while deleting file ${directory}: ${util.inspect(err, { depth: null })}.`);
+        throw new Error(
+          `An error occurred while deleting file ${directory}: ${util.inspect(err, { depth: null })}.`)
       }
     }
   }
 
   try {
-    fs.mkdirSync(directory);
+    fs.mkdirSync(directory)
   } catch (err) {
-    throw new Error(`An error occurred while creating directory ${directory}: ${util.inspect(err, { depth: null })}.`);
+    throw new Error(
+      `An error occurred while creating directory ${directory}: ${util.inspect(err, { depth: null })}.`)
   }
-
 
   try {
-    let isBranchDefined = branch !== null && branch !== undefined && typeof branch.valueOf() === 'string';
-    let cmd = isBranchDefined ? `git clone --depth=1 --branch ${branch} ${url} ${directory}` : `git clone --depth=1 ${url} ${directory}`;
-    let result = execSync(cmd, { encoding: 'utf8' });
+    let isBranchDefined = branch !== null && branch !== undefined && typeof branch.valueOf() === 'string'
+    let cmd = isBranchDefined
+      ? `git clone --depth=1 --branch ${branch} ${url} ${directory}`
+      : `git clone --depth=1 ${url} ${directory}`
+    let result = execSync(cmd, { encoding: 'utf8' })
   } catch (err) {
-    throw new Error(`An error occurred while cloning git repository: ${util.inspect(err, { depth: null })}.`);
+    throw new Error(`An error occurred while cloning git repository: ${util.inspect(err, { depth: null })}.`)
   }
-};
+}
 
 /*
  * Removes given directory recursively.
@@ -477,13 +490,13 @@ export function gitClone(directory: string, url: string, branch: string) {
 export function removeDirSync(dir: string) {
   if (fs.existsSync(dir)) {
     fs.readdirSync(dir).forEach(function (file: any) {
-      var current = dir + '/' + file;
-      if (fs.statSync(current).isDirectory()) removeDirSync(current);
-      else fs.unlinkSync(current);
-    });
-    fs.rmdirSync(dir);
+      var current = dir + '/' + file
+      if (fs.statSync(current).isDirectory()) removeDirSync(current)
+      else fs.unlinkSync(current)
+    })
+    fs.rmdirSync(dir)
   }
-};
+}
 
 /*
  * Finds the first content-type that contains "/json". Only supported Content-Types are
@@ -493,44 +506,52 @@ export function removeDirSync(dir: string) {
  * @returns {string} firstMatchedJson content-type that contains "/json".
  */
 export function getJsonContentType(consumesOrProduces: any[]) {
-  let firstMatchedJson = null;
+  let firstMatchedJson = null
   if (consumesOrProduces) {
     firstMatchedJson = consumesOrProduces.find((contentType) => {
-      return (contentType.match(/.*\/json.*/ig) !== null);
-    });
+      return (contentType.match(/.*\/json.*/ig) !== null)
+    })
   }
-  return firstMatchedJson;
-};
+  return firstMatchedJson
+}
 
 /**
  * Determines whether the given string is url encoded
  * @param {string} str - The input string to be verified.
  * @returns {boolean} result - true if str is url encoded; false otherwise.
  */
-export function isUrlEncoded(str: string) {
-  str = str || '';
-  return str !== decodeURIComponent(str);
-};
+export function isUrlEncoded(str: string): boolean {
+  str = str || ''
+  return str !== decodeURIComponent(str)
+}
 
 /**
  * Determines whether the given model is a pure (free-form) object candidate (i.e. equivalent of the C# Object type).
  * @param {object} model - The model to be verified
  * @returns {boolean} result - true if model is a pure object; false otherwise.
  */
-export function isPureObject(model: any) {
+export function isPureObject(model: any): boolean {
   if (!model) {
-    throw new Error(`model cannot be null or undefined and must be of type "object"`);
+    throw new Error(`model cannot be null or undefined and must be of type "object"`)
   }
-  if (model.type && typeof model.type.valueOf() === 'string' && model.type === 'object' && model.properties && getKeys(model.properties).length === 0) {
-    return true;
+  if (model.type
+    && typeof model.type.valueOf() === 'string'
+    && model.type === 'object'
+    && model.properties
+    && getKeys(model.properties).length === 0) {
+    return true
   } else if (!model.type && model.properties && getKeys(model.properties).length === 0) {
-    return true;
-  } else if (model.type && typeof model.type.valueOf() === 'string' && model.type === 'object' && !model.properties && !model.additionalProperties) {
-    return true;
+    return true
+  } else if (model.type
+    && typeof model.type.valueOf() === 'string'
+    && model.type === 'object'
+    && !model.properties
+    && !model.additionalProperties) {
+    return true
   } else {
-    return false;
+    return false
   }
-};
+}
 
 /**
  * Relaxes/Transforms the given entities type from a specific JSON schema primitive type (http://json-schema.org/latest/json-schema-core.html#rfc.section.4.2)
@@ -543,32 +564,35 @@ export function isPureObject(model: any) {
  */
 export function relaxEntityType(entity: any, isRequired?: boolean) {
   if (isPureObject(entity) && entity.type) {
-    delete entity.type;
+    delete entity.type
   }
-  if (entity.additionalProperties && isPureObject(entity.additionalProperties) && entity.additionalProperties.type) {
-    delete entity.additionalProperties.type;
+  if (entity.additionalProperties
+    && isPureObject(entity.additionalProperties)
+    && entity.additionalProperties.type) {
+    delete entity.additionalProperties.type
   }
-  return entity;
-};
+  return entity
+}
 
 /**
  * Relaxes/Transforms model definition like entities recursively
  */
 export function relaxModelLikeEntities(model: any) {
-  model = relaxEntityType(model);
+  model = relaxEntityType(model)
   if (model.properties) {
-    let modelProperties = model.properties;
+    let modelProperties = model.properties
 
     for (let propName of getKeys(modelProperties)) {
       if (modelProperties[propName].properties) {
-        modelProperties[propName] = relaxModelLikeEntities(modelProperties[propName]);
+        modelProperties[propName] = relaxModelLikeEntities(modelProperties[propName])
       } else {
-        modelProperties[propName] = relaxEntityType(modelProperties[propName], isPropertyRequired(propName, model));
+        modelProperties[propName] = relaxEntityType(
+          modelProperties[propName], isPropertyRequired(propName, model))
       }
     }
   }
-  return model;
-};
+  return model
+}
 
 /**
  * Relaxes the entity to be a oneOf: [the current type OR null type] if the condition is satisfied
@@ -585,9 +609,9 @@ export function allowNullType(entity: any, isPropRequired?: boolean) {
       if (entity.items) {
         // if items object contains inline properties
         if (entity.items.properties) {
-          entity.items = allowNullableTypes(entity.items);
+          entity.items = allowNullableTypes(entity.items)
         } else {
-          entity.items = allowNullType(entity.items);
+          entity.items = allowNullType(entity.items)
         }
       }
     }
@@ -595,33 +619,33 @@ export function allowNullType(entity: any, isPropRequired?: boolean) {
     // takes care of string 'false' and 'true'
     if (typeof entity['x-nullable'] === 'string') {
       if (entity['x-nullable'].toLowerCase() === 'false') {
-        entity['x-nullable'] = false;
+        entity['x-nullable'] = false
       } else if (entity['x-nullable'].toLowerCase() === 'true') {
-        entity['x-nullable'] = true;
+        entity['x-nullable'] = true
       }
     }
 
     if (shouldAcceptNullValue(entity['x-nullable'], isPropRequired)) {
-      let savedEntity = entity;
+      let savedEntity = entity
       // handling nullable parameters
       if (savedEntity.in) {
-        entity.oneOf = [{ "type": entity.type }, { "type": "null" }];
-        delete entity.type;
+        entity.oneOf = [{ "type": entity.type }, { "type": "null" }]
+        delete entity.type
       } else {
-        entity = {};
-        entity.oneOf = [savedEntity, { "type": "null" }];
+        entity = {}
+        entity.oneOf = [savedEntity, { "type": "null" }]
       }
     }
   }
 
   // if there's a $ref
   if (entity && entity["$ref"] && shouldAcceptNullValue(entity['x-nullable'], isPropRequired)) {
-    let savedEntity = entity;
-    entity = {};
-    entity.oneOf = [savedEntity, { "type": "null" }];
+    let savedEntity = entity
+    entity = {}
+    entity.oneOf = [savedEntity, { "type": "null" }]
   }
-  return entity;
-};
+  return entity
+}
 
 /** logic table to determine when to use oneOf to accept null values
 * required \ x-nullable | True               | False | Undefined
@@ -630,9 +654,9 @@ export function allowNullType(entity: any, isPropRequired?: boolean) {
 * No                    | convert to oneOf[] |       | convert to oneOf[]
 */
 export function shouldAcceptNullValue(xnullable: any, isPropRequired: any) {
-  let isPropNullable = xnullable && typeof xnullable === 'boolean';
-  return (isPropNullable === undefined && !isPropRequired) || isPropNullable;
-};
+  let isPropNullable = xnullable && typeof xnullable === 'boolean'
+  return (isPropNullable === undefined && !isPropRequired) || isPropNullable
+}
 /**
  * Relaxes/Transforms model definition to allow null values
  */
@@ -640,20 +664,21 @@ export function allowNullableTypes(model: any) {
   // process additionalProperties if present
   if (model && typeof model.additionalProperties === 'object') {
     if (model.additionalProperties.properties || model.additionalProperties.additionalProperties) {
-      model.additionalProperties = allowNullableTypes(model.additionalProperties);
+      model.additionalProperties = allowNullableTypes(model.additionalProperties)
     } else {
       // there shouldn't be more properties nesting at this point
-      model.additionalProperties = allowNullType(model.additionalProperties);
+      model.additionalProperties = allowNullType(model.additionalProperties)
     }
   }
   if (model && model.properties) {
-    let modelProperties = model.properties;
+    let modelProperties = model.properties
     for (let propName of getKeys(modelProperties)) {
       // process properties if present
       if (modelProperties[propName].properties || modelProperties[propName].additionalProperties) {
-        modelProperties[propName] = allowNullableTypes(modelProperties[propName]);
+        modelProperties[propName] = allowNullableTypes(modelProperties[propName])
       }
-      modelProperties[propName] = allowNullType(modelProperties[propName], isPropertyRequired(propName, model));
+      modelProperties[propName] = allowNullType(
+        modelProperties[propName], isPropertyRequired(propName, model))
     }
   }
 
@@ -662,51 +687,51 @@ export function allowNullableTypes(model: any) {
       if (model.items) {
         // if items object contains additional properties
         if (model.items.additionalProperties && typeof model.items.additionalProperties === 'object') {
-          if (model.items.additionalProperties.properties || model.items.additionalProperties.additionalProperties) {
-            model.items.additionalProperties = allowNullableTypes(model.items.additionalProperties);
+          if (model.items.additionalProperties.properties
+            || model.items.additionalProperties.additionalProperties) {
+            model.items.additionalProperties = allowNullableTypes(model.items.additionalProperties)
           } else {
             // there shouldn't be more properties nesting at this point
-            model.items.additionalProperties = allowNullType(model.items.additionalProperties);
+            model.items.additionalProperties = allowNullType(model.items.additionalProperties)
           }
         }
         // if items object contains inline properties
         if (model.items.properties) {
-          model.items = allowNullableTypes(model.items);
+          model.items = allowNullableTypes(model.items)
         }
         else {
-          model.items = allowNullType(model.items);
+          model.items = allowNullType(model.items)
         }
       }
     }
     // if we have a top level "object" with x-nullable set, we need to relax the model at that level
     else if (model.type == "object" && model['x-nullable']) {
-      model = allowNullType(model);
+      model = allowNullType(model)
     }
   }
 
   // if model is a parameter (contains "in" property") we want to relax the parameter
   if (model && model.in && model['x-nullable']) {
-    model = allowNullType(model, model["required"]);
+    model = allowNullType(model, model["required"])
   }
 
-  return model;
-};
+  return model
+}
 
 /**
  * Relaxes/Transforms parameter definition to allow null values for non-path parameters
  */
 export function allowNullableParams(parameter: any) {
   if (parameter["in"] && parameter["in"] === "body" && parameter["schema"]) {
-    parameter["schema"] = allowNullableTypes(parameter["schema"]);
+    parameter["schema"] = allowNullableTypes(parameter["schema"])
   }
   else {
     if (parameter["in"] && parameter["in"] !== "path") {
-      parameter = allowNullType(parameter, parameter["required"]);
+      parameter = allowNullType(parameter, parameter["required"])
     }
   }
-  return parameter;
-};
-
+  return parameter
+}
 
 /**
  * Sanitizes the file name by replacing special characters with
@@ -715,9 +740,8 @@ export function allowNullableParams(parameter: any) {
  * @returns {string} result - The sanitized string.
  */
 export function sanitizeFileName(str: string) {
-  let result = str ? str.replace(/[{}\[\]'";\(\)#@~`!%&\^\$\+=,\/\\?<>\|\*:]/ig, '').replace(/(\s+)/ig, '_') : str;
-  return result;
-};
+  return str ? str.replace(/[{}\[\]'";\(\)#@~`!%&\^\$\+=,\/\\?<>\|\*:]/ig, '').replace(/(\s+)/ig, '_') : str
+}
 
 /**
  * Gets the values of an object or returns an empty Array if the object is not defined.
@@ -726,10 +750,10 @@ export function sanitizeFileName(str: string) {
  */
 export function getValues(obj: any): any[] {
   if (obj === undefined || obj === null) {
-    return [];
+    return []
   }
-  return Object.values(obj);
-};
+  return Object.values(obj)
+}
 
 /**
  * Gets the keys of an object or returns an empty Array if the object is not defined.
@@ -738,23 +762,24 @@ export function getValues(obj: any): any[] {
  */
 export function getKeys(obj: any): string[] {
   if (obj === undefined || obj === null) {
-    return [];
+    return []
   }
 
-  return Object.keys(obj);
-};
+  return Object.keys(obj)
+}
 
 /**
  * Checks if the property is required in the model.
  */
 function isPropertyRequired(propName: any, model: any) {
-  return model.required ? model.required.some((p: any) => { return p == propName; }) : false;
+  return model.required ? model.required.some((p: any) => { return p == propName; }) : false
 }
 
 /**
  * Contains the reverse mapping of http.STATUS_CODES
  */
-export const statusCodeStringToStatusCode = lodash.invert(lodash.mapValues(http.STATUS_CODES, (value: any) => { return value.replace(/ |-/g, "").toLowerCase(); }));
+export const statusCodeStringToStatusCode = lodash.invert(
+  lodash.mapValues(http.STATUS_CODES, (value: any) => { return value.replace(/ |-/g, "").toLowerCase(); }))
 
 /**
  * Models an ARM cloud error schema.
@@ -764,7 +789,7 @@ export const CloudErrorSchema = {
   schema: {
     "$ref": "#/definitions/CloudErrorWrapper"
   }
-};
+}
 
 /**
  * Models an ARM cloud error wrapper.
@@ -777,7 +802,7 @@ export const CloudErrorWrapper = {
     }
   },
   additionalProperties: false
-};
+}
 
 /**
  * Models a Cloud Error
@@ -787,7 +812,8 @@ export const CloudError = {
   properties: {
     code: {
       type: "string",
-      description: "An identifier for the error. Codes are invariant and are intended to be consumed programmatically."
+      description:
+        "An identifier for the error. Codes are invariant and are intended to be consumed programmatically."
     },
     message: {
       type: "string",
@@ -813,4 +839,4 @@ export const CloudError = {
   },
   required: ["code", "message"],
   additionalProperties: false
-};
+}

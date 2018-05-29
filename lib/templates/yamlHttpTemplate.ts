@@ -1,58 +1,57 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-'use strict';
 import url = require('url')
 import utils = require('../util/utils')
 import HttpTemplate = require('./httpTemplate')
-import uuid = require('uuid');
+import uuid = require('uuid')
 
 class YamlHttpTemplate extends HttpTemplate {
 
   constructor(request: any, responses: any) {
-    super(request, responses);
+    super(request, responses)
   }
 
   getRequestHeaders() {
-    let result = ``;
+    let result = ``
     if (this.request.body) {
-      result += `  Content-Length: ${JSON.stringify(this.request.body).length}\n`;
+      result += `  Content-Length: ${JSON.stringify(this.request.body).length}\n`
     }
     if (this.request.headers) {
-      let headers = utils.getKeys(this.request.headers);
+      let headers = utils.getKeys(this.request.headers)
 
       for (let i = 0; i < headers.length; i++) {
-        let headerName = headers[i];
-        result += `  ${headerName}: ${this.request.headers[headerName]}`;
+        let headerName = headers[i]
+        result += `  ${headerName}: ${this.request.headers[headerName]}`
         if (i !== headers.length - 1) {
-          result += `\n`;
+          result += `\n`
         }
       }
     }
-    return result;
+    return result
   }
 
   getResponseHeaders(response: any) {
-    let result = ``;
+    let result = ``
     if (response.body) {
-      result += `    Content-Length: ${JSON.stringify(response.body).length}\n`;
+      result += `    Content-Length: ${JSON.stringify(response.body).length}\n`
     }
-    let gotContentType = false;
+    let gotContentType = false
     if (response.headers) {
-      let headers = utils.getKeys(response.headers);
+      let headers = utils.getKeys(response.headers)
       for (let i = 0; i < headers.length; i++) {
-        let headerName = headers[i];
-        if (headerName.match(/^Content-Type$/ig) !== null) gotContentType = true;
-        result += `    ${headerName}: ${response.headers[headerName]}`;
+        let headerName = headers[i]
+        if (headerName.match(/^Content-Type$/ig) !== null) gotContentType = true
+        result += `    ${headerName}: ${response.headers[headerName]}`
         if (i !== headers.length - 1) {
-          result += `\n`;
+          result += `\n`
         }
       }
     }
     if (!gotContentType) {
-      result += `    Content-Type: application/json; charset=utf-8`;
+      result += `    Content-Type: application/json; charset=utf-8`
     }
-    return result;
+    return result
   }
 
   populateRequest() {
@@ -66,13 +65,13 @@ ${this.getRequestHeaders()}
   Connection: close
 
   ${this.getRequestBody()}
-`;
-    return requestTemplate;
+`
+    return requestTemplate
   }
 
   populateResponse(response: any, responseType: any) {
-    if (!responseType) responseType = 'Response';
-    let responseGuid = uuid.v4();
+    if (!responseType) responseType = 'Response'
+    let responseGuid = uuid.v4()
     let responseTemplate = `
 #${responseType}
 response:
@@ -92,38 +91,40 @@ ${this.getResponseHeaders(response)}
     Connection: close
 
     ${this.getResponseBody(response)}
-`;
-    return responseTemplate;
+`
+    return responseTemplate
   }
 
   populateCurl() {
-    let padding = `  `;
+    let padding = `  `
     let template =
       `\n#Curl
 curl: |
   curl -X ${this.request.method} '${this.request.url}' \\\n  -H 'authorization: bearer <token>' \\${this.getCurlRequestHeaders(padding)}${this.getCurlRequestBody(padding)}
-`;
-    return template;
+`
+    return template
   }
 
   populate() {
-    let template = ``;
-    template += this.populateRequest();
-    template += this.populateCurl();
+    let template = ``
+    template += this.populateRequest()
+    template += this.populateCurl()
     if (this.responses) {
       if (this.responses.longrunning) {
         if (this.responses.longrunning.initialResponse) {
-          template += this.populateResponse(this.responses.longrunning.initialResponse, 'Initial Response');
+          template += this.populateResponse(this.responses.longrunning.initialResponse, 'Initial Response')
         }
         if (this.responses.longrunning.finalResponse) {
-          template += this.populateResponse(this.responses.longrunning.finalResponse, 'Final Response after polling is complete and successful');
+          template += this.populateResponse(
+            this.responses.longrunning.finalResponse,
+            'Final Response after polling is complete and successful')
         }
       } else {
-        template += this.populateResponse(this.responses.standard.finalResponse, 'Response');
+        template += this.populateResponse(this.responses.standard.finalResponse, 'Response')
       }
     }
-    return template;
+    return template
   }
 }
 
-module.exports = YamlHttpTemplate;
+export = YamlHttpTemplate

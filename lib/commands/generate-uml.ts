@@ -1,15 +1,15 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-var util = require('util'),
-  log = require('../util/logging'),
-  validate = require('../validate');
+import util = require('util')
+import log = require('../util/logging')
+import validate = require('../validate')
 
-exports.command = 'generate-uml <spec-path>';
+export let command = 'generate-uml <spec-path>'
 
-exports.describe = 'Generates a class diagram of the model definitions in the given swagger spec.';
+export let describe = 'Generates a class diagram of the model definitions in the given swagger spec.'
 
-exports.builder = {
+export let builder = {
   d: {
     alias: 'outputDir',
     describe: 'Output directory where the class diagram will be stored.',
@@ -42,22 +42,20 @@ exports.builder = {
     default: "TB",
     choices: ["TB", "LR", "RL"]
   }
-};
+}
 
-exports.handler = function (argv: any) {
-  log.debug(argv);
-  let specPath = argv.specPath;
-  let vOptions: any = {};
-  vOptions.consoleLogLevel = argv.logLevel;
-  vOptions.logFilepath = argv.f;
-  vOptions.shouldDisableProperties = argv.p;
-  vOptions.shouldDisableAllof = argv.a;
-  vOptions.shouldDisableRefs = argv.r;
-  vOptions.direction = argv.i;
+export let handler = function (argv: any) {
+  log.debug(argv)
+  let specPath = argv.specPath
+  let vOptions: any = {}
+  vOptions.consoleLogLevel = argv.logLevel
+  vOptions.logFilepath = argv.f
+  vOptions.shouldDisableProperties = argv.p
+  vOptions.shouldDisableAllof = argv.a
+  vOptions.shouldDisableRefs = argv.r
+  vOptions.direction = argv.i
   function execGenerateUml() {
-    return validate.generateUml(specPath, argv.d, vOptions);
+    return validate.generateUml(specPath, argv.d, vOptions)
   }
-  return execGenerateUml().catch((err: any) => { process.exitCode = 1; });
-};
-
-exports = module.exports;
+  return execGenerateUml().catch((err: any) => { process.exitCode = 1; })
+}

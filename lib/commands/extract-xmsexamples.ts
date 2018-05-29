@@ -1,15 +1,16 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-var util = require('util'),
-  log = require('../util/logging'),
-  validate = require('../validate');
+import util = require('util')
+import log = require('../util/logging')
+import validate = require('../validate')
 
-exports.command = 'extract-xmsexamples <spec-path> <recordings>';
+export let command = 'extract-xmsexamples <spec-path> <recordings>'
 
-exports.describe = 'Extracts the x-ms-examples for a given swagger from the .NET session recordings and saves them in a file.';
+export let describe =
+  'Extracts the x-ms-examples for a given swagger from the .NET session recordings and saves them in a file.'
 
-exports.builder = {
+export let builder = {
   d: {
     alias: 'outDir',
     describe: 'The output directory where the x-ms-examples files need to be stored. If not provided ' +
@@ -22,19 +23,17 @@ exports.builder = {
     boolean: true,
     default: true
   }
-};
+}
 
-exports.handler = function (argv: any) {
-  log.debug(argv);
-  let specPath = argv.specPath;
-  let recordings = argv.recordings;
-  let vOptions: any = {};
-  vOptions.consoleLogLevel = argv.logLevel;
-  vOptions.logFilepath = argv.f;
-  vOptions.output = argv.outDir;
-  vOptions.matchApiVersion = argv.matchApiVersion;
+export let handler = function (argv: any) {
+  log.debug(argv)
+  let specPath = argv.specPath
+  let recordings = argv.recordings
+  let vOptions: any = {}
+  vOptions.consoleLogLevel = argv.logLevel
+  vOptions.logFilepath = argv.f
+  vOptions.output = argv.outDir
+  vOptions.matchApiVersion = argv.matchApiVersion
 
-  return validate.extractXMsExamples(specPath, recordings, vOptions);
-};
-
-exports = module.exports;
+  return validate.extractXMsExamples(specPath, recordings, vOptions)
+}

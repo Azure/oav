@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-var Constants = {
+let Constants = {
   constraints: ['minLength', 'maxLength', 'minimum', 'maximum', 'enum', 'maxItems', 'minItems', 'uniqueItems', 'multipleOf', 'pattern'],
   xmsExamples: 'x-ms-examples',
   exampleInSpec: 'example-in-spec',
@@ -55,6 +55,6 @@ var Constants = {
   knownTitleToResourceProviders: {
     'ResourceManagementClient': 'Microsoft.Resources'
   }
-};
+}
 
-export = Constants;
+export = Constants

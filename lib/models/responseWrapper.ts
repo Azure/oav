@@ -24,7 +24,7 @@ class ResponseWrapper {
     public statusCode: number|string,
     public body: any,
     public headers: any,
-    public encoding: string) {
+    public encoding?: string) {
   }
 }
 export = ResponseWrapper

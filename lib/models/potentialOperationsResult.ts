@@ -21,9 +21,9 @@ class PotentialOperationsResult {
   operations: any[]
   reason: any
   constructor(operations: any[], reason: any) {
-    this.operations = operations || [];
+    this.operations = operations || []
     if (reason) {
-      this.reason = reason;
+      this.reason = reason
     }
   }
 }

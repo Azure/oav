@@ -1,15 +1,16 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-var util = require('util'),
-  log = require('../util/logging'),
-  validate = require('../validate');
+import util = require('util')
+import log = require('../util/logging')
+import validate = require('../validate')
 
-exports.command = 'resolve-spec <spec-path>';
+export let command = 'resolve-spec <spec-path>'
 
-exports.describe = 'Resolves the swagger spec based on the selected options like allOfs, relativePaths, examples etc.';
+export let describe =
+  'Resolves the swagger spec based on the selected options like allOfs, relativePaths, examples etc.'
 
-exports.builder = {
+export let builder = {
   a: {
     alias: 'additionalPropertiesFalse',
     describe: 'Should additionalProperties be set to false?',
@@ -64,31 +65,29 @@ exports.builder = {
     string: true,
     default: './'
   }
-};
+}
 
-exports.handler = function (argv: any) {
-  log.debug(argv);
-  let specPath = argv.specPath;
-  let vOptions: any = {};
-  vOptions.consoleLogLevel = argv.logLevel;
-  vOptions.logFilepath = argv.f;
-  vOptions.shouldResolveRelativePaths = argv.r;
-  vOptions.shouldResolveXmsExamples = argv.e;
-  vOptions.shouldResolveAllOf = argv.o;
-  vOptions.shouldSetAdditionalPropertiesFalse = argv.a;
-  vOptions.shouldResolveParameterizedHost = argv.t;
-  vOptions.shouldResolvePureObjects = argv.p;
-  vOptions.shouldResolveDiscriminator = argv.c;
-  vOptions.shouldResolveNullableTypes = argv.n;
+export let handler = function (argv: any) {
+  log.debug(argv)
+  let specPath = argv.specPath
+  let vOptions: any = {}
+  vOptions.consoleLogLevel = argv.logLevel
+  vOptions.logFilepath = argv.f
+  vOptions.shouldResolveRelativePaths = argv.r
+  vOptions.shouldResolveXmsExamples = argv.e
+  vOptions.shouldResolveAllOf = argv.o
+  vOptions.shouldSetAdditionalPropertiesFalse = argv.a
+  vOptions.shouldResolveParameterizedHost = argv.t
+  vOptions.shouldResolvePureObjects = argv.p
+  vOptions.shouldResolveDiscriminator = argv.c
+  vOptions.shouldResolveNullableTypes = argv.n
 
   function execResolve() {
     if (specPath.match(/.*composite.*/ig) !== null) {
-      return validate.resolveCompositeSpec(specPath, argv.d, vOptions);
+      return validate.resolveCompositeSpec(specPath, argv.d, vOptions)
     } else {
-      return validate.resolveSpec(specPath, argv.d, vOptions);
+      return validate.resolveSpec(specPath, argv.d, vOptions)
     }
   }
-  return execResolve().catch((err: any) => { process.exitCode = 1; });
-};
-
-exports = module.exports;
+  return execResolve().catch((err: any) => { process.exitCode = 1 })
+}

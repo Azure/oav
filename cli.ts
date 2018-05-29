@@ -1,15 +1,12 @@
 #!/usr/bin/env node
 
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License. See License.txt in the project root for license information.
+import yargs = require('yargs')
+import os = require('os')
+import log = require('./lib/util/logging')
 
-var yargs = require('yargs'),
-  os = require('os'),
-  log = require('./lib/util/logging');
-
-var defaultLogDir = log.directory;
-var logFilepath = log.filepath;
-var packageVersion = require('./package.json').version;
+let defaultLogDir = log.directory
+let logFilepath = log.filepath
+let packageVersion = require('./package.json').version
 
 yargs
   .version(packageVersion)
@@ -29,8 +26,8 @@ yargs
   })
   .global(['h', 'l', 'f'])
   .help()
-  .argv;
+  .argv
 
 if (yargs.argv._.length === 0 && yargs.argv.h === false) {
-  yargs.coerce('help', function (arg: any) { return true; }).argv;
+  yargs.coerce('help', function (arg: any) { return true; }).argv
 }

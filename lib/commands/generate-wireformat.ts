@@ -1,16 +1,16 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-'use strict';
-var util = require('util'),
-  log = require('../util/logging'),
-  validate = require('../validate');
+import util = require('util')
+import log = require('../util/logging')
+import validate = require('../validate')
 
-exports.command = 'generate-wireformat <spec-path>';
+export let command = 'generate-wireformat <spec-path>'
 
-exports.describe = 'Transforms the x-ms-examples for a given operation into raw request/response format and saves them in a markdown file.';
+export let describe =
+  'Transforms the x-ms-examples for a given operation into raw request/response format and saves them in a markdown file.'
 
-exports.builder = {
+export let builder = {
   d: {
     alias: 'outDir',
     describe: 'The output directory where the raw request/response markdown files need to be stored. If not provided and if the spec-path is a ' +
@@ -31,26 +31,24 @@ exports.builder = {
       'generate wireformat in a yaml doc. Default is a markdown doc.',
     boolean: true
   }
-};
+}
 
-exports.handler = function (argv: any) {
-  log.debug(argv);
-  let specPath = argv.specPath;
-  let operationIds = argv.operationIds;
-  let outDir = argv.outDir;
-  let vOptions: any = {};
-  let emitYaml = argv.inYaml;
-  vOptions.consoleLogLevel = argv.logLevel;
-  vOptions.logFilepath = argv.f;
+export let handler = function (argv: any) {
+  log.debug(argv)
+  let specPath = argv.specPath
+  let operationIds = argv.operationIds
+  let outDir = argv.outDir
+  let vOptions: any = {}
+  let emitYaml = argv.inYaml
+  vOptions.consoleLogLevel = argv.logLevel
+  vOptions.logFilepath = argv.f
 
   function execWireFormat() {
     if (specPath.match(/.*composite.*/ig) !== null) {
-      return validate.generateWireFormatInCompositeSpec(specPath, outDir, emitYaml, vOptions);
+      return validate.generateWireFormatInCompositeSpec(specPath, outDir, emitYaml, vOptions)
     } else {
-      return validate.generateWireFormat(specPath, outDir, emitYaml, operationIds, vOptions);
+      return validate.generateWireFormat(specPath, outDir, emitYaml, operationIds, vOptions)
     }
   }
-  return execWireFormat().catch((err: any) => { process.exitCode = 1; });
-};
-
-exports = module.exports;
+  return execWireFormat().catch((err: any) => { process.exitCode = 1 })
+}
