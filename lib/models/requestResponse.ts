@@ -78,4 +78,4 @@ class RequestResponse {
   }
 }
 
-module.exports = RequestResponse;
+export = RequestResponse

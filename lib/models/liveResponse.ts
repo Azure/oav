@@ -83,4 +83,4 @@ class LiveResponse {
   }
 }
 
-module.exports = LiveResponse;
+export = LiveResponse

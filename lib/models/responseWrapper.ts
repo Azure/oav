@@ -27,4 +27,4 @@ class ResponseWrapper {
     public encoding: string) {
   }
 }
-export = ResponseWrapper;
+export = ResponseWrapper

@@ -62,4 +62,4 @@ class OperationInfo {
   }
 }
 
-module.exports = OperationInfo;
+export = OperationInfo

@@ -88,4 +88,4 @@ class ResponseValidationResult {
   }
 }
 
-module.exports = ResponseValidationResult;
+export = ResponseValidationResult

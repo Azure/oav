@@ -28,4 +28,4 @@ class PotentialOperationsResult {
   }
 }
 
-module.exports = PotentialOperationsResult;
+export = PotentialOperationsResult

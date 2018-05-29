@@ -12,14 +12,26 @@
 /* jshint forin:false */
 /* jshint noempty:false */
 
-export const LiveRequest = require('./liveRequest');
-export const LiveResponse = require('./liveResponse');
-export const RequestResponse = require('./requestResponse');
-export const OperationInfo = require('./operationInfo');
-export const LiveValidationError = require('./liveValidationError');
-export const ErrorResponse = require('./errorResponse');
-export const ErrorWrapper = require('./errorWrapper');
-export const RequestValidationResult = require('./requestValidationResult');
-export const ResponseValidationResult = require('./responseValidationResult');
-export const ValidationResult = require('./validationResult');
-export const PotentialOperationsResult = require('./potentialOperationsResult');
+import liveRequest = require('./liveRequest')
+import liveResponse = require('./liveResponse')
+import requestResponse = require('./requestResponse')
+import operationInfo = require('./operationInfo')
+import liveValidationError = require('./liveValidationError')
+import errorResponse = require('./errorResponse')
+import errorWrapper = require('./errorWrapper')
+import requestValidationResult = require('./requestValidationResult')
+import responseValidationResult = require('./responseValidationResult')
+import validationResult = require('./validationResult')
+import potentialOperationsResult = require('./potentialOperationsResult')
+
+export const LiveRequest = liveRequest
+export const LiveResponse = liveResponse
+export const RequestResponse = requestResponse
+export const OperationInfo = operationInfo
+export const LiveValidationError = liveValidationError
+export const ErrorResponse = errorResponse
+export const ErrorWrapper = errorWrapper
+export const RequestValidationResult = requestValidationResult
+export const ResponseValidationResult = responseValidationResult
+export const ValidationResult = validationResult
+export const PotentialOperationsResult = potentialOperationsResult

@@ -83,4 +83,4 @@ class LiveRequest {
   }
 }
 
-module.exports = LiveRequest;
+export = LiveRequest;

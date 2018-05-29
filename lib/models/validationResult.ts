@@ -101,4 +101,4 @@ class ValidationResult {
   }
 }
 
-module.exports = ValidationResult;
+export = ValidationResult

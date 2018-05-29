@@ -55,4 +55,4 @@ class LiveValidationError {
   }
 }
 
-export = LiveValidationError;
+export = LiveValidationError
