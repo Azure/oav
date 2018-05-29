@@ -5,7 +5,7 @@ import url = require('url')
 import uuid = require('uuid')
 import utils = require('../util/utils')
 
-class HttpTemplate {
+export class HttpTemplate {
 
   constructor(public request: any, public responses: any) {
   }
@@ -64,5 +64,3 @@ class HttpTemplate {
     return body
   }
 }
-
-export = HttpTemplate

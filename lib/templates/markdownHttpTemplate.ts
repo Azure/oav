@@ -2,11 +2,11 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import url = require('url')
-import HttpTemplate = require('./httpTemplate')
+import { HttpTemplate } from './httpTemplate'
 import uuid = require('uuid')
 import utils = require('../util/utils')
 
-class MarkdownHttpTemplate extends HttpTemplate {
+export class MarkdownHttpTemplate extends HttpTemplate {
 
   constructor(request: any, responses: any) {
     super(request, responses)
@@ -132,5 +132,3 @@ curl -X ${this.request.method} '${this.request.url}' \\\n-H 'authorization: bear
     return template
   }
 }
-
-export = MarkdownHttpTemplate

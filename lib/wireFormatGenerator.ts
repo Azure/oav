@@ -13,8 +13,8 @@ let HttpRequest = msRest.WebResource
 import log = require('./util/logging')
 import SpecResolver = require('./validators/specResolver')
 import { ResponseWrapper } from './models/responseWrapper'
-import MarkdownHttpTemplate = require('./templates/markdownHttpTemplate')
-import YamlHttpTemplate = require('./templates/yamlHttpTemplate')
+import { MarkdownHttpTemplate } from './templates/markdownHttpTemplate'
+import { YamlHttpTemplate } from './templates/yamlHttpTemplate'
 import Constants = require('./util/constants')
 
 const ErrorCodes = Constants.ErrorCodes
