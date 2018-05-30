@@ -1,6 +1,6 @@
 {
   "name": "oav",
-  "version": "0.4.38",
+  "version": "0.4.39",
   "author": {
     "name": "Microsoft Corporation",
     "email": "azsdkteam@microsoft.com",
@@ -32,11 +32,11 @@
     "yuml2svg": "^3.1.0"
   },
   "devDependencies": {
-    "jshint": "2.9.4",
+    "@types/mocha": "^2.2.46",
+    "@types/should": "^8.1.30",
     "mocha": "^4.1.0",
     "should": "5.2.0",
-    "@types/mocha": "^2.2.46",
-    "@types/should": "^8.1.30"
+    "typescript": "^2.8.3"
   },
   "homepage": "https://github.com/azure/oav",
   "repository": {
@@ -50,9 +50,15 @@
   "bin": {
     "oav": "./cli.js"
   },
+  "files": [
+    "**/*.js",
+    "**/*.d.ts"
+  ],
+  "types": "**/*.d.ts",
   "scripts": {
-    "jshint": "jshint lib --reporter=jslint",
-    "test": "npm -s run-script jshint && mocha -t 100000 --reporter min",
-    "start": "node ./lib/autorestPlugin/pluginHost.js"
+    "build": "tsc",
+    "test": "tsc && mocha -t 100000 --reporter min",
+    "start": "node ./lib/autorestPlugin/pluginHost.js",
+    "prepack": "npm install && tsc"
   }
 }
