@@ -4,7 +4,7 @@
 import JsonRefs = require('json-refs')
 import fs = require('fs')
 import path = require('path')
-import utils = require('./util/utils')
+import * as utils from './util/utils'
 import Sway = require('sway')
 import msRest = require('ms-rest')
 

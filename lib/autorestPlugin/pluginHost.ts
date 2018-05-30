@@ -7,7 +7,7 @@ import vscodeJsonRpc = require("vscode-jsonrpc")
 import linq = require('linq')
 import jsonPath = require('jsonpath')
 import yaml = require("js-yaml")
-import utils = require("../util/utils")
+import * as utils from "../util/utils"
 import { log } from '../util/logging'
 import SpecValidator = require('../validators/specValidator')
 import extensionBase = require('@microsoft.azure/autorest-extension-base')

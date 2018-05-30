@@ -7,7 +7,7 @@ import os = require('os')
 import glob = require('glob')
 import LiveValidator = require('../lib/validators/liveValidator.js')
 import { Constants } from '../lib/util/constants'
-import utils = require('../lib/util/utils');
+import * as utils from '../lib/util/utils'
 
 const livePaths = glob.sync(path.join(__dirname, 'liveValidation/swaggers/**/live/*.json'))
 describe('Live Validator', function () {

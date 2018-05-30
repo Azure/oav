@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import assert = require('assert')
-import utils = require('../lib/util/utils.js')
+import * as utils from '../lib/util/utils.js'
 
 describe('Utility functions', function () {
   describe('Get Provider', function () {

@@ -4,7 +4,7 @@
 import util = require('util')
 import JsonRefs = require('json-refs')
 import yuml2svg = require('yuml2svg')
-import utils = require('./util/utils')
+import * as utils from './util/utils'
 import { Constants } from './util/constants'
 import { log } from './util/logging'
 

@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import validate = require('./lib/validate')
-import utils = require('./lib/util/utils')
+import * as utils from './lib/util/utils'
 
 // Easy to use methods from validate.js
 export let getDocumentsFromCompositeSwagger = validate.getDocumentsFromCompositeSwagger;

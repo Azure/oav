@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import url = require('url')
-import utils = require('../util/utils')
+import * as utils from '../util/utils'
 import { HttpTemplate } from './httpTemplate'
 import uuid = require('uuid')
 

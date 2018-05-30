@@ -3,7 +3,7 @@
 
 import url = require('url')
 import uuid = require('uuid')
-import utils = require('../util/utils')
+import * as utils from '../util/utils'
 
 export class HttpTemplate {
 
