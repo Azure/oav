@@ -10,6 +10,9 @@
     "editor.tabSize": 2,
     "editor.detectIndentation": false
   },
+  "[typescript]": {
+    "editor.tabSize": 2,
+  },
   "[json]": {
     "editor.formatOnSave": true,
     "editor.formatOnPaste": true,
