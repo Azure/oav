@@ -22,7 +22,7 @@ let ErrorCodes = Constants.ErrorCodes;
  * @class
  * Performs semantic and data validation of the given swagger spec.
  */
-class SpecValidator {
+export class SpecValidator {
 
   specPath: string
 
@@ -1019,5 +1019,3 @@ class SpecValidator {
   }
 
 }
-
-export = SpecValidator

@@ -8,7 +8,7 @@ import msrestazure = require('ms-rest-azure')
 import { ResourceManagementClient } from 'azure-arm-resource'
 import { log } from './util/logging'
 import * as utils from './util/utils'
-import SpecValidator = require('./validators/specValidator')
+import { SpecValidator } from './validators/specValidator'
 import WireFormatGenerator = require('./wireFormatGenerator')
 import XMsExampleExtractor = require('./xMsExampleExtractor')
 import { SpecResolver } from './validators/specResolver'

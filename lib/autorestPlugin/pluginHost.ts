@@ -9,7 +9,7 @@ import jsonPath = require('jsonpath')
 import yaml = require("js-yaml")
 import * as utils from "../util/utils"
 import { log } from '../util/logging'
-import SpecValidator = require('../validators/specValidator')
+import { SpecValidator } from '../validators/specValidator'
 import extensionBase = require('@microsoft.azure/autorest-extension-base')
 
 const openAPIDocUrl = "https://github.com/Azure/oav"

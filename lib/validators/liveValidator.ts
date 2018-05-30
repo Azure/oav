@@ -8,7 +8,7 @@ import url = require('url')
 import _ = require('lodash')
 import glob = require('glob')
 import msRest = require('ms-rest')
-import SpecValidator = require('./specValidator')
+import { SpecValidator } from './specValidator'
 import { Constants } from '../util/constants'
 import { log } from '../util/logging'
 import * as utils from '../util/utils'
