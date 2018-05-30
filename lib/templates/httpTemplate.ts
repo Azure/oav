@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import url = require('url')
-import uuid = require('uuid')
+import * as url from 'url'
+// import uuid = require('uuid')
 import * as utils from '../util/utils'
 
 export class HttpTemplate {

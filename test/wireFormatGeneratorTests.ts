@@ -1,7 +1,7 @@
-import should = require('should')
-import path = require('path')
-import glob = require('glob')
-import jsYaml = require('js-yaml')
+import * as should from 'should'
+import * as path from 'path'
+import * as glob from 'glob'
+import * as jsYaml from 'js-yaml'
 
 const yamlPaths = glob.sync(path.join(__dirname, 'swaggers/**/yaml/*.yml'))
 

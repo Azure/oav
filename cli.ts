@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-import yargs = require('yargs')
-import os = require('os')
+import * as yargs from 'yargs'
+import * as os from 'os'
 import { log } from './lib/util/logging'
 
 let defaultLogDir = log.directory

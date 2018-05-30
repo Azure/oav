@@ -1,6 +1,6 @@
-import _ = require('lodash')
-import path = require('path')
-import JsonRefs = require('json-refs')
+import * as _ from 'lodash'
+import * as path from 'path'
+import * as JsonRefs from 'json-refs'
 import * as utils from '../util/utils'
 import { Constants } from '../util/constants'
 import { log } from '../util/logging'

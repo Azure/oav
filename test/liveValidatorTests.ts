@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import assert = require('assert')
-import path = require('path')
-import os = require('os')
-import glob = require('glob')
+import assert from 'assert'
+import * as path from 'path'
+import * as os from 'os'
+import * as glob from 'glob'
 import { LiveValidator } from '../lib/validators/liveValidator.js'
 import { Constants } from '../lib/util/constants'
 import * as utils from '../lib/util/utils'

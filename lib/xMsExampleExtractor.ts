@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import util = require('util')
-import fs = require('fs')
-import pathlib = require('path')
-import recursive = require('recursive-readdir')
+import * as util from 'util'
+import * as fs from 'fs'
+import * as pathlib from 'path'
+import * as recursive from 'recursive-readdir'
 import * as utils from './util/utils'
 import { log } from './util/logging'
 

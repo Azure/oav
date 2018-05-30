@@ -1,19 +1,19 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import util = require('util')
-import path = require('path')
-import os = require('os')
-import url = require('url')
-import _ = require('lodash')
-import glob = require('glob')
-import msRest = require('ms-rest')
+import * as util from 'util'
+import * as path from 'path'
+import * as os from 'os'
+import * as url from 'url'
+import * as _ from 'lodash'
+import * as glob from 'glob'
+import * as msRest from 'ms-rest'
 import { SpecValidator } from './specValidator'
 import { Constants } from '../util/constants'
 import { log } from '../util/logging'
 import * as utils from '../util/utils'
-import models = require('../models')
-import http = require('http')
+import * as models from '../models'
+import * as http from 'http'
 import { PotentialOperationsResult } from '../models/potentialOperationsResult'
 
 /**

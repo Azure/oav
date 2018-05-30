@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import JsonRefs = require('json-refs')
-import fs = require('fs')
-import path = require('path')
+import * as JsonRefs from 'json-refs'
+import * as fs from 'fs'
+import * as path from 'path'
 import * as utils from './util/utils'
-import Sway = require('sway')
-import msRest = require('ms-rest')
+import * as Sway from 'sway'
+import * as msRest from 'ms-rest'
 
 let HttpRequest = msRest.WebResource
 

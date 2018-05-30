@@ -3,14 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import vscodeJsonRpc = require("vscode-jsonrpc")
-import linq = require('linq')
-import jsonPath = require('jsonpath')
-import yaml = require("js-yaml")
+// import vscodeJsonRpc = require("vscode-jsonrpc")
+import * as linq from 'linq'
+import * as jsonPath from 'jsonpath'
+import * as yaml from "js-yaml"
 import * as utils from "../util/utils"
 import { log } from '../util/logging'
 import { SpecValidator } from '../validators/specValidator'
-import extensionBase = require('@microsoft.azure/autorest-extension-base')
+import * as extensionBase from '@microsoft.azure/autorest-extension-base'
 
 const openAPIDocUrl = "https://github.com/Azure/oav"
 

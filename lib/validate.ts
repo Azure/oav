@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import fs = require('fs')
-import path = require('path')
-import msrest = require('ms-rest')
-import msrestazure = require('ms-rest-azure')
+import * as fs from 'fs'
+import * as path from 'path'
+import * as msrest from 'ms-rest'
+import * as msrestazure from 'ms-rest-azure'
 import { ResourceManagementClient } from 'azure-arm-resource'
 import { log } from './util/logging'
 import * as utils from './util/utils'

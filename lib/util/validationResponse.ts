@@ -1,4 +1,4 @@
-import pointer = require('json-pointer')
+import * as pointer from 'json-pointer'
 
 class foo{
   constructor(

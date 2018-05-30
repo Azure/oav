@@ -1,16 +1,16 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import fs = require('fs')
+import * as fs from 'fs'
 import { execSync } from 'child_process'
-import util = require('util')
-import path = require('path')
-import jsonPointer from 'json-pointer'
-import YAML = require('js-yaml')
+import * as util from 'util'
+import * as path from 'path'
+import * as jsonPointer from 'json-pointer'
+import * as YAML from 'js-yaml'
 import { log } from './logging'
 import request = require('request')
-import lodash from 'lodash'
-import http = require('http')
+import * as lodash from 'lodash'
+import * as http from 'http'
 
 /*
  * Caches the json docs that were successfully parsed by parseJson(). This avoids, fetching them again.

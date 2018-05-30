@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import util = require('util')
+// import util = require('util')
 import { log } from '../util/logging'
-import validate = require('../validate')
+import * as validate from '../validate'
 
 export let command = 'generate-uml <spec-path>'
 

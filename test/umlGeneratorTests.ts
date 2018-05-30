@@ -1,6 +1,6 @@
-import assert = require('assert')
-import validate = require('../lib/validate')
-import fs = require('fs')
+import assert from 'assert'
+import * as validate from '../lib/validate'
+import * as fs from 'fs'
 
 const specPath = `${__dirname}/modelValidation/swaggers/specification/polymorphic/EntitySearch.json`
 

@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import util = require('util')
-import JsonRefs = require('json-refs')
+// import util = require('util')
+// import JsonRefs = require('json-refs')
 import yuml2svg = require('yuml2svg')
 import * as utils from './util/utils'
 import { Constants } from './util/constants'

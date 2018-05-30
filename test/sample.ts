@@ -2,9 +2,9 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 //Sample standalone script to call live validator.
-import assert = require('assert')
-import path = require('path')
-import os = require('os')
+import assert from 'assert'
+import * as path from 'path'
+import * as os from 'os'
 import { LiveValidator } from '../lib/validators/liveValidator.js'
 import { Constants } from '../lib/util/constants'
 
