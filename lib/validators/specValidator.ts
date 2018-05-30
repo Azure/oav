@@ -11,7 +11,7 @@ let HttpRequest = msRest.WebResource
 
 import SpecResolver = require('./specResolver')
 import utils = require('../util/utils')
-import Constants = require('../util/constants')
+import { Constants } from '../util/constants'
 import log = require('../util/logging')
 import { ResponseWrapper } from '../models/responseWrapper'
 import ValidationResponse = require('../util/validationResponse')

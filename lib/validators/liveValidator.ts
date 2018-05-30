@@ -9,7 +9,7 @@ import _ = require('lodash')
 import glob = require('glob')
 import msRest = require('ms-rest')
 import SpecValidator = require('./specValidator')
-import Constants = require('../util/constants')
+import { Constants } from '../util/constants'
 import log = require('../util/logging')
 import utils = require('../util/utils')
 import models = require('../models')

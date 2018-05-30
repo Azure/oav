@@ -15,7 +15,7 @@ import SpecResolver = require('./validators/specResolver')
 import { ResponseWrapper } from './models/responseWrapper'
 import { MarkdownHttpTemplate } from './templates/markdownHttpTemplate'
 import { YamlHttpTemplate } from './templates/yamlHttpTemplate'
-import Constants = require('./util/constants')
+import { Constants } from './util/constants'
 
 const ErrorCodes = Constants.ErrorCodes
 

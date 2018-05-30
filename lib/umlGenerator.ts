@@ -5,7 +5,7 @@ import util = require('util')
 import JsonRefs = require('json-refs')
 import yuml2svg = require('yuml2svg')
 import utils = require('./util/utils')
-import Constants = require('./util/constants')
+import { Constants } from './util/constants'
 import log = require('./util/logging')
 
 let ErrorCodes = Constants.ErrorCodes;

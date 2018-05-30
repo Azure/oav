@@ -2,7 +2,7 @@ import _ = require('lodash')
 import path = require('path')
 import JsonRefs = require('json-refs')
 import utils = require('../util/utils')
-import Constants = require('../util/constants')
+import { Constants } from '../util/constants'
 import log = require('../util/logging')
 
 let ErrorCodes = Constants.ErrorCodes
