@@ -54,6 +54,7 @@
     "**/*.js",
     "**/*.d.ts"
   ],
+  "types": "**/*.d.ts",
   "scripts": {
     "build": "tsc",
     "test": "tsc && mocha -t 100000 --reporter min",
