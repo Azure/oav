@@ -14,7 +14,7 @@ let currentLogFile: any
  * Provides current time in custom format that will be used in naming log files. Example:'20140820_151113'
  * @return {string} Current time in a custom string format
  */
-function getTimeStamp() {
+function getTimeStamp(): string {
   // We pad each value so that sorted directory listings show the files in chronological order
   function pad(number: any) {
     if (number < 10) {
@@ -34,7 +34,7 @@ function getTimeStamp() {
     pad(now.getSeconds())
 }
 
-let customLogLevels = {
+const customLogLevels = {
   off: 0,
   json: 1,
   error: 2,
@@ -51,7 +51,7 @@ export type ILogger = winston.LoggerInstance & {
   directory: any
 }
 
-export let log : ILogger = new (winston.Logger)({
+export const log : ILogger = new (winston.Logger)({
   transports: [
     new (winston.transports.Console)({
       level: 'warn',

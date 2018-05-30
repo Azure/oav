@@ -2,7 +2,6 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import * as url from 'url'
-// import uuid = require('uuid')
 import * as utils from '../util/utils'
 
 export class HttpTemplate {
@@ -10,7 +9,7 @@ export class HttpTemplate {
   constructor(public request: any, public responses: any) {
   }
 
-  getHost() {
+  getHost(): string|undefined {
     let result: string|undefined = 'management.azure.com'
     if (this.request.url) {
       result = url.parse(this.request.url).host
@@ -18,7 +17,7 @@ export class HttpTemplate {
     return result
   }
 
-  getCurlRequestHeaders(padding?: any) {
+  getCurlRequestHeaders(padding?: any): string {
     let result = ``
     if (!padding) padding = ``
     if (this.request.body) {
@@ -35,7 +34,7 @@ export class HttpTemplate {
     return result
   }
 
-  getRequestBody() {
+  getRequestBody(): string {
     let body = ``
     if (this.request && this.request.body !== null && this.request.body !== undefined) {
       body = JSON.stringify(this.request.body)
@@ -46,7 +45,7 @@ export class HttpTemplate {
   //The format for request body in Curl has been inspired from the following links:
   // - https://stackoverflow.com/questions/34847981/curl-with-multiline-of-json
   // - https://ok-b.org/t/34847981/curl-with-multiline-of-json
-  getCurlRequestBody(padding?: any) {
+  getCurlRequestBody(padding?: any): string {
     let body = ``
     if (!padding) padding = ``
     if (this.request && this.request.body !== null && this.request.body !== undefined) {
@@ -56,7 +55,7 @@ export class HttpTemplate {
     return body
   }
 
-  getResponseBody(response: any) {
+  getResponseBody(response: any): string {
     let body = ``
     if (response && response.body !== null && response.body !== undefined) {
       body = JSON.stringify(response.body)

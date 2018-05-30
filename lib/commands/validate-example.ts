@@ -5,11 +5,11 @@
 import { log } from '../util/logging'
 import * as validate from '../validate'
 
-export let command = 'validate-example <spec-path>'
+export const command = 'validate-example <spec-path>'
 
-export let describe = 'Performs validation of x-ms-examples and examples present in the spec.'
+export const describe = 'Performs validation of x-ms-examples and examples present in the spec.'
 
-export let builder = {
+export const builder = {
   o: {
     alias: 'operationIds',
     describe: 'A comma separated string of operationIds for which the examples ' +
@@ -19,7 +19,7 @@ export let builder = {
   }
 }
 
-export let handler = function (argv: any) {
+export function handler(argv: any) {
   log.debug(argv)
   let specPath = argv.specPath
   let operationIds = argv.operationIds

@@ -117,7 +117,7 @@ export class SpecResolver {
    * Merges the x-ms-paths object into the paths object in swagger spec. The method assumes that the
    * paths present in "x-ms-paths" and "paths" are unique. Hence it does a simple union.
    */
-  unifyXmsPaths() {
+  unifyXmsPaths(): Promise<this> {
     let self = this
     //unify x-ms-paths into paths
     let xmsPaths = self.specInJson['x-ms-paths']
@@ -136,7 +136,7 @@ export class SpecResolver {
    * resolving the allof is present in any model definition and then setting additionalProperties
    * to false if it is not previously set to true or an object in that definition.
    */
-  resolve() {
+  resolve(): Promise<any> {
     let self = this
     return self.unifyXmsPaths().then(() => {
       if (self.options.shouldResolveRelativePaths) {
@@ -216,7 +216,7 @@ export class SpecResolver {
    *
    * @return {object} doc fully resolved json document
    */
-  resolveRelativePaths(doc?: any, docPath?: string, filterType?: string) {
+  resolveRelativePaths(doc?: any, docPath?: string, filterType?: string): Promise<any> {
     let self = this
     let docDir
     let options = {
@@ -264,7 +264,7 @@ export class SpecResolver {
    *
    * @return undefined the modified object
    */
-  resolveRelativeReference(refName: string, refDetails: any, doc: any, docPath: any) {
+  resolveRelativeReference(refName: string, refDetails: any, doc: any, docPath: string|undefined): Promise<any> {
     if (!refName || (refName && typeof refName.valueOf() !== 'string')) {
       throw new Error('refName cannot be null or undefined and must be of type "string".')
     }
@@ -363,7 +363,7 @@ export class SpecResolver {
   /**
    * Resolves the "allOf" array present in swagger model definitions by composing all the properties of the parent model into the child model.
    */
-  resolveAllOfInDefinitions() {
+  resolveAllOfInDefinitions(): Promise<this> {
     let self = this
     let spec = self.specInJson
     let definitions = spec.definitions
@@ -476,7 +476,7 @@ export class SpecResolver {
    * @param {boolean} [force] A boolean value that indicates whether to ignore the additionalProperties
    * set to true or an object and forcefully set it to false. Default: false.
    */
-  setAdditionalPropertiesFalse(modelNames?: any[], force?: boolean) {
+  setAdditionalPropertiesFalse(modelNames?: any[], force?: boolean): Promise<this> {
     let self = this
     let spec = self.specInJson
     let definitions = spec.definitions
@@ -512,7 +512,7 @@ export class SpecResolver {
    * be a mismatch between the number of path parameters provided in the operation
    * definition and the number of parameters actually present in the path template.
    */
-  resolveParameterizedHost() {
+  resolveParameterizedHost(): Promise<this> {
     let self = this
     let spec = self.specInJson
     let parameterizedHost = spec[Constants.xmsParameterizedHost]
@@ -537,7 +537,7 @@ export class SpecResolver {
    * i.e `"type": "object"` and `"properties": {}` or `"properties"` is absent or the entity has
    * "additionalProperties": { "type": "object" }.
    */
-  resolvePureObjects() {
+  resolvePureObjects(): Promise<this> {
     let self = this
     let spec = self.specInJson
     let definitions = spec.definitions
@@ -619,7 +619,7 @@ export class SpecResolver {
   /**
    * Models a default response as a Cloud Error if none is specified in the api spec.
    */
-  modelImplicitDefaultResponse() {
+  modelImplicitDefaultResponse(): void {
     let self = this
     let spec = self.specInJson
     if (!spec.definitions.CloudError) {
@@ -653,7 +653,7 @@ export class SpecResolver {
    * For example:  the Cat model's discriminator property will look like:
    * "Cat": { "required": [ "animalType" ], "properties": { "animalType": { "type": "string", "enum": [ "Cat" ] },  . . } }.
    */
-  resolveDiscriminator() {
+  resolveDiscriminator(): Promise<this> {
     let self = this
     let spec = self.specInJson
     let definitions = spec.definitions
@@ -680,7 +680,7 @@ export class SpecResolver {
    * If the property does not have the "x-nullable" extension, then if not required, we'll relax the type to include "null"; if required we won't.
    * The way we're relaxing the type is to have the model be a "oneOf" array with one value being the original content of the model and the second value "type": "null".
    */
-  resolveNullableTypes() {
+  resolveNullableTypes(): Promise<this> {
     let self = this
     let spec = self.specInJson
     let definitions = spec.definitions
@@ -732,7 +732,7 @@ export class SpecResolver {
    * to the documentation of json-refs over [here](https://github.com/whitlockjc/json-refs/blob/master/docs/API.md#jsonrefsunresolvedrefdetails--object)
    * for detailed structure of the object.
    */
-  updateReferencesWithOneOf(subTreeMap: Map<string, PolymorphicTree>, references: any) {
+  updateReferencesWithOneOf(subTreeMap: Map<string, PolymorphicTree>, references: any): void {
     let spec = this.specInJson
 
     for (const node of subTreeMap.values()) {
@@ -772,7 +772,7 @@ export class SpecResolver {
    * @returns {PolymorphicTree} rootNode- A PolymorphicTree that represents the model in the inheritance chain.
    */
   createPolymorphicTree(
-    name: string, discriminator: string, subTreeMap: Map<string, PolymorphicTree>) {
+    name: string, discriminator: string, subTreeMap: Map<string, PolymorphicTree>): PolymorphicTree {
     if (name === null
       || name === undefined
       || typeof name.valueOf() !== 'string'
@@ -835,7 +835,7 @@ export class SpecResolver {
    * @param {string} name- Name of the model for which the children need to be found.
    * @returns {Set} result- A set of model names that are the children of the given model in the inheritance chain.
    */
-  findChildren(name: string) {
+  findChildren(name: string): Set<any> {
     if (name === null
       || name === undefined
       || typeof name.valueOf() !== 'string'
@@ -872,7 +872,7 @@ export class SpecResolver {
    * @param {PolymorphicTree} rootNode- A PolymorphicTree that represents the model in the inheritance chain.
    * @returns {PolymorphicTree} result- An array of reference objects that comprise of the parent and its children.
    */
-  buildOneOfReferences(rootNode: PolymorphicTree) {
+  buildOneOfReferences(rootNode: PolymorphicTree): Set<any> {
     let result = new Set()
     result.add({ "$ref": `#/definitions/${rootNode.name}` })
     for (let entry of rootNode.children.entries()) {
@@ -919,7 +919,7 @@ export class PolymorphicTree {
    * @param {string} childName- The name of the child model
    * @returns {PolymorphicTree} child - The created child node.
    */
-  addChildByName(childName: string) {
+  addChildByName(childName: string): PolymorphicTree|undefined {
     if (childName === null
       || childName === undefined
       || typeof childName.valueOf() === 'string'
@@ -942,7 +942,7 @@ export class PolymorphicTree {
    * @param {PolymorphicTree} childObj- A polymorphicTree representing the child model.
    * @returns {PolymorphicTree} childObj - The created child node.
    */
-  addChildByObject(childObj: PolymorphicTree) {
+  addChildByObject(childObj: PolymorphicTree): PolymorphicTree {
     if (childObj === null || childObj === undefined || !(childObj instanceof PolymorphicTree)) {
       throw new Error('childObj is a required parameter of type PolymorphicTree.')
     }

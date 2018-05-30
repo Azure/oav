@@ -16,7 +16,7 @@ import { UmlGenerator } from './umlGenerator'
 
 export let finalValidationResult: any = { validityStatus: true };
 
-export function getDocumentsFromCompositeSwagger(compositeSpecPath: any) {
+export function getDocumentsFromCompositeSwagger(compositeSpecPath: any): Promise<any> {
   let compositeSwagger;
   let finalDocs: any = [];
   return utils.parseJson(compositeSpecPath).then(function (result: any) {
@@ -81,7 +81,7 @@ export function validateSpec(specPath: any, options: any, _?: any) {
   })
 }
 
-export function validateCompositeSpec(compositeSpecPath: any, options: any) {
+export function validateCompositeSpec(compositeSpecPath: any, options: any): Promise<void> {
   if (!options) options = {}
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
   log.filepath = options.logFilepath || log.filepath
@@ -116,7 +116,7 @@ export function validateExamples(specPath: any, operationIds: any, options?: any
   })
 }
 
-export function validateExamplesInCompositeSpec(compositeSpecPath: any, options: any) {
+export function validateExamplesInCompositeSpec(compositeSpecPath: any, options: any): Promise<void> {
   if (!options) options = {}
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
   log.filepath = options.logFilepath || log.filepath
@@ -133,7 +133,7 @@ export function validateExamplesInCompositeSpec(compositeSpecPath: any, options:
   })
 }
 
-export function resolveSpec(specPath: any, outputDir: any, options: any) {
+export function resolveSpec(specPath: any, outputDir: any, options: any): Promise<void> {
   if (!options) options = {}
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
   log.filepath = options.logFilepath || log.filepath
@@ -157,7 +157,7 @@ export function resolveSpec(specPath: any, outputDir: any, options: any) {
   })
 }
 
-export function resolveCompositeSpec(specPath: any, outputDir: any, options: any) {
+export function resolveCompositeSpec(specPath: any, outputDir: any, options: any): Promise<void> {
   if (!options) options = {}
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
   log.filepath = options.logFilepath || log.filepath
@@ -175,7 +175,8 @@ export function resolveCompositeSpec(specPath: any, outputDir: any, options: any
 }
 
 export function generateWireFormat(
-  specPath: any, outDir: any, emitYaml: any, operationIds: any, options: any) {
+  specPath: any, outDir: any, emitYaml: any, operationIds: any, options: any): Promise<void>
+{
   if (!options) options = {}
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
   log.filepath = options.logFilepath || log.filepath
@@ -191,7 +192,8 @@ export function generateWireFormat(
 }
 
 export function generateWireFormatInCompositeSpec(
-  compositeSpecPath: any, outDir: any, emitYaml: any, options: any) {
+  compositeSpecPath: any, outDir: any, emitYaml: any, options: any): Promise<void>
+{
   if (!options) options = {}
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
   log.filepath = options.logFilepath || log.filepath
@@ -208,7 +210,7 @@ export function generateWireFormatInCompositeSpec(
   })
 }
 
-export function generateUml(specPath: any, outputDir: any, options?: any) {
+export function generateUml(specPath: any, outputDir: any, options?: any): Promise<void> {
   if (!options) options = {}
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
   log.filepath = options.logFilepath || log.filepath
@@ -244,7 +246,7 @@ export function generateUml(specPath: any, outputDir: any, options?: any) {
   })
 }
 
-export function updateEndResultOfSingleValidation(validator: any) {
+export function updateEndResultOfSingleValidation(validator: any): void {
   if (validator.specValidationResult.validityStatus) {
     if (!(log.consoleLogLevel === 'json' || log.consoleLogLevel === 'off')) {
       log.info('No Errors were found.')

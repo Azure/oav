@@ -5,12 +5,12 @@
 import { log } from '../util/logging'
 import * as validate from '../validate'
 
-export let command = 'generate-wireformat <spec-path>'
+export const command = 'generate-wireformat <spec-path>'
 
-export let describe =
+export const describe =
   'Transforms the x-ms-examples for a given operation into raw request/response format and saves them in a markdown file.'
 
-export let builder = {
+export const builder = {
   d: {
     alias: 'outDir',
     describe: 'The output directory where the raw request/response markdown files need to be stored. If not provided and if the spec-path is a ' +
@@ -33,7 +33,7 @@ export let builder = {
   }
 }
 
-export let handler = function (argv: any) {
+export function handler(argv: any) {
   log.debug(argv)
   let specPath = argv.specPath
   let operationIds = argv.operationIds

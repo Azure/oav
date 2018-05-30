@@ -1,16 +1,15 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-// import util = require('util')
 import { log } from '../util/logging'
 import * as validate from '../validate'
 
-export let command = 'extract-xmsexamples <spec-path> <recordings>'
+export const command = 'extract-xmsexamples <spec-path> <recordings>'
 
-export let describe =
+export const describe =
   'Extracts the x-ms-examples for a given swagger from the .NET session recordings and saves them in a file.'
 
-export let builder = {
+export const builder = {
   d: {
     alias: 'outDir',
     describe: 'The output directory where the x-ms-examples files need to be stored. If not provided ' +
@@ -25,7 +24,7 @@ export let builder = {
   }
 }
 
-export let handler = function (argv: any) {
+export function handler(argv: any) {
   log.debug(argv)
   let specPath = argv.specPath
   let recordings = argv.recordings

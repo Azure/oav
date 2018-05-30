@@ -8,10 +8,6 @@
  * regenerated.
  */
 
-/* jshint latedef:false */
-/* jshint forin:false */
-/* jshint noempty:false */
-
 export { LiveRequest } from './liveRequest'
 export { LiveResponse } from './liveResponse'
 export { RequestResponse } from './requestResponse'

@@ -4,9 +4,9 @@ import * as yargs from 'yargs'
 import * as os from 'os'
 import { log } from './lib/util/logging'
 
-let defaultLogDir = log.directory
-let logFilepath = log.filepath
-let packageVersion = require('./package.json').version
+const defaultLogDir = log.directory
+const logFilepath = log.filepath
+const packageVersion = require('./package.json').version
 
 yargs
   .version(packageVersion)

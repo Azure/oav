@@ -11,6 +11,7 @@ import * as utils from "../util/utils"
 import { log } from '../util/logging'
 import { SpecValidator } from '../validators/specValidator'
 import * as extensionBase from '@microsoft.azure/autorest-extension-base'
+import { IAutoRestPluginInitiator } from '@microsoft.azure/autorest-extension-base/dist/lib/extension-base';
 
 const openAPIDocUrl = "https://github.com/Azure/oav"
 
@@ -32,37 +33,36 @@ class FormattedOutput{
 /**
  * Returns a promise with the examples validation of the swagger.
  */
-function analyzeSwagger(swaggerFileName: any, autoRestApi: any) {
-  return autoRestApi.ReadFile(swaggerFileName).then((swaggerFile: any) => {
-    const swagger = yaml.safeLoad(swaggerFile)
-    return openApiValidationExample(swagger, swaggerFileName).then(function (exampleValidationResults: any) {
-      for (const result of exampleValidationResults) {
-        autoRestApi.Message({
-          Channel: result.channel,
-          Text: result.text,
-          Details: result.details,
-          Key: result.code,
-          Source: result.source
-        })
-      }
-      // console.error(JSON.stringify(exampleValidationResults, null, 2))
+async function analyzeSwagger(swaggerFileName: string, autoRestApi: extensionBase.Host)
+  : Promise<void>
+{
+  const swaggerFile = await autoRestApi.ReadFile(swaggerFileName)
+  const swagger = yaml.safeLoad(swaggerFile)
+  const exampleValidationResults = await openApiValidationExample(swagger, swaggerFileName)
+  for (const result of exampleValidationResults) {
+    autoRestApi.Message({
+      Channel: result.channel,
+      Text: result.text,
+      Details: result.details,
+      Key: result.code,
+      Source: result.source
     })
-  })
+  }
+  // console.error(JSON.stringify(exampleValidationResults, null, 2))
 }
 
-extension.Add(modelValidatorPluginName, (autoRestApi: any) => {
-  return autoRestApi.ListInputs().then((swaggerFileNames: any) => {
-    const promises = []
-    for (const swaggerFileName of swaggerFileNames) {
-      promises.push(
-        analyzeSwagger(swaggerFileName, autoRestApi)
-      )
-    }
-    return Promise.all(promises).then(_ => true)
+extension.Add(
+  modelValidatorPluginName,
+  async (autoRestApi: IAutoRestPluginInitiator): Promise<void> => {
+    const swaggerFileNames = await autoRestApi.ListInputs()
+    const promises = swaggerFileNames.map(
+      swaggerFileName => analyzeSwagger(swaggerFileName, autoRestApi))
+    await Promise.all(promises)
   })
-})
 
-export function openApiValidationExample(swagger: any, swaggerFileName: any, options?: any) {
+export function openApiValidationExample(
+  swagger: yaml.DocumentLoadResult, swaggerFileName: string, options?: any)
+{
   var formattedResult: any[] = []
   if (!options) options = {}
   options.consoleLogLevel = "off"

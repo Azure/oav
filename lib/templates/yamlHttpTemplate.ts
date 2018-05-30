@@ -12,7 +12,7 @@ export class YamlHttpTemplate extends HttpTemplate {
     super(request, responses)
   }
 
-  getRequestHeaders() {
+  getRequestHeaders(): string {
     let result = ``
     if (this.request.body) {
       result += `  Content-Length: ${JSON.stringify(this.request.body).length}\n`
@@ -31,7 +31,7 @@ export class YamlHttpTemplate extends HttpTemplate {
     return result
   }
 
-  getResponseHeaders(response: any) {
+  getResponseHeaders(response: any): string {
     let result = ``
     if (response.body) {
       result += `    Content-Length: ${JSON.stringify(response.body).length}\n`
@@ -54,7 +54,7 @@ export class YamlHttpTemplate extends HttpTemplate {
     return result
   }
 
-  populateRequest() {
+  populateRequest(): string {
     let requestTemplate =
       `#Request
 request: |
@@ -69,7 +69,7 @@ ${this.getRequestHeaders()}
     return requestTemplate
   }
 
-  populateResponse(response: any, responseType: any) {
+  populateResponse(response: any, responseType: any): string {
     if (!responseType) responseType = 'Response'
     let responseGuid = uuid.v4()
     let responseTemplate = `
@@ -95,7 +95,7 @@ ${this.getResponseHeaders(response)}
     return responseTemplate
   }
 
-  populateCurl() {
+  populateCurl(): string {
     let padding = `  `
     let template =
       `\n#Curl
@@ -105,7 +105,7 @@ curl: |
     return template
   }
 
-  populate() {
+  populate(): string {
     let template = ``
     template += this.populateRequest()
     template += this.populateCurl()

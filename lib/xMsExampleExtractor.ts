@@ -69,7 +69,7 @@ export class XMsExampleExtractor {
   /**
    * Extracts x-ms-examples from the recordings
    */
-  extract() {
+  extract(): void {
     let self = this
     self.mkdirSync(self.options.output)
     self.mkdirSync(self.options.output + "/examples")
@@ -246,7 +246,7 @@ export class XMsExampleExtractor {
     })
   }
 
-  mkdirSync(path: any) {
+  mkdirSync(path: any): void {
     try {
       fs.mkdirSync(path)
     } catch (e) {

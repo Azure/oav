@@ -5,15 +5,15 @@ import * as validate from './lib/validate'
 import * as utils from './lib/util/utils'
 
 // Easy to use methods from validate.js
-export let getDocumentsFromCompositeSwagger = validate.getDocumentsFromCompositeSwagger
-export let validateSpec = validate.validateSpec
-export let validateCompositeSpec = validate.validateCompositeSpec
-export let validateExamples = validate.validateExamples
+export const getDocumentsFromCompositeSwagger = validate.getDocumentsFromCompositeSwagger
+export const validateSpec = validate.validateSpec
+export const validateCompositeSpec = validate.validateCompositeSpec
+export const validateExamples = validate.validateExamples
 export let validateExamplesInCompositeSpec = validate.validateExamplesInCompositeSpec
 export { log } from './lib/util/logging'
-export let executePromisesSequentially = utils.executePromisesSequentially
-export let resolveSpec = validate.resolveSpec
-export let resolveCompositeSpec = validate.resolveCompositeSpec
+export const executePromisesSequentially = utils.executePromisesSequentially
+export const resolveSpec = validate.resolveSpec
+export const resolveCompositeSpec = validate.resolveCompositeSpec
 
 // Classes
 export { SpecValidator } from './lib/validators/specValidator'

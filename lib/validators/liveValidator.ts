@@ -94,7 +94,7 @@ export class LiveValidator {
   /**
    * Initializes the Live Validator.
    */
-  initialize() {
+  initialize(): Promise<void> {
     let self = this
 
     // Clone github repository if required
@@ -340,7 +340,7 @@ export class LiveValidator {
    *
    * @returns {Array<Operation>} List of potential operations matching the requestPath.
    */
-  getPotentialOperationsHelper(requestPath: string, requestMethod: string, operations: any[]) {
+  getPotentialOperationsHelper(requestPath: string, requestMethod: string, operations: any[]): any[] {
     if (requestPath === null
       || requestPath === undefined
       || typeof requestPath.valueOf() !== 'string'

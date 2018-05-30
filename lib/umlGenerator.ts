@@ -43,14 +43,14 @@ export class UmlGenerator {
     this.bg = '{bg:cornsilk}'
   }
 
-  generateGraphDefinition() {
+  generateGraphDefinition(): void {
     this.generateModelPropertiesGraph()
     if (!this.options.shouldDisableAllof) {
       this.generateAllOfGraph()
     }
   }
 
-  generateAllOfGraph() {
+  generateAllOfGraph(): void {
     let spec = this.specInJson
     let definitions = spec.definitions
     for (let modelName of utils.getKeys(definitions)) {
@@ -59,7 +59,7 @@ export class UmlGenerator {
     }
   }
 
-  generateAllOfForModel(modelName: any, model: any) {
+  generateAllOfForModel(modelName: any, model: any): void {
     if (model.allOf) {
       model.allOf.map((item: any) => {
         let referencedModel = item
@@ -71,7 +71,7 @@ export class UmlGenerator {
     }
   }
 
-  generateModelPropertiesGraph() {
+  generateModelPropertiesGraph(): void {
     let spec = this.specInJson
     let definitions = spec.definitions
     let references: any[] = []
@@ -133,7 +133,7 @@ export class UmlGenerator {
     return ''
   }
 
-  generateDiagramFromGraph() {
+  generateDiagramFromGraph(): Promise<string> {
     this.generateGraphDefinition()
     let svg = ''
     try {

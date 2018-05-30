@@ -61,7 +61,7 @@ export class WireFormatGenerator {
     }
   }
 
-  initialize() {
+  initialize(): Promise<any> {
     let self = this
     if (self.options.shouldResolveRelativePaths) {
       utils.clearCache()
@@ -102,7 +102,7 @@ export class WireFormatGenerator {
    *
    * @param {boolean} value A truthy or a falsy value.
    */
-  updateValidityStatus(value: boolean) {
+  updateValidityStatus(value: boolean): void {
     if (!Boolean(value)) {
       this.specValidationResult.validityStatus = false
     } else {
@@ -139,7 +139,7 @@ export class WireFormatGenerator {
     return err
   }
 
-  resolveExamples() {
+  resolveExamples(): Promise<any> {
     let self = this
     let options = {
       relativeBase: self.specDir,
@@ -160,7 +160,7 @@ export class WireFormatGenerator {
     }
   }
 
-  resolveRelativeReference(refName: any, refDetails: any, doc: any, docPath: any) {
+  resolveRelativeReference(refName: any, refDetails: any, doc: any, docPath: any): Promise<any> {
     if (!refName || (refName && typeof refName.valueOf() !== 'string')) {
       throw new Error('refName cannot be null or undefined and must be of type "string".')
     }
@@ -213,7 +213,7 @@ export class WireFormatGenerator {
    * @param {string} [operationIds] - A comma sparated string specifying the operations for
    * which the wire format needs to be generated. If not specified then the entire spec is processed.
    */
-  processOperations(operationIds: string) {
+  processOperations(operationIds: string): void {
     let self = this
     if (!self.swaggerApi) {
       throw new Error(
@@ -246,7 +246,7 @@ export class WireFormatGenerator {
    *
    * @param {object} operation - The operation object.
    */
-  processOperation(operation: any) {
+  processOperation(operation: any): void {
     let self = this
     self.processXmsExamples(operation)
     //self.processExample(operation)
@@ -258,7 +258,7 @@ export class WireFormatGenerator {
    *
    * @param {object} operation - The operation object.
    */
-  processXmsExamples(operation: any) {
+  processXmsExamples(operation: any): void {
     let self = this
     if (operation === null || operation === undefined || typeof operation !== 'object') {
       throw new Error('operation cannot be null or undefined and must be of type \'object\'.')
@@ -297,7 +297,7 @@ export class WireFormatGenerator {
    *
    * @return {object} result - The validation result.
    */
-  processRequest(operation: any, exampleParameterValues: any) {
+  processRequest(operation: any, exampleParameterValues: any): msRest.WebResource {
     let self = this
     if (operation === null || operation === undefined || typeof operation !== 'object') {
       throw new Error('operation cannot be null or undefined and must be of type \'object\'.')

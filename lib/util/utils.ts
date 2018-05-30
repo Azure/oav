@@ -19,7 +19,7 @@ import * as http from 'http'
  */
 export let docCache: any = {}
 
-export function clearCache() {
+export function clearCache(): void {
   docCache = {}
   return
 }
@@ -112,7 +112,7 @@ export function parseContent(filePath: string, fileContent: string) {
  * It waits till the task is over.
  * @param {function} A generator function as an input
  */
-export function run(genfun: any) {
+export function run(genfun: () => any) {
   // instantiate the generator object
   let gen = genfun()
   // This is the async loop pattern
@@ -185,7 +185,7 @@ export function makeRequest(options: any) {
  *
  * @return A chain of resolved or rejected promises
  */
-export function executePromisesSequentially(promiseFactories: any[]) {
+export function executePromisesSequentially(promiseFactories: any[]): Promise<void> {
   let result = Promise.resolve()
   promiseFactories.forEach(function (promiseFactory) {
     result = result.then(promiseFactory)
@@ -203,7 +203,7 @@ export function executePromisesSequentially(promiseFactories: any[]) {
  *
  * @return {string} result A random string
  */
-export function generateRandomId(prefix: string, existingIds: any) {
+export function generateRandomId(prefix: string, existingIds: any): string {
   let randomStr
   while (true) {
     randomStr = Math.random().toString(36).substr(2, 12)
@@ -277,7 +277,7 @@ export function parseReferenceInSwagger(reference: string) {
  * provided by path.join() https://nodejs.org/dist/latest-v6.x/docs/api/path.html#path_path_join_paths
  * @return {string} resolved path
  */
-export function joinPath(...args: string[]) {
+export function joinPath(...args: string[]): string {
   let finalPath = path.join(...args)
   finalPath = finalPath.replace(/\\/gi, '/')
   finalPath = finalPath.replace(/^(http|https):\/(.*)/gi, '$1://$2')
@@ -406,7 +406,7 @@ export function removeObject(doc: any, ptr: string) {
  *
  * @returns {string} result - provider namespace from the given path.
  */
-export function getProvider(path?: string|null) {
+export function getProvider(path?: string|null): string|undefined {
   if (path === null || path === undefined || typeof path.valueOf() !== 'string' || !path.trim().length) {
     throw new Error('path is a required parameter of type string and it cannot be an empty string.')
   }
@@ -434,7 +434,7 @@ export function getProvider(path?: string|null) {
  *
  * @param {string} [branch] to be cloned instead of the default branch.
  */
-export function gitClone(directory: string, url: string, branch: string) {
+export function gitClone(directory: string, url: string, branch: string): void {
   if (url === null || url === undefined || typeof url.valueOf() !== 'string' || !url.trim().length) {
     throw new Error('url is a required parameter of type string and it cannot be an empty string.')
   }
@@ -653,8 +653,8 @@ export function allowNullType(entity: any, isPropRequired?: boolean) {
 * Yes                   | convert to oneOf[] |       |
 * No                    | convert to oneOf[] |       | convert to oneOf[]
 */
-export function shouldAcceptNullValue(xnullable: any, isPropRequired: any) {
-  let isPropNullable = xnullable && typeof xnullable === 'boolean'
+export function shouldAcceptNullValue(xnullable: any, isPropRequired: any): boolean {
+  const isPropNullable = xnullable && typeof xnullable === 'boolean'
   return (isPropNullable === undefined && !isPropRequired) || isPropNullable
 }
 /**
@@ -739,7 +739,7 @@ export function allowNullableParams(parameter: any) {
  * @param {string} str - The string to be sanitized.
  * @returns {string} result - The sanitized string.
  */
-export function sanitizeFileName(str: string) {
+export function sanitizeFileName(str: string): string {
   return str ? str.replace(/[{}\[\]'";\(\)#@~`!%&\^\$\+=,\/\\?<>\|\*:]/ig, '').replace(/(\s+)/ig, '_') : str
 }
 
