@@ -10,7 +10,7 @@ import { log } from './util/logging'
 import * as utils from './util/utils'
 import { SpecValidator } from './validators/specValidator'
 import { WireFormatGenerator } from './wireFormatGenerator'
-import XMsExampleExtractor = require('./xMsExampleExtractor')
+import { XMsExampleExtractor } from './xMsExampleExtractor'
 import { SpecResolver } from './validators/specResolver'
 import { UmlGenerator } from './umlGenerator'
 

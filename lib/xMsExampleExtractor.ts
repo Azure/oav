@@ -11,7 +11,7 @@ import { log } from './util/logging'
 /**
  * @class
  */
-class xMsExampleExtractor {
+export class XMsExampleExtractor {
   specPath: string
   recordings: any
   specDir: any
@@ -269,5 +269,3 @@ class xMsExampleExtractor {
     return filelist
   }
 }
-
-export = xMsExampleExtractor
