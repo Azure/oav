@@ -11,6 +11,7 @@ import msRest = require('ms-rest')
 let HttpRequest = msRest.WebResource
 
 import { SpecResolver } from './specResolver'
+import * as specResolver from './specResolver'
 import * as utils from '../util/utils'
 import { Constants } from '../util/constants'
 import { log } from '../util/logging'
@@ -19,6 +20,10 @@ import { validateResponse } from '../util/validationResponse'
 import { Error } from '../util/error'
 
 let ErrorCodes = Constants.ErrorCodes;
+
+export interface Options extends specResolver.Options {
+  isPathCaseSensitive?: boolean
+}
 
 /*
  * @class
@@ -38,7 +43,7 @@ export class SpecValidator {
 
   swaggerApi: any
 
-  options: any
+  options: Options
 
   sampleRequest: any
 
@@ -73,7 +78,7 @@ export class SpecValidator {
    *
    * @return {object} An instance of the SpecValidator class.
    */
-  constructor(specPath: string, specInJson: any, options: any) {
+  constructor(specPath: string, specInJson: any, options: Options) {
     if (specPath === null
       || specPath === undefined
       || typeof specPath.valueOf() !== 'string'
@@ -104,52 +109,35 @@ export class SpecValidator {
   /*
    * Initializes the spec validator. Resolves the spec on different counts using the SpecResolver and initializes the internal api validator.
    */
-  initialize(): Promise<any> {
+  async initialize(): Promise<any> {
     let self = this
     if (self.options.shouldResolveRelativePaths) {
       utils.clearCache()
     }
-    if (typeof (self.specInJson) === "undefined" || self.specInJson === null) {
-      return utils.parseJson(self.specPath).then(function (result: any) {
+    try {
+      if (self.specInJson === undefined || self.specInJson === null) {
+        const result = await utils.parseJson(self.specPath)
         self.specInJson = result
-        self.specResolver = new SpecResolver(self.specPath, self.specInJson, self.options)
-        return self.specResolver.resolve()
-      }).then(function () {
-        let options: any = {}
-        options.definition = self.specInJson
-        options.jsonRefs = {}
-        options.jsonRefs.relativeBase = self.specDir
-        options.isPathCaseSensitive = self.options.isPathCaseSensitive
-        return Sway.create(options)
-      }).then(function (api: any) {
-        self.swaggerApi = api
-        return Promise.resolve(api)
-      }).catch(function (err: any) {
-        let e = self.constructErrorObject(ErrorCodes.ResolveSpecError, err.message, [err])
-        self.specValidationResult.resolveSpec = e
-        log.error(`${ErrorCodes.ResolveSpecError.name}: ${err.message}.`)
-        log.error(err.stack)
-        return Promise.reject(e)
-      })
-    } else {
+      }
+
       self.specResolver = new SpecResolver(self.specPath, self.specInJson, self.options)
-      return self.specResolver.resolve().then(function () {
-        let options: any = {}
-        options.definition = self.specInJson
-        options.jsonRefs = {}
-        options.jsonRefs.relativeBase = self.specDir
-        options.isPathCaseSensitive = self.options.isPathCaseSensitive
-        return Sway.create(options)
-      }).then(function (api: any) {
-        self.swaggerApi = api
-        return Promise.resolve(api)
-      }).catch(function (err: any) {
-        let e = self.constructErrorObject(ErrorCodes.ResolveSpecError, err.message, [err])
-        self.specValidationResult.resolveSpec = e
-        log.error(`${ErrorCodes.ResolveSpecError.name}: ${err.message}.`)
-        log.error(err.stack)
-        return Promise.reject(e)
-      })
+      await self.specResolver.resolve()
+      const options = {
+        definition: self.specInJson,
+        jsonRefs: {
+          relativeBase: self.specDir
+        },
+        isPathCaseSensitive: self.options.isPathCaseSensitive
+      }
+      const api = await Sway.create(options)
+      self.swaggerApi = api
+      return api
+    } catch (err) {
+      const e = self.constructErrorObject(ErrorCodes.ResolveSpecError, err.message, [err])
+      self.specValidationResult.resolveSpec = e
+      log.error(`${ErrorCodes.ResolveSpecError.name}: ${err.message}.`)
+      log.error(err.stack)
+      throw e
     }
   }
 

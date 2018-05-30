@@ -1,3 +1,8 @@
 declare module "sway" {
-    function create(options: any): any
+  interface Options {
+    definition: any
+    jsonRefs: { relativeBase: any }
+    isPathCaseSensitive?: boolean
+  }
+  function create(options: Options): Promise<any>
 }

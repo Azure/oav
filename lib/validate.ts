@@ -217,16 +217,17 @@ export async function generateUml(specPath: any, outputDir: any, options?: Optio
   if (!options) options = {}
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
   log.filepath = options.logFilepath || log.filepath
-  let specFileName = path.basename(specPath)
-  let resolverOptions: any = {}
-  resolverOptions.shouldResolveRelativePaths = true
-  resolverOptions.shouldResolveXmsExamples = false
-  resolverOptions.shouldResolveAllOf = false
-  resolverOptions.shouldSetAdditionalPropertiesFalse = false
-  resolverOptions.shouldResolvePureObjects = false
-  resolverOptions.shouldResolveDiscriminator = false
-  resolverOptions.shouldResolveParameterizedHost = false
-  resolverOptions.shouldResolveNullableTypes = false
+  const specFileName = path.basename(specPath)
+  const resolverOptions = {
+    shouldResolveRelativePaths: true,
+    shouldResolveXmsExamples: false,
+    shouldResolveAllOf: false,
+    shouldSetAdditionalPropertiesFalse: false,
+    shouldResolvePureObjects: false,
+    shouldResolveDiscriminator: false,
+    shouldResolveParameterizedHost: false,
+    shouldResolveNullableTypes: false
+  }
   try {
     const result = await utils.parseJson(specPath)
     const resolver = new SpecResolver(specPath, result, resolverOptions)
