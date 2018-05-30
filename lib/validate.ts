@@ -9,10 +9,10 @@ import { ResourceManagementClient } from 'azure-arm-resource'
 import { log } from './util/logging'
 import * as utils from './util/utils'
 import { SpecValidator } from './validators/specValidator'
-import WireFormatGenerator = require('./wireFormatGenerator')
+import { WireFormatGenerator } from './wireFormatGenerator'
 import XMsExampleExtractor = require('./xMsExampleExtractor')
 import { SpecResolver } from './validators/specResolver'
-import UmlGenerator = require('./umlGenerator')
+import { UmlGenerator } from './umlGenerator'
 
 export let finalValidationResult: any = { validityStatus: true };
 

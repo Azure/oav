@@ -19,7 +19,7 @@ import { Constants } from './util/constants'
 
 const ErrorCodes = Constants.ErrorCodes
 
-class WireFormatGenerator {
+export class WireFormatGenerator {
   specPath: any
   specDir: any
   wireFormatDir: any
@@ -421,5 +421,3 @@ class WireFormatGenerator {
   }
 
 }
-
-export = WireFormatGenerator

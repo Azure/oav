@@ -14,7 +14,7 @@ let ErrorCodes = Constants.ErrorCodes;
  * @class
  * Generates a Uml Diagaram in svg format.
  */
-class UmlGenerator {
+export class UmlGenerator {
 
   specInJson: any
 
@@ -146,5 +146,3 @@ class UmlGenerator {
     return Promise.resolve(svg)
   }
 }
-
-export = UmlGenerator
