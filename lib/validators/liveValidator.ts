@@ -20,7 +20,7 @@ import { PotentialOperationsResult } from '../models/potentialOperationsResult'
  * @class
  * Live Validator for Azure swagger APIs.
  */
-class LiveValidator {
+export class LiveValidator {
   cache: any
 
   /**
@@ -522,5 +522,3 @@ class LiveValidator {
     return validationResult
   }
 }
-
-export = LiveValidator

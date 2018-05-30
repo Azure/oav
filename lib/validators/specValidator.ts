@@ -9,7 +9,7 @@ import msRest = require('ms-rest')
 
 let HttpRequest = msRest.WebResource
 
-import SpecResolver = require('./specResolver')
+import { SpecResolver } from './specResolver'
 import * as utils from '../util/utils'
 import { Constants } from '../util/constants'
 import { log } from '../util/logging'

@@ -5,7 +5,7 @@
 import assert = require('assert')
 import path = require('path')
 import os = require('os')
-import LiveValidator = require('../lib/validators/liveValidator.js')
+import { LiveValidator } from '../lib/validators/liveValidator.js'
 import { Constants } from '../lib/util/constants'
 
 let options = {

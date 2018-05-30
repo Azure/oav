@@ -11,7 +11,7 @@ import * as utils from './util/utils'
 import SpecValidator = require('./validators/specValidator')
 import WireFormatGenerator = require('./wireFormatGenerator')
 import XMsExampleExtractor = require('./xMsExampleExtractor')
-import SpecResolver = require('./validators/specResolver')
+import { SpecResolver } from './validators/specResolver'
 import UmlGenerator = require('./umlGenerator')
 
 export let finalValidationResult: any = { validityStatus: true };

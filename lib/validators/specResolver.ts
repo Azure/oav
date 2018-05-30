@@ -13,7 +13,7 @@ let ErrorCodes = Constants.ErrorCodes
  * resolving the allof is present in any model definition and then setting additionalProperties
  * to false if it is not previously set to true or an object in that definition.
  */
-class SpecResolver {
+export class SpecResolver {
 
   specInJson: any
 
@@ -888,7 +888,7 @@ class SpecResolver {
  * @class
  * Creates a tree by traversing the definitions where the parent model is the rootNode and child model is one of it's children.
  */
-class PolymorphicTree {
+export class PolymorphicTree {
   name: string
   children: Map<string, PolymorphicTree>
   /**
@@ -953,5 +953,3 @@ class PolymorphicTree {
     return childObj
   }
 }
-
-export = SpecResolver as any
