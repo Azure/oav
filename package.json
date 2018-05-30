@@ -55,7 +55,7 @@
     "**/*.d.ts"
   ],
   "scripts": {
-    "tsc": "tsc",
+    "build": "tsc",
     "test": "tsc && mocha -t 100000 --reporter min",
     "start": "node ./lib/autorestPlugin/pluginHost.js",
     "prepack": "npm install && tsc"
