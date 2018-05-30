@@ -142,23 +142,21 @@ export class SpecValidator {
   }
 
   getProviderNamespace(): string|null {
-    let result = null
-    let re = /^(.*)\/providers\/(\w+\.\w+)\/(.*)$/ig
+    const re = /^(.*)\/providers\/(\w+\.\w+)\/(.*)$/ig
     if (this.specInJson) {
       if (this.specInJson.paths) {
-        let paths = utils.getKeys(this.specInJson.paths)
+        const paths = utils.getKeys(this.specInJson.paths)
         if (paths) {
-          for (let i = 0; i < paths.length; i++) {
-            let res = re.exec(paths[i])
+          for (const path of paths) {
+            const res = re.exec(path)
             if (res && res[2]) {
-              result = res[2]
-              break
+              return res[2]
             }
           }
         }
       }
     }
-    return result
+    return null
   }
 
   /*
@@ -167,12 +165,7 @@ export class SpecValidator {
    * @param {boolean} value A truthy or a falsy value.
    */
   updateValidityStatus(value?: boolean): void {
-    if (!Boolean(value)) {
-      this.specValidationResult.validityStatus = false
-    } else {
-      this.specValidationResult.validityStatus = true
-    }
-    return
+    this.specValidationResult.validityStatus = Boolean(value)
   }
 
   /*
@@ -195,10 +188,7 @@ export class SpecValidator {
       code: code.name,
       id: code.id,
       message: message,
-      innerErrors: undefined as any
-    }
-    if (innerErrors) {
-      err.innerErrors = innerErrors
+      innerErrors: innerErrors ? innerErrors : (undefined as any)
     }
     if (!skipValidityStatusUpdate) {
       this.updateValidityStatus()
@@ -207,7 +197,7 @@ export class SpecValidator {
   }
 
   validateSpec(): Promise<any> {
-    let self = this
+    const self = this
     self.specValidationResult.validateSpec = {}
     self.specValidationResult.validateSpec.isValid = true
     self.specValidationResult.validateSpec.errors = []
@@ -271,7 +261,7 @@ export class SpecValidator {
    * @return {object} operation - The operation object.
    */
   getOperationById(id: string) {
-    let self = this
+    const self = this
     if (!self.swaggerApi) {
       throw new Error(
         `Please call specValidator.initialize() so that swaggerApi is populated, before calling this method.`)
@@ -350,7 +340,7 @@ export class SpecValidator {
     if (!isValid) {
       operationResult.isValid = false
       operationResult.request.isValid = false
-      let e = this.constructErrorObject(ErrorCodes.RequestValidationError, msg, requestValidationErrors)
+      const e = this.constructErrorObject(ErrorCodes.RequestValidationError, msg, requestValidationErrors)
       operationResult.request.error = e
       log.error(`${msg}:\n`, e)
     } else if (requestValidationWarnings) {
@@ -361,7 +351,6 @@ export class SpecValidator {
       operationResult.request.result = msg
       log.info(`${msg}`)
     }
-    return
   }
 
   constructResponseResult(
@@ -389,7 +378,6 @@ export class SpecValidator {
       operationResult.responses[responseStatusCode].result = msg
       log.info(`${msg}`)
     }
-    return
   }
 
   constructRequestResultWrapper(
@@ -421,7 +409,6 @@ export class SpecValidator {
       warnMsg = `Found warnings in ${subMsg}.`
       this.constructRequestResult(operationResult, true, warnMsg, null, requestValidationWarnings)
     }
-    return
   }
 
   constructResponseResultWrapper(
@@ -456,7 +443,6 @@ export class SpecValidator {
       this.constructResponseResult(
         operationResult, responseStatusCode, true, warnMsg, null, responseValidationWarnings)
     }
-    return
   }
 
   /*
@@ -525,7 +511,6 @@ export class SpecValidator {
         }
       }
     }
-    return
   }
 
   /*
@@ -534,9 +519,8 @@ export class SpecValidator {
    * @param {object} operation - The operation object.
    */
   validateOperation(operation: any): void {
-    let self = this
-    self.validateXmsExamples(operation)
-    self.validateExample(operation)
+    this.validateXmsExamples(operation)
+    this.validateExample(operation)
   }
 
   /*
@@ -546,8 +530,7 @@ export class SpecValidator {
    * If not specified then the entire spec is validated.
    */
   validateOperations(operationIds?: string): void {
-    let self = this
-    if (!self.swaggerApi) {
+    if (!this.swaggerApi) {
       throw new Error(
         `Please call "specValidator.initialize()" before calling this method, so that swaggerApi is populated.`)
     }
@@ -557,7 +540,7 @@ export class SpecValidator {
       throw new Error(`operationIds parameter must be of type 'string'.`)
     }
 
-    let operations = self.swaggerApi.getOperations()
+    let operations = this.swaggerApi.getOperations()
     if (operationIds) {
       let operationIdsObj: any = {}
       operationIds.trim().split(',').map(function (item) { operationIdsObj[item.trim()] = 1; })
@@ -569,15 +552,15 @@ export class SpecValidator {
 
     for (let i = 0; i < operations.length; i++) {
       let operation = operations[i]
-      self.specValidationResult.operations[operation.operationId] = {}
-      self.specValidationResult.operations[operation.operationId][Constants.xmsExamples] = {}
-      self.specValidationResult.operations[operation.operationId][Constants.exampleInSpec] = {}
-      self.validateOperation(operation)
+      this.specValidationResult.operations[operation.operationId] = {}
+      this.specValidationResult.operations[operation.operationId][Constants.xmsExamples] = {}
+      this.specValidationResult.operations[operation.operationId][Constants.exampleInSpec] = {}
+      this.validateOperation(operation)
       if (utils
-          .getKeys(self.specValidationResult.operations[operation.operationId][Constants.exampleInSpec])
+          .getKeys(this.specValidationResult.operations[operation.operationId][Constants.exampleInSpec])
           .length
         === 0) {
-        delete self.specValidationResult.operations[operation.operationId][Constants.exampleInSpec]
+        delete this.specValidationResult.operations[operation.operationId][Constants.exampleInSpec]
       }
     }
   }
@@ -601,19 +584,17 @@ export class SpecValidator {
     if (xmsExamples) {
       for (let scenario of Object.keys(xmsExamples)) {
         let xmsExample = xmsExamples[scenario]
-        resultScenarios[scenario] = {}
-        resultScenarios[scenario].requestValidation =
-          self.validateRequest(operation, xmsExample.parameters)
-        resultScenarios[scenario].responseValidation =
-          self.validateXmsExampleResponses(operation, xmsExample.responses)
+        resultScenarios[scenario] = {
+          requestValidation: self.validateRequest(operation, xmsExample.parameters),
+          responseValidation: self.validateXmsExampleResponses(operation, xmsExample.responses)
+        }
       }
     } else {
-      let msg = `x-ms-example not found in ${operation.operationId}.`
+      const msg = `x-ms-example not found in ${operation.operationId}.`
       result.exampleNotFound = self.constructErrorObject(
         ErrorCodes.XmsExampleNotFoundError, msg, null, true)
     }
     self.constructOperationResult(operation, result, Constants.xmsExamples)
-    return
   }
 
   /*
@@ -626,11 +607,11 @@ export class SpecValidator {
     if (operation === null || operation === undefined || typeof operation !== 'object') {
       throw new Error('operation cannot be null or undefined and must be of type \'object\'.')
     }
-    let result: any = {}
-    result.requestValidation = self.validateExampleRequest(operation)
-    result.responseValidation = self.validateExampleResponses(operation)
+    const result = {
+      requestValidation: self.validateExampleRequest(operation),
+      responseValidation: self.validateExampleResponses(operation)
+    }
     self.constructOperationResult(operation, result, Constants.exampleInSpec)
-    return
   }
 
   /*
