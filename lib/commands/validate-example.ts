@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import util = require('util')
-import log = require('../util/logging')
+import { log } from '../util/logging'
 import validate = require('../validate')
 
 export let command = 'validate-example <spec-path>'

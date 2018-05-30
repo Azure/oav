@@ -10,7 +10,7 @@ export let validateSpec = validate.validateSpec;
 export let validateCompositeSpec = validate.validateCompositeSpec;
 export let validateExamples = validate.validateExamples;
 export let validateExamplesInCompositeSpec = validate.validateExamplesInCompositeSpec;
-export let log = require('./lib/util/logging');
+export { log } from './lib/util/logging'
 export let executePromisesSequentially = utils.executePromisesSequentially;
 export let resolveSpec = validate.resolveSpec;
 export let resolveCompositeSpec = validate.resolveCompositeSpec;

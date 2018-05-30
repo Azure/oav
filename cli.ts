@@ -2,7 +2,7 @@
 
 import yargs = require('yargs')
 import os = require('os')
-import log = require('./lib/util/logging')
+import { log } from './lib/util/logging'
 
 let defaultLogDir = log.directory
 let logFilepath = log.filepath

@@ -10,7 +10,7 @@ import glob = require('glob')
 import msRest = require('ms-rest')
 import SpecValidator = require('./specValidator')
 import { Constants } from '../util/constants'
-import log = require('../util/logging')
+import { log } from '../util/logging'
 import utils = require('../util/utils')
 import models = require('../models')
 import http = require('http')

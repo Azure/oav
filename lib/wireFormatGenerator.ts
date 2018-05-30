@@ -10,7 +10,7 @@ import msRest = require('ms-rest')
 
 let HttpRequest = msRest.WebResource
 
-import log = require('./util/logging')
+import { log } from './util/logging'
 import SpecResolver = require('./validators/specResolver')
 import { ResponseWrapper } from './models/responseWrapper'
 import { MarkdownHttpTemplate } from './templates/markdownHttpTemplate'

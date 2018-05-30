@@ -6,7 +6,7 @@ import path = require('path')
 import msrest = require('ms-rest')
 import msrestazure = require('ms-rest-azure')
 import { ResourceManagementClient } from 'azure-arm-resource'
-import log = require('./util/logging')
+import { log } from './util/logging'
 import utils = require('./util/utils')
 import SpecValidator = require('./validators/specValidator')
 import WireFormatGenerator = require('./wireFormatGenerator')

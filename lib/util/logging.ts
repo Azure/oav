@@ -45,13 +45,13 @@ let customLogLevels = {
   silly: 7
 }
 
-type ILogger = winston.LoggerInstance & {
+export type ILogger = winston.LoggerInstance & {
   consoleLogLevel: any
   filepath: any
   directory: any
 }
 
-let logger = new (winston.Logger)({
+export let log : ILogger = new (winston.Logger)({
   transports: [
     new (winston.transports.Console)({
       level: 'warn',
@@ -61,9 +61,9 @@ let logger = new (winston.Logger)({
     })
   ],
   levels: customLogLevels
-})
+}) as ILogger
 
-Object.defineProperties(logger, {
+Object.defineProperties(log, {
   'consoleLogLevel': {
     enumerable: true,
     get: function () { return this.transports.console.level; },
@@ -127,5 +127,3 @@ Object.defineProperties(logger, {
     }
   }
 });
-
-export = (logger as any) as ILogger

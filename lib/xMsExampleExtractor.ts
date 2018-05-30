@@ -6,7 +6,7 @@ import fs = require('fs')
 import pathlib = require('path')
 import recursive = require('recursive-readdir')
 import utils = require('./util/utils')
-import log = require('./util/logging')
+import { log } from './util/logging'
 
 /**
  * @class

@@ -7,7 +7,7 @@ import util = require('util')
 import path = require('path')
 import jsonPointer from 'json-pointer'
 import YAML = require('js-yaml')
-import log = require('./logging')
+import { log } from './logging'
 import request = require('request')
 import lodash from 'lodash'
 import http = require('http')

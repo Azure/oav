@@ -8,7 +8,7 @@ import linq = require('linq')
 import jsonPath = require('jsonpath')
 import yaml = require("js-yaml")
 import utils = require("../util/utils")
-import log = require('../util/logging')
+import { log } from '../util/logging'
 import SpecValidator = require('../validators/specValidator')
 import extensionBase = require('@microsoft.azure/autorest-extension-base')
 
