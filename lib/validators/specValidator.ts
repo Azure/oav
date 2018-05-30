@@ -14,7 +14,7 @@ import * as utils from '../util/utils'
 import { Constants } from '../util/constants'
 import { log } from '../util/logging'
 import { ResponseWrapper } from '../models/responseWrapper'
-import ValidationResponse = require('../util/validationResponse')
+import { validateResponse } from '../util/validationResponse'
 
 let ErrorCodes = Constants.ErrorCodes;
 
@@ -240,7 +240,7 @@ class SpecValidator {
             ErrorCodes.SemanticValidationError,
             `The spec ${self.specPath} has semantic validation errors.`,
             validationResult.errors)
-          self.specValidationResult.validateSpec.errors = ValidationResponse.constructErrors(
+          self.specValidationResult.validateSpec.errors = validateResponse.constructErrors(
             e, self.specPath, self.getProviderNamespace())
           log.error(Constants.Errors)
           log.error('------')
@@ -250,7 +250,7 @@ class SpecValidator {
           self.specValidationResult.validateSpec.result = `The spec ${self.specPath} is semantically valid.`
         }
         if (validationResult.warnings && validationResult.warnings.length > 0) {
-          let warnings = ValidationResponse.sanitizeWarnings(validationResult.warnings)
+          let warnings = validateResponse.sanitizeWarnings(validationResult.warnings)
           if (warnings && warnings.length) {
             self.specValidationResult.validateSpec.warnings = warnings
             log.debug(Constants.Warnings)

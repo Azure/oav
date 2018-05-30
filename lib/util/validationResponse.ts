@@ -15,7 +15,7 @@ class foo{
   }
 }
 
-class ValidateResponse {
+export class ValidateResponse {
 
   seralize() {
     let result: any = {}
@@ -96,4 +96,4 @@ class ValidateResponse {
   }
 }
 
-export = new ValidateResponse() as any
+export const validateResponse = new ValidateResponse()
