@@ -5,20 +5,20 @@ import validate = require('./lib/validate');
 var utils = require('./lib/util/utils');
 
 // Easy to use methods from validate.js
-exports.getDocumentsFromCompositeSwagger = validate.getDocumentsFromCompositeSwagger;
-exports.validateSpec = validate.validateSpec;
-exports.validateCompositeSpec = validate.validateCompositeSpec;
-exports.validateExamples = validate.validateExamples;
-exports.validateExamplesInCompositeSpec = validate.validateExamplesInCompositeSpec;
-exports.log = require('./lib/util/logging');
-exports.executePromisesSequentially = utils.executePromisesSequentially;
-exports.resolveSpec = validate.resolveSpec;
-exports.resolveCompositeSpec = validate.resolveCompositeSpec;
+export let getDocumentsFromCompositeSwagger = validate.getDocumentsFromCompositeSwagger;
+export let validateSpec = validate.validateSpec;
+export let validateCompositeSpec = validate.validateCompositeSpec;
+export let validateExamples = validate.validateExamples;
+export let validateExamplesInCompositeSpec = validate.validateExamplesInCompositeSpec;
+export let log = require('./lib/util/logging');
+export let executePromisesSequentially = utils.executePromisesSequentially;
+export let resolveSpec = validate.resolveSpec;
+export let resolveCompositeSpec = validate.resolveCompositeSpec;
 
 // Classes
-exports.Validator = require('./lib/validators/specValidator');
-exports.LiveValidator = require('./lib/validators/liveValidator');
-exports.SpecResolver = require('./lib/validators/specResolver');
+export let Validator = require('./lib/validators/specValidator');
+export let LiveValidator = require('./lib/validators/liveValidator');
+export let SpecResolver = require('./lib/validators/specResolver');
 
 // Constants
-exports.Constants = require('./lib/util/constants');
+export let Constants = require('./lib/util/constants');
