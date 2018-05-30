@@ -7,6 +7,19 @@ import { log } from '../util/logging'
 
 let ErrorCodes = Constants.ErrorCodes
 
+export interface Options
+{
+  shouldResolveRelativePaths?: boolean
+  shouldResolveXmsExamples?: boolean
+  shouldResolveAllOf?: boolean
+  shouldSetAdditionalPropertiesFalse?: boolean
+  shouldResolvePureObjects?: boolean
+  shouldResolveDiscriminator?: boolean
+  shouldResolveParameterizedHost?: boolean
+  shouldResolveNullableTypes?: boolean
+  shouldModelImplicitDefaultResponse?: boolean
+}
+
 /**
  * @class
  * Resolves the swagger spec by unifying x-ms-paths, resolving relative file references if any,
@@ -25,7 +38,7 @@ export class SpecResolver {
 
   resolvedAllOfModels: any
 
-  options: any
+  options: Options
 
   /**
    * @constructor
@@ -58,7 +71,7 @@ export class SpecResolver {
    *
    * @return {object} An instance of the SpecResolver class.
    */
-  constructor(specPath: string, specInJson: any, options: any) {
+  constructor(specPath: string, specInJson: any, options: Options) {
     if (specPath === null
       || specPath === undefined
       || typeof specPath.valueOf() !== 'string'

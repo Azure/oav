@@ -12,6 +12,7 @@ import { SpecValidator } from './validators/specValidator'
 import { WireFormatGenerator } from './wireFormatGenerator'
 import { XMsExampleExtractor } from './xMsExampleExtractor'
 import { SpecResolver } from './validators/specResolver'
+import * as specResolver from './validators/specResolver'
 import { UmlGenerator } from './umlGenerator'
 
 export let finalValidationResult: any = { validityStatus: true };
@@ -133,28 +134,30 @@ export function validateExamplesInCompositeSpec(compositeSpecPath: any, options:
   })
 }
 
-export function resolveSpec(specPath: any, outputDir: any, options: any): Promise<void> {
+export interface Options extends specResolver.Options {
+  consoleLogLevel?: any
+  logFilepath?: any
+}
+
+export async function resolveSpec(specPath: any, outputDir: any, options: Options): Promise<void> {
   if (!options) options = {}
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
   log.filepath = options.logFilepath || log.filepath
-  let specFileName = path.basename(specPath)
-  let resolver: any
-  return utils.parseJson(specPath).then((result: any) => {
-    resolver = new SpecResolver(specPath, result, options)
-    return resolver.resolve()
-  }).then(() => {
-    let resolvedSwagger = JSON.stringify(resolver.specInJson, null, 2)
+  const specFileName = path.basename(specPath)
+  try {
+    const result = await utils.parseJson(specPath)
+    const resolver = new SpecResolver(specPath, result, options)
+    const resolvedSwagger = JSON.stringify(resolver.specInJson, null, 2)
     if (outputDir !== './' && !fs.existsSync(outputDir)) {
       fs.mkdirSync(outputDir)
     }
-    let outputFilepath = `${path.join(outputDir, specFileName)}`
+    const outputFilepath = `${path.join(outputDir, specFileName)}`
     fs.writeFileSync(`${path.join(outputDir, specFileName)}`, resolvedSwagger, { encoding: 'utf8' })
     console.log(`Saved the resolved spec at "${outputFilepath}".`)
-    return Promise.resolve()
-  }).catch((err: any) => {
+  } catch (err) {
     log.error(err)
-    return Promise.reject(err)
-  })
+    throw err
+  }
 }
 
 export function resolveCompositeSpec(specPath: any, outputDir: any, options: any): Promise<void> {
@@ -210,12 +213,11 @@ export function generateWireFormatInCompositeSpec(
   })
 }
 
-export function generateUml(specPath: any, outputDir: any, options?: any): Promise<void> {
+export async function generateUml(specPath: any, outputDir: any, options?: Options): Promise<void> {
   if (!options) options = {}
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
   log.filepath = options.logFilepath || log.filepath
   let specFileName = path.basename(specPath)
-  let resolver: any
   let resolverOptions: any = {}
   resolverOptions.shouldResolveRelativePaths = true
   resolverOptions.shouldResolveXmsExamples = false
@@ -225,25 +227,22 @@ export function generateUml(specPath: any, outputDir: any, options?: any): Promi
   resolverOptions.shouldResolveDiscriminator = false
   resolverOptions.shouldResolveParameterizedHost = false
   resolverOptions.shouldResolveNullableTypes = false
-  return utils.parseJson(specPath).then((result: any) => {
-    resolver = new SpecResolver(specPath, result, resolverOptions)
-    return resolver.resolve()
-  }).then(() => {
-    let umlGenerator = new UmlGenerator(resolver.specInJson, options)
-    return umlGenerator.generateDiagramFromGraph()
-  }).then((svgGraph: any) => {
+  try {
+    const result = await utils.parseJson(specPath)
+    const resolver = new SpecResolver(specPath, result, resolverOptions)
+    const umlGenerator = new UmlGenerator(resolver.specInJson, options)
+    const svgGraph = await umlGenerator.generateDiagramFromGraph()
     if (outputDir !== './' && !fs.existsSync(outputDir)) {
       fs.mkdirSync(outputDir)
     }
-    let svgFile = specFileName.replace(path.extname(specFileName), '.svg')
-    let outputFilepath = `${path.join(outputDir, svgFile)}`
+    const svgFile = specFileName.replace(path.extname(specFileName), '.svg')
+    const outputFilepath = `${path.join(outputDir, svgFile)}`
     fs.writeFileSync(`${path.join(outputDir, svgFile)}`, svgGraph, { encoding: 'utf8' })
     console.log(`Saved the uml at "${outputFilepath}". Please open the file in a browser.`)
-    return Promise.resolve()
-  }).catch((err: any) => {
+  } catch (err) {
     log.error(err)
-    return Promise.reject(err)
-  })
+    throw err
+  }
 }
 
 export function updateEndResultOfSingleValidation(validator: any): void {
