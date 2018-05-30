@@ -47,7 +47,7 @@ export function stripBOM(content: any) {
  *
  * @returns {object} jsonDoc - Parsed document in JSON format.
  */
-export function parseJson(specPath: string) {
+export function parseJson(specPath: string): Promise<any> {
   if (!specPath || (specPath && typeof specPath.valueOf() !== 'string')) {
     let err = new Error(
       'A (github) url or a local file path to the swagger spec is required and must be of type string.')
@@ -151,7 +151,7 @@ export function run(genfun: () => any) {
  */
 export function makeRequest(options: any) {
   var promise = new Promise(function (resolve, reject) {
-    request(options, function (err: any, response: any, responseBody: any) {
+    request(options, function (err: any, response: request.Response, responseBody: any): void {
       if (err) {
         reject(err)
       }

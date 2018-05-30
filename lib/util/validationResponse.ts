@@ -1,5 +1,7 @@
 import * as pointer from 'json-pointer'
+import { Error } from "./error"
 
+/*
 class foo{
   constructor(
     public type: any,
@@ -14,12 +16,13 @@ class foo{
     public resourceType: any) {
   }
 }
+*/
 
 export class ValidateResponse {
 
   seralize() {
-    let result: any = {}
-    for (let prop in this) {
+    const result: any = {}
+    for (const prop in this) {
       if (this[prop] !== null && this[prop] !== undefined) {
         if (prop === 'jsonpath')
           result['json-path'] = this[prop]
@@ -28,14 +31,14 @@ export class ValidateResponse {
     return result
   }
 
-  constructErrors(validationError: any, specPath: any, providerNamespace: any) {
+  constructErrors(
+    validationError: Error, specPath: any, providerNamespace: any): any[] {
     const self = this
     if (!validationError) {
       throw new Error('validationError cannot be null or undefined.')
     }
-    let result: any = []
-    validationError.innerErrors.forEach(function (error: any) {
-      let e: any = {
+    return validationError.innerErrors.map(function (error: any) {
+      const e: any = {
         validationCategory: 'SwaggerViolation',
         providerNamespace: providerNamespace,
         type: 'error',
@@ -57,24 +60,17 @@ export class ValidateResponse {
         e.jsonref = jsonpath
         e['json-path'] = pointer.unescape(jsonpath)
       }
-      result.push(e)
+      return e
     })
-    return result
   }
 
-  sanitizeWarnings(warnings: any) {
+  sanitizeWarnings(warnings: any[]): any[] {
     if (!warnings) {
       throw new Error('validationError cannot be null or undefined.')
     }
-    let result: any = []
-    warnings.forEach(function (warning: any) {
-      if (warning.code
-        && warning.code !== 'EXTRA_REFERENCE_PROPERTIES'
-        && warning.code !== 'UNUSED_DEFINITION') {
-        result.push(warning)
-      }
-    })
-    return result
+    return warnings.filter(warning => warning.code
+      && warning.code !== 'EXTRA_REFERENCE_PROPERTIES'
+      && warning.code !== 'UNUSED_DEFINITION')
   }
 
   mapper = {

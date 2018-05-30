@@ -96,8 +96,8 @@ ${this.getResponseHeaders(response)}
   }
 
   populateCurl(): string {
-    let padding = `  `
-    let template =
+    const padding = `  `
+    const template =
       `\n#Curl
 curl: |
   curl -X ${this.request.method} '${this.request.url}' \\\n  -H 'authorization: bearer <token>' \\${this.getCurlRequestHeaders(padding)}${this.getCurlRequestBody(padding)}

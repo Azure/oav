@@ -4,12 +4,13 @@
 // import util = require('util')
 import { log } from '../util/logging'
 import * as validate from '../validate'
+import * as yargs from "yargs"
 
 export const command = 'validate-example <spec-path>'
 
 export const describe = 'Performs validation of x-ms-examples and examples present in the spec.'
 
-export const builder = {
+export const builder: yargs.CommandBuilder = {
   o: {
     alias: 'operationIds',
     describe: 'A comma separated string of operationIds for which the examples ' +
@@ -19,8 +20,8 @@ export const builder = {
   }
 }
 
-export function handler(argv: any) {
-  log.debug(argv)
+export function handler(argv: yargs.Arguments) {
+  log.debug(argv.toString())
   let specPath = argv.specPath
   let operationIds = argv.operationIds
   let vOptions: any = {}

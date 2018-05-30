@@ -3,13 +3,14 @@
 
 import { log } from '../util/logging'
 import * as validate from '../validate'
+import * as yargs from 'yargs'
 
 export const command = 'extract-xmsexamples <spec-path> <recordings>'
 
 export const describe =
   'Extracts the x-ms-examples for a given swagger from the .NET session recordings and saves them in a file.'
 
-export const builder = {
+export const builder: yargs.CommandBuilder = {
   d: {
     alias: 'outDir',
     describe: 'The output directory where the x-ms-examples files need to be stored. If not provided ' +
@@ -24,8 +25,8 @@ export const builder = {
   }
 }
 
-export function handler(argv: any) {
-  log.debug(argv)
+export function handler(argv: yargs.Arguments): void {
+  log.debug(argv.toString())
   let specPath = argv.specPath
   let recordings = argv.recordings
   let vOptions: any = {}

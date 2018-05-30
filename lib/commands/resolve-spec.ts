@@ -3,13 +3,14 @@
 
 import { log } from '../util/logging'
 import * as validate from '../validate'
+import * as yargs from "yargs"
 
 export const command = 'resolve-spec <spec-path>'
 
 export const describe =
   'Resolves the swagger spec based on the selected options like allOfs, relativePaths, examples etc.'
 
-export const builder = {
+export const builder: yargs.CommandBuilder = {
   a: {
     alias: 'additionalPropertiesFalse',
     describe: 'Should additionalProperties be set to false?',
@@ -66,8 +67,8 @@ export const builder = {
   }
 }
 
-export function handler(argv: any) {
-  log.debug(argv)
+export function handler(argv: yargs.Arguments) {
+  log.debug(argv.toString())
   let specPath = argv.specPath
   let vOptions: any = {}
   vOptions.consoleLogLevel = argv.logLevel

@@ -4,13 +4,14 @@
 // import util = require('util')
 import { log } from '../util/logging'
 import * as validate from '../validate'
+import * as yargs from "yargs"
 
 export const command = 'generate-wireformat <spec-path>'
 
 export const describe =
   'Transforms the x-ms-examples for a given operation into raw request/response format and saves them in a markdown file.'
 
-export const builder = {
+export const builder: yargs.CommandBuilder = {
   d: {
     alias: 'outDir',
     describe: 'The output directory where the raw request/response markdown files need to be stored. If not provided and if the spec-path is a ' +
@@ -33,8 +34,8 @@ export const builder = {
   }
 }
 
-export function handler(argv: any) {
-  log.debug(argv)
+export function handler(argv: yargs.Arguments) {
+  log.debug(argv.toString())
   let specPath = argv.specPath
   let operationIds = argv.operationIds
   let outDir = argv.outDir

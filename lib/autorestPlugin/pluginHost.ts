@@ -21,12 +21,11 @@ const modelValidationCategory = "ExampleModelViolation"
 
 class FormattedOutput{
   constructor(
-    public channel: any,
+    public channel: string,
     public details: any,
-    public code: any,
-    public text: any,
-    public source: any,
-    _?: any) {
+    public code: any[],
+    public text: string,
+    public source: any[]) {
   }
 }
 
@@ -61,13 +60,13 @@ extension.Add(
   })
 
 export function openApiValidationExample(
-  swagger: yaml.DocumentLoadResult, swaggerFileName: string, options?: any)
+  swagger: yaml.DocumentLoadResult, swaggerFileName: string, options?: any): Promise<any[]>
 {
-  var formattedResult: any[] = []
+  const formattedResult: any[] = []
   if (!options) options = {}
   options.consoleLogLevel = "off"
   log.consoleLogLevel = options.consoleLogLevel
-  let specVal = new SpecValidator(swaggerFileName, swagger, options)
+  const specVal = new SpecValidator(swaggerFileName, swagger, options)
   //console.error(JSON.stringify(swagger, null, 2))
   return specVal.initialize().then(function () {
     specVal.validateOperations()
@@ -76,7 +75,7 @@ export function openApiValidationExample(
         const xmsExamplesNode = specValidationResult.operations[op]["x-ms-examples"];
         for (let scenario of utils.getKeys(xmsExamplesNode.scenarios)) {
           // invalid? meaning that there's an issue found in the validation
-          var scenarioItem = xmsExamplesNode.scenarios[scenario]
+          let scenarioItem = xmsExamplesNode.scenarios[scenario]
           if (scenarioItem.isValid === false) {
             // get path to x-ms-examples in swagger
             const xmsexPath = linq
@@ -89,8 +88,7 @@ export function openApiValidationExample(
             //console.error(JSON.stringify(scenarioItem, null, 2));
             var result = new FormattedOutput(
               "verbose",
-              scenarioItem,
-              scenario,
+              { scenarioItem: scenarioItem, scenario: scenario },
               [modelValidationCategory],
               "Model validator found issue (see details).",
               [{ document: swaggerFileName, Position: { path: xmsexPath } }])

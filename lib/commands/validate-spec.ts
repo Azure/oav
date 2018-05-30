@@ -3,13 +3,14 @@
 
 import { log } from '../util/logging'
 import * as validate from '../validate'
+import * as yargs from "yargs"
 
 export const command = 'validate-spec <spec-path>'
 
 export const describe = 'Performs semantic validation of the spec.'
 
-export function handler(argv: any) {
-  log.debug(argv)
+export function handler(argv: yargs.Arguments) {
+  log.debug(argv.toString())
   let specPath = argv.specPath
   let vOptions: any = {}
   vOptions.consoleLogLevel = argv.logLevel

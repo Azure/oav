@@ -16,6 +16,7 @@ import { Constants } from '../util/constants'
 import { log } from '../util/logging'
 import { ResponseWrapper } from '../models/responseWrapper'
 import { validateResponse } from '../util/validationResponse'
+import { Error } from '../util/error'
 
 let ErrorCodes = Constants.ErrorCodes;
 
@@ -31,7 +32,7 @@ export class SpecValidator {
 
   specInJson: any
 
-  specResolver: any
+  specResolver: SpecResolver|null
 
   specValidationResult: any
 
@@ -72,7 +73,7 @@ export class SpecValidator {
    *
    * @return {object} An instance of the SpecValidator class.
    */
-  constructor(specPath: string, specInJson: yaml.DocumentLoadResult|null, options: any) {
+  constructor(specPath: string, specInJson: any, options: any) {
     if (specPath === null
       || specPath === undefined
       || typeof specPath.valueOf() !== 'string'
@@ -103,7 +104,7 @@ export class SpecValidator {
   /*
    * Initializes the spec validator. Resolves the spec on different counts using the SpecResolver and initializes the internal api validator.
    */
-  initialize() {
+  initialize(): Promise<any> {
     let self = this
     if (self.options.shouldResolveRelativePaths) {
       utils.clearCache()
@@ -200,9 +201,9 @@ export class SpecValidator {
    * @return {object} err Return the constructed Error object.
    */
   constructErrorObject(
-    code: any, message: string, innerErrors?: null|any[], skipValidityStatusUpdate?: boolean) {
+    code: any, message: string, innerErrors?: null|Error[], skipValidityStatusUpdate?: boolean) {
 
-    const err = {
+    const err: Error = {
       code: code.name,
       id: code.id,
       message: message,

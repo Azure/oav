@@ -3,12 +3,13 @@
 
 import { log } from '../util/logging'
 import * as validate from '../validate'
+import * as yargs from 'yargs'
 
 export const command = 'generate-uml <spec-path>'
 
 export const describe = 'Generates a class diagram of the model definitions in the given swagger spec.'
 
-export const builder = {
+export const builder: yargs.CommandBuilder = {
   d: {
     alias: 'outputDir',
     describe: 'Output directory where the class diagram will be stored.',
@@ -43,8 +44,8 @@ export const builder = {
   }
 }
 
-export function handler(argv: any) {
-  log.debug(argv)
+export function handler(argv: yargs.Arguments) {
+  log.debug(argv.toString())
   let specPath = argv.specPath
   let vOptions: any = {}
   vOptions.consoleLogLevel = argv.logLevel
