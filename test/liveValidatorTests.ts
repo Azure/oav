@@ -5,7 +5,7 @@ import assert from 'assert'
 import * as path from 'path'
 import * as os from 'os'
 import * as glob from 'glob'
-import { LiveValidator } from '../lib/validators/liveValidator.js'
+import { LiveValidator } from '../lib/validators/liveValidator'
 import { Constants } from '../lib/util/constants'
 import * as utils from '../lib/util/utils'
 
