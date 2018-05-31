@@ -56,11 +56,17 @@
   "bugs": {
     "url": "http://github.com/azure/oav/issues"
   },
-  "main": "./index.js",
+  "main": "./dist/index.js",
   "bin": {
-    "oav": "./cli.js"
+    "oav": "./dist/cli.js"
   },
-  "types": "**/*.d.ts",
+  "files": [
+    "dist/*.js",
+    "dist/*.d.ts",
+    "dist/lib/**/*.js",
+    "dist/lib/**/*.d.ts"
+  ],
+  "types": "./dist/index.d.ts",
   "scripts": {
     "test": "nyc --extension .ts --reporter lcov --reporter text mocha ./test/**/*.ts -r ts-node/register -t 10000",
     "start": "node ./lib/autorestPlugin/pluginHost.js",
