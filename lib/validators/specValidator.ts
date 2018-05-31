@@ -196,12 +196,13 @@ export class SpecValidator {
     return err
   }
 
-  validateSpec(): Promise<any> {
+  async validateSpec(): Promise<any> {
     const self = this
-    self.specValidationResult.validateSpec = {}
-    self.specValidationResult.validateSpec.isValid = true
-    self.specValidationResult.validateSpec.errors = []
-    self.specValidationResult.validateSpec.warnings = []
+    self.specValidationResult.validateSpec = {
+      isValid: true,
+      errors: [],
+      warnings: [],
+    }
     if (!self.swaggerApi) {
       let msg =
         `Please call "specValidator.initialize()" before calling this method, so that swaggerApi is populated.`
@@ -209,7 +210,7 @@ export class SpecValidator {
       self.specValidationResult.initialize = e
       self.specValidationResult.validateSpec.isValid = false
       log.error(`${ErrorCodes.InitializationError.name}: ${msg}`)
-      return Promise.reject(e)
+      return e
     }
     try {
       let validationResult = self.swaggerApi.validate()
@@ -249,7 +250,7 @@ export class SpecValidator {
       self.specValidationResult.validateSpec.error = err
       log.error(err)
       self.updateValidityStatus()
-      return Promise.reject(err)
+      throw err
     }
   }
 

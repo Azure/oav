@@ -1,23 +1,6 @@
 import * as pointer from 'json-pointer'
 import { Error } from "./error"
 
-/*
-class foo{
-  constructor(
-    public type: any,
-    public code: any,
-    public message: any,
-    public innerErrors: any,
-    public jsonref: any,
-    public jsonpath: any,
-    public id: any,
-    public validationCategory: any,
-    public providerNamespace: any,
-    public resourceType: any) {
-  }
-}
-*/
-
 export class ValidateResponse {
 
   seralize() {
@@ -37,7 +20,7 @@ export class ValidateResponse {
     if (!validationError) {
       throw new Error('validationError cannot be null or undefined.')
     }
-    return validationError.innerErrors.map(function (error: any) {
+    return validationError.innerErrors.map(error => {
       const e: any = {
         validationCategory: 'SwaggerViolation',
         providerNamespace: providerNamespace,
