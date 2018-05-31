@@ -61,12 +61,8 @@
     "oav": "./cli.js"
   },
   "types": "**/*.d.ts",
-  "nyc": {
-    "extension": [ ".ts" ]
-  },
   "scripts": {
-    "nyc": "nyc",
-    "test": "nyc mocha ./test/**/*.ts -r ts-node/register",
+    "test": "nyc --extension .ts --reporter lcov --reporter text mocha ./test/**/*.ts -r ts-node/register -t 10000",
     "start": "node ./lib/autorestPlugin/pluginHost.js",
     "prepack": "npm install && tsc"
   }
