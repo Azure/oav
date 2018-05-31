@@ -285,7 +285,6 @@ export class WireFormatGenerator {
         fs.writeFileSync(fileName, sampleData, { encoding: 'utf8' })
       }
     }
-    return
   }
 
   /*

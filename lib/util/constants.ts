@@ -2,7 +2,18 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 export const Constants = {
-  constraints: ['minLength', 'maxLength', 'minimum', 'maximum', 'enum', 'maxItems', 'minItems', 'uniqueItems', 'multipleOf', 'pattern'],
+  constraints: [
+    'minLength',
+    'maxLength',
+    'minimum',
+    'maximum',
+    'enum',
+    'maxItems',
+    'minItems',
+    'uniqueItems',
+    'multipleOf',
+    'pattern'
+  ],
   xmsExamples: 'x-ms-examples',
   exampleInSpec: 'example-in-spec',
   BodyParameterValid: 'BODY_PARAMETER_VALID',

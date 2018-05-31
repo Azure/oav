@@ -21,11 +21,11 @@ const modelValidationCategory = "ExampleModelViolation"
 
 class FormattedOutput{
   constructor(
-    public channel: string,
-    public details: any,
-    public code: any[],
-    public text: string,
-    public source: any[]) {
+    public readonly channel: string,
+    public readonly details: any,
+    public readonly code: any[],
+    public readonly text: string,
+    public readonly source: any[]) {
   }
 }
 
@@ -62,7 +62,7 @@ extension.Add(
 export function openApiValidationExample(
   swagger: yaml.DocumentLoadResult, swaggerFileName: string, options?: any): Promise<any[]>
 {
-  const formattedResult: any[] = []
+  const formattedResult: FormattedOutput[] = []
   if (!options) options = {}
   options.consoleLogLevel = "off"
   log.consoleLogLevel = options.consoleLogLevel
@@ -135,7 +135,7 @@ export function openApiValidationExample(
             }
 
             // responses
-            for (let responseCode of utils.getKeys(scenarioItem.responses)) {
+            for (const responseCode of utils.getKeys(scenarioItem.responses)) {
               const response = scenarioItem.responses[responseCode]
               if (response.isValid === false) {
                 const error = response.error
@@ -145,7 +145,7 @@ export function openApiValidationExample(
                 }
                 for (const innerError of innerErrors) {
                   //console.error(JSON.stringify(error, null, 2));
-                  let resultDetails = {
+                  const resultDetails = {
                     type: "Error",
                     code: error.code,
                     message: error.message,

@@ -29,27 +29,33 @@ export interface Options {
   isPathCaseSensitive?: boolean
 }
 
+export interface Operation {
+  responses: {
+    default: {
+      schema: {
+        properties: {
+          [property: string]: {}
+        }
+      }
+    }
+  }
+}
+
+export interface ApiVersion {
+  [method: string]: Operation[]
+}
+
+export interface Provider {
+  [apiVersion: string]: ApiVersion
+}
+
 /**
  * @class
  * Live Validator for Azure swagger APIs.
  */
 export class LiveValidator {
   cache: {
-    [provider: string]: {
-      [apiVersion: string]: {
-        [method: string]: {
-          responses: {
-            default: {
-              schema: {
-                properties: {
-                  [property: string]: {}
-                }
-              }
-            }
-          }
-        }[]
-      }
-    }
+    [provider: string]: Provider
   }
   options: Options
   /**
@@ -124,7 +130,7 @@ export class LiveValidator {
   /**
    * Initializes the Live Validator.
    */
-  initialize(): Promise<void> {
+  async initialize(): Promise<void> {
 
     // Clone github repository if required
     if (this.options.git.shouldClone) {
@@ -144,7 +150,11 @@ export class LiveValidator {
         jsonsPattern,
         {
           ignore: [
-            '**/examples/**/*', '**/quickstart-templates/**/*', '**/schema/**/*', '**/live/**/*', '**/wire-format/**/*'
+            '**/examples/**/*',
+            '**/quickstart-templates/**/*',
+            '**/schema/**/*',
+            '**/live/**/*',
+            '**/wire-format/**/*'
           ]
         })
       log.debug(
@@ -178,7 +188,7 @@ export class LiveValidator {
     //   ...
     // }
     const promiseFactories = swaggerPaths.map(swaggerPath => {
-      return () => {
+      return async () => {
         log.info(`Building cache from: "${swaggerPath}"`)
 
         const validator = new SpecValidator(
@@ -189,9 +199,11 @@ export class LiveValidator {
             isPathCaseSensitive: this.options.isPathCaseSensitive
           })
 
-        return validator.initialize().then((api: any) => {
-          let operations = api.getOperations()
-          let apiVersion: string = api.info.version.toLowerCase()
+        try {
+          const api = await validator.initialize()
+
+          const operations = api.getOperations()
+          let apiVersion = api.info.version.toLowerCase()
 
           operations.forEach((operation: any) => {
             let httpMethod = operation.method.toLowerCase()
@@ -229,19 +241,17 @@ export class LiveValidator {
             this.cache[provider] = apiVersions
           })
 
-          return Promise.resolve(this.cache)
-        }).catch(function (err: any) {
+        } catch (err) {
           // Do Not reject promise in case, we cannot initialize one of the swagger
           log.debug(`Unable to initialize "${swaggerPath}" file from SpecValidator. Error: ${err}`)
           log.warn(
             `Unable to initialize "${swaggerPath}" file from SpecValidator. We are ignoring this swagger file and continuing to build cache for other valid specs.`)
-        })
+        }
       }
     })
 
-    return utils.executePromisesSequentially(promiseFactories).then(() => {
-      log.info("Cache initialization complete.")
-    })
+    await utils.executePromisesSequentially(promiseFactories)
+    log.info("Cache initialization complete.")
   }
 
   /**

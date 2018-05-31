@@ -4,9 +4,9 @@
 import * as util from 'util'
 import * as fs from 'fs'
 import * as yaml from "js-yaml"
-import path = require('path')
-import Sway = require('sway')
-import msRest = require('ms-rest')
+import * as path from 'path'
+import * as Sway from 'sway'
+import * as msRest from 'ms-rest'
 
 let HttpRequest = msRest.WebResource
 
@@ -41,7 +41,7 @@ export class SpecValidator {
 
   specValidationResult: any
 
-  swaggerApi: any
+  swaggerApi: Sway.SwaggerApi|null
 
   options: Options
 
@@ -109,7 +109,7 @@ export class SpecValidator {
   /*
    * Initializes the spec validator. Resolves the spec on different counts using the SpecResolver and initializes the internal api validator.
    */
-  async initialize(): Promise<any> {
+  async initialize(): Promise<Sway.SwaggerApi> {
     //let self = this
     if (this.options.shouldResolveRelativePaths) {
       utils.clearCache()
@@ -262,15 +262,14 @@ export class SpecValidator {
    * @return {object} operation - The operation object.
    */
   getOperationById(id: string) {
-    const self = this
-    if (!self.swaggerApi) {
+    if (!this.swaggerApi) {
       throw new Error(
         `Please call specValidator.initialize() so that swaggerApi is populated, before calling this method.`)
     }
     if (!id) {
       throw new Error(`id cannot be null or undefined and must be of type string.`)
     }
-    let result = this.swaggerApi.getOperations().find(function (item: any) {
+    const result = this.swaggerApi.getOperations().find(function (item: any) {
       return (item.operationId === id)
     })
     return result

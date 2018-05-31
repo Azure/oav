@@ -85,3 +85,6 @@ output/*
 *.js
 *.d.ts
 *.tgz
+*.js.map
+coverage/
+.nyc_output

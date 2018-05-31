@@ -185,12 +185,10 @@ export function makeRequest(options: any) {
  *
  * @return A chain of resolved or rejected promises
  */
-export function executePromisesSequentially(promiseFactories: any[]): Promise<void> {
-  let result = Promise.resolve()
-  promiseFactories.forEach(function (promiseFactory) {
-    result = result.then(promiseFactory)
-  })
-  return result
+export async function executePromisesSequentially(promiseFactories: (() => Promise<void>)[]): Promise<void> {
+  for (const promiseFactory of promiseFactories) {
+    await promiseFactory()
+  }
 };
 
 /*

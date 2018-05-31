@@ -6,7 +6,7 @@ import * as utils from '../util/utils'
 
 export class HttpTemplate {
 
-  constructor(public request: any, public responses: any) {
+  constructor(public readonly request: any, public readonly responses: any) {
   }
 
   getHost(): string|undefined {

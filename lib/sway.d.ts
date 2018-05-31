@@ -4,5 +4,13 @@ declare module "sway" {
     jsonRefs: { relativeBase: any }
     isPathCaseSensitive?: boolean
   }
-  function create(options: Options): Promise<any>
+  interface SwaggerApi {
+    validate(): any
+    getOperations(): any
+    info: {
+      version: string
+      title: any
+    }
+  }
+  function create(options: Options): Promise<SwaggerApi>
 }

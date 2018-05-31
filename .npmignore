@@ -10,6 +10,7 @@ node_modules
 # Tests #
 test/
 tests/
+dist/test/
 
 # Tools and dev scripts #
 tools/
@@ -27,3 +28,4 @@ packages.config
 # VS #
 .ntvs_analysis.*
 *.sln
+
