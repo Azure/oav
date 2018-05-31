@@ -64,7 +64,8 @@
     "dist/*.js",
     "dist/*.d.ts",
     "dist/lib/**/*.js",
-    "dist/lib/**/*.d.ts"
+    "dist/lib/**/*.d.ts",
+    "types/**/*.d.ts"
   ],
   "types": "./dist/index.d.ts",
   "scripts": {
