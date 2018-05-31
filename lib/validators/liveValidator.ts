@@ -16,13 +16,42 @@ import * as models from '../models'
 import * as http from 'http'
 import { PotentialOperationsResult } from '../models/potentialOperationsResult'
 
+export interface Options {
+  swaggerPaths: string[]
+  git: {
+    url: string
+    shouldClone: boolean
+    branch?: string
+  }
+  directory: string
+  swaggerPathsPattern?: string
+  shouldModelImplicitDefaultResponse?: boolean
+  isPathCaseSensitive?: boolean
+}
+
 /**
  * @class
  * Live Validator for Azure swagger APIs.
  */
 export class LiveValidator {
-  cache: any
-
+  cache: {
+    [provider: string]: {
+      [apiVersion: string]: {
+        [method: string]: {
+          responses: {
+            default: {
+              schema: {
+                properties: {
+                  [property: string]: {}
+                }
+              }
+            }
+          }
+        }[]
+      }
+    }
+  }
+  options: Options
   /**
    * Constructs LiveValidator based on provided options.
    *
@@ -46,11 +75,12 @@ export class LiveValidator {
    *
    * @returns {object} CacheBuilder Returns the configured CacheBuilder object.
    */
-  constructor(public options?: any) {
+  constructor(options?: any) {
 
-    if (this.options === null || this.options === undefined) {
-      this.options = {}
-    }
+    this.options = options === null || options === undefined
+      ? { }
+      : options
+
     if (typeof this.options !== 'object') {
       throw new Error('options must be of type "object".')
     }
@@ -63,8 +93,8 @@ export class LiveValidator {
     }
     if (this.options.git === null || this.options.git === undefined) {
       this.options.git = {
-        "url": "https://github.com/Azure/azure-rest-api-specs.git",
-        "shouldClone": false
+        url: "https://github.com/Azure/azure-rest-api-specs.git",
+        shouldClone: false
       }
     }
     if (typeof this.options.git !== 'object') {
@@ -95,22 +125,21 @@ export class LiveValidator {
    * Initializes the Live Validator.
    */
   initialize(): Promise<void> {
-    let self = this
 
     // Clone github repository if required
-    if (self.options.git.shouldClone) {
-      utils.gitClone(self.options.directory, self.options.git.url, self.options.git.branch)
+    if (this.options.git.shouldClone) {
+      utils.gitClone(this.options.directory, this.options.git.url, this.options.git.branch)
     }
 
     // Construct array of swagger paths to be used for building a cache
-    let swaggerPaths
-    if (self.options.swaggerPaths.length !== 0) {
-      swaggerPaths = self.options.swaggerPaths
+    let swaggerPaths: string[]
+    if (this.options.swaggerPaths.length !== 0) {
+      swaggerPaths = this.options.swaggerPaths
       log.debug(`Using user provided swagger paths. Total paths: ${swaggerPaths.length}`)
     } else {
-      let allJsonsPattern = '/specification/**/*.json'
-      let jsonsPattern = path.join(
-        self.options.directory, self.options.swaggerPathsPattern || allJsonsPattern)
+      const allJsonsPattern = '/specification/**/*.json'
+      const jsonsPattern = path.join(
+        this.options.directory, this.options.swaggerPathsPattern || allJsonsPattern)
       swaggerPaths = glob.sync(
         jsonsPattern,
         {
@@ -119,7 +148,7 @@ export class LiveValidator {
           ]
         })
       log.debug(
-        `Using swaggers found from directory "${self.options.directory}" and pattern "${jsonsPattern}". Total paths: ${swaggerPaths.length}`)
+        `Using swaggers found from directory "${this.options.directory}" and pattern "${jsonsPattern}". Total paths: ${swaggerPaths.length}`)
     }
     // console.log(swaggerPaths);
     // Create array of promise factories that builds up cache
@@ -148,11 +177,11 @@ export class LiveValidator {
     //   }
     //   ...
     // }
-    let promiseFactories = swaggerPaths.map((swaggerPath: any) => {
+    const promiseFactories = swaggerPaths.map(swaggerPath => {
       return () => {
         log.info(`Building cache from: "${swaggerPath}"`)
 
-        let validator = new SpecValidator(
+        const validator = new SpecValidator(
           swaggerPath,
           null,
           {
@@ -162,7 +191,7 @@ export class LiveValidator {
 
         return validator.initialize().then((api: any) => {
           let operations = api.getOperations()
-          let apiVersion = api.info.version.toLowerCase()
+          let apiVersion: string = api.info.version.toLowerCase()
 
           operations.forEach((operation: any) => {
             let httpMethod = operation.method.toLowerCase()
@@ -187,7 +216,7 @@ export class LiveValidator {
             provider = provider.toLowerCase()
 
             // Get all api-version for given provider or initialize it
-            let apiVersions = self.cache[provider] || {}
+            let apiVersions = this.cache[provider] || {}
             // Get methods for given apiVersion or initialize it
             let allMethods = apiVersions[apiVersion] || {}
             // Get specific http methods array for given verb or initialize it
@@ -197,10 +226,10 @@ export class LiveValidator {
             operationsForHttpMethod.push(operation)
             allMethods[httpMethod] = operationsForHttpMethod
             apiVersions[apiVersion] = allMethods
-            self.cache[provider] = apiVersions
+            this.cache[provider] = apiVersions
           })
 
-          return Promise.resolve(self.cache)
+          return Promise.resolve(this.cache)
         }).catch(function (err: any) {
           // Do Not reject promise in case, we cannot initialize one of the swagger
           log.debug(`Unable to initialize "${swaggerPath}" file from SpecValidator. Error: ${err}`)

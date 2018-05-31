@@ -110,31 +110,31 @@ export class SpecValidator {
    * Initializes the spec validator. Resolves the spec on different counts using the SpecResolver and initializes the internal api validator.
    */
   async initialize(): Promise<any> {
-    let self = this
-    if (self.options.shouldResolveRelativePaths) {
+    //let self = this
+    if (this.options.shouldResolveRelativePaths) {
       utils.clearCache()
     }
     try {
-      if (self.specInJson === undefined || self.specInJson === null) {
-        const result = await utils.parseJson(self.specPath)
-        self.specInJson = result
+      if (this.specInJson === undefined || this.specInJson === null) {
+        const result = await utils.parseJson(this.specPath)
+        this.specInJson = result
       }
 
-      self.specResolver = new SpecResolver(self.specPath, self.specInJson, self.options)
-      await self.specResolver.resolve()
+      this.specResolver = new SpecResolver(this.specPath, this.specInJson, this.options)
+      await this.specResolver.resolve()
       const options = {
-        definition: self.specInJson,
+        definition: this.specInJson,
         jsonRefs: {
-          relativeBase: self.specDir
+          relativeBase: this.specDir
         },
-        isPathCaseSensitive: self.options.isPathCaseSensitive
+        isPathCaseSensitive: this.options.isPathCaseSensitive
       }
       const api = await Sway.create(options)
-      self.swaggerApi = api
+      this.swaggerApi = api
       return api
     } catch (err) {
-      const e = self.constructErrorObject(ErrorCodes.ResolveSpecError, err.message, [err])
-      self.specValidationResult.resolveSpec = e
+      const e = this.constructErrorObject(ErrorCodes.ResolveSpecError, err.message, [err])
+      this.specValidationResult.resolveSpec = e
       log.error(`${ErrorCodes.ResolveSpecError.name}: ${err.message}.`)
       log.error(err.stack)
       throw e

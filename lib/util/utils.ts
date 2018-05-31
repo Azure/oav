@@ -434,7 +434,7 @@ export function getProvider(path?: string|null): string|undefined {
  *
  * @param {string} [branch] to be cloned instead of the default branch.
  */
-export function gitClone(directory: string, url: string, branch: string): void {
+export function gitClone(directory: string, url: string, branch: string|undefined): void {
   if (url === null || url === undefined || typeof url.valueOf() !== 'string' || !url.trim().length) {
     throw new Error('url is a required parameter of type string and it cannot be an empty string.')
   }
