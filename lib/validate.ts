@@ -15,21 +15,20 @@ import { SpecResolver } from './validators/specResolver'
 import * as specResolver from './validators/specResolver'
 import { UmlGenerator } from './umlGenerator'
 
-export let finalValidationResult: any = { validityStatus: true };
+export const finalValidationResult: any = { validityStatus: true };
 
-export function getDocumentsFromCompositeSwagger(compositeSpecPath: any): Promise<any> {
-  let compositeSwagger;
-  let finalDocs: any = [];
-  return utils.parseJson(compositeSpecPath).then(function (result: any) {
-    compositeSwagger = result;
+export async function getDocumentsFromCompositeSwagger(compositeSpecPath: string): Promise<string[]> {
+  try {
+    const compositeSwagger = await utils.parseJson(compositeSpecPath)
     if (!(compositeSwagger.documents
       && Array.isArray(compositeSwagger.documents)
       && compositeSwagger.documents.length > 0)) {
       throw new Error(
         `CompositeSwagger - ${compositeSpecPath} must contain a documents property and it must be of type array and it must be a non empty array.`)
     }
-    let docs = compositeSwagger.documents
-    let basePath = path.dirname(compositeSpecPath)
+    const docs = compositeSwagger.documents
+    const basePath = path.dirname(compositeSpecPath)
+    const finalDocs: string[] = [];
     for (let i = 0; i < docs.length; i++) {
       if (docs[i].startsWith('.')) {
         docs[i] = docs[i].substring(1)
@@ -43,10 +42,10 @@ export function getDocumentsFromCompositeSwagger(compositeSpecPath: any): Promis
       finalDocs.push(individualPath)
     }
     return finalDocs
-  }).catch(function (err: any) {
+  } catch(err) {
     log.error(err)
-    return Promise.reject(err)
-  })
+    throw err
+  }
 }
 
 export function validateSpec(specPath: any, options: any, _?: any) {
@@ -160,21 +159,22 @@ export async function resolveSpec(specPath: any, outputDir: any, options: Option
   }
 }
 
-export function resolveCompositeSpec(specPath: any, outputDir: any, options: any): Promise<void> {
+export async function resolveCompositeSpec(specPath: any, outputDir: any, options: any): Promise<void> {
   if (!options) options = {}
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
   log.filepath = options.logFilepath || log.filepath
-  return getDocumentsFromCompositeSwagger(specPath).then(function (docs: any) {
+  try {
+    const docs = await getDocumentsFromCompositeSwagger(specPath)
     options.consoleLogLevel = log.consoleLogLevel
     options.logFilepath = log.filepath
-    let promiseFactories = docs.map(function (doc: any) {
-      return function () { return resolveSpec(doc, outputDir, options) }
+    const promiseFactories = docs.map(function (doc: any) {
+      return () => resolveSpec(doc, outputDir, options)
     })
-    return utils.executePromisesSequentially(promiseFactories)
-  }).catch(function (err: any) {
+    return await utils.executePromisesSequentially(promiseFactories)
+  } catch(err) {
     log.error(err)
-    return Promise.reject(err)
-  })
+    throw err
+  }
 }
 
 export function generateWireFormat(

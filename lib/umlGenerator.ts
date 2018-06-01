@@ -133,16 +133,13 @@ export class UmlGenerator {
     return ''
   }
 
-  generateDiagramFromGraph(): Promise<string> {
+  async generateDiagramFromGraph(): Promise<string> {
     this.generateGraphDefinition()
     let svg = ''
-    try {
-      log.info(this.graphDefinition)
-      svg = yuml2svg(this.graphDefinition, false, { dir: this.options.direction, type: 'class' })
-      //console.log(svg)
-    } catch (err) {
-      return Promise.reject(err)
-    }
-    return Promise.resolve(svg)
+
+    log.info(this.graphDefinition)
+    svg = yuml2svg(this.graphDefinition, false, { dir: this.options.direction, type: 'class' })
+    //console.log(svg)
+    return svg
   }
 }
