@@ -29,7 +29,8 @@
     "vscode-jsonrpc": "^3.6.1",
     "winston": "^2.4.2",
     "yargs": "^6.6.0",
-    "yuml2svg": "^3.1.0"
+    "yuml2svg": "^3.1.0",
+    "@types/winston": "^2.3.9"
   },
   "devDependencies": {
     "@types/glob": "^5.0.35",
@@ -40,7 +41,6 @@
     "@types/mocha": "^2.2.46",
     "@types/recursive-readdir": "^2.2.0",
     "@types/should": "^8.1.30",
-    "@types/winston": "^2.3.9",
     "@types/yargs": "^11.0.0",
     "mocha": "^4.1.0",
     "nyc": "^11.8.0",
