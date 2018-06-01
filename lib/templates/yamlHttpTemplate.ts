@@ -3,7 +3,7 @@
 
 // import url = require('url')
 import * as utils from '../util/utils'
-import { HttpTemplate, Request, Responses } from './httpTemplate'
+import { HttpTemplate, Request, Responses, Response } from './httpTemplate'
 import * as uuid from 'uuid'
 
 export class YamlHttpTemplate extends HttpTemplate {
@@ -31,7 +31,7 @@ export class YamlHttpTemplate extends HttpTemplate {
     return result
   }
 
-  getResponseHeaders(response: any): string {
+  getResponseHeaders(response: Response): string {
     let result = ``
     if (response.body) {
       result += `    Content-Length: ${JSON.stringify(response.body).length}\n`
@@ -55,7 +55,7 @@ export class YamlHttpTemplate extends HttpTemplate {
   }
 
   populateRequest(): string {
-    let requestTemplate =
+    const requestTemplate =
       `#Request
 request: |
   ${this.request.method} ${this.request.url} HTTP/1.1

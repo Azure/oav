@@ -4,15 +4,20 @@
 import * as url from 'url'
 import * as utils from '../util/utils'
 
+export interface Headers {
+  [name: string]: string
+}
+
 export interface Request {
   url: string|undefined
   method: any
   body: any
-  headers: { [name: string]: string }
+  headers: Headers
 }
 
 export interface Response {
   body: any
+  headers: Headers
 }
 
 export interface Responses {

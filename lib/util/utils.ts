@@ -215,6 +215,14 @@ export function generateRandomId(prefix: string, existingIds: any): string {
   return randomStr
 };
 
+export interface Reference {
+  readonly filePath?: string
+  readonly localReference?: {
+    readonly value: string
+    readonly accessorProperty: string
+  }
+}
+
 /*
  * Parses a [inline|relative] [model|parameter] reference in the swagger spec.
  * This method does not handle parsing paths "/subscriptions/{subscriptionId}/etc.".
@@ -234,32 +242,36 @@ export function generateRandomId(prefix: string, existingIds: any): string {
  *           - '../newtwork.json#/definitions/Resource' => 'definitions.Resource'
  *           - '#/parameters/SubscriptionId' => 'parameters,SubscriptionId'
  */
-export function parseReferenceInSwagger(reference: string) {
+export function parseReferenceInSwagger(reference: string): Reference {
   if (!reference || (reference && reference.trim().length === 0)) {
     throw new Error('reference cannot be null or undefined and it must be a non-empty string.')
   }
 
-  let result: any = {}
+  // let result: any = {}
   if (reference.includes('#')) {
     //local reference in the doc
     if (reference.startsWith('#/')) {
-      result.localReference = {}
-      result.localReference.value = reference
-      result.localReference.accessorProperty = reference.slice(2).replace('/', '.')
+      return {
+        localReference: {
+          value: reference,
+          accessorProperty: reference.slice(2).replace('/', '.')
+        }
+      }
     } else {
       //filePath+localReference
-      let segments = reference.split('#')
-      result.filePath = segments[0]
-      result.localReference = {}
-      result.localReference.value = '#' + segments[1]
-      result.localReference.accessorProperty = segments[1].slice(1).replace('/', '.')
+      const segments = reference.split('#')
+      return {
+        filePath: segments[0],
+        localReference: {
+          value: '#' + segments[1],
+          accessorProperty: segments[1].slice(1).replace('/', '.')
+        }
+      }
     }
   } else {
     //we are assuming that the string is a relative filePath
-    result.filePath = reference
+    return { filePath: reference }
   }
-
-  return result
 }
 
 /*

@@ -16,12 +16,8 @@ let currentLogFile: any
  */
 function getTimeStamp(): string {
   // We pad each value so that sorted directory listings show the files in chronological order
-  function pad(number: any) {
-    if (number < 10) {
-      return '0' + number
-    }
-
-    return number
+  function pad(number: number): string {
+    return number < 10 ? '0' + number.toString() : number.toString()
   }
 
   const now = new Date()
