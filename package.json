@@ -70,7 +70,7 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "test": "nyc --extension .ts --reporter lcov --reporter text mocha ./test/**/*.ts -r ts-node/register -t 10000",
-    "start": "node ./lib/autorestPlugin/pluginHost.js",
+    "start": "node ./dist/lib/autorestPlugin/pluginHost.js",
     "prepack": "npm install && tsc"
   }
 }
