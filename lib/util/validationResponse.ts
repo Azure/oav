@@ -4,7 +4,7 @@ import { Error } from "./error"
 export class ValidateResponse {
 
   seralize() {
-    const result: any = {}
+    const result: { ['json-path']?: any } = {}
     for (const prop in this) {
       if (this[prop] !== null && this[prop] !== undefined) {
         if (prop === 'jsonpath')

@@ -8,7 +8,7 @@ import * as path from 'path'
 import * as Sway from 'sway'
 import * as msRest from 'ms-rest'
 
-let HttpRequest = msRest.WebResource
+const HttpRequest = msRest.WebResource
 
 import { SpecResolver } from './specResolver'
 import * as specResolver from './specResolver'
@@ -19,7 +19,7 @@ import { ResponseWrapper } from '../models/responseWrapper'
 import { validateResponse } from '../util/validationResponse'
 import { Error } from '../util/error'
 
-let ErrorCodes = Constants.ErrorCodes;
+const ErrorCodes = Constants.ErrorCodes;
 
 export interface Options extends specResolver.Options {
   isPathCaseSensitive?: boolean
@@ -210,7 +210,7 @@ export class SpecValidator {
       self.specValidationResult.initialize = e
       self.specValidationResult.validateSpec.isValid = false
       log.error(`${ErrorCodes.InitializationError.name}: ${msg}`)
-      return e
+      throw e
     }
     try {
       let validationResult = self.swaggerApi.validate()
@@ -240,7 +240,7 @@ export class SpecValidator {
           }
         }
       }
-      return Promise.resolve(validationResult)
+      return validationResult
     } catch (err) {
       let msg = `An Internal Error occurred in validating the spec "${self.specPath}". \t${err.message}.`
       err.code = ErrorCodes.InternalError.name
@@ -474,10 +474,10 @@ export class SpecValidator {
           this.constructRequestResultWrapper(
             operationId, requestValidationErrors, requestValidationWarnings, exampleType, scenario)
           //responseValidation
-          for (let responseStatusCode of utils.getKeys(result.scenarios[scenario].responseValidation)) {
-            let responseValidationErrors =
+          for (const responseStatusCode of utils.getKeys(result.scenarios[scenario].responseValidation)) {
+            const responseValidationErrors =
               result.scenarios[scenario].responseValidation[responseStatusCode].errors
-            let responseValidationWarnings =
+            const responseValidationWarnings =
               result.scenarios[scenario].responseValidation[responseStatusCode].warnings
             this.constructResponseResultWrapper(
               operationId,

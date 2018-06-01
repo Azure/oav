@@ -30,6 +30,10 @@ export interface Options {
 }
 
 export interface Operation {
+  pathObject: {
+    path: string
+    regexp: RegExp
+  }
   responses: {
     default: {
       schema: {
@@ -379,7 +383,7 @@ export class LiveValidator {
    *
    * @returns {Array<Operation>} List of potential operations matching the requestPath.
    */
-  getPotentialOperationsHelper(requestPath: string, requestMethod: string, operations: any[]): any[] {
+  getPotentialOperationsHelper(requestPath: string, requestMethod: string, operations: Operation[]): any[] {
     if (requestPath === null
       || requestPath === undefined
       || typeof requestPath.valueOf() !== 'string'
@@ -464,10 +468,10 @@ export class LiveValidator {
       (msRest as any).models = models;
       (msRest as any).serialize(mapper, requestResponseObj, 'requestResponseObj');
     } catch (err) {
-      let msg =
+      const msg =
         `Found errors "${err.message}" in the provided input:\n` +
         `${util.inspect(requestResponseObj, { depth: null })}.`
-      let e = new models.LiveValidationError(Constants.ErrorCodes.IncorrectInput.name, msg)
+      const e = new models.LiveValidationError(Constants.ErrorCodes.IncorrectInput.name, msg)
       validationResult.errors.push(e)
       return validationResult
     }
