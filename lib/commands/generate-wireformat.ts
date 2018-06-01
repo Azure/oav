@@ -34,22 +34,24 @@ export const builder: yargs.CommandBuilder = {
   }
 }
 
-export function handler(argv: yargs.Arguments) {
+export async function handler(argv: yargs.Arguments) {
   log.debug(argv.toString())
-  let specPath = argv.specPath
-  let operationIds = argv.operationIds
-  let outDir = argv.outDir
-  let vOptions: any = {}
-  let emitYaml = argv.inYaml
-  vOptions.consoleLogLevel = argv.logLevel
-  vOptions.logFilepath = argv.f
-
-  function execWireFormat() {
-    if (specPath.match(/.*composite.*/ig) !== null) {
-      return validate.generateWireFormatInCompositeSpec(specPath, outDir, emitYaml, vOptions)
-    } else {
-      return validate.generateWireFormat(specPath, outDir, emitYaml, operationIds, vOptions)
-    }
+  const specPath = argv.specPath
+  const operationIds = argv.operationIds
+  const outDir = argv.outDir
+  const emitYaml = argv.inYaml
+  const vOptions = {
+    consoleLogLevel: argv.logLevel,
+    logFilepath: argv.f
   }
-  return execWireFormat().catch((err: any) => { process.exitCode = 1 })
+
+  try {
+    if (specPath.match(/.*composite.*/ig) !== null) {
+      return await validate.generateWireFormatInCompositeSpec(specPath, outDir, emitYaml, vOptions)
+    } else {
+      return await validate.generateWireFormat(specPath, outDir, emitYaml, operationIds, vOptions)
+    }
+  } catch(err) {
+    process.exitCode = 1
+  }
 }

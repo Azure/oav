@@ -27,13 +27,13 @@ export const builder: yargs.CommandBuilder = {
 
 export function handler(argv: yargs.Arguments): void {
   log.debug(argv.toString())
-  let specPath = argv.specPath
-  let recordings = argv.recordings
-  let vOptions: any = {}
-  vOptions.consoleLogLevel = argv.logLevel
-  vOptions.logFilepath = argv.f
-  vOptions.output = argv.outDir
-  vOptions.matchApiVersion = argv.matchApiVersion
-
+  const specPath = argv.specPath
+  const recordings = argv.recordings
+  const vOptions = {
+    consoleLogLevel: argv.logLevel,
+    logFilepath: argv.f,
+    output: argv.outDir,
+    matchApiVersion: argv.matchApiVersion
+  }
   return validate.extractXMsExamples(specPath, recordings, vOptions)
 }

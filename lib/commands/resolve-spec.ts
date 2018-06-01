@@ -67,27 +67,29 @@ export const builder: yargs.CommandBuilder = {
   }
 }
 
-export function handler(argv: yargs.Arguments) {
+export async function handler(argv: yargs.Arguments) {
   log.debug(argv.toString())
-  let specPath = argv.specPath
-  let vOptions: any = {}
-  vOptions.consoleLogLevel = argv.logLevel
-  vOptions.logFilepath = argv.f
-  vOptions.shouldResolveRelativePaths = argv.r
-  vOptions.shouldResolveXmsExamples = argv.e
-  vOptions.shouldResolveAllOf = argv.o
-  vOptions.shouldSetAdditionalPropertiesFalse = argv.a
-  vOptions.shouldResolveParameterizedHost = argv.t
-  vOptions.shouldResolvePureObjects = argv.p
-  vOptions.shouldResolveDiscriminator = argv.c
-  vOptions.shouldResolveNullableTypes = argv.n
-
-  function execResolve() {
-    if (specPath.match(/.*composite.*/ig) !== null) {
-      return validate.resolveCompositeSpec(specPath, argv.d, vOptions)
-    } else {
-      return validate.resolveSpec(specPath, argv.d, vOptions)
-    }
+  const specPath = argv.specPath
+  const vOptions = {
+    consoleLogLevel: argv.logLevel,
+    logFilepath: argv.f,
+    shouldResolveRelativePaths: argv.r,
+    shouldResolveXmsExamples: argv.e,
+    shouldResolveAllOf: argv.o,
+    shouldSetAdditionalPropertiesFalse: argv.a,
+    shouldResolveParameterizedHost: argv.t,
+    shouldResolvePureObjects: argv.p,
+    shouldResolveDiscriminator: argv.c,
+    shouldResolveNullableTypes: argv.n
   }
-  return execResolve().catch((err: any) => { process.exitCode = 1 })
+
+  try {
+    if (specPath.match(/.*composite.*/ig) !== null) {
+      return await validate.resolveCompositeSpec(specPath, argv.d, vOptions)
+    } else {
+      return await validate.resolveSpec(specPath, argv.d, vOptions)
+    }
+  } catch(err) {
+    process.exitCode = 1
+  }
 }

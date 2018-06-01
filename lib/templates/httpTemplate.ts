@@ -4,17 +4,37 @@
 import * as url from 'url'
 import * as utils from '../util/utils'
 
+export interface Request {
+  url: string|undefined
+  method: any
+  body: any
+  headers: { [name: string]: string }
+}
+
+export interface Response {
+  body: any
+}
+
+export interface Responses {
+  longrunning: {
+    initialResponse: Response
+    finalResponse: Response
+  }
+  standard: {
+    finalResponse: Response
+  }
+}
+
 export class HttpTemplate {
 
-  constructor(public readonly request: any, public readonly responses: any) {
+  constructor(public readonly request: Request, public readonly responses: Responses) {
   }
 
   getHost(): string|undefined {
-    let result: string|undefined = 'management.azure.com'
-    if (this.request.url) {
-      result = url.parse(this.request.url).host
-    }
-    return result
+    const requestUrl = this.request.url
+    return requestUrl
+      ? url.parse(requestUrl).host
+      : 'management.azure.com'
   }
 
   getCurlRequestHeaders(padding?: any): string {
@@ -24,10 +44,10 @@ export class HttpTemplate {
       result += `\n${padding}-H 'Content-Length: ${JSON.stringify(this.request.body).length}' \\`
     }
     if (this.request.headers) {
-      let headers = utils.getKeys(this.request.headers)
+      const headers = utils.getKeys(this.request.headers)
 
       for (let i = 0; i < headers.length; i++) {
-        let headerName = headers[i]
+        const headerName = headers[i]
         result += `\n${padding}-H '${headerName}: ${this.request.headers[headerName]}' \\`
       }
     }
@@ -45,7 +65,7 @@ export class HttpTemplate {
   //The format for request body in Curl has been inspired from the following links:
   // - https://stackoverflow.com/questions/34847981/curl-with-multiline-of-json
   // - https://ok-b.org/t/34847981/curl-with-multiline-of-json
-  getCurlRequestBody(padding?: any): string {
+  getCurlRequestBody(padding?: string): string {
     let body = ``
     if (!padding) padding = ``
     if (this.request && this.request.body !== null && this.request.body !== undefined) {
@@ -55,7 +75,7 @@ export class HttpTemplate {
     return body
   }
 
-  getResponseBody(response: any): string {
+  getResponseBody(response: Response): string {
     let body = ``
     if (response && response.body !== null && response.body !== undefined) {
       body = JSON.stringify(response.body)

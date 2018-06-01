@@ -3,12 +3,12 @@
 
 // import url = require('url')
 import * as utils from '../util/utils'
-import { HttpTemplate } from './httpTemplate'
+import { HttpTemplate, Request, Responses } from './httpTemplate'
 import * as uuid from 'uuid'
 
 export class YamlHttpTemplate extends HttpTemplate {
 
-  constructor(request: any, responses: any) {
+  constructor(request: Request, responses: Responses) {
     super(request, responses)
   }
 

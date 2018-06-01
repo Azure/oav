@@ -44,18 +44,20 @@ export const builder: yargs.CommandBuilder = {
   }
 }
 
-export function handler(argv: yargs.Arguments) {
+export async function handler(argv: yargs.Arguments) {
   log.debug(argv.toString())
-  let specPath = argv.specPath
-  let vOptions: any = {}
-  vOptions.consoleLogLevel = argv.logLevel
-  vOptions.logFilepath = argv.f
-  vOptions.shouldDisableProperties = argv.p
-  vOptions.shouldDisableAllof = argv.a
-  vOptions.shouldDisableRefs = argv.r
-  vOptions.direction = argv.i
-  function execGenerateUml() {
-    return validate.generateUml(specPath, argv.d, vOptions)
+  const specPath = argv.specPath
+  const vOptions = {
+    consoleLogLevel: argv.logLevel,
+    logFilepath: argv.f,
+    shouldDisableProperties: argv.p,
+    shouldDisableAllof: argv.a,
+    shouldDisableRefs: argv.r,
+    direction: argv.i
   }
-  return execGenerateUml().catch((err: any) => { process.exitCode = 1; })
+  try {
+    await validate.generateUml(specPath, argv.d, vOptions)
+  } catch (err) {
+    process.exitCode = 1
+  }
 }

@@ -11,10 +11,11 @@ export const describe = 'Performs semantic validation of the spec.'
 
 export function handler(argv: yargs.Arguments) {
   log.debug(argv.toString())
-  let specPath = argv.specPath
-  let vOptions: any = {}
-  vOptions.consoleLogLevel = argv.logLevel
-  vOptions.logFilepath = argv.f
+  const specPath = argv.specPath
+  const vOptions = {
+    consoleLogLevel: argv.logLevel,
+    logFilepath: argv.f
+  }
 
   if (specPath.match(/.*composite.*/ig) !== null) {
     return validate.validateCompositeSpec(specPath, vOptions)

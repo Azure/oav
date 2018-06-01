@@ -2,13 +2,13 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 // import * as url from 'url'
-import { HttpTemplate } from './httpTemplate'
+import { HttpTemplate, Request, Responses } from './httpTemplate'
 import * as uuid from 'uuid'
 import * as utils from '../util/utils'
 
 export class MarkdownHttpTemplate extends HttpTemplate {
 
-  constructor(request: any, responses: any) {
+  constructor(request: Request, responses: Responses) {
     super(request, responses)
   }
 
