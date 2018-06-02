@@ -18,8 +18,8 @@
  *
  */
 export class PotentialOperationsResult {
-  operations: any[]
-  reason: any
+  public readonly operations: any[]
+  public readonly reason: any
   constructor(operations: any[], reason: any) {
     this.operations = operations || []
     if (reason) {

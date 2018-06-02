@@ -1,28 +1,28 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import { log } from '../util/logging'
-import * as validate from '../validate'
-import * as yargs from 'yargs'
+import { log } from "../util/logging"
+import * as validate from "../validate"
+import * as yargs from "yargs"
 
-export const command = 'extract-xmsexamples <spec-path> <recordings>'
+export const command = "extract-xmsexamples <spec-path> <recordings>"
 
 export const describe =
-  'Extracts the x-ms-examples for a given swagger from the .NET session recordings and saves them in a file.'
+  "Extracts the x-ms-examples for a given swagger from the .NET session recordings and saves them in a file."
 
 export const builder: yargs.CommandBuilder = {
   d: {
-    alias: 'outDir',
-    describe: 'The output directory where the x-ms-examples files need to be stored. If not provided ' +
+    alias: "outDir",
+    describe: "The output directory where the x-ms-examples files need to be stored. If not provided " +
       'then the output will be stored in a folder name "output" adjacent to the working directory.',
-    string: true
+    string: true,
   },
   m: {
-    alias: 'matchApiVersion',
-    describe: 'Only generate examples if api-version matches.',
+    alias: "matchApiVersion",
+    describe: "Only generate examples if api-version matches.",
     boolean: true,
-    default: true
-  }
+    default: true,
+  },
 }
 
 export function handler(argv: yargs.Arguments): void {
@@ -33,7 +33,7 @@ export function handler(argv: yargs.Arguments): void {
     consoleLogLevel: argv.logLevel,
     logFilepath: argv.f,
     output: argv.outDir,
-    matchApiVersion: argv.matchApiVersion
+    matchApiVersion: argv.matchApiVersion,
   }
   return validate.extractXMsExamples(specPath, recordings, vOptions)
 }

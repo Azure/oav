@@ -4,14 +4,15 @@
  *--------------------------------------------------------------------------------------------*/
 
 // import vscodeJsonRpc = require("vscode-jsonrpc")
-import * as linq from 'linq'
-import * as jsonPath from 'jsonpath'
+import * as linq from "linq"
+import * as jsonPath from "jsonpath"
 import * as yaml from "js-yaml"
 import * as utils from "../util/utils"
-import { log } from '../util/logging'
-import { SpecValidator } from '../validators/specValidator'
-import * as extensionBase from '@microsoft.azure/autorest-extension-base'
-import { IAutoRestPluginInitiator } from '@microsoft.azure/autorest-extension-base/dist/lib/extension-base';
+import { log } from "../util/logging"
+import { SpecValidator } from "../validators/specValidator"
+import * as extensionBase from "@microsoft.azure/autorest-extension-base"
+import { IAutoRestPluginInitiator } from
+  "@microsoft.azure/autorest-extension-base/dist/lib/extension-base"
 
 const openAPIDocUrl = "https://github.com/Azure/oav"
 
@@ -19,7 +20,7 @@ const extension = new extensionBase.AutoRestExtension()
 const modelValidatorPluginName = "model-validator"
 const modelValidationCategory = "ExampleModelViolation"
 
-class FormattedOutput{
+class FormattedOutput {
   constructor(
     public readonly channel: string,
     public readonly details: any,
@@ -33,8 +34,7 @@ class FormattedOutput{
  * Returns a promise with the examples validation of the swagger.
  */
 async function analyzeSwagger(swaggerFileName: string, autoRestApi: extensionBase.Host)
-  : Promise<void>
-{
+  : Promise<void> {
   const swaggerFile = await autoRestApi.ReadFile(swaggerFileName)
   const swagger = yaml.safeLoad(swaggerFile)
   const exampleValidationResults = await openApiValidationExample(swagger, swaggerFileName)
@@ -44,7 +44,7 @@ async function analyzeSwagger(swaggerFileName: string, autoRestApi: extensionBas
       Text: result.text,
       Details: result.details,
       Key: result.code,
-      Source: result.source
+      Source: result.source,
     })
   }
   // console.error(JSON.stringify(exampleValidationResults, null, 2))
@@ -60,36 +60,37 @@ extension.Add(
   })
 
 export async function openApiValidationExample(
-  swagger: yaml.DocumentLoadResult, swaggerFileName: string, options?: any): Promise<any[]>
-{
+  swagger: yaml.DocumentLoadResult, swaggerFileName: string, options?: any)
+  : Promise<any[]> {
   const formattedResult: FormattedOutput[] = []
-  if (!options) options = {}
+  if (!options) { options = {} }
   options.consoleLogLevel = "off"
   log.consoleLogLevel = options.consoleLogLevel
   const specVal = new SpecValidator(swaggerFileName, swagger, options)
-  //console.error(JSON.stringify(swagger, null, 2))
+  // console.error(JSON.stringify(swagger, null, 2))
   await specVal.initialize()
   try {
     specVal.validateOperations()
     const specValidationResult = specVal.specValidationResult
-    for (let op of utils.getKeys(specValidationResult.operations)) {
+    for (const op of utils.getKeys(specValidationResult.operations)) {
       const xmsExamplesNode = specValidationResult.operations[op]["x-ms-examples"];
-      for (let scenario of utils.getKeys(xmsExamplesNode.scenarios)) {
+      for (const scenario of utils.getKeys(xmsExamplesNode.scenarios)) {
         // invalid? meaning that there's an issue found in the validation
-        let scenarioItem = xmsExamplesNode.scenarios[scenario]
+        const scenarioItem = xmsExamplesNode.scenarios[scenario]
         if (scenarioItem.isValid === false) {
           // get path to x-ms-examples in swagger
           const xmsexPath = linq
-            .from(jsonPath.nodes(swagger, `$.paths[*][?(@.operationId==='${op}')]["x-ms-examples"]`))
+            .from(jsonPath.nodes(
+              swagger, `$.paths[*][?(@.operationId==='${op}')]["x-ms-examples"]`))
             .select((x: any) => x.path)
             .firstOrDefault();
           if (!xmsexPath) {
             throw new Error("Model Validator: Path to x-ms-examples not found.")
           }
-          //console.error(JSON.stringify(scenarioItem, null, 2));
-          var result = new FormattedOutput(
+          // console.error(JSON.stringify(scenarioItem, null, 2));
+          let result = new FormattedOutput(
             "verbose",
-            { scenarioItem: scenarioItem, scenario: scenario },
+            { scenarioItem, scenario },
             [modelValidationCategory],
             "Model validator found issue (see details).",
             [{ document: swaggerFileName, Position: { path: xmsexPath } }])
@@ -105,14 +106,14 @@ export async function openApiValidationExample(
             }
             for (const innerError of innerErrors) {
               const path = convertIndicesFromStringToNumbers(innerError.path)
-              //console.error(JSON.stringify(error, null, 2))
-              let resultDetails = {
+              // console.error(JSON.stringify(error, null, 2))
+              const resultDetails = {
                 type: "Error",
                 code: error.code,
                 message: error.message,
                 id: error.id,
                 validationCategory: modelValidationCategory,
-                innerErrors: innerError
+                innerErrors: innerError,
               }
               result = new FormattedOutput(
                 "error",
@@ -130,7 +131,7 @@ export async function openApiValidationExample(
                   + "-"
                   + error.code.toLowerCase()
                   + "\n",
-                [{ document: swaggerFileName, Position: { path: path } }])
+                [{ document: swaggerFileName, Position: { path } }])
               formattedResult.push(result)
             }
           }
@@ -145,14 +146,14 @@ export async function openApiValidationExample(
                 throw new Error("Model Validator: Unexpected format.")
               }
               for (const innerError of innerErrors) {
-                //console.error(JSON.stringify(error, null, 2));
+                // console.error(JSON.stringify(error, null, 2));
                 const resultDetails = {
                   type: "Error",
                   code: error.code,
                   message: error.message,
                   id: error.id,
                   validationCategory: modelValidationCategory,
-                  innerErrors: innerError
+                  innerErrors: innerError,
                 }
                 result = new FormattedOutput(
                   "error",
@@ -172,8 +173,10 @@ export async function openApiValidationExample(
                   [{
                     document: swaggerFileName,
                     Position: {
-                      path: xmsexPath.slice(0, xmsexPath.length - 1).concat(["responses", responseCode])
-                    }
+                      path: xmsexPath
+                        .slice(0, xmsexPath.length - 1)
+                        .concat(["responses", responseCode]),
+                    },
                   }])
                 formattedResult.push(result)
               }
@@ -183,13 +186,15 @@ export async function openApiValidationExample(
       }
     }
     return formattedResult
-  } catch(err) {
+  } catch (err) {
+    /* tslint:disable-next-line:no-console */
     console.error(err)
     throw err
   }
 }
 /**
- * Path comes with indices as strings in "inner errors", so converting those to actual numbers for path to work.
+ * Path comes with indices as strings in "inner errors", so converting those to actual numbers for
+ * path to work.
  */
 function convertIndicesFromStringToNumbers(path: any) {
   const result = path.slice()

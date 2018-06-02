@@ -8,7 +8,7 @@
  * regenerated.
  */
 
-import { ErrorResponse } from './errorResponse';
+import { ErrorResponse } from "./errorResponse";
 
 /**
  * @class
@@ -30,80 +30,80 @@ export class ErrorWrapper extends ErrorResponse {
    * @returns {object} metadata of ErrorWrapper
    *
    */
-  mapper() {
+  public mapper() {
     return {
       required: false,
-      serializedName: 'ErrorWrapper',
+      serializedName: "ErrorWrapper",
       type: {
-        name: 'Composite',
-        className: 'ErrorWrapper',
+        name: "Composite",
+        className: "ErrorWrapper",
         modelProperties: {
           code: {
             required: false,
-            serializedName: 'code',
+            serializedName: "code",
             type: {
-              name: 'String'
-            }
+              name: "String",
+            },
           },
           message: {
             required: false,
-            serializedName: 'message',
+            serializedName: "message",
             type: {
-              name: 'String'
-            }
+              name: "String",
+            },
           },
           description: {
             required: false,
-            serializedName: 'description',
+            serializedName: "description",
             type: {
-              name: 'String'
-            }
+              name: "String",
+            },
           },
           params: {
             required: false,
-            serializedName: 'params',
+            serializedName: "params",
             type: {
-              name: 'Sequence',
+              name: "Sequence",
               element: {
-                  required: false,
-                  serializedName: 'StringElementType',
-                  type: {
-                    name: 'String'
-                  }
-              }
-            }
+                required: false,
+                serializedName: "StringElementType",
+                type: {
+                  name: "String",
+                },
+              },
+            },
           },
           path: {
             required: false,
-            serializedName: 'path',
+            serializedName: "path",
             type: {
-              name: 'Sequence',
+              name: "Sequence",
               element: {
-                  required: false,
-                  serializedName: 'StringElementType',
-                  type: {
-                    name: 'String'
-                  }
-              }
-            }
+                required: false,
+                serializedName: "StringElementType",
+                type: {
+                  name: "String",
+                },
+              },
+            },
           },
           errors: {
             required: false,
-            serializedName: 'errors',
+            serializedName: "errors",
             type: {
-              name: 'Sequence',
+              name: "Sequence",
               element: {
-                  required: false,
-                  serializedName: 'ErrorResponseElementType',
-                  type: {
-                    name: 'Composite',
-                    className: 'ErrorResponse'
-                  }
-              }
-            }
-          }
-        }
-      }
+                required: false,
+                serializedName: "ErrorResponseElementType",
+                type: {
+                  name: "Composite",
+                  className: "ErrorResponse",
+                },
+              },
+            },
+          },
+        },
+      },
     };
   }
 }

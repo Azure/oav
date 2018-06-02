@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import * as url from 'url'
-import * as utils from '../util/utils'
+import * as url from "url"
+import * as utils from "../util/utils"
 
 export interface Headers {
   [name: string]: string
@@ -39,7 +39,7 @@ export class HttpTemplate {
     const requestUrl = this.request.url
     return requestUrl
       ? url.parse(requestUrl).host
-      : 'management.azure.com'
+      : "management.azure.com"
   }
 
   getCurlRequestHeaders(padding?: any): string {

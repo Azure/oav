@@ -1,4 +1,7 @@
-import { LiveValidationError } from './liveValidationError'
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License. See License.txt in the project root for license information.
+
+import { LiveValidationError } from "./liveValidationError"
 
 /**
  * @class
@@ -27,66 +30,65 @@ export class ErrorResponse extends LiveValidationError {
    * @returns {object} metadata of ErrorResponse
    *
    */
-  mapper() {
+  public mapper() {
     return {
       required: false,
-      serializedName: 'ErrorResponse',
+      serializedName: "ErrorResponse",
       type: {
-        name: 'Composite',
-        className: 'ErrorResponse',
+        name: "Composite",
+        className: "ErrorResponse",
         modelProperties: {
           code: {
             required: false,
-            serializedName: 'code',
+            serializedName: "code",
             type: {
-              name: 'String'
-            }
+              name: "String",
+            },
           },
           message: {
             required: false,
-            serializedName: 'message',
+            serializedName: "message",
             type: {
-              name: 'String'
-            }
+              name: "String",
+            },
           },
           description: {
             required: false,
-            serializedName: 'description',
+            serializedName: "description",
             type: {
-              name: 'String'
-            }
+              name: "String",
+            },
           },
           params: {
             required: false,
-            serializedName: 'params',
+            serializedName: "params",
             type: {
-              name: 'Sequence',
+              name: "Sequence",
               element: {
-                  required: false,
-                  serializedName: 'StringElementType',
-                  type: {
-                    name: 'String'
-                  }
-              }
-            }
+                required: false,
+                serializedName: "StringElementType",
+                type: {
+                  name: "String",
+                },
+              },
+            },
           },
           path: {
             required: false,
-            serializedName: 'path',
+            serializedName: "path",
             type: {
-              name: 'Sequence',
+              name: "Sequence",
               element: {
-                  required: false,
-                  serializedName: 'StringElementType',
-                  type: {
-                    name: 'String'
-                  }
-              }
-            }
-          }
-        }
-      }
-    };
+                required: false,
+                serializedName: "StringElementType",
+                type: {
+                  name: "String",
+                },
+              },
+            },
+          },
+        },
+      },
+    }
   }
 }
-

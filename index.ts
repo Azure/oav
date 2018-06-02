@@ -9,17 +9,17 @@ export {
   validateExamples,
   validateExamplesInCompositeSpec,
   resolveSpec,
-  resolveCompositeSpec
-} from './lib/validate'
+  resolveCompositeSpec,
+} from "./lib/validate"
 
-export { executePromisesSequentially } from './lib/util/utils'
+export { executePromisesSequentially } from "./lib/util/utils"
 
-export { log } from './lib/util/logging'
+export { log } from "./lib/util/logging"
 
 // Classes
-export { SpecValidator } from './lib/validators/specValidator'
-export { LiveValidator } from './lib/validators/liveValidator'
-export { SpecResolver } from './lib/validators/specResolver'
+export { SpecValidator } from "./lib/validators/specValidator"
+export { LiveValidator } from "./lib/validators/liveValidator"
+export { SpecResolver } from "./lib/validators/specResolver"
 
 // Constants
-export { Constants } from './lib/util/constants'
+export { Constants } from "./lib/util/constants"

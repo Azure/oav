@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
+/* tslint:disable */
+
 // var util = require('util'),
 //   ExecutionEngine = require('../util/executionEngine'),
 //   log = require('../util/logging'),

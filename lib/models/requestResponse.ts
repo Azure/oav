@@ -39,8 +39,6 @@
  *
  */
 export class RequestResponse {
-  constructor() {
-  }
 
   /**
    * Defines the metadata of RequestResponse
@@ -48,32 +46,32 @@ export class RequestResponse {
    * @returns {object} metadata of RequestResponse
    *
    */
-  mapper() {
+  public mapper() {
     return {
       required: false,
-      serializedName: 'RequestResponse',
+      serializedName: "RequestResponse",
       type: {
-        name: 'Composite',
-        className: 'RequestResponse',
+        name: "Composite",
+        className: "RequestResponse",
         modelProperties: {
           liveRequest: {
             required: true,
-            serializedName: 'liveRequest',
+            serializedName: "liveRequest",
             type: {
-              name: 'Composite',
-              className: 'LiveRequest'
-            }
+              name: "Composite",
+              className: "LiveRequest",
+            },
           },
           liveResponse: {
             required: true,
-            serializedName: 'liveResponse',
+            serializedName: "liveResponse",
             type: {
-              name: 'Composite',
-              className: 'LiveResponse'
-            }
-          }
-        }
-      }
-    };
+              name: "Composite",
+              className: "LiveResponse",
+            },
+          },
+        },
+      },
+    }
   }
 }

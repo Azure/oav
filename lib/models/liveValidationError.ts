@@ -27,31 +27,30 @@ export class LiveValidationError {
    * @returns {object} metadata of LiveValidationError
    *
    */
-  mapper() {
+  public mapper() {
     return {
       required: false,
-      serializedName: 'LiveValidationError',
+      serializedName: "LiveValidationError",
       type: {
-        name: 'Composite',
-        className: 'LiveValidationError',
+        name: "Composite",
+        className: "LiveValidationError",
         modelProperties: {
           code: {
             required: true,
-            serializedName: 'code',
+            serializedName: "code",
             type: {
-              name: 'String'
-            }
+              name: "String",
+            },
           },
           message: {
             required: true,
-            serializedName: 'message',
+            serializedName: "message",
             type: {
-              name: 'String'
-            }
-          }
-        }
-      }
+              name: "String",
+            },
+          },
+        },
+      },
     };
   }
 }
-
