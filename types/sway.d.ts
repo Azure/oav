@@ -8,12 +8,12 @@ declare module "sway" {
     isPathCaseSensitive?: boolean
   }
   interface SwaggerApi {
-    validate(): any
-    getOperations(): any[]
     info: {
       version: string
       title: any
     }
+    validate(): any
+    getOperations(): any[]
   }
   function create(options: Options): Promise<SwaggerApi>
 }
