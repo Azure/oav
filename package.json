@@ -69,10 +69,27 @@
     "types/**/*.d.ts"
   ],
   "types": "./dist/index.d.ts",
+  "nyc": {
+    "require": [
+      "ts-node/register"
+    ],
+    "all": true,
+    "reporter": [
+      "lcov",
+      "text"
+    ],
+    "extension": [
+      ".ts"
+    ],
+    "exclude": [
+      "types/",
+      "dist/"
+    ]
+  },
   "scripts": {
     "tsc": "tsc",
     "tslint": "tslint ./*.ts ./lib/**/*.ts ./test/**/*.ts ./types/**/*.ts",
-    "test": "npm run tslint && nyc --extension .ts --reporter lcov --reporter text mocha ./test/**/*.ts -r ts-node/register -t 10000",
+    "test": "npm run tslint && nyc mocha ./test/**/*.ts -r ts-node/register -t 10000",
     "start": "node ./dist/lib/autorestPlugin/pluginHost.js",
     "prepack": "npm install && tsc && npm run tslint"
   }
