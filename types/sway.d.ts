@@ -6,7 +6,7 @@ declare module "sway" {
   }
   interface SwaggerApi {
     validate(): any
-    getOperations(): any
+    getOperations(): any[]
     info: {
       version: string
       title: any

@@ -8,12 +8,14 @@ import * as yargs from "yargs"
 export const command = "extract-xmsexamples <spec-path> <recordings>"
 
 export const describe =
-  "Extracts the x-ms-examples for a given swagger from the .NET session recordings and saves them in a file."
+  "Extracts the x-ms-examples for a given swagger from the .NET session recordings and saves " +
+  "them in a file."
 
 export const builder: yargs.CommandBuilder = {
   d: {
     alias: "outDir",
-    describe: "The output directory where the x-ms-examples files need to be stored. If not provided " +
+    describe:
+      "The output directory where the x-ms-examples files need to be stored. If not provided " +
       'then the output will be stored in a folder name "output" adjacent to the working directory.',
     string: true,
   },
@@ -25,7 +27,7 @@ export const builder: yargs.CommandBuilder = {
   },
 }
 
-export function handler(argv: yargs.Arguments): void {
+export function handler(argv: yargs.Arguments): Promise<void> {
   log.debug(argv.toString())
   const specPath = argv.specPath
   const recordings = argv.recordings

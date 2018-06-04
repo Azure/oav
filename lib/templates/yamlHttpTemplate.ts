@@ -2,9 +2,9 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 // import url = require('url')
-import * as utils from '../util/utils'
-import { HttpTemplate, Request, Responses, Response } from './httpTemplate'
-import * as uuid from 'uuid'
+import * as utils from "../util/utils"
+import { HttpTemplate, Request, Responses, Response } from "./httpTemplate"
+import * as uuid from "uuid"
 
 export class YamlHttpTemplate extends HttpTemplate {
 
@@ -12,16 +12,38 @@ export class YamlHttpTemplate extends HttpTemplate {
     super(request, responses)
   }
 
-  getRequestHeaders(): string {
+  public populate(): string {
+    let template = ``
+    template += this.populateRequest()
+    template += this.populateCurl()
+    if (this.responses) {
+      if (this.responses.longrunning) {
+        if (this.responses.longrunning.initialResponse) {
+          template += this.populateResponse(
+            this.responses.longrunning.initialResponse, "Initial Response")
+        }
+        if (this.responses.longrunning.finalResponse) {
+          template += this.populateResponse(
+            this.responses.longrunning.finalResponse,
+            "Final Response after polling is complete and successful")
+        }
+      } else {
+        template += this.populateResponse(this.responses.standard.finalResponse, "Response")
+      }
+    }
+    return template
+  }
+
+  private getRequestHeaders(): string {
     let result = ``
     if (this.request.body) {
       result += `  Content-Length: ${JSON.stringify(this.request.body).length}\n`
     }
     if (this.request.headers) {
-      let headers = utils.getKeys(this.request.headers)
+      const headers = utils.getKeys(this.request.headers)
 
       for (let i = 0; i < headers.length; i++) {
-        let headerName = headers[i]
+        const headerName = headers[i]
         result += `  ${headerName}: ${this.request.headers[headerName]}`
         if (i !== headers.length - 1) {
           result += `\n`
@@ -31,17 +53,17 @@ export class YamlHttpTemplate extends HttpTemplate {
     return result
   }
 
-  getResponseHeaders(response: Response): string {
+  private getResponseHeaders(response: Response): string {
     let result = ``
     if (response.body) {
       result += `    Content-Length: ${JSON.stringify(response.body).length}\n`
     }
     let gotContentType = false
     if (response.headers) {
-      let headers = utils.getKeys(response.headers)
+      const headers = utils.getKeys(response.headers)
       for (let i = 0; i < headers.length; i++) {
-        let headerName = headers[i]
-        if (headerName.match(/^Content-Type$/ig) !== null) gotContentType = true
+        const headerName = headers[i]
+        if (headerName.match(/^Content-Type$/ig) !== null) { gotContentType = true }
         result += `    ${headerName}: ${response.headers[headerName]}`
         if (i !== headers.length - 1) {
           result += `\n`
@@ -54,7 +76,7 @@ export class YamlHttpTemplate extends HttpTemplate {
     return result
   }
 
-  populateRequest(): string {
+  private populateRequest(): string {
     const requestTemplate =
       `#Request
 request: |
@@ -69,10 +91,11 @@ ${this.getRequestHeaders()}
     return requestTemplate
   }
 
-  populateResponse(response: any, responseType: any): string {
-    if (!responseType) responseType = 'Response'
-    let responseGuid = uuid.v4()
-    let responseTemplate = `
+  private populateResponse(response: any, responseType: any): string {
+    if (!responseType) { responseType = "Response" }
+    const responseGuid = uuid.v4()
+    const date = new Date().toISOString().replace(/(\W)/ig, "")
+    const responseTemplate = `
 #${responseType}
 response:
   #${response.statusCode}
@@ -84,7 +107,7 @@ response:
     x-ms-ratelimit-remaining-subscription-writes: 1199
     x-ms-request-id: ${responseGuid}
     x-ms-correlation-request-id: ${responseGuid}
-    x-ms-routing-request-id: WESTUS2:${new Date().toISOString().replace(/(\W)/ig, '')}:${responseGuid}
+    x-ms-routing-request-id: WESTUS2:${date}:${responseGuid}
     Strict-Transport-Security: max-age=31536000; includeSubDomains
 ${this.getResponseHeaders(response)}
     Date: ${new Date().toUTCString()}
@@ -95,34 +118,17 @@ ${this.getResponseHeaders(response)}
     return responseTemplate
   }
 
-  populateCurl(): string {
+  private populateCurl(): string {
     const padding = `  `
+    const method = this.request.method
+    const url = this.request.url
+    const headers = this.getCurlRequestHeaders(padding)
+    const body = this.getCurlRequestBody(padding)
     const template =
       `\n#Curl
 curl: |
-  curl -X ${this.request.method} '${this.request.url}' \\\n  -H 'authorization: bearer <token>' \\${this.getCurlRequestHeaders(padding)}${this.getCurlRequestBody(padding)}
+  curl -X ${method} '${url}' \\\n  -H 'authorization: bearer <token>' \\${headers}${body}
 `
-    return template
-  }
-
-  populate(): string {
-    let template = ``
-    template += this.populateRequest()
-    template += this.populateCurl()
-    if (this.responses) {
-      if (this.responses.longrunning) {
-        if (this.responses.longrunning.initialResponse) {
-          template += this.populateResponse(this.responses.longrunning.initialResponse, 'Initial Response')
-        }
-        if (this.responses.longrunning.finalResponse) {
-          template += this.populateResponse(
-            this.responses.longrunning.finalResponse,
-            'Final Response after polling is complete and successful')
-        }
-      } else {
-        template += this.populateResponse(this.responses.standard.finalResponse, 'Response')
-      }
-    }
     return template
   }
 }

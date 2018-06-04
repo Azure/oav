@@ -2,9 +2,9 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 // import * as url from 'url'
-import { HttpTemplate, Request, Responses } from './httpTemplate'
-import * as uuid from 'uuid'
-import * as utils from '../util/utils'
+import { HttpTemplate, Request, Responses } from "./httpTemplate"
+import * as uuid from "uuid"
+import * as utils from "../util/utils"
 
 export class MarkdownHttpTemplate extends HttpTemplate {
 
@@ -12,16 +12,38 @@ export class MarkdownHttpTemplate extends HttpTemplate {
     super(request, responses)
   }
 
-  getRequestHeaders(): string {
+  public populate(): string {
+    let template = ``
+    template += this.populateRequest()
+    template += this.populateCurl()
+    if (this.responses) {
+      if (this.responses.longrunning) {
+        if (this.responses.longrunning.initialResponse) {
+          template += this.populateResponse(
+            this.responses.longrunning.initialResponse, "Initial Response")
+        }
+        if (this.responses.longrunning.finalResponse) {
+          template += this.populateResponse(
+            this.responses.longrunning.finalResponse,
+            "Final Response after polling is complete and successful")
+        }
+      } else {
+        template += this.populateResponse(this.responses.standard.finalResponse, "Response")
+      }
+    }
+    return template
+  }
+
+  private getRequestHeaders(): string {
     let result = ``
     if (this.request.body) {
       result += `Content-Length: ${JSON.stringify(this.request.body).length}\n`
     }
     if (this.request.headers) {
-      let headers = utils.getKeys(this.request.headers)
+      const headers = utils.getKeys(this.request.headers)
 
       for (let i = 0; i < headers.length; i++) {
-        let headerName = headers[i]
+        const headerName = headers[i]
         result += `${headerName}: ${this.request.headers[headerName]}`
         if (i !== headers.length - 1) {
           result += `\n`
@@ -31,17 +53,17 @@ export class MarkdownHttpTemplate extends HttpTemplate {
     return result
   }
 
-  getResponseHeaders(response: any): string {
+  private getResponseHeaders(response: any): string {
     let result = ``
     if (response.body) {
       result += `Content-Length: ${JSON.stringify(response.body).length}\n`
     }
     let gotContentType = false
     if (response.headers) {
-      let headers = utils.getKeys(response.headers)
+      const headers = utils.getKeys(response.headers)
       for (let i = 0; i < headers.length; i++) {
-        let headerName = headers[i]
-        if (headerName.match(/^Content-Type$/ig) !== null) gotContentType = true
+        const headerName = headers[i]
+        if (headerName.match(/^Content-Type$/ig) !== null) { gotContentType = true }
         result += `${headerName}: ${response.headers[headerName]}`
         if (i !== headers.length - 1) {
           result += `\n`
@@ -54,8 +76,8 @@ export class MarkdownHttpTemplate extends HttpTemplate {
     return result
   }
 
-  populateRequest(): string {
-    let requestTemplate =
+  private populateRequest(): string {
+    const requestTemplate =
       `## Request
 
 \`\`\`http
@@ -72,10 +94,10 @@ ${this.getRequestBody()}
     return requestTemplate
   }
 
-  populateResponse(response: any, responseType: any) {
-    if (!responseType) responseType = 'Response'
-    let responseGuid = uuid.v4()
-    let responseTemplate = `
+  private populateResponse(response: any, responseType: any) {
+    if (!responseType) { responseType = "Response" }
+    const responseGuid = uuid.v4()
+    const responseTemplate = `
 ## ${responseType}
 
 #### StatusCode: ${response.statusCode}
@@ -88,7 +110,7 @@ Expires: -1
 x-ms-ratelimit-remaining-subscription-writes: 1199
 x-ms-request-id: ${responseGuid}
 x-ms-correlation-request-id: ${responseGuid}
-x-ms-routing-request-id: WESTUS2:${new Date().toISOString().replace(/(\W)/ig, '')}:${responseGuid}
+x-ms-routing-request-id: WESTUS2:${new Date().toISOString().replace(/(\W)/ig, "")}:${responseGuid}
 Strict-Transport-Security: max-age=31536000; includeSubDomains
 ${this.getResponseHeaders(response)}
 Date: ${new Date().toUTCString()}
@@ -100,35 +122,18 @@ ${this.getResponseBody(response)}
     return responseTemplate
   }
 
-  populateCurl() {
-    let template =
+  private populateCurl() {
+    const method = this.request.method
+    const url = this.request.url
+    const requestHeaders = this.getCurlRequestHeaders()
+    const requestBody = this.getCurlRequestBody()
+    const template =
       `\n## Curl
 
 \`\`\`bash
-curl -X ${this.request.method} '${this.request.url}' \\\n-H 'authorization: bearer <token>' \\${this.getCurlRequestHeaders()}${this.getCurlRequestBody()}
+curl -X ${method} '${url}' \\\n-H 'authorization: bearer <token>' \\${requestHeaders}${requestBody}
 \`\`\`
 `
-    return template
-  }
-
-  populate(): string {
-    let template = ``
-    template += this.populateRequest()
-    template += this.populateCurl()
-    if (this.responses) {
-      if (this.responses.longrunning) {
-        if (this.responses.longrunning.initialResponse) {
-          template += this.populateResponse(this.responses.longrunning.initialResponse, 'Initial Response')
-        }
-        if (this.responses.longrunning.finalResponse) {
-          template += this.populateResponse(
-            this.responses.longrunning.finalResponse,
-            'Final Response after polling is complete and successful')
-        }
-      } else {
-        template += this.populateResponse(this.responses.standard.finalResponse, 'Response')
-      }
-    }
     return template
   }
 }

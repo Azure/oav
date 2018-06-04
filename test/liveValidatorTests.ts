@@ -1,31 +1,31 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import assert from 'assert'
-import * as path from 'path'
-import * as os from 'os'
-import * as glob from 'glob'
-import { LiveValidator } from '../lib/validators/liveValidator'
-import { Constants } from '../lib/util/constants'
-import * as utils from '../lib/util/utils'
+import assert from "assert"
+import * as path from "path"
+import * as os from "os"
+import * as glob from "glob"
+import { LiveValidator } from "../lib/validators/liveValidator"
+import { Constants } from "../lib/util/constants"
+import * as utils from "../lib/util/utils"
 
-const livePaths = glob.sync(path.join(__dirname, 'liveValidation/swaggers/**/live/*.json'))
-describe('Live Validator', function () {
-  describe('Initialization', function () {
-    it('should initialize with defaults', function () {
+const livePaths = glob.sync(path.join(__dirname, "liveValidation/swaggers/**/live/*.json"))
+describe("Live Validator", function () {
+  describe("Initialization", function () {
+    it("should initialize with defaults", function () {
       let options = {
         "swaggerPaths": [],
         "git": {
           "url": "https://github.com/Azure/azure-rest-api-specs.git",
           "shouldClone": false
         },
-        "directory": path.resolve(os.homedir(), 'repo')
+        "directory": path.resolve(os.homedir(), "repo")
       };
       let validator = new LiveValidator()
       assert.deepEqual(validator.cache, {})
       assert.deepEqual(validator.options, options)
     })
-    it('should initialize with user provided swaggerPaths', function () {
+    it("should initialize with user provided swaggerPaths", function () {
       let swaggerPaths = ["swaggerPath1", "swaggerPath2"]
       let options = {
         "swaggerPaths": swaggerPaths,
@@ -33,13 +33,13 @@ describe('Live Validator', function () {
           "url": "https://github.com/Azure/azure-rest-api-specs.git",
           "shouldClone": false
         },
-        "directory": path.resolve(os.homedir(), 'repo')
+        "directory": path.resolve(os.homedir(), "repo")
       }
       let validator = new LiveValidator({ "swaggerPaths": swaggerPaths })
       assert.deepEqual(validator.cache, {})
       assert.deepEqual(validator.options, options)
     })
-    it('should initialize with user provided swaggerPaths & directory', function () {
+    it("should initialize with user provided swaggerPaths & directory", function () {
       let swaggerPaths = ["swaggerPath1", "swaggerPath2"]
       let directory = "/Users/username/repos/"
       let options = {
@@ -54,7 +54,7 @@ describe('Live Validator', function () {
       assert.deepEqual(validator.cache, {})
       assert.deepEqual(validator.options, options)
     })
-    it('should initialize with user provided partial git configuration', function () {
+    it("should initialize with user provided partial git configuration", function () {
       let swaggerPaths = ["swaggerPath1", "swaggerPath2"]
       let directory = "/Users/username/repos/"
       let git = {
@@ -73,7 +73,7 @@ describe('Live Validator', function () {
       assert.deepEqual(validator.cache, {})
       assert.deepEqual(validator.options, options)
     })
-    it('should initialize with user provided full git configuration', function () {
+    it("should initialize with user provided full git configuration", function () {
       let swaggerPaths = ["swaggerPath1", "swaggerPath2"]
       let directory = "/Users/username/repos/"
       let git = {
@@ -91,9 +91,9 @@ describe('Live Validator', function () {
       assert.deepEqual(validator.cache, {})
       assert.deepEqual(validator.options, options)
     })
-    it('should throw on invalid options types', function () {
+    it("should throw on invalid options types", function () {
       assert.throws(() => {
-        new LiveValidator('string')
+        new LiveValidator("string")
       }, /must be of type "object"/)
       assert.throws(() => {
         new LiveValidator({ "swaggerPaths": "should be array" })
@@ -110,10 +110,10 @@ describe('Live Validator', function () {
     })
   })
 
-  describe('Initialize cache', function () {
-    it('should initialize for arm-mediaservices', function (done) {
-      let expectedProvider = 'microsoft.media'
-      let expectedApiVersion = '2015-10-01'
+  describe("Initialize cache", function () {
+    it("should initialize for arm-mediaservices", function (done) {
+      let expectedProvider = "microsoft.media"
+      let expectedApiVersion = "2015-10-01"
       let options = {
         "directory": "./test/liveValidation/swaggers/"
       }
@@ -123,20 +123,20 @@ describe('Live Validator', function () {
         assert.equal(6, Object.keys(validator.cache).length)
         assert.equal(true, expectedApiVersion in (validator.cache[expectedProvider]))
         assert.equal(1, Object.keys(validator.cache[expectedProvider]).length)
-        assert.equal(2, validator.cache[expectedProvider][expectedApiVersion]['get'].length)
-        assert.equal(1, validator.cache[expectedProvider][expectedApiVersion]['put'].length)
-        assert.equal(1, validator.cache[expectedProvider][expectedApiVersion]['patch'].length)
-        assert.equal(1, validator.cache[expectedProvider][expectedApiVersion]['delete'].length)
-        assert.equal(4, validator.cache[expectedProvider][expectedApiVersion]['post'].length)
+        assert.equal(2, validator.cache[expectedProvider][expectedApiVersion]["get"].length)
+        assert.equal(1, validator.cache[expectedProvider][expectedApiVersion]["put"].length)
+        assert.equal(1, validator.cache[expectedProvider][expectedApiVersion]["patch"].length)
+        assert.equal(1, validator.cache[expectedProvider][expectedApiVersion]["delete"].length)
+        assert.equal(4, validator.cache[expectedProvider][expectedApiVersion]["post"].length)
         done()
       }).catch((err: any) => {
         assert.ifError(err)
         done()
       }).catch(done)
     })
-    it('should initialize for arm-resources', function (done) {
-      let expectedProvider = 'microsoft.resources'
-      let expectedApiVersion = '2016-09-01'
+    it("should initialize for arm-resources", function (done) {
+      let expectedProvider = "microsoft.resources"
+      let expectedApiVersion = "2016-09-01"
       let options = {
         "directory": "./test/liveValidation/swaggers/"
       }
@@ -147,47 +147,47 @@ describe('Live Validator', function () {
         assert.equal(true, expectedApiVersion in (validator.cache[expectedProvider]))
         assert.equal(1, Object.keys(validator.cache[expectedProvider]).length)
         // 'microsoft.resources' -> '2016-09-01'
-        assert.equal(2, validator.cache[expectedProvider][expectedApiVersion]['get'].length)
-        assert.equal(1, validator.cache[expectedProvider][expectedApiVersion]['delete'].length)
-        assert.equal(3, validator.cache[expectedProvider][expectedApiVersion]['post'].length)
-        assert.equal(1, validator.cache[expectedProvider][expectedApiVersion]['head'].length)
-        assert.equal(1, validator.cache[expectedProvider][expectedApiVersion]['put'].length)
+        assert.equal(2, validator.cache[expectedProvider][expectedApiVersion]["get"].length)
+        assert.equal(1, validator.cache[expectedProvider][expectedApiVersion]["delete"].length)
+        assert.equal(3, validator.cache[expectedProvider][expectedApiVersion]["post"].length)
+        assert.equal(1, validator.cache[expectedProvider][expectedApiVersion]["head"].length)
+        assert.equal(1, validator.cache[expectedProvider][expectedApiVersion]["put"].length)
         // 'microsoft.unknown' -> 'unknown-api-version'
         assert.equal(
-          4, validator.cache[Constants.unknownResourceProvider][Constants.unknownApiVersion]['post'].length)
+          4, validator.cache[Constants.unknownResourceProvider][Constants.unknownApiVersion]["post"].length)
         assert.equal(
-          11, validator.cache[Constants.unknownResourceProvider][Constants.unknownApiVersion]['get'].length)
+          11, validator.cache[Constants.unknownResourceProvider][Constants.unknownApiVersion]["get"].length)
         assert.equal(
-          3, validator.cache[Constants.unknownResourceProvider][Constants.unknownApiVersion]['head'].length)
+          3, validator.cache[Constants.unknownResourceProvider][Constants.unknownApiVersion]["head"].length)
         assert.equal(
-          5, validator.cache[Constants.unknownResourceProvider][Constants.unknownApiVersion]['put'].length)
+          5, validator.cache[Constants.unknownResourceProvider][Constants.unknownApiVersion]["put"].length)
         assert.equal(
-          5, validator.cache[Constants.unknownResourceProvider][Constants.unknownApiVersion]['delete'].length)
+          5, validator.cache[Constants.unknownResourceProvider][Constants.unknownApiVersion]["delete"].length)
         assert.equal(
-          1, validator.cache[Constants.unknownResourceProvider][Constants.unknownApiVersion]['patch'].length)
+          1, validator.cache[Constants.unknownResourceProvider][Constants.unknownApiVersion]["patch"].length)
         done()
       }).catch((err: any) => {
         assert.ifError(err)
         done()
       }).catch(done)
     })
-    it('should initialize for all swaggers', function (done) {
+    it("should initialize for all swaggers", function (done) {
       let options = {
         "directory": "./test/liveValidation/swaggers/"
       }
       let validator = new LiveValidator(options)
       validator.initialize().then(function () {
         assert.equal(6, Object.keys(validator.cache).length)
-        assert.equal(2, validator.cache['microsoft.resources']['2016-09-01']['get'].length)
-        assert.equal(1, validator.cache['microsoft.resources']['2016-09-01']['head'].length)
-        assert.equal(1, validator.cache['microsoft.media']['2015-10-01']['patch'].length)
-        assert.equal(4, validator.cache['microsoft.media']['2015-10-01']['post'].length)
-        assert.equal(2, validator.cache['microsoft.search']['2015-02-28']['get'].length)
-        assert.equal(3, validator.cache['microsoft.search']['2015-08-19']['get'].length)
-        assert.equal(1, validator.cache['microsoft.storage']['2015-05-01-preview']['patch'].length)
-        assert.equal(4, validator.cache['microsoft.storage']['2015-06-15']['get'].length)
-        assert.equal(3, validator.cache['microsoft.storage']['2016-01-01']['post'].length)
-        assert.equal(4, validator.cache['microsoft.test']['2016-01-01']['post'].length)
+        assert.equal(2, validator.cache["microsoft.resources"]["2016-09-01"]["get"].length)
+        assert.equal(1, validator.cache["microsoft.resources"]["2016-09-01"]["head"].length)
+        assert.equal(1, validator.cache["microsoft.media"]["2015-10-01"]["patch"].length)
+        assert.equal(4, validator.cache["microsoft.media"]["2015-10-01"]["post"].length)
+        assert.equal(2, validator.cache["microsoft.search"]["2015-02-28"]["get"].length)
+        assert.equal(3, validator.cache["microsoft.search"]["2015-08-19"]["get"].length)
+        assert.equal(1, validator.cache["microsoft.storage"]["2015-05-01-preview"]["patch"].length)
+        assert.equal(4, validator.cache["microsoft.storage"]["2015-06-15"]["get"].length)
+        assert.equal(3, validator.cache["microsoft.storage"]["2016-01-01"]["post"].length)
+        assert.equal(4, validator.cache["microsoft.test"]["2016-01-01"]["post"].length)
         done()
       }).catch((err: any) => {
         assert.ifError(err)
@@ -196,8 +196,8 @@ describe('Live Validator', function () {
     })
   })
 
-  describe('Initialize cache and search', function () {
-    it('should return one matched operation for arm-storage', function (done) {
+  describe("Initialize cache and search", function () {
+    it("should return one matched operation for arm-storage", function (done) {
       let options = {
         "directory": "./test/liveValidation/swaggers/"
       }
@@ -210,7 +210,7 @@ describe('Live Validator', function () {
       let validator = new LiveValidator(options)
       validator.initialize().then(function () {
         // Operations to match is StorageAccounts_List
-        let operations = validator.getPotentialOperations(listRequestUrl, 'Get').operations
+        let operations = validator.getPotentialOperations(listRequestUrl, "Get").operations
         assert.equal(
           1, operations.length)
         assert.equal(
@@ -218,14 +218,14 @@ describe('Live Validator', function () {
           operations[0].pathObject.path)
 
         // Operations to match is StorageAccounts_CheckNameAvailability
-        operations = validator.getPotentialOperations(postRequestUrl, 'PoSt').operations
+        operations = validator.getPotentialOperations(postRequestUrl, "PoSt").operations
         assert.equal(1, operations.length)
         assert.equal(
           "/subscriptions/{subscriptionId}/providers/Microsoft.Storage/checkNameAvailability",
           operations[0].pathObject.path)
 
         // Operations to match is StorageAccounts_Delete
-        operations = validator.getPotentialOperations(deleteRequestUrl, 'delete').operations
+        operations = validator.getPotentialOperations(deleteRequestUrl, "delete").operations
         assert.equal(1, operations.length)
         assert.equal(
           "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}",
@@ -236,7 +236,7 @@ describe('Live Validator', function () {
         done()
       }).catch(done)
     })
-    it('should return reason for not matched operations', function (done) {
+    it("should return reason for not matched operations", function (done) {
       let options = {
         "directory": "./test/liveValidation/swaggers/"
       }
@@ -251,28 +251,28 @@ describe('Live Validator', function () {
       let validator = new LiveValidator(options)
       validator.initialize().then(function () {
         // Operations to match is StorageAccounts_List with api-version 2015-08-15 [non cached api version]
-        let result = validator.getPotentialOperations(nonCachedApiUrl, 'Get')
+        let result = validator.getPotentialOperations(nonCachedApiUrl, "Get")
         let operations = result.operations
         let reason = result.reason
         assert.equal(0, operations.length)
         assert.equal(Constants.ErrorCodes.OperationNotFoundInCacheWithApi.name, reason.code)
 
         // Operations to match is StorageAccounts_CheckNameAvailability with provider "Hello.World" [non cached provider]
-        result = validator.getPotentialOperations(nonCachedProviderUrl, 'PoSt')
+        result = validator.getPotentialOperations(nonCachedProviderUrl, "PoSt")
         operations = result.operations
         reason = result.reason
         assert.equal(0, operations.length)
         assert.equal(Constants.ErrorCodes.OperationNotFoundInCacheWithProvider.name, reason.code)
 
         // Operations to match is StorageAccounts_Delete with verb "head" [non cached http verb]
-        result = validator.getPotentialOperations(nonCachedVerbUrl, 'head')
+        result = validator.getPotentialOperations(nonCachedVerbUrl, "head")
         operations = result.operations
         reason = result.reason
         assert.equal(0, operations.length)
         assert.equal(Constants.ErrorCodes.OperationNotFoundInCacheWithVerb.name, reason.code)
 
         // Operations to match is with path "subscriptions/subscriptionId/providers/Microsoft.Storage/storageAccounts/storageAccounts/accountName/properties/" [non cached path]
-        result = validator.getPotentialOperations(nonCachedPath, 'get')
+        result = validator.getPotentialOperations(nonCachedPath, "get")
         operations = result.operations
         reason = result.reason
         assert.equal(0, operations.length)
@@ -283,7 +283,7 @@ describe('Live Validator', function () {
         done()
       }).catch(done)
     })
-    it('it should create an implicit default response and find it', function (done) {
+    it("it should create an implicit default response and find it", function (done) {
       let options = {
         "directory": "./test/liveValidation/swaggers/specification/scenarios",
         "swaggerPathsPattern": "**/*.json",
@@ -295,7 +295,7 @@ describe('Live Validator', function () {
       let validator = new LiveValidator(options)
       validator.initialize().then(() => {
         // Operations to match is StorageAccounts_List
-        let operations = validator.cache['microsoft.test']['2016-01-01']['post']
+        let operations = validator.cache["microsoft.test"]["2016-01-01"]["post"]
 
         for (const operation of operations) {
           assert(operation.responses.default)
@@ -309,7 +309,7 @@ describe('Live Validator', function () {
     })
   })
 
-  describe('Initialize cache and validate', function () {
+  describe("Initialize cache and validate", function () {
     livePaths.forEach((livePath: any) => {
       it(`should validate request and response for "${livePath}"`, function (done) {
         let options = {

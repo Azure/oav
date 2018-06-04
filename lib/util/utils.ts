@@ -1,19 +1,20 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import * as fs from 'fs'
-import { execSync } from 'child_process'
-import * as util from 'util'
-import * as path from 'path'
-import * as jsonPointer from 'json-pointer'
-import * as YAML from 'js-yaml'
-import { log } from './logging'
-import request = require('request')
-import * as lodash from 'lodash'
-import * as http from 'http'
+import * as fs from "fs"
+import { execSync } from "child_process"
+import * as util from "util"
+import * as path from "path"
+import * as jsonPointer from "json-pointer"
+import * as YAML from "js-yaml"
+import { log } from "./logging"
+import request = require("request")
+import * as lodash from "lodash"
+import * as http from "http"
 
 /*
- * Caches the json docs that were successfully parsed by parseJson(). This avoids, fetching them again.
+ * Caches the json docs that were successfully parsed by parseJson().
+ * This avoids, fetching them again.
  * key: docPath
  * value: parsed doc in JSON format
  */
@@ -48,35 +49,38 @@ export function stripBOM(content: any) {
  * @returns {object} jsonDoc - Parsed document in JSON format.
  */
 export function parseJson(specPath: string): Promise<any> {
-  if (!specPath || (specPath && typeof specPath.valueOf() !== 'string')) {
-    let err = new Error(
-      'A (github) url or a local file path to the swagger spec is required and must be of type string.')
+  if (!specPath || (specPath && typeof specPath.valueOf() !== "string")) {
+    const err = new Error(
+      "A (github) url or a local file path to the swagger spec is required and must be of type " +
+      "string.")
     return Promise.reject(err)
   }
   if (docCache[specPath]) {
     return Promise.resolve(docCache[specPath])
   }
-  //url
+  // url
   if (specPath.match(/^http.*/ig) !== null) {
-    //If the spec path is a url starting with https://github then let us auto convert it to an https://raw.githubusercontent url.
-    if (specPath.startsWith('https://github')) {
+    // If the spec path is a url starting with https://github then let us auto convert it to an
+    // https://raw.githubusercontent url.
+    if (specPath.startsWith("https://github")) {
       specPath = specPath.replace(
-        /^https:\/\/(github.com)(.*)blob\/(.*)/ig, 'https://raw.githubusercontent.com$2$3')
+        /^https:\/\/(github.com)(.*)blob\/(.*)/ig, "https://raw.githubusercontent.com$2$3")
     }
-    let res = makeRequest({ url: specPath, errorOnNon200Response: true })
+    const res = makeRequest({ url: specPath, errorOnNon200Response: true })
     docCache[specPath] = res
     return res
   } else {
-    //local filepath
+    // local filepath
     try {
-      let fileContent = stripBOM(fs.readFileSync(specPath, 'utf8'))
-      let result = parseContent(specPath, fileContent)
+      const fileContent = stripBOM(fs.readFileSync(specPath, "utf8"))
+      const result = parseContent(specPath, fileContent)
       docCache[specPath] = result
       return Promise.resolve(result)
     } catch (err) {
-      let msg =
-        `Unable to read the content or execute "JSON.parse()" on the content of file "${specPath}". The error is:\n${err}`
-      let e: any = new Error(msg)
+      const msg =
+        `Unable to read the content or execute "JSON.parse()" on the content of file ` +
+        `"${specPath}". The error is:\n${err}`
+      const e: any = new Error(msg)
       log.error(e)
       return Promise.reject(e)
     }
@@ -99,7 +103,7 @@ export function parseContent(filePath: string, fileContent: string) {
   } else if (/.*\.ya?ml$/ig.test(filePath)) {
     result = YAML.safeLoad(fileContent)
   } else {
-    let msg =
+    const msg =
       `We currently support "*.json" and "*.yaml | *.yml" file formats for validating swaggers.\n` +
       `The current file extension in "${filePath}" is not supported.`
     throw new Error(msg)
@@ -108,13 +112,14 @@ export function parseContent(filePath: string, fileContent: string) {
 }
 
 /*
- * A utility function to help us acheive stuff in the same way as async/await but with yield statement and generator functions.
+ * A utility function to help us acheive stuff in the same way as async/await but with yield
+ * statement and generator functions.
  * It waits till the task is over.
  * @param {function} A generator function as an input
  */
 export function run(genfun: () => any) {
   // instantiate the generator object
-  let gen = genfun()
+  const gen = genfun()
   // This is the async loop pattern
   function next(err?: any, answer?: any) {
     let res
@@ -141,33 +146,37 @@ export function run(genfun: () => any) {
 }
 
 /*
- * Makes a generic request. It is a wrapper on top of request.js library that provides a promise instead of a callback.
+ * Makes a generic request. It is a wrapper on top of request.js library that provides a promise
+ * instead of a callback.
  *
- * @param {object} options - The request options as described over here https://github.com/request/request#requestoptions-callback
+ * @param {object} options - The request options as described over here
+ *                           https://github.com/request/request#requestoptions-callback
  *
- * @param {boolean} options.errorOnNon200Response If true will reject the promise with an error if the response statuscode is not 200.
+ * @param {boolean} options.errorOnNon200Response If true will reject the promise with an error if
+ *                                                the response statuscode is not 200.
  *
  * @return {Promise} promise - A promise that resolves to the responseBody or rejects to an error.
  */
-export function makeRequest(options: any) {
-  var promise = new Promise(function (resolve, reject) {
-    request(options, function (err: any, response: request.Response, responseBody: any): void {
+export function makeRequest(options: any): Promise<any> {
+  const promise = new Promise((resolve, reject) => {
+    request(options, (err: any, response: request.Response, responseBody: any): void => {
       if (err) {
         reject(err)
       }
       if (options.errorOnNon200Response && response.statusCode !== 200) {
-        var msg = `StatusCode: "${response.statusCode}", ResponseBody: "${responseBody}."`
+        const msg = `StatusCode: "${response.statusCode}", ResponseBody: "${responseBody}."`
         reject(new Error(msg))
       }
       let res = responseBody
       try {
-        if (typeof responseBody.valueOf() === 'string') {
+        if (typeof responseBody.valueOf() === "string") {
           res = parseContent(options.url, responseBody)
         }
       } catch (error) {
-        let msg =
-          `An error occurred while parsing the file ${options.url}. The error is:\n ${util.inspect(error, { depth: null })}.`
-        let e = new Error(msg)
+        const url = options.url
+        const text = util.inspect(error, { depth: null })
+        const msg = `An error occurred while parsing the file ${url}. The error is:\n ${text}.`
+        const e = new Error(msg)
         reject(e)
       }
 
@@ -185,7 +194,8 @@ export function makeRequest(options: any) {
  *
  * @return A chain of resolved or rejected promises
  */
-export async function executePromisesSequentially(promiseFactories: (() => Promise<void>)[]): Promise<void> {
+export async function executePromisesSequentially(
+  promiseFactories: Array<() => Promise<void>>): Promise<void> {
   for (const promiseFactory of promiseFactories) {
     await promiseFactory()
   }
@@ -205,7 +215,7 @@ export function generateRandomId(prefix: string, existingIds: any): string {
   let randomStr
   while (true) {
     randomStr = Math.random().toString(36).substr(2, 12)
-    if (prefix && typeof prefix.valueOf() === 'string') {
+    if (prefix && typeof prefix.valueOf() === "string") {
       randomStr = prefix + randomStr
     }
     if (!existingIds || !(randomStr in existingIds)) {
@@ -233,43 +243,45 @@ export interface Reference {
  *         {string} [result.filePath] Filepath present in the reference. Examples are:
  *             - '../newtwork.json#/definitions/Resource' => '../network.json'
  *             - '../examples/nic_create.json' => '../examples/nic_create.json'
- *         {object} [result.localReference] Provides information about the local reference in the json document.
+ *         {object} [result.localReference] Provides information about the local reference in the
+ *                                          json document.
  *         {string} [result.localReference.value] The json reference value. Examples are:
  *           - '../newtwork.json#/definitions/Resource' => '#/definitions/Resource'
  *           - '#/parameters/SubscriptionId' => '#/parameters/SubscriptionId'
- *         {string} [result.localReference.accessorProperty] The json path expression that can be used by
+ *         {string} [result.localReference.accessorProperty] The json path expression that can be
+ *                                                           used by
  *         eval() to access the desired object. Examples are:
  *           - '../newtwork.json#/definitions/Resource' => 'definitions.Resource'
  *           - '#/parameters/SubscriptionId' => 'parameters,SubscriptionId'
  */
 export function parseReferenceInSwagger(reference: string): Reference {
   if (!reference || (reference && reference.trim().length === 0)) {
-    throw new Error('reference cannot be null or undefined and it must be a non-empty string.')
+    throw new Error("reference cannot be null or undefined and it must be a non-empty string.")
   }
 
   // let result: any = {}
-  if (reference.includes('#')) {
-    //local reference in the doc
-    if (reference.startsWith('#/')) {
+  if (reference.includes("#")) {
+    // local reference in the doc
+    if (reference.startsWith("#/")) {
       return {
         localReference: {
           value: reference,
-          accessorProperty: reference.slice(2).replace('/', '.')
+          accessorProperty: reference.slice(2).replace("/", ".")
         }
       }
     } else {
-      //filePath+localReference
-      const segments = reference.split('#')
+      // filePath+localReference
+      const segments = reference.split("#")
       return {
         filePath: segments[0],
         localReference: {
-          value: '#' + segments[1],
-          accessorProperty: segments[1].slice(1).replace('/', '.')
+          value: "#" + segments[1],
+          accessorProperty: segments[1].slice(1).replace("/", ".")
         }
       }
     }
   } else {
-    //we are assuming that the string is a relative filePath
+    // we are assuming that the string is a relative filePath
     return { filePath: reference }
   }
 }
@@ -279,18 +291,23 @@ export function parseReferenceInSwagger(reference: string): Reference {
  * This is required because path.join() joins the paths and converts all the
  * forward slashes to backward slashes if executed on a windows system. This can
  * be problematic while joining a url. For example:
- * path.join('https://github.com/Azure/openapi-validation-tools/blob/master/lib', '../examples/foo.json') returns
- * 'https:\\github.com\\Azure\\openapi-validation-tools\\blob\\master\\examples\\foo.json' instead of
+ * path.join(
+ *  'https://github.com/Azure/openapi-validation-tools/blob/master/lib',
+ *  '../examples/foo.json')
+ * returns
+ * 'https:\\github.com\\Azure\\openapi-validation-tools\\blob\\master\\examples\\foo.json'
+ * instead of
  * 'https://github.com/Azure/openapi-validation-tools/blob/master/examples/foo.json'
  *
- * @param variable number of arguments and all the arguments must be of type string. Similar to the API
- * provided by path.join() https://nodejs.org/dist/latest-v6.x/docs/api/path.html#path_path_join_paths
+ * @param variable number of arguments and all the arguments must be of type string. Similar to
+ * the API provided by path.join()
+ * https://nodejs.org/dist/latest-v6.x/docs/api/path.html#path_path_join_paths
  * @return {string} resolved path
  */
 export function joinPath(...args: string[]): string {
   let finalPath = path.join(...args)
-  finalPath = finalPath.replace(/\\/gi, '/')
-  finalPath = finalPath.replace(/^(http|https):\/(.*)/gi, '$1://$2')
+  finalPath = finalPath.replace(/\\/gi, "/")
+  finalPath = finalPath.replace(/^(http|https):\/(.*)/gi, "$1://$2")
   return finalPath
 }
 
@@ -304,7 +321,7 @@ export function joinPath(...args: string[]): string {
  * @returns {object} jsonDoc - Parsed document in JSON format.
  */
 export function parseJsonWithPathFragments(...args: string[]) {
-  let specPath = joinPath(...args)
+  const specPath = joinPath(...args)
   return parseJson(specPath)
 }
 
@@ -317,10 +334,12 @@ export function parseJsonWithPathFragments(...args: string[]) {
  * @returns {object} target - Returns the merged target object.
  */
 export function mergeObjects(source: any, target: any) {
-  Object.keys(source).forEach(function (key) {
+  Object.keys(source).forEach((key) => {
     if (Array.isArray(source[key])) {
       if (target[key] && !Array.isArray(target[key])) {
-        throw new Error(`Cannot merge ${key} from source object into target object because the same property in target object is not (of the same type) an Array.`)
+        throw new Error(
+          `Cannot merge ${key} from source object into target object because the same property ` +
+          `in target object is not (of the same type) an Array.`)
       }
       if (!target[key]) {
         target[key] = []
@@ -407,26 +426,31 @@ export function removeObject(doc: any, ptr: string) {
 }
 
 /**
-/*
  * Gets provider namespace from the given path. In case of multiple, last one will be returned.
- * @param {string} path The path of the operation.
- *                 Example "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/
- *                 {parentResourcePath}/{resourceType}/{resourceName}/providers/Microsoft.Authorization/roleAssignments"
+ * @param {string} pathStr The path of the operation.
+ *                 Example "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/
+ *                  providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/
+ *                  {resourceName}/providers/Microsoft.Authorization/roleAssignments"
  *                 will return "Microsoft.Authorization".
  *
  * @returns {string} result - provider namespace from the given path.
  */
-export function getProvider(path?: string|null): string|undefined {
-  if (path === null || path === undefined || typeof path.valueOf() !== 'string' || !path.trim().length) {
-    throw new Error('path is a required parameter of type string and it cannot be an empty string.')
+export function getProvider(pathStr?: string|null): string|undefined {
+  if (pathStr === null
+    || pathStr === undefined
+    || typeof pathStr.valueOf() !== "string"
+    || !pathStr.trim().length) {
+    throw new Error(
+      "pathStr is a required parameter of type string and it cannot be an empty string.")
   }
 
-  let providerRegEx = new RegExp('/providers/(\:?[^{/]+)', 'gi')
+  const providerRegEx = new RegExp("/providers/(\:?[^{/]+)", "gi")
   let result
-  let pathMatch
 
   // Loop over the paths to find the last matched provider namespace
-  while ((pathMatch = providerRegEx.exec(path)) !== null) {
+  while (true) {
+    const pathMatch = providerRegEx.exec(pathStr)
+    if (pathMatch === null) { break; }
     result = pathMatch[1]
   }
 
@@ -445,15 +469,19 @@ export function getProvider(path?: string|null): string|undefined {
  * @param {string} [branch] to be cloned instead of the default branch.
  */
 export function gitClone(directory: string, url: string, branch: string|undefined): void {
-  if (url === null || url === undefined || typeof url.valueOf() !== 'string' || !url.trim().length) {
-    throw new Error('url is a required parameter of type string and it cannot be an empty string.')
+  if (url === null
+    || url === undefined
+    || typeof url.valueOf() !== "string"
+    || !url.trim().length) {
+    throw new Error("url is a required parameter of type string and it cannot be an empty string.")
   }
 
   if (directory === null
     || directory === undefined
-    || typeof directory.valueOf() !== 'string'
+    || typeof directory.valueOf() !== "string"
     || !directory.trim().length) {
-    throw new Error('directory is a required parameter of type string and it cannot be an empty string.')
+    throw new Error(
+      "directory is a required parameter of type string and it cannot be an empty string.")
   }
 
   // If the directory exists then we assume that the repo to be cloned is already present.
@@ -462,15 +490,17 @@ export function gitClone(directory: string, url: string, branch: string|undefine
       try {
         removeDirSync(directory)
       } catch (err) {
+        const text = util.inspect(err, { depth: null })
         throw new Error(
-          `An error occurred while deleting directory ${directory}: ${util.inspect(err, { depth: null })}.`)
+          `An error occurred while deleting directory ${directory}: ${text}.`)
       }
     } else {
       try {
         fs.unlinkSync(directory)
       } catch (err) {
+        const text = util.inspect(err, { depth: null })
         throw new Error(
-          `An error occurred while deleting file ${directory}: ${util.inspect(err, { depth: null })}.`)
+          `An error occurred while deleting file ${directory}: ${text}.`)
       }
     }
   }
@@ -478,18 +508,21 @@ export function gitClone(directory: string, url: string, branch: string|undefine
   try {
     fs.mkdirSync(directory)
   } catch (err) {
+    const text = util.inspect(err, { depth: null })
     throw new Error(
-      `An error occurred while creating directory ${directory}: ${util.inspect(err, { depth: null })}.`)
+      `An error occurred while creating directory ${directory}: ${text}.`)
   }
 
   try {
-    let isBranchDefined = branch !== null && branch !== undefined && typeof branch.valueOf() === 'string'
-    let cmd = isBranchDefined
+    const isBranchDefined =
+      branch !== null && branch !== undefined && typeof branch.valueOf() === "string"
+    const cmd = isBranchDefined
       ? `git clone --depth=1 --branch ${branch} ${url} ${directory}`
       : `git clone --depth=1 ${url} ${directory}`
-    let result = execSync(cmd, { encoding: 'utf8' })
+    const result = execSync(cmd, { encoding: "utf8" })
   } catch (err) {
-    throw new Error(`An error occurred while cloning git repository: ${util.inspect(err, { depth: null })}.`)
+    throw new Error(
+      `An error occurred while cloning git repository: ${util.inspect(err, { depth: null })}.`)
   }
 }
 
@@ -499,10 +532,13 @@ export function gitClone(directory: string, url: string, branch: string|undefine
  */
 export function removeDirSync(dir: string) {
   if (fs.existsSync(dir)) {
-    fs.readdirSync(dir).forEach(function (file: any) {
-      var current = dir + '/' + file
-      if (fs.statSync(current).isDirectory()) removeDirSync(current)
-      else fs.unlinkSync(current)
+    fs.readdirSync(dir).forEach(file => {
+      const current = dir + "/" + file
+      if (fs.statSync(current).isDirectory()) {
+        removeDirSync(current)
+      } else {
+        fs.unlinkSync(current)
+      }
     })
     fs.rmdirSync(dir)
   }
@@ -531,12 +567,13 @@ export function getJsonContentType(consumesOrProduces: any[]) {
  * @returns {boolean} result - true if str is url encoded; false otherwise.
  */
 export function isUrlEncoded(str: string): boolean {
-  str = str || ''
+  str = str || ""
   return str !== decodeURIComponent(str)
 }
 
 /**
- * Determines whether the given model is a pure (free-form) object candidate (i.e. equivalent of the C# Object type).
+ * Determines whether the given model is a pure (free-form) object candidate (i.e. equivalent of the
+ * C# Object type).
  * @param {object} model - The model to be verified
  * @returns {boolean} result - true if model is a pure object; false otherwise.
  */
@@ -545,16 +582,16 @@ export function isPureObject(model: any): boolean {
     throw new Error(`model cannot be null or undefined and must be of type "object"`)
   }
   if (model.type
-    && typeof model.type.valueOf() === 'string'
-    && model.type === 'object'
+    && typeof model.type.valueOf() === "string"
+    && model.type === "object"
     && model.properties
     && getKeys(model.properties).length === 0) {
     return true
   } else if (!model.type && model.properties && getKeys(model.properties).length === 0) {
     return true
   } else if (model.type
-    && typeof model.type.valueOf() === 'string'
-    && model.type === 'object'
+    && typeof model.type.valueOf() === "string"
+    && model.type === "object"
     && !model.properties
     && !model.additionalProperties) {
     return true
@@ -564,13 +601,17 @@ export function isPureObject(model: any): boolean {
 }
 
 /**
- * Relaxes/Transforms the given entities type from a specific JSON schema primitive type (http://json-schema.org/latest/json-schema-core.html#rfc.section.4.2)
- * to an array of JSON schema primitve types (http://json-schema.org/latest/json-schema-validation.html#rfc.section.5.21).
+ * Relaxes/Transforms the given entities type from a specific JSON schema primitive type
+ * (http://json-schema.org/latest/json-schema-core.html#rfc.section.4.2)
+ * to an array of JSON schema primitve types
+ * (http://json-schema.org/latest/json-schema-validation.html#rfc.section.5.21).
  *
  * @param {object} entity - The entity to be relaxed.
- * @param {boolean|undefined} [isRequired] - A boolean value that indicates whether the entity is required or not.
+ * @param {boolean|undefined} [isRequired] - A boolean value that indicates whether the entity is
+ *                                           required or not.
  * If the entity is required then the primitve type "null" is not added.
- * @returns {object} entity - The transformed entity if it is a pure object else the same entity is returned as-is.
+ * @returns {object} entity - The transformed entity if it is a pure object else the same entity is
+ * returned as-is.
  */
 export function relaxEntityType(entity: any, isRequired?: boolean) {
   if (isPureObject(entity) && entity.type) {
@@ -590,9 +631,9 @@ export function relaxEntityType(entity: any, isRequired?: boolean) {
 export function relaxModelLikeEntities(model: any) {
   model = relaxEntityType(model)
   if (model.properties) {
-    let modelProperties = model.properties
+    const modelProperties = model.properties
 
-    for (let propName of getKeys(modelProperties)) {
+    for (const propName of getKeys(modelProperties)) {
       if (modelProperties[propName].properties) {
         modelProperties[propName] = relaxModelLikeEntities(modelProperties[propName])
       } else {
@@ -627,32 +668,32 @@ export function allowNullType(entity: any, isPropRequired?: boolean) {
     }
 
     // takes care of string 'false' and 'true'
-    if (typeof entity['x-nullable'] === 'string') {
-      if (entity['x-nullable'].toLowerCase() === 'false') {
-        entity['x-nullable'] = false
-      } else if (entity['x-nullable'].toLowerCase() === 'true') {
-        entity['x-nullable'] = true
+    if (typeof entity["x-nullable"] === "string") {
+      if (entity["x-nullable"].toLowerCase() === "false") {
+        entity["x-nullable"] = false
+      } else if (entity["x-nullable"].toLowerCase() === "true") {
+        entity["x-nullable"] = true
       }
     }
 
-    if (shouldAcceptNullValue(entity['x-nullable'], isPropRequired)) {
-      let savedEntity = entity
+    if (shouldAcceptNullValue(entity["x-nullable"], isPropRequired)) {
+      const savedEntity = entity
       // handling nullable parameters
       if (savedEntity.in) {
-        entity.oneOf = [{ "type": entity.type }, { "type": "null" }]
+        entity.oneOf = [{ type: entity.type }, { type: "null" }]
         delete entity.type
       } else {
         entity = {}
-        entity.oneOf = [savedEntity, { "type": "null" }]
+        entity.oneOf = [savedEntity, { type: "null" }]
       }
     }
   }
 
   // if there's a $ref
-  if (entity && entity["$ref"] && shouldAcceptNullValue(entity['x-nullable'], isPropRequired)) {
-    let savedEntity = entity
+  if (entity && entity.$ref && shouldAcceptNullValue(entity["x-nullable"], isPropRequired)) {
+    const savedEntity = entity
     entity = {}
-    entity.oneOf = [savedEntity, { "type": "null" }]
+    entity.oneOf = [savedEntity, { type: "null" }]
   }
   return entity
 }
@@ -664,7 +705,7 @@ export function allowNullType(entity: any, isPropRequired?: boolean) {
 * No                    | convert to oneOf[] |       | convert to oneOf[]
 */
 export function shouldAcceptNullValue(xnullable: any, isPropRequired: any): boolean {
-  const isPropNullable = xnullable && typeof xnullable === 'boolean'
+  const isPropNullable = xnullable && typeof xnullable === "boolean"
   return (isPropNullable === undefined && !isPropRequired) || isPropNullable
 }
 /**
@@ -672,7 +713,7 @@ export function shouldAcceptNullValue(xnullable: any, isPropRequired: any): bool
  */
 export function allowNullableTypes(model: any) {
   // process additionalProperties if present
-  if (model && typeof model.additionalProperties === 'object') {
+  if (model && typeof model.additionalProperties === "object") {
     if (model.additionalProperties.properties || model.additionalProperties.additionalProperties) {
       model.additionalProperties = allowNullableTypes(model.additionalProperties)
     } else {
@@ -681,8 +722,8 @@ export function allowNullableTypes(model: any) {
     }
   }
   if (model && model.properties) {
-    let modelProperties = model.properties
-    for (let propName of getKeys(modelProperties)) {
+    const modelProperties = model.properties
+    for (const propName of getKeys(modelProperties)) {
       // process properties if present
       if (modelProperties[propName].properties || modelProperties[propName].additionalProperties) {
         modelProperties[propName] = allowNullableTypes(modelProperties[propName])
@@ -693,10 +734,12 @@ export function allowNullableTypes(model: any) {
   }
 
   if (model && model.type) {
-    if (model.type == 'array') {
+    if (model.type === "array") {
       if (model.items) {
         // if items object contains additional properties
-        if (model.items.additionalProperties && typeof model.items.additionalProperties === 'object') {
+        if (model.items.additionalProperties
+          && typeof model.items.additionalProperties === "object") {
+
           if (model.items.additionalProperties.properties
             || model.items.additionalProperties.additionalProperties) {
             model.items.additionalProperties = allowNullableTypes(model.items.additionalProperties)
@@ -708,21 +751,19 @@ export function allowNullableTypes(model: any) {
         // if items object contains inline properties
         if (model.items.properties) {
           model.items = allowNullableTypes(model.items)
-        }
-        else {
+        } else {
           model.items = allowNullType(model.items)
         }
       }
-    }
     // if we have a top level "object" with x-nullable set, we need to relax the model at that level
-    else if (model.type == "object" && model['x-nullable']) {
+    } else if (model.type === "object" && model["x-nullable"]) {
       model = allowNullType(model)
     }
   }
 
   // if model is a parameter (contains "in" property") we want to relax the parameter
-  if (model && model.in && model['x-nullable']) {
-    model = allowNullType(model, model["required"])
+  if (model && model.in && model["x-nullable"]) {
+    model = allowNullType(model, model.required)
   }
 
   return model
@@ -732,12 +773,11 @@ export function allowNullableTypes(model: any) {
  * Relaxes/Transforms parameter definition to allow null values for non-path parameters
  */
 export function allowNullableParams(parameter: any) {
-  if (parameter["in"] && parameter["in"] === "body" && parameter["schema"]) {
-    parameter["schema"] = allowNullableTypes(parameter["schema"])
-  }
-  else {
-    if (parameter["in"] && parameter["in"] !== "path") {
-      parameter = allowNullType(parameter, parameter["required"])
+  if (parameter.in && parameter.in === "body" && parameter.schema) {
+    parameter.schema = allowNullableTypes(parameter.schema)
+  } else {
+    if (parameter.in && parameter.in !== "path") {
+      parameter = allowNullType(parameter, parameter.required)
     }
   }
   return parameter
@@ -750,7 +790,9 @@ export function allowNullableParams(parameter: any) {
  * @returns {string} result - The sanitized string.
  */
 export function sanitizeFileName(str: string): string {
-  return str ? str.replace(/[{}\[\]'";\(\)#@~`!%&\^\$\+=,\/\\?<>\|\*:]/ig, '').replace(/(\s+)/ig, '_') : str
+  return str
+    ? str.replace(/[{}\[\]'";\(\)#@~`!%&\^\$\+=,\/\\?<>\|\*:]/ig, "").replace(/(\s+)/ig, "_")
+    : str
 }
 
 /**
@@ -782,14 +824,16 @@ export function getKeys(obj: any): string[] {
  * Checks if the property is required in the model.
  */
 function isPropertyRequired(propName: any, model: any) {
-  return model.required ? model.required.some((p: any) => { return p == propName; }) : false
+  return model.required ? model.required.some((p: any) => p === propName) : false
 }
 
 /**
  * Contains the reverse mapping of http.STATUS_CODES
  */
 export const statusCodeStringToStatusCode = lodash.invert(
-  lodash.mapValues(http.STATUS_CODES, (value: any) => { return value.replace(/ |-/g, "").toLowerCase(); }))
+  lodash.mapValues(
+    http.STATUS_CODES,
+    (value: any) => value.replace(/ |-/g, "").toLowerCase()))
 
 /**
  * Models an ARM cloud error schema.
@@ -797,7 +841,7 @@ export const statusCodeStringToStatusCode = lodash.invert(
 export const CloudErrorSchema = {
   description: "Error response describing why the operation failed.",
   schema: {
-    "$ref": "#/definitions/CloudErrorWrapper"
+    $ref: "#/definitions/CloudErrorWrapper"
   }
 }
 
@@ -808,7 +852,7 @@ export const CloudErrorWrapper = {
   type: "object",
   properties: {
     error: {
-      "$ref": "#/definitions/CloudError"
+      $ref: "#/definitions/CloudError"
     }
   },
   additionalProperties: false
@@ -823,15 +867,18 @@ export const CloudError = {
     code: {
       type: "string",
       description:
-        "An identifier for the error. Codes are invariant and are intended to be consumed programmatically."
+        "An identifier for the error. Codes are invariant and are intended to be consumed " +
+        "programmatically."
     },
     message: {
       type: "string",
-      description: "A message describing the error, intended to be suitable for display in a user interface."
+      description:
+        "A message describing the error, intended to be suitable for display in a user interface."
     },
     target: {
       type: "string",
-      description: "The target of the particular error. For example, the name of the property in error."
+      description:
+        "The target of the particular error. For example, the name of the property in error."
     },
     details: {
       type: "array",
