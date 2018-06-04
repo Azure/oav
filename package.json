@@ -73,6 +73,9 @@
     "require": [
       "ts-node/register"
     ],
+    "include": [
+      "lib/**/*.ts"
+    ],
     "all": true,
     "reporter": [
       "lcov",
@@ -82,8 +85,8 @@
       ".ts"
     ],
     "exclude": [
-      "types/",
-      "dist/"
+      "dist/",
+      "types/"
     ]
   },
   "scripts": {
