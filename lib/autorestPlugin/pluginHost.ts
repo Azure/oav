@@ -23,7 +23,7 @@ const modelValidationCategory = "ExampleModelViolation"
 class FormattedOutput {
   constructor(
     public readonly channel: string,
-    public readonly details: any,
+    public readonly details: {},
     public readonly code: any[],
     public readonly text: string,
     public readonly source: any[]) {
@@ -82,7 +82,7 @@ export async function openApiValidationExample(
           const xmsexPath = linq
             .from(jsonPath.nodes(
               swagger, `$.paths[*][?(@.operationId==='${op}')]["x-ms-examples"]`))
-            .select((x: any) => x.path)
+            .select(x => x.path)
             .firstOrDefault();
           if (!xmsexPath) {
             throw new Error("Model Validator: Path to x-ms-examples not found.")

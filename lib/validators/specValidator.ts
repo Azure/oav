@@ -25,6 +25,11 @@ export interface Options extends specResolver.Options {
   isPathCaseSensitive?: boolean
 }
 
+export interface ErrorCode {
+  readonly name: string
+  readonly id: string
+}
+
 /*
  * @class
  * Performs semantic and data validation of the given swagger spec.
@@ -302,7 +307,11 @@ export class SpecValidator {
    * @return {object} err Return the constructed Error object.
    */
   private constructErrorObject(
-    code: any, message: string, innerErrors?: null|Error[], skipValidityStatusUpdate?: boolean) {
+    code: ErrorCode,
+    message: string,
+    innerErrors?: null|Error[],
+    skipValidityStatusUpdate?: boolean)
+    : Error {
 
     const err: Error = {
       code: code.name,

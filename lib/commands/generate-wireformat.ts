@@ -40,7 +40,7 @@ export const builder: yargs.CommandBuilder = {
   },
 }
 
-export async function handler(argv: yargs.Arguments) {
+export async function handler(argv: yargs.Arguments): Promise<void> {
   log.debug(argv.toString())
   const specPath = argv.specPath
   const operationIds = argv.operationIds

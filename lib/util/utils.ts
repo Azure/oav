@@ -12,13 +12,17 @@ import request = require("request")
 import * as lodash from "lodash"
 import * as http from "http"
 
+export interface DocCache {
+  [name: string]: {}
+}
+
 /*
  * Caches the json docs that were successfully parsed by parseJson().
  * This avoids, fetching them again.
  * key: docPath
  * value: parsed doc in JSON format
  */
-export let docCache: any = {}
+export let docCache: DocCache = {}
 
 export function clearCache(): void {
   docCache = {}
@@ -30,7 +34,7 @@ export function clearCache(): void {
  * because the buffer-to-string conversion in `fs.readFile()`
  * translates it to FEFF, the UTF-16 BOM.
  */
-export function stripBOM(content: any) {
+export function stripBOM(content: Buffer|string) {
   if (Buffer.isBuffer(content)) {
     content = content.toString()
   }
@@ -112,11 +116,12 @@ export function parseContent(filePath: string, fileContent: string) {
 }
 
 /*
- * A utility function to help us acheive stuff in the same way as async/await but with yield
+ * A utility function to help us achieve stuff in the same way as async/await but with yield
  * statement and generator functions.
  * It waits till the task is over.
  * @param {function} A generator function as an input
  */
+/*
 export function run(genfun: () => any) {
   // instantiate the generator object
   const gen = genfun()
@@ -144,6 +149,7 @@ export function run(genfun: () => any) {
   // Kick off the async loop
   next()
 }
+*/
 
 /*
  * Makes a generic request. It is a wrapper on top of request.js library that provides a promise
