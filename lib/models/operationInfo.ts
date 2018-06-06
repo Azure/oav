@@ -24,9 +24,7 @@
  * api-version and will be useful in preparing report.
  *
  */
-class OperationInfo {
-  constructor() {
-  }
+export class OperationInfo {
 
   /**
    * Defines the metadata of OperationInfo
@@ -34,32 +32,30 @@ class OperationInfo {
    * @returns {object} metadata of OperationInfo
    *
    */
-  mapper() {
+  public mapper() {
     return {
       required: false,
-      serializedName: 'OperationInfo',
+      serializedName: "OperationInfo",
       type: {
-        name: 'Composite',
-        className: 'OperationInfo',
+        name: "Composite",
+        className: "OperationInfo",
         modelProperties: {
           operationId: {
             required: true,
-            serializedName: 'operationId',
+            serializedName: "operationId",
             type: {
-              name: 'String'
-            }
+              name: "String",
+            },
           },
           apiVersion: {
             required: true,
-            serializedName: 'apiVersion',
+            serializedName: "apiVersion",
             type: {
-              name: 'String'
-            }
-          }
-        }
-      }
-    };
+              name: "String",
+            },
+          },
+        },
+      },
+    }
   }
 }
-
-export = OperationInfo

@@ -1,23 +1,21 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-'use strict';
-
-var util = require('util'),
-  fs = require('fs'),
-  pathlib = require('path'),
-  recursive = require('recursive-readdir'),
-  utils = require('./util/utils'),
-  log = require('./util/logging');
+import * as util from "util"
+import * as fs from "fs"
+import * as pathlib from "path"
+import * as recursive from "recursive-readdir"
+import * as utils from "./util/utils"
+import { log } from "./util/logging"
 
 /**
  * @class
  */
-class xMsExampleExtractor {
-  specPath: string
-  recordings: any
-  specDir: any
-  options: any
+export class XMsExampleExtractor {
+  private specPath: string
+  private recordings: any
+  private specDir: any
+  private options: any
   /**
    * @constructor
    * Initializes a new instance of the xMsExampleExtractor class.
@@ -28,234 +26,253 @@ class xMsExampleExtractor {
    *
    * @param {object} [options] The options object
    *
-   * @param {object} [options.matchApiVersion] Only generate examples if api-version matches. Default: false
+   * @param {object} [options.matchApiVersion] Only generate examples if api-version matches.
+   * Default: false
    *
    * @param {object} [options.output] Output folder for the generated examples.
    */
   constructor(specPath: string, recordings: any, options: any) {
-    if (specPath === null || specPath === undefined || typeof specPath.valueOf() !== 'string' || !specPath.trim().length) {
-      throw new Error('specPath is a required property of type string and it cannot be an empty string.');
+    if (specPath === null
+      || specPath === undefined
+      || typeof specPath.valueOf() !== "string"
+      || !specPath.trim().length) {
+      throw new Error(
+        "specPath is a required property of type string and it cannot be an empty string.")
     }
 
-    if (recordings === null || recordings === undefined || typeof recordings.valueOf() !== 'string' || !recordings.trim().length) {
-      throw new Error('recordings is a required property of type string and it cannot be an empty string.');
+    if (recordings === null
+      || recordings === undefined
+      || typeof recordings.valueOf() !== "string"
+      || !recordings.trim().length) {
+      throw new Error(
+        "recordings is a required property of type string and it cannot be an empty string.")
     }
 
-    this.specPath = specPath;
-    this.recordings = recordings;
-    this.specDir = pathlib.dirname(this.specPath);
-    if (!options) options = {};
+    this.specPath = specPath
+    this.recordings = recordings
+    this.specDir = pathlib.dirname(this.specPath)
+    if (!options) { options = {} }
     if (options.output === null || options.output === undefined) {
-      options.output = process.cwd() + '/output';
+      options.output = process.cwd() + "/output"
     }
-    if (options.shouldResolveXmsExamples === null || options.shouldResolveXmsExamples === undefined) {
-      options.shouldResolveXmsExamples = true;
+    if (options.shouldResolveXmsExamples === null
+      || options.shouldResolveXmsExamples === undefined) {
+      options.shouldResolveXmsExamples = true
     }
     if (options.matchApiVersion === null || options.matchApiVersion === undefined) {
-      options.matchApiVersion = false;
+      options.matchApiVersion = false
     }
 
-    this.options = options;
-    log.debug(`specPath : ${this.specPath}`);
-    log.debug(`recordings : ${this.recordings}`);
-    log.debug(`options.output : ${this.options.output}`);
-    log.debug(`options.matchApiVersion : ${this.options.matchApiVersion}`);
+    this.options = options
+    log.debug(`specPath : ${this.specPath}`)
+    log.debug(`recordings : ${this.recordings}`)
+    log.debug(`options.output : ${this.options.output}`)
+    log.debug(`options.matchApiVersion : ${this.options.matchApiVersion}`)
   }
 
   /**
    * Extracts x-ms-examples from the recordings
    */
-  extract() {
-    let self = this;
-    self.mkdirSync(self.options.output);
-    self.mkdirSync(self.options.output + "/examples");
-    self.mkdirSync(self.options.output + "/swagger");
+  public async extract(): Promise<void> {
+    const self = this
+    self.mkdirSync(self.options.output)
+    self.mkdirSync(self.options.output + "/examples")
+    self.mkdirSync(self.options.output + "/swagger")
 
-    let outputExamples = self.options.output + "/examples/";
-    let relativeExamplesPath = "../examples/";
-    let specName = self.specPath.split("/");
-    let outputSwagger = self.options.output + "/swagger/" + specName[specName.length - 1].split(".")[0] + ".json";
+    const outputExamples = self.options.output + "/examples/"
+    const relativeExamplesPath = "../examples/"
+    const specName = self.specPath.split("/")
+    const outputSwagger =
+      self.options.output + "/swagger/" + specName[specName.length - 1].split(".")[0] + ".json"
 
-    var swaggerObject = require(self.specPath);
-    var SwaggerParser = require('swagger-parser');
-    var parser = new SwaggerParser();
+    const swaggerObject = require(self.specPath)
+    const SwaggerParser = require("swagger-parser")
+    const parser = new SwaggerParser()
 
-    var accErrors: any = {};
-    var filesArray: any = [];
-    self.getFileList(self.recordings, filesArray);
+    const accErrors: any = {}
+    const filesArray: any = []
+    self.getFileList(self.recordings, filesArray)
 
-    let recordingFiles = filesArray;
-    var example = {};
+    const recordingFiles = filesArray
+    const example = {}
 
-    parser.parse(swaggerObject).then(function (api: any) {
-      for (let recordingFileName of utils.getValues(recordingFiles)) {
-        log.debug(`Processing recording file: ${recordingFileName}`);
+    try {
+      const api = await parser.parse(swaggerObject)
+      for (const recordingFileName of utils.getValues(recordingFiles)) {
+        log.debug(`Processing recording file: ${recordingFileName}`)
 
         try {
-          let recording = JSON.parse(fs.readFileSync(recordingFileName));
-          let paths = api.paths;
-          let pathIndex = 0;
-          var pathParams: any = {};
-          for (let path of utils.getKeys(paths)) {
-            pathIndex++;
-            let searchResult = path.match(/\/{\w*\}/g);
-            let pathParts = path.split('/');
-            let pathToMatch = path;
-            pathParams = {};
-            for (let match of utils.getValues(searchResult)) {
-              let splitRegEx = /[{}]/;
-              let pathParam = match.split(splitRegEx)[1];
+          const recording = JSON.parse(fs.readFileSync(recordingFileName).toString())
+          const paths = api.paths
+          let pathIndex = 0
+          let pathParams: any = {}
+          for (const path of utils.getKeys(paths)) {
+            pathIndex++
+            const searchResult = path.match(/\/{\w*\}/g)
+            const pathParts = path.split("/")
+            let pathToMatch = path
+            pathParams = {}
+            for (const match of utils.getValues(searchResult)) {
+              const splitRegEx = /[{}]/
+              const pathParam = match.split(splitRegEx)[1]
 
-              for (let part of utils.getKeys(pathParts)) {
-                let pathPart = "/" + pathParts[part];
+              for (const part of utils.getKeys(pathParts)) {
+                const pathPart = "/" + pathParts[part as any]
                 if (pathPart.localeCompare(match) === 0) {
-                  pathParams[pathParam] = part;
+                  pathParams[pathParam] = part
                 }
               }
-              pathToMatch = pathToMatch.replace(match, "/[^\/]+");
+              pathToMatch = pathToMatch.replace(match, "/[^\/]+")
             }
-            let newPathToMatch = pathToMatch.replace(/\//g, "\\/");
-            newPathToMatch = newPathToMatch + "$";
+            let newPathToMatch = pathToMatch.replace(/\//g, "\\/")
+            newPathToMatch = newPathToMatch + "$"
 
-            //for this API path (and method), try to find it in the recording file, and get the data
-            var entries = recording.Entries;
-            let entryIndex = 0;
-            let queryParams: any = {};
-            for (let entry of utils.getKeys(entries)) {
-              entryIndex++;
-              let recordingPath = JSON.stringify(entries[entry]["RequestUri"]);
-              let recordingPathQueryParams = recordingPath.split('?')[1].slice(0, -1);
-              let queryParamsArray = recordingPathQueryParams.split('&');
-              for (let part of utils.getKeys(queryParamsArray)) {
-                let queryParam = queryParamsArray[part].split('=');
-                queryParams[queryParam[0]] = queryParam[1];
+            // for this API path (and method), try to find it in the recording file, and get
+            // the data
+            const entries = recording.Entries
+            let entryIndex = 0
+            const queryParams: any = {}
+            for (const entry of utils.getKeys(entries)) {
+              entryIndex++
+              let recordingPath = JSON.stringify(entries[entry].RequestUri)
+              const recordingPathQueryParams = recordingPath.split("?")[1].slice(0, -1)
+              const queryParamsArray = recordingPathQueryParams.split("&")
+              for (const part of utils.getKeys(queryParamsArray)) {
+                const queryParam = queryParamsArray[part as any].split("=")
+                queryParams[queryParam[0]] = queryParam[1]
               }
 
-              let headerParams = entries[entry]["RequestHeaders"];
+              const headerParams = entries[entry].RequestHeaders
 
-              // if commandline included check for API version, validate api-version from URI in recordings matches the api-version of the spec
-              if (!self.options.matchApiVersion || (("api-version" in queryParams) && queryParams["api-version"] == api.info.version)) {
-                recordingPath = recordingPath.replace(/\?.*/, '');
-                let recordingPathParts = recordingPath.split('/');
-                let match = recordingPath.match(newPathToMatch);
+              // if commandline included check for API version, validate api-version from URI in
+              // recordings matches the api-version of the spec
+              if (!self.options.matchApiVersion
+                || (("api-version" in queryParams)
+                  && queryParams["api-version"] === api.info.version)) {
+                recordingPath = recordingPath.replace(/\?.*/, "")
+                const recordingPathParts = recordingPath.split("/")
+                const match = recordingPath.match(newPathToMatch)
                 if (match !== null) {
-                  log.silly("path: " + path);
-                  log.silly("recording path: " + recordingPath);
+                  log.silly("path: " + path)
+                  log.silly("recording path: " + recordingPath)
 
-                  var pathParamsValues: any = {};
-                  for (let p of utils.getKeys(pathParams)) {
-                    let index = pathParams[p];
-                    pathParamsValues[p] = recordingPathParts[index];
+                  const pathParamsValues: any = {}
+                  for (const p of utils.getKeys(pathParams)) {
+                    const index = pathParams[p]
+                    pathParamsValues[p] = recordingPathParts[index]
                   }
 
-                  //found a match in the recording
-                  let requestMethodFromRecording = entries[entry]["RequestMethod"];
-                  let infoFromOperation = paths[path][requestMethodFromRecording.toLowerCase()];
-                  if (typeof infoFromOperation != 'undefined') {
-                    //need to consider each method in operation
-                    let fileName = recordingFileName.split('/');
-                    fileName = fileName[fileName.length - 1];
-                    fileName = fileName.split(".json")[0];
-                    fileName = fileName.replace(/\//g, "-");
-                    let exampleFileName = fileName + "-" + requestMethodFromRecording + "-example-" + pathIndex + entryIndex + ".json";
-                    let ref: any = {};
-                    ref["$ref"] = relativeExamplesPath + exampleFileName;
-                    let exampleFriendlyName = fileName + requestMethodFromRecording + pathIndex + entryIndex;
-                    log.debug(`exampleFriendlyName: ${exampleFriendlyName}`);
+                  // found a match in the recording
+                  const requestMethodFromRecording = entries[entry].RequestMethod
+                  const infoFromOperation = paths[path][requestMethodFromRecording.toLowerCase()]
+                  if (typeof infoFromOperation !== "undefined") {
+                    // need to consider each method in operation
+                    let fileName = recordingFileName.split("/")
+                    fileName = fileName[fileName.length - 1]
+                    fileName = fileName.split(".json")[0]
+                    fileName = fileName.replace(/\//g, "-")
+                    const exampleFileName = fileName
+                      + "-"
+                      + requestMethodFromRecording
+                      + "-example-"
+                      + pathIndex
+                      + entryIndex
+                      + ".json"
+                    const ref: any = {}
+                    ref.$ref = relativeExamplesPath + exampleFileName
+                    const exampleFriendlyName =
+                      fileName + requestMethodFromRecording + pathIndex + entryIndex
+                    log.debug(`exampleFriendlyName: ${exampleFriendlyName}`)
 
                     if (!("x-ms-examples" in infoFromOperation)) {
-                      infoFromOperation["x-ms-examples"] = {};
+                      infoFromOperation["x-ms-examples"] = {}
                     }
-                    infoFromOperation["x-ms-examples"][exampleFriendlyName] = ref;
-                    let example: any = {};
-                    example["parameters"] = {};
-                    example["responses"] = {};
-                    let params = infoFromOperation["parameters"];
-                    for (let param of utils.getKeys(pathParamsValues)) {
-                      example['parameters'][param] = pathParamsValues[param];
+                    infoFromOperation["x-ms-examples"][exampleFriendlyName] = ref
+                    const exampleL = {
+                      parameters: {} as any,
+                      responses: {} as any
                     }
-                    for (let param of utils.getKeys(queryParams)) {
-                      example['parameters'][param] = queryParams[param];
+                    const params = infoFromOperation.parameters
+                    for (const param of utils.getKeys(pathParamsValues)) {
+                      exampleL.parameters[param] = pathParamsValues[param]
                     }
-                    for (let param of utils.getKeys(headerParams)) {
-                      example['parameters'][param] = headerParams[param];
+                    for (const param of utils.getKeys(queryParams)) {
+                      exampleL.parameters[param] = queryParams[param]
                     }
-                    for (let param of utils.getKeys(infoFromOperation["parameters"])) {
-                      if (params[param]["in"] == "body") {
-                        let bodyParamName = params[param]["name"];
-                        let bodyParamValue = entries[entry]["RequestBody"];
-                        let bodyParamExample: any = {};
-                        bodyParamExample[bodyParamName] = bodyParamValue;
+                    for (const param of utils.getKeys(headerParams)) {
+                      exampleL.parameters[param] = headerParams[param]
+                    }
+                    for (const param of utils.getKeys(infoFromOperation.parameters)) {
+                      if (params[param].in === "body") {
+                        const bodyParamName = params[param].name
+                        const bodyParamValue = entries[entry].RequestBody
+                        const bodyParamExample: any = {}
+                        bodyParamExample[bodyParamName] = bodyParamValue
 
                         if (bodyParamValue !== "") {
-                          example['parameters'][bodyParamName] = JSON.parse(bodyParamValue);
-                        }
-                        else {
-                          example['parameters'][bodyParamName] = "";
+                          exampleL.parameters[bodyParamName] = JSON.parse(bodyParamValue)
+                        } else {
+                          exampleL.parameters[bodyParamName] = ""
                         }
                       }
                     }
-                    let responses = infoFromOperation["responses"];
-                    for (var response of utils.getKeys(responses)) {
-                      let statusCodeFromRecording = entries[entry]["StatusCode"];
-                      let responseBody = entries[entry]["ResponseBody"];
-                      example['responses'][statusCodeFromRecording] = {};
+                    const responses = infoFromOperation.responses
+                    for (const response of utils.getKeys(responses)) {
+                      const statusCodeFromRecording = entries[entry].StatusCode
+                      const responseBody = entries[entry].ResponseBody
+                      exampleL.responses[statusCodeFromRecording] = {}
                       if (responseBody !== "") {
-                        example['responses'][statusCodeFromRecording]['body'] = JSON.parse(responseBody);
-                      }
-                      else {
-                        example['responses'][statusCodeFromRecording]['body'] = "";
+                        exampleL.responses[statusCodeFromRecording].body = JSON.parse(responseBody)
+                      } else {
+                        exampleL.responses[statusCodeFromRecording].body = ""
                       }
                     }
-                    log.info(`Writing x-ms-examples at ${outputExamples + exampleFileName}`);
-                    fs.writeFile(outputExamples + exampleFileName, JSON.stringify(example, null, 2));
+                    log.info(`Writing x-ms-examples at ${outputExamples + exampleFileName}`)
+                    fs.writeFileSync(
+                      outputExamples + exampleFileName, JSON.stringify(exampleL, null, 2))
                   }
                 }
               }
             }
           }
-          log.info(`Writing updated swagger with x-ms-examples at ${outputSwagger}`);
-          fs.writeFile(outputSwagger, JSON.stringify(swaggerObject, null, 2));
-        }
-        catch (err) {
-          accErrors[recordingFileName] = err.toString();
-          log.warn(`Error pricessing recording file: "${recordingFileName}"`);
-          log.warn(`Error: "${err.toString()} "`);
+          log.info(`Writing updated swagger with x-ms-examples at ${outputSwagger}`)
+          fs.writeFileSync(outputSwagger, JSON.stringify(swaggerObject, null, 2))
+        } catch (err) {
+          accErrors[recordingFileName] = err.toString()
+          log.warn(`Error processing recording file: "${recordingFileName}"`)
+          log.warn(`Error: "${err.toString()} "`)
         }
       }
 
-      if (JSON.stringify(accErrors) != "{}") {
-        log.error(`Errors loading/parsing recording files.`);
-        log.error(`${JSON.stringify(accErrors)}`);
+      if (JSON.stringify(accErrors) !== "{}") {
+        log.error(`Errors loading/parsing recording files.`)
+        log.error(`${JSON.stringify(accErrors)}`)
       }
-    }).catch(function (err: any) {
-      process.exitCode = 1;
-      log.error(err);
-    });
-  }
-
-  mkdirSync(path: any) {
-    try {
-      fs.mkdirSync(path);
-    } catch (e) {
-      if (e.code != 'EEXIST') throw e;
+    } catch (err) {
+      process.exitCode = 1
+      log.error(err)
     }
   }
 
-  getFileList(dir: any, filelist: any) {
-    let self = this;
-    var files = fs.readdirSync(dir);
-    filelist = filelist || [];
-    files.forEach(function (file: any) {
+  private mkdirSync(path: any): void {
+    try {
+      fs.mkdirSync(path)
+    } catch (e) {
+      if (e.code !== "EEXIST") { throw e }
+    }
+  }
+
+  private getFileList(dir: any, fileList: string[]): string[] {
+    const self = this
+    const files = fs.readdirSync(dir)
+    fileList = fileList || []
+    files.forEach(file => {
       if (fs.statSync(pathlib.join(dir, file)).isDirectory()) {
-        filelist = self.getFileList(pathlib.join(dir, file), filelist);
-      }
-      else {
-        filelist.push(pathlib.join(dir, file));
+        fileList = self.getFileList(pathlib.join(dir, file), fileList)
+      } else {
+        fileList.push(pathlib.join(dir, file))
       }
     });
-    return filelist;
+    return fileList
   }
 }
-
-module.exports = xMsExampleExtractor;

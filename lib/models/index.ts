@@ -8,18 +8,14 @@
  * regenerated.
  */
 
-/* jshint latedef:false */
-/* jshint forin:false */
-/* jshint noempty:false */
-
-export import LiveRequest = require('./liveRequest')
-export import LiveResponse = require('./liveResponse')
-export import RequestResponse = require('./requestResponse')
-export import OperationInfo = require('./operationInfo')
-export import LiveValidationError = require('./liveValidationError')
-export import ErrorResponse = require('./errorResponse')
-export import ErrorWrapper = require('./errorWrapper')
-export import RequestValidationResult = require('./requestValidationResult')
-export import ResponseValidationResult = require('./responseValidationResult')
-export import ValidationResult = require('./validationResult')
-export import PotentialOperationsResult = require('./potentialOperationsResult')
+export { LiveRequest } from "./liveRequest"
+export { LiveResponse } from "./liveResponse"
+export { RequestResponse } from "./requestResponse"
+export { OperationInfo } from "./operationInfo"
+export { LiveValidationError } from "./liveValidationError"
+export { ErrorResponse } from "./errorResponse"
+export { ErrorWrapper } from "./errorWrapper"
+export { RequestValidationResult } from "./requestValidationResult"
+export { ResponseValidationResult } from "./responseValidationResult"
+export { ValidationResult } from "./validationResult"
+export { PotentialOperationsResult } from "./potentialOperationsResult"

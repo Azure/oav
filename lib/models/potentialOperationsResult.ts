@@ -17,15 +17,13 @@
  * @member {LiveValidationError} Reason when potential operations were empty.
  *
  */
-class PotentialOperationsResult {
-  operations: any[]
-  reason: any
+export class PotentialOperationsResult {
+  public readonly operations: any[]
+  public readonly reason: any
   constructor(operations: any[], reason: any) {
-    this.operations = operations || [];
+    this.operations = operations || []
     if (reason) {
-      this.reason = reason;
+      this.reason = reason
     }
   }
 }
-
-export = PotentialOperationsResult

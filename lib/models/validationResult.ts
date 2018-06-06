@@ -43,9 +43,7 @@
  * found or the input was invalid.
  *
  */
-class ValidationResult {
-  constructor() {
-  }
+export class ValidationResult {
 
   /**
    * Defines the metadata of ValidationResult
@@ -53,52 +51,50 @@ class ValidationResult {
    * @returns {object} metadata of ValidationResult
    *
    */
-  mapper() {
+  public mapper() {
     return {
       required: false,
-      serializedName: 'ValidationResult',
+      serializedName: "ValidationResult",
       type: {
-        name: 'Composite',
-        className: 'ValidationResult',
+        name: "Composite",
+        className: "ValidationResult",
         modelProperties: {
           requestValidationResult: {
             required: false,
             readOnly: true,
-            serializedName: 'requestValidationResult',
+            serializedName: "requestValidationResult",
             type: {
-              name: 'Composite',
-              className: 'RequestValidationResult'
+              name: "Composite",
+              className: "RequestValidationResult"
             }
           },
           responseValidationResult: {
             required: false,
             readOnly: true,
-            serializedName: 'responseValidationResult',
+            serializedName: "responseValidationResult",
             type: {
-              name: 'Composite',
-              className: 'ResponseValidationResult'
+              name: "Composite",
+              className: "ResponseValidationResult"
             }
           },
           errors: {
             required: false,
             readOnly: true,
-            serializedName: 'errors',
+            serializedName: "errors",
             type: {
-              name: 'Sequence',
+              name: "Sequence",
               element: {
                 required: false,
-                serializedName: 'ErrorWrapperElementType',
+                serializedName: "ErrorWrapperElementType",
                 type: {
-                  name: 'Composite',
-                  className: 'ErrorWrapper'
+                  name: "Composite",
+                  className: "ErrorWrapper"
                 }
               }
             }
           }
         }
       }
-    };
+    }
   }
 }
-
-export = ValidationResult

@@ -24,9 +24,7 @@
  * validation.
  *
  */
-class ResponseValidationResult {
-  constructor() {
-  }
+export class ResponseValidationResult {
 
   /**
    * Defines the metadata of ResponseValidationResult
@@ -34,58 +32,56 @@ class ResponseValidationResult {
    * @returns {object} metadata of ResponseValidationResult
    *
    */
-  mapper() {
+  public mapper() {
     return {
       required: false,
-      serializedName: 'ResponseValidationResult',
+      serializedName: "ResponseValidationResult",
       type: {
-        name: 'Composite',
-        className: 'ResponseValidationResult',
+        name: "Composite",
+        className: "ResponseValidationResult",
         modelProperties: {
           successfulResponse: {
             required: false,
             readOnly: true,
-            serializedName: 'successfulResponse',
+            serializedName: "successfulResponse",
             type: {
-              name: 'Boolean'
+              name: "Boolean"
             }
           },
           operationInfo: {
             required: false,
             readOnly: true,
-            serializedName: 'operationInfo',
+            serializedName: "operationInfo",
             type: {
-              name: 'Sequence',
+              name: "Sequence",
               element: {
-                  required: false,
-                  serializedName: 'OperationInfoElementType',
-                  type: {
-                    name: 'Composite',
-                    className: 'OperationInfo'
-                  }
+                required: false,
+                serializedName: "OperationInfoElementType",
+                type: {
+                  name: "Composite",
+                  className: "OperationInfo"
+                }
               }
             }
           },
           errors: {
             required: false,
             readOnly: true,
-            serializedName: 'errors',
+            serializedName: "errors",
             type: {
-              name: 'Sequence',
+              name: "Sequence",
               element: {
-                  required: false,
-                  serializedName: 'ErrorWrapperElementType',
-                  type: {
-                    name: 'Composite',
-                    className: 'ErrorWrapper'
-                  }
+                required: false,
+                serializedName: "ErrorWrapperElementType",
+                type: {
+                  name: "Composite",
+                  className: "ErrorWrapper"
+                }
               }
             }
           }
         }
       }
-    };
+    }
   }
 }
-
-export = ResponseValidationResult

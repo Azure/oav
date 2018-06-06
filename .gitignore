@@ -83,5 +83,8 @@ SdkCodeGen
 
 output/*
 *.js
-*.d.ts
+dist/
 *.tgz
+*.js.map
+coverage/
+.nyc_output

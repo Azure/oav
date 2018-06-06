@@ -1,6 +1,6 @@
 {
   "name": "oav",
-  "version": "0.4.39",
+  "version": "0.4.40",
   "author": {
     "name": "Microsoft Corporation",
     "email": "azsdkteam@microsoft.com",
@@ -29,13 +29,24 @@
     "vscode-jsonrpc": "^3.6.1",
     "winston": "^2.4.2",
     "yargs": "^6.6.0",
-    "yuml2svg": "^3.1.0"
+    "yuml2svg": "^3.1.0",
+    "@types/winston": "^2.3.9"
   },
   "devDependencies": {
+    "@types/glob": "^5.0.35",
+    "@types/js-yaml": "^3.11.1",
+    "@types/json-pointer": "^1.0.30",
+    "@types/jsonpath": "^0.2.0",
+    "@types/lodash": "^4.14.109",
     "@types/mocha": "^2.2.46",
+    "@types/recursive-readdir": "^2.2.0",
     "@types/should": "^8.1.30",
+    "@types/yargs": "^11.0.0",
     "mocha": "^4.1.0",
+    "nyc": "^11.8.0",
     "should": "5.2.0",
+    "ts-node": "^6.0.5",
+    "tslint": "^5.10.0",
     "typescript": "^2.8.3"
   },
   "homepage": "https://github.com/azure/oav",
@@ -46,19 +57,43 @@
   "bugs": {
     "url": "http://github.com/azure/oav/issues"
   },
-  "main": "./index.js",
+  "main": "./dist/index.js",
   "bin": {
-    "oav": "./cli.js"
+    "oav": "./dist/cli.js"
   },
   "files": [
-    "**/*.js",
-    "**/*.d.ts"
+    "dist/*.js",
+    "dist/*.d.ts",
+    "dist/lib/**/*.js",
+    "dist/lib/**/*.d.ts",
+    "types/**/*.d.ts"
   ],
-  "types": "**/*.d.ts",
+  "types": "./dist/index.d.ts",
+  "nyc": {
+    "require": [
+      "ts-node/register"
+    ],
+    "include": [
+      "lib/**/*.ts"
+    ],
+    "all": true,
+    "reporter": [
+      "lcov",
+      "text"
+    ],
+    "extension": [
+      ".ts"
+    ],
+    "exclude": [
+      "dist/",
+      "types/"
+    ]
+  },
   "scripts": {
-    "build": "tsc",
-    "test": "tsc && mocha -t 100000 --reporter min",
-    "start": "node ./lib/autorestPlugin/pluginHost.js",
-    "prepack": "npm install && tsc"
+    "tsc": "tsc",
+    "tslint": "tslint ./*.ts ./lib/**/*.ts ./test/**/*.ts ./types/**/*.ts",
+    "test": "npm run tslint && nyc mocha ./test/**/*.ts -r ts-node/register -t 10000",
+    "start": "node ./dist/lib/autorestPlugin/pluginHost.js",
+    "prepack": "npm install && tsc && npm run tslint"
   }
 }

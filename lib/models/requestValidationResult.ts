@@ -24,9 +24,7 @@
  * validation.
  *
  */
-class RequestValidationResult {
-  constructor() {
-  }
+export class RequestValidationResult {
 
   /**
    * Defines the metadata of RequestValidationResult
@@ -34,58 +32,56 @@ class RequestValidationResult {
    * @returns {object} metadata of RequestValidationResult
    *
    */
-  mapper() {
+  public mapper() {
     return {
       required: false,
-      serializedName: 'RequestValidationResult',
+      serializedName: "RequestValidationResult",
       type: {
-        name: 'Composite',
-        className: 'RequestValidationResult',
+        name: "Composite",
+        className: "RequestValidationResult",
         modelProperties: {
           successfulRequest: {
             required: false,
             readOnly: true,
-            serializedName: 'successfulRequest',
+            serializedName: "successfulRequest",
             type: {
-              name: 'Boolean'
-            }
+              name: "Boolean",
+            },
           },
           operationInfo: {
             required: false,
             readOnly: true,
-            serializedName: 'operationInfo',
+            serializedName: "operationInfo",
             type: {
-              name: 'Sequence',
+              name: "Sequence",
               element: {
-                  required: false,
-                  serializedName: 'OperationInfoElementType',
-                  type: {
-                    name: 'Composite',
-                    className: 'OperationInfo'
-                  }
-              }
-            }
+                required: false,
+                serializedName: "OperationInfoElementType",
+                type: {
+                  name: "Composite",
+                  className: "OperationInfo",
+                },
+              },
+            },
           },
           errors: {
             required: false,
             readOnly: true,
-            serializedName: 'errors',
+            serializedName: "errors",
             type: {
-              name: 'Sequence',
+              name: "Sequence",
               element: {
-                  required: false,
-                  serializedName: 'ErrorWrapperElementType',
-                  type: {
-                    name: 'Composite',
-                    className: 'ErrorWrapper'
-                  }
-              }
-            }
-          }
-        }
-      }
+                required: false,
+                serializedName: "ErrorWrapperElementType",
+                type: {
+                  name: "Composite",
+                  className: "ErrorWrapper",
+                },
+              },
+            },
+          },
+        },
+      },
     };
   }
 }
-
-export = RequestValidationResult

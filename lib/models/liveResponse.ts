@@ -24,9 +24,7 @@
  * is a buffer.
  *
  */
-class LiveResponse {
-  constructor() {
-  }
+export class LiveResponse {
 
   /**
    * Defines the metadata of LiveResponse
@@ -34,53 +32,51 @@ class LiveResponse {
    * @returns {object} metadata of LiveResponse
    *
    */
-  mapper() {
+  public mapper() {
     return {
       required: false,
-      serializedName: 'LiveResponse',
+      serializedName: "LiveResponse",
       type: {
-        name: 'Composite',
-        className: 'LiveResponse',
+        name: "Composite",
+        className: "LiveResponse",
         modelProperties: {
           statusCode: {
             required: true,
-            serializedName: 'statusCode',
+            serializedName: "statusCode",
             type: {
-              name: 'String'
-            }
+              name: "String",
+            },
           },
           headers: {
             required: true,
-            serializedName: 'headers',
+            serializedName: "headers",
             type: {
-              name: 'Dictionary',
+              name: "Dictionary",
               value: {
-                  required: false,
-                  serializedName: 'StringElementType',
-                  type: {
-                    name: 'String'
-                  }
-              }
-            }
+                required: false,
+                serializedName: "StringElementType",
+                type: {
+                  name: "String",
+                },
+              },
+            },
           },
           body: {
             required: false,
-            serializedName: 'body',
+            serializedName: "body",
             type: {
-              name: 'Object'
-            }
+              name: "Object",
+            },
           },
           encoding: {
             required: false,
-            serializedName: 'encoding',
+            serializedName: "encoding",
             type: {
-              name: 'String'
-            }
-          }
-        }
-      }
-    };
+              name: "String",
+            },
+          },
+        },
+      },
+    }
   }
 }
-
-export = LiveResponse

@@ -24,9 +24,7 @@
  * @member {object} [body] Parsed body of the request as a JSON.
  *
  */
-class LiveRequest {
-  constructor() {
-  }
+export class LiveRequest {
 
   /**
    * Defines the metadata of LiveRequest
@@ -34,53 +32,51 @@ class LiveRequest {
    * @returns {object} metadata of LiveRequest
    *
    */
-  mapper() {
+  public mapper() {
     return {
       required: false,
-      serializedName: 'LiveRequest',
+      serializedName: "LiveRequest",
       type: {
-        name: 'Composite',
-        className: 'LiveRequest',
+        name: "Composite",
+        className: "LiveRequest",
         modelProperties: {
           headers: {
             required: true,
-            serializedName: 'headers',
+            serializedName: "headers",
             type: {
-              name: 'Dictionary',
+              name: "Dictionary",
               value: {
-                  required: false,
-                  serializedName: 'StringElementType',
-                  type: {
-                    name: 'String'
-                  }
-              }
-            }
+                required: false,
+                serializedName: "StringElementType",
+                type: {
+                  name: "String",
+                },
+              },
+            },
           },
           method: {
             required: true,
-            serializedName: 'method',
+            serializedName: "method",
             type: {
-              name: 'String'
-            }
+              name: "String",
+            },
           },
           url: {
             required: true,
-            serializedName: 'url',
+            serializedName: "url",
             type: {
-              name: 'String'
-            }
+              name: "String",
+            },
           },
           body: {
             required: false,
-            serializedName: 'body',
+            serializedName: "body",
             type: {
-              name: 'Object'
-            }
-          }
-        }
-      }
-    };
+              name: "Object",
+            },
+          },
+        },
+      },
+    }
   }
 }
-
-export = LiveRequest;
