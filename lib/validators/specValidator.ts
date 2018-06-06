@@ -2,8 +2,6 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import * as util from "util"
-import * as fs from "fs"
-import * as yaml from "js-yaml"
 import * as path from "path"
 import * as Sway from "sway"
 import * as msRest from "ms-rest"
@@ -23,6 +21,18 @@ const ErrorCodes = Constants.ErrorCodes;
 
 export interface Options extends specResolver.Options {
   isPathCaseSensitive?: boolean
+}
+
+export interface ErrorCode {
+  readonly name: string
+  readonly id: string
+}
+
+interface ValidationResult {
+  exampleNotFound?: any
+  scenarios?: any
+  requestValidation?: any
+  responseValidation?: any
 }
 
 /*
@@ -280,7 +290,7 @@ export class SpecValidator {
   /*
    * Updates the validityStatus of the internal specValidationResult based on the provided value.
    *
-   * @param {boolean} value A truthy or a falsy value.
+   * @param {boolean} value
    */
   private updateValidityStatus(value?: boolean): void {
     this.specValidationResult.validityStatus = Boolean(value)
@@ -290,7 +300,7 @@ export class SpecValidator {
    * Constructs the Error object and updates the validityStatus unless indicated to not update the
    * status.
    *
-   * @param {string} code The Error code that uniquely idenitifies the error.
+   * @param {string} code The Error code that uniquely identifiers the error.
    *
    * @param {string} message The message that provides more information about the error.
    *
@@ -302,7 +312,11 @@ export class SpecValidator {
    * @return {object} err Return the constructed Error object.
    */
   private constructErrorObject(
-    code: any, message: string, innerErrors?: null|Error[], skipValidityStatusUpdate?: boolean) {
+    code: ErrorCode,
+    message: string,
+    innerErrors?: null|Error[],
+    skipValidityStatusUpdate?: boolean)
+    : Error {
 
     const err: Error = {
       code: code.name,
@@ -343,12 +357,12 @@ export class SpecValidator {
    *
    * @return {object} xmsExample - The xmsExample object.
    */
-  private getXmsExamples(idOrObj: any) {
+  private getXmsExamples(idOrObj: string|{}) {
     if (!idOrObj) {
       throw new Error(`idOrObj cannot be null or undefined and must be of type string or object.`)
     }
     let operation: any = {}
-    if (typeof idOrObj.valueOf() === "string") {
+    if (typeof idOrObj === "string") {
       operation = this.getOperationById(idOrObj)
     } else {
       operation = idOrObj
@@ -388,7 +402,6 @@ export class SpecValidator {
       }
     }
     this.specValidationResult.operations[operationId] = operationResult
-    return
   }
 
   private constructRequestResult(
@@ -396,7 +409,9 @@ export class SpecValidator {
     isValid: any,
     msg: any,
     requestValidationErrors?: any,
-    requestValidationWarnings?: any): void {
+    requestValidationWarnings?: any)
+    : void {
+
     if (!isValid) {
       operationResult.isValid = false
       operationResult.request.isValid = false
@@ -422,6 +437,7 @@ export class SpecValidator {
     responseValidationErrors?: any,
     responseValidationWarnings?: any)
     : void {
+
     if (!operationResult.responses[responseStatusCode]) {
       operationResult.responses[responseStatusCode] = {}
     }
@@ -447,7 +463,9 @@ export class SpecValidator {
     requestValidationErrors: any,
     requestValidationWarnings: any,
     exampleType: any,
-    scenarioName?: any): void {
+    scenarioName?: any)
+    : void {
+
     this.initializeExampleResult(operationId, exampleType, scenarioName)
     let operationResult
     let part
@@ -485,6 +503,7 @@ export class SpecValidator {
     exampleType: any,
     scenarioName?: any)
     : void {
+
     this.initializeExampleResult(operationId, exampleType, scenarioName)
     let operationResult
     let part
@@ -529,7 +548,9 @@ export class SpecValidator {
    *
    * @return {object} xmsExample - The xmsExample object.
    */
-  private constructOperationResult(operation: any, result: any, exampleType: string): void {
+  private constructOperationResult(
+    operation: any, result: ValidationResult, exampleType: string): void {
+
     const operationId = operation.operationId
     if (result.exampleNotFound) {
       this.specValidationResult.operations[operationId][exampleType].error = result.exampleNotFound
@@ -608,7 +629,7 @@ export class SpecValidator {
       throw new Error("operation cannot be null or undefined and must be of type 'object'.")
     }
     const xmsExamples = operation[Constants.xmsExamples]
-    const result = {
+    const result: ValidationResult = {
       scenarios: {} as any,
       exampleNotFound: undefined as any
     }
@@ -868,7 +889,8 @@ export class SpecValidator {
     }
 
     if (responseWrapper === null
-      || responseWrapper === undefined || typeof responseWrapper !== "object") {
+      || responseWrapper === undefined
+      || typeof responseWrapper !== "object") {
       throw new Error("responseWrapper cannot be null or undefined and must be of type 'object'.")
     }
     self.sampleResponse = responseWrapper

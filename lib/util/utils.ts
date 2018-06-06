@@ -12,13 +12,17 @@ import request = require("request")
 import * as lodash from "lodash"
 import * as http from "http"
 
+export interface DocCache {
+  [name: string]: {}
+}
+
 /*
  * Caches the json docs that were successfully parsed by parseJson().
  * This avoids, fetching them again.
  * key: docPath
  * value: parsed doc in JSON format
  */
-export let docCache: any = {}
+export let docCache: DocCache = {}
 
 export function clearCache(): void {
   docCache = {}
@@ -30,7 +34,7 @@ export function clearCache(): void {
  * because the buffer-to-string conversion in `fs.readFile()`
  * translates it to FEFF, the UTF-16 BOM.
  */
-export function stripBOM(content: any) {
+export function stripBOM(content: Buffer|string) {
   if (Buffer.isBuffer(content)) {
     content = content.toString()
   }
@@ -112,11 +116,12 @@ export function parseContent(filePath: string, fileContent: string) {
 }
 
 /*
- * A utility function to help us acheive stuff in the same way as async/await but with yield
+ * A utility function to help us achieve stuff in the same way as async/await but with yield
  * statement and generator functions.
  * It waits till the task is over.
  * @param {function} A generator function as an input
  */
+/*
 export function run(genfun: () => any) {
   // instantiate the generator object
   const gen = genfun()
@@ -144,6 +149,12 @@ export function run(genfun: () => any) {
   // Kick off the async loop
   next()
 }
+*/
+
+export type Options = request.CoreOptions & request.UrlOptions & {
+  readonly url: any
+  readonly errorOnNon200Response: any
+}
 
 /*
  * Makes a generic request. It is a wrapper on top of request.js library that provides a promise
@@ -157,9 +168,9 @@ export function run(genfun: () => any) {
  *
  * @return {Promise} promise - A promise that resolves to the responseBody or rejects to an error.
  */
-export function makeRequest(options: any): Promise<any> {
+export function makeRequest(options: Options): Promise<any> {
   const promise = new Promise((resolve, reject) => {
-    request(options, (err: any, response: request.Response, responseBody: any): void => {
+    request(options, (err, response, responseBody) => {
       if (err) {
         reject(err)
       }
@@ -211,8 +222,8 @@ export async function executePromisesSequentially(
  *
  * @return {string} result A random string
  */
-export function generateRandomId(prefix: string, existingIds: any): string {
-  let randomStr
+export function generateRandomId(prefix: string, existingIds: {}): string {
+  let randomStr: string
   while (true) {
     randomStr = Math.random().toString(36).substr(2, 12)
     if (prefix && typeof prefix.valueOf() === "string") {
@@ -325,6 +336,10 @@ export function parseJsonWithPathFragments(...args: string[]) {
   return parseJson(specPath)
 }
 
+export interface Map {
+  [name: string]: any
+}
+
 /*
  * Merges source object into the target object
  * @param {object} source The object that needs to be merged
@@ -333,7 +348,7 @@ export function parseJsonWithPathFragments(...args: string[]) {
  *
  * @returns {object} target - Returns the merged target object.
  */
-export function mergeObjects(source: any, target: any) {
+export function mergeObjects<T extends Map>(source: T, target: T): T {
   Object.keys(source).forEach((key) => {
     if (Array.isArray(source[key])) {
       if (target[key] && !Array.isArray(target[key])) {
@@ -379,7 +394,7 @@ export function mergeArrays(source: any[], target: any[]) {
  *
  * @returns {any} result - Returns the value that the ptr points to, in the doc.
  */
-export function getObject(doc: any, ptr: string) {
+export function getObject(doc: {}, ptr: string) {
   let result
   try {
     result = jsonPointer.get(doc, ptr)
@@ -399,7 +414,7 @@ export function getObject(doc: any, ptr: string) {
  * @param {any} value The value that needs to be set at the
  * location provided by the ptr in the doc.
  */
-export function setObject(doc: any, ptr: string, value: any) {
+export function setObject(doc: {}, ptr: string, value: any) {
   let result
   try {
     result = jsonPointer.set(doc, ptr, value)
@@ -415,7 +430,7 @@ export function setObject(doc: any, ptr: string, value: any) {
  *
  * @param {string} ptr The json reference pointer.
  */
-export function removeObject(doc: any, ptr: string) {
+export function removeObject(doc: {}, ptr: string) {
   let result
   try {
     result = jsonPointer.remove(doc, ptr)
@@ -530,7 +545,7 @@ export function gitClone(directory: string, url: string, branch: string|undefine
  * Removes given directory recursively.
  * @param {string} dir directory to be deleted.
  */
-export function removeDirSync(dir: string) {
+export function removeDirSync(dir: string): void {
   if (fs.existsSync(dir)) {
     fs.readdirSync(dir).forEach(file => {
       const current = dir + "/" + file
@@ -551,14 +566,10 @@ export function removeDirSync(dir: string) {
  * @param {array} consumesOrProduces Array of content-types.
  * @returns {string} firstMatchedJson content-type that contains "/json".
  */
-export function getJsonContentType(consumesOrProduces: any[]) {
-  let firstMatchedJson = null
-  if (consumesOrProduces) {
-    firstMatchedJson = consumesOrProduces.find((contentType) => {
-      return (contentType.match(/.*\/json.*/ig) !== null)
-    })
-  }
-  return firstMatchedJson
+export function getJsonContentType(consumesOrProduces: string[]): string|undefined {
+  return consumesOrProduces
+    ? consumesOrProduces.find(contentType => contentType.match(/.*\/json.*/ig) !== null)
+    : undefined
 }
 
 /**
@@ -571,13 +582,25 @@ export function isUrlEncoded(str: string): boolean {
   return str !== decodeURIComponent(str)
 }
 
+export interface Model {
+  type?: any
+  items?: any
+  properties?: any
+  additionalProperties?: any
+  "x-nullable"?: any
+  in?: any
+  oneOf?: any
+  $ref?: any
+  required?: any
+}
+
 /**
  * Determines whether the given model is a pure (free-form) object candidate (i.e. equivalent of the
  * C# Object type).
  * @param {object} model - The model to be verified
  * @returns {boolean} result - true if model is a pure object; false otherwise.
  */
-export function isPureObject(model: any): boolean {
+export function isPureObject(model: Model): boolean {
   if (!model) {
     throw new Error(`model cannot be null or undefined and must be of type "object"`)
   }
@@ -613,7 +636,7 @@ export function isPureObject(model: any): boolean {
  * @returns {object} entity - The transformed entity if it is a pure object else the same entity is
  * returned as-is.
  */
-export function relaxEntityType(entity: any, isRequired?: boolean) {
+export function relaxEntityType(entity: Model, isRequired?: boolean): Model {
   if (isPureObject(entity) && entity.type) {
     delete entity.type
   }
@@ -628,7 +651,7 @@ export function relaxEntityType(entity: any, isRequired?: boolean) {
 /**
  * Relaxes/Transforms model definition like entities recursively
  */
-export function relaxModelLikeEntities(model: any) {
+export function relaxModelLikeEntities(model: Model): Model {
   model = relaxEntityType(model)
   if (model.properties) {
     const modelProperties = model.properties
@@ -652,7 +675,7 @@ export function relaxModelLikeEntities(model: any) {
  * If true then it is required. If false or undefined then it is not required.
  * @returns {object} entity - The processed entity
  */
-export function allowNullType(entity: any, isPropRequired?: boolean) {
+export function allowNullType(entity: Model, isPropRequired?: boolean): Model {
   // if entity has a type
   if (entity && entity.type) {
     // if type is an array
@@ -711,7 +734,7 @@ export function shouldAcceptNullValue(xnullable: any, isPropRequired: any): bool
 /**
  * Relaxes/Transforms model definition to allow null values
  */
-export function allowNullableTypes(model: any) {
+export function allowNullableTypes(model: Model) {
   // process additionalProperties if present
   if (model && typeof model.additionalProperties === "object") {
     if (model.additionalProperties.properties || model.additionalProperties.additionalProperties) {

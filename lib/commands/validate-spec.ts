@@ -9,7 +9,7 @@ export const command = "validate-spec <spec-path>"
 
 export const describe = "Performs semantic validation of the spec."
 
-export function handler(argv: yargs.Arguments) {
+export function handler(argv: yargs.Arguments): Promise<any> {
   log.debug(argv.toString())
   const specPath = argv.specPath
   const vOptions = {

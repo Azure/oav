@@ -38,7 +38,7 @@ export const Constants = {
     ResponseBodyValidationError: { name: "RESPONSE_BODY_VALIDATION_ERROR", id: "OAV110" },
     ResponseStatusCodeNotInExample: { name: "RESPONSE_STATUS_CODE_NOT_IN_EXAMPLE", id: "OAV111" },
     ResponseStatusCodeNotInSpec: { name: "RESPONSE_STATUS_CODE_NOT_IN_SPEC", id: "OAV112" },
-    ResponseSchemaNotInSpec: { nam: "RESPONSE_SCHEMA_NOT_IN_SPEC", id: "OAV113" },
+    ResponseSchemaNotInSpec: { name: "RESPONSE_SCHEMA_NOT_IN_SPEC", id: "OAV113" },
     RequiredParameterNotInExampleError: {
       name: "REQUIRED_PARAMETER_NOT_IN_EXAMPLE_ERROR",
       id: "OAV114"

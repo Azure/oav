@@ -262,7 +262,7 @@ export class XMsExampleExtractor {
     }
   }
 
-  private getFileList(dir: any, fileList: string[]): string[] {
+  private getFileList(dir: string, fileList: string[]): string[] {
     const self = this
     const files = fs.readdirSync(dir)
     fileList = fileList || []
