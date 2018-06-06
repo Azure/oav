@@ -85,7 +85,7 @@ export class SpecResolver {
   constructor(specPath: string, specInJson: any, options: Options) {
     if (specPath === null
       || specPath === undefined
-      || typeof specPath.valueOf() !== "string"
+      || typeof specPath !== "string"
       || !specPath.trim().length) {
       throw new Error(
         "specPath is a required property of type string and it cannot be an empty string.")
@@ -212,7 +212,7 @@ export class SpecResolver {
    * @return {object} doc fully resolved json document
    */
   public async resolveRelativePaths(doc?: any, docPath?: string, filterType?: string)
-    : Promise<any> {
+    : Promise<void> {
 
     const self = this
     let docDir
@@ -238,14 +238,12 @@ export class SpecResolver {
     }
 
     const allRefsRemoteRelative = JsonRefs.findRefs(doc, options)
-    const promiseFactories = utils.getKeys(allRefsRemoteRelative).map((refName: any) => {
+    const promiseFactories = utils.getKeys(allRefsRemoteRelative).map(refName => {
       const refDetails = allRefsRemoteRelative[refName]
       return () => self.resolveRelativeReference(refName, refDetails, doc, docPath)
     });
     if (promiseFactories.length) {
-      return await utils.executePromisesSequentially(promiseFactories)
-    } else {
-      return doc
+      await utils.executePromisesSequentially(promiseFactories)
     }
   }
 
@@ -253,7 +251,7 @@ export class SpecResolver {
    * Merges the x-ms-paths object into the paths object in swagger spec. The method assumes that the
    * paths present in "x-ms-paths" and "paths" are unique. Hence it does a simple union.
    */
-  private async unifyXmsPaths(): Promise<this> {
+  private async unifyXmsPaths(): Promise<void> {
     // unify x-ms-paths into paths
     const xmsPaths = this.specInJson["x-ms-paths"]
     const paths = this.specInJson.paths
@@ -263,7 +261,6 @@ export class SpecResolver {
       }
       this.specInJson.paths = utils.mergeObjects(xmsPaths, paths)
     }
-    return this
   }
 
   /**
@@ -281,7 +278,7 @@ export class SpecResolver {
    * @return undefined the modified object
    */
   private async resolveRelativeReference(
-    refName: string, refDetails: any, doc: any, docPath: string|undefined): Promise<any> {
+    refName: string, refDetails: any, doc: any, docPath: string|undefined): Promise<void> {
 
     if (!refName || (refName && typeof refName.valueOf() !== "string")) {
       throw new Error('refName cannot be null or undefined and must be of type "string".')
@@ -321,7 +318,6 @@ export class SpecResolver {
         || (!self.options.shouldResolveXmsExamples && slicedRefName.match(regex) === null)) {
         utils.setObject(doc, slicedRefName, result)
       }
-      return doc
     } else {
       // resolve the local reference.
       // make the reference local to the doc being processed
@@ -368,11 +364,8 @@ export class SpecResolver {
             processDefinition(defName)
           }
 
-          return await utils.executePromisesSequentially(unresolvedDefinitions)
+          await utils.executePromisesSequentially(unresolvedDefinitions)
         }
-        return
-      } else {
-        return doc
       }
     }
   }
@@ -381,17 +374,16 @@ export class SpecResolver {
    * Resolves the "allOf" array present in swagger model definitions by composing all the properties
    * of the parent model into the child model.
    */
-  private async resolveAllOfInDefinitions(): Promise<this> {
+  private async resolveAllOfInDefinitions(): Promise<void> {
     const self = this
     const spec = self.specInJson
     const definitions = spec.definitions
     const modelNames = utils.getKeys(definitions)
-    modelNames.map(modelName => {
+    modelNames.forEach(modelName => {
       const model = definitions[modelName]
       const modelRef = "/definitions/" + modelName
-      return self.resolveAllOfInModel(model, modelRef)
+      self.resolveAllOfInModel(model, modelRef)
     })
-    return self
   }
 
   /**
@@ -473,30 +465,29 @@ export class SpecResolver {
   /**
    * Deletes all the references to allOf from all the model definitions in the swagger spec.
    */
-  private async deleteReferencesToAllOf(): Promise<this> {
+  private async deleteReferencesToAllOf(): Promise<void> {
     const self = this
     const spec = self.specInJson
     const definitions = spec.definitions
     const modelNames = utils.getKeys(definitions)
-    modelNames.map(modelName => {
+    modelNames.forEach(modelName => {
       if (definitions[modelName].allOf) {
         delete definitions[modelName].allOf
       }
     })
-    return self
   }
 
   /**
    * Sets additionalProperties of the given modelNames to false.
    *
    * @param {array} [modelNames] An array of strings that specifies the modelNames to be processed.
-   * Default: All the modelnames from the definitions section in the swagger spec.
+   * Default: All the model names from the definitions section in the swagger spec.
    *
    * @param {boolean} [force] A boolean value that indicates whether to ignore the
    * additionalProperties
    * set to true or an object and forcefully set it to false. Default: false.
    */
-  private async setAdditionalPropertiesFalse(modelNames?: any[], force?: boolean): Promise<this> {
+  private async setAdditionalPropertiesFalse(modelNames?: any[], force?: boolean): Promise<void> {
     const self = this
     const spec = self.specInJson
     const definitions = spec.definitions
@@ -515,7 +506,6 @@ export class SpecResolver {
         }
       }
     })
-    return self
   }
 
   /**
@@ -533,7 +523,7 @@ export class SpecResolver {
    * be a mismatch between the number of path parameters provided in the operation
    * definition and the number of parameters actually present in the path template.
    */
-  private async resolveParameterizedHost(): Promise<this> {
+  private async resolveParameterizedHost(): Promise<void> {
     const self = this
     const spec = self.specInJson
     const parameterizedHost = spec[Constants.xmsParameterizedHost]
@@ -549,8 +539,6 @@ export class SpecResolver {
         }
       }
     }
-
-    return self
   }
 
   /**
@@ -559,7 +547,7 @@ export class SpecResolver {
    * i.e `"type": "object"` and `"properties": {}` or `"properties"` is absent or the entity has
    * "additionalProperties": { "type": "object" }.
    */
-  private async resolvePureObjects(): Promise<this> {
+  private async resolvePureObjects(): Promise<void> {
     const self = this
     const spec = self.specInJson
     const definitions = spec.definitions
@@ -584,9 +572,7 @@ export class SpecResolver {
         : operation.produces
 
       const octetStream = (elements: any) => {
-        return elements.some((e: any) => {
-          return e.toLowerCase() === "application/octet-stream"
-        })
+        return elements.some((e: any) => e.toLowerCase() === "application/octet-stream")
       }
 
       const resolveParameter2 = (param: any) => {
@@ -638,7 +624,6 @@ export class SpecResolver {
       spec.parameters[param] = utils.relaxEntityType(
         spec.parameters[param], spec.parameters[param].required)
     }
-    return self
   }
 
   /**
@@ -687,7 +672,7 @@ export class SpecResolver {
    * "Cat": { "required": [ "animalType" ], "properties": { "animalType": { "type": "string",
    * "enum": [ "Cat" ] },  . . } }.
    */
-  private async resolveDiscriminator(): Promise<this> {
+  private async resolveDiscriminator(): Promise<void> {
     const self = this
     const spec = self.specInJson
     const definitions = spec.definitions
@@ -705,8 +690,6 @@ export class SpecResolver {
         self.updateReferencesWithOneOf(subTreeMap, references)
       }
     })
-
-    return self
   }
 
   /**
@@ -719,7 +702,7 @@ export class SpecResolver {
    * The way we're relaxing the type is to have the model be a "oneOf" array with one value being
    * the original content of the model and the second value "type": "null".
    */
-  private resolveNullableTypes(): Promise<this> {
+  private async resolveNullableTypes(): Promise<void> {
     const self = this
     const spec = self.specInJson
     const definitions = spec.definitions
@@ -731,7 +714,7 @@ export class SpecResolver {
     }
     // scan every operation response
     for (const pathObj of utils.getValues(spec.paths)) {
-      // need to handle paramaters at this level
+      // need to handle parameters at this level
       if (pathObj.parameters) {
         for (const parameter of utils.getKeys(pathObj.parameters)) {
           pathObj.parameters[parameter] = utils.allowNullableParams(pathObj.parameters[parameter])
@@ -760,8 +743,6 @@ export class SpecResolver {
     for (const parameter of utils.getKeys(spec.parameters)) {
       spec.parameters[parameter] = utils.allowNullableParams(spec.parameters[parameter])
     }
-
-    return Promise.resolve(self)
   }
 
   /**
@@ -822,6 +803,7 @@ export class SpecResolver {
   private createPolymorphicTree(
     name: string, discriminator: string, subTreeMap: Map<string, PolymorphicTree>)
     : PolymorphicTree {
+
     if (name === null
       || name === undefined
       || typeof name.valueOf() !== "string"
@@ -927,7 +909,7 @@ export class SpecResolver {
    *
    * @param {PolymorphicTree} rootNode- A PolymorphicTree that represents the model in the
    *    inheritance chain.
-   * @returns {PolymorphicTree} result- An array of reference objects that comprise of the
+   * @returns {PolymorphicTree} An array of reference objects that comprise of the
    *    parent and its children.
    */
   private buildOneOfReferences(rootNode: PolymorphicTree): Set<any> {
