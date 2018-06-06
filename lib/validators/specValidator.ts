@@ -2,8 +2,6 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import * as util from "util"
-import * as fs from "fs"
-import * as yaml from "js-yaml"
 import * as path from "path"
 import * as Sway from "sway"
 import * as msRest from "ms-rest"
@@ -414,7 +412,7 @@ export class SpecValidator {
     requestValidationWarnings?: any)
     : void {
 
-      if (!isValid) {
+    if (!isValid) {
       operationResult.isValid = false
       operationResult.request.isValid = false
       const e = this.constructErrorObject(
@@ -891,7 +889,8 @@ export class SpecValidator {
     }
 
     if (responseWrapper === null
-      || responseWrapper === undefined || typeof responseWrapper !== "object") {
+      || responseWrapper === undefined
+      || typeof responseWrapper !== "object") {
       throw new Error("responseWrapper cannot be null or undefined and must be of type 'object'.")
     }
     self.sampleResponse = responseWrapper

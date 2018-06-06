@@ -150,74 +150,49 @@ export class SpecResolver {
    * resolving the allof is present in any model definition and then setting additionalProperties
    * to false if it is not previously set to true or an object in that definition.
    */
-  public async resolve(): Promise<any> {
-    const self = this
-    return self.unifyXmsPaths().then(() => {
-      if (self.options.shouldResolveRelativePaths) {
-        return self.resolveRelativePaths()
-      } else {
-        return Promise.resolve(self)
+  public async resolve(): Promise<this> {
+    try {
+      await this.unifyXmsPaths()
+      if (this.options.shouldResolveRelativePaths) {
+        await this.resolveRelativePaths()
       }
-    }).then(() => {
-      if (self.options.shouldResolveAllOf) {
-        return self.resolveAllOfInDefinitions()
-      } else {
-        return Promise.resolve(self)
+      if (this.options.shouldResolveAllOf) {
+        await this.resolveAllOfInDefinitions()
       }
-    }).then(() => {
-      if (self.options.shouldResolveDiscriminator) {
-        return self.resolveDiscriminator()
-      } else {
-        return Promise.resolve(self)
+      if (this.options.shouldResolveDiscriminator) {
+        await this.resolveDiscriminator()
       }
-    }).then(() => {
-      if (self.options.shouldResolveAllOf) {
-        return self.deleteReferencesToAllOf()
-      } else {
-        return Promise.resolve(self)
+      if (this.options.shouldResolveAllOf) {
+        await this.deleteReferencesToAllOf()
       }
-    }).then(() => {
-      if (self.options.shouldSetAdditionalPropertiesFalse) {
-        return self.setAdditionalPropertiesFalse()
-      } else {
-        return Promise.resolve(self)
+      if (this.options.shouldSetAdditionalPropertiesFalse) {
+        await this.setAdditionalPropertiesFalse()
       }
-    }).then(() => {
-      if (self.options.shouldResolveParameterizedHost) {
-        return self.resolveParameterizedHost()
-      } else {
-        return Promise.resolve(self)
+      if (this.options.shouldResolveParameterizedHost) {
+        await this.resolveParameterizedHost()
       }
-    }).then(() => {
-      if (self.options.shouldResolvePureObjects) {
-        return self.resolvePureObjects()
-      } else {
-        return Promise.resolve(self)
+      if (this.options.shouldResolvePureObjects) {
+        await this.resolvePureObjects()
       }
-    }).then(() => {
-      if (self.options.shouldResolveNullableTypes) {
-        return self.resolveNullableTypes()
-      } else {
-        return Promise.resolve(self)
+      if (this.options.shouldResolveNullableTypes) {
+        await this.resolveNullableTypes()
       }
-    }).then((): any => {
-      if (self.options.shouldModelImplicitDefaultResponse) {
-        return self.modelImplicitDefaultResponse()
-      } else {
-        return Promise.resolve(self)
+      if (this.options.shouldModelImplicitDefaultResponse) {
+        this.modelImplicitDefaultResponse()
       }
-    }).catch((err: any) => {
+    } catch (err) {
       const e = {
         message:
           `An Error occurred while resolving relative references and allOf in model definitions ` +
-          `in the swagger spec: "${self.specPath}".`,
+          `in the swagger spec: "${this.specPath}".`,
         code: ErrorCodes.ResolveSpecError.name,
         id: ErrorCodes.ResolveSpecError.id,
         innerErrors: [err]
       }
       log.error(err)
-      return Promise.reject(e)
-    });
+      throw e
+    }
+    return this
   }
 
   /**
