@@ -82,3 +82,9 @@ node_modules
 SdkCodeGen
 
 output/*
+*.js
+dist/
+*.tgz
+*.js.map
+coverage/
+.nyc_output
