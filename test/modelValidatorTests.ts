@@ -107,16 +107,32 @@ describe("Model Validation", () => {
       assert(
         result.validityStatus === false,
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`)
-      const responseError = result.operations
+      const scenarios = result
+        .operations
         .CircularAnimal_IncorrectSibling_List
-        ["x-ms-examples"].scenarios
+        ["x-ms-examples"]
+        .scenarios
+      if (scenarios === undefined) {
+        throw new Error("scenarios === undefined")
+      }
+      const responseError = scenarios
         ["Tests ploymorphic circular array, " +
           "dictionary of animals with incorrect sibling (negative)"]
         .responses
         ["200"]
       assert.equal(responseError.isValid, false)
+      if (responseError.error === undefined) {
+        throw new Error("no error")
+      }
       assert.equal(responseError.error.code, "RESPONSE_VALIDATION_ERROR")
-      assert.equal(responseError.error.innerErrors[0].errors[0].code, "ONE_OF_MISSING")
+      if (responseError.error.innerErrors === undefined) {
+        throw new Error("innerErrors is undefined")
+      }
+      const errors = responseError.error.innerErrors[0].errors
+      if (errors === undefined) {
+        throw new Error("innerErrors is undefined")
+      }
+      assert.equal(errors[0].code, "ONE_OF_MISSING")
     })
 
     it("should pass for Entities_Search", async () => {

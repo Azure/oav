@@ -3,16 +3,20 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-// import vscodeJsonRpc = require("vscode-jsonrpc")
 import * as linq from "linq"
 import * as jsonPath from "jsonpath"
 import * as yaml from "js-yaml"
 import * as utils from "../util/utils"
 import { log } from "../util/logging"
-import { SpecValidator } from "../validators/specValidator"
+import * as specValidator from "../validators/specValidator"
 import * as extensionBase from "@microsoft.azure/autorest-extension-base"
 import { IAutoRestPluginInitiator } from
   "@microsoft.azure/autorest-extension-base/dist/lib/extension-base"
+import { SourceLocation } from
+  "@microsoft.azure/autorest-extension-base/dist/lib/types"
+import { Unknown } from "../util/unknown"
+import { Error } from "../util/error"
+import { Spec } from "../validators/specResolver"
 
 const openAPIDocUrl = "https://github.com/Azure/oav"
 
@@ -22,12 +26,22 @@ const modelValidationCategory = "ExampleModelViolation"
 
 class FormattedOutput {
   constructor(
-    public readonly channel: string,
-    public readonly details: any,
-    public readonly code: any[],
+    public readonly channel: Channel,
+    public readonly details: {},
+    public readonly code: string[],
     public readonly text: string,
-    public readonly source: any[]) {
+    public readonly source: SourceLocation[]) {
   }
+}
+
+export type Channel = "information" | "warning" | "error" | "debug" | "verbose"
+
+export interface Message {
+  readonly channel: Channel
+  readonly text: string
+  readonly details: Unknown
+  readonly code: string[]
+  readonly source: SourceLocation[]
 }
 
 /**
@@ -59,14 +73,18 @@ extension.Add(
     await Promise.all(promises)
   })
 
+export interface Options extends specValidator.Options {
+  consoleLogLevel?: Unknown
+}
+
 export async function openApiValidationExample(
-  swagger: yaml.DocumentLoadResult, swaggerFileName: string, options?: any)
-  : Promise<any[]> {
+  swagger: yaml.DocumentLoadResult, swaggerFileName: string, options?: Options)
+  : Promise<Message[]> {
   const formattedResult: FormattedOutput[] = []
   if (!options) { options = {} }
   options.consoleLogLevel = "off"
   log.consoleLogLevel = options.consoleLogLevel
-  const specVal = new SpecValidator(swaggerFileName, swagger, options)
+  const specVal = new specValidator.SpecValidator(swaggerFileName, swagger as Spec, options)
   // console.error(JSON.stringify(swagger, null, 2))
   await specVal.initialize()
   try {
@@ -74,15 +92,16 @@ export async function openApiValidationExample(
     const specValidationResult = specVal.specValidationResult
     for (const op of utils.getKeys(specValidationResult.operations)) {
       const xmsExamplesNode = specValidationResult.operations[op]["x-ms-examples"];
-      for (const scenario of utils.getKeys(xmsExamplesNode.scenarios)) {
+      const scenarios = xmsExamplesNode.scenarios as specValidator.SpecScenarios
+      for (const scenario of utils.getKeys(scenarios)) {
         // invalid? meaning that there's an issue found in the validation
-        const scenarioItem = xmsExamplesNode.scenarios[scenario]
+        const scenarioItem = scenarios[scenario]
         if (scenarioItem.isValid === false) {
           // get path to x-ms-examples in swagger
           const xmsexPath = linq
             .from(jsonPath.nodes(
               swagger, `$.paths[*][?(@.operationId==='${op}')]["x-ms-examples"]`))
-            .select((x: any) => x.path)
+            .select(x => x.path)
             .firstOrDefault();
           if (!xmsexPath) {
             throw new Error("Model Validator: Path to x-ms-examples not found.")
@@ -99,13 +118,14 @@ export async function openApiValidationExample(
           // request
           const request = scenarioItem.request
           if (request.isValid === false) {
-            const error = request.error
+            const error = request.error as Error
             const innerErrors = error.innerErrors
             if (!innerErrors || !innerErrors.length) {
               throw new Error("Model Validator: Unexpected format.")
             }
             for (const innerError of innerErrors) {
-              const path = convertIndicesFromStringToNumbers(innerError.path)
+              const innerErrorPath = innerError.path as string[]
+              const path = convertIndicesFromStringToNumbers(innerErrorPath)
               // console.error(JSON.stringify(error, null, 2))
               const resultDetails = {
                 type: "Error",
@@ -140,7 +160,7 @@ export async function openApiValidationExample(
           for (const responseCode of utils.getKeys(scenarioItem.responses)) {
             const response = scenarioItem.responses[responseCode]
             if (response.isValid === false) {
-              const error = response.error
+              const error = response.error as Error
               const innerErrors = error.innerErrors
               if (!innerErrors || !innerErrors.length) {
                 throw new Error("Model Validator: Unexpected format.")
@@ -196,10 +216,10 @@ export async function openApiValidationExample(
  * Path comes with indices as strings in "inner errors", so converting those to actual numbers for
  * path to work.
  */
-function convertIndicesFromStringToNumbers(path: any) {
-  const result = path.slice()
+function convertIndicesFromStringToNumbers(path: string[]): Array<string|number> {
+  const result: Array<string|number> = path.slice()
   for (let i = 1; i < result.length; ++i) {
-    const num = parseInt(result[i])
+    const num = parseInt(result[i] as string)
     if (!isNaN(num) && result[i - 1] === "parameters") {
       result[i] = num
     }

@@ -5,10 +5,11 @@ import * as winston from "winston"
 import * as path from "path"
 import * as fs from "fs"
 import * as os from "os"
+import { Unknown } from "./unknown"
 
 let logDir = path.resolve(os.homedir(), "oav_output")
 
-let currentLogFile: any
+let currentLogFile: string
 
 /*
  * Provides current time in custom format that will be used in naming log files. Example:
@@ -43,9 +44,9 @@ const customLogLevels = {
 }
 
 export type ILogger = winston.LoggerInstance & {
-  consoleLogLevel: any
-  filepath: any
-  directory: any
+  consoleLogLevel: Unknown
+  filepath: Unknown
+  directory: Unknown
 }
 
 export const log: ILogger = new (winston.Logger)({
@@ -74,15 +75,14 @@ Object.defineProperties(log, {
           `The logging level provided is "${level}". Valid values are: "${validLevels}".`)
       }
       this.transports.console.level = level
-      return
     }
   },
   directory: {
     enumerable: true,
-    get() {
+    get(): string {
       return logDir
     },
-    set(logDirectory) {
+    set(logDirectory: string): void {
       if (!logDirectory || logDirectory && typeof logDirectory.valueOf() !== "string") {
         throw new Error('logDirectory cannot be null or undefined and must be of type "string".')
       }
@@ -91,12 +91,11 @@ Object.defineProperties(log, {
         fs.mkdirSync(logDirectory)
       }
       logDir = logDirectory
-      return
     }
   },
   filepath: {
     enumerable: true,
-    get() {
+    get(): string {
       if (!currentLogFile) {
         const filename = `validate_log_${getTimeStamp()}.log`
         currentLogFile = path.join(this.directory, filename)
@@ -104,7 +103,7 @@ Object.defineProperties(log, {
 
       return currentLogFile
     },
-    set(logFilePath) {
+    set(logFilePath: string): void {
       if (!logFilePath || logFilePath && typeof logFilePath.valueOf() !== "string") {
         throw new Error(
           "filepath cannot be null or undefined and must be of type string. It must be " +
@@ -122,7 +121,6 @@ Object.defineProperties(log, {
           filename: logFilePath
         })
       }
-      return
     }
   }
 })

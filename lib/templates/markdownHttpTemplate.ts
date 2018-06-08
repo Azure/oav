@@ -1,8 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-// import * as url from 'url'
-import { HttpTemplate, Request, Responses } from "./httpTemplate"
+import { HttpTemplate, Request, Responses, Response } from "./httpTemplate"
 import * as uuid from "uuid"
 import * as utils from "../util/utils"
 
@@ -53,7 +52,7 @@ export class MarkdownHttpTemplate extends HttpTemplate {
     return result
   }
 
-  private getResponseHeaders(response: any): string {
+  private getResponseHeaders(response: Response): string {
     let result = ``
     if (response.body) {
       result += `Content-Length: ${JSON.stringify(response.body).length}\n`
@@ -94,7 +93,7 @@ ${this.getRequestBody()}
     return requestTemplate
   }
 
-  private populateResponse(response: any, responseType: any) {
+  private populateResponse(response: Response, responseType: string) {
     if (!responseType) { responseType = "Response" }
     const responseGuid = uuid.v4()
     const responseTemplate = `

@@ -98,7 +98,7 @@ export class XMsExampleExtractor {
 
     try {
       const api = await parser.parse(swaggerObject)
-      for (const recordingFileName of utils.getValues(recordingFiles)) {
+      for (const recordingFileName of utils.getValues<any>(recordingFiles)) {
         log.debug(`Processing recording file: ${recordingFileName}`)
 
         try {
@@ -112,7 +112,7 @@ export class XMsExampleExtractor {
             const pathParts = path.split("/")
             let pathToMatch = path
             pathParams = {}
-            for (const match of utils.getValues(searchResult)) {
+            for (const match of utils.getValues<any>(searchResult)) {
               const splitRegEx = /[{}]/
               const pathParam = match.split(splitRegEx)[1]
 
@@ -262,7 +262,7 @@ export class XMsExampleExtractor {
     }
   }
 
-  private getFileList(dir: any, fileList: string[]): string[] {
+  private getFileList(dir: string, fileList: string[]): string[] {
     const self = this
     const files = fs.readdirSync(dir)
     fileList = fileList || []

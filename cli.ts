@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+/* tslint:disable */
+
 import * as yargs from "yargs"
 import * as os from "os"
 import { log } from "./lib/util/logging"
@@ -7,8 +9,7 @@ import { log } from "./lib/util/logging"
 const defaultLogDir = log.directory
 const logFilepath = log.filepath
 
-/* tslint:disable-next-line:no-var-requires */
-const packageVersion = require("./package.json").version
+const packageVersion = require("../package.json").version
 
 yargs
   .version(packageVersion)
@@ -28,7 +29,8 @@ yargs
   })
   .global(["h", "l", "f"])
   .help()
+  .argv;
 
 if (yargs.argv._.length === 0 && yargs.argv.h === false) {
-  yargs.coerce("help", arg => true)
+  yargs.coerce("help", arg => true).argv;
 }

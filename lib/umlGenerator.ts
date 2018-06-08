@@ -1,14 +1,22 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-// import util = require('util')
-// import JsonRefs = require('json-refs')
 import yuml2svg = require("yuml2svg")
 import * as utils from "./util/utils"
-import { Constants } from "./util/constants"
+import * as C from "./util/constants"
 import { log } from "./util/logging"
+import { Unknown } from "./util/unknown"
+import { Spec } from "./validators/specResolver"
+import { Model } from "./util/utils"
 
-const ErrorCodes = Constants.ErrorCodes;
+// const ErrorCodes = C.ErrorCodes;
+
+export interface Options {
+  readonly direction?: Unknown
+  readonly shouldDisableAllof?: Unknown
+  readonly shouldDisableProperties?: Unknown
+  readonly shouldDisableRefs?: Unknown
+}
 
 /**
  * @class
@@ -16,13 +24,13 @@ const ErrorCodes = Constants.ErrorCodes;
  */
 export class UmlGenerator {
 
-  private specInJson: any
+  private readonly specInJson: Spec
 
-  private graphDefinition: any
+  private graphDefinition: string
 
-  private options: any
+  private readonly options: Options
 
-  private bg: any
+  private readonly bg = "{bg:cornsilk}"
 
   /**
    * @constructor
@@ -32,15 +40,13 @@ export class UmlGenerator {
    *
    * @return {object} An instance of the UmlGenerator class.
    */
-  constructor(specInJson: any, options: any) {
+  constructor(specInJson: null|undefined|Spec, options: null|undefined|Options) {
     if (specInJson === null || specInJson === undefined || typeof specInJson !== "object") {
       throw new Error("specInJson is a required property of type object")
     }
     this.specInJson = specInJson
     this.graphDefinition = ""
-    if (!options) { options = {} }
-    this.options = options
-    this.bg = "{bg:cornsilk}"
+    this.options = !options ? {} : options
   }
 
   public async generateDiagramFromGraph(): Promise<string> {
@@ -69,9 +75,9 @@ export class UmlGenerator {
     }
   }
 
-  private generateAllOfForModel(modelName: any, model: any): void {
+  private generateAllOfForModel(modelName: Unknown, model: Model): void {
     if (model.allOf) {
-      model.allOf.map((item: any) => {
+      model.allOf.map(item => {
         const referencedModel = item
         const ref = item.$ref
         const segments = ref.split("/")
@@ -84,7 +90,7 @@ export class UmlGenerator {
   private generateModelPropertiesGraph(): void {
     const spec = this.specInJson
     const definitions = spec.definitions
-    const references: any[] = []
+    const references: string[] = []
     for (const modelName of utils.getKeys(definitions)) {
       const model = definitions[modelName]
       const modelProperties = model.properties
@@ -111,7 +117,8 @@ export class UmlGenerator {
     }
   }
 
-  private getPropertyType(modelName: any, property: any, references: any) {
+  private getPropertyType(
+    modelName: Unknown, property: Model, references: string[]): string {
     if (property.type && property.type.match(/^(string|number|boolean)$/i) !== null) {
       return property.type
     }

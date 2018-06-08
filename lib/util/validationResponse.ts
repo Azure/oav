@@ -3,10 +3,28 @@
 
 import * as pointer from "json-pointer"
 import { Error } from "./error"
+import { Unknown } from "./unknown"
+import { Map } from "./utils"
+
+interface ValidationError {
+  validationCategory: string
+  code?: string
+  providerNamespace: Unknown
+  type: string
+  inner?: Error|Error[]
+  id?: Unknown
+  message?: string
+  jsonref?: string
+  "json-path"?: string
+}
+
+interface Warning {
+  readonly code: Unknown
+}
 
 export class ValidateResponse {
 
-  private mapper = {
+  private readonly mapper: Map<string> = {
     SWAGGER_SCHEMA_VALIDATION_ERROR: "M6000",
     INVALID_PARAMETER_COMBINATION: "M6001",
     MULTIPLE_BODY_PARAMETERS: "M6002",
@@ -25,26 +43,27 @@ export class ValidateResponse {
   }
 
   public constructErrors(
-    validationError: Error, specPath: any, providerNamespace: any): any[] {
+    validationError: Error, specPath: Unknown, providerNamespace: Unknown): ValidationError[] {
     const self = this
     if (!validationError) {
       throw new Error("validationError cannot be null or undefined.")
     }
-    return validationError.innerErrors.map(error => {
-      const e: any = {
+    const errors = validationError.innerErrors as Error[]
+    return errors.map(error => {
+      const e: ValidationError = {
         validationCategory: "SwaggerViolation",
         providerNamespace,
         type: "error",
         inner: error.inner
       }
-      if (error.code && (self.mapper as any)[error.code]) {
+      if (error.code && self.mapper[error.code]) {
         e.code = error.code
-        e.id = (self.mapper as any)[error.code]
+        e.id = self.mapper[error.code]
         e.message = error.message
       } else {
         e.code = "SWAGGER_SCHEMA_VALIDATION_ERROR"
         e.message = validationError.message
-        e.id = (self.mapper as any)[e.code]
+        e.id = self.mapper[e.code]
         e.inner = error
       }
       if (error.path && error.path.length) {
@@ -57,7 +76,7 @@ export class ValidateResponse {
     })
   }
 
-  public sanitizeWarnings(warnings: any[]): any[] {
+  public sanitizeWarnings(warnings: Warning[]): Warning[] {
     if (!warnings) {
       throw new Error("validationError cannot be null or undefined.")
     }
@@ -67,7 +86,7 @@ export class ValidateResponse {
   }
 
   private seralize() {
-    const result: { ["json-path"]?: any } = {}
+    const result: { ["json-path"]?: Unknown } = {}
     for (const prop in this) {
       if (this[prop] !== null && this[prop] !== undefined) {
         if (prop === "jsonpath") {

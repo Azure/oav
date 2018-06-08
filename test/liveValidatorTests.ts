@@ -6,8 +6,9 @@ import * as path from "path"
 import * as os from "os"
 import * as glob from "glob"
 import { LiveValidator } from "../lib/validators/liveValidator"
-import { Constants } from "../lib/util/constants"
+import * as Constants from "../lib/util/constants"
 import * as utils from "../lib/util/utils"
+import { Responses } from "sway"
 
 const livePaths = glob.sync(path.join(__dirname, "liveValidation/swaggers/**/live/*.json"))
 describe("Live Validator", () => {
@@ -229,33 +230,44 @@ describe("Live Validator", () => {
       validator.initialize().then(() => {
         // Operations to match is StorageAccounts_List
         let operations = validator.getPotentialOperations(listRequestUrl, "Get").operations
-        assert.equal(
-          1, operations.length)
+        let pathObject = operations[0].pathObject
+        if (pathObject === undefined) {
+          throw new Error("pathObject is undefined")
+        }
+        assert.equal(1, operations.length)
         assert.equal(
           "/subscriptions/{subscriptionId}/providers/Microsoft.Storage/storageAccounts",
-          operations[0].pathObject.path)
+          pathObject.path)
 
         // Operations to match is StorageAccounts_CheckNameAvailability
         operations = validator.getPotentialOperations(postRequestUrl, "PoSt").operations
+        pathObject = operations[0].pathObject
+        if (pathObject === undefined) {
+          throw new Error("pathObject is undefined")
+        }
         assert.equal(1, operations.length)
         assert.equal(
           "/subscriptions/{subscriptionId}/providers/Microsoft.Storage/checkNameAvailability",
-          operations[0].pathObject.path)
+          pathObject.path)
 
         // Operations to match is StorageAccounts_Delete
         operations = validator.getPotentialOperations(deleteRequestUrl, "delete").operations
+        pathObject = operations[0].pathObject
+        if (pathObject === undefined) {
+          throw new Error("pathObject is undefined")
+        }
         assert.equal(1, operations.length)
         assert.equal(
           "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/" +
             "Microsoft.Storage/storageAccounts/{accountName}",
-          operations[0].pathObject.path)
+          pathObject.path)
         done()
       }).catch((err: any) => {
         assert.ifError(err)
         done()
       }).catch(done)
     })
-    it("should return reason for not matched operations", (done) => {
+    it("should return reason for not matched operations", async () => {
       const options = {
         directory: "./test/liveValidation/swaggers/"
       }
@@ -276,44 +288,51 @@ describe("Live Validator", () => {
         "subscriptions/subscriptionId/providers/Microsoft.Storage/storageAccounts/accountName/" +
         "properties?api-version=2015-06-15"
       const validator = new LiveValidator(options)
-      validator.initialize().then(() => {
-        // Operations to match is StorageAccounts_List with api-version 2015-08-15
-        // [non cached api version]
-        let result = validator.getPotentialOperations(nonCachedApiUrl, "Get")
-        let operations = result.operations
-        let reason = result.reason
-        assert.equal(0, operations.length)
-        assert.equal(Constants.ErrorCodes.OperationNotFoundInCacheWithApi.name, reason.code)
+      await validator.initialize()
+      // Operations to match is StorageAccounts_List with api-version 2015-08-15
+      // [non cached api version]
+      let result = validator.getPotentialOperations(nonCachedApiUrl, "Get")
+      let operations = result.operations
+      let reason = result.reason
+      assert.equal(0, operations.length)
+      if (reason === undefined) {
+        throw new Error("reason is undefined")
+      }
+      assert.equal(Constants.ErrorCodes.OperationNotFoundInCacheWithApi.name, reason.code)
 
-        // Operations to match is StorageAccounts_CheckNameAvailability with provider "Hello.World"
-        // [non cached provider]
-        result = validator.getPotentialOperations(nonCachedProviderUrl, "PoSt")
-        operations = result.operations
-        reason = result.reason
-        assert.equal(0, operations.length)
-        assert.equal(Constants.ErrorCodes.OperationNotFoundInCacheWithProvider.name, reason.code)
+      // Operations to match is StorageAccounts_CheckNameAvailability with provider "Hello.World"
+      // [non cached provider]
+      result = validator.getPotentialOperations(nonCachedProviderUrl, "PoSt")
+      operations = result.operations
+      reason = result.reason
+      assert.equal(0, operations.length)
+      if (reason === undefined) {
+        throw new Error("reason is undefined")
+      }
+      assert.equal(Constants.ErrorCodes.OperationNotFoundInCacheWithProvider.name, reason.code)
 
-        // Operations to match is StorageAccounts_Delete with verb "head" [non cached http verb]
-        result = validator.getPotentialOperations(nonCachedVerbUrl, "head")
-        operations = result.operations
-        reason = result.reason
-        assert.equal(0, operations.length)
-        assert.equal(Constants.ErrorCodes.OperationNotFoundInCacheWithVerb.name, reason.code)
+      // Operations to match is StorageAccounts_Delete with verb "head" [non cached http verb]
+      result = validator.getPotentialOperations(nonCachedVerbUrl, "head")
+      operations = result.operations
+      reason = result.reason
+      assert.equal(0, operations.length)
+      if (reason === undefined) {
+        throw new Error("reason is undefined")
+      }
+      assert.equal(Constants.ErrorCodes.OperationNotFoundInCacheWithVerb.name, reason.code)
 
-        // Operations to match is with path
-        // "subscriptions/subscriptionId/providers/Microsoft.Storage/" +
-        // "storageAccounts/storageAccounts/accountName/properties/"
-        // [non cached path]
-        result = validator.getPotentialOperations(nonCachedPath, "get")
-        operations = result.operations
-        reason = result.reason
-        assert.equal(0, operations.length)
-        assert.equal(Constants.ErrorCodes.OperationNotFoundInCache.name, reason.code)
-        done()
-      }).catch((err: any) => {
-        assert.ifError(err)
-        done()
-      }).catch(done)
+      // Operations to match is with path
+      // "subscriptions/subscriptionId/providers/Microsoft.Storage/" +
+      // "storageAccounts/storageAccounts/accountName/properties/"
+      // [non cached path]
+      result = validator.getPotentialOperations(nonCachedPath, "get")
+      operations = result.operations
+      reason = result.reason
+      assert.equal(0, operations.length)
+      if (reason === undefined) {
+        throw new Error("reason is undefined")
+      }
+      assert.equal(Constants.ErrorCodes.OperationNotFoundInCache.name, reason.code)
     })
     it("it should create an implicit default response and find it", (done) => {
       const options = {
@@ -332,8 +351,9 @@ describe("Live Validator", () => {
         const operations = validator.cache["microsoft.test"]["2016-01-01"].post
 
         for (const operation of operations) {
-          assert(operation.responses.default)
-          assert.deepEqual(operation.responses.default.schema.properties.error, utils.CloudError)
+          const responses = operation.responses as Responses
+          assert(responses.default)
+          assert.deepEqual(responses.default.schema.properties.error, utils.CloudError)
         }
         done()
       }).catch((err: any) => {
