@@ -1,6 +1,6 @@
 {
   "name": "oav",
-  "version": "0.4.40",
+  "version": "0.4.41",
   "author": {
     "name": "Microsoft Corporation",
     "email": "azsdkteam@microsoft.com",
@@ -10,6 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "@microsoft.azure/autorest-extension-base": "^1.0.13",
+    "@types/winston": "^2.3.9",
     "azure-arm-resource": "^2.0.0-preview",
     "glob": "^5.0.14",
     "js-yaml": "^3.8.2",
@@ -29,8 +30,7 @@
     "vscode-jsonrpc": "^3.6.1",
     "winston": "^2.4.2",
     "yargs": "^6.6.0",
-    "yuml2svg": "^3.1.0",
-    "@types/winston": "^2.3.9"
+    "yuml2svg": "^3.1.0"
   },
   "devDependencies": {
     "@types/glob": "^5.0.35",
@@ -47,7 +47,7 @@
     "should": "5.2.0",
     "ts-node": "^6.0.5",
     "tslint": "^5.10.0",
-    "typescript": "^2.8.3"
+    "typescript": "^2.9.1"
   },
   "homepage": "https://github.com/azure/oav",
   "repository": {

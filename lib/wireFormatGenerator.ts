@@ -15,9 +15,9 @@ import { SpecResolver } from "./validators/specResolver"
 import { ResponseWrapper } from "./models/responseWrapper"
 import { MarkdownHttpTemplate } from "./templates/markdownHttpTemplate"
 import { YamlHttpTemplate } from "./templates/yamlHttpTemplate"
-import { Constants } from "./util/constants"
+import * as C from "./util/constants"
 
-const ErrorCodes = Constants.ErrorCodes
+const ErrorCodes = C.ErrorCodes
 
 export class WireFormatGenerator {
   private specPath: any
@@ -99,13 +99,13 @@ export class WireFormatGenerator {
   }
 
   /*
-   * Generates wireformat for the given operationIds or all the operations in the spec.
+   * Generates wire-format for the given operationIds or all the operations in the spec.
    *
-   * @param {string} [operationIds] - A comma sparated string specifying the operations for
+   * @param {string} [operationIds] - A comma separated string specifying the operations for
    * which the wire format needs to be generated. If not specified then the entire spec is
    * processed.
    */
-  public processOperations(operationIds: string): void {
+  public processOperations(operationIds: string|null): void {
     const self = this
     if (!self.swaggerApi) {
       throw new Error(
@@ -266,7 +266,7 @@ export class WireFormatGenerator {
     if (operation === null || operation === undefined || typeof operation !== "object") {
       throw new Error("operation cannot be null or undefined and must be of type 'object'.")
     }
-    const xmsExamples = operation[Constants.xmsExamples]
+    const xmsExamples = operation[C.xmsExamples]
     if (xmsExamples) {
       for (const scenario of utils.getKeys(xmsExamples)) {
         // If we do not see the value property then we assume that the swagger spec had
@@ -331,7 +331,7 @@ export class WireFormatGenerator {
       if (location === "path" || location === "query") {
         const paramType = location + "Parameters"
         if (!options[paramType]) { options[paramType] = {} }
-        if (parameter[Constants.xmsSkipUrlEncoding]
+        if (parameter[C.xmsSkipUrlEncoding]
           || utils.isUrlEncoded(exampleParameterValues[parameter.name])) {
           options[paramType][parameter.name] = {
             value: exampleParameterValues[parameter.name],

@@ -8,14 +8,21 @@ import * as msrestazure from "ms-rest-azure"
 import { ResourceManagementClient } from "azure-arm-resource"
 import { log } from "./util/logging"
 import * as utils from "./util/utils"
-import { SpecValidator } from "./validators/specValidator"
+import { SpecValidator, SpecValidationResult } from "./validators/specValidator"
 import { WireFormatGenerator } from "./wireFormatGenerator"
 import { XMsExampleExtractor } from "./xMsExampleExtractor"
 import { SpecResolver } from "./validators/specResolver"
 import * as specResolver from "./validators/specResolver"
-import { UmlGenerator } from "./umlGenerator"
+import * as umlGeneratorLib from "./umlGenerator"
+import { Unknown } from "./util/unknown"
 
-export const finalValidationResult: any = { validityStatus: true };
+interface FinalValidationResult {
+  [name: string]: Unknown
+}
+
+export const finalValidationResult: FinalValidationResult = {
+  validityStatus: true
+}
 
 export async function getDocumentsFromCompositeSwagger(compositeSpecPath: string)
   : Promise<string[]> {
@@ -50,12 +57,13 @@ export async function getDocumentsFromCompositeSwagger(compositeSpecPath: string
   }
 }
 
-export async function validateSpec(specPath: any, options: any, _?: any): Promise<any> {
+export async function validateSpec(specPath: string, options: Options|undefined)
+  : Promise<SpecValidationResult> {
   if (!options) { options = {} }
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
   log.filepath = options.logFilepath || log.filepath
   // As a part of resolving discriminators we replace all the parent references
-  // with a oneof array containing references to the parent and its children.
+  // with a oneOf array containing references to the parent and its children.
   // This breaks the swagger specification 2.0 schema since oneOf is not supported.
   // Hence we disable it since it is not required for semantic check.
 
@@ -65,8 +73,8 @@ export async function validateSpec(specPath: any, options: any, _?: any): Promis
   // and cause the semantic validation to fail.
   options.shouldResolveParameterizedHost = false
 
-  // We shoudln't be resolving nullable types for semantic validaiton as we'll replace nodes
-  // with oneof arrays which are not semantically valid in swagger 2.0 schema.
+  // We shouldn't be resolving nullable types for semantic validation as we'll replace nodes
+  // with oneOf arrays which are not semantically valid in swagger 2.0 schema.
   options.shouldResolveNullableTypes = false
   const validator = new SpecValidator(specPath, null, options)
   finalValidationResult[specPath] = validator.specValidationResult
@@ -83,7 +91,9 @@ export async function validateSpec(specPath: any, options: any, _?: any): Promis
   }
 }
 
-export async function validateCompositeSpec(compositeSpecPath: any, options: any): Promise<void> {
+export async function validateCompositeSpec(compositeSpecPath: string, options: Options)
+  : Promise<void> {
+
   if (!options) { options = {} }
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
   log.filepath = options.logFilepath || log.filepath
@@ -91,16 +101,17 @@ export async function validateCompositeSpec(compositeSpecPath: any, options: any
     const docs = await getDocumentsFromCompositeSwagger(compositeSpecPath)
     options.consoleLogLevel = log.consoleLogLevel
     options.logFilepath = log.filepath
-    const promiseFactories = docs.map((doc: any) => () => validateSpec(doc, options))
-    return await utils.executePromisesSequentially(promiseFactories)
+    const promiseFactories = docs.map(doc => async () => { await validateSpec(doc, options) })
+    await utils.executePromisesSequentially(promiseFactories)
   } catch (err) {
     log.error(err)
     throw err
   }
 }
 
-export async function validateExamples(specPath: any, operationIds: any, options?: any)
-  : Promise<any> {
+export async function validateExamples(
+  specPath: string, operationIds: string|undefined, options?: Options)
+  : Promise<SpecValidationResult> {
 
   if (!options) { options = {} }
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
@@ -120,7 +131,7 @@ export async function validateExamples(specPath: any, operationIds: any, options
   }
 }
 
-export async function validateExamplesInCompositeSpec(compositeSpecPath: any, options: any)
+export async function validateExamplesInCompositeSpec(compositeSpecPath: string, options: Options)
   : Promise<void> {
 
   if (!options) { options = {} }
@@ -130,7 +141,8 @@ export async function validateExamplesInCompositeSpec(compositeSpecPath: any, op
     const docs = await getDocumentsFromCompositeSwagger(compositeSpecPath)
     options.consoleLogLevel = log.consoleLogLevel
     options.logFilepath = log.filepath
-    const promiseFactories = docs.map(doc => () => validateExamples(doc, options))
+    const promiseFactories = docs.map(
+      doc => async () => { await validateExamples(doc, undefined, options) })
     await utils.executePromisesSequentially(promiseFactories)
   } catch (err) {
     log.error(err)
@@ -138,12 +150,14 @@ export async function validateExamplesInCompositeSpec(compositeSpecPath: any, op
   }
 }
 
-export interface Options extends specResolver.Options {
-  consoleLogLevel?: any
-  logFilepath?: any
+export interface Options extends specResolver.Options, umlGeneratorLib.Options {
+  consoleLogLevel?: Unknown
+  logFilepath?: Unknown
 }
 
-export async function resolveSpec(specPath: any, outputDir: any, options: Options): Promise<void> {
+export async function resolveSpec(specPath: string, outputDir: string, options: Options)
+  : Promise<void> {
+
   if (!options) { options = {} }
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
   log.filepath = options.logFilepath || log.filepath
@@ -165,8 +179,9 @@ export async function resolveSpec(specPath: any, outputDir: any, options: Option
   }
 }
 
-export async function resolveCompositeSpec(specPath: any, outputDir: any, options: any)
-: Promise<void> {
+export async function resolveCompositeSpec(specPath: string, outputDir: string, options: Options)
+  : Promise<void> {
+
   if (!options) { options = {} }
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
   log.filepath = options.logFilepath || log.filepath
@@ -183,7 +198,11 @@ export async function resolveCompositeSpec(specPath: any, outputDir: any, option
 }
 
 export async function generateWireFormat(
-  specPath: any, outDir: any, emitYaml: any, operationIds: any, options: any)
+  specPath: Unknown,
+  outDir: Unknown,
+  emitYaml: Unknown,
+  operationIds: string|null,
+  options: Options)
   : Promise<void> {
 
   if (!options) { options = {} }
@@ -201,7 +220,8 @@ export async function generateWireFormat(
 }
 
 export async function generateWireFormatInCompositeSpec(
-  compositeSpecPath: any, outDir: any, emitYaml: any, options: any): Promise<void> {
+  compositeSpecPath: string, outDir: Unknown, emitYaml: Unknown, options: Options): Promise<void> {
+
   if (!options) { options = {} }
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
   log.filepath = options.logFilepath || log.filepath
@@ -218,7 +238,9 @@ export async function generateWireFormatInCompositeSpec(
   }
 }
 
-export async function generateUml(specPath: any, outputDir: any, options?: Options): Promise<void> {
+export async function generateUml(specPath: string, outputDir: string, options?: Options)
+  : Promise<void> {
+
   if (!options) { options = {} }
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
   log.filepath = options.logFilepath || log.filepath
@@ -236,7 +258,7 @@ export async function generateUml(specPath: any, outputDir: any, options?: Optio
   try {
     const result = await utils.parseJson(specPath)
     const resolver = new SpecResolver(specPath, result, resolverOptions)
-    const umlGenerator = new UmlGenerator(resolver.specInJson, options)
+    const umlGenerator = new umlGeneratorLib.UmlGenerator(resolver.specInJson, options)
     const svgGraph = await umlGenerator.generateDiagramFromGraph()
     if (outputDir !== "./" && !fs.existsSync(outputDir)) {
       fs.mkdirSync(outputDir)
@@ -252,7 +274,7 @@ export async function generateUml(specPath: any, outputDir: any, options?: Optio
   }
 }
 
-export function updateEndResultOfSingleValidation(validator: any): void {
+export function updateEndResultOfSingleValidation(validator: SpecValidator): void {
   if (validator.specValidationResult.validityStatus) {
     if (!(log.consoleLogLevel === "json" || log.consoleLogLevel === "off")) {
       log.info("No Errors were found.")
@@ -264,17 +286,19 @@ export function updateEndResultOfSingleValidation(validator: any): void {
   }
 }
 
-export function logDetailedInfo(validator: any): void {
+export function logDetailedInfo(validator: SpecValidator): void {
   if (log.consoleLogLevel === "json") {
     /* tslint:disable-next-line */
     console.dir(validator.specValidationResult, { depth: null, colors: true })
   }
   log.silly("############################")
-  log.silly(validator.specValidationResult)
+  log.silly(validator.specValidationResult.toString())
   log.silly("----------------------------")
 }
 
-export function extractXMsExamples(specPath: any, recordings: any, options: any) {
+export function extractXMsExamples(specPath: string, recordings: Unknown, options: Options)
+  : Promise<void> {
+
   if (!options) { options = {} }
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
   log.filepath = options.logFilepath || log.filepath

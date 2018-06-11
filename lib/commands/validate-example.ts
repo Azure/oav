@@ -21,7 +21,7 @@ export const builder: yargs.CommandBuilder = {
   },
 }
 
-export function handler(argv: yargs.Arguments) {
+export async function handler(argv: yargs.Arguments): Promise<void> {
   log.debug(argv.toString())
   const specPath = argv.specPath
   const operationIds = argv.operationIds
@@ -30,8 +30,8 @@ export function handler(argv: yargs.Arguments) {
     logFilepath: argv.f,
   }
   if (specPath.match(/.*composite.*/ig) !== null) {
-    return validate.validateExamplesInCompositeSpec(specPath, vOptions)
+    await validate.validateExamplesInCompositeSpec(specPath, vOptions)
   } else {
-    return validate.validateExamples(specPath, operationIds, vOptions)
+    await validate.validateExamples(specPath, operationIds, vOptions)
   }
 }

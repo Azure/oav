@@ -4,12 +4,15 @@
  * license information.
  */
 
+import { LiveValidationError } from "./liveValidationError"
+import { Operation } from "sway"
+
 /**
  * @class
  * Initializes a new instance of the PotentialOperationsResult class.
  *
  * @constructor
- * Provides information about the issue that occured while performing
+ * Provides information about the issue that occurred while performing
  * live request and response validation.
  *
  * @member {Array<Operation>} List of potential operations found.
@@ -18,9 +21,9 @@
  *
  */
 export class PotentialOperationsResult {
-  public readonly operations: any[]
-  public readonly reason: any
-  constructor(operations: any[], reason: any) {
+  public readonly operations: Operation[]
+  public readonly reason?: LiveValidationError
+  constructor(operations: Operation[], reason: undefined|LiveValidationError) {
     this.operations = operations || []
     if (reason) {
       this.reason = reason

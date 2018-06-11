@@ -9,7 +9,7 @@ export const command = "validate-spec <spec-path>"
 
 export const describe = "Performs semantic validation of the spec."
 
-export function handler(argv: yargs.Arguments) {
+export async function handler(argv: yargs.Arguments): Promise<void> {
   log.debug(argv.toString())
   const specPath = argv.specPath
   const vOptions = {
@@ -18,8 +18,8 @@ export function handler(argv: yargs.Arguments) {
   }
 
   if (specPath.match(/.*composite.*/ig) !== null) {
-    return validate.validateCompositeSpec(specPath, vOptions)
+    await validate.validateCompositeSpec(specPath, vOptions)
   } else {
-    return validate.validateSpec(specPath, vOptions)
+    await validate.validateSpec(specPath, vOptions)
   }
 }

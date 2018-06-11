@@ -11,6 +11,10 @@ import { log } from "./logging"
 import request = require("request")
 import * as lodash from "lodash"
 import * as http from "http"
+import { Unknown } from "./unknown"
+import { Spec } from "../validators/specResolver"
+
+export type DocCache = MapObject<Promise<Spec>>
 
 /*
  * Caches the json docs that were successfully parsed by parseJson().
@@ -18,7 +22,7 @@ import * as http from "http"
  * key: docPath
  * value: parsed doc in JSON format
  */
-export let docCache: any = {}
+export let docCache: DocCache = {}
 
 export function clearCache(): void {
   docCache = {}
@@ -30,7 +34,7 @@ export function clearCache(): void {
  * because the buffer-to-string conversion in `fs.readFile()`
  * translates it to FEFF, the UTF-16 BOM.
  */
-export function stripBOM(content: any) {
+export function stripBOM(content: Buffer|string): string {
   if (Buffer.isBuffer(content)) {
     content = content.toString()
   }
@@ -48,15 +52,14 @@ export function stripBOM(content: any) {
  *
  * @returns {object} jsonDoc - Parsed document in JSON format.
  */
-export function parseJson(specPath: string): Promise<any> {
+export async function parseJson(specPath: string): Promise<Spec> {
   if (!specPath || (specPath && typeof specPath.valueOf() !== "string")) {
-    const err = new Error(
+    throw new Error(
       "A (github) url or a local file path to the swagger spec is required and must be of type " +
       "string.")
-    return Promise.reject(err)
   }
   if (docCache[specPath]) {
-    return Promise.resolve(docCache[specPath])
+    return await docCache[specPath]
   }
   // url
   if (specPath.match(/^http.*/ig) !== null) {
@@ -68,21 +71,21 @@ export function parseJson(specPath: string): Promise<any> {
     }
     const res = makeRequest({ url: specPath, errorOnNon200Response: true })
     docCache[specPath] = res
-    return res
+    return await res
   } else {
     // local filepath
     try {
       const fileContent = stripBOM(fs.readFileSync(specPath, "utf8"))
       const result = parseContent(specPath, fileContent)
-      docCache[specPath] = result
-      return Promise.resolve(result)
+      docCache[specPath] = Promise.resolve(result)
+      return result
     } catch (err) {
       const msg =
         `Unable to read the content or execute "JSON.parse()" on the content of file ` +
         `"${specPath}". The error is:\n${err}`
-      const e: any = new Error(msg)
-      log.error(e)
-      return Promise.reject(e)
+      const e = new Error(msg)
+      log.error(e.toString())
+      throw e
     }
   }
 }
@@ -96,7 +99,7 @@ export function parseJson(specPath: string): Promise<any> {
  *
  * @returns {object} jsonDoc - Parsed document in JSON format.
  */
-export function parseContent(filePath: string, fileContent: string) {
+export function parseContent(filePath: string, fileContent: string): Spec {
   let result = null
   if (/.*\.json$/ig.test(filePath)) {
     result = JSON.parse(fileContent)
@@ -111,38 +114,9 @@ export function parseContent(filePath: string, fileContent: string) {
   return result
 }
 
-/*
- * A utility function to help us acheive stuff in the same way as async/await but with yield
- * statement and generator functions.
- * It waits till the task is over.
- * @param {function} A generator function as an input
- */
-export function run(genfun: () => any) {
-  // instantiate the generator object
-  const gen = genfun()
-  // This is the async loop pattern
-  function next(err?: any, answer?: any) {
-    let res
-    if (err) {
-      // if err, throw it into the wormhole
-      return gen.throw(err)
-    } else {
-      // if good value, send it
-      res = gen.next(answer)
-    }
-    if (!res.done) {
-      // if we are not at the end
-      // we have an async request to
-      // fulfill, we do this by calling
-      // `value` as a function
-      // and passing it a callback
-      // that receives err, answer
-      // for which we'll just use `next()`
-      res.value(next)
-    }
-  }
-  // Kick off the async loop
-  next()
+export type Options = request.CoreOptions & request.UrlOptions & {
+  readonly url: string
+  readonly errorOnNon200Response: Unknown
 }
 
 /*
@@ -157,9 +131,9 @@ export function run(genfun: () => any) {
  *
  * @return {Promise} promise - A promise that resolves to the responseBody or rejects to an error.
  */
-export function makeRequest(options: any): Promise<any> {
-  const promise = new Promise((resolve, reject) => {
-    request(options, (err: any, response: request.Response, responseBody: any): void => {
+export function makeRequest(options: Options): Promise<Spec> {
+  const promise = new Promise<Spec>((resolve, reject) => {
+    request(options, (err, response, responseBody) => {
       if (err) {
         reject(err)
       }
@@ -211,8 +185,8 @@ export async function executePromisesSequentially(
  *
  * @return {string} result A random string
  */
-export function generateRandomId(prefix: string, existingIds: any): string {
-  let randomStr
+export function generateRandomId(prefix: string, existingIds: {}): string {
+  let randomStr: string
   while (true) {
     randomStr = Math.random().toString(36).substr(2, 12)
     if (prefix && typeof prefix.valueOf() === "string") {
@@ -259,7 +233,6 @@ export function parseReferenceInSwagger(reference: string): Reference {
     throw new Error("reference cannot be null or undefined and it must be a non-empty string.")
   }
 
-  // let result: any = {}
   if (reference.includes("#")) {
     // local reference in the doc
     if (reference.startsWith("#/")) {
@@ -325,6 +298,10 @@ export function parseJsonWithPathFragments(...args: string[]) {
   return parseJson(specPath)
 }
 
+export interface MapObject<T> {
+  [name: string]: T
+}
+
 /*
  * Merges source object into the target object
  * @param {object} source The object that needs to be merged
@@ -333,7 +310,7 @@ export function parseJsonWithPathFragments(...args: string[]) {
  *
  * @returns {object} target - Returns the merged target object.
  */
-export function mergeObjects(source: any, target: any) {
+export function mergeObjects<T extends MapObject<any>>(source: T, target: T): T {
   Object.keys(source).forEach((key) => {
     if (Array.isArray(source[key])) {
       if (target[key] && !Array.isArray(target[key])) {
@@ -360,7 +337,7 @@ export function mergeObjects(source: any, target: any) {
  *
  * @returns {array} target - Returns the merged target array.
  */
-export function mergeArrays(source: any[], target: any[]) {
+export function mergeArrays<T>(source: T[], target: T[]): T[] {
   if (!Array.isArray(target) || (!Array.isArray(source))) {
     return target
   }
@@ -379,7 +356,7 @@ export function mergeArrays(source: any[], target: any[]) {
  *
  * @returns {any} result - Returns the value that the ptr points to, in the doc.
  */
-export function getObject(doc: any, ptr: string) {
+export function getObject(doc: {}, ptr: string): any {
   let result
   try {
     result = jsonPointer.get(doc, ptr)
@@ -399,7 +376,7 @@ export function getObject(doc: any, ptr: string) {
  * @param {any} value The value that needs to be set at the
  * location provided by the ptr in the doc.
  */
-export function setObject(doc: any, ptr: string, value: any) {
+export function setObject(doc: {}, ptr: string, value: any) {
   let result
   try {
     result = jsonPointer.set(doc, ptr, value)
@@ -415,7 +392,7 @@ export function setObject(doc: any, ptr: string, value: any) {
  *
  * @param {string} ptr The json reference pointer.
  */
-export function removeObject(doc: any, ptr: string) {
+export function removeObject(doc: {}, ptr: string) {
   let result
   try {
     result = jsonPointer.remove(doc, ptr)
@@ -530,7 +507,7 @@ export function gitClone(directory: string, url: string, branch: string|undefine
  * Removes given directory recursively.
  * @param {string} dir directory to be deleted.
  */
-export function removeDirSync(dir: string) {
+export function removeDirSync(dir: string): void {
   if (fs.existsSync(dir)) {
     fs.readdirSync(dir).forEach(file => {
       const current = dir + "/" + file
@@ -551,14 +528,10 @@ export function removeDirSync(dir: string) {
  * @param {array} consumesOrProduces Array of content-types.
  * @returns {string} firstMatchedJson content-type that contains "/json".
  */
-export function getJsonContentType(consumesOrProduces: any[]) {
-  let firstMatchedJson = null
-  if (consumesOrProduces) {
-    firstMatchedJson = consumesOrProduces.find((contentType) => {
-      return (contentType.match(/.*\/json.*/ig) !== null)
-    })
-  }
-  return firstMatchedJson
+export function getJsonContentType(consumesOrProduces: string[]): string|undefined {
+  return consumesOrProduces
+    ? consumesOrProduces.find(contentType => contentType.match(/.*\/json.*/ig) !== null)
+    : undefined
 }
 
 /**
@@ -571,13 +544,40 @@ export function isUrlEncoded(str: string): boolean {
   return str !== decodeURIComponent(str)
 }
 
+export interface Properties {
+  [name: string]: Model
+}
+
+export interface Ref {
+  readonly $ref: string
+}
+
+export interface Model {
+  type?: string
+  items?: Model
+  properties?: Properties
+  additionalProperties?: Model|false
+  "x-nullable"?: Unknown
+  in?: Unknown
+  oneOf?: Unknown
+  $ref?: string
+  required?: Unknown[]|false
+  schema?: Model
+  allOf?: Ref[]
+  description?: Unknown
+  discriminator?: string
+  "x-ms-discriminator-value"?: string
+  enum?: Unknown
+  "x-ms-azure-resource"?: Unknown
+}
+
 /**
  * Determines whether the given model is a pure (free-form) object candidate (i.e. equivalent of the
  * C# Object type).
  * @param {object} model - The model to be verified
  * @returns {boolean} result - true if model is a pure object; false otherwise.
  */
-export function isPureObject(model: any): boolean {
+export function isPureObject(model: Model): boolean {
   if (!model) {
     throw new Error(`model cannot be null or undefined and must be of type "object"`)
   }
@@ -613,7 +613,7 @@ export function isPureObject(model: any): boolean {
  * @returns {object} entity - The transformed entity if it is a pure object else the same entity is
  * returned as-is.
  */
-export function relaxEntityType(entity: any, isRequired?: boolean) {
+export function relaxEntityType(entity: Model, isRequired?: Unknown): Model {
   if (isPureObject(entity) && entity.type) {
     delete entity.type
   }
@@ -628,7 +628,7 @@ export function relaxEntityType(entity: any, isRequired?: boolean) {
 /**
  * Relaxes/Transforms model definition like entities recursively
  */
-export function relaxModelLikeEntities(model: any) {
+export function relaxModelLikeEntities(model: Model): Model {
   model = relaxEntityType(model)
   if (model.properties) {
     const modelProperties = model.properties
@@ -652,7 +652,7 @@ export function relaxModelLikeEntities(model: any) {
  * If true then it is required. If false or undefined then it is not required.
  * @returns {object} entity - The processed entity
  */
-export function allowNullType(entity: any, isPropRequired?: boolean) {
+export function allowNullType(entity: Model, isPropRequired?: boolean|{}): Model {
   // if entity has a type
   if (entity && entity.type) {
     // if type is an array
@@ -668,11 +668,15 @@ export function allowNullType(entity: any, isPropRequired?: boolean) {
     }
 
     // takes care of string 'false' and 'true'
-    if (typeof entity["x-nullable"] === "string") {
-      if (entity["x-nullable"].toLowerCase() === "false") {
-        entity["x-nullable"] = false
-      } else if (entity["x-nullable"].toLowerCase() === "true") {
-        entity["x-nullable"] = true
+    const xNullable = entity["x-nullable"]
+    if (typeof xNullable === "string") {
+      switch (xNullable.toLowerCase()) {
+        case "false":
+          entity["x-nullable"] = false
+          break
+        case "true":
+          entity["x-nullable"] = true
+          break
       }
     }
 
@@ -690,7 +694,9 @@ export function allowNullType(entity: any, isPropRequired?: boolean) {
   }
 
   // if there's a $ref
-  if (entity && entity.$ref && shouldAcceptNullValue(entity["x-nullable"], isPropRequired)) {
+  if (entity
+    && entity.$ref
+    && shouldAcceptNullValue(entity["x-nullable"], isPropRequired)) {
     const savedEntity = entity
     entity = {}
     entity.oneOf = [savedEntity, { type: "null" }]
@@ -704,14 +710,14 @@ export function allowNullType(entity: any, isPropRequired?: boolean) {
 * Yes                   | convert to oneOf[] |       |
 * No                    | convert to oneOf[] |       | convert to oneOf[]
 */
-export function shouldAcceptNullValue(xnullable: any, isPropRequired: any): boolean {
+export function shouldAcceptNullValue(xnullable: Unknown, isPropRequired: Unknown): Unknown {
   const isPropNullable = xnullable && typeof xnullable === "boolean"
   return (isPropNullable === undefined && !isPropRequired) || isPropNullable
 }
 /**
  * Relaxes/Transforms model definition to allow null values
  */
-export function allowNullableTypes(model: any) {
+export function allowNullableTypes(model: Model) {
   // process additionalProperties if present
   if (model && typeof model.additionalProperties === "object") {
     if (model.additionalProperties.properties || model.additionalProperties.additionalProperties) {
@@ -772,7 +778,7 @@ export function allowNullableTypes(model: any) {
 /**
  * Relaxes/Transforms parameter definition to allow null values for non-path parameters
  */
-export function allowNullableParams(parameter: any) {
+export function allowNullableParams(parameter: Model) {
   if (parameter.in && parameter.in === "body" && parameter.schema) {
     parameter.schema = allowNullableTypes(parameter.schema)
   } else {
@@ -800,7 +806,7 @@ export function sanitizeFileName(str: string): string {
  * The check is necessary because Object.values does not coerce parameters to object type.
  * @param {*} obj
  */
-export function getValues(obj: any): any[] {
+export function getValues<T>(obj: MapObject<T>|null): T[] {
   if (obj === undefined || obj === null) {
     return []
   }
@@ -812,7 +818,7 @@ export function getValues(obj: any): any[] {
 .* The check is necessary because Object.keys does not coerce parameters to object type.
  * @param {*} obj
  */
-export function getKeys(obj: any): string[] {
+export function getKeys(obj: MapObject<any>): string[] {
   if (obj === undefined || obj === null) {
     return []
   }
@@ -823,8 +829,8 @@ export function getKeys(obj: any): string[] {
 /**
  * Checks if the property is required in the model.
  */
-function isPropertyRequired(propName: any, model: any) {
-  return model.required ? model.required.some((p: any) => p === propName) : false
+function isPropertyRequired(propName: Unknown, model: Model) {
+  return model.required ? model.required.some(p => p === propName) : false
 }
 
 /**
@@ -833,7 +839,7 @@ function isPropertyRequired(propName: any, model: any) {
 export const statusCodeStringToStatusCode = lodash.invert(
   lodash.mapValues(
     http.STATUS_CODES,
-    (value: any) => value.replace(/ |-/g, "").toLowerCase()))
+    (value: string) => value.replace(/ |-/g, "").toLowerCase()))
 
 /**
  * Models an ARM cloud error schema.
@@ -848,7 +854,7 @@ export const CloudErrorSchema = {
 /**
  * Models an ARM cloud error wrapper.
  */
-export const CloudErrorWrapper = {
+export const CloudErrorWrapper: Model = {
   type: "object",
   properties: {
     error: {
@@ -861,7 +867,7 @@ export const CloudErrorWrapper = {
 /**
  * Models a Cloud Error
  */
-export const CloudError = {
+export const CloudError: Model = {
   type: "object",
   properties: {
     code: {

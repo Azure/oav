@@ -5,6 +5,7 @@
 import * as utils from "../util/utils"
 import { HttpTemplate, Request, Responses, Response } from "./httpTemplate"
 import * as uuid from "uuid"
+import { Unknown } from "../util/unknown"
 
 export class YamlHttpTemplate extends HttpTemplate {
 
@@ -91,7 +92,7 @@ ${this.getRequestHeaders()}
     return requestTemplate
   }
 
-  private populateResponse(response: any, responseType: any): string {
+  private populateResponse(response: Response, responseType: Unknown): string {
     if (!responseType) { responseType = "Response" }
     const responseGuid = uuid.v4()
     const date = new Date().toISOString().replace(/(\W)/ig, "")
