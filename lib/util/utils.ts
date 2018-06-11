@@ -13,6 +13,7 @@ import * as lodash from "lodash"
 import * as http from "http"
 import { Unknown } from "./unknown"
 import { Spec } from "../validators/specResolver"
+import { MapObject } from "./mapObject"
 
 export type DocCache = MapObject<Promise<Spec>>
 
@@ -296,10 +297,6 @@ export function joinPath(...args: string[]): string {
 export function parseJsonWithPathFragments(...args: string[]) {
   const specPath = joinPath(...args)
   return parseJson(specPath)
-}
-
-export interface MapObject<T> {
-  [name: string]: T
 }
 
 /*

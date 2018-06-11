@@ -18,6 +18,7 @@ import { PotentialOperationsResult } from "../models/potentialOperationsResult"
 import { Operation, PathObject } from "sway"
 import { ParsedUrlQuery } from "querystring"
 import { Unknown } from "../util/unknown"
+import { MapObject } from "../util/mapObject"
 
 export interface Options {
   swaggerPaths: string[]
@@ -74,10 +75,11 @@ export interface ValidationResult {
  * Live Validator for Azure swagger APIs.
  */
 export class LiveValidator {
-  public readonly cache: {
-    [provider: string]: Provider
-  } = {}
+
+  public readonly cache: MapObject<Provider> = {}
+
   public options: Options
+
   /**
    * Constructs LiveValidator based on provided options.
    *
@@ -167,30 +169,8 @@ export class LiveValidator {
     }
 
     // Construct array of swagger paths to be used for building a cache
-    let swaggerPaths: string[]
-    if (this.options.swaggerPaths.length !== 0) {
-      swaggerPaths = this.options.swaggerPaths
-      log.debug(`Using user provided swagger paths. Total paths: ${swaggerPaths.length}`)
-    } else {
-      const allJsonsPattern = "/specification/**/*.json"
-      const jsonsPattern = path.join(
-        this.options.directory, this.options.swaggerPathsPattern || allJsonsPattern)
-      swaggerPaths = glob.sync(
-        jsonsPattern,
-        {
-          ignore: [
-            "**/examples/**/*",
-            "**/quickstart-templates/**/*",
-            "**/schema/**/*",
-            "**/live/**/*",
-            "**/wire-format/**/*"
-          ]
-        })
-      const dir = this.options.directory
-      log.debug(
-        `Using swaggers found from directory "${dir}" and pattern "${jsonsPattern}".` +
-        `Total paths: ${swaggerPaths.length}`)
-    }
+    const swaggerPaths = this.getSwaggerPaths()
+
     // console.log(swaggerPaths);
     // Create array of promise factories that builds up cache
     // Structure of the cache is
@@ -218,138 +198,11 @@ export class LiveValidator {
     //   }
     //   ...
     // }
-    const promiseFactories = swaggerPaths.map(swaggerPath => {
-      return async () => {
-        log.info(`Building cache from: "${swaggerPath}"`)
-
-        const validator = new SpecValidator(
-          swaggerPath,
-          null,
-          {
-            shouldModelImplicitDefaultResponse: this.options.shouldModelImplicitDefaultResponse,
-            isPathCaseSensitive: this.options.isPathCaseSensitive
-          })
-
-        try {
-          const api = await validator.initialize()
-
-          const operations = api.getOperations()
-          let apiVersion = api.info.version.toLowerCase()
-
-          operations.forEach(operation => {
-            const httpMethod = operation.method.toLowerCase()
-            const pathObject = operation.pathObject as PathObject
-            const pathStr = pathObject.path
-            let provider = utils.getProvider(pathStr)
-            log.debug(`${apiVersion}, ${operation.operationId}, ${pathStr}, ${httpMethod}`)
-
-            if (!provider) {
-              const title = api.info.title
-
-              // Whitelist lookups: Look up knownTitleToResourceProviders
-              // Putting the provider namespace onto operation for future use
-              if (title && (C.knownTitleToResourceProviders as any)[title]) {
-                operation.provider = (C.knownTitleToResourceProviders as any)[title]
-              }
-
-              // Put the operation into 'Microsoft.Unknown' RPs
-              provider = C.unknownResourceProvider
-              apiVersion = C.unknownApiVersion
-              log.debug(
-                `Unable to find provider for path : "${pathObject.path}". ` +
-                `Bucketizing into provider: "${provider}"`)
-            }
-            provider = provider.toLowerCase()
-
-            // Get all api-version for given provider or initialize it
-            const apiVersions = this.cache[provider] || {}
-            // Get methods for given apiVersion or initialize it
-            const allMethods = apiVersions[apiVersion] || {}
-            // Get specific http methods array for given verb or initialize it
-            const operationsForHttpMethod: Operation[] = allMethods[httpMethod] || []
-
-            // Builds the cache
-            operationsForHttpMethod.push(operation)
-            allMethods[httpMethod] = operationsForHttpMethod
-            apiVersions[apiVersion] = allMethods
-            this.cache[provider] = apiVersions
-          })
-
-        } catch (err) {
-          // Do Not reject promise in case, we cannot initialize one of the swagger
-          log.debug(`Unable to initialize "${swaggerPath}" file from SpecValidator. Error: ${err}`)
-          log.warn(
-            `Unable to initialize "${swaggerPath}" file from SpecValidator. We are ` +
-            `ignoring this swagger file and continuing to build cache for other valid specs.`)
-        }
-      }
-    })
+    const promiseFactories = swaggerPaths.map(
+      swaggerPath => () => this.getSwaggerInitializer(swaggerPath))
 
     await utils.executePromisesSequentially(promiseFactories)
     log.info("Cache initialization complete.")
-  }
-
-  /**
-   * Gets list of potential operations objects for given path and method.
-   *
-   * @param {string} requestPath The path of the url for which to find potential operations.
-   *
-   * @param {string} requestMethod The http verb for the method to be used for lookup.
-   *
-   * @param {Array<Operation>} operations The list of operations to search.
-   *
-   * @returns {Array<Operation>} List of potential operations matching the requestPath.
-   */
-  public getPotentialOperationsHelper(
-    requestPath: string, requestMethod: string, operations: Operation[]): Operation[] {
-    if (requestPath === null
-      || requestPath === undefined
-      || typeof requestPath.valueOf() !== "string"
-      || !requestPath.trim().length) {
-      throw new Error(
-        'requestPath is a required parameter of type "string" and it cannot be an empty string.')
-    }
-
-    if (requestMethod === null
-      || requestMethod === undefined
-      || typeof requestMethod.valueOf() !== "string"
-      || !requestMethod.trim().length) {
-      throw new Error(
-        'requestMethod is a required parameter of type "string" and it cannot be an empty string.')
-    }
-
-    if (operations === null || operations === undefined || !Array.isArray(operations)) {
-      throw new Error('operations is a required parameter of type "array".')
-    }
-
-    const self = this
-    let potentialOperations = operations.filter(operation => {
-      const pathObject = operation.pathObject as PathObject
-      const pathMatch = pathObject.regexp.exec(requestPath)
-      return pathMatch === null ? false : true
-    })
-
-    // If we do not find any match then we'll look into Microsoft.Unknown -> unknown-api-version
-    // for given requestMethod as the fall back option
-    if (!potentialOperations.length) {
-      if (self.cache[C.unknownResourceProvider] &&
-        self.cache[C.unknownResourceProvider][C.unknownApiVersion]) {
-        operations = self.cache
-          [C.unknownResourceProvider][C.unknownApiVersion][requestMethod]
-        potentialOperations = operations.filter(operation => {
-          const pathObject = operation.pathObject as PathObject
-          let pathTemplate = pathObject.path
-          if (pathTemplate && pathTemplate.includes("?")) {
-            pathTemplate = pathTemplate.slice(0, pathTemplate.indexOf("?"))
-            pathObject.path = pathTemplate
-          }
-          const pathMatch = pathObject.regexp.exec(requestPath)
-          return pathMatch === null ? false : true
-        })
-      }
-    }
-
-    return potentialOperations
   }
 
   /**
@@ -609,5 +462,160 @@ export class LiveValidator {
     }
 
     return validationResult
+  }
+
+  /**
+   * Gets list of potential operations objects for given path and method.
+   *
+   * @param {string} requestPath The path of the url for which to find potential operations.
+   *
+   * @param {string} requestMethod The http verb for the method to be used for lookup.
+   *
+   * @param {Array<Operation>} operations The list of operations to search.
+   *
+   * @returns {Array<Operation>} List of potential operations matching the requestPath.
+   */
+  private getPotentialOperationsHelper(
+    requestPath: string, requestMethod: string, operations: Operation[]): Operation[] {
+    if (requestPath === null
+      || requestPath === undefined
+      || typeof requestPath.valueOf() !== "string"
+      || !requestPath.trim().length) {
+      throw new Error(
+        'requestPath is a required parameter of type "string" and it cannot be an empty string.')
+    }
+
+    if (requestMethod === null
+      || requestMethod === undefined
+      || typeof requestMethod.valueOf() !== "string"
+      || !requestMethod.trim().length) {
+      throw new Error(
+        'requestMethod is a required parameter of type "string" and it cannot be an empty string.')
+    }
+
+    if (operations === null || operations === undefined || !Array.isArray(operations)) {
+      throw new Error('operations is a required parameter of type "array".')
+    }
+
+    const self = this
+    let potentialOperations = operations.filter(operation => {
+      const pathObject = operation.pathObject as PathObject
+      const pathMatch = pathObject.regexp.exec(requestPath)
+      return pathMatch !== null
+    })
+
+    // If we do not find any match then we'll look into Microsoft.Unknown -> unknown-api-version
+    // for given requestMethod as the fall back option
+    if (!potentialOperations.length) {
+      if (self.cache[C.unknownResourceProvider] &&
+        self.cache[C.unknownResourceProvider][C.unknownApiVersion]) {
+        operations = self.cache[C.unknownResourceProvider][C.unknownApiVersion][requestMethod]
+        potentialOperations = operations.filter(operation => {
+          const pathObject = operation.pathObject as PathObject
+          let pathTemplate = pathObject.path
+          if (pathTemplate && pathTemplate.includes("?")) {
+            pathTemplate = pathTemplate.slice(0, pathTemplate.indexOf("?"))
+            pathObject.path = pathTemplate
+          }
+          const pathMatch = pathObject.regexp.exec(requestPath)
+          return pathMatch !== null
+        })
+      }
+    }
+
+    return potentialOperations
+  }
+
+  private getSwaggerPaths(): string[] {
+    if (this.options.swaggerPaths.length !== 0) {
+      log.debug(
+        `Using user provided swagger paths. Total paths: ${this.options.swaggerPaths.length}`)
+      return this.options.swaggerPaths
+    } else {
+      const allJsonsPattern = "/specification/**/*.json"
+      const jsonsPattern = path.join(
+        this.options.directory, this.options.swaggerPathsPattern || allJsonsPattern)
+      const swaggerPaths = glob.sync(
+        jsonsPattern,
+        {
+          ignore: [
+            "**/examples/**/*",
+            "**/quickstart-templates/**/*",
+            "**/schema/**/*",
+            "**/live/**/*",
+            "**/wire-format/**/*"
+          ]
+        })
+      const dir = this.options.directory
+      log.debug(
+        `Using swaggers found from directory "${dir}" and pattern "${jsonsPattern}".` +
+        `Total paths: ${swaggerPaths.length}`)
+      return swaggerPaths
+    }
+  }
+
+  private async getSwaggerInitializer(swaggerPath: string): Promise<void> {
+    log.info(`Building cache from: "${swaggerPath}"`)
+
+    const validator = new SpecValidator(
+      swaggerPath,
+      null,
+      {
+        shouldModelImplicitDefaultResponse: this.options.shouldModelImplicitDefaultResponse,
+        isPathCaseSensitive: this.options.isPathCaseSensitive
+      })
+
+    try {
+      const api = await validator.initialize()
+
+      const operations = api.getOperations()
+      let apiVersion = api.info.version.toLowerCase()
+
+      operations.forEach(operation => {
+        const httpMethod = operation.method.toLowerCase()
+        const pathObject = operation.pathObject as PathObject
+        const pathStr = pathObject.path
+        let provider = utils.getProvider(pathStr)
+        log.debug(`${apiVersion}, ${operation.operationId}, ${pathStr}, ${httpMethod}`)
+
+        if (!provider) {
+          const title = api.info.title
+
+          // Whitelist lookups: Look up knownTitleToResourceProviders
+          // Putting the provider namespace onto operation for future use
+          if (title && C.knownTitleToResourceProviders[title]) {
+            operation.provider = C.knownTitleToResourceProviders[title]
+          }
+
+          // Put the operation into 'Microsoft.Unknown' RPs
+          provider = C.unknownResourceProvider
+          apiVersion = C.unknownApiVersion
+          log.debug(
+            `Unable to find provider for path : "${pathObject.path}". ` +
+            `Bucketizing into provider: "${provider}"`)
+        }
+        provider = provider.toLowerCase()
+
+        // Get all api-version for given provider or initialize it
+        const apiVersions = this.cache[provider] || {}
+        // Get methods for given apiVersion or initialize it
+        const allMethods = apiVersions[apiVersion] || {}
+        // Get specific http methods array for given verb or initialize it
+        const operationsForHttpMethod: Operation[] = allMethods[httpMethod] || []
+
+        // Builds the cache
+        operationsForHttpMethod.push(operation)
+        allMethods[httpMethod] = operationsForHttpMethod
+        apiVersions[apiVersion] = allMethods
+        this.cache[provider] = apiVersions
+      })
+
+    } catch (err) {
+      // Do Not reject promise in case, we cannot initialize one of the swagger
+      log.debug(`Unable to initialize "${swaggerPath}" file from SpecValidator. Error: ${err}`)
+      log.warn(
+        `Unable to initialize "${swaggerPath}" file from SpecValidator. We are ` +
+        `ignoring this swagger file and continuing to build cache for other valid specs.`)
+    }
   }
 }
