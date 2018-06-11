@@ -4,7 +4,7 @@
 import * as pointer from "json-pointer"
 import { Error } from "./error"
 import { Unknown } from "./unknown"
-import { Map } from "./utils"
+import { MapObject } from "./utils"
 
 interface ValidationError {
   validationCategory: string
@@ -24,7 +24,7 @@ interface Warning {
 
 export class ValidateResponse {
 
-  private readonly mapper: Map<string> = {
+  private readonly mapper: MapObject<string> = {
     SWAGGER_SCHEMA_VALIDATION_ERROR: "M6000",
     INVALID_PARAMETER_COMBINATION: "M6001",
     MULTIPLE_BODY_PARAMETERS: "M6002",

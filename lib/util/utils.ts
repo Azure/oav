@@ -14,24 +14,7 @@ import * as http from "http"
 import { Unknown } from "./unknown"
 import { Spec } from "../validators/specResolver"
 
-export interface Definition {
-  readonly allOf: Unknown[]
-}
-
-export interface Definitions {
-  readonly [name: string]: Definition
-}
-
-/*
-export interface Doc {
-  readonly documents: Unknown
-  readonly definitions: Definitions
-}
-*/
-
-export interface DocCache {
-  [name: string]: Promise<Spec>
-}
+export type DocCache = MapObject<Promise<Spec>>
 
 /*
  * Caches the json docs that were successfully parsed by parseJson().
@@ -315,7 +298,7 @@ export function parseJsonWithPathFragments(...args: string[]) {
   return parseJson(specPath)
 }
 
-export interface Map<T> {
+export interface MapObject<T> {
   [name: string]: T
 }
 
@@ -327,7 +310,7 @@ export interface Map<T> {
  *
  * @returns {object} target - Returns the merged target object.
  */
-export function mergeObjects<T extends Map<any>>(source: T, target: T): T {
+export function mergeObjects<T extends MapObject<any>>(source: T, target: T): T {
   Object.keys(source).forEach((key) => {
     if (Array.isArray(source[key])) {
       if (target[key] && !Array.isArray(target[key])) {
@@ -823,7 +806,7 @@ export function sanitizeFileName(str: string): string {
  * The check is necessary because Object.values does not coerce parameters to object type.
  * @param {*} obj
  */
-export function getValues<T>(obj: Map<T>|null): T[] {
+export function getValues<T>(obj: MapObject<T>|null): T[] {
   if (obj === undefined || obj === null) {
     return []
   }
@@ -835,7 +818,7 @@ export function getValues<T>(obj: Map<T>|null): T[] {
 .* The check is necessary because Object.keys does not coerce parameters to object type.
  * @param {*} obj
  */
-export function getKeys(obj: Map<any>): string[] {
+export function getKeys(obj: MapObject<any>): string[] {
   if (obj === undefined || obj === null) {
     return []
   }
