@@ -232,40 +232,58 @@ export class SpecResolver {
       for (const definitionKv of Object.entries(definitions)) {
         const name = definitionKv[0]
         const definition = definitionKv[1]
-        if (definition.properties) {
-          for (const property of Object.entries(definition.properties)) {
-            this.resolveNestedDefinition(property[1])
+
+        const properties = definition.properties
+        if (properties) {
+          for (const property in properties) {
+            if (properties[property] !== undefined) {
+              properties[property] = this.resolveNestedDefinition(properties[property])
+            }
           }
         }
+
         const additionalProperties = definition.additionalProperties
         if (additionalProperties && typeof additionalProperties === "object") {
-          this.resolveNestedDefinition(additionalProperties)
+          definition.additionalProperties = this.resolveNestedDefinition(additionalProperties)
         }
+
         if (definition.items) {
-          this.resolveNestedDefinition(definition.items)
+          definition.items = this.resolveNestedDefinition(definition.items)
         }
+
         if (definition.oneOf) {
-          for (const item of definition.oneOf) {
-            this.resolveNestedDefinition(item)
-          }
+          definition.oneOf = definition.oneOf.map(this.resolveNestedDefinition)
         }
         if (definition.allOf) {
-          for (const item of definition.allOf) {
-            this.resolveNestedDefinition(item)
-          }
+          definition.allOf = definition.allOf.map(this.resolveNestedDefinition)
         }
         if (definition.anyOf) {
-          for (const item of definition.anyOf) {
-            this.resolveNestedDefinition(item)
-          }
+          definition.anyOf = definition.anyOf.map(this.resolveNestedDefinition)
         }
       }
     }
     // TODO: scan parameters and results
   }
 
-  private resolveNestedDefinition(definition: JsonModel) {
-    ;
+  private alterProperty<V, T extends { [P in K]: V }, K extends keyof T>(
+    obj: T, k: K, create: (k: K, v: V) => V
+  ) {
+    obj[k] = create(k, obj[k])
+  }
+
+  /*
+  private resolveNestedDefinitionArray<
+    T extends { [P in K]: JsonModel[]|undefined }, K extends keyof T>(
+    obj: T, key: K) {
+    const v: JsonModel[]|undefined = obj[key]
+    if (v) {
+      obj[key] = v.map(this.resolveNestedDefinition)
+    }
+  }
+  */
+
+  private resolveNestedDefinition(definition: JsonModel): JsonModel {
+    return definition
   }
 
   /**
