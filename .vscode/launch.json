@@ -83,8 +83,10 @@
       "cwd": "${workspaceRoot}",
       "stopOnEntry": false,
       "args": [
-        "--no-timeouts",
-        "test/modelValidatorTests.js"
+        "./test/**/*.ts",
+        "-r",
+        "ts-node/register",
+        "--no-timeouts"
       ],
       "env": {}
     },

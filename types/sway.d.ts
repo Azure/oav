@@ -2,15 +2,107 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 declare module "sway" {
+
+  export interface JsonRef {
+    readonly $ref: string
+  }
+
+  interface JsonProperties {
+    [name: string]: JsonModel
+  }
+
+  interface JsonParameter {
+    name: string
+    in: string
+    schema?: JsonModel
+    required?: boolean
+    items?: JsonModel
+    type?: any
+  }
+
+  interface JsonModel {
+    type?: string
+    items?: JsonModel
+    properties?: JsonProperties
+    additionalProperties?: JsonModel|boolean
+    "x-nullable"?: any
+    in?: any
+    oneOf?: JsonModel[]
+    $ref?: string
+    required?: any[]|false
+    schema?: JsonModel
+    allOf?: JsonModel[]
+    description?: any
+    discriminator?: string
+    "x-ms-discriminator-value"?: string
+    enum?: any
+    "x-ms-azure-resource"?: any
+    anyOf?: JsonModel[]
+  }
+
+  interface JsonOperation {
+    parameters?: JsonParameter[]
+    consumes?: string[]
+    produces?: string[]
+    responses?: {
+      [name: string]: JsonModel
+    }
+  }
+
+  interface JsonPath {
+    parameters?: JsonParameter[]
+    get?: JsonOperation
+    put?: JsonOperation
+    post?: JsonOperation
+    delete?: JsonOperation
+    options?: JsonOperation
+    head?: JsonOperation
+    patch?: JsonOperation
+  }
+
+  interface JsonPaths {
+    [name: string]: JsonPath
+  }
+
+  interface JsonDefinitions {
+    [name: string]: JsonModel
+  }
+
+  interface JsonParameters {
+    [name: string]: JsonParameter
+  }
+
+  interface JsonSpec {
+    "x-ms-paths"?: JsonPaths
+    paths?: JsonPaths
+    definitions?: JsonDefinitions
+    "x-ms-parameterized-host"?: {
+      parameters: any
+    }
+    consumes?: string[]
+    produces?: string[]
+    parameters?: JsonParameters
+    readonly documents?: any
+  }
+
   interface Options {
-    readonly definition: any
+    readonly definition: JsonSpec
     readonly jsonRefs: {
       readonly relativeBase: any
     }
     readonly isPathCaseSensitive?: boolean
   }
+
   interface RequestValidation {
-    readonly errors: any
+    readonly errors: any[]
+  }
+  interface ParsedUrlQuery {
+    [key: string]: any
+  }
+  interface LiveRequest {
+    query?: ParsedUrlQuery
+    readonly url: string
+    readonly method: string
   }
   interface ResponseValidation {
     readonly errors: any
@@ -58,7 +150,7 @@ declare module "sway" {
     "x-ms-examples": any
     readonly consumes: string[]
     readonly produces: any
-    validateRequest(_: any): RequestValidation
+    validateRequest(_: LiveRequest): RequestValidation
     validateResponse(_: any): ResponseValidation
     getParameters(): Parameter[]
     getResponses(): Response[]

@@ -12,10 +12,10 @@ import request = require("request")
 import * as lodash from "lodash"
 import * as http from "http"
 import { Unknown } from "./unknown"
-import { Spec } from "../validators/specResolver"
 import { MapObject } from "./mapObject"
+import { JsonModel, JsonSpec, JsonParameter, Parameter } from "sway"
 
-export type DocCache = MapObject<Promise<Spec>>
+export type DocCache = MapObject<Promise<JsonSpec>>
 
 /*
  * Caches the json docs that were successfully parsed by parseJson().
@@ -53,7 +53,7 @@ export function stripBOM(content: Buffer|string): string {
  *
  * @returns {object} jsonDoc - Parsed document in JSON format.
  */
-export async function parseJson(specPath: string): Promise<Spec> {
+export async function parseJson(specPath: string): Promise<JsonSpec> {
   if (!specPath || (specPath && typeof specPath.valueOf() !== "string")) {
     throw new Error(
       "A (github) url or a local file path to the swagger spec is required and must be of type " +
@@ -100,7 +100,7 @@ export async function parseJson(specPath: string): Promise<Spec> {
  *
  * @returns {object} jsonDoc - Parsed document in JSON format.
  */
-export function parseContent(filePath: string, fileContent: string): Spec {
+export function parseContent(filePath: string, fileContent: string): JsonSpec {
   let result = null
   if (/.*\.json$/ig.test(filePath)) {
     result = JSON.parse(fileContent)
@@ -132,8 +132,8 @@ export type Options = request.CoreOptions & request.UrlOptions & {
  *
  * @return {Promise} promise - A promise that resolves to the responseBody or rejects to an error.
  */
-export function makeRequest(options: Options): Promise<Spec> {
-  const promise = new Promise<Spec>((resolve, reject) => {
+export function makeRequest(options: Options): Promise<JsonSpec> {
+  const promise = new Promise<JsonSpec>((resolve, reject) => {
     request(options, (err, response, responseBody) => {
       if (err) {
         reject(err)
@@ -541,40 +541,13 @@ export function isUrlEncoded(str: string): boolean {
   return str !== decodeURIComponent(str)
 }
 
-export interface Properties {
-  [name: string]: Model
-}
-
-export interface Ref {
-  readonly $ref: string
-}
-
-export interface Model {
-  type?: string
-  items?: Model
-  properties?: Properties
-  additionalProperties?: Model|false
-  "x-nullable"?: Unknown
-  in?: Unknown
-  oneOf?: Unknown
-  $ref?: string
-  required?: Unknown[]|false
-  schema?: Model
-  allOf?: Ref[]
-  description?: Unknown
-  discriminator?: string
-  "x-ms-discriminator-value"?: string
-  enum?: Unknown
-  "x-ms-azure-resource"?: Unknown
-}
-
 /**
  * Determines whether the given model is a pure (free-form) object candidate (i.e. equivalent of the
  * C# Object type).
  * @param {object} model - The model to be verified
  * @returns {boolean} result - true if model is a pure object; false otherwise.
  */
-export function isPureObject(model: Model): boolean {
+export function isPureObject(model: JsonModel): boolean {
   if (!model) {
     throw new Error(`model cannot be null or undefined and must be of type "object"`)
   }
@@ -597,6 +570,16 @@ export function isPureObject(model: Model): boolean {
   }
 }
 
+interface Entity {
+  in?: string
+  type?: string
+  additionalProperties?: any
+  items?: any
+  "x-nullable"?: any
+  oneOf?: any
+  $ref?: any
+}
+
 /**
  * Relaxes/Transforms the given entities type from a specific JSON schema primitive type
  * (http://json-schema.org/latest/json-schema-core.html#rfc.section.4.2)
@@ -606,11 +589,11 @@ export function isPureObject(model: Model): boolean {
  * @param {object} entity - The entity to be relaxed.
  * @param {boolean|undefined} [isRequired] - A boolean value that indicates whether the entity is
  *                                           required or not.
- * If the entity is required then the primitve type "null" is not added.
+ * If the entity is required then the primitive type "null" is not added.
  * @returns {object} entity - The transformed entity if it is a pure object else the same entity is
  * returned as-is.
  */
-export function relaxEntityType(entity: Model, isRequired?: Unknown): Model {
+export function relaxEntityType<T extends Entity>(entity: T, isRequired?: Unknown): T {
   if (isPureObject(entity) && entity.type) {
     delete entity.type
   }
@@ -625,7 +608,7 @@ export function relaxEntityType(entity: Model, isRequired?: Unknown): Model {
 /**
  * Relaxes/Transforms model definition like entities recursively
  */
-export function relaxModelLikeEntities(model: Model): Model {
+export function relaxModelLikeEntities(model: JsonModel): JsonModel {
   model = relaxEntityType(model)
   if (model.properties) {
     const modelProperties = model.properties
@@ -649,7 +632,7 @@ export function relaxModelLikeEntities(model: Model): Model {
  * If true then it is required. If false or undefined then it is not required.
  * @returns {object} entity - The processed entity
  */
-export function allowNullType(entity: Model, isPropRequired?: boolean|{}): Model {
+export function allowNullType<T extends Entity>(entity: T, isPropRequired?: boolean|{}): T {
   // if entity has a type
   if (entity && entity.type) {
     // if type is an array
@@ -684,7 +667,7 @@ export function allowNullType(entity: Model, isPropRequired?: boolean|{}): Model
         entity.oneOf = [{ type: entity.type }, { type: "null" }]
         delete entity.type
       } else {
-        entity = {}
+        entity = {} as T
         entity.oneOf = [savedEntity, { type: "null" }]
       }
     }
@@ -695,7 +678,7 @@ export function allowNullType(entity: Model, isPropRequired?: boolean|{}): Model
     && entity.$ref
     && shouldAcceptNullValue(entity["x-nullable"], isPropRequired)) {
     const savedEntity = entity
-    entity = {}
+    entity = {} as T
     entity.oneOf = [savedEntity, { type: "null" }]
   }
   return entity
@@ -714,7 +697,7 @@ export function shouldAcceptNullValue(xnullable: Unknown, isPropRequired: Unknow
 /**
  * Relaxes/Transforms model definition to allow null values
  */
-export function allowNullableTypes(model: Model) {
+export function allowNullableTypes(model: JsonModel) {
   // process additionalProperties if present
   if (model && typeof model.additionalProperties === "object") {
     if (model.additionalProperties.properties || model.additionalProperties.additionalProperties) {
@@ -775,7 +758,7 @@ export function allowNullableTypes(model: Model) {
 /**
  * Relaxes/Transforms parameter definition to allow null values for non-path parameters
  */
-export function allowNullableParams(parameter: Model) {
+export function allowNullableParams(parameter: JsonParameter): JsonParameter {
   if (parameter.in && parameter.in === "body" && parameter.schema) {
     parameter.schema = allowNullableTypes(parameter.schema)
   } else {
@@ -826,7 +809,7 @@ export function getKeys(obj: MapObject<any>): string[] {
 /**
  * Checks if the property is required in the model.
  */
-function isPropertyRequired(propName: Unknown, model: Model) {
+function isPropertyRequired(propName: Unknown, model: JsonModel) {
   return model.required ? model.required.some(p => p === propName) : false
 }
 
@@ -851,7 +834,7 @@ export const CloudErrorSchema = {
 /**
  * Models an ARM cloud error wrapper.
  */
-export const CloudErrorWrapper: Model = {
+export const CloudErrorWrapper: JsonModel = {
   type: "object",
   properties: {
     error: {
@@ -864,7 +847,7 @@ export const CloudErrorWrapper: Model = {
 /**
  * Models a Cloud Error
  */
-export const CloudError: Model = {
+export const CloudError: JsonModel = {
   type: "object",
   properties: {
     code: {

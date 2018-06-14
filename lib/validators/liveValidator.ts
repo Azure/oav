@@ -15,7 +15,7 @@ import * as utils from "../util/utils"
 import * as models from "../models"
 import * as http from "http"
 import { PotentialOperationsResult } from "../models/potentialOperationsResult"
-import { Operation, PathObject } from "sway"
+import { Operation, PathObject, LiveRequest } from "sway"
 import { ParsedUrlQuery } from "querystring"
 import { Unknown } from "../util/unknown"
 import { MapObject } from "../util/mapObject"
@@ -42,11 +42,7 @@ export interface Provider {
 }
 
 export interface RequestResponseObj {
-  readonly liveRequest: {
-    query: ParsedUrlQuery
-    readonly url: string
-    readonly method: string
-  }
+  readonly liveRequest: LiveRequest
   readonly liveResponse: {
     statusCode: string
   }
@@ -380,7 +376,7 @@ export class LiveValidator {
     }
     const currentApiVersion = request.query["api-version"] || C.unknownApiVersion
     let potentialOperationsResult
-    let potentialOperations = []
+    let potentialOperations: Operation[] = []
     try {
       potentialOperationsResult = self.getPotentialOperations(request.url, request.method)
       potentialOperations = potentialOperationsResult.operations
@@ -398,59 +394,8 @@ export class LiveValidator {
     if (potentialOperations.length === 0) {
       validationResult.errors.push(potentialOperationsResult.reason)
       return validationResult
-    // Found exactly 1 potentialOperations
-    } else if (potentialOperations.length === 1) {
-      const operation = potentialOperations[0]
-      const basicOperationInfo = {
-        operationId: operation.operationId,
-        apiVersion: currentApiVersion
-      }
-      validationResult.requestValidationResult.operationInfo = [basicOperationInfo]
-      validationResult.responseValidationResult.operationInfo = [basicOperationInfo]
-      let reqResult
-      try {
-        reqResult = operation.validateRequest(request)
-        validationResult.requestValidationResult.errors = reqResult.errors || []
-        log.debug("Request Validation Result")
-        log.debug(reqResult.toString())
-      } catch (reqValidationError) {
-        const msg =
-          `An error occurred while validating the live request for operation ` +
-          `"${operation.operationId}". The error is:\n ` +
-          `${util.inspect(reqValidationError, { depth: null })}`
-        const err = new models.LiveValidationError(
-          C.ErrorCodes.RequestValidationError.name, msg)
-        validationResult.requestValidationResult.errors = [err]
-      }
-      let resResult
-      try {
-        resResult = operation.validateResponse(response)
-        validationResult.responseValidationResult.errors = resResult.errors || []
-        log.debug("Response Validation Result")
-        log.debug(resResult.toString())
-      } catch (resValidationError) {
-        const msg =
-          `An error occurred while validating the live response for operation ` +
-          `"${operation.operationId}". The error is:\n ` +
-          `${util.inspect(resValidationError, { depth: null })}`
-        const err = new models.LiveValidationError(
-          C.ErrorCodes.ResponseValidationError.name, msg)
-        validationResult.responseValidationResult.errors = [err]
-      }
-      if (reqResult
-        && reqResult.errors
-        && Array.isArray(reqResult.errors)
-        && !reqResult.errors.length) {
-        validationResult.requestValidationResult.successfulRequest = true
-      }
-      if (resResult
-        && resResult.errors
-        && Array.isArray(resResult.errors)
-        && !resResult.errors.length) {
-        validationResult.responseValidationResult.successfulResponse = true
-      }
     // Found more than 1 potentialOperations
-    } else {
+    } else if (potentialOperations.length !== 1) {
       const operationIds = potentialOperations.map(op => op.operationId).join()
       const msg =
         `Found multiple matching operations with operationIds "${operationIds}" ` +
@@ -459,6 +404,57 @@ export class LiveValidator {
       const err = new models.LiveValidationError(
         C.ErrorCodes.MultipleOperationsFound.name, msg)
       validationResult.errors = [err]
+      return validationResult
+    }
+
+    const operation = potentialOperations[0]
+    const basicOperationInfo = {
+      operationId: operation.operationId,
+      apiVersion: currentApiVersion
+    }
+    validationResult.requestValidationResult.operationInfo = [basicOperationInfo]
+    validationResult.responseValidationResult.operationInfo = [basicOperationInfo]
+    let reqResult
+    try {
+      reqResult = operation.validateRequest(request)
+      validationResult.requestValidationResult.errors = reqResult.errors || []
+      log.debug("Request Validation Result")
+      log.debug(reqResult.toString())
+    } catch (reqValidationError) {
+      const msg =
+        `An error occurred while validating the live request for operation ` +
+        `"${operation.operationId}". The error is:\n ` +
+        `${util.inspect(reqValidationError, { depth: null })}`
+      const err = new models.LiveValidationError(
+        C.ErrorCodes.RequestValidationError.name, msg)
+      validationResult.requestValidationResult.errors = [err]
+    }
+    let resResult
+    try {
+      resResult = operation.validateResponse(response)
+      validationResult.responseValidationResult.errors = resResult.errors || []
+      log.debug("Response Validation Result")
+      log.debug(resResult.toString())
+    } catch (resValidationError) {
+      const msg =
+        `An error occurred while validating the live response for operation ` +
+        `"${operation.operationId}". The error is:\n ` +
+        `${util.inspect(resValidationError, { depth: null })}`
+      const err = new models.LiveValidationError(
+        C.ErrorCodes.ResponseValidationError.name, msg)
+      validationResult.responseValidationResult.errors = [err]
+    }
+    if (reqResult
+      && reqResult.errors
+      && Array.isArray(reqResult.errors)
+      && !reqResult.errors.length) {
+      validationResult.requestValidationResult.successfulRequest = true
+    }
+    if (resResult
+      && resResult.errors
+      && Array.isArray(resResult.errors)
+      && !resResult.errors.length) {
+      validationResult.responseValidationResult.successfulResponse = true
     }
 
     return validationResult
@@ -601,7 +597,7 @@ export class LiveValidator {
         // Get methods for given apiVersion or initialize it
         const allMethods = apiVersions[apiVersion] || {}
         // Get specific http methods array for given verb or initialize it
-        const operationsForHttpMethod: Operation[] = allMethods[httpMethod] || []
+        const operationsForHttpMethod = allMethods[httpMethod] || []
 
         // Builds the cache
         operationsForHttpMethod.push(operation)
