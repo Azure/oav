@@ -179,10 +179,14 @@ export class SpecResolver {
    */
   public async resolve(): Promise<this> {
     try {
+      // path resolvers
       this.unifyXmsPaths()
       if (this.options.shouldResolveRelativePaths) {
         await this.resolveRelativePaths()
       }
+      // resolve nested definitions
+      this.resolveNestedDefinitions()
+      // other resolvers
       if (this.options.shouldResolveAllOf) {
         this.resolveAllOfInDefinitions()
       }
@@ -220,6 +224,48 @@ export class SpecResolver {
       throw e
     }
     return this
+  }
+
+  private resolveNestedDefinitions() {
+    const definitions = this.specInJson.definitions
+    if (definitions) {
+      for (const definitionKv of Object.entries(definitions)) {
+        const name = definitionKv[0]
+        const definition = definitionKv[1]
+        if (definition.properties) {
+          for (const property of Object.entries(definition.properties)) {
+            this.resolveNestedDefinition(property[1])
+          }
+        }
+        const additionalProperties = definition.additionalProperties
+        if (additionalProperties && typeof additionalProperties === "object") {
+          this.resolveNestedDefinition(additionalProperties)
+        }
+        if (definition.items) {
+          this.resolveNestedDefinition(definition.items)
+        }
+        if (definition.oneOf) {
+          for (const item of definition.oneOf) {
+            this.resolveNestedDefinition(item)
+          }
+        }
+        if (definition.allOf) {
+          for (const item of definition.allOf) {
+            this.resolveNestedDefinition(item)
+          }
+        }
+        if (definition.anyOf) {
+          for (const item of definition.anyOf) {
+            this.resolveNestedDefinition(item)
+          }
+        }
+      }
+    }
+    // TODO: scan parameters and results
+  }
+
+  private resolveNestedDefinition(definition: JsonModel) {
+    ;
   }
 
   /**
