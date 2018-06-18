@@ -7,12 +7,12 @@ import { SpecValidator } from "../lib/validators/specValidator"
 
 describe("sway", () => {
   // SpecResolver:
-  // - resolveAllOfInDefinitions
-  // - resolveDiscriminator
-  // - deleteReferencesToAllOf
-  // - setAdditionalPropertiesFalse
-  // - resolvePureObjects
-  // - resolveNullableTypes
+  // - resolveAllOfInDefinitions (partly recursive, allOf.allOf only)
+  // - resolveDiscriminator (partly recursive)
+  // - deleteReferencesToAllOf (non recursive)
+  // - setAdditionalPropertiesFalse (non recursive)
+  // - resolvePureObjects (partly recursive `properties`)
+  // - resolveNullableTypes (full recursion)
   it("create", async () => {
     const options: sway.Options = {
       definition: {

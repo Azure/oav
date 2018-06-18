@@ -389,7 +389,7 @@
   },
   "definitions": {
     "Result": {
-      "description": "Result decription",
+      "description": "Result description",
       "properties": {
         "prop1": {
           "type": "string",

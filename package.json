@@ -68,7 +68,7 @@
     "dist/lib/**/*.d.ts",
     "types/**/*.d.ts"
   ],
-  "types": "./dist/index.d.ts",
+  "types": ["./dist/index.d.ts", "./types/*.d.ts"],
   "nyc": {
     "require": [
       "ts-node/register"

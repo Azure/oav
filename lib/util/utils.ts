@@ -639,11 +639,9 @@ export function allowNullType<T extends Entity>(entity: T, isPropRequired?: bool
     if (entity.type === "array") {
       if (entity.items) {
         // if items object contains inline properties
-        if (entity.items.properties) {
-          entity.items = allowNullableTypes(entity.items)
-        } else {
-          entity.items = allowNullType(entity.items)
-        }
+        entity.items = entity.items.properties
+          ? allowNullableTypes(entity.items)
+          : allowNullType(entity.items)
       }
     }
 
@@ -697,25 +695,23 @@ export function shouldAcceptNullValue(xnullable: Unknown, isPropRequired: Unknow
 /**
  * Relaxes/Transforms model definition to allow null values
  */
-export function allowNullableTypes(model: JsonModel) {
+export function allowNullableTypes(model: JsonModel): JsonModel {
   // process additionalProperties if present
   if (model && typeof model.additionalProperties === "object") {
-    if (model.additionalProperties.properties || model.additionalProperties.additionalProperties) {
-      model.additionalProperties = allowNullableTypes(model.additionalProperties)
-    } else {
-      // there shouldn't be more properties nesting at this point
-      model.additionalProperties = allowNullType(model.additionalProperties)
-    }
+    model.additionalProperties =
+      model.additionalProperties.properties || model.additionalProperties.additionalProperties
+        ? allowNullableTypes(model.additionalProperties)
+        // there shouldn't be more properties nesting at this point
+        : allowNullType(model.additionalProperties)
   }
   if (model && model.properties) {
     const modelProperties = model.properties
     for (const propName of getKeys(modelProperties)) {
       // process properties if present
-      if (modelProperties[propName].properties || modelProperties[propName].additionalProperties) {
-        modelProperties[propName] = allowNullableTypes(modelProperties[propName])
-      }
-      modelProperties[propName] = allowNullType(
-        modelProperties[propName], isPropertyRequired(propName, model))
+      modelProperties[propName] =
+        modelProperties[propName].properties || modelProperties[propName].additionalProperties
+          ? allowNullableTypes(modelProperties[propName])
+          : allowNullType(modelProperties[propName], isPropertyRequired(propName, model))
     }
   }
 
@@ -726,20 +722,17 @@ export function allowNullableTypes(model: JsonModel) {
         if (model.items.additionalProperties
           && typeof model.items.additionalProperties === "object") {
 
-          if (model.items.additionalProperties.properties
-            || model.items.additionalProperties.additionalProperties) {
-            model.items.additionalProperties = allowNullableTypes(model.items.additionalProperties)
-          } else {
-            // there shouldn't be more properties nesting at this point
-            model.items.additionalProperties = allowNullType(model.items.additionalProperties)
-          }
+          model.items.additionalProperties =
+            model.items.additionalProperties.properties ||
+            model.items.additionalProperties.additionalProperties
+              ? allowNullableTypes(model.items.additionalProperties)
+              // there shouldn't be more properties nesting at this point
+              : allowNullType(model.items.additionalProperties)
         }
         // if items object contains inline properties
-        if (model.items.properties) {
-          model.items = allowNullableTypes(model.items)
-        } else {
-          model.items = allowNullType(model.items)
-        }
+        model.items = model.items.properties
+          ? allowNullableTypes(model.items)
+          : allowNullType(model.items)
       }
     // if we have a top level "object" with x-nullable set, we need to relax the model at that level
     } else if (model.type === "object" && model["x-nullable"]) {

@@ -14,6 +14,7 @@ import {
 } from "sway"
 import { defaultIfUndefinedOrNull } from "../util/defaultIfUndefinedOrNull"
 import { MapObject } from "../util/mapObject"
+import { resolveNestedDefinitions } from "./resolveNestedDefinitions"
 
 const ErrorCodes = C.ErrorCodes
 
@@ -185,7 +186,7 @@ export class SpecResolver {
         await this.resolveRelativePaths()
       }
       // resolve nested definitions
-      this.resolveNestedDefinitions()
+      this.specInJson.definitions = resolveNestedDefinitions(this.specInJson.definitions)
       // other resolvers
       if (this.options.shouldResolveAllOf) {
         this.resolveAllOfInDefinitions()
@@ -224,66 +225,6 @@ export class SpecResolver {
       throw e
     }
     return this
-  }
-
-  private resolveNestedDefinitions() {
-    const definitions = this.specInJson.definitions
-    if (definitions) {
-      for (const definitionKv of Object.entries(definitions)) {
-        const name = definitionKv[0]
-        const definition = definitionKv[1]
-
-        const properties = definition.properties
-        if (properties) {
-          for (const property in properties) {
-            if (properties[property] !== undefined) {
-              properties[property] = this.resolveNestedDefinition(properties[property])
-            }
-          }
-        }
-
-        const additionalProperties = definition.additionalProperties
-        if (additionalProperties && typeof additionalProperties === "object") {
-          definition.additionalProperties = this.resolveNestedDefinition(additionalProperties)
-        }
-
-        if (definition.items) {
-          definition.items = this.resolveNestedDefinition(definition.items)
-        }
-
-        if (definition.oneOf) {
-          definition.oneOf = definition.oneOf.map(this.resolveNestedDefinition)
-        }
-        if (definition.allOf) {
-          definition.allOf = definition.allOf.map(this.resolveNestedDefinition)
-        }
-        if (definition.anyOf) {
-          definition.anyOf = definition.anyOf.map(this.resolveNestedDefinition)
-        }
-      }
-    }
-    // TODO: scan parameters and results
-  }
-
-  private alterProperty<V, T extends { [P in K]: V }, K extends keyof T>(
-    obj: T, k: K, create: (k: K, v: V) => V
-  ) {
-    obj[k] = create(k, obj[k])
-  }
-
-  /*
-  private resolveNestedDefinitionArray<
-    T extends { [P in K]: JsonModel[]|undefined }, K extends keyof T>(
-    obj: T, key: K) {
-    const v: JsonModel[]|undefined = obj[key]
-    if (v) {
-      obj[key] = v.map(this.resolveNestedDefinition)
-    }
-  }
-  */
-
-  private resolveNestedDefinition(definition: JsonModel): JsonModel {
-    return definition
   }
 
   /**
@@ -525,7 +466,7 @@ export class SpecResolver {
    *
    * @param {object} child object to be merged. Example: "Storage".
    *
-   * @return {object} returns the merged child oject
+   * @return {object} returns the merged child object
    */
   private mergeParentAllOfInChild(parent: JsonModel, child: JsonModel) {
     const self = this
@@ -700,9 +641,7 @@ export class SpecResolver {
     const parameters = spec.parameters as JsonParameters
     for (const param of utils.getKeys(parameters)) {
       const parameter = parameters[param]
-      if (parameter.in
-        && parameter.in === "body"
-        && parameter.schema) {
+      if (parameter.in && parameter.in === "body" && parameter.schema) {
         parameter.schema = utils.relaxModelLikeEntities(parameter.schema)
       }
       parameters[param] = utils.relaxEntityType(
@@ -1003,9 +942,9 @@ export class SpecResolver {
   private buildOneOfReferences(rootNode: PolymorphicTree): Set<PolymorphicTree> {
     let result = new Set()
     result.add({ $ref: `#/definitions/${rootNode.name}` })
-    for (const entry of rootNode.children.entries()) {
-      if (entry[1]) {
-        result = new Set([...result, ...this.buildOneOfReferences(entry[1])])
+    for (const en of rootNode.children.entries()) {
+      if (en[1]) {
+        result = new Set([...result, ...this.buildOneOfReferences(en[1])])
       }
     }
     return result
