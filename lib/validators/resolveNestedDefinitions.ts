@@ -72,6 +72,6 @@ class Result {
     const result = this.resolveDefinition(name, model)
     // return result
     this.extra[name] = result
-    return { $ref: `/definitions/${name}` }
+    return { $ref: `#/definitions/${name}` }
   }
 }

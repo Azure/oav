@@ -63,7 +63,7 @@ describe("sway", () => {
         a: "somevalue",
         b: {
           c: "somevalue",
-          d: "anothervalue"
+          // d: "anothervalue"
         },
         // d: 54
       }
