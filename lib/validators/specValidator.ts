@@ -1,6 +1,9 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
+/* tslint:disable-next-line:no-reference */
+/// <reference path="./../../types/sway.d.ts" />
+
 import * as util from "util"
 import * as path from "path"
 import * as Sway from "sway"
