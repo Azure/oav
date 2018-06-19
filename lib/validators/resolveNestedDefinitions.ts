@@ -64,6 +64,7 @@ class Result {
       case "number":
       case "string":
       case "boolean":
+      case "null":
       case "file":
         return model
     }
