@@ -3,9 +3,6 @@
 
 import * as fs from "fs"
 import * as path from "path"
-import * as msrest from "ms-rest"
-import * as msrestazure from "ms-rest-azure"
-import { ResourceManagementClient } from "azure-arm-resource"
 import { log } from "./util/logging"
 import * as utils from "./util/utils"
 import { SpecValidator, SpecValidationResult } from "./validators/specValidator"
@@ -81,7 +78,6 @@ export async function validateSpec(specPath: string, options: Options|undefined)
   try {
     await validator.initialize()
     log.info(`Semantically validating  ${specPath}:\n`)
-    const result = await validator.validateSpec()
     updateEndResultOfSingleValidation(validator)
     logDetailedInfo(validator)
     return validator.specValidationResult
