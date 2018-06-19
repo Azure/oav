@@ -78,6 +78,7 @@ export async function validateSpec(specPath: string, options: Options|undefined)
   try {
     await validator.initialize()
     log.info(`Semantically validating  ${specPath}:\n`)
+    const result = await validator.validateSpec()
     updateEndResultOfSingleValidation(validator)
     logDetailedInfo(validator)
     return validator.specValidationResult
