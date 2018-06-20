@@ -2,11 +2,11 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 /* tslint:disable-next-line:no-reference */
-/// <reference path="./../../types/sway.d.ts" />
+/// <reference path="./../../types/yasway.d.ts" />
 
 import * as util from "util"
 import * as path from "path"
-import * as Sway from "sway"
+import * as Sway from "yasway"
 import * as msRest from "ms-rest"
 
 const HttpRequest = msRest.WebResource
@@ -20,7 +20,7 @@ import { validateResponse } from "../util/validationResponse"
 import { Error } from "../util/error"
 import { Unknown } from "../util/unknown"
 import * as C from "../util/constants"
-import { Operation } from "sway"
+import { Operation } from "yasway"
 
 const ErrorCodes = C.ErrorCodes;
 

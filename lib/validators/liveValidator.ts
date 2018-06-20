@@ -15,7 +15,7 @@ import * as utils from "../util/utils"
 import * as models from "../models"
 import * as http from "http"
 import { PotentialOperationsResult } from "../models/potentialOperationsResult"
-import { Operation, PathObject } from "sway"
+import { Operation, PathObject } from "yasway"
 import { ParsedUrlQuery } from "querystring"
 import { Unknown } from "../util/unknown"
 

@@ -8,7 +8,7 @@ import * as glob from "glob"
 import { LiveValidator } from "../lib/validators/liveValidator"
 import * as Constants from "../lib/util/constants"
 import * as utils from "../lib/util/utils"
-import { Responses } from "sway"
+import { Responses } from "yasway"
 
 const livePaths = glob.sync(path.join(__dirname, "liveValidation/swaggers/**/live/*.json"))
 describe("Live Validator", () => {
