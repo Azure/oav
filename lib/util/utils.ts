@@ -676,8 +676,9 @@ export function allowNullType<T extends Entity>(entity: T, isPropRequired?: bool
     && entity.$ref
     && shouldAcceptNullValue(entity["x-nullable"], isPropRequired)) {
     const savedEntity = entity
-    entity = {} as T
-    entity.oneOf = [savedEntity, { type: "null" }]
+    entity = {
+      anyOf: [savedEntity, { type: "null" }]
+    }
   }
   return entity
 }

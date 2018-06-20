@@ -3,9 +3,6 @@
 
 import * as fs from "fs"
 import * as path from "path"
-import * as msrest from "ms-rest"
-import * as msrestazure from "ms-rest-azure"
-import { ResourceManagementClient } from "azure-arm-resource"
 import { log } from "./util/logging"
 import * as utils from "./util/utils"
 import { SpecValidator, SpecValidationResult } from "./validators/specValidator"

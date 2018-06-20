@@ -314,6 +314,29 @@
         }
       }
     },
+    "/foo/definitionWithReferenceNullOperation": {
+      "get": {
+        "tags": [
+          "getTag"
+        ],
+        "operationId": "definitionWithReferenceNull_Get",
+        "description": "Operation to test invalid_type for nulls",
+        "x-ms-examples": {
+          "required prop operation": {
+            "$ref": "./examples/definitionWithReferenceNullOperation.json"
+          }
+        },
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "success response",
+            "schema": {
+              "$ref": "#/definitions/DefinitionWithReference"
+            }
+          }
+        }
+      }
+    },
     "/foo/definitionWithReferenceNotNullableOperation": {
       "get": {
         "tags": [
