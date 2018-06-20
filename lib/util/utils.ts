@@ -573,11 +573,12 @@ export function isPureObject(model: JsonModel): boolean {
 interface Entity {
   in?: string
   type?: string
-  additionalProperties?: any
-  items?: any
+  additionalProperties?: JsonModel|boolean
+  items?: JsonModel
   "x-nullable"?: any
-  oneOf?: any
+  oneOf?: JsonModel[]
   $ref?: any
+  anyOf?: JsonModel[]
 }
 
 /**
@@ -597,7 +598,7 @@ export function relaxEntityType<T extends Entity>(entity: T, isRequired?: Unknow
   if (isPureObject(entity) && entity.type) {
     delete entity.type
   }
-  if (entity.additionalProperties
+  if (typeof entity.additionalProperties === "object"
     && isPureObject(entity.additionalProperties)
     && entity.additionalProperties.type) {
     delete entity.additionalProperties.type
@@ -678,7 +679,7 @@ export function allowNullType<T extends Entity>(entity: T, isPropRequired?: bool
     const savedEntity = entity
     entity = {
       anyOf: [savedEntity, { type: "null" }]
-    }
+    } as T
   }
   return entity
 }
