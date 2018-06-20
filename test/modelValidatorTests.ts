@@ -329,6 +329,18 @@ describe("Model Validation", () => {
       console.log(result)
     })
 
+    it("should pass for definitionWithReferenceNull_Get", async () => {
+      const specPath2 =
+        `${__dirname}/modelValidation/swaggers/specification/nullableTypes/invalid_type_test.json`
+      const operationIds = "definitionWithReferenceNull_Get"
+      const result = await validate.validateExamples(
+        specPath2, operationIds, { consoleLogLevel: "off" })
+      assert(
+        result.validityStatus === true,
+        `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`)
+      console.log(result)
+    })
+
     it("should pass for definitionWithReferenceNotNullableOperation_Get", async () => {
       const specPath2 =
         `${__dirname}/modelValidation/swaggers/specification/nullableTypes/invalid_type_test.json`

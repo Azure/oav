@@ -559,11 +559,12 @@ export interface Model {
   additionalProperties?: Model|false
   "x-nullable"?: Unknown
   in?: Unknown
-  oneOf?: Unknown
+  oneOf?: Model[]
   $ref?: string
   required?: Unknown[]|false
   schema?: Model
   allOf?: Ref[]
+  anyOf?: Model[]
   description?: Unknown
   discriminator?: string
   "x-ms-discriminator-value"?: string
@@ -698,8 +699,9 @@ export function allowNullType(entity: Model, isPropRequired?: boolean|{}): Model
     && entity.$ref
     && shouldAcceptNullValue(entity["x-nullable"], isPropRequired)) {
     const savedEntity = entity
-    entity = {}
-    entity.oneOf = [savedEntity, { type: "null" }]
+    entity = {
+      anyOf: [savedEntity, { type: "null" }]
+    }
   }
   return entity
 }

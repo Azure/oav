@@ -1,0 +1,11 @@
+{
+  "parameters": {},
+  "responses": {
+    "200": {
+      "headers": {},
+      "body": {
+        "namedProp": null
+      }
+    }
+  }
+}
