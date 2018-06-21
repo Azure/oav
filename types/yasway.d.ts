@@ -41,6 +41,7 @@ declare module "yasway" {
   }
 
   interface JsonOperation {
+    operationId?: string
     parameters?: JsonParameter[]
     consumes?: string[]
     produces?: string[]

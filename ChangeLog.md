@@ -1,5 +1,5 @@
-### 0.4.51
-- Nested Properties
+### 06/21/2018 0.4.54
+- Apply rules for Nested Properties
 
 ### 06/19/2018 0.4.49
 - Bug fix: Data is valid against more than one schema from `oneOf` [#248](https://github.com/Azure/oav/pull/248)

@@ -666,8 +666,9 @@ export function allowNullType<T extends Entity>(entity: T, isPropRequired?: bool
         entity.oneOf = [{ type: entity.type }, { type: "null" }]
         delete entity.type
       } else {
-        entity = {} as T
-        entity.oneOf = [savedEntity, { type: "null" }]
+        entity = {
+          oneOf: [savedEntity, { type: "null" }]
+        } as T
       }
     }
   }

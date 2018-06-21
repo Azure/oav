@@ -18,21 +18,22 @@ export function resolveNestedDefinitions(spec: JsonSpec): JsonDefinitions {
       result.resolveDefinition(name, definition)
     }
   }
-  // TODO: scan parameters and response
   result.resolveParameterMap(spec, "parameters")
   result.resolveParameterMap(spec, "responses")
   const paths = spec.paths
   if (paths) {
-    for (const name in paths) {
-      const path = paths[name]
-      const pathName = `paths.${name}`
+    let i = 0
+    for (const url in paths) {
+      const path = paths[url]
+      const pathName = `paths_${i}`
       result.resolveParameterArray(pathName, path.parameters)
       for (const method of methods) {
         const operation = path[method]
         if (operation !== undefined) {
-          result.resolveParameterArray(`${pathName}.${method}`, operation.parameters)
+          result.resolveParameterArray(`operations.${operation.operationId}`, operation.parameters)
         }
       }
+      ++i
     }
   }
   return result.extra
@@ -64,13 +65,6 @@ class Result {
     }
   }
 
-  public resolveParameter(path: string, name: string, parameter: JsonParameter): void {
-    const schema = parameter.schema
-    if (schema) {
-      this.resolveNested(path, name, schema)
-    }
-  }
-
   public resolveDefinition(name: string, definition: JsonModel): JsonModel {
 
     updateProperty(definition,
@@ -93,7 +87,7 @@ class Result {
 
     const resolveNestedArrayProperty = (v: JsonModel[]|undefined, n: string) =>
       v !== undefined
-        ? v.map((x, i) => this.resolveNested(name, `${n}[${i}]`, x))
+        ? v.map((x, i) => this.resolveNested(name, `${n}_${i}`, x))
         : undefined
 
     updateProperty(definition, "oneOf", resolveNestedArrayProperty)
@@ -101,6 +95,13 @@ class Result {
     updateProperty(definition, "anyOf", resolveNestedArrayProperty)
 
     return definition
+  }
+
+  private resolveParameter(path: string, name: string, parameter: JsonParameter): void {
+    const schema = parameter.schema
+    if (schema) {
+      this.resolveNested(path, name, schema)
+    }
   }
 
   private resolveNested(objectName: string, propertyName: string, model: JsonModel): JsonModel {
