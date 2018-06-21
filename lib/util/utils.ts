@@ -13,7 +13,7 @@ import * as lodash from "lodash"
 import * as http from "http"
 import { Unknown } from "./unknown"
 import { MapObject } from "./mapObject"
-import { JsonModel, JsonSpec, JsonParameter, Parameter } from "sway"
+import { JsonModel, JsonSpec, JsonParameter, Parameter } from "yasway"
 
 export type DocCache = MapObject<Promise<JsonSpec>>
 

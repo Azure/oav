@@ -16,7 +16,7 @@ import { SourceLocation } from
   "@microsoft.azure/autorest-extension-base/dist/lib/types"
 import { Unknown } from "../util/unknown"
 import { Error } from "../util/error"
-import { JsonSpec } from "sway"
+import { JsonSpec } from "yasway"
 
 const openAPIDocUrl = "https://github.com/Azure/oav"
 

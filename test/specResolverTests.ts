@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import { SpecResolver, Options } from "../lib/validators/specResolver"
-import { JsonSpec } from "sway"
+import { JsonSpec } from "yasway"
 
 describe("specResolver", () => {
   it("create", async () => {

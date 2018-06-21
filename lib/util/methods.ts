@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import { Methods, JsonPath, JsonOperation } from "sway"
+import { Methods, JsonPath, JsonOperation } from "yasway"
 
 export const methods: Methods[] = ["get", "put", "post", "delete", "options", "head", "patch"]
 

@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import * as sway from "sway"
+import * as sway from "yasway"
 import assert from "assert"
 import { SpecValidator } from "../lib/validators/specValidator"
 

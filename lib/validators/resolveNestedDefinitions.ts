@@ -3,7 +3,7 @@
 
 import {
   JsonModel, JsonDefinitions, JsonSpec, JsonParameters, JsonOperation, JsonParameter
-} from "sway"
+} from "yasway"
 import { updateProperty } from "../util/updateProperty"
 import { objectMap } from "../util/mapObject"
 import { methods } from "../util/methods"
@@ -19,8 +19,8 @@ export function resolveNestedDefinitions(spec: JsonSpec): JsonDefinitions {
     }
   }
   // TODO: scan parameters and response
-  result.resolveParameters(spec, "parameters")
-  result.resolveParameters(spec, "responses")
+  result.resolveParameterMap(spec, "parameters")
+  result.resolveParameterMap(spec, "responses")
   const paths = spec.paths
   if (paths) {
     for (const name in paths) {
@@ -42,7 +42,7 @@ class Result {
 
   public readonly extra: JsonDefinitions = {}
 
-  public resolveParameters<
+  public resolveParameterMap<
     T extends { readonly [P in K]?: JsonParameters }, K extends keyof T>(
     obj: T, k: K)
     : void {

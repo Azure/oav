@@ -17,7 +17,7 @@ import {
   JsonDefinitions,
   JsonParameters,
   JsonParameter
-} from "sway"
+} from "yasway"
 import { defaultIfUndefinedOrNull } from "../util/defaultIfUndefinedOrNull"
 import { MapObject } from "../util/mapObject"
 import { resolveNestedDefinitions } from "./resolveNestedDefinitions"

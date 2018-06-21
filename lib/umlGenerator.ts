@@ -5,7 +5,7 @@ import yuml2svg = require("yuml2svg")
 import * as utils from "./util/utils"
 import { log } from "./util/logging"
 import { Unknown } from "./util/unknown"
-import { JsonSpec, JsonModel, JsonDefinitions } from "sway"
+import { JsonSpec, JsonModel, JsonDefinitions } from "yasway"
 
 export interface Options {
   readonly direction?: Unknown
