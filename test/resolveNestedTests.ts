@@ -5,7 +5,7 @@ import * as sway from "yasway"
 import assert from "assert"
 import { SpecValidator } from "../lib/validators/specValidator"
 
-describe("sway", () => {
+describe("resolve nested properties", () => {
   // SpecResolver:
   // - resolveAllOfInDefinitions (partly recursive, allOf.allOf only)
   // - resolveDiscriminator (partly recursive)
@@ -75,13 +75,5 @@ describe("sway", () => {
     const apiOperation = apiOperations[0]
     const apiValidationResult = apiOperation.validateRequest(request)
     assert.equal(apiValidationResult.errors.length, 0)
-
-    /*
-    const result = await sway.create(options)
-    const operations = result.getOperations()
-    const operation = operations[0]
-    const validationResult = operation.validateRequest(request)
-    assert.equal(validationResult.errors.length, 0)
-    */
   })
 })
