@@ -10,11 +10,18 @@ import { log } from "../util/logging"
 import { PolymorphicTree } from "./polymorphicTree"
 import { Unknown } from "../util/unknown"
 import {
-  JsonModel, JsonPath, JsonSpec, JsonOperation, JsonDefinitions, JsonParameters, JsonParameter
+  JsonModel,
+  JsonPath,
+  JsonSpec,
+  JsonOperation,
+  JsonDefinitions,
+  JsonParameters,
+  JsonParameter
 } from "sway"
 import { defaultIfUndefinedOrNull } from "../util/defaultIfUndefinedOrNull"
 import { MapObject } from "../util/mapObject"
 import { resolveNestedDefinitions } from "./resolveNestedDefinitions"
+import { getOperations } from "../util/methods"
 
 const ErrorCodes = C.ErrorCodes
 
@@ -28,23 +35,6 @@ export interface Options {
   shouldResolveParameterizedHost?: boolean|null
   shouldResolveNullableTypes?: boolean
   shouldModelImplicitDefaultResponse?: boolean|null
-}
-
-function *getOperations(p: JsonPath) {
-  function *all() {
-    yield p.get
-    yield p.put
-    yield p.post
-    yield p.delete
-    yield p.options
-    yield p.head
-    yield p.patch
-  }
-  for (const v of all()) {
-    if (v !== undefined) {
-      yield v
-    }
-  }
 }
 
 export interface Paths {
@@ -186,7 +176,7 @@ export class SpecResolver {
         await this.resolveRelativePaths()
       }
       // resolve nested definitions
-      this.specInJson.definitions = resolveNestedDefinitions(this.specInJson.definitions)
+      this.specInJson.definitions = resolveNestedDefinitions(this.specInJson)
       // other resolvers
       if (this.options.shouldResolveAllOf) {
         this.resolveAllOfInDefinitions()

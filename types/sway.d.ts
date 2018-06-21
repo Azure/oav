@@ -49,15 +49,14 @@ declare module "sway" {
     }
   }
 
-  interface JsonPath {
+  type Methods = "get"|"put"|"post"|"delete"|"options"|"head"|"patch"
+
+  type JsonPathMethods = {
+    [m in Methods]?: JsonOperation
+  }
+
+  interface JsonPath extends JsonPathMethods {
     parameters?: JsonParameter[]
-    get?: JsonOperation
-    put?: JsonOperation
-    post?: JsonOperation
-    delete?: JsonOperation
-    options?: JsonOperation
-    head?: JsonOperation
-    patch?: JsonOperation
   }
 
   interface JsonPaths {
@@ -82,6 +81,7 @@ declare module "sway" {
     consumes?: string[]
     produces?: string[]
     parameters?: JsonParameters
+    responses?: JsonParameters
     readonly documents?: any
   }
 
