@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-declare module "sway" {
+declare module "yasway" {
 
   export interface JsonRef {
     readonly $ref: string

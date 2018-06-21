@@ -5,7 +5,7 @@ import * as JsonRefs from "json-refs"
 import * as fs from "fs"
 import * as path from "path"
 import * as utils from "./util/utils"
-import * as Sway from "sway"
+import * as Sway from "yasway"
 import * as msRest from "ms-rest"
 
 const HttpRequest = msRest.WebResource

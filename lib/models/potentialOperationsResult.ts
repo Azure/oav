@@ -5,7 +5,7 @@
  */
 
 import { LiveValidationError } from "./liveValidationError"
-import { Operation } from "sway"
+import { Operation } from "yasway"
 
 /**
  * @class
