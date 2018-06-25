@@ -16,7 +16,7 @@ import { SourceLocation } from
   "@microsoft.azure/autorest-extension-base/dist/lib/types"
 import { Unknown } from "../util/unknown"
 import { Error } from "../util/error"
-import { Spec } from "../validators/specResolver"
+import { JsonSpec } from "yasway"
 
 const openAPIDocUrl = "https://github.com/Azure/oav"
 
@@ -84,7 +84,7 @@ export async function openApiValidationExample(
   if (!options) { options = {} }
   options.consoleLogLevel = "off"
   log.consoleLogLevel = options.consoleLogLevel
-  const specVal = new specValidator.SpecValidator(swaggerFileName, swagger as Spec, options)
+  const specVal = new specValidator.SpecValidator(swaggerFileName, swagger as JsonSpec, options)
   // console.error(JSON.stringify(swagger, null, 2))
   await specVal.initialize()
   try {

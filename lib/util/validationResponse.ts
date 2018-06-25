@@ -4,7 +4,7 @@
 import * as pointer from "json-pointer"
 import { Error } from "./error"
 import { Unknown } from "./unknown"
-import { MapObject } from "./utils"
+import { MapObject } from "./mapObject"
 
 interface ValidationError {
   validationCategory: string

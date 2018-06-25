@@ -132,7 +132,7 @@ describe("Model Validation", () => {
       if (errors === undefined) {
         throw new Error("innerErrors is undefined")
       }
-      assert.equal(errors[0].code, "ONE_OF_MISSING")
+      assert.equal(errors[0].code, "ANY_OF_MISSING")
     })
 
     it("should pass for Entities_Search", async () => {

@@ -20,7 +20,8 @@ import { validateResponse } from "../util/validationResponse"
 import { Error } from "../util/error"
 import { Unknown } from "../util/unknown"
 import * as C from "../util/constants"
-import { Operation } from "yasway"
+import { Operation, JsonSpec } from "yasway"
+import { MapObject } from "../util/mapObject"
 
 const ErrorCodes = C.ErrorCodes;
 
@@ -129,7 +130,7 @@ export class SpecValidator {
 
   private specDir: Unknown
 
-  private specInJson: specResolver.Spec
+  private specInJson: JsonSpec
 
   private specResolver: SpecResolver|null
 
@@ -179,7 +180,7 @@ export class SpecValidator {
    *
    * @return {object} An instance of the SpecValidator class.
    */
-  constructor(specPath: string, specInJson: specResolver.Spec|undefined|null, options: Options) {
+  constructor(specPath: string, specInJson: JsonSpec|undefined|null, options: Options) {
     if (specPath === null
       || specPath === undefined
       || typeof specPath.valueOf() !== "string"
@@ -195,7 +196,7 @@ export class SpecValidator {
     }
     this.specPath = specPath
     this.specDir = path.dirname(this.specPath)
-    this.specInJson = specInJson as specResolver.Spec
+    this.specInJson = specInJson as JsonSpec
     this.specResolver = null
     this.specValidationResult = { validityStatus: true, operations: {} }
     this.swaggerApi = null
@@ -329,7 +330,7 @@ export class SpecValidator {
     let operations = this.swaggerApi.getOperations()
     if (operationIds) {
       const operationIdsObj: { [name: string]: Unknown } = {}
-      operationIds.trim().split(",").map(item => operationIdsObj[item.trim()] = 1)
+      operationIds.trim().split(",").forEach(item => operationIdsObj[item.trim()] = 1)
       const operationsToValidate = operations
         .filter(item => Boolean(operationIdsObj[item.operationId]))
       if (operationsToValidate.length) { operations = operationsToValidate }
@@ -912,11 +913,10 @@ export class SpecValidator {
           const isOctetStream = (consumes: string[]) => consumes.some(
             contentType => contentType === "application/octet-stream")
 
-          if (parameter.schema.format === "file" && isOctetStream(operation.consumes)) {
-            options.headers["Content-Type"] = "application/octet-stream"
-          } else {
-            options.headers["Content-Type"] = operation.consumes[0]
-          }
+          options.headers["Content-Type"] =
+            parameter.schema.format === "file" && isOctetStream(operation.consumes)
+              ? "application/octet-stream"
+              : operation.consumes[0]
         }
       } else if (location === "header") {
         options.headers[parameter.name] = parameterValue
@@ -1159,9 +1159,7 @@ export class SpecValidator {
     if (operation === null || operation === undefined || typeof operation !== "object") {
       throw new Error("operation cannot be null or undefined and must be of type 'object'.")
     }
-    const result: {
-      [name: string]: Sway.ResponseValidation
-    } = {}
+    const result: MapObject<Sway.ResponseValidation> = {}
     const responses = operation.getResponses()
     for (const response of responses) {
       if (response.examples) {
