@@ -13,7 +13,7 @@ import * as lodash from "lodash"
 import * as http from "http"
 import { Unknown } from "./unknown"
 import { MapObject } from "./mapObject"
-import { JsonModel, JsonSpec, JsonParameter, Parameter } from "yasway"
+import { JsonModel, JsonSpec, JsonParameter, Parameter, ModelType } from "yasway"
 
 export type DocCache = MapObject<Promise<JsonSpec>>
 
@@ -572,7 +572,7 @@ export function isPureObject(model: JsonModel): boolean {
 
 interface Entity {
   in?: string
-  type?: string
+  type?: ModelType
   additionalProperties?: JsonModel|boolean
   items?: JsonModel
   "x-nullable"?: any

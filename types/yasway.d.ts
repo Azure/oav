@@ -20,8 +20,10 @@ declare module "yasway" {
     type?: any
   }
 
+  type ModelType = "integer"|"number"|"string"|"boolean"|"null"|"file"|"object"|"array"
+
   interface JsonModel {
-    type?: "integer"|"number"|"string"|"boolean"|"null"|"file"|"object"|"array"
+    type?: ModelType
     items?: JsonModel
     properties?: JsonProperties
     additionalProperties?: JsonModel|boolean
