@@ -231,12 +231,11 @@ export class SpecResolver {
    *    If provided the value should be 'all'. This indicates that 'local' references should also be
    *    resolved apart from the default ones.
    *
-   * @return {object} doc fully resolved json document
+   * @return {Promise<void>}
    */
   private async resolveRelativePaths(doc?: Unknown, docPath?: string, filterType?: string)
     : Promise<void> {
 
-    const self = this
     let docDir
 
     const options = {
@@ -246,11 +245,11 @@ export class SpecResolver {
     }
 
     if (!doc) {
-      doc = self.specInJson
+      doc = this.specInJson
     }
     if (!docPath) {
-      docPath = self.specPath
-      docDir = self.specDir
+      docPath = this.specPath
+      docDir = this.specDir
     }
     if (!docDir) {
       docDir = path.dirname(docPath)
@@ -262,7 +261,7 @@ export class SpecResolver {
     const allRefsRemoteRelative = JsonRefs.findRefs(doc, options)
     const promiseFactories = utils.getKeys(allRefsRemoteRelative).map(refName => {
       const refDetails = allRefsRemoteRelative[refName]
-      return () => self.resolveRelativeReference(refName, refDetails, doc, docPath)
+      return () => this.resolveRelativeReference(refName, refDetails, doc, docPath)
     });
     if (promiseFactories.length) {
       await utils.executePromisesSequentially(promiseFactories)
@@ -458,7 +457,7 @@ export class SpecResolver {
    *
    * @return {object} returns the merged child object
    */
-  private mergeParentAllOfInChild(parent: JsonModel, child: JsonModel) {
+  private mergeParentAllOfInChild(parent: JsonModel, child: JsonModel): JsonModel {
     const self = this
     if (!parent || (parent && typeof parent !== "object")) {
       throw new Error(`parent must be of type "object".`)
@@ -929,12 +928,12 @@ export class SpecResolver {
    * @returns {PolymorphicTree} An array of reference objects that comprise of the
    *    parent and its children.
    */
-  private buildOneOfReferences(rootNode: PolymorphicTree): Set<PolymorphicTree> {
-    let result = new Set()
+  private buildOneOfReferences(rootNode: PolymorphicTree): Set<JsonModel> {
+    let result = new Set<JsonModel>()
     result.add({ $ref: `#/definitions/${rootNode.name}` })
-    for (const en of rootNode.children.entries()) {
-      if (en[1]) {
-        result = new Set([...result, ...this.buildOneOfReferences(en[1])])
+    for (const enObj of rootNode.children.values()) {
+      if (enObj) {
+        result = new Set([...result, ...this.buildOneOfReferences(enObj)])
       }
     }
     return result

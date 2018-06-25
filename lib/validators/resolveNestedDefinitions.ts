@@ -2,63 +2,60 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import {
-  JsonModel, JsonDefinitions, JsonSpec, JsonParameters, JsonOperation, JsonParameter
+  JsonModel, JsonDefinitions, JsonSpec, JsonParameters, JsonParameter
 } from "yasway"
 import { updateProperty } from "../util/updateProperty"
 import { objectMap } from "../util/mapObject"
 import { methods } from "../util/methods"
 
 export function resolveNestedDefinitions(spec: JsonSpec): JsonDefinitions {
-  const result = new Result()
+  const context = new Context()
   const definitions = spec.definitions
   if (definitions) {
-    for (const name in definitions) {
-      const definition = definitions[name]
-      result.extra[name] = definition
-      result.resolveDefinition(name, definition)
+    for (const [name, definition] of Object.entries(definitions)) {
+      context.newDefinitions[name] = context.resolveDefinition(name, definition)
     }
   }
-  result.resolveParameterMap(spec, "parameters")
-  result.resolveParameterMap(spec, "responses")
+  context.resolveParameterMap(spec, "parameters")
+  context.resolveParameterMap(spec, "responses")
   const paths = spec.paths
   if (paths) {
     let i = 0
-    for (const url in paths) {
-      const path = paths[url]
+    for (const [url, path] of Object.entries(paths)) {
       const pathName = `paths_${i}`
-      result.resolveParameterArray(pathName, path.parameters)
+      context.resolveParameterArray(pathName, path.parameters)
       for (const method of methods) {
         const operation = path[method]
         if (operation !== undefined) {
-          result.resolveParameterArray(`operations.${operation.operationId}`, operation.parameters)
+          context.resolveParameterArray(`operations.${operation.operationId}`, operation.parameters)
         }
       }
       ++i
     }
   }
-  return result.extra
+  return context.newDefinitions
 }
 
-class Result {
+class Context {
 
-  public readonly extra: JsonDefinitions = {}
+  public readonly newDefinitions: JsonDefinitions = {}
 
   public resolveParameterMap<
     T extends { readonly [P in K]?: JsonParameters }, K extends keyof T>(
     obj: T, k: K)
     : void {
-    const parameters = obj[k]
-    const name = k as string
+    const parameters: JsonParameters|undefined = obj[k]
+    const prefix = k as string
     if (parameters) {
-      for (const pn in parameters) {
-        this.resolveParameter(name, pn, parameters[pn])
+      for (const [name, parameter] of Object.entries(parameters)) {
+        this.resolveParameter(prefix, name, parameter)
       }
     }
   }
 
-  public resolveParameterArray(path: string, parameters: JsonParameter[]|undefined): void {
+  public resolveParameterArray(prefix: string, parameters: JsonParameter[]|undefined): void {
     if (parameters) {
-      const parametersName = `${path}.parameters`
+      const parametersName = `${prefix}.parameters`
       for (const parameter of parameters) {
         this.resolveParameter(parametersName, parameter.name, parameter)
       }
@@ -97,18 +94,26 @@ class Result {
     return definition
   }
 
-  private resolveParameter(path: string, name: string, parameter: JsonParameter): void {
+  /**
+   * Resolve an OpenAPI parameter.
+   * @param prefix a parameter name prefix.
+   * @param name a parameter name.
+   * @param parameter a parameter value.
+   */
+  private resolveParameter(prefix: string, name: string, parameter: JsonParameter): void {
     const schema = parameter.schema
     if (schema) {
-      this.resolveNested(path, name, schema)
+      this.resolveNested(prefix, name, schema)
     }
   }
 
   private resolveNested(objectName: string, propertyName: string, model: JsonModel): JsonModel {
+    // ignore references
     if (model.$ref !== undefined) {
       return model
     }
 
+    // ignore primitive types
     switch (model.type) {
       case "integer":
       case "number":
@@ -121,7 +126,7 @@ class Result {
 
     const name = `${objectName}.${propertyName}`
     const result = this.resolveDefinition(name, model)
-    this.extra[name] = result
+    this.newDefinitions[name] = result
     return { $ref: `#/definitions/${name}` }
   }
 }

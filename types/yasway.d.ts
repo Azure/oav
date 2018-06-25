@@ -21,7 +21,7 @@ declare module "yasway" {
   }
 
   interface JsonModel {
-    type?: string
+    type?: "integer"|"number"|"string"|"boolean"|"null"|"file"|"object"|"array"
     items?: JsonModel
     properties?: JsonProperties
     additionalProperties?: JsonModel|boolean
