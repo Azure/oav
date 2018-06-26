@@ -75,7 +75,7 @@ export async function parseJson(specPath: string): Promise<Spec> {
   } else {
     // local filepath
     try {
-      const fileContent = stripBOM(fs.readFileSync(specPath, "utf8"))
+      const fileContent = fs.readFileSync(specPath, "utf8")
       const result = parseContent(specPath, fileContent)
       docCache[specPath] = Promise.resolve(result)
       return result
@@ -101,10 +101,11 @@ export async function parseJson(specPath: string): Promise<Spec> {
  */
 export function parseContent(filePath: string, fileContent: string): Spec {
   let result = null
+  const sanitizedContent = stripBOM(fileContent)
   if (/.*\.json$/ig.test(filePath)) {
-    result = JSON.parse(fileContent)
+    result = JSON.parse(sanitizedContent)
   } else if (/.*\.ya?ml$/ig.test(filePath)) {
-    result = YAML.safeLoad(fileContent)
+    result = YAML.safeLoad(sanitizedContent)
   } else {
     const msg =
       `We currently support "*.json" and "*.yaml | *.yml" file formats for validating swaggers.\n` +

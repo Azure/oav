@@ -1,3 +1,9 @@
+### 06/26/2018 0.4.51
+- Bug fix: Do BOM stripping for remote URL's [#266](https://github.com/Azure/oav/issues/266).
+
+### 06/20/2018 0.4.50
+- Replace  sway dependency with yasway.
+
 ### 06/19/2018 0.4.49
 - Bug fix: Data is valid against more than one schema from `oneOf` [#248](https://github.com/Azure/oav/pull/248)
   The problem occurs when referenced model may also accept `null`. The fix is replacing `oneOf` with `anyOf`.
