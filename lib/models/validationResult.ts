@@ -21,7 +21,7 @@
  * status of live request validation.
  *
  * @member {array} [requestValidationResult.operationInfo] The corresponding
- * operation(s) in openapi spec that was used for validating the request.
+ * operation(s) in OpenAPI spec that was used for validating the request.
  *
  * @member {array} [requestValidationResult.errors] Provides more information
  * about live response validation.

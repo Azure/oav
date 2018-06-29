@@ -229,8 +229,9 @@ export class SpecResolver {
    *
    * @return {Promise<void>}
    */
-  private async resolveRelativePaths(doc?: Unknown, docPath?: string, filterType?: string)
-    : Promise<void> {
+  private async resolveRelativePaths(
+    doc?: Unknown, docPath?: string, filterType?: string
+  ): Promise<void> {
 
     let docDir
 
@@ -295,8 +296,8 @@ export class SpecResolver {
    * @return undefined the modified object
    */
   private async resolveRelativeReference(
-    refName: string, refDetails: RefDetails, doc: Unknown, docPath: string|undefined)
-    : Promise<void> {
+    refName: string, refDetails: RefDetails, doc: Unknown, docPath: string|undefined
+  ): Promise<void> {
 
     if (!refName || (refName && typeof refName.valueOf() !== "string")) {
       throw new Error('refName cannot be null or undefined and must be of type "string".')
@@ -771,8 +772,9 @@ export class SpecResolver {
    * [here](https://bit.ly/2sw5MOa)
    * for detailed structure of the object.
    */
-  private updateReferencesWithOneOf(subTreeMap: Map<string, PolymorphicTree>, references: any[])
-    : void {
+  private updateReferencesWithOneOf(
+    subTreeMap: Map<string, PolymorphicTree>, references: any[]
+  ): void {
 
     const spec = this.specInJson
 
@@ -815,8 +817,8 @@ export class SpecResolver {
    * inheritance chain.
    */
   private createPolymorphicTree(
-    name: string, discriminator: string, subTreeMap: Map<string, PolymorphicTree>)
-    : PolymorphicTree {
+    name: string, discriminator: string, subTreeMap: Map<string, PolymorphicTree>
+  ): PolymorphicTree {
 
     if (name === null
       || name === undefined

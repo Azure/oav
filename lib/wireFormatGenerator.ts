@@ -160,7 +160,8 @@ export class WireFormatGenerator {
    * @return {object} err Return the constructed Error object.
    */
   private constructErrorObject(
-    code: any, message: string, innerErrors: any[], skipValidityStatusUpdate?: boolean) {
+    code: any, message: string, innerErrors: any[], skipValidityStatusUpdate?: boolean
+  ) {
     const err = {
       code,
       message,
@@ -196,7 +197,8 @@ export class WireFormatGenerator {
   }
 
   private resolveRelativeReference(
-    refName: any, refDetails: any, doc: any, docPath: any): Promise<any> {
+    refName: any, refDetails: any, doc: any, docPath: any
+  ): Promise<any> {
 
     if (!refName || (refName && typeof refName.valueOf() !== "string")) {
       throw new Error('refName cannot be null or undefined and must be of type "string".')

@@ -210,8 +210,9 @@ export class LiveValidator {
    *
    * @returns {PotentialOperationsResult} Potential operation result object.
    */
-  public getPotentialOperations(requestUrl: string, requestMethod: string)
-    : PotentialOperationsResult {
+  public getPotentialOperations(
+    requestUrl: string, requestMethod: string
+  ): PotentialOperationsResult {
 
     if (_.isEmpty(this.cache)) {
       const msgStr =
@@ -472,7 +473,8 @@ export class LiveValidator {
    * @returns {Array<Operation>} List of potential operations matching the requestPath.
    */
   private getPotentialOperationsHelper(
-    requestPath: string, requestMethod: string, operations: Operation[]): Operation[] {
+    requestPath: string, requestMethod: string, operations: Operation[]
+  ): Operation[] {
     if (requestPath === null
       || requestPath === undefined
       || typeof requestPath.valueOf() !== "string"

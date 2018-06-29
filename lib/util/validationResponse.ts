@@ -43,7 +43,8 @@ export class ValidateResponse {
   }
 
   public constructErrors(
-    validationError: Error, specPath: Unknown, providerNamespace: Unknown): ValidationError[] {
+    validationError: Error, specPath: Unknown, providerNamespace: Unknown
+  ): ValidationError[] {
     const self = this
     if (!validationError) {
       throw new Error("validationError cannot be null or undefined.")

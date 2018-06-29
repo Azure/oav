@@ -19,8 +19,8 @@
  * validation happened. This will help find the problematic information in the
  * spec and will be useful in preparing report.
  *
- * @member {string} apiVersion Describes the api-version of the openapi
- * specification. This will help find the openapi spec corresponding to that
+ * @member {string} apiVersion Describes the api-version of the OpenAPI
+ * specification. This will help find the OpenAPI spec corresponding to that
  * api-version and will be useful in preparing report.
  *
  */

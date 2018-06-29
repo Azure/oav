@@ -93,7 +93,7 @@ ${this.getRequestBody()}
     return requestTemplate
   }
 
-  private populateResponse(response: Response, responseType: string) {
+  private populateResponse(response: Response, responseType: string): string {
     if (!responseType) { responseType = "Response" }
     const responseGuid = uuid.v4()
     const responseTemplate = `
@@ -121,7 +121,7 @@ ${this.getResponseBody(response)}
     return responseTemplate
   }
 
-  private populateCurl() {
+  private populateCurl(): string {
     const method = this.request.method
     const url = this.request.url
     const requestHeaders = this.getCurlRequestHeaders()

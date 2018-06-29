@@ -4,7 +4,7 @@
 import { objectPathAppend } from "./objectPath"
 import { Tracked, tracked } from "./tracked"
 
-export function arrayMap<T>(array: Tracked<T[]>, f: (value: Tracked<T>) => T) {
+export function arrayMap<T>(array: Tracked<T[]>, f: (value: Tracked<T>) => T): T[] {
   const path = array.path
   const value = array.value
   let same = true

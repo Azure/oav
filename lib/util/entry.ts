@@ -14,9 +14,3 @@ export function entryName<T>(e: Entry<T>): string {
 export function entryValue<T>(e: Entry<T>): T {
   return e[1]
 }
-
-/*
-export function entryMap<T>(e: Entry<T>, f: (value: T, name: string) => T): Entry<T> {
-  return entry(entryName(e), f(entryValue(e), entryName(e)))
-}
-*/

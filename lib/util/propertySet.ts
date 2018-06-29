@@ -18,9 +18,8 @@ export type PropertySetTransformation<T> = {
 /**
  * Clones the given `propertySet` and transforms its properties according to the given
  * `propertyTransformations`.
- * @param propertySet must be a pure data object with properties.
+ * @param propertySet must be a tracked object of a pure data object with properties.
  * @param propertySetTransformation
- * @param path
  * @returns a new object with transformed properties.
  */
 export function propertySetMap<T>(
