@@ -3,13 +3,9 @@
 
 import yuml2svg = require("yuml2svg")
 import * as utils from "./util/utils"
-import * as C from "./util/constants"
 import { log } from "./util/logging"
 import { Unknown } from "./util/unknown"
-import { Spec } from "./validators/specResolver"
-import { Model } from "./util/utils"
-
-// const ErrorCodes = C.ErrorCodes;
+import { SwaggerObject, DefinitionsObject, SchemaObject } from "yasway"
 
 export interface Options {
   readonly direction?: Unknown
@@ -24,7 +20,7 @@ export interface Options {
  */
 export class UmlGenerator {
 
-  private readonly specInJson: Spec
+  private readonly specInJson: SwaggerObject
 
   private graphDefinition: string
 
@@ -40,7 +36,7 @@ export class UmlGenerator {
    *
    * @return {object} An instance of the UmlGenerator class.
    */
-  constructor(specInJson: null|undefined|Spec, options: null|undefined|Options) {
+  constructor(specInJson: null|undefined|SwaggerObject, options: null|undefined|Options) {
     if (specInJson === null || specInJson === undefined || typeof specInJson !== "object") {
       throw new Error("specInJson is a required property of type object")
     }
@@ -68,18 +64,20 @@ export class UmlGenerator {
 
   private generateAllOfGraph(): void {
     const spec = this.specInJson
-    const definitions = spec.definitions
+    const definitions = spec.definitions as DefinitionsObject
     for (const modelName of utils.getKeys(definitions)) {
       const model = definitions[modelName]
       this.generateAllOfForModel(modelName, model)
     }
   }
 
-  private generateAllOfForModel(modelName: Unknown, model: Model): void {
+  private generateAllOfForModel(modelName: Unknown, model: SchemaObject): void {
     if (model.allOf) {
-      model.allOf.map(item => {
-        const referencedModel = item
+      model.allOf.forEach(item => {
         const ref = item.$ref
+        if (ref === undefined) {
+          throw new Error("ref === undefined")
+        }
         const segments = ref.split("/")
         const parent = segments[segments.length - 1]
         this.graphDefinition += `\n[${parent}${this.bg}]^-.-allOf[${modelName}${this.bg}]`
@@ -89,7 +87,7 @@ export class UmlGenerator {
 
   private generateModelPropertiesGraph(): void {
     const spec = this.specInJson
-    const definitions = spec.definitions
+    const definitions = spec.definitions as DefinitionsObject
     const references: string[] = []
     for (const modelName of utils.getKeys(definitions)) {
       const model = definitions[modelName]
@@ -117,13 +115,18 @@ export class UmlGenerator {
     }
   }
 
-  private getPropertyType(
-    modelName: Unknown, property: Model, references: string[]): string {
-    if (property.type && property.type.match(/^(string|number|boolean)$/i) !== null) {
-      return property.type
+  private getPropertyType(modelName: Unknown, property: SchemaObject, references: string[])
+    : string {
+
+    const type = property.type
+    switch (type) {
+      case "string":
+      case "number":
+      case "boolean":
+        return type
     }
 
-    if (property.type === "array") {
+    if (type === "array") {
       let result = "Array<"
       if (property.items) {
         result += this.getPropertyType(modelName, property.items, references)
@@ -146,7 +149,7 @@ export class UmlGenerator {
       return result
     }
 
-    if (property.type === "object") {
+    if (type === "object") {
       return "Object"
     }
     return ""

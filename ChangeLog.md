@@ -1,3 +1,6 @@
+### 06/21/2018 0.4.54
+- Apply rules for Nested Properties
+
 ### 06/26/2018 0.4.51
 - Bug fix: Do BOM stripping for remote URL's [#266](https://github.com/Azure/oav/issues/266).
 

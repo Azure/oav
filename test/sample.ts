@@ -8,6 +8,7 @@ const options = {
   directory: "./test/swaggers/arm-storage"
 }
 const validator = new LiveValidator(options)
+
 validator.initialize().then(() => {
   const reqRes = require(
     __dirname +

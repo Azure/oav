@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
+import { StringMap } from "./stringMap"
+
 export const xmsParameterizedHost = "x-ms-parameterized-host"
 
 export const xmsExamples = "x-ms-examples"
@@ -76,7 +78,7 @@ export const ErrorCodes = {
   DoubleForwardSlashesInUrl: { name: "DOUBLE_FORWARD_SLASHES_IN_URL", id: "OAV129" }
 }
 
-export const knownTitleToResourceProviders = {
+export const knownTitleToResourceProviders: StringMap<string> = {
   ResourceManagementClient: "Microsoft.Resources"
 }
 
