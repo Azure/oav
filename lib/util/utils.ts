@@ -12,9 +12,11 @@ import request = require("request")
 import * as lodash from "lodash"
 import * as http from "http"
 import { Unknown } from "./unknown"
-import { Spec } from "../validators/specResolver"
+import { StringMap } from "./stringMap"
+import { SwaggerObject, ParameterObject, SchemaObject, DataType } from "yasway"
+import { NonUndefined } from "./nonUndefined"
 
-export type DocCache = MapObject<Promise<Spec>>
+export type DocCache = StringMap<Promise<SwaggerObject>>
 
 /*
  * Caches the json docs that were successfully parsed by parseJson().
@@ -48,11 +50,11 @@ export function stripBOM(content: Buffer|string): string {
  * Provides a parsed JSON from the given file path or a url.
  *
  * @param {string} specPath - A local file path or a (github) url to the swagger spec.
- * The method will auto convert a github url to rawgithub url.
+ * The method will auto convert a github url to raw github url.
  *
  * @returns {object} jsonDoc - Parsed document in JSON format.
  */
-export async function parseJson(specPath: string): Promise<Spec> {
+export async function parseJson(specPath: string): Promise<SwaggerObject> {
   if (!specPath || (specPath && typeof specPath.valueOf() !== "string")) {
     throw new Error(
       "A (github) url or a local file path to the swagger spec is required and must be of type " +
@@ -99,7 +101,7 @@ export async function parseJson(specPath: string): Promise<Spec> {
  *
  * @returns {object} jsonDoc - Parsed document in JSON format.
  */
-export function parseContent(filePath: string, fileContent: string): Spec {
+export function parseContent(filePath: string, fileContent: string): SwaggerObject {
   let result = null
   const sanitizedContent = stripBOM(fileContent)
   if (/.*\.json$/ig.test(filePath)) {
@@ -132,8 +134,8 @@ export type Options = request.CoreOptions & request.UrlOptions & {
  *
  * @return {Promise} promise - A promise that resolves to the responseBody or rejects to an error.
  */
-export function makeRequest(options: Options): Promise<Spec> {
-  const promise = new Promise<Spec>((resolve, reject) => {
+export function makeRequest(options: Options): Promise<SwaggerObject> {
+  const promise = new Promise<SwaggerObject>((resolve, reject) => {
     request(options, (err, response, responseBody) => {
       if (err) {
         reject(err)
@@ -299,10 +301,6 @@ export function parseJsonWithPathFragments(...args: string[]) {
   return parseJson(specPath)
 }
 
-export interface MapObject<T> {
-  [name: string]: T
-}
-
 /*
  * Merges source object into the target object
  * @param {object} source The object that needs to be merged
@@ -311,7 +309,7 @@ export interface MapObject<T> {
  *
  * @returns {object} target - Returns the merged target object.
  */
-export function mergeObjects<T extends MapObject<any>>(source: T, target: T): T {
+export function mergeObjects<T extends StringMap<any>>(source: T, target: T): T {
   Object.keys(source).forEach((key) => {
     if (Array.isArray(source[key])) {
       if (target[key] && !Array.isArray(target[key])) {
@@ -545,41 +543,13 @@ export function isUrlEncoded(str: string): boolean {
   return str !== decodeURIComponent(str)
 }
 
-export interface Properties {
-  [name: string]: Model
-}
-
-export interface Ref {
-  readonly $ref: string
-}
-
-export interface Model {
-  type?: string
-  items?: Model
-  properties?: Properties
-  additionalProperties?: Model|false
-  "x-nullable"?: Unknown
-  in?: Unknown
-  oneOf?: Model[]
-  $ref?: string
-  required?: Unknown[]|false
-  schema?: Model
-  allOf?: Ref[]
-  anyOf?: Model[]
-  description?: Unknown
-  discriminator?: string
-  "x-ms-discriminator-value"?: string
-  enum?: Unknown
-  "x-ms-azure-resource"?: Unknown
-}
-
 /**
  * Determines whether the given model is a pure (free-form) object candidate (i.e. equivalent of the
  * C# Object type).
  * @param {object} model - The model to be verified
  * @returns {boolean} result - true if model is a pure object; false otherwise.
  */
-export function isPureObject(model: Model): boolean {
+export function isPureObject(model: SchemaObject): boolean {
   if (!model) {
     throw new Error(`model cannot be null or undefined and must be of type "object"`)
   }
@@ -602,24 +572,35 @@ export function isPureObject(model: Model): boolean {
   }
 }
 
+interface Entity {
+  in?: string
+  type?: DataType
+  additionalProperties?: SchemaObject|boolean
+  items?: SchemaObject
+  "x-nullable"?: any
+  oneOf?: SchemaObject[]
+  $ref?: any
+  anyOf?: SchemaObject[]
+}
+
 /**
  * Relaxes/Transforms the given entities type from a specific JSON schema primitive type
  * (http://json-schema.org/latest/json-schema-core.html#rfc.section.4.2)
- * to an array of JSON schema primitve types
+ * to an array of JSON schema primitive types
  * (http://json-schema.org/latest/json-schema-validation.html#rfc.section.5.21).
  *
  * @param {object} entity - The entity to be relaxed.
  * @param {boolean|undefined} [isRequired] - A boolean value that indicates whether the entity is
  *                                           required or not.
- * If the entity is required then the primitve type "null" is not added.
+ * If the entity is required then the primitive type "null" is not added.
  * @returns {object} entity - The transformed entity if it is a pure object else the same entity is
  * returned as-is.
  */
-export function relaxEntityType(entity: Model, isRequired?: Unknown): Model {
+export function relaxEntityType<T extends Entity>(entity: T, isRequired?: Unknown): T {
   if (isPureObject(entity) && entity.type) {
     delete entity.type
   }
-  if (entity.additionalProperties
+  if (typeof entity.additionalProperties === "object"
     && isPureObject(entity.additionalProperties)
     && entity.additionalProperties.type) {
     delete entity.additionalProperties.type
@@ -630,7 +611,7 @@ export function relaxEntityType(entity: Model, isRequired?: Unknown): Model {
 /**
  * Relaxes/Transforms model definition like entities recursively
  */
-export function relaxModelLikeEntities(model: Model): Model {
+export function relaxModelLikeEntities(model: SchemaObject): SchemaObject {
   model = relaxEntityType(model)
   if (model.properties) {
     const modelProperties = model.properties
@@ -654,18 +635,16 @@ export function relaxModelLikeEntities(model: Model): Model {
  * If true then it is required. If false or undefined then it is not required.
  * @returns {object} entity - The processed entity
  */
-export function allowNullType(entity: Model, isPropRequired?: boolean|{}): Model {
+export function allowNullType<T extends Entity>(entity: T, isPropRequired?: boolean|{}): T {
   // if entity has a type
   if (entity && entity.type) {
     // if type is an array
     if (entity.type === "array") {
       if (entity.items) {
         // if items object contains inline properties
-        if (entity.items.properties) {
-          entity.items = allowNullableTypes(entity.items)
-        } else {
-          entity.items = allowNullType(entity.items)
-        }
+        entity.items = entity.items.properties
+          ? allowNullableTypes(entity.items)
+          : allowNullType(entity.items)
       }
     }
 
@@ -689,8 +668,9 @@ export function allowNullType(entity: Model, isPropRequired?: boolean|{}): Model
         entity.oneOf = [{ type: entity.type }, { type: "null" }]
         delete entity.type
       } else {
-        entity = {}
-        entity.oneOf = [savedEntity, { type: "null" }]
+        entity = {
+          oneOf: [savedEntity, { type: "null" }]
+        } as T
       }
     }
   }
@@ -702,7 +682,7 @@ export function allowNullType(entity: Model, isPropRequired?: boolean|{}): Model
     const savedEntity = entity
     entity = {
       anyOf: [savedEntity, { type: "null" }]
-    }
+    } as T
   }
   return entity
 }
@@ -720,25 +700,23 @@ export function shouldAcceptNullValue(xnullable: Unknown, isPropRequired: Unknow
 /**
  * Relaxes/Transforms model definition to allow null values
  */
-export function allowNullableTypes(model: Model) {
+export function allowNullableTypes(model: SchemaObject): SchemaObject {
   // process additionalProperties if present
   if (model && typeof model.additionalProperties === "object") {
-    if (model.additionalProperties.properties || model.additionalProperties.additionalProperties) {
-      model.additionalProperties = allowNullableTypes(model.additionalProperties)
-    } else {
-      // there shouldn't be more properties nesting at this point
-      model.additionalProperties = allowNullType(model.additionalProperties)
-    }
+    model.additionalProperties =
+      model.additionalProperties.properties || model.additionalProperties.additionalProperties
+        ? allowNullableTypes(model.additionalProperties)
+        // there shouldn't be more properties nesting at this point
+        : allowNullType(model.additionalProperties)
   }
   if (model && model.properties) {
     const modelProperties = model.properties
     for (const propName of getKeys(modelProperties)) {
       // process properties if present
-      if (modelProperties[propName].properties || modelProperties[propName].additionalProperties) {
-        modelProperties[propName] = allowNullableTypes(modelProperties[propName])
-      }
-      modelProperties[propName] = allowNullType(
-        modelProperties[propName], isPropertyRequired(propName, model))
+      modelProperties[propName] =
+        modelProperties[propName].properties || modelProperties[propName].additionalProperties
+          ? allowNullableTypes(modelProperties[propName])
+          : allowNullType(modelProperties[propName], isPropertyRequired(propName, model))
     }
   }
 
@@ -749,20 +727,17 @@ export function allowNullableTypes(model: Model) {
         if (model.items.additionalProperties
           && typeof model.items.additionalProperties === "object") {
 
-          if (model.items.additionalProperties.properties
-            || model.items.additionalProperties.additionalProperties) {
-            model.items.additionalProperties = allowNullableTypes(model.items.additionalProperties)
-          } else {
-            // there shouldn't be more properties nesting at this point
-            model.items.additionalProperties = allowNullType(model.items.additionalProperties)
-          }
+          model.items.additionalProperties =
+            model.items.additionalProperties.properties ||
+            model.items.additionalProperties.additionalProperties
+              ? allowNullableTypes(model.items.additionalProperties)
+              // there shouldn't be more properties nesting at this point
+              : allowNullType(model.items.additionalProperties)
         }
         // if items object contains inline properties
-        if (model.items.properties) {
-          model.items = allowNullableTypes(model.items)
-        } else {
-          model.items = allowNullType(model.items)
-        }
+        model.items = model.items.properties
+          ? allowNullableTypes(model.items)
+          : allowNullType(model.items)
       }
     // if we have a top level "object" with x-nullable set, we need to relax the model at that level
     } else if (model.type === "object" && model["x-nullable"]) {
@@ -781,7 +756,7 @@ export function allowNullableTypes(model: Model) {
 /**
  * Relaxes/Transforms parameter definition to allow null values for non-path parameters
  */
-export function allowNullableParams(parameter: Model) {
+export function allowNullableParams(parameter: ParameterObject): ParameterObject {
   if (parameter.in && parameter.in === "body" && parameter.schema) {
     parameter.schema = allowNullableTypes(parameter.schema)
   } else {
@@ -809,11 +784,11 @@ export function sanitizeFileName(str: string): string {
  * The check is necessary because Object.values does not coerce parameters to object type.
  * @param {*} obj
  */
-export function getValues<T>(obj: MapObject<T>|null): T[] {
+export function getValues<T>(obj: StringMap<T>|null): Array<NonUndefined<T>> {
   if (obj === undefined || obj === null) {
     return []
   }
-  return Object.values(obj)
+  return Object.values(obj) as Array<NonUndefined<T>>
 }
 
 /**
@@ -821,7 +796,7 @@ export function getValues<T>(obj: MapObject<T>|null): T[] {
 .* The check is necessary because Object.keys does not coerce parameters to object type.
  * @param {*} obj
  */
-export function getKeys(obj: MapObject<any>): string[] {
+export function getKeys(obj: StringMap<any>): string[] {
   if (obj === undefined || obj === null) {
     return []
   }
@@ -832,7 +807,7 @@ export function getKeys(obj: MapObject<any>): string[] {
 /**
  * Checks if the property is required in the model.
  */
-function isPropertyRequired(propName: Unknown, model: Model) {
+function isPropertyRequired(propName: Unknown, model: SchemaObject) {
   return model.required ? model.required.some(p => p === propName) : false
 }
 
@@ -857,7 +832,7 @@ export const CloudErrorSchema = {
 /**
  * Models an ARM cloud error wrapper.
  */
-export const CloudErrorWrapper: Model = {
+export const CloudErrorWrapper: SchemaObject = {
   type: "object",
   properties: {
     error: {
@@ -870,7 +845,7 @@ export const CloudErrorWrapper: Model = {
 /**
  * Models a Cloud Error
  */
-export const CloudError: Model = {
+export const CloudError: SchemaObject = {
   type: "object",
   properties: {
     code: {

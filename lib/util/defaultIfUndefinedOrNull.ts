@@ -1,0 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License. See License.txt in the project root for license information.
+
+export function defaultIfUndefinedOrNull<T>(value: T|null|undefined, defaultValue: T): T {
+  return value !== null && value !== undefined ? value : defaultValue
+}

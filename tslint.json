@@ -15,7 +15,8 @@
         "trailing-comma": false,
         "interface-name": false,
         "jsdoc-format": false,
-        "object-literal-shorthand": false
+        "object-literal-shorthand": false,
+        "forin": false
     },
     "rulesDirectory": []
 }

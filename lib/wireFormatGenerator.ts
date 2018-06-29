@@ -62,40 +62,38 @@ export class WireFormatGenerator {
     }
   }
 
-  public initialize(): Promise<any> {
+  public async initialize(): Promise<Sway.SwaggerApi> {
     const self = this
     if (self.options.shouldResolveRelativePaths) {
       utils.clearCache()
     }
-    return utils.parseJson(self.specPath).then((result: any) => {
+    try {
+      const result = await utils.parseJson(self.specPath)
       self.specInJson = result
-      const options = {
+      const specOptions = {
         shouldResolveRelativePaths: true,
         shouldResolveXmsExamples: false,
         shouldResolveAllOf: false,
         shouldSetAdditionalPropertiesFalse: false,
         shouldResolvePureObjects: false
       }
-      self.specResolver = new SpecResolver(self.specPath, self.specInJson, options)
-      return self.specResolver.resolve()
-    }).then(() => {
-      return self.resolveExamples()
-    }).then(() => {
-      const options: any = {}
-      options.definition = self.specInJson
-      options.jsonRefs = {}
-      options.jsonRefs.relativeBase = self.specDir
-      return Sway.create(options)
-    }).then((api: any) => {
+      self.specResolver = new SpecResolver(self.specPath, self.specInJson, specOptions)
+      await self.specResolver.resolve()
+      await self.resolveExamples()
+      const options: any = {
+        definition: self.specInJson,
+        jsonRefs: { relativeBase: self.specDir }
+      }
+      const api = await Sway.create(options)
       self.swaggerApi = api
-      return Promise.resolve(api)
-    }).catch((err: any) => {
+      return api
+    } catch (err) {
       const e = self.constructErrorObject(ErrorCodes.ResolveSpecError, err.message, [err])
       // self.specValidationResult.resolveSpec = e;
       log.error(`${ErrorCodes.ResolveSpecError.name}: ${err.message}.`)
       log.error(err.stack)
-      return Promise.reject(e)
-    })
+      throw e
+    }
   }
 
   /*
