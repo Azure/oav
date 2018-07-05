@@ -43,19 +43,20 @@ const customLogLevels = {
   silly: 7
 }
 
-export type ILogger = winston.LoggerInstance & {
+export type ILogger = winston.Logger & {
   consoleLogLevel: Unknown
   filepath: Unknown
   directory: Unknown
 }
 
-export const log: ILogger = new (winston.Logger)({
+export const log = winston.createLogger({
   transports: [
-    new (winston.transports.Console)({
+    new winston.transports.Console({
       level: "warn",
-      colorize: true,
-      prettyPrint: true,
-      humanReadableUnhandledException: true
+      format: winston.format.combine(
+        winston.format.colorize(),
+        winston.format.prettyPrint()
+      )
     })
   ],
   levels: customLogLevels
@@ -64,8 +65,13 @@ export const log: ILogger = new (winston.Logger)({
 Object.defineProperties(log, {
   consoleLogLevel: {
     enumerable: true,
-    get() { return this.transports.console.level; },
+    get() {
+      const transport =
+        (this as ILogger).transports.find(t => t instanceof winston.transports.Console)
+      return transport !== undefined ? transport.level : undefined
+    },
     set(level) {
+      const self = this as ILogger
       if (!level) {
         level = "warn"
       }
@@ -74,7 +80,11 @@ Object.defineProperties(log, {
         throw new Error(
           `The logging level provided is "${level}". Valid values are: "${validLevels}".`)
       }
-      this.transports.console.level = level
+      const transport =
+        (this as ILogger).transports.find(t => t instanceof winston.transports.Console)
+      if (transport !== undefined) {
+        transport.level = level
+      }
     }
   },
   directory: {
@@ -104,22 +114,21 @@ Object.defineProperties(log, {
       return currentLogFile
     },
     set(logFilePath: string): void {
+      const self = this as ILogger
       if (!logFilePath || logFilePath && typeof logFilePath.valueOf() !== "string") {
         throw new Error(
           "filepath cannot be null or undefined and must be of type string. It must be " +
           "an absolute file path.")
       }
       currentLogFile = logFilePath
-      this.directory = path.dirname(logFilePath)
-      if (!this.transports.file) {
-        this.add(winston.transports.File, {
+      self.directory = path.dirname(logFilePath)
+      if (!self.transports.some(t => t instanceof winston.transports.File)) {
+        self.add(new winston.transports.File({
           level: "silly",
-          colorize: false,
+          format: winston.format.prettyPrint(),
           silent: false,
-          prettyPrint: true,
-          json: false,
           filename: logFilePath
-        })
+        }))
       }
     }
   }

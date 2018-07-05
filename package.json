@@ -29,7 +29,7 @@
     "swagger-tools": "^0.10.1",
     "uuid": "^3.0.1",
     "vscode-jsonrpc": "^3.6.1",
-    "winston": "^2.4.2",
+    "winston": "^3.0.0",
     "yargs": "^6.6.0",
     "yasway": "^1.0.0",
     "yuml2svg": "^3.1.0"
@@ -96,7 +96,7 @@
   "scripts": {
     "tsc": "tsc",
     "tslint": "tslint ./*.ts ./lib/**/*.ts ./test/**/*.ts ./types/**/*.ts",
-    "test": "npm run tslint && nyc mocha ./test/**/*.ts -r ts-node/register -t 10000",
+    "test": "npm run tsc && npm run tslint && nyc mocha ./test/**/*.ts -r ts-node/register -t 10000",
     "start": "node ./dist/lib/autorestPlugin/pluginHost.js",
     "prepack": "npm install && tsc && npm run tslint"
   }

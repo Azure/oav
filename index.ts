@@ -16,7 +16,7 @@ export {
 
 export { executePromisesSequentially } from "./lib/util/utils"
 
-export { log } from "./lib/util/logging"
+// export { log } from "./lib/util/logging"
 
 // Classes
 export { SpecValidator } from "./lib/validators/specValidator"
