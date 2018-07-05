@@ -237,7 +237,6 @@ export class LiveValidator {
         'requestMethod is a required parameter of type "string" and it cannot be an empty string.')
     }
 
-    const self = this
     let potentialOperations: Operation[] = []
     const parsedUrl = url.parse(requestUrl, true)
     const pathStr = parsedUrl.pathname
@@ -268,7 +267,7 @@ export class LiveValidator {
     provider = provider.toLowerCase()
 
     // Search using provider
-    const allApiVersions = self.cache[provider]
+    const allApiVersions = this.cache[provider]
     if (allApiVersions) {
       // Search using api-version found in the requestUrl
       if (apiVersion) {
@@ -278,7 +277,7 @@ export class LiveValidator {
           // Search using requestMethod provided by user
           if (operationsForHttpMethod) {
             // Find the best match using regex on path
-            potentialOperations = self.getPotentialOperationsHelper(
+            potentialOperations = this.getPotentialOperationsHelper(
               pathStr, requestMethod, operationsForHttpMethod)
             // If potentialOperations were to be [] then we need reason
             msg =
@@ -298,7 +297,7 @@ export class LiveValidator {
             `in the cache.`
           code = C.ErrorCodes.OperationNotFoundInCacheWithApi
           log.debug(`${msg} We'll search in the resource provider "Microsoft.Unknown".`)
-          potentialOperations = self.getPotentialOperationsHelper(pathStr, requestMethod, [])
+          potentialOperations = this.getPotentialOperationsHelper(pathStr, requestMethod, [])
         }
       } else {
         msg = `Could not find api-version in requestUrl "${requestUrl}".`
@@ -310,7 +309,7 @@ export class LiveValidator {
       msg = `Could not find provider "${provider}" in the cache.`
       code = C.ErrorCodes.OperationNotFoundInCacheWithProvider
       log.debug(`${msg} We'll search in the resource provider "Microsoft.Unknown".`)
-      potentialOperations = self.getPotentialOperationsHelper(pathStr, requestMethod, [])
+      potentialOperations = this.getPotentialOperationsHelper(pathStr, requestMethod, [])
     }
 
     // Provide reason when we do not find any potential operation in cache
@@ -331,7 +330,6 @@ export class LiveValidator {
    * @returns {object} validationResult - Validation result for given input
    */
   public validateLiveRequestResponse(requestResponseObj: RequestResponseObj): ValidationResult {
-    const self = this
     const validationResult: ValidationResult = {
       requestValidationResult: {
         successfulRequest: false,
@@ -379,7 +377,7 @@ export class LiveValidator {
     let potentialOperationsResult
     let potentialOperations: Operation[] = []
     try {
-      potentialOperationsResult = self.getPotentialOperations(request.url, request.method)
+      potentialOperationsResult = this.getPotentialOperations(request.url, request.method)
       potentialOperations = potentialOperationsResult.operations
     } catch (err) {
       const msg =
@@ -495,7 +493,6 @@ export class LiveValidator {
       throw new Error('operations is a required parameter of type "array".')
     }
 
-    const self = this
     let potentialOperations = operations.filter(operation => {
       const pathObject = operation.pathObject as PathObject
       const pathMatch = pathObject.regexp.exec(requestPath)
@@ -505,9 +502,9 @@ export class LiveValidator {
     // If we do not find any match then we'll look into Microsoft.Unknown -> unknown-api-version
     // for given requestMethod as the fall back option
     if (!potentialOperations.length) {
-      if (self.cache[C.unknownResourceProvider] &&
-        self.cache[C.unknownResourceProvider][C.unknownApiVersion]) {
-        operations = self.cache[C.unknownResourceProvider][C.unknownApiVersion][requestMethod]
+      if (this.cache[C.unknownResourceProvider] &&
+        this.cache[C.unknownResourceProvider][C.unknownApiVersion]) {
+        operations = this.cache[C.unknownResourceProvider][C.unknownApiVersion][requestMethod]
         potentialOperations = operations.filter(operation => {
           const pathObject = operation.pathObject as PathObject
           let pathTemplate = pathObject.path
