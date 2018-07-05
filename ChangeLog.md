@@ -1,5 +1,5 @@
 ### 07/05/2018 0.4.55
-- Remove a dependency on `@types/winston` package
+- Remove a dependency on `@types/winston` package. `winston` is updated to `3.0.0`.
 
 ### 06/21/2018 0.4.54
 - Apply rules for Nested Properties
