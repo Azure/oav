@@ -1,3 +1,6 @@
+### 06/21/2018 0.4.55
+- Error serialization.
+
 ### 06/21/2018 0.4.54
 - Apply rules for Nested Properties
 
