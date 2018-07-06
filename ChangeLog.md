@@ -1,3 +1,6 @@
+### 07/05/2018 0.4.56
+- Error serialization.
+
 ### 07/05/2018 0.4.55
 - Remove a dependency on `@types/winston` package. `winston` is updated to `3.0.0`.
 

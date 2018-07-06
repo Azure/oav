@@ -17,7 +17,7 @@
  * @member {boolean} [successfulResponse] Describes the status of live response
  * validation.
  *
- * @member {array} [operationInfo] The corresponding operation(s) in openapi
+ * @member {array} [operationInfo] The corresponding operation(s) in OpenAPI
  * spec that was used for validating the response.
  *
  * @member {array} [errors] Provides more information about live response

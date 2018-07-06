@@ -115,8 +115,9 @@ export class UmlGenerator {
     }
   }
 
-  private getPropertyType(modelName: Unknown, property: SchemaObject, references: string[])
-    : string {
+  private getPropertyType(
+    modelName: Unknown, property: SchemaObject, references: string[]
+  ): string {
 
     const type = property.type
     switch (type) {

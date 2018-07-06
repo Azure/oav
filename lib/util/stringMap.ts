@@ -10,7 +10,8 @@ export interface StringMap<T> {
 }
 
 export function stringMapForEach<T>(
-  src: Tracked<StringMap<T>>, f: (value: Tracked<NonUndefined<T>>) => void): void {
+  src: Tracked<StringMap<T>>, f: (value: Tracked<NonUndefined<T>>) => void
+): void {
   const sv = src.value
   for (const name in sv) {
     const value = sv[name]

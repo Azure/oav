@@ -1,6 +1,6 @@
 {
   "name": "oav",
-  "version": "0.4.55",
+  "version": "0.4.56",
   "author": {
     "name": "Microsoft Corporation",
     "email": "azsdkteam@microsoft.com",
@@ -98,6 +98,7 @@
     "tslint": "tslint ./*.ts ./lib/**/*.ts ./test/**/*.ts ./types/**/*.ts",
     "test": "npm run tsc && npm run tslint && nyc mocha ./test/**/*.ts -r ts-node/register -t 10000",
     "start": "node ./dist/lib/autorestPlugin/pluginHost.js",
-    "prepack": "npm install && tsc && npm run tslint"
+    "prepack": "npm install && tsc && npm run tslint",
+    "cli": "node dist/cli.js"
   }
 }

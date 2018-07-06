@@ -172,7 +172,8 @@ export function makeRequest(options: Options): Promise<SwaggerObject> {
  * @return A chain of resolved or rejected promises
  */
 export async function executePromisesSequentially(
-  promiseFactories: Array<() => Promise<void>>): Promise<void> {
+  promiseFactories: Array<() => Promise<void>>
+): Promise<void> {
   for (const promiseFactory of promiseFactories) {
     await promiseFactory()
   }
@@ -296,7 +297,7 @@ export function joinPath(...args: string[]): string {
  *
  * @returns {object} jsonDoc - Parsed document in JSON format.
  */
-export function parseJsonWithPathFragments(...args: string[]) {
+export function parseJsonWithPathFragments(...args: string[]): Promise<SwaggerObject> {
   const specPath = joinPath(...args)
   return parseJson(specPath)
 }
@@ -391,7 +392,7 @@ export function setObject(doc: {}, ptr: string, value: any) {
  *
  * @param {string} ptr The json reference pointer.
  */
-export function removeObject(doc: {}, ptr: string) {
+function removeObject(doc: {}, ptr: string) {
   let result
   try {
     result = jsonPointer.remove(doc, ptr)

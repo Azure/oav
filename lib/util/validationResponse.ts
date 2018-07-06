@@ -43,8 +43,8 @@ export class ValidateResponse {
   }
 
   public constructErrors(
-    validationError: Error, specPath: Unknown, providerNamespace: Unknown): ValidationError[] {
-    const self = this
+    validationError: Error, specPath: Unknown, providerNamespace: Unknown
+  ): ValidationError[] {
     if (!validationError) {
       throw new Error("validationError cannot be null or undefined.")
     }
@@ -56,14 +56,14 @@ export class ValidateResponse {
         type: "error",
         inner: error.inner
       }
-      if (error.code && self.mapper[error.code]) {
+      if (error.code && this.mapper[error.code]) {
         e.code = error.code
-        e.id = self.mapper[error.code]
+        e.id = this.mapper[error.code]
         e.message = error.message
       } else {
         e.code = "SWAGGER_SCHEMA_VALIDATION_ERROR"
         e.message = validationError.message
-        e.id = self.mapper[e.code]
+        e.id = this.mapper[e.code]
         e.inner = error
       }
       if (error.path && error.path.length) {

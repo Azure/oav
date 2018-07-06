@@ -400,8 +400,8 @@ export class SpecValidator {
     code: ErrorCode,
     message: string,
     innerErrors?: null|Error[],
-    skipValidityStatusUpdate?: boolean)
-    : Error {
+    skipValidityStatusUpdate?: boolean
+  ): Error {
 
     const err: Error = {
       code: code.name,
@@ -457,8 +457,8 @@ export class SpecValidator {
   }
 
   private initializeExampleResult(
-    operationId: string, exampleType: string, scenarioName: string|undefined)
-    : void {
+    operationId: string, exampleType: string, scenarioName: string|undefined
+  ): void {
     const initialResult = {
       isValid: true,
       request: {
@@ -497,8 +497,8 @@ export class SpecValidator {
     isValid: Unknown,
     msg: string,
     requestValidationErrors?: Error[]|null,
-    requestValidationWarnings?: Unknown)
-    : void {
+    requestValidationWarnings?: Unknown
+  ): void {
 
     if (operationResult.request === undefined) {
       throw new Error("operationResult.result is undefined")
@@ -527,8 +527,8 @@ export class SpecValidator {
     isValid: Unknown,
     msg: string,
     responseValidationErrors?: Error[]|null,
-    responseValidationWarnings?: Unknown)
-    : void {
+    responseValidationWarnings?: Unknown
+  ): void {
 
     if (operationResult.responses === undefined) {
       throw new Error("operationResult.responses is undefined")
@@ -558,8 +558,8 @@ export class SpecValidator {
     requestValidationErrors: Error[],
     requestValidationWarnings: Unknown[],
     exampleType: string,
-    scenarioName?: string)
-    : void {
+    scenarioName?: string
+  ): void {
 
     this.initializeExampleResult(operationId, exampleType, scenarioName)
     let operationResult
@@ -597,8 +597,8 @@ export class SpecValidator {
     responseValidationErrors: Error[],
     responseValidationWarnings: Unknown[],
     exampleType: string,
-    scenarioName?: string)
-    : void {
+    scenarioName?: string
+  ): void {
 
     this.initializeExampleResult(operationId, exampleType, scenarioName)
     let operationResult
@@ -646,7 +646,8 @@ export class SpecValidator {
    * @return {object} xmsExample - The xmsExample object.
    */
   private constructOperationResult(
-    operation: Operation, result: ValidationResult, exampleType: string): void {
+    operation: Operation, result: ValidationResult, exampleType: string
+  ): void {
 
     const operationId = operation.operationId
     if (result.exampleNotFound) {
@@ -779,8 +780,9 @@ export class SpecValidator {
    *
    * @return {object} result - The validation result.
    */
-  private validateRequest(operation: Operation, exampleParameterValues: { [name: string]: string })
-    : RequestValidation {
+  private validateRequest(
+    operation: Operation, exampleParameterValues: { [name: string]: string }
+  ): RequestValidation {
 
     const self = this
     if (operation === null || operation === undefined || typeof operation !== "object") {
@@ -1063,7 +1065,8 @@ export class SpecValidator {
    * @return {object} result - The validation result.
    */
   private validateXmsExampleResponses(
-    operation: Operation, exampleResponseValue: { [name: string]: ExampleResponse }) {
+    operation: Operation, exampleResponseValue: { [name: string]: ExampleResponse }
+  ) {
 
     const self = this
     const result: any = {}

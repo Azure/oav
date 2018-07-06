@@ -47,8 +47,9 @@ export interface Message {
 /**
  * Returns a promise with the examples validation of the swagger.
  */
-async function analyzeSwagger(swaggerFileName: string, autoRestApi: extensionBase.Host)
-  : Promise<void> {
+async function analyzeSwagger(
+  swaggerFileName: string, autoRestApi: extensionBase.Host
+): Promise<void> {
   const swaggerFile = await autoRestApi.ReadFile(swaggerFileName)
   const swagger = yaml.safeLoad(swaggerFile)
   const exampleValidationResults = await openApiValidationExample(swagger, swaggerFileName)
@@ -78,8 +79,8 @@ export interface Options extends specValidator.Options {
 }
 
 export async function openApiValidationExample(
-  swagger: yaml.DocumentLoadResult, swaggerFileName: string, options?: Options)
-  : Promise<Message[]> {
+  swagger: yaml.DocumentLoadResult, swaggerFileName: string, options?: Options
+): Promise<Message[]> {
   const formattedResult: FormattedOutput[] = []
   if (!options) { options = {} }
   options.consoleLogLevel = "off"

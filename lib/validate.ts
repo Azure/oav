@@ -21,8 +21,9 @@ export const finalValidationResult: FinalValidationResult = {
   validityStatus: true
 }
 
-export async function getDocumentsFromCompositeSwagger(compositeSpecPath: string)
-  : Promise<string[]> {
+export async function getDocumentsFromCompositeSwagger(
+  compositeSpecPath: string
+): Promise<string[]> {
   try {
     const compositeSwagger = await utils.parseJson(compositeSpecPath)
     if (!(compositeSwagger.documents
@@ -54,8 +55,9 @@ export async function getDocumentsFromCompositeSwagger(compositeSpecPath: string
   }
 }
 
-export async function validateSpec(specPath: string, options: Options|undefined)
-  : Promise<SpecValidationResult> {
+export async function validateSpec(
+  specPath: string, options: Options|undefined
+): Promise<SpecValidationResult> {
   if (!options) { options = {} }
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
   log.filepath = options.logFilepath || log.filepath
@@ -88,8 +90,9 @@ export async function validateSpec(specPath: string, options: Options|undefined)
   }
 }
 
-export async function validateCompositeSpec(compositeSpecPath: string, options: Options)
-  : Promise<void> {
+export async function validateCompositeSpec(
+  compositeSpecPath: string, options: Options
+): Promise<void> {
 
   if (!options) { options = {} }
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
@@ -107,8 +110,8 @@ export async function validateCompositeSpec(compositeSpecPath: string, options: 
 }
 
 export async function validateExamples(
-  specPath: string, operationIds: string|undefined, options?: Options)
-  : Promise<SpecValidationResult> {
+  specPath: string, operationIds: string|undefined, options?: Options
+): Promise<SpecValidationResult> {
 
   if (!options) { options = {} }
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
@@ -128,8 +131,9 @@ export async function validateExamples(
   }
 }
 
-export async function validateExamplesInCompositeSpec(compositeSpecPath: string, options: Options)
-  : Promise<void> {
+export async function validateExamplesInCompositeSpec(
+  compositeSpecPath: string, options: Options
+): Promise<void> {
 
   if (!options) { options = {} }
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
@@ -152,8 +156,9 @@ export interface Options extends specResolver.Options, umlGeneratorLib.Options {
   logFilepath?: Unknown
 }
 
-export async function resolveSpec(specPath: string, outputDir: string, options: Options)
-  : Promise<void> {
+export async function resolveSpec(
+  specPath: string, outputDir: string, options: Options
+): Promise<void> {
 
   if (!options) { options = {} }
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
@@ -176,8 +181,9 @@ export async function resolveSpec(specPath: string, outputDir: string, options: 
   }
 }
 
-export async function resolveCompositeSpec(specPath: string, outputDir: string, options: Options)
-  : Promise<void> {
+export async function resolveCompositeSpec(
+  specPath: string, outputDir: string, options: Options
+): Promise<void> {
 
   if (!options) { options = {} }
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
@@ -199,8 +205,8 @@ export async function generateWireFormat(
   outDir: Unknown,
   emitYaml: Unknown,
   operationIds: string|null,
-  options: Options)
-  : Promise<void> {
+  options: Options
+): Promise<void> {
 
   if (!options) { options = {} }
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
@@ -217,7 +223,8 @@ export async function generateWireFormat(
 }
 
 export async function generateWireFormatInCompositeSpec(
-  compositeSpecPath: string, outDir: Unknown, emitYaml: Unknown, options: Options): Promise<void> {
+  compositeSpecPath: string, outDir: Unknown, emitYaml: Unknown, options: Options
+): Promise<void> {
 
   if (!options) { options = {} }
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
@@ -235,8 +242,9 @@ export async function generateWireFormatInCompositeSpec(
   }
 }
 
-export async function generateUml(specPath: string, outputDir: string, options?: Options)
-  : Promise<void> {
+export async function generateUml(
+  specPath: string, outputDir: string, options?: Options
+): Promise<void> {
 
   if (!options) { options = {} }
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
@@ -293,8 +301,9 @@ export function logDetailedInfo(validator: SpecValidator): void {
   log.silly("----------------------------")
 }
 
-export function extractXMsExamples(specPath: string, recordings: Unknown, options: Options)
-  : Promise<void> {
+export function extractXMsExamples(
+  specPath: string, recordings: Unknown, options: Options
+): Promise<void> {
 
   if (!options) { options = {} }
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
