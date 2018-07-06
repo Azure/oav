@@ -16,7 +16,7 @@ declare module "yasway" {
     schema?: SchemaObject
     required?: boolean
     items?: SchemaObject
-    type?: any
+    type?: DataType
   }
 
   type DataType = "integer"|"number"|"string"|"boolean"|"null"|"file"|"object"|"array"
@@ -26,18 +26,18 @@ declare module "yasway" {
     items?: SchemaObject
     properties?: JsonSchemaProperties
     additionalProperties?: SchemaObject|boolean
-    "x-nullable"?: any
-    in?: any
+    "x-nullable"?: boolean
+    in?: string
     oneOf?: SchemaObject[]
     $ref?: string
-    required?: any[]|false
+    required?: string[]|false
     schema?: SchemaObject
     allOf?: SchemaObject[]
-    description?: any
+    description?: string
     discriminator?: string
     "x-ms-discriminator-value"?: string
-    enum?: any
-    "x-ms-azure-resource"?: any
+    enum?: string[]
+    "x-ms-azure-resource"?: boolean
     anyOf?: SchemaObject[]
   }
 
@@ -89,7 +89,7 @@ declare module "yasway" {
     paths?: PathsObject
     definitions?: DefinitionsObject
     "x-ms-parameterized-host"?: {
-      parameters: any
+      parameters: ParameterObject[]
     }
     consumes?: string[]
     produces?: string[]
@@ -106,9 +106,11 @@ declare module "yasway" {
     readonly isPathCaseSensitive?: boolean
   }
 
-  interface RequestValidation {
+  interface Validation {
     readonly errors: any[]
+    readonly warnings?: any[]
   }
+
   interface ParsedUrlQuery {
     [key: string]: any
   }
@@ -117,9 +119,7 @@ declare module "yasway" {
     readonly url: string
     readonly method: string
   }
-  interface ResponseValidation {
-    readonly errors: any
-  }
+
   interface PathObject {
     path: string
     readonly regexp: RegExp
@@ -163,8 +163,8 @@ declare module "yasway" {
     "x-ms-examples": any
     readonly consumes: string[]
     readonly produces: any
-    validateRequest(_: LiveRequest): RequestValidation
-    validateResponse(_: any): ResponseValidation
+    validateRequest(_: LiveRequest): Validation
+    validateResponse(_: any): Validation
     getParameters(): Parameter[]
     getResponses(): Response[]
     getResponse(_: string): Response

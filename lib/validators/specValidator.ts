@@ -45,7 +45,7 @@ interface RequestValidation {
 }
 
 interface ResponseValidation {
-  readonly [name: string]: Validation
+  readonly [name: string]: Sway.Validation
 }
 
 interface Scenario {
@@ -150,7 +150,7 @@ export class SpecValidator {
    *
    * @param {object} [specInJson] the parsed spec in json format
    *
-   * @param {object} [options.shouldResolveRelativePaths] Should relative pathes be resolved?
+   * @param {object} [options.shouldResolveRelativePaths] Should relative paths be resolved?
    * Default: true
    *
    * @param {object} [options.shouldResolveXmsExamples] Should x-ms-examples be resolved?
@@ -216,7 +216,6 @@ export class SpecValidator {
    * and initializes the internal api validator.
    */
   public async initialize(): Promise<Sway.SwaggerApi> {
-    // let self = this
     if (this.options.shouldResolveRelativePaths) {
       utils.clearCache()
     }
@@ -249,45 +248,44 @@ export class SpecValidator {
   }
 
   public async validateSpec(): Promise<Unknown> {
-    const self = this
-    self.specValidationResult.validateSpec = {
+    this.specValidationResult.validateSpec = {
       isValid: true,
       errors: [],
       warnings: [],
     }
-    if (!self.swaggerApi) {
+    if (!this.swaggerApi) {
       const msg =
         `Please call "specValidator.initialize()" before calling this method, ` +
         `so that swaggerApi is populated.`
-      const e = self.constructErrorObject(ErrorCodes.InitializationError, msg)
-      self.specValidationResult.initialize = e
-      self.specValidationResult.validateSpec.isValid = false
+      const e = this.constructErrorObject(ErrorCodes.InitializationError, msg)
+      this.specValidationResult.initialize = e
+      this.specValidationResult.validateSpec.isValid = false
       log.error(`${ErrorCodes.InitializationError.name}: ${msg}`)
       throw e
     }
     try {
-      const validationResult = self.swaggerApi.validate()
+      const validationResult = this.swaggerApi.validate()
       if (validationResult) {
         if (validationResult.errors && validationResult.errors.length) {
-          self.specValidationResult.validateSpec.isValid = false
-          const e = self.constructErrorObject(
+          this.specValidationResult.validateSpec.isValid = false
+          const e = this.constructErrorObject(
             ErrorCodes.SemanticValidationError,
-            `The spec ${self.specPath} has semantic validation errors.`,
+            `The spec ${this.specPath} has semantic validation errors.`,
             validationResult.errors)
-          self.specValidationResult.validateSpec.errors = validateResponse.constructErrors(
-            e, self.specPath, self.getProviderNamespace())
+          this.specValidationResult.validateSpec.errors = validateResponse.constructErrors(
+            e, this.specPath, this.getProviderNamespace())
           log.error(C.Errors)
           log.error("------")
-          self.updateValidityStatus()
+          this.updateValidityStatus()
           log.error(e as any)
         } else {
-          self.specValidationResult.validateSpec.result =
-            `The spec ${self.specPath} is semantically valid.`
+          this.specValidationResult.validateSpec.result =
+            `The spec ${this.specPath} is semantically valid.`
         }
         if (validationResult.warnings && validationResult.warnings.length > 0) {
           const warnings = validateResponse.sanitizeWarnings(validationResult.warnings)
           if (warnings && warnings.length) {
-            self.specValidationResult.validateSpec.warnings = warnings
+            this.specValidationResult.validateSpec.warnings = warnings
             log.debug(C.Warnings)
             log.debug("--------")
             log.debug(util.inspect(warnings))
@@ -297,14 +295,14 @@ export class SpecValidator {
       return validationResult
     } catch (err) {
       const msg =
-        `An Internal Error occurred in validating the spec "${self.specPath}". \t${err.message}.`
+        `An Internal Error occurred in validating the spec "${this.specPath}". \t${err.message}.`
       err.code = ErrorCodes.InternalError.name
       err.id = ErrorCodes.InternalError.id
       err.message = msg
-      self.specValidationResult.validateSpec.isValid = false
-      self.specValidationResult.validateSpec.error = err
+      this.specValidationResult.validateSpec.isValid = false
+      this.specValidationResult.validateSpec.error = err
       log.error(err)
-      self.updateValidityStatus()
+      this.updateValidityStatus()
       throw err
     }
   }
@@ -344,7 +342,8 @@ export class SpecValidator {
       }
       this.validateOperation(operation)
       if (utils
-          .getKeys(this.specValidationResult.operations
+          .getKeys(
+            this.specValidationResult.operations
             [operation.operationId]
             [C.exampleInSpec])
           .length
@@ -413,47 +412,6 @@ export class SpecValidator {
       this.updateValidityStatus()
     }
     return err
-  }
-
-  /*
-   * Gets the operation object by operationId specified in the swagger spec.
-   *
-   * @param {string} id - The operation id.
-   *
-   * @return {object} operation - The operation object.
-   */
-  private getOperationById(id: string) {
-    if (!this.swaggerApi) {
-      throw new Error(
-        `Please call specValidator.initialize() so that swaggerApi is populated, ` +
-        `before calling this method.`)
-    }
-    if (!id) {
-      throw new Error(`id cannot be null or undefined and must be of type string.`)
-    }
-    const result = this.swaggerApi.getOperations().find(item => item.operationId === id)
-    return result
-  }
-
-  /*
-   * Gets the x-ms-examples object for an operation if specified in the swagger spec.
-   *
-   * @param {string|object} idOrObj - The operation id or the operation object.
-   *
-   * @return {object} xmsExample - The xmsExample object.
-   */
-  private getXmsExamples(idOrObj: string|Sway.Operation) {
-    if (!idOrObj) {
-      throw new Error(`idOrObj cannot be null or undefined and must be of type string or object.`)
-    }
-    const operation: Sway.Operation|undefined = typeof idOrObj === "string"
-      ? this.getOperationById(idOrObj)
-      : idOrObj
-    let result
-    if (operation && operation[C.xmsExamples]) {
-      result = operation[C.xmsExamples]
-    }
-    return result
   }
 
   private initializeExampleResult(
@@ -595,7 +553,7 @@ export class SpecValidator {
     operationId: string,
     responseStatusCode: string,
     responseValidationErrors: Error[],
-    responseValidationWarnings: Unknown[],
+    responseValidationWarnings: Unknown[]|undefined,
     exampleType: string,
     scenarioName?: string
   ): void {
@@ -633,7 +591,7 @@ export class SpecValidator {
   }
 
   /*
-   * Cosntructs the validation result for an operation.
+   * Constructs the validation result for an operation.
    *
    * @param {object} operation - The operation object.
    *
@@ -728,7 +686,6 @@ export class SpecValidator {
    * @param {object} operation - The operation object.
    */
   private validateXmsExamples(operation: Operation): void {
-    const self = this
     if (operation === null || operation === undefined || typeof operation !== "object") {
       throw new Error("operation cannot be null or undefined and must be of type 'object'.")
     }
@@ -741,17 +698,17 @@ export class SpecValidator {
       for (const scenario of Object.keys(xmsExamples)) {
         const xmsExample = xmsExamples[scenario]
         resultScenarios[scenario] = {
-          requestValidation: self.validateRequest(operation, xmsExample.parameters),
-          responseValidation: self.validateXmsExampleResponses(operation, xmsExample.responses)
+          requestValidation: this.validateRequest(operation, xmsExample.parameters),
+          responseValidation: this.validateXmsExampleResponses(operation, xmsExample.responses)
         }
       }
       result.scenarios = resultScenarios
     } else {
       const msg = `x-ms-example not found in ${operation.operationId}.`
-      result.exampleNotFound = self.constructErrorObject(
+      result.exampleNotFound = this.constructErrorObject(
         ErrorCodes.XmsExampleNotFoundError, msg, null, true)
     }
-    self.constructOperationResult(operation, result, C.xmsExamples)
+    this.constructOperationResult(operation, result, C.xmsExamples)
   }
 
   /*
@@ -760,15 +717,14 @@ export class SpecValidator {
    * @param {object} operation - The operation object.
    */
   private validateExample(operation: Operation): void {
-    const self = this
     if (operation === null || operation === undefined || typeof operation !== "object") {
       throw new Error("operation cannot be null or undefined and must be of type 'object'.")
     }
     const result: ValidationResult = {
-      requestValidation: self.validateExampleRequest(operation),
-      responseValidation: self.validateExampleResponses(operation) as any
+      requestValidation: this.validateExampleRequest(operation),
+      responseValidation: this.validateExampleResponses(operation) as any
     }
-    self.constructOperationResult(operation, result, C.exampleInSpec)
+    this.constructOperationResult(operation, result, C.exampleInSpec)
   }
 
   /*
@@ -784,7 +740,6 @@ export class SpecValidator {
     operation: Operation, exampleParameterValues: { [name: string]: string }
   ): RequestValidation {
 
-    const self = this
     if (operation === null || operation === undefined || typeof operation !== "object") {
       throw new Error("operation cannot be null or undefined and must be of type 'object'.")
     }
@@ -859,7 +814,7 @@ export class SpecValidator {
           const msg =
             `In operation "${operation.operationId}", parameter ${parameter.name} is required in ` +
             `the swagger spec but is not present in the provided example parameter values.`
-          const e = self.constructErrorObject(ErrorCodes.RequiredParameterExampleNotFound, msg)
+          const e = this.constructErrorObject(ErrorCodes.RequiredParameterExampleNotFound, msg)
           if (result.validationResult === undefined) {
             throw new Error("result.validationResult is undefined")
           }
@@ -887,7 +842,7 @@ export class SpecValidator {
               `and the path template: "${pathTemplate}" contains a forward slash before ` +
               `the parameter starts. This will cause double forward slashes ` +
               ` in the request url. Thus making it incorrect. Please rectify the example.`
-            const e = self.constructErrorObject(ErrorCodes.DoubleForwardSlashesInUrl, msg)
+            const e = this.constructErrorObject(ErrorCodes.DoubleForwardSlashesInUrl, msg)
             if (result.validationResult === undefined) {
               throw new Error("result.validationResult is undefined")
             }
@@ -972,10 +927,10 @@ export class SpecValidator {
           request.body = options.formData
         }
         validationResult = operation.validateRequest(request)
-        self.sampleRequest = request
+        this.sampleRequest = request
       } catch (err) {
         request = null
-        const e = self.constructErrorObject(ErrorCodes.ErrorInPreparingRequest, err.message, [err])
+        const e = this.constructErrorObject(ErrorCodes.ErrorInPreparingRequest, err.message, [err])
         validationResult.errors.push(e)
       }
     }
@@ -1020,7 +975,6 @@ export class SpecValidator {
    * @return {object} result - The validation result.
    */
   private validateExampleRequest(operation: Operation): RequestValidation {
-    const self = this
     if (operation === null || operation === undefined || typeof operation !== "object") {
       throw new Error("operation cannot be null or undefined and must be of type 'object'.")
     }
@@ -1050,7 +1004,7 @@ export class SpecValidator {
         exampleParameterValues[parameter.name] = parameter.getSample()
       }
       exampleParameterValues[bodyParam.name] = bodyParam.schema.example
-      result = self.validateRequest(operation, exampleParameterValues)
+      result = this.validateRequest(operation, exampleParameterValues)
     }
     return result
   }
@@ -1065,11 +1019,13 @@ export class SpecValidator {
    * @return {object} result - The validation result.
    */
   private validateXmsExampleResponses(
-    operation: Operation, exampleResponseValue: { [name: string]: ExampleResponse }
+    operation: Operation,
+    exampleResponseValue: { [name: string]: ExampleResponse }
   ) {
 
-    const self = this
-    const result: any = {}
+    const result: {
+      [name: string]: Sway.Validation
+    } = {}
     if (operation === null || operation === undefined || typeof operation !== "object") {
       throw new Error("operation cannot be null or undefined and must be of type 'object'.")
     }
@@ -1100,7 +1056,7 @@ export class SpecValidator {
           `Response statusCode "${exampleResponseStatusCode}" for operation ` +
           `"${operation.operationId}" is provided in exampleResponseValue, ` +
           `however it is not present in the swagger spec.`;
-        const e = self.constructErrorObject(ErrorCodes.ResponseStatusCodeNotInSpec, msg)
+        const e = this.constructErrorObject(ErrorCodes.ResponseStatusCodeNotInSpec, msg)
         result[exampleResponseStatusCode].errors.push(e)
         log.error(e as any)
         continue
@@ -1113,7 +1069,7 @@ export class SpecValidator {
           `Response statusCode "${exampleResponseStatusCode}" for operation ` +
           `"${operation.operationId}" has response body provided in the example, ` +
           `however the response does not have a "schema" defined in the swagger spec.`
-        const e = self.constructErrorObject(ErrorCodes.ResponseSchemaNotInSpec, msg)
+        const e = this.constructErrorObject(ErrorCodes.ResponseSchemaNotInSpec, msg)
         result[exampleResponseStatusCode].errors.push(e)
         log.error(e as any)
         continue
@@ -1124,7 +1080,7 @@ export class SpecValidator {
       }
       const exampleResponse = new ResponseWrapper(
         exampleResponseStatusCode, exampleResponseBody, exampleResponseHeaders)
-      const validationResult = self.validateResponse(operation, exampleResponse)
+      const validationResult = this.validateResponse(operation, exampleResponse)
       result[exampleResponseStatusCode] = validationResult
     }
     const responseWithoutXmsExamples = utils
@@ -1142,7 +1098,7 @@ export class SpecValidator {
         `Following response status codes "${responseWithoutXmsExamples.toString()}" for ` +
         `operation "${operation.operationId}" were present in the swagger spec, ` +
         `however they were not present in x-ms-examples. Please provide them.`
-      const e = self.constructErrorObject(ErrorCodes.ResponseStatusCodeNotInExample, msg)
+      const e = this.constructErrorObject(ErrorCodes.ResponseStatusCodeNotInExample, msg)
       log.error(e as any)
       responseWithoutXmsExamples.forEach(statusCode => {
         result[statusCode] = { errors: [e] }
@@ -1163,7 +1119,7 @@ export class SpecValidator {
     if (operation === null || operation === undefined || typeof operation !== "object") {
       throw new Error("operation cannot be null or undefined and must be of type 'object'.")
     }
-    const result: StringMap<Sway.ResponseValidation> = {}
+    const result: StringMap<Sway.Validation> = {}
     const responses = operation.getResponses()
     for (const response of responses) {
       if (response.examples) {

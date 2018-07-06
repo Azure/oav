@@ -116,7 +116,7 @@ export interface Node {
 /**
  * Serializes error tree
  */
-export function serializeErrors(node: Node, serializedErrors: Unknown[], path: Unknown[]) {
+export function serializeErrors(node: Node, serializedErrors: Unknown[], path: Unknown[]): void {
   if (isLeaf(node)) {
     if (isTrueError(node)) {
       if (node.path) {
@@ -142,15 +142,11 @@ export function serializeErrors(node: Node, serializedErrors: Unknown[], path: U
     path = consolidatePath(path, node.path)
   }
   if (node.errors) {
-    node.errors.map(validationError => {
-      serializeErrors(validationError, serializedErrors, path);
-    })
+    node.errors.forEach(validationError => serializeErrors(validationError, serializedErrors, path))
   }
 
   if (node.inner) {
-    node.inner.map(validationError => {
-      serializeErrors(validationError, serializedErrors, path)
-    })
+    node.inner.forEach(validationError => serializeErrors(validationError, serializedErrors, path))
   }
 }
 
@@ -158,7 +154,7 @@ function validationErrorEntry(id: string, severity: Severity): [string, Validati
   return [id, new ValidationError(id, severity)]
 }
 
-function isTrueError(node: Node) {
+function isTrueError(node: Node): boolean {
   // this is necessary to filter out extra errors coming from doing the ONE_OF transformation on
   // the models to allow "null"
   if (
@@ -172,11 +168,11 @@ function isTrueError(node: Node) {
   }
 }
 
-function isLeaf(node: Node) {
+function isLeaf(node: Node): boolean {
   return !node.errors && !node.inner;
 };
 
-function consolidatePath(path: Unknown[], suffixPath: string|string[]) {
+function consolidatePath(path: Unknown[], suffixPath: string|string[]): Unknown[] {
   let newSuffixIndex = 0
   let overlapIndex = path.lastIndexOf(suffixPath[newSuffixIndex])
   let previousIndex = overlapIndex
@@ -196,7 +192,7 @@ function consolidatePath(path: Unknown[], suffixPath: string|string[]) {
       break
     }
   }
-  let newPath = []
+  let newPath: Unknown[] = []
   if (newSuffixIndex === suffixPath.length) {
     // if all elements are contained in the existing path, nothing to do.
     newPath = path.slice(0)
