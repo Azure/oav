@@ -20,10 +20,7 @@ export class ValidationError {
   }
 }
 
-export const errorConstants: Map<string, ValidationError> = new Map<
-  string,
-  ValidationError
->([
+export const errorConstants: Map<string, ValidationError> = new Map<string, ValidationError>([
   validationErrorEntry("INVALID_TYPE", Severity.Critical),
   validationErrorEntry("INVALID_FORMAT", Severity.Critical),
   validationErrorEntry("ENUM_MISMATCH", Severity.Critical),
