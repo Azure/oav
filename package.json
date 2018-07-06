@@ -1,6 +1,6 @@
 {
   "name": "oav",
-  "version": "0.4.54",
+  "version": "0.4.55",
   "author": {
     "name": "Microsoft Corporation",
     "email": "azsdkteam@microsoft.com",
@@ -13,7 +13,6 @@
     "@types/uuid": "^3.4.3",
     "@types/lodash": "^4.14.109",
     "@types/request": "^2.47.1",
-    "@types/winston": "^2.3.9",
     "azure-arm-resource": "^2.0.0-preview",
     "glob": "^5.0.14",
     "js-yaml": "^3.8.2",
@@ -30,7 +29,7 @@
     "swagger-tools": "^0.10.1",
     "uuid": "^3.0.1",
     "vscode-jsonrpc": "^3.6.1",
-    "winston": "^2.4.2",
+    "winston": "^3.0.0",
     "yargs": "^6.6.0",
     "yasway": "^1.0.0",
     "yuml2svg": "^3.1.0"
@@ -97,7 +96,7 @@
   "scripts": {
     "tsc": "tsc",
     "tslint": "tslint ./*.ts ./lib/**/*.ts ./test/**/*.ts ./types/**/*.ts",
-    "test": "npm run tslint && nyc mocha ./test/**/*.ts -r ts-node/register -t 10000",
+    "test": "npm run tsc && npm run tslint && nyc mocha ./test/**/*.ts -r ts-node/register -t 10000",
     "start": "node ./dist/lib/autorestPlugin/pluginHost.js",
     "prepack": "npm install && tsc && npm run tslint"
   }
