@@ -174,7 +174,7 @@ declare module "yasway" {
       readonly version: string
       readonly title: any
     }
-    validate(): any
+    validate(): Validation
     getOperations(): Operation[]
   }
   function create(options: Options): Promise<SwaggerApi>

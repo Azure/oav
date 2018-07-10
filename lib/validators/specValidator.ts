@@ -8,9 +8,6 @@ import * as util from "util"
 import * as path from "path"
 import * as Sway from "yasway"
 import * as msRest from "ms-rest"
-
-const HttpRequest = msRest.WebResource
-
 import { SpecResolver } from "./specResolver"
 import * as specResolver from "./specResolver"
 import * as utils from "../util/utils"
@@ -23,6 +20,8 @@ import * as C from "../util/constants"
 import { Operation, SwaggerObject } from "yasway"
 import { StringMap } from "../util/stringMap"
 
+const HttpRequest = msRest.WebResource
+
 const ErrorCodes = C.ErrorCodes;
 
 export interface Options extends specResolver.Options {
@@ -34,14 +33,9 @@ export interface ErrorCode {
   readonly id: string
 }
 
-interface Validation {
-  readonly errors: Error[]
-  readonly warnings: Unknown[]
-}
-
 interface RequestValidation {
   request?: Unknown
-  validationResult?: Validation
+  validationResult?: Sway.Validation
 }
 
 interface ResponseValidation {
@@ -247,7 +241,7 @@ export class SpecValidator {
     }
   }
 
-  public async validateSpec(): Promise<Unknown> {
+  public async validateSpec(): Promise<Sway.Validation> {
     this.specValidationResult.validateSpec = {
       isValid: true,
       errors: [],
@@ -514,7 +508,7 @@ export class SpecValidator {
   private constructRequestResultWrapper(
     operationId: string,
     requestValidationErrors: Error[],
-    requestValidationWarnings: Unknown[],
+    requestValidationWarnings: Unknown[]|undefined,
     exampleType: string,
     scenarioName?: string
   ): void {
@@ -1100,9 +1094,7 @@ export class SpecValidator {
         `however they were not present in x-ms-examples. Please provide them.`
       const e = this.constructErrorObject(ErrorCodes.ResponseStatusCodeNotInExample, msg)
       log.error(e as any)
-      responseWithoutXmsExamples.forEach(statusCode => {
-        result[statusCode] = { errors: [e] }
-      })
+      responseWithoutXmsExamples.forEach(statusCode => result[statusCode] = { errors: [e] })
     }
     return result
   }
@@ -1114,8 +1106,7 @@ export class SpecValidator {
    *
    * @return {object} result - The validation result.
    */
-  private validateExampleResponses(operation: Operation) {
-    const self = this
+  private validateExampleResponses(operation: Operation): StringMap<Sway.Validation> {
     if (operation === null || operation === undefined || typeof operation !== "object") {
       throw new Error("operation cannot be null or undefined and must be of type 'object'.")
     }
@@ -1128,7 +1119,7 @@ export class SpecValidator {
           const exampleResponseHeaders = { "content-type": mimeType }
           const exampleResponse = new ResponseWrapper(
             response.statusCode, exampleResponseBody, exampleResponseHeaders)
-          const validationResult = self.validateResponse(operation, exampleResponse)
+          const validationResult = this.validateResponse(operation, exampleResponse)
           result[response.statusCode] = validationResult
         }
       }
