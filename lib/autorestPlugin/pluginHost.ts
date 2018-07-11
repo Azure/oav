@@ -119,7 +119,7 @@ export async function openApiValidationExample(
 
           // request
           const request = scenarioItem.request
-          if (request.isValid === false) {
+          if (request !== undefined && request.isValid === false) {
             const error = request.error as Error
             const innerErrors = error.innerErrors
             if (!innerErrors || !innerErrors.length) {
@@ -159,48 +159,50 @@ export async function openApiValidationExample(
           }
 
           // responses
-          for (const responseCode of utils.getKeys(scenarioItem.responses)) {
-            const response = scenarioItem.responses[responseCode]
-            if (response.isValid === false) {
-              const error = response.error as Error
-              const innerErrors = error.innerErrors
-              if (!innerErrors || !innerErrors.length) {
-                throw new Error("Model Validator: Unexpected format.")
-              }
-              for (const innerError of innerErrors) {
-                // console.error(JSON.stringify(error, null, 2));
-                const resultDetails = {
-                  type: "Error",
-                  code: error.code,
-                  message: error.message,
-                  id: error.id,
-                  validationCategory: modelValidationCategory,
-                  innerErrors: innerError,
+          if (scenarioItem.responses !== undefined) {
+            for (const responseCode of utils.getKeys(scenarioItem.responses)) {
+              const response = scenarioItem.responses[responseCode]
+              if (response.isValid === false) {
+                const error = response.error as Error
+                const innerErrors = error.innerErrors
+                if (!innerErrors || !innerErrors.length) {
+                  throw new Error("Model Validator: Unexpected format.")
                 }
-                result = new FormattedOutput(
-                  "error",
-                  resultDetails,
-                  [error.code, error.id, modelValidationCategory],
-                  innerError.message
-                    + ". \nScenario: "
-                    + scenario
-                    + ". \nDetails: "
-                    + JSON.stringify(innerError.errors, null, 2)
-                    + "\nMore info: "
-                    + openAPIDocUrl
-                    + "#"
-                    + error.id.toLowerCase()
-                    + "-"
-                    + error.code.toLowerCase() + "\n",
-                  [{
-                    document: swaggerFileName,
-                    Position: {
-                      path: xmsexPath
-                        .slice(0, xmsexPath.length - 1)
-                        .concat(["responses", responseCode]),
-                    },
-                  }])
-                formattedResult.push(result)
+                for (const innerError of innerErrors) {
+                  // console.error(JSON.stringify(error, null, 2));
+                  const resultDetails = {
+                    type: "Error",
+                    code: error.code,
+                    message: error.message,
+                    id: error.id,
+                    validationCategory: modelValidationCategory,
+                    innerErrors: innerError,
+                  }
+                  result = new FormattedOutput(
+                    "error",
+                    resultDetails,
+                    [error.code, error.id, modelValidationCategory],
+                    innerError.message
+                      + ". \nScenario: "
+                      + scenario
+                      + ". \nDetails: "
+                      + JSON.stringify(innerError.errors, null, 2)
+                      + "\nMore info: "
+                      + openAPIDocUrl
+                      + "#"
+                      + error.id.toLowerCase()
+                      + "-"
+                      + error.code.toLowerCase() + "\n",
+                    [{
+                      document: swaggerFileName,
+                      Position: {
+                        path: xmsexPath
+                          .slice(0, xmsexPath.length - 1)
+                          .concat(["responses", responseCode]),
+                      },
+                    }])
+                  formattedResult.push(result)
+                }
               }
             }
           }

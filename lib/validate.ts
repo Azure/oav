@@ -12,6 +12,7 @@ import { SpecResolver } from "./validators/specResolver"
 import * as specResolver from "./validators/specResolver"
 import * as umlGeneratorLib from "./umlGenerator"
 import { Unknown } from "./util/unknown"
+// import { processValidationErrors } from './util/validationError';
 
 interface FinalValidationResult {
   [name: string]: Unknown
@@ -67,6 +68,9 @@ async function validate<T>(
   if (!options) { options = {} }
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
   log.filepath = options.logFilepath || log.filepath
+  if (options.pretty) {
+    log.consoleLogLevel = undefined
+  }
   try {
     return await func(options)
   } catch (err) {
@@ -128,6 +132,11 @@ export function validateExamples(
     validator.validateOperations(operationIds)
     updateEndResultOfSingleValidation(validator)
     logDetailedInfo(validator)
+    if (o.pretty) {
+      /* tslint:disable-next-line:no-console no-string-literal */
+      // tslint:disable-next-line:max-line-length
+      // console.log(processValidationErrors(validator.specValidationResult.operations["sss"]["get"].))
+    }
     return validator.specValidationResult
   })
 }

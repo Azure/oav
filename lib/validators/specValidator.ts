@@ -42,20 +42,15 @@ interface ResponseValidation {
   readonly [name: string]: Sway.Validation
 }
 
-interface Scenario {
-  readonly requestValidation: RequestValidation
-  readonly responseValidation: ResponseValidation
-}
-
-interface Scenarios {
-  [name: string]: Scenario
-}
-
 interface ValidationResult {
   exampleNotFound?: Error
   scenarios?: Scenarios
-  requestValidation?: RequestValidation
-  responseValidation?: ResponseValidation
+  readonly requestValidation?: RequestValidation
+  readonly responseValidation?: ResponseValidation
+}
+
+interface Scenarios {
+  [name: string]: ValidationResult
 }
 
 export interface Result {
@@ -63,24 +58,12 @@ export interface Result {
   error?: Error
   warning?: Unknown
   result?: Unknown
+  errors?: Unknown
+  warnings?: Unknown
 }
 
 export interface SpecScenarios {
-  [name: string]: {
-    isValid: Unknown
-    request: Result
-    responses: {
-      [name: string]: Result
-    }
-  }
-}
-
-export interface SpecValidation {
-  isValid: Unknown
-  errors: Unknown
-  warnings: Unknown
-  result?: Unknown
-  error?: Unknown
+  [name: string]: OperationResult
 }
 
 export interface OperationResult {
@@ -101,7 +84,7 @@ export interface SpecValidationResult {
       [name: string]: OperationResult
     }
   }
-  validateSpec?: SpecValidation
+  validateSpec?: Result
   initialize?: Unknown
 }
 
@@ -609,7 +592,11 @@ export class SpecValidator {
     if (exampleType === C.xmsExamples) {
       if (result.scenarios) {
         for (const scenario of utils.getKeys(result.scenarios)) {
-          const validationResult = result.scenarios[scenario].requestValidation.validationResult
+          const requestValidation = result.scenarios[scenario].requestValidation
+          if (requestValidation === undefined) {
+            throw new Error("requestValidation is undefined")
+          }
+          const validationResult = requestValidation.validationResult
           if (validationResult === undefined) {
             throw new Error("validationResult is undefined")
           }
@@ -619,13 +606,13 @@ export class SpecValidator {
           this.constructRequestResultWrapper(
             operationId, requestValidationErrors, requestValidationWarnings, exampleType, scenario)
           // responseValidation
-          for (const responseStatusCode of utils.getKeys(
-            result.scenarios[scenario].responseValidation)) {
-
-            const responseValidationErrors =
-              result.scenarios[scenario].responseValidation[responseStatusCode].errors
-            const responseValidationWarnings =
-              result.scenarios[scenario].responseValidation[responseStatusCode].warnings
+          const responseValidation = result.scenarios[scenario].responseValidation
+          if (responseValidation === undefined) {
+            throw new Error("responseValidation is undefined")
+          }
+          for (const responseStatusCode of utils.getKeys(responseValidation)) {
+            const responseValidationErrors = responseValidation[responseStatusCode].errors
+            const responseValidationWarnings = responseValidation[responseStatusCode].warnings
             this.constructResponseResultWrapper(
               operationId,
               responseStatusCode,

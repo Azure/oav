@@ -3,6 +3,7 @@
 
 import { Severity } from "./severity"
 import { Unknown } from "./unknown"
+import { Error } from "./error"
 
 /**
  * @class
@@ -74,10 +75,24 @@ export function errorCodeToSeverity(code: string): Severity {
   return errorConstant ? errorConstant.severity : Severity.Critical
 }
 
+export type Node = Error
+
 export interface ValidationResult {
   readonly requestValidationResult: Node
   readonly responseValidationResult: Node
 }
+
+/*
+export interface Node {
+  path: string|string[]
+  errors: Node[]
+  code: Unknown
+  in: Unknown
+  name: string
+  inner: Node[]
+  params: Unknown[]
+}
+*/
 
 /**
  * Serializes validation results into a flat array.
@@ -102,16 +117,6 @@ export function processValidationErrors(rawValidation: ValidationResult): Valida
 
   return rawValidation
 };
-
-export interface Node {
-  path: string|string[]
-  errors: Node[]
-  code: Unknown
-  in: Unknown
-  name: string
-  inner: Node[]
-  params: Unknown[]
-}
 
 /**
  * Serializes error tree

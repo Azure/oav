@@ -85,6 +85,7 @@ export class ValidateResponse {
       && warning.code !== "UNUSED_DEFINITION")
   }
 
+  /*
   private seralize() {
     const result: { ["json-path"]?: Unknown } = {}
     for (const prop in this) {
@@ -96,6 +97,7 @@ export class ValidateResponse {
     }
     return result
   }
+  */
 }
 
 export const validateResponse = new ValidateResponse()

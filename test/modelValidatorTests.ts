@@ -115,11 +115,16 @@ describe("Model Validation", () => {
       if (scenarios === undefined) {
         throw new Error("scenarios === undefined")
       }
-      const responseError = scenarios
+      const scenario = scenarios
         ["Tests ploymorphic circular array, " +
           "dictionary of animals with incorrect sibling (negative)"]
-        .responses
-        ["200"]
+      if (scenario === undefined) {
+        throw new Error("scenario === undefined")
+      }
+      if (scenario.responses === undefined) {
+        throw new Error("scenario.responses === undefined")
+      }
+      const responseError = scenario.responses["200"]
       assert.equal(responseError.isValid, false)
       if (responseError.error === undefined) {
         throw new Error("no error")
