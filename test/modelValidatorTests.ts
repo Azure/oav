@@ -107,11 +107,15 @@ describe("Model Validation", () => {
       assert(
         result.validityStatus === false,
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`)
-      const scenarios = result
+      const example =
+        result
         .operations
         .CircularAnimal_IncorrectSibling_List
         ["x-ms-examples"]
-        .scenarios
+      if (example === undefined) {
+        throw new Error("scenarios === undefined")
+      }
+      const scenarios = example.scenarios
       if (scenarios === undefined) {
         throw new Error("scenarios === undefined")
       }

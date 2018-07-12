@@ -5,24 +5,41 @@ import { processValidationErrors, ValidationResult } from "./validationError"
 import { toModelErrors } from "./toModelErrors"
 import { ValidationResultSource } from "./validationResultSource"
 import { responseReducer, Scenario } from "./responseReducer"
-import { Unknown } from "./unknown"
 import { ModelValidationError } from "./modelValidationError"
 
-interface Operation {
-  readonly ["x-ms-examples"]: {
-    readonly scenarios: {
-      readonly [key in string]: Scenario
+export interface Operation {
+  readonly ["x-ms-examples"]?: {
+    readonly scenarios?: {
+      readonly [key in string]?: Scenario
     }
   }
 }
 
 export function scenarioReducer(
-  acc: Unknown[], scenarioName: string, operationId: string, operation: Operation
+  acc: ModelValidationError[],
+  scenarioName: string,
+  operationId: string,
+  operation: Operation
 ) {
-  const scenario = operation["x-ms-examples"].scenarios[scenarioName];
+  const example = operation["x-ms-examples"]
+  if (example === undefined) {
+    throw new Error("example is undefined")
+  }
+  const scenarios = example.scenarios
+  if (scenarios === undefined) {
+    throw new Error("scenarios is undefined")
+  }
+  const scenario = scenarios[scenarioName];
+  if (scenario === undefined) {
+    throw new Error("scenario is undefined")
+  }
+  const request = scenario.request
+  if (request === undefined) {
+    throw new Error("request is undefined")
+  }
   const rawValidationResult: ValidationResult<ModelValidationError> = {
     requestValidationResult: {
-      errors: scenario.request.error ? scenario.request.error.innerErrors : []
+      errors: request.error ? request.error.innerErrors : []
     },
     responseValidationResult: {
       errors: []
@@ -34,7 +51,7 @@ export function scenarioReducer(
   if (processedErrors.requestValidationResult.errors === undefined) {
     throw new Error("ICE: processedErrors.requestValidationResult.errors === undefined")
   }
-  if (!scenario.request.isValid) {
+  if (!request.isValid) {
     acc = [
       ...acc,
       ...toModelErrors(

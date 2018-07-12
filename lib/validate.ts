@@ -5,14 +5,18 @@ import * as fs from "fs"
 import * as path from "path"
 import { log } from "./util/logging"
 import * as utils from "./util/utils"
-import { SpecValidator, SpecValidationResult } from "./validators/specValidator"
+import {
+  SpecValidator, SpecValidationResult, CommonValidationResult
+} from "./validators/specValidator"
 import { WireFormatGenerator } from "./wireFormatGenerator"
 import { XMsExampleExtractor } from "./xMsExampleExtractor"
 import { SpecResolver } from "./validators/specResolver"
 import * as specResolver from "./validators/specResolver"
 import * as umlGeneratorLib from "./umlGenerator"
 import { Unknown } from "./util/unknown"
-// import { processValidationErrors } from './util/validationError';
+import { getErrorsFromModelValidation } from "./util/getErrorsFromModelValidation"
+import { SemanticValidator } from "./validators/semanticValidator"
+import { ModelValidator } from "./validators/modelValidator"
 
 interface FinalValidationResult {
   [name: string]: Unknown
@@ -97,7 +101,7 @@ export function validateSpec(
     // We shouldn't be resolving nullable types for semantic validation as we'll replace nodes
     // with oneOf arrays which are not semantically valid in swagger 2.0 schema.
     o.shouldResolveNullableTypes = false
-    const validator = new SpecValidator(specPath, null, o)
+    const validator = new SemanticValidator(specPath, null, o)
     finalValidationResult[specPath] = validator.specValidationResult
 
     await validator.initialize()
@@ -125,7 +129,7 @@ export function validateExamples(
   specPath: string, operationIds: string|undefined, options?: Options
 ): Promise<SpecValidationResult> {
   return validate(options, async o => {
-    const validator = new SpecValidator(specPath, null, o)
+    const validator = new ModelValidator(specPath, null, o)
     finalValidationResult[specPath] = validator.specValidationResult
     await validator.initialize()
     log.info(`Validating "examples" and "x-ms-examples" in  ${specPath}:\n`)
@@ -134,8 +138,7 @@ export function validateExamples(
     logDetailedInfo(validator)
     if (o.pretty) {
       /* tslint:disable-next-line:no-console no-string-literal */
-      // tslint:disable-next-line:max-line-length
-      // console.log(processValidationErrors(validator.specValidationResult.operations["sss"]["get"].))
+      // console.log(getErrorsFromModelValidation(validator.specValidationResult))
     }
     return validator.specValidationResult
   })
@@ -277,7 +280,9 @@ export async function generateUml(
   }
 }
 
-export function updateEndResultOfSingleValidation(validator: SpecValidator): void {
+export function updateEndResultOfSingleValidation<T extends CommonValidationResult>(
+  validator: SpecValidator<T>
+): void {
   if (validator.specValidationResult.validityStatus) {
     if (!(log.consoleLogLevel === "json" || log.consoleLogLevel === "off")) {
       log.info("No Errors were found.")
@@ -289,7 +294,9 @@ export function updateEndResultOfSingleValidation(validator: SpecValidator): voi
   }
 }
 
-export function logDetailedInfo(validator: SpecValidator): void {
+export function logDetailedInfo<T extends CommonValidationResult>(
+  validator: SpecValidator<T>
+): void {
   if (log.consoleLogLevel === "json") {
     /* tslint:disable-next-line */
     console.dir(validator.specValidationResult, { depth: null, colors: true })

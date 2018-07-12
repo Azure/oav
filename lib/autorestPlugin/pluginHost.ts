@@ -17,6 +17,7 @@ import { SourceLocation } from
 import { Unknown } from "../util/unknown"
 import { CommonError } from "../util/error"
 import { SwaggerObject } from "yasway"
+import { ModelValidator } from "../validators/modelValidator"
 
 const openAPIDocUrl = "https://github.com/Azure/oav"
 
@@ -85,7 +86,7 @@ export async function openApiValidationExample(
   if (!options) { options = {} }
   options.consoleLogLevel = "off"
   log.consoleLogLevel = options.consoleLogLevel
-  const specVal = new specValidator.SpecValidator(
+  const specVal = new ModelValidator(
     swaggerFileName, swagger as SwaggerObject, options)
   // console.error(JSON.stringify(swagger, null, 2))
   await specVal.initialize()
@@ -94,6 +95,9 @@ export async function openApiValidationExample(
     const specValidationResult = specVal.specValidationResult
     for (const op of utils.getKeys(specValidationResult.operations)) {
       const xmsExamplesNode = specValidationResult.operations[op]["x-ms-examples"];
+      if (xmsExamplesNode === undefined) {
+        throw new Error("xmsExamplesNode is undefined")
+      }
       const scenarios = xmsExamplesNode.scenarios as specValidator.SpecScenarios
       for (const scenario of utils.getKeys(scenarios)) {
         // invalid? meaning that there's an issue found in the validation
