@@ -6,20 +6,43 @@ import { toModelErrors } from "./toModelErrors"
 import { ValidationResultSource } from "./validationResultSource"
 import { responseReducer, Scenario } from "./responseReducer"
 import { ModelValidationError } from "./modelValidationError"
+import { Unknown } from "./unknown"
+import { CommonError } from "./error"
 
-export interface Operation {
-  readonly ["x-ms-examples"]?: {
-    readonly scenarios?: {
-      readonly [key in string]?: Scenario
-    }
+export interface Result {
+  isValid?: Unknown
+  error?: CommonError
+  warning?: Unknown
+  result?: Unknown
+  errors?: Unknown
+  warnings?: Unknown
+}
+
+/*
+export interface OperationExampleResult {
+  isValid?: Unknown
+  scenarios?: {
+    [key in string]?: Scenario
   }
+  request?: Result
+  responses?: {
+    [name: string]: Result
+  }
+  error?: Unknown
+}
+*/
+
+export type OperationExampleResult = Scenario
+
+export interface OperationResult {
+  [key: string]: OperationExampleResult
 }
 
 export function scenarioReducer(
   acc: ModelValidationError[],
   scenarioName: string,
   operationId: string,
-  operation: Operation
+  operation: OperationResult
 ) {
   const example = operation["x-ms-examples"]
   if (example === undefined) {

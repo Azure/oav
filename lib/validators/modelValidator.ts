@@ -1,10 +1,8 @@
 import {
   SpecValidator,
   SpecValidationResult,
-  OperationResult,
-  SpecScenarios,
   ValidationResult,
-  Scenarios,
+  ValidationResultScenarios,
   RequestValidation,
   ExampleResponse
 } from "./specValidator"
@@ -18,6 +16,7 @@ import { StringMap } from "../util/stringMap"
 import { Operation } from "yasway"
 import * as Sway from "yasway"
 import { ResponseWrapper } from "../models/responseWrapper"
+import { OperationExampleResult } from "../util/scenarioReducer"
 
 export class ModelValidator extends SpecValidator<SpecValidationResult> {
 
@@ -55,9 +54,11 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
         [C.exampleInSpec]: {}
       }
       this.validateOperation(operation)
-      const example = this.specValidationResult.operations
-        [operation.operationId]
-        [C.exampleInSpec]
+      const operationResult = this.specValidationResult.operations[operation.operationId]
+      if (operationResult === undefined) {
+        throw new Error("operationResult is undefined")
+      }
+      const example = operationResult[C.exampleInSpec]
       if (example === undefined) {
         throw new Error("example is undefined")
       }
@@ -65,7 +66,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
           .getKeys(example)
           .length
         === 0) {
-        delete this.specValidationResult.operations[operation.operationId][C.exampleInSpec]
+        delete operationResult[C.exampleInSpec]
       }
     }
   }
@@ -111,15 +112,26 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
 
   private getExample(
     operationId: string, exampleType: string, scenarioName: string|undefined
-  ): { operationResult: OperationResult, part: string } {
-    const example = this.specValidationResult.operations[operationId][exampleType]
+  ): { operationResult: OperationExampleResult, part: string } {
+    const operation = this.specValidationResult.operations[operationId]
+    if (operation === undefined) {
+      throw new Error("operation is undefined")
+    }
+    const example = operation[exampleType]
     if (example === undefined) {
       throw new Error("example is undefined")
     }
     if (exampleType === C.xmsExamples) {
-      const scenarios = example.scenarios as SpecScenarios
+      const scenarios = example.scenarios
+      if (scenarios === undefined) {
+        throw new Error("scenarios is undefined")
+      }
+      const scenario = scenarios[scenarioName as string]
+      if (scenario === undefined) {
+        throw new Error("scenario is undefined")
+      }
       return {
-        operationResult: scenarios[scenarioName as string],
+        operationResult: scenario,
         part: `for x-ms-example "${scenarioName}" in operation "${operationId}"`
       }
     } else {
@@ -208,7 +220,11 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
 
     const operationId = operation.operationId
     if (result.exampleNotFound) {
-      const example = this.specValidationResult.operations[operationId][exampleType]
+      const operationResult = this.specValidationResult.operations[operationId]
+      if (operationResult === undefined) {
+        throw new Error("example is undefined")
+      }
+      const example = operationResult[exampleType]
       if (example === undefined) {
         throw new Error("example is undefined")
       }
@@ -287,7 +303,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       throw new Error("operation cannot be null or undefined and must be of type 'object'.")
     }
     const xmsExamples = operation[C.xmsExamples]
-    const resultScenarios: Scenarios = {}
+    const resultScenarios: ValidationResultScenarios = {}
     const result: ValidationResult = {
       scenarios: resultScenarios
     }

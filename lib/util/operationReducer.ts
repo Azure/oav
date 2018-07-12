@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import { scenarioReducer, Operation } from "./scenarioReducer"
+import { scenarioReducer, OperationResult } from "./scenarioReducer"
 import { ModelValidationError } from "./modelValidationError"
 
 export function operationReducer(
-  acc: ModelValidationError[], [operationId, operation]: [string, Operation]
+  acc: ModelValidationError[], [operationId, operation]: [string, OperationResult]
 ) {
   const example = operation["x-ms-examples"]
   if (example === undefined) {

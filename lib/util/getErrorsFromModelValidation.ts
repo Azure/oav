@@ -3,11 +3,11 @@
 
 import { ModelValidationError } from "./modelValidationError"
 import { operationReducer } from "./operationReducer"
-import { Operation } from "./scenarioReducer"
+import { OperationResult } from "./scenarioReducer"
 
 export interface ModelValidation {
-  readonly operations: {
-    readonly [key: string]: Operation|undefined
+  operations: {
+    [key: string]: OperationResult|undefined
   }
 }
 
@@ -31,5 +31,5 @@ export function getErrorsFromModelValidation(
         return examples && examples.scenarios
       }
     )
-  return (operations as ReadonlyArray<[string, Operation]>).reduce(operationReducer, []);
+  return (operations as ReadonlyArray<[string, OperationResult]>).reduce(operationReducer, []);
 }

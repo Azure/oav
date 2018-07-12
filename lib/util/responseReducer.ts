@@ -8,14 +8,18 @@ import { Unknown } from "./unknown"
 import { ModelValidationError } from "./modelValidationError"
 
 export interface Result {
-  readonly isValid?: Unknown
-  readonly error?: {
+  isValid?: Unknown
+  error?: {
+    readonly code: Unknown
     readonly innerErrors?: ModelValidationError[]
   }
 }
 
 export interface Scenario {
-  readonly isValid?: Unknown
+  isValid?: Unknown
+  scenarios?: {
+    [key in string]?: Scenario
+  }
   readonly request?: Result
   readonly responses: {
     readonly [key in string|number]: Result

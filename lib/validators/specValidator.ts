@@ -12,6 +12,8 @@ import { CommonError } from "../util/error"
 import { Unknown } from "../util/unknown"
 import * as C from "../util/constants"
 import { Operation, SwaggerObject } from "yasway"
+import { ModelValidation } from "../util/getErrorsFromModelValidation"
+import { Result, OperationExampleResult } from "../util/scenarioReducer"
 
 const HttpRequest = msRest.WebResource
 
@@ -37,29 +39,21 @@ interface ResponseValidation {
 
 export interface ValidationResult {
   exampleNotFound?: CommonError
-  scenarios?: Scenarios
+  scenarios?: ValidationResultScenarios
   readonly requestValidation?: RequestValidation
   readonly responseValidation?: ResponseValidation
 }
 
-export interface Scenarios {
+export interface ValidationResultScenarios {
   [name: string]: ValidationResult
 }
 
-export interface Result {
-  isValid?: Unknown
-  error?: CommonError
-  warning?: Unknown
-  result?: Unknown
-  errors?: Unknown
-  warnings?: Unknown
-}
-
+/*
 export interface SpecScenarios {
-  [name: string]: OperationResult
+  [name: string]: OperationExampleResult|undefined
 }
 
-export interface OperationResult {
+export interface OperationExampleResult {
   isValid?: Unknown
   scenarios?: SpecScenarios
   error?: Unknown
@@ -68,7 +62,9 @@ export interface OperationResult {
     [name: string]: Result
   }
 }
+*/
 
+/*
 export interface SpecValidationResult {
   resolveSpec?: Unknown
   validityStatus: Unknown
@@ -80,6 +76,11 @@ export interface SpecValidationResult {
   }
   validateSpec?: Result
   initialize?: Unknown
+}
+*/
+
+export interface SpecValidationResult extends ModelValidation {
+  validityStatus: Unknown
 }
 
 export interface ExampleResponse {
@@ -101,7 +102,7 @@ export interface CommonValidationResult {
  */
 export class SpecValidator<T extends CommonValidationResult> {
 
-  public specValidationResult: T // SpecValidationResult
+  public specValidationResult: T
 
   protected swaggerApi: Sway.SwaggerApi|null
 
@@ -287,7 +288,7 @@ export class SpecValidator<T extends CommonValidationResult> {
   }
 
   protected constructRequestResult(
-    operationResult: OperationResult,
+    operationResult: OperationExampleResult,
     isValid: Unknown,
     msg: string,
     requestValidationErrors?: CommonError[]|null,
@@ -316,7 +317,7 @@ export class SpecValidator<T extends CommonValidationResult> {
   }
 
   protected constructResponseResult(
-    operationResult: OperationResult,
+    operationResult: OperationExampleResult,
     responseStatusCode: string,
     isValid: Unknown,
     msg: string,

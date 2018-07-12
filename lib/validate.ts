@@ -138,7 +138,7 @@ export function validateExamples(
     logDetailedInfo(validator)
     if (o.pretty) {
       /* tslint:disable-next-line:no-console no-string-literal */
-      // console.log(getErrorsFromModelValidation(validator.specValidationResult))
+      console.log(getErrorsFromModelValidation(validator.specValidationResult))
     }
     return validator.specValidationResult
   })
