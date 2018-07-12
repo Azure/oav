@@ -14,6 +14,7 @@ import * as C from "../util/constants"
 import { Operation, SwaggerObject } from "yasway"
 import { ModelValidation } from "../util/getErrorsFromModelValidation"
 import { Result, OperationExampleResult } from "../util/scenarioReducer"
+import { ModelValidationError } from "../util/modelValidationError"
 
 const HttpRequest = msRest.WebResource
 
@@ -241,12 +242,12 @@ export class SpecValidator<T extends CommonValidationResult> {
    *
    * @return {object} err Return the constructed Error object.
    */
-  protected constructErrorObject(
+  protected constructErrorObject<TE extends CommonError>(
     code: ErrorCode,
     message: string,
-    innerErrors?: null|CommonError[],
+    innerErrors?: null|TE[],
     skipValidityStatusUpdate?: boolean
-  ): CommonError {
+  ): TE {
 
     const err: CommonError = {
       code: code.name,
@@ -257,7 +258,7 @@ export class SpecValidator<T extends CommonValidationResult> {
     if (!skipValidityStatusUpdate) {
       this.updateValidityStatus()
     }
-    return err
+    return err as TE
   }
 
   protected getProviderNamespace(): string|null {
@@ -291,7 +292,7 @@ export class SpecValidator<T extends CommonValidationResult> {
     operationResult: OperationExampleResult,
     isValid: Unknown,
     msg: string,
-    requestValidationErrors?: CommonError[]|null,
+    requestValidationErrors?: ModelValidationError[]|null,
     requestValidationWarnings?: Unknown
   ): void {
 

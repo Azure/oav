@@ -8,4 +8,5 @@ export interface ModelValidationError extends BaseValidationError, NodeError<Mod
   operationId?: string
   scenario?: string
   responseCode?: string
+  readonly innerErrors?: ModelValidationError[]
 }

@@ -9,10 +9,10 @@ import { ModelValidationError } from "./modelValidationError"
 
 export interface Result {
   isValid?: Unknown
-  error?: {
+  error?: ModelValidationError /* {
     readonly code: Unknown
     readonly innerErrors?: ModelValidationError[]
-  }
+  }*/
 }
 
 export interface Scenario {
