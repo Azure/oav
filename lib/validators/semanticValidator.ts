@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License. See License.txt in the project root for license information.
+
 import { SpecValidator, CommonValidationResult } from "./specValidator"
 import * as Sway from "yasway"
 import { ErrorCodes } from "../util/constants"
@@ -7,6 +10,7 @@ import { validateResponse } from "../util/validationResponse"
 import * as C from "../util/constants"
 import * as util from "util"
 import { CommonError } from "../util/error"
+import * as utils from "../util/utils"
 
 export interface Result {
   isValid?: Unknown
@@ -23,6 +27,7 @@ export interface SemanticValidationResult extends CommonValidationResult {
 }
 
 export class SemanticValidator extends SpecValidator<SemanticValidationResult> {
+
   public async validateSpec(): Promise<Sway.Validation> {
     this.specValidationResult.validateSpec = {
       isValid: true,
@@ -81,5 +86,23 @@ export class SemanticValidator extends SpecValidator<SemanticValidationResult> {
       this.updateValidityStatus()
       throw err
     }
+  }
+
+  private getProviderNamespace(): string|null {
+    const re = /^(.*)\/providers\/(\w+\.\w+)\/(.*)$/ig
+    if (this.specInJson) {
+      if (this.specInJson.paths) {
+        const paths = utils.getKeys(this.specInJson.paths)
+        if (paths) {
+          for (const pathStr of paths) {
+            const res = re.exec(pathStr)
+            if (res && res[2]) {
+              return res[2]
+            }
+          }
+        }
+      }
+    }
+    return null
   }
 }

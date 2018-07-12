@@ -3,7 +3,6 @@
 
 import * as path from "path"
 import * as Sway from "yasway"
-import * as msRest from "ms-rest"
 import { SpecResolver } from "./specResolver"
 import * as specResolver from "./specResolver"
 import * as utils from "../util/utils"
@@ -11,12 +10,8 @@ import { log } from "../util/logging"
 import { CommonError } from "../util/error"
 import { Unknown } from "../util/unknown"
 import * as C from "../util/constants"
-import { Operation, SwaggerObject } from "yasway"
+import { SwaggerObject } from "yasway"
 import { ModelValidation } from "../util/getErrorsFromModelValidation"
-import { Result, OperationExampleResult } from "../util/scenarioReducer"
-import { ModelValidationError } from "../util/modelValidationError"
-
-const HttpRequest = msRest.WebResource
 
 const ErrorCodes = C.ErrorCodes;
 
@@ -49,37 +44,6 @@ export interface ValidationResultScenarios {
   [name: string]: ValidationResult
 }
 
-/*
-export interface SpecScenarios {
-  [name: string]: OperationExampleResult|undefined
-}
-
-export interface OperationExampleResult {
-  isValid?: Unknown
-  scenarios?: SpecScenarios
-  error?: Unknown
-  request?: Result
-  responses?: {
-    [name: string]: Result
-  }
-}
-*/
-
-/*
-export interface SpecValidationResult {
-  resolveSpec?: Unknown
-  validityStatus: Unknown
-  operations: {
-    [name: string]: {
-      ["x-ms-examples"]?: OperationResult
-      [name: string]: OperationResult|undefined
-    }
-  }
-  validateSpec?: Result
-  initialize?: Unknown
-}
-*/
-
 export interface SpecValidationResult extends ModelValidation {
   validityStatus: Unknown
 }
@@ -109,13 +73,9 @@ export class SpecValidator<T extends CommonValidationResult> {
 
   protected specPath: string
 
-  protected sampleRequest: Unknown
-
-  protected sampleResponse: Unknown
+  protected specInJson: SwaggerObject
 
   private specDir: Unknown
-
-  private specInJson: SwaggerObject
 
   private specResolver: SpecResolver|null
 
@@ -187,8 +147,6 @@ export class SpecValidator<T extends CommonValidationResult> {
     }
 
     this.options = options
-    this.sampleRequest = {}
-    this.sampleResponse = {}
   }
 
   /*
@@ -261,24 +219,6 @@ export class SpecValidator<T extends CommonValidationResult> {
     return err as TE
   }
 
-  protected getProviderNamespace(): string|null {
-    const re = /^(.*)\/providers\/(\w+\.\w+)\/(.*)$/ig
-    if (this.specInJson) {
-      if (this.specInJson.paths) {
-        const paths = utils.getKeys(this.specInJson.paths)
-        if (paths) {
-          for (const pathStr of paths) {
-            const res = re.exec(pathStr)
-            if (res && res[2]) {
-              return res[2]
-            }
-          }
-        }
-      }
-    }
-    return null
-  }
-
   /*
    * Updates the validityStatus of the internal specValidationResult based on the provided value.
    *
@@ -286,279 +226,5 @@ export class SpecValidator<T extends CommonValidationResult> {
    */
   protected updateValidityStatus(value?: boolean): void {
     this.specValidationResult.validityStatus = Boolean(value)
-  }
-
-  protected constructRequestResult(
-    operationResult: OperationExampleResult,
-    isValid: Unknown,
-    msg: string,
-    requestValidationErrors?: ModelValidationError[]|null,
-    requestValidationWarnings?: Unknown
-  ): void {
-
-    if (operationResult.request === undefined) {
-      throw new Error("operationResult.result is undefined")
-    }
-
-    if (!isValid) {
-      operationResult.isValid = false
-      operationResult.request.isValid = false
-      const e = this.constructErrorObject(
-        ErrorCodes.RequestValidationError, msg, requestValidationErrors)
-      operationResult.request.error = e
-      log.error(`${msg}:\n`, e)
-    } else if (requestValidationWarnings) {
-      operationResult.request.warning = requestValidationWarnings
-      log.debug(`${msg}:\n`, requestValidationWarnings)
-    } else {
-      operationResult.request.isValid = true
-      operationResult.request.result = msg
-      log.info(`${msg}`)
-    }
-  }
-
-  protected constructResponseResult(
-    operationResult: OperationExampleResult,
-    responseStatusCode: string,
-    isValid: Unknown,
-    msg: string,
-    responseValidationErrors?: ModelValidationError[]|null,
-    responseValidationWarnings?: Unknown
-  ): void {
-
-    if (operationResult.responses === undefined) {
-      throw new Error("operationResult.responses is undefined")
-    }
-    if (!operationResult.responses[responseStatusCode]) {
-      operationResult.responses[responseStatusCode] = {}
-    }
-    if (!isValid) {
-      operationResult.isValid = false
-      operationResult.responses[responseStatusCode].isValid = false
-      const e = this.constructErrorObject(
-        ErrorCodes.ResponseValidationError, msg, responseValidationErrors)
-      operationResult.responses[responseStatusCode].error = e
-      log.error(`${msg}:\n`, e)
-    } else if (responseValidationWarnings) {
-      operationResult.responses[responseStatusCode].warning = responseValidationWarnings
-      log.debug(`${msg}:\n`, responseValidationWarnings)
-    } else {
-      operationResult.responses[responseStatusCode].isValid = true
-      operationResult.responses[responseStatusCode].result = msg
-      log.info(`${msg}`)
-    }
-  }
-
-  /*
-   * Validates the request for an operation.
-   *
-   * @param {object} operation - The operation object.
-   *
-   * @param {object} exampleParameterValues - The example parameter values.
-   *
-   * @return {object} result - The validation result.
-   */
-  protected validateRequest(
-    operation: Operation, exampleParameterValues: { [name: string]: string }
-  ): RequestValidation {
-
-    if (operation === null || operation === undefined || typeof operation !== "object") {
-      throw new Error("operation cannot be null or undefined and must be of type 'object'.")
-    }
-
-    if (exampleParameterValues === null
-      || exampleParameterValues === undefined
-      || typeof exampleParameterValues !== "object") {
-      throw new Error(
-        `In operation "${operation.operationId}", exampleParameterValues cannot be null or ` +
-        `undefined and must be of type "object" (A dictionary of key-value pairs of ` +
-        `parameter-names and their values).`)
-    }
-
-    const parameters = operation.getParameters()
-    const result: RequestValidation = {
-      request: null,
-      validationResult: { errors: [], warnings: [] }
-    }
-    let foundIssues = false
-    const options: {
-      baseUrl?: string
-      [name: string]: any
-    } = { headers: {} }
-    let formDataFiles: {
-      [name: string]: Unknown
-    }|null = null
-    const pathObject = operation.pathObject as Sway.PathObject
-    const parameterizedHost = pathObject.api[C.xmsParameterizedHost]
-    const hostTemplate = parameterizedHost && parameterizedHost.hostTemplate
-      ? parameterizedHost.hostTemplate
-      : null
-    if (operation.pathObject
-      && operation.pathObject.api
-      && (operation.pathObject.api.host || hostTemplate)) {
-      let scheme = "https"
-      let basePath = ""
-      let host = ""
-      host = operation.pathObject.api.host || hostTemplate
-      if (host.endsWith("/")) {
-        host = host.slice(0, host.length - 1)
-      }
-      if (operation.pathObject.api.schemes
-        && !operation.pathObject.api.schemes.some(
-          item => !!item && item.toLowerCase() === "https")) {
-        scheme = operation.pathObject.api.schemes[0]
-      }
-      if (operation.pathObject.api.basePath) {
-        basePath = operation.pathObject.api.basePath
-      }
-      if (!basePath.startsWith("/")) {
-        basePath = `/${basePath}`
-      }
-      let baseUrl = ""
-      if (host.startsWith(scheme + "://")) {
-        baseUrl = `${host}${basePath}`
-      } else {
-        baseUrl = `${scheme}://${host}${basePath}`
-      }
-      options.baseUrl = baseUrl
-    }
-    options.method = operation.method
-    let pathTemplate = pathObject.path
-    if (pathTemplate && pathTemplate.includes("?")) {
-      pathTemplate = pathTemplate.slice(0, pathTemplate.indexOf("?"))
-      pathObject.path = pathTemplate
-    }
-    options.pathTemplate = pathTemplate
-    for (const parameter of parameters) {
-      let parameterValue = exampleParameterValues[parameter.name]
-      if (!parameterValue) {
-        if (parameter.required) {
-          const msg =
-            `In operation "${operation.operationId}", parameter ${parameter.name} is required in ` +
-            `the swagger spec but is not present in the provided example parameter values.`
-          const e = this.constructErrorObject(ErrorCodes.RequiredParameterExampleNotFound, msg)
-          if (result.validationResult === undefined) {
-            throw new Error("result.validationResult is undefined")
-          }
-          result.validationResult.errors.push(e)
-          foundIssues = true
-          break
-        }
-        continue
-      }
-      const location = parameter.in
-      if (location === "path" || location === "query") {
-        if (location === "path" && parameterValue && typeof parameterValue === "string") {
-          // "/{scope}/scopes/resourceGroups/{resourceGroupName}" In the aforementioned path
-          // template, we will search for the path parameter based on it's name
-          // for example: "scope". Find it's index in the string and move backwards by 2 positions.
-          // If the character at that position is a forward slash "/" and
-          // the value for the parameter starts with a forward slash "/" then we have found the case
-          // where there will be duplicate forward slashes in the url.
-          if (pathTemplate.charAt(pathTemplate.indexOf(`${parameter.name}`) - 2)
-            === "/" && parameterValue.startsWith("/")) {
-
-            const msg =
-              `In operation "${operation.operationId}", example for parameter ` +
-              `"${parameter.name}": "${parameterValue}" starts with a forward slash ` +
-              `and the path template: "${pathTemplate}" contains a forward slash before ` +
-              `the parameter starts. This will cause double forward slashes ` +
-              ` in the request url. Thus making it incorrect. Please rectify the example.`
-            const e = this.constructErrorObject(ErrorCodes.DoubleForwardSlashesInUrl, msg)
-            if (result.validationResult === undefined) {
-              throw new Error("result.validationResult is undefined")
-            }
-            result.validationResult.errors.push(e)
-            foundIssues = true
-            break
-          }
-          // replacing forward slashes with empty string because this messes up Sways regex
-          // validation of path segment.
-          parameterValue = parameterValue.replace(/\//ig, "")
-        }
-        const paramType = location + "Parameters"
-        if (!options[paramType]) { options[paramType] = {} }
-        if (parameter[C.xmsSkipUrlEncoding] || utils.isUrlEncoded(parameterValue)) {
-          options[paramType][parameter.name] = {
-            value: parameterValue,
-            skipUrlEncoding: true
-          }
-        } else {
-          options[paramType][parameter.name] = parameterValue
-        }
-      } else if (location === "body") {
-        options.body = parameterValue
-        options.disableJsonStringifyOnBody = true
-        if (operation.consumes) {
-          const isOctetStream = (consumes: string[]) => consumes.some(
-            contentType => contentType === "application/octet-stream")
-
-          options.headers["Content-Type"] =
-            parameter.schema.format === "file" && isOctetStream(operation.consumes)
-              ? "application/octet-stream"
-              : operation.consumes[0]
-        }
-      } else if (location === "header") {
-        options.headers[parameter.name] = parameterValue
-      } else if (location === "formData") {
-        // helper function
-        const isFormUrlEncoded = (consumes: string[]) => consumes.some(
-          contentType => contentType === "application/x-www-form-urlencoded")
-
-        if (!options.formData) { options.formData = {} }
-        options.formData[parameter.name] = parameterValue
-
-        // set Content-Type correctly
-        if (operation.consumes && isFormUrlEncoded(operation.consumes)) {
-          options.headers["Content-Type"] = "application/x-www-form-urlencoded"
-        } else {
-          // default to formData
-          options.headers["Content-Type"] = "multipart/form-data"
-        }
-        // keep track of parameter type 'file' as sway expects such parameter types to be set
-        // differently in the request object given for validation.
-        if (parameter.type === "file") {
-          if (!formDataFiles) { formDataFiles = {} }
-          formDataFiles[parameter.name] = parameterValue
-        }
-      }
-    }
-
-    if (options.headers["content-type"]) {
-      const val = delete options.headers["content-type"]
-      options.headers["Content-Type"] = val
-    }
-    if (!options.headers["Content-Type"]) {
-      options.headers["Content-Type"] = utils.getJsonContentType(operation.consumes)
-    }
-
-    let request: msRest.WebResource|null = null
-    let validationResult: {
-      errors: CommonError[]
-    } = {
-      errors: []
-    }
-    if (!foundIssues) {
-      try {
-        request = new HttpRequest()
-        request = request.prepare(options as any)
-        // set formData in the way sway expects it.
-        if (formDataFiles) {
-          (request as any).files = formDataFiles
-        } else if (options.formData) {
-          request.body = options.formData
-        }
-        validationResult = operation.validateRequest(request)
-        this.sampleRequest = request
-      } catch (err) {
-        request = null
-        const e = this.constructErrorObject(ErrorCodes.ErrorInPreparingRequest, err.message, [err])
-        validationResult.errors.push(e)
-      }
-    }
-
-    result.request = request
-    result.validationResult = utils.mergeObjects(validationResult, result.validationResult as any)
-    return result
   }
 }
