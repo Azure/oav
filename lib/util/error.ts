@@ -3,14 +3,14 @@
 
 import { Unknown } from "./unknown"
 
-export interface Error {
-  readonly code: string
-  readonly id: string
-  readonly message: string
-  readonly innerErrors?: Error[]
+export interface CommonError {
+  readonly code?: string
+  readonly id?: string
+  readonly message?: string
+  readonly innerErrors?: CommonError[]
   path?: string|string[]
-  readonly inner?: Error[]
-  errors?: Error[]
+  readonly inner?: CommonError[]
+  errors?: CommonError[]
   in?: Unknown
   name?: string
   params?: Unknown[]

@@ -3,7 +3,7 @@
 
 import { Severity } from "./severity"
 import { Unknown } from "./unknown"
-import { Error } from "./error"
+import { CommonError } from "./error"
 
 /**
  * @class
@@ -75,31 +75,29 @@ export function errorCodeToSeverity(code: string): Severity {
   return errorConstant ? errorConstant.severity : Severity.Critical
 }
 
-export type Node = Error
-
-export interface ValidationResult {
-  readonly requestValidationResult: Node
-  readonly responseValidationResult: Node
+export interface NodeError<T extends NodeError<T>> {
+  code?: string
+  path?: string|string[]
+  errors?: T[]
+  in?: string
+  name?: string
+  params?: Unknown[]
+  inner?: T[]
 }
 
-/*
-export interface Node {
-  path: string|string[]
-  errors: Node[]
-  code: Unknown
-  in: Unknown
-  name: string
-  inner: Node[]
-  params: Unknown[]
+export interface ValidationResult<T extends NodeError<T>> {
+  readonly requestValidationResult: T
+  readonly responseValidationResult: T
 }
-*/
 
 /**
  * Serializes validation results into a flat array.
  */
-export function processValidationErrors(rawValidation: ValidationResult): ValidationResult {
-  const requestSerializedErrors: Node[] = []
-  const responseSerializedErrors: Node[] = []
+export function processValidationErrors<T extends NodeError<T>>(
+  rawValidation: ValidationResult<T>
+): ValidationResult<T> {
+  const requestSerializedErrors: T[] = []
+  const responseSerializedErrors: T[] = []
 
   serializeErrors(
     rawValidation.requestValidationResult,
@@ -121,7 +119,9 @@ export function processValidationErrors(rawValidation: ValidationResult): Valida
 /**
  * Serializes error tree
  */
-export function serializeErrors(node: Node, serializedErrors: Unknown[], path: Unknown[]): void {
+export function serializeErrors<T extends NodeError<T>>(
+  node: T, serializedErrors: Unknown[], path: Unknown[]
+): void {
   if (isLeaf(node)) {
     if (isTrueError(node)) {
       if (node.path) {
@@ -159,7 +159,7 @@ function validationErrorEntry(id: string, severity: Severity): [string, Validati
   return [id, new ValidationError(id, severity)]
 }
 
-function isTrueError(node: Node): boolean {
+function isTrueError<T extends NodeError<T>>(node: T): boolean {
   // this is necessary to filter out extra errors coming from doing the ONE_OF transformation on
   // the models to allow "null"
   if (
@@ -173,7 +173,7 @@ function isTrueError(node: Node): boolean {
   }
 }
 
-function isLeaf(node: Node): boolean {
+function isLeaf<T extends NodeError<T>>(node: T): boolean {
   return !node.errors && !node.inner;
 };
 

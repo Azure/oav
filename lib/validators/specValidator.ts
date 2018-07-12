@@ -14,7 +14,7 @@ import * as utils from "../util/utils"
 import { log } from "../util/logging"
 import { ResponseWrapper } from "../models/responseWrapper"
 import { validateResponse } from "../util/validationResponse"
-import { Error } from "../util/error"
+import { CommonError } from "../util/error"
 import { Unknown } from "../util/unknown"
 import * as C from "../util/constants"
 import { Operation, SwaggerObject } from "yasway"
@@ -43,7 +43,7 @@ interface ResponseValidation {
 }
 
 interface ValidationResult {
-  exampleNotFound?: Error
+  exampleNotFound?: CommonError
   scenarios?: Scenarios
   readonly requestValidation?: RequestValidation
   readonly responseValidation?: ResponseValidation
@@ -55,7 +55,7 @@ interface Scenarios {
 
 export interface Result {
   isValid?: Unknown
-  error?: Error
+  error?: CommonError
   warning?: Unknown
   result?: Unknown
   errors?: Unknown
@@ -375,11 +375,11 @@ export class SpecValidator {
   private constructErrorObject(
     code: ErrorCode,
     message: string,
-    innerErrors?: null|Error[],
+    innerErrors?: null|CommonError[],
     skipValidityStatusUpdate?: boolean
-  ): Error {
+  ): CommonError {
 
-    const err: Error = {
+    const err: CommonError = {
       code: code.name,
       id: code.id,
       message: message,
@@ -431,7 +431,7 @@ export class SpecValidator {
     operationResult: OperationResult,
     isValid: Unknown,
     msg: string,
-    requestValidationErrors?: Error[]|null,
+    requestValidationErrors?: CommonError[]|null,
     requestValidationWarnings?: Unknown
   ): void {
 
@@ -461,7 +461,7 @@ export class SpecValidator {
     responseStatusCode: string,
     isValid: Unknown,
     msg: string,
-    responseValidationErrors?: Error[]|null,
+    responseValidationErrors?: CommonError[]|null,
     responseValidationWarnings?: Unknown
   ): void {
 
@@ -490,7 +490,7 @@ export class SpecValidator {
 
   private constructRequestResultWrapper(
     operationId: string,
-    requestValidationErrors: Error[],
+    requestValidationErrors: CommonError[],
     requestValidationWarnings: Unknown[]|undefined,
     exampleType: string,
     scenarioName?: string
@@ -529,7 +529,7 @@ export class SpecValidator {
   private constructResponseResultWrapper(
     operationId: string,
     responseStatusCode: string,
-    responseValidationErrors: Error[],
+    responseValidationErrors: CommonError[],
     responseValidationWarnings: Unknown[]|undefined,
     exampleType: string,
     scenarioName?: string
@@ -893,7 +893,7 @@ export class SpecValidator {
 
     let request: msRest.WebResource|null = null
     let validationResult: {
-      errors: Error[]
+      errors: CommonError[]
     } = {
       errors: []
     }

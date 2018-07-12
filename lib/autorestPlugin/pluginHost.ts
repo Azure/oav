@@ -15,7 +15,7 @@ import { IAutoRestPluginInitiator } from
 import { SourceLocation } from
   "@microsoft.azure/autorest-extension-base/dist/lib/types"
 import { Unknown } from "../util/unknown"
-import { Error } from "../util/error"
+import { CommonError } from "../util/error"
 import { SwaggerObject } from "yasway"
 
 const openAPIDocUrl = "https://github.com/Azure/oav"
@@ -120,7 +120,7 @@ export async function openApiValidationExample(
           // request
           const request = scenarioItem.request
           if (request !== undefined && request.isValid === false) {
-            const error = request.error as Error
+            const error = request.error as CommonError
             const innerErrors = error.innerErrors
             if (!innerErrors || !innerErrors.length) {
               throw new Error("Model Validator: Unexpected format.")
@@ -136,6 +136,9 @@ export async function openApiValidationExample(
                 id: error.id,
                 validationCategory: modelValidationCategory,
                 innerErrors: innerError,
+              }
+              if (error.code === undefined || error.id === undefined) {
+                throw new Error("Invalid error.")
               }
               result = new FormattedOutput(
                 "error",
@@ -163,7 +166,7 @@ export async function openApiValidationExample(
             for (const responseCode of utils.getKeys(scenarioItem.responses)) {
               const response = scenarioItem.responses[responseCode]
               if (response.isValid === false) {
-                const error = response.error as Error
+                const error = response.error as CommonError
                 const innerErrors = error.innerErrors
                 if (!innerErrors || !innerErrors.length) {
                   throw new Error("Model Validator: Unexpected format.")
@@ -177,6 +180,9 @@ export async function openApiValidationExample(
                     id: error.id,
                     validationCategory: modelValidationCategory,
                     innerErrors: innerError,
+                  }
+                  if (error.code === undefined || error.id === undefined) {
+                    throw new Error("Invalid error.")
                   }
                   result = new FormattedOutput(
                     "error",
