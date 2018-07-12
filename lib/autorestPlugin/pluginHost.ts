@@ -94,14 +94,24 @@ export async function openApiValidationExample(
     specVal.validateOperations()
     const specValidationResult = specVal.specValidationResult
     for (const op of utils.getKeys(specValidationResult.operations)) {
-      const xmsExamplesNode = specValidationResult.operations[op]["x-ms-examples"];
+      const operation = specValidationResult.operations[op]
+      if (operation === undefined) {
+        throw new Error("operation is undefined")
+      }
+      const xmsExamplesNode = operation["x-ms-examples"];
       if (xmsExamplesNode === undefined) {
         throw new Error("xmsExamplesNode is undefined")
       }
-      const scenarios = xmsExamplesNode.scenarios as specValidator.SpecScenarios
+      const scenarios = xmsExamplesNode.scenarios
+      if (scenarios === undefined) {
+        throw new Error("scenarios is undefined")
+      }
       for (const scenario of utils.getKeys(scenarios)) {
         // invalid? meaning that there's an issue found in the validation
         const scenarioItem = scenarios[scenario]
+        if (scenarioItem === undefined) {
+          throw new Error("scenarios is undefined")
+        }
         if (scenarioItem.isValid === false) {
           // get path to x-ms-examples in swagger
           const xmsexPath = linq

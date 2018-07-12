@@ -13,6 +13,8 @@ export interface Result {
     readonly code: Unknown
     readonly innerErrors?: ModelValidationError[]
   }*/
+  warning?: Unknown
+  result?: Unknown
 }
 
 export interface Scenario {
@@ -21,9 +23,10 @@ export interface Scenario {
     [key in string]?: Scenario
   }
   readonly request?: Result
-  readonly responses: {
-    readonly [key in string|number]: Result
+  readonly responses?: {
+    [key in string|number]: Result
   }
+  error?: Unknown
 }
 
 export function responseReducer(
@@ -34,6 +37,9 @@ export function responseReducer(
   operationId: string,
   scenarioName: string
 ): ModelValidationError[] {
+  if (scenario.responses === undefined) {
+    throw new Error("scenario.responses is undefined")
+  }
   const response = scenario.responses[responseCode]
   rawValidationResult.responseValidationResult.errors = response.error
     ? response.error.innerErrors

@@ -322,7 +322,7 @@ export class SpecValidator<T extends CommonValidationResult> {
     responseStatusCode: string,
     isValid: Unknown,
     msg: string,
-    responseValidationErrors?: CommonError[]|null,
+    responseValidationErrors?: ModelValidationError[]|null,
     responseValidationWarnings?: Unknown
   ): void {
 

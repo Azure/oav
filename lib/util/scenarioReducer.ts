@@ -90,9 +90,14 @@ export function scenarioReducer(
   // process responses
   rawValidationResult.requestValidationResult.errors = [];
 
-  return Object.keys(scenario.responses)
+  const responses = scenario.responses
+  if (responses === undefined) {
+    throw new Error("responses is undefined")
+  }
+
+  return Object.keys(responses)
     .filter(responseCode => {
-      const response = scenario.responses[responseCode];
+      const response = responses[responseCode];
       return !response.isValid;
     })
     .reduce(

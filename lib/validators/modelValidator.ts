@@ -17,6 +17,7 @@ import { Operation } from "yasway"
 import * as Sway from "yasway"
 import { ResponseWrapper } from "../models/responseWrapper"
 import { OperationExampleResult } from "../util/scenarioReducer"
+import { ModelValidationError } from "../util/modelValidationError"
 
 export class ModelValidator extends SpecValidator<SpecValidationResult> {
 
@@ -144,7 +145,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
 
   private constructRequestResultWrapper(
     operationId: string,
-    requestValidationErrors: CommonError[],
+    requestValidationErrors: ModelValidationError[],
     requestValidationWarnings: Unknown[]|undefined,
     exampleType: string,
     scenarioName?: string
@@ -173,7 +174,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
   private constructResponseResultWrapper(
     operationId: string,
     responseStatusCode: string,
-    responseValidationErrors: CommonError[],
+    responseValidationErrors: ModelValidationError[],
     responseValidationWarnings: Unknown[]|undefined,
     exampleType: string,
     scenarioName?: string
