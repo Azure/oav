@@ -73,7 +73,7 @@ async function validate<T>(
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
   log.filepath = options.logFilepath || log.filepath
   if (options.pretty) {
-    log.consoleLogLevel = undefined
+    log.consoleLogLevel = "off"
   }
   try {
     return await func(options)
@@ -132,13 +132,15 @@ export function validateExamples(
     const validator = new ModelValidator(specPath, null, o)
     finalValidationResult[specPath] = validator.specValidationResult
     await validator.initialize()
-    log.info(`Validating "examples" and "x-ms-examples" in  ${specPath}:\n`)
+    // log.info(`Validating "examples" and "x-ms-examples" in  ${specPath}:\n`)
     validator.validateOperations(operationIds)
     updateEndResultOfSingleValidation(validator)
     logDetailedInfo(validator)
     if (o.pretty) {
+      const errors = getErrorsFromModelValidation(validator.specValidationResult)
+      const x = JSON.stringify(errors)
       /* tslint:disable-next-line:no-console no-string-literal */
-      console.log(getErrorsFromModelValidation(validator.specValidationResult))
+      console.log(errors)
     }
     return validator.specValidationResult
   })
