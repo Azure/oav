@@ -144,7 +144,7 @@ export function validateExamples(
       if (errors.length > 0) {
         const yaml = jsYaml.dump(errors)
         /* tslint:disable-next-line:no-console no-string-literal */
-        console.log(yaml)
+        console.error(yaml)
       }
     }
     return validator.specValidationResult
