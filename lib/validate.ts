@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
+import jsYaml from "js-yaml"
 import * as fs from "fs"
 import * as path from "path"
 import { log } from "./util/logging"
@@ -132,15 +133,19 @@ export function validateExamples(
     const validator = new ModelValidator(specPath, null, o)
     finalValidationResult[specPath] = validator.specValidationResult
     await validator.initialize()
-    // log.info(`Validating "examples" and "x-ms-examples" in  ${specPath}:\n`)
+    log.info(`Validating "examples" and "x-ms-examples" in  ${specPath}:\n`)
     validator.validateOperations(operationIds)
     updateEndResultOfSingleValidation(validator)
     logDetailedInfo(validator)
     if (o.pretty) {
-      const errors = getErrorsFromModelValidation(validator.specValidationResult)
-      const x = JSON.stringify(errors)
       /* tslint:disable-next-line:no-console no-string-literal */
-      console.log(errors)
+      console.log(`Validating "examples" and "x-ms-examples" in  ${specPath}:\n`)
+      const errors = getErrorsFromModelValidation(validator.specValidationResult)
+      if (errors.length > 0) {
+        const yaml = jsYaml.dump(errors)
+        /* tslint:disable-next-line:no-console no-string-literal */
+        console.log(yaml)
+      }
     }
     return validator.specValidationResult
   })
