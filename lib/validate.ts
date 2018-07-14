@@ -142,9 +142,13 @@ export function validateExamples(
       console.log(`Validating "examples" and "x-ms-examples" in  ${specPath}:\n`)
       const errors = getErrorsFromModelValidation(validator.specValidationResult)
       if (errors.length > 0) {
-        const yaml = jsYaml.dump(errors)
-        /* tslint:disable-next-line:no-console no-string-literal */
-        console.error(yaml)
+        for (const error of errors) {
+          const yaml = jsYaml.dump(error)
+          /* tslint:disable-next-line:no-console no-string-literal */
+          console.error("\x1b[31m", "error:")
+          /* tslint:disable-next-line:no-console no-string-literal */
+          console.error(yaml)
+        }
       }
     }
     return validator.specValidationResult
