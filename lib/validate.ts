@@ -145,7 +145,7 @@ export function validateExamples(
         for (const error of errors) {
           const yaml = jsYaml.dump(error)
           /* tslint:disable-next-line:no-console no-string-literal */
-          console.error("\x1b[31m", "error:")
+          console.error("\x1b[31m", "error:", "\x1b[0m")
           /* tslint:disable-next-line:no-console no-string-literal */
           console.error(yaml)
         }
