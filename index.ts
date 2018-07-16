@@ -16,6 +16,7 @@ export {
 
 export { BaseValidationError } from "./lib/util/baseValidationError"
 export { Severity } from "./lib/util/severity"
+export { ModelValidationError } from "./lib/util/modelValidationError"
 
 export { executePromisesSequentially } from "./lib/util/utils"
 
