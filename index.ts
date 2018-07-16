@@ -14,6 +14,8 @@ export {
   resolveCompositeSpec,
 } from "./lib/validate"
 
+export { BaseValidationError } from "./lib/util/baseValidationError"
+
 export { executePromisesSequentially } from "./lib/util/utils"
 
 // Classes
