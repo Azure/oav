@@ -1,20 +1,32 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
+import jsYaml from "js-yaml"
 import * as fs from "fs"
 import * as path from "path"
 import { log } from "./util/logging"
 import * as utils from "./util/utils"
-import { SpecValidator, SpecValidationResult } from "./validators/specValidator"
+import {
+  SpecValidator, SpecValidationResult, CommonValidationResult
+} from "./validators/specValidator"
 import { WireFormatGenerator } from "./wireFormatGenerator"
 import { XMsExampleExtractor } from "./xMsExampleExtractor"
 import { SpecResolver } from "./validators/specResolver"
 import * as specResolver from "./validators/specResolver"
 import * as umlGeneratorLib from "./umlGenerator"
 import { Unknown } from "./util/unknown"
+import { getErrorsFromModelValidation } from "./util/getErrorsFromModelValidation"
+import { SemanticValidator } from "./validators/semanticValidator"
+import { ModelValidator } from "./validators/modelValidator"
 
 interface FinalValidationResult {
   [name: string]: Unknown
+}
+
+export interface Options extends specResolver.Options, umlGeneratorLib.Options {
+  consoleLogLevel?: Unknown
+  logFilepath?: Unknown
+  pretty?: boolean
 }
 
 export const finalValidationResult: FinalValidationResult = {
@@ -55,105 +67,105 @@ export async function getDocumentsFromCompositeSwagger(
   }
 }
 
-export async function validateSpec(
-  specPath: string, options: Options|undefined
-): Promise<SpecValidationResult> {
+async function validate<T>(
+  options: Options|undefined, func: (options: Options) => Promise<T>
+): Promise<T> {
   if (!options) { options = {} }
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
   log.filepath = options.logFilepath || log.filepath
-  // As a part of resolving discriminators we replace all the parent references
-  // with a oneOf array containing references to the parent and its children.
-  // This breaks the swagger specification 2.0 schema since oneOf is not supported.
-  // Hence we disable it since it is not required for semantic check.
-
-  options.shouldResolveDiscriminator = false
-  // parameters in 'x-ms-parameterized-host' extension need not be resolved for semantic
-  // validation as that would not match the path parameters defined in the path template
-  // and cause the semantic validation to fail.
-  options.shouldResolveParameterizedHost = false
-
-  // We shouldn't be resolving nullable types for semantic validation as we'll replace nodes
-  // with oneOf arrays which are not semantically valid in swagger 2.0 schema.
-  options.shouldResolveNullableTypes = false
-  const validator = new SpecValidator(specPath, null, options)
-  finalValidationResult[specPath] = validator.specValidationResult
+  if (options.pretty) {
+    log.consoleLogLevel = "off"
+  }
   try {
+    return await func(options)
+  } catch (err) {
+    log.error(err)
+    throw err
+  }
+}
+
+export function validateSpec(
+  specPath: string, options: Options|undefined
+): Promise<SpecValidationResult> {
+  return validate(options, async o => {
+    // As a part of resolving discriminators we replace all the parent references
+    // with a oneOf array containing references to the parent and its children.
+    // This breaks the swagger specification 2.0 schema since oneOf is not supported.
+    // Hence we disable it since it is not required for semantic check.
+
+    o.shouldResolveDiscriminator = false
+    // parameters in 'x-ms-parameterized-host' extension need not be resolved for semantic
+    // validation as that would not match the path parameters defined in the path template
+    // and cause the semantic validation to fail.
+    o.shouldResolveParameterizedHost = false
+
+    // We shouldn't be resolving nullable types for semantic validation as we'll replace nodes
+    // with oneOf arrays which are not semantically valid in swagger 2.0 schema.
+    o.shouldResolveNullableTypes = false
+    const validator = new SemanticValidator(specPath, null, o)
+    finalValidationResult[specPath] = validator.specValidationResult
+
     await validator.initialize()
     log.info(`Semantically validating  ${specPath}:\n`)
     const result = await validator.validateSpec()
     updateEndResultOfSingleValidation(validator)
     logDetailedInfo(validator)
     return validator.specValidationResult
-  } catch (err) {
-    log.error(err)
-    throw err
-  }
+  })
 }
 
 export async function validateCompositeSpec(
   compositeSpecPath: string, options: Options
-): Promise<void> {
-
-  if (!options) { options = {} }
-  log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
-  log.filepath = options.logFilepath || log.filepath
-  try {
+): Promise<ReadonlyArray<SpecValidationResult>> {
+  return validate(options, async o => {
     const docs = await getDocumentsFromCompositeSwagger(compositeSpecPath)
-    options.consoleLogLevel = log.consoleLogLevel
-    options.logFilepath = log.filepath
-    const promiseFactories = docs.map(doc => async () => { await validateSpec(doc, options) })
-    await utils.executePromisesSequentially(promiseFactories)
-  } catch (err) {
-    log.error(err)
-    throw err
-  }
+    o.consoleLogLevel = log.consoleLogLevel
+    o.logFilepath = log.filepath
+    const promiseFactories = docs.map(doc => async () => await validateSpec(doc, o))
+    return await utils.executePromisesSequentially(promiseFactories)
+  })
 }
 
-export async function validateExamples(
+export function validateExamples(
   specPath: string, operationIds: string|undefined, options?: Options
 ): Promise<SpecValidationResult> {
-
-  if (!options) { options = {} }
-  log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
-  log.filepath = options.logFilepath || log.filepath
-  const validator = new SpecValidator(specPath, null, options)
-  finalValidationResult[specPath] = validator.specValidationResult
-  try {
+  return validate(options, async o => {
+    const validator = new ModelValidator(specPath, null, o)
+    finalValidationResult[specPath] = validator.specValidationResult
     await validator.initialize()
     log.info(`Validating "examples" and "x-ms-examples" in  ${specPath}:\n`)
     validator.validateOperations(operationIds)
     updateEndResultOfSingleValidation(validator)
     logDetailedInfo(validator)
+    if (o.pretty) {
+      /* tslint:disable-next-line:no-console no-string-literal */
+      console.log(`Validating "examples" and "x-ms-examples" in  ${specPath}:\n`)
+      const errors = getErrorsFromModelValidation(validator.specValidationResult)
+      if (errors.length > 0) {
+        for (const error of errors) {
+          const yaml = jsYaml.dump(error)
+          /* tslint:disable-next-line:no-console no-string-literal */
+          console.error("\x1b[31m", "error:", "\x1b[0m")
+          /* tslint:disable-next-line:no-console no-string-literal */
+          console.error(yaml)
+        }
+      }
+    }
     return validator.specValidationResult
-  } catch (err) {
-    log.error(err)
-    throw err
-  }
+  })
 }
 
-export async function validateExamplesInCompositeSpec(
+export function validateExamplesInCompositeSpec(
   compositeSpecPath: string, options: Options
-): Promise<void> {
-
-  if (!options) { options = {} }
-  log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
-  log.filepath = options.logFilepath || log.filepath
-  try {
+): Promise<ReadonlyArray<SpecValidationResult>> {
+  return validate(options, async o => {
+    o.consoleLogLevel = log.consoleLogLevel
+    o.logFilepath = log.filepath
     const docs = await getDocumentsFromCompositeSwagger(compositeSpecPath)
-    options.consoleLogLevel = log.consoleLogLevel
-    options.logFilepath = log.filepath
     const promiseFactories = docs.map(
-      doc => async () => { await validateExamples(doc, undefined, options) })
-    await utils.executePromisesSequentially(promiseFactories)
-  } catch (err) {
-    log.error(err)
-    throw err
-  }
-}
-
-export interface Options extends specResolver.Options, umlGeneratorLib.Options {
-  consoleLogLevel?: Unknown
-  logFilepath?: Unknown
+      doc => async () => await validateExamples(doc, undefined, o))
+    return await utils.executePromisesSequentially(promiseFactories)
+  })
 }
 
 export async function resolveSpec(
@@ -193,7 +205,7 @@ export async function resolveCompositeSpec(
     options.consoleLogLevel = log.consoleLogLevel
     options.logFilepath = log.filepath
     const promiseFactories = docs.map(doc => () => resolveSpec(doc, outputDir, options))
-    return await utils.executePromisesSequentially(promiseFactories)
+    await utils.executePromisesSequentially(promiseFactories)
   } catch (err) {
     log.error(err)
     throw err
@@ -279,7 +291,9 @@ export async function generateUml(
   }
 }
 
-export function updateEndResultOfSingleValidation(validator: SpecValidator): void {
+export function updateEndResultOfSingleValidation<T extends CommonValidationResult>(
+  validator: SpecValidator<T>
+): void {
   if (validator.specValidationResult.validityStatus) {
     if (!(log.consoleLogLevel === "json" || log.consoleLogLevel === "off")) {
       log.info("No Errors were found.")
@@ -291,7 +305,9 @@ export function updateEndResultOfSingleValidation(validator: SpecValidator): voi
   }
 }
 
-export function logDetailedInfo(validator: SpecValidator): void {
+export function logDetailedInfo<T extends CommonValidationResult>(
+  validator: SpecValidator<T>
+): void {
   if (log.consoleLogLevel === "json") {
     /* tslint:disable-next-line */
     console.dir(validator.specValidationResult, { depth: null, colors: true })

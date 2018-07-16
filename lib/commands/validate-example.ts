@@ -24,9 +24,10 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
   log.debug(argv.toString())
   const specPath = argv.specPath
   const operationIds = argv.operationIds
-  const vOptions = {
+  const vOptions: validate.Options = {
     consoleLogLevel: argv.logLevel,
     logFilepath: argv.f,
+    pretty: argv.p,
   }
   if (specPath.match(/.*composite.*/ig) !== null) {
     await validate.validateExamplesInCompositeSpec(specPath, vOptions)

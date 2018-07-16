@@ -15,8 +15,9 @@ import { IAutoRestPluginInitiator } from
 import { SourceLocation } from
   "@microsoft.azure/autorest-extension-base/dist/lib/types"
 import { Unknown } from "../util/unknown"
-import { Error } from "../util/error"
+import { CommonError } from "../util/commonError"
 import { SwaggerObject } from "yasway"
+import { ModelValidator } from "../validators/modelValidator"
 
 const openAPIDocUrl = "https://github.com/Azure/oav"
 
@@ -85,7 +86,7 @@ export async function openApiValidationExample(
   if (!options) { options = {} }
   options.consoleLogLevel = "off"
   log.consoleLogLevel = options.consoleLogLevel
-  const specVal = new specValidator.SpecValidator(
+  const specVal = new ModelValidator(
     swaggerFileName, swagger as SwaggerObject, options)
   // console.error(JSON.stringify(swagger, null, 2))
   await specVal.initialize()
@@ -93,11 +94,24 @@ export async function openApiValidationExample(
     specVal.validateOperations()
     const specValidationResult = specVal.specValidationResult
     for (const op of utils.getKeys(specValidationResult.operations)) {
-      const xmsExamplesNode = specValidationResult.operations[op]["x-ms-examples"];
-      const scenarios = xmsExamplesNode.scenarios as specValidator.SpecScenarios
+      const operation = specValidationResult.operations[op]
+      if (operation === undefined) {
+        throw new Error("operation is undefined")
+      }
+      const xmsExamplesNode = operation["x-ms-examples"];
+      if (xmsExamplesNode === undefined) {
+        throw new Error("xmsExamplesNode is undefined")
+      }
+      const scenarios = xmsExamplesNode.scenarios
+      if (scenarios === undefined) {
+        throw new Error("scenarios is undefined")
+      }
       for (const scenario of utils.getKeys(scenarios)) {
         // invalid? meaning that there's an issue found in the validation
         const scenarioItem = scenarios[scenario]
+        if (scenarioItem === undefined) {
+          throw new Error("scenarios is undefined")
+        }
         if (scenarioItem.isValid === false) {
           // get path to x-ms-examples in swagger
           const xmsexPath = linq
@@ -119,8 +133,8 @@ export async function openApiValidationExample(
 
           // request
           const request = scenarioItem.request
-          if (request.isValid === false) {
-            const error = request.error as Error
+          if (request !== undefined && request.isValid === false) {
+            const error = request.error as CommonError
             const innerErrors = error.innerErrors
             if (!innerErrors || !innerErrors.length) {
               throw new Error("Model Validator: Unexpected format.")
@@ -136,6 +150,9 @@ export async function openApiValidationExample(
                 id: error.id,
                 validationCategory: modelValidationCategory,
                 innerErrors: innerError,
+              }
+              if (error.code === undefined || error.id === undefined) {
+                throw new Error("Invalid error.")
               }
               result = new FormattedOutput(
                 "error",
@@ -159,48 +176,53 @@ export async function openApiValidationExample(
           }
 
           // responses
-          for (const responseCode of utils.getKeys(scenarioItem.responses)) {
-            const response = scenarioItem.responses[responseCode]
-            if (response.isValid === false) {
-              const error = response.error as Error
-              const innerErrors = error.innerErrors
-              if (!innerErrors || !innerErrors.length) {
-                throw new Error("Model Validator: Unexpected format.")
-              }
-              for (const innerError of innerErrors) {
-                // console.error(JSON.stringify(error, null, 2));
-                const resultDetails = {
-                  type: "Error",
-                  code: error.code,
-                  message: error.message,
-                  id: error.id,
-                  validationCategory: modelValidationCategory,
-                  innerErrors: innerError,
+          if (scenarioItem.responses !== undefined) {
+            for (const responseCode of utils.getKeys(scenarioItem.responses)) {
+              const response = scenarioItem.responses[responseCode]
+              if (response.isValid === false) {
+                const error = response.error as CommonError
+                const innerErrors = error.innerErrors
+                if (!innerErrors || !innerErrors.length) {
+                  throw new Error("Model Validator: Unexpected format.")
                 }
-                result = new FormattedOutput(
-                  "error",
-                  resultDetails,
-                  [error.code, error.id, modelValidationCategory],
-                  innerError.message
-                    + ". \nScenario: "
-                    + scenario
-                    + ". \nDetails: "
-                    + JSON.stringify(innerError.errors, null, 2)
-                    + "\nMore info: "
-                    + openAPIDocUrl
-                    + "#"
-                    + error.id.toLowerCase()
-                    + "-"
-                    + error.code.toLowerCase() + "\n",
-                  [{
-                    document: swaggerFileName,
-                    Position: {
-                      path: xmsexPath
-                        .slice(0, xmsexPath.length - 1)
-                        .concat(["responses", responseCode]),
-                    },
-                  }])
-                formattedResult.push(result)
+                for (const innerError of innerErrors) {
+                  // console.error(JSON.stringify(error, null, 2));
+                  const resultDetails = {
+                    type: "Error",
+                    code: error.code,
+                    message: error.message,
+                    id: error.id,
+                    validationCategory: modelValidationCategory,
+                    innerErrors: innerError,
+                  }
+                  if (error.code === undefined || error.id === undefined) {
+                    throw new Error("Invalid error.")
+                  }
+                  result = new FormattedOutput(
+                    "error",
+                    resultDetails,
+                    [error.code, error.id, modelValidationCategory],
+                    innerError.message
+                      + ". \nScenario: "
+                      + scenario
+                      + ". \nDetails: "
+                      + JSON.stringify(innerError.errors, null, 2)
+                      + "\nMore info: "
+                      + openAPIDocUrl
+                      + "#"
+                      + error.id.toLowerCase()
+                      + "-"
+                      + error.code.toLowerCase() + "\n",
+                    [{
+                      document: swaggerFileName,
+                      Position: {
+                        path: xmsexPath
+                          .slice(0, xmsexPath.length - 1)
+                          .concat(["responses", responseCode]),
+                      },
+                    }])
+                  formattedResult.push(result)
+                }
               }
             }
           }

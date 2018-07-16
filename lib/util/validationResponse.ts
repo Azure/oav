@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import * as pointer from "json-pointer"
-import { Error } from "./error"
+import { CommonError } from "./commonError"
 import { Unknown } from "./unknown"
 import { StringMap } from "./stringMap"
 
@@ -11,7 +11,7 @@ interface ValidationError {
   code?: string
   providerNamespace: Unknown
   type: string
-  inner?: Error|Error[]
+  inner?: CommonError|CommonError[]
   id?: Unknown
   message?: string
   jsonref?: string
@@ -43,12 +43,12 @@ export class ValidateResponse {
   }
 
   public constructErrors(
-    validationError: Error, specPath: Unknown, providerNamespace: Unknown
+    validationError: CommonError, specPath: Unknown, providerNamespace: Unknown
   ): ValidationError[] {
     if (!validationError) {
       throw new Error("validationError cannot be null or undefined.")
     }
-    const errors = validationError.innerErrors as Error[]
+    const errors = validationError.innerErrors as CommonError[]
     return errors.map(error => {
       const e: ValidationError = {
         validationCategory: "SwaggerViolation",
@@ -85,6 +85,7 @@ export class ValidateResponse {
       && warning.code !== "UNUSED_DEFINITION")
   }
 
+  /*
   private seralize() {
     const result: { ["json-path"]?: Unknown } = {}
     for (const prop in this) {
@@ -96,6 +97,7 @@ export class ValidateResponse {
     }
     return result
   }
+  */
 }
 
 export const validateResponse = new ValidateResponse()

@@ -27,10 +27,14 @@ yargs
     describe: `Set the log file path. It must be an absolute filepath. ` +
       `By default the logs will stored in a timestamp based log file at "${defaultLogDir}".`,
   })
-  .global(["h", "l", "f"])
+  .option("p", {
+    alias: "pretty",
+    describe: `Pretty print`
+  })
+  .global(["h", "l", "f", "p"])
   .help()
   .argv;
 
 if (yargs.argv._.length === 0 && yargs.argv.h === false) {
-  yargs.coerce("help", arg => true).argv;
+  yargs.coerce("help", _ => true).argv;
 }

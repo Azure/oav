@@ -1,3 +1,6 @@
+### 07/05/2018 0.4.57
+- `--pretty` output.
+
 ### 07/05/2018 0.4.56
 - Error serialization.
 

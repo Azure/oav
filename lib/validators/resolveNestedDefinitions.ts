@@ -40,7 +40,7 @@ export function resolveNestedDefinitions(spec: SwaggerObject): SwaggerObject {
         return schemaObject
     }
 
-    // schemaObject.type is one of {undefined, "object", "array"}.
+    // here schemaObject.type is one of {undefined, "object", "array"}.
     // Because it's a nested schema object, we create a new definition and return a reference.
     const result = resolveSchemaObject(schemaObjectTracked)
     const definitionName = uuid.v4()

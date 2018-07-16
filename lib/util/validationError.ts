@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import { Severity } from "./severity"
+import { Unknown } from "./unknown"
 
 /**
  * @class
@@ -20,7 +21,7 @@ export class ValidationError {
   }
 }
 
-export const errorConstants: Map<string, ValidationError> = new Map<string, ValidationError>([
+export const errorConstants = new Map<string, ValidationError>([
   validationErrorEntry("INVALID_TYPE", Severity.Critical),
   validationErrorEntry("INVALID_FORMAT", Severity.Critical),
   validationErrorEntry("ENUM_MISMATCH", Severity.Critical),
@@ -73,12 +74,29 @@ export function errorCodeToSeverity(code: string): Severity {
   return errorConstant ? errorConstant.severity : Severity.Critical
 }
 
+export interface NodeError<T extends NodeError<T>> {
+  code?: string
+  path?: string|string[]
+  errors?: T[]
+  in?: string
+  name?: string
+  params?: Unknown[]
+  inner?: T[]
+}
+
+export interface ValidationResult<T extends NodeError<T>> {
+  readonly requestValidationResult: T
+  readonly responseValidationResult: T
+}
+
 /**
  * Serializes validation results into a flat array.
  */
-export function processValidationErrors(rawValidation: any): any {
-  const requestSerializedErrors: any[] = []
-  const responseSerializedErrors: any[] = []
+export function processValidationErrors<T extends NodeError<T>>(
+  rawValidation: ValidationResult<T>
+): ValidationResult<T> {
+  const requestSerializedErrors: T[] = []
+  const responseSerializedErrors: T[] = []
 
   serializeErrors(
     rawValidation.requestValidationResult,
@@ -100,7 +118,9 @@ export function processValidationErrors(rawValidation: any): any {
 /**
  * Serializes error tree
  */
-export function serializeErrors(node: any, serializedErrors: any, path: any) {
+export function serializeErrors<T extends NodeError<T>>(
+  node: T, serializedErrors: Unknown[], path: Unknown[]
+): void {
   if (isLeaf(node)) {
     if (isTrueError(node)) {
       if (node.path) {
@@ -126,15 +146,11 @@ export function serializeErrors(node: any, serializedErrors: any, path: any) {
     path = consolidatePath(path, node.path)
   }
   if (node.errors) {
-    node.errors.map((validationError: any) => {
-      serializeErrors(validationError, serializedErrors, path);
-    })
+    node.errors.forEach(validationError => serializeErrors(validationError, serializedErrors, path))
   }
 
   if (node.inner) {
-    node.inner.map((validationError: any) => {
-      serializeErrors(validationError, serializedErrors, path)
-    })
+    node.inner.forEach(validationError => serializeErrors(validationError, serializedErrors, path))
   }
 }
 
@@ -142,7 +158,7 @@ function validationErrorEntry(id: string, severity: Severity): [string, Validati
   return [id, new ValidationError(id, severity)]
 }
 
-function isTrueError(node: any) {
+function isTrueError<T extends NodeError<T>>(node: T): boolean {
   // this is necessary to filter out extra errors coming from doing the ONE_OF transformation on
   // the models to allow "null"
   if (
@@ -156,11 +172,11 @@ function isTrueError(node: any) {
   }
 }
 
-function isLeaf(node: any) {
+function isLeaf<T extends NodeError<T>>(node: T): boolean {
   return !node.errors && !node.inner;
 };
 
-function consolidatePath(path: any, suffixPath: any) {
+function consolidatePath(path: Unknown[], suffixPath: string|string[]): Unknown[] {
   let newSuffixIndex = 0
   let overlapIndex = path.lastIndexOf(suffixPath[newSuffixIndex])
   let previousIndex = overlapIndex
@@ -180,7 +196,7 @@ function consolidatePath(path: any, suffixPath: any) {
       break
     }
   }
-  let newPath = []
+  let newPath: Unknown[] = []
   if (newSuffixIndex === suffixPath.length) {
     // if all elements are contained in the existing path, nothing to do.
     newPath = path.slice(0)

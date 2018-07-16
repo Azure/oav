@@ -1,6 +1,6 @@
 {
   "name": "oav",
-  "version": "0.4.56",
+  "version": "0.4.57",
   "author": {
     "name": "Microsoft Corporation",
     "email": "azsdkteam@microsoft.com",
@@ -10,12 +10,11 @@
   "license": "MIT",
   "dependencies": {
     "@microsoft.azure/autorest-extension-base": "1.0.13",
-    "@types/uuid": "^3.4.3",
     "@types/lodash": "^4.14.109",
     "@types/request": "^2.47.1",
     "azure-arm-resource": "^2.0.0-preview",
     "glob": "^5.0.14",
-    "js-yaml": "^3.8.2",
+    "js-yaml": "^3.12.0",
     "json-pointer": "^0.6.0",
     "jsonpath": "^0.2.11",
     "linq": "^3.1.0",
@@ -43,6 +42,7 @@
     "@types/recursive-readdir": "^2.2.0",
     "@types/should": "^8.1.30",
     "@types/yargs": "^11.0.0",
+    "@types/uuid": "^3.4.3",
     "mocha": "^4.1.0",
     "nyc": "^11.8.0",
     "should": "5.2.0",

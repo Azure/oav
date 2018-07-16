@@ -171,12 +171,14 @@ export function makeRequest(options: Options): Promise<SwaggerObject> {
  *
  * @return A chain of resolved or rejected promises
  */
-export async function executePromisesSequentially(
-  promiseFactories: Array<() => Promise<void>>
-): Promise<void> {
+export async function executePromisesSequentially<T>(
+  promiseFactories: ReadonlyArray<() => Promise<T>>
+): Promise<ReadonlyArray<T>> {
+  const result: T[] = []
   for (const promiseFactory of promiseFactories) {
-    await promiseFactory()
+    result.push(await promiseFactory())
   }
+  return result
 };
 
 /*
