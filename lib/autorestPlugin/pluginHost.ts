@@ -15,7 +15,7 @@ import { IAutoRestPluginInitiator } from
 import { SourceLocation } from
   "@microsoft.azure/autorest-extension-base/dist/lib/types"
 import { Unknown } from "../util/unknown"
-import { CommonError } from "../util/error"
+import { CommonError } from "../util/commonError"
 import { SwaggerObject } from "yasway"
 import { ModelValidator } from "../validators/modelValidator"
 

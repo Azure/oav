@@ -3,7 +3,6 @@
 
 import { Severity } from "./severity"
 import { Unknown } from "./unknown"
-import { CommonError } from "./error"
 
 /**
  * @class

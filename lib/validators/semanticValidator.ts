@@ -9,7 +9,7 @@ import { log } from "../util/logging"
 import { validateResponse } from "../util/validationResponse"
 import * as C from "../util/constants"
 import * as util from "util"
-import { CommonError } from "../util/error"
+import { CommonError } from "../util/commonError"
 import * as utils from "../util/utils"
 
 export interface Result {

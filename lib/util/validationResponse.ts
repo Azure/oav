@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import * as pointer from "json-pointer"
-import { CommonError } from "./error"
+import { CommonError } from "./commonError"
 import { Unknown } from "./unknown"
 import { StringMap } from "./stringMap"
 

@@ -7,7 +7,7 @@ import { ValidationResultSource } from "./validationResultSource"
 import { responseReducer, Scenario } from "./responseReducer"
 import { ModelValidationError } from "./modelValidationError"
 import { Unknown } from "./unknown"
-import { CommonError } from "./error"
+import { CommonError } from "./commonError"
 
 export interface Result {
   isValid?: Unknown
@@ -17,20 +17,6 @@ export interface Result {
   errors?: Unknown
   warnings?: Unknown
 }
-
-/*
-export interface OperationExampleResult {
-  isValid?: Unknown
-  scenarios?: {
-    [key in string]?: Scenario
-  }
-  request?: Result
-  responses?: {
-    [name: string]: Result
-  }
-  error?: Unknown
-}
-*/
 
 export type OperationExampleResult = Scenario
 
