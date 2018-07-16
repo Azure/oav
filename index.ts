@@ -15,6 +15,7 @@ export {
 } from "./lib/validate"
 
 export { BaseValidationError } from "./lib/util/baseValidationError"
+export { Severity } from "./lib/util/severity"
 
 export { executePromisesSequentially } from "./lib/util/utils"
 
