@@ -1,8 +1,4 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-export enum ValidationResultSource {
-  RESPONSE = "response",
-  REQUEST = "request",
-  GLOBAL = "global"
-}
+export type ValidationResultSource = "response"|"request"|"global"

@@ -67,7 +67,7 @@ export function scenarioReducer(
         processedErrors.requestValidationResult.errors,
         operationId,
         scenarioName,
-        ValidationResultSource.REQUEST,
+        "request",
         "ALL"
       )
     ];
