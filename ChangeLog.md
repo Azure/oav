@@ -1,3 +1,6 @@
+### 07/17/2018 0.4.58
+- export additional types.
+
 ### 07/05/2018 0.4.57
 - `--pretty` output.
 
