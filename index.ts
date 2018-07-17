@@ -19,7 +19,9 @@ export { Severity } from "./lib/util/severity"
 export { ModelValidationError } from "./lib/util/modelValidationError"
 export { ValidationResultSource } from "./lib/util/validationResultSource"
 export { getErrorsFromModelValidation } from "./lib/util/getErrorsFromModelValidation"
-export { processValidationErrors, ValidationError } from "./lib/util/validationError"
+export {
+  errorConstants, processValidationErrors, ValidationError
+} from "./lib/util/validationError"
 
 export { executePromisesSequentially } from "./lib/util/utils"
 
