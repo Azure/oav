@@ -20,7 +20,7 @@ export { ModelValidationError } from "./lib/util/modelValidationError"
 export { ValidationResultSource } from "./lib/util/validationResultSource"
 export { getErrorsFromModelValidation } from "./lib/util/getErrorsFromModelValidation"
 export {
-  errorConstants, processValidationErrors, ValidationError
+  errorConstants, errorCodeToSeverity, processValidationErrors, ValidationError
 } from "./lib/util/validationError"
 
 export { executePromisesSequentially } from "./lib/util/utils"
