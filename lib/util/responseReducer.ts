@@ -53,7 +53,7 @@ export function responseReducer(
       processedErrors.responseValidationResult.errors,
       operationId,
       scenarioName,
-      "response",
+      ValidationResultSource.RESPONSE,
       responseCode
     )
   ]
