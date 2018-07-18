@@ -258,7 +258,7 @@ export class SpecResolver {
     const allRefsRemoteRelative = JsonRefs.findRefs(doc, options)
     const promiseFactories = utils.getKeys(allRefsRemoteRelative).map(refName => {
       const refDetails = allRefsRemoteRelative[refName]
-      return () => this.resolveRelativeReference(refName, refDetails, doc, docPath)
+      return async () => await this.resolveRelativeReference(refName, refDetails, doc, docPath)
     });
     if (promiseFactories.length) {
       await utils.executePromisesSequentially(promiseFactories)
