@@ -104,10 +104,10 @@ export async function openApiValidationExample(
         throw new Error("xmsExamplesNode is undefined")
       }
       const scenarios = xmsExamplesNode.scenarios
-      if (scenarios === undefined) {
-        throw new Error("scenarios is undefined")
-      }
       for (const scenario of utils.getKeys(scenarios)) {
+        if (scenarios === undefined) {
+          throw new Error("scenarios is undefined")
+        }
         // invalid? meaning that there's an issue found in the validation
         const scenarioItem = scenarios[scenario]
         if (scenarioItem === undefined) {

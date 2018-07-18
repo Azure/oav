@@ -799,7 +799,7 @@ export function getValues<T>(obj: StringMap<T>|null): Array<NonUndefined<T>> {
 .* The check is necessary because Object.keys does not coerce parameters to object type.
  * @param {*} obj
  */
-export function getKeys(obj: StringMap<any>): string[] {
+export function getKeys(obj: StringMap<any>|undefined): string[] {
   if (obj === undefined || obj === null) {
     return []
   }
