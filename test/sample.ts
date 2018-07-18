@@ -9,6 +9,7 @@ const options = {
 }
 const validator = new LiveValidator(options)
 
+// tslint:disable-next-line:no-floating-promises
 validator.initialize().then(() => {
   const reqRes = require(
     __dirname +

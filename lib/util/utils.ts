@@ -134,7 +134,7 @@ export type Options = request.CoreOptions & request.UrlOptions & {
  *
  * @return {Promise} promise - A promise that resolves to the responseBody or rejects to an error.
  */
-export function makeRequest(options: Options): Promise<SwaggerObject> {
+export async function makeRequest(options: Options): Promise<SwaggerObject> {
   const promise = new Promise<SwaggerObject>((resolve, reject) => {
     request(options, (err, response, responseBody) => {
       if (err) {
@@ -160,7 +160,7 @@ export function makeRequest(options: Options): Promise<SwaggerObject> {
       resolve(res)
     })
   })
-  return promise
+  return await promise
 }
 
 /*
@@ -299,9 +299,9 @@ export function joinPath(...args: string[]): string {
  *
  * @returns {object} jsonDoc - Parsed document in JSON format.
  */
-export function parseJsonWithPathFragments(...args: string[]): Promise<SwaggerObject> {
+export async function parseJsonWithPathFragments(...args: string[]): Promise<SwaggerObject> {
   const specPath = joinPath(...args)
-  return parseJson(specPath)
+  return await parseJson(specPath)
 }
 
 /*
@@ -799,7 +799,7 @@ export function getValues<T>(obj: StringMap<T>|null): Array<NonUndefined<T>> {
 .* The check is necessary because Object.keys does not coerce parameters to object type.
  * @param {*} obj
  */
-export function getKeys(obj: StringMap<any>): string[] {
+export function getKeys(obj: StringMap<any>|undefined): string[] {
   if (obj === undefined || obj === null) {
     return []
   }

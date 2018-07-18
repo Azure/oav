@@ -195,7 +195,7 @@ export class LiveValidator {
     //   ...
     // }
     const promiseFactories = swaggerPaths.map(
-      swaggerPath => () => this.getSwaggerInitializer(swaggerPath))
+      swaggerPath => async () => await this.getSwaggerInitializer(swaggerPath))
 
     await utils.executePromisesSequentially(promiseFactories)
     log.info("Cache initialization complete.")

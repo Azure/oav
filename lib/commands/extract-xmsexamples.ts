@@ -27,7 +27,7 @@ export const builder: yargs.CommandBuilder = {
   },
 }
 
-export function handler(argv: yargs.Arguments): Promise<void> {
+export async function handler(argv: yargs.Arguments): Promise<void> {
   log.debug(argv.toString())
   const specPath = argv.specPath
   const recordings = argv.recordings
@@ -37,5 +37,5 @@ export function handler(argv: yargs.Arguments): Promise<void> {
     output: argv.outDir,
     matchApiVersion: argv.matchApiVersion,
   }
-  return validate.extractXMsExamples(specPath, recordings, vOptions)
+  return await validate.extractXMsExamples(specPath, recordings, vOptions)
 }

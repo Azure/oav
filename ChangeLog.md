@@ -1,3 +1,6 @@
+### 07/18/2018 0.4.59
+- Bug fix: `scenarios is undefined` when running AutoRest plugin.
+
 ### 07/17/2018 0.4.58
 - export additional types.
 

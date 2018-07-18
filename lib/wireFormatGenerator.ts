@@ -176,7 +176,7 @@ export class WireFormatGenerator {
     return err
   }
 
-  private resolveExamples(): Promise<any> {
+  private async resolveExamples(): Promise<any> {
     const self = this
     const options = {
       relativeBase: self.specDir,
@@ -186,17 +186,17 @@ export class WireFormatGenerator {
     const allRefsRemoteRelative = JsonRefs.findRefs(self.specInJson, options)
     const promiseFactories = utils.getKeys(allRefsRemoteRelative).map(refName => {
       const refDetails = allRefsRemoteRelative[refName]
-      return () => self.resolveRelativeReference(
+      return async () => await self.resolveRelativeReference(
         refName, refDetails, self.specInJson, self.specPath)
     })
     if (promiseFactories.length) {
-      return utils.executePromisesSequentially(promiseFactories)
+      return await utils.executePromisesSequentially(promiseFactories)
     } else {
-      return Promise.resolve(self.specInJson)
+      return self.specInJson
     }
   }
 
-  private resolveRelativeReference(
+  private async resolveRelativeReference(
     refName: any, refDetails: any, doc: any, docPath: any
   ): Promise<any> {
 
@@ -216,7 +216,6 @@ export class WireFormatGenerator {
       throw new Error('docPath cannot be null or undefined and must be of type "string".')
     }
 
-    const self = this
     const node = refDetails.def
     const slicedRefName = refName.slice(1)
     const reference = node.$ref
@@ -229,21 +228,20 @@ export class WireFormatGenerator {
       docPath = utils.joinPath(docDir, parsedReference.filePath)
     }
 
-    return utils.parseJson(docPath).then((result: any) => {
-      if (!parsedReference.localReference) {
-        // Since there is no local reference we will replace the key in the object with the parsed
-        // json (relative) file it is refering to.
-        const regex = /.*x-ms-examples.*/ig
-        if (slicedRefName.match(regex) !== null) {
-          const exampleObj = {
-            filePath: docPath,
-            value: result
-          }
-          utils.setObject(doc, slicedRefName, exampleObj)
+    const result = await utils.parseJson(docPath)
+    if (!parsedReference.localReference) {
+      // Since there is no local reference we will replace the key in the object with the parsed
+      // json (relative) file it is referring to.
+      const regex = /.*x-ms-examples.*/ig
+      if (slicedRefName.match(regex) !== null) {
+        const exampleObj = {
+          filePath: docPath,
+          value: result
         }
+        utils.setObject(doc, slicedRefName, exampleObj)
       }
-      return Promise.resolve(doc)
-    })
+    }
+    return doc
   }
 
   /*
