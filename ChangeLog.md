@@ -1,3 +1,6 @@
+### 07/18/2018 0.4.60
+- Use `yasway` type definitions
+
 ### 07/18/2018 0.4.59
 - Bug fix: `scenarios is undefined` when running AutoRest plugin.
 

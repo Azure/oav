@@ -384,7 +384,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
 
     let result: RequestValidation = {}
     if (bodyParam && bodyParam.schema && bodyParam.schema.example) {
-      const exampleParameterValues: { [name: string]: string } = {}
+      const exampleParameterValues: { [name: string]: object } = {}
       for (const parameter of parameters) {
         log.debug(
           `Getting sample value for parameter "${parameter.name}" in operation ` +
@@ -410,11 +410,11 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
    *
    * @return {object} result - The validation result.
    */
-  private validateExampleResponses(operation: Operation): StringMap<Sway.Validation> {
+  private validateExampleResponses(operation: Operation): StringMap<Sway.ValidationResults> {
     if (operation === null || operation === undefined || typeof operation !== "object") {
       throw new Error("operation cannot be null or undefined and must be of type 'object'.")
     }
-    const result: StringMap<Sway.Validation> = {}
+    const result: StringMap<Sway.ValidationResults> = {}
     const responses = operation.getResponses()
     for (const response of responses) {
       if (response.examples) {
@@ -473,7 +473,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
   ) {
 
     const result: {
-      [name: string]: Sway.Validation
+      [name: string]: Sway.ValidationResults
     } = {}
     if (operation === null || operation === undefined || typeof operation !== "object") {
       throw new Error("operation cannot be null or undefined and must be of type 'object'.")
@@ -505,7 +505,8 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
           `Response statusCode "${exampleResponseStatusCode}" for operation ` +
           `"${operation.operationId}" is provided in exampleResponseValue, ` +
           `however it is not present in the swagger spec.`;
-        const e = this.constructErrorObject(ErrorCodes.ResponseStatusCodeNotInSpec, msg)
+        const e = this.constructErrorObject<Sway.ValidationEntry>(
+          ErrorCodes.ResponseStatusCodeNotInSpec, msg)
         result[exampleResponseStatusCode].errors.push(e)
         log.error(e as any)
         continue
@@ -518,7 +519,8 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
           `Response statusCode "${exampleResponseStatusCode}" for operation ` +
           `"${operation.operationId}" has response body provided in the example, ` +
           `however the response does not have a "schema" defined in the swagger spec.`
-        const e = this.constructErrorObject(ErrorCodes.ResponseSchemaNotInSpec, msg)
+        const e = this.constructErrorObject<Sway.ValidationEntry>(
+          ErrorCodes.ResponseSchemaNotInSpec, msg)
         result[exampleResponseStatusCode].errors.push(e)
         log.error(e as any)
         continue
@@ -547,7 +549,8 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
         `Following response status codes "${responseWithoutXmsExamples.toString()}" for ` +
         `operation "${operation.operationId}" were present in the swagger spec, ` +
         `however they were not present in x-ms-examples. Please provide them.`
-      const e = this.constructErrorObject(ErrorCodes.ResponseStatusCodeNotInExample, msg)
+      const e = this.constructErrorObject<Sway.ValidationEntry>(
+        ErrorCodes.ResponseStatusCodeNotInExample, msg)
       log.error(e as any)
       responseWithoutXmsExamples.forEach(statusCode => result[statusCode] = { errors: [e] })
     }
@@ -564,7 +567,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
    * @return {object} result - The validation result.
    */
   private validateRequest(
-    operation: Operation, exampleParameterValues: { [name: string]: string }
+    operation: Operation, exampleParameterValues: { [name: string]: {} }
   ): RequestValidation {
 
     if (operation === null || operation === undefined || typeof operation !== "object") {
@@ -593,7 +596,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     let formDataFiles: {
       [name: string]: Unknown
     }|null = null
-    const pathObject = operation.pathObject as Sway.PathObject
+    const pathObject = operation.pathObject as Sway.Path
     const parameterizedHost = pathObject.api[C.xmsParameterizedHost]
     const hostTemplate = parameterizedHost && parameterizedHost.hostTemplate
       ? parameterizedHost.hostTemplate
@@ -641,7 +644,8 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
           const msg =
             `In operation "${operation.operationId}", parameter ${parameter.name} is required in ` +
             `the swagger spec but is not present in the provided example parameter values.`
-          const e = this.constructErrorObject(ErrorCodes.RequiredParameterExampleNotFound, msg)
+          const e = this.constructErrorObject<Sway.ValidationEntry>(
+            ErrorCodes.RequiredParameterExampleNotFound, msg)
           if (result.validationResult === undefined) {
             throw new Error("result.validationResult is undefined")
           }
@@ -669,7 +673,8 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
               `and the path template: "${pathTemplate}" contains a forward slash before ` +
               `the parameter starts. This will cause double forward slashes ` +
               ` in the request url. Thus making it incorrect. Please rectify the example.`
-            const e = this.constructErrorObject(ErrorCodes.DoubleForwardSlashesInUrl, msg)
+            const e = this.constructErrorObject<Sway.ValidationEntry>(
+              ErrorCodes.DoubleForwardSlashesInUrl, msg)
             if (result.validationResult === undefined) {
               throw new Error("result.validationResult is undefined")
             }
@@ -683,7 +688,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
         }
         const paramType = location + "Parameters"
         if (!options[paramType]) { options[paramType] = {} }
-        if (parameter[C.xmsSkipUrlEncoding] || utils.isUrlEncoded(parameterValue)) {
+        if (parameter[C.xmsSkipUrlEncoding] || utils.isUrlEncoded(parameterValue as string)) {
           options[paramType][parameter.name] = {
             value: parameterValue,
             skipUrlEncoding: true

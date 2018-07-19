@@ -8,7 +8,7 @@ import * as glob from "glob"
 import { LiveValidator } from "../lib/validators/liveValidator"
 import * as Constants from "../lib/util/constants"
 import * as utils from "../lib/util/utils"
-import { Responses } from "yasway"
+import { ResponsesObject } from "yasway"
 
 const livePaths = glob.sync(path.join(__dirname, "liveValidation/swaggers/**/live/*.json"))
 describe("Live Validator", () => {
@@ -374,8 +374,16 @@ describe("Live Validator", () => {
       const operations = validator.cache["microsoft.test"]["2016-01-01"].post
 
       for (const operation of operations) {
-        const responses = operation.responses as Responses
-        assert(responses.default)
+        const responses = operation.responses as ResponsesObject
+        if (responses.default === undefined) {
+          throw new Error("responses.default === undefined")
+        }
+        if (responses.default.schema === undefined) {
+          throw new Error("responses.default.schema === undefined")
+        }
+        if (responses.default.schema.properties === undefined) {
+          throw new Error("responses.default.schema.properties === undefined")
+        }
         assert.deepEqual(responses.default.schema.properties.error, utils.CloudError)
       }
     })

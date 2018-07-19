@@ -15,7 +15,7 @@ import * as utils from "../util/utils"
 import * as models from "../models"
 import * as http from "http"
 import { PotentialOperationsResult } from "../models/potentialOperationsResult"
-import { Operation, PathObject, LiveRequest } from "yasway"
+import { Operation, Path, Request } from "yasway"
 import { ParsedUrlQuery } from "querystring"
 import { Unknown } from "../util/unknown"
 import { StringMap } from "../util/stringMap"
@@ -42,7 +42,7 @@ export interface Provider {
 }
 
 export interface RequestResponseObj {
-  readonly liveRequest: LiveRequest
+  readonly liveRequest: Request
   readonly liveResponse: {
     statusCode: string
   }
@@ -494,7 +494,7 @@ export class LiveValidator {
     }
 
     let potentialOperations = operations.filter(operation => {
-      const pathObject = operation.pathObject as PathObject
+      const pathObject = operation.pathObject as Path
       const pathMatch = pathObject.regexp.exec(requestPath)
       return pathMatch !== null
     })
@@ -506,7 +506,7 @@ export class LiveValidator {
         this.cache[C.unknownResourceProvider][C.unknownApiVersion]) {
         operations = this.cache[C.unknownResourceProvider][C.unknownApiVersion][requestMethod]
         potentialOperations = operations.filter(operation => {
-          const pathObject = operation.pathObject as PathObject
+          const pathObject = operation.pathObject as Path
           let pathTemplate = pathObject.path
           if (pathTemplate && pathTemplate.includes("?")) {
             pathTemplate = pathTemplate.slice(0, pathTemplate.indexOf("?"))
@@ -568,7 +568,7 @@ export class LiveValidator {
 
       operations.forEach(operation => {
         const httpMethod = operation.method.toLowerCase()
-        const pathObject = operation.pathObject as PathObject
+        const pathObject = operation.pathObject as Path
         const pathStr = pathObject.path
         let provider = utils.getProvider(pathStr)
         log.debug(`${apiVersion}, ${operation.operationId}, ${pathStr}, ${httpMethod}`)

@@ -81,7 +81,7 @@ export interface Options extends specValidator.Options {
 }
 
 export async function openApiValidationExample(
-  swagger: yaml.DocumentLoadResult, swaggerFileName: string, options?: Options
+  swagger: any, swaggerFileName: string, options?: Options
 ): Promise<Message[]> {
   const formattedResult: FormattedOutput[] = []
   if (!options) { options = {} }
