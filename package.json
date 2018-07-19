@@ -22,7 +22,6 @@
     "moment": "~2.21.0",
     "ms-rest": "^2.3.3",
     "ms-rest-azure": "^2.5.5",
-    "npm": "^6.2.0",
     "recursive-readdir": "^2.2.1",
     "request": "^2.85.0",
     "swagger-parser": "^3.4.1",
