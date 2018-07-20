@@ -1,3 +1,6 @@
+### 07/18/2018 0.4.61
+- Export more types
+
 ### 07/18/2018 0.4.60
 - Use `yasway` type definitions
 
