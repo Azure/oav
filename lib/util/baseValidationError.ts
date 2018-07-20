@@ -4,10 +4,14 @@
 import { Severity } from "./severity"
 import { ValidationResultSource } from "./validationResultSource"
 
+export interface SerializedError {
+  readonly code: string
+}
+
 export interface BaseValidationError {
   severity?: Severity;
   errorCode?: string;
-  errorDetails?: string;
+  errorDetails?: string|SerializedError;
   source?: ValidationResultSource;
   count?: number;
 }
