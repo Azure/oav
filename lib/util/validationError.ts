@@ -92,9 +92,9 @@ export interface ValidationResult<T extends NodeError<T>> {
 /**
  * Serializes validation results into a flat array.
  */
-export function processValidationErrors<T extends NodeError<T>>(
-  rawValidation: ValidationResult<T>
-): ValidationResult<T> {
+export function processValidationErrors<V extends ValidationResult<T>, T extends NodeError<T>>(
+  rawValidation: V
+): V {
   const requestSerializedErrors: T[] = []
   const responseSerializedErrors: T[] = []
 
