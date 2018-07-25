@@ -2,21 +2,23 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 // Sample standalone script to call live validator.
-import { LiveValidator } from "../lib/validators/liveValidator";
+import { LiveValidator, Options } from "../lib/validators/liveValidator"
 
 const options = {
-  directory: "./test/liveValidation/swaggers"
-};
-const validator = new LiveValidator(options);
+  directory: "C:\\vladdb\\devdiv\\repos\\azure\\azure-rest-api-specs",
+  swaggerPathsPattern:
+    "specification\\dns\\resource-manager\\Microsoft.Network\\preview\\2018-03-01-preview\\dns.json"
+}
+const validator = new LiveValidator(options)
 
 // tslint:disable-next-line:no-floating-promises
 validator.initialize().then(() => {
   const reqRes = require(__dirname +
     "/liveValidation/swaggers/specification/storage/resource-manager/Microsoft.Storage/" +
-    "2016-01-01/live/StorageAccounts_CheckNameAvailability.json");
+    "2016-01-01/live/StorageAccounts_CheckNameAvailability.json")
   const requestResponseObj = {
     liveRequest: reqRes.request,
     liveResponse: reqRes.response
-  };
-  validator.validateLiveRequestResponse(requestResponseObj);
-});
+  }
+  validator.validateLiveRequestResponse(requestResponseObj)
+})
