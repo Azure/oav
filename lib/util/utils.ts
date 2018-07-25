@@ -825,6 +825,7 @@ export function allowNullableTypes(model: SchemaObject): SchemaObject {
           ? allowNullableTypes(model.items)
           : allowNullType(model.items)
       }
+      // tslint:disable-next-line:max-line-length
       // if we have a top level "object" with x-nullable set, we need to relax the model at that level
     } else if (model.type === "object" && model["x-nullable"]) {
       model = allowNullType(model)
