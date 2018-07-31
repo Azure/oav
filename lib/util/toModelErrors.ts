@@ -1,6 +1,7 @@
 import { ModelValidationError } from "./modelValidationError"
 import { errorCodeToSeverity } from "./validationError"
 import { ValidationResultSource } from "./validationResultSource"
+import { SerializedError } from "./baseValidationError"
 
 /**
  * Transforms serialized errors to ModelValidationError
@@ -12,7 +13,10 @@ export function toModelErrors(
   source: ValidationResultSource,
   responseCode: string
 ): ModelValidationError[] {
-  return processedErrors.reduce((acc: any, value: any) => {
+  return processedErrors.reduce((acc: ModelValidationError[], value: ModelValidationError) => {
+    if (value.code === undefined) {
+      throw Error("value.code is undefined")
+    }
     const severity = errorCodeToSeverity(value.code);
     const modelError: ModelValidationError = {
       operationId,
@@ -21,7 +25,7 @@ export function toModelErrors(
       responseCode,
       severity,
       errorCode: value.code,
-      errorDetails: value
+      errorDetails: value as SerializedError,
     };
     return [...acc, modelError];
   }, []);
