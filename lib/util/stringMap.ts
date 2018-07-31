@@ -4,10 +4,7 @@
 import { objectPathAppend, objectPathLast } from "./objectPath"
 import { Tracked, tracked } from "./tracked";
 import { NonUndefined } from "./nonUndefined"
-
-export interface StringMap<T> {
-  [name: string]: T
-}
+import { StringMap } from "@ts-common/string-map"
 
 export function stringMapForEach<T>(
   src: Tracked<StringMap<T>>, f: (value: Tracked<NonUndefined<T>>) => void
@@ -24,7 +21,7 @@ export function stringMapForEach<T>(
 export function stringMapMap<T>(
   src: Tracked<StringMap<T>>, f: (value: Tracked<NonUndefined<T>>) => T
 ): StringMap<T> {
-  const result: StringMap<T> = {}
+  const result: { [n: string]: T } = {}
   let same = true
   stringMapForEach(
     src,

@@ -12,11 +12,11 @@ import request = require("request")
 import * as lodash from "lodash"
 import * as http from "http"
 import { Unknown } from "./unknown"
-import { StringMap } from "./stringMap"
+import { MutableStringMap, StringMap } from "@ts-common/string-map"
 import { SwaggerObject, ParameterObject, SchemaObject, DataType } from "yasway"
 import { NonUndefined } from "./nonUndefined"
 
-export type DocCache = StringMap<Promise<SwaggerObject>>
+export type DocCache = MutableStringMap<Promise<SwaggerObject>>
 
 /*
  * Caches the json docs that were successfully parsed by parseJson().
@@ -327,7 +327,7 @@ export async function parseJsonWithPathFragments(
  *
  * @returns {object} target - Returns the merged target object.
  */
-export function mergeObjects<T extends StringMap<any>>(
+export function mergeObjects<T extends MutableStringMap<any>>(
   source: T,
   target: T
 ): T {

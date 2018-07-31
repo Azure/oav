@@ -1,10 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import * as util from "util"
 import * as fs from "fs"
 import * as pathlib from "path"
-import * as recursive from "recursive-readdir"
 import * as utils from "./util/utils"
 import { log } from "./util/logging"
 
@@ -14,7 +12,6 @@ import { log } from "./util/logging"
 export class XMsExampleExtractor {
   private specPath: string
   private recordings: any
-  private specDir: any
   private options: any
   /**
    * @constructor
@@ -50,7 +47,6 @@ export class XMsExampleExtractor {
 
     this.specPath = specPath
     this.recordings = recordings
-    this.specDir = pathlib.dirname(this.specPath)
     if (!options) { options = {} }
     if (options.output === null || options.output === undefined) {
       options.output = process.cwd() + "/output"
@@ -94,7 +90,6 @@ export class XMsExampleExtractor {
     self.getFileList(self.recordings, filesArray)
 
     const recordingFiles = filesArray
-    const example = {}
 
     try {
       const api = await parser.parse(swaggerObject)
@@ -217,7 +212,7 @@ export class XMsExampleExtractor {
                       }
                     }
                     const responses = infoFromOperation.responses
-                    for (const response of utils.getKeys(responses)) {
+                    for (const {} of utils.getKeys(responses)) {
                       const statusCodeFromRecording = entries[entry].StatusCode
                       const responseBody = entries[entry].ResponseBody
                       exampleL.responses[statusCodeFromRecording] = {}
