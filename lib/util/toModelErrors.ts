@@ -7,13 +7,13 @@ import { SerializedError } from "./baseValidationError"
  * Transforms serialized errors to ModelValidationError
  */
 export function toModelErrors(
-  processedErrors: ModelValidationError[],
+  processedErrors: ReadonlyArray<ModelValidationError>,
   operationId: string,
   scenario: string,
   source: ValidationResultSource,
   responseCode: string
-): ModelValidationError[] {
-  return processedErrors.reduce((acc: ModelValidationError[], value: ModelValidationError) => {
+): ReadonlyArray<ModelValidationError> {
+  return processedErrors.map(value => {
     if (value.code === undefined) {
       throw Error("value.code is undefined")
     }
@@ -26,7 +26,7 @@ export function toModelErrors(
       severity,
       errorCode: value.code,
       errorDetails: value as SerializedError,
-    };
-    return [...acc, modelError];
-  }, []);
+    }
+    return modelError
+  })
 }
