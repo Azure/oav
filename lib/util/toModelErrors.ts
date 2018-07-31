@@ -16,7 +16,7 @@ export function toModelErrors(
 ): Iterable<ModelValidationError> {
   return it.map(processedErrors, value => {
     if (value.code === undefined) {
-      throw Error("value.code is undefined")
+      throw Error("ICE: value.code is undefined")
     }
     const severity = errorCodeToSeverity(value.code);
     const modelError: ModelValidationError = {
