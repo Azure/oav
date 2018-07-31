@@ -3,7 +3,6 @@
 /* tslint:disable */
 
 import * as yargs from "yargs"
-import * as os from "os"
 import { log } from "./lib/util/logging"
 
 const defaultLogDir = log.directory

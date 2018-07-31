@@ -14,11 +14,13 @@ export interface Result {
   result?: Unknown
 }
 
+export interface Scenarios {
+  [key: string]: Scenario|undefined
+}
+
 export interface Scenario {
   isValid?: Unknown
-  scenarios?: {
-    [key in string]?: Scenario
-  }
+  scenarios?: Scenarios
   readonly request?: Result
   readonly responses?: {
     [key in string|number]: Result
@@ -27,7 +29,7 @@ export interface Scenario {
 }
 
 export function responseReducer(
-  responseAcc: ModelValidationError[],
+  responseAcc: ReadonlyArray<ModelValidationError>,
   responseCode: string,
   scenario: Scenario,
   rawValidationResult: ValidationResult<ModelValidationError>,

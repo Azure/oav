@@ -4,6 +4,8 @@
 import { ModelValidationError } from "./modelValidationError"
 import { operationReducer } from "./operationReducer"
 import { OperationResult } from "./scenarioReducer"
+import * as sm from "@ts-common/string-map"
+import * as it from "@ts-common/iterator"
 
 export interface ModelValidation {
   operations: {
@@ -16,20 +18,23 @@ export interface ModelValidation {
  */
 export function getErrorsFromModelValidation(
   validationResult: ModelValidation
-): ModelValidationError[] {
+): ReadonlyArray<ModelValidationError> {
   if (!validationResult.operations) {
     return [];
   }
 
-  const operations = Object.entries(validationResult.operations)
-    .filter(
-      ([_, operation]) => {
-        if (!operation) {
-          return false
-        }
-        const examples = operation["x-ms-examples"]
-        return examples && examples.scenarios
+  const operations = it.filterMap(
+    sm.entries(validationResult.operations),
+    ([operationId, operation]) => {
+      const examples = operation["x-ms-examples"]
+      if (examples === undefined) {
+        return undefined
       }
-    )
-  return (operations as ReadonlyArray<[string, OperationResult]>).reduce(operationReducer, []);
+      const scenarios = examples.scenarios
+      if (scenarios === undefined) {
+        return undefined
+      }
+      return { operationId, operation, scenarios }
+    })
+  return it.fold(operations, operationReducer, [])
 }

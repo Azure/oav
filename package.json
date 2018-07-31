@@ -10,6 +10,9 @@
   "license": "MIT",
   "dependencies": {
     "@microsoft.azure/autorest-extension-base": "1.0.13",
+    "@ts-common/iterator": "0.0.30",
+    "@ts-common/string-map": "0.0.5",
+    "@ts-common/tuple": "0.0.0",
     "@types/lodash": "^4.14.109",
     "@types/request": "^2.47.1",
     "azure-arm-resource": "^2.0.0-preview",

@@ -3,30 +3,27 @@
 
 import { scenarioReducer, OperationResult } from "./scenarioReducer"
 import { ModelValidationError } from "./modelValidationError"
+import { Scenarios } from "./responseReducer"
+import * as sm from "@ts-common/string-map"
+import * as it from "@ts-common/iterator"
+
+interface OperationResultScenarios {
+  readonly operationId: string
+  readonly operation: OperationResult
+  readonly scenarios: Scenarios
+}
 
 export function operationReducer(
-  acc: ModelValidationError[], [operationId, operation]: [string, OperationResult]
+  acc: ReadonlyArray<ModelValidationError>,
+  {operationId, operation, scenarios }: OperationResultScenarios
 ) {
-  const example = operation["x-ms-examples"]
-  if (example === undefined) {
-    throw new Error("example is undefined")
-  }
-  const scenarios = example.scenarios
-  if (scenarios === undefined) {
-    throw new Error("scenarios is undefined")
-  }
-  return Object
-    .keys(scenarios)
-    .filter(scenarioName => {
-      const scenario = scenarios[scenarioName];
-      if (scenario === undefined) {
-        throw new Error("scenario is undefined")
-      }
-      return !scenario.isValid;
-    })
-    .reduce(
-      (scenarioAcc, scenarioName) =>
-        scenarioReducer(scenarioAcc, scenarioName, operationId, operation),
-      acc
-    )
+  const scenariosEntries = sm.entries(scenarios)
+  const invalidScenarios = it.filter(scenariosEntries, ([_, scenario]) => !scenario.isValid)
+  return it.fold(
+    invalidScenarios,
+    (scenarioAcc, [scenarioName, scenario]) => scenarioReducer(
+      scenarioAcc, scenarioName, scenario, operationId
+    ),
+    acc
+  );
 }

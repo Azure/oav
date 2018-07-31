@@ -25,23 +25,11 @@ export interface OperationResult {
 }
 
 export function scenarioReducer(
-  acc: ModelValidationError[],
+  acc: ReadonlyArray<ModelValidationError>,
   scenarioName: string,
+  scenario: Scenario,
   operationId: string,
-  operation: OperationResult
 ) {
-  const example = operation["x-ms-examples"]
-  if (example === undefined) {
-    throw new Error("example is undefined")
-  }
-  const scenarios = example.scenarios
-  if (scenarios === undefined) {
-    throw new Error("scenarios is undefined")
-  }
-  const scenario = scenarios[scenarioName];
-  if (scenario === undefined) {
-    throw new Error("scenario is undefined")
-  }
   const request = scenario.request
   if (request === undefined) {
     throw new Error("request is undefined")
