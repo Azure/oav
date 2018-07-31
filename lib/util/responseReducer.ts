@@ -29,13 +29,12 @@ export interface Scenario {
 }
 
 export function responseReducer(
-  responseAcc: ReadonlyArray<ModelValidationError>,
   responseCode: string,
   scenario: Scenario,
   rawValidationResult: ValidationResult<ModelValidationError>,
   operationId: string,
   scenarioName: string
-): ReadonlyArray<ModelValidationError> {
+): Iterable<ModelValidationError> {
   if (scenario.responses === undefined) {
     throw new Error("ICE: scenario.responses is undefined")
   }
@@ -49,14 +48,11 @@ export function responseReducer(
   if (processedErrors.responseValidationResult.errors === undefined) {
     throw new Error("ICE: processedErrors.responseValidationResult.errors === undefined")
   }
-  return [
-    ...responseAcc,
-    ...toModelErrors(
-      processedErrors.responseValidationResult.errors,
-      operationId,
-      scenarioName,
-      ValidationResultSource.RESPONSE,
-      responseCode
-    )
-  ]
+  return toModelErrors(
+    processedErrors.responseValidationResult.errors,
+    operationId,
+    scenarioName,
+    ValidationResultSource.RESPONSE,
+    responseCode
+  )
 }
