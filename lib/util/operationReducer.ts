@@ -14,13 +14,12 @@ interface OperationResultScenarios {
 }
 
 export function operationReducer(
-  acc: ReadonlyArray<ModelValidationError>,
   {operationId, operation, scenarios }: OperationResultScenarios
-): ReadonlyArray<ModelValidationError> {
+): Iterable<ModelValidationError> {
   const scenariosEntries = sm.entries(scenarios)
   const invalidScenarios = it.filter(scenariosEntries, ([_, scenario]) => !scenario.isValid)
   const result = it.flatMap(
     invalidScenarios,
     ([scenarioName, scenario]) => scenarioReducer(scenarioName, scenario, operationId))
-  return [...acc, ...result]
+  return result
 }

@@ -36,5 +36,5 @@ export function getErrorsFromModelValidation(
       }
       return { operationId, operation, scenarios }
     })
-  return it.fold(operations, operationReducer, [])
+  return it.toArray(it.flatMap(operations, operationReducer))
 }
