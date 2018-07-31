@@ -16,14 +16,11 @@ interface OperationResultScenarios {
 export function operationReducer(
   acc: ReadonlyArray<ModelValidationError>,
   {operationId, operation, scenarios }: OperationResultScenarios
-) {
+): ReadonlyArray<ModelValidationError> {
   const scenariosEntries = sm.entries(scenarios)
   const invalidScenarios = it.filter(scenariosEntries, ([_, scenario]) => !scenario.isValid)
-  return it.fold(
+  const result = it.flatMap(
     invalidScenarios,
-    (scenarioAcc, [scenarioName, scenario]) => scenarioReducer(
-      scenarioAcc, scenarioName, scenario, operationId
-    ),
-    acc
-  );
+    ([scenarioName, scenario]) => scenarioReducer(scenarioName, scenario, operationId))
+  return [...acc, ...result]
 }

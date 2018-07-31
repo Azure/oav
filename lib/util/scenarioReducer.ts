@@ -27,11 +27,10 @@ export interface OperationResult {
 }
 
 export function scenarioReducer(
-  acc: ReadonlyArray<ModelValidationError>,
   scenarioName: string,
   scenario: Scenario,
   operationId: string,
-): ReadonlyArray<ModelValidationError> {
+): Iterable<ModelValidationError> {
   const request = scenario.request
   if (request === undefined) {
     throw new Error("request is undefined")
@@ -76,5 +75,5 @@ export function scenarioReducer(
     operationId,
     scenarioName
   ))
-  return [...acc, ...modelErrors, ...result]
+  return it.concat(modelErrors, result)
 }
