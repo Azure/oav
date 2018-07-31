@@ -50,28 +50,4 @@ export class PolymorphicTree {
     }
     return childObj
   }
-
-  /**
-   * Adds a child by name to the PolymorphicTree. This method will not add the child again if it is
-   *    already present.
-   *
-   * @param {string} childName- The name of the child model
-   * @returns {PolymorphicTree} child - The created child node.
-   */
-  private addChildByName(childName: string): PolymorphicTree|undefined {
-    if (childName === null
-      || childName === undefined
-      || typeof childName.valueOf() === "string"
-      || !childName.trim().length) {
-      throw new Error("childName is a required parameter of type string.")
-    }
-    let child
-    if (!this.children.has(childName)) {
-      child = new PolymorphicTree(childName)
-      this.children.set(childName, child)
-    } else {
-      child = this.children.get(childName)
-    }
-    return child
-  }
 }
