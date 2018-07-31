@@ -9,7 +9,6 @@ import {
   RequestValidation,
   ExampleResponse
 } from "./specValidator"
-import { Unknown } from "../util/unknown"
 import * as C from "../util/constants"
 import * as utils from "../util/utils"
 import { CommonError } from "../util/commonError"
@@ -27,9 +26,9 @@ const HttpRequest = msRest.WebResource
 
 export class ModelValidator extends SpecValidator<SpecValidationResult> {
 
-  private sampleRequest: Unknown = {}
+  private sampleRequest: unknown = {}
 
-  private sampleResponse: Unknown = {}
+  private sampleResponse: unknown = {}
 
   /*
    * Validates the given operationIds or all the operations in the spec.
@@ -52,7 +51,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
 
     let operations = this.swaggerApi.getOperations()
     if (operationIds) {
-      const operationIdsObj: { [name: string]: Unknown } = {}
+      const operationIdsObj: { [name: string]: unknown } = {}
       operationIds.trim().split(",").forEach(item => operationIdsObj[item.trim()] = 1)
       const operationsToValidate = operations
         .filter(item => Boolean(operationIdsObj[item.operationId]))
@@ -156,7 +155,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
   private constructRequestResultWrapper(
     operationId: string,
     requestValidationErrors: ModelValidationError[],
-    requestValidationWarnings: Unknown[]|undefined,
+    requestValidationWarnings: Array<unknown>|undefined,
     exampleType: string,
     scenarioName?: string
   ): void {
@@ -185,7 +184,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     operationId: string,
     responseStatusCode: string,
     responseValidationErrors: ModelValidationError[],
-    responseValidationWarnings: Unknown[]|undefined,
+    responseValidationWarnings: Array<unknown>|undefined,
     exampleType: string,
     scenarioName?: string
   ): void {
@@ -440,7 +439,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
    *
    * @return {object} result - The validation result.
    */
-  private validateResponse(operationOrResponse: Operation, responseWrapper: Unknown) {
+  private validateResponse(operationOrResponse: Operation, responseWrapper: unknown) {
     const self = this
     if (operationOrResponse === null
       || operationOrResponse === undefined
@@ -455,7 +454,8 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       throw new Error("responseWrapper cannot be null or undefined and must be of type 'object'.")
     }
     self.sampleResponse = responseWrapper
-    return operationOrResponse.validateResponse(responseWrapper)
+    // TODO: update responseWrapper
+    return operationOrResponse.validateResponse(responseWrapper as Sway.LiveResponse)
   }
 
   /*
@@ -485,7 +485,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       throw new Error("operation cannot be null or undefined and must be of type 'object'.")
     }
     const responsesInSwagger: {
-      [name: string]: Unknown
+      [name: string]: unknown
     } = {}
     operation.getResponses().forEach(response => {
       responsesInSwagger[response.statusCode] = response.statusCode
@@ -594,7 +594,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       [name: string]: any
     } = { headers: {} }
     let formDataFiles: {
-      [name: string]: Unknown
+      [name: string]: unknown
     }|null = null
     const pathObject = operation.pathObject as Sway.Path
     const parameterizedHost = pathObject.api[C.xmsParameterizedHost]
@@ -774,10 +774,10 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
 
   private constructRequestResult(
     operationResult: OperationExampleResult,
-    isValid: Unknown,
+    isValid: unknown,
     msg: string,
     requestValidationErrors?: ModelValidationError[]|null,
-    requestValidationWarnings?: Unknown
+    requestValidationWarnings?: unknown
   ): void {
 
     if (operationResult.request === undefined) {
@@ -804,10 +804,10 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
   private constructResponseResult(
     operationResult: OperationExampleResult,
     responseStatusCode: string,
-    isValid: Unknown,
+    isValid: unknown,
     msg: string,
     responseValidationErrors?: ModelValidationError[]|null,
-    responseValidationWarnings?: Unknown
+    responseValidationWarnings?: unknown
   ): void {
 
     if (operationResult.responses === undefined) {

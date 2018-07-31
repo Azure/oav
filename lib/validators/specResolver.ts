@@ -8,7 +8,6 @@ import * as utils from "../util/utils"
 import * as C from "../util/constants"
 import { log } from "../util/logging"
 import { PolymorphicTree } from "./polymorphicTree"
-import { Unknown } from "../util/unknown"
 import {
   SwaggerObject,
   ParametersDefinitionsObject,
@@ -55,7 +54,7 @@ export class SpecResolver {
 
   private readonly specPath: string
 
-  private readonly specDir: Unknown
+  private readonly specDir: unknown
 
   private readonly visitedEntities: MutableStringMap<SchemaObject> = {}
 
@@ -230,7 +229,7 @@ export class SpecResolver {
    * @return {Promise<void>}
    */
   private async resolveRelativePaths(
-    doc?: Unknown, docPath?: string, filterType?: string
+    doc?: unknown, docPath?: string, filterType?: string
   ): Promise<void> {
 
     let docDir
@@ -296,7 +295,7 @@ export class SpecResolver {
    * @return undefined the modified object
    */
   private async resolveRelativeReference(
-    refName: string, refDetails: RefDetails, doc: Unknown, docPath: string|undefined
+    refName: string, refDetails: RefDetails, doc: unknown, docPath: string|undefined
   ): Promise<void> {
 
     if (!refName || (refName && typeof refName.valueOf() !== "string")) {
@@ -335,13 +334,15 @@ export class SpecResolver {
       const regex = /.*x-ms-examples.*/ig
       if (self.options.shouldResolveXmsExamples
         || (!self.options.shouldResolveXmsExamples && slicedRefName.match(regex) === null)) {
-        utils.setObject(doc, slicedRefName, result)
+        // TODO: doc should have a type
+        utils.setObject(doc as {}, slicedRefName, result)
       }
     } else {
       // resolve the local reference.
       // make the reference local to the doc being processed
       node.$ref = parsedReference.localReference.value
-      utils.setObject(doc, slicedRefName, node)
+      // TODO: doc should have a type
+      utils.setObject(doc as {}, slicedRefName, node)
       const slicedLocalReferenceValue = parsedReference.localReference.value.slice(1)
       let referencedObj = self.visitedEntities[slicedLocalReferenceValue]
       if (!referencedObj) {

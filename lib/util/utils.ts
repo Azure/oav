@@ -11,10 +11,9 @@ import { log } from "./logging"
 import request = require("request")
 import * as lodash from "lodash"
 import * as http from "http"
-import { Unknown } from "./unknown"
 import { MutableStringMap, StringMap } from "@ts-common/string-map"
 import { SwaggerObject, ParameterObject, SchemaObject, DataType } from "yasway"
-import { NonUndefined } from "./nonUndefined"
+import { NonUndefined } from "@ts-common/json"
 
 export type DocCache = MutableStringMap<Promise<SwaggerObject>>
 
@@ -126,7 +125,7 @@ export function parseContent(
 export type Options = request.CoreOptions &
   request.UrlOptions & {
     readonly url: string
-    readonly errorOnNon200Response: Unknown
+    readonly errorOnNon200Response: unknown
   }
 
 /*
@@ -645,7 +644,7 @@ interface Entity {
  */
 export function relaxEntityType<T extends Entity>(
   entity: T,
-  isRequired?: Unknown
+  isRequired?: unknown
 ): T {
   if (isPureObject(entity) && entity.type) {
     delete entity.type
@@ -755,9 +754,9 @@ export function allowNullType<T extends Entity>(
  * No                    | convert to oneOf[] |       | convert to oneOf[]
  */
 export function shouldAcceptNullValue(
-  xnullable: Unknown,
-  isPropRequired: Unknown
-): Unknown {
+  xnullable: unknown,
+  isPropRequired: unknown
+): unknown {
   const isPropNullable = xnullable && typeof xnullable === "boolean"
   return (isPropNullable === undefined && !isPropRequired) || isPropNullable
 }
@@ -882,7 +881,7 @@ export function getKeys(obj: StringMap<any> | undefined): string[] {
 /**
  * Checks if the property is required in the model.
  */
-function isPropertyRequired(propName: Unknown, model: SchemaObject) {
+function isPropertyRequired(propName: unknown, model: SchemaObject) {
   return model.required ? model.required.some(p => p === propName) : false
 }
 

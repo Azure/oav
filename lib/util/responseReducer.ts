@@ -4,14 +4,13 @@
 import { processValidationErrors, ValidationResult } from "./validationError"
 import { toModelErrors } from "./toModelErrors"
 import { ValidationResultSource } from "./validationResultSource"
-import { Unknown } from "./unknown"
 import { ModelValidationError } from "./modelValidationError"
 
 export interface Result {
-  isValid?: Unknown
+  isValid?: unknown
   error?: ModelValidationError
-  warning?: Unknown
-  result?: Unknown
+  warning?: unknown
+  result?: unknown
 }
 
 export interface Scenarios {
@@ -19,13 +18,13 @@ export interface Scenarios {
 }
 
 export interface Scenario {
-  isValid?: Unknown
+  isValid?: unknown
   scenarios?: Scenarios
   readonly request?: Result
   readonly responses?: {
     [key in string|number]: Result
   }
-  error?: Unknown
+  error?: unknown
 }
 
 export function responseReducer(

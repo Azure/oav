@@ -3,7 +3,7 @@
 
 import { objectPathAppend, objectPathLast } from "./objectPath"
 import { Tracked, tracked } from "./tracked";
-import { NonUndefined } from "./nonUndefined"
+import { NonUndefined } from "@ts-common/json"
 import { StringMap } from "@ts-common/string-map"
 
 export function stringMapForEach<T>(

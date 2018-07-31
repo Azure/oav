@@ -9,24 +9,7 @@ export const xmsExamples = "x-ms-examples"
 
 export const xmsSkipUrlEncoding = "x-ms-skip-url-encoding"
 
-/*
-const constraints = [
-  "minLength",
-  "maxLength",
-  "minimum",
-  "maximum",
-  "enum",
-  "maxItems",
-  "minItems",
-  "uniqueItems",
-  "multipleOf",
-  "pattern"
-]
-*/
-
 export const exampleInSpec = "example-in-spec"
-
-// const BodyParameterValid = "BODY_PARAMETER_VALID"
 
 export const Errors = "Errors"
 

@@ -17,7 +17,6 @@ import * as http from "http"
 import { PotentialOperationsResult } from "../models/potentialOperationsResult"
 import { Operation, Path, Request } from "yasway"
 import { ParsedUrlQuery } from "querystring"
-import { Unknown } from "../util/unknown"
 import { MutableStringMap } from "@ts-common/string-map"
 
 export interface Options {
@@ -49,21 +48,21 @@ export interface RequestResponseObj {
 }
 
 export interface RequestValidationResult {
-  successfulRequest: Unknown
-  operationInfo?: Unknown
-  errors?: Unknown
+  successfulRequest: unknown
+  operationInfo?: unknown
+  errors?: unknown
 }
 
 export interface ResponseValidationResult {
-  successfulResponse: Unknown
-  operationInfo?: Unknown
-  errors?: Unknown
+  successfulResponse: unknown
+  operationInfo?: unknown
+  errors?: unknown
 }
 
 export interface ValidationResult {
   readonly requestValidationResult: RequestValidationResult
   readonly responseValidationResult: ResponseValidationResult
-  errors: Unknown[]
+  errors: Array<unknown>
 }
 
 /**

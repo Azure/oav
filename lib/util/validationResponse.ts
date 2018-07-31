@@ -3,23 +3,22 @@
 
 import * as pointer from "json-pointer"
 import { CommonError } from "./commonError"
-import { Unknown } from "./unknown"
 import { StringMap } from "@ts-common/string-map"
 
 interface ValidationError {
   validationCategory: string
   code?: string
-  providerNamespace: Unknown
+  providerNamespace: unknown
   type: string
   inner?: CommonError|CommonError[]
-  id?: Unknown
+  id?: unknown
   message?: string
   jsonref?: string
   "json-path"?: string
 }
 
 interface Warning {
-  readonly code: Unknown
+  readonly code: unknown
 }
 
 export class ValidateResponse {
@@ -43,7 +42,7 @@ export class ValidateResponse {
   }
 
   public constructErrors(
-    validationError: CommonError, specPath: Unknown, providerNamespace: Unknown
+    validationError: CommonError, specPath: unknown, providerNamespace: unknown
   ): ValidationError[] {
     if (!validationError) {
       throw new Error("validationError cannot be null or undefined.")

@@ -4,7 +4,6 @@
 import * as url from "url"
 import * as utils from "../util/utils"
 import * as msRest from "ms-rest"
-import { Unknown } from "../util/unknown"
 
 export interface Headers {
   readonly [name: string]: string
@@ -13,7 +12,7 @@ export interface Headers {
 export type Request = msRest.WebResource
 
 export interface Response {
-  readonly body: Unknown
+  readonly body: unknown
   readonly headers: Headers
   readonly statusCode: string
 }

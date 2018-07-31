@@ -14,7 +14,6 @@ import { IAutoRestPluginInitiator } from
 import * as extensionBase from "@microsoft.azure/autorest-extension-base"
 import { SourceLocation } from
   "@microsoft.azure/autorest-extension-base/dist/lib/types"
-import { Unknown } from "../util/unknown"
 import { CommonError } from "../util/commonError"
 import { SwaggerObject } from "yasway"
 import { ModelValidator } from "../validators/modelValidator"
@@ -41,7 +40,7 @@ export type Channel = "information" | "warning" | "error" | "debug" | "verbose"
 export interface Message {
   readonly channel: Channel
   readonly text: string
-  readonly details: Unknown
+  readonly details: unknown
   readonly code: string[]
   readonly source: SourceLocation[]
 }
@@ -77,7 +76,7 @@ extension.Add(
   })
 
 export interface Options extends specValidator.Options {
-  consoleLogLevel?: Unknown
+  consoleLogLevel?: unknown
 }
 
 export async function openApiValidationExample(

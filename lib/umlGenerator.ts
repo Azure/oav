@@ -4,14 +4,13 @@
 import yuml2svg = require("yuml2svg")
 import * as utils from "./util/utils"
 import { log } from "./util/logging"
-import { Unknown } from "./util/unknown"
 import { SwaggerObject, DefinitionsObject, SchemaObject } from "yasway"
 
 export interface Options {
-  readonly direction?: Unknown
-  readonly shouldDisableAllof?: Unknown
-  readonly shouldDisableProperties?: Unknown
-  readonly shouldDisableRefs?: Unknown
+  readonly direction?: unknown
+  readonly shouldDisableAllof?: unknown
+  readonly shouldDisableProperties?: unknown
+  readonly shouldDisableRefs?: unknown
 }
 
 /**
@@ -71,7 +70,7 @@ export class UmlGenerator {
     }
   }
 
-  private generateAllOfForModel(modelName: Unknown, model: SchemaObject): void {
+  private generateAllOfForModel(modelName: unknown, model: SchemaObject): void {
     if (model.allOf) {
       model.allOf.forEach(item => {
         const ref = item.$ref
@@ -116,7 +115,7 @@ export class UmlGenerator {
   }
 
   private getPropertyType(
-    modelName: Unknown, property: SchemaObject, references: string[]
+    modelName: unknown, property: SchemaObject, references: string[]
   ): string {
 
     const type = property.type

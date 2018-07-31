@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import { Unknown } from "../util/unknown"
-
 /*
  * @class
  * A Response wrapper that encapsulates basic info that can be validated for an HTTP(s) response.
@@ -24,8 +22,8 @@ export class ResponseWrapper {
    */
   constructor(
     public statusCode: number|string,
-    public body: Unknown,
-    public headers: Unknown,
+    public body: unknown,
+    public headers: unknown,
     public encoding?: string) {
   }
 }

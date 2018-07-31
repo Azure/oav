@@ -14,18 +14,17 @@ import { XMsExampleExtractor } from "./xMsExampleExtractor"
 import { SpecResolver } from "./validators/specResolver"
 import * as specResolver from "./validators/specResolver"
 import * as umlGeneratorLib from "./umlGenerator"
-import { Unknown } from "./util/unknown"
 import { getErrorsFromModelValidation } from "./util/getErrorsFromModelValidation"
 import { SemanticValidator } from "./validators/semanticValidator"
 import { ModelValidator } from "./validators/modelValidator"
 
 interface FinalValidationResult {
-  [name: string]: Unknown
+  [name: string]: unknown
 }
 
 export interface Options extends specResolver.Options, umlGeneratorLib.Options {
-  consoleLogLevel?: Unknown
-  logFilepath?: Unknown
+  consoleLogLevel?: unknown
+  logFilepath?: unknown
   pretty?: boolean
 }
 
@@ -213,9 +212,9 @@ export async function resolveCompositeSpec(
 }
 
 export async function generateWireFormat(
-  specPath: Unknown,
-  outDir: Unknown,
-  emitYaml: Unknown,
+  specPath: unknown,
+  outDir: unknown,
+  emitYaml: unknown,
   operationIds: string|null,
   options: Options
 ): Promise<void> {
@@ -235,7 +234,7 @@ export async function generateWireFormat(
 }
 
 export async function generateWireFormatInCompositeSpec(
-  compositeSpecPath: string, outDir: Unknown, emitYaml: Unknown, options: Options
+  compositeSpecPath: string, outDir: unknown, emitYaml: unknown, options: Options
 ): Promise<void> {
 
   if (!options) { options = {} }
@@ -318,7 +317,7 @@ export function logDetailedInfo<T extends CommonValidationResult>(
 }
 
 export async function extractXMsExamples(
-  specPath: string, recordings: Unknown, options: Options
+  specPath: string, recordings: unknown, options: Options
 ): Promise<void> {
 
   if (!options) { options = {} }
