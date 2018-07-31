@@ -9,12 +9,11 @@ import * as it from "@ts-common/iterator"
 
 interface OperationResultScenarios {
   readonly operationId: string
-  readonly operation: OperationResult
   readonly scenarios: Scenarios
 }
 
 export function operationReducer(
-  {operationId, operation, scenarios }: OperationResultScenarios
+  {operationId, scenarios }: OperationResultScenarios
 ): Iterable<ModelValidationError> {
   const scenariosEntries = sm.entries(scenarios)
   const invalidScenarios = it.filter(scenariosEntries, ([_, scenario]) => !scenario.isValid)

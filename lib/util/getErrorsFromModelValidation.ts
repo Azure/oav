@@ -23,8 +23,9 @@ export function getErrorsFromModelValidation(
     return [];
   }
 
+  const entries = sm.entries(validationResult.operations)
   const operations = it.filterMap(
-    sm.entries(validationResult.operations),
+    entries,
     ([operationId, operation]) => {
       const examples = operation["x-ms-examples"]
       if (examples === undefined) {
@@ -34,7 +35,7 @@ export function getErrorsFromModelValidation(
       if (scenarios === undefined) {
         return undefined
       }
-      return { operationId, operation, scenarios }
+      return { operationId, scenarios }
     })
   return it.toArray(it.flatMap(operations, operationReducer))
 }
