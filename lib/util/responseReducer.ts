@@ -35,9 +35,9 @@ export function responseReducer(
   rawValidationResult: ValidationResult<ModelValidationError>,
   operationId: string,
   scenarioName: string
-): ModelValidationError[] {
+): ReadonlyArray<ModelValidationError> {
   if (scenario.responses === undefined) {
-    throw new Error("scenario.responses is undefined")
+    throw new Error("ICE: scenario.responses is undefined")
   }
   const response = scenario.responses[responseCode]
   rawValidationResult.responseValidationResult.errors = response.error

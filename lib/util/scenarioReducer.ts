@@ -29,7 +29,7 @@ export function scenarioReducer(
   scenarioName: string,
   scenario: Scenario,
   operationId: string,
-) {
+): ReadonlyArray<ModelValidationError> {
   const request = scenario.request
   if (request === undefined) {
     throw new Error("request is undefined")

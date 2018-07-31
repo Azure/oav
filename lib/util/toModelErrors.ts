@@ -2,18 +2,19 @@ import { ModelValidationError } from "./modelValidationError"
 import { errorCodeToSeverity } from "./validationError"
 import { ValidationResultSource } from "./validationResultSource"
 import { SerializedError } from "./baseValidationError"
+import * as it from "@ts-common/iterator"
 
 /**
  * Transforms serialized errors to ModelValidationError
  */
 export function toModelErrors(
-  processedErrors: ReadonlyArray<ModelValidationError>,
+  processedErrors: Iterable<ModelValidationError>,
   operationId: string,
   scenario: string,
   source: ValidationResultSource,
   responseCode: string
-): ReadonlyArray<ModelValidationError> {
-  return processedErrors.map(value => {
+): Iterable<ModelValidationError> {
+  return it.map(processedErrors, value => {
     if (value.code === undefined) {
       throw Error("value.code is undefined")
     }
