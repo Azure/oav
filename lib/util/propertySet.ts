@@ -1,7 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import { StringMap, stringMapMap } from "./stringMap"
+import { StringMap } from "@ts-common/string-map"
+import { stringMapMap } from "./stringMap"
 import { NonUndefined } from "./nonUndefined"
 import { objectPathLast } from "./objectPath"
 import { Tracked } from "./tracked";

@@ -15,7 +15,7 @@ import * as utils from "../util/utils"
 import { CommonError } from "../util/commonError"
 import { ErrorCodes } from "../util/constants"
 import { log } from "../util/logging"
-import { StringMap } from "../util/stringMap"
+import { StringMap, MutableStringMap } from "@ts-common/string-map"
 import { Operation } from "yasway"
 import * as Sway from "yasway"
 import { ResponseWrapper } from "../models/responseWrapper"
@@ -414,7 +414,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     if (operation === null || operation === undefined || typeof operation !== "object") {
       throw new Error("operation cannot be null or undefined and must be of type 'object'.")
     }
-    const result: StringMap<Sway.ValidationResults> = {}
+    const result: MutableStringMap<Sway.ValidationResults> = {}
     const responses = operation.getResponses()
     for (const response of responses) {
       if (response.examples) {

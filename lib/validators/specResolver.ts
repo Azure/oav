@@ -19,7 +19,7 @@ import {
   OperationObject
 } from "yasway"
 import { defaultIfUndefinedOrNull } from "../util/defaultIfUndefinedOrNull"
-import { StringMap } from "../util/stringMap"
+import { StringMap, MutableStringMap } from "@ts-common/string-map"
 import { resolveNestedDefinitions } from "./resolveNestedDefinitions"
 import { getOperations } from "../util/methods"
 
@@ -57,9 +57,9 @@ export class SpecResolver {
 
   private readonly specDir: Unknown
 
-  private readonly visitedEntities: StringMap<SchemaObject> = {}
+  private readonly visitedEntities: MutableStringMap<SchemaObject> = {}
 
-  private readonly resolvedAllOfModels: StringMap<SchemaObject> = {}
+  private readonly resolvedAllOfModels: MutableStringMap<SchemaObject> = {}
 
   private readonly options: Options
 

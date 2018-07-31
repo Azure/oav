@@ -18,7 +18,7 @@ import { PotentialOperationsResult } from "../models/potentialOperationsResult"
 import { Operation, Path, Request } from "yasway"
 import { ParsedUrlQuery } from "querystring"
 import { Unknown } from "../util/unknown"
-import { StringMap } from "../util/stringMap"
+import { MutableStringMap } from "@ts-common/string-map"
 
 export interface Options {
   swaggerPaths: string[]
@@ -71,7 +71,7 @@ export interface ValidationResult {
  * Live Validator for Azure swagger APIs.
  */
 export class LiveValidator {
-  public readonly cache: StringMap<Provider> = {}
+  public readonly cache: MutableStringMap<Provider> = {}
 
   public options: Options
 

@@ -4,7 +4,7 @@
 import * as pointer from "json-pointer"
 import { CommonError } from "./commonError"
 import { Unknown } from "./unknown"
-import { StringMap } from "./stringMap"
+import { StringMap } from "@ts-common/string-map"
 
 interface ValidationError {
   validationCategory: string

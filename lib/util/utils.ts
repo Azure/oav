@@ -410,22 +410,6 @@ export function setObject(doc: {}, ptr: string, value: any, overwrite = true) {
   return result
 }
 
-/*
- * Removes the location pointed by the json pointer in the given doc.
- * @param {object} doc The source object.
- *
- * @param {string} ptr The json reference pointer.
- */
-function removeObject(doc: {}, ptr: string) {
-  let result
-  try {
-    result = jsonPointer.remove(doc, ptr)
-  } catch (err) {
-    log.error(err)
-  }
-  return result
-}
-
 /**
  * Gets provider namespace from the given path. In case of multiple, last one will be returned.
  * @param {string} pathStr The path of the operation.
