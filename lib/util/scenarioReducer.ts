@@ -8,6 +8,8 @@ import { responseReducer, Scenario } from "./responseReducer"
 import { ModelValidationError } from "./modelValidationError"
 import { Unknown } from "./unknown"
 import { CommonError } from "./commonError"
+import * as sm from "@ts-common/string-map"
+import * as it from "@ts-common/iterator"
 
 export interface Result {
   isValid?: Unknown
@@ -25,23 +27,10 @@ export interface OperationResult {
 }
 
 export function scenarioReducer(
-  acc: ModelValidationError[],
   scenarioName: string,
+  scenario: Scenario,
   operationId: string,
-  operation: OperationResult
-) {
-  const example = operation["x-ms-examples"]
-  if (example === undefined) {
-    throw new Error("example is undefined")
-  }
-  const scenarios = example.scenarios
-  if (scenarios === undefined) {
-    throw new Error("scenarios is undefined")
-  }
-  const scenario = scenarios[scenarioName];
-  if (scenario === undefined) {
-    throw new Error("scenario is undefined")
-  }
+): Iterable<ModelValidationError> {
   const request = scenario.request
   if (request === undefined) {
     throw new Error("request is undefined")
@@ -60,42 +49,31 @@ export function scenarioReducer(
   if (processedErrors.requestValidationResult.errors === undefined) {
     throw new Error("ICE: processedErrors.requestValidationResult.errors === undefined")
   }
-  if (!request.isValid) {
-    acc = [
-      ...acc,
-      ...toModelErrors(
-        processedErrors.requestValidationResult.errors,
-        operationId,
-        scenarioName,
-        ValidationResultSource.REQUEST,
-        "ALL"
-      )
-    ];
-  }
+  const modelErrors = !request.isValid
+    ? toModelErrors(
+      processedErrors.requestValidationResult.errors,
+      operationId,
+      scenarioName,
+      ValidationResultSource.REQUEST,
+      "ALL"
+    ) : []
 
   // process responses
   rawValidationResult.requestValidationResult.errors = [];
 
   const responses = scenario.responses
   if (responses === undefined) {
-    throw new Error("responses is undefined")
+    throw new Error("ICE: responses is undefined")
   }
 
-  return Object.keys(responses)
-    .filter(responseCode => {
-      const response = responses[responseCode];
-      return !response.isValid;
-    })
-    .reduce(
-      (responseAcc, responseCode) =>
-        responseReducer(
-          responseAcc,
-          responseCode,
-          scenario,
-          rawValidationResult,
-          operationId,
-          scenarioName
-        ),
-      acc
-    )
+  const entries = sm.entries(responses)
+  const invalidResponses = it.filter(entries, ([_, response]) => !response.isValid)
+  const result = it.flatMap(invalidResponses, ([responseCode]) => responseReducer(
+    responseCode,
+    scenario,
+    rawValidationResult,
+    operationId,
+    scenarioName
+  ))
+  return it.concat(modelErrors, result)
 }

@@ -23,6 +23,17 @@ describe("Model Validation", () => {
       console.log(result)
     })
 
+    it("should pass with pretty format", async () => {
+      const operationIds = "StorageAccounts_pathParameterWithForwardSlashes"
+      const result = await validate.validateExamples(
+        specPath, operationIds, { consoleLogLevel: "off", pretty: true })
+      assert(
+        result.validityStatus === true,
+        `swagger "${specPath}" with operation "${operationIds}" ` +
+          `contains model validation errors.`)
+      console.log(result)
+    })
+
     it("should pass for paths in x-ms-paths with question mark", async () => {
       const operationIds = "StorageAccounts_pathParameterWithQuestionMark"
       const result = await validate.validateExamples(
