@@ -1,5 +1,9 @@
 # Changelog
 
+### 08/01/2018 0.4.63
+
+- Replacing `reduce` error collections with lazy iterators.
+
 ### 07/18/2018 0.4.62
 
 - Solve security vulnerabilities
