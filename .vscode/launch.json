@@ -71,7 +71,8 @@
       "type": "node",
       "request": "launch",
       "name": "Live Validator",
-      "program": "${workspaceRoot}/test/sample.js",
+      "program": "${workspaceRoot}/dist/test/sample",
+      "preLaunchTask": "tsc: build - tsconfig.json",
       "cwd": "${workspaceRoot}",
       "env": {}
     },
@@ -84,7 +85,7 @@
       "stopOnEntry": false,
       "args": [
         "--no-timeouts",
-        "test/modelValidatorTests.ts",
+        "test/autorestPluginTests.ts",
         "-r",
         "ts-node/register",
         "--no-timeouts"

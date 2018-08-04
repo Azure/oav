@@ -15,7 +15,7 @@ import * as utils from "../util/utils"
 import * as models from "../models"
 import * as http from "http"
 import { PotentialOperationsResult } from "../models/potentialOperationsResult"
-import { Operation, PathObject, LiveRequest } from "yasway"
+import { Operation, Path, Request } from "yasway"
 import { ParsedUrlQuery } from "querystring"
 import { Unknown } from "../util/unknown"
 import { StringMap } from "../util/stringMap"
@@ -42,7 +42,7 @@ export interface Provider {
 }
 
 export interface RequestResponseObj {
-  readonly liveRequest: LiveRequest
+  readonly liveRequest: Request
   readonly liveResponse: {
     statusCode: string
   }
@@ -71,7 +71,6 @@ export interface ValidationResult {
  * Live Validator for Azure swagger APIs.
  */
 export class LiveValidator {
-
   public readonly cache: StringMap<Provider> = {}
 
   public options: Options
@@ -108,21 +107,23 @@ export class LiveValidator {
    * @returns {object} CacheBuilder Returns the configured CacheBuilder object.
    */
   constructor(optionsRaw?: any) {
-
-    optionsRaw = optionsRaw === null || optionsRaw === undefined
-      ? { }
-      : optionsRaw
+    optionsRaw =
+      optionsRaw === null || optionsRaw === undefined ? {} : optionsRaw
 
     if (typeof optionsRaw !== "object") {
       throw new Error('options must be of type "object".')
     }
-    if (optionsRaw.swaggerPaths === null || optionsRaw.swaggerPaths === undefined) {
+    if (
+      optionsRaw.swaggerPaths === null ||
+      optionsRaw.swaggerPaths === undefined
+    ) {
       optionsRaw.swaggerPaths = []
     }
     if (!Array.isArray(optionsRaw.swaggerPaths)) {
       const paths = typeof optionsRaw.swaggerPaths
       throw new Error(
-        `options.swaggerPaths must be of type "array" instead of type "${paths}".`)
+        `options.swaggerPaths must be of type "array" instead of type "${paths}".`
+      )
     }
     if (optionsRaw.git === null || optionsRaw.git === undefined) {
       optionsRaw.git = {
@@ -139,7 +140,10 @@ export class LiveValidator {
     if (typeof optionsRaw.git.url.valueOf() !== "string") {
       throw new Error('options.git.url must be of type "string".')
     }
-    if (optionsRaw.git.shouldClone === null || optionsRaw.git.shouldClone === undefined) {
+    if (
+      optionsRaw.git.shouldClone === null ||
+      optionsRaw.git.shouldClone === undefined
+    ) {
       optionsRaw.git.shouldClone = false
     }
     if (typeof optionsRaw.git.shouldClone !== "boolean") {
@@ -158,10 +162,13 @@ export class LiveValidator {
    * Initializes the Live Validator.
    */
   public async initialize(): Promise<void> {
-
     // Clone github repository if required
     if (this.options.git.shouldClone) {
-      utils.gitClone(this.options.directory, this.options.git.url, this.options.git.branch)
+      utils.gitClone(
+        this.options.directory,
+        this.options.git.url,
+        this.options.git.branch
+      )
     }
 
     // Construct array of swagger paths to be used for building a cache
@@ -194,8 +201,9 @@ export class LiveValidator {
     //   }
     //   ...
     // }
-    const promiseFactories = swaggerPaths.map(
-      swaggerPath => () => this.getSwaggerInitializer(swaggerPath))
+    const promiseFactories = swaggerPaths.map(swaggerPath => async () =>
+      await this.getSwaggerInitializer(swaggerPath)
+    )
 
     await utils.executePromisesSequentially(promiseFactories)
     log.info("Cache initialization complete.")
@@ -211,9 +219,9 @@ export class LiveValidator {
    * @returns {PotentialOperationsResult} Potential operation result object.
    */
   public getPotentialOperations(
-    requestUrl: string, requestMethod: string
+    requestUrl: string,
+    requestMethod: string
   ): PotentialOperationsResult {
-
     if (_.isEmpty(this.cache)) {
       const msgStr =
         `Please call "liveValidator.initialize()" before calling this method, ` +
@@ -221,20 +229,26 @@ export class LiveValidator {
       throw new Error(msgStr)
     }
 
-    if (requestUrl === null
-      || requestUrl === undefined
-      || typeof requestUrl.valueOf() !== "string"
-      || !requestUrl.trim().length) {
+    if (
+      requestUrl === null ||
+      requestUrl === undefined ||
+      typeof requestUrl.valueOf() !== "string" ||
+      !requestUrl.trim().length
+    ) {
       throw new Error(
-        'requestUrl is a required parameter of type "string" and it cannot be an empty string.')
+        'requestUrl is a required parameter of type "string" and it cannot be an empty string.'
+      )
     }
 
-    if (requestMethod === null
-      || requestMethod === undefined
-      || typeof requestMethod.valueOf() !== "string"
-      || !requestMethod.trim().length) {
+    if (
+      requestMethod === null ||
+      requestMethod === undefined ||
+      typeof requestMethod.valueOf() !== "string" ||
+      !requestMethod.trim().length
+    ) {
       throw new Error(
-        'requestMethod is a required parameter of type "string" and it cannot be an empty string.')
+        'requestMethod is a required parameter of type "string" and it cannot be an empty string.'
+      )
     }
 
     let potentialOperations: Operation[] = []
@@ -244,18 +258,25 @@ export class LiveValidator {
     let result
     let msg
     let code
-    let liveValidationError: models.LiveValidationError|undefined
+    let liveValidationError: models.LiveValidationError | undefined
     if (pathStr === null || pathStr === undefined) {
       msg = `Could not find path from requestUrl: "${requestUrl}".`
       liveValidationError = new models.LiveValidationError(
-        C.ErrorCodes.PathNotFoundInRequestUrl.name, msg)
-      result = new models.PotentialOperationsResult(potentialOperations, liveValidationError)
+        C.ErrorCodes.PathNotFoundInRequestUrl.name,
+        msg
+      )
+      result = new models.PotentialOperationsResult(
+        potentialOperations,
+        liveValidationError
+      )
       return result
     }
 
     // Lower all the keys of query parameters before searching for `api-version`
     const queryObject = _.transform(
-      parsedUrl.query, (obj: ParsedUrlQuery, value, key) => obj[key.toLowerCase()] = value)
+      parsedUrl.query,
+      (obj: ParsedUrlQuery, value, key) => (obj[key.toLowerCase()] = value)
+    )
     let apiVersion = queryObject["api-version"] as string
     let provider = utils.getProvider(pathStr)
 
@@ -278,7 +299,10 @@ export class LiveValidator {
           if (operationsForHttpMethod) {
             // Find the best match using regex on path
             potentialOperations = this.getPotentialOperationsHelper(
-              pathStr, requestMethod, operationsForHttpMethod)
+              pathStr,
+              requestMethod,
+              operationsForHttpMethod
+            )
             // If potentialOperations were to be [] then we need reason
             msg =
               `Could not find best match operation for verb "${requestMethod}" for api-version ` +
@@ -296,8 +320,14 @@ export class LiveValidator {
             `Could not find exact api-version "${apiVersion}" for provider "${provider}" ` +
             `in the cache.`
           code = C.ErrorCodes.OperationNotFoundInCacheWithApi
-          log.debug(`${msg} We'll search in the resource provider "Microsoft.Unknown".`)
-          potentialOperations = this.getPotentialOperationsHelper(pathStr, requestMethod, [])
+          log.debug(
+            `${msg} We'll search in the resource provider "Microsoft.Unknown".`
+          )
+          potentialOperations = this.getPotentialOperationsHelper(
+            pathStr,
+            requestMethod,
+            []
+          )
         }
       } else {
         msg = `Could not find api-version in requestUrl "${requestUrl}".`
@@ -308,8 +338,14 @@ export class LiveValidator {
       // provider does not exist in cache
       msg = `Could not find provider "${provider}" in the cache.`
       code = C.ErrorCodes.OperationNotFoundInCacheWithProvider
-      log.debug(`${msg} We'll search in the resource provider "Microsoft.Unknown".`)
-      potentialOperations = this.getPotentialOperationsHelper(pathStr, requestMethod, [])
+      log.debug(
+        `${msg} We'll search in the resource provider "Microsoft.Unknown".`
+      )
+      potentialOperations = this.getPotentialOperationsHelper(
+        pathStr,
+        requestMethod,
+        []
+      )
     }
 
     // Provide reason when we do not find any potential operation in cache
@@ -317,7 +353,10 @@ export class LiveValidator {
       liveValidationError = new models.LiveValidationError(code.name, msg)
     }
 
-    result = new models.PotentialOperationsResult(potentialOperations, liveValidationError)
+    result = new models.PotentialOperationsResult(
+      potentialOperations,
+      liveValidationError
+    )
     return result
   }
 
@@ -329,33 +368,51 @@ export class LiveValidator {
    * @param {object} requestResponseObj.liveResponse - The live response
    * @returns {object} validationResult - Validation result for given input
    */
-  public validateLiveRequestResponse(requestResponseObj: RequestResponseObj): ValidationResult {
+  public validateLiveRequestResponse(
+    requestResponseObj: RequestResponseObj
+  ): ValidationResult {
     const validationResult: ValidationResult = {
       requestValidationResult: {
-        successfulRequest: false,
+        successfulRequest: false
       },
       responseValidationResult: {
-        successfulResponse: false,
+        successfulResponse: false
       },
       errors: []
-    };
-    if (!requestResponseObj || (requestResponseObj && typeof requestResponseObj !== "object")) {
-      const msg = 'requestResponseObj cannot be null or undefined and must be of type "object".'
-      const e = new models.LiveValidationError(C.ErrorCodes.IncorrectInput.name, msg)
+    }
+    if (
+      !requestResponseObj ||
+      (requestResponseObj && typeof requestResponseObj !== "object")
+    ) {
+      const msg =
+        'requestResponseObj cannot be null or undefined and must be of type "object".'
+      const e = new models.LiveValidationError(
+        C.ErrorCodes.IncorrectInput.name,
+        msg
+      )
       validationResult.errors.push(e)
       return validationResult
     }
     try {
       // We are using this to validate the payload as per the definitions in swagger.
       // We do not need the serialized output from ms-rest.
-      const mapper = new models.RequestResponse().mapper();
-      (msRest as any).models = models;
-      (msRest as any).serialize(mapper, requestResponseObj, "requestResponseObj");
+      const mapper = new models.RequestResponse().mapper()
+      // tslint:disable-next-line:align whitespace
+      ;(msRest as any).models = models
+      // tslint:disable-next-line:align whitespace
+      ;(msRest as any).serialize(
+        mapper,
+        requestResponseObj,
+        "requestResponseObj"
+      )
     } catch (err) {
       const msg =
         `Found errors "${err.message}" in the provided input:\n` +
         `${util.inspect(requestResponseObj, { depth: null })}.`
-      const e = new models.LiveValidationError(C.ErrorCodes.IncorrectInput.name, msg)
+      const e = new models.LiveValidationError(
+        C.ErrorCodes.IncorrectInput.name,
+        msg
+      )
       validationResult.errors.push(e)
       return validationResult
     }
@@ -364,27 +421,36 @@ export class LiveValidator {
 
     // If status code is passed as a status code string (e.g. "OK") transform it to the status code
     // number (e.g. '200').
-    if (response
-      && !http.STATUS_CODES[response.statusCode]
-      && utils.statusCodeStringToStatusCode[response.statusCode.toLowerCase()]) {
-      response.statusCode = utils.statusCodeStringToStatusCode[response.statusCode.toLowerCase()]
+    if (
+      response &&
+      !http.STATUS_CODES[response.statusCode] &&
+      utils.statusCodeStringToStatusCode[response.statusCode.toLowerCase()]
+    ) {
+      response.statusCode =
+        utils.statusCodeStringToStatusCode[response.statusCode.toLowerCase()]
     }
 
     if (!request.query) {
       request.query = url.parse(request.url, true).query
     }
-    const currentApiVersion = request.query["api-version"] || C.unknownApiVersion
+    const currentApiVersion =
+      request.query["api-version"] || C.unknownApiVersion
     let potentialOperationsResult
     let potentialOperations: Operation[] = []
     try {
-      potentialOperationsResult = this.getPotentialOperations(request.url, request.method)
+      potentialOperationsResult = this.getPotentialOperations(
+        request.url,
+        request.method
+      )
       potentialOperations = potentialOperationsResult.operations
     } catch (err) {
       const msg =
         `An error occurred while trying to search for potential operations:\n` +
         `${util.inspect(err, { depth: null })}`
       const e = new models.LiveValidationError(
-        C.ErrorCodes.PotentialOperationSearchError.name, msg)
+        C.ErrorCodes.PotentialOperationSearchError.name,
+        msg
+      )
       validationResult.errors.push(e)
       return validationResult
     }
@@ -393,15 +459,17 @@ export class LiveValidator {
     if (potentialOperations.length === 0) {
       validationResult.errors.push(potentialOperationsResult.reason)
       return validationResult
-    // Found more than 1 potentialOperations
+      // Found more than 1 potentialOperations
     } else if (potentialOperations.length !== 1) {
       const operationIds = potentialOperations.map(op => op.operationId).join()
       const msg =
         `Found multiple matching operations with operationIds "${operationIds}" ` +
-        `for request url "${request.url}" with HTTP Method "${request.method}".`;
+        `for request url "${request.url}" with HTTP Method "${request.method}".`
       log.debug(msg)
       const err = new models.LiveValidationError(
-        C.ErrorCodes.MultipleOperationsFound.name, msg)
+        C.ErrorCodes.MultipleOperationsFound.name,
+        msg
+      )
       validationResult.errors = [err]
       return validationResult
     }
@@ -411,8 +479,12 @@ export class LiveValidator {
       operationId: operation.operationId,
       apiVersion: currentApiVersion
     }
-    validationResult.requestValidationResult.operationInfo = [basicOperationInfo]
-    validationResult.responseValidationResult.operationInfo = [basicOperationInfo]
+    validationResult.requestValidationResult.operationInfo = [
+      basicOperationInfo
+    ]
+    validationResult.responseValidationResult.operationInfo = [
+      basicOperationInfo
+    ]
     let reqResult
     try {
       reqResult = operation.validateRequest(request)
@@ -425,7 +497,9 @@ export class LiveValidator {
         `"${operation.operationId}". The error is:\n ` +
         `${util.inspect(reqValidationError, { depth: null })}`
       const err = new models.LiveValidationError(
-        C.ErrorCodes.RequestValidationError.name, msg)
+        C.ErrorCodes.RequestValidationError.name,
+        msg
+      )
       validationResult.requestValidationResult.errors = [err]
     }
     let resResult
@@ -440,19 +514,25 @@ export class LiveValidator {
         `"${operation.operationId}". The error is:\n ` +
         `${util.inspect(resValidationError, { depth: null })}`
       const err = new models.LiveValidationError(
-        C.ErrorCodes.ResponseValidationError.name, msg)
+        C.ErrorCodes.ResponseValidationError.name,
+        msg
+      )
       validationResult.responseValidationResult.errors = [err]
     }
-    if (reqResult
-      && reqResult.errors
-      && Array.isArray(reqResult.errors)
-      && !reqResult.errors.length) {
+    if (
+      reqResult &&
+      reqResult.errors &&
+      Array.isArray(reqResult.errors) &&
+      !reqResult.errors.length
+    ) {
       validationResult.requestValidationResult.successfulRequest = true
     }
-    if (resResult
-      && resResult.errors
-      && Array.isArray(resResult.errors)
-      && !resResult.errors.length) {
+    if (
+      resResult &&
+      resResult.errors &&
+      Array.isArray(resResult.errors) &&
+      !resResult.errors.length
+    ) {
       validationResult.responseValidationResult.successfulResponse = true
     }
 
@@ -471,30 +551,42 @@ export class LiveValidator {
    * @returns {Array<Operation>} List of potential operations matching the requestPath.
    */
   private getPotentialOperationsHelper(
-    requestPath: string, requestMethod: string, operations: Operation[]
+    requestPath: string,
+    requestMethod: string,
+    operations: Operation[]
   ): Operation[] {
-    if (requestPath === null
-      || requestPath === undefined
-      || typeof requestPath.valueOf() !== "string"
-      || !requestPath.trim().length) {
+    if (
+      requestPath === null ||
+      requestPath === undefined ||
+      typeof requestPath.valueOf() !== "string" ||
+      !requestPath.trim().length
+    ) {
       throw new Error(
-        'requestPath is a required parameter of type "string" and it cannot be an empty string.')
+        'requestPath is a required parameter of type "string" and it cannot be an empty string.'
+      )
     }
 
-    if (requestMethod === null
-      || requestMethod === undefined
-      || typeof requestMethod.valueOf() !== "string"
-      || !requestMethod.trim().length) {
+    if (
+      requestMethod === null ||
+      requestMethod === undefined ||
+      typeof requestMethod.valueOf() !== "string" ||
+      !requestMethod.trim().length
+    ) {
       throw new Error(
-        'requestMethod is a required parameter of type "string" and it cannot be an empty string.')
+        'requestMethod is a required parameter of type "string" and it cannot be an empty string.'
+      )
     }
 
-    if (operations === null || operations === undefined || !Array.isArray(operations)) {
+    if (
+      operations === null ||
+      operations === undefined ||
+      !Array.isArray(operations)
+    ) {
       throw new Error('operations is a required parameter of type "array".')
     }
 
     let potentialOperations = operations.filter(operation => {
-      const pathObject = operation.pathObject as PathObject
+      const pathObject = operation.pathObject as Path
       const pathMatch = pathObject.regexp.exec(requestPath)
       return pathMatch !== null
     })
@@ -502,11 +594,15 @@ export class LiveValidator {
     // If we do not find any match then we'll look into Microsoft.Unknown -> unknown-api-version
     // for given requestMethod as the fall back option
     if (!potentialOperations.length) {
-      if (this.cache[C.unknownResourceProvider] &&
-        this.cache[C.unknownResourceProvider][C.unknownApiVersion]) {
-        operations = this.cache[C.unknownResourceProvider][C.unknownApiVersion][requestMethod]
+      if (
+        this.cache[C.unknownResourceProvider] &&
+        this.cache[C.unknownResourceProvider][C.unknownApiVersion]
+      ) {
+        operations = this.cache[C.unknownResourceProvider][C.unknownApiVersion][
+          requestMethod
+        ]
         potentialOperations = operations.filter(operation => {
-          const pathObject = operation.pathObject as PathObject
+          const pathObject = operation.pathObject as Path
           let pathTemplate = pathObject.path
           if (pathTemplate && pathTemplate.includes("?")) {
             pathTemplate = pathTemplate.slice(0, pathTemplate.indexOf("?"))
@@ -524,27 +620,31 @@ export class LiveValidator {
   private getSwaggerPaths(): string[] {
     if (this.options.swaggerPaths.length !== 0) {
       log.debug(
-        `Using user provided swagger paths. Total paths: ${this.options.swaggerPaths.length}`)
+        `Using user provided swagger paths. Total paths: ${
+          this.options.swaggerPaths.length
+        }`
+      )
       return this.options.swaggerPaths
     } else {
       const allJsonsPattern = "/specification/**/*.json"
       const jsonsPattern = path.join(
-        this.options.directory, this.options.swaggerPathsPattern || allJsonsPattern)
-      const swaggerPaths = glob.sync(
-        jsonsPattern,
-        {
-          ignore: [
-            "**/examples/**/*",
-            "**/quickstart-templates/**/*",
-            "**/schema/**/*",
-            "**/live/**/*",
-            "**/wire-format/**/*"
-          ]
-        })
+        this.options.directory,
+        this.options.swaggerPathsPattern || allJsonsPattern
+      )
+      const swaggerPaths = glob.sync(jsonsPattern, {
+        ignore: [
+          "**/examples/**/*",
+          "**/quickstart-templates/**/*",
+          "**/schema/**/*",
+          "**/live/**/*",
+          "**/wire-format/**/*"
+        ]
+      })
       const dir = this.options.directory
       log.debug(
         `Using swaggers found from directory "${dir}" and pattern "${jsonsPattern}".` +
-        `Total paths: ${swaggerPaths.length}`)
+          `Total paths: ${swaggerPaths.length}`
+      )
       return swaggerPaths
     }
   }
@@ -552,13 +652,11 @@ export class LiveValidator {
   private async getSwaggerInitializer(swaggerPath: string): Promise<void> {
     log.info(`Building cache from: "${swaggerPath}"`)
 
-    const validator = new SpecValidator(
-      swaggerPath,
-      null,
-      {
-        shouldModelImplicitDefaultResponse: this.options.shouldModelImplicitDefaultResponse,
-        isPathCaseSensitive: this.options.isPathCaseSensitive
-      })
+    const validator = new SpecValidator(swaggerPath, null, {
+      shouldModelImplicitDefaultResponse: this.options
+        .shouldModelImplicitDefaultResponse,
+      isPathCaseSensitive: this.options.isPathCaseSensitive
+    })
 
     try {
       const api = await validator.initialize()
@@ -568,10 +666,12 @@ export class LiveValidator {
 
       operations.forEach(operation => {
         const httpMethod = operation.method.toLowerCase()
-        const pathObject = operation.pathObject as PathObject
+        const pathObject = operation.pathObject as Path
         const pathStr = pathObject.path
         let provider = utils.getProvider(pathStr)
-        log.debug(`${apiVersion}, ${operation.operationId}, ${pathStr}, ${httpMethod}`)
+        log.debug(
+          `${apiVersion}, ${operation.operationId}, ${pathStr}, ${httpMethod}`
+        )
 
         if (!provider) {
           const title = api.info.title
@@ -587,7 +687,8 @@ export class LiveValidator {
           apiVersion = C.unknownApiVersion
           log.debug(
             `Unable to find provider for path : "${pathObject.path}". ` +
-            `Bucketizing into provider: "${provider}"`)
+              `Bucketizing into provider: "${provider}"`
+          )
         }
         provider = provider.toLowerCase()
 
@@ -604,13 +705,15 @@ export class LiveValidator {
         apiVersions[apiVersion] = allMethods
         this.cache[provider] = apiVersions
       })
-
     } catch (err) {
       // Do Not reject promise in case, we cannot initialize one of the swagger
-      log.debug(`Unable to initialize "${swaggerPath}" file from SpecValidator. Error: ${err}`)
+      log.debug(
+        `Unable to initialize "${swaggerPath}" file from SpecValidator. Error: ${err}`
+      )
       log.warn(
         `Unable to initialize "${swaggerPath}" file from SpecValidator. We are ` +
-        `ignoring this swagger file and continuing to build cache for other valid specs.`)
+          `ignoring this swagger file and continuing to build cache for other valid specs.`
+      )
     }
   }
 }

@@ -36,11 +36,11 @@ export function clearCache(): void {
  * because the buffer-to-string conversion in `fs.readFile()`
  * translates it to FEFF, the UTF-16 BOM.
  */
-export function stripBOM(content: Buffer|string): string {
+export function stripBOM(content: Buffer | string): string {
   if (Buffer.isBuffer(content)) {
     content = content.toString()
   }
-  if (content.charCodeAt(0) === 0xFEFF || content.charCodeAt(0) === 0xFFFE) {
+  if (content.charCodeAt(0) === 0xfeff || content.charCodeAt(0) === 0xfffe) {
     content = content.slice(1)
   }
   return content
@@ -58,18 +58,21 @@ export async function parseJson(specPath: string): Promise<SwaggerObject> {
   if (!specPath || (specPath && typeof specPath.valueOf() !== "string")) {
     throw new Error(
       "A (github) url or a local file path to the swagger spec is required and must be of type " +
-      "string.")
+        "string."
+    )
   }
   if (docCache[specPath]) {
     return await docCache[specPath]
   }
   // url
-  if (specPath.match(/^http.*/ig) !== null) {
+  if (specPath.match(/^http.*/gi) !== null) {
     // If the spec path is a url starting with https://github then let us auto convert it to an
     // https://raw.githubusercontent url.
     if (specPath.startsWith("https://github")) {
       specPath = specPath.replace(
-        /^https:\/\/(github.com)(.*)blob\/(.*)/ig, "https://raw.githubusercontent.com$2$3")
+        /^https:\/\/(github.com)(.*)blob\/(.*)/gi,
+        "https://raw.githubusercontent.com$2$3"
+      )
     }
     const res = makeRequest({ url: specPath, errorOnNon200Response: true })
     docCache[specPath] = res
@@ -101,12 +104,15 @@ export async function parseJson(specPath: string): Promise<SwaggerObject> {
  *
  * @returns {object} jsonDoc - Parsed document in JSON format.
  */
-export function parseContent(filePath: string, fileContent: string): SwaggerObject {
+export function parseContent(
+  filePath: string,
+  fileContent: string
+): SwaggerObject {
   let result = null
   const sanitizedContent = stripBOM(fileContent)
-  if (/.*\.json$/ig.test(filePath)) {
+  if (/.*\.json$/gi.test(filePath)) {
     result = JSON.parse(sanitizedContent)
-  } else if (/.*\.ya?ml$/ig.test(filePath)) {
+  } else if (/.*\.ya?ml$/gi.test(filePath)) {
     result = YAML.safeLoad(sanitizedContent)
   } else {
     const msg =
@@ -117,10 +123,11 @@ export function parseContent(filePath: string, fileContent: string): SwaggerObje
   return result
 }
 
-export type Options = request.CoreOptions & request.UrlOptions & {
-  readonly url: string
-  readonly errorOnNon200Response: Unknown
-}
+export type Options = request.CoreOptions &
+  request.UrlOptions & {
+    readonly url: string
+    readonly errorOnNon200Response: Unknown
+  }
 
 /*
  * Makes a generic request. It is a wrapper on top of request.js library that provides a promise
@@ -134,14 +141,16 @@ export type Options = request.CoreOptions & request.UrlOptions & {
  *
  * @return {Promise} promise - A promise that resolves to the responseBody or rejects to an error.
  */
-export function makeRequest(options: Options): Promise<SwaggerObject> {
+export async function makeRequest(options: Options): Promise<SwaggerObject> {
   const promise = new Promise<SwaggerObject>((resolve, reject) => {
     request(options, (err, response, responseBody) => {
       if (err) {
         reject(err)
       }
       if (options.errorOnNon200Response && response.statusCode !== 200) {
-        const msg = `StatusCode: "${response.statusCode}", ResponseBody: "${responseBody}."`
+        const msg = `StatusCode: "${
+          response.statusCode
+        }", ResponseBody: "${responseBody}."`
         reject(new Error(msg))
       }
       let res = responseBody
@@ -160,7 +169,7 @@ export function makeRequest(options: Options): Promise<SwaggerObject> {
       resolve(res)
     })
   })
-  return promise
+  return await promise
 }
 
 /*
@@ -179,7 +188,7 @@ export async function executePromisesSequentially<T>(
     result.push(await promiseFactory())
   }
   return result
-};
+}
 
 /*
  * Generates a randomId
@@ -194,7 +203,9 @@ export async function executePromisesSequentially<T>(
 export function generateRandomId(prefix: string, existingIds: {}): string {
   let randomStr: string
   while (true) {
-    randomStr = Math.random().toString(36).substr(2, 12)
+    randomStr = Math.random()
+      .toString(36)
+      .substr(2, 12)
     if (prefix && typeof prefix.valueOf() === "string") {
       randomStr = prefix + randomStr
     }
@@ -203,7 +214,7 @@ export function generateRandomId(prefix: string, existingIds: {}): string {
     }
   }
   return randomStr
-};
+}
 
 export interface Reference {
   readonly filePath?: string
@@ -236,7 +247,9 @@ export interface Reference {
  */
 export function parseReferenceInSwagger(reference: string): Reference {
   if (!reference || (reference && reference.trim().length === 0)) {
-    throw new Error("reference cannot be null or undefined and it must be a non-empty string.")
+    throw new Error(
+      "reference cannot be null or undefined and it must be a non-empty string."
+    )
   }
 
   if (reference.includes("#")) {
@@ -299,9 +312,11 @@ export function joinPath(...args: string[]): string {
  *
  * @returns {object} jsonDoc - Parsed document in JSON format.
  */
-export function parseJsonWithPathFragments(...args: string[]): Promise<SwaggerObject> {
+export async function parseJsonWithPathFragments(
+  ...args: string[]
+): Promise<SwaggerObject> {
   const specPath = joinPath(...args)
-  return parseJson(specPath)
+  return await parseJson(specPath)
 }
 
 /*
@@ -312,13 +327,17 @@ export function parseJsonWithPathFragments(...args: string[]): Promise<SwaggerOb
  *
  * @returns {object} target - Returns the merged target object.
  */
-export function mergeObjects<T extends StringMap<any>>(source: T, target: T): T {
-  Object.keys(source).forEach((key) => {
+export function mergeObjects<T extends StringMap<any>>(
+  source: T,
+  target: T
+): T {
+  Object.keys(source).forEach(key => {
     if (Array.isArray(source[key])) {
       if (target[key] && !Array.isArray(target[key])) {
         throw new Error(
           `Cannot merge ${key} from source object into target object because the same property ` +
-          `in target object is not (of the same type) an Array.`)
+            `in target object is not (of the same type) an Array.`
+        )
       }
       if (!target[key]) {
         target[key] = []
@@ -327,7 +346,7 @@ export function mergeObjects<T extends StringMap<any>>(source: T, target: T): T 
     } else {
       target[key] = lodash.cloneDeep(source[key])
     }
-  });
+  })
   return target
 }
 
@@ -340,14 +359,14 @@ export function mergeObjects<T extends StringMap<any>>(source: T, target: T): T 
  * @returns {array} target - Returns the merged target array.
  */
 export function mergeArrays<T>(source: T[], target: T[]): T[] {
-  if (!Array.isArray(target) || (!Array.isArray(source))) {
+  if (!Array.isArray(target) || !Array.isArray(source)) {
     return target
   }
-  source.forEach((item) => {
+  source.forEach(item => {
     target.push(lodash.cloneDeep(item))
   })
   return target
-};
+}
 
 /*
  * Gets the object from the given doc based on the provided json reference pointer.
@@ -377,11 +396,14 @@ export function getObject(doc: {}, ptr: string): any {
  *
  * @param {any} value The value that needs to be set at the
  * location provided by the ptr in the doc.
+ * @param {overwrite} Optional parameter to decide if a pointer value should be overwritten.
  */
-export function setObject(doc: {}, ptr: string, value: any) {
+export function setObject(doc: {}, ptr: string, value: any, overwrite = true) {
   let result
   try {
-    result = jsonPointer.set(doc, ptr, value)
+    if (overwrite || !jsonPointer.has(doc, ptr)) {
+      result = jsonPointer.set(doc, ptr, value)
+    }
   } catch (err) {
     log.error(err)
   }
@@ -414,22 +436,27 @@ function removeObject(doc: {}, ptr: string) {
  *
  * @returns {string} result - provider namespace from the given path.
  */
-export function getProvider(pathStr?: string|null): string|undefined {
-  if (pathStr === null
-    || pathStr === undefined
-    || typeof pathStr.valueOf() !== "string"
-    || !pathStr.trim().length) {
+export function getProvider(pathStr?: string | null): string | undefined {
+  if (
+    pathStr === null ||
+    pathStr === undefined ||
+    typeof pathStr.valueOf() !== "string" ||
+    !pathStr.trim().length
+  ) {
     throw new Error(
-      "pathStr is a required parameter of type string and it cannot be an empty string.")
+      "pathStr is a required parameter of type string and it cannot be an empty string."
+    )
   }
 
-  const providerRegEx = new RegExp("/providers/(\:?[^{/]+)", "gi")
+  const providerRegEx = new RegExp("/providers/(:?[^{/]+)", "gi")
   let result
 
   // Loop over the paths to find the last matched provider namespace
   while (true) {
     const pathMatch = providerRegEx.exec(pathStr)
-    if (pathMatch === null) { break; }
+    if (pathMatch === null) {
+      break
+    }
     result = pathMatch[1]
   }
 
@@ -447,20 +474,31 @@ export function getProvider(pathStr?: string|null): string|undefined {
  *
  * @param {string} [branch] to be cloned instead of the default branch.
  */
-export function gitClone(directory: string, url: string, branch: string|undefined): void {
-  if (url === null
-    || url === undefined
-    || typeof url.valueOf() !== "string"
-    || !url.trim().length) {
-    throw new Error("url is a required parameter of type string and it cannot be an empty string.")
+export function gitClone(
+  directory: string,
+  url: string,
+  branch: string | undefined
+): void {
+  if (
+    url === null ||
+    url === undefined ||
+    typeof url.valueOf() !== "string" ||
+    !url.trim().length
+  ) {
+    throw new Error(
+      "url is a required parameter of type string and it cannot be an empty string."
+    )
   }
 
-  if (directory === null
-    || directory === undefined
-    || typeof directory.valueOf() !== "string"
-    || !directory.trim().length) {
+  if (
+    directory === null ||
+    directory === undefined ||
+    typeof directory.valueOf() !== "string" ||
+    !directory.trim().length
+  ) {
     throw new Error(
-      "directory is a required parameter of type string and it cannot be an empty string.")
+      "directory is a required parameter of type string and it cannot be an empty string."
+    )
   }
 
   // If the directory exists then we assume that the repo to be cloned is already present.
@@ -471,7 +509,8 @@ export function gitClone(directory: string, url: string, branch: string|undefine
       } catch (err) {
         const text = util.inspect(err, { depth: null })
         throw new Error(
-          `An error occurred while deleting directory ${directory}: ${text}.`)
+          `An error occurred while deleting directory ${directory}: ${text}.`
+        )
       }
     } else {
       try {
@@ -479,7 +518,8 @@ export function gitClone(directory: string, url: string, branch: string|undefine
       } catch (err) {
         const text = util.inspect(err, { depth: null })
         throw new Error(
-          `An error occurred while deleting file ${directory}: ${text}.`)
+          `An error occurred while deleting file ${directory}: ${text}.`
+        )
       }
     }
   }
@@ -489,19 +529,25 @@ export function gitClone(directory: string, url: string, branch: string|undefine
   } catch (err) {
     const text = util.inspect(err, { depth: null })
     throw new Error(
-      `An error occurred while creating directory ${directory}: ${text}.`)
+      `An error occurred while creating directory ${directory}: ${text}.`
+    )
   }
 
   try {
     const isBranchDefined =
-      branch !== null && branch !== undefined && typeof branch.valueOf() === "string"
+      branch !== null &&
+      branch !== undefined &&
+      typeof branch.valueOf() === "string"
     const cmd = isBranchDefined
       ? `git clone --depth=1 --branch ${branch} ${url} ${directory}`
       : `git clone --depth=1 ${url} ${directory}`
     const result = execSync(cmd, { encoding: "utf8" })
   } catch (err) {
     throw new Error(
-      `An error occurred while cloning git repository: ${util.inspect(err, { depth: null })}.`)
+      `An error occurred while cloning git repository: ${util.inspect(err, {
+        depth: null
+      })}.`
+    )
   }
 }
 
@@ -530,9 +576,13 @@ export function removeDirSync(dir: string): void {
  * @param {array} consumesOrProduces Array of content-types.
  * @returns {string} firstMatchedJson content-type that contains "/json".
  */
-export function getJsonContentType(consumesOrProduces: string[]): string|undefined {
+export function getJsonContentType(
+  consumesOrProduces: string[]
+): string | undefined {
   return consumesOrProduces
-    ? consumesOrProduces.find(contentType => contentType.match(/.*\/json.*/ig) !== null)
+    ? consumesOrProduces.find(
+        contentType => contentType.match(/.*\/json.*/gi) !== null
+      )
     : undefined
 }
 
@@ -554,21 +604,31 @@ export function isUrlEncoded(str: string): boolean {
  */
 export function isPureObject(model: SchemaObject): boolean {
   if (!model) {
-    throw new Error(`model cannot be null or undefined and must be of type "object"`)
+    throw new Error(
+      `model cannot be null or undefined and must be of type "object"`
+    )
   }
-  if (model.type
-    && typeof model.type.valueOf() === "string"
-    && model.type === "object"
-    && model.properties
-    && getKeys(model.properties).length === 0) {
+  if (
+    model.type &&
+    typeof model.type.valueOf() === "string" &&
+    model.type === "object" &&
+    model.properties &&
+    getKeys(model.properties).length === 0
+  ) {
     return true
-  } else if (!model.type && model.properties && getKeys(model.properties).length === 0) {
+  } else if (
+    !model.type &&
+    model.properties &&
+    getKeys(model.properties).length === 0
+  ) {
     return true
-  } else if (model.type
-    && typeof model.type.valueOf() === "string"
-    && model.type === "object"
-    && !model.properties
-    && !model.additionalProperties) {
+  } else if (
+    model.type &&
+    typeof model.type.valueOf() === "string" &&
+    model.type === "object" &&
+    !model.properties &&
+    !model.additionalProperties
+  ) {
     return true
   } else {
     return false
@@ -578,7 +638,7 @@ export function isPureObject(model: SchemaObject): boolean {
 interface Entity {
   in?: string
   type?: DataType
-  additionalProperties?: SchemaObject|boolean
+  additionalProperties?: SchemaObject | boolean
   items?: SchemaObject
   "x-nullable"?: any
   oneOf?: SchemaObject[]
@@ -599,13 +659,18 @@ interface Entity {
  * @returns {object} entity - The transformed entity if it is a pure object else the same entity is
  * returned as-is.
  */
-export function relaxEntityType<T extends Entity>(entity: T, isRequired?: Unknown): T {
+export function relaxEntityType<T extends Entity>(
+  entity: T,
+  isRequired?: Unknown
+): T {
   if (isPureObject(entity) && entity.type) {
     delete entity.type
   }
-  if (typeof entity.additionalProperties === "object"
-    && isPureObject(entity.additionalProperties)
-    && entity.additionalProperties.type) {
+  if (
+    typeof entity.additionalProperties === "object" &&
+    isPureObject(entity.additionalProperties) &&
+    entity.additionalProperties.type
+  ) {
     delete entity.additionalProperties.type
   }
   return entity
@@ -621,10 +686,14 @@ export function relaxModelLikeEntities(model: SchemaObject): SchemaObject {
 
     for (const propName of getKeys(modelProperties)) {
       if (modelProperties[propName].properties) {
-        modelProperties[propName] = relaxModelLikeEntities(modelProperties[propName])
+        modelProperties[propName] = relaxModelLikeEntities(
+          modelProperties[propName]
+        )
       } else {
         modelProperties[propName] = relaxEntityType(
-          modelProperties[propName], isPropertyRequired(propName, model))
+          modelProperties[propName],
+          isPropertyRequired(propName, model)
+        )
       }
     }
   }
@@ -638,7 +707,10 @@ export function relaxModelLikeEntities(model: SchemaObject): SchemaObject {
  * If true then it is required. If false or undefined then it is not required.
  * @returns {object} entity - The processed entity
  */
-export function allowNullType<T extends Entity>(entity: T, isPropRequired?: boolean|{}): T {
+export function allowNullType<T extends Entity>(
+  entity: T,
+  isPropRequired?: boolean | {}
+): T {
   // if entity has a type
   if (entity && entity.type) {
     // if type is an array
@@ -679,9 +751,11 @@ export function allowNullType<T extends Entity>(entity: T, isPropRequired?: bool
   }
 
   // if there's a $ref
-  if (entity
-    && entity.$ref
-    && shouldAcceptNullValue(entity["x-nullable"], isPropRequired)) {
+  if (
+    entity &&
+    entity.$ref &&
+    shouldAcceptNullValue(entity["x-nullable"], isPropRequired)
+  ) {
     const savedEntity = entity
     entity = {
       anyOf: [savedEntity, { type: "null" }]
@@ -691,12 +765,15 @@ export function allowNullType<T extends Entity>(entity: T, isPropRequired?: bool
 }
 
 /** logic table to determine when to use oneOf to accept null values
-* required \ x-nullable | True               | False | Undefined
-* ===============================================================
-* Yes                   | convert to oneOf[] |       |
-* No                    | convert to oneOf[] |       | convert to oneOf[]
-*/
-export function shouldAcceptNullValue(xnullable: Unknown, isPropRequired: Unknown): Unknown {
+ * required \ x-nullable | True               | False | Undefined
+ * ===============================================================
+ * Yes                   | convert to oneOf[] |       |
+ * No                    | convert to oneOf[] |       | convert to oneOf[]
+ */
+export function shouldAcceptNullValue(
+  xnullable: Unknown,
+  isPropRequired: Unknown
+): Unknown {
   const isPropNullable = xnullable && typeof xnullable === "boolean"
   return (isPropNullable === undefined && !isPropRequired) || isPropNullable
 }
@@ -707,19 +784,24 @@ export function allowNullableTypes(model: SchemaObject): SchemaObject {
   // process additionalProperties if present
   if (model && typeof model.additionalProperties === "object") {
     model.additionalProperties =
-      model.additionalProperties.properties || model.additionalProperties.additionalProperties
+      model.additionalProperties.properties ||
+      model.additionalProperties.additionalProperties
         ? allowNullableTypes(model.additionalProperties)
-        // there shouldn't be more properties nesting at this point
-        : allowNullType(model.additionalProperties)
+        : // there shouldn't be more properties nesting at this point
+          allowNullType(model.additionalProperties)
   }
   if (model && model.properties) {
     const modelProperties = model.properties
     for (const propName of getKeys(modelProperties)) {
       // process properties if present
       modelProperties[propName] =
-        modelProperties[propName].properties || modelProperties[propName].additionalProperties
+        modelProperties[propName].properties ||
+        modelProperties[propName].additionalProperties
           ? allowNullableTypes(modelProperties[propName])
-          : allowNullType(modelProperties[propName], isPropertyRequired(propName, model))
+          : allowNullType(
+              modelProperties[propName],
+              isPropertyRequired(propName, model)
+            )
     }
   }
 
@@ -727,22 +809,24 @@ export function allowNullableTypes(model: SchemaObject): SchemaObject {
     if (model.type === "array") {
       if (model.items) {
         // if items object contains additional properties
-        if (model.items.additionalProperties
-          && typeof model.items.additionalProperties === "object") {
-
+        if (
+          model.items.additionalProperties &&
+          typeof model.items.additionalProperties === "object"
+        ) {
           model.items.additionalProperties =
             model.items.additionalProperties.properties ||
             model.items.additionalProperties.additionalProperties
               ? allowNullableTypes(model.items.additionalProperties)
-              // there shouldn't be more properties nesting at this point
-              : allowNullType(model.items.additionalProperties)
+              : // there shouldn't be more properties nesting at this point
+                allowNullType(model.items.additionalProperties)
         }
         // if items object contains inline properties
         model.items = model.items.properties
           ? allowNullableTypes(model.items)
           : allowNullType(model.items)
       }
-    // if we have a top level "object" with x-nullable set, we need to relax the model at that level
+      // tslint:disable-next-line:max-line-length
+      // if we have a top level "object" with x-nullable set, we need to relax the model at that level
     } else if (model.type === "object" && model["x-nullable"]) {
       model = allowNullType(model)
     }
@@ -759,7 +843,9 @@ export function allowNullableTypes(model: SchemaObject): SchemaObject {
 /**
  * Relaxes/Transforms parameter definition to allow null values for non-path parameters
  */
-export function allowNullableParams(parameter: ParameterObject): ParameterObject {
+export function allowNullableParams(
+  parameter: ParameterObject
+): ParameterObject {
   if (parameter.in && parameter.in === "body" && parameter.schema) {
     parameter.schema = allowNullableTypes(parameter.schema)
   } else {
@@ -778,7 +864,9 @@ export function allowNullableParams(parameter: ParameterObject): ParameterObject
  */
 export function sanitizeFileName(str: string): string {
   return str
-    ? str.replace(/[{}\[\]'";\(\)#@~`!%&\^\$\+=,\/\\?<>\|\*:]/ig, "").replace(/(\s+)/ig, "_")
+    ? str
+        .replace(/[{}\[\]'";\(\)#@~`!%&\^\$\+=,\/\\?<>\|\*:]/gi, "")
+        .replace(/(\s+)/gi, "_")
     : str
 }
 
@@ -787,7 +875,7 @@ export function sanitizeFileName(str: string): string {
  * The check is necessary because Object.values does not coerce parameters to object type.
  * @param {*} obj
  */
-export function getValues<T>(obj: StringMap<T>|null): Array<NonUndefined<T>> {
+export function getValues<T>(obj: StringMap<T> | null): Array<NonUndefined<T>> {
   if (obj === undefined || obj === null) {
     return []
   }
@@ -799,7 +887,7 @@ export function getValues<T>(obj: StringMap<T>|null): Array<NonUndefined<T>> {
 .* The check is necessary because Object.keys does not coerce parameters to object type.
  * @param {*} obj
  */
-export function getKeys(obj: StringMap<any>): string[] {
+export function getKeys(obj: StringMap<any> | undefined): string[] {
   if (obj === undefined || obj === null) {
     return []
   }
@@ -818,9 +906,10 @@ function isPropertyRequired(propName: Unknown, model: SchemaObject) {
  * Contains the reverse mapping of http.STATUS_CODES
  */
 export const statusCodeStringToStatusCode = lodash.invert(
-  lodash.mapValues(
-    http.STATUS_CODES,
-    (value: string) => value.replace(/ |-/g, "").toLowerCase()))
+  lodash.mapValues(http.STATUS_CODES, (value: string) =>
+    value.replace(/ |-/g, "").toLowerCase()
+  )
+)
 
 /**
  * Models an ARM cloud error schema.

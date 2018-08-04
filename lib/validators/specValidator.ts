@@ -26,11 +26,11 @@ export interface ErrorCode {
 
 export interface RequestValidation {
   request?: Unknown
-  validationResult?: Sway.Validation
+  validationResult?: Sway.ValidationResults
 }
 
 interface ResponseValidation {
-  readonly [name: string]: Sway.Validation
+  readonly [name: string]: Sway.ValidationResults
 }
 
 export interface ValidationResult {
@@ -119,7 +119,7 @@ export class SpecValidator<T extends CommonValidationResult> {
    *
    * @return {object} An instance of the SpecValidator class.
    */
-  constructor(specPath: string, specInJson: SwaggerObject|undefined|null, options: Options) {
+  constructor(specPath: string, specInJson: SwaggerObject|undefined|null|string, options: Options) {
     if (specPath === null
       || specPath === undefined
       || typeof specPath.valueOf() !== "string"

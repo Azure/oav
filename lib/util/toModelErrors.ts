@@ -1,18 +1,23 @@
 import { ModelValidationError } from "./modelValidationError"
 import { errorCodeToSeverity } from "./validationError"
 import { ValidationResultSource } from "./validationResultSource"
+import { SerializedError } from "./baseValidationError"
+import * as it from "@ts-common/iterator"
 
 /**
  * Transforms serialized errors to ModelValidationError
  */
 export function toModelErrors(
-  processedErrors: ModelValidationError[],
+  processedErrors: Iterable<ModelValidationError>,
   operationId: string,
   scenario: string,
   source: ValidationResultSource,
   responseCode: string
-): ModelValidationError[] {
-  return processedErrors.reduce((acc: any, value: any) => {
+): Iterable<ModelValidationError> {
+  return it.map(processedErrors, value => {
+    if (value.code === undefined) {
+      throw Error("ICE: value.code is undefined")
+    }
     const severity = errorCodeToSeverity(value.code);
     const modelError: ModelValidationError = {
       operationId,
@@ -21,8 +26,8 @@ export function toModelErrors(
       responseCode,
       severity,
       errorCode: value.code,
-      errorDetails: value
-    };
-    return [...acc, modelError];
-  }, []);
+      errorDetails: value as SerializedError,
+    }
+    return modelError
+  })
 }

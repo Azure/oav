@@ -16,7 +16,10 @@
         "interface-name": false,
         "jsdoc-format": false,
         "object-literal-shorthand": false,
-        "forin": false
+        "forin": false,
+        "no-floating-promises": true,
+        "await-promise": true,
+        "promise-function-async": true
     },
     "rulesDirectory": []
 }
