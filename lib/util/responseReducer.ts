@@ -14,11 +14,13 @@ export interface Result {
   result?: Unknown
 }
 
+export interface Scenarios {
+  [key: string]: Scenario|undefined
+}
+
 export interface Scenario {
   isValid?: Unknown
-  scenarios?: {
-    [key in string]?: Scenario
-  }
+  scenarios?: Scenarios
   readonly request?: Result
   readonly responses?: {
     [key in string|number]: Result
@@ -27,15 +29,14 @@ export interface Scenario {
 }
 
 export function responseReducer(
-  responseAcc: ModelValidationError[],
   responseCode: string,
   scenario: Scenario,
   rawValidationResult: ValidationResult<ModelValidationError>,
   operationId: string,
   scenarioName: string
-): ModelValidationError[] {
+): Iterable<ModelValidationError> {
   if (scenario.responses === undefined) {
-    throw new Error("scenario.responses is undefined")
+    throw new Error("ICE: scenario.responses is undefined")
   }
   const response = scenario.responses[responseCode]
   rawValidationResult.responseValidationResult.errors = response.error
@@ -47,14 +48,11 @@ export function responseReducer(
   if (processedErrors.responseValidationResult.errors === undefined) {
     throw new Error("ICE: processedErrors.responseValidationResult.errors === undefined")
   }
-  return [
-    ...responseAcc,
-    ...toModelErrors(
-      processedErrors.responseValidationResult.errors,
-      operationId,
-      scenarioName,
-      ValidationResultSource.RESPONSE,
-      responseCode
-    )
-  ]
+  return toModelErrors(
+    processedErrors.responseValidationResult.errors,
+    operationId,
+    scenarioName,
+    ValidationResultSource.RESPONSE,
+    responseCode
+  )
 }

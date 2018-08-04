@@ -28,7 +28,7 @@ export interface SemanticValidationResult extends CommonValidationResult {
 
 export class SemanticValidator extends SpecValidator<SemanticValidationResult> {
 
-  public async validateSpec(): Promise<Sway.Validation> {
+  public async validateSpec(): Promise<Sway.ValidationResults> {
     this.specValidationResult.validateSpec = {
       isValid: true,
       errors: [],

@@ -84,10 +84,10 @@ async function validate<T>(
   }
 }
 
-export function validateSpec(
+export async function validateSpec(
   specPath: string, options: Options|undefined
 ): Promise<SpecValidationResult> {
-  return validate(options, async o => {
+  return await validate(options, async o => {
     // As a part of resolving discriminators we replace all the parent references
     // with a oneOf array containing references to the parent and its children.
     // This breaks the swagger specification 2.0 schema since oneOf is not supported.
@@ -126,10 +126,10 @@ export async function validateCompositeSpec(
   })
 }
 
-export function validateExamples(
+export async function validateExamples(
   specPath: string, operationIds: string|undefined, options?: Options
 ): Promise<SpecValidationResult> {
-  return validate(options, async o => {
+  return await validate(options, async o => {
     const validator = new ModelValidator(specPath, null, o)
     finalValidationResult[specPath] = validator.specValidationResult
     await validator.initialize()
@@ -155,10 +155,10 @@ export function validateExamples(
   })
 }
 
-export function validateExamplesInCompositeSpec(
+export async function validateExamplesInCompositeSpec(
   compositeSpecPath: string, options: Options
 ): Promise<ReadonlyArray<SpecValidationResult>> {
-  return validate(options, async o => {
+  return await validate(options, async o => {
     o.consoleLogLevel = log.consoleLogLevel
     o.logFilepath = log.filepath
     const docs = await getDocumentsFromCompositeSwagger(compositeSpecPath)
@@ -204,7 +204,7 @@ export async function resolveCompositeSpec(
     const docs = await getDocumentsFromCompositeSwagger(specPath)
     options.consoleLogLevel = log.consoleLogLevel
     options.logFilepath = log.filepath
-    const promiseFactories = docs.map(doc => () => resolveSpec(doc, outputDir, options))
+    const promiseFactories = docs.map(doc => async () => await resolveSpec(doc, outputDir, options))
     await utils.executePromisesSequentially(promiseFactories)
   } catch (err) {
     log.error(err)
@@ -246,7 +246,7 @@ export async function generateWireFormatInCompositeSpec(
     options.consoleLogLevel = log.consoleLogLevel
     options.logFilepath = log.filepath
     const promiseFactories = docs.map(doc =>
-      () => generateWireFormat(doc, outDir, emitYaml, null, options))
+      async () => await generateWireFormat(doc, outDir, emitYaml, null, options))
     await utils.executePromisesSequentially(promiseFactories)
   } catch (err) {
     log.error(err)
@@ -317,7 +317,7 @@ export function logDetailedInfo<T extends CommonValidationResult>(
   log.silly("----------------------------")
 }
 
-export function extractXMsExamples(
+export async function extractXMsExamples(
   specPath: string, recordings: Unknown, options: Options
 ): Promise<void> {
 
@@ -325,5 +325,5 @@ export function extractXMsExamples(
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
   log.filepath = options.logFilepath || log.filepath
   const xMsExampleExtractor = new XMsExampleExtractor(specPath, recordings, options)
-  return xMsExampleExtractor.extract()
+  return await xMsExampleExtractor.extract()
 }
