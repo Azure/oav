@@ -1,6 +1,11 @@
 # Changelog
 
-### 08/01/2018 0.4.64
+### 08/10/2018 0.4.65
+
+- Include property name as schema title in the property object.
+
+### 08/10/2018 0.4.64
+
 - Include definition name as schema title in the definitions.
 
 ### 08/01/2018 0.4.63
