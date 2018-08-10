@@ -398,7 +398,7 @@ export class SpecResolver {
       if (!referencedObj) {
         // We get the definition/parameter from the relative file and then add it (make it local)
         // to the doc (i.e. self.specInJson) being processed.
-        referencedObj = utils.getObject(result, slicedLocalReferenceValue)
+        referencedObj = utils.getObject(result, slicedLocalReferenceValue) as SchemaObject
         utils.setObject(
           self.specInJson,
           slicedLocalReferenceValue,
@@ -891,7 +891,7 @@ export class SpecResolver {
         // containing reference to the node and all its children.
         for (const location of locationsToBeUpdated) {
           const slicedLocation = location.slice(1)
-          const obj = utils.getObject(spec, slicedLocation)
+          const obj = utils.getObject(spec, slicedLocation) as any
           if (obj) {
             if (obj.$ref) {
               delete obj.$ref

@@ -27,9 +27,9 @@ export function propertySetMap<T>(
   propertySet: Tracked<T>,
   propertySetTransformation: PropertySetTransformation<T>
 ): T {
-  const untypedPropertySet = propertySet as Tracked<StringMap<any>>
+  const untypedPropertySet = propertySet as Tracked<StringMap<unknown>>
   const untypedPropertySetTransformation =
-    propertySetTransformation as PropertySetTransformation<StringMap<any>>
+    propertySetTransformation as PropertySetTransformation<StringMap<unknown>>
   const result = stringMapMap(
     untypedPropertySet,
     t => {

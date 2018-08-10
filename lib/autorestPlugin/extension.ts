@@ -80,7 +80,7 @@ export interface Options extends specValidator.Options {
 }
 
 export async function openApiValidationExample(
-  swagger: any, swaggerFileName: string, options?: Options
+  swagger: unknown, swaggerFileName: string, options?: Options
 ): Promise<Message[]> {
   const formattedResult: FormattedOutput[] = []
   if (!options) { options = {} }

@@ -326,22 +326,24 @@ export async function parseJsonWithPathFragments(
  *
  * @returns {object} target - Returns the merged target object.
  */
-export function mergeObjects<T extends MutableStringMap<any>>(
+export function mergeObjects<T extends MutableStringMap<unknown>>(
   source: T,
   target: T
 ): T {
   Object.keys(source).forEach(key => {
-    if (Array.isArray(source[key])) {
-      if (target[key] && !Array.isArray(target[key])) {
+    const sourceProperty = source[key]
+    if (Array.isArray(sourceProperty)) {
+      const targetProperty = target[key]
+      if (!targetProperty) {
+        target[key] = sourceProperty
+      } else if (!Array.isArray(targetProperty)) {
         throw new Error(
           `Cannot merge ${key} from source object into target object because the same property ` +
-            `in target object is not (of the same type) an Array.`
+          `in target object is not (of the same type) an Array.`
         )
+      } else {
+        target[key] = mergeArrays(sourceProperty, targetProperty)
       }
-      if (!target[key]) {
-        target[key] = []
-      }
-      target[key] = mergeArrays(source[key], target[key])
     } else {
       target[key] = lodash.cloneDeep(source[key])
     }
@@ -374,9 +376,9 @@ export function mergeArrays<T>(source: T[], target: T[]): T[] {
  *
  * @param {string} ptr The json reference pointer
  *
- * @returns {any} result - Returns the value that the ptr points to, in the doc.
+ * @returns {unknown} result - Returns the value that the ptr points to, in the doc.
  */
-export function getObject(doc: {}, ptr: string): any {
+export function getObject(doc: {}, ptr: string): unknown {
   let result
   try {
     result = jsonPointer.get(doc, ptr)
@@ -393,11 +395,11 @@ export function getObject(doc: {}, ptr: string): any {
  *
  * @param {string} ptr The json reference pointer.
  *
- * @param {any} value The value that needs to be set at the
+ * @param {unknown} value The value that needs to be set at the
  * location provided by the ptr in the doc.
  * @param {overwrite} Optional parameter to decide if a pointer value should be overwritten.
  */
-export function setObject(doc: {}, ptr: string, value: any, overwrite = true) {
+export function setObject(doc: {}, ptr: string, value: unknown, overwrite = true) {
   let result
   try {
     if (overwrite || !jsonPointer.has(doc, ptr)) {
@@ -623,7 +625,7 @@ interface Entity {
   type?: DataType
   additionalProperties?: SchemaObject | boolean
   items?: SchemaObject
-  "x-nullable"?: any
+  "x-nullable"?: boolean|string
   oneOf?: SchemaObject[]
   $ref?: any
   anyOf?: SchemaObject[]
