@@ -6,7 +6,7 @@ import * as yargs from "yargs"
 import { log } from "./lib/util/logging"
 
 const defaultLogDir = log.directory
-const logFilepath = log.filepath
+// const logFilepath = log.filepath
 
 const packageVersion = require("../package.json").version
 

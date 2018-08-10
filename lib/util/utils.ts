@@ -524,7 +524,7 @@ export function gitClone(
     const cmd = isBranchDefined
       ? `git clone --depth=1 --branch ${branch} ${url} ${directory}`
       : `git clone --depth=1 ${url} ${directory}`
-    const result = execSync(cmd, { encoding: "utf8" })
+    execSync(cmd, { encoding: "utf8" })
   } catch (err) {
     throw new Error(
       `An error occurred while cloning git repository: ${util.inspect(err, {
@@ -644,7 +644,7 @@ interface Entity {
  */
 export function relaxEntityType<T extends Entity>(
   entity: T,
-  isRequired?: unknown
+  _?: unknown
 ): T {
   if (isPureObject(entity) && entity.type) {
     delete entity.type

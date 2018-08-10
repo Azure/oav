@@ -63,6 +63,7 @@ describe("Live Validator", () => {
           directory: 54
         };
         const validator = new LiveValidator(options)
+        assert.notEqual(validator, null)
       })
     })
     it("should initialize with user provided swaggerPaths", () => {
@@ -134,18 +135,23 @@ describe("Live Validator", () => {
     it("should throw on invalid options types", () => {
       assert.throws(() => {
         const _ = new LiveValidator("string")
+        assert.notEqual(_, null)
       }, /must be of type "object"/)
       assert.throws(() => {
         const _ = new LiveValidator({ swaggerPaths: "should be array" })
+        assert.notEqual(_, null)
       }, /must be of type "array"/)
       assert.throws(() => {
         const _ = new LiveValidator({ git: 1 })
+        assert.notEqual(_, null)
       }, /must be of type "object"/)
       assert.throws(() => {
         const _ = new LiveValidator({ git: { url: [] } })
+        assert.notEqual(_, null)
       }, /must be of type "string"/)
       assert.throws(() => {
         const _ = new LiveValidator({ git: { url: "url", shouldClone: "no" } })
+        assert.notEqual(_, null)
       }, /must be of type "boolean"/)
     })
   })
@@ -363,10 +369,12 @@ describe("Live Validator", () => {
         swaggerPathsPattern: "**/*.json",
         shouldModelImplicitDefaultResponse: true
       }
+      /*
       const apiUrl =
         "https://management.azure.com/" +
         "subscriptions/subscriptionId/providers/Microsoft.Test/storageAccounts" +
         "?api-version=2016-01-01"
+      */
 
       const validator = new LiveValidator(options)
       await validator.initialize()

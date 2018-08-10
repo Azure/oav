@@ -26,9 +26,9 @@ const HttpRequest = msRest.WebResource
 
 export class ModelValidator extends SpecValidator<SpecValidationResult> {
 
-  private sampleRequest: unknown = {}
+  // private sampleRequest: unknown = {}
 
-  private sampleResponse: unknown = {}
+  // private sampleResponse: unknown = {}
 
   /*
    * Validates the given operationIds or all the operations in the spec.
@@ -440,7 +440,6 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
    * @return {object} result - The validation result.
    */
   private validateResponse(operationOrResponse: Operation, responseWrapper: unknown) {
-    const self = this
     if (operationOrResponse === null
       || operationOrResponse === undefined
       || typeof operationOrResponse !== "object") {
@@ -453,7 +452,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       || typeof responseWrapper !== "object") {
       throw new Error("responseWrapper cannot be null or undefined and must be of type 'object'.")
     }
-    self.sampleResponse = responseWrapper
+    // this.sampleResponse = responseWrapper
     // TODO: update responseWrapper
     return operationOrResponse.validateResponse(responseWrapper as Sway.LiveResponse)
   }
@@ -543,6 +542,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
           return statusCode
           // }
         }
+        return
       })
     if (responseWithoutXmsExamples && responseWithoutXmsExamples.length) {
       const msg =
@@ -759,7 +759,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
           request.body = options.formData
         }
         validationResult = operation.validateRequest(request)
-        this.sampleRequest = request
+        // this.sampleRequest = request
       } catch (err) {
         request = null
         const e = this.constructErrorObject(ErrorCodes.ErrorInPreparingRequest, err.message, [err])

@@ -212,7 +212,7 @@ export class XMsExampleExtractor {
                       }
                     }
                     const responses = infoFromOperation.responses
-                    for (const {} of utils.getKeys(responses)) {
+                    for (const _ of utils.getKeys(responses)) {
                       const statusCodeFromRecording = entries[entry].StatusCode
                       const responseBody = entries[entry].ResponseBody
                       exampleL.responses[statusCodeFromRecording] = {}

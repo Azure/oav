@@ -70,7 +70,6 @@ Object.defineProperties(log, {
       return transport !== undefined ? transport.level : undefined
     },
     set(level) {
-      const self = this as ILogger
       if (!level) {
         level = "warn"
       }

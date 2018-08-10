@@ -18,7 +18,7 @@ import {
   OperationObject
 } from "yasway"
 import { defaultIfUndefinedOrNull } from "../util/defaultIfUndefinedOrNull"
-import { StringMap, MutableStringMap } from "@ts-common/string-map"
+import { MutableStringMap } from "@ts-common/string-map"
 import { resolveNestedDefinitions } from "./resolveNestedDefinitions"
 import { getOperations } from "../util/methods"
 import { transform } from "./specTransformer"
@@ -423,7 +423,7 @@ export class SpecResolver {
               const allOf = definitions[defName].allOf
               if (allOf) {
                 const matchFound = allOf.some(
-                  item => !self.visitedEntities[`/definitions/${defName}`]
+                  () => !self.visitedEntities[`/definitions/${defName}`]
                 )
                 if (matchFound) {
                   const slicedDefinitionRef = `/definitions/${defName}`
@@ -511,6 +511,8 @@ export class SpecResolver {
         return model
       }
     }
+
+    return
   }
 
   /**
@@ -526,7 +528,6 @@ export class SpecResolver {
     parent: SchemaObject,
     child: SchemaObject
   ): SchemaObject {
-    const self = this
     if (!parent || (parent && typeof parent !== "object")) {
       throw new Error(`parent must be of type "object".`)
     }

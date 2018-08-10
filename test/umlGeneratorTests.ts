@@ -8,14 +8,10 @@ import * as fs from "fs"
 const specPath = `${__dirname}/modelValidation/swaggers/specification/polymorphic/EntitySearch.json`
 
 describe("Uml generator", () => {
-  it("should generate class diagram correctly", (done) => {
+  it("should generate class diagram correctly", async () => {
     const svgFile = `${__dirname}/diagram/EntitySearch.svg`
     if (fs.existsSync(svgFile)) { fs.unlinkSync(svgFile) }
-    validate.generateUml(specPath, `${__dirname}/diagram`).then((res: any) => {
-      assert.equal(fs.existsSync(svgFile), true)
-      done()
-    }).catch((err: any) => {
-      done(err)
-    })
+    await validate.generateUml(specPath, `${__dirname}/diagram`)
+    assert.equal(fs.existsSync(svgFile), true)
   })
 })

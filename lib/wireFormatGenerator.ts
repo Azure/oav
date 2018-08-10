@@ -28,7 +28,7 @@ export class WireFormatGenerator {
   private specResolver: any
   private swaggerApi: any
   private options: any
-  private specValidationResult: any
+  // private specValidationResult: any
   constructor(specPath: any, specInJson: any, wireFormatDir: any, emitYaml: any) {
     if (specPath === null
       || specPath === undefined
@@ -135,6 +135,7 @@ export class WireFormatGenerator {
    *
    * @param {boolean} value A truthy or a falsy value.
    */
+  /*
   private updateValidityStatus(value: boolean): void {
     if (!Boolean(value)) {
       this.specValidationResult.validityStatus = false
@@ -143,6 +144,7 @@ export class WireFormatGenerator {
     }
     return
   }
+  */
 
   /*
    * Constructs the Error object and updates the validityStatus unless indicated to not update the
@@ -160,7 +162,7 @@ export class WireFormatGenerator {
    * @return {object} err Return the constructed Error object.
    */
   private constructErrorObject(
-    code: any, message: string, innerErrors: any[], skipValidityStatusUpdate?: boolean
+    code: any, message: string, innerErrors: any[], _?: boolean
   ) {
     const err = {
       code,
@@ -300,7 +302,6 @@ export class WireFormatGenerator {
    * @return {object} result - The validation result.
    */
   private processRequest(operation: any, exampleParameterValues: any): msRest.WebResource {
-    const self = this
     if (operation === null || operation === undefined || typeof operation !== "object") {
       throw new Error("operation cannot be null or undefined and must be of type 'object'.")
     }
@@ -375,7 +376,6 @@ export class WireFormatGenerator {
    * @return {object} result - The validation result.
    */
   private processXmsExampleResponses(operation: any, exampleResponseValue: any) {
-    const self = this
     const result: any = {}
     if (operation === null || operation === undefined || typeof operation !== "object") {
       throw new Error("operation cannot be null or undefined and must be of type 'object'.")
@@ -387,7 +387,7 @@ export class WireFormatGenerator {
       throw new Error("operation cannot be null or undefined and must be of type 'object'.")
     }
     const responsesInSwagger: any = {}
-    const responses = operation.getResponses().map((response: any) => {
+    operation.getResponses().map((response: any) => {
       responsesInSwagger[response.statusCode] = response.statusCode
       return response.statusCode
     })
