@@ -1,5 +1,8 @@
 # Changelog
 
+### 08/01/2018 0.4.64
+- Include definition name as schema title in the definitions.
+
 ### 08/01/2018 0.4.63
 
 - Replacing `reduce` error collections with lazy iterators.
