@@ -12,6 +12,14 @@ export function transform(spec: SwaggerObject): SwaggerObject {
 
   for (const [definitionName, definition] of Object.entries(spec.definitions)) {
     insertSchemaTitle(definition, definitionName)
+
+    if (definition.properties) {
+      for (const [propertyName, property] of Object.entries(
+        definition.properties
+      )) {
+        insertSchemaTitle(property, propertyName)
+      }
+    }
   }
 
   return spec
