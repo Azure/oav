@@ -868,7 +868,7 @@ export class SpecResolver {
    */
   private updateReferencesWithOneOf(
     subTreeMap: Map<string, PolymorphicTree>,
-    references: any[]
+    references: Array<{ readonly uri: unknown }>
   ): void {
     const spec = this.specInJson
 

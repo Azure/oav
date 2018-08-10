@@ -627,7 +627,7 @@ interface Entity {
   items?: SchemaObject
   "x-nullable"?: boolean|string
   oneOf?: SchemaObject[]
-  $ref?: any
+  $ref?: string
   anyOf?: SchemaObject[]
 }
 
@@ -872,7 +872,7 @@ export function getValues<T>(obj: StringMap<T> | null): Array<NonUndefined<T>> {
 .* The check is necessary because Object.keys does not coerce parameters to object type.
  * @param {*} obj
  */
-export function getKeys(obj: StringMap<any> | undefined): string[] {
+export function getKeys(obj: StringMap<unknown> | undefined): string[] {
   if (obj === undefined || obj === null) {
     return []
   }
