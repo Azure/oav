@@ -1,5 +1,9 @@
 # Changelog
 
+### 08/10/2018 0.4.66
+
+- Use JSON Pointer format for inserted schema title for properties and definitions.
+
 ### 08/10/2018 0.4.65
 
 - Include property name as schema title in the property object.
