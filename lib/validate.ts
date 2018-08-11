@@ -212,8 +212,8 @@ export async function resolveCompositeSpec(
 }
 
 export async function generateWireFormat(
-  specPath: unknown,
-  outDir: unknown,
+  specPath: string,
+  outDir: string,
   emitYaml: unknown,
   operationIds: string|null,
   options: Options
@@ -234,7 +234,7 @@ export async function generateWireFormat(
 }
 
 export async function generateWireFormatInCompositeSpec(
-  compositeSpecPath: string, outDir: unknown, emitYaml: unknown, options: Options
+  compositeSpecPath: string, outDir: string, emitYaml: unknown, options: Options
 ): Promise<void> {
 
   if (!options) { options = {} }

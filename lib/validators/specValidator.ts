@@ -11,6 +11,7 @@ import { CommonError } from "../util/commonError"
 import * as C from "../util/constants"
 import { SwaggerObject } from "yasway"
 import { ModelValidation } from "../util/getErrorsFromModelValidation"
+import { Headers } from "../templates/httpTemplate"
 
 const ErrorCodes = C.ErrorCodes;
 
@@ -48,9 +49,7 @@ export interface SpecValidationResult extends ModelValidation {
 }
 
 export interface ExampleResponse {
-  readonly headers: {
-    [name: string]: unknown
-  }
+  readonly headers: Headers
   readonly body: unknown
 }
 

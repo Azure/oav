@@ -28,6 +28,9 @@ export class YamlHttpTemplate extends HttpTemplate {
             "Final Response after polling is complete and successful")
         }
       } else {
+        if (this.responses.standard.finalResponse === undefined) {
+          throw new Error("this.responses.standard.finalResponse === undefined")
+        }
         template += this.populateResponse(this.responses.standard.finalResponse, "Response")
       }
     }

@@ -625,7 +625,7 @@ interface Entity {
   type?: DataType
   additionalProperties?: SchemaObject | boolean
   items?: SchemaObject
-  "x-nullable"?: boolean|string
+  "x-nullable"?: boolean
   oneOf?: SchemaObject[]
   $ref?: string
   anyOf?: SchemaObject[]
@@ -709,7 +709,7 @@ export function allowNullType<T extends Entity>(
     }
 
     // takes care of string 'false' and 'true'
-    const xNullable = entity["x-nullable"]
+    const xNullable = entity["x-nullable"] as (string|boolean)
     if (typeof xNullable === "string") {
       switch (xNullable.toLowerCase()) {
         case "false":
