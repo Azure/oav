@@ -1,5 +1,9 @@
 # Changelog
 
+### 08/11/2018 0.4.67
+
+- Single error for not matching any discriminated types.
+
 ### 08/10/2018 0.4.66
 
 - Use JSON Pointer format for inserted schema title for properties and definitions.
