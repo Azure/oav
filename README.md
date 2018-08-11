@@ -1,19 +1,25 @@
 # openapi-validation-tools [oav]
+
+[![Build Status](https://travis-ci.org/Azure/oav.svg?branch=master)](https://travis-ci.org/Azure/oav)
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
+
 Tools for validating OpenAPI (Swagger) files.
 
-### Requirements
+## Requirements
+
 - **node.js version > 6.x**
 
 You can install the latest stable release of node.js from [here](https://nodejs.org/en/download/). For a machine with a linux flavored OS, please follow the node.js installation instructions over [here](https://nodejs.org/en/download/package-manager/)
 
-
 ### How to install the tool
-```
+
+```bash
 npm install -g oav
 ```
 
 #### Command usage:
-```
+
+```bash
 bash-3.2$ oav -h
 Commands:
   extract-xmsexamples <spec-path>           Extracts the x-ms-examples for a
@@ -52,13 +58,14 @@ bash-3.2$
 Model validation checks whether definitions for request parameters and responses, match an expected input/output payload of the service.
 
 Examples of issues:
+
 - required properties not sent in requests or responses;
 - defined types not matching the value provided in the payload;
 - constraints on properties not met; enumeration values that don’t match the value used by the service.
 
 References: https://github.com/Azure/azure-rest-api-specs/issues/778 , https://github.com/Azure/azure-rest-api-specs/issues/755 , https://github.com/Azure/azure-rest-api-specs/issues/773
 
-Model validation *requires* example payloads (request/response) of the service, so the data can be matched with the defined models. See [x-ms-examples extension](https://github.com/Azure/azure-rest-api-specs/issues/648) on how to specify the examples/payloads. Swagger “examples” is also supported and data included there is validated as well. To get the most benefit from this tool, make sure to have the simplest and most complex examples possible as part of x-ms-examples.
+Model validation _requires_ example payloads (request/response) of the service, so the data can be matched with the defined models. See [x-ms-examples extension](https://github.com/Azure/azure-rest-api-specs/issues/648) on how to specify the examples/payloads. Swagger “examples” is also supported and data included there is validated as well. To get the most benefit from this tool, make sure to have the simplest and most complex examples possible as part of x-ms-examples.
 The tool relies on swagger-tools package to perform model validation.
 
 - Please take a look at the redis-cache swagger spec as an example for providing "x-ms-examples" over [here](https://github.com/Azure/azure-rest-api-specs/blob/master/arm-redis/2016-04-01/swagger/redis.json#L45).
@@ -71,50 +78,57 @@ The tool relies on swagger-tools package to perform model validation.
 ### How does this tool fit with others?
 
 Swagger specs validation could be split in the following:
-   1.	Schema validation
-   2.	Semantic validation
-   3.	Model definition validation
-   4.	Swagger operations execution (against mocked data or live tests)
-   5.	Human-eye review to complement the above
+
+1. Schema validation
+2. Semantic validation
+3. Model definition validation
+4. Swagger operations execution (against mocked data or live tests)
+5. Human-eye review to complement the above
 
 In the context of “azure-rest-api-specs” repo:
-  - #1 is being performed on every PR as part of CI.
-  - #2 and #3 are performed by the tool currently in openapi-validation-tools repo and by AutoRest linter. We’re working towards integrating them into CI for “azure-rest-api-specs” repo.
-  -	#4 is not available yet, though we’re starting to work on it.
-  -	#5 will be done by the approvers of PRs in “azure-rest-api-specs”, as this won’t be automated.
 
-
+- #1 is being performed on every PR as part of CI.
+- #2 and #3 are performed by the tool currently in openapi-validation-tools repo and by AutoRest linter. We’re working towards integrating them into CI for “azure-rest-api-specs” repo.
+- #4 is not available yet, though we’re starting to work on it.
+- #5 will be done by the approvers of PRs in “azure-rest-api-specs”, as this won’t be automated.
 
 ### Autorest plugin configuration
-- Please don't edit this section unless you're re-configuring how oav plugs in to AutoRest
-AutoRest needs the below config to pick this up as a plug-in - see https://github.com/Azure/autorest/blob/master/docs/developer/architecture/AutoRest-extension.md
 
-``` yaml $(model-validator)
+- Please don't edit this section unless you're re-configuring how oav plugs in to AutoRest
+  AutoRest needs the below config to pick this up as a plug-in - see [Autorest extensions](https://github.com/Azure/autorest/blob/master/docs/developer/architecture/AutoRest-extension.md).
+
+```yaml $(model-validator)
 pipeline:
   swagger-document/model-validator:
     input: swagger-document/identity
 ```
+
 ### Live Validation Mode
+
 - A **Live Validation** mode has been added to OAV with the purpose of enabling validation of live traffic.
 - Usage (here is a sample of a [request-response pair](./test/sampleRequestResponsePair.json)):
+
 ```javascript
-  const liveValidatorOptions = {
-    git: {
-      url: "https://github.com/Azure/azure-rest-api-specs.git",
-      shouldClone: true
-    },
-    directory: path.resolve(os.homedir(), "cloneRepo"),
-    swaggerPathsPattern: "/specification/**/resource-manager/**/*.json",
-    isPathCaseSensitive: false,
-    shouldModelImplicitDefaultResponse: true
-  };
+const liveValidatorOptions = {
+  git: {
+    url: "https://github.com/Azure/azure-rest-api-specs.git",
+    shouldClone: true
+  },
+  directory: path.resolve(os.homedir(), "cloneRepo"),
+  swaggerPathsPattern: "/specification/**/resource-manager/**/*.json",
+  isPathCaseSensitive: false,
+  shouldModelImplicitDefaultResponse: true
+}
 
-  let apiValidator = new oav.LiveValidator(liveValidatorOptions);
-  await apiValidator.initialize(); // Note that for a large number of specs this can take some time.
+let apiValidator = new oav.LiveValidator(liveValidatorOptions)
+await apiValidator.initialize() // Note that for a large number of specs this can take some time.
 
-  // After `initialize()` finishes we are ready to validate
-  let validationResult = apiValidator.validateLiveRequestResponse(requestResponsePair);
+// After `initialize()` finishes we are ready to validate
+let validationResult = apiValidator.validateLiveRequestResponse(
+  requestResponsePair
+)
 ```
 
 ---
+
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
