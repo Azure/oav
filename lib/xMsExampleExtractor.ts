@@ -5,14 +5,21 @@ import * as fs from "fs"
 import * as pathlib from "path"
 import * as utils from "./util/utils"
 import { log } from "./util/logging"
+import { MutableStringMap } from "@ts-common/string-map"
+
+interface Options {
+  output?: string
+  shouldResolveXmsExamples?: unknown
+  matchApiVersion?: unknown
+}
 
 /**
  * @class
  */
 export class XMsExampleExtractor {
   private specPath: string
-  private recordings: any
-  private options: any
+  private recordings: string
+  private options: Options
   /**
    * @constructor
    * Initializes a new instance of the xMsExampleExtractor class.
@@ -28,7 +35,11 @@ export class XMsExampleExtractor {
    *
    * @param {object} [options.output] Output folder for the generated examples.
    */
-  constructor(specPath: string, recordings: any, options: any) {
+  constructor(
+    specPath: string,
+    recordings: string,
+    options: Options
+  ) {
     if (specPath === null
       || specPath === undefined
       || typeof specPath.valueOf() !== "string"
@@ -70,44 +81,46 @@ export class XMsExampleExtractor {
    * Extracts x-ms-examples from the recordings
    */
   public async extract(): Promise<void> {
-    const self = this
-    self.mkdirSync(self.options.output)
-    self.mkdirSync(self.options.output + "/examples")
-    self.mkdirSync(self.options.output + "/swagger")
+    if (this.options.output === undefined) {
+      throw new Error("this.options.output === undefined")
+    }
+    this.mkdirSync(this.options.output)
+    this.mkdirSync(this.options.output + "/examples")
+    this.mkdirSync(this.options.output + "/swagger")
 
-    const outputExamples = self.options.output + "/examples/"
+    const outputExamples = this.options.output + "/examples/"
     const relativeExamplesPath = "../examples/"
-    const specName = self.specPath.split("/")
+    const specName = this.specPath.split("/")
     const outputSwagger =
-      self.options.output + "/swagger/" + specName[specName.length - 1].split(".")[0] + ".json"
+      this.options.output + "/swagger/" + specName[specName.length - 1].split(".")[0] + ".json"
 
-    const swaggerObject = require(self.specPath)
+    const swaggerObject = require(this.specPath)
     const SwaggerParser = require("swagger-parser")
     const parser = new SwaggerParser()
 
-    const accErrors: any = {}
-    const filesArray: any = []
-    self.getFileList(self.recordings, filesArray)
+    const accErrors: MutableStringMap<unknown> = {}
+    const filesArray: string[] = []
+    this.getFileList(this.recordings, filesArray)
 
     const recordingFiles = filesArray
 
     try {
       const api = await parser.parse(swaggerObject)
-      for (const recordingFileName of utils.getValues<any>(recordingFiles)) {
+      for (const recordingFileName of utils.getValues(recordingFiles)) {
         log.debug(`Processing recording file: ${recordingFileName}`)
 
         try {
           const recording = JSON.parse(fs.readFileSync(recordingFileName).toString())
           const paths = api.paths
           let pathIndex = 0
-          let pathParams: any = {}
+          let pathParams: MutableStringMap<string> = {}
           for (const path of utils.getKeys(paths)) {
             pathIndex++
             const searchResult = path.match(/\/{\w*\}/g)
             const pathParts = path.split("/")
             let pathToMatch = path
             pathParams = {}
-            for (const match of utils.getValues<any>(searchResult)) {
+            for (const match of utils.getValues(searchResult)) {
               const splitRegEx = /[{}]/
               const pathParam = match.split(splitRegEx)[1]
 
@@ -126,7 +139,7 @@ export class XMsExampleExtractor {
             // the data
             const entries = recording.Entries
             let entryIndex = 0
-            const queryParams: any = {}
+            const queryParams: MutableStringMap<unknown> = {}
             for (const entry of utils.getKeys(entries)) {
               entryIndex++
               let recordingPath = JSON.stringify(entries[entry].RequestUri)
@@ -141,7 +154,7 @@ export class XMsExampleExtractor {
 
               // if commandline included check for API version, validate api-version from URI in
               // recordings matches the api-version of the spec
-              if (!self.options.matchApiVersion
+              if (!this.options.matchApiVersion
                 || (("api-version" in queryParams)
                   && queryParams["api-version"] === api.info.version)) {
                 recordingPath = recordingPath.replace(/\?.*/, "")
@@ -151,10 +164,10 @@ export class XMsExampleExtractor {
                   log.silly("path: " + path)
                   log.silly("recording path: " + recordingPath)
 
-                  const pathParamsValues: any = {}
+                  const pathParamsValues: MutableStringMap<unknown> = {}
                   for (const p of utils.getKeys(pathParams)) {
                     const index = pathParams[p]
-                    pathParamsValues[p] = recordingPathParts[index]
+                    pathParamsValues[p] = recordingPathParts[index as any as number]
                   }
 
                   // found a match in the recording
@@ -162,8 +175,8 @@ export class XMsExampleExtractor {
                   const infoFromOperation = paths[path][requestMethodFromRecording.toLowerCase()]
                   if (typeof infoFromOperation !== "undefined") {
                     // need to consider each method in operation
-                    let fileName = recordingFileName.split("/")
-                    fileName = fileName[fileName.length - 1]
+                    const fileNameArray = recordingFileName.split("/")
+                    let fileName = fileNameArray[fileNameArray.length - 1]
                     fileName = fileName.split(".json")[0]
                     fileName = fileName.replace(/\//g, "-")
                     const exampleFileName = fileName
@@ -173,8 +186,9 @@ export class XMsExampleExtractor {
                       + pathIndex
                       + entryIndex
                       + ".json"
-                    const ref: any = {}
-                    ref.$ref = relativeExamplesPath + exampleFileName
+                    const ref = {
+                      $ref: relativeExamplesPath + exampleFileName
+                    }
                     const exampleFriendlyName =
                       fileName + requestMethodFromRecording + pathIndex + entryIndex
                     log.debug(`exampleFriendlyName: ${exampleFriendlyName}`)
@@ -183,9 +197,14 @@ export class XMsExampleExtractor {
                       infoFromOperation["x-ms-examples"] = {}
                     }
                     infoFromOperation["x-ms-examples"][exampleFriendlyName] = ref
-                    const exampleL = {
-                      parameters: {} as any,
-                      responses: {} as any
+                    const exampleL: {
+                      parameters: MutableStringMap<unknown>
+                      responses: MutableStringMap<{
+                        body?: unknown
+                      }>
+                    } = {
+                      parameters: {},
+                      responses: {}
                     }
                     const params = infoFromOperation.parameters
                     for (const param of utils.getKeys(pathParamsValues)) {
@@ -201,7 +220,7 @@ export class XMsExampleExtractor {
                       if (params[param].in === "body") {
                         const bodyParamName = params[param].name
                         const bodyParamValue = entries[entry].RequestBody
-                        const bodyParamExample: any = {}
+                        const bodyParamExample: MutableStringMap<unknown> = {}
                         bodyParamExample[bodyParamName] = bodyParamValue
 
                         if (bodyParamValue !== "") {
@@ -249,7 +268,7 @@ export class XMsExampleExtractor {
     }
   }
 
-  private mkdirSync(path: any): void {
+  private mkdirSync(path: string): void {
     try {
       fs.mkdirSync(path)
     } catch (e) {

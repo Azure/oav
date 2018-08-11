@@ -860,7 +860,7 @@ export function sanitizeFileName(str: string): string {
  * The check is necessary because Object.values does not coerce parameters to object type.
  * @param {*} obj
  */
-export function getValues<T>(obj: StringMap<T> | null): Array<NonUndefined<T>> {
+export function getValues<T>(obj: StringMap<T> | T[] | null): Array<NonUndefined<T>> {
   if (obj === undefined || obj === null) {
     return []
   }
@@ -872,7 +872,9 @@ export function getValues<T>(obj: StringMap<T> | null): Array<NonUndefined<T>> {
 .* The check is necessary because Object.keys does not coerce parameters to object type.
  * @param {*} obj
  */
-export function getKeys(obj: StringMap<unknown> | undefined): string[] {
+export function getKeys(
+  obj: StringMap<unknown> | Array<unknown>| undefined
+): string[] {
   if (obj === undefined || obj === null) {
     return []
   }

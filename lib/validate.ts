@@ -317,7 +317,7 @@ export function logDetailedInfo<T extends CommonValidationResult>(
 }
 
 export async function extractXMsExamples(
-  specPath: string, recordings: unknown, options: Options
+  specPath: string, recordings: string, options: Options
 ): Promise<void> {
 
   if (!options) { options = {} }

@@ -398,7 +398,7 @@ describe("Live Validator", () => {
   })
 
   describe("Initialize cache and validate", () => {
-    livePaths.forEach((livePath: any) => {
+    livePaths.forEach(livePath => {
       it(`should validate request and response for "${livePath}"`, async () => {
         const options = {
           directory: "./test/liveValidation/swaggers/specification/storage",

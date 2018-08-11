@@ -189,8 +189,8 @@ export class WireFormatGenerator {
     }
 
     const allRefsRemoteRelative = JsonRefs.findRefs(this.specInJson, options)
-    const promiseFactories = utils.getKeys(allRefsRemoteRelative).map(refName => {
-      const refDetails = allRefsRemoteRelative[refName]
+    const promiseFactories = utils.getKeys(allRefsRemoteRelative as any).map(refName => {
+      const refDetails = (allRefsRemoteRelative as any)[refName]
       return async () => await this.resolveRelativeReference(
         refName, refDetails, this.specInJson, this.specPath)
     })
@@ -400,8 +400,8 @@ export class WireFormatGenerator {
       || typeof exampleResponseValue !== "object") {
       throw new Error("operation cannot be null or undefined and must be of type 'object'.")
     }
-    const responsesInSwagger: any = {}
-    operation.getResponses().map((response: any) => {
+    const responsesInSwagger: MutableStringMap<string> = {}
+    operation.getResponses().map(response => {
       responsesInSwagger[response.statusCode] = response.statusCode
       return response.statusCode
     })

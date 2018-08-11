@@ -286,9 +286,9 @@ export class SpecResolver {
 
     const allRefsRemoteRelative = JsonRefs.findRefs(doc, options)
     const promiseFactories = utils
-      .getKeys(allRefsRemoteRelative)
+      .getKeys(allRefsRemoteRelative as any)
       .map(refName => {
-        const refDetails = allRefsRemoteRelative[refName]
+        const refDetails = (allRefsRemoteRelative as any)[refName]
         return async () =>
           await this.resolveRelativeReference(refName, refDetails, doc, docPath)
       })
@@ -790,7 +790,7 @@ export class SpecResolver {
             subTreeMap
           )
         }
-        self.updateReferencesWithOneOf(subTreeMap, references)
+        self.updateReferencesWithOneOf(subTreeMap, references as any)
       }
     })
   }

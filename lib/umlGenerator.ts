@@ -49,7 +49,9 @@ export class UmlGenerator {
     let svg = ""
 
     log.info(this.graphDefinition)
-    svg = yuml2svg(this.graphDefinition, false, { dir: this.options.direction, type: "class" })
+    svg = yuml2svg(
+      this.graphDefinition, false, { dir: this.options.direction, type: "class" }
+    ) as string
     // console.log(svg)
     return svg
   }
