@@ -122,9 +122,8 @@ export function processValidationErrors<
  */
 export function serializeErrors<T extends NodeError<T>>(
   node: T,
-  serializedErrors: Array<unknown>,
   path: Array<unknown>
-): void {
+): T[] {
   if (isLeaf(node)) {
     if (isTrueError(node)) {
       if (node.path) {
