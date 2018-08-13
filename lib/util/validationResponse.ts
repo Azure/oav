@@ -86,7 +86,7 @@ export class ValidateResponse {
 
   /*
   private seralize() {
-    const result: { ["json-path"]?: Unknown } = {}
+    const result: { ["json-path"]?: unknown } = {}
     for (const prop in this) {
       if (this[prop] !== null && this[prop] !== undefined) {
         if (prop === "jsonpath") {

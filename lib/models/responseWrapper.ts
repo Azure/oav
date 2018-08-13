@@ -14,7 +14,7 @@ export class ResponseWrapper {
    *
    * @param {number|string} statusCode The response statusCode
    *
-   * @param {Unknown} body The response body
+   * @param {unknown} body The response body
    *
    * @param {object} headers The response headers
    *
