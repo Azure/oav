@@ -361,7 +361,6 @@ export class SpecResolver {
       )
     }
 
-    const self = this
     const node = refDetails.def
     const slicedRefName = refName.slice(1)
     const reference = node.$ref
@@ -380,8 +379,8 @@ export class SpecResolver {
       // json (relative) file it is referring to.
       const regex = /.*x-ms-examples.*/gi
       if (
-        self.options.shouldResolveXmsExamples ||
-        (!self.options.shouldResolveXmsExamples &&
+        this.options.shouldResolveXmsExamples ||
+        (!this.options.shouldResolveXmsExamples &&
           slicedRefName.match(regex) === null)
       ) {
         // TODO: doc should have a type
@@ -394,18 +393,18 @@ export class SpecResolver {
       // TODO: doc should have a type
       utils.setObject(doc as {}, slicedRefName, node)
       const slicedLocalReferenceValue = parsedReference.localReference.value.slice(1)
-      let referencedObj = self.visitedEntities[slicedLocalReferenceValue]
+      let referencedObj = this.visitedEntities[slicedLocalReferenceValue]
       if (!referencedObj) {
         // We get the definition/parameter from the relative file and then add it (make it local)
         // to the doc (i.e. self.specInJson) being processed.
         referencedObj = utils.getObject(result, slicedLocalReferenceValue) as SchemaObject
         utils.setObject(
-          self.specInJson,
+          this.specInJson,
           slicedLocalReferenceValue,
           referencedObj
         )
-        self.visitedEntities[slicedLocalReferenceValue] = referencedObj
-        await self.resolveRelativePaths(referencedObj, docPath, "all")
+        this.visitedEntities[slicedLocalReferenceValue] = referencedObj
+        await this.resolveRelativePaths(referencedObj, docPath, "all")
         // After resolving a model definition, if there are models that have an allOf on that model
         // definition.
         // It may be possible that those models are not being referenced anywhere. Hence, we must
@@ -418,23 +417,23 @@ export class SpecResolver {
           const definitions = result.definitions
           const unresolvedDefinitions: Array<() => Promise<void>> = []
 
-          function processDefinition(defName: string) {
+          const processDefinition = (defName: string) => {
             unresolvedDefinitions.push(async () => {
               const allOf = definitions[defName].allOf
               if (allOf) {
                 const matchFound = allOf.some(
-                  () => !self.visitedEntities[`/definitions/${defName}`]
+                  () => !this.visitedEntities[`/definitions/${defName}`]
                 )
                 if (matchFound) {
                   const slicedDefinitionRef = `/definitions/${defName}`
                   const definitionObj = definitions[defName]
                   utils.setObject(
-                    self.specInJson,
+                    this.specInJson,
                     slicedDefinitionRef,
                     definitionObj
                   )
-                  self.visitedEntities[slicedDefinitionRef] = definitionObj
-                  await self.resolveRelativePaths(definitionObj, docPath, "all")
+                  this.visitedEntities[slicedDefinitionRef] = definitionObj
+                  await this.resolveRelativePaths(definitionObj, docPath, "all")
                 }
               }
             })

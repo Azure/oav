@@ -26,10 +26,6 @@ const HttpRequest = msRest.WebResource
 
 export class ModelValidator extends SpecValidator<SpecValidationResult> {
 
-  // private sampleRequest: unknown = {}
-
-  // private sampleResponse: unknown = {}
-
   /*
    * Validates the given operationIds or all the operations in the spec.
    *
@@ -161,13 +157,11 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
   ): void {
 
     this.initializeExampleResult(operationId, exampleType, scenarioName)
-    let subMsg
-    let infoMsg
+    const { operationResult, part } = this.getExample(operationId, exampleType, scenarioName)
+    const subMsg = `validating the request ${part}`
+    const infoMsg = `Request parameters ${part} is valid.`
     let errorMsg
     let warnMsg
-    const { operationResult, part } = this.getExample(operationId, exampleType, scenarioName)
-    subMsg = `validating the request ${part}`
-    infoMsg = `Request parameters ${part} is valid.`
     if (requestValidationErrors && requestValidationErrors.length) {
       errorMsg = `Found errors in ${subMsg}.`
       this.constructRequestResult(operationResult, false, errorMsg, requestValidationErrors)
@@ -190,13 +184,11 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
   ): void {
 
     this.initializeExampleResult(operationId, exampleType, scenarioName)
-    let subMsg
-    let infoMsg
+    const { operationResult, part } = this.getExample(operationId, exampleType, scenarioName)
+    const subMsg = `validating the response with statusCode "${responseStatusCode}" ${part}`
+    const infoMsg = `Response with statusCode "${responseStatusCode}" ${part} is valid.`
     let errorMsg
     let warnMsg
-    const { operationResult, part } = this.getExample(operationId, exampleType, scenarioName)
-    subMsg = `validating the response with statusCode "${responseStatusCode}" ${part}`
-    infoMsg = `Response with statusCode "${responseStatusCode}" ${part} is valid.`
     if (responseValidationErrors && responseValidationErrors.length) {
       errorMsg = `Found errors in ${subMsg}.`
       this.constructResponseResult(
@@ -471,9 +463,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     exampleResponseValue: { [name: string]: ExampleResponse }
   ) {
 
-    const result: {
-      [name: string]: Sway.ValidationResults
-    } = {}
+    const result: MutableStringMap<Sway.ValidationResults> = {}
     if (operation === null || operation === undefined || typeof operation !== "object") {
       throw new Error("operation cannot be null or undefined and must be of type 'object'.")
     }
@@ -483,9 +473,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       || typeof exampleResponseValue !== "object") {
       throw new Error("operation cannot be null or undefined and must be of type 'object'.")
     }
-    const responsesInSwagger: {
-      [name: string]: unknown
-    } = {}
+    const responsesInSwagger: MutableStringMap<unknown> = {}
     operation.getResponses().forEach(response => {
       responsesInSwagger[response.statusCode] = response.statusCode
     })
@@ -593,9 +581,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       baseUrl?: string
       [name: string]: any
     } = { headers: {} }
-    let formDataFiles: {
-      [name: string]: unknown
-    }|null = null
+    let formDataFiles: MutableStringMap<unknown>|null = null
     const pathObject = operation.pathObject as Sway.Path
     const parameterizedHost = pathObject.api[C.xmsParameterizedHost]
     const hostTemplate = parameterizedHost && parameterizedHost.hostTemplate
