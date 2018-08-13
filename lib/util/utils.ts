@@ -14,6 +14,7 @@ import * as http from "http"
 import { MutableStringMap, StringMap } from "@ts-common/string-map"
 import { SwaggerObject, ParameterObject, SchemaObject, DataType } from "yasway"
 import { NonUndefined } from "@ts-common/json"
+import * as jsonParser from "@ts-common/json-parser"
 
 export type DocCache = MutableStringMap<Promise<SwaggerObject>>
 
@@ -107,19 +108,25 @@ export function parseContent(
   filePath: string,
   fileContent: string
 ): SwaggerObject {
-  let result = null
   const sanitizedContent = stripBOM(fileContent)
   if (/.*\.json$/gi.test(filePath)) {
-    result = JSON.parse(sanitizedContent)
+    //  return JSON.parse(sanitizedContent)
+    return jsonParser.parse(
+      { url: filePath, kind: "file" },
+      sanitizedContent, e => {
+        // tslint:disable-next-line:no-console
+        console.log(e)
+        throw Error(e.message)
+      }
+    ) as SwaggerObject
   } else if (/.*\.ya?ml$/gi.test(filePath)) {
-    result = YAML.safeLoad(sanitizedContent)
+    return YAML.safeLoad(sanitizedContent)
   } else {
     const msg =
       `We currently support "*.json" and "*.yaml | *.yml" file formats for validating swaggers.\n` +
       `The current file extension in "${filePath}" is not supported.`
     throw new Error(msg)
   }
-  return result
 }
 
 export type Options = request.CoreOptions &

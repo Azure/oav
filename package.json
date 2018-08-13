@@ -12,6 +12,7 @@
     "@microsoft.azure/autorest-extension-base": "1.0.13",
     "@ts-common/iterator": "0.0.30",
     "@ts-common/json": "0.0.13",
+    "@ts-common/json-parser": "0.0.1",
     "@ts-common/string-map": "0.0.6",
     "@ts-common/tuple": "0.0.0",
     "@types/lodash": "^4.14.109",
