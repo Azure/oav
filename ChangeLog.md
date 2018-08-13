@@ -1,6 +1,6 @@
 # Changelog
 
-### 13/11/2018 0.4.68
+### 08/13/2018 0.4.68
 
 - Using a JSON parser with a source map.
 
