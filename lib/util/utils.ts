@@ -910,6 +910,7 @@ export const statusCodeStringToStatusCode = lodash.invert(
  */
 export const CloudErrorSchema = {
   description: "Error response describing why the operation failed.",
+  title: "#/definitions/CloudErrorSchema",
   schema: {
     $ref: "#/definitions/CloudErrorWrapper"
   }
@@ -920,6 +921,7 @@ export const CloudErrorSchema = {
  */
 export const CloudErrorWrapper: SchemaObject = {
   type: "object",
+  title: "#/definitions/CloudErrorWrapper",
   properties: {
     error: {
       $ref: "#/definitions/CloudError"
@@ -933,6 +935,7 @@ export const CloudErrorWrapper: SchemaObject = {
  */
 export const CloudError: SchemaObject = {
   type: "object",
+  title: "#/definitions/CloudError",
   properties: {
     code: {
       type: "string",
