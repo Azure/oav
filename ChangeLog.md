@@ -2,7 +2,7 @@
 
 ### 13/11/2018 0.4.68
 
-- Using JSON parse with a source map.
+- Using a JSON parser with a source map.
 
 ### 08/11/2018 0.4.67
 
