@@ -110,12 +110,9 @@ export function parseContent(
 ): SwaggerObject {
   const sanitizedContent = stripBOM(fileContent)
   if (/.*\.json$/gi.test(filePath)) {
-    //  return JSON.parse(sanitizedContent)
     return jsonParser.parse(
       { url: filePath, kind: "file" },
       sanitizedContent, e => {
-        // tslint:disable-next-line:no-console
-        console.log(e)
         throw Error(e.message)
       }
     ) as SwaggerObject
