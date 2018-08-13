@@ -8,10 +8,10 @@ import * as specResolver from "./specResolver"
 import * as utils from "../util/utils"
 import { log } from "../util/logging"
 import { CommonError } from "../util/commonError"
-import { Unknown } from "../util/unknown"
 import * as C from "../util/constants"
 import { SwaggerObject } from "yasway"
 import { ModelValidation } from "../util/getErrorsFromModelValidation"
+import { Headers } from "../templates/httpTemplate"
 
 const ErrorCodes = C.ErrorCodes;
 
@@ -25,7 +25,7 @@ export interface ErrorCode {
 }
 
 export interface RequestValidation {
-  request?: Unknown
+  request?: unknown
   validationResult?: Sway.ValidationResults
 }
 
@@ -45,20 +45,18 @@ export interface ValidationResultScenarios {
 }
 
 export interface SpecValidationResult extends ModelValidation {
-  validityStatus: Unknown
+  validityStatus: unknown
 }
 
 export interface ExampleResponse {
-  readonly headers: {
-    [name: string]: Unknown
-  }
-  readonly body: Unknown
+  readonly headers: Headers
+  readonly body: unknown
 }
 
 export interface CommonValidationResult {
-  validityStatus: Unknown
+  validityStatus: unknown
   operations: {}
-  resolveSpec?: Unknown
+  resolveSpec?: unknown
 }
 
 /*
@@ -75,7 +73,7 @@ export class SpecValidator<T extends CommonValidationResult> {
 
   protected specInJson: SwaggerObject
 
-  private specDir: Unknown
+  private specDir: unknown
 
   private specResolver: SpecResolver|null
 

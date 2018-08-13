@@ -9,7 +9,7 @@ import * as jsYaml from "js-yaml"
 const yamlPaths = glob.sync(path.join(__dirname, "swaggers/**/yaml/*.yml"))
 
 describe("Wireformat generator", () => {
-  yamlPaths.forEach((yamlPath: any) => {
+  yamlPaths.forEach(yamlPath => {
     it(`should generate a valid YAML doc for "${yamlPath}."`, (done) => {
       try {
         const yamlContent = jsYaml.safeLoad(yamlPath, { strict: true })

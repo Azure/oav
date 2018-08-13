@@ -11,12 +11,12 @@ import { log } from "./logging"
 import request = require("request")
 import * as lodash from "lodash"
 import * as http from "http"
-import { Unknown } from "./unknown"
-import { StringMap } from "./stringMap"
+import { MutableStringMap, StringMap } from "@ts-common/string-map"
 import { SwaggerObject, ParameterObject, SchemaObject, DataType } from "yasway"
-import { NonUndefined } from "./nonUndefined"
+import { NonUndefined } from "@ts-common/json"
+import * as jsonParser from "@ts-common/json-parser"
 
-export type DocCache = StringMap<Promise<SwaggerObject>>
+export type DocCache = MutableStringMap<Promise<SwaggerObject>>
 
 /*
  * Caches the json docs that were successfully parsed by parseJson().
@@ -108,25 +108,28 @@ export function parseContent(
   filePath: string,
   fileContent: string
 ): SwaggerObject {
-  let result = null
   const sanitizedContent = stripBOM(fileContent)
   if (/.*\.json$/gi.test(filePath)) {
-    result = JSON.parse(sanitizedContent)
+    return jsonParser.parse(
+      { url: filePath, kind: "file" },
+      sanitizedContent, e => {
+        throw Error(e.message)
+      }
+    ) as SwaggerObject
   } else if (/.*\.ya?ml$/gi.test(filePath)) {
-    result = YAML.safeLoad(sanitizedContent)
+    return YAML.safeLoad(sanitizedContent)
   } else {
     const msg =
       `We currently support "*.json" and "*.yaml | *.yml" file formats for validating swaggers.\n` +
       `The current file extension in "${filePath}" is not supported.`
     throw new Error(msg)
   }
-  return result
 }
 
 export type Options = request.CoreOptions &
   request.UrlOptions & {
     readonly url: string
-    readonly errorOnNon200Response: Unknown
+    readonly errorOnNon200Response: unknown
   }
 
 /*
@@ -327,22 +330,24 @@ export async function parseJsonWithPathFragments(
  *
  * @returns {object} target - Returns the merged target object.
  */
-export function mergeObjects<T extends StringMap<any>>(
+export function mergeObjects<T extends MutableStringMap<unknown>>(
   source: T,
   target: T
 ): T {
   Object.keys(source).forEach(key => {
-    if (Array.isArray(source[key])) {
-      if (target[key] && !Array.isArray(target[key])) {
+    const sourceProperty = source[key]
+    if (Array.isArray(sourceProperty)) {
+      const targetProperty = target[key]
+      if (!targetProperty) {
+        target[key] = sourceProperty
+      } else if (!Array.isArray(targetProperty)) {
         throw new Error(
           `Cannot merge ${key} from source object into target object because the same property ` +
-            `in target object is not (of the same type) an Array.`
+          `in target object is not (of the same type) an Array.`
         )
+      } else {
+        target[key] = mergeArrays(sourceProperty, targetProperty)
       }
-      if (!target[key]) {
-        target[key] = []
-      }
-      target[key] = mergeArrays(source[key], target[key])
     } else {
       target[key] = lodash.cloneDeep(source[key])
     }
@@ -375,9 +380,9 @@ export function mergeArrays<T>(source: T[], target: T[]): T[] {
  *
  * @param {string} ptr The json reference pointer
  *
- * @returns {any} result - Returns the value that the ptr points to, in the doc.
+ * @returns {unknown} result - Returns the value that the ptr points to, in the doc.
  */
-export function getObject(doc: {}, ptr: string): any {
+export function getObject(doc: {}, ptr: string): unknown {
   let result
   try {
     result = jsonPointer.get(doc, ptr)
@@ -394,32 +399,16 @@ export function getObject(doc: {}, ptr: string): any {
  *
  * @param {string} ptr The json reference pointer.
  *
- * @param {any} value The value that needs to be set at the
+ * @param {unknown} value The value that needs to be set at the
  * location provided by the ptr in the doc.
  * @param {overwrite} Optional parameter to decide if a pointer value should be overwritten.
  */
-export function setObject(doc: {}, ptr: string, value: any, overwrite = true) {
+export function setObject(doc: {}, ptr: string, value: unknown, overwrite = true) {
   let result
   try {
     if (overwrite || !jsonPointer.has(doc, ptr)) {
       result = jsonPointer.set(doc, ptr, value)
     }
-  } catch (err) {
-    log.error(err)
-  }
-  return result
-}
-
-/*
- * Removes the location pointed by the json pointer in the given doc.
- * @param {object} doc The source object.
- *
- * @param {string} ptr The json reference pointer.
- */
-function removeObject(doc: {}, ptr: string) {
-  let result
-  try {
-    result = jsonPointer.remove(doc, ptr)
   } catch (err) {
     log.error(err)
   }
@@ -541,7 +530,7 @@ export function gitClone(
     const cmd = isBranchDefined
       ? `git clone --depth=1 --branch ${branch} ${url} ${directory}`
       : `git clone --depth=1 ${url} ${directory}`
-    const result = execSync(cmd, { encoding: "utf8" })
+    execSync(cmd, { encoding: "utf8" })
   } catch (err) {
     throw new Error(
       `An error occurred while cloning git repository: ${util.inspect(err, {
@@ -640,9 +629,9 @@ interface Entity {
   type?: DataType
   additionalProperties?: SchemaObject | boolean
   items?: SchemaObject
-  "x-nullable"?: any
+  "x-nullable"?: boolean
   oneOf?: SchemaObject[]
-  $ref?: any
+  $ref?: string
   anyOf?: SchemaObject[]
 }
 
@@ -661,7 +650,7 @@ interface Entity {
  */
 export function relaxEntityType<T extends Entity>(
   entity: T,
-  isRequired?: Unknown
+  _?: unknown
 ): T {
   if (isPureObject(entity) && entity.type) {
     delete entity.type
@@ -724,7 +713,7 @@ export function allowNullType<T extends Entity>(
     }
 
     // takes care of string 'false' and 'true'
-    const xNullable = entity["x-nullable"]
+    const xNullable = entity["x-nullable"] as (string|boolean)
     if (typeof xNullable === "string") {
       switch (xNullable.toLowerCase()) {
         case "false":
@@ -771,9 +760,9 @@ export function allowNullType<T extends Entity>(
  * No                    | convert to oneOf[] |       | convert to oneOf[]
  */
 export function shouldAcceptNullValue(
-  xnullable: Unknown,
-  isPropRequired: Unknown
-): Unknown {
+  xnullable: unknown,
+  isPropRequired: unknown
+): unknown {
   const isPropNullable = xnullable && typeof xnullable === "boolean"
   return (isPropNullable === undefined && !isPropRequired) || isPropNullable
 }
@@ -875,7 +864,7 @@ export function sanitizeFileName(str: string): string {
  * The check is necessary because Object.values does not coerce parameters to object type.
  * @param {*} obj
  */
-export function getValues<T>(obj: StringMap<T> | null): Array<NonUndefined<T>> {
+export function getValues<T>(obj: StringMap<T> | T[] | null): Array<NonUndefined<T>> {
   if (obj === undefined || obj === null) {
     return []
   }
@@ -887,7 +876,9 @@ export function getValues<T>(obj: StringMap<T> | null): Array<NonUndefined<T>> {
 .* The check is necessary because Object.keys does not coerce parameters to object type.
  * @param {*} obj
  */
-export function getKeys(obj: StringMap<any> | undefined): string[] {
+export function getKeys(
+  obj: StringMap<unknown> | Array<unknown>| undefined
+): string[] {
   if (obj === undefined || obj === null) {
     return []
   }
@@ -898,7 +889,7 @@ export function getKeys(obj: StringMap<any> | undefined): string[] {
 /**
  * Checks if the property is required in the model.
  */
-function isPropertyRequired(propName: Unknown, model: SchemaObject) {
+function isPropertyRequired(propName: unknown, model: SchemaObject) {
   return model.required ? model.required.some(p => p === propName) : false
 }
 

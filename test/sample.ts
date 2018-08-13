@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 // Sample standalone script to call live validator.
-import { LiveValidator, Options } from "../lib/validators/liveValidator"
+import { LiveValidator } from "../lib/validators/liveValidator"
 
 const options = {
   directory: "C:\\vladdb\\devdiv\\repos\\azure\\azure-rest-api-specs",

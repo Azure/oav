@@ -1,7 +1,7 @@
+import { Headers } from "../templates/httpTemplate"
+
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
-
-import { Unknown } from "../util/unknown"
 
 /*
  * @class
@@ -14,7 +14,7 @@ export class ResponseWrapper {
    *
    * @param {number|string} statusCode The response statusCode
    *
-   * @param {Unknown} body The response body
+   * @param {unknown} body The response body
    *
    * @param {object} headers The response headers
    *
@@ -24,8 +24,8 @@ export class ResponseWrapper {
    */
   constructor(
     public statusCode: number|string,
-    public body: Unknown,
-    public headers: Unknown,
+    public body: unknown,
+    public headers: Headers,
     public encoding?: string) {
   }
 }

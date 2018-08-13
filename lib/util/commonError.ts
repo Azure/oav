@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import { Unknown } from "./unknown"
-
 export interface CommonError {
   readonly code?: string
   readonly id?: string
@@ -11,7 +9,7 @@ export interface CommonError {
   path?: string|string[]
   readonly inner?: CommonError[]
   errors?: CommonError[]
-  in?: Unknown
+  in?: unknown
   name?: string
-  params?: Unknown[]
+  params?: Array<unknown>
 }

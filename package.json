@@ -1,6 +1,6 @@
 {
   "name": "oav",
-  "version": "0.4.67",
+  "version": "0.4.68",
   "author": {
     "name": "Microsoft Corporation",
     "email": "azsdkteam@microsoft.com",
@@ -11,7 +11,9 @@
   "dependencies": {
     "@microsoft.azure/autorest-extension-base": "1.0.13",
     "@ts-common/iterator": "0.0.30",
-    "@ts-common/string-map": "0.0.5",
+    "@ts-common/json": "0.0.13",
+    "@ts-common/json-parser": "0.0.1",
+    "@ts-common/string-map": "0.0.6",
     "@ts-common/tuple": "0.0.0",
     "@types/lodash": "^4.14.116",
     "@types/request": "^2.47.1",
@@ -19,6 +21,7 @@
     "glob": "^5.0.14",
     "js-yaml": "^3.12.0",
     "json-pointer": "^0.6.0",
+    "json-source-map": "^0.4.0",
     "jsonpath": "^1.0.0",
     "linq": "^3.1.0",
     "lodash": "^4.17.10",
@@ -33,7 +36,7 @@
     "vscode-jsonrpc": "^3.6.2",
     "winston": "^3.0.0",
     "yargs": "^6.6.0",
-    "yasway": "^1.0.2",
+    "yasway": "^1.0.4",
     "yuml2svg": "^3.1.0"
   },
   "devDependencies": {

@@ -5,7 +5,6 @@
 import * as utils from "../util/utils"
 import { HttpTemplate, Request, Responses, Response } from "./httpTemplate"
 import * as uuid from "uuid"
-import { Unknown } from "../util/unknown"
 
 export class YamlHttpTemplate extends HttpTemplate {
 
@@ -29,6 +28,9 @@ export class YamlHttpTemplate extends HttpTemplate {
             "Final Response after polling is complete and successful")
         }
       } else {
+        if (this.responses.standard.finalResponse === undefined) {
+          throw new Error("this.responses.standard.finalResponse === undefined")
+        }
         template += this.populateResponse(this.responses.standard.finalResponse, "Response")
       }
     }
@@ -92,7 +94,7 @@ ${this.getRequestHeaders()}
     return requestTemplate
   }
 
-  private populateResponse(response: Response, responseType: Unknown): string {
+  private populateResponse(response: Response, responseType: unknown): string {
     if (!responseType) { responseType = "Response" }
     const responseGuid = uuid.v4()
     const date = new Date().toISOString().replace(/(\W)/ig, "")

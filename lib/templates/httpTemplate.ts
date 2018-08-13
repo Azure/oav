@@ -4,27 +4,25 @@
 import * as url from "url"
 import * as utils from "../util/utils"
 import * as msRest from "ms-rest"
-import { Unknown } from "../util/unknown"
+import { MutableStringMap } from "@ts-common/string-map"
 
-export interface Headers {
-  readonly [name: string]: string
-}
+export type Headers = MutableStringMap<string|undefined>
 
 export type Request = msRest.WebResource
 
 export interface Response {
-  readonly body: Unknown
+  readonly body: unknown
   readonly headers: Headers
-  readonly statusCode: string
+  readonly statusCode: string|number
 }
 
 export interface Responses {
-  readonly longrunning: {
-    readonly initialResponse: Response
-    readonly finalResponse: Response
+  longrunning: {
+    initialResponse?: Response
+    finalResponse?: Response
   }
-  readonly standard: {
-    readonly finalResponse: Response
+  standard: {
+    finalResponse?: Response
   }
 }
 

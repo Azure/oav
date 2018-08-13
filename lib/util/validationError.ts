@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 import { Severity } from "./severity"
-import { Unknown } from "./unknown"
 
 /**
  * @class
@@ -87,7 +86,7 @@ export interface NodeError<T extends NodeError<T>> {
   errors?: T[]
   in?: string
   name?: string
-  params?: Unknown[]
+  params?: Array<unknown>
   inner?: T[]
 }
 
@@ -123,7 +122,7 @@ export function processValidationErrors<
  */
 export function serializeErrors<T extends NodeError<T>>(
   node: T,
-  path: Unknown[]
+  path: Array<unknown>
 ): T[] {
   if (isLeaf(node)) {
     if (isTrueError(node)) {
@@ -208,10 +207,7 @@ function isLeaf<T extends NodeError<T>>(node: T): boolean {
   return !node.errors && !node.inner
 }
 
-function consolidatePath(
-  path: Unknown[],
-  suffixPath: string | string[]
-): Unknown[] {
+function consolidatePath(path: Array<unknown>, suffixPath: string | string[]): Array<unknown> {
   let newSuffixIndex = 0
   let overlapIndex = path.lastIndexOf(suffixPath[newSuffixIndex])
   let previousIndex = overlapIndex
@@ -231,7 +227,7 @@ function consolidatePath(
       break
     }
   }
-  let newPath: Unknown[] = []
+  let newPath: Array<unknown> = []
   if (newSuffixIndex === suffixPath.length) {
     // if all elements are contained in the existing path, nothing to do.
     newPath = path.slice(0)

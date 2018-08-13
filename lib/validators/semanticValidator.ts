@@ -4,7 +4,6 @@
 import { SpecValidator, CommonValidationResult } from "./specValidator"
 import * as Sway from "yasway"
 import { ErrorCodes } from "../util/constants"
-import { Unknown } from "../util/unknown"
 import { log } from "../util/logging"
 import { validateResponse } from "../util/validationResponse"
 import * as C from "../util/constants"
@@ -13,17 +12,17 @@ import { CommonError } from "../util/commonError"
 import * as utils from "../util/utils"
 
 export interface Result {
-  isValid?: Unknown
+  isValid?: unknown
   error?: CommonError
-  warning?: Unknown
-  result?: Unknown
-  errors?: Unknown
-  warnings?: Unknown
+  warning?: unknown
+  result?: unknown
+  errors?: unknown
+  warnings?: unknown
 }
 
 export interface SemanticValidationResult extends CommonValidationResult {
   validateSpec?: Result
-  initialize?: Unknown
+  initialize?: unknown
 }
 
 export class SemanticValidator extends SpecValidator<SemanticValidationResult> {

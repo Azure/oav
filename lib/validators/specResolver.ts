@@ -8,7 +8,6 @@ import * as utils from "../util/utils"
 import * as C from "../util/constants"
 import { log } from "../util/logging"
 import { PolymorphicTree } from "./polymorphicTree"
-import { Unknown } from "../util/unknown"
 import {
   SwaggerObject,
   ParametersDefinitionsObject,
@@ -19,7 +18,7 @@ import {
   OperationObject
 } from "yasway"
 import { defaultIfUndefinedOrNull } from "../util/defaultIfUndefinedOrNull"
-import { StringMap } from "../util/stringMap"
+import { MutableStringMap } from "@ts-common/string-map"
 import { resolveNestedDefinitions } from "./resolveNestedDefinitions"
 import { getOperations } from "../util/methods"
 import { transform } from "./specTransformer"
@@ -55,11 +54,11 @@ export class SpecResolver {
 
   private readonly specPath: string
 
-  private readonly specDir: Unknown
+  private readonly specDir: unknown
 
-  private readonly visitedEntities: StringMap<SchemaObject> = {}
+  private readonly visitedEntities: MutableStringMap<SchemaObject> = {}
 
-  private readonly resolvedAllOfModels: StringMap<SchemaObject> = {}
+  private readonly resolvedAllOfModels: MutableStringMap<SchemaObject> = {}
 
   private readonly options: Options
 
@@ -259,7 +258,7 @@ export class SpecResolver {
    * @return {Promise<void>}
    */
   private async resolveRelativePaths(
-    doc?: Unknown,
+    doc?: unknown,
     docPath?: string,
     filterType?: string
   ): Promise<void> {
@@ -287,9 +286,9 @@ export class SpecResolver {
 
     const allRefsRemoteRelative = JsonRefs.findRefs(doc, options)
     const promiseFactories = utils
-      .getKeys(allRefsRemoteRelative)
+      .getKeys(allRefsRemoteRelative as any)
       .map(refName => {
-        const refDetails = allRefsRemoteRelative[refName]
+        const refDetails = (allRefsRemoteRelative as any)[refName]
         return async () =>
           await this.resolveRelativeReference(refName, refDetails, doc, docPath)
       })
@@ -335,7 +334,7 @@ export class SpecResolver {
   private async resolveRelativeReference(
     refName: string,
     refDetails: RefDetails,
-    doc: Unknown,
+    doc: unknown,
     docPath: string | undefined
   ): Promise<void> {
     if (!refName || (refName && typeof refName.valueOf() !== "string")) {
@@ -362,7 +361,6 @@ export class SpecResolver {
       )
     }
 
-    const self = this
     const node = refDetails.def
     const slicedRefName = refName.slice(1)
     const reference = node.$ref
@@ -381,32 +379,32 @@ export class SpecResolver {
       // json (relative) file it is referring to.
       const regex = /.*x-ms-examples.*/gi
       if (
-        self.options.shouldResolveXmsExamples ||
-        (!self.options.shouldResolveXmsExamples &&
+        this.options.shouldResolveXmsExamples ||
+        (!this.options.shouldResolveXmsExamples &&
           slicedRefName.match(regex) === null)
       ) {
-        utils.setObject(doc, slicedRefName, result)
+        // TODO: doc should have a type
+        utils.setObject(doc as {}, slicedRefName, result)
       }
     } else {
       // resolve the local reference.
       // make the reference local to the doc being processed
       node.$ref = parsedReference.localReference.value
-      utils.setObject(doc, slicedRefName, node)
-      const slicedLocalReferenceValue = parsedReference.localReference.value.slice(
-        1
-      )
-      let referencedObj = self.visitedEntities[slicedLocalReferenceValue]
+      // TODO: doc should have a type
+      utils.setObject(doc as {}, slicedRefName, node)
+      const slicedLocalReferenceValue = parsedReference.localReference.value.slice(1)
+      let referencedObj = this.visitedEntities[slicedLocalReferenceValue]
       if (!referencedObj) {
         // We get the definition/parameter from the relative file and then add it (make it local)
         // to the doc (i.e. self.specInJson) being processed.
-        referencedObj = utils.getObject(result, slicedLocalReferenceValue)
+        referencedObj = utils.getObject(result, slicedLocalReferenceValue) as SchemaObject
         utils.setObject(
-          self.specInJson,
+          this.specInJson,
           slicedLocalReferenceValue,
           referencedObj
         )
-        self.visitedEntities[slicedLocalReferenceValue] = referencedObj
-        await self.resolveRelativePaths(referencedObj, docPath, "all")
+        this.visitedEntities[slicedLocalReferenceValue] = referencedObj
+        await this.resolveRelativePaths(referencedObj, docPath, "all")
         // After resolving a model definition, if there are models that have an allOf on that model
         // definition.
         // It may be possible that those models are not being referenced anywhere. Hence, we must
@@ -419,23 +417,23 @@ export class SpecResolver {
           const definitions = result.definitions
           const unresolvedDefinitions: Array<() => Promise<void>> = []
 
-          function processDefinition(defName: string) {
+          const processDefinition = (defName: string) => {
             unresolvedDefinitions.push(async () => {
               const allOf = definitions[defName].allOf
               if (allOf) {
                 const matchFound = allOf.some(
-                  item => !self.visitedEntities[`/definitions/${defName}`]
+                  () => !this.visitedEntities[`/definitions/${defName}`]
                 )
                 if (matchFound) {
                   const slicedDefinitionRef = `/definitions/${defName}`
                   const definitionObj = definitions[defName]
                   utils.setObject(
-                    self.specInJson,
+                    this.specInJson,
                     slicedDefinitionRef,
                     definitionObj
                   )
-                  self.visitedEntities[slicedDefinitionRef] = definitionObj
-                  await self.resolveRelativePaths(definitionObj, docPath, "all")
+                  this.visitedEntities[slicedDefinitionRef] = definitionObj
+                  await this.resolveRelativePaths(definitionObj, docPath, "all")
                 }
               }
             })
@@ -512,6 +510,8 @@ export class SpecResolver {
         return model
       }
     }
+
+    return
   }
 
   /**
@@ -527,7 +527,6 @@ export class SpecResolver {
     parent: SchemaObject,
     child: SchemaObject
   ): SchemaObject {
-    const self = this
     if (!parent || (parent && typeof parent !== "object")) {
       throw new Error(`parent must be of type "object".`)
     }
@@ -790,7 +789,7 @@ export class SpecResolver {
             subTreeMap
           )
         }
-        self.updateReferencesWithOneOf(subTreeMap, references)
+        self.updateReferencesWithOneOf(subTreeMap, references as any)
       }
     })
   }
@@ -868,7 +867,7 @@ export class SpecResolver {
    */
   private updateReferencesWithOneOf(
     subTreeMap: Map<string, PolymorphicTree>,
-    references: any[]
+    references: Array<{ readonly uri: unknown }>
   ): void {
     const spec = this.specInJson
 
@@ -891,7 +890,7 @@ export class SpecResolver {
         // containing reference to the node and all its children.
         for (const location of locationsToBeUpdated) {
           const slicedLocation = location.slice(1)
-          const obj = utils.getObject(spec, slicedLocation)
+          const obj = utils.getObject(spec, slicedLocation) as any
           if (obj) {
             if (obj.$ref) {
               delete obj.$ref
