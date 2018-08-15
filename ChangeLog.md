@@ -1,5 +1,9 @@
 # Changelog
 
+### 08/14/2018 0.4.69
+
+- Add option to collapse similar errors for arrays.
+
 ### 08/13/2018 0.4.68
 
 - Using a JSON parser with a source map.

@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 import { Severity } from "./severity"
+import _ from "lodash"
 
 /**
  * @class
@@ -83,11 +84,14 @@ export function errorCodeToSeverity(code: string): Severity {
 export interface NodeError<T extends NodeError<T>> {
   code?: string
   path?: string | string[]
+  similarPaths?: string[]
   errors?: T[]
   in?: string
   name?: string
   params?: Array<unknown>
   inner?: T[]
+  title?: string
+  message?: string
 }
 
 export interface ValidationResult<T extends NodeError<T>> {
@@ -159,7 +163,19 @@ export function serializeErrors<T extends NodeError<T>>(
   let serializedInner: T[] = []
   if (node.inner) {
     serializedInner = node.inner.reduce((acc, validationError) => {
-      return acc.concat(serializeErrors(validationError, path))
+      const errs = serializeErrors(validationError, path)
+      errs.forEach(err => {
+        const similarErr = acc.find(el => areErrorsSimilar(err, el))
+        if (similarErr && similarErr.path) {
+          if (!similarErr.similarPaths) {
+            similarErr.similarPaths = []
+          }
+          similarErr.similarPaths.push(err.path as string)
+        } else {
+          acc.push(err)
+        }
+      })
+      return acc
     }, new Array<T>())
   }
 
@@ -172,6 +188,56 @@ export function serializeErrors<T extends NodeError<T>>(
     return [node]
   }
   return [...serializedErrors, ...serializedInner]
+}
+
+/**
+ * Checks if two errors are the same except their path.
+ */
+function areErrorsSimilar<T extends NodeError<T>>(node1: T, node2: T) {
+  if (
+    node1.code !== node2.code ||
+    node1.title !== node2.title ||
+    node1.message !== node2.message ||
+    !arePathsSimilar(node1.path, node2.path)
+  ) {
+    return false
+  }
+
+  if (!node1.inner && !node2.inner) {
+    return true
+  } else if (
+    !node1.inner ||
+    !node2.inner ||
+    node1.inner.length !== node2.inner.length
+  ) {
+    return false
+  }
+
+  for (let i = 0; i < node1.inner.length; i++) {
+    if (!areErrorsSimilar(node1.inner[i], node2.inner[i])) {
+      return false
+    }
+  }
+  return true
+}
+
+/**
+ * Checks if paths differ only in indexes
+ */
+const arePathsSimilar = (
+  path1: string | string[] | undefined,
+  path2: string | string[] | undefined
+) => {
+  if (path1 === undefined && path2 === undefined) {
+    return true
+  } else if (path1 === undefined || path2 === undefined) {
+    return false
+  }
+
+  const p1 = Array.isArray(path1) ? path1 : path1.split("/")
+  const p2 = Array.isArray(path2) ? path2 : path2.split("/")
+
+  return _.xor(p1, p2).every(v => Number.isInteger(+v))
 }
 
 function isDiscriminatorError<T extends NodeError<T>>(node: T) {
@@ -207,7 +273,13 @@ function isLeaf<T extends NodeError<T>>(node: T): boolean {
   return !node.errors && !node.inner
 }
 
-function consolidatePath(path: Array<unknown>, suffixPath: string | string[]): Array<unknown> {
+/**
+ * Unifies a suffix path with a root path.
+ */
+function consolidatePath(
+  path: Array<unknown>,
+  suffixPath: string | string[]
+): Array<unknown> {
   let newSuffixIndex = 0
   let overlapIndex = path.lastIndexOf(suffixPath[newSuffixIndex])
   let previousIndex = overlapIndex
