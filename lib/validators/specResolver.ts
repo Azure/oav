@@ -392,12 +392,17 @@ export class SpecResolver {
       node.$ref = parsedReference.localReference.value
       // TODO: doc should have a type
       utils.setObject(doc as {}, slicedRefName, node)
-      const slicedLocalReferenceValue = parsedReference.localReference.value.slice(1)
+      const slicedLocalReferenceValue = parsedReference.localReference.value.slice(
+        1
+      )
       let referencedObj = this.visitedEntities[slicedLocalReferenceValue]
       if (!referencedObj) {
         // We get the definition/parameter from the relative file and then add it (make it local)
         // to the doc (i.e. self.specInJson) being processed.
-        referencedObj = utils.getObject(result, slicedLocalReferenceValue) as SchemaObject
+        referencedObj = utils.getObject(
+          result,
+          slicedLocalReferenceValue
+        ) as SchemaObject
         utils.setObject(
           this.specInJson,
           slicedLocalReferenceValue,
@@ -511,7 +516,7 @@ export class SpecResolver {
       }
     }
 
-    return
+    return undefined
   }
 
   /**
