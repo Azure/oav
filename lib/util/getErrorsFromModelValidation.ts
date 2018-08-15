@@ -8,9 +8,7 @@ import * as sm from "@ts-common/string-map"
 import * as it from "@ts-common/iterator"
 
 export interface ModelValidation {
-  operations: {
-    [key: string]: OperationResult|undefined
-  }
+  operations: sm.MutableStringMap<OperationResult|undefined>
 }
 
 /**
