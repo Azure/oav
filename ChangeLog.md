@@ -2,7 +2,7 @@
 
 ### 08/14/2018 0.4.69
 
-- Add option to collapse similar errors for arrays.
+- Collaps of similar errors for array elements in `similarPaths` property on the error.
 
 ### 08/13/2018 0.4.68
 
