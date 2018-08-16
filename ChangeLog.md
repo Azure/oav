@@ -1,5 +1,9 @@
 # Changelog
 
+### 08/16/2018 0.4.70
+
+- New transformation functions.
+
 ### 08/14/2018 0.4.69
 
 - Collapse of similar errors for array elements in `similarPaths` property on the error.
