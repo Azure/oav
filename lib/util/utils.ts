@@ -851,23 +851,6 @@ export function sanitizeFileName(str: string): string {
 }
 
 /**
- * Gets the keys of an object or returns an empty Array if the object is not defined.
-.* The check is necessary because Object.keys does not coerce parameters to object type.
- * @param {*} obj
- */
-/*
-export function getKeys(
-  obj: StringMap<unknown> | Array<unknown>| undefined
-): string[] {
-  if (obj === undefined || obj === null) {
-    return []
-  }
-
-  return Object.keys(obj)
-}
-*/
-
-/**
  * Checks if the property is required in the model.
  */
 function isPropertyRequired(propName: unknown, model: SchemaObject) {
