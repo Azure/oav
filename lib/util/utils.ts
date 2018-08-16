@@ -11,9 +11,8 @@ import { log } from "./logging"
 import request = require("request")
 import * as lodash from "lodash"
 import * as http from "http"
-import { MutableStringMap, StringMap } from "@ts-common/string-map"
+import { MutableStringMap, entries } from "@ts-common/string-map"
 import { SwaggerObject, ParameterObject, SchemaObject, DataType } from "yasway"
-import { NonUndefined } from "@ts-common/json"
 import * as jsonParser from "@ts-common/json-parser"
 
 export type DocCache = MutableStringMap<Promise<SwaggerObject>>
@@ -28,7 +27,6 @@ export let docCache: DocCache = {}
 
 export function clearCache(): void {
   docCache = {}
-  return
 }
 
 /*
@@ -79,7 +77,7 @@ export async function parseJson(specPath: string): Promise<SwaggerObject> {
     docCache[specPath] = res
     return await res
   } else {
-    // local filepath
+    // local file path
     try {
       const fileContent = fs.readFileSync(specPath, "utf8")
       const result = parseContent(specPath, fileContent)
@@ -335,8 +333,7 @@ export function mergeObjects<T extends MutableStringMap<unknown>>(
   source: T,
   target: T
 ): T {
-  Object.keys(source).forEach(key => {
-    const sourceProperty = source[key]
+  for (const [key, sourceProperty] of entries(source)) {
     if (Array.isArray(sourceProperty)) {
       const targetProperty = target[key]
       if (!targetProperty) {
@@ -352,7 +349,7 @@ export function mergeObjects<T extends MutableStringMap<unknown>>(
     } else {
       target[key] = lodash.cloneDeep(source[key])
     }
-  })
+  }
   return target
 }
 
@@ -603,13 +600,13 @@ export function isPureObject(model: SchemaObject): boolean {
     typeof model.type.valueOf() === "string" &&
     model.type === "object" &&
     model.properties &&
-    getKeys(model.properties).length === 0
+    model.properties.length === 0
   ) {
     return true
   } else if (
     !model.type &&
     model.properties &&
-    getKeys(model.properties).length === 0
+    model.properties.length === 0
   ) {
     return true
   } else if (
@@ -674,17 +671,13 @@ export function relaxModelLikeEntities(model: SchemaObject): SchemaObject {
   if (model.properties) {
     const modelProperties = model.properties
 
-    for (const propName of getKeys(modelProperties)) {
-      if (modelProperties[propName].properties) {
-        modelProperties[propName] = relaxModelLikeEntities(
-          modelProperties[propName]
-        )
-      } else {
-        modelProperties[propName] = relaxEntityType(
-          modelProperties[propName],
+    for (const [propName, property] of entries(modelProperties)) {
+      modelProperties[propName] = property.properties ?
+        relaxModelLikeEntities(property) :
+        relaxEntityType(
+          property,
           isPropertyRequired(propName, model)
         )
-      }
     }
   }
   return model
@@ -782,16 +775,13 @@ export function allowNullableTypes(model: SchemaObject): SchemaObject {
   }
   if (model && model.properties) {
     const modelProperties = model.properties
-    for (const propName of getKeys(modelProperties)) {
+    for (const [propName, prop] of entries(modelProperties)) {
       // process properties if present
       modelProperties[propName] =
-        modelProperties[propName].properties ||
-        modelProperties[propName].additionalProperties
-          ? allowNullableTypes(modelProperties[propName])
-          : allowNullType(
-              modelProperties[propName],
-              isPropertyRequired(propName, model)
-            )
+        prop.properties ||
+        prop.additionalProperties
+          ? allowNullableTypes(prop)
+          : allowNullType(prop, isPropertyRequired(propName, model))
     }
   }
 
@@ -861,22 +851,11 @@ export function sanitizeFileName(str: string): string {
 }
 
 /**
- * Gets the values of an object or returns an empty Array if the object is not defined.
- * The check is necessary because Object.values does not coerce parameters to object type.
- * @param {*} obj
- */
-export function getValues<T>(obj: StringMap<T> | T[] | null): Array<NonUndefined<T>> {
-  if (obj === undefined || obj === null) {
-    return []
-  }
-  return Object.values(obj) as Array<NonUndefined<T>>
-}
-
-/**
  * Gets the keys of an object or returns an empty Array if the object is not defined.
 .* The check is necessary because Object.keys does not coerce parameters to object type.
  * @param {*} obj
  */
+/*
 export function getKeys(
   obj: StringMap<unknown> | Array<unknown>| undefined
 ): string[] {
@@ -886,6 +865,7 @@ export function getKeys(
 
   return Object.keys(obj)
 }
+*/
 
 /**
  * Checks if the property is required in the model.

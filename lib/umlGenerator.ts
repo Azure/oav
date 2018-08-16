@@ -2,9 +2,9 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import yuml2svg = require("yuml2svg")
-import * as utils from "./util/utils"
 import { log } from "./util/logging"
 import { SwaggerObject, DefinitionsObject, SchemaObject } from "yasway"
+import { entries } from "@ts-common/string-map"
 
 export interface Options {
   readonly direction?: unknown
@@ -65,10 +65,11 @@ export class UmlGenerator {
 
   private generateAllOfGraph(): void {
     const spec = this.specInJson
-    const definitions = spec.definitions as DefinitionsObject
-    for (const modelName of utils.getKeys(definitions)) {
-      const model = definitions[modelName]
-      this.generateAllOfForModel(modelName, model)
+    const definitions = spec.definitions
+    if (definitions !== undefined) {
+      for (const [modelName, model] of entries(definitions)) {
+        this.generateAllOfForModel(modelName, model)
+      }
     }
   }
 
@@ -90,13 +91,11 @@ export class UmlGenerator {
     const spec = this.specInJson
     const definitions = spec.definitions as DefinitionsObject
     const references: string[] = []
-    for (const modelName of utils.getKeys(definitions)) {
-      const model = definitions[modelName]
+    for (const [modelName, model] of entries(definitions)) {
       const modelProperties = model.properties
       let props = ""
       if (modelProperties) {
-        for (const propertyName of utils.getKeys(modelProperties)) {
-          const property = modelProperties[propertyName]
+        for (const [propertyName, property] of entries(modelProperties)) {
           const propertyType = this.getPropertyType(modelName, property, references)
           let discriminator = ""
           if (model.discriminator && model.discriminator === propertyName) {

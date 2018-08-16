@@ -18,10 +18,11 @@ import {
   OperationObject
 } from "yasway"
 import { defaultIfUndefinedOrNull } from "../util/defaultIfUndefinedOrNull"
-import { MutableStringMap } from "@ts-common/string-map"
+import { MutableStringMap, Entry, entries, values, keys, StringMap } from "@ts-common/string-map"
 import { resolveNestedDefinitions } from "./resolveNestedDefinitions"
 import { getOperations } from "../util/methods"
 import { transform } from "./specTransformer"
+import { map, toArray } from "@ts-common/iterator"
 
 const ErrorCodes = C.ErrorCodes
 
@@ -285,13 +286,14 @@ export class SpecResolver {
     }
 
     const allRefsRemoteRelative = JsonRefs.findRefs(doc, options)
-    const promiseFactories = utils
-      .getKeys(allRefsRemoteRelative as any)
-      .map(refName => {
-        const refDetails = (allRefsRemoteRelative as any)[refName]
+    const e = entries(allRefsRemoteRelative as StringMap<RefDetails>)
+    const promiseFactories = toArray(map(
+      e,
+      ([refName, refDetails]) => {
         return async () =>
           await this.resolveRelativeReference(refName, refDetails, doc, docPath)
-      })
+      }
+    ))
     if (promiseFactories.length) {
       await utils.executePromisesSequentially(promiseFactories)
     }
@@ -308,10 +310,10 @@ export class SpecResolver {
     if (
       xmsPaths &&
       xmsPaths instanceof Object &&
-      utils.getKeys(xmsPaths).length > 0
+      toArray(keys(xmsPaths)).length > 0
     ) {
-      for (const property of utils.getKeys(xmsPaths)) {
-        paths[property] = xmsPaths[property]
+      for (const [property, v] of entries(xmsPaths)) {
+        paths[property] = v
       }
       this.specInJson.paths = utils.mergeObjects(xmsPaths, paths)
     }
@@ -422,9 +424,9 @@ export class SpecResolver {
           const definitions = result.definitions
           const unresolvedDefinitions: Array<() => Promise<void>> = []
 
-          const processDefinition = (defName: string) => {
+          const processDefinition = ([defName, def]: Entry<SchemaObject>) => {
             unresolvedDefinitions.push(async () => {
-              const allOf = definitions[defName].allOf
+              const allOf = def.allOf
               if (allOf) {
                 const matchFound = allOf.some(
                   () => !this.visitedEntities[`/definitions/${defName}`]
@@ -444,8 +446,8 @@ export class SpecResolver {
             })
           }
 
-          for (const defName of utils.getKeys(result.definitions)) {
-            processDefinition(defName)
+          for (const entry of entries(result.definitions)) {
+            processDefinition(entry)
           }
 
           await utils.executePromisesSequentially(unresolvedDefinitions)
@@ -461,12 +463,10 @@ export class SpecResolver {
   private resolveAllOfInDefinitions(): void {
     const spec = this.specInJson
     const definitions = spec.definitions as DefinitionsObject
-    const modelNames = utils.getKeys(definitions)
-    modelNames.forEach(modelName => {
-      const model = definitions[modelName]
+    for (const [modelName, model] of entries(definitions)) {
       const modelRef = "/definitions/" + modelName
       this.resolveAllOfInModel(model, modelRef)
-    })
+    }
   }
 
   /**
@@ -565,15 +565,13 @@ export class SpecResolver {
    * Deletes all the references to allOf from all the model definitions in the swagger spec.
    */
   private deleteReferencesToAllOf(): void {
-    const self = this
-    const spec = self.specInJson
+    const spec = this.specInJson
     const definitions = spec.definitions as DefinitionsObject
-    const modelNames = utils.getKeys(definitions)
-    modelNames.forEach(modelName => {
-      if (definitions[modelName].allOf) {
-        delete definitions[modelName].allOf
+    for (const model of values(definitions)) {
+      if (model.allOf) {
+        delete model.allOf
       }
-    })
+    }
   }
 
   /**
@@ -584,21 +582,17 @@ export class SpecResolver {
     const spec = self.specInJson
     const definitions = spec.definitions as DefinitionsObject
 
-    const modelNames = utils.getKeys(definitions)
-    modelNames.forEach(modelName => {
-      const model = definitions[modelName]
-      if (model) {
-        if (
-          !model.additionalProperties &&
-          !(
-            !model.properties ||
-            (model.properties && utils.getKeys(model.properties).length === 0)
-          )
-        ) {
-          model.additionalProperties = false
-        }
+    for (const model of values(definitions)) {
+      if (
+        !model.additionalProperties &&
+        !(
+          !model.properties ||
+          (model.properties && toArray(keys(model.properties)).length === 0)
+        )
+      ) {
+        model.additionalProperties = false
       }
-    })
+    }
   }
 
   /**
@@ -624,8 +618,8 @@ export class SpecResolver {
       ? parameterizedHost.parameters
       : null
     if (parameterizedHost && hostParameters) {
-      const paths = spec.paths as PathsObject
-      for (const verbs of utils.getValues(paths)) {
+      const paths = spec.paths
+      for (const verbs of values(paths)) {
         for (const operation of getOperations(verbs)) {
           let operationParameters = operation.parameters
           if (!operationParameters) {
@@ -647,10 +641,10 @@ export class SpecResolver {
   private resolvePureObjects(): void {
     const self = this
     const spec = self.specInJson
-    const definitions = spec.definitions as DefinitionsObject
+    const definitions = spec.definitions
 
     // scan definitions and properties of every model in definitions
-    for (const model of utils.getValues(definitions)) {
+    for (const model of values(definitions)) {
       utils.relaxModelLikeEntities(model)
     }
 
@@ -691,11 +685,9 @@ export class SpecResolver {
         operation.parameters.forEach(resolveParameter2)
       }
       // scan every response in the operation
-      if (operation.responses) {
-        for (const response of utils.getValues(operation.responses)) {
-          if (response.schema && !octetStream(produces)) {
-            response.schema = utils.relaxModelLikeEntities(response.schema)
-          }
+      for (const response of values(operation.responses)) {
+        if (response.schema && !octetStream(produces)) {
+          response.schema = utils.relaxModelLikeEntities(response.schema)
         }
       }
     }
@@ -709,7 +701,7 @@ export class SpecResolver {
     }
 
     // scan every operation
-    for (const pathObj of utils.getValues(spec.paths as PathsObject)) {
+    for (const pathObj of values(spec.paths)) {
       for (const operation of getOperations(pathObj)) {
         resolveOperation(operation)
       }
@@ -720,12 +712,11 @@ export class SpecResolver {
     }
     // scan global parameters
     const parameters = spec.parameters as ParametersDefinitionsObject
-    for (const param of utils.getKeys(parameters)) {
-      const parameter = parameters[param]
+    for (const [paramName, parameter] of entries(parameters)) {
       if (parameter.in && parameter.in === "body" && parameter.schema) {
         parameter.schema = utils.relaxModelLikeEntities(parameter.schema)
       }
-      parameters[param] = utils.relaxEntityType(parameter, parameter.required)
+      parameters[paramName] = utils.relaxEntityType(parameter, parameter.required)
     }
   }
 
@@ -733,14 +724,13 @@ export class SpecResolver {
    * Models a default response as a Cloud Error if none is specified in the api spec.
    */
   private modelImplicitDefaultResponse(): void {
-    const self = this
-    const spec = self.specInJson
+    const spec = this.specInJson
     const definitions = spec.definitions as DefinitionsObject
     if (!definitions.CloudError) {
       definitions.CloudErrorWrapper = utils.CloudErrorWrapper
       definitions.CloudError = utils.CloudError
     }
-    for (const pathObj of utils.getValues(spec.paths as PathsObject)) {
+    for (const pathObj of values(spec.paths)) {
       for (const operation of getOperations(pathObj)) {
         if (operation.responses && !operation.responses.default) {
           operation.responses.default = utils.CloudErrorSchema
@@ -779,12 +769,11 @@ export class SpecResolver {
     const self = this
     const spec = self.specInJson
     const definitions = spec.definitions as DefinitionsObject
-    const modelNames = utils.getKeys(definitions)
     const subTreeMap = new Map()
     const references = JsonRefs.findRefs(spec)
 
-    modelNames.forEach(modelName => {
-      const discriminator = definitions[modelName].discriminator
+    for (const [modelName, model] of entries(definitions)) {
+      const discriminator = model.discriminator
       if (discriminator) {
         let rootNode = subTreeMap.get(modelName)
         if (!rootNode) {
@@ -796,7 +785,7 @@ export class SpecResolver {
         }
         self.updateReferencesWithOneOf(subTreeMap, references as any)
       }
-    })
+    }
   }
 
   /**
@@ -810,20 +799,18 @@ export class SpecResolver {
    * the original content of the model and the second value "type": "null".
    */
   private resolveNullableTypes(): void {
-    const self = this
-    const spec = self.specInJson
+    const spec = this.specInJson
     const definitions = spec.definitions as DefinitionsObject
 
     // scan definitions and properties of every model in definitions
-    for (const defName of utils.getKeys(definitions)) {
-      const model = definitions[defName]
+    for (const [defName, model] of entries(definitions)) {
       definitions[defName] = utils.allowNullableTypes(model)
     }
     // scan every operation response
-    for (const pathObj of utils.getValues(spec.paths as PathsObject)) {
+    for (const pathObj of values(spec.paths)) {
       // need to handle parameters at this level
       if (pathObj.parameters) {
-        for (const parameter of utils.getKeys(pathObj.parameters)) {
+        for (const [parameter] of _.entries(pathObj.parameters)) {
           const n = parseInt(parameter)
           pathObj.parameters[n] = utils.allowNullableParams(
             pathObj.parameters[n]
@@ -833,7 +820,7 @@ export class SpecResolver {
       for (const operation of getOperations(pathObj)) {
         // need to account for parameters, except for path parameters
         if (operation.parameters) {
-          for (const parameter of utils.getKeys(operation.parameters)) {
+          for (const parameter of _.keys(operation.parameters)) {
             const n = parseInt(parameter)
             operation.parameters[n] = utils.allowNullableParams(
               operation.parameters[n]
@@ -841,11 +828,9 @@ export class SpecResolver {
           }
         }
         // going through responses
-        if (operation.responses) {
-          for (const response of utils.getValues(operation.responses)) {
-            if (response.schema) {
-              response.schema = utils.allowNullableTypes(response.schema)
-            }
+        for (const response of values(operation.responses)) {
+          if (response.schema) {
+            response.schema = utils.allowNullableTypes(response.schema)
           }
         }
       }
@@ -853,8 +838,8 @@ export class SpecResolver {
 
     // scan parameter definitions
     const parameters = spec.parameters as ParametersDefinitionsObject
-    for (const parameter of utils.getKeys(parameters)) {
-      parameters[parameter] = utils.allowNullableParams(parameters[parameter])
+    for (const [parameterName, parameter] of entries(parameters)) {
+      parameters[parameterName] = utils.allowNullableParams(parameter)
     }
   }
 
@@ -959,29 +944,28 @@ export class SpecResolver {
     // Adding the model name or it's discriminator value as an enum constraint with one value
     // (constant) on property marked as discriminator
     const definition = definitions[name]
-    if (
-      definition &&
-      definition.properties &&
-      definition.properties[discriminator]
-    ) {
-      const val = definition["x-ms-discriminator-value"] || name
-      // Ensure that the property marked as a discriminator has only one value in the enum
-      // constraint for that model and it
-      // should be the one that is the model name or the value indicated by
-      // x-ms-discriminator-value. This will make the discriminator
-      // property a constant (in json schema terms).
-      if (definition.properties[discriminator].$ref) {
-        delete definition.properties[discriminator].$ref
+    if (definition && definition.properties) {
+      const d = definition.properties[discriminator]
+      if (d) {
+        const val = definition["x-ms-discriminator-value"] || name
+        // Ensure that the property marked as a discriminator has only one value in the enum
+        // constraint for that model and it
+        // should be the one that is the model name or the value indicated by
+        // x-ms-discriminator-value. This will make the discriminator
+        // property a constant (in json schema terms).
+        if (d.$ref) {
+          delete d.$ref
+        }
+        // We will set "type" to "string". It is safe to assume that properties marked as
+        // "discriminator" will be of type "string"
+        // as it needs to refer to a model definition name. Model name would be a key in the
+        // definitions object/dictionary in the
+        // swagger spec. keys would always be a string in a JSON object/dictionary.
+        if (!d.type) {
+          d.type = "string"
+        }
+        d.enum = [`${val}`]
       }
-      // We will set "type" to "string". It is safe to assume that properties marked as
-      // "discriminator" will be of type "string"
-      // as it needs to refer to a model definition name. Model name would be a key in the
-      // definitions object/dictionary in the
-      // swagger spec. keys would always be a string in a JSON object/dictionary.
-      if (!definition.properties[discriminator].type) {
-        definition.properties[discriminator].type = "string"
-      }
-      definition.properties[discriminator].enum = [`${val}`]
     }
 
     const children = this.findChildren(name)
@@ -1035,7 +1019,7 @@ export class SpecResolver {
       }
     }
 
-    for (const definitionName of utils.getKeys(definitions)) {
+    for (const definitionName of keys(definitions)) {
       findReferences(definitionName)
     }
 

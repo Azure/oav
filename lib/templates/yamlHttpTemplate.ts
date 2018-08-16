@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-// import url = require('url')
-import * as utils from "../util/utils"
 import { HttpTemplate, Request, Responses, Response } from "./httpTemplate"
 import * as uuid from "uuid"
+import { keys } from "@ts-common/string-map"
+import { toArray } from "@ts-common/iterator"
 
 export class YamlHttpTemplate extends HttpTemplate {
 
@@ -43,7 +43,7 @@ export class YamlHttpTemplate extends HttpTemplate {
       result += `  Content-Length: ${JSON.stringify(this.request.body).length}\n`
     }
     if (this.request.headers) {
-      const headers = utils.getKeys(this.request.headers)
+      const headers = toArray(keys(this.request.headers))
 
       for (let i = 0; i < headers.length; i++) {
         const headerName = headers[i]
@@ -63,7 +63,7 @@ export class YamlHttpTemplate extends HttpTemplate {
     }
     let gotContentType = false
     if (response.headers) {
-      const headers = utils.getKeys(response.headers)
+      const headers = toArray(keys(response.headers))
       for (let i = 0; i < headers.length; i++) {
         const headerName = headers[i]
         if (headerName.match(/^Content-Type$/ig) !== null) { gotContentType = true }

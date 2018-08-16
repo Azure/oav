@@ -19,7 +19,7 @@ const skipUndefined = <T>(f: (v: T) => T): ((v: T|undefined) => T|undefined) =>
 
 export function resolveNestedDefinitions(spec: SwaggerObject): SwaggerObject {
 
-  const newDefinitions: DefinitionsObject = {}
+  const extraDefinitions: DefinitionsObject = {}
 
   // a function to resolve nested schema objects
   const resolveNestedSchemaObject = (schemaObject: SchemaObject) => {
@@ -40,11 +40,11 @@ export function resolveNestedDefinitions(spec: SwaggerObject): SwaggerObject {
     }
 
     // here schemaObject.type is one of {undefined, "object", "array"}.
-    // Because it's a nested schema object, we create a new definition and return a reference.
+    // Because it's a nested schema object, we create an extra definition and return a reference.
     const result = resolveSchemaObject(schemaObject)
     const definitionName = uuid.v4()
     if (result !== undefined) {
-      newDefinitions[definitionName] = result
+      extraDefinitions[definitionName] = result
     }
     return { $ref: `#/definitions/${encodeURIComponent(definitionName)}` }
   }
@@ -58,9 +58,7 @@ export function resolveNestedDefinitions(spec: SwaggerObject): SwaggerObject {
     propertySetMap<SchemaObject>(
       schemaObject,
       {
-        properties: properties => properties === undefined ?
-          undefined :
-          stringMapMap(properties, resolveNestedSchemaObject),
+        properties: properties => stringMapMap(properties, resolveNestedSchemaObject),
         additionalProperties: additionalProperties =>
           additionalProperties === undefined ?
             undefined :
@@ -89,45 +87,38 @@ export function resolveNestedDefinitions(spec: SwaggerObject): SwaggerObject {
         operationObject,
         {
           parameters: skipUndefined(resolveParameterArray),
-          responses: responses => responses === undefined ?
-            undefined :
-            stringMapMap(responses, resolveResponseObject)
+          responses: responses => stringMapMap(responses, resolveResponseObject)
         })
 
   // transformations for Open API 2.0
   const swaggerObjectTransformation: PartialFactory<SwaggerObject> = {
-    definitions: definitions => definitions === undefined ?
-      undefined :
-      stringMapMap(definitions, resolveSchemaObject),
-    parameters: parameters => parameters === undefined ?
-      undefined :
-      stringMapMap(parameters, resolveParameterObject),
-    responses: responses => responses === undefined ?
-      undefined :
-      stringMapMap(responses, resolveResponseObject),
-    paths: paths => paths === undefined ?
-      undefined :
-      stringMapMap(
-        paths,
-        path => propertySetMap<PathItemObject>(
-          path,
-          {
-            get: resolveOperationObject,
-            put: resolveOperationObject,
-            post: resolveOperationObject,
-            delete: resolveOperationObject,
-            options: resolveOperationObject,
-            head: resolveOperationObject,
-            patch: resolveOperationObject,
-            parameters: skipUndefined(resolveParameterArray)
-          }))
+    definitions: definitions => stringMapMap(definitions, resolveSchemaObject),
+    parameters: parameters => stringMapMap(parameters, resolveParameterObject),
+    responses: responses => stringMapMap(responses, resolveResponseObject),
+    paths: paths => stringMapMap(
+      paths,
+      path => propertySetMap<PathItemObject>(
+        path,
+        {
+          get: resolveOperationObject,
+          put: resolveOperationObject,
+          post: resolveOperationObject,
+          delete: resolveOperationObject,
+          options: resolveOperationObject,
+          head: resolveOperationObject,
+          patch: resolveOperationObject,
+          parameters: skipUndefined(resolveParameterArray)
+        }
+      )
+    )
   }
 
+  // create extra definitions and the temporary spec
   const temp = propertySetMap(spec, swaggerObjectTransformation)
 
-  // resolve the given OpenAPI document.
-  return propertySetMap(temp, {
-    definitions: (definitions: DefinitionsObject|undefined) => definitions === undefined ?
-      newDefinitions : stringMapMerge(definitions, newDefinitions)
-  })
+  const mergeDefinitions = (definitions: DefinitionsObject|undefined) =>
+    definitions === undefined ? extraDefinitions : stringMapMerge(definitions, extraDefinitions)
+
+  // merge definitions and extraDefinitions.
+  return propertySetMap(temp, { definitions: mergeDefinitions })
 }

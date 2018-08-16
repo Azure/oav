@@ -3,9 +3,9 @@
 
 import * as fs from "fs"
 import * as pathlib from "path"
-import * as utils from "./util/utils"
 import { log } from "./util/logging"
-import { MutableStringMap } from "@ts-common/string-map"
+import { MutableStringMap, keys } from "@ts-common/string-map"
+import * as _ from "@ts-common/iterator"
 
 interface Options {
   output?: string
@@ -106,31 +106,33 @@ export class XMsExampleExtractor {
 
     try {
       const api = await parser.parse(swaggerObject)
-      for (const recordingFileName of utils.getValues(recordingFiles)) {
+      for (const recordingFileName of recordingFiles) {
         log.debug(`Processing recording file: ${recordingFileName}`)
 
         try {
           const recording = JSON.parse(fs.readFileSync(recordingFileName).toString())
           const paths = api.paths
           let pathIndex = 0
-          let pathParams: MutableStringMap<string> = {}
-          for (const path of utils.getKeys(paths)) {
+          let pathParams: MutableStringMap<number> = {}
+          for (const path of keys(paths)) {
             pathIndex++
             const searchResult = path.match(/\/{\w*\}/g)
             const pathParts = path.split("/")
             let pathToMatch = path
             pathParams = {}
-            for (const match of utils.getValues(searchResult)) {
-              const splitRegEx = /[{}]/
-              const pathParam = match.split(splitRegEx)[1]
+            if (searchResult !== null) {
+            for (const match of searchResult) {
+                const splitRegEx = /[{}]/
+                const pathParam = match.split(splitRegEx)[1]
 
-              for (const part of utils.getKeys(pathParts)) {
-                const pathPart = "/" + pathParts[part as any]
-                if (pathPart.localeCompare(match) === 0) {
-                  pathParams[pathParam] = part
+                for (const [part, value] of _.entries(pathParts)) {
+                  const pathPart = "/" + value
+                  if (pathPart.localeCompare(match) === 0) {
+                    pathParams[pathParam] = part
+                  }
                 }
+                pathToMatch = pathToMatch.replace(match, "/[^\/]+")
               }
-              pathToMatch = pathToMatch.replace(match, "/[^\/]+")
             }
             let newPathToMatch = pathToMatch.replace(/\//g, "\\/")
             newPathToMatch = newPathToMatch + "$"
@@ -140,13 +142,13 @@ export class XMsExampleExtractor {
             const entries = recording.Entries
             let entryIndex = 0
             const queryParams: MutableStringMap<unknown> = {}
-            for (const entry of utils.getKeys(entries)) {
+            for (const entry of keys(entries)) {
               entryIndex++
               let recordingPath = JSON.stringify(entries[entry].RequestUri)
               const recordingPathQueryParams = recordingPath.split("?")[1].slice(0, -1)
               const queryParamsArray = recordingPathQueryParams.split("&")
-              for (const part of utils.getKeys(queryParamsArray)) {
-                const queryParam = queryParamsArray[part as any].split("=")
+              for (const value of queryParamsArray) {
+                const queryParam = value.split("=")
                 queryParams[queryParam[0]] = queryParam[1]
               }
 
@@ -165,9 +167,9 @@ export class XMsExampleExtractor {
                   log.silly("recording path: " + recordingPath)
 
                   const pathParamsValues: MutableStringMap<unknown> = {}
-                  for (const p of utils.getKeys(pathParams)) {
-                    const index = pathParams[p]
-                    pathParamsValues[p] = recordingPathParts[index as any as number]
+                  for (const [p, v] of entries(pathParams)) {
+                    const index = v
+                    pathParamsValues[p] = recordingPathParts[index as number]
                   }
 
                   // found a match in the recording
@@ -207,16 +209,16 @@ export class XMsExampleExtractor {
                       responses: {}
                     }
                     const params = infoFromOperation.parameters
-                    for (const param of utils.getKeys(pathParamsValues)) {
-                      exampleL.parameters[param] = pathParamsValues[param]
+                    for (const [param, v] of entries(pathParamsValues)) {
+                      exampleL.parameters[param] = v
                     }
-                    for (const param of utils.getKeys(queryParams)) {
-                      exampleL.parameters[param] = queryParams[param]
+                    for (const [param, v] of entries(queryParams)) {
+                      exampleL.parameters[param] = v
                     }
-                    for (const param of utils.getKeys(headerParams)) {
-                      exampleL.parameters[param] = headerParams[param]
+                    for (const [param, v] of entries(headerParams)) {
+                      exampleL.parameters[param] = v
                     }
-                    for (const param of utils.getKeys(infoFromOperation.parameters)) {
+                    for (const param of keys(infoFromOperation.parameters)) {
                       if (params[param].in === "body") {
                         const bodyParamName = params[param].name
                         const bodyParamValue = entries[entry].RequestBody
@@ -230,8 +232,7 @@ export class XMsExampleExtractor {
                         }
                       }
                     }
-                    const responses = infoFromOperation.responses
-                    for (const _ of utils.getKeys(responses)) {
+                    for (const {} of keys(infoFromOperation.responses)) {
                       const statusCodeFromRecording = entries[entry].StatusCode
                       const responseBody = entries[entry].ResponseBody
                       exampleL.responses[statusCodeFromRecording] = {
