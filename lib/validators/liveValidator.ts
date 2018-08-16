@@ -593,13 +593,9 @@ export class LiveValidator {
     // If we do not find any match then we'll look into Microsoft.Unknown -> unknown-api-version
     // for given requestMethod as the fall back option
     if (!potentialOperations.length) {
-      if (
-        this.cache[C.unknownResourceProvider] &&
-        this.cache[C.unknownResourceProvider][C.unknownApiVersion]
-      ) {
-        operations = this.cache[C.unknownResourceProvider][C.unknownApiVersion][
-          requestMethod
-        ]
+      const c = this.cache[C.unknownResourceProvider]
+      if (c && c[C.unknownApiVersion]) {
+        operations = c[C.unknownApiVersion][requestMethod]
         potentialOperations = operations.filter(operation => {
           const pathObject = operation.pathObject as Path
           let pathTemplate = pathObject.path

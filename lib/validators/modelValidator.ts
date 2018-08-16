@@ -14,7 +14,7 @@ import * as utils from "../util/utils"
 import { CommonError } from "../util/commonError"
 import { ErrorCodes } from "../util/constants"
 import { log } from "../util/logging"
-import { StringMap, MutableStringMap } from "@ts-common/string-map"
+import { StringMap, MutableStringMap, entries } from "@ts-common/string-map"
 import { Operation } from "yasway"
 import * as Sway from "yasway"
 import { ResponseWrapper } from "../models/responseWrapper"
@@ -305,16 +305,12 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
           if (responseValidation === undefined) {
             throw new Error("responseValidation is undefined")
           }
-          for (const responseStatusCode of utils.getKeys(responseValidation)) {
-            const responseValidationErrors =
-              responseValidation[responseStatusCode].errors
-            const responseValidationWarnings =
-              responseValidation[responseStatusCode].warnings
+          for (const [responseStatusCode, value] of entries(responseValidation)) {
             this.constructResponseResultWrapper(
               operationId,
               responseStatusCode,
-              responseValidationErrors,
-              responseValidationWarnings,
+              value.errors,
+              value.warnings,
               exampleType,
               scenario
             )
@@ -345,18 +341,12 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
         utils.getKeys(result.responseValidation).length
       ) {
         // responseValidation
-        for (const responseStatusCode of utils.getKeys(
-          result.responseValidation
-        )) {
-          const responseValidationErrors =
-            result.responseValidation[responseStatusCode].errors
-          const responseValidationWarnings =
-            result.responseValidation[responseStatusCode].warnings
+        for (const [responseStatusCode, value] of entries(result.responseValidation)) {
           this.constructResponseResultWrapper(
             operationId,
             responseStatusCode,
-            responseValidationErrors,
-            responseValidationWarnings,
+            value.errors,
+            value.warnings,
             exampleType
           )
         }
@@ -618,7 +608,8 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       if (responsesInSwagger[exampleResponseStatusCode]) {
         delete responsesInSwagger[exampleResponseStatusCode]
       }
-      result[exampleResponseStatusCode] = { errors: [], warnings: [] }
+      const validationResults: Sway.ValidationResults = { errors: [], warnings: [] }
+      result[exampleResponseStatusCode] = validationResults
       // have to ensure how to map negative status codes to default. There have been several issues
       // filed in the Autorest repo, w.r.t how
       // default is handled. While solving that issue, we may come up with some extension. Once that
@@ -632,7 +623,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
           ErrorCodes.ResponseStatusCodeNotInSpec,
           msg
         )
-        result[exampleResponseStatusCode].errors.push(e)
+        validationResults.errors.push(e)
         log.error(e as any)
         continue
       }
@@ -652,7 +643,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
           ErrorCodes.ResponseSchemaNotInSpec,
           msg
         )
-        result[exampleResponseStatusCode].errors.push(e)
+        validationResults.errors.push(e)
         log.error(e as any)
         continue
       }

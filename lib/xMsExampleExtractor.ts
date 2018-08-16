@@ -234,11 +234,8 @@ export class XMsExampleExtractor {
                     for (const _ of utils.getKeys(responses)) {
                       const statusCodeFromRecording = entries[entry].StatusCode
                       const responseBody = entries[entry].ResponseBody
-                      exampleL.responses[statusCodeFromRecording] = {}
-                      if (responseBody !== "") {
-                        exampleL.responses[statusCodeFromRecording].body = JSON.parse(responseBody)
-                      } else {
-                        exampleL.responses[statusCodeFromRecording].body = ""
+                      exampleL.responses[statusCodeFromRecording] = {
+                        body: responseBody !== "" ? JSON.parse(responseBody) : ""
                       }
                     }
                     log.info(`Writing x-ms-examples at ${outputExamples + exampleFileName}`)

@@ -30,7 +30,7 @@ export interface RequestValidation {
 }
 
 interface ResponseValidation {
-  readonly [name: string]: Sway.ValidationResults
+  readonly [name: string]: Sway.ValidationResults|undefined
 }
 
 export interface ValidationResult {

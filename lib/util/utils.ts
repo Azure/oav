@@ -61,8 +61,9 @@ export async function parseJson(specPath: string): Promise<SwaggerObject> {
         "string."
     )
   }
-  if (docCache[specPath]) {
-    return await docCache[specPath]
+  const doc = docCache[specPath]
+  if (doc) {
+    return await doc
   }
   // url
   if (specPath.match(/^http.*/gi) !== null) {

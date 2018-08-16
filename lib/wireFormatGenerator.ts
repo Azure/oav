@@ -16,7 +16,7 @@ import { ResponseWrapper } from "./models/responseWrapper"
 import { MarkdownHttpTemplate } from "./templates/markdownHttpTemplate"
 import { YamlHttpTemplate } from "./templates/yamlHttpTemplate"
 import * as C from "./util/constants"
-import { MutableStringMap, StringMap } from "@ts-common/string-map"
+import { MutableStringMap, StringMap, entries } from "@ts-common/string-map"
 import { PathTemplateBasedRequestPrepareOptions } from "ms-rest"
 import { Responses, Headers } from "./templates/httpTemplate"
 
@@ -341,14 +341,18 @@ export class WireFormatGenerator {
         const paramType = location + "Parameters"
         const optionsParameters = options as any as MutableStringMap<MutableStringMap<unknown>>
         if (!optionsParameters[paramType]) { optionsParameters[paramType] = {} }
+        const op = optionsParameters[paramType]
+        if (op === undefined) {
+          throw new Error("op === undefined")
+        }
         if (parameter[C.xmsSkipUrlEncoding]
-          || utils.isUrlEncoded(exampleParameterValues[parameter.name])) {
-            optionsParameters[paramType][parameter.name] = {
+          || utils.isUrlEncoded(exampleParameterValues[parameter.name] as string)) {
+          op[parameter.name] = {
             value: exampleParameterValues[parameter.name],
             skipUrlEncoding: true
           }
         } else {
-          optionsParameters[paramType][parameter.name] = exampleParameterValues[parameter.name]
+          op[parameter.name] = exampleParameterValues[parameter.name]
         }
       } else if (location === "body") {
         options.body = exampleParameterValues[parameter.name]
@@ -412,12 +416,11 @@ export class WireFormatGenerator {
       result.standard = { finalResponse: undefined }
     }
 
-    for (const exampleResponseStatusCode of utils.getKeys(exampleResponseValue)) {
+    for (const [exampleResponseStatusCode, value] of entries(exampleResponseValue)) {
       const response = operation.getResponse(exampleResponseStatusCode)
       if (response) {
-        const exampleResponseHeaders =
-          exampleResponseValue[exampleResponseStatusCode].headers || {}
-        const exampleResponseBody = exampleResponseValue[exampleResponseStatusCode].body
+        const exampleResponseHeaders = value.headers || {}
+        const exampleResponseBody = value.body
         // ensure content-type header is present
         if (!(exampleResponseHeaders["content-type"] || exampleResponseHeaders["Content-Type"])) {
           exampleResponseHeaders["content-type"] = utils.getJsonContentType(operation.produces)
