@@ -9,6 +9,7 @@ import { ModelValidationError } from "./modelValidationError"
 import { CommonError } from "./commonError"
 import * as sm from "@ts-common/string-map"
 import * as it from "@ts-common/iterator"
+import { SwaggerObject } from "yasway"
 
 export interface Result {
   isValid?: unknown
@@ -26,6 +27,7 @@ export interface OperationResult {
 }
 
 export function scenarioReducer(
+  spec: SwaggerObject,
   scenarioName: string,
   scenario: Scenario,
   operationId: string,
@@ -41,9 +43,9 @@ export function scenarioReducer(
     responseValidationResult: {
       errors: []
     }
-  };
+  }
   // process request separately since its unique
-  const processedErrors = processValidationErrors(rawValidationResult);
+  const processedErrors = processValidationErrors(spec, rawValidationResult);
 
   if (processedErrors.requestValidationResult.errors === undefined) {
     throw new Error("ICE: processedErrors.requestValidationResult.errors === undefined")
@@ -60,14 +62,10 @@ export function scenarioReducer(
   // process responses
   rawValidationResult.requestValidationResult.errors = [];
 
-  const responses = scenario.responses
-  if (responses === undefined) {
-    throw new Error("ICE: responses is undefined")
-  }
-
-  const entries = sm.entries(responses)
+  const entries = sm.entries(scenario.responses)
   const invalidResponses = it.filter(entries, ([_, response]) => !response.isValid)
   const result = it.flatMap(invalidResponses, ([responseCode]) => responseReducer(
+    spec,
     responseCode,
     scenario,
     rawValidationResult,

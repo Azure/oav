@@ -69,9 +69,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
         [C.exampleInSpec]: {}
       }
       this.validateOperation(operation)
-      const operationResult = this.specValidationResult.operations[
-        operation.operationId
-      ]
+      const operationResult = this.specValidationResult.operations[operation.operationId]
       if (operationResult === undefined) {
         throw new Error("operationResult is undefined")
       }
@@ -463,7 +461,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
 
     let result: RequestValidation = {}
     if (bodyParam && bodyParam.schema && bodyParam.schema.example) {
-      const exampleParameterValues: { [name: string]: object } = {}
+      const exampleParameterValues: MutableStringMap<object> = {}
       for (const parameter of parameters) {
         log.debug(
           `Getting sample value for parameter "${
@@ -698,7 +696,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
    */
   private validateRequest(
     operation: Operation,
-    exampleParameterValues: { [name: string]: {} }
+    exampleParameterValues: StringMap<{}>
   ): RequestValidation {
     if (
       operation === null ||

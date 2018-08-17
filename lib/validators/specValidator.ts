@@ -67,11 +67,11 @@ export class SpecValidator<T extends CommonValidationResult> {
 
   public specValidationResult: T
 
+  public specInJson: SwaggerObject
+
   protected swaggerApi: Sway.SwaggerApi|null
 
   protected specPath: string
-
-  protected specInJson: SwaggerObject
 
   private specDir: unknown
 
