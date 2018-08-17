@@ -17,9 +17,7 @@ import * as umlGeneratorLib from "./umlGenerator"
 import { getErrorsFromModelValidation } from "./util/getErrorsFromModelValidation"
 import { SemanticValidator } from "./validators/semanticValidator"
 import { ModelValidator } from "./validators/modelValidator"
-import { ModelValidationError } from "./util/modelValidationError"
-import { SwaggerObject } from "yasway"
-import { getInfo } from "@ts-common/source-map"
+import { errorsAddFileInfo } from "./util/errorFileInfo"
 
 interface FinalValidationResult {
   [name: string]: unknown
@@ -70,7 +68,8 @@ export async function getDocumentsFromCompositeSwagger(
 }
 
 async function validate<T>(
-  options: Options|undefined, func: (options: Options) => Promise<T>
+  options: Options|undefined,
+  func: (options: Options) => Promise<T>,
 ): Promise<T> {
   if (!options) { options = {} }
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
@@ -87,7 +86,8 @@ async function validate<T>(
 }
 
 export async function validateSpec(
-  specPath: string, options: Options|undefined
+  specPath: string,
+  options: Options|undefined,
 ): Promise<SpecValidationResult> {
   return await validate(options, async o => {
     // As a part of resolving discriminators we replace all the parent references
@@ -142,8 +142,11 @@ export async function validateExamples(
     if (o.pretty) {
       /* tslint:disable-next-line:no-console no-string-literal */
       console.log(`Validating "examples" and "x-ms-examples" in  ${specPath}:\n`)
-      const errors = getErrorsFromModelValidation(validator.specValidationResult)
-      addFilePosition(validator.specInJson, errors)
+      const errors = getErrorsFromModelValidation(
+        validator.specInJson,
+        validator.specValidationResult,
+      )
+      errorsAddFileInfo(validator.specInJson, errors)
       if (errors.length > 0) {
         for (const error of errors) {
           const yaml = jsYaml.dump(error)
@@ -158,22 +161,9 @@ export async function validateExamples(
   })
 }
 
-const addFilePosition = (spec: SwaggerObject, errors: Iterable<ModelValidationError>) => {
-  for (const e of errors) {
-    if (e.title !== undefined) {
-      const o = utils.getObject(spec, e.title)
-      if (o !== undefined && typeof o === "object") {
-        const info = getInfo(o as object)
-        if (info !== undefined && info.kind === "object") {
-          e.position = info.position
-        }
-      }
-    }
-  }
-}
-
 export async function validateExamplesInCompositeSpec(
-  compositeSpecPath: string, options: Options
+  compositeSpecPath: string,
+  options: Options
 ): Promise<ReadonlyArray<SpecValidationResult>> {
   return await validate(options, async o => {
     o.consoleLogLevel = log.consoleLogLevel

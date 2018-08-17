@@ -1,6 +1,6 @@
 {
   "name": "oav",
-  "version": "0.4.70",
+  "version": "0.4.71",
   "author": {
     "name": "Microsoft Corporation",
     "email": "azsdkteam@microsoft.com",
@@ -10,12 +10,12 @@
   "license": "MIT",
   "dependencies": {
     "@microsoft.azure/autorest-extension-base": "1.0.13",
-    "@ts-common/iterator": "0.0.32",
+    "@ts-common/iterator": "0.0.33",
     "@ts-common/json": "0.0.14",
-    "@ts-common/json-parser": "0.0.3",
+    "@ts-common/json-parser": "0.0.4",
     "@ts-common/string-map": "0.0.16",
     "@ts-common/property-set": "0.0.7",
-    "@ts-common/source-map": "0.0.18",
+    "@ts-common/source-map": "0.0.19",
     "@ts-common/tuple": "0.0.0",
     "@types/lodash": "^4.14.116",
     "@types/request": "^2.47.1",

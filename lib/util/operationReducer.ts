@@ -6,6 +6,7 @@ import { ModelValidationError } from "./modelValidationError"
 import { Scenarios } from "./responseReducer"
 import * as sm from "@ts-common/string-map"
 import * as it from "@ts-common/iterator"
+import { SwaggerObject } from "yasway"
 
 interface OperationResultScenarios {
   readonly operationId: string
@@ -13,12 +14,13 @@ interface OperationResultScenarios {
 }
 
 export function operationReducer(
-  {operationId, scenarios }: OperationResultScenarios
+  spec: SwaggerObject,
+  { operationId, scenarios }: OperationResultScenarios,
 ): Iterable<ModelValidationError> {
   const scenariosEntries = sm.entries(scenarios)
   const invalidScenarios = it.filter(scenariosEntries, ([_, scenario]) => !scenario.isValid)
   const result = it.flatMap(
     invalidScenarios,
-    ([scenarioName, scenario]) => scenarioReducer(scenarioName, scenario, operationId))
+    ([scenarioName, scenario]) => scenarioReducer(spec, scenarioName, scenario, operationId))
   return result
 }

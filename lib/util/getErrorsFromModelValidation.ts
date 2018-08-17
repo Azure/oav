@@ -6,6 +6,7 @@ import { operationReducer } from "./operationReducer"
 import { OperationResult } from "./scenarioReducer"
 import * as sm from "@ts-common/string-map"
 import * as it from "@ts-common/iterator"
+import { SwaggerObject } from "yasway"
 
 export interface ModelValidation {
   operations: sm.MutableStringMap<OperationResult|undefined>
@@ -15,7 +16,8 @@ export interface ModelValidation {
  * From the raw validator engine results process errors to be served.
  */
 export function getErrorsFromModelValidation(
-  validationResult: ModelValidation
+  spec: SwaggerObject,
+  validationResult: ModelValidation,
 ): ReadonlyArray<ModelValidationError> {
   if (!validationResult.operations) {
     return [];
@@ -35,5 +37,5 @@ export function getErrorsFromModelValidation(
       }
       return { operationId, scenarios }
     })
-  return it.toArray(it.flatMap(operations, operationReducer))
+  return it.toArray(it.flatMap(operations, operation => operationReducer(spec, operation)))
 }

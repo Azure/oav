@@ -12,13 +12,13 @@ export function transform(spec: SwaggerObject): SwaggerObject {
   }
 
   for (const [definitionName, definition] of entries(spec.definitions)) {
-    insertSchemaTitle(definition, `#/definitions/${definitionName}`)
+    insertSchemaTitle(definition, `/definitions/${definitionName}`)
 
     if (definition.properties) {
       for (const [propertyName, property] of entries(definition.properties)) {
         insertSchemaTitle(
           property,
-          `#/definitions/${definitionName}/properties/${propertyName}`
+          `/definitions/${definitionName}/properties/${propertyName}`
         )
       }
     }

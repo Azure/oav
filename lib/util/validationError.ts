@@ -3,6 +3,9 @@
 import { Severity } from "./severity"
 import _ from "lodash"
 import { FilePosition } from "@ts-common/source-map"
+import { flatMap, fold } from "@ts-common/iterator"
+import { errorsAddFileInfo } from "./errorFileInfo"
+import { SwaggerObject } from "yasway"
 
 /**
  * @class
@@ -19,6 +22,9 @@ export class ValidationError {
     public readonly severity: Severity
   ) {}
 }
+
+const validationErrorEntry = (id: string, severity: Severity): [string, ValidationError] =>
+  [id, new ValidationError(id, severity)]
 
 export const errorConstants = new Map<string, ValidationError>([
   validationErrorEntry("INVALID_TYPE", Severity.Critical),
@@ -77,7 +83,7 @@ export const errorConstants = new Map<string, ValidationError>([
 /**
  * Gets the severity from an error code. If the code is unknown assume critical.
  */
-export function errorCodeToSeverity(code: string): Severity {
+export const errorCodeToSeverity = (code: string): Severity => {
   const errorConstant = errorConstants.get(code)
   return errorConstant ? errorConstant.severity : Severity.Critical
 }
@@ -95,6 +101,7 @@ export interface NodeError<T extends NodeError<T>> {
   message?: string
 
   position?: FilePosition
+  url?: string
 }
 
 export interface ValidationResult<T extends NodeError<T>> {
@@ -108,7 +115,10 @@ export interface ValidationResult<T extends NodeError<T>> {
 export function processValidationErrors<
   V extends ValidationResult<T>,
   T extends NodeError<T>
->(rawValidation: V): V {
+>(
+  spec: SwaggerObject,
+  rawValidation: V
+): V {
   const requestSerializedErrors: T[] = serializeErrors(
     rawValidation.requestValidationResult,
     []
@@ -118,8 +128,8 @@ export function processValidationErrors<
     []
   )
 
-  rawValidation.requestValidationResult.errors = requestSerializedErrors
-  rawValidation.responseValidationResult.errors = responseSerializedErrors
+  rawValidation.requestValidationResult.errors = errorsAddFileInfo(spec, requestSerializedErrors)
+  rawValidation.responseValidationResult.errors = errorsAddFileInfo(spec, responseSerializedErrors)
 
   return rawValidation
 }
@@ -131,6 +141,7 @@ export function serializeErrors<T extends NodeError<T>>(
   node: T,
   path: Array<unknown>
 ): T[] {
+
   if (isLeaf(node)) {
     if (isTrueError(node)) {
       if (node.path) {
@@ -156,16 +167,14 @@ export function serializeErrors<T extends NodeError<T>>(
     path = consolidatePath(path, node.path)
   }
 
-  let serializedErrors: T[] = []
-  if (node.errors) {
-    serializedErrors = node.errors.reduce((acc, validationError) => {
-      return acc.concat(serializeErrors(validationError, path))
-    }, new Array<T>())
-  }
+  const serializedErrors = Array.from(flatMap(
+    node.errors,
+    validationError => serializeErrors(validationError, path)
+  ))
 
-  let serializedInner: T[] = []
-  if (node.inner) {
-    serializedInner = node.inner.reduce((acc, validationError) => {
+  const serializedInner = fold(
+    node.inner,
+    (acc, validationError) => {
       const errs = serializeErrors(validationError, path)
       errs.forEach(err => {
         const similarErr = acc.find(el => areErrorsSimilar(err, el))
@@ -179,8 +188,9 @@ export function serializeErrors<T extends NodeError<T>>(
         }
       })
       return acc
-    }, new Array<T>())
-  }
+    },
+    new Array<T>()
+  )
 
   if (isDiscriminatorError(node)) {
     if (node.path) {
@@ -208,7 +218,9 @@ function areErrorsSimilar<T extends NodeError<T>>(node1: T, node2: T) {
 
   if (!node1.inner && !node2.inner) {
     return true
-  } else if (
+  }
+
+  if (
     !node1.inner ||
     !node2.inner ||
     node1.inner.length !== node2.inner.length
@@ -231,9 +243,10 @@ const arePathsSimilar = (
   path1: string | string[] | undefined,
   path2: string | string[] | undefined
 ) => {
-  if (path1 === undefined && path2 === undefined) {
+  if (path1 === path2) {
     return true
-  } else if (path1 === undefined || path2 === undefined) {
+  }
+  if (path1 === undefined || path2 === undefined) {
     return false
   }
 
@@ -244,32 +257,17 @@ const arePathsSimilar = (
 }
 
 function isDiscriminatorError<T extends NodeError<T>>(node: T) {
-  if (node.code === "ONE_OF_MISSING" && node.inner && node.inner.length > 0) {
-    return true
-  } else {
-    return false
-  }
-}
-
-function validationErrorEntry(
-  id: string,
-  severity: Severity
-): [string, ValidationError] {
-  return [id, new ValidationError(id, severity)]
+  return node.code === "ONE_OF_MISSING" && node.inner && node.inner.length > 0
 }
 
 function isTrueError<T extends NodeError<T>>(node: T): boolean {
   // this is necessary to filter out extra errors coming from doing the ONE_OF transformation on
   // the models to allow "null"
-  if (
+  return !(
     node.code === "INVALID_TYPE" &&
     node.params &&
     node.params[0] === "null"
-  ) {
-    return false
-  } else {
-    return true
-  }
+  )
 }
 
 function isLeaf<T extends NodeError<T>>(node: T): boolean {

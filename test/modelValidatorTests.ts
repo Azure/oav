@@ -7,6 +7,7 @@ import assert from "assert"
 import * as validate from "../lib/validate"
 import { getErrorsFromModelValidation } from "../lib/util/getErrorsFromModelValidation"
 import { SerializedError } from "../lib/util/baseValidationError"
+import { parseJson } from "../lib/util/utils"
 
 const specPath =
   `${__dirname}/modelValidation/swaggers/specification/scenarios/resource-manager/` +
@@ -58,7 +59,7 @@ describe("Model Validation", () => {
           `contains model validation errors.`
       )
 
-      const serializedErrors = getErrorsFromModelValidation(result)
+      const serializedErrors = getErrorsFromModelValidation(await parseJson(localSpecPath), result)
       assert(
         serializedErrors.length === 1,
         `swagger "${specPath} with operation "${operationIds}" should report only 1 error.`
