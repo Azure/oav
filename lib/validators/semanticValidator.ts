@@ -9,7 +9,7 @@ import { validateResponse } from "../util/validationResponse"
 import * as C from "../util/constants"
 import * as util from "util"
 import { CommonError } from "../util/commonError"
-import * as utils from "../util/utils"
+import { keys } from "@ts-common/string-map"
 
 export interface Result {
   isValid?: unknown
@@ -91,13 +91,10 @@ export class SemanticValidator extends SpecValidator<SemanticValidationResult> {
     const re = /^(.*)\/providers\/(\w+\.\w+)\/(.*)$/ig
     if (this.specInJson) {
       if (this.specInJson.paths) {
-        const paths = utils.getKeys(this.specInJson.paths)
-        if (paths) {
-          for (const pathStr of paths) {
-            const res = re.exec(pathStr)
-            if (res && res[2]) {
-              return res[2]
-            }
+        for (const pathStr of keys(this.specInJson.paths)) {
+          const res = re.exec(pathStr)
+          if (res && res[2]) {
+            return res[2]
           }
         }
       }

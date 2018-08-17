@@ -16,9 +16,10 @@ import { ResponseWrapper } from "./models/responseWrapper"
 import { MarkdownHttpTemplate } from "./templates/markdownHttpTemplate"
 import { YamlHttpTemplate } from "./templates/yamlHttpTemplate"
 import * as C from "./util/constants"
-import { MutableStringMap, StringMap } from "@ts-common/string-map"
+import { MutableStringMap, StringMap, entries } from "@ts-common/string-map"
 import { PathTemplateBasedRequestPrepareOptions } from "ms-rest"
 import { Responses, Headers } from "./templates/httpTemplate"
+import { map, toArray } from "@ts-common/iterator"
 
 const ErrorCodes = C.ErrorCodes
 
@@ -189,11 +190,14 @@ export class WireFormatGenerator {
     }
 
     const allRefsRemoteRelative = JsonRefs.findRefs(this.specInJson, options)
-    const promiseFactories = utils.getKeys(allRefsRemoteRelative as any).map(refName => {
-      const refDetails = (allRefsRemoteRelative as any)[refName]
-      return async () => await this.resolveRelativeReference(
-        refName, refDetails, this.specInJson, this.specPath)
-    })
+    const e = entries(allRefsRemoteRelative as StringMap<any>)
+    const promiseFactories = toArray(map(
+      e,
+      ([refName, refDetails]) => {
+        return async () => await this.resolveRelativeReference(
+          refName, refDetails, this.specInJson, this.specPath)
+      }
+    ))
     if (promiseFactories.length) {
       return await utils.executePromisesSequentially(promiseFactories)
     } else {
@@ -273,16 +277,16 @@ export class WireFormatGenerator {
     }
     const xmsExamples = operation[C.xmsExamples]
     if (xmsExamples) {
-      for (const scenario of utils.getKeys(xmsExamples)) {
+      for (const [scenario, v] of entries(xmsExamples as StringMap<any>)) {
         // If we do not see the value property then we assume that the swagger spec had
         // x-ms-examples references resolved.
         // Then we do not need to access the value property. At the same time the file name for
         // wire-format will be the sanitized scenario name.
-        const xmsExample = xmsExamples[scenario].value || xmsExamples[scenario]
+        const xmsExample = v.value || v
         const sampleRequest = this.processRequest(operation, xmsExample.parameters)
         const sampleResponses = this.processXmsExampleResponses(operation, xmsExample.responses)
-        const exampleFileName = xmsExamples[scenario].filePath
-          ? path.basename(xmsExamples[scenario].filePath)
+        const exampleFileName = v.filePath
+          ? path.basename(v.filePath)
           : `${utils.sanitizeFileName(scenario)}.json`
         let wireFormatFileName =
           `${exampleFileName.substring(0, exampleFileName.indexOf(path.extname(exampleFileName)))}.`
@@ -341,14 +345,18 @@ export class WireFormatGenerator {
         const paramType = location + "Parameters"
         const optionsParameters = options as any as MutableStringMap<MutableStringMap<unknown>>
         if (!optionsParameters[paramType]) { optionsParameters[paramType] = {} }
+        const op = optionsParameters[paramType]
+        if (op === undefined) {
+          throw new Error("op === undefined")
+        }
         if (parameter[C.xmsSkipUrlEncoding]
-          || utils.isUrlEncoded(exampleParameterValues[parameter.name])) {
-            optionsParameters[paramType][parameter.name] = {
+          || utils.isUrlEncoded(exampleParameterValues[parameter.name] as string)) {
+          op[parameter.name] = {
             value: exampleParameterValues[parameter.name],
             skipUrlEncoding: true
           }
         } else {
-          optionsParameters[paramType][parameter.name] = exampleParameterValues[parameter.name]
+          op[parameter.name] = exampleParameterValues[parameter.name]
         }
       } else if (location === "body") {
         options.body = exampleParameterValues[parameter.name]
@@ -412,12 +420,11 @@ export class WireFormatGenerator {
       result.standard = { finalResponse: undefined }
     }
 
-    for (const exampleResponseStatusCode of utils.getKeys(exampleResponseValue)) {
+    for (const [exampleResponseStatusCode, value] of entries(exampleResponseValue)) {
       const response = operation.getResponse(exampleResponseStatusCode)
       if (response) {
-        const exampleResponseHeaders =
-          exampleResponseValue[exampleResponseStatusCode].headers || {}
-        const exampleResponseBody = exampleResponseValue[exampleResponseStatusCode].body
+        const exampleResponseHeaders = value.headers || {}
+        const exampleResponseBody = value.body
         // ensure content-type header is present
         if (!(exampleResponseHeaders["content-type"] || exampleResponseHeaders["Content-Type"])) {
           exampleResponseHeaders["content-type"] = utils.getJsonContentType(operation.produces)

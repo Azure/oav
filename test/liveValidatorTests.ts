@@ -168,13 +168,17 @@ describe("Live Validator", () => {
         await validator.initialize()
         assert.equal(true, expectedProvider in validator.cache)
         assert.equal(6, Object.keys(validator.cache).length)
-        assert.equal(true, expectedApiVersion in (validator.cache[expectedProvider]))
-        assert.equal(1, Object.keys(validator.cache[expectedProvider]).length)
-        assert.equal(2, validator.cache[expectedProvider][expectedApiVersion].get.length)
-        assert.equal(1, validator.cache[expectedProvider][expectedApiVersion].put.length)
-        assert.equal(1, validator.cache[expectedProvider][expectedApiVersion].patch.length)
-        assert.equal(1, validator.cache[expectedProvider][expectedApiVersion].delete.length)
-        assert.equal(4, validator.cache[expectedProvider][expectedApiVersion].post.length)
+        const x = validator.cache[expectedProvider]
+        if (x === undefined) {
+          throw new Error("x === undefined")
+        }
+        assert.equal(true, expectedApiVersion in x)
+        assert.equal(1, Object.keys(x).length)
+        assert.equal(2, x[expectedApiVersion].get.length)
+        assert.equal(1, x[expectedApiVersion].put.length)
+        assert.equal(1, x[expectedApiVersion].patch.length)
+        assert.equal(1, x[expectedApiVersion].delete.length)
+        assert.equal(4, x[expectedApiVersion].post.length)
       } catch (err) {
         assert.ifError(err)
       }
@@ -189,39 +193,41 @@ describe("Live Validator", () => {
       await validator.initialize()
       assert.equal(true, expectedProvider in validator.cache)
       assert.equal(6, Object.keys(validator.cache).length)
-      assert.equal(true, expectedApiVersion in (validator.cache[expectedProvider]))
-      assert.equal(1, Object.keys(validator.cache[expectedProvider]).length)
+      const x = validator.cache[expectedProvider]
+      if (x === undefined) {
+        throw new Error("x === undefined")
+      }
+      assert.equal(true, expectedApiVersion in x)
+      assert.equal(1, Object.keys(x).length)
       // 'microsoft.resources' -> '2016-09-01'
-      assert.equal(2, validator.cache[expectedProvider][expectedApiVersion].get.length)
-      assert.equal(1, validator.cache[expectedProvider][expectedApiVersion].delete.length)
-      assert.equal(3, validator.cache[expectedProvider][expectedApiVersion].post.length)
-      assert.equal(1, validator.cache[expectedProvider][expectedApiVersion].head.length)
-      assert.equal(1, validator.cache[expectedProvider][expectedApiVersion].put.length)
+      assert.equal(2, x[expectedApiVersion].get.length)
+      assert.equal(1, x[expectedApiVersion].delete.length)
+      assert.equal(3, x[expectedApiVersion].post.length)
+      assert.equal(1, x[expectedApiVersion].head.length)
+      assert.equal(1, x[expectedApiVersion].put.length)
+      const p = validator.cache[Constants.unknownResourceProvider]
+      if (p === undefined) {
+        throw new Error("p === undefined")
+      }
       // 'microsoft.unknown' -> 'unknown-api-version'
       assert.equal(
         4,
-        validator
-          .cache[Constants.unknownResourceProvider][Constants.unknownApiVersion].post.length)
+        p[Constants.unknownApiVersion].post.length)
       assert.equal(
         11,
-        validator
-          .cache[Constants.unknownResourceProvider][Constants.unknownApiVersion].get.length)
+        p[Constants.unknownApiVersion].get.length)
       assert.equal(
         3,
-        validator
-          .cache[Constants.unknownResourceProvider][Constants.unknownApiVersion].head.length)
+        p[Constants.unknownApiVersion].head.length)
       assert.equal(
         5,
-        validator
-          .cache[Constants.unknownResourceProvider][Constants.unknownApiVersion].put.length)
+        p[Constants.unknownApiVersion].put.length)
       assert.equal(
         5,
-        validator
-          .cache[Constants.unknownResourceProvider][Constants.unknownApiVersion].delete.length)
+        p[Constants.unknownApiVersion].delete.length)
       assert.equal(
         1,
-        validator
-          .cache[Constants.unknownResourceProvider][Constants.unknownApiVersion].patch.length)
+        p[Constants.unknownApiVersion].patch.length)
     })
     it("should initialize for all swaggers", async () => {
       const options = {
@@ -230,16 +236,36 @@ describe("Live Validator", () => {
       const validator = new LiveValidator(options)
       await validator.initialize()
       assert.equal(6, Object.keys(validator.cache).length)
-      assert.equal(2, validator.cache["microsoft.resources"]["2016-09-01"].get.length)
-      assert.equal(1, validator.cache["microsoft.resources"]["2016-09-01"].head.length)
-      assert.equal(1, validator.cache["microsoft.media"]["2015-10-01"].patch.length)
-      assert.equal(4, validator.cache["microsoft.media"]["2015-10-01"].post.length)
-      assert.equal(2, validator.cache["microsoft.search"]["2015-02-28"].get.length)
-      assert.equal(3, validator.cache["microsoft.search"]["2015-08-19"].get.length)
-      assert.equal(1, validator.cache["microsoft.storage"]["2015-05-01-preview"].patch.length)
-      assert.equal(4, validator.cache["microsoft.storage"]["2015-06-15"].get.length)
-      assert.equal(3, validator.cache["microsoft.storage"]["2016-01-01"].post.length)
-      assert.equal(4, validator.cache["microsoft.test"]["2016-01-01"].post.length)
+      const microsoftResources = validator.cache["microsoft.resources"]
+      if (microsoftResources === undefined) {
+        throw new Error("microsoftResources === undefined")
+      }
+      assert.equal(2, microsoftResources["2016-09-01"].get.length)
+      assert.equal(1, microsoftResources["2016-09-01"].head.length)
+      const microsoftMedia = validator.cache["microsoft.media"]
+      if (microsoftMedia === undefined) {
+        throw new Error("microsoftMedia === undefined")
+      }
+      assert.equal(1, microsoftMedia["2015-10-01"].patch.length)
+      assert.equal(4, microsoftMedia["2015-10-01"].post.length)
+      const microsoftSearch = validator.cache["microsoft.search"]
+      if (microsoftSearch === undefined) {
+        throw new Error("microsoftSearch === undefined")
+      }
+      assert.equal(2, microsoftSearch["2015-02-28"].get.length)
+      assert.equal(3, microsoftSearch["2015-08-19"].get.length)
+      const microsoftStorage = validator.cache["microsoft.storage"]
+      if (microsoftStorage === undefined) {
+        throw new Error("microsoftStorage === undefined")
+      }
+      assert.equal(1, microsoftStorage["2015-05-01-preview"].patch.length)
+      assert.equal(4, microsoftStorage["2015-06-15"].get.length)
+      assert.equal(3, microsoftStorage["2016-01-01"].post.length)
+      const microsoftTest = validator.cache["microsoft.test"]
+      if (microsoftTest === undefined) {
+        throw new Error("microsoftTest === undefined")
+      }
+      assert.equal(4, microsoftTest["2016-01-01"].post.length)
     })
   })
 
@@ -378,8 +404,12 @@ describe("Live Validator", () => {
 
       const validator = new LiveValidator(options)
       await validator.initialize()
+      const microsoftTest = validator.cache["microsoft.test"]
+      if (microsoftTest === undefined) {
+        throw new Error("microsoftTest === undefined")
+      }
       // Operations to match is StorageAccounts_List
-      const operations = validator.cache["microsoft.test"]["2016-01-01"].post
+      const operations = microsoftTest["2016-01-01"].post
 
       for (const operation of operations) {
         const responses = operation.responses as ResponsesObject

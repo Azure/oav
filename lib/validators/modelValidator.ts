@@ -14,13 +14,14 @@ import * as utils from "../util/utils"
 import { CommonError } from "../util/commonError"
 import { ErrorCodes } from "../util/constants"
 import { log } from "../util/logging"
-import { StringMap, MutableStringMap } from "@ts-common/string-map"
+import { StringMap, MutableStringMap, entries, keys } from "@ts-common/string-map"
 import { Operation } from "yasway"
 import * as Sway from "yasway"
 import { ResponseWrapper } from "../models/responseWrapper"
 import { OperationExampleResult } from "../util/scenarioReducer"
 import { ModelValidationError } from "../util/modelValidationError"
 import * as msRest from "ms-rest"
+import { toArray, filter } from "@ts-common/iterator"
 
 const HttpRequest = msRest.WebResource
 
@@ -78,7 +79,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       if (example === undefined) {
         throw new Error("example is undefined")
       }
-      if (utils.getKeys(example).length === 0) {
+      if (toArray(keys(example as StringMap<unknown>)).length === 0) {
         delete operationResult[C.exampleInSpec]
       }
     }
@@ -102,7 +103,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     }
     if (exampleType === C.exampleInSpec) {
       const example = operationResult[exampleType]
-      if (!example || (example && !utils.getKeys(example).length)) {
+      if (!example || (example && !toArray(keys(example as StringMap<unknown>)).length)) {
         operationResult[exampleType] = initialResult
       }
     }
@@ -280,8 +281,8 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     }
     if (exampleType === C.xmsExamples) {
       if (result.scenarios) {
-        for (const scenario of utils.getKeys(result.scenarios)) {
-          const requestValidation = result.scenarios[scenario].requestValidation
+        for (const [scenario, v] of entries(result.scenarios)) {
+          const requestValidation = v.requestValidation
           if (requestValidation === undefined) {
             throw new Error("requestValidation is undefined")
           }
@@ -305,16 +306,12 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
           if (responseValidation === undefined) {
             throw new Error("responseValidation is undefined")
           }
-          for (const responseStatusCode of utils.getKeys(responseValidation)) {
-            const responseValidationErrors =
-              responseValidation[responseStatusCode].errors
-            const responseValidationWarnings =
-              responseValidation[responseStatusCode].warnings
+          for (const [responseStatusCode, value] of entries(responseValidation)) {
             this.constructResponseResultWrapper(
               operationId,
               responseStatusCode,
-              responseValidationErrors,
-              responseValidationWarnings,
+              value.errors,
+              value.warnings,
               exampleType,
               scenario
             )
@@ -324,7 +321,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     } else if (exampleType === C.exampleInSpec) {
       if (
         result.requestValidation &&
-        utils.getKeys(result.requestValidation).length
+        toArray(keys(result.requestValidation as StringMap<unknown>)).length
       ) {
         // requestValidation
         const validationResult = result.requestValidation.validationResult
@@ -342,21 +339,15 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       }
       if (
         result.responseValidation &&
-        utils.getKeys(result.responseValidation).length
+        toArray(keys(result.responseValidation)).length
       ) {
         // responseValidation
-        for (const responseStatusCode of utils.getKeys(
-          result.responseValidation
-        )) {
-          const responseValidationErrors =
-            result.responseValidation[responseStatusCode].errors
-          const responseValidationWarnings =
-            result.responseValidation[responseStatusCode].warnings
+        for (const [responseStatusCode, value] of entries(result.responseValidation)) {
           this.constructResponseResultWrapper(
             operationId,
             responseStatusCode,
-            responseValidationErrors,
-            responseValidationWarnings,
+            value.errors,
+            value.warnings,
             exampleType
           )
         }
@@ -611,14 +602,13 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     operation.getResponses().forEach(response => {
       responsesInSwagger[response.statusCode] = response.statusCode
     })
-    for (const exampleResponseStatusCode of utils.getKeys(
-      exampleResponseValue
-    )) {
+    for (const exampleResponseStatusCode of keys(exampleResponseValue)) {
       const response = operation.getResponse(exampleResponseStatusCode)
       if (responsesInSwagger[exampleResponseStatusCode]) {
         delete responsesInSwagger[exampleResponseStatusCode]
       }
-      result[exampleResponseStatusCode] = { errors: [], warnings: [] }
+      const validationResults: Sway.ValidationResults = { errors: [], warnings: [] }
+      result[exampleResponseStatusCode] = validationResults
       // have to ensure how to map negative status codes to default. There have been several issues
       // filed in the Autorest repo, w.r.t how
       // default is handled. While solving that issue, we may come up with some extension. Once that
@@ -632,7 +622,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
           ErrorCodes.ResponseStatusCodeNotInSpec,
           msg
         )
-        result[exampleResponseStatusCode].errors.push(e)
+        validationResults.errors.push(e)
         log.error(e as any)
         continue
       }
@@ -652,7 +642,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
           ErrorCodes.ResponseSchemaNotInSpec,
           msg
         )
-        result[exampleResponseStatusCode].errors.push(e)
+        validationResults.errors.push(e)
         log.error(e as any)
         continue
       }
@@ -675,9 +665,8 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       const validationResult = this.validateResponse(operation, exampleResponse)
       result[exampleResponseStatusCode] = validationResult
     }
-    const responseWithoutXmsExamples = utils
-      .getKeys(responsesInSwagger)
-      .filter(statusCode => statusCode !== "default")
+    const responseWithoutXmsExamples =
+      toArray(filter(keys(responsesInSwagger), statusCode => statusCode !== "default"))
 
     if (responseWithoutXmsExamples && responseWithoutXmsExamples.length) {
       const msg =

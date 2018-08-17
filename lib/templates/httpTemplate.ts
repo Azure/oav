@@ -2,9 +2,8 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import * as url from "url"
-import * as utils from "../util/utils"
 import * as msRest from "ms-rest"
-import { MutableStringMap } from "@ts-common/string-map"
+import { MutableStringMap, entries } from "@ts-common/string-map"
 
 export type Headers = MutableStringMap<string|undefined>
 
@@ -45,10 +44,8 @@ export class HttpTemplate {
       result += `\n${padding}-H 'Content-Length: ${JSON.stringify(this.request.body).length}' \\`
     }
     if (this.request.headers) {
-      const headers = utils.getKeys(this.request.headers)
-
-      for (const headerName of headers) {
-        result += `\n${padding}-H '${headerName}: ${this.request.headers[headerName]}' \\`
+      for (const [headerName, header] of entries(this.request.headers)) {
+        result += `\n${padding}-H '${headerName}: ${header}' \\`
       }
     }
     return result
