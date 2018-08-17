@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 import { Severity } from "./severity"
 import _ from "lodash"
+import { FilePosition } from "@ts-common/source-map"
 
 /**
  * @class
@@ -92,6 +93,8 @@ export interface NodeError<T extends NodeError<T>> {
   inner?: T[]
   title?: string
   message?: string
+
+  position?: FilePosition
 }
 
 export interface ValidationResult<T extends NodeError<T>> {
