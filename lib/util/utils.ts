@@ -112,7 +112,8 @@ export function parseContent(
   if (/.*\.json$/gi.test(filePath)) {
     return jsonParser.parse(
       { url: filePath, kind: "file" },
-      sanitizedContent, e => {
+      sanitizedContent,
+      e => {
         throw Error(e.message)
       }
     ) as SwaggerObject
@@ -343,7 +344,7 @@ export function mergeObjects<T extends MutableStringMap<unknown>>(
       } else if (!Array.isArray(targetProperty)) {
         throw new Error(
           `Cannot merge ${key} from source object into target object because the same property ` +
-          `in target object is not (of the same type) an Array.`
+            `in target object is not (of the same type) an Array.`
         )
       } else {
         target[key] = mergeArrays(sourceProperty, targetProperty)
@@ -403,7 +404,12 @@ export function getObject(doc: {}, ptr: string): unknown {
  * location provided by the ptr in the doc.
  * @param {overwrite} Optional parameter to decide if a pointer value should be overwritten.
  */
-export function setObject(doc: {}, ptr: string, value: unknown, overwrite = true) {
+export function setObject(
+  doc: {},
+  ptr: string,
+  value: unknown,
+  overwrite = true
+) {
   let result
   try {
     if (overwrite || !jsonPointer.has(doc, ptr)) {
@@ -648,10 +654,7 @@ interface Entity {
  * @returns {object} entity - The transformed entity if it is a pure object else the same entity is
  * returned as-is.
  */
-export function relaxEntityType<T extends Entity>(
-  entity: T,
-  _?: unknown
-): T {
+export function relaxEntityType<T extends Entity>(entity: T, _?: unknown): T {
   if (isPureObject(entity) && entity.type) {
     delete entity.type
   }
@@ -690,7 +693,7 @@ export function relaxModelLikeEntities(model: SchemaObject): SchemaObject {
 }
 
 /**
- * Relaxes the entity to be a oneOf: [the current type OR null type] if the condition is satisfied
+ * Relaxes the entity to be a anyOf: [the current type OR null type] if the condition is satisfied
  * @param {object} entity - The entity to be relaxed
  * @param {Boolean|undefined} isPropRequired - states whether the property is required.
  * If true then it is required. If false or undefined then it is not required.
@@ -713,7 +716,7 @@ export function allowNullType<T extends Entity>(
     }
 
     // takes care of string 'false' and 'true'
-    const xNullable = entity["x-nullable"] as (string|boolean)
+    const xNullable = entity["x-nullable"] as string | boolean
     if (typeof xNullable === "string") {
       switch (xNullable.toLowerCase()) {
         case "false":
@@ -729,11 +732,11 @@ export function allowNullType<T extends Entity>(
       const savedEntity = entity
       // handling nullable parameters
       if (savedEntity.in) {
-        entity.oneOf = [{ type: entity.type }, { type: "null" }]
+        entity.anyOf = [{ type: entity.type }, { type: "null" }]
         delete entity.type
       } else {
         entity = {
-          oneOf: [savedEntity, { type: "null" }]
+          anyOf: [savedEntity, { type: "null" }]
         } as T
       }
     }
@@ -753,11 +756,11 @@ export function allowNullType<T extends Entity>(
   return entity
 }
 
-/** logic table to determine when to use oneOf to accept null values
+/** logic table to determine when to use anyOf to accept null values
  * required \ x-nullable | True               | False | Undefined
  * ===============================================================
- * Yes                   | convert to oneOf[] |       |
- * No                    | convert to oneOf[] |       | convert to oneOf[]
+ * Yes                   | convert to anyOf[] |       |
+ * No                    | convert to anyOf[] |       | convert to anyOf[]
  */
 export function shouldAcceptNullValue(
   xnullable: unknown,
@@ -864,7 +867,9 @@ export function sanitizeFileName(str: string): string {
  * The check is necessary because Object.values does not coerce parameters to object type.
  * @param {*} obj
  */
-export function getValues<T>(obj: StringMap<T> | T[] | null): Array<NonUndefined<T>> {
+export function getValues<T>(
+  obj: StringMap<T> | T[] | null
+): Array<NonUndefined<T>> {
   if (obj === undefined || obj === null) {
     return []
   }
@@ -877,7 +882,7 @@ export function getValues<T>(obj: StringMap<T> | T[] | null): Array<NonUndefined
  * @param {*} obj
  */
 export function getKeys(
-  obj: StringMap<unknown> | Array<unknown>| undefined
+  obj: StringMap<unknown> | Array<unknown> | undefined
 ): string[] {
   if (obj === undefined || obj === null) {
     return []
