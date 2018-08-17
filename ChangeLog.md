@@ -1,6 +1,6 @@
 # Changelog
 
-### 08/17/2018 0.4.71
+### 08/17/2018 0.5.0
 
 - File URL and position
 
