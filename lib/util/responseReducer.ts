@@ -5,7 +5,6 @@ import { processValidationErrors, ValidationResult } from "./validationError"
 import { toModelErrors } from "./toModelErrors"
 import { ValidationResultSource } from "./validationResultSource"
 import { ModelValidationError } from "./modelValidationError"
-import { SwaggerObject } from "yasway"
 
 export interface Result {
   isValid?: unknown
@@ -29,7 +28,6 @@ export interface Scenario {
 }
 
 export function responseReducer(
-  spec: SwaggerObject,
   responseCode: string,
   scenario: Scenario,
   rawValidationResult: ValidationResult<ModelValidationError>,
@@ -44,7 +42,7 @@ export function responseReducer(
     ? response.error.innerErrors
     : []
 
-  const processedErrors = processValidationErrors(spec, rawValidationResult)
+  const processedErrors = processValidationErrors(rawValidationResult)
 
   if (processedErrors.responseValidationResult.errors === undefined) {
     throw new Error("ICE: processedErrors.responseValidationResult.errors === undefined")

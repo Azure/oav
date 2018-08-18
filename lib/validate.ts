@@ -142,11 +142,8 @@ export async function validateExamples(
     if (o.pretty) {
       /* tslint:disable-next-line:no-console no-string-literal */
       console.log(`Validating "examples" and "x-ms-examples" in  ${specPath}:\n`)
-      const errors = getErrorsFromModelValidation(
-        validator.specInJson,
-        validator.specValidationResult,
-      )
-      errorsAddFileInfo(validator.specInJson, errors)
+      const errors = getErrorsFromModelValidation(validator.specValidationResult)
+      errorsAddFileInfo(errors)
       if (errors.length > 0) {
         for (const error of errors) {
           const yaml = jsYaml.dump(error)
