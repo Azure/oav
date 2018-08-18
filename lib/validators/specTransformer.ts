@@ -44,7 +44,10 @@ function insertSchemaTitle(model: SchemaObject, title: string) {
   }
   if (info !== undefined) {
     if (info.kind === "object") {
-      titleObject.position = info.position
+      titleObject.position = {
+        line: info.position.line + 1,
+        column: info.position.column + 1,
+      }
     }
     titleObject.url = getFileInfo(info).url
   }
