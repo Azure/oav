@@ -1,5 +1,9 @@
 # Changelog
 
+### 08/17/2018 0.5.1
+
+- File URL and position in title
+
 ### 08/17/2018 0.5.0
 
 - File URL and position

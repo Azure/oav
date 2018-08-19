@@ -5,7 +5,6 @@ import _ from "lodash"
 import { FilePosition } from "@ts-common/source-map"
 import { flatMap, fold } from "@ts-common/iterator"
 import { errorsAddFileInfo } from "./errorFileInfo"
-import { SwaggerObject } from "yasway"
 
 /**
  * @class
@@ -115,10 +114,7 @@ export interface ValidationResult<T extends NodeError<T>> {
 export function processValidationErrors<
   V extends ValidationResult<T>,
   T extends NodeError<T>
->(
-  spec: SwaggerObject,
-  rawValidation: V
-): V {
+>(rawValidation: V): V {
   const requestSerializedErrors: T[] = serializeErrors(
     rawValidation.requestValidationResult,
     []
@@ -128,8 +124,8 @@ export function processValidationErrors<
     []
   )
 
-  rawValidation.requestValidationResult.errors = errorsAddFileInfo(spec, requestSerializedErrors)
-  rawValidation.responseValidationResult.errors = errorsAddFileInfo(spec, responseSerializedErrors)
+  rawValidation.requestValidationResult.errors = errorsAddFileInfo(requestSerializedErrors)
+  rawValidation.responseValidationResult.errors = errorsAddFileInfo(responseSerializedErrors)
 
   return rawValidation
 }

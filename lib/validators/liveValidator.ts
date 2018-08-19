@@ -50,13 +50,13 @@ export interface RequestResponseObj {
 export interface RequestValidationResult {
   successfulRequest: unknown
   operationInfo?: unknown
-  errors?: unknown
+  errors?: Array<unknown>
 }
 
 export interface ResponseValidationResult {
   successfulResponse: unknown
   operationInfo?: unknown
-  errors?: unknown
+  errors?: Array<unknown>
 }
 
 export interface ValidationResult {
