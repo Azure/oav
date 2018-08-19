@@ -1,6 +1,7 @@
 import { NodeError } from "./validationError"
 import { forEach } from "@ts-common/iterator"
 import { TitleObject } from "../validators/specTransformer"
+import { log } from "./logging"
 
 export const errorsAddFileInfo = <T extends NodeError<T>, E extends Iterable<T>>(
   errors: E|undefined,
@@ -20,7 +21,9 @@ const errorAddFileInfo = <T extends NodeError<T>>(error: T): void => {
         error.title = titleObject.title
       }
     // tslint:disable-next-line:no-empty
-    } catch { }
+    } catch {
+      log.error(`ICE: can't parse title: ${title}`)
+    }
   }
   errorsAddFileInfo(error.errors)
   errorsAddFileInfo(error.inner)
