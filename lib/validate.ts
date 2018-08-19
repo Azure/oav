@@ -17,7 +17,6 @@ import * as umlGeneratorLib from "./umlGenerator"
 import { getErrorsFromModelValidation } from "./util/getErrorsFromModelValidation"
 import { SemanticValidator } from "./validators/semanticValidator"
 import { ModelValidator } from "./validators/modelValidator"
-import { errorsAddFileInfo } from "./util/errorFileInfo"
 
 interface FinalValidationResult {
   [name: string]: unknown
