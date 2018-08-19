@@ -143,7 +143,6 @@ export async function validateExamples(
       /* tslint:disable-next-line:no-console no-string-literal */
       console.log(`Validating "examples" and "x-ms-examples" in  ${specPath}:\n`)
       const errors = getErrorsFromModelValidation(validator.specValidationResult)
-      errorsAddFileInfo(errors)
       if (errors.length > 0) {
         for (const error of errors) {
           const yaml = jsYaml.dump(error)
