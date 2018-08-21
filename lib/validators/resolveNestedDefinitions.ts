@@ -60,16 +60,15 @@ export function resolveNestedDefinitions(spec: SwaggerObject): SwaggerObject {
       {
         properties: properties => stringMapMap(properties, resolveNestedSchemaObject),
         additionalProperties: additionalProperties =>
-          additionalProperties === undefined ?
-            undefined :
-          typeof additionalProperties === "object" ?
-            resolveNestedSchemaObject(additionalProperties) :
-            additionalProperties,
+          additionalProperties === undefined || typeof additionalProperties !== "object" ?
+            additionalProperties :
+            resolveNestedSchemaObject(additionalProperties),
         items: skipUndefined(resolveNestedSchemaObject),
         allOf: skipUndefined(resolveSchemaObjectArray),
         anyOf: skipUndefined(resolveSchemaObjectArray),
         oneOf: skipUndefined(resolveSchemaObjectArray),
-      })
+      }
+    )
 
   const resolveParameterObject = (parameterObject: ParameterObject) =>
     propertySetMap(parameterObject, { schema: skipUndefined(resolveSchemaObject) })
@@ -82,7 +81,8 @@ export function resolveNestedDefinitions(spec: SwaggerObject): SwaggerObject {
           schema === undefined || schema.type === "file" ?
             schema :
             resolveSchemaObject(schema)
-      })
+      }
+    )
 
   const resolveParameterArray = (parametersTracked: ParameterObject[]) =>
     arrayMap(parametersTracked, resolveParameterObject) as ParameterObject[]
