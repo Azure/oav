@@ -419,6 +419,9 @@ describe("Live Validator", () => {
         if (responses.default.schema === undefined) {
           throw new Error("responses.default.schema === undefined")
         }
+        if (responses.default.schema.type === "file") {
+          throw new Error("responses.default.schema.type === \"file\"")
+        }
         if (responses.default.schema.properties === undefined) {
           throw new Error("responses.default.schema.properties === undefined")
         }
