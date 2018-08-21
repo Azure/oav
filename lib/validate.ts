@@ -17,10 +17,9 @@ import * as umlGeneratorLib from "./umlGenerator"
 import { getErrorsFromModelValidation } from "./util/getErrorsFromModelValidation"
 import { SemanticValidator } from "./validators/semanticValidator"
 import { ModelValidator } from "./validators/modelValidator"
+import { MutableStringMap } from "@ts-common/string-map"
 
-interface FinalValidationResult {
-  [name: string]: unknown
-}
+type FinalValidationResult = MutableStringMap<unknown>
 
 export interface Options extends specResolver.Options, umlGeneratorLib.Options {
   consoleLogLevel?: unknown

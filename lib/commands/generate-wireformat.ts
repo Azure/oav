@@ -19,9 +19,9 @@ export const builder: yargs.CommandBuilder = {
       "The output directory where the raw request/response markdown files need to be stored. " +
       "If not provided and if the spec-path is a local file path then the output will be stored " +
       'in a folder named "wire-format" adjacent to the directory of the swagger spec. ' +
-      'If the spec-path is a url then output will be stored in a folder named "wire-fromat" ' +
+      'If the spec-path is a url then output will be stored in a folder named "wire-format" ' +
       "inside the current working directory.",
-    strting: true,
+    string: true,
   },
   o: {
     alias: "operationIds",
