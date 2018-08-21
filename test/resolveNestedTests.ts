@@ -39,7 +39,14 @@ const options: sway.Options = {
                 $ref: "#/definitions/A"
               }
             }
-          ]
+          ],
+          responses: {
+            200: {
+              schema: {
+                type: "file"
+              }
+            }
+          }
         }
       }
     }

@@ -686,7 +686,7 @@ export class SpecResolver {
       }
       // scan every response in the operation
       for (const response of values(operation.responses)) {
-        if (response.schema && !octetStream(produces)) {
+        if (response.schema && !octetStream(produces) && response.schema.type !== "file") {
           response.schema = utils.relaxModelLikeEntities(response.schema)
         }
       }
@@ -829,7 +829,7 @@ export class SpecResolver {
         }
         // going through responses
         for (const response of values(operation.responses)) {
-          if (response.schema) {
+          if (response.schema && response.schema.type !== "file") {
             response.schema = utils.allowNullableTypes(response.schema)
           }
         }

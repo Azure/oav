@@ -8,7 +8,8 @@ import {
   SchemaObject,
   ResponseObject,
   PathItemObject,
-  OperationObject
+  OperationObject,
+  ResponseSchemaObject
 } from "yasway"
 import * as uuid from "uuid"
 import { arrayMap, propertySetMap, stringMapMap, stringMapMerge } from "@ts-common/source-map"
@@ -35,7 +36,6 @@ export function resolveNestedDefinitions(spec: SwaggerObject): SwaggerObject {
       case "string":
       case "boolean":
       case "null":
-      case "file":
         return schemaObject
     }
 
@@ -75,7 +75,14 @@ export function resolveNestedDefinitions(spec: SwaggerObject): SwaggerObject {
     propertySetMap(parameterObject, { schema: skipUndefined(resolveSchemaObject) })
 
   const resolveResponseObject = (responseObject: ResponseObject) =>
-    propertySetMap(responseObject, { schema: skipUndefined(resolveSchemaObject) })
+    propertySetMap(
+      responseObject,
+      {
+        schema: (schema?: ResponseSchemaObject) =>
+          schema === undefined || schema.type === "file" ?
+            schema :
+            resolveSchemaObject(schema)
+      })
 
   const resolveParameterArray = (parametersTracked: ParameterObject[]) =>
     arrayMap(parametersTracked, resolveParameterObject) as ParameterObject[]
