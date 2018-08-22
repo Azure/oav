@@ -14,7 +14,8 @@ import * as utils from "../util/utils"
 import { CommonError } from "../util/commonError"
 import { ErrorCodes } from "../util/constants"
 import { log } from "../util/logging"
-import { StringMap, MutableStringMap, entries, keys } from "@ts-common/string-map"
+import { StringMap, MutableStringMap, entries, keys, toStringMap } from "@ts-common/string-map"
+import * as sm from "@ts-common/string-map"
 import { Operation } from "yasway"
 import * as Sway from "yasway"
 import { ResponseWrapper } from "../models/responseWrapper"
@@ -77,7 +78,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       if (example === undefined) {
         throw new Error("example is undefined")
       }
-      if (toArray(keys(example as StringMap<unknown>)).length === 0) {
+      if (sm.isEmpty(toStringMap(example))) {
         delete operationResult[C.exampleInSpec]
       }
     }

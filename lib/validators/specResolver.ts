@@ -18,7 +18,14 @@ import {
   OperationObject
 } from "yasway"
 import { defaultIfUndefinedOrNull } from "../util/defaultIfUndefinedOrNull"
-import { MutableStringMap, Entry, entries, values, keys, StringMap } from "@ts-common/string-map"
+import {
+  MutableStringMap,
+  Entry,
+  entries,
+  values,
+  keys,
+  StringMap
+} from "@ts-common/string-map"
 import { resolveNestedDefinitions } from "./resolveNestedDefinitions"
 import { getOperations } from "../util/methods"
 import { transform } from "./specTransformer"
@@ -287,13 +294,12 @@ export class SpecResolver {
 
     const allRefsRemoteRelative = JsonRefs.findRefs(doc, options)
     const e = entries(allRefsRemoteRelative as StringMap<RefDetails>)
-    const promiseFactories = toArray(map(
-      e,
-      ([refName, refDetails]) => {
+    const promiseFactories = toArray(
+      map(e, ([refName, refDetails]) => {
         return async () =>
           await this.resolveRelativeReference(refName, refDetails, doc, docPath)
-      }
-    ))
+      })
+    )
     if (promiseFactories.length) {
       await utils.executePromisesSequentially(promiseFactories)
     }
@@ -686,7 +692,11 @@ export class SpecResolver {
       }
       // scan every response in the operation
       for (const response of values(operation.responses)) {
-        if (response.schema && !octetStream(produces) && response.schema.type !== "file") {
+        if (
+          response.schema &&
+          !octetStream(produces) &&
+          response.schema.type !== "file"
+        ) {
           response.schema = utils.relaxModelLikeEntities(response.schema)
         }
       }
@@ -716,7 +726,10 @@ export class SpecResolver {
       if (parameter.in && parameter.in === "body" && parameter.schema) {
         parameter.schema = utils.relaxModelLikeEntities(parameter.schema)
       }
-      parameters[paramName] = utils.relaxEntityType(parameter, parameter.required)
+      parameters[paramName] = utils.relaxEntityType(
+        parameter,
+        parameter.required
+      )
     }
   }
 
@@ -726,14 +739,15 @@ export class SpecResolver {
   private modelImplicitDefaultResponse(): void {
     const spec = this.specInJson
     const definitions = spec.definitions as DefinitionsObject
-    if (!definitions.CloudError) {
-      definitions.CloudErrorWrapper = utils.CloudErrorWrapper
-      definitions.CloudError = utils.CloudError
+    const addDefinition = (name: string, schema: SchemaObject) => {
+      if (definitions[name] !== undefined) { definitions[name] = schema }
     }
-    for (const pathObj of values(spec.paths)) {
+    addDefinition(utils.generatedCloudErrorName, utils.GeneratedCloudError)
+    addDefinition(utils.generatedCloudErrorWrapperName, utils.GeneratedCloudErrorWrapper)
+    for (const pathObj of values(spec.paths!)) {
       for (const operation of getOperations(pathObj)) {
         if (operation.responses && !operation.responses.default) {
-          operation.responses.default = utils.CloudErrorSchema
+          operation.responses.default = utils.GeneratedCloudErrorSchema
         }
       }
     }

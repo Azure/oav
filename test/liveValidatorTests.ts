@@ -395,13 +395,6 @@ describe("Live Validator", () => {
         swaggerPathsPattern: "**/*.json",
         shouldModelImplicitDefaultResponse: true
       }
-      /*
-      const apiUrl =
-        "https://management.azure.com/" +
-        "subscriptions/subscriptionId/providers/Microsoft.Test/storageAccounts" +
-        "?api-version=2016-01-01"
-      */
-
       const validator = new LiveValidator(options)
       await validator.initialize()
       const microsoftTest = validator.cache["microsoft.test"]
@@ -422,10 +415,11 @@ describe("Live Validator", () => {
         if (responses.default.schema.type === "file") {
           throw new Error("responses.default.schema.type === \"file\"")
         }
-        if (responses.default.schema.properties === undefined) {
-          throw new Error("responses.default.schema.properties === undefined")
-        }
-        assert.deepEqual(responses.default.schema.properties.error, utils.CloudError)
+        assert.deepEqual(responses.default, utils.GeneratedCloudErrorSchema)
+        assert.strictEqual(
+          responses.default.schema.$ref,
+          "#/definitions/" + utils.generatedCloudErrorWrapperName
+        )
       }
     })
   })

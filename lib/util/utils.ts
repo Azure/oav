@@ -15,6 +15,7 @@ import { MutableStringMap, entries } from "@ts-common/string-map"
 import { SwaggerObject, ParameterObject, SchemaObject, DataType } from "yasway"
 import * as jsonParser from "@ts-common/json-parser"
 import { cloneDeep, Data } from "@ts-common/source-map"
+import { generatedPrefix } from "../validators/resolveNestedDefinitions"
 
 export type DocCache = MutableStringMap<Promise<SwaggerObject>>
 
@@ -610,11 +611,7 @@ export function isPureObject(model: SchemaObject): boolean {
     model.properties.length === 0
   ) {
     return true
-  } else if (
-    !model.type &&
-    model.properties &&
-    model.properties.length === 0
-  ) {
+  } else if (!model.type && model.properties && model.properties.length === 0) {
     return true
   } else if (
     model.type &&
@@ -676,12 +673,9 @@ export function relaxModelLikeEntities(model: SchemaObject): SchemaObject {
     const modelProperties = model.properties
 
     for (const [propName, property] of entries(modelProperties)) {
-      modelProperties[propName] = property.properties ?
-        relaxModelLikeEntities(property) :
-        relaxEntityType(
-          property,
-          isPropertyRequired(propName, model)
-        )
+      modelProperties[propName] = property.properties
+        ? relaxModelLikeEntities(property)
+        : relaxEntityType(property, isPropertyRequired(propName, model))
     }
   }
   return model
@@ -782,8 +776,7 @@ export function allowNullableTypes(model: SchemaObject): SchemaObject {
     for (const [propName, prop] of entries(modelProperties)) {
       // process properties if present
       modelProperties[propName] =
-        prop.properties ||
-        prop.additionalProperties
+        prop.properties || prop.additionalProperties
           ? allowNullableTypes(prop)
           : allowNullType(prop, isPropertyRequired(propName, model))
     }
@@ -870,26 +863,30 @@ export const statusCodeStringToStatusCode = lodash.invert(
   )
 )
 
+export const generatedCloudErrorName = generatedPrefix + "CloudError"
+export const generatedCloudErrorSchemaName = generatedPrefix + "CloudErrorSchema"
+export const generatedCloudErrorWrapperName = generatedPrefix + "CloudErrorWrapper"
+
 /**
  * Models an ARM cloud error schema.
  */
-export const CloudErrorSchema = {
+export const GeneratedCloudErrorSchema = {
   description: "Error response describing why the operation failed.",
-  title: "#/definitions/CloudErrorSchema",
+  title: "#/definitions/" + generatedCloudErrorSchemaName,
   schema: {
-    $ref: "#/definitions/CloudErrorWrapper"
+    $ref: "#/definitions/" + generatedCloudErrorWrapperName
   }
 }
 
 /**
  * Models an ARM cloud error wrapper.
  */
-export const CloudErrorWrapper: SchemaObject = {
+export const GeneratedCloudErrorWrapper: SchemaObject = {
   type: "object",
-  title: "#/definitions/CloudErrorWrapper",
+  title: "#/definitions/" + generatedCloudErrorWrapperName,
   properties: {
     error: {
-      $ref: "#/definitions/CloudError"
+      $ref: "#/definitions/" + generatedCloudErrorName
     }
   },
   additionalProperties: false
@@ -898,9 +895,9 @@ export const CloudErrorWrapper: SchemaObject = {
 /**
  * Models a Cloud Error
  */
-export const CloudError: SchemaObject = {
+export const GeneratedCloudError: SchemaObject = {
   type: "object",
-  title: "#/definitions/CloudError",
+  title: "#/definitions/" + generatedCloudErrorName,
   properties: {
     code: {
       type: "string",

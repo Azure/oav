@@ -25,6 +25,8 @@ import { PartialFactory } from "@ts-common/property-set"
 const skipUndefined = <T>(f: (v: T) => T): ((v: T|undefined) => T|undefined) =>
   (v) => v === undefined ? undefined : f(v)
 
+export const generatedPrefix = "generated."
+
 export function resolveNestedDefinitions(spec: SwaggerObject): SwaggerObject {
 
   const extraDefinitions: DefinitionsObject = {}
@@ -51,7 +53,7 @@ export function resolveNestedDefinitions(spec: SwaggerObject): SwaggerObject {
     const result = resolveSchemaObject(schemaObject)
     const info = getInfo(result)
     const suffix = info === undefined ? uuid.v4() : getPath(info).join(".")
-    const definitionName = "generated." + suffix
+    const definitionName = generatedPrefix + suffix
     if (result !== undefined) {
       extraDefinitions[definitionName] = result
     }
