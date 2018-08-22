@@ -51,7 +51,7 @@ export function resolveNestedDefinitions(spec: SwaggerObject): SwaggerObject {
     const result = resolveSchemaObject(schemaObject)
     const info = getInfo(result)
     const suffix = info === undefined ? uuid.v4() : getPath(info).join(".")
-    const definitionName = "generated" + suffix
+    const definitionName = "generated." + suffix
     if (result !== undefined) {
       extraDefinitions[definitionName] = result
     }
