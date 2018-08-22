@@ -1,5 +1,17 @@
 # Changelog
 
+### 08/22/2018 0.5.4
+
+- Simplified source-map
+
+### 08/21/2018 0.5.3
+
+- Friendly nested definition name
+
+### 08/21/2018 0.5.2
+
+- Bug fix for `"type": "file"`
+
 ### 08/17/2018 0.5.1
 
 - File URL and position in title
