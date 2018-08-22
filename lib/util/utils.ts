@@ -610,11 +610,7 @@ export function isPureObject(model: SchemaObject): boolean {
     model.properties.length === 0
   ) {
     return true
-  } else if (
-    !model.type &&
-    model.properties &&
-    model.properties.length === 0
-  ) {
+  } else if (!model.type && model.properties && model.properties.length === 0) {
     return true
   } else if (
     model.type &&
@@ -676,12 +672,9 @@ export function relaxModelLikeEntities(model: SchemaObject): SchemaObject {
     const modelProperties = model.properties
 
     for (const [propName, property] of entries(modelProperties)) {
-      modelProperties[propName] = property.properties ?
-        relaxModelLikeEntities(property) :
-        relaxEntityType(
-          property,
-          isPropertyRequired(propName, model)
-        )
+      modelProperties[propName] = property.properties
+        ? relaxModelLikeEntities(property)
+        : relaxEntityType(property, isPropertyRequired(propName, model))
     }
   }
   return model
@@ -782,8 +775,7 @@ export function allowNullableTypes(model: SchemaObject): SchemaObject {
     for (const [propName, prop] of entries(modelProperties)) {
       // process properties if present
       modelProperties[propName] =
-        prop.properties ||
-        prop.additionalProperties
+        prop.properties || prop.additionalProperties
           ? allowNullableTypes(prop)
           : allowNullType(prop, isPropertyRequired(propName, model))
     }
@@ -873,23 +865,23 @@ export const statusCodeStringToStatusCode = lodash.invert(
 /**
  * Models an ARM cloud error schema.
  */
-export const CloudErrorSchema = {
+export const GeneratedCloudErrorSchema = {
   description: "Error response describing why the operation failed.",
-  title: "#/definitions/CloudErrorSchema",
+  title: "#/definitions/generated.CloudErrorSchema",
   schema: {
-    $ref: "#/definitions/CloudErrorWrapper"
+    $ref: "#/definitions/generated.CloudErrorWrapper"
   }
 }
 
 /**
  * Models an ARM cloud error wrapper.
  */
-export const CloudErrorWrapper: SchemaObject = {
+export const GeneratedCloudErrorWrapper: SchemaObject = {
   type: "object",
-  title: "#/definitions/CloudErrorWrapper",
+  title: "#/definitions/generated.CloudErrorWrapper",
   properties: {
     error: {
-      $ref: "#/definitions/CloudError"
+      $ref: "#/definitions/generated.CloudError"
     }
   },
   additionalProperties: false
@@ -898,9 +890,9 @@ export const CloudErrorWrapper: SchemaObject = {
 /**
  * Models a Cloud Error
  */
-export const CloudError: SchemaObject = {
+export const GeneratedCloudError: SchemaObject = {
   type: "object",
-  title: "#/definitions/CloudError",
+  title: "#/definitions/generated.CloudError",
   properties: {
     code: {
       type: "string",
