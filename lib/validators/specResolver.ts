@@ -744,7 +744,6 @@ export class SpecResolver {
     }
     addDefinition(utils.generatedCloudErrorName, utils.GeneratedCloudError)
     addDefinition(utils.generatedCloudErrorWrapperName, utils.GeneratedCloudErrorWrapper)
-    // addDefinition(utils.generatedCloudErrorSchemaName, utils.GeneratedCloudErrorSchema)
     for (const pathObj of values(spec.paths!)) {
       for (const operation of getOperations(pathObj)) {
         if (operation.responses && !operation.responses.default) {
