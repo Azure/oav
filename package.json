@@ -38,7 +38,7 @@
     "vscode-jsonrpc": "^3.6.2",
     "winston": "^3.0.0",
     "yargs": "^6.6.0",
-    "yasway": "1.0.6",
+    "yasway": "^1.0.6",
     "yuml2svg": "^3.1.0"
   },
   "devDependencies": {

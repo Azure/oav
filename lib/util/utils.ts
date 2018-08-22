@@ -331,7 +331,7 @@ export async function parseJsonWithPathFragments(
  *
  * @returns {object} target - Returns the merged target object.
  */
-export function mergeObjects<T extends MutableStringMap<unknown>>(
+export function mergeObjects<T extends MutableStringMap<Data>>(
   source: T,
   target: T
 ): T {
@@ -349,7 +349,7 @@ export function mergeObjects<T extends MutableStringMap<unknown>>(
         target[key] = mergeArrays(sourceProperty, targetProperty)
       }
     } else {
-      target[key] = cloneDeep(source[key] as Data)
+      target[key] = cloneDeep(sourceProperty)
     }
   }
   return target
@@ -363,12 +363,12 @@ export function mergeObjects<T extends MutableStringMap<unknown>>(
  *
  * @returns {array} target - Returns the merged target array.
  */
-export function mergeArrays<T>(source: T[], target: T[]): T[] {
+export function mergeArrays<T extends Data>(source: ReadonlyArray<T>, target: T[]): T[] {
   if (!Array.isArray(target) || !Array.isArray(source)) {
     return target
   }
   source.forEach(item => {
-    target.push(cloneDeep(item as any) as any)
+    target.push(cloneDeep(item))
   })
   return target
 }
