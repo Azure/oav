@@ -739,11 +739,12 @@ export class SpecResolver {
   private modelImplicitDefaultResponse(): void {
     const spec = this.specInJson
     const definitions = spec.definitions as DefinitionsObject
-    if (!definitions["generated.CloudError"]) {
-      definitions["generated.CloudErrorSchema"] =
-        utils.GeneratedCloudErrorSchema
-      definitions["generated.CloudError"] = utils.GeneratedCloudError
+    const addDefinition = (name: string, schema: SchemaObject) => {
+      if (definitions[name] !== undefined) { definitions[name] = schema }
     }
+    addDefinition(utils.generatedCloudErrorName, utils.GeneratedCloudError)
+    addDefinition(utils.generatedCloudErrorWrapperName, utils.GeneratedCloudErrorWrapper)
+    // addDefinition(utils.generatedCloudErrorSchemaName, utils.GeneratedCloudErrorSchema)
     for (const pathObj of values(spec.paths!)) {
       for (const operation of getOperations(pathObj)) {
         if (operation.responses && !operation.responses.default) {

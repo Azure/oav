@@ -15,6 +15,7 @@ import { MutableStringMap, entries } from "@ts-common/string-map"
 import { SwaggerObject, ParameterObject, SchemaObject, DataType } from "yasway"
 import * as jsonParser from "@ts-common/json-parser"
 import { cloneDeep, Data } from "@ts-common/source-map"
+import { generatedPrefix } from "../validators/resolveNestedDefinitions"
 
 export type DocCache = MutableStringMap<Promise<SwaggerObject>>
 
@@ -862,14 +863,18 @@ export const statusCodeStringToStatusCode = lodash.invert(
   )
 )
 
+export const generatedCloudErrorName = generatedPrefix + "CloudError"
+export const generatedCloudErrorSchemaName = generatedPrefix + "CloudErrorSchema"
+export const generatedCloudErrorWrapperName = generatedPrefix + "CloudErrorWrapper"
+
 /**
  * Models an ARM cloud error schema.
  */
 export const GeneratedCloudErrorSchema = {
   description: "Error response describing why the operation failed.",
-  title: "#/definitions/generated.CloudErrorSchema",
+  title: "#/definitions/" + generatedCloudErrorSchemaName,
   schema: {
-    $ref: "#/definitions/generated.CloudErrorWrapper"
+    $ref: "#/definitions/" + generatedCloudErrorWrapperName
   }
 }
 
@@ -878,10 +883,10 @@ export const GeneratedCloudErrorSchema = {
  */
 export const GeneratedCloudErrorWrapper: SchemaObject = {
   type: "object",
-  title: "#/definitions/generated.CloudErrorWrapper",
+  title: "#/definitions/" + generatedCloudErrorWrapperName,
   properties: {
     error: {
-      $ref: "#/definitions/generated.CloudError"
+      $ref: "#/definitions/" + generatedCloudErrorName
     }
   },
   additionalProperties: false
@@ -892,7 +897,7 @@ export const GeneratedCloudErrorWrapper: SchemaObject = {
  */
 export const GeneratedCloudError: SchemaObject = {
   type: "object",
-  title: "#/definitions/generated.CloudError",
+  title: "#/definitions/" + generatedCloudErrorName,
   properties: {
     code: {
       type: "string",
