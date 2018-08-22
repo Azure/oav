@@ -12,7 +12,14 @@ import {
   ResponseSchemaObject
 } from "yasway"
 import * as uuid from "uuid"
-import { arrayMap, propertySetMap, stringMapMap, stringMapMerge } from "@ts-common/source-map"
+import {
+  arrayMap,
+  propertySetMap,
+  stringMapMap,
+  stringMapMerge,
+  getInfo,
+  getPath
+} from "@ts-common/source-map"
 import { PartialFactory } from "@ts-common/property-set"
 
 const skipUndefined = <T>(f: (v: T) => T): ((v: T|undefined) => T|undefined) =>
@@ -42,7 +49,9 @@ export function resolveNestedDefinitions(spec: SwaggerObject): SwaggerObject {
     // here schemaObject.type is one of {undefined, "object", "array"}.
     // Because it's a nested schema object, we create an extra definition and return a reference.
     const result = resolveSchemaObject(schemaObject)
-    const definitionName = uuid.v4()
+    const info = getInfo(result)
+    const suffix = info === undefined ? uuid.v4() : getPath(info).join(".")
+    const definitionName = "generated." + suffix
     if (result !== undefined) {
       extraDefinitions[definitionName] = result
     }
