@@ -711,7 +711,7 @@ export class SpecResolver {
     }
 
     // scan every operation
-    for (const pathObj of values(spec.paths!)) {
+    for (const pathObj of values(spec.paths)) {
       for (const operation of getOperations(pathObj)) {
         resolveOperation(operation)
       }
