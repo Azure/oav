@@ -14,6 +14,7 @@ import * as http from "http"
 import { MutableStringMap, entries } from "@ts-common/string-map"
 import { SwaggerObject, ParameterObject, SchemaObject, DataType } from "yasway"
 import * as jsonParser from "@ts-common/json-parser"
+import { cloneDeep, Data } from "@ts-common/source-map"
 
 export type DocCache = MutableStringMap<Promise<SwaggerObject>>
 
@@ -110,7 +111,7 @@ export function parseContent(
   const sanitizedContent = stripBOM(fileContent)
   if (/.*\.json$/gi.test(filePath)) {
     return jsonParser.parse(
-      { url: filePath, kind: "file" },
+      filePath,
       sanitizedContent,
       e => {
         throw Error(e.message)
@@ -348,7 +349,7 @@ export function mergeObjects<T extends MutableStringMap<unknown>>(
         target[key] = mergeArrays(sourceProperty, targetProperty)
       }
     } else {
-      target[key] = lodash.cloneDeep(source[key])
+      target[key] = cloneDeep(source[key] as Data)
     }
   }
   return target
@@ -367,7 +368,7 @@ export function mergeArrays<T>(source: T[], target: T[]): T[] {
     return target
   }
   source.forEach(item => {
-    target.push(lodash.cloneDeep(item))
+    target.push(cloneDeep(item as any) as any)
   })
   return target
 }

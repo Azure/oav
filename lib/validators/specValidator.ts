@@ -69,7 +69,7 @@ export class SpecValidator<T extends CommonValidationResult> {
 
   protected specInJson: SwaggerObject
 
-  protected swaggerApi: Sway.SwaggerApi|null
+  protected swaggerApi: Sway.SwaggerApi|null = null
 
   protected specPath: string
 
@@ -137,7 +137,6 @@ export class SpecValidator<T extends CommonValidationResult> {
     this.specResolver = null
     const base: CommonValidationResult = { validityStatus: true, operations: {} }
     this.specValidationResult = base as T
-    this.swaggerApi = null
     if (!options) { options = {} }
     if (options.shouldResolveRelativePaths === null
       || options.shouldResolveRelativePaths === undefined) {
