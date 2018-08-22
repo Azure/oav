@@ -14,6 +14,7 @@ import * as http from "http"
 import { MutableStringMap, entries } from "@ts-common/string-map"
 import { SwaggerObject, ParameterObject, SchemaObject, DataType } from "yasway"
 import * as jsonParser from "@ts-common/json-parser"
+import { cloneDeep, Data } from "@ts-common/source-map"
 
 export type DocCache = MutableStringMap<Promise<SwaggerObject>>
 
@@ -110,7 +111,7 @@ export function parseContent(
   const sanitizedContent = stripBOM(fileContent)
   if (/.*\.json$/gi.test(filePath)) {
     return jsonParser.parse(
-      { url: filePath, kind: "file" },
+      filePath,
       sanitizedContent,
       e => {
         throw Error(e.message)
@@ -330,7 +331,7 @@ export async function parseJsonWithPathFragments(
  *
  * @returns {object} target - Returns the merged target object.
  */
-export function mergeObjects<T extends MutableStringMap<unknown>>(
+export function mergeObjects<T extends MutableStringMap<Data>>(
   source: T,
   target: T
 ): T {
@@ -348,7 +349,7 @@ export function mergeObjects<T extends MutableStringMap<unknown>>(
         target[key] = mergeArrays(sourceProperty, targetProperty)
       }
     } else {
-      target[key] = lodash.cloneDeep(source[key])
+      target[key] = cloneDeep(sourceProperty)
     }
   }
   return target
@@ -362,12 +363,12 @@ export function mergeObjects<T extends MutableStringMap<unknown>>(
  *
  * @returns {array} target - Returns the merged target array.
  */
-export function mergeArrays<T>(source: T[], target: T[]): T[] {
+export function mergeArrays<T extends Data>(source: ReadonlyArray<T>, target: T[]): T[] {
   if (!Array.isArray(target) || !Array.isArray(source)) {
     return target
   }
   source.forEach(item => {
-    target.push(lodash.cloneDeep(item))
+    target.push(cloneDeep(item))
   })
   return target
 }
