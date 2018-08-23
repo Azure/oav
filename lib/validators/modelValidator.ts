@@ -51,7 +51,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
 
     let operations = this.swaggerApi.getOperations()
     if (operationIds) {
-      const operationIdsObj: { [name: string]: unknown } = {}
+      const operationIdsObj: MutableStringMap<unknown> = {}
       operationIds
         .trim()
         .split(",")
@@ -129,7 +129,10 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     operationId: string,
     exampleType: string,
     scenarioName: string | undefined
-  ): { operationResult: OperationExampleResult; part: string } {
+  ): {
+    operationResult: OperationExampleResult
+    part: string
+  } {
     const operation = this.specValidationResult.operations[operationId]
     if (operation === undefined) {
       throw new Error("operation is undefined")
@@ -338,7 +341,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       }
       if (
         result.responseValidation &&
-        toArray(keys(result.responseValidation)).length
+        !sm.isEmpty(result.responseValidation)
       ) {
         // responseValidation
         for (const [responseStatusCode, value] of entries(result.responseValidation)) {
@@ -375,8 +378,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       scenarios: resultScenarios
     }
     if (xmsExamples) {
-      for (const scenario of Object.keys(xmsExamples)) {
-        const xmsExample = xmsExamples[scenario]
+      for (const [scenario, xmsExample] of entries<any>(xmsExamples)) {
         resultScenarios[scenario] = {
           requestValidation: this.validateRequest(
             operation,

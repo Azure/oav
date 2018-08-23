@@ -239,7 +239,9 @@ export class XMsExampleExtractor {
                     }
                     log.info(`Writing x-ms-examples at ${outputExamples + exampleFileName}`)
                     fs.writeFileSync(
-                      outputExamples + exampleFileName, JSON.stringify(exampleL, null, 2))
+                      outputExamples + exampleFileName,
+                      JSON.stringify(exampleL, null, 2)
+                    )
                   }
                 }
               }
