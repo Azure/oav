@@ -30,6 +30,7 @@ import { resolveNestedDefinitions } from "./resolveNestedDefinitions"
 import { getOperations } from "../util/methods"
 import { transform } from "./specTransformer"
 import { map, toArray } from "@ts-common/iterator"
+import { arrayMap } from '@ts-common/source-map'
 
 const ErrorCodes = C.ErrorCodes
 
@@ -109,7 +110,7 @@ export class SpecResolver {
    *
    * @return {object} An instance of the SpecResolver class.
    */
-  constructor(specPath: string, specInJson: SwaggerObject, options: Options) {
+  public constructor(specPath: string, specInJson: SwaggerObject, options: Options) {
     if (
       specPath === null ||
       specPath === undefined ||
@@ -132,7 +133,7 @@ export class SpecResolver {
     this.specPath = specPath
     this.specDir = path.dirname(this.specPath)
 
-    options = defaultIfUndefinedOrNull(options, {})
+    options = defaultIfUndefinedOrNull<Options>(options, {})
 
     options.shouldResolveRelativePaths = defaultIfUndefinedOrNull(
       options.shouldResolveRelativePaths,
@@ -205,7 +206,7 @@ export class SpecResolver {
         await this.resolveRelativePaths()
       }
       // resolve nested definitions
-      this.specInJson = resolveNestedDefinitions(this.specInJson)
+      this.specInJson = resolveNestedDefinitions(this.specInJson, this.options)
 
       // all transformations without dependencies should be moved here)
       this.specInJson = transform(this.specInJson)
@@ -231,10 +232,7 @@ export class SpecResolver {
       if (this.options.shouldResolveNullableTypes) {
         this.resolveNullableTypes()
       }
-      if (this.options.shouldModelImplicitDefaultResponse) {
-        this.modelImplicitDefaultResponse()
-      }
-    } catch (err) {
+     } catch (err) {
       const e = {
         message:
           `An Error occurred while resolving relative references and allOf in model definitions ` +
@@ -295,10 +293,11 @@ export class SpecResolver {
     const allRefsRemoteRelative = JsonRefs.findRefs(doc, options)
     const e = entries(allRefsRemoteRelative as StringMap<RefDetails>)
     const promiseFactories = toArray(
-      map(e, ([refName, refDetails]) => {
-        return async () =>
-          await this.resolveRelativeReference(refName, refDetails, doc, docPath)
-      })
+      map(
+        e,
+        ([refName, refDetails]) =>
+          async () => await this.resolveRelativeReference(refName, refDetails, doc, docPath)
+      )
     )
     if (promiseFactories.length) {
       await utils.executePromisesSequentially(promiseFactories)
@@ -329,13 +328,13 @@ export class SpecResolver {
    * Resolves the relative reference in the provided object. If the object to be resolved contains
    * more relative references then this method will call resolveRelativePaths
    *
-   * @param {string} refName the reference name/location that has a relative reference
+   * @param refName the reference name/location that has a relative reference
    *
-   * @param {object} refDetails the value or the object that the refName points at
+   * @param refDetails the value or the object that the refName points at
    *
-   * @param {object} doc the doc in which the refName exists
+   * @param doc the doc in which the refName exists
    *
-   * @param {string} docPath the absolute (local|remote) path of the doc
+   * @param docPath the absolute (local|remote) path of the doc
    *
    * @return undefined the modified object
    */
@@ -584,8 +583,7 @@ export class SpecResolver {
    * Sets additionalProperties to false if additionalProperties is not defined.
    */
   private setAdditionalPropertiesFalse(): void {
-    const self = this
-    const spec = self.specInJson
+    const spec = this.specInJson
     const definitions = spec.definitions as DefinitionsObject
 
     for (const model of values(definitions)) {
@@ -617,8 +615,7 @@ export class SpecResolver {
    * definition and the number of parameters actually present in the path template.
    */
   private resolveParameterizedHost(): void {
-    const self = this
-    const spec = self.specInJson
+    const spec = this.specInJson
     const parameterizedHost = spec[C.xmsParameterizedHost]
     const hostParameters = parameterizedHost
       ? parameterizedHost.parameters
@@ -645,8 +642,7 @@ export class SpecResolver {
    * "additionalProperties": { "type": "object" }.
    */
   private resolvePureObjects(): void {
-    const self = this
-    const spec = self.specInJson
+    const spec = this.specInJson
     const definitions = spec.definitions
 
     // scan definitions and properties of every model in definitions
@@ -668,11 +664,8 @@ export class SpecResolver {
           : spec.produces
         : operation.produces
 
-      const octetStream = (elements: string[]) => {
-        return elements.some(
-          e => e.toLowerCase() === "application/octet-stream"
-        )
-      }
+      const octetStream = (elements: string[]) =>
+        elements.some(e => e.toLowerCase() === "application/octet-stream")
 
       const resolveParameter2 = (param: ParameterObject) => {
         if (
@@ -734,26 +727,6 @@ export class SpecResolver {
   }
 
   /**
-   * Models a default response as a Cloud Error if none is specified in the api spec.
-   */
-  private modelImplicitDefaultResponse(): void {
-    const spec = this.specInJson
-    const definitions = spec.definitions as DefinitionsObject
-    const addDefinition = (name: string, schema: SchemaObject) => {
-      if (definitions[name] !== undefined) { definitions[name] = schema }
-    }
-    addDefinition(utils.generatedCloudErrorName, utils.GeneratedCloudError)
-    addDefinition(utils.generatedCloudErrorWrapperName, utils.GeneratedCloudErrorWrapper)
-    for (const pathObj of values(spec.paths!)) {
-      for (const operation of getOperations(pathObj)) {
-        if (operation.responses && !operation.responses.default) {
-          operation.responses.default = utils.GeneratedCloudErrorSchema
-        }
-      }
-    }
-  }
-
-  /**
    * Resolves the discriminator by replacing all the references to the parent model with a oneOf
    * array containing
    * references to the parent model and all its child models. It also modifies the discriminator
@@ -780,8 +753,7 @@ export class SpecResolver {
    * "enum": [ "Cat" ] },  . . } }.
    */
   private resolveDiscriminator(): void {
-    const self = this
-    const spec = self.specInJson
+    const spec = this.specInJson
     const definitions = spec.definitions as DefinitionsObject
     const subTreeMap = new Map()
     const references = JsonRefs.findRefs(spec)
@@ -791,13 +763,13 @@ export class SpecResolver {
       if (discriminator) {
         let rootNode = subTreeMap.get(modelName)
         if (!rootNode) {
-          rootNode = self.createPolymorphicTree(
+          rootNode = this.createPolymorphicTree(
             modelName,
             discriminator,
             subTreeMap
           )
         }
-        self.updateReferencesWithOneOf(subTreeMap, references as any)
+        this.updateReferencesWithOneOf(subTreeMap, references as any)
       }
     }
   }
@@ -824,22 +796,12 @@ export class SpecResolver {
     for (const pathObj of values(spec.paths)) {
       // need to handle parameters at this level
       if (pathObj.parameters) {
-        for (const [parameter] of _.entries(pathObj.parameters)) {
-          const n = parseInt(parameter)
-          pathObj.parameters[n] = utils.allowNullableParams(
-            pathObj.parameters[n]
-          )
-        }
+        pathObj.parameters = arrayMap(pathObj.parameters, utils.allowNullableParams)
       }
       for (const operation of getOperations(pathObj)) {
         // need to account for parameters, except for path parameters
         if (operation.parameters) {
-          for (const parameter of _.keys(operation.parameters)) {
-            const n = parseInt(parameter)
-            operation.parameters[n] = utils.allowNullableParams(
-              operation.parameters[n]
-            )
-          }
+          operation.parameters = arrayMap(operation.parameters, utils.allowNullableParams)
         }
         // going through responses
         for (const response of values(operation.responses)) {

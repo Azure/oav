@@ -5,14 +5,14 @@ import * as url from "url"
 import * as msRest from "ms-rest"
 import { MutableStringMap, entries } from "@ts-common/string-map"
 
-export type Headers = MutableStringMap<string|undefined>
+export type Headers = MutableStringMap<string | undefined>
 
 export type Request = msRest.WebResource
 
 export interface Response {
   readonly body: unknown
   readonly headers: Headers
-  readonly statusCode: string|number
+  readonly statusCode: string | number
 }
 
 export interface Responses {
@@ -27,10 +27,12 @@ export interface Responses {
 
 export class HttpTemplate {
 
-  constructor(public readonly request: Request, public readonly responses: Responses) {
-  }
+  public constructor(
+    public readonly request: Request,
+    public readonly responses: Responses
+  ) { }
 
-  protected getHost(): string|undefined {
+  protected getHost(): string | undefined {
     const requestUrl = this.request.url
     return requestUrl
       ? url.parse(requestUrl).host
@@ -63,7 +65,10 @@ export class HttpTemplate {
   protected getCurlRequestBody(padding?: string): string {
     if (!padding) { padding = `` }
     if (this.request && this.request.body !== null && this.request.body !== undefined) {
-      const part = JSON.stringify(this.request.body, null, 2).split(`\n`).join(`\n${padding}`)
+      const part = JSON
+        .stringify(this.request.body, null, 2)
+        .split(`\n`)
+        .join(`\n${padding}`)
       return `\n${padding}-d @- << EOF\n${part}\n${padding}EOF`
     } else {
       return ""

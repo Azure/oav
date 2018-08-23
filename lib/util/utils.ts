@@ -15,7 +15,6 @@ import { MutableStringMap, entries } from "@ts-common/string-map"
 import { SwaggerObject, ParameterObject, SchemaObject, DataType } from "yasway"
 import * as jsonParser from "@ts-common/json-parser"
 import { cloneDeep, Data } from "@ts-common/source-map"
-import { generatedPrefix } from "../validators/resolveNestedDefinitions"
 
 export type DocCache = MutableStringMap<Promise<SwaggerObject>>
 
@@ -40,7 +39,7 @@ export function stripBOM(content: Buffer | string): string {
   if (Buffer.isBuffer(content)) {
     content = content.toString()
   }
-  if (content.charCodeAt(0) === 0xfeff || content.charCodeAt(0) === 0xfffe) {
+  if (content.charCodeAt(0) === 0xFEFF || content.charCodeAt(0) === 0xFFFE) {
     content = content.slice(1)
   }
   return content
@@ -632,9 +631,9 @@ interface Entity {
   additionalProperties?: SchemaObject | boolean
   items?: SchemaObject
   "x-nullable"?: boolean
-  oneOf?: SchemaObject[]
+  oneOf?: ReadonlyArray<SchemaObject>
   $ref?: string
-  anyOf?: SchemaObject[]
+  anyOf?: ReadonlyArray<SchemaObject>
 }
 
 /**
@@ -726,7 +725,7 @@ export function allowNullType<T extends Entity>(
       } else {
         entity = {
           anyOf: [savedEntity, { type: "null" }]
-        } as T
+        } as any
       }
     }
   }
@@ -740,7 +739,7 @@ export function allowNullType<T extends Entity>(
     const savedEntity = entity
     entity = {
       anyOf: [savedEntity, { type: "null" }]
-    } as T
+    } as any
   }
   return entity
 }
@@ -862,73 +861,3 @@ export const statusCodeStringToStatusCode = lodash.invert(
     value.replace(/ |-/g, "").toLowerCase()
   )
 )
-
-export const generatedCloudErrorName = generatedPrefix + "CloudError"
-export const generatedCloudErrorSchemaName = generatedPrefix + "CloudErrorSchema"
-export const generatedCloudErrorWrapperName = generatedPrefix + "CloudErrorWrapper"
-
-/**
- * Models an ARM cloud error schema.
- */
-export const GeneratedCloudErrorSchema = {
-  description: "Error response describing why the operation failed.",
-  title: "#/definitions/" + generatedCloudErrorSchemaName,
-  schema: {
-    $ref: "#/definitions/" + generatedCloudErrorWrapperName
-  }
-}
-
-/**
- * Models an ARM cloud error wrapper.
- */
-export const GeneratedCloudErrorWrapper: SchemaObject = {
-  type: "object",
-  title: "#/definitions/" + generatedCloudErrorWrapperName,
-  properties: {
-    error: {
-      $ref: "#/definitions/" + generatedCloudErrorName
-    }
-  },
-  additionalProperties: false
-}
-
-/**
- * Models a Cloud Error
- */
-export const GeneratedCloudError: SchemaObject = {
-  type: "object",
-  title: "#/definitions/" + generatedCloudErrorName,
-  properties: {
-    code: {
-      type: "string",
-      description:
-        "An identifier for the error. Codes are invariant and are intended to be consumed " +
-        "programmatically."
-    },
-    message: {
-      type: "string",
-      description:
-        "A message describing the error, intended to be suitable for display in a user interface."
-    },
-    target: {
-      type: "string",
-      description:
-        "The target of the particular error. For example, the name of the property in error."
-    },
-    details: {
-      type: "array",
-      items: { type: "object" },
-      description: "A list of additional details about the error."
-    },
-    additionalInfo: {
-      type: "array",
-      items: { type: "object" },
-      description: "A list of additional info about an error."
-    },
-    innererror: {
-      type: "object"
-    }
-  },
-  required: ["code", "message"],
-  additionalProperties: false
-}

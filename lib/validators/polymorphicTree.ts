@@ -17,11 +17,11 @@ export class PolymorphicTree {
    * @param {Map<string, PolymorphicTree>} [children] - A map of zero or more children representing
    *    the child models in the inheritance chain
    */
-  constructor(name: string, children?: Map<string, PolymorphicTree>) {
+  public constructor(name: string, children?: Map<string, PolymorphicTree>) {
     if (name === null
       || name === undefined
       || typeof name.valueOf() !== "string"
-      || !name.trim().length) {
+      || name.trim().length === 0) {
       throw new Error(
         "name is a required property of type string and it cannot be an empty string.")
     }

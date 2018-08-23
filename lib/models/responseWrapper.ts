@@ -22,8 +22,8 @@ export class ResponseWrapper {
    *
    * @return {object} An instance of the ResponseWrapper class.
    */
-  constructor(
-    public statusCode: number|string,
+  public constructor(
+    public statusCode: number | string,
     public body: unknown,
     public headers: Headers,
     public encoding?: string) {

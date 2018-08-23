@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import * as util from "util"
@@ -15,7 +15,7 @@ import * as utils from "../util/utils"
 import * as models from "../models"
 import * as http from "http"
 import { PotentialOperationsResult } from "../models/potentialOperationsResult"
-import { Operation, Path, Request } from "yasway"
+import { Operation, Request } from "yasway"
 import { ParsedUrlQuery } from "querystring"
 import { MutableStringMap } from "@ts-common/string-map"
 
@@ -105,7 +105,7 @@ export class LiveValidator {
    *
    * @returns {object} CacheBuilder Returns the configured CacheBuilder object.
    */
-  constructor(optionsRaw?: any) {
+  public constructor(optionsRaw?: any) {
     optionsRaw =
       optionsRaw === null || optionsRaw === undefined ? {} : optionsRaw
 
@@ -585,7 +585,7 @@ export class LiveValidator {
     }
 
     let potentialOperations = operations.filter(operation => {
-      const pathObject = operation.pathObject as Path
+      const pathObject = operation.pathObject
       const pathMatch = pathObject.regexp.exec(requestPath)
       return pathMatch !== null
     })
@@ -597,7 +597,7 @@ export class LiveValidator {
       if (c && c[C.unknownApiVersion]) {
         operations = c[C.unknownApiVersion][requestMethod]
         potentialOperations = operations.filter(operation => {
-          const pathObject = operation.pathObject as Path
+          const pathObject = operation.pathObject
           let pathTemplate = pathObject.path
           if (pathTemplate && pathTemplate.includes("?")) {
             pathTemplate = pathTemplate.slice(0, pathTemplate.indexOf("?"))
@@ -661,7 +661,7 @@ export class LiveValidator {
 
       operations.forEach(operation => {
         const httpMethod = operation.method.toLowerCase()
-        const pathObject = operation.pathObject as Path
+        const pathObject = operation.pathObject
         const pathStr = pathObject.path
         let provider = utils.getProvider(pathStr)
         log.debug(

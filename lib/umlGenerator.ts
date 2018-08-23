@@ -35,7 +35,10 @@ export class UmlGenerator {
    *
    * @return {object} An instance of the UmlGenerator class.
    */
-  constructor(specInJson: null|undefined|SwaggerObject, options: null|undefined|Options) {
+  public constructor(
+    specInJson: null | undefined | SwaggerObject,
+    options: null | undefined | Options
+  ) {
     if (specInJson === null || specInJson === undefined || typeof specInJson !== "object") {
       throw new Error("specInJson is a required property of type object")
     }

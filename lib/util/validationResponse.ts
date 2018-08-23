@@ -10,7 +10,7 @@ interface ValidationError {
   code?: string
   providerNamespace: unknown
   type: string
-  inner?: CommonError|CommonError[]
+  inner?: CommonError | CommonError[]
   id?: unknown
   message?: string
   jsonref?: string
@@ -83,20 +83,6 @@ export class ValidateResponse {
       && warning.code !== "EXTRA_REFERENCE_PROPERTIES"
       && warning.code !== "UNUSED_DEFINITION")
   }
-
-  /*
-  private seralize() {
-    const result: { ["json-path"]?: unknown } = {}
-    for (const prop in this) {
-      if (this[prop] !== null && this[prop] !== undefined) {
-        if (prop === "jsonpath") {
-          result["json-path"] = this[prop]
-        }
-      }
-    }
-    return result
-  }
-  */
 }
 
 export const validateResponse = new ValidateResponse()

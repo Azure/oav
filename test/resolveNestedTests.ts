@@ -75,7 +75,7 @@ describe("resolve nested properties", () => {
     const apiOperations = api.getOperations()
     const apiOperation = apiOperations[0]
     const apiValidationResult = apiOperation.validateRequest(request)
-    assert.equal(apiValidationResult.errors.length, 0)
+    assert.strictEqual(apiValidationResult.errors.length, 0)
   })
 
   it("should fail if an example has nested additional properties", async () => {
@@ -98,6 +98,6 @@ describe("resolve nested properties", () => {
     const apiOperations = api.getOperations()
     const apiOperation = apiOperations[0]
     const apiValidationResult = apiOperation.validateRequest(request)
-    assert.equal(apiValidationResult.errors.length, 1)
+    assert.strictEqual(apiValidationResult.errors.length, 1)
   })
 })

@@ -17,9 +17,9 @@ interface Options {
  * @class
  */
 export class XMsExampleExtractor {
-  private specPath: string
-  private recordings: string
-  private options: Options
+  private readonly specPath: string
+  private readonly recordings: string
+  private readonly options: Options
   /**
    * @constructor
    * Initializes a new instance of the xMsExampleExtractor class.
@@ -35,7 +35,7 @@ export class XMsExampleExtractor {
    *
    * @param {object} [options.output] Output folder for the generated examples.
    */
-  constructor(
+  public constructor(
     specPath: string,
     recordings: string,
     options: Options
@@ -225,11 +225,9 @@ export class XMsExampleExtractor {
                         const bodyParamExample: MutableStringMap<unknown> = {}
                         bodyParamExample[bodyParamName] = bodyParamValue
 
-                        if (bodyParamValue !== "") {
-                          exampleL.parameters[bodyParamName] = JSON.parse(bodyParamValue)
-                        } else {
-                          exampleL.parameters[bodyParamName] = ""
-                        }
+                        exampleL.parameters[bodyParamName] = bodyParamValue !== "" ?
+                          JSON.parse(bodyParamValue) :
+                          ""
                       }
                     }
                     for (const {} of keys(infoFromOperation.responses)) {
@@ -241,7 +239,9 @@ export class XMsExampleExtractor {
                     }
                     log.info(`Writing x-ms-examples at ${outputExamples + exampleFileName}`)
                     fs.writeFileSync(
-                      outputExamples + exampleFileName, JSON.stringify(exampleL, null, 2))
+                      outputExamples + exampleFileName,
+                      JSON.stringify(exampleL, null, 2)
+                    )
                   }
                 }
               }
@@ -275,12 +275,11 @@ export class XMsExampleExtractor {
   }
 
   private getFileList(dir: string, fileList: string[]): string[] {
-    const self = this
     const files = fs.readdirSync(dir)
     fileList = fileList || []
     files.forEach(file => {
       if (fs.statSync(pathlib.join(dir, file)).isDirectory()) {
-        fileList = self.getFileList(pathlib.join(dir, file), fileList)
+        fileList = this.getFileList(pathlib.join(dir, file), fileList)
       } else {
         fileList.push(pathlib.join(dir, file))
       }

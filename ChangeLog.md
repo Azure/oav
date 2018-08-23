@@ -1,5 +1,9 @@
 # Changelog
 
+### 08/22/2018 0.5.6
+
+- CloudError proper fix
+
 ### 08/22/2018 0.5.5
 
 - CloudError bug fix #300.

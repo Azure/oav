@@ -12,6 +12,6 @@ describe("Uml generator", () => {
     const svgFile = `${__dirname}/diagram/EntitySearch.svg`
     if (fs.existsSync(svgFile)) { fs.unlinkSync(svgFile) }
     await validate.generateUml(specPath, `${__dirname}/diagram`)
-    assert.equal(fs.existsSync(svgFile), true)
+    assert.strictEqual(fs.existsSync(svgFile), true)
   })
 })

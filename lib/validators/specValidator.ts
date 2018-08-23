@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import * as path from "path"
@@ -12,6 +12,7 @@ import * as C from "../util/constants"
 import { SwaggerObject } from "yasway"
 import { ModelValidation } from "../util/getErrorsFromModelValidation"
 import { Headers } from "../templates/httpTemplate"
+import { StringMap } from '@ts-common/string-map';
 
 const ErrorCodes = C.ErrorCodes;
 
@@ -29,9 +30,7 @@ export interface RequestValidation {
   validationResult?: Sway.ValidationResults
 }
 
-interface ResponseValidation {
-  readonly [name: string]: Sway.ValidationResults|undefined
-}
+type ResponseValidation = StringMap<Sway.ValidationResults>
 
 export interface ValidationResult {
   exampleNotFound?: CommonError
@@ -69,15 +68,15 @@ export class SpecValidator<T extends CommonValidationResult> {
 
   protected specInJson: SwaggerObject
 
-  protected swaggerApi: Sway.SwaggerApi|null = null
+  protected swaggerApi: Sway.SwaggerApi | null = null
 
   protected specPath: string
 
-  private specDir: unknown
+  private readonly specDir: unknown
 
-  private specResolver: SpecResolver|null
+  private specResolver: SpecResolver | null
 
-  private options: Options
+  private readonly options: Options
 
   /*
    * @constructor
@@ -117,7 +116,11 @@ export class SpecValidator<T extends CommonValidationResult> {
    *
    * @return {object} An instance of the SpecValidator class.
    */
-  constructor(specPath: string, specInJson: SwaggerObject|undefined|null|string, options: Options) {
+  public constructor(
+    specPath: string,
+    specInJson: SwaggerObject | undefined | null | string,
+    options: Options
+  ) {
     if (specPath === null
       || specPath === undefined
       || typeof specPath.valueOf() !== "string"
@@ -200,7 +203,7 @@ export class SpecValidator<T extends CommonValidationResult> {
   protected constructErrorObject<TE extends CommonError>(
     code: ErrorCode,
     message: string,
-    innerErrors?: null|TE[],
+    innerErrors?: null | TE[],
     skipValidityStatusUpdate?: boolean
   ): TE {
 
