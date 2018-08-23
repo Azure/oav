@@ -42,6 +42,7 @@ const options: sway.Options = {
           ],
           responses: {
             200: {
+              description: "200 response",
               schema: {
                 type: "file"
               }
