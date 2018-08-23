@@ -29,8 +29,8 @@ import {
   getDefaultResponses
 } from './cloudError';
 
-const skipUndefined = <T>(f: (v: T) => T): ((v: T | undefined) => T | undefined) =>
-  (v) => v === undefined ? undefined : f(v)
+const skipIfUndefined = <T>(f: (v: T) => T): ((v: T | undefined) => T | undefined) =>
+  (v) => v !== undefined ? f(v) : undefined
 
 export function resolveNestedDefinitions(spec: SwaggerObject, options: Options): SwaggerObject {
 
@@ -68,8 +68,12 @@ export function resolveNestedDefinitions(spec: SwaggerObject, options: Options):
   }
 
   // a function to resolve SchemaObject array
-  const resolveSchemaObjectArray = (schemaObjectArray: ReadonlyArray<SchemaObject>) =>
-    arrayMap(schemaObjectArray, resolveNestedSchemaObject)
+  const resolveOptionalSchemaObjectArray = (
+    schemaObjectArray: ReadonlyArray<SchemaObject> | undefined
+  ) =>
+    schemaObjectArray !== undefined ?
+      arrayMap(schemaObjectArray, resolveNestedSchemaObject) :
+      undefined
 
   // a function to resolve SchemaObject (top-level and nested)
   const resolveSchemaObject = (schemaObject: SchemaObject): SchemaObject =>
@@ -81,44 +85,50 @@ export function resolveNestedDefinitions(spec: SwaggerObject, options: Options):
           additionalProperties === undefined || typeof additionalProperties !== "object" ?
             additionalProperties :
             resolveNestedSchemaObject(additionalProperties),
-        items: skipUndefined(resolveNestedSchemaObject),
-        allOf: skipUndefined(resolveSchemaObjectArray),
-        anyOf: skipUndefined(resolveSchemaObjectArray),
-        oneOf: skipUndefined(resolveSchemaObjectArray),
+        items: skipIfUndefined(resolveNestedSchemaObject),
+        allOf: resolveOptionalSchemaObjectArray,
+        anyOf: resolveOptionalSchemaObjectArray,
+        oneOf: resolveOptionalSchemaObjectArray,
       }
     )
 
   const resolveParameterObject = (parameterObject: ParameterObject) =>
-    propertySetMap(parameterObject, { schema: skipUndefined(resolveSchemaObject) })
+    propertySetMap(parameterObject, { schema: skipIfUndefined(resolveSchemaObject) })
 
   const resolveResponseObject = (responseObject: ResponseObject) =>
     propertySetMap(
       responseObject,
       {
-        schema: (schema?: ResponseSchemaObject) =>
+        schema: (schema: ResponseSchemaObject | undefined) =>
           schema === undefined || schema.type === "file" ?
             schema :
             resolveSchemaObject(schema)
       }
     )
 
-  const resolveParameterArray = (parametersTracked: ParameterObject[]) =>
-    arrayMap(parametersTracked, resolveParameterObject) as ParameterObject[]
+  const resolveOptionalParameterArray = (
+    parameters: ReadonlyArray<ParameterObject> | undefined
+  ) =>
+    parameters !== undefined ?
+      arrayMap(parameters, resolveParameterObject) :
+      undefined
 
-  const resolveResponses = (responses: ResponsesObject): ResponsesObject => {
-    const result = stringMapMap(responses, resolveResponseObject)
-    return stringMapMerge(result, defaultResponses.responses)
-  }
+  const resolveOptionalResponses = (responses: ResponsesObject | undefined): ResponsesObject =>
+    stringMapMap(
+      stringMapMerge(responses, defaultResponses.responses),
+      resolveResponseObject
+    )
 
-  const resolveOperationObject = (operationObject: OperationObject | undefined) =>
-    operationObject === undefined ?
-      undefined :
+  const resolveOptionalOperationObject = (operationObject: OperationObject | undefined) =>
+    operationObject !== undefined ?
       propertySetMap<OperationObject>(
         operationObject,
         {
-          parameters: skipUndefined(resolveParameterArray),
-          responses: skipUndefined(resolveResponses),
-        })
+          parameters: resolveOptionalParameterArray,
+          responses: resolveOptionalResponses,
+        }
+      ) :
+      undefined
 
   // transformations for Open API 2.0
   const swaggerObjectTransformation: PartialFactory<SwaggerObject> = {
@@ -130,14 +140,14 @@ export function resolveNestedDefinitions(spec: SwaggerObject, options: Options):
       path => propertySetMap<PathItemObject>(
         path,
         {
-          get: resolveOperationObject,
-          put: resolveOperationObject,
-          post: resolveOperationObject,
-          delete: resolveOperationObject,
-          options: resolveOperationObject,
-          head: resolveOperationObject,
-          patch: resolveOperationObject,
-          parameters: skipUndefined(resolveParameterArray)
+          get: resolveOptionalOperationObject,
+          put: resolveOptionalOperationObject,
+          post: resolveOptionalOperationObject,
+          delete: resolveOptionalOperationObject,
+          options: resolveOptionalOperationObject,
+          head: resolveOptionalOperationObject,
+          patch: resolveOptionalOperationObject,
+          parameters: resolveOptionalParameterArray
         }
       )
     )
@@ -146,11 +156,9 @@ export function resolveNestedDefinitions(spec: SwaggerObject, options: Options):
   // create extra definitions and the temporary spec
   const temp = propertySetMap(spec, swaggerObjectTransformation)
 
-  const mergeDefinitions = (definitions: DefinitionsObject | undefined) =>
-    definitions === undefined ?
-      extraDefinitions :
-      stringMapMerge(definitions, extraDefinitions, defaultResponses.definitions)
+  const mergeOptionalDefinitions = (definitions: DefinitionsObject | undefined) =>
+    stringMapMerge(definitions, extraDefinitions, defaultResponses.definitions)
 
   // merge definitions and extraDefinitions.
-  return propertySetMap(temp, { definitions: mergeDefinitions })
+  return propertySetMap(temp, { definitions: mergeOptionalDefinitions })
 }

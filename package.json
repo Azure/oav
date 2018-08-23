@@ -14,8 +14,8 @@
     "@ts-common/json": "0.0.16",
     "@ts-common/json-parser": "0.2.0",
     "@ts-common/property-set": "0.0.7",
-    "@ts-common/source-map": "0.2.2",
-    "@ts-common/string-map": "0.0.25",
+    "@ts-common/source-map": "0.2.4",
+    "@ts-common/string-map": "0.0.26",
     "@ts-common/tuple": "0.0.0",
     "@types/lodash": "^4.14.116",
     "@types/request": "^2.47.1",
@@ -38,7 +38,7 @@
     "vscode-jsonrpc": "^3.6.2",
     "winston": "^3.0.0",
     "yargs": "^6.6.0",
-    "yasway": "sergey-shandar-forks/sway#sergey/readonly",
+    "yasway": "^1.0.9",
     "yuml2svg": "^3.1.0"
   },
   "devDependencies": {

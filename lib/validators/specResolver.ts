@@ -30,6 +30,7 @@ import { resolveNestedDefinitions } from "./resolveNestedDefinitions"
 import { getOperations } from "../util/methods"
 import { transform } from "./specTransformer"
 import { map, toArray } from "@ts-common/iterator"
+import { arrayMap } from '@ts-common/source-map'
 
 const ErrorCodes = C.ErrorCodes
 
@@ -795,22 +796,12 @@ export class SpecResolver {
     for (const pathObj of values(spec.paths)) {
       // need to handle parameters at this level
       if (pathObj.parameters) {
-        for (const [parameter] of _.entries(pathObj.parameters)) {
-          const n = parseInt(parameter)
-          pathObj.parameters[n] = utils.allowNullableParams(
-            pathObj.parameters[n]
-          )
-        }
+        pathObj.parameters = arrayMap(pathObj.parameters, utils.allowNullableParams)
       }
       for (const operation of getOperations(pathObj)) {
         // need to account for parameters, except for path parameters
         if (operation.parameters) {
-          for (const parameter of _.keys(operation.parameters)) {
-            const n = parseInt(parameter)
-            operation.parameters[n] = utils.allowNullableParams(
-              operation.parameters[n]
-            )
-          }
+          operation.parameters = arrayMap(operation.parameters, utils.allowNullableParams)
         }
         // going through responses
         for (const response of values(operation.responses)) {
