@@ -231,12 +231,7 @@ export class SpecResolver {
       if (this.options.shouldResolveNullableTypes) {
         this.resolveNullableTypes()
       }
-      /*
-      if (this.options.shouldModelImplicitDefaultResponse) {
-        this.modelImplicitDefaultResponse()
-      }
-      */
-    } catch (err) {
+     } catch (err) {
       const e = {
         message:
           `An Error occurred while resolving relative references and allOf in model definitions ` +
@@ -729,28 +724,6 @@ export class SpecResolver {
       )
     }
   }
-
-  /**
-   * Models a default response as a Cloud Error if none is specified in the api spec.
-   */
-  /*
-  private modelImplicitDefaultResponse(): void {
-    const spec = this.specInJson
-    const definitions = spec.definitions as DefinitionsObject
-    const addDefinition = (name: string, schema: SchemaObject) => {
-      if (definitions[name] !== undefined) { definitions[name] = schema }
-    }
-    addDefinition(utils.generatedCloudErrorName, utils.GeneratedCloudError)
-    addDefinition(utils.generatedCloudErrorWrapperName, utils.GeneratedCloudErrorWrapper)
-    for (const pathObj of values(spec.paths!)) {
-      for (const operation of getOperations(pathObj)) {
-        if (operation.responses && !operation.responses.default) {
-          operation.responses.default = utils.GeneratedCloudErrorSchema
-        }
-      }
-    }
-  }
-  */
 
   /**
    * Resolves the discriminator by replacing all the references to the parent model with a oneOf
