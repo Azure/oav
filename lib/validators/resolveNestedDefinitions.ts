@@ -25,11 +25,6 @@ import { PartialFactory } from "@ts-common/property-set"
 import { Options } from "./specResolver"
 import { MutableStringMap } from "@ts-common/string-map"
 import {
-  generatedCloudErrorName,
-  generatedCloudError,
-  generatedCloudErrorWrapperName,
-  generatedCloudErrorWrapper,
-  generatedCloudErrorSchema,
   generatedPrefix,
   getDefaultResponses
 } from './cloudError';
