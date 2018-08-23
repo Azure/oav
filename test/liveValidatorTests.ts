@@ -7,8 +7,8 @@ import * as os from "os"
 import * as glob from "glob"
 import { LiveValidator } from "../lib/validators/liveValidator"
 import * as Constants from "../lib/util/constants"
-import * as utils from "../lib/util/utils"
 import { ResponsesObject } from "yasway"
+import { generatedCloudErrorWrapper } from '../lib/validators/cloudError';
 
 const livePaths = glob.sync(path.join(__dirname, "liveValidation/swaggers/**/live/*.json"))
 describe("Live Validator", () => {
@@ -423,17 +423,18 @@ describe("Live Validator", () => {
         if (responses.default === undefined) {
           throw new Error("responses.default === undefined")
         }
-        if (responses.default.schema === undefined) {
+        const schema = responses.default.schema
+        if (schema === undefined) {
           throw new Error("responses.default.schema === undefined")
         }
-        if (responses.default.schema.type === "file") {
-          throw new Error("responses.default.schema.type === \"file\"")
+        if (schema.type !== "object") {
+          throw new Error("responses.default.schema.type !== \"object\"")
         }
-        assert.deepStrictEqual(responses.default, utils.GeneratedCloudErrorSchema)
-        assert.strictEqual(
-          responses.default.schema.$ref,
-          "#/definitions/" + utils.generatedCloudErrorWrapperName
-        )
+        assert.strictEqual(schema.title, generatedCloudErrorWrapper.title)
+        if (schema.properties === undefined) {
+          throw new Error("schema.properties === undefined")
+        }
+        assert.strictEqual(typeof schema.properties.error, "object")
       }
     })
   })

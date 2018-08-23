@@ -59,7 +59,8 @@
         "prefer-switch": false,
         "max-file-line-count": false,
         "no-for-in-array": false,
-        "match-default-export-name": false
+        "match-default-export-name": false,
+        "linebreak-style": false
     },
     "rulesDirectory": []
 }

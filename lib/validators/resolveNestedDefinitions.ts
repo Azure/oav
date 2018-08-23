@@ -23,45 +23,23 @@ import {
 } from "@ts-common/source-map"
 import { PartialFactory } from "@ts-common/property-set"
 import { Options } from "./specResolver"
-import {
-  GeneratedCloudErrorSchema,
-  generatedCloudErrorName,
-  GeneratedCloudError,
-  generatedCloudErrorWrapperName,
-  GeneratedCloudErrorWrapper
-} from "../util/utils"
 import { MutableStringMap } from "@ts-common/string-map"
+import {
+  generatedCloudErrorName,
+  generatedCloudError,
+  generatedCloudErrorWrapperName,
+  generatedCloudErrorWrapper,
+  generatedCloudErrorSchema,
+  generatedPrefix,
+  getDefaultResponses
+} from './cloudError';
 
 const skipUndefined = <T>(f: (v: T) => T): ((v: T | undefined) => T | undefined) =>
   (v) => v === undefined ? undefined : f(v)
 
-export const generatedPrefix = "generated."
-
-interface ResponsesAndDefinitions {
-  readonly definitions: DefinitionsObject
-  readonly responses: ResponsesObject
-}
-
-const noDefaultResponses: ResponsesAndDefinitions = {
-  definitions: {},
-  responses: {}
-}
-
-const implicitDefaultResponses: ResponsesAndDefinitions = {
-  definitions: {
-    [generatedCloudErrorName]: GeneratedCloudError,
-    [generatedCloudErrorWrapperName]: GeneratedCloudErrorWrapper
-  },
-  responses: {
-    default: GeneratedCloudErrorSchema
-  }
-}
-
 export function resolveNestedDefinitions(spec: SwaggerObject, options: Options): SwaggerObject {
 
-  const defaultResponses: ResponsesAndDefinitions = options.shouldModelImplicitDefaultResponse ?
-    implicitDefaultResponses :
-    noDefaultResponses
+  const defaultResponses = getDefaultResponses(options.shouldModelImplicitDefaultResponse)
 
   const extraDefinitions: MutableStringMap<SchemaObject> = {}
 
