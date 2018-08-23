@@ -102,7 +102,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     }
     if (exampleType === C.exampleInSpec) {
       const example = operationResult[exampleType]
-      if (!example || (example && !toArray(keys(example as StringMap<unknown>)).length)) {
+      if (!example || (example && sm.isEmpty(toStringMap(example)))) {
         operationResult[exampleType] = initialResult
       }
     }
@@ -734,7 +734,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       [name: string]: any
     } = { headers: {} }
     let formDataFiles: MutableStringMap<unknown> | null = null
-    const pathObject = operation.pathObject as Sway.Path
+    const pathObject = operation.pathObject
     const parameterizedHost = pathObject.api[C.xmsParameterizedHost]
     const hostTemplate =
       parameterizedHost && parameterizedHost.hostTemplate
@@ -766,12 +766,9 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       if (!basePath.startsWith("/")) {
         basePath = `/${basePath}`
       }
-      let baseUrl = ""
-      if (host.startsWith(scheme + "://")) {
-        baseUrl = `${host}${basePath}`
-      } else {
-        baseUrl = `${scheme}://${host}${basePath}`
-      }
+      const baseUrl = host.startsWith(scheme + "://") ?
+        `${host}${basePath}` :
+        `${scheme}://${host}${basePath}`
       options.baseUrl = baseUrl
     }
     options.method = operation.method
@@ -892,12 +889,11 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
         options.formData[parameter.name] = parameterValue
 
         // set Content-Type correctly
-        if (operation.consumes && isFormUrlEncoded(operation.consumes)) {
-          options.headers["Content-Type"] = "application/x-www-form-urlencoded"
-        } else {
-          // default to formData
-          options.headers["Content-Type"] = "multipart/form-data"
-        }
+        options.headers["Content-Type"] =
+          operation.consumes && isFormUrlEncoded(operation.consumes) ?
+            "application/x-www-form-urlencoded" :
+            // default to formData
+            "multipart/form-data"
         // keep track of parameter type 'file' as sway expects such parameter types to be set
         // differently in the request object given for validation.
         if (parameter.type === "file") {

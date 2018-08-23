@@ -10,7 +10,7 @@ interface ValidationError {
   code?: string
   providerNamespace: unknown
   type: string
-  inner?: CommonError|CommonError[]
+  inner?: CommonError | CommonError[]
   id?: unknown
   message?: string
   jsonref?: string

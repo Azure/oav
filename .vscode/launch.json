@@ -85,7 +85,7 @@
       "stopOnEntry": false,
       "args": [
         "--no-timeouts",
-        "test/modelValidatorTests.ts",
+        "test/liveValidatorTests.ts",
         "-r",
         "ts-node/register",
         "--no-timeouts"

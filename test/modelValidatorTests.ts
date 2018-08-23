@@ -108,8 +108,8 @@ describe("Model Validation", () => {
         )
         console.log(result)
       } catch (err) {
-        assert.equal(err.code, "REQUEST_VALIDATION_ERROR")
-        assert.equal(err.innerErrors[0].code, "DOUBLE_FORWARD_SLASHES_IN_URL")
+        assert.strictEqual(err.code, "REQUEST_VALIDATION_ERROR")
+        assert.strictEqual(err.innerErrors[0].code, "DOUBLE_FORWARD_SLASHES_IN_URL")
       }
     })
   })
@@ -189,11 +189,11 @@ describe("Model Validation", () => {
         throw new Error("scenario.responses === undefined")
       }
       const responseError = scenario.responses["200"]
-      assert.equal(responseError.isValid, false)
+      assert.strictEqual(responseError.isValid, false)
       if (responseError.error === undefined) {
         throw new Error("no error")
       }
-      assert.equal(responseError.error.code, "RESPONSE_VALIDATION_ERROR")
+      assert.strictEqual(responseError.error.code, "RESPONSE_VALIDATION_ERROR")
       if (responseError.error.innerErrors === undefined) {
         throw new Error("innerErrors is undefined")
       }
@@ -201,7 +201,7 @@ describe("Model Validation", () => {
       if (errors === undefined) {
         throw new Error("innerErrors is undefined")
       }
-      assert.equal(errors[0].code, "ANY_OF_MISSING")
+      assert.strictEqual(errors[0].code, "ANY_OF_MISSING")
     })
 
     it("should pass for Entities_Search", async () => {

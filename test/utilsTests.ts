@@ -26,12 +26,12 @@ describe("Utility functions", () => {
         "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/" +
         "Microsoft.Resources/{parentResourcePath}/{resourceType}/{resourceName}"
       const provider = utils.getProvider(path)
-      assert.equal(provider, "Microsoft.Resources")
+      assert.strictEqual(provider, "Microsoft.Resources")
     })
     it("should return undefined", () => {
       const path = "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/"
       const provider = utils.getProvider(path)
-      assert.equal(provider, undefined)
+      assert.strictEqual(provider, undefined)
     })
     it("should return Microsoft.Authorization", () => {
       const path =
@@ -39,7 +39,7 @@ describe("Utility functions", () => {
         "Microsoft.Resources/{parentResourcePath}/{resourceType}/{resourceName}/providers/" +
         "Microsoft.Authorization/roleAssignments"
       const provider = utils.getProvider(path)
-      assert.equal(provider, "Microsoft.Authorization")
+      assert.strictEqual(provider, "Microsoft.Authorization")
     })
   })
 })

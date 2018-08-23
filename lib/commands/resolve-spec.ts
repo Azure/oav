@@ -86,9 +86,9 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
 
   try {
     if (specPath.match(/.*composite.*/ig) !== null) {
-      return await validate.resolveCompositeSpec(specPath, argv.d, vOptions)
+      await validate.resolveCompositeSpec(specPath, argv.d, vOptions)
     } else {
-      return await validate.resolveSpec(specPath, argv.d, vOptions)
+      await validate.resolveSpec(specPath, argv.d, vOptions)
     }
   } catch (err) {
     process.exitCode = 1

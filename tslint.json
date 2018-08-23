@@ -1,7 +1,7 @@
 {
     "defaultSeverity": "error",
     "extends": [
-        "tslint:recommended"
+        "tslint:all"
     ],
     "jsRules": {},
     "rules": {
@@ -19,7 +19,47 @@
         "forin": false,
         "no-floating-promises": true,
         "await-promise": true,
-        "promise-function-async": true
+        "promise-function-async": true,
+
+        "comment-format": false,
+        "no-unused-variable": false,
+        "cyclomatic-complexity": false,
+        "typedef": false,
+        "quotemark": false,
+        "no-parameter-reassignment": false,
+        "newline-before-return": false,
+        "strict-boolean-expressions": false,
+        "only-arrow-functions": false,
+        "member-ordering": false,
+        "prefer-function-over-method": false,
+        "no-parameter-properties": false,
+        "type-literal-delimiter": false,
+        "no-redundant-jsdoc": false,
+        "variable-name": false,
+        "no-submodule-imports": false,
+        "completed-docs": false,
+        "prefer-template": false,
+        "no-unsafe-any": false,
+        "restrict-plus-operands": false,
+        "no-null-keyword": false,
+        "no-magic-numbers": false,
+        "file-name-casing": false,
+        "no-return-await": false,
+        "newline-per-chained-call": false,
+        "strict-type-predicates": false,
+        "no-require-imports": false,
+        "switch-default": false,
+        "no-use-before-declare": false,
+        "no-void-expression": false,
+        "switch-final-break": false,
+        "no-object-literal-type-assertion": false,
+        "no-duplicate-imports": false,
+        "no-any": false,
+        "no-dynamic-delete": false,
+        "prefer-switch": false,
+        "max-file-line-count": false,
+        "no-for-in-array": false,
+        "match-default-export-name": false
     },
     "rulesDirectory": []
 }

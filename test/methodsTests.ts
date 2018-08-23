@@ -9,7 +9,7 @@ describe("Methods", () => {
     const httpMethods: string[] = ["get", "put", "post", "delete", "options", "head", "patch"]
     for (const method of methods) {
       const r = httpMethods.find(v => v === method)
-      assert.equal(r, method)
+      assert.strictEqual(r, method)
     }
   })
 })

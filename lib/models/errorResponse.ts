@@ -20,7 +20,7 @@ import { LiveValidationError } from "./liveValidationError"
  *
  */
 export class ErrorResponse extends LiveValidationError {
-  constructor() {
+  public constructor() {
     super();
   }
 

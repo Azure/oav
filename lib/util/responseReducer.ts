@@ -5,6 +5,7 @@ import { processValidationErrors, ValidationResult } from "./validationError"
 import { toModelErrors } from "./toModelErrors"
 import { ValidationResultSource } from "./validationResultSource"
 import { ModelValidationError } from "./modelValidationError"
+import { MutableStringMap } from '@ts-common/string-map';
 
 export interface Result {
   isValid?: unknown
@@ -13,16 +14,14 @@ export interface Result {
   result?: unknown
 }
 
-export interface Scenarios {
-  [key: string]: Scenario|undefined
-}
+export type Scenarios = MutableStringMap<Scenario>
 
 export interface Scenario {
   isValid?: unknown
   scenarios?: Scenarios
   readonly request?: Result
   readonly responses?: {
-    [key in string|number]: Result
+    [key in string | number]: Result
   }
   error?: unknown
 }

@@ -24,17 +24,20 @@ import { map, toArray } from "@ts-common/iterator"
 const ErrorCodes = C.ErrorCodes
 
 export class WireFormatGenerator {
-  private specPath: string
-  private specDir: string
-  private wireFormatDir: string
-  private emitYaml: unknown
-  private specInJson: Sway.SwaggerObject|null
-  private specResolver: SpecResolver|null
-  private swaggerApi: Sway.SwaggerApi|null
-  private options: { readonly shouldResolveRelativePaths: unknown }
+  private readonly specPath: string
+  private readonly specDir: string
+  private readonly wireFormatDir: string
+  private readonly emitYaml: unknown
+  private specInJson: Sway.SwaggerObject | null
+  private specResolver: SpecResolver | null
+  private swaggerApi: Sway.SwaggerApi | null
+  private readonly options: { readonly shouldResolveRelativePaths: unknown }
   // private specValidationResult: any
-  constructor(
-    specPath: string, specInJson: Sway.SwaggerObject|null, wireFormatDir: string, emitYaml: unknown
+  public constructor(
+    specPath: string,
+    specInJson: Sway.SwaggerObject | null,
+    wireFormatDir: string,
+    emitYaml: unknown
   ) {
     if (specPath === null
       || specPath === undefined
@@ -109,7 +112,7 @@ export class WireFormatGenerator {
    * which the wire format needs to be generated. If not specified then the entire spec is
    * processed.
    */
-  public processOperations(operationIds: string|null): void {
+  public processOperations(operationIds: string | null): void {
     if (!this.swaggerApi) {
       throw new Error(
         `Please call "specValidator.initialize()" before calling this method, ` +
@@ -172,7 +175,7 @@ export class WireFormatGenerator {
     const err = {
       code,
       message,
-      innerErrors: undefined as (Array<unknown>|undefined)
+      innerErrors: undefined as (Array<unknown> | undefined)
     }
     if (innerErrors) {
       err.innerErrors = innerErrors
@@ -183,7 +186,7 @@ export class WireFormatGenerator {
     return err
   }
 
-  private async resolveExamples(): Promise<Sway.SwaggerObject|null|ReadonlyArray<unknown>> {
+  private async resolveExamples(): Promise<Sway.SwaggerObject | null | ReadonlyArray<unknown>> {
     const options = {
       relativeBase: this.specDir,
       filter: ["relative", "remote"]
@@ -193,10 +196,11 @@ export class WireFormatGenerator {
     const e = entries(allRefsRemoteRelative as StringMap<any>)
     const promiseFactories = toArray(map(
       e,
-      ([refName, refDetails]) => {
-        return async () => await this.resolveRelativeReference(
-          refName, refDetails, this.specInJson, this.specPath)
-      }
+      ([refName, refDetails]) =>
+        async () =>
+          await this.resolveRelativeReference(
+            refName, refDetails, this.specInJson, this.specPath
+          )
     ))
     if (promiseFactories.length) {
       return await utils.executePromisesSequentially(promiseFactories)
@@ -208,7 +212,7 @@ export class WireFormatGenerator {
   private async resolveRelativeReference(
     refName: string,
     refDetails: { readonly def: { readonly $ref: string } },
-    doc: {}|null,
+    doc: {} | null,
     docPath: string
   ): Promise<unknown> {
 

@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import assert from "assert"
+import * as assert from "assert"
 import * as path from "path"
 import * as os from "os"
 import * as glob from "glob"
@@ -23,8 +23,8 @@ describe("Live Validator", () => {
         directory: path.resolve(os.homedir(), "repo")
       };
       const validator = new LiveValidator()
-      assert.deepEqual(validator.cache, {})
-      assert.deepEqual(validator.options, options)
+      assert.deepStrictEqual(validator.cache, {})
+      assert.deepStrictEqual(validator.options, options)
     })
     it("should initialize with cloning", async () => {
       const options = {
@@ -37,8 +37,8 @@ describe("Live Validator", () => {
       };
       const validator = new LiveValidator(options)
       await validator.initialize()
-      assert.deepEqual(validator.cache, {})
-      assert.deepEqual(validator.options, options)
+      assert.deepStrictEqual(validator.cache, {})
+      assert.deepStrictEqual(validator.options, options)
     })
     it("should initialize without url", () => {
       const options = {
@@ -49,9 +49,10 @@ describe("Live Validator", () => {
         directory: path.resolve(os.homedir(), "repo")
       };
       const validator = new LiveValidator(options)
-      assert.deepEqual(validator.cache, {})
-      assert.deepEqual(
-        validator.options.git.url, "https://github.com/Azure/azure-rest-api-specs.git")
+      assert.deepStrictEqual(validator.cache, {})
+      assert.deepStrictEqual(
+        validator.options.git.url, "https://github.com/Azure/azure-rest-api-specs.git"
+      )
     })
     it("should throw during initialization with invalid directory", () => {
       assert.throws(() => {
@@ -63,7 +64,7 @@ describe("Live Validator", () => {
           directory: 54
         };
         const validator = new LiveValidator(options)
-        assert.notEqual(validator, null)
+        assert.notStrictEqual(validator, null)
       })
     })
     it("should initialize with user provided swaggerPaths", () => {
@@ -77,8 +78,8 @@ describe("Live Validator", () => {
         directory: path.resolve(os.homedir(), "repo")
       }
       const validator = new LiveValidator({ swaggerPaths: swaggerPaths })
-      assert.deepEqual(validator.cache, {})
-      assert.deepEqual(validator.options, options)
+      assert.deepStrictEqual(validator.cache, {})
+      assert.deepStrictEqual(validator.options, options)
     })
     it("should initialize with user provided swaggerPaths & directory", () => {
       const swaggerPaths = ["swaggerPath1", "swaggerPath2"]
@@ -92,8 +93,8 @@ describe("Live Validator", () => {
         directory: directory
       }
       const validator = new LiveValidator({ swaggerPaths: swaggerPaths, directory: directory })
-      assert.deepEqual(validator.cache, {})
-      assert.deepEqual(validator.options, options)
+      assert.deepStrictEqual(validator.cache, {})
+      assert.deepStrictEqual(validator.options, options)
     })
     it("should initialize with user provided partial git configuration", () => {
       const swaggerPaths = ["swaggerPath1", "swaggerPath2"]
@@ -111,8 +112,8 @@ describe("Live Validator", () => {
       }
       const validator = new LiveValidator({
         swaggerPaths: swaggerPaths, directory: directory, git: git })
-      assert.deepEqual(validator.cache, {})
-      assert.deepEqual(validator.options, options)
+      assert.deepStrictEqual(validator.cache, {})
+      assert.deepStrictEqual(validator.options, options)
     })
     it("should initialize with user provided full git configuration", () => {
       const swaggerPaths = ["swaggerPath1", "swaggerPath2"]
@@ -129,30 +130,40 @@ describe("Live Validator", () => {
       }
       const validator = new LiveValidator({
         swaggerPaths: swaggerPaths, directory: directory, git: git })
-      assert.deepEqual(validator.cache, {})
-      assert.deepEqual(validator.options, options)
+      assert.deepStrictEqual(validator.cache, {})
+      assert.deepStrictEqual(validator.options, options)
     })
     it("should throw on invalid options types", () => {
-      assert.throws(() => {
-        const _ = new LiveValidator("string")
-        assert.notEqual(_, null)
-      }, /must be of type "object"/)
-      assert.throws(() => {
-        const _ = new LiveValidator({ swaggerPaths: "should be array" })
-        assert.notEqual(_, null)
-      }, /must be of type "array"/)
-      assert.throws(() => {
-        const _ = new LiveValidator({ git: 1 })
-        assert.notEqual(_, null)
-      }, /must be of type "object"/)
-      assert.throws(() => {
-        const _ = new LiveValidator({ git: { url: [] } })
-        assert.notEqual(_, null)
-      }, /must be of type "string"/)
-      assert.throws(() => {
-        const _ = new LiveValidator({ git: { url: "url", shouldClone: "no" } })
-        assert.notEqual(_, null)
-      }, /must be of type "boolean"/)
+      assert.throws(
+        () => {
+          const _ = new LiveValidator("string")
+          assert.notStrictEqual(_, null)
+        },
+        /must be of type "object"/)
+      assert.throws(
+        () => {
+          const _ = new LiveValidator({ swaggerPaths: "should be array" })
+          assert.notStrictEqual(_, null)
+        },
+        /must be of type "array"/)
+      assert.throws(
+        () => {
+          const _ = new LiveValidator({ git: 1 })
+          assert.notStrictEqual(_, null)
+        },
+        /must be of type "object"/)
+      assert.throws(
+        () => {
+          const _ = new LiveValidator({ git: { url: [] } })
+          assert.notStrictEqual(_, null)
+        },
+        /must be of type "string"/)
+      assert.throws(
+        () => {
+          const _ = new LiveValidator({ git: { url: "url", shouldClone: "no" } })
+          assert.notStrictEqual(_, null)
+        },
+        /must be of type "boolean"/)
     })
   })
 
@@ -166,19 +177,19 @@ describe("Live Validator", () => {
       const validator = new LiveValidator(options)
       try {
         await validator.initialize()
-        assert.equal(true, expectedProvider in validator.cache)
-        assert.equal(6, Object.keys(validator.cache).length)
+        assert.strictEqual(true, expectedProvider in validator.cache)
+        assert.strictEqual(6, Object.keys(validator.cache).length)
         const x = validator.cache[expectedProvider]
         if (x === undefined) {
           throw new Error("x === undefined")
         }
-        assert.equal(true, expectedApiVersion in x)
-        assert.equal(1, Object.keys(x).length)
-        assert.equal(2, x[expectedApiVersion].get.length)
-        assert.equal(1, x[expectedApiVersion].put.length)
-        assert.equal(1, x[expectedApiVersion].patch.length)
-        assert.equal(1, x[expectedApiVersion].delete.length)
-        assert.equal(4, x[expectedApiVersion].post.length)
+        assert.strictEqual(true, expectedApiVersion in x)
+        assert.strictEqual(1, Object.keys(x).length)
+        assert.strictEqual(2, x[expectedApiVersion].get.length)
+        assert.strictEqual(1, x[expectedApiVersion].put.length)
+        assert.strictEqual(1, x[expectedApiVersion].patch.length)
+        assert.strictEqual(1, x[expectedApiVersion].delete.length)
+        assert.strictEqual(4, x[expectedApiVersion].post.length)
       } catch (err) {
         assert.ifError(err)
       }
@@ -191,41 +202,41 @@ describe("Live Validator", () => {
       }
       const validator = new LiveValidator(options)
       await validator.initialize()
-      assert.equal(true, expectedProvider in validator.cache)
-      assert.equal(6, Object.keys(validator.cache).length)
+      assert.strictEqual(true, expectedProvider in validator.cache)
+      assert.strictEqual(6, Object.keys(validator.cache).length)
       const x = validator.cache[expectedProvider]
       if (x === undefined) {
         throw new Error("x === undefined")
       }
-      assert.equal(true, expectedApiVersion in x)
-      assert.equal(1, Object.keys(x).length)
+      assert.strictEqual(true, expectedApiVersion in x)
+      assert.strictEqual(1, Object.keys(x).length)
       // 'microsoft.resources' -> '2016-09-01'
-      assert.equal(2, x[expectedApiVersion].get.length)
-      assert.equal(1, x[expectedApiVersion].delete.length)
-      assert.equal(3, x[expectedApiVersion].post.length)
-      assert.equal(1, x[expectedApiVersion].head.length)
-      assert.equal(1, x[expectedApiVersion].put.length)
+      assert.strictEqual(2, x[expectedApiVersion].get.length)
+      assert.strictEqual(1, x[expectedApiVersion].delete.length)
+      assert.strictEqual(3, x[expectedApiVersion].post.length)
+      assert.strictEqual(1, x[expectedApiVersion].head.length)
+      assert.strictEqual(1, x[expectedApiVersion].put.length)
       const p = validator.cache[Constants.unknownResourceProvider]
       if (p === undefined) {
         throw new Error("p === undefined")
       }
       // 'microsoft.unknown' -> 'unknown-api-version'
-      assert.equal(
+      assert.strictEqual(
         4,
         p[Constants.unknownApiVersion].post.length)
-      assert.equal(
+      assert.strictEqual(
         11,
         p[Constants.unknownApiVersion].get.length)
-      assert.equal(
+      assert.strictEqual(
         3,
         p[Constants.unknownApiVersion].head.length)
-      assert.equal(
+      assert.strictEqual(
         5,
         p[Constants.unknownApiVersion].put.length)
-      assert.equal(
+      assert.strictEqual(
         5,
         p[Constants.unknownApiVersion].delete.length)
-      assert.equal(
+      assert.strictEqual(
         1,
         p[Constants.unknownApiVersion].patch.length)
     })
@@ -235,37 +246,37 @@ describe("Live Validator", () => {
       }
       const validator = new LiveValidator(options)
       await validator.initialize()
-      assert.equal(6, Object.keys(validator.cache).length)
+      assert.strictEqual(6, Object.keys(validator.cache).length)
       const microsoftResources = validator.cache["microsoft.resources"]
       if (microsoftResources === undefined) {
         throw new Error("microsoftResources === undefined")
       }
-      assert.equal(2, microsoftResources["2016-09-01"].get.length)
-      assert.equal(1, microsoftResources["2016-09-01"].head.length)
+      assert.strictEqual(2, microsoftResources["2016-09-01"].get.length)
+      assert.strictEqual(1, microsoftResources["2016-09-01"].head.length)
       const microsoftMedia = validator.cache["microsoft.media"]
       if (microsoftMedia === undefined) {
         throw new Error("microsoftMedia === undefined")
       }
-      assert.equal(1, microsoftMedia["2015-10-01"].patch.length)
-      assert.equal(4, microsoftMedia["2015-10-01"].post.length)
+      assert.strictEqual(1, microsoftMedia["2015-10-01"].patch.length)
+      assert.strictEqual(4, microsoftMedia["2015-10-01"].post.length)
       const microsoftSearch = validator.cache["microsoft.search"]
       if (microsoftSearch === undefined) {
         throw new Error("microsoftSearch === undefined")
       }
-      assert.equal(2, microsoftSearch["2015-02-28"].get.length)
-      assert.equal(3, microsoftSearch["2015-08-19"].get.length)
+      assert.strictEqual(2, microsoftSearch["2015-02-28"].get.length)
+      assert.strictEqual(3, microsoftSearch["2015-08-19"].get.length)
       const microsoftStorage = validator.cache["microsoft.storage"]
       if (microsoftStorage === undefined) {
         throw new Error("microsoftStorage === undefined")
       }
-      assert.equal(1, microsoftStorage["2015-05-01-preview"].patch.length)
-      assert.equal(4, microsoftStorage["2015-06-15"].get.length)
-      assert.equal(3, microsoftStorage["2016-01-01"].post.length)
+      assert.strictEqual(1, microsoftStorage["2015-05-01-preview"].patch.length)
+      assert.strictEqual(4, microsoftStorage["2015-06-15"].get.length)
+      assert.strictEqual(3, microsoftStorage["2016-01-01"].post.length)
       const microsoftTest = validator.cache["microsoft.test"]
       if (microsoftTest === undefined) {
         throw new Error("microsoftTest === undefined")
       }
-      assert.equal(4, microsoftTest["2016-01-01"].post.length)
+      assert.strictEqual(4, microsoftTest["2016-01-01"].post.length)
     })
   })
 
@@ -294,8 +305,8 @@ describe("Live Validator", () => {
       if (pathObject === undefined) {
         throw new Error("pathObject is undefined")
       }
-      assert.equal(1, operations.length)
-      assert.equal(
+      assert.strictEqual(1, operations.length)
+      assert.strictEqual(
         "/subscriptions/{subscriptionId}/providers/Microsoft.Storage/storageAccounts",
         pathObject.path)
 
@@ -305,8 +316,8 @@ describe("Live Validator", () => {
       if (pathObject === undefined) {
         throw new Error("pathObject is undefined")
       }
-      assert.equal(1, operations.length)
-      assert.equal(
+      assert.strictEqual(1, operations.length)
+      assert.strictEqual(
         "/subscriptions/{subscriptionId}/providers/Microsoft.Storage/checkNameAvailability",
         pathObject.path)
 
@@ -316,8 +327,8 @@ describe("Live Validator", () => {
       if (pathObject === undefined) {
         throw new Error("pathObject is undefined")
       }
-      assert.equal(1, operations.length)
-      assert.equal(
+      assert.strictEqual(1, operations.length)
+      assert.strictEqual(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/" +
           "Microsoft.Storage/storageAccounts/{accountName}",
         pathObject.path)
@@ -349,32 +360,35 @@ describe("Live Validator", () => {
       let result = validator.getPotentialOperations(nonCachedApiUrl, "Get")
       let operations = result.operations
       let reason = result.reason
-      assert.equal(0, operations.length)
+      assert.strictEqual(0, operations.length)
       if (reason === undefined) {
         throw new Error("reason is undefined")
       }
-      assert.equal(Constants.ErrorCodes.OperationNotFoundInCacheWithApi.name, reason.code)
+      assert.strictEqual(Constants.ErrorCodes.OperationNotFoundInCacheWithApi.name, reason.code)
 
       // Operations to match is StorageAccounts_CheckNameAvailability with provider "Hello.World"
       // [non cached provider]
       result = validator.getPotentialOperations(nonCachedProviderUrl, "PoSt")
       operations = result.operations
       reason = result.reason
-      assert.equal(0, operations.length)
+      assert.strictEqual(0, operations.length)
       if (reason === undefined) {
         throw new Error("reason is undefined")
       }
-      assert.equal(Constants.ErrorCodes.OperationNotFoundInCacheWithProvider.name, reason.code)
+      assert.strictEqual(
+        Constants.ErrorCodes.OperationNotFoundInCacheWithProvider.name,
+        reason.code
+      )
 
       // Operations to match is StorageAccounts_Delete with verb "head" [non cached http verb]
       result = validator.getPotentialOperations(nonCachedVerbUrl, "head")
       operations = result.operations
       reason = result.reason
-      assert.equal(0, operations.length)
+      assert.strictEqual(0, operations.length)
       if (reason === undefined) {
         throw new Error("reason is undefined")
       }
-      assert.equal(Constants.ErrorCodes.OperationNotFoundInCacheWithVerb.name, reason.code)
+      assert.strictEqual(Constants.ErrorCodes.OperationNotFoundInCacheWithVerb.name, reason.code)
 
       // Operations to match is with path
       // "subscriptions/subscriptionId/providers/Microsoft.Storage/" +
@@ -383,11 +397,11 @@ describe("Live Validator", () => {
       result = validator.getPotentialOperations(nonCachedPath, "get")
       operations = result.operations
       reason = result.reason
-      assert.equal(0, operations.length)
+      assert.strictEqual(0, operations.length)
       if (reason === undefined) {
         throw new Error("reason is undefined")
       }
-      assert.equal(Constants.ErrorCodes.OperationNotFoundInCache.name, reason.code)
+      assert.strictEqual(Constants.ErrorCodes.OperationNotFoundInCache.name, reason.code)
     })
     it("it should create an implicit default response and find it", async () => {
       const options = {
@@ -415,7 +429,7 @@ describe("Live Validator", () => {
         if (responses.default.schema.type === "file") {
           throw new Error("responses.default.schema.type === \"file\"")
         }
-        assert.deepEqual(responses.default, utils.GeneratedCloudErrorSchema)
+        assert.deepStrictEqual(responses.default, utils.GeneratedCloudErrorSchema)
         assert.strictEqual(
           responses.default.schema.$ref,
           "#/definitions/" + utils.generatedCloudErrorWrapperName

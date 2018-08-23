@@ -17,7 +17,7 @@ export class PolymorphicTree {
    * @param {Map<string, PolymorphicTree>} [children] - A map of zero or more children representing
    *    the child models in the inheritance chain
    */
-  constructor(name: string, children?: Map<string, PolymorphicTree>) {
+  public constructor(name: string, children?: Map<string, PolymorphicTree>) {
     if (name === null
       || name === undefined
       || typeof name.valueOf() !== "string"

@@ -40,7 +40,7 @@ export function stripBOM(content: Buffer | string): string {
   if (Buffer.isBuffer(content)) {
     content = content.toString()
   }
-  if (content.charCodeAt(0) === 0xfeff || content.charCodeAt(0) === 0xfffe) {
+  if (content.charCodeAt(0) === 0xFEFF || content.charCodeAt(0) === 0xFFFE) {
     content = content.slice(1)
   }
   return content

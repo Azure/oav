@@ -50,12 +50,9 @@ export async function getDocumentsFromCompositeSwagger(
       if (docs[i].startsWith(".")) {
         docs[i] = docs[i].substring(1)
       }
-      let individualPath = ""
-      if (docs[i].startsWith("http")) {
-        individualPath = docs[i]
-      } else {
-        individualPath = basePath + docs[i]
-      }
+      const individualPath = docs[i].startsWith("http") ?
+        docs[i] :
+        basePath + docs[i]
       finalDocs.push(individualPath)
     }
     return finalDocs
@@ -66,7 +63,7 @@ export async function getDocumentsFromCompositeSwagger(
 }
 
 async function validate<T>(
-  options: Options|undefined,
+  options: Options | undefined,
   func: (options: Options) => Promise<T>,
 ): Promise<T> {
   if (!options) { options = {} }
@@ -85,7 +82,7 @@ async function validate<T>(
 
 export async function validateSpec(
   specPath: string,
-  options: Options|undefined,
+  options: Options | undefined,
 ): Promise<SpecValidationResult> {
   return await validate(options, async o => {
     // As a part of resolving discriminators we replace all the parent references
@@ -127,7 +124,9 @@ export async function validateCompositeSpec(
 }
 
 export async function validateExamples(
-  specPath: string, operationIds: string|undefined, options?: Options
+  specPath: string,
+  operationIds: string | undefined,
+  options?: Options
 ): Promise<SpecValidationResult> {
   return await validate(options, async o => {
     const validator = new ModelValidator(specPath, null, o)
@@ -217,7 +216,7 @@ export async function generateWireFormat(
   specPath: string,
   outDir: string,
   emitYaml: unknown,
-  operationIds: string|null,
+  operationIds: string | null,
   options: Options
 ): Promise<void> {
 

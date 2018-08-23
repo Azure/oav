@@ -26,7 +26,7 @@ const modelValidatorPluginName = "model-validator"
 const modelValidationCategory = "ExampleModelViolation"
 
 class FormattedOutput {
-  constructor(
+  public constructor(
     public readonly channel: Channel,
     public readonly details: {},
     public readonly code: string[],
@@ -71,7 +71,7 @@ extension.Add(
   async (autoRestApi: IAutoRestPluginInitiator): Promise<void> => {
     const swaggerFileNames = await autoRestApi.ListInputs()
     const promises = swaggerFileNames.map(
-      async (swaggerFileName) => await analyzeSwagger(swaggerFileName, autoRestApi))
+      async (swaggerFileName) => analyzeSwagger(swaggerFileName, autoRestApi))
     await Promise.all(promises)
   })
 
@@ -226,8 +226,8 @@ export async function openApiValidationExample(
  * Path comes with indices as strings in "inner errors", so converting those to actual numbers for
  * path to work.
  */
-function convertIndicesFromStringToNumbers(path: string[]): Array<string|number> {
-  const result: Array<string|number> = path.slice()
+function convertIndicesFromStringToNumbers(path: string[]): Array<string | number> {
+  const result: Array<string | number> = path.slice()
   for (let i = 1; i < result.length; ++i) {
     const num = parseInt(result[i] as string)
     if (!isNaN(num) && result[i - 1] === "parameters") {

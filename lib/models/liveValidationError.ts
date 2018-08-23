@@ -18,7 +18,7 @@
  *
  */
 export class LiveValidationError {
-  constructor(public code?: string, public message?: string) {
+  public constructor(public code?: string, public message?: string) {
   }
 
   /**

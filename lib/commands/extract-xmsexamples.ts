@@ -37,5 +37,5 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     output: argv.outDir,
     matchApiVersion: argv.matchApiVersion,
   }
-  return await validate.extractXMsExamples(specPath, recordings, vOptions)
+  await validate.extractXMsExamples(specPath, recordings, vOptions)
 }

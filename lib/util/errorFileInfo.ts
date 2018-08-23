@@ -4,9 +4,9 @@ import { TitleObject } from "../validators/specTransformer"
 import { log } from "./logging"
 
 export const errorsAddFileInfo = <T extends NodeError<T>, E extends Iterable<T>>(
-  errors: E|undefined,
-): E|undefined => {
-  forEach(errors, e => errorAddFileInfo(e))
+  errors: E | undefined,
+): E | undefined => {
+  forEach(errors, errorAddFileInfo)
   return errors
 }
 
@@ -14,7 +14,7 @@ const errorAddFileInfo = <T extends NodeError<T>>(error: T): void => {
   const title = error.title
   if (title !== undefined) {
     try {
-      const titleObject: TitleObject|undefined = JSON.parse(title)
+      const titleObject: TitleObject | undefined = JSON.parse(title)
       if (titleObject !== undefined) {
         error.position = titleObject.position
         error.url = titleObject.url

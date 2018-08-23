@@ -6,7 +6,7 @@ export interface CommonError {
   readonly id?: string
   readonly message?: string
   readonly innerErrors?: CommonError[]
-  path?: string|string[]
+  path?: string | string[]
   readonly inner?: CommonError[]
   errors?: CommonError[]
   in?: unknown

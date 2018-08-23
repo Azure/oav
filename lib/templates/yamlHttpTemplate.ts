@@ -8,7 +8,7 @@ import { toArray } from "@ts-common/iterator"
 
 export class YamlHttpTemplate extends HttpTemplate {
 
-  constructor(request: Request, responses: Responses) {
+  public constructor(request: Request, responses: Responses) {
     super(request, responses)
   }
 

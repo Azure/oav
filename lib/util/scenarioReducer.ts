@@ -21,9 +21,7 @@ export interface Result {
 
 export type OperationExampleResult = Scenario
 
-export interface OperationResult {
-  [key: string]: OperationExampleResult
-}
+export type OperationResult = sm.MutableStringMap<OperationExampleResult>
 
 export function scenarioReducer(
   scenarioName: string,

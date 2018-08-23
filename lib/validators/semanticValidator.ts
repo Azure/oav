@@ -37,7 +37,7 @@ export class SemanticValidator extends SpecValidator<SemanticValidationResult> {
       const msg =
         `Please call "specValidator.initialize()" before calling this method, ` +
         `so that swaggerApi is populated.`
-      const e = this.constructErrorObject(ErrorCodes.InitializationError, msg)
+      const e = this.constructErrorObject<{}>(ErrorCodes.InitializationError, msg)
       this.specValidationResult.initialize = e
       this.specValidationResult.validateSpec.isValid = false
       log.error(`${ErrorCodes.InitializationError.name}: ${msg}`)
@@ -87,7 +87,7 @@ export class SemanticValidator extends SpecValidator<SemanticValidationResult> {
     }
   }
 
-  private getProviderNamespace(): string|null {
+  private getProviderNamespace(): string | null {
     const re = /^(.*)\/providers\/(\w+\.\w+)\/(.*)$/ig
     if (this.specInJson) {
       if (this.specInJson.paths) {
