@@ -631,9 +631,9 @@ interface Entity {
   additionalProperties?: SchemaObject | boolean
   items?: SchemaObject
   "x-nullable"?: boolean
-  oneOf?: SchemaObject[]
+  oneOf?: ReadonlyArray<SchemaObject>
   $ref?: string
-  anyOf?: SchemaObject[]
+  anyOf?: ReadonlyArray<SchemaObject>
 }
 
 /**
@@ -725,7 +725,7 @@ export function allowNullType<T extends Entity>(
       } else {
         entity = {
           anyOf: [savedEntity, { type: "null" }]
-        } as T
+        } as any
       }
     }
   }
@@ -739,7 +739,7 @@ export function allowNullType<T extends Entity>(
     const savedEntity = entity
     entity = {
       anyOf: [savedEntity, { type: "null" }]
-    } as T
+    } as any
   }
   return entity
 }

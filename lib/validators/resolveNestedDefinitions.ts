@@ -68,8 +68,8 @@ export function resolveNestedDefinitions(spec: SwaggerObject, options: Options):
   }
 
   // a function to resolve SchemaObject array
-  const resolveSchemaObjectArray = (schemaObjectArray: SchemaObject[]) =>
-    arrayMap(schemaObjectArray, resolveNestedSchemaObject) as SchemaObject[]
+  const resolveSchemaObjectArray = (schemaObjectArray: ReadonlyArray<SchemaObject>) =>
+    arrayMap(schemaObjectArray, resolveNestedSchemaObject)
 
   // a function to resolve SchemaObject (top-level and nested)
   const resolveSchemaObject = (schemaObject: SchemaObject): SchemaObject =>
