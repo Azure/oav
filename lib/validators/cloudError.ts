@@ -5,14 +5,16 @@ import { SchemaObject, DefinitionsObject, ResponsesObject } from "yasway"
 
 export const generatedPrefix = "generated."
 
-export const generatedCloudErrorName = generatedPrefix + "CloudError"
+const defaultPrefix = `${generatedPrefix}default.`
+
+const cloudErrorName = `${defaultPrefix}CloudError`
 
 /**
  * Models a Cloud Error
  */
-export const generatedCloudError: SchemaObject = {
+const cloudError: SchemaObject = {
   type: "object",
-  title: "#/definitions/" + generatedCloudErrorName,
+  title: `#/definitions/${cloudErrorName}`,
   properties: {
     code: {
       type: "string",
@@ -48,29 +50,29 @@ export const generatedCloudError: SchemaObject = {
   additionalProperties: false
 }
 
-export const generatedCloudErrorWrapperName = generatedPrefix + "CloudErrorWrapper"
-export const generatedCloudErrorSchemaName = generatedPrefix + "CloudErrorSchema"
+const cloudErrorWrapperName = `${defaultPrefix}CloudErrorWrapper`
+const cloudErrorSchemaName = `${defaultPrefix}CloudErrorSchema`
 
 /**
  * Models an ARM cloud error schema.
  */
-export const generatedCloudErrorSchema = {
+const cloudErrorSchema = {
   description: "Error response describing why the operation failed.",
-  title: "#/definitions/" + generatedCloudErrorSchemaName,
+  title: `#/definitions/${cloudErrorSchemaName}`,
   schema: {
-    $ref: "#/definitions/" + generatedCloudErrorWrapperName
+    $ref: `#/definitions/${cloudErrorWrapperName}`
   }
 }
 
 /**
  * Models an ARM cloud error wrapper.
  */
-export const generatedCloudErrorWrapper: SchemaObject = {
+const cloudErrorWrapper: SchemaObject = {
   type: "object",
-  title: "#/definitions/" + generatedCloudErrorWrapperName,
+  title: `#/definitions/${cloudErrorWrapperName}`,
   properties: {
     error: {
-      $ref: "#/definitions/" + generatedCloudErrorName
+      $ref: `#/definitions/${cloudErrorName}`
     }
   },
   additionalProperties: false
@@ -88,11 +90,11 @@ const noDefaultResponses: ResponsesAndDefinitions = {
 
 const implicitDefaultResponses: ResponsesAndDefinitions = {
   definitions: {
-    [generatedCloudErrorName]: generatedCloudError,
-    [generatedCloudErrorWrapperName]: generatedCloudErrorWrapper
+    [cloudErrorName]: cloudError,
+    [cloudErrorWrapperName]: cloudErrorWrapper
   },
   responses: {
-    default: generatedCloudErrorSchema
+    default: cloudErrorSchema
   }
 }
 

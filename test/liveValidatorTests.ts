@@ -8,7 +8,6 @@ import * as glob from "glob"
 import { LiveValidator } from "../lib/validators/liveValidator"
 import * as Constants from "../lib/util/constants"
 import { ResponsesObject } from "yasway"
-import { generatedCloudErrorWrapper } from '../lib/validators/cloudError';
 
 const livePaths = glob.sync(path.join(__dirname, "liveValidation/swaggers/**/live/*.json"))
 describe("Live Validator", () => {
@@ -430,7 +429,6 @@ describe("Live Validator", () => {
         if (schema.type !== "object") {
           throw new Error("responses.default.schema.type !== \"object\"")
         }
-        assert.strictEqual(schema.title, generatedCloudErrorWrapper.title)
         if (schema.properties === undefined) {
           throw new Error("schema.properties === undefined")
         }

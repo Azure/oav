@@ -36,7 +36,7 @@ export function resolveNestedDefinitions(spec: SwaggerObject, options: Options):
 
   const defaultResponses = getDefaultResponses(options.shouldModelImplicitDefaultResponse)
 
-  const extraDefinitions: MutableStringMap<SchemaObject> = {}
+  const generatedDefinitions: MutableStringMap<SchemaObject> = {}
 
   // a function to resolve nested schema objects
   const resolveNestedSchemaObject = (schemaObject: SchemaObject) => {
@@ -60,9 +60,9 @@ export function resolveNestedDefinitions(spec: SwaggerObject, options: Options):
     const result = resolveSchemaObject(schemaObject)
     const info = getInfo(result)
     const suffix = info === undefined ? uuid.v4() : getPath(info).join(".")
-    const definitionName = generatedPrefix + suffix
+    const definitionName = `${generatedPrefix}nested.${suffix}`
     if (result !== undefined) {
-      extraDefinitions[definitionName] = result
+      generatedDefinitions[definitionName] = result
     }
     return { $ref: `#/definitions/${encodeURIComponent(definitionName)}` }
   }
@@ -130,9 +130,15 @@ export function resolveNestedDefinitions(spec: SwaggerObject, options: Options):
       ) :
       undefined
 
+  const resolveDefinitions = (definitions: DefinitionsObject | undefined) =>
+    stringMapMap(
+      stringMapMerge(definitions, defaultResponses.definitions),
+      resolveSchemaObject
+    )
+
   // transformations for Open API 2.0
   const swaggerObjectTransformation: PartialFactory<SwaggerObject> = {
-    definitions: definitions => stringMapMap(definitions, resolveSchemaObject),
+    definitions: resolveDefinitions,
     parameters: parameters => stringMapMap(parameters, resolveParameterObject),
     responses: responses => stringMapMap(responses, resolveResponseObject),
     paths: paths => stringMapMap(
@@ -154,11 +160,12 @@ export function resolveNestedDefinitions(spec: SwaggerObject, options: Options):
   }
 
   // create extra definitions and the temporary spec
-  const temp = propertySetMap(spec, swaggerObjectTransformation)
+  const specWithNoGeneratedDefinitions = propertySetMap(spec, swaggerObjectTransformation)
 
-  const mergeOptionalDefinitions = (definitions: DefinitionsObject | undefined) =>
-    stringMapMerge(definitions, extraDefinitions, defaultResponses.definitions)
+  const addGeneratedDefinitions = (definitions: DefinitionsObject | undefined) =>
+    stringMapMerge(definitions, generatedDefinitions)
 
-  // merge definitions and extraDefinitions.
-  return propertySetMap(temp, { definitions: mergeOptionalDefinitions })
+  // Merge definitions and generatedDefinitions.
+  // It should be the last step when all generated definitions are known
+  return propertySetMap(specWithNoGeneratedDefinitions, { definitions: addGeneratedDefinitions })
 }
