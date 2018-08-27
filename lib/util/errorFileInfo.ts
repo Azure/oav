@@ -2,6 +2,8 @@ import { NodeError } from "./validationError"
 import { forEach } from "@ts-common/iterator"
 import { jsonSymbol, schemaSymbol } from "z-schema"
 import { getInfo, getRootObjectInfo } from '@ts-common/source-map';
+import { TitleObject } from '../validators/specTransformer';
+import { log } from './logging';
 
 export const errorsAddFileInfo = <T extends NodeError<T>, E extends Iterable<T>>(
   errors: E | undefined,
@@ -16,7 +18,6 @@ interface ErrorEx {
 }
 
 const errorAddFileInfo = <T extends NodeError<T>>(error: T): void => {
-  /*
   const title = error.title
   if (title !== undefined) {
     try {
@@ -31,7 +32,6 @@ const errorAddFileInfo = <T extends NodeError<T>>(error: T): void => {
       log.error(`ICE: can't parse title: ${title}`)
     }
   }
-  */
   const errorEx = error as any as ErrorEx
   const json = errorEx[jsonSymbol]
   if (json !== undefined) {
@@ -41,6 +41,7 @@ const errorAddFileInfo = <T extends NodeError<T>>(error: T): void => {
       error.jsonUrl = getRootObjectInfo(jsonInfo).url
     }
   }
+  /*
   const schema = errorEx[schemaSymbol]
   if (schema !== null && typeof schema === "object") {
     const schemaInfo = getInfo(schema)
@@ -49,6 +50,7 @@ const errorAddFileInfo = <T extends NodeError<T>>(error: T): void => {
       error.url = getRootObjectInfo(schemaInfo).url
     }
   }
+  */
   errorsAddFileInfo(error.errors)
   errorsAddFileInfo(error.inner)
 }
