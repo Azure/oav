@@ -38,8 +38,9 @@
     "vscode-jsonrpc": "^3.6.2",
     "winston": "^3.0.0",
     "yargs": "^6.6.0",
-    "yasway": "sergey-shandar-forks/sway#sergey/schema",
-    "yuml2svg": "^3.1.0"
+    "yasway": "github:sergey-shandar-forks/sway#sergey/schema",
+    "yuml2svg": "^3.1.0",
+    "z-schema": "github:sergey-shandar-forks/z-schema#sergey/json"
   },
   "devDependencies": {
     "@types/glob": "^5.0.35",

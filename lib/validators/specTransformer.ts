@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 import { SchemaObject, SwaggerObject } from "yasway"
 import { entries } from "@ts-common/string-map"
-import { FilePosition, getInfo, getRootObjectInfo } from "@ts-common/source-map"
+import { FilePosition } from "@ts-common/source-map"
 
 /**
  * Transforms the swagger object
@@ -35,6 +35,7 @@ export interface TitleObject {
 }
 
 function insertSchemaTitle(model: SchemaObject, title: string) {
+  /*
   const info = getInfo(model)
   const titleObject: TitleObject = info === undefined ?
     { title } :
@@ -44,4 +45,6 @@ function insertSchemaTitle(model: SchemaObject, title: string) {
       url: getRootObjectInfo(info).url
     }
   model.title = JSON.stringify(titleObject)
+  */
+ model.title = title
 }

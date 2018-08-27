@@ -101,6 +101,9 @@ export interface NodeError<T extends NodeError<T>> {
 
   position?: FilePosition
   url?: string
+
+  jsonPosition?: FilePosition
+  jsonUrl?: string
 }
 
 export interface ValidationResult<T extends NodeError<T>> {

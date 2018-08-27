@@ -1,7 +1,7 @@
 import { NodeError } from "./validationError"
 import { forEach } from "@ts-common/iterator"
-import { TitleObject } from "../validators/specTransformer"
-import { log } from "./logging"
+import { jsonSymbol, schemaSymbol } from "z-schema"
+import { getInfo, getRootObjectInfo } from '@ts-common/source-map';
 
 export const errorsAddFileInfo = <T extends NodeError<T>, E extends Iterable<T>>(
   errors: E | undefined,
@@ -10,7 +10,13 @@ export const errorsAddFileInfo = <T extends NodeError<T>, E extends Iterable<T>>
   return errors
 }
 
+interface ErrorEx {
+  readonly [jsonSymbol]?: object
+  readonly [schemaSymbol]?: object
+}
+
 const errorAddFileInfo = <T extends NodeError<T>>(error: T): void => {
+  /*
   const title = error.title
   if (title !== undefined) {
     try {
@@ -23,6 +29,24 @@ const errorAddFileInfo = <T extends NodeError<T>>(error: T): void => {
     // tslint:disable-next-line:no-empty
     } catch {
       log.error(`ICE: can't parse title: ${title}`)
+    }
+  }
+  */
+  const errorEx = error as any as ErrorEx
+  const json = errorEx[jsonSymbol]
+  if (json !== undefined) {
+    const jsonInfo = getInfo(json)
+    if (jsonInfo !== undefined) {
+      error.jsonPosition = jsonInfo.position
+      error.jsonUrl = getRootObjectInfo(jsonInfo).url
+    }
+  }
+  const schema = errorEx[schemaSymbol]
+  if (schema !== null && typeof schema === "object") {
+    const schemaInfo = getInfo(schema)
+    if (schemaInfo !== undefined) {
+      error.position = schemaInfo.position
+      error.url = getRootObjectInfo(schemaInfo).url
     }
   }
   errorsAddFileInfo(error.errors)
