@@ -39,14 +39,10 @@ const errorAddFileInfo = <T extends NodeError<T>>(error: T): void => {
     const jsonInfo = getInfo(json)
     if (jsonInfo !== undefined) {
       const path = error.path
-      if (path !== undefined) {
-        error.jsonPosition = getDescendantFilePosition(
-          json,
-          isArray(path) ? path : path.split("/")
-        )
-      } else {
-        error.jsonPosition = jsonInfo.position
-      }
+      error.jsonPosition = getDescendantFilePosition(
+        json,
+        path === undefined ? undefined : isArray(path) ? path : path.split("/")
+      )
       error.jsonUrl = getRootObjectInfo(jsonInfo).url
     }
   }
