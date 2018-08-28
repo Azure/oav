@@ -1,9 +1,10 @@
 import { NodeError } from "./validationError"
-import { forEach } from "@ts-common/iterator"
+import { forEach, isArray } from "@ts-common/iterator"
 import { jsonSymbol, schemaSymbol } from "z-schema"
-import { getInfo, getRootObjectInfo } from '@ts-common/source-map';
-import { TitleObject } from '../validators/specTransformer';
-import { log } from './logging';
+import { getInfo, getRootObjectInfo } from '@ts-common/source-map'
+import { TitleObject } from '../validators/specTransformer'
+import { log } from './logging'
+import { getDescendantFilePosition } from "@ts-common/source-map"
 
 export const errorsAddFileInfo = <T extends NodeError<T>, E extends Iterable<T>>(
   errors: E | undefined,
@@ -37,7 +38,15 @@ const errorAddFileInfo = <T extends NodeError<T>>(error: T): void => {
   if (json !== undefined) {
     const jsonInfo = getInfo(json)
     if (jsonInfo !== undefined) {
-      error.jsonPosition = jsonInfo.position
+      const path = error.path
+      if (path !== undefined) {
+        error.jsonPosition = getDescendantFilePosition(
+          json,
+          isArray(path) ? path : path.split("/")
+        )
+      } else {
+        error.jsonPosition = jsonInfo.position
+      }
       error.jsonUrl = getRootObjectInfo(jsonInfo).url
     }
   }

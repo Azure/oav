@@ -11,10 +11,10 @@
   "dependencies": {
     "@microsoft.azure/autorest-extension-base": "1.0.13",
     "@ts-common/iterator": "0.0.36",
-    "@ts-common/json": "0.0.16",
-    "@ts-common/json-parser": "0.2.0",
+    "@ts-common/json": "0.0.18",
+    "@ts-common/json-parser": "0.2.1",
     "@ts-common/property-set": "0.0.7",
-    "@ts-common/source-map": "0.2.4",
+    "@ts-common/source-map": "0.2.6",
     "@ts-common/string-map": "0.0.26",
     "@ts-common/tuple": "0.0.0",
     "@types/lodash": "^4.14.116",
