@@ -40,7 +40,7 @@
     "yargs": "^6.6.0",
     "yasway": "github:sergey-shandar-forks/sway#sergey/schema",
     "yuml2svg": "^3.1.0",
-    "z-schema": "github:sergey-shandar-forks/z-schema#sergey/json"
+    "z-schema": "github:sergey-shandar-forks/z-schema#sergey/crlf"
   },
   "devDependencies": {
     "@types/glob": "^5.0.35",
