@@ -104,6 +104,6 @@ describe("resolve nested properties", () => {
     assert.strictEqual(apiValidationResult.errors.length, 1)
     const error = apiValidationResult.errors[0].errors[0]
     const json = (error as any)[jsonSymbol]
-    assert.strictEqual(json, request)
+    assert.strictEqual(json, request.body)
   })
 })
