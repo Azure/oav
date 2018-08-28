@@ -1,5 +1,9 @@
 # Changelog
 
+### 08/28/2018 0.5.7
+
+- Errors have optional `jsonUrl` and `jsonUrl` fields.
+
 ### 08/22/2018 0.5.6
 
 - CloudError proper fix
