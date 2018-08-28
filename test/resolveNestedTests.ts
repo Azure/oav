@@ -4,6 +4,7 @@
 import * as sway from "yasway"
 import assert from "assert"
 import { SpecValidator } from "../lib/validators/specValidator"
+import { jsonSymbol } from 'z-schema';
 
 const options: sway.Options = {
   definition: {
@@ -42,6 +43,7 @@ const options: sway.Options = {
           ],
           responses: {
             200: {
+              description: "200 response",
               schema: {
                 type: "file"
               }
@@ -98,6 +100,10 @@ describe("resolve nested properties", () => {
     const apiOperations = api.getOperations()
     const apiOperation = apiOperations[0]
     const apiValidationResult = apiOperation.validateRequest(request)
+
     assert.strictEqual(apiValidationResult.errors.length, 1)
+    const error = apiValidationResult.errors[0].errors[0]
+    const json = (error as any)[jsonSymbol]
+    assert.strictEqual(json, request.body)
   })
 })
