@@ -17,11 +17,11 @@ export class PolymorphicTree {
    * @param {Map<string, PolymorphicTree>} [children] - A map of zero or more children representing
    *    the child models in the inheritance chain
    */
-  constructor(name: string, children?: Map<string, PolymorphicTree>) {
+  public constructor(name: string, children?: Map<string, PolymorphicTree>) {
     if (name === null
       || name === undefined
       || typeof name.valueOf() !== "string"
-      || !name.trim().length) {
+      || name.trim().length === 0) {
       throw new Error(
         "name is a required property of type string and it cannot be an empty string.")
     }
@@ -49,29 +49,5 @@ export class PolymorphicTree {
       this.children.set(childObj.name, childObj)
     }
     return childObj
-  }
-
-  /**
-   * Adds a child by name to the PolymorphicTree. This method will not add the child again if it is
-   *    already present.
-   *
-   * @param {string} childName- The name of the child model
-   * @returns {PolymorphicTree} child - The created child node.
-   */
-  private addChildByName(childName: string): PolymorphicTree|undefined {
-    if (childName === null
-      || childName === undefined
-      || typeof childName.valueOf() === "string"
-      || !childName.trim().length) {
-      throw new Error("childName is a required parameter of type string.")
-    }
-    let child
-    if (!this.children.has(childName)) {
-      child = new PolymorphicTree(childName)
-      this.children.set(childName, child)
-    } else {
-      child = this.children.get(childName)
-    }
-    return child
   }
 }

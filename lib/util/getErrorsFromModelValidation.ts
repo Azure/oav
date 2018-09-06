@@ -8,16 +8,14 @@ import * as sm from "@ts-common/string-map"
 import * as it from "@ts-common/iterator"
 
 export interface ModelValidation {
-  operations: {
-    [key: string]: OperationResult|undefined
-  }
+  operations: sm.MutableStringMap<OperationResult | undefined>
 }
 
 /**
  * From the raw validator engine results process errors to be served.
  */
 export function getErrorsFromModelValidation(
-  validationResult: ModelValidation
+  validationResult: ModelValidation,
 ): ReadonlyArray<ModelValidationError> {
   if (!validationResult.operations) {
     return [];

@@ -73,6 +73,40 @@
                 }
               }
             ]
+          },
+          {
+            "animalType": "Tiger",
+            "name": "TigerWithSiblings",
+            "eats": {
+              "plants": {
+                "name": "Corriander",
+                "foodType": "Microsoft.Jain",
+                "flavor": "cilantro"
+              },
+              "plantains": {
+                "name": "plantains",
+                "foodType": "Microsoft.Jain"
+              }
+            },
+            "siblings": [
+              {
+                "animalType": "Microsoft.Mammal",
+                "name": "BabyTiger",
+                "sanctuary": "Ranthambore",
+                "eats": {
+                  "plantFood": {
+                    "name": "Corriander",
+                    "foodType": "Microsoft.Jain",
+                    "flavor": "cilantro"
+                  },
+                  "dogFood": {
+                    "name": "Dog",
+                    "foodType": "Meat",
+                    "isOrganic": false
+                  }
+                }
+              }
+            ]
           }
         ]
       }

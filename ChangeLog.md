@@ -1,5 +1,65 @@
 # Changelog
 
+### 08/28/2018 0.5.7
+
+- Errors have optional `jsonUrl` and `jsonPosition` fields.
+
+### 08/22/2018 0.5.6
+
+- CloudError proper fix
+
+### 08/22/2018 0.5.5
+
+- CloudError bug fix #300.
+
+### 08/22/2018 0.5.4
+
+- Simplified source-map
+
+### 08/21/2018 0.5.3
+
+- Friendly nested definition name
+
+### 08/21/2018 0.5.2
+
+- Bug fix for `"type": "file"`
+
+### 08/17/2018 0.5.1
+
+- File URL and position in title
+
+### 08/17/2018 0.5.0
+
+- File URL and position
+
+### 08/16/2018 0.4.70
+
+- New transformation functions.
+
+### 08/14/2018 0.4.69
+
+- Collapse of similar errors for array elements in `similarPaths` property on the error.
+
+### 08/13/2018 0.4.68
+
+- Using a JSON parser with a source map.
+
+### 08/11/2018 0.4.67
+
+- Single error for not matching any discriminated types.
+
+### 08/10/2018 0.4.66
+
+- Use JSON Pointer format for inserted schema title for properties and definitions.
+
+### 08/10/2018 0.4.65
+
+- Include property name as schema title in the property object.
+
+### 08/10/2018 0.4.64
+
+- Include definition name as schema title in the definitions.
+
 ### 08/01/2018 0.4.63
 
 - Replacing `reduce` error collections with lazy iterators.

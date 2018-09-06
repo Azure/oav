@@ -20,7 +20,7 @@ import { ErrorResponse } from "./errorResponse";
  *
  */
 export class ErrorWrapper extends ErrorResponse {
-  constructor() {
+  public constructor() {
     super();
   }
 

@@ -11,12 +11,12 @@ import { log } from "./logging"
 import request = require("request")
 import * as lodash from "lodash"
 import * as http from "http"
-import { Unknown } from "./unknown"
-import { StringMap } from "./stringMap"
+import { MutableStringMap, entries } from "@ts-common/string-map"
 import { SwaggerObject, ParameterObject, SchemaObject, DataType } from "yasway"
-import { NonUndefined } from "./nonUndefined"
+import * as jsonParser from "@ts-common/json-parser"
+import { cloneDeep, Data } from "@ts-common/source-map"
 
-export type DocCache = StringMap<Promise<SwaggerObject>>
+export type DocCache = MutableStringMap<Promise<SwaggerObject>>
 
 /*
  * Caches the json docs that were successfully parsed by parseJson().
@@ -28,7 +28,6 @@ export let docCache: DocCache = {}
 
 export function clearCache(): void {
   docCache = {}
-  return
 }
 
 /*
@@ -40,7 +39,7 @@ export function stripBOM(content: Buffer | string): string {
   if (Buffer.isBuffer(content)) {
     content = content.toString()
   }
-  if (content.charCodeAt(0) === 0xfeff || content.charCodeAt(0) === 0xfffe) {
+  if (content.charCodeAt(0) === 0xFEFF || content.charCodeAt(0) === 0xFFFE) {
     content = content.slice(1)
   }
   return content
@@ -61,8 +60,9 @@ export async function parseJson(specPath: string): Promise<SwaggerObject> {
         "string."
     )
   }
-  if (docCache[specPath]) {
-    return await docCache[specPath]
+  const doc = docCache[specPath]
+  if (doc) {
+    return await doc
   }
   // url
   if (specPath.match(/^http.*/gi) !== null) {
@@ -78,7 +78,7 @@ export async function parseJson(specPath: string): Promise<SwaggerObject> {
     docCache[specPath] = res
     return await res
   } else {
-    // local filepath
+    // local file path
     try {
       const fileContent = fs.readFileSync(specPath, "utf8")
       const result = parseContent(specPath, fileContent)
@@ -108,25 +108,29 @@ export function parseContent(
   filePath: string,
   fileContent: string
 ): SwaggerObject {
-  let result = null
   const sanitizedContent = stripBOM(fileContent)
   if (/.*\.json$/gi.test(filePath)) {
-    result = JSON.parse(sanitizedContent)
+    return jsonParser.parse(
+      filePath,
+      sanitizedContent,
+      e => {
+        throw Error(e.message)
+      }
+    ) as SwaggerObject
   } else if (/.*\.ya?ml$/gi.test(filePath)) {
-    result = YAML.safeLoad(sanitizedContent)
+    return YAML.safeLoad(sanitizedContent)
   } else {
     const msg =
       `We currently support "*.json" and "*.yaml | *.yml" file formats for validating swaggers.\n` +
       `The current file extension in "${filePath}" is not supported.`
     throw new Error(msg)
   }
-  return result
 }
 
 export type Options = request.CoreOptions &
   request.UrlOptions & {
     readonly url: string
-    readonly errorOnNon200Response: Unknown
+    readonly errorOnNon200Response: unknown
   }
 
 /*
@@ -327,26 +331,27 @@ export async function parseJsonWithPathFragments(
  *
  * @returns {object} target - Returns the merged target object.
  */
-export function mergeObjects<T extends StringMap<any>>(
+export function mergeObjects<T extends MutableStringMap<Data>>(
   source: T,
   target: T
 ): T {
-  Object.keys(source).forEach(key => {
-    if (Array.isArray(source[key])) {
-      if (target[key] && !Array.isArray(target[key])) {
+  for (const [key, sourceProperty] of entries(source)) {
+    if (Array.isArray(sourceProperty)) {
+      const targetProperty = target[key]
+      if (!targetProperty) {
+        target[key] = sourceProperty
+      } else if (!Array.isArray(targetProperty)) {
         throw new Error(
           `Cannot merge ${key} from source object into target object because the same property ` +
             `in target object is not (of the same type) an Array.`
         )
+      } else {
+        target[key] = mergeArrays(sourceProperty, targetProperty)
       }
-      if (!target[key]) {
-        target[key] = []
-      }
-      target[key] = mergeArrays(source[key], target[key])
     } else {
-      target[key] = lodash.cloneDeep(source[key])
+      target[key] = cloneDeep(sourceProperty)
     }
-  })
+  }
   return target
 }
 
@@ -358,12 +363,12 @@ export function mergeObjects<T extends StringMap<any>>(
  *
  * @returns {array} target - Returns the merged target array.
  */
-export function mergeArrays<T>(source: T[], target: T[]): T[] {
+export function mergeArrays<T extends Data>(source: ReadonlyArray<T>, target: T[]): T[] {
   if (!Array.isArray(target) || !Array.isArray(source)) {
     return target
   }
   source.forEach(item => {
-    target.push(lodash.cloneDeep(item))
+    target.push(cloneDeep(item))
   })
   return target
 }
@@ -375,9 +380,9 @@ export function mergeArrays<T>(source: T[], target: T[]): T[] {
  *
  * @param {string} ptr The json reference pointer
  *
- * @returns {any} result - Returns the value that the ptr points to, in the doc.
+ * @returns {unknown} result - Returns the value that the ptr points to, in the doc.
  */
-export function getObject(doc: {}, ptr: string): any {
+export function getObject(doc: {}, ptr: string): unknown {
   let result
   try {
     result = jsonPointer.get(doc, ptr)
@@ -394,32 +399,21 @@ export function getObject(doc: {}, ptr: string): any {
  *
  * @param {string} ptr The json reference pointer.
  *
- * @param {any} value The value that needs to be set at the
+ * @param {unknown} value The value that needs to be set at the
  * location provided by the ptr in the doc.
  * @param {overwrite} Optional parameter to decide if a pointer value should be overwritten.
  */
-export function setObject(doc: {}, ptr: string, value: any, overwrite = true) {
+export function setObject(
+  doc: {},
+  ptr: string,
+  value: unknown,
+  overwrite = true
+) {
   let result
   try {
     if (overwrite || !jsonPointer.has(doc, ptr)) {
       result = jsonPointer.set(doc, ptr, value)
     }
-  } catch (err) {
-    log.error(err)
-  }
-  return result
-}
-
-/*
- * Removes the location pointed by the json pointer in the given doc.
- * @param {object} doc The source object.
- *
- * @param {string} ptr The json reference pointer.
- */
-function removeObject(doc: {}, ptr: string) {
-  let result
-  try {
-    result = jsonPointer.remove(doc, ptr)
   } catch (err) {
     log.error(err)
   }
@@ -541,7 +535,7 @@ export function gitClone(
     const cmd = isBranchDefined
       ? `git clone --depth=1 --branch ${branch} ${url} ${directory}`
       : `git clone --depth=1 ${url} ${directory}`
-    const result = execSync(cmd, { encoding: "utf8" })
+    execSync(cmd, { encoding: "utf8" })
   } catch (err) {
     throw new Error(
       `An error occurred while cloning git repository: ${util.inspect(err, {
@@ -613,14 +607,10 @@ export function isPureObject(model: SchemaObject): boolean {
     typeof model.type.valueOf() === "string" &&
     model.type === "object" &&
     model.properties &&
-    getKeys(model.properties).length === 0
+    model.properties.length === 0
   ) {
     return true
-  } else if (
-    !model.type &&
-    model.properties &&
-    getKeys(model.properties).length === 0
-  ) {
+  } else if (!model.type && model.properties && model.properties.length === 0) {
     return true
   } else if (
     model.type &&
@@ -640,10 +630,10 @@ interface Entity {
   type?: DataType
   additionalProperties?: SchemaObject | boolean
   items?: SchemaObject
-  "x-nullable"?: any
-  oneOf?: SchemaObject[]
-  $ref?: any
-  anyOf?: SchemaObject[]
+  "x-nullable"?: boolean
+  oneOf?: ReadonlyArray<SchemaObject>
+  $ref?: string
+  anyOf?: ReadonlyArray<SchemaObject>
 }
 
 /**
@@ -659,10 +649,7 @@ interface Entity {
  * @returns {object} entity - The transformed entity if it is a pure object else the same entity is
  * returned as-is.
  */
-export function relaxEntityType<T extends Entity>(
-  entity: T,
-  isRequired?: Unknown
-): T {
+export function relaxEntityType<T extends Entity>(entity: T, _?: unknown): T {
   if (isPureObject(entity) && entity.type) {
     delete entity.type
   }
@@ -684,24 +671,17 @@ export function relaxModelLikeEntities(model: SchemaObject): SchemaObject {
   if (model.properties) {
     const modelProperties = model.properties
 
-    for (const propName of getKeys(modelProperties)) {
-      if (modelProperties[propName].properties) {
-        modelProperties[propName] = relaxModelLikeEntities(
-          modelProperties[propName]
-        )
-      } else {
-        modelProperties[propName] = relaxEntityType(
-          modelProperties[propName],
-          isPropertyRequired(propName, model)
-        )
-      }
+    for (const [propName, property] of entries(modelProperties)) {
+      modelProperties[propName] = property.properties
+        ? relaxModelLikeEntities(property)
+        : relaxEntityType(property, isPropertyRequired(propName, model))
     }
   }
   return model
 }
 
 /**
- * Relaxes the entity to be a oneOf: [the current type OR null type] if the condition is satisfied
+ * Relaxes the entity to be a anyOf: [the current type OR null type] if the condition is satisfied
  * @param {object} entity - The entity to be relaxed
  * @param {Boolean|undefined} isPropRequired - states whether the property is required.
  * If true then it is required. If false or undefined then it is not required.
@@ -724,7 +704,7 @@ export function allowNullType<T extends Entity>(
     }
 
     // takes care of string 'false' and 'true'
-    const xNullable = entity["x-nullable"]
+    const xNullable = entity["x-nullable"] as string | boolean
     if (typeof xNullable === "string") {
       switch (xNullable.toLowerCase()) {
         case "false":
@@ -740,12 +720,12 @@ export function allowNullType<T extends Entity>(
       const savedEntity = entity
       // handling nullable parameters
       if (savedEntity.in) {
-        entity.oneOf = [{ type: entity.type }, { type: "null" }]
+        entity.anyOf = [{ type: entity.type }, { type: "null" }]
         delete entity.type
       } else {
         entity = {
-          oneOf: [savedEntity, { type: "null" }]
-        } as T
+          anyOf: [savedEntity, { type: "null" }]
+        } as any
       }
     }
   }
@@ -759,21 +739,21 @@ export function allowNullType<T extends Entity>(
     const savedEntity = entity
     entity = {
       anyOf: [savedEntity, { type: "null" }]
-    } as T
+    } as any
   }
   return entity
 }
 
-/** logic table to determine when to use oneOf to accept null values
+/** logic table to determine when to use anyOf to accept null values
  * required \ x-nullable | True               | False | Undefined
  * ===============================================================
- * Yes                   | convert to oneOf[] |       |
- * No                    | convert to oneOf[] |       | convert to oneOf[]
+ * Yes                   | convert to anyOf[] |       |
+ * No                    | convert to anyOf[] |       | convert to anyOf[]
  */
 export function shouldAcceptNullValue(
-  xnullable: Unknown,
-  isPropRequired: Unknown
-): Unknown {
+  xnullable: unknown,
+  isPropRequired: unknown
+): unknown {
   const isPropNullable = xnullable && typeof xnullable === "boolean"
   return (isPropNullable === undefined && !isPropRequired) || isPropNullable
 }
@@ -792,16 +772,12 @@ export function allowNullableTypes(model: SchemaObject): SchemaObject {
   }
   if (model && model.properties) {
     const modelProperties = model.properties
-    for (const propName of getKeys(modelProperties)) {
+    for (const [propName, prop] of entries(modelProperties)) {
       // process properties if present
       modelProperties[propName] =
-        modelProperties[propName].properties ||
-        modelProperties[propName].additionalProperties
-          ? allowNullableTypes(modelProperties[propName])
-          : allowNullType(
-              modelProperties[propName],
-              isPropertyRequired(propName, model)
-            )
+        prop.properties || prop.additionalProperties
+          ? allowNullableTypes(prop)
+          : allowNullType(prop, isPropertyRequired(propName, model))
     }
   }
 
@@ -871,34 +847,9 @@ export function sanitizeFileName(str: string): string {
 }
 
 /**
- * Gets the values of an object or returns an empty Array if the object is not defined.
- * The check is necessary because Object.values does not coerce parameters to object type.
- * @param {*} obj
- */
-export function getValues<T>(obj: StringMap<T> | null): Array<NonUndefined<T>> {
-  if (obj === undefined || obj === null) {
-    return []
-  }
-  return Object.values(obj) as Array<NonUndefined<T>>
-}
-
-/**
- * Gets the keys of an object or returns an empty Array if the object is not defined.
-.* The check is necessary because Object.keys does not coerce parameters to object type.
- * @param {*} obj
- */
-export function getKeys(obj: StringMap<any> | undefined): string[] {
-  if (obj === undefined || obj === null) {
-    return []
-  }
-
-  return Object.keys(obj)
-}
-
-/**
  * Checks if the property is required in the model.
  */
-function isPropertyRequired(propName: Unknown, model: SchemaObject) {
+function isPropertyRequired(propName: unknown, model: SchemaObject) {
   return model.required ? model.required.some(p => p === propName) : false
 }
 
@@ -910,66 +861,3 @@ export const statusCodeStringToStatusCode = lodash.invert(
     value.replace(/ |-/g, "").toLowerCase()
   )
 )
-
-/**
- * Models an ARM cloud error schema.
- */
-export const CloudErrorSchema = {
-  description: "Error response describing why the operation failed.",
-  schema: {
-    $ref: "#/definitions/CloudErrorWrapper"
-  }
-}
-
-/**
- * Models an ARM cloud error wrapper.
- */
-export const CloudErrorWrapper: SchemaObject = {
-  type: "object",
-  properties: {
-    error: {
-      $ref: "#/definitions/CloudError"
-    }
-  },
-  additionalProperties: false
-}
-
-/**
- * Models a Cloud Error
- */
-export const CloudError: SchemaObject = {
-  type: "object",
-  properties: {
-    code: {
-      type: "string",
-      description:
-        "An identifier for the error. Codes are invariant and are intended to be consumed " +
-        "programmatically."
-    },
-    message: {
-      type: "string",
-      description:
-        "A message describing the error, intended to be suitable for display in a user interface."
-    },
-    target: {
-      type: "string",
-      description:
-        "The target of the particular error. For example, the name of the property in error."
-    },
-    details: {
-      type: "array",
-      items: { type: "object" },
-      description: "A list of additional details about the error."
-    },
-    additionalInfo: {
-      type: "array",
-      items: { type: "object" },
-      description: "A list of additional info about an error."
-    },
-    innererror: {
-      type: "object"
-    }
-  },
-  required: ["code", "message"],
-  additionalProperties: false
-}

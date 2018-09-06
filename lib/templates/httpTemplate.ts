@@ -2,38 +2,37 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import * as url from "url"
-import * as utils from "../util/utils"
 import * as msRest from "ms-rest"
-import { Unknown } from "../util/unknown"
+import { MutableStringMap, entries } from "@ts-common/string-map"
 
-export interface Headers {
-  readonly [name: string]: string
-}
+export type Headers = MutableStringMap<string | undefined>
 
 export type Request = msRest.WebResource
 
 export interface Response {
-  readonly body: Unknown
+  readonly body: unknown
   readonly headers: Headers
-  readonly statusCode: string
+  readonly statusCode: string | number
 }
 
 export interface Responses {
-  readonly longrunning: {
-    readonly initialResponse: Response
-    readonly finalResponse: Response
+  longrunning: {
+    initialResponse?: Response
+    finalResponse?: Response
   }
-  readonly standard: {
-    readonly finalResponse: Response
+  standard: {
+    finalResponse?: Response
   }
 }
 
 export class HttpTemplate {
 
-  constructor(public readonly request: Request, public readonly responses: Responses) {
-  }
+  public constructor(
+    public readonly request: Request,
+    public readonly responses: Responses
+  ) { }
 
-  protected getHost(): string|undefined {
+  protected getHost(): string | undefined {
     const requestUrl = this.request.url
     return requestUrl
       ? url.parse(requestUrl).host
@@ -47,10 +46,8 @@ export class HttpTemplate {
       result += `\n${padding}-H 'Content-Length: ${JSON.stringify(this.request.body).length}' \\`
     }
     if (this.request.headers) {
-      const headers = utils.getKeys(this.request.headers)
-
-      for (const headerName of headers) {
-        result += `\n${padding}-H '${headerName}: ${this.request.headers[headerName]}' \\`
+      for (const [headerName, header] of entries(this.request.headers)) {
+        result += `\n${padding}-H '${headerName}: ${header}' \\`
       }
     }
     return result
@@ -68,7 +65,10 @@ export class HttpTemplate {
   protected getCurlRequestBody(padding?: string): string {
     if (!padding) { padding = `` }
     if (this.request && this.request.body !== null && this.request.body !== undefined) {
-      const part = JSON.stringify(this.request.body, null, 2).split(`\n`).join(`\n${padding}`)
+      const part = JSON
+        .stringify(this.request.body, null, 2)
+        .split(`\n`)
+        .join(`\n${padding}`)
       return `\n${padding}-d @- << EOF\n${part}\n${padding}EOF`
     } else {
       return ""

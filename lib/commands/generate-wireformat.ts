@@ -19,9 +19,9 @@ export const builder: yargs.CommandBuilder = {
       "The output directory where the raw request/response markdown files need to be stored. " +
       "If not provided and if the spec-path is a local file path then the output will be stored " +
       'in a folder named "wire-format" adjacent to the directory of the swagger spec. ' +
-      'If the spec-path is a url then output will be stored in a folder named "wire-fromat" ' +
+      'If the spec-path is a url then output will be stored in a folder named "wire-format" ' +
       "inside the current working directory.",
-    strting: true,
+    string: true,
   },
   o: {
     alias: "operationIds",
@@ -53,9 +53,9 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
 
   try {
     if (specPath.match(/.*composite.*/ig) !== null) {
-      return await validate.generateWireFormatInCompositeSpec(specPath, outDir, emitYaml, vOptions)
+      await validate.generateWireFormatInCompositeSpec(specPath, outDir, emitYaml, vOptions)
     } else {
-      return await validate.generateWireFormat(specPath, outDir, emitYaml, operationIds, vOptions)
+      await validate.generateWireFormat(specPath, outDir, emitYaml, operationIds, vOptions)
     }
   } catch (err) {
     process.exitCode = 1

@@ -1,8 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
-
 import { Severity } from "./severity"
-import { Unknown } from "./unknown"
+import _ from "lodash"
+import { FilePosition } from "@ts-common/source-map"
+import { flatMap, fold } from "@ts-common/iterator"
+import { errorsAddFileInfo } from "./errorFileInfo"
+import { jsonSymbol, schemaSymbol } from 'z-schema';
 
 /**
  * @class
@@ -14,12 +17,14 @@ export class ValidationError {
    * @param name Validation Error Name
    * @param severity The
    */
-  constructor(
+  public constructor(
     public readonly name: string,
     public readonly severity: Severity
-  ) {
-  }
+  ) {}
 }
+
+const validationErrorEntry = (id: string, severity: Severity): [string, ValidationError] =>
+  [id, new ValidationError(id, severity)]
 
 export const errorConstants = new Map<string, ValidationError>([
   validationErrorEntry("INVALID_TYPE", Severity.Critical),
@@ -54,34 +59,55 @@ export const errorConstants = new Map<string, ValidationError>([
   validationErrorEntry("PATTERN", Severity.Critical),
   // operation
   validationErrorEntry("OPERATION_NOT_FOUND_IN_CACHE", Severity.Critical),
-  validationErrorEntry("OPERATION_NOT_FOUND_IN_CACHE_WITH_VERB", Severity.Critical),
-  validationErrorEntry("OPERATION_NOT_FOUND_IN_CACHE_WITH_API", Severity.Critical),
-  validationErrorEntry("OPERATION_NOT_FOUND_IN_CACHE_WITH_PROVIDER", Severity.Critical),
+  validationErrorEntry(
+    "OPERATION_NOT_FOUND_IN_CACHE_WITH_VERB",
+    Severity.Critical
+  ),
+  validationErrorEntry(
+    "OPERATION_NOT_FOUND_IN_CACHE_WITH_API",
+    Severity.Critical
+  ),
+  validationErrorEntry(
+    "OPERATION_NOT_FOUND_IN_CACHE_WITH_PROVIDER",
+    Severity.Critical
+  ),
   validationErrorEntry("MULTIPLE_OPERATIONS_FOUND", Severity.Critical),
   // others
   validationErrorEntry("INVALID_RESPONSE_HEADER", Severity.Critical),
   validationErrorEntry("INVALID_RESPONSE_CODE", Severity.Critical),
   validationErrorEntry("INVALID_RESPONSE_BODY", Severity.Critical),
   validationErrorEntry("INVALID_REQUEST_PARAMETER", Severity.Critical),
-  validationErrorEntry("INVALID_CONTENT_TYPE", Severity.Error),
+  validationErrorEntry("INVALID_CONTENT_TYPE", Severity.Error)
 ])
 
 /**
  * Gets the severity from an error code. If the code is unknown assume critical.
  */
-export function errorCodeToSeverity(code: string): Severity {
+export const errorCodeToSeverity = (code: string): Severity => {
   const errorConstant = errorConstants.get(code)
   return errorConstant ? errorConstant.severity : Severity.Critical
 }
 
 export interface NodeError<T extends NodeError<T>> {
   code?: string
-  path?: string|string[]
+  path?: string | string[]
+  similarPaths?: string[]
   errors?: T[]
   in?: string
   name?: string
-  params?: Unknown[]
+  params?: Array<unknown>
   inner?: T[]
+  title?: string
+  message?: string
+
+  position?: FilePosition
+  url?: string
+
+  jsonPosition?: FilePosition
+  jsonUrl?: string
+
+  readonly [jsonSymbol]?: object
+  readonly [schemaSymbol]?: object
 }
 
 export interface ValidationResult<T extends NodeError<T>> {
@@ -92,43 +118,41 @@ export interface ValidationResult<T extends NodeError<T>> {
 /**
  * Serializes validation results into a flat array.
  */
-export function processValidationErrors<V extends ValidationResult<T>, T extends NodeError<T>>(
-  rawValidation: V
-): V {
-  const requestSerializedErrors: T[] = []
-  const responseSerializedErrors: T[] = []
-
-  serializeErrors(
+export function processValidationErrors<
+  V extends ValidationResult<T>,
+  T extends NodeError<T>
+>(rawValidation: V): V {
+  const requestSerializedErrors: T[] = serializeErrors(
     rawValidation.requestValidationResult,
-    requestSerializedErrors,
     []
   )
-  serializeErrors(
+  const responseSerializedErrors: T[] = serializeErrors(
     rawValidation.responseValidationResult,
-    responseSerializedErrors,
     []
   )
 
-  rawValidation.requestValidationResult.errors = requestSerializedErrors
-  rawValidation.responseValidationResult.errors = responseSerializedErrors
+  rawValidation.requestValidationResult.errors = errorsAddFileInfo(requestSerializedErrors)
+  rawValidation.responseValidationResult.errors = errorsAddFileInfo(responseSerializedErrors)
 
   return rawValidation
-};
+}
 
 /**
  * Serializes error tree
  */
 export function serializeErrors<T extends NodeError<T>>(
-  node: T, serializedErrors: Unknown[], path: Unknown[]
-): void {
+  node: T,
+  path: Array<unknown>
+): T[] {
+
   if (isLeaf(node)) {
     if (isTrueError(node)) {
       if (node.path) {
         node.path = consolidatePath(path, node.path).join("/")
       }
-      serializedErrors.push(node)
+      return [node]
     }
-    return
+    return []
   }
 
   if (node.path) {
@@ -145,38 +169,121 @@ export function serializeErrors<T extends NodeError<T>>(
     }
     path = consolidatePath(path, node.path)
   }
-  if (node.errors) {
-    node.errors.forEach(validationError => serializeErrors(validationError, serializedErrors, path))
-  }
 
-  if (node.inner) {
-    node.inner.forEach(validationError => serializeErrors(validationError, serializedErrors, path))
+  const serializedErrors = Array.from(flatMap(
+    node.errors,
+    validationError => serializeErrors(validationError, path)
+  ))
+
+  const serializedInner = fold(
+    node.inner,
+    (acc, validationError) => {
+      const errs = serializeErrors(validationError, path)
+      errs.forEach(err => {
+        const similarErr = acc.find(el => areErrorsSimilar(err, el))
+        if (similarErr && similarErr.path) {
+          if (!similarErr.similarPaths) {
+            similarErr.similarPaths = []
+          }
+          similarErr.similarPaths.push(err.path as string)
+        } else {
+          acc.push(err)
+        }
+      })
+      return acc
+    },
+    new Array<T>()
+  )
+
+  if (isDiscriminatorError(node)) {
+    if (node.path) {
+      node.path = consolidatePath(path, node.path).join("/")
+    }
+
+    node.inner = serializedInner
+    return [node]
   }
+  return [...serializedErrors, ...serializedInner]
 }
 
-function validationErrorEntry(id: string, severity: Severity): [string, ValidationError] {
-  return [id, new ValidationError(id, severity)]
+/**
+ * Checks if two errors are the same except their path.
+ */
+function areErrorsSimilar<T extends NodeError<T>>(node1: T, node2: T) {
+  if (
+    node1.code !== node2.code ||
+    node1.title !== node2.title ||
+    node1.message !== node2.message ||
+    !arePathsSimilar(node1.path, node2.path)
+  ) {
+    return false
+  }
+
+  if (!node1.inner && !node2.inner) {
+    return true
+  }
+
+  if (
+    !node1.inner ||
+    !node2.inner ||
+    node1.inner.length !== node2.inner.length
+  ) {
+    return false
+  }
+
+  for (let i = 0; i < node1.inner.length; i++) {
+    if (!areErrorsSimilar(node1.inner[i], node2.inner[i])) {
+      return false
+    }
+  }
+  return true
+}
+
+/**
+ * Checks if paths differ only in indexes
+ */
+const arePathsSimilar = (
+  path1: string | string[] | undefined,
+  path2: string | string[] | undefined
+) => {
+  if (path1 === path2) {
+    return true
+  }
+  if (path1 === undefined || path2 === undefined) {
+    return false
+  }
+
+  const p1 = Array.isArray(path1) ? path1 : path1.split("/")
+  const p2 = Array.isArray(path2) ? path2 : path2.split("/")
+
+  return _.xor(p1, p2).every(v => Number.isInteger(+v))
+}
+
+function isDiscriminatorError<T extends NodeError<T>>(node: T) {
+  return node.code === "ONE_OF_MISSING" && node.inner && node.inner.length > 0
 }
 
 function isTrueError<T extends NodeError<T>>(node: T): boolean {
   // this is necessary to filter out extra errors coming from doing the ONE_OF transformation on
   // the models to allow "null"
-  if (
+  return !(
     node.code === "INVALID_TYPE" &&
     node.params &&
     node.params[0] === "null"
-  ) {
-    return false
-  } else {
-    return true
-  }
+  )
 }
 
 function isLeaf<T extends NodeError<T>>(node: T): boolean {
-  return !node.errors && !node.inner;
-};
+  return !node.errors && !node.inner
+}
 
-function consolidatePath(path: Unknown[], suffixPath: string|string[]): Unknown[] {
+/**
+ * Unifies a suffix path with a root path.
+ */
+function consolidatePath(
+  path: Array<unknown>,
+  suffixPath: string | string[]
+): Array<unknown> {
   let newSuffixIndex = 0
   let overlapIndex = path.lastIndexOf(suffixPath[newSuffixIndex])
   let previousIndex = overlapIndex
@@ -196,7 +303,7 @@ function consolidatePath(path: Unknown[], suffixPath: string|string[]): Unknown[
       break
     }
   }
-  let newPath: Unknown[] = []
+  let newPath: Array<unknown> = []
   if (newSuffixIndex === suffixPath.length) {
     // if all elements are contained in the existing path, nothing to do.
     newPath = path.slice(0)

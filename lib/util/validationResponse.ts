@@ -3,23 +3,22 @@
 
 import * as pointer from "json-pointer"
 import { CommonError } from "./commonError"
-import { Unknown } from "./unknown"
-import { StringMap } from "./stringMap"
+import { StringMap } from "@ts-common/string-map"
 
 interface ValidationError {
   validationCategory: string
   code?: string
-  providerNamespace: Unknown
+  providerNamespace: unknown
   type: string
-  inner?: CommonError|CommonError[]
-  id?: Unknown
+  inner?: CommonError | CommonError[]
+  id?: unknown
   message?: string
   jsonref?: string
   "json-path"?: string
 }
 
 interface Warning {
-  readonly code: Unknown
+  readonly code: unknown
 }
 
 export class ValidateResponse {
@@ -43,7 +42,7 @@ export class ValidateResponse {
   }
 
   public constructErrors(
-    validationError: CommonError, specPath: Unknown, providerNamespace: Unknown
+    validationError: CommonError, specPath: unknown, providerNamespace: unknown
   ): ValidationError[] {
     if (!validationError) {
       throw new Error("validationError cannot be null or undefined.")
@@ -84,20 +83,6 @@ export class ValidateResponse {
       && warning.code !== "EXTRA_REFERENCE_PROPERTIES"
       && warning.code !== "UNUSED_DEFINITION")
   }
-
-  /*
-  private seralize() {
-    const result: { ["json-path"]?: Unknown } = {}
-    for (const prop in this) {
-      if (this[prop] !== null && this[prop] !== undefined) {
-        if (prop === "jsonpath") {
-          result["json-path"] = this[prop]
-        }
-      }
-    }
-    return result
-  }
-  */
 }
 
 export const validateResponse = new ValidateResponse()

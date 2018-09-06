@@ -3,11 +3,12 @@
 
 import { HttpTemplate, Request, Responses, Response } from "./httpTemplate"
 import * as uuid from "uuid"
-import * as utils from "../util/utils"
+import { keys } from "@ts-common/string-map"
+import { toArray } from "@ts-common/iterator"
 
 export class MarkdownHttpTemplate extends HttpTemplate {
 
-  constructor(request: Request, responses: Responses) {
+  public constructor(request: Request, responses: Responses) {
     super(request, responses)
   }
 
@@ -27,6 +28,9 @@ export class MarkdownHttpTemplate extends HttpTemplate {
             "Final Response after polling is complete and successful")
         }
       } else {
+        if (this.responses.standard.finalResponse === undefined) {
+          throw new Error("this.responses.standard.finalResponse === undefined")
+        }
         template += this.populateResponse(this.responses.standard.finalResponse, "Response")
       }
     }
@@ -39,7 +43,7 @@ export class MarkdownHttpTemplate extends HttpTemplate {
       result += `Content-Length: ${JSON.stringify(this.request.body).length}\n`
     }
     if (this.request.headers) {
-      const headers = utils.getKeys(this.request.headers)
+      const headers = toArray(keys(this.request.headers))
 
       for (let i = 0; i < headers.length; i++) {
         const headerName = headers[i]
@@ -59,7 +63,7 @@ export class MarkdownHttpTemplate extends HttpTemplate {
     }
     let gotContentType = false
     if (response.headers) {
-      const headers = utils.getKeys(response.headers)
+      const headers = toArray(keys(response.headers))
       for (let i = 0; i < headers.length; i++) {
         const headerName = headers[i]
         if (headerName.match(/^Content-Type$/ig) !== null) { gotContentType = true }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import * as util from "util"
@@ -15,10 +15,9 @@ import * as utils from "../util/utils"
 import * as models from "../models"
 import * as http from "http"
 import { PotentialOperationsResult } from "../models/potentialOperationsResult"
-import { Operation, Path, Request } from "yasway"
+import { Operation, Request } from "yasway"
 import { ParsedUrlQuery } from "querystring"
-import { Unknown } from "../util/unknown"
-import { StringMap } from "../util/stringMap"
+import { MutableStringMap } from "@ts-common/string-map"
 
 export interface Options {
   swaggerPaths: string[]
@@ -49,21 +48,21 @@ export interface RequestResponseObj {
 }
 
 export interface RequestValidationResult {
-  successfulRequest: Unknown
-  operationInfo?: Unknown
-  errors?: Unknown
+  successfulRequest: unknown
+  operationInfo?: unknown
+  errors?: Array<unknown>
 }
 
 export interface ResponseValidationResult {
-  successfulResponse: Unknown
-  operationInfo?: Unknown
-  errors?: Unknown
+  successfulResponse: unknown
+  operationInfo?: unknown
+  errors?: Array<unknown>
 }
 
 export interface ValidationResult {
   readonly requestValidationResult: RequestValidationResult
   readonly responseValidationResult: ResponseValidationResult
-  errors: Unknown[]
+  errors: Array<unknown>
 }
 
 /**
@@ -71,7 +70,7 @@ export interface ValidationResult {
  * Live Validator for Azure swagger APIs.
  */
 export class LiveValidator {
-  public readonly cache: StringMap<Provider> = {}
+  public readonly cache: MutableStringMap<Provider> = {}
 
   public options: Options
 
@@ -106,7 +105,7 @@ export class LiveValidator {
    *
    * @returns {object} CacheBuilder Returns the configured CacheBuilder object.
    */
-  constructor(optionsRaw?: any) {
+  public constructor(optionsRaw?: any) {
     optionsRaw =
       optionsRaw === null || optionsRaw === undefined ? {} : optionsRaw
 
@@ -586,7 +585,7 @@ export class LiveValidator {
     }
 
     let potentialOperations = operations.filter(operation => {
-      const pathObject = operation.pathObject as Path
+      const pathObject = operation.pathObject
       const pathMatch = pathObject.regexp.exec(requestPath)
       return pathMatch !== null
     })
@@ -594,15 +593,11 @@ export class LiveValidator {
     // If we do not find any match then we'll look into Microsoft.Unknown -> unknown-api-version
     // for given requestMethod as the fall back option
     if (!potentialOperations.length) {
-      if (
-        this.cache[C.unknownResourceProvider] &&
-        this.cache[C.unknownResourceProvider][C.unknownApiVersion]
-      ) {
-        operations = this.cache[C.unknownResourceProvider][C.unknownApiVersion][
-          requestMethod
-        ]
+      const c = this.cache[C.unknownResourceProvider]
+      if (c && c[C.unknownApiVersion]) {
+        operations = c[C.unknownApiVersion][requestMethod]
         potentialOperations = operations.filter(operation => {
-          const pathObject = operation.pathObject as Path
+          const pathObject = operation.pathObject
           let pathTemplate = pathObject.path
           if (pathTemplate && pathTemplate.includes("?")) {
             pathTemplate = pathTemplate.slice(0, pathTemplate.indexOf("?"))
@@ -666,7 +661,7 @@ export class LiveValidator {
 
       operations.forEach(operation => {
         const httpMethod = operation.method.toLowerCase()
-        const pathObject = operation.pathObject as Path
+        const pathObject = operation.pathObject
         const pathStr = pathObject.path
         let provider = utils.getProvider(pathStr)
         log.debug(

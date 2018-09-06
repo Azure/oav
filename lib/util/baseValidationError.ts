@@ -6,12 +6,13 @@ import { ValidationResultSource } from "./validationResultSource"
 
 export interface SerializedError {
   readonly code: string
+  similarPaths: string[]
 }
 
 export interface BaseValidationError {
-  severity?: Severity;
-  errorCode?: string;
-  errorDetails?: string|SerializedError;
-  source?: ValidationResultSource;
-  count?: number;
+  severity?: Severity
+  errorCode?: string
+  errorDetails?: string | SerializedError
+  source?: ValidationResultSource
+  count?: number
 }

@@ -8,23 +8,39 @@ import {
   SchemaObject,
   ResponseObject,
   PathItemObject,
-  OperationObject
+  OperationObject,
+  ResponseSchemaObject,
+  ResponsesObject
 } from "yasway"
-import { PropertySetTransformation, propertySetMap } from "../util/propertySet"
-import { stringMapMap, stringMapForEach } from "../util/stringMap"
-import { objectPathLast } from "../util/objectPath"
-import { arrayMap } from "../util/array"
-import { Tracked, tracked } from "../util/tracked";
 import * as uuid from "uuid"
+import {
+  arrayMap,
+  propertySetMap,
+  stringMapMap,
+  stringMapMerge,
+  getInfo,
+  getPath
+} from "@ts-common/source-map"
+import { PartialFactory } from "@ts-common/property-set"
+import { Options } from "./specResolver"
+import { MutableStringMap } from "@ts-common/string-map"
+import {
+  generatedPrefix,
+  getDefaultResponses
+} from './cloudError';
 
-export function resolveNestedDefinitions(spec: SwaggerObject): SwaggerObject {
+const skipIfUndefined = <T>(f: (v: T) => T): ((v: T | undefined) => T | undefined) =>
+  (v) => v !== undefined ? f(v) : undefined
 
-  const newDefinitions: DefinitionsObject = {}
+export function resolveNestedDefinitions(spec: SwaggerObject, options: Options): SwaggerObject {
+
+  const defaultResponses = getDefaultResponses(options.shouldModelImplicitDefaultResponse)
+
+  const generatedDefinitions: MutableStringMap<SchemaObject> = {}
 
   // a function to resolve nested schema objects
-  function resolveNestedSchemaObject(schemaObjectTracked: Tracked<SchemaObject>) {
+  const resolveNestedSchemaObject = (schemaObject: SchemaObject) => {
     // ignore references
-    const schemaObject = schemaObjectTracked.value
     if (schemaObject.$ref !== undefined) {
       return schemaObject
     }
@@ -36,94 +52,120 @@ export function resolveNestedDefinitions(spec: SwaggerObject): SwaggerObject {
       case "string":
       case "boolean":
       case "null":
-      case "file":
         return schemaObject
     }
 
     // here schemaObject.type is one of {undefined, "object", "array"}.
-    // Because it's a nested schema object, we create a new definition and return a reference.
-    const result = resolveSchemaObject(schemaObjectTracked)
-    const definitionName = uuid.v4()
-    newDefinitions[definitionName] = result
+    // Because it's a nested schema object, we create an extra definition and return a reference.
+    const result = resolveSchemaObject(schemaObject)
+    const info = getInfo(result)
+    const suffix = info === undefined ? uuid.v4() : getPath(info).join(".")
+    const definitionName = `${generatedPrefix}nested.${suffix}`
+    if (result !== undefined) {
+      generatedDefinitions[definitionName] = result
+    }
     return { $ref: `#/definitions/${encodeURIComponent(definitionName)}` }
   }
 
   // a function to resolve SchemaObject array
-  function resolveSchemaObjectArray(schemaObjectArrayTracked: Tracked<SchemaObject[]>) {
-    return arrayMap(schemaObjectArrayTracked, resolveNestedSchemaObject)
-  }
+  const resolveOptionalSchemaObjectArray = (
+    schemaObjectArray: ReadonlyArray<SchemaObject> | undefined
+  ) =>
+    schemaObjectArray !== undefined ?
+      arrayMap(schemaObjectArray, resolveNestedSchemaObject) :
+      undefined
 
   // a function to resolve SchemaObject (top-level and nested)
-  function resolveSchemaObject(schemaObjectTracked: Tracked<SchemaObject>) {
-    return propertySetMap<SchemaObject>(
-      schemaObjectTracked,
+  const resolveSchemaObject = (schemaObject: SchemaObject): SchemaObject =>
+    propertySetMap<SchemaObject>(
+      schemaObject,
       {
-        properties: propertiesTracked => stringMapMap(propertiesTracked, resolveNestedSchemaObject),
-        additionalProperties: additionalPropertiesTracked => {
-          const additionalProperties = additionalPropertiesTracked.value
-          return typeof additionalProperties === "object"
-            ? resolveNestedSchemaObject(
-              tracked(additionalProperties, additionalPropertiesTracked.path))
-            : additionalProperties
-        },
-        items: resolveNestedSchemaObject,
-        allOf: resolveSchemaObjectArray,
-        anyOf: resolveSchemaObjectArray,
-        oneOf: resolveSchemaObjectArray,
-      })
-  }
+        properties: properties => stringMapMap(properties, resolveNestedSchemaObject),
+        additionalProperties: additionalProperties =>
+          additionalProperties === undefined || typeof additionalProperties !== "object" ?
+            additionalProperties :
+            resolveNestedSchemaObject(additionalProperties),
+        items: skipIfUndefined(resolveNestedSchemaObject),
+        allOf: resolveOptionalSchemaObjectArray,
+        anyOf: resolveOptionalSchemaObjectArray,
+        oneOf: resolveOptionalSchemaObjectArray,
+      }
+    )
 
-  function resolveParameterObject(parameterObjectTracked: Tracked<ParameterObject>) {
-    return propertySetMap(parameterObjectTracked, { schema: resolveSchemaObject })
-  }
+  const resolveParameterObject = (parameterObject: ParameterObject) =>
+    propertySetMap(parameterObject, { schema: skipIfUndefined(resolveSchemaObject) })
 
-  function resolveResponseObject(responseObjectTracked: Tracked<ResponseObject>) {
-    return propertySetMap(responseObjectTracked, { schema: resolveSchemaObject })
-  }
-
-  function resolveParameterArray(parametersTracked: Tracked<ParameterObject[]>) {
-     return arrayMap(parametersTracked, resolveParameterObject)
-  }
-
-  function resolveOperationObject(operationObjectTracked: Tracked<OperationObject>) {
-    return propertySetMap<OperationObject>(
-      operationObjectTracked,
+  const resolveResponseObject = (responseObject: ResponseObject) =>
+    propertySetMap(
+      responseObject,
       {
-        parameters: resolveParameterArray,
-        responses: responsesTracked => stringMapMap(responsesTracked, resolveResponseObject)
-      })
-  }
+        schema: (schema: ResponseSchemaObject | undefined) =>
+          schema === undefined || schema.type === "file" ?
+            schema :
+            resolveSchemaObject(schema)
+      }
+    )
+
+  const resolveOptionalParameterArray = (
+    parameters: ReadonlyArray<ParameterObject> | undefined
+  ) =>
+    parameters !== undefined ?
+      arrayMap(parameters, resolveParameterObject) :
+      undefined
+
+  const resolveOptionalResponses = (responses: ResponsesObject | undefined): ResponsesObject =>
+    stringMapMap(
+      stringMapMerge(responses, defaultResponses.responses),
+      resolveResponseObject
+    )
+
+  const resolveOptionalOperationObject = (operationObject: OperationObject | undefined) =>
+    operationObject !== undefined ?
+      propertySetMap<OperationObject>(
+        operationObject,
+        {
+          parameters: resolveOptionalParameterArray,
+          responses: resolveOptionalResponses,
+        }
+      ) :
+      undefined
+
+  const resolveDefinitions = (definitions: DefinitionsObject | undefined) =>
+    stringMapMap(
+      stringMapMerge(definitions, defaultResponses.definitions),
+      resolveSchemaObject
+    )
 
   // transformations for Open API 2.0
-  const swaggerObjectTransformation: PropertySetTransformation<SwaggerObject> = {
-    definitions: definitionsTracked => {
-      stringMapForEach(
-        definitionsTracked,
-        definitionTracked => {
-          // add resolved definitions into the `newDefinitions` map
-          newDefinitions[objectPathLast(definitionTracked.path)] =
-            resolveSchemaObject(definitionTracked)
-        })
-      return newDefinitions
-    },
-    parameters: parametersTracked => stringMapMap(parametersTracked, resolveParameterObject),
-    responses: responsesTracked => stringMapMap(responsesTracked, resolveResponseObject),
-    paths: pathsTracked => stringMapMap(
-      pathsTracked,
-      pathTracked => propertySetMap<PathItemObject>(
-        pathTracked,
+  const swaggerObjectTransformation: PartialFactory<SwaggerObject> = {
+    definitions: resolveDefinitions,
+    parameters: parameters => stringMapMap(parameters, resolveParameterObject),
+    responses: responses => stringMapMap(responses, resolveResponseObject),
+    paths: paths => stringMapMap(
+      paths,
+      path => propertySetMap<PathItemObject>(
+        path,
         {
-          get: resolveOperationObject,
-          put: resolveOperationObject,
-          post: resolveOperationObject,
-          delete: resolveOperationObject,
-          options: resolveOperationObject,
-          head: resolveOperationObject,
-          patch: resolveOperationObject,
-          parameters: resolveParameterArray
-        }))
+          get: resolveOptionalOperationObject,
+          put: resolveOptionalOperationObject,
+          post: resolveOptionalOperationObject,
+          delete: resolveOptionalOperationObject,
+          options: resolveOptionalOperationObject,
+          head: resolveOptionalOperationObject,
+          patch: resolveOptionalOperationObject,
+          parameters: resolveOptionalParameterArray
+        }
+      )
+    )
   }
 
-  // resolve the given OpenAPI document.
-  return propertySetMap(tracked(spec, []), swaggerObjectTransformation)
+  // create extra definitions and the temporary spec
+  const specWithNoGeneratedDefinitions = propertySetMap(spec, swaggerObjectTransformation)
+
+  const addGeneratedDefinitions = (definitions: DefinitionsObject | undefined) =>
+    stringMapMerge(definitions, generatedDefinitions)
+
+  // Merge definitions and generatedDefinitions.
+  // It should be the last step when all generated definitions are known
+  return propertySetMap(specWithNoGeneratedDefinitions, { definitions: addGeneratedDefinitions })
 }

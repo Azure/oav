@@ -2,16 +2,15 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import yuml2svg = require("yuml2svg")
-import * as utils from "./util/utils"
 import { log } from "./util/logging"
-import { Unknown } from "./util/unknown"
 import { SwaggerObject, DefinitionsObject, SchemaObject } from "yasway"
+import { entries } from "@ts-common/string-map"
 
 export interface Options {
-  readonly direction?: Unknown
-  readonly shouldDisableAllof?: Unknown
-  readonly shouldDisableProperties?: Unknown
-  readonly shouldDisableRefs?: Unknown
+  readonly direction?: unknown
+  readonly shouldDisableAllof?: unknown
+  readonly shouldDisableProperties?: unknown
+  readonly shouldDisableRefs?: unknown
 }
 
 /**
@@ -36,7 +35,10 @@ export class UmlGenerator {
    *
    * @return {object} An instance of the UmlGenerator class.
    */
-  constructor(specInJson: null|undefined|SwaggerObject, options: null|undefined|Options) {
+  public constructor(
+    specInJson: null | undefined | SwaggerObject,
+    options: null | undefined | Options
+  ) {
     if (specInJson === null || specInJson === undefined || typeof specInJson !== "object") {
       throw new Error("specInJson is a required property of type object")
     }
@@ -50,7 +52,9 @@ export class UmlGenerator {
     let svg = ""
 
     log.info(this.graphDefinition)
-    svg = yuml2svg(this.graphDefinition, false, { dir: this.options.direction, type: "class" })
+    svg = yuml2svg(
+      this.graphDefinition, false, { dir: this.options.direction, type: "class" }
+    ) as string
     // console.log(svg)
     return svg
   }
@@ -64,14 +68,15 @@ export class UmlGenerator {
 
   private generateAllOfGraph(): void {
     const spec = this.specInJson
-    const definitions = spec.definitions as DefinitionsObject
-    for (const modelName of utils.getKeys(definitions)) {
-      const model = definitions[modelName]
-      this.generateAllOfForModel(modelName, model)
+    const definitions = spec.definitions
+    if (definitions !== undefined) {
+      for (const [modelName, model] of entries(definitions)) {
+        this.generateAllOfForModel(modelName, model)
+      }
     }
   }
 
-  private generateAllOfForModel(modelName: Unknown, model: SchemaObject): void {
+  private generateAllOfForModel(modelName: unknown, model: SchemaObject): void {
     if (model.allOf) {
       model.allOf.forEach(item => {
         const ref = item.$ref
@@ -89,13 +94,11 @@ export class UmlGenerator {
     const spec = this.specInJson
     const definitions = spec.definitions as DefinitionsObject
     const references: string[] = []
-    for (const modelName of utils.getKeys(definitions)) {
-      const model = definitions[modelName]
+    for (const [modelName, model] of entries(definitions)) {
       const modelProperties = model.properties
       let props = ""
       if (modelProperties) {
-        for (const propertyName of utils.getKeys(modelProperties)) {
-          const property = modelProperties[propertyName]
+        for (const [propertyName, property] of entries(modelProperties)) {
           const propertyType = this.getPropertyType(modelName, property, references)
           let discriminator = ""
           if (model.discriminator && model.discriminator === propertyName) {
@@ -116,7 +119,7 @@ export class UmlGenerator {
   }
 
   private getPropertyType(
-    modelName: Unknown, property: SchemaObject, references: string[]
+    modelName: unknown, property: SchemaObject, references: string[]
   ): string {
 
     const type = property.type

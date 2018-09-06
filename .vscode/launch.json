@@ -85,7 +85,7 @@
       "stopOnEntry": false,
       "args": [
         "--no-timeouts",
-        "test/autorestPluginTests.ts",
+        "test/resolveNestedTests.ts",
         "-r",
         "ts-node/register",
         "--no-timeouts"

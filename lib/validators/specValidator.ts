@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import * as path from "path"
@@ -8,10 +8,11 @@ import * as specResolver from "./specResolver"
 import * as utils from "../util/utils"
 import { log } from "../util/logging"
 import { CommonError } from "../util/commonError"
-import { Unknown } from "../util/unknown"
 import * as C from "../util/constants"
 import { SwaggerObject } from "yasway"
 import { ModelValidation } from "../util/getErrorsFromModelValidation"
+import { Headers } from "../templates/httpTemplate"
+import { StringMap } from '@ts-common/string-map';
 
 const ErrorCodes = C.ErrorCodes;
 
@@ -25,13 +26,11 @@ export interface ErrorCode {
 }
 
 export interface RequestValidation {
-  request?: Unknown
+  request?: unknown
   validationResult?: Sway.ValidationResults
 }
 
-interface ResponseValidation {
-  readonly [name: string]: Sway.ValidationResults
-}
+type ResponseValidation = StringMap<Sway.ValidationResults>
 
 export interface ValidationResult {
   exampleNotFound?: CommonError
@@ -45,20 +44,18 @@ export interface ValidationResultScenarios {
 }
 
 export interface SpecValidationResult extends ModelValidation {
-  validityStatus: Unknown
+  validityStatus: unknown
 }
 
 export interface ExampleResponse {
-  readonly headers: {
-    [name: string]: Unknown
-  }
-  readonly body: Unknown
+  readonly headers: Headers
+  readonly body: unknown
 }
 
 export interface CommonValidationResult {
-  validityStatus: Unknown
+  validityStatus: unknown
   operations: {}
-  resolveSpec?: Unknown
+  resolveSpec?: unknown
 }
 
 /*
@@ -69,17 +66,17 @@ export class SpecValidator<T extends CommonValidationResult> {
 
   public specValidationResult: T
 
-  protected swaggerApi: Sway.SwaggerApi|null
+  protected specInJson: SwaggerObject
+
+  protected swaggerApi: Sway.SwaggerApi | null = null
 
   protected specPath: string
 
-  protected specInJson: SwaggerObject
+  private readonly specDir: unknown
 
-  private specDir: Unknown
+  private specResolver: SpecResolver | null
 
-  private specResolver: SpecResolver|null
-
-  private options: Options
+  private readonly options: Options
 
   /*
    * @constructor
@@ -119,7 +116,11 @@ export class SpecValidator<T extends CommonValidationResult> {
    *
    * @return {object} An instance of the SpecValidator class.
    */
-  constructor(specPath: string, specInJson: SwaggerObject|undefined|null|string, options: Options) {
+  public constructor(
+    specPath: string,
+    specInJson: SwaggerObject | undefined | null | string,
+    options: Options
+  ) {
     if (specPath === null
       || specPath === undefined
       || typeof specPath.valueOf() !== "string"
@@ -139,7 +140,6 @@ export class SpecValidator<T extends CommonValidationResult> {
     this.specResolver = null
     const base: CommonValidationResult = { validityStatus: true, operations: {} }
     this.specValidationResult = base as T
-    this.swaggerApi = null
     if (!options) { options = {} }
     if (options.shouldResolveRelativePaths === null
       || options.shouldResolveRelativePaths === undefined) {
@@ -203,7 +203,7 @@ export class SpecValidator<T extends CommonValidationResult> {
   protected constructErrorObject<TE extends CommonError>(
     code: ErrorCode,
     message: string,
-    innerErrors?: null|TE[],
+    innerErrors?: null | TE[],
     skipValidityStatusUpdate?: boolean
   ): TE {
 

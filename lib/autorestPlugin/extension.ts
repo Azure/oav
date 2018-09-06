@@ -6,7 +6,6 @@
 import * as linq from "linq"
 import * as jsonPath from "jsonpath"
 import * as yaml from "js-yaml"
-import * as utils from "../util/utils"
 import { log } from "../util/logging"
 import * as specValidator from "../validators/specValidator"
 import { IAutoRestPluginInitiator } from
@@ -14,10 +13,10 @@ import { IAutoRestPluginInitiator } from
 import * as extensionBase from "@microsoft.azure/autorest-extension-base"
 import { SourceLocation } from
   "@microsoft.azure/autorest-extension-base/dist/lib/types"
-import { Unknown } from "../util/unknown"
 import { CommonError } from "../util/commonError"
 import { SwaggerObject } from "yasway"
 import { ModelValidator } from "../validators/modelValidator"
+import { entries } from "@ts-common/string-map"
 
 export const extension = new extensionBase.AutoRestExtension()
 
@@ -27,7 +26,7 @@ const modelValidatorPluginName = "model-validator"
 const modelValidationCategory = "ExampleModelViolation"
 
 class FormattedOutput {
-  constructor(
+  public constructor(
     public readonly channel: Channel,
     public readonly details: {},
     public readonly code: string[],
@@ -41,7 +40,7 @@ export type Channel = "information" | "warning" | "error" | "debug" | "verbose"
 export interface Message {
   readonly channel: Channel
   readonly text: string
-  readonly details: Unknown
+  readonly details: unknown
   readonly code: string[]
   readonly source: SourceLocation[]
 }
@@ -72,16 +71,16 @@ extension.Add(
   async (autoRestApi: IAutoRestPluginInitiator): Promise<void> => {
     const swaggerFileNames = await autoRestApi.ListInputs()
     const promises = swaggerFileNames.map(
-      async (swaggerFileName) => await analyzeSwagger(swaggerFileName, autoRestApi))
+      async (swaggerFileName) => analyzeSwagger(swaggerFileName, autoRestApi))
     await Promise.all(promises)
   })
 
 export interface Options extends specValidator.Options {
-  consoleLogLevel?: Unknown
+  consoleLogLevel?: unknown
 }
 
 export async function openApiValidationExample(
-  swagger: any, swaggerFileName: string, options?: Options
+  swagger: unknown, swaggerFileName: string, options?: Options
 ): Promise<Message[]> {
   const formattedResult: FormattedOutput[] = []
   if (!options) { options = {} }
@@ -94,25 +93,14 @@ export async function openApiValidationExample(
   try {
     specVal.validateOperations()
     const specValidationResult = specVal.specValidationResult
-    for (const op of utils.getKeys(specValidationResult.operations)) {
-      const operation = specValidationResult.operations[op]
-      if (operation === undefined) {
-        throw new Error("operation is undefined")
-      }
+    for (const [op, operation] of entries(specValidationResult.operations)) {
       const xmsExamplesNode = operation["x-ms-examples"];
       if (xmsExamplesNode === undefined) {
         throw new Error("xmsExamplesNode is undefined")
       }
       const scenarios = xmsExamplesNode.scenarios
-      for (const scenario of utils.getKeys(scenarios)) {
-        if (scenarios === undefined) {
-          throw new Error("scenarios is undefined")
-        }
+      for (const [scenario, scenarioItem] of entries(scenarios)) {
         // invalid? meaning that there's an issue found in the validation
-        const scenarioItem = scenarios[scenario]
-        if (scenarioItem === undefined) {
-          throw new Error("scenarioItem is undefined")
-        }
         if (scenarioItem.isValid === false) {
           // get path to x-ms-examples in swagger
           const xmsexPath = linq
@@ -177,53 +165,50 @@ export async function openApiValidationExample(
           }
 
           // responses
-          if (scenarioItem.responses !== undefined) {
-            for (const responseCode of utils.getKeys(scenarioItem.responses)) {
-              const response = scenarioItem.responses[responseCode]
-              if (response.isValid === false) {
-                const error = response.error as CommonError
-                const innerErrors = error.innerErrors
-                if (!innerErrors || !innerErrors.length) {
-                  throw new Error("Model Validator: Unexpected format.")
+          for (const [responseCode, response] of entries(scenarioItem.responses)) {
+            if (response.isValid === false) {
+              const error = response.error as CommonError
+              const innerErrors = error.innerErrors
+              if (!innerErrors || !innerErrors.length) {
+                throw new Error("Model Validator: Unexpected format.")
+              }
+              for (const innerError of innerErrors) {
+                // console.error(JSON.stringify(error, null, 2));
+                const resultDetails = {
+                  type: "Error",
+                  code: error.code,
+                  message: error.message,
+                  id: error.id,
+                  validationCategory: modelValidationCategory,
+                  innerErrors: innerError,
                 }
-                for (const innerError of innerErrors) {
-                  // console.error(JSON.stringify(error, null, 2));
-                  const resultDetails = {
-                    type: "Error",
-                    code: error.code,
-                    message: error.message,
-                    id: error.id,
-                    validationCategory: modelValidationCategory,
-                    innerErrors: innerError,
-                  }
-                  if (error.code === undefined || error.id === undefined) {
-                    throw new Error("Invalid error.")
-                  }
-                  result = new FormattedOutput(
-                    "error",
-                    resultDetails,
-                    [error.code, error.id, modelValidationCategory],
-                    innerError.message
-                      + ". \nScenario: "
-                      + scenario
-                      + ". \nDetails: "
-                      + JSON.stringify(innerError.errors, null, 2)
-                      + "\nMore info: "
-                      + openAPIDocUrl
-                      + "#"
-                      + error.id.toLowerCase()
-                      + "-"
-                      + error.code.toLowerCase() + "\n",
-                    [{
-                      document: swaggerFileName,
-                      Position: {
-                        path: xmsexPath
-                          .slice(0, xmsexPath.length - 1)
-                          .concat(["responses", responseCode]),
-                      },
-                    }])
-                  formattedResult.push(result)
+                if (error.code === undefined || error.id === undefined) {
+                  throw new Error("Invalid error.")
                 }
+                result = new FormattedOutput(
+                  "error",
+                  resultDetails,
+                  [error.code, error.id, modelValidationCategory],
+                  innerError.message
+                    + ". \nScenario: "
+                    + scenario
+                    + ". \nDetails: "
+                    + JSON.stringify(innerError.errors, null, 2)
+                    + "\nMore info: "
+                    + openAPIDocUrl
+                    + "#"
+                    + error.id.toLowerCase()
+                    + "-"
+                    + error.code.toLowerCase() + "\n",
+                  [{
+                    document: swaggerFileName,
+                    Position: {
+                      path: xmsexPath
+                        .slice(0, xmsexPath.length - 1)
+                        .concat(["responses", responseCode]),
+                    },
+                  }])
+                formattedResult.push(result)
               }
             }
           }
@@ -241,8 +226,8 @@ export async function openApiValidationExample(
  * Path comes with indices as strings in "inner errors", so converting those to actual numbers for
  * path to work.
  */
-function convertIndicesFromStringToNumbers(path: string[]): Array<string|number> {
-  const result: Array<string|number> = path.slice()
+function convertIndicesFromStringToNumbers(path: string[]): Array<string | number> {
+  const result: Array<string | number> = path.slice()
   for (let i = 1; i < result.length; ++i) {
     const num = parseInt(result[i] as string)
     if (!isNaN(num) && result[i - 1] === "parameters") {

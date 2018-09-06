@@ -6,25 +6,22 @@ import { toModelErrors } from "./toModelErrors"
 import { ValidationResultSource } from "./validationResultSource"
 import { responseReducer, Scenario } from "./responseReducer"
 import { ModelValidationError } from "./modelValidationError"
-import { Unknown } from "./unknown"
 import { CommonError } from "./commonError"
 import * as sm from "@ts-common/string-map"
 import * as it from "@ts-common/iterator"
 
 export interface Result {
-  isValid?: Unknown
+  isValid?: unknown
   error?: CommonError
-  warning?: Unknown
-  result?: Unknown
-  errors?: Unknown
-  warnings?: Unknown
+  warning?: unknown
+  result?: unknown
+  errors?: unknown
+  warnings?: unknown
 }
 
 export type OperationExampleResult = Scenario
 
-export interface OperationResult {
-  [key: string]: OperationExampleResult
-}
+export type OperationResult = sm.MutableStringMap<OperationExampleResult>
 
 export function scenarioReducer(
   scenarioName: string,
@@ -42,7 +39,7 @@ export function scenarioReducer(
     responseValidationResult: {
       errors: []
     }
-  };
+  }
   // process request separately since its unique
   const processedErrors = processValidationErrors(rawValidationResult);
 
@@ -61,12 +58,7 @@ export function scenarioReducer(
   // process responses
   rawValidationResult.requestValidationResult.errors = [];
 
-  const responses = scenario.responses
-  if (responses === undefined) {
-    throw new Error("ICE: responses is undefined")
-  }
-
-  const entries = sm.entries(responses)
+  const entries = sm.entries(scenario.responses)
   const invalidResponses = it.filter(entries, ([_, response]) => !response.isValid)
   const result = it.flatMap(invalidResponses, ([responseCode]) => responseReducer(
     responseCode,

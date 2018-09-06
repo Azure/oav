@@ -14,18 +14,16 @@ import { XMsExampleExtractor } from "./xMsExampleExtractor"
 import { SpecResolver } from "./validators/specResolver"
 import * as specResolver from "./validators/specResolver"
 import * as umlGeneratorLib from "./umlGenerator"
-import { Unknown } from "./util/unknown"
 import { getErrorsFromModelValidation } from "./util/getErrorsFromModelValidation"
 import { SemanticValidator } from "./validators/semanticValidator"
 import { ModelValidator } from "./validators/modelValidator"
+import { MutableStringMap } from "@ts-common/string-map"
 
-interface FinalValidationResult {
-  [name: string]: Unknown
-}
+type FinalValidationResult = MutableStringMap<unknown>
 
 export interface Options extends specResolver.Options, umlGeneratorLib.Options {
-  consoleLogLevel?: Unknown
-  logFilepath?: Unknown
+  consoleLogLevel?: unknown
+  logFilepath?: unknown
   pretty?: boolean
 }
 
@@ -52,12 +50,9 @@ export async function getDocumentsFromCompositeSwagger(
       if (docs[i].startsWith(".")) {
         docs[i] = docs[i].substring(1)
       }
-      let individualPath = ""
-      if (docs[i].startsWith("http")) {
-        individualPath = docs[i]
-      } else {
-        individualPath = basePath + docs[i]
-      }
+      const individualPath = docs[i].startsWith("http") ?
+        docs[i] :
+        basePath + docs[i]
       finalDocs.push(individualPath)
     }
     return finalDocs
@@ -68,7 +63,8 @@ export async function getDocumentsFromCompositeSwagger(
 }
 
 async function validate<T>(
-  options: Options|undefined, func: (options: Options) => Promise<T>
+  options: Options | undefined,
+  func: (options: Options) => Promise<T>,
 ): Promise<T> {
   if (!options) { options = {} }
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
@@ -85,7 +81,8 @@ async function validate<T>(
 }
 
 export async function validateSpec(
-  specPath: string, options: Options|undefined
+  specPath: string,
+  options: Options | undefined,
 ): Promise<SpecValidationResult> {
   return await validate(options, async o => {
     // As a part of resolving discriminators we replace all the parent references
@@ -107,7 +104,7 @@ export async function validateSpec(
 
     await validator.initialize()
     log.info(`Semantically validating  ${specPath}:\n`)
-    const result = await validator.validateSpec()
+    await validator.validateSpec()
     updateEndResultOfSingleValidation(validator)
     logDetailedInfo(validator)
     return validator.specValidationResult
@@ -127,7 +124,9 @@ export async function validateCompositeSpec(
 }
 
 export async function validateExamples(
-  specPath: string, operationIds: string|undefined, options?: Options
+  specPath: string,
+  operationIds: string | undefined,
+  options?: Options
 ): Promise<SpecValidationResult> {
   return await validate(options, async o => {
     const validator = new ModelValidator(specPath, null, o)
@@ -156,7 +155,8 @@ export async function validateExamples(
 }
 
 export async function validateExamplesInCompositeSpec(
-  compositeSpecPath: string, options: Options
+  compositeSpecPath: string,
+  options: Options
 ): Promise<ReadonlyArray<SpecValidationResult>> {
   return await validate(options, async o => {
     o.consoleLogLevel = log.consoleLogLevel
@@ -213,10 +213,10 @@ export async function resolveCompositeSpec(
 }
 
 export async function generateWireFormat(
-  specPath: Unknown,
-  outDir: Unknown,
-  emitYaml: Unknown,
-  operationIds: string|null,
+  specPath: string,
+  outDir: string,
+  emitYaml: unknown,
+  operationIds: string | null,
   options: Options
 ): Promise<void> {
 
@@ -235,7 +235,7 @@ export async function generateWireFormat(
 }
 
 export async function generateWireFormatInCompositeSpec(
-  compositeSpecPath: string, outDir: Unknown, emitYaml: Unknown, options: Options
+  compositeSpecPath: string, outDir: string, emitYaml: unknown, options: Options
 ): Promise<void> {
 
   if (!options) { options = {} }
@@ -318,7 +318,7 @@ export function logDetailedInfo<T extends CommonValidationResult>(
 }
 
 export async function extractXMsExamples(
-  specPath: string, recordings: Unknown, options: Options
+  specPath: string, recordings: string, options: Options
 ): Promise<void> {
 
   if (!options) { options = {} }

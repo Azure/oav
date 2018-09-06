@@ -4,26 +4,25 @@
 import { SpecValidator, CommonValidationResult } from "./specValidator"
 import * as Sway from "yasway"
 import { ErrorCodes } from "../util/constants"
-import { Unknown } from "../util/unknown"
 import { log } from "../util/logging"
 import { validateResponse } from "../util/validationResponse"
 import * as C from "../util/constants"
 import * as util from "util"
 import { CommonError } from "../util/commonError"
-import * as utils from "../util/utils"
+import { keys } from "@ts-common/string-map"
 
 export interface Result {
-  isValid?: Unknown
+  isValid?: unknown
   error?: CommonError
-  warning?: Unknown
-  result?: Unknown
-  errors?: Unknown
-  warnings?: Unknown
+  warning?: unknown
+  result?: unknown
+  errors?: unknown
+  warnings?: unknown
 }
 
 export interface SemanticValidationResult extends CommonValidationResult {
   validateSpec?: Result
-  initialize?: Unknown
+  initialize?: unknown
 }
 
 export class SemanticValidator extends SpecValidator<SemanticValidationResult> {
@@ -38,7 +37,7 @@ export class SemanticValidator extends SpecValidator<SemanticValidationResult> {
       const msg =
         `Please call "specValidator.initialize()" before calling this method, ` +
         `so that swaggerApi is populated.`
-      const e = this.constructErrorObject(ErrorCodes.InitializationError, msg)
+      const e = this.constructErrorObject<{}>(ErrorCodes.InitializationError, msg)
       this.specValidationResult.initialize = e
       this.specValidationResult.validateSpec.isValid = false
       log.error(`${ErrorCodes.InitializationError.name}: ${msg}`)
@@ -88,17 +87,14 @@ export class SemanticValidator extends SpecValidator<SemanticValidationResult> {
     }
   }
 
-  private getProviderNamespace(): string|null {
+  private getProviderNamespace(): string | null {
     const re = /^(.*)\/providers\/(\w+\.\w+)\/(.*)$/ig
     if (this.specInJson) {
       if (this.specInJson.paths) {
-        const paths = utils.getKeys(this.specInJson.paths)
-        if (paths) {
-          for (const pathStr of paths) {
-            const res = re.exec(pathStr)
-            if (res && res[2]) {
-              return res[2]
-            }
+        for (const pathStr of keys(this.specInJson.paths)) {
+          const res = re.exec(pathStr)
+          if (res && res[2]) {
+            return res[2]
           }
         }
       }

@@ -9,28 +9,24 @@ import {
   RequestValidation,
   ExampleResponse
 } from "./specValidator"
-import { Unknown } from "../util/unknown"
 import * as C from "../util/constants"
 import * as utils from "../util/utils"
 import { CommonError } from "../util/commonError"
 import { ErrorCodes } from "../util/constants"
 import { log } from "../util/logging"
-import { StringMap } from "../util/stringMap"
+import { StringMap, MutableStringMap, entries, keys, toStringMap } from "@ts-common/string-map"
+import * as sm from "@ts-common/string-map"
 import { Operation } from "yasway"
 import * as Sway from "yasway"
 import { ResponseWrapper } from "../models/responseWrapper"
 import { OperationExampleResult } from "../util/scenarioReducer"
 import { ModelValidationError } from "../util/modelValidationError"
 import * as msRest from "ms-rest"
+import { toArray, filter } from "@ts-common/iterator"
 
 const HttpRequest = msRest.WebResource
 
 export class ModelValidator extends SpecValidator<SpecValidationResult> {
-
-  private sampleRequest: Unknown = {}
-
-  private sampleResponse: Unknown = {}
-
   /*
    * Validates the given operationIds or all the operations in the spec.
    *
@@ -42,21 +38,30 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     if (!this.swaggerApi) {
       throw new Error(
         `Please call "specValidator.initialize()" before calling this method, so that swaggerApi ` +
-        `is populated.`)
+          `is populated.`
+      )
     }
-    if (operationIds !== null
-      && operationIds !== undefined
-      && typeof operationIds.valueOf() !== "string") {
+    if (
+      operationIds !== null &&
+      operationIds !== undefined &&
+      typeof operationIds.valueOf() !== "string"
+    ) {
       throw new Error(`operationIds parameter must be of type 'string'.`)
     }
 
     let operations = this.swaggerApi.getOperations()
     if (operationIds) {
-      const operationIdsObj: { [name: string]: Unknown } = {}
-      operationIds.trim().split(",").forEach(item => operationIdsObj[item.trim()] = 1)
-      const operationsToValidate = operations
-        .filter(item => Boolean(operationIdsObj[item.operationId]))
-      if (operationsToValidate.length) { operations = operationsToValidate }
+      const operationIdsObj: MutableStringMap<unknown> = {}
+      operationIds
+        .trim()
+        .split(",")
+        .forEach(item => (operationIdsObj[item.trim()] = 1))
+      const operationsToValidate = operations.filter(item =>
+        Boolean(operationIdsObj[item.operationId])
+      )
+      if (operationsToValidate.length) {
+        operations = operationsToValidate
+      }
     }
 
     for (const operation of operations) {
@@ -73,17 +78,16 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       if (example === undefined) {
         throw new Error("example is undefined")
       }
-      if (utils
-          .getKeys(example)
-          .length
-        === 0) {
+      if (sm.isEmpty(toStringMap(example))) {
         delete operationResult[C.exampleInSpec]
       }
     }
   }
 
   private initializeExampleResult(
-    operationId: string, exampleType: string, scenarioName: string|undefined
+    operationId: string,
+    exampleType: string,
+    scenarioName: string | undefined
   ): void {
     const initialResult = {
       isValid: true,
@@ -98,7 +102,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     }
     if (exampleType === C.exampleInSpec) {
       const example = operationResult[exampleType]
-      if (!example || (example && !utils.getKeys(example).length)) {
+      if (!example || (example && sm.isEmpty(toStringMap(example)))) {
         operationResult[exampleType] = initialResult
       }
     }
@@ -122,8 +126,13 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
   }
 
   private getExample(
-    operationId: string, exampleType: string, scenarioName: string|undefined
-  ): { operationResult: OperationExampleResult, part: string } {
+    operationId: string,
+    exampleType: string,
+    scenarioName: string | undefined
+  ): {
+    operationResult: OperationExampleResult
+    part: string
+  } {
     const operation = this.specValidationResult.operations[operationId]
     if (operation === undefined) {
       throw new Error("operation is undefined")
@@ -156,28 +165,40 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
   private constructRequestResultWrapper(
     operationId: string,
     requestValidationErrors: ModelValidationError[],
-    requestValidationWarnings: Unknown[]|undefined,
+    requestValidationWarnings: Array<unknown> | undefined,
     exampleType: string,
     scenarioName?: string
   ): void {
-
     this.initializeExampleResult(operationId, exampleType, scenarioName)
-    let subMsg
-    let infoMsg
+    const { operationResult, part } = this.getExample(
+      operationId,
+      exampleType,
+      scenarioName
+    )
+    const subMsg = `validating the request ${part}`
+    const infoMsg = `Request parameters ${part} is valid.`
     let errorMsg
     let warnMsg
-    const { operationResult, part } = this.getExample(operationId, exampleType, scenarioName)
-    subMsg = `validating the request ${part}`
-    infoMsg = `Request parameters ${part} is valid.`
     if (requestValidationErrors && requestValidationErrors.length) {
       errorMsg = `Found errors in ${subMsg}.`
-      this.constructRequestResult(operationResult, false, errorMsg, requestValidationErrors)
+      this.constructRequestResult(
+        operationResult,
+        false,
+        errorMsg,
+        requestValidationErrors
+      )
     } else {
       this.constructRequestResult(operationResult, true, infoMsg)
     }
     if (requestValidationWarnings && requestValidationWarnings.length) {
       warnMsg = `Found warnings in ${subMsg}.`
-      this.constructRequestResult(operationResult, true, warnMsg, null, requestValidationWarnings)
+      this.constructRequestResult(
+        operationResult,
+        true,
+        warnMsg,
+        null,
+        requestValidationWarnings
+      )
     }
   }
 
@@ -185,30 +206,47 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     operationId: string,
     responseStatusCode: string,
     responseValidationErrors: ModelValidationError[],
-    responseValidationWarnings: Unknown[]|undefined,
+    responseValidationWarnings: Array<unknown> | undefined,
     exampleType: string,
     scenarioName?: string
   ): void {
-
     this.initializeExampleResult(operationId, exampleType, scenarioName)
-    let subMsg
-    let infoMsg
+    const { operationResult, part } = this.getExample(
+      operationId,
+      exampleType,
+      scenarioName
+    )
+    const subMsg = `validating the response with statusCode "${responseStatusCode}" ${part}`
+    const infoMsg = `Response with statusCode "${responseStatusCode}" ${part} is valid.`
     let errorMsg
     let warnMsg
-    const { operationResult, part } = this.getExample(operationId, exampleType, scenarioName)
-    subMsg = `validating the response with statusCode "${responseStatusCode}" ${part}`
-    infoMsg = `Response with statusCode "${responseStatusCode}" ${part} is valid.`
     if (responseValidationErrors && responseValidationErrors.length) {
       errorMsg = `Found errors in ${subMsg}.`
       this.constructResponseResult(
-        operationResult, responseStatusCode, false, errorMsg, responseValidationErrors)
+        operationResult,
+        responseStatusCode,
+        false,
+        errorMsg,
+        responseValidationErrors
+      )
     } else {
-      this.constructResponseResult(operationResult, responseStatusCode, true, infoMsg)
+      this.constructResponseResult(
+        operationResult,
+        responseStatusCode,
+        true,
+        infoMsg
+      )
     }
     if (responseValidationWarnings && responseValidationWarnings.length) {
       warnMsg = `Found warnings in ${subMsg}.`
       this.constructResponseResult(
-        operationResult, responseStatusCode, true, warnMsg, null, responseValidationWarnings)
+        operationResult,
+        responseStatusCode,
+        true,
+        warnMsg,
+        null,
+        responseValidationWarnings
+      )
     }
   }
 
@@ -226,9 +264,10 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
    * @return {object} xmsExample - The xmsExample object.
    */
   private constructOperationResult(
-    operation: Operation, result: ValidationResult, exampleType: string
+    operation: Operation,
+    result: ValidationResult,
+    exampleType: string
   ): void {
-
     const operationId = operation.operationId
     if (result.exampleNotFound) {
       const operationResult = this.specValidationResult.operations[operationId]
@@ -244,8 +283,8 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     }
     if (exampleType === C.xmsExamples) {
       if (result.scenarios) {
-        for (const scenario of utils.getKeys(result.scenarios)) {
-          const requestValidation = result.scenarios[scenario].requestValidation
+        for (const [scenario, v] of entries(result.scenarios)) {
+          const requestValidation = v.requestValidation
           if (requestValidation === undefined) {
             throw new Error("requestValidation is undefined")
           }
@@ -257,27 +296,35 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
           const requestValidationErrors = validationResult.errors
           const requestValidationWarnings = validationResult.warnings
           this.constructRequestResultWrapper(
-            operationId, requestValidationErrors, requestValidationWarnings, exampleType, scenario)
+            operationId,
+            requestValidationErrors,
+            requestValidationWarnings,
+            exampleType,
+            scenario
+          )
           // responseValidation
-          const responseValidation = result.scenarios[scenario].responseValidation
+          const responseValidation =
+            result.scenarios[scenario].responseValidation
           if (responseValidation === undefined) {
             throw new Error("responseValidation is undefined")
           }
-          for (const responseStatusCode of utils.getKeys(responseValidation)) {
-            const responseValidationErrors = responseValidation[responseStatusCode].errors
-            const responseValidationWarnings = responseValidation[responseStatusCode].warnings
+          for (const [responseStatusCode, value] of entries(responseValidation)) {
             this.constructResponseResultWrapper(
               operationId,
               responseStatusCode,
-              responseValidationErrors,
-              responseValidationWarnings,
+              value.errors,
+              value.warnings,
               exampleType,
-              scenario)
+              scenario
+            )
           }
         }
       }
     } else if (exampleType === C.exampleInSpec) {
-      if (result.requestValidation && utils.getKeys(result.requestValidation).length) {
+      if (
+        result.requestValidation &&
+        toArray(keys(result.requestValidation as StringMap<unknown>)).length
+      ) {
         // requestValidation
         const validationResult = result.requestValidation.validationResult
         if (validationResult === undefined) {
@@ -286,19 +333,25 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
         const requestValidationErrors = validationResult.errors
         const requestValidationWarnings = validationResult.warnings
         this.constructRequestResultWrapper(
-          operationId, requestValidationErrors, requestValidationWarnings, exampleType)
+          operationId,
+          requestValidationErrors,
+          requestValidationWarnings,
+          exampleType
+        )
       }
-      if (result.responseValidation && utils.getKeys(result.responseValidation).length) {
+      if (
+        result.responseValidation &&
+        !sm.isEmpty(result.responseValidation)
+      ) {
         // responseValidation
-        for (const responseStatusCode of utils.getKeys(result.responseValidation)) {
-          const responseValidationErrors = result.responseValidation[responseStatusCode].errors
-          const responseValidationWarnings = result.responseValidation[responseStatusCode].warnings
+        for (const [responseStatusCode, value] of entries(result.responseValidation)) {
           this.constructResponseResultWrapper(
             operationId,
             responseStatusCode,
-            responseValidationErrors,
-            responseValidationWarnings,
-            exampleType)
+            value.errors,
+            value.warnings,
+            exampleType
+          )
         }
       }
     }
@@ -310,8 +363,14 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
    * @param {object} operation - The operation object.
    */
   private validateXmsExamples(operation: Operation): void {
-    if (operation === null || operation === undefined || typeof operation !== "object") {
-      throw new Error("operation cannot be null or undefined and must be of type 'object'.")
+    if (
+      operation === null ||
+      operation === undefined ||
+      typeof operation !== "object"
+    ) {
+      throw new Error(
+        "operation cannot be null or undefined and must be of type 'object'."
+      )
     }
     const xmsExamples = operation[C.xmsExamples]
     const resultScenarios: ValidationResultScenarios = {}
@@ -319,18 +378,27 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       scenarios: resultScenarios
     }
     if (xmsExamples) {
-      for (const scenario of Object.keys(xmsExamples)) {
-        const xmsExample = xmsExamples[scenario]
+      for (const [scenario, xmsExample] of entries<any>(xmsExamples)) {
         resultScenarios[scenario] = {
-          requestValidation: this.validateRequest(operation, xmsExample.parameters),
-          responseValidation: this.validateXmsExampleResponses(operation, xmsExample.responses)
+          requestValidation: this.validateRequest(
+            operation,
+            xmsExample.parameters
+          ),
+          responseValidation: this.validateXmsExampleResponses(
+            operation,
+            xmsExample.responses
+          )
         }
       }
       result.scenarios = resultScenarios
     } else {
       const msg = `x-ms-example not found in ${operation.operationId}.`
       result.exampleNotFound = this.constructErrorObject(
-        ErrorCodes.XmsExampleNotFoundError, msg, null, true)
+        ErrorCodes.XmsExampleNotFoundError,
+        msg,
+        null,
+        true
+      )
     }
     this.constructOperationResult(operation, result, C.xmsExamples)
   }
@@ -351,8 +419,14 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
    * @param {object} operation - The operation object.
    */
   private validateExample(operation: Operation): void {
-    if (operation === null || operation === undefined || typeof operation !== "object") {
-      throw new Error("operation cannot be null or undefined and must be of type 'object'.")
+    if (
+      operation === null ||
+      operation === undefined ||
+      typeof operation !== "object"
+    ) {
+      throw new Error(
+        "operation cannot be null or undefined and must be of type 'object'."
+      )
     }
     const result: ValidationResult = {
       requestValidation: this.validateExampleRequest(operation),
@@ -369,8 +443,14 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
    * @return {object} result - The validation result.
    */
   private validateExampleRequest(operation: Operation): RequestValidation {
-    if (operation === null || operation === undefined || typeof operation !== "object") {
-      throw new Error("operation cannot be null or undefined and must be of type 'object'.")
+    if (
+      operation === null ||
+      operation === undefined ||
+      typeof operation !== "object"
+    ) {
+      throw new Error(
+        "operation cannot be null or undefined and must be of type 'object'."
+      )
     }
     const parameters = operation.getParameters()
     // as per swagger specification
@@ -384,11 +464,13 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
 
     let result: RequestValidation = {}
     if (bodyParam && bodyParam.schema && bodyParam.schema.example) {
-      const exampleParameterValues: { [name: string]: object } = {}
+      const exampleParameterValues: MutableStringMap<object> = {}
       for (const parameter of parameters) {
         log.debug(
-          `Getting sample value for parameter "${parameter.name}" in operation ` +
-          `"${operation.operationId}".`)
+          `Getting sample value for parameter "${
+            parameter.name
+          }" in operation ` + `"${operation.operationId}".`
+        )
         // need to figure out how to register custom format validators. Till then deleting the
         // format uuid.
         if (parameter.format && parameter.format === "uuid") {
@@ -410,11 +492,19 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
    *
    * @return {object} result - The validation result.
    */
-  private validateExampleResponses(operation: Operation): StringMap<Sway.ValidationResults> {
-    if (operation === null || operation === undefined || typeof operation !== "object") {
-      throw new Error("operation cannot be null or undefined and must be of type 'object'.")
+  private validateExampleResponses(
+    operation: Operation
+  ): StringMap<Sway.ValidationResults> {
+    if (
+      operation === null ||
+      operation === undefined ||
+      typeof operation !== "object"
+    ) {
+      throw new Error(
+        "operation cannot be null or undefined and must be of type 'object'."
+      )
     }
-    const result: StringMap<Sway.ValidationResults> = {}
+    const result: MutableStringMap<Sway.ValidationResults> = {}
     const responses = operation.getResponses()
     for (const response of responses) {
       if (response.examples) {
@@ -422,8 +512,14 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
           const exampleResponseBody = response.examples[mimeType]
           const exampleResponseHeaders = { "content-type": mimeType }
           const exampleResponse = new ResponseWrapper(
-            response.statusCode, exampleResponseBody, exampleResponseHeaders)
-          const validationResult = this.validateResponse(operation, exampleResponse)
+            response.statusCode,
+            exampleResponseBody,
+            exampleResponseHeaders
+          )
+          const validationResult = this.validateResponse(
+            operation,
+            exampleResponse
+          )
           result[response.statusCode] = validationResult
         }
       }
@@ -440,22 +536,34 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
    *
    * @return {object} result - The validation result.
    */
-  private validateResponse(operationOrResponse: Operation, responseWrapper: Unknown) {
-    const self = this
-    if (operationOrResponse === null
-      || operationOrResponse === undefined
-      || typeof operationOrResponse !== "object") {
+  private validateResponse(
+    operationOrResponse: Operation,
+    responseWrapper: unknown
+  ) {
+    if (
+      operationOrResponse === null ||
+      operationOrResponse === undefined ||
+      typeof operationOrResponse !== "object"
+    ) {
       throw new Error(
-        "operationOrResponse cannot be null or undefined and must be of type 'object'.")
+        "operationOrResponse cannot be null or undefined and must be of type 'object'."
+      )
     }
 
-    if (responseWrapper === null
-      || responseWrapper === undefined
-      || typeof responseWrapper !== "object") {
-      throw new Error("responseWrapper cannot be null or undefined and must be of type 'object'.")
+    if (
+      responseWrapper === null ||
+      responseWrapper === undefined ||
+      typeof responseWrapper !== "object"
+    ) {
+      throw new Error(
+        "responseWrapper cannot be null or undefined and must be of type 'object'."
+      )
     }
-    self.sampleResponse = responseWrapper
-    return operationOrResponse.validateResponse(responseWrapper)
+    // this.sampleResponse = responseWrapper
+    // TODO: update responseWrapper
+    return operationOrResponse.validateResponse(
+      responseWrapper as Sway.LiveResponse
+    )
   }
 
   /*
@@ -471,31 +579,37 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     operation: Operation,
     exampleResponseValue: { [name: string]: ExampleResponse }
   ) {
-
-    const result: {
-      [name: string]: Sway.ValidationResults
-    } = {}
-    if (operation === null || operation === undefined || typeof operation !== "object") {
-      throw new Error("operation cannot be null or undefined and must be of type 'object'.")
+    const result: MutableStringMap<Sway.ValidationResults> = {}
+    if (
+      operation === null ||
+      operation === undefined ||
+      typeof operation !== "object"
+    ) {
+      throw new Error(
+        "operation cannot be null or undefined and must be of type 'object'."
+      )
     }
 
-    if (exampleResponseValue === null
-      || exampleResponseValue === undefined
-      || typeof exampleResponseValue !== "object") {
-      throw new Error("operation cannot be null or undefined and must be of type 'object'.")
+    if (
+      exampleResponseValue === null ||
+      exampleResponseValue === undefined ||
+      typeof exampleResponseValue !== "object"
+    ) {
+      throw new Error(
+        "operation cannot be null or undefined and must be of type 'object'."
+      )
     }
-    const responsesInSwagger: {
-      [name: string]: Unknown
-    } = {}
+    const responsesInSwagger: MutableStringMap<unknown> = {}
     operation.getResponses().forEach(response => {
       responsesInSwagger[response.statusCode] = response.statusCode
     })
-    for (const exampleResponseStatusCode of utils.getKeys(exampleResponseValue)) {
+    for (const exampleResponseStatusCode of keys(exampleResponseValue)) {
       const response = operation.getResponse(exampleResponseStatusCode)
       if (responsesInSwagger[exampleResponseStatusCode]) {
         delete responsesInSwagger[exampleResponseStatusCode]
       }
-      result[exampleResponseStatusCode] = { errors: [], warnings: [] }
+      const validationResults: Sway.ValidationResults = { errors: [], warnings: [] }
+      result[exampleResponseStatusCode] = validationResults
       // have to ensure how to map negative status codes to default. There have been several issues
       // filed in the Autorest repo, w.r.t how
       // default is handled. While solving that issue, we may come up with some extension. Once that
@@ -504,55 +618,72 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
         const msg =
           `Response statusCode "${exampleResponseStatusCode}" for operation ` +
           `"${operation.operationId}" is provided in exampleResponseValue, ` +
-          `however it is not present in the swagger spec.`;
+          `however it is not present in the swagger spec.`
         const e = this.constructErrorObject<Sway.ValidationEntry>(
-          ErrorCodes.ResponseStatusCodeNotInSpec, msg)
-        result[exampleResponseStatusCode].errors.push(e)
+          ErrorCodes.ResponseStatusCodeNotInSpec,
+          msg
+        )
+        validationResults.errors.push(e)
         log.error(e as any)
         continue
       }
 
-      const exampleResponseHeaders = exampleResponseValue[exampleResponseStatusCode].headers || {}
-      const exampleResponseBody = exampleResponseValue[exampleResponseStatusCode].body
+      const exampleResponseHeaders =
+        exampleResponseValue[exampleResponseStatusCode].headers || {}
+      const exampleResponseBody =
+        exampleResponseValue[exampleResponseStatusCode].body
       if (exampleResponseBody && !response.schema) {
         const msg =
           `Response statusCode "${exampleResponseStatusCode}" for operation ` +
-          `"${operation.operationId}" has response body provided in the example, ` +
+          `"${
+            operation.operationId
+          }" has response body provided in the example, ` +
           `however the response does not have a "schema" defined in the swagger spec.`
         const e = this.constructErrorObject<Sway.ValidationEntry>(
-          ErrorCodes.ResponseSchemaNotInSpec, msg)
-        result[exampleResponseStatusCode].errors.push(e)
+          ErrorCodes.ResponseSchemaNotInSpec,
+          msg
+        )
+        validationResults.errors.push(e)
         log.error(e as any)
         continue
       }
       // ensure content-type header is present
-      if (!(exampleResponseHeaders["content-type"] || exampleResponseHeaders["Content-Type"])) {
-        exampleResponseHeaders["content-type"] = utils.getJsonContentType(operation.produces)
+      if (
+        !(
+          exampleResponseHeaders["content-type"] ||
+          exampleResponseHeaders["Content-Type"]
+        )
+      ) {
+        exampleResponseHeaders["content-type"] = utils.getJsonContentType(
+          operation.produces
+        )
       }
       const exampleResponse = new ResponseWrapper(
-        exampleResponseStatusCode, exampleResponseBody, exampleResponseHeaders)
+        exampleResponseStatusCode,
+        exampleResponseBody,
+        exampleResponseHeaders
+      )
       const validationResult = this.validateResponse(operation, exampleResponse)
       result[exampleResponseStatusCode] = validationResult
     }
-    const responseWithoutXmsExamples = utils
-      .getKeys(responsesInSwagger)
-      .filter(statusCode => {
-        if (statusCode !== "default") {
-          // let intStatusCode = parseInt(statusCode);
-          // if (!isNaN(intStatusCode) && intStatusCode < 400) {
-          return statusCode
-          // }
-        }
-      })
+    const responseWithoutXmsExamples =
+      toArray(filter(keys(responsesInSwagger), statusCode => statusCode !== "default"))
+
     if (responseWithoutXmsExamples && responseWithoutXmsExamples.length) {
       const msg =
         `Following response status codes "${responseWithoutXmsExamples.toString()}" for ` +
-        `operation "${operation.operationId}" were present in the swagger spec, ` +
+        `operation "${
+          operation.operationId
+        }" were present in the swagger spec, ` +
         `however they were not present in x-ms-examples. Please provide them.`
       const e = this.constructErrorObject<Sway.ValidationEntry>(
-        ErrorCodes.ResponseStatusCodeNotInExample, msg)
+        ErrorCodes.ResponseStatusCodeNotInExample,
+        msg
+      )
       log.error(e as any)
-      responseWithoutXmsExamples.forEach(statusCode => result[statusCode] = { errors: [e] })
+      responseWithoutXmsExamples.forEach(
+        statusCode => (result[statusCode] = { errors: [e] })
+      )
     }
     return result
   }
@@ -567,20 +698,31 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
    * @return {object} result - The validation result.
    */
   private validateRequest(
-    operation: Operation, exampleParameterValues: { [name: string]: {} }
+    operation: Operation,
+    exampleParameterValues: StringMap<{}>
   ): RequestValidation {
-
-    if (operation === null || operation === undefined || typeof operation !== "object") {
-      throw new Error("operation cannot be null or undefined and must be of type 'object'.")
+    if (
+      operation === null ||
+      operation === undefined ||
+      typeof operation !== "object"
+    ) {
+      throw new Error(
+        "operation cannot be null or undefined and must be of type 'object'."
+      )
     }
 
-    if (exampleParameterValues === null
-      || exampleParameterValues === undefined
-      || typeof exampleParameterValues !== "object") {
+    if (
+      exampleParameterValues === null ||
+      exampleParameterValues === undefined ||
+      typeof exampleParameterValues !== "object"
+    ) {
       throw new Error(
-        `In operation "${operation.operationId}", exampleParameterValues cannot be null or ` +
-        `undefined and must be of type "object" (A dictionary of key-value pairs of ` +
-        `parameter-names and their values).`)
+        `In operation "${
+          operation.operationId
+        }", exampleParameterValues cannot be null or ` +
+          `undefined and must be of type "object" (A dictionary of key-value pairs of ` +
+          `parameter-names and their values).`
+      )
     }
 
     const parameters = operation.getParameters()
@@ -593,17 +735,18 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       baseUrl?: string
       [name: string]: any
     } = { headers: {} }
-    let formDataFiles: {
-      [name: string]: Unknown
-    }|null = null
-    const pathObject = operation.pathObject as Sway.Path
+    let formDataFiles: MutableStringMap<unknown> | null = null
+    const pathObject = operation.pathObject
     const parameterizedHost = pathObject.api[C.xmsParameterizedHost]
-    const hostTemplate = parameterizedHost && parameterizedHost.hostTemplate
-      ? parameterizedHost.hostTemplate
-      : null
-    if (operation.pathObject
-      && operation.pathObject.api
-      && (operation.pathObject.api.host || hostTemplate)) {
+    const hostTemplate =
+      parameterizedHost && parameterizedHost.hostTemplate
+        ? parameterizedHost.hostTemplate
+        : null
+    if (
+      operation.pathObject &&
+      operation.pathObject.api &&
+      (operation.pathObject.api.host || hostTemplate)
+    ) {
       let scheme = "https"
       let basePath = ""
       let host = ""
@@ -611,9 +754,12 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       if (host.endsWith("/")) {
         host = host.slice(0, host.length - 1)
       }
-      if (operation.pathObject.api.schemes
-        && !operation.pathObject.api.schemes.some(
-          item => !!item && item.toLowerCase() === "https")) {
+      if (
+        operation.pathObject.api.schemes &&
+        !operation.pathObject.api.schemes.some(
+          item => !!item && item.toLowerCase() === "https"
+        )
+      ) {
         scheme = operation.pathObject.api.schemes[0]
       }
       if (operation.pathObject.api.basePath) {
@@ -622,12 +768,9 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       if (!basePath.startsWith("/")) {
         basePath = `/${basePath}`
       }
-      let baseUrl = ""
-      if (host.startsWith(scheme + "://")) {
-        baseUrl = `${host}${basePath}`
-      } else {
-        baseUrl = `${scheme}://${host}${basePath}`
-      }
+      const baseUrl = host.startsWith(scheme + "://") ?
+        `${host}${basePath}` :
+        `${scheme}://${host}${basePath}`
       options.baseUrl = baseUrl
     }
     options.method = operation.method
@@ -642,10 +785,14 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       if (!parameterValue) {
         if (parameter.required) {
           const msg =
-            `In operation "${operation.operationId}", parameter ${parameter.name} is required in ` +
+            `In operation "${operation.operationId}", parameter ${
+              parameter.name
+            } is required in ` +
             `the swagger spec but is not present in the provided example parameter values.`
           const e = this.constructErrorObject<Sway.ValidationEntry>(
-            ErrorCodes.RequiredParameterExampleNotFound, msg)
+            ErrorCodes.RequiredParameterExampleNotFound,
+            msg
+          )
           if (result.validationResult === undefined) {
             throw new Error("result.validationResult is undefined")
           }
@@ -657,24 +804,37 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       }
       const location = parameter.in
       if (location === "path" || location === "query") {
-        if (location === "path" && parameterValue && typeof parameterValue === "string") {
+        if (
+          location === "path" &&
+          parameterValue &&
+          typeof parameterValue === "string"
+        ) {
           // "/{scope}/scopes/resourceGroups/{resourceGroupName}" In the aforementioned path
           // template, we will search for the path parameter based on it's name
           // for example: "scope". Find it's index in the string and move backwards by 2 positions.
           // If the character at that position is a forward slash "/" and
           // the value for the parameter starts with a forward slash "/" then we have found the case
           // where there will be duplicate forward slashes in the url.
-          if (pathTemplate.charAt(pathTemplate.indexOf(`${parameter.name}`) - 2)
-            === "/" && parameterValue.startsWith("/")) {
-
+          if (
+            pathTemplate.charAt(
+              pathTemplate.indexOf(`${parameter.name}`) - 2
+            ) === "/" &&
+            parameterValue.startsWith("/")
+          ) {
             const msg =
-              `In operation "${operation.operationId}", example for parameter ` +
-              `"${parameter.name}": "${parameterValue}" starts with a forward slash ` +
+              `In operation "${
+                operation.operationId
+              }", example for parameter ` +
+              `"${
+                parameter.name
+              }": "${parameterValue}" starts with a forward slash ` +
               `and the path template: "${pathTemplate}" contains a forward slash before ` +
               `the parameter starts. This will cause double forward slashes ` +
               ` in the request url. Thus making it incorrect. Please rectify the example.`
             const e = this.constructErrorObject<Sway.ValidationEntry>(
-              ErrorCodes.DoubleForwardSlashesInUrl, msg)
+              ErrorCodes.DoubleForwardSlashesInUrl,
+              msg
+            )
             if (result.validationResult === undefined) {
               throw new Error("result.validationResult is undefined")
             }
@@ -684,11 +844,16 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
           }
           // replacing forward slashes with empty string because this messes up Sways regex
           // validation of path segment.
-          parameterValue = parameterValue.replace(/\//ig, "")
+          parameterValue = parameterValue.replace(/\//gi, "")
         }
         const paramType = location + "Parameters"
-        if (!options[paramType]) { options[paramType] = {} }
-        if (parameter[C.xmsSkipUrlEncoding] || utils.isUrlEncoded(parameterValue as string)) {
+        if (!options[paramType]) {
+          options[paramType] = {}
+        }
+        if (
+          parameter[C.xmsSkipUrlEncoding] ||
+          utils.isUrlEncoded(parameterValue as string)
+        ) {
           options[paramType][parameter.name] = {
             value: parameterValue,
             skipUrlEncoding: true
@@ -700,11 +865,14 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
         options.body = parameterValue
         options.disableJsonStringifyOnBody = true
         if (operation.consumes) {
-          const isOctetStream = (consumes: string[]) => consumes.some(
-            contentType => contentType === "application/octet-stream")
+          const isOctetStream = (consumes: string[]) =>
+            consumes.some(
+              contentType => contentType === "application/octet-stream"
+            )
 
           options.headers["Content-Type"] =
-            parameter.schema.format === "file" && isOctetStream(operation.consumes)
+            parameter.schema.format === "file" &&
+            isOctetStream(operation.consumes)
               ? "application/octet-stream"
               : operation.consumes[0]
         }
@@ -712,23 +880,28 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
         options.headers[parameter.name] = parameterValue
       } else if (location === "formData") {
         // helper function
-        const isFormUrlEncoded = (consumes: string[]) => consumes.some(
-          contentType => contentType === "application/x-www-form-urlencoded")
+        const isFormUrlEncoded = (consumes: string[]) =>
+          consumes.some(
+            contentType => contentType === "application/x-www-form-urlencoded"
+          )
 
-        if (!options.formData) { options.formData = {} }
+        if (!options.formData) {
+          options.formData = {}
+        }
         options.formData[parameter.name] = parameterValue
 
         // set Content-Type correctly
-        if (operation.consumes && isFormUrlEncoded(operation.consumes)) {
-          options.headers["Content-Type"] = "application/x-www-form-urlencoded"
-        } else {
-          // default to formData
-          options.headers["Content-Type"] = "multipart/form-data"
-        }
+        options.headers["Content-Type"] =
+          operation.consumes && isFormUrlEncoded(operation.consumes) ?
+            "application/x-www-form-urlencoded" :
+            // default to formData
+            "multipart/form-data"
         // keep track of parameter type 'file' as sway expects such parameter types to be set
         // differently in the request object given for validation.
         if (parameter.type === "file") {
-          if (!formDataFiles) { formDataFiles = {} }
+          if (!formDataFiles) {
+            formDataFiles = {}
+          }
           formDataFiles[parameter.name] = parameterValue
         }
       }
@@ -739,10 +912,14 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       options.headers["Content-Type"] = val
     }
     if (!options.headers["Content-Type"]) {
-      options.headers["Content-Type"] = utils.getJsonContentType(operation.consumes)
+      options.headers["Content-Type"] = utils.getJsonContentType(
+        operation.consumes
+      )
     }
 
-    let request: msRest.WebResource|null = null
+    let request:
+      | (msRest.WebResource & { files?: MutableStringMap<unknown> })
+      | null = null
     let validationResult: {
       errors: CommonError[]
     } = {
@@ -754,32 +931,38 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
         request = request.prepare(options as any)
         // set formData in the way sway expects it.
         if (formDataFiles) {
-          (request as any).files = formDataFiles
+          request.files = formDataFiles
         } else if (options.formData) {
           request.body = options.formData
         }
         validationResult = operation.validateRequest(request)
-        this.sampleRequest = request
+        // this.sampleRequest = request
       } catch (err) {
         request = null
-        const e = this.constructErrorObject(ErrorCodes.ErrorInPreparingRequest, err.message, [err])
+        const e = this.constructErrorObject(
+          ErrorCodes.ErrorInPreparingRequest,
+          err.message,
+          [err]
+        )
         validationResult.errors.push(e)
       }
     }
 
     result.request = request
-    result.validationResult = utils.mergeObjects(validationResult, result.validationResult as any)
+    result.validationResult = utils.mergeObjects(
+      validationResult,
+      result.validationResult as any
+    )
     return result
   }
 
   private constructRequestResult(
     operationResult: OperationExampleResult,
-    isValid: Unknown,
+    isValid: unknown,
     msg: string,
-    requestValidationErrors?: ModelValidationError[]|null,
-    requestValidationWarnings?: Unknown
+    requestValidationErrors?: ModelValidationError[] | null,
+    requestValidationWarnings?: unknown
   ): void {
-
     if (operationResult.request === undefined) {
       throw new Error("operationResult.result is undefined")
     }
@@ -788,7 +971,10 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       operationResult.isValid = false
       operationResult.request.isValid = false
       const e = this.constructErrorObject(
-        ErrorCodes.RequestValidationError, msg, requestValidationErrors)
+        ErrorCodes.RequestValidationError,
+        msg,
+        requestValidationErrors
+      )
       operationResult.request.error = e
       log.error(`${msg}:\n`, e)
     } else if (requestValidationWarnings) {
@@ -804,12 +990,11 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
   private constructResponseResult(
     operationResult: OperationExampleResult,
     responseStatusCode: string,
-    isValid: Unknown,
+    isValid: unknown,
     msg: string,
-    responseValidationErrors?: ModelValidationError[]|null,
-    responseValidationWarnings?: Unknown
+    responseValidationErrors?: ModelValidationError[] | null,
+    responseValidationWarnings?: unknown
   ): void {
-
     if (operationResult.responses === undefined) {
       throw new Error("operationResult.responses is undefined")
     }
@@ -820,11 +1005,16 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       operationResult.isValid = false
       operationResult.responses[responseStatusCode].isValid = false
       const e = this.constructErrorObject(
-        ErrorCodes.ResponseValidationError, msg, responseValidationErrors)
+        ErrorCodes.ResponseValidationError,
+        msg,
+        responseValidationErrors
+      )
       operationResult.responses[responseStatusCode].error = e
       log.error(`${msg}:\n`, e)
     } else if (responseValidationWarnings) {
-      operationResult.responses[responseStatusCode].warning = responseValidationWarnings
+      operationResult.responses[
+        responseStatusCode
+      ].warning = responseValidationWarnings
       log.debug(`${msg}:\n`, responseValidationWarnings)
     } else {
       operationResult.responses[responseStatusCode].isValid = true

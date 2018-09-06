@@ -5,7 +5,6 @@ import * as winston from "winston"
 import * as path from "path"
 import * as fs from "fs"
 import * as os from "os"
-import { Unknown } from "./unknown"
 
 let logDir = path.resolve(os.homedir(), "oav_output")
 
@@ -44,9 +43,9 @@ const customLogLevels = {
 }
 
 export type ILogger = winston.Logger & {
-  consoleLogLevel: Unknown
-  filepath: Unknown
-  directory: Unknown
+  consoleLogLevel: unknown
+  filepath: unknown
+  directory: unknown
 }
 
 export const log = winston.createLogger({
@@ -71,7 +70,6 @@ Object.defineProperties(log, {
       return transport !== undefined ? transport.level : undefined
     },
     set(level) {
-      const self = this as ILogger
       if (!level) {
         level = "warn"
       }
