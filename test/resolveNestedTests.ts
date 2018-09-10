@@ -11,10 +11,10 @@ const options: sway.Options = {
     definitions: {
       A: {
         properties: {
-          a: {
+          "a": {
             type: "string"
           },
-          b: {
+          "b": {
             properties: {
               c: {
                 type: "string"
@@ -22,6 +22,13 @@ const options: sway.Options = {
             },
             // additionalProperties: false,
             required: ["c"]
+          },
+          "@": {
+            properties: {
+              c: {
+                type: "string"
+              }
+            }
           }
         },
         required: ["a", "b"],
@@ -63,11 +70,14 @@ describe("resolve nested properties", () => {
       url: "example.com",
       method: "x",
       body: {
-        a: "somevalue",
-        b: {
+        "a": "somevalue",
+        "b": {
           c: "somevalue",
           // d: "anothervalue"
         },
+        "@": {
+          c: "somevalue",
+        }
         // d: 54
       }
     }
