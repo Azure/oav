@@ -23,7 +23,7 @@
     "glob": "^5.0.14",
     "js-yaml": "^3.12.0",
     "json-pointer": "^0.6.0",
-    "json-refs": "3.0.6",
+    "json-refs": "3.0.10",
     "jsonpath": "^1.0.0",
     "linq": "^3.1.0",
     "lodash": "^4.17.10",
