@@ -28,6 +28,7 @@ import {
   generatedPrefix,
   getDefaultResponses
 } from './cloudError';
+import { pathToPtr } from 'json-refs';
 
 const skipIfUndefined = <T>(f: (v: T) => T): ((v: T | undefined) => T | undefined) =>
   (v) => v !== undefined ? f(v) : undefined
@@ -64,7 +65,7 @@ export function resolveNestedDefinitions(spec: SwaggerObject, options: Options):
     if (result !== undefined) {
       generatedDefinitions[definitionName] = result
     }
-    return { $ref: `#/definitions/${encodeURIComponent(definitionName)}` }
+    return { $ref: pathToPtr(["definitions", definitionName]) }
   }
 
   // a function to resolve SchemaObject array

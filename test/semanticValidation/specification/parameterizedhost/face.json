@@ -1303,6 +1303,13 @@
       "properties": {
         "error": {
           "$ref": "#/definitions/Error"
+        },
+        "@nested": {
+          "properties": {
+            "@a": {
+              "type": "string"
+            }
+          }
         }
       }
     },

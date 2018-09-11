@@ -85,7 +85,7 @@
       "stopOnEntry": false,
       "args": [
         "--no-timeouts",
-        "test/resolveNestedTests.ts",
+        "test/semanticValidatorTests.ts",
         "-r",
         "ts-node/register",
         "--no-timeouts"

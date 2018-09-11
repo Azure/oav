@@ -192,7 +192,7 @@ export class WireFormatGenerator {
       filter: ["relative", "remote"]
     }
 
-    const allRefsRemoteRelative = JsonRefs.findRefs(this.specInJson, options)
+    const allRefsRemoteRelative = JsonRefs.findRefs(this.specInJson as object, options)
     const e = entries(allRefsRemoteRelative as StringMap<any>)
     const promiseFactories = toArray(map(
       e,

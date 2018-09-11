@@ -1,5 +1,9 @@
 # Changelog
 
+### 09/10/2018 0.5.8
+
+- Fix JSON-Pointer encoding.
+
 ### 08/28/2018 0.5.7
 
 - Errors have optional `jsonUrl` and `jsonPosition` fields.
