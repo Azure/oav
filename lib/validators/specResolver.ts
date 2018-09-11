@@ -264,7 +264,7 @@ export class SpecResolver {
    * @return {Promise<void>}
    */
   private async resolveRelativePaths(
-    doc?: unknown,
+    doc?: object,
     docPath?: string,
     filterType?: string
   ): Promise<void> {
