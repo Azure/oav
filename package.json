@@ -1,6 +1,6 @@
 {
   "name": "oav",
-  "version": "0.5.8",
+  "version": "0.5.9",
   "author": {
     "name": "Microsoft Corporation",
     "email": "azsdkteam@microsoft.com",
@@ -17,6 +17,7 @@
     "@ts-common/source-map": "0.2.7",
     "@ts-common/string-map": "0.0.26",
     "@ts-common/tuple": "0.0.0",
+    "@ts-common/z-schema": "^3.24.0",
     "@types/lodash": "^4.14.116",
     "@types/request": "^2.47.1",
     "azure-arm-resource": "^2.0.0-preview",
@@ -38,9 +39,8 @@
     "vscode-jsonrpc": "^3.6.2",
     "winston": "^3.0.0",
     "yargs": "^6.6.0",
-    "yasway": "^1.0.10",
-    "yuml2svg": "^3.1.0",
-    "z-schema": "github:sergey-shandar-forks/z-schema#sergey/json"
+    "yasway": "^1.0.11",
+    "yuml2svg": "^3.1.0"
   },
   "devDependencies": {
     "@types/glob": "^5.0.35",
