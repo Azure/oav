@@ -5,7 +5,7 @@ import _ from "lodash"
 import { FilePosition } from "@ts-common/source-map"
 import { flatMap, fold } from "@ts-common/iterator"
 import { errorsAddFileInfo } from "./errorFileInfo"
-import { jsonSymbol, schemaSymbol } from 'z-schema';
+import { jsonSymbol, schemaSymbol } from "@ts-common/z-schema"
 
 /**
  * @class
