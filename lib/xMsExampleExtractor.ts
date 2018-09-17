@@ -4,7 +4,7 @@
 import * as fs from "fs"
 import * as pathlib from "path"
 import { log } from "./util/logging"
-import { MutableStringMap, keys, StringMap } from "@ts-common/string-map"
+import { MutableStringMap, keys, StringMap, entries, values } from "@ts-common/string-map"
 import * as _ from "@ts-common/iterator"
 import swaggerParser from "swagger-parser"
 
@@ -12,6 +12,16 @@ interface Options {
   output?: string
   shouldResolveXmsExamples?: unknown
   matchApiVersion?: unknown
+}
+
+const mkdirRecursiveSync = (dir: string) => {
+  if (!fs.existsSync(dir)) {
+    const parent = pathlib.dirname(dir)
+    if (parent !== dir) {
+      mkdirRecursiveSync(parent)
+    }
+    fs.mkdirSync(dir)
+  }
 }
 
 /**
@@ -113,12 +123,12 @@ export class XMsExampleExtractor {
 
       // for this API path (and method), try to find it in the recording file, and get
       // the data
-      const entries = recording.Entries
+      const recordingEntries: StringMap<any> = recording.Entries
       let entryIndex = 0
       const queryParams: MutableStringMap<unknown> = {}
-      for (const entry of keys(entries)) {
+      for (const recordingEntry of values(recordingEntries)) {
         entryIndex++
-        let recordingPath = JSON.stringify(entries[entry].RequestUri)
+        let recordingPath = JSON.stringify(recordingEntry.RequestUri)
         const recordingPathQueryParams = recordingPath.split("?")[1].slice(0, -1)
         const queryParamsArray = recordingPathQueryParams.split("&")
         for (const value of queryParamsArray) {
@@ -126,7 +136,7 @@ export class XMsExampleExtractor {
           queryParams[queryParam[0]] = queryParam[1]
         }
 
-        const headerParams = entries[entry].RequestHeaders
+        const headerParams = recordingEntry.RequestHeaders
 
         // if commandline included check for API version, validate api-version from URI in
         // recordings matches the api-version of the spec
@@ -143,11 +153,11 @@ export class XMsExampleExtractor {
             const pathParamsValues: MutableStringMap<unknown> = {}
             for (const [p, v] of entries(pathParams)) {
               const index = v
-              pathParamsValues[p] = recordingPathParts[index as number]
+              pathParamsValues[p] = recordingPathParts[index]
             }
 
             // found a match in the recording
-            const requestMethodFromRecording = entries[entry].RequestMethod
+            const requestMethodFromRecording = recordingEntry.RequestMethod
             const infoFromOperation = paths[path][requestMethodFromRecording.toLowerCase()]
             if (typeof infoFromOperation !== "undefined") {
               // need to consider each method in operation
@@ -195,7 +205,7 @@ export class XMsExampleExtractor {
               for (const param of keys(infoFromOperation.parameters)) {
                 if (params[param].in === "body") {
                   const bodyParamName = params[param].name
-                  const bodyParamValue = entries[entry].RequestBody
+                  const bodyParamValue = recordingEntry.RequestBody
                   const bodyParamExample: MutableStringMap<unknown> = {}
                   bodyParamExample[bodyParamName] = bodyParamValue
 
@@ -205,15 +215,18 @@ export class XMsExampleExtractor {
                 }
               }
               for (const {} of keys(infoFromOperation.responses)) {
-                const statusCodeFromRecording = entries[entry].StatusCode
-                const responseBody = entries[entry].ResponseBody
+                const statusCodeFromRecording = recordingEntry.StatusCode
+                const responseBody = recordingEntry.ResponseBody
                 exampleL.responses[statusCodeFromRecording] = {
                   body: responseBody !== "" ? JSON.parse(responseBody) : ""
                 }
               }
               log.info(`Writing x-ms-examples at ${outputExamples + exampleFileName}`)
+              const examplePath = pathlib.join(outputExamples, exampleFileName)
+              const dir = pathlib.dirname(examplePath)
+              mkdirRecursiveSync(dir)
               fs.writeFileSync(
-                outputExamples + exampleFileName,
+                examplePath,
                 JSON.stringify(exampleL, null, 2)
               )
             }
@@ -234,11 +247,14 @@ export class XMsExampleExtractor {
     this.mkdirSync(this.options.output + "/examples")
     this.mkdirSync(this.options.output + "/swagger")
 
-    const outputExamples = this.options.output + "/examples/"
+    const outputExamples = pathlib.join(this.options.output, "examples")
     const relativeExamplesPath = "../examples/"
     const specName = this.specPath.split("/")
-    const outputSwagger =
-      this.options.output + "/swagger/" + specName[specName.length - 1].split(".")[0] + ".json"
+    const outputSwagger = pathlib.join(
+      this.options.output,
+      "swagger",
+      specName[specName.length - 1].split(".")[0] + ".json"
+    )
 
     const accErrors: MutableStringMap<unknown> = {}
     const filesArray: string[] = []
@@ -273,9 +289,9 @@ export class XMsExampleExtractor {
     return accErrors
   }
 
-  private mkdirSync(path: string): void {
+  private mkdirSync(dir: string): void {
     try {
-      fs.mkdirSync(path)
+      fs.mkdirSync(dir)
     } catch (e) {
       if (e.code !== "EEXIST") { throw e }
     }
