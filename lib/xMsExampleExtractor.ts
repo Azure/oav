@@ -240,8 +240,6 @@ export class XMsExampleExtractor {
     const outputSwagger =
       this.options.output + "/swagger/" + specName[specName.length - 1].split(".")[0] + ".json"
 
-    // const swaggerObject = JSON.parse(fs.readFileSync(this.specPath).toString())
-
     const accErrors: MutableStringMap<unknown> = {}
     const filesArray: string[] = []
     this.getFileList(this.recordings, filesArray)
