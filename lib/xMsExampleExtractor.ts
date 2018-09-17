@@ -4,7 +4,7 @@
 import * as fs from "fs"
 import * as pathlib from "path"
 import { log } from "./util/logging"
-import { MutableStringMap, keys } from "@ts-common/string-map"
+import { MutableStringMap, keys, StringMap } from "@ts-common/string-map"
 import * as _ from "@ts-common/iterator"
 import swaggerParser from "swagger-parser"
 
@@ -226,7 +226,7 @@ export class XMsExampleExtractor {
   /**
    * Extracts x-ms-examples from the recordings
    */
-  public async extract(): Promise<void> {
+  public async extract(): Promise<StringMap<unknown>> {
     if (this.options.output === undefined) {
       throw new Error("this.options.output === undefined")
     }
@@ -270,6 +270,7 @@ export class XMsExampleExtractor {
       process.exitCode = 1
       log.error(err)
     }
+    return accErrors
   }
 
   private mkdirSync(path: string): void {
