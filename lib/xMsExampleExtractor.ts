@@ -6,7 +6,7 @@ import * as pathlib from "path"
 import { log } from "./util/logging"
 import { MutableStringMap, keys } from "@ts-common/string-map"
 import * as _ from "@ts-common/iterator"
-import * as swaggerParser from "swagger-parser"
+import swaggerParser from "swagger-parser"
 
 interface Options {
   output?: string
@@ -240,7 +240,7 @@ export class XMsExampleExtractor {
     const outputSwagger =
       this.options.output + "/swagger/" + specName[specName.length - 1].split(".")[0] + ".json"
 
-    const swaggerObject = require(this.specPath)
+    // const swaggerObject = JSON.parse(fs.readFileSync(this.specPath).toString())
 
     const accErrors: MutableStringMap<unknown> = {}
     const filesArray: string[] = []
@@ -249,14 +249,14 @@ export class XMsExampleExtractor {
     const recordingFiles = filesArray
 
     try {
-      const api = await swaggerParser.parse(swaggerObject)
+      const api = await swaggerParser.parse(this.specPath)
       for (const recordingFileName of recordingFiles) {
         log.debug(`Processing recording file: ${recordingFileName}`)
 
         try {
           this.extractOne(relativeExamplesPath, outputExamples, api, recordingFileName)
           log.info(`Writing updated swagger with x-ms-examples at ${outputSwagger}`)
-          fs.writeFileSync(outputSwagger, JSON.stringify(swaggerObject, null, 2))
+          fs.writeFileSync(outputSwagger, JSON.stringify(api, null, 2))
         } catch (err) {
           accErrors[recordingFileName] = err.toString()
           log.warn(`Error processing recording file: "${recordingFileName}"`)
