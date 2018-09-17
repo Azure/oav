@@ -33,6 +33,19 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "Extract example",
+      "program": "${workspaceRoot}/dist/cli.js",
+      "cwd": "${workspaceRoot}",
+      "args": [
+        "extract-xmsexamples",
+        "c:/github.com/Azure/azure-rest-api-specs/specification/databox/resource-manager/Microsoft.DataBox/preview/2018-01-01/databox.json",
+        "C:/github.com/Azure/azure-sdk-for-net/src/SDKs/DataBox/DataBox.Tests/SessionRecords"
+      ],
+      "env": {}
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "Resolve Spec",
       "program": "${workspaceRoot}/cli.js",
       "cwd": "${workspaceRoot}",
