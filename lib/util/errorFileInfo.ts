@@ -1,6 +1,6 @@
 import { NodeError } from "./validationError"
 import { forEach, isArray } from "@ts-common/iterator"
-import { jsonSymbol } from "z-schema"
+import { jsonSymbol } from "@ts-common/z-schema"
 import { getInfo, getRootObjectInfo } from '@ts-common/source-map'
 import { TitleObject } from '../validators/specTransformer'
 import { log } from './logging'

@@ -1,5 +1,13 @@
 # Changelog
 
+### 09/17/2018 0.5.10
+
+- xMsExamplesExtractor bug fix #309
+
+### 09/11/2018 0.5.9
+
+- OAV is using '@ts-common/z-schema' instead of 'z-schema'
+
 ### 09/10/2018 0.5.8
 
 - Fix JSON-Pointer encoding.

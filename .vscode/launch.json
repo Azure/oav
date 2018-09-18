@@ -33,6 +33,19 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "Extract example",
+      "program": "${workspaceRoot}/dist/cli.js",
+      "cwd": "${workspaceRoot}",
+      "args": [
+        "extract-xmsexamples",
+        "./test/xMsExamplesExtractor/databox.json",
+        "./test/xMsExamplesExtractor/SessionRecords"
+      ],
+      "env": {}
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "Resolve Spec",
       "program": "${workspaceRoot}/cli.js",
       "cwd": "${workspaceRoot}",

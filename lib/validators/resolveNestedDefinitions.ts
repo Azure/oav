@@ -27,8 +27,8 @@ import { MutableStringMap } from "@ts-common/string-map"
 import {
   generatedPrefix,
   getDefaultResponses
-} from './cloudError';
-import { pathToPtr } from 'json-refs';
+} from "./cloudError"
+import { pathToPtr } from "json-refs"
 
 const skipIfUndefined = <T>(f: (v: T) => T): ((v: T | undefined) => T | undefined) =>
   (v) => v !== undefined ? f(v) : undefined
