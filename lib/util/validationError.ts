@@ -15,7 +15,7 @@ export class ValidationError {
   /**
    *
    * @param name Validation Error Name
-   * @param severity The severity
+   * @param severity The severity of the error
    */
   public constructor(
     public readonly name: string,
