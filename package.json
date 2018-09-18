@@ -1,6 +1,6 @@
 {
   "name": "oav",
-  "version": "0.5.9",
+  "version": "0.5.10",
   "author": {
     "name": "Microsoft Corporation",
     "email": "azsdkteam@microsoft.com",
@@ -27,13 +27,13 @@
     "json-refs": "3.0.10",
     "jsonpath": "^1.0.0",
     "linq": "^3.1.0",
-    "lodash": "^4.17.10",
+    "lodash": "^4.17.11",
     "moment": "~2.22.2",
     "ms-rest": "^2.3.6",
     "ms-rest-azure": "^2.5.7",
     "recursive-readdir": "^2.2.2",
     "request": "^2.88.0",
-    "swagger-parser": "^3.4.1",
+    "swagger-parser": "^5.0.5",
     "swagger-tools": "^0.10.4",
     "uuid": "^3.0.1",
     "vscode-jsonrpc": "^3.6.2",
@@ -50,14 +50,15 @@
     "@types/mocha": "^5.2.5",
     "@types/recursive-readdir": "^2.2.0",
     "@types/should": "^8.1.30",
-    "@types/uuid": "^3.4.3",
-    "@types/yargs": "^11.1.1",
+    "@types/swagger-parser": "^4.0.2",
+    "@types/uuid": "^3.4.4",
+    "@types/yargs": "^11.1.2",
     "mocha": "^5.2.0",
     "nyc": "^11.8.0",
     "should": "^5.2.0",
     "ts-node": "^6.0.5",
     "tslint": "^5.11.0",
-    "typescript": "^3.0.1"
+    "typescript": "^3.0.3"
   },
   "homepage": "https://github.com/azure/oav",
   "repository": {

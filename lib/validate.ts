@@ -17,7 +17,7 @@ import * as umlGeneratorLib from "./umlGenerator"
 import { getErrorsFromModelValidation } from "./util/getErrorsFromModelValidation"
 import { SemanticValidator } from "./validators/semanticValidator"
 import { ModelValidator } from "./validators/modelValidator"
-import { MutableStringMap } from "@ts-common/string-map"
+import { MutableStringMap, StringMap } from "@ts-common/string-map"
 
 type FinalValidationResult = MutableStringMap<unknown>
 
@@ -319,7 +319,7 @@ export function logDetailedInfo<T extends CommonValidationResult>(
 
 export async function extractXMsExamples(
   specPath: string, recordings: string, options: Options
-): Promise<void> {
+): Promise<StringMap<unknown>> {
 
   if (!options) { options = {} }
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
