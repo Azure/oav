@@ -1,5 +1,9 @@
 # Changelog
 
+### 09/19/2018 0.5.11
+
+- Adding pretty printing to validate-spec command, --pretty option.
+
 ### 09/17/2018 0.5.10
 
 - xMsExamplesExtractor bug fix #309
