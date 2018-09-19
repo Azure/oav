@@ -12,7 +12,9 @@ import * as C from "../util/constants"
 import { SwaggerObject } from "yasway"
 import { ModelValidation } from "../util/getErrorsFromModelValidation"
 import { Headers } from "../templates/httpTemplate"
-import { StringMap } from '@ts-common/string-map';
+import { StringMap } from "@ts-common/string-map"
+import * as fs from "fs"
+import * as md from "@ts-common/commonmark-to-markdown"
 
 const ErrorCodes = C.ErrorCodes;
 
@@ -56,6 +58,21 @@ export interface CommonValidationResult {
   validityStatus: unknown
   operations: {}
   resolveSpec?: unknown
+}
+
+const findReadMe = (dir: string): string | undefined => {
+  dir = path.resolve(dir)
+  while (true) {
+    const fileName = path.join(dir, "readme.md")
+    if (fs.existsSync(fileName)) {
+      return fileName
+    }
+    const newDir = path.dirname(dir)
+    if (newDir === dir) {
+      return undefined
+    }
+    dir = newDir
+  }
 }
 
 /*
@@ -161,6 +178,12 @@ export class SpecValidator<T extends CommonValidationResult> {
       if (this.specInJson === undefined || this.specInJson === null) {
         const result = await utils.parseJson(this.specPath)
         this.specInJson = result
+        // find readme.md
+        const readMe = findReadMe(path.dirname(this.specPath))
+        if (readMe !== undefined) {
+          const readMeStr = fs.readFileSync(readMe).toString()
+          md.parse(readMeStr)
+        }
       }
 
       this.specResolver = new SpecResolver(this.specPath, this.specInJson, this.options)
@@ -173,9 +196,8 @@ export class SpecValidator<T extends CommonValidationResult> {
         },
         isPathCaseSensitive: this.options.isPathCaseSensitive
       }
-      const api = await Sway.create(options)
-      this.swaggerApi = api
-      return api
+      this.swaggerApi = await Sway.create(options)
+      return this.swaggerApi
     } catch (err) {
       const e = this.constructErrorObject(ErrorCodes.ResolveSpecError, err.message, [err])
       this.specValidationResult.resolveSpec = e

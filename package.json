@@ -10,6 +10,8 @@
   "license": "MIT",
   "dependencies": {
     "@microsoft.azure/autorest-extension-base": "1.0.13",
+    "@ts-common/azure-openapi-markdown": "^0.1.1",
+    "@ts-common/commonmark-to-markdown": "^1.1.2",
     "@ts-common/iterator": "0.0.36",
     "@ts-common/json": "0.0.18",
     "@ts-common/json-parser": "0.2.1",
@@ -43,6 +45,7 @@
     "yuml2svg": "^3.1.0"
   },
   "devDependencies": {
+    "@types/commonmark": "^0.27.1",
     "@types/glob": "^5.0.35",
     "@types/js-yaml": "^3.11.2",
     "@types/json-pointer": "^1.0.30",
