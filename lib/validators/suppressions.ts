@@ -5,8 +5,9 @@ import * as path from "path"
 import * as fs from "fs"
 import * as md from "@ts-common/commonmark-to-markdown"
 import * as amd from "@ts-common/azure-openapi-markdown"
+import * as cm from "commonmark"
 
-export const getSuppressions = (specPath: string): undefined | string => {
+export const getSuppressions = (specPath: string): undefined | cm.Node => {
   // find readme.md
   const readMe = findReadMe(path.dirname(specPath))
   if (readMe === undefined) {
@@ -14,12 +15,11 @@ export const getSuppressions = (specPath: string): undefined | string => {
   }
   const readMeStr = fs.readFileSync(readMe).toString()
   const cmd = md.parse(readMeStr)
-  const codeBlocks = amd.getCodeBlocksAndHeadings(cmd.markDown)
-  if (codeBlocks === undefined) {
+  const suppression = amd.getCodeBlocksAndHeadings(cmd.markDown).Suppression
+  if (suppression === undefined) {
     return undefined
   }
-  // codeBlocks.Suppression
-  return undefined
+  return suppression
 }
 
 const findReadMe = (dir: string): string | undefined => {

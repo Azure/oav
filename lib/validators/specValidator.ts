@@ -13,7 +13,8 @@ import { SwaggerObject } from "yasway"
 import { ModelValidation } from "../util/getErrorsFromModelValidation"
 import { Headers } from "../templates/httpTemplate"
 import { StringMap } from "@ts-common/string-map"
-import { getSuppressions } from './suppressions'
+import { getSuppressions } from "./suppressions"
+import * as cm from "commonmark"
 
 const ErrorCodes = C.ErrorCodes;
 
@@ -78,6 +79,8 @@ export class SpecValidator<T extends CommonValidationResult> {
   private specResolver: SpecResolver | null
 
   private readonly options: Options
+
+  private suppression?: cm.Node
 
   /*
    * @constructor
@@ -162,7 +165,7 @@ export class SpecValidator<T extends CommonValidationResult> {
       if (this.specInJson === undefined || this.specInJson === null) {
         const result = await utils.parseJson(this.specPath)
         this.specInJson = result
-        getSuppressions(this.specPath)
+        this.suppression = getSuppressions(this.specPath)
       }
 
       this.specResolver = new SpecResolver(this.specPath, this.specInJson, this.options)
