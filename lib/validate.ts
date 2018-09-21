@@ -18,6 +18,7 @@ import { getErrorsFromModelValidation } from "./util/getErrorsFromModelValidatio
 import { SemanticValidator } from "./validators/semanticValidator"
 import { ModelValidator } from "./validators/modelValidator"
 import { MutableStringMap, StringMap } from "@ts-common/string-map"
+import { errorsAddFileInfo } from "./util/errorFileInfo"
 
 type FinalValidationResult = MutableStringMap<unknown>
 
@@ -104,9 +105,36 @@ export async function validateSpec(
 
     await validator.initialize()
     log.info(`Semantically validating  ${specPath}:\n`)
-    await validator.validateSpec()
+    const validationResults = await validator.validateSpec()
+    errorsAddFileInfo(validationResults.errors)
+    errorsAddFileInfo(validationResults.warnings)
     updateEndResultOfSingleValidation(validator)
     logDetailedInfo(validator)
+    logDetailedInfo(validator)
+    if (o.pretty) {
+      /* tslint:disable-next-line:no-console no-string-literal */
+      console.log(`Semantically validating  ${specPath}:\n`)
+      const errors = validationResults.errors
+      if (errors.length > 0) {
+        for (const error of errors) {
+          const yaml = jsYaml.dump(error)
+          /* tslint:disable-next-line:no-console no-string-literal */
+          console.error("\x1b[31m", "error:", "\x1b[0m")
+          /* tslint:disable-next-line:no-console no-string-literal */
+          console.error(yaml)
+        }
+      }
+      const warnings = validationResults.warnings
+      if (warnings && warnings.length > 0) {
+        for (const warning of warnings) {
+          const yaml = jsYaml.dump(warning)
+          /* tslint:disable-next-line:no-console no-string-literal */
+          console.warn("\x1b[31m", "warning:", "\x1b[0m")
+          /* tslint:disable-next-line:no-console no-string-literal */
+          console.warn(yaml)
+        }
+      }
+    }
     return validator.specValidationResult
   })
 }
