@@ -1,5 +1,9 @@
 # Changelog
 
+### 09/21/2018 0.5.13
+
+- Correcting where we add url and position information to semantic validation errors. 
+
 ### 09/19/2018 0.5.12
 
 - Adding url and position to source where issue occurs for semantic validation errors.

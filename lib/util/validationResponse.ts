@@ -4,6 +4,7 @@
 import * as pointer from "json-pointer"
 import { CommonError } from "./commonError"
 import { StringMap } from "@ts-common/string-map"
+import { FilePosition } from "@ts-common/source-map"
 
 interface ValidationError {
   validationCategory: string
@@ -15,6 +16,8 @@ interface ValidationError {
   message?: string
   jsonref?: string
   "json-path"?: string
+  jsonUrl?: string
+  jsonPosition?: FilePosition
 }
 
 interface Warning {
@@ -70,6 +73,12 @@ export class ValidateResponse {
         const jsonpath = pointer.compile(paths)
         e.jsonref = jsonpath
         e["json-path"] = pointer.unescape(jsonpath)
+      }
+      if (error.jsonUrl && error.jsonUrl.length) {
+        e.jsonUrl = error.jsonUrl
+      }
+      if (error.jsonPosition) {
+        e.jsonPosition = error.jsonPosition
       }
       return e
     })
