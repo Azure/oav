@@ -51,6 +51,7 @@ const createErrorProcessor = <T extends NodeError<T>>(suppression: Suppression |
   const isSuppressed = suppression === undefined ?
     () => false :
     (error: T): boolean =>
+      // TODO: JSONPath: https://www.npmjs.com/package/jsonpath using jp.nodes() function.
       suppression.directive.some(item => error.code === item.suppress)
 
   const one = (error: T): T | undefined => {
