@@ -19,6 +19,7 @@ import { SemanticValidator } from "./validators/semanticValidator"
 import { ModelValidator } from "./validators/modelValidator"
 import { MutableStringMap, StringMap } from "@ts-common/string-map"
 import { errorsAddFileInfo } from "./util/errorFileInfo"
+import { CommonError } from "./util/commonError"
 
 type FinalValidationResult = MutableStringMap<unknown>
 
@@ -81,6 +82,22 @@ async function validate<T>(
   }
 }
 
+type ErrorType = "error" | "warning"
+
+const prettyPrint = <T extends CommonError>(
+  errors: ReadonlyArray<T> | undefined, errorType: ErrorType
+) => {
+  if (errors !== undefined) {
+    for (const error of errors) {
+      const yaml = jsYaml.dump(error)
+      /* tslint:disable-next-line:no-console no-string-literal */
+      console.error("\x1b[31m", errorType, ":", "\x1b[0m")
+      /* tslint:disable-next-line:no-console no-string-literal */
+      console.error(yaml)
+    }
+  }
+}
+
 export async function validateSpec(
   specPath: string,
   options: Options | undefined,
@@ -114,26 +131,8 @@ export async function validateSpec(
     if (o.pretty) {
       /* tslint:disable-next-line:no-console no-string-literal */
       console.log(`Semantically validating  ${specPath}:\n`)
-      const errors = validationResults.errors
-      if (errors.length > 0) {
-        for (const error of errors) {
-          const yaml = jsYaml.dump(error)
-          /* tslint:disable-next-line:no-console no-string-literal */
-          console.error("\x1b[31m", "error:", "\x1b[0m")
-          /* tslint:disable-next-line:no-console no-string-literal */
-          console.error(yaml)
-        }
-      }
-      const warnings = validationResults.warnings
-      if (warnings && warnings.length > 0) {
-        for (const warning of warnings) {
-          const yaml = jsYaml.dump(warning)
-          /* tslint:disable-next-line:no-console no-string-literal */
-          console.warn("\x1b[31m", "warning:", "\x1b[0m")
-          /* tslint:disable-next-line:no-console no-string-literal */
-          console.warn(yaml)
-        }
-      }
+      prettyPrint(validationResults.errors, "error")
+      prettyPrint(validationResults.warnings, "warning")
     }
     return validator.specValidationResult
   })
@@ -168,15 +167,7 @@ export async function validateExamples(
       /* tslint:disable-next-line:no-console no-string-literal */
       console.log(`Validating "examples" and "x-ms-examples" in  ${specPath}:\n`)
       const errors = getErrorsFromModelValidation(validator.specValidationResult)
-      if (errors.length > 0) {
-        for (const error of errors) {
-          const yaml = jsYaml.dump(error)
-          /* tslint:disable-next-line:no-console no-string-literal */
-          console.error("\x1b[31m", "error:", "\x1b[0m")
-          /* tslint:disable-next-line:no-console no-string-literal */
-          console.error(yaml)
-        }
-      }
+      prettyPrint(errors, "error")
     }
     return validator.specValidationResult
   })

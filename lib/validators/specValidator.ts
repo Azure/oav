@@ -82,6 +82,10 @@ export class SpecValidator<T extends CommonValidationResult> {
 
   private suppression?: amd.Suppression
 
+  protected getSuppression(): amd.Suppression | undefined {
+    return this.suppression
+  }
+
   /*
    * @constructor
    * Initializes a new instance of the SpecValidator class.
