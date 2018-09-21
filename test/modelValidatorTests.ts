@@ -58,7 +58,7 @@ describe("Model Validation", () => {
           `contains model validation errors.`
       )
 
-      const serializedErrors = getErrorsFromModelValidation(result)
+      const serializedErrors = getErrorsFromModelValidation(undefined, result)
       assert(
         serializedErrors.length === 1,
         `swagger "${specPath} with operation "${operationIds}" should report only 1 error.`

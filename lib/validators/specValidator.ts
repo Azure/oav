@@ -82,7 +82,7 @@ export class SpecValidator<T extends CommonValidationResult> {
 
   private suppression?: amd.Suppression
 
-  protected getSuppression(): amd.Suppression | undefined {
+  public getSuppression(): amd.Suppression | undefined {
     return this.suppression
   }
 

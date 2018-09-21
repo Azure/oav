@@ -123,8 +123,8 @@ export async function validateSpec(
     await validator.initialize()
     log.info(`Semantically validating  ${specPath}:\n`)
     const validationResults = await validator.validateSpec()
-    processErrors(validationResults.errors)
-    processErrors(validationResults.warnings)
+    processErrors(validator.getSuppression(), validationResults.errors)
+    processErrors(validator.getSuppression(), validationResults.warnings)
     updateEndResultOfSingleValidation(validator)
     logDetailedInfo(validator)
     logDetailedInfo(validator)
@@ -166,7 +166,10 @@ export async function validateExamples(
     if (o.pretty) {
       /* tslint:disable-next-line:no-console no-string-literal */
       console.log(`Validating "examples" and "x-ms-examples" in  ${specPath}:\n`)
-      const errors = getErrorsFromModelValidation(validator.specValidationResult)
+      const errors = getErrorsFromModelValidation(
+        validator.getSuppression(),
+        validator.specValidationResult
+      )
       prettyPrint(errors, "error")
     }
     return validator.specValidationResult

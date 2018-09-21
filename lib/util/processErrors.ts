@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License. See License.txt in the project root for license information.
+
 import { NodeError } from "./validationError"
 import { isArray, filterMap } from "@ts-common/iterator"
 import { jsonSymbol } from "@ts-common/z-schema"
@@ -7,7 +10,13 @@ import { log } from './logging'
 import { getDescendantFilePosition } from "@ts-common/source-map"
 import { Suppression } from '@ts-common/azure-openapi-markdown';
 
-const errorAddFileInfo = <T extends NodeError<T>>(error: T): T => {
+export const processErrors = <T extends NodeError<T>>(
+  suppression: Suppression | undefined,
+  errors: T[] | undefined,
+): T[] | undefined =>
+  createErrorProcessor<T>(suppression)(errors)
+
+const addFileInfo = <T extends NodeError<T>>(error: T): T => {
   const title = error.title
   if (title !== undefined) {
     try {
@@ -39,7 +48,7 @@ const errorAddFileInfo = <T extends NodeError<T>>(error: T): T => {
 
 const createErrorProcessor = <T extends NodeError<T>>(_suppression: Suppression | undefined) => {
   const one = (error: T): T | undefined => {
-    error = errorAddFileInfo(error)
+    error = addFileInfo(error)
     error.errors = multiple(error.errors)
     error.inner = multiple(error.inner)
     return error
@@ -48,8 +57,3 @@ const createErrorProcessor = <T extends NodeError<T>>(_suppression: Suppression 
     errors === undefined ? undefined : Array.from(filterMap(errors, one))
   return multiple
 }
-
-export const processErrors = <T extends NodeError<T>>(
-  errors: T[] | undefined,
-): T[] | undefined =>
-  createErrorProcessor<T>(undefined)(errors)
