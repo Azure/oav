@@ -14,7 +14,7 @@ import { ModelValidation } from "../util/getErrorsFromModelValidation"
 import { Headers } from "../templates/httpTemplate"
 import { StringMap } from "@ts-common/string-map"
 import { getSuppressions } from "./suppressions"
-import * as cm from "commonmark"
+import * as amd from "@ts-common/azure-openapi-markdown"
 
 const ErrorCodes = C.ErrorCodes;
 
@@ -80,7 +80,7 @@ export class SpecValidator<T extends CommonValidationResult> {
 
   private readonly options: Options
 
-  private suppression?: cm.Node
+  private suppression?: amd.Suppression
 
   /*
    * @constructor

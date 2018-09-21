@@ -10,7 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "@microsoft.azure/autorest-extension-base": "1.0.13",
-    "@ts-common/azure-openapi-markdown": "^0.1.4",
+    "@ts-common/azure-openapi-markdown": "^0.2.4",
     "@ts-common/commonmark-to-markdown": "^1.1.3",
     "@ts-common/iterator": "0.0.36",
     "@ts-common/json": "0.0.18",
