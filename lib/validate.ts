@@ -18,8 +18,8 @@ import { getErrorsFromModelValidation } from "./util/getErrorsFromModelValidatio
 import { SemanticValidator } from "./validators/semanticValidator"
 import { ModelValidator } from "./validators/modelValidator"
 import { MutableStringMap, StringMap } from "@ts-common/string-map"
-import { errorsAddFileInfo } from "./util/errorFileInfo"
-import { CommonError } from "./util/commonError"
+import { processErrors } from "./util/processErrors"
+import { NodeError } from "./util/validationError"
 
 type FinalValidationResult = MutableStringMap<unknown>
 
@@ -84,7 +84,7 @@ async function validate<T>(
 
 type ErrorType = "error" | "warning"
 
-const prettyPrint = <T extends CommonError>(
+const prettyPrint = <T extends NodeError<T>>(
   errors: ReadonlyArray<T> | undefined, errorType: ErrorType
 ) => {
   if (errors !== undefined) {
@@ -123,8 +123,8 @@ export async function validateSpec(
     await validator.initialize()
     log.info(`Semantically validating  ${specPath}:\n`)
     const validationResults = await validator.validateSpec()
-    errorsAddFileInfo(validationResults.errors)
-    errorsAddFileInfo(validationResults.warnings)
+    processErrors(validationResults.errors)
+    processErrors(validationResults.warnings)
     updateEndResultOfSingleValidation(validator)
     logDetailedInfo(validator)
     logDetailedInfo(validator)

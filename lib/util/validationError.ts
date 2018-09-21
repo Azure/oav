@@ -5,7 +5,7 @@ import { Severity } from "./severity"
 import _ from "lodash"
 import { FilePosition } from "@ts-common/source-map"
 import { flatMap, fold } from "@ts-common/iterator"
-import { errorsAddFileInfo } from "./errorFileInfo"
+import { processErrors } from "./processErrors"
 import { jsonSymbol, schemaSymbol } from "@ts-common/z-schema"
 
 /**
@@ -132,8 +132,8 @@ export function processValidationErrors<
     []
   )
 
-  rawValidation.requestValidationResult.errors = errorsAddFileInfo(requestSerializedErrors)
-  rawValidation.responseValidationResult.errors = errorsAddFileInfo(responseSerializedErrors)
+  rawValidation.requestValidationResult.errors = processErrors(requestSerializedErrors)
+  rawValidation.responseValidationResult.errors = processErrors(responseSerializedErrors)
 
   return rawValidation
 }

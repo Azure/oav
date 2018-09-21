@@ -1,19 +1,13 @@
 import { NodeError } from "./validationError"
-import { forEach, isArray } from "@ts-common/iterator"
+import { isArray, filterMap } from "@ts-common/iterator"
 import { jsonSymbol } from "@ts-common/z-schema"
 import { getInfo, getRootObjectInfo } from '@ts-common/source-map'
 import { TitleObject } from '../validators/specTransformer'
 import { log } from './logging'
 import { getDescendantFilePosition } from "@ts-common/source-map"
+import { Suppression } from '@ts-common/azure-openapi-markdown';
 
-export const errorsAddFileInfo = <T extends NodeError<T>, E extends Iterable<T>>(
-  errors: E | undefined,
-): E | undefined => {
-  forEach(errors, errorAddFileInfo)
-  return errors
-}
-
-const errorAddFileInfo = <T extends NodeError<T>>(error: T): void => {
+const errorAddFileInfo = <T extends NodeError<T>>(error: T): T => {
   const title = error.title
   if (title !== undefined) {
     try {
@@ -40,6 +34,22 @@ const errorAddFileInfo = <T extends NodeError<T>>(error: T): void => {
       error.jsonUrl = getRootObjectInfo(jsonInfo).url
     }
   }
-  errorsAddFileInfo(error.errors)
-  errorsAddFileInfo(error.inner)
+  return error
 }
+
+const createErrorProcessor = <T extends NodeError<T>>(_suppression: Suppression | undefined) => {
+  const one = (error: T): T | undefined => {
+    error = errorAddFileInfo(error)
+    error.errors = multiple(error.errors)
+    error.inner = multiple(error.inner)
+    return error
+  }
+  const multiple = (errors: T[] | undefined) =>
+    errors === undefined ? undefined : Array.from(filterMap(errors, one))
+  return multiple
+}
+
+export const processErrors = <T extends NodeError<T>>(
+  errors: T[] | undefined,
+): T[] | undefined =>
+  createErrorProcessor<T>(undefined)(errors)
