@@ -46,9 +46,18 @@ const addFileInfo = <T extends NodeError<T>>(error: T): T => {
   return error
 }
 
-const createErrorProcessor = <T extends NodeError<T>>(_suppression: Suppression | undefined) => {
+const createErrorProcessor = <T extends NodeError<T>>(suppression: Suppression | undefined) => {
+
+  const isSuppressed = suppression === undefined ?
+    () => false :
+    (error: T): boolean =>
+      suppression.directive.some(item => error.code === item.suppress)
+
   const one = (error: T): T | undefined => {
     error = addFileInfo(error)
+    if (isSuppressed(error)) {
+      return undefined
+    }
     error.errors = multiple(error.errors)
     error.inner = multiple(error.inner)
     return error
