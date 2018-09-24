@@ -6,7 +6,7 @@ import _ from "lodash"
 import { FilePosition } from "@ts-common/source-map"
 import { flatMap, fold } from "@ts-common/iterator"
 import { processErrors } from "./processErrors"
-import { jsonSymbol, schemaSymbol } from "@ts-common/z-schema"
+import { jsonSymbol, schemaSymbol } from "z-schema"
 import { Suppression } from '@ts-common/azure-openapi-markdown';
 
 /**

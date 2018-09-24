@@ -3,7 +3,7 @@
 
 import { NodeError } from "./validationError"
 import { isArray, filterMap } from "@ts-common/iterator"
-import { jsonSymbol } from "@ts-common/z-schema"
+import { jsonSymbol } from "z-schema"
 import { getInfo, getRootObjectInfo } from '@ts-common/source-map'
 import { TitleObject } from '../validators/specTransformer'
 import { log } from './logging'
