@@ -52,6 +52,8 @@ const createErrorProcessor = <T extends NodeError<T>>(suppression: Suppression |
     () => false :
     (error: T): boolean =>
       // TODO: JSONPath: https://www.npmjs.com/package/jsonpath using jp.nodes() function.
+      // See error codes:
+      // https://github.com/Azure/oav/blob/master/documentation/oav-errors-reference.md#errors-index
       suppression.directive.some(item => error.code === item.suppress)
 
   const one = (error: T): T | undefined => {
