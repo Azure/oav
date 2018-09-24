@@ -19,6 +19,7 @@ import { SemanticValidator } from "./validators/semanticValidator"
 import { ModelValidator } from "./validators/modelValidator"
 import { MutableStringMap, StringMap } from "@ts-common/string-map"
 import { NodeError } from './util/validationError';
+import { ModelValidationError } from './util/modelValidationError';
 
 type FinalValidationResult = MutableStringMap<unknown>
 
@@ -150,7 +151,7 @@ export async function validateExamples(
   specPath: string,
   operationIds: string | undefined,
   options?: Options
-): Promise<SpecValidationResult> {
+): Promise<ReadonlyArray<ModelValidationError>> {
   return await validate(options, async o => {
     const validator = new ModelValidator(specPath, null, o)
     finalValidationResult[specPath] = validator.specValidationResult
@@ -159,23 +160,23 @@ export async function validateExamples(
     validator.validateOperations(operationIds)
     updateEndResultOfSingleValidation(validator)
     logDetailedInfo(validator)
+    const errors = getErrorsFromModelValidation(
+      validator.getSuppression(),
+      validator.specValidationResult
+    )
     if (o.pretty) {
       /* tslint:disable-next-line:no-console no-string-literal */
       console.log(`Validating "examples" and "x-ms-examples" in  ${specPath}:\n`)
-      const errors = getErrorsFromModelValidation(
-        validator.getSuppression(),
-        validator.specValidationResult
-      )
       prettyPrint(errors, "error")
     }
-    return validator.specValidationResult
+    return errors
   })
 }
 
 export async function validateExamplesInCompositeSpec(
   compositeSpecPath: string,
   options: Options
-): Promise<ReadonlyArray<SpecValidationResult>> {
+): Promise<ReadonlyArray<ReadonlyArray<ModelValidationError>>> {
   return await validate(options, async o => {
     o.consoleLogLevel = log.consoleLogLevel
     o.logFilepath = log.filepath

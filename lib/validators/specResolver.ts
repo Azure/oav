@@ -35,6 +35,7 @@ import { arrayMap } from '@ts-common/source-map'
 const ErrorCodes = C.ErrorCodes
 
 export interface Options {
+  consoleLogLevel?: unknown
   shouldResolveRelativePaths?: boolean | null
   shouldResolveXmsExamples?: boolean | null
   shouldResolveAllOf?: boolean
