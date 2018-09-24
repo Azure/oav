@@ -4,7 +4,7 @@
 import * as sway from "yasway"
 import assert from "assert"
 import { SpecValidator } from "../lib/validators/specValidator"
-import { jsonSymbol } from "@ts-common/z-schema"
+import { jsonSymbol } from "z-schema"
 
 const options: sway.Options = {
   definition: {

@@ -1,5 +1,9 @@
 # Changelog
 
+### 09/21/2018 0.6.0
+
+- Suppression. `where` is not supported yet.
+
 ### 09/21/2018 0.5.13
 
 - Correcting where we add url and position information to semantic validation errors. 

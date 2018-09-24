@@ -1,11 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
+
 import { Severity } from "./severity"
 import _ from "lodash"
 import { FilePosition } from "@ts-common/source-map"
 import { flatMap, fold } from "@ts-common/iterator"
-import { errorsAddFileInfo } from "./errorFileInfo"
-import { jsonSymbol, schemaSymbol } from "@ts-common/z-schema"
+import { processErrors } from "./processErrors"
+import { jsonSymbol, schemaSymbol } from "z-schema"
+import { Suppression } from '@ts-common/azure-openapi-markdown';
 
 /**
  * @class
@@ -121,7 +123,10 @@ export interface ValidationResult<T extends NodeError<T>> {
 export function processValidationErrors<
   V extends ValidationResult<T>,
   T extends NodeError<T>
->(rawValidation: V): V {
+>(
+  suppression: Suppression | undefined,
+  rawValidation: V
+): V {
   const requestSerializedErrors: T[] = serializeErrors(
     rawValidation.requestValidationResult,
     []
@@ -131,8 +136,14 @@ export function processValidationErrors<
     []
   )
 
-  rawValidation.requestValidationResult.errors = errorsAddFileInfo(requestSerializedErrors)
-  rawValidation.responseValidationResult.errors = errorsAddFileInfo(responseSerializedErrors)
+  rawValidation.requestValidationResult.errors = processErrors(
+    suppression,
+    requestSerializedErrors
+  )
+  rawValidation.responseValidationResult.errors = processErrors(
+    suppression,
+    responseSerializedErrors
+  )
 
   return rawValidation
 }
