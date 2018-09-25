@@ -198,6 +198,7 @@ export async function resolveSpec(
   try {
     const result = await utils.parseJson(specPath)
     const resolver = new SpecResolver(specPath, result, options)
+    await resolver.resolve();
     const resolvedSwagger = JSON.stringify(resolver.specInJson, null, 2)
     if (outputDir !== "./" && !fs.existsSync(outputDir)) {
       fs.mkdirSync(outputDir)

@@ -47,12 +47,12 @@
       "type": "node",
       "request": "launch",
       "name": "Resolve Spec",
-      "program": "${workspaceRoot}/cli.js",
+      "program": "${workspaceRoot}/dist/cli.js",
       "cwd": "${workspaceRoot}",
       "args": [
         "resolve-spec",
-        "../upstream/azure-rest-api-specs/specification/cognitiveservices/data-plane/EntitySearch/v1.0/EntitySearch.json",
-        "-capro"
+        "-r",
+        "../azure-rest-api-specs/specification/network/resource-manager/Microsoft.Network/stable/2018-08-01/applicationGateway.json"
       ],
       "env": {}
     },
