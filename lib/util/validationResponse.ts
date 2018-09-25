@@ -5,6 +5,7 @@ import * as pointer from "json-pointer"
 import { CommonError } from "./commonError"
 import { StringMap } from "@ts-common/string-map"
 import { FilePosition } from "@ts-common/source-map"
+import { ValidationEntry } from 'yasway';
 
 interface ValidationError {
   validationCategory: string
@@ -18,10 +19,6 @@ interface ValidationError {
   "json-path"?: string
   jsonUrl?: string
   jsonPosition?: FilePosition
-}
-
-interface Warning {
-  readonly code: unknown
 }
 
 export class ValidateResponse {
@@ -84,7 +81,7 @@ export class ValidateResponse {
     })
   }
 
-  public sanitizeWarnings(warnings: Warning[]): Warning[] {
+  public sanitizeWarnings(warnings: ValidationEntry[]): ValidationEntry[] {
     if (!warnings) {
       throw new Error("validationError cannot be null or undefined.")
     }
