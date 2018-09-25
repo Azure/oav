@@ -1,5 +1,9 @@
 # Changelog
 
+### 09/25/2018 0.6.2
+
+- Bug fix for `resolve-spec` CLI (#320)
+
 ### 09/25/2018 0.6.1
 
 - Semantic validation warning bug fix.
