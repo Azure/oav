@@ -5,7 +5,7 @@ import * as pointer from "json-pointer"
 import { CommonError } from "./commonError"
 import { StringMap } from "@ts-common/string-map"
 import { FilePosition } from "@ts-common/source-map"
-import { ValidationEntry } from 'yasway';
+import { ValidationEntry } from "yasway"
 
 interface ValidationError {
   validationCategory: string
