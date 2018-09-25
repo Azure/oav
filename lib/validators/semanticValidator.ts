@@ -66,12 +66,12 @@ export class SemanticValidator extends SpecValidator<SemanticValidationResult> {
         }
         if (validationResult.warnings && validationResult.warnings.length > 0) {
           processErrors(this.getSuppression(), validationResult.warnings)
-          const warnings = validateResponse.sanitizeWarnings(validationResult.warnings)
-          if (warnings && warnings.length) {
-            this.specValidationResult.validateSpec.warnings = warnings
+          validationResult.warnings = validateResponse.sanitizeWarnings(validationResult.warnings)
+          if (validationResult.warnings && validationResult.warnings.length > 0) {
+            this.specValidationResult.validateSpec.warnings = validationResult.warnings
             log.debug(C.Warnings)
             log.debug("--------")
-            log.debug(util.inspect(warnings))
+            log.debug(util.inspect(validationResult.warnings))
           }
         }
       }
