@@ -59,6 +59,18 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "Model Validation",
+      "program": "${workspaceRoot}/dist/cli.js",
+      "cwd": "${workspaceRoot}",
+      "args": [
+        "validate-example",
+        "../azure-rest-api-specs/specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-06-01-preview/apimversionsets.json"
+      ],
+      "env": {}
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "generate uml",
       "program": "${workspaceRoot}/cli.js",
       "cwd": "${workspaceRoot}",
