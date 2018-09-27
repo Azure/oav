@@ -5,6 +5,7 @@ import * as path from "path"
 import * as fs from "fs"
 import * as md from "@ts-common/commonmark-to-markdown"
 import * as amd from "@ts-common/azure-openapi-markdown"
+import { isArray } from '@ts-common/iterator';
 
 export const getSuppressions = (specPath: string): undefined | amd.Suppression => {
   // find readme.md
@@ -19,6 +20,9 @@ export const getSuppressions = (specPath: string): undefined | amd.Suppression =
     return undefined
   }
   const suppression = amd.getYamlFromNode(suppressionCodeBlock) as amd.Suppression
+  if (!isArray(suppression.directive)) {
+    return undefined
+  }
   return suppression
 }
 

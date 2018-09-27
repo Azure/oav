@@ -58,7 +58,7 @@ const splitPathAndReverse = (p: string | undefined) =>
 
 const isSubPath = (mainPath: ReadonlyArray<string> | undefined, subPath: ReadonlyArray<string>) =>
   mainPath !== undefined &&
-  mainPath.length < subPath.length &&
+  mainPath.length > subPath.length &&
   subPath.every((s, i) => mainPath[i] === s)
 
 const createErrorProcessor = <T extends NodeError<T>>(suppression: Suppression | undefined) => {
