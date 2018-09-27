@@ -9,7 +9,9 @@ import { TitleObject } from '../validators/specTransformer'
 import { log } from './logging'
 import { getDescendantFilePosition } from "@ts-common/source-map"
 import { Suppression } from "@ts-common/azure-openapi-markdown"
-import { assignOptional } from './assignOptional';
+import { assignOptional } from "./assignOptional"
+import jp = require("jsonpath")
+import { createDummyByPath } from "./createDummy"
 
 export const processErrors = <T extends NodeError<T>>(
   suppression: Suppression | undefined,
@@ -68,13 +70,20 @@ const createErrorProcessor = <T extends NodeError<T>>(suppression: Suppression |
     (error: T): boolean => {
       const urlReversed = splitPathAndReverse(error.url)
       const jsonUrlReversed = splitPathAndReverse(error.url)
-      // TODO: JSONPath: https://www.npmjs.com/package/jsonpath using jp.nodes() function.
+
+      const oPath = createDummyByPath(error.title)
+      const jPath = createDummyByPath(error.path)
+
       // See error codes:
       // https://github.com/Azure/oav/blob/master/documentation/oav-errors-reference.md#errors-index
       return suppression.directive.some(s => {
+
+        // error code
         if (error.code !== s.suppress) {
           return false
         }
+
+        // file path
         const fromReversed = splitPathAndReverse(s.from)
         if (fromReversed !== undefined) {
           const match =
@@ -84,6 +93,18 @@ const createErrorProcessor = <T extends NodeError<T>>(suppression: Suppression |
             return false
           }
         }
+
+        const where = s.where
+        if (where !== undefined) {
+          // TODO: JSONPath: https://www.npmjs.com/package/jsonpath using jp.nodes() function.
+          const match =
+            jp.value(oPath, where) ||
+            jp.value(jPath, where)
+          if (!match) {
+            return false
+          }
+        }
+
         return true
       })
     }

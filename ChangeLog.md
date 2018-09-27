@@ -2,7 +2,7 @@
 
 ### 09/27/2018 0.6.5
 
-- Suppression supports relative paths.
+- Suppression supports relative file and object paths.
 
 ### 09/25/2018 0.6.4
 

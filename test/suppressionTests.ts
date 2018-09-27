@@ -25,4 +25,14 @@ describe("suppression", () => {
     )
     assert.strictEqual(result.length, 0)
   })
+  it("suppress where", async () => {
+    const result = await validateExamples(
+      "./test/modelValidation/swaggers/specification/suppressions2/test.json",
+      undefined,
+      {
+        consoleLogLevel: "off"
+      }
+    )
+    assert.strictEqual(result.length, 0)
+  })
 })
