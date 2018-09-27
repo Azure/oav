@@ -1,5 +1,9 @@
 # Changelog
 
+### 09/27/2018 0.6.5
+
+- Suppression supports relative paths.
+
 ### 09/25/2018 0.6.4
 
 - Source Map for `.d.ts` files.
