@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import { NodeError } from "./validationError"
-import { isArray, filterMap } from "@ts-common/iterator"
+import { isArray, filterMap, flatMap } from "@ts-common/iterator"
 import { jsonSymbol } from "z-schema"
 import { getInfo, getRootObjectInfo } from '@ts-common/source-map'
 import { TitleObject } from '../validators/specTransformer'
@@ -53,25 +53,40 @@ const addFileInfo = <T extends NodeError<T>>(error: T): T => {
   return error
 }
 
+const splitPathAndReverse = (p: string | undefined) =>
+  p === undefined ? undefined : Array.from(flatMap(p.split("/"), s => s.split("\\"))).reverse()
+
+const isSubPath = (mainPath: ReadonlyArray<string> | undefined, subPath: ReadonlyArray<string>) =>
+  mainPath !== undefined &&
+  mainPath.length < subPath.length &&
+  subPath.every((s, i) => mainPath[i] === s)
+
 const createErrorProcessor = <T extends NodeError<T>>(suppression: Suppression | undefined) => {
 
   const isSuppressed = suppression === undefined ?
     () => false :
-    (error: T): boolean =>
+    (error: T): boolean => {
+      const urlReversed = splitPathAndReverse(error.url)
+      const jsonUrlReversed = splitPathAndReverse(error.url)
       // TODO: JSONPath: https://www.npmjs.com/package/jsonpath using jp.nodes() function.
       // See error codes:
       // https://github.com/Azure/oav/blob/master/documentation/oav-errors-reference.md#errors-index
-      suppression.directive.some(s => {
+      return suppression.directive.some(s => {
         if (error.code !== s.suppress) {
           return false
         }
-        /*
-        if (s.from !== undefined) {
-          const from = s.from.split("/")
+        const fromReversed = splitPathAndReverse(s.from)
+        if (fromReversed !== undefined) {
+          const match =
+            isSubPath(urlReversed, fromReversed) ||
+            isSubPath(jsonUrlReversed, fromReversed)
+          if (!match) {
+            return false
+          }
         }
-        */
         return true
       })
+    }
 
   const one = (error: T): T | undefined => {
     error = addFileInfo(error)
@@ -82,7 +97,9 @@ const createErrorProcessor = <T extends NodeError<T>>(suppression: Suppression |
     assignOptional(error, "inner", multiple(error.inner))
     return error
   }
+
   const multiple = (errors: T[] | undefined) =>
     errors === undefined ? undefined : Array.from(filterMap(errors, one))
+
   return multiple
 }
