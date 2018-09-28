@@ -15,7 +15,7 @@
     "@ts-common/iterator": "0.0.36",
     "@ts-common/json": "0.0.18",
     "@ts-common/json-parser": "0.2.1",
-    "@ts-common/property-set": "0.0.7",
+    "@ts-common/property-set": "0.0.8",
     "@ts-common/source-map": "0.2.7",
     "@ts-common/string-map": "0.0.26",
     "@ts-common/tuple": "0.0.0",
@@ -62,7 +62,7 @@
     "should": "^5.2.0",
     "ts-node": "^6.0.5",
     "tslint": "^5.11.0",
-    "typescript": "^3.0.3"
+    "typescript": "^3.1.1"
   },
   "homepage": "https://github.com/azure/oav",
   "repository": {

@@ -9,9 +9,9 @@ import { TitleObject } from '../validators/specTransformer'
 import { log } from './logging'
 import { getDescendantFilePosition } from "@ts-common/source-map"
 import { Suppression } from "@ts-common/azure-openapi-markdown"
-import { assignOptional } from "./assignOptional"
 import jp = require("jsonpath")
 import { createDummyByPath } from "./createDummy"
+import { setMutableProperty } from '@ts-common/property-set';
 
 export const processErrors = <T extends NodeError<T>>(
   suppression: Suppression | undefined,
@@ -39,7 +39,7 @@ const addFileInfo = <T extends NodeError<T>>(error: T): T => {
     const jsonInfo = getInfo(json)
     if (jsonInfo !== undefined) {
       const errorPath = error.path
-      assignOptional(
+      setMutableProperty(
         error,
         "jsonPosition",
         getDescendantFilePosition(
@@ -116,8 +116,8 @@ const createErrorProcessor = <T extends NodeError<T>>(suppression: Suppression |
     if (isSuppressed(error)) {
       return undefined
     }
-    assignOptional(error, "errors", multiple(error.errors))
-    assignOptional(error, "inner", multiple(error.inner))
+    setMutableProperty(error, "errors", multiple(error.errors))
+    setMutableProperty(error, "inner", multiple(error.inner))
     return error
   }
 
