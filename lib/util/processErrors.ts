@@ -71,6 +71,8 @@ const createErrorProcessor = <T extends NodeError<T>>(suppression: Suppression |
       const urlReversed = splitPathAndReverse(error.url)
       const jsonUrlReversed = splitPathAndReverse(error.url)
 
+      // create dummy object which have the `error.title` path and `error.path`.
+      // we use the dummy object to test against suppression path expressions.
       const oPath = createDummyByPath(error.title)
       const jPath = createDummyByPath(error.path)
 

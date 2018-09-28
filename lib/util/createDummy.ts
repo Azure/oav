@@ -9,6 +9,10 @@ export interface Dummy {
 
 export const createDummy = (): Dummy => ({})
 
+/**
+ * Creates a dummy object which has the given JSON path.
+ * @param objectPath a JSON path.
+ */
 export const createDummyByPath = (objectPath: string | string[] | undefined): Dummy => {
   const result = createDummy()
   if (objectPath === undefined) {
