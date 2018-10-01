@@ -1,6 +1,6 @@
 {
   "name": "oav",
-  "version": "0.6.5",
+  "version": "0.7.0",
   "author": {
     "name": "Microsoft Corporation",
     "email": "azsdkteam@microsoft.com",
@@ -16,8 +16,8 @@
     "@ts-common/json": "0.0.18",
     "@ts-common/json-parser": "0.2.1",
     "@ts-common/property-set": "0.0.8",
-    "@ts-common/source-map": "0.2.7",
-    "@ts-common/string-map": "0.0.26",
+    "@ts-common/source-map": "0.2.9",
+    "@ts-common/string-map": "0.1.0",
     "@ts-common/tuple": "0.0.0",
     "z-schema": "^3.24.1",
     "@types/lodash": "^4.14.116",

@@ -6,7 +6,6 @@ import { ModelValidationError } from "./modelValidationError"
 import { Scenarios } from "./responseReducer"
 import * as sm from "@ts-common/string-map"
 import * as it from "@ts-common/iterator"
-import { Suppression } from '@ts-common/azure-openapi-markdown';
 
 interface OperationResultScenarios {
   readonly operationId: string
@@ -14,13 +13,12 @@ interface OperationResultScenarios {
 }
 
 export function operationReducer(
-  suppression: Suppression | undefined,
   { operationId, scenarios }: OperationResultScenarios,
 ): Iterable<ModelValidationError> {
   const scenariosEntries = sm.entries(scenarios)
   const invalidScenarios = it.filter(scenariosEntries, ([_, scenario]) => !scenario.isValid)
   const result = it.flatMap(
     invalidScenarios,
-    ([scenarioName, scenario]) => scenarioReducer(suppression, scenarioName, scenario, operationId))
+    ([scenarioName, scenario]) => scenarioReducer(scenarioName, scenario, operationId))
   return result
 }

@@ -7,7 +7,7 @@ import * as assert from "assert"
 describe("suppression", () => {
   it("suppress all", async () => {
     const result = await validateExamples(
-      "./test/modelValidation/swaggers/specification/suppressions/datalake.json",
+      "./test/modelValidation/swaggers/specification/suppressions/test.json",
       undefined,
       {
         consoleLogLevel: "off"

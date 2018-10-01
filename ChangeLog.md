@@ -1,5 +1,9 @@
 # Changelog
 
+### 10/01/2018 0.7.0
+
+- Suppression API is changed.
+
 ### 09/27/2018 0.6.5
 
 - Suppression supports relative file and object paths.

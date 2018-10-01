@@ -80,11 +80,11 @@ export class SpecValidator<T extends CommonValidationResult> {
 
   private readonly options: Options
 
-  private suppression?: amd.Suppression
-
+  /*
   public getSuppression(): amd.Suppression | undefined {
     return this.suppression
   }
+  */
 
   /*
    * @constructor
@@ -166,14 +166,15 @@ export class SpecValidator<T extends CommonValidationResult> {
       utils.clearCache()
     }
     try {
+      let suppression: amd.Suppression | undefined
       if (this.specInJson === undefined || this.specInJson === null) {
-        const result = await utils.parseJson(this.specPath)
+        suppression = getSuppressions(this.specPath)
+        const result = await utils.parseJson(suppression, this.specPath)
         this.specInJson = result
-        this.suppression = getSuppressions(this.specPath)
       }
 
       this.specResolver = new SpecResolver(this.specPath, this.specInJson, this.options)
-      this.specInJson = (await this.specResolver.resolve()).specInJson
+      this.specInJson = (await this.specResolver.resolve(suppression)).specInJson
 
       const options = {
         definition: this.specInJson,
