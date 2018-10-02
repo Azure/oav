@@ -164,10 +164,7 @@ export async function validateExamples(
     validator.validateOperations(operationIds)
     updateEndResultOfSingleValidation(validator)
     logDetailedInfo(validator)
-    const errors = getErrorsFromModelValidation(
-      // validator.getSuppression(),
-      validator.specValidationResult
-    )
+    const errors = getErrorsFromModelValidation(validator.specValidationResult)
     if (o.pretty) {
       /* tslint:disable-next-line:no-console no-string-literal */
       console.log(`Validating "examples" and "x-ms-examples" in  ${specPath}:\n`)
