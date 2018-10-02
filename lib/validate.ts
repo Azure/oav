@@ -81,6 +81,10 @@ async function validate<T>(
     return await func(options)
   } catch (err) {
     log.error(err)
+    if (options.pretty) {
+      // tslint:disable-next-line:no-console
+      console.error(`internal error: ${err}`)
+    }
     throw err
   }
 }
