@@ -18,6 +18,6 @@ describe("specResolver", () => {
     }
     const options: Options = { shouldResolveAllOf: true }
     const resolver = new SpecResolver("./", spec, options)
-    await resolver.resolve()
+    await resolver.resolve(undefined)
   })
 })

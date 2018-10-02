@@ -2,22 +2,17 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import { NodeError } from "./validationError"
-import { isArray, filterMap, flatMap } from "@ts-common/iterator"
+import { isArray, filterMap } from "@ts-common/iterator"
 import { jsonSymbol } from "z-schema"
-import { getInfo, getRootObjectInfo } from '@ts-common/source-map'
+import { getInfo, getRootObjectInfo, getAllDirectives } from '@ts-common/source-map'
 import { TitleObject } from '../validators/specTransformer'
 import { log } from './logging'
 import { getDescendantFilePosition } from "@ts-common/source-map"
-import { Suppression } from "@ts-common/azure-openapi-markdown"
-import jp = require("jsonpath")
-import { createDummyByPath } from "./createDummy"
-import { setMutableProperty } from '@ts-common/property-set';
+import { setMutableProperty } from "@ts-common/property-set"
+import { merge } from "@ts-common/string-map"
 
-export const processErrors = <T extends NodeError<T>>(
-  suppression: Suppression | undefined,
-  errors: T[] | undefined,
-): T[] | undefined =>
-  createErrorProcessor<T>(suppression)(errors)
+export const processErrors = <T extends NodeError<T>>(errors: T[] | undefined): T[] | undefined =>
+  createErrorProcessor<T>()(errors)
 
 const addFileInfo = <T extends NodeError<T>>(error: T): T => {
   const title = error.title
@@ -28,6 +23,7 @@ const addFileInfo = <T extends NodeError<T>>(error: T): T => {
         error.position = titleObject.position
         error.url = titleObject.url
         error.title = titleObject.title
+        error.directives = titleObject.directives
       }
     // tslint:disable-next-line:no-empty
     } catch {
@@ -38,78 +34,28 @@ const addFileInfo = <T extends NodeError<T>>(error: T): T => {
   if (json !== undefined) {
     const jsonInfo = getInfo(json)
     if (jsonInfo !== undefined) {
-      const errorPath = error.path
+      const errorPathOriginal = error.path
+      const errorPath = errorPathOriginal === undefined ? undefined :
+        isArray(errorPathOriginal) ? errorPathOriginal :
+        errorPathOriginal.split("/")
       setMutableProperty(
         error,
         "jsonPosition",
-        getDescendantFilePosition(
-          json,
-          errorPath === undefined ? undefined :
-            isArray(errorPath) ? errorPath :
-            errorPath.split("/")
-        )
+        getDescendantFilePosition(json, errorPath)
       )
+      error.directives = merge(error.directives, getAllDirectives(json, errorPath))
       error.jsonUrl = getRootObjectInfo(jsonInfo).url
     }
   }
   return error
 }
 
-const splitPathAndReverse = (p: string | undefined) =>
-  p === undefined ? undefined : Array.from(flatMap(p.split("/"), s => s.split("\\"))).reverse()
+const createErrorProcessor = <T extends NodeError<T>>() => {
 
-const isSubPath = (mainPath: ReadonlyArray<string> | undefined, subPath: ReadonlyArray<string>) =>
-  mainPath !== undefined &&
-  mainPath.length > subPath.length &&
-  subPath.every((s, i) => mainPath[i] === s)
-
-const createErrorProcessor = <T extends NodeError<T>>(suppression: Suppression | undefined) => {
-
-  const isSuppressed = suppression === undefined ?
-    () => false :
-    (error: T): boolean => {
-      const urlReversed = splitPathAndReverse(error.url)
-      const jsonUrlReversed = splitPathAndReverse(error.url)
-
-      // create dummy object which have the `error.title` path and `error.path`.
-      // we use the dummy object to test against suppression path expressions.
-      const oPath = createDummyByPath(error.title)
-      const jPath = createDummyByPath(error.path)
-
-      // See error codes:
-      // https://github.com/Azure/oav/blob/master/documentation/oav-errors-reference.md#errors-index
-      return suppression.directive.some(s => {
-
-        // error code
-        if (error.code !== s.suppress) {
-          return false
-        }
-
-        // file path
-        const fromReversed = splitPathAndReverse(s.from)
-        if (fromReversed !== undefined) {
-          const match =
-            isSubPath(urlReversed, fromReversed) ||
-            isSubPath(jsonUrlReversed, fromReversed)
-          if (!match) {
-            return false
-          }
-        }
-
-        const where = s.where
-        if (where !== undefined) {
-          // TODO: JSONPath: https://www.npmjs.com/package/jsonpath using jp.nodes() function.
-          const match =
-            jp.value(oPath, where) ||
-            jp.value(jPath, where)
-          if (!match) {
-            return false
-          }
-        }
-
-        return true
-      })
-    }
+  const isSuppressed = (error: T): boolean =>
+    error.directives !== undefined &&
+    error.code !== undefined &&
+    error.directives[error.code] !== undefined
 
   const one = (error: T): T | undefined => {
     error = addFileInfo(error)

@@ -49,7 +49,7 @@ export class SemanticValidator extends SpecValidator<SemanticValidationResult> {
       if (validationResult) {
         if (validationResult.errors && validationResult.errors.length) {
           this.specValidationResult.validateSpec.isValid = false
-          processErrors(this.getSuppression(), validationResult.errors)
+          processErrors(validationResult.errors)
           const e = this.constructErrorObject(
             ErrorCodes.SemanticValidationError,
             `The spec ${this.specPath} has semantic validation errors.`,
@@ -65,7 +65,7 @@ export class SemanticValidator extends SpecValidator<SemanticValidationResult> {
             `The spec ${this.specPath} is semantically valid.`
         }
         if (validationResult.warnings && validationResult.warnings.length > 0) {
-          processErrors(this.getSuppression(), validationResult.warnings)
+          processErrors(validationResult.warnings)
           validationResult.warnings = validateResponse.sanitizeWarnings(validationResult.warnings)
           if (validationResult.warnings && validationResult.warnings.length > 0) {
             this.specValidationResult.validateSpec.warnings = validationResult.warnings

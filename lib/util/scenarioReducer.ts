@@ -9,7 +9,6 @@ import { ModelValidationError } from "./modelValidationError"
 import { CommonError } from "./commonError"
 import * as sm from "@ts-common/string-map"
 import * as it from "@ts-common/iterator"
-import { Suppression } from '@ts-common/azure-openapi-markdown';
 
 export interface Result {
   isValid?: unknown
@@ -25,7 +24,6 @@ export type OperationExampleResult = Scenario
 export type OperationResult = sm.MutableStringMap<OperationExampleResult>
 
 export function scenarioReducer(
-  suppression: Suppression | undefined,
   scenarioName: string,
   scenario: Scenario,
   operationId: string,
@@ -43,7 +41,7 @@ export function scenarioReducer(
     }
   }
   // process request separately since its unique
-  const processedErrors = processValidationErrors(suppression, rawValidationResult);
+  const processedErrors = processValidationErrors(rawValidationResult);
 
   if (processedErrors.requestValidationResult.errors === undefined) {
     throw new Error("ICE: processedErrors.requestValidationResult.errors === undefined")
@@ -63,7 +61,6 @@ export function scenarioReducer(
   const entries = sm.entries(scenario.responses)
   const invalidResponses = it.filter(entries, ([_, response]) => !response.isValid)
   const result = it.flatMap(invalidResponses, ([responseCode]) => responseReducer(
-    suppression,
     responseCode,
     scenario,
     rawValidationResult,

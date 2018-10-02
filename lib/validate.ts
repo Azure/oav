@@ -20,6 +20,8 @@ import { ModelValidator } from "./validators/modelValidator"
 import { MutableStringMap, StringMap } from "@ts-common/string-map"
 import { NodeError } from './util/validationError';
 import { ModelValidationError } from './util/modelValidationError';
+import { Suppression } from '@ts-common/azure-openapi-markdown';
+import { getSuppressions } from './validators/suppressions';
 
 type FinalValidationResult = MutableStringMap<unknown>
 
@@ -34,10 +36,11 @@ export const finalValidationResult: FinalValidationResult = {
 }
 
 export async function getDocumentsFromCompositeSwagger(
+  suppression: Suppression | undefined,
   compositeSpecPath: string
 ): Promise<string[]> {
   try {
-    const compositeSwagger = await utils.parseJson(compositeSpecPath)
+    const compositeSwagger = await utils.parseJson(suppression, compositeSpecPath)
     if (!(compositeSwagger.documents
       && Array.isArray(compositeSwagger.documents)
       && compositeSwagger.documents.length > 0)) {
@@ -139,7 +142,8 @@ export async function validateCompositeSpec(
   compositeSpecPath: string, options: Options
 ): Promise<ReadonlyArray<SpecValidationResult>> {
   return validate(options, async o => {
-    const docs = await getDocumentsFromCompositeSwagger(compositeSpecPath)
+    const suppression = getSuppressions(compositeSpecPath)
+    const docs = await getDocumentsFromCompositeSwagger(suppression, compositeSpecPath)
     o.consoleLogLevel = log.consoleLogLevel
     o.logFilepath = log.filepath
     const promiseFactories = docs.map(doc => async () => await validateSpec(doc, o))
@@ -160,10 +164,7 @@ export async function validateExamples(
     validator.validateOperations(operationIds)
     updateEndResultOfSingleValidation(validator)
     logDetailedInfo(validator)
-    const errors = getErrorsFromModelValidation(
-      validator.getSuppression(),
-      validator.specValidationResult
-    )
+    const errors = getErrorsFromModelValidation(validator.specValidationResult)
     if (o.pretty) {
       /* tslint:disable-next-line:no-console no-string-literal */
       console.log(`Validating "examples" and "x-ms-examples" in  ${specPath}:\n`)
@@ -180,7 +181,8 @@ export async function validateExamplesInCompositeSpec(
   return await validate(options, async o => {
     o.consoleLogLevel = log.consoleLogLevel
     o.logFilepath = log.filepath
-    const docs = await getDocumentsFromCompositeSwagger(compositeSpecPath)
+    const suppression = getSuppressions(compositeSpecPath)
+    const docs = await getDocumentsFromCompositeSwagger(suppression, compositeSpecPath)
     const promiseFactories = docs.map(
       doc => async () => await validateExamples(doc, undefined, o))
     return await utils.executePromisesSequentially(promiseFactories)
@@ -196,9 +198,10 @@ export async function resolveSpec(
   log.filepath = options.logFilepath || log.filepath
   const specFileName = path.basename(specPath)
   try {
-    const result = await utils.parseJson(specPath)
+    const suppression = getSuppressions(specPath)
+    const result = await utils.parseJson(suppression, specPath)
     const resolver = new SpecResolver(specPath, result, options)
-    await resolver.resolve();
+    await resolver.resolve(suppression);
     const resolvedSwagger = JSON.stringify(resolver.specInJson, null, 2)
     if (outputDir !== "./" && !fs.existsSync(outputDir)) {
       fs.mkdirSync(outputDir)
@@ -221,7 +224,8 @@ export async function resolveCompositeSpec(
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
   log.filepath = options.logFilepath || log.filepath
   try {
-    const docs = await getDocumentsFromCompositeSwagger(specPath)
+    const suppression = getSuppressions(specPath)
+    const docs = await getDocumentsFromCompositeSwagger(suppression, specPath)
     options.consoleLogLevel = log.consoleLogLevel
     options.logFilepath = log.filepath
     const promiseFactories = docs.map(doc => async () => await resolveSpec(doc, outputDir, options))
@@ -262,7 +266,8 @@ export async function generateWireFormatInCompositeSpec(
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
   log.filepath = options.logFilepath || log.filepath
   try {
-    const docs = await getDocumentsFromCompositeSwagger(compositeSpecPath)
+    const suppression = getSuppressions(compositeSpecPath)
+    const docs = await getDocumentsFromCompositeSwagger(suppression, compositeSpecPath)
     options.consoleLogLevel = log.consoleLogLevel
     options.logFilepath = log.filepath
     const promiseFactories = docs.map(doc =>
@@ -293,7 +298,8 @@ export async function generateUml(
     shouldResolveNullableTypes: false
   }
   try {
-    const result = await utils.parseJson(specPath)
+    const suppression = getSuppressions(specPath)
+    const result = await utils.parseJson(suppression, specPath)
     const resolver = new SpecResolver(specPath, result, resolverOptions)
     const umlGenerator = new umlGeneratorLib.UmlGenerator(resolver.specInJson, options)
     const svgGraph = await umlGenerator.generateDiagramFromGraph()

@@ -20,6 +20,8 @@ import { MutableStringMap, StringMap, entries } from "@ts-common/string-map"
 import { PathTemplateBasedRequestPrepareOptions } from "ms-rest"
 import { Responses, Headers } from "./templates/httpTemplate"
 import { map, toArray } from "@ts-common/iterator"
+import { getSuppressions } from './validators/suppressions';
+import { Suppression } from '@ts-common/azure-openapi-markdown';
 
 const ErrorCodes = C.ErrorCodes
 
@@ -77,7 +79,8 @@ export class WireFormatGenerator {
       utils.clearCache()
     }
     try {
-      const result = await utils.parseJson(this.specPath)
+      const suppression = getSuppressions(this.specPath)
+      const result = await utils.parseJson(suppression, this.specPath)
       this.specInJson = result
       const specOptions = {
         shouldResolveRelativePaths: true,
@@ -87,8 +90,8 @@ export class WireFormatGenerator {
         shouldResolvePureObjects: false
       }
       this.specResolver = new SpecResolver(this.specPath, this.specInJson, specOptions)
-      await this.specResolver.resolve()
-      await this.resolveExamples()
+      await this.specResolver.resolve(suppression)
+      await this.resolveExamples(suppression)
       const options = {
         definition: this.specInJson,
         jsonRefs: { relativeBase: this.specDir }
@@ -186,7 +189,9 @@ export class WireFormatGenerator {
     return err
   }
 
-  private async resolveExamples(): Promise<Sway.SwaggerObject | null | ReadonlyArray<unknown>> {
+  private async resolveExamples(
+    suppression: Suppression | undefined
+  ): Promise<Sway.SwaggerObject | null | ReadonlyArray<unknown>> {
     const options = {
       relativeBase: this.specDir,
       filter: ["relative", "remote"]
@@ -199,7 +204,7 @@ export class WireFormatGenerator {
       ([refName, refDetails]) =>
         async () =>
           await this.resolveRelativeReference(
-            refName, refDetails, this.specInJson, this.specPath
+            suppression, refName, refDetails, this.specInJson, this.specPath
           )
     ))
     if (promiseFactories.length) {
@@ -210,6 +215,7 @@ export class WireFormatGenerator {
   }
 
   private async resolveRelativeReference(
+    suppression: Suppression | undefined,
     refName: string,
     refDetails: { readonly def: { readonly $ref: string } },
     doc: {} | null,
@@ -244,7 +250,7 @@ export class WireFormatGenerator {
       docPath = utils.joinPath(docDir, parsedReference.filePath)
     }
 
-    const result = await utils.parseJson(docPath)
+    const result = await utils.parseJson(suppression, docPath)
     if (!parsedReference.localReference) {
       // Since there is no local reference we will replace the key in the object with the parsed
       // json (relative) file it is referring to.

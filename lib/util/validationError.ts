@@ -7,7 +7,7 @@ import { FilePosition } from "@ts-common/source-map"
 import { flatMap, fold } from "@ts-common/iterator"
 import { processErrors } from "./processErrors"
 import { jsonSymbol, schemaSymbol } from "z-schema"
-import { Suppression } from '@ts-common/azure-openapi-markdown';
+import { StringMap } from '@ts-common/string-map';
 
 /**
  * @class
@@ -108,6 +108,8 @@ export interface NodeError<T extends NodeError<T>> {
   jsonPosition?: FilePosition
   jsonUrl?: string
 
+  directives?: StringMap<unknown>
+
   readonly [jsonSymbol]?: object
   readonly [schemaSymbol]?: object
 }
@@ -123,10 +125,7 @@ export interface ValidationResult<T extends NodeError<T>> {
 export function processValidationErrors<
   V extends ValidationResult<T>,
   T extends NodeError<T>
->(
-  suppression: Suppression | undefined,
-  rawValidation: V
-): V {
+>(rawValidation: V): V {
   const requestSerializedErrors: T[] = serializeErrors(
     rawValidation.requestValidationResult,
     []
@@ -136,14 +135,8 @@ export function processValidationErrors<
     []
   )
 
-  rawValidation.requestValidationResult.errors = processErrors(
-    suppression,
-    requestSerializedErrors
-  )
-  rawValidation.responseValidationResult.errors = processErrors(
-    suppression,
-    responseSerializedErrors
-  )
+  rawValidation.requestValidationResult.errors = processErrors(requestSerializedErrors)
+  rawValidation.responseValidationResult.errors = processErrors(responseSerializedErrors)
 
   return rawValidation
 }

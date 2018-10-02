@@ -5,8 +5,7 @@ import { processValidationErrors, ValidationResult } from "./validationError"
 import { toModelErrors } from "./toModelErrors"
 import { ValidationResultSource } from "./validationResultSource"
 import { ModelValidationError } from "./modelValidationError"
-import { MutableStringMap } from '@ts-common/string-map';
-import { Suppression } from '@ts-common/azure-openapi-markdown';
+import { MutableStringMap } from '@ts-common/string-map'
 
 export interface Result {
   isValid?: unknown
@@ -28,7 +27,6 @@ export interface Scenario {
 }
 
 export function responseReducer(
-  suppression: Suppression | undefined,
   responseCode: string,
   scenario: Scenario,
   rawValidationResult: ValidationResult<ModelValidationError>,
@@ -43,7 +41,7 @@ export function responseReducer(
     ? response.error.innerErrors
     : []
 
-  const processedErrors = processValidationErrors(suppression, rawValidationResult)
+  const processedErrors = processValidationErrors(rawValidationResult)
 
   if (processedErrors.responseValidationResult.errors === undefined) {
     throw new Error("ICE: processedErrors.responseValidationResult.errors === undefined")
