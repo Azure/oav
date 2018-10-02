@@ -638,7 +638,11 @@ export function getJsonContentType(
  */
 export function isUrlEncoded(str: string): boolean {
   str = str || ""
-  return str !== decodeURIComponent(str)
+  try {
+    return str !== decodeURIComponent(str)
+  } catch (e) {
+    return false
+  }
 }
 
 /**

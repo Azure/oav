@@ -1,5 +1,9 @@
 # Changelog
 
+### 10/02/2018 0.7.2
+
+- Fix URL encoding test.
+
 ### 10/02/2018 0.7.1
 
 - Fix yasway.
