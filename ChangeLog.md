@@ -1,5 +1,9 @@
 # Changelog
 
+### 10/02/2018 0.7.1
+
+- Fix yasway.
+
 ### 10/01/2018 0.7.0
 
 - Suppression API is changed.
