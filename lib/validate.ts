@@ -83,9 +83,9 @@ async function validate<T>(
     log.error(err)
     if (options.pretty) {
       // tslint:disable-next-line:no-console
-      console.error(`internal error: ${err}`)
+      console.error(`error: ${JSON.stringify(err)}`);
     }
-    throw err
+    return err
   }
 }
 
