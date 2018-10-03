@@ -1,5 +1,9 @@
 # Changelog
 
+### 10/03/2018 0.7.4
+
+- Fix `@ts-common/source-map` `.d.ts` files.
+
 ### 10/02/2018 0.7.3
 
 - Suppress promise rejection.
