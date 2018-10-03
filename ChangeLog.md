@@ -1,5 +1,9 @@
 # Changelog
 
+### 10/02/2018 0.7.3
+
+- Suppress promise rejection.
+
 ### 10/02/2018 0.7.2
 
 - Fix URL encoding test.
