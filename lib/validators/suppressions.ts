@@ -5,7 +5,8 @@ import * as path from "path"
 import * as fs from "fs"
 import * as md from "@ts-common/commonmark-to-markdown"
 import * as amd from "@ts-common/azure-openapi-markdown"
-import { isArray } from '@ts-common/iterator';
+import { isArray } from "@ts-common/iterator"
+import { findReadMe } from "@ts-common/azure-openapi-markdown"
 
 export const getSuppressions = (specPath: string): undefined | amd.Suppression => {
   // find readme.md
@@ -24,19 +25,4 @@ export const getSuppressions = (specPath: string): undefined | amd.Suppression =
     return undefined
   }
   return suppression
-}
-
-const findReadMe = (dir: string): string | undefined => {
-  dir = path.resolve(dir)
-  while (true) {
-    const fileName = path.join(dir, "readme.md")
-    if (fs.existsSync(fileName)) {
-      return fileName
-    }
-    const newDir = path.dirname(dir)
-    if (newDir === dir) {
-      return undefined
-    }
-    dir = newDir
-  }
 }
