@@ -5,8 +5,8 @@
 
 import assert from "assert"
 import * as validate from "../lib/validate"
-import { getErrorsFromModelValidation } from "../lib/util/getErrorsFromModelValidation"
 import { SerializedError } from "../lib/util/baseValidationError"
+import { ModelValidator } from '../lib/validators/modelValidator';
 
 const specPath =
   `${__dirname}/modelValidation/swaggers/specification/scenarios/resource-manager/` +
@@ -20,7 +20,7 @@ describe("Model Validation", () => {
         consoleLogLevel: "off"
       })
       assert(
-        result.validityStatus === true,
+        result.length === 0,
         `swagger "${specPath}" with operation "${operationIds}" ` +
           `contains model validation errors.`
       )
@@ -34,7 +34,7 @@ describe("Model Validation", () => {
         pretty: true
       })
       assert(
-        result.validityStatus === true,
+        result.length === 0,
         `swagger "${specPath}" with operation "${operationIds}" ` +
           `contains model validation errors.`
       )
@@ -53,19 +53,12 @@ describe("Model Validation", () => {
       )
 
       assert(
-        result.validityStatus === false,
-        `swagger "${specPath}" with operation "${operationIds}" ` +
-          `contains model validation errors.`
-      )
-
-      const serializedErrors = getErrorsFromModelValidation(result)
-      assert(
-        serializedErrors.length === 1,
+        result.length === 1,
         `swagger "${specPath} with operation "${operationIds}" should report only 1 error.`
       )
 
       assert(
-        (serializedErrors[0].errorDetails as SerializedError).similarPaths
+        (result[0].errorDetails as SerializedError).similarPaths
           .length === 1,
         `swagger "${specPath} with operation "${operationIds}" error should have a similar path.`
       )
@@ -78,7 +71,7 @@ describe("Model Validation", () => {
         consoleLogLevel: "off"
       })
       assert(
-        result.validityStatus === true,
+        result.length === 0,
         `swagger "${specPath}" with operation "${operationIds}" contains model validation errors.`
       )
       console.log(result)
@@ -90,7 +83,7 @@ describe("Model Validation", () => {
         consoleLogLevel: "off"
       })
       assert(
-        result.validityStatus === true,
+        result.length === 0,
         `swagger "${specPath}" with operation "${operationIds}" contains model validation errors.`
       )
       console.log(result)
@@ -103,7 +96,7 @@ describe("Model Validation", () => {
           consoleLogLevel: "off"
         })
         assert(
-          result.validityStatus === false,
+          result.length !== 0,
           `swagger "${specPath}" with operation "${operationIds}" contains passed incorrectly.`
         )
         console.log(result)
@@ -122,7 +115,7 @@ describe("Model Validation", () => {
         consoleLogLevel: "off"
       })
       assert(
-        result.validityStatus === true,
+        result.length === 0,
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
       )
       console.log(result)
@@ -135,7 +128,7 @@ describe("Model Validation", () => {
         consoleLogLevel: "off"
       })
       assert(
-        result.validityStatus === true,
+        result.length === 0,
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
       )
       console.log(result)
@@ -148,7 +141,7 @@ describe("Model Validation", () => {
         consoleLogLevel: "off"
       })
       assert(
-        result.validityStatus === true,
+        result.length === 0,
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
       )
       console.log(result)
@@ -157,9 +150,16 @@ describe("Model Validation", () => {
     it("should fail for CircularAnimal_IncorrectSibling_List", async () => {
       const specPath2 = `${__dirname}/modelValidation/swaggers/specification/polymorphic/polymorphicSwagger.json`
       const operationIds = "CircularAnimal_IncorrectSibling_List"
-      const result = await validate.validateExamples(specPath2, operationIds, {
-        consoleLogLevel: "off"
-      })
+      const validator = new ModelValidator(
+        specPath2,
+        null,
+        {
+          consoleLogLevel: "off"
+        }
+      )
+      await validator.initialize()
+      validator.validateOperations(operationIds)
+      const result = validator.specValidationResult
       assert(
         result.validityStatus === false,
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
@@ -211,7 +211,7 @@ describe("Model Validation", () => {
         consoleLogLevel: "off"
       })
       assert(
-        result.validityStatus === true,
+        result.length === 0,
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
       )
       console.log(result)
@@ -225,7 +225,7 @@ describe("Model Validation", () => {
         consoleLogLevel: "off"
       })
       assert(
-        result.validityStatus === true,
+        result.length === 0,
         `swagger "${specPath2}" contains model validation errors.`
       )
       console.log(result)
@@ -240,7 +240,7 @@ describe("Model Validation", () => {
       })
       console.dir(result, { depth: null })
       assert(
-        result.validityStatus === true,
+        result.length === 0,
         `swagger "${specPath2}" contains model validation errors.`
       )
       console.log(result)
@@ -253,7 +253,7 @@ describe("Model Validation", () => {
       })
       console.dir(result, { depth: null })
       assert(
-        result.validityStatus === true,
+        result.length === 0,
         `swagger "${specPath2}" contains model validation errors.`
       )
       console.log(result)
@@ -268,7 +268,7 @@ describe("Model Validation", () => {
         consoleLogLevel: "off"
       })
       assert(
-        result.validityStatus === true,
+        result.length === 0,
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
       )
       console.log(result)
@@ -281,7 +281,7 @@ describe("Model Validation", () => {
         consoleLogLevel: "off"
       })
       assert(
-        result.validityStatus === true,
+        result.length === 0,
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
       )
       console.log(result)
@@ -294,7 +294,7 @@ describe("Model Validation", () => {
         consoleLogLevel: "off"
       })
       assert(
-        result.validityStatus === true,
+        result.length === 0,
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
       )
       console.log(result)
@@ -307,7 +307,7 @@ describe("Model Validation", () => {
         consoleLogLevel: "off"
       })
       assert(
-        result.validityStatus === true,
+        result.length === 0,
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
       )
       console.log(result)
@@ -320,7 +320,7 @@ describe("Model Validation", () => {
         consoleLogLevel: "off"
       })
       assert(
-        result.validityStatus === true,
+        result.length === 0,
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
       )
       console.log(result)
@@ -333,7 +333,7 @@ describe("Model Validation", () => {
         consoleLogLevel: "off"
       })
       assert(
-        result.validityStatus === true,
+        result.length === 0,
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
       )
       console.log(result)
@@ -346,7 +346,7 @@ describe("Model Validation", () => {
         consoleLogLevel: "off"
       })
       assert(
-        result.validityStatus === true,
+        result.length === 0,
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
       )
       console.log(result)
@@ -359,7 +359,7 @@ describe("Model Validation", () => {
         consoleLogLevel: "off"
       })
       assert(
-        result.validityStatus === true,
+        result.length === 0,
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
       )
       console.log(result)
@@ -372,7 +372,7 @@ describe("Model Validation", () => {
         consoleLogLevel: "off"
       })
       assert(
-        result.validityStatus === true,
+        result.length === 0,
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
       )
       console.log(result)
@@ -385,7 +385,7 @@ describe("Model Validation", () => {
         consoleLogLevel: "off"
       })
       assert(
-        result.validityStatus === true,
+        result.length === 0,
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
       )
       console.log(result)
@@ -398,7 +398,7 @@ describe("Model Validation", () => {
         consoleLogLevel: "off"
       })
       assert(
-        result.validityStatus === true,
+        result.length === 0,
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
       )
       console.log(result)
@@ -411,7 +411,7 @@ describe("Model Validation", () => {
         consoleLogLevel: "off"
       })
       assert(
-        result.validityStatus === true,
+        result.length === 0,
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
       )
       console.log(result)
@@ -424,7 +424,7 @@ describe("Model Validation", () => {
         consoleLogLevel: "off"
       })
       assert(
-        result.validityStatus === true,
+        result.length === 0,
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
       )
       console.log(result)
@@ -437,7 +437,7 @@ describe("Model Validation", () => {
         consoleLogLevel: "off"
       })
       assert(
-        result.validityStatus === true,
+        result.length === 0,
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
       )
       console.log(result)
@@ -450,7 +450,7 @@ describe("Model Validation", () => {
         consoleLogLevel: "off"
       })
       assert(
-        result.validityStatus === true,
+        result.length === 0,
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
       )
       console.log(result)
@@ -465,7 +465,7 @@ describe("Model Validation", () => {
       })
       console.dir(result, { depth: null })
       assert(
-        result.validityStatus === true,
+        result.length === 0,
         `swagger "${specPath2}" contains model validation errors.`
       )
       console.log(result)
@@ -480,7 +480,7 @@ describe("Model Validation", () => {
       })
       console.dir(result, { depth: null })
       assert(
-        result.validityStatus === true,
+        result.length === 0,
         `swagger "${specPath2}" contains model validation errors.`
       )
       console.log(result)
@@ -495,7 +495,7 @@ describe("Model Validation", () => {
       })
       console.dir(result, { depth: null })
       assert(
-        result.validityStatus === true,
+        result.length === 0,
         `swagger "${specPath2}" contains model validation errors.`
       )
       console.log(result)

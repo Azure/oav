@@ -1,11 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
+
 import { Severity } from "./severity"
 import _ from "lodash"
 import { FilePosition } from "@ts-common/source-map"
 import { flatMap, fold } from "@ts-common/iterator"
-import { errorsAddFileInfo } from "./errorFileInfo"
-import { jsonSymbol, schemaSymbol } from "@ts-common/z-schema"
+import { processErrors } from "./processErrors"
+import { jsonSymbol, schemaSymbol } from "z-schema"
+import { StringMap } from '@ts-common/string-map';
 
 /**
  * @class
@@ -106,6 +108,8 @@ export interface NodeError<T extends NodeError<T>> {
   jsonPosition?: FilePosition
   jsonUrl?: string
 
+  directives?: StringMap<unknown>
+
   readonly [jsonSymbol]?: object
   readonly [schemaSymbol]?: object
 }
@@ -131,8 +135,8 @@ export function processValidationErrors<
     []
   )
 
-  rawValidation.requestValidationResult.errors = errorsAddFileInfo(requestSerializedErrors)
-  rawValidation.responseValidationResult.errors = errorsAddFileInfo(responseSerializedErrors)
+  rawValidation.requestValidationResult.errors = processErrors(requestSerializedErrors)
+  rawValidation.responseValidationResult.errors = processErrors(responseSerializedErrors)
 
   return rawValidation
 }

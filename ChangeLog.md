@@ -1,5 +1,53 @@
 # Changelog
 
+### 10/03/2018 0.7.4
+
+- Fix `@ts-common/source-map` `.d.ts` files.
+
+### 10/02/2018 0.7.3
+
+- Suppress promise rejection.
+
+### 10/02/2018 0.7.2
+
+- Fix URL encoding test.
+
+### 10/02/2018 0.7.1
+
+- Fix yasway.
+
+### 10/01/2018 0.7.0
+
+- Suppression API is changed.
+
+### 09/27/2018 0.6.5
+
+- Suppression supports relative file and object paths.
+
+### 09/25/2018 0.6.4
+
+- Source Map for `.d.ts` files.
+
+### 09/25/2018 0.6.3
+
+- Source Map
+
+### 09/25/2018 0.6.2
+
+- Bug fix for `resolve-spec` CLI (#320)
+
+### 09/25/2018 0.6.1
+
+- Semantic validation warning bug fix.
+
+### 09/21/2018 0.6.0
+
+- Suppression. `where` is not supported yet.
+
+### 09/21/2018 0.5.13
+
+- Correcting where we add url and position information to semantic validation errors.
+
 ### 09/19/2018 0.5.12
 
 - Adding url and position to source where issue occurs for semantic validation errors.

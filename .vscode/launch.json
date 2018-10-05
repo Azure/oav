@@ -47,12 +47,24 @@
       "type": "node",
       "request": "launch",
       "name": "Resolve Spec",
-      "program": "${workspaceRoot}/cli.js",
+      "program": "${workspaceRoot}/dist/cli.js",
       "cwd": "${workspaceRoot}",
       "args": [
         "resolve-spec",
-        "../upstream/azure-rest-api-specs/specification/cognitiveservices/data-plane/EntitySearch/v1.0/EntitySearch.json",
-        "-capro"
+        "-r",
+        "../azure-rest-api-specs/specification/network/resource-manager/Microsoft.Network/stable/2018-08-01/applicationGateway.json"
+      ],
+      "env": {}
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Model Validation",
+      "program": "${workspaceRoot}/dist/cli.js",
+      "cwd": "${workspaceRoot}",
+      "args": [
+        "validate-example",
+        "../azure-rest-api-specs/specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-06-01-preview/apimversionsets.json"
       ],
       "env": {}
     },
@@ -98,7 +110,7 @@
       "stopOnEntry": false,
       "args": [
         "--no-timeouts",
-        "test/semanticValidatorTests.ts",
+        "test/suppressionTests.ts",
         "-r",
         "ts-node/register",
         "--no-timeouts"

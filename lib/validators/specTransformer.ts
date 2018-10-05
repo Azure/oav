@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 import { SchemaObject, SwaggerObject } from "yasway"
-import { entries } from "@ts-common/string-map"
-import { FilePosition, getInfo, getRootObjectInfo } from "@ts-common/source-map"
+import { entries, StringMap } from "@ts-common/string-map"
+import { FilePosition, getInfo, getRootObjectInfo, getAllDirectives } from "@ts-common/source-map"
 
 /**
  * Transforms the swagger object
@@ -30,6 +30,7 @@ export function transform(spec: SwaggerObject): SwaggerObject {
 
 export interface TitleObject {
   readonly position?: FilePosition
+  readonly directives?: StringMap<unknown>
   readonly url?: string
   readonly title: string
 }
@@ -41,7 +42,8 @@ function insertSchemaTitle(model: SchemaObject, title: string) {
     {
       title,
       position: info.position,
-      url: getRootObjectInfo(info).url
+      url: getRootObjectInfo(info).url,
+      directives: getAllDirectives(model, []),
     }
   model.title = JSON.stringify(titleObject)
 }

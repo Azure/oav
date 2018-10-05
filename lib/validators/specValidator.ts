@@ -12,7 +12,9 @@ import * as C from "../util/constants"
 import { SwaggerObject } from "yasway"
 import { ModelValidation } from "../util/getErrorsFromModelValidation"
 import { Headers } from "../templates/httpTemplate"
-import { StringMap } from '@ts-common/string-map';
+import { StringMap } from "@ts-common/string-map"
+import { getSuppressions } from "./suppressions"
+import * as amd from "@ts-common/azure-openapi-markdown"
 
 const ErrorCodes = C.ErrorCodes;
 
@@ -77,6 +79,12 @@ export class SpecValidator<T extends CommonValidationResult> {
   private specResolver: SpecResolver | null
 
   private readonly options: Options
+
+  /*
+  public getSuppression(): amd.Suppression | undefined {
+    return this.suppression
+  }
+  */
 
   /*
    * @constructor
@@ -158,13 +166,15 @@ export class SpecValidator<T extends CommonValidationResult> {
       utils.clearCache()
     }
     try {
+      let suppression: amd.Suppression | undefined
       if (this.specInJson === undefined || this.specInJson === null) {
-        const result = await utils.parseJson(this.specPath)
+        suppression = getSuppressions(this.specPath)
+        const result = await utils.parseJson(suppression, this.specPath)
         this.specInJson = result
       }
 
       this.specResolver = new SpecResolver(this.specPath, this.specInJson, this.options)
-      this.specInJson = (await this.specResolver.resolve()).specInJson
+      this.specInJson = (await this.specResolver.resolve(suppression)).specInJson
 
       const options = {
         definition: this.specInJson,
@@ -173,9 +183,8 @@ export class SpecValidator<T extends CommonValidationResult> {
         },
         isPathCaseSensitive: this.options.isPathCaseSensitive
       }
-      const api = await Sway.create(options)
-      this.swaggerApi = api
-      return api
+      this.swaggerApi = await Sway.create(options)
+      return this.swaggerApi
     } catch (err) {
       const e = this.constructErrorObject(ErrorCodes.ResolveSpecError, err.message, [err])
       this.specValidationResult.resolveSpec = e

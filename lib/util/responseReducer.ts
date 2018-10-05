@@ -5,7 +5,7 @@ import { processValidationErrors, ValidationResult } from "./validationError"
 import { toModelErrors } from "./toModelErrors"
 import { ValidationResultSource } from "./validationResultSource"
 import { ModelValidationError } from "./modelValidationError"
-import { MutableStringMap } from '@ts-common/string-map';
+import { MutableStringMap } from '@ts-common/string-map'
 
 export interface Result {
   isValid?: unknown

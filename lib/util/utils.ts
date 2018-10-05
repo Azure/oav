@@ -12,9 +12,19 @@ import request = require("request")
 import * as lodash from "lodash"
 import * as http from "http"
 import { MutableStringMap, entries } from "@ts-common/string-map"
+import { drop } from "@ts-common/iterator"
 import { SwaggerObject, ParameterObject, SchemaObject, DataType } from "yasway"
 import * as jsonParser from "@ts-common/json-parser"
-import { cloneDeep, Data } from "@ts-common/source-map"
+import {
+  cloneDeep,
+  Data,
+  getFilePosition,
+  FilePosition,
+  getDescendantFilePosition
+} from "@ts-common/source-map"
+import { Suppression, SuppressionItem } from "@ts-common/azure-openapi-markdown"
+import { splitPathAndReverse, isSubPath } from "./path"
+import jp = require("jsonpath")
 
 export type DocCache = MutableStringMap<Promise<SwaggerObject>>
 
@@ -45,6 +55,16 @@ export function stripBOM(content: Buffer | string): string {
   return content
 }
 
+const setSuppression = (info: FilePosition | undefined, code: string) => {
+  if (info !== undefined) {
+    if (info.directives === undefined) {
+      (info as any).directives = {}
+    }
+    const directives = info.directives as MutableStringMap<boolean>
+    directives[code] = true
+  }
+}
+
 /*
  * Provides a parsed JSON from the given file path or a url.
  *
@@ -53,14 +73,30 @@ export function stripBOM(content: Buffer | string): string {
  *
  * @returns {object} jsonDoc - Parsed document in JSON format.
  */
-export async function parseJson(specPath: string): Promise<SwaggerObject> {
+export async function parseJson(
+  suppression: Suppression | undefined,
+  specPath: string,
+): Promise<SwaggerObject> {
+
+  const getSuppressionArray = (
+    suppressionItems: ReadonlyArray<SuppressionItem>
+  ): ReadonlyArray<SuppressionItem> => {
+    const urlReversed = splitPathAndReverse(specPath)
+    return suppressionItems.filter(s => isSubPath(urlReversed, splitPathAndReverse(s.from)))
+  }
+
+  const suppressionArray =
+    suppression === undefined ? [] : getSuppressionArray(suppression.directive)
+
   if (!specPath || (specPath && typeof specPath.valueOf() !== "string")) {
     throw new Error(
       "A (github) url or a local file path to the swagger spec is required and must be of type " +
         "string."
     )
   }
+
   const doc = docCache[specPath]
+
   if (doc) {
     return await doc
   }
@@ -82,6 +118,20 @@ export async function parseJson(specPath: string): Promise<SwaggerObject> {
     try {
       const fileContent = fs.readFileSync(specPath, "utf8")
       const result = parseContent(specPath, fileContent)
+      const rootInfo = getFilePosition(result)
+      // apply suppression
+      for (const s of suppressionArray) {
+        if (s.where !== undefined) {
+          const paths = jp.paths(result, s.where)
+          for (const p of paths) {
+            // drop "$" and apply suppressions.
+            setSuppression(getDescendantFilePosition(result, drop(p)), s.suppress)
+          }
+        } else {
+          setSuppression(rootInfo, s.suppress)
+        }
+      }
+      //
       docCache[specPath] = Promise.resolve(result)
       return result
     } catch (err) {
@@ -317,10 +367,11 @@ export function joinPath(...args: string[]): string {
  * @returns {object} jsonDoc - Parsed document in JSON format.
  */
 export async function parseJsonWithPathFragments(
+  suppression: Suppression | undefined,
   ...args: string[]
 ): Promise<SwaggerObject> {
   const specPath = joinPath(...args)
-  return await parseJson(specPath)
+  return await parseJson(suppression, specPath)
 }
 
 /*
@@ -587,7 +638,11 @@ export function getJsonContentType(
  */
 export function isUrlEncoded(str: string): boolean {
   str = str || ""
-  return str !== decodeURIComponent(str)
+  try {
+    return str !== decodeURIComponent(str)
+  } catch (e) {
+    return false
+  }
 }
 
 /**

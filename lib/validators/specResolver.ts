@@ -31,10 +31,12 @@ import { getOperations } from "../util/methods"
 import { transform } from "./specTransformer"
 import { map, toArray } from "@ts-common/iterator"
 import { arrayMap } from '@ts-common/source-map'
+import { Suppression } from '@ts-common/azure-openapi-markdown';
 
 const ErrorCodes = C.ErrorCodes
 
 export interface Options {
+  consoleLogLevel?: unknown
   shouldResolveRelativePaths?: boolean | null
   shouldResolveXmsExamples?: boolean | null
   shouldResolveAllOf?: boolean
@@ -198,12 +200,12 @@ export class SpecResolver {
    * resolving the allOf is present in any model definition and then setting additionalProperties
    * to false if it is not previously set to true or an object in that definition.
    */
-  public async resolve(): Promise<this> {
+  public async resolve(suppression: Suppression | undefined): Promise<this> {
     try {
       // path resolvers
       this.unifyXmsPaths()
       if (this.options.shouldResolveRelativePaths) {
-        await this.resolveRelativePaths()
+        await this.resolveRelativePaths(suppression)
       }
       // resolve nested definitions
       this.specInJson = resolveNestedDefinitions(this.specInJson, this.options)
@@ -264,9 +266,10 @@ export class SpecResolver {
    * @return {Promise<void>}
    */
   private async resolveRelativePaths(
+    suppression: Suppression | undefined,
     doc?: object,
     docPath?: string,
-    filterType?: string
+    filterType?: string,
   ): Promise<void> {
     let docDir
 
@@ -296,7 +299,9 @@ export class SpecResolver {
       map(
         e,
         ([refName, refDetails]) =>
-          async () => await this.resolveRelativeReference(refName, refDetails, doc, docPath)
+          async () => await this.resolveRelativeReference(
+            refName, refDetails, doc, docPath, suppression
+          )
       )
     )
     if (promiseFactories.length) {
@@ -342,7 +347,8 @@ export class SpecResolver {
     refName: string,
     refDetails: RefDetails,
     doc: unknown,
-    docPath: string | undefined
+    docPath: string | undefined,
+    suppression: Suppression | undefined,
   ): Promise<void> {
     if (!refName || (refName && typeof refName.valueOf() !== "string")) {
       throw new Error(
@@ -380,7 +386,7 @@ export class SpecResolver {
       docPath = utils.joinPath(docDir, parsedReference.filePath)
     }
 
-    const result = await utils.parseJson(docPath)
+    const result = await utils.parseJson(suppression, docPath)
     if (!parsedReference.localReference) {
       // Since there is no local reference we will replace the key in the object with the parsed
       // json (relative) file it is referring to.
@@ -416,7 +422,7 @@ export class SpecResolver {
           referencedObj
         )
         this.visitedEntities[slicedLocalReferenceValue] = referencedObj
-        await this.resolveRelativePaths(referencedObj, docPath, "all")
+        await this.resolveRelativePaths(suppression, referencedObj, docPath, "all")
         // After resolving a model definition, if there are models that have an allOf on that model
         // definition.
         // It may be possible that those models are not being referenced anywhere. Hence, we must
@@ -445,7 +451,7 @@ export class SpecResolver {
                     definitionObj
                   )
                   this.visitedEntities[slicedDefinitionRef] = definitionObj
-                  await this.resolveRelativePaths(definitionObj, docPath, "all")
+                  await this.resolveRelativePaths(suppression, definitionObj, docPath, "all")
                 }
               }
             })
