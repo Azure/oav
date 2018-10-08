@@ -168,7 +168,7 @@ export class SpecValidator<T extends CommonValidationResult> {
     try {
       let suppression: amd.Suppression | undefined
       if (this.specInJson === undefined || this.specInJson === null) {
-        suppression = getSuppressions(this.specPath)
+        suppression = await getSuppressions(this.specPath)
         const result = await utils.parseJson(suppression, this.specPath)
         this.specInJson = result
       }

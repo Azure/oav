@@ -146,7 +146,7 @@ export async function validateCompositeSpec(
   compositeSpecPath: string, options: Options
 ): Promise<ReadonlyArray<SpecValidationResult>> {
   return validate(options, async o => {
-    const suppression = getSuppressions(compositeSpecPath)
+    const suppression = await getSuppressions(compositeSpecPath)
     const docs = await getDocumentsFromCompositeSwagger(suppression, compositeSpecPath)
     o.consoleLogLevel = log.consoleLogLevel
     o.logFilepath = log.filepath
@@ -185,7 +185,7 @@ export async function validateExamplesInCompositeSpec(
   return await validate(options, async o => {
     o.consoleLogLevel = log.consoleLogLevel
     o.logFilepath = log.filepath
-    const suppression = getSuppressions(compositeSpecPath)
+    const suppression = await getSuppressions(compositeSpecPath)
     const docs = await getDocumentsFromCompositeSwagger(suppression, compositeSpecPath)
     const promiseFactories = docs.map(
       doc => async () => await validateExamples(doc, undefined, o))
@@ -202,7 +202,7 @@ export async function resolveSpec(
   log.filepath = options.logFilepath || log.filepath
   const specFileName = path.basename(specPath)
   try {
-    const suppression = getSuppressions(specPath)
+    const suppression = await getSuppressions(specPath)
     const result = await utils.parseJson(suppression, specPath)
     const resolver = new SpecResolver(specPath, result, options)
     await resolver.resolve(suppression);
@@ -228,7 +228,7 @@ export async function resolveCompositeSpec(
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
   log.filepath = options.logFilepath || log.filepath
   try {
-    const suppression = getSuppressions(specPath)
+    const suppression = await getSuppressions(specPath)
     const docs = await getDocumentsFromCompositeSwagger(suppression, specPath)
     options.consoleLogLevel = log.consoleLogLevel
     options.logFilepath = log.filepath
@@ -270,7 +270,7 @@ export async function generateWireFormatInCompositeSpec(
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
   log.filepath = options.logFilepath || log.filepath
   try {
-    const suppression = getSuppressions(compositeSpecPath)
+    const suppression = await getSuppressions(compositeSpecPath)
     const docs = await getDocumentsFromCompositeSwagger(suppression, compositeSpecPath)
     options.consoleLogLevel = log.consoleLogLevel
     options.logFilepath = log.filepath
@@ -302,7 +302,7 @@ export async function generateUml(
     shouldResolveNullableTypes: false
   }
   try {
-    const suppression = getSuppressions(specPath)
+    const suppression = await getSuppressions(specPath)
     const result = await utils.parseJson(suppression, specPath)
     const resolver = new SpecResolver(specPath, result, resolverOptions)
     const umlGenerator = new umlGeneratorLib.UmlGenerator(resolver.specInJson, options)
