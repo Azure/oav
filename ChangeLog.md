@@ -1,5 +1,9 @@
 # Changelog
 
+### 10/08/2018 0.7.6
+
+- Fix a bug in ReadFile from HTTPS.
+
 ### 10/08/2018 0.7.5
 
 - Get suppressions from HTTPS.
