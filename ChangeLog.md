@@ -1,5 +1,9 @@
 # Changelog
 
+### 10/08/2018 0.7.5
+
+- Get suppressions from HTTPS.
+
 ### 10/03/2018 0.7.4
 
 - Fix `@ts-common/source-map` `.d.ts` files.
