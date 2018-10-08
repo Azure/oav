@@ -79,7 +79,7 @@ export class WireFormatGenerator {
       utils.clearCache()
     }
     try {
-      const suppression = getSuppressions(this.specPath)
+      const suppression = await getSuppressions(this.specPath)
       const result = await utils.parseJson(suppression, this.specPath)
       this.specInJson = result
       const specOptions = {
