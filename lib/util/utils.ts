@@ -97,6 +97,23 @@ export async function parseJson(
 
   const doc = docCache[specPath]
 
+  const applySuppression = (result: SwaggerObject) => {
+    const rootInfo = getFilePosition(result)
+    // apply suppression
+    for (const s of suppressionArray) {
+      if (s.where !== undefined) {
+        const paths = jp.paths(result, s.where)
+        for (const p of paths) {
+          // drop "$" and apply suppressions.
+          setSuppression(getDescendantFilePosition(result, drop(p)), s.suppress)
+        }
+      } else {
+        setSuppression(rootInfo, s.suppress)
+      }
+    }
+    return result
+  }
+
   if (doc) {
     return await doc
   }
@@ -110,7 +127,7 @@ export async function parseJson(
         "https://raw.githubusercontent.com$2$3"
       )
     }
-    const res = makeRequest({ url: specPath, errorOnNon200Response: true })
+    const res = makeRequest({ url: specPath, errorOnNon200Response: true }).then(applySuppression)
     docCache[specPath] = res
     return await res
   } else {
@@ -118,20 +135,7 @@ export async function parseJson(
     try {
       const fileContent = fs.readFileSync(specPath, "utf8")
       const result = parseContent(specPath, fileContent)
-      const rootInfo = getFilePosition(result)
-      // apply suppression
-      for (const s of suppressionArray) {
-        if (s.where !== undefined) {
-          const paths = jp.paths(result, s.where)
-          for (const p of paths) {
-            // drop "$" and apply suppressions.
-            setSuppression(getDescendantFilePosition(result, drop(p)), s.suppress)
-          }
-        } else {
-          setSuppression(rootInfo, s.suppress)
-        }
-      }
-      //
+      applySuppression(result)
       docCache[specPath] = Promise.resolve(result)
       return result
     } catch (err) {
