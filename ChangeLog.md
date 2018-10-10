@@ -1,5 +1,9 @@
 # Changelog
 
+### 10/09/2018 0.7.8
+
+- Update `@ts-common/azure-openapi-markdown` package.
+
 ### 10/08/2018 0.7.7
 
 - Fix a bug applying suppressions from HTTPS.
