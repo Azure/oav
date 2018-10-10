@@ -5,6 +5,7 @@ import * as path from "path"
 import * as md from "@ts-common/commonmark-to-markdown"
 import * as amd from "@ts-common/azure-openapi-markdown"
 import { isArray } from "@ts-common/iterator"
+import * as vfs from "@ts-common/virtual-fs"
 
 export const getSuppressions = async (specPath: string): Promise<undefined | amd.Suppression> => {
   // find readme.md
@@ -12,7 +13,7 @@ export const getSuppressions = async (specPath: string): Promise<undefined | amd
   if (readMe === undefined) {
     return undefined
   }
-  const readMeStr = await amd.readFile(readMe)
+  const readMeStr = await vfs.readFile(readMe)
   const cmd = md.parse(readMeStr)
   const suppressionCodeBlock = amd.getCodeBlocksAndHeadings(cmd.markDown).Suppression
   if (suppressionCodeBlock === undefined) {
