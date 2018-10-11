@@ -22,6 +22,7 @@ import { Responses, Headers } from "./templates/httpTemplate"
 import { map, toArray } from "@ts-common/iterator"
 import { getSuppressions } from './validators/suppressions';
 import { Suppression } from '@ts-common/azure-openapi-markdown';
+import { setMutableProperty } from '@ts-common/property-set';
 
 const ErrorCodes = C.ErrorCodes
 
@@ -175,14 +176,15 @@ export class WireFormatGenerator {
   private constructErrorObject(
     code: unknown, message: string, innerErrors: Array<unknown>, _?: boolean
   ) {
-    const err = {
+    const err: {
+      code: unknown
+      message: string
+      innerErrors?: Array<unknown>
+    } = {
       code,
-      message,
-      innerErrors: undefined as (Array<unknown> | undefined)
+      message
     }
-    if (innerErrors) {
-      err.innerErrors = innerErrors
-    }
+    setMutableProperty(err, "innerErrors", innerErrors ? innerErrors : undefined)
     // if (!skipValidityStatusUpdate) {
     // this.updateValidityStatus();
     // }

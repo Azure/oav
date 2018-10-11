@@ -15,6 +15,7 @@ import { Headers } from "../templates/httpTemplate"
 import { StringMap } from "@ts-common/string-map"
 import { getSuppressions } from "./suppressions"
 import * as amd from "@ts-common/azure-openapi-markdown"
+import { setMutableProperty } from '@ts-common/property-set';
 
 const ErrorCodes = C.ErrorCodes;
 
@@ -219,9 +220,9 @@ export class SpecValidator<T extends CommonValidationResult> {
     const err: CommonError = {
       code: code.name,
       id: code.id,
-      message: message,
-      innerErrors: innerErrors ? innerErrors : undefined
+      message: message
     }
+    setMutableProperty(err, "innerErrors", innerErrors ? innerErrors : undefined)
     if (!skipValidityStatusUpdate) {
       this.updateValidityStatus()
     }
