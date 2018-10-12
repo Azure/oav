@@ -759,7 +759,7 @@ export function allowNullType<T extends Entity>(
     const typeNull: SchemaObject = setSchemaInfo({ type: "null" }, info)
     const typeArray = copyInfo(entity, [entity, typeNull])
     const newEntity: SchemaObject = setSchemaInfo({ anyOf: typeArray }, info)
-    entity = newEntity as any
+    entity = newEntity as T
   }
 
   // if entity has a type

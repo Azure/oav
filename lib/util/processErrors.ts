@@ -20,7 +20,7 @@ const addFileInfo = <T extends NodeError<T>>(error: T): T => {
     try {
       const titleObject: TitleObject | undefined = JSON.parse(title)
       if (titleObject !== undefined) {
-        const path = titleObject.path
+        const { path } = titleObject
         error.position = titleObject.position
         error.url = titleObject.url
         if (path !== undefined) {
