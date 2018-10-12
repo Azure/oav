@@ -6,27 +6,6 @@ import {
   FilePosition, getRootObjectInfo, getAllDirectives, getPath, InfoFunc, getInfoFunc, setInfoFunc
 } from "@ts-common/source-map"
 
-/**
- * Transforms the swagger object
- */
-export function transform(spec: SwaggerObject): SwaggerObject {
-  if (!spec.definitions) {
-    return spec
-  }
-
-  for (const definition of values(spec.definitions)) {
-    setSchemaTitle(definition)
-
-    if (definition.properties) {
-      for (const property of values(definition.properties)) {
-        setSchemaTitle(property)
-      }
-    }
-  }
-
-  return spec
-}
-
 export interface TitleObject {
   readonly position?: FilePosition
   readonly directives?: StringMap<unknown>

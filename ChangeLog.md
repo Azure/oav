@@ -1,5 +1,9 @@
 # Changelog
 
+### 10/12/2018 0.7.9
+
+- Additional source map for generated Schema objects.
+
 ### 10/09/2018 0.7.8
 
 - Update `@ts-common/azure-openapi-markdown` package.
