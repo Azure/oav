@@ -43,6 +43,7 @@ export const setSchemaInfo = (
 ): SchemaObject => {
   if (info !== undefined) {
     model.title = info.title
+    // add source map info function to the `model`.
     setInfoFunc(model, info.infoFunc)
   }
   return model
