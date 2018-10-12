@@ -8,7 +8,7 @@
       "type": "node",
       "request": "launch",
       "name": "Validate Spec",
-      "program": "${workspaceRoot}/cli.js",
+      "program": "${workspaceRoot}/dist/cli.js",
       "cwd": "${workspaceRoot}",
       "args": [
         "validate-spec",
@@ -20,13 +20,12 @@
       "type": "node",
       "request": "launch",
       "name": "Validate example",
-      "program": "${workspaceRoot}/cli.js",
+      "program": "${workspaceRoot}/dist/cli.js",
       "cwd": "${workspaceRoot}",
       "args": [
         "validate-example",
-        "test/swaggers/arm-storage/2016-01-01/swagger/storage.json",
-        "-o",
-        "StorageAccounts_CheckNameAvailability"
+        "C:/github.com/Azure/azure-rest-api-specs/specification/adhybridhealthservice/resource-manager/Microsoft.ADHybridHealthService/stable/2014-01-01/ADHybridHealthService.json",
+        "--pretty"
       ],
       "env": {}
     },

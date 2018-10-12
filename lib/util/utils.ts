@@ -20,11 +20,13 @@ import {
   Data,
   getFilePosition,
   FilePosition,
-  getDescendantFilePosition
+  getDescendantFilePosition,
+  copyInfo
 } from "@ts-common/source-map"
 import { Suppression, SuppressionItem } from "@ts-common/azure-openapi-markdown"
 import { splitPathAndReverse, isSubPath } from "./path"
 import jp = require("jsonpath")
+import { getSchemaObjectInfo, setSchemaInfo } from '../validators/specTransformer';
 
 export type DocCache = MutableStringMap<Promise<SwaggerObject>>
 
@@ -750,6 +752,16 @@ export function allowNullType<T extends Entity>(
   entity: T,
   isPropRequired?: boolean | {}
 ): T {
+
+  const info = getSchemaObjectInfo(entity)
+
+  const nullable = () => {
+    const typeNull: SchemaObject = setSchemaInfo({ type: "null" }, info)
+    const typeArray = copyInfo(entity, [entity, typeNull])
+    const newEntity: SchemaObject = setSchemaInfo({ anyOf: typeArray }, info)
+    entity = newEntity as any
+  }
+
   // if entity has a type
   if (entity && entity.type) {
     // if type is an array
@@ -779,12 +791,13 @@ export function allowNullType<T extends Entity>(
       const savedEntity = entity
       // handling nullable parameters
       if (savedEntity.in) {
-        entity.anyOf = [{ type: entity.type }, { type: "null" }]
+        const typeNull: SchemaObject = setSchemaInfo({ type: "null" }, info)
+        const typeEntity: SchemaObject = setSchemaInfo({ type: entity.type }, info)
+        const typeArray: ReadonlyArray<SchemaObject> = copyInfo(entity, [typeEntity, typeNull])
+        entity.anyOf = typeArray
         delete entity.type
       } else {
-        entity = {
-          anyOf: [savedEntity, { type: "null" }]
-        } as any
+        nullable()
       }
     }
   }
@@ -795,10 +808,7 @@ export function allowNullType<T extends Entity>(
     entity.$ref &&
     shouldAcceptNullValue(entity["x-nullable"], isPropRequired)
   ) {
-    const savedEntity = entity
-    entity = {
-      anyOf: [savedEntity, { type: "null" }]
-    } as any
+    nullable()
   }
   return entity
 }
@@ -897,20 +907,18 @@ export function allowNullableParams(
  * @param {string} str - The string to be sanitized.
  * @returns {string} result - The sanitized string.
  */
-export function sanitizeFileName(str: string): string {
-  return str
+export const sanitizeFileName = (str: string): string =>
+  str
     ? str
         .replace(/[{}\[\]'";\(\)#@~`!%&\^\$\+=,\/\\?<>\|\*:]/gi, "")
         .replace(/(\s+)/gi, "_")
     : str
-}
 
 /**
  * Checks if the property is required in the model.
  */
-function isPropertyRequired(propName: unknown, model: SchemaObject) {
-  return model.required ? model.required.some(p => p === propName) : false
-}
+const isPropertyRequired = (propName: unknown, model: SchemaObject) =>
+  model.required ? model.required.some(p => p === propName) : false
 
 /**
  * Contains the reverse mapping of http.STATUS_CODES

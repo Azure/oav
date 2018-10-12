@@ -15,7 +15,7 @@ export interface Options {
 
 /**
  * @class
- * Generates a Uml Diagaram in svg format.
+ * Generates a Uml Diagram in svg format.
  */
 export class UmlGenerator {
 

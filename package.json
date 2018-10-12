@@ -1,6 +1,6 @@
 {
   "name": "oav",
-  "version": "0.7.8",
+  "version": "0.7.9",
   "author": {
     "name": "Microsoft Corporation",
     "email": "azsdkteam@microsoft.com",
@@ -13,13 +13,13 @@
     "@ts-common/azure-openapi-markdown": "^0.4.0",
     "@ts-common/commonmark-to-markdown": "^1.1.3",
     "@ts-common/iterator": "^0.0.38",
-    "@ts-common/json": "^0.0.19",
-    "@ts-common/json-parser": "^0.2.2",
+    "@ts-common/json": "^0.0.20",
+    "@ts-common/json-parser": "^0.2.3",
     "@ts-common/property-set": "^0.0.8",
-    "@ts-common/source-map": "^0.2.11",
-    "@ts-common/string-map": "^0.1.0",
+    "@ts-common/source-map": "^0.2.12",
+    "@ts-common/string-map": "^0.1.1",
     "@ts-common/tuple": "^0.0.0",
-    "@ts-common/virtual-fs": "github:ts-common/virtual-fs",
+    "@ts-common/virtual-fs": "^0.0.1",
     "@types/lodash": "^4.14.116",
     "@types/request": "^2.47.1",
     "azure-arm-resource": "^2.0.0-preview",
@@ -42,7 +42,7 @@
     "vscode-jsonrpc": "^3.6.2",
     "winston": "^3.0.0",
     "yargs": "^6.6.0",
-    "yasway": "^1.0.15",
+    "yasway": "^1.0.16",
     "yuml2svg": "^3.1.0",
     "z-schema": "^3.24.1"
   },
@@ -64,7 +64,7 @@
     "should": "^5.2.0",
     "ts-node": "^6.0.5",
     "tslint": "^5.11.0",
-    "typescript": "^3.1.2"
+    "typescript": "^3.1.3"
   },
   "homepage": "https://github.com/azure/oav",
   "repository": {
