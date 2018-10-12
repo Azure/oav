@@ -28,7 +28,6 @@ import {
 } from "@ts-common/string-map"
 import { resolveNestedDefinitions } from "./resolveNestedDefinitions"
 import { getOperations } from "../util/methods"
-// import { transform } from "./specTransformer"
 import { map, toArray } from "@ts-common/iterator"
 import { arrayMap } from '@ts-common/source-map'
 import { Suppression } from '@ts-common/azure-openapi-markdown';
@@ -211,7 +210,6 @@ export class SpecResolver {
       this.specInJson = resolveNestedDefinitions(this.specInJson, this.options)
 
       // all transformations without dependencies should be moved here)
-      // this.specInJson = transform(this.specInJson)
 
       // other resolvers
       if (this.options.shouldResolveAllOf) {

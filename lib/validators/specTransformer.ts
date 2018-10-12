@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
-import { SchemaObject, SwaggerObject } from "yasway"
-import { StringMap, values } from "@ts-common/string-map"
+import { SchemaObject } from "yasway"
+import { StringMap } from "@ts-common/string-map"
 import {
   FilePosition, getRootObjectInfo, getAllDirectives, getPath, InfoFunc, getInfoFunc, setInfoFunc
 } from "@ts-common/source-map"
