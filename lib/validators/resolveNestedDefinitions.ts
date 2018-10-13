@@ -29,6 +29,7 @@ import {
   getDefaultResponses
 } from "./cloudError"
 import { pathToPtr } from "json-refs"
+import { setSchemaTitle } from './specTransformer';
 
 const skipIfUndefined = <T>(f: (v: T) => T): ((v: T | undefined) => T | undefined) =>
   (v) => v !== undefined ? f(v) : undefined
@@ -41,6 +42,8 @@ export function resolveNestedDefinitions(spec: SwaggerObject, options: Options):
 
   // a function to resolve nested schema objects
   const resolveNestedSchemaObject = (schemaObject: SchemaObject) => {
+    setSchemaTitle(schemaObject)
+
     // ignore references
     if (schemaObject.$ref !== undefined) {
       return schemaObject
