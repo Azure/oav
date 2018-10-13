@@ -16,7 +16,8 @@ describe("sourceMap", () => {
     )
     assert.strictEqual(result.length, 1)
     const result0 = result[0]
-    assert.notStrictEqual(result0.url, undefined)
-    assert.deepStrictEqual(result0.position, { line: 76, column: 11 })
+    const e = result0.errorDetails as any
+    assert.notStrictEqual(e.url, undefined)
+    assert.deepStrictEqual(e.position, { line: 76, column: 11 })
   })
 })

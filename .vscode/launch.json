@@ -109,7 +109,7 @@
       "stopOnEntry": false,
       "args": [
         "--no-timeouts",
-        "test/suppressionTests.ts",
+        "test/sourceMapTests.ts",
         "-r",
         "ts-node/register",
         "--no-timeouts"
