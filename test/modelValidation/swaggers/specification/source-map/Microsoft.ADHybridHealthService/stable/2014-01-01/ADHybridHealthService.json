@@ -1,0 +1,351 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "2014-01-01",
+    "title": "ADHybridHealthService",
+    "description": "REST APIs for Azure Active Drectory Connect Health"
+  },
+  "host": "management.azure.com",
+  "schemes": [ "https" ],
+  "consumes": [ "application/json" ],
+  "produces": [ "application/json" ],
+  "paths": {
+    "/providers/Microsoft.ADHybridHealthService/addsservices/{serviceName}/addomainservicemembers": {
+      "get": {
+        "tags": [ "Adds" ],
+        "description": "Gets the details of the servers, for a given Active Directory Domain Service, that are onboarded to Azure Active Directory Connect Health.",
+        "x-ms-examples": {
+          "adDomainServiceMembers_list": {
+            "$ref": "./examples/AddomainServiceMembers.json"
+          }
+        },
+        "operationId": "adDomainServiceMembers_list",
+        "parameters": [
+          {
+            "name": "serviceName",
+            "in": "path",
+            "description": "The name of the service.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "$filter",
+            "in": "query",
+            "description": "The server property filter to apply.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "isGroupbySite",
+            "in": "query",
+            "description": "Indicates if the result should be grouped by site or not.",
+            "required": true,
+            "type": "boolean"
+          },
+          {
+            "name": "query",
+            "in": "query",
+            "description": "The custom query.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "nextPartitionKey",
+            "in": "query",
+            "description": "The next partition key to query for.",
+            "required": true,
+            "type": "string",
+            "enum": [ " " ],
+            "x-ms-enum": {
+              "name": "nextPartitionKey",
+              "modelAsString": true
+            }
+          },
+          {
+            "name": "nextRowKey",
+            "in": "query",
+            "description": "The next row key to query for.",
+            "required": true,
+            "type": "string",
+            "enum": [ " " ],
+            "x-ms-enum": {
+              "name": "nextRowKey",
+              "modelAsString": true
+            }
+          },
+          {
+            "name": "takeCount",
+            "in": "query",
+            "description": "The take count , which specifies the number of elements that can be returned from a sequence.",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "$ref": "#/parameters/apiVersionParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The list of Active Directory Domain Servers.",
+            "schema": {
+              "$ref": "#/definitions/AddsServiceMembers"
+            }
+          }
+        },
+        "x-ms-pageable": {
+          "nextLinkName": "nextLink"
+        }
+      }
+    }
+  },
+  "definitions": {
+
+    "AddsServiceMember": {
+      "description": "The server details for ADDS service.",
+      "type": "object",
+      "properties": {
+        "domainName": {
+          "description": "The domain name.",
+          "type": "string"
+        },
+        "siteName": {
+          "description": "The site name.",
+          "type": "string"
+        },
+        "addsRoles": {
+          "description": "The list of ADDS roles.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "gcReachable": {
+          "description": "Indicates if the global catalog for this domain is reachable or not.",
+          "type": "boolean"
+        },
+        "isAdvertising": {
+          "description": "Indicates if the Dc is advertising or not.",
+          "type": "boolean"
+        },
+        "pdcReachable": {
+          "description": "Indicates if the primary domain controller is reachable or not.",
+          "type": "boolean"
+        },
+        "sysvolState": {
+          "description": "Indicates if the SYSVOL state is healthy or not.",
+          "type": "boolean"
+        },
+        "dcTypes": {
+          "description": "The list of domain controller types.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "serviceMemberId": {
+          "description": "The id of the server.",
+          "type": "string"
+        },
+        "serviceId": {
+          "description": "The service id to whom this server belongs.",
+          "type": "string"
+        },
+        "tenantId": {
+          "description": "The tenant id to whom this server belongs.",
+          "type": "string"
+        },
+        "activeAlerts": {
+          "description": "The total number of alerts that are currently active for the server.",
+          "type": "integer"
+        },
+        "additionalInformation": {
+          "description": "The additional information, if any, for the server.",
+          "type": "string"
+        },
+        "createdDate": {
+          "description": "The date time , in UTC, when the server was onboaraded to Azure Active Directory Connect Health.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "dimensions": {
+          "description": "The server specific configuration related dimensions.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Item"
+          }
+        },
+        "disabled": {
+          "description": "Indicates if the server is disabled or not. ",
+          "type": "boolean"
+        },
+        "disabledReason": {
+          "description": "The reason for disabling the server.",
+          "type": "integer"
+        },
+        "installedQfes": {
+          "description": "The list of installed QFEs for the server.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Hotfix"
+          }
+        },
+        "lastDisabled": {
+          "description": "The date and time , in UTC, when the server was last disabled.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "lastReboot": {
+          "description": "The date and time, in UTC, when the server was last rebooted.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "lastServerReportedMonitoringLevelChange": {
+          "description": "The date and time, in UTC, when the server's data monitoring configuration was last changed.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "lastUpdated": {
+          "description": "The date and time, in UTC, when the server proeprties were last updated.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "machineId": {
+          "description": "The id of the machine.",
+          "type": "string"
+        },
+        "machineName": {
+          "description": "The name of the server.",
+          "type": "string"
+        },
+        "monitoringConfigurationsComputed": {
+          "description": "The monitoring configuration of the server which determines what activities are monitored by Azure Active Directory Connect Health.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Item"
+          }
+        },
+        "monitoringConfigurationsCustomized": {
+          "description": "The customized monitoring configuration of the server which determines what activities are monitored by Azure Active Directory Connect Health.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Item"
+          }
+        },
+        "osName": {
+          "description": "The name of the operating system installed in the machine.",
+          "type": "string"
+        },
+        "osVersion": {
+          "description": "The version of the operating system installed in the machine.",
+          "type": "string"
+        },
+        "properties": {
+          "description": "Server specific properties.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Item"
+          }
+        },
+        "recommendedQfes": {
+          "description": "The list of recommended hotfixes for the server.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Hotfix"
+          }
+        },
+        "resolvedAlerts": {
+          "description": "The total count of alerts that are resolved for this server.",
+          "type": "integer"
+        },
+        "role": {
+          "description": "The service role that is being monitored in the server.",
+          "type": "string"
+        },
+        "serverReportedMonitoringLevel": {
+          "description": "The monitoring level reported by the server.",
+          "type": "string",
+          "enum": [
+            "Partial",
+            "Full",
+            "Off"
+          ],
+          "x-ms-enum": {
+            "name": "MonitoringLevel",
+            "modelAsString": false
+          }
+        },
+        "status": {
+          "description": "The health status of the server.",
+          "type": "string"
+        }
+      }
+    },
+    "AddsServiceMembers": {
+      "description": "The list of  ADDS service members.",
+      "type": "object",
+      "properties": {
+        "nextLink": {
+          "description": "The link used to get the next page of operations.",
+          "type": "string"
+        },
+        "value": {
+          "description": "The value returned by the operation.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AddsServiceMember"
+          }
+        },
+        "totalCount": {
+          "description": "The total count of service members.",
+          "type": "integer"
+        },
+        "continuationToken": {
+          "description": "The continuation token for paginated calls.",
+          "type": "string"
+        }
+      }
+    },
+    "Hotfix": {
+      "description": "The details of the hotfix installed in the server.",
+      "type": "object",
+      "properties": {
+        "kbName": {
+          "description": "The name of the hotfix KB.",
+          "type": "string"
+        },
+        "link": {
+          "description": "The link to the KB Article.",
+          "type": "string"
+        },
+        "installedDate": {
+          "description": "The date and time, in UTC, when the KB was installed in the server.",
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "Item": {
+      "description": "The key value pair for properties.",
+      "type": "object",
+      "properties": {
+        "key": {
+          "description": "The key for the property.",
+          "type": "string"
+        },
+        "value": {
+          "description": "The value for the key.",
+          "type": "string"
+        }
+      }
+    }
+  },
+  "parameters": {
+    "apiVersionParameter": {
+      "name": "api-version",
+      "in": "query",
+      "description": "The version of the API to be used with the client request.",
+      "required": true,
+      "type": "string"
+    }
+  }
+}

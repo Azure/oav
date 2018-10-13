@@ -209,9 +209,7 @@ export class SpecResolver {
       // resolve nested definitions
       this.specInJson = resolveNestedDefinitions(this.specInJson, this.options)
 
-      // all transformations without dependencies should be moved here)
-
-      // other resolvers
+      // other resolvers (should be moved to resolveNestedDefinitions())
       if (this.options.shouldResolveAllOf) {
         this.resolveAllOfInDefinitions()
       }
