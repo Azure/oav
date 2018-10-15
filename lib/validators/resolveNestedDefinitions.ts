@@ -29,7 +29,7 @@ import {
   getDefaultResponses
 } from "./cloudError"
 import { pathToPtr } from "json-refs"
-import { setSchemaTitle } from './specTransformer';
+import { setSchemaTitle, getSchemaObjectInfo, setSchemaInfo } from './specTransformer';
 
 const skipIfUndefined = <T>(f: (v: T) => T): ((v: T | undefined) => T | undefined) =>
   (v) => v !== undefined ? f(v) : undefined
@@ -42,10 +42,9 @@ export function resolveNestedDefinitions(spec: SwaggerObject, options: Options):
 
   // a function to resolve nested schema objects
   const resolveNestedSchemaObject = (schemaObject: SchemaObject) => {
-    setSchemaTitle(schemaObject)
-
     // ignore references
     if (schemaObject.$ref !== undefined) {
+      setSchemaTitle(schemaObject)
       return schemaObject
     }
 
@@ -56,6 +55,7 @@ export function resolveNestedDefinitions(spec: SwaggerObject, options: Options):
       case "string":
       case "boolean":
       case "null":
+        setSchemaTitle(schemaObject)
         return schemaObject
     }
 
@@ -68,7 +68,9 @@ export function resolveNestedDefinitions(spec: SwaggerObject, options: Options):
     if (result !== undefined) {
       generatedDefinitions[definitionName] = result
     }
-    return { $ref: pathToPtr(["definitions", definitionName]) }
+    const refResult = { $ref: pathToPtr(["definitions", definitionName]) }
+    setSchemaInfo(refResult, getSchemaObjectInfo(schemaObject))
+    return refResult
   }
 
   // a function to resolve SchemaObject array
@@ -80,8 +82,8 @@ export function resolveNestedDefinitions(spec: SwaggerObject, options: Options):
       undefined
 
   // a function to resolve SchemaObject (top-level and nested)
-  const resolveSchemaObject = (schemaObject: SchemaObject): SchemaObject =>
-    propertySetMap<SchemaObject>(
+  const resolveSchemaObject = (schemaObject: SchemaObject): SchemaObject => {
+    const result = propertySetMap<SchemaObject>(
       schemaObject,
       {
         properties: properties => stringMapMap(properties, resolveNestedSchemaObject),
@@ -95,6 +97,9 @@ export function resolveNestedDefinitions(spec: SwaggerObject, options: Options):
         oneOf: resolveOptionalSchemaObjectArray,
       }
     )
+    setSchemaTitle(result)
+    return result
+  }
 
   const resolveParameterObject = (parameterObject: ParameterObject) =>
     propertySetMap(parameterObject, { schema: skipIfUndefined(resolveSchemaObject) })
