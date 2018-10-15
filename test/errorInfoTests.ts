@@ -5,7 +5,7 @@ import { validateExamples } from "../lib/validate"
 import * as assert from "assert"
 
 describe("error info", () => {
-  it("schema object", async () => {
+  it("error info should contain url to file", async () => {
     const result = await validateExamples(
       "./test/modelValidation/swaggers/specification/errorInfo/apimusers.json",
       undefined,
