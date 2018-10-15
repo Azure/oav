@@ -1,0 +1,342 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "ApiManagementClient",
+    "description": "Use these REST APIs for performing operations on User entity in Azure API Management deployment. The User entity in API Management represents the developers that call the APIs of the products to which they are subscribed.",
+    "version": "2017-03-01"
+  },
+  "x-ms-parameterized-host": {
+    "hostTemplate": "{apimBaseUrl}",
+    "useSchemePrefix": false,
+    "positionInOperation": "first",
+    "parameters": [
+      {
+        "name": "apimBaseUrl",
+        "description": "The management endpoint of the API Management service, for example https://myapimservice.management.azure-api.net.",
+        "required": true,
+        "type": "string",
+        "in": "path",
+        "x-ms-skip-url-encoding": true
+      }
+    ]
+  },
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "securityDefinitions": {
+    "apim_key": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "security": [
+    {
+      "apim_key": []
+    }
+  ],
+  "paths": {
+    "/users/{uid}": {
+      "put": {
+        "tags": [
+          "Users"
+        ],
+        "operationId": "User_CreateOrUpdate",
+        "description": "Creates or Updates a user.",
+        "x-ms-examples": {
+          "ApiManagementPutUsers": {
+            "$ref": "./examples/ApiManagementPutUsers.json"
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/UserIdParameter"
+          },
+          {
+            "name": "parameters",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserCreateParameters"
+            },
+            "description": "Create or update parameters."
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "User was successfully created.",
+            "schema": {
+              "$ref": "#/definitions/UserContract"
+            }
+          },
+          "200": {
+            "description": "User was successfully updated.",
+            "schema": {
+              "$ref": "#/definitions/UserContract"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "GenerateSsoUrlResult": {
+      "properties": {
+        "value": {
+          "type": "string",
+          "description": "Redirect Url containing the SSO URL value."
+        }
+      },
+      "description": "Generate SSO Url operations response details."
+    },
+    "UserCollection": {
+      "properties": {
+        "value": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UserContract"
+          },
+          "description": "Page values."
+        },
+        "count": {
+          "type": "integer",
+          "description": "Total number of entities"
+        },
+        "nextLink": {
+          "type": "string",
+          "description": "Next page link if any."
+        }
+      },
+      "description": "Paged Users list representation."
+    },
+    "UserContract": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Identifier of the entity."
+        }
+      },
+      "allOf": [
+        {
+          "$ref": "#/definitions/UserContractProperties"
+        }
+      ],
+      "description": "User details."
+    },
+    "UserContractProperties": {
+      "properties": {
+        "firstName": {
+          "type": "string",
+          "description": "First name."
+        },
+        "lastName": {
+          "type": "string",
+          "description": "Last name."
+        },
+        "email": {
+          "type": "string",
+          "description": "Email address."
+        },
+        "registrationDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Date of user registration. The date conforms to the following format: `yyyy-MM-ddTHH:mm:ssZ` as specified by the ISO 8601 standard.\n"
+        }
+      },
+      "allOf": [
+        {
+          "$ref": "#/definitions/UserEntityBaseParameters"
+        }
+      ],
+      "description": "User profile."
+    },
+    "UserCreateParameters": {
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": "Email address. Must not be empty and must be unique within the service instance.",
+          "minLength": 1,
+          "maxLength": 254
+        },
+        "firstName": {
+          "type": "string",
+          "description": "First name.",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "lastName": {
+          "type": "string",
+          "description": "Last name.",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "password": {
+          "type": "string",
+          "description": "User Password. If no value is provided, a default password is generated."
+        }
+      },
+      "allOf": [
+        {
+          "$ref": "#/definitions/UserEntityBaseParameters"
+        }
+      ],
+      "required": [
+        "email",
+        "firstName",
+        "lastName"
+      ],
+      "description": "Parameters supplied to the Create User operation."
+    },
+    "UserEntityBaseParameters": {
+      "properties": {
+        "state": {
+          "type": "string",
+          "description": "Account state. Specifies whether the user is active or not. Blocked users are unable to sign into the developer portal or call any APIs of subscribed products. Default state is Active.",
+          "enum": [
+            "active",
+            "blocked"
+          ],
+          "default": "active",
+          "x-ms-enum": {
+            "name": "UserState",
+            "modelAsString": true
+          }
+        },
+        "note": {
+          "type": "string",
+          "description": "Optional note about a user set by the administrator."
+        },
+        "identities": {
+          "readOnly": true,
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UserIdentityContract"
+          },
+          "description": "Collection of user identities."
+        }
+      },
+      "description": "User Entity Base Parameters set."
+    },
+    "UserIdentityCollection": {
+      "properties": {
+        "value": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UserIdentityContract"
+          },
+          "description": "User Identity values."
+        },
+        "count": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Total record count number across all pages."
+        },
+        "nextLink": {
+          "type": "string",
+          "description": "Next page link if any."
+        }
+      },
+      "description": "List of Users Identity list representation."
+    },
+    "UserIdentityContract": {
+      "properties": {
+        "provider": {
+          "type": "string",
+          "description": "Identity provider name."
+        },
+        "id": {
+          "type": "string",
+          "description": "Identifier value within provider."
+        }
+      },
+      "description": "User identity details."
+    },
+    "UserTokenParameters": {
+      "properties": {
+        "keyType": {
+          "type": "string",
+          "description": "The Key to be used to generate token for user.",
+          "enum": [
+            "primary",
+            "secondary"
+          ],
+          "default": "primary",
+          "x-ms-enum": {
+            "name": "KeyType",
+            "modelAsString": false
+          }
+        },
+        "expiry": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The Expiry time of the Token. Maximum token expiry time is set to 30 days. The date conforms to the following format: `yyyy-MM-ddTHH:mm:ssZ` as specified by the ISO 8601 standard.\n"
+        }
+      },
+      "required": [
+        "keyType",
+        "expiry"
+      ],
+      "description": "Parameters supplied to the Get User Token operation."
+    },
+    "UserTokenResult": {
+      "properties": {
+        "value": {
+          "type": "string",
+          "description": "Shared Access Authorization token for the User."
+        }
+      },
+      "description": "Get User Token response details."
+    },
+    "UserUpdateParameters": {
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": "Email address. Must not be empty and must be unique within the service instance.",
+          "minLength": 1,
+          "maxLength": 254
+        },
+        "password": {
+          "type": "string",
+          "description": "User Password."
+        },
+        "firstName": {
+          "type": "string",
+          "description": "First name.",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "lastName": {
+          "type": "string",
+          "description": "Last name.",
+          "minLength": 1,
+          "maxLength": 100
+        }
+      },
+      "allOf": [
+        {
+          "$ref": "#/definitions/UserEntityBaseParameters"
+        }
+      ],
+      "description": "Parameters supplied to the Update User operation."
+    }
+  },
+  "parameters": {
+    "UserIdParameter": {
+      "name": "uid",
+      "in": "path",
+      "required": true,
+      "type": "string",
+      "description": "User identifier. Must be unique in the current API Management service instance.",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[^*#&+:<>?]+$",
+      "x-ms-parameter-location": "method"
+    }
+  }
+}
