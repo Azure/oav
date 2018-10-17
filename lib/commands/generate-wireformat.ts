@@ -5,6 +5,7 @@
 import { log } from "../util/logging"
 import * as validate from "../validate"
 import * as yargs from "yargs"
+import { cliSuppressExceptions } from '../cliSuppressExceptions';
 
 export const command = "generate-wireformat <spec-path>"
 
@@ -41,23 +42,23 @@ export const builder: yargs.CommandBuilder = {
 }
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
-  log.debug(argv.toString())
-  const specPath = argv.specPath
-  const operationIds = argv.operationIds
-  const outDir = argv.outDir
-  const emitYaml = argv.inYaml
-  const vOptions = {
-    consoleLogLevel: argv.logLevel,
-    logFilepath: argv.f,
-  }
+  await cliSuppressExceptions(
+    async () => {
+      log.debug(argv.toString())
+      const specPath = argv.specPath
+      const operationIds = argv.operationIds
+      const outDir = argv.outDir
+      const emitYaml = argv.inYaml
+      const vOptions = {
+        consoleLogLevel: argv.logLevel,
+        logFilepath: argv.f,
+      }
 
-  try {
-    if (specPath.match(/.*composite.*/ig) !== null) {
-      await validate.generateWireFormatInCompositeSpec(specPath, outDir, emitYaml, vOptions)
-    } else {
-      await validate.generateWireFormat(specPath, outDir, emitYaml, operationIds, vOptions)
+      if (specPath.match(/.*composite.*/ig) !== null) {
+        await validate.generateWireFormatInCompositeSpec(specPath, outDir, emitYaml, vOptions)
+      } else {
+        await validate.generateWireFormat(specPath, outDir, emitYaml, operationIds, vOptions)
+      }
     }
-  } catch (err) {
-    process.exitCode = 1
-  }
+  )
 }

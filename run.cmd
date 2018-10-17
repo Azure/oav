@@ -1,0 +1,1 @@
+node dist/cli.js validate-example C:/github.com/Azure/azure-rest-api-specs/specification/adhybridhealthservice/resource-manager/Microsoft.ADHybridHealthService/stable/2014-01-01/ADHybridHealthService.json --pretty
