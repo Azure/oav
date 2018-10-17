@@ -4,7 +4,7 @@
 import { log } from "../util/logging"
 import * as validate from "../validate"
 import * as yargs from "yargs"
-import { cliSuppressExceptions } from '../cliSuppressExceptions';
+import { cliSuppressExceptions } from '../cliSuppressExceptions'
 
 export const command = "resolve-spec <spec-path>"
 
