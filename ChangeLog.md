@@ -2,6 +2,10 @@
 
 ### 10/15/2018 0.7.10
 
+- exported functions don't catch exceptions.
+
+### 10/15/2018 0.7.10
+
 - Provide Title for all Schema Objects.
 
 ### 10/12/2018 0.7.9

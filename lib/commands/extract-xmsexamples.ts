@@ -4,6 +4,7 @@
 import { log } from "../util/logging"
 import * as validate from "../validate"
 import * as yargs from "yargs"
+import { cliSuppressExceptions } from '../cliSuppressExceptions'
 
 export const command = "extract-xmsexamples <spec-path> <recordings>"
 
@@ -28,14 +29,18 @@ export const builder: yargs.CommandBuilder = {
 }
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
-  log.debug(argv.toString())
-  const specPath = argv.specPath
-  const recordings = argv.recordings
-  const vOptions = {
-    consoleLogLevel: argv.logLevel,
-    logFilepath: argv.f,
-    output: argv.outDir,
-    matchApiVersion: argv.matchApiVersion,
-  }
-  await validate.extractXMsExamples(specPath, recordings, vOptions)
+  await cliSuppressExceptions(
+    async () => {
+      log.debug(argv.toString())
+      const specPath = argv.specPath
+      const recordings = argv.recordings
+      const vOptions = {
+        consoleLogLevel: argv.logLevel,
+        logFilepath: argv.f,
+        output: argv.outDir,
+        matchApiVersion: argv.matchApiVersion,
+      }
+      await validate.extractXMsExamples(specPath, recordings, vOptions)
+    }
+  )
 }

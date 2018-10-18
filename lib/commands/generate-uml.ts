@@ -4,6 +4,7 @@
 import { log } from "../util/logging"
 import * as validate from "../validate"
 import * as yargs from "yargs"
+import { cliSuppressExceptions } from '../cliSuppressExceptions'
 
 export const command = "generate-uml <spec-path>"
 
@@ -46,19 +47,19 @@ export const builder: yargs.CommandBuilder = {
 }
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
-  log.debug(argv.toString())
-  const specPath = argv.specPath
-  const vOptions = {
-    consoleLogLevel: argv.logLevel,
-    logFilepath: argv.f,
-    shouldDisableProperties: argv.p,
-    shouldDisableAllof: argv.a,
-    shouldDisableRefs: argv.r,
-    direction: argv.i,
-  }
-  try {
-    await validate.generateUml(specPath, argv.d, vOptions)
-  } catch (err) {
-    process.exitCode = 1
-  }
+  await cliSuppressExceptions(
+    async () => {
+      log.debug(argv.toString())
+      const specPath = argv.specPath
+      const vOptions = {
+        consoleLogLevel: argv.logLevel,
+        logFilepath: argv.f,
+        shouldDisableProperties: argv.p,
+        shouldDisableAllof: argv.a,
+        shouldDisableRefs: argv.r,
+        direction: argv.i,
+      }
+      await validate.generateUml(specPath, argv.d, vOptions)
+    }
+  )
 }

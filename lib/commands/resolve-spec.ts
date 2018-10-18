@@ -4,6 +4,7 @@
 import { log } from "../util/logging"
 import * as validate from "../validate"
 import * as yargs from "yargs"
+import { cliSuppressExceptions } from '../cliSuppressExceptions'
 
 export const command = "resolve-spec <spec-path>"
 
@@ -69,28 +70,28 @@ export const builder: yargs.CommandBuilder = {
 }
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
-  log.debug(argv.toString())
-  const specPath = argv.specPath
-  const vOptions = {
-    consoleLogLevel: argv.logLevel,
-    logFilepath: argv.f,
-    shouldResolveRelativePaths: argv.r,
-    shouldResolveXmsExamples: argv.e,
-    shouldResolveAllOf: argv.o,
-    shouldSetAdditionalPropertiesFalse: argv.a,
-    shouldResolveParameterizedHost: argv.t,
-    shouldResolvePureObjects: argv.p,
-    shouldResolveDiscriminator: argv.c,
-    shouldResolveNullableTypes: argv.n,
-  }
+  await cliSuppressExceptions(
+    async () => {
+      log.debug(argv.toString())
+      const specPath = argv.specPath
+      const vOptions = {
+        consoleLogLevel: argv.logLevel,
+        logFilepath: argv.f,
+        shouldResolveRelativePaths: argv.r,
+        shouldResolveXmsExamples: argv.e,
+        shouldResolveAllOf: argv.o,
+        shouldSetAdditionalPropertiesFalse: argv.a,
+        shouldResolveParameterizedHost: argv.t,
+        shouldResolvePureObjects: argv.p,
+        shouldResolveDiscriminator: argv.c,
+        shouldResolveNullableTypes: argv.n,
+      }
 
-  try {
-    if (specPath.match(/.*composite.*/ig) !== null) {
-      await validate.resolveCompositeSpec(specPath, argv.d, vOptions)
-    } else {
-      await validate.resolveSpec(specPath, argv.d, vOptions)
+      if (specPath.match(/.*composite.*/ig) !== null) {
+        await validate.resolveCompositeSpec(specPath, argv.d, vOptions)
+      } else {
+        await validate.resolveSpec(specPath, argv.d, vOptions)
+      }
     }
-  } catch (err) {
-    process.exitCode = 1
-  }
+  )
 }

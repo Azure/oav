@@ -77,16 +77,7 @@ async function validate<T>(
   if (options.pretty) {
     log.consoleLogLevel = "off"
   }
-  try {
-    return await func(options)
-  } catch (err) {
-    log.error(err)
-    if (options.pretty) {
-      // tslint:disable-next-line:no-console
-      console.error(`error: ${JSON.stringify(err)}`);
-    }
-    return err
-  }
+  return await func(options)
 }
 
 type ErrorType = "error" | "warning"
