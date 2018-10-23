@@ -20,7 +20,7 @@ import { ModelValidator } from "./validators/modelValidator"
 import { MutableStringMap, StringMap } from "@ts-common/string-map"
 import { NodeError } from './util/validationError';
 import { ModelValidationError } from './util/modelValidationError';
-import { Suppression } from '@ts-common/azure-openapi-markdown';
+import { Suppression } from '@azure/openapi-markdown';
 import { getSuppressions } from './validators/suppressions';
 
 type FinalValidationResult = MutableStringMap<unknown>

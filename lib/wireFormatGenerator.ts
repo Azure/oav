@@ -21,7 +21,7 @@ import { PathTemplateBasedRequestPrepareOptions } from "ms-rest"
 import { Responses, Headers } from "./templates/httpTemplate"
 import { map, toArray } from "@ts-common/iterator"
 import { getSuppressions } from './validators/suppressions';
-import { Suppression } from '@ts-common/azure-openapi-markdown';
+import { Suppression } from '@azure/openapi-markdown';
 import { setMutableProperty } from '@ts-common/property-set';
 
 const ErrorCodes = C.ErrorCodes

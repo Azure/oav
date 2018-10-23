@@ -30,7 +30,7 @@ import { resolveNestedDefinitions } from "./resolveNestedDefinitions"
 import { getOperations } from "../util/methods"
 import { map, toArray } from "@ts-common/iterator"
 import { arrayMap } from '@ts-common/source-map'
-import { Suppression } from '@ts-common/azure-openapi-markdown';
+import { Suppression } from '@azure/openapi-markdown';
 
 const ErrorCodes = C.ErrorCodes
 

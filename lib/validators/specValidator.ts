@@ -14,7 +14,7 @@ import { ModelValidation } from "../util/getErrorsFromModelValidation"
 import { Headers } from "../templates/httpTemplate"
 import { StringMap } from "@ts-common/string-map"
 import { getSuppressions } from "./suppressions"
-import * as amd from "@ts-common/azure-openapi-markdown"
+import * as amd from "@azure/openapi-markdown"
 import { setMutableProperty } from '@ts-common/property-set';
 
 const ErrorCodes = C.ErrorCodes;
