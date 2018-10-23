@@ -1,6 +1,10 @@
 # Changelog
 
-### 10/15/2018 0.7.10
+### 10/23/2018 0.7.12
+
+- switch from `@ts-common/azure-openapi-markdown` to `@azure/openapi-markdown`.
+
+### 10/15/2018 0.7.11
 
 - exported functions don't catch exceptions.
 

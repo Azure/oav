@@ -23,7 +23,7 @@ import {
   getDescendantFilePosition,
   copyInfo
 } from "@ts-common/source-map"
-import { Suppression, SuppressionItem } from "@ts-common/azure-openapi-markdown"
+import { Suppression, SuppressionItem } from "@azure/openapi-markdown"
 import { splitPathAndReverse, isSubPath } from "./path"
 import jp = require("jsonpath")
 import { getSchemaObjectInfo, setSchemaInfo } from '../validators/specTransformer';
