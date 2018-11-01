@@ -88,3 +88,4 @@ dist/
 *.js.map
 coverage/
 .nyc_output
+test-results.xml

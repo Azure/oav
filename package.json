@@ -1,6 +1,6 @@
 {
   "name": "oav",
-  "version": "0.7.12",
+  "version": "0.7.13",
   "author": {
     "name": "Microsoft Corporation",
     "email": "azsdkteam@microsoft.com",
@@ -60,11 +60,12 @@
     "@types/uuid": "^3.4.4",
     "@types/yargs": "^11.1.2",
     "mocha": "^5.2.0",
+    "mocha-junit-reporter": "^1.18.0",
     "nyc": "^13.0.1",
     "should": "^5.2.0",
     "ts-node": "^6.0.5",
     "tslint": "^5.11.0",
-    "typescript": "^3.1.3"
+    "typescript": "^3.1.5"
   },
   "homepage": "https://github.com/azure/oav",
   "repository": {
@@ -105,7 +106,9 @@
     "all": true,
     "reporter": [
       "lcov",
-      "text"
+      "text",
+      "html",
+      "cobertura"
     ],
     "extension": [
       ".ts"
@@ -118,7 +121,7 @@
   "scripts": {
     "tsc": "tsc",
     "tslint": "tslint --project tsconfig.json ./*.ts ./lib/**/*.ts ./test/**/*.ts ./types/**/*.ts",
-    "test": "npm run tsc && npm run tslint && nyc mocha ./test/**/*.ts -r ts-node/register -t 10000",
+    "test": "npm run tsc && npm run tslint && nyc mocha ./test/**/*.ts -r ts-node/register -t 10000 --reporter mocha-junit-reporter",
     "start": "node ./dist/lib/autorestPlugin/pluginHost.js",
     "prepack": "npm install && tsc && npm run tslint",
     "cli": "node dist/cli.js"

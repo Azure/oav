@@ -1,5 +1,9 @@
 # Changelog
 
+### 10/23/2018 0.7.13
+
+- switch to Azure DevOps.
+
 ### 10/23/2018 0.7.12
 
 - switch from `@ts-common/azure-openapi-markdown` to `@azure/openapi-markdown`.
