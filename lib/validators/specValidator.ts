@@ -82,12 +82,6 @@ export class SpecValidator<T extends CommonValidationResult> {
   private readonly options: Options
 
   /*
-  public getSuppression(): amd.Suppression | undefined {
-    return this.suppression
-  }
-  */
-
-  /*
    * @constructor
    * Initializes a new instance of the SpecValidator class.
    *
