@@ -7,6 +7,8 @@ import { SwaggerObject } from "yasway"
 describe("specResolver", () => {
   it("create", async () => {
     const spec: SwaggerObject = {
+      swagger: "2.0",
+      info: { title: "sometitle", version: "2018" },
       definitions: {
         A: {
           allOf: [

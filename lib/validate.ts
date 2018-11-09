@@ -17,22 +17,16 @@ import * as umlGeneratorLib from "./umlGenerator"
 import { getErrorsFromModelValidation } from "./util/getErrorsFromModelValidation"
 import { SemanticValidator } from "./validators/semanticValidator"
 import { ModelValidator } from "./validators/modelValidator"
-import { MutableStringMap, StringMap } from "@ts-common/string-map"
+import { StringMap } from "@ts-common/string-map"
 import { NodeError } from './util/validationError';
 import { ModelValidationError } from './util/modelValidationError';
 import { Suppression } from '@azure/openapi-markdown';
 import { getSuppressions } from './validators/suppressions';
 
-type FinalValidationResult = MutableStringMap<unknown>
-
 export interface Options extends specResolver.Options, umlGeneratorLib.Options {
   consoleLogLevel?: unknown
   logFilepath?: unknown
   pretty?: boolean
-}
-
-export const finalValidationResult: FinalValidationResult = {
-  validityStatus: true
 }
 
 export async function getDocumentsFromCompositeSwagger(
@@ -116,8 +110,6 @@ export async function validateSpec(
     // with oneOf arrays which are not semantically valid in swagger 2.0 schema.
     o.shouldResolveNullableTypes = false
     const validator = new SemanticValidator(specPath, null, o)
-    finalValidationResult[specPath] = validator.specValidationResult
-
     await validator.initialize()
     log.info(`Semantically validating  ${specPath}:\n`)
     const validationResults = await validator.validateSpec()
@@ -153,7 +145,6 @@ export async function validateExamples(
 ): Promise<ReadonlyArray<ModelValidationError>> {
   return await validate(options, async o => {
     const validator = new ModelValidator(specPath, null, o)
-    finalValidationResult[specPath] = validator.specValidationResult
     await validator.initialize()
     log.info(`Validating "examples" and "x-ms-examples" in  ${specPath}:\n`)
     validator.validateOperations(operationIds)
@@ -322,7 +313,6 @@ export function updateEndResultOfSingleValidation<T extends CommonValidationResu
   }
   if (!validator.specValidationResult.validityStatus) {
     process.exitCode = 1
-    finalValidationResult.validityStatus = validator.specValidationResult.validityStatus
   }
 }
 

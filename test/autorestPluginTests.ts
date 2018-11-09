@@ -7,6 +7,8 @@ import { SwaggerObject } from "yasway"
 describe("autorestPlugin/pluginHost", () => {
   it("shouldn't fail if no scenarios", async () => {
     const swagger: SwaggerObject = {
+      swagger: "2.0",
+      info: { title: "sometitle", version: "2018" },
       paths: {
         "/somepath/": {
           get: {}
