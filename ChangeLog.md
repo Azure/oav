@@ -1,5 +1,9 @@
 # Changelog
 
+### 11/08/2018 0.7.14
+
+- update swagger definition
+
 ### 10/23/2018 0.7.13
 
 - switch to Azure DevOps.
