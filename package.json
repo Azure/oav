@@ -121,7 +121,7 @@
   "scripts": {
     "tsc": "tsc",
     "tslint": "tslint --project tsconfig.json ./*.ts ./lib/**/*.ts ./test/**/*.ts ./types/**/*.ts",
-    "test": "npm run tsc && npm run tslint && nyc mocha ./test/**/*.ts -r ts-node/register -t 10000 --reporter mocha-junit-reporter",
+    "test": "npm run tsc && npm run tslint && nyc mocha ./test/**/*.ts -r ts-node/register -t 10000 --reporter mocha-junit-reporter --reporter spec",
     "start": "node ./dist/lib/autorestPlugin/pluginHost.js",
     "prepack": "npm install && tsc && npm run tslint",
     "cli": "node dist/cli.js"

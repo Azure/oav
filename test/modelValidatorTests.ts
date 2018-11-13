@@ -24,7 +24,7 @@ describe("Model Validation", () => {
         `swagger "${specPath}" with operation "${operationIds}" ` +
           `contains model validation errors.`
       )
-      console.log(result)
+      // console.log(result)
     })
 
     it("should pass with pretty format", async () => {
@@ -38,7 +38,7 @@ describe("Model Validation", () => {
         `swagger "${specPath}" with operation "${operationIds}" ` +
           `contains model validation errors.`
       )
-      console.log(result)
+      // console.log(result)
     })
 
     it("should fail with collapsed similar array elements errors", async () => {
@@ -62,7 +62,7 @@ describe("Model Validation", () => {
           .length === 1,
         `swagger "${specPath} with operation "${operationIds}" error should have a similar path.`
       )
-      console.log(result)
+      // console.log(result)
     })
 
     it("should pass for paths in x-ms-paths with question mark", async () => {
@@ -74,7 +74,7 @@ describe("Model Validation", () => {
         result.length === 0,
         `swagger "${specPath}" with operation "${operationIds}" contains model validation errors.`
       )
-      console.log(result)
+      // console.log(result)
     })
 
     it("should pass for paths with quotes", async () => {
@@ -86,7 +86,7 @@ describe("Model Validation", () => {
         result.length === 0,
         `swagger "${specPath}" with operation "${operationIds}" contains model validation errors.`
       )
-      console.log(result)
+      // console.log(result)
     })
 
     it("should fail for paths with path parameter value resulting in duplicate forward slashes", async () => {
@@ -99,7 +99,7 @@ describe("Model Validation", () => {
           result.length !== 0,
           `swagger "${specPath}" with operation "${operationIds}" contains passed incorrectly.`
         )
-        console.log(result)
+        // console.log(result)
       } catch (err) {
         assert.strictEqual(err.code, "REQUEST_VALIDATION_ERROR")
         assert.strictEqual(err.innerErrors[0].code, "DOUBLE_FORWARD_SLASHES_IN_URL")
@@ -118,7 +118,7 @@ describe("Model Validation", () => {
         result.length === 0,
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
       )
-      console.log(result)
+      // console.log(result)
     })
 
     it("should pass for Activity_Dictionary", async () => {
@@ -131,7 +131,7 @@ describe("Model Validation", () => {
         result.length === 0,
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
       )
-      console.log(result)
+      // console.log(result)
     })
 
     it("should pass for CircularAnimal_List", async () => {
@@ -144,7 +144,7 @@ describe("Model Validation", () => {
         result.length === 0,
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
       )
-      console.log(result)
+      // console.log(result)
     })
 
     it("should fail for CircularAnimal_IncorrectSibling_List", async () => {
@@ -214,7 +214,7 @@ describe("Model Validation", () => {
         result.length === 0,
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
       )
-      console.log(result)
+      // console.log(result)
     })
   })
 
@@ -228,7 +228,7 @@ describe("Model Validation", () => {
         result.length === 0,
         `swagger "${specPath2}" contains model validation errors.`
       )
-      console.log(result)
+      // console.log(result)
     })
   })
 
@@ -238,12 +238,12 @@ describe("Model Validation", () => {
       const result = await validate.validateExamples(specPath2, undefined, {
         consoleLogLevel: "off"
       })
-      console.dir(result, { depth: null })
+      // console.dir(result, { depth: null })
       assert(
         result.length === 0,
         `swagger "${specPath2}" contains model validation errors.`
       )
-      console.log(result)
+      // console.log(result)
     })
 
     it("should validate the presence of parameters", async () => {
@@ -251,12 +251,12 @@ describe("Model Validation", () => {
       const result = await validate.validateExamples(specPath2, undefined, {
         consoleLogLevel: "off"
       })
-      console.dir(result, { depth: null })
+      // console.dir(result, { depth: null })
       assert(
         result.length === 0,
         `swagger "${specPath2}" contains model validation errors.`
       )
-      console.log(result)
+      // console.log(result)
     })
   })
 
@@ -271,7 +271,7 @@ describe("Model Validation", () => {
         result.length === 0,
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
       )
-      console.log(result)
+      // console.log(result)
     })
 
     it("should pass for formatInDefinition_Get", async () => {
@@ -284,7 +284,7 @@ describe("Model Validation", () => {
         result.length === 0,
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
       )
-      console.log(result)
+      // console.log(result)
     })
 
     it("should pass for enumInResponse_Get", async () => {
@@ -297,7 +297,7 @@ describe("Model Validation", () => {
         result.length === 0,
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
       )
-      console.log(result)
+      // console.log(result)
     })
 
     it("should pass for readOnlyProp_Get", async () => {
@@ -310,7 +310,7 @@ describe("Model Validation", () => {
         result.length === 0,
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
       )
-      console.log(result)
+      // console.log(result)
     })
 
     it("should pass for arrayInResponse_List", async () => {
@@ -323,7 +323,7 @@ describe("Model Validation", () => {
         result.length === 0,
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
       )
-      console.log(result)
+      // console.log(result)
     })
 
     it("should pass for objectInResponse_Get", async () => {
@@ -336,7 +336,7 @@ describe("Model Validation", () => {
         result.length === 0,
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
       )
-      console.log(result)
+      // console.log(result)
     })
 
     it("should pass for typeArrayInResponse_Get", async () => {
@@ -349,7 +349,7 @@ describe("Model Validation", () => {
         result.length === 0,
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
       )
-      console.log(result)
+      // console.log(result)
     })
 
     it("should pass for xnullableFalse_Get", async () => {
@@ -362,7 +362,7 @@ describe("Model Validation", () => {
         result.length === 0,
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
       )
-      console.log(result)
+      // console.log(result)
     })
 
     it("should pass for requiredProp_Get", async () => {
@@ -375,7 +375,7 @@ describe("Model Validation", () => {
         result.length === 0,
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
       )
-      console.log(result)
+      // console.log(result)
     })
 
     it("should pass for inlineResponse_Get", async () => {
@@ -388,7 +388,7 @@ describe("Model Validation", () => {
         result.length === 0,
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
       )
-      console.log(result)
+      // console.log(result)
     })
 
     it("should pass for RefWithNullableAtTopLevelOperation_Get", async () => {
@@ -401,7 +401,7 @@ describe("Model Validation", () => {
         result.length === 0,
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
       )
-      console.log(result)
+      // console.log(result)
     })
 
     it("should pass for definitionWithReference_Get", async () => {
@@ -414,7 +414,7 @@ describe("Model Validation", () => {
         result.length === 0,
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
       )
-      console.log(result)
+      // console.log(result)
     })
 
     it("should pass for definitionWithReferenceNull_Get", async () => {
@@ -427,7 +427,7 @@ describe("Model Validation", () => {
         result.length === 0,
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
       )
-      console.log(result)
+      // console.log(result)
     })
 
     it("should pass for definitionWithReferenceNotNullableOperation_Get", async () => {
@@ -440,7 +440,7 @@ describe("Model Validation", () => {
         result.length === 0,
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
       )
-      console.log(result)
+      // console.log(result)
     })
 
     it("should pass for nullableTopLevel_Get", async () => {
@@ -453,7 +453,7 @@ describe("Model Validation", () => {
         result.length === 0,
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
       )
-      console.log(result)
+      // console.log(result)
     })
   })
 
@@ -463,12 +463,12 @@ describe("Model Validation", () => {
       const result = await validate.validateExamples(specPath2, undefined, {
         consoleLogLevel: "off"
       })
-      console.dir(result, { depth: null })
+      // console.dir(result, { depth: null })
       assert(
         result.length === 0,
         `swagger "${specPath2}" contains model validation errors.`
       )
-      console.log(result)
+      // console.log(result)
     })
   })
 
@@ -478,12 +478,12 @@ describe("Model Validation", () => {
       const result = await validate.validateExamples(specPath2, undefined, {
         consoleLogLevel: "off"
       })
-      console.dir(result, { depth: null })
+      // console.dir(result, { depth: null })
       assert(
         result.length === 0,
         `swagger "${specPath2}" contains model validation errors.`
       )
-      console.log(result)
+      // console.log(result)
     })
   })
 
@@ -493,12 +493,12 @@ describe("Model Validation", () => {
       const result = await validate.validateExamples(specPath2, undefined, {
         consoleLogLevel: "off"
       })
-      console.dir(result, { depth: null })
+      // console.dir(result, { depth: null })
       assert(
         result.length === 0,
         `swagger "${specPath2}" contains model validation errors.`
       )
-      console.log(result)
+      // console.log(result)
     })
   })
 })

@@ -448,8 +448,9 @@ describe("Live Validator", () => {
         await validator.initialize()
         const reqRes = require(livePath)
         const validationResult = validator.validateLiveRequestResponse(reqRes)
+        assert.notStrictEqual(validationResult, undefined)
         /* tslint:disable-next-line */
-        console.dir(validationResult, { depth: null, colors: true })
+        // console.dir(validationResult, { depth: null, colors: true })
       })
     })
   })

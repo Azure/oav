@@ -109,7 +109,7 @@
       "stopOnEntry": false,
       "args": [
         "--no-timeouts",
-        "test/errorInfoTests.ts",
+        "test/simpleSemanticValidationTests.ts",
         "-r",
         "ts-node/register",
         "--no-timeouts"

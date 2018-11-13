@@ -18,4 +18,30 @@ describe("Simple semantic validation", () => {
     assert.notStrictEqual(api, undefined)
     assert.strictEqual(result.errors.length, 0)
   })
+  it("semantic validation with operation", async () => {
+    const spec: SwaggerObject = {
+      swagger: "2.0",
+      info: { title: "sometitle", version: "2018" },
+      paths: {
+        "/somepath": {
+          get: {
+            responses: {
+              default: {
+                description: "Default response."
+              }
+            }
+          }
+        }
+      },
+    }
+    const semanticValidator = new SemanticValidator(
+      "some/file/path",
+      spec,
+      {}
+    )
+    const api = await semanticValidator.initialize()
+    const result = await semanticValidator.validateSpec()
+    assert.notStrictEqual(api, undefined)
+    assert.strictEqual(result.errors.length, 0)
+  })
 })
