@@ -52,14 +52,14 @@ const cloudError: SchemaObject = {
 }
 
 const cloudErrorWrapperName = `${defaultPrefix}CloudErrorWrapper`
-const cloudErrorSchemaName = `${defaultPrefix}CloudErrorSchema`
+// const cloudErrorSchemaName = `${defaultPrefix}CloudErrorSchema`
 
 /**
  * An ARM cloud error schema.
  */
 const cloudErrorSchema = {
   description: "Error response describing why the operation failed.",
-  title: `#/definitions/${cloudErrorSchemaName}`,
+  // title: `#/definitions/${cloudErrorSchemaName}`,
   schema: {
     $ref: `#/definitions/${cloudErrorWrapperName}`
   }

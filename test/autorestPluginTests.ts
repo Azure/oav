@@ -11,7 +11,9 @@ describe("autorestPlugin/pluginHost", () => {
       info: { title: "sometitle", version: "2018" },
       paths: {
         "/somepath/": {
-          get: {}
+          get: {
+            responses: {}
+          }
         }
       }
     }

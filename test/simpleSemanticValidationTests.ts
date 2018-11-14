@@ -18,7 +18,7 @@ describe("Simple semantic validation", () => {
     assert.notStrictEqual(api, undefined)
     assert.strictEqual(result.errors.length, 0)
   })
-  it("semantic validation with operation", async () => {
+  it("semantic validation with generated CloudError", async () => {
     const spec: SwaggerObject = {
       swagger: "2.0",
       info: { title: "sometitle", version: "2018" },
@@ -27,7 +27,7 @@ describe("Simple semantic validation", () => {
           get: {
             responses: {
               default: {
-                description: "Default response."
+                description: "Default response.",
               }
             }
           }
@@ -37,7 +37,9 @@ describe("Simple semantic validation", () => {
     const semanticValidator = new SemanticValidator(
       "some/file/path",
       spec,
-      {}
+      {
+        shouldModelImplicitDefaultResponse: true
+      }
     )
     const api = await semanticValidator.initialize()
     const result = await semanticValidator.validateSpec()
