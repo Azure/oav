@@ -1,5 +1,10 @@
 # Changelog
 
+### 11/08/2018 0.7.15
+
+- a source map for CloudError
+- a bug fix for embedded examples.
+
 ### 11/08/2018 0.7.14
 
 - update swagger definition
