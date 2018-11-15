@@ -14,15 +14,19 @@ export interface Result {
   result?: unknown
 }
 
-export type Scenarios = MutableStringMap<Scenario>
-
 export interface Scenario {
   isValid?: unknown
-  scenarios?: Scenarios
   readonly request?: Result
   readonly responses?: {
     [key in string | number]: Result
   }
+  error?: unknown
+}
+
+export type Scenarios = MutableStringMap<Scenario>
+
+export interface MultipleScenarios {
+  scenarios?: Scenarios
   error?: unknown
 }
 

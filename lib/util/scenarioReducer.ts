@@ -4,7 +4,7 @@
 import { processValidationErrors, ValidationResult } from "./validationError"
 import { toModelErrors } from "./toModelErrors"
 import { ValidationResultSource } from "./validationResultSource"
-import { responseReducer, Scenario } from "./responseReducer"
+import { responseReducer, MultipleScenarios, Scenario } from "./responseReducer"
 import { ModelValidationError } from "./modelValidationError"
 import { CommonError } from "./commonError"
 import * as sm from "@ts-common/string-map"
@@ -19,9 +19,14 @@ export interface Result {
   warnings?: unknown
 }
 
-export type OperationExampleResult = Scenario
+export type OperationExampleResult = MultipleScenarios
 
-export type OperationResult = sm.MutableStringMap<OperationExampleResult>
+export type OperationResultType = "x-ms-examples" | "example-in-spec"
+
+export interface OperationResult {
+  "x-ms-examples"?: MultipleScenarios
+  "example-in-spec"?: Scenario
+}
 
 export function scenarioReducer(
   scenarioName: string,
