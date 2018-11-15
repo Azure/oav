@@ -1,6 +1,6 @@
 # Changelog
 
-### 11/08/2018 0.7.15
+### 11/08/2018 0.8.0
 
 - a source map for CloudError
 - a bug fix for embedded examples.
