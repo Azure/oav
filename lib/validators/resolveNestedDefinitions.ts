@@ -128,7 +128,9 @@ export function resolveNestedDefinitions(spec: SwaggerObject, options: Options):
 
   const resolveOptionalResponses = (responses: ResponsesObject | undefined): ResponsesObject =>
     stringMapMap(
-      stringMapMerge(responses, defaultResponses.responses(responses, defaultInfoFunc)),
+      // we respect the swagger definition so we only use generated CloudError if `default`
+      // response is omitted.
+      stringMapMerge(defaultResponses.responses(responses, defaultInfoFunc), responses),
       resolveResponseObject
     )
 
