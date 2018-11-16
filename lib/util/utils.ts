@@ -85,9 +85,11 @@ export async function parseJson(
     suppressionItems: ReadonlyArray<SuppressionItem>
   ): ReadonlyArray<SuppressionItem> => {
     const urlReversed = splitPathAndReverse(specPath)
-    return suppressionItems.filter(s => it.some(
-      it.isArray(s.from) ? s.from : [s.from],
-      from => isSubPath(urlReversed, splitPathAndReverse(from)))
+    return suppressionItems.filter(
+      s => it.some(
+        it.isArray(s.from) ? s.from : [s.from],
+        from => isSubPath(urlReversed, splitPathAndReverse(from))
+      )
     )
   }
 
