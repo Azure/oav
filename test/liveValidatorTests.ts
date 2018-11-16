@@ -9,6 +9,7 @@ import { LiveValidator } from "../lib/validators/liveValidator"
 import * as Constants from "../lib/util/constants"
 import { ResponsesObject } from "yasway"
 
+const numberOfSpecs = 7
 const livePaths = glob.sync(path.join(__dirname, "liveValidation/swaggers/**/live/*.json"))
 describe("Live Validator", () => {
   describe("Initialization", () => {
@@ -177,7 +178,7 @@ describe("Live Validator", () => {
       try {
         await validator.initialize()
         assert.strictEqual(true, expectedProvider in validator.cache)
-        assert.strictEqual(6, Object.keys(validator.cache).length)
+        assert.strictEqual(numberOfSpecs, Object.keys(validator.cache).length)
         const x = validator.cache[expectedProvider]
         if (x === undefined) {
           throw new Error("x === undefined")
@@ -202,7 +203,7 @@ describe("Live Validator", () => {
       const validator = new LiveValidator(options)
       await validator.initialize()
       assert.strictEqual(true, expectedProvider in validator.cache)
-      assert.strictEqual(6, Object.keys(validator.cache).length)
+      assert.strictEqual(numberOfSpecs, Object.keys(validator.cache).length)
       const x = validator.cache[expectedProvider]
       if (x === undefined) {
         throw new Error("x === undefined")
@@ -255,7 +256,7 @@ describe("Live Validator", () => {
       }
       const validator = new LiveValidator(options)
       await validator.initialize()
-      assert.strictEqual(6, Object.keys(validator.cache).length)
+      assert.strictEqual(numberOfSpecs, Object.keys(validator.cache).length)
       const microsoftResources = validator.cache["microsoft.resources"]
       if (microsoftResources === undefined) {
         throw new Error("microsoftResources === undefined")
