@@ -79,6 +79,10 @@ const cloudErrorWrapper: SchemaObject = {
   additionalProperties: false
 }
 
+/**
+ * A generator of additional Responses and Definitions.
+ * The object will have the same source map as `defaultInfo` function.
+ */
 export interface ResponsesAndDefinitions {
   readonly definitions:
     (d: DefinitionsObject | undefined, defaultInfo: InfoFunc) => DefinitionsObject | undefined
@@ -102,6 +106,12 @@ const createImplicitDefaultResponses = (): ResponsesAndDefinitions => ({
   responses: (r, i) => cloneDeepWithInfo({ default: cloudErrorSchema }, getInfoFunc(r) || i)
 })
 
+/**
+ * The function produces a generator of definitions/responses for CloudError.
+ *
+ * @param implicitDefaultResponse if true then the function returns a response/definition
+ *                                generator which will produce CloudError definitions/responses.
+ */
 export const getDefaultResponses = (
   implicitDefaultResponse: boolean | undefined | null
 ): ResponsesAndDefinitions =>
