@@ -2,7 +2,7 @@
 
 ### 11/16/2018 0.8.1
 
-- Suppressions may have multiple where and from fields. OAV didn't handle it properly.
+- Suppressions may have multiple `where` and `from` fields. OAV didn't handle it properly.
 
 ### 11/08/2018 0.8.0
 
