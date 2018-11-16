@@ -239,6 +239,16 @@ describe("Live Validator", () => {
         1,
         p[Constants.unknownApiVersion].patch.length)
     })
+    it("should initialize for batch", async () => {
+      const options = {
+        directory: "./test/liveValidation/swaggers/specification",
+        swaggerPathsPattern:
+          "batch/resource-manager/Microsoft.Batch/stable/2017-01-01/BatchManagement.json"
+      }
+      const validator = new LiveValidator(options)
+      await validator.initialize()
+      assert.notStrictEqual(validator.cache["microsoft.batch"], undefined)
+    })
     it("should initialize for all swaggers", async () => {
       const options = {
         directory: "./test/liveValidation/swaggers/"
