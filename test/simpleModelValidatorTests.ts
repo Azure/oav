@@ -40,23 +40,6 @@ describe("simple model validation tests", () => {
     const api = await validator.initialize()
     validator.validateOperations()
     const result = validator.specValidationResult
-    const o = result.operations.op
-    if (o === undefined) {
-      throw new Error("o === undefined")
-    }
-    const e = o["example-in-spec"]
-    if (e === undefined) {
-      throw new Error("e === undefined")
-    }
-    const er = e.responses
-    if (er === undefined) {
-      throw new Error("er === undefined")
-    }
-    const err = er.default.error
-    if (err === undefined) {
-      throw new Error("err === undefined")
-    }
-    assert.strictEqual(err.code, "RESPONSE_VALIDATION_ERROR")
     assert.notStrictEqual(api, undefined)
     const errors = getErrorsFromModelValidation(result)
     assert.strictEqual(errors.length, 2)
