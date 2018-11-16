@@ -19,7 +19,9 @@ import {
   stringMapMap,
   stringMapMerge,
   getInfo,
-  getPath
+  getPath,
+  getInfoFunc,
+  InfoFunc
 } from "@ts-common/source-map"
 import { PartialFactory } from "@ts-common/property-set"
 import { Options } from "./specResolver"
@@ -35,6 +37,8 @@ const skipIfUndefined = <T>(f: (v: T) => T): ((v: T | undefined) => T | undefine
   (v) => v !== undefined ? f(v) : undefined
 
 export function resolveNestedDefinitions(spec: SwaggerObject, options: Options): SwaggerObject {
+
+  const defaultInfoFunc = getInfoFunc(spec) as InfoFunc
 
   const defaultResponses = getDefaultResponses(options.shouldModelImplicitDefaultResponse)
 
@@ -124,7 +128,9 @@ export function resolveNestedDefinitions(spec: SwaggerObject, options: Options):
 
   const resolveOptionalResponses = (responses: ResponsesObject | undefined): ResponsesObject =>
     stringMapMap(
-      stringMapMerge(responses, defaultResponses.responses),
+      // we respect the swagger definition so we only use generated CloudError if `default`
+      // response is omitted.
+      stringMapMerge(defaultResponses.responses(responses, defaultInfoFunc), responses),
       resolveResponseObject
     )
 
@@ -141,7 +147,7 @@ export function resolveNestedDefinitions(spec: SwaggerObject, options: Options):
 
   const resolveDefinitions = (definitions: DefinitionsObject | undefined) =>
     stringMapMap(
-      stringMapMerge(definitions, defaultResponses.definitions),
+      stringMapMerge(definitions, defaultResponses.definitions(definitions, defaultInfoFunc)),
       resolveSchemaObject
     )
 

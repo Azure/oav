@@ -19,6 +19,7 @@ export function operationReducer(
   const invalidScenarios = it.filter(scenariosEntries, ([_, scenario]) => !scenario.isValid)
   const result = it.flatMap(
     invalidScenarios,
-    ([scenarioName, scenario]) => scenarioReducer(scenarioName, scenario, operationId))
+    ([scenarioName, scenario]) => scenarioReducer(scenarioName, scenario, operationId)
+  )
   return result
 }
