@@ -26,7 +26,8 @@ import {
 import { Suppression, SuppressionItem } from "@azure/openapi-markdown"
 import { splitPathAndReverse, isSubPath } from "./path"
 import jp = require("jsonpath")
-import { getSchemaObjectInfo, setSchemaInfo } from '../validators/specTransformer';
+import { getSchemaObjectInfo, setSchemaInfo } from '../validators/specTransformer'
+import * as it from "@ts-common/iterator"
 
 export type DocCache = MutableStringMap<Promise<SwaggerObject>>
 
@@ -84,7 +85,12 @@ export async function parseJson(
     suppressionItems: ReadonlyArray<SuppressionItem>
   ): ReadonlyArray<SuppressionItem> => {
     const urlReversed = splitPathAndReverse(specPath)
-    return suppressionItems.filter(s => isSubPath(urlReversed, splitPathAndReverse(s.from)))
+    return suppressionItems.filter(
+      s => it.some(
+        it.isArray(s.from) ? s.from : [s.from],
+        from => isSubPath(urlReversed, splitPathAndReverse(from))
+      )
+    )
   }
 
   const suppressionArray =
@@ -104,7 +110,10 @@ export async function parseJson(
     // apply suppression
     for (const s of suppressionArray) {
       if (s.where !== undefined) {
-        const paths = jp.paths(result, s.where)
+        const paths = it.flatMap(
+          it.isArray(s.where) ? s.where : [s.where],
+          where => jp.paths(result, where)
+        )
         for (const p of paths) {
           // drop "$" and apply suppressions.
           setSuppression(getDescendantFilePosition(result, drop(p)), s.suppress)

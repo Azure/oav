@@ -9,6 +9,7 @@ import { LiveValidator } from "../lib/validators/liveValidator"
 import * as Constants from "../lib/util/constants"
 import { ResponsesObject } from "yasway"
 
+const numberOfSpecs = 7
 const livePaths = glob.sync(path.join(__dirname, "liveValidation/swaggers/**/live/*.json"))
 describe("Live Validator", () => {
   describe("Initialization", () => {
@@ -177,7 +178,7 @@ describe("Live Validator", () => {
       try {
         await validator.initialize()
         assert.strictEqual(true, expectedProvider in validator.cache)
-        assert.strictEqual(6, Object.keys(validator.cache).length)
+        assert.strictEqual(numberOfSpecs, Object.keys(validator.cache).length)
         const x = validator.cache[expectedProvider]
         if (x === undefined) {
           throw new Error("x === undefined")
@@ -202,7 +203,7 @@ describe("Live Validator", () => {
       const validator = new LiveValidator(options)
       await validator.initialize()
       assert.strictEqual(true, expectedProvider in validator.cache)
-      assert.strictEqual(6, Object.keys(validator.cache).length)
+      assert.strictEqual(numberOfSpecs, Object.keys(validator.cache).length)
       const x = validator.cache[expectedProvider]
       if (x === undefined) {
         throw new Error("x === undefined")
@@ -239,13 +240,23 @@ describe("Live Validator", () => {
         1,
         p[Constants.unknownApiVersion].patch.length)
     })
+    it("should initialize for batch", async () => {
+      const options = {
+        directory: "./test/liveValidation/swaggers/specification",
+        swaggerPathsPattern:
+          "batch/resource-manager/Microsoft.Batch/stable/2017-01-01/BatchManagement.json"
+      }
+      const validator = new LiveValidator(options)
+      await validator.initialize()
+      assert.notStrictEqual(validator.cache["microsoft.batch"], undefined)
+    })
     it("should initialize for all swaggers", async () => {
       const options = {
         directory: "./test/liveValidation/swaggers/"
       }
       const validator = new LiveValidator(options)
       await validator.initialize()
-      assert.strictEqual(6, Object.keys(validator.cache).length)
+      assert.strictEqual(numberOfSpecs, Object.keys(validator.cache).length)
       const microsoftResources = validator.cache["microsoft.resources"]
       if (microsoftResources === undefined) {
         throw new Error("microsoftResources === undefined")

@@ -5,9 +5,10 @@
 import { LiveValidator } from "../lib/validators/liveValidator"
 
 const options = {
-  directory: "C:\\vladdb\\devdiv\\repos\\azure\\azure-rest-api-specs",
+  directory: "C:\\github.com\\Azure\\azure-rest-api-specs",
   swaggerPathsPattern:
-    "specification\\dns\\resource-manager\\Microsoft.Network\\preview\\2018-03-01-preview\\dns.json"
+    "specification\\batch\\resource-manager\\Microsoft.Batch\\stable\\2017-01-01\\" +
+    "BatchManagement.json"
 }
 const validator = new LiveValidator(options)
 
