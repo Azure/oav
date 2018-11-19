@@ -3,16 +3,12 @@
 
 import { Severity } from "./severity"
 import { ValidationResultSource } from "./validationResultSource"
-
-export interface SerializedError {
-  readonly code: string
-  similarPaths: string[]
-}
+import { NodeError } from './validationError';
 
 export interface BaseValidationError {
   severity?: Severity
   errorCode?: string
-  errorDetails?: string | SerializedError
+  errorDetails?: NodeError<any>
   source?: ValidationResultSource
   count?: number
 }

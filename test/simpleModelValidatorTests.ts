@@ -9,6 +9,8 @@ describe("simple model validation tests", () => {
     const spec: SwaggerObject = {
       swagger: "2.0",
       info: { title: "sometitle", version: "2018" },
+      consumes: [ "application/json" ],
+      produces: [ "application/json" ],
       paths: {
         "/somepath": {
           get: {
@@ -17,10 +19,13 @@ describe("simple model validation tests", () => {
               default: {
                 description: "Default response.",
                 schema: {
-                  type: "string"
+                  type: "object",
+                  additionalProperties: false
                 },
                 examples: {
-                  "application/json": []
+                  "application/json": {
+                    invalid: 3,
+                  }
                 }
               }
             }
@@ -42,6 +47,11 @@ describe("simple model validation tests", () => {
     const result = validator.specValidationResult
     assert.notStrictEqual(api, undefined)
     const errors = getErrorsFromModelValidation(result)
-    assert.strictEqual(errors.length, 2)
+    assert.strictEqual(errors.length, 1)
+    if (errors[0].errorDetails === undefined) {
+      throw new Error("errors[0].errorDetails === undefined")
+    }
+    // make sure it has source map.
+    assert.notStrictEqual(errors[0].errorDetails.position, undefined);
   })
 })
