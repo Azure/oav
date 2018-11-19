@@ -5,7 +5,6 @@
 
 import assert from "assert"
 import * as validate from "../lib/validate"
-import { SerializedError } from "../lib/util/baseValidationError"
 import { ModelValidator } from '../lib/validators/modelValidator';
 
 const specPath =
@@ -57,8 +56,14 @@ describe("Model Validation", () => {
         `swagger "${specPath} with operation "${operationIds}" should report only 1 error.`
       )
 
+      if (result[0].errorDetails === undefined) {
+        throw new Error("result[0].errorDetails === undefined")
+      }
+      if (result[0].errorDetails.similarPaths === undefined) {
+        throw new Error("result[0].errorDetails.similarPaths === undefined")
+      }
       assert(
-        (result[0].errorDetails as SerializedError).similarPaths
+        result[0].errorDetails.similarPaths
           .length === 1,
         `swagger "${specPath} with operation "${operationIds}" error should have a similar path.`
       )
