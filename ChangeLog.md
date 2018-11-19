@@ -1,5 +1,9 @@
 # Changelog
 
+### 11/19/2018 0.9.0
+
+- Improve error types.
+
 ### 11/16/2018 0.8.1
 
 - Suppressions may have multiple `where` and `from` fields. OAV didn't handle it properly.
