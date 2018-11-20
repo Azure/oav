@@ -20,6 +20,10 @@ export { ModelValidationError } from "./lib/util/modelValidationError"
 export { ValidationResultSource } from "./lib/util/validationResultSource"
 export { getErrorsFromModelValidation } from "./lib/util/getErrorsFromModelValidation"
 export {
+  getErrorsFromSemanticValidation,
+  SemanticValidationError
+} from "./lib/util/getErrorsFromSemanticValidation"
+export {
   errorConstants,
   errorCodeToSeverity,
   processValidationErrors,

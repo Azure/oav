@@ -1,5 +1,9 @@
 # Changelog
 
+### 11/20/2018 0.9.1
+
+- getErrorsFromSemanticValidation().
+
 ### 11/19/2018 0.9.0
 
 - Improve error types.
