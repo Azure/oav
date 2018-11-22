@@ -1,5 +1,9 @@
 # Changelog
 
+### 11/21/2018 0.9.2
+
+- Remove `rewire()` package.
+
 ### 11/20/2018 0.9.1
 
 - getErrorsFromSemanticValidation().
