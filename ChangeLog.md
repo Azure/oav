@@ -1,5 +1,9 @@
 # Changelog
 
+### 11/26/2018 0.9.3
+
+- Use `z-schema` instead of `@ts-common/z-schema`.
+
 ### 11/21/2018 0.9.2
 
 - Remove `rewire()` package.
