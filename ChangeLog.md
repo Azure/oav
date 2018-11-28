@@ -1,5 +1,9 @@
 # Changelog
 
+### 11/28/2018 0.9.5
+
+- Better internal structure.
+
 ### 11/27/2018 0.9.4
 
 - Improve exception/error message.
