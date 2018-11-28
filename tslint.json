@@ -38,6 +38,7 @@
         "variable-name": false,
         "no-submodule-imports": false,
         "completed-docs": false,
+        "prefer-method-signature": false,
         "prefer-template": false,
         "no-unsafe-any": false,
         "restrict-plus-operands": false,

@@ -1,7 +1,6 @@
 import { ModelValidationError } from "./modelValidationError"
 import { errorCodeToSeverity } from "./validationError"
 import { ValidationResultSource } from "./validationResultSource"
-import { SerializedError } from "./baseValidationError"
 import * as it from "@ts-common/iterator"
 
 /**
@@ -26,7 +25,7 @@ export function toModelErrors(
       responseCode,
       severity,
       errorCode: value.code,
-      errorDetails: value as SerializedError,
+      errorDetails: value,
     }
     return modelError
   })

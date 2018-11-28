@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import { SchemaObject, DefinitionsObject, ResponsesObject } from "yasway"
+import { getInfoFunc, InfoFunc, cloneDeepWithInfo } from '@ts-common/source-map';
 
 export const generatedPrefix = "generated."
 
@@ -10,7 +11,7 @@ const defaultPrefix = `${generatedPrefix}default.`
 const cloudErrorName = `${defaultPrefix}CloudError`
 
 /**
- * Models a Cloud Error
+ * Cloud Error model.
  */
 const cloudError: SchemaObject = {
   type: "object",
@@ -51,21 +52,21 @@ const cloudError: SchemaObject = {
 }
 
 const cloudErrorWrapperName = `${defaultPrefix}CloudErrorWrapper`
-const cloudErrorSchemaName = `${defaultPrefix}CloudErrorSchema`
 
 /**
- * Models an ARM cloud error schema.
+ * An ARM cloud error schema.
+ *
+ * `#/definitions/${cloudErrorSchemaName}`
  */
 const cloudErrorSchema = {
   description: "Error response describing why the operation failed.",
-  title: `#/definitions/${cloudErrorSchemaName}`,
   schema: {
     $ref: `#/definitions/${cloudErrorWrapperName}`
   }
 }
 
 /**
- * Models an ARM cloud error wrapper.
+ * An ARM cloud error wrapper.
  */
 const cloudErrorWrapper: SchemaObject = {
   type: "object",
@@ -78,27 +79,40 @@ const cloudErrorWrapper: SchemaObject = {
   additionalProperties: false
 }
 
+/**
+ * A generator of additional Responses and Definitions.
+ * The object will have the same source map as `defaultInfo` function.
+ */
 export interface ResponsesAndDefinitions {
-  readonly definitions: DefinitionsObject
-  readonly responses: ResponsesObject
+  readonly definitions:
+    (d: DefinitionsObject | undefined, defaultInfo: InfoFunc) => DefinitionsObject | undefined
+  readonly responses:
+    (r: ResponsesObject | undefined, defaultInfo: InfoFunc) => ResponsesObject | undefined
 }
 
 const noDefaultResponses: ResponsesAndDefinitions = {
-  definitions: {},
-  responses: {}
+  definitions: () => undefined,
+  responses: () => undefined
 }
 
-const implicitDefaultResponses: ResponsesAndDefinitions = {
-  definitions: {
-    [cloudErrorName]: cloudError,
-    [cloudErrorWrapperName]: cloudErrorWrapper
-  },
-  responses: {
-    default: cloudErrorSchema
-  }
-}
+const createImplicitDefaultResponses = (): ResponsesAndDefinitions => ({
+  definitions: (d, i) => cloneDeepWithInfo(
+    {
+      [cloudErrorName]: cloudError,
+      [cloudErrorWrapperName]: cloudErrorWrapper,
+    },
+    getInfoFunc(d) || i
+  ),
+  responses: (r, i) => cloneDeepWithInfo({ default: cloudErrorSchema }, getInfoFunc(r) || i)
+})
 
+/**
+ * The function produces a generator of definitions/responses for CloudError.
+ *
+ * @param implicitDefaultResponse if true then the function returns a response/definition
+ *                                generator which will produce CloudError definitions/responses.
+ */
 export const getDefaultResponses = (
   implicitDefaultResponse: boolean | undefined | null
 ): ResponsesAndDefinitions =>
-  implicitDefaultResponse ? implicitDefaultResponses : noDefaultResponses
+  implicitDefaultResponse ? createImplicitDefaultResponses() : noDefaultResponses

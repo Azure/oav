@@ -1,5 +1,70 @@
 # Changelog
 
+### 11/26/2018 0.9.3
+
+- Use `z-schema` instead of `@ts-common/z-schema`.
+
+### 11/21/2018 0.9.2
+
+- Remove `rewire()` package.
+
+### 11/20/2018 0.9.1
+
+- getErrorsFromSemanticValidation().
+
+### 11/19/2018 0.9.0
+
+- Improve error types.
+
+### 11/16/2018 0.8.1
+
+- Suppressions may have multiple `where` and `from` fields. OAV didn't handle it properly.
+
+### 11/08/2018 0.8.0
+
+- a source map for CloudError
+- a bug fix for embedded examples.
+
+### 11/08/2018 0.7.14
+
+- update swagger definition
+
+### 10/23/2018 0.7.13
+
+- switch to Azure DevOps.
+
+### 10/23/2018 0.7.12
+
+- switch from `@ts-common/azure-openapi-markdown` to `@azure/openapi-markdown`.
+
+### 10/15/2018 0.7.11
+
+- exported functions don't catch exceptions.
+
+### 10/15/2018 0.7.10
+
+- Provide Title for all Schema Objects.
+
+### 10/12/2018 0.7.9
+
+- Additional source map for generated Schema objects.
+
+### 10/09/2018 0.7.8
+
+- Update `@ts-common/azure-openapi-markdown` package.
+
+### 10/08/2018 0.7.7
+
+- Fix a bug applying suppressions from HTTPS.
+
+### 10/08/2018 0.7.6
+
+- Fix a bug in ReadFile from HTTPS.
+
+### 10/08/2018 0.7.5
+
+- Get suppressions from HTTPS.
+
 ### 10/03/2018 0.7.4
 
 - Fix `@ts-common/source-map` `.d.ts` files.

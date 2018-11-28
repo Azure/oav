@@ -20,6 +20,10 @@ export { ModelValidationError } from "./lib/util/modelValidationError"
 export { ValidationResultSource } from "./lib/util/validationResultSource"
 export { getErrorsFromModelValidation } from "./lib/util/getErrorsFromModelValidation"
 export {
+  getErrorsFromSemanticValidation,
+  SemanticValidationError
+} from "./lib/util/getErrorsFromSemanticValidation"
+export {
   errorConstants,
   errorCodeToSeverity,
   processValidationErrors,
@@ -28,7 +32,7 @@ export {
   ValidationResult
 } from "./lib/util/validationError"
 
-export { executePromisesSequentially } from "./lib/util/utils"
+export { executePromisesSequentially, clearCache } from "./lib/util/utils"
 
 // Classes
 export { SpecValidator } from "./lib/validators/specValidator"

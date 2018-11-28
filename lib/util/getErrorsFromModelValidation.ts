@@ -22,18 +22,19 @@ export function getErrorsFromModelValidation(
   }
 
   const entries = sm.entries(validationResult.operations)
-  const operations = it.filterMap(
+  const operationScenarios = it.filterMap(
     entries,
     ([operationId, operation]) => {
-      const examples = operation["x-ms-examples"]
-      if (examples === undefined) {
-        return undefined
-      }
-      const scenarios = examples.scenarios
-      if (scenarios === undefined) {
-        return undefined
-      }
+      const xMsScenarios = operation["x-ms-examples"]
+      const scenario = operation["example-in-spec"]
+      const scenarios = sm.merge(
+        xMsScenarios !== undefined && xMsScenarios.scenarios !== undefined ?
+          xMsScenarios.scenarios :
+          {},
+        scenario !== undefined ? { "example-in-spec": scenario } : {}
+      )
       return { operationId, scenarios }
-    })
-  return it.toArray(it.flatMap(operations, operationReducer))
+    }
+  )
+  return it.toArray(it.flatMap(operationScenarios, operationReducer))
 }

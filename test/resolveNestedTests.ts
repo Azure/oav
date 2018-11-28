@@ -8,6 +8,8 @@ import { jsonSymbol } from "z-schema"
 
 const options: sway.Options = {
   definition: {
+    swagger: "2.0",
+    info: { title: "sometitle", version: "2018" },
     definitions: {
       A: {
         properties: {

@@ -20,9 +20,12 @@ const addFileInfo = <T extends NodeError<T>>(error: T): T => {
     try {
       const titleObject: TitleObject | undefined = JSON.parse(title)
       if (titleObject !== undefined) {
+        const { path } = titleObject
         error.position = titleObject.position
         error.url = titleObject.url
-        error.title = titleObject.title
+        if (path !== undefined) {
+          error.title = "/" + path.join("/")
+        }
         error.directives = titleObject.directives
       }
     // tslint:disable-next-line:no-empty

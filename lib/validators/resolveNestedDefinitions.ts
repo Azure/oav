@@ -19,7 +19,9 @@ import {
   stringMapMap,
   stringMapMerge,
   getInfo,
-  getPath
+  getPath,
+  getInfoFunc,
+  InfoFunc
 } from "@ts-common/source-map"
 import { PartialFactory } from "@ts-common/property-set"
 import { Options } from "./specResolver"
@@ -29,11 +31,14 @@ import {
   getDefaultResponses
 } from "./cloudError"
 import { pathToPtr } from "json-refs"
+import { setSchemaTitle, getSchemaObjectInfo, setSchemaInfo } from './specTransformer';
 
 const skipIfUndefined = <T>(f: (v: T) => T): ((v: T | undefined) => T | undefined) =>
   (v) => v !== undefined ? f(v) : undefined
 
 export function resolveNestedDefinitions(spec: SwaggerObject, options: Options): SwaggerObject {
+
+  const defaultInfoFunc = getInfoFunc(spec) as InfoFunc
 
   const defaultResponses = getDefaultResponses(options.shouldModelImplicitDefaultResponse)
 
@@ -43,6 +48,7 @@ export function resolveNestedDefinitions(spec: SwaggerObject, options: Options):
   const resolveNestedSchemaObject = (schemaObject: SchemaObject) => {
     // ignore references
     if (schemaObject.$ref !== undefined) {
+      setSchemaTitle(schemaObject)
       return schemaObject
     }
 
@@ -53,6 +59,7 @@ export function resolveNestedDefinitions(spec: SwaggerObject, options: Options):
       case "string":
       case "boolean":
       case "null":
+        setSchemaTitle(schemaObject)
         return schemaObject
     }
 
@@ -65,7 +72,9 @@ export function resolveNestedDefinitions(spec: SwaggerObject, options: Options):
     if (result !== undefined) {
       generatedDefinitions[definitionName] = result
     }
-    return { $ref: pathToPtr(["definitions", definitionName]) }
+    const refResult = { $ref: pathToPtr(["definitions", definitionName]) }
+    setSchemaInfo(refResult, getSchemaObjectInfo(schemaObject))
+    return refResult
   }
 
   // a function to resolve SchemaObject array
@@ -77,8 +86,8 @@ export function resolveNestedDefinitions(spec: SwaggerObject, options: Options):
       undefined
 
   // a function to resolve SchemaObject (top-level and nested)
-  const resolveSchemaObject = (schemaObject: SchemaObject): SchemaObject =>
-    propertySetMap<SchemaObject>(
+  const resolveSchemaObject = (schemaObject: SchemaObject): SchemaObject => {
+    const result = propertySetMap<SchemaObject>(
       schemaObject,
       {
         properties: properties => stringMapMap(properties, resolveNestedSchemaObject),
@@ -92,6 +101,9 @@ export function resolveNestedDefinitions(spec: SwaggerObject, options: Options):
         oneOf: resolveOptionalSchemaObjectArray,
       }
     )
+    setSchemaTitle(result)
+    return result
+  }
 
   const resolveParameterObject = (parameterObject: ParameterObject) =>
     propertySetMap(parameterObject, { schema: skipIfUndefined(resolveSchemaObject) })
@@ -116,7 +128,9 @@ export function resolveNestedDefinitions(spec: SwaggerObject, options: Options):
 
   const resolveOptionalResponses = (responses: ResponsesObject | undefined): ResponsesObject =>
     stringMapMap(
-      stringMapMerge(responses, defaultResponses.responses),
+      // we respect the swagger definition so we only use generated CloudError if `default`
+      // response is omitted.
+      stringMapMerge(defaultResponses.responses(responses, defaultInfoFunc), responses),
       resolveResponseObject
     )
 
@@ -133,7 +147,7 @@ export function resolveNestedDefinitions(spec: SwaggerObject, options: Options):
 
   const resolveDefinitions = (definitions: DefinitionsObject | undefined) =>
     stringMapMap(
-      stringMapMerge(definitions, defaultResponses.definitions),
+      stringMapMerge(definitions, defaultResponses.definitions(definitions, defaultInfoFunc)),
       resolveSchemaObject
     )
 

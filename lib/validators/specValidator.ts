@@ -14,7 +14,8 @@ import { ModelValidation } from "../util/getErrorsFromModelValidation"
 import { Headers } from "../templates/httpTemplate"
 import { StringMap } from "@ts-common/string-map"
 import { getSuppressions } from "./suppressions"
-import * as amd from "@ts-common/azure-openapi-markdown"
+import * as amd from "@azure/openapi-markdown"
+import { setMutableProperty } from '@ts-common/property-set';
 
 const ErrorCodes = C.ErrorCodes;
 
@@ -79,12 +80,6 @@ export class SpecValidator<T extends CommonValidationResult> {
   private specResolver: SpecResolver | null
 
   private readonly options: Options
-
-  /*
-  public getSuppression(): amd.Suppression | undefined {
-    return this.suppression
-  }
-  */
 
   /*
    * @constructor
@@ -168,7 +163,7 @@ export class SpecValidator<T extends CommonValidationResult> {
     try {
       let suppression: amd.Suppression | undefined
       if (this.specInJson === undefined || this.specInJson === null) {
-        suppression = getSuppressions(this.specPath)
+        suppression = await getSuppressions(this.specPath)
         const result = await utils.parseJson(suppression, this.specPath)
         this.specInJson = result
       }
@@ -219,9 +214,9 @@ export class SpecValidator<T extends CommonValidationResult> {
     const err: CommonError = {
       code: code.name,
       id: code.id,
-      message: message,
-      innerErrors: innerErrors ? innerErrors : undefined
+      message: message
     }
+    setMutableProperty(err, "innerErrors", innerErrors ? innerErrors : undefined)
     if (!skipValidityStatusUpdate) {
       this.updateValidityStatus()
     }

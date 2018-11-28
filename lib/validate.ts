@@ -17,22 +17,16 @@ import * as umlGeneratorLib from "./umlGenerator"
 import { getErrorsFromModelValidation } from "./util/getErrorsFromModelValidation"
 import { SemanticValidator } from "./validators/semanticValidator"
 import { ModelValidator } from "./validators/modelValidator"
-import { MutableStringMap, StringMap } from "@ts-common/string-map"
+import { StringMap } from "@ts-common/string-map"
 import { NodeError } from './util/validationError';
 import { ModelValidationError } from './util/modelValidationError';
-import { Suppression } from '@ts-common/azure-openapi-markdown';
+import { Suppression } from '@azure/openapi-markdown';
 import { getSuppressions } from './validators/suppressions';
-
-type FinalValidationResult = MutableStringMap<unknown>
 
 export interface Options extends specResolver.Options, umlGeneratorLib.Options {
   consoleLogLevel?: unknown
   logFilepath?: unknown
   pretty?: boolean
-}
-
-export const finalValidationResult: FinalValidationResult = {
-  validityStatus: true
 }
 
 export async function getDocumentsFromCompositeSwagger(
@@ -77,16 +71,7 @@ async function validate<T>(
   if (options.pretty) {
     log.consoleLogLevel = "off"
   }
-  try {
-    return await func(options)
-  } catch (err) {
-    log.error(err)
-    if (options.pretty) {
-      // tslint:disable-next-line:no-console
-      console.error(`error: ${JSON.stringify(err)}`);
-    }
-    return err
-  }
+  return await func(options)
 }
 
 type ErrorType = "error" | "warning"
@@ -125,8 +110,6 @@ export async function validateSpec(
     // with oneOf arrays which are not semantically valid in swagger 2.0 schema.
     o.shouldResolveNullableTypes = false
     const validator = new SemanticValidator(specPath, null, o)
-    finalValidationResult[specPath] = validator.specValidationResult
-
     await validator.initialize()
     log.info(`Semantically validating  ${specPath}:\n`)
     const validationResults = await validator.validateSpec()
@@ -146,7 +129,7 @@ export async function validateCompositeSpec(
   compositeSpecPath: string, options: Options
 ): Promise<ReadonlyArray<SpecValidationResult>> {
   return validate(options, async o => {
-    const suppression = getSuppressions(compositeSpecPath)
+    const suppression = await getSuppressions(compositeSpecPath)
     const docs = await getDocumentsFromCompositeSwagger(suppression, compositeSpecPath)
     o.consoleLogLevel = log.consoleLogLevel
     o.logFilepath = log.filepath
@@ -162,7 +145,6 @@ export async function validateExamples(
 ): Promise<ReadonlyArray<ModelValidationError>> {
   return await validate(options, async o => {
     const validator = new ModelValidator(specPath, null, o)
-    finalValidationResult[specPath] = validator.specValidationResult
     await validator.initialize()
     log.info(`Validating "examples" and "x-ms-examples" in  ${specPath}:\n`)
     validator.validateOperations(operationIds)
@@ -185,7 +167,7 @@ export async function validateExamplesInCompositeSpec(
   return await validate(options, async o => {
     o.consoleLogLevel = log.consoleLogLevel
     o.logFilepath = log.filepath
-    const suppression = getSuppressions(compositeSpecPath)
+    const suppression = await getSuppressions(compositeSpecPath)
     const docs = await getDocumentsFromCompositeSwagger(suppression, compositeSpecPath)
     const promiseFactories = docs.map(
       doc => async () => await validateExamples(doc, undefined, o))
@@ -202,7 +184,7 @@ export async function resolveSpec(
   log.filepath = options.logFilepath || log.filepath
   const specFileName = path.basename(specPath)
   try {
-    const suppression = getSuppressions(specPath)
+    const suppression = await getSuppressions(specPath)
     const result = await utils.parseJson(suppression, specPath)
     const resolver = new SpecResolver(specPath, result, options)
     await resolver.resolve(suppression);
@@ -228,7 +210,7 @@ export async function resolveCompositeSpec(
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
   log.filepath = options.logFilepath || log.filepath
   try {
-    const suppression = getSuppressions(specPath)
+    const suppression = await getSuppressions(specPath)
     const docs = await getDocumentsFromCompositeSwagger(suppression, specPath)
     options.consoleLogLevel = log.consoleLogLevel
     options.logFilepath = log.filepath
@@ -270,7 +252,7 @@ export async function generateWireFormatInCompositeSpec(
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
   log.filepath = options.logFilepath || log.filepath
   try {
-    const suppression = getSuppressions(compositeSpecPath)
+    const suppression = await getSuppressions(compositeSpecPath)
     const docs = await getDocumentsFromCompositeSwagger(suppression, compositeSpecPath)
     options.consoleLogLevel = log.consoleLogLevel
     options.logFilepath = log.filepath
@@ -302,7 +284,7 @@ export async function generateUml(
     shouldResolveNullableTypes: false
   }
   try {
-    const suppression = getSuppressions(specPath)
+    const suppression = await getSuppressions(specPath)
     const result = await utils.parseJson(suppression, specPath)
     const resolver = new SpecResolver(specPath, result, resolverOptions)
     const umlGenerator = new umlGeneratorLib.UmlGenerator(resolver.specInJson, options)
@@ -331,7 +313,6 @@ export function updateEndResultOfSingleValidation<T extends CommonValidationResu
   }
   if (!validator.specValidationResult.validityStatus) {
     process.exitCode = 1
-    finalValidationResult.validityStatus = validator.specValidationResult.validityStatus
   }
 }
 

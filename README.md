@@ -1,6 +1,6 @@
 # openapi-validation-tools [oav]
 
-[![Build Status](https://travis-ci.org/Azure/oav.svg?branch=master)](https://travis-ci.org/Azure/oav)
+[![Build Status](https://dev.azure.com/azure-public/adx/_apis/build/status/public.Azure.oav)](https://dev.azure.com/azure-public/adx/_build/latest?definitionId=3)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
 Tools for validating OpenAPI (Swagger) files.

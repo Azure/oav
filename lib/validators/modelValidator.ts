@@ -19,10 +19,11 @@ import * as sm from "@ts-common/string-map"
 import { Operation } from "yasway"
 import * as Sway from "yasway"
 import { ResponseWrapper } from "../models/responseWrapper"
-import { OperationExampleResult } from "../util/scenarioReducer"
+import { OperationResultType } from "../util/scenarioReducer"
 import { ModelValidationError } from "../util/modelValidationError"
 import * as msRest from "ms-rest"
 import { toArray, filter } from "@ts-common/iterator"
+import { MultipleScenarios, Scenario } from '../util/responseReducer';
 
 const HttpRequest = msRest.WebResource
 
@@ -66,8 +67,8 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
 
     for (const operation of operations) {
       this.specValidationResult.operations[operation.operationId] = {
-        [C.xmsExamples]: {},
-        [C.exampleInSpec]: {}
+        "x-ms-examples": {},
+        "example-in-spec": {}
       }
       this.validateOperation(operation)
       const operationResult = this.specValidationResult.operations[operation.operationId]
@@ -127,10 +128,10 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
 
   private getExample(
     operationId: string,
-    exampleType: string,
+    exampleType: OperationResultType,
     scenarioName: string | undefined
   ): {
-    operationResult: OperationExampleResult
+    operationResult: Scenario // OperationExampleResult
     part: string
   } {
     const operation = this.specValidationResult.operations[operationId]
@@ -142,7 +143,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       throw new Error("example is undefined")
     }
     if (exampleType === C.xmsExamples) {
-      const scenarios = example.scenarios
+      const scenarios = (example as MultipleScenarios).scenarios
       if (scenarios === undefined) {
         throw new Error("scenarios is undefined")
       }
@@ -156,7 +157,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       }
     } else {
       return {
-        operationResult: example,
+        operationResult: (example as Scenario),
         part: `for example in spec for operation "${operationId}"`
       }
     }
@@ -166,7 +167,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     operationId: string,
     requestValidationErrors: ModelValidationError[],
     requestValidationWarnings: Array<unknown> | undefined,
-    exampleType: string,
+    exampleType: OperationResultType,
     scenarioName?: string
   ): void {
     this.initializeExampleResult(operationId, exampleType, scenarioName)
@@ -207,7 +208,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     responseStatusCode: string,
     responseValidationErrors: ModelValidationError[],
     responseValidationWarnings: Array<unknown> | undefined,
-    exampleType: string,
+    exampleType: OperationResultType,
     scenarioName?: string
   ): void {
     this.initializeExampleResult(operationId, exampleType, scenarioName)
@@ -266,7 +267,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
   private constructOperationResult(
     operation: Operation,
     result: ValidationResult,
-    exampleType: string
+    exampleType: OperationResultType
   ): void {
     const operationId = operation.operationId
     if (result.exampleNotFound) {
@@ -957,7 +958,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
   }
 
   private constructRequestResult(
-    operationResult: OperationExampleResult,
+    operationResult: Scenario, // OperationExampleResult,
     isValid: unknown,
     msg: string,
     requestValidationErrors?: ModelValidationError[] | null,
@@ -988,7 +989,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
   }
 
   private constructResponseResult(
-    operationResult: OperationExampleResult,
+    operationResult: Scenario, // OperationExampleResult,
     responseStatusCode: string,
     isValid: unknown,
     msg: string,
