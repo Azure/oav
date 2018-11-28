@@ -64,7 +64,15 @@ export async function parseJson(
       if (s.where !== undefined) {
         const paths = it.flatMap(
           it.isArray(s.where) ? s.where : [s.where],
-          where => jp.paths(result, where)
+          where => {
+            try {
+              return jp.paths(result, where)
+            } catch (e) {
+              log.error(e)
+              // TODO: return the error.
+              return []
+            }
+          }
         )
         for (const p of paths) {
           // drop "$" and apply suppressions.
