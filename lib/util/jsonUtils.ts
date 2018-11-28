@@ -4,7 +4,7 @@ import { splitPathAndReverse, isSubPath } from './path'
 import * as it from "@ts-common/iterator"
 import * as docs from "./documents"
 import { getFilePosition, FilePosition, getDescendantFilePosition } from '@ts-common/source-map'
-import * as jp from "jsonpath"
+import jp = require("jsonpath")
 import { MutableStringMap } from '@ts-common/string-map'
 import { makeRequest, parseContent } from './makeRequest'
 import * as fs from "fs"
