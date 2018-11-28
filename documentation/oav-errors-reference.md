@@ -11,19 +11,20 @@ This document includes further reference for errors reported by `oav` validate-e
 
 Errors described below may apply in request or response, your result output will indicate location of the issue.
 
-| Error Code                                                                  |
-| --------------------------------------------------------------------------- |
-| [INVALID_TYPE](#INVALID_TYPE)                                               |
-| [INVALID_FORMAT](#INVALID_FORMAT)                                           |
-| [INVALID_CONTENT_TYPE](#INVALID_CONTENT_TYPE)                               |
-| [ENUM_MISMATCH](#ENUM_MISMATCH)                                             |
-| [ENUM_CASE_MISMATCH](#ENUM_CASE_MISMATCH)                                   |
-| [ONE_OF_MISSING](#ONE_OF_MISSING)                                           |
-| [ONE_OF_MULTIPLE](#ONE_OF_MULTIPLE)                                         |
-| [OBJECT_MISSING_REQUIRED_PROPERTY](#OBJECT_MISSING_REQUIRED_PROPERTY)       |
-| [OBJECT_ADDITIONAL_PROPERTIES](#OBJECT_ADDITIONAL_PROPERTIES)               |
-| [RESPONSE_STATUS_CODE_NOT_IN_EXAMPLE](#RESPONSE_STATUS_CODE_NOT_IN_EXAMPLE) |
-| [RESPONSE_SCHEMA_NOT_IN_SPEC](#RESPONSE_SCHEMA_NOT_IN_SPEC)                 |
+| Error Code                                                                    |
+| ----------------------------------------------------------------------------- |
+| [INVALID_TYPE](#INVALID_TYPE)                                                 |
+| [INVALID_FORMAT](#INVALID_FORMAT)                                             |
+| [INVALID_CONTENT_TYPE](#INVALID_CONTENT_TYPE)                                 |
+| [ENUM_MISMATCH](#ENUM_MISMATCH)                                               |
+| [ENUM_CASE_MISMATCH](#ENUM_CASE_MISMATCH)                                     |
+| [ONE_OF_MISSING](#ONE_OF_MISSING)                                             |
+| [ONE_OF_MULTIPLE](#ONE_OF_MULTIPLE)                                           |
+| [OBJECT_MISSING_REQUIRED_PROPERTY](#OBJECT_MISSING_REQUIRED_PROPERTY)         |
+| [OBJECT_ADDITIONAL_PROPERTIES](#OBJECT_ADDITIONAL_PROPERTIES)                 |
+| [RESPONSE_STATUS_CODE_NOT_IN_EXAMPLE](#RESPONSE_STATUS_CODE_NOT_IN_EXAMPLE)   |
+| [RESPONSE_SCHEMA_NOT_IN_SPEC](#RESPONSE_SCHEMA_NOT_IN_SPEC)                   |
+| [REQUIRED_PARAMETER_EXAMPLE_NOT_FOUND](#REQUIRED_PARAMETER_EXAMPLE_NOT_FOUND) |
 
 ## Errors Descriptions
 
@@ -186,5 +187,19 @@ Links: [Index](#index) | [Error descriptions](#error-descriptions)
 **Description**: When providing x-ms-examples, if there's a body of response provided in the data, the OpenAPI spec should specify a "schema" with the model representing the data.
 
 **How to fix the issue**: Verify that the OpenAPI spec describes the response schema according to the service.
+
+Links: [Index](#index) | [Error descriptions](#error-descriptions)
+
+### <a name="REQUIRED_PARAMETER_EXAMPLE_NOT_FOUND" />REQUIRED_PARAMETER_EXAMPLE_NOT_FOUND
+
+**Severity** : 0
+
+**Message** : In operation X, parameter Y is required in the swagger spec but is not present in the provided example parameter values.'.
+
+**Location**: Path to operation missing data.
+
+**Description**: When providing x-ms-examples, there's a required parameter indicated in the OpenAPI spec, but there's no paramater value in the corresponding provided example.
+
+**How to fix the issue**: Verify that the required parameter value is in the example or confirm that the OpenAPI spec is describing the parameter correctly, whether it's required or not. If the paramater is not required on the service side, an update to the OpenAPI specification may be required.
 
 Links: [Index](#index) | [Error descriptions](#error-descriptions)
