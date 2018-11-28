@@ -5,7 +5,6 @@ import * as path from "path"
 import * as Sway from "yasway"
 import { SpecResolver } from "./specResolver"
 import * as specResolver from "./specResolver"
-import * as utils from "../util/utils"
 import { log } from "../util/logging"
 import { CommonError } from "../util/commonError"
 import * as C from "../util/constants"
@@ -15,7 +14,9 @@ import { Headers } from "../templates/httpTemplate"
 import { StringMap } from "@ts-common/string-map"
 import { getSuppressions } from "./suppressions"
 import * as amd from "@azure/openapi-markdown"
-import { setMutableProperty } from '@ts-common/property-set';
+import { setMutableProperty } from "@ts-common/property-set"
+import * as docs from "../util/documents"
+import * as jsonUtils from "../util/jsonUtils"
 
 const ErrorCodes = C.ErrorCodes;
 
@@ -158,13 +159,13 @@ export class SpecValidator<T extends CommonValidationResult> {
    */
   public async initialize(): Promise<Sway.SwaggerApi> {
     if (this.options.shouldResolveRelativePaths) {
-      utils.clearCache()
+      docs.clearCache()
     }
     try {
       let suppression: amd.Suppression | undefined
       if (this.specInJson === undefined || this.specInJson === null) {
         suppression = await getSuppressions(this.specPath)
-        const result = await utils.parseJson(suppression, this.specPath)
+        const result = await jsonUtils.parseJson(suppression, this.specPath)
         this.specInJson = result
       }
 

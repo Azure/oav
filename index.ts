@@ -32,7 +32,8 @@ export {
   ValidationResult
 } from "./lib/util/validationError"
 
-export { executePromisesSequentially, clearCache } from "./lib/util/utils"
+export { executePromisesSequentially} from "./lib/util/utils"
+export { clearCache } from "./lib/util/documents"
 
 // Classes
 export { SpecValidator } from "./lib/validators/specValidator"

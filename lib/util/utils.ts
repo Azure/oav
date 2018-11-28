@@ -6,240 +6,19 @@ import { execSync } from "child_process"
 import * as util from "util"
 import * as path from "path"
 import * as jsonPointer from "json-pointer"
-import * as YAML from "js-yaml"
 import { log } from "./logging"
-import request = require("request")
 import * as lodash from "lodash"
 import * as http from "http"
 import { MutableStringMap, entries } from "@ts-common/string-map"
-import { drop } from "@ts-common/iterator"
 import { SwaggerObject, ParameterObject, SchemaObject, DataType } from "yasway"
-import * as jsonParser from "@ts-common/json-parser"
 import {
   cloneDeep,
   Data,
-  getFilePosition,
-  FilePosition,
-  getDescendantFilePosition,
   copyInfo
 } from "@ts-common/source-map"
-import { Suppression, SuppressionItem } from "@azure/openapi-markdown"
-import { splitPathAndReverse, isSubPath } from "./path"
-import jp = require("jsonpath")
-import { getSchemaObjectInfo, setSchemaInfo } from '../validators/specTransformer'
-import * as it from "@ts-common/iterator"
-
-export type DocCache = MutableStringMap<Promise<SwaggerObject>>
-
-/*
- * Caches the json docs that were successfully parsed by parseJson().
- * This avoids, fetching them again.
- * key: docPath
- * value: parsed doc in JSON format
- */
-export let docCache: DocCache = {}
-
-export function clearCache(): void {
-  docCache = {}
-}
-
-/*
- * Removes byte order marker. This catches EF BB BF (the UTF-8 BOM)
- * because the buffer-to-string conversion in `fs.readFile()`
- * translates it to FEFF, the UTF-16 BOM.
- */
-export function stripBOM(content: Buffer | string): string {
-  if (Buffer.isBuffer(content)) {
-    content = content.toString()
-  }
-  if (content.charCodeAt(0) === 0xFEFF || content.charCodeAt(0) === 0xFFFE) {
-    content = content.slice(1)
-  }
-  return content
-}
-
-const setSuppression = (info: FilePosition | undefined, code: string) => {
-  if (info !== undefined) {
-    if (info.directives === undefined) {
-      (info as any).directives = {}
-    }
-    const directives = info.directives as MutableStringMap<boolean>
-    directives[code] = true
-  }
-}
-
-/*
- * Provides a parsed JSON from the given file path or a url.
- *
- * @param {string} specPath - A local file path or a (github) url to the swagger spec.
- * The method will auto convert a github url to raw github url.
- *
- * @returns {object} jsonDoc - Parsed document in JSON format.
- */
-export async function parseJson(
-  suppression: Suppression | undefined,
-  specPath: string,
-): Promise<SwaggerObject> {
-
-  const getSuppressionArray = (
-    suppressionItems: ReadonlyArray<SuppressionItem>
-  ): ReadonlyArray<SuppressionItem> => {
-    const urlReversed = splitPathAndReverse(specPath)
-    return suppressionItems.filter(
-      s => it.some(
-        it.isArray(s.from) ? s.from : [s.from],
-        from => isSubPath(urlReversed, splitPathAndReverse(from))
-      )
-    )
-  }
-
-  const suppressionArray =
-    suppression === undefined ? [] : getSuppressionArray(suppression.directive)
-
-  if (!specPath || (specPath && typeof specPath.valueOf() !== "string")) {
-    throw new Error(
-      "A (github) url or a local file path to the swagger spec is required and must be of type " +
-        "string."
-    )
-  }
-
-  const doc = docCache[specPath]
-
-  const applySuppression = (result: SwaggerObject) => {
-    const rootInfo = getFilePosition(result)
-    // apply suppression
-    for (const s of suppressionArray) {
-      if (s.where !== undefined) {
-        const paths = it.flatMap(
-          it.isArray(s.where) ? s.where : [s.where],
-          where => jp.paths(result, where)
-        )
-        for (const p of paths) {
-          // drop "$" and apply suppressions.
-          setSuppression(getDescendantFilePosition(result, drop(p)), s.suppress)
-        }
-      } else {
-        setSuppression(rootInfo, s.suppress)
-      }
-    }
-    return result
-  }
-
-  if (doc) {
-    return await doc
-  }
-  // url
-  if (specPath.match(/^http.*/gi) !== null) {
-    // If the spec path is a url starting with https://github then let us auto convert it to an
-    // https://raw.githubusercontent url.
-    if (specPath.startsWith("https://github")) {
-      specPath = specPath.replace(
-        /^https:\/\/(github.com)(.*)blob\/(.*)/gi,
-        "https://raw.githubusercontent.com$2$3"
-      )
-    }
-    const res = makeRequest({ url: specPath, errorOnNon200Response: true }).then(applySuppression)
-    docCache[specPath] = res
-    return await res
-  } else {
-    // local file path
-    try {
-      const fileContent = fs.readFileSync(specPath, "utf8")
-      const result = parseContent(specPath, fileContent)
-      applySuppression(result)
-      docCache[specPath] = Promise.resolve(result)
-      return result
-    } catch (err) {
-      const msg =
-        `Unable to read the content or execute "JSON.parse()" on the content of file ` +
-        `"${specPath}". The error is:\n${err}`
-      const e = new Error(msg)
-      log.error(e.toString())
-      throw e
-    }
-  }
-}
-
-/*
- * Provides a parsed JSON from the given content.
- *
- * @param {string} filePath - A local file path or a (github) url to the swagger spec.
- *
- * @param {string} fileContent - The content to be parsed.
- *
- * @returns {object} jsonDoc - Parsed document in JSON format.
- */
-export function parseContent(
-  filePath: string,
-  fileContent: string
-): SwaggerObject {
-  const sanitizedContent = stripBOM(fileContent)
-  if (/.*\.json$/gi.test(filePath)) {
-    return jsonParser.parse(
-      filePath,
-      sanitizedContent,
-      e => {
-        throw Error(e.message)
-      }
-    ) as SwaggerObject
-  } else if (/.*\.ya?ml$/gi.test(filePath)) {
-    return YAML.safeLoad(sanitizedContent)
-  } else {
-    const msg =
-      `We currently support "*.json" and "*.yaml | *.yml" file formats for validating swaggers.\n` +
-      `The current file extension in "${filePath}" is not supported.`
-    throw new Error(msg)
-  }
-}
-
-export type Options = request.CoreOptions &
-  request.UrlOptions & {
-    readonly url: string
-    readonly errorOnNon200Response: unknown
-  }
-
-/*
- * Makes a generic request. It is a wrapper on top of request.js library that provides a promise
- * instead of a callback.
- *
- * @param {object} options - The request options as described over here
- *                           https://github.com/request/request#requestoptions-callback
- *
- * @param {boolean} options.errorOnNon200Response If true will reject the promise with an error if
- *                                                the response statuscode is not 200.
- *
- * @return {Promise} promise - A promise that resolves to the responseBody or rejects to an error.
- */
-export async function makeRequest(options: Options): Promise<SwaggerObject> {
-  const promise = new Promise<SwaggerObject>((resolve, reject) => {
-    request(options, (err, response, responseBody) => {
-      if (err) {
-        reject(err)
-      }
-      if (options.errorOnNon200Response && response.statusCode !== 200) {
-        const msg = `StatusCode: "${
-          response.statusCode
-        }", ResponseBody: "${responseBody}."`
-        reject(new Error(msg))
-      }
-      let res = responseBody
-      try {
-        if (typeof responseBody.valueOf() === "string") {
-          res = parseContent(options.url, responseBody)
-        }
-      } catch (error) {
-        const url = options.url
-        const text = util.inspect(error, { depth: null })
-        const msg = `An error occurred while parsing the file ${url}. The error is:\n ${text}.`
-        const e = new Error(msg)
-        reject(e)
-      }
-
-      resolve(res)
-    })
-  })
-  return await promise
-}
+import { Suppression } from "@azure/openapi-markdown"
+import { getSchemaObjectInfo, setSchemaInfo } from "../validators/specTransformer"
+import * as jsonUtils from "./jsonUtils"
 
 /*
  * Executes an array of promises sequentially. Inspiration of this method is here:
@@ -386,7 +165,7 @@ export async function parseJsonWithPathFragments(
   ...args: string[]
 ): Promise<SwaggerObject> {
   const specPath = joinPath(...args)
-  return await parseJson(suppression, specPath)
+  return await jsonUtils.parseJson(suppression, specPath)
 }
 
 /*

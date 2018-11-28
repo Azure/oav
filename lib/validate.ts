@@ -18,10 +18,11 @@ import { getErrorsFromModelValidation } from "./util/getErrorsFromModelValidatio
 import { SemanticValidator } from "./validators/semanticValidator"
 import { ModelValidator } from "./validators/modelValidator"
 import { StringMap } from "@ts-common/string-map"
-import { NodeError } from './util/validationError';
-import { ModelValidationError } from './util/modelValidationError';
-import { Suppression } from '@azure/openapi-markdown';
-import { getSuppressions } from './validators/suppressions';
+import { NodeError } from "./util/validationError"
+import { ModelValidationError } from "./util/modelValidationError"
+import { Suppression } from "@azure/openapi-markdown"
+import { getSuppressions } from "./validators/suppressions"
+import * as jsonUtils from "./util/jsonUtils"
 
 export interface Options extends specResolver.Options, umlGeneratorLib.Options {
   consoleLogLevel?: unknown
@@ -34,7 +35,7 @@ export async function getDocumentsFromCompositeSwagger(
   compositeSpecPath: string
 ): Promise<string[]> {
   try {
-    const compositeSwagger = await utils.parseJson(suppression, compositeSpecPath)
+    const compositeSwagger = await jsonUtils.parseJson(suppression, compositeSpecPath)
     if (!(compositeSwagger.documents
       && Array.isArray(compositeSwagger.documents)
       && compositeSwagger.documents.length > 0)) {
@@ -185,7 +186,7 @@ export async function resolveSpec(
   const specFileName = path.basename(specPath)
   try {
     const suppression = await getSuppressions(specPath)
-    const result = await utils.parseJson(suppression, specPath)
+    const result = await jsonUtils.parseJson(suppression, specPath)
     const resolver = new SpecResolver(specPath, result, options)
     await resolver.resolve(suppression);
     const resolvedSwagger = JSON.stringify(resolver.specInJson, null, 2)
@@ -285,7 +286,7 @@ export async function generateUml(
   }
   try {
     const suppression = await getSuppressions(specPath)
-    const result = await utils.parseJson(suppression, specPath)
+    const result = await jsonUtils.parseJson(suppression, specPath)
     const resolver = new SpecResolver(specPath, result, resolverOptions)
     const umlGenerator = new umlGeneratorLib.UmlGenerator(resolver.specInJson, options)
     const svgGraph = await umlGenerator.generateDiagramFromGraph()
