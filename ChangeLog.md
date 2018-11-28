@@ -2,6 +2,7 @@
 
 ### 11/28/2018 0.9.5
 
+- catch `jsonpath` exceptions.
 - Better internal structure.
 
 ### 11/27/2018 0.9.4
