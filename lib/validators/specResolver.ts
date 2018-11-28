@@ -234,7 +234,7 @@ export class SpecResolver {
       }
      } catch (err) {
       const e = {
-        message: err.message,
+        message: "internal error: " + err.message,
         code: ErrorCodes.ResolveSpecError.name,
         id: ErrorCodes.ResolveSpecError.id,
         innerErrors: [err]
