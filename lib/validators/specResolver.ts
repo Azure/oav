@@ -233,9 +233,7 @@ export class SpecResolver {
       }
      } catch (err) {
       const e = {
-        message:
-          `An Error occurred while resolving relative references and allOf in model definitions ` +
-          `in the swagger spec: "${this.specPath}".`,
+        message: err.message,
         code: ErrorCodes.ResolveSpecError.name,
         id: ErrorCodes.ResolveSpecError.id,
         innerErrors: [err]
