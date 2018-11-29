@@ -29,8 +29,9 @@ import {
 import { resolveNestedDefinitions } from "./resolveNestedDefinitions"
 import { getOperations } from "../util/methods"
 import { map, toArray } from "@ts-common/iterator"
-import { arrayMap } from '@ts-common/source-map'
-import { Suppression } from '@azure/openapi-markdown';
+import { arrayMap } from "@ts-common/source-map"
+import { Suppression } from "@azure/openapi-markdown"
+import * as jsonUtils from "../util/jsonUtils"
 
 const ErrorCodes = C.ErrorCodes
 
@@ -381,7 +382,7 @@ export class SpecResolver {
       docPath = utils.joinPath(docDir, parsedReference.filePath)
     }
 
-    const result = await utils.parseJson(suppression, docPath)
+    const result = await jsonUtils.parseJson(suppression, docPath)
     if (!parsedReference.localReference) {
       // Since there is no local reference we will replace the key in the object with the parsed
       // json (relative) file it is referring to.
