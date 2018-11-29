@@ -1,5 +1,9 @@
 # Changelog
 
+### 11/29/2018 0.9.6
+
+- update `@ts-common/json-parser` to properly handle UNICODE escape symbols.
+
 ### 11/28/2018 0.9.5
 
 - catch `jsonpath` exceptions.
