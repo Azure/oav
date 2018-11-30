@@ -47,7 +47,6 @@
     "z-schema": "^3.24.2"
   },
   "devDependencies": {
-    "@ts-common/local-install": "0.0.8",
     "@types/commonmark": "^0.27.1",
     "@types/glob": "^5.0.35",
     "@types/js-yaml": "^3.11.2",
@@ -126,7 +125,7 @@
     "start": "node ./dist/lib/autorestPlugin/pluginHost.js",
     "prepack": "npm install && tsc && npm run tslint",
     "cli": "node dist/cli.js",
-    "li": "local-install"
+    "li": "npm install @ts-common/local-install --no-save && local-install"
   },
   "engines": {
     "node": ">=10.11.0"
