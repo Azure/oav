@@ -3,6 +3,7 @@
 
 import { SpecResolver, Options } from "../lib/validators/specResolver"
 import { SwaggerObject } from "yasway"
+import * as jsonParser from "@ts-common/json-parser"
 
 describe("specResolver", () => {
   it("create", async () => {
@@ -19,7 +20,7 @@ describe("specResolver", () => {
       }
     }
     const options: Options = { shouldResolveAllOf: true }
-    const resolver = new SpecResolver("./", spec, options)
+    const resolver = new SpecResolver("./", spec, options, jsonParser.defaultErrorReport)
     await resolver.resolve(undefined)
   })
 })

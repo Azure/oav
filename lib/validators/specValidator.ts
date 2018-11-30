@@ -17,6 +17,7 @@ import * as amd from "@azure/openapi-markdown"
 import { setMutableProperty } from "@ts-common/property-set"
 import * as docs from "../util/documents"
 import * as jsonUtils from "../util/jsonUtils"
+import * as jsonParser from "@ts-common/json-parser"
 
 const ErrorCodes = C.ErrorCodes;
 
@@ -49,6 +50,7 @@ export interface ValidationResultScenarios {
 
 export interface SpecValidationResult extends ModelValidation {
   validityStatus: unknown
+  resolveSpec?: unknown
 }
 
 export interface ExampleResponse {
@@ -161,15 +163,22 @@ export class SpecValidator<T extends CommonValidationResult> {
     if (this.options.shouldResolveRelativePaths) {
       docs.clearCache()
     }
+    const errors: jsonParser.ParseError[] = []
+    const reportError = (e: jsonParser.ParseError) => errors.push(e)
     try {
       let suppression: amd.Suppression | undefined
       if (this.specInJson === undefined || this.specInJson === null) {
         suppression = await getSuppressions(this.specPath)
-        const result = await jsonUtils.parseJson(suppression, this.specPath)
+        const result = await jsonUtils.parseJson(suppression, this.specPath, reportError)
         this.specInJson = result
       }
 
-      this.specResolver = new SpecResolver(this.specPath, this.specInJson, this.options)
+      this.specResolver = new SpecResolver(
+        this.specPath,
+        this.specInJson,
+        this.options,
+        reportError,
+      )
       this.specInJson = (await this.specResolver.resolve(suppression)).specInJson
 
       const options = {
@@ -180,14 +189,20 @@ export class SpecValidator<T extends CommonValidationResult> {
         isPathCaseSensitive: this.options.isPathCaseSensitive
       }
       this.swaggerApi = await Sway.create(options)
-      return this.swaggerApi
     } catch (err) {
-      const e = this.constructErrorObject(ErrorCodes.ResolveSpecError, err.message, [err])
+      const e = this.constructErrorObject(ErrorCodes.InternalError, err.message, [err])
       this.specValidationResult.resolveSpec = e
       log.error(`${ErrorCodes.ResolveSpecError.name}: ${err.message}.`)
       log.error(err.stack)
       throw e
     }
+    if (errors.length > 0) {
+      const err = errors[0]
+      const e = this.constructErrorObject(ErrorCodes.JsonParsingError, err.message, errors)
+      this.specValidationResult.resolveSpec = e
+      log.error(`${ErrorCodes.ResolveSpecError.name}: ${err.message}.`)
+    }
+    return this.swaggerApi
   }
 
   /*

@@ -25,6 +25,7 @@ import { Suppression } from "@azure/openapi-markdown"
 import { setMutableProperty } from "@ts-common/property-set"
 import * as docs from "./util/documents"
 import * as jsonUtils from "./util/jsonUtils"
+import * as jsonParser from "@ts-common/json-parser"
 
 const ErrorCodes = C.ErrorCodes
 
@@ -83,7 +84,11 @@ export class WireFormatGenerator {
     }
     try {
       const suppression = await getSuppressions(this.specPath)
-      const result = await jsonUtils.parseJson(suppression, this.specPath)
+      const result = await jsonUtils.parseJson(
+        suppression,
+        this.specPath,
+        jsonParser.defaultErrorReport,
+      )
       this.specInJson = result
       const specOptions = {
         shouldResolveRelativePaths: true,
@@ -92,7 +97,12 @@ export class WireFormatGenerator {
         shouldSetAdditionalPropertiesFalse: false,
         shouldResolvePureObjects: false
       }
-      this.specResolver = new SpecResolver(this.specPath, this.specInJson, specOptions)
+      this.specResolver = new SpecResolver(
+        this.specPath,
+        this.specInJson,
+        specOptions,
+        jsonParser.defaultErrorReport,
+      )
       await this.specResolver.resolve(suppression)
       await this.resolveExamples(suppression)
       const options = {
@@ -254,7 +264,7 @@ export class WireFormatGenerator {
       docPath = utils.joinPath(docDir, parsedReference.filePath)
     }
 
-    const result = await jsonUtils.parseJson(suppression, docPath)
+    const result = await jsonUtils.parseJson(suppression, docPath, jsonParser.defaultErrorReport)
     if (!parsedReference.localReference) {
       // Since there is no local reference we will replace the key in the object with the parsed
       // json (relative) file it is referring to.

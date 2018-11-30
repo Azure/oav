@@ -3,6 +3,7 @@ import { SemanticValidator } from '../lib/validators/semanticValidator';
 import * as assert from "assert"
 
 describe("Simple semantic validation", () => {
+
   it("a valid minimal swagger should pass semantic validation", async () => {
     const spec: SwaggerObject = {
       swagger: "2.0",
@@ -18,6 +19,7 @@ describe("Simple semantic validation", () => {
     assert.notStrictEqual(api, undefined)
     assert.strictEqual(result.errors.length, 0)
   })
+
   it("semantic validation with generated CloudError", async () => {
     const spec: SwaggerObject = {
       swagger: "2.0",
