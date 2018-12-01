@@ -50,7 +50,7 @@ export interface ValidationResultScenarios {
 
 export interface SpecValidationResult extends ModelValidation {
   validityStatus: unknown
-  resolveSpec?: unknown
+  resolveSpec?: Sway.ValidationEntry
 }
 
 export interface ExampleResponse {
@@ -61,7 +61,7 @@ export interface ExampleResponse {
 export interface CommonValidationResult {
   validityStatus: unknown
   operations: {}
-  resolveSpec?: unknown
+  resolveSpec?: Sway.ValidationEntry
 }
 
 /*
@@ -199,9 +199,8 @@ export class SpecValidator<T extends CommonValidationResult> {
     if (errors.length > 0) {
       const err = errors[0]
       const e = this.constructErrorObject(ErrorCodes.JsonParsingError, err.message, errors)
-      this.specValidationResult.resolveSpec = e
+      this.specValidationResult.resolveSpec = e as any
       log.error(`${ErrorCodes.ResolveSpecError.name}: ${err.message}.`)
-      throw e
     }
     return this.swaggerApi
   }

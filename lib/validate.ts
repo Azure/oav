@@ -121,6 +121,10 @@ export async function validateSpec(
     if (o.pretty) {
       /* tslint:disable-next-line:no-console no-string-literal */
       console.log(`Semantically validating  ${specPath}:\n`)
+      const resolveSpecError = validator.specValidationResult.resolveSpec
+      if (resolveSpecError !== undefined) {
+        prettyPrint([resolveSpecError], "error")
+      }
       prettyPrint(validationResults.errors, "error")
       prettyPrint(validationResults.warnings, "warning")
     }
