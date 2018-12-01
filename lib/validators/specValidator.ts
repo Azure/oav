@@ -201,6 +201,7 @@ export class SpecValidator<T extends CommonValidationResult> {
       const e = this.constructErrorObject(ErrorCodes.JsonParsingError, err.message, errors)
       this.specValidationResult.resolveSpec = e
       log.error(`${ErrorCodes.ResolveSpecError.name}: ${err.message}.`)
+      throw e
     }
     return this.swaggerApi
   }
