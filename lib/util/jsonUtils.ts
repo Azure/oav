@@ -9,6 +9,7 @@ import { MutableStringMap } from '@ts-common/string-map'
 import { makeRequest, parseContent } from './makeRequest'
 import * as fs from "fs"
 import { log } from "./logging"
+import * as jsonParser from "@ts-common/json-parser"
 
 const setSuppression = (info: FilePosition | undefined, code: string) => {
   if (info !== undefined) {
@@ -31,6 +32,7 @@ const setSuppression = (info: FilePosition | undefined, code: string) => {
 export async function parseJson(
   suppression: Suppression | undefined,
   specPath: string,
+  reportError: jsonParser.ReportError
 ): Promise<SwaggerObject> {
 
   const getSuppressionArray = (
@@ -98,14 +100,15 @@ export async function parseJson(
         "https://raw.githubusercontent.com$2$3"
       )
     }
-    const res = makeRequest({ url: specPath, errorOnNon200Response: true }).then(applySuppression)
+    const res = makeRequest({ url: specPath, errorOnNon200Response: true }, reportError)
+      .then(applySuppression)
     docs.docCache[specPath] = res
     return await res
   } else {
     // local file path
     try {
       const fileContent = fs.readFileSync(specPath, "utf8")
-      const result = parseContent(specPath, fileContent)
+      const result = parseContent(specPath, fileContent, reportError)
       applySuppression(result)
       docs.docCache[specPath] = Promise.resolve(result)
       return result

@@ -30,16 +30,15 @@ export function stripBOM(content: Buffer | string): string {
  */
 export function parseContent(
   filePath: string,
-  fileContent: string
+  fileContent: string,
+  reportError: jsonParser.ReportError,
 ): SwaggerObject {
   const sanitizedContent = stripBOM(fileContent)
   if (/.*\.json$/gi.test(filePath)) {
     return jsonParser.parse(
       filePath,
       sanitizedContent,
-      e => {
-        throw Error(e.message)
-      }
+      reportError,
     ) as SwaggerObject
   } else if (/.*\.ya?ml$/gi.test(filePath)) {
     return yaml.safeLoad(sanitizedContent)
@@ -69,7 +68,10 @@ export type Options = request.CoreOptions &
  *
  * @return {Promise} promise - A promise that resolves to the responseBody or rejects to an error.
  */
-export async function makeRequest(options: Options): Promise<SwaggerObject> {
+export async function makeRequest(
+  options: Options,
+  reportError: jsonParser.ReportError,
+): Promise<SwaggerObject> {
   const promise = new Promise<SwaggerObject>((resolve, reject) => {
     request(options, (err, response, responseBody) => {
       if (err) {
@@ -84,7 +86,7 @@ export async function makeRequest(options: Options): Promise<SwaggerObject> {
       let res = responseBody
       try {
         if (typeof responseBody.valueOf() === "string") {
-          res = parseContent(options.url, responseBody)
+          res = parseContent(options.url, responseBody, reportError)
         }
       } catch (error) {
         const url = options.url

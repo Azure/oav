@@ -10,15 +10,13 @@ import { log } from "./logging"
 import * as lodash from "lodash"
 import * as http from "http"
 import { MutableStringMap, entries } from "@ts-common/string-map"
-import { SwaggerObject, ParameterObject, SchemaObject, DataType } from "yasway"
+import { ParameterObject, SchemaObject, DataType } from "yasway"
 import {
   cloneDeep,
   Data,
   copyInfo
 } from "@ts-common/source-map"
-import { Suppression } from "@azure/openapi-markdown"
 import { getSchemaObjectInfo, setSchemaInfo } from "../validators/specTransformer"
-import * as jsonUtils from "./jsonUtils"
 
 /*
  * Executes an array of promises sequentially. Inspiration of this method is here:
@@ -160,13 +158,15 @@ export function joinPath(...args: string[]): string {
  *
  * @returns {object} jsonDoc - Parsed document in JSON format.
  */
+/*
 export async function parseJsonWithPathFragments(
   suppression: Suppression | undefined,
-  ...args: string[]
+  ...args: string[],
 ): Promise<SwaggerObject> {
   const specPath = joinPath(...args)
   return await jsonUtils.parseJson(suppression, specPath)
 }
+*/
 
 /*
  * Merges source object into the target object
