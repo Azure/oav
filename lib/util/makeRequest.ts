@@ -97,7 +97,8 @@ export async function makeRequest(
       }
     },
     {
-      retries: 3
+      retries: 3,
+      factor: 1
     }
   )
 }
