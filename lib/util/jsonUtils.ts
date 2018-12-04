@@ -100,8 +100,7 @@ export async function parseJson(
         "https://raw.githubusercontent.com$2$3"
       )
     }
-    const res = makeRequest({ url: specPath, errorOnNon200Response: true }, reportError)
-      .then(applySuppression)
+    const res = makeRequest(specPath, reportError).then(applySuppression)
     docs.docCache[specPath] = res
     return await res
   } else {
