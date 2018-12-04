@@ -1,10 +1,9 @@
-import request = require("request")
-import { SwaggerObject } from "yasway"
 import * as jsonParser from "@ts-common/json-parser"
 import retry from "async-retry"
 import * as yaml from "js-yaml"
 import * as util from "util"
-
+import { SwaggerObject } from "yasway"
+import fetch from "node-fetch"
 /*
  * Removes byte order marker. This catches EF BB BF (the UTF-8 BOM)
  * because the buffer-to-string conversion in `fs.readFile()`
@@ -51,24 +50,6 @@ export function parseContent(
   }
 }
 
-export type Options = request.CoreOptions &
-  request.UrlOptions & {
-    readonly url: string
-    readonly errorOnNon200Response: unknown
-  }
-
-const promisifiedRequest = (options: Options) =>
-  new Promise<{ err: any; response: request.Response; responseBody: any }>(
-    (resolve, reject) =>
-      request(options, (err, response, responseBody) => {
-        if (err) {
-          reject(err)
-        }
-
-        resolve({ err, response, responseBody })
-      })
-  )
-
 /*
  * Makes a generic request. It is a wrapper on top of request.js library that provides a promise
  * instead of a callback.
@@ -82,45 +63,38 @@ const promisifiedRequest = (options: Options) =>
  * @return {Promise} promise - A promise that resolves to the responseBody or rejects to an error.
  */
 export async function makeRequest(
-  options: Options,
+  url: string,
   reportError: jsonParser.ReportError
 ): Promise<SwaggerObject> {
-  return retry(
-    async (bail, retryNr) => {
-      const { err, response, responseBody } = await promisifiedRequest(options)
+  return retry<SwaggerObject>(
+    async (bail, retryNr): Promise<SwaggerObject> => {
+      try {
+        const response = await fetch(url)
+        const body = await response.text()
 
-      if (err) {
-        const message = `Request to ${
-          options.url
-        } failed with error ${err} on retry number ${retryNr}.`
+        if (response.status !== 200) {
+          const msg = `StatusCode: "${
+            response.status
+          }", ResponseBody: "${body}."`
+
+          return bail(new Error(msg)) as any
+        }
+
+        try {
+          return parseContent(url, body, reportError)
+        } catch (parseError) {
+          const text = util.inspect(parseError, { depth: null })
+          const msg = `An error occurred while parsing the file ${url} on
+          retry number ${retryNr}.. The error is:\n ${text}.`
+
+          return bail(new Error(msg)) as any
+        }
+      } catch (fetchError) {
+        const message = `Request to ${url} failed with error ${fetchError} on
+        retry number ${retryNr}.`
 
         throw new Error(message)
       }
-
-      if (options.errorOnNon200Response && response.statusCode !== 200) {
-        const msg = `StatusCode: "${
-          response.statusCode
-        }", ResponseBody: "${responseBody}."`
-
-        return bail(new Error(msg))
-      }
-
-      let res = responseBody
-
-      try {
-        if (typeof responseBody.valueOf() === "string") {
-          res = parseContent(options.url, responseBody, reportError)
-        }
-      } catch (error) {
-        const url = options.url
-        const text = util.inspect(error, { depth: null })
-        const msg = `An error occurred while parsing the file ${url} on
-        retry number ${retryNr}.. The error is:\n ${text}.`
-
-        return bail(new Error(msg))
-      }
-
-      return res
     },
     {
       retries: 3
