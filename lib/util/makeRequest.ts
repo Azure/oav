@@ -1,6 +1,7 @@
 import request = require("request")
 import { SwaggerObject } from "yasway"
 import * as jsonParser from "@ts-common/json-parser"
+import retry from "async-retry"
 import * as yaml from "js-yaml"
 import * as util from "util"
 
@@ -56,6 +57,18 @@ export type Options = request.CoreOptions &
     readonly errorOnNon200Response: unknown
   }
 
+const promisifiedRequest = (options: Options) =>
+  new Promise<{ err: any; response: request.Response; responseBody: any }>(
+    (resolve, reject) =>
+      request(options, (err, response, responseBody) => {
+        if (err) {
+          reject(err)
+        }
+
+        resolve({ err, response, responseBody })
+      })
+  )
+
 /*
  * Makes a generic request. It is a wrapper on top of request.js library that provides a promise
  * instead of a callback.
@@ -70,20 +83,30 @@ export type Options = request.CoreOptions &
  */
 export async function makeRequest(
   options: Options,
-  reportError: jsonParser.ReportError,
+  reportError: jsonParser.ReportError
 ): Promise<SwaggerObject> {
-  const promise = new Promise<SwaggerObject>((resolve, reject) => {
-    request(options, (err, response, responseBody) => {
+  return retry(
+    async (bail, retryNr) => {
+      const { err, response, responseBody } = await promisifiedRequest(options)
+
       if (err) {
-        reject(err)
+        const message = `Request to ${
+          options.url
+        } failed with error ${err} on retry number ${retryNr}.`
+
+        throw new Error(message)
       }
+
       if (options.errorOnNon200Response && response.statusCode !== 200) {
         const msg = `StatusCode: "${
           response.statusCode
         }", ResponseBody: "${responseBody}."`
-        reject(new Error(msg))
+
+        return bail(new Error(msg))
       }
+
       let res = responseBody
+
       try {
         if (typeof responseBody.valueOf() === "string") {
           res = parseContent(options.url, responseBody, reportError)
@@ -91,13 +114,16 @@ export async function makeRequest(
       } catch (error) {
         const url = options.url
         const text = util.inspect(error, { depth: null })
-        const msg = `An error occurred while parsing the file ${url}. The error is:\n ${text}.`
-        const e = new Error(msg)
-        reject(e)
+        const msg = `An error occurred while parsing the file ${url} on
+        retry number ${retryNr}.. The error is:\n ${text}.`
+
+        return bail(new Error(msg))
       }
 
-      resolve(res)
-    })
-  })
-  return await promise
+      return res
+    },
+    {
+      retries: 3
+    }
+  )
 }
