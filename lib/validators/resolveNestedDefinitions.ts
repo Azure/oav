@@ -10,7 +10,6 @@ import {
   PathItemObject,
   OperationObject,
   ResponseSchemaObject,
-  ResponsesObject
 } from "yasway"
 import * as uuid from "uuid"
 import {
@@ -20,27 +19,17 @@ import {
   stringMapMerge,
   getInfo,
   getPath,
-  getInfoFunc,
-  InfoFunc
 } from "@ts-common/source-map"
 import { PartialFactory } from "@ts-common/property-set"
-import { Options } from "./specResolver"
 import { MutableStringMap } from "@ts-common/string-map"
-import {
-  generatedPrefix,
-  getDefaultResponses
-} from "./cloudError"
 import { pathToPtr } from "json-refs"
 import { setSchemaTitle, getSchemaObjectInfo, setSchemaInfo } from './specTransformer';
+import { generatedPrefix } from './cloudError';
 
 const skipIfUndefined = <T>(f: (v: T) => T): ((v: T | undefined) => T | undefined) =>
   (v) => v !== undefined ? f(v) : undefined
 
-export function resolveNestedDefinitions(spec: SwaggerObject, options: Options): SwaggerObject {
-
-  const defaultInfoFunc = getInfoFunc(spec) as InfoFunc
-
-  const defaultResponses = getDefaultResponses(options.shouldModelImplicitDefaultResponse)
+export function resolveNestedDefinitions(spec: SwaggerObject): SwaggerObject {
 
   const generatedDefinitions: MutableStringMap<SchemaObject> = {}
 
@@ -126,28 +115,19 @@ export function resolveNestedDefinitions(spec: SwaggerObject, options: Options):
       arrayMap(parameters, resolveParameterObject) :
       undefined
 
-  const resolveOptionalResponses = (responses: ResponsesObject | undefined): ResponsesObject =>
-    stringMapMap(
-      // we respect the swagger definition so we only use generated CloudError if `default`
-      // response is omitted.
-      stringMapMerge(defaultResponses.responses(responses, defaultInfoFunc), responses),
-      resolveResponseObject
-    )
-
   const resolveOptionalOperationObject = (operationObject: OperationObject | undefined) =>
     operationObject !== undefined ?
       propertySetMap<OperationObject>(
         operationObject,
         {
-          parameters: resolveOptionalParameterArray,
-          responses: resolveOptionalResponses,
+          parameters: resolveOptionalParameterArray
         }
       ) :
       undefined
 
   const resolveDefinitions = (definitions: DefinitionsObject | undefined) =>
     stringMapMap(
-      stringMapMerge(definitions, defaultResponses.definitions(definitions, defaultInfoFunc)),
+      definitions,
       resolveSchemaObject
     )
 

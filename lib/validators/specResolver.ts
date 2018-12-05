@@ -214,7 +214,7 @@ export class SpecResolver {
         await this.resolveRelativePaths(suppression)
       }
       // resolve nested definitions
-      this.specInJson = resolveNestedDefinitions(this.specInJson, this.options)
+      this.specInJson = resolveNestedDefinitions(this.specInJson)
 
       // other resolvers (should be moved to resolveNestedDefinitions())
       if (this.options.shouldResolveAllOf) {
