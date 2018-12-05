@@ -18,10 +18,12 @@ import { getErrorsFromModelValidation } from "./util/getErrorsFromModelValidatio
 import { SemanticValidator } from "./validators/semanticValidator"
 import { ModelValidator } from "./validators/modelValidator"
 import { StringMap } from "@ts-common/string-map"
-import { NodeError } from './util/validationError';
-import { ModelValidationError } from './util/modelValidationError';
-import { Suppression } from '@azure/openapi-markdown';
-import { getSuppressions } from './validators/suppressions';
+import { NodeError } from "./util/validationError"
+import { ModelValidationError } from "./util/modelValidationError"
+import { Suppression } from "@azure/openapi-markdown"
+import { getSuppressions } from "./validators/suppressions"
+import * as jsonUtils from "./util/jsonUtils"
+import * as jsonParser from "@ts-common/json-parser"
 
 export interface Options extends specResolver.Options, umlGeneratorLib.Options {
   consoleLogLevel?: unknown
@@ -31,10 +33,11 @@ export interface Options extends specResolver.Options, umlGeneratorLib.Options {
 
 export async function getDocumentsFromCompositeSwagger(
   suppression: Suppression | undefined,
-  compositeSpecPath: string
+  compositeSpecPath: string,
+  reportError: jsonParser.ReportError
 ): Promise<string[]> {
   try {
-    const compositeSwagger = await utils.parseJson(suppression, compositeSpecPath)
+    const compositeSwagger = await jsonUtils.parseJson(suppression, compositeSpecPath, reportError)
     if (!(compositeSwagger.documents
       && Array.isArray(compositeSwagger.documents)
       && compositeSwagger.documents.length > 0)) {
@@ -118,6 +121,10 @@ export async function validateSpec(
     if (o.pretty) {
       /* tslint:disable-next-line:no-console no-string-literal */
       console.log(`Semantically validating  ${specPath}:\n`)
+      const resolveSpecError = validator.specValidationResult.resolveSpec
+      if (resolveSpecError !== undefined) {
+        prettyPrint([resolveSpecError], "error")
+      }
       prettyPrint(validationResults.errors, "error")
       prettyPrint(validationResults.warnings, "warning")
     }
@@ -130,7 +137,11 @@ export async function validateCompositeSpec(
 ): Promise<ReadonlyArray<SpecValidationResult>> {
   return validate(options, async o => {
     const suppression = await getSuppressions(compositeSpecPath)
-    const docs = await getDocumentsFromCompositeSwagger(suppression, compositeSpecPath)
+    const docs = await getDocumentsFromCompositeSwagger(
+      suppression,
+      compositeSpecPath,
+      jsonParser.defaultErrorReport
+    )
     o.consoleLogLevel = log.consoleLogLevel
     o.logFilepath = log.filepath
     const promiseFactories = docs.map(doc => async () => await validateSpec(doc, o))
@@ -168,7 +179,11 @@ export async function validateExamplesInCompositeSpec(
     o.consoleLogLevel = log.consoleLogLevel
     o.logFilepath = log.filepath
     const suppression = await getSuppressions(compositeSpecPath)
-    const docs = await getDocumentsFromCompositeSwagger(suppression, compositeSpecPath)
+    const docs = await getDocumentsFromCompositeSwagger(
+      suppression,
+      compositeSpecPath,
+      jsonParser.defaultErrorReport
+    )
     const promiseFactories = docs.map(
       doc => async () => await validateExamples(doc, undefined, o))
     return await utils.executePromisesSequentially(promiseFactories)
@@ -176,7 +191,10 @@ export async function validateExamplesInCompositeSpec(
 }
 
 export async function resolveSpec(
-  specPath: string, outputDir: string, options: Options
+  specPath: string,
+  outputDir: string,
+  options: Options,
+  reportError: jsonParser.ReportError,
 ): Promise<void> {
 
   if (!options) { options = {} }
@@ -185,8 +203,8 @@ export async function resolveSpec(
   const specFileName = path.basename(specPath)
   try {
     const suppression = await getSuppressions(specPath)
-    const result = await utils.parseJson(suppression, specPath)
-    const resolver = new SpecResolver(specPath, result, options)
+    const result = await jsonUtils.parseJson(suppression, specPath, reportError)
+    const resolver = new SpecResolver(specPath, result, options, reportError)
     await resolver.resolve(suppression);
     const resolvedSwagger = JSON.stringify(resolver.specInJson, null, 2)
     if (outputDir !== "./" && !fs.existsSync(outputDir)) {
@@ -211,10 +229,21 @@ export async function resolveCompositeSpec(
   log.filepath = options.logFilepath || log.filepath
   try {
     const suppression = await getSuppressions(specPath)
-    const docs = await getDocumentsFromCompositeSwagger(suppression, specPath)
+    const docs = await getDocumentsFromCompositeSwagger(
+      suppression,
+      specPath,
+      jsonParser.defaultErrorReport
+    )
     options.consoleLogLevel = log.consoleLogLevel
     options.logFilepath = log.filepath
-    const promiseFactories = docs.map(doc => async () => await resolveSpec(doc, outputDir, options))
+    const promiseFactories = docs.map(doc => async () =>
+      await resolveSpec(
+        doc,
+        outputDir,
+        options,
+        jsonParser.defaultErrorReport
+      )
+    )
     await utils.executePromisesSequentially(promiseFactories)
   } catch (err) {
     log.error(err)
@@ -253,7 +282,11 @@ export async function generateWireFormatInCompositeSpec(
   log.filepath = options.logFilepath || log.filepath
   try {
     const suppression = await getSuppressions(compositeSpecPath)
-    const docs = await getDocumentsFromCompositeSwagger(suppression, compositeSpecPath)
+    const docs = await getDocumentsFromCompositeSwagger(
+      suppression,
+      compositeSpecPath,
+      jsonParser.defaultErrorReport
+    )
     options.consoleLogLevel = log.consoleLogLevel
     options.logFilepath = log.filepath
     const promiseFactories = docs.map(doc =>
@@ -285,8 +318,13 @@ export async function generateUml(
   }
   try {
     const suppression = await getSuppressions(specPath)
-    const result = await utils.parseJson(suppression, specPath)
-    const resolver = new SpecResolver(specPath, result, resolverOptions)
+    const result = await jsonUtils.parseJson(suppression, specPath, jsonParser.defaultErrorReport)
+    const resolver = new SpecResolver(
+      specPath,
+      result,
+      resolverOptions,
+      jsonParser.defaultErrorReport
+    )
     const umlGenerator = new umlGeneratorLib.UmlGenerator(resolver.specInJson, options)
     const svgGraph = await umlGenerator.generateDiagramFromGraph()
     if (outputDir !== "./" && !fs.existsSync(outputDir)) {

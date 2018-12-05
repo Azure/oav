@@ -20,9 +20,12 @@ import { MutableStringMap, StringMap, entries } from "@ts-common/string-map"
 import { PathTemplateBasedRequestPrepareOptions } from "ms-rest"
 import { Responses, Headers } from "./templates/httpTemplate"
 import { map, toArray } from "@ts-common/iterator"
-import { getSuppressions } from './validators/suppressions';
-import { Suppression } from '@azure/openapi-markdown';
-import { setMutableProperty } from '@ts-common/property-set';
+import { getSuppressions } from "./validators/suppressions"
+import { Suppression } from "@azure/openapi-markdown"
+import { setMutableProperty } from "@ts-common/property-set"
+import * as docs from "./util/documents"
+import * as jsonUtils from "./util/jsonUtils"
+import * as jsonParser from "@ts-common/json-parser"
 
 const ErrorCodes = C.ErrorCodes
 
@@ -77,11 +80,15 @@ export class WireFormatGenerator {
 
   public async initialize(): Promise<Sway.SwaggerApi> {
     if (this.options.shouldResolveRelativePaths) {
-      utils.clearCache()
+      docs.clearCache()
     }
     try {
       const suppression = await getSuppressions(this.specPath)
-      const result = await utils.parseJson(suppression, this.specPath)
+      const result = await jsonUtils.parseJson(
+        suppression,
+        this.specPath,
+        jsonParser.defaultErrorReport,
+      )
       this.specInJson = result
       const specOptions = {
         shouldResolveRelativePaths: true,
@@ -90,7 +97,12 @@ export class WireFormatGenerator {
         shouldSetAdditionalPropertiesFalse: false,
         shouldResolvePureObjects: false
       }
-      this.specResolver = new SpecResolver(this.specPath, this.specInJson, specOptions)
+      this.specResolver = new SpecResolver(
+        this.specPath,
+        this.specInJson,
+        specOptions,
+        jsonParser.defaultErrorReport,
+      )
       await this.specResolver.resolve(suppression)
       await this.resolveExamples(suppression)
       const options = {
@@ -252,7 +264,7 @@ export class WireFormatGenerator {
       docPath = utils.joinPath(docDir, parsedReference.filePath)
     }
 
-    const result = await utils.parseJson(suppression, docPath)
+    const result = await jsonUtils.parseJson(suppression, docPath, jsonParser.defaultErrorReport)
     if (!parsedReference.localReference) {
       // Since there is no local reference we will replace the key in the object with the parsed
       // json (relative) file it is referring to.

@@ -1,5 +1,18 @@
 # Changelog
 
+### 11/29/2018 0.9.6
+
+- update `@ts-common/json-parser` to properly handle UNICODE escape symbols.
+
+### 11/28/2018 0.9.5
+
+- catch `jsonpath` exceptions.
+- Better internal structure.
+
+### 11/27/2018 0.9.4
+
+- Improve exception/error message.
+
 ### 11/26/2018 0.9.3
 
 - Use `z-schema` instead of `@ts-common/z-schema`.

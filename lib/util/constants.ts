@@ -60,7 +60,7 @@ export const ErrorCodes = {
     name: "OPERATION_NOT_FOUND_IN_CACHE_WITH_PROVIDER",
     id: "OAV128"
   }, // Implies we never found correct provider in cache
-  DoubleForwardSlashesInUrl: { name: "DOUBLE_FORWARD_SLASHES_IN_URL", id: "OAV129" }
+  DoubleForwardSlashesInUrl: { name: "DOUBLE_FORWARD_SLASHES_IN_URL", id: "OAV129" },
 }
 
 export const knownTitleToResourceProviders: StringMap<string> = {

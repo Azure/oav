@@ -29,8 +29,10 @@ import {
 import { resolveNestedDefinitions } from "./resolveNestedDefinitions"
 import { getOperations } from "../util/methods"
 import { map, toArray } from "@ts-common/iterator"
-import { arrayMap } from '@ts-common/source-map'
-import { Suppression } from '@azure/openapi-markdown';
+import { arrayMap } from "@ts-common/source-map"
+import { Suppression } from "@azure/openapi-markdown"
+import * as jsonUtils from "../util/jsonUtils"
+import * as jsonParser from "@ts-common/json-parser"
 
 const ErrorCodes = C.ErrorCodes
 
@@ -111,7 +113,12 @@ export class SpecResolver {
    *
    * @return {object} An instance of the SpecResolver class.
    */
-  public constructor(specPath: string, specInJson: SwaggerObject, options: Options) {
+  public constructor(
+    specPath: string,
+    specInJson: SwaggerObject,
+    options: Options,
+    private readonly reportError: jsonParser.ReportError
+  ) {
     if (
       specPath === null ||
       specPath === undefined ||
@@ -233,11 +240,9 @@ export class SpecResolver {
       }
      } catch (err) {
       const e = {
-        message:
-          `An Error occurred while resolving relative references and allOf in model definitions ` +
-          `in the swagger spec: "${this.specPath}".`,
-        code: ErrorCodes.ResolveSpecError.name,
-        id: ErrorCodes.ResolveSpecError.id,
+        message: "internal error: " + err.message,
+        code: ErrorCodes.InternalError.name,
+        id: ErrorCodes.InternalError.id,
         innerErrors: [err]
       }
       log.error(err)
@@ -345,7 +350,7 @@ export class SpecResolver {
     refDetails: RefDetails,
     doc: unknown,
     docPath: string | undefined,
-    suppression: Suppression | undefined,
+    suppression: Suppression | undefined
   ): Promise<void> {
     if (!refName || (refName && typeof refName.valueOf() !== "string")) {
       throw new Error(
@@ -383,7 +388,7 @@ export class SpecResolver {
       docPath = utils.joinPath(docDir, parsedReference.filePath)
     }
 
-    const result = await utils.parseJson(suppression, docPath)
+    const result = await jsonUtils.parseJson(suppression, docPath, this.reportError)
     if (!parsedReference.localReference) {
       // Since there is no local reference we will replace the key in the object with the parsed
       // json (relative) file it is referring to.
