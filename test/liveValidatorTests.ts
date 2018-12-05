@@ -8,6 +8,7 @@ import * as glob from "glob"
 import { LiveValidator } from "../lib/validators/liveValidator"
 import * as Constants from "../lib/util/constants"
 import { ResponsesObject } from "yasway"
+import * as errorCodes from "../lib/util/errorCodes"
 
 const numberOfSpecs = 7
 const livePaths = glob.sync(path.join(__dirname, "liveValidation/swaggers/**/live/*.json"))
@@ -374,7 +375,10 @@ describe("Live Validator", () => {
       if (reason === undefined) {
         throw new Error("reason is undefined")
       }
-      assert.strictEqual(Constants.ErrorCodes.OperationNotFoundInCacheWithApi.name, reason.code)
+      {
+        const code: errorCodes.Code = "OPERATION_NOT_FOUND_IN_CACHE_WITH_API"
+        assert.strictEqual(code, reason.code)
+      }
 
       // Operations to match is StorageAccounts_CheckNameAvailability with provider "Hello.World"
       // [non cached provider]
@@ -385,10 +389,10 @@ describe("Live Validator", () => {
       if (reason === undefined) {
         throw new Error("reason is undefined")
       }
-      assert.strictEqual(
-        Constants.ErrorCodes.OperationNotFoundInCacheWithProvider.name,
-        reason.code
-      )
+      {
+        const code: errorCodes.Code = "OPERATION_NOT_FOUND_IN_CACHE_WITH_PROVIDER"
+        assert.strictEqual(code, reason.code)
+      }
 
       // Operations to match is StorageAccounts_Delete with verb "head" [non cached http verb]
       result = validator.getPotentialOperations(nonCachedVerbUrl, "head")
@@ -398,7 +402,10 @@ describe("Live Validator", () => {
       if (reason === undefined) {
         throw new Error("reason is undefined")
       }
-      assert.strictEqual(Constants.ErrorCodes.OperationNotFoundInCacheWithVerb.name, reason.code)
+      {
+        const code: errorCodes.Code = "OPERATION_NOT_FOUND_IN_CACHE_WITH_VERB"
+        assert.strictEqual(code, reason.code)
+      }
 
       // Operations to match is with path
       // "subscriptions/subscriptionId/providers/Microsoft.Storage/" +
@@ -411,7 +418,10 @@ describe("Live Validator", () => {
       if (reason === undefined) {
         throw new Error("reason is undefined")
       }
-      assert.strictEqual(Constants.ErrorCodes.OperationNotFoundInCache.name, reason.code)
+      {
+        const code: errorCodes.Code = "OPERATION_NOT_FOUND_IN_CACHE"
+        assert.strictEqual(code, reason.code)
+      }
     })
     it("it should create an implicit default response and find it", async () => {
       const options = {

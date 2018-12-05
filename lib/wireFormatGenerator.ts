@@ -25,9 +25,8 @@ import { Suppression } from "@azure/openapi-markdown"
 import { setMutableProperty } from "@ts-common/property-set"
 import * as docs from "./util/documents"
 import * as jsonUtils from "./util/jsonUtils"
-import * as jsonParser from "@ts-common/json-parser"
-
-const ErrorCodes = C.ErrorCodes
+import * as reportError from "./util/reportError"
+import * as errorCodes from "./util/errorCodes"
 
 export class WireFormatGenerator {
   private readonly specPath: string
@@ -43,7 +42,8 @@ export class WireFormatGenerator {
     specPath: string,
     specInJson: Sway.SwaggerObject | null,
     wireFormatDir: string,
-    emitYaml: unknown
+    emitYaml: unknown,
+    private readonly re: reportError.Report
   ) {
     if (specPath === null
       || specPath === undefined
@@ -87,7 +87,7 @@ export class WireFormatGenerator {
       const result = await jsonUtils.parseJson(
         suppression,
         this.specPath,
-        jsonParser.defaultErrorReport,
+        this.re
       )
       this.specInJson = result
       const specOptions = {
@@ -101,7 +101,7 @@ export class WireFormatGenerator {
         this.specPath,
         this.specInJson,
         specOptions,
-        jsonParser.defaultErrorReport,
+        this.re,
       )
       await this.specResolver.resolve(suppression)
       await this.resolveExamples(suppression)
@@ -113,9 +113,10 @@ export class WireFormatGenerator {
       this.swaggerApi = api
       return api
     } catch (err) {
-      const e = this.constructErrorObject(ErrorCodes.ResolveSpecError, err.message, [err])
+      const code: errorCodes.Code = "RESOLVE_SPEC_ERROR"
+      const e = this.constructErrorObject(code, err.message, [err])
       // self.specValidationResult.resolveSpec = e;
-      log.error(`${ErrorCodes.ResolveSpecError.name}: ${err.message}.`)
+      log.error(`${code}: ${err.message}.`)
       log.error(err.stack)
       throw e
     }
@@ -264,7 +265,7 @@ export class WireFormatGenerator {
       docPath = utils.joinPath(docDir, parsedReference.filePath)
     }
 
-    const result = await jsonUtils.parseJson(suppression, docPath, jsonParser.defaultErrorReport)
+    const result = await jsonUtils.parseJson(suppression, docPath, this.re)
     if (!parsedReference.localReference) {
       // Since there is no local reference we will replace the key in the object with the parsed
       // json (relative) file it is referring to.

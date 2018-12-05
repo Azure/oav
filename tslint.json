@@ -61,7 +61,8 @@
         "max-file-line-count": false,
         "no-for-in-array": false,
         "match-default-export-name": false,
-        "linebreak-style": false
+        "linebreak-style": false,
+        "object-literal-key-quotes": false
     },
     "rulesDirectory": []
 }

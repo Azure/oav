@@ -5,7 +5,6 @@ import { log } from "../util/logging"
 import * as validate from "../validate"
 import * as yargs from "yargs"
 import { cliSuppressExceptions } from '../cliSuppressExceptions'
-import * as jsonParser from "@ts-common/json-parser"
 
 export const command = "resolve-spec <spec-path>"
 
@@ -91,7 +90,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       if (specPath.match(/.*composite.*/ig) !== null) {
         await validate.resolveCompositeSpec(specPath, argv.d, vOptions)
       } else {
-        await validate.resolveSpec(specPath, argv.d, vOptions, jsonParser.defaultErrorReport)
+        await validate.resolveSpec(specPath, argv.d, vOptions, (_, m) => { throw m })
       }
     }
   )

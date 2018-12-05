@@ -3,7 +3,6 @@
 
 import { SpecValidator, CommonValidationResult } from "./specValidator"
 import * as Sway from "yasway"
-import { ErrorCodes } from "../util/constants"
 import { log } from "../util/logging"
 import { validateResponse } from "../util/validationResponse"
 import * as C from "../util/constants"
@@ -11,6 +10,7 @@ import * as util from "util"
 import { CommonError } from "../util/commonError"
 import { keys } from "@ts-common/string-map"
 import { processErrors } from "../util/processErrors"
+import * as errorCodes from "../util/errorCodes"
 
 export interface Result {
   isValid?: unknown
@@ -38,10 +38,11 @@ export class SemanticValidator extends SpecValidator<SemanticValidationResult> {
       const msg =
         `Please call "specValidator.initialize()" before calling this method, ` +
         `so that swaggerApi is populated.`
-      const e = this.constructErrorObject<{}>(ErrorCodes.InitializationError, msg)
+      const code: errorCodes.Code = "INITIALIZATION_ERROR"
+      const e = this.constructErrorObject(code, msg)
       this.specValidationResult.initialize = e
       this.specValidationResult.validateSpec.isValid = false
-      log.error(`${ErrorCodes.InitializationError.name}: ${msg}`)
+      log.error(`${code}: ${msg}`)
       throw e
     }
     try {
@@ -51,11 +52,14 @@ export class SemanticValidator extends SpecValidator<SemanticValidationResult> {
           this.specValidationResult.validateSpec.isValid = false
           processErrors(validationResult.errors)
           const e = this.constructErrorObject(
-            ErrorCodes.SemanticValidationError,
+            "SEMANTIC_VALIDATION_ERROR",
             `The spec ${this.specPath} has semantic validation errors.`,
-            validationResult.errors)
+            validationResult.errors as any[])
           this.specValidationResult.validateSpec.errors = validateResponse.constructErrors(
-            e, this.specPath, this.getProviderNamespace())
+            e,
+            this.specPath,
+            this.getProviderNamespace()
+          )
           log.error(C.Errors)
           log.error("------")
           this.updateValidityStatus()
@@ -79,8 +83,8 @@ export class SemanticValidator extends SpecValidator<SemanticValidationResult> {
     } catch (err) {
       const msg =
         `An Internal Error occurred in validating the spec "${this.specPath}". \t${err.message}.`
-      err.code = ErrorCodes.InternalError.name
-      err.id = ErrorCodes.InternalError.id
+      const code: errorCodes.Code = "INTERNAL_ERROR"
+      err.code = code
       err.message = msg
       this.specValidationResult.validateSpec.isValid = false
       this.specValidationResult.validateSpec.error = err

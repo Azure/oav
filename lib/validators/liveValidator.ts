@@ -9,7 +9,6 @@ import * as _ from "lodash"
 import * as glob from "glob"
 import * as msRest from "ms-rest"
 import { SpecValidator } from "./specValidator"
-import * as C from "../util/constants"
 import { log } from "../util/logging"
 import * as utils from "../util/utils"
 import * as models from "../models"
@@ -18,6 +17,9 @@ import { PotentialOperationsResult } from "../models/potentialOperationsResult"
 import { Operation, Request } from "yasway"
 import { ParsedUrlQuery } from "querystring"
 import { MutableStringMap } from "@ts-common/string-map"
+import * as liveValidationErrors from "./liveValidationErrors"
+import * as constants from "../util/constants"
+import * as errorCodes from "../util/errorCodes"
 
 export interface Options {
   swaggerPaths: string[]
@@ -256,12 +258,12 @@ export class LiveValidator {
     requestMethod = requestMethod.toLowerCase()
     let result
     let msg
-    let code
+    let code: errorCodes.Code
     let liveValidationError: models.LiveValidationError | undefined
     if (pathStr === null || pathStr === undefined) {
       msg = `Could not find path from requestUrl: "${requestUrl}".`
-      liveValidationError = new models.LiveValidationError(
-        C.ErrorCodes.PathNotFoundInRequestUrl.name,
+      liveValidationError = liveValidationErrors.create(
+        "PATH_NOT_FOUND_IN_REQUEST_URL",
         msg
       )
       result = new models.PotentialOperationsResult(
@@ -280,9 +282,9 @@ export class LiveValidator {
     let provider = utils.getProvider(pathStr)
 
     // Provider would be provider found from the path or Microsoft.Unknown
-    provider = provider || C.unknownResourceProvider
-    if (provider === C.unknownResourceProvider) {
-      apiVersion = C.unknownApiVersion
+    provider = provider || constants.unknownResourceProvider
+    if (provider === constants.unknownResourceProvider) {
+      apiVersion = constants.unknownApiVersion
     }
     provider = provider.toLowerCase()
 
@@ -306,19 +308,19 @@ export class LiveValidator {
             msg =
               `Could not find best match operation for verb "${requestMethod}" for api-version ` +
               `"${apiVersion}" and provider "${provider}" in the cache.`
-            code = C.ErrorCodes.OperationNotFoundInCache
+            code = "OPERATION_NOT_FOUND_IN_CACHE"
           } else {
             msg =
               `Could not find any methods with verb "${requestMethod}" for api-version ` +
               `"${apiVersion}" and provider "${provider}" in the cache.`
-            code = C.ErrorCodes.OperationNotFoundInCacheWithVerb
+            code = "OPERATION_NOT_FOUND_IN_CACHE_WITH_VERB"
             log.debug(msg)
           }
         } else {
           msg =
             `Could not find exact api-version "${apiVersion}" for provider "${provider}" ` +
             `in the cache.`
-          code = C.ErrorCodes.OperationNotFoundInCacheWithApi
+          code = "OPERATION_NOT_FOUND_IN_CACHE_WITH_API"
           log.debug(
             `${msg} We'll search in the resource provider "Microsoft.Unknown".`
           )
@@ -330,13 +332,13 @@ export class LiveValidator {
         }
       } else {
         msg = `Could not find api-version in requestUrl "${requestUrl}".`
-        code = C.ErrorCodes.OperationNotFoundInCacheWithApi
+        code = "OPERATION_NOT_FOUND_IN_CACHE_WITH_API"
         log.debug(msg)
       }
     } else {
       // provider does not exist in cache
       msg = `Could not find provider "${provider}" in the cache.`
-      code = C.ErrorCodes.OperationNotFoundInCacheWithProvider
+      code = "OPERATION_NOT_FOUND_IN_CACHE_WITH_PROVIDER"
       log.debug(
         `${msg} We'll search in the resource provider "Microsoft.Unknown".`
       )
@@ -349,7 +351,7 @@ export class LiveValidator {
 
     // Provide reason when we do not find any potential operation in cache
     if (potentialOperations.length === 0) {
-      liveValidationError = new models.LiveValidationError(code.name, msg)
+      liveValidationError = liveValidationErrors.create(code, msg)
     }
 
     result = new models.PotentialOperationsResult(
@@ -385,10 +387,7 @@ export class LiveValidator {
     ) {
       const msg =
         'requestResponseObj cannot be null or undefined and must be of type "object".'
-      const e = new models.LiveValidationError(
-        C.ErrorCodes.IncorrectInput.name,
-        msg
-      )
+      const e = liveValidationErrors.create("INCORRECT_INPUT", msg)
       validationResult.errors.push(e)
       return validationResult
     }
@@ -408,10 +407,7 @@ export class LiveValidator {
       const msg =
         `Found errors "${err.message}" in the provided input:\n` +
         `${util.inspect(requestResponseObj, { depth: null })}.`
-      const e = new models.LiveValidationError(
-        C.ErrorCodes.IncorrectInput.name,
-        msg
-      )
+      const e = liveValidationErrors.create("INCORRECT_INPUT", msg)
       validationResult.errors.push(e)
       return validationResult
     }
@@ -433,7 +429,7 @@ export class LiveValidator {
       request.query = url.parse(request.url, true).query
     }
     const currentApiVersion =
-      request.query["api-version"] || C.unknownApiVersion
+      request.query["api-version"] || constants.unknownApiVersion
     let potentialOperationsResult
     let potentialOperations: Operation[] = []
     try {
@@ -446,10 +442,7 @@ export class LiveValidator {
       const msg =
         `An error occurred while trying to search for potential operations:\n` +
         `${util.inspect(err, { depth: null })}`
-      const e = new models.LiveValidationError(
-        C.ErrorCodes.PotentialOperationSearchError.name,
-        msg
-      )
+      const e = liveValidationErrors.create("POTENTIAL_OPERATION_SEARCH_ERROR", msg)
       validationResult.errors.push(e)
       return validationResult
     }
@@ -465,10 +458,7 @@ export class LiveValidator {
         `Found multiple matching operations with operationIds "${operationIds}" ` +
         `for request url "${request.url}" with HTTP Method "${request.method}".`
       log.debug(msg)
-      const err = new models.LiveValidationError(
-        C.ErrorCodes.MultipleOperationsFound.name,
-        msg
-      )
+      const err = liveValidationErrors.create("MULTIPLE_OPERATIONS_FOUND", msg)
       validationResult.errors = [err]
       return validationResult
     }
@@ -495,10 +485,7 @@ export class LiveValidator {
         `An error occurred while validating the live request for operation ` +
         `"${operation.operationId}". The error is:\n ` +
         `${util.inspect(reqValidationError, { depth: null })}`
-      const err = new models.LiveValidationError(
-        C.ErrorCodes.RequestValidationError.name,
-        msg
-      )
+      const err = liveValidationErrors.create("REQUEST_VALIDATION_ERROR", msg)
       validationResult.requestValidationResult.errors = [err]
     }
     let resResult
@@ -512,10 +499,7 @@ export class LiveValidator {
         `An error occurred while validating the live response for operation ` +
         `"${operation.operationId}". The error is:\n ` +
         `${util.inspect(resValidationError, { depth: null })}`
-      const err = new models.LiveValidationError(
-        C.ErrorCodes.ResponseValidationError.name,
-        msg
-      )
+      const err = liveValidationErrors.create("REQUEST_VALIDATION_ERROR", msg)
       validationResult.responseValidationResult.errors = [err]
     }
     if (
@@ -593,9 +577,9 @@ export class LiveValidator {
     // If we do not find any match then we'll look into Microsoft.Unknown -> unknown-api-version
     // for given requestMethod as the fall back option
     if (!potentialOperations.length) {
-      const c = this.cache[C.unknownResourceProvider]
-      if (c && c[C.unknownApiVersion]) {
-        operations = c[C.unknownApiVersion][requestMethod]
+      const c = this.cache[constants.unknownResourceProvider]
+      if (c && c[constants.unknownApiVersion]) {
+        operations = c[constants.unknownApiVersion][requestMethod]
         potentialOperations = operations.filter(operation => {
           const pathObject = operation.pathObject
           let pathTemplate = pathObject.path
@@ -673,13 +657,13 @@ export class LiveValidator {
 
           // Whitelist lookups: Look up knownTitleToResourceProviders
           // Putting the provider namespace onto operation for future use
-          if (title && C.knownTitleToResourceProviders[title]) {
-            operation.provider = C.knownTitleToResourceProviders[title]
+          if (title && constants.knownTitleToResourceProviders[title]) {
+            operation.provider = constants.knownTitleToResourceProviders[title]
           }
 
           // Put the operation into 'Microsoft.Unknown' RPs
-          provider = C.unknownResourceProvider
-          apiVersion = C.unknownApiVersion
+          provider = constants.unknownResourceProvider
+          apiVersion = constants.unknownApiVersion
           log.debug(
             `Unable to find provider for path : "${pathObject.path}". ` +
               `Bucketizing into provider: "${provider}"`

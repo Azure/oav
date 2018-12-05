@@ -12,7 +12,7 @@ import {
 import * as C from "../util/constants"
 import * as utils from "../util/utils"
 import { CommonError } from "../util/commonError"
-import { ErrorCodes } from "../util/constants"
+// import { ErrorCodes } from "../util/constants"
 import { log } from "../util/logging"
 import { StringMap, MutableStringMap, entries, keys, toStringMap } from "@ts-common/string-map"
 import * as sm from "@ts-common/string-map"
@@ -395,7 +395,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     } else {
       const msg = `x-ms-example not found in ${operation.operationId}.`
       result.exampleNotFound = this.constructErrorObject(
-        ErrorCodes.XmsExampleNotFoundError,
+        "X-MS-EXAMPLE_NOT_FOUND",
         msg,
         null,
         true
@@ -620,11 +620,11 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
           `Response statusCode "${exampleResponseStatusCode}" for operation ` +
           `"${operation.operationId}" is provided in exampleResponseValue, ` +
           `however it is not present in the swagger spec.`
-        const e = this.constructErrorObject<Sway.ValidationEntry>(
-          ErrorCodes.ResponseStatusCodeNotInSpec,
+        const e = this.constructErrorObject(
+          "RESPONSE_STATUS_CODE_NOT_IN_SPEC",
           msg
         )
-        validationResults.errors.push(e)
+        validationResults.errors.push(e as any)
         log.error(e as any)
         continue
       }
@@ -640,11 +640,11 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
             operation.operationId
           }" has response body provided in the example, ` +
           `however the response does not have a "schema" defined in the swagger spec.`
-        const e = this.constructErrorObject<Sway.ValidationEntry>(
-          ErrorCodes.ResponseSchemaNotInSpec,
+        const e = this.constructErrorObject(
+          "RESPONSE_SCHEMA_NOT_IN_SPEC",
           msg
         )
-        validationResults.errors.push(e)
+        validationResults.errors.push(e as any)
         log.error(e as any)
         continue
       }
@@ -677,13 +677,13 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
           operation.operationId
         }" were present in the swagger spec, ` +
         `however they were not present in x-ms-examples. Please provide them.`
-      const e = this.constructErrorObject<Sway.ValidationEntry>(
-        ErrorCodes.ResponseStatusCodeNotInExample,
+      const e = this.constructErrorObject(
+        "RESPONSE_STATUS_CODE_NOT_IN_EXAMPLE",
         msg
       )
       log.error(e as any)
       responseWithoutXmsExamples.forEach(
-        statusCode => (result[statusCode] = { errors: [e] })
+        statusCode => (result[statusCode] = { errors: [e as any] })
       )
     }
     return result
@@ -790,14 +790,14 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
               parameter.name
             } is required in ` +
             `the swagger spec but is not present in the provided example parameter values.`
-          const e = this.constructErrorObject<Sway.ValidationEntry>(
-            ErrorCodes.RequiredParameterExampleNotFound,
+          const e = this.constructErrorObject(
+            "REQUIRED_PARAMETER_EXAMPLE_NOT_FOUND",
             msg
           )
           if (result.validationResult === undefined) {
             throw new Error("result.validationResult is undefined")
           }
-          result.validationResult.errors.push(e)
+          result.validationResult.errors.push(e as any)
           foundIssues = true
           break
         }
@@ -832,14 +832,14 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
               `and the path template: "${pathTemplate}" contains a forward slash before ` +
               `the parameter starts. This will cause double forward slashes ` +
               ` in the request url. Thus making it incorrect. Please rectify the example.`
-            const e = this.constructErrorObject<Sway.ValidationEntry>(
-              ErrorCodes.DoubleForwardSlashesInUrl,
+            const e = this.constructErrorObject(
+              "DOUBLE_FORWARD_SLASHES_IN_URL",
               msg
             )
             if (result.validationResult === undefined) {
               throw new Error("result.validationResult is undefined")
             }
-            result.validationResult.errors.push(e)
+            result.validationResult.errors.push(e as any)
             foundIssues = true
             break
           }
@@ -936,12 +936,12 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
         } else if (options.formData) {
           request.body = options.formData
         }
-        validationResult = operation.validateRequest(request)
+        validationResult = operation.validateRequest(request) as any
         // this.sampleRequest = request
       } catch (err) {
         request = null
         const e = this.constructErrorObject(
-          ErrorCodes.ErrorInPreparingRequest,
+          "ERROR_IN_PREPARING_REQUEST",
           err.message,
           [err]
         )
@@ -972,11 +972,11 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       operationResult.isValid = false
       operationResult.request.isValid = false
       const e = this.constructErrorObject(
-        ErrorCodes.RequestValidationError,
+        "REQUEST_VALIDATION_ERROR",
         msg,
-        requestValidationErrors
+        requestValidationErrors as any[]
       )
-      operationResult.request.error = e
+      operationResult.request.error = e as any
       log.error(`${msg}:\n`, e)
     } else if (requestValidationWarnings) {
       operationResult.request.warning = requestValidationWarnings
@@ -1006,11 +1006,11 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       operationResult.isValid = false
       operationResult.responses[responseStatusCode].isValid = false
       const e = this.constructErrorObject(
-        ErrorCodes.ResponseValidationError,
+        "RESPONSE_VALIDATION_ERROR",
         msg,
-        responseValidationErrors
+        responseValidationErrors as any[]
       )
-      operationResult.responses[responseStatusCode].error = e
+      operationResult.responses[responseStatusCode].error = e as any
       log.error(`${msg}:\n`, e)
     } else if (responseValidationWarnings) {
       operationResult.responses[

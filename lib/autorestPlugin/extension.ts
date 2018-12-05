@@ -136,17 +136,17 @@ export async function openApiValidationExample(
                 type: "Error",
                 code: error.code,
                 message: error.message,
-                id: error.id,
+                id: error.code,
                 validationCategory: modelValidationCategory,
                 innerErrors: innerError,
               }
-              if (error.code === undefined || error.id === undefined) {
+              if (error.code === undefined) {
                 throw new Error("Invalid error.")
               }
               result = new FormattedOutput(
                 "error",
                 resultDetails,
-                [error.code, error.id, modelValidationCategory],
+                [error.code, error.code, modelValidationCategory],
                 innerError.message
                   + ". \nScenario: "
                   + scenario
@@ -155,7 +155,7 @@ export async function openApiValidationExample(
                   + "\nMore info: "
                   + openAPIDocUrl
                   + "#"
-                  + error.id.toLowerCase()
+                  + error.code.toLowerCase()
                   + "-"
                   + error.code.toLowerCase()
                   + "\n",
@@ -178,17 +178,17 @@ export async function openApiValidationExample(
                   type: "Error",
                   code: error.code,
                   message: error.message,
-                  id: error.id,
+                  id: error.code,
                   validationCategory: modelValidationCategory,
                   innerErrors: innerError,
                 }
-                if (error.code === undefined || error.id === undefined) {
+                if (error.code === undefined || error.code === undefined) {
                   throw new Error("Invalid error.")
                 }
                 result = new FormattedOutput(
                   "error",
                   resultDetails,
-                  [error.code, error.id, modelValidationCategory],
+                  [error.code, error.code, modelValidationCategory],
                   innerError.message
                     + ". \nScenario: "
                     + scenario
@@ -197,7 +197,7 @@ export async function openApiValidationExample(
                     + "\nMore info: "
                     + openAPIDocUrl
                     + "#"
-                    + error.id.toLowerCase()
+                    + error.code.toLowerCase()
                     + "-"
                     + error.code.toLowerCase() + "\n",
                   [{

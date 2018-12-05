@@ -31,12 +31,17 @@ import {
   getDefaultResponses
 } from "./cloudError"
 import { pathToPtr } from "json-refs"
-import { setSchemaTitle, getSchemaObjectInfo, setSchemaInfo } from './specTransformer';
+import { setSchemaTitle, getSchemaObjectInfo, setSchemaInfo } from "./specTransformer"
+import * as reportError from "../util/reportError"
 
 const skipIfUndefined = <T>(f: (v: T) => T): ((v: T | undefined) => T | undefined) =>
   (v) => v !== undefined ? f(v) : undefined
 
-export function resolveNestedDefinitions(spec: SwaggerObject, options: Options): SwaggerObject {
+export function resolveNestedDefinitions(
+  spec: SwaggerObject,
+  options: Options,
+  _: reportError.Report
+): SwaggerObject {
 
   const defaultInfoFunc = getInfoFunc(spec) as InfoFunc
 
@@ -126,52 +131,67 @@ export function resolveNestedDefinitions(spec: SwaggerObject, options: Options):
       arrayMap(parameters, resolveParameterObject) :
       undefined
 
-  const resolveOptionalResponses = (responses: ResponsesObject | undefined): ResponsesObject =>
-    stringMapMap(
-      // we respect the swagger definition so we only use generated CloudError if `default`
-      // response is omitted.
-      stringMapMerge(defaultResponses.responses(responses, defaultInfoFunc), responses),
-      resolveResponseObject
-    )
-
-  const resolveOptionalOperationObject = (operationObject: OperationObject | undefined) =>
-    operationObject !== undefined ?
-      propertySetMap<OperationObject>(
-        operationObject,
-        {
-          parameters: resolveOptionalParameterArray,
-          responses: resolveOptionalResponses,
-        }
-      ) :
-      undefined
-
   const resolveDefinitions = (definitions: DefinitionsObject | undefined) =>
     stringMapMap(
       stringMapMerge(definitions, defaultResponses.definitions(definitions, defaultInfoFunc)),
       resolveSchemaObject
     )
 
+  const resolvePath = (path: PathItemObject, _pathId: string) => {
+
+    const resolveOptionalOperationObject = (
+      operationObject: OperationObject | undefined,
+      _method: string
+    ) => {
+
+      const resolveOptionalResponses = (
+        responses: ResponsesObject | undefined
+      ): ResponsesObject => responses === undefined ? {} : responses
+        // if (responses === undefined || responses.default === undefined) {
+        //   re(
+        //     "NO_DEFAULT_RESPONSE",
+        //     `No default response in '${pathId}', method: ${method}`
+        //   )
+        // }
+        // return stringMapMap(
+        //   // we respect the swagger definition so we only use generated CloudError if `default`
+        //   // response is omitted.
+        //   stringMapMerge(defaultResponses.responses(responses, defaultInfoFunc), responses),
+        //   resolveResponseObject
+        // )
+
+      return operationObject !== undefined ?
+        propertySetMap<OperationObject>(
+          operationObject,
+          {
+            parameters: resolveOptionalParameterArray,
+            responses: resolveOptionalResponses,
+          }
+        ) :
+        undefined
+    }
+
+    return propertySetMap<PathItemObject>(
+      path,
+      {
+        get: resolveOptionalOperationObject,
+        put: resolveOptionalOperationObject,
+        post: resolveOptionalOperationObject,
+        delete: resolveOptionalOperationObject,
+        options: resolveOptionalOperationObject,
+        head: resolveOptionalOperationObject,
+        patch: resolveOptionalOperationObject,
+        parameters: resolveOptionalParameterArray
+      }
+    )
+  }
+
   // transformations for Open API 2.0
   const swaggerObjectTransformation: PartialFactory<SwaggerObject> = {
     definitions: resolveDefinitions,
     parameters: parameters => stringMapMap(parameters, resolveParameterObject),
     responses: responses => stringMapMap(responses, resolveResponseObject),
-    paths: paths => stringMapMap(
-      paths,
-      path => propertySetMap<PathItemObject>(
-        path,
-        {
-          get: resolveOptionalOperationObject,
-          put: resolveOptionalOperationObject,
-          post: resolveOptionalOperationObject,
-          delete: resolveOptionalOperationObject,
-          options: resolveOptionalOperationObject,
-          head: resolveOptionalOperationObject,
-          patch: resolveOptionalOperationObject,
-          parameters: resolveOptionalParameterArray
-        }
-      )
-    )
+    paths: paths => stringMapMap(paths, resolvePath)
   }
 
   // create extra definitions and the temporary spec

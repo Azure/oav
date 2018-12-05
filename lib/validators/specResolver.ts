@@ -26,15 +26,14 @@ import {
   keys,
   StringMap
 } from "@ts-common/string-map"
-import { resolveNestedDefinitions } from "./resolveNestedDefinitions"
+import * as resolveNestedDefinitions from "./resolveNestedDefinitions"
 import { getOperations } from "../util/methods"
 import { map, toArray } from "@ts-common/iterator"
 import { arrayMap } from "@ts-common/source-map"
 import { Suppression } from "@azure/openapi-markdown"
 import * as jsonUtils from "../util/jsonUtils"
-import * as jsonParser from "@ts-common/json-parser"
-
-const ErrorCodes = C.ErrorCodes
+import * as errorCodes from "../util/errorCodes"
+import * as reportError from "../util/reportError"
 
 export interface Options {
   consoleLogLevel?: unknown
@@ -117,7 +116,7 @@ export class SpecResolver {
     specPath: string,
     specInJson: SwaggerObject,
     options: Options,
-    private readonly reportError: jsonParser.ReportError
+    private readonly re: reportError.Report
   ) {
     if (
       specPath === null ||
@@ -214,7 +213,11 @@ export class SpecResolver {
         await this.resolveRelativePaths(suppression)
       }
       // resolve nested definitions
-      this.specInJson = resolveNestedDefinitions(this.specInJson, this.options)
+      this.specInJson = resolveNestedDefinitions.resolveNestedDefinitions(
+        this.specInJson,
+        this.options,
+        this.re
+      )
 
       // other resolvers (should be moved to resolveNestedDefinitions())
       if (this.options.shouldResolveAllOf) {
@@ -239,10 +242,10 @@ export class SpecResolver {
         this.resolveNullableTypes()
       }
      } catch (err) {
+      const code: errorCodes.Code = "INTERNAL_ERROR"
       const e = {
         message: "internal error: " + err.message,
-        code: ErrorCodes.InternalError.name,
-        id: ErrorCodes.InternalError.id,
+        code: code,
         innerErrors: [err]
       }
       log.error(err)
@@ -388,7 +391,11 @@ export class SpecResolver {
       docPath = utils.joinPath(docDir, parsedReference.filePath)
     }
 
-    const result = await jsonUtils.parseJson(suppression, docPath, this.reportError)
+    const result = await jsonUtils.parseJson(
+      suppression,
+      docPath,
+      this.re
+    )
     if (!parsedReference.localReference) {
       // Since there is no local reference we will replace the key in the object with the parsed
       // json (relative) file it is referring to.

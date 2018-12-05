@@ -7,7 +7,6 @@ import { SpecResolver } from "./specResolver"
 import * as specResolver from "./specResolver"
 import { log } from "../util/logging"
 import { CommonError } from "../util/commonError"
-import * as C from "../util/constants"
 import { SwaggerObject } from "yasway"
 import { ModelValidation } from "../util/getErrorsFromModelValidation"
 import { Headers } from "../templates/httpTemplate"
@@ -17,17 +16,10 @@ import * as amd from "@azure/openapi-markdown"
 import { setMutableProperty } from "@ts-common/property-set"
 import * as docs from "../util/documents"
 import * as jsonUtils from "../util/jsonUtils"
-import * as jsonParser from "@ts-common/json-parser"
-
-const ErrorCodes = C.ErrorCodes;
+import * as errorCodes from "../util/errorCodes"
 
 export interface Options extends specResolver.Options {
   readonly isPathCaseSensitive?: boolean
-}
-
-export interface ErrorCode {
-  readonly name: string
-  readonly id: string
 }
 
 export interface RequestValidation {
@@ -163,8 +155,8 @@ export class SpecValidator<T extends CommonValidationResult> {
     if (this.options.shouldResolveRelativePaths) {
       docs.clearCache()
     }
-    const errors: jsonParser.ParseError[] = []
-    const reportError = (e: jsonParser.ParseError) => errors.push(e)
+    const errors: CommonError[] = []
+    const reportError = (code: errorCodes.Code, message: string) => errors.push({ code, message })
     try {
       let suppression: amd.Suppression | undefined
       if (this.specInJson === undefined || this.specInJson === null) {
@@ -190,17 +182,19 @@ export class SpecValidator<T extends CommonValidationResult> {
       }
       this.swaggerApi = await Sway.create(options)
     } catch (err) {
-      const e = this.constructErrorObject(ErrorCodes.InternalError, err.message, [err])
-      this.specValidationResult.resolveSpec = e
-      log.error(`${ErrorCodes.ResolveSpecError.name}: ${err.message}.`)
+      const code: errorCodes.Code = "INTERNAL_ERROR"
+      const e = this.constructErrorObject(code, err.message, [err])
+      this.specValidationResult.resolveSpec = e as any
+      log.error(`${code}: ${err.message}.`)
       log.error(err.stack)
       throw e
     }
     if (errors.length > 0) {
       const err = errors[0]
-      const e = this.constructErrorObject(ErrorCodes.JsonParsingError, err.message, errors)
+      const code: errorCodes.Code = err.code as errorCodes.Code
+      const e = this.constructErrorObject(code, err.message as string, errors as any[])
       this.specValidationResult.resolveSpec = e as any
-      log.error(`${ErrorCodes.ResolveSpecError.name}: ${err.message}.`)
+      log.error(`${code}: ${err.message}.`)
     }
     return this.swaggerApi
   }
@@ -220,23 +214,22 @@ export class SpecValidator<T extends CommonValidationResult> {
    *
    * @return {object} err Return the constructed Error object.
    */
-  protected constructErrorObject<TE extends CommonError>(
-    code: ErrorCode,
+  protected constructErrorObject(
+    code: errorCodes.Code,
     message: string,
-    innerErrors?: null | TE[],
+    innerErrors?: null | CommonError[],
     skipValidityStatusUpdate?: boolean
-  ): TE {
+  ): CommonError {
 
     const err: CommonError = {
-      code: code.name,
-      id: code.id,
+      code: code,
       message: message
     }
     setMutableProperty(err, "innerErrors", innerErrors ? innerErrors : undefined)
     if (!skipValidityStatusUpdate) {
       this.updateValidityStatus()
     }
-    return err as TE
+    return err
   }
 
   /*
