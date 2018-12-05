@@ -25,6 +25,7 @@ Errors described below may apply in request or response, your result output will
 | [RESPONSE_STATUS_CODE_NOT_IN_EXAMPLE](#RESPONSE_STATUS_CODE_NOT_IN_EXAMPLE)   |
 | [RESPONSE_SCHEMA_NOT_IN_SPEC](#RESPONSE_SCHEMA_NOT_IN_SPEC)                   |
 | [REQUIRED_PARAMETER_EXAMPLE_NOT_FOUND](#REQUIRED_PARAMETER_EXAMPLE_NOT_FOUND) |
+| [RESPONSE_STATUS_CODE_NOT_IN_SPEC](#RESPONSE_STATUS_CODE_NOT_IN_SPEC)         |
 
 ## Errors Descriptions
 
@@ -201,5 +202,17 @@ Links: [Index](#index) | [Error descriptions](#error-descriptions)
 **Description**: When providing x-ms-examples, there's a required parameter indicated in the OpenAPI spec, but there's no paramater value in the corresponding provided example.
 
 **How to fix the issue**: Verify that the required parameter value is in the example or confirm that the OpenAPI spec is describing the parameter correctly, whether it's required or not. If the paramater is not required on the service side, an update to the OpenAPI specification may be required.
+
+Links: [Index](#index) | [Error descriptions](#error-descriptions)
+
+### <a name="RESPONSE_STATUS_CODE_NOT_IN_SPEC" />RESPONSE_STATUS_CODE_NOT_IN_SPEC
+
+**Severity** : 0
+
+**Message** : Response statusCode X for operation Y is provided in example, however it is not present in the swagger spec.
+
+**Description**: There is a status code specified in the example file referenced, which is not described in the OpenAPI spec.
+
+**How to fix the issue**: Remove the status code from example that is not specificed in the spec, or check whether the status code should be added to the OpenAPI spec.
 
 Links: [Index](#index) | [Error descriptions](#error-descriptions)
