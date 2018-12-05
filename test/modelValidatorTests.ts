@@ -506,4 +506,19 @@ describe("Model Validation", () => {
       // console.log(result)
     })
   })
+
+  describe("No Default Response", () => {
+    it("should fail on example with unrecognized status code", async () => {
+      const specPath2 = `${__dirname}/modelValidation/swaggers/specification/noDefault/test.json`
+      const result = await validate.validateExamples(specPath2, undefined, {
+        consoleLogLevel: "off"
+      })
+      // console.dir(result, { depth: null })
+      assert(
+        result.length === 1,
+        `swagger "${specPath2}" contains model validation errors.`
+      )
+      // console.log(result)
+    })
+  })
 })

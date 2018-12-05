@@ -1,0 +1,11 @@
+{
+  "parameters":{},
+  "responses":{
+    "200": {},
+    "404": {
+      "body": {
+        "nameAvailable": "string instead of bool"
+      }
+    }
+  }
+}
