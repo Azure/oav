@@ -120,7 +120,8 @@ export function resolveNestedDefinitions(spec: SwaggerObject): SwaggerObject {
       propertySetMap<OperationObject>(
         operationObject,
         {
-          parameters: resolveOptionalParameterArray
+          parameters: resolveOptionalParameterArray,
+          responses: responses => stringMapMap(responses, resolveResponseObject)
         }
       ) :
       undefined
