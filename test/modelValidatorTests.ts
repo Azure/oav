@@ -519,4 +519,17 @@ describe("Model Validation", () => {
       // console.log(result)
     })
   })
+
+  describe("Default doesn't cover non-error responses", () => {
+    it("should fail on example with unrecognized status code", async () => {
+      const specPath2 = `${__dirname}/modelValidation/swaggers/specification/defaultIsErrorOnly/test.json`
+      const result = await validate.validateExamples(specPath2, undefined, {
+        consoleLogLevel: "off"
+      })
+      // console.dir(result, { depth: null })
+      assert(result.length === 1)
+      assert.strictEqual(result[0].errorCode, "RESPONSE_STATUS_CODE_NOT_IN_SPEC")
+      // console.log(result)
+    })
+  })
 })
