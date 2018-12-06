@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../sway"
+		}
+	],
+	"settings": {
+		"typescript.tsdk": "./oav/node_modules/typescript/lib"
+	}
+}

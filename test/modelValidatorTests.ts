@@ -514,10 +514,8 @@ describe("Model Validation", () => {
         consoleLogLevel: "off"
       })
       // console.dir(result, { depth: null })
-      assert(
-        result.length === 1,
-        `swagger "${specPath2}" contains model validation errors.`
-      )
+      assert(result.length === 1)
+      assert.strictEqual(result[0].errorCode, "RESPONSE_STATUS_CODE_NOT_IN_SPEC")
       // console.log(result)
     })
   })
