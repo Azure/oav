@@ -39,7 +39,6 @@ describe("simple model validation tests", () => {
       "some/file/path",
       specParsed,
       {
-        shouldModelImplicitDefaultResponse: true
       }
     )
     const api = await validator.initialize()
