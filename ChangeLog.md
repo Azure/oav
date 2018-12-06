@@ -1,6 +1,6 @@
 # Changelog
 
-### 12/05/2018 0.9.8
+### 12/05/2018 0.10.0
 
 - no `CloudError` generation.
 
