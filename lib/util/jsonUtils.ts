@@ -1,15 +1,20 @@
-import { Suppression, SuppressionItem } from '@azure/openapi-markdown'
-import { SwaggerObject } from 'yasway'
-import { splitPathAndReverse, isSubPath } from './path'
+import { Suppression, SuppressionItem } from "@azure/openapi-markdown"
 import * as it from "@ts-common/iterator"
-import * as docs from "./documents"
-import { getFilePosition, FilePosition, getDescendantFilePosition } from '@ts-common/source-map'
-import jp = require("jsonpath")
-import { MutableStringMap } from '@ts-common/string-map'
-import { makeRequest, parseContent } from './makeRequest'
-import * as fs from "fs"
-import { log } from "./logging"
 import * as jsonParser from "@ts-common/json-parser"
+import {
+  FilePosition,
+  getDescendantFilePosition,
+  getFilePosition
+} from "@ts-common/source-map"
+import { MutableStringMap } from "@ts-common/string-map"
+import * as vfs from "@ts-common/virtual-fs"
+import jp = require("jsonpath")
+import { SwaggerObject } from "yasway"
+
+import * as docs from "./documents"
+import { log } from "./logging"
+import { parseContent } from "./makeRequest"
+import { isSubPath, splitPathAndReverse } from "./path"
 
 const setSuppression = (info: FilePosition | undefined, code: string) => {
   if (info !== undefined) {
@@ -90,8 +95,7 @@ export async function parseJson(
   if (doc) {
     return await doc
   }
-  // url
-  if (specPath.match(/^http.*/gi) !== null) {
+
     // If the spec path is a url starting with https://github then let us auto convert it to an
     // https://raw.githubusercontent url.
     if (specPath.startsWith("https://github")) {
@@ -100,24 +104,15 @@ export async function parseJson(
         "https://raw.githubusercontent.com$2$3"
       )
     }
-    const res = makeRequest(specPath, reportError).then(applySuppression)
-    docs.docCache[specPath] = res
-    return await res
-  } else {
-    // local file path
-    try {
-      const fileContent = fs.readFileSync(specPath, "utf8")
-      const result = parseContent(specPath, fileContent, reportError)
-      applySuppression(result)
-      docs.docCache[specPath] = Promise.resolve(result)
-      return result
-    } catch (err) {
-      const msg =
-        `Unable to read the content or execute "JSON.parse()" on the content of file ` +
-        `"${specPath}". The error is:\n${err}`
-      const e = new Error(msg)
-      log.error(e.toString())
-      throw e
-    }
-  }
+
+  const swaggerObjectPromise = vfs
+    .readFile(specPath)
+    .then((fileContent: string) =>
+      parseContent(specPath, fileContent, reportError)
+    )
+    .then(applySuppression)
+
+  docs.docCache[specPath] = swaggerObjectPromise
+
+  return swaggerObjectPromise
 }
