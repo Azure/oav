@@ -105,12 +105,14 @@ export async function parseJson(
       )
     }
 
-  const swaggerObjectPromise = vfs
-    .readFile(specPath)
-    .then((fileContent: string) =>
-      parseContent(specPath, fileContent, reportError)
-    )
-    .then(applySuppression)
+  const createSwaggerObject = async () => {
+    const fileContent = await vfs.readFile(specPath)
+    const swaggerObject = parseContent(specPath, fileContent, reportError)
+    applySuppression(swaggerObject)
+    return swaggerObject
+  }
+
+  const swaggerObjectPromise = createSwaggerObject()
 
   docs.docCache[specPath] = swaggerObjectPromise
 
