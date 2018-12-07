@@ -98,12 +98,12 @@ export async function parseJson(
 
     // If the spec path is a url starting with https://github then let us auto convert it to an
     // https://raw.githubusercontent url.
-    if (specPath.startsWith("https://github")) {
-      specPath = specPath.replace(
-        /^https:\/\/(github.com)(.*)blob\/(.*)/gi,
-        "https://raw.githubusercontent.com$2$3"
-      )
-    }
+  if (specPath.startsWith("https://github")) {
+    specPath = specPath.replace(
+      /^https:\/\/(github.com)(.*)blob\/(.*)/gi,
+      "https://raw.githubusercontent.com$2$3"
+    )
+  }
 
   const createSwaggerObject = async () => {
     const fileContent = await vfs.readFile(specPath)
