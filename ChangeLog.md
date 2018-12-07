@@ -1,5 +1,9 @@
 # Changelog
 
+### 7/12/2018 0.10.1
+
+- update `@ts-common/virtual-fs` to retry network requests.
+
 ### 12/05/2018 0.10.0
 
 - no `CloudError` generation.
