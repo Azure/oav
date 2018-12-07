@@ -96,8 +96,8 @@ export async function parseJson(
     return await doc
   }
 
-    // If the spec path is a url starting with https://github then let us auto convert it to an
-    // https://raw.githubusercontent url.
+  // If the spec path is a url starting with https://github then let us auto convert it to an
+  // https://raw.githubusercontent url.
   if (specPath.startsWith("https://github")) {
     specPath = specPath.replace(
       /^https:\/\/(github.com)(.*)blob\/(.*)/gi,
