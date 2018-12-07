@@ -413,7 +413,7 @@ describe("Live Validator", () => {
       }
       assert.strictEqual(Constants.ErrorCodes.OperationNotFoundInCache.name, reason.code)
     })
-    it("it should create an implicit default response and find it", async () => {
+    it("it shouldn't create an implicit default response", async () => {
       const options = {
         directory: "./test/liveValidation/swaggers/specification/scenarios",
         swaggerPathsPattern: "**/*.json",
@@ -430,20 +430,7 @@ describe("Live Validator", () => {
 
       for (const operation of operations) {
         const responses = operation.responses as ResponsesObject
-        if (responses.default === undefined) {
-          throw new Error("responses.default === undefined")
-        }
-        const schema = responses.default.schema
-        if (schema === undefined) {
-          throw new Error("responses.default.schema === undefined")
-        }
-        if (schema.type !== "object") {
-          throw new Error("responses.default.schema.type !== \"object\"")
-        }
-        if (schema.properties === undefined) {
-          throw new Error("schema.properties === undefined")
-        }
-        assert.strictEqual(typeof schema.properties.error, "object")
+        assert.strictEqual(responses.default, undefined)
       }
     })
   })
