@@ -40,7 +40,6 @@ describe("Simple semantic validation", () => {
       "some/file/path",
       spec,
       {
-        shouldModelImplicitDefaultResponse: true
       }
     )
     const api = await semanticValidator.initialize()
