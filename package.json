@@ -19,7 +19,7 @@
     "@ts-common/source-map": "^0.3.3",
     "@ts-common/string-map": "^0.2.2",
     "@ts-common/tuple": "^0.0.3",
-    "@ts-common/virtual-fs": "^0.1.0",
+    "@ts-common/virtual-fs": "^0.1.1",
     "@types/lodash": "^4.14.116",
     "@types/request": "^2.47.1",
     "azure-arm-resource": "^2.0.0-preview",
