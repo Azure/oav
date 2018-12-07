@@ -39,10 +39,15 @@ export interface Provider {
   [apiVersion: string]: ApiVersion
 }
 
+export interface LiveRequest extends Request {
+  readonly headers: {}
+}
+
 export interface RequestResponseObj {
-  readonly liveRequest: Request
+  readonly liveRequest: LiveRequest
   readonly liveResponse: {
     statusCode: string
+    readonly headers: {}
   }
 }
 

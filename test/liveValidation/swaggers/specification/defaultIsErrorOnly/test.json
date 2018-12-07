@@ -1,0 +1,32 @@
+{
+  "swagger": "2.0",
+  "info": { "title": "sometitle", "version": "2018-01-01" },
+  "consumes": [ "application/json" ],
+  "produces": [ "application/json" ],
+  "paths": {
+    "/providers/someprovider": {
+      "get": {
+        "operationId": "op",
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "type": "string",
+            "description": "Client Api Version."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "somedescription",
+            "schema": {}
+          },
+          "default": {
+            "description": "somedescription",
+            "schema": {}
+          }
+        }
+      }
+    }
+  }
+}
