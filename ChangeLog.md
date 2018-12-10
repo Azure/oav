@@ -1,5 +1,21 @@
 # Changelog
 
+### 12/07/2018 0.10.2
+
+- no default response for non errors.
+
+### 12/07/2018 0.10.1
+
+- update `@ts-common/virtual-fs` to retry network requests.
+
+### 12/05/2018 0.10.0
+
+- no `CloudError` generation.
+
+### 12/01/2018 0.9.7
+
+- Properly handle JSON errors
+
 ### 11/29/2018 0.9.6
 
 - update `@ts-common/json-parser` to properly handle UNICODE escape symbols.

@@ -28,7 +28,6 @@ export interface Options {
   }
   directory: string
   swaggerPathsPattern?: string
-  shouldModelImplicitDefaultResponse?: boolean
   isPathCaseSensitive?: boolean
 }
 
@@ -40,10 +39,15 @@ export interface Provider {
   [apiVersion: string]: ApiVersion
 }
 
+export interface LiveRequest extends Request {
+  readonly headers: {}
+}
+
 export interface RequestResponseObj {
-  readonly liveRequest: Request
+  readonly liveRequest: LiveRequest
   readonly liveResponse: {
     statusCode: string
+    readonly headers: {}
   }
 }
 
@@ -99,9 +103,6 @@ export class LiveValidator {
    *
    * @param {string} [options.directory] The directory where to clone github repository or from
    *    where to find swaggers. Defaults to "repo" under user directory.
-   *
-   * @param {string} [options.shouldModelImplicitDefaultResponse] Specifies if to model a default
-   *    response for operations even if it is not specified in the specs.
    *
    * @returns {object} CacheBuilder Returns the configured CacheBuilder object.
    */
@@ -648,8 +649,6 @@ export class LiveValidator {
     log.info(`Building cache from: "${swaggerPath}"`)
 
     const validator = new SpecValidator(swaggerPath, null, {
-      shouldModelImplicitDefaultResponse: this.options
-        .shouldModelImplicitDefaultResponse,
       isPathCaseSensitive: this.options.isPathCaseSensitive
     })
 

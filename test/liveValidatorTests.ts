@@ -9,7 +9,7 @@ import { LiveValidator } from "../lib/validators/liveValidator"
 import * as Constants from "../lib/util/constants"
 import { ResponsesObject } from "yasway"
 
-const numberOfSpecs = 7
+const numberOfSpecs = 8
 const livePaths = glob.sync(path.join(__dirname, "liveValidation/swaggers/**/live/*.json"))
 describe("Live Validator", () => {
   describe("Initialization", () => {
@@ -413,7 +413,7 @@ describe("Live Validator", () => {
       }
       assert.strictEqual(Constants.ErrorCodes.OperationNotFoundInCache.name, reason.code)
     })
-    it("it should create an implicit default response and find it", async () => {
+    it("it shouldn't create an implicit default response", async () => {
       const options = {
         directory: "./test/liveValidation/swaggers/specification/scenarios",
         swaggerPathsPattern: "**/*.json",
@@ -430,20 +430,7 @@ describe("Live Validator", () => {
 
       for (const operation of operations) {
         const responses = operation.responses as ResponsesObject
-        if (responses.default === undefined) {
-          throw new Error("responses.default === undefined")
-        }
-        const schema = responses.default.schema
-        if (schema === undefined) {
-          throw new Error("responses.default.schema === undefined")
-        }
-        if (schema.type !== "object") {
-          throw new Error("responses.default.schema.type !== \"object\"")
-        }
-        if (schema.properties === undefined) {
-          throw new Error("schema.properties === undefined")
-        }
-        assert.strictEqual(typeof schema.properties.error, "object")
+        assert.strictEqual(responses.default, undefined)
       }
     })
   })
@@ -464,5 +451,65 @@ describe("Live Validator", () => {
         // console.dir(validationResult, { depth: null, colors: true })
       })
     })
+    it("should initialize for defaultErrorOnly and fail on unknown status code", async () => {
+      const options = {
+        directory: "./test/liveValidation/swaggers/specification/defaultIsErrorOnly",
+        swaggerPathsPattern: "test.json"
+      }
+      const validator = new LiveValidator(options)
+      await validator.initialize()
+      const result = validator.validateLiveRequestResponse({
+        liveRequest: {
+          url: "https://xxx.com/providers/someprovider?api-version=2018-01-01",
+          method: "get",
+          headers: {
+            "content-type": "application/json",
+          },
+          query: {
+            "api-version": "2016-01-01"
+          }
+        },
+        liveResponse: {
+          statusCode: "300",
+          headers: {
+            "content-Type": "application/json"
+          }
+        }
+      })
+      const errors = result.responseValidationResult.errors
+      if (errors === undefined) {
+        throw new Error("errors === undefined")
+      }
+      assert.strictEqual((errors[0] as any).code, "INVALID_RESPONSE_CODE")
+    })
+    it("should initialize for defaultErrorOnly and pass", async () => {
+      const options = {
+        directory: "./test/liveValidation/swaggers/specification/defaultIsErrorOnly",
+        swaggerPathsPattern: "test.json"
+      }
+      const validator = new LiveValidator(options)
+      await validator.initialize()
+      const result = validator.validateLiveRequestResponse({
+        liveRequest: {
+          url: "https://xxx.com/providers/someprovider?api-version=2018-01-01",
+          method: "get",
+          headers: {
+            "content-type": "application/json",
+          },
+          query: {
+            "api-version": "2016-01-01"
+          }
+        },
+        liveResponse: {
+          statusCode: "404",
+          headers: {
+            "content-Type": "application/json"
+          }
+        }
+      })
+      const errors = result.responseValidationResult.errors
+      assert.deepStrictEqual(errors, [])
+    })
   })
+
 })

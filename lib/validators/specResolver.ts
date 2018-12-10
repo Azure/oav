@@ -46,7 +46,6 @@ export interface Options {
   shouldResolveDiscriminator?: boolean
   shouldResolveParameterizedHost?: boolean | null
   shouldResolveNullableTypes?: boolean
-  shouldModelImplicitDefaultResponse?: boolean | null
 }
 
 export interface RefDetails {
@@ -107,9 +106,6 @@ export class SpecResolver {
    *
    * @param {object} [options.shouldResolveNullableTypes] Should we allow null values to match any
    *    type? Default: true
-   *
-   * @param {object} [options.shouldModelImplicitDefaultResponse] Should we model a default response
-   *    even if it is not defined? Default: false
    *
    * @return {object} An instance of the SpecResolver class.
    */
@@ -193,11 +189,6 @@ export class SpecResolver {
       options.shouldResolveAllOf
     )
 
-    options.shouldModelImplicitDefaultResponse = defaultIfUndefinedOrNull(
-      options.shouldModelImplicitDefaultResponse,
-      false
-    )
-
     this.options = options
   }
 
@@ -214,7 +205,7 @@ export class SpecResolver {
         await this.resolveRelativePaths(suppression)
       }
       // resolve nested definitions
-      this.specInJson = resolveNestedDefinitions(this.specInJson, this.options)
+      this.specInJson = resolveNestedDefinitions(this.specInJson)
 
       // other resolvers (should be moved to resolveNestedDefinitions())
       if (this.options.shouldResolveAllOf) {

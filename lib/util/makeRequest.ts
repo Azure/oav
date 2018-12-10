@@ -1,8 +1,6 @@
-import request = require("request")
-import { SwaggerObject } from "yasway"
 import * as jsonParser from "@ts-common/json-parser"
 import * as yaml from "js-yaml"
-import * as util from "util"
+import { SwaggerObject } from "yasway"
 
 /*
  * Removes byte order marker. This catches EF BB BF (the UTF-8 BOM)
@@ -33,6 +31,7 @@ export function parseContent(
   fileContent: string,
   reportError: jsonParser.ReportError,
 ): SwaggerObject {
+  try {
   const sanitizedContent = stripBOM(fileContent)
   if (/.*\.json$/gi.test(filePath)) {
     return jsonParser.parse(
@@ -44,60 +43,12 @@ export function parseContent(
     return yaml.safeLoad(sanitizedContent)
   } else {
     const msg =
-      `We currently support "*.json" and "*.yaml | *.yml" file formats for validating swaggers.\n` +
-      `The current file extension in "${filePath}" is not supported.`
+        `We currently support "*.json" and "*.yaml | *.yml" file formats for` +
+        `validating swaggers. \n The current file extension in "${filePath}" ` +
+        `is not supported.`
     throw new Error(msg)
   }
-}
-
-export type Options = request.CoreOptions &
-  request.UrlOptions & {
-    readonly url: string
-    readonly errorOnNon200Response: unknown
-  }
-
-/*
- * Makes a generic request. It is a wrapper on top of request.js library that provides a promise
- * instead of a callback.
- *
- * @param {object} options - The request options as described over here
- *                           https://github.com/request/request#requestoptions-callback
- *
- * @param {boolean} options.errorOnNon200Response If true will reject the promise with an error if
- *                                                the response statuscode is not 200.
- *
- * @return {Promise} promise - A promise that resolves to the responseBody or rejects to an error.
- */
-export async function makeRequest(
-  options: Options,
-  reportError: jsonParser.ReportError,
-): Promise<SwaggerObject> {
-  const promise = new Promise<SwaggerObject>((resolve, reject) => {
-    request(options, (err, response, responseBody) => {
-      if (err) {
-        reject(err)
-      }
-      if (options.errorOnNon200Response && response.statusCode !== 200) {
-        const msg = `StatusCode: "${
-          response.statusCode
-        }", ResponseBody: "${responseBody}."`
-        reject(new Error(msg))
-      }
-      let res = responseBody
-      try {
-        if (typeof responseBody.valueOf() === "string") {
-          res = parseContent(options.url, responseBody, reportError)
+  } catch (e) {
+    throw new Error(`Unable to parse swagger, inner error: ${e.message}`)
         }
-      } catch (error) {
-        const url = options.url
-        const text = util.inspect(error, { depth: null })
-        const msg = `An error occurred while parsing the file ${url}. The error is:\n ${text}.`
-        const e = new Error(msg)
-        reject(e)
-      }
-
-      resolve(res)
-    })
-  })
-  return await promise
 }
