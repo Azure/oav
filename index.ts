@@ -28,6 +28,7 @@ export {
   errorCodeToSeverity,
   processValidationErrors,
   serializeErrors,
+  NodeError,
   ValidationError,
   ValidationResult
 } from "./lib/util/validationError"

@@ -1,5 +1,9 @@
 # Changelog
 
+### 12/11/2018 0.10.3
+
+- exporting NodeError to consume it outside of oav..
+
 ### 12/07/2018 0.10.2
 
 - no default response for non errors.
