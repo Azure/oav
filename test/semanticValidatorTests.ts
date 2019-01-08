@@ -6,10 +6,13 @@
 import assert from "assert"
 import * as validate from "../lib/validate"
 import * as constants from "../lib/util/constants"
+import * as path from "path"
+
+const testPath = path.join(__dirname, "..", "..", "test")
 
 describe("Semantic validation", () => {
   it("should validate correctly when the spec contains an x-ms-parameterized-host", async () => {
-    const specPath = `${__dirname}/semanticValidation/specification/parameterizedhost/face.json`
+    const specPath = `${testPath}/semanticValidation/specification/parameterizedhost/face.json`
     const result = await validate.validateSpec(specPath, undefined)
     // console.dir(result, { depth: null })
     assert(
@@ -17,7 +20,7 @@ describe("Semantic validation", () => {
   })
 
   it("should validate correctly when the spec does not contain a definitions section", async () => {
-    const specPath = `${__dirname}/semanticValidation/specification/definitions/definitions.json`
+    const specPath = `${testPath}/semanticValidation/specification/definitions/definitions.json`
     const result = await validate.validateSpec(specPath, undefined)
     // console.dir(result, { depth: null })
     assert(
@@ -25,7 +28,7 @@ describe("Semantic validation", () => {
   })
 
   it("should fail when validating a swagger with JSON errors", async () => {
-    const specPath = `${__dirname}/semanticValidation/specification/invalid/invalid.json`
+    const specPath = `${testPath}/semanticValidation/specification/invalid/invalid.json`
     const result = await validate.validateSpec(specPath, undefined)
     assert(result.validityStatus === false)
     assert.strictEqual(

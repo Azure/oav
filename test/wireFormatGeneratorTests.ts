@@ -13,7 +13,7 @@ describe("Wireformat generator", () => {
   yamlPaths.forEach(yamlPath => {
     it(`should generate a valid YAML doc for "${yamlPath}."`, (done) => {
       try {
-        const yamlContent = jsYaml.safeLoad(yamlPath, { strict: true })
+        const yamlContent = jsYaml.safeLoad(yamlPath, { })
         should.exist(yamlContent)
         done()
       } catch (err) {
