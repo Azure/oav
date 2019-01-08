@@ -1,6 +1,6 @@
 {
   "name": "oav",
-  "version": "0.10.3",
+  "version": "0.10.4",
   "author": {
     "name": "Microsoft Corporation",
     "email": "azsdkteam@microsoft.com",
@@ -25,7 +25,7 @@
     "azure-arm-resource": "^2.0.0-preview",
     "commonmark": "^0.28.1",
     "glob": "^5.0.14",
-    "js-yaml": "^3.12.0",
+    "js-yaml": "^3.12.1",
     "json-pointer": "^0.6.0",
     "json-refs": "3.0.10",
     "jsonpath": "^1.0.0",
@@ -49,7 +49,7 @@
   "devDependencies": {
     "@types/commonmark": "^0.27.1",
     "@types/glob": "^5.0.35",
-    "@types/js-yaml": "^3.11.2",
+    "@types/js-yaml": "^3.11.4",
     "@types/json-pointer": "^1.0.30",
     "@types/jsonpath": "^0.2.0",
     "@types/mocha": "^5.2.5",
@@ -61,11 +61,10 @@
     "@types/yargs": "^11.1.2",
     "mocha": "^5.2.0",
     "mocha-junit-reporter": "^1.18.0",
-    "nyc": "^13.0.1",
+    "nyc": "^13.1.0",
     "should": "^5.2.0",
-    "ts-node": "^6.0.5",
-    "tslint": "^5.11.0",
-    "typescript": "^3.2.1"
+    "tslint": "^5.12.0",
+    "typescript": "^3.2.2"
   },
   "homepage": "https://github.com/azure/oav",
   "repository": {
@@ -97,11 +96,8 @@
     "./types/*.d.ts"
   ],
   "nyc": {
-    "require": [
-      "ts-node/register"
-    ],
     "include": [
-      "lib/**/*.ts"
+      "dist/**/*.js"
     ],
     "all": true,
     "reporter": [
@@ -110,18 +106,15 @@
       "html",
       "cobertura"
     ],
-    "extension": [
-      ".ts"
-    ],
     "exclude": [
-      "dist/",
+      "dist/test/",
       "types/"
     ]
   },
   "scripts": {
     "tsc": "tsc",
     "tslint": "tslint --project tsconfig.json ./*.ts ./lib/**/*.ts ./test/**/*.ts ./types/**/*.ts",
-    "test": "npm run tsc && npm run tslint && nyc mocha ./test/**/*.ts -r ts-node/register -t 10000 --reporter mocha-junit-reporter --reporter spec",
+    "test": "npm run tsc && npm run tslint && nyc mocha ./dist/test/**/*.js -t 10000 --reporter mocha-junit-reporter --reporter spec",
     "start": "node ./dist/lib/autorestPlugin/pluginHost.js",
     "prepack": "npm install && tsc && npm run tslint",
     "cli": "node dist/cli.js",

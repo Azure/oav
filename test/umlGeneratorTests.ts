@@ -4,14 +4,17 @@
 import assert from "assert"
 import * as validate from "../lib/validate"
 import * as fs from "fs"
+import * as path from "path"
 
-const specPath = `${__dirname}/modelValidation/swaggers/specification/polymorphic/EntitySearch.json`
+const testPath = path.join(__dirname, "..", "..", "test")
+
+const specPath = `${testPath}/modelValidation/swaggers/specification/polymorphic/EntitySearch.json`
 
 describe("Uml generator", () => {
   it("should generate class diagram correctly", async () => {
-    const svgFile = `${__dirname}/diagram/EntitySearch.svg`
+    const svgFile = `${testPath}/diagram/EntitySearch.svg`
     if (fs.existsSync(svgFile)) { fs.unlinkSync(svgFile) }
-    await validate.generateUml(specPath, `${__dirname}/diagram`)
+    await validate.generateUml(specPath, `${testPath}/diagram`)
     assert.strictEqual(fs.existsSync(svgFile), true)
   })
 })

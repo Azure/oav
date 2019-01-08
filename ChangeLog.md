@@ -1,5 +1,9 @@
 # Changelog
 
+### 01/08/2019 0.10.4
+
+- remove `ts-node`
+
 ### 12/11/2018 0.10.3
 
 - exporting NodeError to consume it outside of oav..

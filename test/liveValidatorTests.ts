@@ -10,7 +10,12 @@ import * as Constants from "../lib/util/constants"
 import { ResponsesObject } from "yasway"
 
 const numberOfSpecs = 8
-const livePaths = glob.sync(path.join(__dirname, "liveValidation/swaggers/**/live/*.json"))
+const livePaths = glob.sync(path.join(
+  __dirname,
+  "..",
+  "..",
+  "test/liveValidation/swaggers/**/live/*.json")
+)
 describe("Live Validator", () => {
   describe("Initialization", () => {
     it("should initialize with defaults", () => {
