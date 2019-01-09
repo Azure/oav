@@ -985,11 +985,9 @@ export class SpecResolver {
         definition.allOf.forEach(item => {
           // TODO: What if there is an inline definition instead of $ref
           if (item.$ref && item.$ref === reference) {
-            /*
             log.debug(
               `reference found: ${reference} in definition: ${definitionName}`
             )
-            */
             result.add(definitionName)
           }
         })
