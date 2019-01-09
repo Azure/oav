@@ -23,7 +23,8 @@ import { OperationResultType } from "../util/scenarioReducer"
 import { ModelValidationError } from "../util/modelValidationError"
 import * as msRest from "ms-rest"
 import { toArray, filter } from "@ts-common/iterator"
-import { MultipleScenarios, Scenario } from '../util/responseReducer';
+import { MultipleScenarios, Scenario } from '../util/responseReducer'
+import { processErrors } from '../util/processErrors'
 
 const HttpRequest = msRest.WebResource
 
@@ -1011,7 +1012,8 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
         responseValidationErrors
       )
       operationResult.responses[responseStatusCode].error = e
-      log.error(`${msg}:\n`, e)
+      const pe = processErrors([e])
+      log.error(`${msg}:\n`, pe)
     } else if (responseValidationWarnings) {
       operationResult.responses[
         responseStatusCode

@@ -3,7 +3,7 @@
 
 import { NodeError } from "./validationError"
 import { isArray, filterMap } from "@ts-common/iterator"
-import { jsonSymbol } from "z-schema"
+import { jsonSymbol, schemaSymbol } from "z-schema"
 import { getInfo, getRootObjectInfo, getAllDirectives } from '@ts-common/source-map'
 import { TitleObject } from '../validators/specTransformer'
 import { log } from './logging'
@@ -50,6 +50,8 @@ const addFileInfo = <T extends NodeError<T>>(error: T): T => {
       error.jsonUrl = getRootObjectInfo(jsonInfo).url
     }
   }
+  delete (error as any)[jsonSymbol]
+  delete (error as any)[schemaSymbol]
   return error
 }
 
@@ -67,6 +69,7 @@ const createErrorProcessor = <T extends NodeError<T>>() => {
     }
     setMutableProperty(error, "errors", multiple(error.errors))
     setMutableProperty(error, "inner", multiple(error.inner))
+    setMutableProperty(error, "innerErrors", multiple(error.innerErrors))
     return error
   }
 

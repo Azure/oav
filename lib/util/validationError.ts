@@ -95,6 +95,7 @@ export interface NodeError<T extends NodeError<T>> {
   path?: string | string[]
   similarPaths?: string[]
   errors?: T[]
+  innerErrors?: T[]
   in?: string
   name?: string
   params?: Array<unknown>
