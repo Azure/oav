@@ -1,5 +1,9 @@
 # Changelog
 
+### 01/08/2019 0.11.0
+
+- Remove JS symbols from errors to avoid logging failure.
+
 ### 01/08/2019 0.10.4
 
 - remove `ts-node`
