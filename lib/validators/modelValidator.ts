@@ -380,7 +380,8 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       scenarios: resultScenarios
     }
     if (xmsExamples) {
-      for (const [scenario, xmsExample] of entries<any>(xmsExamples)) {
+      for (const [scenario, xmsExampleFunc] of entries<any>(xmsExamples)) {
+        const xmsExample = xmsExampleFunc()
         resultScenarios[scenario] = {
           requestValidation: this.validateRequest(
             operation,
@@ -466,7 +467,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
 
     let result: RequestValidation = {}
     if (bodyParam && bodyParam.schema && bodyParam.schema.example) {
-      const exampleParameterValues: MutableStringMap<object> = {}
+      const exampleParameterValues: MutableStringMap<(() => {}) | object> = {}
       for (const parameter of parameters) {
         log.debug(
           `Getting sample value for parameter "${

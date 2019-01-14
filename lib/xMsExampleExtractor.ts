@@ -138,7 +138,7 @@ export class XMsExampleExtractor {
 
         const headerParams = recordingEntry.RequestHeaders
 
-        // if commandline included check for API version, validate api-version from URI in
+        // if command-line included check for API version, validate api-version from URI in
         // recordings matches the api-version of the spec
         if (!this.options.matchApiVersion
           || (("api-version" in queryParams)

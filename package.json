@@ -1,6 +1,6 @@
 {
   "name": "oav",
-  "version": "0.11.0",
+  "version": "0.11.1",
   "author": {
     "name": "Microsoft Corporation",
     "email": "azsdkteam@microsoft.com",
@@ -53,7 +53,7 @@
     "@types/json-pointer": "^1.0.30",
     "@types/jsonpath": "^0.2.0",
     "@types/mocha": "^5.2.5",
-    "@types/node": "^8.10.34",
+    "@types/node": "^10.12.18",
     "@types/recursive-readdir": "^2.2.0",
     "@types/should": "^8.1.30",
     "@types/swagger-parser": "^4.0.2",
