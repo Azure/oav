@@ -467,7 +467,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
 
     let result: RequestValidation = {}
     if (bodyParam && bodyParam.schema && bodyParam.schema.example) {
-      const exampleParameterValues: MutableStringMap<(() => {}) | object> = {}
+      const exampleParameterValues: MutableStringMap<object> = {}
       for (const parameter of parameters) {
         log.debug(
           `Getting sample value for parameter "${
