@@ -17,15 +17,15 @@ export function toModelErrors(
     if (value.code === undefined) {
       throw Error("ICE: value.code is undefined")
     }
-    const severity = errorCodeToSeverity(value.code);
+    const severity = errorCodeToSeverity(value.code)
     const modelError: ModelValidationError = {
       operationId,
       scenario,
       source,
       responseCode,
       severity,
-      errorCode: value.code,
-      errorDetails: value,
+      code: value.code,
+      details: value
     }
     return modelError
   })

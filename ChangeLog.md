@@ -1,5 +1,9 @@
 # Changelog
 
+### 01/14/2019 0.12.0
+
+- Simplify model and semantic property names. `errorCode` becomes `code` and `errorDetails` becomes `details`.
+
 ### 01/14/2019 0.11.1
 
 - Replace an example object with a function to avoid reference resolutions in examples.

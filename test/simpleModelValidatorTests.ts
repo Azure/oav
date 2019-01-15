@@ -9,8 +9,8 @@ describe("simple model validation tests", () => {
     const spec: SwaggerObject = {
       swagger: "2.0",
       info: { title: "sometitle", version: "2018" },
-      consumes: [ "application/json" ],
-      produces: [ "application/json" ],
+      consumes: ["application/json"],
+      produces: ["application/json"],
       paths: {
         "/somepath": {
           get: {
@@ -24,7 +24,7 @@ describe("simple model validation tests", () => {
                 },
                 examples: {
                   "application/json": {
-                    invalid: 3,
+                    invalid: 3
                   }
                 }
               }
@@ -35,18 +35,13 @@ describe("simple model validation tests", () => {
     }
     const specJson = JSON.stringify(spec)
     const specParsed = parse("url", specJson) as SwaggerObject
-    const validator = new ModelValidator(
-      "some/file/path",
-      specParsed,
-      {
-      }
-    )
+    const validator = new ModelValidator("some/file/path", specParsed, {})
     const api = await validator.initialize()
     validator.validateOperations()
     const result = validator.specValidationResult
     assert.notStrictEqual(api, undefined)
     const errors = getErrorsFromModelValidation(result)
     assert.strictEqual(errors.length, 1)
-    assert.strictEqual(errors[0].errorCode, "OBJECT_ADDITIONAL_PROPERTIES")
+    assert.strictEqual(errors[0].code, "OBJECT_ADDITIONAL_PROPERTIES")
   })
 })

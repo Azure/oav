@@ -5,7 +5,7 @@
 
 import assert from "assert"
 import * as validate from "../lib/validate"
-import { ModelValidator } from '../lib/validators/modelValidator'
+import { ModelValidator } from "../lib/validators/modelValidator"
 import * as path from "path"
 
 const testPath = path.join(__dirname, "../../test")
@@ -59,15 +59,14 @@ describe("Model Validation", () => {
         `swagger "${specPath} with operation "${operationIds}" should report only 1 error.`
       )
 
-      if (result[0].errorDetails === undefined) {
-        throw new Error("result[0].errorDetails === undefined")
+      if (result[0].details === undefined) {
+        throw new Error("result[0].details === undefined")
       }
-      if (result[0].errorDetails.similarPaths === undefined) {
-        throw new Error("result[0].errorDetails.similarPaths === undefined")
+      if (result[0].details.similarPaths === undefined) {
+        throw new Error("result[0].details.similarPaths === undefined")
       }
       assert(
-        result[0].errorDetails.similarPaths
-          .length === 1,
+        result[0].details.similarPaths.length === 1,
         `swagger "${specPath} with operation "${operationIds}" error should have a similar path.`
       )
       // console.log(result)
@@ -110,7 +109,10 @@ describe("Model Validation", () => {
         // console.log(result)
       } catch (err) {
         assert.strictEqual(err.code, "REQUEST_VALIDATION_ERROR")
-        assert.strictEqual(err.innerErrors[0].code, "DOUBLE_FORWARD_SLASHES_IN_URL")
+        assert.strictEqual(
+          err.innerErrors[0].code,
+          "DOUBLE_FORWARD_SLASHES_IN_URL"
+        )
       }
     })
   })
@@ -158,13 +160,9 @@ describe("Model Validation", () => {
     it("should fail for CircularAnimal_IncorrectSibling_List", async () => {
       const specPath2 = `${testPath}/modelValidation/swaggers/specification/polymorphic/polymorphicSwagger.json`
       const operationIds = "CircularAnimal_IncorrectSibling_List"
-      const validator = new ModelValidator(
-        specPath2,
-        null,
-        {
-          consoleLogLevel: "off"
-        }
-      )
+      const validator = new ModelValidator(specPath2, null, {
+        consoleLogLevel: "off"
+      })
       await validator.initialize()
       validator.validateOperations(operationIds)
       const result = validator.specValidationResult
@@ -518,7 +516,7 @@ describe("Model Validation", () => {
       })
       // console.dir(result, { depth: null })
       assert(result.length === 1)
-      assert.strictEqual(result[0].errorCode, "RESPONSE_STATUS_CODE_NOT_IN_SPEC")
+      assert.strictEqual(result[0].code, "RESPONSE_STATUS_CODE_NOT_IN_SPEC")
       // console.log(result)
     })
   })
@@ -531,7 +529,7 @@ describe("Model Validation", () => {
       })
       // console.dir(result, { depth: null })
       assert(result.length === 1)
-      assert.strictEqual(result[0].errorCode, "RESPONSE_STATUS_CODE_NOT_IN_SPEC")
+      assert.strictEqual(result[0].code, "RESPONSE_STATUS_CODE_NOT_IN_SPEC")
       // console.log(result)
     })
   })
