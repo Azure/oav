@@ -17,6 +17,9 @@ import {
   copyInfo
 } from "@ts-common/source-map"
 import { getSchemaObjectInfo, setSchemaInfo } from "../validators/specTransformer"
+import * as json from "@ts-common/json"
+import * as it from "@ts-common/iterator"
+import * as sm from "@ts-common/string-map"
 
 /*
  * Executes an array of promises sequentially. Inspiration of this method is here:
@@ -456,10 +459,10 @@ export function isPureObject(model: SchemaObject): boolean {
     typeof model.type.valueOf() === "string" &&
     model.type === "object" &&
     model.properties &&
-    model.properties.length === 0
+    it.isEmpty(sm.entries(model.properties))
   ) {
     return true
-  } else if (!model.type && model.properties && model.properties.length === 0) {
+  } else if (!model.type && model.properties && it.isEmpty(sm.entries(model.properties))) {
     return true
   } else if (
     model.type &&
@@ -474,7 +477,7 @@ export function isPureObject(model: SchemaObject): boolean {
   }
 }
 
-interface Entity {
+type Entity = {
   in?: string
   type?: DataType
   additionalProperties?: SchemaObject | boolean
@@ -483,7 +486,7 @@ interface Entity {
   oneOf?: ReadonlyArray<SchemaObject>
   $ref?: string
   anyOf?: ReadonlyArray<SchemaObject>
-}
+} & json.JsonObject
 
 /**
  * Relaxes/Transforms the given entities type from a specific JSON schema primitive type

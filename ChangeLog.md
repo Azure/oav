@@ -1,5 +1,9 @@
 # Changelog
 
+### 01/15/2019 0.13.0
+
+- JSON types are updated.
+
 ### 01/14/2019 0.12.0
 
 - Simplify model and semantic property names. `errorCode` becomes `code` and `errorDetails` becomes `details`.
