@@ -106,8 +106,6 @@ export class SpecResolver {
    *
    * @param {object} [options.shouldResolveNullableTypes] Should we allow null values to match any
    *    type? Default: true
-   *
-   * @return {object} An instance of the SpecResolver class.
    */
   public constructor(
     specPath: string,
@@ -390,7 +388,9 @@ export class SpecResolver {
           slicedRefName.match(regex) === null)
       ) {
         // TODO: doc should have a type
-        utils.setObject(doc as {}, slicedRefName, result)
+        // We set a function `() => result` instead of an object `result` to avoid
+        // reference resolution in the examples.
+        utils.setObject(doc as {}, slicedRefName, () => result)
       }
     } else {
       // resolve the local reference.

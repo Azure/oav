@@ -32,6 +32,14 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "Validate Network examples",
+      "program": "${workspaceRoot}/dist/scripts/testNetwork.js",
+      "cwd": "${workspaceRoot}",
+      "env": {}
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "Extract example",
       "program": "${workspaceRoot}/dist/cli.js",
       "cwd": "${workspaceRoot}",
@@ -109,10 +117,7 @@
       "stopOnEntry": false,
       "args": [
         "--no-timeouts",
-        "test/liveValidatorTests.ts",
-        "-r",
-        "ts-node/register",
-        "--no-timeouts"
+        "dist/test/modelValidatorTests.js"
       ],
       "env": {}
     },
