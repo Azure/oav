@@ -3,12 +3,12 @@
 
 import { Severity } from "./severity"
 import { ValidationResultSource } from "./validationResultSource"
-import { NodeError } from './validationError';
+import { NodeError } from "./validationError"
 
 export interface BaseValidationError<T extends NodeError<T>> {
   severity?: Severity
-  errorCode?: string
-  errorDetails?: T
+  code?: string
+  details?: T
   source?: ValidationResultSource
   count?: number
 }
