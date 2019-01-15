@@ -1,5 +1,9 @@
 # Changelog
 
+### 01/14/2019 0.11.1
+
+- Replace an example object with a function to avoid reference resolutions in examples.
+
 ### 01/08/2019 0.11.0
 
 - Remove JS symbols from errors to avoid logging failure.

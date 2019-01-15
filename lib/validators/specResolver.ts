@@ -388,6 +388,8 @@ export class SpecResolver {
           slicedRefName.match(regex) === null)
       ) {
         // TODO: doc should have a type
+        // We set a function `() => result` instead of an object `result` to avoid
+        // reference resolution in the examples.
         utils.setObject(doc as {}, slicedRefName, () => result)
       }
     } else {
