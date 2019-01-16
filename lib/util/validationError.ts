@@ -7,7 +7,8 @@ import { FilePosition } from "@ts-common/source-map"
 import { flatMap, fold } from "@ts-common/iterator"
 import { processErrors } from "./processErrors"
 import { jsonSymbol, schemaSymbol } from "z-schema"
-import { StringMap } from '@ts-common/string-map';
+import { StringMap } from "@ts-common/string-map"
+import * as json from "@ts-common/json"
 
 /**
  * @class
@@ -111,7 +112,7 @@ export interface NodeError<T extends NodeError<T>> {
 
   directives?: StringMap<unknown>
 
-  readonly [jsonSymbol]?: object
+  readonly [jsonSymbol]?: json.JsonRef
   readonly [schemaSymbol]?: object
 }
 

@@ -23,8 +23,8 @@ import {
 import { PartialFactory } from "@ts-common/property-set"
 import { MutableStringMap } from "@ts-common/string-map"
 import { pathToPtr } from "json-refs"
-import { setSchemaTitle, getSchemaObjectInfo, setSchemaInfo } from './specTransformer';
-import { generatedPrefix } from './cloudError';
+import { setSchemaTitle, getSchemaObjectInfo, setSchemaInfo } from "./specTransformer"
+import { generatedPrefix } from "./cloudError"
 
 const skipIfUndefined = <T>(f: (v: T) => T): ((v: T | undefined) => T | undefined) =>
   (v) => v !== undefined ? f(v) : undefined
@@ -65,11 +65,10 @@ export function resolveNestedDefinitions(spec: SwaggerObject): SwaggerObject {
     setSchemaInfo(refResult, getSchemaObjectInfo(schemaObject))
     return refResult
   }
-
   // a function to resolve SchemaObject array
   const resolveOptionalSchemaObjectArray = (
     schemaObjectArray: ReadonlyArray<SchemaObject> | undefined
-  ) =>
+  ): ReadonlyArray<SchemaObject> | undefined =>
     schemaObjectArray !== undefined ?
       arrayMap(schemaObjectArray, resolveNestedSchemaObject) :
       undefined

@@ -11,8 +11,8 @@ import { getDescendantFilePosition } from "@ts-common/source-map"
 import { setMutableProperty } from "@ts-common/property-set"
 import { merge } from "@ts-common/string-map"
 
-export const processErrors = <T extends NodeError<T>>(errors: T[] | undefined): T[] | undefined =>
-  createErrorProcessor<T>()(errors)
+export const processErrors = <T extends NodeError<T>>(errors: T[] | undefined) =>
+  errors === undefined ? undefined : Array.from(filterMap(errors, one))
 
 const addFileInfo = <T extends NodeError<T>>(error: T): T => {
   const title = error.title
@@ -55,26 +55,18 @@ const addFileInfo = <T extends NodeError<T>>(error: T): T => {
   return error
 }
 
-const createErrorProcessor = <T extends NodeError<T>>() => {
+const isSuppressed = <T extends NodeError<T>>(error: T): boolean =>
+  error.directives !== undefined &&
+  error.code !== undefined &&
+  error.directives[error.code] !== undefined
 
-  const isSuppressed = (error: T): boolean =>
-    error.directives !== undefined &&
-    error.code !== undefined &&
-    error.directives[error.code] !== undefined
-
-  const one = (error: T): T | undefined => {
-    error = addFileInfo(error)
-    if (isSuppressed(error)) {
-      return undefined
-    }
-    setMutableProperty(error, "errors", multiple(error.errors))
-    setMutableProperty(error, "inner", multiple(error.inner))
-    setMutableProperty(error, "innerErrors", multiple(error.innerErrors))
-    return error
+const one = <T extends NodeError<T>>(error: T): T | undefined => {
+  error = addFileInfo(error)
+  if (isSuppressed(error)) {
+    return undefined
   }
-
-  const multiple = (errors: T[] | undefined) =>
-    errors === undefined ? undefined : Array.from(filterMap(errors, one))
-
-  return multiple
+  setMutableProperty(error, "errors", processErrors(error.errors))
+  setMutableProperty(error, "inner", processErrors(error.inner))
+  setMutableProperty(error, "innerErrors", processErrors(error.innerErrors))
+  return error
 }
