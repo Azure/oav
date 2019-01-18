@@ -55,10 +55,19 @@ const addFileInfo = <T extends NodeError<T>>(error: T): T => {
   return error
 }
 
-const isSuppressed = <T extends NodeError<T>>(error: T): boolean =>
-  error.directives !== undefined &&
-  error.code !== undefined &&
-  error.directives[error.code] !== undefined
+const isSuppressed = <T extends NodeError<T>>({ code, directives, message }: T): boolean => {
+  if (directives === undefined || code === undefined) {
+    return false
+  }
+  const messageRegEx = directives[code]
+  if (messageRegEx === undefined || typeof messageRegEx !== "string") {
+    return false
+  }
+  if (message === undefined) {
+    return false
+  }
+  return new RegExp(messageRegEx).test(message)
+}
 
 const one = <T extends NodeError<T>>(error: T): T | undefined => {
   error = addFileInfo(error)
