@@ -8,7 +8,8 @@
     "200":{
       "body": {
         "nameAvailable": "string instead of bool",
-        "unknownProperty": "something"
+        "unknownProperty": "something",
+        "some": "something else"
       }
     }
   }
