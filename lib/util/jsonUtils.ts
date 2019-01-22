@@ -16,13 +16,16 @@ import { log } from "./logging"
 import { parseContent } from "./makeRequest"
 import { isSubPath, splitPathAndReverse } from "./path"
 
-const setSuppression = (info: FilePosition | undefined, code: string) => {
+const setSuppression = (
+  info: FilePosition | undefined,
+  item: SuppressionItem
+) => {
   if (info !== undefined) {
     if (info.directives === undefined) {
       (info as any).directives = {}
     }
-    const directives = info.directives as MutableStringMap<boolean>
-    directives[code] = true
+    const directives = info.directives as MutableStringMap<string>
+    directives[item.suppress] = item["text-matches"] || ".*"
   }
 }
 
@@ -83,10 +86,10 @@ export async function parseJson(
         )
         for (const p of paths) {
           // drop "$" and apply suppressions.
-          setSuppression(getDescendantFilePosition(result, it.drop(p)), s.suppress)
+          setSuppression(getDescendantFilePosition(result, it.drop(p)), s)
         }
       } else {
-        setSuppression(rootInfo, s.suppress)
+        setSuppression(rootInfo, s)
       }
     }
     return result

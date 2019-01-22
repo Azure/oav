@@ -1,5 +1,9 @@
 # Changelog
 
+### 01/18/2019 0.13.1
+
+- Handle `text-matches` in suppression.
+
 ### 01/15/2019 0.13.0
 
 - JSON types are updated.

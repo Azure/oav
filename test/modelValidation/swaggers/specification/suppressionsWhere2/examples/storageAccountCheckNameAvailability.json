@@ -1,0 +1,15 @@
+{
+  "parameters":{
+    "api-version": "2016-01-01",
+    "scope": "subscriptionID",
+    "accountName":{"name":"storage4db9202c66274d529","type":"Microsoft.Storage/storageAccounts"}
+  },
+  "responses":{
+    "200":{
+      "body": {
+        "nameAvailable": "string instead of bool",
+        "unknownProperty": "something"
+      }
+    }
+  }
+}
