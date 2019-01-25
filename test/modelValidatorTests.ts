@@ -54,6 +54,7 @@ describe("Model Validation", () => {
         }
       )
 
+      // Issue # 381
       assert(
         result.length === 2,
         `swagger "${specPath} with operation "${operationIds}" should report only 1 error.`
