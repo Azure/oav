@@ -117,7 +117,7 @@
       "stopOnEntry": false,
       "args": [
         "--no-timeouts",
-        "dist/test/suppressionTests.js"
+        "dist/test/modelValidatorTests.js"
       ],
       "env": {}
     },

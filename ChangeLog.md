@@ -1,5 +1,9 @@
 # Changelog
 
+### 01/23/2019 0.13.2
+
+- Update `z-schema`.
+
 ### 01/18/2019 0.13.1
 
 - Handle `text-matches` in suppression.
