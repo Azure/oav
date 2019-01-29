@@ -1,5 +1,9 @@
 # Changelog
 
+### 01/28/2019 0.13.3
+
+- Provide url and file position for some errors.
+
 ### 01/23/2019 0.13.2
 
 - Update `z-schema`.
