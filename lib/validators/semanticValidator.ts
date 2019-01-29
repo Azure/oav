@@ -55,7 +55,10 @@ export class SemanticValidator extends SpecValidator<SemanticValidationResult> {
             `The spec ${this.specPath} has semantic validation errors.`,
             validationResult.errors)
           this.specValidationResult.validateSpec.errors = validateResponse.constructErrors(
-            e, this.specPath, this.getProviderNamespace())
+            e,
+            this.specPath,
+            this.getProviderNamespace()
+          )
           log.error(C.Errors)
           log.error("------")
           this.updateValidityStatus()
