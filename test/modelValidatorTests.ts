@@ -54,16 +54,14 @@ describe("Model Validation", () => {
         }
       )
 
-      // Issue # 381
       assert(
-        result.length === 2,
+        result.length === 1,
         `swagger "${specPath} with operation "${operationIds}" should report only 1 error.`
       )
 
       if (result[0].details === undefined) {
         throw new Error("result[0].details === undefined")
       }
-      /* Issue # 381
       if (result[0].details.similarPaths === undefined) {
         throw new Error("result[0].details.similarPaths === undefined")
       }
@@ -71,7 +69,6 @@ describe("Model Validation", () => {
         result[0].details.similarPaths.length === 1,
         `swagger "${specPath} with operation "${operationIds}" error should have a similar path.`
       )
-      */
       // console.log(result)
     })
 

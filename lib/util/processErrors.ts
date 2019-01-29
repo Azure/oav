@@ -14,21 +14,27 @@ import { merge } from "@ts-common/string-map"
 export const processErrors = <T extends NodeError<T>>(errors: T[] | undefined) =>
   errors === undefined ? undefined : Array.from(filterMap(errors, one))
 
+export const setPositionAndUrl = <T extends NodeError<T>>(
+  error: NodeError<T>,
+  titleObject: TitleObject|undefined
+) => {
+  if (titleObject !== undefined) {
+    const { path } = titleObject
+    error.position = titleObject.position
+    error.url = titleObject.url
+    if (path !== undefined) {
+      error.title = "/" + path.join("/")
+    }
+    error.directives = titleObject.directives
+  }
+}
+
 const addFileInfo = <T extends NodeError<T>>(error: T): T => {
   const title = error.title
   if (title !== undefined) {
     try {
       const titleObject: TitleObject | undefined = JSON.parse(title)
-      if (titleObject !== undefined) {
-        const { path } = titleObject
-        error.position = titleObject.position
-        error.url = titleObject.url
-        if (path !== undefined) {
-          error.title = "/" + path.join("/")
-        }
-        error.directives = titleObject.directives
-      }
-    // tslint:disable-next-line:no-empty
+      setPositionAndUrl(error, titleObject)
     } catch {
       log.error(`ICE: can't parse title: ${title}`)
     }

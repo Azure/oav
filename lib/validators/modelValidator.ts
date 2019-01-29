@@ -24,7 +24,8 @@ import { ModelValidationError } from "../util/modelValidationError"
 import * as msRest from "ms-rest"
 import { toArray, filter } from "@ts-common/iterator"
 import { MultipleScenarios, Scenario } from '../util/responseReducer'
-import { processErrors } from '../util/processErrors'
+import { processErrors, setPositionAndUrl } from '../util/processErrors'
+import { getTitle } from './specTransformer';
 
 const HttpRequest = msRest.WebResource
 
@@ -675,13 +676,15 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     if (responseWithoutXmsExamples && responseWithoutXmsExamples.length) {
       const msg =
         `Following response status codes "${responseWithoutXmsExamples.toString()}" for ` +
-        `operation "${
-          operation.operationId
-        }" were present in the swagger spec, ` +
+        `operation "${operation.operationId}" were present in the swagger spec, ` +
         `however they were not present in x-ms-examples. Please provide them.`
       const e = this.constructErrorObject<Sway.ValidationEntry>(
         ErrorCodes.ResponseStatusCodeNotInExample,
         msg
+      )
+      setPositionAndUrl(
+        e,
+        getTitle(operation.definition)
       )
       log.error(e as any)
       responseWithoutXmsExamples.forEach(

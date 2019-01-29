@@ -5,6 +5,7 @@ import { StringMap } from "@ts-common/string-map"
 import {
   FilePosition, getRootObjectInfo, getAllDirectives, getPath, InfoFunc, getInfoFunc, setInfoFunc
 } from "@ts-common/source-map"
+import * as json from '@ts-common/json';
 
 export interface TitleObject {
   readonly position?: FilePosition
@@ -18,7 +19,23 @@ export interface SchemaObjectInfo {
   readonly infoFunc: InfoFunc
 }
 
-export const getSchemaObjectInfo = (model: SchemaObject): SchemaObjectInfo | undefined => {
+export const getTitle = (model: json.JsonObject|json.JsonArray): TitleObject|undefined => {
+  const infoFunc = getInfoFunc(model)
+  if (infoFunc === undefined) {
+    return undefined
+  }
+  const info = infoFunc()
+  return {
+    path: getPath(info),
+    position: info.position,
+    url: getRootObjectInfo(info).url,
+    directives: getAllDirectives(model, []),
+  }
+}
+
+export const getSchemaObjectInfo = (
+  model: json.JsonObject|json.JsonArray
+): SchemaObjectInfo | undefined => {
   const infoFunc = getInfoFunc(model)
   if (infoFunc === undefined) {
     return undefined
