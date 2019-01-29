@@ -19,7 +19,7 @@ export interface SchemaObjectInfo {
   readonly infoFunc: InfoFunc
 }
 
-export const getTitle = (model: json.JsonObject|json.JsonArray): TitleObject => {
+export const getTitle = (model: json.JsonObject|json.JsonArray): TitleObject|undefined => {
   const infoFunc = getInfoFunc(model)
   if (infoFunc === undefined) {
     return undefined
