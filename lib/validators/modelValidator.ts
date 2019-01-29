@@ -24,7 +24,8 @@ import { ModelValidationError } from "../util/modelValidationError"
 import * as msRest from "ms-rest"
 import { toArray, filter } from "@ts-common/iterator"
 import { MultipleScenarios, Scenario } from '../util/responseReducer'
-import { processErrors } from '../util/processErrors'
+import { processErrors, setPositionAndUrl } from '../util/processErrors'
+import { getTitle } from './specTransformer';
 
 const HttpRequest = msRest.WebResource
 
@@ -689,6 +690,10 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
         undefined,
         undefined,
         operation.definition
+      )
+      setPositionAndUrl(
+        e,
+        getTitle(operation.definition)
       )
       log.error(e as any)
       responseWithoutXmsExamples.forEach(
