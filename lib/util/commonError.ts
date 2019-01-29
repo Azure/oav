@@ -1,4 +1,5 @@
 import { FilePosition } from '@ts-common/source-map';
+import { StringMap } from '@ts-common/string-map';
 
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
@@ -16,4 +17,8 @@ export interface CommonError {
   params?: Array<unknown>
   jsonUrl?: string
   jsonPosition?: FilePosition
+  position?: FilePosition
+  url?: string
+  title?: string
+  directives?: StringMap<unknown>
 }

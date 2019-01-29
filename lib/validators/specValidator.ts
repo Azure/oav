@@ -18,6 +18,9 @@ import { setMutableProperty } from "@ts-common/property-set"
 import * as docs from "../util/documents"
 import * as jsonUtils from "../util/jsonUtils"
 import * as jsonParser from "@ts-common/json-parser"
+import * as json from "@ts-common/json"
+import * as processErrors from "../util/processErrors"
+import { getTitle } from './specTransformer';
 
 const ErrorCodes = C.ErrorCodes;
 
@@ -159,7 +162,7 @@ export class SpecValidator<T extends CommonValidationResult> {
    * Initializes the spec validator. Resolves the spec on different counts using the SpecResolver
    * and initializes the internal api validator.
    */
-  public async initialize(): Promise<Sway.SwaggerApi> {
+  public readonly initialize = async (): Promise<Sway.SwaggerApi> => {
     if (this.options.shouldResolveRelativePaths) {
       docs.clearCache()
     }
@@ -220,23 +223,30 @@ export class SpecValidator<T extends CommonValidationResult> {
    *
    * @return {object} err Return the constructed Error object.
    */
-  protected constructErrorObject<TE extends CommonError>(
+  protected readonly constructErrorObject = <TE extends CommonError>(
     code: ErrorCode,
     message: string,
     innerErrors?: null | TE[],
-    skipValidityStatusUpdate?: boolean
-  ): TE {
+    skipValidityStatusUpdate?: boolean,
+    source?: json.JsonObject
+  ): TE => {
 
-    const err: CommonError = {
+    const err: TE = {
       code: code.name,
       id: code.id,
       message: message
-    }
+    } as TE
     setMutableProperty(err, "innerErrors", innerErrors ? innerErrors : undefined)
     if (!skipValidityStatusUpdate) {
       this.updateValidityStatus()
     }
-    return err as TE
+    if (source !== undefined) {
+      processErrors.setPositionAndUrl(
+        err,
+        getTitle(source)
+      )
+    }
+    return err
   }
 
   /*
@@ -244,7 +254,7 @@ export class SpecValidator<T extends CommonValidationResult> {
    *
    * @param {boolean} value
    */
-  protected updateValidityStatus(value?: boolean): void {
+  protected readonly updateValidityStatus = (value?: boolean): void => {
     this.specValidationResult.validityStatus = Boolean(value)
   }
 }

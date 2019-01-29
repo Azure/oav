@@ -1,5 +1,12 @@
 # Changelog
 
+### 01/29/2019 0.13.4
+
+- Provide url and file position for these errors:
+  - `RESPONSE_STATUS_CODE_NOT_IN_SPEC`,
+  - `RESPONSE_SCHEMA_NOT_IN_SPEC`, and
+  - `REQUIRED_PARAMETER_EXAMPLE_NOT_FOUND`.
+
 ### 01/28/2019 0.13.3
 
 - Provide url and file position for `RESPONSE_STATUS_CODE_NOT_IN_EXAMPLE` errors.

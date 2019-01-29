@@ -24,8 +24,7 @@ import { ModelValidationError } from "../util/modelValidationError"
 import * as msRest from "ms-rest"
 import { toArray, filter } from "@ts-common/iterator"
 import { MultipleScenarios, Scenario } from '../util/responseReducer'
-import { processErrors, setPositionAndUrl } from '../util/processErrors'
-import { getTitle } from './specTransformer';
+import { processErrors } from '../util/processErrors'
 
 const HttpRequest = msRest.WebResource
 
@@ -625,7 +624,10 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
           `however it is not present in the swagger spec.`
         const e = this.constructErrorObject<Sway.ValidationEntry>(
           ErrorCodes.ResponseStatusCodeNotInSpec,
-          msg
+          msg,
+          undefined,
+          undefined,
+          operation.definition
         )
         validationResults.errors.push(e)
         log.error(e as any)
@@ -645,7 +647,10 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
           `however the response does not have a "schema" defined in the swagger spec.`
         const e = this.constructErrorObject<Sway.ValidationEntry>(
           ErrorCodes.ResponseSchemaNotInSpec,
-          msg
+          msg,
+          undefined,
+          undefined,
+          operation.definition
         )
         validationResults.errors.push(e)
         log.error(e as any)
@@ -680,11 +685,10 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
         `however they were not present in x-ms-examples. Please provide them.`
       const e = this.constructErrorObject<Sway.ValidationEntry>(
         ErrorCodes.ResponseStatusCodeNotInExample,
-        msg
-      )
-      setPositionAndUrl(
-        e,
-        getTitle(operation.definition)
+        msg,
+        undefined,
+        undefined,
+        operation.definition
       )
       log.error(e as any)
       responseWithoutXmsExamples.forEach(
@@ -797,7 +801,10 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
             `the swagger spec but is not present in the provided example parameter values.`
           const e = this.constructErrorObject<Sway.ValidationEntry>(
             ErrorCodes.RequiredParameterExampleNotFound,
-            msg
+            msg,
+            undefined,
+            undefined,
+            parameter.definition
           )
           if (result.validationResult === undefined) {
             throw new Error("result.validationResult is undefined")
