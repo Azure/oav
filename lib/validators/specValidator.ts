@@ -18,6 +18,9 @@ import { setMutableProperty } from "@ts-common/property-set"
 import * as docs from "../util/documents"
 import * as jsonUtils from "../util/jsonUtils"
 import * as jsonParser from "@ts-common/json-parser"
+import * as json from "@ts-common/json"
+import * as processErrors from "../util/processErrors"
+import { getTitle } from './specTransformer';
 
 const ErrorCodes = C.ErrorCodes;
 
@@ -62,6 +65,14 @@ export interface CommonValidationResult {
   validityStatus: unknown
   operations: {}
   resolveSpec?: Sway.ValidationEntry
+}
+
+export interface ErrorParameters<TE extends CommonError> {
+  code: ErrorCode,
+  message: string,
+  innerErrors?: null | TE[],
+  skipValidityStatusUpdate?: boolean,
+  source?: json.JsonObject
 }
 
 /*
@@ -190,7 +201,13 @@ export class SpecValidator<T extends CommonValidationResult> {
       }
       this.swaggerApi = await Sway.create(options)
     } catch (err) {
-      const e = this.constructErrorObject(ErrorCodes.InternalError, err.message, [err])
+      const e = this.constructErrorObject(
+        {
+          code: ErrorCodes.InternalError,
+          message: err.message,
+          innerErrors: [err]
+        }
+      )
       this.specValidationResult.resolveSpec = e
       log.error(`${ErrorCodes.ResolveSpecError.name}: ${err.message}.`)
       log.error(err.stack)
@@ -198,7 +215,12 @@ export class SpecValidator<T extends CommonValidationResult> {
     }
     if (errors.length > 0) {
       const err = errors[0]
-      const e = this.constructErrorObject(ErrorCodes.JsonParsingError, err.message, errors)
+      const e = this.constructErrorObject(
+        {
+          code: ErrorCodes.JsonParsingError,
+          message: err.message,
+          innerErrors: errors
+        })
       this.specValidationResult.resolveSpec = e as any
       log.error(`${ErrorCodes.ResolveSpecError.name}: ${err.message}.`)
     }
@@ -221,22 +243,31 @@ export class SpecValidator<T extends CommonValidationResult> {
    * @return {object} err Return the constructed Error object.
    */
   protected constructErrorObject<TE extends CommonError>(
-    code: ErrorCode,
-    message: string,
-    innerErrors?: null | TE[],
-    skipValidityStatusUpdate?: boolean
+    {
+      code,
+      message,
+      innerErrors,
+      skipValidityStatusUpdate,
+      source
+    }: ErrorParameters<TE>
   ): TE {
 
-    const err: CommonError = {
+    const err: TE = {
       code: code.name,
       id: code.id,
       message: message
-    }
+    } as TE
     setMutableProperty(err, "innerErrors", innerErrors ? innerErrors : undefined)
     if (!skipValidityStatusUpdate) {
       this.updateValidityStatus()
     }
-    return err as TE
+    if (source !== undefined) {
+      processErrors.setPositionAndUrl(
+        err,
+        getTitle(source)
+      )
+    }
+    return err
   }
 
   /*

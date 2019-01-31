@@ -398,10 +398,12 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     } else {
       const msg = `x-ms-example not found in ${operation.operationId}.`
       result.exampleNotFound = this.constructErrorObject(
-        ErrorCodes.XmsExampleNotFoundError,
-        msg,
-        null,
-        true
+        {
+          code: ErrorCodes.XmsExampleNotFoundError,
+          message: msg,
+          skipValidityStatusUpdate: true,
+          source: operation.definition
+        }
       )
     }
     this.constructOperationResult(operation, result, C.xmsExamples)
@@ -624,8 +626,11 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
           `"${operation.operationId}" is provided in exampleResponseValue, ` +
           `however it is not present in the swagger spec.`
         const e = this.constructErrorObject<Sway.ValidationEntry>(
-          ErrorCodes.ResponseStatusCodeNotInSpec,
-          msg
+          {
+            code: ErrorCodes.ResponseStatusCodeNotInSpec,
+            message: msg,
+            source: operation.definition
+          }
         )
         validationResults.errors.push(e)
         log.error(e as any)
@@ -644,8 +649,11 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
           }" has response body provided in the example, ` +
           `however the response does not have a "schema" defined in the swagger spec.`
         const e = this.constructErrorObject<Sway.ValidationEntry>(
-          ErrorCodes.ResponseSchemaNotInSpec,
-          msg
+          {
+            code: ErrorCodes.ResponseSchemaNotInSpec,
+            message: msg,
+            source: operation.definition,
+          }
         )
         validationResults.errors.push(e)
         log.error(e as any)
@@ -679,8 +687,11 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
         `operation "${operation.operationId}" were present in the swagger spec, ` +
         `however they were not present in x-ms-examples. Please provide them.`
       const e = this.constructErrorObject<Sway.ValidationEntry>(
-        ErrorCodes.ResponseStatusCodeNotInExample,
-        msg
+        {
+          code: ErrorCodes.ResponseStatusCodeNotInExample,
+          message: msg,
+          source: operation.definition,
+        }
       )
       setPositionAndUrl(
         e,
@@ -796,8 +807,11 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
             } is required in ` +
             `the swagger spec but is not present in the provided example parameter values.`
           const e = this.constructErrorObject<Sway.ValidationEntry>(
-            ErrorCodes.RequiredParameterExampleNotFound,
-            msg
+            {
+              code: ErrorCodes.RequiredParameterExampleNotFound,
+              message: msg,
+              source: parameter.definition
+            }
           )
           if (result.validationResult === undefined) {
             throw new Error("result.validationResult is undefined")
@@ -838,8 +852,11 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
               `the parameter starts. This will cause double forward slashes ` +
               ` in the request url. Thus making it incorrect. Please rectify the example.`
             const e = this.constructErrorObject<Sway.ValidationEntry>(
-              ErrorCodes.DoubleForwardSlashesInUrl,
-              msg
+              {
+                code: ErrorCodes.DoubleForwardSlashesInUrl,
+                message: msg,
+                source: parameter.definition
+              }
             )
             if (result.validationResult === undefined) {
               throw new Error("result.validationResult is undefined")
@@ -946,9 +963,11 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       } catch (err) {
         request = null
         const e = this.constructErrorObject(
-          ErrorCodes.ErrorInPreparingRequest,
-          err.message,
-          [err]
+          {
+            code: ErrorCodes.ErrorInPreparingRequest,
+            message: err.message,
+            innerErrors: [err]
+          }
         )
         validationResult.errors.push(e)
       }
@@ -977,9 +996,11 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       operationResult.isValid = false
       operationResult.request.isValid = false
       const e = this.constructErrorObject(
-        ErrorCodes.RequestValidationError,
-        msg,
-        requestValidationErrors
+        {
+          code: ErrorCodes.RequestValidationError,
+          message: msg,
+          innerErrors: requestValidationErrors
+        }
       )
       operationResult.request.error = e
       log.error(`${msg}:\n`, e)
@@ -1011,9 +1032,11 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       operationResult.isValid = false
       operationResult.responses[responseStatusCode].isValid = false
       const e = this.constructErrorObject(
-        ErrorCodes.ResponseValidationError,
-        msg,
-        responseValidationErrors
+        {
+          code: ErrorCodes.ResponseValidationError,
+          message: msg,
+          innerErrors: responseValidationErrors
+        }
       )
       operationResult.responses[responseStatusCode].error = e
       const pe = processErrors([e])

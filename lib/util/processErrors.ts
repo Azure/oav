@@ -10,12 +10,13 @@ import { log } from './logging'
 import { getDescendantFilePosition } from "@ts-common/source-map"
 import { setMutableProperty } from "@ts-common/property-set"
 import { merge } from "@ts-common/string-map"
+import { CommonError } from './commonError';
 
 export const processErrors = <T extends NodeError<T>>(errors: T[] | undefined) =>
   errors === undefined ? undefined : Array.from(filterMap(errors, one))
 
-export const setPositionAndUrl = <T extends NodeError<T>>(
-  error: NodeError<T>,
+export const setPositionAndUrl = (
+  error: CommonError,
   titleObject: TitleObject|undefined
 ) => {
   if (titleObject !== undefined) {
