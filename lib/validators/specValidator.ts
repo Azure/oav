@@ -67,6 +67,14 @@ export interface CommonValidationResult {
   resolveSpec?: Sway.ValidationEntry
 }
 
+export interface ErrorParameters<TE extends CommonError> {
+  code: ErrorCode,
+  message: string,
+  innerErrors?: null | TE[],
+  skipValidityStatusUpdate?: boolean,
+  source?: json.JsonObject
+}
+
 /*
  * @class
  * Performs semantic and data validation of the given swagger spec.
@@ -162,7 +170,7 @@ export class SpecValidator<T extends CommonValidationResult> {
    * Initializes the spec validator. Resolves the spec on different counts using the SpecResolver
    * and initializes the internal api validator.
    */
-  public readonly initialize = async (): Promise<Sway.SwaggerApi> => {
+  public async initialize(): Promise<Sway.SwaggerApi> {
     if (this.options.shouldResolveRelativePaths) {
       docs.clearCache()
     }
@@ -193,7 +201,13 @@ export class SpecValidator<T extends CommonValidationResult> {
       }
       this.swaggerApi = await Sway.create(options)
     } catch (err) {
-      const e = this.constructErrorObject(ErrorCodes.InternalError, err.message, [err])
+      const e = this.constructErrorObject(
+        {
+          code: ErrorCodes.InternalError,
+          message: err.message,
+          innerErrors: [err]
+        }
+      )
       this.specValidationResult.resolveSpec = e
       log.error(`${ErrorCodes.ResolveSpecError.name}: ${err.message}.`)
       log.error(err.stack)
@@ -201,7 +215,12 @@ export class SpecValidator<T extends CommonValidationResult> {
     }
     if (errors.length > 0) {
       const err = errors[0]
-      const e = this.constructErrorObject(ErrorCodes.JsonParsingError, err.message, errors)
+      const e = this.constructErrorObject(
+        {
+          code: ErrorCodes.JsonParsingError,
+          message: err.message,
+          innerErrors: errors
+        })
       this.specValidationResult.resolveSpec = e as any
       log.error(`${ErrorCodes.ResolveSpecError.name}: ${err.message}.`)
     }
@@ -223,13 +242,15 @@ export class SpecValidator<T extends CommonValidationResult> {
    *
    * @return {object} err Return the constructed Error object.
    */
-  protected readonly constructErrorObject = <TE extends CommonError>(
-    code: ErrorCode,
-    message: string,
-    innerErrors?: null | TE[],
-    skipValidityStatusUpdate?: boolean,
-    source?: json.JsonObject
-  ): TE => {
+  protected constructErrorObject<TE extends CommonError>(
+    {
+      code,
+      message,
+      innerErrors,
+      skipValidityStatusUpdate,
+      source
+    }: ErrorParameters<TE>
+  ): TE {
 
     const err: TE = {
       code: code.name,
@@ -254,7 +275,7 @@ export class SpecValidator<T extends CommonValidationResult> {
    *
    * @param {boolean} value
    */
-  protected readonly updateValidityStatus = (value?: boolean): void => {
+  protected updateValidityStatus(value?: boolean): void {
     this.specValidationResult.validityStatus = Boolean(value)
   }
 }
