@@ -24,7 +24,7 @@
       "cwd": "${workspaceRoot}",
       "args": [
         "validate-example",
-        "C:/github.com/Azure/azure-rest-api-specs/specification/cognitiveservices/data-plane/ImageSearch/stable/v1.0/ImageSearch.json",
+        "C:/github.com/Azure/azure-rest-api-specs/specification/recoveryservicesbackup/resource-manager/Microsoft.RecoveryServices/stable/2016-12-01/bms.json",
         "--pretty"
       ],
       "env": {}
