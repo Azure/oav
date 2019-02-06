@@ -1,5 +1,9 @@
 # Changelog
 
+### 02/05/2019 0.13.5
+
+- Fixing `ONE_OF_MULTIPLE`.
+
 ### 01/29/2019 0.13.4
 
 - Provide url and file position for these errors:
