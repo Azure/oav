@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License. See License.txt in the project root for license information.
+
 import * as jsonRefs from "json-refs"
 import * as sm from "@ts-common/string-map"
 
