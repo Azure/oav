@@ -935,6 +935,8 @@ export class SpecResolver {
         }
         const xMsEnum = d["x-ms-enum"]
         if (xMsEnum !== undefined) {
+          // if modelAsString is set to `true` then validator will always succeeded on any string.
+          // Because of this, we have to set it to `false`.
           ps.asMutable(xMsEnum).modelAsString = false
         }
         // We will set "type" to "string". It is safe to assume that properties marked as
