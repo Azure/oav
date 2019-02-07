@@ -6,6 +6,7 @@ import * as sm from "@ts-common/string-map"
 
 export { UnresolvedRefDetails } from "json-refs"
 
+// https://github.com/whitlockjc/json-refs/pull/153
 export const findRefs = (
   obj: object | ReadonlyArray<unknown>,
   options?: jsonRefs.JsonRefsOptions
