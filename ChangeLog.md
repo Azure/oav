@@ -1,5 +1,9 @@
 # Changelog
 
+### 02/06/2019 0.13.6
+
+- Polymorphic models should have `"type": "object"`.
+
 ### 02/05/2019 0.13.5
 
 - Fixing `ONE_OF_MULTIPLE`. It was caused by `x-ms-enum.modelAsString` which validates

@@ -922,6 +922,8 @@ export class SpecResolver {
     // (constant) on property marked as discriminator
     const definition = definitions[name]
     if (definition && definition.properties) {
+      // all derived types should have `"type": "object"`.
+      definition.type = "object"
       const d = definition.properties[discriminator]
       if (d) {
         const val = definition["x-ms-discriminator-value"] || name
