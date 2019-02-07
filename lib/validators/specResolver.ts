@@ -3,7 +3,7 @@
 
 import * as _ from "lodash"
 import * as path from "path"
-import * as JsonRefs from "json-refs"
+import * as jsonRefs from "../util/jsonRefs"
 import * as utils from "../util/utils"
 import * as C from "../util/constants"
 import { log } from "../util/logging"
@@ -26,6 +26,7 @@ import {
   keys,
   StringMap
 } from "@ts-common/string-map"
+import * as sm from "@ts-common/string-map"
 import { resolveNestedDefinitions } from "./resolveNestedDefinitions"
 import { getOperations } from "../util/methods"
 import { map, toArray } from "@ts-common/iterator"
@@ -33,6 +34,7 @@ import { arrayMap } from "@ts-common/source-map"
 import { Suppression } from "@azure/openapi-markdown"
 import * as jsonUtils from "../util/jsonUtils"
 import * as jsonParser from "@ts-common/json-parser"
+import * as ps from "@ts-common/property-set"
 
 const ErrorCodes = C.ErrorCodes
 
@@ -284,7 +286,7 @@ export class SpecResolver {
       delete options.filter
     }
 
-    const allRefsRemoteRelative = JsonRefs.findRefs(doc, options)
+    const allRefsRemoteRelative = jsonRefs.findRefs(doc, options)
     const e = entries(allRefsRemoteRelative as StringMap<RefDetails>)
     const promiseFactories = toArray(
       map(
@@ -755,7 +757,7 @@ export class SpecResolver {
     const spec = this.specInJson
     const definitions = spec.definitions as DefinitionsObject
     const subTreeMap = new Map()
-    const references = JsonRefs.findRefs(spec)
+    const references = jsonRefs.findRefs(spec)
 
     for (const [modelName, model] of entries(definitions)) {
       const discriminator = model.discriminator
@@ -768,7 +770,7 @@ export class SpecResolver {
             subTreeMap
           )
         }
-        this.updateReferencesWithOneOf(subTreeMap, references as any)
+        this.updateReferencesWithOneOf(subTreeMap, references)
       }
     }
   }
@@ -832,7 +834,7 @@ export class SpecResolver {
    */
   private updateReferencesWithOneOf(
     subTreeMap: Map<string, PolymorphicTree>,
-    references: Array<{ readonly uri: unknown }>
+    references: StringMap<jsonRefs.UnresolvedRefDetails>
   ): void {
     const spec = this.specInJson
 
@@ -842,9 +844,9 @@ export class SpecResolver {
         const locationsToBeUpdated = []
         const modelReference = `#/definitions/${node.name}`
         // Create a list of all the locations where the current node is referenced
-        for (const key in references) {
+        for (const [key, value] of sm.entries(references)) {
           if (
-            references[key].uri === modelReference &&
+            value.uri === modelReference &&
             key.indexOf("allOf") === -1 &&
             key.indexOf("oneOf") === -1
           ) {
@@ -930,6 +932,12 @@ export class SpecResolver {
         // property a constant (in json schema terms).
         if (d.$ref) {
           delete d.$ref
+        }
+        const xMsEnum = d["x-ms-enum"]
+        if (xMsEnum !== undefined) {
+          // if modelAsString is set to `true` then validator will always succeeded on any string.
+          // Because of this, we have to set it to `false`.
+          ps.asMutable(xMsEnum).modelAsString = false
         }
         // We will set "type" to "string". It is safe to assume that properties marked as
         // "discriminator" will be of type "string"

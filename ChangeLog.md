@@ -1,5 +1,10 @@
 # Changelog
 
+### 02/05/2019 0.13.5
+
+- Fixing `ONE_OF_MULTIPLE`. It was caused by `x-ms-enum.modelAsString` which validates
+  discriminators as an unrestricted strings
+
 ### 01/29/2019 0.13.4
 
 - Provide url and file position for these errors:

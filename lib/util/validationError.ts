@@ -265,23 +265,20 @@ const arePathsSimilar = (
   return _.xor(p1, p2).every(v => Number.isInteger(+v))
 }
 
-function isDiscriminatorError<T extends NodeError<T>>(node: T) {
-  return node.code === "ONE_OF_MISSING" && node.inner && node.inner.length > 0
-}
+const isDiscriminatorError = <T extends NodeError<T>>(node: T) =>
+  node.code === "ONE_OF_MISSING" && node.inner && node.inner.length > 0
 
-function isTrueError<T extends NodeError<T>>(node: T): boolean {
+const isTrueError = <T extends NodeError<T>>(node: T): boolean =>
   // this is necessary to filter out extra errors coming from doing the ONE_OF transformation on
   // the models to allow "null"
-  return !(
+  !(
     node.code === "INVALID_TYPE" &&
     node.params &&
     node.params[0] === "null"
   )
-}
 
-function isLeaf<T extends NodeError<T>>(node: T): boolean {
-  return !node.errors && !node.inner
-}
+const isLeaf = <T extends NodeError<T>>(node: T): boolean =>
+  !node.errors && !node.inner
 
 /**
  * Unifies a suffix path with a root path.

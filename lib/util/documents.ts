@@ -11,6 +11,4 @@ export type DocCache = MutableStringMap<Promise<SwaggerObject>>
  */
 export let docCache: DocCache = {}
 
-export function clearCache(): void {
-  docCache = {}
-}
+export const clearCache = () => { docCache = {} }
