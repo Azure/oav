@@ -923,6 +923,8 @@ export class SpecResolver {
     const definition = definitions[name]
     if (definition && definition.properties) {
       // all derived types should have `"type": "object"`.
+      // otherwise it may pass validation for other types, such as `string`.
+      // see also https://github.com/Azure/oav/issues/390
       definition.type = "object"
       const d = definition.properties[discriminator]
       if (d) {
