@@ -533,4 +533,16 @@ describe("Model Validation", () => {
       // console.log(result)
     })
   })
+
+  describe("Should assume `type` is `object` for polymorphic types", () => {
+    it("pass string instead of object", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/polymorphicNoType/noType.json`
+      const result = await validate.validateExamples(specPath2, undefined, {
+        consoleLogLevel: "off"
+      })
+      assert.strictEqual(result.length, 1)
+      // it should report `ONE_OF_MISSING` instead of `ONE_OF_MULTIPLE`
+      assert.strictEqual(result[0].code, "ONE_OF_MISSING")
+    })
+  })
 })
