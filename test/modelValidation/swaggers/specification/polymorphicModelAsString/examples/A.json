@@ -1,0 +1,10 @@
+{
+  "parameters": {},
+  "responses": {
+    "200": {
+      "body": {
+        "d": "B"
+      }
+    }
+  }
+}

@@ -29,7 +29,7 @@ import {
 import * as sm from "@ts-common/string-map"
 import { resolveNestedDefinitions } from "./resolveNestedDefinitions"
 import { getOperations } from "../util/methods"
-import { map, toArray } from "@ts-common/iterator"
+import { map, toArray, isArray } from "@ts-common/iterator"
 import { arrayMap } from "@ts-common/source-map"
 import { Suppression } from "@azure/openapi-markdown"
 import * as jsonUtils from "../util/jsonUtils"
@@ -922,8 +922,18 @@ export class SpecResolver {
     // (constant) on property marked as discriminator
     const definition = definitions[name]
     if (definition && definition.properties) {
+      // all derived types should have `"type": "object"`.
+      // otherwise it may pass validation for other types, such as `string`.
+      // see also https://github.com/Azure/oav/issues/390
+      definition.type = "object"
       const d = definition.properties[discriminator]
       if (d) {
+        const required = definition.required
+        if (!isArray(required)) {
+          definition.required = [ discriminator ]
+        } else if (required.find(v => v === discriminator) === undefined) {
+          definition.required = [...required, discriminator]
+        }
         const val = definition["x-ms-discriminator-value"] || name
         // Ensure that the property marked as a discriminator has only one value in the enum
         // constraint for that model and it
