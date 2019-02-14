@@ -545,4 +545,16 @@ describe("Model Validation", () => {
       assert.strictEqual(result[0].code, "ONE_OF_MISSING")
     })
   })
+
+  describe("Should assume only one enum value for polymorphic discriminator", () => {
+    it("x-ms-enum with modelAsString", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/polymorphicModelAsString/spec.json`
+      const result = await validate.validateExamples(specPath2, undefined, {
+        consoleLogLevel: "off"
+      })
+      assert.strictEqual(result.length, 0)
+      // it should report `ONE_OF_MISSING` instead of `ONE_OF_MULTIPLE`
+      // assert.strictEqual(result[0].code, "ONE_OF_MISSING")
+    })
+  })
 })

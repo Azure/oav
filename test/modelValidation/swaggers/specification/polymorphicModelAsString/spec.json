@@ -1,0 +1,56 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "some title",
+    "version": "2099-11-11"
+  },
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "definitions": {
+    "A": {
+      "title": "yeah",
+      "discriminator": "d",
+      "properties": {
+        "d": {
+          "title": "d property",
+          "enum": ["A", "B"],
+          "x-ms-enum": {
+            "name": "someName",
+            "modelAsString": true
+          }
+        }
+      }
+    },
+    "B": {
+      "title": "no",
+      "allOf": [
+        { "$ref": "#/definitions/A" }
+      ]
+    }
+  },
+  "paths": {
+    "/providers//operations": {
+      "get": {
+        "description": "get something",
+        "operationId": "GetA",
+        "responses": {
+          "200": {
+            "description": "a",
+            "schema": {
+              "$ref": "#/definitions/A"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Activity_List": {
+            "$ref": "./examples/A.json"
+          }
+        }
+      }
+    }
+  }
+}
