@@ -29,7 +29,7 @@ import {
 import * as sm from "@ts-common/string-map"
 import { resolveNestedDefinitions } from "./resolveNestedDefinitions"
 import { getOperations } from "../util/methods"
-import { map, toArray } from "@ts-common/iterator"
+import { map, toArray, isArray, find, concat } from "@ts-common/iterator"
 import { arrayMap } from "@ts-common/source-map"
 import { Suppression } from "@azure/openapi-markdown"
 import * as jsonUtils from "../util/jsonUtils"
@@ -928,6 +928,12 @@ export class SpecResolver {
       definition.type = "object"
       const d = definition.properties[discriminator]
       if (d) {
+        const required = definition.required
+        if (!isArray(required)) {
+          definition.required = [ discriminator ]
+        } else if (find(required, v => v === discriminator) === undefined) {
+          definition.required = Array.from(concat(required, [discriminator]))
+        }
         const val = definition["x-ms-discriminator-value"] || name
         // Ensure that the property marked as a discriminator has only one value in the enum
         // constraint for that model and it

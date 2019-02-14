@@ -553,8 +553,18 @@ describe("Model Validation", () => {
         consoleLogLevel: "off"
       })
       assert.strictEqual(result.length, 0)
+    })
+  })
+
+  describe("Discriminator is required property", () => {
+    it("required", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/polymorphicRequired/spec.json`
+      const result = await validate.validateExamples(specPath2, undefined, {
+        consoleLogLevel: "off"
+      })
+      assert.strictEqual(result.length, 1)
       // it should report `ONE_OF_MISSING` instead of `ONE_OF_MULTIPLE`
-      // assert.strictEqual(result[0].code, "ONE_OF_MISSING")
+      assert.strictEqual(result[0].code, "ONE_OF_MISSING")
     })
   })
 })
