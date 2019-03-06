@@ -171,9 +171,6 @@ export class SpecValidator<T extends CommonValidationResult> {
    * and initializes the internal api validator.
    */
   public async initialize(): Promise<Sway.SwaggerApi> {
-    if (this.options.shouldResolveRelativePaths) {
-      docs.clearCache()
-    }
     const errors: jsonParser.ParseError[] = []
     const reportError = (e: jsonParser.ParseError) => errors.push(e)
     try {

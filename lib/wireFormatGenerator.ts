@@ -79,9 +79,6 @@ export class WireFormatGenerator {
   }
 
   public async initialize(): Promise<Sway.SwaggerApi> {
-    if (this.options.shouldResolveRelativePaths) {
-      docs.clearCache()
-    }
     try {
       const suppression = await getSuppressions(this.specPath)
       const result = await jsonUtils.parseJson(

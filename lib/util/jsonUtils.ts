@@ -11,7 +11,6 @@ import * as vfs from "@ts-common/virtual-fs"
 import jp = require("jsonpath")
 import { SwaggerObject } from "yasway"
 
-import * as docs from "./documents"
 import { log } from "./logging"
 import { parseContent } from "./makeRequest"
 import { isSubPath, splitPathAndReverse } from "./path"
@@ -61,11 +60,9 @@ export async function parseJson(
   if (!specPath || (specPath && typeof specPath.valueOf() !== "string")) {
     throw new Error(
       "A (github) url or a local file path to the swagger spec is required and must be of type " +
-        "string."
+      "string."
     )
   }
-
-  const doc = docs.docCache[specPath]
 
   const applySuppression = (result: SwaggerObject) => {
     const rootInfo = getFilePosition(result)
@@ -95,10 +92,6 @@ export async function parseJson(
     return result
   }
 
-  if (doc) {
-    return await doc
-  }
-
   // If the spec path is a url starting with https://github then let us auto convert it to an
   // https://raw.githubusercontent url.
   if (specPath.startsWith("https://github")) {
@@ -116,8 +109,6 @@ export async function parseJson(
   }
 
   const swaggerObjectPromise = createSwaggerObject()
-
-  docs.docCache[specPath] = swaggerObjectPromise
 
   return swaggerObjectPromise
 }

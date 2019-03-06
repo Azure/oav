@@ -1,5 +1,10 @@
 # Changelog
 
+### 03/06/2019 0.14.0
+
+- Remove package level global doc cache.
+- Remove external exports of `clearCache()` and of `executePromisesSequentially()`
+
 ### 02/06/2019 0.13.6
 
 - Polymorphic models should have `"type": "object"`.
