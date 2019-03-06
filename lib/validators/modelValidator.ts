@@ -168,7 +168,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
   private constructRequestResultWrapper(
     operationId: string,
     requestValidationErrors: ModelValidationError[],
-    requestValidationWarnings: Array<unknown> | undefined,
+    requestValidationWarnings: unknown[] | undefined,
     exampleType: OperationResultType,
     scenarioName?: string
   ): void {
@@ -209,7 +209,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     operationId: string,
     responseStatusCode: string,
     responseValidationErrors: ModelValidationError[],
-    responseValidationWarnings: Array<unknown> | undefined,
+    responseValidationWarnings: unknown[] | undefined,
     exampleType: OperationResultType,
     scenarioName?: string
   ): void {

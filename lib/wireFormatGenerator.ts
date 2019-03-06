@@ -23,7 +23,6 @@ import { map, toArray } from "@ts-common/iterator"
 import { getSuppressions } from "./validators/suppressions"
 import { Suppression } from "@azure/openapi-markdown"
 import { setMutableProperty } from "@ts-common/property-set"
-import * as docs from "./util/documents"
 import * as jsonUtils from "./util/jsonUtils"
 import * as jsonParser from "@ts-common/json-parser"
 
@@ -37,7 +36,6 @@ export class WireFormatGenerator {
   private specInJson: Sway.SwaggerObject | null
   private specResolver: SpecResolver | null
   private swaggerApi: Sway.SwaggerApi | null
-  private readonly options: { readonly shouldResolveRelativePaths: unknown }
   // private specValidationResult: any
   public constructor(
     specPath: string,
@@ -73,15 +71,9 @@ export class WireFormatGenerator {
     this.specInJson = specInJson
     this.specResolver = null
     this.swaggerApi = null
-    this.options = {
-      shouldResolveRelativePaths: true
-    }
   }
 
   public async initialize(): Promise<Sway.SwaggerApi> {
-    if (this.options.shouldResolveRelativePaths) {
-      docs.clearCache()
-    }
     try {
       const suppression = await getSuppressions(this.specPath)
       const result = await jsonUtils.parseJson(
@@ -186,12 +178,12 @@ export class WireFormatGenerator {
    * @return {object} err Return the constructed Error object.
    */
   private constructErrorObject(
-    code: unknown, message: string, innerErrors: Array<unknown>, _?: boolean
+    code: unknown, message: string, innerErrors: unknown[], _?: boolean
   ) {
     const err: {
       code: unknown
       message: string
-      innerErrors?: Array<unknown>
+      innerErrors?: unknown[]
     } = {
       code,
       message

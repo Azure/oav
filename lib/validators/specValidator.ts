@@ -15,7 +15,6 @@ import { StringMap } from "@ts-common/string-map"
 import { getSuppressions } from "./suppressions"
 import * as amd from "@azure/openapi-markdown"
 import { setMutableProperty } from "@ts-common/property-set"
-import * as docs from "../util/documents"
 import * as jsonUtils from "../util/jsonUtils"
 import * as jsonParser from "@ts-common/json-parser"
 import * as json from "@ts-common/json"
@@ -171,9 +170,6 @@ export class SpecValidator<T extends CommonValidationResult> {
    * and initializes the internal api validator.
    */
   public async initialize(): Promise<Sway.SwaggerApi> {
-    if (this.options.shouldResolveRelativePaths) {
-      docs.clearCache()
-    }
     const errors: jsonParser.ParseError[] = []
     const reportError = (e: jsonParser.ParseError) => errors.push(e)
     try {
