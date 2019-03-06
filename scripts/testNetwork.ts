@@ -49,8 +49,7 @@ const f = async () => {
     "C:/github.com/Azure/azure-rest-api-specs/specification/logic/resource-manager/Microsoft.Logic/preview/2018-07-01-preview/logic.json"
   ]) {
     try {
-      await oav.validateExamples(swagger, undefined, {consoleLogLevel: 'error', pretty: true});
-      oav.clearCache();
+      await oav.validateExamples(swagger, undefined, { consoleLogLevel: 'error', pretty: true });
     } catch (e) {
       // tslint:disable-next-line:no-console
       console.error("error: ")
