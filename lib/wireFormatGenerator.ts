@@ -178,12 +178,12 @@ export class WireFormatGenerator {
    * @return {object} err Return the constructed Error object.
    */
   private constructErrorObject(
-    code: unknown, message: string, innerErrors: Array<unknown>, _?: boolean
+    code: unknown, message: string, innerErrors: unknown[], _?: boolean
   ) {
     const err: {
       code: unknown
       message: string
-      innerErrors?: Array<unknown>
+      innerErrors?: unknown[]
     } = {
       code,
       message

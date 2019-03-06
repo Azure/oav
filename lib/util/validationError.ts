@@ -99,7 +99,7 @@ export interface NodeError<T extends NodeError<T>> {
   innerErrors?: T[]
   in?: string
   name?: string
-  params?: Array<unknown>
+  params?: unknown[]
   inner?: T[]
   title?: string
   message?: string
@@ -148,7 +148,7 @@ export function processValidationErrors<
  */
 export function serializeErrors<T extends NodeError<T>>(
   node: T,
-  path: Array<unknown>
+  path: unknown[]
 ): T[] {
 
   if (isLeaf(node)) {
@@ -284,9 +284,9 @@ const isLeaf = <T extends NodeError<T>>(node: T): boolean =>
  * Unifies a suffix path with a root path.
  */
 function consolidatePath(
-  path: Array<unknown>,
+  path: unknown[],
   suffixPath: string | string[]
-): Array<unknown> {
+): unknown[] {
   let newSuffixIndex = 0
   let overlapIndex = path.lastIndexOf(suffixPath[newSuffixIndex])
   let previousIndex = overlapIndex
@@ -306,7 +306,7 @@ function consolidatePath(
       break
     }
   }
-  let newPath: Array<unknown> = []
+  let newPath: unknown[] = []
   if (newSuffixIndex === suffixPath.length) {
     // if all elements are contained in the existing path, nothing to do.
     newPath = path.slice(0)

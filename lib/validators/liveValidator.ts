@@ -54,19 +54,19 @@ export interface RequestResponseObj {
 export interface RequestValidationResult {
   successfulRequest: unknown
   operationInfo?: unknown
-  errors?: Array<unknown>
+  errors?: unknown[]
 }
 
 export interface ResponseValidationResult {
   successfulResponse: unknown
   operationInfo?: unknown
-  errors?: Array<unknown>
+  errors?: unknown[]
 }
 
 export interface ValidationResult {
   readonly requestValidationResult: RequestValidationResult
   readonly responseValidationResult: ResponseValidationResult
-  errors: Array<unknown>
+  errors: unknown[]
 }
 
 /**

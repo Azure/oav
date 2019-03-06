@@ -14,7 +14,7 @@ export interface CommonError {
   errors?: CommonError[]
   in?: unknown
   name?: string
-  params?: Array<unknown>
+  params?: unknown[]
   jsonUrl?: string
   jsonPosition?: FilePosition
   position?: FilePosition
