@@ -35,6 +35,7 @@ import { Suppression } from "@azure/openapi-markdown"
 import * as jsonUtils from "../util/jsonUtils"
 import * as jsonParser from "@ts-common/json-parser"
 import * as ps from "@ts-common/property-set"
+import { DocCache } from '../util/documents';
 
 const ErrorCodes = C.ErrorCodes
 
@@ -113,7 +114,8 @@ export class SpecResolver {
     specPath: string,
     specInJson: SwaggerObject,
     options: Options,
-    private readonly reportError: jsonParser.ReportError
+    private readonly reportError: jsonParser.ReportError,
+    private readonly docsCache: DocCache = {}
   ) {
     if (
       specPath === null ||
@@ -229,7 +231,7 @@ export class SpecResolver {
       if (this.options.shouldResolveNullableTypes) {
         this.resolveNullableTypes()
       }
-     } catch (err) {
+    } catch (err) {
       const e = {
         message: "internal error: " + err.message,
         code: ErrorCodes.InternalError.name,
@@ -379,7 +381,7 @@ export class SpecResolver {
       docPath = utils.joinPath(docDir, parsedReference.filePath)
     }
 
-    const result = await jsonUtils.parseJson(suppression, docPath, this.reportError)
+    const result = await jsonUtils.parseJson(suppression, docPath, this.reportError, this.docsCache)
     if (!parsedReference.localReference) {
       // Since there is no local reference we will replace the key in the object with the parsed
       // json (relative) file it is referring to.
@@ -930,7 +932,7 @@ export class SpecResolver {
       if (d) {
         const required = definition.required
         if (!isArray(required)) {
-          definition.required = [ discriminator ]
+          definition.required = [discriminator]
         } else if (required.find(v => v === discriminator) === undefined) {
           definition.required = [...required, discriminator]
         }

@@ -20,6 +20,7 @@ import * as jsonParser from "@ts-common/json-parser"
 import * as json from "@ts-common/json"
 import * as processErrors from "../util/processErrors"
 import { getTitle } from './specTransformer';
+import { DocCache } from '../util/documents';
 
 const ErrorCodes = C.ErrorCodes;
 
@@ -90,8 +91,6 @@ export class SpecValidator<T extends CommonValidationResult> {
 
   private readonly specDir: unknown
 
-  private specResolver: SpecResolver | null
-
   private readonly options: Options
 
   /*
@@ -135,7 +134,8 @@ export class SpecValidator<T extends CommonValidationResult> {
   public constructor(
     specPath: string,
     specInJson: SwaggerObject | undefined | null | string,
-    options: Options
+    options: Options,
+    private readonly docsCache: DocCache = {}
   ) {
     if (specPath === null
       || specPath === undefined
@@ -153,7 +153,6 @@ export class SpecValidator<T extends CommonValidationResult> {
     this.specPath = specPath
     this.specDir = path.dirname(this.specPath)
     this.specInJson = specInJson as SwaggerObject
-    this.specResolver = null
     const base: CommonValidationResult = { validityStatus: true, operations: {} }
     this.specValidationResult = base as T
     if (!options) { options = {} }
@@ -176,18 +175,19 @@ export class SpecValidator<T extends CommonValidationResult> {
       let suppression: amd.Suppression | undefined
       if (this.specInJson === undefined || this.specInJson === null) {
         suppression = await getSuppressions(this.specPath)
-        const result = await jsonUtils.parseJson(suppression, this.specPath, reportError)
+        const result = await jsonUtils.parseJson(
+          suppression, this.specPath, reportError, this.docsCache)
         this.specInJson = result
       }
 
-      this.specResolver = new SpecResolver(
+      const resolver = new SpecResolver(
         this.specPath,
         this.specInJson,
         this.options,
         reportError,
+        this.docsCache
       )
-      this.specInJson = (await this.specResolver.resolve(suppression)).specInJson
-
+      this.specInJson = (await resolver.resolve(suppression)).specInJson
       const options = {
         definition: this.specInJson,
         jsonRefs: {
