@@ -18,7 +18,6 @@ import { PotentialOperationsResult } from "../models/potentialOperationsResult"
 import { Operation, Request } from "yasway"
 import { ParsedUrlQuery } from "querystring"
 import { MutableStringMap } from "@ts-common/string-map"
-import { DocCache } from '../util/documents';
 
 export interface Options {
   swaggerPaths: string[]
@@ -202,9 +201,8 @@ export class LiveValidator {
     //   }
     //   ...
     // }
-    const docsCache: DocCache = {}
     const promiseFactories = swaggerPaths.map(swaggerPath => async () =>
-      await this.getSwaggerInitializer(swaggerPath, docsCache)
+      await this.getSwaggerInitializer(swaggerPath)
     )
 
     await utils.executePromisesSequentially(promiseFactories)
@@ -648,12 +646,12 @@ export class LiveValidator {
     }
   }
 
-  private async getSwaggerInitializer(swaggerPath: string, docsCache: DocCache): Promise<void> {
+  private async getSwaggerInitializer(swaggerPath: string): Promise<void> {
     log.info(`Building cache from: "${swaggerPath}"`)
 
     const validator = new SpecValidator(swaggerPath, null, {
       isPathCaseSensitive: this.options.isPathCaseSensitive
-    }, docsCache)
+    })
 
     try {
       const api = await validator.initialize()

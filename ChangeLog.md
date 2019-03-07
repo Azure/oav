@@ -1,5 +1,9 @@
 # Changelog
 
+### 03/06/2019 0.14.2
+
+- Use one cache per SpecValidator inside the LiveValidator.
+
 ### 03/06/2019 0.14.1
 
 - Add doc cache during `LiveValidator initialization` to reduce memory footprint and execution time.
