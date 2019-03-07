@@ -18,6 +18,7 @@ import { PotentialOperationsResult } from "../models/potentialOperationsResult"
 import { Operation, Request } from "yasway"
 import { ParsedUrlQuery } from "querystring"
 import { MutableStringMap } from "@ts-common/string-map"
+import { DocCache } from '../util/documents';
 
 export interface Options {
   swaggerPaths: string[]
@@ -201,11 +202,13 @@ export class LiveValidator {
     //   }
     //   ...
     // }
+    const docsCache: DocCache = {}
     const promiseFactories = swaggerPaths.map(swaggerPath => async () =>
-      await this.getSwaggerInitializer(swaggerPath)
+      await this.getSwaggerInitializer(swaggerPath, docsCache)
     )
 
     await utils.executePromisesSequentially(promiseFactories)
+
     log.info("Cache initialization complete.")
   }
 
@@ -397,14 +400,14 @@ export class LiveValidator {
       // We are using this to validate the payload as per the definitions in swagger.
       // We do not need the serialized output from ms-rest.
       const mapper = new models.RequestResponse().mapper()
-      // tslint:disable-next-line:align whitespace
-      ;(msRest as any).models = models
-      // tslint:disable-next-line:align whitespace
-      ;(msRest as any).serialize(
-        mapper,
-        requestResponseObj,
-        "requestResponseObj"
-      )
+        // tslint:disable-next-line:align whitespace
+        ; (msRest as any).models = models
+        // tslint:disable-next-line:align whitespace
+        ; (msRest as any).serialize(
+          mapper,
+          requestResponseObj,
+          "requestResponseObj"
+        )
     } catch (err) {
       const msg =
         `Found errors "${err.message}" in the provided input:\n` +
@@ -617,7 +620,7 @@ export class LiveValidator {
     if (this.options.swaggerPaths.length !== 0) {
       log.debug(
         `Using user provided swagger paths. Total paths: ${
-          this.options.swaggerPaths.length
+        this.options.swaggerPaths.length
         }`
       )
       return this.options.swaggerPaths
@@ -639,18 +642,18 @@ export class LiveValidator {
       const dir = this.options.directory
       log.debug(
         `Using swaggers found from directory "${dir}" and pattern "${jsonsPattern}".` +
-          `Total paths: ${swaggerPaths.length}`
+        `Total paths: ${swaggerPaths.length}`
       )
       return swaggerPaths
     }
   }
 
-  private async getSwaggerInitializer(swaggerPath: string): Promise<void> {
+  private async getSwaggerInitializer(swaggerPath: string, docsCache: DocCache): Promise<void> {
     log.info(`Building cache from: "${swaggerPath}"`)
 
     const validator = new SpecValidator(swaggerPath, null, {
       isPathCaseSensitive: this.options.isPathCaseSensitive
-    })
+    }, docsCache)
 
     try {
       const api = await validator.initialize()
@@ -681,7 +684,7 @@ export class LiveValidator {
           apiVersion = C.unknownApiVersion
           log.debug(
             `Unable to find provider for path : "${pathObject.path}". ` +
-              `Bucketizing into provider: "${provider}"`
+            `Bucketizing into provider: "${provider}"`
           )
         }
         provider = provider.toLowerCase()
@@ -706,7 +709,7 @@ export class LiveValidator {
       )
       log.warn(
         `Unable to initialize "${swaggerPath}" file from SpecValidator. We are ` +
-          `ignoring this swagger file and continuing to build cache for other valid specs.`
+        `ignoring this swagger file and continuing to build cache for other valid specs.`
       )
     }
   }

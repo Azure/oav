@@ -14,6 +14,7 @@ import { SwaggerObject } from "yasway"
 import { log } from "./logging"
 import { parseContent } from "./makeRequest"
 import { isSubPath, splitPathAndReverse } from "./path"
+import { DocCache } from './documents';
 
 const setSuppression = (
   info: FilePosition | undefined,
@@ -39,8 +40,14 @@ const setSuppression = (
 export async function parseJson(
   suppression: Suppression | undefined,
   specPath: string,
-  reportError: jsonParser.ReportError
+  reportError: jsonParser.ReportError,
+  docsCache?: DocCache
 ): Promise<SwaggerObject> {
+
+  const doc = docsCache && docsCache[specPath]
+  if (doc) {
+    return await doc
+  }
 
   const getSuppressionArray = (
     suppressionItems: ReadonlyArray<SuppressionItem>
@@ -109,6 +116,10 @@ export async function parseJson(
   }
 
   const swaggerObjectPromise = createSwaggerObject()
+
+  if (docsCache) {
+    docsCache[specPath] = swaggerObjectPromise
+  }
 
   return swaggerObjectPromise
 }
