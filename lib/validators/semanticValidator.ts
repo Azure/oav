@@ -55,9 +55,7 @@ export class SemanticValidator extends SpecValidator<SemanticValidationResult> {
           processErrors(validationResult.errors)
           const e = this.constructErrorObject({
             code: C.ErrorCodes.SemanticValidationError,
-            message: `The spec ${
-              this.specPath
-            } has semantic validation errors.`,
+            message: `The spec ${this.specPath} has semantic validation errors.`,
             innerErrors: validationResult.errors
           })
           this.specValidationResult.validateSpec.errors = validateResponse.constructErrors(
@@ -76,15 +74,9 @@ export class SemanticValidator extends SpecValidator<SemanticValidationResult> {
         }
         if (validationResult.warnings && validationResult.warnings.length > 0) {
           processErrors(validationResult.warnings)
-          validationResult.warnings = validateResponse.sanitizeWarnings(
-            validationResult.warnings
-          )
-          if (
-            validationResult.warnings &&
-            validationResult.warnings.length > 0
-          ) {
-            this.specValidationResult.validateSpec.warnings =
-              validationResult.warnings
+          validationResult.warnings = validateResponse.sanitizeWarnings(validationResult.warnings)
+          if (validationResult.warnings && validationResult.warnings.length > 0) {
+            this.specValidationResult.validateSpec.warnings = validationResult.warnings
             log.debug(C.Warnings)
             log.debug("--------")
             log.debug(util.inspect(validationResult.warnings))
@@ -93,9 +85,9 @@ export class SemanticValidator extends SpecValidator<SemanticValidationResult> {
       }
       return validationResult
     } catch (err) {
-      const msg = `An Internal Error occurred in validating the spec "${
-        this.specPath
-      }". \t${err.message}.`
+      const msg = `An Internal Error occurred in validating the spec "${this.specPath}". \t${
+        err.message
+      }.`
       err.code = C.ErrorCodes.InternalError.name
       err.id = C.ErrorCodes.InternalError.id
       err.message = msg

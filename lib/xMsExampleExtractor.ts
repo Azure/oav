@@ -2,13 +2,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import * as _ from "@ts-common/iterator"
-import {
-  entries,
-  keys,
-  MutableStringMap,
-  StringMap,
-  values
-} from "@ts-common/string-map"
+import { entries, keys, MutableStringMap, StringMap, values } from "@ts-common/string-map"
 import * as fs from "fs"
 import * as pathlib from "path"
 import swaggerParser from "swagger-parser"
@@ -90,10 +84,7 @@ export class XMsExampleExtractor {
     ) {
       options.shouldResolveXmsExamples = true
     }
-    if (
-      options.matchApiVersion === null ||
-      options.matchApiVersion === undefined
-    ) {
+    if (options.matchApiVersion === null || options.matchApiVersion === undefined) {
       options.matchApiVersion = false
     }
 
@@ -145,9 +136,7 @@ export class XMsExampleExtractor {
       for (const recordingEntry of values(recordingEntries)) {
         entryIndex++
         let recordingPath = JSON.stringify(recordingEntry.RequestUri)
-        const recordingPathQueryParams = recordingPath
-          .split("?")[1]
-          .slice(0, -1)
+        const recordingPathQueryParams = recordingPath.split("?")[1].slice(0, -1)
         const queryParamsArray = recordingPathQueryParams.split("&")
         for (const value of queryParamsArray) {
           const queryParam = value.split("=")
@@ -160,8 +149,7 @@ export class XMsExampleExtractor {
         // recordings matches the api-version of the spec
         if (
           !this.options.matchApiVersion ||
-          ("api-version" in queryParams &&
-            queryParams["api-version"] === api.info.version)
+          ("api-version" in queryParams && queryParams["api-version"] === api.info.version)
         ) {
           recordingPath = recordingPath.replace(/\?.*/, "")
           const recordingPathParts = recordingPath.split("/")
@@ -178,8 +166,7 @@ export class XMsExampleExtractor {
 
             // found a match in the recording
             const requestMethodFromRecording = recordingEntry.RequestMethod
-            const infoFromOperation =
-              paths[path][requestMethodFromRecording.toLowerCase()]
+            const infoFromOperation = paths[path][requestMethodFromRecording.toLowerCase()]
             if (typeof infoFromOperation !== "undefined") {
               // need to consider each method in operation
               const fileNameArray = recordingFileName.split("/")
@@ -242,9 +229,7 @@ export class XMsExampleExtractor {
                   body: responseBody !== "" ? JSON.parse(responseBody) : ""
                 }
               }
-              log.info(
-                `Writing x-ms-examples at ${outputExamples + exampleFileName}`
-              )
+              log.info(`Writing x-ms-examples at ${outputExamples + exampleFileName}`)
               const examplePath = pathlib.join(outputExamples, exampleFileName)
               const dir = pathlib.dirname(examplePath)
               mkdirRecursiveSync(dir)
@@ -288,15 +273,8 @@ export class XMsExampleExtractor {
         log.debug(`Processing recording file: ${recordingFileName}`)
 
         try {
-          this.extractOne(
-            relativeExamplesPath,
-            outputExamples,
-            api,
-            recordingFileName
-          )
-          log.info(
-            `Writing updated swagger with x-ms-examples at ${outputSwagger}`
-          )
+          this.extractOne(relativeExamplesPath, outputExamples, api, recordingFileName)
+          log.info(`Writing updated swagger with x-ms-examples at ${outputSwagger}`)
           fs.writeFileSync(outputSwagger, JSON.stringify(api, null, 2))
         } catch (err) {
           accErrors[recordingFileName] = err.toString()

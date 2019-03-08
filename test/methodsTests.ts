@@ -7,15 +7,7 @@ import { methods } from "../lib/util/methods"
 
 describe("Methods", () => {
   it("HTTP methods", () => {
-    const httpMethods: string[] = [
-      "get",
-      "put",
-      "post",
-      "delete",
-      "options",
-      "head",
-      "patch"
-    ]
+    const httpMethods: string[] = ["get", "put", "post", "delete", "options", "head", "patch"]
     for (const method of methods) {
       const r = httpMethods.find(v => v === method)
       assert.strictEqual(r, method)

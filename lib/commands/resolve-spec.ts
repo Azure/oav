@@ -65,8 +65,7 @@ export const builder: yargs.CommandBuilder = {
   },
   d: {
     alias: "outputDir",
-    describe:
-      "Output directory where the resolved swagger spec will be stored.",
+    describe: "Output directory where the resolved swagger spec will be stored.",
     string: true,
     default: "./"
   }
@@ -92,12 +91,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     if (specPath.match(/.*composite.*/gi) !== null) {
       await validate.resolveCompositeSpec(specPath, argv.d, vOptions)
     } else {
-      await validate.resolveSpec(
-        specPath,
-        argv.d,
-        vOptions,
-        jsonParser.defaultErrorReport
-      )
+      await validate.resolveSpec(specPath, argv.d, vOptions, jsonParser.defaultErrorReport)
     }
   })
 }

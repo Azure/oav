@@ -262,11 +262,7 @@ export class SpecValidator<T extends CommonValidationResult> {
       id: code.id,
       message
     } as any
-    setMutableProperty(
-      err,
-      "innerErrors",
-      innerErrors ? innerErrors : undefined
-    )
+    setMutableProperty(err, "innerErrors", innerErrors ? innerErrors : undefined)
     if (!skipValidityStatusUpdate) {
       this.updateValidityStatus()
     }

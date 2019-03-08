@@ -30,8 +30,7 @@ describe("Utility functions", () => {
       assert.strictEqual(provider, "Microsoft.Resources")
     })
     it("should return undefined", () => {
-      const path =
-        "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/"
+      const path = "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/"
       const provider = utils.getProvider(path)
       assert.strictEqual(provider, undefined)
     })

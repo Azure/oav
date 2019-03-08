@@ -9,8 +9,7 @@ import * as validate from "../validate"
 
 export const command = "validate-example <spec-path>"
 
-export const describe =
-  "Performs validation of x-ms-examples and examples present in the spec."
+export const describe = "Performs validation of x-ms-examples and examples present in the spec."
 
 export const builder: yargs.CommandBuilder = {
   o: {

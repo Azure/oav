@@ -55,20 +55,9 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     }
 
     if (specPath.match(/.*composite.*/gi) !== null) {
-      await validate.generateWireFormatInCompositeSpec(
-        specPath,
-        outDir,
-        emitYaml,
-        vOptions
-      )
+      await validate.generateWireFormatInCompositeSpec(specPath, outDir, emitYaml, vOptions)
     } else {
-      await validate.generateWireFormat(
-        specPath,
-        outDir,
-        emitYaml,
-        operationIds,
-        vOptions
-      )
+      await validate.generateWireFormat(specPath, outDir, emitYaml, operationIds, vOptions)
     }
   })
 }

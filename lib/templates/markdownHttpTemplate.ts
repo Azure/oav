@@ -34,10 +34,7 @@ export class MarkdownHttpTemplate extends HttpTemplate {
         if (this.responses.standard.finalResponse === undefined) {
           throw new Error("this.responses.standard.finalResponse === undefined")
         }
-        template += this.populateResponse(
-          this.responses.standard.finalResponse,
-          "Response"
-        )
+        template += this.populateResponse(this.responses.standard.finalResponse, "Response")
       }
     }
     return template
@@ -122,9 +119,7 @@ Expires: -1
 x-ms-ratelimit-remaining-subscription-writes: 1199
 x-ms-request-id: ${responseGuid}
 x-ms-correlation-request-id: ${responseGuid}
-x-ms-routing-request-id: WESTUS2:${new Date()
-      .toISOString()
-      .replace(/(\W)/gi, "")}:${responseGuid}
+x-ms-routing-request-id: WESTUS2:${new Date().toISOString().replace(/(\W)/gi, "")}:${responseGuid}
 Strict-Transport-Security: max-age=31536000; includeSubDomains
 ${this.getResponseHeaders(response)}
 Date: ${new Date().toUTCString()}

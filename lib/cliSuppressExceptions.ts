@@ -3,9 +3,7 @@
 
 import { log } from "./util/logging"
 
-export const cliSuppressExceptions = async (
-  f: () => Promise<void>
-): Promise<void> => {
+export const cliSuppressExceptions = async (f: () => Promise<void>): Promise<void> => {
   try {
     await f()
   } catch (err) {

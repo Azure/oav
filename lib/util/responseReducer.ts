@@ -47,9 +47,7 @@ export function responseReducer(
   const processedErrors = processValidationErrors(rawValidationResult)
 
   if (processedErrors.responseValidationResult.errors === undefined) {
-    throw new Error(
-      "ICE: processedErrors.responseValidationResult.errors === undefined"
-    )
+    throw new Error("ICE: processedErrors.responseValidationResult.errors === undefined")
   }
   return toModelErrors(
     processedErrors.responseValidationResult.errors,

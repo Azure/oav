@@ -18,12 +18,7 @@ describe("specResolver", () => {
       }
     }
     const options: Options = { shouldResolveAllOf: true }
-    const resolver = new SpecResolver(
-      "./",
-      spec,
-      options,
-      jsonParser.defaultErrorReport
-    )
+    const resolver = new SpecResolver("./", spec, options, jsonParser.defaultErrorReport)
     await resolver.resolve(undefined)
   })
 })

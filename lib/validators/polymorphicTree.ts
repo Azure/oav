@@ -29,14 +29,8 @@ export class PolymorphicTree {
       )
     }
 
-    if (
-      children !== null &&
-      children !== undefined &&
-      !(children instanceof Map)
-    ) {
-      throw new Error(
-        "children is an optional property of type Map<string, PolymorphicTree>."
-      )
+    if (children !== null && children !== undefined && !(children instanceof Map)) {
+      throw new Error("children is an optional property of type Map<string, PolymorphicTree>.")
     }
     this.name = name
     this.children = children || new Map()
@@ -50,14 +44,8 @@ export class PolymorphicTree {
    * @returns {PolymorphicTree} childObj - The created child node.
    */
   public addChildByObject(childObj: PolymorphicTree): PolymorphicTree {
-    if (
-      childObj === null ||
-      childObj === undefined ||
-      !(childObj instanceof PolymorphicTree)
-    ) {
-      throw new Error(
-        "childObj is a required parameter of type PolymorphicTree."
-      )
+    if (childObj === null || childObj === undefined || !(childObj instanceof PolymorphicTree)) {
+      throw new Error("childObj is a required parameter of type PolymorphicTree.")
     }
 
     if (!this.children.has(childObj.name)) {

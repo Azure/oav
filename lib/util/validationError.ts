@@ -21,16 +21,13 @@ export class ValidationError {
    * @param name Validation Error Name
    * @param severity The severity of the error
    */
-  public constructor(
-    public readonly name: string,
-    public readonly severity: Severity
-  ) { }
+  public constructor(public readonly name: string, public readonly severity: Severity) {}
 }
 
-const validationErrorEntry = (
-  id: string,
-  severity: Severity
-): [string, ValidationError] => [id, new ValidationError(id, severity)]
+const validationErrorEntry = (id: string, severity: Severity): [string, ValidationError] => [
+  id,
+  new ValidationError(id, severity)
+]
 
 export const errorConstants = new Map<string, ValidationError>([
   validationErrorEntry("INVALID_TYPE", Severity.Critical),
@@ -65,18 +62,9 @@ export const errorConstants = new Map<string, ValidationError>([
   validationErrorEntry("PATTERN", Severity.Critical),
   // operation
   validationErrorEntry("OPERATION_NOT_FOUND_IN_CACHE", Severity.Critical),
-  validationErrorEntry(
-    "OPERATION_NOT_FOUND_IN_CACHE_WITH_VERB",
-    Severity.Critical
-  ),
-  validationErrorEntry(
-    "OPERATION_NOT_FOUND_IN_CACHE_WITH_API",
-    Severity.Critical
-  ),
-  validationErrorEntry(
-    "OPERATION_NOT_FOUND_IN_CACHE_WITH_PROVIDER",
-    Severity.Critical
-  ),
+  validationErrorEntry("OPERATION_NOT_FOUND_IN_CACHE_WITH_VERB", Severity.Critical),
+  validationErrorEntry("OPERATION_NOT_FOUND_IN_CACHE_WITH_API", Severity.Critical),
+  validationErrorEntry("OPERATION_NOT_FOUND_IN_CACHE_WITH_PROVIDER", Severity.Critical),
   validationErrorEntry("MULTIPLE_OPERATIONS_FOUND", Severity.Critical),
   // others
   validationErrorEntry("INVALID_RESPONSE_HEADER", Severity.Critical),
@@ -128,25 +116,14 @@ export interface ValidationResult<T extends NodeError<T>> {
 /**
  * Serializes validation results into a flat array.
  */
-export function processValidationErrors<
-  V extends ValidationResult<T>,
-  T extends NodeError<T>
->(rawValidation: V): V {
-  const requestSerializedErrors: T[] = serializeErrors(
-    rawValidation.requestValidationResult,
-    []
-  )
-  const responseSerializedErrors: T[] = serializeErrors(
-    rawValidation.responseValidationResult,
-    []
-  )
+export function processValidationErrors<V extends ValidationResult<T>, T extends NodeError<T>>(
+  rawValidation: V
+): V {
+  const requestSerializedErrors: T[] = serializeErrors(rawValidation.requestValidationResult, [])
+  const responseSerializedErrors: T[] = serializeErrors(rawValidation.responseValidationResult, [])
 
-  rawValidation.requestValidationResult.errors = processErrors(
-    requestSerializedErrors
-  )
-  rawValidation.responseValidationResult.errors = processErrors(
-    responseSerializedErrors
-  )
+  rawValidation.requestValidationResult.errors = processErrors(requestSerializedErrors)
+  rawValidation.responseValidationResult.errors = processErrors(responseSerializedErrors)
 
   return rawValidation
 }
@@ -154,10 +131,7 @@ export function processValidationErrors<
 /**
  * Serializes error tree
  */
-export function serializeErrors<T extends NodeError<T>>(
-  node: T,
-  path: unknown[]
-): T[] {
+export function serializeErrors<T extends NodeError<T>>(node: T, path: unknown[]): T[] {
   if (isLeaf(node)) {
     if (isTrueError(node)) {
       if (node.path) {
@@ -184,9 +158,7 @@ export function serializeErrors<T extends NodeError<T>>(
   }
 
   const serializedErrors = Array.from(
-    flatMap(node.errors, validationError =>
-      serializeErrors(validationError, path)
-    )
+    flatMap(node.errors, validationError => serializeErrors(validationError, path))
   )
 
   const serializedInner = fold(
@@ -237,11 +209,7 @@ function areErrorsSimilar<T extends NodeError<T>>(node1: T, node2: T) {
     return true
   }
 
-  if (
-    !node1.inner ||
-    !node2.inner ||
-    node1.inner.length !== node2.inner.length
-  ) {
+  if (!node1.inner || !node2.inner || node1.inner.length !== node2.inner.length) {
     return false
   }
 
@@ -281,16 +249,12 @@ const isTrueError = <T extends NodeError<T>>(node: T): boolean =>
   // the models to allow "null"
   !(node.code === "INVALID_TYPE" && node.params && node.params[0] === "null")
 
-const isLeaf = <T extends NodeError<T>>(node: T): boolean =>
-  !node.errors && !node.inner
+const isLeaf = <T extends NodeError<T>>(node: T): boolean => !node.errors && !node.inner
 
 /**
  * Unifies a suffix path with a root path.
  */
-function consolidatePath(
-  path: unknown[],
-  suffixPath: string | string[]
-): unknown[] {
+function consolidatePath(path: unknown[], suffixPath: string | string[]): unknown[] {
   let newSuffixIndex = 0
   let overlapIndex = path.lastIndexOf(suffixPath[newSuffixIndex])
   let previousIndex = overlapIndex
@@ -299,11 +263,7 @@ function consolidatePath(
     return path.concat(suffixPath)
   }
 
-  for (
-    newSuffixIndex = 1;
-    newSuffixIndex < suffixPath.length;
-    ++newSuffixIndex
-  ) {
+  for (newSuffixIndex = 1; newSuffixIndex < suffixPath.length; ++newSuffixIndex) {
     previousIndex = overlapIndex
     overlapIndex = path.lastIndexOf(suffixPath[newSuffixIndex])
     if (overlapIndex === -1 || overlapIndex !== previousIndex + 1) {

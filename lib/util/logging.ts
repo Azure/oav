@@ -54,10 +54,7 @@ export const log = winston.createLogger({
   transports: [
     new winston.transports.Console({
       level: "warn",
-      format: winston.format.combine(
-        winston.format.colorize(),
-        winston.format.prettyPrint()
-      )
+      format: winston.format.combine(winston.format.colorize(), winston.format.prettyPrint())
     })
   ],
   levels: customLogLevels
@@ -96,13 +93,8 @@ Object.defineProperties(log, {
       return logDir
     },
     set(logDirectory: string): void {
-      if (
-        !logDirectory ||
-        (logDirectory && typeof logDirectory.valueOf() !== "string")
-      ) {
-        throw new Error(
-          'logDirectory cannot be null or undefined and must be of type "string".'
-        )
+      if (!logDirectory || (logDirectory && typeof logDirectory.valueOf() !== "string")) {
+        throw new Error('logDirectory cannot be null or undefined and must be of type "string".')
       }
 
       if (!fs.existsSync(logDirectory)) {
@@ -123,10 +115,7 @@ Object.defineProperties(log, {
     },
     set(logFilePath: string): void {
       const self = this as ILogger
-      if (
-        !logFilePath ||
-        (logFilePath && typeof logFilePath.valueOf() !== "string")
-      ) {
+      if (!logFilePath || (logFilePath && typeof logFilePath.valueOf() !== "string")) {
         throw new Error(
           "filepath cannot be null or undefined and must be of type string. It must be " +
             "an absolute file path."

@@ -36,9 +36,6 @@ describe("Semantic validation", () => {
     const specPath = `${testPath}/semanticValidation/specification/invalid/invalid.json`
     const result = await validate.validateSpec(specPath, undefined)
     assert(result.validityStatus === false)
-    assert.strictEqual(
-      (result.resolveSpec as any).code,
-      constants.ErrorCodes.JsonParsingError.name
-    )
+    assert.strictEqual((result.resolveSpec as any).code, constants.ErrorCodes.JsonParsingError.name)
   })
 })

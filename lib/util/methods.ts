@@ -3,15 +3,7 @@
 
 import { Methods, OperationObject, PathItemObject } from "yasway"
 
-export const methods: Methods[] = [
-  "get",
-  "put",
-  "post",
-  "delete",
-  "options",
-  "head",
-  "patch"
-]
+export const methods: Methods[] = ["get", "put", "post", "delete", "options", "head", "patch"]
 
 export function* getOperations(p: PathItemObject): Iterable<OperationObject> {
   for (const v of methods) {

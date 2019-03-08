@@ -113,6 +113,7 @@
     "tslint": "tslint --project tsconfig.json ./*.ts ./lib/**/*.ts ./test/**/*.ts ./types/**/*.ts",
     "test": "npm run tsc && npm run tslint && nyc mocha ./dist/test/**/*.js -t 10000 --reporter mocha-junit-reporter --reporter spec",
     "start": "node ./dist/lib/autorestPlugin/pluginHost.js",
+    "tslint-check": "tslint-config-prettier-check ./tslint.json",
     "prepack": "npm install && tsc && npm run tslint",
     "cli": "node dist/cli.js",
     "li": "npm install @ts-common/local-install --no-save && local-install"

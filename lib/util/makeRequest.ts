@@ -34,11 +34,7 @@ export function parseContent(
   try {
     const sanitizedContent = stripBOM(fileContent)
     if (/.*\.json$/gi.test(filePath)) {
-      return jsonParser.parse(
-        filePath,
-        sanitizedContent,
-        reportError
-      ) as SwaggerObject
+      return jsonParser.parse(filePath, sanitizedContent, reportError) as SwaggerObject
     } else if (/.*\.ya?ml$/gi.test(filePath)) {
       return yaml.safeLoad(sanitizedContent)
     } else {

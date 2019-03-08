@@ -4,9 +4,7 @@
 import { flatMap } from "@ts-common/iterator"
 
 export const splitPathAndReverse = (p: string | undefined) =>
-  p === undefined
-    ? undefined
-    : Array.from(flatMap(p.split("/"), s => s.split("\\"))).reverse()
+  p === undefined ? undefined : Array.from(flatMap(p.split("/"), s => s.split("\\"))).reverse()
 
 export const isSubPath = (
   mainPath: ReadonlyArray<string> | undefined,

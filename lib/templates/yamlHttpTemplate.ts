@@ -34,10 +34,7 @@ export class YamlHttpTemplate extends HttpTemplate {
         if (this.responses.standard.finalResponse === undefined) {
           throw new Error("this.responses.standard.finalResponse === undefined")
         }
-        template += this.populateResponse(
-          this.responses.standard.finalResponse,
-          "Response"
-        )
+        template += this.populateResponse(this.responses.standard.finalResponse, "Response")
       }
     }
     return template
@@ -46,9 +43,7 @@ export class YamlHttpTemplate extends HttpTemplate {
   private getRequestHeaders(): string {
     let result = ``
     if (this.request.body) {
-      result += `  Content-Length: ${
-        JSON.stringify(this.request.body).length
-      }\n`
+      result += `  Content-Length: ${JSON.stringify(this.request.body).length}\n`
     }
     if (this.request.headers) {
       const headers = toArray(keys(this.request.headers))

@@ -55,10 +55,7 @@ async function analyzeSwagger(
 ): Promise<void> {
   const swaggerFile = await autoRestApi.ReadFile(swaggerFileName)
   const swagger = yaml.safeLoad(swaggerFile)
-  const exampleValidationResults = await openApiValidationExample(
-    swagger,
-    swaggerFileName
-  )
+  const exampleValidationResults = await openApiValidationExample(swagger, swaggerFileName)
   for (const result of exampleValidationResults) {
     autoRestApi.Message({
       Channel: result.channel,
@@ -97,11 +94,7 @@ export async function openApiValidationExample(
   }
   options.consoleLogLevel = "off"
   log.consoleLogLevel = options.consoleLogLevel
-  const specVal = new ModelValidator(
-    swaggerFileName,
-    swagger as SwaggerObject,
-    options
-  )
+  const specVal = new ModelValidator(swaggerFileName, swagger as SwaggerObject, options)
   // console.error(JSON.stringify(swagger, null, 2))
   await specVal.initialize()
   try {
@@ -119,10 +112,7 @@ export async function openApiValidationExample(
           // get path to x-ms-examples in swagger
           const xmsexPath = linq
             .from(
-              jsonPath.nodes(
-                swagger,
-                `$.paths[*][?(@.operationId==='${op}')]["x-ms-examples"]`
-              )
+              jsonPath.nodes(swagger, `$.paths[*][?(@.operationId==='${op}')]["x-ms-examples"]`)
             )
             .select(x => x.path)
             .firstOrDefault()
@@ -185,9 +175,7 @@ export async function openApiValidationExample(
           }
 
           // responses
-          for (const [responseCode, response] of entries(
-            scenarioItem.responses
-          )) {
+          for (const [responseCode, response] of entries(scenarioItem.responses)) {
             if (response.isValid === false) {
               const error = response.error as CommonError
               const innerErrors = error.innerErrors
@@ -252,11 +240,10 @@ export async function openApiValidationExample(
  * Path comes with indices as strings in "inner errors", so converting those to actual numbers for
  * path to work.
  */
-function convertIndicesFromStringToNumbers(
-  path: string[]
-): Array<string | number> {
+function convertIndicesFromStringToNumbers(path: string[]): Array<string | number> {
   const result: Array<string | number> = path.slice()
   for (let i = 1; i < result.length; ++i) {
+    // tslint:disable-next-line: radix
     const num = parseInt(result[i] as string)
     if (!isNaN(num) && result[i - 1] === "parameters") {
       result[i] = num

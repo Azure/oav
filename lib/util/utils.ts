@@ -13,10 +13,7 @@ import * as path from "path"
 import * as util from "util"
 import { DataType, ParameterObject, SchemaObject } from "yasway"
 
-import {
-  getSchemaObjectInfo,
-  setSchemaInfo
-} from "../validators/specTransformer"
+import { getSchemaObjectInfo, setSchemaInfo } from "../validators/specTransformer"
 import { log } from "./logging"
 
 /*
@@ -94,9 +91,7 @@ export interface Reference {
  */
 export function parseReferenceInSwagger(reference: string): Reference {
   if (!reference || (reference && reference.trim().length === 0)) {
-    throw new Error(
-      "reference cannot be null or undefined and it must be a non-empty string."
-    )
+    throw new Error("reference cannot be null or undefined and it must be a non-empty string.")
   }
 
   if (reference.includes("#")) {
@@ -177,10 +172,7 @@ export async function parseJsonWithPathFragments(
  *
  * @returns {object} target - Returns the merged target object.
  */
-export function mergeObjects<T extends sm.MutableStringMap<Data>>(
-  source: T,
-  target: T
-): T {
+export function mergeObjects<T extends sm.MutableStringMap<Data>>(source: T, target: T): T {
   for (const [key, sourceProperty] of sm.entries(source)) {
     if (Array.isArray(sourceProperty)) {
       const targetProperty = target[key]
@@ -209,10 +201,7 @@ export function mergeObjects<T extends sm.MutableStringMap<Data>>(
  *
  * @returns {array} target - Returns the merged target array.
  */
-export function mergeArrays<T extends Data>(
-  source: ReadonlyArray<T>,
-  target: T[]
-): T[] {
+export function mergeArrays<T extends Data>(source: ReadonlyArray<T>, target: T[]): T[] {
   if (!Array.isArray(target) || !Array.isArray(source)) {
     return target
   }
@@ -252,12 +241,7 @@ export function getObject(doc: {}, ptr: string): unknown {
  * location provided by the ptr in the doc.
  * @param {overwrite} Optional parameter to decide if a pointer value should be overwritten.
  */
-export function setObject(
-  doc: {},
-  ptr: string,
-  value: unknown,
-  overwrite = true
-) {
+export function setObject(doc: {}, ptr: string, value: unknown, overwrite = true) {
   let result
   try {
     if (overwrite || !jsonPointer.has(doc, ptr)) {
@@ -317,20 +301,14 @@ export function getProvider(pathStr?: string | null): string | undefined {
  *
  * @param {string} [branch] to be cloned instead of the default branch.
  */
-export function gitClone(
-  directory: string,
-  url: string,
-  branch: string | undefined
-): void {
+export function gitClone(directory: string, url: string, branch: string | undefined): void {
   if (
     url === null ||
     url === undefined ||
     typeof url.valueOf() !== "string" ||
     !url.trim().length
   ) {
-    throw new Error(
-      "url is a required parameter of type string and it cannot be an empty string."
-    )
+    throw new Error("url is a required parameter of type string and it cannot be an empty string.")
   }
 
   if (
@@ -351,18 +329,14 @@ export function gitClone(
         removeDirSync(directory)
       } catch (err) {
         const text = util.inspect(err, { depth: null })
-        throw new Error(
-          `An error occurred while deleting directory ${directory}: ${text}.`
-        )
+        throw new Error(`An error occurred while deleting directory ${directory}: ${text}.`)
       }
     } else {
       try {
         fs.unlinkSync(directory)
       } catch (err) {
         const text = util.inspect(err, { depth: null })
-        throw new Error(
-          `An error occurred while deleting file ${directory}: ${text}.`
-        )
+        throw new Error(`An error occurred while deleting file ${directory}: ${text}.`)
       }
     }
   }
@@ -371,16 +345,12 @@ export function gitClone(
     fs.mkdirSync(directory)
   } catch (err) {
     const text = util.inspect(err, { depth: null })
-    throw new Error(
-      `An error occurred while creating directory ${directory}: ${text}.`
-    )
+    throw new Error(`An error occurred while creating directory ${directory}: ${text}.`)
   }
 
   try {
     const isBranchDefined =
-      branch !== null &&
-      branch !== undefined &&
-      typeof branch.valueOf() === "string"
+      branch !== null && branch !== undefined && typeof branch.valueOf() === "string"
     const cmd = isBranchDefined
       ? `git clone --depth=1 --branch ${branch} ${url} ${directory}`
       : `git clone --depth=1 ${url} ${directory}`
@@ -419,13 +389,9 @@ export function removeDirSync(dir: string): void {
  * @param {array} consumesOrProduces Array of content-types.
  * @returns {string} firstMatchedJson content-type that contains "/json".
  */
-export function getJsonContentType(
-  consumesOrProduces: string[]
-): string | undefined {
+export function getJsonContentType(consumesOrProduces: string[]): string | undefined {
   return consumesOrProduces
-    ? consumesOrProduces.find(
-        contentType => contentType.match(/.*\/json.*/gi) !== null
-      )
+    ? consumesOrProduces.find(contentType => contentType.match(/.*\/json.*/gi) !== null)
     : undefined
 }
 
@@ -451,9 +417,7 @@ export function isUrlEncoded(str: string): boolean {
  */
 export function isPureObject(model: SchemaObject): boolean {
   if (!model) {
-    throw new Error(
-      `model cannot be null or undefined and must be of type "object"`
-    )
+    throw new Error(`model cannot be null or undefined and must be of type "object"`)
   }
   if (
     model.type &&
@@ -463,11 +427,7 @@ export function isPureObject(model: SchemaObject): boolean {
     it.isEmpty(sm.entries(model.properties))
   ) {
     return true
-  } else if (
-    !model.type &&
-    model.properties &&
-    it.isEmpty(sm.entries(model.properties))
-  ) {
+  } else if (!model.type && model.properties && it.isEmpty(sm.entries(model.properties))) {
     return true
   } else if (
     model.type &&
@@ -544,10 +504,7 @@ export function relaxModelLikeEntities(model: SchemaObject): SchemaObject {
  * If true then it is required. If false or undefined then it is not required.
  * @returns {object} entity - The processed entity
  */
-export function allowNullType<T extends Entity>(
-  entity: T,
-  isPropRequired?: boolean | {}
-): T {
+export function allowNullType<T extends Entity>(entity: T, isPropRequired?: boolean | {}): T {
   const info = getSchemaObjectInfo(entity)
 
   const nullable = () => {
@@ -587,14 +544,8 @@ export function allowNullType<T extends Entity>(
       // handling nullable parameters
       if (savedEntity.in) {
         const typeNull: SchemaObject = setSchemaInfo({ type: "null" }, info)
-        const typeEntity: SchemaObject = setSchemaInfo(
-          { type: entity.type },
-          info
-        )
-        const typeArray: ReadonlyArray<SchemaObject> = copyInfo(entity, [
-          typeEntity,
-          typeNull
-        ])
+        const typeEntity: SchemaObject = setSchemaInfo({ type: entity.type }, info)
+        const typeArray: ReadonlyArray<SchemaObject> = copyInfo(entity, [typeEntity, typeNull])
         entity.anyOf = typeArray
         delete entity.type
       } else {
@@ -604,11 +555,7 @@ export function allowNullType<T extends Entity>(
   }
 
   // if there's a $ref
-  if (
-    entity &&
-    entity.$ref &&
-    shouldAcceptNullValue(entity["x-nullable"], isPropRequired)
-  ) {
+  if (entity && entity.$ref && shouldAcceptNullValue(entity["x-nullable"], isPropRequired)) {
     nullable()
   }
   return entity
@@ -620,10 +567,7 @@ export function allowNullType<T extends Entity>(
  * Yes                   | convert to anyOf[] |       |
  * No                    | convert to anyOf[] |       | convert to anyOf[]
  */
-export function shouldAcceptNullValue(
-  xnullable: unknown,
-  isPropRequired: unknown
-): unknown {
+export function shouldAcceptNullValue(xnullable: unknown, isPropRequired: unknown): unknown {
   const isPropNullable = xnullable && typeof xnullable === "boolean"
   return (isPropNullable === undefined && !isPropRequired) || isPropNullable
 }
@@ -634,8 +578,7 @@ export function allowNullableTypes(model: SchemaObject): SchemaObject {
   // process additionalProperties if present
   if (model && typeof model.additionalProperties === "object") {
     model.additionalProperties =
-      model.additionalProperties.properties ||
-      model.additionalProperties.additionalProperties
+      model.additionalProperties.properties || model.additionalProperties.additionalProperties
         ? allowNullableTypes(model.additionalProperties)
         : // there shouldn't be more properties nesting at this point
           allowNullType(model.additionalProperties)
@@ -689,9 +632,7 @@ export function allowNullableTypes(model: SchemaObject): SchemaObject {
 /**
  * Relaxes/Transforms parameter definition to allow null values for non-path parameters
  */
-export function allowNullableParams(
-  parameter: ParameterObject
-): ParameterObject {
+export function allowNullableParams(parameter: ParameterObject): ParameterObject {
   if (parameter.in && parameter.in === "body" && parameter.schema) {
     parameter.schema = allowNullableTypes(parameter.schema)
   } else {
@@ -710,9 +651,7 @@ export function allowNullableParams(
  */
 export const sanitizeFileName = (str: string): string =>
   str
-    ? str
-        .replace(/[{}\[\]'";\(\)#@~`!%&\^\$\+=,\/\\?<>\|\*:]/gi, "")
-        .replace(/(\s+)/gi, "_")
+    ? str.replace(/[{}\[\]'";\(\)#@~`!%&\^\$\+=,\/\\?<>\|\*:]/gi, "").replace(/(\s+)/gi, "_")
     : str
 
 /**
@@ -725,7 +664,5 @@ const isPropertyRequired = (propName: unknown, model: SchemaObject) =>
  * Contains the reverse mapping of http.STATUS_CODES
  */
 export const statusCodeStringToStatusCode = lodash.invert(
-  lodash.mapValues(http.STATUS_CODES, (value: string) =>
-    value.replace(/ |-/g, "").toLowerCase()
-  )
+  lodash.mapValues(http.STATUS_CODES, (value: string) => value.replace(/ |-/g, "").toLowerCase())
 )

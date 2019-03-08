@@ -1,15 +1,10 @@
 import { SpecValidationResult } from "../validators/specValidator"
 
 import { BaseValidationError } from "./baseValidationError"
-import {
-  errorCodeToSeverity,
-  NodeError,
-  serializeErrors
-} from "./validationError"
+import { errorCodeToSeverity, NodeError, serializeErrors } from "./validationError"
 import { ValidationResultSource } from "./validationResultSource"
 
-export interface SemanticValidationError
-  extends BaseValidationError<NodeError<any>> {
+export interface SemanticValidationError extends BaseValidationError<NodeError<any>> {
   source?: ValidationResultSource
   path?: string
   readonly inner?: {}
@@ -33,25 +28,20 @@ export const getErrorsFromSemanticValidation = (
   }
 
   return validationResult.validateSpec.errors.reduce((acc, rawError) => {
-    const serializedErrors: any[] = serializeErrors(
-      rawError.inner || rawError,
-      []
-    )
+    const serializedErrors: any[] = serializeErrors(rawError.inner || rawError, [])
 
     // process serialized errors
-    const semanticErrors: SemanticValidationError[] = serializedErrors.map(
-      serializedError => {
-        const severity = errorCodeToSeverity(serializedError.code)
-        const semanticError: SemanticValidationError = {
-          source: ValidationResultSource.GLOBAL,
-          code: serializedError.code,
-          details: serializedError,
-          path: rawError["json-path"],
-          severity
-        }
-        return semanticError
+    const semanticErrors: SemanticValidationError[] = serializedErrors.map(serializedError => {
+      const severity = errorCodeToSeverity(serializedError.code)
+      const semanticError: SemanticValidationError = {
+        source: ValidationResultSource.GLOBAL,
+        code: serializedError.code,
+        details: serializedError,
+        path: rawError["json-path"],
+        severity
       }
-    )
+      return semanticError
+    })
     return [...acc, ...semanticErrors]
   }, new Array<SemanticValidationError>())
 }

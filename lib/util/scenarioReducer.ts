@@ -50,9 +50,7 @@ export function scenarioReducer(
   const processedErrors = processValidationErrors(rawValidationResult)
 
   if (processedErrors.requestValidationResult.errors === undefined) {
-    throw new Error(
-      "ICE: processedErrors.requestValidationResult.errors === undefined"
-    )
+    throw new Error("ICE: processedErrors.requestValidationResult.errors === undefined")
   }
   const modelErrors = !request.isValid
     ? toModelErrors(
@@ -68,18 +66,9 @@ export function scenarioReducer(
   rawValidationResult.requestValidationResult.errors = []
 
   const entries = sm.entries(scenario.responses)
-  const invalidResponses = it.filter(
-    entries,
-    ([_, response]) => !response.isValid
-  )
+  const invalidResponses = it.filter(entries, ([_, response]) => !response.isValid)
   const result = it.flatMap(invalidResponses, ([responseCode]) =>
-    responseReducer(
-      responseCode,
-      scenario,
-      rawValidationResult,
-      operationId,
-      scenarioName
-    )
+    responseReducer(responseCode, scenario, rawValidationResult, operationId, scenarioName)
   )
   return it.concat(modelErrors, result)
 }

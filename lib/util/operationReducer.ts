@@ -18,10 +18,7 @@ export function operationReducer({
   scenarios
 }: OperationResultScenarios): Iterable<ModelValidationError> {
   const scenariosEntries = sm.entries(scenarios)
-  const invalidScenarios = it.filter(
-    scenariosEntries,
-    ([_, scenario]) => !scenario.isValid
-  )
+  const invalidScenarios = it.filter(scenariosEntries, ([_, scenario]) => !scenario.isValid)
   const result = it.flatMap(invalidScenarios, ([scenarioName, scenario]) =>
     scenarioReducer(scenarioName, scenario, operationId)
   )

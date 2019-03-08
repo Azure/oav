@@ -26,10 +26,7 @@ export interface Responses {
 }
 
 export class HttpTemplate {
-  public constructor(
-    public readonly request: Request,
-    public readonly responses: Responses
-  ) {}
+  public constructor(public readonly request: Request, public readonly responses: Responses) {}
 
   protected getHost(): string | undefined {
     const requestUrl = this.request.url
@@ -42,9 +39,7 @@ export class HttpTemplate {
       padding = ``
     }
     if (this.request.body) {
-      result += `\n${padding}-H 'Content-Length: ${
-        JSON.stringify(this.request.body).length
-      }' \\`
+      result += `\n${padding}-H 'Content-Length: ${JSON.stringify(this.request.body).length}' \\`
     }
     if (this.request.headers) {
       for (const [headerName, header] of entries(this.request.headers)) {
@@ -55,9 +50,7 @@ export class HttpTemplate {
   }
 
   protected getRequestBody(): string {
-    return this.request &&
-      this.request.body !== null &&
-      this.request.body !== undefined
+    return this.request && this.request.body !== null && this.request.body !== undefined
       ? JSON.stringify(this.request.body)
       : ""
   }
@@ -69,11 +62,7 @@ export class HttpTemplate {
     if (!padding) {
       padding = ``
     }
-    if (
-      this.request &&
-      this.request.body !== null &&
-      this.request.body !== undefined
-    ) {
+    if (this.request && this.request.body !== null && this.request.body !== undefined) {
       const part = JSON.stringify(this.request.body, null, 2)
         .split(`\n`)
         .join(`\n${padding}`)

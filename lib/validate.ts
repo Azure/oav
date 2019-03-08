@@ -39,11 +39,7 @@ export async function getDocumentsFromCompositeSwagger(
   reportError: jsonParser.ReportError
 ): Promise<string[]> {
   try {
-    const compositeSwagger = await jsonUtils.parseJson(
-      suppression,
-      compositeSpecPath,
-      reportError
-    )
+    const compositeSwagger = await jsonUtils.parseJson(suppression, compositeSpecPath, reportError)
     if (
       !(
         compositeSwagger.documents &&
@@ -63,9 +59,7 @@ export async function getDocumentsFromCompositeSwagger(
       if (docs[i].startsWith(".")) {
         docs[i] = docs[i].substring(1)
       }
-      const individualPath = docs[i].startsWith("http")
-        ? docs[i]
-        : basePath + docs[i]
+      const individualPath = docs[i].startsWith("http") ? docs[i] : basePath + docs[i]
       finalDocs.push(individualPath)
     }
     return finalDocs
@@ -179,9 +173,7 @@ export async function validateExamples(
     const errors = getErrorsFromModelValidation(validator.specValidationResult)
     if (o.pretty) {
       /* tslint:disable-next-line:no-console no-string-literal */
-      console.log(
-        `Validating "examples" and "x-ms-examples" in  ${specPath}:\n`
-      )
+      console.log(`Validating "examples" and "x-ms-examples" in  ${specPath}:\n`)
       prettyPrint(errors, "error")
     }
     return errors
@@ -201,9 +193,7 @@ export async function validateExamplesInCompositeSpec(
       compositeSpecPath,
       jsonParser.defaultErrorReport
     )
-    const promiseFactories = docs.map(doc => async () =>
-      validateExamples(doc, undefined, o)
-    )
+    const promiseFactories = docs.map(doc => async () => validateExamples(doc, undefined, o))
     return utils.executePromisesSequentially(promiseFactories)
   })
 }
@@ -223,12 +213,7 @@ export async function resolveSpec(
   try {
     const suppression = await getSuppressions(specPath)
     const result = await jsonUtils.parseJson(suppression, specPath, reportError)
-    const resolver = new specResolver.SpecResolver(
-      specPath,
-      result,
-      options,
-      reportError
-    )
+    const resolver = new specResolver.SpecResolver(specPath, result, options, reportError)
     await resolver.resolve(suppression)
     const resolvedSwagger = JSON.stringify(resolver.specInJson, null, 2)
     if (outputDir !== "./" && !fs.existsSync(outputDir)) {
@@ -290,9 +275,7 @@ export async function generateWireFormat(
   const wfGenerator = new WireFormatGenerator(specPath, null, outDir, emitYaml)
   try {
     await wfGenerator.initialize()
-    log.info(
-      `Generating wire format request and responses for swagger spec: "${specPath}":\n`
-    )
+    log.info(`Generating wire format request and responses for swagger spec: "${specPath}":\n`)
     wfGenerator.processOperations(operationIds)
   } catch (err) {
     log.error(err)
@@ -353,21 +336,14 @@ export async function generateUml(
   }
   try {
     const suppression = await getSuppressions(specPath)
-    const result = await jsonUtils.parseJson(
-      suppression,
-      specPath,
-      jsonParser.defaultErrorReport
-    )
+    const result = await jsonUtils.parseJson(suppression, specPath, jsonParser.defaultErrorReport)
     const resolver = new specResolver.SpecResolver(
       specPath,
       result,
       resolverOptions,
       jsonParser.defaultErrorReport
     )
-    const umlGenerator = new umlGeneratorLib.UmlGenerator(
-      resolver.specInJson,
-      options
-    )
+    const umlGenerator = new umlGeneratorLib.UmlGenerator(resolver.specInJson, options)
     const svgGraph = await umlGenerator.generateDiagramFromGraph()
     if (outputDir !== "./" && !fs.existsSync(outputDir)) {
       fs.mkdirSync(outputDir)
@@ -385,9 +361,9 @@ export async function generateUml(
   }
 }
 
-export function updateEndResultOfSingleValidation<
-  T extends CommonValidationResult
->(validator: SpecValidator<T>): void {
+export function updateEndResultOfSingleValidation<T extends CommonValidationResult>(
+  validator: SpecValidator<T>
+): void {
   if (validator.specValidationResult.validityStatus) {
     if (!(log.consoleLogLevel === "json" || log.consoleLogLevel === "off")) {
       log.info("No Errors were found.")
@@ -420,10 +396,6 @@ export async function extractXMsExamples(
   }
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel
   log.filepath = options.logFilepath || log.filepath
-  const xMsExampleExtractor = new XMsExampleExtractor(
-    specPath,
-    recordings,
-    options
-  )
+  const xMsExampleExtractor = new XMsExampleExtractor(specPath, recordings, options)
   return xMsExampleExtractor.extract()
 }

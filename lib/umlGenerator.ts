@@ -39,11 +39,7 @@ export class UmlGenerator {
     specInJson: null | undefined | SwaggerObject,
     options: null | undefined | Options
   ) {
-    if (
-      specInJson === null ||
-      specInJson === undefined ||
-      typeof specInJson !== "object"
-    ) {
+    if (specInJson === null || specInJson === undefined || typeof specInJson !== "object") {
       throw new Error("specInJson is a required property of type object")
     }
     this.specInJson = specInJson
@@ -90,9 +86,7 @@ export class UmlGenerator {
         }
         const segments = ref.split("/")
         const parent = segments[segments.length - 1]
-        this.graphDefinition += `\n[${parent}${this.bg}]^-.-allOf[${modelName}${
-          this.bg
-        }]`
+        this.graphDefinition += `\n[${parent}${this.bg}]^-.-allOf[${modelName}${this.bg}]`
       })
     }
   }
@@ -106,11 +100,7 @@ export class UmlGenerator {
       let props = ""
       if (modelProperties) {
         for (const [propertyName, property] of entries(modelProperties)) {
-          const propertyType = this.getPropertyType(
-            modelName,
-            property,
-            references
-          )
+          const propertyType = this.getPropertyType(modelName, property, references)
           let discriminator = ""
           if (model.discriminator && model.discriminator === propertyName) {
             discriminator = "(discriminator)"
@@ -154,22 +144,13 @@ export class UmlGenerator {
     if (property.$ref) {
       const segments = property.$ref.split("/")
       const referencedModel = segments[segments.length - 1]
-      references.push(
-        `[${modelName}${this.bg}]->[${referencedModel}${this.bg}]`
-      )
+      references.push(`[${modelName}${this.bg}]->[${referencedModel}${this.bg}]`)
       return referencedModel
     }
 
-    if (
-      property.additionalProperties &&
-      typeof property.additionalProperties === "object"
-    ) {
+    if (property.additionalProperties && typeof property.additionalProperties === "object") {
       let result = "Dictionary<"
-      result += this.getPropertyType(
-        modelName,
-        property.additionalProperties,
-        references
-      )
+      result += this.getPropertyType(modelName, property.additionalProperties, references)
       result += ">"
       return result
     }

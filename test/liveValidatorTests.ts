@@ -12,12 +12,7 @@ import { LiveValidator } from "../lib/validators/liveValidator"
 
 const numberOfSpecs = 8
 const livePaths = glob.sync(
-  path.join(
-    __dirname,
-    "..",
-    "..",
-    "test/liveValidation/swaggers/**/live/*.json"
-  )
+  path.join(__dirname, "..", "..", "test/liveValidation/swaggers/**/live/*.json")
 )
 describe("Live Validator", () => {
   describe("Initialization", () => {
@@ -303,8 +298,7 @@ describe("Live Validator", () => {
       const validator = new LiveValidator(options)
       await validator.initialize()
       // Operations to match is StorageAccounts_List
-      let operations = validator.getPotentialOperations(listRequestUrl, "Get")
-        .operations
+      let operations = validator.getPotentialOperations(listRequestUrl, "Get").operations
       let pathObject = operations[0].pathObject
       if (pathObject === undefined) {
         throw new Error("pathObject is undefined")
@@ -316,8 +310,7 @@ describe("Live Validator", () => {
       )
 
       // Operations to match is StorageAccounts_CheckNameAvailability
-      operations = validator.getPotentialOperations(postRequestUrl, "PoSt")
-        .operations
+      operations = validator.getPotentialOperations(postRequestUrl, "PoSt").operations
       pathObject = operations[0].pathObject
       if (pathObject === undefined) {
         throw new Error("pathObject is undefined")
@@ -329,8 +322,7 @@ describe("Live Validator", () => {
       )
 
       // Operations to match is StorageAccounts_Delete
-      operations = validator.getPotentialOperations(deleteRequestUrl, "delete")
-        .operations
+      operations = validator.getPotentialOperations(deleteRequestUrl, "delete").operations
       pathObject = operations[0].pathObject
       if (pathObject === undefined) {
         throw new Error("pathObject is undefined")
@@ -373,10 +365,7 @@ describe("Live Validator", () => {
       if (reason === undefined) {
         throw new Error("reason is undefined")
       }
-      assert.strictEqual(
-        Constants.ErrorCodes.OperationNotFoundInCacheWithApi.name,
-        reason.code
-      )
+      assert.strictEqual(Constants.ErrorCodes.OperationNotFoundInCacheWithApi.name, reason.code)
 
       // Operations to match is StorageAccounts_CheckNameAvailability with provider "Hello.World"
       // [non cached provider]
@@ -400,10 +389,7 @@ describe("Live Validator", () => {
       if (reason === undefined) {
         throw new Error("reason is undefined")
       }
-      assert.strictEqual(
-        Constants.ErrorCodes.OperationNotFoundInCacheWithVerb.name,
-        reason.code
-      )
+      assert.strictEqual(Constants.ErrorCodes.OperationNotFoundInCacheWithVerb.name, reason.code)
 
       // Operations to match is with path
       // "subscriptions/subscriptionId/providers/Microsoft.Storage/" +
@@ -416,10 +402,7 @@ describe("Live Validator", () => {
       if (reason === undefined) {
         throw new Error("reason is undefined")
       }
-      assert.strictEqual(
-        Constants.ErrorCodes.OperationNotFoundInCache.name,
-        reason.code
-      )
+      assert.strictEqual(Constants.ErrorCodes.OperationNotFoundInCache.name, reason.code)
     })
     it("it shouldn't create an implicit default response", async () => {
       const options = {
@@ -461,8 +444,7 @@ describe("Live Validator", () => {
     })
     it("should initialize for defaultErrorOnly and fail on unknown status code", async () => {
       const options = {
-        directory:
-          "./test/liveValidation/swaggers/specification/defaultIsErrorOnly",
+        directory: "./test/liveValidation/swaggers/specification/defaultIsErrorOnly",
         swaggerPathsPattern: "test.json"
       }
       const validator = new LiveValidator(options)
@@ -493,8 +475,7 @@ describe("Live Validator", () => {
     })
     it("should initialize for defaultErrorOnly and pass", async () => {
       const options = {
-        directory:
-          "./test/liveValidation/swaggers/specification/defaultIsErrorOnly",
+        directory: "./test/liveValidation/swaggers/specification/defaultIsErrorOnly",
         swaggerPathsPattern: "test.json"
       }
       const validator = new LiveValidator(options)

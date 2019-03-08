@@ -7,9 +7,7 @@ import { isArray } from "@ts-common/iterator"
 import * as vfs from "@ts-common/virtual-fs"
 import * as path from "path"
 
-export const getSuppressions = async (
-  specPath: string
-): Promise<undefined | amd.Suppression> => {
+export const getSuppressions = async (specPath: string): Promise<undefined | amd.Suppression> => {
   // find readme.md
   const readMe = await amd.findReadMe(path.dirname(specPath))
   if (readMe === undefined) {
@@ -17,14 +15,11 @@ export const getSuppressions = async (
   }
   const readMeStr = await vfs.readFile(readMe)
   const cmd = md.parse(readMeStr)
-  const suppressionCodeBlock = amd.getCodeBlocksAndHeadings(cmd.markDown)
-    .Suppression
+  const suppressionCodeBlock = amd.getCodeBlocksAndHeadings(cmd.markDown).Suppression
   if (suppressionCodeBlock === undefined) {
     return undefined
   }
-  const suppression = amd.getYamlFromNode(
-    suppressionCodeBlock
-  ) as amd.Suppression
+  const suppression = amd.getYamlFromNode(suppressionCodeBlock) as amd.Suppression
   if (!isArray(suppression.directive)) {
     return undefined
   }

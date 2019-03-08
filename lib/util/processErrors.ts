@@ -16,14 +16,10 @@ import { CommonError } from "./commonError"
 import { log } from "./logging"
 import { NodeError } from "./validationError"
 
-export const processErrors = <T extends NodeError<T>>(
-  errors: T[] | undefined
-) => (errors === undefined ? undefined : Array.from(filterMap(errors, one)))
+export const processErrors = <T extends NodeError<T>>(errors: T[] | undefined) =>
+  errors === undefined ? undefined : Array.from(filterMap(errors, one))
 
-export const setPositionAndUrl = (
-  error: CommonError,
-  titleObject: TitleObject | undefined
-) => {
+export const setPositionAndUrl = (error: CommonError, titleObject: TitleObject | undefined) => {
   if (titleObject !== undefined) {
     const { path } = titleObject
     error.position = titleObject.position
@@ -56,15 +52,8 @@ const addFileInfo = <T extends NodeError<T>>(error: T): T => {
           : isArray(errorPathOriginal)
           ? errorPathOriginal
           : errorPathOriginal.split("/")
-      setMutableProperty(
-        error,
-        "jsonPosition",
-        getDescendantFilePosition(json, errorPath)
-      )
-      error.directives = merge(
-        error.directives,
-        getAllDirectives(json, errorPath)
-      )
+      setMutableProperty(error, "jsonPosition", getDescendantFilePosition(json, errorPath))
+      error.directives = merge(error.directives, getAllDirectives(json, errorPath))
       error.jsonUrl = getRootObjectInfo(jsonInfo).url
     }
   }
@@ -73,11 +62,7 @@ const addFileInfo = <T extends NodeError<T>>(error: T): T => {
   return error
 }
 
-const isSuppressed = <T extends NodeError<T>>({
-  code,
-  directives,
-  message
-}: T): boolean => {
+const isSuppressed = <T extends NodeError<T>>({ code, directives, message }: T): boolean => {
   if (directives === undefined || code === undefined) {
     return false
   }
