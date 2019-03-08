@@ -44,7 +44,6 @@
  *
  */
 export class ValidationResult {
-
   /**
    * Defines the metadata of ValidationResult
    *

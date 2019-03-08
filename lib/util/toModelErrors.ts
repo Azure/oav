@@ -1,7 +1,8 @@
+import * as it from "@ts-common/iterator"
+
 import { ModelValidationError } from "./modelValidationError"
 import { errorCodeToSeverity } from "./validationError"
 import { ValidationResultSource } from "./validationResultSource"
-import * as it from "@ts-common/iterator"
 
 /**
  * Transforms serialized errors to ModelValidationError

@@ -1,30 +1,28 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import * as JsonRefs from "json-refs"
+import { Suppression } from "@azure/openapi-markdown"
+import { map, toArray } from "@ts-common/iterator"
+import * as jsonParser from "@ts-common/json-parser"
+import { setMutableProperty } from "@ts-common/property-set"
+import { entries, MutableStringMap, StringMap } from "@ts-common/string-map"
 import * as fs from "fs"
-import * as path from "path"
-import * as utils from "./util/utils"
-import * as Sway from "yasway"
+import * as JsonRefs from "json-refs"
+import { PathTemplateBasedRequestPrepareOptions } from "ms-rest"
 import * as msRest from "ms-rest"
+import * as path from "path"
+import * as Sway from "yasway"
 
-const HttpRequest = msRest.WebResource
-
-import { log } from "./util/logging"
-import { SpecResolver } from "./validators/specResolver"
 import { ResponseWrapper } from "./models/responseWrapper"
+import { Headers, Responses } from "./templates/httpTemplate"
 import { MarkdownHttpTemplate } from "./templates/markdownHttpTemplate"
 import { YamlHttpTemplate } from "./templates/yamlHttpTemplate"
 import * as C from "./util/constants"
-import { MutableStringMap, StringMap, entries } from "@ts-common/string-map"
-import { PathTemplateBasedRequestPrepareOptions } from "ms-rest"
-import { Responses, Headers } from "./templates/httpTemplate"
-import { map, toArray } from "@ts-common/iterator"
-import { getSuppressions } from "./validators/suppressions"
-import { Suppression } from "@azure/openapi-markdown"
-import { setMutableProperty } from "@ts-common/property-set"
 import * as jsonUtils from "./util/jsonUtils"
-import * as jsonParser from "@ts-common/json-parser"
+import { log } from "./util/logging"
+import * as utils from "./util/utils"
+import { SpecResolver } from "./validators/specResolver"
+import { getSuppressions } from "./validators/suppressions"
 
 const ErrorCodes = C.ErrorCodes
 
@@ -43,19 +41,23 @@ export class WireFormatGenerator {
     wireFormatDir: string,
     emitYaml: unknown
   ) {
-    if (specPath === null
-      || specPath === undefined
-      || typeof specPath.valueOf() !== "string"
-      || !specPath.trim().length
+    if (
+      specPath === null ||
+      specPath === undefined ||
+      typeof specPath.valueOf() !== "string" ||
+      !specPath.trim().length
     ) {
       throw new Error(
-        "specPath is a required parameter of type string and it cannot be an empty string.")
+        "specPath is a required parameter of type string and it cannot be an empty string."
+      )
     }
     // If the spec path is a url starting with https://github then let us auto convert it to an
     // https://raw.githubusercontent url.
     if (specPath.startsWith("https://github")) {
       specPath = specPath.replace(
-        /^https:\/\/(github.com)(.*)blob\/(.*)/ig, "https://raw.githubusercontent.com$2$3")
+        /^https:\/\/(github.com)(.*)blob\/(.*)/gi,
+        "https://raw.githubusercontent.com$2$3"
+      )
     }
     this.specPath = specPath
     this.specDir = path.dirname(this.specPath)
@@ -79,7 +81,7 @@ export class WireFormatGenerator {
       const result = await jsonUtils.parseJson(
         suppression,
         this.specPath,
-        jsonParser.defaultErrorReport,
+        jsonParser.defaultErrorReport
       )
       this.specInJson = result
       const specOptions = {
@@ -93,7 +95,7 @@ export class WireFormatGenerator {
         this.specPath,
         this.specInJson,
         specOptions,
-        jsonParser.defaultErrorReport,
+        jsonParser.defaultErrorReport
       )
       await this.specResolver.resolve(suppression)
       await this.resolveExamples(suppression)
@@ -105,7 +107,11 @@ export class WireFormatGenerator {
       this.swaggerApi = api
       return api
     } catch (err) {
-      const e = this.constructErrorObject(ErrorCodes.ResolveSpecError, err.message, [err])
+      const e = this.constructErrorObject(
+        ErrorCodes.ResolveSpecError,
+        err.message,
+        [err]
+      )
       // self.specValidationResult.resolveSpec = e;
       log.error(`${ErrorCodes.ResolveSpecError.name}: ${err.message}.`)
       log.error(err.stack)
@@ -124,21 +130,32 @@ export class WireFormatGenerator {
     if (!this.swaggerApi) {
       throw new Error(
         `Please call "specValidator.initialize()" before calling this method, ` +
-        `so that swaggerApi is populated.`)
+          `so that swaggerApi is populated.`
+      )
     }
-    if (operationIds !== null
-      && operationIds !== undefined
-      && typeof operationIds.valueOf() !== "string") {
+    if (
+      operationIds !== null &&
+      operationIds !== undefined &&
+      typeof operationIds.valueOf() !== "string"
+    ) {
       throw new Error(`operationIds parameter must be of type 'string'.`)
     }
 
     let operations = this.swaggerApi.getOperations()
     if (operationIds) {
       const operationIdsObj: MutableStringMap<unknown> = {}
-      operationIds.trim().split(",").forEach(item => { operationIdsObj[item.trim()] = 1; })
+      operationIds
+        .trim()
+        .split(",")
+        .forEach(item => {
+          operationIdsObj[item.trim()] = 1
+        })
       const operationsToValidate = operations.filter(item =>
-        Boolean(operationIdsObj[item.operationId]))
-      if (operationsToValidate.length) { operations = operationsToValidate }
+        Boolean(operationIdsObj[item.operationId])
+      )
+      if (operationsToValidate.length) {
+        operations = operationsToValidate
+      }
     }
 
     for (const operation of operations) {
@@ -178,7 +195,10 @@ export class WireFormatGenerator {
    * @return {object} err Return the constructed Error object.
    */
   private constructErrorObject(
-    code: unknown, message: string, innerErrors: unknown[], _?: boolean
+    code: unknown,
+    message: string,
+    innerErrors: unknown[],
+    _?: boolean
   ) {
     const err: {
       code: unknown
@@ -188,7 +208,11 @@ export class WireFormatGenerator {
       code,
       message
     }
-    setMutableProperty(err, "innerErrors", innerErrors ? innerErrors : undefined)
+    setMutableProperty(
+      err,
+      "innerErrors",
+      innerErrors ? innerErrors : undefined
+    )
     // if (!skipValidityStatusUpdate) {
     // this.updateValidityStatus();
     // }
@@ -203,18 +227,24 @@ export class WireFormatGenerator {
       filter: ["relative", "remote"]
     }
 
-    const allRefsRemoteRelative = JsonRefs.findRefs(this.specInJson as object, options)
+    const allRefsRemoteRelative = JsonRefs.findRefs(
+      this.specInJson as object,
+      options
+    )
     const e = entries(allRefsRemoteRelative as StringMap<any>)
-    const promiseFactories = toArray(map(
-      e,
-      ([refName, refDetails]) =>
-        async () =>
-          await this.resolveRelativeReference(
-            suppression, refName, refDetails, this.specInJson, this.specPath
-          )
-    ))
+    const promiseFactories = toArray(
+      map(e, ([refName, refDetails]) => async () =>
+        this.resolveRelativeReference(
+          suppression,
+          refName,
+          refDetails,
+          this.specInJson,
+          this.specPath
+        )
+      )
+    )
     if (promiseFactories.length) {
-      return await utils.executePromisesSequentially(promiseFactories)
+      return utils.executePromisesSequentially(promiseFactories)
     } else {
       return this.specInJson
     }
@@ -227,21 +257,28 @@ export class WireFormatGenerator {
     doc: {} | null,
     docPath: string
   ): Promise<unknown> {
-
     if (!refName || (refName && typeof refName.valueOf() !== "string")) {
-      throw new Error('refName cannot be null or undefined and must be of type "string".')
+      throw new Error(
+        'refName cannot be null or undefined and must be of type "string".'
+      )
     }
 
     if (!refDetails || (refDetails && !(refDetails instanceof Object))) {
-      throw new Error('refDetails cannot be null or undefined and must be of type "object".')
+      throw new Error(
+        'refDetails cannot be null or undefined and must be of type "object".'
+      )
     }
 
     if (!doc || (doc && !(doc instanceof Object))) {
-      throw new Error('doc cannot be null or undefined and must be of type "object".')
+      throw new Error(
+        'doc cannot be null or undefined and must be of type "object".'
+      )
     }
 
     if (!docPath || (docPath && typeof docPath.valueOf() !== "string")) {
-      throw new Error('docPath cannot be null or undefined and must be of type "string".')
+      throw new Error(
+        'docPath cannot be null or undefined and must be of type "string".'
+      )
     }
 
     const node = refDetails.def
@@ -256,11 +293,15 @@ export class WireFormatGenerator {
       docPath = utils.joinPath(docDir, parsedReference.filePath)
     }
 
-    const result = await jsonUtils.parseJson(suppression, docPath, jsonParser.defaultErrorReport)
+    const result = await jsonUtils.parseJson(
+      suppression,
+      docPath,
+      jsonParser.defaultErrorReport
+    )
     if (!parsedReference.localReference) {
       // Since there is no local reference we will replace the key in the object with the parsed
       // json (relative) file it is referring to.
-      const regex = /.*x-ms-examples.*/ig
+      const regex = /.*x-ms-examples.*/gi
       if (slicedRefName.match(regex) !== null) {
         const exampleObj = {
           filePath: docPath,
@@ -288,8 +329,14 @@ export class WireFormatGenerator {
    * @param {object} operation - The operation object.
    */
   private processXmsExamples(operation: Sway.Operation): void {
-    if (operation === null || operation === undefined || typeof operation !== "object") {
-      throw new Error("operation cannot be null or undefined and must be of type 'object'.")
+    if (
+      operation === null ||
+      operation === undefined ||
+      typeof operation !== "object"
+    ) {
+      throw new Error(
+        "operation cannot be null or undefined and must be of type 'object'."
+      )
     }
     const xmsExamples = operation[C.xmsExamples]
     if (xmsExamples) {
@@ -299,13 +346,21 @@ export class WireFormatGenerator {
         // Then we do not need to access the value property. At the same time the file name for
         // wire-format will be the sanitized scenario name.
         const xmsExample = v.value || v
-        const sampleRequest = this.processRequest(operation, xmsExample.parameters)
-        const sampleResponses = this.processXmsExampleResponses(operation, xmsExample.responses)
+        const sampleRequest = this.processRequest(
+          operation,
+          xmsExample.parameters
+        )
+        const sampleResponses = this.processXmsExampleResponses(
+          operation,
+          xmsExample.responses
+        )
         const exampleFileName = v.filePath
           ? path.basename(v.filePath)
           : `${utils.sanitizeFileName(scenario)}.json`
-        let wireFormatFileName =
-          `${exampleFileName.substring(0, exampleFileName.indexOf(path.extname(exampleFileName)))}.`
+        let wireFormatFileName = `${exampleFileName.substring(
+          0,
+          exampleFileName.indexOf(path.extname(exampleFileName))
+        )}.`
         wireFormatFileName += this.emitYaml ? "yml" : "md"
         const fileName = path.join(this.wireFormatDir, wireFormatFileName)
         const httpTemplate = this.emitYaml
@@ -330,17 +385,28 @@ export class WireFormatGenerator {
     operation: Sway.Operation,
     exampleParameterValues: StringMap<string>
   ): msRest.WebResource {
-    if (operation === null || operation === undefined || typeof operation !== "object") {
-      throw new Error("operation cannot be null or undefined and must be of type 'object'.")
+    if (
+      operation === null ||
+      operation === undefined ||
+      typeof operation !== "object"
+    ) {
+      throw new Error(
+        "operation cannot be null or undefined and must be of type 'object'."
+      )
     }
 
-    if (exampleParameterValues === null
-      || exampleParameterValues === undefined
-      || typeof exampleParameterValues !== "object") {
+    if (
+      exampleParameterValues === null ||
+      exampleParameterValues === undefined ||
+      typeof exampleParameterValues !== "object"
+    ) {
       throw new Error(
-        `In operation "${operation.operationId}", exampleParameterValues cannot be null or ` +
-        `undefined and must be of type "object" ` +
-        `(A dictionary of key-value pairs of parameter-names and their values).`)
+        `In operation "${
+          operation.operationId
+        }", exampleParameterValues cannot be null or ` +
+          `undefined and must be of type "object" ` +
+          `(A dictionary of key-value pairs of parameter-names and their values).`
+      )
     }
 
     const parameters = operation.getParameters()
@@ -359,14 +425,20 @@ export class WireFormatGenerator {
       const location = parameter.in
       if (location === "path" || location === "query") {
         const paramType = location + "Parameters"
-        const optionsParameters = options as any as MutableStringMap<MutableStringMap<unknown>>
-        if (!optionsParameters[paramType]) { optionsParameters[paramType] = {} }
+        const optionsParameters = (options as any) as MutableStringMap<
+          MutableStringMap<unknown>
+        >
+        if (!optionsParameters[paramType]) {
+          optionsParameters[paramType] = {}
+        }
         const op = optionsParameters[paramType]
         if (op === undefined) {
           throw new Error("op === undefined")
         }
-        if (parameter[C.xmsSkipUrlEncoding]
-          || utils.isUrlEncoded(exampleParameterValues[parameter.name] as string)) {
+        if (
+          parameter[C.xmsSkipUrlEncoding] ||
+          utils.isUrlEncoded(exampleParameterValues[parameter.name] as string)
+        ) {
           op[parameter.name] = {
             value: exampleParameterValues[parameter.name],
             skipUrlEncoding: true
@@ -378,7 +450,9 @@ export class WireFormatGenerator {
         options.body = exampleParameterValues[parameter.name]
         options.disableJsonStringifyOnBody = true
       } else if (location === "header") {
-        if (!options.headers) { options.headers = {} }
+        if (!options.headers) {
+          options.headers = {}
+        }
         options.headers[parameter.name] = exampleParameterValues[parameter.name]
       }
     }
@@ -389,11 +463,15 @@ export class WireFormatGenerator {
         options.headers["Content-Type"] = val
       }
       if (!options.headers["Content-Type"]) {
-        options.headers["Content-Type"] = utils.getJsonContentType(operation.consumes)
+        options.headers["Content-Type"] = utils.getJsonContentType(
+          operation.consumes
+        )
       }
     } else {
       options.headers = {}
-      options.headers["Content-Type"] = utils.getJsonContentType(operation.consumes)
+      options.headers["Content-Type"] = utils.getJsonContentType(
+        operation.consumes
+      )
     }
     return new HttpRequest().prepare(options)
   }
@@ -415,14 +493,24 @@ export class WireFormatGenerator {
     }>
   ) {
     const result = {} as Responses
-    if (operation === null || operation === undefined || typeof operation !== "object") {
-      throw new Error("operation cannot be null or undefined and must be of type 'object'.")
+    if (
+      operation === null ||
+      operation === undefined ||
+      typeof operation !== "object"
+    ) {
+      throw new Error(
+        "operation cannot be null or undefined and must be of type 'object'."
+      )
     }
 
-    if (exampleResponseValue === null
-      || exampleResponseValue === undefined
-      || typeof exampleResponseValue !== "object") {
-      throw new Error("operation cannot be null or undefined and must be of type 'object'.")
+    if (
+      exampleResponseValue === null ||
+      exampleResponseValue === undefined ||
+      typeof exampleResponseValue !== "object"
+    ) {
+      throw new Error(
+        "operation cannot be null or undefined and must be of type 'object'."
+      )
     }
     const responsesInSwagger: MutableStringMap<string> = {}
     operation.getResponses().map(response => {
@@ -431,43 +519,64 @@ export class WireFormatGenerator {
     })
     const xMsLongRunningOperation = operation["x-ms-long-running-operation"]
     if (xMsLongRunningOperation) {
-      result.longrunning = { initialResponse: undefined, finalResponse: undefined }
+      result.longrunning = {
+        initialResponse: undefined,
+        finalResponse: undefined
+      }
     } else {
       result.standard = { finalResponse: undefined }
     }
 
-    for (const [exampleResponseStatusCode, value] of entries(exampleResponseValue)) {
+    for (const [exampleResponseStatusCode, value] of entries(
+      exampleResponseValue
+    )) {
       const response = operation.getResponse(exampleResponseStatusCode)
       if (response) {
         const exampleResponseHeaders = value.headers || {}
         const exampleResponseBody = value.body
         // ensure content-type header is present
-        if (!(exampleResponseHeaders["content-type"] || exampleResponseHeaders["Content-Type"])) {
-          exampleResponseHeaders["content-type"] = utils.getJsonContentType(operation.produces)
+        if (
+          !(
+            exampleResponseHeaders["content-type"] ||
+            exampleResponseHeaders["Content-Type"]
+          )
+        ) {
+          exampleResponseHeaders["content-type"] = utils.getJsonContentType(
+            operation.produces
+          )
         }
         const exampleResponse = new ResponseWrapper(
-          exampleResponseStatusCode, exampleResponseBody, exampleResponseHeaders
+          exampleResponseStatusCode,
+          exampleResponseBody,
+          exampleResponseHeaders
         )
         if (xMsLongRunningOperation) {
           if (result.longrunning === undefined) {
             throw new Error("result.longrunning === undefined")
           }
-          if (exampleResponseStatusCode === "202" || exampleResponseStatusCode === "201") {
+          if (
+            exampleResponseStatusCode === "202" ||
+            exampleResponseStatusCode === "201"
+          ) {
             result.longrunning.initialResponse = exampleResponse
           }
-          if ((exampleResponseStatusCode === "200" || exampleResponseStatusCode === "204")
-            && !result.longrunning.finalResponse) {
+          if (
+            (exampleResponseStatusCode === "200" ||
+              exampleResponseStatusCode === "204") &&
+            !result.longrunning.finalResponse
+          ) {
             result.longrunning.finalResponse = exampleResponse
           }
         } else {
           if (result.standard === undefined) {
             throw new Error("result.standard === undefined")
           }
-          if (!result.standard.finalResponse) { result.standard.finalResponse = exampleResponse }
+          if (!result.standard.finalResponse) {
+            result.standard.finalResponse = exampleResponse
+          }
         }
       }
     }
     return result
   }
-
 }

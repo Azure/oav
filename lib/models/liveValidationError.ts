@@ -18,8 +18,7 @@
  *
  */
 export class LiveValidationError {
-  public constructor(public code?: string, public message?: string) {
-  }
+  public constructor(public code?: string, public message?: string) {}
 
   /**
    * Defines the metadata of LiveValidationError
@@ -39,18 +38,18 @@ export class LiveValidationError {
             required: true,
             serializedName: "code",
             type: {
-              name: "String",
-            },
+              name: "String"
+            }
           },
           message: {
             required: true,
             serializedName: "message",
             type: {
-              name: "String",
-            },
-          },
-        },
-      },
-    };
+              name: "String"
+            }
+          }
+        }
+      }
+    }
   }
 }

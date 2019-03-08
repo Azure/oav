@@ -1,23 +1,25 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import * as util from "util"
-import * as path from "path"
-import * as os from "os"
-import * as url from "url"
-import * as _ from "lodash"
+import { MutableStringMap } from "@ts-common/string-map"
 import * as glob from "glob"
+import * as http from "http"
+import * as _ from "lodash"
 import * as msRest from "ms-rest"
-import { SpecValidator } from "./specValidator"
+import * as os from "os"
+import * as path from "path"
+import { ParsedUrlQuery } from "querystring"
+import * as url from "url"
+import * as util from "util"
+import { Operation, Request } from "yasway"
+
+import * as models from "../models"
+import { PotentialOperationsResult } from "../models/potentialOperationsResult"
 import * as C from "../util/constants"
 import { log } from "../util/logging"
 import * as utils from "../util/utils"
-import * as models from "../models"
-import * as http from "http"
-import { PotentialOperationsResult } from "../models/potentialOperationsResult"
-import { Operation, Request } from "yasway"
-import { ParsedUrlQuery } from "querystring"
-import { MutableStringMap } from "@ts-common/string-map"
+
+import { SpecValidator } from "./specValidator"
 
 export interface Options {
   swaggerPaths: string[]
@@ -202,7 +204,7 @@ export class LiveValidator {
     //   ...
     // }
     const promiseFactories = swaggerPaths.map(swaggerPath => async () =>
-      await this.getSwaggerInitializer(swaggerPath)
+      this.getSwaggerInitializer(swaggerPath)
     )
 
     await utils.executePromisesSequentially(promiseFactories)
@@ -399,13 +401,13 @@ export class LiveValidator {
       // We do not need the serialized output from ms-rest.
       const mapper = new models.RequestResponse().mapper()
         // tslint:disable-next-line:align whitespace
-        ; (msRest as any).models = models
-        // tslint:disable-next-line:align whitespace
-        ; (msRest as any).serialize(
-          mapper,
-          requestResponseObj,
-          "requestResponseObj"
-        )
+      ;(msRest as any).models = models
+      // tslint:disable-next-line:align whitespace
+      ;(msRest as any).serialize(
+        mapper,
+        requestResponseObj,
+        "requestResponseObj"
+      )
     } catch (err) {
       const msg =
         `Found errors "${err.message}" in the provided input:\n` +
@@ -618,7 +620,7 @@ export class LiveValidator {
     if (this.options.swaggerPaths.length !== 0) {
       log.debug(
         `Using user provided swagger paths. Total paths: ${
-        this.options.swaggerPaths.length
+          this.options.swaggerPaths.length
         }`
       )
       return this.options.swaggerPaths
@@ -640,7 +642,7 @@ export class LiveValidator {
       const dir = this.options.directory
       log.debug(
         `Using swaggers found from directory "${dir}" and pattern "${jsonsPattern}".` +
-        `Total paths: ${swaggerPaths.length}`
+          `Total paths: ${swaggerPaths.length}`
       )
       return swaggerPaths
     }
@@ -682,7 +684,7 @@ export class LiveValidator {
           apiVersion = C.unknownApiVersion
           log.debug(
             `Unable to find provider for path : "${pathObject.path}". ` +
-            `Bucketizing into provider: "${provider}"`
+              `Bucketizing into provider: "${provider}"`
           )
         }
         provider = provider.toLowerCase()
@@ -707,7 +709,7 @@ export class LiveValidator {
       )
       log.warn(
         `Unable to initialize "${swaggerPath}" file from SpecValidator. We are ` +
-        `ignoring this swagger file and continuing to build cache for other valid specs.`
+          `ignoring this swagger file and continuing to build cache for other valid specs.`
       )
     }
   }

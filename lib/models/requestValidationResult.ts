@@ -25,7 +25,6 @@
  *
  */
 export class RequestValidationResult {
-
   /**
    * Defines the metadata of RequestValidationResult
    *
@@ -45,8 +44,8 @@ export class RequestValidationResult {
             readOnly: true,
             serializedName: "successfulRequest",
             type: {
-              name: "Boolean",
-            },
+              name: "Boolean"
+            }
           },
           operationInfo: {
             required: false,
@@ -59,10 +58,10 @@ export class RequestValidationResult {
                 serializedName: "OperationInfoElementType",
                 type: {
                   name: "Composite",
-                  className: "OperationInfo",
-                },
-              },
-            },
+                  className: "OperationInfo"
+                }
+              }
+            }
           },
           errors: {
             required: false,
@@ -75,13 +74,13 @@ export class RequestValidationResult {
                 serializedName: "ErrorWrapperElementType",
                 type: {
                   name: "Composite",
-                  className: "ErrorWrapper",
-                },
-              },
-            },
-          },
-        },
-      },
-    };
+                  className: "ErrorWrapper"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }

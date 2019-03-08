@@ -14,11 +14,9 @@ const validator = new LiveValidator(options)
 
 // tslint:disable-next-line:no-floating-promises
 validator.initialize().then(() => {
-  const reqRes = require(
-    __dirname +
+  const reqRes = require(__dirname +
     "/../../test/liveValidation/swaggers/specification/storage/resource-manager/" +
-    "Microsoft.Storage/2016-01-01/live/StorageAccounts_CheckNameAvailability.json"
-  )
+    "Microsoft.Storage/2016-01-01/live/StorageAccounts_CheckNameAvailability.json")
   const requestResponseObj = {
     liveRequest: reqRes.request,
     liveResponse: reqRes.response

@@ -1,23 +1,30 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import { NodeError } from "./validationError"
-import { isArray, filterMap } from "@ts-common/iterator"
-import { jsonSymbol, schemaSymbol } from "z-schema"
-import { getInfo, getRootObjectInfo, getAllDirectives } from '@ts-common/source-map'
-import { TitleObject } from '../validators/specTransformer'
-import { log } from './logging'
-import { getDescendantFilePosition } from "@ts-common/source-map"
+import { filterMap, isArray } from "@ts-common/iterator"
 import { setMutableProperty } from "@ts-common/property-set"
+import {
+  getAllDirectives,
+  getInfo,
+  getRootObjectInfo
+} from "@ts-common/source-map"
+import { getDescendantFilePosition } from "@ts-common/source-map"
 import { merge } from "@ts-common/string-map"
-import { CommonError } from './commonError';
+import { jsonSymbol, schemaSymbol } from "z-schema"
 
-export const processErrors = <T extends NodeError<T>>(errors: T[] | undefined) =>
-  errors === undefined ? undefined : Array.from(filterMap(errors, one))
+import { TitleObject } from "../validators/specTransformer"
+
+import { CommonError } from "./commonError"
+import { log } from "./logging"
+import { NodeError } from "./validationError"
+
+export const processErrors = <T extends NodeError<T>>(
+  errors: T[] | undefined
+) => (errors === undefined ? undefined : Array.from(filterMap(errors, one)))
 
 export const setPositionAndUrl = (
   error: CommonError,
-  titleObject: TitleObject|undefined
+  titleObject: TitleObject | undefined
 ) => {
   if (titleObject !== undefined) {
     const { path } = titleObject
@@ -45,15 +52,21 @@ const addFileInfo = <T extends NodeError<T>>(error: T): T => {
     const jsonInfo = getInfo(json)
     if (jsonInfo !== undefined) {
       const errorPathOriginal = error.path
-      const errorPath = errorPathOriginal === undefined ? undefined :
-        isArray(errorPathOriginal) ? errorPathOriginal :
-        errorPathOriginal.split("/")
+      const errorPath =
+        errorPathOriginal === undefined
+          ? undefined
+          : isArray(errorPathOriginal)
+          ? errorPathOriginal
+          : errorPathOriginal.split("/")
       setMutableProperty(
         error,
         "jsonPosition",
         getDescendantFilePosition(json, errorPath)
       )
-      error.directives = merge(error.directives, getAllDirectives(json, errorPath))
+      error.directives = merge(
+        error.directives,
+        getAllDirectives(json, errorPath)
+      )
       error.jsonUrl = getRootObjectInfo(jsonInfo).url
     }
   }
@@ -62,7 +75,11 @@ const addFileInfo = <T extends NodeError<T>>(error: T): T => {
   return error
 }
 
-const isSuppressed = <T extends NodeError<T>>({ code, directives, message }: T): boolean => {
+const isSuppressed = <T extends NodeError<T>>({
+  code,
+  directives,
+  message
+}: T): boolean => {
   if (directives === undefined || code === undefined) {
     return false
   }

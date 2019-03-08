@@ -25,7 +25,6 @@
  *
  */
 export class ResponseValidationResult {
-
   /**
    * Defines the metadata of ResponseValidationResult
    *

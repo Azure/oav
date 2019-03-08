@@ -11,14 +11,16 @@ export {
   validateExamples,
   validateExamplesInCompositeSpec,
   resolveSpec,
-  resolveCompositeSpec,
+  resolveCompositeSpec
 } from "./lib/validate"
 
 export { BaseValidationError } from "./lib/util/baseValidationError"
 export { Severity } from "./lib/util/severity"
 export { ModelValidationError } from "./lib/util/modelValidationError"
 export { ValidationResultSource } from "./lib/util/validationResultSource"
-export { getErrorsFromModelValidation } from "./lib/util/getErrorsFromModelValidation"
+export {
+  getErrorsFromModelValidation
+} from "./lib/util/getErrorsFromModelValidation"
 export {
   getErrorsFromSemanticValidation,
   SemanticValidationError

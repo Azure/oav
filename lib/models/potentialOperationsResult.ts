@@ -4,8 +4,9 @@
  * license information.
  */
 
-import { LiveValidationError } from "./liveValidationError"
 import { Operation } from "yasway"
+
+import { LiveValidationError } from "./liveValidationError"
 
 /**
  * @class
@@ -23,7 +24,10 @@ import { Operation } from "yasway"
 export class PotentialOperationsResult {
   public readonly operations: Operation[]
   public readonly reason?: LiveValidationError
-  public constructor(operations: Operation[], reason: undefined | LiveValidationError) {
+  public constructor(
+    operations: Operation[],
+    reason: undefined | LiveValidationError
+  ) {
     this.operations = operations || []
     if (reason) {
       this.reason = reason

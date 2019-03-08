@@ -1,25 +1,26 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import * as fs from "fs"
-import { execSync } from "child_process"
-import * as util from "util"
-import * as path from "path"
-import * as jsonPointer from "json-pointer"
-import { log } from "./logging"
-import * as lodash from "lodash"
-import * as http from "http"
-import { MutableStringMap, entries } from "@ts-common/string-map"
-import { ParameterObject, SchemaObject, DataType } from "yasway"
-import {
-  cloneDeep,
-  Data,
-  copyInfo
-} from "@ts-common/source-map"
-import { getSchemaObjectInfo, setSchemaInfo } from "../validators/specTransformer"
-import * as json from "@ts-common/json"
 import * as it from "@ts-common/iterator"
+import * as json from "@ts-common/json"
+import { cloneDeep, copyInfo, Data } from "@ts-common/source-map"
 import * as sm from "@ts-common/string-map"
+import { entries, MutableStringMap } from "@ts-common/string-map"
+import { execSync } from "child_process"
+import * as fs from "fs"
+import * as http from "http"
+import * as jsonPointer from "json-pointer"
+import * as lodash from "lodash"
+import * as path from "path"
+import * as util from "util"
+import { DataType, ParameterObject, SchemaObject } from "yasway"
+
+import {
+  getSchemaObjectInfo,
+  setSchemaInfo
+} from "../validators/specTransformer"
+
+import { log } from "./logging"
 
 /*
  * Executes an array of promises sequentially. Inspiration of this method is here:
@@ -211,7 +212,10 @@ export function mergeObjects<T extends MutableStringMap<Data>>(
  *
  * @returns {array} target - Returns the merged target array.
  */
-export function mergeArrays<T extends Data>(source: ReadonlyArray<T>, target: T[]): T[] {
+export function mergeArrays<T extends Data>(
+  source: ReadonlyArray<T>,
+  target: T[]
+): T[] {
   if (!Array.isArray(target) || !Array.isArray(source)) {
     return target
   }
@@ -462,7 +466,11 @@ export function isPureObject(model: SchemaObject): boolean {
     it.isEmpty(sm.entries(model.properties))
   ) {
     return true
-  } else if (!model.type && model.properties && it.isEmpty(sm.entries(model.properties))) {
+  } else if (
+    !model.type &&
+    model.properties &&
+    it.isEmpty(sm.entries(model.properties))
+  ) {
     return true
   } else if (
     model.type &&
@@ -543,7 +551,6 @@ export function allowNullType<T extends Entity>(
   entity: T,
   isPropRequired?: boolean | {}
 ): T {
-
   const info = getSchemaObjectInfo(entity)
 
   const nullable = () => {
@@ -583,8 +590,14 @@ export function allowNullType<T extends Entity>(
       // handling nullable parameters
       if (savedEntity.in) {
         const typeNull: SchemaObject = setSchemaInfo({ type: "null" }, info)
-        const typeEntity: SchemaObject = setSchemaInfo({ type: entity.type }, info)
-        const typeArray: ReadonlyArray<SchemaObject> = copyInfo(entity, [typeEntity, typeNull])
+        const typeEntity: SchemaObject = setSchemaInfo(
+          { type: entity.type },
+          info
+        )
+        const typeArray: ReadonlyArray<SchemaObject> = copyInfo(entity, [
+          typeEntity,
+          typeNull
+        ])
         entity.anyOf = typeArray
         delete entity.type
       } else {

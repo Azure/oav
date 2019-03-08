@@ -11,10 +11,10 @@ import * as vfs from "@ts-common/virtual-fs"
 import jp = require("jsonpath")
 import { SwaggerObject } from "yasway"
 
+import { DocCache } from "./documents"
 import { log } from "./logging"
 import { parseContent } from "./makeRequest"
 import { isSubPath, splitPathAndReverse } from "./path"
-import { DocCache } from './documents';
 
 const setSuppression = (
   info: FilePosition | undefined,
@@ -22,7 +22,7 @@ const setSuppression = (
 ) => {
   if (info !== undefined) {
     if (info.directives === undefined) {
-      (info as any).directives = {}
+      ;(info as any).directives = {}
     }
     const directives = info.directives as MutableStringMap<string>
     directives[item.suppress] = item["text-matches"] || ".*"
@@ -43,20 +43,18 @@ export async function parseJson(
   reportError: jsonParser.ReportError,
   docsCache?: DocCache
 ): Promise<SwaggerObject> {
-
   const doc = docsCache && docsCache[specPath]
   if (doc) {
-    return await doc
+    return doc
   }
 
   const getSuppressionArray = (
     suppressionItems: ReadonlyArray<SuppressionItem>
   ): ReadonlyArray<SuppressionItem> => {
     const urlReversed = splitPathAndReverse(specPath)
-    return suppressionItems.filter(
-      s => it.some(
-        it.isArray(s.from) ? s.from : [s.from],
-        from => isSubPath(urlReversed, splitPathAndReverse(from))
+    return suppressionItems.filter(s =>
+      it.some(it.isArray(s.from) ? s.from : [s.from], from =>
+        isSubPath(urlReversed, splitPathAndReverse(from))
       )
     )
   }
@@ -67,7 +65,7 @@ export async function parseJson(
   if (!specPath || (specPath && typeof specPath.valueOf() !== "string")) {
     throw new Error(
       "A (github) url or a local file path to the swagger spec is required and must be of type " +
-      "string."
+        "string."
     )
   }
 

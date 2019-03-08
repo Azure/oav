@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import * as winston from "winston"
-import * as path from "path"
 import * as fs from "fs"
 import * as os from "os"
+import * as path from "path"
+import * as winston from "winston"
 
 let logDir = path.resolve(os.homedir(), "oav_output")
 
@@ -22,13 +22,15 @@ function getTimeStamp(): string {
   }
 
   const now = new Date()
-  return pad(now.getFullYear()) +
+  return (
+    pad(now.getFullYear()) +
     pad(now.getMonth() + 1) +
     pad(now.getDate()) +
     "_" +
     pad(now.getHours()) +
     pad(now.getMinutes()) +
     pad(now.getSeconds())
+  )
 }
 
 const customLogLevels = {
@@ -65,8 +67,9 @@ Object.defineProperties(log, {
   consoleLogLevel: {
     enumerable: true,
     get() {
-      const transport =
-        (this as ILogger).transports.find(t => t instanceof winston.transports.Console)
+      const transport = (this as ILogger).transports.find(
+        t => t instanceof winston.transports.Console
+      )
       return transport !== undefined ? transport.level : undefined
     },
     set(level) {
@@ -76,10 +79,12 @@ Object.defineProperties(log, {
       const validLevels = Object.keys(customLogLevels)
       if (!validLevels.some(item => item === level)) {
         throw new Error(
-          `The logging level provided is "${level}". Valid values are: "${validLevels}".`)
+          `The logging level provided is "${level}". Valid values are: "${validLevels}".`
+        )
       }
-      const transport =
-        (this as ILogger).transports.find(t => t instanceof winston.transports.Console)
+      const transport = (this as ILogger).transports.find(
+        t => t instanceof winston.transports.Console
+      )
       if (transport !== undefined) {
         transport.level = level
       }
@@ -91,8 +96,13 @@ Object.defineProperties(log, {
       return logDir
     },
     set(logDirectory: string): void {
-      if (!logDirectory || logDirectory && typeof logDirectory.valueOf() !== "string") {
-        throw new Error('logDirectory cannot be null or undefined and must be of type "string".')
+      if (
+        !logDirectory ||
+        (logDirectory && typeof logDirectory.valueOf() !== "string")
+      ) {
+        throw new Error(
+          'logDirectory cannot be null or undefined and must be of type "string".'
+        )
       }
 
       if (!fs.existsSync(logDirectory)) {
@@ -113,20 +123,26 @@ Object.defineProperties(log, {
     },
     set(logFilePath: string): void {
       const self = this as ILogger
-      if (!logFilePath || logFilePath && typeof logFilePath.valueOf() !== "string") {
+      if (
+        !logFilePath ||
+        (logFilePath && typeof logFilePath.valueOf() !== "string")
+      ) {
         throw new Error(
           "filepath cannot be null or undefined and must be of type string. It must be " +
-          "an absolute file path.")
+            "an absolute file path."
+        )
       }
       currentLogFile = logFilePath
       self.directory = path.dirname(logFilePath)
       if (!self.transports.some(t => t instanceof winston.transports.File)) {
-        self.add(new winston.transports.File({
-          level: "silly",
-          format: winston.format.prettyPrint(),
-          silent: false,
-          filename: logFilePath
-        }))
+        self.add(
+          new winston.transports.File({
+            level: "silly",
+            format: winston.format.prettyPrint(),
+            silent: false,
+            filename: logFilePath
+          })
+        )
       }
     }
   }

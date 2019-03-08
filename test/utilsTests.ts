@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import assert from "assert"
+
 import * as utils from "../lib/util/utils"
 
 describe("Utility functions", () => {
@@ -29,7 +30,8 @@ describe("Utility functions", () => {
       assert.strictEqual(provider, "Microsoft.Resources")
     })
     it("should return undefined", () => {
-      const path = "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/"
+      const path =
+        "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/"
       const provider = utils.getProvider(path)
       assert.strictEqual(provider, undefined)
     })

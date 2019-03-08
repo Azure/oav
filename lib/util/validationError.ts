@@ -1,14 +1,15 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import { Severity } from "./severity"
-import _ from "lodash"
-import { FilePosition } from "@ts-common/source-map"
 import { flatMap, fold } from "@ts-common/iterator"
-import { processErrors } from "./processErrors"
-import { jsonSymbol, schemaSymbol } from "z-schema"
-import { StringMap } from "@ts-common/string-map"
 import * as json from "@ts-common/json"
+import { FilePosition } from "@ts-common/source-map"
+import { StringMap } from "@ts-common/string-map"
+import _ from "lodash"
+import { jsonSymbol, schemaSymbol } from "z-schema"
+
+import { processErrors } from "./processErrors"
+import { Severity } from "./severity"
 
 /**
  * @class
@@ -26,8 +27,10 @@ export class ValidationError {
   ) {}
 }
 
-const validationErrorEntry = (id: string, severity: Severity): [string, ValidationError] =>
-  [id, new ValidationError(id, severity)]
+const validationErrorEntry = (
+  id: string,
+  severity: Severity
+): [string, ValidationError] => [id, new ValidationError(id, severity)]
 
 export const errorConstants = new Map<string, ValidationError>([
   validationErrorEntry("INVALID_TYPE", Severity.Critical),
@@ -138,8 +141,12 @@ export function processValidationErrors<
     []
   )
 
-  rawValidation.requestValidationResult.errors = processErrors(requestSerializedErrors)
-  rawValidation.responseValidationResult.errors = processErrors(responseSerializedErrors)
+  rawValidation.requestValidationResult.errors = processErrors(
+    requestSerializedErrors
+  )
+  rawValidation.responseValidationResult.errors = processErrors(
+    responseSerializedErrors
+  )
 
   return rawValidation
 }
@@ -151,7 +158,6 @@ export function serializeErrors<T extends NodeError<T>>(
   node: T,
   path: unknown[]
 ): T[] {
-
   if (isLeaf(node)) {
     if (isTrueError(node)) {
       if (node.path) {
@@ -177,10 +183,11 @@ export function serializeErrors<T extends NodeError<T>>(
     path = consolidatePath(path, node.path)
   }
 
-  const serializedErrors = Array.from(flatMap(
-    node.errors,
-    validationError => serializeErrors(validationError, path)
-  ))
+  const serializedErrors = Array.from(
+    flatMap(node.errors, validationError =>
+      serializeErrors(validationError, path)
+    )
+  )
 
   const serializedInner = fold(
     node.inner,
@@ -272,11 +279,7 @@ const isDiscriminatorError = <T extends NodeError<T>>(node: T) =>
 const isTrueError = <T extends NodeError<T>>(node: T): boolean =>
   // this is necessary to filter out extra errors coming from doing the ONE_OF transformation on
   // the models to allow "null"
-  !(
-    node.code === "INVALID_TYPE" &&
-    node.params &&
-    node.params[0] === "null"
-  )
+  !(node.code === "INVALID_TYPE" && node.params && node.params[0] === "null")
 
 const isLeaf = <T extends NodeError<T>>(node: T): boolean =>
   !node.errors && !node.inner

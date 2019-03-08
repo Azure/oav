@@ -1,13 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import { HttpTemplate, Request, Responses, Response } from "./httpTemplate"
-import * as uuid from "uuid"
-import { keys } from "@ts-common/string-map"
 import { toArray } from "@ts-common/iterator"
+import { keys } from "@ts-common/string-map"
+import * as uuid from "uuid"
+
+import { HttpTemplate, Request, Response, Responses } from "./httpTemplate"
 
 export class MarkdownHttpTemplate extends HttpTemplate {
-
   public constructor(request: Request, responses: Responses) {
     super(request, responses)
   }
@@ -20,18 +20,24 @@ export class MarkdownHttpTemplate extends HttpTemplate {
       if (this.responses.longrunning) {
         if (this.responses.longrunning.initialResponse) {
           template += this.populateResponse(
-            this.responses.longrunning.initialResponse, "Initial Response")
+            this.responses.longrunning.initialResponse,
+            "Initial Response"
+          )
         }
         if (this.responses.longrunning.finalResponse) {
           template += this.populateResponse(
             this.responses.longrunning.finalResponse,
-            "Final Response after polling is complete and successful")
+            "Final Response after polling is complete and successful"
+          )
         }
       } else {
         if (this.responses.standard.finalResponse === undefined) {
           throw new Error("this.responses.standard.finalResponse === undefined")
         }
-        template += this.populateResponse(this.responses.standard.finalResponse, "Response")
+        template += this.populateResponse(
+          this.responses.standard.finalResponse,
+          "Response"
+        )
       }
     }
     return template
@@ -66,7 +72,9 @@ export class MarkdownHttpTemplate extends HttpTemplate {
       const headers = toArray(keys(response.headers))
       for (let i = 0; i < headers.length; i++) {
         const headerName = headers[i]
-        if (headerName.match(/^Content-Type$/ig) !== null) { gotContentType = true }
+        if (headerName.match(/^Content-Type$/gi) !== null) {
+          gotContentType = true
+        }
         result += `${headerName}: ${response.headers[headerName]}`
         if (i !== headers.length - 1) {
           result += `\n`
@@ -80,8 +88,7 @@ export class MarkdownHttpTemplate extends HttpTemplate {
   }
 
   private populateRequest(): string {
-    const requestTemplate =
-      `## Request
+    const requestTemplate = `## Request
 
 \`\`\`http
 ${this.request.method} ${this.request.url} HTTP/1.1
@@ -98,7 +105,9 @@ ${this.getRequestBody()}
   }
 
   private populateResponse(response: Response, responseType: string): string {
-    if (!responseType) { responseType = "Response" }
+    if (!responseType) {
+      responseType = "Response"
+    }
     const responseGuid = uuid.v4()
     const responseTemplate = `
 ## ${responseType}
@@ -113,7 +122,9 @@ Expires: -1
 x-ms-ratelimit-remaining-subscription-writes: 1199
 x-ms-request-id: ${responseGuid}
 x-ms-correlation-request-id: ${responseGuid}
-x-ms-routing-request-id: WESTUS2:${new Date().toISOString().replace(/(\W)/ig, "")}:${responseGuid}
+x-ms-routing-request-id: WESTUS2:${new Date()
+      .toISOString()
+      .replace(/(\W)/gi, "")}:${responseGuid}
 Strict-Transport-Security: max-age=31536000; includeSubDomains
 ${this.getResponseHeaders(response)}
 Date: ${new Date().toUTCString()}
@@ -130,8 +141,7 @@ ${this.getResponseBody(response)}
     const url = this.request.url
     const requestHeaders = this.getCurlRequestHeaders()
     const requestBody = this.getCurlRequestBody()
-    const template =
-      `\n## Curl
+    const template = `\n## Curl
 
 \`\`\`bash
 curl -X ${method} '${url}' \\\n-H 'authorization: bearer <token>' \\${requestHeaders}${requestBody}

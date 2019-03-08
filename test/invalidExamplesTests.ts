@@ -1,8 +1,8 @@
 import * as assert from "assert"
+
 import * as validate from "../lib/validate"
 
-const specPath =
-  `test/modelValidation/swaggers/specification/invalidExamples/cdn.json`
+const specPath = `test/modelValidation/swaggers/specification/invalidExamples/cdn.json`
 
 describe("Invalid examples", () => {
   it("from CDN", async () => {

@@ -1,10 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import * as sway from "yasway"
 import assert from "assert"
-import { SpecValidator } from "../lib/validators/specValidator"
+import * as sway from "yasway"
 import { jsonSymbol } from "z-schema"
+
+import { SpecValidator } from "../lib/validators/specValidator"
 
 const options: sway.Options = {
   definition: {
@@ -13,10 +14,10 @@ const options: sway.Options = {
     definitions: {
       A: {
         properties: {
-          "a": {
+          a: {
             type: "string"
           },
-          "b": {
+          b: {
             properties: {
               c: {
                 type: "string"
@@ -33,7 +34,7 @@ const options: sway.Options = {
             }
           }
         },
-        required: ["a", "b"],
+        required: ["a", "b"]
         // additionalProperties: false
       }
     },
@@ -67,18 +68,17 @@ const options: sway.Options = {
 
 describe("resolve nested properties", () => {
   it("should pass if an example has no nested additional properties", async () => {
-
     const request = {
       url: "example.com",
       method: "x",
       body: {
-        "a": "somevalue",
-        "b": {
-          c: "somevalue",
+        a: "somevalue",
+        b: {
+          c: "somevalue"
           // d: "anothervalue"
         },
         "@": {
-          c: "somevalue",
+          c: "somevalue"
         }
         // d: 54
       }
@@ -93,7 +93,6 @@ describe("resolve nested properties", () => {
   })
 
   it("should fail if an example has nested additional properties", async () => {
-
     const request = {
       url: "example.com",
       method: "x",
@@ -102,7 +101,7 @@ describe("resolve nested properties", () => {
         b: {
           c: "somevalue",
           d: "anothervalue"
-        },
+        }
         // d: 54
       }
     }

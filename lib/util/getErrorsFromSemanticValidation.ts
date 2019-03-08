@@ -1,11 +1,12 @@
-import { BaseValidationError } from "./baseValidationError"
-import { ValidationResultSource } from "./validationResultSource"
 import { SpecValidationResult } from "../validators/specValidator"
+
+import { BaseValidationError } from "./baseValidationError"
 import {
+  errorCodeToSeverity,
   NodeError,
-  serializeErrors,
-  errorCodeToSeverity
+  serializeErrors
 } from "./validationError"
+import { ValidationResultSource } from "./validationResultSource"
 
 export interface SemanticValidationError
   extends BaseValidationError<NodeError<any>> {

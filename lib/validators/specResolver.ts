@@ -1,41 +1,43 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import * as _ from "lodash"
-import * as path from "path"
-import * as jsonRefs from "../util/jsonRefs"
-import * as utils from "../util/utils"
-import * as C from "../util/constants"
-import { log } from "../util/logging"
-import { PolymorphicTree } from "./polymorphicTree"
-import {
-  SwaggerObject,
-  ParametersDefinitionsObject,
-  ParameterObject,
-  SchemaObject,
-  DefinitionsObject,
-  PathsObject,
-  OperationObject
-} from "yasway"
-import { defaultIfUndefinedOrNull } from "../util/defaultIfUndefinedOrNull"
-import {
-  MutableStringMap,
-  Entry,
-  entries,
-  values,
-  keys,
-  StringMap
-} from "@ts-common/string-map"
-import * as sm from "@ts-common/string-map"
-import { resolveNestedDefinitions } from "./resolveNestedDefinitions"
-import { getOperations } from "../util/methods"
-import { map, toArray, isArray } from "@ts-common/iterator"
-import { arrayMap } from "@ts-common/source-map"
 import { Suppression } from "@azure/openapi-markdown"
-import * as jsonUtils from "../util/jsonUtils"
+import { isArray, map, toArray } from "@ts-common/iterator"
 import * as jsonParser from "@ts-common/json-parser"
 import * as ps from "@ts-common/property-set"
-import { DocCache } from '../util/documents';
+import { arrayMap } from "@ts-common/source-map"
+import {
+  entries,
+  Entry,
+  keys,
+  MutableStringMap,
+  StringMap,
+  values
+} from "@ts-common/string-map"
+import * as sm from "@ts-common/string-map"
+import * as _ from "lodash"
+import * as path from "path"
+import {
+  DefinitionsObject,
+  OperationObject,
+  ParameterObject,
+  ParametersDefinitionsObject,
+  PathsObject,
+  SchemaObject,
+  SwaggerObject
+} from "yasway"
+
+import * as C from "../util/constants"
+import { defaultIfUndefinedOrNull } from "../util/defaultIfUndefinedOrNull"
+import { DocCache } from "../util/documents"
+import * as jsonRefs from "../util/jsonRefs"
+import * as jsonUtils from "../util/jsonUtils"
+import { log } from "../util/logging"
+import { getOperations } from "../util/methods"
+import * as utils from "../util/utils"
+
+import { PolymorphicTree } from "./polymorphicTree"
+import { resolveNestedDefinitions } from "./resolveNestedDefinitions"
 
 const ErrorCodes = C.ErrorCodes
 
@@ -264,7 +266,7 @@ export class SpecResolver {
     suppression: Suppression | undefined,
     doc?: object,
     docPath?: string,
-    filterType?: string,
+    filterType?: string
   ): Promise<void> {
     let docDir
 
@@ -291,12 +293,14 @@ export class SpecResolver {
     const allRefsRemoteRelative = jsonRefs.findRefs(doc, options)
     const e = entries(allRefsRemoteRelative as StringMap<RefDetails>)
     const promiseFactories = toArray(
-      map(
-        e,
-        ([refName, refDetails]) =>
-          async () => await this.resolveRelativeReference(
-            refName, refDetails, doc, docPath, suppression
-          )
+      map(e, ([refName, refDetails]) => async () =>
+        this.resolveRelativeReference(
+          refName,
+          refDetails,
+          doc,
+          docPath,
+          suppression
+        )
       )
     )
     if (promiseFactories.length) {
@@ -381,7 +385,12 @@ export class SpecResolver {
       docPath = utils.joinPath(docDir, parsedReference.filePath)
     }
 
-    const result = await jsonUtils.parseJson(suppression, docPath, this.reportError, this.docsCache)
+    const result = await jsonUtils.parseJson(
+      suppression,
+      docPath,
+      this.reportError,
+      this.docsCache
+    )
     if (!parsedReference.localReference) {
       // Since there is no local reference we will replace the key in the object with the parsed
       // json (relative) file it is referring to.
@@ -419,7 +428,12 @@ export class SpecResolver {
           referencedObj
         )
         this.visitedEntities[slicedLocalReferenceValue] = referencedObj
-        await this.resolveRelativePaths(suppression, referencedObj, docPath, "all")
+        await this.resolveRelativePaths(
+          suppression,
+          referencedObj,
+          docPath,
+          "all"
+        )
         // After resolving a model definition, if there are models that have an allOf on that model
         // definition.
         // It may be possible that those models are not being referenced anywhere. Hence, we must
@@ -448,7 +462,12 @@ export class SpecResolver {
                     definitionObj
                   )
                   this.visitedEntities[slicedDefinitionRef] = definitionObj
-                  await this.resolveRelativePaths(suppression, definitionObj, docPath, "all")
+                  await this.resolveRelativePaths(
+                    suppression,
+                    definitionObj,
+                    docPath,
+                    "all"
+                  )
                 }
               }
             })
@@ -799,12 +818,18 @@ export class SpecResolver {
     for (const pathObj of values(spec.paths)) {
       // need to handle parameters at this level
       if (pathObj.parameters) {
-        pathObj.parameters = arrayMap(pathObj.parameters, utils.allowNullableParams)
+        pathObj.parameters = arrayMap(
+          pathObj.parameters,
+          utils.allowNullableParams
+        )
       }
       for (const operation of getOperations(pathObj)) {
         // need to account for parameters, except for path parameters
         if (operation.parameters) {
-          operation.parameters = arrayMap(operation.parameters, utils.allowNullableParams)
+          operation.parameters = arrayMap(
+            operation.parameters,
+            utils.allowNullableParams
+          )
         }
         // going through responses
         for (const response of values(operation.responses)) {

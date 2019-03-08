@@ -1,5 +1,6 @@
-import * as validate from "../lib/validate"
 import assert from "assert"
+
+import * as validate from "../lib/validate"
 
 describe("xMsExampleExtractor", () => {
   it("simple", async () => {

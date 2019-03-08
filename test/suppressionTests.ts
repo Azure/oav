@@ -1,8 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import { validateExamples } from "../lib/validate"
 import * as assert from "assert"
+
+import { validateExamples } from "../lib/validate"
 
 describe("suppression", () => {
   it("suppress all", async () => {
@@ -57,6 +58,9 @@ describe("suppression", () => {
     if (result[0].details === undefined) {
       throw new Error("result[0].details === undefined")
     }
-    assert.strictEqual(result[0].details.message, "Additional properties not allowed: some")
+    assert.strictEqual(
+      result[0].details.message,
+      "Additional properties not allowed: some"
+    )
   })
 })

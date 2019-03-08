@@ -1,10 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import yuml2svg = require("yuml2svg")
-import { log } from "./util/logging"
-import { SwaggerObject, DefinitionsObject, SchemaObject } from "yasway"
 import { entries } from "@ts-common/string-map"
+import { DefinitionsObject, SchemaObject, SwaggerObject } from "yasway"
+import yuml2svg = require("yuml2svg")
+
+import { log } from "./util/logging"
 
 export interface Options {
   readonly direction?: unknown
@@ -18,7 +19,6 @@ export interface Options {
  * Generates a Uml Diagram in svg format.
  */
 export class UmlGenerator {
-
   private readonly specInJson: SwaggerObject
 
   private graphDefinition: string
@@ -39,7 +39,11 @@ export class UmlGenerator {
     specInJson: null | undefined | SwaggerObject,
     options: null | undefined | Options
   ) {
-    if (specInJson === null || specInJson === undefined || typeof specInJson !== "object") {
+    if (
+      specInJson === null ||
+      specInJson === undefined ||
+      typeof specInJson !== "object"
+    ) {
       throw new Error("specInJson is a required property of type object")
     }
     this.specInJson = specInJson
@@ -52,9 +56,10 @@ export class UmlGenerator {
     let svg = ""
 
     log.info(this.graphDefinition)
-    svg = yuml2svg(
-      this.graphDefinition, false, { dir: this.options.direction, type: "class" }
-    ) as string
+    svg = yuml2svg(this.graphDefinition, false, {
+      dir: this.options.direction,
+      type: "class"
+    }) as string
     // console.log(svg)
     return svg
   }
@@ -85,7 +90,9 @@ export class UmlGenerator {
         }
         const segments = ref.split("/")
         const parent = segments[segments.length - 1]
-        this.graphDefinition += `\n[${parent}${this.bg}]^-.-allOf[${modelName}${this.bg}]`
+        this.graphDefinition += `\n[${parent}${this.bg}]^-.-allOf[${modelName}${
+          this.bg
+        }]`
       })
     }
   }
@@ -99,7 +106,11 @@ export class UmlGenerator {
       let props = ""
       if (modelProperties) {
         for (const [propertyName, property] of entries(modelProperties)) {
-          const propertyType = this.getPropertyType(modelName, property, references)
+          const propertyType = this.getPropertyType(
+            modelName,
+            property,
+            references
+          )
           let discriminator = ""
           if (model.discriminator && model.discriminator === propertyName) {
             discriminator = "(discriminator)"
@@ -119,9 +130,10 @@ export class UmlGenerator {
   }
 
   private getPropertyType(
-    modelName: unknown, property: SchemaObject, references: string[]
+    modelName: unknown,
+    property: SchemaObject,
+    references: string[]
   ): string {
-
     const type = property.type
     switch (type) {
       case "string":
@@ -142,13 +154,22 @@ export class UmlGenerator {
     if (property.$ref) {
       const segments = property.$ref.split("/")
       const referencedModel = segments[segments.length - 1]
-      references.push(`[${modelName}${this.bg}]->[${referencedModel}${this.bg}]`)
+      references.push(
+        `[${modelName}${this.bg}]->[${referencedModel}${this.bg}]`
+      )
       return referencedModel
     }
 
-    if (property.additionalProperties && typeof property.additionalProperties === "object") {
+    if (
+      property.additionalProperties &&
+      typeof property.additionalProperties === "object"
+    ) {
       let result = "Dictionary<"
-      result += this.getPropertyType(modelName, property.additionalProperties, references)
+      result += this.getPropertyType(
+        modelName,
+        property.additionalProperties,
+        references
+      )
       result += ">"
       return result
     }

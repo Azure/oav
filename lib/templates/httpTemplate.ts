@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import * as url from "url"
+import { entries, MutableStringMap } from "@ts-common/string-map"
 import * as msRest from "ms-rest"
-import { MutableStringMap, entries } from "@ts-common/string-map"
+import * as url from "url"
 
 export type Headers = MutableStringMap<string | undefined>
 
@@ -26,24 +26,25 @@ export interface Responses {
 }
 
 export class HttpTemplate {
-
   public constructor(
     public readonly request: Request,
     public readonly responses: Responses
-  ) { }
+  ) {}
 
   protected getHost(): string | undefined {
     const requestUrl = this.request.url
-    return requestUrl
-      ? url.parse(requestUrl).host
-      : "management.azure.com"
+    return requestUrl ? url.parse(requestUrl).host : "management.azure.com"
   }
 
   protected getCurlRequestHeaders(padding?: string): string {
     let result = ``
-    if (!padding) { padding = `` }
+    if (!padding) {
+      padding = ``
+    }
     if (this.request.body) {
-      result += `\n${padding}-H 'Content-Length: ${JSON.stringify(this.request.body).length}' \\`
+      result += `\n${padding}-H 'Content-Length: ${
+        JSON.stringify(this.request.body).length
+      }' \\`
     }
     if (this.request.headers) {
       for (const [headerName, header] of entries(this.request.headers)) {
@@ -54,7 +55,9 @@ export class HttpTemplate {
   }
 
   protected getRequestBody(): string {
-    return this.request && this.request.body !== null && this.request.body !== undefined
+    return this.request &&
+      this.request.body !== null &&
+      this.request.body !== undefined
       ? JSON.stringify(this.request.body)
       : ""
   }
@@ -63,10 +66,15 @@ export class HttpTemplate {
   // - https://stackoverflow.com/questions/34847981/curl-with-multiline-of-json
   // - https://ok-b.org/t/34847981/curl-with-multiline-of-json
   protected getCurlRequestBody(padding?: string): string {
-    if (!padding) { padding = `` }
-    if (this.request && this.request.body !== null && this.request.body !== undefined) {
-      const part = JSON
-        .stringify(this.request.body, null, 2)
+    if (!padding) {
+      padding = ``
+    }
+    if (
+      this.request &&
+      this.request.body !== null &&
+      this.request.body !== undefined
+    ) {
+      const part = JSON.stringify(this.request.body, null, 2)
         .split(`\n`)
         .join(`\n${padding}`)
       return `\n${padding}-d @- << EOF\n${part}\n${padding}EOF`

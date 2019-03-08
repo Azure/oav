@@ -1,31 +1,39 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
+import { filter, toArray } from "@ts-common/iterator"
 import {
-  SpecValidator,
-  SpecValidationResult,
-  ValidationResult,
-  ValidationResultScenarios,
-  RequestValidation,
-  ExampleResponse
-} from "./specValidator"
-import * as C from "../util/constants"
-import * as utils from "../util/utils"
-import { CommonError } from "../util/commonError"
-import { ErrorCodes } from "../util/constants"
-import { log } from "../util/logging"
-import { StringMap, MutableStringMap, entries, keys, toStringMap } from "@ts-common/string-map"
+  entries,
+  keys,
+  MutableStringMap,
+  StringMap,
+  toStringMap
+} from "@ts-common/string-map"
 import * as sm from "@ts-common/string-map"
+import * as msRest from "ms-rest"
 import { Operation } from "yasway"
 import * as Sway from "yasway"
+
 import { ResponseWrapper } from "../models/responseWrapper"
-import { OperationResultType } from "../util/scenarioReducer"
+import { CommonError } from "../util/commonError"
+import * as C from "../util/constants"
+import { ErrorCodes } from "../util/constants"
+import { log } from "../util/logging"
 import { ModelValidationError } from "../util/modelValidationError"
-import * as msRest from "ms-rest"
-import { toArray, filter } from "@ts-common/iterator"
-import { MultipleScenarios, Scenario } from '../util/responseReducer'
-import { processErrors, setPositionAndUrl } from '../util/processErrors'
-import { getTitle } from './specTransformer';
+import { processErrors, setPositionAndUrl } from "../util/processErrors"
+import { MultipleScenarios, Scenario } from "../util/responseReducer"
+import { OperationResultType } from "../util/scenarioReducer"
+import * as utils from "../util/utils"
+
+import { getTitle } from "./specTransformer"
+import {
+  ExampleResponse,
+  RequestValidation,
+  SpecValidationResult,
+  SpecValidator,
+  ValidationResult,
+  ValidationResultScenarios
+} from "./specValidator"
 
 const HttpRequest = msRest.WebResource
 
@@ -73,7 +81,9 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
         "example-in-spec": {}
       }
       this.validateOperation(operation)
-      const operationResult = this.specValidationResult.operations[operation.operationId]
+      const operationResult = this.specValidationResult.operations[
+        operation.operationId
+      ]
       if (operationResult === undefined) {
         throw new Error("operationResult is undefined")
       }
@@ -159,7 +169,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       }
     } else {
       return {
-        operationResult: (example as Scenario),
+        operationResult: example as Scenario,
         part: `for example in spec for operation "${operationId}"`
       }
     }
@@ -311,7 +321,9 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
           if (responseValidation === undefined) {
             throw new Error("responseValidation is undefined")
           }
-          for (const [responseStatusCode, value] of entries(responseValidation)) {
+          for (const [responseStatusCode, value] of entries(
+            responseValidation
+          )) {
             this.constructResponseResultWrapper(
               operationId,
               responseStatusCode,
@@ -342,12 +354,11 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
           exampleType
         )
       }
-      if (
-        result.responseValidation &&
-        !sm.isEmpty(result.responseValidation)
-      ) {
+      if (result.responseValidation && !sm.isEmpty(result.responseValidation)) {
         // responseValidation
-        for (const [responseStatusCode, value] of entries(result.responseValidation)) {
+        for (const [responseStatusCode, value] of entries(
+          result.responseValidation
+        )) {
           this.constructResponseResultWrapper(
             operationId,
             responseStatusCode,
@@ -397,14 +408,12 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       result.scenarios = resultScenarios
     } else {
       const msg = `x-ms-example not found in ${operation.operationId}.`
-      result.exampleNotFound = this.constructErrorObject(
-        {
-          code: ErrorCodes.XmsExampleNotFoundError,
-          message: msg,
-          skipValidityStatusUpdate: true,
-          source: operation.definition
-        }
-      )
+      result.exampleNotFound = this.constructErrorObject({
+        code: ErrorCodes.XmsExampleNotFoundError,
+        message: msg,
+        skipValidityStatusUpdate: true,
+        source: operation.definition
+      })
     }
     this.constructOperationResult(operation, result, C.xmsExamples)
   }
@@ -614,7 +623,10 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       if (responsesInSwagger[exampleResponseStatusCode]) {
         delete responsesInSwagger[exampleResponseStatusCode]
       }
-      const validationResults: Sway.ValidationResults = { errors: [], warnings: [] }
+      const validationResults: Sway.ValidationResults = {
+        errors: [],
+        warnings: []
+      }
       result[exampleResponseStatusCode] = validationResults
       // have to ensure how to map negative status codes to default. There have been several issues
       // filed in the Autorest repo, w.r.t how
@@ -625,13 +637,11 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
           `Response statusCode "${exampleResponseStatusCode}" for operation ` +
           `"${operation.operationId}" is provided in exampleResponseValue, ` +
           `however it is not present in the swagger spec.`
-        const e = this.constructErrorObject<Sway.ValidationEntry>(
-          {
-            code: ErrorCodes.ResponseStatusCodeNotInSpec,
-            message: msg,
-            source: operation.definition
-          }
-        )
+        const e = this.constructErrorObject<Sway.ValidationEntry>({
+          code: ErrorCodes.ResponseStatusCodeNotInSpec,
+          message: msg,
+          source: operation.definition
+        })
         validationResults.errors.push(e)
         log.error(e as any)
         continue
@@ -648,13 +658,11 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
             operation.operationId
           }" has response body provided in the example, ` +
           `however the response does not have a "schema" defined in the swagger spec.`
-        const e = this.constructErrorObject<Sway.ValidationEntry>(
-          {
-            code: ErrorCodes.ResponseSchemaNotInSpec,
-            message: msg,
-            source: operation.definition,
-          }
-        )
+        const e = this.constructErrorObject<Sway.ValidationEntry>({
+          code: ErrorCodes.ResponseSchemaNotInSpec,
+          message: msg,
+          source: operation.definition
+        })
         validationResults.errors.push(e)
         log.error(e as any)
         continue
@@ -678,25 +686,23 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       const validationResult = this.validateResponse(operation, exampleResponse)
       result[exampleResponseStatusCode] = validationResult
     }
-    const responseWithoutXmsExamples =
-      toArray(filter(keys(responsesInSwagger), statusCode => statusCode !== "default"))
+    const responseWithoutXmsExamples = toArray(
+      filter(keys(responsesInSwagger), statusCode => statusCode !== "default")
+    )
 
     if (responseWithoutXmsExamples && responseWithoutXmsExamples.length) {
       const msg =
         `Following response status codes "${responseWithoutXmsExamples.toString()}" for ` +
-        `operation "${operation.operationId}" were present in the swagger spec, ` +
+        `operation "${
+          operation.operationId
+        }" were present in the swagger spec, ` +
         `however they were not present in x-ms-examples. Please provide them.`
-      const e = this.constructErrorObject<Sway.ValidationEntry>(
-        {
-          code: ErrorCodes.ResponseStatusCodeNotInExample,
-          message: msg,
-          source: operation.definition,
-        }
-      )
-      setPositionAndUrl(
-        e,
-        getTitle(operation.definition)
-      )
+      const e = this.constructErrorObject<Sway.ValidationEntry>({
+        code: ErrorCodes.ResponseStatusCodeNotInExample,
+        message: msg,
+        source: operation.definition
+      })
+      setPositionAndUrl(e, getTitle(operation.definition))
       log.error(e as any)
       responseWithoutXmsExamples.forEach(
         statusCode => (result[statusCode] = { errors: [e] })
@@ -785,9 +791,9 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       if (!basePath.startsWith("/")) {
         basePath = `/${basePath}`
       }
-      const baseUrl = host.startsWith(scheme + "://") ?
-        `${host}${basePath}` :
-        `${scheme}://${host}${basePath}`
+      const baseUrl = host.startsWith(scheme + "://")
+        ? `${host}${basePath}`
+        : `${scheme}://${host}${basePath}`
       options.baseUrl = baseUrl
     }
     options.method = operation.method
@@ -806,13 +812,11 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
               parameter.name
             } is required in ` +
             `the swagger spec but is not present in the provided example parameter values.`
-          const e = this.constructErrorObject<Sway.ValidationEntry>(
-            {
-              code: ErrorCodes.RequiredParameterExampleNotFound,
-              message: msg,
-              source: parameter.definition
-            }
-          )
+          const e = this.constructErrorObject<Sway.ValidationEntry>({
+            code: ErrorCodes.RequiredParameterExampleNotFound,
+            message: msg,
+            source: parameter.definition
+          })
           if (result.validationResult === undefined) {
             throw new Error("result.validationResult is undefined")
           }
@@ -851,13 +855,11 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
               `and the path template: "${pathTemplate}" contains a forward slash before ` +
               `the parameter starts. This will cause double forward slashes ` +
               ` in the request url. Thus making it incorrect. Please rectify the example.`
-            const e = this.constructErrorObject<Sway.ValidationEntry>(
-              {
-                code: ErrorCodes.DoubleForwardSlashesInUrl,
-                message: msg,
-                source: parameter.definition
-              }
-            )
+            const e = this.constructErrorObject<Sway.ValidationEntry>({
+              code: ErrorCodes.DoubleForwardSlashesInUrl,
+              message: msg,
+              source: parameter.definition
+            })
             if (result.validationResult === undefined) {
               throw new Error("result.validationResult is undefined")
             }
@@ -915,10 +917,10 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
 
         // set Content-Type correctly
         options.headers["Content-Type"] =
-          operation.consumes && isFormUrlEncoded(operation.consumes) ?
-            "application/x-www-form-urlencoded" :
-            // default to formData
-            "multipart/form-data"
+          operation.consumes && isFormUrlEncoded(operation.consumes)
+            ? "application/x-www-form-urlencoded"
+            : // default to formData
+              "multipart/form-data"
         // keep track of parameter type 'file' as sway expects such parameter types to be set
         // differently in the request object given for validation.
         if (parameter.type === "file") {
@@ -962,13 +964,11 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
         // this.sampleRequest = request
       } catch (err) {
         request = null
-        const e = this.constructErrorObject(
-          {
-            code: ErrorCodes.ErrorInPreparingRequest,
-            message: err.message,
-            innerErrors: [err]
-          }
-        )
+        const e = this.constructErrorObject({
+          code: ErrorCodes.ErrorInPreparingRequest,
+          message: err.message,
+          innerErrors: [err]
+        })
         validationResult.errors.push(e)
       }
     }
@@ -995,13 +995,11 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     if (!isValid) {
       operationResult.isValid = false
       operationResult.request.isValid = false
-      const e = this.constructErrorObject(
-        {
-          code: ErrorCodes.RequestValidationError,
-          message: msg,
-          innerErrors: requestValidationErrors
-        }
-      )
+      const e = this.constructErrorObject({
+        code: ErrorCodes.RequestValidationError,
+        message: msg,
+        innerErrors: requestValidationErrors
+      })
       operationResult.request.error = e
       log.error(`${msg}:\n`, e)
     } else if (requestValidationWarnings) {
@@ -1031,13 +1029,11 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     if (!isValid) {
       operationResult.isValid = false
       operationResult.responses[responseStatusCode].isValid = false
-      const e = this.constructErrorObject(
-        {
-          code: ErrorCodes.ResponseValidationError,
-          message: msg,
-          innerErrors: responseValidationErrors
-        }
-      )
+      const e = this.constructErrorObject({
+        code: ErrorCodes.ResponseValidationError,
+        message: msg,
+        innerErrors: responseValidationErrors
+      })
       operationResult.responses[responseStatusCode].error = e
       const pe = processErrors([e])
       log.error(`${msg}:\n`, pe)

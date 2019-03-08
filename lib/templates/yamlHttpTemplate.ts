@@ -1,13 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import { HttpTemplate, Request, Responses, Response } from "./httpTemplate"
-import * as uuid from "uuid"
-import { keys } from "@ts-common/string-map"
 import { toArray } from "@ts-common/iterator"
+import { keys } from "@ts-common/string-map"
+import * as uuid from "uuid"
+
+import { HttpTemplate, Request, Response, Responses } from "./httpTemplate"
 
 export class YamlHttpTemplate extends HttpTemplate {
-
   public constructor(request: Request, responses: Responses) {
     super(request, responses)
   }
@@ -20,18 +20,24 @@ export class YamlHttpTemplate extends HttpTemplate {
       if (this.responses.longrunning) {
         if (this.responses.longrunning.initialResponse) {
           template += this.populateResponse(
-            this.responses.longrunning.initialResponse, "Initial Response")
+            this.responses.longrunning.initialResponse,
+            "Initial Response"
+          )
         }
         if (this.responses.longrunning.finalResponse) {
           template += this.populateResponse(
             this.responses.longrunning.finalResponse,
-            "Final Response after polling is complete and successful")
+            "Final Response after polling is complete and successful"
+          )
         }
       } else {
         if (this.responses.standard.finalResponse === undefined) {
           throw new Error("this.responses.standard.finalResponse === undefined")
         }
-        template += this.populateResponse(this.responses.standard.finalResponse, "Response")
+        template += this.populateResponse(
+          this.responses.standard.finalResponse,
+          "Response"
+        )
       }
     }
     return template
@@ -40,7 +46,9 @@ export class YamlHttpTemplate extends HttpTemplate {
   private getRequestHeaders(): string {
     let result = ``
     if (this.request.body) {
-      result += `  Content-Length: ${JSON.stringify(this.request.body).length}\n`
+      result += `  Content-Length: ${
+        JSON.stringify(this.request.body).length
+      }\n`
     }
     if (this.request.headers) {
       const headers = toArray(keys(this.request.headers))
@@ -66,7 +74,9 @@ export class YamlHttpTemplate extends HttpTemplate {
       const headers = toArray(keys(response.headers))
       for (let i = 0; i < headers.length; i++) {
         const headerName = headers[i]
-        if (headerName.match(/^Content-Type$/ig) !== null) { gotContentType = true }
+        if (headerName.match(/^Content-Type$/gi) !== null) {
+          gotContentType = true
+        }
         result += `    ${headerName}: ${response.headers[headerName]}`
         if (i !== headers.length - 1) {
           result += `\n`
@@ -80,8 +90,7 @@ export class YamlHttpTemplate extends HttpTemplate {
   }
 
   private populateRequest(): string {
-    const requestTemplate =
-      `#Request
+    const requestTemplate = `#Request
 request: |
   ${this.request.method} ${this.request.url} HTTP/1.1
   Authorization: Bearer <token>
@@ -95,9 +104,11 @@ ${this.getRequestHeaders()}
   }
 
   private populateResponse(response: Response, responseType: unknown): string {
-    if (!responseType) { responseType = "Response" }
+    if (!responseType) {
+      responseType = "Response"
+    }
     const responseGuid = uuid.v4()
-    const date = new Date().toISOString().replace(/(\W)/ig, "")
+    const date = new Date().toISOString().replace(/(\W)/gi, "")
     const responseTemplate = `
 #${responseType}
 response:
@@ -127,8 +138,7 @@ ${this.getResponseHeaders(response)}
     const url = this.request.url
     const headers = this.getCurlRequestHeaders(padding)
     const body = this.getCurlRequestBody(padding)
-    const template =
-      `\n#Curl
+    const template = `\n#Curl
 curl: |
   curl -X ${method} '${url}' \\\n  -H 'authorization: bearer <token>' \\${headers}${body}
 `
