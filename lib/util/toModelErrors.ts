@@ -15,7 +15,7 @@ export function toModelErrors(
 ): Iterable<ModelValidationError> {
   return it.map(processedErrors, value => {
     if (value.code === undefined) {
-      throw Error("ICE: value.code is undefined")
+      value.code = "INTERNAL_ERROR"
     }
     const severity = errorCodeToSeverity(value.code)
     const modelError: ModelValidationError = {
