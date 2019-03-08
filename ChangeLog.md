@@ -1,5 +1,9 @@
 # Changelog
 
+### 03/08/2019 0.14.4
+
+- `INTERNAL_ERROR` as an error code.
+
 ### 03/07/2019 0.14.3
 
 - OAV shouldn't parse `error.title` twice.
