@@ -80,7 +80,8 @@ export const errorConstants = new Map<string, ValidationError>([
   validationErrorEntry("INVALID_RESPONSE_CODE", Severity.Critical),
   validationErrorEntry("INVALID_RESPONSE_BODY", Severity.Critical),
   validationErrorEntry("INVALID_REQUEST_PARAMETER", Severity.Critical),
-  validationErrorEntry("INVALID_CONTENT_TYPE", Severity.Error)
+  validationErrorEntry("INVALID_CONTENT_TYPE", Severity.Error),
+  validationErrorEntry("INTERNAL_ERROR", Severity.Critical),
 ])
 
 /**

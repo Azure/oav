@@ -7,7 +7,7 @@ export const cliSuppressExceptions = async (f: () => Promise<void>): Promise<voi
   try {
     await f()
   } catch (err) {
-    const message = `fatal error: ${JSON.stringify(err)}`
+    const message = `fatal error: ${err.message}, ${JSON.stringify(err)}`
     log.error(message)
     // tslint:disable-next-line:no-console
     console.error(message)
