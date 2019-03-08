@@ -24,7 +24,7 @@
       "cwd": "${workspaceRoot}",
       "args": [
         "validate-example",
-        "C:/github.com/Azure/azure-rest-api-specs/specification/azure-kusto/resource-manager/Microsoft.Kusto/stable/2019-01-21/kusto.json",
+        "C:/github.com/Azure/azure-rest-api-specs/specification/cdn/resource-manager/Microsoft.Cdn/stable/2017-10-12/cdn.json",
         "--pretty"
       ],
       "env": {}

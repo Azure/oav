@@ -32,7 +32,7 @@ export const setPositionAndUrl = (
 
 const addFileInfo = <T extends NodeError<T>>(error: T): T => {
   const title = error.title
-  if (title !== undefined) {
+  if (error.position === undefined && title !== undefined) {
     try {
       const titleObject: TitleObject | undefined = JSON.parse(title)
       setPositionAndUrl(error, titleObject)
@@ -41,7 +41,7 @@ const addFileInfo = <T extends NodeError<T>>(error: T): T => {
     }
   }
   const json = error[jsonSymbol]
-  if (json !== undefined) {
+  if (error.jsonPosition === undefined && json !== undefined) {
     const jsonInfo = getInfo(json)
     if (jsonInfo !== undefined) {
       const errorPathOriginal = error.path

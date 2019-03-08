@@ -1,5 +1,9 @@
 # Changelog
 
+### 03/07/2019 0.14.3
+
+- OAV shouldn't parse `error.title` twice.
+
 ### 03/06/2019 0.14.2
 
 - Use one cache per SpecValidator inside the LiveValidator.
