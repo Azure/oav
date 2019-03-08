@@ -1,14 +1,15 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import { Severity } from "./severity"
-import _ from "lodash"
-import { FilePosition } from "@ts-common/source-map"
 import { flatMap, fold } from "@ts-common/iterator"
-import { processErrors } from "./processErrors"
-import { jsonSymbol, schemaSymbol } from "z-schema"
-import { StringMap } from "@ts-common/string-map"
 import * as json from "@ts-common/json"
+import { FilePosition } from "@ts-common/source-map"
+import { StringMap } from "@ts-common/string-map"
+import _ from "lodash"
+import { jsonSymbol, schemaSymbol } from "z-schema"
+
+import { processErrors } from "./processErrors"
+import { Severity } from "./severity"
 
 /**
  * @class
@@ -20,14 +21,13 @@ export class ValidationError {
    * @param name Validation Error Name
    * @param severity The severity of the error
    */
-  public constructor(
-    public readonly name: string,
-    public readonly severity: Severity
-  ) {}
+  public constructor(public readonly name: string, public readonly severity: Severity) {}
 }
 
-const validationErrorEntry = (id: string, severity: Severity): [string, ValidationError] =>
-  [id, new ValidationError(id, severity)]
+const validationErrorEntry = (id: string, severity: Severity): [string, ValidationError] => [
+  id,
+  new ValidationError(id, severity)
+]
 
 export const errorConstants = new Map<string, ValidationError>([
   validationErrorEntry("INVALID_TYPE", Severity.Critical),
@@ -62,18 +62,9 @@ export const errorConstants = new Map<string, ValidationError>([
   validationErrorEntry("PATTERN", Severity.Critical),
   // operation
   validationErrorEntry("OPERATION_NOT_FOUND_IN_CACHE", Severity.Critical),
-  validationErrorEntry(
-    "OPERATION_NOT_FOUND_IN_CACHE_WITH_VERB",
-    Severity.Critical
-  ),
-  validationErrorEntry(
-    "OPERATION_NOT_FOUND_IN_CACHE_WITH_API",
-    Severity.Critical
-  ),
-  validationErrorEntry(
-    "OPERATION_NOT_FOUND_IN_CACHE_WITH_PROVIDER",
-    Severity.Critical
-  ),
+  validationErrorEntry("OPERATION_NOT_FOUND_IN_CACHE_WITH_VERB", Severity.Critical),
+  validationErrorEntry("OPERATION_NOT_FOUND_IN_CACHE_WITH_API", Severity.Critical),
+  validationErrorEntry("OPERATION_NOT_FOUND_IN_CACHE_WITH_PROVIDER", Severity.Critical),
   validationErrorEntry("MULTIPLE_OPERATIONS_FOUND", Severity.Critical),
   // others
   validationErrorEntry("INVALID_RESPONSE_HEADER", Severity.Critical),
@@ -81,7 +72,7 @@ export const errorConstants = new Map<string, ValidationError>([
   validationErrorEntry("INVALID_RESPONSE_BODY", Severity.Critical),
   validationErrorEntry("INVALID_REQUEST_PARAMETER", Severity.Critical),
   validationErrorEntry("INVALID_CONTENT_TYPE", Severity.Error),
-  validationErrorEntry("INTERNAL_ERROR", Severity.Critical),
+  validationErrorEntry("INTERNAL_ERROR", Severity.Critical)
 ])
 
 /**
@@ -125,18 +116,11 @@ export interface ValidationResult<T extends NodeError<T>> {
 /**
  * Serializes validation results into a flat array.
  */
-export function processValidationErrors<
-  V extends ValidationResult<T>,
-  T extends NodeError<T>
->(rawValidation: V): V {
-  const requestSerializedErrors: T[] = serializeErrors(
-    rawValidation.requestValidationResult,
-    []
-  )
-  const responseSerializedErrors: T[] = serializeErrors(
-    rawValidation.responseValidationResult,
-    []
-  )
+export function processValidationErrors<V extends ValidationResult<T>, T extends NodeError<T>>(
+  rawValidation: V
+): V {
+  const requestSerializedErrors: T[] = serializeErrors(rawValidation.requestValidationResult, [])
+  const responseSerializedErrors: T[] = serializeErrors(rawValidation.responseValidationResult, [])
 
   rawValidation.requestValidationResult.errors = processErrors(requestSerializedErrors)
   rawValidation.responseValidationResult.errors = processErrors(responseSerializedErrors)
@@ -147,11 +131,7 @@ export function processValidationErrors<
 /**
  * Serializes error tree
  */
-export function serializeErrors<T extends NodeError<T>>(
-  node: T,
-  path: unknown[]
-): T[] {
-
+export function serializeErrors<T extends NodeError<T>>(node: T, path: unknown[]): T[] {
   if (isLeaf(node)) {
     if (isTrueError(node)) {
       if (node.path) {
@@ -177,10 +157,9 @@ export function serializeErrors<T extends NodeError<T>>(
     path = consolidatePath(path, node.path)
   }
 
-  const serializedErrors = Array.from(flatMap(
-    node.errors,
-    validationError => serializeErrors(validationError, path)
-  ))
+  const serializedErrors = Array.from(
+    flatMap(node.errors, validationError => serializeErrors(validationError, path))
+  )
 
   const serializedInner = fold(
     node.inner,
@@ -230,11 +209,7 @@ function areErrorsSimilar<T extends NodeError<T>>(node1: T, node2: T) {
     return true
   }
 
-  if (
-    !node1.inner ||
-    !node2.inner ||
-    node1.inner.length !== node2.inner.length
-  ) {
+  if (!node1.inner || !node2.inner || node1.inner.length !== node2.inner.length) {
     return false
   }
 
@@ -272,22 +247,14 @@ const isDiscriminatorError = <T extends NodeError<T>>(node: T) =>
 const isTrueError = <T extends NodeError<T>>(node: T): boolean =>
   // this is necessary to filter out extra errors coming from doing the ONE_OF transformation on
   // the models to allow "null"
-  !(
-    node.code === "INVALID_TYPE" &&
-    node.params &&
-    node.params[0] === "null"
-  )
+  !(node.code === "INVALID_TYPE" && node.params && node.params[0] === "null")
 
-const isLeaf = <T extends NodeError<T>>(node: T): boolean =>
-  !node.errors && !node.inner
+const isLeaf = <T extends NodeError<T>>(node: T): boolean => !node.errors && !node.inner
 
 /**
  * Unifies a suffix path with a root path.
  */
-function consolidatePath(
-  path: unknown[],
-  suffixPath: string | string[]
-): unknown[] {
+function consolidatePath(path: unknown[], suffixPath: string | string[]): unknown[] {
   let newSuffixIndex = 0
   let overlapIndex = path.lastIndexOf(suffixPath[newSuffixIndex])
   let previousIndex = overlapIndex
@@ -296,11 +263,7 @@ function consolidatePath(
     return path.concat(suffixPath)
   }
 
-  for (
-    newSuffixIndex = 1;
-    newSuffixIndex < suffixPath.length;
-    ++newSuffixIndex
-  ) {
+  for (newSuffixIndex = 1; newSuffixIndex < suffixPath.length; ++newSuffixIndex) {
     previousIndex = overlapIndex
     overlapIndex = path.lastIndexOf(suffixPath[newSuffixIndex])
     if (overlapIndex === -1 || overlapIndex !== previousIndex + 1) {

@@ -26,28 +26,61 @@ export const ErrorCodes = {
     id: "OAV105"
   },
   ErrorInPreparingRequest: { name: "ERROR_IN_PREPARING_REQUEST", id: "OAV106" },
-  XmsExampleNotFoundError: { name: "X-MS-EXAMPLE_NOTFOUND_ERROR", id: "OAV107" },
+  XmsExampleNotFoundError: {
+    name: "X-MS-EXAMPLE_NOTFOUND_ERROR",
+    id: "OAV107"
+  },
   ResponseValidationError: { name: "RESPONSE_VALIDATION_ERROR", id: "OAV108" },
   RequestValidationError: { name: "REQUEST_VALIDATION_ERROR", id: "OAV109" },
-  ResponseBodyValidationError: { name: "RESPONSE_BODY_VALIDATION_ERROR", id: "OAV110" },
-  ResponseStatusCodeNotInExample: { name: "RESPONSE_STATUS_CODE_NOT_IN_EXAMPLE", id: "OAV111" },
-  ResponseStatusCodeNotInSpec: { name: "RESPONSE_STATUS_CODE_NOT_IN_SPEC", id: "OAV112" },
-  ResponseSchemaNotInSpec: { name: "RESPONSE_SCHEMA_NOT_IN_SPEC", id: "OAV113" },
+  ResponseBodyValidationError: {
+    name: "RESPONSE_BODY_VALIDATION_ERROR",
+    id: "OAV110"
+  },
+  ResponseStatusCodeNotInExample: {
+    name: "RESPONSE_STATUS_CODE_NOT_IN_EXAMPLE",
+    id: "OAV111"
+  },
+  ResponseStatusCodeNotInSpec: {
+    name: "RESPONSE_STATUS_CODE_NOT_IN_SPEC",
+    id: "OAV112"
+  },
+  ResponseSchemaNotInSpec: {
+    name: "RESPONSE_SCHEMA_NOT_IN_SPEC",
+    id: "OAV113"
+  },
   RequiredParameterNotInExampleError: {
     name: "REQUIRED_PARAMETER_NOT_IN_EXAMPLE_ERROR",
     id: "OAV114"
   },
-  BodyParameterValidationError: { name: "BODY_PARAMETER_VALIDATION_ERROR", id: "OAV115" },
+  BodyParameterValidationError: {
+    name: "BODY_PARAMETER_VALIDATION_ERROR",
+    id: "OAV115"
+  },
   TypeValidationError: { name: "TYPE_VALIDATION_ERROR", id: "OAV116" },
-  ConstraintValidationError: { name: "CONSTRAINT_VALIDATION_ERROR", id: "OAV117" },
-  StatuscodeNotInExampleError: { name: "STATUS_CODE_NOT_IN_EXAMPLE_ERROR", id: "OAV118" },
+  ConstraintValidationError: {
+    name: "CONSTRAINT_VALIDATION_ERROR",
+    id: "OAV117"
+  },
+  StatuscodeNotInExampleError: {
+    name: "STATUS_CODE_NOT_IN_EXAMPLE_ERROR",
+    id: "OAV118"
+  },
   SemanticValidationError: { name: "SEMANTIC_VALIDATION_ERROR", id: "OAV119" },
   MultipleOperationsFound: { name: "MULTIPLE_OPERATIONS_FOUND", id: "OAV120" },
   NoOperationFound: { name: "NO_OPERATION_FOUND", id: "OAV121" },
   IncorrectInput: { name: "INCORRECT_INPUT", id: "OAV122" },
-  PotentialOperationSearchError: { name: "POTENTIAL_OPERATION_SEARCH_ERROR", id: "OAV123" },
-  PathNotFoundInRequestUrl: { name: "PATH_NOT_FOUND_IN_REQUEST_URL", id: "OAV124" },
-  OperationNotFoundInCache: { name: "OPERATION_NOT_FOUND_IN_CACHE", id: "OAV125" },
+  PotentialOperationSearchError: {
+    name: "POTENTIAL_OPERATION_SEARCH_ERROR",
+    id: "OAV123"
+  },
+  PathNotFoundInRequestUrl: {
+    name: "PATH_NOT_FOUND_IN_REQUEST_URL",
+    id: "OAV124"
+  },
+  OperationNotFoundInCache: {
+    name: "OPERATION_NOT_FOUND_IN_CACHE",
+    id: "OAV125"
+  },
   OperationNotFoundInCacheWithVerb: {
     name: "OPERATION_NOT_FOUND_IN_CACHE_WITH_VERB",
     id: "OAV126"
@@ -60,7 +93,10 @@ export const ErrorCodes = {
     name: "OPERATION_NOT_FOUND_IN_CACHE_WITH_PROVIDER",
     id: "OAV128"
   }, // Implies we never found correct provider in cache
-  DoubleForwardSlashesInUrl: { name: "DOUBLE_FORWARD_SLASHES_IN_URL", id: "OAV129" },
+  DoubleForwardSlashesInUrl: {
+    name: "DOUBLE_FORWARD_SLASHES_IN_URL",
+    id: "OAV129"
+  }
 }
 
 export const knownTitleToResourceProviders: StringMap<string> = {

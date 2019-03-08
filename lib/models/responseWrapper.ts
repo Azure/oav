@@ -26,6 +26,6 @@ export class ResponseWrapper {
     public statusCode: number | string,
     public body: unknown,
     public headers: Headers,
-    public encoding?: string) {
-  }
+    public encoding?: string
+  ) {}
 }

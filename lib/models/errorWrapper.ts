@@ -8,7 +8,7 @@
  * regenerated.
  */
 
-import { ErrorResponse } from "./errorResponse";
+import { ErrorResponse } from "./errorResponse"
 
 /**
  * @class
@@ -21,7 +21,7 @@ import { ErrorResponse } from "./errorResponse";
  */
 export class ErrorWrapper extends ErrorResponse {
   public constructor() {
-    super();
+    super()
   }
 
   /**
@@ -42,22 +42,22 @@ export class ErrorWrapper extends ErrorResponse {
             required: false,
             serializedName: "code",
             type: {
-              name: "String",
-            },
+              name: "String"
+            }
           },
           message: {
             required: false,
             serializedName: "message",
             type: {
-              name: "String",
-            },
+              name: "String"
+            }
           },
           description: {
             required: false,
             serializedName: "description",
             type: {
-              name: "String",
-            },
+              name: "String"
+            }
           },
           params: {
             required: false,
@@ -68,10 +68,10 @@ export class ErrorWrapper extends ErrorResponse {
                 required: false,
                 serializedName: "StringElementType",
                 type: {
-                  name: "String",
-                },
-              },
-            },
+                  name: "String"
+                }
+              }
+            }
           },
           path: {
             required: false,
@@ -82,10 +82,10 @@ export class ErrorWrapper extends ErrorResponse {
                 required: false,
                 serializedName: "StringElementType",
                 type: {
-                  name: "String",
-                },
-              },
-            },
+                  name: "String"
+                }
+              }
+            }
           },
           errors: {
             required: false,
@@ -97,13 +97,13 @@ export class ErrorWrapper extends ErrorResponse {
                 serializedName: "ErrorResponseElementType",
                 type: {
                   name: "Composite",
-                  className: "ErrorResponse",
-                },
-              },
-            },
-          },
-        },
-      },
-    };
+                  className: "ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }

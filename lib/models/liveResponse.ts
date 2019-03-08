@@ -25,7 +25,6 @@
  *
  */
 export class LiveResponse {
-
   /**
    * Defines the metadata of LiveResponse
    *
@@ -44,8 +43,8 @@ export class LiveResponse {
             required: true,
             serializedName: "statusCode",
             type: {
-              name: "String",
-            },
+              name: "String"
+            }
           },
           headers: {
             required: true,
@@ -56,27 +55,27 @@ export class LiveResponse {
                 required: false,
                 serializedName: "StringElementType",
                 type: {
-                  name: "String",
-                },
-              },
-            },
+                  name: "String"
+                }
+              }
+            }
           },
           body: {
             required: false,
             serializedName: "body",
             type: {
-              name: "Object",
-            },
+              name: "Object"
+            }
           },
           encoding: {
             required: false,
             serializedName: "encoding",
             type: {
-              name: "String",
-            },
-          },
-        },
-      },
+              name: "String"
+            }
+          }
+        }
+      }
     }
   }
 }

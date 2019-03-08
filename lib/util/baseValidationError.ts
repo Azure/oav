@@ -2,8 +2,8 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import { Severity } from "./severity"
-import { ValidationResultSource } from "./validationResultSource"
 import { NodeError } from "./validationError"
+import { ValidationResultSource } from "./validationResultSource"
 
 export interface BaseValidationError<T extends NodeError<T>> {
   severity?: Severity

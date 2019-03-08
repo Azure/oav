@@ -2,19 +2,17 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import * as assert from "assert"
-import * as path from "path"
-import * as os from "os"
 import * as glob from "glob"
-import { LiveValidator } from "../lib/validators/liveValidator"
-import * as Constants from "../lib/util/constants"
+import * as os from "os"
+import * as path from "path"
 import { ResponsesObject } from "yasway"
 
+import * as Constants from "../lib/util/constants"
+import { LiveValidator } from "../lib/validators/liveValidator"
+
 const numberOfSpecs = 8
-const livePaths = glob.sync(path.join(
-  __dirname,
-  "..",
-  "..",
-  "test/liveValidation/swaggers/**/live/*.json")
+const livePaths = glob.sync(
+  path.join(__dirname, "..", "..", "test/liveValidation/swaggers/**/live/*.json")
 )
 describe("Live Validator", () => {
   describe("Initialization", () => {
@@ -26,7 +24,7 @@ describe("Live Validator", () => {
           shouldClone: false
         },
         directory: path.resolve(os.homedir(), "repo")
-      };
+      }
       const validator = new LiveValidator()
       assert.deepStrictEqual(validator.cache, {})
       assert.deepStrictEqual(validator.options, options)
@@ -39,7 +37,7 @@ describe("Live Validator", () => {
           shouldClone: true
         },
         directory: path.resolve(os.homedir(), "repo")
-      };
+      }
       const validator = new LiveValidator(options)
       await validator.initialize()
       assert.deepStrictEqual(validator.cache, {})
@@ -52,11 +50,12 @@ describe("Live Validator", () => {
           shouldClone: false
         },
         directory: path.resolve(os.homedir(), "repo")
-      };
+      }
       const validator = new LiveValidator(options)
       assert.deepStrictEqual(validator.cache, {})
       assert.deepStrictEqual(
-        validator.options.git.url, "https://github.com/Azure/azure-rest-api-specs.git"
+        validator.options.git.url,
+        "https://github.com/Azure/azure-rest-api-specs.git"
       )
     })
     it("should throw during initialization with invalid directory", () => {
@@ -67,7 +66,7 @@ describe("Live Validator", () => {
             shouldClone: false
           },
           directory: 54
-        };
+        }
         const validator = new LiveValidator(options)
         assert.notStrictEqual(validator, null)
       })
@@ -75,14 +74,14 @@ describe("Live Validator", () => {
     it("should initialize with user provided swaggerPaths", () => {
       const swaggerPaths = ["swaggerPath1", "swaggerPath2"]
       const options = {
-        swaggerPaths: swaggerPaths,
+        swaggerPaths,
         git: {
           url: "https://github.com/Azure/azure-rest-api-specs.git",
           shouldClone: false
         },
         directory: path.resolve(os.homedir(), "repo")
       }
-      const validator = new LiveValidator({ swaggerPaths: swaggerPaths })
+      const validator = new LiveValidator({ swaggerPaths })
       assert.deepStrictEqual(validator.cache, {})
       assert.deepStrictEqual(validator.options, options)
     })
@@ -90,14 +89,14 @@ describe("Live Validator", () => {
       const swaggerPaths = ["swaggerPath1", "swaggerPath2"]
       const directory = "/Users/username/repos/"
       const options = {
-        swaggerPaths: swaggerPaths,
+        swaggerPaths,
         git: {
           url: "https://github.com/Azure/azure-rest-api-specs.git",
           shouldClone: false
         },
-        directory: directory
+        directory
       }
-      const validator = new LiveValidator({ swaggerPaths: swaggerPaths, directory: directory })
+      const validator = new LiveValidator({ swaggerPaths, directory })
       assert.deepStrictEqual(validator.cache, {})
       assert.deepStrictEqual(validator.options, options)
     })
@@ -108,15 +107,18 @@ describe("Live Validator", () => {
         url: "https://github.com/Azure/azure-rest-api-specs.git"
       }
       const options = {
-        swaggerPaths: swaggerPaths,
+        swaggerPaths,
         git: {
           url: git.url,
           shouldClone: false
         },
-        directory: directory
+        directory
       }
       const validator = new LiveValidator({
-        swaggerPaths: swaggerPaths, directory: directory, git: git })
+        swaggerPaths,
+        directory,
+        git
+      })
       assert.deepStrictEqual(validator.cache, {})
       assert.deepStrictEqual(validator.options, options)
     })
@@ -129,46 +131,39 @@ describe("Live Validator", () => {
         branch: "oav-test-branch"
       }
       const options = {
-        swaggerPaths: swaggerPaths,
-        git: git,
-        directory: directory
+        swaggerPaths,
+        git,
+        directory
       }
       const validator = new LiveValidator({
-        swaggerPaths: swaggerPaths, directory: directory, git: git })
+        swaggerPaths,
+        directory,
+        git
+      })
       assert.deepStrictEqual(validator.cache, {})
       assert.deepStrictEqual(validator.options, options)
     })
     it("should throw on invalid options types", () => {
-      assert.throws(
-        () => {
-          const _ = new LiveValidator("string")
-          assert.notStrictEqual(_, null)
-        },
-        /must be of type "object"/)
-      assert.throws(
-        () => {
-          const _ = new LiveValidator({ swaggerPaths: "should be array" })
-          assert.notStrictEqual(_, null)
-        },
-        /must be of type "array"/)
-      assert.throws(
-        () => {
-          const _ = new LiveValidator({ git: 1 })
-          assert.notStrictEqual(_, null)
-        },
-        /must be of type "object"/)
-      assert.throws(
-        () => {
-          const _ = new LiveValidator({ git: { url: [] } })
-          assert.notStrictEqual(_, null)
-        },
-        /must be of type "string"/)
-      assert.throws(
-        () => {
-          const _ = new LiveValidator({ git: { url: "url", shouldClone: "no" } })
-          assert.notStrictEqual(_, null)
-        },
-        /must be of type "boolean"/)
+      assert.throws(() => {
+        const _ = new LiveValidator("string")
+        assert.notStrictEqual(_, null)
+      }, /must be of type "object"/)
+      assert.throws(() => {
+        const _ = new LiveValidator({ swaggerPaths: "should be array" })
+        assert.notStrictEqual(_, null)
+      }, /must be of type "array"/)
+      assert.throws(() => {
+        const _ = new LiveValidator({ git: 1 })
+        assert.notStrictEqual(_, null)
+      }, /must be of type "object"/)
+      assert.throws(() => {
+        const _ = new LiveValidator({ git: { url: [] } })
+        assert.notStrictEqual(_, null)
+      }, /must be of type "string"/)
+      assert.throws(() => {
+        const _ = new LiveValidator({ git: { url: "url", shouldClone: "no" } })
+        assert.notStrictEqual(_, null)
+      }, /must be of type "boolean"/)
     })
   })
 
@@ -226,24 +221,12 @@ describe("Live Validator", () => {
         throw new Error("p === undefined")
       }
       // 'microsoft.unknown' -> 'unknown-api-version'
-      assert.strictEqual(
-        4,
-        p[Constants.unknownApiVersion].post.length)
-      assert.strictEqual(
-        11,
-        p[Constants.unknownApiVersion].get.length)
-      assert.strictEqual(
-        3,
-        p[Constants.unknownApiVersion].head.length)
-      assert.strictEqual(
-        5,
-        p[Constants.unknownApiVersion].put.length)
-      assert.strictEqual(
-        5,
-        p[Constants.unknownApiVersion].delete.length)
-      assert.strictEqual(
-        1,
-        p[Constants.unknownApiVersion].patch.length)
+      assert.strictEqual(4, p[Constants.unknownApiVersion].post.length)
+      assert.strictEqual(11, p[Constants.unknownApiVersion].get.length)
+      assert.strictEqual(3, p[Constants.unknownApiVersion].head.length)
+      assert.strictEqual(5, p[Constants.unknownApiVersion].put.length)
+      assert.strictEqual(5, p[Constants.unknownApiVersion].delete.length)
+      assert.strictEqual(1, p[Constants.unknownApiVersion].patch.length)
     })
     it("should initialize for batch", async () => {
       const options = {
@@ -323,7 +306,8 @@ describe("Live Validator", () => {
       assert.strictEqual(1, operations.length)
       assert.strictEqual(
         "/subscriptions/{subscriptionId}/providers/Microsoft.Storage/storageAccounts",
-        pathObject.path)
+        pathObject.path
+      )
 
       // Operations to match is StorageAccounts_CheckNameAvailability
       operations = validator.getPotentialOperations(postRequestUrl, "PoSt").operations
@@ -334,7 +318,8 @@ describe("Live Validator", () => {
       assert.strictEqual(1, operations.length)
       assert.strictEqual(
         "/subscriptions/{subscriptionId}/providers/Microsoft.Storage/checkNameAvailability",
-        pathObject.path)
+        pathObject.path
+      )
 
       // Operations to match is StorageAccounts_Delete
       operations = validator.getPotentialOperations(deleteRequestUrl, "delete").operations
@@ -346,7 +331,8 @@ describe("Live Validator", () => {
       assert.strictEqual(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/" +
           "Microsoft.Storage/storageAccounts/{accountName}",
-        pathObject.path)
+        pathObject.path
+      )
     })
     it("should return reason for not matched operations", async () => {
       const options = {
@@ -468,7 +454,7 @@ describe("Live Validator", () => {
           url: "https://xxx.com/providers/someprovider?api-version=2018-01-01",
           method: "get",
           headers: {
-            "content-type": "application/json",
+            "content-type": "application/json"
           },
           query: {
             "api-version": "2016-01-01"
@@ -499,7 +485,7 @@ describe("Live Validator", () => {
           url: "https://xxx.com/providers/someprovider?api-version=2018-01-01",
           method: "get",
           headers: {
-            "content-type": "application/json",
+            "content-type": "application/json"
           },
           query: {
             "api-version": "2016-01-01"
@@ -516,5 +502,4 @@ describe("Live Validator", () => {
       assert.deepStrictEqual(errors, [])
     })
   })
-
 })

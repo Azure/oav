@@ -4,9 +4,10 @@
 /* tslint:disable:no-console max-line-length*/
 
 import assert from "assert"
+import * as path from "path"
+
 import * as validate from "../lib/validate"
 import { ModelValidator } from "../lib/validators/modelValidator"
-import * as path from "path"
 
 const testPath = path.join(__dirname, "../../test")
 
@@ -46,13 +47,9 @@ describe("Model Validation", () => {
     it("should fail with collapsed similar array elements errors", async () => {
       const localSpecPath = `${testPath}/modelValidation/swaggers/specification/polymorphic/polymorphicSwagger.json`
       const operationIds = "CircularAnimal_IncorrectSibling_List"
-      const result = await validate.validateExamples(
-        localSpecPath,
-        operationIds,
-        {
-          consoleLogLevel: "off"
-        }
-      )
+      const result = await validate.validateExamples(localSpecPath, operationIds, {
+        consoleLogLevel: "off"
+      })
 
       assert(
         result.length === 1,
@@ -109,10 +106,7 @@ describe("Model Validation", () => {
         // console.log(result)
       } catch (err) {
         assert.strictEqual(err.code, "REQUEST_VALIDATION_ERROR")
-        assert.strictEqual(
-          err.innerErrors[0].code,
-          "DOUBLE_FORWARD_SLASHES_IN_URL"
-        )
+        assert.strictEqual(err.innerErrors[0].code, "DOUBLE_FORWARD_SLASHES_IN_URL")
       }
     })
   })
@@ -170,8 +164,7 @@ describe("Model Validation", () => {
         result.validityStatus === false,
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
       )
-      const operationResult =
-        result.operations.CircularAnimal_IncorrectSibling_List
+      const operationResult = result.operations.CircularAnimal_IncorrectSibling_List
       if (operationResult === undefined) {
         throw new Error("operationResult === undefined")
       }
@@ -230,10 +223,7 @@ describe("Model Validation", () => {
       const result = await validate.validateExamples(specPath2, undefined, {
         consoleLogLevel: "off"
       })
-      assert(
-        result.length === 0,
-        `swagger "${specPath2}" contains model validation errors.`
-      )
+      assert(result.length === 0, `swagger "${specPath2}" contains model validation errors.`)
       // console.log(result)
     })
   })
@@ -245,10 +235,7 @@ describe("Model Validation", () => {
         consoleLogLevel: "off"
       })
       // console.dir(result, { depth: null })
-      assert(
-        result.length === 0,
-        `swagger "${specPath2}" contains model validation errors.`
-      )
+      assert(result.length === 0, `swagger "${specPath2}" contains model validation errors.`)
       // console.log(result)
     })
 
@@ -258,10 +245,7 @@ describe("Model Validation", () => {
         consoleLogLevel: "off"
       })
       // console.dir(result, { depth: null })
-      assert(
-        result.length === 0,
-        `swagger "${specPath2}" contains model validation errors.`
-      )
+      assert(result.length === 0, `swagger "${specPath2}" contains model validation errors.`)
       // console.log(result)
     })
   })
@@ -470,10 +454,7 @@ describe("Model Validation", () => {
         consoleLogLevel: "off"
       })
       // console.dir(result, { depth: null })
-      assert(
-        result.length === 0,
-        `swagger "${specPath2}" contains model validation errors.`
-      )
+      assert(result.length === 0, `swagger "${specPath2}" contains model validation errors.`)
       // console.log(result)
     })
   })
@@ -485,10 +466,7 @@ describe("Model Validation", () => {
         consoleLogLevel: "off"
       })
       // console.dir(result, { depth: null })
-      assert(
-        result.length === 0,
-        `swagger "${specPath2}" contains model validation errors.`
-      )
+      assert(result.length === 0, `swagger "${specPath2}" contains model validation errors.`)
       // console.log(result)
     })
   })
@@ -500,10 +478,7 @@ describe("Model Validation", () => {
         consoleLogLevel: "off"
       })
       // console.dir(result, { depth: null })
-      assert(
-        result.length === 0,
-        `swagger "${specPath2}" contains model validation errors.`
-      )
+      assert(result.length === 0, `swagger "${specPath2}" contains model validation errors.`)
       // console.log(result)
     })
   })

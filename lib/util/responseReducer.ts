@@ -1,11 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import { processValidationErrors, ValidationResult } from "./validationError"
-import { toModelErrors } from "./toModelErrors"
-import { ValidationResultSource } from "./validationResultSource"
+import { MutableStringMap } from "@ts-common/string-map"
+
 import { ModelValidationError } from "./modelValidationError"
-import { MutableStringMap } from '@ts-common/string-map'
+import { toModelErrors } from "./toModelErrors"
+import { processValidationErrors, ValidationResult } from "./validationError"
+import { ValidationResultSource } from "./validationResultSource"
 
 export interface Result {
   isValid?: unknown
@@ -17,9 +18,7 @@ export interface Result {
 export interface Scenario {
   isValid?: unknown
   readonly request?: Result
-  readonly responses?: {
-    [key in string | number]: Result
-  }
+  readonly responses?: { [key in string | number]: Result }
   error?: unknown
 }
 

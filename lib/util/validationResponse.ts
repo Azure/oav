@@ -1,11 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import * as pointer from "json-pointer"
-import { CommonError } from "./commonError"
-import { StringMap } from "@ts-common/string-map"
 import { FilePosition } from "@ts-common/source-map"
+import { StringMap } from "@ts-common/string-map"
+import * as pointer from "json-pointer"
 import { ValidationEntry } from "yasway"
+
+import { CommonError } from "./commonError"
 
 interface ValidationError {
   validationCategory: string
@@ -22,7 +23,6 @@ interface ValidationError {
 }
 
 export class ValidateResponse {
-
   private readonly mapper: StringMap<string> = {
     SWAGGER_SCHEMA_VALIDATION_ERROR: "M6000",
     INVALID_PARAMETER_COMBINATION: "M6001",
@@ -42,7 +42,9 @@ export class ValidateResponse {
   }
 
   public constructErrors(
-    validationError: CommonError, specPath: unknown, providerNamespace: unknown
+    validationError: CommonError,
+    specPath: unknown,
+    providerNamespace: unknown
   ): ValidationError[] {
     if (!validationError) {
       throw new Error("validationError cannot be null or undefined.")
@@ -85,9 +87,12 @@ export class ValidateResponse {
     if (!warnings) {
       throw new Error("validationError cannot be null or undefined.")
     }
-    return warnings.filter(warning => warning.code
-      && warning.code !== "EXTRA_REFERENCE_PROPERTIES"
-      && warning.code !== "UNUSED_DEFINITION")
+    return warnings.filter(
+      warning =>
+        warning.code &&
+        warning.code !== "EXTRA_REFERENCE_PROPERTIES" &&
+        warning.code !== "UNUSED_DEFINITION"
+    )
   }
 }
 

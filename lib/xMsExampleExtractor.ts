@@ -1,12 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
+import * as _ from "@ts-common/iterator"
+import { entries, keys, MutableStringMap, StringMap, values } from "@ts-common/string-map"
 import * as fs from "fs"
 import * as pathlib from "path"
-import { log } from "./util/logging"
-import { MutableStringMap, keys, StringMap, entries, values } from "@ts-common/string-map"
-import * as _ from "@ts-common/iterator"
 import swaggerParser from "swagger-parser"
+
+import { log } from "./util/logging"
 
 interface Options {
   output?: string
@@ -46,35 +47,41 @@ export class XMsExampleExtractor {
    *
    * @param {object} [options.output] Output folder for the generated examples.
    */
-  public constructor(
-    specPath: string,
-    recordings: string,
-    options: Options
-  ) {
-    if (specPath === null
-      || specPath === undefined
-      || typeof specPath.valueOf() !== "string"
-      || !specPath.trim().length) {
+  public constructor(specPath: string, recordings: string, options: Options) {
+    if (
+      specPath === null ||
+      specPath === undefined ||
+      typeof specPath.valueOf() !== "string" ||
+      !specPath.trim().length
+    ) {
       throw new Error(
-        "specPath is a required property of type string and it cannot be an empty string.")
+        "specPath is a required property of type string and it cannot be an empty string."
+      )
     }
 
-    if (recordings === null
-      || recordings === undefined
-      || typeof recordings.valueOf() !== "string"
-      || !recordings.trim().length) {
+    if (
+      recordings === null ||
+      recordings === undefined ||
+      typeof recordings.valueOf() !== "string" ||
+      !recordings.trim().length
+    ) {
       throw new Error(
-        "recordings is a required property of type string and it cannot be an empty string.")
+        "recordings is a required property of type string and it cannot be an empty string."
+      )
     }
 
     this.specPath = specPath
     this.recordings = recordings
-    if (!options) { options = {} }
+    if (!options) {
+      options = {}
+    }
     if (options.output === null || options.output === undefined) {
       options.output = process.cwd() + "/output"
     }
-    if (options.shouldResolveXmsExamples === null
-      || options.shouldResolveXmsExamples === undefined) {
+    if (
+      options.shouldResolveXmsExamples === null ||
+      options.shouldResolveXmsExamples === undefined
+    ) {
       options.shouldResolveXmsExamples = true
     }
     if (options.matchApiVersion === null || options.matchApiVersion === undefined) {
@@ -105,7 +112,7 @@ export class XMsExampleExtractor {
       let pathToMatch = path
       pathParams = {}
       if (searchResult !== null) {
-      for (const match of searchResult) {
+        for (const match of searchResult) {
           const splitRegEx = /[{}]/
           const pathParam = match.split(splitRegEx)[1]
 
@@ -115,7 +122,7 @@ export class XMsExampleExtractor {
               pathParams[pathParam] = part
             }
           }
-          pathToMatch = pathToMatch.replace(match, "/[^\/]+")
+          pathToMatch = pathToMatch.replace(match, "/[^/]+")
         }
       }
       let newPathToMatch = pathToMatch.replace(/\//g, "\\/")
@@ -140,9 +147,10 @@ export class XMsExampleExtractor {
 
         // if command-line included check for API version, validate api-version from URI in
         // recordings matches the api-version of the spec
-        if (!this.options.matchApiVersion
-          || (("api-version" in queryParams)
-            && queryParams["api-version"] === api.info.version)) {
+        if (
+          !this.options.matchApiVersion ||
+          ("api-version" in queryParams && queryParams["api-version"] === api.info.version)
+        ) {
           recordingPath = recordingPath.replace(/\?.*/, "")
           const recordingPathParts = recordingPath.split("/")
           const match = recordingPath.match(newPathToMatch)
@@ -165,13 +173,14 @@ export class XMsExampleExtractor {
               let fileName = fileNameArray[fileNameArray.length - 1]
               fileName = fileName.split(".json")[0]
               fileName = fileName.replace(/\//g, "-")
-              const exampleFileName = fileName
-                + "-"
-                + requestMethodFromRecording
-                + "-example-"
-                + pathIndex
-                + entryIndex
-                + ".json"
+              const exampleFileName =
+                fileName +
+                "-" +
+                requestMethodFromRecording +
+                "-example-" +
+                pathIndex +
+                entryIndex +
+                ".json"
               const ref = {
                 $ref: relativeExamplesPath + exampleFileName
               }
@@ -209,9 +218,8 @@ export class XMsExampleExtractor {
                   const bodyParamExample: MutableStringMap<unknown> = {}
                   bodyParamExample[bodyParamName] = bodyParamValue
 
-                  exampleL.parameters[bodyParamName] = bodyParamValue !== "" ?
-                    JSON.parse(bodyParamValue) :
-                    ""
+                  exampleL.parameters[bodyParamName] =
+                    bodyParamValue !== "" ? JSON.parse(bodyParamValue) : ""
                 }
               }
               for (const {} of keys(infoFromOperation.responses)) {
@@ -225,10 +233,7 @@ export class XMsExampleExtractor {
               const examplePath = pathlib.join(outputExamples, exampleFileName)
               const dir = pathlib.dirname(examplePath)
               mkdirRecursiveSync(dir)
-              fs.writeFileSync(
-                examplePath,
-                JSON.stringify(exampleL, null, 2)
-              )
+              fs.writeFileSync(examplePath, JSON.stringify(exampleL, null, 2))
             }
           }
         }
@@ -293,7 +298,9 @@ export class XMsExampleExtractor {
     try {
       fs.mkdirSync(dir)
     } catch (e) {
-      if (e.code !== "EEXIST") { throw e }
+      if (e.code !== "EEXIST") {
+        throw e
+      }
     }
   }
 
@@ -306,7 +313,7 @@ export class XMsExampleExtractor {
       } else {
         fileList.push(pathlib.join(dir, file))
       }
-    });
+    })
     return fileList
   }
 }

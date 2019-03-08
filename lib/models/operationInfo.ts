@@ -25,7 +25,6 @@
  *
  */
 export class OperationInfo {
-
   /**
    * Defines the metadata of OperationInfo
    *
@@ -44,18 +43,18 @@ export class OperationInfo {
             required: true,
             serializedName: "operationId",
             type: {
-              name: "String",
-            },
+              name: "String"
+            }
           },
           apiVersion: {
             required: true,
             serializedName: "apiVersion",
             type: {
-              name: "String",
-            },
-          },
-        },
-      },
+              name: "String"
+            }
+          }
+        }
+      }
     }
   }
 }

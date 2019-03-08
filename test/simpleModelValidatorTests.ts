@@ -1,8 +1,9 @@
-import { SwaggerObject } from "yasway"
-import assert = require("assert")
-import { ModelValidator } from "../lib/validators/modelValidator"
 import { parse } from "@ts-common/json-parser"
+import assert = require("assert")
+import { SwaggerObject } from "yasway"
+
 import { getErrorsFromModelValidation } from "../lib/util/getErrorsFromModelValidation"
+import { ModelValidator } from "../lib/validators/modelValidator"
 
 describe("simple model validation tests", () => {
   it("semantic validation without generated CloudError", async () => {

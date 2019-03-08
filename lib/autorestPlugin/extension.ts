@@ -3,20 +3,21 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as linq from "linq"
-import * as jsonPath from "jsonpath"
-import * as yaml from "js-yaml"
-import { log } from "../util/logging"
-import * as specValidator from "../validators/specValidator"
-import { IAutoRestPluginInitiator } from
-  "@microsoft.azure/autorest-extension-base/dist/lib/extension-base"
 import * as extensionBase from "@microsoft.azure/autorest-extension-base"
-import { SourceLocation } from
-  "@microsoft.azure/autorest-extension-base/dist/lib/types"
-import { CommonError } from "../util/commonError"
-import { SwaggerObject } from "yasway"
-import { ModelValidator } from "../validators/modelValidator"
+// tslint:disable-next-line: max-line-length no-submodule-imports
+import { IAutoRestPluginInitiator } from "@microsoft.azure/autorest-extension-base/dist/lib/extension-base"
+// tslint:disable-next-line: no-submodule-imports
+import { SourceLocation } from "@microsoft.azure/autorest-extension-base/dist/lib/types"
 import { entries } from "@ts-common/string-map"
+import * as yaml from "js-yaml"
+import * as jsonPath from "jsonpath"
+import * as linq from "linq"
+import { SwaggerObject } from "yasway"
+
+import { CommonError } from "../util/commonError"
+import { log } from "../util/logging"
+import { ModelValidator } from "../validators/modelValidator"
+import * as specValidator from "../validators/specValidator"
 
 export const extension = new extensionBase.AutoRestExtension()
 
@@ -31,8 +32,8 @@ class FormattedOutput {
     public readonly details: {},
     public readonly code: string[],
     public readonly text: string,
-    public readonly source: SourceLocation[]) {
-  }
+    public readonly source: SourceLocation[]
+  ) {}
 }
 
 export type Channel = "information" | "warning" | "error" | "debug" | "verbose"
@@ -49,7 +50,8 @@ export interface Message {
  * Returns a promise with the examples validation of the swagger.
  */
 async function analyzeSwagger(
-  swaggerFileName: string, autoRestApi: extensionBase.Host
+  swaggerFileName: string,
+  autoRestApi: extensionBase.Host
 ): Promise<void> {
   const swaggerFile = await autoRestApi.ReadFile(swaggerFileName)
   const swagger = yaml.safeLoad(swaggerFile)
@@ -60,7 +62,7 @@ async function analyzeSwagger(
       Text: result.text,
       Details: result.details,
       Key: result.code,
-      Source: result.source,
+      Source: result.source
     })
   }
   // console.error(JSON.stringify(exampleValidationResults, null, 2))
@@ -70,31 +72,36 @@ extension.Add(
   modelValidatorPluginName,
   async (autoRestApi: IAutoRestPluginInitiator): Promise<void> => {
     const swaggerFileNames = await autoRestApi.ListInputs()
-    const promises = swaggerFileNames.map(
-      async (swaggerFileName) => analyzeSwagger(swaggerFileName, autoRestApi))
+    const promises = swaggerFileNames.map(async swaggerFileName =>
+      analyzeSwagger(swaggerFileName, autoRestApi)
+    )
     await Promise.all(promises)
-  })
+  }
+)
 
 export interface Options extends specValidator.Options {
   consoleLogLevel?: unknown
 }
 
 export async function openApiValidationExample(
-  swagger: unknown, swaggerFileName: string, options?: Options
+  swagger: unknown,
+  swaggerFileName: string,
+  options?: Options
 ): Promise<Message[]> {
   const formattedResult: FormattedOutput[] = []
-  if (!options) { options = {} }
+  if (!options) {
+    options = {}
+  }
   options.consoleLogLevel = "off"
   log.consoleLogLevel = options.consoleLogLevel
-  const specVal = new ModelValidator(
-    swaggerFileName, swagger as SwaggerObject, options)
+  const specVal = new ModelValidator(swaggerFileName, swagger as SwaggerObject, options)
   // console.error(JSON.stringify(swagger, null, 2))
   await specVal.initialize()
   try {
     specVal.validateOperations()
     const specValidationResult = specVal.specValidationResult
     for (const [op, operation] of entries(specValidationResult.operations)) {
-      const xmsExamplesNode = operation["x-ms-examples"];
+      const xmsExamplesNode = operation["x-ms-examples"]
       if (xmsExamplesNode === undefined) {
         throw new Error("xmsExamplesNode is undefined")
       }
@@ -104,10 +111,11 @@ export async function openApiValidationExample(
         if (scenarioItem.isValid === false) {
           // get path to x-ms-examples in swagger
           const xmsexPath = linq
-            .from(jsonPath.nodes(
-              swagger, `$.paths[*][?(@.operationId==='${op}')]["x-ms-examples"]`))
+            .from(
+              jsonPath.nodes(swagger, `$.paths[*][?(@.operationId==='${op}')]["x-ms-examples"]`)
+            )
             .select(x => x.path)
-            .firstOrDefault();
+            .firstOrDefault()
           if (!xmsexPath) {
             throw new Error("Model Validator: Path to x-ms-examples not found.")
           }
@@ -117,7 +125,8 @@ export async function openApiValidationExample(
             { scenarioItem, scenario },
             [modelValidationCategory],
             "Model validator found issue (see details).",
-            [{ document: swaggerFileName, Position: { path: xmsexPath } }])
+            [{ document: swaggerFileName, Position: { path: xmsexPath } }]
+          )
           formattedResult.push(result)
 
           // request
@@ -138,7 +147,7 @@ export async function openApiValidationExample(
                 message: error.message,
                 id: error.id,
                 validationCategory: modelValidationCategory,
-                innerErrors: innerError,
+                innerErrors: innerError
               }
               if (error.code === undefined || error.id === undefined) {
                 throw new Error("Invalid error.")
@@ -147,19 +156,20 @@ export async function openApiValidationExample(
                 "error",
                 resultDetails,
                 [error.code, error.id, modelValidationCategory],
-                innerError.message
-                  + ". \nScenario: "
-                  + scenario
-                  + ". \nDetails: "
-                  + JSON.stringify(innerError.errors, null, 2)
-                  + "\nMore info: "
-                  + openAPIDocUrl
-                  + "#"
-                  + error.id.toLowerCase()
-                  + "-"
-                  + error.code.toLowerCase()
-                  + "\n",
-                [{ document: swaggerFileName, Position: { path } }])
+                innerError.message +
+                  ". \nScenario: " +
+                  scenario +
+                  ". \nDetails: " +
+                  JSON.stringify(innerError.errors, null, 2) +
+                  "\nMore info: " +
+                  openAPIDocUrl +
+                  "#" +
+                  error.id.toLowerCase() +
+                  "-" +
+                  error.code.toLowerCase() +
+                  "\n",
+                [{ document: swaggerFileName, Position: { path } }]
+              )
               formattedResult.push(result)
             }
           }
@@ -180,7 +190,7 @@ export async function openApiValidationExample(
                   message: error.message,
                   id: error.id,
                   validationCategory: modelValidationCategory,
-                  innerErrors: innerError,
+                  innerErrors: innerError
                 }
                 if (error.code === undefined || error.id === undefined) {
                   throw new Error("Invalid error.")
@@ -189,25 +199,29 @@ export async function openApiValidationExample(
                   "error",
                   resultDetails,
                   [error.code, error.id, modelValidationCategory],
-                  innerError.message
-                    + ". \nScenario: "
-                    + scenario
-                    + ". \nDetails: "
-                    + JSON.stringify(innerError.errors, null, 2)
-                    + "\nMore info: "
-                    + openAPIDocUrl
-                    + "#"
-                    + error.id.toLowerCase()
-                    + "-"
-                    + error.code.toLowerCase() + "\n",
-                  [{
-                    document: swaggerFileName,
-                    Position: {
-                      path: xmsexPath
-                        .slice(0, xmsexPath.length - 1)
-                        .concat(["responses", responseCode]),
-                    },
-                  }])
+                  innerError.message +
+                    ". \nScenario: " +
+                    scenario +
+                    ". \nDetails: " +
+                    JSON.stringify(innerError.errors, null, 2) +
+                    "\nMore info: " +
+                    openAPIDocUrl +
+                    "#" +
+                    error.id.toLowerCase() +
+                    "-" +
+                    error.code.toLowerCase() +
+                    "\n",
+                  [
+                    {
+                      document: swaggerFileName,
+                      Position: {
+                        path: xmsexPath
+                          .slice(0, xmsexPath.length - 1)
+                          .concat(["responses", responseCode])
+                      }
+                    }
+                  ]
+                )
                 formattedResult.push(result)
               }
             }
@@ -229,6 +243,7 @@ export async function openApiValidationExample(
 function convertIndicesFromStringToNumbers(path: string[]): Array<string | number> {
   const result: Array<string | number> = path.slice()
   for (let i = 1; i < result.length; ++i) {
+    // tslint:disable-next-line: radix
     const num = parseInt(result[i] as string)
     if (!isNaN(num) && result[i - 1] === "parameters") {
       result[i] = num

@@ -4,8 +4,9 @@
  * license information.
  */
 
-import { LiveValidationError } from "./liveValidationError"
 import { Operation } from "yasway"
+
+import { LiveValidationError } from "./liveValidationError"
 
 /**
  * @class

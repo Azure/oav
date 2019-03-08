@@ -11,7 +11,7 @@ export function stripBOM(content: Buffer | string): string {
   if (Buffer.isBuffer(content)) {
     content = content.toString()
   }
-  if (content.charCodeAt(0) === 0xFEFF || content.charCodeAt(0) === 0xFFFE) {
+  if (content.charCodeAt(0) === 0xfeff || content.charCodeAt(0) === 0xfffe) {
     content = content.slice(1)
   }
   return content
@@ -29,26 +29,22 @@ export function stripBOM(content: Buffer | string): string {
 export function parseContent(
   filePath: string,
   fileContent: string,
-  reportError: jsonParser.ReportError,
+  reportError: jsonParser.ReportError
 ): SwaggerObject {
   try {
-  const sanitizedContent = stripBOM(fileContent)
-  if (/.*\.json$/gi.test(filePath)) {
-    return jsonParser.parse(
-      filePath,
-      sanitizedContent,
-      reportError,
-    ) as SwaggerObject
-  } else if (/.*\.ya?ml$/gi.test(filePath)) {
-    return yaml.safeLoad(sanitizedContent)
-  } else {
-    const msg =
+    const sanitizedContent = stripBOM(fileContent)
+    if (/.*\.json$/gi.test(filePath)) {
+      return jsonParser.parse(filePath, sanitizedContent, reportError) as SwaggerObject
+    } else if (/.*\.ya?ml$/gi.test(filePath)) {
+      return yaml.safeLoad(sanitizedContent)
+    } else {
+      const msg =
         `We currently support "*.json" and "*.yaml | *.yml" file formats for` +
         `validating swaggers. \n The current file extension in "${filePath}" ` +
         `is not supported.`
-    throw new Error(msg)
-  }
+      throw new Error(msg)
+    }
   } catch (e) {
     throw new Error(`Unable to parse swagger, inner error: ${e.message}`)
-        }
+  }
 }

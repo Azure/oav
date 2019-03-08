@@ -1,41 +1,35 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import * as _ from "lodash"
-import * as path from "path"
-import * as jsonRefs from "../util/jsonRefs"
-import * as utils from "../util/utils"
-import * as C from "../util/constants"
-import { log } from "../util/logging"
-import { PolymorphicTree } from "./polymorphicTree"
-import {
-  SwaggerObject,
-  ParametersDefinitionsObject,
-  ParameterObject,
-  SchemaObject,
-  DefinitionsObject,
-  PathsObject,
-  OperationObject
-} from "yasway"
-import { defaultIfUndefinedOrNull } from "../util/defaultIfUndefinedOrNull"
-import {
-  MutableStringMap,
-  Entry,
-  entries,
-  values,
-  keys,
-  StringMap
-} from "@ts-common/string-map"
-import * as sm from "@ts-common/string-map"
-import { resolveNestedDefinitions } from "./resolveNestedDefinitions"
-import { getOperations } from "../util/methods"
-import { map, toArray, isArray } from "@ts-common/iterator"
-import { arrayMap } from "@ts-common/source-map"
 import { Suppression } from "@azure/openapi-markdown"
-import * as jsonUtils from "../util/jsonUtils"
+import { isArray, map, toArray } from "@ts-common/iterator"
 import * as jsonParser from "@ts-common/json-parser"
 import * as ps from "@ts-common/property-set"
-import { DocCache } from '../util/documents';
+import { arrayMap } from "@ts-common/source-map"
+import * as sm from "@ts-common/string-map"
+import * as _ from "lodash"
+import * as path from "path"
+import {
+  DefinitionsObject,
+  OperationObject,
+  ParameterObject,
+  ParametersDefinitionsObject,
+  PathsObject,
+  SchemaObject,
+  SwaggerObject
+} from "yasway"
+
+import * as C from "../util/constants"
+import { defaultIfUndefinedOrNull } from "../util/defaultIfUndefinedOrNull"
+import { DocCache } from "../util/documents"
+import * as jsonRefs from "../util/jsonRefs"
+import * as jsonUtils from "../util/jsonUtils"
+import { log } from "../util/logging"
+import { getOperations } from "../util/methods"
+import * as utils from "../util/utils"
+
+import { PolymorphicTree } from "./polymorphicTree"
+import { resolveNestedDefinitions } from "./resolveNestedDefinitions"
 
 const ErrorCodes = C.ErrorCodes
 
@@ -70,9 +64,9 @@ export class SpecResolver {
 
   private readonly specDir: unknown
 
-  private readonly visitedEntities: MutableStringMap<SchemaObject> = {}
+  private readonly visitedEntities: sm.MutableStringMap<SchemaObject> = {}
 
-  private readonly resolvedAllOfModels: MutableStringMap<SchemaObject> = {}
+  private readonly resolvedAllOfModels: sm.MutableStringMap<SchemaObject> = {}
 
   private readonly options: Options
 
@@ -128,11 +122,7 @@ export class SpecResolver {
       )
     }
 
-    if (
-      specInJson === null ||
-      specInJson === undefined ||
-      typeof specInJson !== "object"
-    ) {
+    if (specInJson === null || specInJson === undefined || typeof specInJson !== "object") {
       throw new Error("specInJson is a required property of type object")
     }
     this.specInJson = specInJson
@@ -151,10 +141,7 @@ export class SpecResolver {
       true
     )
 
-    if (
-      options.shouldResolveAllOf === null ||
-      options.shouldResolveAllOf === undefined
-    ) {
+    if (options.shouldResolveAllOf === null || options.shouldResolveAllOf === undefined) {
       if (!_.isUndefined(specInJson.definitions)) {
         options.shouldResolveAllOf = true
       }
@@ -264,7 +251,7 @@ export class SpecResolver {
     suppression: Suppression | undefined,
     doc?: object,
     docPath?: string,
-    filterType?: string,
+    filterType?: string
   ): Promise<void> {
     let docDir
 
@@ -289,14 +276,10 @@ export class SpecResolver {
     }
 
     const allRefsRemoteRelative = jsonRefs.findRefs(doc, options)
-    const e = entries(allRefsRemoteRelative as StringMap<RefDetails>)
+    const e = sm.entries(allRefsRemoteRelative as sm.StringMap<RefDetails>)
     const promiseFactories = toArray(
-      map(
-        e,
-        ([refName, refDetails]) =>
-          async () => await this.resolveRelativeReference(
-            refName, refDetails, doc, docPath, suppression
-          )
+      map(e, ([refName, refDetails]) => async () =>
+        this.resolveRelativeReference(refName, refDetails, doc, docPath, suppression)
       )
     )
     if (promiseFactories.length) {
@@ -312,12 +295,8 @@ export class SpecResolver {
     // unify x-ms-paths into paths
     const xmsPaths = this.specInJson["x-ms-paths"]
     const paths = this.specInJson.paths as PathsObject
-    if (
-      xmsPaths &&
-      xmsPaths instanceof Object &&
-      toArray(keys(xmsPaths)).length > 0
-    ) {
-      for (const [property, v] of entries(xmsPaths)) {
+    if (xmsPaths && xmsPaths instanceof Object && toArray(sm.keys(xmsPaths)).length > 0) {
+      for (const [property, v] of sm.entries(xmsPaths)) {
         paths[property] = v
       }
       this.specInJson.paths = utils.mergeObjects(xmsPaths, paths)
@@ -346,27 +325,19 @@ export class SpecResolver {
     suppression: Suppression | undefined
   ): Promise<void> {
     if (!refName || (refName && typeof refName.valueOf() !== "string")) {
-      throw new Error(
-        'refName cannot be null or undefined and must be of type "string".'
-      )
+      throw new Error('refName cannot be null or undefined and must be of type "string".')
     }
 
     if (!refDetails || (refDetails && !(refDetails instanceof Object))) {
-      throw new Error(
-        'refDetails cannot be null or undefined and must be of type "object".'
-      )
+      throw new Error('refDetails cannot be null or undefined and must be of type "object".')
     }
 
     if (!doc || (doc && !(doc instanceof Object))) {
-      throw new Error(
-        'doc cannot be null or undefined and must be of type "object".'
-      )
+      throw new Error('doc cannot be null or undefined and must be of type "object".')
     }
 
     if (!docPath || (docPath && typeof docPath.valueOf() !== "string")) {
-      throw new Error(
-        'docPath cannot be null or undefined and must be of type "string".'
-      )
+      throw new Error('docPath cannot be null or undefined and must be of type "string".')
     }
 
     const node = refDetails.def
@@ -388,8 +359,7 @@ export class SpecResolver {
       const regex = /.*x-ms-examples.*/gi
       if (
         this.options.shouldResolveXmsExamples ||
-        (!this.options.shouldResolveXmsExamples &&
-          slicedRefName.match(regex) === null)
+        (!this.options.shouldResolveXmsExamples && slicedRefName.match(regex) === null)
       ) {
         // TODO: doc should have a type
         // We set a function `() => result` instead of an object `result` to avoid
@@ -402,22 +372,13 @@ export class SpecResolver {
       node.$ref = parsedReference.localReference.value
       // TODO: doc should have a type
       utils.setObject(doc as {}, slicedRefName, node)
-      const slicedLocalReferenceValue = parsedReference.localReference.value.slice(
-        1
-      )
+      const slicedLocalReferenceValue = parsedReference.localReference.value.slice(1)
       let referencedObj = this.visitedEntities[slicedLocalReferenceValue]
       if (!referencedObj) {
         // We get the definition/parameter from the relative file and then add it (make it local)
         // to the doc (i.e. self.specInJson) being processed.
-        referencedObj = utils.getObject(
-          result,
-          slicedLocalReferenceValue
-        ) as SchemaObject
-        utils.setObject(
-          this.specInJson,
-          slicedLocalReferenceValue,
-          referencedObj
-        )
+        referencedObj = utils.getObject(result, slicedLocalReferenceValue) as SchemaObject
+        utils.setObject(this.specInJson, slicedLocalReferenceValue, referencedObj)
         this.visitedEntities[slicedLocalReferenceValue] = referencedObj
         await this.resolveRelativePaths(suppression, referencedObj, docPath, "all")
         // After resolving a model definition, if there are models that have an allOf on that model
@@ -432,7 +393,7 @@ export class SpecResolver {
           const definitions = result.definitions
           const unresolvedDefinitions: Array<() => Promise<void>> = []
 
-          const processDefinition = ([defName, def]: Entry<SchemaObject>) => {
+          const processDefinition = ([defName, def]: sm.Entry<SchemaObject>) => {
             unresolvedDefinitions.push(async () => {
               const allOf = def.allOf
               if (allOf) {
@@ -442,11 +403,7 @@ export class SpecResolver {
                 if (matchFound) {
                   const slicedDefinitionRef = `/definitions/${defName}`
                   const definitionObj = definitions[defName]
-                  utils.setObject(
-                    this.specInJson,
-                    slicedDefinitionRef,
-                    definitionObj
-                  )
+                  utils.setObject(this.specInJson, slicedDefinitionRef, definitionObj)
                   this.visitedEntities[slicedDefinitionRef] = definitionObj
                   await this.resolveRelativePaths(suppression, definitionObj, docPath, "all")
                 }
@@ -454,7 +411,7 @@ export class SpecResolver {
             })
           }
 
-          for (const entry of entries(result.definitions)) {
+          for (const entry of sm.entries(result.definitions)) {
             processDefinition(entry)
           }
 
@@ -471,7 +428,7 @@ export class SpecResolver {
   private resolveAllOfInDefinitions(): void {
     const spec = this.specInJson
     const definitions = spec.definitions as DefinitionsObject
-    for (const [modelName, model] of entries(definitions)) {
+    for (const [modelName, model] of sm.entries(definitions)) {
       const modelRef = "/definitions/" + modelName
       this.resolveAllOfInModel(model, modelRef)
     }
@@ -481,22 +438,15 @@ export class SpecResolver {
    * Resolves the "allOf" array present in swagger model definitions by composing all the properties
    * of the parent model into the child model.
    */
-  private resolveAllOfInModel(
-    model: SchemaObject,
-    modelRef: string | undefined
-  ) {
+  private resolveAllOfInModel(model: SchemaObject, modelRef: string | undefined) {
     const spec = this.specInJson
 
     if (!model || (model && typeof model !== "object")) {
-      throw new Error(
-        `model cannot be null or undefined and must of type "object".`
-      )
+      throw new Error(`model cannot be null or undefined and must of type "object".`)
     }
 
     if (!modelRef || (modelRef && typeof modelRef.valueOf() !== "string")) {
-      throw new Error(
-        `model cannot be null or undefined and must of type "string".`
-      )
+      throw new Error(`model cannot be null or undefined and must of type "string".`)
     }
 
     if (modelRef.startsWith("#")) {
@@ -509,9 +459,7 @@ export class SpecResolver {
           const ref = item.$ref
           const slicedRef = ref ? ref.slice(1) : undefined
           const referencedModel =
-            slicedRef === undefined
-              ? item
-              : (utils.getObject(spec, slicedRef) as SchemaObject)
+            slicedRef === undefined ? item : (utils.getObject(spec, slicedRef) as SchemaObject)
           if (referencedModel.allOf) {
             this.resolveAllOfInModel(referencedModel, slicedRef)
           }
@@ -536,10 +484,7 @@ export class SpecResolver {
    *
    * @return {object} returns the merged child object
    */
-  private mergeParentAllOfInChild(
-    parent: SchemaObject,
-    child: SchemaObject
-  ): SchemaObject {
+  private mergeParentAllOfInChild(parent: SchemaObject, child: SchemaObject): SchemaObject {
     if (!parent || (parent && typeof parent !== "object")) {
       throw new Error(`parent must be of type "object".`)
     }
@@ -575,7 +520,7 @@ export class SpecResolver {
   private deleteReferencesToAllOf(): void {
     const spec = this.specInJson
     const definitions = spec.definitions as DefinitionsObject
-    for (const model of values(definitions)) {
+    for (const model of sm.values(definitions)) {
       if (model.allOf) {
         delete model.allOf
       }
@@ -589,12 +534,12 @@ export class SpecResolver {
     const spec = this.specInJson
     const definitions = spec.definitions as DefinitionsObject
 
-    for (const model of values(definitions)) {
+    for (const model of sm.values(definitions)) {
       if (
         !model.additionalProperties &&
         !(
           !model.properties ||
-          (model.properties && toArray(keys(model.properties)).length === 0)
+          (model.properties && toArray(sm.keys(model.properties)).length === 0)
         )
       ) {
         model.additionalProperties = false
@@ -620,12 +565,10 @@ export class SpecResolver {
   private resolveParameterizedHost(): void {
     const spec = this.specInJson
     const parameterizedHost = spec[C.xmsParameterizedHost]
-    const hostParameters = parameterizedHost
-      ? parameterizedHost.parameters
-      : null
+    const hostParameters = parameterizedHost ? parameterizedHost.parameters : null
     if (parameterizedHost && hostParameters) {
       const paths = spec.paths
-      for (const verbs of values(paths)) {
+      for (const verbs of sm.values(paths)) {
         for (const operation of getOperations(verbs)) {
           let operationParameters = operation.parameters
           if (!operationParameters) {
@@ -649,7 +592,7 @@ export class SpecResolver {
     const definitions = spec.definitions
 
     // scan definitions and properties of every model in definitions
-    for (const model of values(definitions)) {
+    for (const model of sm.values(definitions)) {
       utils.relaxModelLikeEntities(model)
     }
 
@@ -671,12 +614,7 @@ export class SpecResolver {
         elements.some(e => e.toLowerCase() === "application/octet-stream")
 
       const resolveParameter2 = (param: ParameterObject) => {
-        if (
-          param.in &&
-          param.in === "body" &&
-          param.schema &&
-          !octetStream(consumes)
-        ) {
+        if (param.in && param.in === "body" && param.schema && !octetStream(consumes)) {
           param.schema = utils.relaxModelLikeEntities(param.schema)
         } else {
           param = utils.relaxEntityType(param, param.required)
@@ -687,12 +625,8 @@ export class SpecResolver {
         operation.parameters.forEach(resolveParameter2)
       }
       // scan every response in the operation
-      for (const response of values(operation.responses)) {
-        if (
-          response.schema &&
-          !octetStream(produces) &&
-          response.schema.type !== "file"
-        ) {
+      for (const response of sm.values(operation.responses)) {
+        if (response.schema && !octetStream(produces) && response.schema.type !== "file") {
           response.schema = utils.relaxModelLikeEntities(response.schema)
         }
       }
@@ -707,7 +641,7 @@ export class SpecResolver {
     }
 
     // scan every operation
-    for (const pathObj of values(spec.paths)) {
+    for (const pathObj of sm.values(spec.paths)) {
       for (const operation of getOperations(pathObj)) {
         resolveOperation(operation)
       }
@@ -718,14 +652,11 @@ export class SpecResolver {
     }
     // scan global parameters
     const parameters = spec.parameters as ParametersDefinitionsObject
-    for (const [paramName, parameter] of entries(parameters)) {
+    for (const [paramName, parameter] of sm.entries(parameters)) {
       if (parameter.in && parameter.in === "body" && parameter.schema) {
         parameter.schema = utils.relaxModelLikeEntities(parameter.schema)
       }
-      parameters[paramName] = utils.relaxEntityType(
-        parameter,
-        parameter.required
-      )
+      parameters[paramName] = utils.relaxEntityType(parameter, parameter.required)
     }
   }
 
@@ -761,16 +692,12 @@ export class SpecResolver {
     const subTreeMap = new Map()
     const references = jsonRefs.findRefs(spec)
 
-    for (const [modelName, model] of entries(definitions)) {
+    for (const [modelName, model] of sm.entries(definitions)) {
       const discriminator = model.discriminator
       if (discriminator) {
         let rootNode = subTreeMap.get(modelName)
         if (!rootNode) {
-          rootNode = this.createPolymorphicTree(
-            modelName,
-            discriminator,
-            subTreeMap
-          )
+          rootNode = this.createPolymorphicTree(modelName, discriminator, subTreeMap)
         }
         this.updateReferencesWithOneOf(subTreeMap, references)
       }
@@ -792,11 +719,11 @@ export class SpecResolver {
     const definitions = spec.definitions as DefinitionsObject
 
     // scan definitions and properties of every model in definitions
-    for (const [defName, model] of entries(definitions)) {
+    for (const [defName, model] of sm.entries(definitions)) {
       definitions[defName] = utils.allowNullableTypes(model)
     }
     // scan every operation response
-    for (const pathObj of values(spec.paths)) {
+    for (const pathObj of sm.values(spec.paths)) {
       // need to handle parameters at this level
       if (pathObj.parameters) {
         pathObj.parameters = arrayMap(pathObj.parameters, utils.allowNullableParams)
@@ -807,7 +734,7 @@ export class SpecResolver {
           operation.parameters = arrayMap(operation.parameters, utils.allowNullableParams)
         }
         // going through responses
-        for (const response of values(operation.responses)) {
+        for (const response of sm.values(operation.responses)) {
           if (response.schema && response.schema.type !== "file") {
             response.schema = utils.allowNullableTypes(response.schema)
           }
@@ -817,7 +744,7 @@ export class SpecResolver {
 
     // scan parameter definitions
     const parameters = spec.parameters as ParametersDefinitionsObject
-    for (const [parameterName, parameter] of entries(parameters)) {
+    for (const [parameterName, parameter] of sm.entries(parameters)) {
       parameters[parameterName] = utils.allowNullableParams(parameter)
     }
   }
@@ -836,7 +763,7 @@ export class SpecResolver {
    */
   private updateReferencesWithOneOf(
     subTreeMap: Map<string, PolymorphicTree>,
-    references: StringMap<jsonRefs.UnresolvedRefDetails>
+    references: sm.StringMap<jsonRefs.UnresolvedRefDetails>
   ): void {
     const spec = this.specInJson
 
@@ -909,11 +836,7 @@ export class SpecResolver {
       )
     }
 
-    if (
-      subTreeMap === null ||
-      subTreeMap === undefined ||
-      !(subTreeMap instanceof Map)
-    ) {
+    if (subTreeMap === null || subTreeMap === undefined || !(subTreeMap instanceof Map)) {
       throw new Error("subTreeMap is a required property of type Map.")
     }
 
@@ -965,11 +888,7 @@ export class SpecResolver {
 
     const children = this.findChildren(name)
     for (const childName of children) {
-      const childObj = this.createPolymorphicTree(
-        childName,
-        discriminator,
-        subTreeMap
-      )
+      const childObj = this.createPolymorphicTree(childName, discriminator, subTreeMap)
       rootNode.addChildByObject(childObj)
     }
     // Adding the created sub tree in the subTreeMap for future use.
@@ -1005,16 +924,14 @@ export class SpecResolver {
         definition.allOf.forEach(item => {
           // TODO: What if there is an inline definition instead of $ref
           if (item.$ref && item.$ref === reference) {
-            log.debug(
-              `reference found: ${reference} in definition: ${definitionName}`
-            )
+            log.debug(`reference found: ${reference} in definition: ${definitionName}`)
             result.add(definitionName)
           }
         })
       }
     }
 
-    for (const definitionName of keys(definitions)) {
+    for (const definitionName of sm.keys(definitions)) {
       findReferences(definitionName)
     }
 

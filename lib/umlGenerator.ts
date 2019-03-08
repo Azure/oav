@@ -1,10 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import yuml2svg = require("yuml2svg")
-import { log } from "./util/logging"
-import { SwaggerObject, DefinitionsObject, SchemaObject } from "yasway"
 import { entries } from "@ts-common/string-map"
+import { DefinitionsObject, SchemaObject, SwaggerObject } from "yasway"
+import yuml2svg = require("yuml2svg")
+
+import { log } from "./util/logging"
 
 export interface Options {
   readonly direction?: unknown
@@ -18,7 +19,6 @@ export interface Options {
  * Generates a Uml Diagram in svg format.
  */
 export class UmlGenerator {
-
   private readonly specInJson: SwaggerObject
 
   private graphDefinition: string
@@ -52,9 +52,10 @@ export class UmlGenerator {
     let svg = ""
 
     log.info(this.graphDefinition)
-    svg = yuml2svg(
-      this.graphDefinition, false, { dir: this.options.direction, type: "class" }
-    ) as string
+    svg = yuml2svg(this.graphDefinition, false, {
+      dir: this.options.direction,
+      type: "class"
+    }) as string
     // console.log(svg)
     return svg
   }
@@ -119,9 +120,10 @@ export class UmlGenerator {
   }
 
   private getPropertyType(
-    modelName: unknown, property: SchemaObject, references: string[]
+    modelName: unknown,
+    property: SchemaObject,
+    references: string[]
   ): string {
-
     const type = property.type
     switch (type) {
       case "string":

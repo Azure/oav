@@ -1,19 +1,15 @@
-import { SwaggerObject } from "yasway"
-import { SemanticValidator } from '../lib/validators/semanticValidator';
 import * as assert from "assert"
+import { SwaggerObject } from "yasway"
+
+import { SemanticValidator } from "../lib/validators/semanticValidator"
 
 describe("Simple semantic validation", () => {
-
   it("a valid minimal swagger should pass semantic validation", async () => {
     const spec: SwaggerObject = {
       swagger: "2.0",
       info: { title: "sometitle", version: "2018" }
     }
-    const semanticValidator = new SemanticValidator(
-      "some/file/path",
-      spec,
-      {}
-    )
+    const semanticValidator = new SemanticValidator("some/file/path", spec, {})
     const api = await semanticValidator.initialize()
     const result = await semanticValidator.validateSpec()
     assert.notStrictEqual(api, undefined)
@@ -29,19 +25,14 @@ describe("Simple semantic validation", () => {
           get: {
             responses: {
               default: {
-                description: "Default response.",
+                description: "Default response."
               }
             }
           }
         }
-      },
-    }
-    const semanticValidator = new SemanticValidator(
-      "some/file/path",
-      spec,
-      {
       }
-    )
+    }
+    const semanticValidator = new SemanticValidator("some/file/path", spec, {})
     const api = await semanticValidator.initialize()
     const result = await semanticValidator.validateSpec()
     assert.notStrictEqual(api, undefined)

@@ -11,7 +11,7 @@ export {
   validateExamples,
   validateExamplesInCompositeSpec,
   resolveSpec,
-  resolveCompositeSpec,
+  resolveCompositeSpec
 } from "./lib/validate"
 
 export { BaseValidationError } from "./lib/util/baseValidationError"

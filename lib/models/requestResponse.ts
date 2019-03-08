@@ -39,7 +39,6 @@
  *
  */
 export class RequestResponse {
-
   /**
    * Defines the metadata of RequestResponse
    *
@@ -59,19 +58,19 @@ export class RequestResponse {
             serializedName: "liveRequest",
             type: {
               name: "Composite",
-              className: "LiveRequest",
-            },
+              className: "LiveRequest"
+            }
           },
           liveResponse: {
             required: true,
             serializedName: "liveResponse",
             type: {
               name: "Composite",
-              className: "LiveResponse",
-            },
-          },
-        },
-      },
+              className: "LiveResponse"
+            }
+          }
+        }
+      }
     }
   }
 }

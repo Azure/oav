@@ -4,9 +4,10 @@
 /* tslint:disable:no-console */
 
 import assert from "assert"
-import * as validate from "../lib/validate"
-import * as constants from "../lib/util/constants"
 import * as path from "path"
+
+import * as constants from "../lib/util/constants"
+import * as validate from "../lib/validate"
 
 const testPath = path.join(__dirname, "..", "..", "test")
 
@@ -16,7 +17,9 @@ describe("Semantic validation", () => {
     const result = await validate.validateSpec(specPath, undefined)
     // console.dir(result, { depth: null })
     assert(
-      result.validityStatus === true, `swagger "${specPath}" contains model validation errors.`)
+      result.validityStatus === true,
+      `swagger "${specPath}" contains model validation errors.`
+    )
   })
 
   it("should validate correctly when the spec does not contain a definitions section", async () => {
@@ -24,16 +27,15 @@ describe("Semantic validation", () => {
     const result = await validate.validateSpec(specPath, undefined)
     // console.dir(result, { depth: null })
     assert(
-      result.validityStatus === true, `swagger "${specPath}" contains model validation errors.`)
+      result.validityStatus === true,
+      `swagger "${specPath}" contains model validation errors.`
+    )
   })
 
   it("should fail when validating a swagger with JSON errors", async () => {
     const specPath = `${testPath}/semanticValidation/specification/invalid/invalid.json`
     const result = await validate.validateSpec(specPath, undefined)
     assert(result.validityStatus === false)
-    assert.strictEqual(
-      (result.resolveSpec as any).code,
-      constants.ErrorCodes.JsonParsingError.name
-    )
+    assert.strictEqual((result.resolveSpec as any).code, constants.ErrorCodes.JsonParsingError.name)
   })
 })
