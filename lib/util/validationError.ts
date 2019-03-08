@@ -24,7 +24,7 @@ export class ValidationError {
   public constructor(
     public readonly name: string,
     public readonly severity: Severity
-  ) {}
+  ) { }
 }
 
 const validationErrorEntry = (
@@ -84,7 +84,7 @@ export const errorConstants = new Map<string, ValidationError>([
   validationErrorEntry("INVALID_RESPONSE_BODY", Severity.Critical),
   validationErrorEntry("INVALID_REQUEST_PARAMETER", Severity.Critical),
   validationErrorEntry("INVALID_CONTENT_TYPE", Severity.Error),
-  validationErrorEntry("INTERNAL_ERROR", Severity.Critical),
+  validationErrorEntry("INTERNAL_ERROR", Severity.Critical)
 ])
 
 /**
