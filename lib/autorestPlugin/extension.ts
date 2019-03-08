@@ -4,7 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as extensionBase from "@microsoft.azure/autorest-extension-base"
+// tslint:disable-next-line: max-line-length no-submodule-imports
 import { IAutoRestPluginInitiator } from "@microsoft.azure/autorest-extension-base/dist/lib/extension-base"
+// tslint:disable-next-line: no-submodule-imports
 import { SourceLocation } from "@microsoft.azure/autorest-extension-base/dist/lib/types"
 import { entries } from "@ts-common/string-map"
 import * as yaml from "js-yaml"

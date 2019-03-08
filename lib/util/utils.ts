@@ -1,11 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
-
 import * as it from "@ts-common/iterator"
 import * as json from "@ts-common/json"
 import { cloneDeep, copyInfo, Data } from "@ts-common/source-map"
 import * as sm from "@ts-common/string-map"
-import { entries, MutableStringMap } from "@ts-common/string-map"
 import { execSync } from "child_process"
 import * as fs from "fs"
 import * as http from "http"
@@ -19,7 +17,6 @@ import {
   getSchemaObjectInfo,
   setSchemaInfo
 } from "../validators/specTransformer"
-
 import { log } from "./logging"
 
 /*
@@ -180,11 +177,11 @@ export async function parseJsonWithPathFragments(
  *
  * @returns {object} target - Returns the merged target object.
  */
-export function mergeObjects<T extends MutableStringMap<Data>>(
+export function mergeObjects<T extends sm.MutableStringMap<Data>>(
   source: T,
   target: T
 ): T {
-  for (const [key, sourceProperty] of entries(source)) {
+  for (const [key, sourceProperty] of sm.entries(source)) {
     if (Array.isArray(sourceProperty)) {
       const targetProperty = target[key]
       if (!targetProperty) {
@@ -531,7 +528,7 @@ export function relaxModelLikeEntities(model: SchemaObject): SchemaObject {
   if (model.properties) {
     const modelProperties = model.properties
 
-    for (const [propName, property] of entries(modelProperties)) {
+    for (const [propName, property] of sm.entries(modelProperties)) {
       modelProperties[propName] = property.properties
         ? relaxModelLikeEntities(property)
         : relaxEntityType(property, isPropertyRequired(propName, model))
@@ -645,7 +642,7 @@ export function allowNullableTypes(model: SchemaObject): SchemaObject {
   }
   if (model && model.properties) {
     const modelProperties = model.properties
-    for (const [propName, prop] of entries(modelProperties)) {
+    for (const [propName, prop] of sm.entries(modelProperties)) {
       // process properties if present
       modelProperties[propName] =
         prop.properties || prop.additionalProperties

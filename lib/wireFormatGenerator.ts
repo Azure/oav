@@ -8,7 +8,6 @@ import { setMutableProperty } from "@ts-common/property-set"
 import { entries, MutableStringMap, StringMap } from "@ts-common/string-map"
 import * as fs from "fs"
 import * as JsonRefs from "json-refs"
-import { PathTemplateBasedRequestPrepareOptions } from "ms-rest"
 import * as msRest from "ms-rest"
 import * as path from "path"
 import * as Sway from "yasway"
@@ -416,10 +415,11 @@ export class WireFormatGenerator {
       pathTemplate = pathTemplate.slice(0, pathTemplate.indexOf("?"))
       operation.pathObject.path = pathTemplate
     }
+    // tslint:disable-next-line: no-object-literal-type-assertion
     const options = {
       method: operation.method,
       pathTemplate
-    } as PathTemplateBasedRequestPrepareOptions
+    } as msRest.PathTemplateBasedRequestPrepareOptions
 
     for (const parameter of parameters) {
       const location = parameter.in
@@ -473,7 +473,7 @@ export class WireFormatGenerator {
         operation.consumes
       )
     }
-    return new HttpRequest().prepare(options)
+    return new msRest.WebResource().prepare(options)
   }
 
   /*
@@ -492,6 +492,7 @@ export class WireFormatGenerator {
       readonly body: unknown
     }>
   ) {
+    // tslint:disable-next-line: no-object-literal-type-assertion
     const result = {} as Responses
     if (
       operation === null ||

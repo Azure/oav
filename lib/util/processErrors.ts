@@ -1,19 +1,17 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
-
 import { filterMap, isArray } from "@ts-common/iterator"
 import { setMutableProperty } from "@ts-common/property-set"
 import {
   getAllDirectives,
+  getDescendantFilePosition,
   getInfo,
   getRootObjectInfo
 } from "@ts-common/source-map"
-import { getDescendantFilePosition } from "@ts-common/source-map"
 import { merge } from "@ts-common/string-map"
 import { jsonSymbol, schemaSymbol } from "z-schema"
 
 import { TitleObject } from "../validators/specTransformer"
-
 import { CommonError } from "./commonError"
 import { log } from "./logging"
 import { NodeError } from "./validationError"

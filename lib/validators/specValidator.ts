@@ -8,7 +8,6 @@ import { setMutableProperty } from "@ts-common/property-set"
 import { StringMap } from "@ts-common/string-map"
 import * as path from "path"
 import * as Sway from "yasway"
-import { SwaggerObject } from "yasway"
 
 import { Headers } from "../templates/httpTemplate"
 import { CommonError } from "../util/commonError"
@@ -19,7 +18,6 @@ import * as jsonUtils from "../util/jsonUtils"
 import { log } from "../util/logging"
 import * as processErrors from "../util/processErrors"
 
-import { SpecResolver } from "./specResolver"
 import * as specResolver from "./specResolver"
 import { getTitle } from "./specTransformer"
 import { getSuppressions } from "./suppressions"
@@ -84,7 +82,7 @@ export interface ErrorParameters<TE extends CommonError> {
 export class SpecValidator<T extends CommonValidationResult> {
   public specValidationResult: T
 
-  protected specInJson: SwaggerObject
+  protected specInJson: Sway.SwaggerObject
 
   protected swaggerApi: Sway.SwaggerApi | null = null
 
@@ -134,7 +132,7 @@ export class SpecValidator<T extends CommonValidationResult> {
    */
   public constructor(
     specPath: string,
-    specInJson: SwaggerObject | undefined | null | string,
+    specInJson: Sway.SwaggerObject | undefined | null | string,
     options: Options,
     private readonly docsCache: DocCache = {}
   ) {
@@ -158,7 +156,7 @@ export class SpecValidator<T extends CommonValidationResult> {
     }
     this.specPath = specPath
     this.specDir = path.dirname(this.specPath)
-    this.specInJson = specInJson as SwaggerObject
+    this.specInJson = specInJson as Sway.SwaggerObject
     const base: CommonValidationResult = {
       validityStatus: true,
       operations: {}
@@ -197,7 +195,7 @@ export class SpecValidator<T extends CommonValidationResult> {
         this.specInJson = result
       }
 
-      const resolver = new SpecResolver(
+      const resolver = new specResolver.SpecResolver(
         this.specPath,
         this.specInJson,
         this.options,
@@ -263,7 +261,7 @@ export class SpecValidator<T extends CommonValidationResult> {
       code: code.name,
       id: code.id,
       message
-    } as TE
+    } as any
     setMutableProperty(
       err,
       "innerErrors",

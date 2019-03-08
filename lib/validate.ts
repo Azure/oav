@@ -18,7 +18,6 @@ import { NodeError } from "./util/validationError"
 import { ModelValidator } from "./validators/modelValidator"
 import { SemanticValidator } from "./validators/semanticValidator"
 import * as specResolver from "./validators/specResolver"
-import { SpecResolver } from "./validators/specResolver"
 import {
   CommonValidationResult,
   SpecValidationResult,
@@ -224,7 +223,12 @@ export async function resolveSpec(
   try {
     const suppression = await getSuppressions(specPath)
     const result = await jsonUtils.parseJson(suppression, specPath, reportError)
-    const resolver = new SpecResolver(specPath, result, options, reportError)
+    const resolver = new specResolver.SpecResolver(
+      specPath,
+      result,
+      options,
+      reportError
+    )
     await resolver.resolve(suppression)
     const resolvedSwagger = JSON.stringify(resolver.specInJson, null, 2)
     if (outputDir !== "./" && !fs.existsSync(outputDir)) {
@@ -354,7 +358,7 @@ export async function generateUml(
       specPath,
       jsonParser.defaultErrorReport
     )
-    const resolver = new SpecResolver(
+    const resolver = new specResolver.SpecResolver(
       specPath,
       result,
       resolverOptions,

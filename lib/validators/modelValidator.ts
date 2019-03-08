@@ -1,30 +1,19 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
-
 import { filter, toArray } from "@ts-common/iterator"
-import {
-  entries,
-  keys,
-  MutableStringMap,
-  StringMap,
-  toStringMap
-} from "@ts-common/string-map"
 import * as sm from "@ts-common/string-map"
 import * as msRest from "ms-rest"
-import { Operation } from "yasway"
 import * as Sway from "yasway"
 
 import { ResponseWrapper } from "../models/responseWrapper"
 import { CommonError } from "../util/commonError"
 import * as C from "../util/constants"
-import { ErrorCodes } from "../util/constants"
 import { log } from "../util/logging"
 import { ModelValidationError } from "../util/modelValidationError"
 import { processErrors, setPositionAndUrl } from "../util/processErrors"
 import { MultipleScenarios, Scenario } from "../util/responseReducer"
 import { OperationResultType } from "../util/scenarioReducer"
 import * as utils from "../util/utils"
-
 import { getTitle } from "./specTransformer"
 import {
   ExampleResponse,
@@ -48,8 +37,8 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
   public validateOperations(operationIds?: string): void {
     if (!this.swaggerApi) {
       throw new Error(
-        `Please call "specValidator.initialize()" before calling this method, so that swaggerApi ` +
-          `is populated.`
+        // tslint:disable-next-line: max-line-length
+        `Please call "specValidator.initialize()" before calling this method, so that swaggerApi is populated.`
       )
     }
     if (
@@ -62,7 +51,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
 
     let operations = this.swaggerApi.getOperations()
     if (operationIds) {
-      const operationIdsObj: MutableStringMap<unknown> = {}
+      const operationIdsObj: sm.MutableStringMap<unknown> = {}
       operationIds
         .trim()
         .split(",")
@@ -91,7 +80,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       if (example === undefined) {
         throw new Error("example is undefined")
       }
-      if (sm.isEmpty(toStringMap(example))) {
+      if (sm.isEmpty(sm.toStringMap(example))) {
         delete operationResult[C.exampleInSpec]
       }
     }
@@ -115,7 +104,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     }
     if (exampleType === C.exampleInSpec) {
       const example = operationResult[exampleType]
-      if (!example || (example && sm.isEmpty(toStringMap(example)))) {
+      if (!example || (example && sm.isEmpty(sm.toStringMap(example)))) {
         operationResult[exampleType] = initialResult
       }
     }
@@ -277,7 +266,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
    * @return {object} xmsExample - The xmsExample object.
    */
   private constructOperationResult(
-    operation: Operation,
+    operation: Sway.Operation,
     result: ValidationResult,
     exampleType: OperationResultType
   ): void {
@@ -296,7 +285,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     }
     if (exampleType === C.xmsExamples) {
       if (result.scenarios) {
-        for (const [scenario, v] of entries(result.scenarios)) {
+        for (const [scenario, v] of sm.entries(result.scenarios)) {
           const requestValidation = v.requestValidation
           if (requestValidation === undefined) {
             throw new Error("requestValidation is undefined")
@@ -321,7 +310,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
           if (responseValidation === undefined) {
             throw new Error("responseValidation is undefined")
           }
-          for (const [responseStatusCode, value] of entries(
+          for (const [responseStatusCode, value] of sm.entries(
             responseValidation
           )) {
             this.constructResponseResultWrapper(
@@ -338,7 +327,8 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     } else if (exampleType === C.exampleInSpec) {
       if (
         result.requestValidation &&
-        toArray(keys(result.requestValidation as StringMap<unknown>)).length
+        toArray(sm.keys(result.requestValidation as sm.StringMap<unknown>))
+          .length
       ) {
         // requestValidation
         const validationResult = result.requestValidation.validationResult
@@ -356,7 +346,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       }
       if (result.responseValidation && !sm.isEmpty(result.responseValidation)) {
         // responseValidation
-        for (const [responseStatusCode, value] of entries(
+        for (const [responseStatusCode, value] of sm.entries(
           result.responseValidation
         )) {
           this.constructResponseResultWrapper(
@@ -376,7 +366,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
    *
    * @param {object} operation - The operation object.
    */
-  private validateXmsExamples(operation: Operation): void {
+  private validateXmsExamples(operation: Sway.Operation): void {
     if (
       operation === null ||
       operation === undefined ||
@@ -392,7 +382,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       scenarios: resultScenarios
     }
     if (xmsExamples) {
-      for (const [scenario, xmsExampleFunc] of entries<any>(xmsExamples)) {
+      for (const [scenario, xmsExampleFunc] of sm.entries<any>(xmsExamples)) {
         const xmsExample = xmsExampleFunc()
         resultScenarios[scenario] = {
           requestValidation: this.validateRequest(
@@ -409,7 +399,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     } else {
       const msg = `x-ms-example not found in ${operation.operationId}.`
       result.exampleNotFound = this.constructErrorObject({
-        code: ErrorCodes.XmsExampleNotFoundError,
+        code: C.ErrorCodes.XmsExampleNotFoundError,
         message: msg,
         skipValidityStatusUpdate: true,
         source: operation.definition
@@ -423,7 +413,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
    *
    * @param {object} operation - The operation object.
    */
-  private validateOperation(operation: Operation): void {
+  private validateOperation(operation: Sway.Operation): void {
     this.validateXmsExamples(operation)
     this.validateExample(operation)
   }
@@ -433,7 +423,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
    *
    * @param {object} operation - The operation object.
    */
-  private validateExample(operation: Operation): void {
+  private validateExample(operation: Sway.Operation): void {
     if (
       operation === null ||
       operation === undefined ||
@@ -457,7 +447,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
    *
    * @return {object} result - The validation result.
    */
-  private validateExampleRequest(operation: Operation): RequestValidation {
+  private validateExampleRequest(operation: Sway.Operation): RequestValidation {
     if (
       operation === null ||
       operation === undefined ||
@@ -479,7 +469,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
 
     let result: RequestValidation = {}
     if (bodyParam && bodyParam.schema && bodyParam.schema.example) {
-      const exampleParameterValues: MutableStringMap<object> = {}
+      const exampleParameterValues: sm.MutableStringMap<object> = {}
       for (const parameter of parameters) {
         log.debug(
           `Getting sample value for parameter "${
@@ -508,8 +498,8 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
    * @return {object} result - The validation result.
    */
   private validateExampleResponses(
-    operation: Operation
-  ): StringMap<Sway.ValidationResults> {
+    operation: Sway.Operation
+  ): sm.StringMap<Sway.ValidationResults> {
     if (
       operation === null ||
       operation === undefined ||
@@ -519,7 +509,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
         "operation cannot be null or undefined and must be of type 'object'."
       )
     }
-    const result: MutableStringMap<Sway.ValidationResults> = {}
+    const result: sm.MutableStringMap<Sway.ValidationResults> = {}
     const responses = operation.getResponses()
     for (const response of responses) {
       if (response.examples) {
@@ -552,7 +542,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
    * @return {object} result - The validation result.
    */
   private validateResponse(
-    operationOrResponse: Operation,
+    operationOrResponse: Sway.Operation,
     responseWrapper: unknown
   ) {
     if (
@@ -591,10 +581,10 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
    * @return {object} result - The validation result.
    */
   private validateXmsExampleResponses(
-    operation: Operation,
+    operation: Sway.Operation,
     exampleResponseValue: { [name: string]: ExampleResponse }
   ) {
-    const result: MutableStringMap<Sway.ValidationResults> = {}
+    const result: sm.MutableStringMap<Sway.ValidationResults> = {}
     if (
       operation === null ||
       operation === undefined ||
@@ -614,11 +604,11 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
         "operation cannot be null or undefined and must be of type 'object'."
       )
     }
-    const responsesInSwagger: MutableStringMap<unknown> = {}
+    const responsesInSwagger: sm.MutableStringMap<unknown> = {}
     operation.getResponses().forEach(response => {
       responsesInSwagger[response.statusCode] = response.statusCode
     })
-    for (const exampleResponseStatusCode of keys(exampleResponseValue)) {
+    for (const exampleResponseStatusCode of sm.keys(exampleResponseValue)) {
       const response = operation.getResponse(exampleResponseStatusCode)
       if (responsesInSwagger[exampleResponseStatusCode]) {
         delete responsesInSwagger[exampleResponseStatusCode]
@@ -638,7 +628,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
           `"${operation.operationId}" is provided in exampleResponseValue, ` +
           `however it is not present in the swagger spec.`
         const e = this.constructErrorObject<Sway.ValidationEntry>({
-          code: ErrorCodes.ResponseStatusCodeNotInSpec,
+          code: C.ErrorCodes.ResponseStatusCodeNotInSpec,
           message: msg,
           source: operation.definition
         })
@@ -659,7 +649,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
           }" has response body provided in the example, ` +
           `however the response does not have a "schema" defined in the swagger spec.`
         const e = this.constructErrorObject<Sway.ValidationEntry>({
-          code: ErrorCodes.ResponseSchemaNotInSpec,
+          code: C.ErrorCodes.ResponseSchemaNotInSpec,
           message: msg,
           source: operation.definition
         })
@@ -687,7 +677,10 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       result[exampleResponseStatusCode] = validationResult
     }
     const responseWithoutXmsExamples = toArray(
-      filter(keys(responsesInSwagger), statusCode => statusCode !== "default")
+      filter(
+        sm.keys(responsesInSwagger),
+        statusCode => statusCode !== "default"
+      )
     )
 
     if (responseWithoutXmsExamples && responseWithoutXmsExamples.length) {
@@ -698,7 +691,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
         }" were present in the swagger spec, ` +
         `however they were not present in x-ms-examples. Please provide them.`
       const e = this.constructErrorObject<Sway.ValidationEntry>({
-        code: ErrorCodes.ResponseStatusCodeNotInExample,
+        code: C.ErrorCodes.ResponseStatusCodeNotInExample,
         message: msg,
         source: operation.definition
       })
@@ -721,8 +714,8 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
    * @return {object} result - The validation result.
    */
   private validateRequest(
-    operation: Operation,
-    exampleParameterValues: StringMap<{}>
+    operation: Sway.Operation,
+    exampleParameterValues: sm.StringMap<{}>
   ): RequestValidation {
     if (
       operation === null ||
@@ -758,7 +751,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       baseUrl?: string
       [name: string]: any
     } = { headers: {} }
-    let formDataFiles: MutableStringMap<unknown> | null = null
+    let formDataFiles: sm.MutableStringMap<unknown> | null = null
     const pathObject = operation.pathObject
     const parameterizedHost = pathObject.api[C.xmsParameterizedHost]
     const hostTemplate =
@@ -813,7 +806,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
             } is required in ` +
             `the swagger spec but is not present in the provided example parameter values.`
           const e = this.constructErrorObject<Sway.ValidationEntry>({
-            code: ErrorCodes.RequiredParameterExampleNotFound,
+            code: C.ErrorCodes.RequiredParameterExampleNotFound,
             message: msg,
             source: parameter.definition
           })
@@ -856,7 +849,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
               `the parameter starts. This will cause double forward slashes ` +
               ` in the request url. Thus making it incorrect. Please rectify the example.`
             const e = this.constructErrorObject<Sway.ValidationEntry>({
-              code: ErrorCodes.DoubleForwardSlashesInUrl,
+              code: C.ErrorCodes.DoubleForwardSlashesInUrl,
               message: msg,
               source: parameter.definition
             })
@@ -943,7 +936,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     }
 
     let request:
-      | (msRest.WebResource & { files?: MutableStringMap<unknown> })
+      | (msRest.WebResource & { files?: sm.MutableStringMap<unknown> })
       | null = null
     let validationResult: {
       errors: CommonError[]
@@ -965,7 +958,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       } catch (err) {
         request = null
         const e = this.constructErrorObject({
-          code: ErrorCodes.ErrorInPreparingRequest,
+          code: C.ErrorCodes.ErrorInPreparingRequest,
           message: err.message,
           innerErrors: [err]
         })
@@ -996,7 +989,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       operationResult.isValid = false
       operationResult.request.isValid = false
       const e = this.constructErrorObject({
-        code: ErrorCodes.RequestValidationError,
+        code: C.ErrorCodes.RequestValidationError,
         message: msg,
         innerErrors: requestValidationErrors
       })
@@ -1030,7 +1023,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       operationResult.isValid = false
       operationResult.responses[responseStatusCode].isValid = false
       const e = this.constructErrorObject({
-        code: ErrorCodes.ResponseValidationError,
+        code: C.ErrorCodes.ResponseValidationError,
         message: msg,
         innerErrors: responseValidationErrors
       })
