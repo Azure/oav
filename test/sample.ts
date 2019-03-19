@@ -12,14 +12,18 @@ const options = {
 }
 const validator = new LiveValidator(options)
 
-// tslint:disable-next-line:no-floating-promises
-validator.initialize().then(() => {
-  const reqRes = require(__dirname +
-    "/liveValidation/swaggers/specification/storage/resource-manager/" +
-    "Microsoft.Storage/2016-01-01/live/StorageAccounts_CheckNameAvailability.json")
-  const requestResponseObj = {
-    liveRequest: reqRes.request,
-    liveResponse: reqRes.response
-  }
-  validator.validateLiveRequestResponse(requestResponseObj)
+describe("Live validation", () => {
+  test("sample call", async () => {
+    // tslint:disable-next-line:no-floating-promises
+    validator.initialize().then(() => {
+      const reqRes = require(__dirname +
+        "/liveValidation/swaggers/specification/storage/resource-manager/" +
+        "Microsoft.Storage/2016-01-01/live/StorageAccounts_CheckNameAvailability.json")
+      const requestResponseObj = {
+        liveRequest: reqRes.request,
+        liveResponse: reqRes.response
+      }
+      validator.validateLiveRequestResponse(requestResponseObj)
+    })
+  })
 })
