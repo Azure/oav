@@ -93,10 +93,7 @@
       "name": "generate wireformat",
       "program": "${workspaceRoot}/cli.js",
       "cwd": "${workspaceRoot}",
-      "args": [
-        "generate-wireformat",
-        "test/swaggers/arm-storage/2016-01-01/swagger/storage.json"
-      ],
+      "args": ["generate-wireformat", "test/swaggers/arm-storage/2016-01-01/swagger/storage.json"],
       "env": {}
     },
     {
@@ -111,15 +108,28 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Mocha Tests",
-      "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
-      "cwd": "${workspaceRoot}",
-      "stopOnEntry": false,
-      "args": [
-        "--no-timeouts",
-        "dist/test/modelValidatorTests.js"
-      ],
-      "env": {}
+      "name": "Jest All",
+      "program": "${workspaceFolder}/node_modules/.bin/jest",
+      "args": ["--runInBand"],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "disableOptimisticBPs": true,
+      "windows": {
+        "program": "${workspaceFolder}/node_modules/jest/bin/jest"
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Jest Current File",
+      "program": "${workspaceFolder}/node_modules/.bin/jest",
+      "args": ["${relativeFile}"],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "disableOptimisticBPs": true,
+      "windows": {
+        "program": "${workspaceFolder}/node_modules/jest/bin/jest"
+      }
     },
     {
       "type": "node",

@@ -1,13 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
-
 import assert from "assert"
 import * as fs from "fs"
-import * as path from "path"
 
 import * as validate from "../lib/validate"
 
-const testPath = path.join(__dirname, "..", "..", "test")
+const testPath = __dirname
 
 const specPath = `${testPath}/modelValidation/swaggers/specification/polymorphic/EntitySearch.json`
 

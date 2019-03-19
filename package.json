@@ -21,6 +21,8 @@
     "@ts-common/virtual-fs": "^0.1.2",
     "commonmark": "^0.28.1",
     "glob": "^5.0.14",
+    "jest": "^24.5.0",
+    "jest-junit": "^6.3.0",
     "js-yaml": "^3.12.2",
     "json-pointer": "^0.6.0",
     "json-refs": "^3.0.12",
@@ -32,6 +34,7 @@
     "request": "^2.88.0",
     "swagger-parser": "^6.0.5",
     "swagger-tools": "^0.10.4",
+    "ts-jest": "^24.0.0",
     "uuid": "^3.3.2",
     "vscode-jsonrpc": "^3.6.2",
     "winston": "^3.2.1",
@@ -43,25 +46,22 @@
   "devDependencies": {
     "@types/commonmark": "^0.27.3",
     "@types/glob": "^5.0.35",
+    "@types/jest": "^24.0.11",
     "@types/js-yaml": "^3.12.0",
     "@types/json-pointer": "^1.0.30",
     "@types/jsonpath": "^0.2.0",
     "@types/lodash": "^4.14.123",
-    "@types/mocha": "^5.2.6",
     "@types/node": "^10.12.18",
     "@types/request": "^2.48.1",
     "@types/swagger-parser": "^4.0.3",
     "@types/uuid": "^3.4.4",
     "@types/yargs": "^11.1.2",
-    "mocha": "^5.2.0",
-    "mocha-junit-reporter": "^1.18.0",
-    "nyc": "^13.3.0",
     "prettier": "^1.16.4",
     "should": "^13.2.3",
     "tslint": "^5.14.0",
     "tslint-config-prettier": "^1.18.0",
     "tslint-plugin-prettier": "^2.0.1",
-    "typescript": "~3.2.4"
+    "typescript": "^3.2.4"
   },
   "homepage": "https://github.com/azure/oav",
   "repository": {
@@ -111,7 +111,7 @@
   "scripts": {
     "tsc": "tsc",
     "tslint": "tslint --project tsconfig.json ./*.ts ./lib/**/*.ts ./test/**/*.ts ./types/**/*.ts",
-    "test": "npm run tsc && npm run tslint && nyc mocha ./dist/test/**/*.js -t 10000 --reporter mocha-junit-reporter --reporter spec",
+    "test": "npm run tsc && npm run tslint && jest --ci --reporters=default --reporters=jest-junit",
     "start": "node ./dist/lib/autorestPlugin/pluginHost.js",
     "tslint-check": "tslint-config-prettier-check ./tslint.json",
     "prepack": "npm install && tsc && npm run tslint",
@@ -120,5 +120,44 @@
   },
   "engines": {
     "node": ">=10.11.0"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "moduleFileExtensions": [
+      "ts",
+      "js",
+      "json",
+      "node"
+    ],
+    "moduleNameMapper": {},
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "./lib/**/*.ts",
+      "!**/node_modules/**"
+    ],
+    "coverageReporters": [
+      "json",
+      "lcov",
+      "cobertura",
+      "text",
+      "html",
+      "clover"
+    ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      ".*/tests/.*"
+    ],
+    "globals": {
+      "ts-jest": {
+        "tsConfig": "tsconfig.json"
+      }
+    },
+    "testMatch": [
+      "**/test/**/*.ts",
+      "!**/test/**/*.d.ts"
+    ],
+    "verbose": true
   }
 }
