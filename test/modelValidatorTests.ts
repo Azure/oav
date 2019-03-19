@@ -4,12 +4,11 @@
 /* tslint:disable:no-console max-line-length*/
 
 import assert from "assert"
-import * as path from "path"
 
 import * as validate from "../lib/validate"
 import { ModelValidator } from "../lib/validators/modelValidator"
 
-const testPath = path.join(__dirname, "../../test")
+const testPath = __dirname
 
 const specPath =
   `${testPath}/modelValidation/swaggers/specification/scenarios/resource-manager/` +
