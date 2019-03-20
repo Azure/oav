@@ -121,6 +121,9 @@
   "engines": {
     "node": ">=10.11.0"
   },
+  "jest-junit": {
+    "output": "test-results.xml"
+  },
   "jest": {
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
