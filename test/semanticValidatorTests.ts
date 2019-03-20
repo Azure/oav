@@ -2,14 +2,12 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 /* tslint:disable:no-console */
-
 import assert from "assert"
-import * as path from "path"
 
 import * as constants from "../lib/util/constants"
 import * as validate from "../lib/validate"
 
-const testPath = path.join(__dirname, "..", "..", "test")
+const testPath = __dirname
 
 describe("Semantic validation", () => {
   it("should validate correctly when the spec contains an x-ms-parameterized-host", async () => {
