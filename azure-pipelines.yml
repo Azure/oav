@@ -4,10 +4,10 @@ pool:
 trigger:
   - master
 
-- checkout: self
-  submodules: true
-
 steps:
+  - checkout: self
+    submodules: true
+
   - task: Npm@1
     displayName: "npm install"
     inputs:
