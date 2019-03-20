@@ -11,11 +11,11 @@ steps:
       verbose: false
 
   - task: Npm@1
-    displayName: "npm slow-test"
+    displayName: "npm run slow-test"
     inputs:
       command: custom
       verbose: false
-      customCommand: slow-test
+      customCommand: run slow-test
 
   - task: PublishTestResults@2
     inputs:
