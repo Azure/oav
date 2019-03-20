@@ -92,26 +92,12 @@
     "./dist/index.d.ts",
     "./types/*.d.ts"
   ],
-  "nyc": {
-    "include": [
-      "dist/**/*.js"
-    ],
-    "all": true,
-    "reporter": [
-      "lcov",
-      "text",
-      "html",
-      "cobertura"
-    ],
-    "exclude": [
-      "dist/test/",
-      "types/"
-    ]
-  },
   "scripts": {
     "tsc": "tsc",
     "tslint": "tslint --project tsconfig.json ./*.ts ./lib/**/*.ts ./test/**/*.ts ./types/**/*.ts",
-    "test": "npm run tsc && npm run tslint && jest --ci --reporters=default --reporters=jest-junit",
+    "test": "npm run tsc && npm run tslint && npm run fast-test",
+    "fast-test": "jest --ci --reporters=default --reporters=jest-junit --testPathIgnorePatterns **/regression/**/*.ts",
+    "slow-test": "node --max-old-space-size=10192 ./node_modules/.bin/jest  test/regression/[^/]*ts --runInBand --ci --reporters=default --reporters=jest-junit ",
     "start": "node ./dist/lib/autorestPlugin/pluginHost.js",
     "tslint-check": "tslint-config-prettier-check ./tslint.json",
     "prepack": "npm install && tsc && npm run tslint",
