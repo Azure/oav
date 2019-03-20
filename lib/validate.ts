@@ -120,6 +120,7 @@ export async function validateSpec(
     // We shouldn't be resolving nullable types for semantic validation as we'll replace nodes
     // with oneOf arrays which are not semantically valid in swagger 2.0 schema.
     o.shouldResolveNullableTypes = false
+
     const validator = new SemanticValidator(specPath, null, o)
     await validator.initialize()
     log.info(`Semantically validating  ${specPath}:\n`)

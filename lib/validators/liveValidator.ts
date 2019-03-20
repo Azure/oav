@@ -578,7 +578,8 @@ export class LiveValidator {
     log.info(`Building cache from: "${swaggerPath}"`)
 
     const validator = new SpecValidator(swaggerPath, null, {
-      isPathCaseSensitive: this.options.isPathCaseSensitive
+      isPathCaseSensitive: this.options.isPathCaseSensitive,
+      shouldResolveXmsExamples: false
     })
 
     try {

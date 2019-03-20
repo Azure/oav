@@ -18,7 +18,7 @@ describe("Semantic validation", () => {
     // console.dir(result, { depth: null })
     assert(
       result.validityStatus === true,
-      `swagger "${specPath}" contains model validation errors.`
+      `swagger "${specPath}" contains semantic validation errors.`
     )
   })
 
@@ -28,7 +28,7 @@ describe("Semantic validation", () => {
     // console.dir(result, { depth: null })
     assert(
       result.validityStatus === true,
-      `swagger "${specPath}" contains model validation errors.`
+      `swagger "${specPath}" contains semantic validation errors.`
     )
   })
 

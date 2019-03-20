@@ -1,5 +1,9 @@
 # Changelog
 
+### 03/19/2019 0.14.6
+
+- Don't resolve x-ms-examples for live validation and for semantic validation.
+
 ### 03/07/2019 0.14.5
 
 - Fixing linting and coding style issues.
