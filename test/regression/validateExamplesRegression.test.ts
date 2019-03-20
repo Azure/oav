@@ -1,19 +1,24 @@
 import glob = require("glob")
+import md5File = require("md5-file")
 import * as path from "path"
 
-const validate = require("../../lib/validate")
+import * as validate from "../../lib/validate"
 
 describe("@regression validateExamples should not regress for file", () => {
-  const specPaths = glob
-    .sync(path.join(__dirname, "azure-rest-api-specs/specification/**/*.json"), {
+  const specPaths = glob.sync(
+    path.join(__dirname, "azure-rest-api-specs/specification/**/*.json"),
+    {
       ignore: ["azure-rest-api-specs/specification/**/examples/*"]
-    })
-    .map((file, index) => [file, index % 10000])
+    }
+  )
 
   test.each(specPaths)(
-    "'%s' @%sbatch",
+    "'%s'",
     async file => {
       try {
+        const hash = await new Promise(resolve => md5File(file, resolve))
+        expect(hash).toMatchSnapshot("input file hash")
+
         const result = await validate.validateExamples(file, undefined, {
           pretty: true
         })
