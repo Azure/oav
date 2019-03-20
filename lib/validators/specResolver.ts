@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
-
 import { Suppression } from "@azure/openapi-markdown"
 import { isArray, map, toArray } from "@ts-common/iterator"
 import * as jsonParser from "@ts-common/json-parser"
 import * as ps from "@ts-common/property-set"
 import { arrayMap } from "@ts-common/source-map"
 import * as sm from "@ts-common/string-map"
+import * as jsonPointer from "json-pointer"
 import * as _ from "lodash"
 import * as path from "path"
 import {
@@ -27,7 +27,6 @@ import * as jsonUtils from "../util/jsonUtils"
 import { log } from "../util/logging"
 import { getOperations } from "../util/methods"
 import * as utils from "../util/utils"
-
 import { PolymorphicTree } from "./polymorphicTree"
 import { resolveNestedDefinitions } from "./resolveNestedDefinitions"
 
@@ -443,16 +442,20 @@ export class SpecResolver {
   ) {
     const regex = /.*x-ms-examples.*/gi
     if (this.options.shouldResolveXmsExamples || slicedRefName.match(regex) === null) {
-      // TODO: doc should have a type
-      // We set a function `() => result` instead of an object `result` to avoid
-      // reference resolution in the examples.
       const result = await jsonUtils.parseJson(
         suppression,
         docPath,
         this.reportError,
         this.docsCache
       )
+
+      // We set a function `() => result` instead of an object `result` to avoid
+      // reference resolution in the examples.
       utils.setObject(doc as {}, slicedRefName, () => result)
+    } else {
+      if (jsonPointer.has(doc as {}, slicedRefName)) {
+        jsonPointer.remove(doc as {}, slicedRefName)
+      }
     }
   }
 
