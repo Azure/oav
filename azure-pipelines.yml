@@ -4,6 +4,12 @@ pool:
 trigger:
   - master
 
+resources:
+  repositories:
+    - repository: self
+      checkoutOptions:
+        submodules: true
+
 steps:
   - task: Npm@1
     displayName: "npm install"
