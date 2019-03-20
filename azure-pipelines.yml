@@ -4,11 +4,8 @@ pool:
 trigger:
   - master
 
-resources:
-  repositories:
-    - repository: self
-      checkoutOptions:
-        submodules: true
+- checkout: self
+  submodules: true
 
 steps:
   - task: Npm@1
