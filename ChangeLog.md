@@ -1,5 +1,9 @@
 # Changelog
 
+### 03/20/2019 0.14.6
+
+- Change test runner to jest.
+
 ### 03/19/2019 0.14.6
 
 - Don't resolve x-ms-examples for live validation and for semantic validation.
