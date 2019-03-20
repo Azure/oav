@@ -352,72 +352,107 @@ export class SpecResolver {
       docPath = utils.joinPath(docDir, parsedReference.filePath)
     }
 
-    const result = await jsonUtils.parseJson(suppression, docPath, this.reportError, this.docsCache)
-    if (!parsedReference.localReference) {
+    if (parsedReference.localReference) {
+      await this.resolveLocalReference(
+        slicedRefName,
+        doc,
+        docPath,
+        node,
+        parsedReference.localReference,
+        suppression
+      )
+    } else {
       // Since there is no local reference we will replace the key in the object with the parsed
       // json (relative) file it is referring to.
-      const regex = /.*x-ms-examples.*/gi
-      if (
-        this.options.shouldResolveXmsExamples ||
-        (!this.options.shouldResolveXmsExamples && slicedRefName.match(regex) === null)
-      ) {
-        // TODO: doc should have a type
-        // We set a function `() => result` instead of an object `result` to avoid
-        // reference resolution in the examples.
-        utils.setObject(doc as {}, slicedRefName, () => result)
-      }
-    } else {
-      // resolve the local reference.
-      // make the reference local to the doc being processed
-      node.$ref = parsedReference.localReference.value
-      // TODO: doc should have a type
-      utils.setObject(doc as {}, slicedRefName, node)
-      const slicedLocalReferenceValue = parsedReference.localReference.value.slice(1)
-      let referencedObj = this.visitedEntities[slicedLocalReferenceValue]
-      if (!referencedObj) {
-        // We get the definition/parameter from the relative file and then add it (make it local)
-        // to the doc (i.e. self.specInJson) being processed.
-        referencedObj = utils.getObject(result, slicedLocalReferenceValue) as SchemaObject
-        utils.setObject(this.specInJson, slicedLocalReferenceValue, referencedObj)
-        this.visitedEntities[slicedLocalReferenceValue] = referencedObj
-        await this.resolveRelativePaths(suppression, referencedObj, docPath, "all")
-        // After resolving a model definition, if there are models that have an allOf on that model
-        // definition.
-        // It may be possible that those models are not being referenced anywhere. Hence, we must
-        // ensure that they are consumed as well. Example model "CopyActivity" in file
-        // arm-datafactory/2017-03-01-preview/swagger/entityTypes/Pipeline.json is having an allOf
-        // on model "Activity". Spec "datafactory.json" has references to "Activity" in
-        // Pipeline.json but there are no references to "CopyActivity". The following code, ensures
-        // that we do not forget such models while resolving relative swaggers.
-        if (result && result.definitions) {
-          const definitions = result.definitions
-          const unresolvedDefinitions: Array<() => Promise<void>> = []
+      await this.resolveRemoteReference(slicedRefName, doc, docPath, suppression)
+    }
+  }
 
-          const processDefinition = ([defName, def]: sm.Entry<SchemaObject>) => {
-            unresolvedDefinitions.push(async () => {
-              const allOf = def.allOf
-              if (allOf) {
-                const matchFound = allOf.some(
-                  () => !this.visitedEntities[`/definitions/${defName}`]
-                )
-                if (matchFound) {
-                  const slicedDefinitionRef = `/definitions/${defName}`
-                  const definitionObj = definitions[defName]
-                  utils.setObject(this.specInJson, slicedDefinitionRef, definitionObj)
-                  this.visitedEntities[slicedDefinitionRef] = definitionObj
-                  await this.resolveRelativePaths(suppression, definitionObj, docPath, "all")
-                }
+  /**
+   * Resolves references local to the file.
+   */
+  private async resolveLocalReference(
+    slicedRefName: string,
+    doc: unknown,
+    docPath: string,
+    node: { $ref: string },
+    localReference: utils.LocalReference,
+    suppression: Suppression | undefined
+  ) {
+    // resolve the local reference.
+    // make the reference local to the doc being processed
+    const result = await jsonUtils.parseJson(suppression, docPath, this.reportError, this.docsCache)
+
+    node.$ref = localReference.value
+    // TODO: doc should have a type
+    utils.setObject(doc as {}, slicedRefName, node)
+    const slicedLocalReferenceValue = localReference.value.slice(1)
+    let referencedObj = this.visitedEntities[slicedLocalReferenceValue]
+    if (!referencedObj) {
+      // We get the definition/parameter from the relative file and then add it (make it local)
+      // to the doc (i.e. self.specInJson) being processed.
+      referencedObj = utils.getObject(result, slicedLocalReferenceValue) as SchemaObject
+      utils.setObject(this.specInJson, slicedLocalReferenceValue, referencedObj)
+      this.visitedEntities[slicedLocalReferenceValue] = referencedObj
+      await this.resolveRelativePaths(suppression, referencedObj, docPath, "all")
+      // After resolving a model definition, if there are models that have an allOf on that model
+      // definition.
+      // It may be possible that those models are not being referenced anywhere. Hence, we must
+      // ensure that they are consumed as well. Example model "CopyActivity" in file
+      // arm-datafactory/2017-03-01-preview/swagger/entityTypes/Pipeline.json is having an allOf
+      // on model "Activity". Spec "datafactory.json" has references to "Activity" in
+      // Pipeline.json but there are no references to "CopyActivity". The following code, ensures
+      // that we do not forget such models while resolving relative swaggers.
+      if (result && result.definitions) {
+        const definitions = result.definitions
+        const unresolvedDefinitions: Array<() => Promise<void>> = []
+
+        const processDefinition = ([defName, def]: sm.Entry<SchemaObject>) => {
+          unresolvedDefinitions.push(async () => {
+            const allOf = def.allOf
+            if (allOf) {
+              const matchFound = allOf.some(() => !this.visitedEntities[`/definitions/${defName}`])
+              if (matchFound) {
+                const slicedDefinitionRef = `/definitions/${defName}`
+                const definitionObj = definitions[defName]
+                utils.setObject(this.specInJson, slicedDefinitionRef, definitionObj)
+                this.visitedEntities[slicedDefinitionRef] = definitionObj
+                await this.resolveRelativePaths(suppression, definitionObj, docPath, "all")
               }
-            })
-          }
-
-          for (const entry of sm.entries(result.definitions)) {
-            processDefinition(entry)
-          }
-
-          await utils.executePromisesSequentially(unresolvedDefinitions)
+            }
+          })
         }
+
+        for (const entry of sm.entries(result.definitions)) {
+          processDefinition(entry)
+        }
+
+        await utils.executePromisesSequentially(unresolvedDefinitions)
       }
+    }
+  }
+
+  /**
+   * Resolves remote references for the document
+   */
+  private async resolveRemoteReference(
+    slicedRefName: string,
+    doc: unknown,
+    docPath: string,
+    suppression: Suppression | undefined
+  ) {
+    const regex = /.*x-ms-examples.*/gi
+    if (this.options.shouldResolveXmsExamples || slicedRefName.match(regex) === null) {
+      // TODO: doc should have a type
+      // We set a function `() => result` instead of an object `result` to avoid
+      // reference resolution in the examples.
+      const result = await jsonUtils.parseJson(
+        suppression,
+        docPath,
+        this.reportError,
+        this.docsCache
+      )
+      utils.setObject(doc as {}, slicedRefName, () => result)
     }
   }
 

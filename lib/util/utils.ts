@@ -62,10 +62,12 @@ export function generateRandomId(prefix: string, existingIds: {}): string {
 
 export interface Reference {
   readonly filePath?: string
-  readonly localReference?: {
-    readonly value: string
-    readonly accessorProperty: string
-  }
+  readonly localReference?: LocalReference
+}
+
+export interface LocalReference {
+  readonly value: string
+  readonly accessorProperty: string
 }
 
 /*
