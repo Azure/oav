@@ -28,6 +28,12 @@ steps:
       summaryFileLocation: "$(System.DefaultWorkingDirectory)/**/*coverage.xml"
       reportDirectory: "$(System.DefaultWorkingDirectory)/**/coverage"
 
-  - script: git diff > $(Build.ArtifactStagingDirectory)/updateTests.patch
+  - script: git diff > $(Build.ArtifactStagingDirectory)/snapshot.patch
     displayName: Publish jest update snapshot patch
     condition: always()
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: $(Build.ArtifactStagingDirectory)/snapshot.patch
+      artifactName: "snapshot-patch"
+      condition: always()
