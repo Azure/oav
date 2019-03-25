@@ -28,6 +28,11 @@ steps:
       summaryFileLocation: "$(System.DefaultWorkingDirectory)/**/*coverage.xml"
       reportDirectory: "$(System.DefaultWorkingDirectory)/**/coverage"
 
+  # this command will return non zero if git repo has changes
+  - script: git diff-index --quiet HEAD --
+    displayName: Fail test if snapshots have been updated
+    condition: always()
+
   - script: git diff > $(Build.ArtifactStagingDirectory)/snapshot.patch
     displayName: Publish jest update snapshot patch
     condition: always()
