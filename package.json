@@ -1,6 +1,6 @@
 {
   "name": "oav",
-  "version": "0.14.6",
+  "version": "0.14.8",
   "author": {
     "name": "Microsoft Corporation",
     "email": "azsdkteam@microsoft.com",
@@ -52,7 +52,10 @@
     "@types/json-pointer": "^1.0.30",
     "@types/jsonpath": "^0.2.0",
     "@types/lodash": "^4.14.123",
+<<<<<<< HEAD
     "@types/md5-file": "^4.0.0",
+=======
+>>>>>>> origin/master
     "@types/node": "^10.12.18",
     "@types/request": "^2.48.1",
     "@types/swagger-parser": "^4.0.3",
@@ -109,6 +112,12 @@
   "engines": {
     "node": ">=10.11.0"
   },
+<<<<<<< HEAD
+=======
+  "jest-junit": {
+    "output": "test-results.xml"
+  },
+>>>>>>> origin/master
   "jest": {
     "transform": {
       "^.+\\.tsx?$": "ts-jest"

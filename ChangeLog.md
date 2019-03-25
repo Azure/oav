@@ -1,5 +1,14 @@
 # Changelog
 
+### 03/20/2019 0.14.8
+
+- Don't parse examples when not needed.
+- Remove example references when not needed to avoid "UNRESOLVABLE_REFERENCE" errors.
+
+### 03/20/2019 0.14.7
+
+- Change test runner to jest.
+
 ### 03/19/2019 0.14.6
 
 - Don't resolve x-ms-examples for live validation and for semantic validation.
