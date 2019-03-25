@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`@regression validateExamples should not regress for file '/Users/billytrend/Repositories/oav/test/regression/azure-rest-api-specs/specification/addons/resource-manager/Microsoft.Addons/preview/2017-05-15/Addons.json': input file hash 1`] = `null`;
+
+exports[`@regression validateExamples should not regress for file '/Users/billytrend/Repositories/oav/test/regression/azure-rest-api-specs/specification/addons/resource-manager/Microsoft.Addons/preview/2017-05-15/Addons.json': returned results 1`] = `Array []`;
+
+exports[`@regression validateExamples should not regress for file '/Users/billytrend/Repositories/oav/test/regression/azure-rest-api-specs/specification/addons/resource-manager/Microsoft.Addons/preview/2017-05-15/examples/CanonicalSupportPlanTypes_Get.json': input file hash 1`] = `null`;
+
+exports[`@regression validateExamples should not regress for file '/Users/billytrend/Repositories/oav/test/regression/azure-rest-api-specs/specification/addons/resource-manager/Microsoft.Addons/preview/2017-05-15/examples/CanonicalSupportPlanTypes_Get.json': returned results 1`] = `Array []`;
+
+exports[`@regression validateExamples should not regress for file '/Users/billytrend/Repositories/oav/test/regression/azure-rest-api-specs/specification/addons/resource-manager/Microsoft.Addons/preview/2017-05-15/examples/Operations_List.json': input file hash 1`] = `null`;
+
+exports[`@regression validateExamples should not regress for file '/Users/billytrend/Repositories/oav/test/regression/azure-rest-api-specs/specification/addons/resource-manager/Microsoft.Addons/preview/2017-05-15/examples/Operations_List.json': returned results 1`] = `Array []`;
+
+exports[`@regression validateExamples should not regress for file '/Users/billytrend/Repositories/oav/test/regression/azure-rest-api-specs/specification/addons/resource-manager/Microsoft.Addons/preview/2017-05-15/examples/SupportPlanTypes_CreateOrUpdate.json': input file hash 1`] = `null`;
+
+exports[`@regression validateExamples should not regress for file '/Users/billytrend/Repositories/oav/test/regression/azure-rest-api-specs/specification/addons/resource-manager/Microsoft.Addons/preview/2017-05-15/examples/SupportPlanTypes_CreateOrUpdate.json': returned results 1`] = `Array []`;
+
+exports[`@regression validateExamples should not regress for file '/Users/billytrend/Repositories/oav/test/regression/azure-rest-api-specs/specification/addons/resource-manager/Microsoft.Addons/preview/2017-05-15/examples/SupportPlanTypes_Delete.json': input file hash 1`] = `null`;
+
+exports[`@regression validateExamples should not regress for file '/Users/billytrend/Repositories/oav/test/regression/azure-rest-api-specs/specification/addons/resource-manager/Microsoft.Addons/preview/2017-05-15/examples/SupportPlanTypes_Delete.json': returned results 1`] = `Array []`;
