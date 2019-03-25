@@ -27,3 +27,7 @@ steps:
       codeCoverageTool: Cobertura
       summaryFileLocation: "$(System.DefaultWorkingDirectory)/**/*coverage.xml"
       reportDirectory: "$(System.DefaultWorkingDirectory)/**/coverage"
+
+  - script: git diff > $(Build.ArtifactStagingDirectory)/updateTests.patch
+    displayName: Publish jest update snapshot patch
+    condition: always()
