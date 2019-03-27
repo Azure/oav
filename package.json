@@ -20,7 +20,7 @@
     "@ts-common/string-map": "^0.2.6",
     "@ts-common/virtual-fs": "^0.1.2",
     "commonmark": "^0.28.1",
-    "glob": "^5.0.14",
+    "globby": "^9.1.0",
     "jest": "^24.5.0",
     "jest-junit": "^6.3.0",
     "js-yaml": "^3.13.0",

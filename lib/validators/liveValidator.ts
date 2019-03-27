@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import { MutableStringMap } from "@ts-common/string-map"
-import * as glob from "glob"
+import globby from "globby"
 import * as http from "http"
 import * as _ from "lodash"
 import * as msRest from "ms-rest"
@@ -84,6 +84,8 @@ interface OperationId {
   url: string
   method: string
 }
+
+type OperationWithApiVersion = Operation & { apiVersion: string }
 
 function isOperationId(arg: any): arg is OperationId {
   return arg.method && arg.url
@@ -179,7 +181,7 @@ export class LiveValidator {
     }
 
     // Construct array of swagger paths to be used for building a cache
-    const swaggerPaths = this.getSwaggerPaths()
+    const swaggerPaths = await this.getSwaggerPaths()
 
     // console.log(swaggerPaths);
     // Create array of promise factories that builds up cache
@@ -263,7 +265,6 @@ export class LiveValidator {
     const parsedUrl = url.parse(requestUrl, true)
     const pathStr = parsedUrl.pathname
     requestMethod = requestMethod.toLowerCase()
-    let result
     let msg
     let code
     let liveValidationError: models.LiveValidationError | undefined
@@ -273,8 +274,12 @@ export class LiveValidator {
         C.ErrorCodes.PathNotFoundInRequestUrl.name,
         msg
       )
-      result = new models.PotentialOperationsResult(potentialOperations, liveValidationError)
-      return result
+      return new models.PotentialOperationsResult(
+        potentialOperations,
+        C.unknownResourceProvider,
+        C.unknownApiVersion,
+        liveValidationError
+      )
     }
 
     // Lower all the keys of query parameters before searching for `api-version`
@@ -346,8 +351,12 @@ export class LiveValidator {
       liveValidationError = new models.LiveValidationError(code.name, msg)
     }
 
-    result = new models.PotentialOperationsResult(potentialOperations, liveValidationError)
-    return result
+    return new models.PotentialOperationsResult(
+      potentialOperations,
+      provider,
+      apiVersion,
+      liveValidationError
+    )
   }
 
   /**
@@ -355,7 +364,7 @@ export class LiveValidator {
    */
   public validateLiveRequest(
     liveRequest: LiveRequest,
-    specOperation?: Operation
+    specOperation?: OperationWithApiVersion
   ): RequestValidationResult {
     let operation = specOperation
     if (!operation) {
@@ -385,7 +394,7 @@ export class LiveValidator {
     return {
       successfulRequest: errors.length === 0,
       operationInfo: {
-        apiVersion: operation.operationId,
+        apiVersion: operation.apiVersion,
         operationId: operation.operationId
       },
       errors
@@ -397,9 +406,9 @@ export class LiveValidator {
    */
   public validateLiveResponse(
     liveResponse: LiveResponse,
-    specOperation: Operation | OperationId
+    specOperation: OperationWithApiVersion | OperationId
   ): ResponseValidationResult {
-    let operation: Operation
+    let operation: OperationWithApiVersion
     if (isOperationId(specOperation)) {
       try {
         operation = this.findSpecOperation(specOperation.url, specOperation.method)
@@ -438,7 +447,7 @@ export class LiveValidator {
     return {
       successfulResponse: errors.length === 0,
       operationInfo: {
-        apiVersion: operation.operationId,
+        apiVersion: operation.apiVersion,
         operationId: operation.operationId
       },
       errors
@@ -505,10 +514,6 @@ export class LiveValidator {
         ...validationResult,
         errors: [err]
       }
-    }
-    const basicOperationInfo = {
-      operationId: operation.operationId,
-      apiVersion: request.query["api-version"] || C.unknownApiVersion
     }
 
     const requestValidationResult = this.validateLiveRequest(request, operation)
@@ -594,12 +599,10 @@ export class LiveValidator {
   /**
    * Gets the swagger operation based on the HTTP url and method
    */
-  private findSpecOperation(requestUrl: string, requestMethod: string): Operation {
+  private findSpecOperation(requestUrl: string, requestMethod: string): OperationWithApiVersion {
     let potentialOperationsResult
-    let potentialOperations: Operation[] = []
     try {
       potentialOperationsResult = this.getPotentialOperations(requestUrl, requestMethod)
-      potentialOperations = potentialOperationsResult.operations
     } catch (err) {
       const msg =
         `An error occurred while trying to search for potential operations:\n` +
@@ -609,11 +612,11 @@ export class LiveValidator {
     }
 
     // Found empty potentialOperations
-    if (potentialOperations.length === 0) {
+    if (potentialOperationsResult.operations.length === 0) {
       throw potentialOperationsResult.reason
       // Found more than 1 potentialOperations
-    } else if (potentialOperations.length !== 1) {
-      const operationIds = potentialOperations.map(op => op.operationId).join()
+    } else if (potentialOperationsResult.operations.length > 1) {
+      const operationIds = potentialOperationsResult.operations.map(op => op.operationId).join()
       const msg =
         `Found multiple matching operations with operationIds "${operationIds}" ` +
         `for request url "${url}" with HTTP Method "${requestMethod}".`
@@ -622,10 +625,13 @@ export class LiveValidator {
       throw e
     }
 
-    return potentialOperations[0]
+    return {
+      ...potentialOperationsResult.operations[0],
+      apiVersion: potentialOperationsResult.apiVersion
+    }
   }
 
-  private getSwaggerPaths(): string[] {
+  private async getSwaggerPaths(): Promise<string[]> {
     if (this.options.swaggerPaths.length !== 0) {
       log.debug(
         `Using user provided swagger paths. Total paths: ${this.options.swaggerPaths.length}`
@@ -637,14 +643,16 @@ export class LiveValidator {
         this.options.directory,
         this.options.swaggerPathsPattern || allJsonsPattern
       )
-      const swaggerPaths = glob.sync(jsonsPattern, {
+      const swaggerPaths = await globby(jsonsPattern, {
         ignore: [
           "**/examples/**/*",
           "**/quickstart-templates/**/*",
           "**/schema/**/*",
           "**/live/**/*",
           "**/wire-format/**/*"
-        ]
+        ],
+        onlyFiles: true,
+        unique: true
       })
       const dir = this.options.directory
       log.debug(
