@@ -9,7 +9,7 @@ import * as msRest from "ms-rest"
 import * as os from "os"
 import * as path from "path"
 import { ParsedUrlQuery } from "querystring"
-import * as URL from "url"
+import * as url from "url"
 import * as util from "util"
 import { Operation, Request } from "yasway"
 
@@ -58,26 +58,26 @@ export interface RequestResponsePair {
 }
 
 interface OperationInfo {
-  operationId: string
-  apiVersion: string
+  readonly operationId: string
+  readonly apiVersion: string
 }
 
 export interface RequestValidationResult {
-  successfulRequest: boolean
-  operationInfo: OperationInfo[]
+  readonly successfulRequest: boolean
+  readonly operationInfo: OperationInfo
   errors?: unknown[]
 }
 
 export interface ResponseValidationResult {
-  successfulResponse: boolean
-  operationInfo: OperationInfo[]
+  readonly successfulResponse: boolean
+  readonly operationInfo: OperationInfo
   errors?: unknown[]
 }
 
 export interface ValidationResult {
   readonly requestValidationResult: RequestValidationResult
   readonly responseValidationResult: ResponseValidationResult
-  errors: unknown[]
+  readonly errors: unknown[]
 }
 
 interface OperationId {
@@ -220,11 +220,11 @@ export class LiveValidator {
   /**
    * Gets list of potential operations objects for given url and method.
    *
-   * @param {string} requestUrl The url for which to find potential operations.
+   * @param  requestUrl The url for which to find potential operations.
    *
-   * @param {string} requestMethod The http verb for the method to be used for lookup.
+   * @param requestMethod The http verb for the method to be used for lookup.
    *
-   * @returns {PotentialOperationsResult} Potential operation result object.
+   * @returns Potential operation result object.
    */
   public getPotentialOperations(
     requestUrl: string,
@@ -260,7 +260,7 @@ export class LiveValidator {
     }
 
     let potentialOperations: Operation[] = []
-    const parsedUrl = URL.parse(requestUrl, true)
+    const parsedUrl = url.parse(requestUrl, true)
     const pathStr = parsedUrl.pathname
     requestMethod = requestMethod.toLowerCase()
     let result
@@ -365,7 +365,7 @@ export class LiveValidator {
         return {
           successfulRequest: false,
           errors: [err],
-          operationInfo: []
+          operationInfo: { apiVersion: C.unknownApiVersion, operationId: C.unknownOperationId }
         }
       }
     }
@@ -384,12 +384,10 @@ export class LiveValidator {
     }
     return {
       successfulRequest: errors.length === 0,
-      operationInfo: [
-        {
-          apiVersion: operation.operationId,
-          operationId: operation.operationId
-        }
-      ],
+      operationInfo: {
+        apiVersion: operation.operationId,
+        operationId: operation.operationId
+      },
       errors
     }
   }
@@ -409,7 +407,7 @@ export class LiveValidator {
         return {
           successfulResponse: false,
           errors: [err],
-          operationInfo: []
+          operationInfo: { apiVersion: C.unknownApiVersion, operationId: C.unknownOperationId }
         }
       }
     } else {
@@ -439,12 +437,10 @@ export class LiveValidator {
 
     return {
       successfulResponse: errors.length === 0,
-      operationInfo: [
-        {
-          apiVersion: operation.operationId,
-          operationId: operation.operationId
-        }
-      ],
+      operationInfo: {
+        apiVersion: operation.operationId,
+        operationId: operation.operationId
+      },
       errors
     }
   }
@@ -460,12 +456,12 @@ export class LiveValidator {
       requestValidationResult: {
         successfulRequest: false,
         errors: [],
-        operationInfo: []
+        operationInfo: { apiVersion: C.unknownApiVersion, operationId: C.unknownOperationId }
       },
       responseValidationResult: {
         successfulResponse: false,
         errors: [],
-        operationInfo: []
+        operationInfo: { apiVersion: C.unknownApiVersion, operationId: C.unknownOperationId }
       },
       errors: []
     }
@@ -499,42 +495,30 @@ export class LiveValidator {
     const response = requestResponseObj.liveResponse
 
     if (!request.query) {
-      request.query = URL.parse(request.url, true).query
+      request.query = url.parse(request.url, true).query
     }
     let operation
     try {
       operation = this.findSpecOperation(request.url, request.method)
     } catch (err) {
-      validationResult.errors = [err]
-      return validationResult
+      return {
+        ...validationResult,
+        errors: [err]
+      }
     }
     const basicOperationInfo = {
       operationId: operation.operationId,
       apiVersion: request.query["api-version"] || C.unknownApiVersion
     }
-    validationResult.requestValidationResult.operationInfo = [basicOperationInfo]
-    validationResult.responseValidationResult.operationInfo = [basicOperationInfo]
-    const reqResult = this.validateLiveRequest(request, operation)
-    const resResult = this.validateLiveResponse(response, operation)
 
-    if (
-      reqResult &&
-      reqResult.errors &&
-      Array.isArray(reqResult.errors) &&
-      !reqResult.errors.length
-    ) {
-      validationResult.requestValidationResult.successfulRequest = true
-    }
-    if (
-      resResult &&
-      resResult.errors &&
-      Array.isArray(resResult.errors) &&
-      !resResult.errors.length
-    ) {
-      validationResult.responseValidationResult.successfulResponse = true
-    }
+    const requestValidationResult = this.validateLiveRequest(request, operation)
+    const responseValidationResult = this.validateLiveResponse(response, operation)
 
-    return validationResult
+    return {
+      requestValidationResult,
+      responseValidationResult,
+      errors: []
+    }
   }
 
   /**
@@ -610,11 +594,11 @@ export class LiveValidator {
   /**
    * Gets the swagger operation based on the HTTP url and method
    */
-  private findSpecOperation(url: string, method: string): Operation {
+  private findSpecOperation(requestUrl: string, requestMethod: string): Operation {
     let potentialOperationsResult
     let potentialOperations: Operation[] = []
     try {
-      potentialOperationsResult = this.getPotentialOperations(url, method)
+      potentialOperationsResult = this.getPotentialOperations(requestUrl, requestMethod)
       potentialOperations = potentialOperationsResult.operations
     } catch (err) {
       const msg =
@@ -632,7 +616,7 @@ export class LiveValidator {
       const operationIds = potentialOperations.map(op => op.operationId).join()
       const msg =
         `Found multiple matching operations with operationIds "${operationIds}" ` +
-        `for request url "${url}" with HTTP Method "${method}".`
+        `for request url "${url}" with HTTP Method "${requestMethod}".`
       log.debug(msg)
       const e = new models.LiveValidationError(C.ErrorCodes.MultipleOperationsFound.name, msg)
       throw e
