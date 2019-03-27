@@ -35,7 +35,12 @@ export {
 
 // Classes
 export { SpecValidator } from "./lib/validators/specValidator"
-export { LiveValidator } from "./lib/validators/liveValidator"
+export {
+  LiveValidator,
+  RequestResponsePair,
+  LiveRequest,
+  LiveResponse
+} from "./lib/validators/liveValidator"
 export { SpecResolver } from "./lib/validators/specResolver"
 
 // Constants

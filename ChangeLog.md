@@ -1,5 +1,10 @@
 # Changelog
 
+### 03/27/2019 0.14.9
+
+- Refactor live validator.
+- Expose separate request and response validate methods.
+
 ### 03/20/2019 0.14.8
 
 - Don't parse examples when not needed.

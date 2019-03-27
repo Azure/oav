@@ -52,7 +52,7 @@ export interface LiveResponse {
   readonly body: {} | undefined
 }
 
-export interface RequestResponseObj {
+export interface RequestResponsePair {
   readonly liveRequest: LiveRequest
   readonly liveResponse: LiveResponse
 }
@@ -78,6 +78,15 @@ export interface ValidationResult {
   readonly requestValidationResult: RequestValidationResult
   readonly responseValidationResult: ResponseValidationResult
   errors: unknown[]
+}
+
+interface OperationId {
+  url: string
+  method: string
+}
+
+function isOperationId(arg: any): arg is OperationId {
+  return arg.method && arg.url
 }
 
 /**
@@ -390,16 +399,39 @@ export class LiveValidator {
    */
   public validateLiveResponse(
     liveResponse: LiveResponse,
-    specOperation: Operation
+    specOperation: Operation | OperationId
   ): ResponseValidationResult {
+    let operation: Operation
+    if (isOperationId(specOperation)) {
+      try {
+        operation = this.findSpecOperation(specOperation.url, specOperation.method)
+      } catch (err) {
+        return {
+          successfulResponse: false,
+          errors: [err],
+          operationInfo: []
+        }
+      }
+    } else {
+      operation = specOperation
+    }
     let errors = []
+    // If status code is passed as a status code string (e.g. "OK") transform it to the status code
+    // number (e.g. '200').
+    if (
+      !http.STATUS_CODES[liveResponse.statusCode] &&
+      utils.statusCodeStringToStatusCode[liveResponse.statusCode.toLowerCase()]
+    ) {
+      liveResponse.statusCode =
+        utils.statusCodeStringToStatusCode[liveResponse.statusCode.toLowerCase()]
+    }
     try {
-      const resResult = specOperation.validateResponse(liveResponse)
+      const resResult = operation.validateResponse(liveResponse)
       errors = [...resResult.errors]
     } catch (resValidationError) {
       const msg =
         `An error occurred while validating the live response for operation ` +
-        `"${specOperation.operationId}". The error is:\n ` +
+        `"${operation.operationId}". The error is:\n ` +
         `${util.inspect(resValidationError, { depth: null })}`
       const err = new models.LiveValidationError(C.ErrorCodes.ResponseValidationError.name, msg)
       errors = [err]
@@ -409,8 +441,8 @@ export class LiveValidator {
       successfulResponse: errors.length === 0,
       operationInfo: [
         {
-          apiVersion: specOperation.operationId,
-          operationId: specOperation.operationId
+          apiVersion: operation.operationId,
+          operationId: operation.operationId
         }
       ],
       errors
@@ -420,10 +452,10 @@ export class LiveValidator {
   /**
    * Validates live request and response.
    *
-   * @param requestResponseObj - The wrapper that contains the live request and response
+   * @param requestResponsePair - The wrapper that contains the live request and response
    * @returns  validationResult - Validation result for given input
    */
-  public validateLiveRequestResponse(requestResponseObj: RequestResponseObj): ValidationResult {
+  public validateLiveRequestResponse(requestResponseObj: RequestResponsePair): ValidationResult {
     const validationResult: ValidationResult = {
       requestValidationResult: {
         successfulRequest: false,
@@ -437,11 +469,13 @@ export class LiveValidator {
       },
       errors: []
     }
-    if (!requestResponseObj || (requestResponseObj && typeof requestResponseObj !== "object")) {
+    if (!requestResponseObj) {
       const msg = 'requestResponseObj cannot be null or undefined and must be of type "object".'
       const e = new models.LiveValidationError(C.ErrorCodes.IncorrectInput.name, msg)
-      validationResult.errors.push(e)
-      return validationResult
+      return {
+        ...validationResult,
+        errors: [e]
+      }
     }
     try {
       // We are using this to validate the payload as per the definitions in swagger.
@@ -456,21 +490,13 @@ export class LiveValidator {
         `Found errors "${err.message}" in the provided input:\n` +
         `${util.inspect(requestResponseObj, { depth: null })}.`
       const e = new models.LiveValidationError(C.ErrorCodes.IncorrectInput.name, msg)
-      validationResult.errors.push(e)
-      return validationResult
+      return {
+        ...validationResult,
+        errors: [e]
+      }
     }
     const request = requestResponseObj.liveRequest
     const response = requestResponseObj.liveResponse
-
-    // If status code is passed as a status code string (e.g. "OK") transform it to the status code
-    // number (e.g. '200').
-    if (
-      response &&
-      !http.STATUS_CODES[response.statusCode] &&
-      utils.statusCodeStringToStatusCode[response.statusCode.toLowerCase()]
-    ) {
-      response.statusCode = utils.statusCodeStringToStatusCode[response.statusCode.toLowerCase()]
-    }
 
     if (!request.query) {
       request.query = URL.parse(request.url, true).query
@@ -488,34 +514,9 @@ export class LiveValidator {
     }
     validationResult.requestValidationResult.operationInfo = [basicOperationInfo]
     validationResult.responseValidationResult.operationInfo = [basicOperationInfo]
-    let reqResult
-    try {
-      reqResult = operation.validateRequest(request)
-      validationResult.requestValidationResult.errors = reqResult.errors || []
-      log.debug("Request Validation Result")
-      log.debug(reqResult.toString())
-    } catch (reqValidationError) {
-      const msg =
-        `An error occurred while validating the live request for operation ` +
-        `"${operation.operationId}". The error is:\n ` +
-        `${util.inspect(reqValidationError, { depth: null })}`
-      const err = new models.LiveValidationError(C.ErrorCodes.RequestValidationError.name, msg)
-      validationResult.requestValidationResult.errors = [err]
-    }
-    let resResult
-    try {
-      resResult = operation.validateResponse(response)
-      validationResult.responseValidationResult.errors = resResult.errors || []
-      log.debug("Response Validation Result")
-      log.debug(resResult.toString())
-    } catch (resValidationError) {
-      const msg =
-        `An error occurred while validating the live response for operation ` +
-        `"${operation.operationId}". The error is:\n ` +
-        `${util.inspect(resValidationError, { depth: null })}`
-      const err = new models.LiveValidationError(C.ErrorCodes.ResponseValidationError.name, msg)
-      validationResult.responseValidationResult.errors = [err]
-    }
+    const reqResult = this.validateLiveRequest(request, operation)
+    const resResult = this.validateLiveResponse(response, operation)
+
     if (
       reqResult &&
       reqResult.errors &&
