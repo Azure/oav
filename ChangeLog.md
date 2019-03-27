@@ -1,6 +1,6 @@
 # Changelog
 
-### 03/27/2019 0.14.9
+### 03/27/2019 0.15.0
 
 - Refactor live validator.
 - Expose separate request and response validate methods.
