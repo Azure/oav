@@ -9,7 +9,7 @@ import * as msRest from "ms-rest"
 import * as os from "os"
 import * as path from "path"
 import { ParsedUrlQuery } from "querystring"
-import * as url from "url"
+import * as URL from "url"
 import * as util from "util"
 import { Operation, Request } from "yasway"
 
@@ -42,26 +42,35 @@ export interface Provider {
 }
 
 export interface LiveRequest extends Request {
+  readonly headers: {} | undefined
+  readonly body: {} | undefined
+}
+
+export interface LiveResponse {
+  statusCode: string
   readonly headers: {}
+  readonly body: {} | undefined
 }
 
 export interface RequestResponseObj {
   readonly liveRequest: LiveRequest
-  readonly liveResponse: {
-    statusCode: string
-    readonly headers: {}
-  }
+  readonly liveResponse: LiveResponse
+}
+
+interface OperationInfo {
+  operationId: string
+  apiVersion: string
 }
 
 export interface RequestValidationResult {
-  successfulRequest: unknown
-  operationInfo?: unknown
+  successfulRequest: boolean
+  operationInfo: OperationInfo[]
   errors?: unknown[]
 }
 
 export interface ResponseValidationResult {
-  successfulResponse: unknown
-  operationInfo?: unknown
+  successfulResponse: boolean
+  operationInfo: OperationInfo[]
   errors?: unknown[]
 }
 
@@ -242,7 +251,7 @@ export class LiveValidator {
     }
 
     let potentialOperations: Operation[] = []
-    const parsedUrl = url.parse(requestUrl, true)
+    const parsedUrl = URL.parse(requestUrl, true)
     const pathStr = parsedUrl.pathname
     requestMethod = requestMethod.toLowerCase()
     let result
@@ -333,20 +342,98 @@ export class LiveValidator {
   }
 
   /**
+   *  Validates live request.
+   */
+  public validateLiveRequest(
+    liveRequest: LiveRequest,
+    specOperation?: Operation
+  ): RequestValidationResult {
+    let operation = specOperation
+    if (!operation) {
+      try {
+        operation = this.findSpecOperation(liveRequest.url, liveRequest.method)
+      } catch (err) {
+        return {
+          successfulRequest: false,
+          errors: [err],
+          operationInfo: []
+        }
+      }
+    }
+    let errors = []
+
+    try {
+      const reqResult = operation.validateRequest(liveRequest)
+      errors = [...reqResult.errors]
+    } catch (reqValidationError) {
+      const msg =
+        `An error occurred while validating the live request for operation ` +
+        `"${operation.operationId}". The error is:\n ` +
+        `${util.inspect(reqValidationError, { depth: null })}`
+      const err = new models.LiveValidationError(C.ErrorCodes.RequestValidationError.name, msg)
+      errors = [err]
+    }
+    return {
+      successfulRequest: errors.length === 0,
+      operationInfo: [
+        {
+          apiVersion: operation.operationId,
+          operationId: operation.operationId
+        }
+      ],
+      errors
+    }
+  }
+
+  /**
+   * Validates live response.
+   */
+  public validateLiveResponse(
+    liveResponse: LiveResponse,
+    specOperation: Operation
+  ): ResponseValidationResult {
+    let errors = []
+    try {
+      const resResult = specOperation.validateResponse(liveResponse)
+      errors = [...resResult.errors]
+    } catch (resValidationError) {
+      const msg =
+        `An error occurred while validating the live response for operation ` +
+        `"${specOperation.operationId}". The error is:\n ` +
+        `${util.inspect(resValidationError, { depth: null })}`
+      const err = new models.LiveValidationError(C.ErrorCodes.ResponseValidationError.name, msg)
+      errors = [err]
+    }
+
+    return {
+      successfulResponse: errors.length === 0,
+      operationInfo: [
+        {
+          apiVersion: specOperation.operationId,
+          operationId: specOperation.operationId
+        }
+      ],
+      errors
+    }
+  }
+
+  /**
    * Validates live request and response.
    *
-   * @param {object} requestResponseObj - The wrapper that contains the live request and response
-   * @param {object} requestResponseObj.liveRequest - The live request
-   * @param {object} requestResponseObj.liveResponse - The live response
-   * @returns {object} validationResult - Validation result for given input
+   * @param requestResponseObj - The wrapper that contains the live request and response
+   * @returns  validationResult - Validation result for given input
    */
   public validateLiveRequestResponse(requestResponseObj: RequestResponseObj): ValidationResult {
     const validationResult: ValidationResult = {
       requestValidationResult: {
-        successfulRequest: false
+        successfulRequest: false,
+        errors: [],
+        operationInfo: []
       },
       responseValidationResult: {
-        successfulResponse: false
+        successfulResponse: false,
+        errors: [],
+        operationInfo: []
       },
       errors: []
     }
@@ -386,43 +473,18 @@ export class LiveValidator {
     }
 
     if (!request.query) {
-      request.query = url.parse(request.url, true).query
+      request.query = URL.parse(request.url, true).query
     }
-    const currentApiVersion = request.query["api-version"] || C.unknownApiVersion
-    let potentialOperationsResult
-    let potentialOperations: Operation[] = []
+    let operation
     try {
-      potentialOperationsResult = this.getPotentialOperations(request.url, request.method)
-      potentialOperations = potentialOperationsResult.operations
+      operation = this.findSpecOperation(request.url, request.method)
     } catch (err) {
-      const msg =
-        `An error occurred while trying to search for potential operations:\n` +
-        `${util.inspect(err, { depth: null })}`
-      const e = new models.LiveValidationError(C.ErrorCodes.PotentialOperationSearchError.name, msg)
-      validationResult.errors.push(e)
-      return validationResult
-    }
-
-    // Found empty potentialOperations
-    if (potentialOperations.length === 0) {
-      validationResult.errors.push(potentialOperationsResult.reason)
-      return validationResult
-      // Found more than 1 potentialOperations
-    } else if (potentialOperations.length !== 1) {
-      const operationIds = potentialOperations.map(op => op.operationId).join()
-      const msg =
-        `Found multiple matching operations with operationIds "${operationIds}" ` +
-        `for request url "${request.url}" with HTTP Method "${request.method}".`
-      log.debug(msg)
-      const err = new models.LiveValidationError(C.ErrorCodes.MultipleOperationsFound.name, msg)
       validationResult.errors = [err]
       return validationResult
     }
-
-    const operation = potentialOperations[0]
     const basicOperationInfo = {
       operationId: operation.operationId,
-      apiVersion: currentApiVersion
+      apiVersion: request.query["api-version"] || C.unknownApiVersion
     }
     validationResult.requestValidationResult.operationInfo = [basicOperationInfo]
     validationResult.responseValidationResult.operationInfo = [basicOperationInfo]
@@ -542,6 +604,40 @@ export class LiveValidator {
     }
 
     return potentialOperations
+  }
+
+  /**
+   * Gets the swagger operation based on the HTTP url and method
+   */
+  private findSpecOperation(url: string, method: string): Operation {
+    let potentialOperationsResult
+    let potentialOperations: Operation[] = []
+    try {
+      potentialOperationsResult = this.getPotentialOperations(url, method)
+      potentialOperations = potentialOperationsResult.operations
+    } catch (err) {
+      const msg =
+        `An error occurred while trying to search for potential operations:\n` +
+        `${util.inspect(err, { depth: null })}`
+      const e = new models.LiveValidationError(C.ErrorCodes.PotentialOperationSearchError.name, msg)
+      throw e
+    }
+
+    // Found empty potentialOperations
+    if (potentialOperations.length === 0) {
+      throw potentialOperationsResult.reason
+      // Found more than 1 potentialOperations
+    } else if (potentialOperations.length !== 1) {
+      const operationIds = potentialOperations.map(op => op.operationId).join()
+      const msg =
+        `Found multiple matching operations with operationIds "${operationIds}" ` +
+        `for request url "${url}" with HTTP Method "${method}".`
+      log.debug(msg)
+      const e = new models.LiveValidationError(C.ErrorCodes.MultipleOperationsFound.name, msg)
+      throw e
+    }
+
+    return potentialOperations[0]
   }
 
   private getSwaggerPaths(): string[] {
