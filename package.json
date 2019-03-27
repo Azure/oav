@@ -100,7 +100,7 @@
     "test": "npm run tsc && npm run tslint && npm run fast-test",
     "fast-test": "jest --ci --reporters=default --reporters=jest-junit --testPathIgnorePatterns **/regression/**/*.ts",
     "slow-test": "node --max-old-space-size=10192 ./node_modules/.bin/jest  test/regression/[^/]*ts -u --runInBand --ci --reporters=default --reporters=jest-junit",
-    "slow-test-sample": "node --max-old-space-size=10192 ./node_modules/.bin/jest  test/regression/[^/]*ts --runInBand --ci --reporters=default --reporters=jest-junit",
+    "slow-test-sample": "node --max-old-space-size=10192 ./node_modules/.bin/jest  test/regression/[^/]*ts --runInBand --ci --reporters=default --reporters=jest-junit -t @latestVersion",
     "start": "node ./dist/lib/autorestPlugin/pluginHost.js",
     "tslint-check": "tslint-config-prettier-check ./tslint.json",
     "prepack": "npm install && tsc && npm run tslint",

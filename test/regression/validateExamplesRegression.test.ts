@@ -6,14 +6,11 @@ import * as path from "path"
 import * as validate from "../../lib/validate"
 
 describe("validateExamples should not regress for file", () => {
-  const specPaths = glob.sync(
-    path.join(__dirname, "azure-rest-api-specs/specification/**/*.json"),
-    {
-      ignore: ["azure-rest-api-specs/specification/**/examples/*"]
-    }
-  )
+  const specPaths = glob
+    .sync(path.join(__dirname, "azure-rest-api-specs/specification/**/*.json"))
+    .filter(p => !p.includes("examples"))
 
-  const versionRegex = /(?:\/)[0-9-]*[^\/]*/
+  const versionRegex = /[0-9]+[0-9-]+[^\/]*/
   const rpRegex = /(?:\/)Microsoft.[^\/]*/
   const latestForEachRp = (_.chain(specPaths)
     .filter(p => p.includes("stable")) // only look at stable specs
@@ -23,12 +20,15 @@ describe("validateExamples should not regress for file", () => {
     .map((entry: [string, string[]]) =>
       // for each rp get latest version
       _.chain(entry[1])
-        .filter(p => p.match(versionRegex))
-        .sortBy((p: string) => p.match(versionRegex)![0])
+        .filter(p => p!.match(versionRegex))
+        .groupBy((p: string) => p!.match(versionRegex)![0])
+        .entries()
+        .sortBy(([version]: [string, string[]]) => version)
+        .map((e: [string, string[]]) => e[1])
         .last()
         .value()
     )
-    .toArray()
+    .flatten()
     .value() as unknown) as string[]
 
   test.each(specPaths.map(path => [path, latestForEachRp.includes(path) ? "@latestVersion" : ""]))(
@@ -44,6 +44,7 @@ describe("validateExamples should not regress for file", () => {
           })
         )
         expect(hash).toMatchSnapshot("input file hash")
+
         const result = await validate.validateExamples(file, undefined, {
           pretty: true
         })
