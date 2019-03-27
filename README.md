@@ -2,6 +2,7 @@
 
 [![Build Status](https://dev.azure.com/azure-public/adx/_apis/build/status/public.Azure.oav)](https://dev.azure.com/azure-public/adx/_build/latest?definitionId=3)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
+[![Build Status](https://dev.azure.com/azure-sdk/public/_apis/build/status/OAV%20Validate%20Examples%20Regression?branchName=master)](https://dev.azure.com/azure-sdk/public/_build/latest?definitionId=163&branchName=master)
 
 Tools for validating OpenAPI (Swagger) files.
 
@@ -124,9 +125,7 @@ let apiValidator = new oav.LiveValidator(liveValidatorOptions)
 await apiValidator.initialize() // Note that for a large number of specs this can take some time.
 
 // After `initialize()` finishes we are ready to validate
-let validationResult = apiValidator.validateLiveRequestResponse(
-  requestResponsePair
-)
+let validationResult = apiValidator.validateLiveRequestResponse(requestResponsePair)
 ```
 
 ---
