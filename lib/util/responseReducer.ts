@@ -5,7 +5,7 @@ import { MutableStringMap } from "@ts-common/string-map"
 
 import { ModelValidationError } from "./modelValidationError"
 import { toModelErrors } from "./toModelErrors"
-import { processValidationErrors, ValidationResult } from "./validationError"
+import { processValidationResult, ValidationResult } from "./validationError"
 import { ValidationResultSource } from "./validationResultSource"
 
 export interface Result {
@@ -44,7 +44,7 @@ export function responseReducer(
     ? response.error.innerErrors
     : []
 
-  const processedErrors = processValidationErrors(rawValidationResult)
+  const processedErrors = processValidationResult(rawValidationResult)
 
   if (processedErrors.responseValidationResult.errors === undefined) {
     throw new Error("ICE: processedErrors.responseValidationResult.errors === undefined")

@@ -1,5 +1,12 @@
 # Changelog
 
+### 03/27/2019 0.15.0
+
+- Refactor live validator and new types for validation results.
+- Expose separate request and response validate methods.
+- Expose types for live validation parameters.
+- `processValidationErrors`, `serializeErrors` and `getPotentialOperations` are not exported anymore. Validation methods automatically call these.
+
 ### 03/20/2019 0.14.8
 
 - Don't parse examples when not needed.

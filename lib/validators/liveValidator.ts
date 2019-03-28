@@ -1,8 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
-
 import { MutableStringMap } from "@ts-common/string-map"
-import * as glob from "glob"
+import globby from "globby"
 import * as http from "http"
 import * as _ from "lodash"
 import * as msRest from "ms-rest"
@@ -17,20 +16,27 @@ import * as models from "../models"
 import { PotentialOperationsResult } from "../models/potentialOperationsResult"
 import * as C from "../util/constants"
 import { log } from "../util/logging"
+import { Severity } from "../util/severity"
 import * as utils from "../util/utils"
-
+import {
+  errorCodeToSeverity,
+  processValidationErrors,
+  RuntimeException,
+  SourceLocation
+} from "../util/validationError"
 import { SpecValidator } from "./specValidator"
 
-export interface Options {
+export interface LiveValidatorOptions {
   swaggerPaths: string[]
   git: {
-    url: string
     shouldClone: boolean
+    url?: string
     branch?: string
   }
+  useRelativeSourceLocationUrl?: boolean
   directory: string
-  swaggerPathsPattern?: string
-  isPathCaseSensitive?: boolean
+  swaggerPathsPattern: string
+  isPathCaseSensitive: boolean
 }
 
 export interface ApiVersion {
@@ -42,34 +48,63 @@ export interface Provider {
 }
 
 export interface LiveRequest extends Request {
-  readonly headers: {}
+  headers: object
+  body?: object
 }
 
-export interface RequestResponseObj {
+export interface LiveResponse {
+  statusCode: string
+  headers: object
+  body?: object
+}
+
+export interface RequestResponsePair {
   readonly liveRequest: LiveRequest
-  readonly liveResponse: {
-    statusCode: string
-    readonly headers: {}
-  }
+  readonly liveResponse: LiveResponse
+}
+
+interface OperationInfo {
+  readonly operationId: string
+  readonly apiVersion: string
 }
 
 export interface RequestValidationResult {
-  successfulRequest: unknown
-  operationInfo?: unknown
-  errors?: unknown[]
+  readonly successfulRequest: boolean
+  readonly operationInfo: OperationInfo
+  errors: LiveValidationIssue[]
+  runtimeException?: RuntimeException
 }
 
 export interface ResponseValidationResult {
-  successfulResponse: unknown
-  operationInfo?: unknown
-  errors?: unknown[]
+  readonly successfulResponse: boolean
+  readonly operationInfo: OperationInfo
+  errors: LiveValidationIssue[]
+  runtimeException?: RuntimeException
 }
 
 export interface ValidationResult {
   readonly requestValidationResult: RequestValidationResult
   readonly responseValidationResult: ResponseValidationResult
-  errors: unknown[]
+  readonly errors: unknown[]
 }
+
+export interface ApiOperationIdentifier {
+  url: string
+  method: string
+}
+export interface LiveValidationIssue {
+  code: string
+  message: string
+  pathInPayload: string
+  severity: Severity
+  similarPaths: string[]
+  source: SourceLocation
+  documentationUrl: string
+  params?: string[]
+  inner?: object[]
+}
+
+type OperationWithApiVersion = Operation & { apiVersion: string }
 
 /**
  * @class
@@ -78,77 +113,45 @@ export interface ValidationResult {
 export class LiveValidator {
   public readonly cache: MutableStringMap<Provider> = {}
 
-  public options: Options
+  public options: LiveValidatorOptions
 
   /**
    * Constructs LiveValidator based on provided options.
    *
-   * @param {object} optionsRaw The configuration options.
+   * @param {object} ops The configuration options.
    *
-   * @param {array} [options.swaggerPaths] Array of swagger paths to be used for initializing Live
-   *    Validator. This has precedence over {@link options.swaggerPathsPattern}.
-   *
-   * @param {string} [options.swaggerPathsPattern] Pattern for swagger paths to be used for
-   *    initializing Live Validator.
-   *
-   * @param {string} [options.isPathCaseSensitive] Specifies if the swagger path is to be considered
-   *    case sensitive.
-   *
-   * @param {string} [options.git.url] The url of the github repository. Defaults to
-   *    "https://github.com/Azure/azure-rest-api-specs.git".
-   *
-   * @param {string} [options.git.shouldClone] Specifies whether to clone the repository or not.
-   *    Defaults to false.
-   *
-   * @param {string} [options.git.branch] The branch  of the github repository to use instead of the
-   *    default branch.
-   *
-   * @param {string} [options.directory] The directory where to clone github repository or from
-   *    where to find swaggers. Defaults to "repo" under user directory.
-   *
-   * @returns {object} CacheBuilder Returns the configured CacheBuilder object.
+   * @returns CacheBuilder Returns the configured CacheBuilder object.
    */
-  public constructor(optionsRaw?: any) {
-    optionsRaw = optionsRaw === null || optionsRaw === undefined ? {} : optionsRaw
+  public constructor(options?: Partial<LiveValidatorOptions>) {
+    const ops: Partial<LiveValidatorOptions> = options || {}
 
-    if (typeof optionsRaw !== "object") {
-      throw new Error('options must be of type "object".')
+    if (!ops.swaggerPaths) {
+      ops.swaggerPaths = []
     }
-    if (optionsRaw.swaggerPaths === null || optionsRaw.swaggerPaths === undefined) {
-      optionsRaw.swaggerPaths = []
-    }
-    if (!Array.isArray(optionsRaw.swaggerPaths)) {
-      const paths = typeof optionsRaw.swaggerPaths
-      throw new Error(`options.swaggerPaths must be of type "array" instead of type "${paths}".`)
-    }
-    if (optionsRaw.git === null || optionsRaw.git === undefined) {
-      optionsRaw.git = {
+
+    if (!ops.git) {
+      ops.git = {
         url: "https://github.com/Azure/azure-rest-api-specs.git",
         shouldClone: false
       }
     }
-    if (typeof optionsRaw.git !== "object") {
-      throw new Error('options.git must be of type "object".')
+
+    if (!ops.git.url) {
+      ops.git.url = "https://github.com/Azure/azure-rest-api-specs.git"
     }
-    if (optionsRaw.git.url === null || optionsRaw.git.url === undefined) {
-      optionsRaw.git.url = "https://github.com/Azure/azure-rest-api-specs.git"
+    if (!ops.git.shouldClone) {
+      ops.git.shouldClone = false
     }
-    if (typeof optionsRaw.git.url.valueOf() !== "string") {
-      throw new Error('options.git.url must be of type "string".')
+
+    if (!ops.directory) {
+      ops.directory = path.resolve(os.homedir(), "repo")
     }
-    if (optionsRaw.git.shouldClone === null || optionsRaw.git.shouldClone === undefined) {
-      optionsRaw.git.shouldClone = false
+
+    if (!ops.isPathCaseSensitive) {
+      ops.isPathCaseSensitive = false
     }
-    if (typeof optionsRaw.git.shouldClone !== "boolean") {
-      throw new Error('options.git.shouldClone must be of type "boolean".')
-    }
-    if (optionsRaw.directory === null || optionsRaw.directory === undefined) {
-      optionsRaw.directory = path.resolve(os.homedir(), "repo")
-    }
-    if (typeof optionsRaw.directory.valueOf() !== "string") {
-      throw new Error('options.directory must be of type "string".')
-    }
-    this.options = optionsRaw
+
+    this.options = ops as LiveValidatorOptions
   }
 
   /**
@@ -156,12 +159,12 @@ export class LiveValidator {
    */
   public async initialize(): Promise<void> {
     // Clone github repository if required
-    if (this.options.git.shouldClone) {
+    if (this.options.git.shouldClone && this.options.git.url) {
       utils.gitClone(this.options.directory, this.options.git.url, this.options.git.branch)
     }
 
     // Construct array of swagger paths to be used for building a cache
-    const swaggerPaths = this.getSwaggerPaths()
+    const swaggerPaths = await this.getSwaggerPaths()
 
     // console.log(swaggerPaths);
     // Create array of promise factories that builds up cache
@@ -202,13 +205,13 @@ export class LiveValidator {
   /**
    * Gets list of potential operations objects for given url and method.
    *
-   * @param {string} requestUrl The url for which to find potential operations.
+   * @param  requestUrl The url for which to find potential operations.
    *
-   * @param {string} requestMethod The http verb for the method to be used for lookup.
+   * @param requestMethod The http verb for the method to be used for lookup.
    *
-   * @returns {PotentialOperationsResult} Potential operation result object.
+   * @returns Potential operation result object.
    */
-  public getPotentialOperations(
+  private getPotentialOperations(
     requestUrl: string,
     requestMethod: string
   ): PotentialOperationsResult {
@@ -245,7 +248,6 @@ export class LiveValidator {
     const parsedUrl = url.parse(requestUrl, true)
     const pathStr = parsedUrl.pathname
     requestMethod = requestMethod.toLowerCase()
-    let result
     let msg
     let code
     let liveValidationError: models.LiveValidationError | undefined
@@ -255,8 +257,12 @@ export class LiveValidator {
         C.ErrorCodes.PathNotFoundInRequestUrl.name,
         msg
       )
-      result = new models.PotentialOperationsResult(potentialOperations, liveValidationError)
-      return result
+      return new models.PotentialOperationsResult(
+        potentialOperations,
+        C.unknownResourceProvider,
+        C.unknownApiVersion,
+        liveValidationError
+      )
     }
 
     // Lower all the keys of query parameters before searching for `api-version`
@@ -328,33 +334,160 @@ export class LiveValidator {
       liveValidationError = new models.LiveValidationError(code.name, msg)
     }
 
-    result = new models.PotentialOperationsResult(potentialOperations, liveValidationError)
-    return result
+    return new models.PotentialOperationsResult(
+      potentialOperations,
+      provider,
+      apiVersion,
+      liveValidationError
+    )
+  }
+
+  /**
+   *  Validates live request.
+   */
+  public validateLiveRequest(liveRequest: LiveRequest): RequestValidationResult {
+    let operation
+    try {
+      operation = this.findSpecOperation(liveRequest.url, liveRequest.method)
+    } catch (err) {
+      return {
+        successfulRequest: false,
+        errors: [err],
+        operationInfo: { apiVersion: C.unknownApiVersion, operationId: C.unknownOperationId }
+      }
+    }
+    if (!liveRequest.query) {
+      liveRequest.query = url.parse(liveRequest.url, true).query
+    }
+    let errors: LiveValidationIssue[] = []
+    let runtimeException
+    try {
+      const reqResult = operation.validateRequest(liveRequest)
+      const processedErrors = processValidationErrors({ errors: [...reqResult.errors] })
+      errors = processedErrors
+        ? processedErrors.map(err => this.toLiveValidationIssue(err as any))
+        : []
+    } catch (reqValidationError) {
+      const msg =
+        `An error occurred while validating the live request for operation ` +
+        `"${operation.operationId}". The error is:\n ` +
+        `${util.inspect(reqValidationError, { depth: null })}`
+      runtimeException = { code: C.ErrorCodes.RequestValidationError.name, message: msg }
+    }
+    return {
+      successfulRequest: errors.length === 0,
+      operationInfo: {
+        apiVersion: operation.apiVersion,
+        operationId: operation.operationId
+      },
+      errors,
+      runtimeException
+    }
+  }
+  private toLiveValidationIssue(err: { [index: string]: any; url: string }): LiveValidationIssue {
+    return {
+      code: err.code,
+      message: err.message,
+      pathInPayload: err.path,
+      inner: err.inner,
+      severity: errorCodeToSeverity(err.code),
+      params: err.params,
+      similarPaths: err.similarPaths || [],
+      source: {
+        url:
+          this.options.useRelativeSourceLocationUrl && err.url
+            ? err.url.substr(this.options.directory.length)
+            : err.url,
+        jsonRef: err.title,
+        position: {
+          column: err.position ? err.position.column : -1,
+          line: err.position ? err.position.line : -1
+        }
+      },
+      documentationUrl: ""
+    }
+  }
+
+  /**
+   * Validates live response.
+   */
+  public validateLiveResponse(
+    liveResponse: LiveResponse,
+    specOperation: ApiOperationIdentifier
+  ): ResponseValidationResult {
+    let operation: OperationWithApiVersion
+    try {
+      operation = this.findSpecOperation(specOperation.url, specOperation.method)
+    } catch (err) {
+      return {
+        successfulResponse: false,
+        errors: [err],
+        operationInfo: { apiVersion: C.unknownApiVersion, operationId: C.unknownOperationId }
+      }
+    }
+    let errors: LiveValidationIssue[] = []
+    let runtimeException
+    // If status code is passed as a status code string (e.g. "OK") transform it to the status code
+    // number (e.g. '200').
+    if (
+      !http.STATUS_CODES[liveResponse.statusCode] &&
+      utils.statusCodeStringToStatusCode[liveResponse.statusCode.toLowerCase()]
+    ) {
+      liveResponse.statusCode =
+        utils.statusCodeStringToStatusCode[liveResponse.statusCode.toLowerCase()]
+    }
+    try {
+      const resResult = operation.validateResponse(liveResponse)
+      const processedErrors = processValidationErrors({ errors: [...resResult.errors] })
+      errors = processedErrors
+        ? processedErrors.map(err => this.toLiveValidationIssue(err as any))
+        : []
+    } catch (resValidationError) {
+      const msg =
+        `An error occurred while validating the live response for operation ` +
+        `"${operation.operationId}". The error is:\n ` +
+        `${util.inspect(resValidationError, { depth: null })}`
+      runtimeException = { code: C.ErrorCodes.RequestValidationError.name, message: msg }
+    }
+
+    return {
+      successfulResponse: errors.length === 0,
+      operationInfo: {
+        apiVersion: operation.apiVersion,
+        operationId: operation.operationId
+      },
+      errors,
+      runtimeException
+    }
   }
 
   /**
    * Validates live request and response.
    *
-   * @param {object} requestResponseObj - The wrapper that contains the live request and response
-   * @param {object} requestResponseObj.liveRequest - The live request
-   * @param {object} requestResponseObj.liveResponse - The live response
-   * @returns {object} validationResult - Validation result for given input
+   * @param requestResponsePair - The wrapper that contains the live request and response
+   * @returns  validationResult - Validation result for given input
    */
-  public validateLiveRequestResponse(requestResponseObj: RequestResponseObj): ValidationResult {
+  public validateLiveRequestResponse(requestResponseObj: RequestResponsePair): ValidationResult {
     const validationResult: ValidationResult = {
       requestValidationResult: {
-        successfulRequest: false
+        successfulRequest: false,
+        errors: [],
+        operationInfo: { apiVersion: C.unknownApiVersion, operationId: C.unknownOperationId }
       },
       responseValidationResult: {
-        successfulResponse: false
+        successfulResponse: false,
+        errors: [],
+        operationInfo: { apiVersion: C.unknownApiVersion, operationId: C.unknownOperationId }
       },
       errors: []
     }
-    if (!requestResponseObj || (requestResponseObj && typeof requestResponseObj !== "object")) {
+    if (!requestResponseObj) {
       const msg = 'requestResponseObj cannot be null or undefined and must be of type "object".'
       const e = new models.LiveValidationError(C.ErrorCodes.IncorrectInput.name, msg)
-      validationResult.errors.push(e)
-      return validationResult
+      return {
+        ...validationResult,
+        errors: [e]
+      }
     }
     try {
       // We are using this to validate the payload as per the definitions in swagger.
@@ -369,109 +502,25 @@ export class LiveValidator {
         `Found errors "${err.message}" in the provided input:\n` +
         `${util.inspect(requestResponseObj, { depth: null })}.`
       const e = new models.LiveValidationError(C.ErrorCodes.IncorrectInput.name, msg)
-      validationResult.errors.push(e)
-      return validationResult
+      return {
+        ...validationResult,
+        errors: [e]
+      }
     }
     const request = requestResponseObj.liveRequest
     const response = requestResponseObj.liveResponse
 
-    // If status code is passed as a status code string (e.g. "OK") transform it to the status code
-    // number (e.g. '200').
-    if (
-      response &&
-      !http.STATUS_CODES[response.statusCode] &&
-      utils.statusCodeStringToStatusCode[response.statusCode.toLowerCase()]
-    ) {
-      response.statusCode = utils.statusCodeStringToStatusCode[response.statusCode.toLowerCase()]
-    }
+    const requestValidationResult = this.validateLiveRequest(request)
+    const responseValidationResult = this.validateLiveResponse(response, {
+      method: request.method,
+      url: request.url
+    })
 
-    if (!request.query) {
-      request.query = url.parse(request.url, true).query
+    return {
+      requestValidationResult,
+      responseValidationResult,
+      errors: []
     }
-    const currentApiVersion = request.query["api-version"] || C.unknownApiVersion
-    let potentialOperationsResult
-    let potentialOperations: Operation[] = []
-    try {
-      potentialOperationsResult = this.getPotentialOperations(request.url, request.method)
-      potentialOperations = potentialOperationsResult.operations
-    } catch (err) {
-      const msg =
-        `An error occurred while trying to search for potential operations:\n` +
-        `${util.inspect(err, { depth: null })}`
-      const e = new models.LiveValidationError(C.ErrorCodes.PotentialOperationSearchError.name, msg)
-      validationResult.errors.push(e)
-      return validationResult
-    }
-
-    // Found empty potentialOperations
-    if (potentialOperations.length === 0) {
-      validationResult.errors.push(potentialOperationsResult.reason)
-      return validationResult
-      // Found more than 1 potentialOperations
-    } else if (potentialOperations.length !== 1) {
-      const operationIds = potentialOperations.map(op => op.operationId).join()
-      const msg =
-        `Found multiple matching operations with operationIds "${operationIds}" ` +
-        `for request url "${request.url}" with HTTP Method "${request.method}".`
-      log.debug(msg)
-      const err = new models.LiveValidationError(C.ErrorCodes.MultipleOperationsFound.name, msg)
-      validationResult.errors = [err]
-      return validationResult
-    }
-
-    const operation = potentialOperations[0]
-    const basicOperationInfo = {
-      operationId: operation.operationId,
-      apiVersion: currentApiVersion
-    }
-    validationResult.requestValidationResult.operationInfo = [basicOperationInfo]
-    validationResult.responseValidationResult.operationInfo = [basicOperationInfo]
-    let reqResult
-    try {
-      reqResult = operation.validateRequest(request)
-      validationResult.requestValidationResult.errors = reqResult.errors || []
-      log.debug("Request Validation Result")
-      log.debug(reqResult.toString())
-    } catch (reqValidationError) {
-      const msg =
-        `An error occurred while validating the live request for operation ` +
-        `"${operation.operationId}". The error is:\n ` +
-        `${util.inspect(reqValidationError, { depth: null })}`
-      const err = new models.LiveValidationError(C.ErrorCodes.RequestValidationError.name, msg)
-      validationResult.requestValidationResult.errors = [err]
-    }
-    let resResult
-    try {
-      resResult = operation.validateResponse(response)
-      validationResult.responseValidationResult.errors = resResult.errors || []
-      log.debug("Response Validation Result")
-      log.debug(resResult.toString())
-    } catch (resValidationError) {
-      const msg =
-        `An error occurred while validating the live response for operation ` +
-        `"${operation.operationId}". The error is:\n ` +
-        `${util.inspect(resValidationError, { depth: null })}`
-      const err = new models.LiveValidationError(C.ErrorCodes.ResponseValidationError.name, msg)
-      validationResult.responseValidationResult.errors = [err]
-    }
-    if (
-      reqResult &&
-      reqResult.errors &&
-      Array.isArray(reqResult.errors) &&
-      !reqResult.errors.length
-    ) {
-      validationResult.requestValidationResult.successfulRequest = true
-    }
-    if (
-      resResult &&
-      resResult.errors &&
-      Array.isArray(resResult.errors) &&
-      !resResult.errors.length
-    ) {
-      validationResult.responseValidationResult.successfulResponse = true
-    }
-
-    return validationResult
   }
 
   /**
@@ -516,9 +565,10 @@ export class LiveValidator {
       throw new Error('operations is a required parameter of type "array".')
     }
 
+    const requestUrl = formatUrlToExpectedFormat(requestPath)
     let potentialOperations = operations.filter(operation => {
       const pathObject = operation.pathObject
-      const pathMatch = pathObject.regexp.exec(requestPath)
+      const pathMatch = pathObject.regexp.exec(requestUrl)
       return pathMatch !== null
     })
 
@@ -544,7 +594,43 @@ export class LiveValidator {
     return potentialOperations
   }
 
-  private getSwaggerPaths(): string[] {
+  /**
+   * Gets the swagger operation based on the HTTP url and method
+   */
+  private findSpecOperation(requestUrl: string, requestMethod: string): OperationWithApiVersion {
+    let potentialOperationsResult
+    try {
+      potentialOperationsResult = this.getPotentialOperations(requestUrl, requestMethod)
+    } catch (err) {
+      const msg =
+        `An error occurred while trying to search for potential operations:\n` +
+        `${util.inspect(err, { depth: null })}`
+      const e = new models.LiveValidationError(C.ErrorCodes.PotentialOperationSearchError.name, msg)
+      throw e
+    }
+
+    // Found empty potentialOperations
+    if (potentialOperationsResult.operations.length === 0) {
+      throw potentialOperationsResult.reason
+      // Found more than 1 potentialOperations
+    } else if (potentialOperationsResult.operations.length > 1) {
+      const operationIds = potentialOperationsResult.operations
+        .map(operation => operation.operationId)
+        .join()
+      const msg =
+        `Found multiple matching operations with operationIds "${operationIds}" ` +
+        `for request url "${url}" with HTTP Method "${requestMethod}".`
+      log.debug(msg)
+      const e = new models.LiveValidationError(C.ErrorCodes.MultipleOperationsFound.name, msg)
+      throw e
+    }
+
+    const op = potentialOperationsResult.operations[0]
+    Object.assign(op, { apiVersion: potentialOperationsResult.apiVersion })
+    return op as OperationWithApiVersion
+  }
+
+  private async getSwaggerPaths(): Promise<string[]> {
     if (this.options.swaggerPaths.length !== 0) {
       log.debug(
         `Using user provided swagger paths. Total paths: ${this.options.swaggerPaths.length}`
@@ -556,19 +642,22 @@ export class LiveValidator {
         this.options.directory,
         this.options.swaggerPathsPattern || allJsonsPattern
       )
-      const swaggerPaths = glob.sync(jsonsPattern, {
+      const swaggerPaths = await globby(jsonsPattern, {
         ignore: [
           "**/examples/**/*",
           "**/quickstart-templates/**/*",
           "**/schema/**/*",
           "**/live/**/*",
           "**/wire-format/**/*"
-        ]
+        ],
+        onlyFiles: true,
+        unique: true
       })
-      const dir = this.options.directory
       log.debug(
-        `Using swaggers found from directory "${dir}" and pattern "${jsonsPattern}".` +
-          `Total paths: ${swaggerPaths.length}`
+        `Using swaggers found from directory: "${
+          this.options.directory
+        }" and pattern: "${jsonsPattern}".
+        Total paths: ${swaggerPaths.length}`
       )
       return swaggerPaths
     }
@@ -636,4 +725,13 @@ export class LiveValidator {
       )
     }
   }
+}
+
+/**
+ * OAV expects the url that is sent to match exactly with the swagger path. For this we need to keep only the part after
+ * where the swagger path starts. Currently those are '/subscriptions' and '/providers'.
+ */
+
+export function formatUrlToExpectedFormat(requestUrl: string): string {
+  return requestUrl.substring(requestUrl.search("/?(subscriptions|providers)"))
 }

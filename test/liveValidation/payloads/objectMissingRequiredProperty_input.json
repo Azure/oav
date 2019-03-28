@@ -1,0 +1,57 @@
+{
+  "liveRequest": {
+    "headers": {
+      "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+      "x-ms-request-id": "97856fec-304a-4317-87f0-f04c328402d3",
+      "date": "Tue, 11 Sep 2018 19:00:21 GMT",
+      "eTag": "\"AAAAAAAAQqUAAAAAAABCpw==\"",
+      "server": "Microsoft-HTTPAPI/2.0",
+      "Content-Type": "application/json"
+    },
+    "method": "PUT",
+    "url": "/subscriptions/randomSub/resourceGroups/randomRG/providers/Microsoft.ApiManagement/service/randomService/users/radomUser?api-version=2018-01-01",
+    "body": {
+      "properties": {
+        "firstName": "aaaaa",
+        "lastName": "aaaaa",
+        "email": "aaaaaaaaaaaaaaaaaaaaaa",
+        "password": "aaaaaaaaaa",
+        "state": "active"
+      }
+    },
+    "query": { "api-version": "2018-01-01" }
+  },
+  "liveResponse": {
+    "statusCode": "201",
+    "headers": {
+      "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+      "x-ms-request-id": "97856fec-304a-4317-87f0-f04c328402d3",
+      "date": "Tue, 11 Sep 2018 19:00:21 GMT",
+      "eTag": "\"AAAAAAAAQqUAAAAAAABCpw==\"",
+      "server": "Microsoft-HTTPAPI/2.0",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "type": "Microsoft.ApiManagement/service/users",
+      "name": "david-kelly-us-abb-com",
+      "properties": {
+        "firstName": "aaaaa",
+        "lastName": "aaaaa",
+        "email": "aaaaaaaaaaaaaaaaaaaaaa",
+        "state": "active",
+        "registrationDate": "2018-09-11T19:00:21.037Z",
+        "note": null,
+        "groups": [
+          {
+            "description": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "builtIn": true,
+            "type": "system",
+            "externalId": null
+          }
+        ],
+        "identities": [{ "provider": "aaaaa", "id": "aaaaaaaaaaaaaaaaaaaaaa" }]
+      }
+    }
+  }
+}

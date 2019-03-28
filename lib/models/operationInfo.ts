@@ -28,10 +28,10 @@ export class OperationInfo {
   /**
    * Defines the metadata of OperationInfo
    *
-   * @returns {object} metadata of OperationInfo
+   * @returns metadata of OperationInfo
    *
    */
-  public mapper() {
+  public mapper(): object {
     return {
       required: false,
       serializedName: "OperationInfo",

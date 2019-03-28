@@ -1,0 +1,126 @@
+{
+  "liveRequest": {
+    "headers": {
+      "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+      "x-ms-request-id": "90a50d53-257d-42c0-a888-67501884e8f6",
+      "date": "Tue, 11 Sep 2018 17:41:28 GMT",
+      "eTag": "\"AAAAAAEdnhs=\"",
+      "server": "Microsoft-HTTPAPI/2.0",
+      "Content-Type": "application/json"
+    },
+    "method": "GET",
+    "url": "/subscriptions/367b68e8-7a71-46ee-8c43-f5488498ed9e/resourceGroups/dc-p-apim-rg/providers/Microsoft.ApiManagement/service/dc-p-apim-svc01?api-version=2018-01-01",
+    "query": { "api-version": "2018-01-01" }
+  },
+  "liveResponse": {
+    "statusCode": "200",
+    "headers": {
+      "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+      "x-ms-request-id": "90a50d53-257d-42c0-a888-67501884e8f6",
+      "date": "Tue, 11 Sep 2018 17:41:28 GMT",
+      "eTag": "\"AAAAAAEdnhs=\"",
+      "server": "Microsoft-HTTPAPI/2.0",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "dc-p-apim-svc01",
+      "type": "Microsoft.ApiManagement/service",
+      "tags": {},
+      "location": "aaaaaaa",
+      "etag": "aaaaaaaaaaaa",
+      "properties": {
+        "publisherEmail": "aaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "publisherName": "aaaaaaaaaaaaaaaaaaaaaaa",
+        "notificationSenderEmail": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "provisioningState": "aaaaaaaaa",
+        "targetProvisioningState": "",
+        "createdAtUtc": "2018-04-28T04:24:05.4989542Z",
+        "gatewayUrl": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "gatewayRegionalUrl": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "portalUrl": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "managementApiUrl": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "scmUrl": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "hostnameConfigurations": [
+          {
+            "type": "Management",
+            "hostName": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "encodedCertificate": null,
+            "keyVaultId": null,
+            "certificatePassword": null,
+            "negotiateClientCertificate": false,
+            "certificate": {
+              "expiry": "2020-05-09T22:58:11+00:00",
+              "thumbprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "subject": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            },
+            "defaultSslBinding": false
+          },
+          {
+            "type": "Portal",
+            "hostName": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "encodedCertificate": null,
+            "keyVaultId": null,
+            "certificatePassword": null,
+            "negotiateClientCertificate": false,
+            "certificate": {
+              "expiry": "2020-05-09T22:58:11+00:00",
+              "thumbprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "subject": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            },
+            "defaultSslBinding": false
+          },
+          {
+            "type": "Proxy",
+            "hostName": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "encodedCertificate": null,
+            "keyVaultId": null,
+            "certificatePassword": null,
+            "negotiateClientCertificate": false,
+            "certificate": {
+              "expiry": "2020-05-09T22:58:11+00:00",
+              "thumbprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "subject": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            },
+            "defaultSslBinding": true
+          },
+          {
+            "type": "Scm",
+            "hostName": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "encodedCertificate": null,
+            "keyVaultId": null,
+            "certificatePassword": null,
+            "negotiateClientCertificate": false,
+            "certificate": {
+              "expiry": "2020-05-09T22:58:11+00:00",
+              "thumbprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "subject": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            },
+            "defaultSslBinding": false
+          }
+        ],
+        "publicIPAddresses": ["aaaaaaaaaaaaa"],
+        "privateIPAddresses": ["aaaaaaaaaa"],
+        "additionalLocations": null,
+        "virtualNetworkConfiguration": {
+          "subnetResourceId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "vnetid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "subnetname": null
+        },
+        "customProperties": {
+          "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Protocols.Tls10": "aaaa",
+          "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Protocols.Tls11": "aaaa",
+          "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Protocols.Ssl30": "aaaaa",
+          "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Backend.Protocols.Tls10": "aaaa",
+          "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Backend.Protocols.Tls11": "aaaa",
+          "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Backend.Protocols.Ssl30": "aaaaa",
+          "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Ciphers.TripleDes168": "aaaa"
+        },
+        "virtualNetworkType": "Internal",
+        "certificates": null
+      },
+      "sku": { "name": "Premium", "capacity": 1 },
+      "identity": null
+    }
+  }
+}

@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
-
 import * as assert from "assert"
-import * as glob from "glob"
+import * as globby from "globby"
+import * as lodash from "lodash"
 import * as os from "os"
 import * as path from "path"
 import { ResponsesObject } from "yasway"
@@ -10,8 +10,8 @@ import { ResponsesObject } from "yasway"
 import * as Constants from "../lib/util/constants"
 import { LiveValidator } from "../lib/validators/liveValidator"
 
-const numberOfSpecs = 8
-const livePaths = glob.sync(path.join(__dirname, "test/liveValidation/swaggers/**/live/*.json"))
+const numberOfSpecs = 9
+jest.setTimeout(150000)
 
 describe("Live Validator", () => {
   describe("Initialization", () => {
@@ -22,7 +22,8 @@ describe("Live Validator", () => {
           url: "https://github.com/Azure/azure-rest-api-specs.git",
           shouldClone: false
         },
-        directory: path.resolve(os.homedir(), "repo")
+        directory: path.resolve(os.homedir(), "repo"),
+        isPathCaseSensitive: false
       }
       const validator = new LiveValidator()
       assert.deepStrictEqual(validator.cache, {})
@@ -57,22 +58,10 @@ describe("Live Validator", () => {
         "https://github.com/Azure/azure-rest-api-specs.git"
       )
     })
-    it("should throw during initialization with invalid directory", () => {
-      assert.throws(() => {
-        const options = {
-          swaggerPaths: [],
-          git: {
-            shouldClone: false
-          },
-          directory: 54
-        }
-        const validator = new LiveValidator(options)
-        assert.notStrictEqual(validator, null)
-      })
-    })
     it("should initialize with user provided swaggerPaths", () => {
       const swaggerPaths = ["swaggerPath1", "swaggerPath2"]
       const options = {
+        isPathCaseSensitive: false,
         swaggerPaths,
         git: {
           url: "https://github.com/Azure/azure-rest-api-specs.git",
@@ -89,6 +78,7 @@ describe("Live Validator", () => {
       const directory = "/Users/username/repos/"
       const options = {
         swaggerPaths,
+        isPathCaseSensitive: false,
         git: {
           url: "https://github.com/Azure/azure-rest-api-specs.git",
           shouldClone: false
@@ -103,10 +93,12 @@ describe("Live Validator", () => {
       const swaggerPaths = ["swaggerPath1", "swaggerPath2"]
       const directory = "/Users/username/repos/"
       const git = {
-        url: "https://github.com/Azure/azure-rest-api-specs.git"
+        url: "https://github.com/Azure/azure-rest-api-specs.git",
+        shouldClone: false
       }
       const options = {
         swaggerPaths,
+        isPathCaseSensitive: false,
         git: {
           url: git.url,
           shouldClone: false
@@ -132,7 +124,8 @@ describe("Live Validator", () => {
       const options = {
         swaggerPaths,
         git,
-        directory
+        directory,
+        isPathCaseSensitive: false
       }
       const validator = new LiveValidator({
         swaggerPaths,
@@ -141,28 +134,6 @@ describe("Live Validator", () => {
       })
       assert.deepStrictEqual(validator.cache, {})
       assert.deepStrictEqual(validator.options, options)
-    })
-    it("should throw on invalid options types", () => {
-      assert.throws(() => {
-        const _ = new LiveValidator("string")
-        assert.notStrictEqual(_, null)
-      }, /must be of type "object"/)
-      assert.throws(() => {
-        const _ = new LiveValidator({ swaggerPaths: "should be array" })
-        assert.notStrictEqual(_, null)
-      }, /must be of type "array"/)
-      assert.throws(() => {
-        const _ = new LiveValidator({ git: 1 })
-        assert.notStrictEqual(_, null)
-      }, /must be of type "object"/)
-      assert.throws(() => {
-        const _ = new LiveValidator({ git: { url: [] } })
-        assert.notStrictEqual(_, null)
-      }, /must be of type "string"/)
-      assert.throws(() => {
-        const _ = new LiveValidator({ git: { url: "url", shouldClone: "no" } })
-        assert.notStrictEqual(_, null)
-      }, /must be of type "boolean"/)
     })
   })
 
@@ -294,7 +265,7 @@ describe("Live Validator", () => {
         "https://management.azure.com/" +
         "subscriptions/subscriptionId/resourceGroups/myRG/providers/Microsoft.Storage/" +
         "storageAccounts/accname?api-version=2015-06-15"
-      const validator = new LiveValidator(options)
+      const validator: any = new LiveValidator(options)
       await validator.initialize()
       // Operations to match is StorageAccounts_List
       let operations = validator.getPotentialOperations(listRequestUrl, "Get").operations
@@ -353,7 +324,7 @@ describe("Live Validator", () => {
         "https://management.azure.com/" +
         "subscriptions/subscriptionId/providers/Microsoft.Storage/storageAccounts/accountName/" +
         "properties?api-version=2015-06-15"
-      const validator = new LiveValidator(options)
+      const validator: any = new LiveValidator(options)
       await validator.initialize()
       // Operations to match is StorageAccounts_List with api-version 2015-08-15
       // [non cached api version]
@@ -426,6 +397,9 @@ describe("Live Validator", () => {
   })
 
   describe("Initialize cache and validate", () => {
+    const livePaths = globby.sync(
+      path.join(__dirname, "test/liveValidation/swaggers/**/live/*.json")
+    )
     livePaths.forEach(livePath => {
       it(`should validate request and response for "${livePath}"`, async () => {
         const options = {
@@ -499,6 +473,63 @@ describe("Live Validator", () => {
       })
       const errors = result.responseValidationResult.errors
       assert.deepStrictEqual(errors, [])
+    })
+  })
+})
+describe("Live validator snapshot validation", () => {
+  let validator: LiveValidator
+  const errors = [
+    "OBJECT_MISSING_REQUIRED_PROPERTY",
+    "OBJECT_ADDITIONAL_PROPERTIES",
+    "MAX_LENGTH",
+    "INVALID_FORMAT",
+    "INVALID_TYPE",
+    "ENUM_MISMATCH",
+    "ENUM_CASE_MISMATCH"
+  ]
+
+  beforeAll(async () => {
+    const options = {
+      directory: `${__dirname}/liveValidation/swaggers/`,
+      isPathCaseSensitive: false,
+      useRelativeSourceLocationUrl: true,
+      swaggerPathsPattern:
+        "specification\\apimanagement\\resource-manager\\Microsoft.ApiManagement\\preview\\2018-01-01\\*.json",
+      git: {
+        shouldClone: false
+      }
+    }
+    validator = new LiveValidator(options)
+    await validator.initialize()
+  }, 100000)
+
+  test(`should return no errors for valid input`, async () => {
+    const payload = require(`${__dirname}/liveValidation/payloads/valid_input.json`)
+    const validationResult = validator.validateLiveRequestResponse(payload)
+    expect(validationResult).toMatchSnapshot()
+  })
+
+  errors.forEach(error => {
+    test(`should return the expected error requestResponse validation for ${error}`, async () => {
+      const payload = require(`${__dirname}/liveValidation/payloads/${lodash.camelCase(
+        error
+      )}_input.json`)
+      const validationResult = validator.validateLiveRequestResponse(payload)
+      expect(validationResult).toMatchSnapshot()
+    })
+
+    test(`should match pair validation with response request validation for ${error}`, async () => {
+      const payload = require(`${__dirname}/liveValidation/payloads/${lodash.camelCase(
+        error
+      )}_input.json`)
+      const validationResult = validator.validateLiveRequestResponse(payload)
+      const requestValidationResult = validator.validateLiveRequest(payload.liveRequest)
+      const responseValidationResult = validator.validateLiveResponse(payload.liveResponse, {
+        url: payload.liveRequest.url,
+        method: payload.liveRequest.method
+      })
+      expect(validationResult.requestValidationResult).toStrictEqual(requestValidationResult)
+      expect(validationResult.responseValidationResult).toStrictEqual(responseValidationResult)
     })
   })
 })

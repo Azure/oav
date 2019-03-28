@@ -1,0 +1,343 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Live validator snapshot validation should return no errors for valid input 1`] = `
+Object {
+  "errors": Array [],
+  "requestValidationResult": Object {
+    "errors": Array [],
+    "operationInfo": Object {
+      "apiVersion": "2018-01-01",
+      "operationId": "User_Get",
+    },
+    "runtimeException": undefined,
+    "successfulRequest": true,
+  },
+  "responseValidationResult": Object {
+    "errors": Array [],
+    "operationInfo": Object {
+      "apiVersion": "2018-01-01",
+      "operationId": "User_Get",
+    },
+    "runtimeException": undefined,
+    "successfulResponse": true,
+  },
+}
+`;
+
+exports[`Live validator snapshot validation should return the expected error requestResponse validation for ENUM_CASE_MISMATCH 1`] = `
+Object {
+  "errors": Array [],
+  "requestValidationResult": Object {
+    "errors": Array [],
+    "operationInfo": Object {
+      "apiVersion": "2018-01-01",
+      "operationId": "User_CreateOrUpdate",
+    },
+    "runtimeException": undefined,
+    "successfulRequest": true,
+  },
+  "responseValidationResult": Object {
+    "errors": Array [
+      Object {
+        "code": "ENUM_CASE_MISMATCH",
+        "documentationUrl": "",
+        "inner": undefined,
+        "message": "Enum doesn not match case for: System",
+        "params": Array [
+          "System",
+        ],
+        "pathInPayload": "properties/groups/0/type",
+        "severity": 1,
+        "similarPaths": Array [],
+        "source": Object {
+          "jsonRef": "#/definitions/GroupContractProperties/properties/type",
+          "position": Object {
+            "column": 17,
+            "line": 611,
+          },
+          "url": "specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimgroups.json",
+        },
+      },
+    ],
+    "operationInfo": Object {
+      "apiVersion": "2018-01-01",
+      "operationId": "User_CreateOrUpdate",
+    },
+    "runtimeException": undefined,
+    "successfulResponse": false,
+  },
+}
+`;
+
+exports[`Live validator snapshot validation should return the expected error requestResponse validation for ENUM_MISMATCH 1`] = `
+Object {
+  "errors": Array [],
+  "requestValidationResult": Object {
+    "errors": Array [],
+    "operationInfo": Object {
+      "apiVersion": "2018-01-01",
+      "operationId": "User_CreateOrUpdate",
+    },
+    "runtimeException": undefined,
+    "successfulRequest": true,
+  },
+  "responseValidationResult": Object {
+    "errors": Array [
+      Object {
+        "code": "ENUM_MISMATCH",
+        "documentationUrl": "",
+        "inner": undefined,
+        "message": "No enum match for: banana",
+        "params": Array [
+          "banana",
+        ],
+        "pathInPayload": "properties/groups/0/type",
+        "severity": 0,
+        "similarPaths": Array [],
+        "source": Object {
+          "jsonRef": "#/definitions/GroupContractProperties/properties/type",
+          "position": Object {
+            "column": 17,
+            "line": 611,
+          },
+          "url": "specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimgroups.json",
+        },
+      },
+    ],
+    "operationInfo": Object {
+      "apiVersion": "2018-01-01",
+      "operationId": "User_CreateOrUpdate",
+    },
+    "runtimeException": undefined,
+    "successfulResponse": false,
+  },
+}
+`;
+
+exports[`Live validator snapshot validation should return the expected error requestResponse validation for INVALID_FORMAT 1`] = `
+Object {
+  "errors": Array [],
+  "requestValidationResult": Object {
+    "errors": Array [],
+    "operationInfo": Object {
+      "apiVersion": "2018-01-01",
+      "operationId": "ApiManagementService_Get",
+    },
+    "runtimeException": undefined,
+    "successfulRequest": true,
+  },
+  "responseValidationResult": Object {
+    "errors": Array [
+      Object {
+        "code": "INVALID_FORMAT",
+        "documentationUrl": "",
+        "inner": undefined,
+        "message": "Object didn't pass validation for format date-time: 0001-01-01T00:00:00",
+        "params": Array [
+          "date-time",
+          "0001-01-01T00:00:00",
+        ],
+        "pathInPayload": "properties/createdAtUtc",
+        "severity": 0,
+        "similarPaths": Array [],
+        "source": Object {
+          "jsonRef": "#/definitions/ApiManagementServiceBaseProperties/properties/createdAtUtc",
+          "position": Object {
+            "column": 25,
+            "line": 903,
+          },
+          "url": "specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimdeployment.json",
+        },
+      },
+    ],
+    "operationInfo": Object {
+      "apiVersion": "2018-01-01",
+      "operationId": "ApiManagementService_Get",
+    },
+    "runtimeException": undefined,
+    "successfulResponse": false,
+  },
+}
+`;
+
+exports[`Live validator snapshot validation should return the expected error requestResponse validation for INVALID_TYPE 1`] = `
+Object {
+  "errors": Array [],
+  "requestValidationResult": Object {
+    "errors": Array [],
+    "operationInfo": Object {
+      "apiVersion": "2018-01-01",
+      "operationId": "ApiManagementService_Get",
+    },
+    "runtimeException": undefined,
+    "successfulRequest": true,
+  },
+  "responseValidationResult": Object {
+    "errors": Array [
+      Object {
+        "code": "INVALID_TYPE",
+        "documentationUrl": "",
+        "inner": undefined,
+        "message": "Expected type array but found type string",
+        "params": Array [
+          "array",
+          "string",
+        ],
+        "pathInPayload": "properties/hostnameConfigurations",
+        "severity": 0,
+        "similarPaths": Array [],
+        "source": Object {
+          "jsonRef": "#/definitions/ApiManagementServiceBaseProperties/properties/hostnameConfigurations",
+          "position": Object {
+            "column": 35,
+            "line": 934,
+          },
+          "url": "specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimdeployment.json",
+        },
+      },
+    ],
+    "operationInfo": Object {
+      "apiVersion": "2018-01-01",
+      "operationId": "ApiManagementService_Get",
+    },
+    "runtimeException": undefined,
+    "successfulResponse": false,
+  },
+}
+`;
+
+exports[`Live validator snapshot validation should return the expected error requestResponse validation for MAX_LENGTH 1`] = `
+Object {
+  "errors": Array [],
+  "requestValidationResult": Object {
+    "errors": Array [],
+    "operationInfo": Object {
+      "apiVersion": "2018-01-01",
+      "operationId": "ApiOperation_Get",
+    },
+    "runtimeException": undefined,
+    "successfulRequest": true,
+  },
+  "responseValidationResult": Object {
+    "errors": Array [
+      Object {
+        "code": "MAX_LENGTH",
+        "documentationUrl": "",
+        "inner": undefined,
+        "message": "String is too long (1958 chars), maximum 1000",
+        "params": Array [
+          1958,
+          1000,
+        ],
+        "pathInPayload": "properties/description",
+        "severity": 0,
+        "similarPaths": Array [],
+        "source": Object {
+          "jsonRef": "#/definitions/OperationEntityBaseContract/properties/description",
+          "position": Object {
+            "column": 24,
+            "line": 4231,
+          },
+          "url": "specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimapis.json",
+        },
+      },
+    ],
+    "operationInfo": Object {
+      "apiVersion": "2018-01-01",
+      "operationId": "ApiOperation_Get",
+    },
+    "runtimeException": undefined,
+    "successfulResponse": false,
+  },
+}
+`;
+
+exports[`Live validator snapshot validation should return the expected error requestResponse validation for OBJECT_ADDITIONAL_PROPERTIES 1`] = `
+Object {
+  "errors": Array [],
+  "requestValidationResult": Object {
+    "errors": Array [],
+    "operationInfo": Object {
+      "apiVersion": "2018-01-01",
+      "operationId": "User_CreateOrUpdate",
+    },
+    "runtimeException": undefined,
+    "successfulRequest": true,
+  },
+  "responseValidationResult": Object {
+    "errors": Array [
+      Object {
+        "code": "OBJECT_ADDITIONAL_PROPERTIES",
+        "documentationUrl": "",
+        "inner": undefined,
+        "message": "Additional properties not allowed: id",
+        "params": Array [
+          "id",
+        ],
+        "pathInPayload": "properties/groups/0",
+        "severity": 0,
+        "similarPaths": Array [],
+        "source": Object {
+          "jsonRef": "#/definitions/GroupContractProperties",
+          "position": Object {
+            "column": 32,
+            "line": 593,
+          },
+          "url": "specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimgroups.json",
+        },
+      },
+    ],
+    "operationInfo": Object {
+      "apiVersion": "2018-01-01",
+      "operationId": "User_CreateOrUpdate",
+    },
+    "runtimeException": undefined,
+    "successfulResponse": false,
+  },
+}
+`;
+
+exports[`Live validator snapshot validation should return the expected error requestResponse validation for OBJECT_MISSING_REQUIRED_PROPERTY 1`] = `
+Object {
+  "errors": Array [],
+  "requestValidationResult": Object {
+    "errors": Array [],
+    "operationInfo": Object {
+      "apiVersion": "2018-01-01",
+      "operationId": "User_CreateOrUpdate",
+    },
+    "runtimeException": undefined,
+    "successfulRequest": true,
+  },
+  "responseValidationResult": Object {
+    "errors": Array [
+      Object {
+        "code": "OBJECT_MISSING_REQUIRED_PROPERTY",
+        "documentationUrl": "",
+        "inner": undefined,
+        "message": "Missing required property: displayName",
+        "params": Array [
+          "displayName",
+        ],
+        "pathInPayload": "properties/groups/0",
+        "severity": 0,
+        "similarPaths": Array [],
+        "source": Object {
+          "jsonRef": "#/definitions/GroupContractProperties",
+          "position": Object {
+            "column": 32,
+            "line": 593,
+          },
+          "url": "specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimgroups.json",
+        },
+      },
+    ],
+    "operationInfo": Object {
+      "apiVersion": "2018-01-01",
+      "operationId": "User_CreateOrUpdate",
+    },
+    "runtimeException": undefined,
+    "successfulResponse": false,
+  },
+}
+`;

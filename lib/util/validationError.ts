@@ -83,8 +83,35 @@ export const errorCodeToSeverity = (code: string): Severity => {
   return errorConstant ? errorConstant.severity : Severity.Critical
 }
 
+export interface LiveValidationIssue {
+  code: string
+  message: string
+  pathInPayload: string
+  similarPaths: string[]
+  operationId: string
+  source: SourceLocation
+  documentationUrl: string
+  params?: string[]
+  origin: string
+  inner?: object[]
+}
+export interface SourceLocation {
+  url: string
+  jsonRef?: string
+  jsonPath?: string
+  position: {
+    column: number
+    line: number
+  }
+}
+export interface RuntimeException {
+  code: string
+  message: string
+}
+
 export interface NodeError<T extends NodeError<T>> {
   code?: string
+  message?: string
   path?: string | string[]
   similarPaths?: string[]
   errors?: T[]
@@ -94,7 +121,6 @@ export interface NodeError<T extends NodeError<T>> {
   params?: unknown[]
   inner?: T[]
   title?: string
-  message?: string
 
   position?: FilePosition
   url?: string
@@ -116,16 +142,23 @@ export interface ValidationResult<T extends NodeError<T>> {
 /**
  * Serializes validation results into a flat array.
  */
-export function processValidationErrors<V extends ValidationResult<T>, T extends NodeError<T>>(
+export function processValidationResult<V extends ValidationResult<T>, T extends NodeError<T>>(
   rawValidation: V
 ): V {
-  const requestSerializedErrors: T[] = serializeErrors(rawValidation.requestValidationResult, [])
-  const responseSerializedErrors: T[] = serializeErrors(rawValidation.responseValidationResult, [])
+  rawValidation.requestValidationResult.errors = processValidationErrors(
+    rawValidation.requestValidationResult
+  )
 
-  rawValidation.requestValidationResult.errors = processErrors(requestSerializedErrors)
-  rawValidation.responseValidationResult.errors = processErrors(responseSerializedErrors)
+  rawValidation.responseValidationResult.errors = processValidationErrors(
+    rawValidation.responseValidationResult
+  )
 
   return rawValidation
+}
+
+export function processValidationErrors<T extends NodeError<T>>(errorsNode: T) {
+  const requestSerializedErrors: T[] = serializeErrors(errorsNode, [])
+  return processErrors(requestSerializedErrors)
 }
 
 /**

@@ -114,3 +114,4 @@ export const EnvironmentVariables = {
 
 export const unknownResourceProvider = "microsoft.unknown"
 export const unknownApiVersion = "unknown-api-version"
+export const unknownOperationId = "unknownOperationId"
