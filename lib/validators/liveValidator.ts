@@ -27,6 +27,7 @@ export interface LiveValidatorOptions {
     url?: string
     branch?: string
   }
+  useRelativeSourceLocationUrl?: boolean
   directory: string
   swaggerPathsPattern: string
   isPathCaseSensitive: boolean
@@ -94,25 +95,6 @@ export interface LiveValidationIssue {
   documentationUrl: string
   params?: string[]
   inner?: object[]
-}
-function toLiveValidationIssue(err: any): LiveValidationIssue {
-  return {
-    code: err.code,
-    message: err.message,
-    pathInPayload: err.path,
-    inner: err.inner,
-    params: err.params,
-    similarPaths: err.similarPaths || [],
-    source: {
-      url: err.url,
-      jsonRef: err.title,
-      position: {
-        column: err.position ? err.position.column : -1,
-        line: err.position ? err.position.line : -1
-      }
-    },
-    documentationUrl: ""
-  }
 }
 
 type OperationWithApiVersion = Operation & { apiVersion: string }
@@ -384,7 +366,9 @@ export class LiveValidator {
     try {
       const reqResult = operation.validateRequest(liveRequest)
       const processedErrors = processValidationErrors({ errors: [...reqResult.errors] })
-      errors = processedErrors ? processedErrors.map(toLiveValidationIssue) : []
+      errors = processedErrors
+        ? processedErrors.map(err => this.toLiveValidationIssue(err as any))
+        : []
     } catch (reqValidationError) {
       const msg =
         `An error occurred while validating the live request for operation ` +
@@ -400,6 +384,28 @@ export class LiveValidator {
       },
       errors,
       runtimeException
+    }
+  }
+  private toLiveValidationIssue(err: { [index: string]: any; url: string }): LiveValidationIssue {
+    return {
+      code: err.code,
+      message: err.message,
+      pathInPayload: err.path,
+      inner: err.inner,
+      params: err.params,
+      similarPaths: err.similarPaths || [],
+      source: {
+        url:
+          this.options.useRelativeSourceLocationUrl && err.url
+            ? err.url.substr(this.options.directory.length)
+            : err.url,
+        jsonRef: err.title,
+        position: {
+          column: err.position ? err.position.column : -1,
+          line: err.position ? err.position.line : -1
+        }
+      },
+      documentationUrl: ""
     }
   }
 
@@ -438,7 +444,9 @@ export class LiveValidator {
     try {
       const resResult = operation.validateResponse(liveResponse)
       const processedErrors = processValidationErrors({ errors: [...resResult.errors] })
-      errors = processedErrors ? processedErrors.map(toLiveValidationIssue) : []
+      errors = processedErrors
+        ? processedErrors.map(err => this.toLiveValidationIssue(err as any))
+        : []
     } catch (resValidationError) {
       const msg =
         `An error occurred while validating the live response for operation ` +

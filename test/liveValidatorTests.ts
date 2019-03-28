@@ -492,6 +492,7 @@ describe("Live validator snapshot validation", () => {
     const options = {
       directory: `${__dirname}/liveValidation/swaggers/`,
       isPathCaseSensitive: false,
+      useRelativeSourceLocationUrl: true,
       swaggerPathsPattern:
         "specification\\apimanagement\\resource-manager\\Microsoft.ApiManagement\\preview\\2018-01-01\\*.json",
       git: {
