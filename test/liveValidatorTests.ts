@@ -1,8 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
-
 import * as assert from "assert"
-import * as glob from "glob"
+import * as globby from "globby"
 import * as os from "os"
 import * as path from "path"
 import { ResponsesObject } from "yasway"
@@ -11,7 +10,7 @@ import * as Constants from "../lib/util/constants"
 import { LiveValidator } from "../lib/validators/liveValidator"
 
 const numberOfSpecs = 8
-const livePaths = glob.sync(path.join(__dirname, "test/liveValidation/swaggers/**/live/*.json"))
+const livePaths = globby.sync(path.join(__dirname, "test/liveValidation/swaggers/**/live/*.json"))
 
 describe("Live Validator", () => {
   describe("Initialization", () => {

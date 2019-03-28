@@ -8,7 +8,7 @@ import { CommonError } from "./commonError"
 import { ModelValidationError } from "./modelValidationError"
 import { MultipleScenarios, responseReducer, Scenario } from "./responseReducer"
 import { toModelErrors } from "./toModelErrors"
-import { processValidationErrors, ValidationResult } from "./validationError"
+import { processValidationResult, ValidationResult } from "./validationError"
 import { ValidationResultSource } from "./validationResultSource"
 
 export interface Result {
@@ -47,7 +47,7 @@ export function scenarioReducer(
     }
   }
   // process request separately since its unique
-  const processedErrors = processValidationErrors(rawValidationResult)
+  const processedErrors = processValidationResult(rawValidationResult)
 
   if (processedErrors.requestValidationResult.errors === undefined) {
     throw new Error("ICE: processedErrors.requestValidationResult.errors === undefined")

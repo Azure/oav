@@ -26,8 +26,6 @@ export {
 export {
   errorConstants,
   errorCodeToSeverity,
-  processValidationErrors,
-  serializeErrors,
   NodeError,
   ValidationError,
   ValidationResult
@@ -39,7 +37,8 @@ export {
   LiveValidator,
   RequestResponsePair,
   LiveRequest,
-  LiveResponse
+  LiveResponse,
+  LiveValidationIssue
 } from "./lib/validators/liveValidator"
 export { SpecResolver } from "./lib/validators/specResolver"
 

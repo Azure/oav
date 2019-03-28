@@ -9,6 +9,7 @@ import {
   getRootObjectInfo
 } from "@ts-common/source-map"
 import { merge } from "@ts-common/string-map"
+import * as jsonRefs from "json-refs"
 import { jsonSymbol, schemaSymbol } from "z-schema"
 
 import { TitleObject } from "../validators/specTransformer"
@@ -25,7 +26,7 @@ export const setPositionAndUrl = (error: CommonError, titleObject: TitleObject |
     error.position = titleObject.position
     error.url = titleObject.url
     if (path !== undefined) {
-      error.title = "/" + path.join("/")
+      error.title = jsonRefs.pathToPtr(path as string[], true)
     }
     error.directives = titleObject.directives
   }

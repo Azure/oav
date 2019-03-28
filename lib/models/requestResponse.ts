@@ -42,10 +42,10 @@ export class RequestResponse {
   /**
    * Defines the metadata of RequestResponse
    *
-   * @returns metadata of RequestResponse
+   * @returns {object} metadata of RequestResponse
    *
    */
-  public mapper(): object {
+  public mapper() {
     return {
       required: false,
       serializedName: "RequestResponse",
