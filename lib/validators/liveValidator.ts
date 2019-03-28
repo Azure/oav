@@ -106,10 +106,6 @@ export interface LiveValidationIssue {
 
 type OperationWithApiVersion = Operation & { apiVersion: string }
 
-function isApiOperationIdentifier(arg: any): arg is ApiOperationIdentifier {
-  return arg.method && arg.url
-}
-
 /**
  * @class
  * Live Validator for Azure swagger APIs.
@@ -215,7 +211,7 @@ export class LiveValidator {
    *
    * @returns Potential operation result object.
    */
-  public getPotentialOperations(
+  private getPotentialOperations(
     requestUrl: string,
     requestMethod: string
   ): PotentialOperationsResult {
@@ -349,20 +345,15 @@ export class LiveValidator {
   /**
    *  Validates live request.
    */
-  public validateLiveRequest(
-    liveRequest: LiveRequest,
-    specOperation?: OperationWithApiVersion
-  ): RequestValidationResult {
-    let operation = specOperation
-    if (!operation) {
-      try {
-        operation = this.findSpecOperation(liveRequest.url, liveRequest.method)
-      } catch (err) {
-        return {
-          successfulRequest: false,
-          errors: [err],
-          operationInfo: { apiVersion: C.unknownApiVersion, operationId: C.unknownOperationId }
-        }
+  public validateLiveRequest(liveRequest: LiveRequest): RequestValidationResult {
+    let operation
+    try {
+      operation = this.findSpecOperation(liveRequest.url, liveRequest.method)
+    } catch (err) {
+      return {
+        successfulRequest: false,
+        errors: [err],
+        operationInfo: { apiVersion: C.unknownApiVersion, operationId: C.unknownOperationId }
       }
     }
     if (!liveRequest.query) {
@@ -422,21 +413,17 @@ export class LiveValidator {
    */
   public validateLiveResponse(
     liveResponse: LiveResponse,
-    specOperation: OperationWithApiVersion | ApiOperationIdentifier
+    specOperation: ApiOperationIdentifier
   ): ResponseValidationResult {
     let operation: OperationWithApiVersion
-    if (isApiOperationIdentifier(specOperation)) {
-      try {
-        operation = this.findSpecOperation(specOperation.url, specOperation.method)
-      } catch (err) {
-        return {
-          successfulResponse: false,
-          errors: [err],
-          operationInfo: { apiVersion: C.unknownApiVersion, operationId: C.unknownOperationId }
-        }
+    try {
+      operation = this.findSpecOperation(specOperation.url, specOperation.method)
+    } catch (err) {
+      return {
+        successfulResponse: false,
+        errors: [err],
+        operationInfo: { apiVersion: C.unknownApiVersion, operationId: C.unknownOperationId }
       }
-    } else {
-      operation = specOperation
     }
     let errors: LiveValidationIssue[] = []
     let runtimeException
@@ -523,18 +510,11 @@ export class LiveValidator {
     const request = requestResponseObj.liveRequest
     const response = requestResponseObj.liveResponse
 
-    let operation
-    try {
-      operation = this.findSpecOperation(request.url, request.method)
-    } catch (err) {
-      return {
-        ...validationResult,
-        errors: [err]
-      }
-    }
-
-    const requestValidationResult = this.validateLiveRequest(request, operation)
-    const responseValidationResult = this.validateLiveResponse(response, operation)
+    const requestValidationResult = this.validateLiveRequest(request)
+    const responseValidationResult = this.validateLiveResponse(response, {
+      method: request.method,
+      url: request.url
+    })
 
     return {
       requestValidationResult,

@@ -265,7 +265,7 @@ describe("Live Validator", () => {
         "https://management.azure.com/" +
         "subscriptions/subscriptionId/resourceGroups/myRG/providers/Microsoft.Storage/" +
         "storageAccounts/accname?api-version=2015-06-15"
-      const validator = new LiveValidator(options)
+      const validator: any = new LiveValidator(options)
       await validator.initialize()
       // Operations to match is StorageAccounts_List
       let operations = validator.getPotentialOperations(listRequestUrl, "Get").operations
@@ -324,7 +324,7 @@ describe("Live Validator", () => {
         "https://management.azure.com/" +
         "subscriptions/subscriptionId/providers/Microsoft.Storage/storageAccounts/accountName/" +
         "properties?api-version=2015-06-15"
-      const validator = new LiveValidator(options)
+      const validator: any = new LiveValidator(options)
       await validator.initialize()
       // Operations to match is StorageAccounts_List with api-version 2015-08-15
       // [non cached api version]
