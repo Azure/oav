@@ -47,6 +47,7 @@ Object {
           "System",
         ],
         "pathInPayload": "properties/groups/0/type",
+        "severity": 1,
         "similarPaths": Array [],
         "source": Object {
           "jsonRef": "#/definitions/GroupContractProperties/properties/type",
@@ -91,6 +92,7 @@ Object {
           "banana",
         ],
         "pathInPayload": "properties/groups/0/type",
+        "severity": 0,
         "similarPaths": Array [],
         "source": Object {
           "jsonRef": "#/definitions/GroupContractProperties/properties/type",
@@ -136,6 +138,7 @@ Object {
           "0001-01-01T00:00:00",
         ],
         "pathInPayload": "properties/createdAtUtc",
+        "severity": 0,
         "similarPaths": Array [],
         "source": Object {
           "jsonRef": "#/definitions/ApiManagementServiceBaseProperties/properties/createdAtUtc",
@@ -181,6 +184,7 @@ Object {
           "string",
         ],
         "pathInPayload": "properties/hostnameConfigurations",
+        "severity": 0,
         "similarPaths": Array [],
         "source": Object {
           "jsonRef": "#/definitions/ApiManagementServiceBaseProperties/properties/hostnameConfigurations",
@@ -226,6 +230,7 @@ Object {
           1000,
         ],
         "pathInPayload": "properties/description",
+        "severity": 0,
         "similarPaths": Array [],
         "source": Object {
           "jsonRef": "#/definitions/OperationEntityBaseContract/properties/description",
@@ -270,6 +275,7 @@ Object {
           "id",
         ],
         "pathInPayload": "properties/groups/0",
+        "severity": 0,
         "similarPaths": Array [],
         "source": Object {
           "jsonRef": "#/definitions/GroupContractProperties",
@@ -314,6 +320,7 @@ Object {
           "displayName",
         ],
         "pathInPayload": "properties/groups/0",
+        "severity": 0,
         "similarPaths": Array [],
         "source": Object {
           "jsonRef": "#/definitions/GroupContractProperties",

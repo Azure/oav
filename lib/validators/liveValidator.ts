@@ -16,8 +16,14 @@ import * as models from "../models"
 import { PotentialOperationsResult } from "../models/potentialOperationsResult"
 import * as C from "../util/constants"
 import { log } from "../util/logging"
+import { Severity } from "../util/severity"
 import * as utils from "../util/utils"
-import { processValidationErrors, RuntimeException, SourceLocation } from "../util/validationError"
+import {
+  errorCodeToSeverity,
+  processValidationErrors,
+  RuntimeException,
+  SourceLocation
+} from "../util/validationError"
 import { SpecValidator } from "./specValidator"
 
 export interface LiveValidatorOptions {
@@ -90,6 +96,7 @@ export interface LiveValidationIssue {
   code: string
   message: string
   pathInPayload: string
+  severity: Severity
   similarPaths: string[]
   source: SourceLocation
   documentationUrl: string
@@ -392,6 +399,7 @@ export class LiveValidator {
       message: err.message,
       pathInPayload: err.path,
       inner: err.inner,
+      severity: errorCodeToSeverity(err.code),
       params: err.params,
       similarPaths: err.similarPaths || [],
       source: {
