@@ -111,6 +111,7 @@
     "tsc": "tsc",
     "tslint": "tslint --project tsconfig.json ./*.ts ./lib/**/*.ts ./test/**/*.ts ./types/**/*.ts",
     "test": "npm run tsc && npm run tslint && jest --ci --reporters=default --reporters=jest-junit",
+    "jest": "jest",
     "start": "node ./dist/lib/autorestPlugin/pluginHost.js",
     "tslint-check": "tslint-config-prettier-check ./tslint.json",
     "prepack": "npm install && tsc && npm run tslint",
@@ -158,7 +159,8 @@
     },
     "testMatch": [
       "**/test/**/*.ts",
-      "!**/test/**/*.d.ts"
+      "!**/test/**/*.d.ts",
+      "!**/test/sample.ts"
     ],
     "verbose": true
   }

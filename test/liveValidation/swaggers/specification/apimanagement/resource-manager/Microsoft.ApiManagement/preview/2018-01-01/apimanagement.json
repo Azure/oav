@@ -6,20 +6,12 @@
     "version": "2018-01-01"
   },
   "host": "management.azure.com",
-  "schemes": [
-    "https"
-  ],
-  "consumes": [
-    "application/json"
-  ],
-  "produces": [
-    "application/json"
-  ],
+  "schemes": ["https"],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
   "security": [
     {
-      "azure_auth": [
-        "user_impersonation"
-      ]
+      "azure_auth": ["user_impersonation"]
     }
   ],
   "securityDefinitions": {
@@ -36,9 +28,7 @@
   "paths": {
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/policies": {
       "get": {
-        "tags": [
-          "Policy"
-        ],
+        "tags": ["Policy"],
         "operationId": "Policy_ListByService",
         "description": "Lists all the Global Policy definitions of the Api Management service.",
         "x-ms-examples": {
@@ -59,13 +49,7 @@
             "required": false,
             "type": "string",
             "description": "Policy scope.",
-            "enum": [
-              "Tenant",
-              "Product",
-              "Api",
-              "Operation",
-              "All"
-            ],
+            "enum": ["Tenant", "Product", "Api", "Operation", "All"],
             "x-ms-enum": {
               "name": "PolicyScopeContract",
               "modelAsString": false
@@ -90,9 +74,7 @@
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/policies/{policyId}": {
       "head": {
-        "tags": [
-          "Policy"
-        ],
+        "tags": ["Policy"],
         "operationId": "Policy_GetEntityTag",
         "description": "Gets the entity state (Etag) version of the Global policy definition in the Api Management service.",
         "x-ms-examples": {
@@ -136,9 +118,7 @@
         }
       },
       "get": {
-        "tags": [
-          "Policy"
-        ],
+        "tags": ["Policy"],
         "operationId": "Policy_Get",
         "description": "Get the Global policy definition of the Api Management service.",
         "x-ms-examples": {
@@ -185,9 +165,7 @@
         }
       },
       "put": {
-        "tags": [
-          "Policy"
-        ],
+        "tags": ["Policy"],
         "operationId": "Policy_CreateOrUpdate",
         "description": "Creates or updates the global policy configuration of the Api Management service.",
         "x-ms-examples": {
@@ -243,9 +221,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Policy"
-        ],
+        "tags": ["Policy"],
         "operationId": "Policy_Delete",
         "description": "Deletes the global policy configuration of the Api Management Service.",
         "x-ms-examples": {
@@ -291,9 +267,7 @@
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/policySnippets": {
       "get": {
-        "tags": [
-          "PolicySnippets"
-        ],
+        "tags": ["PolicySnippets"],
         "operationId": "PolicySnippets_ListByService",
         "description": "Lists all policy snippets.",
         "x-ms-examples": {
@@ -314,13 +288,7 @@
             "required": false,
             "type": "string",
             "description": "Policy scope.",
-            "enum": [
-              "Tenant",
-              "Product",
-              "Api",
-              "Operation",
-              "All"
-            ],
+            "enum": ["Tenant", "Product", "Api", "Operation", "All"],
             "x-ms-enum": {
               "name": "PolicyScopeContract",
               "modelAsString": false
@@ -345,9 +313,7 @@
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/regions": {
       "get": {
-        "tags": [
-          "Regions"
-        ],
+        "tags": ["Regions"],
         "operationId": "Regions_ListByService",
         "description": "Lists all azure regions in which the service exists.",
         "x-ms-examples": {
@@ -403,7 +369,7 @@
     },
     "ErrorResponse": {
       "properties": {
-        "error" : {
+        "error": {
           "x-ms-client-flatten": true,
           "$ref": "#/definitions/ErrorResponseBody",
           "description": "Properties of the Error Response."
@@ -471,12 +437,7 @@
         "contentFormat": {
           "type": "string",
           "description": "Format of the policyContent.",
-          "enum": [
-            "xml",
-            "xml-link",
-            "rawxml",
-            "rawxml-link"
-          ],
+          "enum": ["xml", "xml-link", "rawxml", "rawxml-link"],
           "x-ms-enum": {
             "name": "PolicyContentFormat",
             "modelAsString": true,
@@ -502,9 +463,7 @@
           "default": "xml"
         }
       },
-      "required": [
-        "policyContent"
-      ],
+      "required": ["policyContent"],
       "description": "Policy contract Properties."
     },
     "PolicySnippetsCollection": {
@@ -664,9 +623,7 @@
       "in": "path",
       "required": true,
       "type": "string",
-      "enum": [
-        "policy"
-      ],
+      "enum": ["policy"],
       "description": "The identifier of the Policy.",
       "x-ms-enum": {
         "modelAsString": true,

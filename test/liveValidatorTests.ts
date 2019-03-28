@@ -10,8 +10,8 @@ import { ResponsesObject } from "yasway"
 import * as Constants from "../lib/util/constants"
 import { LiveValidator } from "../lib/validators/liveValidator"
 
-const numberOfSpecs = 8
-const livePaths = globby.sync(path.join(__dirname, "test/liveValidation/swaggers/**/live/*.json"))
+const numberOfSpecs = 9
+jest.setTimeout(150000)
 
 describe("Live Validator", () => {
   describe("Initialization", () => {
@@ -22,7 +22,8 @@ describe("Live Validator", () => {
           url: "https://github.com/Azure/azure-rest-api-specs.git",
           shouldClone: false
         },
-        directory: path.resolve(os.homedir(), "repo")
+        directory: path.resolve(os.homedir(), "repo"),
+        isPathCaseSensitive: false
       }
       const validator = new LiveValidator()
       assert.deepStrictEqual(validator.cache, {})
@@ -60,6 +61,7 @@ describe("Live Validator", () => {
     it("should initialize with user provided swaggerPaths", () => {
       const swaggerPaths = ["swaggerPath1", "swaggerPath2"]
       const options = {
+        isPathCaseSensitive: false,
         swaggerPaths,
         git: {
           url: "https://github.com/Azure/azure-rest-api-specs.git",
@@ -76,6 +78,7 @@ describe("Live Validator", () => {
       const directory = "/Users/username/repos/"
       const options = {
         swaggerPaths,
+        isPathCaseSensitive: false,
         git: {
           url: "https://github.com/Azure/azure-rest-api-specs.git",
           shouldClone: false
@@ -95,6 +98,7 @@ describe("Live Validator", () => {
       }
       const options = {
         swaggerPaths,
+        isPathCaseSensitive: false,
         git: {
           url: git.url,
           shouldClone: false
@@ -120,7 +124,8 @@ describe("Live Validator", () => {
       const options = {
         swaggerPaths,
         git,
-        directory
+        directory,
+        isPathCaseSensitive: false
       }
       const validator = new LiveValidator({
         swaggerPaths,
@@ -392,6 +397,9 @@ describe("Live Validator", () => {
   })
 
   describe("Initialize cache and validate", () => {
+    const livePaths = globby.sync(
+      path.join(__dirname, "test/liveValidation/swaggers/**/live/*.json")
+    )
     livePaths.forEach(livePath => {
       it(`should validate request and response for "${livePath}"`, async () => {
         const options = {
@@ -468,21 +476,8 @@ describe("Live Validator", () => {
     })
   })
 })
-describe.only("Live validator snapshot validation", () => {
+describe("Live validator snapshot validation", () => {
   let validator: LiveValidator
-  beforeAll(async () => {
-    validator = new LiveValidator({
-      directory: "./test/liveValidation/swaggers/",
-      isPathCaseSensitive: false,
-      swaggerPathsPattern:
-        "specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/*.json",
-      git: {
-        shouldClone: false
-      }
-    })
-    await validator.initialize()
-  })
-
   const errors = [
     "OBJECT_MISSING_REQUIRED_PROPERTY",
     "OBJECT_ADDITIONAL_PROPERTIES",
@@ -493,11 +488,47 @@ describe.only("Live validator snapshot validation", () => {
     "ENUM_CASE_MISMATCH"
   ]
 
+  beforeAll(async () => {
+    const options = {
+      directory: `${__dirname}/liveValidation/swaggers/`,
+      isPathCaseSensitive: false,
+      swaggerPathsPattern:
+        "specification\\apimanagement\\resource-manager\\Microsoft.ApiManagement\\preview\\2018-01-01\\*.json",
+      git: {
+        shouldClone: false
+      }
+    }
+    validator = new LiveValidator(options)
+    await validator.initialize()
+  }, 100000)
+
+  test(`should return no errors for valid input`, async () => {
+    const payload = require(`${__dirname}/liveValidation/payloads/valid_input.json`)
+    const validationResult = validator.validateLiveRequestResponse(payload)
+    expect(validationResult).toMatchSnapshot()
+  })
+
   errors.forEach(error => {
-    test(`should return the expected error requestResponse validation for ${errors}`, () => {
-      const payload = require(`./assets/${lodash.camelCase(error)}_input.json`)
+    test(`should return the expected error requestResponse validation for ${error}`, async () => {
+      const payload = require(`${__dirname}/liveValidation/payloads/${lodash.camelCase(
+        error
+      )}_input.json`)
       const validationResult = validator.validateLiveRequestResponse(payload)
       expect(validationResult).toMatchSnapshot()
+    })
+
+    test(`should match pair validation with response request validation for ${error}`, async () => {
+      const payload = require(`${__dirname}/liveValidation/payloads/${lodash.camelCase(
+        error
+      )}_input.json`)
+      const validationResult = validator.validateLiveRequestResponse(payload)
+      const requestValidationResult = validator.validateLiveRequest(payload.liveRequest)
+      const responseValidationResult = validator.validateLiveResponse(payload.liveResponse, {
+        url: payload.liveRequest.url,
+        method: payload.liveRequest.method
+      })
+      expect(validationResult.requestValidationResult).toStrictEqual(requestValidationResult)
+      expect(validationResult.responseValidationResult).toStrictEqual(responseValidationResult)
     })
   })
 })

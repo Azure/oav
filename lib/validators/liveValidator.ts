@@ -81,7 +81,7 @@ export interface ValidationResult {
   readonly errors: unknown[]
 }
 
-interface OperationId {
+export interface ApiOperationIdentifier {
   url: string
   method: string
 }
@@ -117,7 +117,7 @@ function toLiveValidationIssue(err: any): LiveValidationIssue {
 
 type OperationWithApiVersion = Operation & { apiVersion: string }
 
-function isOperationId(arg: any): arg is OperationId {
+function isApiOperationIdentifier(arg: any): arg is ApiOperationIdentifier {
   return arg.method && arg.url
 }
 
@@ -408,10 +408,10 @@ export class LiveValidator {
    */
   public validateLiveResponse(
     liveResponse: LiveResponse,
-    specOperation: OperationWithApiVersion | OperationId
+    specOperation: OperationWithApiVersion | ApiOperationIdentifier
   ): ResponseValidationResult {
     let operation: OperationWithApiVersion
-    if (isOperationId(specOperation)) {
+    if (isApiOperationIdentifier(specOperation)) {
       try {
         operation = this.findSpecOperation(specOperation.url, specOperation.method)
       } catch (err) {
@@ -569,9 +569,10 @@ export class LiveValidator {
       throw new Error('operations is a required parameter of type "array".')
     }
 
+    const requestUrl = formatUrlToExpectedFormat(requestPath)
     let potentialOperations = operations.filter(operation => {
       const pathObject = operation.pathObject
-      const pathMatch = pathObject.regexp.exec(requestPath)
+      const pathMatch = pathObject.regexp.exec(requestUrl)
       return pathMatch !== null
     })
 
@@ -728,4 +729,13 @@ export class LiveValidator {
       )
     }
   }
+}
+
+/**
+ * OAV expects the url that is sent to match exactly with the swagger path. For this we need to keep only the part after
+ * where the swagger path starts. Currently those are '/subscriptions' and '/providers'.
+ */
+
+export function formatUrlToExpectedFormat(requestUrl: string): string {
+  return requestUrl.substring(requestUrl.search("/?(subscriptions|providers)"))
 }

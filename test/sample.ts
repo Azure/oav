@@ -5,21 +5,18 @@
 import { LiveValidator } from "../lib/validators/liveValidator"
 
 const options = {
-  directory: "C:\\vladdb\\repos\\devdiv\\temp\\testSpecs",
+  directory: `${__dirname}/liveValidation/swaggers/`,
   swaggerPathsPattern:
-    "specification\\batch\\resource-manager\\Microsoft.Batch\\stable\\2017-01-01\\" +
-    "BatchManagement.json",
+    "specification\\apimanagement\\resource-manager\\Microsoft.ApiManagement\\preview\\2018-01-01\\*.json",
   git: {
-    shouldClone: true
+    shouldClone: false
   }
 }
 const validator = new LiveValidator(options)
 
 // tslint:disable-next-line:no-floating-promises
 validator.initialize().then(() => {
-  const reqRes = require(__dirname +
-    "/liveValidation/swaggers/specification/storage/resource-manager/" +
-    "Microsoft.Storage/2016-01-01/live/StorageAccounts_CheckNameAvailability.json")
+  const reqRes = require(`${__dirname}/liveValidation/payloads/objectMissingRequiredProperty_input.json`)
   const result = validator.validateLiveRequestResponse(reqRes)
   // tslint:disable-next-line:no-console
   console.log(`${result}`)
