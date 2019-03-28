@@ -38,7 +38,8 @@ export {
   RequestResponsePair,
   LiveRequest,
   LiveResponse,
-  LiveValidationIssue
+  LiveValidationIssue,
+  LiveValidatorOptions
 } from "./lib/validators/liveValidator"
 export { SpecResolver } from "./lib/validators/specResolver"
 

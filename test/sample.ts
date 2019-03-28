@@ -21,5 +21,6 @@ validator.initialize().then(() => {
     "/liveValidation/swaggers/specification/storage/resource-manager/" +
     "Microsoft.Storage/2016-01-01/live/StorageAccounts_CheckNameAvailability.json")
   const result = validator.validateLiveRequestResponse(reqRes)
+  // tslint:disable-next-line:no-console
   console.log(`${result}`)
 })

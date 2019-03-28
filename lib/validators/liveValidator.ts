@@ -20,16 +20,16 @@ import * as utils from "../util/utils"
 import { processValidationErrors, RuntimeException, SourceLocation } from "../util/validationError"
 import { SpecValidator } from "./specValidator"
 
-export interface Options {
+export interface LiveValidatorOptions {
   swaggerPaths: string[]
   git: {
-    url: string
     shouldClone: boolean
+    url?: string
     branch?: string
   }
   directory: string
-  swaggerPathsPattern?: string
-  isPathCaseSensitive?: boolean
+  swaggerPathsPattern: string
+  isPathCaseSensitive: boolean
 }
 
 export interface ApiVersion {
@@ -128,77 +128,45 @@ function isOperationId(arg: any): arg is OperationId {
 export class LiveValidator {
   public readonly cache: MutableStringMap<Provider> = {}
 
-  public options: Options
+  public options: LiveValidatorOptions
 
   /**
    * Constructs LiveValidator based on provided options.
    *
-   * @param {object} optionsRaw The configuration options.
-   *
-   * @param {array} [options.swaggerPaths] Array of swagger paths to be used for initializing Live
-   *    Validator. This has precedence over {@link options.swaggerPathsPattern}.
-   *
-   * @param {string} [options.swaggerPathsPattern] Pattern for swagger paths to be used for
-   *    initializing Live Validator.
-   *
-   * @param {string} [options.isPathCaseSensitive] Specifies if the swagger path is to be considered
-   *    case sensitive.
-   *
-   * @param {string} [options.git.url] The url of the github repository. Defaults to
-   *    "https://github.com/Azure/azure-rest-api-specs.git".
-   *
-   * @param {string} [options.git.shouldClone] Specifies whether to clone the repository or not.
-   *    Defaults to false.
-   *
-   * @param {string} [options.git.branch] The branch  of the github repository to use instead of the
-   *    default branch.
-   *
-   * @param {string} [options.directory] The directory where to clone github repository or from
-   *    where to find swaggers. Defaults to "repo" under user directory.
+   * @param {object} ops The configuration options.
    *
    * @returns CacheBuilder Returns the configured CacheBuilder object.
    */
-  public constructor(optionsRaw?: any) {
-    optionsRaw = optionsRaw === null || optionsRaw === undefined ? {} : optionsRaw
+  public constructor(options?: Partial<LiveValidatorOptions>) {
+    const ops: Partial<LiveValidatorOptions> = options || {}
 
-    if (typeof optionsRaw !== "object") {
-      throw new Error('options must be of type "object".')
+    if (!ops.swaggerPaths) {
+      ops.swaggerPaths = []
     }
-    if (optionsRaw.swaggerPaths === null || optionsRaw.swaggerPaths === undefined) {
-      optionsRaw.swaggerPaths = []
-    }
-    if (!Array.isArray(optionsRaw.swaggerPaths)) {
-      const paths = typeof optionsRaw.swaggerPaths
-      throw new Error(`options.swaggerPaths must be of type "array" instead of type "${paths}".`)
-    }
-    if (optionsRaw.git === null || optionsRaw.git === undefined) {
-      optionsRaw.git = {
+
+    if (!ops.git) {
+      ops.git = {
         url: "https://github.com/Azure/azure-rest-api-specs.git",
         shouldClone: false
       }
     }
-    if (typeof optionsRaw.git !== "object") {
-      throw new Error('options.git must be of type "object".')
+
+    if (!ops.git.url) {
+      ops.git.url = "https://github.com/Azure/azure-rest-api-specs.git"
     }
-    if (optionsRaw.git.url === null || optionsRaw.git.url === undefined) {
-      optionsRaw.git.url = "https://github.com/Azure/azure-rest-api-specs.git"
+    if (!ops.git.shouldClone) {
+      ops.git.shouldClone = false
     }
-    if (typeof optionsRaw.git.url.valueOf() !== "string") {
-      throw new Error('options.git.url must be of type "string".')
+
+    if (!ops.directory) {
+      ops.directory = path.resolve(os.homedir(), "repo")
     }
-    if (optionsRaw.git.shouldClone === null || optionsRaw.git.shouldClone === undefined) {
-      optionsRaw.git.shouldClone = false
+
+    if (!ops.isPathCaseSensitive) {
+      ops.isPathCaseSensitive = false
     }
-    if (typeof optionsRaw.git.shouldClone !== "boolean") {
-      throw new Error('options.git.shouldClone must be of type "boolean".')
-    }
-    if (optionsRaw.directory === null || optionsRaw.directory === undefined) {
-      optionsRaw.directory = path.resolve(os.homedir(), "repo")
-    }
-    if (typeof optionsRaw.directory.valueOf() !== "string") {
-      throw new Error('options.directory must be of type "string".')
-    }
-    this.options = optionsRaw
+
+    this.options = ops as LiveValidatorOptions
   }
 
   /**
@@ -206,7 +174,7 @@ export class LiveValidator {
    */
   public async initialize(): Promise<void> {
     // Clone github repository if required
-    if (this.options.git.shouldClone) {
+    if (this.options.git.shouldClone && this.options.git.url) {
       utils.gitClone(this.options.directory, this.options.git.url, this.options.git.branch)
     }
 
