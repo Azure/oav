@@ -28,7 +28,8 @@ export {
   errorCodeToSeverity,
   NodeError,
   ValidationError,
-  ValidationResult
+  ValidationResult,
+  ErrorCode
 } from "./lib/util/validationError"
 
 // Classes

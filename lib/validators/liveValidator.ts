@@ -19,6 +19,7 @@ import { log } from "../util/logging"
 import { Severity } from "../util/severity"
 import * as utils from "../util/utils"
 import {
+  ErrorCode,
   errorCodeToSeverity,
   processValidationErrors,
   RuntimeException,
@@ -93,7 +94,7 @@ export interface ApiOperationIdentifier {
   method: string
 }
 export interface LiveValidationIssue {
-  code: string
+  code: ErrorCode
   message: string
   pathInPayload: string
   severity: Severity
@@ -102,6 +103,14 @@ export interface LiveValidationIssue {
   documentationUrl: string
   params?: string[]
   inner?: object[]
+}
+
+/**
+ * Options for a validation operation.
+ * If `includeErrors` is missing or empty, all error codes will be included.
+ */
+export interface ValidateOptions {
+  includeErrors?: ErrorCode[]
 }
 
 type OperationWithApiVersion = Operation & { apiVersion: string }
@@ -345,7 +354,10 @@ export class LiveValidator {
   /**
    *  Validates live request.
    */
-  public validateLiveRequest(liveRequest: LiveRequest): RequestValidationResult {
+  public validateLiveRequest(
+    liveRequest: LiveRequest,
+    options: ValidateOptions = {}
+  ): RequestValidationResult {
     let operation
     try {
       operation = this.findSpecOperation(liveRequest.url, liveRequest.method)
@@ -365,7 +377,14 @@ export class LiveValidator {
       const reqResult = operation.validateRequest(liveRequest)
       const processedErrors = processValidationErrors({ errors: [...reqResult.errors] })
       errors = processedErrors
-        ? processedErrors.map(err => this.toLiveValidationIssue(err as any))
+        ? processedErrors
+            .map(err => this.toLiveValidationIssue(err as any))
+            .filter(
+              err =>
+                !options.includeErrors ||
+                options.includeErrors.length === 0 ||
+                options.includeErrors.includes(err.code)
+            )
         : []
     } catch (reqValidationError) {
       const msg =
@@ -413,7 +432,8 @@ export class LiveValidator {
    */
   public validateLiveResponse(
     liveResponse: LiveResponse,
-    specOperation: ApiOperationIdentifier
+    specOperation: ApiOperationIdentifier,
+    options: ValidateOptions = {}
   ): ResponseValidationResult {
     let operation: OperationWithApiVersion
     try {
@@ -440,7 +460,14 @@ export class LiveValidator {
       const resResult = operation.validateResponse(liveResponse)
       const processedErrors = processValidationErrors({ errors: [...resResult.errors] })
       errors = processedErrors
-        ? processedErrors.map(err => this.toLiveValidationIssue(err as any))
+        ? processedErrors
+            .map(err => this.toLiveValidationIssue(err as any))
+            .filter(
+              err =>
+                !options.includeErrors ||
+                options.includeErrors.length === 0 ||
+                options.includeErrors.includes(err.code)
+            )
         : []
     } catch (resValidationError) {
       const msg =
@@ -463,11 +490,11 @@ export class LiveValidator {
 
   /**
    * Validates live request and response.
-   *
-   * @param requestResponsePair - The wrapper that contains the live request and response
-   * @returns  validationResult - Validation result for given input
    */
-  public validateLiveRequestResponse(requestResponseObj: RequestResponsePair): ValidationResult {
+  public validateLiveRequestResponse(
+    requestResponseObj: RequestResponsePair,
+    options?: ValidateOptions
+  ): ValidationResult {
     const validationResult: ValidationResult = {
       requestValidationResult: {
         successfulRequest: false,
@@ -510,11 +537,15 @@ export class LiveValidator {
     const request = requestResponseObj.liveRequest
     const response = requestResponseObj.liveResponse
 
-    const requestValidationResult = this.validateLiveRequest(request)
-    const responseValidationResult = this.validateLiveResponse(response, {
-      method: request.method,
-      url: request.url
-    })
+    const requestValidationResult = this.validateLiveRequest(request, options)
+    const responseValidationResult = this.validateLiveResponse(
+      response,
+      {
+        method: request.method,
+        url: request.url
+      },
+      options
+    )
 
     return {
       requestValidationResult,
@@ -731,7 +762,6 @@ export class LiveValidator {
  * OAV expects the url that is sent to match exactly with the swagger path. For this we need to keep only the part after
  * where the swagger path starts. Currently those are '/subscriptions' and '/providers'.
  */
-
 export function formatUrlToExpectedFormat(requestUrl: string): string {
   return requestUrl.substring(requestUrl.search("/?(subscriptions|providers)"))
 }

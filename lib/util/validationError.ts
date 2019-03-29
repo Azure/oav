@@ -24,10 +24,38 @@ export class ValidationError {
   public constructor(public readonly name: string, public readonly severity: Severity) {}
 }
 
-const validationErrorEntry = (id: string, severity: Severity): [string, ValidationError] => [
-  id,
-  new ValidationError(id, severity)
-]
+const validationErrorEntry = (
+  id: ExtendedErrorCode | string,
+  severity: Severity
+): [string, ValidationError] => [id, new ValidationError(id, severity)]
+
+export type ExtendedErrorCode = ErrorCode & WrapperErrorCode
+
+export type ErrorCode =
+  | "INVALID_TYPE"
+  | "OBJECT_MISSING_REQUIRED_PROPERTY"
+  | "OBJECT_ADDITIONAL_PROPERTIES"
+  | "ENUM_MISMATCH"
+  | "ENUM_CASE_MISMATCH"
+  | "INVALID_FORMAT"
+  | "PATTERN"
+  | "MAX_LENGTH"
+  | "MIN_LENGTH"
+  | "ARRAY_LENGTH_SHORT"
+  | "ARRAY_LENGTH_LONG"
+  | "ARRAY_UNIQUE"
+  | "ARRAY_ADDITIONAL_ITEMS"
+  | "MINIMUM"
+  | "MINIMUM_EXCLUSIVE"
+  | "OBJECT_PROPERTIES_MINIMUM"
+  | "OBJECT_PROPERTIES_MAXIMUM"
+  | "MAXIMUM"
+  | "MAXIMUM_EXCLUSIVE"
+  | "PII_MISMATCH"
+  | "INVALID_RESPONSE_CODE"
+  | "INVALID_CONTENT_TYPE"
+
+export type WrapperErrorCode = "ONE_OF_MISSING" | "ANY_OF_MISSING" | "ONE_OF_MULTIPLE"
 
 export const errorConstants = new Map<string, ValidationError>([
   validationErrorEntry("INVALID_TYPE", Severity.Critical),
