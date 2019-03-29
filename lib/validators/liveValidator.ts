@@ -20,7 +20,7 @@ import { Severity } from "../util/severity"
 import * as utils from "../util/utils"
 import {
   ErrorCode,
-  errorCodeToSeverity,
+  errorCodeToErrorMetadata,
   processValidationErrors,
   RuntimeException,
   SourceLocation
@@ -40,11 +40,11 @@ export interface LiveValidatorOptions {
   isPathCaseSensitive: boolean
 }
 
-export interface ApiVersion {
+interface ApiVersion {
   [method: string]: Operation[]
 }
 
-export interface Provider {
+interface Provider {
   [apiVersion: string]: ApiVersion
 }
 
@@ -410,7 +410,7 @@ export class LiveValidator {
       message: err.message,
       pathInPayload: err.path,
       inner: err.inner,
-      severity: errorCodeToSeverity(err.code),
+      severity: errorCodeToErrorMetadata(err.code).severity,
       params: err.params,
       similarPaths: err.similarPaths || [],
       source: {
