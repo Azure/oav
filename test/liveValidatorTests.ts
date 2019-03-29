@@ -142,13 +142,14 @@ describe("Live Validator", () => {
       const expectedProvider = "microsoft.media"
       const expectedApiVersion = "2015-10-01"
       const options = {
-        directory: "./test/liveValidation/swaggers/"
+        directory: "./test/liveValidation/swaggers/specification",
+        swaggerPathsPattern: "mediaservices/resource-manager/Microsoft.Media/2015-10-01/media.json"
       }
       const validator = new LiveValidator(options)
       try {
         await validator.initialize()
         assert.strictEqual(true, expectedProvider in validator.cache)
-        assert.strictEqual(numberOfSpecs, Object.keys(validator.cache).length)
+        assert.strictEqual(1, Object.keys(validator.cache).length)
         const x = validator.cache[expectedProvider]
         if (x === undefined) {
           throw new Error("x === undefined")
@@ -478,6 +479,7 @@ describe("Live Validator", () => {
 })
 describe("Live validator snapshot validation", () => {
   let validator: LiveValidator
+  let validatorOneOf: LiveValidator
   const errors = [
     "OBJECT_MISSING_REQUIRED_PROPERTY",
     "OBJECT_ADDITIONAL_PROPERTIES",
@@ -487,7 +489,6 @@ describe("Live validator snapshot validation", () => {
     "ENUM_MISMATCH",
     "ENUM_CASE_MISMATCH"
   ]
-
   beforeAll(async () => {
     const options = {
       directory: `${__dirname}/liveValidation/swaggers/`,
@@ -501,6 +502,10 @@ describe("Live validator snapshot validation", () => {
     }
     validator = new LiveValidator(options)
     await validator.initialize()
+    options.swaggerPathsPattern =
+      "specification\\mediaservices\\resource-manager\\Microsoft.Media\\2018-07-01\\*.json"
+    validatorOneOf = new LiveValidator(options)
+    await validatorOneOf.initialize()
   }, 100000)
 
   test(`should return no errors for valid input`, async () => {
@@ -531,6 +536,11 @@ describe("Live validator snapshot validation", () => {
       expect(validationResult.requestValidationResult).toStrictEqual(requestValidationResult)
       expect(validationResult.responseValidationResult).toStrictEqual(responseValidationResult)
     })
+  })
+  test(`should match for one of missing`, async () => {
+    const payload = require(`${__dirname}/liveValidation/payloads/oneOfMissing_input.json`)
+    const result = validatorOneOf.validateLiveRequestResponse(payload)
+    expect(result).toMatchSnapshot()
   })
   test(`should return all errors for no options`, async () => {
     const payload = require(`${__dirname}/liveValidation/payloads/multipleErrors_input.json`)

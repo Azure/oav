@@ -175,34 +175,8 @@ export class LiveValidator {
 
     // Construct array of swagger paths to be used for building a cache
     const swaggerPaths = await this.getSwaggerPaths()
+    log.info(`Found ${swaggerPaths.length}`)
 
-    // console.log(swaggerPaths);
-    // Create array of promise factories that builds up cache
-    // Structure of the cache is
-    // {
-    //   "provider1": {
-    //     "api-version1": {
-    //       "get": [
-    //         "operation1",
-    //         "operation2",
-    //       ],
-    //       "put": [
-    //         "operation1",
-    //         "operation2",
-    //       ],
-    //       ...
-    //     },
-    //     ...
-    //   },
-    //   "microsoft.unknown": {
-    //     "unknown-api-version": {
-    //      "post": [
-    //        "operation1"
-    //      ]
-    //    }
-    //   }
-    //   ...
-    // }
     const promiseFactories = swaggerPaths.map(swaggerPath => async () =>
       this.getSwaggerInitializer(swaggerPath)
     )

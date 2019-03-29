@@ -1,0 +1,95 @@
+{
+  "liveRequest": {
+    "headers": {
+      "vary": "Accept-Encoding",
+      "x-ms-request-id": "randomId",
+      "x-ms-client-request-id": "randomId",
+      "oData-Version": "4.0",
+      "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+      "date": "Fri, 29 Mar 2019 21:20:55 GMT",
+      "server": "Microsoft-IIS/10.0",
+      "x-Powered-By": "ASP.NET",
+      "Content-Type": "application/json"
+    },
+    "method": "PUT",
+    "url": "/subscriptions/randomSub/resourceGroups/randomRG/providers/Microsoft.Media/mediaServices/someName/contentKeyPolicies/policyName?api-version=2018-07-01",
+    "body": {
+      "properties": {
+        "options": [
+          {
+            "name": "aaaaaaaaaaaaaaaaaaaaaaaa",
+            "configuration": {
+              "@odata.type": "#Microsoft.Media.ContentKeyPolicyClearKeyConfiguration"
+            },
+            "restriction": {
+              "@odata.type": "#Microsoft.Media.ContentKeyPolicyTokenRestriction",
+              "issuer": "aaaaaaaaaaaaaaaaaaaa",
+              "audience": "aaaaaaaaaaaaaaaaaaaaaa",
+              "primaryVerificationKey": {
+                "@odata.type": "#Microsoft.Media.ContentKeyPolicySymmetricTokenKey",
+                "keyValue": "aaaaaaaaaaaaaaaaaaaaaaaa"
+              },
+              "requiredClaims": [
+                {
+                  "claimType": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                }
+              ],
+              "restrictionTokenType": "Jwt"
+            }
+          }
+        ]
+      }
+    },
+    "query": {
+      "api-version": "2018-07-01"
+    }
+  },
+  "liveResponse": {
+    "statusCode": "200",
+    "headers": {
+      "vary": "Accept-Encoding",
+      "x-ms-request-id": "randomId",
+      "x-ms-client-request-id": "randomId",
+      "oData-Version": "4.0",
+      "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+      "date": "Fri, 29 Mar 2019 21:20:55 GMT",
+      "server": "Microsoft-IIS/10.0",
+      "x-Powered-By": "ASP.NET",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "name": "aaaaaaaaaaaaaaaaaaaaaaaa",
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "type": "Microsoft.Media/mediaservices/contentKeyPolicies",
+      "properties": {
+        "policyId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "created": "2019-03-29T21:20:55.38Z",
+        "lastModified": "2019-03-29T21:20:55.38Z",
+        "options": [
+          {
+            "policyOptionId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "name": "aaaaaaaaaaaaaaaaaaaaaaaa",
+            "configuration": {
+              "@odata.type": "#Microsoft.Media.ContentKeyPolicyClearKeyConfiguration"
+            },
+            "restriction": {
+              "@odata.type": "#Microsoft.Media.ContentKeyPolicyTokenRestriction",
+              "issuer": "aaaaaaaaaaaaaaaaaaaa",
+              "primaryVerificationKey": {
+                "@odata.type": "#Microsoft.Media.ContentKeyPolicySymmetricTokenKey",
+                "keyValue": "aaaaaaaaaaaaaaaaaaaaaaaa"
+              },
+              "alternateVerificationKeys": [],
+              "requiredClaims": [
+                {
+                  "claimType": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                }
+              ],
+              "restrictionTokenType": "Jwt"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

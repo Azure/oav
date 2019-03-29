@@ -1,5 +1,113 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Live validator snapshot validation should match for one of missing 1`] = `
+Object {
+  "errors": Array [],
+  "requestValidationResult": Object {
+    "errors": Array [],
+    "operationInfo": Object {
+      "apiVersion": "2018-07-01",
+      "operationId": "ContentKeyPolicies_CreateOrUpdate",
+    },
+    "runtimeException": undefined,
+    "successfulRequest": true,
+  },
+  "responseValidationResult": Object {
+    "errors": Array [
+      Object {
+        "code": "ONE_OF_MISSING",
+        "documentationUrl": "",
+        "inner": Array [
+          Object {
+            "code": "OBJECT_ADDITIONAL_PROPERTIES",
+            "description": "Base class for Content Key Policy restrictions. A derived class must be used to create a restriction.",
+            "directives": Object {},
+            "message": "Additional properties not allowed: issuer",
+            "params": Array [
+              "issuer",
+            ],
+            "path": "properties/options/0/restriction",
+            "position": Object {
+              "column": 36,
+              "line": 316,
+            },
+            "title": "#/definitions/ContentKeyPolicyRestriction",
+            "url": "C:/vladdb/devdiv/repos/tools/oav/test/liveValidation/swaggers/specification/mediaservices/resource-manager/Microsoft.Media/2018-07-01/ContentKeyPolicies.json",
+          },
+          Object {
+            "code": "OBJECT_ADDITIONAL_PROPERTIES",
+            "description": "Represents an open restriction. License or key will be delivered on every request.",
+            "directives": Object {},
+            "message": "Additional properties not allowed: issuer",
+            "params": Array [
+              "issuer",
+            ],
+            "path": "properties/options/0/restriction",
+            "position": Object {
+              "column": 40,
+              "line": 330,
+            },
+            "title": "#/definitions/ContentKeyPolicyOpenRestriction",
+            "url": "C:/vladdb/devdiv/repos/tools/oav/test/liveValidation/swaggers/specification/mediaservices/resource-manager/Microsoft.Media/2018-07-01/ContentKeyPolicies.json",
+          },
+          Object {
+            "code": "OBJECT_ADDITIONAL_PROPERTIES",
+            "description": "Represents a ContentKeyPolicyRestriction that is unavailable in the current API version.",
+            "directives": Object {},
+            "message": "Additional properties not allowed: issuer",
+            "params": Array [
+              "issuer",
+            ],
+            "path": "properties/options/0/restriction",
+            "position": Object {
+              "column": 43,
+              "line": 341,
+            },
+            "title": "#/definitions/ContentKeyPolicyUnknownRestriction",
+            "url": "C:/vladdb/devdiv/repos/tools/oav/test/liveValidation/swaggers/specification/mediaservices/resource-manager/Microsoft.Media/2018-07-01/ContentKeyPolicies.json",
+          },
+          Object {
+            "code": "OBJECT_MISSING_REQUIRED_PROPERTY",
+            "description": "Represents a token restriction. Provided token must match these requirements for successful license or key delivery.",
+            "directives": Object {},
+            "message": "Missing required property: audience",
+            "params": Array [
+              "audience",
+            ],
+            "path": "properties/options/0/restriction",
+            "position": Object {
+              "column": 41,
+              "line": 446,
+            },
+            "title": "#/definitions/ContentKeyPolicyTokenRestriction",
+            "url": "C:/vladdb/devdiv/repos/tools/oav/test/liveValidation/swaggers/specification/mediaservices/resource-manager/Microsoft.Media/2018-07-01/ContentKeyPolicies.json",
+          },
+        ],
+        "message": "Data does not match any schemas from 'oneOf'",
+        "params": Array [],
+        "pathInPayload": "properties/options/0/restriction",
+        "severity": 0,
+        "similarPaths": Array [],
+        "source": Object {
+          "jsonRef": "#/definitions/ContentKeyPolicyOption/properties/restriction",
+          "position": Object {
+            "column": 24,
+            "line": 674,
+          },
+          "url": "specification/mediaservices/resource-manager/Microsoft.Media/2018-07-01/ContentKeyPolicies.json",
+        },
+      },
+    ],
+    "operationInfo": Object {
+      "apiVersion": "2018-07-01",
+      "operationId": "ContentKeyPolicies_CreateOrUpdate",
+    },
+    "runtimeException": undefined,
+    "successfulResponse": false,
+  },
+}
+`;
+
 exports[`Live validator snapshot validation should return no errors for valid input 1`] = `
 Object {
   "errors": Array [],
