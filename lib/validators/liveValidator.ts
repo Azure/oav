@@ -72,15 +72,15 @@ interface OperationInfo {
 export interface RequestValidationResult {
   readonly successfulRequest: boolean
   readonly operationInfo: OperationInfo
-  errors: LiveValidationIssue[]
-  runtimeException?: RuntimeException
+  readonly errors: LiveValidationIssue[]
+  readonly runtimeException?: RuntimeException
 }
 
 export interface ResponseValidationResult {
   readonly successfulResponse: boolean
   readonly operationInfo: OperationInfo
-  errors: LiveValidationIssue[]
-  runtimeException?: RuntimeException
+  readonly errors: LiveValidationIssue[]
+  readonly runtimeException?: RuntimeException
 }
 
 export interface ValidationResult {
@@ -90,19 +90,20 @@ export interface ValidationResult {
 }
 
 export interface ApiOperationIdentifier {
-  url: string
-  method: string
+  readonly url: string
+  readonly method: string
 }
+
 export interface LiveValidationIssue {
-  code: ErrorCode
-  message: string
-  pathInPayload: string
-  severity: Severity
-  similarPaths: string[]
-  source: SourceLocation
-  documentationUrl: string
-  params?: string[]
-  inner?: object[]
+  readonly code: ErrorCode
+  readonly message: string
+  readonly pathInPayload: string
+  readonly severity: Severity
+  readonly similarPaths: string[]
+  readonly source: SourceLocation
+  readonly documentationUrl: string
+  readonly params?: string[]
+  readonly inner?: object[]
 }
 
 /**
@@ -110,7 +111,7 @@ export interface LiveValidationIssue {
  * If `includeErrors` is missing or empty, all error codes will be included.
  */
 export interface ValidateOptions {
-  includeErrors?: ErrorCode[]
+  readonly includeErrors?: ErrorCode[]
 }
 
 type OperationWithApiVersion = Operation & { apiVersion: string }

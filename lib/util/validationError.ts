@@ -16,12 +16,11 @@ import { Severity } from "./severity"
  * Error that results from validations.
  */
 export class ValidationError {
-  /**
-   *
-   * @param name Validation Error Name
-   * @param severity The severity of the error
-   */
-  public constructor(public readonly name: string, public readonly severity: Severity) {}
+  public constructor(
+    public readonly name: string,
+    public readonly severity: Severity,
+    public readonly docUrl = ""
+  ) {}
 }
 
 const validationErrorEntry = (
@@ -57,7 +56,7 @@ export type ErrorCode =
 
 export type WrapperErrorCode = "ONE_OF_MISSING" | "ANY_OF_MISSING" | "ONE_OF_MULTIPLE"
 
-export const errorConstants = new Map<string, ValidationError>([
+export const errorConstants = new Map<ExtendedErrorCode | string, ValidationError>([
   validationErrorEntry("INVALID_TYPE", Severity.Critical),
   validationErrorEntry("INVALID_FORMAT", Severity.Critical),
   validationErrorEntry("ENUM_MISMATCH", Severity.Critical),

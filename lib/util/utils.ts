@@ -141,12 +141,30 @@ export function mergeObjects<T extends sm.MutableStringMap<Data>>(source: T, tar
             `in target object is not (of the same type) an Array.`
         )
       } else {
-        target[key] = [...sourceProperty, ...targetProperty]
+        target[key] = mergeArrays(sourceProperty, targetProperty)
       }
     } else {
       target[key] = cloneDeep(sourceProperty)
     }
   }
+  return target
+}
+
+/*
+ * Merges source array into the target array
+ * @param {array} source The array that needs to be merged
+ *
+ * @param {array} target The array to be merged into
+ *
+ * @returns {array} target - Returns the merged target array.
+ */
+export function mergeArrays<T extends Data>(source: ReadonlyArray<T>, target: T[]): T[] {
+  if (!Array.isArray(target) || !Array.isArray(source)) {
+    return target
+  }
+  source.forEach(item => {
+    target.push(cloneDeep(item))
+  })
   return target
 }
 
