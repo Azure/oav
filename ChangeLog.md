@@ -1,5 +1,9 @@
 # Changelog
 
+### 03/28/2019 0.15.1
+
+- Allow for live validation to exclude/include specific errors.
+
 ### 03/27/2019 0.15.0
 
 - Refactor live validator and new types for validation results.

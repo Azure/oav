@@ -1,7 +1,7 @@
 import { SpecValidationResult } from "../validators/specValidator"
 
 import { BaseValidationError } from "./baseValidationError"
-import { errorCodeToSeverity, NodeError, serializeErrors } from "./validationError"
+import { errorCodeToErrorMetadata, NodeError, serializeErrors } from "./validationError"
 import { ValidationResultSource } from "./validationResultSource"
 
 export interface SemanticValidationError extends BaseValidationError<NodeError<any>> {
@@ -32,7 +32,7 @@ export const getErrorsFromSemanticValidation = (
 
     // process serialized errors
     const semanticErrors: SemanticValidationError[] = serializedErrors.map(serializedError => {
-      const severity = errorCodeToSeverity(serializedError.code)
+      const severity = errorCodeToErrorMetadata(serializedError.code).severity
       const semanticError: SemanticValidationError = {
         source: ValidationResultSource.GLOBAL,
         code: serializedError.code,

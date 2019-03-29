@@ -1,7 +1,7 @@
 import * as it from "@ts-common/iterator"
 
 import { ModelValidationError } from "./modelValidationError"
-import { errorCodeToSeverity } from "./validationError"
+import { errorCodeToErrorMetadata, ExtendedErrorCode } from "./validationError"
 import { ValidationResultSource } from "./validationResultSource"
 
 /**
@@ -18,7 +18,7 @@ export function toModelErrors(
     if (value.code === undefined) {
       value.code = "INTERNAL_ERROR"
     }
-    const severity = errorCodeToSeverity(value.code)
+    const severity = errorCodeToErrorMetadata(value.code as ExtendedErrorCode).severity
     const modelError: ModelValidationError = {
       operationId,
       scenario,

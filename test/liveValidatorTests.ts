@@ -532,4 +532,37 @@ describe("Live validator snapshot validation", () => {
       expect(validationResult.responseValidationResult).toStrictEqual(responseValidationResult)
     })
   })
+  test(`should return all errors for no options`, async () => {
+    const payload = require(`${__dirname}/liveValidation/payloads/multipleErrors_input.json`)
+    const result = validator.validateLiveRequestResponse(payload)
+    expect(result.responseValidationResult.errors.length === 3)
+    expect(result.responseValidationResult.errors.some(err => err.code === "INVALID_TYPE"))
+    expect(result.responseValidationResult.errors.some(err => err.code === "INVALID_FORMAT"))
+    expect(
+      result.responseValidationResult.errors.some(
+        err => err.code === "OBJECT_ADDITIONAL_PROPERTIES"
+      )
+    )
+  })
+  test(`should return all errors for empty includeErrors list`, async () => {
+    const payload = require(`${__dirname}/liveValidation/payloads/multipleErrors_input.json`)
+    const result = validator.validateLiveRequestResponse(payload, { includeErrors: [] })
+    expect(result.responseValidationResult.errors.length === 3)
+    expect(result.responseValidationResult.errors.some(err => err.code === "INVALID_TYPE"))
+    expect(result.responseValidationResult.errors.some(err => err.code === "INVALID_FORMAT"))
+    expect(
+      result.responseValidationResult.errors.some(
+        err => err.code === "OBJECT_ADDITIONAL_PROPERTIES"
+      )
+    )
+  })
+
+  test(`should return only errors specified  in the list`, async () => {
+    const payload = require(`${__dirname}/liveValidation/payloads/multipleErrors_input.json`)
+    const result = validator.validateLiveRequestResponse(payload, {
+      includeErrors: ["INVALID_TYPE"]
+    })
+    expect(result.responseValidationResult.errors.length === 1)
+    expect(result.responseValidationResult.errors[0].code === "INVALID_TYPE")
+  })
 })

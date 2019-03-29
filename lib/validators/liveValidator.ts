@@ -19,7 +19,8 @@ import { log } from "../util/logging"
 import { Severity } from "../util/severity"
 import * as utils from "../util/utils"
 import {
-  errorCodeToSeverity,
+  ErrorCode,
+  errorCodeToErrorMetadata,
   processValidationErrors,
   RuntimeException,
   SourceLocation
@@ -39,11 +40,11 @@ export interface LiveValidatorOptions {
   isPathCaseSensitive: boolean
 }
 
-export interface ApiVersion {
+interface ApiVersion {
   [method: string]: Operation[]
 }
 
-export interface Provider {
+interface Provider {
   [apiVersion: string]: ApiVersion
 }
 
@@ -71,15 +72,15 @@ interface OperationInfo {
 export interface RequestValidationResult {
   readonly successfulRequest: boolean
   readonly operationInfo: OperationInfo
-  errors: LiveValidationIssue[]
-  runtimeException?: RuntimeException
+  readonly errors: LiveValidationIssue[]
+  readonly runtimeException?: RuntimeException
 }
 
 export interface ResponseValidationResult {
   readonly successfulResponse: boolean
   readonly operationInfo: OperationInfo
-  errors: LiveValidationIssue[]
-  runtimeException?: RuntimeException
+  readonly errors: LiveValidationIssue[]
+  readonly runtimeException?: RuntimeException
 }
 
 export interface ValidationResult {
@@ -89,19 +90,28 @@ export interface ValidationResult {
 }
 
 export interface ApiOperationIdentifier {
-  url: string
-  method: string
+  readonly url: string
+  readonly method: string
 }
+
 export interface LiveValidationIssue {
-  code: string
-  message: string
-  pathInPayload: string
-  severity: Severity
-  similarPaths: string[]
-  source: SourceLocation
-  documentationUrl: string
-  params?: string[]
-  inner?: object[]
+  readonly code: ErrorCode
+  readonly message: string
+  readonly pathInPayload: string
+  readonly severity: Severity
+  readonly similarPaths: string[]
+  readonly source: SourceLocation
+  readonly documentationUrl: string
+  readonly params?: string[]
+  readonly inner?: object[]
+}
+
+/**
+ * Options for a validation operation.
+ * If `includeErrors` is missing or empty, all error codes will be included.
+ */
+export interface ValidateOptions {
+  readonly includeErrors?: ErrorCode[]
 }
 
 type OperationWithApiVersion = Operation & { apiVersion: string }
@@ -345,7 +355,10 @@ export class LiveValidator {
   /**
    *  Validates live request.
    */
-  public validateLiveRequest(liveRequest: LiveRequest): RequestValidationResult {
+  public validateLiveRequest(
+    liveRequest: LiveRequest,
+    options: ValidateOptions = {}
+  ): RequestValidationResult {
     let operation
     try {
       operation = this.findSpecOperation(liveRequest.url, liveRequest.method)
@@ -365,7 +378,14 @@ export class LiveValidator {
       const reqResult = operation.validateRequest(liveRequest)
       const processedErrors = processValidationErrors({ errors: [...reqResult.errors] })
       errors = processedErrors
-        ? processedErrors.map(err => this.toLiveValidationIssue(err as any))
+        ? processedErrors
+            .map(err => this.toLiveValidationIssue(err as any))
+            .filter(
+              err =>
+                !options.includeErrors ||
+                options.includeErrors.length === 0 ||
+                options.includeErrors.includes(err.code)
+            )
         : []
     } catch (reqValidationError) {
       const msg =
@@ -390,7 +410,7 @@ export class LiveValidator {
       message: err.message,
       pathInPayload: err.path,
       inner: err.inner,
-      severity: errorCodeToSeverity(err.code),
+      severity: errorCodeToErrorMetadata(err.code).severity,
       params: err.params,
       similarPaths: err.similarPaths || [],
       source: {
@@ -413,7 +433,8 @@ export class LiveValidator {
    */
   public validateLiveResponse(
     liveResponse: LiveResponse,
-    specOperation: ApiOperationIdentifier
+    specOperation: ApiOperationIdentifier,
+    options: ValidateOptions = {}
   ): ResponseValidationResult {
     let operation: OperationWithApiVersion
     try {
@@ -440,7 +461,14 @@ export class LiveValidator {
       const resResult = operation.validateResponse(liveResponse)
       const processedErrors = processValidationErrors({ errors: [...resResult.errors] })
       errors = processedErrors
-        ? processedErrors.map(err => this.toLiveValidationIssue(err as any))
+        ? processedErrors
+            .map(err => this.toLiveValidationIssue(err as any))
+            .filter(
+              err =>
+                !options.includeErrors ||
+                options.includeErrors.length === 0 ||
+                options.includeErrors.includes(err.code)
+            )
         : []
     } catch (resValidationError) {
       const msg =
@@ -463,11 +491,11 @@ export class LiveValidator {
 
   /**
    * Validates live request and response.
-   *
-   * @param requestResponsePair - The wrapper that contains the live request and response
-   * @returns  validationResult - Validation result for given input
    */
-  public validateLiveRequestResponse(requestResponseObj: RequestResponsePair): ValidationResult {
+  public validateLiveRequestResponse(
+    requestResponseObj: RequestResponsePair,
+    options?: ValidateOptions
+  ): ValidationResult {
     const validationResult: ValidationResult = {
       requestValidationResult: {
         successfulRequest: false,
@@ -510,11 +538,15 @@ export class LiveValidator {
     const request = requestResponseObj.liveRequest
     const response = requestResponseObj.liveResponse
 
-    const requestValidationResult = this.validateLiveRequest(request)
-    const responseValidationResult = this.validateLiveResponse(response, {
-      method: request.method,
-      url: request.url
-    })
+    const requestValidationResult = this.validateLiveRequest(request, options)
+    const responseValidationResult = this.validateLiveResponse(
+      response,
+      {
+        method: request.method,
+        url: request.url
+      },
+      options
+    )
 
     return {
       requestValidationResult,
@@ -731,7 +763,6 @@ export class LiveValidator {
  * OAV expects the url that is sent to match exactly with the swagger path. For this we need to keep only the part after
  * where the swagger path starts. Currently those are '/subscriptions' and '/providers'.
  */
-
 export function formatUrlToExpectedFormat(requestUrl: string): string {
   return requestUrl.substring(requestUrl.search("/?(subscriptions|providers)"))
 }

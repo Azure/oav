@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
-
 import * as C from "./lib/util/constants"
 
 // Easy to use methods from validate.ts
@@ -24,11 +23,14 @@ export {
   SemanticValidationError
 } from "./lib/util/getErrorsFromSemanticValidation"
 export {
-  errorConstants,
-  errorCodeToSeverity,
   NodeError,
-  ValidationError,
-  ValidationResult
+  ValidationErrorMetadata,
+  errorCodeToErrorMetadata,
+  ValidationResult,
+  ErrorCode,
+  ExtendedErrorCode,
+  WrapperErrorCode,
+  RuntimeErrorCode
 } from "./lib/util/validationError"
 
 // Classes

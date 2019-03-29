@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
-
 import { flatMap, fold } from "@ts-common/iterator"
 import * as json from "@ts-common/json"
 import { FilePosition } from "@ts-common/source-map"
@@ -15,72 +14,119 @@ import { Severity } from "./severity"
  * @class
  * Error that results from validations.
  */
-export class ValidationError {
-  /**
-   *
-   * @param name Validation Error Name
-   * @param severity The severity of the error
-   */
-  public constructor(public readonly name: string, public readonly severity: Severity) {}
+interface ErrorCodeMetadata {
+  readonly severity: Severity
+  readonly docUrl: string
 }
 
-const validationErrorEntry = (id: string, severity: Severity): [string, ValidationError] => [
-  id,
-  new ValidationError(id, severity)
-]
+export type ValidationErrorMetadata = ErrorCodeMetadata & { code: ExtendedErrorCode }
 
-export const errorConstants = new Map<string, ValidationError>([
-  validationErrorEntry("INVALID_TYPE", Severity.Critical),
-  validationErrorEntry("INVALID_FORMAT", Severity.Critical),
-  validationErrorEntry("ENUM_MISMATCH", Severity.Critical),
-  validationErrorEntry("ENUM_CASE_MISMATCH", Severity.Error),
-  validationErrorEntry("PII_MISMATCH", Severity.Warning),
-  validationErrorEntry("ANY_OF_MISSING", Severity.Critical),
-  validationErrorEntry("ONE_OF_MISSING", Severity.Critical),
-  validationErrorEntry("ONE_OF_MULTIPLE", Severity.Critical),
-  validationErrorEntry("NOT_PASSED", Severity.Critical),
-  // arrays
-  validationErrorEntry("ARRAY_LENGTH_SHORT", Severity.Critical),
-  validationErrorEntry("ARRAY_LENGTH_LONG", Severity.Critical),
-  validationErrorEntry("ARRAY_UNIQUE", Severity.Critical),
-  validationErrorEntry("ARRAY_ADDITIONAL_ITEMS", Severity.Critical),
-  // numeric
-  validationErrorEntry("MULTIPLE_OF", Severity.Critical),
-  validationErrorEntry("MINIMUM", Severity.Critical),
-  validationErrorEntry("MINIMUM_EXCLUSIVE", Severity.Critical),
-  validationErrorEntry("MAXIMUM", Severity.Critical),
-  validationErrorEntry("MAXIMUM_EXCLUSIVE", Severity.Critical),
-  // objects
-  validationErrorEntry("OBJECT_PROPERTIES_MINIMUM", Severity.Critical),
-  validationErrorEntry("OBJECT_PROPERTIES_MAXIMUM", Severity.Critical),
-  validationErrorEntry("OBJECT_MISSING_REQUIRED_PROPERTY", Severity.Critical),
-  validationErrorEntry("OBJECT_ADDITIONAL_PROPERTIES", Severity.Critical),
-  validationErrorEntry("OBJECT_DEPENDENCY_KEY", Severity.Warning),
-  // string
-  validationErrorEntry("MIN_LENGTH", Severity.Critical),
-  validationErrorEntry("MAX_LENGTH", Severity.Critical),
-  validationErrorEntry("PATTERN", Severity.Critical),
-  // operation
-  validationErrorEntry("OPERATION_NOT_FOUND_IN_CACHE", Severity.Critical),
-  validationErrorEntry("OPERATION_NOT_FOUND_IN_CACHE_WITH_VERB", Severity.Critical),
-  validationErrorEntry("OPERATION_NOT_FOUND_IN_CACHE_WITH_API", Severity.Critical),
-  validationErrorEntry("OPERATION_NOT_FOUND_IN_CACHE_WITH_PROVIDER", Severity.Critical),
-  validationErrorEntry("MULTIPLE_OPERATIONS_FOUND", Severity.Critical),
-  // others
-  validationErrorEntry("INVALID_RESPONSE_HEADER", Severity.Critical),
-  validationErrorEntry("INVALID_RESPONSE_CODE", Severity.Critical),
-  validationErrorEntry("INVALID_RESPONSE_BODY", Severity.Critical),
-  validationErrorEntry("INVALID_REQUEST_PARAMETER", Severity.Critical),
-  validationErrorEntry("INVALID_CONTENT_TYPE", Severity.Error),
-  validationErrorEntry("INTERNAL_ERROR", Severity.Critical)
-])
+export type ExtendedErrorCode = ErrorCode | WrapperErrorCode | RuntimeErrorCode
+export type ErrorCode = keyof typeof errorConstants
+export type WrapperErrorCode = keyof typeof wrapperErrorConstants
+export type RuntimeErrorCode = keyof typeof runtimeErrorConstants
 
+const errorConstants = {
+  INVALID_TYPE: {
+    severity: Severity.Critical,
+    docUrl: ""
+  },
+  INVALID_FORMAT: { severity: Severity.Critical, docUrl: "" },
+  ENUM_MISMATCH: { severity: Severity.Critical, docUrl: "" },
+  ENUM_CASE_MISMATCH: { severity: Severity.Error, docUrl: "" },
+  PII_MISMATCH: { severity: Severity.Warning, docUrl: "" },
+  NOT_PASSED: { severity: Severity.Critical, docUrl: "" },
+  ARRAY_LENGTH_SHORT: { severity: Severity.Critical, docUrl: "" },
+  ARRAY_LENGTH_LONG: { severity: Severity.Critical, docUrl: "" },
+  ARRAY_UNIQUE: { severity: Severity.Critical, docUrl: "" },
+  ARRAY_ADDITIONAL_ITEMS: {
+    severity: Severity.Critical,
+    docUrl: ""
+  },
+  MULTIPLE_OF: { severity: Severity.Critical, docUrl: "" },
+  MINIMUM: { severity: Severity.Critical, docUrl: "" },
+  MINIMUM_EXCLUSIVE: { severity: Severity.Critical, docUrl: "" },
+  MAXIMUM: { severity: Severity.Critical, docUrl: "" },
+  MAXIMUM_EXCLUSIVE: { severity: Severity.Critical, docUrl: "" },
+  OBJECT_PROPERTIES_MINIMUM: {
+    severity: Severity.Critical,
+    docUrl: ""
+  },
+  OBJECT_PROPERTIES_MAXIMUM: {
+    severity: Severity.Critical,
+    docUrl: ""
+  },
+  OBJECT_MISSING_REQUIRED_PROPERTY: {
+    severity: Severity.Critical,
+    docUrl: ""
+  },
+  OBJECT_ADDITIONAL_PROPERTIES: {
+    severity: Severity.Critical,
+    docUrl: ""
+  },
+  OBJECT_DEPENDENCY_KEY: { severity: Severity.Warning, docUrl: "" },
+  MIN_LENGTH: { severity: Severity.Critical, docUrl: "" },
+  MAX_LENGTH: { severity: Severity.Critical, docUrl: "" },
+  PATTERN: { severity: Severity.Critical, docUrl: "" },
+  INVALID_RESPONSE_CODE: { severity: Severity.Critical, docUrl: "" },
+  INVALID_CONTENT_TYPE: { severity: Severity.Error, docUrl: "" }
+}
+
+const wrapperErrorConstants = {
+  ANY_OF_MISSING: { severity: Severity.Critical, docUrl: "" },
+  ONE_OF_MISSING: { severity: Severity.Critical, docUrl: "" },
+  ONE_OF_MULTIPLE: { severity: Severity.Critical, docUrl: "" },
+  MULTIPLE_OPERATIONS_FOUND: {
+    severity: Severity.Critical,
+    docUrl: ""
+  },
+  INVALID_RESPONSE_HEADER: {
+    severity: Severity.Critical,
+    docUrl: ""
+  },
+  INVALID_RESPONSE_BODY: { severity: Severity.Critical, docUrl: "" },
+  INVALID_REQUEST_PARAMETER: {
+    severity: Severity.Critical,
+    docUrl: ""
+  }
+}
+
+const runtimeErrorConstants = {
+  OPERATION_NOT_FOUND_IN_CACHE: {
+    severity: Severity.Critical,
+    docUrl: ""
+  },
+  OPERATION_NOT_FOUND_IN_CACHE_WITH_VERB: {
+    severity: Severity.Critical,
+    docUrl: ""
+  },
+  OPERATION_NOT_FOUND_IN_CACHE_WITH_API: {
+    severity: Severity.Critical,
+    docUrl: ""
+  },
+  OPERATION_NOT_FOUND_IN_CACHE_WITH_PROVIDER: {
+    severity: Severity.Critical,
+    docUrl: ""
+  },
+  INTERNAL_ERROR: { severity: Severity.Critical, docUrl: "" }
+}
+
+const allErrorConstants = {
+  ...errorConstants,
+  ...wrapperErrorConstants,
+  ...runtimeErrorConstants
+}
 /**
- * Gets the severity from an error code. If the code is unknown assume critical.
+ * Gets the validation error metadata from an error code. If the code is unknown assume critical.
  */
-export const errorCodeToSeverity = (code: string): Severity => {
-  const errorConstant = errorConstants.get(code)
-  return errorConstant ? errorConstant.severity : Severity.Critical
+export const errorCodeToErrorMetadata = (code: ExtendedErrorCode): ValidationErrorMetadata => {
+  return {
+    ...(allErrorConstants[code] || {
+      severity: Severity.Critical,
+      docUrl: ""
+    }),
+    code
+  }
 }
 
 export interface LiveValidationIssue {
