@@ -103,7 +103,7 @@ export interface LiveValidationIssue {
   readonly source: SourceLocation
   readonly documentationUrl: string
   readonly params?: string[]
-  readonly inner?: object[]
+  readonly inner?: LiveValidationIssue[]
 }
 
 /**
@@ -175,34 +175,8 @@ export class LiveValidator {
 
     // Construct array of swagger paths to be used for building a cache
     const swaggerPaths = await this.getSwaggerPaths()
+    log.info(`Found ${swaggerPaths.length}`)
 
-    // console.log(swaggerPaths);
-    // Create array of promise factories that builds up cache
-    // Structure of the cache is
-    // {
-    //   "provider1": {
-    //     "api-version1": {
-    //       "get": [
-    //         "operation1",
-    //         "operation2",
-    //       ],
-    //       "put": [
-    //         "operation1",
-    //         "operation2",
-    //       ],
-    //       ...
-    //     },
-    //     ...
-    //   },
-    //   "microsoft.unknown": {
-    //     "unknown-api-version": {
-    //      "post": [
-    //        "operation1"
-    //      ]
-    //    }
-    //   }
-    //   ...
-    // }
     const promiseFactories = swaggerPaths.map(swaggerPath => async () =>
       this.getSwaggerInitializer(swaggerPath)
     )
@@ -406,25 +380,27 @@ export class LiveValidator {
   }
   private toLiveValidationIssue(err: { [index: string]: any; url: string }): LiveValidationIssue {
     return {
-      code: err.code,
-      message: err.message,
-      pathInPayload: err.path,
-      inner: err.inner,
+      code: err.code || "INTERNAL_ERROR",
+      message: err.message || "",
+      pathInPayload: err.path || "",
+      inner: Array.isArray(err.inner)
+        ? err.inner.map(innerErr => this.toLiveValidationIssue(innerErr))
+        : undefined,
       severity: errorCodeToErrorMetadata(err.code).severity,
-      params: err.params,
+      params: err.params || undefined,
       similarPaths: err.similarPaths || [],
       source: {
         url:
           this.options.useRelativeSourceLocationUrl && err.url
             ? err.url.substr(this.options.directory.length)
             : err.url,
-        jsonRef: err.title,
+        jsonRef: err.title || "",
         position: {
           column: err.position ? err.position.column : -1,
           line: err.position ? err.position.line : -1
         }
       },
-      documentationUrl: ""
+      documentationUrl: errorCodeToErrorMetadata(err.code).docUrl
     }
   }
 
