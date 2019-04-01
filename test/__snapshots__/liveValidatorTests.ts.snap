@@ -20,67 +20,83 @@ Object {
         "inner": Array [
           Object {
             "code": "OBJECT_ADDITIONAL_PROPERTIES",
-            "description": "Base class for Content Key Policy restrictions. A derived class must be used to create a restriction.",
-            "directives": Object {},
+            "documentationUrl": "",
+            "inner": Array [],
             "message": "Additional properties not allowed: issuer",
             "params": Array [
               "issuer",
             ],
-            "path": "properties/options/0/restriction",
-            "position": Object {
-              "column": 36,
-              "line": 316,
+            "pathInPayload": "properties/options/0/restriction",
+            "severity": 0,
+            "similarPaths": Array [],
+            "source": Object {
+              "jsonRef": "#/definitions/ContentKeyPolicyRestriction",
+              "position": Object {
+                "column": 36,
+                "line": 316,
+              },
+              "url": "specification/mediaservices/resource-manager/Microsoft.Media/2018-07-01/ContentKeyPolicies.json",
             },
-            "title": "#/definitions/ContentKeyPolicyRestriction",
-            "url": "C:/vladdb/devdiv/repos/tools/oav/test/liveValidation/swaggers/specification/mediaservices/resource-manager/Microsoft.Media/2018-07-01/ContentKeyPolicies.json",
           },
           Object {
             "code": "OBJECT_ADDITIONAL_PROPERTIES",
-            "description": "Represents an open restriction. License or key will be delivered on every request.",
-            "directives": Object {},
+            "documentationUrl": "",
+            "inner": Array [],
             "message": "Additional properties not allowed: issuer",
             "params": Array [
               "issuer",
             ],
-            "path": "properties/options/0/restriction",
-            "position": Object {
-              "column": 40,
-              "line": 330,
+            "pathInPayload": "properties/options/0/restriction",
+            "severity": 0,
+            "similarPaths": Array [],
+            "source": Object {
+              "jsonRef": "#/definitions/ContentKeyPolicyOpenRestriction",
+              "position": Object {
+                "column": 40,
+                "line": 330,
+              },
+              "url": "specification/mediaservices/resource-manager/Microsoft.Media/2018-07-01/ContentKeyPolicies.json",
             },
-            "title": "#/definitions/ContentKeyPolicyOpenRestriction",
-            "url": "C:/vladdb/devdiv/repos/tools/oav/test/liveValidation/swaggers/specification/mediaservices/resource-manager/Microsoft.Media/2018-07-01/ContentKeyPolicies.json",
           },
           Object {
             "code": "OBJECT_ADDITIONAL_PROPERTIES",
-            "description": "Represents a ContentKeyPolicyRestriction that is unavailable in the current API version.",
-            "directives": Object {},
+            "documentationUrl": "",
+            "inner": Array [],
             "message": "Additional properties not allowed: issuer",
             "params": Array [
               "issuer",
             ],
-            "path": "properties/options/0/restriction",
-            "position": Object {
-              "column": 43,
-              "line": 341,
+            "pathInPayload": "properties/options/0/restriction",
+            "severity": 0,
+            "similarPaths": Array [],
+            "source": Object {
+              "jsonRef": "#/definitions/ContentKeyPolicyUnknownRestriction",
+              "position": Object {
+                "column": 43,
+                "line": 341,
+              },
+              "url": "specification/mediaservices/resource-manager/Microsoft.Media/2018-07-01/ContentKeyPolicies.json",
             },
-            "title": "#/definitions/ContentKeyPolicyUnknownRestriction",
-            "url": "C:/vladdb/devdiv/repos/tools/oav/test/liveValidation/swaggers/specification/mediaservices/resource-manager/Microsoft.Media/2018-07-01/ContentKeyPolicies.json",
           },
           Object {
             "code": "OBJECT_MISSING_REQUIRED_PROPERTY",
-            "description": "Represents a token restriction. Provided token must match these requirements for successful license or key delivery.",
-            "directives": Object {},
+            "documentationUrl": "",
+            "inner": Array [],
             "message": "Missing required property: audience",
             "params": Array [
               "audience",
             ],
-            "path": "properties/options/0/restriction",
-            "position": Object {
-              "column": 41,
-              "line": 446,
+            "pathInPayload": "properties/options/0/restriction",
+            "severity": 0,
+            "similarPaths": Array [],
+            "source": Object {
+              "jsonRef": "#/definitions/ContentKeyPolicyTokenRestriction",
+              "position": Object {
+                "column": 41,
+                "line": 446,
+              },
+              "url": "specification/mediaservices/resource-manager/Microsoft.Media/2018-07-01/ContentKeyPolicies.json",
             },
-            "title": "#/definitions/ContentKeyPolicyTokenRestriction",
-            "url": "C:/vladdb/devdiv/repos/tools/oav/test/liveValidation/swaggers/specification/mediaservices/resource-manager/Microsoft.Media/2018-07-01/ContentKeyPolicies.json",
           },
         ],
         "message": "Data does not match any schemas from 'oneOf'",
@@ -149,7 +165,7 @@ Object {
       Object {
         "code": "ENUM_CASE_MISMATCH",
         "documentationUrl": "",
-        "inner": undefined,
+        "inner": Array [],
         "message": "Enum doesn not match case for: System",
         "params": Array [
           "System",
@@ -194,7 +210,7 @@ Object {
       Object {
         "code": "ENUM_MISMATCH",
         "documentationUrl": "",
-        "inner": undefined,
+        "inner": Array [],
         "message": "No enum match for: banana",
         "params": Array [
           "banana",
@@ -239,7 +255,7 @@ Object {
       Object {
         "code": "INVALID_FORMAT",
         "documentationUrl": "",
-        "inner": undefined,
+        "inner": Array [],
         "message": "Object didn't pass validation for format date-time: 0001-01-01T00:00:00",
         "params": Array [
           "date-time",
@@ -285,7 +301,7 @@ Object {
       Object {
         "code": "INVALID_TYPE",
         "documentationUrl": "",
-        "inner": undefined,
+        "inner": Array [],
         "message": "Expected type array but found type string",
         "params": Array [
           "array",
@@ -331,7 +347,7 @@ Object {
       Object {
         "code": "MAX_LENGTH",
         "documentationUrl": "",
-        "inner": undefined,
+        "inner": Array [],
         "message": "String is too long (1958 chars), maximum 1000",
         "params": Array [
           1958,
@@ -377,7 +393,7 @@ Object {
       Object {
         "code": "OBJECT_ADDITIONAL_PROPERTIES",
         "documentationUrl": "",
-        "inner": undefined,
+        "inner": Array [],
         "message": "Additional properties not allowed: id",
         "params": Array [
           "id",
@@ -422,7 +438,7 @@ Object {
       Object {
         "code": "OBJECT_MISSING_REQUIRED_PROPERTY",
         "documentationUrl": "",
-        "inner": undefined,
+        "inner": Array [],
         "message": "Missing required property: displayName",
         "params": Array [
           "displayName",

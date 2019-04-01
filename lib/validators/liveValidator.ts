@@ -103,7 +103,7 @@ export interface LiveValidationIssue {
   readonly source: SourceLocation
   readonly documentationUrl: string
   readonly params?: string[]
-  readonly inner?: object[]
+  readonly inner?: LiveValidationIssue[]
 }
 
 /**
@@ -380,25 +380,27 @@ export class LiveValidator {
   }
   private toLiveValidationIssue(err: { [index: string]: any; url: string }): LiveValidationIssue {
     return {
-      code: err.code,
-      message: err.message,
-      pathInPayload: err.path,
-      inner: err.inner,
+      code: err.code || "INTERNAL_ERROR",
+      message: err.message || "",
+      pathInPayload: err.path || "",
+      inner: Array.isArray(err.inner)
+        ? err.inner.map(innerErr => this.toLiveValidationIssue(innerErr))
+        : [],
       severity: errorCodeToErrorMetadata(err.code).severity,
-      params: err.params,
+      params: err.params || [],
       similarPaths: err.similarPaths || [],
       source: {
         url:
           this.options.useRelativeSourceLocationUrl && err.url
             ? err.url.substr(this.options.directory.length)
             : err.url,
-        jsonRef: err.title,
+        jsonRef: err.title || "",
         position: {
           column: err.position ? err.position.column : -1,
           line: err.position ? err.position.line : -1
         }
       },
-      documentationUrl: ""
+      documentationUrl: errorCodeToErrorMetadata(err.code).docUrl
     }
   }
 

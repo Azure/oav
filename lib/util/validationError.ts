@@ -247,9 +247,12 @@ export function serializeErrors<T extends NodeError<T>>(node: T, path: unknown[]
       errs.forEach(err => {
         const similarErr = acc.find(el => areErrorsSimilar(err, el))
         if (similarErr && similarErr.path) {
-          similarErr.similarPaths = [...(similarErr.similarPaths || []), err.path as string]
+          if (!similarErr.similarPaths) {
+            similarErr.similarPaths = []
+          }
+          similarErr.similarPaths.push(err.path as string)
         } else {
-          acc = [...acc, err]
+          acc.push(err)
         }
       })
       return acc

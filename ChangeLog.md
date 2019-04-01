@@ -1,5 +1,9 @@
 # Changelog
 
+### 04/01/2019 0.15.2
+
+- Inner errors will have the `LiveValidationIssue` type instead of`object`.
+
 ### 03/28/2019 0.15.1
 
 - Allow for live validation to exclude/include specific errors.
