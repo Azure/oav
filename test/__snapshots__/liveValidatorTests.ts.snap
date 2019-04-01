@@ -21,7 +21,7 @@ Object {
           Object {
             "code": "OBJECT_ADDITIONAL_PROPERTIES",
             "documentationUrl": "",
-            "inner": Array [],
+            "inner": undefined,
             "message": "Additional properties not allowed: issuer",
             "params": Array [
               "issuer",
@@ -41,7 +41,7 @@ Object {
           Object {
             "code": "OBJECT_ADDITIONAL_PROPERTIES",
             "documentationUrl": "",
-            "inner": Array [],
+            "inner": undefined,
             "message": "Additional properties not allowed: issuer",
             "params": Array [
               "issuer",
@@ -61,7 +61,7 @@ Object {
           Object {
             "code": "OBJECT_ADDITIONAL_PROPERTIES",
             "documentationUrl": "",
-            "inner": Array [],
+            "inner": undefined,
             "message": "Additional properties not allowed: issuer",
             "params": Array [
               "issuer",
@@ -81,7 +81,7 @@ Object {
           Object {
             "code": "OBJECT_MISSING_REQUIRED_PROPERTY",
             "documentationUrl": "",
-            "inner": Array [],
+            "inner": undefined,
             "message": "Missing required property: audience",
             "params": Array [
               "audience",
@@ -165,7 +165,7 @@ Object {
       Object {
         "code": "ENUM_CASE_MISMATCH",
         "documentationUrl": "",
-        "inner": Array [],
+        "inner": undefined,
         "message": "Enum doesn not match case for: System",
         "params": Array [
           "System",
@@ -210,7 +210,7 @@ Object {
       Object {
         "code": "ENUM_MISMATCH",
         "documentationUrl": "",
-        "inner": Array [],
+        "inner": undefined,
         "message": "No enum match for: banana",
         "params": Array [
           "banana",
@@ -255,7 +255,7 @@ Object {
       Object {
         "code": "INVALID_FORMAT",
         "documentationUrl": "",
-        "inner": Array [],
+        "inner": undefined,
         "message": "Object didn't pass validation for format date-time: 0001-01-01T00:00:00",
         "params": Array [
           "date-time",
@@ -301,7 +301,7 @@ Object {
       Object {
         "code": "INVALID_TYPE",
         "documentationUrl": "",
-        "inner": Array [],
+        "inner": undefined,
         "message": "Expected type array but found type string",
         "params": Array [
           "array",
@@ -347,7 +347,7 @@ Object {
       Object {
         "code": "MAX_LENGTH",
         "documentationUrl": "",
-        "inner": Array [],
+        "inner": undefined,
         "message": "String is too long (1958 chars), maximum 1000",
         "params": Array [
           1958,
@@ -393,7 +393,7 @@ Object {
       Object {
         "code": "OBJECT_ADDITIONAL_PROPERTIES",
         "documentationUrl": "",
-        "inner": Array [],
+        "inner": undefined,
         "message": "Additional properties not allowed: id",
         "params": Array [
           "id",
@@ -438,7 +438,7 @@ Object {
       Object {
         "code": "OBJECT_MISSING_REQUIRED_PROPERTY",
         "documentationUrl": "",
-        "inner": Array [],
+        "inner": undefined,
         "message": "Missing required property: displayName",
         "params": Array [
           "displayName",

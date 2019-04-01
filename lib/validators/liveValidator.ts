@@ -385,9 +385,9 @@ export class LiveValidator {
       pathInPayload: err.path || "",
       inner: Array.isArray(err.inner)
         ? err.inner.map(innerErr => this.toLiveValidationIssue(innerErr))
-        : [],
+        : undefined,
       severity: errorCodeToErrorMetadata(err.code).severity,
-      params: err.params || [],
+      params: err.params || undefined,
       similarPaths: err.similarPaths || [],
       source: {
         url:
