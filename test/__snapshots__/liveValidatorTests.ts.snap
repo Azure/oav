@@ -15,100 +15,21 @@ Object {
   "responseValidationResult": Object {
     "errors": Array [
       Object {
-        "code": "ONE_OF_MISSING",
+        "code": "OBJECT_MISSING_REQUIRED_PROPERTY",
         "documentationUrl": "",
-        "inner": Array [
-          Object {
-            "code": "OBJECT_ADDITIONAL_PROPERTIES",
-            "documentationUrl": "",
-            "inner": undefined,
-            "message": "Additional properties not allowed: issuer",
-            "params": Array [
-              "issuer",
-            ],
-            "pathInPayload": "properties/options/0/restriction",
-            "severity": 0,
-            "similarPaths": Array [],
-            "source": Object {
-              "jsonRef": "#/definitions/ContentKeyPolicyRestriction",
-              "position": Object {
-                "column": 36,
-                "line": 316,
-              },
-              "url": "specification/mediaservices/resource-manager/Microsoft.Media/2018-07-01/ContentKeyPolicies.json",
-            },
-          },
-          Object {
-            "code": "OBJECT_ADDITIONAL_PROPERTIES",
-            "documentationUrl": "",
-            "inner": undefined,
-            "message": "Additional properties not allowed: issuer",
-            "params": Array [
-              "issuer",
-            ],
-            "pathInPayload": "properties/options/0/restriction",
-            "severity": 0,
-            "similarPaths": Array [],
-            "source": Object {
-              "jsonRef": "#/definitions/ContentKeyPolicyOpenRestriction",
-              "position": Object {
-                "column": 40,
-                "line": 330,
-              },
-              "url": "specification/mediaservices/resource-manager/Microsoft.Media/2018-07-01/ContentKeyPolicies.json",
-            },
-          },
-          Object {
-            "code": "OBJECT_ADDITIONAL_PROPERTIES",
-            "documentationUrl": "",
-            "inner": undefined,
-            "message": "Additional properties not allowed: issuer",
-            "params": Array [
-              "issuer",
-            ],
-            "pathInPayload": "properties/options/0/restriction",
-            "severity": 0,
-            "similarPaths": Array [],
-            "source": Object {
-              "jsonRef": "#/definitions/ContentKeyPolicyUnknownRestriction",
-              "position": Object {
-                "column": 43,
-                "line": 341,
-              },
-              "url": "specification/mediaservices/resource-manager/Microsoft.Media/2018-07-01/ContentKeyPolicies.json",
-            },
-          },
-          Object {
-            "code": "OBJECT_MISSING_REQUIRED_PROPERTY",
-            "documentationUrl": "",
-            "inner": undefined,
-            "message": "Missing required property: audience",
-            "params": Array [
-              "audience",
-            ],
-            "pathInPayload": "properties/options/0/restriction",
-            "severity": 0,
-            "similarPaths": Array [],
-            "source": Object {
-              "jsonRef": "#/definitions/ContentKeyPolicyTokenRestriction",
-              "position": Object {
-                "column": 41,
-                "line": 446,
-              },
-              "url": "specification/mediaservices/resource-manager/Microsoft.Media/2018-07-01/ContentKeyPolicies.json",
-            },
-          },
+        "inner": undefined,
+        "message": "Missing required property: audience",
+        "params": Array [
+          "audience",
         ],
-        "message": "Data does not match any schemas from 'oneOf'",
-        "params": Array [],
         "pathInPayload": "properties/options/0/restriction",
         "severity": 0,
         "similarPaths": Array [],
         "source": Object {
-          "jsonRef": "#/definitions/ContentKeyPolicyOption/properties/restriction",
+          "jsonRef": "#/definitions/ContentKeyPolicyTokenRestriction",
           "position": Object {
-            "column": 24,
-            "line": 674,
+            "column": 41,
+            "line": 446,
           },
           "url": "specification/mediaservices/resource-manager/Microsoft.Media/2018-07-01/ContentKeyPolicies.json",
         },

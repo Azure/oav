@@ -515,8 +515,8 @@ describe("Model Validation", () => {
         consoleLogLevel: "off"
       })
       assert.strictEqual(result.length, 1)
-      // it should report `ONE_OF_MISSING` instead of `ONE_OF_MULTIPLE`
-      assert.strictEqual(result[0].code, "ONE_OF_MISSING")
+      // it should report the real error `INVALID_TYPE` instead of the wrapper `ONE_OF_MISSING`
+      assert.strictEqual(result[0].code, "INVALID_TYPE")
     })
   })
 
@@ -537,8 +537,8 @@ describe("Model Validation", () => {
         consoleLogLevel: "off"
       })
       assert.strictEqual(result.length, 1)
-      // it should report `ONE_OF_MISSING` instead of `ONE_OF_MULTIPLE`
-      assert.strictEqual(result[0].code, "ONE_OF_MISSING")
+      // it should report the real error `OBJECT_MISSING_REQUIRED_PROPERTY` instead of the wrapper `ONE_OF_MISSING`
+      assert.strictEqual(result[0].code, "OBJECT_MISSING_REQUIRED_PROPERTY")
     })
   })
 })

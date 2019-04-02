@@ -1,5 +1,9 @@
 # Changelog
 
+### 04/01/2019 0.15.3
+
+- Polymporphic anyOf's will be validated only against the matching subschema and any error wont be nested.
+
 ### 04/01/2019 0.15.2
 
 - Inner errors will have the `LiveValidationIssue` type instead of`object`.
