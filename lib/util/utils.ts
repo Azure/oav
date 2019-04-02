@@ -445,7 +445,9 @@ export function relaxModelLikeEntities(model: SchemaObject): SchemaObject {
   if (model.properties) {
     const modelProperties = model.properties
 
-    for (const [propName, property] of sm.entries(modelProperties)) {
+    for (const prop of sm.entries(modelProperties)) {
+      const propName = prop[0]
+      const property = prop[1]
       modelProperties[propName] = property.properties
         ? relaxModelLikeEntities(property)
         : relaxEntityType(property, isPropertyRequired(propName, model))
@@ -542,7 +544,9 @@ export function allowNullableTypes(model: SchemaObject): SchemaObject {
   }
   if (model && model.properties) {
     const modelProperties = model.properties
-    for (const [propName, prop] of sm.entries(modelProperties)) {
+    for (const propEntry of sm.entries(modelProperties)) {
+      const propName = propEntry[0]
+      const prop = propEntry[1]
       // process properties if present
       modelProperties[propName] =
         prop.properties || prop.additionalProperties

@@ -23,7 +23,8 @@ export function getErrorsFromModelValidation(
   }
 
   const entries = sm.entries(validationResult.operations)
-  const operationScenarios = it.filterMap(entries, ([operationId, operation]) => {
+  const operationScenarios = it.filterMap(entries, entry => {
+    const [operationId, operation] = entry
     const xMsScenarios = operation["x-ms-examples"]
     const scenario = operation["example-in-spec"]
     const scenarios = sm.merge(
