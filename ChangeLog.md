@@ -1,6 +1,6 @@
 # Changelog
 
-### 04/05/2019 0.16.0
+### 04/05/2019 0.16.1
 
 - OAV should exit with code `1` if it finds errors.
 - Breaking changes in SpecValidationResult, CommonValidationResult.
