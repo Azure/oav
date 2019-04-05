@@ -69,23 +69,16 @@ interface OperationInfo {
   readonly apiVersion: string
 }
 
-export interface RequestValidationResult {
-  readonly successfulRequest: boolean
+export interface LiveValidationResult {
+  readonly isSuccessful: boolean
   readonly operationInfo: OperationInfo
   readonly errors: LiveValidationIssue[]
   readonly runtimeException?: RuntimeException
 }
 
-export interface ResponseValidationResult {
-  readonly successfulResponse: boolean
-  readonly operationInfo: OperationInfo
-  readonly errors: LiveValidationIssue[]
-  readonly runtimeException?: RuntimeException
-}
-
-export interface ValidationResult {
-  readonly requestValidationResult: RequestValidationResult
-  readonly responseValidationResult: ResponseValidationResult
+export interface RequestResponseLiveValidationResult {
+  readonly requestValidationResult: LiveValidationResult
+  readonly responseValidationResult: LiveValidationResult
   readonly errors: unknown[]
 }
 
@@ -97,9 +90,8 @@ export interface ApiOperationIdentifier {
 export interface LiveValidationIssue {
   readonly code: ErrorCode
   readonly message: string
-  readonly pathInPayload: string
+  readonly pathsInPayload: string[]
   readonly severity: Severity
-  readonly similarPaths: string[]
   readonly source: SourceLocation
   readonly documentationUrl: string
   readonly params?: string[]
@@ -332,13 +324,13 @@ export class LiveValidator {
   public validateLiveRequest(
     liveRequest: LiveRequest,
     options: ValidateOptions = {}
-  ): RequestValidationResult {
+  ): LiveValidationResult {
     let operation
     try {
       operation = this.findSpecOperation(liveRequest.url, liveRequest.method)
     } catch (err) {
       return {
-        successfulRequest: false,
+        isSuccessful: false,
         errors: [err],
         operationInfo: { apiVersion: C.unknownApiVersion, operationId: C.unknownOperationId }
       }
@@ -349,7 +341,7 @@ export class LiveValidator {
     let errors: LiveValidationIssue[] = []
     let runtimeException
     try {
-      const reqResult = operation.validateRequest(liveRequest)
+      const reqResult = operation.validateRequest(liveRequest, options)
       const processedErrors = processValidationErrors({ errors: [...reqResult.errors] })
       errors = processedErrors
         ? processedErrors
@@ -369,7 +361,7 @@ export class LiveValidator {
       runtimeException = { code: C.ErrorCodes.RequestValidationError.name, message: msg }
     }
     return {
-      successfulRequest: errors.length === 0,
+      isSuccessful: errors.length === 0,
       operationInfo: {
         apiVersion: operation.apiVersion,
         operationId: operation.operationId
@@ -382,13 +374,12 @@ export class LiveValidator {
     return {
       code: err.code || "INTERNAL_ERROR",
       message: err.message || "",
-      pathInPayload: err.path || "",
+      pathsInPayload: err.path ? [err.path, ...(err.similarPaths || [])] : [],
       inner: Array.isArray(err.inner)
         ? err.inner.map(innerErr => this.toLiveValidationIssue(innerErr))
         : undefined,
       severity: errorCodeToErrorMetadata(err.code).severity,
       params: err.params || undefined,
-      similarPaths: err.similarPaths || [],
       source: {
         url:
           this.options.useRelativeSourceLocationUrl && err.url
@@ -411,13 +402,13 @@ export class LiveValidator {
     liveResponse: LiveResponse,
     specOperation: ApiOperationIdentifier,
     options: ValidateOptions = {}
-  ): ResponseValidationResult {
+  ): LiveValidationResult {
     let operation: OperationWithApiVersion
     try {
       operation = this.findSpecOperation(specOperation.url, specOperation.method)
     } catch (err) {
       return {
-        successfulResponse: false,
+        isSuccessful: false,
         errors: [err],
         operationInfo: { apiVersion: C.unknownApiVersion, operationId: C.unknownOperationId }
       }
@@ -434,7 +425,7 @@ export class LiveValidator {
         utils.statusCodeStringToStatusCode[liveResponse.statusCode.toLowerCase()]
     }
     try {
-      const resResult = operation.validateResponse(liveResponse)
+      const resResult = operation.validateResponse(liveResponse, options)
       const processedErrors = processValidationErrors({ errors: [...resResult.errors] })
       errors = processedErrors
         ? processedErrors
@@ -455,7 +446,7 @@ export class LiveValidator {
     }
 
     return {
-      successfulResponse: errors.length === 0,
+      isSuccessful: errors.length === 0,
       operationInfo: {
         apiVersion: operation.apiVersion,
         operationId: operation.operationId
@@ -471,15 +462,15 @@ export class LiveValidator {
   public validateLiveRequestResponse(
     requestResponseObj: RequestResponsePair,
     options?: ValidateOptions
-  ): ValidationResult {
-    const validationResult: ValidationResult = {
+  ): RequestResponseLiveValidationResult {
+    const validationResult = {
       requestValidationResult: {
-        successfulRequest: false,
+        isSuccessful: false,
         errors: [],
         operationInfo: { apiVersion: C.unknownApiVersion, operationId: C.unknownOperationId }
       },
       responseValidationResult: {
-        successfulResponse: false,
+        isSuccessful: false,
         errors: [],
         operationInfo: { apiVersion: C.unknownApiVersion, operationId: C.unknownOperationId }
       },

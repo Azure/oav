@@ -132,8 +132,7 @@ export const errorCodeToErrorMetadata = (code: ExtendedErrorCode): ValidationErr
 export interface LiveValidationIssue {
   code: string
   message: string
-  pathInPayload: string
-  similarPaths: string[]
+  pathsInPayload: string[]
   operationId: string
   source: SourceLocation
   documentationUrl: string

@@ -201,14 +201,16 @@ export class XMsExampleExtractor {
                 parameters: {},
                 responses: {}
               }
-              const paramsToProcess = [pathParamsValues, queryParams, headerParams]
-              paramsToProcess.forEach(params => {
-                for (const paramEntry of entries(params)) {
-                  const param = paramEntry[0]
-                  const v = paramEntry[1]
-                  exampleL.parameters[param] = v
-                }
-              })
+              const paramsToProcess = [
+                ...entries(pathParamsValues),
+                ...entries(queryParams),
+                ...entries(headerParams)
+              ]
+              for (const paramEntry of paramsToProcess) {
+                const param = paramEntry[0]
+                const v = paramEntry[1]
+                exampleL.parameters[param] = v
+              }
 
               const params = infoFromOperation.parameters
 
