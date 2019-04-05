@@ -45,8 +45,7 @@ export {
   ApiOperationIdentifier,
   RequestValidationResult,
   ResponseValidationResult,
-  ValidateOptions,
-  formatUrlToExpectedFormat
+  ValidateOptions
 } from "./lib/validators/liveValidator"
 export { SpecResolver } from "./lib/validators/specResolver"
 
