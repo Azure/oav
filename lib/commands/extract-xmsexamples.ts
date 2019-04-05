@@ -41,5 +41,6 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       matchApiVersion: argv.matchApiVersion
     }
     await validate.extractXMsExamples(specPath, recordings, vOptions)
+    return 0
   })
 }

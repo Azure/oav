@@ -1,5 +1,10 @@
 # Changelog
 
+### 04/05/2019 0.16.0
+
+- OAV should exit with code `1` if it finds errors.
+- Breaking changes: TypeScript 3.4
+
 ### 04/01/2019 0.15.3
 
 - Polymporphic anyOf's will be validated only against the matching subschema and any error wont be nested.
