@@ -38,7 +38,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       return iterator.flat(result).some(() => true) ? 1 : 0
     } else {
       const result = await validate.validateExamples(specPath, operationIds, vOptions)
-      return iterator.some(result, () => true) ? 1 : 0
+      return result.length > 0 ? 1 : 0
     }
   })
 }
