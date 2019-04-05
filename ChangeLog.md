@@ -3,7 +3,7 @@
 ### 04/05/2019 0.17.0
 
 - Live Validation mode is now skipping validating for errors not specified when using the `includeErrors` option.
-- The types `RequestValidationResult` and `ResponseValidationResult` have been replaced with the `ValidationResult` type.
+- The types `RequestValidationResult` and `ResponseValidationResult` have been replaced with the `LiveValidationResult` type.
 
 ### 04/05/2019 0.16.1
 
