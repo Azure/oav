@@ -130,28 +130,31 @@ export const errorCodeToErrorMetadata = (code: ExtendedErrorCode): ValidationErr
 }
 
 export interface LiveValidationIssue {
-  code: string
-  message: string
-  pathsInPayload: string[]
-  operationId: string
-  source: SourceLocation
-  documentationUrl: string
-  params?: string[]
-  origin: string
-  inner?: object[]
+  readonly code: string
+  readonly message: string
+// tslint:disable-next-line: prettier
+  readonly pathsInPayload: readonly string[]
+  readonly operationId: string
+  readonly source: SourceLocation
+  readonly documentationUrl: string
+  readonly params?: readonly string[]
+  readonly origin: string
+  readonly inner?: readonly object[]
 }
+
 export interface SourceLocation {
-  url: string
-  jsonRef?: string
-  jsonPath?: string
-  position: {
-    column: number
-    line: number
+  readonly url: string
+  readonly jsonRef?: string
+  readonly jsonPath?: string
+  readonly position: {
+    readonly column: number
+    readonly line: number
   }
 }
+
 export interface RuntimeException {
-  code: string
-  message: string
+  readonly code: string
+  readonly message: string
 }
 
 export interface NodeError<T extends NodeError<T>> {

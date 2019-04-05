@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 import { Suppression } from "@azure/openapi-markdown"
-import { isArray, map, toArray } from "@ts-common/iterator"
+import { isArray, toArray } from "@ts-common/iterator"
 import * as jsonParser from "@ts-common/json-parser"
 import * as ps from "@ts-common/property-set"
 import { arrayMap } from "@ts-common/source-map"
@@ -276,12 +276,13 @@ export class SpecResolver {
 
     const allRefsRemoteRelative = jsonRefs.findRefs(doc, options)
     const e = sm.entries(allRefsRemoteRelative as sm.StringMap<RefDetails>)
-    const promiseFactories = toArray(
-      map(e, ref => async () => {
+    const promiseFactories = e
+      .map(ref => async () => {
         const [refName, refDetails] = ref
         return this.resolveRelativeReference(refName, refDetails, doc, docPath, suppression)
       })
-    )
+      .toArray()
+
     if (promiseFactories.length) {
       await utils.executePromisesSequentially(promiseFactories)
     }

@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import * as it from "@ts-common/iterator"
 import * as sm from "@ts-common/string-map"
 
 import { ModelValidationError } from "./modelValidationError"
@@ -17,13 +16,14 @@ export interface ModelValidation {
  */
 export function getErrorsFromModelValidation(
   validationResult: ModelValidation
-): ReadonlyArray<ModelValidationError> {
+// tslint:disable-next-line: prettier
+): readonly ModelValidationError[] {
   if (!validationResult.operations) {
     return []
   }
 
   const entries = sm.entries(validationResult.operations)
-  const operationScenarios = it.filterMap(entries, entry => {
+  const operationScenarios = entries.filterMap(entry => {
     const [operationId, operation] = entry
     const xMsScenarios = operation["x-ms-examples"]
     const scenario = operation["example-in-spec"]
@@ -35,5 +35,5 @@ export function getErrorsFromModelValidation(
     )
     return { operationId, scenarios }
   })
-  return it.toArray(it.flatMap(operationScenarios, operationReducer))
+  return operationScenarios.flatMap(operationReducer).toArray()
 }
