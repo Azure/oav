@@ -52,7 +52,7 @@ export interface ValidationResultScenarios {
 }
 
 export interface SpecValidationResult extends ModelValidation {
-  validityStatus: unknown
+  validityStatus: boolean
   resolveSpec?: Sway.ValidationEntry
 }
 
@@ -62,7 +62,7 @@ export interface ExampleResponse {
 }
 
 export interface CommonValidationResult {
-  validityStatus: unknown
+  validityStatus: boolean
   operations: {}
   resolveSpec?: Sway.ValidationEntry
 }

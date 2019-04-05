@@ -63,5 +63,6 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       direction: argv.i
     }
     await validate.generateUml(specPath, argv.d, vOptions)
+    return 0
   })
 }

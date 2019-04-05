@@ -93,5 +93,6 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     } else {
       await validate.resolveSpec(specPath, argv.d, vOptions, jsonParser.defaultErrorReport)
     }
+    return 0
   })
 }

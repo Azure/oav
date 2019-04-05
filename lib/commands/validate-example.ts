@@ -3,6 +3,7 @@
 
 import * as yargs from "yargs"
 
+import * as iterator from "@ts-common/iterator"
 import { cliSuppressExceptions } from "../cliSuppressExceptions"
 import { log } from "../util/logging"
 import * as validate from "../validate"
@@ -33,9 +34,11 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       pretty: argv.p
     }
     if (specPath.match(/.*composite.*/gi) !== null) {
-      await validate.validateExamplesInCompositeSpec(specPath, vOptions)
+      const result = await validate.validateExamplesInCompositeSpec(specPath, vOptions)
+      return iterator.flat(result).some(() => true) ? 1 : 0
     } else {
-      await validate.validateExamples(specPath, operationIds, vOptions)
+      const result = await validate.validateExamples(specPath, operationIds, vOptions)
+      return result.length > 0 ? 1 : 0
     }
   })
 }
