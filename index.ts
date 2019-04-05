@@ -42,7 +42,10 @@ export {
   LiveResponse,
   LiveValidationIssue,
   LiveValidatorOptions,
-  ApiOperationIdentifier
+  ApiOperationIdentifier,
+  RequestValidationResult,
+  ResponseValidationResult,
+  ValidateOptions
 } from "./lib/validators/liveValidator"
 export { SpecResolver } from "./lib/validators/specResolver"
 
