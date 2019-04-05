@@ -60,15 +60,19 @@ export function scenarioReducer(
         ValidationResultSource.REQUEST,
         "ALL"
       )
-    : []
+    : it.empty()
 
   // process responses
   rawValidationResult.requestValidationResult.errors = []
 
   const entries = sm.entries(scenario.responses)
-  const invalidResponses = it.filter(entries, ([_, response]) => !response.isValid)
-  const result = it.flatMap(invalidResponses, ([responseCode]) =>
-    responseReducer(responseCode, scenario, rawValidationResult, operationId, scenarioName)
-  )
-  return it.concat(modelErrors, result)
+  const invalidResponses = entries.filter(entry => {
+    const [, response] = entry
+    return !response.isValid
+  })
+  const result = invalidResponses.flatMap(response => {
+    const [responseCode] = response
+    return responseReducer(responseCode, scenario, rawValidationResult, operationId, scenarioName)
+  })
+  return modelErrors.concat(result)
 }

@@ -6,20 +6,12 @@
     "version": "2018-01-01"
   },
   "host": "management.azure.com",
-  "schemes": [
-    "https"
-  ],
-  "consumes": [
-    "application/json"
-  ],
-  "produces": [
-    "application/json"
-  ],
+  "schemes": ["https"],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
   "security": [
     {
-      "azure_auth": [
-        "user_impersonation"
-      ]
+      "azure_auth": ["user_impersonation"]
     }
   ],
   "securityDefinitions": {
@@ -36,9 +28,7 @@
   "paths": {
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/users": {
       "get": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "operationId": "User_ListByService",
         "description": "Lists a collection of registered users in the specified service instance.",
         "x-ms-examples": {
@@ -95,9 +85,7 @@
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/users/{uid}": {
       "head": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "operationId": "User_GetEntityTag",
         "description": "Gets the entity state (Etag) version of the user specified by its identifier.",
         "x-ms-examples": {
@@ -141,9 +129,7 @@
         }
       },
       "get": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "operationId": "User_Get",
         "description": "Gets the details of the user specified by its identifier.",
         "x-ms-examples": {
@@ -190,9 +176,7 @@
         }
       },
       "put": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "operationId": "User_CreateOrUpdate",
         "description": "Creates or Updates a user.",
         "x-ms-examples": {
@@ -251,9 +235,7 @@
         }
       },
       "patch": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "operationId": "User_Update",
         "description": "Updates the details of the user specified by its identifier.",
         "x-ms-examples": {
@@ -303,9 +285,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "operationId": "User_Delete",
         "description": "Deletes specific user.",
         "x-ms-examples": {
@@ -365,9 +345,7 @@
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/users/{uid}/generateSsoUrl": {
       "post": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "operationId": "User_GenerateSsoUrl",
         "description": "Retrieves a redirection URL containing an authentication token for signing a given user into the developer portal.",
         "x-ms-examples": {
@@ -411,9 +389,7 @@
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/users/{uid}/groups": {
       "get": {
-        "tags": [
-          "UserGroups"
-        ],
+        "tags": ["UserGroups"],
         "operationId": "UserGroup_List",
         "description": "Lists all user groups.",
         "x-ms-examples": {
@@ -473,9 +449,7 @@
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/users/{uid}/subscriptions": {
       "get": {
-        "tags": [
-          "UserSubscriptions"
-        ],
+        "tags": ["UserSubscriptions"],
         "operationId": "UserSubscription_List",
         "description": "Lists the collection of subscriptions of the specified user.",
         "x-ms-examples": {
@@ -535,9 +509,7 @@
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/users/{uid}/identities": {
       "get": {
-        "tags": [
-          "UserIdentities"
-        ],
+        "tags": ["UserIdentities"],
         "operationId": "UserIdentities_List",
         "description": "Lists all user identities.",
         "x-ms-examples": {
@@ -583,9 +555,7 @@
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/users/{uid}/token": {
       "post": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "operationId": "User_GetSharedAccessToken",
         "description": "Gets the Shared Access Authorization Token for the User.",
         "x-ms-examples": {
@@ -750,10 +720,7 @@
         "confirmation": {
           "type": "string",
           "description": "Determines the type of confirmation e-mail that will be sent to the newly created user.",
-          "enum": [
-            "signup",
-            "invite"
-          ],
+          "enum": ["signup", "invite"],
           "x-ms-enum": {
             "name": "Confirmation",
             "modelAsString": true,
@@ -775,11 +742,7 @@
           "$ref": "#/definitions/UserEntityBaseParameters"
         }
       ],
-      "required": [
-        "email",
-        "firstName",
-        "lastName"
-      ],
+      "required": ["email", "firstName", "lastName"],
       "description": "Parameters supplied to the Create User operation."
     },
     "UserEntityBaseParameters": {
@@ -787,16 +750,11 @@
         "state": {
           "type": "string",
           "description": "Account state. Specifies whether the user is active or not. Blocked users are unable to sign into the developer portal or call any APIs of subscribed products. Default state is Active.",
-          "enum": [
-            "active",
-            "blocked",
-            "pending",
-            "deleted"
-          ],
+          "enum": ["active", "blocked", "pending", "deleted"],
           "default": "active",
           "x-ms-enum": {
             "name": "UserState",
-            "modelAsString": true,
+            "modelAsString": false,
             "values": [
               {
                 "value": "active",
@@ -871,10 +829,7 @@
         "keyType": {
           "type": "string",
           "description": "The Key to be used to generate token for user.",
-          "enum": [
-            "primary",
-            "secondary"
-          ],
+          "enum": ["primary", "secondary"],
           "default": "primary",
           "x-ms-enum": {
             "name": "KeyType",
@@ -887,10 +842,7 @@
           "description": "The Expiry time of the Token. Maximum token expiry time is set to 30 days. The date conforms to the following format: `yyyy-MM-ddTHH:mm:ssZ` as specified by the ISO 8601 standard.\n"
         }
       },
-      "required": [
-        "keyType",
-        "expiry"
-      ],
+      "required": ["keyType", "expiry"],
       "description": "Parameters supplied to the Get User Token operation."
     },
     "UserTokenResult": {

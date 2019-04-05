@@ -16,7 +16,7 @@
         "lastName": "aaaaa",
         "email": "aaaaaaaaaaaaaaaaaaaaaa",
         "password": "aaaaaaaaaa",
-        "state": "active"
+        "state": "dasda"
       }
     },
     "query": { "api-version": "2018-01-01" }

@@ -13,7 +13,7 @@ export function toModelErrors(
   scenario: string,
   source: ValidationResultSource,
   responseCode: string
-): Iterable<ModelValidationError> {
+): it.IterableEx<ModelValidationError> {
   return it.map(processedErrors, value => {
     if (value.code === undefined) {
       value.code = "INTERNAL_ERROR"

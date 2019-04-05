@@ -5,12 +5,12 @@ Object {
   "errors": Array [],
   "requestValidationResult": Object {
     "errors": Array [],
+    "isSuccessful": true,
     "operationInfo": Object {
       "apiVersion": "2018-07-01",
       "operationId": "ContentKeyPolicies_CreateOrUpdate",
     },
     "runtimeException": undefined,
-    "successfulRequest": true,
   },
   "responseValidationResult": Object {
     "errors": Array [
@@ -22,9 +22,10 @@ Object {
         "params": Array [
           "audience",
         ],
-        "pathInPayload": "properties/options/0/restriction",
+        "pathsInPayload": Array [
+          "properties/options/0/restriction",
+        ],
         "severity": 0,
-        "similarPaths": Array [],
         "source": Object {
           "jsonRef": "#/definitions/ContentKeyPolicyTokenRestriction",
           "position": Object {
@@ -35,12 +36,12 @@ Object {
         },
       },
     ],
+    "isSuccessful": false,
     "operationInfo": Object {
       "apiVersion": "2018-07-01",
       "operationId": "ContentKeyPolicies_CreateOrUpdate",
     },
     "runtimeException": undefined,
-    "successfulResponse": false,
   },
 }
 `;
@@ -50,21 +51,21 @@ Object {
   "errors": Array [],
   "requestValidationResult": Object {
     "errors": Array [],
+    "isSuccessful": true,
     "operationInfo": Object {
       "apiVersion": "2018-01-01",
       "operationId": "User_Get",
     },
     "runtimeException": undefined,
-    "successfulRequest": true,
   },
   "responseValidationResult": Object {
     "errors": Array [],
+    "isSuccessful": true,
     "operationInfo": Object {
       "apiVersion": "2018-01-01",
       "operationId": "User_Get",
     },
     "runtimeException": undefined,
-    "successfulResponse": true,
   },
 }
 `;
@@ -74,12 +75,12 @@ Object {
   "errors": Array [],
   "requestValidationResult": Object {
     "errors": Array [],
+    "isSuccessful": true,
     "operationInfo": Object {
       "apiVersion": "2018-01-01",
       "operationId": "User_CreateOrUpdate",
     },
     "runtimeException": undefined,
-    "successfulRequest": true,
   },
   "responseValidationResult": Object {
     "errors": Array [
@@ -87,13 +88,14 @@ Object {
         "code": "ENUM_CASE_MISMATCH",
         "documentationUrl": "",
         "inner": undefined,
-        "message": "Enum doesn not match case for: System",
+        "message": "Enum does not match case for: System",
         "params": Array [
           "System",
         ],
-        "pathInPayload": "properties/groups/0/type",
+        "pathsInPayload": Array [
+          "properties/groups/0/type",
+        ],
         "severity": 1,
-        "similarPaths": Array [],
         "source": Object {
           "jsonRef": "#/definitions/GroupContractProperties/properties/type",
           "position": Object {
@@ -104,12 +106,12 @@ Object {
         },
       },
     ],
+    "isSuccessful": false,
     "operationInfo": Object {
       "apiVersion": "2018-01-01",
       "operationId": "User_CreateOrUpdate",
     },
     "runtimeException": undefined,
-    "successfulResponse": false,
   },
 }
 `;
@@ -118,13 +120,35 @@ exports[`Live validator snapshot validation should return the expected error req
 Object {
   "errors": Array [],
   "requestValidationResult": Object {
-    "errors": Array [],
+    "errors": Array [
+      Object {
+        "code": "ENUM_MISMATCH",
+        "documentationUrl": "",
+        "inner": undefined,
+        "message": "No enum match for: dasda",
+        "params": Array [
+          "dasda",
+        ],
+        "pathsInPayload": Array [
+          "properties/state",
+        ],
+        "severity": 0,
+        "source": Object {
+          "jsonRef": "#/definitions/UserEntityBaseParameters/properties/state",
+          "position": Object {
+            "column": 18,
+            "line": 750,
+          },
+          "url": "specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimusers.json",
+        },
+      },
+    ],
+    "isSuccessful": false,
     "operationInfo": Object {
       "apiVersion": "2018-01-01",
       "operationId": "User_CreateOrUpdate",
     },
     "runtimeException": undefined,
-    "successfulRequest": true,
   },
   "responseValidationResult": Object {
     "errors": Array [
@@ -136,9 +160,10 @@ Object {
         "params": Array [
           "banana",
         ],
-        "pathInPayload": "properties/groups/0/type",
+        "pathsInPayload": Array [
+          "properties/groups/0/type",
+        ],
         "severity": 0,
-        "similarPaths": Array [],
         "source": Object {
           "jsonRef": "#/definitions/GroupContractProperties/properties/type",
           "position": Object {
@@ -149,12 +174,12 @@ Object {
         },
       },
     ],
+    "isSuccessful": false,
     "operationInfo": Object {
       "apiVersion": "2018-01-01",
       "operationId": "User_CreateOrUpdate",
     },
     "runtimeException": undefined,
-    "successfulResponse": false,
   },
 }
 `;
@@ -164,12 +189,12 @@ Object {
   "errors": Array [],
   "requestValidationResult": Object {
     "errors": Array [],
+    "isSuccessful": true,
     "operationInfo": Object {
       "apiVersion": "2018-01-01",
       "operationId": "ApiManagementService_Get",
     },
     "runtimeException": undefined,
-    "successfulRequest": true,
   },
   "responseValidationResult": Object {
     "errors": Array [
@@ -182,9 +207,10 @@ Object {
           "date-time",
           "0001-01-01T00:00:00",
         ],
-        "pathInPayload": "properties/createdAtUtc",
+        "pathsInPayload": Array [
+          "properties/createdAtUtc",
+        ],
         "severity": 0,
-        "similarPaths": Array [],
         "source": Object {
           "jsonRef": "#/definitions/ApiManagementServiceBaseProperties/properties/createdAtUtc",
           "position": Object {
@@ -195,12 +221,12 @@ Object {
         },
       },
     ],
+    "isSuccessful": false,
     "operationInfo": Object {
       "apiVersion": "2018-01-01",
       "operationId": "ApiManagementService_Get",
     },
     "runtimeException": undefined,
-    "successfulResponse": false,
   },
 }
 `;
@@ -210,12 +236,12 @@ Object {
   "errors": Array [],
   "requestValidationResult": Object {
     "errors": Array [],
+    "isSuccessful": true,
     "operationInfo": Object {
       "apiVersion": "2018-01-01",
       "operationId": "ApiManagementService_Get",
     },
     "runtimeException": undefined,
-    "successfulRequest": true,
   },
   "responseValidationResult": Object {
     "errors": Array [
@@ -228,9 +254,10 @@ Object {
           "array",
           "string",
         ],
-        "pathInPayload": "properties/hostnameConfigurations",
+        "pathsInPayload": Array [
+          "properties/hostnameConfigurations",
+        ],
         "severity": 0,
-        "similarPaths": Array [],
         "source": Object {
           "jsonRef": "#/definitions/ApiManagementServiceBaseProperties/properties/hostnameConfigurations",
           "position": Object {
@@ -241,12 +268,12 @@ Object {
         },
       },
     ],
+    "isSuccessful": false,
     "operationInfo": Object {
       "apiVersion": "2018-01-01",
       "operationId": "ApiManagementService_Get",
     },
     "runtimeException": undefined,
-    "successfulResponse": false,
   },
 }
 `;
@@ -256,12 +283,12 @@ Object {
   "errors": Array [],
   "requestValidationResult": Object {
     "errors": Array [],
+    "isSuccessful": true,
     "operationInfo": Object {
       "apiVersion": "2018-01-01",
       "operationId": "ApiOperation_Get",
     },
     "runtimeException": undefined,
-    "successfulRequest": true,
   },
   "responseValidationResult": Object {
     "errors": Array [
@@ -274,25 +301,26 @@ Object {
           1958,
           1000,
         ],
-        "pathInPayload": "properties/description",
+        "pathsInPayload": Array [
+          "properties/description",
+        ],
         "severity": 0,
-        "similarPaths": Array [],
         "source": Object {
           "jsonRef": "#/definitions/OperationEntityBaseContract/properties/description",
           "position": Object {
             "column": 24,
-            "line": 4231,
+            "line": 4071,
           },
           "url": "specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimapis.json",
         },
       },
     ],
+    "isSuccessful": false,
     "operationInfo": Object {
       "apiVersion": "2018-01-01",
       "operationId": "ApiOperation_Get",
     },
     "runtimeException": undefined,
-    "successfulResponse": false,
   },
 }
 `;
@@ -302,12 +330,12 @@ Object {
   "errors": Array [],
   "requestValidationResult": Object {
     "errors": Array [],
+    "isSuccessful": true,
     "operationInfo": Object {
       "apiVersion": "2018-01-01",
       "operationId": "User_CreateOrUpdate",
     },
     "runtimeException": undefined,
-    "successfulRequest": true,
   },
   "responseValidationResult": Object {
     "errors": Array [
@@ -319,9 +347,10 @@ Object {
         "params": Array [
           "id",
         ],
-        "pathInPayload": "properties/groups/0",
+        "pathsInPayload": Array [
+          "properties/groups/0",
+        ],
         "severity": 0,
-        "similarPaths": Array [],
         "source": Object {
           "jsonRef": "#/definitions/GroupContractProperties",
           "position": Object {
@@ -332,12 +361,12 @@ Object {
         },
       },
     ],
+    "isSuccessful": false,
     "operationInfo": Object {
       "apiVersion": "2018-01-01",
       "operationId": "User_CreateOrUpdate",
     },
     "runtimeException": undefined,
-    "successfulResponse": false,
   },
 }
 `;
@@ -347,12 +376,12 @@ Object {
   "errors": Array [],
   "requestValidationResult": Object {
     "errors": Array [],
+    "isSuccessful": true,
     "operationInfo": Object {
       "apiVersion": "2018-01-01",
       "operationId": "User_CreateOrUpdate",
     },
     "runtimeException": undefined,
-    "successfulRequest": true,
   },
   "responseValidationResult": Object {
     "errors": Array [
@@ -364,9 +393,10 @@ Object {
         "params": Array [
           "displayName",
         ],
-        "pathInPayload": "properties/groups/0",
+        "pathsInPayload": Array [
+          "properties/groups/0",
+        ],
         "severity": 0,
-        "similarPaths": Array [],
         "source": Object {
           "jsonRef": "#/definitions/GroupContractProperties",
           "position": Object {
@@ -377,12 +407,12 @@ Object {
         },
       },
     ],
+    "isSuccessful": false,
     "operationInfo": Object {
       "apiVersion": "2018-01-01",
       "operationId": "User_CreateOrUpdate",
     },
     "runtimeException": undefined,
-    "successfulResponse": false,
   },
 }
 `;
