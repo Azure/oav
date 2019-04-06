@@ -34,32 +34,6 @@ export async function executePromisesSequentially<T>(
   return result
 }
 
-/*
- * Generates a randomId
- *
- * @param {string} [prefix] A prefix to which the random numbers will be appended.
- *
- * @param {object} [existingIds] An object of existingIds. The function will
- * ensure that the randomId is not one of the existing ones.
- *
- * @return {string} result A random string
- */
-export function generateRandomId(prefix: string, existingIds: {}): string {
-  let randomStr: string
-  while (true) {
-    randomStr = Math.random()
-      .toString(36)
-      .substr(2, 12)
-    if (prefix && typeof prefix.valueOf() === "string") {
-      randomStr = prefix + randomStr
-    }
-    if (!existingIds || !(randomStr in existingIds)) {
-      break
-    }
-  }
-  return randomStr
-}
-
 export interface Reference {
   readonly filePath?: string
   readonly localReference?: LocalReference
@@ -146,25 +120,6 @@ export function joinPath(...args: string[]): string {
   finalPath = finalPath.replace(/^(http|https):\/(.*)/gi, "$1://$2")
   return finalPath
 }
-
-/*
- * Provides a parsed JSON from the given file path or a url. Same as parseJson(). However,
- * this method accepts variable number of path segments as strings and joins them together.
- * After joining the path, it internally calls parseJson().
- *
- * @param variable number of arguments and all the arguments must be of type string.
- *
- * @returns {object} jsonDoc - Parsed document in JSON format.
- */
-/*
-export async function parseJsonWithPathFragments(
-  suppression: Suppression | undefined,
-  ...args: string[],
-): Promise<SwaggerObject> {
-  const specPath = joinPath(...args)
-  return await jsonUtils.parseJson(suppression, specPath)
-}
-*/
 
 /*
  * Merges source object into the target object
@@ -490,7 +445,9 @@ export function relaxModelLikeEntities(model: SchemaObject): SchemaObject {
   if (model.properties) {
     const modelProperties = model.properties
 
-    for (const [propName, property] of sm.entries(modelProperties)) {
+    for (const prop of sm.entries(modelProperties)) {
+      const propName = prop[0]
+      const property = prop[1]
       modelProperties[propName] = property.properties
         ? relaxModelLikeEntities(property)
         : relaxEntityType(property, isPropertyRequired(propName, model))
@@ -587,7 +544,9 @@ export function allowNullableTypes(model: SchemaObject): SchemaObject {
   }
   if (model && model.properties) {
     const modelProperties = model.properties
-    for (const [propName, prop] of sm.entries(modelProperties)) {
+    for (const propEntry of sm.entries(modelProperties)) {
+      const propName = propEntry[0]
+      const prop = propEntry[1]
       // process properties if present
       modelProperties[propName] =
         prop.properties || prop.additionalProperties

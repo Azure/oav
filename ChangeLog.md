@@ -1,5 +1,34 @@
 # Changelog
 
+### 04/05/2019 0.17.0
+
+- Live Validation mode is now skipping validating for errors not specified when using the `includeErrors` option.
+- The types `RequestValidationResult` and `ResponseValidationResult` have been replaced with the `LiveValidationResult` type.
+
+### 04/05/2019 0.16.1
+
+- OAV should exit with code `1` if it finds errors.
+- Breaking changes in SpecValidationResult, CommonValidationResult.
+
+### 04/01/2019 0.15.3
+
+- Polymporphic anyOf's will be validated only against the matching subschema and any error wont be nested.
+
+### 04/01/2019 0.15.2
+
+- Inner errors will have the `LiveValidationIssue` type instead of`object`.
+
+### 03/28/2019 0.15.1
+
+- Allow for live validation to exclude/include specific errors.
+
+### 03/27/2019 0.15.0
+
+- Refactor live validator and new types for validation results.
+- Expose separate request and response validate methods.
+- Expose types for live validation parameters.
+- `processValidationErrors`, `serializeErrors` and `getPotentialOperations` are not exported anymore. Validation methods automatically call these.
+
 ### 03/20/2019 0.14.8
 
 - Don't parse examples when not needed.

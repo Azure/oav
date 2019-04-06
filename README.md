@@ -67,7 +67,6 @@ Examples of issues:
 References: https://github.com/Azure/azure-rest-api-specs/issues/778 , https://github.com/Azure/azure-rest-api-specs/issues/755 , https://github.com/Azure/azure-rest-api-specs/issues/773
 
 Model validation _requires_ example payloads (request/response) of the service, so the data can be matched with the defined models. See [x-ms-examples extension](https://github.com/Azure/azure-rest-api-specs/issues/648) on how to specify the examples/payloads. Swagger “examples” is also supported and data included there is validated as well. To get the most benefit from this tool, make sure to have the simplest and most complex examples possible as part of x-ms-examples.
-The tool relies on swagger-tools package to perform model validation.
 
 - Please take a look at the redis-cache swagger spec as an example for providing "x-ms-examples" over [here](https://github.com/Azure/azure-rest-api-specs/blob/master/arm-redis/2016-04-01/swagger/redis.json#L45).
 - The examples need to be provided in a separate file in the examples directory under the api-version directory `azure-rest-api-specs/arm-<yourService>/<api-version>/examples/<exampleName>.json`. You can take a look over [here](https://github.com/Azure/azure-rest-api-specs/tree/master/arm-redis/2016-04-01/examples) for the structure of examples.
@@ -76,7 +75,7 @@ The tool relies on swagger-tools package to perform model validation.
   - If you are using **vscode** to edit your swaggers in the azure-rest-api-specs repo then everything should work out of the box as the schemas have been added in the `.vscode/settings.json` file over [here](https://github.com/Azure/azure-rest-api-specs/blob/master/.vscode/settings.json).
   - If you are using **Visual Studio** then you can use the urls provided in the settings.json file and put them in the drop down list at the top of a json file when the file is opened in VS.
 
-### How does this tool fit with others?
+### How does this tool fit with others
 
 Swagger specs validation could be split in the following:
 
@@ -121,11 +120,11 @@ const liveValidatorOptions = {
   shouldModelImplicitDefaultResponse: true
 }
 
-let apiValidator = new oav.LiveValidator(liveValidatorOptions)
+const apiValidator = new oav.LiveValidator(liveValidatorOptions)
 await apiValidator.initialize() // Note that for a large number of specs this can take some time.
 
 // After `initialize()` finishes we are ready to validate
-let validationResult = apiValidator.validateLiveRequestResponse(requestResponsePair)
+const validationResult = apiValidator.validateLiveRequestResponse(requestResponsePair)
 ```
 
 ---

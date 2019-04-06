@@ -1,0 +1,190 @@
+{
+  "liveRequest": {
+    "headers": {
+      "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+      "x-ms-request-id": "7388e775-58be-4ca2-ab43-fd63ee973ee4",
+      "date": "Wed, 12 Sep 2018 04:49:26 GMT",
+      "eTag": "\"AAAAAAAAR58=\"",
+      "server": "Microsoft-HTTPAPI/2.0",
+      "Content-Type": "application/json"
+    },
+    "method": "GET",
+    "url": "/subscriptions/randomSub/resourceGroups/randomRG/providers/Microsoft.ApiManagement/service/randomService/apis/randomAPI/operations/customerauth_registerasync?api-version=2018-01-01",
+    "query": { "api-version": "2018-01-01" }
+  },
+  "liveResponse": {
+    "statusCode": "200",
+    "headers": {
+      "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+      "x-ms-request-id": "7388e775-58be-4ca2-ab43-fd63ee973ee4",
+      "date": "Wed, 12 Sep 2018 04:49:26 GMT",
+      "eTag": "\"AAAAAAAAR58=\"",
+      "server": "Microsoft-HTTPAPI/2.0",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "type": "Microsoft.ApiManagement/service/apis/operations",
+      "name": "customerauth_registerasync",
+      "properties": {
+        "displayName": "aaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "method": "aaaa",
+        "urlTemplate": "aaaaaaaaaaaaaaaaaaaaaaaaa",
+        "templateParameters": [],
+        "description": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "request": {
+          "description": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "queryParameters": [],
+          "headers": [
+            {
+              "name": "Chipotle-CorrelationId",
+              "description": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "type": "string",
+              "values": []
+            },
+            {
+              "name": "Authorization",
+              "description": "aaa",
+              "type": "string",
+              "values": []
+            }
+          ],
+          "representations": [
+            {
+              "contentType": "aaaaaaaaaaaaaaaa",
+              "schemaId": "aaaaaaaaaaaaaaaaaaaaaaaa",
+              "typeName": "aaaaaaaaaaaaaaaaaaaaaaa"
+            },
+            {
+              "contentType": "aaaaaaaaa",
+              "schemaId": "aaaaaaaaaaaaaaaaaaaaaaaa",
+              "typeName": "aaaaaaaaaaaaaaaaaaaaaaa"
+            },
+            {
+              "contentType": "aaaaaaaaaaaaaaa",
+              "schemaId": "aaaaaaaaaaaaaaaaaaaaaaaa",
+              "typeName": "aaaaaaaaaaaaaaaaaaaaaaa"
+            },
+            {
+              "contentType": "aaaaaaaa",
+              "schemaId": "aaaaaaaaaaaaaaaaaaaaaaaa",
+              "typeName": "aaaaaaaaaaaaaaaaaaaaaaa"
+            },
+            { "contentType": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" }
+          ]
+        },
+        "responses": [
+          {
+            "statusCode": 200,
+            "description": "aa",
+            "representations": [
+              {
+                "contentType": "aaaaaaaaaaaaaaaa",
+                "schemaId": "aaaaaaaaaaaaaaaaaaaaaaaa",
+                "typeName": "aaaaaaaaaaaaaaaaaaaaaa"
+              },
+              {
+                "contentType": "aaaaaaaaa",
+                "schemaId": "aaaaaaaaaaaaaaaaaaaaaaaa",
+                "typeName": "aaaaaaaaaaaaaaaaaaaaaa"
+              },
+              {
+                "contentType": "aaaaaaaaaaaaaaa",
+                "schemaId": "aaaaaaaaaaaaaaaaaaaaaaaa",
+                "typeName": "aaaaaaaaaaaaaaaaaaaaaa"
+              },
+              {
+                "contentType": "aaaaaaaa",
+                "schemaId": "aaaaaaaaaaaaaaaaaaaaaaaa",
+                "typeName": "aaaaaaaaaaaaaaaaaaaaaa"
+              }
+            ],
+            "headers": []
+          },
+          {
+            "statusCode": 201,
+            "description": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "representations": [
+              {
+                "contentType": "aaaaaaaaaaaaaaaa",
+                "schemaId": "aaaaaaaaaaaaaaaaaaaaaaaa",
+                "typeName": "aaaaaaaaaaaaaaaaaaaaaa"
+              },
+              {
+                "contentType": "aaaaaaaaa",
+                "schemaId": "aaaaaaaaaaaaaaaaaaaaaaaa",
+                "typeName": "aaaaaaaaaaaaaaaaaaaaaa"
+              },
+              {
+                "contentType": "aaaaaaaaaaaaaaa",
+                "schemaId": "aaaaaaaaaaaaaaaaaaaaaaaa",
+                "typeName": "aaaaaaaaaaaaaaaaaaaaaa"
+              },
+              {
+                "contentType": "aaaaaaaa",
+                "schemaId": "aaaaaaaaaaaaaaaaaaaaaaaa",
+                "typeName": "aaaaaaaaaaaaaaaaaaaaaa"
+              }
+            ],
+            "headers": []
+          },
+          {
+            "statusCode": 400,
+            "description": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "representations": [
+              {
+                "contentType": "aaaaaaaaaaaaaaaa",
+                "schemaId": "aaaaaaaaaaaaaaaaaaaaaaaa",
+                "typeName": "aaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              },
+              {
+                "contentType": "aaaaaaaaa",
+                "schemaId": "aaaaaaaaaaaaaaaaaaaaaaaa",
+                "typeName": "aaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              },
+              {
+                "contentType": "aaaaaaaaaaaaaaa",
+                "schemaId": "aaaaaaaaaaaaaaaaaaaaaaaa",
+                "typeName": "aaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              },
+              {
+                "contentType": "aaaaaaaa",
+                "schemaId": "aaaaaaaaaaaaaaaaaaaaaaaa",
+                "typeName": "aaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              }
+            ],
+            "headers": []
+          },
+          {
+            "statusCode": 500,
+            "description": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "representations": [
+              {
+                "contentType": "aaaaaaaaaaaaaaaa",
+                "schemaId": "aaaaaaaaaaaaaaaaaaaaaaaa",
+                "typeName": "aaaaaaaaaaaaaaaaaaaaa"
+              },
+              {
+                "contentType": "aaaaaaaaa",
+                "schemaId": "aaaaaaaaaaaaaaaaaaaaaaaa",
+                "typeName": "aaaaaaaaaaaaaaaaaaaaa"
+              },
+              {
+                "contentType": "aaaaaaaaaaaaaaa",
+                "schemaId": "aaaaaaaaaaaaaaaaaaaaaaaa",
+                "typeName": "aaaaaaaaaaaaaaaaaaaaa"
+              },
+              {
+                "contentType": "aaaaaaaa",
+                "schemaId": "aaaaaaaaaaaaaaaaaaaaaaaa",
+                "typeName": "aaaaaaaaaaaaaaaaaaaaa"
+              }
+            ],
+            "headers": []
+          }
+        ],
+        "policies": null
+      }
+    }
+  }
+}

@@ -5,25 +5,19 @@
 import { LiveValidator } from "../lib/validators/liveValidator"
 
 const options = {
-  directory: "C:\\github.com\\Azure\\azure-rest-api-specs",
+  directory: `${__dirname}/../../test/liveValidation/swaggers/`,
   swaggerPathsPattern:
-    "specification\\batch\\resource-manager\\Microsoft.Batch\\stable\\2017-01-01\\" +
-    "BatchManagement.json"
+    "specification\\mediaservices\\resource-manager\\Microsoft.Media\\2018-07-01\\*.json",
+  git: {
+    shouldClone: false
+  }
 }
 const validator = new LiveValidator(options)
 
-describe("Live validation", () => {
-  test("sample call", async () => {
-    // tslint:disable-next-line:no-floating-promises
-    validator.initialize().then(() => {
-      const reqRes = require(__dirname +
-        "/liveValidation/swaggers/specification/storage/resource-manager/" +
-        "Microsoft.Storage/2016-01-01/live/StorageAccounts_CheckNameAvailability.json")
-      const requestResponseObj = {
-        liveRequest: reqRes.request,
-        liveResponse: reqRes.response
-      }
-      validator.validateLiveRequestResponse(requestResponseObj)
-    })
-  })
+// tslint:disable-next-line:no-floating-promises
+validator.initialize().then(() => {
+  const reqRes = require(`${__dirname}/../../test/liveValidation/payloads/oneOfMissing_input.json`)
+  const result = validator.validateLiveRequestResponse(reqRes)
+  // tslint:disable-next-line:no-console
+  console.log(`${result}`)
 })

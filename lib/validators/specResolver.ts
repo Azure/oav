@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 import { Suppression } from "@azure/openapi-markdown"
-import { isArray, map, toArray } from "@ts-common/iterator"
+import { isArray, toArray } from "@ts-common/iterator"
 import * as jsonParser from "@ts-common/json-parser"
 import * as ps from "@ts-common/property-set"
 import { arrayMap } from "@ts-common/source-map"
@@ -276,11 +276,13 @@ export class SpecResolver {
 
     const allRefsRemoteRelative = jsonRefs.findRefs(doc, options)
     const e = sm.entries(allRefsRemoteRelative as sm.StringMap<RefDetails>)
-    const promiseFactories = toArray(
-      map(e, ([refName, refDetails]) => async () =>
-        this.resolveRelativeReference(refName, refDetails, doc, docPath, suppression)
-      )
-    )
+    const promiseFactories = e
+      .map(ref => async () => {
+        const [refName, refDetails] = ref
+        return this.resolveRelativeReference(refName, refDetails, doc, docPath, suppression)
+      })
+      .toArray()
+
     if (promiseFactories.length) {
       await utils.executePromisesSequentially(promiseFactories)
     }
@@ -406,7 +408,10 @@ export class SpecResolver {
         const definitions = result.definitions
         const unresolvedDefinitions: Array<() => Promise<void>> = []
 
-        const processDefinition = ([defName, def]: sm.Entry<SchemaObject>) => {
+        const processDefinition = (defEntry: sm.Entry<SchemaObject>) => {
+          const defName = defEntry[0]
+          const def = defEntry[1]
+
           unresolvedDefinitions.push(async () => {
             const allOf = def.allOf
             if (allOf) {
@@ -730,7 +735,10 @@ export class SpecResolver {
     const subTreeMap = new Map()
     const references = jsonRefs.findRefs(spec)
 
-    for (const [modelName, model] of sm.entries(definitions)) {
+    for (const modelEntry of sm.entries(definitions)) {
+      const modelName = modelEntry[0]
+      const model = modelEntry[1]
+
       const discriminator = model.discriminator
       if (discriminator) {
         let rootNode = subTreeMap.get(modelName)
@@ -757,7 +765,10 @@ export class SpecResolver {
     const definitions = spec.definitions as DefinitionsObject
 
     // scan definitions and properties of every model in definitions
-    for (const [defName, model] of sm.entries(definitions)) {
+    for (const defEntry of sm.entries(definitions)) {
+      const defName = defEntry[0]
+      const model = defEntry[1]
+
       definitions[defName] = utils.allowNullableTypes(model)
     }
     // scan every operation response

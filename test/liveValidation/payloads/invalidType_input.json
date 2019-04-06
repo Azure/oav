@@ -1,0 +1,57 @@
+{
+  "liveRequest": {
+    "headers": {
+      "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+      "x-ms-request-id": "53e62a45-dba0-46ab-965b-5c6d06cf9007",
+      "date": "Tue, 11 Sep 2018 19:12:21 GMT",
+      "eTag": "\"AAAAAAEei3k=\"",
+      "server": "Microsoft-HTTPAPI/2.0",
+      "Content-Type": "application/json"
+    },
+    "method": "GET",
+    "url": "/subscriptions/randomSub/resourcegroups/randomRG/providers/Microsoft.ApiManagement/service/randomService?api-version=2018-01-01",
+    "query": { "api-version": "2018-01-01" }
+  },
+  "liveResponse": {
+    "statusCode": "200",
+    "headers": {
+      "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+      "x-ms-request-id": "53e62a45-dba0-46ab-965b-5c6d06cf9007",
+      "date": "Tue, 11 Sep 2018 19:12:21 GMT",
+      "eTag": "\"AAAAAAEei3k=\"",
+      "server": "Microsoft-HTTPAPI/2.0",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "name": "dev1apimanagement",
+      "type": "Microsoft.ApiManagement/service",
+      "tags": {},
+      "location": "aaaaaaaaa",
+      "etag": "aaaaaaaaaaaa",
+      "properties": {
+        "publisherEmail": "aaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "publisherName": "aaaaaaaaa",
+        "notificationSenderEmail": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "provisioningState": "aaaaaaaaaa",
+        "targetProvisioningState": "aaaaaaaaaa",
+        "createdAtUtc": "2017-07-21T17:32:28Z",
+        "gatewayUrl": null,
+        "gatewayRegionalUrl": null,
+        "portalUrl": null,
+        "managementApiUrl": null,
+        "scmUrl": null,
+        "hostnameConfigurations": "config1",
+        "publicIPAddresses": null,
+        "privateIPAddresses": null,
+        "additionalLocations": null,
+        "virtualNetworkConfiguration": null,
+        "customProperties": null,
+        "virtualNetworkType": "None",
+        "certificates": null
+      },
+      "sku": { "name": "Developer", "capacity": 1 },
+      "identity": null
+    }
+  }
+}

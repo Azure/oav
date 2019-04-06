@@ -1,7 +1,7 @@
 import * as it from "@ts-common/iterator"
 
 import { ModelValidationError } from "./modelValidationError"
-import { errorCodeToSeverity } from "./validationError"
+import { errorCodeToErrorMetadata, ExtendedErrorCode } from "./validationError"
 import { ValidationResultSource } from "./validationResultSource"
 
 /**
@@ -13,12 +13,12 @@ export function toModelErrors(
   scenario: string,
   source: ValidationResultSource,
   responseCode: string
-): Iterable<ModelValidationError> {
+): it.IterableEx<ModelValidationError> {
   return it.map(processedErrors, value => {
     if (value.code === undefined) {
       value.code = "INTERNAL_ERROR"
     }
-    const severity = errorCodeToSeverity(value.code)
+    const severity = errorCodeToErrorMetadata(value.code as ExtendedErrorCode).severity
     const modelError: ModelValidationError = {
       operationId,
       scenario,

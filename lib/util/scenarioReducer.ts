@@ -8,7 +8,7 @@ import { CommonError } from "./commonError"
 import { ModelValidationError } from "./modelValidationError"
 import { MultipleScenarios, responseReducer, Scenario } from "./responseReducer"
 import { toModelErrors } from "./toModelErrors"
-import { processValidationErrors, ValidationResult } from "./validationError"
+import { processValidationResult, ValidationResult } from "./validationError"
 import { ValidationResultSource } from "./validationResultSource"
 
 export interface Result {
@@ -47,7 +47,7 @@ export function scenarioReducer(
     }
   }
   // process request separately since its unique
-  const processedErrors = processValidationErrors(rawValidationResult)
+  const processedErrors = processValidationResult(rawValidationResult)
 
   if (processedErrors.requestValidationResult.errors === undefined) {
     throw new Error("ICE: processedErrors.requestValidationResult.errors === undefined")
@@ -60,15 +60,19 @@ export function scenarioReducer(
         ValidationResultSource.REQUEST,
         "ALL"
       )
-    : []
+    : it.empty()
 
   // process responses
   rawValidationResult.requestValidationResult.errors = []
 
   const entries = sm.entries(scenario.responses)
-  const invalidResponses = it.filter(entries, ([_, response]) => !response.isValid)
-  const result = it.flatMap(invalidResponses, ([responseCode]) =>
-    responseReducer(responseCode, scenario, rawValidationResult, operationId, scenarioName)
-  )
-  return it.concat(modelErrors, result)
+  const invalidResponses = entries.filter(entry => {
+    const [, response] = entry
+    return !response.isValid
+  })
+  const result = invalidResponses.flatMap(response => {
+    const [responseCode] = response
+    return responseReducer(responseCode, scenario, rawValidationResult, operationId, scenarioName)
+  })
+  return modelErrors.concat(result)
 }

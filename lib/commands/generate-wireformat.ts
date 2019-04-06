@@ -59,5 +59,6 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     } else {
       await validate.generateWireFormat(specPath, outDir, emitYaml, operationIds, vOptions)
     }
+    return 0
   })
 }

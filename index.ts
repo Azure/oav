@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
-
 import * as C from "./lib/util/constants"
 
 // Easy to use methods from validate.ts
@@ -24,18 +23,30 @@ export {
   SemanticValidationError
 } from "./lib/util/getErrorsFromSemanticValidation"
 export {
-  errorConstants,
-  errorCodeToSeverity,
-  processValidationErrors,
-  serializeErrors,
   NodeError,
-  ValidationError,
-  ValidationResult
+  ValidationErrorMetadata,
+  errorCodeToErrorMetadata,
+  ValidationResult,
+  ErrorCode,
+  ExtendedErrorCode,
+  WrapperErrorCode,
+  RuntimeErrorCode
 } from "./lib/util/validationError"
 
 // Classes
 export { SpecValidator } from "./lib/validators/specValidator"
-export { LiveValidator } from "./lib/validators/liveValidator"
+export {
+  LiveValidator,
+  RequestResponsePair,
+  LiveRequest,
+  LiveResponse,
+  LiveValidationIssue,
+  LiveValidatorOptions,
+  ApiOperationIdentifier,
+  RequestResponseLiveValidationResult,
+  LiveValidationResult,
+  ValidateOptions
+} from "./lib/validators/liveValidator"
 export { SpecResolver } from "./lib/validators/specResolver"
 
 // Constants

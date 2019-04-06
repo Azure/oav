@@ -3,9 +3,9 @@
 
 import { log } from "./util/logging"
 
-export const cliSuppressExceptions = async (f: () => Promise<void>): Promise<void> => {
+export const cliSuppressExceptions = async (f: () => Promise<number>): Promise<void> => {
   try {
-    await f()
+    process.exitCode = await f()
   } catch (err) {
     const message = `fatal error: ${err.message}, ${JSON.stringify(err)}`
     log.error(message)
