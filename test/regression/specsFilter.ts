@@ -27,5 +27,5 @@ const latestForEachRp = (_.chain(specPaths)
   .flatten()
   .value() as unknown) as string[]
 
-export const latestSpecsOnly = specPaths.filter(path => latestForEachRp.includes(path))
-export const allSpecs = specPaths.filter(path => !latestForEachRp.includes(path))
+export const latestSpecsOnly = specPaths.filter(p => latestForEachRp.includes(p))
+export const allSpecs = specPaths.filter(p => !latestForEachRp.includes(p))
