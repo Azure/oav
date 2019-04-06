@@ -4,7 +4,7 @@ import * as path from "path"
 
 const specPaths = glob
   .sync(path.join(__dirname, "azure-rest-api-specs/specification/**/*.json"))
-  .filter(p => !p.includes("examples"))
+  .filter((p: string) => !p.includes("examples"))
 
 const versionRegex = /[0-9]+[0-9-]+[^\/]*/
 const rpRegex = /(?:\/)Microsoft.[^\/]*/
@@ -27,5 +27,5 @@ const latestForEachRp = (_.chain(specPaths)
   .flatten()
   .value() as unknown) as string[]
 
-export const latestSpecsOnly = specPaths.filter(p => latestForEachRp.includes(p))
-export const allSpecs = specPaths.filter(p => !latestForEachRp.includes(p))
+export const latestSpecsOnly = specPaths.filter((p: string) => latestForEachRp.includes(p))
+export const allSpecs = specPaths.filter((p: string) => !latestForEachRp.includes(p))
