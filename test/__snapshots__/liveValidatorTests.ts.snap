@@ -2,7 +2,6 @@
 
 exports[`Live validator snapshot validation should match for one of missing 1`] = `
 Object {
-  "errors": Array [],
   "requestValidationResult": Object {
     "errors": Array [],
     "isSuccessful": true,
@@ -48,7 +47,6 @@ Object {
 
 exports[`Live validator snapshot validation should return no errors for valid input 1`] = `
 Object {
-  "errors": Array [],
   "requestValidationResult": Object {
     "errors": Array [],
     "isSuccessful": true,
@@ -72,7 +70,6 @@ Object {
 
 exports[`Live validator snapshot validation should return the expected error requestResponse validation for ENUM_CASE_MISMATCH 1`] = `
 Object {
-  "errors": Array [],
   "requestValidationResult": Object {
     "errors": Array [],
     "isSuccessful": true,
@@ -118,7 +115,6 @@ Object {
 
 exports[`Live validator snapshot validation should return the expected error requestResponse validation for ENUM_MISMATCH 1`] = `
 Object {
-  "errors": Array [],
   "requestValidationResult": Object {
     "errors": Array [
       Object {
@@ -186,7 +182,6 @@ Object {
 
 exports[`Live validator snapshot validation should return the expected error requestResponse validation for INVALID_FORMAT 1`] = `
 Object {
-  "errors": Array [],
   "requestValidationResult": Object {
     "errors": Array [],
     "isSuccessful": true,
@@ -233,7 +228,6 @@ Object {
 
 exports[`Live validator snapshot validation should return the expected error requestResponse validation for INVALID_TYPE 1`] = `
 Object {
-  "errors": Array [],
   "requestValidationResult": Object {
     "errors": Array [],
     "isSuccessful": true,
@@ -280,7 +274,6 @@ Object {
 
 exports[`Live validator snapshot validation should return the expected error requestResponse validation for MAX_LENGTH 1`] = `
 Object {
-  "errors": Array [],
   "requestValidationResult": Object {
     "errors": Array [],
     "isSuccessful": true,
@@ -327,7 +320,6 @@ Object {
 
 exports[`Live validator snapshot validation should return the expected error requestResponse validation for OBJECT_ADDITIONAL_PROPERTIES 1`] = `
 Object {
-  "errors": Array [],
   "requestValidationResult": Object {
     "errors": Array [],
     "isSuccessful": true,
@@ -373,7 +365,6 @@ Object {
 
 exports[`Live validator snapshot validation should return the expected error requestResponse validation for OBJECT_MISSING_REQUIRED_PROPERTY 1`] = `
 Object {
-  "errors": Array [],
   "requestValidationResult": Object {
     "errors": Array [],
     "isSuccessful": true,
