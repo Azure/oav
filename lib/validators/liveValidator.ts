@@ -70,7 +70,7 @@ interface OperationInfo {
 }
 
 export interface LiveValidationResult {
-  readonly isSuccessful: boolean
+  readonly isSuccessful?: boolean
   readonly operationInfo: OperationInfo
   readonly errors: LiveValidationIssue[]
   readonly runtimeException?: RuntimeException
@@ -79,7 +79,7 @@ export interface LiveValidationResult {
 export interface RequestResponseLiveValidationResult {
   readonly requestValidationResult: LiveValidationResult
   readonly responseValidationResult: LiveValidationResult
-  readonly errors: unknown[]
+  readonly runtimeException?: RuntimeException
 }
 
 export interface ApiOperationIdentifier {
@@ -330,8 +330,9 @@ export class LiveValidator {
       operation = this.findSpecOperation(liveRequest.url, liveRequest.method)
     } catch (err) {
       return {
-        isSuccessful: false,
-        errors: [err],
+        isSuccessful: undefined,
+        errors: [],
+        runtimeException: err,
         operationInfo: { apiVersion: C.unknownApiVersion, operationId: C.unknownOperationId }
       }
     }
@@ -361,7 +362,7 @@ export class LiveValidator {
       runtimeException = { code: C.ErrorCodes.RequestValidationError.name, message: msg }
     }
     return {
-      isSuccessful: errors.length === 0,
+      isSuccessful: runtimeException ? undefined : errors.length === 0,
       operationInfo: {
         apiVersion: operation.apiVersion,
         operationId: operation.operationId
@@ -408,8 +409,9 @@ export class LiveValidator {
       operation = this.findSpecOperation(specOperation.url, specOperation.method)
     } catch (err) {
       return {
-        isSuccessful: false,
-        errors: [err],
+        isSuccessful: undefined,
+        errors: [],
+        runtimeException: err,
         operationInfo: { apiVersion: C.unknownApiVersion, operationId: C.unknownOperationId }
       }
     }
@@ -446,7 +448,7 @@ export class LiveValidator {
     }
 
     return {
-      isSuccessful: errors.length === 0,
+      isSuccessful: runtimeException ? undefined : errors.length === 0,
       operationInfo: {
         apiVersion: operation.apiVersion,
         operationId: operation.operationId
@@ -465,23 +467,22 @@ export class LiveValidator {
   ): RequestResponseLiveValidationResult {
     const validationResult = {
       requestValidationResult: {
-        isSuccessful: false,
         errors: [],
         operationInfo: { apiVersion: C.unknownApiVersion, operationId: C.unknownOperationId }
       },
       responseValidationResult: {
-        isSuccessful: false,
         errors: [],
         operationInfo: { apiVersion: C.unknownApiVersion, operationId: C.unknownOperationId }
-      },
-      errors: []
+      }
     }
     if (!requestResponseObj) {
-      const msg = 'requestResponseObj cannot be null or undefined and must be of type "object".'
-      const e = new models.LiveValidationError(C.ErrorCodes.IncorrectInput.name, msg)
+      const message = 'requestResponseObj cannot be null or undefined and must be of type "object".'
       return {
         ...validationResult,
-        errors: [e]
+        runtimeException: {
+          code: C.ErrorCodes.IncorrectInput.name,
+          message
+        }
       }
     }
     try {
@@ -493,13 +494,15 @@ export class LiveValidator {
       // tslint:disable-next-line:align whitespace
       ;(msRest as any).serialize(mapper, requestResponseObj, "requestResponseObj")
     } catch (err) {
-      const msg =
+      const message =
         `Found errors "${err.message}" in the provided input:\n` +
         `${util.inspect(requestResponseObj, { depth: null })}.`
-      const e = new models.LiveValidationError(C.ErrorCodes.IncorrectInput.name, msg)
       return {
         ...validationResult,
-        errors: [e]
+        runtimeException: {
+          message,
+          code: C.ErrorCodes.IncorrectInput.name
+        }
       }
     }
     const request = requestResponseObj.liveRequest
@@ -517,8 +520,7 @@ export class LiveValidator {
 
     return {
       requestValidationResult,
-      responseValidationResult,
-      errors: []
+      responseValidationResult
     }
   }
 
