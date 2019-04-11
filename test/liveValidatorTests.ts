@@ -483,6 +483,7 @@ describe("Live validator snapshot validation", () => {
   const errors = [
     "OBJECT_MISSING_REQUIRED_PROPERTY",
     "OBJECT_ADDITIONAL_PROPERTIES",
+    "MISSING_REQUIRED_PARAMETER",
     "MAX_LENGTH",
     "INVALID_FORMAT",
     "INVALID_TYPE",
@@ -553,6 +554,11 @@ describe("Live validator snapshot validation", () => {
         err => err.code === "OBJECT_ADDITIONAL_PROPERTIES"
       )
     )
+  })
+  test(`should match all errors for no options`, async () => {
+    const payload = require(`${__dirname}/liveValidation/payloads/multipleErrors_input.json`)
+    const result = validator.validateLiveRequestResponse(payload)
+    expect(result).toMatchSnapshot()
   })
   test(`should return all errors for empty includeErrors list`, async () => {
     const payload = require(`${__dirname}/liveValidation/payloads/multipleErrors_input.json`)

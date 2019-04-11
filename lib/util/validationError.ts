@@ -60,6 +60,10 @@ const errorConstants = {
     severity: Severity.Critical,
     docUrl: ""
   },
+  MISSING_REQUIRED_PARAMETER: {
+    severity: Severity.Critical,
+    docUrl: ""
+  },
   OBJECT_ADDITIONAL_PROPERTIES: {
     severity: Severity.Critical,
     docUrl: ""
