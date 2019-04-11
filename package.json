@@ -1,6 +1,6 @@
 {
   "name": "oav",
-  "version": "0.18.0",
+  "version": "0.18.1",
   "author": {
     "name": "Microsoft Corporation",
     "email": "azsdkteam@microsoft.com",
@@ -27,14 +27,14 @@
     "jsonpath": "^1.0.1",
     "linq": "^3.1.1",
     "lodash": "^4.17.11",
-    "moment": "~2.24.0",
+    "moment": "^2.24.0",
     "ms-rest": "^2.3.8",
     "swagger-parser": "^6.0.5",
     "uuid": "^3.3.2",
     "vscode-jsonrpc": "^3.6.2",
     "winston": "^3.2.1",
     "yargs": "^6.6.0",
-    "yasway": "^1.7.0",
+    "yasway": "^1.7.1",
     "yuml2svg": "^3.1.0",
     "z-schema": "^4.0.0"
   },

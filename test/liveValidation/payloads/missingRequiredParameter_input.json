@@ -10,15 +10,9 @@
     },
     "method": "PUT",
     "url": "/subscriptions/randomSub/resourceGroups/randomRG/providers/Microsoft.ApiManagement/service/randomService/users/radomUser?api-version=2018-01-01",
-    "body": {
-      "properties": {
-        "firstName": "aaaaa",
-        "lastName": "aaaaa",
-        "password": "aaaaaaaaaa",
-        "state": "active"
-      }
-    },
-    "query": { "api-version": "2018-01-01" }
+    "query": {
+      "api-version": "2018-01-01"
+    }
   },
   "liveResponse": {
     "statusCode": "201",
@@ -33,25 +27,29 @@
     "body": {
       "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
       "type": "Microsoft.ApiManagement/service/users",
-      "name": "aaaaaaaaaaaa",
+      "name": "david-kelly-us-abb-com",
       "properties": {
         "firstName": "aaaaa",
-        "lastName": 3,
+        "lastName": "aaaaa",
         "email": "aaaaaaaaaaaaaaaaaaaaaa",
-        "state": "Active",
-        "registrationDate": "2018-09-11",
+        "state": "active",
+        "registrationDate": "2018-09-11T19:00:21.037Z",
         "note": null,
         "groups": [
           {
             "displayName": "aaaaaaaaaaaaaaaaaaa",
-            "id": "aaaaaaaaaaaaaaaaaaaaaaaa",
             "description": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             "builtIn": true,
-            "type": "system",
+            "type": "external",
             "externalId": null
           }
         ],
-        "identities": [{ "provider": "aaaaa", "id": "aaaaaaaaaaaaaaaaaaaaaa" }]
+        "identities": [
+          {
+            "provider": "aaaaa",
+            "id": "aaaaaaaaaaaaaaaaaaaaaa"
+          }
+        ]
       }
     }
   }

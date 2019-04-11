@@ -1,5 +1,9 @@
 # Changelog
 
+### 04/08/2019 0.18.1
+
+- Validate request body when it is a JSON object.
+
 ### 04/08/2019 0.18.0
 
 - The `isSuccessful` is `undefined` in case of an existing `runtimeException`.
