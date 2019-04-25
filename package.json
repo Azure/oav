@@ -1,6 +1,6 @@
 {
   "name": "oav",
-  "version": "0.18.1",
+  "version": "0.18.2",
   "author": {
     "name": "Microsoft Corporation",
     "email": "azsdkteam@microsoft.com",
@@ -25,10 +25,10 @@
     "json-pointer": "^0.6.0",
     "json-refs": "^3.0.13",
     "jsonpath": "^1.0.1",
-    "linq": "^3.1.1",
+    "linq": "^3.2.0",
     "lodash": "^4.17.11",
     "moment": "^2.24.0",
-    "ms-rest": "^2.3.8",
+    "ms-rest": "^2.5.0",
     "swagger-parser": "^6.0.5",
     "uuid": "^3.3.2",
     "vscode-jsonrpc": "^3.6.2",
@@ -36,7 +36,7 @@
     "yargs": "^6.6.0",
     "yasway": "^1.7.1",
     "yuml2svg": "^3.1.0",
-    "z-schema": "^4.0.0"
+    "z-schema": "^4.0.2"
   },
   "devDependencies": {
     "@types/commonmark": "^0.27.3",
@@ -53,12 +53,12 @@
     "ts-jest": "^24.0.2",
     "jest": "^24.7.1",
     "jest-junit": "^6.3.0",
-    "prettier": "^1.16.4",
+    "prettier": "^1.17.0",
     "should": "^13.2.3",
-    "tslint": "^5.15.0",
+    "tslint": "^5.16.0",
     "tslint-config-prettier": "^1.18.0",
     "tslint-plugin-prettier": "^2.0.1",
-    "typescript": "^3.4.2"
+    "typescript": "^3.4.5"
   },
   "homepage": "https://github.com/azure/oav",
   "repository": {
@@ -108,7 +108,7 @@
   "scripts": {
     "tsc": "tsc",
     "tslint": "tslint --project tsconfig.json ./*.ts ./lib/**/*.ts ./test/**/*.ts ./types/**/*.ts",
-    "test": "npm run tsc && npm run tslint && jest --ci --reporters=default --reporters=jest-junit",
+    "test": "npm run tsc && npm run --silent tslint && jest --ci --reporters=default --reporters=jest-junit",
     "jest": "jest",
     "start": "node ./dist/lib/autorestPlugin/pluginHost.js",
     "tslint-check": "tslint-config-prettier-check ./tslint.json",
@@ -126,6 +126,7 @@
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
     },
+    "testEnvironment": "node",
     "moduleFileExtensions": [
       "ts",
       "js",

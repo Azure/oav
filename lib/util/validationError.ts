@@ -136,7 +136,7 @@ export const errorCodeToErrorMetadata = (code: ExtendedErrorCode): ValidationErr
 export interface LiveValidationIssue {
   readonly code: string
   readonly message: string
-// tslint:disable-next-line: prettier
+  // tslint:disable-next-line: prettier
   readonly pathsInPayload: readonly string[]
   readonly operationId: string
   readonly source: SourceLocation
