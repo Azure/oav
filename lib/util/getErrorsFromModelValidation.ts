@@ -16,7 +16,7 @@ export interface ModelValidation {
  */
 export function getErrorsFromModelValidation(
   validationResult: ModelValidation
-// tslint:disable-next-line: prettier
+  // tslint:disable-next-line: prettier
 ): readonly ModelValidationError[] {
   if (!validationResult.operations) {
     return []
