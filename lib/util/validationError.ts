@@ -60,6 +60,10 @@ const errorConstants = {
     severity: Severity.Critical,
     docUrl: ""
   },
+  MISSING_REQUIRED_PARAMETER: {
+    severity: Severity.Critical,
+    docUrl: ""
+  },
   OBJECT_ADDITIONAL_PROPERTIES: {
     severity: Severity.Critical,
     docUrl: ""
@@ -132,7 +136,7 @@ export const errorCodeToErrorMetadata = (code: ExtendedErrorCode): ValidationErr
 export interface LiveValidationIssue {
   readonly code: string
   readonly message: string
-// tslint:disable-next-line: prettier
+  // tslint:disable-next-line: prettier
   readonly pathsInPayload: readonly string[]
   readonly operationId: string
   readonly source: SourceLocation

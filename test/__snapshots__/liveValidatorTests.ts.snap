@@ -1,8 +1,139 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Live validator snapshot validation should match all errors for no options 1`] = `
+Object {
+  "requestValidationResult": Object {
+    "errors": Array [
+      Object {
+        "code": "OBJECT_MISSING_REQUIRED_PROPERTY",
+        "documentationUrl": "",
+        "inner": undefined,
+        "message": "Missing required property: email",
+        "params": Array [
+          "email",
+        ],
+        "pathsInPayload": Array [
+          "properties",
+        ],
+        "severity": 0,
+        "source": Object {
+          "jsonRef": "#/definitions/UserCreateParameterProperties",
+          "position": Object {
+            "column": 38,
+            "line": 696,
+          },
+          "url": "specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimusers.json",
+        },
+      },
+    ],
+    "isSuccessful": false,
+    "operationInfo": Object {
+      "apiVersion": "2018-01-01",
+      "operationId": "User_CreateOrUpdate",
+    },
+    "runtimeException": undefined,
+  },
+  "responseValidationResult": Object {
+    "errors": Array [
+      Object {
+        "code": "INVALID_TYPE",
+        "documentationUrl": "",
+        "inner": undefined,
+        "message": "Expected type string but found type integer",
+        "params": Array [
+          "string",
+          "integer",
+        ],
+        "pathsInPayload": Array [
+          "properties/lastName",
+        ],
+        "severity": 0,
+        "source": Object {
+          "jsonRef": "#/definitions/UserContractProperties/properties/lastName",
+          "position": Object {
+            "column": 21,
+            "line": 657,
+          },
+          "url": "specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimusers.json",
+        },
+      },
+      Object {
+        "code": "ENUM_CASE_MISMATCH",
+        "documentationUrl": "",
+        "inner": undefined,
+        "message": "Enum does not match case for: Active",
+        "params": Array [
+          "Active",
+        ],
+        "pathsInPayload": Array [
+          "properties/state",
+        ],
+        "severity": 1,
+        "source": Object {
+          "jsonRef": "#/definitions/UserEntityBaseParameters/properties/state",
+          "position": Object {
+            "column": 18,
+            "line": 750,
+          },
+          "url": "specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimusers.json",
+        },
+      },
+      Object {
+        "code": "INVALID_FORMAT",
+        "documentationUrl": "",
+        "inner": undefined,
+        "message": "Object didn't pass validation for format date-time: 2018-09-11",
+        "params": Array [
+          "date-time",
+          "2018-09-11",
+        ],
+        "pathsInPayload": Array [
+          "properties/registrationDate",
+        ],
+        "severity": 0,
+        "source": Object {
+          "jsonRef": "#/definitions/UserContractProperties/properties/registrationDate",
+          "position": Object {
+            "column": 29,
+            "line": 665,
+          },
+          "url": "specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimusers.json",
+        },
+      },
+      Object {
+        "code": "OBJECT_ADDITIONAL_PROPERTIES",
+        "documentationUrl": "",
+        "inner": undefined,
+        "message": "Additional properties not allowed: id",
+        "params": Array [
+          "id",
+        ],
+        "pathsInPayload": Array [
+          "properties/groups/0",
+        ],
+        "severity": 0,
+        "source": Object {
+          "jsonRef": "#/definitions/GroupContractProperties",
+          "position": Object {
+            "column": 32,
+            "line": 593,
+          },
+          "url": "specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimgroups.json",
+        },
+      },
+    ],
+    "isSuccessful": false,
+    "operationInfo": Object {
+      "apiVersion": "2018-01-01",
+      "operationId": "User_CreateOrUpdate",
+    },
+    "runtimeException": undefined,
+  },
+}
+`;
+
 exports[`Live validator snapshot validation should match for one of missing 1`] = `
 Object {
-  "errors": Array [],
   "requestValidationResult": Object {
     "errors": Array [],
     "isSuccessful": true,
@@ -48,7 +179,6 @@ Object {
 
 exports[`Live validator snapshot validation should return no errors for valid input 1`] = `
 Object {
-  "errors": Array [],
   "requestValidationResult": Object {
     "errors": Array [],
     "isSuccessful": true,
@@ -72,7 +202,6 @@ Object {
 
 exports[`Live validator snapshot validation should return the expected error requestResponse validation for ENUM_CASE_MISMATCH 1`] = `
 Object {
-  "errors": Array [],
   "requestValidationResult": Object {
     "errors": Array [],
     "isSuccessful": true,
@@ -118,7 +247,6 @@ Object {
 
 exports[`Live validator snapshot validation should return the expected error requestResponse validation for ENUM_MISMATCH 1`] = `
 Object {
-  "errors": Array [],
   "requestValidationResult": Object {
     "errors": Array [
       Object {
@@ -186,7 +314,6 @@ Object {
 
 exports[`Live validator snapshot validation should return the expected error requestResponse validation for INVALID_FORMAT 1`] = `
 Object {
-  "errors": Array [],
   "requestValidationResult": Object {
     "errors": Array [],
     "isSuccessful": true,
@@ -233,7 +360,6 @@ Object {
 
 exports[`Live validator snapshot validation should return the expected error requestResponse validation for INVALID_TYPE 1`] = `
 Object {
-  "errors": Array [],
   "requestValidationResult": Object {
     "errors": Array [],
     "isSuccessful": true,
@@ -280,7 +406,6 @@ Object {
 
 exports[`Live validator snapshot validation should return the expected error requestResponse validation for MAX_LENGTH 1`] = `
 Object {
-  "errors": Array [],
   "requestValidationResult": Object {
     "errors": Array [],
     "isSuccessful": true,
@@ -325,9 +450,51 @@ Object {
 }
 `;
 
+exports[`Live validator snapshot validation should return the expected error requestResponse validation for MISSING_REQUIRED_PARAMETER 1`] = `
+Object {
+  "requestValidationResult": Object {
+    "errors": Array [
+      Object {
+        "code": "MISSING_REQUIRED_PARAMETER",
+        "documentationUrl": "",
+        "inner": undefined,
+        "message": "Value is required but was not provided",
+        "params": undefined,
+        "pathsInPayload": Array [
+          "paths//subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/users/{uid}/put/parameters/3",
+        ],
+        "severity": 0,
+        "source": Object {
+          "jsonRef": "",
+          "position": Object {
+            "column": -1,
+            "line": -1,
+          },
+          "url": undefined,
+        },
+      },
+    ],
+    "isSuccessful": false,
+    "operationInfo": Object {
+      "apiVersion": "2018-01-01",
+      "operationId": "User_CreateOrUpdate",
+    },
+    "runtimeException": undefined,
+  },
+  "responseValidationResult": Object {
+    "errors": Array [],
+    "isSuccessful": true,
+    "operationInfo": Object {
+      "apiVersion": "2018-01-01",
+      "operationId": "User_CreateOrUpdate",
+    },
+    "runtimeException": undefined,
+  },
+}
+`;
+
 exports[`Live validator snapshot validation should return the expected error requestResponse validation for OBJECT_ADDITIONAL_PROPERTIES 1`] = `
 Object {
-  "errors": Array [],
   "requestValidationResult": Object {
     "errors": Array [],
     "isSuccessful": true,
@@ -373,7 +540,6 @@ Object {
 
 exports[`Live validator snapshot validation should return the expected error requestResponse validation for OBJECT_MISSING_REQUIRED_PROPERTY 1`] = `
 Object {
-  "errors": Array [],
   "requestValidationResult": Object {
     "errors": Array [],
     "isSuccessful": true,

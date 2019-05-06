@@ -1,6 +1,6 @@
 {
   "name": "oav",
-  "version": "0.17.0",
+  "version": "0.18.2",
   "author": {
     "name": "Microsoft Corporation",
     "email": "azsdkteam@microsoft.com",
@@ -19,28 +19,28 @@
     "@ts-common/source-map": "^0.5.0",
     "@ts-common/string-map": "^0.3.0",
     "@ts-common/virtual-fs": "^0.2.0",
-    "commonmark": "^0.28.1",
     "glob": "^5.0.15",
     "jest": "^24.5.0",
     "jest-junit": "^6.3.0",
+    "commonmark": "^0.29.0",
     "globby": "^9.2.0",
     "js-yaml": "^3.13.1",
     "json-pointer": "^0.6.0",
     "json-refs": "^3.0.13",
     "jsonpath": "^1.0.1",
-    "linq": "^3.1.1",
+    "linq": "^3.2.0",
     "lodash": "^4.17.11",
     "md5-file": "^4.0.0",
-    "moment": "~2.24.0",
-    "ms-rest": "^2.3.8",
+    "moment": "^2.24.0",
+    "ms-rest": "^2.5.0",
     "swagger-parser": "^6.0.5",
     "uuid": "^3.3.2",
     "vscode-jsonrpc": "^3.6.2",
     "winston": "^3.2.1",
     "yargs": "^6.6.0",
-    "yasway": "^1.7.0",
+    "yasway": "^1.7.1",
     "yuml2svg": "^3.1.0",
-    "z-schema": "^4.0.0"
+    "z-schema": "^4.0.2"
   },
   "devDependencies": {
     "@types/commonmark": "^0.27.3",
@@ -56,15 +56,15 @@
     "@types/swagger-parser": "^4.0.3",
     "@types/uuid": "^3.4.4",
     "@types/yargs": "^11.1.2",
+    "ts-jest": "^24.0.2",
     "jest": "^24.7.1",
     "jest-junit": "^6.3.0",
-    "prettier": "^1.16.4",
+    "prettier": "^1.17.0",
     "should": "^13.2.3",
-    "ts-jest": "^24.0.1",
-    "tslint": "^5.15.0",
+    "tslint": "^5.16.0",
     "tslint-config-prettier": "^1.18.0",
     "tslint-plugin-prettier": "^2.0.1",
-    "typescript": "^3.4.2"
+    "typescript": "^3.4.5"
   },
   "homepage": "https://github.com/azure/oav",
   "repository": {
@@ -98,7 +98,7 @@
   "scripts": {
     "tsc": "tsc",
     "tslint": "tslint --project tsconfig.json ./*.ts ./lib/**/*.ts ./test/**/*.ts ./types/**/*.ts",
-    "test": "npm run tsc && npm run tslint && npm run fast-test",
+    "test": "npm run tsc && npm run --silent tslint && jest --ci --reporters=default --reporters=jest-junit",
     "fast-test": "jest --ci --reporters=default --reporters=jest-junit",
     "slow-test": "node --max-old-space-size=10192 ./node_modules/.bin/jest  regression/[^/]*ts -u --runInBand --ci --reporters=default --reporters=jest-junit",
     "slow-test-sample": "node --max-old-space-size=10192 ./node_modules/.bin/jest  regression/[^/]*_latestOnly[^/]*ts --runInBand --ci --reporters=default --reporters=jest-junit",
@@ -119,6 +119,7 @@
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
     },
+    "testEnvironment": "node",
     "moduleFileExtensions": [
       "ts",
       "js",

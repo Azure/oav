@@ -2,13 +2,12 @@
 
 [![Build Status](https://dev.azure.com/azure-public/adx/_apis/build/status/public.Azure.oav)](https://dev.azure.com/azure-public/adx/_build/latest?definitionId=3)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
-[![Build Status](https://dev.azure.com/azure-sdk/public/_apis/build/status/OAV%20Validate%20Examples%20Regression?branchName=master)](https://dev.azure.com/azure-sdk/public/_build/latest?definitionId=163&branchName=master)
 
 Tools for validating OpenAPI (Swagger) files.
 
 ## Requirements
 
-- **node.js version > 6.x**
+- **node.js version > 10.x**
 
 You can install the latest stable release of node.js from [here](https://nodejs.org/en/download/). For a machine with a linux flavored OS, please follow the node.js installation instructions over [here](https://nodejs.org/en/download/package-manager/)
 

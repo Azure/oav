@@ -1,5 +1,14 @@
 # Changelog
 
+### 04/08/2019 0.18.1
+
+- Validate request body when it is a JSON object.
+
+### 04/08/2019 0.18.0
+
+- The `isSuccessful` is `undefined` in case of an existing `runtimeException`.
+- `RequestResponseLiveValidationResult` has a runtimeExceptions field instead of an errors field.
+
 ### 04/05/2019 0.17.0
 
 - Live Validation mode is now skipping validating for errors not specified when using the `includeErrors` option.
