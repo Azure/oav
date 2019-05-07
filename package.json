@@ -99,7 +99,7 @@
     "test": "npm run tsc && npm run --silent tslint && jest --ci --reporters=default --reporters=jest-junit",
     "fast-test": "jest test/* --ci --reporters=default --reporters=jest-junit",
     "slow-test": "node --max-old-space-size=10192 ./node_modules/.bin/jest  regression/* -u --runInBand --ci --reporters=default --reporters=jest-junit",
-    "slow-test-sample": "node --max-old-space-size=10192 ./node_modules/.bin/jest  regression/[^/]*_latestOnly.test.ts --runInBand --ci --reporters=default --reporters=jest-junit",
+    "slow-test-sample": "node --max-old-space-size=10192 ./node_modules/.bin/jest  regression/[^/]*_latestOnly.test.ts -u --runInBand --ci --reporters=default --reporters=jest-junit",
     "jest": "jest",
     "start": "node ./dist/lib/autorestPlugin/pluginHost.js",
     "tslint-check": "tslint-config-prettier-check ./tslint.json",
