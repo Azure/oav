@@ -1,3 +1,3 @@
-[submodule "test/regression/azure-rest-api-specs"]
-	path = test/regression/azure-rest-api-specs
+[submodule "regression/azure-rest-api-specs"]
+	path = regression/azure-rest-api-specs
 	url = https://github.com/Azure/azure-rest-api-specs

@@ -20,8 +20,6 @@
     "@ts-common/string-map": "^0.3.0",
     "@ts-common/virtual-fs": "^0.2.0",
     "glob": "^5.0.15",
-    "jest": "^24.5.0",
-    "jest-junit": "^6.3.0",
     "commonmark": "^0.29.0",
     "globby": "^9.2.0",
     "js-yaml": "^3.13.1",
@@ -99,9 +97,9 @@
     "tsc": "tsc",
     "tslint": "tslint --project tsconfig.json ./*.ts ./lib/**/*.ts ./test/**/*.ts ./types/**/*.ts",
     "test": "npm run tsc && npm run --silent tslint && jest --ci --reporters=default --reporters=jest-junit",
-    "fast-test": "jest --ci --reporters=default --reporters=jest-junit",
-    "slow-test": "node --max-old-space-size=10192 ./node_modules/.bin/jest  regression/[^/]*ts -u --runInBand --ci --reporters=default --reporters=jest-junit",
-    "slow-test-sample": "node --max-old-space-size=10192 ./node_modules/.bin/jest  regression/[^/]*_latestOnly[^/]*ts --runInBand --ci --reporters=default --reporters=jest-junit",
+    "fast-test": "jest test/* --ci --reporters=default --reporters=jest-junit",
+    "slow-test": "node --max-old-space-size=10192 ./node_modules/.bin/jest  regression/* -u --runInBand --ci --reporters=default --reporters=jest-junit",
+    "slow-test-sample": "node --max-old-space-size=10192 ./node_modules/.bin/jest  regression/[^/]*_latestOnly.test.ts --runInBand --ci --reporters=default --reporters=jest-junit",
     "jest": "jest",
     "start": "node ./dist/lib/autorestPlugin/pluginHost.js",
     "tslint-check": "tslint-config-prettier-check ./tslint.json",
@@ -150,6 +148,7 @@
       }
     },
     "testMatch": [
+      "**/regression/**/*.test.ts",
       "**/test/**/*.ts",
       "!**/test/**/*.d.ts",
       "!**/test/sample.ts"
