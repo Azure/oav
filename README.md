@@ -126,6 +126,14 @@ await apiValidator.initialize() // Note that for a large number of specs this ca
 const validationResult = apiValidator.validateLiveRequestResponse(requestResponsePair)
 ```
 
+### Regression testing
+
+Output of the OAV tool has been snapshotted and committed to the repo. The regression test may be run on a sample or all of https://github.com/azure/azure-rest-api-specs. If there are changes to the snapshots the build produces a git patch file as an artifact which may be used to update the snapshots.
+
+[Fast Regression (~10mins)](https://dev.azure.com/azure-sdk/public/_build?definitionId=166&_a=completed) is used for merge validation
+
+[Slow Regression (~1 hour)](https://dev.azure.com/azure-sdk/public/_build?definitionId=163&_a=completed) is run after merge and should be fixed if it fails
+
 ---
 
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.

@@ -19,6 +19,7 @@
     "@ts-common/source-map": "^0.5.0",
     "@ts-common/string-map": "^0.3.0",
     "@ts-common/virtual-fs": "^0.2.0",
+    "glob": "^5.0.15",
     "commonmark": "^0.29.0",
     "globby": "^9.2.0",
     "js-yaml": "^3.13.1",
@@ -27,6 +28,7 @@
     "jsonpath": "^1.0.1",
     "linq": "^3.2.0",
     "lodash": "^4.17.11",
+    "md5-file": "^4.0.0",
     "moment": "^2.24.0",
     "ms-rest": "^2.5.0",
     "swagger-parser": "^6.0.5",
@@ -40,11 +42,13 @@
   },
   "devDependencies": {
     "@types/commonmark": "^0.27.3",
+    "@types/glob": "^7.1.1",
     "@types/jest": "^24.0.11",
     "@types/js-yaml": "^3.12.1",
     "@types/json-pointer": "^1.0.30",
     "@types/jsonpath": "^0.2.0",
     "@types/lodash": "^4.14.123",
+    "@types/md5-file": "^4.0.0",
     "@types/node": "^10.12.18",
     "@types/request": "^2.48.1",
     "@types/swagger-parser": "^4.0.3",
@@ -89,26 +93,13 @@
     "./dist/index.d.ts",
     "./types/*.d.ts"
   ],
-  "nyc": {
-    "include": [
-      "dist/**/*.js"
-    ],
-    "all": true,
-    "reporter": [
-      "lcov",
-      "text",
-      "html",
-      "cobertura"
-    ],
-    "exclude": [
-      "dist/test/",
-      "types/"
-    ]
-  },
   "scripts": {
     "tsc": "tsc",
     "tslint": "tslint --project tsconfig.json ./*.ts ./lib/**/*.ts ./test/**/*.ts ./types/**/*.ts",
     "test": "npm run tsc && npm run --silent tslint && jest --ci --reporters=default --reporters=jest-junit",
+    "fast-test": "jest --ci --reporters=default --reporters=jest-junit --config ./jest.config.js ",
+    "slow-test": "node --max-old-space-size=10192 ./node_modules/.bin/jest -u --runInBand --ci --reporters=default --reporters=jest-junit --config ./regression/jest.regression.config.js ",
+    "slow-test-sample": "node --max-old-space-size=10192 ./node_modules/.bin/jest -u --runInBand --ci --reporters=default --reporters=jest-junit --config ./regression/jest.regression-sample.config.js ",
     "jest": "jest",
     "start": "node ./dist/lib/autorestPlugin/pluginHost.js",
     "tslint-check": "tslint-config-prettier-check ./tslint.json",
@@ -121,46 +112,5 @@
   },
   "jest-junit": {
     "output": "test-results.xml"
-  },
-  "jest": {
-    "transform": {
-      "^.+\\.tsx?$": "ts-jest"
-    },
-    "testEnvironment": "node",
-    "moduleFileExtensions": [
-      "ts",
-      "js",
-      "json",
-      "node"
-    ],
-    "moduleNameMapper": {},
-    "collectCoverage": true,
-    "collectCoverageFrom": [
-      "./lib/**/*.ts",
-      "!**/node_modules/**"
-    ],
-    "coverageReporters": [
-      "json",
-      "lcov",
-      "cobertura",
-      "text",
-      "html",
-      "clover"
-    ],
-    "coveragePathIgnorePatterns": [
-      "/node_modules/",
-      ".*/tests/.*"
-    ],
-    "globals": {
-      "ts-jest": {
-        "tsConfig": "tsconfig.json"
-      }
-    },
-    "testMatch": [
-      "**/test/**/*.ts",
-      "!**/test/**/*.d.ts",
-      "!**/test/sample.ts"
-    ],
-    "verbose": true
   }
 }
