@@ -1,6 +1,6 @@
 {
   "name": "oav",
-  "version": "0.18.2",
+  "version": "0.18.3",
   "author": {
     "name": "Microsoft Corporation",
     "email": "azsdkteam@microsoft.com",
@@ -37,7 +37,7 @@
     "winston": "^3.2.1",
     "yargs": "^6.6.0",
     "yasway": "^1.7.1",
-    "yuml2svg": "^3.1.0",
+    "yuml2svg": "^4.2.1",
     "z-schema": "^4.0.2"
   },
   "devDependencies": {

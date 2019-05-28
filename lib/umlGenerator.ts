@@ -3,15 +3,15 @@
 
 import { entries } from "@ts-common/string-map"
 import { DefinitionsObject, SchemaObject, SwaggerObject } from "yasway"
-import yuml2svg = require("yuml2svg")
+import yuml2svg from "yuml2svg"
 
 import { log } from "./util/logging"
 
 export interface Options {
-  readonly direction?: unknown
-  readonly shouldDisableAllof?: unknown
-  readonly shouldDisableProperties?: unknown
-  readonly shouldDisableRefs?: unknown
+  readonly direction?: "TB" | "LR" | "RL"
+  readonly shouldDisableAllof?: boolean
+  readonly shouldDisableProperties?: boolean
+  readonly shouldDisableRefs?: boolean
 }
 
 /**
@@ -52,10 +52,11 @@ export class UmlGenerator {
     let svg = ""
 
     log.info(this.graphDefinition)
-    svg = yuml2svg(this.graphDefinition, false, {
-      dir: this.options.direction,
+    svg = await yuml2svg(this.graphDefinition, {
+      isDark: false,
+      dir: this.options.direction!,
       type: "class"
-    }) as string
+    })
     // console.log(svg)
     return svg
   }

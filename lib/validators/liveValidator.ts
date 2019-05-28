@@ -168,13 +168,11 @@ export class LiveValidator {
     // Construct array of swagger paths to be used for building a cache
     const swaggerPaths = await this.getSwaggerPaths()
     log.info(`Found ${swaggerPaths.length}`)
+    const promiseFactories = swaggerPaths.map(swaggerPath => {
+      return this.getSwaggerInitializer(swaggerPath)
+    })
 
-    const promiseFactories = swaggerPaths.map(swaggerPath => async () =>
-      this.getSwaggerInitializer(swaggerPath)
-    )
-
-    await utils.executePromisesSequentially(promiseFactories)
-
+    await Promise.all(promiseFactories)
     log.info("Cache initialization complete.")
   }
 
@@ -678,7 +676,7 @@ export class LiveValidator {
       const operations = api.getOperations()
       let apiVersion = api.info.version.toLowerCase()
 
-      operations.forEach(operation => {
+      for (const operation of operations) {
         const httpMethod = operation.method.toLowerCase()
         const pathObject = operation.pathObject
         const pathStr = pathObject.path
@@ -716,7 +714,7 @@ export class LiveValidator {
         allMethods[httpMethod] = operationsForHttpMethod
         apiVersions[apiVersion] = allMethods
         this.cache[provider] = apiVersions
-      })
+      }
     } catch (err) {
       // Do Not reject promise in case, we cannot initialize one of the swagger
       log.debug(`Unable to initialize "${swaggerPath}" file from SpecValidator. Error: ${err}`)

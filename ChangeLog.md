@@ -1,4 +1,10 @@
 # Changelog
+### 05/29/2019 0.18.3
+- update cache initialization in live validator to `Promise.all()`.
+- update package version of `yuml2svg` dependency (since it contains typescript definitions).
+
+### 04/25/2019 0.18.2
+- Use node env for jest #422.
 
 ### 04/08/2019 0.18.1
 
