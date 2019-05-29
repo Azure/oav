@@ -531,14 +531,12 @@ describe("Model Validation", () => {
   })
 
   describe("Discriminator is required property", () => {
-    it("required", async () => {
+    it("assumes the type to be the defined type in swagger if discriminator is missing", async () => {
       const specPath2 = `${testPath}/modelValidation/swaggers/specification/polymorphicRequired/spec.json`
       const result = await validate.validateExamples(specPath2, undefined, {
         consoleLogLevel: "off"
       })
-      assert.strictEqual(result.length, 1)
-      // it should report the real error `OBJECT_MISSING_REQUIRED_PROPERTY` instead of the wrapper `ONE_OF_MISSING`
-      assert.strictEqual(result[0].code, "OBJECT_MISSING_REQUIRED_PROPERTY")
+      assert.strictEqual(result.length, 0)
     })
   })
 })
