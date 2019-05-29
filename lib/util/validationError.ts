@@ -48,6 +48,10 @@ const errorConstants = {
   MINIMUM_EXCLUSIVE: { severity: Severity.Critical, docUrl: "" },
   MAXIMUM: { severity: Severity.Critical, docUrl: "" },
   MAXIMUM_EXCLUSIVE: { severity: Severity.Critical, docUrl: "" },
+  READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST: {
+    severity: Severity.Critical,
+    docUrl: ""
+  },
   OBJECT_PROPERTIES_MINIMUM: {
     severity: Severity.Critical,
     docUrl: ""

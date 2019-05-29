@@ -25,7 +25,7 @@ describe("Read Only properties", () => {
     )
   })
 
-  it("should throw 2 errors - readonly properties not allowed in request and invalid type", async () => {
+  it("for a number value discriminator should throw 2 errors - readonly properties not allowed in request and invalid type", async () => {
     const result = await validate.validateExamples(specPath, "Profiles_Update", {
       consoleLogLevel: "off"
     })
