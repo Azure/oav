@@ -11,8 +11,7 @@
     "member-ordering": false,
     "no-unsafe-any": false,
     "no-null-keyword": false,
-    "prettier": true,
-    "no-console": false
+    "prettier": true
   },
   "rulesDirectory": ["tslint-plugin-prettier"]
 }
