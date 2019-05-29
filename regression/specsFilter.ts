@@ -10,13 +10,13 @@ const versionRegex = /[0-9]+[0-9-]+[^\/]*/
 const rpRegex = /(?:\/)Microsoft.[^\/]*/
 const latestForEachRp = (_.chain(specPaths)
   .filter(p => p.includes("stable")) // only look at stable specs
-  .filter(p => p.match(rpRegex))
+  .filter(p => Boolean(p.match(rpRegex)))
   .groupBy((p: string) => p.match(rpRegex)![0]) // group paths by rp
   .entries()
   .map((entry: [string, string[]]) =>
     // for each rp get latest version
     _.chain(entry[1])
-      .filter(p => p!.match(versionRegex))
+      .filter(p => Boolean(p!.match(versionRegex)))
       .groupBy((p: string) => p!.match(versionRegex)![0])
       .entries()
       .sortBy(([version]: [string, string[]]) => version)
