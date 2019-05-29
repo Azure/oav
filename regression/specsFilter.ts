@@ -2,13 +2,13 @@ import glob = require("glob")
 import * as _ from "lodash"
 import * as path from "path"
 
-const specPaths = glob
+const specPaths: string[] = glob
   .sync(path.join(__dirname, "azure-rest-api-specs/specification/**/*.json"))
   .filter((p: string) => !p.includes("examples"))
 
 const versionRegex = /[0-9]+[0-9-]+[^\/]*/
 const rpRegex = /(?:\/)Microsoft.[^\/]*/
-const latestForEachRp = (_.chain(specPaths)
+const latestForEachRp = ((_.chain(specPaths)
   .filter(p => p.includes("stable")) // only look at stable specs
   .filter(p => Boolean(p.match(rpRegex)))
   .groupBy((p: string) => p.match(rpRegex)![0]) // group paths by rp
@@ -23,7 +23,7 @@ const latestForEachRp = (_.chain(specPaths)
       .map((e: [string, string[]]) => e[1])
       .last()
       .value()
-  )
+  ) as any)
   .flatten()
   .value() as unknown) as string[]
 
