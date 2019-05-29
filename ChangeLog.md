@@ -1,7 +1,9 @@
 # Changelog
 ### 05/29/2019 0.18.3
-- update cache initialization in live validator to `Promise.all()`.
-- update package version of `yuml2svg` dependency (since it contains typescript definitions).
+- Update cache initialization in live validator to `Promise.all()`.
+- Update package version of `yuml2svg` dependency (since it contains typescript definitions).
+- Add support for validating `readOnly` properties in the request.
+- Limiting dependencies on `@types/lodash` and `typescript` due to stricter type definition rules in the later versions.
 
 ### 04/25/2019 0.18.2
 - Use node env for jest #422.
