@@ -97,7 +97,7 @@ export async function parseJson(
   }
 
   const createSwaggerObject = async () => {
-    const fileContent = await vfs.readFile(specPath)
+    const fileContent = await getSpecContent(specPath)
     const swaggerObject = parseContent(specPath, fileContent, reportError)
     applySuppression(swaggerObject)
     return swaggerObject
@@ -110,4 +110,12 @@ export async function parseJson(
   }
 
   return swaggerObjectPromise
+}
+
+const getSpecContent = async (specPath: string) => {
+  try {
+    return await vfs.readFile(specPath)
+  } catch (error) {
+    throw new Error(`Failed to load a reference file ${specPath}. (${error})`)
+  }
 }
