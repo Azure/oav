@@ -116,6 +116,6 @@ const getSpecContent = async (specPath: string) => {
   try {
     return await vfs.readFile(specPath)
   } catch (error) {
-    throw new Error(`Failed to load a reference file ${specPath}`)
+    throw new Error(`Failed to load a reference file ${specPath}. (${error})`)
   }
 }
