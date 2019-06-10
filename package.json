@@ -19,8 +19,8 @@
     "@ts-common/source-map": "^0.5.0",
     "@ts-common/string-map": "^0.3.0",
     "@ts-common/virtual-fs": "^0.2.0",
-    "glob": "^5.0.15",
     "commonmark": "^0.29.0",
+    "glob": "^5.0.15",
     "globby": "^9.2.0",
     "js-yaml": "^3.13.1",
     "json-pointer": "^0.6.0",
@@ -36,9 +36,9 @@
     "vscode-jsonrpc": "^3.6.2",
     "winston": "^3.2.1",
     "yargs": "^6.6.0",
-    "yasway": "^1.7.3",
+    "yasway": "^1.8.0",
     "yuml2svg": "^4.2.1",
-    "z-schema": "^4.0.2"
+    "z-schema": "^4.1.0"
   },
   "devDependencies": {
     "@types/commonmark": "^0.27.3",

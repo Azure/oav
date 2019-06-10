@@ -90,6 +90,7 @@ export interface ApiOperationIdentifier {
 export interface LiveValidationIssue {
   readonly code: ErrorCode
   readonly message: string
+  readonly jsonPathsInPayload: string[]
   readonly pathsInPayload: string[]
   readonly severity: Severity
   readonly source: SourceLocation
@@ -373,6 +374,7 @@ export class LiveValidator {
     return {
       code: err.code || "INTERNAL_ERROR",
       message: err.message || "",
+      jsonPathsInPayload: err.jsonPath ? [err.jsonPath, ...(err.similarJsonPaths || [])] : [],
       pathsInPayload: err.path ? [err.path, ...(err.similarPaths || [])] : [],
       inner: Array.isArray(err.inner)
         ? err.inner.map(innerErr => this.toLiveValidationIssue(innerErr))
