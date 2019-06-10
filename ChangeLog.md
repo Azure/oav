@@ -1,4 +1,8 @@
 # Changelog
+### 05/30/2019 0.18.4
+- Better error reporting for spec reference pointing to invalid files
+
+# Changelog
 ### 05/29/2019 0.18.3
 - Update cache initialization in live validator to `Promise.all()`.
 - Update package version of `yuml2svg` dependency (since it contains typescript definitions).
