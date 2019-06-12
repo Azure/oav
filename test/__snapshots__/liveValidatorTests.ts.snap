@@ -8,6 +8,9 @@ Object {
         "code": "OBJECT_MISSING_REQUIRED_PROPERTY",
         "documentationUrl": "",
         "inner": undefined,
+        "jsonPathsInPayload": Array [
+          "$.properties",
+        ],
         "message": "Missing required property: email",
         "params": Array [
           "email",
@@ -15,6 +18,7 @@ Object {
         "pathsInPayload": Array [
           "properties",
         ],
+        "schemaPath": "",
         "severity": 0,
         "source": Object {
           "jsonRef": "#/definitions/UserCreateParameterProperties",
@@ -39,6 +43,9 @@ Object {
         "code": "INVALID_TYPE",
         "documentationUrl": "",
         "inner": undefined,
+        "jsonPathsInPayload": Array [
+          "$.properties.lastName",
+        ],
         "message": "Expected type string but found type integer",
         "params": Array [
           "string",
@@ -47,6 +54,7 @@ Object {
         "pathsInPayload": Array [
           "properties/lastName",
         ],
+        "schemaPath": "",
         "severity": 0,
         "source": Object {
           "jsonRef": "#/definitions/UserContractProperties/properties/lastName",
@@ -61,6 +69,9 @@ Object {
         "code": "ENUM_CASE_MISMATCH",
         "documentationUrl": "",
         "inner": undefined,
+        "jsonPathsInPayload": Array [
+          "$.properties.state",
+        ],
         "message": "Enum does not match case for: Active",
         "params": Array [
           "Active",
@@ -68,6 +79,7 @@ Object {
         "pathsInPayload": Array [
           "properties/state",
         ],
+        "schemaPath": "",
         "severity": 1,
         "source": Object {
           "jsonRef": "#/definitions/UserEntityBaseParameters/properties/state",
@@ -82,6 +94,9 @@ Object {
         "code": "INVALID_FORMAT",
         "documentationUrl": "",
         "inner": undefined,
+        "jsonPathsInPayload": Array [
+          "$.properties.registrationDate",
+        ],
         "message": "Object didn't pass validation for format date-time: 2018-09-11",
         "params": Array [
           "date-time",
@@ -90,6 +105,7 @@ Object {
         "pathsInPayload": Array [
           "properties/registrationDate",
         ],
+        "schemaPath": "",
         "severity": 0,
         "source": Object {
           "jsonRef": "#/definitions/UserContractProperties/properties/registrationDate",
@@ -104,6 +120,9 @@ Object {
         "code": "OBJECT_ADDITIONAL_PROPERTIES",
         "documentationUrl": "",
         "inner": undefined,
+        "jsonPathsInPayload": Array [
+          "$.properties.groups[0]",
+        ],
         "message": "Additional properties not allowed: id",
         "params": Array [
           "id",
@@ -111,6 +130,7 @@ Object {
         "pathsInPayload": Array [
           "properties/groups/0",
         ],
+        "schemaPath": "",
         "severity": 0,
         "source": Object {
           "jsonRef": "#/definitions/GroupContractProperties",
@@ -149,6 +169,9 @@ Object {
         "code": "OBJECT_MISSING_REQUIRED_PROPERTY",
         "documentationUrl": "",
         "inner": undefined,
+        "jsonPathsInPayload": Array [
+          "$.properties.options[0].restriction",
+        ],
         "message": "Missing required property: audience",
         "params": Array [
           "audience",
@@ -156,6 +179,7 @@ Object {
         "pathsInPayload": Array [
           "properties/options/0/restriction",
         ],
+        "schemaPath": "",
         "severity": 0,
         "source": Object {
           "jsonRef": "#/definitions/ContentKeyPolicyTokenRestriction",
@@ -217,6 +241,9 @@ Object {
         "code": "ENUM_CASE_MISMATCH",
         "documentationUrl": "",
         "inner": undefined,
+        "jsonPathsInPayload": Array [
+          "$.properties.groups[0].type",
+        ],
         "message": "Enum does not match case for: System",
         "params": Array [
           "System",
@@ -224,6 +251,7 @@ Object {
         "pathsInPayload": Array [
           "properties/groups/0/type",
         ],
+        "schemaPath": "",
         "severity": 1,
         "source": Object {
           "jsonRef": "#/definitions/GroupContractProperties/properties/type",
@@ -253,6 +281,9 @@ Object {
         "code": "ENUM_MISMATCH",
         "documentationUrl": "",
         "inner": undefined,
+        "jsonPathsInPayload": Array [
+          "$.properties.state",
+        ],
         "message": "No enum match for: dasda",
         "params": Array [
           "dasda",
@@ -260,6 +291,7 @@ Object {
         "pathsInPayload": Array [
           "properties/state",
         ],
+        "schemaPath": "",
         "severity": 0,
         "source": Object {
           "jsonRef": "#/definitions/UserEntityBaseParameters/properties/state",
@@ -284,6 +316,9 @@ Object {
         "code": "ENUM_MISMATCH",
         "documentationUrl": "",
         "inner": undefined,
+        "jsonPathsInPayload": Array [
+          "$.properties.groups[0].type",
+        ],
         "message": "No enum match for: banana",
         "params": Array [
           "banana",
@@ -291,6 +326,7 @@ Object {
         "pathsInPayload": Array [
           "properties/groups/0/type",
         ],
+        "schemaPath": "",
         "severity": 0,
         "source": Object {
           "jsonRef": "#/definitions/GroupContractProperties/properties/type",
@@ -329,6 +365,9 @@ Object {
         "code": "INVALID_FORMAT",
         "documentationUrl": "",
         "inner": undefined,
+        "jsonPathsInPayload": Array [
+          "$.properties.createdAtUtc",
+        ],
         "message": "Object didn't pass validation for format date-time: 0001-01-01T00:00:00",
         "params": Array [
           "date-time",
@@ -337,6 +376,7 @@ Object {
         "pathsInPayload": Array [
           "properties/createdAtUtc",
         ],
+        "schemaPath": "",
         "severity": 0,
         "source": Object {
           "jsonRef": "#/definitions/ApiManagementServiceBaseProperties/properties/createdAtUtc",
@@ -375,6 +415,9 @@ Object {
         "code": "INVALID_TYPE",
         "documentationUrl": "",
         "inner": undefined,
+        "jsonPathsInPayload": Array [
+          "$.properties.hostnameConfigurations",
+        ],
         "message": "Expected type array but found type string",
         "params": Array [
           "array",
@@ -383,6 +426,7 @@ Object {
         "pathsInPayload": Array [
           "properties/hostnameConfigurations",
         ],
+        "schemaPath": "",
         "severity": 0,
         "source": Object {
           "jsonRef": "#/definitions/ApiManagementServiceBaseProperties/properties/hostnameConfigurations",
@@ -421,6 +465,9 @@ Object {
         "code": "MAX_LENGTH",
         "documentationUrl": "",
         "inner": undefined,
+        "jsonPathsInPayload": Array [
+          "$.properties.description",
+        ],
         "message": "String is too long (1958 chars), maximum 1000",
         "params": Array [
           1958,
@@ -429,6 +476,7 @@ Object {
         "pathsInPayload": Array [
           "properties/description",
         ],
+        "schemaPath": "",
         "severity": 0,
         "source": Object {
           "jsonRef": "#/definitions/OperationEntityBaseContract/properties/description",
@@ -458,11 +506,11 @@ Object {
         "code": "MISSING_REQUIRED_PARAMETER",
         "documentationUrl": "",
         "inner": undefined,
+        "jsonPathsInPayload": Array [],
         "message": "Value is required but was not provided",
         "params": undefined,
-        "pathsInPayload": Array [
-          "paths//subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/users/{uid}/put/parameters/3",
-        ],
+        "pathsInPayload": Array [],
+        "schemaPath": "#/paths/~1subscriptions~1{subscriptionId}~1resourceGroups~1{resourceGroupName}~1providers~1Microsoft.ApiManagement~1service~1{serviceName}~1users~1{uid}/put/parameters/3",
         "severity": 0,
         "source": Object {
           "jsonRef": "",
@@ -510,6 +558,9 @@ Object {
         "code": "OBJECT_ADDITIONAL_PROPERTIES",
         "documentationUrl": "",
         "inner": undefined,
+        "jsonPathsInPayload": Array [
+          "$.properties.groups[0]",
+        ],
         "message": "Additional properties not allowed: id",
         "params": Array [
           "id",
@@ -517,6 +568,7 @@ Object {
         "pathsInPayload": Array [
           "properties/groups/0",
         ],
+        "schemaPath": "",
         "severity": 0,
         "source": Object {
           "jsonRef": "#/definitions/GroupContractProperties",
@@ -555,6 +607,9 @@ Object {
         "code": "OBJECT_MISSING_REQUIRED_PROPERTY",
         "documentationUrl": "",
         "inner": undefined,
+        "jsonPathsInPayload": Array [
+          "$.properties.groups[0]",
+        ],
         "message": "Missing required property: displayName",
         "params": Array [
           "displayName",
@@ -562,6 +617,7 @@ Object {
         "pathsInPayload": Array [
           "properties/groups/0",
         ],
+        "schemaPath": "",
         "severity": 0,
         "source": Object {
           "jsonRef": "#/definitions/GroupContractProperties",

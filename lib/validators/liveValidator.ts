@@ -90,7 +90,9 @@ export interface ApiOperationIdentifier {
 export interface LiveValidationIssue {
   readonly code: ErrorCode
   readonly message: string
+  readonly jsonPathsInPayload: string[]
   readonly pathsInPayload: string[]
+  readonly schemaPath: string
   readonly severity: Severity
   readonly source: SourceLocation
   readonly documentationUrl: string
@@ -373,7 +375,9 @@ export class LiveValidator {
     return {
       code: err.code || "INTERNAL_ERROR",
       message: err.message || "",
+      jsonPathsInPayload: err.jsonPath ? [err.jsonPath, ...(err.similarJsonPaths || [])] : [],
       pathsInPayload: err.path ? [err.path, ...(err.similarPaths || [])] : [],
+      schemaPath: err.schemaPath || "",
       inner: Array.isArray(err.inner)
         ? err.inner.map(innerErr => this.toLiveValidationIssue(innerErr))
         : undefined,
@@ -653,9 +657,7 @@ export class LiveValidator {
         unique: true
       })
       log.debug(
-        `Using swaggers found from directory: "${
-          this.options.directory
-        }" and pattern: "${jsonsPattern}".
+        `Using swaggers found from directory: "${this.options.directory}" and pattern: "${jsonsPattern}".
         Total paths: ${swaggerPaths.length}`
       )
       return swaggerPaths

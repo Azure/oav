@@ -4,6 +4,7 @@ import { flatMap, fold } from "@ts-common/iterator"
 import * as json from "@ts-common/json"
 import { FilePosition } from "@ts-common/source-map"
 import { StringMap } from "@ts-common/string-map"
+import { PathComponent, stringify } from "jsonpath"
 import _ from "lodash"
 import { jsonSymbol, schemaSymbol } from "z-schema"
 
@@ -169,7 +170,10 @@ export interface NodeError<T extends NodeError<T>> {
   code?: string
   message?: string
   path?: string | string[]
+  jsonPath?: string
+  schemaPath?: string
   similarPaths?: string[]
+  similarJsonPaths?: string[]
   errors?: T[]
   innerErrors?: T[]
   in?: string
@@ -220,12 +224,10 @@ export function processValidationErrors<T extends NodeError<T>>(errorsNode: T) {
 /**
  * Serializes error tree
  */
-export function serializeErrors<T extends NodeError<T>>(node: T, path: unknown[]): T[] {
+export function serializeErrors<T extends NodeError<T>>(node: T, path: PathComponent[]): T[] {
   if (isLeaf(node)) {
     if (isTrueError(node)) {
-      if (node.path) {
-        node.path = consolidatePath(path, node.path).join("/")
-      }
+      setPathProperties(node, path)
       return [node]
     }
     return []
@@ -261,6 +263,11 @@ export function serializeErrors<T extends NodeError<T>>(node: T, path: unknown[]
             similarErr.similarPaths = []
           }
           similarErr.similarPaths.push(err.path as string)
+
+          if (!similarErr.similarJsonPaths) {
+            similarErr.similarJsonPaths = []
+          }
+          similarErr.similarJsonPaths.push(err.jsonPath as string)
         } else {
           acc.push(err)
         }
@@ -271,14 +278,24 @@ export function serializeErrors<T extends NodeError<T>>(node: T, path: unknown[]
   )
 
   if (isDiscriminatorError(node)) {
-    if (node.path) {
-      node.path = consolidatePath(path, node.path).join("/")
-    }
-
+    setPathProperties(node, path)
     node.inner = serializedInner
     return [node]
   }
   return [...serializedErrors, ...serializedInner]
+}
+
+/**
+ * Sets the path and jsonPath properties on an error node.
+ */
+function setPathProperties<T extends NodeError<T>>(node: T, path: PathComponent[]) {
+  if (!node.path) {
+    return
+  }
+
+  const pathSegments = consolidatePath(path, node.path)
+  node.path = pathSegments.join("/")
+  node.jsonPath = (pathSegments.length && stringify(pathSegments)) || ""
 }
 
 /**
@@ -343,7 +360,7 @@ const isLeaf = <T extends NodeError<T>>(node: T): boolean => !node.errors && !no
 /**
  * Unifies a suffix path with a root path.
  */
-function consolidatePath(path: unknown[], suffixPath: string | string[]): unknown[] {
+function consolidatePath(path: PathComponent[], suffixPath: string | string[]): PathComponent[] {
   let newSuffixIndex = 0
   let overlapIndex = path.lastIndexOf(suffixPath[newSuffixIndex])
   let previousIndex = overlapIndex
@@ -359,7 +376,7 @@ function consolidatePath(path: unknown[], suffixPath: string | string[]): unknow
       break
     }
   }
-  let newPath: unknown[] = []
+  let newPath: PathComponent[] = []
   if (newSuffixIndex === suffixPath.length) {
     // if all elements are contained in the existing path, nothing to do.
     newPath = path.slice(0)

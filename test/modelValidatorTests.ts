@@ -61,9 +61,16 @@ describe("Model Validation", () => {
       if (result[0].details.similarPaths === undefined) {
         throw new Error("result[0].details.similarPaths === undefined")
       }
+      if (result[0].details.similarJsonPaths === undefined) {
+        throw new Error("result[0].details.similarJsonPaths === undefined")
+      }
       assert(
         result[0].details.similarPaths.length === 1,
         `swagger "${specPath} with operation "${operationIds}" error should have a similar path.`
+      )
+      assert(
+        result[0].details.similarJsonPaths.length === 1,
+        `swagger "${specPath} with operation "${operationIds}" error should have a similar JSON path.`
       )
       // console.log(result)
     })
