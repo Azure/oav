@@ -171,6 +171,7 @@ export interface NodeError<T extends NodeError<T>> {
   message?: string
   path?: string | string[]
   jsonPath?: string
+  schemaPath?: string
   similarPaths?: string[]
   similarJsonPaths?: string[]
   errors?: T[]

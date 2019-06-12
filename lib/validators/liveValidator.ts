@@ -92,6 +92,7 @@ export interface LiveValidationIssue {
   readonly message: string
   readonly jsonPathsInPayload: string[]
   readonly pathsInPayload: string[]
+  readonly schemaPath: string
   readonly severity: Severity
   readonly source: SourceLocation
   readonly documentationUrl: string
@@ -376,6 +377,7 @@ export class LiveValidator {
       message: err.message || "",
       jsonPathsInPayload: err.jsonPath ? [err.jsonPath, ...(err.similarJsonPaths || [])] : [],
       pathsInPayload: err.path ? [err.path, ...(err.similarPaths || [])] : [],
+      schemaPath: err.schemaPath || "",
       inner: Array.isArray(err.inner)
         ? err.inner.map(innerErr => this.toLiveValidationIssue(innerErr))
         : undefined,

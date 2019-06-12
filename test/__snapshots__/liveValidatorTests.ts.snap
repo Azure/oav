@@ -18,6 +18,7 @@ Object {
         "pathsInPayload": Array [
           "properties",
         ],
+        "schemaPath": "",
         "severity": 0,
         "source": Object {
           "jsonRef": "#/definitions/UserCreateParameterProperties",
@@ -53,6 +54,7 @@ Object {
         "pathsInPayload": Array [
           "properties/lastName",
         ],
+        "schemaPath": "",
         "severity": 0,
         "source": Object {
           "jsonRef": "#/definitions/UserContractProperties/properties/lastName",
@@ -77,6 +79,7 @@ Object {
         "pathsInPayload": Array [
           "properties/state",
         ],
+        "schemaPath": "",
         "severity": 1,
         "source": Object {
           "jsonRef": "#/definitions/UserEntityBaseParameters/properties/state",
@@ -102,6 +105,7 @@ Object {
         "pathsInPayload": Array [
           "properties/registrationDate",
         ],
+        "schemaPath": "",
         "severity": 0,
         "source": Object {
           "jsonRef": "#/definitions/UserContractProperties/properties/registrationDate",
@@ -126,6 +130,7 @@ Object {
         "pathsInPayload": Array [
           "properties/groups/0",
         ],
+        "schemaPath": "",
         "severity": 0,
         "source": Object {
           "jsonRef": "#/definitions/GroupContractProperties",
@@ -174,6 +179,7 @@ Object {
         "pathsInPayload": Array [
           "properties/options/0/restriction",
         ],
+        "schemaPath": "",
         "severity": 0,
         "source": Object {
           "jsonRef": "#/definitions/ContentKeyPolicyTokenRestriction",
@@ -245,6 +251,7 @@ Object {
         "pathsInPayload": Array [
           "properties/groups/0/type",
         ],
+        "schemaPath": "",
         "severity": 1,
         "source": Object {
           "jsonRef": "#/definitions/GroupContractProperties/properties/type",
@@ -284,6 +291,7 @@ Object {
         "pathsInPayload": Array [
           "properties/state",
         ],
+        "schemaPath": "",
         "severity": 0,
         "source": Object {
           "jsonRef": "#/definitions/UserEntityBaseParameters/properties/state",
@@ -318,6 +326,7 @@ Object {
         "pathsInPayload": Array [
           "properties/groups/0/type",
         ],
+        "schemaPath": "",
         "severity": 0,
         "source": Object {
           "jsonRef": "#/definitions/GroupContractProperties/properties/type",
@@ -367,6 +376,7 @@ Object {
         "pathsInPayload": Array [
           "properties/createdAtUtc",
         ],
+        "schemaPath": "",
         "severity": 0,
         "source": Object {
           "jsonRef": "#/definitions/ApiManagementServiceBaseProperties/properties/createdAtUtc",
@@ -416,6 +426,7 @@ Object {
         "pathsInPayload": Array [
           "properties/hostnameConfigurations",
         ],
+        "schemaPath": "",
         "severity": 0,
         "source": Object {
           "jsonRef": "#/definitions/ApiManagementServiceBaseProperties/properties/hostnameConfigurations",
@@ -465,6 +476,7 @@ Object {
         "pathsInPayload": Array [
           "properties/description",
         ],
+        "schemaPath": "",
         "severity": 0,
         "source": Object {
           "jsonRef": "#/definitions/OperationEntityBaseContract/properties/description",
@@ -494,14 +506,11 @@ Object {
         "code": "MISSING_REQUIRED_PARAMETER",
         "documentationUrl": "",
         "inner": undefined,
-        "jsonPathsInPayload": Array [
-          "$.paths["/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/users/{uid}"].put.parameters["3"]",
-        ],
+        "jsonPathsInPayload": Array [],
         "message": "Value is required but was not provided",
         "params": undefined,
-        "pathsInPayload": Array [
-          "paths//subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/users/{uid}/put/parameters/3",
-        ],
+        "pathsInPayload": Array [],
+        "schemaPath": "#/paths/~1subscriptions~1{subscriptionId}~1resourceGroups~1{resourceGroupName}~1providers~1Microsoft.ApiManagement~1service~1{serviceName}~1users~1{uid}/put/parameters/3",
         "severity": 0,
         "source": Object {
           "jsonRef": "",
@@ -559,6 +568,7 @@ Object {
         "pathsInPayload": Array [
           "properties/groups/0",
         ],
+        "schemaPath": "",
         "severity": 0,
         "source": Object {
           "jsonRef": "#/definitions/GroupContractProperties",
@@ -607,6 +617,7 @@ Object {
         "pathsInPayload": Array [
           "properties/groups/0",
         ],
+        "schemaPath": "",
         "severity": 0,
         "source": Object {
           "jsonRef": "#/definitions/GroupContractProperties",
