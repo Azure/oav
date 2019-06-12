@@ -141,7 +141,7 @@ Output of the OAV tool has been snapshotted and committed to the repo. The regre
 
 1. Go to the failed build
 2. Download the artifact patch file
-3. In the OAV directory, at the relevant commit/branch, run `git apply <path to patch file>`
+3. In the OAV directory run `git apply <path to patch file>`
 4. Commit the patched changes and create a pull request
 5. Validate that the changes look ok and don't represent a breaking change in OAV
 6. Merge the PR
