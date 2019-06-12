@@ -657,9 +657,7 @@ export class LiveValidator {
         unique: true
       })
       log.debug(
-        `Using swaggers found from directory: "${
-          this.options.directory
-        }" and pattern: "${jsonsPattern}".
+        `Using swaggers found from directory: "${this.options.directory}" and pattern: "${jsonsPattern}".
         Total paths: ${swaggerPaths.length}`
       )
       return swaggerPaths

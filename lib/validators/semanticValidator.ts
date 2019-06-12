@@ -68,9 +68,7 @@ export class SemanticValidator extends SpecValidator<SemanticValidationResult> {
           this.updateValidityStatus()
           log.error(e as any)
         } else {
-          this.specValidationResult.validateSpec.result = `The spec ${
-            this.specPath
-          } is semantically valid.`
+          this.specValidationResult.validateSpec.result = `The spec ${this.specPath} is semantically valid.`
         }
         if (validationResult.warnings && validationResult.warnings.length > 0) {
           processErrors(validationResult.warnings)
@@ -85,9 +83,7 @@ export class SemanticValidator extends SpecValidator<SemanticValidationResult> {
       }
       return validationResult
     } catch (err) {
-      const msg = `An Internal Error occurred in validating the spec "${this.specPath}". \t${
-        err.message
-      }.`
+      const msg = `An Internal Error occurred in validating the spec "${this.specPath}". \t${err.message}.`
       err.code = C.ErrorCodes.InternalError.name
       err.id = C.ErrorCodes.InternalError.id
       err.message = msg
