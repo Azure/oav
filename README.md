@@ -3,6 +3,9 @@
 [![Build Status](https://dev.azure.com/azure-public/adx/_apis/build/status/public.Azure.oav)](https://dev.azure.com/azure-public/adx/_build/latest?definitionId=3)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
+
+Regression: [![Build Status](https://dev.azure.com/azure-sdk/public/_apis/build/status/OAV%20Validate%20Examples%20Regression?branchName=master)](https://dev.azure.com/azure-sdk/public/_build/latest?definitionId=163&branchName=master) [How to fix this](#fixing-regression-builds)
+
 Tools for validating OpenAPI (Swagger) files.
 
 ## Requirements
@@ -133,6 +136,15 @@ Output of the OAV tool has been snapshotted and committed to the repo. The regre
 [Fast Regression (~10mins)](https://dev.azure.com/azure-sdk/public/_build?definitionId=166&_a=completed) is used for merge validation
 
 [Slow Regression (~1 hour)](https://dev.azure.com/azure-sdk/public/_build?definitionId=163&_a=completed) is run after merge and should be fixed if it fails
+
+#### Fixing regression builds
+
+1. Go to the failed build
+2. Download the artifact patch file
+3. In the OAV directory, at the relevant commit/branch, run `git apply <path to patch file>`
+4. Commit the patched changes and create a pull request
+5. Validate that the changes look ok and don't represent a breaking change in OAV
+6. Merge the PR
 
 ---
 
