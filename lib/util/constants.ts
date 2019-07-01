@@ -96,6 +96,14 @@ export const ErrorCodes = {
   DoubleForwardSlashesInUrl: {
     name: "DOUBLE_FORWARD_SLASHES_IN_URL",
     id: "OAV129"
+  },
+  ResponseBodyNotInExample: {
+    name: "RESPONSE_BODY_NOT_IN_EXAMPLE",
+    id: "OAV130"
+  },
+  ExtraResponseBodyInExample: {
+    name: "EXTRA_RESPONSE_BODY_IN_EXAMPLE",
+    id: "OAV131"
   }
 }
 

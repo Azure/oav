@@ -502,6 +502,28 @@ describe("Model Validation", () => {
     })
   })
 
+  describe("No body in response if schema is defined for response", () => {
+    it("should fail on example without body defined in response", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/noBodyInResponse/test.json`
+      const result = await validate.validateExamples(specPath2, undefined, {
+        consoleLogLevel: "off"
+      })
+      assert(result.length === 1)
+      assert.strictEqual(result[0].code, "RESPONSE_BODY_NOT_IN_EXAMPLE")
+    })
+  })
+
+  describe("Extra body in response even it's not defined in schema", () => {
+    it("should fail on example when extra body defined in response", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/extraBodyInResponse/test.json`
+      const result = await validate.validateExamples(specPath2, undefined, {
+        consoleLogLevel: "off"
+      })
+      assert(result.length === 1)
+      assert.strictEqual(result[0].code, "EXTRA_RESPONSE_BODY_IN_EXAMPLE")
+    })
+  })
+
   describe("Default doesn't cover non-error responses", () => {
     it("should fail on example with unrecognized status code", async () => {
       const specPath2 = `${testPath}/modelValidation/swaggers/specification/defaultIsErrorOnly/test.json`

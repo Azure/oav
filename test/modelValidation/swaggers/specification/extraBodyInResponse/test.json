@@ -1,0 +1,30 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "sometitle",
+    "version": "2018-01-01"
+  },
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/somepath": {
+      "get": {
+        "operationId": "op",
+        "responses": {
+          "200": {
+            "description": "somedescription"
+          }
+        },
+        "x-ms-examples": {
+          "Fail": {
+            "$ref": "./examples/fail.json"
+          }
+        }
+      }
+    }
+  }
+}

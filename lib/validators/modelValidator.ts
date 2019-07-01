@@ -566,7 +566,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
           `"${operation.operationId}" has response body provided in the example, ` +
           `however the response does not have a "schema" defined in the swagger spec.`
         const e = this.constructErrorObject<Sway.ValidationEntry>({
-          code: C.ErrorCodes.ResponseSchemaNotInSpec,
+          code: C.ErrorCodes.ExtraResponseBodyInExample,
           message: msg,
           source: operation.definition
         })
@@ -574,13 +574,13 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
         log.error(e as any)
         continue
       } else if (exampleResponseBody === undefined && response.schema) {
-        // Fail when example provides the response body but the swagger spec doesn't define the schema for the response.
+        // Fail when example doesn't provide the response body but the swagger spec define the schema for the response.
         const msg =
           `Response statusCode "${exampleResponseStatusCode}" for operation ` +
           `"${operation.operationId}" has no response body provided in the example, ` +
           `however the response does have a "schema" defined in the swagger spec.`
         const e = this.constructErrorObject<Sway.ValidationEntry>({
-          code: C.ErrorCodes.ResponseSchemaNotInSpec,
+          code: C.ErrorCodes.ResponseBodyNotInExample,
           message: msg,
           source: operation.definition
         })
