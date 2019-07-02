@@ -1,6 +1,8 @@
 # Changelog
-### 07/02/2019 0.18.5
+### 07/02/2019 0.18.6
 - Fail the validation when there's schema defined for response body in spec but the example response doesn't provide the body.
+
+### 06/12/2019 0.18.5
 
 ### 05/30/2019 0.18.4
 - Better error reporting for spec reference pointing to invalid files.
