@@ -100,10 +100,6 @@ export const ErrorCodes = {
   ResponseBodyNotInExample: {
     name: "RESPONSE_BODY_NOT_IN_EXAMPLE",
     id: "OAV130"
-  },
-  ExtraResponseBodyInExample: {
-    name: "EXTRA_RESPONSE_BODY_IN_EXAMPLE",
-    id: "OAV131"
   }
 }
 

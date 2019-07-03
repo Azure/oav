@@ -520,7 +520,7 @@ describe("Model Validation", () => {
         consoleLogLevel: "off"
       })
       assert(result.length === 1)
-      assert.strictEqual(result[0].code, "EXTRA_RESPONSE_BODY_IN_EXAMPLE")
+      assert.strictEqual(result[0].code, "RESPONSE_SCHEMA_NOT_IN_SPEC")
     })
   })
 

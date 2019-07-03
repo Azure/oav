@@ -566,7 +566,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
           `"${operation.operationId}" has response body provided in the example, ` +
           `however the response does not have a "schema" defined in the swagger spec.`
         const e = this.constructErrorObject<Sway.ValidationEntry>({
-          code: C.ErrorCodes.ExtraResponseBodyInExample,
+          code: C.ErrorCodes.ResponseSchemaNotInSpec,
           message: msg,
           source: operation.definition
         })
