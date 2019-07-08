@@ -76,7 +76,9 @@ export function resolveNestedDefinitions(spec: SwaggerObject): SwaggerObject {
   // a function to resolve SchemaObject (top-level and nested)
   const resolveSchemaObject = (schemaObject: SchemaObject): SchemaObject => {
     const result = propertySetMap<SchemaObject>(schemaObject, {
-      properties: properties => stringMapMap(properties, resolveNestedSchemaObject),
+      properties: skipIfUndefined(properties =>
+        stringMapMap(properties, resolveNestedSchemaObject)
+      ),
       additionalProperties: additionalProperties =>
         additionalProperties === undefined || typeof additionalProperties !== "object"
           ? additionalProperties

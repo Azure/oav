@@ -1,8 +1,13 @@
 # Changelog
+### 07/08/2019 0.18.7
+- Fixed validation of nullable array types if they were defined as tope level models or transformed into top level models in the `"definitions"` object. Fixes #437.
+- Fixed an issue where `"properties": {}` was being incorrectly added to a schema with `"$ref"` in the response or a top level `array`. 
+
 ### 07/02/2019 0.18.6
--  Adding support for JSON path & schema path in errors.
+- Improved model validation when example provides the response body however the spec doesn't have a schema for the response and vice-versa.
 
 ### 06/12/2019 0.18.5
+-  Added support for JSON path & schema path in errors.
 
 ### 05/30/2019 0.18.4
 - Better error reporting for spec reference pointing to invalid files.
