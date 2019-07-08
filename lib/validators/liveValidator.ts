@@ -372,11 +372,20 @@ export class LiveValidator {
     }
   }
   private toLiveValidationIssue(err: { [index: string]: any; url: string }): LiveValidationIssue {
+    let pathsInPayload = [];
+    if(err.code === "OBJECT_MISSING_REQUIRED_PROPERTY" || err.code === 'OBJECT_ADDITIONAL_PROPERTIES'){
+      pathsInPayload = err.path ? 
+        err.params.map((param: any) => err.path.concat(`/${param}`)).concat(err.similarPaths || []) : []
+    }
+    else{
+      pathsInPayload = err.path ? [err.path, ...(err.similarPaths || [])] : [];
+    }
+
     return {
       code: err.code || "INTERNAL_ERROR",
       message: err.message || "",
       jsonPathsInPayload: err.jsonPath ? [err.jsonPath, ...(err.similarJsonPaths || [])] : [],
-      pathsInPayload: err.path ? [err.path, ...(err.similarPaths || [])] : [],
+      pathsInPayload: pathsInPayload,
       schemaPath: err.schemaPath || "",
       inner: Array.isArray(err.inner)
         ? err.inner.map(innerErr => this.toLiveValidationIssue(innerErr))

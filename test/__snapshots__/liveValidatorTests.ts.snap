@@ -16,7 +16,7 @@ Object {
           "email",
         ],
         "pathsInPayload": Array [
-          "properties",
+          "properties/email",
         ],
         "schemaPath": "",
         "severity": 0,
@@ -128,7 +128,7 @@ Object {
           "id",
         ],
         "pathsInPayload": Array [
-          "properties/groups/0",
+          "properties/groups/0/id",
         ],
         "schemaPath": "",
         "severity": 0,
@@ -177,7 +177,7 @@ Object {
           "audience",
         ],
         "pathsInPayload": Array [
-          "properties/options/0/restriction",
+          "properties/options/0/restriction/audience",
         ],
         "schemaPath": "",
         "severity": 0,
@@ -566,7 +566,7 @@ Object {
           "id",
         ],
         "pathsInPayload": Array [
-          "properties/groups/0",
+          "properties/groups/0/id",
         ],
         "schemaPath": "",
         "severity": 0,
@@ -615,7 +615,7 @@ Object {
           "displayName",
         ],
         "pathsInPayload": Array [
-          "properties/groups/0",
+          "properties/groups/0/displayName",
         ],
         "schemaPath": "",
         "severity": 0,
