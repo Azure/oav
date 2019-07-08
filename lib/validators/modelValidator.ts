@@ -558,7 +558,9 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
 
       const exampleResponseHeaders = exampleResponseValue[exampleResponseStatusCode].headers || {}
       const exampleResponseBody = exampleResponseValue[exampleResponseStatusCode].body
-      if (exampleResponseBody && !response.schema) {
+
+      // Fail when example provides the response body but the swagger spec doesn't define the schema for the response.
+      if (exampleResponseBody !== undefined && !response.schema) {
         const msg =
           `Response statusCode "${exampleResponseStatusCode}" for operation ` +
           `"${operation.operationId}" has response body provided in the example, ` +
@@ -571,7 +573,22 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
         validationResults.errors.push(e)
         log.error(e as any)
         continue
+      } else if (exampleResponseBody === undefined && response.schema) {
+        // Fail when example doesn't provide the response body but the swagger spec define the schema for the response.
+        const msg =
+          `Response statusCode "${exampleResponseStatusCode}" for operation ` +
+          `"${operation.operationId}" has no response body provided in the example, ` +
+          `however the response does have a "schema" defined in the swagger spec.`
+        const e = this.constructErrorObject<Sway.ValidationEntry>({
+          code: C.ErrorCodes.ResponseBodyNotInExample,
+          message: msg,
+          source: operation.definition
+        })
+        validationResults.errors.push(e)
+        log.error(e as any)
+        continue
       }
+
       // ensure content-type header is present
       if (!(exampleResponseHeaders["content-type"] || exampleResponseHeaders["Content-Type"])) {
         exampleResponseHeaders["content-type"] = utils.getJsonContentType(operation.produces)
