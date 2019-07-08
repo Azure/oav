@@ -137,15 +137,11 @@ export class SemanticValidator extends SpecValidator<SemanticValidationResult> {
           const validateEntry: Sway.ValidationEntry = {
             code: "DISCRIMINATOR_ERROR",
             error: "discriminator is not a required property.",
-            errors: [],
-            lineage: [],
             name: "discriminator",
             params: [discriminator],
-            schemaPath: "",
-            schemaId: "",
             message: "discriminator must be a required property.",
             path: [path]
-          }
+          } as any
           validationEntries.push(validateEntry)
         }
       }
