@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import { keys } from "@ts-common/string-map"
+import * as sm from "@ts-common/string-map"
 import * as util from "util"
 import * as Sway from "yasway"
 
@@ -11,6 +11,7 @@ import { log } from "../util/logging"
 import { processErrors } from "../util/processErrors"
 import { validateResponse } from "../util/validationResponse"
 
+import { TitleObject } from "./specTransformer"
 import { CommonValidationResult, SpecValidator } from "./specValidator"
 
 export interface Result {
@@ -50,6 +51,10 @@ export class SemanticValidator extends SpecValidator<SemanticValidationResult> {
     try {
       const validationResult = this.swaggerApi.validate()
       if (validationResult) {
+        const discriminatorValidationResult = this.validateDiscriminator()
+        if (discriminatorValidationResult) {
+          validationResult.errors = validationResult.errors.concat(discriminatorValidationResult)
+        }
         if (validationResult.errors && validationResult.errors.length) {
           this.specValidationResult.validateSpec.isValid = false
           processErrors(validationResult.errors)
@@ -99,7 +104,7 @@ export class SemanticValidator extends SpecValidator<SemanticValidationResult> {
     const re = /^(.*)\/providers\/(\w+\.\w+)\/(.*)$/gi
     if (this.specInJson) {
       if (this.specInJson.paths) {
-        for (const pathStr of keys(this.specInJson.paths)) {
+        for (const pathStr of sm.keys(this.specInJson.paths)) {
           const res = re.exec(pathStr)
           if (res && res[2]) {
             return res[2]
@@ -108,5 +113,43 @@ export class SemanticValidator extends SpecValidator<SemanticValidationResult> {
       }
     }
     return null
+  }
+
+  /**
+   * Validate discriminator must be a required property
+   */
+  private validateDiscriminator(): Sway.ValidationEntry[] {
+    const spec = this.specInJson
+    const definitions = spec.definitions as Sway.DefinitionsObject
+    const validationEntries: Sway.ValidationEntry[] = []
+    for (const modelEntry of sm.entries(definitions)) {
+      const model = modelEntry[1]
+      const discriminator = model.discriminator
+      if (discriminator) {
+        if (!model.required || !model.required.includes(discriminator)) {
+          let path = modelEntry[0]
+          if (model.title) {
+            const title: TitleObject = JSON.parse(model.title)
+            if (title.path) {
+              path = title.path.join()
+            }
+          }
+          const validateEntry: Sway.ValidationEntry = {
+            code: "DISCRIMINATOR_ERROR",
+            error: "discriminator is not a required property.",
+            errors: [],
+            lineage: [],
+            name: "discriminator",
+            params: [discriminator],
+            schemaPath: "",
+            schemaId: "",
+            message: "discriminator must be a required property.",
+            path: [path]
+          }
+          validationEntries.push(validateEntry)
+        }
+      }
+    }
+    return validationEntries
   }
 }
