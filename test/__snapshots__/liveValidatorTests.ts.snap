@@ -9,7 +9,7 @@ Object {
         "documentationUrl": "",
         "inner": undefined,
         "jsonPathsInPayload": Array [
-          "$.properties",
+          "$.properties.email",
         ],
         "message": "Missing required property: email",
         "params": Array [
@@ -121,7 +121,7 @@ Object {
         "documentationUrl": "",
         "inner": undefined,
         "jsonPathsInPayload": Array [
-          "$.properties.groups[0]",
+          "$.properties.groups[0].id",
         ],
         "message": "Additional properties not allowed: id",
         "params": Array [
@@ -170,7 +170,7 @@ Object {
         "documentationUrl": "",
         "inner": undefined,
         "jsonPathsInPayload": Array [
-          "$.properties.options[0].restriction",
+          "$.properties.options[0].restriction.audience",
         ],
         "message": "Missing required property: audience",
         "params": Array [
@@ -559,7 +559,7 @@ Object {
         "documentationUrl": "",
         "inner": undefined,
         "jsonPathsInPayload": Array [
-          "$.properties.groups[0]",
+          "$.properties.groups[0].id",
         ],
         "message": "Additional properties not allowed: id",
         "params": Array [
@@ -608,7 +608,7 @@ Object {
         "documentationUrl": "",
         "inner": undefined,
         "jsonPathsInPayload": Array [
-          "$.properties.groups[0]",
+          "$.properties.groups[0].displayName",
         ],
         "message": "Missing required property: displayName",
         "params": Array [

@@ -372,20 +372,36 @@ export class LiveValidator {
     }
   }
   private toLiveValidationIssue(err: { [index: string]: any; url: string }): LiveValidationIssue {
-    let pathsInPayload = [];
-    if(err.code === "OBJECT_MISSING_REQUIRED_PROPERTY" || err.code === 'OBJECT_ADDITIONAL_PROPERTIES'){
-      pathsInPayload = err.path ? 
-        err.params.map((param: any) => err.path.concat(`/${param}`)).concat(err.similarPaths || []) : []
-    }
-    else{
-      pathsInPayload = err.path ? [err.path, ...(err.similarPaths || [])] : [];
+    let pathsInPayload = []
+    let jsonPathsInPayload = []
+    if (
+      err.code === "OBJECT_MISSING_REQUIRED_PROPERTY" ||
+      err.code === "OBJECT_ADDITIONAL_PROPERTIES"
+    ) {
+      const similarPaths = err.similarPaths
+        ? err.params.map((param: any) => err.similarPaths.concat(`/${param}`))
+        : []
+      pathsInPayload = err.path
+        ? err.params.map((param: any) => err.path.concat(`/${param}`)).concat(similarPaths || [])
+        : []
+      const similarJsonPaths = err.similarJsonPaths
+        ? err.params.map((param: any) => err.similarPaths.concat(`.${param}`))
+        : []
+      jsonPathsInPayload = err.jsonPath
+        ? err.params
+            .map((param: any) => err.jsonPath.concat(`.${param}`))
+            .concat(similarJsonPaths || [])
+        : []
+    } else {
+      pathsInPayload = err.path ? [err.path, ...(err.similarPaths || [])] : []
+      jsonPathsInPayload = err.jsonPath ? [err.jsonPath, ...(err.similarJsonPaths || [])] : []
     }
 
     return {
       code: err.code || "INTERNAL_ERROR",
       message: err.message || "",
-      jsonPathsInPayload: err.jsonPath ? [err.jsonPath, ...(err.similarJsonPaths || [])] : [],
-      pathsInPayload: pathsInPayload,
+      jsonPathsInPayload,
+      pathsInPayload,
       schemaPath: err.schemaPath || "",
       inner: Array.isArray(err.inner)
         ? err.inner.map(innerErr => this.toLiveValidationIssue(innerErr))
