@@ -375,8 +375,8 @@ export class LiveValidator {
     return {
       code: err.code || "INTERNAL_ERROR",
       message: err.message || "",
-      pathsInPayload: err.path ? [err.path, ...(err.similarPaths || [])] : [],
       jsonPathsInPayload: err.jsonPath ? [err.jsonPath, ...(err.similarJsonPaths || [])] : [],
+      pathsInPayload: err.path ? [err.path, ...(err.similarPaths || [])] : [],
       schemaPath: err.schemaPath || "",
       inner: Array.isArray(err.inner)
         ? err.inner.map(innerErr => this.toLiveValidationIssue(innerErr))
