@@ -248,9 +248,9 @@ export function serializeErrors<T extends NodeError<T>>(node: T, path: PathCompo
     path = consolidatePath(path, node.path)
   }
 
-  const serializedErrors = Array.from(
-    flatMap(node.errors, validationError => serializeErrors(validationError, path))
-  )
+  const serializedErrors = flatMap(node.errors, validationError =>
+    serializeErrors(validationError, path)
+  ).toArray()
 
   const serializedInner = fold(
     node.inner,
