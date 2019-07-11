@@ -560,6 +560,7 @@ Object {
         "inner": undefined,
         "jsonPathsInPayload": Array [
           "$.properties.groups[0].id",
+          "$.properties.groups[1].id",
         ],
         "message": "Additional properties not allowed: id",
         "params": Array [
@@ -567,6 +568,7 @@ Object {
         ],
         "pathsInPayload": Array [
           "properties/groups/0/id",
+          "properties/groups/1/id",
         ],
         "schemaPath": "",
         "severity": 0,

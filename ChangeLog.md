@@ -1,19 +1,28 @@
 # Changelog
+
+### 07/12/2019 0.18.7
+
+- Modify path in payload for MISSING_REQUIRED_PROPERTIES and for OBJECT_ADDITIONAL_PROPERTIES to point to the actual property.
+
 ### 07/02/2019 0.18.6
--  Adding support for JSON path & schema path in errors.
+
+- Adding support for JSON path & schema path in errors.
 
 ### 06/12/2019 0.18.5
 
 ### 05/30/2019 0.18.4
+
 - Better error reporting for spec reference pointing to invalid files.
 
 ### 05/29/2019 0.18.3
+
 - Update cache initialization in live validator to `Promise.all()`.
 - Update package version of `yuml2svg` dependency (since it contains typescript definitions).
 - Add support for validating `readOnly` properties in the request.
 - Limiting dependencies on `@types/lodash` and `typescript` due to stricter type definition rules in the later versions.
 
 ### 04/25/2019 0.18.2
+
 - Use node env for jest #422.
 
 ### 04/08/2019 0.18.1
