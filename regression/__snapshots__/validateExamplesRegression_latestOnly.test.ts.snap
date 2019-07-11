@@ -1507,19 +1507,6 @@ Array [
     "source": "response",
   },
   Object {
-    "code": "INTERNAL_ERROR",
-    "details": Object {
-      "code": "INTERNAL_ERROR",
-      "message": "Cannot read property 'certificateSource' of null",
-      "schemaPath": "#/paths/~1subscriptions~1{subscriptionId}~1resourceGroups~1{resourceGroupName}~1providers~1Microsoft.Cdn~1profiles~1{profileName}~1endpoints~1{endpointName}~1customDomains~1{customDomainName}~1enableCustomHttps/post/parameters/4",
-    },
-    "operationId": "CustomDomains_EnableCustomHttps",
-    "responseCode": "ALL",
-    "scenario": "CustomDomains_EnableCustomHttpsUsingYourOwnCertificate",
-    "severity": 0,
-    "source": "request",
-  },
-  Object {
     "code": "RESPONSE_SCHEMA_NOT_IN_SPEC",
     "details": Object {
       "code": "RESPONSE_SCHEMA_NOT_IN_SPEC",
@@ -1541,19 +1528,6 @@ Array [
     "scenario": "CustomDomains_EnableCustomHttpsUsingYourOwnCertificate",
     "severity": 0,
     "source": "response",
-  },
-  Object {
-    "code": "INTERNAL_ERROR",
-    "details": Object {
-      "code": "INTERNAL_ERROR",
-      "message": "Cannot read property 'certificateSource' of null",
-      "schemaPath": "#/paths/~1subscriptions~1{subscriptionId}~1resourceGroups~1{resourceGroupName}~1providers~1Microsoft.Cdn~1profiles~1{profileName}~1endpoints~1{endpointName}~1customDomains~1{customDomainName}~1enableCustomHttps/post/parameters/4",
-    },
-    "operationId": "CustomDomains_EnableCustomHttps",
-    "responseCode": "ALL",
-    "scenario": "CustomDomains_EnableCustomHttpsUsingCDNManagedCertificate",
-    "severity": 0,
-    "source": "request",
   },
   Object {
     "code": "RESPONSE_SCHEMA_NOT_IN_SPEC",
