@@ -9,14 +9,14 @@ Object {
         "documentationUrl": "",
         "inner": undefined,
         "jsonPathsInPayload": Array [
-          "$.properties",
+          "$.properties.email",
         ],
         "message": "Missing required property: email",
         "params": Array [
           "email",
         ],
         "pathsInPayload": Array [
-          "properties",
+          "properties/email",
         ],
         "schemaPath": "",
         "severity": 0,
@@ -121,14 +121,14 @@ Object {
         "documentationUrl": "",
         "inner": undefined,
         "jsonPathsInPayload": Array [
-          "$.properties.groups[0]",
+          "$.properties.groups[0].id",
         ],
         "message": "Additional properties not allowed: id",
         "params": Array [
           "id",
         ],
         "pathsInPayload": Array [
-          "properties/groups/0",
+          "properties/groups/0/id",
         ],
         "schemaPath": "",
         "severity": 0,
@@ -170,14 +170,14 @@ Object {
         "documentationUrl": "",
         "inner": undefined,
         "jsonPathsInPayload": Array [
-          "$.properties.options[0].restriction",
+          "$.properties.options[0].restriction.audience",
         ],
         "message": "Missing required property: audience",
         "params": Array [
           "audience",
         ],
         "pathsInPayload": Array [
-          "properties/options/0/restriction",
+          "properties/options/0/restriction/audience",
         ],
         "schemaPath": "",
         "severity": 0,
@@ -559,14 +559,16 @@ Object {
         "documentationUrl": "",
         "inner": undefined,
         "jsonPathsInPayload": Array [
-          "$.properties.groups[0]",
+          "$.properties.groups[0].id",
+          "$.properties.groups[1].id",
         ],
         "message": "Additional properties not allowed: id",
         "params": Array [
           "id",
         ],
         "pathsInPayload": Array [
-          "properties/groups/0",
+          "properties/groups/0/id",
+          "properties/groups/1/id",
         ],
         "schemaPath": "",
         "severity": 0,
@@ -608,14 +610,14 @@ Object {
         "documentationUrl": "",
         "inner": undefined,
         "jsonPathsInPayload": Array [
-          "$.properties.groups[0]",
+          "$.properties.groups[0].displayName",
         ],
         "message": "Missing required property: displayName",
         "params": Array [
           "displayName",
         ],
         "pathsInPayload": Array [
-          "properties/groups/0",
+          "properties/groups/0/displayName",
         ],
         "schemaPath": "",
         "severity": 0,
