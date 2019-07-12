@@ -1,6 +1,6 @@
 # Changelog
 
-### 07/12/2019 0.18.7
+### 07/12/2019 0.19.0
 
 - Modify path in payload for MISSING_REQUIRED_PROPERTIES and for OBJECT_ADDITIONAL_PROPERTIES to point to the actual property.
 
