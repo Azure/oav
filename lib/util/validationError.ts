@@ -292,8 +292,19 @@ function setPathProperties<T extends NodeError<T>>(node: T, path: PathComponent[
   if (!node.path) {
     return
   }
+  let nodePath = typeof node.path === "string" ? [node.path] : node.path
 
-  const pathSegments = consolidatePath(path, node.path)
+  if (
+    node.code === "OBJECT_MISSING_REQUIRED_PROPERTY" ||
+    node.code === "OBJECT_ADDITIONAL_PROPERTIES"
+  ) {
+    // For multiple missing/additional properties , each node would only contain one param.
+    if (node.params && node.params.length > 0) {
+      nodePath = nodePath.concat(node.params[0] as string)
+    }
+  }
+
+  const pathSegments = consolidatePath(path, nodePath)
   node.path = pathSegments.join("/")
   node.jsonPath = (pathSegments.length && stringify(pathSegments)) || ""
 }

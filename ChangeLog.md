@@ -1,9 +1,14 @@
 # Changelog
 
-## 07/02/2019 0.18.7
+## 07/02/2019 0.19.1
 
 - Update TypeScript to 3.5
 - `@types/jsonpath` is a dependency because `PathComponent` type from the package is exported in `lib/util/validationError.ts`.
+
+## 07/12/2019 0.19.0
+
+- Modify path in payload for MISSING_REQUIRED_PROPERTIES and for OBJECT_ADDITIONAL_PROPERTIES to point to the actual property.
+
 
 ## 07/02/2019 0.18.6
 
