@@ -1,5 +1,9 @@
 # Changelog
 
+## 07/12/2019 0.19.2
+
+- Add support for validating discriminator is required and also the support for suppression.[Issue#386](https://github.com/Azure/oav/issues/386).
+
 ## 07/02/2019 0.19.1
 
 - Update TypeScript to 3.5

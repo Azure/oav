@@ -34,11 +34,7 @@ export function existSuppression(
 ): boolean {
   if (suppression.directive !== undefined) {
     const suppressionArray = getSuppressionArray(specPath, suppression.directive)
-    for (const s of suppressionArray) {
-      if (s.suppress === id) {
-        return true
-      }
-    }
+    return it.some(suppressionArray, s => s.suppress === id)
   }
   return false
 }
