@@ -5,5 +5,5 @@
 ``` yaml
 directive:
   - from: notRequiredDiscriminatorWithSuppression.json
-    suppress: OAV130 
+    suppress: OAV131 
     reason: Testing purpose.

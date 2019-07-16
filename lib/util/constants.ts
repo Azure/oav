@@ -97,9 +97,13 @@ export const ErrorCodes = {
     name: "DOUBLE_FORWARD_SLASHES_IN_URL",
     id: "OAV129"
   },
+  ResponseBodyNotInExample: {
+    name: "RESPONSE_BODY_NOT_IN_EXAMPLE",
+    id: "OAV130"
+  },
   DiscriminatorNotRequired: {
     name: "DISCRIMINATOR_NOT_REQUIRED",
-    id: "OAV130"
+    id: "OAV131"
   }
 }
 

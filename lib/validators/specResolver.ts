@@ -965,7 +965,7 @@ export class SpecResolver {
     }
     const definitions = this.specInJson.definitions as DefinitionsObject
     const reference = `#/definitions/${name}`
-    const result = new Set()
+    const result = new Set<string>()
 
     const findReferences = (definitionName: string) => {
       const definition = definitions[definitionName]
