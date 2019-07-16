@@ -60,7 +60,7 @@ export function scenarioReducer(
         ValidationResultSource.REQUEST,
         "ALL"
       )
-    : it.empty()
+    : it.empty<ModelValidationError>()
 
   // process responses
   rawValidationResult.requestValidationResult.errors = []
