@@ -96,6 +96,10 @@ export const ErrorCodes = {
   DoubleForwardSlashesInUrl: {
     name: "DOUBLE_FORWARD_SLASHES_IN_URL",
     id: "OAV129"
+  },
+  DiscriminatorNotRequired: {
+    name: "DISCRIMINATOR_NOT_REQUIRED",
+    id: "OAV130"
   }
 }
 

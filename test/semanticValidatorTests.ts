@@ -42,4 +42,10 @@ describe("Semantic validation", () => {
     const result = await validate.validateSpec(specPath, undefined)
     assert(result.validityStatus === false)
   })
+
+  it("should succeed when discriminator is not a required property and the error is suppressed", async () => {
+    const specPath = `${testPath}/semanticValidation/specification/invalid/notRequiredDiscriminatorWithSuppression.json`
+    const result = await validate.validateSpec(specPath, undefined)
+    assert(result.validityStatus === true)
+  })
 })
