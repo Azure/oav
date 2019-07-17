@@ -3,9 +3,10 @@
 
 import * as amd from "@azure/openapi-markdown"
 import * as md from "@ts-common/commonmark-to-markdown"
-import { isArray } from "@ts-common/iterator"
+import * as it from "@ts-common/iterator"
 import * as vfs from "@ts-common/virtual-fs"
 import * as path from "path"
+import { isSubPath, splitPathAndReverse } from "../util/path"
 
 export const getSuppressions = async (specPath: string): Promise<undefined | amd.Suppression> => {
   // find readme.md
@@ -20,8 +21,32 @@ export const getSuppressions = async (specPath: string): Promise<undefined | amd
     return undefined
   }
   const suppression = amd.getYamlFromNode(suppressionCodeBlock) as amd.Suppression
-  if (!isArray(suppression.directive)) {
+  if (!it.isArray(suppression.directive)) {
     return undefined
   }
   return suppression
+}
+
+export function existSuppression(
+  specPath: string,
+  suppression: amd.Suppression,
+  id: string
+): boolean {
+  if (suppression.directive !== undefined) {
+    const suppressionArray = getSuppressionArray(specPath, suppression.directive)
+    return it.some(suppressionArray, s => s.suppress === id)
+  }
+  return false
+}
+
+const getSuppressionArray = (
+  specPath: string,
+  suppressionItems: ReadonlyArray<amd.SuppressionItem>
+): ReadonlyArray<amd.SuppressionItem> => {
+  const urlReversed = splitPathAndReverse(specPath)
+  return suppressionItems.filter(s =>
+    it.some(it.isArray(s.from) ? s.from : [s.from], from =>
+      isSubPath(urlReversed, splitPathAndReverse(from))
+    )
+  )
 }
