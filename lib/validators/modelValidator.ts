@@ -88,7 +88,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     }
   }
 
-  private async loadExamplesForOperation(exampleFilePath: string) : Promise<void> {
+  private async loadExamplesForOperation(exampleFilePath: string): Promise<void> {
     try {
       if (!this.exampleJsonMap.has(exampleFilePath)) {
         const exampleJson = await jsonUtils.parseJson(
