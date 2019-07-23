@@ -87,7 +87,6 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       }
     }
   }
-
   private async loadExamplesForOperation(exampleFilePath: string): Promise<void> {
     try {
       if (!this.exampleJsonMap.has(exampleFilePath)) {
@@ -98,7 +97,6 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
         )
         this.exampleJsonMap.set(exampleFilePath, exampleJson)
       }
-
       // let position: sourcemap.FilePosition = sourcemap.getDescendantFilePosition(exampleJson, ["parameters","profileName"])
       // console.log(position.line + position.column);
     } catch (error) {
