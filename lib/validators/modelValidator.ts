@@ -90,12 +90,15 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
 
   private async loadExamplesForOperation(exampleFilePath: string) {
     try {
-      const exampleJson = await jsonUtils.parseJson(
-        undefined,
-        exampleFilePath,
-        jsonParser.defaultErrorReport
-      )
-      this.exampleJsonMap.set(exampleFilePath, exampleJson)
+      if (!this.exampleJsonMap.has(exampleFilePath)) {
+        const exampleJson = await jsonUtils.parseJson(
+          undefined,
+          exampleFilePath,
+          jsonParser.defaultErrorReport
+        )
+        this.exampleJsonMap.set(exampleFilePath, exampleJson)
+      }
+
       // let position: sourcemap.FilePosition = sourcemap.getDescendantFilePosition(exampleJson, ["parameters","profileName"])
       // console.log(position.line + position.column);
     } catch (error) {
