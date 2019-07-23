@@ -1,13 +1,16 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 import { filter, toArray } from "@ts-common/iterator"
+import { JsonRef } from "@ts-common/json"
+import * as jsonParser from "@ts-common/json-parser"
+import { getDescendantFilePosition } from "@ts-common/source-map"
 import * as sm from "@ts-common/string-map"
 import * as msRest from "ms-rest"
 import * as Sway from "yasway"
-
 import { ResponseWrapper } from "../models/responseWrapper"
 import { CommonError } from "../util/commonError"
 import * as C from "../util/constants"
+import * as jsonUtils from "../util/jsonUtils"
 import { log } from "../util/logging"
 import { ModelValidationError } from "../util/modelValidationError"
 import { processErrors, setPositionAndUrl } from "../util/processErrors"
@@ -27,6 +30,7 @@ import {
 const HttpRequest = msRest.WebResource
 
 export class ModelValidator extends SpecValidator<SpecValidationResult> {
+  private exampleJsonMap = new Map<string, Sway.SwaggerObject>()
   /*
    * Validates the given operationIds or all the operations in the spec.
    *
@@ -34,7 +38,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
    * validated.
    * If not specified then the entire spec is validated.
    */
-  public validateOperations(operationIds?: string): void {
+  public async validateOperations(operationIds?: string): Promise<void> {
     if (!this.swaggerApi) {
       throw new Error(
         // tslint:disable-next-line: max-line-length
@@ -69,7 +73,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
         "x-ms-examples": {},
         "example-in-spec": {}
       }
-      this.validateOperation(operation)
+      await this.validateOperation(operation)
       const operationResult = this.specValidationResult.operations[operation.operationId]
       if (operationResult === undefined) {
         throw new Error("operationResult is undefined")
@@ -84,6 +88,20 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     }
   }
 
+  private async loadExamplesForOperation(exampleFilePath: string) {
+    try {
+      const exampleJson = await jsonUtils.parseJson(
+        undefined,
+        exampleFilePath,
+        jsonParser.defaultErrorReport
+      )
+      this.exampleJsonMap.set(exampleFilePath, exampleJson)
+      // let position: sourcemap.FilePosition = sourcemap.getDescendantFilePosition(exampleJson, ["parameters","profileName"])
+      // console.log(position.line + position.column);
+    } catch (error) {
+      throw new Error(`Failed to load a reference example file ${exampleFilePath}. (${error})`)
+    }
+  }
   private initializeExampleResult(
     operationId: string,
     exampleType: string,
@@ -167,7 +185,8 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     requestValidationErrors: ModelValidationError[],
     requestValidationWarnings: unknown[] | undefined,
     exampleType: OperationResultType,
-    scenarioName?: string
+    scenarioName?: string,
+    exampleFilePath?: string
   ): void {
     this.initializeExampleResult(operationId, exampleType, scenarioName)
     const { operationResult, part } = this.getExample(operationId, exampleType, scenarioName)
@@ -177,7 +196,14 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     let warnMsg
     if (requestValidationErrors && requestValidationErrors.length) {
       errorMsg = `Found errors in ${subMsg}.`
-      this.constructRequestResult(operationResult, false, errorMsg, requestValidationErrors)
+      this.constructRequestResult(
+        operationResult,
+        false,
+        errorMsg,
+        requestValidationErrors,
+        null,
+        exampleFilePath
+      )
     } else {
       this.constructRequestResult(operationResult, true, infoMsg)
     }
@@ -242,7 +268,8 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
   private constructOperationResult(
     operation: Sway.Operation,
     result: ValidationResult,
-    exampleType: OperationResultType
+    exampleType: OperationResultType,
+    exampleFileMap?: Map<string, string>
   ): void {
     const operationId = operation.operationId
     if (result.exampleNotFound) {
@@ -276,7 +303,8 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
             requestValidationErrors,
             requestValidationWarnings,
             exampleType,
-            scenario
+            scenario,
+            exampleFileMap !== undefined ? exampleFileMap.get(scenario) : undefined
           )
           // responseValidation
           const responseValidation = result.scenarios[scenario].responseValidation
@@ -334,7 +362,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
    *
    * @param {object} operation - The operation object.
    */
-  private validateXmsExamples(operation: Sway.Operation): void {
+  private async validateXmsExamples(operation: Sway.Operation): Promise<void> {
     if (operation === null || operation === undefined || typeof operation !== "object") {
       throw new Error("operation cannot be null or undefined and must be of type 'object'.")
     }
@@ -343,6 +371,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     const result: ValidationResult = {
       scenarios: resultScenarios
     }
+    const exampleFileMap = new Map<string, string>()
     if (xmsExamples) {
       for (const [scenario, xmsExampleFunc] of sm.entries<any>(xmsExamples)) {
         const xmsExample = xmsExampleFunc()
@@ -350,6 +379,8 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
           requestValidation: this.validateRequest(operation, xmsExample.parameters),
           responseValidation: this.validateXmsExampleResponses(operation, xmsExample.responses)
         }
+        exampleFileMap.set(scenario, xmsExample.docPath)
+        await this.loadExamplesForOperation(xmsExample.docPath)
       }
       result.scenarios = resultScenarios
     } else {
@@ -361,7 +392,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
         source: operation.definition
       })
     }
-    this.constructOperationResult(operation, result, C.xmsExamples)
+    this.constructOperationResult(operation, result, C.xmsExamples, exampleFileMap)
   }
 
   /*
@@ -369,7 +400,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
    *
    * @param {object} operation - The operation object.
    */
-  private validateOperation(operation: Sway.Operation): void {
+  private async validateOperation(operation: Sway.Operation): Promise<void> {
     this.validateXmsExamples(operation)
     this.validateExample(operation)
   }
@@ -858,7 +889,8 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     isValid: unknown,
     msg: string,
     requestValidationErrors?: ModelValidationError[] | null,
-    requestValidationWarnings?: unknown
+    requestValidationWarnings?: unknown,
+    exampleFilePath?: string
   ): void {
     if (operationResult.request === undefined) {
       throw new Error("operationResult.result is undefined")
@@ -867,6 +899,29 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     if (!isValid) {
       operationResult.isValid = false
       operationResult.request.isValid = false
+
+      if (
+        requestValidationErrors !== undefined &&
+        requestValidationErrors !== null &&
+        requestValidationErrors.length > 0
+      ) {
+        if (exampleFilePath !== undefined) {
+          requestValidationErrors.forEach(error => {
+            const position = getDescendantFilePosition(
+              this.exampleJsonMap.get(exampleFilePath) as JsonRef,
+              error.path
+            )
+            error.title =
+              '{"path":[' +
+              error.path +
+              '],"position":' +
+              JSON.stringify(position) +
+              ',"url":"' +
+              exampleFilePath +
+              '"}'
+          })
+        }
+      }
       const e = this.constructErrorObject({
         code: C.ErrorCodes.RequestValidationError,
         message: msg,
