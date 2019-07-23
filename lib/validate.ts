@@ -169,7 +169,7 @@ export async function validateExamples(
     const validator = new ModelValidator(specPath, null, o)
     await validator.initialize()
     log.info(`Validating "examples" and "x-ms-examples" in  ${specPath}:\n`)
-    validator.validateOperations(operationIds)
+    await validator.validateOperations(operationIds)
     updateEndResultOfSingleValidation(validator)
     logDetailedInfo(validator)
     const errors = getErrorsFromModelValidation(validator.specValidationResult)
