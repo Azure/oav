@@ -88,7 +88,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     }
   }
 
-  private async loadExamplesForOperation(exampleFilePath: string) {
+  private async loadExamplesForOperation(exampleFilePath: string) : Promise<void> {
     try {
       if (!this.exampleJsonMap.has(exampleFilePath)) {
         const exampleJson = await jsonUtils.parseJson(
@@ -404,7 +404,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
    * @param {object} operation - The operation object.
    */
   private async validateOperation(operation: Sway.Operation): Promise<void> {
-    this.validateXmsExamples(operation)
+    await this.validateXmsExamples(operation)
     this.validateExample(operation)
   }
 
