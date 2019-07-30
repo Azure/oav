@@ -1,0 +1,83 @@
+{
+  "swagger": "2.0",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/x": {
+      "patch": {
+        "x-ms-examples": {
+          "Update": {
+            "$ref": "./examples/myExample.json"
+          }
+        },
+        "operationId": "Models_Update",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "x-ms-parameter-location": "method",
+            "type": "object",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "myObject": {
+                  "$ref": "#/definitions/compositeProps"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated",
+            "schema": {
+              "$ref": "#/definitions/model"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "model": {
+      "type": "object",
+      "properties": {
+        "properties": {
+          "x-ms-client-flatten": true,
+          "$ref": "#/definitions/myProperties"
+        }
+      }
+    },
+    "myProperties": {
+      "type": "object",
+      "properties": {
+        "myObject": {
+          "$ref": "#/definitions/compositeProps"
+        }
+      }
+    },
+    "compositeProps": {
+      "type": "object",
+      "properties": {
+        "myArray": {
+          "type": "array",
+          "x-nullable": true,
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "myArray"
+      ]
+    }
+  }
+}

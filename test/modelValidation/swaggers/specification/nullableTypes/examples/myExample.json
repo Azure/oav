@@ -1,0 +1,22 @@
+{
+  "parameters": {
+    "data": {
+      "properties": {
+        "myObject": {
+          "myArray": null
+        }
+      }
+    }
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "properties": {
+          "myObject": {
+            "myArray": null
+          }
+        }
+      }
+    }
+  }
+}

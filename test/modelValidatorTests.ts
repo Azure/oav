@@ -451,6 +451,19 @@ describe("Model Validation", () => {
       )
       // console.log(result)
     })
+
+    it("should pass for nullable array types", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/nullableTypes/array_nullable.json`
+      const operationIds = "Models_Update"
+      const result = await validate.validateExamples(specPath2, operationIds, {
+        consoleLogLevel: "off"
+      })
+      assert(
+        result.length === 0,
+        `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
+      )
+      // console.log(result)
+    })
   })
 
   describe("Content type - ", () => {
