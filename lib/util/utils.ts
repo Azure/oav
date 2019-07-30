@@ -130,24 +130,25 @@ export function joinPath(...args: string[]): string {
  * @returns {object} target - Returns the merged target object.
  */
 export function mergeObjects<T extends sm.MutableStringMap<Data>>(source: T, target: T): T {
+  const result: sm.MutableStringMap<Data> = target
   for (const [key, sourceProperty] of sm.entries(source)) {
     if (Array.isArray(sourceProperty)) {
       const targetProperty = target[key]
       if (!targetProperty) {
-        target[key] = sourceProperty
+        result[key] = sourceProperty
       } else if (!Array.isArray(targetProperty)) {
         throw new Error(
           `Cannot merge ${key} from source object into target object because the same property ` +
             `in target object is not (of the same type) an Array.`
         )
       } else {
-        target[key] = mergeArrays(sourceProperty, targetProperty)
+        result[key] = mergeArrays(sourceProperty, targetProperty)
       }
     } else {
-      target[key] = cloneDeep(sourceProperty)
+      result[key] = cloneDeep(sourceProperty)
     }
   }
-  return target
+  return result as T
 }
 
 /*

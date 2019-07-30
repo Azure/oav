@@ -179,13 +179,14 @@ export class SpecValidator<T extends CommonValidationResult> {
    * Initializes the spec validator. Resolves the spec on different counts using the SpecResolver
    * and initializes the internal api validator.
    */
-  public async initialize(): Promise<Sway.SwaggerApi> {
+  public async initialize(suppression?: amd.Suppression): Promise<Sway.SwaggerApi> {
     const errors: jsonParser.ParseError[] = []
     const reportError = (e: jsonParser.ParseError) => errors.push(e)
     try {
-      let suppression: amd.Suppression | undefined
       if (this.specInJson === undefined || this.specInJson === null) {
-        suppression = await getSuppressions(this.specPath)
+        if (suppression === undefined) {
+          suppression = await getSuppressions(this.specPath)
+        }
         const result = await jsonUtils.parseJson(
           suppression,
           this.specPath,

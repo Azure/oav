@@ -122,9 +122,10 @@ export async function validateSpec(
     o.shouldResolveNullableTypes = false
 
     const validator = new SemanticValidator(specPath, null, o)
-    await validator.initialize()
+    const suppression = await getSuppressions(specPath)
+    await validator.initialize(suppression)
     log.info(`Semantically validating  ${specPath}:\n`)
-    const validationResults = await validator.validateSpec()
+    const validationResults = await validator.validateSpec(specPath, suppression)
     updateEndResultOfSingleValidation(validator)
     logDetailedInfo(validator)
     if (o.pretty) {
