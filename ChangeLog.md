@@ -1,9 +1,13 @@
 # Changelog
 
+## 08/12/2019 0.19.4
+
+- Update the error handling when loading and parsing suppression files.
+
 ## 07/30/2019 0.19.3
 
 - Fixed validation of nullable array types if they were defined as tope level models or transformed into top level models in the `"definitions"` object. Fixes #437.
-- Fixed an issue where `"properties": {}` was being incorrectly added to a schema with `"$ref"` in the response or a top level `array`. 
+- Fixed an issue where `"properties": {}` was being incorrectly added to a schema with `"$ref"` in the response or a top level `array`.
 
 ## 07/12/2019 0.19.2
 
@@ -25,7 +29,7 @@
 
 ## 06/12/2019 0.18.5
 
--  Added support for JSON path & schema path in errors.
+- Added support for JSON path & schema path in errors.
 
 ## 05/30/2019 0.18.4
 
