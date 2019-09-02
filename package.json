@@ -59,10 +59,10 @@
     "prettier": "^1.18.2",
     "should": "^13.2.3",
     "ts-jest": "^24.0.2",
-    "tslint": "^5.17.0",
+    "tslint": "~5.17.0",
     "tslint-config-prettier": "^1.18.0",
     "tslint-plugin-prettier": "^2.0.1",
-    "typescript": "^3.5.3"
+    "typescript": "~3.5.3"
   },
   "homepage": "https://github.com/azure/oav",
   "repository": {
@@ -96,6 +96,7 @@
   "scripts": {
     "tsc": "tsc",
     "tslint": "tslint --project tsconfig.json ./*.ts ./lib/**/*.ts ./test/**/*.ts ./types/**/*.ts",
+    "tslint-fix": "tslint --fix --project tsconfig.json ./*.ts ./lib/**/*.ts ./test/**/*.ts ./types/**/*.ts",
     "test": "npm run tsc && npm run --silent tslint && jest --ci --reporters=default --reporters=jest-junit",
     "fast-test": "jest --ci --reporters=default --reporters=jest-junit --config ./jest.config.js ",
     "slow-test": "node --max-old-space-size=10192 ./node_modules/.bin/jest -u --runInBand --ci --reporters=default --reporters=jest-junit --config ./regression/jest.regression.config.js ",
