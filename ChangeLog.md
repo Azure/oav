@@ -1,5 +1,14 @@
 # Changelog
 
+## 08/12/2019 0.19.4
+
+- Update the error handling when loading and parsing suppression files.
+
+## 07/30/2019 0.19.3
+
+- Fixed validation of nullable array types if they were defined as tope level models or transformed into top level models in the `"definitions"` object. Fixes #437.
+- Fixed an issue where `"properties": {}` was being incorrectly added to a schema with `"$ref"` in the response or a top level `array`.
+
 ## 07/12/2019 0.19.2
 
 - Add support for validating discriminator is required and also the support for suppression.[Issue#386](https://github.com/Azure/oav/issues/386).
@@ -13,12 +22,14 @@
 
 - Modify path in payload for MISSING_REQUIRED_PROPERTIES and for OBJECT_ADDITIONAL_PROPERTIES to point to the actual property.
 
-
 ## 07/02/2019 0.18.6
 
 - Adding support for JSON path & schema path in errors.
+- Improved model validation when example provides the response body however the spec doesn't have a schema for the response and vice-versa.
 
 ## 06/12/2019 0.18.5
+
+- Added support for JSON path & schema path in errors.
 
 ## 05/30/2019 0.18.4
 

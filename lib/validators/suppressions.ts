@@ -6,25 +6,31 @@ import * as md from "@ts-common/commonmark-to-markdown"
 import * as it from "@ts-common/iterator"
 import * as vfs from "@ts-common/virtual-fs"
 import * as path from "path"
+import { log } from "../util/logging"
 import { isSubPath, splitPathAndReverse } from "../util/path"
 
 export const getSuppressions = async (specPath: string): Promise<undefined | amd.Suppression> => {
   // find readme.md
-  const readMe = await amd.findReadMe(path.dirname(specPath))
-  if (readMe === undefined) {
+  try {
+    const readMe = await amd.findReadMe(path.dirname(specPath))
+    if (readMe === undefined) {
+      return undefined
+    }
+    const readMeStr = await vfs.readFile(readMe)
+    const cmd = md.parse(readMeStr)
+    const suppressionCodeBlock = amd.getCodeBlocksAndHeadings(cmd.markDown).Suppression
+    if (suppressionCodeBlock === undefined) {
+      return undefined
+    }
+    const suppression = amd.getYamlFromNode(suppressionCodeBlock) as amd.Suppression
+    if (!it.isArray(suppression.directive)) {
+      return undefined
+    }
+    return suppression
+  } catch (err) {
+    log.warn(`Unable to load and parse suppression file. Error: ${err}`)
     return undefined
   }
-  const readMeStr = await vfs.readFile(readMe)
-  const cmd = md.parse(readMeStr)
-  const suppressionCodeBlock = amd.getCodeBlocksAndHeadings(cmd.markDown).Suppression
-  if (suppressionCodeBlock === undefined) {
-    return undefined
-  }
-  const suppression = amd.getYamlFromNode(suppressionCodeBlock) as amd.Suppression
-  if (!it.isArray(suppression.directive)) {
-    return undefined
-  }
-  return suppression
 }
 
 export function existSuppression(
