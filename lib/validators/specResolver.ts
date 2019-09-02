@@ -453,12 +453,12 @@ export class SpecResolver {
         this.reportError,
         this.docsCache
       )
-      const result2: any = result
-      result2.docPath = docPath
+      const resultWithReferenceDocPath: any = result
+      resultWithReferenceDocPath.docPath = docPath
 
       // We set a function `() => result` instead of an object `result` to avoid
       // reference resolution in the examples.
-      utils.setObject(doc as {}, slicedRefName, () => result2)
+      utils.setObject(doc as {}, slicedRefName, () => resultWithReferenceDocPath)
     } else {
       if (jsonPointer.has(doc as {}, slicedRefName)) {
         jsonPointer.remove(doc as {}, slicedRefName)

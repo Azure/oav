@@ -164,7 +164,7 @@ describe("Model Validation", () => {
         consoleLogLevel: "off"
       })
       await validator.initialize()
-      validator.validateOperations(operationIds)
+      await validator.validateOperations(operationIds)
       const result = validator.specValidationResult
       assert(
         result.validityStatus === false,

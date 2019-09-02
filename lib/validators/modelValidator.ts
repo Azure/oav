@@ -401,7 +401,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
    * @param {object} operation - The operation object.
    */
   private async validateOperation(operation: Sway.Operation): Promise<void> {
-    this.validateXmsExamples(operation)
+    await this.validateXmsExamples(operation)
     this.validateExample(operation)
   }
 
