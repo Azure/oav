@@ -1,5 +1,9 @@
 # Changelog
 
+## 08/12/2019 0.19.5
+
+- Add package.lock file to lock the version of dependencies.
+
 ## 08/12/2019 0.19.4
 
 - Update the error handling when loading and parsing suppression files.
