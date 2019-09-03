@@ -97,8 +97,6 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
         )
         this.exampleJsonMap.set(exampleFilePath, exampleJson)
       }
-      // let position: sourcemap.FilePosition = sourcemap.getDescendantFilePosition(exampleJson, ["parameters","profileName"])
-      // console.log(position.line + position.column);
     } catch (error) {
       throw new Error(`Failed to load a reference example file ${exampleFilePath}. (${error})`)
     }
