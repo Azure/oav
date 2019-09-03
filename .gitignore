@@ -90,5 +90,4 @@ coverage/
 .nyc_output
 test-results.xml
 
-package-lock.json
 .clinic/*
