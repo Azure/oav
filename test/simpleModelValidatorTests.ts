@@ -38,7 +38,7 @@ describe("simple model validation tests", () => {
     const specParsed = parse("url", specJson) as SwaggerObject
     const validator = new ModelValidator("some/file/path", specParsed, {})
     const api = await validator.initialize()
-    validator.validateOperations()
+    await validator.validateOperations()
     const result = validator.specValidationResult
     assert.notStrictEqual(api, undefined)
     const errors = getErrorsFromModelValidation(result)
