@@ -11,7 +11,8 @@
     "member-ordering": false,
     "no-unsafe-any": false,
     "no-null-keyword": false,
-    "prettier": true
+    "prettier": true,
+    "max-line-length": [true, 140]
   },
   "rulesDirectory": ["tslint-plugin-prettier"]
 }

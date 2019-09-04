@@ -898,26 +898,16 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     if (!isValid) {
       operationResult.isValid = false
       operationResult.request.isValid = false
-
-      if (
-        requestValidationErrors !== undefined &&
-        requestValidationErrors !== null &&
-        requestValidationErrors.length > 0
-      ) {
+      if (!!requestValidationErrors && requestValidationErrors.length > 0) {
         if (exampleFilePath !== undefined) {
           requestValidationErrors.forEach(error => {
             const position = getDescendantFilePosition(
               this.exampleJsonMap.get(exampleFilePath) as JsonRef,
               error.path
             )
-            error.title =
-              '{"path":[' +
-              error.path +
-              '],"position":' +
-              JSON.stringify(position) +
-              ',"url":"' +
-              exampleFilePath +
-              '"}'
+            error.title = `{"path":["${error.path}"], "position":"${JSON.stringify(
+              position
+            )}", "url":"${exampleFilePath}"}`
           })
         }
       }
