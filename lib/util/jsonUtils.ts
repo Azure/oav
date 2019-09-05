@@ -98,6 +98,10 @@ export async function parseJson(
 
   const createSwaggerObject = async () => {
     const fileContent = await getSpecContent(specPath)
+    if (fileContent === "") {
+      throw new Error(`The content of ${specPath} is empty`)
+    }
+
     const swaggerObject = parseContent(specPath, fileContent, reportError)
     applySuppression(swaggerObject)
     return swaggerObject

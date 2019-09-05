@@ -1,6 +1,12 @@
 # Changelog
 
-## 08/12/2019 0.19.5
+## 09/04/2019 0.19.6
+
+- Report example position for request parameter errors [Issue#423](https://github.com/Azure/oav/issues/423).
+- Fixed internal error when load invalid local reference file [Issue#449](https://github.com/Azure/oav/issues/449).
+- Fixed internal error when load empty reference file [Issue#444](https://github.com/Azure/oav/issues/444).
+
+## 09/03/2019 0.19.5
 
 - Add package.lock file to lock the version of dependencies.
 

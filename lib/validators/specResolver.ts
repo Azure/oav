@@ -348,6 +348,10 @@ export class SpecResolver {
     const docDir = path.dirname(docPath)
 
     if (parsedReference.filePath) {
+      const regexFilePath = new RegExp("^[.\\w\\\\\\/].*.[A-Za-z]+$")
+      if (!regexFilePath.test(parsedReference.filePath)) {
+        throw new Error(`${node.$ref} isn't a valid local reference file.`)
+      }
       // assuming that everything in the spec is relative to it, let us join the spec directory
       // and the file path in reference.
       docPath = utils.joinPath(docDir, parsedReference.filePath)
