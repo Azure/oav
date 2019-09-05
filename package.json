@@ -37,7 +37,7 @@
     "vscode-jsonrpc": "^3.6.2",
     "winston": "^3.2.1",
     "yargs": "^6.6.0",
-    "yasway": "^1.8.3",
+    "yasway": "^1.8.4",
     "yuml2svg": "^4.2.1",
     "z-schema": "^4.1.0"
   },
