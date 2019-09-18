@@ -69,12 +69,10 @@ export async function getDocumentsFromCompositeSwagger(
   }
 }
 
-const vsoLogIssuePrefix = (issueType: string) => {
-  let prefix = `##vso[task.logissue type=error]`
-  if (issueType === "error" || issueType === "warning") {
-    prefix = `##vso[task.logissue type=${issueType}]`
-  }
-  return prefix
+const vsoLogIssueWrapper = (issueType: string, message: string) => {
+  return issueType === "error" || issueType === "warning"
+    ? `##vso[task.logissue type=${issueType}]${message}`
+    : `##vso[task.logissue type=error]${message}`
 }
 
 async function validate<T>(
@@ -103,9 +101,9 @@ const prettyPrint = <T extends NodeError<T>>(
       const yaml = jsYaml.dump(error)
       if (process.env["Agent.Id"]) {
         /* tslint:disable-next-line:no-console no-string-literal */
-        console.error(vsoLogIssuePrefix(errorType) + errorType)
+        console.error(vsoLogIssueWrapper(errorType, errorType))
         /* tslint:disable-next-line:no-console no-string-literal */
-        console.error(vsoLogIssuePrefix(errorType) + yaml)
+        console.error(vsoLogIssueWrapper(errorType, yaml))
       } else {
         /* tslint:disable-next-line:no-console no-string-literal */
         console.error("\x1b[31m", errorType, ":", "\x1b[0m")
@@ -145,7 +143,7 @@ export async function validateSpec(
     logDetailedInfo(validator)
     if (o.pretty) {
       /* tslint:disable-next-line:no-console no-string-literal */
-      console.log(vsoLogIssuePrefix("error") + `Semantically validating  ${specPath}:\n`)
+      console.log(vsoLogIssueWrapper("error", `Semantically validating  ${specPath}:\n`))
       const resolveSpecError = validator.specValidationResult.resolveSpec
       if (resolveSpecError !== undefined) {
         prettyPrint([resolveSpecError], "error")
@@ -191,7 +189,7 @@ export async function validateExamples(
     if (o.pretty) {
       /* tslint:disable-next-line:no-console no-string-literal */
       console.log(
-        vsoLogIssuePrefix("error") + `Validating "examples" and "x-ms-examples" in  ${specPath}:\n`
+        vsoLogIssueWrapper("error", `Validating "examples" and "x-ms-examples" in  ${specPath}:\n`)
       )
       prettyPrint(errors, "error")
     }
