@@ -69,6 +69,12 @@ export async function getDocumentsFromCompositeSwagger(
   }
 }
 
+const vsoLogIssueWrapper = (issueType: string, message: string) => {
+  return issueType === "error" || issueType === "warning"
+    ? `##vso[task.logissue type=${issueType}]${message}`
+    : `##vso[task.logissue type=error]${message}`
+}
+
 async function validate<T>(
   options: Options | undefined,
   func: (options: Options) => Promise<T>
@@ -93,10 +99,17 @@ const prettyPrint = <T extends NodeError<T>>(
   if (errors !== undefined) {
     for (const error of errors) {
       const yaml = jsYaml.dump(error)
-      /* tslint:disable-next-line:no-console no-string-literal */
-      console.error("\x1b[31m", errorType, ":", "\x1b[0m")
-      /* tslint:disable-next-line:no-console no-string-literal */
-      console.error(yaml)
+      if (process.env["Agent.Id"]) {
+        /* tslint:disable-next-line:no-console no-string-literal */
+        console.error(vsoLogIssueWrapper(errorType, errorType))
+        /* tslint:disable-next-line:no-console no-string-literal */
+        console.error(vsoLogIssueWrapper(errorType, yaml))
+      } else {
+        /* tslint:disable-next-line:no-console no-string-literal */
+        console.error("\x1b[31m", errorType, ":", "\x1b[0m")
+        /* tslint:disable-next-line:no-console no-string-literal */
+        console.error(yaml)
+      }
     }
   }
 }
@@ -130,7 +143,7 @@ export async function validateSpec(
     logDetailedInfo(validator)
     if (o.pretty) {
       /* tslint:disable-next-line:no-console no-string-literal */
-      console.log(`Semantically validating  ${specPath}:\n`)
+      console.log(vsoLogIssueWrapper("error", `Semantically validating  ${specPath}:\n`))
       const resolveSpecError = validator.specValidationResult.resolveSpec
       if (resolveSpecError !== undefined) {
         prettyPrint([resolveSpecError], "error")
@@ -175,7 +188,9 @@ export async function validateExamples(
     const errors = getErrorsFromModelValidation(validator.specValidationResult)
     if (o.pretty) {
       /* tslint:disable-next-line:no-console no-string-literal */
-      console.log(`Validating "examples" and "x-ms-examples" in  ${specPath}:\n`)
+      console.log(
+        vsoLogIssueWrapper("error", `Validating "examples" and "x-ms-examples" in  ${specPath}:\n`)
+      )
       prettyPrint(errors, "error")
     }
     return errors
