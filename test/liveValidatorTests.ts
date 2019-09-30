@@ -10,7 +10,7 @@ import { ResponsesObject } from "yasway"
 import * as Constants from "../lib/util/constants"
 import { LiveValidator } from "../lib/validators/liveValidator"
 
-const numberOfSpecs = 9
+const numberOfSpecs = 10
 jest.setTimeout(150000)
 
 describe("Live Validator", () => {
@@ -513,6 +513,28 @@ describe("Live validator snapshot validation", () => {
     const payload = require(`${__dirname}/liveValidation/payloads/valid_input.json`)
     const validationResult = validator.validateLiveRequestResponse(payload)
     expect(validationResult).toMatchSnapshot()
+  })
+
+  test(`should return expected error for unresolvable reference`, async () => {
+    const options = {
+      directory: `${__dirname}/liveValidation/swaggers/`,
+      isPathCaseSensitive: false,
+      useRelativeSourceLocationUrl: true,
+      swaggerPathsPattern:
+        "specification\\rpsaas\\resource-manager\\Microsoft.Contoso\\stable\\2019-01-01\\*.json",
+      git: {
+        shouldClone: false
+      }
+    }
+    const liveValidator = new LiveValidator(options)
+    await liveValidator.initialize()
+
+    const payload = require(`${__dirname}/liveValidation/payloads/unresolvableReference_input.json`)
+    const result = liveValidator.validateLiveRequest(payload.input.request, {
+      includeErrors: ["UNRESOLVABLE_REFERENCE"]
+    })
+    expect(result.isSuccessful === false)
+    expect(result.errors[0].code === "UNRESOLVABLE_REFERENCE")
   })
 
   errors.forEach(error => {

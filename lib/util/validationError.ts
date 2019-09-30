@@ -53,6 +53,7 @@ const errorConstants = {
     severity: Severity.Critical,
     docUrl: ""
   },
+  UNRESOLVABLE_REFERENCE: { severity: Severity.Critical, docUrl: "" },
   OBJECT_PROPERTIES_MINIMUM: {
     severity: Severity.Critical,
     docUrl: ""
