@@ -6,20 +6,12 @@
     "version": "2019-01-01"
   },
   "host": "management.azure.com",
-  "schemes": [
-    "https"
-  ],
-  "consumes": [
-    "application/json"
-  ],
-  "produces": [
-    "application/json"
-  ],
+  "schemes": ["https"],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
   "security": [
     {
-      "azure_auth": [
-        "user_impersonation"
-      ]
+      "azure_auth": ["user_impersonation"]
     }
   ],
   "securityDefinitions": {
@@ -181,326 +173,6 @@
         }
       }
     },
-    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.contoso/employees/{employeeName}/nestedResourceType/{nestedResourceName}": {
-      "get": {
-        "description": "Returns nested resources for a given employee name",
-        "operationId": "NestedResourceType_Get",
-        "parameters": [
-          {
-            "$ref": "#/parameters/ResourceGroupNameParameter"
-          },
-          {
-            "$ref": "#/parameters/ApiVersionParameter"
-          },
-          {
-            "$ref": "#/parameters/SubscriptionIdParameter"
-          },
-          {
-            "$ref": "#/parameters/NestedResourceNameParameter"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Nested Resource Types.",
-            "schema": {
-              "$ref": "#/definitions/NestedResource"
-            }
-          }
-        },
-        "x-ms-examples": {
-          "NestedResourceGet": {
-            "$ref": "./examples/NestedResourceGet.json"
-          }
-        }
-      },
-      "put": {
-        "description": "Create or update nested resource type.",
-        "operationId": "NestedResourceType_CreateAndUpdate",
-        "parameters": [
-          {
-            "$ref": "#/parameters/ResourceGroupNameParameter"
-          },
-          {
-            "$ref": "#/parameters/ApiVersionParameter"
-          },
-          {
-            "$ref": "#/parameters/SubscriptionIdParameter"
-          },
-          {
-            "$ref": "#/parameters/NestedResourceNameParameter"
-          },
-          {
-            "name": "NestedResourceType",
-            "description": "Nested Resource Type details.",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/NestedResource"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful.",
-            "schema": {
-              "$ref": "#/definitions/NestedResource"
-            }
-          }
-        },
-        "x-ms-examples": {
-          "NestedResourceUpdate": {
-            "$ref": "./examples/NestedResourceUpdate.json"
-          }
-        }
-      },
-      "patch": {
-        "description": "Update nested resource type details.",
-        "operationId": "NestedResourceType_Update",
-        "parameters": [
-          {
-            "$ref": "#/parameters/ResourceGroupNameParameter"
-          },
-          {
-            "$ref": "#/parameters/ApiVersionParameter"
-          },
-          {
-            "$ref": "#/parameters/SubscriptionIdParameter"
-          },
-          {
-            "$ref": "#/parameters/NestedResourceNameParameter"
-          },
-          {
-            "name": "NestedResourcePatchResource",
-            "description": "Nested resource patch details.",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/NestedResource"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful.",
-            "schema": {
-              "$ref": "#/definitions/NestedResource"
-            }
-          }
-        },
-        "x-ms-examples": {
-          "NestedResourceUpdate": {
-            "$ref": "./examples/NestedResourceUpdate.json"
-          }
-        }
-      }
-    },
-    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.contoso/employees/{employeeName}/nestedResourceType": {
-      "get": {
-        "description": "Returns nested resources for a given employee name",
-        "operationId": "NestedResourceType_Get",
-        "parameters": [
-          {
-            "$ref": "#/parameters/ResourceGroupNameParameter"
-          },
-          {
-            "$ref": "#/parameters/ApiVersionParameter"
-          },
-          {
-            "$ref": "#/parameters/SubscriptionIdParameter"
-          },
-          {
-            "$ref": "#/parameters/NestedResourceNameParameter"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Nested Resource Types.",
-            "schema": {
-              "$ref": "#/definitions/NestedResourceList"
-            }
-          }
-        },
-        "x-ms-examples": {
-          "NestedResourceGet": {
-            "$ref": "./examples/NestedResourceGet.json"
-          }
-        }
-      }
-    },
-    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.contoso/extensionResourceType": {
-      "get": {
-        "description": "Returns nextension resource for a given employee name",
-        "operationId": "NestedResourceType_Get",
-        "parameters": [
-          {
-            "$ref": "#/parameters/ResourceGroupNameParameter"
-          },
-          {
-            "$ref": "#/parameters/ApiVersionParameter"
-          },
-          {
-            "$ref": "#/parameters/SubscriptionIdParameter"
-          },
-          {
-            "$ref": "#/parameters/ExtensionResourceNameParameter"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Nested Resource Types.",
-            "schema": {
-              "$ref": "#/definitions/ExtensionResourceList"
-            }
-          }
-        },
-        "x-ms-examples": {
-          "NestedResourceGet": {
-            "$ref": "./examples/ExtensionResourceGet.json"
-          }
-        }
-      }
-    },
-    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.contoso/extensionResourceType/{extensionResourceName}": {
-      "get": {
-        "description": "Returns extension resources",
-        "operationId": "ExtensionResource_Get",
-        "parameters": [
-          {
-            "$ref": "#/parameters/ResourceGroupNameParameter"
-          },
-          {
-            "$ref": "#/parameters/ApiVersionParameter"
-          },
-          {
-            "$ref": "#/parameters/SubscriptionIdParameter"
-          },
-          {
-            "$ref": "#/parameters/ExtensionResourceNameParameter"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Extension Resources.",
-            "schema": {
-              "$ref": "#/definitions/ExtensionResource"
-            }
-          }
-        },
-        "x-ms-examples": {
-          "ExtensionResourceGet": {
-            "$ref": "./examples/ExtensionResourceNestedResourceGet.json"
-          }
-        }
-      },
-      "put": {
-        "description": "Create or update extension resource.",
-        "operationId": "ExtensionResource_CreateAndUpdate",
-        "parameters": [
-          {
-            "$ref": "#/parameters/ResourceGroupNameParameter"
-          },
-          {
-            "$ref": "#/parameters/ApiVersionParameter"
-          },
-          {
-            "$ref": "#/parameters/SubscriptionIdParameter"
-          },
-          {
-            "$ref": "#/parameters/ExtensionResourceNameParameter"
-          },
-          {
-            "name": "ExtensionResourceType",
-            "description": "ExtensionResource details.",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/ExtensionResource"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful.",
-            "schema": {
-              "$ref": "#/definitions/ExtensionResource"
-            }
-          }
-        },
-        "x-ms-examples": {
-          "ExtensionResourceUpdate": {
-            "$ref": "./examples/ExtensionResourceUpdate.json"
-          }
-        }
-      },
-      "patch": {
-        "description": "Update extension resource details.",
-        "operationId": "ExtensionResource_Update",
-        "parameters": [
-          {
-            "$ref": "#/parameters/ResourceGroupNameParameter"
-          },
-          {
-            "$ref": "#/parameters/ApiVersionParameter"
-          },
-          {
-            "$ref": "#/parameters/SubscriptionIdParameter"
-          },
-          {
-            "$ref": "#/parameters/ExtensionResourceParameter"
-          },
-          {
-            "name": "ExtensionResourcePatchResource",
-            "description": "Extension Resource patch details.",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/ExtensionResource"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful.",
-            "schema": {
-              "$ref": "#/definitions/ExtensionResource"
-            }
-          }
-        },
-        "x-ms-examples": {
-          "ExtensionResourceUpdate": {
-            "$ref": "./examples/ExtensionResourceUpdate.json"
-          }
-        }
-      }
-    },
-    "/providers/microsoft.contoso/operations": {
-      "get": {
-        "description": "Returns list of operations.",
-        "operationId": "Operation_List",
-        "parameters": [
-          {
-            "$ref": "#/parameters/ApiVersionParameter"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Operation details.",
-            "schema": {
-              "$ref": "#/definitions/OperationsList"
-            }
-          }
-        },
-        "deprecated": false,
-        "x-ms-pageable": {
-          "nextLinkName": "nextLink"
-        },
-        "x-ms-examples": {
-          "EmployeeDetailsGet": {
-            "$ref": "./examples/OperationsList.json"
-          }
-        }
-      }
-    },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.contoso/operations": {
       "get": {
         "description": "Returns list of operations.",
@@ -569,7 +241,7 @@
           }
         }
       },
-	  "x-ms-azure-resource": true
+      "x-ms-azure-resource": true
     },
     "EmployeeResource": {
       "type": "object",
@@ -579,11 +251,11 @@
           "$ref": "#/definitions/Resource"
         }
       ],
-      "required": [ "properties" ],
+      "required": ["properties"],
       "properties": {
         "properties": {
           "type": "object",
-          "required": [ "firstName", "lastName", "group", "likesTea" ],
+          "required": ["firstName", "lastName", "group", "likesTea"],
           "properties": {
             "firstName": {
               "type": "string",
@@ -621,7 +293,7 @@
             "likesTea": {
               "type": "string",
               "description": "Gets or sets the deployment mode.",
-              "enum": [ "Yes" ],
+              "enum": ["Yes"],
               "x-ms-enum": {
                 "name": "likesTea",
                 "modelAsString": true
@@ -679,7 +351,7 @@
           "$ref": "#/definitions/Resource"
         }
       ],
-      "required": [ "properties" ],
+      "required": ["properties"],
       "properties": {
         "properties": {
           "properties": {
@@ -719,14 +391,14 @@
             "likesTea": {
               "type": "string",
               "description": "Gets or sets the deployment mode.",
-              "enum": [ "Yes" ],
+              "enum": ["Yes"],
               "x-ms-enum": {
                 "name": "likesTea",
                 "modelAsString": true
               }
             }
           },
-          "required": [ "firstName", "lastName", "group", "likesTea" ],
+          "required": ["firstName", "lastName", "group", "likesTea"],
           "type": "object"
         }
       }
@@ -744,83 +416,6 @@
           "type": "array",
           "items": {
             "$ref": "#/definitions/NestedResource"
-          }
-        }
-      }
-    },
-    "ExtensionResource": {
-      "type": "object",
-      "description": "Extension Resource details",
-      "allOf": [
-        {
-          "$ref": "#/definitions/Resource"
-        }
-      ],
-      "required": [ "properties" ],
-      "properties": {
-        "properties": {
-          "properties": {
-            "firstName": {
-              "type": "string",
-              "description": "Extension Resource full name.",
-              "minLength": 1,
-              "maxLength": 10,
-              "pattern": "^[A-Za-z0-9-._]+$"
-            },
-            "middleName": {
-              "type": "string",
-              "description": "Extension Resource name.",
-              "minLength": 1,
-              "maxLength": 10,
-              "pattern": "^[A-Za-z0-9-._]+$"
-            },
-            "lastName": {
-              "type": "string",
-              "description": "Extension Resource name.",
-              "minLength": 1,
-              "maxLength": 10,
-              "pattern": "^[A-Za-z0-9-._]+$"
-            },
-            "group": {
-              "type": "string",
-              "description": "group like Finance, HR etc...",
-              "minLength": 1,
-              "maxLength": 10,
-              "pattern": "^[A-Za-z0-9-._]+$"
-            },
-            "identificationNumber": {
-              "type": "string",
-              "readOnly": true,
-              "description": "unique id assigned at the time of user creation"
-            },
-            "likesTea": {
-              "type": "string",
-              "description": "Gets or sets the deployment mode.",
-              "enum": [ "Yes" ],
-              "x-ms-enum": {
-                "name": "likesTea",
-                "modelAsString": true
-              }
-            }
-          },
-          "required": [ "firstName", "lastName", "group", "likesTea" ],
-          "type": "object"
-        }
-      }
-    },
-    "ExtensionResourceList": {
-      "description": "The list of extension resources.",
-      "type": "object",
-      "properties": {
-        "nextLink": {
-          "description": "The link used to get the next page of extension resources list.",
-          "type": "string"
-        },
-        "value": {
-          "description": "The list of recommendations.",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/ExtensionResource"
           }
         }
       }
