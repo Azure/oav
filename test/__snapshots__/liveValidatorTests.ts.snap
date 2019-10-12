@@ -640,3 +640,53 @@ Object {
   },
 }
 `;
+
+exports[`Live validator snapshot validation should return the expected error requestResponse validation for SECRET_PROPERTY 1`] = `
+Object {
+  "requestValidationResult": Object {
+    "errors": Array [],
+    "isSuccessful": true,
+    "operationInfo": Object {
+      "apiVersion": "2018-01-01",
+      "operationId": "SecretUser_Get",
+    },
+    "runtimeException": undefined,
+  },
+  "responseValidationResult": Object {
+    "errors": Array [
+      Object {
+        "code": "SECRET_PROPERTY",
+        "documentationUrl": "",
+        "inner": undefined,
+        "jsonPathsInPayload": Array [
+          "$.properties.password",
+        ],
+        "message": "Secret property \`\\"password\\": \\"aaaaaa\\"\`, cannot be sent in the response.",
+        "params": Array [
+          "password",
+          "aaaaaa",
+        ],
+        "pathsInPayload": Array [
+          "properties/password",
+        ],
+        "schemaPath": "",
+        "severity": 0,
+        "source": Object {
+          "jsonRef": "#/definitions/SecretUserContractProperties/properties/password",
+          "position": Object {
+            "column": 21,
+            "line": 134,
+          },
+          "url": "specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimusersecret.json",
+        },
+      },
+    ],
+    "isSuccessful": false,
+    "operationInfo": Object {
+      "apiVersion": "2018-01-01",
+      "operationId": "SecretUser_Get",
+    },
+    "runtimeException": undefined,
+  },
+}
+`;

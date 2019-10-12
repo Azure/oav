@@ -54,6 +54,7 @@ const errorConstants = {
     docUrl: ""
   },
   UNRESOLVABLE_REFERENCE: { severity: Severity.Critical, docUrl: "" },
+  SECRET_PROPERTY: { severity: Severity.Critical, docUrl: "" },
   OBJECT_PROPERTIES_MINIMUM: {
     severity: Severity.Critical,
     docUrl: ""

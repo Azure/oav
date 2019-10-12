@@ -488,7 +488,8 @@ describe("Live validator snapshot validation", () => {
     "INVALID_FORMAT",
     "INVALID_TYPE",
     "ENUM_MISMATCH",
-    "ENUM_CASE_MISMATCH"
+    "ENUM_CASE_MISMATCH",
+    "SECRET_PROPERTY"
   ]
   beforeAll(async () => {
     const options = {
