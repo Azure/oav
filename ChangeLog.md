@@ -1,5 +1,11 @@
 # Changelog
 
+## 10/14/2019 0.19.8
+
+- Add an optional logging callback to consume by livevalidator in order to dump log to external caller.
+- Update the yasway version to 1.8.5.
+- Add the new validation error code of SECRET_PROPERTY.
+
 ## 09/04/2019 0.19.6
 
 - Report example position for request parameter errors [Issue#423](https://github.com/Azure/oav/issues/423).
