@@ -12,6 +12,7 @@ import * as url from "url"
 import * as util from "util"
 import { Operation, Request } from "yasway"
 
+import winston = require("winston")
 import * as models from "../models"
 import { PotentialOperationsResult } from "../models/potentialOperationsResult"
 import * as C from "../util/constants"
@@ -119,6 +120,8 @@ export class LiveValidator {
 
   public options: LiveValidatorOptions
 
+  private logFunction?: (message: string, level: number) => void
+
   /**
    * Constructs LiveValidator based on provided options.
    *
@@ -126,8 +129,12 @@ export class LiveValidator {
    *
    * @returns CacheBuilder Returns the configured CacheBuilder object.
    */
-  public constructor(options?: Partial<LiveValidatorOptions>) {
+  public constructor(
+    options?: Partial<LiveValidatorOptions>,
+    logCallback?: (message: string, level: number) => void
+  ) {
     const ops: Partial<LiveValidatorOptions> = options || {}
+    this.logFunction = logCallback
 
     if (!ops.swaggerPaths) {
       ops.swaggerPaths = []
@@ -158,6 +165,12 @@ export class LiveValidator {
     this.options = ops as LiveValidatorOptions
   }
 
+  private loggingCallback(message: string, level: number = winston.config.npm.levels.info): void {
+    if (this.logFunction !== undefined) {
+      this.logFunction(message, level)
+    }
+  }
+
   /**
    * Initializes the Live Validator.
    */
@@ -168,14 +181,16 @@ export class LiveValidator {
     }
 
     // Construct array of swagger paths to be used for building a cache
+    log.info("Get swagger path.")
+    this.loggingCallback("Get swagger path.")
     const swaggerPaths = await this.getSwaggerPaths()
-    log.info(`Found ${swaggerPaths.length}`)
     const promiseFactories = swaggerPaths.map(swaggerPath => {
       return this.getSwaggerInitializer(swaggerPath)
     })
 
     await Promise.all(promiseFactories)
     log.info("Cache initialization complete.")
+    this.loggingCallback("Cache initialization complete.")
   }
 
   /**
@@ -283,6 +298,10 @@ export class LiveValidator {
               `"${apiVersion}" and provider "${provider}" in the cache.`
             code = C.ErrorCodes.OperationNotFoundInCacheWithVerb
             log.debug(msg)
+            this.loggingCallback(
+              `${msg} with requestUrl ${requestUrl}`,
+              winston.config.npm.levels.debug
+            )
           }
         } else {
           msg =
@@ -290,18 +309,30 @@ export class LiveValidator {
             `in the cache.`
           code = C.ErrorCodes.OperationNotFoundInCacheWithApi
           log.debug(`${msg} We'll search in the resource provider "Microsoft.Unknown".`)
+          this.loggingCallback(
+            `${msg} with requestUrl ${requestUrl}, we'll search in the resource provider "Microsoft.Unknown".`,
+            winston.config.npm.levels.debug
+          )
           potentialOperations = this.getPotentialOperationsHelper(pathStr, requestMethod, [])
         }
       } else {
         msg = `Could not find api-version in requestUrl "${requestUrl}".`
         code = C.ErrorCodes.OperationNotFoundInCacheWithApi
         log.debug(msg)
+        this.loggingCallback(
+          `${msg} with requestUrl ${requestUrl}`,
+          winston.config.npm.levels.debug
+        )
       }
     } else {
       // provider does not exist in cache
       msg = `Could not find provider "${provider}" in the cache.`
       code = C.ErrorCodes.OperationNotFoundInCacheWithProvider
       log.debug(`${msg} We'll search in the resource provider "Microsoft.Unknown".`)
+      this.loggingCallback(
+        `${msg} with requestUrl ${requestUrl}, we'll search in the resource provider "Microsoft.Unknown".`,
+        winston.config.npm.levels.debug
+      )
       potentialOperations = this.getPotentialOperationsHelper(pathStr, requestMethod, [])
     }
 
@@ -624,6 +655,7 @@ export class LiveValidator {
         `Found multiple matching operations with operationIds "${operationIds}" ` +
         `for request url "${url}" with HTTP Method "${requestMethod}".`
       log.debug(msg)
+      this.loggingCallback(msg, winston.config.npm.levels.debug)
       const e = new models.LiveValidationError(C.ErrorCodes.MultipleOperationsFound.name, msg)
       throw e
     }
@@ -635,7 +667,10 @@ export class LiveValidator {
 
   private async getSwaggerPaths(): Promise<string[]> {
     if (this.options.swaggerPaths.length !== 0) {
-      log.debug(
+      log.info(
+        `Using user provided swagger paths. Total paths: ${this.options.swaggerPaths.length}`
+      )
+      this.loggingCallback(
         `Using user provided swagger paths. Total paths: ${this.options.swaggerPaths.length}`
       )
       return this.options.swaggerPaths
@@ -656,7 +691,11 @@ export class LiveValidator {
         onlyFiles: true,
         unique: true
       })
-      log.debug(
+      log.info(
+        `Using swaggers found from directory: "${this.options.directory}" and pattern: "${jsonsPattern}".
+        Total paths: ${swaggerPaths.length}`
+      )
+      this.loggingCallback(
         `Using swaggers found from directory: "${this.options.directory}" and pattern: "${jsonsPattern}".
         Total paths: ${swaggerPaths.length}`
       )
@@ -665,7 +704,8 @@ export class LiveValidator {
   }
 
   private async getSwaggerInitializer(swaggerPath: string): Promise<void> {
-    log.info(`Building cache from: "${swaggerPath}"`)
+    log.debug(`Building cache from: "${swaggerPath}"`)
+    this.loggingCallback(`Building cache from: "${swaggerPath}"`, winston.config.npm.levels.debug)
 
     const validator = new SpecValidator(swaggerPath, null, {
       isPathCaseSensitive: this.options.isPathCaseSensitive,
@@ -684,6 +724,10 @@ export class LiveValidator {
         const pathStr = pathObject.path
         let provider = utils.getProvider(pathStr)
         log.debug(`${apiVersion}, ${operation.operationId}, ${pathStr}, ${httpMethod}`)
+        this.loggingCallback(
+          `${apiVersion}, ${operation.operationId}, ${pathStr}, ${httpMethod}`,
+          winston.config.npm.levels.debug
+        )
 
         if (!provider) {
           const title = api.info.title
@@ -700,6 +744,11 @@ export class LiveValidator {
           log.debug(
             `Unable to find provider for path : "${pathObject.path}". ` +
               `Bucketizing into provider: "${provider}"`
+          )
+          this.loggingCallback(
+            `Unable to find provider for path : "${pathObject.path}". ` +
+              `Bucketizing into provider: "${provider}"`,
+            winston.config.npm.levels.debug
           )
         }
         provider = provider.toLowerCase()
@@ -720,9 +769,18 @@ export class LiveValidator {
     } catch (err) {
       // Do Not reject promise in case, we cannot initialize one of the swagger
       log.debug(`Unable to initialize "${swaggerPath}" file from SpecValidator. Error: ${err}`)
+      this.loggingCallback(
+        `Unable to initialize "${swaggerPath}" file from SpecValidator. Error: ${err}`,
+        winston.config.npm.levels.debug
+      )
       log.warn(
         `Unable to initialize "${swaggerPath}" file from SpecValidator. We are ` +
           `ignoring this swagger file and continuing to build cache for other valid specs.`
+      )
+      this.loggingCallback(
+        `Unable to initialize "${swaggerPath}" file from SpecValidator. We are ` +
+          `ignoring this swagger file and continuing to build cache for other valid specs.`,
+        winston.config.npm.levels.warn
       )
     }
   }
