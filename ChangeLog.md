@@ -3,9 +3,6 @@
 ## 10/14/2019 0.19.8
 
 - Add an optional logging callback to consume by livevalidator in order to dump log to external caller.
-
-## 10/12/2019 0.19.7
-
 - Update the yasway version to 1.8.5.
 - Add the new validation error code of SECRET_PROPERTY.
 
