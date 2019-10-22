@@ -1,5 +1,9 @@
 # Changelog
 
+## 10/22/2019 0.19.9
+
+- Extends logging for live validator to log performance metrics, correlationId and structured request information.
+
 ## 10/14/2019 0.19.8
 
 - Add an optional logging callback to consume by livevalidator in order to dump log to external caller.
