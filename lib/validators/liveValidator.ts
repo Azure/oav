@@ -213,7 +213,7 @@ export class LiveValidator {
     this.logging("Cache initialization complete.")
     const elapsedTime = Date.now() - startTime
     this.logging(
-      `DurationInMs:${elapsedTime}`,
+      `Cache initialization complete with DurationInMs:${elapsedTime}.`,
       LiveValidatorLoggingLevels.debug,
       "Oav.liveValidator.initialize"
     )
@@ -821,13 +821,13 @@ export class LiveValidator {
     })
 
     try {
-      const startTimeInnerValidator = Date.now()
+      const startTimeLoadSpec = Date.now()
       const api = await validator.initialize()
-      const elapsedTimeInnerValidator = Date.now() - startTimeInnerValidator
+      const elapsedTimeLoadSpec = Date.now() - startTimeLoadSpec
       this.logging(
-        `DurationInMs:${elapsedTimeInnerValidator}`,
+        `Load spec for ${swaggerPath} with DurationInMs:${elapsedTimeLoadSpec}`,
         LiveValidatorLoggingLevels.debug,
-        "Oav.liveValidator.getSwaggerInitializer.innerValidator.initialize"
+        "Oav.liveValidator.getSwaggerInitializer.specValidator.initialize"
       )
 
       const operations = api.getOperations()
