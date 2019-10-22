@@ -3,6 +3,7 @@
     "headers": {
       "strict-Transport-Security": "max-age=31536000; includeSubDomains",
       "x-ms-request-id": "97856fec-304a-4317-87f0-f04c328402d3",
+      "x-ms-correlation-request-id": "97856fec-304a-4317-87f0-f04c328402d3",
       "date": "Tue, 11 Sep 2018 19:00:21 GMT",
       "eTag": "\"AAAAAAAAQqUAAAAAAABCpw==\"",
       "server": "Microsoft-HTTPAPI/2.0",
@@ -25,6 +26,7 @@
     "headers": {
       "strict-Transport-Security": "max-age=31536000; includeSubDomains",
       "x-ms-request-id": "97856fec-304a-4317-87f0-f04c328402d3",
+      "x-ms-correlation-request-id": "97856fec-304a-4317-87f0-f04c328402d3",
       "date": "Tue, 11 Sep 2018 19:00:21 GMT",
       "eTag": "\"AAAAAAAAQqUAAAAAAABCpw==\"",
       "server": "Microsoft-HTTPAPI/2.0",
