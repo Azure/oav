@@ -490,7 +490,7 @@ describe("Live validator snapshot validation", () => {
     "ENUM_MISMATCH",
     "ENUM_CASE_MISMATCH",
     "SECRET_PROPERTY",
-    "WRITE_ONLY_PROPERTY_IN_RESPONSE"
+    "WRITEONLY_PROPERTY_NOT_ALLOWED_IN_RESPONSE"
   ]
   beforeAll(async () => {
     const options = {
@@ -541,12 +541,6 @@ describe("Live validator snapshot validation", () => {
 
   errors.forEach(error => {
     test(`should return the expected error requestResponse validation for ${error}`, async () => {
-      if (error === 'WRITE_ONLY_PROPERTY_IN_RESPONSE') {
-        console.log('here');
-      }
-      if (error == 'SECRET_PROPERTY') {
-        console.log('here')
-      }
       const payload = require(`${__dirname}/liveValidation/payloads/${lodash.camelCase(
         error
       )}_input.json`)

@@ -40,7 +40,7 @@ export class ValidateResponse {
     ENUM_MISMATCH: "M6015",
     ENUM_CASE_MISMATCH: "M6016",
     SECRET_PROPERTY: "M6017",
-    WRITEONLY_PROPERTY_NOT_ALLOWED: "M6018"
+    WRITEONLY_PROPERTY_NOT_ALLOWED_IN_RESPONSE: "M6018"
   }
 
   public constructErrors(
