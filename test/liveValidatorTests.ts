@@ -269,7 +269,8 @@ describe("Live Validator", () => {
       const validator: any = new LiveValidator(options)
       await validator.initialize()
       // Operations to match is StorageAccounts_List
-      let operations = validator.getPotentialOperations(listRequestUrl, "Get").operations
+      let validationInfo = validator.parseValidationRequest(listRequestUrl, "Get", "randomId")
+      let operations = validator.getPotentialOperations(validationInfo).operations
       let pathObject = operations[0].pathObject
       if (pathObject === undefined) {
         throw new Error("pathObject is undefined")
@@ -281,7 +282,8 @@ describe("Live Validator", () => {
       )
 
       // Operations to match is StorageAccounts_CheckNameAvailability
-      operations = validator.getPotentialOperations(postRequestUrl, "PoSt").operations
+      validationInfo = validator.parseValidationRequest(postRequestUrl, "PoSt", "randomId")
+      operations = validator.getPotentialOperations(validationInfo).operations
       pathObject = operations[0].pathObject
       if (pathObject === undefined) {
         throw new Error("pathObject is undefined")
@@ -293,7 +295,8 @@ describe("Live Validator", () => {
       )
 
       // Operations to match is StorageAccounts_Delete
-      operations = validator.getPotentialOperations(deleteRequestUrl, "delete").operations
+      validationInfo = validator.parseValidationRequest(deleteRequestUrl, "Delete", "randomId")
+      operations = validator.getPotentialOperations(validationInfo).operations
       pathObject = operations[0].pathObject
       if (pathObject === undefined) {
         throw new Error("pathObject is undefined")
@@ -329,7 +332,8 @@ describe("Live Validator", () => {
       await validator.initialize()
       // Operations to match is StorageAccounts_List with api-version 2015-08-15
       // [non cached api version]
-      let result = validator.getPotentialOperations(nonCachedApiUrl, "Get")
+      let validationInfo = validator.parseValidationRequest(nonCachedApiUrl, "Get", "randomId")
+      let result = validator.getPotentialOperations(validationInfo)
       let operations = result.operations
       let reason = result.reason
       assert.strictEqual(0, operations.length)
@@ -340,7 +344,8 @@ describe("Live Validator", () => {
 
       // Operations to match is StorageAccounts_CheckNameAvailability with provider "Hello.World"
       // [non cached provider]
-      result = validator.getPotentialOperations(nonCachedProviderUrl, "PoSt")
+      validationInfo = validator.parseValidationRequest(nonCachedProviderUrl, "PoSt", "randomId")
+      result = validator.getPotentialOperations(validationInfo)
       operations = result.operations
       reason = result.reason
       assert.strictEqual(0, operations.length)
@@ -353,7 +358,8 @@ describe("Live Validator", () => {
       )
 
       // Operations to match is StorageAccounts_Delete with verb "head" [non cached http verb]
-      result = validator.getPotentialOperations(nonCachedVerbUrl, "head")
+      validationInfo = validator.parseValidationRequest(nonCachedVerbUrl, "head", "randomId")
+      result = validator.getPotentialOperations(validationInfo)
       operations = result.operations
       reason = result.reason
       assert.strictEqual(0, operations.length)
@@ -366,7 +372,8 @@ describe("Live Validator", () => {
       // "subscriptions/subscriptionId/providers/Microsoft.Storage/" +
       // "storageAccounts/storageAccounts/accountName/properties/"
       // [non cached path]
-      result = validator.getPotentialOperations(nonCachedPath, "get")
+      validationInfo = validator.parseValidationRequest(nonCachedPath, "get", "randomId")
+      result = validator.getPotentialOperations(validationInfo)
       operations = result.operations
       reason = result.reason
       assert.strictEqual(0, operations.length)

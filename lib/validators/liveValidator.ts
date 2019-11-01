@@ -48,14 +48,25 @@ interface Provider {
   [apiVersion: string]: ApiVersion
 }
 
+export interface ValidationRequest {
+  providerNamespace: string
+  resourceType: string
+  apiVersion: string
+  requestMethod: string
+  pathStr: string
+  queryStr?: ParsedUrlQuery
+  correlationId?: string
+  requestUrl: string
+}
+
 export interface LiveRequest extends Request {
-  headers: object
+  headers: { [propertyName: string]: string }
   body?: object
 }
 
 export interface LiveResponse {
   statusCode: string
-  headers: object
+  headers: { [propertyName: string]: string }
   body?: object
 }
 
@@ -101,6 +112,13 @@ export interface LiveValidationIssue {
 }
 
 /**
+ * Additional data to log.
+ */
+interface Meta {
+  [key: string]: any
+}
+
+/**
  * Options for a validation operation.
  * If `includeErrors` is missing or empty, all error codes will be included.
  */
@@ -128,7 +146,7 @@ export class LiveValidator {
 
   public options: LiveValidatorOptions
 
-  private logFunction?: (message: string, level: string) => void
+  private logFunction?: (message: string, level: string, meta?: Meta) => void
 
   /**
    * Constructs LiveValidator based on provided options.
@@ -140,7 +158,7 @@ export class LiveValidator {
    */
   public constructor(
     options?: Partial<LiveValidatorOptions>,
-    logCallback?: (message: string, level: string) => void
+    logCallback?: (message: string, level: string, meta?: Meta) => void
   ) {
     const ops: Partial<LiveValidatorOptions> = options || {}
     this.logFunction = logCallback
@@ -174,20 +192,11 @@ export class LiveValidator {
     this.options = ops as LiveValidatorOptions
   }
 
-  private logging(
-    message: string,
-    level: LiveValidatorLoggingLevels = LiveValidatorLoggingLevels.info
-  ): void {
-    log.log(level, message)
-    if (this.logFunction !== undefined) {
-      this.logFunction(message, level)
-    }
-  }
-
   /**
    * Initializes the Live Validator.
    */
   public async initialize(): Promise<void> {
+    const startTime = Date.now()
     // Clone github repository if required
     if (this.options.git.shouldClone && this.options.git.url) {
       utils.gitClone(this.options.directory, this.options.git.url, this.options.git.branch)
@@ -202,151 +211,11 @@ export class LiveValidator {
 
     await Promise.all(promiseFactories)
     this.logging("Cache initialization complete.")
-  }
-
-  /**
-   * Gets list of potential operations objects for given url and method.
-   *
-   * @param  requestUrl The url for which to find potential operations.
-   *
-   * @param requestMethod The http verb for the method to be used for lookup.
-   *
-   * @returns Potential operation result object.
-   */
-  private getPotentialOperations(
-    requestUrl: string,
-    requestMethod: string
-  ): PotentialOperationsResult {
-    if (_.isEmpty(this.cache)) {
-      const msgStr =
-        `Please call "liveValidator.initialize()" before calling this method, ` +
-        `so that cache is populated.`
-      throw new Error(msgStr)
-    }
-
-    if (
-      requestUrl === null ||
-      requestUrl === undefined ||
-      typeof requestUrl.valueOf() !== "string" ||
-      !requestUrl.trim().length
-    ) {
-      throw new Error(
-        'requestUrl is a required parameter of type "string" and it cannot be an empty string.'
-      )
-    }
-
-    if (
-      requestMethod === null ||
-      requestMethod === undefined ||
-      typeof requestMethod.valueOf() !== "string" ||
-      !requestMethod.trim().length
-    ) {
-      throw new Error(
-        'requestMethod is a required parameter of type "string" and it cannot be an empty string.'
-      )
-    }
-
-    let potentialOperations: Operation[] = []
-    const parsedUrl = url.parse(requestUrl, true)
-    const pathStr = parsedUrl.pathname
-    requestMethod = requestMethod.toLowerCase()
-    let msg
-    let code
-    let liveValidationError: models.LiveValidationError | undefined
-    if (pathStr === null || pathStr === undefined) {
-      msg = `Could not find path from requestUrl: "${requestUrl}".`
-      liveValidationError = new models.LiveValidationError(
-        C.ErrorCodes.PathNotFoundInRequestUrl.name,
-        msg
-      )
-      return new models.PotentialOperationsResult(
-        potentialOperations,
-        C.unknownResourceProvider,
-        C.unknownApiVersion,
-        liveValidationError
-      )
-    }
-
-    // Lower all the keys of query parameters before searching for `api-version`
-    const queryObject = _.transform(
-      parsedUrl.query,
-      (obj: ParsedUrlQuery, value, key) => (obj[key.toLowerCase()] = value)
-    )
-    let apiVersion = queryObject["api-version"] as string
-    let provider = utils.getProvider(pathStr)
-
-    // Provider would be provider found from the path or Microsoft.Unknown
-    provider = provider || C.unknownResourceProvider
-    if (provider === C.unknownResourceProvider) {
-      apiVersion = C.unknownApiVersion
-    }
-    provider = provider.toLowerCase()
-
-    // Search using provider
-    const allApiVersions = this.cache[provider]
-    if (allApiVersions) {
-      // Search using api-version found in the requestUrl
-      if (apiVersion) {
-        const allMethods = allApiVersions[apiVersion]
-        if (allMethods) {
-          const operationsForHttpMethod = allMethods[requestMethod]
-          // Search using requestMethod provided by user
-          if (operationsForHttpMethod) {
-            // Find the best match using regex on path
-            potentialOperations = this.getPotentialOperationsHelper(
-              pathStr,
-              requestMethod,
-              operationsForHttpMethod
-            )
-            // If potentialOperations were to be [] then we need reason
-            msg =
-              `Could not find best match operation for verb "${requestMethod}" for api-version ` +
-              `"${apiVersion}" and provider "${provider}" in the cache.`
-            code = C.ErrorCodes.OperationNotFoundInCache
-          } else {
-            msg =
-              `Could not find any methods with verb "${requestMethod}" for api-version ` +
-              `"${apiVersion}" and provider "${provider}" in the cache.`
-            code = C.ErrorCodes.OperationNotFoundInCacheWithVerb
-            this.logging(`${msg} with requestUrl ${requestUrl}`, LiveValidatorLoggingLevels.debug)
-          }
-        } else {
-          msg =
-            `Could not find exact api-version "${apiVersion}" for provider "${provider}" ` +
-            `in the cache.`
-          code = C.ErrorCodes.OperationNotFoundInCacheWithApi
-          this.logging(
-            `${msg} with requestUrl ${requestUrl}, we'll search in the resource provider "Microsoft.Unknown".`,
-            LiveValidatorLoggingLevels.debug
-          )
-          potentialOperations = this.getPotentialOperationsHelper(pathStr, requestMethod, [])
-        }
-      } else {
-        msg = `Could not find api-version in requestUrl "${requestUrl}".`
-        code = C.ErrorCodes.OperationNotFoundInCacheWithApi
-        this.logging(`${msg} with requestUrl ${requestUrl}`, LiveValidatorLoggingLevels.debug)
-      }
-    } else {
-      // provider does not exist in cache
-      msg = `Could not find provider "${provider}" in the cache.`
-      code = C.ErrorCodes.OperationNotFoundInCacheWithProvider
-      this.logging(
-        `${msg} with requestUrl ${requestUrl}, we'll search in the resource provider "Microsoft.Unknown".`,
-        LiveValidatorLoggingLevels.debug
-      )
-      potentialOperations = this.getPotentialOperationsHelper(pathStr, requestMethod, [])
-    }
-
-    // Provide reason when we do not find any potential operation in cache
-    if (potentialOperations.length === 0) {
-      liveValidationError = new models.LiveValidationError(code.name, msg)
-    }
-
-    return new models.PotentialOperationsResult(
-      potentialOperations,
-      provider,
-      apiVersion,
-      liveValidationError
+    const elapsedTime = Date.now() - startTime
+    this.logging(
+      `Cache initialization complete with DurationInMs:${elapsedTime}.`,
+      LiveValidatorLoggingLevels.debug,
+      "Oav.liveValidator.initialize"
     )
   }
 
@@ -357,10 +226,24 @@ export class LiveValidator {
     liveRequest: LiveRequest,
     options: ValidateOptions = {}
   ): LiveValidationResult {
+    const startTime = Date.now()
     let operation
+    let validationRequest
+    const correlationId = liveRequest.headers["x-ms-correlation-request-id"] || ""
     try {
-      operation = this.findSpecOperation(liveRequest.url, liveRequest.method)
+      validationRequest = this.parseValidationRequest(
+        liveRequest.url,
+        liveRequest.method,
+        correlationId
+      )
+      operation = this.findSpecOperation(validationRequest)
     } catch (err) {
+      this.logging(
+        err.message,
+        LiveValidatorLoggingLevels.error,
+        "Oav.liveValidator.validateLiveRequest",
+        validationRequest
+      )
       return {
         isSuccessful: undefined,
         errors: [],
@@ -392,7 +275,20 @@ export class LiveValidator {
         `"${operation.operationId}". The error is:\n ` +
         `${util.inspect(reqValidationError, { depth: null })}`
       runtimeException = { code: C.ErrorCodes.RequestValidationError.name, message: msg }
+      this.logging(
+        msg,
+        LiveValidatorLoggingLevels.error,
+        "Oav.liveValidator.validateLiveRequest",
+        validationRequest
+      )
     }
+    const elapsedTime = Date.now() - startTime
+    this.logging(
+      `DurationInMs:${elapsedTime}`,
+      LiveValidatorLoggingLevels.debug,
+      "Oav.liveValidator.validateLiveRequest",
+      validationRequest
+    )
     return {
       isSuccessful: runtimeException ? undefined : errors.length === 0,
       operationInfo: {
@@ -438,10 +334,24 @@ export class LiveValidator {
     specOperation: ApiOperationIdentifier,
     options: ValidateOptions = {}
   ): LiveValidationResult {
+    const startTime = Date.now()
     let operation: OperationWithApiVersion
+    let validationRequest
+    const correlationId = liveResponse.headers["x-ms-correlation-request-id"] || ""
     try {
-      operation = this.findSpecOperation(specOperation.url, specOperation.method)
+      validationRequest = this.parseValidationRequest(
+        specOperation.url,
+        specOperation.method,
+        correlationId
+      )
+      operation = this.findSpecOperation(validationRequest)
     } catch (err) {
+      this.logging(
+        err.message,
+        LiveValidatorLoggingLevels.error,
+        "Oav.liveValidator.validateLiveResponse",
+        validationRequest
+      )
       return {
         isSuccessful: undefined,
         errors: [],
@@ -479,8 +389,20 @@ export class LiveValidator {
         `"${operation.operationId}". The error is:\n ` +
         `${util.inspect(resValidationError, { depth: null })}`
       runtimeException = { code: C.ErrorCodes.RequestValidationError.name, message: msg }
+      this.logging(
+        msg,
+        LiveValidatorLoggingLevels.error,
+        "Oav.liveValidator.validateLiveResponse",
+        validationRequest
+      )
     }
-
+    const elapsedTime = Date.now() - startTime
+    this.logging(
+      `DurationInMs:${elapsedTime}`,
+      LiveValidatorLoggingLevels.debug,
+      "Oav.liveValidator.validateLiveResponse",
+      validationRequest
+    )
     return {
       isSuccessful: runtimeException ? undefined : errors.length === 0,
       operationInfo: {
@@ -559,6 +481,208 @@ export class LiveValidator {
   }
 
   /**
+   * Gets list of potential operations objects for given url and method.
+   *
+   * @param  requestInfo The parsed request info for which to find potential operations.
+   *
+   * @returns Potential operation result object.
+   */
+  private getPotentialOperations(requestInfo: ValidationRequest): PotentialOperationsResult {
+    const startTime = Date.now()
+    if (_.isEmpty(this.cache)) {
+      const msgStr =
+        `Please call "liveValidator.initialize()" before calling this method, ` +
+        `so that cache is populated.`
+      throw new Error(msgStr)
+    }
+
+    let potentialOperations: Operation[] = []
+    let msg
+    let code
+    let liveValidationError: models.LiveValidationError | undefined
+    if (requestInfo.pathStr === "") {
+      msg = `Could not find path from requestUrl: "${requestInfo.requestUrl}".`
+      liveValidationError = new models.LiveValidationError(
+        C.ErrorCodes.PathNotFoundInRequestUrl.name,
+        msg
+      )
+      return new models.PotentialOperationsResult(
+        potentialOperations,
+        C.unknownResourceProvider,
+        C.unknownApiVersion,
+        liveValidationError
+      )
+    }
+
+    // Search using provider
+    const allApiVersions = this.cache[requestInfo.providerNamespace]
+    if (allApiVersions) {
+      // Search using api-version found in the requestUrl
+      if (requestInfo.apiVersion) {
+        const allMethods = allApiVersions[requestInfo.apiVersion]
+        if (allMethods) {
+          const operationsForHttpMethod = allMethods[requestInfo.requestMethod]
+          // Search using requestMethod provided by user
+          if (operationsForHttpMethod) {
+            // Find the best match using regex on path
+            potentialOperations = this.getPotentialOperationsHelper(
+              requestInfo,
+              operationsForHttpMethod
+            )
+            // If potentialOperations were to be [] then we need reason
+            msg =
+              `Could not find best match operation for verb "${requestInfo.requestMethod}" for api-version ` +
+              `"${requestInfo.apiVersion}" and provider "${requestInfo.providerNamespace}" in the cache.`
+            code = C.ErrorCodes.OperationNotFoundInCache
+          } else {
+            msg =
+              `Could not find any methods with verb "${requestInfo.requestMethod}" for api-version ` +
+              `"${requestInfo.apiVersion}" and provider "${requestInfo.providerNamespace}" in the cache.`
+            code = C.ErrorCodes.OperationNotFoundInCacheWithVerb
+            this.logging(
+              `${msg} with requestUrl ${requestInfo.requestUrl}`,
+              LiveValidatorLoggingLevels.debug,
+              "Oav.liveValidator.getPotentialOperations",
+              requestInfo
+            )
+          }
+        } else {
+          msg =
+            `Could not find exact api-version "${requestInfo.apiVersion}" for provider "${requestInfo.providerNamespace}" ` +
+            `in the cache.`
+          code = C.ErrorCodes.OperationNotFoundInCacheWithApi
+          this.logging(
+            `${msg} with requestUrl ${requestInfo.requestUrl}, we'll search in the resource provider "Microsoft.Unknown".`,
+            LiveValidatorLoggingLevels.debug,
+            "Oav.liveValidator.getPotentialOperations",
+            requestInfo
+          )
+          potentialOperations = this.getPotentialOperationsHelper(requestInfo, [])
+        }
+      } else {
+        msg = `Could not find api-version in requestUrl "${requestInfo.requestUrl}".`
+        code = C.ErrorCodes.OperationNotFoundInCacheWithApi
+        this.logging(
+          `${msg} with requestUrl ${requestInfo.requestUrl}`,
+          LiveValidatorLoggingLevels.debug,
+          "Oav.liveValidator.getPotentialOperations",
+          requestInfo
+        )
+      }
+    } else {
+      // provider does not exist in cache
+      msg = `Could not find provider "${requestInfo.providerNamespace}" in the cache.`
+      code = C.ErrorCodes.OperationNotFoundInCacheWithProvider
+      this.logging(
+        `${msg} with requestUrl ${requestInfo.requestUrl}, we'll search in the resource provider "Microsoft.Unknown".`,
+        LiveValidatorLoggingLevels.debug,
+        "Oav.liveValidator.getPotentialOperations",
+        requestInfo
+      )
+      potentialOperations = this.getPotentialOperationsHelper(requestInfo, [])
+    }
+
+    // Provide reason when we do not find any potential operation in cache
+    if (potentialOperations.length === 0) {
+      liveValidationError = new models.LiveValidationError(code.name, msg)
+    }
+    const elapsedTime = Date.now() - startTime
+    this.logging(
+      `DurationInMs:${elapsedTime}`,
+      LiveValidatorLoggingLevels.debug,
+      "Oav.liveValidator.getPotentialOperations",
+      requestInfo
+    )
+
+    return new models.PotentialOperationsResult(
+      potentialOperations,
+      requestInfo.providerNamespace,
+      requestInfo.apiVersion,
+      liveValidationError
+    )
+  }
+
+  /**
+   * Parse the validation request information.
+   *
+   * @param  requestUrl The url of service api call.
+   *
+   * @param requestMethod The http verb for the method to be used for lookup.
+   *
+   * @param correlationId The id to correlate the api calls.
+   *
+   * @returns parsed ValidationRequest info.
+   */
+  public parseValidationRequest(
+    requestUrl: string,
+    requestMethod: string,
+    correlationId: string
+  ): ValidationRequest {
+    if (
+      requestUrl === undefined ||
+      requestUrl === null ||
+      typeof requestUrl.valueOf() !== "string" ||
+      !requestUrl.trim().length
+    ) {
+      const msg =
+        "An error occurred while trying to parse validation payload." +
+        'requestUrl is a required parameter of type "string" and it cannot be an empty string.'
+      const e = new models.LiveValidationError(C.ErrorCodes.PotentialOperationSearchError.name, msg)
+      throw e
+    }
+
+    if (
+      requestMethod === undefined ||
+      requestMethod === null ||
+      typeof requestMethod.valueOf() !== "string" ||
+      !requestMethod.trim().length
+    ) {
+      const msg =
+        "An error occurred while trying to parse validation payload." +
+        'requestMethod is a required parameter of type "string" and it cannot be an empty string.'
+      const e = new models.LiveValidationError(C.ErrorCodes.PotentialOperationSearchError.name, msg)
+      throw e
+    }
+    let queryStr
+    let pathStr
+    let apiVersion = ""
+    let resourceType = ""
+    let providerNamespace = ""
+
+    const parsedUrl = url.parse(requestUrl, true)
+    pathStr = parsedUrl.pathname || ""
+    if (pathStr !== "") {
+      // Lower all the keys of query parameters before searching for `api-version`
+      const queryObject = _.transform(
+        parsedUrl.query,
+        (obj: ParsedUrlQuery, value, key) => (obj[key.toLowerCase()] = value)
+      )
+      apiVersion = queryObject["api-version"] as string
+      providerNamespace = utils.getProvider(pathStr) || C.unknownResourceProvider
+      resourceType = utils.getResourceType(pathStr, providerNamespace)
+
+      // Provider would be provider found from the path or Microsoft.Unknown
+      providerNamespace = providerNamespace || C.unknownResourceProvider
+      if (providerNamespace === C.unknownResourceProvider) {
+        apiVersion = C.unknownApiVersion
+      }
+      providerNamespace = providerNamespace.toLowerCase()
+      queryStr = parsedUrl.query
+      requestMethod = requestMethod.toLowerCase()
+    }
+    return {
+      providerNamespace,
+      resourceType,
+      apiVersion,
+      requestMethod,
+      pathStr,
+      queryStr,
+      correlationId,
+      requestUrl
+    }
+  }
+
+  /**
    * Gets list of potential operations objects for given path and method.
    *
    * @param {string} requestPath The path of the url for which to find potential operations.
@@ -570,37 +694,15 @@ export class LiveValidator {
    * @returns {Array<Operation>} List of potential operations matching the requestPath.
    */
   private getPotentialOperationsHelper(
-    requestPath: string,
-    requestMethod: string,
+    requestInfo: ValidationRequest,
     operations: Operation[]
   ): Operation[] {
-    if (
-      requestPath === null ||
-      requestPath === undefined ||
-      typeof requestPath.valueOf() !== "string" ||
-      !requestPath.trim().length
-    ) {
-      throw new Error(
-        'requestPath is a required parameter of type "string" and it cannot be an empty string.'
-      )
-    }
-
-    if (
-      requestMethod === null ||
-      requestMethod === undefined ||
-      typeof requestMethod.valueOf() !== "string" ||
-      !requestMethod.trim().length
-    ) {
-      throw new Error(
-        'requestMethod is a required parameter of type "string" and it cannot be an empty string.'
-      )
-    }
-
+    const startTime = Date.now()
     if (operations === null || operations === undefined || !Array.isArray(operations)) {
       throw new Error('operations is a required parameter of type "array".')
     }
 
-    const requestUrl = formatUrlToExpectedFormat(requestPath)
+    const requestUrl = formatUrlToExpectedFormat(requestInfo.pathStr)
     let potentialOperations = operations.filter(operation => {
       const pathObject = operation.pathObject
       const pathMatch = pathObject.regexp.exec(requestUrl)
@@ -612,7 +714,7 @@ export class LiveValidator {
     if (!potentialOperations.length) {
       const c = this.cache[C.unknownResourceProvider]
       if (c && c[C.unknownApiVersion]) {
-        operations = c[C.unknownApiVersion][requestMethod]
+        operations = c[C.unknownApiVersion][requestInfo.requestMethod]
         potentialOperations = operations.filter(operation => {
           const pathObject = operation.pathObject
           let pathTemplate = pathObject.path
@@ -620,11 +722,18 @@ export class LiveValidator {
             pathTemplate = pathTemplate.slice(0, pathTemplate.indexOf("?"))
             pathObject.path = pathTemplate
           }
-          const pathMatch = pathObject.regexp.exec(requestPath)
+          const pathMatch = pathObject.regexp.exec(requestInfo.pathStr)
           return pathMatch !== null
         })
       }
     }
+    const elapsedTime = Date.now() - startTime
+    this.logging(
+      `DurationInMs:${elapsedTime}`,
+      LiveValidatorLoggingLevels.debug,
+      "Oav.liveValidator.getPotentialOperationsHelper",
+      requestInfo
+    )
 
     return potentialOperations
   }
@@ -632,10 +741,10 @@ export class LiveValidator {
   /**
    * Gets the swagger operation based on the HTTP url and method
    */
-  private findSpecOperation(requestUrl: string, requestMethod: string): OperationWithApiVersion {
+  private findSpecOperation(requestInfo: ValidationRequest): OperationWithApiVersion {
     let potentialOperationsResult
     try {
-      potentialOperationsResult = this.getPotentialOperations(requestUrl, requestMethod)
+      potentialOperationsResult = this.getPotentialOperations(requestInfo)
     } catch (err) {
       const msg =
         `An error occurred while trying to search for potential operations:\n` +
@@ -654,8 +763,13 @@ export class LiveValidator {
         .join()
       const msg =
         `Found multiple matching operations with operationIds "${operationIds}" ` +
-        `for request url "${url}" with HTTP Method "${requestMethod}".`
-      this.logging(msg, LiveValidatorLoggingLevels.debug)
+        `for request url "${requestInfo.requestUrl}" with HTTP Method "${requestInfo.requestMethod}".`
+      this.logging(
+        msg,
+        LiveValidatorLoggingLevels.debug,
+        "Oav.liveValidator.findSpecOperation",
+        requestInfo
+      )
       const e = new models.LiveValidationError(C.ErrorCodes.MultipleOperationsFound.name, msg)
       throw e
     }
@@ -698,6 +812,7 @@ export class LiveValidator {
   }
 
   private async getSwaggerInitializer(swaggerPath: string): Promise<void> {
+    const startTime = Date.now()
     this.logging(`Building cache from: "${swaggerPath}"`, LiveValidatorLoggingLevels.debug)
 
     const validator = new SpecValidator(swaggerPath, null, {
@@ -706,7 +821,14 @@ export class LiveValidator {
     })
 
     try {
+      const startTimeLoadSpec = Date.now()
       const api = await validator.initialize()
+      const elapsedTimeLoadSpec = Date.now() - startTimeLoadSpec
+      this.logging(
+        `Load spec for ${swaggerPath} with DurationInMs:${elapsedTimeLoadSpec}`,
+        LiveValidatorLoggingLevels.debug,
+        "Oav.liveValidator.getSwaggerInitializer.specValidator.initialize"
+      )
 
       const operations = api.getOperations()
       let apiVersion = api.info.version.toLowerCase()
@@ -754,6 +876,12 @@ export class LiveValidator {
         apiVersions[apiVersion] = allMethods
         this.cache[provider] = apiVersions
       }
+      const elapsedTime = Date.now() - startTime
+      this.logging(
+        `DurationInMs:${elapsedTime}`,
+        LiveValidatorLoggingLevels.debug,
+        "Oav.liveValidator.getSwaggerInitializer"
+      )
     } catch (err) {
       // Do Not reject promise in case, we cannot initialize one of the swagger
       this.logging(
@@ -765,6 +893,32 @@ export class LiveValidator {
           `ignoring this swagger file and continuing to build cache for other valid specs.`,
         LiveValidatorLoggingLevels.warn
       )
+    }
+  }
+
+  private logging(
+    message: string,
+    level?: LiveValidatorLoggingLevels,
+    operationName?: string,
+    validationRequest?: ValidationRequest
+  ): void {
+    level = level || LiveValidatorLoggingLevels.info
+    operationName = operationName || ""
+    log.log(level, message)
+    if (this.logFunction !== undefined) {
+      if (validationRequest !== undefined && validationRequest !== null) {
+        this.logFunction(message, level, {
+          CorrelationId: validationRequest.correlationId,
+          ProviderNamespace: validationRequest.providerNamespace,
+          ResourceType: validationRequest.resourceType,
+          ApiVersion: validationRequest.apiVersion,
+          OperationName: operationName
+        })
+      } else {
+        this.logFunction(message, level, {
+          OperationName: operationName
+        })
+      }
     }
   }
 }

@@ -249,6 +249,33 @@ export function getProvider(pathStr?: string | null): string | undefined {
 }
 
 /**
+ * Gets provider resource type from the given path.
+ * @param {string} pathStr The path of the operation.
+ *                 Example "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/
+ *                  providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/
+ *                  {resourceName}/providers/Microsoft.Authorization/roleAssignments"
+ *                 will return "roleAssignments".
+ *
+ * @returns {string} result - provider resource type from the given path.
+ */
+export function getResourceType(pathStr: string, provider?: string): string {
+  if (provider !== undefined && provider !== null) {
+    const index = pathStr.indexOf(provider)
+    if (index > 0) {
+      pathStr = pathStr.substring(index + provider.length + 1)
+    }
+  }
+
+  let resourceType = pathStr
+  const slashIndex = pathStr.indexOf("/")
+  if (slashIndex > 0) {
+    resourceType = pathStr.substring(0, slashIndex)
+  }
+
+  return resourceType
+}
+
+/**
 /*
  * Clones a github repository in the given directory.
  * @param {string} directory to where to clone the repository.
