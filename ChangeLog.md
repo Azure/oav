@@ -1,5 +1,8 @@
 # Changelog
 
+## 11/4/2019 0.20.0
+- Support x-ms-mutability in the response validation. If there's a write-only x-ms-mutabitlity property in the response, report an error
+
 ## 10/22/2019 0.19.9
 
 - Extends logging for live validator to log performance metrics, correlationId and structured request information.

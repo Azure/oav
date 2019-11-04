@@ -496,7 +496,8 @@ describe("Live validator snapshot validation", () => {
     "INVALID_TYPE",
     "ENUM_MISMATCH",
     "ENUM_CASE_MISMATCH",
-    "SECRET_PROPERTY"
+    "SECRET_PROPERTY",
+    "WRITEONLY_PROPERTY_NOT_ALLOWED_IN_RESPONSE"
   ]
   beforeAll(async () => {
     const options = {

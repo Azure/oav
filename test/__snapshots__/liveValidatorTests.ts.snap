@@ -690,3 +690,53 @@ Object {
   },
 }
 `;
+
+exports[`Live validator snapshot validation should return the expected error requestResponse validation for WRITEONLY_PROPERTY_NOT_ALLOWED_IN_RESPONSE 1`] = `
+Object {
+  "requestValidationResult": Object {
+    "errors": Array [],
+    "isSuccessful": true,
+    "operationInfo": Object {
+      "apiVersion": "2018-01-01",
+      "operationId": "WriteOnlyProperty_Get",
+    },
+    "runtimeException": undefined,
+  },
+  "responseValidationResult": Object {
+    "errors": Array [
+      Object {
+        "code": "WRITEONLY_PROPERTY_NOT_ALLOWED_IN_RESPONSE",
+        "documentationUrl": "",
+        "inner": undefined,
+        "jsonPathsInPayload": Array [
+          "$.properties.propertyUsage",
+        ],
+        "message": "Write-only property \`\\"propertyUsage\\": \\"I am a write-only property!\\"\`, is not allowed in the response.",
+        "params": Array [
+          "propertyUsage",
+          "I am a write-only property!",
+        ],
+        "pathsInPayload": Array [
+          "properties/propertyUsage",
+        ],
+        "schemaPath": "",
+        "severity": 0,
+        "source": Object {
+          "jsonRef": "#/definitions/WriteOnlyPropertyContractProperties/properties/propertyUsage",
+          "position": Object {
+            "column": 26,
+            "line": 142,
+          },
+          "url": "specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimwriteonly.json",
+        },
+      },
+    ],
+    "isSuccessful": false,
+    "operationInfo": Object {
+      "apiVersion": "2018-01-01",
+      "operationId": "WriteOnlyProperty_Get",
+    },
+    "runtimeException": undefined,
+  },
+}
+`;
