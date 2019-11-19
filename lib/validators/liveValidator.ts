@@ -667,6 +667,7 @@ export class LiveValidator {
         apiVersion = C.unknownApiVersion
       }
       providerNamespace = providerNamespace.toLowerCase()
+      apiVersion = apiVersion.toLowerCase()
       queryStr = parsedUrl.query
       requestMethod = requestMethod.toLowerCase()
     }
