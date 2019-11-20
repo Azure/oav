@@ -458,11 +458,13 @@ describe("Live Validator", () => {
     // should be case insensitive for api version
     it("should be case-insensitive for resource provider and API version", async () => {
       const options = {
-        directory: "./test/liveValidation/swaggers/specification/storage/resource-manager/Microsoft.Storage/2015-05-01-preview",
+        directory:
+          "./test/liveValidation/swaggers/specification/storage/resource-manager/Microsoft.Storage/2015-05-01-preview",
         swaggerPathsPattern: "*.json"
       }
       // Upper and lowercased provider and api-version strings for testing purpose
-      const adjustedUrl = "/subscriptions/randomSub/resourceGroups/randomResourceGroup/providers/MICROsoft.stoRAGE/storageAccounts/test?api-version=2015-05-01-PREVIEW"
+      const adjustedUrl =
+        "/subscriptions/rs/resourceGroups/rsg/providers/MICROsoft.stoRAGE/storageAccounts/test?api-version=2015-05-01-PREVIEW"
       const validator = new LiveValidator(options)
       await validator.initialize()
       const result = validator.validateLiveRequestResponse({
@@ -470,7 +472,7 @@ describe("Live Validator", () => {
           url: adjustedUrl,
           method: "get",
           headers: {
-            "content-type":"application/json"
+            "content-type": "application/json"
           },
           query: {
             "api-version": "2015-05-01-PREVIEW"
@@ -482,30 +484,30 @@ describe("Live Validator", () => {
             "content-type": "application/json"
           },
           body: {
-            location:"testLocation",
+            location: "testLocation",
             properties: {
-            creationTime: "2017-05-24T13:28:53.4540398Z",
-            primaryEndpoints: {
-              "blob": "https://random.blob.core.windows.net/",
-              "queue": "https://random.queue.core.windows.net/",
-              "table": "https://random.table.core.windows.net/"
-            },
-            accountType:"Standard_LRS",
-            primaryLocation: "eastus2euap",
-            provisioningState: "Succeeded",
-            secondaryLocation: "centraluseuap",
-            statusOfPrimary: "Available",
-            statusOfSecondary: "Available"
+              creationTime: "2017-05-24T13:28:53.4540398Z",
+              primaryEndpoints: {
+                blob: "https://random.blob.core.windows.net/",
+                queue: "https://random.queue.core.windows.net/",
+                table: "https://random.table.core.windows.net/"
+              },
+              accountType: "Standard_LRS",
+              primaryLocation: "eastus2euap",
+              provisioningState: "Succeeded",
+              secondaryLocation: "centraluseuap",
+              statusOfPrimary: "Available",
+              statusOfSecondary: "Available"
             },
             type: "Microsoft.Storage/storageAccounts"
           }
         }
       })
       // Should be able to find Microsoft.Storage with 2015-05-01-preview api version succesfully
-      const errors = result.responseValidationResult.errors;
+      const errors = result.responseValidationResult.errors
       assert.deepStrictEqual(errors, [])
       assert.equal(result.responseValidationResult.isSuccessful, true)
-      assert.equal(typeof result.responseValidationResult.runtimeException, 'undefined')
+      assert.equal(typeof result.responseValidationResult.runtimeException, "undefined")
     })
 
     it("should initialize for defaultErrorOnly and pass", async () => {
