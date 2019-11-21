@@ -1,6 +1,6 @@
 {
   "name": "oav",
-  "version": "0.20.0",
+  "version": "0.20.1",
   "author": {
     "name": "Microsoft Corporation",
     "email": "azsdkteam@microsoft.com",
@@ -37,7 +37,7 @@
     "vscode-jsonrpc": "^3.6.2",
     "winston": "^3.2.1",
     "yargs": "^6.6.0",
-    "yasway": "^1.8.6",
+    "yasway": "^1.8.7",
     "yuml2svg": "^4.2.1",
     "z-schema": "^4.1.0"
   },

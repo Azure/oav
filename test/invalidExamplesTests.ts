@@ -17,6 +17,6 @@ describe("Invalid examples", () => {
     if (result[0].details === undefined) {
       throw new Error("result[0].details === undefined")
     }
-    assert.notStrictEqual(result[0].details.url, undefined)
+    assert.strictEqual(result[0].details.code, "RESPONSE_STATUS_CODE_NOT_IN_EXAMPLE")
   })
 })

@@ -652,10 +652,11 @@ export class LiveValidator {
     const parsedUrl = url.parse(requestUrl, true)
     pathStr = parsedUrl.pathname || ""
     if (pathStr !== "") {
-      // Lower all the keys of query parameters before searching for `api-version`
+      // Lower all the keys and values of query parameters before searching for `api-version`
       const queryObject = _.transform(
         parsedUrl.query,
-        (obj: ParsedUrlQuery, value, key) => (obj[key.toLowerCase()] = value)
+        (obj: ParsedUrlQuery, value, key) =>
+          (obj[key.toLowerCase()] = _.isString(value) ? value.toLowerCase() : value)
       )
       apiVersion = queryObject["api-version"] as string
       providerNamespace = utils.getProvider(pathStr) || C.unknownResourceProvider
@@ -667,7 +668,8 @@ export class LiveValidator {
         apiVersion = C.unknownApiVersion
       }
       providerNamespace = providerNamespace.toLowerCase()
-      queryStr = parsedUrl.query
+      apiVersion = apiVersion.toLowerCase()
+      queryStr = queryObject
       requestMethod = requestMethod.toLowerCase()
     }
     return {

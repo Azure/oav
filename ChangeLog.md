@@ -1,5 +1,9 @@
 # Changelog
 
+## 11/20/2019 0.20.1
+- Resource provider and API version should be case-insensitive in live validation
+- Upgrade yasway version to reflect the deep clone performance improvement change
+
 ## 11/4/2019 0.20.0
 - Support x-ms-mutability in the response validation. If there's a write-only x-ms-mutabitlity property in the response, report an error
 
