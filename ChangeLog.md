@@ -1,5 +1,8 @@
 # Changelog
 
+## 11/26/2019 0.20.2
+- Upgrade yasway version to consume the change for x-ms-secret property update
+
 ## 11/20/2019 0.20.1
 - Resource provider and API version should be case-insensitive in live validation
 - Upgrade yasway version to reflect the deep clone performance improvement change
