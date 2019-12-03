@@ -37,6 +37,7 @@ export interface LiveValidatorOptions {
   useRelativeSourceLocationUrl?: boolean
   directory: string
   swaggerPathsPattern: string
+  excludedSwaggerPathsPattern: string[]
   isPathCaseSensitive: boolean
 }
 
@@ -165,6 +166,10 @@ export class LiveValidator {
 
     if (!ops.swaggerPaths) {
       ops.swaggerPaths = []
+    }
+
+    if (!ops.excludedSwaggerPathsPattern) {
+      ops.excludedSwaggerPathsPattern = C.DefaultConfig.ExcludedSwaggerPathPatterns;
     }
 
     if (!ops.git) {
@@ -782,6 +787,7 @@ export class LiveValidator {
   }
 
   private async getSwaggerPaths(): Promise<string[]> {
+
     if (this.options.swaggerPaths.length !== 0) {
       this.logging(
         `Using user provided swagger paths. Total paths: ${this.options.swaggerPaths.length}`
@@ -794,13 +800,7 @@ export class LiveValidator {
         this.options.swaggerPathsPattern || allJsonsPattern
       )
       const swaggerPaths = await globby(jsonsPattern, {
-        ignore: [
-          "**/examples/**/*",
-          "**/quickstart-templates/**/*",
-          "**/schema/**/*",
-          "**/live/**/*",
-          "**/wire-format/**/*"
-        ],
+        ignore: this.options.excludedSwaggerPathsPattern,
         onlyFiles: true,
         unique: true
       })
