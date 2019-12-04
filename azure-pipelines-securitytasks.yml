@@ -52,6 +52,7 @@ jobs:
     steps:
       - task: CredScan@2
         displayName: 'Run CredScan'
+        continueOnError: true
         inputs:
           toolMajorVersion: "V2"
           suppressionsFile: credScanSuppressions.json
