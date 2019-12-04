@@ -51,8 +51,13 @@ jobs:
       vmImage: "windows-2019"
     steps:
       - task: CredScan@2
+        displayName: 'Run CredScan'
         inputs:
           toolMajorVersion: "V2"
+          suppressionsFile: credScanSuppressions.json
+          debugMode: true
+          folderSuppression: true
+
 
       - task: PostAnalysis@1
         inputs:
