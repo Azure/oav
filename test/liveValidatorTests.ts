@@ -135,6 +135,20 @@ describe("Live Validator", () => {
       assert.deepStrictEqual(validator.cache, {})
       assert.deepStrictEqual(validator.options, options)
     })
+    it("should initialize with multiple path patterns", async () => {
+      const options = {
+        directory: "./test/liveValidation/swaggers/specification",
+        swaggerPathsPattern: [
+          "mediaservices/resource-manager/Microsoft.Media/2015-10-01/media.json",
+          "rpsaas/resource-manager/Microsoft.Contoso/**/*.json"
+        ]
+      }
+      const validator = new LiveValidator(options)
+      await validator.initialize()
+      assert.strictEqual(2, Object.keys(validator.cache).length)
+      assert.strictEqual(true, "microsoft.media" in validator.cache)
+      assert.strictEqual(true, "microsoft.contoso" in validator.cache)
+    })
   })
 
   describe("Initialize cache", () => {
@@ -143,7 +157,9 @@ describe("Live Validator", () => {
       const expectedApiVersion = "2015-10-01"
       const options = {
         directory: "./test/liveValidation/swaggers/specification",
-        swaggerPathsPattern: "mediaservices/resource-manager/Microsoft.Media/2015-10-01/media.json"
+        swaggerPathsPattern: [
+          "mediaservices/resource-manager/Microsoft.Media/2015-10-01/media.json"
+        ]
       }
       const validator = new LiveValidator(options)
       try {
@@ -202,8 +218,9 @@ describe("Live Validator", () => {
     it("should initialize for batch", async () => {
       const options = {
         directory: "./test/liveValidation/swaggers/specification",
-        swaggerPathsPattern:
+        swaggerPathsPattern: [
           "batch/resource-manager/Microsoft.Batch/stable/2017-01-01/BatchManagement.json"
+        ]
       }
       const validator = new LiveValidator(options)
       await validator.initialize()
@@ -385,7 +402,7 @@ describe("Live Validator", () => {
     it("it shouldn't create an implicit default response", async () => {
       const options = {
         directory: "./test/liveValidation/swaggers/specification/scenarios",
-        swaggerPathsPattern: "**/*.json",
+        swaggerPathsPattern: ["**/*.json"],
         shouldModelImplicitDefaultResponse: true
       }
       const validator = new LiveValidator(options)
@@ -412,7 +429,7 @@ describe("Live Validator", () => {
       it(`should validate request and response for "${livePath}"`, async () => {
         const options = {
           directory: "./test/liveValidation/swaggers/specification/storage",
-          swaggerPathsPattern: "**/*.json"
+          swaggerPathsPattern: ["**/*.json"]
         }
         const validator = new LiveValidator(options)
         await validator.initialize()
@@ -426,7 +443,7 @@ describe("Live Validator", () => {
     it("should initialize for defaultErrorOnly and fail on unknown status code", async () => {
       const options = {
         directory: "./test/liveValidation/swaggers/specification/defaultIsErrorOnly",
-        swaggerPathsPattern: "test.json"
+        swaggerPathsPattern: ["test.json"]
       }
       const validator = new LiveValidator(options)
       await validator.initialize()
@@ -460,7 +477,7 @@ describe("Live Validator", () => {
       const options = {
         directory:
           "./test/liveValidation/swaggers/specification/storage/resource-manager/Microsoft.Storage/2015-05-01-preview",
-        swaggerPathsPattern: "*.json"
+        swaggerPathsPattern: ["*.json"]
       }
       // Upper and lowercased provider and api-version strings for testing purpose
       const adjustedUrl =
@@ -513,7 +530,7 @@ describe("Live Validator", () => {
     it("should initialize for defaultErrorOnly and pass", async () => {
       const options = {
         directory: "./test/liveValidation/swaggers/specification/defaultIsErrorOnly",
-        swaggerPathsPattern: "test.json"
+        swaggerPathsPattern: ["test.json"]
       }
       const validator = new LiveValidator(options)
       await validator.initialize()
@@ -560,16 +577,18 @@ describe("Live validator snapshot validation", () => {
       directory: `${__dirname}/liveValidation/swaggers/`,
       isPathCaseSensitive: false,
       useRelativeSourceLocationUrl: true,
-      swaggerPathsPattern:
-        "specification\\apimanagement\\resource-manager\\Microsoft.ApiManagement\\preview\\2018-01-01\\*.json",
+      swaggerPathsPattern: [
+        "specification\\apimanagement\\resource-manager\\Microsoft.ApiManagement\\preview\\2018-01-01\\*.json"
+      ],
       git: {
         shouldClone: false
       }
     }
     validator = new LiveValidator(options)
     await validator.initialize()
-    options.swaggerPathsPattern =
+    options.swaggerPathsPattern = [
       "specification\\mediaservices\\resource-manager\\Microsoft.Media\\2018-07-01\\*.json"
+    ]
     validatorOneOf = new LiveValidator(options)
     await validatorOneOf.initialize()
   }, 100000)
@@ -585,8 +604,9 @@ describe("Live validator snapshot validation", () => {
       directory: `${__dirname}/liveValidation/swaggers/`,
       isPathCaseSensitive: false,
       useRelativeSourceLocationUrl: true,
-      swaggerPathsPattern:
-        "specification\\rpsaas\\resource-manager\\Microsoft.Contoso\\stable\\2019-01-01\\*.json",
+      swaggerPathsPattern: [
+        "specification\\rpsaas\\resource-manager\\Microsoft.Contoso\\stable\\2019-01-01\\*.json"
+      ],
       git: {
         shouldClone: false
       }

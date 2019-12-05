@@ -36,7 +36,7 @@ export interface LiveValidatorOptions {
   }
   useRelativeSourceLocationUrl?: boolean
   directory: string
-  swaggerPathsPattern: string
+  swaggerPathsPattern: string[]
   isPathCaseSensitive: boolean
 }
 
@@ -781,6 +781,26 @@ export class LiveValidator {
     return op as OperationWithApiVersion
   }
 
+  private async getMatchedPaths(jsonsPattern: string): Promise<string[]> {
+    const matchedPaths = await globby(jsonsPattern, {
+      ignore: [
+        "**/examples/**/*",
+        "**/quickstart-templates/**/*",
+        "**/schema/**/*",
+        "**/live/**/*",
+        "**/wire-format/**/*"
+      ],
+      onlyFiles: true,
+      unique: true
+    })
+    this.logging(
+      `Using swaggers found from directory: "${this.options.directory}" and pattern: "${jsonsPattern}".
+      paths.count: ${matchedPaths.length}`,
+      LiveValidatorLoggingLevels.debug
+    )
+    return matchedPaths
+  }
+
   private async getSwaggerPaths(): Promise<string[]> {
     if (this.options.swaggerPaths.length !== 0) {
       this.logging(
@@ -789,24 +809,26 @@ export class LiveValidator {
       return this.options.swaggerPaths
     } else {
       const allJsonsPattern = "/specification/**/*.json"
-      const jsonsPattern = path.join(
-        this.options.directory,
-        this.options.swaggerPathsPattern || allJsonsPattern
-      )
-      const swaggerPaths = await globby(jsonsPattern, {
-        ignore: [
-          "**/examples/**/*",
-          "**/quickstart-templates/**/*",
-          "**/schema/**/*",
-          "**/live/**/*",
-          "**/wire-format/**/*"
-        ],
-        onlyFiles: true,
-        unique: true
-      })
+      let swaggerPaths: string[] = []
+
+      if (
+        this.options.swaggerPathsPattern === undefined ||
+        this.options.swaggerPathsPattern.length === 0
+      ) {
+        const jsonsPattern = path.join(this.options.directory, allJsonsPattern)
+        swaggerPaths = await this.getMatchedPaths(jsonsPattern)
+      } else {
+        await Promise.all(
+          this.options.swaggerPathsPattern.map(async item => {
+            const jsonsPattern = path.join(this.options.directory, item)
+            const matchedPaths = await this.getMatchedPaths(jsonsPattern)
+            swaggerPaths = swaggerPaths.concat(matchedPaths)
+          })
+        )
+      }
       this.logging(
-        `Using swaggers found from directory: "${this.options.directory}" and pattern: "${jsonsPattern}".
-        Total paths: ${swaggerPaths.length}`,
+        `Using swaggers found from directory: "${this.options.directory}".
+        Total paths count: ${swaggerPaths.length}`,
         LiveValidatorLoggingLevels.debug
       )
       return swaggerPaths

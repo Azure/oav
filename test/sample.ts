@@ -6,8 +6,9 @@ import { LiveValidator } from "../lib/validators/liveValidator"
 
 const options = {
   directory: `${__dirname}/../../test/liveValidation/swaggers/`,
-  swaggerPathsPattern:
-    "specification\\mediaservices\\resource-manager\\Microsoft.Media\\2018-07-01\\*.json",
+  swaggerPathsPattern: [
+    "specification\\mediaservices\\resource-manager\\Microsoft.Media\\2018-07-01\\*.json"
+  ],
   git: {
     shouldClone: false
   }
