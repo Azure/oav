@@ -169,7 +169,11 @@ export class LiveValidator {
     }
 
     if (!ops.excludedSwaggerPathsPattern) {
+<<<<<<< HEAD
       ops.excludedSwaggerPathsPattern = C.DefaultConfig.ExcludedSwaggerPathsPattern;
+=======
+      ops.excludedSwaggerPathsPattern = C.DefaultConfig.ExcludedSwaggerPathPatterns;
+>>>>>>> c982808934cde9eae696424a0a57af84d45cdc1a
     }
 
     if (!ops.git) {
