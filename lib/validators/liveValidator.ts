@@ -169,7 +169,7 @@ export class LiveValidator {
     }
 
     if (!ops.excludedSwaggerPathsPattern) {
-      ops.excludedSwaggerPathsPattern = C.DefaultConfig.ExcludedSwaggerPathsPattern;
+      ops.excludedSwaggerPathsPattern = C.DefaultConfig.ExcludedSwaggerPathsPattern
     }
 
     if (!ops.git) {
@@ -803,7 +803,6 @@ export class LiveValidator {
   }
 
   private async getSwaggerPaths(): Promise<string[]> {
-
     if (this.options.swaggerPaths.length !== 0) {
       this.logging(
         `Using user provided swagger paths. Total paths count: ${this.options.swaggerPaths.length}`

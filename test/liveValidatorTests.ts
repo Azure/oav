@@ -235,7 +235,7 @@ describe("Live Validator", () => {
     it("should initialize and ignore certain swaggers by default", async () => {
       const options = {
         directory: "./test/liveValidation/swaggers/specification",
-        swaggerPathsPattern:["batch/**/*.json"]
+        swaggerPathsPattern: ["batch/**/*.json"]
       }
       const validator = new LiveValidator(options)
       await validator.initialize()
@@ -252,8 +252,8 @@ describe("Live Validator", () => {
     it("should not ignore any swagger paths if options delcare no ignore path", async () => {
       const options = {
         directory: "./test/liveValidation/swaggers/specification",
-        excludedSwaggerPathsPattern:[],
-        swaggerPathsPattern:["batch/**/*.json"]
+        excludedSwaggerPathsPattern: [],
+        swaggerPathsPattern: ["batch/**/*.json"]
       }
       const validator = new LiveValidator(options)
       await validator.initialize()
