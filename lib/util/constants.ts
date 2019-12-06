@@ -125,7 +125,7 @@ export const unknownApiVersion = "unknown-api-version"
 export const unknownOperationId = "unknownOperationId"
 export const unknownResourceType = "unknownResourceType"
 
-// Data-plane and Azure Stack swaggers can be skipped for performance boost as ARM don't use them 
+// Data-plane and Azure Stack swaggers can be skipped for performance boost as ARM don't use them
 export const DefaultConfig = {
   ExcludedSwaggerPathsPattern: [
     "**/examples/**/*",
