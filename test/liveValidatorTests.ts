@@ -18,6 +18,7 @@ describe("Live Validator", () => {
     it("should initialize with defaults", () => {
       const options = {
         swaggerPaths: [],
+        excludedSwaggerPathsPattern: Constants.DefaultConfig.ExcludedSwaggerPathsPattern,
         git: {
           url: "https://github.com/Azure/azure-rest-api-specs.git",
           shouldClone: false
@@ -32,6 +33,7 @@ describe("Live Validator", () => {
     it("should initialize with cloning", async () => {
       const options = {
         swaggerPaths: [],
+        excludedSwaggerPathsPattern: Constants.DefaultConfig.ExcludedSwaggerPathsPattern,
         git: {
           url: "https://github.com/Azure/oav.git",
           shouldClone: true
@@ -62,6 +64,7 @@ describe("Live Validator", () => {
       const swaggerPaths = ["swaggerPath1", "swaggerPath2"]
       const options = {
         isPathCaseSensitive: false,
+        excludedSwaggerPathsPattern: Constants.DefaultConfig.ExcludedSwaggerPathsPattern,
         swaggerPaths,
         git: {
           url: "https://github.com/Azure/azure-rest-api-specs.git",
@@ -78,6 +81,7 @@ describe("Live Validator", () => {
       const directory = "/Users/username/repos/"
       const options = {
         swaggerPaths,
+        excludedSwaggerPathsPattern: Constants.DefaultConfig.ExcludedSwaggerPathsPattern,
         isPathCaseSensitive: false,
         git: {
           url: "https://github.com/Azure/azure-rest-api-specs.git",
@@ -98,6 +102,7 @@ describe("Live Validator", () => {
       }
       const options = {
         swaggerPaths,
+        excludedSwaggerPathsPattern: Constants.DefaultConfig.ExcludedSwaggerPathsPattern,
         isPathCaseSensitive: false,
         git: {
           url: git.url,
@@ -123,6 +128,7 @@ describe("Live Validator", () => {
       }
       const options = {
         swaggerPaths,
+        excludedSwaggerPathsPattern: Constants.DefaultConfig.ExcludedSwaggerPathsPattern,
         git,
         directory,
         isPathCaseSensitive: false
@@ -225,6 +231,42 @@ describe("Live Validator", () => {
       const validator = new LiveValidator(options)
       await validator.initialize()
       assert.notStrictEqual(validator.cache["microsoft.batch"], undefined)
+    })
+    it("should initialize and ignore certain swaggers by default", async () => {
+      const options = {
+        directory: "./test/liveValidation/swaggers/specification",
+        swaggerPathsPattern:["batch/**/*.json"]
+      }
+      const validator = new LiveValidator(options)
+      await validator.initialize()
+      assert.strictEqual(1, Object.keys(validator.cache).length)
+      const microsoftBatch = validator.cache["microsoft.batch"]
+      if (microsoftBatch === undefined) {
+        throw new Error("microsoftBatch === undefined")
+      }
+      assert.strictEqual(undefined, microsoftBatch["2019-08-01.10.0"])
+      assert.strictEqual(7, microsoftBatch["2017-01-01"].get.length)
+      assert.strictEqual(2, microsoftBatch["2017-01-01"].patch.length)
+      assert.strictEqual(4, microsoftBatch["2017-01-01"].post.length)
+    })
+    it("should not ignore any swagger paths if options delcare no ignore path", async () => {
+      const options = {
+        directory: "./test/liveValidation/swaggers/specification",
+        excludedSwaggerPathsPattern:[],
+        swaggerPathsPattern:["batch/**/*.json"]
+      }
+      const validator = new LiveValidator(options)
+      await validator.initialize()
+      assert.strictEqual(1, Object.keys(validator.cache).length)
+      const microsoftBatch = validator.cache["microsoft.batch"]
+      if (microsoftBatch === undefined) {
+        throw new Error("microsoftBatch === undefined")
+      }
+      // Should find two different api versions, one for data plane and one for management plane
+      assert.strictEqual(1, microsoftBatch["2019-08-01.10.0"].get.length)
+      assert.strictEqual(7, microsoftBatch["2017-01-01"].get.length)
+      assert.strictEqual(2, microsoftBatch["2017-01-01"].patch.length)
+      assert.strictEqual(4, microsoftBatch["2017-01-01"].post.length)
     })
     it("should initialize for all swaggers", async () => {
       const options = {
