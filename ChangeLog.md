@@ -1,5 +1,8 @@
 # Changelog
 
+## 12/05/2019 0.20.3
+- Change the swaggerPathsPattern of LiveValidatorOptions to array type
+
 ## 11/26/2019 0.20.2
 - Upgrade yasway version to consume the change for x-ms-secret property update
 
