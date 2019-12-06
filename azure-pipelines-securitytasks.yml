@@ -1,0 +1,78 @@
+trigger:
+  - master
+
+jobs:
+  - job: Build
+    pool:
+      vmImage: "Ubuntu 16.04"
+    steps:
+      - task: Npm@1
+        displayName: "npm install"
+        inputs:
+          verbose: false
+
+      - task: Npm@1
+        displayName: "npm test"
+        inputs:
+          command: custom
+          verbose: false
+          customCommand: test
+
+      - task: PublishTestResults@2
+        inputs:
+          testResultsFiles: "**/test-results.xml"
+          testRunTitle: "Test results for JavaScript"
+
+      - task: PublishCodeCoverageResults@1
+        inputs:
+          codeCoverageTool: Cobertura
+          summaryFileLocation: "$(System.DefaultWorkingDirectory)/**/*coverage.xml"
+          reportDirectory: "$(System.DefaultWorkingDirectory)/**/coverage"
+
+      - task: Npm@1
+        displayName: "npm pack"
+        inputs:
+          command: custom
+          verbose: false
+          customCommand: pack
+
+      - task: CopyFiles@2
+        displayName: "Copy Files to: drop"
+        inputs:
+          Contents: "*.tgz"
+          TargetFolder: drop
+
+      - task: PublishBuildArtifacts@1
+        inputs:
+          pathtoPublish: $(Build.SourcesDirectory)/drop
+
+  - job: Windows
+    pool:
+      vmImage: "windows-2019"
+    steps:
+      - task: CredScan@2
+        displayName: 'Run CredScan'
+        continueOnError: true
+        inputs:
+          toolMajorVersion: "V2"
+          suppressionsFile: credScanSuppressions.json
+          debugMode: true
+          folderSuppression: true
+
+
+      - task: PostAnalysis@1
+        inputs:
+          AllTools: false
+          APIScan: false
+          BinSkim: false
+          CodesignValidation: false
+          CredScan: true
+          FortifySCA: false
+          FxCop: false
+          ModernCop: false
+          PoliCheck: false
+          RoslynAnalyzers: false
+          SDLNativeRules: false
+          Semmle: false
+          TSLint: false
+          ToolLogsNotFoundAction: "Standard"
