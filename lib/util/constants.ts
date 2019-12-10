@@ -140,7 +140,7 @@ export const DefaultConfig = {
     "**/containerregistry/data-plane/**/*",
     "**/datalake-analytics/data-plane/**/*",
     "**/datalake-store/data-plane/**/*",
-    "**/ventgrid/data-plane/**/*",
+    "**/eventgrid/data-plane/**/*",
     "**/graphrbac/data-plane/**/*",
     "**/hdinsight/data-plane/**/*",
     "**/imds/data-plane/**/*",

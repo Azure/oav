@@ -244,7 +244,9 @@ describe("Live Validator", () => {
       if (microsoftBatch === undefined) {
         throw new Error("microsoftBatch === undefined")
       }
+      // 2019-08-01 version should NOT be found as it is in data-plane and ignored
       assert.strictEqual(undefined, microsoftBatch["2019-08-01.10.0"])
+      // 2017-01-01 version should be found as it is in management-plane
       assert.strictEqual(7, microsoftBatch["2017-01-01"].get.length)
       assert.strictEqual(2, microsoftBatch["2017-01-01"].patch.length)
       assert.strictEqual(4, microsoftBatch["2017-01-01"].post.length)
@@ -267,6 +269,36 @@ describe("Live Validator", () => {
       assert.strictEqual(7, microsoftBatch["2017-01-01"].get.length)
       assert.strictEqual(2, microsoftBatch["2017-01-01"].patch.length)
       assert.strictEqual(4, microsoftBatch["2017-01-01"].post.length)
+    })
+    it("should ignore certain swaggers if exclued swagger path pattern is specified", async () => {
+      const options = {
+        directory: "./test/liveValidation/swaggers/specification",
+        excludedSwaggerPathsPattern: ["**/batch/data-plane/**/*"],
+        swaggerPathsPattern: ["batch/**/*.json"]
+      }
+      const validator = new LiveValidator(options)
+      await validator.initialize()
+      assert.strictEqual(1, Object.keys(validator.cache).length)
+      const microsoftBatch = validator.cache["microsoft.batch"]
+      if (microsoftBatch === undefined) {
+        throw new Error("microsoftBatch === undefined")
+      }
+       // 2019-08-01 version should NOT be found as it is in data-plane and ignored
+       assert.strictEqual(undefined, microsoftBatch["2019-08-01.10.0"])
+       // 2017-01-01 version should be found as it is in management-plane
+       assert.strictEqual(7, microsoftBatch["2017-01-01"].get.length)
+       assert.strictEqual(2, microsoftBatch["2017-01-01"].patch.length)
+       assert.strictEqual(4, microsoftBatch["2017-01-01"].post.length)
+    })
+    it("Exclude should take higher priority if included and excluded path collide", async () => {
+      const options = {
+        directory: "./test/liveValidation/swaggers/specification",
+        excludedSwaggerPathsPattern: ["**/batch/data-plane/**/*"],
+        swaggerPathsPattern: ["**/batch/data-plane/**/*.json"]
+      }
+      const validator = new LiveValidator(options)
+      await validator.initialize()
+      assert.strictEqual(0, Object.keys(validator.cache).length)
     })
     it("should initialize for all swaggers", async () => {
       const options = {
