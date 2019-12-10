@@ -283,12 +283,12 @@ describe("Live Validator", () => {
       if (microsoftBatch === undefined) {
         throw new Error("microsoftBatch === undefined")
       }
-       // 2019-08-01 version should NOT be found as it is in data-plane and ignored
-       assert.strictEqual(undefined, microsoftBatch["2019-08-01.10.0"])
-       // 2017-01-01 version should be found as it is in management-plane
-       assert.strictEqual(7, microsoftBatch["2017-01-01"].get.length)
-       assert.strictEqual(2, microsoftBatch["2017-01-01"].patch.length)
-       assert.strictEqual(4, microsoftBatch["2017-01-01"].post.length)
+      // 2019-08-01 version should NOT be found as it is in data-plane and ignored
+      assert.strictEqual(undefined, microsoftBatch["2019-08-01.10.0"])
+      // 2017-01-01 version should be found as it is in management-plane
+      assert.strictEqual(7, microsoftBatch["2017-01-01"].get.length)
+      assert.strictEqual(2, microsoftBatch["2017-01-01"].patch.length)
+      assert.strictEqual(4, microsoftBatch["2017-01-01"].post.length)
     })
     it("Exclude should take higher priority if included and excluded path collide", async () => {
       const options = {
