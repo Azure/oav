@@ -124,3 +124,34 @@ export const unknownResourceProvider = "microsoft.unknown"
 export const unknownApiVersion = "unknown-api-version"
 export const unknownOperationId = "unknownOperationId"
 export const unknownResourceType = "unknownResourceType"
+
+// Data-plane and Azure Stack swaggers can be skipped for performance boost as ARM don't use them
+export const DefaultConfig = {
+  ExcludedSwaggerPathsPattern: [
+    "**/examples/**/*",
+    "**/quickstart-templates/**/*",
+    "**/schema/**/*",
+    "**/live/**/*",
+    "**/wire-format/**/*",
+    "**/azurestack/**/*",
+    "**/applicationinsights/data-plane/**/*",
+    "**/batch/data-plane/**/*",
+    "**/cognitiveservices/data-plane/**/*",
+    "**/containerregistry/data-plane/**/*",
+    "**/datalake-analytics/data-plane/**/*",
+    "**/datalake-store/data-plane/**/*",
+    "**/eventgrid/data-plane/**/*",
+    "**/graphrbac/data-plane/**/*",
+    "**/hdinsight/data-plane/**/*",
+    "**/imds/data-plane/**/*",
+    "**/iotcentral/data-plane/**/*",
+    "**/keyvault/data-plane/**/*",
+    "**/machinelearningservices/data-plane/**/*",
+    "**/monitor/data-plane/**/*",
+    "**/operationalinsights/data-plane/**/*",
+    "**/search/data-plane/**/*",
+    "**/servicefabric/data-plane/**/*",
+    "**/storage/data-plane/**/*",
+    "**/timeseriesinsights/data-plane/**/*"
+  ]
+}
