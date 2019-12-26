@@ -1,5 +1,8 @@
 # Changelog
 
+## 12/26/2019 0.20.4
+- Upgrade yasway and z-schema version.
+
 ## 12/05/2019 0.20.3
 - Change the swaggerPathsPattern of LiveValidatorOptions to array type
 
