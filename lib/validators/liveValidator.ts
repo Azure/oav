@@ -814,7 +814,7 @@ export class LiveValidator {
     return matchedPaths
   }
 
-  private async getSwaggerPaths(): Promise<string[]> {
+  public async getSwaggerPaths(): Promise<string[]> {
     if (this.options.swaggerPaths.length !== 0) {
       this.logging(
         `Using user provided swagger paths. Total paths count: ${this.options.swaggerPaths.length}`
@@ -835,6 +835,16 @@ export class LiveValidator {
         return this.getMatchedPaths(swaggerPathPatterns)
       }
     }
+  }
+
+  public async refreshResourceProviderCache(resourceProvider: string): Promise<void> {
+    const specsPaths = (await this.getSwaggerPaths()).filter(
+      it => utils.getProviderBySwaggerFileName(it) === resourceProvider
+    )
+    const promiseFactories = specsPaths.map(it => {
+      return this.getSwaggerInitializer(it)
+    })
+    await Promise.all(promiseFactories)
   }
 
   private async getSwaggerInitializer(swaggerPath: string): Promise<void> {

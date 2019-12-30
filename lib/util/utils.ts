@@ -210,6 +210,20 @@ export function setObject(doc: {}, ptr: string, value: unknown, overwrite = true
   }
   return result
 }
+/**
+ * Get resource provider by swagger file path. resource-manager only.
+ * @param filename swagger file path
+ * @example input: apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimwriteonly.json.
+ * return: Microsoft.ApiManagement
+ */
+export function getProviderBySwaggerFileName(filename: string): string | undefined {
+  const pattern = new RegExp("resource-manager/(?<resourceProvider>.*?)/")
+  const matchRes = filename.match(pattern)
+  if (matchRes === null) {
+    return undefined
+  }
+  return matchRes.groups === undefined ? undefined : matchRes.groups.resourceProvider
+}
 
 /**
  * Gets provider namespace from the given path. In case of multiple, last one will be returned.
