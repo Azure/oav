@@ -837,10 +837,12 @@ export class LiveValidator {
     }
   }
 
-  public async refreshResourceProviderCache(resourceProvider: string): Promise<void> {
-    const specsPaths = (await this.getSwaggerPaths()).filter(
-      it => utils.getProviderBySwaggerFileName(it) === resourceProvider
-    )
+  public async refreshResourceProviderCache(resourceProviders: string[]): Promise<void> {
+    const resourceProvidersSet = new Set<string>(resourceProviders)
+    const specsPaths = (await this.getSwaggerPaths()).filter(it => {
+      const resourceProvider = utils.getProviderBySwaggerFileName(it)
+      return resourceProvider && resourceProvidersSet.has(resourceProvider)
+    })
     const promiseFactories = specsPaths.map(it => {
       return this.getSwaggerInitializer(it, true)
     })

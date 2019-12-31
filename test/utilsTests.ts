@@ -47,14 +47,13 @@ describe("Utility functions", () => {
   describe("Get provider by swagger file name", () => {
     it("should return undefined", () => {
       assert.equal(utils.getProviderBySwaggerFileName(""), undefined)
-    })
-    it("should return resource provider", () => {
       assert.equal(
-        utils.getProviderBySwaggerFileName(
-          "/specs/resource-manager/Microsoft.Storage/swagger.json"
-        ),
+        utils.getProviderBySwaggerFileName("/specs/data-plane/Microsoft.Storage/swagger.json"),
         "Microsoft.Storage"
       )
+    })
+
+    it("should return resource provider", () => {
       assert.equal(
         utils.getProviderBySwaggerFileName(
           "specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimwriteonly.json"
