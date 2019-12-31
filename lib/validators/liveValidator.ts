@@ -814,7 +814,7 @@ export class LiveValidator {
     return matchedPaths
   }
 
-  public async getSwaggerPaths(): Promise<string[]> {
+  private async getSwaggerPaths(): Promise<string[]> {
     if (this.options.swaggerPaths.length !== 0) {
       this.logging(
         `Using user provided swagger paths. Total paths count: ${this.options.swaggerPaths.length}`
@@ -842,12 +842,15 @@ export class LiveValidator {
       it => utils.getProviderBySwaggerFileName(it) === resourceProvider
     )
     const promiseFactories = specsPaths.map(it => {
-      return this.getSwaggerInitializer(it)
+      return this.getSwaggerInitializer(it, true)
     })
     await Promise.all(promiseFactories)
   }
 
-  private async getSwaggerInitializer(swaggerPath: string): Promise<void> {
+  private async getSwaggerInitializer(
+    swaggerPath: string,
+    cleanCache: boolean = false
+  ): Promise<void> {
     const startTime = Date.now()
     this.logging(`Building cache from: "${swaggerPath}"`, LiveValidatorLoggingLevels.debug)
 
@@ -858,7 +861,7 @@ export class LiveValidator {
 
     try {
       const startTimeLoadSpec = Date.now()
-      const api = await validator.initialize()
+      const api = await validator.initialize(undefined, cleanCache)
       const elapsedTimeLoadSpec = Date.now() - startTimeLoadSpec
       this.logging(
         `Load spec for ${swaggerPath} with DurationInMs:${elapsedTimeLoadSpec}`,
