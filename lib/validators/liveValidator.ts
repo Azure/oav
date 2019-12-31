@@ -209,7 +209,7 @@ export class LiveValidator {
 
     // Construct array of swagger paths to be used for building a cache
     this.logging("Get swagger path.")
-    const swaggerPaths = await this.getSwaggerPaths()
+    const swaggerPaths = await this.getSwaggerPaths(this.options.swaggerPathsPattern)
     const promiseFactories = swaggerPaths.map(swaggerPath => {
       return this.getSwaggerInitializer(swaggerPath)
     })
@@ -814,7 +814,11 @@ export class LiveValidator {
     return matchedPaths
   }
 
-  private async getSwaggerPaths(): Promise<string[]> {
+  /**
+   * Filter swagger file from 'this.options.swaggerPaths'. If pathsPattern is empty return all swagger file.
+   * @param pathsPatterns path pattern to match swagger file
+   */
+  public async getSwaggerPaths(pathsPatterns: string[]): Promise<string[]> {
     if (this.options.swaggerPaths.length !== 0) {
       this.logging(
         `Using user provided swagger paths. Total paths count: ${this.options.swaggerPaths.length}`
@@ -822,27 +826,20 @@ export class LiveValidator {
       return this.options.swaggerPaths
     } else {
       const allJsonsPattern = path.join(this.options.directory, "/specification/**/*.json")
-      const swaggerPathPatterns: string[] = []
-      if (
-        this.options.swaggerPathsPattern === undefined ||
-        this.options.swaggerPathsPattern.length === 0
-      ) {
+      if (pathsPatterns.length === 0) {
         return this.getMatchedPaths(allJsonsPattern)
       } else {
-        this.options.swaggerPathsPattern.map(item => {
-          swaggerPathPatterns.push(path.join(this.options.directory, item))
-        })
-        return this.getMatchedPaths(swaggerPathPatterns)
+        pathsPatterns.forEach(item => path.join(this.options.directory, item))
+        return this.getMatchedPaths(pathsPatterns)
       }
     }
   }
 
   public async refreshResourceProviderCache(resourceProviders: string[]): Promise<void> {
-    const resourceProvidersSet = new Set<string>(resourceProviders)
-    const specsPaths = (await this.getSwaggerPaths()).filter(it => {
-      const resourceProvider = utils.getProviderBySwaggerFileName(it)
-      return resourceProvider && resourceProvidersSet.has(resourceProvider)
-    })
+    const pathsPatterns = resourceProviders.map(
+      it => `/specification/**/resource-manager/${it}/**/*.json`
+    )
+    const specsPaths = await this.getSwaggerPaths(pathsPatterns)
     const promiseFactories = specsPaths.map(it => {
       return this.getSwaggerInitializer(it, true)
     })
