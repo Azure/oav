@@ -829,8 +829,8 @@ export class LiveValidator {
       if (pathsPatterns === undefined || pathsPatterns.length === 0) {
         return this.getMatchedPaths(allJsonsPattern)
       } else {
-        pathsPatterns.forEach(item => path.join(this.options.directory, item))
-        return this.getMatchedPaths(pathsPatterns)
+        const patterns = pathsPatterns.map(item => path.join(this.options.directory, item))
+        return this.getMatchedPaths(patterns)
       }
     }
   }
