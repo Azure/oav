@@ -826,7 +826,7 @@ export class LiveValidator {
       return this.options.swaggerPaths
     } else {
       const allJsonsPattern = path.join(this.options.directory, "/specification/**/*.json")
-      if (pathsPatterns.length === 0) {
+      if (pathsPatterns === undefined || pathsPatterns.length === 0) {
         return this.getMatchedPaths(allJsonsPattern)
       } else {
         pathsPatterns.forEach(item => path.join(this.options.directory, item))
