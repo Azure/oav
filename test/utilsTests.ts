@@ -49,7 +49,7 @@ describe("Utility functions", () => {
       assert.equal(utils.getProviderBySwaggerFileName(""), undefined)
       assert.equal(
         utils.getProviderBySwaggerFileName("/specs/data-plane/Microsoft.Storage/swagger.json"),
-        "Microsoft.Storage"
+        undefined
       )
     })
 
