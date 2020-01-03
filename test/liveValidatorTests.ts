@@ -673,6 +673,29 @@ describe("Live validator snapshot validation", () => {
     expect(validationResult).toMatchSnapshot()
   })
 
+  test(`should return expected error for multiple operation found`, async () => {
+    const options = {
+      directory: `${__dirname}/liveValidation/swaggers/`,
+      isPathCaseSensitive: false,
+      useRelativeSourceLocationUrl: true,
+      swaggerPathsPattern: [
+        "specification\\mediaservices\\resource-manager\\Microsoft.Media\\**\\*.json"
+      ],
+      git: {
+        shouldClone: false
+      }
+    }
+    const liveValidator = new LiveValidator(options)
+    await liveValidator.initialize()
+
+    const payload = require(`${__dirname}/liveValidation/payloads/multiplePperationFound_input`)
+    const result = liveValidator.validateLiveRequestResponse(payload)
+    expect(
+      result.responseValidationResult.runtimeException &&
+        result.responseValidationResult.runtimeException.code === "MULTIPLE_OPERATIONS_FOUND"
+    )
+  })
+
   test(`should return expected error for unresolvable reference`, async () => {
     const options = {
       directory: `${__dirname}/liveValidation/swaggers/`,
