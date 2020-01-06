@@ -694,6 +694,18 @@ describe("Live validator snapshot validation", () => {
       result.responseValidationResult.runtimeException &&
         result.responseValidationResult.runtimeException.code === "MULTIPLE_OPERATIONS_FOUND"
     )
+    expect(
+      result.responseValidationResult.runtimeException &&
+        result.responseValidationResult.runtimeException.message.indexOf(
+          "specification/mediaservices/resource-manager/Microsoft.Media/2018-07-01/AssetsAndAssetFilters.json"
+        ) >= 0
+    )
+    expect(
+      result.responseValidationResult.runtimeException &&
+        result.responseValidationResult.runtimeException.message.indexOf(
+          "specification/mediaservices/resource-manager/Microsoft.Media/2019-05-01-preview/AssetsAndAssetFilters.json"
+        ) >= 0
+    )
   })
 
   test(`should return expected error for unresolvable reference`, async () => {
