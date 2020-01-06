@@ -765,14 +765,18 @@ export class LiveValidator {
       throw potentialOperationsResult.reason
       // Found more than 1 potentialOperations
     } else if (potentialOperationsResult.operations.length > 1) {
-      const operationInfos: Array<{ id: number; path: string }> = []
+      const operationInfos: Array<{ id: number; path: string; specPath: string }> = []
 
       potentialOperationsResult.operations.forEach(operation => {
-        const specPath =
+        const swaggerSpecPath =
           this.options.useRelativeSourceLocationUrl && operation.pathObject.specPath
             ? operation.pathObject.specPath.substr(this.options.directory.length)
             : operation.pathObject.specPath
-        operationInfos.push({ id: operation.operationId, path: specPath })
+        operationInfos.push({
+          id: operation.operationId,
+          path: operation.pathObject.path,
+          specPath: swaggerSpecPath
+        })
       })
 
       const msg =
