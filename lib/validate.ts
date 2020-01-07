@@ -189,9 +189,12 @@ export async function validateExamples(
     if (o.pretty) {
       /* tslint:disable-next-line:no-console no-string-literal */
       console.log(
-        vsoLogIssueWrapper("error", `Validating "examples" and "x-ms-examples" in  ${specPath}:\n`)
+        vsoLogIssueWrapper("info", `Validating "examples" and "x-ms-examples" in  ${specPath}:\n`)
       )
-      prettyPrint(errors, "error")
+
+      if (errors.length > 0) {
+        prettyPrint(errors, "error")
+      }
     }
     return errors
   })
