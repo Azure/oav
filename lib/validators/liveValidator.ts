@@ -840,8 +840,8 @@ export class LiveValidator {
       it => `/specification/**/resource-manager/${it}/**/*.json`
     )
     const specsPaths = await this.getSwaggerPaths(pathsPatterns)
-    const promiseFactories = specsPaths.map(it => {
-      return this.getSwaggerInitializer(it, true)
+    const promiseFactories = specsPaths.map(swaggerPath => {
+      return this.getSwaggerInitializer(swaggerPath, true)
     })
     await Promise.all(promiseFactories)
   }
