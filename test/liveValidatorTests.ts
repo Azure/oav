@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 import * as assert from "assert"
+import * as fs from "fs"
 import * as globby from "globby"
 import * as lodash from "lodash"
 import * as os from "os"
@@ -629,6 +630,45 @@ describe("Live Validator", () => {
       const errors = result.responseValidationResult.errors
       assert.deepStrictEqual(errors, [])
     })
+  })
+})
+describe("Live validator refresh resource provider cache", () => {
+  const newVersionPath =
+    "./test/liveValidation/swaggers/specification/search/resource-manager/Microsoft.Search/2019-01-01"
+  const options = {
+    directory: "./test/liveValidation/swaggers/"
+  }
+  const createNewVersionSwagger = () => {
+    if (!fs.existsSync(newVersionPath)) {
+      fs.mkdirSync(newVersionPath)
+    }
+    const data = fs.readFileSync(
+      "./test/liveValidation/swaggers/specification/search/resource-manager/Microsoft.Search/2015-02-28/search.json"
+    )
+    const obj: any = JSON.parse(data.toString())
+    obj.info.version = "2019-01-01"
+
+    fs.writeFileSync(path.resolve(newVersionPath, "search.json"), JSON.stringify(obj))
+  }
+  it("cache should return new API version after add new version swagger and refresh", async () => {
+    const validator = new LiveValidator(options)
+    await validator.refreshResourceProviderCache(["Microsoft.Search"])
+    assert.strictEqual("Microsoft.Search".toLowerCase() in validator.cache, true)
+    assert.strictEqual("2019-01-01" in validator.cache["microsoft.search"]!, false)
+    createNewVersionSwagger()
+    await validator.refreshResourceProviderCache(["Microsoft.Search"])
+    assert.strictEqual("2019-01-01" in validator.cache["microsoft.search"]!, true)
+    fs.unlinkSync(path.resolve(newVersionPath, "search.json"))
+  })
+  it("cache shouldn't return old API version after delete old version swagger and refresh", async () => {
+    const validator = new LiveValidator(options)
+    createNewVersionSwagger()
+    await validator.refreshResourceProviderCache(["Microsoft.Search"])
+    assert.strictEqual("Microsoft.Search".toLowerCase() in validator.cache, true)
+    assert.strictEqual("2019-01-01" in validator.cache["microsoft.search"]!, true)
+    fs.unlinkSync(path.resolve(newVersionPath, "search.json"))
+    await validator.refreshResourceProviderCache(["Microsoft.Search"])
+    assert.strictEqual("2019-01-01" in validator.cache["microsoft.search"]!, false)
   })
 })
 describe("Live validator snapshot validation", () => {

@@ -835,15 +835,33 @@ export class LiveValidator {
     }
   }
 
+  /**
+   * refresh cache per resource provider. Reload resource provider swagger files and refresh cache.
+   * 1. Delete resource provider cache
+   * 2. Reload swagger files under resource provider folder
+   * 3. Build resource provider cache
+   * @param resourceProviders resourceProviders list which need to be refresh.
+   */
   public async refreshResourceProviderCache(resourceProviders: string[]): Promise<void> {
     const pathsPatterns = resourceProviders.map(
-      it => `/specification/**/resource-manager/${it}/**/*.json`
+      resourceProvider => `/specification/**/resource-manager/${resourceProvider}/**/*.json`
     )
-    const specsPaths = await this.getSwaggerPaths(pathsPatterns)
-    const promiseFactories = specsPaths.map(swaggerPath => {
-      return this.getSwaggerInitializer(swaggerPath, true)
+    resourceProviders.forEach(resourceProvider => {
+      delete this.cache[resourceProvider.toLowerCase()]
     })
-    await Promise.all(promiseFactories)
+
+    try {
+      const specsPaths = await this.getSwaggerPaths(pathsPatterns)
+      const promiseFactories = specsPaths.map(swaggerPath => {
+        return this.getSwaggerInitializer(swaggerPath, true)
+      })
+      await Promise.all(promiseFactories)
+    } catch (err) {
+      this.logging(
+        `Fail to refresh resource providers ${resourceProviders}. Error: ${err}`,
+        LiveValidatorLoggingLevels.error
+      )
+    }
   }
 
   private async getSwaggerInitializer(
