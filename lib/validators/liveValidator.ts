@@ -843,24 +843,25 @@ export class LiveValidator {
    * @param resourceProviders resourceProviders list which need to be refresh.
    */
   public async refreshResourceProviderCache(resourceProviders: string[]): Promise<void> {
-    const pathsPatterns = resourceProviders.map(
-      resourceProvider => `/specification/**/resource-manager/${resourceProvider}/**/*.json`
-    )
-    resourceProviders.forEach(resourceProvider => {
-      delete this.cache[resourceProvider.toLowerCase()]
-    })
-
-    try {
-      const specsPaths = await this.getSwaggerPaths(pathsPatterns)
-      const promiseFactories = specsPaths.map(swaggerPath => {
-        return this.getSwaggerInitializer(swaggerPath, true)
-      })
-      await Promise.all(promiseFactories)
-    } catch (err) {
-      this.logging(
-        `Fail to refresh resource providers ${resourceProviders}. Error: ${err}`,
-        LiveValidatorLoggingLevels.error
-      )
+    for (const resourceProvider of resourceProviders) {
+      try {
+        this.logging(
+          `Begin to refresh resource provider cache ${resourceProvider}`,
+          LiveValidatorLoggingLevels.info
+        )
+        delete this.cache[resourceProvider.toLowerCase()]
+        const pathsPattern = `/specification/**/resource-manager/${resourceProvider}/**/*.json`
+        const specsPaths = await this.getSwaggerPaths([pathsPattern])
+        const promiseFactories = specsPaths.map(swaggerPath => {
+          return this.getSwaggerInitializer(swaggerPath, true)
+        })
+        await Promise.all(promiseFactories)
+      } catch (err) {
+        this.logging(
+          `Fail to refresh resource provider cache ${resourceProvider}, Error: ${err}`,
+          LiveValidatorLoggingLevels.error
+        )
+      }
     }
   }
 
