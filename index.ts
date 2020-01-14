@@ -48,6 +48,7 @@ export {
   ValidateOptions
 } from "./lib/validators/liveValidator"
 export { SpecResolver } from "./lib/validators/specResolver"
+export { getProviderBySwaggerFileName } from "./lib/util/utils"
 
 // Constants
 export const Constants = C
