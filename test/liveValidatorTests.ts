@@ -673,6 +673,41 @@ describe("Live validator snapshot validation", () => {
     expect(validationResult).toMatchSnapshot()
   })
 
+  test(`should return expected error for multiple operation found`, async () => {
+    const options = {
+      directory: `${__dirname}/liveValidation/swaggers/`,
+      isPathCaseSensitive: false,
+      useRelativeSourceLocationUrl: true,
+      swaggerPathsPattern: [
+        "specification\\mediaservices\\resource-manager\\Microsoft.Media\\**\\*.json"
+      ],
+      git: {
+        shouldClone: false
+      }
+    }
+    const liveValidator = new LiveValidator(options)
+    await liveValidator.initialize()
+
+    const payload = require(`${__dirname}/liveValidation/payloads/multiplePperationFound_input`)
+    const result = liveValidator.validateLiveRequestResponse(payload)
+    expect(
+      result.responseValidationResult.runtimeException &&
+        result.responseValidationResult.runtimeException.code === "MULTIPLE_OPERATIONS_FOUND"
+    )
+    expect(
+      result.responseValidationResult.runtimeException &&
+        result.responseValidationResult.runtimeException.message.indexOf(
+          "specification/mediaservices/resource-manager/Microsoft.Media/2018-07-01/AssetsAndAssetFilters.json"
+        ) >= 0
+    )
+    expect(
+      result.responseValidationResult.runtimeException &&
+        result.responseValidationResult.runtimeException.message.indexOf(
+          "specification/mediaservices/resource-manager/Microsoft.Media/2019-05-01-preview/AssetsAndAssetFilters.json"
+        ) >= 0
+    )
+  })
+
   test(`should return expected error for unresolvable reference`, async () => {
     const options = {
       directory: `${__dirname}/liveValidation/swaggers/`,

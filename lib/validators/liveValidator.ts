@@ -765,12 +765,24 @@ export class LiveValidator {
       throw potentialOperationsResult.reason
       // Found more than 1 potentialOperations
     } else if (potentialOperationsResult.operations.length > 1) {
-      const operationIds = potentialOperationsResult.operations
-        .map(operation => operation.operationId)
-        .join()
+      const operationInfos: Array<{ id: number; path: string; specPath: string }> = []
+
+      potentialOperationsResult.operations.forEach(operation => {
+        const swaggerSpecPath =
+          this.options.useRelativeSourceLocationUrl && operation.pathObject.specPath
+            ? operation.pathObject.specPath.substr(this.options.directory.length)
+            : operation.pathObject.specPath
+        operationInfos.push({
+          id: operation.operationId,
+          path: operation.pathObject.path,
+          specPath: swaggerSpecPath
+        })
+      })
+
       const msg =
-        `Found multiple matching operations with operationIds "${operationIds}" ` +
-        `for request url "${requestInfo.requestUrl}" with HTTP Method "${requestInfo.requestMethod}".`
+        `Found multiple matching operations ` +
+        `for request url "${requestInfo.requestUrl}" with HTTP Method "${requestInfo.requestMethod}".` +
+        `Operation Information: ${JSON.stringify(operationInfos)}`
       this.logging(
         msg,
         LiveValidatorLoggingLevels.debug,

@@ -209,7 +209,8 @@ export class SpecValidator<T extends CommonValidationResult> {
         jsonRefs: {
           relativeBase: this.specDir
         },
-        isPathCaseSensitive: this.options.isPathCaseSensitive
+        isPathCaseSensitive: this.options.isPathCaseSensitive,
+        specPath: this.specPath
       }
       this.swaggerApi = await Sway.create(options)
     } catch (err) {
