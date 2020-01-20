@@ -1,5 +1,8 @@
 # Changelog
 
+## 01/16/2020 0.20.6
+- security vulnerability fix for handlebars, kind-of and lodash
+
 ## 12/05/2019 0.20.3
 - Change the swaggerPathsPattern of LiveValidatorOptions to array type
 
