@@ -348,10 +348,6 @@ export class SpecResolver {
     const docDir = path.dirname(docPath)
 
     if (parsedReference.filePath) {
-      const regexFilePath = new RegExp("^[.\\w\\\\\\/].*.[A-Za-z]+$")
-      if (!regexFilePath.test(parsedReference.filePath)) {
-        throw new Error(`${node.$ref} isn't a valid local reference file.`)
-      }
       // assuming that everything in the spec is relative to it, let us join the spec directory
       // and the file path in reference.
       docPath = utils.joinPath(docDir, parsedReference.filePath)
@@ -457,12 +453,12 @@ export class SpecResolver {
         this.reportError,
         this.docsCache
       )
-      const resultWithReferenceDocPath: any = result
-      resultWithReferenceDocPath.docPath = docPath
+      const result2: any = result
+      result2.docPath = docPath
 
       // We set a function `() => result` instead of an object `result` to avoid
       // reference resolution in the examples.
-      utils.setObject(doc as {}, slicedRefName, () => resultWithReferenceDocPath)
+      utils.setObject(doc as {}, slicedRefName, () => result2)
     } else {
       if (jsonPointer.has(doc as {}, slicedRefName)) {
         jsonPointer.remove(doc as {}, slicedRefName)
@@ -921,6 +917,14 @@ export class SpecResolver {
         // x-ms-discriminator-value. This will make the discriminator
         // property a constant (in json schema terms).
         if (d.$ref) {
+          // When the discriminator enum is null and point to the nested reference,
+          // we need to set discriminator enum value to the nested reference enum
+          if (!d.enum) {
+            const refDefinition = definitions[d.$ref.substring(d.$ref.lastIndexOf("/") + 1)]
+            if (refDefinition) {
+              d.enum = refDefinition.enum
+            }
+          }
           delete d.$ref
         }
         const xMsEnum = d["x-ms-enum"]
@@ -937,7 +941,16 @@ export class SpecResolver {
         if (!d.type) {
           d.type = "string"
         }
-        d.enum = [`${val}`]
+
+        // For base class model, set the discriminator value to the base class name plus the origin enum values
+        if (definition.discriminator && d.enum) {
+          const baseClassDiscriminatorValue = d.enum
+          if (d.enum.indexOf(val) === -1) {
+            d.enum = [`${val}`, ...baseClassDiscriminatorValue]
+          }
+        } else {
+          d.enum = [`${val}`]
+        }
       }
     }
 

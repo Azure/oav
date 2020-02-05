@@ -1,5 +1,8 @@
 # Changelog
 
+## 02/05/2020 0.20.7
+- Add base model name as a value to discriminator enum value list.[Issue#468](https://github.com/Azure/oav/issues/468)
+
 ## 01/16/2020 0.20.6
 - security vulnerability fix for handlebars, kind-of and lodash
 
