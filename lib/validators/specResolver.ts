@@ -921,6 +921,14 @@ export class SpecResolver {
         // x-ms-discriminator-value. This will make the discriminator
         // property a constant (in json schema terms).
         if (d.$ref) {
+          // When the discriminator enum is null and point to the nested reference,
+          // we need to set discriminator enum value to the nested reference enum
+          if (!d.enum) {
+            const refDefinition = definitions[d.$ref.substring(d.$ref.lastIndexOf("/") + 1)]
+            if (refDefinition) {
+              d.enum = refDefinition.enum
+            }
+          }
           delete d.$ref
         }
         const xMsEnum = d["x-ms-enum"]
@@ -937,7 +945,15 @@ export class SpecResolver {
         if (!d.type) {
           d.type = "string"
         }
-        d.enum = [`${val}`]
+        // For base class model, set the discriminator value to the base class name plus the origin enum values
+        if (definition.discriminator && d.enum) {
+          const baseClassDiscriminatorValue = d.enum
+          if (d.enum.indexOf(val) === -1) {
+            d.enum = [`${val}`, ...baseClassDiscriminatorValue]
+          }
+        } else {
+          d.enum = [`${val}`]
+        }
       }
     }
 

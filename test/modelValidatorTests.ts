@@ -581,4 +581,14 @@ describe("Model Validation", () => {
       assert.strictEqual(result.length, 0)
     })
   })
+
+  describe("Base polymorphic model", () => {
+    it("Should have origin enum values and base model name as discriminator values list", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/polymorphicBaseModelDiscriminator/spec.json`
+      const result = await validate.validateExamples(specPath2, undefined, {
+        consoleLogLevel: "off"
+      })
+      assert.strictEqual(result.length, 0)
+    })
+  })
 })
