@@ -546,8 +546,8 @@ describe("Live Validator", () => {
       assert.strictEqual((errors[0] as any).code, "INVALID_RESPONSE_CODE")
     })
 
-    // should be case insensitive for api version
-    it("should be case-insensitive for resource provider and API version", async () => {
+    // should be case insensitive for paramter name and the value of api version, resource provider
+    it("should be case-insensitive for parameter name, resource provider and API version", async () => {
       const options = {
         directory:
           "./test/liveValidation/swaggers/specification/storage/resource-manager/Microsoft.Storage/2015-05-01-preview",
@@ -560,7 +560,7 @@ describe("Live Validator", () => {
       await validator.initialize()
       const result = validator.validateLiveRequestResponse({
         liveRequest: {
-          url: adjustedUrl,
+          url: adjustedUrl.toLocaleUpperCase(),
           method: "get",
           headers: {
             "content-type": "application/json"

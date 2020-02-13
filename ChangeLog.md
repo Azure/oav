@@ -1,25 +1,36 @@
 # Changelog
 
+## 02/13/2020 0.20.8
+
+- The path matching for Live validation should be case-insensitive.
+
 ## 02/05/2020 0.20.7
+
 - Add base model name as a value to discriminator enum value list.[Issue#468](https://github.com/Azure/oav/issues/468)
 
 ## 01/16/2020 0.20.6
+
 - security vulnerability fix for handlebars, kind-of and lodash
 
 ## 12/26/2019 0.20.4
+
 - Upgrade yasway and z-schema version.
 
 ## 12/05/2019 0.20.3
+
 - Change the swaggerPathsPattern of LiveValidatorOptions to array type
 
 ## 11/26/2019 0.20.2
+
 - Upgrade yasway version to consume the change for x-ms-secret property update
 
 ## 11/20/2019 0.20.1
+
 - Resource provider and API version should be case-insensitive in live validation
 - Upgrade yasway version to reflect the deep clone performance improvement change
 
 ## 11/4/2019 0.20.0
+
 - Support x-ms-mutability in the response validation. If there's a write-only x-ms-mutabitlity property in the response, report an error
 
 ## 10/22/2019 0.19.9

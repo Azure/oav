@@ -954,5 +954,5 @@ export class LiveValidator {
  * where the swagger path starts. Currently those are '/subscriptions' and '/providers'.
  */
 export function formatUrlToExpectedFormat(requestUrl: string): string {
-  return requestUrl.substring(requestUrl.search("/?(subscriptions|providers)"))
+  return requestUrl.substring(requestUrl.search("/?(subscriptions|providers)/i"))
 }
