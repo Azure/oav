@@ -2,7 +2,7 @@
 
 ## 02/13/2020 0.20.8
 
-- The path matching for Live validation should be case-insensitive.
+- The path matching for subscription and provider in Live validation should be case-insensitive.
 
 ## 02/05/2020 0.20.7
 
