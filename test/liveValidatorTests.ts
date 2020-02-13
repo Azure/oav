@@ -215,10 +215,10 @@ describe("Live Validator", () => {
       }
       // 'microsoft.unknown' -> 'unknown-api-version'
       assert.strictEqual(4, p[Constants.unknownApiVersion].post.length)
-      assert.strictEqual(11, p[Constants.unknownApiVersion].get.length)
+      assert.strictEqual(12, p[Constants.unknownApiVersion].get.length)
       assert.strictEqual(3, p[Constants.unknownApiVersion].head.length)
-      assert.strictEqual(5, p[Constants.unknownApiVersion].put.length)
-      assert.strictEqual(5, p[Constants.unknownApiVersion].delete.length)
+      assert.strictEqual(6, p[Constants.unknownApiVersion].put.length)
+      assert.strictEqual(6, p[Constants.unknownApiVersion].delete.length)
       assert.strictEqual(1, p[Constants.unknownApiVersion].patch.length)
     })
     it("should initialize for batch", async () => {
