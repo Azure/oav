@@ -1,5 +1,9 @@
 # Changelog
 
+## 02/13/2020 0.20.9
+
+- Fall back to match child resouce in live validator
+
 ## 02/13/2020 0.20.8
 
 - The path matching for subscription and provider in Live validation should be case-insensitive.

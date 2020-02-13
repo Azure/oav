@@ -10,7 +10,7 @@ import { ResponsesObject } from "yasway"
 import * as Constants from "../lib/util/constants"
 import { LiveValidator } from "../lib/validators/liveValidator"
 
-const numberOfSpecs = 10
+const numberOfSpecs = 11
 jest.setTimeout(150000)
 
 describe("Live Validator", () => {
@@ -341,6 +341,33 @@ describe("Live Validator", () => {
   })
 
   describe("Initialize cache and search", () => {
+    it("should fall back to return child operation in case of request url have parent and child resouces", async () => {
+      const options = {
+        directory: "./test/liveValidation/swaggers/specification/authorization",
+        swaggerPathsPattern: ["**/*.json"]
+      }
+      const requestUrl =
+        "https://management.azure.com/" +
+        "subscriptions/randomSub/resourceGroups/randomRG/providers/providers/Microsoft.Storage" +
+        "/storageAccounts/storageoy6qv/blobServices/default/containers" +
+        "/privatecontainer/providers/Microsoft.Authorization/roleAssignments" +
+        "/3fa73e4b-d60d-43b2-a248-fb776fd0bf60" +
+        "?api-version=2018-09-01-preview"
+      const validator: any = new LiveValidator(options)
+      await validator.initialize()
+      // Operations to match is RoleAssignments_Create
+      const validationInfo = validator.parseValidationRequest(requestUrl, "Put", "randomId")
+      const operations = validator.getPotentialOperations(validationInfo).operations
+      const pathObject = operations[0].pathObject
+      if (pathObject === undefined) {
+        throw new Error("pathObject is undefined")
+      }
+      assert.strictEqual(1, operations.length)
+      assert.strictEqual(
+        "/{scope}/providers/Microsoft.Authorization/roleAssignments/{roleAssignmentName}",
+        pathObject.path
+      )
+    })
     it("should return one matched operation for arm-storage", async () => {
       const options = {
         directory: "./test/liveValidation/swaggers/"
