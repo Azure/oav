@@ -276,6 +276,28 @@ export function getResourceType(pathStr: string, provider?: string): string {
 }
 
 /**
+ * Gets last child resouce url to match.
+ * @param {string} requestUrl The request url.
+ *                 Example "/subscriptions/randomSub/resourceGroups/randomRG/providers/providers/Microsoft.Storage/
+ *                 storageAccounts/storageoy6qv/blobServices/default/containers/
+ *                 privatecontainer/providers/Microsoft.Authorization/roleAssignments/3fa73e4b-d60d-43b2-a248-fb776fd0bf60"
+ *                 will return "roleAssignments".
+ *
+ * @returns {string} last child resource url.
+ */
+export function getLastResourceUrlToMatch(requestUrl: string): string {
+  let index = requestUrl.lastIndexOf("/providers")
+  if (index > 0) {
+    const originUrlWithoutLastChildResource = requestUrl.substring(0, index)
+    index = originUrlWithoutLastChildResource.lastIndexOf("/")
+    if (index > 0) {
+      requestUrl = requestUrl.substring(index)
+    }
+  }
+  return requestUrl
+}
+
+/**
 /*
  * Clones a github repository in the given directory.
  * @param {string} directory to where to clone the repository.
