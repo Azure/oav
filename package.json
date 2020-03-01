@@ -18,7 +18,7 @@
     "@ts-common/property-set": "^0.1.0",
     "@ts-common/source-map": "^0.5.0",
     "@ts-common/string-map": "^0.3.0",
-    "@ts-common/virtual-fs": "^0.2.0",
+    "@ts-common/virtual-fs": "^0.3.0",
     "@types/jsonpath": "^0.2.0",
     "commonmark": "^0.29.0",
     "glob": "^5.0.15",

@@ -1,5 +1,9 @@
 # Changelog
 
+## 03/02/2020 0.20.10
+
+- Upgrade virtual-fs package version
+
 ## 02/13/2020 0.20.9
 
 - Fall back to match child resouce in live validator
