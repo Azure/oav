@@ -70,9 +70,11 @@ export async function getDocumentsFromCompositeSwagger(
 }
 
 const vsoLogIssueWrapper = (issueType: string, message: string) => {
-  return issueType === "error" || issueType === "warning"
-    ? `##vso[task.logissue type=${issueType}]${message}`
-    : `##vso[task.logissue type=error]${message}`
+  if (issueType === "error" || issueType === "warning") {
+    return `##vso[task.logissue type=${issueType}]${message}`
+  } else {
+    return `##vso[task.logissue type=${issueType}]${message}`
+  }
 }
 
 async function validate<T>(
@@ -142,14 +144,26 @@ export async function validateSpec(
     updateEndResultOfSingleValidation(validator)
     logDetailedInfo(validator)
     if (o.pretty) {
-      /* tslint:disable-next-line:no-console no-string-literal */
-      console.log(vsoLogIssueWrapper("error", `Semantically validating  ${specPath}:\n`))
       const resolveSpecError = validator.specValidationResult.resolveSpec
+      if (resolveSpecError !== undefined || validationResults.errors.length > 0) {
+        /* tslint:disable-next-line:no-console no-string-literal */
+        console.log(vsoLogIssueWrapper("error", `Semantically validating  ${specPath}:\n`))
+      } else if (validationResults.warnings && validationResults.warnings.length > 0) {
+        /* tslint:disable-next-line:no-console no-string-literal */
+        console.log(vsoLogIssueWrapper("warning", `Semantically validating  ${specPath}:\n`))
+      } else {
+        /* tslint:disable-next-line:no-console no-string-literal */
+        console.log(`Semantically validating  ${specPath}: without error.\n`)
+      }
       if (resolveSpecError !== undefined) {
         prettyPrint([resolveSpecError], "error")
       }
-      prettyPrint(validationResults.errors, "error")
-      prettyPrint(validationResults.warnings, "warning")
+      if (validationResults.errors.length > 0) {
+        prettyPrint(validationResults.errors, "error")
+      }
+      if (validationResults.warnings && validationResults.warnings.length > 0) {
+        prettyPrint(validationResults.warnings, "warning")
+      }
     }
     return validator.specValidationResult
   })
@@ -187,11 +201,13 @@ export async function validateExamples(
     logDetailedInfo(validator)
     const errors = getErrorsFromModelValidation(validator.specValidationResult)
     if (o.pretty) {
-      /* tslint:disable-next-line:no-console no-string-literal */
-      console.log(
-        vsoLogIssueWrapper("error", `Validating "examples" and "x-ms-examples" in  ${specPath}:\n`)
-      )
-      prettyPrint(errors, "error")
+      if (errors.length > 0) {
+        /* tslint:disable-next-line:no-console no-string-literal */
+        console.log(
+          vsoLogIssueWrapper("error", `Validating "examples" and "x-ms-examples" in  ${specPath}:\n`)
+        )
+        prettyPrint(errors, "error")
+      }
     }
     return errors
   })
