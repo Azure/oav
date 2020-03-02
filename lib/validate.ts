@@ -70,7 +70,7 @@ export async function getDocumentsFromCompositeSwagger(
 }
 
 const vsoLogIssueWrapper = (issueType: string, message: string) => {
-  return issueType === "error" || issueType === "warning"
+  return issueType === "error" || issueType === "warning" || issueType === "info"
     ? `##vso[task.logissue type=${issueType}]${message}`
     : `##vso[task.logissue type=error]${message}`
 }
