@@ -1,5 +1,9 @@
 # Changelog
 
+## 03/02/2020 0.20.11
+
+- Upgrade openapi-markdown package version
+
 ## 03/02/2020 0.20.10
 
 - Upgrade virtual-fs package version
