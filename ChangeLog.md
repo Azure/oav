@@ -1,5 +1,9 @@
 # Changelog
 
+## 03/02/2020 0.20.12
+
+- Fixed typeerror when search in unknownrp-unknownapiversion cached operations
+
 ## 03/02/2020 0.20.11
 
 - Upgrade openapi-markdown package version
