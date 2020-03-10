@@ -786,7 +786,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
           }
 
           // replacing characters that may cause validator failed  with empty string because this messes up Sways regex
-          // validation of path segment. only
+          // validation of path segment.
           if (!utils.isUrlEncoded(parameterValue as string)) {
             // TODO: we can get the scheme from parameterValue if the useSchemePrefix is setting false in the x-ms-parameterized-host,
             // then check if it can match to the swagger scheme.
