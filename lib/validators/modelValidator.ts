@@ -696,12 +696,12 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     const parameterizedHost = pathObject.api[C.xmsParameterizedHost]
     const hostTemplate =
       parameterizedHost && parameterizedHost.hostTemplate ? parameterizedHost.hostTemplate : null
-    let scheme = "https"
     if (
       operation.pathObject &&
       operation.pathObject.api &&
       (operation.pathObject.api.host || hostTemplate)
     ) {
+      let scheme = "https"
       let basePath = ""
       let host = ""
       host = operation.pathObject.api.host || hostTemplate
@@ -785,12 +785,13 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
             break
           }
 
-          // replacing forward slashes and scheme with empty string because this messes up Sways regex
-          // validation of path segment.
-          if (parameterValue.startsWith(scheme + "://")) {
-            parameterValue = parameterValue.slice(scheme.length + 3)
+          // replacing characters that may cause validator failed  with empty string because this messes up Sways regex
+          // validation of path segment. only
+          if (!utils.isUrlEncoded(parameterValue as string)) {
+            // TODO: we can get the scheme from parameterValue if the useSchemePrefix is setting false in the x-ms-parameterized-host,
+            // then check if it can match to the swagger scheme.
+            parameterValue = parameterValue.replace(/[^0-9a-zA-Z._]/gi, "")
           }
-          parameterValue = (parameterValue as string).replace(/^\//gi, "")
         }
         const paramType = location + "Parameters"
         if (!options[paramType]) {
