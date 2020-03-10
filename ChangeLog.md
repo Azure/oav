@@ -2,7 +2,7 @@
 
 ## 03/02/2020 0.20.12
 
-- Fixed typeerror when search in unknownrp-unknownapiversion cached operations
+- Fixed typeerror in live validator when search operation in case of unknownapiversion
 
 ## 03/02/2020 0.20.11
 
