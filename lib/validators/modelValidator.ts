@@ -696,12 +696,12 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     const parameterizedHost = pathObject.api[C.xmsParameterizedHost]
     const hostTemplate =
       parameterizedHost && parameterizedHost.hostTemplate ? parameterizedHost.hostTemplate : null
+    let scheme = "https"
     if (
       operation.pathObject &&
       operation.pathObject.api &&
       (operation.pathObject.api.host || hostTemplate)
     ) {
-      let scheme = "https"
       let basePath = ""
       let host = ""
       host = operation.pathObject.api.host || hostTemplate
@@ -784,9 +784,13 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
             foundIssues = true
             break
           }
-          // replacing forward slashes with empty string because this messes up Sways regex
+
+          // replacing forward slashes and scheme with empty string because this messes up Sways regex
           // validation of path segment.
-          parameterValue = parameterValue.replace(/\//gi, "")
+          if (parameterValue.startsWith(scheme + "://")) {
+            parameterValue = parameterValue.slice(scheme.length + 3)
+          }
+          parameterValue = (parameterValue as string).replace(/^\//gi, "")
         }
         const paramType = location + "Parameters"
         if (!options[paramType]) {
