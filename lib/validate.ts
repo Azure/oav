@@ -138,34 +138,41 @@ export async function validateSpec(
 
     const validator = new SemanticValidator(specPath, null, o)
     const suppression = await getSuppressions(specPath)
-    await validator.initialize(suppression)
-    log.info(`Semantically validating  ${specPath}:\n`)
-    const validationResults = await validator.validateSpec(specPath, suppression)
-    updateEndResultOfSingleValidation(validator)
-    logDetailedInfo(validator)
-    if (o.pretty) {
-      const resolveSpecError = validator.specValidationResult.resolveSpec
-      if (resolveSpecError !== undefined || validationResults.errors.length > 0) {
-        /* tslint:disable-next-line:no-console no-string-literal */
-        console.log(vsoLogIssueWrapper("error", `Semantically validating  ${specPath}:\n`))
-      } else if (validationResults.warnings && validationResults.warnings.length > 0) {
-        /* tslint:disable-next-line:no-console no-string-literal */
-        console.log(vsoLogIssueWrapper("warning", `Semantically validating  ${specPath}:\n`))
-      } else {
-        /* tslint:disable-next-line:no-console no-string-literal */
-        console.log(`Semantically validating  ${specPath}: without error.\n`)
+    try {
+      await validator.initialize(suppression)
+      log.info(`Semantically validating  ${specPath}:\n`)
+      const validationResults = await validator.validateSpec(specPath, suppression)
+      updateEndResultOfSingleValidation(validator)
+      logDetailedInfo(validator)
+      if (o.pretty) {
+        const resolveSpecError = validator.specValidationResult.resolveSpec
+        if (resolveSpecError !== undefined || validationResults.errors.length > 0) {
+          /* tslint:disable-next-line:no-console no-string-literal */
+          console.log(vsoLogIssueWrapper("error", `Semantically validating  ${specPath}:\n`))
+        } else if (validationResults.warnings && validationResults.warnings.length > 0) {
+          /* tslint:disable-next-line:no-console no-string-literal */
+          console.log(vsoLogIssueWrapper("warning", `Semantically validating  ${specPath}:\n`))
+        } else {
+          /* tslint:disable-next-line:no-console no-string-literal */
+          console.log(`Semantically validating  ${specPath}: without error.\n`)
+        }
+        if (resolveSpecError !== undefined) {
+          prettyPrint([resolveSpecError], "error")
+        }
+        if (validationResults.errors.length > 0) {
+          prettyPrint(validationResults.errors, "error")
+        }
+        if (validationResults.warnings && validationResults.warnings.length > 0) {
+          prettyPrint(validationResults.warnings, "warning")
+        }
       }
-      if (resolveSpecError !== undefined) {
-        prettyPrint([resolveSpecError], "error")
-      }
-      if (validationResults.errors.length > 0) {
-        prettyPrint(validationResults.errors, "error")
-      }
-      if (validationResults.warnings && validationResults.warnings.length > 0) {
-        prettyPrint(validationResults.warnings, "warning")
-      }
+      return validator.specValidationResult
+    } catch (err) {
+      // console.log(err)
+      log.error(err)
+      validator.specValidationResult.validityStatus = false
+      return validator.specValidationResult
     }
-    return validator.specValidationResult
   })
 }
 
@@ -194,25 +201,32 @@ export async function validateExamples(
 ): Promise<ReadonlyArray<ModelValidationError>> {
   return validate(options, async o => {
     const validator = new ModelValidator(specPath, null, o)
-    await validator.initialize()
-    log.info(`Validating "examples" and "x-ms-examples" in  ${specPath}:\n`)
-    await validator.validateOperations(operationIds)
-    updateEndResultOfSingleValidation(validator)
-    logDetailedInfo(validator)
-    const errors = getErrorsFromModelValidation(validator.specValidationResult)
-    if (o.pretty) {
-      if (errors.length > 0) {
-        /* tslint:disable-next-line:no-console no-string-literal */
-        console.log(
-          vsoLogIssueWrapper(
-            "error",
-            `Validating "examples" and "x-ms-examples" in  ${specPath}:\n`
+    try {
+      await validator.initialize()
+      log.info(`Validating "examples" and "x-ms-examples" in  ${specPath}:\n`)
+      await validator.validateOperations(operationIds)
+      updateEndResultOfSingleValidation(validator)
+      logDetailedInfo(validator)
+      const errors = getErrorsFromModelValidation(validator.specValidationResult)
+      if (o.pretty) {
+        if (errors.length > 0) {
+          /* tslint:disable-next-line:no-console no-string-literal */
+          console.log(
+            vsoLogIssueWrapper(
+              "error",
+              `Validating "examples" and "x-ms-examples" in  ${specPath}:\n`
+            )
           )
-        )
-        prettyPrint(errors, "error")
+          prettyPrint(errors, "error")
+        }
       }
+      return errors
+    } catch (e) {
+      log.error(e)
+      validator.specValidationResult.validityStatus = false
+      updateEndResultOfSingleValidation(validator)
+      return [{ inner: e }]
     }
-    return errors
   })
 }
 

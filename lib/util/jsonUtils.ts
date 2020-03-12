@@ -1,6 +1,8 @@
 import { Suppression, SuppressionItem } from "@azure/openapi-markdown"
 import * as it from "@ts-common/iterator"
 import * as jsonParser from "@ts-common/json-parser"
+import * as jsonPointer from "json-pointer"
+
 import { FilePosition, getDescendantFilePosition, getFilePosition } from "@ts-common/source-map"
 import { MutableStringMap } from "@ts-common/string-map"
 import * as vfs from "@ts-common/virtual-fs"
@@ -122,4 +124,14 @@ const getSpecContent = async (specPath: string) => {
   } catch (error) {
     throw new Error(`Failed to load a reference file ${specPath}. (${error})`)
   }
+}
+
+export const findUndefinedWithinDocRefs = (specInJson: object): Map<string, string[]> => {
+  const result = new Map<string, string[]>()
+  for (const section of jp.nodes(specInJson, '$..["$ref"]')) {
+    if (section.value.startsWith("#/") && !jsonPointer.has(specInJson, section.value.slice(1))) {
+      result.set(section.value, section.path as string[])
+    }
+  }
+  return result
 }
