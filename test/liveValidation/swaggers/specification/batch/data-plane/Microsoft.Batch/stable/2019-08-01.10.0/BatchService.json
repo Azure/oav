@@ -54,7 +54,7 @@
   },
   "paths": {
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/applications": {
-      "get": 
+      "get": {
         "tags": [
           "Applications"
         ],

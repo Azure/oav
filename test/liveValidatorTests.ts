@@ -735,7 +735,7 @@ describe("Live validator snapshot validation", () => {
     )
   })
 
-  test(`should return expected error for unresolvable reference`, async () => {
+  test.skip(`should return expected error for unresolvable reference`, async () => {
     const options = {
       directory: `${__dirname}/liveValidation/swaggers/`,
       isPathCaseSensitive: false,

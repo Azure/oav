@@ -591,7 +591,7 @@ describe("Model Validation", () => {
       assert.strictEqual(result.length, 0)
     })
   })
-  describe("WithIn Reference valid", () => {
+  describe("WithIn Reference", () => {
     it("should fail when validating a swagger with invalid reference", async () => {
       const specPath2 = `${testPath}/modelValidation/swaggers/specification/invalidReference/searchindex.json`
       const result = await validate.validateExamples(specPath2, undefined)
