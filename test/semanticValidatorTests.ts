@@ -49,7 +49,7 @@ describe("Semantic validation", () => {
     assert(result.validityStatus === true)
   })
 
-  it("should fail when validating a swagger with invalid reference", async () => {
+  it("should fail when validating a swagger with invalid internal reference", async () => {
     const specPath = `${testPath}/semanticValidation/specification/invalidReference/searchindex.json`
     const result = await validate.validateSpec(specPath, undefined)
     assert(result.validityStatus === false)

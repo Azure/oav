@@ -188,7 +188,7 @@ export class SpecResolver {
   public async resolve(suppression: Suppression | undefined): Promise<this> {
     try {
       // path resolvers
-      this.checkWithInReferences()
+      this.verifyInternalReference()
 
       this.unifyXmsPaths()
       if (this.options.shouldResolveRelativePaths) {
@@ -1037,7 +1037,7 @@ export class SpecResolver {
   /**
    * Check if exist undefined within-document reference
    */
-  private checkWithInReferences() {
+  private verifyInternalReference() {
     const errsDetail: any[] = []
     const unresolvedRefs = jsonUtils.findUndefinedWithinDocRefs(this.specInJson)
     unresolvedRefs.forEach((pathStr, ref) => {
