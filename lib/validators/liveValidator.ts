@@ -742,16 +742,18 @@ export class LiveValidator {
       const c = this.cache[C.unknownResourceProvider]
       if (c && c[C.unknownApiVersion]) {
         operations = c[C.unknownApiVersion][requestInfo.requestMethod]
-        potentialOperations = operations.filter(operation => {
-          const pathObject = operation.pathObject
-          let pathTemplate = pathObject.path
-          if (pathTemplate && pathTemplate.includes("?")) {
-            pathTemplate = pathTemplate.slice(0, pathTemplate.indexOf("?"))
-            pathObject.path = pathTemplate
-          }
-          const pathMatch = pathObject.regexp.exec(requestInfo.pathStr)
-          return pathMatch !== null
-        })
+        if (operations && !operations.length) {
+          potentialOperations = operations.filter(operation => {
+            const pathObject = operation.pathObject
+            let pathTemplate = pathObject.path
+            if (pathTemplate && pathTemplate.includes("?")) {
+              pathTemplate = pathTemplate.slice(0, pathTemplate.indexOf("?"))
+              pathObject.path = pathTemplate
+            }
+            const pathMatch = pathObject.regexp.exec(requestInfo.pathStr)
+            return pathMatch !== null
+          })
+        }
       }
     }
     const elapsedTime = Date.now() - startTime

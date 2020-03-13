@@ -215,7 +215,7 @@ describe("Live Validator", () => {
       }
       // 'microsoft.unknown' -> 'unknown-api-version'
       assert.strictEqual(4, p[Constants.unknownApiVersion].post.length)
-      assert.strictEqual(12, p[Constants.unknownApiVersion].get.length)
+      assert.strictEqual(13, p[Constants.unknownApiVersion].get.length)
       assert.strictEqual(3, p[Constants.unknownApiVersion].head.length)
       assert.strictEqual(6, p[Constants.unknownApiVersion].put.length)
       assert.strictEqual(6, p[Constants.unknownApiVersion].delete.length)
@@ -341,6 +341,23 @@ describe("Live Validator", () => {
   })
 
   describe("Initialize cache and search", () => {
+    it("should return zero result when search for unknown method in unknown RP unknown apiversion operations", async () => {
+      const options = {
+        directory: "./test/liveValidation/swaggers/specification/unknown-rp",
+        swaggerPathsPattern: ["**/*.json"]
+      }
+      const requestUrl =
+        "https://management.azure.com/" +
+        "subscriptions/randomSub/resourceGroups/randomRG/providers/providers/Microsoft.Storage" +
+        "/3fa73e4b-d60d-43b2-a248-fb776fd0bf60" +
+        "?api-version=2018-09-01-preview"
+      const validator: any = new LiveValidator(options)
+      await validator.initialize()
+      // Operations to match is RoleAssignments_Create
+      const validationInfo = validator.parseValidationRequest(requestUrl, "Put", "randomId")
+      const operations = validator.getPotentialOperations(validationInfo).operations
+      assert.strictEqual(0, operations.length)
+    })
     it("should fall back to return child operation in case of request url have parent and child resouces", async () => {
       const options = {
         directory: "./test/liveValidation/swaggers/specification/authorization",
