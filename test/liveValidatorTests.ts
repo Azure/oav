@@ -735,6 +735,10 @@ describe("Live validator snapshot validation", () => {
     )
   })
 
+  /**
+   * this case is invalid because we can detect unresolved reference erro in the stage of resolve spec 
+   * TODO: this error code should be removed from the doc later
+   */
   test.skip(`should return expected error for unresolvable reference`, async () => {
     const options = {
       directory: `${__dirname}/liveValidation/swaggers/`,
