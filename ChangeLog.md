@@ -1,5 +1,13 @@
 # Changelog
 
+## 03/13/2020 0.20.13
+
+- Normanormalize the path parameter values by using whilelist (0-9a-zA-Z._) to fix the issue of   validate-example failed which caused by host path parameter values including special characters (:)
+  
+## 03/03/2020 0.20.11
+
+- Upgrade openapi-markdown package version
+
 ## 03/02/2020 0.20.11
 
 - Upgrade openapi-markdown package version
