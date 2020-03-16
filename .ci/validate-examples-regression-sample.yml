@@ -4,6 +4,11 @@ pool:
 trigger:
   - master
 
+pr:
+  branches:
+    include:
+      - "*"
+
 steps:
   - task: Npm@1
     displayName: "npm install"
