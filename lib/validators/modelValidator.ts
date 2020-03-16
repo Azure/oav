@@ -784,9 +784,14 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
             foundIssues = true
             break
           }
-          // replacing forward slashes with empty string because this messes up Sways regex
+
+          // replacing characters that may cause validator failed  with empty string because this messes up Sways regex
           // validation of path segment.
-          parameterValue = parameterValue.replace(/\//gi, "")
+          if (!utils.isUrlEncoded(parameterValue as string)) {
+            // TODO: we can get the scheme from parameterValue if the useSchemePrefix is setting false in the x-ms-parameterized-host,
+            // then check if it can match to the swagger scheme.
+            parameterValue = parameterValue.replace(/[^0-9a-zA-Z._]/gi, "")
+          }
         }
         const paramType = location + "Parameters"
         if (!options[paramType]) {
