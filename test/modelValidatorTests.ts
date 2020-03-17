@@ -254,6 +254,16 @@ describe("Model Validation", () => {
       assert(result.length === 0, `swagger "${specPath2}" contains model validation errors.`)
       // console.log(result)
     })
+
+    it("should pass for parameters values include url", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/parameterizedhost/searchindex.json`
+      const result = await validate.validateExamples(specPath2, undefined, {
+        consoleLogLevel: "off"
+      })
+      // console.dir(result, { depth: null })
+      assert(result.length === 0, `swagger "${specPath2}" contains model validation errors.`)
+      // console.log(result)
+    })
   })
 
   describe("Nullable models - ", () => {
