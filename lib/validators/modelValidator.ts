@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
+import * as amd from "@azure/openapi-markdown"
 import { filter, toArray } from "@ts-common/iterator"
 import { JsonRef } from "@ts-common/json"
 import * as jsonParser from "@ts-common/json-parser"
@@ -906,23 +907,48 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       if (!!requestValidationErrors && requestValidationErrors.length > 0) {
         if (exampleFilePath !== undefined) {
           requestValidationErrors.forEach(error => {
-            const position = getDescendantFilePosition(
+            const positionInfo = getDescendantFilePosition(
               this.exampleJsonMap.get(exampleFilePath) as JsonRef,
               error.path
             )
-            error.title = `{"path":["${error.path}"], "position":"${JSON.stringify(
-              position
-            )}", "url":"${exampleFilePath}"}`
+            if (!error.path) {
+              error.path = ""
+            }
+            const titleObj: any = {
+              path: Array.isArray(error.path) ? [...error.path] : [error.path],
+              position: positionInfo,
+              url: exampleFilePath
+            }
+            error.title = JSON.stringify(titleObj)
           })
+          // process suppression for request validation errors
+          if (this.suppression) {
+            const requestParameterSuppression = this.suppression.directive.filter(
+              item => item.suppress === "INVALID_REQUEST_PARAMETER"
+            )
+            if (requestParameterSuppression && requestParameterSuppression.length > 0) {
+              requestValidationErrors = this.applySuppression(
+                requestValidationErrors,
+                requestParameterSuppression[0]
+              )
+            }
+          }
         }
       }
-      const e = this.constructErrorObject({
-        code: C.ErrorCodes.RequestValidationError,
-        message: msg,
-        innerErrors: requestValidationErrors
-      })
-      operationResult.request.error = e
-      log.error(`${msg}:\n`, e)
+      if (requestValidationErrors && requestValidationErrors.length > 0) {
+        const e = this.constructErrorObject({
+          code: C.ErrorCodes.RequestValidationError,
+          message: msg,
+          innerErrors: requestValidationErrors
+        })
+        operationResult.request.error = e
+        log.error(`${msg}:\n`, e)
+      } else {
+        msg = "Request parameters is valid."
+        operationResult.request.isValid = true
+        operationResult.request.result = msg
+        log.info(`${msg}`)
+      }
     } else if (requestValidationWarnings) {
       operationResult.request.warning = requestValidationWarnings
       log.debug(`${msg}:\n`, requestValidationWarnings)
@@ -931,6 +957,26 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       operationResult.request.result = msg
       log.info(`${msg}`)
     }
+  }
+
+  private applySuppression(
+    errors: ModelValidationError[],
+    suppressionItem: amd.SuppressionItem
+  ): ModelValidationError[] {
+    const notSuppressedError: ModelValidationError[] = []
+    errors.forEach(item => {
+      if (!item.message || !this.existSuppression(suppressionItem, item.message)) {
+        notSuppressedError.push(item)
+      }
+    })
+    return notSuppressedError
+  }
+
+  private existSuppression(suppressionItem: amd.SuppressionItem, message: string): boolean {
+    if (suppressionItem["text-matches"]) {
+      return new RegExp(suppressionItem["text-matches"]).test(message)
+    }
+    return true
   }
 
   private constructResponseResult(
