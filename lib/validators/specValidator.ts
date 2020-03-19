@@ -214,6 +214,10 @@ export class SpecValidator<T extends CommonValidationResult> {
       }
       this.swaggerApi = await Sway.create(options)
     } catch (err) {
+      if (typeof err === "object" && err.id && err.message) {
+        this.specValidationResult.resolveSpec = err
+        throw err
+      }
       const e = this.constructErrorObject({
         code: ErrorCodes.InternalError,
         message: err.message,
