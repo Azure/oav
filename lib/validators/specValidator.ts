@@ -88,6 +88,8 @@ export class SpecValidator<T extends CommonValidationResult> {
 
   protected specPath: string
 
+  protected suppression?: amd.Suppression
+
   private readonly specDir: unknown
 
   private readonly options: Options
@@ -179,16 +181,14 @@ export class SpecValidator<T extends CommonValidationResult> {
    * Initializes the spec validator. Resolves the spec on different counts using the SpecResolver
    * and initializes the internal api validator.
    */
-  public async initialize(suppression?: amd.Suppression): Promise<Sway.SwaggerApi> {
+  public async initialize(): Promise<Sway.SwaggerApi> {
     const errors: jsonParser.ParseError[] = []
     const reportError = (e: jsonParser.ParseError) => errors.push(e)
     try {
       if (this.specInJson === undefined || this.specInJson === null) {
-        if (suppression === undefined) {
-          suppression = await getSuppressions(this.specPath)
-        }
+        this.suppression = await getSuppressions(this.specPath)
         const result = await jsonUtils.parseJson(
-          suppression,
+          this.suppression,
           this.specPath,
           reportError,
           this.docsCache
@@ -203,7 +203,7 @@ export class SpecValidator<T extends CommonValidationResult> {
         reportError,
         this.docsCache
       )
-      this.specInJson = (await resolver.resolve(suppression)).specInJson
+      this.specInJson = (await resolver.resolve(this.suppression)).specInJson
       const options = {
         definition: this.specInJson,
         jsonRefs: {

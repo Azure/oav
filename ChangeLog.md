@@ -1,5 +1,9 @@
 # Changelog
 
+## 03/16/2020 0.21.1
+
+- Enabled request parameter suppression in model validation.
+
 ## 03/16/2020 0.21.0
 
 - Fixed oav does not report the invalid internal references error issue. Added a function (verfiyInternalReference) to check the error.
