@@ -188,6 +188,8 @@ export class SpecResolver {
   public async resolve(suppression: Suppression | undefined): Promise<this> {
     try {
       // path resolvers
+      this.verifyInternalReference()
+
       this.unifyXmsPaths()
       if (this.options.shouldResolveRelativePaths) {
         await this.resolveRelativePaths(suppression)
@@ -218,6 +220,10 @@ export class SpecResolver {
         this.resolveNullableTypes()
       }
     } catch (err) {
+      // to avoid double wrap the exception
+      if (typeof err === "object" && err.id && err.message) {
+        throw err
+      }
       const e = {
         message: "internal error: " + err.message,
         code: ErrorCodes.InternalError.name,
@@ -1026,5 +1032,26 @@ export class SpecResolver {
       }
     }
     return result
+  }
+
+  /**
+   * Check if exist undefined within-document reference
+   */
+  private verifyInternalReference() {
+    const errsDetail: any[] = []
+    const unresolvedRefs = jsonUtils.findUndefinedWithinDocRefs(this.specInJson)
+    unresolvedRefs.forEach((pathStr, ref) => {
+      const err: any = {}
+      err.path = (pathStr as string[]).join(".")
+      err.message = `JSON Pointer points to missing location:${ref}`
+      errsDetail.push(err)
+    })
+
+    if (errsDetail.length) {
+      const err: any = C.ErrorCodes.RefNotFoundError
+      err.message = "Reference could not be resolved"
+      err.innerErrors = errsDetail
+      throw err
+    }
   }
 }
