@@ -929,7 +929,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
             if (requestParameterSuppression && requestParameterSuppression.length > 0) {
               requestValidationErrors = this.applySuppression(
                 requestValidationErrors,
-                requestParameterSuppression[0]
+                requestParameterSuppression
               )
             }
           }
@@ -961,22 +961,27 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
 
   private applySuppression(
     errors: ModelValidationError[],
-    suppressionItem: amd.SuppressionItem
+    suppressionItems: amd.SuppressionItem[]
   ): ModelValidationError[] {
     const notSuppressedError: ModelValidationError[] = []
     errors.forEach(item => {
-      if (!item.message || !this.existSuppression(suppressionItem, item.message)) {
+      if (!item.message || !this.existSuppression(suppressionItems, item.message)) {
         notSuppressedError.push(item)
       }
     })
     return notSuppressedError
   }
 
-  private existSuppression(suppressionItem: amd.SuppressionItem, message: string): boolean {
-    if (suppressionItem["text-matches"]) {
-      return new RegExp(suppressionItem["text-matches"]).test(message)
+  private existSuppression(suppressionItems: amd.SuppressionItem[], message: string): boolean {
+    for (const item of suppressionItems) {
+      if (item["text-matches"] !== undefined) {
+        const regex = new RegExp(item["text-matches"])
+        if (regex.test(message)) {
+          return true
+        }
+      }
     }
-    return true
+    return false
   }
 
   private constructResponseResult(
