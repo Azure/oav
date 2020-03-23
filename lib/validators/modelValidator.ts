@@ -923,13 +923,13 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
           })
           // process suppression for request validation errors
           if (this.suppression) {
-            const requestParameterSuppression = this.suppression.directive.filter(
+            const requestParameterSuppressions = this.suppression.directive.filter(
               item => item.suppress === "INVALID_REQUEST_PARAMETER"
             )
-            if (requestParameterSuppression && requestParameterSuppression.length > 0) {
+            if (requestParameterSuppressions && requestParameterSuppressions.length > 0) {
               requestValidationErrors = this.applySuppression(
                 requestValidationErrors,
-                requestParameterSuppression
+                requestParameterSuppressions
               )
             }
           }
@@ -963,13 +963,13 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     errors: ModelValidationError[],
     suppressionItems: amd.SuppressionItem[]
   ): ModelValidationError[] {
-    const notSuppressedError: ModelValidationError[] = []
+    const notSuppressedErrors: ModelValidationError[] = []
     errors.forEach(item => {
       if (!item.message || !this.existSuppression(suppressionItems, item.message)) {
-        notSuppressedError.push(item)
+        notSuppressedErrors.push(item)
       }
     })
-    return notSuppressedError
+    return notSuppressedErrors
   }
 
   private existSuppression(suppressionItems: amd.SuppressionItem[], message: string): boolean {
