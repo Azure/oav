@@ -690,6 +690,23 @@ export class LiveValidator {
   }
 
   /**
+   * Gets list of matched operations objects for given url.
+   *
+   * @param {string} requestUrl The url for which to find matched operations.
+   *
+   * @param {Array<Operation>} operations The list of operations to search.
+   *
+   * @returns {Array<Operation>} List of matched operations with the request url.
+   */
+  private getMatchedOperations(requestUrl: string, operations: Operation[]): Operation[] {
+    return operations.filter(operation => {
+      const pathObject = operation.pathObject
+      const pathMatch = pathObject.regexp.exec(requestUrl)
+      return pathMatch !== null
+    })
+  }
+
+  /**
    * Gets list of potential operations objects for given path and method.
    *
    * @param {string} requestPath The path of the url for which to find potential operations.
@@ -709,12 +726,15 @@ export class LiveValidator {
       throw new Error('operations is a required parameter of type "array".')
     }
 
-    const requestUrl = formatUrlToExpectedFormat(requestInfo.pathStr)
-    let potentialOperations = operations.filter(operation => {
-      const pathObject = operation.pathObject
-      const pathMatch = pathObject.regexp.exec(requestUrl)
-      return pathMatch !== null
-    })
+    let requestUrl = formatUrlToExpectedFormat(requestInfo.pathStr)
+    let potentialOperations = this.getMatchedOperations(requestUrl, operations)
+
+    // fall back to the last child resource url to search for operations
+    // if there're no matched operations for found for the whole url
+    if (!potentialOperations.length) {
+      requestUrl = utils.getLastResourceUrlToMatch(requestUrl)
+      potentialOperations = this.getMatchedOperations(requestUrl, operations)
+    }
 
     // If we do not find any match then we'll look into Microsoft.Unknown -> unknown-api-version
     // for given requestMethod as the fall back option
@@ -722,16 +742,18 @@ export class LiveValidator {
       const c = this.cache[C.unknownResourceProvider]
       if (c && c[C.unknownApiVersion]) {
         operations = c[C.unknownApiVersion][requestInfo.requestMethod]
-        potentialOperations = operations.filter(operation => {
-          const pathObject = operation.pathObject
-          let pathTemplate = pathObject.path
-          if (pathTemplate && pathTemplate.includes("?")) {
-            pathTemplate = pathTemplate.slice(0, pathTemplate.indexOf("?"))
-            pathObject.path = pathTemplate
-          }
-          const pathMatch = pathObject.regexp.exec(requestInfo.pathStr)
-          return pathMatch !== null
-        })
+        if (operations && !operations.length) {
+          potentialOperations = operations.filter(operation => {
+            const pathObject = operation.pathObject
+            let pathTemplate = pathObject.path
+            if (pathTemplate && pathTemplate.includes("?")) {
+              pathTemplate = pathTemplate.slice(0, pathTemplate.indexOf("?"))
+              pathObject.path = pathTemplate
+            }
+            const pathMatch = pathObject.regexp.exec(requestInfo.pathStr)
+            return pathMatch !== null
+          })
+        }
       }
     }
     const elapsedTime = Date.now() - startTime
@@ -857,12 +879,11 @@ export class LiveValidator {
       )
 
       const operations = api.getOperations()
-      let apiVersion = api.info.version.toLowerCase()
-
       for (const operation of operations) {
         const httpMethod = operation.method.toLowerCase()
         const pathObject = operation.pathObject
         const pathStr = pathObject.path
+        let apiVersion = api.info.version.toLowerCase()
         let provider = utils.getProvider(pathStr)
         this.logging(
           `${apiVersion}, ${operation.operationId}, ${pathStr}, ${httpMethod}`,
@@ -954,5 +975,5 @@ export class LiveValidator {
  * where the swagger path starts. Currently those are '/subscriptions' and '/providers'.
  */
 export function formatUrlToExpectedFormat(requestUrl: string): string {
-  return requestUrl.substring(requestUrl.search("/?(subscriptions|providers)"))
+  return requestUrl.substring(requestUrl.search("/?(subscriptions|providers)/i"))
 }

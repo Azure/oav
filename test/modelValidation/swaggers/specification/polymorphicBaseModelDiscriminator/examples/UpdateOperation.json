@@ -1,0 +1,14 @@
+{
+  "parameters": {
+    "parameters": {
+      "dType": "typeA"
+    }
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "dType": "typeA"
+      }
+    }
+  }
+}

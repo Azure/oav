@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import * as amd from "@azure/openapi-markdown"
 import * as sm from "@ts-common/string-map"
 import * as util from "util"
 import * as Sway from "yasway"
@@ -31,10 +30,7 @@ export interface SemanticValidationResult extends CommonValidationResult {
 }
 
 export class SemanticValidator extends SpecValidator<SemanticValidationResult> {
-  public async validateSpec(
-    specPath?: string,
-    suppression?: amd.Suppression
-  ): Promise<Sway.ValidationResults> {
+  public async validateSpec(): Promise<Sway.ValidationResults> {
     this.specValidationResult.validateSpec = {
       isValid: true,
       errors: [],
@@ -57,11 +53,15 @@ export class SemanticValidator extends SpecValidator<SemanticValidationResult> {
       const validationResult = this.swaggerApi.validate()
       if (validationResult) {
         if (
-          (suppression !== undefined &&
-            specPath !== undefined &&
-            !existSuppression(specPath, suppression, C.ErrorCodes.DiscriminatorNotRequired.id)) ||
-          suppression === undefined ||
-          specPath === undefined
+          (this.suppression &&
+            this.specPath &&
+            !existSuppression(
+              this.specPath,
+              this.suppression,
+              C.ErrorCodes.DiscriminatorNotRequired.id
+            )) ||
+          this.suppression === undefined ||
+          this.specPath === undefined
         ) {
           const discriminatorValidationResult = this.validateDiscriminator()
           if (discriminatorValidationResult) {

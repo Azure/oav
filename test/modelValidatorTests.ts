@@ -254,6 +254,16 @@ describe("Model Validation", () => {
       assert(result.length === 0, `swagger "${specPath2}" contains model validation errors.`)
       // console.log(result)
     })
+
+    it("should pass for parameters values include url", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/parameterizedhost/searchindex.json`
+      const result = await validate.validateExamples(specPath2, undefined, {
+        consoleLogLevel: "off"
+      })
+      // console.dir(result, { depth: null })
+      assert(result.length === 0, `swagger "${specPath2}" contains model validation errors.`)
+      // console.log(result)
+    })
   })
 
   describe("Nullable models - ", () => {
@@ -579,6 +589,23 @@ describe("Model Validation", () => {
         consoleLogLevel: "off"
       })
       assert.strictEqual(result.length, 0)
+    })
+  })
+
+  describe("Base polymorphic model", () => {
+    it("Should have origin enum values and base model name as discriminator values list", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/polymorphicBaseModelDiscriminator/spec.json`
+      const result = await validate.validateExamples(specPath2, undefined, {
+        consoleLogLevel: "off"
+      })
+      assert.strictEqual(result.length, 0)
+    })
+  })
+  describe("WithIn Reference", () => {
+    it("should fail when validating a swagger with invalid reference", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/invalidReference/searchindex.json`
+      const result = await validate.validateExamples(specPath2, undefined)
+      assert.strictEqual(result.length, 1)
     })
   })
 })

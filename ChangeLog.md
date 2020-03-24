@@ -1,19 +1,65 @@
 # Changelog
 
+## 03/16/2020 0.21.1
+
+- Enabled request parameter suppression in model validation.
+
+## 03/16/2020 0.21.0
+
+- Fixed oav does not report the invalid internal references error issue. Added a function (verfiyInternalReference) to check the error.
+
+## 03/13/2020 0.20.13
+
+- Normalize the path parameter values by using whilelist (0-9a-zA-Z._) to fix the issue of validate-example failed
+  which caused by host path parameter values including special characters (:)
+  
+## 03/10/2020 0.20.12
+
+- Fixed typeerror in live validator when search operation in case of unknownapiversion
+
+## 03/03/2020 0.20.11
+
+- Upgrade openapi-markdown package version
+
+## 03/02/2020 0.20.10
+
+- Upgrade virtual-fs package version
+
+## 02/13/2020 0.20.9
+
+- Fall back to match child resouce in live validator
+
+## 02/13/2020 0.20.8
+
+- The path matching for subscription and provider in Live validation should be case-insensitive.
+
+## 02/05/2020 0.20.7
+
+- Add base model name as a value to discriminator enum value list.[Issue#468](https://github.com/Azure/oav/issues/468)
+
+## 01/16/2020 0.20.6
+
+- security vulnerability fix for handlebars, kind-of and lodash
+
 ## 12/26/2019 0.20.4
+
 - Upgrade yasway and z-schema version.
 
 ## 12/05/2019 0.20.3
+
 - Change the swaggerPathsPattern of LiveValidatorOptions to array type
 
 ## 11/26/2019 0.20.2
+
 - Upgrade yasway version to consume the change for x-ms-secret property update
 
 ## 11/20/2019 0.20.1
+
 - Resource provider and API version should be case-insensitive in live validation
 - Upgrade yasway version to reflect the deep clone performance improvement change
 
 ## 11/4/2019 0.20.0
+
 - Support x-ms-mutability in the response validation. If there's a write-only x-ms-mutabitlity property in the response, report an error
 
 ## 10/22/2019 0.19.9

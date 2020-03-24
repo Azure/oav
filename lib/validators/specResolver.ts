@@ -188,6 +188,8 @@ export class SpecResolver {
   public async resolve(suppression: Suppression | undefined): Promise<this> {
     try {
       // path resolvers
+      this.verifyInternalReference()
+
       this.unifyXmsPaths()
       if (this.options.shouldResolveRelativePaths) {
         await this.resolveRelativePaths(suppression)
@@ -218,6 +220,10 @@ export class SpecResolver {
         this.resolveNullableTypes()
       }
     } catch (err) {
+      // to avoid double wrap the exception
+      if (typeof err === "object" && err.id && err.message) {
+        throw err
+      }
       const e = {
         message: "internal error: " + err.message,
         code: ErrorCodes.InternalError.name,
@@ -921,6 +927,14 @@ export class SpecResolver {
         // x-ms-discriminator-value. This will make the discriminator
         // property a constant (in json schema terms).
         if (d.$ref) {
+          // When the discriminator enum is null and point to the nested reference,
+          // we need to set discriminator enum value to the nested reference enum
+          if (!d.enum) {
+            const refDefinition = definitions[d.$ref.substring(d.$ref.lastIndexOf("/") + 1)]
+            if (refDefinition) {
+              d.enum = refDefinition.enum
+            }
+          }
           delete d.$ref
         }
         const xMsEnum = d["x-ms-enum"]
@@ -937,7 +951,15 @@ export class SpecResolver {
         if (!d.type) {
           d.type = "string"
         }
-        d.enum = [`${val}`]
+        // For base class model, set the discriminator value to the base class name plus the origin enum values
+        if (definition.discriminator && d.enum) {
+          const baseClassDiscriminatorValue = d.enum
+          if (d.enum.indexOf(val) === -1) {
+            d.enum = [`${val}`, ...baseClassDiscriminatorValue]
+          }
+        } else {
+          d.enum = [`${val}`]
+        }
       }
     }
 
@@ -1010,5 +1032,26 @@ export class SpecResolver {
       }
     }
     return result
+  }
+
+  /**
+   * Check if exist undefined within-document reference
+   */
+  private verifyInternalReference() {
+    const errsDetail: any[] = []
+    const unresolvedRefs = jsonUtils.findUndefinedWithinDocRefs(this.specInJson)
+    unresolvedRefs.forEach((pathStr, ref) => {
+      const err: any = {}
+      err.path = (pathStr as string[]).join(".")
+      err.message = `JSON Pointer points to missing location:${ref}`
+      errsDetail.push(err)
+    })
+
+    if (errsDetail.length) {
+      const err: any = C.ErrorCodes.RefNotFoundError
+      err.message = "Reference could not be resolved"
+      err.innerErrors = errsDetail
+      throw err
+    }
   }
 }
