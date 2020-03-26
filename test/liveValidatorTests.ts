@@ -752,6 +752,26 @@ describe("Live validator snapshot validation", () => {
     )
   })
 
+  test(`should return expected error for readonly property in the request`, async () => {
+    const options = {
+      directory: `${__dirname}/liveValidation/swaggers/`,
+      isPathCaseSensitive: false,
+      useRelativeSourceLocationUrl: true,
+      swaggerPathsPattern: [
+        "specification\\contoso\\resource-manager\\Microsoft.Contoso\\**\\*.json"
+      ],
+      git: {
+        shouldClone: false
+      }
+    }
+    const liveValidator = new LiveValidator(options)
+    await liveValidator.initialize()
+
+    const payload = require(`${__dirname}/liveValidation/payloads/readonlyProperty_input.json`)
+    const result = liveValidator.validateLiveRequestResponse(payload)
+    expect(result).toMatchSnapshot()
+  })
+
   /**
    * this case is invalid because we can detect unresolved reference erro in the stage of resolve spec
    * TODO: this error code should be removed from the doc later
