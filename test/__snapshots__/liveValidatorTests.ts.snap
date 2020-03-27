@@ -201,6 +201,82 @@ Object {
 }
 `;
 
+exports[`Live validator snapshot validation should return expected error for readonly property in the request 1`] = `
+Object {
+  "requestValidationResult": Object {
+    "errors": Array [
+      Object {
+        "code": "READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST",
+        "documentationUrl": "",
+        "inner": undefined,
+        "jsonPathsInPayload": Array [
+          "$.readOnlyProperty",
+        ],
+        "message": "ReadOnly property \`\\"readOnlyProperty\\": \\"test\\"\`, cannot be sent in the request.",
+        "params": Array [
+          "readOnlyProperty",
+          "test",
+        ],
+        "pathsInPayload": Array [
+          "readOnlyProperty",
+        ],
+        "schemaPath": "",
+        "severity": 0,
+        "source": Object {
+          "jsonRef": "#/definitions/User/properties/readOnlyProperty",
+          "position": Object {
+            "column": 29,
+            "line": 71,
+          },
+          "url": "specification/contoso/resource-manager/Microsoft.Contoso/2020-01-01/contoso.json",
+        },
+      },
+      Object {
+        "code": "READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST",
+        "documentationUrl": "",
+        "inner": undefined,
+        "jsonPathsInPayload": Array [
+          "$.name",
+        ],
+        "message": "ReadOnly property \`\\"name\\": \\"foo\\"\`, cannot be sent in the request.",
+        "params": Array [
+          "name",
+          "foo",
+        ],
+        "pathsInPayload": Array [
+          "name",
+        ],
+        "schemaPath": "",
+        "severity": 0,
+        "source": Object {
+          "jsonRef": "#/definitions/User/properties/name",
+          "position": Object {
+            "column": 17,
+            "line": 61,
+          },
+          "url": "specification/contoso/resource-manager/Microsoft.Contoso/2020-01-01/contoso.json",
+        },
+      },
+    ],
+    "isSuccessful": false,
+    "operationInfo": Object {
+      "apiVersion": "2020-01-01",
+      "operationId": "User_CreateOrUpdate",
+    },
+    "runtimeException": undefined,
+  },
+  "responseValidationResult": Object {
+    "errors": Array [],
+    "isSuccessful": true,
+    "operationInfo": Object {
+      "apiVersion": "2020-01-01",
+      "operationId": "User_CreateOrUpdate",
+    },
+    "runtimeException": undefined,
+  },
+}
+`;
+
 exports[`Live validator snapshot validation should return no errors for valid input 1`] = `
 Object {
   "requestValidationResult": Object {

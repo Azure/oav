@@ -1,0 +1,173 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "K8 Connect RP",
+    "version": "2020-01-01-preview",
+    "description": "Azure Connected Cluster Resource Provider API for adopting any Kubernetes Cluster"
+  },
+  "schemes": ["https"],
+  "host": "management.azure.com",
+  "security": [
+    {
+      "azure_auth": ["user_impersonation"]
+    }
+  ],
+  "securityDefinitions": {
+    "azure_auth": {
+      "type": "oauth2",
+      "authorizationUrl": "https://login.microsoftonline.com/common/oauth2/authorize",
+      "flow": "implicit",
+      "description": "Azure Active Directory OAuth2 Flow.",
+      "scopes": {
+        "user_impersonation": "impersonate your user account"
+      }
+    }
+  },
+  "paths": {
+    "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Kubernetes/connectedClusters/{clusterName}": {
+      "put": {
+        "summary": "Registers a new K8s cluster.",
+        "operationId": "ConnectedCluster_Create",
+        "description": "API to register a new K8s cluster and thereby create a tracked resource in ARM",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "x-ms-examples": {
+          "CreateClusterExample": {
+            "$ref": "./examples/testglobalparamexample.json"
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/SubscriptionIdPathParam"
+          },
+          {
+            "$ref": "#/parameters/ResourceGroupNamePathParam"
+          },
+          {
+            "$ref": "#/parameters/ClusterNamePathParam"
+          },
+          {
+            "$ref": "#/parameters/Api-VersionQueryParam"
+          },
+          {
+            "$ref": "#/parameters/ConnectedClusterBodyParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The resource was created successfully",
+            "schema": {
+              "$ref": "#/definitions/ConnectedCluster"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "ConnectedCluster": {
+      "x-ms-azure-resource": true,
+      "type": "object",
+      "required": ["location", "identity"],
+      "properties": {
+        "id": {
+          "readOnly": true,
+          "type": "string",
+          "description": "Resource Id"
+        },
+        "name": {
+          "readOnly": true,
+          "type": "string",
+          "description": "Resource name"
+        },
+        "type": {
+          "readOnly": true,
+          "type": "string",
+          "description": "Type of the resource requested"
+        },
+        "location": {
+          "type": "string",
+          "description": "Location of the cluster"
+        },
+        "tags": {
+          "description": "Connected Cluster Resource Tags.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "identity": {
+          "$ref": "#/definitions/ConnectedClusterIdentity",
+          "description": "The identity of the connected cluster."
+        }
+      }
+    },
+    "ConnectedClusterIdentity": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "principalId": {
+          "readOnly": true,
+          "type": "string",
+          "description": "The principal id of connected cluster identity. This property will only be provided for a system assigned identity."
+        },
+        "tenantId": {
+          "readOnly": true,
+          "type": "string",
+          "description": "The tenant id associated with the connected cluster. This property will only be provided for a system assigned identity."
+        },
+        "type": {
+          "type": "string",
+          "description": "The type of identity used for the connected cluster. The type 'SystemAssigned, includes a system created identity.",
+          "enum": ["SystemAssigned"],
+          "x-ms-enum": {
+            "name": "ResourceIdentityType",
+            "modelAsString": false
+          }
+        }
+      },
+      "description": "Identity for the connected cluster."
+    }
+  },
+  "parameters": {
+    "ClusterNamePathParam": {
+      "name": "clusterName",
+      "in": "path",
+      "required": true,
+      "type": "string",
+      "description": "The name of the Kubernetes cluster on which get is called.",
+      "x-ms-parameter-location": "method"
+    },
+    "ConnectedClusterBodyParam": {
+      "in": "body",
+      "name": "ConnectedCluster",
+      "required": true,
+      "schema": {
+        "$ref": "#/definitions/ConnectedCluster"
+      },
+      "x-ms-parameter-location": "method"
+    },
+    "ResourceGroupNamePathParam": {
+      "name": "resourceGroupName",
+      "in": "path",
+      "required": true,
+      "type": "string",
+      "description": "The name of the resource group to which the kubernetes cluster is registered.",
+      "x-ms-parameter-location": "method"
+    },
+    "SubscriptionIdPathParam": {
+      "name": "subscriptionId",
+      "in": "path",
+      "required": true,
+      "type": "string",
+      "description": "The ID of the subscription to which the kubernetes cluster is registered."
+    },
+    "Api-VersionQueryParam": {
+      "name": "api-version",
+      "in": "query",
+      "required": true,
+      "type": "string",
+      "description": "Version of the API called."
+    }
+  }
+}

@@ -582,6 +582,17 @@ describe("Model Validation", () => {
     })
   })
 
+  describe("Global parameter in request validation", () => {
+    it("Validation should work against defined schema", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/globalParamsInRequest/test.json`
+      const result = await validate.validateExamples(specPath2, undefined, {
+        consoleLogLevel: "off"
+      })
+      assert.strictEqual(result.length, 1)
+      assert.strictEqual(result[0].code, "OBJECT_MISSING_REQUIRED_PROPERTY")
+    })
+  })
+
   describe("Discriminator is required property", () => {
     it("assumes the type to be the defined type in swagger if discriminator is missing", async () => {
       const specPath2 = `${testPath}/modelValidation/swaggers/specification/polymorphicRequired/spec.json`

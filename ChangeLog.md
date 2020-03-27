@@ -1,5 +1,9 @@
 # Changelog
 
+## 03/27/2020 0.21.2
+
+- Upgrade yasway version including the fix on global parameter in request validation and x-ms-mutability check for read in request.
+
 ## 03/16/2020 0.21.1
 
 - Enabled request parameter suppression in model validation.
