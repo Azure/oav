@@ -1,5 +1,9 @@
 # Changelog
 
+## 03/30/2020 0.21.3
+
+- Upgrade yasway version including the fix on regression issue of customvalidator.
+
 ## 03/27/2020 0.21.2
 
 - Upgrade yasway version including the fix on global parameter in request validation and x-ms-mutability check for read in request.
