@@ -1,5 +1,10 @@
 # Changelog
 
+## 04/10/2020 0.21.4
+
+- Instead of replacing all the special characters in path parameters, only replace the part of parameter value which start with (http:|https:) 
+- Upgrade ms-rest version to 2.5.4
+
 ## 03/30/2020 0.21.3
 
 - Upgrade yasway version including the fix on regression issue of customvalidator.
