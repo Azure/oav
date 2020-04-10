@@ -23,12 +23,11 @@
       {
         "$ref": "./common/extendedRegions.json#/parameters/AzureRegion"
       }
-    ]
+    ],
+    "useSchemePrefix": true
   },
   "basePath": "/face/v1.0",
-  "schemes": [
-    "https"
-  ],
+  "schemes": ["https"],
   "paths": {
     "/persongroups/{personGroupId}/persons": {
       "post": {
@@ -53,12 +52,8 @@
             }
           }
         ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
         "responses": {
           "200": {
             "description": "A successful call returns a new personId created.",
@@ -98,12 +93,8 @@
             }
           }
         ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
         "responses": {
           "200": {
             "description": "A successful call returns the verification result.",
@@ -156,9 +147,7 @@
     },
     "DetectedFace": {
       "type": "object",
-      "required": [
-        "faceRectangle"
-      ],
+      "required": ["faceRectangle"],
       "description": "Detected Face object.",
       "properties": {
         "faceId": {
@@ -181,12 +170,7 @@
             "name": "GlassesTypes",
             "modelAsString": false
           },
-          "enum": [
-            "noGlasses",
-            "readingGlasses",
-            "sunglasses",
-            "swimmingGoggles"
-          ]
+          "enum": ["noGlasses", "readingGlasses", "sunglasses", "swimmingGoggles"]
         },
         "headPose": {
           "$ref": "#/definitions/HeadPoseProperties"
@@ -219,12 +203,7 @@
     },
     "FaceRectangle": {
       "type": "object",
-      "required": [
-        "width",
-        "height",
-        "left",
-        "top"
-      ],
+      "required": ["width", "height", "left", "top"],
       "description": "A rectangle within which a face can be found",
       "properties": {
         "width": {
@@ -251,10 +230,7 @@
     },
     "Position": {
       "type": "object",
-      "required": [
-        "x",
-        "y"
-      ],
+      "required": ["x", "y"],
       "description": "Coordinates within an image",
       "properties": {
         "x": {
@@ -369,10 +345,7 @@
             "name": "Gender",
             "modelAsString": false
           },
-          "enum": [
-            "male",
-            "female"
-          ]
+          "enum": ["male", "female"]
         },
         "smile": {
           "type": "number",
@@ -572,11 +545,7 @@
             "name": "BlurLevels",
             "modelAsString": false
           },
-          "enum": [
-            "Low",
-            "Medium",
-            "High"
-          ]
+          "enum": ["Low", "Medium", "High"]
         },
         "value": {
           "type": "number",
@@ -597,11 +566,7 @@
             "name": "ExposureLevels",
             "modelAsString": false
           },
-          "enum": [
-            "UnderExposure",
-            "GoodExposure",
-            "OverExposure"
-          ]
+          "enum": ["UnderExposure", "GoodExposure", "OverExposure"]
         },
         "value": {
           "type": "number",
@@ -622,11 +587,7 @@
             "name": "NoiseLevels",
             "modelAsString": false
           },
-          "enum": [
-            "Low",
-            "Medium",
-            "High"
-          ]
+          "enum": ["Low", "Medium", "High"]
         },
         "value": {
           "type": "number",
@@ -638,9 +599,7 @@
     },
     "FindSimilarRequest": {
       "type": "object",
-      "required": [
-        "faceId"
-      ],
+      "required": ["faceId"],
       "description": "Request body for find similar operation.",
       "properties": {
         "faceId": {
@@ -679,10 +638,7 @@
             "name": "FaceMatchingMode",
             "modelAsString": false
           },
-          "enum": [
-            "matchPerson",
-            "matchFace"
-          ]
+          "enum": ["matchPerson", "matchFace"]
         }
       }
     },
@@ -713,9 +669,7 @@
     },
     "GroupRequest": {
       "type": "object",
-      "required": [
-        "faceIds"
-      ],
+      "required": ["faceIds"],
       "description": "Request body for group request.",
       "properties": {
         "faceIds": {
@@ -731,9 +685,7 @@
     },
     "GroupResponse": {
       "type": "object",
-      "required": [
-        "groups"
-      ],
+      "required": ["groups"],
       "description": "An array of face groups based on face similarity.",
       "properties": {
         "groups": {
@@ -757,10 +709,7 @@
     },
     "IdentifyRequest": {
       "type": "object",
-      "required": [
-        "personGroupId",
-        "faceIds"
-      ],
+      "required": ["personGroupId", "faceIds"],
       "description": "Request body for identify face operation.",
       "properties": {
         "personGroupId": {
@@ -796,10 +745,7 @@
     },
     "IdentifyResultItem": {
       "type": "object",
-      "required": [
-        "faceId",
-        "candidates"
-      ],
+      "required": ["faceId", "candidates"],
       "description": "Response body for identify face operation.",
       "properties": {
         "faceId": {
@@ -817,10 +763,7 @@
     },
     "IdentifyResultCandidate": {
       "type": "object",
-      "required": [
-        "personId",
-        "confidence"
-      ],
+      "required": ["personId", "confidence"],
       "description": "All possible faces that may qualify.",
       "properties": {
         "personId": {
@@ -835,11 +778,7 @@
     },
     "VerifyPersonGroupRequest": {
       "type": "object",
-      "required": [
-        "faceId",
-        "personId",
-        "personGroupId"
-      ],
+      "required": ["faceId", "personId", "personGroupId"],
       "description": "Request body for verify operation.",
       "properties": {
         "faceId": {
@@ -859,10 +798,7 @@
     },
     "VerifyRequest": {
       "type": "object",
-      "required": [
-        "faceId1",
-        "faceId2"
-      ],
+      "required": ["faceId1", "faceId2"],
       "description": "Request body for verify operation.",
       "properties": {
         "faceId1": {
@@ -879,9 +815,7 @@
     },
     "VerifyResult": {
       "type": "object",
-      "required": [
-        "isIdentical"
-      ],
+      "required": ["isIdentical"],
       "description": "Result of the verify operation.",
       "properties": {
         "isIdentical": {
@@ -912,9 +846,7 @@
     },
     "GetFaceListResult": {
       "type": "object",
-      "required": [
-        "faceListId"
-      ],
+      "required": ["faceListId"],
       "description": "Result of the GetFaceList operation.",
       "properties": {
         "faceListId": {
@@ -960,9 +892,7 @@
     },
     "PersonGroupResult": {
       "type": "object",
-      "required": [
-        "personGroupId"
-      ],
+      "required": ["personGroupId"],
       "description": "Person group object.",
       "properties": {
         "personGroupId": {
@@ -1007,9 +937,7 @@
     },
     "CreatePersonResult": {
       "type": "object",
-      "required": [
-        "personId"
-      ],
+      "required": ["personId"],
       "description": "Result of creating person.",
       "properties": {
         "personId": {
@@ -1020,9 +948,7 @@
     },
     "PersonResult": {
       "type": "object",
-      "required": [
-        "personId"
-      ],
+      "required": ["personId"],
       "description": "Person object.",
       "properties": {
         "personId": {
@@ -1055,9 +981,7 @@
     },
     "PersonFaceResult": {
       "type": "object",
-      "required": [
-        "persistedFaceId"
-      ],
+      "required": ["persistedFaceId"],
       "description": "PersonFace object.",
       "properties": {
         "persistedFaceId": {
@@ -1083,9 +1007,7 @@
     },
     "TrainingStatus": {
       "type": "object",
-      "required": [
-        "status"
-      ],
+      "required": ["status"],
       "description": "Training status object.",
       "properties": {
         "status": {
@@ -1096,12 +1018,7 @@
             "name": "TrainingStatus",
             "modelAsString": false
           },
-          "enum": [
-            "nonstarted",
-            "running",
-            "succeeded",
-            "failed"
-          ]
+          "enum": ["nonstarted", "running", "succeeded", "failed"]
         },
         "createdDateTime": {
           "type": "string",

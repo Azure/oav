@@ -31,7 +31,7 @@
     "lodash": "^4.17.15",
     "md5-file": "^4.0.0",
     "moment": "^2.24.0",
-    "ms-rest": "^2.5.0",
+    "ms-rest": "^2.5.4",
     "swagger-parser": "^6.0.5",
     "uuid": "^3.3.2",
     "vscode-jsonrpc": "^3.6.2",
