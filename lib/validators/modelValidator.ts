@@ -695,7 +695,11 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     let formDataFiles: sm.MutableStringMap<unknown> | null = null
     const pathObject = operation.pathObject
     const parameterizedHost = pathObject.api[C.xmsParameterizedHost]
-    const useSchemePrefix = parameterizedHost ? (parameterizedHost as any).useSchemePrefix : null
+    const useSchemePrefix = parameterizedHost
+      ? (parameterizedHost as any).useSchemePrefix === undefined
+        ? true
+        : (parameterizedHost as any).useSchemePrefix
+      : null
     const hostTemplate =
       parameterizedHost && parameterizedHost.hostTemplate ? parameterizedHost.hostTemplate : null
     if (

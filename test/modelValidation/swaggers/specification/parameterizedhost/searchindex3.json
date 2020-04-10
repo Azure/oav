@@ -1,0 +1,160 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "SearchIndexClient",
+    "description": "Client that can be used to query an index and upload, merge, or delete documents.",
+    "version": "2019-05-06-Preview",
+    "x-ms-code-generation-settings": {
+      "useDateTimeOffset": true,
+      "syncMethods": "None"
+    }
+  },
+  "x-ms-parameterized-host": {
+    "hostTemplate": "{endpoint}/indexes('{indexName}')",
+    "parameters": [
+      {
+        "$ref": "#/parameters/EndpointParameter"
+      },
+      {
+        "$ref": "#/parameters/IndexNameParameter"
+      }
+    ]
+  },
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "paths": {
+    "/docs/$count": {
+      "get": {
+        "tags": ["Documents"],
+        "operationId": "Documents_Count",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/searchservice/Count-Documents"
+        },
+        "x-ms-examples": {
+          "SearchIndexCountDocuments": {
+            "$ref": "./examples/SearchIndexCountDocuments3.json"
+          }
+        },
+        "description": "Queries the number of documents in the index.",
+        "parameters": [
+          {
+            "$ref": "#/parameters/ClientRequestIdParameter"
+          },
+          {
+            "$ref": "#/parameters/ApiVersionParameter"
+          }
+        ],
+        "x-ms-request-id": "request-id",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          "default": {
+            "description": "Error response.",
+            "schema": {
+              "$ref": "#/definitions/SearchError"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "SearchResult": {
+      "properties": {
+        "@search.score": {
+          "type": "number",
+          "format": "double",
+          "readOnly": true,
+          "x-ms-client-name": "Score",
+          "x-nullable": false,
+          "description": "The relevance score of the document compared to other documents returned by the query."
+        },
+        "@search.highlights": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "readOnly": true,
+          "x-ms-client-name": "Highlights",
+          "description": "Text fragments from the document that indicate the matching search terms, organized by each applicable field; null if hit highlighting was not enabled for the query."
+        }
+      },
+      "required": ["@search.score"],
+      "additionalProperties": true,
+      "description": "Contains a document found by a search query, plus associated metadata."
+    },
+    "SearchError": {
+      "properties": {
+        "code": {
+          "type": "string",
+          "readOnly": true,
+          "description": "One of a server-defined set of error codes."
+        },
+        "message": {
+          "type": "string",
+          "readOnly": true,
+          "description": "A human-readable representation of the error."
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SearchError"
+          },
+          "readOnly": true,
+          "description": "An array of details about specific errors that led to this reported error."
+        }
+      },
+      "required": ["message"],
+      "description": "Describes an error condition for the Azure Cognitive Search API."
+    }
+  },
+  "parameters": {
+    "ApiVersionParameter": {
+      "name": "api-version",
+      "in": "query",
+      "required": true,
+      "type": "string",
+      "description": "Client Api Version."
+    },
+    "ClientRequestIdParameter": {
+      "name": "x-ms-client-request-id",
+      "in": "header",
+      "required": false,
+      "type": "string",
+      "format": "uuid",
+      "description": "The tracking ID sent with the request to help with debugging.",
+      "x-ms-client-request-id": true,
+      "x-ms-parameter-grouping": {
+        "name": "request-options"
+      },
+      "x-ms-parameter-location": "method"
+    },
+    "EndpointParameter": {
+      "name": "endpoint",
+      "in": "path",
+      "required": true,
+      "type": "string",
+      "x-ms-skip-url-encoding": true,
+      "description": "The endpoint URL of the search service.",
+      "x-ms-parameter-location": "client"
+    },
+    "IndexNameParameter": {
+      "name": "indexName",
+      "in": "path",
+      "required": true,
+      "type": "string",
+      "pattern": "^[\\w]+-[\\w]+$",
+      "x-ms-skip-url-encoding": false,
+      "description": "The name of the index.",
+      "x-ms-parameter-location": "client"
+    }
+  }
+}

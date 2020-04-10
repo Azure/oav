@@ -272,6 +272,14 @@ describe("Model Validation", () => {
       })
       assert(result.length === 0, `swagger "${specPath2}" contains model validation errors.`)
     })
+
+    it("should pass when useSchemePrefix does not declare explicitly", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/parameterizedhost/searchindex3.json`
+      const result = await validate.validateExamples(specPath2, undefined, {
+        consoleLogLevel: "off"
+      })
+      assert(result.length === 0, `swagger "${specPath2}" contains model validation errors.`)
+    })
   })
 
   describe("Nullable models - ", () => {
