@@ -723,7 +723,7 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
         basePath = `/${basePath}`
       }
       const baseUrl =
-        host.startsWith(scheme + "://") || !useSchemePrefix
+        host.startsWith(scheme + "://") || (hostTemplate && !useSchemePrefix)
           ? `${host}${basePath}`
           : `${scheme}://${host}${basePath}`
       options.baseUrl = baseUrl
