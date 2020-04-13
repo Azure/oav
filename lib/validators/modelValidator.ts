@@ -695,6 +695,11 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     let formDataFiles: sm.MutableStringMap<unknown> | null = null
     const pathObject = operation.pathObject
     const parameterizedHost = pathObject.api[C.xmsParameterizedHost]
+    const useSchemePrefix = parameterizedHost
+      ? (parameterizedHost as any).useSchemePrefix === undefined
+        ? true
+        : (parameterizedHost as any).useSchemePrefix
+      : null
     const hostTemplate =
       parameterizedHost && parameterizedHost.hostTemplate ? parameterizedHost.hostTemplate : null
     if (
@@ -721,9 +726,10 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       if (!basePath.startsWith("/")) {
         basePath = `/${basePath}`
       }
-      const baseUrl = host.startsWith(scheme + "://")
-        ? `${host}${basePath}`
-        : `${scheme}://${host}${basePath}`
+      const baseUrl =
+        host.startsWith(scheme + "://") || (hostTemplate && !useSchemePrefix)
+          ? `${host}${basePath}`
+          : `${scheme}://${host}${basePath}`
       options.baseUrl = baseUrl
     }
     options.method = operation.method
@@ -788,10 +794,12 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
 
           // replacing characters that may cause validator failed  with empty string because this messes up Sways regex
           // validation of path segment.
-          if (!utils.isUrlEncoded(parameterValue as string)) {
-            // TODO: we can get the scheme from parameterValue if the useSchemePrefix is setting false in the x-ms-parameterized-host,
-            // then check if it can match to the swagger scheme.
-            parameterValue = parameterValue.replace(/[^0-9a-zA-Z._]/gi, "")
+          parameterValue = parameterValue.replace(/\//gi, "")
+
+          // replacing scheme that may cause validator failed when x-ms-parameterized-host enbaled & useSchemePrefix enabled
+          // because if useSchemePrefix enabled ,the parameter value in x-ms-parameterized-host should not has the scheme (http://|https://)
+          if (useSchemePrefix) {
+            parameterValue = (parameterValue as string).replace(/^https{0,1}:/gi, "")
           }
         }
         const paramType = location + "Parameters"
