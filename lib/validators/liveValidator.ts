@@ -951,7 +951,6 @@ export class LiveValidator {
   ): void {
     level = level || LiveValidatorLoggingLevels.info
     operationName = operationName || ""
-    log.log(level, message)
     if (this.logFunction !== undefined) {
       if (validationRequest !== undefined && validationRequest !== null) {
         this.logFunction(message, level, {
@@ -966,6 +965,8 @@ export class LiveValidator {
           OperationName: operationName
         })
       }
+    } else {
+      log.log(level, message)
     }
   }
 }
