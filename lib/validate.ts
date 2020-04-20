@@ -221,7 +221,28 @@ export async function validateExamples(
       }
       return errors
     } catch (e) {
-      log.error(e)
+      if (o.pretty) {
+        if (process.env["Agent.Id"]) {
+          console.log(
+            vsoLogIssueWrapper(
+              "error",
+              `Validating "examples" and "x-ms-examples" in  ${specPath}:\n`
+            )
+          )
+          /* tslint:disable-next-line:no-console no-string-literal */
+          console.error(vsoLogIssueWrapper("error", e))
+        } else {
+          console.error(
+              `Validating "examples" and "x-ms-examples" in  ${specPath}:\n`
+          )
+          /* tslint:disable-next-line:no-console no-string-literal */
+          console.error("\x1b[31m", "error", ":", "\x1b[0m")
+          /* tslint:disable-next-line:no-console no-string-literal */
+          console.error(e)
+        }
+      } else {
+        log.error(e)
+      }
       validator.specValidationResult.validityStatus = false
       updateEndResultOfSingleValidation(validator)
       return [{ inner: e }]
