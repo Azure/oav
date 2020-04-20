@@ -1,5 +1,9 @@
 # Changelog
 
+## 04/10/2020 0.21.5
+
+- Output exception information when pretty switch is enabled.
+
 ## 04/10/2020 0.21.4
 
 - Instead of replacing all the special characters in path parameters, only replace the part of parameter value which start with (http:|https:) 
