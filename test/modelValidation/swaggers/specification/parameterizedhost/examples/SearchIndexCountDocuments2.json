@@ -1,0 +1,12 @@
+{
+  "parameters": {
+    "endpoint": "https://myservice.-search.windows.net",
+    "indexName": "my-index",
+    "api-version": "2019-05-06-Preview"
+  },
+  "responses": {
+    "200": {
+      "body": 427
+    }
+  }
+}

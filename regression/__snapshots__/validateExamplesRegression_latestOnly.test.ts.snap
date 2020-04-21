@@ -502,264 +502,99 @@ Array [
     "source": "request",
   },
   Object {
-    "code": "READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST",
+    "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
     "details": Object {
-      "code": "READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST",
-      "description": "Version of the device.",
-      "directives": Object {},
-      "jsonPath": "$.deviceVersion",
-      "message": "ReadOnly property \`\\"deviceVersion\\": \\"1910.0.0.0\\"\`, cannot be sent in the request.",
-      "params": Array [
-        "deviceVersion",
-        "1910.0.0.0",
-      ],
-      "path": "deviceVersion",
-      "position": Object {
-        "column": 26,
-        "line": 674,
-      },
-      "title": "#/definitions/DeviceConfiguration/properties/deviceVersion",
-      "url": "D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/azurestack/resource-manager/Microsoft.AzureStack/stable/2017-06-01/Product.json",
+      "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
+      "id": "OAV130",
+      "level": "error",
+      "message": "Response statusCode \\"201\\" for operation \\"DataConnections_CreateOrUpdate\\" has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
+      Symbol(level): "error",
+      Symbol(message): "{\\"code\\":\\"RESPONSE_BODY_NOT_IN_EXAMPLE\\",\\"id\\":\\"OAV130\\",\\"message\\":\\"Response statusCode \\\\\\"201\\\\\\" for operation \\\\\\"DataConnections_CreateOrUpdate\\\\\\" has no response body provided in the example, however the response does have a \\\\\\"schema\\\\\\" defined in the swagger spec.\\",\\"level\\":\\"error\\"}",
     },
-    "operationId": "Products_GetProduct",
-    "responseCode": "ALL",
-    "scenario": "Returns the specified product.",
+    "operationId": "DataConnections_CreateOrUpdate",
+    "responseCode": "201",
+    "scenario": "KustoDataConnectionsCreateOrUpdate",
     "severity": 0,
-    "source": "request",
+    "source": "response",
   },
   Object {
-    "code": "READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST",
+    "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
     "details": Object {
-      "code": "READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST",
-      "description": "Identity system of the device.",
-      "directives": Object {},
-      "jsonPath": "$.identitySystem",
-      "message": "ReadOnly property \`\\"identitySystem\\": \\"AzureAD\\"\`, cannot be sent in the request.",
-      "params": Array [
-        "identitySystem",
-        "AzureAD",
-      ],
-      "path": "identitySystem",
-      "position": Object {
-        "column": 27,
-        "line": 679,
-      },
-      "title": "#/definitions/DeviceConfiguration/properties/identitySystem",
-      "url": "D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/azurestack/resource-manager/Microsoft.AzureStack/stable/2017-06-01/Product.json",
+      "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
+      "id": "OAV130",
+      "level": "error",
+      "message": "Response statusCode \\"201\\" for operation \\"DataConnections_Update\\" has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
+      Symbol(level): "error",
+      Symbol(message): "{\\"code\\":\\"RESPONSE_BODY_NOT_IN_EXAMPLE\\",\\"id\\":\\"OAV130\\",\\"message\\":\\"Response statusCode \\\\\\"201\\\\\\" for operation \\\\\\"DataConnections_Update\\\\\\" has no response body provided in the example, however the response does have a \\\\\\"schema\\\\\\" defined in the swagger spec.\\",\\"level\\":\\"error\\"}",
     },
-    "operationId": "Products_GetProduct",
-    "responseCode": "ALL",
-    "scenario": "Returns the specified product.",
+    "operationId": "DataConnections_Update",
+    "responseCode": "201",
+    "scenario": "KustoDataConnectionsUpdate",
     "severity": 0,
-    "source": "request",
-  },
-  Object {
-    "code": "READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST",
-    "details": Object {
-      "code": "READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST",
-      "description": "Error details related to operation.",
-      "directives": Object {},
-      "jsonPath": "$.details",
-      "message": "ReadOnly property \`\\"details\\": \\"ExampleDetails\\"\`, cannot be sent in the request.",
-      "params": Array [
-        "details",
-        "ExampleDetails",
-      ],
-      "path": "details",
-      "position": Object {
-        "column": 20,
-        "line": 712,
-      },
-      "title": "#/definitions/MarketplaceProductLogUpdate/properties/details",
-      "url": "D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/azurestack/resource-manager/Microsoft.AzureStack/stable/2017-06-01/Product.json",
-    },
-    "operationId": "Products_UploadLog",
-    "responseCode": "ALL",
-    "scenario": "Returns the specified product.",
-    "severity": 0,
-    "source": "request",
-  },
-  Object {
-    "code": "READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST",
-    "details": Object {
-      "code": "READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST",
-      "description": "Error related to the operation.",
-      "directives": Object {},
-      "jsonPath": "$.error",
-      "message": "ReadOnly property \`\\"error\\": \\"ExampleError\\"\`, cannot be sent in the request.",
-      "params": Array [
-        "error",
-        "ExampleError",
-      ],
-      "path": "error",
-      "position": Object {
-        "column": 18,
-        "line": 707,
-      },
-      "title": "#/definitions/MarketplaceProductLogUpdate/properties/error",
-      "url": "D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/azurestack/resource-manager/Microsoft.AzureStack/stable/2017-06-01/Product.json",
-    },
-    "operationId": "Products_UploadLog",
-    "responseCode": "ALL",
-    "scenario": "Returns the specified product.",
-    "severity": 0,
-    "source": "request",
-  },
-  Object {
-    "code": "READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST",
-    "details": Object {
-      "code": "READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST",
-      "description": "Operation status to log.",
-      "directives": Object {},
-      "jsonPath": "$.status",
-      "message": "ReadOnly property \`\\"status\\": \\"Failed\\"\`, cannot be sent in the request.",
-      "params": Array [
-        "status",
-        "Failed",
-      ],
-      "path": "status",
-      "position": Object {
-        "column": 19,
-        "line": 702,
-      },
-      "title": "#/definitions/MarketplaceProductLogUpdate/properties/status",
-      "url": "D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/azurestack/resource-manager/Microsoft.AzureStack/stable/2017-06-01/Product.json",
-    },
-    "operationId": "Products_UploadLog",
-    "responseCode": "ALL",
-    "scenario": "Returns the specified product.",
-    "severity": 0,
-    "source": "request",
-  },
-  Object {
-    "code": "READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST",
-    "details": Object {
-      "code": "READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST",
-      "description": "Operation to log.",
-      "directives": Object {},
-      "jsonPath": "$.operation",
-      "message": "ReadOnly property \`\\"operation\\": \\"Download\\"\`, cannot be sent in the request.",
-      "params": Array [
-        "operation",
-        "Download",
-      ],
-      "path": "operation",
-      "position": Object {
-        "column": 22,
-        "line": 697,
-      },
-      "title": "#/definitions/MarketplaceProductLogUpdate/properties/operation",
-      "url": "D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/azurestack/resource-manager/Microsoft.AzureStack/stable/2017-06-01/Product.json",
-    },
-    "operationId": "Products_UploadLog",
-    "responseCode": "ALL",
-    "scenario": "Returns the specified product.",
-    "severity": 0,
-    "source": "request",
+    "source": "response",
   },
 ]
 `;
 
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/azurestack/resource-manager/Microsoft.AzureStack/stable/2017-06-01/Registration.json': input file hash 1`] = `"2c08713bc71aef7085f3cf08e78e2d6a"`;
+exports[`validateExamples should not regress for file '/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/azurestack/resource-manager/Microsoft.AzureStack/stable/2017-06-01/AzureStack.json': input file hash 1`] = `"656b80c8c9db00a83d175e6a55903d8c"`;
 
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/azurestack/resource-manager/Microsoft.AzureStack/stable/2017-06-01/Registration.json': returned results 1`] = `Array []`;
+exports[`validateExamples should not regress for file '/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/azurestack/resource-manager/Microsoft.AzureStack/stable/2017-06-01/AzureStack.json': returned results 1`] = `Array []`;
 
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/batch/data-plane/Microsoft.Batch/stable/2020-03-01.11.0/BatchService.json': input file hash 1`] = `"5a97d231e60952f018d8816983007ab8"`;
+exports[`validateExamples should not regress for file '/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/azurestack/resource-manager/Microsoft.AzureStack/stable/2017-06-01/CustomerSubscription.json': input file hash 1`] = `"5df1493efcff045c42e4af67e1cc6be3"`;
 
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/batch/data-plane/Microsoft.Batch/stable/2020-03-01.11.0/BatchService.json': returned results 1`] = `Array []`;
+exports[`validateExamples should not regress for file '/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/azurestack/resource-manager/Microsoft.AzureStack/stable/2017-06-01/CustomerSubscription.json': returned results 1`] = `Array []`;
 
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/batchai/resource-manager/Microsoft.BatchAI/stable/2018-05-01/BatchAI.json': input file hash 1`] = `"7bfb0c96cf619acbadf8b999e8ac059f"`;
+exports[`validateExamples should not regress for file '/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/azurestack/resource-manager/Microsoft.AzureStack/stable/2017-06-01/Product.json': input file hash 1`] = `"70ebbf3ce3a7389ff7686cfd496c4e3d"`;
 
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/batchai/resource-manager/Microsoft.BatchAI/stable/2018-05-01/BatchAI.json': returned results 1`] = `Array []`;
+exports[`validateExamples should not regress for file '/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/azurestack/resource-manager/Microsoft.AzureStack/stable/2017-06-01/Product.json': returned results 1`] = `Array []`;
 
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/cdn/resource-manager/Microsoft.Cdn/stable/2020-03-31/cdn.json': input file hash 1`] = `"dda0a33da4eef868de86a75ee58ffd45"`;
+exports[`validateExamples should not regress for file '/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/azurestack/resource-manager/Microsoft.AzureStack/stable/2017-06-01/Registration.json': input file hash 1`] = `"a8800456a168244ef7e88c488481c9db"`;
 
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/cdn/resource-manager/Microsoft.Cdn/stable/2020-03-31/cdn.json': returned results 1`] = `Array []`;
+exports[`validateExamples should not regress for file '/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/azurestack/resource-manager/Microsoft.AzureStack/stable/2017-06-01/Registration.json': returned results 1`] = `Array []`;
 
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/cdn/resource-manager/Microsoft.Cdn/stable/2020-03-31/cdnwebapplicationfirewall.json': input file hash 1`] = `"371a03d0f1fd0c19a91e3b0f2c48fb58"`;
+exports[`validateExamples should not regress for file '/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/batch/resource-manager/Microsoft.Batch/stable/2019-04-01/BatchManagement.json': input file hash 1`] = `"7b7b10e14de82fc99b8d595f32ea3a0e"`;
 
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/cdn/resource-manager/Microsoft.Cdn/stable/2020-03-31/cdnwebapplicationfirewall.json': returned results 1`] = `Array []`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/stable/2017-04-18/cognitiveservices.json': input file hash 1`] = `"97ec6aa0cb97202a6f04992772ff52fd"`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/stable/2017-04-18/cognitiveservices.json': returned results 1`] = `Array []`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/compute/resource-manager/Microsoft.Compute/stable/2019-12-01/compute.json': input file hash 1`] = `"03214cd0d5e4e6675a90237a5f0f1d98"`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/compute/resource-manager/Microsoft.Compute/stable/2019-12-01/compute.json': returned results 1`] = `Array []`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/compute/resource-manager/Microsoft.Compute/stable/2019-12-01/gallery.json': input file hash 1`] = `"272ef065a98b6485c9816e459d4519b6"`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/compute/resource-manager/Microsoft.Compute/stable/2019-12-01/gallery.json': returned results 1`] = `Array []`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/compute/resource-manager/Microsoft.Compute/stable/2019-12-01/runCommands.json': input file hash 1`] = `"11b18d8d452490f56e2ecb798d23175a"`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/compute/resource-manager/Microsoft.Compute/stable/2019-12-01/runCommands.json': returned results 1`] = `Array []`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/consumption/resource-manager/Microsoft.Consumption/stable/2019-10-01/consumption.json': input file hash 1`] = `"8990debd206a8ceccd66d50c546e8d8c"`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/consumption/resource-manager/Microsoft.Consumption/stable/2019-10-01/consumption.json': returned results 1`] = `Array []`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/containerinstance/resource-manager/Microsoft.ContainerInstance/stable/2018-10-01/containerInstance.json': input file hash 1`] = `"f1226565463671a69df7c4466dd0daf7"`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/containerinstance/resource-manager/Microsoft.ContainerInstance/stable/2018-10-01/containerInstance.json': returned results 1`] = `
+exports[`validateExamples should not regress for file '/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/batch/resource-manager/Microsoft.Batch/stable/2019-04-01/BatchManagement.json': returned results 1`] = `
 Array [
   Object {
-    "code": "READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST",
+    "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
     "details": Object {
-      "code": "READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST",
-      "description": "The resource type.",
-      "directives": Object {
-        "UniqueResourcePaths": ".*",
-      },
-      "jsonPath": "$.type",
-      "message": "ReadOnly property \`\\"type\\": \\"Microsoft.ContainerInstance/containerGroups\\"\`, cannot be sent in the request.",
-      "params": Array [
-        "type",
-        "Microsoft.ContainerInstance/containerGroups",
-      ],
-      "path": "type",
-      "position": Object {
-        "column": 17,
-        "line": 1732,
-      },
-      "title": "#/definitions/Resource/properties/type",
-      "url": "D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/containerinstance/resource-manager/Microsoft.ContainerInstance/stable/2018-10-01/containerInstance.json",
+      "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
+      "id": "OAV130",
+      "level": "error",
+      "message": "Response statusCode \\"200\\" for operation \\"Application_List\\" has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
+      Symbol(level): "error",
+      Symbol(message): "{\\"code\\":\\"RESPONSE_BODY_NOT_IN_EXAMPLE\\",\\"id\\":\\"OAV130\\",\\"message\\":\\"Response statusCode \\\\\\"200\\\\\\" for operation \\\\\\"Application_List\\\\\\" has no response body provided in the example, however the response does have a \\\\\\"schema\\\\\\" defined in the swagger spec.\\",\\"level\\":\\"error\\"}",
     },
-    "operationId": "ContainerGroups_CreateOrUpdate",
-    "responseCode": "ALL",
-    "scenario": "ContainerGroupsCreateOrUpdate",
+    "operationId": "Application_List",
+    "responseCode": "200",
+    "scenario": "ApplicationList",
     "severity": 0,
-    "source": "request",
+    "source": "response",
   },
   Object {
-    "code": "READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST",
+    "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
     "details": Object {
-      "code": "READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST",
-      "description": "The resource name.",
-      "directives": Object {
-        "UniqueResourcePaths": ".*",
-      },
-      "jsonPath": "$.name",
-      "message": "ReadOnly property \`\\"name\\": \\"demo1\\"\`, cannot be sent in the request.",
-      "params": Array [
-        "name",
-        "demo1",
-      ],
-      "path": "name",
-      "position": Object {
-        "column": 17,
-        "line": 1727,
-      },
-      "title": "#/definitions/Resource/properties/name",
-      "url": "D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/containerinstance/resource-manager/Microsoft.ContainerInstance/stable/2018-10-01/containerInstance.json",
+      "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
+      "id": "OAV130",
+      "level": "error",
+      "message": "Response statusCode \\"200\\" for operation \\"ApplicationPackage_List\\" has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
+      Symbol(level): "error",
+      Symbol(message): "{\\"code\\":\\"RESPONSE_BODY_NOT_IN_EXAMPLE\\",\\"id\\":\\"OAV130\\",\\"message\\":\\"Response statusCode \\\\\\"200\\\\\\" for operation \\\\\\"ApplicationPackage_List\\\\\\" has no response body provided in the example, however the response does have a \\\\\\"schema\\\\\\" defined in the swagger spec.\\",\\"level\\":\\"error\\"}",
     },
-    "operationId": "ContainerGroups_CreateOrUpdate",
-    "responseCode": "ALL",
-    "scenario": "ContainerGroupsCreateOrUpdate",
+    "operationId": "ApplicationPackage_List",
+    "responseCode": "200",
+    "scenario": "ApplicationList",
     "severity": 0,
-    "source": "request",
+    "source": "response",
   },
+]
+`;
+
+exports[`validateExamples should not regress for file '/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/batchai/resource-manager/Microsoft.BatchAI/stable/2018-05-01/BatchAI.json': input file hash 1`] = `"0fc3a84809bb86f4f545936fdd3db79e"`;
+
+exports[`validateExamples should not regress for file '/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/batchai/resource-manager/Microsoft.BatchAI/stable/2018-05-01/BatchAI.json': returned results 1`] = `
+Array [
   Object {
     "code": "READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST",
     "details": Object {
@@ -1436,436 +1271,11 @@ exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oa
 
 exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/hdinsight/resource-manager/Microsoft.HDInsight/stable/2018-06-01-preview/extensions.json': returned results 1`] = `Array []`;
 
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/hdinsight/resource-manager/Microsoft.HDInsight/stable/2018-06-01-preview/locations.json': input file hash 1`] = `"147ff37a96a95f675f8b81cdad7f64bf"`;
+exports[`validateExamples should not regress for file '/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/security/resource-manager/Microsoft.Security/stable/2019-01-01/alerts.json': returned results 1`] = `Array []`;
 
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/hdinsight/resource-manager/Microsoft.HDInsight/stable/2018-06-01-preview/locations.json': returned results 1`] = `Array []`;
+exports[`validateExamples should not regress for file '/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/security/resource-manager/Microsoft.Security/stable/2019-01-01/settings.json': input file hash 1`] = `"9a35ecf5aead2192c46638a523419372"`;
 
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/hdinsight/resource-manager/Microsoft.HDInsight/stable/2018-06-01-preview/operations.json': input file hash 1`] = `"b420392399df57094a4320f39b209faa"`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/hdinsight/resource-manager/Microsoft.HDInsight/stable/2018-06-01-preview/operations.json': returned results 1`] = `Array []`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/hdinsight/resource-manager/Microsoft.HDInsight/stable/2018-06-01-preview/scriptActions.json': input file hash 1`] = `"0d245c8cf54dc1e6625a376d19d4a7e7"`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/hdinsight/resource-manager/Microsoft.HDInsight/stable/2018-06-01-preview/scriptActions.json': returned results 1`] = `Array []`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/healthcareapis/resource-manager/Microsoft.HealthcareApis/stable/2019-09-16/healthcare-apis.json': input file hash 1`] = `"8bb8ed2e32e6ade326e360ba4971c389"`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/healthcareapis/resource-manager/Microsoft.HealthcareApis/stable/2019-09-16/healthcare-apis.json': returned results 1`] = `Array []`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/hybridcompute/resource-manager/Microsoft.HybridCompute/stable/2019-12-12/HybridCompute.json': input file hash 1`] = `"5d266b419cdbe6a282d030e0f29ed9dd"`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/hybridcompute/resource-manager/Microsoft.HybridCompute/stable/2019-12-12/HybridCompute.json': returned results 1`] = `Array []`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/hybriddatamanager/resource-manager/Microsoft.HybridData/stable/2019-06-01/hybriddata.json': input file hash 1`] = `"ff944654ed2e49d586941c3182672161"`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/hybriddatamanager/resource-manager/Microsoft.HybridData/stable/2019-06-01/hybriddata.json': returned results 1`] = `Array []`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/imagebuilder/resource-manager/Microsoft.VirtualMachineImages/stable/2020-02-14/imagebuilder.json': input file hash 1`] = `"271f0057726c5829662db2588779abb1"`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/imagebuilder/resource-manager/Microsoft.VirtualMachineImages/stable/2020-02-14/imagebuilder.json': returned results 1`] = `Array []`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/imds/data-plane/Microsoft.InstanceMetadataService/stable/2019-11-01/imds.json': input file hash 1`] = `"a544398216d7d0617b3ed2c8dac12183"`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/imds/data-plane/Microsoft.InstanceMetadataService/stable/2019-11-01/imds.json': returned results 1`] = `Array []`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/iotcentral/resource-manager/Microsoft.IoTCentral/stable/2018-09-01/iotcentral.json': input file hash 1`] = `"30fea015a1b910985f432bb56bf26dae"`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/iotcentral/resource-manager/Microsoft.IoTCentral/stable/2018-09-01/iotcentral.json': returned results 1`] = `Array []`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/keyvault/resource-manager/Microsoft.KeyVault/stable/2019-09-01/keyvault.json': input file hash 1`] = `"3a92d123d56089cce86c4ac27a70840f"`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/keyvault/resource-manager/Microsoft.KeyVault/stable/2019-09-01/keyvault.json': returned results 1`] = `Array []`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/keyvault/resource-manager/Microsoft.KeyVault/stable/2019-09-01/providers.json': input file hash 1`] = `"f8c2e4f844c07543261544e701bcec08"`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/keyvault/resource-manager/Microsoft.KeyVault/stable/2019-09-01/providers.json': returned results 1`] = `Array []`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/keyvault/resource-manager/Microsoft.KeyVault/stable/2019-09-01/secrets.json': input file hash 1`] = `"54ba8f11d5bd9c3eeff090ce056f1a4f"`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/keyvault/resource-manager/Microsoft.KeyVault/stable/2019-09-01/secrets.json': returned results 1`] = `Array []`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/labservices/resource-manager/Microsoft.LabServices/stable/2018-10-15/ML.json': input file hash 1`] = `"3d6c899abcb1cb1edfa33cded7f0708f"`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/labservices/resource-manager/Microsoft.LabServices/stable/2018-10-15/ML.json': returned results 1`] = `Array []`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/logic/resource-manager/Microsoft.Logic/stable/2019-05-01/logic.json': input file hash 1`] = `"2f06cf3dd362c587194573f3e94b226b"`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/logic/resource-manager/Microsoft.Logic/stable/2019-05-01/logic.json': returned results 1`] = `Array []`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/machinelearning/resource-manager/Microsoft.MachineLearning/stable/2019-10-01/workspaces.json': input file hash 1`] = `"6109af7af5a8961f098a9f0aacfcc793"`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/machinelearning/resource-manager/Microsoft.MachineLearning/stable/2019-10-01/workspaces.json': returned results 1`] = `Array []`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/stable/2020-03-01/machineLearningServices.json': input file hash 1`] = `"6cdd19eb75ae06b6b434c7e51488bd58"`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/stable/2020-03-01/machineLearningServices.json': returned results 1`] = `
-Array [
-  Object {
-    "code": "OBJECT_ADDITIONAL_PROPERTIES",
-    "details": Object {
-      "code": "OBJECT_ADDITIONAL_PROPERTIES",
-      "description": "AML Compute properties",
-      "directives": Object {},
-      "jsonPath": "$.properties.properties.properties.properties.properties",
-      "message": "Additional properties not allowed: properties",
-      "params": Array [
-        "properties",
-      ],
-      "path": "properties/properties/properties/properties/properties",
-      "position": Object {
-        "column": 27,
-        "line": 2225,
-      },
-      "title": "#/definitions/AmlCompute/allOf/1/properties/properties",
-      "url": "D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/stable/2020-03-01/machineLearningServices.json",
-    },
-    "operationId": "MachineLearningCompute_CreateOrUpdate",
-    "responseCode": "ALL",
-    "scenario": "Update a AML Compute",
-    "severity": 0,
-    "source": "request",
-  },
-  Object {
-    "code": "OBJECT_ADDITIONAL_PROPERTIES",
-    "details": Object {
-      "code": "OBJECT_ADDITIONAL_PROPERTIES",
-      "description": "AML Compute properties",
-      "directives": Object {},
-      "jsonPath": "$.properties.properties.properties.properties.computeType",
-      "message": "Additional properties not allowed: computeType",
-      "params": Array [
-        "computeType",
-      ],
-      "path": "properties/properties/properties/properties/computeType",
-      "position": Object {
-        "column": 27,
-        "line": 2225,
-      },
-      "title": "#/definitions/AmlCompute/allOf/1/properties/properties",
-      "url": "D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/stable/2020-03-01/machineLearningServices.json",
-    },
-    "operationId": "MachineLearningCompute_CreateOrUpdate",
-    "responseCode": "ALL",
-    "scenario": "Update a AML Compute",
-    "severity": 0,
-    "source": "request",
-  },
-  Object {
-    "code": "OBJECT_ADDITIONAL_PROPERTIES",
-    "details": Object {
-      "code": "OBJECT_ADDITIONAL_PROPERTIES",
-      "description": "AML Compute properties",
-      "directives": Object {},
-      "jsonPath": "$.properties.properties.properties.properties.description",
-      "message": "Additional properties not allowed: description",
-      "params": Array [
-        "description",
-      ],
-      "path": "properties/properties/properties/properties/description",
-      "position": Object {
-        "column": 27,
-        "line": 2225,
-      },
-      "title": "#/definitions/AmlCompute/allOf/1/properties/properties",
-      "url": "D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/stable/2020-03-01/machineLearningServices.json",
-    },
-    "operationId": "MachineLearningCompute_CreateOrUpdate",
-    "responseCode": "ALL",
-    "scenario": "Update a AML Compute",
-    "severity": 0,
-    "source": "request",
-  },
-  Object {
-    "code": "READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST",
-    "details": Object {
-      "code": "READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST",
-      "description": "Specifies the resource ID.",
-      "directives": Object {},
-      "jsonPath": "$.id",
-      "message": "ReadOnly property \`\\"id\\": \\"compute123\\"\`, cannot be sent in the request.",
-      "params": Array [
-        "id",
-        "compute123",
-      ],
-      "path": "id",
-      "position": Object {
-        "column": 15,
-        "line": 1961,
-      },
-      "title": "#/definitions/Resource/properties/id",
-      "url": "D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/machinelearningservices/resource-manager/Microsoft.MachineLearningServices/stable/2020-03-01/machineLearningServices.json",
-    },
-    "operationId": "MachineLearningCompute_CreateOrUpdate",
-    "responseCode": "ALL",
-    "scenario": "Update a AKS Compute",
-    "severity": 0,
-    "source": "request",
-  },
-]
-`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/maintenance/resource-manager/Microsoft.Maintenance/stable/2020-04-01/Maintenance.json': input file hash 1`] = `"ba41018143752aaf16d3bb5bde33f571"`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/maintenance/resource-manager/Microsoft.Maintenance/stable/2020-04-01/Maintenance.json': returned results 1`] = `Array []`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/managedservices/resource-manager/Microsoft.ManagedServices/stable/2019-09-01/managedservices.json': input file hash 1`] = `"765dd7ffd94997ec50e4704a57f24f6e"`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/managedservices/resource-manager/Microsoft.ManagedServices/stable/2019-09-01/managedservices.json': returned results 1`] = `Array []`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/managementgroups/resource-manager/Microsoft.Management/stable/2020-02-01/management.json': input file hash 1`] = `"81ce92674719c26848ae9a8da53db169"`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/managementgroups/resource-manager/Microsoft.Management/stable/2020-02-01/management.json': returned results 1`] = `
-Array [
-  Object {
-    "code": "OBJECT_ADDITIONAL_PROPERTIES",
-    "details": Object {
-      "code": "OBJECT_ADDITIONAL_PROPERTIES",
-      "description": "The generic properties of a management group used during creation.",
-      "directives": Object {},
-      "jsonPath": "$.properties.parent",
-      "message": "Additional properties not allowed: parent",
-      "params": Array [
-        "parent",
-      ],
-      "path": "properties/parent",
-      "position": Object {
-        "column": 40,
-        "line": 1643,
-      },
-      "title": "#/definitions/CreateManagementGroupProperties",
-      "url": "D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/managementgroups/resource-manager/Microsoft.Management/stable/2020-02-01/management.json",
-    },
-    "operationId": "ManagementGroups_CreateOrUpdate",
-    "responseCode": "ALL",
-    "scenario": "PutManagementGroup",
-    "severity": 0,
-    "source": "request",
-  },
-  Object {
-    "code": "OBJECT_ADDITIONAL_PROPERTIES",
-    "details": Object {
-      "code": "OBJECT_ADDITIONAL_PROPERTIES",
-      "description": "Management group patch parameters.",
-      "directives": Object {},
-      "jsonPath": "$.parentGroupId",
-      "message": "Additional properties not allowed: parentGroupId",
-      "params": Array [
-        "parentGroupId",
-      ],
-      "path": "parentGroupId",
-      "position": Object {
-        "column": 36,
-        "line": 1601,
-      },
-      "title": "#/definitions/PatchManagementGroupRequest",
-      "url": "D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/managementgroups/resource-manager/Microsoft.Management/stable/2020-02-01/management.json",
-    },
-    "operationId": "ManagementGroups_Update",
-    "responseCode": "ALL",
-    "scenario": "PatchManagementGroup",
-    "severity": 0,
-    "source": "request",
-  },
-  Object {
-    "code": "ENUM_MISMATCH",
-    "details": Object {
-      "code": "ENUM_MISMATCH",
-      "description": "fully qualified resource type which includes provider namespace",
-      "directives": Object {},
-      "jsonPath": "$.type",
-      "message": "No enum match for: Microsoft.Management/managementGroups",
-      "params": Array [
-        "Microsoft.Management/managementGroups",
-      ],
-      "path": "type",
-      "position": Object {
-        "column": 17,
-        "line": 1787,
-      },
-      "title": "#/definitions/CheckNameAvailabilityRequest/properties/type",
-      "url": "D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/managementgroups/resource-manager/Microsoft.Management/stable/2020-02-01/management.json",
-    },
-    "operationId": "CheckNameAvailability",
-    "responseCode": "ALL",
-    "scenario": "CheckManagementGroupNameAvailability",
-    "severity": 0,
-    "source": "request",
-  },
-]
-`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/maps/resource-manager/Microsoft.Maps/stable/2018-05-01/maps-management.json': input file hash 1`] = `"23f22e2ff686301002f9841846edb17f"`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/maps/resource-manager/Microsoft.Maps/stable/2018-05-01/maps-management.json': returned results 1`] = `Array []`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/mariadb/resource-manager/Microsoft.DBforMariaDB/stable/2018-06-01/PerformanceRecommendations.json': input file hash 1`] = `"583d7ec8d14144ec422b84cd90cf79fe"`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/mariadb/resource-manager/Microsoft.DBforMariaDB/stable/2018-06-01/PerformanceRecommendations.json': returned results 1`] = `Array []`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/mariadb/resource-manager/Microsoft.DBforMariaDB/stable/2018-06-01/PrivateEndpointConnections.json': input file hash 1`] = `"86ca1308182cf4fb67fbbab1ca1b8231"`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/mariadb/resource-manager/Microsoft.DBforMariaDB/stable/2018-06-01/PrivateEndpointConnections.json': returned results 1`] = `Array []`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/mariadb/resource-manager/Microsoft.DBforMariaDB/stable/2018-06-01/PrivateLinkResources.json': input file hash 1`] = `"a2a935782639f87c0b0da4963e184376"`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/mariadb/resource-manager/Microsoft.DBforMariaDB/stable/2018-06-01/PrivateLinkResources.json': returned results 1`] = `Array []`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/mariadb/resource-manager/Microsoft.DBforMariaDB/stable/2018-06-01/QueryPerformanceInsights.json': input file hash 1`] = `"fa3003517207ccbab651bc7e5b5bb471"`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/mariadb/resource-manager/Microsoft.DBforMariaDB/stable/2018-06-01/QueryPerformanceInsights.json': returned results 1`] = `Array []`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/mariadb/resource-manager/Microsoft.DBforMariaDB/stable/2018-06-01/mariadb.json': input file hash 1`] = `"4afced49712875c67ef4f32612141377"`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/mariadb/resource-manager/Microsoft.DBforMariaDB/stable/2018-06-01/mariadb.json': returned results 1`] = `Array []`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/marketplace/resource-manager/Microsoft.Marketplace/stable/2020-01-01/Marketplace.json': input file hash 1`] = `"58434e283b7ad510129eea64e815445b"`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/marketplace/resource-manager/Microsoft.Marketplace/stable/2020-01-01/Marketplace.json': returned results 1`] = `Array []`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/marketplaceordering/resource-manager/Microsoft.MarketplaceOrdering/stable/2015-06-01/Agreements.json': input file hash 1`] = `"c9d7b3bfc6dee409b7cb115e0aefab86"`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/marketplaceordering/resource-manager/Microsoft.MarketplaceOrdering/stable/2015-06-01/Agreements.json': returned results 1`] = `
-Array [
-  Object {
-    "code": "READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST",
-    "details": Object {
-      "code": "READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST",
-      "description": "Resource type.",
-      "directives": Object {},
-      "jsonPath": "$.type",
-      "message": "ReadOnly property \`\\"type\\": \\"Microsoft.MarketplaceOrdering/offertypes\\"\`, cannot be sent in the request.",
-      "params": Array [
-        "type",
-        "Microsoft.MarketplaceOrdering/offertypes",
-      ],
-      "path": "type",
-      "position": Object {
-        "column": 17,
-        "line": 497,
-      },
-      "title": "#/definitions/Resource/properties/type",
-      "url": "D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/marketplaceordering/resource-manager/Microsoft.MarketplaceOrdering/stable/2015-06-01/Agreements.json",
-    },
-    "operationId": "MarketplaceAgreements_Create",
-    "responseCode": "ALL",
-    "scenario": "SetMarketplaceTerms",
-    "severity": 0,
-    "source": "request",
-  },
-  Object {
-    "code": "READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST",
-    "details": Object {
-      "code": "READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST",
-      "description": "Resource name.",
-      "directives": Object {},
-      "jsonPath": "$.name",
-      "message": "ReadOnly property \`\\"name\\": \\"planid\\"\`, cannot be sent in the request.",
-      "params": Array [
-        "name",
-        "planid",
-      ],
-      "path": "name",
-      "position": Object {
-        "column": 17,
-        "line": 492,
-      },
-      "title": "#/definitions/Resource/properties/name",
-      "url": "D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/marketplaceordering/resource-manager/Microsoft.MarketplaceOrdering/stable/2015-06-01/Agreements.json",
-    },
-    "operationId": "MarketplaceAgreements_Create",
-    "responseCode": "ALL",
-    "scenario": "SetMarketplaceTerms",
-    "severity": 0,
-    "source": "request",
-  },
-  Object {
-    "code": "READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST",
-    "details": Object {
-      "code": "READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST",
-      "description": "Resource ID.",
-      "directives": Object {},
-      "jsonPath": "$.id",
-      "message": "ReadOnly property \`\\"id\\": \\"id\\"\`, cannot be sent in the request.",
-      "params": Array [
-        "id",
-        "id",
-      ],
-      "path": "id",
-      "position": Object {
-        "column": 15,
-        "line": 487,
-      },
-      "title": "#/definitions/Resource/properties/id",
-      "url": "D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/marketplaceordering/resource-manager/Microsoft.MarketplaceOrdering/stable/2015-06-01/Agreements.json",
-    },
-    "operationId": "MarketplaceAgreements_Create",
-    "responseCode": "ALL",
-    "scenario": "SetMarketplaceTerms",
-    "severity": 0,
-    "source": "request",
-  },
-]
-`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/mediaservices/resource-manager/Microsoft.Media/stable/2018-07-01/AccountFilters.json': input file hash 1`] = `"97ec0d2a76246f92b11cd7f08641cf7f"`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/mediaservices/resource-manager/Microsoft.Media/stable/2018-07-01/AccountFilters.json': returned results 1`] = `Array []`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/mediaservices/resource-manager/Microsoft.Media/stable/2018-07-01/Accounts.json': input file hash 1`] = `"4bedfa244974dbc3a30e7708548cde96"`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/mediaservices/resource-manager/Microsoft.Media/stable/2018-07-01/Accounts.json': returned results 1`] = `Array []`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/mediaservices/resource-manager/Microsoft.Media/stable/2018-07-01/AssetsAndAssetFilters.json': input file hash 1`] = `"c067609108c87ac8c92965232b797c8c"`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/mediaservices/resource-manager/Microsoft.Media/stable/2018-07-01/AssetsAndAssetFilters.json': returned results 1`] = `Array []`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/mediaservices/resource-manager/Microsoft.Media/stable/2018-07-01/Common.json': input file hash 1`] = `"ebebe4204e123cbeb8273a651bb315ea"`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/mediaservices/resource-manager/Microsoft.Media/stable/2018-07-01/Common.json': returned results 1`] = `Array []`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/mediaservices/resource-manager/Microsoft.Media/stable/2018-07-01/ContentKeyPolicies.json': input file hash 1`] = `"945b01979c157462212fb37c8d3e1e94"`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/mediaservices/resource-manager/Microsoft.Media/stable/2018-07-01/ContentKeyPolicies.json': returned results 1`] = `Array []`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/mediaservices/resource-manager/Microsoft.Media/stable/2018-07-01/Encoding.json': input file hash 1`] = `"70506945fbbb5f55760d0c280c800d21"`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/mediaservices/resource-manager/Microsoft.Media/stable/2018-07-01/Encoding.json': returned results 1`] = `Array []`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/mediaservices/resource-manager/Microsoft.Media/stable/2018-07-01/StreamingPoliciesAndStreamingLocators.json': input file hash 1`] = `"8e883083b5f8c89dff546cf940aa7013"`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/mediaservices/resource-manager/Microsoft.Media/stable/2018-07-01/StreamingPoliciesAndStreamingLocators.json': returned results 1`] = `
-Array [
-  Object {
-    "code": "OBJECT_MISSING_REQUIRED_PROPERTY",
-    "details": Object {
-      "code": "OBJECT_MISSING_REQUIRED_PROPERTY",
-      "description": "Class to specify which protocols are enabled",
-      "directives": Object {},
-      "jsonPath": "$.properties.envelopeEncryption.enabledProtocols.download",
-      "message": "Missing required property: download",
-      "params": Array [
-        "download",
-      ],
-      "path": "properties/envelopeEncryption/enabledProtocols/download",
-      "position": Object {
-        "column": 25,
-        "line": 226,
-      },
-      "title": "#/definitions/EnabledProtocols",
-      "url": "D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/mediaservices/resource-manager/Microsoft.Media/stable/2018-07-01/StreamingPoliciesAndStreamingLocators.json",
-    },
-    "operationId": "StreamingPolicies_Create",
-    "responseCode": "ALL",
-    "scenario": "Creates a Streaming Policy with envelopeEncryption only",
-    "severity": 0,
-    "source": "request",
-  },
-]
-`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/mediaservices/resource-manager/Microsoft.Media/stable/2018-07-01/streamingservice.json': input file hash 1`] = `"e91778cdeedb99f121933e29e1d9f5e2"`;
-
-exports[`validateExamples should not regress for file 'D:/workspace/Azure/oav/oav/regression/azure-rest-api-specs/specification/mediaservices/resource-manager/Microsoft.Media/stable/2018-07-01/streamingservice.json': returned results 1`] = `
+exports[`validateExamples should not regress for file '/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/security/resource-manager/Microsoft.Security/stable/2019-01-01/settings.json': returned results 1`] = `
 Array [
   Object {
     "code": "READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST",
