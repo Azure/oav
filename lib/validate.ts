@@ -223,6 +223,7 @@ export async function validateExamples(
     } catch (e) {
       if (o.pretty) {
         if (process.env["Agent.Id"]) {
+          /* tslint:disable-next-line:no-console no-string-literal */
           console.log(
             vsoLogIssueWrapper(
               "error",
@@ -232,9 +233,8 @@ export async function validateExamples(
           /* tslint:disable-next-line:no-console no-string-literal */
           console.error(vsoLogIssueWrapper("error", e))
         } else {
-          console.error(
-              `Validating "examples" and "x-ms-examples" in  ${specPath}:\n`
-          )
+          /* tslint:disable-next-line:no-console no-string-literal */
+          console.error(`Validating "examples" and "x-ms-examples" in  ${specPath}:\n`)
           /* tslint:disable-next-line:no-console no-string-literal */
           console.error("\x1b[31m", "error", ":", "\x1b[0m")
           /* tslint:disable-next-line:no-console no-string-literal */

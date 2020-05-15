@@ -202,7 +202,7 @@ describe("Live Validator", () => {
         throw new Error("x === undefined")
       }
       assert.strictEqual(true, expectedApiVersion in x)
-      assert.strictEqual(1, Object.keys(x).length)
+      assert.strictEqual(2, Object.keys(x).length)
       // 'microsoft.resources' -> '2016-09-01'
       assert.strictEqual(2, x[expectedApiVersion].get.length)
       assert.strictEqual(1, x[expectedApiVersion].delete.length)
@@ -214,12 +214,12 @@ describe("Live Validator", () => {
         throw new Error("p === undefined")
       }
       // 'microsoft.unknown' -> 'unknown-api-version'
-      assert.strictEqual(4, p[Constants.unknownApiVersion].post.length)
-      assert.strictEqual(13, p[Constants.unknownApiVersion].get.length)
-      assert.strictEqual(3, p[Constants.unknownApiVersion].head.length)
-      assert.strictEqual(6, p[Constants.unknownApiVersion].put.length)
-      assert.strictEqual(6, p[Constants.unknownApiVersion].delete.length)
-      assert.strictEqual(1, p[Constants.unknownApiVersion].patch.length)
+      assert.strictEqual(7, p[Constants.unknownApiVersion].post.length)
+      assert.strictEqual(26, p[Constants.unknownApiVersion].get.length)
+      assert.strictEqual(5, p[Constants.unknownApiVersion].head.length)
+      assert.strictEqual(11, p[Constants.unknownApiVersion].put.length)
+      assert.strictEqual(11, p[Constants.unknownApiVersion].delete.length)
+      assert.strictEqual(3, p[Constants.unknownApiVersion].patch.length)
     })
     it("should initialize for batch", async () => {
       const options = {
@@ -643,6 +643,24 @@ describe("Live Validator", () => {
       assert.deepStrictEqual(errors, [])
       assert.equal(result.responseValidationResult.isSuccessful, true)
       assert.equal(typeof result.responseValidationResult.runtimeException, "undefined")
+    })
+
+    it("should not match to Microsoft.Resources for the unknown resourceprovider", async () => {
+      const options = {
+        directory: "./test/liveValidation/swaggers/",
+        swaggerPathsPattern: [
+          "specification\\resources\\resource-manager\\Microsoft.Resources\\2015-11-01\\*.json"
+        ]
+      }
+      const validator = new LiveValidator(options)
+      await validator.initialize()
+      const payload = require(`${__dirname}/liveValidation/payloads/fooResourceProvider_input.json`)
+      const result = validator.validateLiveRequestResponse(payload)
+      const runtimeException = result.requestValidationResult.runtimeException
+      if (runtimeException === undefined) {
+        throw new Error("runtimeException === undefined")
+      }
+      assert.strictEqual(runtimeException.code, "OPERATION_NOT_FOUND_IN_CACHE_WITH_PROVIDER")
     })
 
     it("should initialize for defaultErrorOnly and pass", async () => {
