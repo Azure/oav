@@ -174,7 +174,7 @@ export async function validateSpec(
       if (o.pretty) {
         if (process.env["Agent.Id"]) {
           /* tslint:disable-next-line:no-console no-string-literal */
-          console.log(vsoLogIssueWrapper("error", `Semantically validating ${specPath}:\n`))
+          console.error(vsoLogIssueWrapper("error", `Semantically validating ${specPath}:\n`))
           /* tslint:disable-next-line:no-console no-string-literal */
           console.error(vsoLogIssueWrapper("error", outputMsg))
         } else {
