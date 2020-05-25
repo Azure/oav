@@ -647,7 +647,7 @@ export function allowNullableParams(parameter: ParameterObject): ParameterObject
   if (parameter.in && parameter.in === "body" && parameter.schema) {
     parameter.schema = allowNullableTypes(parameter.schema)
   } else {
-    if (parameter.in && parameter.in !== "path") {
+    if (parameter.in && parameter.in !== "path" && parameter.type === "string") {
       parameter = allowNullType(parameter, parameter.required)
     }
   }

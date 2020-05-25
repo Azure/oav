@@ -5,8 +5,8 @@ import * as assert from "assert"
 
 import { validateExamples } from "../lib/validate"
 
-describe("sourceMap", () => {
-  it("INVALID_TYPE", async () => {
+describe.only("sourceMap", () => {
+  it.only("INVALID_TYPE", async () => {
     const file =
       // tslint:disable-next-line:max-line-length
       "./test/modelValidation/swaggers/specification/source-map/Microsoft.ADHybridHealthService/stable/2014-01-01/ADHybridHealthService.json"
@@ -16,7 +16,8 @@ describe("sourceMap", () => {
     assert.strictEqual(result.length, 1)
     const result0 = result[0]
     const e = result0.details as any
-    assert.strictEqual(e.url, file)
-    assert.deepStrictEqual(e.position, { line: 76, column: 11 })
+    assert.strictEqual(e.jsonPath, "$.parameters.takeCount")
+    assert.strictEqual(e.code, "INVALID_TYPE")
+    assert.strictEqual(e.message, "Expected type integer but found type string")
   })
 })
