@@ -5,8 +5,8 @@ import * as assert from "assert"
 
 import { validateExamples } from "../lib/validate"
 
-describe.only("sourceMap", () => {
-  it.only("INVALID_TYPE", async () => {
+describe("sourceMap", () => {
+  it("INVALID_TYPE", async () => {
     const file =
       // tslint:disable-next-line:max-line-length
       "./test/modelValidation/swaggers/specification/source-map/Microsoft.ADHybridHealthService/stable/2014-01-01/ADHybridHealthService.json"
