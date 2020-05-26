@@ -16,7 +16,8 @@ describe("sourceMap", () => {
     assert.strictEqual(result.length, 1)
     const result0 = result[0]
     const e = result0.details as any
-    assert.strictEqual(e.url, file)
-    assert.deepStrictEqual(e.position, { line: 76, column: 11 })
+    assert.strictEqual(e.jsonPath, "$.parameters.takeCount")
+    assert.strictEqual(e.code, "INVALID_TYPE")
+    assert.strictEqual(e.message, "Expected type integer but found type string")
   })
 })

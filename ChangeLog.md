@@ -1,6 +1,11 @@
 # Changelog
 
-## 04/10/2020 0.21.5
+## 05/21/2020 0.21.6
+
+- Avoid adding nullable value for parameter when its' type isn't string
+- Output exception infomation for semantic validation
+
+## 04/20/2020 0.21.5
 
 - Output exception information when pretty switch is enabled.
 

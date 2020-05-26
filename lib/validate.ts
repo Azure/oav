@@ -167,8 +167,27 @@ export async function validateSpec(
       }
       return validator.specValidationResult
     } catch (err) {
-      // console.log(err)
-      log.error(err)
+      let outputMsg = err
+      if (typeof err === "object") {
+        outputMsg = jsYaml.dump(err)
+      }
+      if (o.pretty) {
+        if (process.env["Agent.Id"]) {
+          /* tslint:disable-next-line:no-console no-string-literal */
+          console.error(vsoLogIssueWrapper("error", `Semantically validating ${specPath}:\n`))
+          /* tslint:disable-next-line:no-console no-string-literal */
+          console.error(vsoLogIssueWrapper("error", outputMsg))
+        } else {
+          /* tslint:disable-next-line:no-console no-string-literal */
+          console.error(`Semantically validating ${specPath}:\n`)
+          /* tslint:disable-next-line:no-console no-string-literal */
+          console.error("\x1b[31m", "error", ":", "\x1b[0m")
+          // tslint:disable-next-line: no-console
+          console.error(outputMsg)
+        }
+      } else {
+        log.error(outputMsg)
+      }
       validator.specValidationResult.validityStatus = false
       return validator.specValidationResult
     }
@@ -223,6 +242,7 @@ export async function validateExamples(
     } catch (e) {
       if (o.pretty) {
         if (process.env["Agent.Id"]) {
+          /* tslint:disable-next-line:no-console no-string-literal */
           console.log(
             vsoLogIssueWrapper(
               "error",
@@ -232,9 +252,8 @@ export async function validateExamples(
           /* tslint:disable-next-line:no-console no-string-literal */
           console.error(vsoLogIssueWrapper("error", e))
         } else {
-          console.error(
-              `Validating "examples" and "x-ms-examples" in  ${specPath}:\n`
-          )
+          /* tslint:disable-next-line:no-console no-string-literal */
+          console.error(`Validating "examples" and "x-ms-examples" in  ${specPath}:\n`)
           /* tslint:disable-next-line:no-console no-string-literal */
           console.error("\x1b[31m", "error", ":", "\x1b[0m")
           /* tslint:disable-next-line:no-console no-string-literal */
