@@ -1,5 +1,9 @@
 # Changelog
 
+## 07/09/2020 0.21.7
+
+- Fix the bug that the value of 'x-ms-secret' should be boolean instead of string.
+
 ## 05/21/2020 0.21.6
 
 - Avoid adding nullable value for parameter when its' type isn't string
