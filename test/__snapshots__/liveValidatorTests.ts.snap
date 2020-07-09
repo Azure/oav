@@ -751,7 +751,7 @@ Object {
           "jsonRef": "#/definitions/SecretUserContractProperties/properties/password",
           "position": Object {
             "column": 21,
-            "line": 146,
+            "line": 134,
           },
           "url": "specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimusersecret.json",
         },
