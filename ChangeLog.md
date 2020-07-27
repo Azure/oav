@@ -1,5 +1,9 @@
 # Changelog
 
+## 07/24/2020 0.22.1
+
+- Upgrade yasway with removing clonedeep when validate schema.
+
 ## 07/09/2020 0.21.7
 
 - Fix the bug that the value of 'x-ms-secret' should be boolean instead of string.
