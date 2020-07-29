@@ -1,6 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
-import * as C from "./lib/util/constants"
+import * as C from "./lib/util/constants";
 
 // Easy to use methods from validate.ts
 export {
@@ -10,18 +10,18 @@ export {
   validateExamples,
   validateExamplesInCompositeSpec,
   resolveSpec,
-  resolveCompositeSpec
-} from "./lib/validate"
+  resolveCompositeSpec,
+} from "./lib/validate";
 
-export { BaseValidationError } from "./lib/util/baseValidationError"
-export { Severity } from "./lib/util/severity"
-export { ModelValidationError } from "./lib/util/modelValidationError"
-export { ValidationResultSource } from "./lib/util/validationResultSource"
-export { getErrorsFromModelValidation } from "./lib/util/getErrorsFromModelValidation"
+export { BaseValidationError } from "./lib/util/baseValidationError";
+export { Severity } from "./lib/util/severity";
+export { ModelValidationError } from "./lib/util/modelValidationError";
+export { ValidationResultSource } from "./lib/util/validationResultSource";
+export { getErrorsFromModelValidation } from "./lib/util/getErrorsFromModelValidation";
 export {
   getErrorsFromSemanticValidation,
-  SemanticValidationError
-} from "./lib/util/getErrorsFromSemanticValidation"
+  SemanticValidationError,
+} from "./lib/util/getErrorsFromSemanticValidation";
 export {
   NodeError,
   ValidationErrorMetadata,
@@ -30,11 +30,11 @@ export {
   ErrorCode,
   ExtendedErrorCode,
   WrapperErrorCode,
-  RuntimeErrorCode
-} from "./lib/util/validationError"
+  RuntimeErrorCode,
+} from "./lib/util/validationError";
 
 // Classes
-export { SpecValidator } from "./lib/validators/specValidator"
+export { SpecValidator } from "./lib/validators/specValidator";
 export {
   LiveValidator,
   RequestResponsePair,
@@ -45,9 +45,9 @@ export {
   ApiOperationIdentifier,
   RequestResponseLiveValidationResult,
   LiveValidationResult,
-  ValidateOptions
-} from "./lib/validators/liveValidator"
-export { SpecResolver } from "./lib/validators/specResolver"
+  ValidateOptions,
+} from "./lib/validators/liveValidator";
+export { SpecResolver } from "./lib/validators/specResolver";
 
 // Constants
-export const Constants = C
+export const Constants = C;

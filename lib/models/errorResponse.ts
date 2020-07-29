@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import { LiveValidationError } from "./liveValidationError"
+import { LiveValidationError } from "./liveValidationError";
 
 /**
  * @class
@@ -21,7 +21,7 @@ import { LiveValidationError } from "./liveValidationError"
  */
 export class ErrorResponse extends LiveValidationError {
   public constructor() {
-    super()
+    super();
   }
 
   /**
@@ -30,6 +30,7 @@ export class ErrorResponse extends LiveValidationError {
    * @returns {object} metadata of ErrorResponse
    *
    */
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   public mapper() {
     return {
       required: false,
@@ -42,22 +43,22 @@ export class ErrorResponse extends LiveValidationError {
             required: false,
             serializedName: "code",
             type: {
-              name: "String"
-            }
+              name: "String",
+            },
           },
           message: {
             required: false,
             serializedName: "message",
             type: {
-              name: "String"
-            }
+              name: "String",
+            },
           },
           description: {
             required: false,
             serializedName: "description",
             type: {
-              name: "String"
-            }
+              name: "String",
+            },
           },
           params: {
             required: false,
@@ -68,10 +69,10 @@ export class ErrorResponse extends LiveValidationError {
                 required: false,
                 serializedName: "StringElementType",
                 type: {
-                  name: "String"
-                }
-              }
-            }
+                  name: "String",
+                },
+              },
+            },
           },
           path: {
             required: false,
@@ -82,13 +83,13 @@ export class ErrorResponse extends LiveValidationError {
                 required: false,
                 serializedName: "StringElementType",
                 type: {
-                  name: "String"
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+                  name: "String",
+                },
+              },
+            },
+          },
+        },
+      },
+    };
   }
 }

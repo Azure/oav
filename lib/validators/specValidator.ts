@@ -1,78 +1,79 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import * as amd from "@azure/openapi-markdown"
-import * as json from "@ts-common/json"
-import * as jsonParser from "@ts-common/json-parser"
-import { setMutableProperty } from "@ts-common/property-set"
-import { StringMap } from "@ts-common/string-map"
-import * as path from "path"
-import * as Sway from "yasway"
+import * as path from "path";
+import * as amd from "@azure/openapi-markdown";
+import * as json from "@ts-common/json";
+import * as jsonParser from "@ts-common/json-parser";
+import { setMutableProperty } from "@ts-common/property-set";
+import { StringMap } from "@ts-common/string-map";
+import * as Sway from "yasway";
 
-import { Headers } from "../templates/httpTemplate"
-import { CommonError } from "../util/commonError"
-import * as C from "../util/constants"
-import { DocCache } from "../util/documents"
-import { ModelValidation } from "../util/getErrorsFromModelValidation"
-import * as jsonUtils from "../util/jsonUtils"
-import { log } from "../util/logging"
-import * as processErrors from "../util/processErrors"
+import { Headers } from "../templates/httpTemplate";
+import { CommonError } from "../util/commonError";
+import * as C from "../util/constants";
+import { DocCache } from "../util/documents";
+import { ModelValidation } from "../util/getErrorsFromModelValidation";
+import * as jsonUtils from "../util/jsonUtils";
+import { log } from "../util/logging";
+import * as processErrors from "../util/processErrors";
 
-import * as specResolver from "./specResolver"
-import { getTitle } from "./specTransformer"
-import { getSuppressions } from "./suppressions"
+import { OperationResult } from "../util/scenarioReducer";
+import * as specResolver from "./specResolver";
+import { getTitle } from "./specTransformer";
+import { getSuppressions } from "./suppressions";
 
-const ErrorCodes = C.ErrorCodes
+const ErrorCodes = C.ErrorCodes;
 
 export interface Options extends specResolver.Options {
-  readonly isPathCaseSensitive?: boolean
+  readonly isPathCaseSensitive?: boolean;
 }
 
 export interface ErrorCode {
-  readonly name: string
-  readonly id: string
+  readonly name: string;
+  readonly id: string;
 }
 
 export interface RequestValidation {
-  request?: unknown
-  validationResult?: Sway.ValidationResults
+  request?: unknown;
+  validationResult?: Sway.ValidationResults;
 }
 
-type ResponseValidation = StringMap<Sway.ValidationResults>
+type ResponseValidation = StringMap<Sway.ValidationResults>;
 
 export interface ValidationResult {
-  exampleNotFound?: CommonError
-  scenarios?: ValidationResultScenarios
-  readonly requestValidation?: RequestValidation
-  readonly responseValidation?: ResponseValidation
+  exampleNotFound?: CommonError;
+  scenarios?: ValidationResultScenarios;
+  readonly requestValidation?: RequestValidation;
+  readonly responseValidation?: ResponseValidation;
 }
 
 export interface ValidationResultScenarios {
-  [name: string]: ValidationResult
+  [name: string]: ValidationResult;
 }
 
 export interface SpecValidationResult extends ModelValidation {
-  validityStatus: boolean
-  resolveSpec?: Sway.ValidationEntry
+  validityStatus: boolean;
+  resolveSpec?: Sway.ValidationEntry;
 }
 
 export interface ExampleResponse {
-  readonly headers: Headers
-  readonly body: unknown
+  readonly headers: Headers;
+  readonly body: unknown;
 }
 
 export interface CommonValidationResult {
-  validityStatus: boolean
-  operations: {}
-  resolveSpec?: Sway.ValidationEntry
+  validityStatus: boolean;
+  operations: StringMap<OperationResult | undefined>;
+  resolveSpec?: Sway.ValidationEntry;
 }
 
 export interface ErrorParameters<TE extends CommonError> {
-  code: ErrorCode
-  message: string
-  innerErrors?: null | TE[]
-  skipValidityStatusUpdate?: boolean
-  source?: json.JsonObject
+  code: ErrorCode;
+  message: string;
+  innerErrors?: null | TE[];
+  skipValidityStatusUpdate?: boolean;
+  source?: json.JsonObject;
 }
 
 /*
@@ -80,19 +81,19 @@ export interface ErrorParameters<TE extends CommonError> {
  * Performs semantic and data validation of the given swagger spec.
  */
 export class SpecValidator<T extends CommonValidationResult> {
-  public specValidationResult: T
+  public specValidationResult: T;
 
-  protected specInJson: Sway.SwaggerObject
+  protected specInJson: Sway.SwaggerObject;
 
-  protected swaggerApi: Sway.SwaggerApi | null = null
+  protected swaggerApi: Sway.SwaggerApi | null = null;
 
-  protected specPath: string
+  protected specPath: string;
 
-  protected suppression?: amd.Suppression
+  protected suppression?: amd.Suppression;
 
-  private readonly specDir: unknown
+  private readonly specDir: unknown;
 
-  private readonly options: Options
+  private readonly options: Options;
 
   /*
    * @constructor
@@ -146,7 +147,7 @@ export class SpecValidator<T extends CommonValidationResult> {
     ) {
       throw new Error(
         "specPath is a required parameter of type string and it cannot be an empty string."
-      )
+      );
     }
     // If the spec path is a url starting with https://github then let us auto convert it to an
     // https://raw.githubusercontent url.
@@ -154,27 +155,27 @@ export class SpecValidator<T extends CommonValidationResult> {
       specPath = specPath.replace(
         /^https:\/\/(github.com)(.*)blob\/(.*)/gi,
         "https://raw.githubusercontent.com$2$3"
-      )
+      );
     }
-    this.specPath = specPath
-    this.specDir = path.dirname(this.specPath)
-    this.specInJson = specInJson as Sway.SwaggerObject
+    this.specPath = specPath;
+    this.specDir = path.dirname(this.specPath);
+    this.specInJson = specInJson as Sway.SwaggerObject;
     const base: CommonValidationResult = {
       validityStatus: true,
-      operations: {}
-    }
-    this.specValidationResult = base as T
+      operations: {},
+    };
+    this.specValidationResult = base as T;
     if (!options) {
-      options = {}
+      options = {};
     }
     if (
       options.shouldResolveRelativePaths === null ||
       options.shouldResolveRelativePaths === undefined
     ) {
-      options.shouldResolveRelativePaths = true
+      options.shouldResolveRelativePaths = true;
     }
 
-    this.options = options
+    this.options = options;
   }
 
   /*
@@ -182,18 +183,18 @@ export class SpecValidator<T extends CommonValidationResult> {
    * and initializes the internal api validator.
    */
   public async initialize(): Promise<Sway.SwaggerApi> {
-    const errors: jsonParser.ParseError[] = []
-    const reportError = (e: jsonParser.ParseError) => errors.push(e)
+    const errors: jsonParser.ParseError[] = [];
+    const reportError = (e: jsonParser.ParseError) => errors.push(e);
     try {
       if (this.specInJson === undefined || this.specInJson === null) {
-        this.suppression = await getSuppressions(this.specPath)
+        this.suppression = await getSuppressions(this.specPath);
         const result = await jsonUtils.parseJson(
           this.suppression,
           this.specPath,
           reportError,
           this.docsCache
-        )
-        this.specInJson = result
+        );
+        this.specInJson = result;
       }
 
       const resolver = new specResolver.SpecResolver(
@@ -202,43 +203,43 @@ export class SpecValidator<T extends CommonValidationResult> {
         this.options,
         reportError,
         this.docsCache
-      )
-      this.specInJson = (await resolver.resolve(this.suppression)).specInJson
+      );
+      this.specInJson = (await resolver.resolve(this.suppression)).specInJson;
       const options = {
         definition: this.specInJson,
         jsonRefs: {
-          relativeBase: this.specDir
+          relativeBase: this.specDir,
         },
         isPathCaseSensitive: this.options.isPathCaseSensitive,
-        specPath: this.specPath
-      }
-      this.swaggerApi = await Sway.create(options)
+        specPath: this.specPath,
+      };
+      this.swaggerApi = await Sway.create(options);
     } catch (err) {
       if (typeof err === "object" && err.id && err.message) {
-        this.specValidationResult.resolveSpec = err
-        throw err
+        this.specValidationResult.resolveSpec = err;
+        throw err;
       }
       const e = this.constructErrorObject({
         code: ErrorCodes.InternalError,
         message: err.message,
-        innerErrors: [err]
-      })
-      this.specValidationResult.resolveSpec = e
-      log.error(`${ErrorCodes.ResolveSpecError.name}: ${err.message}.`)
-      log.error(err.stack)
-      throw e
+        innerErrors: [err],
+      });
+      this.specValidationResult.resolveSpec = e;
+      log.error(`${ErrorCodes.ResolveSpecError.name}: ${err.message}.`);
+      log.error(err.stack);
+      throw e;
     }
     if (errors.length > 0) {
-      const err = errors[0]
+      const err = errors[0];
       const e = this.constructErrorObject({
         code: ErrorCodes.JsonParsingError,
         message: err.message,
-        innerErrors: errors
-      })
-      this.specValidationResult.resolveSpec = e as any
-      log.error(`${ErrorCodes.ResolveSpecError.name}: ${err.message}.`)
+        innerErrors: errors,
+      });
+      this.specValidationResult.resolveSpec = e as any;
+      log.error(`${ErrorCodes.ResolveSpecError.name}: ${err.message}.`);
     }
-    return this.swaggerApi
+    return this.swaggerApi;
   }
 
   /*
@@ -261,21 +262,21 @@ export class SpecValidator<T extends CommonValidationResult> {
     message,
     innerErrors,
     skipValidityStatusUpdate,
-    source
+    source,
   }: ErrorParameters<TE>): TE {
     const err: TE = {
       code: code.name,
       id: code.id,
-      message
-    } as any
-    setMutableProperty(err, "innerErrors", innerErrors ? innerErrors : undefined)
+      message,
+    } as any;
+    setMutableProperty(err, "innerErrors", innerErrors ? innerErrors : undefined);
     if (!skipValidityStatusUpdate) {
-      this.updateValidityStatus()
+      this.updateValidityStatus();
     }
     if (source !== undefined) {
-      processErrors.setPositionAndUrl(err, getTitle(source))
+      processErrors.setPositionAndUrl(err, getTitle(source));
     }
-    return err
+    return err;
   }
 
   /*
@@ -284,6 +285,6 @@ export class SpecValidator<T extends CommonValidationResult> {
    * @param {boolean} value
    */
   protected updateValidityStatus(value?: boolean): void {
-    this.specValidationResult.validityStatus = Boolean(value)
+    this.specValidationResult.validityStatus = Boolean(value);
   }
 }

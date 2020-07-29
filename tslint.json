@@ -1,6 +1,6 @@
 {
   "defaultSeverity": "error",
-  "extends": ["tslint:latest", "tslint-config-prettier"],
+  "extends": ["tslint:latest"],
   "jsRules": {},
   "rules": {
     "object-literal-sort-keys": false,
@@ -11,8 +11,6 @@
     "member-ordering": false,
     "no-unsafe-any": false,
     "no-null-keyword": false,
-    "prettier": true,
     "max-line-length": [true, 140]
-  },
-  "rulesDirectory": ["tslint-plugin-prettier"]
+  }
 }

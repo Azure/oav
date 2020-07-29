@@ -45,6 +45,7 @@ export class RequestResponse {
    * @returns {object} metadata of RequestResponse
    *
    */
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   public mapper() {
     return {
       required: false,
@@ -58,19 +59,19 @@ export class RequestResponse {
             serializedName: "liveRequest",
             type: {
               name: "Composite",
-              className: "LiveRequest"
-            }
+              className: "LiveRequest",
+            },
           },
           liveResponse: {
             required: true,
             serializedName: "liveResponse",
             type: {
               name: "Composite",
-              className: "LiveResponse"
-            }
-          }
-        }
-      }
-    }
+              className: "LiveResponse",
+            },
+          },
+        },
+      },
+    };
   }
 }

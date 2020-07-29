@@ -1,32 +1,32 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import * as it from "@ts-common/iterator"
-import * as sm from "@ts-common/string-map"
+import * as it from "@ts-common/iterator";
+import * as sm from "@ts-common/string-map";
 
-import { CommonError } from "./commonError"
-import { ModelValidationError } from "./modelValidationError"
-import { MultipleScenarios, responseReducer, Scenario } from "./responseReducer"
-import { toModelErrors } from "./toModelErrors"
-import { processValidationResult, ValidationResult } from "./validationError"
-import { ValidationResultSource } from "./validationResultSource"
+import { CommonError } from "./commonError";
+import { ModelValidationError } from "./modelValidationError";
+import { MultipleScenarios, responseReducer, Scenario } from "./responseReducer";
+import { toModelErrors } from "./toModelErrors";
+import { processValidationResult, ValidationResult } from "./validationError";
+import { ValidationResultSource } from "./validationResultSource";
 
 export interface Result {
-  isValid?: unknown
-  error?: CommonError
-  warning?: unknown
-  result?: unknown
-  errors?: unknown
-  warnings?: unknown
+  isValid?: unknown;
+  error?: CommonError;
+  warning?: unknown;
+  result?: unknown;
+  errors?: unknown;
+  warnings?: unknown;
 }
 
-export type OperationExampleResult = MultipleScenarios
+export type OperationExampleResult = MultipleScenarios;
 
-export type OperationResultType = "x-ms-examples" | "example-in-spec"
+export type OperationResultType = "x-ms-examples" | "example-in-spec";
 
 export interface OperationResult {
-  "x-ms-examples"?: MultipleScenarios
-  "example-in-spec"?: Scenario
+  "x-ms-examples"?: MultipleScenarios;
+  "example-in-spec"?: Scenario;
 }
 
 export function scenarioReducer(
@@ -34,23 +34,23 @@ export function scenarioReducer(
   scenario: Scenario,
   operationId: string
 ): Iterable<ModelValidationError> {
-  const request = scenario.request
+  const request = scenario.request;
   if (request === undefined) {
-    throw new Error("request is undefined")
+    throw new Error("request is undefined");
   }
   const rawValidationResult: ValidationResult<ModelValidationError> = {
     requestValidationResult: {
-      errors: request.error ? request.error.innerErrors : []
+      errors: request.error ? request.error.innerErrors : [],
     },
     responseValidationResult: {
-      errors: []
-    }
-  }
+      errors: [],
+    },
+  };
   // process request separately since its unique
-  const processedErrors = processValidationResult(rawValidationResult)
+  const processedErrors = processValidationResult(rawValidationResult);
 
   if (processedErrors.requestValidationResult.errors === undefined) {
-    throw new Error("ICE: processedErrors.requestValidationResult.errors === undefined")
+    throw new Error("ICE: processedErrors.requestValidationResult.errors === undefined");
   }
   const modelErrors = !request.isValid
     ? toModelErrors(
@@ -60,19 +60,19 @@ export function scenarioReducer(
         ValidationResultSource.REQUEST,
         "ALL"
       )
-    : it.empty<ModelValidationError>()
+    : it.empty<ModelValidationError>();
 
   // process responses
-  rawValidationResult.requestValidationResult.errors = []
+  rawValidationResult.requestValidationResult.errors = [];
 
-  const entries = sm.entries(scenario.responses)
-  const invalidResponses = entries.filter(entry => {
-    const [, response] = entry
-    return !response.isValid
-  })
-  const result = invalidResponses.flatMap(response => {
-    const [responseCode] = response
-    return responseReducer(responseCode, scenario, rawValidationResult, operationId, scenarioName)
-  })
-  return modelErrors.concat(result)
+  const entries = sm.entries(scenario.responses);
+  const invalidResponses = entries.filter((entry) => {
+    const [, response] = entry;
+    return !response.isValid;
+  });
+  const result = invalidResponses.flatMap((response) => {
+    const [responseCode] = response;
+    return responseReducer(responseCode, scenario, rawValidationResult, operationId, scenarioName);
+  });
+  return modelErrors.concat(result);
 }

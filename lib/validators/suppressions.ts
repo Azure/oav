@@ -1,58 +1,58 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import * as amd from "@azure/openapi-markdown"
-import * as md from "@ts-common/commonmark-to-markdown"
-import * as it from "@ts-common/iterator"
-import * as vfs from "@ts-common/virtual-fs"
-import * as path from "path"
-import { log } from "../util/logging"
-import { isSubPath, splitPathAndReverse } from "../util/path"
+import * as path from "path";
+import * as amd from "@azure/openapi-markdown";
+import * as md from "@ts-common/commonmark-to-markdown";
+import * as it from "@ts-common/iterator";
+import * as vfs from "@ts-common/virtual-fs";
+import { log } from "../util/logging";
+import { isSubPath, splitPathAndReverse } from "../util/path";
 
 export const getSuppressions = async (specPath: string): Promise<undefined | amd.Suppression> => {
   // find readme.md
   try {
-    const readMe = await amd.findReadMe(path.dirname(specPath))
+    const readMe = await amd.findReadMe(path.dirname(specPath));
     if (readMe === undefined) {
-      return undefined
+      return undefined;
     }
-    const readMeStr = await vfs.readFile(readMe)
-    const cmd = md.parse(readMeStr)
-    const suppressionCodeBlock = amd.getCodeBlocksAndHeadings(cmd.markDown).Suppression
+    const readMeStr = await vfs.readFile(readMe);
+    const cmd = md.parse(readMeStr);
+    const suppressionCodeBlock = amd.getCodeBlocksAndHeadings(cmd.markDown).Suppression;
     if (suppressionCodeBlock === undefined) {
-      return undefined
+      return undefined;
     }
-    const suppression = amd.getYamlFromNode(suppressionCodeBlock) as amd.Suppression
+    const suppression = amd.getYamlFromNode(suppressionCodeBlock) as amd.Suppression;
     if (!it.isArray(suppression.directive)) {
-      return undefined
+      return undefined;
     }
-    return suppression
+    return suppression;
   } catch (err) {
-    log.warn(`Unable to load and parse suppression file. Error: ${err}`)
-    return undefined
+    log.warn(`Unable to load and parse suppression file. Error: ${err}`);
+    return undefined;
   }
-}
+};
 
-export function existSuppression(
+export const existSuppression = (
   specPath: string,
   suppression: amd.Suppression,
   id: string
-): boolean {
+): boolean => {
   if (suppression.directive !== undefined) {
-    const suppressionArray = getSuppressionArray(specPath, suppression.directive)
-    return it.some(suppressionArray, s => s.suppress === id)
+    const suppressionArray = getSuppressionArray(specPath, suppression.directive);
+    return it.some(suppressionArray, (s) => s.suppress === id);
   }
-  return false
-}
+  return false;
+};
 
 const getSuppressionArray = (
   specPath: string,
-  suppressionItems: ReadonlyArray<amd.SuppressionItem>
-): ReadonlyArray<amd.SuppressionItem> => {
-  const urlReversed = splitPathAndReverse(specPath)
-  return suppressionItems.filter(s =>
-    it.some(it.isArray(s.from) ? s.from : [s.from], from =>
+  suppressionItems: readonly amd.SuppressionItem[]
+): readonly amd.SuppressionItem[] => {
+  const urlReversed = splitPathAndReverse(specPath);
+  return suppressionItems.filter((s) =>
+    it.some(it.isArray(s.from) ? s.from : [s.from], (from) =>
       isSubPath(urlReversed, splitPathAndReverse(from))
     )
-  )
-}
+  );
+};

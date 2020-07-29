@@ -1,38 +1,38 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import { Suppression } from "@azure/openapi-markdown"
-import { map, toArray } from "@ts-common/iterator"
-import * as jsonParser from "@ts-common/json-parser"
-import { setMutableProperty } from "@ts-common/property-set"
-import { entries, MutableStringMap, StringMap } from "@ts-common/string-map"
-import * as fs from "fs"
-import * as JsonRefs from "json-refs"
-import * as msRest from "ms-rest"
-import * as path from "path"
-import * as Sway from "yasway"
+import * as fs from "fs";
+import * as path from "path";
+import { Suppression } from "@azure/openapi-markdown";
+import { map, toArray } from "@ts-common/iterator";
+import * as jsonParser from "@ts-common/json-parser";
+import { setMutableProperty } from "@ts-common/property-set";
+import { entries, MutableStringMap, StringMap } from "@ts-common/string-map";
+import * as JsonRefs from "json-refs";
+import * as msRest from "ms-rest";
+import * as Sway from "yasway";
 
-import { ResponseWrapper } from "./models/responseWrapper"
-import { Headers, Responses } from "./templates/httpTemplate"
-import { MarkdownHttpTemplate } from "./templates/markdownHttpTemplate"
-import { YamlHttpTemplate } from "./templates/yamlHttpTemplate"
-import * as C from "./util/constants"
-import * as jsonUtils from "./util/jsonUtils"
-import { log } from "./util/logging"
-import * as utils from "./util/utils"
-import { SpecResolver } from "./validators/specResolver"
-import { getSuppressions } from "./validators/suppressions"
+import { ResponseWrapper } from "./models/responseWrapper";
+import { Headers, Responses } from "./templates/httpTemplate";
+import { MarkdownHttpTemplate } from "./templates/markdownHttpTemplate";
+import { YamlHttpTemplate } from "./templates/yamlHttpTemplate";
+import * as C from "./util/constants";
+import * as jsonUtils from "./util/jsonUtils";
+import { log } from "./util/logging";
+import * as utils from "./util/utils";
+import { SpecResolver } from "./validators/specResolver";
+import { getSuppressions } from "./validators/suppressions";
 
-const ErrorCodes = C.ErrorCodes
+const ErrorCodes = C.ErrorCodes;
 
 export class WireFormatGenerator {
-  private readonly specPath: string
-  private readonly specDir: string
-  private readonly wireFormatDir: string
-  private readonly emitYaml: unknown
-  private specInJson: Sway.SwaggerObject | null
-  private specResolver: SpecResolver | null
-  private swaggerApi: Sway.SwaggerApi | null
+  private readonly specPath: string;
+  private readonly specDir: string;
+  private readonly wireFormatDir: string;
+  private readonly emitYaml: unknown;
+  private specInJson: Sway.SwaggerObject | null;
+  private specResolver: SpecResolver | null;
+  private swaggerApi: Sway.SwaggerApi | null;
   // private specValidationResult: any
   public constructor(
     specPath: string,
@@ -48,7 +48,7 @@ export class WireFormatGenerator {
     ) {
       throw new Error(
         "specPath is a required parameter of type string and it cannot be an empty string."
-      )
+      );
     }
     // If the spec path is a url starting with https://github then let us auto convert it to an
     // https://raw.githubusercontent url.
@@ -56,61 +56,61 @@ export class WireFormatGenerator {
       specPath = specPath.replace(
         /^https:\/\/(github.com)(.*)blob\/(.*)/gi,
         "https://raw.githubusercontent.com$2$3"
-      )
+      );
     }
-    this.specPath = specPath
-    this.specDir = path.dirname(this.specPath)
-    let wfDir = path.join(this.specDir, "wire-format")
+    this.specPath = specPath;
+    this.specDir = path.dirname(this.specPath);
+    let wfDir = path.join(this.specDir, "wire-format");
     if (specPath.startsWith("https://")) {
-      wfDir = process.cwd() + "/wire-format"
+      wfDir = process.cwd() + "/wire-format";
     }
-    this.wireFormatDir = wireFormatDir || wfDir
+    this.wireFormatDir = wireFormatDir || wfDir;
     if (!fs.existsSync(this.wireFormatDir)) {
-      fs.mkdirSync(this.wireFormatDir)
+      fs.mkdirSync(this.wireFormatDir);
     }
-    this.emitYaml = emitYaml || false
-    this.specInJson = specInJson
-    this.specResolver = null
-    this.swaggerApi = null
+    this.emitYaml = emitYaml || false;
+    this.specInJson = specInJson;
+    this.specResolver = null;
+    this.swaggerApi = null;
   }
 
   public async initialize(): Promise<Sway.SwaggerApi> {
     try {
-      const suppression = await getSuppressions(this.specPath)
+      const suppression = await getSuppressions(this.specPath);
       const result = await jsonUtils.parseJson(
         suppression,
         this.specPath,
         jsonParser.defaultErrorReport
-      )
-      this.specInJson = result
+      );
+      this.specInJson = result;
       const specOptions = {
         shouldResolveRelativePaths: true,
         shouldResolveXmsExamples: false,
         shouldResolveAllOf: false,
         shouldSetAdditionalPropertiesFalse: false,
-        shouldResolvePureObjects: false
-      }
+        shouldResolvePureObjects: false,
+      };
       this.specResolver = new SpecResolver(
         this.specPath,
         this.specInJson,
         specOptions,
         jsonParser.defaultErrorReport
-      )
-      await this.specResolver.resolve(suppression)
-      await this.resolveExamples(suppression)
+      );
+      await this.specResolver.resolve(suppression);
+      await this.resolveExamples(suppression);
       const options = {
         definition: this.specInJson,
-        jsonRefs: { relativeBase: this.specDir }
-      }
-      const api = await Sway.create(options)
-      this.swaggerApi = api
-      return api
+        jsonRefs: { relativeBase: this.specDir },
+      };
+      const api = await Sway.create(options);
+      this.swaggerApi = api;
+      return api;
     } catch (err) {
-      const e = this.constructErrorObject(ErrorCodes.ResolveSpecError, err.message, [err])
+      const e = this.constructErrorObject(ErrorCodes.ResolveSpecError, err.message, [err]);
       // self.specValidationResult.resolveSpec = e;
-      log.error(`${ErrorCodes.ResolveSpecError.name}: ${err.message}.`)
-      log.error(err.stack)
-      throw e
+      log.error(`${ErrorCodes.ResolveSpecError.name}: ${err.message}.`);
+      log.error(err.stack);
+      throw e;
     }
   }
 
@@ -126,35 +126,35 @@ export class WireFormatGenerator {
       throw new Error(
         `Please call "specValidator.initialize()" before calling this method, ` +
           `so that swaggerApi is populated.`
-      )
+      );
     }
     if (
       operationIds !== null &&
       operationIds !== undefined &&
       typeof operationIds.valueOf() !== "string"
     ) {
-      throw new Error(`operationIds parameter must be of type 'string'.`)
+      throw new Error(`operationIds parameter must be of type 'string'.`);
     }
 
-    let operations = this.swaggerApi.getOperations()
+    let operations = this.swaggerApi.getOperations();
     if (operationIds) {
-      const operationIdsObj: MutableStringMap<unknown> = {}
+      const operationIdsObj: MutableStringMap<unknown> = {};
       operationIds
         .trim()
         .split(",")
-        .forEach(item => {
-          operationIdsObj[item.trim()] = 1
-        })
-      const operationsToValidate = operations.filter(item =>
+        .forEach((item) => {
+          operationIdsObj[item.trim()] = 1;
+        });
+      const operationsToValidate = operations.filter((item) =>
         Boolean(operationIdsObj[item.operationId])
-      )
+      );
       if (operationsToValidate.length) {
-        operations = operationsToValidate
+        operations = operationsToValidate;
       }
     }
 
     for (const operation of operations) {
-      this.processOperation(operation)
+      this.processOperation(operation);
     }
   }
 
@@ -196,30 +196,31 @@ export class WireFormatGenerator {
     _?: boolean
   ) {
     const err: {
-      code: unknown
-      message: string
-      innerErrors?: unknown[]
+      code: unknown;
+      message: string;
+      innerErrors?: unknown[];
     } = {
       code,
-      message
-    }
-    setMutableProperty(err, "innerErrors", innerErrors ? innerErrors : undefined)
+      message,
+    };
+    setMutableProperty(err, "innerErrors", innerErrors ? innerErrors : undefined);
     // if (!skipValidityStatusUpdate) {
     // this.updateValidityStatus();
     // }
-    return err
+    return err;
   }
 
   private async resolveExamples(
     suppression: Suppression | undefined
-  ): Promise<Sway.SwaggerObject | null | ReadonlyArray<unknown>> {
+  ): Promise<Sway.SwaggerObject | null | readonly unknown[]> {
     const options = {
       relativeBase: this.specDir,
-      filter: ["relative", "remote"]
-    }
+      filter: ["relative", "remote"],
+    };
 
-    const allRefsRemoteRelative = JsonRefs.findRefs(this.specInJson as object, options)
-    const e = entries(allRefsRemoteRelative as StringMap<any>)
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const allRefsRemoteRelative = JsonRefs.findRefs(this.specInJson!, options);
+    const e = entries(allRefsRemoteRelative as StringMap<any>);
     const promiseFactories = toArray(
       map(e, ([refName, refDetails]) => async () =>
         this.resolveRelativeReference(
@@ -230,11 +231,11 @@ export class WireFormatGenerator {
           this.specPath
         )
       )
-    )
+    );
     if (promiseFactories.length) {
-      return utils.executePromisesSequentially(promiseFactories)
+      return utils.executePromisesSequentially(promiseFactories);
     } else {
-      return this.specInJson
+      return this.specInJson;
     }
   }
 
@@ -242,51 +243,51 @@ export class WireFormatGenerator {
     suppression: Suppression | undefined,
     refName: string,
     refDetails: { readonly def: { readonly $ref: string } },
-    doc: {} | null,
+    doc: StringMap<unknown> | null,
     docPath: string
   ): Promise<unknown> {
     if (!refName || (refName && typeof refName.valueOf() !== "string")) {
-      throw new Error('refName cannot be null or undefined and must be of type "string".')
+      throw new Error('refName cannot be null or undefined and must be of type "string".');
     }
 
     if (!refDetails || (refDetails && !(refDetails instanceof Object))) {
-      throw new Error('refDetails cannot be null or undefined and must be of type "object".')
+      throw new Error('refDetails cannot be null or undefined and must be of type "object".');
     }
 
     if (!doc || (doc && !(doc instanceof Object))) {
-      throw new Error('doc cannot be null or undefined and must be of type "object".')
+      throw new Error('doc cannot be null or undefined and must be of type "object".');
     }
 
     if (!docPath || (docPath && typeof docPath.valueOf() !== "string")) {
-      throw new Error('docPath cannot be null or undefined and must be of type "string".')
+      throw new Error('docPath cannot be null or undefined and must be of type "string".');
     }
 
-    const node = refDetails.def
-    const slicedRefName = refName.slice(1)
-    const reference = node.$ref
-    const parsedReference = utils.parseReferenceInSwagger(reference)
-    const docDir = path.dirname(docPath)
+    const node = refDetails.def;
+    const slicedRefName = refName.slice(1);
+    const reference = node.$ref;
+    const parsedReference = utils.parseReferenceInSwagger(reference);
+    const docDir = path.dirname(docPath);
 
     if (parsedReference.filePath) {
       // assuming that everything in the spec is relative to it, let us join the spec directory
       // and the file path in reference.
-      docPath = utils.joinPath(docDir, parsedReference.filePath)
+      docPath = utils.joinPath(docDir, parsedReference.filePath);
     }
 
-    const result = await jsonUtils.parseJson(suppression, docPath, jsonParser.defaultErrorReport)
+    const result = await jsonUtils.parseJson(suppression, docPath, jsonParser.defaultErrorReport);
     if (!parsedReference.localReference) {
       // Since there is no local reference we will replace the key in the object with the parsed
       // json (relative) file it is referring to.
-      const regex = /.*x-ms-examples.*/gi
+      const regex = /.*x-ms-examples.*/gi;
       if (slicedRefName.match(regex) !== null) {
         const exampleObj = {
           filePath: docPath,
-          value: result
-        }
-        utils.setObject(doc, slicedRefName, exampleObj)
+          value: result,
+        };
+        utils.setObject(doc, slicedRefName, exampleObj);
       }
     }
-    return doc
+    return doc;
   }
 
   /*
@@ -295,7 +296,7 @@ export class WireFormatGenerator {
    * @param {object} operation - The operation object.
    */
   private processOperation(operation: Sway.Operation): void {
-    this.processXmsExamples(operation)
+    this.processXmsExamples(operation);
     // self.processExample(operation)
   }
 
@@ -306,32 +307,32 @@ export class WireFormatGenerator {
    */
   private processXmsExamples(operation: Sway.Operation): void {
     if (operation === null || operation === undefined || typeof operation !== "object") {
-      throw new Error("operation cannot be null or undefined and must be of type 'object'.")
+      throw new Error("operation cannot be null or undefined and must be of type 'object'.");
     }
-    const xmsExamples = operation[C.xmsExamples]
+    const xmsExamples = operation[C.xmsExamples];
     if (xmsExamples) {
       for (const [scenario, v] of entries(xmsExamples as StringMap<any>)) {
         // If we do not see the value property then we assume that the swagger spec had
         // x-ms-examples references resolved.
         // Then we do not need to access the value property. At the same time the file name for
         // wire-format will be the sanitized scenario name.
-        const xmsExample = v.value || v
-        const sampleRequest = this.processRequest(operation, xmsExample.parameters)
-        const sampleResponses = this.processXmsExampleResponses(operation, xmsExample.responses)
+        const xmsExample = v.value || v;
+        const sampleRequest = this.processRequest(operation, xmsExample.parameters);
+        const sampleResponses = this.processXmsExampleResponses(operation, xmsExample.responses);
         const exampleFileName = v.filePath
           ? path.basename(v.filePath)
-          : `${utils.sanitizeFileName(scenario)}.json`
+          : `${utils.sanitizeFileName(scenario)}.json`;
         let wireFormatFileName = `${exampleFileName.substring(
           0,
           exampleFileName.indexOf(path.extname(exampleFileName))
-        )}.`
-        wireFormatFileName += this.emitYaml ? "yml" : "md"
-        const fileName = path.join(this.wireFormatDir, wireFormatFileName)
+        )}.`;
+        wireFormatFileName += this.emitYaml ? "yml" : "md";
+        const fileName = path.join(this.wireFormatDir, wireFormatFileName);
         const httpTemplate = this.emitYaml
           ? new YamlHttpTemplate(sampleRequest, sampleResponses)
-          : new MarkdownHttpTemplate(sampleRequest, sampleResponses)
-        const sampleData = httpTemplate.populate()
-        fs.writeFileSync(fileName, sampleData, { encoding: "utf8" })
+          : new MarkdownHttpTemplate(sampleRequest, sampleResponses);
+        const sampleData = httpTemplate.populate();
+        fs.writeFileSync(fileName, sampleData, { encoding: "utf8" });
       }
     }
   }
@@ -350,7 +351,7 @@ export class WireFormatGenerator {
     exampleParameterValues: StringMap<string>
   ): msRest.WebResource {
     if (operation === null || operation === undefined || typeof operation !== "object") {
-      throw new Error("operation cannot be null or undefined and must be of type 'object'.")
+      throw new Error("operation cannot be null or undefined and must be of type 'object'.");
     }
 
     if (
@@ -362,33 +363,33 @@ export class WireFormatGenerator {
         `In operation "${operation.operationId}", exampleParameterValues cannot be null or ` +
           `undefined and must be of type "object" ` +
           `(A dictionary of key-value pairs of parameter-names and their values).`
-      )
+      );
     }
 
-    const parameters = operation.getParameters()
+    const parameters = operation.getParameters();
 
-    let pathTemplate = operation.pathObject.path
+    let pathTemplate = operation.pathObject.path;
     if (pathTemplate && pathTemplate.includes("?")) {
-      pathTemplate = pathTemplate.slice(0, pathTemplate.indexOf("?"))
-      operation.pathObject.path = pathTemplate
+      pathTemplate = pathTemplate.slice(0, pathTemplate.indexOf("?"));
+      operation.pathObject.path = pathTemplate;
     }
     // tslint:disable-next-line: no-object-literal-type-assertion
     const options = {
       method: operation.method,
-      pathTemplate
-    } as msRest.PathTemplateBasedRequestPrepareOptions
+      pathTemplate,
+    } as msRest.PathTemplateBasedRequestPrepareOptions;
 
     for (const parameter of parameters) {
-      const location = parameter.in
+      const location = parameter.in;
       if (location === "path" || location === "query") {
-        const paramType = location + "Parameters"
-        const optionsParameters = (options as any) as MutableStringMap<MutableStringMap<unknown>>
+        const paramType = `${location}Parameters`;
+        const optionsParameters = (options as any) as MutableStringMap<MutableStringMap<unknown>>;
         if (!optionsParameters[paramType]) {
-          optionsParameters[paramType] = {}
+          optionsParameters[paramType] = {};
         }
-        const op = optionsParameters[paramType]
+        const op = optionsParameters[paramType];
         if (op === undefined) {
-          throw new Error("op === undefined")
+          throw new Error("op === undefined");
         }
         if (
           parameter[C.xmsSkipUrlEncoding] ||
@@ -396,35 +397,35 @@ export class WireFormatGenerator {
         ) {
           op[parameter.name] = {
             value: exampleParameterValues[parameter.name],
-            skipUrlEncoding: true
-          }
+            skipUrlEncoding: true,
+          };
         } else {
-          op[parameter.name] = exampleParameterValues[parameter.name]
+          op[parameter.name] = exampleParameterValues[parameter.name];
         }
       } else if (location === "body") {
-        options.body = exampleParameterValues[parameter.name]
-        options.disableJsonStringifyOnBody = true
+        options.body = exampleParameterValues[parameter.name];
+        options.disableJsonStringifyOnBody = true;
       } else if (location === "header") {
         if (!options.headers) {
-          options.headers = {}
+          options.headers = {};
         }
-        options.headers[parameter.name] = exampleParameterValues[parameter.name]
+        options.headers[parameter.name] = exampleParameterValues[parameter.name];
       }
     }
 
     if (options.headers) {
       if (options.headers["content-type"]) {
-        const val = delete options.headers["content-type"]
-        options.headers["Content-Type"] = val
+        const val = delete options.headers["content-type"];
+        options.headers["Content-Type"] = val;
       }
       if (!options.headers["Content-Type"]) {
-        options.headers["Content-Type"] = utils.getJsonContentType(operation.consumes)
+        options.headers["Content-Type"] = utils.getJsonContentType(operation.consumes);
       }
     } else {
-      options.headers = {}
-      options.headers["Content-Type"] = utils.getJsonContentType(operation.consumes)
+      options.headers = {};
+      options.headers["Content-Type"] = utils.getJsonContentType(operation.consumes);
     }
-    return new msRest.WebResource().prepare(options)
+    return new msRest.WebResource().prepare(options);
   }
 
   /*
@@ -439,14 +440,14 @@ export class WireFormatGenerator {
   private processXmsExampleResponses(
     operation: Sway.Operation,
     exampleResponseValue: StringMap<{
-      readonly headers: Headers
-      readonly body: unknown
+      readonly headers: Headers;
+      readonly body: unknown;
     }>
   ) {
     // tslint:disable-next-line: no-object-literal-type-assertion
-    const result = {} as Responses
+    const result = {} as Responses;
     if (operation === null || operation === undefined || typeof operation !== "object") {
-      throw new Error("operation cannot be null or undefined and must be of type 'object'.")
+      throw new Error("operation cannot be null or undefined and must be of type 'object'.");
     }
 
     if (
@@ -454,60 +455,60 @@ export class WireFormatGenerator {
       exampleResponseValue === undefined ||
       typeof exampleResponseValue !== "object"
     ) {
-      throw new Error("operation cannot be null or undefined and must be of type 'object'.")
+      throw new Error("operation cannot be null or undefined and must be of type 'object'.");
     }
-    const responsesInSwagger: MutableStringMap<string> = {}
-    operation.getResponses().map(response => {
-      responsesInSwagger[response.statusCode] = response.statusCode
-      return response.statusCode
-    })
-    const xMsLongRunningOperation = operation["x-ms-long-running-operation"]
+    const responsesInSwagger: MutableStringMap<string> = {};
+    operation.getResponses().map((response) => {
+      responsesInSwagger[response.statusCode] = response.statusCode;
+      return response.statusCode;
+    });
+    const xMsLongRunningOperation = operation["x-ms-long-running-operation"];
     if (xMsLongRunningOperation) {
       result.longrunning = {
         initialResponse: undefined,
-        finalResponse: undefined
-      }
+        finalResponse: undefined,
+      };
     } else {
-      result.standard = { finalResponse: undefined }
+      result.standard = { finalResponse: undefined };
     }
 
     for (const [exampleResponseStatusCode, value] of entries(exampleResponseValue)) {
-      const response = operation.getResponse(exampleResponseStatusCode)
+      const response = operation.getResponse(exampleResponseStatusCode);
       if (response) {
-        const exampleResponseHeaders = value.headers || {}
-        const exampleResponseBody = value.body
+        const exampleResponseHeaders = value.headers || {};
+        const exampleResponseBody = value.body;
         // ensure content-type header is present
         if (!(exampleResponseHeaders["content-type"] || exampleResponseHeaders["Content-Type"])) {
-          exampleResponseHeaders["content-type"] = utils.getJsonContentType(operation.produces)
+          exampleResponseHeaders["content-type"] = utils.getJsonContentType(operation.produces);
         }
         const exampleResponse = new ResponseWrapper(
           exampleResponseStatusCode,
           exampleResponseBody,
           exampleResponseHeaders
-        )
+        );
         if (xMsLongRunningOperation) {
           if (result.longrunning === undefined) {
-            throw new Error("result.longrunning === undefined")
+            throw new Error("result.longrunning === undefined");
           }
           if (exampleResponseStatusCode === "202" || exampleResponseStatusCode === "201") {
-            result.longrunning.initialResponse = exampleResponse
+            result.longrunning.initialResponse = exampleResponse;
           }
           if (
             (exampleResponseStatusCode === "200" || exampleResponseStatusCode === "204") &&
             !result.longrunning.finalResponse
           ) {
-            result.longrunning.finalResponse = exampleResponse
+            result.longrunning.finalResponse = exampleResponse;
           }
         } else {
           if (result.standard === undefined) {
-            throw new Error("result.standard === undefined")
+            throw new Error("result.standard === undefined");
           }
           if (!result.standard.finalResponse) {
-            result.standard.finalResponse = exampleResponse
+            result.standard.finalResponse = exampleResponse;
           }
         }
       }
     }
-    return result
+    return result;
   }
 }
