@@ -1,5 +1,4 @@
 import assert from "assert";
-
 import * as validate from "../lib/validate";
 
 describe("xMsExampleExtractor", () => {

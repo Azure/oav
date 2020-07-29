@@ -2,7 +2,6 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import assert from "assert";
-
 import * as utils from "../lib/util/utils";
 
 describe("Utility functions", () => {

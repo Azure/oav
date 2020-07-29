@@ -3,11 +3,13 @@
 
 import * as path from "path";
 import * as amd from "@azure/openapi-markdown";
-import * as md from "@ts-common/commonmark-to-markdown";
 import * as it from "@ts-common/iterator";
+import * as md from "@ts-common/commonmark-to-markdown";
 import * as vfs from "@ts-common/virtual-fs";
-import { log } from "../util/logging";
+
 import { isSubPath, splitPathAndReverse } from "../util/path";
+
+import { log } from "../util/logging";
 
 export const getSuppressions = async (specPath: string): Promise<undefined | amd.Suppression> => {
   // find readme.md

@@ -10,7 +10,7 @@ import { IAutoRestPluginInitiator } from "@microsoft.azure/autorest-extension-ba
 import { SourceLocation } from "@microsoft.azure/autorest-extension-base/dist/lib/types";
 import { entries } from "@ts-common/string-map";
 import * as yaml from "js-yaml";
-import * as jsonPath from "jsonpath";
+import { JSONPath } from "jsonpath-plus";
 import * as linq from "linq";
 import { SwaggerObject } from "yasway";
 
@@ -112,9 +112,13 @@ export async function openApiValidationExample(
           // get path to x-ms-examples in swagger
           const xmsexPath = linq
             .from(
-              jsonPath.nodes(swagger, `$.paths[*][?(@.operationId==='${op}')]["x-ms-examples"]`)
+              JSONPath({
+                json: swagger as object,
+                path: `$.paths[*][?(@.operationId==='${op}')]["x-ms-examples"]`,
+                resultType: "path",
+              })
             )
-            .select((x) => x.path)
+            .select((x) => (JSONPath as any).toPathArray(x))
             .firstOrDefault();
           if (!xmsexPath) {
             throw new Error("Model Validator: Path to x-ms-examples not found.");

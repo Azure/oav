@@ -1,31 +1,43 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
+
 import * as http from "http";
 import * as os from "os";
 import * as path from "path";
-import { ParsedUrlQuery } from "querystring";
 import * as url from "url";
 import * as util from "util";
-import * as msRest from "ms-rest";
-import * as _ from "lodash";
-import globby from "globby";
-import { MutableStringMap, StringMap } from "@ts-common/string-map";
-import { Operation, Request } from "yasway";
 
-import * as models from "../models";
-import { PotentialOperationsResult } from "../models/potentialOperationsResult";
-import * as C from "../util/constants";
-import { log } from "../util/logging";
+import { ParsedUrlQuery } from "querystring";
+import { JSONPath } from "jsonpath-plus";
+import { MutableStringMap } from "@ts-common/string-map";
+import * as _ from "lodash";
+import { ValidateFunction } from "ajv";
+import globby from "globby";
+import { ajvErrorCodeToOavErrorCode } from "../swagger/swaggerLiveValidatorErrors";
 import { Severity } from "../util/severity";
-import * as utils from "../util/utils";
+import { Operation, SwaggerSpec } from "../swagger/swaggerTypes";
 import {
-  ErrorCode,
-  errorCodeToErrorMetadata,
-  processValidationErrors,
+  LiveRequest,
+  LiveResponse,
+  OperationContext,
+  OperationMatch,
+  ValidationRequest,
+  validateSwaggerLiveRequest,
+  validateSwaggerLiveResponse,
+} from "../swagger/swaggerLiveValidator";
+import {
+  ExtendedErrorCode,
   RuntimeException,
   SourceLocation,
+  errorCodeToErrorMetadata,
 } from "../util/validationError";
-import { SpecValidator } from "./specValidator";
+import * as utils from "../util/utils";
+import * as models from "../models";
+import { SwaggerLiveValidatorLoader } from "../swagger/swaggerLiveValidatorLoader";
+import * as C from "../util/constants";
+import { log } from "../util/logging";
+import { requestResponseDefinition } from "../models/requestResponse";
+import { SwaggerValidator } from "./swaggerValidator";
 
 export interface LiveValidatorOptions {
   swaggerPaths: string[];
@@ -39,6 +51,8 @@ export interface LiveValidatorOptions {
   swaggerPathsPattern: string[];
   excludedSwaggerPathsPattern: string[];
   isPathCaseSensitive: boolean;
+  loadValidatorInBackground: boolean;
+  loadValidatorInInitialize: boolean;
 }
 
 interface ApiVersion {
@@ -49,26 +63,11 @@ interface Provider {
   [apiVersion: string]: ApiVersion;
 }
 
-export interface ValidationRequest {
-  providerNamespace: string;
-  resourceType: string;
-  apiVersion: string;
-  requestMethod: string;
-  pathStr: string;
-  queryStr?: ParsedUrlQuery;
-  correlationId?: string;
-  requestUrl: string;
-}
-
-export interface LiveRequest extends Request {
-  headers: { [propertyName: string]: string };
-  body?: StringMap<unknown>;
-}
-
-export interface LiveResponse {
-  statusCode: string;
-  headers: { [propertyName: string]: string };
-  body?: StringMap<unknown>;
+interface PotentialOperationsResult {
+  readonly operations: OperationMatch[];
+  readonly resourceProvider: string;
+  readonly apiVersion: string;
+  readonly reason?: models.LiveValidationError;
 }
 
 export interface RequestResponsePair {
@@ -76,14 +75,9 @@ export interface RequestResponsePair {
   readonly liveResponse: LiveResponse;
 }
 
-interface OperationInfo {
-  readonly operationId: string;
-  readonly apiVersion: string;
-}
-
 export interface LiveValidationResult {
   readonly isSuccessful?: boolean;
-  readonly operationInfo: OperationInfo;
+  readonly operationInfo: OperationContext;
   readonly errors: LiveValidationIssue[];
   readonly runtimeException?: RuntimeException;
 }
@@ -100,15 +94,15 @@ export interface ApiOperationIdentifier {
 }
 
 export interface LiveValidationIssue {
-  readonly code: ErrorCode;
+  code: ExtendedErrorCode;
   readonly message: string;
   readonly jsonPathsInPayload: string[];
   readonly pathsInPayload: string[];
   readonly schemaPath: string;
   readonly severity: Severity;
   readonly source: SourceLocation;
-  readonly documentationUrl: string;
-  readonly params?: string[];
+  readonly documentationUrl?: string;
+  readonly params?: any;
   readonly inner?: LiveValidationIssue[];
 }
 
@@ -124,10 +118,9 @@ interface Meta {
  * If `includeErrors` is missing or empty, all error codes will be included.
  */
 export interface ValidateOptions {
-  readonly includeErrors?: ErrorCode[];
+  readonly includeErrors?: ExtendedErrorCode[];
+  readonly includeOperationMatch?: boolean;
 }
-
-type OperationWithApiVersion = Operation & { apiVersion: string };
 
 enum LiveValidatorLoggingLevels {
   error = "error",
@@ -148,6 +141,12 @@ export class LiveValidator {
   public options: LiveValidatorOptions;
 
   private logFunction?: (message: string, level: string, meta?: Meta) => void;
+
+  private loader?: SwaggerLiveValidatorLoader;
+
+  private loadInBackgroundComplete: boolean = false;
+
+  private validateRequestResponsePair?: ValidateFunction;
 
   /**
    * Constructs LiveValidator based on provided options.
@@ -194,6 +193,14 @@ export class LiveValidator {
       ops.isPathCaseSensitive = false;
     }
 
+    if (ops.loadValidatorInBackground === undefined) {
+      ops.loadValidatorInBackground = true;
+    }
+
+    if (ops.loadValidatorInInitialize === undefined) {
+      ops.loadValidatorInInitialize = false;
+    }
+
     this.options = ops as LiveValidatorOptions;
   }
 
@@ -210,16 +217,79 @@ export class LiveValidator {
     // Construct array of swagger paths to be used for building a cache
     this.logging("Get swagger path.");
     const swaggerPaths = await this.getSwaggerPaths();
-    const promiseFactories = swaggerPaths.map((swaggerPath) =>
-      this.getSwaggerInitializer(swaggerPath)
-    );
+    this.loader = new SwaggerLiveValidatorLoader(this.options.directory, {
+      transformToNewSchemaFormat: false,
+    });
+    this.validateRequestResponsePair = this.loader.ajv.compile(requestResponseDefinition);
 
-    await Promise.all(promiseFactories);
+    const allSpecs: SwaggerSpec[] = [];
+    while (swaggerPaths.length > 0) {
+      const swaggerPath = swaggerPaths.shift()!;
+      const spec = await this.getSwaggerInitializer(this.loader!, swaggerPath);
+      if (spec !== undefined) {
+        allSpecs.push(spec);
+      }
+    }
+
+    this.logging("Transforming all specs.");
+    this.loader.transformLoadedSpecs();
+
+    if (this.options.loadValidatorInInitialize) {
+      while (allSpecs.length > 0) {
+        const spec = allSpecs.shift()!;
+        const loadStart = Date.now();
+        await this.loader.buildAjvValidator(spec);
+        this.logging(
+          `Build validator for ${spec._filePath} with DurationInMs:${Date.now() - loadStart}.`,
+          LiveValidatorLoggingLevels.info,
+          "Oav.liveValidator.initialize"
+        );
+      }
+
+      this.loader = undefined;
+    }
+
     this.logging("Cache initialization complete.");
     const elapsedTime = Date.now() - startTime;
     this.logging(
       `Cache initialization complete with DurationInMs:${elapsedTime}.`,
-      LiveValidatorLoggingLevels.debug,
+      LiveValidatorLoggingLevels.info,
+      "Oav.liveValidator.initialize"
+    );
+
+    if (this.options.loadValidatorInBackground) {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      this.loadAllSpecValidatorInBackground(allSpecs);
+    }
+  }
+
+  public isLoadInBackgroundCompleted() {
+    return this.loadInBackgroundComplete;
+  }
+
+  private async loadAllSpecValidatorInBackground(allSpecs: SwaggerSpec[]) {
+    const backgroundStartTime = Date.now();
+    utils.shuffleArray(allSpecs);
+    while (allSpecs.length > 0) {
+      const spec = allSpecs.shift()!;
+      const startTime = Date.now();
+      await this.loader!.buildAjvValidator(spec, { inBackground: true });
+      this.logging(
+        `Build validator for ${spec._filePath} in background with DurationInMs:${
+          Date.now() - startTime
+        }.`,
+        LiveValidatorLoggingLevels.info,
+        "Oav.liveValidator.initialize"
+      );
+    }
+
+    this.loader = undefined;
+    this.loadInBackgroundComplete = true;
+    this.logging(
+      `Build validator for all specs finished in background with DurationInMs:${
+        Date.now() - backgroundStartTime
+      }.`,
+      LiveValidatorLoggingLevels.info,
       "Oav.liveValidator.initialize"
     );
   }
@@ -227,33 +297,26 @@ export class LiveValidator {
   /**
    *  Validates live request.
    */
-  public validateLiveRequest(
+  public async validateLiveRequest(
     liveRequest: LiveRequest,
-    options: ValidateOptions = {}
-  ): LiveValidationResult {
+    options: ValidateOptions = {},
+    operationInfo?: OperationContext
+  ): Promise<LiveValidationResult> {
     const startTime = Date.now();
-    let operation;
-    let validationRequest;
-    const correlationId = liveRequest.headers["x-ms-correlation-request-id"] || "";
-    try {
-      validationRequest = this.parseValidationRequest(
-        liveRequest.url,
-        liveRequest.method,
-        correlationId
-      );
-      operation = this.findSpecOperation(validationRequest);
-    } catch (err) {
+    const correlationId = liveRequest.headers?.["x-ms-correlation-request-id"] || "";
+    const { info, error } = this.getOperationInfo(liveRequest, correlationId, operationInfo);
+    if (error !== undefined) {
       this.logging(
-        err.message,
+        error.message,
         LiveValidatorLoggingLevels.error,
         "Oav.liveValidator.validateLiveRequest",
-        validationRequest
+        info.validationRequest
       );
       return {
         isSuccessful: undefined,
         errors: [],
-        runtimeException: err,
-        operationInfo: { apiVersion: C.unknownApiVersion, operationId: C.unknownOperationId },
+        runtimeException: error,
+        operationInfo: info,
       };
     }
     if (!liveRequest.query) {
@@ -262,29 +325,23 @@ export class LiveValidator {
     let errors: LiveValidationIssue[] = [];
     let runtimeException;
     try {
-      const reqResult = operation.validateRequest(liveRequest, options);
-      const processedErrors = processValidationErrors({ errors: [...reqResult.errors] });
-      errors = processedErrors
-        ? processedErrors
-            .map((err) => this.toLiveValidationIssue(err as any))
-            .filter(
-              (err) =>
-                !options.includeErrors ||
-                options.includeErrors.length === 0 ||
-                options.includeErrors.includes(err.code)
-            )
-        : [];
+      errors = await validateSwaggerLiveRequest(
+        liveRequest,
+        info,
+        this.loader,
+        options.includeErrors
+      );
     } catch (reqValidationError) {
       const msg =
         `An error occurred while validating the live request for operation ` +
-        `"${operation.operationId}". The error is:\n ` +
+        `"${info.operationId}". The error is:\n ` +
         `${util.inspect(reqValidationError, { depth: null })}`;
       runtimeException = { code: C.ErrorCodes.RequestValidationError.name, message: msg };
       this.logging(
         msg,
         LiveValidatorLoggingLevels.error,
         "Oav.liveValidator.validateLiveRequest",
-        validationRequest
+        info.validationRequest
       );
     }
     const elapsedTime = Date.now() - startTime;
@@ -292,18 +349,20 @@ export class LiveValidator {
       `DurationInMs:${elapsedTime}`,
       LiveValidatorLoggingLevels.debug,
       "Oav.liveValidator.validateLiveRequest",
-      validationRequest
+      info.validationRequest
     );
+    if (!options.includeOperationMatch) {
+      delete info.operationMatch;
+      delete info.validationRequest;
+    }
     return {
       isSuccessful: runtimeException ? undefined : errors.length === 0,
-      operationInfo: {
-        apiVersion: operation.apiVersion,
-        operationId: operation.operationId,
-      },
+      operationInfo: info,
       errors,
       runtimeException,
     };
   }
+
   private toLiveValidationIssue(err: { [index: string]: any; url: string }): LiveValidationIssue {
     return {
       code: err.code || "INTERNAL_ERROR",
@@ -334,33 +393,26 @@ export class LiveValidator {
   /**
    * Validates live response.
    */
-  public validateLiveResponse(
+  public async validateLiveResponse(
     liveResponse: LiveResponse,
     specOperation: ApiOperationIdentifier,
-    options: ValidateOptions = {}
-  ): LiveValidationResult {
+    options: ValidateOptions = {},
+    operationInfo?: OperationContext
+  ): Promise<LiveValidationResult> {
     const startTime = Date.now();
-    let operation: OperationWithApiVersion;
-    let validationRequest;
-    const correlationId = liveResponse.headers["x-ms-correlation-request-id"] || "";
-    try {
-      validationRequest = this.parseValidationRequest(
-        specOperation.url,
-        specOperation.method,
-        correlationId
-      );
-      operation = this.findSpecOperation(validationRequest);
-    } catch (err) {
+    const correlationId = liveResponse.headers?.["x-ms-correlation-request-id"] || "";
+    const { info, error } = this.getOperationInfo(specOperation, correlationId, operationInfo);
+    if (error !== undefined) {
       this.logging(
-        err.message,
+        error.message,
         LiveValidatorLoggingLevels.error,
         "Oav.liveValidator.validateLiveResponse",
-        validationRequest
+        info.validationRequest
       );
       return {
         isSuccessful: undefined,
         errors: [],
-        runtimeException: err,
+        runtimeException: error,
         operationInfo: { apiVersion: C.unknownApiVersion, operationId: C.unknownOperationId },
       };
     }
@@ -376,29 +428,23 @@ export class LiveValidator {
         utils.statusCodeStringToStatusCode[liveResponse.statusCode.toLowerCase()];
     }
     try {
-      const resResult = operation.validateResponse(liveResponse, options);
-      const processedErrors = processValidationErrors({ errors: [...resResult.errors] });
-      errors = processedErrors
-        ? processedErrors
-            .map((err) => this.toLiveValidationIssue(err as any))
-            .filter(
-              (err) =>
-                !options.includeErrors ||
-                options.includeErrors.length === 0 ||
-                options.includeErrors.includes(err.code)
-            )
-        : [];
+      errors = await validateSwaggerLiveResponse(
+        liveResponse,
+        info,
+        this.loader,
+        options.includeErrors
+      );
     } catch (resValidationError) {
       const msg =
         `An error occurred while validating the live response for operation ` +
-        `"${operation.operationId}". The error is:\n ` +
+        `"${info.operationId}". The error is:\n ` +
         `${util.inspect(resValidationError, { depth: null })}`;
       runtimeException = { code: C.ErrorCodes.RequestValidationError.name, message: msg };
       this.logging(
         msg,
         LiveValidatorLoggingLevels.error,
         "Oav.liveValidator.validateLiveResponse",
-        validationRequest
+        info.validationRequest
       );
     }
     const elapsedTime = Date.now() - startTime;
@@ -406,14 +452,15 @@ export class LiveValidator {
       `DurationInMs:${elapsedTime}`,
       LiveValidatorLoggingLevels.debug,
       "Oav.liveValidator.validateLiveResponse",
-      validationRequest
+      info.validationRequest
     );
+    if (!options.includeOperationMatch) {
+      delete info.operationMatch;
+      delete info.validationRequest;
+    }
     return {
       isSuccessful: runtimeException ? undefined : errors.length === 0,
-      operationInfo: {
-        apiVersion: operation.apiVersion,
-        operationId: operation.operationId,
-      },
+      operationInfo: info,
       errors,
       runtimeException,
     };
@@ -422,10 +469,10 @@ export class LiveValidator {
   /**
    * Validates live request and response.
    */
-  public validateLiveRequestResponse(
+  public async validateLiveRequestResponse(
     requestResponseObj: RequestResponsePair,
     options?: ValidateOptions
-  ): RequestResponseLiveValidationResult {
+  ): Promise<RequestResponseLiveValidationResult> {
     const validationResult = {
       requestValidationResult: {
         errors: [],
@@ -447,43 +494,92 @@ export class LiveValidator {
         },
       };
     }
-    try {
-      // We are using this to validate the payload as per the definitions in swagger.
-      // We do not need the serialized output from ms-rest.
-      const mapper = new models.RequestResponse().mapper();
-      // tslint:disable-next-line:align whitespace
-      (msRest as any).models = models;
-      // tslint:disable-next-line:align whitespace
-      (msRest as any).serialize(mapper, requestResponseObj, "requestResponseObj");
-    } catch (err) {
+
+    const validate = this.validateRequestResponsePair!;
+    if (!validate(requestResponseObj)) {
+      const ajvErr = validate.errors![0];
+      const errInfo = ajvErrorCodeToOavErrorCode(
+        ajvErr,
+        (JSONPath as any).toPathArray(ajvErr.dataPath),
+        ajvErr.dataPath,
+        { isResponse: false }
+      );
       const message =
-        `Found errors "${err.message}" in the provided input:\n` +
+        `Found errors "${errInfo?.message}" in the provided input in path ${ajvErr.dataPath}:\n` +
         `${util.inspect(requestResponseObj, { depth: null })}.`;
       return {
         ...validationResult,
         runtimeException: {
-          message,
           code: C.ErrorCodes.IncorrectInput.name,
+          message,
         },
       };
     }
+
     const request = requestResponseObj.liveRequest;
     const response = requestResponseObj.liveResponse;
 
-    const requestValidationResult = this.validateLiveRequest(request, options);
-    const responseValidationResult = this.validateLiveResponse(
-      response,
-      {
-        method: request.method,
-        url: request.url,
-      },
-      options
-    );
+    const requestValidationResult = await this.validateLiveRequest(request, {
+      ...options,
+      includeOperationMatch: true,
+    });
+    const info = requestValidationResult.operationInfo;
+    const responseValidationResult =
+      requestValidationResult.isSuccessful === undefined &&
+      requestValidationResult.runtimeException === undefined
+        ? requestValidationResult
+        : await this.validateLiveResponse(
+            response,
+            {
+              method: request.method,
+              url: request.url,
+            },
+            {
+              ...options,
+              includeOperationMatch: false,
+            },
+            info
+          );
+
+    delete info.validationRequest;
+    delete info.operationMatch;
 
     return {
       requestValidationResult,
       responseValidationResult,
     };
+  }
+
+  private getOperationInfo(
+    request: { url: string; method: string },
+    correlationId: string,
+    operationInfo?: OperationContext
+  ): {
+    info: OperationContext;
+    error?: any;
+  } {
+    const info = operationInfo ?? {
+      apiVersion: C.unknownApiVersion,
+      operationId: C.unknownOperationId,
+    };
+    try {
+      if (info.validationRequest === undefined) {
+        info.validationRequest = this.parseValidationRequest(
+          request.url,
+          request.method,
+          correlationId
+        );
+      }
+      if (info.operationMatch === undefined) {
+        const result = this.findSpecOperation(info.validationRequest);
+        info.apiVersion = result.apiVersion;
+        info.operationMatch = result.operationMatch;
+      }
+      info.operationId = info.operationMatch.operation.operationId!;
+      return { info };
+    } catch (error) {
+      return { info, error };
+    }
   }
 
   /**
@@ -502,7 +598,7 @@ export class LiveValidator {
       throw new Error(msgStr);
     }
 
-    let potentialOperations: Operation[] = [];
+    let potentialOperations: OperationMatch[] = [];
     let msg;
     let code;
     let liveValidationError: models.LiveValidationError | undefined;
@@ -512,12 +608,12 @@ export class LiveValidator {
         C.ErrorCodes.PathNotFoundInRequestUrl.name,
         msg
       );
-      return new models.PotentialOperationsResult(
-        potentialOperations,
-        C.unknownResourceProvider,
-        C.unknownApiVersion,
-        liveValidationError
-      );
+      return {
+        operations: potentialOperations,
+        resourceProvider: C.unknownResourceProvider,
+        apiVersion: C.unknownApiVersion,
+        reason: liveValidationError,
+      };
     }
 
     // Search using provider
@@ -600,12 +696,12 @@ export class LiveValidator {
       requestInfo
     );
 
-    return new models.PotentialOperationsResult(
-      potentialOperations,
-      requestInfo.providerNamespace,
-      requestInfo.apiVersion,
-      liveValidationError
-    );
+    return {
+      operations: potentialOperations,
+      resourceProvider: requestInfo.providerNamespace,
+      apiVersion: requestInfo.apiVersion,
+      reason: liveValidationError,
+    };
   }
 
   /**
@@ -704,12 +800,35 @@ export class LiveValidator {
    *
    * @returns {Array<Operation>} List of matched operations with the request url.
    */
-  private getMatchedOperations(requestUrl: string, operations: Operation[]): Operation[] {
-    return operations.filter((operation) => {
-      const pathObject = operation.pathObject;
-      const pathMatch = pathObject.regexp.exec(requestUrl);
-      return pathMatch !== null;
-    });
+  private getMatchedOperations(
+    requestUrl: string,
+    operations: Operation[],
+    query?: ParsedUrlQuery
+  ): OperationMatch[] {
+    const result: OperationMatch[] = [];
+    const queryMatchResult: OperationMatch[] = [];
+
+    for (const operation of operations) {
+      const path = operation._path;
+      // Validate query first so we could match operation in x-ms-paths
+      const queryMatch = path._validateQuery === undefined ? undefined : path._validateQuery(query);
+      if (queryMatch === false) {
+        continue;
+      }
+
+      const pathMatch = path._pathRegex.exec(requestUrl);
+      if (pathMatch === null) {
+        continue;
+      }
+
+      (queryMatch === undefined ? result : queryMatchResult).push({
+        operation,
+        pathRegex: path._pathRegex,
+        pathMatch: pathMatch,
+      });
+    }
+
+    return queryMatchResult.length === 0 ? result : queryMatchResult;
   }
 
   /**
@@ -726,40 +845,38 @@ export class LiveValidator {
   private getPotentialOperationsHelper(
     requestInfo: ValidationRequest,
     operations: Operation[]
-  ): Operation[] {
+  ): OperationMatch[] {
     const startTime = Date.now();
     if (operations === null || operations === undefined || !Array.isArray(operations)) {
       throw new Error('operations is a required parameter of type "array".');
     }
 
     let requestUrl = formatUrlToExpectedFormat(requestInfo.pathStr);
-    let potentialOperations = this.getMatchedOperations(requestUrl, operations);
+    let potentialOperations = this.getMatchedOperations(
+      requestUrl,
+      operations,
+      requestInfo.queryStr
+    );
 
     // fall back to the last child resource url to search for operations
     // if there're no matched operations for found for the whole url
     if (!potentialOperations.length) {
       requestUrl = utils.getLastResourceUrlToMatch(requestUrl);
-      potentialOperations = this.getMatchedOperations(requestUrl, operations);
+      potentialOperations = this.getMatchedOperations(requestUrl, operations, requestInfo.queryStr);
     }
 
     // If we do not find any match then we'll look into Microsoft.Unknown -> unknown-api-version
     // for given requestMethod as the fall back option
     if (!potentialOperations.length) {
-      const c = this.cache[C.unknownResourceProvider];
-      if (c && c[C.unknownApiVersion]) {
-        operations = c[C.unknownApiVersion][requestInfo.requestMethod];
-        if (operations && !operations.length) {
-          potentialOperations = operations.filter((operation) => {
-            const pathObject = operation.pathObject;
-            let pathTemplate = pathObject.path;
-            if (pathTemplate && pathTemplate.includes("?")) {
-              pathTemplate = pathTemplate.slice(0, pathTemplate.indexOf("?"));
-              pathObject.path = pathTemplate;
-            }
-            const pathMatch = pathObject.regexp.exec(requestInfo.pathStr);
-            return pathMatch !== null;
-          });
-        }
+      const ops = this.cache[C.unknownResourceProvider]?.[requestInfo.apiVersion]?.[
+        requestInfo.requestMethod
+      ];
+      if (ops !== undefined) {
+        potentialOperations = this.getMatchedOperations(
+          requestInfo.pathStr,
+          operations,
+          requestInfo.queryStr
+        );
       }
     }
     const elapsedTime = Date.now() - startTime;
@@ -776,7 +893,12 @@ export class LiveValidator {
   /**
    * Gets the swagger operation based on the HTTP url and method
    */
-  private findSpecOperation(requestInfo: ValidationRequest): OperationWithApiVersion {
+  private findSpecOperation(
+    requestInfo: ValidationRequest
+  ): {
+    operationMatch: OperationMatch;
+    apiVersion: string;
+  } {
     let potentialOperationsResult;
     try {
       potentialOperationsResult = this.getPotentialOperations(requestInfo);
@@ -796,16 +918,17 @@ export class LiveValidator {
       throw potentialOperationsResult.reason;
       // Found more than 1 potentialOperations
     } else if (potentialOperationsResult.operations.length > 1) {
-      const operationInfos: Array<{ id: number; path: string; specPath: string }> = [];
+      const operationInfos: Array<{ id: string; path: string; specPath: string }> = [];
 
-      potentialOperationsResult.operations.forEach((operation) => {
+      potentialOperationsResult.operations.forEach(({ operation }) => {
+        const specPath = operation._path._spec._filePath;
         const swaggerSpecPath =
-          this.options.useRelativeSourceLocationUrl && operation.pathObject.specPath
-            ? operation.pathObject.specPath.substr(this.options.directory.length)
-            : operation.pathObject.specPath;
+          this.options.useRelativeSourceLocationUrl && specPath
+            ? specPath.substr(this.options.directory.length)
+            : specPath;
         operationInfos.push({
-          id: operation.operationId,
-          path: operation.pathObject.path,
+          id: operation.operationId!,
+          path: operation._path._pathTemplate,
           specPath: swaggerSpecPath,
         });
       });
@@ -824,9 +947,10 @@ export class LiveValidator {
       throw e;
     }
 
-    const op = potentialOperationsResult.operations[0];
-    Object.assign(op, { apiVersion: potentialOperationsResult.apiVersion });
-    return op as OperationWithApiVersion;
+    return {
+      operationMatch: potentialOperationsResult.operations[0],
+      apiVersion: potentialOperationsResult.apiVersion,
+    };
   }
 
   private async getMatchedPaths(jsonsPattern: string | string[]): Promise<string[]> {
@@ -868,76 +992,91 @@ export class LiveValidator {
     }
   }
 
-  private async getSwaggerInitializer(swaggerPath: string): Promise<void> {
+  private async getSwaggerInitializer(
+    loader: SwaggerLiveValidatorLoader,
+    swaggerPath: string
+  ): Promise<SwaggerSpec | undefined> {
     const startTime = Date.now();
     this.logging(`Building cache from: "${swaggerPath}"`, LiveValidatorLoggingLevels.debug);
 
-    const validator = new SpecValidator(swaggerPath, null, {
+    const validator = new SwaggerValidator(swaggerPath, {
       isPathCaseSensitive: this.options.isPathCaseSensitive,
       shouldResolveXmsExamples: false,
+      loadSuppression: false,
     });
 
     try {
       const startTimeLoadSpec = Date.now();
-      const api = await validator.initialize();
+      const spec = await validator.initialize(loader);
       const elapsedTimeLoadSpec = Date.now() - startTimeLoadSpec;
       this.logging(
         `Load spec for ${swaggerPath} with DurationInMs:${elapsedTimeLoadSpec}`,
-        LiveValidatorLoggingLevels.debug,
+        LiveValidatorLoggingLevels.info,
         "Oav.liveValidator.getSwaggerInitializer.specValidator.initialize"
       );
 
-      const operations = api.getOperations();
-      for (const operation of operations) {
-        const httpMethod = operation.method.toLowerCase();
-        const pathObject = operation.pathObject;
-        const pathStr = pathObject.path;
-        let apiVersion = api.info.version.toLowerCase();
-        let provider = utils.getProvider(pathStr);
-        this.logging(
-          `${apiVersion}, ${operation.operationId}, ${pathStr}, ${httpMethod}`,
-          LiveValidatorLoggingLevels.debug
-        );
-
-        if (!provider) {
-          const title = api.info.title;
-
-          // Whitelist lookups: Look up knownTitleToResourceProviders
-          // Putting the provider namespace onto operation for future use
-          if (title && C.knownTitleToResourceProviders[title]) {
-            operation.provider = C.knownTitleToResourceProviders[title];
-          }
-
-          // Put the operation into 'Microsoft.Unknown' RPs
-          provider = C.unknownResourceProvider;
-          apiVersion = C.unknownApiVersion;
+      loader.traverseSwagger(spec, {
+        onOperation: (operation, path, method) => {
+          const httpMethod = method.toLowerCase();
+          const pathObject = path;
+          const pathStr = pathObject._pathTemplate;
+          let apiVersion = spec.info.version;
+          let provider = utils.getProvider(pathStr);
           this.logging(
-            `Unable to find provider for path : "${pathObject.path}". ` +
-              `Bucketizing into provider: "${provider}"`,
+            `${apiVersion}, ${operation.operationId}, ${pathStr}, ${httpMethod}`,
             LiveValidatorLoggingLevels.debug
           );
-        }
-        provider = provider.toLowerCase();
 
-        // Get all api-version for given provider or initialize it
-        const apiVersions = this.cache[provider] || {};
-        // Get methods for given apiVersion or initialize it
-        const allMethods = apiVersions[apiVersion] || {};
-        // Get specific http methods array for given verb or initialize it
-        const operationsForHttpMethod = allMethods[httpMethod] || [];
+          if (!provider) {
+            const title = spec.info.title;
 
-        // Builds the cache
-        operationsForHttpMethod.push(operation);
-        allMethods[httpMethod] = operationsForHttpMethod;
-        apiVersions[apiVersion] = allMethods;
-        this.cache[provider] = apiVersions;
-      }
+            // Whitelist lookups: Look up knownTitleToResourceProviders
+            // Putting the provider namespace onto operation for future use
+            if (title && C.knownTitleToResourceProviders[title]) {
+              operation.provider = C.knownTitleToResourceProviders[title];
+            }
+
+            // Put the operation into 'Microsoft.Unknown' RPs
+            provider = C.unknownResourceProvider;
+            this.logging(
+              `Unable to find provider for path : "${pathObject._pathTemplate}". ` +
+                `Bucketizing into provider: "${provider}"`,
+              LiveValidatorLoggingLevels.debug
+            );
+          }
+          provider = provider.toLowerCase();
+
+          if (!apiVersion) {
+            this.logging(
+              `Unable to find apiVersion for path : "${pathObject._pathTemplate}".`,
+              LiveValidatorLoggingLevels.error
+            );
+            apiVersion = C.unknownApiVersion;
+          }
+          apiVersion = apiVersion.toLowerCase();
+
+          // Get all api-version for given provider or initialize it
+          const apiVersions = this.cache[provider] || {};
+          // Get methods for given apiVersion or initialize it
+          const allMethods = apiVersions[apiVersion] || {};
+          // Get specific http methods array for given verb or initialize it
+          const operationsForHttpMethod = allMethods[httpMethod] || [];
+
+          // Builds the cache
+          operationsForHttpMethod.push(operation);
+          allMethods[httpMethod] = operationsForHttpMethod;
+          apiVersions[apiVersion] = allMethods;
+          this.cache[provider] = apiVersions;
+        },
+      });
       const elapsedTime = Date.now() - startTime;
       this.logging(
         `DurationInMs:${elapsedTime}`,
         LiveValidatorLoggingLevels.debug,
         "Oav.liveValidator.getSwaggerInitializer"
       );
+
+      return spec;
     } catch (err) {
       // Do Not reject promise in case, we cannot initialize one of the swagger
       this.logging(
@@ -949,6 +1088,8 @@ export class LiveValidator {
           `ignoring this swagger file and continuing to build cache for other valid specs.`,
         LiveValidatorLoggingLevels.warn
       );
+
+      return undefined;
     }
   }
 

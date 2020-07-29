@@ -1,21 +1,23 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
+
+import * as jsonRefs from "json-refs";
+
 import { filterMap, isArray } from "@ts-common/iterator";
-import { setMutableProperty } from "@ts-common/property-set";
 import {
   getAllDirectives,
   getDescendantFilePosition,
   getInfo,
   getRootObjectInfo,
 } from "@ts-common/source-map";
-import { merge } from "@ts-common/string-map";
-import * as jsonRefs from "json-refs";
 import { jsonSymbol, schemaSymbol } from "z-schema";
 
+import { merge } from "@ts-common/string-map";
+import { setMutableProperty } from "@ts-common/property-set";
 import { TitleObject } from "../validators/specTransformer";
 import { CommonError } from "./commonError";
-import { log } from "./logging";
 import { NodeError } from "./validationError";
+import { log } from "./logging";
 
 export const processErrors = <T extends NodeError<T>>(errors: T[] | undefined): T[] | undefined =>
   errors === undefined ? undefined : Array.from(filterMap(errors, one));

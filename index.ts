@@ -31,6 +31,7 @@ export {
   ExtendedErrorCode,
   WrapperErrorCode,
   RuntimeErrorCode,
+  RuntimeException,
 } from "./lib/util/validationError";
 
 // Classes
@@ -38,8 +39,6 @@ export { SpecValidator } from "./lib/validators/specValidator";
 export {
   LiveValidator,
   RequestResponsePair,
-  LiveRequest,
-  LiveResponse,
   LiveValidationIssue,
   LiveValidatorOptions,
   ApiOperationIdentifier,
@@ -47,6 +46,7 @@ export {
   LiveValidationResult,
   ValidateOptions,
 } from "./lib/validators/liveValidator";
+export { LiveRequest, LiveResponse } from "./lib/swagger/swaggerLiveValidator";
 export { SpecResolver } from "./lib/validators/specResolver";
 
 // Constants

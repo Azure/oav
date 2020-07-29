@@ -1,24 +1,24 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
+
+import * as Sway from "yasway";
 import * as amd from "@azure/openapi-markdown";
+import * as jsonParser from "@ts-common/json-parser";
+import * as msRest from "ms-rest";
+import * as sm from "@ts-common/string-map";
 import { filter, toArray } from "@ts-common/iterator";
 import { JsonRef } from "@ts-common/json";
-import * as jsonParser from "@ts-common/json-parser";
 import { getDescendantFilePosition } from "@ts-common/source-map";
-import * as sm from "@ts-common/string-map";
-import * as msRest from "ms-rest";
-import * as Sway from "yasway";
-import { ResponseWrapper } from "../models/responseWrapper";
-import { CommonError } from "../util/commonError";
-import * as C from "../util/constants";
-import * as jsonUtils from "../util/jsonUtils";
-import { log } from "../util/logging";
-import { ModelValidationError } from "../util/modelValidationError";
-import { processErrors, setPositionAndUrl } from "../util/processErrors";
 import { MultipleScenarios, Scenario } from "../util/responseReducer";
+import { processErrors, setPositionAndUrl } from "../util/processErrors";
+import { CommonError } from "../util/commonError";
+import { ModelValidationError } from "../util/modelValidationError";
 import { OperationResultType } from "../util/scenarioReducer";
+import { ResponseWrapper } from "../models/responseWrapper";
 import * as utils from "../util/utils";
-import { getTitle } from "./specTransformer";
+import * as jsonUtils from "../util/jsonUtils";
+import * as C from "../util/constants";
+import { log } from "../util/logging";
 import {
   ExampleResponse,
   RequestValidation,
@@ -27,6 +27,7 @@ import {
   ValidationResult,
   ValidationResultScenarios,
 } from "./specValidator";
+import { getTitle } from "./specTransformer";
 
 const HttpRequest = msRest.WebResource;
 

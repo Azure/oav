@@ -1,17 +1,17 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
+
 import * as assert from "assert";
-import * as globby from "globby";
-import * as lodash from "lodash";
 import * as os from "os";
 import * as path from "path";
+import * as globby from "globby";
+import * as lodash from "lodash";
 import { ResponsesObject } from "yasway";
-
 import * as Constants from "../lib/util/constants";
 import { LiveValidator } from "../lib/validators/liveValidator";
 
 const numberOfSpecs = 11;
-jest.setTimeout(150000);
+jest.setTimeout(5000);
 
 describe("Live Validator", () => {
   describe("Initialization", () => {
@@ -132,6 +132,8 @@ describe("Live Validator", () => {
         git,
         directory,
         isPathCaseSensitive: false,
+        loadValidatorInBackground: true,
+        loadValidatorInInitialize: false,
       };
       const validator = new LiveValidator({
         swaggerPaths,
@@ -370,19 +372,20 @@ describe("Live Validator", () => {
         "/privatecontainer/providers/Microsoft.Authorization/roleAssignments" +
         "/3fa73e4b-d60d-43b2-a248-fb776fd0bf60" +
         "?api-version=2018-09-01-preview";
-      const validator: any = new LiveValidator(options);
+      const validator = new LiveValidator(options);
       await validator.initialize();
       // Operations to match is RoleAssignments_Create
       const validationInfo = validator.parseValidationRequest(requestUrl, "Put", "randomId");
-      const operations = validator.getPotentialOperations(validationInfo).operations;
-      const pathObject = operations[0].pathObject;
+      // eslint-disable-next-line dot-notation
+      const operations = validator["getPotentialOperations"](validationInfo).operations;
+      const pathObject = operations[0].operation._path;
       if (pathObject === undefined) {
         throw new Error("pathObject is undefined");
       }
       assert.strictEqual(1, operations.length);
       assert.strictEqual(
         "/{scope}/providers/Microsoft.Authorization/roleAssignments/{roleAssignmentName}",
-        pathObject.path
+        pathObject._pathTemplate
       );
     });
     it("should return one matched operation for arm-storage", async () => {
@@ -401,38 +404,41 @@ describe("Live Validator", () => {
         "https://management.azure.com/" +
         "subscriptions/subscriptionId/resourceGroups/myRG/providers/Microsoft.Storage/" +
         "storageAccounts/accname?api-version=2015-06-15";
-      const validator: any = new LiveValidator(options);
+      const validator = new LiveValidator(options);
       await validator.initialize();
       // Operations to match is StorageAccounts_List
       let validationInfo = validator.parseValidationRequest(listRequestUrl, "Get", "randomId");
-      let operations = validator.getPotentialOperations(validationInfo).operations;
-      let pathObject = operations[0].pathObject;
+      // eslint-disable-next-line dot-notation
+      let operations = validator["getPotentialOperations"](validationInfo).operations;
+      let pathObject = operations[0].operation._path;
       if (pathObject === undefined) {
         throw new Error("pathObject is undefined");
       }
       assert.strictEqual(1, operations.length);
       assert.strictEqual(
         "/subscriptions/{subscriptionId}/providers/Microsoft.Storage/storageAccounts",
-        pathObject.path
+        pathObject._pathTemplate
       );
 
       // Operations to match is StorageAccounts_CheckNameAvailability
       validationInfo = validator.parseValidationRequest(postRequestUrl, "PoSt", "randomId");
-      operations = validator.getPotentialOperations(validationInfo).operations;
-      pathObject = operations[0].pathObject;
+      // eslint-disable-next-line dot-notation
+      operations = validator["getPotentialOperations"](validationInfo).operations;
+      pathObject = operations[0].operation._path;
       if (pathObject === undefined) {
         throw new Error("pathObject is undefined");
       }
       assert.strictEqual(1, operations.length);
       assert.strictEqual(
         "/subscriptions/{subscriptionId}/providers/Microsoft.Storage/checkNameAvailability",
-        pathObject.path
+        pathObject._pathTemplate
       );
 
       // Operations to match is StorageAccounts_Delete
       validationInfo = validator.parseValidationRequest(deleteRequestUrl, "Delete", "randomId");
-      operations = validator.getPotentialOperations(validationInfo).operations;
-      pathObject = operations[0].pathObject;
+      // eslint-disable-next-line dot-notation
+      operations = validator["getPotentialOperations"](validationInfo).operations;
+      pathObject = operations[0].operation._path;
       if (pathObject === undefined) {
         throw new Error("pathObject is undefined");
       }
@@ -440,7 +446,7 @@ describe("Live Validator", () => {
       assert.strictEqual(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/" +
           "Microsoft.Storage/storageAccounts/{accountName}",
-        pathObject.path
+        pathObject._pathTemplate
       );
     });
     it("should return reason for not matched operations", async () => {
@@ -552,7 +558,7 @@ describe("Live Validator", () => {
         const validator = new LiveValidator(options);
         await validator.initialize();
         const reqRes = require(livePath);
-        const validationResult = validator.validateLiveRequestResponse(reqRes);
+        const validationResult = await validator.validateLiveRequestResponse(reqRes);
         assert.notStrictEqual(validationResult, undefined);
         /* tslint:disable-next-line */
         // console.dir(validationResult, { depth: null, colors: true })
@@ -565,7 +571,7 @@ describe("Live Validator", () => {
       };
       const validator = new LiveValidator(options);
       await validator.initialize();
-      const result = validator.validateLiveRequestResponse({
+      const result = await validator.validateLiveRequestResponse({
         liveRequest: {
           url: "https://xxx.com/providers/someprovider?api-version=2018-01-01",
           method: "get",
@@ -602,7 +608,7 @@ describe("Live Validator", () => {
         "/subscriptions/rs/resourceGroups/rsg/providers/MICROsoft.stoRAGE/storageAccounts/test?api-version=2015-05-01-PREVIEW";
       const validator = new LiveValidator(options);
       await validator.initialize();
-      const result = validator.validateLiveRequestResponse({
+      const result = await validator.validateLiveRequestResponse({
         liveRequest: {
           url: adjustedUrl.toLocaleUpperCase(),
           method: "get",
@@ -655,7 +661,7 @@ describe("Live Validator", () => {
       const validator = new LiveValidator(options);
       await validator.initialize();
       const payload = require(`${__dirname}/liveValidation/payloads/fooResourceProvider_input.json`);
-      const result = validator.validateLiveRequestResponse(payload);
+      const result = await validator.validateLiveRequestResponse(payload);
       const runtimeException = result.requestValidationResult.runtimeException;
       if (runtimeException === undefined) {
         throw new Error("runtimeException === undefined");
@@ -670,7 +676,7 @@ describe("Live Validator", () => {
       };
       const validator = new LiveValidator(options);
       await validator.initialize();
-      const result = validator.validateLiveRequestResponse({
+      const result = await validator.validateLiveRequestResponse({
         liveRequest: {
           url: "https://xxx.com/providers/someprovider?api-version=2018-01-01",
           method: "get",
@@ -731,7 +737,7 @@ describe("Live validator snapshot validation", () => {
 
   test(`should return no errors for valid input`, async () => {
     const payload = require(`${__dirname}/liveValidation/payloads/valid_input.json`);
-    const validationResult = validator.validateLiveRequestResponse(payload);
+    const validationResult = await validator.validateLiveRequestResponse(payload);
     expect(validationResult).toMatchSnapshot();
   });
 
@@ -751,7 +757,7 @@ describe("Live validator snapshot validation", () => {
     await liveValidator.initialize();
 
     const payload = require(`${__dirname}/liveValidation/payloads/multiplePperationFound_input`);
-    const result = liveValidator.validateLiveRequestResponse(payload);
+    const result = await liveValidator.validateLiveRequestResponse(payload);
     expect(
       result.responseValidationResult.runtimeException &&
         result.responseValidationResult.runtimeException.code === "MULTIPLE_OPERATIONS_FOUND"
@@ -786,7 +792,7 @@ describe("Live validator snapshot validation", () => {
     await liveValidator.initialize();
 
     const payload = require(`${__dirname}/liveValidation/payloads/readonlyProperty_input.json`);
-    const result = liveValidator.validateLiveRequestResponse(payload);
+    const result = await liveValidator.validateLiveRequestResponse(payload);
     expect(result).toMatchSnapshot();
   });
 
@@ -810,7 +816,7 @@ describe("Live validator snapshot validation", () => {
     await liveValidator.initialize();
 
     const payload = require(`${__dirname}/liveValidation/payloads/unresolvableReference_input.json`);
-    const result = liveValidator.validateLiveRequest(payload.input.request, {
+    const result = await liveValidator.validateLiveRequest(payload.input.request, {
       includeErrors: ["UNRESOLVABLE_REFERENCE"],
     });
     expect(result.isSuccessful === false);
@@ -822,7 +828,7 @@ describe("Live validator snapshot validation", () => {
       const payload = require(`${__dirname}/liveValidation/payloads/${lodash.camelCase(
         error
       )}_input.json`);
-      const validationResult = validator.validateLiveRequestResponse(payload);
+      const validationResult = await validator.validateLiveRequestResponse(payload);
       expect(validationResult).toMatchSnapshot();
     });
 
@@ -830,9 +836,9 @@ describe("Live validator snapshot validation", () => {
       const payload = require(`${__dirname}/liveValidation/payloads/${lodash.camelCase(
         error
       )}_input.json`);
-      const validationResult = validator.validateLiveRequestResponse(payload);
-      const requestValidationResult = validator.validateLiveRequest(payload.liveRequest);
-      const responseValidationResult = validator.validateLiveResponse(payload.liveResponse, {
+      const validationResult = await validator.validateLiveRequestResponse(payload);
+      const requestValidationResult = await validator.validateLiveRequest(payload.liveRequest);
+      const responseValidationResult = await validator.validateLiveResponse(payload.liveResponse, {
         url: payload.liveRequest.url,
         method: payload.liveRequest.method,
       });
@@ -842,12 +848,12 @@ describe("Live validator snapshot validation", () => {
   });
   test(`should match for one of missing`, async () => {
     const payload = require(`${__dirname}/liveValidation/payloads/oneOfMissing_input.json`);
-    const result = validatorOneOf.validateLiveRequestResponse(payload);
+    const result = await validatorOneOf.validateLiveRequestResponse(payload);
     expect(result).toMatchSnapshot();
   });
   test(`should return all errors for no options`, async () => {
     const payload = require(`${__dirname}/liveValidation/payloads/multipleErrors_input.json`);
-    const result = validator.validateLiveRequestResponse(payload);
+    const result = await validator.validateLiveRequestResponse(payload);
     expect(result.responseValidationResult.errors.length === 3);
     expect(result.responseValidationResult.errors.some((err) => err.code === "INVALID_TYPE"));
     expect(result.responseValidationResult.errors.some((err) => err.code === "INVALID_FORMAT"));
@@ -859,12 +865,12 @@ describe("Live validator snapshot validation", () => {
   });
   test(`should match all errors for no options`, async () => {
     const payload = require(`${__dirname}/liveValidation/payloads/multipleErrors_input.json`);
-    const result = validator.validateLiveRequestResponse(payload);
+    const result = await validator.validateLiveRequestResponse(payload);
     expect(result).toMatchSnapshot();
   });
   test(`should return all errors for empty includeErrors list`, async () => {
     const payload = require(`${__dirname}/liveValidation/payloads/multipleErrors_input.json`);
-    const result = validator.validateLiveRequestResponse(payload, { includeErrors: [] });
+    const result = await validator.validateLiveRequestResponse(payload, { includeErrors: [] });
     expect(result.responseValidationResult.errors.length === 3);
     expect(result.responseValidationResult.errors.some((err) => err.code === "INVALID_TYPE"));
     expect(result.responseValidationResult.errors.some((err) => err.code === "INVALID_FORMAT"));
@@ -877,7 +883,7 @@ describe("Live validator snapshot validation", () => {
 
   test(`should return only errors specified  in the list`, async () => {
     const payload = require(`${__dirname}/liveValidation/payloads/multipleErrors_input.json`);
-    const result = validator.validateLiveRequestResponse(payload, {
+    const result = await validator.validateLiveRequestResponse(payload, {
       includeErrors: ["INVALID_TYPE"],
     });
     expect(result.responseValidationResult.errors.length === 1);

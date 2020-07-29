@@ -1,18 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import { PartialFactory } from "@ts-common/property-set";
-import {
-  arrayMap,
-  getInfo,
-  getPath,
-  propertySetMap,
-  stringMapMap,
-  stringMapMerge,
-} from "@ts-common/source-map";
-import { MutableStringMap } from "@ts-common/string-map";
-import { pathToPtr } from "json-refs";
 import * as uuid from "uuid";
+
 import {
   DefinitionsObject,
   OperationObject,
@@ -23,7 +13,18 @@ import {
   SchemaObject,
   SwaggerObject,
 } from "yasway";
+import {
+  arrayMap,
+  getInfo,
+  getPath,
+  propertySetMap,
+  stringMapMap,
+  stringMapMerge,
+} from "@ts-common/source-map";
 
+import { MutableStringMap } from "@ts-common/string-map";
+import { PartialFactory } from "@ts-common/property-set";
+import { pathToPtr } from "json-refs";
 import { generatedPrefix } from "./cloudError";
 import { getSchemaObjectInfo, setSchemaInfo, setSchemaTitle } from "./specTransformer";
 

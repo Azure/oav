@@ -4,9 +4,8 @@
 import * as fs from "fs";
 import * as pathlib from "path";
 import * as _ from "@ts-common/iterator";
-import { entries, keys, MutableStringMap, StringMap, values } from "@ts-common/string-map";
+import { MutableStringMap, StringMap, entries, keys, values } from "@ts-common/string-map";
 import swaggerParser from "swagger-parser";
-
 import { log } from "./util/logging";
 
 interface Options {

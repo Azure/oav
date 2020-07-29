@@ -19,9 +19,18 @@ export const isSubPath = (
     mainPath.length > subPath.length &&
     subPath.every((s, i) => mainPath[i] === s));
 
-export const buildRegex = (hostTemplate: string, basePathPrefix: string, path: string): RegExp => {
+export type RegExpWithKeys = RegExp & { _keys: string[] };
+export const buildPathRegex = (
+  hostTemplate: string,
+  basePathPrefix: string,
+  path: string
+): RegExpWithKeys => {
   hostTemplate = hostTemplate.replace("https://", "");
   hostTemplate = hostTemplate.replace("http://", "");
+
+  if (path.endsWith("/")) {
+    path = path.substr(0, path.length - 1);
+  }
 
   const params: string[] = [];
 
@@ -29,7 +38,7 @@ export const buildRegex = (hostTemplate: string, basePathPrefix: string, path: s
     if (regResult) {
       const paramName = regResult.replace("{", "").replace("}", "");
 
-      if (params.indexOf(paramName) === -1) {
+      if (!params.includes(paramName)) {
         params.push(paramName);
       }
     }
@@ -39,12 +48,12 @@ export const buildRegex = (hostTemplate: string, basePathPrefix: string, path: s
   const regHostParams = hostTemplate.match(/({[\w-]+})/gi);
 
   if (regHostParams) {
-    regHostParams.forEach((v) => collectParamName(v));
+    regHostParams.forEach(collectParamName);
   }
   const regPathParams = path.match(/({[\w-]+})/gi);
 
   if (regPathParams) {
-    regPathParams.forEach((v) => collectParamName(v));
+    regPathParams.forEach(collectParamName);
   }
 
   /**
@@ -72,10 +81,13 @@ export const buildRegex = (hostTemplate: string, basePathPrefix: string, path: s
   const regexp = pathToRegexp(processedPath, keys, { sensitive: false });
 
   // restore parameter name
-  keys.forEach(function (v, i) {
+  const _keys: string[] = [];
+  keys.forEach((v, i) => {
     if (params[v.name as any]) {
-      keys[i].name = params[v.name as any];
+      _keys[i + 1] = params[v.name as any];
     }
   });
-  return regexp;
+  const regexpWithKeys: RegExpWithKeys = regexp as RegExpWithKeys;
+  regexpWithKeys._keys = _keys;
+  return regexpWithKeys;
 };

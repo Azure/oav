@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import * as path from "path";
-import * as Sway from "yasway";
 import * as amd from "@azure/openapi-markdown";
 import * as json from "@ts-common/json";
 import * as jsonParser from "@ts-common/json-parser";
@@ -12,20 +10,40 @@ import * as C from "../util/constants";
 import * as jsonUtils from "../util/jsonUtils";
 import * as processErrors from "../util/processErrors";
 import { CommonError } from "../util/commonError";
-import { DocCache } from "../util/documents";
 import { Headers } from "../templates/httpTemplate";
 import { ModelValidation } from "../util/getErrorsFromModelValidation";
-import { OperationResult } from "../util/scenarioReducer";
-import { log } from "../util/logging";
-import * as specResolver from "./specResolver";
 
+import { OperationResult } from "../util/scenarioReducer";
+import { SwaggerLoader } from "../swagger/swaggerLoader";
+import { SwaggerSpec } from "../swagger/swaggerTypes";
+import { log } from "../util/logging";
 import { getSuppressions } from "./suppressions";
 import { getTitle } from "./specTransformer";
+import * as specResolver from "./specResolver";
+
+export interface ValidationEntry {
+  code: string;
+  error: string;
+  errors: ValidationEntry[]; // for nested errors
+  lineage: string[];
+  message: string;
+  name: string;
+  params: any[];
+  path: string[];
+  schemaPath: string;
+  schemaId: string;
+}
+
+export interface ValidationResults {
+  errors: ValidationEntry[];
+  warnings?: ValidationEntry[];
+}
 
 const ErrorCodes = C.ErrorCodes;
 
 export interface Options extends specResolver.Options {
   readonly isPathCaseSensitive?: boolean;
+  readonly loadSuppression?: boolean;
 }
 
 export interface ErrorCode {
@@ -35,10 +53,10 @@ export interface ErrorCode {
 
 export interface RequestValidation {
   request?: unknown;
-  validationResult?: Sway.ValidationResults;
+  validationResult?: ValidationResults;
 }
 
-type ResponseValidation = StringMap<Sway.ValidationResults>;
+type ResponseValidation = StringMap<ValidationResults>;
 
 export interface ValidationResult {
   exampleNotFound?: CommonError;
@@ -53,7 +71,7 @@ export interface ValidationResultScenarios {
 
 export interface SpecValidationResult extends ModelValidation {
   validityStatus: boolean;
-  resolveSpec?: Sway.ValidationEntry;
+  resolveSpec?: ValidationEntry;
 }
 
 export interface ExampleResponse {
@@ -64,7 +82,7 @@ export interface ExampleResponse {
 export interface CommonValidationResult {
   validityStatus: boolean;
   operations: StringMap<OperationResult | undefined>;
-  resolveSpec?: Sway.ValidationEntry;
+  resolveSpec?: ValidationEntry;
 }
 
 export interface ErrorParameters<TE extends CommonError> {
@@ -79,18 +97,12 @@ export interface ErrorParameters<TE extends CommonError> {
  * @class
  * Performs semantic and data validation of the given swagger spec.
  */
-export class SpecValidator<T extends CommonValidationResult> {
+export class SwaggerValidator<T extends CommonValidationResult> {
   public specValidationResult: T;
 
-  protected specInJson: Sway.SwaggerObject;
-
-  protected swaggerApi: Sway.SwaggerApi | null = null;
-
-  protected specPath: string;
+  protected specInJson: SwaggerSpec | null = null;
 
   protected suppression?: amd.Suppression;
-
-  private readonly specDir: unknown;
 
   private readonly options: Options;
 
@@ -132,12 +144,7 @@ export class SpecValidator<T extends CommonValidationResult> {
    *
    * @return {object} An instance of the SpecValidator class.
    */
-  public constructor(
-    specPath: string,
-    specInJson: Sway.SwaggerObject | undefined | null | string,
-    options: Options,
-    private readonly docsCache: DocCache = {}
-  ) {
+  public constructor(private specPath: string, options: Options) {
     if (
       specPath === null ||
       specPath === undefined ||
@@ -157,8 +164,6 @@ export class SpecValidator<T extends CommonValidationResult> {
       );
     }
     this.specPath = specPath;
-    this.specDir = path.dirname(this.specPath);
-    this.specInJson = specInJson as Sway.SwaggerObject;
     const base: CommonValidationResult = {
       validityStatus: true,
       operations: {},
@@ -181,38 +186,25 @@ export class SpecValidator<T extends CommonValidationResult> {
    * Initializes the spec validator. Resolves the spec on different counts using the SpecResolver
    * and initializes the internal api validator.
    */
-  public async initialize(): Promise<Sway.SwaggerApi> {
+  public async initialize(swaggerLoader: SwaggerLoader): Promise<SwaggerSpec> {
     const errors: jsonParser.ParseError[] = [];
-    const reportError = (e: jsonParser.ParseError) => errors.push(e);
+    // const reportError = (e: jsonParser.ParseError) => errors.push(e);
     try {
-      if (this.specInJson === undefined || this.specInJson === null) {
+      this.specInJson = await swaggerLoader.loadSpec(this.specPath);
+      if (this.options.loadSuppression) {
         this.suppression = await getSuppressions(this.specPath);
-        const result = await jsonUtils.parseJson(
-          this.suppression,
-          this.specPath,
-          reportError,
-          this.docsCache
-        );
-        this.specInJson = result;
+        jsonUtils.applySuppression(this.specInJson, this.specPath, this.suppression);
       }
 
-      const resolver = new specResolver.SpecResolver(
-        this.specPath,
-        this.specInJson,
-        this.options,
-        reportError,
-        this.docsCache
-      );
-      this.specInJson = (await resolver.resolve(this.suppression)).specInJson;
-      const options = {
-        definition: this.specInJson,
-        jsonRefs: {
-          relativeBase: this.specDir,
-        },
-        isPathCaseSensitive: this.options.isPathCaseSensitive,
-        specPath: this.specPath,
-      };
-      this.swaggerApi = await Sway.create(options);
+      // TODO specResolver
+      // const resolver = new specResolver.SpecResolver(
+      //   this.specPath,
+      //   this.specInJson,
+      //   this.options,
+      //   reportError,
+      //   this.docsCache
+      // );
+      // this.specInJson = (await resolver.resolve(this.suppression)).specInJson;
     } catch (err) {
       if (typeof err === "object" && err.id && err.message) {
         this.specValidationResult.resolveSpec = err;
@@ -238,7 +230,8 @@ export class SpecValidator<T extends CommonValidationResult> {
       this.specValidationResult.resolveSpec = e as any;
       log.error(`${ErrorCodes.ResolveSpecError.name}: ${err.message}.`);
     }
-    return this.swaggerApi;
+
+    return this.specInJson;
   }
 
   /*

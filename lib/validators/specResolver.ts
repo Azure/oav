@@ -1,14 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
+
 import * as path from "path";
-import { Suppression } from "@azure/openapi-markdown";
-import { isArray, toArray } from "@ts-common/iterator";
-import * as jsonParser from "@ts-common/json-parser";
-import * as ps from "@ts-common/property-set";
-import { arrayMap } from "@ts-common/source-map";
-import * as sm from "@ts-common/string-map";
 import * as jsonPointer from "json-pointer";
+import * as jsonParser from "@ts-common/json-parser";
 import * as _ from "lodash";
+import * as ps from "@ts-common/property-set";
+import * as sm from "@ts-common/string-map";
 import {
   DefinitionsObject,
   OperationObject,
@@ -18,15 +16,17 @@ import {
   SchemaObject,
   SwaggerObject,
 } from "yasway";
-
+import { isArray, toArray } from "@ts-common/iterator";
+import { Suppression } from "@azure/openapi-markdown";
+import { arrayMap } from "@ts-common/source-map";
+import * as jsonUtils from "../util/jsonUtils";
+import * as jsonRefs from "../util/jsonRefs";
+import { DocCache } from "../util/documents";
+import * as utils from "../util/utils";
 import * as C from "../util/constants";
 import { defaultIfUndefinedOrNull } from "../util/defaultIfUndefinedOrNull";
-import { DocCache } from "../util/documents";
-import * as jsonRefs from "../util/jsonRefs";
-import * as jsonUtils from "../util/jsonUtils";
-import { log } from "../util/logging";
 import { getOperations } from "../util/methods";
-import * as utils from "../util/utils";
+import { log } from "../util/logging";
 import { PolymorphicTree } from "./polymorphicTree";
 import { resolveNestedDefinitions } from "./resolveNestedDefinitions";
 

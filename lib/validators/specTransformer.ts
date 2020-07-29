@@ -1,17 +1,19 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 import * as json from "@ts-common/json";
+
 import {
   FilePosition,
+  InfoFunc,
   getAllDirectives,
   getInfoFunc,
   getPath,
   getRootObjectInfo,
-  InfoFunc,
   setInfoFunc,
 } from "@ts-common/source-map";
-import { StringMap } from "@ts-common/string-map";
+
 import { SchemaObject } from "yasway";
+import { StringMap } from "@ts-common/string-map";
 
 export interface TitleObject {
   readonly position?: FilePosition;

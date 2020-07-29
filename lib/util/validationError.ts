@@ -4,7 +4,7 @@ import { flatMap, fold } from "@ts-common/iterator";
 import * as json from "@ts-common/json";
 import { FilePosition } from "@ts-common/source-map";
 import { StringMap } from "@ts-common/string-map";
-import { PathComponent, stringify } from "jsonpath";
+import { JSONPath } from "jsonpath-plus";
 import _ from "lodash";
 import { jsonSymbol, schemaSymbol } from "z-schema";
 
@@ -82,6 +82,7 @@ const errorConstants = {
   PATTERN: { severity: Severity.Critical, docUrl: "" },
   INVALID_RESPONSE_CODE: { severity: Severity.Critical, docUrl: "" },
   INVALID_CONTENT_TYPE: { severity: Severity.Error, docUrl: "" },
+  DISCRIMINATOR_VALUE_NOT_FOUND: { severity: Severity.Error, docUrl: "" },
 };
 
 const wrapperErrorConstants = {
@@ -139,19 +140,6 @@ export const errorCodeToErrorMetadata = (code: ExtendedErrorCode): ValidationErr
   code,
 });
 
-export interface LiveValidationIssue {
-  readonly code: string;
-  readonly message: string;
-  // tslint:disable-next-line: prettier
-  readonly pathsInPayload: readonly string[];
-  readonly operationId: string;
-  readonly source: SourceLocation;
-  readonly documentationUrl: string;
-  readonly params?: readonly string[];
-  readonly origin: string;
-  readonly inner?: readonly any[];
-}
-
 export interface SourceLocation {
   readonly url: string;
   readonly jsonRef?: string;
@@ -163,7 +151,7 @@ export interface SourceLocation {
 }
 
 export interface RuntimeException {
-  readonly code: string;
+  code: string;
   readonly message: string;
 }
 
@@ -225,7 +213,7 @@ export function processValidationErrors<T extends NodeError<T>>(errorsNode: T): 
 /**
  * Serializes error tree
  */
-export function serializeErrors<T extends NodeError<T>>(node: T, path: PathComponent[]): T[] {
+export function serializeErrors<T extends NodeError<T>>(node: T, path: string[]): T[] {
   if (isLeaf(node)) {
     if (isTrueError(node)) {
       setPathProperties(node, path);
@@ -289,7 +277,7 @@ export function serializeErrors<T extends NodeError<T>>(node: T, path: PathCompo
 /**
  * Sets the path and jsonPath properties on an error node.
  */
-function setPathProperties<T extends NodeError<T>>(node: T, path: PathComponent[]) {
+function setPathProperties<T extends NodeError<T>>(node: T, path: string[]) {
   if (!node.path) {
     return;
   }
@@ -307,7 +295,7 @@ function setPathProperties<T extends NodeError<T>>(node: T, path: PathComponent[
 
   const pathSegments = consolidatePath(path, nodePath);
   node.path = pathSegments.join("/");
-  node.jsonPath = (pathSegments.length && stringify(pathSegments)) || "";
+  node.jsonPath = (pathSegments.length && (JSONPath as any).toPathString(pathSegments)) || "";
 }
 
 /**
@@ -372,7 +360,7 @@ const isLeaf = <T extends NodeError<T>>(node: T): boolean => !node.errors && !no
 /**
  * Unifies a suffix path with a root path.
  */
-function consolidatePath(path: PathComponent[], suffixPath: string | string[]): PathComponent[] {
+function consolidatePath(path: string[], suffixPath: string | string[]): string[] {
   let newSuffixIndex = 0;
   let overlapIndex = path.lastIndexOf(suffixPath[newSuffixIndex]);
   let previousIndex = overlapIndex;
@@ -388,7 +376,7 @@ function consolidatePath(path: PathComponent[], suffixPath: string | string[]): 
       break;
     }
   }
-  let newPath: PathComponent[] = [];
+  let newPath: string[] = [];
   if (newSuffixIndex === suffixPath.length) {
     // if all elements are contained in the existing path, nothing to do.
     newPath = path.slice(0);

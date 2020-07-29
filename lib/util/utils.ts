@@ -1,19 +1,21 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
-import { execSync } from "child_process";
+
 import * as fs from "fs";
 import * as http from "http";
 import * as path from "path";
 import * as util from "util";
+import { execSync } from "child_process";
 import * as it from "@ts-common/iterator";
 import * as json from "@ts-common/json";
-import { cloneDeep, copyInfo, Data } from "@ts-common/source-map";
-import * as sm from "@ts-common/string-map";
 import * as jsonPointer from "json-pointer";
 import * as lodash from "lodash";
-import { DataType, ParameterObject, SchemaObject } from "yasway";
+import * as sm from "@ts-common/string-map";
 
+import { Data, cloneDeep, copyInfo } from "@ts-common/source-map";
+import { DataType, ParameterObject, SchemaObject } from "yasway";
 import { getSchemaObjectInfo, setSchemaInfo } from "../validators/specTransformer";
+
 import { log } from "./logging";
 
 /*
@@ -685,3 +687,37 @@ const isPropertyRequired = (propName: unknown, model: SchemaObject) =>
 export const statusCodeStringToStatusCode = lodash.invert(
   lodash.mapValues(http.STATUS_CODES, (value: string) => value.replace(/ |-/g, "").toLowerCase())
 );
+
+export type Writable<T> = { -readonly [P in keyof T]: T[P] };
+
+export const waitUntilLowLoad = async () => {
+  let lastTime = Date.now();
+  let waterMark = 0;
+  const startTime = lastTime;
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    const now = Date.now();
+    // If event loop lag is less than 2ms then assume we are under low load
+    if (now - startTime > 60000) {
+      return;
+    }
+    if (now - lastTime <= 5) {
+      ++waterMark;
+      if (waterMark > 1) {
+        return;
+      }
+    } else {
+      waterMark = 0;
+    }
+    lastTime = now;
+  }
+};
+
+export const shuffleArray = (a: any[]) => {
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+};

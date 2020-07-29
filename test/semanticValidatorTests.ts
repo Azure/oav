@@ -1,9 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-/* tslint:disable:no-console */
 import assert from "assert";
-
 import * as constants from "../lib/util/constants";
 import * as validate from "../lib/validate";
 

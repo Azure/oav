@@ -3,25 +3,26 @@
 
 import * as fs from "fs";
 import * as path from "path";
-import { Suppression } from "@azure/openapi-markdown";
-import { map, toArray } from "@ts-common/iterator";
-import * as jsonParser from "@ts-common/json-parser";
-import { setMutableProperty } from "@ts-common/property-set";
-import { entries, MutableStringMap, StringMap } from "@ts-common/string-map";
 import * as JsonRefs from "json-refs";
-import * as msRest from "ms-rest";
 import * as Sway from "yasway";
-
-import { ResponseWrapper } from "./models/responseWrapper";
-import { Headers, Responses } from "./templates/httpTemplate";
-import { MarkdownHttpTemplate } from "./templates/markdownHttpTemplate";
-import { YamlHttpTemplate } from "./templates/yamlHttpTemplate";
+import * as jsonParser from "@ts-common/json-parser";
+import * as msRest from "ms-rest";
+import { MutableStringMap, StringMap, entries } from "@ts-common/string-map";
+import { map, toArray } from "@ts-common/iterator";
+import { Suppression } from "@azure/openapi-markdown";
+import { setMutableProperty } from "@ts-common/property-set";
 import * as C from "./util/constants";
 import * as jsonUtils from "./util/jsonUtils";
-import { log } from "./util/logging";
 import * as utils from "./util/utils";
+
+import { Headers, Responses } from "./templates/httpTemplate";
+
+import { MarkdownHttpTemplate } from "./templates/markdownHttpTemplate";
+import { ResponseWrapper } from "./models/responseWrapper";
 import { SpecResolver } from "./validators/specResolver";
+import { YamlHttpTemplate } from "./templates/yamlHttpTemplate";
 import { getSuppressions } from "./validators/suppressions";
+import { log } from "./util/logging";
 
 const ErrorCodes = C.ErrorCodes;
 

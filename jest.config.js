@@ -3,9 +3,10 @@
 /** @type {jest.InitialOptions} */
 module.exports = {
   transform: {
-    "^.+\\.tsx?$": "ts-jest"
+    "^.+\\.tsx?$": "ts-jest",
   },
   testEnvironment: "node",
+  testTimeout: 600_000,
   moduleFileExtensions: ["ts", "js", "json", "node"],
   moduleNameMapper: {},
   collectCoverage: true,
@@ -14,9 +15,9 @@ module.exports = {
   coveragePathIgnorePatterns: ["/node_modules/", ".*/tests/.*"],
   globals: {
     "ts-jest": {
-      tsConfig: "tsconfig.json"
-    }
+      tsConfig: "tsconfig.json",
+    },
   },
   testMatch: ["**/test/**/*.ts", "!**/test/**/*.d.ts", "!**/test/sample.ts"],
-  verbose: true
-}
+  verbose: true,
+};

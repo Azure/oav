@@ -5,29 +5,30 @@
 
 import * as fs from "fs";
 import * as path from "path";
-import { Suppression } from "@azure/openapi-markdown";
 import * as jsonParser from "@ts-common/json-parser";
 import { StringMap } from "@ts-common/string-map";
+import { Suppression } from "@azure/openapi-markdown";
 import jsYaml from "js-yaml";
-
-import * as umlGeneratorLib from "./umlGenerator";
-import { getErrorsFromModelValidation } from "./util/getErrorsFromModelValidation";
 import * as jsonUtils from "./util/jsonUtils";
-import { log } from "./util/logging";
-import { ModelValidationError } from "./util/modelValidationError";
-import * as utils from "./util/utils";
-import { NodeError } from "./util/validationError";
-import { ModelValidator } from "./validators/modelValidator";
-import { SemanticValidator } from "./validators/semanticValidator";
 import * as specResolver from "./validators/specResolver";
+import * as umlGeneratorLib from "./umlGenerator";
+import * as utils from "./util/utils";
+
 import {
   CommonValidationResult,
   SpecValidationResult,
   SpecValidator,
 } from "./validators/specValidator";
-import { getSuppressions } from "./validators/suppressions";
+
+import { ModelValidationError } from "./util/modelValidationError";
+import { ModelValidator } from "./validators/modelValidator";
+import { NodeError } from "./util/validationError";
+import { SemanticValidator } from "./validators/semanticValidator";
 import { WireFormatGenerator } from "./wireFormatGenerator";
 import { XMsExampleExtractor } from "./xMsExampleExtractor";
+import { getErrorsFromModelValidation } from "./util/getErrorsFromModelValidation";
+import { getSuppressions } from "./validators/suppressions";
+import { log } from "./util/logging";
 
 export interface Options extends specResolver.Options, umlGeneratorLib.Options {
   consoleLogLevel?: unknown;

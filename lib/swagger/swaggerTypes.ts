@@ -1,5 +1,20 @@
 // https://github.com/mohsen1/swagger.d.ts
 
+import { ValidateFunction } from "ajv";
+import { MutableStringMap } from "@ts-common/string-map";
+import { RegExpWithKeys } from "../util/path";
+import {
+  xmsPaths,
+  xmsParameterizedHost,
+  xNullable,
+  xmsDiscriminatorValue,
+  xmsEnum,
+  xmsMutability,
+} from "../util/constants";
+import { $id } from "./fileSystemJsonLoader";
+
+export const refSelfSymbol = Symbol.for("oav-schema-refself");
+
 export interface Info {
   title: string;
   version: string;
@@ -36,7 +51,7 @@ export interface Tag {
 export interface Example {}
 
 export interface Header extends BaseSchema {
-  type: string;
+  type: "string";
 }
 
 // ----------------------------- Parameter -----------------------------------
@@ -45,23 +60,26 @@ interface BaseParameter {
   in: string;
   required?: boolean;
   description?: string;
+
+  [refSelfSymbol]?: string;
 }
 
 export interface BodyParameter extends BaseParameter {
   in: "body";
   schema?: Schema;
+  type?: SchemaType | "file";
 }
 
 export interface QueryParameter extends BaseParameter, BaseSchema {
   in: "query";
-  type: string;
   allowEmptyValue?: boolean;
+  nullable?: boolean;
 }
 
 export interface PathParameter extends BaseParameter {
   in: "path";
   type: string;
-  required: boolean;
+  required: true | undefined;
 }
 
 export interface HeaderParameter extends BaseParameter {
@@ -75,7 +93,7 @@ export interface FormDataParameter extends BaseParameter, BaseSchema {
   collectionFormat?: string;
 }
 
-type Parameter =
+export type Parameter =
   | BodyParameter
   | FormDataParameter
   | QueryParameter
@@ -83,16 +101,18 @@ type Parameter =
   | HeaderParameter;
 
 // ------------------------------- Path --------------------------------------
-export interface Path {
-  get?: Operation;
-  put?: Operation;
-  post?: Operation;
-  delete?: Operation;
-  options?: Operation;
-  head?: Operation;
-  patch?: Operation;
+export const httpMethods = ["get", "put", "post", "delete", "options", "head", "patch"] as const;
+export type HttpMethods = typeof httpMethods[number];
+export type Path = {
+  [method in HttpMethods]?: Operation;
+} & {
   parameters?: Parameter[];
-}
+
+  _pathTemplate: string;
+  _pathRegex: RegExpWithKeys;
+  _validateQuery?: ValidateFunction;
+  _spec: SwaggerSpec;
+};
 
 // ----------------------------- Operation -----------------------------------
 export interface Operation {
@@ -109,8 +129,18 @@ export interface Operation {
   security?: Security[];
   tags?: string[];
 
-  _pathRegex: RegExp;
+  // TODO check why do we need provider
+  provider?: string;
+
+  _path: Path;
+
+  _queryTransform?: MutableStringMap<TransformFn>;
+  _headerTransform?: MutableStringMap<TransformFn>;
+
+  _validate?: ValidateFunction;
 }
+
+export type TransformFn = (val: string) => string | number | boolean;
 
 // ----------------------------- Response ------------------------------------
 export interface Response {
@@ -118,9 +148,14 @@ export interface Response {
   schema?: Schema;
   headers?: { [headerName: string]: Header };
   examples?: { [exampleName: string]: Example };
+
+  _headerTransform?: MutableStringMap<TransformFn>;
+
+  _validate?: ValidateFunction;
 }
 
 // ------------------------------ Schema -------------------------------------
+
 interface BaseSchema {
   format?: string;
   title?: string;
@@ -128,9 +163,9 @@ interface BaseSchema {
   default?: string | boolean | number | any;
   multipleOf?: number;
   maximum?: number;
-  exclusiveMaximum?: number;
+  exclusiveMaximum?: number | boolean;
   minimum?: number;
-  exclusiveMinimum?: number;
+  exclusiveMinimum?: number | boolean;
   maxLength?: number;
   minLength?: number;
   pattern?: string;
@@ -140,20 +175,44 @@ interface BaseSchema {
   maxProperties?: number;
   minProperties?: number;
   enum?: Array<string | boolean | number>;
+  [xmsEnum]?: {
+    name: string;
+    modelAsString?: boolean;
+    values?: Array<{ value: any; description?: string; name?: string }>;
+  };
   type?: string;
   items?: Schema | Schema[];
 }
 
+export type SchemaType = "object" | "array" | "string" | "integer" | "number" | "boolean" | "null";
 export interface Schema extends BaseSchema {
+  type?: SchemaType;
   allOf?: Schema[];
-  additionalProperties?: boolean;
+  anyOf?: Schema[];
+  oneOf?: Schema[];
+  additionalProperties?: boolean | Schema;
   properties?: { [propertyName: string]: Schema };
   discriminator?: string;
+  [xmsDiscriminatorValue]?: string;
   readOnly?: boolean;
+  [xmsMutability]?: Array<"create" | "read" | "update">;
   xml?: XML;
   externalDocs?: ExternalDocs;
   example?: { [exampleName: string]: Example };
   required?: string[];
+  propertyNames?: Schema;
+
+  // Nullable support
+  [xNullable]?: boolean;
+  nullable?: boolean;
+
+  // Ajv extension
+  discriminatorMap?: { [key: string]: Schema | null }; // Null means base class
+
+  // ref to this schema
+  [refSelfSymbol]?: string;
+
+  _skipError?: boolean;
 }
 
 export interface XML {
@@ -214,7 +273,6 @@ type Security =
   | ApiKeySecurity;
 
 // ---------------------------- MS Extensions --------------------------------
-export const xmsParameterizedHost = "x-ms-parameterized-host";
 export interface XMsParameterizedHost {
   hostTemplate: string;
   useSchemePrefix?: boolean;
@@ -224,6 +282,7 @@ export interface XMsParameterizedHost {
 
 // --------------------------------- Spec ------------------------------------
 export interface SwaggerSpec {
+  [$id]: string;
   swagger: string;
   info: Info;
   externalDocs?: ExternalDocs;
@@ -232,7 +291,8 @@ export interface SwaggerSpec {
   schemes?: string[];
   consumes?: string[];
   produces?: string[];
-  paths: { [pathName: string]: Path };
+  paths: { [pathTemplate: string]: Path };
+  [xmsPaths]?: { [pathTemplate: string]: Path };
   definitions?: { [definitionsName: string]: Schema };
   parameters?: { [parameterName: string]: BodyParameter | QueryParameter };
   responses?: { [responseName: string]: Response };
@@ -241,4 +301,6 @@ export interface SwaggerSpec {
   tags?: [Tag];
 
   [xmsParameterizedHost]?: XMsParameterizedHost;
+
+  _filePath: string;
 }

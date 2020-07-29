@@ -2,18 +2,17 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import * as util from "util";
-import * as sm from "@ts-common/string-map";
 import * as Sway from "yasway";
+import * as sm from "@ts-common/string-map";
+import * as C from "../util/constants";
 
 import { CommonError } from "../util/commonError";
-import * as C from "../util/constants";
 import { log } from "../util/logging";
 import { processErrors } from "../util/processErrors";
 import { validateResponse } from "../util/validationResponse";
-
 import { TitleObject } from "./specTransformer";
-import { CommonValidationResult, SpecValidator } from "./specValidator";
 import { existSuppression } from "./suppressions";
+import { CommonValidationResult, SpecValidator } from "./specValidator";
 
 export interface Result {
   isValid?: unknown;

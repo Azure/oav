@@ -3,8 +3,8 @@
 
 import assert from "assert";
 import * as sway from "yasway";
-import { jsonSymbol } from "z-schema";
 
+import { jsonSymbol } from "z-schema";
 import { SpecValidator } from "../lib/validators/specValidator";
 
 const options: sway.Options = {

@@ -5,9 +5,21 @@ import { StringMap } from "@ts-common/string-map";
 
 export const xmsParameterizedHost = "x-ms-parameterized-host";
 
+export const xmsPaths = "x-ms-paths";
+
 export const xmsExamples = "x-ms-examples";
 
 export const xmsSkipUrlEncoding = "x-ms-skip-url-encoding";
+
+export const xmsDiscriminatorValue = "x-ms-discriminator-value";
+
+export const xmsEnum = "x-ms-enum";
+
+export const xmsMutability = "x-ms-mutability";
+
+export const xmsSecret = "x-ms-secret";
+
+export const xNullable = "x-nullable";
 
 export const exampleInSpec = "example-in-spec";
 

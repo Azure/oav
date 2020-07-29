@@ -8,6 +8,8 @@
  * regenerated.
  */
 
+import { Schema } from "../swagger/swaggerTypes";
+
 /**
  * @class
  * Initializes a new instance of the RequestResponse class.
@@ -75,3 +77,60 @@ export class RequestResponse {
     };
   }
 }
+
+export const requestResponseDefinition: Schema = {
+  properties: {
+    liveRequest: {
+      required: ["url", "method"],
+      properties: {
+        headers: {
+          type: "object",
+          additionalProperties: {
+            type: "string",
+          },
+        },
+        query: {
+          nullable: true,
+          additionalProperties: {
+            oneOf: [
+              {
+                type: "string",
+              },
+              {
+                type: "array",
+                items: {
+                  type: "string",
+                },
+              },
+            ],
+          },
+        },
+        url: {
+          type: "string",
+        },
+        method: {
+          type: "string",
+        },
+        body: {
+          nullable: true,
+        },
+      },
+    },
+    liveResponse: {
+      required: ["statusCode"],
+      properties: {
+        statusCode: {
+          type: "string",
+        },
+        headers: {
+          additionalProperties: {
+            type: "string",
+          },
+        },
+        body: {
+          nullable: true,
+        },
+      },
+    },
+  },
+};

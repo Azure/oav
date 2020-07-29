@@ -1,6 +1,6 @@
 import * as assert from "assert";
-import { SwaggerObject } from "yasway";
 
+import { SwaggerObject } from "yasway";
 import { SemanticValidator } from "../lib/validators/semanticValidator";
 
 describe("Simple semantic validation", () => {

@@ -4,8 +4,8 @@
 /* tslint:disable:no-console max-line-length*/
 
 import assert from "assert";
-
 import * as validate from "../lib/validate";
+
 import { ModelValidator } from "../lib/validators/modelValidator";
 
 const testPath = __dirname;
