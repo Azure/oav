@@ -1,5 +1,9 @@
 # Changelog
 
+## 08/11/2020 0.22.2
+
+- Upgrade yargs version to fix security vulnerability warning.
+
 ## 07/24/2020 0.22.1
 
 - Upgrade yasway with removing clonedeep when validate schema.
