@@ -36,7 +36,6 @@ export {
 
 // Classes
 export { SpecValidator } from "./lib/validators/specValidator"
-export { SpecResolver } from "./lib/validators/specResolver"
 export { ModelValidator } from "./lib/validators/modelValidator"
 export { SemanticValidator } from "./lib/validators/semanticValidator"
 export {
@@ -51,7 +50,7 @@ export {
   LiveValidationResult,
   ValidateOptions
 } from "./lib/validators/liveValidator"
-
+export { SpecResolver } from "./lib/validators/specResolver"
 export { log } from "./lib/util/logging"
 
 // Constants
