@@ -13,6 +13,7 @@ export {
   resolveCompositeSpec
 } from "./lib/validate"
 
+export { CommonError } from "./lib/util/commonError"
 export { BaseValidationError } from "./lib/util/baseValidationError"
 export { Severity } from "./lib/util/severity"
 export { ModelValidationError } from "./lib/util/modelValidationError"
@@ -35,6 +36,8 @@ export {
 
 // Classes
 export { SpecValidator } from "./lib/validators/specValidator"
+export { ModelValidator } from "./lib/validators/modelValidator"
+export { SemanticValidator } from "./lib/validators/semanticValidator"
 export {
   LiveValidator,
   RequestResponsePair,
@@ -48,6 +51,7 @@ export {
   ValidateOptions
 } from "./lib/validators/liveValidator"
 export { SpecResolver } from "./lib/validators/specResolver"
+export { log } from "./lib/util/logging"
 
 // Constants
 export const Constants = C
