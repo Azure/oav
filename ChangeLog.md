@@ -1,5 +1,9 @@
 # Changelog
 
+## 08/14/2020 0.22.3
+
+- Export more methods from oav for validation in unified pipeline.
+
 ## 08/11/2020 0.22.2
 
 - Upgrade yargs version to fix security vulnerability warning.
