@@ -737,10 +737,10 @@ Object {
         "jsonPathsInPayload": Array [
           "$.properties.password",
         ],
-        "message": "Secret property \`\\"password\\": \\"aaaaaa\\"\`, cannot be sent in the response.",
+        "message": "Secret property \`\\"password\\"\`, cannot be sent in the response.",
         "params": Array [
           "password",
-          "aaaaaa",
+          "",
         ],
         "pathsInPayload": Array [
           "properties/password",
