@@ -1,5 +1,9 @@
 # Changelog
 
+## 08/17/2020 0.22.4
+
+- Remove sensitive value of x-ms-secret from the Live Validation result.
+
 ## 08/14/2020 0.22.3
 
 - Export more methods from oav for validation in unified pipeline.
