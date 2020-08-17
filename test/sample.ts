@@ -7,7 +7,7 @@ import { LiveValidator } from "../lib/validators/liveValidator"
 const options = {
   directory: `${__dirname}/../../test/liveValidation/swaggers/`,
   swaggerPathsPattern: [
-    "specification\\apimanagement\\resource-manager\\Microsoft.ApiManagement\\preview\\2018-01-01\\*.json"
+    "specification\\mediaservices\\resource-manager\\Microsoft.Media\\2018-07-01\\*.json"
   ],
   git: {
     shouldClone: false
@@ -17,7 +17,7 @@ const validator = new LiveValidator(options)
 
 // tslint:disable-next-line:no-floating-promises
 validator.initialize().then(() => {
-  const reqRes = require(`${__dirname}/../../test/liveValidation/payloads/secretProperty_input.json`)
+  const reqRes = require(`${__dirname}/../../test/liveValidation/payloads/oneOfMissing_input.json`)
   const result = validator.validateLiveRequestResponse(reqRes)
   // tslint:disable-next-line:no-console
   console.log(`${result}`)
