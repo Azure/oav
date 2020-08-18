@@ -9314,12 +9314,12 @@ Array [
       "code": "OBJECT_ADDITIONAL_PROPERTIES",
       "description": "AML Compute properties",
       "directives": Object {},
-      "jsonPath": "$.properties.properties.properties.properties.properties",
+      "jsonPath": "$.properties.properties.properties.properties",
       "message": "Additional properties not allowed: properties",
       "params": Array [
         "properties",
       ],
-      "path": "properties/properties/properties/properties/properties",
+      "path": "properties/properties/properties/properties",
       "position": Object {
         "column": 27,
         "line": 1532,
@@ -9339,12 +9339,12 @@ Array [
       "code": "OBJECT_ADDITIONAL_PROPERTIES",
       "description": "AML Compute properties",
       "directives": Object {},
-      "jsonPath": "$.properties.properties.properties.properties.computeType",
+      "jsonPath": "$.properties.properties.properties.computeType",
       "message": "Additional properties not allowed: computeType",
       "params": Array [
         "computeType",
       ],
-      "path": "properties/properties/properties/properties/computeType",
+      "path": "properties/properties/properties/computeType",
       "position": Object {
         "column": 27,
         "line": 1532,
@@ -9364,12 +9364,12 @@ Array [
       "code": "OBJECT_ADDITIONAL_PROPERTIES",
       "description": "AML Compute properties",
       "directives": Object {},
-      "jsonPath": "$.properties.properties.properties.properties.description",
+      "jsonPath": "$.properties.properties.properties.description",
       "message": "Additional properties not allowed: description",
       "params": Array [
         "description",
       ],
-      "path": "properties/properties/properties/properties/description",
+      "path": "properties/properties/properties/description",
       "position": Object {
         "column": 27,
         "line": 1532,
@@ -9415,12 +9415,12 @@ Array [
       "code": "OBJECT_ADDITIONAL_PROPERTIES",
       "description": "The properties of a amlCompute that need to be updated.",
       "directives": Object {},
-      "jsonPath": "$.properties.properties.properties",
+      "jsonPath": "$.properties.properties",
       "message": "Additional properties not allowed: properties",
       "params": Array [
         "properties",
       ],
-      "path": "properties/properties/properties",
+      "path": "properties/properties",
       "position": Object {
         "column": 32,
         "line": 1927,
