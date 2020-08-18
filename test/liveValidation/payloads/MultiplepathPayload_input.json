@@ -1,0 +1,298 @@
+{
+  "liveRequest": {
+    "headers": {
+      "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+      "x-ms-request-id": "8e3485b6-c8a7-45c2-a9f5-59b826e42880",
+      "x-ms-correlation-request-id": "8e3485b6-c8a7-45c2-a9f5-59b826e42880",
+      "date": "Tue, 11 Sep 2018 18:45:41 GMT",
+      "eTag": "\"AAAAAAAAjAIAAAAAAACL/A==\"",
+      "server": "Microsoft-HTTPAPI/2.0",
+      "Content-Type": "application/json"
+    },
+    "method": "GET",
+    "url": "/subscriptions/2e6a1160-c68f-4298-b9fe-c510912f8b3a/providers/Microsoft.HybridNetwork/vendors/vendorTestCelona4/vendorSkus?api-version=2020-01-01-preview",
+    "query": { "api-version": "2020-01-01-preview" }
+  },
+  "liveResponse": {
+    "statusCode": "200",
+    "headers": {
+      "x-ms-request-id": "8e3485b6-c8a7-45c2-a9f5-59b826e42880",
+      "x-ms-correlation-request-id": "8e3485b6-c8a7-45c2-a9f5-59b826e42880",
+      "date": "Tue, 11 Sep 2018 18:45:41 GMT",
+      "eTag": "\"AAAAAAAAjAIAAAAAAACL/A==\"",
+      "server": "Microsoft-HTTPAPI/2.0",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "value": [
+        {
+          "id": "/subscriptions/2e6a1160-c68f-4298-b9fe-c510912f8b3a/providers/Microsoft.HybridNetwork/vendors/vendorTestCelona4/vendorSkus/test2",
+          "name": "test2",
+          "type": "Microsoft.HybridNetwork/vendors/vendorSkus",
+          "properties": {
+            "provisioningState": "Succeeded",
+            "skuType": "EvolvedPacketCore",
+            "preview": true,
+            "deploymentMode": "PrivateEdgeZone",
+            "managedApplicationParameters": null,
+            "managedApplicationTemplate": {},
+            "virtualNetworkFunctionTemplate": {
+              "virtualNetworkFunctionRoleConfigurations": [
+                {
+                  "roleName": "vendor-test-celona",
+                  "roleType": "VirtualMachine",
+                  "virtualMachineSize": "Standard_D1_v2",
+                  "imageReference": {
+                    "osType": "Linux",
+                    "vhdName": "celonavhd",
+                    "vhdType": "VHD",
+                    "sasUri": "111",
+                    "publisher": null,
+                    "offer": null,
+                    "sku": null,
+                    "version": null,
+                    "exactVersion": null
+                  },
+                  "osProfile": {
+                    "adminUsername": "admin_admin",
+                    "adminPassword": "pwd_111",
+                    "sshPublicKey": null
+                  },
+                  "userDataTemplate": null,
+                  "userDataParameters": null,
+                  "networkInterfaces": [
+                    {
+                      "networkInterfaceName": "MgmtIfc",
+                      "macAddress": "",
+                      "vmSwitchType": "Management",
+                      "ipConfigurations": [
+                        {
+                          "ipAllocationMethod": "Dynamic",
+                          "ipAddress": "",
+                          "subnet": "",
+                          "gateway": "",
+                          "ipVersion": "IPv4",
+                          "dnsServers": null
+                        }
+                      ]
+                    },
+                    {
+                      "networkInterfaceName": "WanIfc",
+                      "macAddress": "",
+                      "vmSwitchType": "Wan",
+                      "ipConfigurations": [
+                        {
+                          "ipAllocationMethod": "Static",
+                          "ipAddress": "",
+                          "subnet": "",
+                          "gateway": "",
+                          "ipVersion": "IPv4",
+                          "dnsServers": null
+                        }
+                      ]
+                    },
+                    {
+                      "networkInterfaceName": "LanIfc",
+                      "macAddress": "",
+                      "vmSwitchType": "Lan",
+                      "ipConfigurations": [
+                        {
+                          "ipAllocationMethod": "Dynamic",
+                          "ipAddress": "",
+                          "subnet": "",
+                          "gateway": "",
+                          "ipVersion": "IPv4",
+                          "dnsServers": null
+                        }
+                      ]
+                    }
+                  ],
+                  "storageProfile": null,
+                  "customProfile": null
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "/subscriptions/2e6a1160-c68f-4298-b9fe-c510912f8b3a/providers/Microsoft.HybridNetwork/vendors/vendorTestCelona4/vendorSkus/test1",
+          "name": "test1",
+          "type": "Microsoft.HybridNetwork/vendors/vendorSkus",
+          "properties": {
+            "provisioningState": "Succeeded",
+            "skuType": "EvolvedPacketCore",
+            "preview": true,
+            "deploymentMode": "PrivateEdgeZone",
+            "managedApplicationParameters": null,
+            "managedApplicationTemplate": {},
+            "virtualNetworkFunctionTemplate": {
+              "virtualNetworkFunctionRoleConfigurations": [
+                {
+                  "roleName": "vendor-test-celona-change-3",
+                  "roleType": "VirtualMachine",
+                  "virtualMachineSize": "Standard_D1_v2",
+                  "imageReference": {
+                    "osType": "Linux",
+                    "vhdName": "celonavhd",
+                    "vhdType": "VHD",
+                    "sasUri": "222",
+                    "publisher": null,
+                    "offer": null,
+                    "sku": null,
+                    "version": null,
+                    "exactVersion": null
+                  },
+                  "osProfile": {
+                    "adminUsername": "admin_admin",
+                    "adminPassword": "pwd_222",
+                    "sshPublicKey": null
+                  },
+                  "userDataTemplate": null,
+                  "userDataParameters": null,
+                  "networkInterfaces": [
+                    {
+                      "networkInterfaceName": "MgmtIfc",
+                      "macAddress": "",
+                      "vmSwitchType": "Management",
+                      "ipConfigurations": [
+                        {
+                          "ipAllocationMethod": "Dynamic",
+                          "ipAddress": "",
+                          "subnet": "",
+                          "gateway": "",
+                          "ipVersion": "IPv4",
+                          "dnsServers": null
+                        }
+                      ]
+                    },
+                    {
+                      "networkInterfaceName": "WanIfc",
+                      "macAddress": "",
+                      "vmSwitchType": "Wan",
+                      "ipConfigurations": [
+                        {
+                          "ipAllocationMethod": "Static",
+                          "ipAddress": "",
+                          "subnet": "",
+                          "gateway": "",
+                          "ipVersion": "IPv4",
+                          "dnsServers": null
+                        }
+                      ]
+                    },
+                    {
+                      "networkInterfaceName": "LanIfc",
+                      "macAddress": "",
+                      "vmSwitchType": "Lan",
+                      "ipConfigurations": [
+                        {
+                          "ipAllocationMethod": "Dynamic",
+                          "ipAddress": "",
+                          "subnet": "",
+                          "gateway": "",
+                          "ipVersion": "IPv4",
+                          "dnsServers": null
+                        }
+                      ]
+                    }
+                  ],
+                  "storageProfile": null,
+                  "customProfile": null
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "/subscriptions/2e6a1160-c68f-4298-b9fe-c510912f8b3a/providers/Microsoft.HybridNetwork/vendors/vendorTestCelona4/vendorSkus/test3",
+          "name": "test3",
+          "type": "Microsoft.HybridNetwork/vendors/vendorSkus",
+          "properties": {
+            "provisioningState": "Succeeded",
+            "skuType": "EvolvedPacketCore",
+            "preview": true,
+            "deploymentMode": "PrivateEdgeZone",
+            "managedApplicationParameters": null,
+            "managedApplicationTemplate": {},
+            "virtualNetworkFunctionTemplate": {
+              "virtualNetworkFunctionRoleConfigurations": [
+                {
+                  "roleName": "vendor-test-celona-change-2",
+                  "roleType": "VirtualMachine",
+                  "virtualMachineSize": "Standard_D1_v2",
+                  "imageReference": {
+                    "osType": "Linux",
+                    "vhdName": "celonavhd",
+                    "vhdType": "VHD",
+                    "sasUri": "333",
+                    "publisher": null,
+                    "offer": null,
+                    "sku": null,
+                    "version": null,
+                    "exactVersion": null
+                  },
+                  "osProfile": {
+                    "adminUsername": "admin_admin",
+                    "adminPassword": "pwd_333",
+                    "sshPublicKey": null
+                  },
+                  "userDataTemplate": null,
+                  "userDataParameters": null,
+                  "networkInterfaces": [
+                    {
+                      "networkInterfaceName": "MgmtIfc",
+                      "macAddress": "",
+                      "vmSwitchType": "Management",
+                      "ipConfigurations": [
+                        {
+                          "ipAllocationMethod": "Dynamic",
+                          "ipAddress": "",
+                          "subnet": "",
+                          "gateway": "",
+                          "ipVersion": "IPv4",
+                          "dnsServers": null
+                        }
+                      ]
+                    },
+                    {
+                      "networkInterfaceName": "WanIfc",
+                      "macAddress": "",
+                      "vmSwitchType": "Wan",
+                      "ipConfigurations": [
+                        {
+                          "ipAllocationMethod": "Static",
+                          "ipAddress": "",
+                          "subnet": "",
+                          "gateway": "",
+                          "ipVersion": "IPv4",
+                          "dnsServers": null
+                        }
+                      ]
+                    },
+                    {
+                      "networkInterfaceName": "LanIfc",
+                      "macAddress": "",
+                      "vmSwitchType": "Lan",
+                      "ipConfigurations": [
+                        {
+                          "ipAllocationMethod": "Dynamic",
+                          "ipAddress": "",
+                          "subnet": "",
+                          "gateway": "",
+                          "ipVersion": "IPv4",
+                          "dnsServers": null
+                        }
+                      ]
+                    }
+                  ],
+                  "storageProfile": null,
+                  "customProfile": null
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

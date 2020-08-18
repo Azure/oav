@@ -9314,12 +9314,12 @@ Array [
       "code": "OBJECT_ADDITIONAL_PROPERTIES",
       "description": "AML Compute properties",
       "directives": Object {},
-      "jsonPath": "$.properties.properties.properties.properties.properties",
+      "jsonPath": "$.properties.properties.properties.properties",
       "message": "Additional properties not allowed: properties",
       "params": Array [
         "properties",
       ],
-      "path": "properties/properties/properties/properties/properties",
+      "path": "properties/properties/properties/properties",
       "position": Object {
         "column": 27,
         "line": 1532,
@@ -9339,12 +9339,12 @@ Array [
       "code": "OBJECT_ADDITIONAL_PROPERTIES",
       "description": "AML Compute properties",
       "directives": Object {},
-      "jsonPath": "$.properties.properties.properties.properties.computeType",
+      "jsonPath": "$.properties.properties.properties.computeType",
       "message": "Additional properties not allowed: computeType",
       "params": Array [
         "computeType",
       ],
-      "path": "properties/properties/properties/properties/computeType",
+      "path": "properties/properties/properties/computeType",
       "position": Object {
         "column": 27,
         "line": 1532,
@@ -9364,12 +9364,12 @@ Array [
       "code": "OBJECT_ADDITIONAL_PROPERTIES",
       "description": "AML Compute properties",
       "directives": Object {},
-      "jsonPath": "$.properties.properties.properties.properties.description",
+      "jsonPath": "$.properties.properties.properties.description",
       "message": "Additional properties not allowed: description",
       "params": Array [
         "description",
       ],
-      "path": "properties/properties/properties/properties/description",
+      "path": "properties/properties/properties/description",
       "position": Object {
         "column": 27,
         "line": 1532,
@@ -9415,12 +9415,12 @@ Array [
       "code": "OBJECT_ADDITIONAL_PROPERTIES",
       "description": "The properties of a amlCompute that need to be updated.",
       "directives": Object {},
-      "jsonPath": "$.properties.properties.properties",
+      "jsonPath": "$.properties.properties",
       "message": "Additional properties not allowed: properties",
       "params": Array [
         "properties",
       ],
-      "path": "properties/properties/properties",
+      "path": "properties/properties",
       "position": Object {
         "column": 32,
         "line": 1927,
@@ -15563,10 +15563,10 @@ Array [
       "directives": Object {},
       "jsonPath": "$.value[1].properties.password",
       "jsonUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/web/resource-manager/Microsoft.Web/stable/2018-11-01/examples/ListCertificates.json",
-      "message": "Write-only property \`\\"password\\": \\"SWsSsd__233$Sdsds#%Sd!\\"\`, is not allowed in the response.",
+      "message": "Write-only property \`\\"password\\"\`, is not allowed in the response.",
       "params": Array [
         "password",
-        "SWsSsd__233$Sdsds#%Sd!",
+        "",
       ],
       "path": "value/1/properties/password",
       "position": Object {
@@ -15590,10 +15590,10 @@ Array [
       "directives": Object {},
       "jsonPath": "$.value[0].properties.password",
       "jsonUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/web/resource-manager/Microsoft.Web/stable/2018-11-01/examples/ListCertificates.json",
-      "message": "Write-only property \`\\"password\\": \\"SWsSsd__233$Sdsds#%Sd!\\"\`, is not allowed in the response.",
+      "message": "Write-only property \`\\"password\\"\`, is not allowed in the response.",
       "params": Array [
         "password",
-        "SWsSsd__233$Sdsds#%Sd!",
+        "",
       ],
       "path": "value/0/properties/password",
       "position": Object {
@@ -15617,10 +15617,10 @@ Array [
       "directives": Object {},
       "jsonPath": "$.value[1].properties.password",
       "jsonUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/web/resource-manager/Microsoft.Web/stable/2018-11-01/examples/ListCertificatesByResourceGroup.json",
-      "message": "Write-only property \`\\"password\\": \\"SWsSsd__233$Sdsds#%Sd!\\"\`, is not allowed in the response.",
+      "message": "Write-only property \`\\"password\\"\`, is not allowed in the response.",
       "params": Array [
         "password",
-        "SWsSsd__233$Sdsds#%Sd!",
+        "",
       ],
       "path": "value/1/properties/password",
       "position": Object {
@@ -15644,10 +15644,10 @@ Array [
       "directives": Object {},
       "jsonPath": "$.value[0].properties.password",
       "jsonUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/web/resource-manager/Microsoft.Web/stable/2018-11-01/examples/ListCertificatesByResourceGroup.json",
-      "message": "Write-only property \`\\"password\\": \\"SWsSsd__233$Sdsds#%Sd!\\"\`, is not allowed in the response.",
+      "message": "Write-only property \`\\"password\\"\`, is not allowed in the response.",
       "params": Array [
         "password",
-        "SWsSsd__233$Sdsds#%Sd!",
+        "",
       ],
       "path": "value/0/properties/password",
       "position": Object {
@@ -15675,10 +15675,10 @@ Array [
         "line": 26,
       },
       "jsonUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/web/resource-manager/Microsoft.Web/stable/2018-11-01/examples/GetCertificate.json",
-      "message": "Write-only property \`\\"password\\": \\"SWsSsd__233$Sdsds#%Sd!\\"\`, is not allowed in the response.",
+      "message": "Write-only property \`\\"password\\"\`, is not allowed in the response.",
       "params": Array [
         "password",
-        "SWsSsd__233$Sdsds#%Sd!",
+        "",
       ],
       "path": "properties/password",
       "position": Object {
@@ -15940,10 +15940,10 @@ Array [
         "line": 44,
       },
       "jsonUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/web/resource-manager/Microsoft.Web/stable/2018-11-01/examples/CreateOrUpdateCertificate.json",
-      "message": "Write-only property \`\\"password\\": \\"SWsSsd__233$Sdsds#%Sd!\\"\`, is not allowed in the response.",
+      "message": "Write-only property \`\\"password\\"\`, is not allowed in the response.",
       "params": Array [
         "password",
-        "SWsSsd__233$Sdsds#%Sd!",
+        "",
       ],
       "path": "properties/password",
       "position": Object {
@@ -16049,10 +16049,10 @@ Array [
         "line": 34,
       },
       "jsonUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/web/resource-manager/Microsoft.Web/stable/2018-11-01/examples/PatchCertificate.json",
-      "message": "Write-only property \`\\"password\\": \\"SWsSsd__233$Sdsds#%Sd!\\"\`, is not allowed in the response.",
+      "message": "Write-only property \`\\"password\\"\`, is not allowed in the response.",
       "params": Array [
         "password",
-        "SWsSsd__233$Sdsds#%Sd!",
+        "",
       ],
       "path": "properties/password",
       "position": Object {
