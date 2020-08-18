@@ -10,7 +10,7 @@ import { ResponsesObject } from "yasway"
 import * as Constants from "../lib/util/constants"
 import { LiveValidator } from "../lib/validators/liveValidator"
 
-const numberOfSpecs = 11
+const numberOfSpecs = 12
 jest.setTimeout(150000)
 
 describe("Live Validator", () => {
@@ -786,6 +786,26 @@ describe("Live validator snapshot validation", () => {
     await liveValidator.initialize()
 
     const payload = require(`${__dirname}/liveValidation/payloads/readonlyProperty_input.json`)
+    const result = liveValidator.validateLiveRequestResponse(payload)
+    expect(result).toMatchSnapshot()
+  })
+
+  test(`should report expected error with correct path information for secret property`, async () => {
+    const options = {
+      directory: `${__dirname}/liveValidation/swaggers/`,
+      isPathCaseSensitive: false,
+      useRelativeSourceLocationUrl: true,
+      swaggerPathsPattern: [
+        "specification\\hybridnetwork\\resource-manager\\2020-01-01-preview\\*.json"
+      ],
+      git: {
+        shouldClone: false
+      }
+    }
+    const liveValidator = new LiveValidator(options)
+    await liveValidator.initialize()
+
+    const payload = require(`${__dirname}/liveValidation/payloads/MultiplepathPayload_input.json`)
     const result = liveValidator.validateLiveRequestResponse(payload)
     expect(result).toMatchSnapshot()
   })

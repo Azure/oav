@@ -387,6 +387,7 @@ function consolidatePath(path: PathComponent[], suffixPath: string | string[]): 
     previousIndex = overlapIndex
     overlapIndex = path.lastIndexOf(suffixPath[newSuffixIndex])
     if (overlapIndex === -1 || overlapIndex !== previousIndex + 1) {
+      overlapIndex = -1
       break
     }
   }

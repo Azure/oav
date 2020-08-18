@@ -1,5 +1,9 @@
 # Changelog
 
+## 08/18/2020 0.22.5
+
+- Remove sensitive value of write only property and update the JSON path calculation.
+
 ## 08/17/2020 0.22.4
 
 - Remove sensitive value of x-ms-secret from the Live Validation result.
