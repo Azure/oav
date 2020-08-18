@@ -201,6 +201,246 @@ Object {
 }
 `;
 
+exports[`Live validator snapshot validation should report expected error with correct path information for secret property 1`] = `
+Object {
+  "requestValidationResult": Object {
+    "errors": Array [],
+    "isSuccessful": true,
+    "operationInfo": Object {
+      "apiVersion": "2020-01-01-preview",
+      "operationId": "VendorSkus_List",
+    },
+    "runtimeException": undefined,
+  },
+  "responseValidationResult": Object {
+    "errors": Array [
+      Object {
+        "code": "SECRET_PROPERTY",
+        "documentationUrl": "",
+        "inner": undefined,
+        "jsonPathsInPayload": Array [
+          "$.value[0].properties.virtualNetworkFunctionTemplate.virtualNetworkFunctionRoleConfigurations[0].imageReference.sasUri",
+          "$.value[1].properties.virtualNetworkFunctionTemplate.virtualNetworkFunctionRoleConfigurations[0].imageReference.sasUri",
+          "$.value[2].properties.virtualNetworkFunctionTemplate.virtualNetworkFunctionRoleConfigurations[0].imageReference.sasUri",
+        ],
+        "message": "Secret property \`\\"sasUri\\"\`, cannot be sent in the response.",
+        "params": Array [
+          "sasUri",
+          "",
+        ],
+        "pathsInPayload": Array [
+          "value/0/properties/virtualNetworkFunctionTemplate/virtualNetworkFunctionRoleConfigurations/0/imageReference/sasUri",
+          "value/1/properties/virtualNetworkFunctionTemplate/virtualNetworkFunctionRoleConfigurations/0/imageReference/sasUri",
+          "value/2/properties/virtualNetworkFunctionTemplate/virtualNetworkFunctionRoleConfigurations/0/imageReference/sasUri",
+        ],
+        "schemaPath": "",
+        "severity": 0,
+        "source": Object {
+          "jsonRef": "#/definitions/ImageReference/properties/sasUri",
+          "position": Object {
+            "column": 19,
+            "line": 1412,
+          },
+          "url": "specification/hybridnetwork/resource-manager/2020-01-01-preview/vendor.json",
+        },
+      },
+      Object {
+        "code": "WRITEONLY_PROPERTY_NOT_ALLOWED_IN_RESPONSE",
+        "documentationUrl": "",
+        "inner": undefined,
+        "jsonPathsInPayload": Array [
+          "$.value[0].properties.virtualNetworkFunctionTemplate.virtualNetworkFunctionRoleConfigurations[0].imageReference.sasUri",
+        ],
+        "message": "Write-only property \`\\"sasUri\\": \\"111\\"\`, is not allowed in the response.",
+        "params": Array [
+          "sasUri",
+          "111",
+        ],
+        "pathsInPayload": Array [
+          "value/0/properties/virtualNetworkFunctionTemplate/virtualNetworkFunctionRoleConfigurations/0/imageReference/sasUri",
+        ],
+        "schemaPath": "",
+        "severity": 0,
+        "source": Object {
+          "jsonRef": "#/definitions/ImageReference/properties/sasUri",
+          "position": Object {
+            "column": 19,
+            "line": 1412,
+          },
+          "url": "specification/hybridnetwork/resource-manager/2020-01-01-preview/vendor.json",
+        },
+      },
+      Object {
+        "code": "SECRET_PROPERTY",
+        "documentationUrl": "",
+        "inner": undefined,
+        "jsonPathsInPayload": Array [
+          "$.value[0].properties.virtualNetworkFunctionTemplate.virtualNetworkFunctionRoleConfigurations[0].osProfile.adminPassword",
+          "$.value[1].properties.virtualNetworkFunctionTemplate.virtualNetworkFunctionRoleConfigurations[0].osProfile.adminPassword",
+          "$.value[2].properties.virtualNetworkFunctionTemplate.virtualNetworkFunctionRoleConfigurations[0].osProfile.adminPassword",
+        ],
+        "message": "Secret property \`\\"adminPassword\\"\`, cannot be sent in the response.",
+        "params": Array [
+          "adminPassword",
+          "",
+        ],
+        "pathsInPayload": Array [
+          "value/0/properties/virtualNetworkFunctionTemplate/virtualNetworkFunctionRoleConfigurations/0/osProfile/adminPassword",
+          "value/1/properties/virtualNetworkFunctionTemplate/virtualNetworkFunctionRoleConfigurations/0/osProfile/adminPassword",
+          "value/2/properties/virtualNetworkFunctionTemplate/virtualNetworkFunctionRoleConfigurations/0/osProfile/adminPassword",
+        ],
+        "schemaPath": "",
+        "severity": 0,
+        "source": Object {
+          "jsonRef": "#/definitions/OsProfile/properties/adminPassword",
+          "position": Object {
+            "column": 26,
+            "line": 1448,
+          },
+          "url": "specification/hybridnetwork/resource-manager/2020-01-01-preview/vendor.json",
+        },
+      },
+      Object {
+        "code": "WRITEONLY_PROPERTY_NOT_ALLOWED_IN_RESPONSE",
+        "documentationUrl": "",
+        "inner": undefined,
+        "jsonPathsInPayload": Array [
+          "$.value[0].properties.virtualNetworkFunctionTemplate.virtualNetworkFunctionRoleConfigurations[0].osProfile.adminPassword",
+        ],
+        "message": "Write-only property \`\\"adminPassword\\": \\"pwd_111\\"\`, is not allowed in the response.",
+        "params": Array [
+          "adminPassword",
+          "pwd_111",
+        ],
+        "pathsInPayload": Array [
+          "value/0/properties/virtualNetworkFunctionTemplate/virtualNetworkFunctionRoleConfigurations/0/osProfile/adminPassword",
+        ],
+        "schemaPath": "",
+        "severity": 0,
+        "source": Object {
+          "jsonRef": "#/definitions/OsProfile/properties/adminPassword",
+          "position": Object {
+            "column": 26,
+            "line": 1448,
+          },
+          "url": "specification/hybridnetwork/resource-manager/2020-01-01-preview/vendor.json",
+        },
+      },
+      Object {
+        "code": "WRITEONLY_PROPERTY_NOT_ALLOWED_IN_RESPONSE",
+        "documentationUrl": "",
+        "inner": undefined,
+        "jsonPathsInPayload": Array [
+          "$.value[1].properties.virtualNetworkFunctionTemplate.virtualNetworkFunctionRoleConfigurations[0].imageReference.sasUri",
+        ],
+        "message": "Write-only property \`\\"sasUri\\": \\"222\\"\`, is not allowed in the response.",
+        "params": Array [
+          "sasUri",
+          "222",
+        ],
+        "pathsInPayload": Array [
+          "value/1/properties/virtualNetworkFunctionTemplate/virtualNetworkFunctionRoleConfigurations/0/imageReference/sasUri",
+        ],
+        "schemaPath": "",
+        "severity": 0,
+        "source": Object {
+          "jsonRef": "#/definitions/ImageReference/properties/sasUri",
+          "position": Object {
+            "column": 19,
+            "line": 1412,
+          },
+          "url": "specification/hybridnetwork/resource-manager/2020-01-01-preview/vendor.json",
+        },
+      },
+      Object {
+        "code": "WRITEONLY_PROPERTY_NOT_ALLOWED_IN_RESPONSE",
+        "documentationUrl": "",
+        "inner": undefined,
+        "jsonPathsInPayload": Array [
+          "$.value[1].properties.virtualNetworkFunctionTemplate.virtualNetworkFunctionRoleConfigurations[0].osProfile.adminPassword",
+        ],
+        "message": "Write-only property \`\\"adminPassword\\": \\"pwd_222\\"\`, is not allowed in the response.",
+        "params": Array [
+          "adminPassword",
+          "pwd_222",
+        ],
+        "pathsInPayload": Array [
+          "value/1/properties/virtualNetworkFunctionTemplate/virtualNetworkFunctionRoleConfigurations/0/osProfile/adminPassword",
+        ],
+        "schemaPath": "",
+        "severity": 0,
+        "source": Object {
+          "jsonRef": "#/definitions/OsProfile/properties/adminPassword",
+          "position": Object {
+            "column": 26,
+            "line": 1448,
+          },
+          "url": "specification/hybridnetwork/resource-manager/2020-01-01-preview/vendor.json",
+        },
+      },
+      Object {
+        "code": "WRITEONLY_PROPERTY_NOT_ALLOWED_IN_RESPONSE",
+        "documentationUrl": "",
+        "inner": undefined,
+        "jsonPathsInPayload": Array [
+          "$.value[2].properties.virtualNetworkFunctionTemplate.virtualNetworkFunctionRoleConfigurations[0].imageReference.sasUri",
+        ],
+        "message": "Write-only property \`\\"sasUri\\": \\"333\\"\`, is not allowed in the response.",
+        "params": Array [
+          "sasUri",
+          "333",
+        ],
+        "pathsInPayload": Array [
+          "value/2/properties/virtualNetworkFunctionTemplate/virtualNetworkFunctionRoleConfigurations/0/imageReference/sasUri",
+        ],
+        "schemaPath": "",
+        "severity": 0,
+        "source": Object {
+          "jsonRef": "#/definitions/ImageReference/properties/sasUri",
+          "position": Object {
+            "column": 19,
+            "line": 1412,
+          },
+          "url": "specification/hybridnetwork/resource-manager/2020-01-01-preview/vendor.json",
+        },
+      },
+      Object {
+        "code": "WRITEONLY_PROPERTY_NOT_ALLOWED_IN_RESPONSE",
+        "documentationUrl": "",
+        "inner": undefined,
+        "jsonPathsInPayload": Array [
+          "$.value[2].properties.virtualNetworkFunctionTemplate.virtualNetworkFunctionRoleConfigurations[0].osProfile.adminPassword",
+        ],
+        "message": "Write-only property \`\\"adminPassword\\": \\"pwd_333\\"\`, is not allowed in the response.",
+        "params": Array [
+          "adminPassword",
+          "pwd_333",
+        ],
+        "pathsInPayload": Array [
+          "value/2/properties/virtualNetworkFunctionTemplate/virtualNetworkFunctionRoleConfigurations/0/osProfile/adminPassword",
+        ],
+        "schemaPath": "",
+        "severity": 0,
+        "source": Object {
+          "jsonRef": "#/definitions/OsProfile/properties/adminPassword",
+          "position": Object {
+            "column": 26,
+            "line": 1448,
+          },
+          "url": "specification/hybridnetwork/resource-manager/2020-01-01-preview/vendor.json",
+        },
+      },
+    ],
+    "isSuccessful": false,
+    "operationInfo": Object {
+      "apiVersion": "2020-01-01-preview",
+      "operationId": "VendorSkus_List",
+    },
+    "runtimeException": undefined,
+  },
+}
+`;
+
 exports[`Live validator snapshot validation should return expected error for readonly property in the request 1`] = `
 Object {
   "requestValidationResult": Object {
