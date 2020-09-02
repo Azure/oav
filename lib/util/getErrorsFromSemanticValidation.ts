@@ -44,8 +44,11 @@ export const getErrorsFromSemanticValidation = (
         return semanticError
       })
       return [...acc, ...semanticErrors]
-    }, new Array<SemanticValidationError>()).filter(
+    }, new Array<SemanticValidationError>())
+    .filter(
       it =>
-        it.code !== "ANY_OF_MISSING" && it.code !== "ONE_OF_MISSING" && it.code !== "ONR_OF_MULTIPLE"
+        it.code !== "ANY_OF_MISSING" &&
+        it.code !== "ONE_OF_MISSING" &&
+        it.code !== "ONR_OF_MULTIPLE"
     )
 }
