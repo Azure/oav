@@ -2,7 +2,7 @@
 
 ## 09/02/2020 0.22.6
 
-- Update function getErrorsFromSemanticValidation to extract inner error correctly.
+- New function for unified pipeline to extract semantic validation inner error.
 
 ## 08/18/2020 0.22.5
 
