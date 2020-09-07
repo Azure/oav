@@ -3,7 +3,8 @@ import { SpecValidationResult } from "../validators/specValidator"
 import { BaseValidationError } from "./baseValidationError"
 import {
   errorCodeToErrorMetadata,
-  NodeError, serializeErrors,
+  NodeError,
+  serializeErrors,
   serializeErrorsForUnifiedPipeline
 } from "./validationError"
 import { ValidationResultSource } from "./validationResultSource"
@@ -64,7 +65,8 @@ export const getErrorsFromSemanticValidationForUnifiedPipeline = (
   return validationResult.validateSpec.errors
     .reduce((acc, rawError) => {
       const serializedErrors: any[] = serializeErrorsForUnifiedPipeline(
-        rawError.inner || rawError, []
+        rawError.inner || rawError,
+        []
       )
 
       // process serialized errors

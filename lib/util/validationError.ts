@@ -292,7 +292,8 @@ export function serializeErrors<T extends NodeError<T>>(node: T, path: PathCompo
  * Serializes error tree for all errors
  */
 export function serializeErrorsForUnifiedPipeline<T extends NodeError<T>>(
-  node: T, path: PathComponent[]
+  node: T,
+  path: PathComponent[]
 ): T[] {
   if (isLeaf(node)) {
     if (isTrueError(node)) {
