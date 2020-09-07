@@ -87,6 +87,6 @@ export const getErrorsFromSemanticValidationForUnifiedPipeline = (
       it =>
         it.code !== "ANY_OF_MISSING" &&
         it.code !== "ONE_OF_MISSING" &&
-        it.code !== "ONR_OF_MULTIPLE"
+        it.code !== "ONE_OF_MULTIPLE"
     )
 }
