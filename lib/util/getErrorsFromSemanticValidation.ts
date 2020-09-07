@@ -1,7 +1,12 @@
 import { SpecValidationResult } from "../validators/specValidator"
 
 import { BaseValidationError } from "./baseValidationError"
-import { errorCodeToErrorMetadata, NodeError, serializeErrors } from "./validationError"
+import {
+  errorCodeToErrorMetadata,
+  NodeError,
+  serializeErrors,
+  serializeErrorsForUnifiedPipeline
+} from "./validationError"
 import { ValidationResultSource } from "./validationResultSource"
 
 export interface SemanticValidationError extends BaseValidationError<NodeError<any>> {
