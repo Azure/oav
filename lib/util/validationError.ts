@@ -280,6 +280,11 @@ export function serializeErrors<T extends NodeError<T>>(node: T, path: PathCompo
     new Array<T>()
   )
 
+  if (isDiscriminatorError(node)) {
+    setPathProperties(node, path)
+    node.inner = serializedInner
+    return [node]
+  }
   return [...serializedErrors, ...serializedInner]
 }
 
@@ -355,6 +360,9 @@ const arePathsSimilar = (
 
   return _.xor(p1, p2).every(v => Number.isInteger(+v))
 }
+
+const isDiscriminatorError = <T extends NodeError<T>>(node: T) =>
+  node.code === "ONE_OF_MISSING" && node.inner && node.inner.length > 0
 
 const isTrueError = <T extends NodeError<T>>(node: T): boolean =>
   // this is necessary to filter out extra errors coming from doing the ONE_OF transformation on

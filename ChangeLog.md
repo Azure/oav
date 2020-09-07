@@ -1,9 +1,5 @@
 # Changelog
 
-## 09/02/2020 0.22.6
-
-- Update function getErrorsFromSemanticValidation to extract inner error correctly.
-
 ## 08/18/2020 0.22.5
 
 - Remove sensitive value of write only property and update the JSON path calculation.
