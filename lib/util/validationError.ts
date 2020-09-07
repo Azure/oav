@@ -225,7 +225,7 @@ export function processValidationErrors<T extends NodeError<T>>(errorsNode: T) {
 }
 
 /**
- * Serializes error tree
+ * Serializes error tree except discriminatorError
  */
 export function serializeErrors<T extends NodeError<T>>(node: T, path: PathComponent[]): T[] {
   if (isLeaf(node)) {
@@ -285,6 +285,67 @@ export function serializeErrors<T extends NodeError<T>>(node: T, path: PathCompo
     node.inner = serializedInner
     return [node]
   }
+  return [...serializedErrors, ...serializedInner]
+}
+
+/**
+ * Serializes error tree for all errors
+ */
+export function serializeErrorsForUnifiedPipeline<T extends NodeError<T>>(
+  node: T,
+  path: PathComponent[]
+): T[] {
+  if (isLeaf(node)) {
+    if (isTrueError(node)) {
+      setPathProperties(node, path)
+      return [node]
+    }
+    return []
+  }
+
+  if (node.path) {
+    // in this case the path will be set to the url instead of the path to the property
+    if (node.code === "INVALID_REQUEST_PARAMETER" && node.in === "body") {
+      node.path = []
+    } else if (
+      (node.in === "query" || node.in === "path") &&
+      node.path[0] === "paths" &&
+      node.name
+    ) {
+      // in this case we will want to normalize the path with the uri and the paramter name
+      node.path = [node.path[1], node.name]
+    }
+    path = consolidatePath(path, node.path)
+  }
+
+  const serializedErrors = flatMap(node.errors, validationError =>
+    serializeErrors(validationError, path)
+  ).toArray()
+
+  const serializedInner = fold(
+    node.inner,
+    (acc, validationError) => {
+      const errs = serializeErrors(validationError, path)
+      errs.forEach(err => {
+        const similarErr = acc.find(el => areErrorsSimilar(err, el))
+        if (similarErr && similarErr.path) {
+          if (!similarErr.similarPaths) {
+            similarErr.similarPaths = []
+          }
+          similarErr.similarPaths.push(err.path as string)
+
+          if (!similarErr.similarJsonPaths) {
+            similarErr.similarJsonPaths = []
+          }
+          similarErr.similarJsonPaths.push(err.jsonPath as string)
+        } else {
+          acc.push(err)
+        }
+      })
+      return acc
+    },
+    new Array<T>()
+  )
   return [...serializedErrors, ...serializedInner]
 }
 
