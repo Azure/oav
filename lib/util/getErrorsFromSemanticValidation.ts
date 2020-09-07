@@ -1,7 +1,11 @@
 import { SpecValidationResult } from "../validators/specValidator"
 
 import { BaseValidationError } from "./baseValidationError"
-import { errorCodeToErrorMetadata, NodeError, serializeErrors, serializeErrorsForUnifiedPipeline} from "./validationError"
+import {
+  errorCodeToErrorMetadata,
+  NodeError, serializeErrors,
+  serializeErrorsForUnifiedPipeline
+} from "./validationError"
 import { ValidationResultSource } from "./validationResultSource"
 
 export interface SemanticValidationError extends BaseValidationError<NodeError<any>> {
@@ -59,7 +63,9 @@ export const getErrorsFromSemanticValidationForUnifiedPipeline = (
 
   return validationResult.validateSpec.errors
     .reduce((acc, rawError) => {
-      const serializedErrors: any[] = serializeErrorsForUnifiedPipeline(rawError.inner || rawError, [])
+      const serializedErrors: any[] = serializeErrorsForUnifiedPipeline(
+        rawError.inner || rawError, []
+      )
 
       // process serialized errors
       const semanticErrors: SemanticValidationError[] = serializedErrors.map(serializedError => {
