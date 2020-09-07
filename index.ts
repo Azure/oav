@@ -21,6 +21,7 @@ export { ValidationResultSource } from "./lib/util/validationResultSource"
 export { getErrorsFromModelValidation } from "./lib/util/getErrorsFromModelValidation"
 export {
   getErrorsFromSemanticValidation,
+  getErrorsFromSemanticValidationForUnifiedPipeline,
   SemanticValidationError
 } from "./lib/util/getErrorsFromSemanticValidation"
 export {
