@@ -1,5 +1,9 @@
 # Changelog
 
+## 09/16/2020 0.22.7
+
+- Ignore invalid yaml object when parse error.
+
 ## 09/07/2020 0.22.6
 
 - New function for unified pipeline to extract semantic validation inner error.
