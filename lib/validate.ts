@@ -100,7 +100,7 @@ const prettyPrint = <T extends NodeError<T>>(
 ) => {
   if (errors !== undefined) {
     for (const error of errors) {
-      const yaml = jsYaml.dump(error)
+      const yaml = jsYaml.dump(error, { skipInvalid: true })
       if (process.env["Agent.Id"]) {
         /* tslint:disable-next-line:no-console no-string-literal */
         console.error(vsoLogIssueWrapper(errorType, errorType))
@@ -169,7 +169,7 @@ export async function validateSpec(
     } catch (err) {
       let outputMsg = err
       if (typeof err === "object") {
-        outputMsg = jsYaml.dump(err)
+        outputMsg = jsYaml.dump(err, { skipInvalid: true })
       }
       if (o.pretty) {
         if (process.env["Agent.Id"]) {
