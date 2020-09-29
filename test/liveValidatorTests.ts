@@ -735,6 +735,44 @@ describe("Live validator snapshot validation", () => {
     expect(validationResult).toMatchSnapshot()
   })
 
+  test(`should return no errors for valid input with optional parameter body null`, async () => {
+    const options = {
+      directory: `${__dirname}/liveValidation/swaggers/`,
+      isPathCaseSensitive: false,
+      useRelativeSourceLocationUrl: true,
+      swaggerPathsPattern: [
+        "specification\\contoso\\resource-manager\\Microsoft.Contoso\\**\\*.json"
+      ],
+      git: {
+        shouldClone: false
+      }
+    }
+    const liveValidator = new LiveValidator(options)
+    await liveValidator.initialize()
+    const payload = require(`${__dirname}/liveValidation/payloads/valid_inputOptionalParameterBodyNull.json`)
+    const validationResult = liveValidator.validateLiveRequestResponse(payload)
+    expect(validationResult).toMatchSnapshot()
+  })
+
+  test(`should return no errors for valid input with optional parameter body empty`, async () => {
+    const options = {
+      directory: `${__dirname}/liveValidation/swaggers/`,
+      isPathCaseSensitive: false,
+      useRelativeSourceLocationUrl: true,
+      swaggerPathsPattern: [
+        "specification\\contoso\\resource-manager\\Microsoft.Contoso\\**\\*.json"
+      ],
+      git: {
+        shouldClone: false
+      }
+    }
+    const liveValidator = new LiveValidator(options)
+    await liveValidator.initialize()
+    const payload = require(`${__dirname}/liveValidation/payloads/valid_inputOptionalParameterBodyEmpty.json`)
+    const validationResult = liveValidator.validateLiveRequestResponse(payload)
+    expect(validationResult).toMatchSnapshot()
+  })
+
   test(`should return expected error for multiple operation found`, async () => {
     const options = {
       directory: `${__dirname}/liveValidation/swaggers/`,

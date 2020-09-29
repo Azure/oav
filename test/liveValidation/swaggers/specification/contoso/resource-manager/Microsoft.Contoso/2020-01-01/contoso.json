@@ -46,6 +46,36 @@
             "description": "User was successfully updated."
           }
         }
+      },
+      "patch": {
+        "tags": ["Users"],
+        "operationId": "User_Patch",
+        "description": "Patch a user.",
+        "parameters": [
+          {
+            "$ref": "#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "#/parameters/ApiVersionParameter"
+          },
+          {
+            "$ref": "#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "name": "user",
+            "in": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/User"
+            },
+            "description": "Create or update parameters."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User was successfully updated."
+          }
+        }
       }
     }
   },
