@@ -370,7 +370,7 @@ Object {
           "jsonRef": "#/definitions/User/properties/readOnlyProperty",
           "position": Object {
             "column": 29,
-            "line": 71,
+            "line": 101,
           },
           "url": "specification/contoso/resource-manager/Microsoft.Contoso/2020-01-01/contoso.json",
         },
@@ -396,7 +396,7 @@ Object {
           "jsonRef": "#/definitions/User/properties/name",
           "position": Object {
             "column": 17,
-            "line": 61,
+            "line": 91,
           },
           "url": "specification/contoso/resource-manager/Microsoft.Contoso/2020-01-01/contoso.json",
         },
@@ -438,6 +438,52 @@ Object {
     "operationInfo": Object {
       "apiVersion": "2018-01-01",
       "operationId": "User_Get",
+    },
+    "runtimeException": undefined,
+  },
+}
+`;
+
+exports[`Live validator snapshot validation should return no errors for valid input with optional parameter body empty 1`] = `
+Object {
+  "requestValidationResult": Object {
+    "errors": Array [],
+    "isSuccessful": true,
+    "operationInfo": Object {
+      "apiVersion": "2020-01-01",
+      "operationId": "User_Patch",
+    },
+    "runtimeException": undefined,
+  },
+  "responseValidationResult": Object {
+    "errors": Array [],
+    "isSuccessful": true,
+    "operationInfo": Object {
+      "apiVersion": "2020-01-01",
+      "operationId": "User_Patch",
+    },
+    "runtimeException": undefined,
+  },
+}
+`;
+
+exports[`Live validator snapshot validation should return no errors for valid input with optional parameter body null 1`] = `
+Object {
+  "requestValidationResult": Object {
+    "errors": Array [],
+    "isSuccessful": true,
+    "operationInfo": Object {
+      "apiVersion": "2020-01-01",
+      "operationId": "User_Patch",
+    },
+    "runtimeException": undefined,
+  },
+  "responseValidationResult": Object {
+    "errors": Array [],
+    "isSuccessful": true,
+    "operationInfo": Object {
+      "apiVersion": "2020-01-01",
+      "operationId": "User_Patch",
     },
     "runtimeException": undefined,
   },
