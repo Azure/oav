@@ -1,5 +1,9 @@
 # Changelog
 
+## 09/29/2020 0.22.8
+
+- The behaviour of optional parameter body of null and {} should be consistent.
+
 ## 09/16/2020 0.22.7
 
 - Ignore invalid yaml object when parse error.
@@ -43,7 +47,7 @@
 
 ## 04/10/2020 0.21.4
 
-- Instead of replacing all the special characters in path parameters, only replace the part of parameter value which start with (http:|https:) 
+- Instead of replacing all the special characters in path parameters, only replace the part of parameter value which start with (http:|https:)
 - Upgrade ms-rest version to 2.5.4
 
 ## 03/30/2020 0.21.3
@@ -64,9 +68,9 @@
 
 ## 03/13/2020 0.20.13
 
-- Normalize the path parameter values by using whilelist (0-9a-zA-Z._) to fix the issue of validate-example failed
+- Normalize the path parameter values by using whilelist (0-9a-zA-Z.\_) to fix the issue of validate-example failed
   which caused by host path parameter values including special characters (:)
-  
+
 ## 03/10/2020 0.20.12
 
 - Fixed typeerror in live validator when search operation in case of unknownapiversion
