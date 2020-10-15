@@ -1,5 +1,9 @@
 # Changelog
 
+## 10/15/2020 0.22.9
+
+- Ignore required validation rule in response when x-ms-secret is true.
+
 ## 09/29/2020 0.22.8
 
 - The behaviour of optional parameter body of null and {} should be consistent.

@@ -370,7 +370,7 @@ Object {
           "jsonRef": "#/definitions/User/properties/readOnlyProperty",
           "position": Object {
             "column": 29,
-            "line": 101,
+            "line": 132,
           },
           "url": "specification/contoso/resource-manager/Microsoft.Contoso/2020-01-01/contoso.json",
         },
@@ -396,7 +396,7 @@ Object {
           "jsonRef": "#/definitions/User/properties/name",
           "position": Object {
             "column": 17,
-            "line": 91,
+            "line": 122,
           },
           "url": "specification/contoso/resource-manager/Microsoft.Contoso/2020-01-01/contoso.json",
         },
