@@ -635,4 +635,17 @@ describe("Model Validation", () => {
       assert.strictEqual(result.length, 1)
     })
   })
+  describe("Examples check", () => {
+    it("report error when example reference doesn't exist or is not filled", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/invalidExamples/missingExampleReference.json`
+      const result = await validate.validateExamples(specPath2, undefined)
+      assert.strictEqual(result.length, 1)
+      assert.strictEqual(
+        JSON.stringify(result[0].inner).includes(
+          "example is not defined or reference is incorrect for operation:Profiles_Create, scenario:Profiles_Create"
+        ),
+        true
+      )
+    })
+  })
 })
