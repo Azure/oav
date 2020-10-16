@@ -376,7 +376,8 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
       for (const [scenario, xmsExampleFunc] of sm.entries<any>(xmsExamples)) {
         if (typeof xmsExampleFunc !== "function") {
           const error = {
-            message: `example is not defined or reference is incorrect for operation:${operation.operationId}, scenario:${scenario}.`
+            message: `example is not defined or reference is incorrect for operation:${operation.operationId}, scenario:${scenario}.`,
+            code: C.ErrorCodes.XmsExampleNotFoundError
           }
           throw error
         } else {
