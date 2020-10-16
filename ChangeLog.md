@@ -1,5 +1,10 @@
 # Changelog
 
+## 10/16/2020 0.22.9
+
+- Output model detail in log when resolve it with failure.
+- Report error when the example reference is not defined or is not correct.
+
 ## 10/15/2020 0.22.9
 
 - Ignore required validation rule in response when x-ms-secret is true.
