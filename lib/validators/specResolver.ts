@@ -497,11 +497,15 @@ export class SpecResolver {
     const spec = this.specInJson
 
     if (!model || (model && typeof model !== "object")) {
-      throw new Error(`model cannot be null or undefined and must of type "object".`)
+      throw new Error(
+        `model cannot be null or undefined and must of type "object". Value:${model}, reference:${modelRef}.`
+      )
     }
 
     if (!modelRef || (modelRef && typeof modelRef.valueOf() !== "string")) {
-      throw new Error(`model cannot be null or undefined and must of type "string".`)
+      throw new Error(
+        `model cannot be null or undefined and must of type "object". Value:${model}, reference:${modelRef}.`
+      )
     }
 
     if (modelRef.startsWith("#")) {
