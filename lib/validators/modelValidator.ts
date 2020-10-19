@@ -374,13 +374,21 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     const exampleFileMap = new Map<string, string>()
     if (xmsExamples) {
       for (const [scenario, xmsExampleFunc] of sm.entries<any>(xmsExamples)) {
-        const xmsExample = xmsExampleFunc()
-        resultScenarios[scenario] = {
-          requestValidation: this.validateRequest(operation, xmsExample.parameters),
-          responseValidation: this.validateXmsExampleResponses(operation, xmsExample.responses)
+        if (typeof xmsExampleFunc !== "function") {
+          const error = {
+            message: `example is not defined or reference is incorrect for operation:${operation.operationId}, scenario:${scenario}.`,
+            code: C.ErrorCodes.XmsExampleNotFoundError
+          }
+          throw error
+        } else {
+          const xmsExample = xmsExampleFunc()
+          resultScenarios[scenario] = {
+            requestValidation: this.validateRequest(operation, xmsExample.parameters),
+            responseValidation: this.validateXmsExampleResponses(operation, xmsExample.responses)
+          }
+          exampleFileMap.set(scenario, xmsExample.docPath)
+          await this.loadExamplesForOperation(xmsExample.docPath)
         }
-        exampleFileMap.set(scenario, xmsExample.docPath)
-        await this.loadExamplesForOperation(xmsExample.docPath)
       }
       result.scenarios = resultScenarios
     } else {
