@@ -1,0 +1,31 @@
+{
+    "liveRequest": {
+        "headers": {
+            "x-ms-request-id": "f9aa1ce8-6b06-457e-a3ab-dc54a0c42762",
+            "x-content-type-options": "nosniff",
+            "date": "Fri, 18 Sep 2020 03:04:13 GMT",
+            "set-Cookie": "ARRAffinity=e3040d32290fae1d39b627487d70e2e5027562a79dc14197e20f3ba7640b4da4;Path=/;HttpOnly;Domain=mindaroprodeus2rp.azurewebsites.net",
+            "server": "Microsoft-IIS/10.0",
+            "x-Powered-By": "ASP.NET"
+        },
+        "method": "POST",
+        "url": "/subscriptions/271d507f-e74a-4e2f-afda-b5b6c0e643d5/resourceGroups/bp0438-east2-paks1-rg/providers/Microsoft.DevSpaces/locations/eastus2/checkContainerHostMapping?api-version=2019-04-01",
+        "body": {
+            "containerHostResourceId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "query": {
+            "api-version": "2019-04-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "204",
+        "headers": {
+            "x-ms-request-id": "f9aa1ce8-6b06-457e-a3ab-dc54a0c42762",
+            "x-content-type-options": "nosniff",
+            "date": "Fri, 18 Sep 2020 03:04:13 GMT",
+            "set-Cookie": "ARRAffinity=e3040d32290fae1d39b627487d70e2e5027562a79dc14197e20f3ba7640b4da4;Path=/;HttpOnly;Domain=mindaroprodeus2rp.azurewebsites.net",
+            "server": "Microsoft-IIS/10.0",
+            "x-Powered-By": "ASP.NET"
+        }
+    }
+}

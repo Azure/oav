@@ -31,6 +31,7 @@ export class LiveRequest {
    * @returns {object} metadata of LiveRequest
    *
    */
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   public mapper() {
     return {
       required: false,
@@ -48,34 +49,34 @@ export class LiveRequest {
                 required: false,
                 serializedName: "StringElementType",
                 type: {
-                  name: "String"
-                }
-              }
-            }
+                  name: "String",
+                },
+              },
+            },
           },
           method: {
             required: true,
             serializedName: "method",
             type: {
-              name: "String"
-            }
+              name: "String",
+            },
           },
           url: {
             required: true,
             serializedName: "url",
             type: {
-              name: "String"
-            }
+              name: "String",
+            },
           },
           body: {
             required: false,
             serializedName: "body",
             type: {
-              name: "Object"
-            }
-          }
-        }
-      }
-    }
+              name: "Object",
+            },
+          },
+        },
+      },
+    };
   }
 }

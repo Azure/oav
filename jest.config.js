@@ -3,7 +3,7 @@
 /** @type {jest.InitialOptions} */
 module.exports = {
   transform: {
-    "^.+\\.tsx?$": "ts-jest"
+    "^.+\\.tsx?$": "ts-jest",
   },
   testEnvironment: "node",
   moduleFileExtensions: ["ts", "js", "json", "node"],
@@ -14,9 +14,9 @@ module.exports = {
   coveragePathIgnorePatterns: ["/node_modules/", ".*/tests/.*"],
   globals: {
     "ts-jest": {
-      tsConfig: "tsconfig.json"
-    }
+      tsConfig: "tsconfig.json",
+    },
   },
   testMatch: ["**/test/**/*.ts", "!**/test/**/*.d.ts", "!**/test/sample.ts"],
-  verbose: true
-}
+  verbose: true,
+};

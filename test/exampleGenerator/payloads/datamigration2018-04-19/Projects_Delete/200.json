@@ -1,0 +1,29 @@
+{
+    "liveRequest": {
+        "headers": {
+            "pragma": "no-cache",
+            "x-ms-request-id": "50a45e43-c34e-4c56-9ecb-76e47c47f247",
+            "connection": "close",
+            "cache-Control": "no-cache",
+            "date": "Mon, 14 Sep 2020 17:19:21 GMT",
+            "server": "Microsoft-IIS/10.0"
+        },
+        "method": "DELETE",
+        "url": "/subscriptions/85b3dbca-5974-4067-9669-67a141095a76/resourceGroups/acctestRG-dbms-200914170707444291/providers/Microsoft.DataMigration/services/acctestDbms-200914170707444291/projects/acctestDbmsProject-200914170707444291?api-version=2018-04-19&deleteRunningTasks=false",
+        "query": {
+            "api-version": "2018-04-19",
+            "deleteRunningTasks": "false"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "200",
+        "headers": {
+            "pragma": "no-cache",
+            "x-ms-request-id": "50a45e43-c34e-4c56-9ecb-76e47c47f247",
+            "connection": "close",
+            "cache-Control": "no-cache",
+            "date": "Mon, 14 Sep 2020 17:19:21 GMT",
+            "server": "Microsoft-IIS/10.0"
+        }
+    }
+}

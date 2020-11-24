@@ -1,8 +1,8 @@
-import * as it from "@ts-common/iterator"
+import { IterableEx, map } from "@azure-tools/openapi-tools-common";
 
-import { ModelValidationError } from "./modelValidationError"
-import { errorCodeToErrorMetadata, ExtendedErrorCode } from "./validationError"
-import { ValidationResultSource } from "./validationResultSource"
+import { ModelValidationError } from "./modelValidationError";
+import { errorCodeToErrorMetadata, ExtendedErrorCode } from "./validationError";
+import { ValidationResultSource } from "./validationResultSource";
 
 /**
  * Transforms serialized errors to ModelValidationError
@@ -13,12 +13,12 @@ export function toModelErrors(
   scenario: string,
   source: ValidationResultSource,
   responseCode: string
-): it.IterableEx<ModelValidationError> {
-  return it.map(processedErrors, value => {
+): IterableEx<ModelValidationError> {
+  return map(processedErrors, (value) => {
     if (value.code === undefined) {
-      value.code = "INTERNAL_ERROR"
+      value.code = "INTERNAL_ERROR";
     }
-    const severity = errorCodeToErrorMetadata(value.code as ExtendedErrorCode).severity
+    const severity = errorCodeToErrorMetadata(value.code as ExtendedErrorCode).severity;
     const modelError: ModelValidationError = {
       operationId,
       scenario,
@@ -26,8 +26,8 @@ export function toModelErrors(
       responseCode,
       severity,
       code: value.code,
-      details: value
-    }
-    return modelError
-  })
+      details: value,
+    };
+    return modelError;
+  });
 }

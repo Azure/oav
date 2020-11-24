@@ -6,5 +6,5 @@ export const enum Severity {
   Error = 1,
   Warning = 2,
   Information = 3,
-  Verbose = 4
+  Verbose = 4,
 }

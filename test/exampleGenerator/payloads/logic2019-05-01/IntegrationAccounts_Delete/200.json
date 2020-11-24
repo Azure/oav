@@ -1,0 +1,28 @@
+{
+    "liveRequest": {
+        "headers": {
+            "pragma": "no-cache",
+            "x-ms-request-id": "westeurope:0f1711d6-d4e0-455f-b6cb-329b2e23cfe6",
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "connection": "close",
+            "cache-Control": "no-cache",
+            "date": "Wed, 29 Jul 2020 15:56:56 GMT"
+        },
+        "method": "DELETE",
+        "url": "/subscriptions/85b3dbca-5974-4067-9669-67a141095a76/resourceGroups/acctest-logic-200729155621512207/providers/Microsoft.Logic/integrationAccounts/acctest-IA-200729155621512207?api-version=2019-05-01",
+        "query": {
+            "api-version": "2019-05-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "200",
+        "headers": {
+            "pragma": "no-cache",
+            "x-ms-request-id": "westeurope:0f1711d6-d4e0-455f-b6cb-329b2e23cfe6",
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "connection": "close",
+            "cache-Control": "no-cache",
+            "date": "Wed, 29 Jul 2020 15:56:56 GMT"
+        }
+    }
+}

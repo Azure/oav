@@ -1,0 +1,22 @@
+{
+    "liveRequest": {
+        "headers": {
+            "strict-Transport-Security": "max-age=2592000",
+            "date": "Tue, 15 Sep 2020 08:41:21 GMT",
+            "server": "Kestrel"
+        },
+        "method": "DELETE",
+        "url": "/subscriptions/d76378d3-ec62-4f63-999f-9f4709617bab/resourceGroups/E2ETests-westus2/providers/Microsoft.DigitalTwins/digitalTwinsInstances/e2e-20091508370206-eastus-02-ep-ga-1/endpoints/rp-crud-EventHubProvisioningConfig?api-version=2020-10-31",
+        "query": {
+            "api-version": "2020-10-31"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "204",
+        "headers": {
+            "strict-Transport-Security": "max-age=2592000",
+            "date": "Tue, 15 Sep 2020 08:41:21 GMT",
+            "server": "Kestrel"
+        }
+    }
+}

@@ -8,14 +8,13 @@
  * regenerated.
  */
 
-export { LiveRequest } from "./liveRequest"
-export { LiveResponse } from "./liveResponse"
-export { RequestResponse } from "./requestResponse"
-export { OperationInfo } from "./operationInfo"
-export { LiveValidationError } from "./liveValidationError"
-export { ErrorResponse } from "./errorResponse"
-export { ErrorWrapper } from "./errorWrapper"
-export { RequestValidationResult } from "./requestValidationResult"
-export { ResponseValidationResult } from "./responseValidationResult"
-export { ValidationResult } from "./validationResult"
-export { PotentialOperationsResult } from "./potentialOperationsResult"
+export { LiveRequest } from "./liveRequest";
+export { LiveResponse } from "./liveResponse";
+export { RequestResponse } from "./requestResponse";
+export { OperationInfo } from "./operationInfo";
+export { LiveValidationError } from "./liveValidationError";
+export { ErrorResponse } from "./errorResponse";
+export { ErrorWrapper } from "./errorWrapper";
+export { RequestValidationResult } from "./requestValidationResult";
+export { ResponseValidationResult } from "./responseValidationResult";
+export { ValidationResult } from "./validationResult";

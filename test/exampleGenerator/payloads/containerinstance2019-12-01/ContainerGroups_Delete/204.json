@@ -1,0 +1,28 @@
+{
+    "liveRequest": {
+        "headers": {
+            "pragma": "no-cache",
+            "x-ms-ratelimit-remaining-subscription-resource-requests-pt5m": "99",
+            "x-ms-ratelimit-remaining-subscription-resource-requests-pt1h": "299",
+            "x-ms-request-id": "westus:950dd9f3-33dd-4713-b1d9-5b4a4ceb24d6",
+            "cache-Control": "no-cache",
+            "date": "Tue, 08 Sep 2020 15:26:37 GMT"
+        },
+        "method": "DELETE",
+        "url": "/subscriptions/95f31ea2-0e41-4d66-a5db-9ef0449ad928/resourceGroups/gamingreco0908_3/providers/Microsoft.ContainerInstance/containerGroups/asdgd7ddo4qw4azscripts?api-version=2019-12-01",
+        "query": {
+            "api-version": "2019-12-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "204",
+        "headers": {
+            "pragma": "no-cache",
+            "x-ms-ratelimit-remaining-subscription-resource-requests-pt5m": "99",
+            "x-ms-ratelimit-remaining-subscription-resource-requests-pt1h": "299",
+            "x-ms-request-id": "westus:950dd9f3-33dd-4713-b1d9-5b4a4ceb24d6",
+            "cache-Control": "no-cache",
+            "date": "Tue, 08 Sep 2020 15:26:37 GMT"
+        }
+    }
+}

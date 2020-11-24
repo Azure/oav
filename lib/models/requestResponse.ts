@@ -8,6 +8,8 @@
  * regenerated.
  */
 
+import { Schema } from "../swagger/swaggerTypes";
+
 /**
  * @class
  * Initializes a new instance of the RequestResponse class.
@@ -45,6 +47,7 @@ export class RequestResponse {
    * @returns {object} metadata of RequestResponse
    *
    */
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   public mapper() {
     return {
       required: false,
@@ -58,19 +61,76 @@ export class RequestResponse {
             serializedName: "liveRequest",
             type: {
               name: "Composite",
-              className: "LiveRequest"
-            }
+              className: "LiveRequest",
+            },
           },
           liveResponse: {
             required: true,
             serializedName: "liveResponse",
             type: {
               name: "Composite",
-              className: "LiveResponse"
-            }
-          }
-        }
-      }
-    }
+              className: "LiveResponse",
+            },
+          },
+        },
+      },
+    };
   }
 }
+
+export const requestResponseDefinition: Schema = {
+  properties: {
+    liveRequest: {
+      required: ["url", "method"],
+      properties: {
+        headers: {
+          type: "object",
+          additionalProperties: {
+            type: "string",
+          },
+        },
+        query: {
+          nullable: true,
+          additionalProperties: {
+            oneOf: [
+              {
+                type: "string",
+              },
+              {
+                type: "array",
+                items: {
+                  type: "string",
+                },
+              },
+            ],
+          },
+        },
+        url: {
+          type: "string",
+        },
+        method: {
+          type: "string",
+        },
+        body: {
+          nullable: true,
+        },
+      },
+    },
+    liveResponse: {
+      required: ["statusCode"],
+      properties: {
+        statusCode: {
+          type: "string",
+        },
+        headers: {
+          additionalProperties: {
+            type: "string",
+          },
+        },
+        body: {
+          nullable: true,
+        },
+      },
+    },
+  },
+};

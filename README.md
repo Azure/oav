@@ -50,7 +50,7 @@ Options:
                                                                [default: "warn"]
   -f, --logFilepath  Set the log file path. It must be an absolute filepath. By
                      default the logs will stored in a timestamp based log file
-                     at "C:\Users\amzavery\oav_output".
+                     at "C:\Users\abc\oav_output".
   -h, --help         Show help                                         [boolean]
 
 bash-3.2$

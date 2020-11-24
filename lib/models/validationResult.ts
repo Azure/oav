@@ -50,6 +50,7 @@ export class ValidationResult {
    * @returns {object} metadata of ValidationResult
    *
    */
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   public mapper() {
     return {
       required: false,
@@ -64,8 +65,8 @@ export class ValidationResult {
             serializedName: "requestValidationResult",
             type: {
               name: "Composite",
-              className: "RequestValidationResult"
-            }
+              className: "RequestValidationResult",
+            },
           },
           responseValidationResult: {
             required: false,
@@ -73,8 +74,8 @@ export class ValidationResult {
             serializedName: "responseValidationResult",
             type: {
               name: "Composite",
-              className: "ResponseValidationResult"
-            }
+              className: "ResponseValidationResult",
+            },
           },
           errors: {
             required: false,
@@ -87,13 +88,13 @@ export class ValidationResult {
                 serializedName: "ErrorWrapperElementType",
                 type: {
                   name: "Composite",
-                  className: "ErrorWrapper"
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+                  className: "ErrorWrapper",
+                },
+              },
+            },
+          },
+        },
+      },
+    };
   }
 }

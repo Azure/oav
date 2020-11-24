@@ -1,0 +1,27 @@
+{
+    "liveRequest": {
+        "headers": {
+            "pragma": "no-cache",
+            "x-ms-request-id": "westeurope:0275954d-50bf-4d93-a28c-b4826ab90587",
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "cache-Control": "no-cache",
+            "date": "Sun, 26 Jul 2020 23:46:56 GMT"
+        },
+        "method": "POST",
+        "url": "/subscriptions/0e0dddfc-1e5f-47a6-bd54-6560908aaf5f/resourcegroups/RO/providers/Microsoft.Logic/workflows/ro-if-pro-logicapp-DWHsyncWJob/Enable?x-ms-api-version=2019-05-01&api-version=2019-05-01",
+        "query": {
+            "x-ms-api-version": "2019-05-01",
+            "api-version": "2019-05-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "200",
+        "headers": {
+            "pragma": "no-cache",
+            "x-ms-request-id": "westeurope:0275954d-50bf-4d93-a28c-b4826ab90587",
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "cache-Control": "no-cache",
+            "date": "Sun, 26 Jul 2020 23:46:56 GMT"
+        }
+    }
+}

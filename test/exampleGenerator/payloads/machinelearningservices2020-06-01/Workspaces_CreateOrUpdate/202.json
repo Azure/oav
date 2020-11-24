@@ -1,0 +1,56 @@
+{
+    "liveRequest": {
+        "headers": {
+            "connection": "keep-alive",
+            "request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+            "x-ms-response-type": "standard",
+            "azure-AsyncOperation": "https://management.azure.com/subscriptions/32271d36-d77b-485b-b7b2-0c990d2abf56/providers/Microsoft.MachineLearningServices/locations/westus2/workspaceOperationsStatus/72b1b685-eea0-41a1-b31f-21c08adef3e2?api-version=2020-04-01&type=async",
+            "x-ms-client-request-id": "c30c659a-d4ac-4b0b-b7c1-576bfcb57d0b",
+            "x-ms-client-session-id": "",
+            "x-request-time": "0.101",
+            "strict-Transport-Security": "max-age=15724800; includeSubDomains; preload",
+            "date": "Mon, 07 Sep 2020 16:21:06 GMT",
+            "location": "https://management.azure.com/subscriptions/32271d36-d77b-485b-b7b2-0c990d2abf56/providers/Microsoft.MachineLearningServices/locations/westus2/workspaceOperationsStatus/72b1b685-eea0-41a1-b31f-21c08adef3e2?api-version=2018-03-01-preview&type=location"
+        },
+        "method": "PUT",
+        "url": "/subscriptions/32271d36-d77b-485b-b7b2-0c990d2abf56/resourcegroups/mike-97b-int/providers/Microsoft.MachineLearningServices/workspaces/mike-97b-int?api-version=2020-06-01",
+        "body": {
+            "sku": {
+                "name": "aaaaaaaaaa",
+                "tier": "aaaaaaaaaa"
+            },
+            "location": "aaaaaaa",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "friendlyName": "aaaaaaaaaaaa",
+                "storageAccount": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "containerRegistry": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "keyVault": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "applicationInsights": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "hbiWorkspace": false,
+                "allowPublicAccessWhenBehindVnet": false,
+                "discoveryUrl": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            }
+        },
+        "query": {
+            "api-version": "2020-06-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "202",
+        "headers": {
+            "connection": "keep-alive",
+            "request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+            "x-ms-response-type": "standard",
+            "azure-AsyncOperation": "https://management.azure.com/subscriptions/32271d36-d77b-485b-b7b2-0c990d2abf56/providers/Microsoft.MachineLearningServices/locations/westus2/workspaceOperationsStatus/72b1b685-eea0-41a1-b31f-21c08adef3e2?api-version=2020-04-01&type=async",
+            "x-ms-client-request-id": "c30c659a-d4ac-4b0b-b7c1-576bfcb57d0b",
+            "x-ms-client-session-id": "",
+            "x-request-time": "0.101",
+            "strict-Transport-Security": "max-age=15724800; includeSubDomains; preload",
+            "date": "Mon, 07 Sep 2020 16:21:06 GMT",
+            "location": "https://management.azure.com/subscriptions/32271d36-d77b-485b-b7b2-0c990d2abf56/providers/Microsoft.MachineLearningServices/locations/westus2/workspaceOperationsStatus/72b1b685-eea0-41a1-b31f-21c08adef3e2?api-version=2018-03-01-preview&type=location"
+        }
+    }
+}

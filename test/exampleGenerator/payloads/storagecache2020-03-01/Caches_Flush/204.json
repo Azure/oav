@@ -1,0 +1,28 @@
+{
+    "liveRequest": {
+        "headers": {
+            "azure-AsyncOperation": "https://eastus2euap.management.azure.com/subscriptions/a67b138d-11dd-4bcf-ad84-ca45f39fd690/providers/Microsoft.StorageCache/locations/southcentralus/ascOperations/dabb416b-9793-4613-b510-d9b291df8ce3?api-version=2020-03-01",
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains,max-age=31536000; includeSubDomains",
+            "x-ms-served-by": "fe957163-c6f1-4293-baeb-0fc6be172576_132430183365189021,fe957163-c6f1-4293-baeb-0fc6be172576_132430183365189021",
+            "x-ms-request-id": "dabb416b-9793-4613-b510-d9b291df8ce3",
+            "date": "Tue, 15 Sep 2020 16:14:10 GMT",
+            "server": "Microsoft-HTTPAPI/2.0;Microsoft-HTTPAPI/2.0"
+        },
+        "method": "POST",
+        "url": "/subscriptions/a67b138d-11dd-4bcf-ad84-ca45f39fd690/resourcegroups/asc0915x150029u-omzevall-PROD-southcentralus/providers/Microsoft.StorageCache/caches/tavern-Standard_2G-3072-asc0915x150029u-omzevall-PROD-southcentralus/flush?api-version=2020-03-01",
+        "query": {
+            "api-version": "2020-03-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "204",
+        "headers": {
+            "azure-AsyncOperation": "https://eastus2euap.management.azure.com/subscriptions/a67b138d-11dd-4bcf-ad84-ca45f39fd690/providers/Microsoft.StorageCache/locations/southcentralus/ascOperations/dabb416b-9793-4613-b510-d9b291df8ce3?api-version=2020-03-01",
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains,max-age=31536000; includeSubDomains",
+            "x-ms-served-by": "fe957163-c6f1-4293-baeb-0fc6be172576_132430183365189021,fe957163-c6f1-4293-baeb-0fc6be172576_132430183365189021",
+            "x-ms-request-id": "dabb416b-9793-4613-b510-d9b291df8ce3",
+            "date": "Tue, 15 Sep 2020 16:14:10 GMT",
+            "server": "Microsoft-HTTPAPI/2.0;Microsoft-HTTPAPI/2.0"
+        }
+    }
+}

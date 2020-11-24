@@ -1,0 +1,40 @@
+{
+    "liveRequest": {
+        "headers": {
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "azure-AsyncOperation": "https://management.azure.com/subscriptions/20fbc625-5052-4bcb-9101-e112b1a42ef4/providers/Microsoft.AnalysisServices/locations/northeurope/operationstatuses/05A23B05-B993-4BCC-AB63-920BF4F2A514?api-version=2016-05-16",
+            "x-ms-request-id": "4de10996-1bcc-4d54-a4f5-cb090a48b256",
+            "x-ms-current-utc-date": "7/26/2020 7:30:40 PM",
+            "x-Frame-Options": "deny",
+            "x-Content-Type-Options": "nosniff",
+            "x-XSS-Protection": "1; mode=block",
+            "content-Security-Policy": "script-src 'self'",
+            "connection": "close",
+            "date": "Sun, 26 Jul 2020 19:30:43 GMT",
+            "location": "https://management.azure.com/subscriptions/20fbc625-5052-4bcb-9101-e112b1a42ef4/providers/Microsoft.AnalysisServices/locations/northeurope/operationresults/05A23B05-B993-4BCC-AB63-920BF4F2A514?api-version=2016-05-16",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "method": "POST",
+        "url": "/subscriptions/20fbc625-5052-4bcb-9101-e112b1a42ef4/resourceGroups/data-services-eu-uat-rg/providers/Microsoft.AnalysisServices/servers/visiontabeuuat/resume?api-version=2017-08-01",
+        "query": {
+            "api-version": "2017-08-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "202",
+        "headers": {
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "azure-AsyncOperation": "https://management.azure.com/subscriptions/20fbc625-5052-4bcb-9101-e112b1a42ef4/providers/Microsoft.AnalysisServices/locations/northeurope/operationstatuses/05A23B05-B993-4BCC-AB63-920BF4F2A514?api-version=2016-05-16",
+            "x-ms-request-id": "4de10996-1bcc-4d54-a4f5-cb090a48b256",
+            "x-ms-current-utc-date": "7/26/2020 7:30:40 PM",
+            "x-Frame-Options": "deny",
+            "x-Content-Type-Options": "nosniff",
+            "x-XSS-Protection": "1; mode=block",
+            "content-Security-Policy": "script-src 'self'",
+            "connection": "close",
+            "date": "Sun, 26 Jul 2020 19:30:43 GMT",
+            "location": "https://management.azure.com/subscriptions/20fbc625-5052-4bcb-9101-e112b1a42ef4/providers/Microsoft.AnalysisServices/locations/northeurope/operationresults/05A23B05-B993-4BCC-AB63-920BF4F2A514?api-version=2016-05-16",
+            "server": "Microsoft-HTTPAPI/2.0"
+        }
+    }
+}

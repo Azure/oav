@@ -1,0 +1,26 @@
+{
+    "liveRequest": {
+        "headers": {
+            "pragma": "no-cache",
+            "x-ms-request-id": "australiaeast:60e34333-b5a8-41c6-9cec-8e287aa731ce",
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "cache-Control": "no-cache",
+            "date": "Sun, 26 Jul 2020 21:33:14 GMT"
+        },
+        "method": "DELETE",
+        "url": "/subscriptions/5d9a50fc-e623-445d-ac3b-627b84504088/resourceGroups/RG_Test_Ryan/providers/Microsoft.Logic/workflows/LA_Test_UrlFwd?api-version=2019-05-01",
+        "query": {
+            "api-version": "2019-05-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "200",
+        "headers": {
+            "pragma": "no-cache",
+            "x-ms-request-id": "australiaeast:60e34333-b5a8-41c6-9cec-8e287aa731ce",
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "cache-Control": "no-cache",
+            "date": "Sun, 26 Jul 2020 21:33:14 GMT"
+        }
+    }
+}

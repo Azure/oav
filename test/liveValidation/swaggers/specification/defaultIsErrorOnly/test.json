@@ -22,8 +22,7 @@
             "schema": {}
           },
           "default": {
-            "description": "somedescription",
-            "schema": {}
+            "description": "somedescription"
           }
         }
       }

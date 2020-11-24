@@ -1,24 +1,24 @@
-import md5File = require("md5-file")
+import md5File = require("md5-file");
 
-import * as validate from "../lib/validate"
+import * as validate from "../lib/validate";
 
 export const validateExamplesRegressionTest = async (file: string) => {
   try {
-    const hash = await new Promise(resolve =>
+    const hash = await new Promise((resolve) =>
       md5File(file, (e, h) => {
         if (e) {
-          throw e
+          throw e;
         }
-        resolve(h)
+        resolve(h);
       })
-    )
-    expect(hash).toMatchSnapshot("input file hash")
+    );
+    expect(hash).toMatchSnapshot("input file hash");
 
     const result = await validate.validateExamples(file, undefined, {
-      pretty: true
-    })
-    expect(result).toMatchSnapshot("returned results")
+      pretty: true,
+    });
+    expect(result).toMatchSnapshot("returned results");
   } catch (e) {
-    expect(e).toMatchSnapshot("thrown exception")
+    expect(e).toMatchSnapshot("thrown exception");
   }
-}
+};

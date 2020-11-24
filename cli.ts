@@ -2,12 +2,12 @@
 
 /* tslint:disable */
 
-import * as yargs from "yargs"
-import { log } from "./lib/util/logging"
+import * as yargs from "yargs";
+import { log } from "./lib/util/logging";
 
-const defaultLogDir = log.directory
+const defaultLogDir = log.directory;
 
-const packageVersion = require("../package.json").version
+const packageVersion = require("../package.json").version;
 
 yargs
   .version(packageVersion)
@@ -22,17 +22,17 @@ yargs
   })
   .option("f", {
     alias: "logFilepath",
-    describe: `Set the log file path. It must be an absolute filepath. ` +
+    describe:
+      `Set the log file path. It must be an absolute filepath. ` +
       `By default the logs will stored in a timestamp based log file at "${defaultLogDir}".`,
   })
   .option("p", {
     alias: "pretty",
-    describe: `Pretty print`
+    describe: `Pretty print`,
   })
   .global(["h", "l", "f", "p"])
-  .help()
-  .argv;
+  .help().argv;
 
 if (yargs.argv._.length === 0 && yargs.argv.h === false) {
-  yargs.coerce("help", _ => true).argv;
+  yargs.coerce("help", (_) => true).argv;
 }

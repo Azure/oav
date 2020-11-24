@@ -1,0 +1,22 @@
+{
+    "liveRequest": {
+        "headers": {
+            "date": "Thu, 17 Sep 2020 21:03:28 GMT",
+            "location": "https://management.azure.com/subscriptions/06897164-47b3-4046-8ecd-a51d963e7046/providers/Microsoft.DataShare/locations/eastus2/operationResults/81a8fa19-915a-4afb-b3a2-f22ba85e7745?api-version=2019-11-01",
+            "server": "Kestrel"
+        },
+        "method": "DELETE",
+        "url": "/subscriptions/06897164-47b3-4046-8ecd-a51d963e7046/resourceGroups/acsmemberl2rg/providers/Microsoft.DataShare/accounts/l2testadsaccount/shares/aics-testreceiveddatapackageapisp000000bc?api-version=2019-11-01",
+        "query": {
+            "api-version": "2019-11-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "202",
+        "headers": {
+            "date": "Thu, 17 Sep 2020 21:03:28 GMT",
+            "location": "https://management.azure.com/subscriptions/06897164-47b3-4046-8ecd-a51d963e7046/providers/Microsoft.DataShare/locations/eastus2/operationResults/81a8fa19-915a-4afb-b3a2-f22ba85e7745?api-version=2019-11-01",
+            "server": "Kestrel"
+        }
+    }
+}

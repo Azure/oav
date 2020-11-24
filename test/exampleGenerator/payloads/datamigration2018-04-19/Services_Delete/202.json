@@ -1,0 +1,35 @@
+{
+    "liveRequest": {
+        "headers": {
+            "pragma": "no-cache",
+            "retry-After": "30",
+            "azure-AsyncOperation": "https://management.azure.com/subscriptions/85b3dbca-5974-4067-9669-67a141095a76/providers/Microsoft.DataMigration/locations/westeurope/operationStatuses/fb67d778-4d32-4806-83b9-9c5e30cd7fa2?api-version=2018-04-19",
+            "x-ms-request-id": "dec72eb3-5155-4b66-8459-5d2821dcb563",
+            "connection": "close",
+            "cache-Control": "no-cache",
+            "date": "Wed, 29 Jul 2020 15:18:30 GMT",
+            "location": "https://management.azure.com/subscriptions/85b3dbca-5974-4067-9669-67a141095a76/providers/Microsoft.DataMigration/locations/westeurope/operationResults/fb67d778-4d32-4806-83b9-9c5e30cd7fa2?api-version=2018-04-19",
+            "server": "Microsoft-IIS/10.0"
+        },
+        "method": "DELETE",
+        "url": "/subscriptions/85b3dbca-5974-4067-9669-67a141095a76/resourceGroups/acctestRG-dbms-200729150836427008/providers/Microsoft.DataMigration/services/acctestDbms-200729150836427008?api-version=2018-04-19&deleteRunningTasks=false",
+        "query": {
+            "api-version": "2018-04-19",
+            "deleteRunningTasks": false
+        }
+    },
+    "liveResponse": {
+        "statusCode": "202",
+        "headers": {
+            "pragma": "no-cache",
+            "retry-After": "30",
+            "azure-AsyncOperation": "https://management.azure.com/subscriptions/85b3dbca-5974-4067-9669-67a141095a76/providers/Microsoft.DataMigration/locations/westeurope/operationStatuses/fb67d778-4d32-4806-83b9-9c5e30cd7fa2?api-version=2018-04-19",
+            "x-ms-request-id": "dec72eb3-5155-4b66-8459-5d2821dcb563",
+            "connection": "close",
+            "cache-Control": "no-cache",
+            "date": "Wed, 29 Jul 2020 15:18:30 GMT",
+            "location": "https://management.azure.com/subscriptions/85b3dbca-5974-4067-9669-67a141095a76/providers/Microsoft.DataMigration/locations/westeurope/operationResults/fb67d778-4d32-4806-83b9-9c5e30cd7fa2?api-version=2018-04-19",
+            "server": "Microsoft-IIS/10.0"
+        }
+    }
+}

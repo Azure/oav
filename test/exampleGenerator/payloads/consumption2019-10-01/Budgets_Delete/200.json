@@ -1,0 +1,30 @@
+{
+    "liveRequest": {
+        "headers": {
+            "session-id": "fd2a2326-194f-4f73-8526-2835bcb3379a",
+            "x-ms-request-id": "364c4d0d-f18b-4a01-8cd1-422b5f7e4deb",
+            "x-ms-correlation-request-id": "eabc8a54-5b22-4e96-b625-54d0b6a2e572",
+            "x-ms-client-request-id": "e7047faa-5f90-4314-976c-796505af4018",
+            "connection": "close",
+            "date": "Thu, 10 Sep 2020 11:17:11 GMT",
+            "x-Powered-By": "ASP.NET"
+        },
+        "method": "DELETE",
+        "url": "/subscriptions/36bc0606-1db0-4134-bfc7-0a86c40d169a/resourceGroups/mpdm-privitar-d-rg/providers/Microsoft.Consumption/budgets/$(MonthlybudgetName)/?api-version=2019-10-01",
+        "query": {
+            "api-version": "2019-10-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "200",
+        "headers": {
+            "session-id": "fd2a2326-194f-4f73-8526-2835bcb3379a",
+            "x-ms-request-id": "364c4d0d-f18b-4a01-8cd1-422b5f7e4deb",
+            "x-ms-correlation-request-id": "eabc8a54-5b22-4e96-b625-54d0b6a2e572",
+            "x-ms-client-request-id": "e7047faa-5f90-4314-976c-796505af4018",
+            "connection": "close",
+            "date": "Thu, 10 Sep 2020 11:17:11 GMT",
+            "x-Powered-By": "ASP.NET"
+        }
+    }
+}

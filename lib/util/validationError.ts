@@ -1,36 +1,32 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
-import { flatMap, fold } from "@ts-common/iterator"
-import * as json from "@ts-common/json"
-import { FilePosition } from "@ts-common/source-map"
-import { StringMap } from "@ts-common/string-map"
-import { PathComponent, stringify } from "jsonpath"
-import _ from "lodash"
-import { jsonSymbol, schemaSymbol } from "z-schema"
-
-import { processErrors } from "./processErrors"
-import { Severity } from "./severity"
+import { FilePosition, flatMap, fold, JsonRef, StringMap } from "@azure-tools/openapi-tools-common";
+import { JSONPath } from "jsonpath-plus";
+import _ from "lodash";
+import { jsonSymbol, schemaSymbol } from "z-schema";
+import { processErrors } from "./processErrors";
+import { Severity } from "./severity";
 
 /**
  * @class
  * Error that results from validations.
  */
 interface ErrorCodeMetadata {
-  readonly severity: Severity
-  readonly docUrl: string
+  readonly severity: Severity;
+  readonly docUrl: string;
 }
 
-export type ValidationErrorMetadata = ErrorCodeMetadata & { code: ExtendedErrorCode }
+export type ValidationErrorMetadata = ErrorCodeMetadata & { code: ExtendedErrorCode };
 
-export type ExtendedErrorCode = ErrorCode | WrapperErrorCode | RuntimeErrorCode
-export type ErrorCode = keyof typeof errorConstants
-export type WrapperErrorCode = keyof typeof wrapperErrorConstants
-export type RuntimeErrorCode = keyof typeof runtimeErrorConstants
+export type ExtendedErrorCode = ErrorCode | WrapperErrorCode | RuntimeErrorCode;
+export type ErrorCode = keyof typeof errorConstants;
+export type WrapperErrorCode = keyof typeof wrapperErrorConstants;
+export type RuntimeErrorCode = keyof typeof runtimeErrorConstants;
 
 const errorConstants = {
   INVALID_TYPE: {
     severity: Severity.Critical,
-    docUrl: ""
+    docUrl: "",
   },
   INVALID_FORMAT: { severity: Severity.Critical, docUrl: "" },
   ENUM_MISMATCH: { severity: Severity.Critical, docUrl: "" },
@@ -42,7 +38,7 @@ const errorConstants = {
   ARRAY_UNIQUE: { severity: Severity.Critical, docUrl: "" },
   ARRAY_ADDITIONAL_ITEMS: {
     severity: Severity.Critical,
-    docUrl: ""
+    docUrl: "",
   },
   MULTIPLE_OF: { severity: Severity.Critical, docUrl: "" },
   MINIMUM: { severity: Severity.Critical, docUrl: "" },
@@ -51,38 +47,41 @@ const errorConstants = {
   MAXIMUM_EXCLUSIVE: { severity: Severity.Critical, docUrl: "" },
   READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST: {
     severity: Severity.Critical,
-    docUrl: ""
+    docUrl: "",
   },
   UNRESOLVABLE_REFERENCE: { severity: Severity.Critical, docUrl: "" },
   SECRET_PROPERTY: { severity: Severity.Critical, docUrl: "" },
   WRITEONLY_PROPERTY_NOT_ALLOWED_IN_RESPONSE: { severity: Severity.Critical, docUrl: "" },
   OBJECT_PROPERTIES_MINIMUM: {
     severity: Severity.Critical,
-    docUrl: ""
+    docUrl: "",
   },
   OBJECT_PROPERTIES_MAXIMUM: {
     severity: Severity.Critical,
-    docUrl: ""
+    docUrl: "",
   },
   OBJECT_MISSING_REQUIRED_PROPERTY: {
     severity: Severity.Critical,
-    docUrl: ""
+    docUrl: "",
   },
   MISSING_REQUIRED_PARAMETER: {
     severity: Severity.Critical,
-    docUrl: ""
+    docUrl: "",
   },
   OBJECT_ADDITIONAL_PROPERTIES: {
     severity: Severity.Critical,
-    docUrl: ""
+    docUrl: "",
   },
   OBJECT_DEPENDENCY_KEY: { severity: Severity.Warning, docUrl: "" },
   MIN_LENGTH: { severity: Severity.Critical, docUrl: "" },
   MAX_LENGTH: { severity: Severity.Critical, docUrl: "" },
   PATTERN: { severity: Severity.Critical, docUrl: "" },
   INVALID_RESPONSE_CODE: { severity: Severity.Critical, docUrl: "" },
-  INVALID_CONTENT_TYPE: { severity: Severity.Error, docUrl: "" }
-}
+  INVALID_CONTENT_TYPE: { severity: Severity.Error, docUrl: "" },
+  DISCRIMINATOR_VALUE_NOT_FOUND: { severity: Severity.Critical, docUrl: "" },
+  INVALID_RESPONSE_HEADER: { severity: Severity.Error, docUrl: "" },
+  INVALID_RESPONSE_BODY: { severity: Severity.Critical, docUrl: "" },
+};
 
 const wrapperErrorConstants = {
   ANY_OF_MISSING: { severity: Severity.Critical, docUrl: "" },
@@ -90,116 +89,101 @@ const wrapperErrorConstants = {
   ONE_OF_MULTIPLE: { severity: Severity.Critical, docUrl: "" },
   MULTIPLE_OPERATIONS_FOUND: {
     severity: Severity.Critical,
-    docUrl: ""
+    docUrl: "",
   },
   INVALID_RESPONSE_HEADER: {
     severity: Severity.Critical,
-    docUrl: ""
+    docUrl: "",
   },
   INVALID_RESPONSE_BODY: { severity: Severity.Critical, docUrl: "" },
   INVALID_REQUEST_PARAMETER: {
     severity: Severity.Critical,
-    docUrl: ""
-  }
-}
+    docUrl: "",
+  },
+};
 
 const runtimeErrorConstants = {
   OPERATION_NOT_FOUND_IN_CACHE: {
     severity: Severity.Critical,
-    docUrl: ""
+    docUrl: "",
   },
   OPERATION_NOT_FOUND_IN_CACHE_WITH_VERB: {
     severity: Severity.Critical,
-    docUrl: ""
+    docUrl: "",
   },
   OPERATION_NOT_FOUND_IN_CACHE_WITH_API: {
     severity: Severity.Critical,
-    docUrl: ""
+    docUrl: "",
   },
   OPERATION_NOT_FOUND_IN_CACHE_WITH_PROVIDER: {
     severity: Severity.Critical,
-    docUrl: ""
+    docUrl: "",
   },
-  INTERNAL_ERROR: { severity: Severity.Critical, docUrl: "" }
-}
+  INTERNAL_ERROR: { severity: Severity.Critical, docUrl: "" },
+};
 
-const allErrorConstants = {
+export const allErrorConstants = {
   ...errorConstants,
   ...wrapperErrorConstants,
-  ...runtimeErrorConstants
-}
+  ...runtimeErrorConstants,
+};
 /**
  * Gets the validation error metadata from an error code. If the code is unknown assume critical.
  */
-export const errorCodeToErrorMetadata = (code: ExtendedErrorCode): ValidationErrorMetadata => {
-  return {
-    ...(allErrorConstants[code] || {
-      severity: Severity.Critical,
-      docUrl: ""
-    }),
-    code
-  }
-}
-
-export interface LiveValidationIssue {
-  readonly code: string
-  readonly message: string
-  // tslint:disable-next-line: prettier
-  readonly pathsInPayload: readonly string[]
-  readonly operationId: string
-  readonly source: SourceLocation
-  readonly documentationUrl: string
-  readonly params?: readonly string[]
-  readonly origin: string
-  readonly inner?: readonly object[]
-}
+export const errorCodeToErrorMetadata = (code: ExtendedErrorCode): ValidationErrorMetadata => ({
+  ...(allErrorConstants[code] || {
+    severity: Severity.Critical,
+    docUrl: "",
+  }),
+  code,
+});
 
 export interface SourceLocation {
-  readonly url: string
-  readonly jsonRef?: string
-  readonly jsonPath?: string
+  readonly url: string;
+  readonly jsonRef?: string;
+  readonly jsonPath?: string;
   readonly position: {
-    readonly column: number
-    readonly line: number
-  }
+    readonly column: number;
+    readonly line: number;
+  };
 }
 
 export interface RuntimeException {
-  readonly code: string
-  readonly message: string
+  code: string;
+  readonly message: string;
 }
 
 export interface NodeError<T extends NodeError<T>> {
-  code?: string
-  message?: string
-  path?: string | string[]
-  jsonPath?: string
-  schemaPath?: string
-  similarPaths?: string[]
-  similarJsonPaths?: string[]
-  errors?: T[]
-  innerErrors?: T[]
-  in?: string
-  name?: string
-  params?: unknown[]
-  inner?: T[]
-  title?: string
+  code?: string;
+  message?: string;
+  path?: string | string[];
+  jsonPath?: string;
+  schemaPath?: string;
+  similarPaths?: string[];
+  similarJsonPaths?: string[];
+  errors?: T[];
+  innerErrors?: T[];
+  in?: string;
+  name?: string;
+  params?: unknown[];
+  inner?: T[];
+  title?: string;
 
-  position?: FilePosition
-  url?: string
+  position?: FilePosition;
+  url?: string;
 
-  jsonPosition?: FilePosition
-  jsonUrl?: string
+  jsonPosition?: FilePosition;
+  jsonUrl?: string;
 
-  directives?: StringMap<unknown>
+  directives?: StringMap<unknown>;
 
-  readonly [jsonSymbol]?: json.JsonRef
-  readonly [schemaSymbol]?: object
+  readonly [jsonSymbol]?: JsonRef;
+  readonly [schemaSymbol]?: any;
 }
 
 export interface ValidationResult<T extends NodeError<T>> {
-  readonly requestValidationResult: T
-  readonly responseValidationResult: T
+  readonly requestValidationResult: T;
+  readonly responseValidationResult: T;
 }
 
 /**
@@ -210,153 +194,92 @@ export function processValidationResult<V extends ValidationResult<T>, T extends
 ): V {
   rawValidation.requestValidationResult.errors = processValidationErrors(
     rawValidation.requestValidationResult
-  )
+  );
 
   rawValidation.responseValidationResult.errors = processValidationErrors(
     rawValidation.responseValidationResult
-  )
+  );
 
-  return rawValidation
+  return rawValidation;
 }
 
-export function processValidationErrors<T extends NodeError<T>>(errorsNode: T) {
-  const requestSerializedErrors: T[] = serializeErrors(errorsNode, [])
-  return processErrors(requestSerializedErrors)
+export function processValidationErrors<T extends NodeError<T>>(errorsNode: T): T[] | undefined {
+  const requestSerializedErrors: T[] = serializeErrors(errorsNode, []);
+  return processErrors(requestSerializedErrors);
 }
 
 /**
- * Serializes error tree except discriminatorError
+ * Serializes error tree
  */
-export function serializeErrors<T extends NodeError<T>>(node: T, path: PathComponent[]): T[] {
+export function serializeErrors<T extends NodeError<T>>(node: T, path: string[]): T[] {
   if (isLeaf(node)) {
     if (isTrueError(node)) {
-      setPathProperties(node, path)
-      return [node]
+      setPathProperties(node, path);
+      return [node];
     }
-    return []
+    return [];
   }
 
   if (node.path) {
     // in this case the path will be set to the url instead of the path to the property
     if (node.code === "INVALID_REQUEST_PARAMETER" && node.in === "body") {
-      node.path = []
+      node.path = [];
     } else if (
       (node.in === "query" || node.in === "path") &&
       node.path[0] === "paths" &&
       node.name
     ) {
       // in this case we will want to normalize the path with the uri and the paramter name
-      node.path = [node.path[1], node.name]
+      node.path = [node.path[1], node.name];
     }
-    path = consolidatePath(path, node.path)
+    path = consolidatePath(path, node.path);
   }
 
-  const serializedErrors = flatMap(node.errors, validationError =>
+  const serializedErrors = flatMap(node.errors, (validationError) =>
     serializeErrors(validationError, path)
-  ).toArray()
+  ).toArray();
 
   const serializedInner = fold(
     node.inner,
     (acc, validationError) => {
-      const errs = serializeErrors(validationError, path)
-      errs.forEach(err => {
-        const similarErr = acc.find(el => areErrorsSimilar(err, el))
+      const errs = serializeErrors(validationError, path);
+      errs.forEach((err) => {
+        const similarErr = acc.find((el) => areErrorsSimilar(err, el));
         if (similarErr && similarErr.path) {
           if (!similarErr.similarPaths) {
-            similarErr.similarPaths = []
+            similarErr.similarPaths = [];
           }
-          similarErr.similarPaths.push(err.path as string)
+          similarErr.similarPaths.push(err.path as string);
 
           if (!similarErr.similarJsonPaths) {
-            similarErr.similarJsonPaths = []
+            similarErr.similarJsonPaths = [];
           }
-          similarErr.similarJsonPaths.push(err.jsonPath as string)
+          similarErr.similarJsonPaths.push(err.jsonPath as string);
         } else {
-          acc.push(err)
+          acc.push(err);
         }
-      })
-      return acc
+      });
+      return acc;
     },
     new Array<T>()
-  )
+  );
 
   if (isDiscriminatorError(node)) {
-    setPathProperties(node, path)
-    node.inner = serializedInner
-    return [node]
+    setPathProperties(node, path);
+    node.inner = serializedInner;
+    return [node];
   }
-  return [...serializedErrors, ...serializedInner]
-}
-
-/**
- * Serializes error tree for all errors
- */
-export function serializeErrorsForUnifiedPipeline<T extends NodeError<T>>(
-  node: T,
-  path: PathComponent[]
-): T[] {
-  if (isLeaf(node)) {
-    if (isTrueError(node)) {
-      setPathProperties(node, path)
-      return [node]
-    }
-    return []
-  }
-
-  if (node.path) {
-    // in this case the path will be set to the url instead of the path to the property
-    if (node.code === "INVALID_REQUEST_PARAMETER" && node.in === "body") {
-      node.path = []
-    } else if (
-      (node.in === "query" || node.in === "path") &&
-      node.path[0] === "paths" &&
-      node.name
-    ) {
-      // in this case we will want to normalize the path with the uri and the paramter name
-      node.path = [node.path[1], node.name]
-    }
-    path = consolidatePath(path, node.path)
-  }
-
-  const serializedErrors = flatMap(node.errors, validationError =>
-    serializeErrors(validationError, path)
-  ).toArray()
-
-  const serializedInner = fold(
-    node.inner,
-    (acc, validationError) => {
-      const errs = serializeErrors(validationError, path)
-      errs.forEach(err => {
-        const similarErr = acc.find(el => areErrorsSimilar(err, el))
-        if (similarErr && similarErr.path) {
-          if (!similarErr.similarPaths) {
-            similarErr.similarPaths = []
-          }
-          similarErr.similarPaths.push(err.path as string)
-
-          if (!similarErr.similarJsonPaths) {
-            similarErr.similarJsonPaths = []
-          }
-          similarErr.similarJsonPaths.push(err.jsonPath as string)
-        } else {
-          acc.push(err)
-        }
-      })
-      return acc
-    },
-    new Array<T>()
-  )
-  return [...serializedErrors, ...serializedInner]
+  return [...serializedErrors, ...serializedInner];
 }
 
 /**
  * Sets the path and jsonPath properties on an error node.
  */
-function setPathProperties<T extends NodeError<T>>(node: T, path: PathComponent[]) {
+function setPathProperties<T extends NodeError<T>>(node: T, path: string[]) {
   if (!node.path) {
-    return
+    return;
   }
-  let nodePath = typeof node.path === "string" ? [node.path] : node.path
+  let nodePath = typeof node.path === "string" ? [node.path] : node.path;
 
   if (
     node.code === "OBJECT_MISSING_REQUIRED_PROPERTY" ||
@@ -364,13 +287,14 @@ function setPathProperties<T extends NodeError<T>>(node: T, path: PathComponent[
   ) {
     // For multiple missing/additional properties , each node would only contain one param.
     if (node.params && node.params.length > 0) {
-      nodePath = nodePath.concat(node.params[0] as string)
+      nodePath = nodePath.concat(node.params[0] as string);
     }
   }
 
-  const pathSegments = consolidatePath(path, nodePath)
-  node.path = pathSegments.join("/")
-  node.jsonPath = (pathSegments.length && stringify(pathSegments)) || ""
+  const pathSegments = consolidatePath(path, nodePath);
+  pathSegments.unshift("$");
+  node.path = pathSegments.join("/");
+  node.jsonPath = (pathSegments.length && (JSONPath as any).toPathString(pathSegments)) || "";
 }
 
 /**
@@ -383,23 +307,23 @@ function areErrorsSimilar<T extends NodeError<T>>(node1: T, node2: T) {
     node1.message !== node2.message ||
     !arePathsSimilar(node1.path, node2.path)
   ) {
-    return false
+    return false;
   }
 
   if (!node1.inner && !node2.inner) {
-    return true
+    return true;
   }
 
   if (!node1.inner || !node2.inner || node1.inner.length !== node2.inner.length) {
-    return false
+    return false;
   }
 
   for (let i = 0; i < node1.inner.length; i++) {
     if (!areErrorsSimilar(node1.inner[i], node2.inner[i])) {
-      return false
+      return false;
     }
   }
-  return true
+  return true;
 }
 
 /**
@@ -410,60 +334,59 @@ const arePathsSimilar = (
   path2: string | string[] | undefined
 ) => {
   if (path1 === path2) {
-    return true
+    return true;
   }
   if (path1 === undefined || path2 === undefined) {
-    return false
+    return false;
   }
 
-  const p1 = Array.isArray(path1) ? path1 : path1.split("/")
-  const p2 = Array.isArray(path2) ? path2 : path2.split("/")
+  const p1 = Array.isArray(path1) ? path1 : path1.split("/");
+  const p2 = Array.isArray(path2) ? path2 : path2.split("/");
 
-  return _.xor(p1, p2).every(v => Number.isInteger(+v))
-}
+  return _.xor(p1, p2).every((v) => Number.isInteger(+v));
+};
 
 const isDiscriminatorError = <T extends NodeError<T>>(node: T) =>
-  node.code === "ONE_OF_MISSING" && node.inner && node.inner.length > 0
+  node.code === "ONE_OF_MISSING" && node.inner && node.inner.length > 0;
 
 const isTrueError = <T extends NodeError<T>>(node: T): boolean =>
   // this is necessary to filter out extra errors coming from doing the ONE_OF transformation on
   // the models to allow "null"
-  !(node.code === "INVALID_TYPE" && node.params && node.params[0] === "null")
+  !(node.code === "INVALID_TYPE" && node.params && node.params[0] === "null");
 
-const isLeaf = <T extends NodeError<T>>(node: T): boolean => !node.errors && !node.inner
+const isLeaf = <T extends NodeError<T>>(node: T): boolean => !node.errors && !node.inner;
 
 /**
  * Unifies a suffix path with a root path.
  */
-function consolidatePath(path: PathComponent[], suffixPath: string | string[]): PathComponent[] {
-  let newSuffixIndex = 0
-  let overlapIndex = path.lastIndexOf(suffixPath[newSuffixIndex])
-  let previousIndex = overlapIndex
+function consolidatePath(path: string[], suffixPath: string | string[]): string[] {
+  let newSuffixIndex = 0;
+  let overlapIndex = path.lastIndexOf(suffixPath[newSuffixIndex]);
+  let previousIndex = overlapIndex;
 
   if (overlapIndex === -1) {
-    return path.concat(suffixPath)
+    return path.concat(suffixPath);
   }
 
   for (newSuffixIndex = 1; newSuffixIndex < suffixPath.length; ++newSuffixIndex) {
-    previousIndex = overlapIndex
-    overlapIndex = path.lastIndexOf(suffixPath[newSuffixIndex])
+    previousIndex = overlapIndex;
+    overlapIndex = path.lastIndexOf(suffixPath[newSuffixIndex]);
     if (overlapIndex === -1 || overlapIndex !== previousIndex + 1) {
-      overlapIndex = -1
-      break
+      break;
     }
   }
-  let newPath: PathComponent[] = []
+  let newPath: string[] = [];
   if (newSuffixIndex === suffixPath.length) {
     // if all elements are contained in the existing path, nothing to do.
-    newPath = path.slice(0)
+    newPath = path.slice(0);
   } else if (overlapIndex === -1 && previousIndex === path.length - 1) {
     // if we didn't find element at x in the previous path and element at x -1 is the last one in
     // the path, append everything from x
-    newPath = path.concat(suffixPath.slice(newSuffixIndex))
+    newPath = path.concat(suffixPath.slice(newSuffixIndex));
   } else {
     // otherwise it is not contained at all, so concat everything.
-    newPath = path.concat(suffixPath)
+    newPath = path.concat(suffixPath);
   }
 
-  return newPath
+  return newPath;
 }
