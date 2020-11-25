@@ -1,5 +1,10 @@
 # Change Log - oav
 
+## 2.0.1
+Wed, 25 Nov 2020
+
+- Ignore required validation rule in response when x-ms-secret is true
+
 ## 2.0.0
 Mon, 23 Nov 2020
 

@@ -693,6 +693,25 @@ describe("Live Validator", () => {
       assert.strictEqual(runtimeException.code, "OPERATION_NOT_FOUND_IN_CACHE_WITH_PROVIDER");
     });
 
+    it(`should not report error in response when both x-ms-secret and requried are declared`, async () => {
+      const options = {
+        directory: `${__dirname}/liveValidation/swaggers/`,
+        isPathCaseSensitive: false,
+        useRelativeSourceLocationUrl: true,
+        swaggerPathsPattern: [
+          "specification\\contoso\\resource-manager\\Microsoft.Contoso\\**\\*.json"
+        ],
+        git: {
+          shouldClone: false
+        }
+      };
+      const liveValidator = new LiveValidator(options);
+      await liveValidator.initialize();
+      const payload = require(`${__dirname}/liveValidation/payloads/xmsSecretAndRequired.json`);
+      const result = await liveValidator.validateLiveRequestResponse(payload);
+      assert.equal(result.responseValidationResult.isSuccessful, true);
+    });
+
     it("should initialize for defaultErrorOnly and pass", async () => {
       const options = {
         directory: "./test/liveValidation/swaggers/specification/defaultIsErrorOnly",

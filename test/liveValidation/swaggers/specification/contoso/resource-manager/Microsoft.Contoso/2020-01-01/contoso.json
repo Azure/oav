@@ -4,6 +4,8 @@
     "title": "Contoso Services",
     "version": "2020-01-01"
   },
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
   "securityDefinitions": {
     "azure_auth": {
       "type": "oauth2",
@@ -46,6 +48,65 @@
             "description": "User was successfully updated."
           }
         }
+      },
+      "patch": {
+        "tags": ["Users"],
+        "operationId": "User_Patch",
+        "description": "Patch a user.",
+        "parameters": [
+          {
+            "$ref": "#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "#/parameters/ApiVersionParameter"
+          },
+          {
+            "$ref": "#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "name": "user",
+            "in": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/User"
+            },
+            "description": "Create or update parameters."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User was successfully updated."
+          }
+        }
+      }
+    },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Contoso/users/{uid}": {
+      "get": {
+        "tags": ["Users"],
+        "operationId": "User_Get",
+        "description": "Gets a user.",
+        "parameters": [
+          {
+            "$ref": "#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "#/parameters/ApiVersionParameter"
+          },
+          {
+            "$ref": "#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "#/parameters/UserIdParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User was successfully updated.",
+            "schema": {
+              "$ref": "#/definitions/SecretUser"
+            }
+          }
+        }
       }
     }
   },
@@ -75,6 +136,21 @@
         }
       },
       "type": "object"
+    },
+    "SecretUser": {
+      "properties": {
+        "firstName": {
+          "type": "string",
+          "description": "First name."
+        },
+        "password": {
+          "type": "string",
+          "description": "password.",
+          "x-ms-secret": true
+        }
+      },
+      "required": ["firstName", "password"],
+      "description": "User profile."
     }
   },
   "parameters": {
@@ -99,6 +175,13 @@
       "type": "string",
       "description": "The name of the resource group.",
       "x-ms-parameter-location": "method"
+    },
+    "UserIdParameter": {
+      "name": "userId",
+      "in": "path",
+      "required": true,
+      "type": "string",
+      "description": "The ID of the user."
     }
   }
 }
