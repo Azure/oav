@@ -6,6 +6,7 @@ import { RegExpWithKeys } from "../transform/pathRegexTransformer";
 import {
   xmsDiscriminatorValue,
   xmsEnum,
+  xmsExamples,
   xmsLongRunningOperation,
   xmsMutability,
   xmsParameterizedHost,
@@ -141,6 +142,7 @@ export interface Operation {
   security?: Security[];
   tags?: string[];
   [xmsLongRunningOperation]?: boolean;
+  [xmsExamples]?: { [description: string]: SwaggerExample };
 
   // TODO check why do we need provider
   provider?: string;
@@ -291,6 +293,15 @@ export interface XMsParameterizedHost {
   useSchemePrefix?: boolean;
   positionInOperation?: "first" | "last";
   parameters: PathParameter[];
+}
+
+// ---------------------------- Example --------------------------------------
+export interface SwaggerExample {
+  parameters: {
+    "api-version": string;
+    [parameterName: string]: any;
+  };
+  responses: { [responseCode: string]: any };
 }
 
 // --------------------------------- Spec ------------------------------------
