@@ -4,6 +4,7 @@
 Wed, 25 Nov 2020
 
 - Ignore required validation rule in response when x-ms-secret is true
+- Ignore schema validation when request body is not required and value is empty {}
 
 ## 2.0.0
 Mon, 23 Nov 2020

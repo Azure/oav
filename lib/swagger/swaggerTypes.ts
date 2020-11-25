@@ -149,6 +149,7 @@ export interface Operation {
 
   _queryTransform?: MutableStringMap<TransformFn>;
   _headerTransform?: MutableStringMap<TransformFn>;
+  _bodyTransform?: (body: any) => any;
 
   _validate?: SchemaValidateFunction;
 }
