@@ -712,6 +712,44 @@ describe("Live Validator", () => {
       assert.equal(result.responseValidationResult.isSuccessful, true);
     });
 
+    it(`should return no errors for valid input with optional parameter body null`, async () => {
+      const options = {
+        directory: `${__dirname}/liveValidation/swaggers/`,
+        isPathCaseSensitive: false,
+        useRelativeSourceLocationUrl: true,
+        swaggerPathsPattern: [
+          "specification\\contoso\\resource-manager\\Microsoft.Contoso\\**\\*.json"
+        ],
+        git: {
+          shouldClone: false
+        }
+      };
+      const liveValidator = new LiveValidator(options);
+      await liveValidator.initialize();
+      const payload = require(`${__dirname}/liveValidation/payloads/valid_inputOptionalParameterBodyNull.json`);
+      const validationResult = await liveValidator.validateLiveRequestResponse(payload);
+      expect(validationResult).toMatchSnapshot();
+    });
+  
+    it(`should return no errors for valid input with optional parameter body empty`, async () => {
+      const options = {
+        directory: `${__dirname}/liveValidation/swaggers/`,
+        isPathCaseSensitive: false,
+        useRelativeSourceLocationUrl: true,
+        swaggerPathsPattern: [
+          "specification\\contoso\\resource-manager\\Microsoft.Contoso\\**\\*.json"
+        ],
+        git: {
+          shouldClone: false
+        }
+      };
+      const liveValidator = new LiveValidator(options);
+      await liveValidator.initialize();
+      const payload = require(`${__dirname}/liveValidation/payloads/valid_inputOptionalParameterBodyEmpty.json`);
+      const validationResult = await liveValidator.validateLiveRequestResponse(payload);
+      expect(validationResult).toMatchSnapshot();
+    });
+
     it("should initialize for defaultErrorOnly and pass", async () => {
       const options = {
         directory: "./test/liveValidation/swaggers/specification/defaultIsErrorOnly",

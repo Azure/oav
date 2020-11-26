@@ -85,7 +85,7 @@ export const validateSwaggerLiveRequest = async (
   const ctx = { isResponse: false, includeErrors };
   const errors = validate(ctx, {
     path: pathParam,
-    body,
+    body: transformBodyValue(body, operation),
     headers,
     query,
   });
@@ -137,6 +137,10 @@ export const validateSwaggerLiveResponse = async (
 
   return result;
 };
+
+const transformBodyValue = (body: any, operation: Operation): any => {
+  return operation._bodyTransform === undefined ? body : operation._bodyTransform(body);
+}
 
 const transformLiveHeader = (
   headers: StringMap<string>,

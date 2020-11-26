@@ -86,6 +86,9 @@
     "url": "http://github.com/azure/oav/issues"
   },
   "main": "./dist/index.js",
+  "bin": {
+    "oav": "./dist/cli.js"
+  },
   "files": [
     "dist/*.js",
     "dist/*.d.ts",
