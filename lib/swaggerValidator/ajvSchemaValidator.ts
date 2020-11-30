@@ -4,7 +4,7 @@ import {
   getRootObjectInfo,
   RootObjectInfo,
 } from "@azure-tools/openapi-tools-common";
-import ajv, { Ajv, default as ajvInit, ErrorObject, ValidateFunction } from "ajv";
+import { default as Ajv, ErrorObject, Options, ValidateFunction } from "ajv";
 import { $id, JsonLoader } from "../swagger/jsonLoader";
 import { isSuppressed } from "../swagger/suppressionLoader";
 import { refSelfSymbol, Schema, SwaggerSpec } from "../swagger/swaggerTypes";
@@ -26,26 +26,36 @@ import {
 export class AjvSchemaValidator implements SchemaValidator {
   private ajv: Ajv;
 
-  public constructor(loader: JsonLoader, options?: ajv.Options) {
-    this.ajv = ajvInit({
+  public constructor(loader: JsonLoader, options?: Options) {
+    this.ajv = new Ajv({
       // tslint:disable-next-line: no-submodule-imports
       meta: require("ajv/lib/refs/json-schema-draft-04.json"),
-      schemaId: "auto",
-      extendRefs: "fail",
-      format: "full",
-      missingRefs: true,
-      addUsedSchema: false,
-      removeAdditional: false,
-      nullable: true,
+      strict: true,
+      strictTypes: true,
+      strictTuples: true,
+      $data: false,
       allErrors: true,
-      messages: true,
       verbose: true,
-      inlineRefs: false,
-      passContext: true,
-      loopRequired: 2,
       loadSchema: async (uri) => {
         const spec: SwaggerSpec = await loader.resolveFile(uri);
         return { [$id]: spec[$id], definitions: spec.definitions, parameters: spec.parameters };
+      },
+      removeAdditional: false,
+      useDefaults: false,
+      coerceTypes: false,
+      validateSchema: true,
+      addUsedSchema: false,
+      inlineRefs: false,
+      passContext: true,
+      loopRequired: 2,
+      loopEnum: 2,
+      ownProperties: true,
+      messages: true,
+      code: {
+        es5: false,
+        lines: false,
+        source: false,
+        optimize: 2,
       },
       ...options,
     });
@@ -136,22 +146,24 @@ export const ajvErrorToSchemaValidateIssue = (
   err: ErrorObject,
   ctx: SchemaValidateContext
 ): SchemaValidateIssue | undefined => {
-  const { parentSchema, params } = err;
-  let { schema } = err;
+  const { params } = err;
+  const parentSchema = err.parentSchema as Schema;
+  let schema = err.schema as Schema;
 
   if (shouldSkipError(err, ctx)) {
     return undefined;
   }
 
   let dataPath = err.dataPath;
-  const extraDataPath =
-    (params as any).additionalProperty ??
-    (params as any).missingProperty ??
-    (parentSchema as Schema).discriminator;
+  const extraDataPath: string | undefined =
+    params.additionalProperty ??
+    params.missingProperty ??
+    parentSchema?.discriminator;
   if (extraDataPath !== undefined) {
     dataPath = `${dataPath}.${extraDataPath}`;
-    if (schema[extraDataPath] !== undefined) {
-      schema = schema[extraDataPath];
+    const extraSchema = (schema as any)[extraDataPath];
+    if (extraSchema !== undefined) {
+      schema = extraSchema;
     }
   }
 
@@ -163,7 +175,7 @@ export const ajvErrorToSchemaValidateIssue = (
     return undefined;
   }
 
-  let sch: Schema | undefined = parentSchema;
+  let sch = parentSchema as Schema | undefined;
   let info = getInfo(sch);
   if (info === undefined) {
     sch = schema;
@@ -187,8 +199,9 @@ export const ajvErrorToSchemaValidateIssue = (
 };
 
 const shouldSkipError = (error: ErrorObject, cxt: SchemaValidateContext) => {
-  const { schema, parentSchema: parentSch, params, keyword, data } = error;
-  const parentSchema = parentSch as Schema;
+  const { params, keyword, data } = error;
+  const schema = error.schema as Schema;
+  const parentSchema = error.parentSchema as Schema;
 
   if (schema?._skipError || parentSchema._skipError) {
     return true;
@@ -198,11 +211,11 @@ const shouldSkipError = (error: ErrorObject, cxt: SchemaValidateContext) => {
   if (
     cxt.isResponse &&
     ((keyword === "required" &&
-      (parentSchema.properties?.[(params as any).missingProperty]?.[xmsMutability]?.indexOf(
+      (parentSchema.properties?.[params.missingProperty]?.[xmsMutability]?.indexOf(
         "read"
       ) === -1 || 
       // required check is ignored when x-ms-secret is true
-      (parentSchema.properties?.[(params as any).missingProperty] as any)?.[xmsSecret] === true
+      parentSchema.properties?.[params.missingProperty]?.[xmsSecret] === true
       )) ||
       (keyword === "type" && data === null && parentSchema[xmsMutability]?.indexOf("read") === -1))
   ) {
@@ -343,12 +356,12 @@ export const ajvErrorCodeToOavErrorCode = (
     case "minLength":
     case "maxItems":
     case "minItems":
-      data = data.length;
+      data = (data as []).length;
       break;
 
     case "maxProperties":
     case "minProperties":
-      data = Object.keys(data).length;
+      data = Object.keys((data as {})).length;
       break;
 
     case "minimum":
@@ -385,7 +398,7 @@ const errorFromErrorCode = (code: ExtendedErrorCode, param: any) => ({
   message: (validateErrorMessages as any)[code](param),
 });
 
-const isEnumCaseMismatch = (data: string, enumList: Array<string | number>) => {
+const isEnumCaseMismatch = (data: unknown, enumList: Array<string | number>) => {
   if (typeof data !== "string") {
     return false;
   }

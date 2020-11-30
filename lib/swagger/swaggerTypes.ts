@@ -10,6 +10,7 @@ import {
   xmsMutability,
   xmsParameterizedHost,
   xmsPaths,
+  xmsSecret,
   xmsSkipUrlEncoding,
   xNullable,
 } from "../util/constants";
@@ -210,6 +211,7 @@ export interface Schema extends BaseSchema {
   [xmsDiscriminatorValue]?: string;
   readOnly?: boolean;
   [xmsMutability]?: Array<"create" | "read" | "update">;
+  [xmsSecret]?: boolean;
   xml?: XML;
   externalDocs?: ExternalDocs;
   example?: { [exampleName: string]: Example };

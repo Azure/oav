@@ -1,13 +1,15 @@
-import { Ajv, ErrorObject, ValidateFunction } from "ajv";
+import { default as Ajv, ErrorObject, ValidateFunction } from "ajv";
 import { JsonLoader } from "../swagger/jsonLoader";
 import { Schema } from "../swagger/swaggerTypes";
 
 export const ajvEnableDiscriminatorMap = (ajv: Ajv, loader: JsonLoader) => {
-  ajv.addKeyword("discriminatorMap", {
+  ajv.addKeyword({
+    keyword: "discriminatorMap",
     errors: "full",
     metaSchema: { type: "object", additionalProperty: { type: "object,null" } },
 
-    compile(schemas: { [key: string]: Schema }, parentSchema: Schema) {
+    compile(schemas: { [key: string]: Schema }, parentSch) {
+      const parentSchema = parentSch as Schema;
       const compiled: { [key: string]: ValidateFunction | null } = {};
       const schemaMap: { [key: string]: Schema } = {};
       for (const value of Object.keys(schemas)) {
@@ -22,7 +24,8 @@ export const ajvEnableDiscriminatorMap = (ajv: Ajv, loader: JsonLoader) => {
       const validated = new WeakSet<Schema>();
       const allowedValues = Object.keys(schemas);
 
-      return function v(this: any, data: any, dataPath?: string) {
+      return function v(this: any, data: any, dataCxt) {
+        let dataPath = dataCxt!.dataPath;
         if (data === null || data === undefined || typeof data !== "object") {
           // Should be validated by other schema property.
           return true;
