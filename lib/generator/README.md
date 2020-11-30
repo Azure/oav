@@ -1,7 +1,6 @@
 ### What does the tool do? What issues does the tool catch?
 
-- Example Generator
-Example Generator generate swagger example according to swagger spec file and real payload records.
+Example Generator generates swagger examples according to swagger spec file.
 
 #### Command usage:
 
@@ -35,7 +34,7 @@ Payload directory should contains folders named by operationId. Put payload file
     └── 202.json
 ```
 
-Payload file should be a valid json file and contains liveRequest && liveResponse. It can be get from Application Insight.
+Payload file should be a valid json file and contains liveRequest && liveResponse. It can be fetched in live validation result from kusto.
 
 ```json
 
