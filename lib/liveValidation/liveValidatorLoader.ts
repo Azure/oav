@@ -92,14 +92,18 @@ export class LiveValidatorLoader implements Loader<SwaggerSpec> {
   );
   private constructor(private opts: LiveValidatorLoaderOptions) {
     setDefaultOpts(opts, {
-      transformToNewSchemaFormat: false,
+      transformToNewSchemaFormat: true,
       loadSuppression: Object.keys(allErrorConstants),
     });
 
     this.jsonLoader = JsonLoader.create(opts);
     this.swaggerLoader = SwaggerLoader.create(opts);
 
-    this.schemaValidator = new AjvSchemaValidator(this.jsonLoader);
+    this.schemaValidator = new AjvSchemaValidator(this.jsonLoader, {
+      strictTypes: false,
+      strict: false,
+      strictTuples: false
+    });
 
     this.transformContext = getTransformContext(this.jsonLoader, this.schemaValidator, [
       xmsPathsTransformer,
@@ -168,8 +172,7 @@ export class LiveValidatorLoader implements Loader<SwaggerSpec> {
           if (param.required) {
             copyInfo(param, schema);
             this.addRequiredToSchema(schema, "body");
-          }
-          else {
+          } else {
             operation._bodyTransform = bodyTransformIfNotRequiredAndEmpty;
           }
           break;
@@ -272,11 +275,10 @@ const parameterTransform = {
 const bodyTransformIfNotRequiredAndEmpty = (body: any) => {
   if (body && Object.keys(body).length === 0 && body.constructor === Object) {
     return undefined;
-  }
-  else {
+  } else {
     return body;
   }
-}
+};
 
 const addParamTransform = (it: Operation | Response, param: Parameter) => {
   const transform = parameterTransform[param.type! as keyof typeof parameterTransform];

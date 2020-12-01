@@ -28,8 +28,6 @@ export class AjvSchemaValidator implements SchemaValidator {
 
   public constructor(loader: JsonLoader, options?: Options) {
     this.ajv = new Ajv({
-      // tslint:disable-next-line: no-submodule-imports
-      meta: require("ajv/lib/refs/json-schema-draft-04.json"),
       strict: true,
       strictTypes: true,
       strictTuples: true,

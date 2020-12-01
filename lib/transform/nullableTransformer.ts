@@ -49,6 +49,9 @@ const transformNullable = (s: Schema, jsonLoader: JsonLoader, defaultNullable?: 
 
   // Originally it's not nullable
   if (nullable === false) {
+    if (sch.type === undefined) {
+      sch.type = "object";
+    }
     return s;
   }
 
@@ -66,6 +69,9 @@ const transformNullable = (s: Schema, jsonLoader: JsonLoader, defaultNullable?: 
     } as Schema;
   } else {
     sch.nullable = true;
+    if (sch.type === undefined) {
+      sch.type = "object";
+    }
     return sch;
   }
 };

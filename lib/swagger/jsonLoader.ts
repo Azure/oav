@@ -21,7 +21,7 @@ interface FileCache {
   mockName: string;
 }
 
-export const $id = "id";
+export const $id = "$id";
 
 export class JsonLoader implements Loader<Json> {
   private fileLoader: FileLoader;

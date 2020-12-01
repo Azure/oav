@@ -1,4 +1,5 @@
-import { CodeGen, default as Ajv, Format, _ } from "ajv";
+import { default as Ajv, Format, _ } from "ajv";
+import { default as addAjvFormats } from "ajv-formats";
 import { JsonLoader } from "../swagger/jsonLoader";
 import { Schema } from "../swagger/swaggerTypes";
 import { xmsMutability, xmsSecret } from "../util/constants";
@@ -18,7 +19,7 @@ export const ajvEnableReadOnlyAndXmsMutability = (ajv: Ajv) => {
         const eq = _`===`;
         cxt.pass(_`this.isResponse || ${cxt.data} ${eq} null || ${cxt.data} ${eq} undefined`);
       }
-    }
+    },
   });
 
   ajv.addKeyword({
@@ -35,18 +36,22 @@ export const ajvEnableReadOnlyAndXmsMutability = (ajv: Ajv) => {
         throw new Error(`Invalid ${xmsMutability} value: ${JSON.stringify(mutability)}`);
       }
       const eq = _`===`;
-      cxt.pass(_`${validInRequest ? "!" : ""}this.isResponse || ${cxt.data} ${eq} null || ${cxt.data} ${eq} undefined`);
+      const cond = validInRequest ? _`!this.isResponse` : _`this.isResponse`;
+      cxt.pass(_`${cond} || ${cxt.data} ${eq} null || ${cxt.data} ${eq} undefined`);
     },
   });
 };
 
 export const ajvEnableXmsSecret = (ajv: Ajv) => {
   ajv.addKeyword({
-    keyword: xmsSecret
+    keyword: xmsSecret,
     metaSchema: { type: "boolean" } as Schema,
-    inline: (it: CompilationContext, _keyword: string, isSecret: boolean) => {
-      const data = `data${it.dataLevel || ""}`;
-      return isSecret ? `!this.isResponse || ${data} === null || ${data} === undefined` : "1";
+    code: (ctx) => {
+      const isSecret = ctx.schema;
+      if (isSecret) {
+        const eq = _`===`;
+        ctx.pass(_`!this.isResponse || ${ctx.data} ${eq} null || ${ctx.data} ${eq} undefined`);
+      }
     },
   });
 };
@@ -102,36 +107,8 @@ export const ajvEnableDurationFormat = (ajv: Ajv) => {
   });
 };
 
-// for (const keyword of [
-//   "name",
-//   "in",
-//   "example",
-//   "parameters",
-//   "externalDocs",
-//   "x-nullable",
-//   "x-ms-enum",
-//   "x-ms-azure-resource",
-//   "x-ms-parameter-location",
-//   "x-ms-client-name",
-//   "x-ms-external",
-//   "x-ms-skip-url-encoding",
-//   "x-ms-client-flatten",
-//   "x-ms-api-version",
-//   "x-ms-parameter-grouping",
-//   "x-ms-discriminator-value",
-//   "x-ms-client-request-id",
-//   "x-apim-code-nillable",
-//   "x-new-pattern",
-//   "x-previous-pattern",
-//   "x-comment",
-//   "x-abstract",
-//   "allowEmptyValue",
-//   "collectionFormat",
-// ]) {
-//   ajv.addKeyword(keyword, {});
-// }
-
 export const ajvEnableAll = (ajv: Ajv, jsonLoader: JsonLoader) => {
+  addAjvFormats(ajv);
   ajvEnableDiscriminatorMap(ajv, jsonLoader);
   ajvEnableXmsSecret(ajv);
   ajvEnableReadOnlyAndXmsMutability(ajv);
@@ -141,4 +118,33 @@ export const ajvEnableAll = (ajv: Ajv, jsonLoader: JsonLoader) => {
   ajvEnableDateTimeRfc1123Format(ajv);
   ajvAddFormatsDefaultValidation(ajv, "string", ["byte", "password", "file"]);
   ajvAddFormatsDefaultValidation(ajv, "number", ["double", "float", "decimal"]);
+  ajv.addVocabulary([
+    "name",
+    "in",
+    "example",
+    "parameters",
+    "externalDocs",
+    "x-nullable",
+    "x-ms-enum",
+    "x-ms-azure-resource",
+    "x-ms-parameter-location",
+    "x-ms-client-name",
+    "x-ms-external",
+    "x-ms-examples",
+    "x-ms-skip-url-encoding",
+    "x-ms-client-flatten",
+    "x-ms-api-version",
+    "x-ms-parameter-grouping",
+    "x-ms-discriminator-value",
+    "x-ms-client-request-id",
+    "x-apim-code-nillable",
+    "x-new-pattern",
+    "x-previous-pattern",
+    "x-comment",
+    "x-abstract",
+    "allowEmptyValue",
+    "collectionFormat",
+    "_skipError",
+    "discriminator",
+  ]);
 };

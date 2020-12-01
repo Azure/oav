@@ -6,7 +6,10 @@ export const ajvEnableDiscriminatorMap = (ajv: Ajv, loader: JsonLoader) => {
   ajv.addKeyword({
     keyword: "discriminatorMap",
     errors: "full",
-    metaSchema: { type: "object", additionalProperty: { type: "object,null" } },
+    metaSchema: {
+      type: "object",
+      additionalProperties: { type: "object", nullable: true },
+    },
 
     compile(schemas: { [key: string]: Schema }, parentSch) {
       const parentSchema = parentSch as Schema;

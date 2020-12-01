@@ -195,13 +195,13 @@ interface BaseSchema {
     modelAsString?: boolean;
     values?: Array<{ value: any; description?: string; name?: string }>;
   };
-  type?: string;
+  type?: string | string[];
   items?: Schema | Schema[];
 }
 
 export type SchemaType = "object" | "array" | "string" | "integer" | "number" | "boolean" | "null";
 export interface Schema extends BaseSchema {
-  type?: SchemaType;
+  type?: SchemaType | SchemaType[];
   allOf?: Schema[];
   anyOf?: Schema[];
   oneOf?: Schema[];

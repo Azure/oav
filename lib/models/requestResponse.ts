@@ -79,8 +79,10 @@ export class RequestResponse {
 }
 
 export const requestResponseDefinition: Schema = {
+  type: "object",
   properties: {
     liveRequest: {
+      type: "object",
       required: ["url", "method"],
       properties: {
         headers: {
@@ -90,6 +92,7 @@ export const requestResponseDefinition: Schema = {
           },
         },
         query: {
+          type: "object",
           nullable: true,
           additionalProperties: {
             oneOf: [
@@ -112,23 +115,45 @@ export const requestResponseDefinition: Schema = {
           type: "string",
         },
         body: {
-          nullable: true,
+          oneOf: [
+            {
+              type: "object",
+            },
+            {
+              type: "array",
+            },
+            {
+              type: "null",
+            },
+          ],
         },
       },
     },
     liveResponse: {
+      type: "object",
       required: ["statusCode"],
       properties: {
         statusCode: {
           type: "string",
         },
         headers: {
+          type: "object",
           additionalProperties: {
             type: "string",
           },
         },
         body: {
-          nullable: true,
+          oneOf: [
+            {
+              type: "object",
+            },
+            {
+              type: "array",
+            },
+            {
+              type: "null",
+            },
+          ],
         },
       },
     },
