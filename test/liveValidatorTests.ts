@@ -668,7 +668,7 @@ describe("Live Validator", () => {
           },
         },
       });
-      // Should be able to find Microsoft.Storage with 2015-05-01-preview api version succesfully
+      // Should be able to find Microsoft.Storage with 2015-05-01-preview api version successfully
       const errors = result.responseValidationResult.errors;
       assert.deepStrictEqual(errors, []);
       assert.equal(result.responseValidationResult.isSuccessful, true);
@@ -691,6 +691,7 @@ describe("Live Validator", () => {
         throw new Error("runtimeException === undefined");
       }
       assert.strictEqual(runtimeException.code, "OPERATION_NOT_FOUND_IN_CACHE_WITH_PROVIDER");
+      assert.strictEqual(payload.liveResponse.statusCode, "200");
     });
 
     it(`should not report error in response when both x-ms-secret and requried are declared`, async () => {
