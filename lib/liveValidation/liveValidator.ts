@@ -372,15 +372,7 @@ export class LiveValidator {
     }
     let errors: LiveValidationIssue[] = [];
     let runtimeException;
-    // If status code is passed as a status code string (e.g. "OK") transform it to the status code
-    // number (e.g. '200').
-    if (
-      !http.STATUS_CODES[liveResponse.statusCode] &&
-      utils.statusCodeStringToStatusCode[liveResponse.statusCode.toLowerCase()]
-    ) {
-      liveResponse.statusCode =
-        utils.statusCodeStringToStatusCode[liveResponse.statusCode.toLowerCase()];
-    }
+    this.transformResponseStatusCode(liveResponse);
     try {
       errors = await validateSwaggerLiveResponse(
         liveResponse,
@@ -466,6 +458,7 @@ export class LiveValidator {
 
     const request = requestResponseObj.liveRequest;
     const response = requestResponseObj.liveResponse;
+    this.transformResponseStatusCode(response);
 
     const requestValidationResult = await this.validateLiveRequest(request, {
       ...options,
@@ -493,6 +486,18 @@ export class LiveValidator {
       requestValidationResult,
       responseValidationResult,
     };
+  }
+
+  private transformResponseStatusCode(liveResponse: LiveResponse) {
+    // If status code is passed as a status code string (e.g. "OK") transform it to the status code
+    // number (e.g. '200').
+    if (
+      !http.STATUS_CODES[liveResponse.statusCode] &&
+      utils.statusCodeStringToStatusCode[liveResponse.statusCode.toLowerCase()]
+    ) {
+      liveResponse.statusCode =
+        utils.statusCodeStringToStatusCode[liveResponse.statusCode.toLowerCase()];
+    }
   }
 
   private getOperationInfo(
