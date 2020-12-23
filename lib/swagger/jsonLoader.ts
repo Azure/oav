@@ -1,5 +1,6 @@
 import { dirname as pathDirname, join as pathJoin } from "path";
 import { Json, parseJson } from "@azure-tools/openapi-tools-common";
+import { safeLoad as parseYaml } from "js-yaml";
 import { default as jsonPointer } from "json-pointer";
 import { xmsExamples } from "../util/constants";
 import { getLazyBuilder } from "../util/lazyBuilder";
@@ -13,6 +14,7 @@ export interface JsonLoaderOption extends FileLoaderOption {
   keepOriginalContent?: boolean;
   transformRef?: boolean; // TODO implement transformRef: false
   skipResolveRefKeys?: string[];
+  supportYaml?: boolean;
 }
 
 interface FileCache {
@@ -41,9 +43,7 @@ export class JsonLoader implements Loader<Json> {
       // eslint-disable-next-line require-atomic-updates
       cache.originalContent = fileString;
     }
-    let fileContent = this.opts.useJsonParser
-      ? parseJson(cache.filePath, fileString)
-      : JSON.parse(fileString);
+    let fileContent = this.parseFileContent(cache, fileString);
     // eslint-disable-next-line require-atomic-updates
     cache.resolved = fileContent;
     (fileContent as any)[$id] = cache.mockName;
@@ -54,6 +54,26 @@ export class JsonLoader implements Loader<Json> {
     return fileContent;
   });
 
+  private parseFileContent(cache: FileCache, fileString: string): any {
+    if (cache.filePath.endsWith(".json")) {
+      return this.opts.useJsonParser
+        ? parseJson(cache.filePath, fileString)
+        : JSON.parse(fileString);
+    }
+
+    if (
+      this.opts.supportYaml &&
+      (cache.filePath.endsWith(".yaml") || cache.filePath.endsWith(".yml"))
+    ) {
+      return parseYaml(fileString, {
+        filename: cache.filePath,
+        json: true,
+      });
+    }
+
+    throw new Error(`Unknown file format while loading file ${cache.filePath}`);
+  }
+
   public static create = getLoaderBuilder((opts: JsonLoaderOption) => new JsonLoader(opts));
   private constructor(private opts: JsonLoaderOption) {
     setDefaultOpts(opts, {
@@ -61,15 +81,10 @@ export class JsonLoader implements Loader<Json> {
       eraseDescription: true,
       eraseXmsExamples: true,
       transformRef: true,
+      supportYaml: false,
     });
     this.skipResolveRefKeys = new Set(opts.skipResolveRefKeys);
     this.fileLoader = FileLoader.create(opts);
-  }
-
-  public getLoadedFiles() {
-    const loadedFiles = this.loadedFiles;
-    this.loadedFiles = [];
-    return loadedFiles;
   }
 
   public async load(inputFilePath: string, skipResolveRef?: boolean): Promise<Json> {
@@ -166,7 +181,7 @@ export class JsonLoader implements Loader<Json> {
           );
           if (newRef !== item) {
             // eslint-disable-next-line require-atomic-updates
-            object[idx] = newRef;
+            (object as any)[idx] = newRef;
           }
         }
       }
