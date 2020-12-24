@@ -29,6 +29,7 @@ import ExampleGenerator from "./generator/exampleGenerator";
 import { getErrorsFromModelValidation } from "./util/getErrorsFromModelValidation";
 import { getSuppressions } from "./validators/suppressions";
 import { log } from "./util/logging";
+import { getInputFiles } from "./generator/util";
 
 export interface Options extends specResolver.Options, umlGeneratorLib.Options {
   consoleLogLevel?: unknown;
@@ -482,18 +483,39 @@ export async function generateExamples(
   specPath: string,
   payloadDir?: string,
   operationId?: string,
+  readme?: string,
+  tag?: string,
   options?: Options
 ): Promise<any> {
   if (!options) {
     options = {};
   }
-
+  const wholeInputFiles: string[] = []
+  if (readme && tag) {
+    const inputFiles = await getInputFiles(readme, tag);
+    if (!inputFiles) {
+      throw Error("get input files from readme tag failed.")
+    }
+    inputFiles.forEach(file => {
+      if (path.isAbsolute(file)) {
+        wholeInputFiles.push(file);
+      }
+      else {
+        wholeInputFiles.push(path.join(path.dirname(readme),file));
+      }
+    })
+  }
+  else if (specPath) {
+    wholeInputFiles.push(specPath);
+  }
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel;
   log.filepath = options.logFilepath || log.filepath;
-  const generator = new ExampleGenerator(specPath, payloadDir);
-
-  if (operationId) {
-    return generator.generate(operationId);
+  for (const file of wholeInputFiles) {
+    const generator = new ExampleGenerator(file, payloadDir);
+    if (operationId) {
+     await generator.generate(operationId);
+     continue;
+    }
+    await generator.generateAll();
   }
-  return generator.generateAll();
 }

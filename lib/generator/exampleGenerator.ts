@@ -10,6 +10,15 @@ import { MockerCache, PayloadCache } from "./exampleCache";
 import SwaggerMocker from "./swaggerMocker";
 import Translator from "./translator";
 import * as util from "./util";
+import { AjvSchemaValidator } from "../swaggerValidator/ajvSchemaValidator";
+import { TransformContext, getTransformContext } from "../transform/context";
+import { xmsPathsTransformer } from "../transform/xmsPathsTransformer";
+import { resolveNestedDefinitionTransformer } from "../transform/resolveNestedDefinitionTransformer";
+import { referenceFieldsTransformer } from "../transform/referenceFieldsTransformer";
+import { discriminatorTransformer } from "../transform/discriminatorTransformer";
+import { allOfTransformer } from "../transform/allOfTransformer";
+import { noAdditionalPropertiesTransformer } from "../transform/noAdditionalPropertiesTransformer";
+import { applySpecTransformers, applyGlobalTransformers } from "../transform/transformer";
 const _ = deepdash(lodash);
 
 export default class Generator {
@@ -22,16 +31,29 @@ export default class Generator {
   private shouldMock: boolean;
   private mockerCache: MockerCache;
   private payloadCache: PayloadCache;
-
+  public readonly transformContext: TransformContext;
+  
   public constructor(specFilePath: string, payloadDir?: string) {
     this.shouldMock = payloadDir ? false : true;
     this.specFilePath = specFilePath;
     this.payloadDir = payloadDir;
-    this.jsonLoader = JsonLoader.create({});
+    this.jsonLoader = JsonLoader.create({
+      useJsonParser: false,
+      eraseXmsExamples: false
+    });
     this.mockerCache = new MockerCache();
     this.payloadCache = new PayloadCache();
-    this.swaggerMocker = new SwaggerMocker(this.jsonLoader, this.mockerCache);
+    this.swaggerMocker = new SwaggerMocker(this.jsonLoader, this.mockerCache,this.payloadCache);
     this.translator = new Translator(this.jsonLoader, this.payloadCache);
+    const schemaValidator = new AjvSchemaValidator(this.jsonLoader);
+    this.transformContext = getTransformContext(this.jsonLoader, schemaValidator, [
+      xmsPathsTransformer,
+      resolveNestedDefinitionTransformer,
+      referenceFieldsTransformer,
+      discriminatorTransformer,
+      allOfTransformer,
+      noAdditionalPropertiesTransformer
+    ]);
   }
 
   private getSpecItem(spec: any, operationId: string): any {
@@ -50,9 +72,17 @@ export default class Generator {
     return null;
   }
 
-  public async generateAll(): Promise<readonly ModelValidationError[]> {
-    this.spec = (await (this.jsonLoader.load(this.specFilePath) as unknown)) as SwaggerSpec;
+  public async load() {
+    this.spec = await(this.jsonLoader.load(this.specFilePath) as unknown) as SwaggerSpec;
+    applySpecTransformers(this.spec, this.transformContext);
+    applyGlobalTransformers(this.transformContext)
+    await this.CacheExistingExamples();
+  }
 
+  public async generateAll(): Promise<readonly ModelValidationError[]> {
+    if (!this.spec) {
+      await this.load();
+    }
     const errs: any[] = [];
     await traverseSwaggerAsync(this.spec, {
       onPath: async (apiPath, pathTemplate) => {
@@ -77,12 +107,47 @@ export default class Generator {
     return errs;
   }
 
+  public async CacheExistingExamples() {
+    await traverseSwaggerAsync(this.spec, {
+      onOperation: async (operation: Operation, pathObject, methodName) => {
+        const pathName = pathObject._pathTemplate;
+        const specItem = {
+          path: pathName,
+          methodName,
+          content: operation
+        };
+        const examples = operation["x-ms-examples"] || undefined;
+        if (!examples) {
+          return
+        }
+        const operationId = operation.operationId 
+        for (const key of Object.keys(examples)) {
+          if (key === `${operationId}_Base`) {
+            continue
+          }
+          const example = this.jsonLoader.resolveRefObj(examples[key]);
+          if (!example) {
+            continue
+          }
+          this.translator.extractParameters(specItem, example.parameters);
+          for (const code of Object.keys(operation.responses)) {
+            if (example.responses && example.responses[code]) {
+              this.translator.extractResponse(specItem,example.responses[code],code);
+            }
+          }
+        }
+        return true;
+      }
+    });
+    this.payloadCache.mergeCache()
+  }
+
   public async generate(
     operationId: string,
     specItem?: any
   ): Promise<readonly ModelValidationError[]> {
     if (!this.spec) {
-      this.spec = (await (this.jsonLoader.load(this.specFilePath) as unknown)) as SwaggerSpec;
+      await this.load()
     }
     if (!specItem) {
       specItem = this.getSpecItem(this.spec, operationId);

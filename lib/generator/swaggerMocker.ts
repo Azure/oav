@@ -6,6 +6,7 @@ import {
   createTrunkItem,
   MockerCache,
   reBuildExample,
+  PayloadCache,
 } from "./exampleCache";
 import Mocker from "./mocker";
 import * as util from "./util";
@@ -14,12 +15,14 @@ export default class SwaggerMocker {
   private jsonLoader: JsonLoader;
   private mocker: Mocker;
   private spec: any;
-  private cache: MockerCache;
+  private mockCache: MockerCache;
+  private payloadCache: PayloadCache;
 
-  public constructor(jsonLoader: JsonLoader, mockerCache: MockerCache) {
+  public constructor(jsonLoader: JsonLoader, mockerCache: MockerCache,payloadCache: PayloadCache) {
     this.jsonLoader = jsonLoader;
     this.mocker = new Mocker();
-    this.cache = mockerCache;
+    this.mockCache = mockerCache;
+    this.payloadCache = payloadCache;
   }
 
   public mockForExample(example: any, specItem: any, spec: any, rp: string) {
@@ -110,14 +113,16 @@ export default class SwaggerMocker {
         //     "required": true,
         //     "type": "string"
         // }
+        this.removeFromSet(element, visited);
         paramExample[paramEle.name] = this.mockObj(
           paramEle.name,
-          paramEle,
+          element,  // use the  containing "$ref" ,original schema which hit the cached value
           paramExample[paramEle.name],
           visited,
           true
         );
       }
+      this.removeFromSet(element, visited);
     }
     return paramExample;
   }
@@ -128,21 +133,15 @@ export default class SwaggerMocker {
     }
   }
 
-  private getSpecDefinition(name: string) {
-    return this.spec.definitions[name];
-  }
-
-  private getSpecByDiscriminatorValue(value: string) {
-    const spec = this.getSpecDefinition(value);
-    if (spec) {
-      return spec;
-    }
-    for (const definition of Object.values(this.spec.definitions)) {
-      if ((definition as any)["x-ms-discriminator-value"] === value) {
-        return definition;
+  private getCache(schema:any) {
+    if ("$ref" in schema ) {
+      for (const cache of [this.payloadCache, this.mockCache]) {
+        if (cache.has(schema.$ref.split("#")[1])) {
+          return cache.get(schema.$ref.split("#")[1]);
+        }
       }
     }
-    return undefined;
+    return undefined
   }
 
   private mockObj(
@@ -171,10 +170,10 @@ export default class SwaggerMocker {
     if ("$ref" in schema && visited.has(schema.$ref)) {
       return undefined;
     }
-    if ("$ref" in schema && this.cache.has(schema.$ref.split("#")[1])) {
-      return this.cache.get(schema.$ref.split("#")[1]);
+    const cache = this.getCache(schema)
+    if (cache) {
+      return cache;
     }
-
     const definitionSpec = this.getDefSpec(schema, visited);
 
     if (util.isObject(definitionSpec)) {
@@ -196,12 +195,12 @@ export default class SwaggerMocker {
         });
       }
       if ("additionalProperties" in definitionSpec && definitionSpec.additionalProperties) {
-        const newkey = util.randomKey();
-        if (newkey in properties) {
+        const newKey = util.randomKey();
+        if (newKey in properties) {
           console.error(`generate additionalProperties for ${objName} fail`);
         } else {
-          example[newkey] = this.mockCachedObj(
-            newkey,
+          example[newKey] = this.mockCachedObj(
+            newKey,
             definitionSpec.additionalProperties,
             undefined,
             visited,
@@ -246,7 +245,7 @@ export default class SwaggerMocker {
     }
 
     if (schema.$ref) {
-      this.cache.checkAndCache(schema, cacheItem);
+      this.mockCache.checkAndCache(schema, cacheItem);
     }
     return cacheItem;
   }
@@ -260,9 +259,11 @@ export default class SwaggerMocker {
     visited: Set<string>
   ) {
     const disDetail = this.getDefSpec(schema, visited);
-    if ("enum" in disDetail) {
-      const discriminatorSpec = this.getSpecByDiscriminatorValue(disDetail.enum[0]);
+    if (disDetail.discriminatorMap) {
+      const firstChildModel = disDetail.discriminatorMap.entries()[0]
+      const discriminatorSpec = firstChildModel[1];
       if (!discriminatorSpec) {
+        this.removeFromSet(schema, visited);
         return example;
       }
       const cacheItem = this.mockCachedObj(
@@ -272,7 +273,8 @@ export default class SwaggerMocker {
         visited,
         isRequest
       );
-      example[discriminator] = createLeafItem(disDetail.enum[0]);
+      example[discriminator] = createLeafItem(firstChildModel[0]);
+      this.removeFromSet(schema, visited);
       return {
         ...example,
         ...cacheItem?.child,
@@ -311,6 +313,7 @@ export default class SwaggerMocker {
         ...properties,
         ...this.getProperties(this.getDefSpec(item, visited), visited),
       };
+      this.removeFromSet(item,visited)
     });
     return {
       ...properties,

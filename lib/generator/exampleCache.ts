@@ -1,5 +1,10 @@
 /* tslint:disable:max-classes-per-file */
-export class MockerCache {
+interface BaseCache {
+  get(modelName:string):CacheItem|undefined
+  set(modelName: string, example: CacheItem):void
+  has(modelName: string):boolean
+}
+export class MockerCache implements BaseCache {
   private caches = new Map<string, CacheItem>();
 
   public get(modelName: string) {
@@ -25,39 +30,51 @@ export class MockerCache {
     }
   }
 }
-export class PayloadCache {
+export class PayloadCache implements BaseCache {
   private requestCaches = new Map<string, CacheItem>();
   private responseCaches = new Map<string, CacheItem>();
   private mergedCaches = new Map<string, CacheItem>();
-  public has(modelName: string, isRequest: boolean) {
+
+  private hasByDirection(modelName: string, isRequest: boolean) {
     const cache = isRequest ? this.requestCaches : this.responseCaches;
     return cache.has(modelName);
   }
-  public set(modelName: string, example: CacheItem, isRequest: boolean) {
+  private setByDirection(modelName: string, example: CacheItem, isRequest: boolean) {
     const cache = isRequest ? this.requestCaches : this.responseCaches;
     if (!cache.has(modelName)) {
       cache.set(modelName, example);
     }
   }
-  public get(modelName: string, isRequest: boolean) {
+  private getByDirection(modelName: string, isRequest: boolean) {
     const cache = isRequest ? this.requestCaches : this.responseCaches;
     if (cache.has(modelName)) {
       return cache.get(modelName);
     }
     return undefined;
   }
-  public getMergedCache(modelName: string) {
+  public get(modelName: string) {
     if (this.mergedCaches.has(modelName)) {
       return this.mergedCaches.get(modelName);
     }
     return undefined;
   }
+
+  public set(key: string, value: CacheItem) {
+    if (!this.mergedCaches.has(key)) {
+      this.mergedCaches.set(key, value);
+    }
+  }
+
+  public has(modelName: string) {
+    return this.mergedCaches.has(modelName);
+  }
+
   public checkAndCache(schema: any, example: CacheItem, isRequest: boolean) {
     if (!schema || !example) {
       return;
     }
-    if ("$ref" in schema && !this.has(schema.$ref.split("#")[1], isRequest)) {
-      this.set(schema.$ref.split("#")[1], example, isRequest);
+    if ("$ref" in schema && !this.hasByDirection(schema.$ref.split("#")[1], isRequest)) {
+      this.setByDirection(schema.$ref.split("#")[1], example, isRequest);
     }
   }
   /**
@@ -93,33 +110,29 @@ export class PayloadCache {
    */
   public mergeCache() {
     for (const [key, requestCache] of this.requestCaches.entries()) {
-      if (this.has(key, false) && !requestCache.isLeaf) {
-        const responseCache = this.get(key, false);
+      if (this.hasByDirection(key, false) && !requestCache.isLeaf) {
+        const responseCache = this.getByDirection(key, false);
         if (responseCache) {
           if (responseCache.isLeaf) {
             console.error(`The response cache and request cache is inconsistent! key:${key}`);
           } else {
             const mergedCache = this.mergeItem(requestCache, responseCache);
-            this.setMergedCache(key, mergedCache);
+            this.set(key, mergedCache);
             continue;
           }
         }
       }
-      this.setMergedCache(key, requestCache);
+      this.set(key, requestCache);
     }
     for (const [key, responseCache] of this.responseCaches.entries()) {
-      if (!this.has(key, true)) {
-        this.setMergedCache(key, responseCache);
+      if (!this.hasByDirection(key, true)) {
+        this.set(key, responseCache);
       }
     }
     this.requestCaches.clear();
     this.responseCaches.clear();
   }
-  private setMergedCache(key: string, value: CacheItem) {
-    if (!this.mergedCaches.has(key)) {
-      this.mergedCaches.set(key, value);
-    }
-  }
+
 }
 
 const shouldSkip = (cache: CacheItem | undefined, isRequest: boolean) => {
@@ -175,6 +188,7 @@ export interface CacheItem {
   child?: CacheItemChild;
   options?: CacheItemOptions;
   isLeaf: boolean;
+  required?: string[];
 }
 
 export const buildItemOption = (schema: any) => {

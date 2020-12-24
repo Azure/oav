@@ -1,5 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
+import { parseMarkdown, readFile } from "@azure-tools/openapi-tools-common";
+import * as amd from "@azure/openapi-markdown";
 
 const ATTR_MAP: any = {
   location: "location",
@@ -120,4 +122,10 @@ export function referenceExmInSpec(
     };
     return spec;
   }
+}
+
+export async function getInputFiles(readMe:string, tag: string) {
+  const readMeStr = await readFile(readMe);
+  const cmd = parseMarkdown(readMeStr);
+  return amd.getInputFilesForTag(cmd.markDown,tag);
 }

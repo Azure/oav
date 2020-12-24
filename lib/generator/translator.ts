@@ -7,6 +7,7 @@ import {
   PayloadCache,
   reBuildExample,
 } from "./exampleCache";
+import * as utils  from "./util";
 
 export default class Translator {
   private jsonLoader: JsonLoader;
@@ -30,10 +31,30 @@ export default class Translator {
     return result;
   }
 
+  public extractParameters(specItem: any, request: any) {
+    const parameters = this.getMatchedParameters(specItem.content.parameters, request);
+    const result = {
+      ...parameters,
+    };
+    this.maskSpecialValue(result);
+    return result;
+  }
+
   private maskSpecialValue(requestExample: any) {
     if (requestExample.subscriptionId) {
       requestExample.subscriptionId = requestExample.subscriptionId.replace(/[a-z0-9]/g, "0");
     }
+  }
+
+  private getMatchedParameters(paramterSchema:any,parameters:any) {
+    const bodyRes: any = {};
+    paramterSchema.forEach((item: any) => {
+      const itemSchema = this.getDefSpec(item)
+      if (parameters[itemSchema.name]) {
+        bodyRes[itemSchema.name] = this.filterBodyContent(parameters[itemSchema.name], itemSchema.in === "body" ? itemSchema.schema : item);
+      }
+    });
+    return bodyRes;
   }
 
   private getBodyParameters(specItem: any, body: any): any {
@@ -45,11 +66,7 @@ export default class Translator {
       console.log("no body parameter definition in spec file");
       return;
     }
-    const bodyRes: any = {};
-    parametersSpec.forEach((item: any) => {
-      bodyRes[item.name] = this.filterBodyContent(body, item.schema);
-    });
-    return bodyRes;
+    return this.getMatchedParameters(parametersSpec,body)
   }
 
   /**
@@ -64,18 +81,18 @@ export default class Translator {
   }
   public cacheBodyContent(body: any, schema: any, isRequest: boolean) {
     if (!body) {
-      return body;
+      return undefined;
     }
     if (!schema) {
-      return;
+      return undefined;
     }
-    if (schema.$ref && this.payloadCache.getMergedCache(schema.$ref.split("#")[1])) {
-      return this.payloadCache.getMergedCache(schema.$ref.split("#")[1]);
+    if (schema.$ref && this.payloadCache.get(schema.$ref.split("#")[1])) {
+      return this.payloadCache.get(schema.$ref.split("#")[1]);
     }
     const definitionSpec = this.getDefSpec(schema);
     const bodyContent: any = {};
     let cacheItem: CacheItem;
-    if (definitionSpec.type === "object") {
+    if (utils.isObject(definitionSpec)) {
       const properties = this.getProperties(definitionSpec);
       Object.keys(body)
         .filter((key) => key in properties)
@@ -91,6 +108,10 @@ export default class Translator {
       cacheItem = createTrunkItem(result, buildItemOption(definitionSpec));
     } else {
       cacheItem = createLeafItem(body, buildItemOption(definitionSpec));
+    }
+    const requiredProperties = this.getRequiredProperties(schema)
+    if (requiredProperties && requiredProperties.length > 0) {
+      cacheItem.required = requiredProperties
     }
     this.payloadCache.checkAndCache(schema, cacheItem, isRequest);
     return cacheItem;
@@ -115,6 +136,25 @@ export default class Translator {
     };
   }
 
+    /**
+   * return all required properties of the object, including parent's properties defined by 'allOf'
+   * It will not spread properties's properties.
+   * @param definitionSpec
+   */
+  private getRequiredProperties(definitionSpec: any) {
+    let requiredProperties: string[] = [];
+    definitionSpec.allOf?.map((item: any) => {
+      requiredProperties = {
+        ...requiredProperties,
+        ...this.getRequiredProperties(this.getDefSpec(item)),
+      };
+    });
+    return {
+      ...requiredProperties,
+      ...definitionSpec.required,
+    };
+  }
+
   private getDefSpec(item: any) {
     if (item) {
       return this.jsonLoader.resolveRefObj(item);
@@ -126,9 +166,9 @@ export default class Translator {
     const resp: any = {};
     if (statusCode === "201" || statusCode === "202") {
       resp.headers = {
-        Location: "location" in response.headers ? response.headers.location : undefined,
+        Location: response.headers && "location" in response.headers ? response.headers.location : undefined ,
         "Azure-AsyncOperation":
-          "azure-AsyncOperation" in response.headers
+          response.headers && "azure-AsyncOperation" in response.headers
             ? response.headers["azure-AsyncOperation"]
             : undefined,
       };
