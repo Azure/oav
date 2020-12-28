@@ -1,8 +1,18 @@
+import { ExampleRule, IsValid } from "./exampleRule";
+
 /* tslint:disable:max-classes-per-file */
 interface BaseCache {
   get(modelName:string):CacheItem|undefined
   set(modelName: string, example: CacheItem):void
   has(modelName: string):boolean
+}
+
+const isBaseResource = (cacheKey:string) => {
+  const pieces = cacheKey.split("/")
+  if(pieces.length < 2) {
+    return false;
+  }
+  return ["resource","proxyresource","trackedresource","azureentityresource"].some(r => r === pieces[pieces.length-1].toLowerCase())
 }
 export class MockerCache implements BaseCache {
   private caches = new Map<string, CacheItem>();
@@ -25,8 +35,9 @@ export class MockerCache implements BaseCache {
     if (!schema || !example) {
       return;
     }
-    if ("$ref" in schema && !this.has(schema.$ref.split("#")[1])) {
-      this.caches.set(schema.$ref.split("#")[1], example);
+    const cacheKey = schema.$ref && schema.$ref.includes("#") ? schema.$ref.split("#")[1] : undefined
+    if (cacheKey && !isBaseResource(cacheKey) && !this.has(cacheKey)) {
+      this.set(cacheKey, example);
     }
   }
 }
@@ -73,8 +84,9 @@ export class PayloadCache implements BaseCache {
     if (!schema || !example) {
       return;
     }
-    if ("$ref" in schema && !this.hasByDirection(schema.$ref.split("#")[1], isRequest)) {
-      this.setByDirection(schema.$ref.split("#")[1], example, isRequest);
+    const cacheKey = schema.$ref && schema.$ref.includes("#") ? schema.$ref.split("#")[1] : undefined
+    if (cacheKey && !isBaseResource(cacheKey) && !this.hasByDirection(cacheKey, isRequest)) {
+      this.setByDirection(cacheKey, example, isRequest);
     }
   }
   /**
@@ -84,6 +96,10 @@ export class PayloadCache implements BaseCache {
    */
   public mergeItem(target: CacheItem, source: CacheItem): CacheItem {
     const result = target;
+    if (!source || !target) {
+      return target ? target :source
+    }
+
     if (Array.isArray(result.child) && Array.isArray(source.child)) {
       if (result.child.length < source.child.length) {
         result.child = (result.child as CacheItem[]).concat(
@@ -135,15 +151,12 @@ export class PayloadCache implements BaseCache {
 
 }
 
-const shouldSkip = (cache: CacheItem | undefined, isRequest: boolean) => {
-  return (isRequest && cache?.options?.isReadonly) || (!isRequest && cache?.options?.isXmsSecret);
-};
 
-export const reBuildExample = (cache: CacheItem | undefined, isRequest: boolean): any => {
+export const reBuildExample = (cache: CacheItem | undefined, isRequest: boolean, exampleRule:ExampleRule | undefined): any => {
   if (!cache) {
     return undefined;
   }
-  if (shouldSkip(cache, isRequest)) {
+  if (!IsValid(exampleRule,{cache,isRequest})) {
     return undefined;
   }
   if (cache.isLeaf) {
@@ -152,21 +165,20 @@ export const reBuildExample = (cache: CacheItem | undefined, isRequest: boolean)
   if (Array.isArray(cache.child)) {
     const result = [];
     for (const item of cache.child) {
-      if (shouldSkip(cache, isRequest)) {
+      if (!IsValid(exampleRule, { cache:item, isRequest })) {
         continue;
       }
-      result.push(reBuildExample(item, isRequest));
+      result.push(reBuildExample(item, isRequest,exampleRule));
     }
     return result;
   } else if (cache.child) {
     const result: any = {};
     for (const key of Object.keys(cache.child)) {
-      if (shouldSkip(cache, isRequest)) {
-        continue;
-      }
-      const value = reBuildExample(cache.child[key], isRequest);
-      if (value !== undefined) {
-        result[key] = value;
+      if (IsValid(exampleRule,{cache,childKey:key,isRequest})) {
+        const value = reBuildExample(cache.child[key], isRequest,exampleRule);
+        if (value !== undefined) {
+          result[key] = value;
+        }
       }
     }
     return result;
@@ -182,6 +194,7 @@ type CacheItemChild = CacheItemObject | CacheItem[];
 interface CacheItemOptions {
   isReadonly?: boolean;
   isXmsSecret?: boolean;
+  isRequired?: boolean;
 }
 export interface CacheItem {
   value?: CacheItemValue;
@@ -195,7 +208,8 @@ export const buildItemOption = (schema: any) => {
   if (schema) {
     const isReadonly = !!schema.readOnly;
     const isXmsSecret = !!schema["x-ms-secret"];
-    if (!isReadonly && !isXmsSecret) {
+    const isRequired = !!schema.required;
+    if (!isReadonly && !isXmsSecret && !isRequired) {
       return undefined;
     }
     let option: CacheItemOptions = {};
@@ -204,6 +218,9 @@ export const buildItemOption = (schema: any) => {
     }
     if (isXmsSecret) {
       option = { ...option, isXmsSecret: true };
+    }
+    if (schema.required === true) {
+      option = {...option, isRequired: true}
     }
     return option;
   }

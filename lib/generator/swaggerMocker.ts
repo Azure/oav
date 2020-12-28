@@ -10,6 +10,7 @@ import {
 } from "./exampleCache";
 import Mocker from "./mocker";
 import * as util from "./util";
+import { ExampleRule, IsValid } from "./exampleRule";
 
 export default class SwaggerMocker {
   private jsonLoader: JsonLoader;
@@ -17,12 +18,17 @@ export default class SwaggerMocker {
   private spec: any;
   private mockCache: MockerCache;
   private payloadCache: PayloadCache;
+  private exampleRule ?: ExampleRule
 
   public constructor(jsonLoader: JsonLoader, mockerCache: MockerCache,payloadCache: PayloadCache) {
     this.jsonLoader = jsonLoader;
     this.mocker = new Mocker();
     this.mockCache = mockerCache;
     this.payloadCache = payloadCache;
+  }
+
+  public setRule(exampleRule ?: ExampleRule) {
+    this.exampleRule = exampleRule
   }
 
   public mockForExample(example: any, specItem: any, spec: any, rp: string) {
@@ -59,7 +65,7 @@ export default class SwaggerMocker {
               responseExample.body || {},
               visited,
               false
-            )
+            ) || {}
           : undefined,
     };
   }
@@ -96,13 +102,15 @@ export default class SwaggerMocker {
         //       "$ref": "#/definitions/SignalRResource"
         //     }
         // }
-        paramExample[paramEle.name] = this.mockObj(
-          paramEle.name,
-          paramEle.schema,
-          paramExample[paramEle.name] || {},
-          visited,
-          true
-        );
+        if (IsValid(this.exampleRule,{parameter:paramEle})) {
+           paramExample[paramEle.name] = this.mockObj(
+            paramEle.name,
+            paramEle.schema,
+            paramExample[paramEle.name] || {},
+            visited,
+            true
+          ) 
+        }
       } else {
         if (paramEle.name in paramExample) {
           continue;
@@ -114,13 +122,15 @@ export default class SwaggerMocker {
         //     "type": "string"
         // }
         this.removeFromSet(element, visited);
-        paramExample[paramEle.name] = this.mockObj(
-          paramEle.name,
-          element,  // use the  containing "$ref" ,original schema which hit the cached value
-          paramExample[paramEle.name],
-          visited,
-          true
-        );
+        if (IsValid(this.exampleRule,{parameter:paramEle})) {
+          paramExample[paramEle.name] = this.mockObj(
+            paramEle.name,
+            element,  // use the  containing "$ref" ,original schema which hit the cached value
+            paramExample[paramEle.name],
+            visited,
+            true
+          )
+        }
       }
       this.removeFromSet(element, visited);
     }
@@ -152,7 +162,7 @@ export default class SwaggerMocker {
     isRequest: boolean
   ) {
     const cache = this.mockCachedObj(objName, schema, example, visited, isRequest);
-    return reBuildExample(cache, isRequest);
+    return reBuildExample(cache, isRequest,this.exampleRule);
   }
 
   private mockCachedObj(
@@ -243,12 +253,31 @@ export default class SwaggerMocker {
     } else {
       cacheItem = createLeafItem(example, buildItemOption(definitionSpec));
     }
-
-    if (schema.$ref) {
-      this.mockCache.checkAndCache(schema, cacheItem);
+    const requiredProperties = this.getRequiredProperties(definitionSpec)
+    if (requiredProperties && requiredProperties.length > 0) {
+      cacheItem.required = requiredProperties
     }
+    this.mockCache.checkAndCache(schema, cacheItem);
     return cacheItem;
   }
+
+
+  /**
+   * return all required properties of the object, including parent's properties defined by 'allOf'
+   * It will not spread properties' properties.
+   * @param definitionSpec
+   */
+  private getRequiredProperties(definitionSpec: any) {
+    let requiredProperties: string[] = Array.isArray(definitionSpec.required) ? definitionSpec.required : [];
+    definitionSpec.allOf?.map((item: any) => {
+      requiredProperties = [
+        ...requiredProperties,
+        ...this.getRequiredProperties(this.getDefSpec(item,new Set<string>())),
+      ];
+    });
+    return requiredProperties
+  }
+
 
   // TODO: handle discriminator without enum options
   private mockForDiscriminator(

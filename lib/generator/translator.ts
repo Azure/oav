@@ -8,19 +8,25 @@ import {
   reBuildExample,
 } from "./exampleCache";
 import * as utils  from "./util";
+import { ExampleRule, IsValid } from "./exampleRule";
 
 export default class Translator {
   private jsonLoader: JsonLoader;
   private payloadCache: PayloadCache;
+  private exampleRule ?: ExampleRule
   public constructor(jsonLoader: JsonLoader, payloadCache: PayloadCache) {
     this.jsonLoader = jsonLoader;
     this.payloadCache = payloadCache;
   }
 
+  public setRule(exampleRule ?: ExampleRule) {
+    this.exampleRule = exampleRule
+  }
+
   public extractRequest(specItem: any, request: any) {
     const path = request.url.split("?")[0];
     const pathValues = this.getPathParameters(specItem.path, path);
-    const queryValues = request.query;
+    const queryValues = this.getQueryParameters(specItem,request.query);
     const parameters = this.getBodyParameters(specItem, request.body);
     const result = {
       ...parameters,
@@ -51,13 +57,33 @@ export default class Translator {
     paramterSchema.forEach((item: any) => {
       const itemSchema = this.getDefSpec(item)
       if (parameters[itemSchema.name]) {
-        bodyRes[itemSchema.name] = this.filterBodyContent(parameters[itemSchema.name], itemSchema.in === "body" ? itemSchema.schema : item);
+        if (IsValid(this.exampleRule,{parameter:itemSchema})) {
+          bodyRes[itemSchema.name] = this.filterBodyContent(parameters[itemSchema.name], itemSchema.in === "body" ? itemSchema.schema : item);
+        }
       }
     });
     return bodyRes;
   }
 
+  private getQueryParameters(specItem: any, body: any): any {
+    if (!specItem || !body) {
+      return
+    }
+    const parametersSpec = specItem.content.parameters
+      .map((item: any) => this.getDefSpec(item))
+      .filter((item: any) => "in" in item && item.in === "query");
+
+    if (parametersSpec.length === 0) {
+      console.log("no query parameter definition in spec file");
+      return;
+    }
+    return this.getMatchedParameters(parametersSpec,body)
+  }
+
   private getBodyParameters(specItem: any, body: any): any {
+    if (!specItem || !body) {
+      return
+    }
     const parametersSpec = specItem.content.parameters
       .map((item: any) => this.getDefSpec(item))
       .filter((item: any) => "in" in item && item.in === "body");
@@ -77,7 +103,7 @@ export default class Translator {
 
   public filterBodyContent(body: any, schema: any, isRequest: boolean = true) {
     const cache = this.cacheBodyContent(body, schema, isRequest);
-    return reBuildExample(cache, isRequest);
+    return reBuildExample(cache, isRequest, this.exampleRule);
   }
   public cacheBodyContent(body: any, schema: any, isRequest: boolean) {
     if (!body) {
@@ -109,10 +135,11 @@ export default class Translator {
     } else {
       cacheItem = createLeafItem(body, buildItemOption(definitionSpec));
     }
-    const requiredProperties = this.getRequiredProperties(schema)
+    const requiredProperties = this.getRequiredProperties(definitionSpec)
     if (requiredProperties && requiredProperties.length > 0) {
       cacheItem.required = requiredProperties
     }
+
     this.payloadCache.checkAndCache(schema, cacheItem, isRequest);
     return cacheItem;
   }
@@ -136,23 +163,20 @@ export default class Translator {
     };
   }
 
-    /**
+   /**
    * return all required properties of the object, including parent's properties defined by 'allOf'
-   * It will not spread properties's properties.
+   * It will not spread properties' properties.
    * @param definitionSpec
    */
   private getRequiredProperties(definitionSpec: any) {
-    let requiredProperties: string[] = [];
+    let requiredProperties: string[] = Array.isArray(definitionSpec.required) ? definitionSpec.required : [];
     definitionSpec.allOf?.map((item: any) => {
-      requiredProperties = {
+      requiredProperties = [
         ...requiredProperties,
         ...this.getRequiredProperties(this.getDefSpec(item)),
-      };
+      ];
     });
-    return {
-      ...requiredProperties,
-      ...definitionSpec.required,
-    };
+    return requiredProperties
   }
 
   private getDefSpec(item: any) {
@@ -178,7 +202,7 @@ export default class Translator {
         response.body,
         specItemContent.responses[statusCode].schema,
         false
-      );
+      ) || {}
     }
     return resp;
   }

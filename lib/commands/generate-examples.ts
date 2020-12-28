@@ -9,7 +9,7 @@ import { cliSuppressExceptions } from "../cliSuppressExceptions";
 import { log } from "../util/logging";
 import * as validate from "../validate";
 
-export const command = "generate-examples <readme>";
+export const command = "generate-examples [spec path]";
 
 export const describe = "Generate swagger examples from real payload records.";
 
@@ -24,13 +24,18 @@ export const builder: yargs.CommandBuilder = {
     describe: "the directory path contains payload.",
     string: true,
   },
-  s: {
-    alias: "specPath",
-    describe: "spec path.",
+  c: {
+    alias: "readme",
+    describe: "readme path.",
     string: true,
   },
   tag: {
     alias: "tagName",
+    describe: "tag name.",
+    string: true,
+  },
+  minimum: {
+    alias: "minimum",
     describe: "tag name.",
     string: true,
   },
