@@ -37,6 +37,7 @@ export default class Translator {
     return result;
   }
 
+  // for example cache.
   public extractParameters(specItem: any, request: any) {
     const parameters = this.getMatchedParameters(specItem.content.parameters, request);
     const result = {
@@ -80,6 +81,7 @@ export default class Translator {
     return this.getMatchedParameters(parametersSpec,body)
   }
 
+  // for payload cache
   private getBodyParameters(specItem: any, body: any): any {
     if (!specItem || !body) {
       return
@@ -92,7 +94,10 @@ export default class Translator {
       console.log("no body parameter definition in spec file");
       return;
     }
-    return this.getMatchedParameters(parametersSpec,body)
+    const bodyParameterName = parametersSpec[0].name
+    const exampleBody : any = {}
+    exampleBody[bodyParameterName] = body
+    return this.getMatchedParameters(parametersSpec,exampleBody)
   }
 
   /**
