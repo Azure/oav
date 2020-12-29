@@ -9,14 +9,17 @@ import {
 } from "./exampleCache";
 import * as utils  from "./util";
 import { ExampleRule, IsValid } from "./exampleRule";
+import SwaggerMocker from "./swaggerMocker";
 
 export default class Translator {
   private jsonLoader: JsonLoader;
   private payloadCache: PayloadCache;
   private exampleRule ?: ExampleRule
-  public constructor(jsonLoader: JsonLoader, payloadCache: PayloadCache) {
+  private mocker:SwaggerMocker|undefined
+  public constructor(jsonLoader: JsonLoader, payloadCache: PayloadCache,mocker?:SwaggerMocker) {
     this.jsonLoader = jsonLoader;
     this.payloadCache = payloadCache;
+    this.mocker = mocker
   }
 
   public setRule(exampleRule ?: ExampleRule) {
@@ -111,10 +114,7 @@ export default class Translator {
     return reBuildExample(cache, isRequest, this.exampleRule);
   }
   public cacheBodyContent(body: any, schema: any, isRequest: boolean) {
-    if (!body) {
-      return undefined;
-    }
-    if (!schema) {
+    if (!schema || !body) {
       return undefined;
     }
     if (schema.$ref && this.payloadCache.get(schema.$ref.split("#")[1])) {
@@ -130,7 +130,15 @@ export default class Translator {
         .forEach((key: string) => {
           bodyContent[key] = this.cacheBodyContent(body[key], properties[key], isRequest);
         });
-
+      // to mock the properties that not exists in the body.
+      // it's not needed when generating from payload.
+      if (this.mocker !== undefined) {
+        Object.keys(properties)
+        .filter(key => !body[key])
+        .forEach((key: string) => {
+          bodyContent[key] = this.mocker?.getMockCachedObj(key,properties[key], isRequest);
+        });
+      }
       cacheItem = createTrunkItem(bodyContent, buildItemOption(definitionSpec));
     } else if (definitionSpec.type === "array") {
       const result = body.map((i: any) => {
@@ -151,7 +159,7 @@ export default class Translator {
 
   /**
    * return all properties of the object, including parent's properties defined by 'allOf'
-   * It will not spread properties's properties.
+   * It will not spread properties' properties.
    * @param definitionSpec
    */
   private getProperties(definitionSpec: any) {

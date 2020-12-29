@@ -151,7 +151,6 @@ export class PayloadCache implements BaseCache {
 
 }
 
-
 export const reBuildExample = (cache: CacheItem | undefined, isRequest: boolean, exampleRule:ExampleRule | undefined): any => {
   if (!cache) {
     return undefined;

@@ -45,7 +45,11 @@ export default class Generator {
     this.mockerCache = new MockerCache();
     this.payloadCache = new PayloadCache();
     this.swaggerMocker = new SwaggerMocker(this.jsonLoader, this.mockerCache,this.payloadCache);
-    this.translator = new Translator(this.jsonLoader, this.payloadCache);
+    this.translator = new Translator(
+      this.jsonLoader,
+      this.payloadCache,
+      this.shouldMock ? this.swaggerMocker : undefined
+    );
     const schemaValidator = new AjvSchemaValidator(this.jsonLoader);
     this.transformContext = getTransformContext(this.jsonLoader, schemaValidator, [
       xmsPathsTransformer,
@@ -77,7 +81,7 @@ export default class Generator {
     this.spec = await(this.jsonLoader.load(this.specFilePath) as unknown) as SwaggerSpec;
     applySpecTransformers(this.spec, this.transformContext);
     applyGlobalTransformers(this.transformContext)
-    await this.CacheExistingExamples();
+    await this.cacheExistingExamples();
   }
 
   public async generateAll(): Promise<readonly ModelValidationError[]> {
@@ -108,7 +112,10 @@ export default class Generator {
     return errs;
   }
 
-  public async CacheExistingExamples() {
+  public async cacheExistingExamples() {
+    if (!this.shouldMock) {
+      return
+    }
     await traverseSwaggerAsync(this.spec, {
       onOperation: async (operation: Operation, pathObject, methodName) => {
         const pathName = pathObject._pathTemplate;
@@ -121,9 +128,17 @@ export default class Generator {
         if (!examples) {
           return
         }
+ 
         const operationId = operation.operationId 
+        const validateErrors = await validate.validateExamples(this.specFilePath, operationId, {
+        });
+        if(validateErrors.length > 0) {
+          console.debug(`operation:${operationId} has invalid examples.`)
+          console.debug(validateErrors);
+          return
+        }
         for (const key of Object.keys(examples)) {
-          if (key === `${operationId}_Base`) {
+          if (key.match(new RegExp(`^${operationId}_.*_Base$`))) {
             continue
           }
           const example = this.jsonLoader.resolveRefObj(examples[key]);

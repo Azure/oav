@@ -44,6 +44,10 @@ export default class SwaggerMocker {
     example.responses = this.mockResponse(example.responses, specItem);
   }
 
+  public getMockCachedObj(objName:string,schema: any,isRequest: boolean) {
+    return this.mockCachedObj(objName,schema,undefined,new Set<string>(),isRequest)
+  }
+
   private mockResponse(responseExample: any, specItem: any) {
     for (const statusCode of Object.keys(responseExample)) {
       const mockedResp = this.mockEachResponse(statusCode, responseExample[statusCode], specItem);
@@ -121,18 +125,16 @@ export default class SwaggerMocker {
         //     "required": true,
         //     "type": "string"
         // }
-        this.removeFromSet(element, visited);
         if (IsValid(this.exampleRule,{parameter:paramEle})) {
           paramExample[paramEle.name] = this.mockObj(
             paramEle.name,
-            element,  // use the  containing "$ref" ,original schema which hit the cached value
+            element,  // use the original schema  containing "$ref" which will hit the cached value
             paramExample[paramEle.name],
-            visited,
+            new Set<string>(),
             true
           )
         }
       }
-      this.removeFromSet(element, visited);
     }
     return paramExample;
   }
