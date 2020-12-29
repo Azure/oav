@@ -8,7 +8,7 @@ import {
   reBuildExample,
 } from "./exampleCache";
 import * as utils  from "./util";
-import { ExampleRule, IsValid } from "./exampleRule";
+import { ExampleRule, isValid } from "./exampleRule";
 import SwaggerMocker from "./swaggerMocker";
 
 export default class Translator {
@@ -61,7 +61,7 @@ export default class Translator {
     paramterSchema.forEach((item: any) => {
       const itemSchema = this.getDefSpec(item)
       if (parameters[itemSchema.name]) {
-        if (IsValid(this.exampleRule,{parameter:itemSchema})) {
+        if (isValid(this.exampleRule,{parameter:itemSchema})) {
           bodyRes[itemSchema.name] = this.filterBodyContent(parameters[itemSchema.name], itemSchema.in === "body" ? itemSchema.schema : item);
         }
       }
@@ -114,7 +114,7 @@ export default class Translator {
     return reBuildExample(cache, isRequest, this.exampleRule);
   }
   public cacheBodyContent(body: any, schema: any, isRequest: boolean) {
-    if (!schema || !body) {
+    if (!schema) {
       return undefined;
     }
     if (schema.$ref && this.payloadCache.get(schema.$ref.split("#")[1])) {
@@ -122,37 +122,49 @@ export default class Translator {
     }
     const definitionSpec = this.getDefSpec(schema);
     const bodyContent: any = {};
-    let cacheItem: CacheItem;
+    let cacheItem: CacheItem | undefined;
     if (utils.isObject(definitionSpec)) {
       const properties = this.getProperties(definitionSpec);
-      Object.keys(body)
+      if (body) {
+        Object.keys(body)
         .filter((key) => key in properties)
         .forEach((key: string) => {
           bodyContent[key] = this.cacheBodyContent(body[key], properties[key], isRequest);
         });
+      }
       // to mock the properties that not exists in the body.
       // it's not needed when generating from payload.
       if (this.mocker !== undefined) {
         Object.keys(properties)
-        .filter(key => !body[key])
+        .filter(key => !body?.[key])
         .forEach((key: string) => {
           bodyContent[key] = this.mocker?.getMockCachedObj(key,properties[key], isRequest);
         });
       }
       cacheItem = createTrunkItem(bodyContent, buildItemOption(definitionSpec));
     } else if (definitionSpec.type === "array") {
-      const result = body.map((i: any) => {
-        return this.cacheBodyContent(i, schema.items, isRequest);
-      });
-      cacheItem = createTrunkItem(result, buildItemOption(definitionSpec));
+      if (body) {
+        const result = body.map((i: any) => {
+          return this.cacheBodyContent(i, schema.items, isRequest);
+        });
+        cacheItem = createTrunkItem(result, buildItemOption(definitionSpec));
+      }
+      else if (this.mocker !== undefined) {
+        return this.mocker?.getMockCachedObj("mock array",schema, isRequest);
+      }
+    
     } else {
-      cacheItem = createLeafItem(body, buildItemOption(definitionSpec));
+      if (body !== undefined) {
+        cacheItem = createLeafItem(body, buildItemOption(definitionSpec));
+      }
+      else if (this.mocker){
+        return this.mocker?.getMockCachedObj("",schema, isRequest);
+      }
     }
     const requiredProperties = this.getRequiredProperties(definitionSpec)
-    if (requiredProperties && requiredProperties.length > 0) {
+    if (requiredProperties && requiredProperties.length > 0 && cacheItem !== undefined) {
       cacheItem.required = requiredProperties
     }
-
     this.payloadCache.checkAndCache(schema, cacheItem, isRequest);
     return cacheItem;
   }

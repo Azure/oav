@@ -10,7 +10,7 @@ import {
 } from "./exampleCache";
 import Mocker from "./mocker";
 import * as util from "./util";
-import { ExampleRule, IsValid } from "./exampleRule";
+import { ExampleRule, isValid } from "./exampleRule";
 
 export default class SwaggerMocker {
   private jsonLoader: JsonLoader;
@@ -106,7 +106,7 @@ export default class SwaggerMocker {
         //       "$ref": "#/definitions/SignalRResource"
         //     }
         // }
-        if (IsValid(this.exampleRule,{parameter:paramEle})) {
+        if (isValid(this.exampleRule,{parameter:paramEle})) {
            paramExample[paramEle.name] = this.mockObj(
             paramEle.name,
             paramEle.schema,
@@ -125,7 +125,7 @@ export default class SwaggerMocker {
         //     "required": true,
         //     "type": "string"
         // }
-        if (IsValid(this.exampleRule,{parameter:paramEle})) {
+        if (isValid(this.exampleRule,{parameter:paramEle})) {
           paramExample[paramEle.name] = this.mockObj(
             paramEle.name,
             element,  // use the original schema  containing "$ref" which will hit the cached value
@@ -175,7 +175,7 @@ export default class SwaggerMocker {
     isRequest: boolean
   ) {
     if (!schema || typeof schema !== "object") {
-      console.log(`The schema is invalid.`);
+      console.log(`invalid schema.`);
       return undefined;
     }
     // use visited set to avoid circular dependency

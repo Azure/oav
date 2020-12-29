@@ -133,8 +133,8 @@ export default class Generator {
         const validateErrors = await validate.validateExamples(this.specFilePath, operationId, {
         });
         if(validateErrors.length > 0) {
-          console.debug(`operation:${operationId} has invalid examples.`)
-          console.debug(validateErrors);
+          console.warn(`invalid examples for operation:${operationId}.`);
+          console.warn(validateErrors);
           return
         }
         for (const key of Object.keys(examples)) {
@@ -161,33 +161,26 @@ export default class Generator {
   private async generateExample( operationId: string,
     specItem: any, rule: ExampleRule) {
     let example 
-    if (this.payloadDir) {
+    if (!this.shouldMock) {
       example = this.getExampleFromPayload(operationId, specItem);
       if (!example) {
         return [];
       }
-      console.log(example);
-    }
-    else {
+    } else {
       example = {
         parameters: {},
         responses: this.extractResponse(specItem, {})
       };
-      if (this.shouldMock) {
-        this.swaggerMocker.mockForExample(
-          example,
-          specItem,
-          this.spec,
-          util.getBaseName(this.specFilePath).split(".")[0]
-        );
-        console.log(example);
-      }
+      this.swaggerMocker.mockForExample(
+        example,
+        specItem,
+        this.spec,
+        util.getBaseName(this.specFilePath).split(".")[0]
+      );
     }
-    
-    console.log(example);
-    
-    const unifiedExample = this.unifyCommonProperty(example);
 
+    console.log(example);
+    const unifiedExample = this.unifyCommonProperty(example);
     const newSpec = util.referenceExmInSpec(
       this.specFilePath,
       specItem.path,
@@ -295,7 +288,7 @@ export default class Generator {
       example.responses,
       (value, key, parentValue, context) => {
         if (!parentValue) {
-          console.debug(`parent is null`);
+          console.log(`parent is null`);
         }
         if (
           ["integer", "number", "string"].some((type) => typeof value === type) &&
@@ -350,7 +343,7 @@ export default class Generator {
       const payloadDir = path.join(this.payloadDir,subPaths)
       const payload: any = util.readPayloadFile(payloadDir, operationId);
       if (!payload) {
-        console.log(
+        console.warn(
           `no payload file for operationId ${operationId} under directory ${path.resolve(
             payloadDir,
             operationId
@@ -412,7 +405,7 @@ export default class Generator {
 
     const liveRequest: any = this.getRequestPayload(specItem, payload);
     if (!liveRequest) {
-      console.log(`no AI record`);
+      console.log(`no live request in payload`);
       return {};
     }
     const request = this.translator.extractRequest(specItem, liveRequest) || {};

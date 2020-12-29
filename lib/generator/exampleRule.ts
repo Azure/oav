@@ -9,7 +9,7 @@ export interface ExampleRule extends BaseRule {
 }
 
 const shouldSkip = (cache: CacheItem | undefined, isRequest?: boolean) => {
-  return (isRequest && cache?.options?.isReadonly) || (!isRequest && cache?.options?.isXmsSecret);
+  return (isRequest && cache?.options?.isReadonly) || (!isRequest && (cache?.options?.isXmsSecret || cache?.options?.isWriteOnly));
 };
 
 type RuleContext =  {
@@ -46,7 +46,7 @@ export function getRuleValidator(rule:ExampleRule) {
   return ()=>true
 }
 
-export function IsValid(rule:ExampleRule | undefined,context:RuleContext) {
+export function isValid(rule:ExampleRule | undefined,context:RuleContext) {
   if (!rule) {
     return true
   }

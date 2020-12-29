@@ -3,6 +3,7 @@ import * as fs from "fs";
 import * as path from "path";
 import ExampleGenerator from "../lib/generator/exampleGenerator";
 import { ModelValidationError } from "../lib/util/modelValidationError";
+import { generateExamples } from "../lib/validate";
 
 const payloadDir = `test/exampleGenerator/payloads`;
 const specRepoDir = `azure-rest-api-specs`;
@@ -25,6 +26,63 @@ describe.skip("mock examples", () => {
     });
   }
 });
+
+describe("test generate example",()=> {
+  const originalError = console.error;
+  const originalLog = console.log;
+  let consoleOutput: any[] = [];
+  const mockedLog = (output: any) => consoleOutput.push(output);
+  const mockedError = (output: any) => consoleOutput.push(output);
+  beforeAll(() => {
+    consoleOutput = []
+    console.log = mockedLog
+    console.error = mockedError
+  });
+
+  afterAll(() => {
+    console.error = originalError;
+    console.log = originalLog;
+  })
+ 
+  test.each<string[]>([
+    ["sql", "package-pure-2020-02-preview"],
+    ["signalr", "package-2020-05-01"],
+    ["eventgrid", "package-2020-06"]
+  ])(
+    "from payload,rp:%s",
+    async (resourceProviderName, tag) => {
+      await generateExamples(
+        "",
+        payloadDir,
+        undefined,
+        `test/exampleGenerator/specification/${resourceProviderName}/resource-manager/readme.md`,
+        tag
+      );
+      expect(consoleOutput).toMatchSnapshot(`,tag:${tag}`);
+    },
+    1000000
+  );
+  
+  test.each<string[]>([
+    ["sql", "package-pure-2020-02-preview"],
+    ["signalr", "package-2020-05-01"],
+    ["eventgrid", "package-2020-06"]
+  ])(
+    "from mocker,readme:%s",
+    async (resourceProviderName, tag) => {
+      await generateExamples(
+        "",
+        undefined,
+        undefined,
+        `test/exampleGenerator/specification/${resourceProviderName}/resource-manager/readme.md`,
+        tag
+      );
+      expect(consoleOutput).toMatchSnapshot(`,tag:${tag}`);
+    },
+    1000000
+  );
+
+})
 
 export function getSpecFilePaths(repoDir: string) {
   const rpList = fs.readdirSync(path.resolve(repoDir, "specification"));

@@ -1,4 +1,4 @@
-import { ExampleRule, IsValid } from "./exampleRule";
+import { ExampleRule, isValid } from "./exampleRule";
 
 /* tslint:disable:max-classes-per-file */
 interface BaseCache {
@@ -80,7 +80,7 @@ export class PayloadCache implements BaseCache {
     return this.mergedCaches.has(modelName);
   }
 
-  public checkAndCache(schema: any, example: CacheItem, isRequest: boolean) {
+  public checkAndCache(schema: any, example: CacheItem|undefined, isRequest: boolean) {
     if (!schema || !example) {
       return;
     }
@@ -130,7 +130,7 @@ export class PayloadCache implements BaseCache {
         const responseCache = this.getByDirection(key, false);
         if (responseCache) {
           if (responseCache.isLeaf) {
-            console.error(`The response cache and request cache is inconsistent! key:${key}`);
+            console.error(`the response cache and request cache is inconsistent! key:${key}`);
           } else {
             const mergedCache = this.mergeItem(requestCache, responseCache);
             this.set(key, mergedCache);
@@ -151,41 +151,7 @@ export class PayloadCache implements BaseCache {
 
 }
 
-export const reBuildExample = (cache: CacheItem | undefined, isRequest: boolean, exampleRule:ExampleRule | undefined): any => {
-  if (!cache) {
-    return undefined;
-  }
-  if (!IsValid(exampleRule,{cache,isRequest})) {
-    return undefined;
-  }
-  if (cache.isLeaf) {
-    return cache.value;
-  }
-  if (Array.isArray(cache.child)) {
-    const result = [];
-    for (const item of cache.child) {
-      if (!IsValid(exampleRule, { cache:item, isRequest })) {
-        continue;
-      }
-      result.push(reBuildExample(item, isRequest,exampleRule));
-    }
-    return result;
-  } else if (cache.child) {
-    const result: any = {};
-    for (const key of Object.keys(cache.child)) {
-      if (IsValid(exampleRule,{cache,childKey:key,isRequest})) {
-        const value = reBuildExample(cache.child[key], isRequest,exampleRule);
-        if (value !== undefined) {
-          result[key] = value;
-        }
-      }
-    }
-    return result;
-  }
-  return undefined;
-};
-
-type CacheItemValue = string | number | object;
+type CacheItemValue = string | number | object | boolean;
 interface CacheItemObject {
   [index: string]: CacheItem;
 }
@@ -194,6 +160,7 @@ interface CacheItemOptions {
   isReadonly?: boolean;
   isXmsSecret?: boolean;
   isRequired?: boolean;
+  isWriteOnly?:boolean;
 }
 export interface CacheItem {
   value?: CacheItemValue;
@@ -208,7 +175,8 @@ export const buildItemOption = (schema: any) => {
     const isReadonly = !!schema.readOnly;
     const isXmsSecret = !!schema["x-ms-secret"];
     const isRequired = !!schema.required;
-    if (!isReadonly && !isXmsSecret && !isRequired) {
+    const isWriteOnly = schema["x-ms-mutability"] ? schema["x-ms-mutability"].indexOf("read") === -1 : false
+    if (!isReadonly && !isXmsSecret && !isRequired && !isWriteOnly) {
       return undefined;
     }
     let option: CacheItemOptions = {};
@@ -217,6 +185,9 @@ export const buildItemOption = (schema: any) => {
     }
     if (isXmsSecret) {
       option = { ...option, isXmsSecret: true };
+    }
+    if (isWriteOnly) {
+      option = { ...option, isWriteOnly: true };
     }
     if (schema.required === true) {
       option = {...option, isRequired: true}
@@ -253,3 +224,42 @@ export const createTrunkItem = (
   }
   return item;
 };
+
+export const reBuildExample = (
+  cache: CacheItem | undefined,
+  isRequest: boolean,
+  exampleRule: ExampleRule | undefined
+): any => {
+  if (!cache) {
+    return undefined;
+  }
+  if (!isValid(exampleRule, { cache, isRequest })) {
+    return undefined;
+  }
+  if (cache.isLeaf) {
+    return cache.value;
+  }
+  if (Array.isArray(cache.child)) {
+    const result = [];
+    for (const item of cache.child) {
+      if (!isValid(exampleRule, { cache: item, isRequest })) {
+        continue;
+      }
+      result.push(reBuildExample(item, isRequest, exampleRule));
+    }
+    return result;
+  } else if (cache.child) {
+    const result: any = {};
+    for (const key of Object.keys(cache.child)) {
+      if (isValid(exampleRule, { cache, childKey: key, isRequest })) {
+        const value = reBuildExample(cache.child[key], isRequest, exampleRule);
+        if (value !== undefined) {
+          result[key] = value;
+        }
+      }
+    }
+    return result;
+  }
+  return undefined;
+};
+

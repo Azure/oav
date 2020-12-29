@@ -12,7 +12,7 @@ export default class Mocker {
       case "array":
         return this.generateArray(paramSpec, paramName, arrItem);
       default:
-        console.log(`Unknown type ${paramSpec.type}.`);
+        console.log(`unknown type ${paramSpec.type}.`);
     }
   }
 
