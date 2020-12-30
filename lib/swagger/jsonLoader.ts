@@ -12,12 +12,14 @@ export interface JsonLoaderOption extends FileLoaderOption {
   eraseXmsExamples?: boolean;
   keepOriginalContent?: boolean;
   transformRef?: boolean; // TODO implement transformRef: false
+  skipResolveRefKeys?: string[];
 }
 
 interface FileCache {
   resolved?: Json;
   filePath: string;
   originalContent?: string;
+  skipResolveRef?: boolean;
   mockName: string;
 }
 
@@ -30,6 +32,7 @@ export class JsonLoader implements Loader<Json> {
   private globalMockNameId = 0;
 
   private loadedFiles: any[] = [];
+  private skipResolveRefKeys: Set<string>;
 
   private fileCache = new Map<string, FileCache>();
   private loadFile = getLazyBuilder("resolved", async (cache: FileCache) => {
@@ -44,7 +47,9 @@ export class JsonLoader implements Loader<Json> {
     // eslint-disable-next-line require-atomic-updates
     cache.resolved = fileContent;
     (fileContent as any)[$id] = cache.mockName;
-    fileContent = await this.resolveRef(fileContent, ["$"], fileContent, cache.filePath);
+    if (cache.skipResolveRef !== true) {
+      fileContent = await this.resolveRef(fileContent, ["$"], fileContent, cache.filePath, false);
+    }
     this.loadedFiles.push(fileContent);
     return fileContent;
   });
@@ -57,6 +62,7 @@ export class JsonLoader implements Loader<Json> {
       eraseXmsExamples: true,
       transformRef: true,
     });
+    this.skipResolveRefKeys = new Set(opts.skipResolveRefKeys);
     this.fileLoader = FileLoader.create(opts);
   }
 
@@ -66,7 +72,7 @@ export class JsonLoader implements Loader<Json> {
     return loadedFiles;
   }
 
-  public async load(inputFilePath: string): Promise<Json> {
+  public async load(inputFilePath: string, skipResolveRef?: boolean): Promise<Json> {
     const filePath = this.fileLoader.relativePath(inputFilePath);
     let cache = this.fileCache.get(filePath);
     if (cache === undefined) {
@@ -75,6 +81,9 @@ export class JsonLoader implements Loader<Json> {
         mockName: this.getNextMockName(filePath),
       };
       this.fileCache.set(filePath, cache);
+    }
+    if (skipResolveRef !== undefined) {
+      cache.skipResolveRef = skipResolveRef;
     }
     return this.loadFile(cache);
   }
@@ -106,11 +115,16 @@ export class JsonLoader implements Loader<Json> {
     return refObj;
   }
 
+  public getRealPath(mockName: string): string {
+    return this.mockNameMap[mockName];
+  }
+
   private async resolveRef(
     object: Json,
     pathArr: string[],
     rootObject: Json,
-    relativeFilePath: string
+    relativeFilePath: string,
+    skipResolveChildRef: boolean
   ): Promise<Json> {
     if (isRefLike(object)) {
       const ref = object.$ref;
@@ -126,10 +140,17 @@ export class JsonLoader implements Loader<Json> {
         const mockName = (rootObject as any)[$id];
         return { $ref: `${mockName}#${refObjPath}` };
       }
-      const refObj = await this.load(pathJoin(pathDirname(relativeFilePath), refFilePath));
-      jsonPointer.get(refObj as {}, refObjPath);
+      const refObj = await this.load(
+        pathJoin(pathDirname(relativeFilePath), refFilePath),
+        skipResolveChildRef
+      );
       const refMockName = (refObj as any)[$id];
-      return { $ref: `${refMockName}#${refObjPath}` };
+      if (refObjPath !== undefined) {
+        jsonPointer.get(refObj as {}, refObjPath);
+        return { $ref: `${refMockName}#${refObjPath}` };
+      } else {
+        return { $ref: refMockName };
+      }
     }
 
     if (Array.isArray(object)) {
@@ -140,7 +161,8 @@ export class JsonLoader implements Loader<Json> {
             item,
             pathArr.concat([idx.toString()]),
             rootObject,
-            relativeFilePath
+            relativeFilePath,
+            skipResolveChildRef
           );
           if (newRef !== item) {
             // eslint-disable-next-line require-atomic-updates
@@ -164,7 +186,8 @@ export class JsonLoader implements Loader<Json> {
             item,
             pathArr.concat([key]),
             rootObject,
-            relativeFilePath
+            relativeFilePath,
+            skipResolveChildRef || this.skipResolveRefKeys.has(key)
           );
           if (newRef !== item) {
             obj[key] = newRef;
