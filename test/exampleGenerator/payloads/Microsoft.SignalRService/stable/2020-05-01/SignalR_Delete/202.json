@@ -1,0 +1,34 @@
+{
+    "liveRequest": {
+        "headers": {
+            "connection": "keep-alive",
+            "accept": "application/json",
+            "accept-Encoding": "gzip;deflate",
+            "accept-Language": "en-US",
+            "host": "management.azure.com",
+            "user-Agent": "python/3.6.10;(Linux-5.3.0-1032-azure-x86_64-with-debian-buster-sid);msrest/0.6.9;msrest_azure/0.6.3;azure-mgmt-signalr/0.4.0;Azure-SDK-For-Python;AZURECLI/2.9.1;(DEB)",
+            "x-ms-client-request-id": "f6293773-19a3-11eb-898a-000d3af761ee",
+            "commandName": "signalr delete",
+            "parameterSetName": "--name -g"
+        },
+        "method": "DELETE",
+        "url": "/subscriptions/49bf282f-13ae-4073-a625-e2f972eb2bd0/resourceGroups/hzatpf20201029040029/providers/Microsoft.SignalRService/signalR/atpf20201029040029?api-version=2020-05-01",
+        "query": {
+            "api-version": "2020-05-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "202",
+        "headers": {
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "x-content-type-options": "nosniff",
+            "x-ms-client-request-id": "f6293773-19a3-11eb-898a-000d3af761ee",
+            "x-rp-server-mvid": "e36e6838-7779-4ba2-b738-62cf73818870",
+            "azure-AsyncOperation": "https://management.azure.com/subscriptions/49bf282f-13ae-4073-a625-e2f972eb2bd0/resourceGroups/hzatpf20201029040029/providers/Microsoft.SignalRService/locations/eastus/operationStatuses/atpf20201029040029/operationId/d84ffce4-68f1-4e9e-9450-024d90846107?api-version=2020-05-01",
+            "x-ms-request-id": "4ed2237f-a1f6-49ce-974f-90ae5bdb52c3",
+            "date": "Thu, 29 Oct 2020 05:02:36 GMT",
+            "location": "https://management.azure.com/subscriptions/49bf282f-13ae-4073-a625-e2f972eb2bd0/resourceGroups/hzatpf20201029040029/providers/Microsoft.SignalRService/locations/eastus/operationResults/d84ffce4-68f1-4e9e-9450-024d90846107/SignalR/atpf20201029040029?api-version=2020-05-01",
+            "server": "Kestrel"
+        }
+    }
+}

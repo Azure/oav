@@ -1,0 +1,30 @@
+{
+    "liveRequest": {
+        "headers": {
+            "x-ms-request-id": "580a3b2e-3d63-4fa7-93cc-8d3bc936ddc2",
+            "date": "Sun, 04 Oct 2020 18:29:28 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "method": "GET",
+        "url": "/subscriptions/ada01f78-59c2-4bba-97df-26fa86fe9c9f/resourceGroups/spartan-rg-tip-crmcoretip-westus-2002059300/providers/Microsoft.Sql/servers/spartan-srv-tip-crmcoretip-204489f59654/databases/db_crmcoretip_20201004_06162113_434b/backupShortTermRetentionPolicies/default?api-version=2020-02-02-preview",
+        "query": {
+            "api-version": "2020-02-02-preview"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "200",
+        "headers": {
+            "x-ms-request-id": "580a3b2e-3d63-4fa7-93cc-8d3bc936ddc2",
+            "date": "Sun, 04 Oct 2020 18:29:28 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "properties": {
+                "retentionDays": 7
+            },
+            "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "name": "aaaaaaa",
+            "type": "Microsoft.Sql/servers/databases/backupShortTermRetentionPolicies"
+        }
+    }
+}

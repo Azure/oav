@@ -1,0 +1,29 @@
+{
+    "liveRequest": {
+        "headers": {
+            "user-Agent": "azure-resource-manager/2.0",
+            "x-ms-client-request-id": "6963e9fa-0521-4d54-a41e-74fca5e254a6",
+            "x-ms-arm-request-tracking-id": "2a0640ab-0ad2-4f1f-987e-b4b7d807caac",
+            "x-ms-client-location": "westeurope",
+            "accept-Language": "en-US",
+            "x-ms-arm-service-request-id": "4830c308-ee35-407b-920f-e950eedab826",
+            "x-ms-activity-vector": "IN.1O.IN.0R"
+        },
+        "method": "GET",
+        "url": "/subscriptions/809cfd4d-6bf5-4e2b-828a-2e20529586dc/resourceGroups/oAltRdWeu1Dev001/providers/Microsoft.Sql/locations/westeurope/shortTermRetentionPolicyAzureAsyncOperation/a60d9c75-e84f-4c16-8824-cc14f4b02ebc?api-version=2020-02-02-preview"
+    },
+    "liveResponse": {
+        "statusCode": "OK",
+        "headers": {
+            "retry-After": "15",
+            "x-ms-request-id": "7a62b903-65f1-48e4-9a95-f8ee709c9efd",
+            "date": "Tue, 20 Oct 2020 03:31:27 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "status": "Succeeded",
+            "startTime": "2020-10-20T03:31:11.58Z"
+        }
+    }
+}

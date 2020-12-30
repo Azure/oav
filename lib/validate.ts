@@ -508,6 +508,9 @@ export async function generateExamples(
   else if (specPath) {
     wholeInputFiles.push(specPath);
   }
+  if (wholeInputFiles.length === 0) {
+    console.error(`no spec file specified !`)
+  }
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel;
   log.filepath = options.logFilepath || log.filepath;
   for (const file of wholeInputFiles) {

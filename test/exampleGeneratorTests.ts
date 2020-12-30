@@ -4,6 +4,7 @@ import * as path from "path";
 import ExampleGenerator from "../lib/generator/exampleGenerator";
 import { ModelValidationError } from "../lib/util/modelValidationError";
 import { generateExamples } from "../lib/validate";
+import { log } from "../lib/util/logging";
 
 const payloadDir = `test/exampleGenerator/payloads`;
 const specRepoDir = `azure-rest-api-specs`;
@@ -28,20 +29,24 @@ describe.skip("mock examples", () => {
 });
 
 describe("test generate example",()=> {
-  const originalError = console.error;
-  const originalLog = console.log;
+  const originalError = log.error;
+  const originalLog = log.info;
+  const originalWarn = log.warn;
   let consoleOutput: any[] = [];
   const mockedLog = (output: any) => consoleOutput.push(output);
   const mockedError = (output: any) => consoleOutput.push(output);
+  const mockedWarn = (output: any) => consoleOutput.push(output);
   beforeAll(() => {
     consoleOutput = []
-    console.log = mockedLog
-    console.error = mockedError
+    log.info = mockedLog as any
+    log.error = mockedError as any
+    log.warn = mockedWarn as any;
   });
 
   afterAll(() => {
-    console.error = originalError;
-    console.log = originalLog;
+    log.error = originalError;
+    log.info = originalLog;
+    log.warn = originalWarn;
   })
  
   test.each<string[]>([

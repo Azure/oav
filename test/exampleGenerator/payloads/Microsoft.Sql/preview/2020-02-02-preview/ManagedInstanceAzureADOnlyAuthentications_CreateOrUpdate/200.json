@@ -1,0 +1,27 @@
+{
+    "liveRequest": {
+        "headers": {
+            "host": "management.azure.com",
+            "user-Agent": "FxVersion/4.8.4250.0;OSName/Windows;OSVersion/Microsoft.Windows.10.0.18363.;Microsoft.Azure.Management.Sql.SqlManagementClient/1.44.2.0;AzurePowershell/v0.0.0;PSVersion/v5.1.18362.1110",
+            "commandName": "Get-AzSqlInstanceActiveDirectoryOnlyAuthentication",
+            "parameterSetName": "UseResourceGroupAndInstanceNameParameterSet",
+            "x-ms-client-request-id": "12216c48-44c5-4c5f-9c09-52b230510c47"
+        },
+        "method": "GET",
+        "url": "/subscriptions/e1775f9f-a286-474d-b6f0-29c42ac74554/resourceGroups/rg-sso/providers/Microsoft.Sql/locations/eastus/administratorAzureAsyncOperation/8b27b23e-0909-41f9-96b4-8e430a87bd17?api-version=2020-02-02-preview"
+    },
+    "liveResponse": {
+        "statusCode": "OK",
+        "headers": {
+            "retry-After": "15",
+            "x-ms-request-id": "279b3c68-9799-4f39-83ec-7e54150e2f8b",
+            "date": "Tue, 27 Oct 2020 01:09:53 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "status": "InProgress",
+            "startTime": "2020-10-27T01:09:39.447Z"
+        }
+    }
+}

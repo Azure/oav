@@ -25,8 +25,8 @@ export const builder: yargs.CommandBuilder = {
     string: true,
   },
   c: {
-    alias: "readme",
-    describe: "readme path.",
+    alias: "config",
+    describe: "config path.",
     string: true,
   },
   tag: {
@@ -44,7 +44,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       consoleLogLevel: argv.logLevel,
       logFilepath: argv.f,
     };
-    await validate.generateExamples(specPath, argv.payload, argv.o, argv.readme,argv.tag, vOptions);
+    await validate.generateExamples(specPath, argv.payload, argv.o, argv.config, argv.tag, vOptions);
     return 0;
   });
 }

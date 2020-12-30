@@ -1,11 +1,16 @@
 import { CacheItem } from "./exampleCache"
-
-interface BaseRule {
+export interface ExampleRule  {
   exampleNamePostfix: string
+  ruleName: "Minimum" | "Maximum" | undefined
 }
 
-export interface ExampleRule extends BaseRule {
-  selectedProperties: "Minimum" | "Maximum"
+export type RuleValidatorFunc = (context:RuleContext)=> boolean | undefined
+
+type RuleValidator =  {
+  onParameter?: RuleValidatorFunc,
+  onSchema?:RuleValidatorFunc,
+  onResponseCode?: RuleValidatorFunc,
+  onResponseHeader?:RuleValidatorFunc,
 }
 
 const shouldSkip = (cache: CacheItem | undefined, isRequest?: boolean) => {
@@ -13,44 +18,42 @@ const shouldSkip = (cache: CacheItem | undefined, isRequest?: boolean) => {
 };
 
 type RuleContext =  {
-  cache?:CacheItem,
-  childKey?:string|undefined,
-  parameter?:any,
-  isRequest?: boolean
+  schema?:any,
+  propertyName?:string|undefined,
+  schemaCache?:CacheItem
+  isRequest?: boolean,
+  parentSchema?:any
 }
 
-export function getRuleValidator(rule:ExampleRule) {
+export function getRuleValidator(rule:ExampleRule | undefined):RuleValidator {
   const validators = {
-    "Minimum": (context:RuleContext)=> {
-      if (context?.parameter) {
-        return context?.parameter.required
+    "Minimum": {
+      onParameter: (context:RuleContext)=> {
+        return context?.schema.required
+      },
+      onSchema:(context:RuleContext)=> {
+        if (context?.propertyName) {
+          return context?.schemaCache?.required?.includes(context?.propertyName)
+        }
+        else if (context.schemaCache && context?.isRequest !== undefined) {
+          return !shouldSkip(context.schemaCache,context?.isRequest)
+        }
+        return true;
       }
-      else if (context?.childKey) {
-        return context?.cache?.required?.includes(context?.childKey)
-      }
-      else if (context.cache && context?.isRequest !== undefined) {
-        return !shouldSkip(context.cache,context?.isRequest)
-      }
-      return true;
     },
-    "Maximum": (context:RuleContext)=> {
-      if (context.cache && context?.isRequest !== undefined) {
-        return !shouldSkip(context.cache,context?.isRequest)
+    "Maximum": {
+      onSchema:(context:RuleContext)=> {
+        if (context.schemaCache && context?.isRequest !== undefined) {
+          return !shouldSkip(context.schemaCache,context?.isRequest)
+        }
+        return true;
       }
-      return true;
     }
   }
-  if (rule.selectedProperties) {
-    return validators[rule.selectedProperties]
+  if (rule?.ruleName) {
+    return validators[rule.ruleName]
   }
-  return ()=>true
-}
-
-export function isValid(rule:ExampleRule | undefined,context:RuleContext) {
-  if (!rule) {
-    return true
-  }
-  return getRuleValidator(rule)(context)
+  return {}
 }
 
 export type RuleSet = ExampleRule []

@@ -1,0 +1,45 @@
+{
+    "liveRequest": {
+        "headers": {
+            "accept-Encoding": "gzip;deflate",
+            "host": "management.azure.com",
+            "user-Agent": "PolicyScan",
+            "x-ms-client-request-id": "501188a2-ad8d-48b3-b78d-160d028bb210"
+        },
+        "method": "GET",
+        "url": "/subscriptions/4eacb6e0-4d16-4ec2-9a81-facc83edff67/providers/Microsoft.EventGrid/domains?api-version=2020-06-01",
+        "query": {
+            "api-version": "2020-06-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "200",
+        "headers": {
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "x-ms-request-id": "63fd5652-2395-47f2-8c03-1ebc0f6167f0",
+            "date": "Thu, 29 Oct 2020 01:16:19 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "value": [
+                {
+                    "properties": {
+                        "provisioningState": "Succeeded",
+                        "endpoint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                        "inputSchema": "EventGridSchema",
+                        "metricResourceId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                        "publicNetworkAccess": "Enabled"
+                    },
+                    "location": "aaaaaaa",
+                    "tags": {
+                        "APP": "aaaaa",
+                        "ENV": "aaa"
+                    },
+                    "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                    "name": "egridrtcrm01lab",
+                    "type": "Microsoft.EventGrid/domains"
+                }
+            ]
+        }
+    }
+}

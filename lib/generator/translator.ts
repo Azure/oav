@@ -8,8 +8,9 @@ import {
   reBuildExample,
 } from "./exampleCache";
 import * as utils  from "./util";
-import { ExampleRule, isValid } from "./exampleRule";
+import { ExampleRule, getRuleValidator } from "./exampleRule";
 import SwaggerMocker from "./swaggerMocker";
+import { log } from "../util/logging";
 
 export default class Translator {
   private jsonLoader: JsonLoader;
@@ -58,10 +59,11 @@ export default class Translator {
 
   private getMatchedParameters(paramterSchema:any,parameters:any) {
     const bodyRes: any = {};
+    const validator = getRuleValidator(this.exampleRule).onParameter
     paramterSchema.forEach((item: any) => {
       const itemSchema = this.getDefSpec(item)
       if (parameters[itemSchema.name]) {
-        if (isValid(this.exampleRule,{parameter:itemSchema})) {
+        if (!validator || validator({schema:itemSchema})) {
           bodyRes[itemSchema.name] = this.filterBodyContent(parameters[itemSchema.name], itemSchema.in === "body" ? itemSchema.schema : item);
         }
       }
@@ -78,7 +80,7 @@ export default class Translator {
       .filter((item: any) => "in" in item && item.in === "query");
 
     if (parametersSpec.length === 0) {
-      console.log("no query parameter definition in spec file");
+      log.info("no query parameter definition in spec file");
       return;
     }
     return this.getMatchedParameters(parametersSpec,body)
@@ -94,7 +96,7 @@ export default class Translator {
       .filter((item: any) => "in" in item && item.in === "body");
 
     if (parametersSpec.length === 0) {
-      console.log("no body parameter definition in spec file");
+      log.info("no body parameter definition in spec file");
       return;
     }
     const bodyParameterName = parametersSpec[0].name
@@ -111,7 +113,8 @@ export default class Translator {
 
   public filterBodyContent(body: any, schema: any, isRequest: boolean = true) {
     const cache = this.cacheBodyContent(body, schema, isRequest);
-    return reBuildExample(cache, isRequest, this.exampleRule);
+    const validator = getRuleValidator(this.exampleRule).onSchema
+    return reBuildExample(cache, isRequest,schema,validator);
   }
   public cacheBodyContent(body: any, schema: any, isRequest: boolean) {
     if (!schema) {

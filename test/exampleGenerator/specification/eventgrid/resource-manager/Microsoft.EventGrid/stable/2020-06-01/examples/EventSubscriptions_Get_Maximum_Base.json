@@ -1,0 +1,57 @@
+{
+  "parameters": {
+    "scope": "aaaaaaaaaaa",
+    "eventSubscriptionName": "aaaaaaaa",
+    "api-version": "2020-06-01"
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "properties": {
+          "destination": {
+            "endpointType": "WebHook"
+          },
+          "filter": {
+            "isSubjectCaseSensitive": true,
+            "subjectBeginsWith": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "subjectEndsWith": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "includedEventTypes": [
+              "aaaaaaaaaaaaaaaaaaaaaaaaa"
+            ],
+            "advancedFilters": [
+              {
+                "values": [
+                  6
+                ],
+                "operatorType": "NumberIn",
+                "key": "aa"
+              }
+            ]
+          },
+          "topic": "aaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "provisioningState": "Creating",
+          "labels": [
+            "aaa",
+            "label2"
+          ],
+          "expirationTimeUtc": "2020-12-30T06:55:00.295Z",
+          "eventDeliverySchema": "EventGridSchema",
+          "retryPolicy": {
+            "maxDeliveryAttempts": 24,
+            "eventTimeToLiveInMinutes": 7
+          },
+          "deadLetterDestination": {
+            "properties": {
+              "resourceId": "aaaaaaa",
+              "blobContainerName": "aaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            },
+            "endpointType": "StorageBlob"
+          }
+        },
+        "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "name": "aaaaaaaaaaaaaaaaaaaaaaaaa",
+        "type": "aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    }
+  }
+}

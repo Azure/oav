@@ -1,4 +1,4 @@
-import { ExampleRule, isValid } from "./exampleRule";
+import {RuleValidatorFunc } from "./exampleRule";
 
 /* tslint:disable:max-classes-per-file */
 interface BaseCache {
@@ -228,12 +228,13 @@ export const createTrunkItem = (
 export const reBuildExample = (
   cache: CacheItem | undefined,
   isRequest: boolean,
-  exampleRule: ExampleRule | undefined
+  schema: any,
+  validator:RuleValidatorFunc | undefined
 ): any => {
   if (!cache) {
     return undefined;
   }
-  if (!isValid(exampleRule, { cache, isRequest })) {
+  if (validator && !validator({schemaCache:cache, isRequest })) {
     return undefined;
   }
   if (cache.isLeaf) {
@@ -242,17 +243,17 @@ export const reBuildExample = (
   if (Array.isArray(cache.child)) {
     const result = [];
     for (const item of cache.child) {
-      if (!isValid(exampleRule, { cache: item, isRequest })) {
+      if (validator && !validator({ schemaCache: item, isRequest,schema })) {
         continue;
       }
-      result.push(reBuildExample(item, isRequest, exampleRule));
+      result.push(reBuildExample(item, isRequest,schema,validator,));
     }
     return result;
   } else if (cache.child) {
     const result: any = {};
     for (const key of Object.keys(cache.child)) {
-      if (isValid(exampleRule, { cache, childKey: key, isRequest })) {
-        const value = reBuildExample(cache.child[key], isRequest, exampleRule);
+      if (validator && validator({ schemaCache:cache, propertyName: key, isRequest, schema})) {
+        const value = reBuildExample(cache.child[key], isRequest, schema,validator);
         if (value !== undefined) {
           result[key] = value;
         }

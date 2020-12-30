@@ -1,0 +1,32 @@
+{
+    "liveRequest": {
+        "headers": {
+            "retry-After": "15",
+            "azure-AsyncOperation": "https://management.azure.com/subscriptions/f59f7fee-9218-4c26-b9d8-afca88acdb52/providers/Microsoft.Sql/locations/westus2/managedDatabaseAzureAsyncOperation/a91b9527-c3b1-461c-bee2-f6c89bc953eb?api-version=2020-02-02-preview",
+            "x-ms-request-id": "a91b9527-c3b1-461c-bee2-f6c89bc953eb",
+            "date": "Mon, 05 Oct 2020 14:20:29 GMT",
+            "location": "https://management.azure.com/subscriptions/f59f7fee-9218-4c26-b9d8-afca88acdb52/providers/Microsoft.Sql/locations/westus2/managedDatabaseOperationResults/a91b9527-c3b1-461c-bee2-f6c89bc953eb?api-version=2020-02-02-preview",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "method": "DELETE",
+        "url": "/subscriptions/f59f7fee-9218-4c26-b9d8-afca88acdb52/resourceGroups/wu2-clpdbmi-prod-rg/providers/Microsoft.Sql/managedInstances/clpdb01-mi/databases/ArizonaState-Test_moved?api-version=2020-02-02-preview",
+        "query": {
+            "api-version": "2020-02-02-preview"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "202",
+        "headers": {
+            "retry-After": "15",
+            "azure-AsyncOperation": "https://management.azure.com/subscriptions/f59f7fee-9218-4c26-b9d8-afca88acdb52/providers/Microsoft.Sql/locations/westus2/managedDatabaseAzureAsyncOperation/a91b9527-c3b1-461c-bee2-f6c89bc953eb?api-version=2020-02-02-preview",
+            "x-ms-request-id": "a91b9527-c3b1-461c-bee2-f6c89bc953eb",
+            "date": "Mon, 05 Oct 2020 14:20:29 GMT",
+            "location": "https://management.azure.com/subscriptions/f59f7fee-9218-4c26-b9d8-afca88acdb52/providers/Microsoft.Sql/locations/westus2/managedDatabaseOperationResults/a91b9527-c3b1-461c-bee2-f6c89bc953eb?api-version=2020-02-02-preview",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "operation": "aaaaaaaaaaaaaaaaaaa",
+            "startTime": "2020-10-05T14:20:30.82Z"
+        }
+    }
+}

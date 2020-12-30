@@ -1,0 +1,27 @@
+{
+    "liveRequest": {
+        "headers": {
+            "accept-Encoding": "gzip;deflate",
+            "host": "management.azure.com",
+            "user-Agent": "PolicyScan",
+            "x-ms-client-request-id": "0e8d3ca1-a823-4107-8dd7-b25eb92b9e1e"
+        },
+        "method": "GET",
+        "url": "/subscriptions/48ea319f-2f74-4984-aadc-77e6d637cb2c/resourceGroups/abko/providers/Microsoft.EventGrid/domains/kveg/topics?api-version=2020-06-01",
+        "query": {
+            "api-version": "2020-06-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "200",
+        "headers": {
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "x-ms-request-id": "b0de32bf-32b6-4902-b265-dd5c6c4dd206",
+            "date": "Thu, 29 Oct 2020 00:45:07 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "value": []
+        }
+    }
+}

@@ -1,0 +1,14 @@
+{
+  "parameters": {
+    "scope": "aaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "eventSubscriptionName": "aaaaaaaaaaaaaaaaa",
+    "api-version": "2020-06-01"
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "endpointUrl": "https://requestb.in/15ksip71"
+      }
+    }
+  }
+}

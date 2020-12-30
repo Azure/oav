@@ -1,0 +1,69 @@
+{
+    "liveRequest": {
+        "headers": {
+            "accept-Language": "en-US",
+            "host": "management.azure.com",
+            "user-Agent": "FxVersion/4.7.3163.0;OSName/Windows;OSVersion/Microsoft.Windows.10.0.9200.;Microsoft.Azure.Management.EventGrid.EventGridManagementClient/6.0.0.0;PSVersion/v5.1.15063.726;AzurePowershell/v1.0.0",
+            "x-ms-client-request-id": "49cd9cfc-296b-45f7-b12c-116d913819cd",
+            "commandName": "Get-AzEventGridSubscription",
+            "parameterSetName": "ResourceIdEventSubscriptionParameterSet"
+        },
+        "method": "GET",
+        "url": "/subscriptions/cf045210-087e-482a-8f22-f0aee68f29f0/resourceGroups/ws009-d1-euw-002-rg/providers/Microsoft.KeyVault/vaults/ws009-d1-euw-002-kv/providers/Microsoft.EventGrid/eventSubscriptions?api-version=2020-06-01",
+        "query": {
+            "api-version": "2020-06-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "200",
+        "headers": {
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "x-ms-request-id": "9404682f-a697-4e16-9d45-4f6b8cfcaae3",
+            "date": "Thu, 29 Oct 2020 02:01:22 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "value": [
+                {
+                    "properties": {
+                        "topic": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                        "provisioningState": "Succeeded",
+                        "destination": {
+                            "properties": {
+                                "endpointUrl": null,
+                                "endpointBaseUrl": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                                "maxEventsPerBatch": 1,
+                                "preferredBatchSizeInKilobytes": 64
+                            },
+                            "endpointType": "WebHook"
+                        },
+                        "filter": {
+                            "subjectBeginsWith": "",
+                            "subjectEndsWith": "",
+                            "includedEventTypes": [
+                                "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                                "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                                "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                                "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                                "aaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                                "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                                "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                                "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                                "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                            ]
+                        },
+                        "labels": null,
+                        "eventDeliverySchema": "EventGridSchema",
+                        "retryPolicy": {
+                            "maxDeliveryAttempts": 30,
+                            "eventTimeToLiveInMinutes": 1440
+                        }
+                    },
+                    "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                    "name": "ws009-d1-euw-002-kv",
+                    "type": "Microsoft.EventGrid/eventSubscriptions"
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,12 @@
+{
+  "parameters": {
+    "scope": "aaaaaaaaaaaaaaaaaaaaaaa",
+    "eventSubscriptionName": "aaaaaaa",
+    "api-version": "2020-06-01"
+  },
+  "responses": {
+    "200": {
+      "body": {}
+    }
+  }
+}

@@ -20,6 +20,7 @@ import { allOfTransformer } from "../transform/allOfTransformer";
 import { noAdditionalPropertiesTransformer } from "../transform/noAdditionalPropertiesTransformer";
 import { applySpecTransformers, applyGlobalTransformers } from "../transform/transformer";
 import { ExampleRule, RuleSet } from "./exampleRule";
+import { log } from "../util/logging";
 const _ = deepdash(lodash);
 
 export default class Generator {
@@ -130,13 +131,14 @@ export default class Generator {
         }
  
         const operationId = operation.operationId 
+        /*
         const validateErrors = await validate.validateExamples(this.specFilePath, operationId, {
         });
         if(validateErrors.length > 0) {
           console.warn(`invalid examples for operation:${operationId}.`);
           console.warn(validateErrors);
           return
-        }
+        } */
         for (const key of Object.keys(examples)) {
           if (key.match(new RegExp(`^${operationId}_.*_Base$`))) {
             continue
@@ -160,7 +162,11 @@ export default class Generator {
 
   private async generateExample( operationId: string,
     specItem: any, rule: ExampleRule) {
+    
+    this.translator.setRule(rule);
+    this.swaggerMocker.setRule(rule);
     let example 
+    console.log(`start generated example for ${operationId}, rule:${rule.ruleName}`);
     if (!this.shouldMock) {
       example = this.getExampleFromPayload(operationId, specItem);
       if (!example) {
@@ -179,7 +185,7 @@ export default class Generator {
       );
     }
 
-    console.log(example);
+    log.info(example);
     const unifiedExample = this.unifyCommonProperty(example);
     const newSpec = util.referenceExmInSpec(
       this.specFilePath,
@@ -194,14 +200,16 @@ export default class Generator {
       `${operationId}_${rule.exampleNamePostfix}_Base.json`
     );
 
-    console.log(`start validating generated example for ${operationId}`);
+    log.info(`start validating generated example for ${operationId}`);
     const validateErrors = await validate.validateExamples(this.specFilePath, operationId, {
       //   consoleLogLevel: "error"
     });
     if (validateErrors.length > 0) {
-      console.error(validateErrors);
+      log.error(`the validation raised below error:`)
+      log.error(validateErrors);
       return validateErrors;
     }
+    console.log(`generated example for ${operationId}, rule:${rule.ruleName} successfully!`);
     return []
   }
 
@@ -222,15 +230,14 @@ export default class Generator {
     const ruleSet: RuleSet = []
     ruleSet.push({
       exampleNamePostfix: "Maximum",
-      selectedProperties: "Maximum"
+      ruleName: "Maximum"
     });
     ruleSet.push({
       exampleNamePostfix: "Minimum",
-      selectedProperties: "Minimum"
+      ruleName: "Minimum"
     });
     for (const rule of ruleSet) {
-      this.translator.setRule(rule)
-      this.swaggerMocker.setRule(rule)
+     
       const error = await this.generateExample(operationId,specItem,rule)
       if (error.length) {
         return error
@@ -288,7 +295,7 @@ export default class Generator {
       example.responses,
       (value, key, parentValue, context) => {
         if (!parentValue) {
-          console.log(`parent is null`);
+          log.info(`parent is null`);
         }
         if (
           ["integer", "number", "string"].some((type) => typeof value === type) &&
@@ -343,7 +350,7 @@ export default class Generator {
       const payloadDir = path.join(this.payloadDir,subPaths)
       const payload: any = util.readPayloadFile(payloadDir, operationId);
       if (!payload) {
-        console.warn(
+        log.warn(
           `no payload file for operationId ${operationId} under directory ${path.resolve(
             payloadDir,
             operationId
@@ -351,9 +358,6 @@ export default class Generator {
         );
         return;
       }
-
-      console.log(`start generating example for ${operationId}`);
-
       this.validatePayload(specItem, payload, operationId);
       this.cachePayload(specItem, payload);
       const example = {
@@ -393,7 +397,7 @@ export default class Generator {
       const realApiVersion = payload[statusCode].liveRequest.query["api-version"];
       if (realApiVersion && realApiVersion !== specApiVersion) {
         delete payload[statusCode];
-        console.log(
+        log.warn(
           `${operationId} payload ${statusCode}.json's api-version is ${realApiVersion}, inconsistent with swagger spec's api-version ${specApiVersion}`
         );
       }
@@ -401,11 +405,11 @@ export default class Generator {
   }
 
   private extractRequest(specItem: any, payload: any) {
-    console.log("extractRequest");
+    log.info("extractRequest");
 
     const liveRequest: any = this.getRequestPayload(specItem, payload);
     if (!liveRequest) {
-      console.log(`no live request in payload`);
+      log.warn(`no live request in payload`);
       return {};
     }
     const request = this.translator.extractRequest(specItem, liveRequest) || {};
@@ -425,7 +429,7 @@ export default class Generator {
   }
 
   private extractResponse(specItem: any, payload: any) {
-    console.log("extractResponse");
+    log.info("extractResponse");
 
     const specResp = specItem.content.responses;
     const longRunning: boolean = specItem.content["x-ms-long-running-operation"];

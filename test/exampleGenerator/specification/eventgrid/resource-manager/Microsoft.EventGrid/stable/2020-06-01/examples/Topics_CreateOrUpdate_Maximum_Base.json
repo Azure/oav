@@ -1,0 +1,148 @@
+{
+  "parameters": {
+    "subscriptionId": "5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
+    "resourceGroupName": "rgEventGrid",
+    "topicName": "aaa",
+    "topicInfo": {
+      "location": "westus2",
+      "tags": {},
+      "properties": {
+        "publicNetworkAccess": "Enabled",
+        "inboundIpRules": [
+          {
+            "ipMask": "12.18.30.15",
+            "action": "Allow"
+          },
+          {
+            "ipMask": "12.18.176.1",
+            "action": "Allow"
+          }
+        ],
+        "privateEndpointConnections": [
+          {
+            "properties": {
+              "privateEndpoint": {
+                "id": "aaaaaaaaaaaaaaa"
+              },
+              "groupIds": [
+                "aaaaa"
+              ],
+              "privateLinkServiceConnectionState": {
+                "status": "Pending",
+                "description": "aaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "actionsRequired": "aaaaaaaaaaaa"
+              },
+              "provisioningState": "Creating"
+            }
+          }
+        ],
+        "inputSchema": "EventGridSchema",
+        "inputSchemaMapping": {
+          "properties": {
+            "id": {
+              "sourceField": "aaaaaaaaaaaa"
+            },
+            "topic": {
+              "sourceField": "aaaaaaaaaaaa"
+            },
+            "eventTime": {
+              "sourceField": "aaaaaaaaaaaa"
+            },
+            "eventType": {
+              "sourceField": "aaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "defaultValue": "aaaa"
+            },
+            "subject": {
+              "sourceField": "aaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "defaultValue": "aaaa"
+            },
+            "dataVersion": {
+              "sourceField": "aaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "defaultValue": "aaaa"
+            }
+          },
+          "inputSchemaMappingType": "Json"
+        }
+      }
+    },
+    "api-version": "2020-06-01"
+  },
+  "responses": {
+    "201": {
+      "headers": {
+        "location": "LocationURl"
+      },
+      "body": {
+        "location": "westus2",
+        "tags": {},
+        "properties": {
+          "publicNetworkAccess": "Enabled",
+          "inboundIpRules": [
+            {
+              "ipMask": "12.18.30.15",
+              "action": "Allow"
+            },
+            {
+              "ipMask": "12.18.176.1",
+              "action": "Allow"
+            }
+          ],
+          "privateEndpointConnections": [
+            {
+              "properties": {
+                "privateEndpoint": {
+                  "id": "aaaaaaaaaaaaaaa"
+                },
+                "groupIds": [
+                  "aaaaa"
+                ],
+                "privateLinkServiceConnectionState": {
+                  "status": "Pending",
+                  "description": "aaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                  "actionsRequired": "aaaaaaaaaaaa"
+                },
+                "provisioningState": "Creating"
+              },
+              "id": "aaaaaaaaaaaaaaaa",
+              "name": "aaaaaaaaaaaaaaaaaaa",
+              "type": "aaaaaaaaaaaaaaaaaaaaaaaa"
+            }
+          ],
+          "provisioningState": "Creating",
+          "endpoint": "aaaaaaaaaaaaa",
+          "inputSchema": "EventGridSchema",
+          "inputSchemaMapping": {
+            "properties": {
+              "id": {
+                "sourceField": "aaaaaaaaaaaa"
+              },
+              "topic": {
+                "sourceField": "aaaaaaaaaaaa"
+              },
+              "eventTime": {
+                "sourceField": "aaaaaaaaaaaa"
+              },
+              "eventType": {
+                "sourceField": "aaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "defaultValue": "aaaa"
+              },
+              "subject": {
+                "sourceField": "aaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "defaultValue": "aaaa"
+              },
+              "dataVersion": {
+                "sourceField": "aaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "defaultValue": "aaaa"
+              }
+            },
+            "inputSchemaMappingType": "Json"
+          },
+          "metricResourceId": "aaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "id": "aaaaaaaaaaaaaaaaaaaaaa",
+        "name": "aaaaaaaaaaaaaaaaaaaaaa",
+        "type": "aaaaaaaaaaaaaaaaaa"
+      }
+    }
+  }
+}

@@ -1,0 +1,71 @@
+{
+    "liveRequest": {
+        "headers": {
+            "expect": "100-continue",
+            "host": "management.azure.com",
+            "user-Agent": "AzurePowershell/v6.9.0;PSVersion/v5.1.15063.726",
+            "parameterSetName": "ByResourceId",
+            "commandName": "Set-AzureRmResource",
+            "x-ms-arm-resource-system-data": "{\"lastModifiedBy\":\"a210c699-fce6-4c89-98db-6fea1940883b\",\"lastModifiedByType\":\"Application\",\"lastModifiedAt\":\"2020-10-29T01:30:11.2594429Z\"}"
+        },
+        "method": "PATCH",
+        "url": "/subscriptions/34867346-35f0-445b-bc36-cb53a3e45e92/resourceGroups/HQ-EAI4HR-ACC-rg/providers/Microsoft.EventGrid/topics/evtgrdtopic-weu-eai4hr-taleo-acc?api-version=2020-06-01",
+        "body": {
+            "tags": {
+                "RG-Applicationname": "aaaaaa",
+                "RG-TechContact-others": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "RG-Business_Entity": "aaaaa",
+                "RG-Environment": "aaa",
+                "RG-SLA": "",
+                "RG-AppContact-others": "aaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "RG-ServiceMode": "aaaaaaaaa",
+                "RG-PO-InvoiceInfo": "",
+                "RG-TechContact": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "RG-AppContact": "aaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "RG-Service-Window": "",
+                "RG-IO-InvoiceInfo": "aaaaaaaaaaaa"
+            }
+        },
+        "query": {
+            "api-version": "2020-06-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "201",
+        "headers": {
+            "retry-After": "10",
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "azure-AsyncOperation": "https://management.azure.com:443/subscriptions/34867346-35f0-445b-bc36-cb53a3e45e92/providers/Microsoft.EventGrid/locations/westeurope/operationsStatus/FB58AF93-F7AF-4DFF-8458-BA396E699C9C?api-version=2020-06-01",
+            "x-ms-request-id": "f0201aaa-2f2f-4d34-984e-a76ef330aeec",
+            "date": "Thu, 29 Oct 2020 01:30:11 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "properties": {
+                "provisioningState": "Updating",
+                "endpoint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "inputSchema": "EventGridSchema",
+                "metricResourceId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "publicNetworkAccess": "Enabled"
+            },
+            "location": "aaaaaaaaaa",
+            "tags": {
+                "RG-Applicationname": "aaaaaa",
+                "RG-TechContact-others": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "RG-Business_Entity": "aaaaa",
+                "RG-Environment": "aaa",
+                "RG-SLA": "",
+                "RG-AppContact-others": "aaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "RG-ServiceMode": "aaaaaaaaa",
+                "RG-PO-InvoiceInfo": "",
+                "RG-TechContact": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "RG-AppContact": "aaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "RG-Service-Window": "",
+                "RG-IO-InvoiceInfo": "aaaaaaaaaaaa"
+            },
+            "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "name": "evtgrdtopic-weu-eai4hr-taleo-acc",
+            "type": "Microsoft.EventGrid/topics"
+        }
+    }
+}

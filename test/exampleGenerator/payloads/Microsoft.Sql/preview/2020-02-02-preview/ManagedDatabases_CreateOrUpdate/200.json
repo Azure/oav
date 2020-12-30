@@ -1,0 +1,31 @@
+{
+    "liveRequest": {
+        "headers": {
+            "host": "management.azure.com",
+            "user-Agent": "FxVersion/4.7.3163.0;OSName/Windows;OSVersion/Microsoft.Windows.10.0.9200.;Microsoft.Azure.Management.Sql.SqlManagementClient/1.44.2.0;AzurePowershell/v0.0.0;PSVersion/v5.1.15063.726",
+            "commandName": "Restore-AzSqlInstanceDatabase",
+            "parameterSetName": "PointInTimeCrossInstanceRestoreInstanceDatabaseFromInputParameters",
+            "x-ms-client-request-id": "5ec43212-427b-4cba-81b9-5dec2115a927"
+        },
+        "method": "GET",
+        "url": "/subscriptions/1ce3a02f-e031-45f9-8962-569baafd32c3/resourceGroups/bi-ont-rg/providers/Microsoft.Sql/locations/westeurope/managedDatabaseAzureAsyncOperation/ef60be8a-5052-4565-9ab9-f0e3e0a879b6?api-version=2020-02-02-preview"
+    },
+    "liveResponse": {
+        "statusCode": "OK",
+        "headers": {
+            "retry-After": "15",
+            "x-ms-request-id": "b844865a-d2f7-4502-8028-a411190919c0",
+            "date": "Mon, 26 Oct 2020 12:16:28 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "status": "Failed",
+            "startTime": "2020-10-26T12:16:11.94Z",
+            "error": {
+                "code": "aaaaaaaaaaaaaaaaaaaaaaaa",
+                "message": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            }
+        }
+    }
+}

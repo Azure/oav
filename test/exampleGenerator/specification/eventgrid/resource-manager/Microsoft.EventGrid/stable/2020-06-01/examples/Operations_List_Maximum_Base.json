@@ -1,0 +1,90 @@
+{
+  "parameters": {
+    "api-version": "2020-06-01"
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "value": [
+          {
+            "name": "Microsoft.EventGrid/register/action",
+            "display": {
+              "provider": "Microsoft Event Grid",
+              "resource": "EventGrid Resource Provider",
+              "operation": "Registers the EventGrid Resource Provider",
+              "description": "aaaaaaaaa"
+            },
+            "origin": "UserAndSystem",
+            "properties": {}
+          },
+          {
+            "name": "Microsoft.EventGrid/eventSubscriptions/write",
+            "display": {
+              "provider": "Microsoft Event Grid",
+              "resource": "eventSubscriptions",
+              "operation": "Write EventSubscription",
+              "description": "aaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            },
+            "origin": "UserAndSystem",
+            "properties": {}
+          },
+          {
+            "name": "Microsoft.EventGrid/eventSubscriptions/read",
+            "display": {
+              "provider": "Microsoft Event Grid",
+              "resource": "eventSubscriptions",
+              "operation": "Read EventSubscription",
+              "description": "aa"
+            },
+            "origin": "UserAndSystem",
+            "properties": {}
+          },
+          {
+            "name": "Microsoft.EventGrid/eventSubscriptions/delete",
+            "display": {
+              "provider": "Microsoft Event Grid",
+              "resource": "eventSubscriptions",
+              "operation": "Delete EventSubscription",
+              "description": "aaaaa"
+            },
+            "origin": "UserAndSystem",
+            "properties": {}
+          },
+          {
+            "name": "Microsoft.EventGrid/topics/write",
+            "display": {
+              "provider": "Microsoft Event Grid",
+              "resource": "topics",
+              "operation": "Write Topic",
+              "description": "aaaaaaaaaaaaaaa"
+            },
+            "origin": "UserAndSystem",
+            "properties": {}
+          },
+          {
+            "name": "Microsoft.EventGrid/topics/read",
+            "display": {
+              "provider": "Microsoft Event Grid",
+              "resource": "topics",
+              "operation": "Read Topic",
+              "description": "aaaaaaa"
+            },
+            "origin": "UserAndSystem",
+            "properties": {}
+          },
+          {
+            "name": "Microsoft.EventGrid/topics/delete",
+            "display": {
+              "provider": "Microsoft Event Grid",
+              "resource": "topics",
+              "operation": "Delete Topic",
+              "description": "aaaa"
+            },
+            "origin": "UserAndSystem",
+            "properties": {}
+          }
+        ]
+      }
+    }
+  }
+}

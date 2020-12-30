@@ -1,0 +1,31 @@
+{
+    "liveRequest": {
+        "headers": {
+            "accept-Language": "en-US",
+            "host": "management.azure.com",
+            "user-Agent": "FxVersion/4.8.4261.0;OSName/Windows;OSVersion/Microsoft.Windows.10.0.14393.;Microsoft.Azure.Management.EventGrid.EventGridManagementClient/6.0.0.0;AzurePowershell/v0.0.0;VSTS_e1458a4f-823a-41c9-8d33-990d21e6d69f_build_618_0;PSVersion/v5.1.14393.3866",
+            "x-ms-client-request-id": "dcab944e-9010-41d8-a8d7-76e4c8573b13",
+            "commandName": "Get-AzEventGridTopicKey",
+            "parameterSetName": "TopicNameParameterSet",
+            "x-ms-arm-resource-system-data": "{\"lastModifiedBy\":\"68d605a0-6e74-489e-8529-a9496fabf661\",\"lastModifiedByType\":\"Application\",\"lastModifiedAt\":\"2020-10-29T00:09:06.6130835Z\"}"
+        },
+        "method": "POST",
+        "url": "/subscriptions/d20e7f97-7449-4276-821b-8f814b2ccb08/resourceGroups/lamsjaia_rg/providers/Microsoft.EventGrid/topics/mlsjaiaschemachange-topic/listKeys?api-version=2020-06-01",
+        "query": {
+            "api-version": "2020-06-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "200",
+        "headers": {
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "x-ms-request-id": "b9cf35fc-7275-4162-92e2-e4edad9f327c",
+            "date": "Thu, 29 Oct 2020 00:09:06 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "key1": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "key2": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+    }
+}

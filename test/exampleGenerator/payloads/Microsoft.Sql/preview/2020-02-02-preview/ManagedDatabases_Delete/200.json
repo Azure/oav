@@ -1,0 +1,26 @@
+{
+    "liveRequest": {
+        "headers": {
+            "retry-After": "15",
+            "x-ms-request-id": "ddc7e29e-3003-4fe0-b43a-4641eb8e0b00",
+            "date": "Mon, 05 Oct 2020 14:20:46 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "method": "GET",
+        "url": "/subscriptions/f59f7fee-9218-4c26-b9d8-afca88acdb52/providers/Microsoft.Sql/locations/westus2/managedDatabaseAzureAsyncOperation/a91b9527-c3b1-461c-bee2-f6c89bc953eb?api-version=2020-02-02-preview"
+    },
+    "liveResponse": {
+        "statusCode": "OK",
+        "headers": {
+            "retry-After": "15",
+            "x-ms-request-id": "ddc7e29e-3003-4fe0-b43a-4641eb8e0b00",
+            "date": "Mon, 05 Oct 2020 14:20:46 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "status": "Succeeded",
+            "startTime": "2020-10-05T14:20:30.82Z"
+        }
+    }
+}

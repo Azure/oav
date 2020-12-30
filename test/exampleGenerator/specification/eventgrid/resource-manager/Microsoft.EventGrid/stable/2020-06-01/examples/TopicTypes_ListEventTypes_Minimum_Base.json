@@ -1,0 +1,11 @@
+{
+  "parameters": {
+    "topicTypeName": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "api-version": "2020-06-01"
+  },
+  "responses": {
+    "200": {
+      "body": {}
+    }
+  }
+}
