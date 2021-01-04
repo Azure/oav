@@ -30,22 +30,30 @@ describe.skip("mock examples", () => {
 
 describe("test generate example",()=> {
   const originalError = log.error;
-  const originalLog = log.info;
+  //const originalLog = log.info;
   const originalWarn = log.warn;
   let consoleOutput: any[] = [];
-  const mockedLog = (output: any) => consoleOutput.push(output);
-  const mockedError = (output: any) => consoleOutput.push(output);
-  const mockedWarn = (output: any) => consoleOutput.push(output);
+  const recordOutput = (output:any) => {
+    if (typeof output === "string" && output.indexOf("\\") !== -1) {
+      const result = output.replace(/\\/gi, "/");
+      consoleOutput.push(result);
+    } else {
+      consoleOutput.push(output);
+    }
+  }
+  //const mockedLog = (output: any) => recordOutput(output);
+  const mockedError = (output: any) => recordOutput(output);
+  const mockedWarn = (output: any) => recordOutput(output);
   beforeAll(() => {
     consoleOutput = []
-    log.info = mockedLog as any
+    //log.info = mockedLog as any
     log.error = mockedError as any
     log.warn = mockedWarn as any;
   });
 
   afterAll(() => {
     log.error = originalError;
-    log.info = originalLog;
+    //log.info = originalLog;
     log.warn = originalWarn;
   })
  

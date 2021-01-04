@@ -157,6 +157,7 @@ export default class Generator {
         return true;
       }
     });
+    // reuse the payloadCache as exampleCache.
     this.payloadCache.mergeCache()
   }
 
@@ -295,7 +296,7 @@ export default class Generator {
       example.responses,
       (value, key, parentValue, context) => {
         if (!parentValue) {
-          log.info(`parent is null`);
+          log.warn(`parent is null`);
         }
         if (
           ["integer", "number", "string"].some((type) => typeof value === type) &&
@@ -397,7 +398,7 @@ export default class Generator {
       const realApiVersion = payload[statusCode].liveRequest.query["api-version"];
       if (realApiVersion && realApiVersion !== specApiVersion) {
         delete payload[statusCode];
-        log.warn(
+        log.error(
           `${operationId} payload ${statusCode}.json's api-version is ${realApiVersion}, inconsistent with swagger spec's api-version ${specApiVersion}`
         );
       }

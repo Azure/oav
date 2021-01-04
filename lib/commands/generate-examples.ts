@@ -26,12 +26,12 @@ export const builder: yargs.CommandBuilder = {
   },
   c: {
     alias: "config",
-    describe: "config path.",
+    describe: "the readme config path.",
     string: true,
   },
   tag: {
     alias: "tagName",
-    describe: "tag name.",
+    describe: "the readme tag name.",
     string: true,
   }
 };

@@ -14,7 +14,7 @@ export default class Mocker {
       case "array":
         return this.generateArray(paramSpec, paramName, arrItem);
       default:
-        log.info(`unknown type ${paramSpec.type}.`);
+        log.warn(`unknown type ${paramSpec.type}.`);
     }
   }
 
@@ -126,7 +126,7 @@ export default class Mocker {
 
   private generateArray(paramSpec: any, paramName: any, arrItem: any) {
     if (!arrItem) {
-      log.info(`array ${paramName} item is null, it may be caused by circular reference`);
+      log.warn(`array ${paramName} item is null, it may be caused by circular reference`);
       return [];
     }
     const minItems = "minItems" in paramSpec ? paramSpec.minItems : 1;

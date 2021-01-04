@@ -65,12 +65,6 @@
         "x-ms-examples": {
           "Gets a Azure Active Directory only authentication property.": {
             "$ref": "./examples/ManagedInstanceAzureADOnlyAuthGet.json"
-          },
-          "ManagedInstanceAzureADOnlyAuthentications_Get_Maximum_Base": {
-            "$ref": "./examples/ManagedInstanceAzureADOnlyAuthentications_Get_Maximum_Base.json"
-          },
-          "ManagedInstanceAzureADOnlyAuthentications_Get_Minimum_Base": {
-            "$ref": "./examples/ManagedInstanceAzureADOnlyAuthentications_Get_Minimum_Base.json"
           }
         }
       },
@@ -124,29 +118,23 @@
               "$ref": "#/definitions/ManagedInstanceAzureADOnlyAuthentication"
             }
           },
+          "default": {
+            "description": "*** Error Responses: ***\n\n * 400 SubscriptionNotFound - The requested subscription was not found.\n\n * 404 ServerNotInSubscription - Specified server does not exist on the specified subscription.\n\n * 404 ManagedInstanceNotInSubscriptionResourceGroup - Specified managed instance does not exist in the specified resource group and subscription.\n\n * 404 OperationIdNotFound - The operation with Id does not exist.\n\n * 409 OperationCancelled - The operation has been cancelled by user.\n\n * 409 OperationInterrupted - The operation on the resource could not be completed because it was interrupted by another operation on the same resource.\n\n * 429 SubscriptionTooManyCreateUpdateRequests - Requests beyond max requests that can be processed by available resources.\n\n * 429 SubscriptionTooManyRequests - Requests beyond max requests that can be processed by available resources.\n\n * 500 OperationTimedOut - The operation timed out and automatically rolled back. Please retry the operation.\n\n * 503 TooManyRequests - Requests beyond max requests that can be processed by available resources.\n\n * 504 RequestTimeout - Service request exceeded the allowed timeout."
+          },
+          "202": {
+            "description": "Accepted"
+          },
           "201": {
             "description": "Successfully updated Azure Active Directory only authentication property.",
             "schema": {
               "$ref": "#/definitions/ManagedInstanceAzureADOnlyAuthentication"
             }
-          },
-          "202": {
-            "description": "Accepted"
-          },
-          "default": {
-            "description": "*** Error Responses: ***\n\n * 400 SubscriptionNotFound - The requested subscription was not found.\n\n * 404 ServerNotInSubscription - Specified server does not exist on the specified subscription.\n\n * 404 ManagedInstanceNotInSubscriptionResourceGroup - Specified managed instance does not exist in the specified resource group and subscription.\n\n * 404 OperationIdNotFound - The operation with Id does not exist.\n\n * 409 OperationCancelled - The operation has been cancelled by user.\n\n * 409 OperationInterrupted - The operation on the resource could not be completed because it was interrupted by another operation on the same resource.\n\n * 429 SubscriptionTooManyCreateUpdateRequests - Requests beyond max requests that can be processed by available resources.\n\n * 429 SubscriptionTooManyRequests - Requests beyond max requests that can be processed by available resources.\n\n * 500 OperationTimedOut - The operation timed out and automatically rolled back. Please retry the operation.\n\n * 503 TooManyRequests - Requests beyond max requests that can be processed by available resources.\n\n * 504 RequestTimeout - Service request exceeded the allowed timeout."
           }
         },
         "x-ms-long-running-operation": true,
         "x-ms-examples": {
           "Creates or updates Azure Active Directory only authentication object.": {
             "$ref": "./examples/ManagedInstanceAzureADOnlyAuthCreateOrUpdate.json"
-          },
-          "ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate_Maximum_Base": {
-            "$ref": "./examples/ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate_Maximum_Base.json"
-          },
-          "ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate_Minimum_Base": {
-            "$ref": "./examples/ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate_Minimum_Base.json"
           }
         }
       },
@@ -188,26 +176,20 @@
           "200": {
             "description": "Successfully deleted the Azure Active Directory only property."
           },
+          "default": {
+            "description": "*** Error Responses: ***\n\n * 400 SubscriptionNotFound - The requested subscription was not found.\n\n * 404 ServerNotInSubscription - Specified server does not exist on the specified subscription.\n\n * 404 ManagedInstanceNotInSubscriptionResourceGroup - Specified managed instance does not exist in the specified resource group and subscription.\n\n * 404 OperationIdNotFound - The operation with Id does not exist.\n\n * 409 OperationCancelled - The operation has been cancelled by user.\n\n * 409 OperationInterrupted - The operation on the resource could not be completed because it was interrupted by another operation on the same resource.\n\n * 429 SubscriptionTooManyCreateUpdateRequests - Requests beyond max requests that can be processed by available resources.\n\n * 429 SubscriptionTooManyRequests - Requests beyond max requests that can be processed by available resources.\n\n * 500 OperationTimedOut - The operation timed out and automatically rolled back. Please retry the operation.\n\n * 503 TooManyRequests - Requests beyond max requests that can be processed by available resources.\n\n * 504 RequestTimeout - Service request exceeded the allowed timeout."
+          },
           "202": {
             "description": "Accepted"
           },
           "204": {
             "description": "The specified Azure Active Directory only property does not exist."
-          },
-          "default": {
-            "description": "*** Error Responses: ***\n\n * 400 SubscriptionNotFound - The requested subscription was not found.\n\n * 404 ServerNotInSubscription - Specified server does not exist on the specified subscription.\n\n * 404 ManagedInstanceNotInSubscriptionResourceGroup - Specified managed instance does not exist in the specified resource group and subscription.\n\n * 404 OperationIdNotFound - The operation with Id does not exist.\n\n * 409 OperationCancelled - The operation has been cancelled by user.\n\n * 409 OperationInterrupted - The operation on the resource could not be completed because it was interrupted by another operation on the same resource.\n\n * 429 SubscriptionTooManyCreateUpdateRequests - Requests beyond max requests that can be processed by available resources.\n\n * 429 SubscriptionTooManyRequests - Requests beyond max requests that can be processed by available resources.\n\n * 500 OperationTimedOut - The operation timed out and automatically rolled back. Please retry the operation.\n\n * 503 TooManyRequests - Requests beyond max requests that can be processed by available resources.\n\n * 504 RequestTimeout - Service request exceeded the allowed timeout."
           }
         },
         "x-ms-long-running-operation": true,
         "x-ms-examples": {
           "Deletes Azure Active Directory only authentication object.": {
             "$ref": "./examples/ManagedInstanceAzureADOnlyAuthDelete.json"
-          },
-          "ManagedInstanceAzureADOnlyAuthentications_Delete_Maximum_Base": {
-            "$ref": "./examples/ManagedInstanceAzureADOnlyAuthentications_Delete_Maximum_Base.json"
-          },
-          "ManagedInstanceAzureADOnlyAuthentications_Delete_Minimum_Base": {
-            "$ref": "./examples/ManagedInstanceAzureADOnlyAuthentications_Delete_Minimum_Base.json"
           }
         }
       }
@@ -250,12 +232,6 @@
         "x-ms-examples": {
           "Gets a list of Azure Active Directory only authentication object.": {
             "$ref": "./examples/ManagedInstanceAzureADOnlyAuthListByInstance.json"
-          },
-          "ManagedInstanceAzureADOnlyAuthentications_ListByInstance_Maximum_Base": {
-            "$ref": "./examples/ManagedInstanceAzureADOnlyAuthentications_ListByInstance_Maximum_Base.json"
-          },
-          "ManagedInstanceAzureADOnlyAuthentications_ListByInstance_Minimum_Base": {
-            "$ref": "./examples/ManagedInstanceAzureADOnlyAuthentications_ListByInstance_Minimum_Base.json"
           }
         }
       }

@@ -11,20 +11,21 @@ import {
 import Mocker from "./mocker";
 import * as util from "./util";
 import { ExampleRule,  getRuleValidator } from "./exampleRule";
+import { log } from "../util/logging";
 
 export default class SwaggerMocker {
   private jsonLoader: JsonLoader;
   private mocker: Mocker;
   private spec: any;
   private mockCache: MockerCache;
-  private payloadCache: PayloadCache;
+  private exampleCache: PayloadCache;
   private exampleRule ?: ExampleRule
 
   public constructor(jsonLoader: JsonLoader, mockerCache: MockerCache,payloadCache: PayloadCache) {
     this.jsonLoader = jsonLoader;
     this.mocker = new Mocker();
     this.mockCache = mockerCache;
-    this.payloadCache = payloadCache;
+    this.exampleCache = payloadCache;
   }
 
   public setRule(exampleRule ?: ExampleRule) {
@@ -156,7 +157,7 @@ export default class SwaggerMocker {
 
   private getCache(schema:any) {
     if ("$ref" in schema ) {
-      for (const cache of [this.payloadCache, this.mockCache]) {
+      for (const cache of [this.exampleCache, this.mockCache]) {
         if (cache.has(schema.$ref.split("#")[1])) {
           return cache.get(schema.$ref.split("#")[1]);
         }
@@ -186,7 +187,7 @@ export default class SwaggerMocker {
     discriminatorValue:string|undefined = undefined
   ) {
     if (!schema || typeof schema !== "object") {
-      console.log(`invalid schema.`);
+      log.warn(`invalid schema.`);
       return undefined;
     }
     // use visited set to avoid circular dependency
