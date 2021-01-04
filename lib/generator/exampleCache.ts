@@ -252,7 +252,7 @@ export const reBuildExample = (
   } else if (cache.child) {
     const result: any = {};
     for (const key of Object.keys(cache.child)) {
-      if (validator && validator({ schemaCache:cache, propertyName: key, isRequest, schema})) {
+      if (!validator || validator({ schemaCache:cache, propertyName: key, isRequest, schema})) {
         const value = reBuildExample(cache.child[key], isRequest, schema,validator);
         if (value !== undefined) {
           result[key] = value;

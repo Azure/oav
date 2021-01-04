@@ -1,7 +1,7 @@
 import { CacheItem } from "./exampleCache"
 export interface ExampleRule  {
   exampleNamePostfix: string
-  ruleName: "Minimum" | "Maximum" | undefined
+  ruleName: string | undefined
 }
 
 export type RuleValidatorFunc = (context:RuleContext)=> boolean | undefined
@@ -24,10 +24,8 @@ type RuleContext =  {
   isRequest?: boolean,
   parentSchema?:any
 }
-
-export function getRuleValidator(rule:ExampleRule | undefined):RuleValidator {
-  const validators = {
-    "Minimum": {
+const exampleRuleValidators = new Map<string,RuleValidator>();
+  exampleRuleValidators.set("MinimumSet",{
       onParameter: (context:RuleContext)=> {
         return context?.schema.required
       },
@@ -40,8 +38,8 @@ export function getRuleValidator(rule:ExampleRule | undefined):RuleValidator {
         }
         return true;
       }
-    },
-    "Maximum": {
+    });
+  exampleRuleValidators.set("MaximumSet", {
       onSchema:(context:RuleContext)=> {
         if (context.schemaCache && context?.isRequest !== undefined) {
           return !shouldSkip(context.schemaCache,context?.isRequest)
@@ -49,9 +47,12 @@ export function getRuleValidator(rule:ExampleRule | undefined):RuleValidator {
         return true;
       }
     }
-  }
-  if (rule?.ruleName) {
-    return validators[rule.ruleName]
+  );
+
+export function getRuleValidator(rule:ExampleRule | undefined):RuleValidator {
+  const validators = exampleRuleValidators;
+  if (rule?.ruleName && validators.has(rule.ruleName)) {
+    return validators.get(rule.ruleName) || {}
   }
   return {}
 }

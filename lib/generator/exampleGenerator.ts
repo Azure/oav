@@ -140,7 +140,7 @@ export default class Generator {
           return
         } */
         for (const key of Object.keys(examples)) {
-          if (key.match(new RegExp(`^${operationId}_.*_Base$`))) {
+          if (key.match(new RegExp(`^${operationId}_.*_Gen$`))) {
             continue
           }
           const example = this.jsonLoader.resolveRefObj(examples[key]);
@@ -192,13 +192,13 @@ export default class Generator {
       this.specFilePath,
       specItem.path,
       specItem.methodName,
-      `${operationId}_${rule.exampleNamePostfix}_Base`
+      `${operationId}_${rule.exampleNamePostfix}_Gen`
     );
     util.updateExmAndSpecFile(
       unifiedExample,
       newSpec,
       this.specFilePath,
-      `${operationId}_${rule.exampleNamePostfix}_Base.json`
+      `${operationId}_${rule.exampleNamePostfix}_Gen.json`
     );
 
     log.info(`start validating generated example for ${operationId}`);
@@ -230,12 +230,12 @@ export default class Generator {
     }
     const ruleSet: RuleSet = []
     ruleSet.push({
-      exampleNamePostfix: "Maximum",
-      ruleName: "Maximum"
+      exampleNamePostfix: "MaximumSet",
+      ruleName: "MaximumSet"
     });
     ruleSet.push({
-      exampleNamePostfix: "Minimum",
-      ruleName: "Minimum"
+      exampleNamePostfix: "MinimumSet",
+      ruleName: "MinimumSet"
     });
     for (const rule of ruleSet) {
      
@@ -351,7 +351,7 @@ export default class Generator {
       const payloadDir = path.join(this.payloadDir,subPaths)
       const payload: any = util.readPayloadFile(payloadDir, operationId);
       if (!payload) {
-        log.warn(
+        log.info(
           `no payload file for operationId ${operationId} under directory ${path.resolve(
             payloadDir,
             operationId
