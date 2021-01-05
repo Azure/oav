@@ -90,7 +90,7 @@ export class PayloadCache implements BaseCache {
     }
   }
   /**
-   *
+   *  picking value priority : non-mocked value > mocked value , target value > source value  
    * @param target The target item that to be merged into
    * @param source The source item that needs to merge
    */
@@ -101,10 +101,19 @@ export class PayloadCache implements BaseCache {
     }
 
     if (Array.isArray(result.child) && Array.isArray(source.child)) {
-      if (result.child.length < source.child.length) {
-        result.child = (result.child as CacheItem[]).concat(
-          source.child.slice(result.child.length)
-        );
+      const resultArr = result.child as CacheItem[];
+      const sourceArr = source.child as CacheItem[];
+      if (resultArr.length === 0 || sourceArr.length === 0) {
+        return resultArr.length === 0 ? source : result
+      }
+      // only when source is not mocked and target is mocked , choose target.
+      if (resultArr[0].isMocked && !sourceArr[0].isMocked) {
+        return source
+      }
+      for ( let i = 0; i < resultArr.length; i++) {
+        if (i < sourceArr.length) {
+          resultArr[i] = this.mergeItem(resultArr[i], sourceArr[i]);
+        }
       }
     } else if (source.child && result.child) {
       const resultObj = result.child as CacheItemObject;
