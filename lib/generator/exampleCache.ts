@@ -106,7 +106,7 @@ export class PayloadCache implements BaseCache {
       if (resultArr.length === 0 || sourceArr.length === 0) {
         return resultArr.length === 0 ? source : result
       }
-      // only when source is not mocked and target is mocked , choose target.
+      // only when source is not mocked and target is mocked , choose source cache.
       if (resultArr[0].isMocked && !sourceArr[0].isMocked) {
         return source
       }
