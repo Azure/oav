@@ -117,7 +117,10 @@ export class PayloadCache implements BaseCache {
         }
       }
     }
-    return result;
+    else {
+      return result.isMocked && !source.isMocked ? source : result;
+    }
+    return result
   }
 
   /**
@@ -168,6 +171,7 @@ export interface CacheItem {
   options?: CacheItemOptions;
   isLeaf: boolean;
   required?: string[];
+  isMocked?:boolean
 }
 
 export const buildItemOption = (schema: any) => {

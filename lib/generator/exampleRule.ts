@@ -9,7 +9,7 @@ export type RuleValidatorFunc = (context:RuleContext)=> boolean | undefined
 type RuleValidator =  {
   onParameter?: RuleValidatorFunc,
   onSchema?:RuleValidatorFunc,
-  onResponseCode?: RuleValidatorFunc,
+  onResponseBody?: RuleValidatorFunc,
   onResponseHeader?:RuleValidatorFunc,
 }
 

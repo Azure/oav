@@ -59,7 +59,7 @@ export default class SwaggerMocker {
 
   private mockEachResponse(statusCode: string, responseExample: any, specItem: any,) {
     const visited = new Set<string>();
-    const validator = getRuleValidator(this.exampleRule).onResponseCode
+    const validator = getRuleValidator(this.exampleRule).onResponseBody
     const responseSpec = specItem.content.responses[statusCode];
     if (validator && !validator({schema:responseSpec})) {
       return undefined
@@ -258,7 +258,7 @@ export default class SwaggerMocker {
     // removeFromSet: once we try all roads started from present node, we should remove it and backtrack
     this.removeFromSet(schema, visited);
 
-    let cacheItem: CacheItem;
+    let cacheItem: CacheItem
     if (Array.isArray(example)) {
       const cacheChild: CacheItem[] = [];
       for (const item of example) {
@@ -274,6 +274,7 @@ export default class SwaggerMocker {
     } else {
       cacheItem = createLeafItem(example, buildItemOption(definitionSpec));
     }
+    cacheItem.isMocked = true
     const requiredProperties = this.getRequiredProperties(definitionSpec)
     if (requiredProperties && requiredProperties.length > 0) {
       cacheItem.required = requiredProperties
