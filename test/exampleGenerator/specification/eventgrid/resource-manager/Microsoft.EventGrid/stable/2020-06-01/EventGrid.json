@@ -64,12 +64,6 @@
         "x-ms-examples": {
           "Domains_Get": {
             "$ref": "./examples/Domains_Get.json"
-          },
-          "Domains_Get_Maximum_Base": {
-            "$ref": "./examples/Domains_Get_Maximum_Base.json"
-          },
-          "Domains_Get_Minimum_Base": {
-            "$ref": "./examples/Domains_Get_Minimum_Base.json"
           }
         }
       },
@@ -131,12 +125,6 @@
         "x-ms-examples": {
           "Domains_CreateOrUpdate": {
             "$ref": "./examples/Domains_CreateOrUpdate.json"
-          },
-          "Domains_CreateOrUpdate_Maximum_Base": {
-            "$ref": "./examples/Domains_CreateOrUpdate_Maximum_Base.json"
-          },
-          "Domains_CreateOrUpdate_Minimum_Base": {
-            "$ref": "./examples/Domains_CreateOrUpdate_Minimum_Base.json"
           }
         },
         "x-ms-long-running-operation": true
@@ -188,12 +176,6 @@
         "x-ms-examples": {
           "Domains_Delete": {
             "$ref": "./examples/Domains_Delete.json"
-          },
-          "Domains_Delete_Maximum_Base": {
-            "$ref": "./examples/Domains_Delete_Maximum_Base.json"
-          },
-          "Domains_Delete_Minimum_Base": {
-            "$ref": "./examples/Domains_Delete_Minimum_Base.json"
           }
         },
         "x-ms-long-running-operation": true
@@ -259,12 +241,6 @@
         "x-ms-examples": {
           "Domains_Update": {
             "$ref": "./examples/Domains_Update.json"
-          },
-          "Domains_Update_Maximum_Base": {
-            "$ref": "./examples/Domains_Update_Maximum_Base.json"
-          },
-          "Domains_Update_Minimum_Base": {
-            "$ref": "./examples/Domains_Update_Minimum_Base.json"
           }
         },
         "x-ms-long-running-operation": true
@@ -310,12 +286,6 @@
         "x-ms-examples": {
           "Domains_ListBySubscription": {
             "$ref": "./examples/Domains_ListBySubscription.json"
-          },
-          "Domains_ListBySubscription_Maximum_Base": {
-            "$ref": "./examples/Domains_ListBySubscription_Maximum_Base.json"
-          },
-          "Domains_ListBySubscription_Minimum_Base": {
-            "$ref": "./examples/Domains_ListBySubscription_Minimum_Base.json"
           }
         },
         "x-ms-pageable": {
@@ -370,12 +340,6 @@
         "x-ms-examples": {
           "Domains_ListByResourceGroup": {
             "$ref": "./examples/Domains_ListByResourceGroup.json"
-          },
-          "Domains_ListByResourceGroup_Maximum_Base": {
-            "$ref": "./examples/Domains_ListByResourceGroup_Maximum_Base.json"
-          },
-          "Domains_ListByResourceGroup_Minimum_Base": {
-            "$ref": "./examples/Domains_ListByResourceGroup_Minimum_Base.json"
           }
         },
         "x-ms-pageable": {
@@ -431,12 +395,6 @@
         "x-ms-examples": {
           "Domains_ListSharedAccessKeys": {
             "$ref": "./examples/Domains_ListSharedAccessKeys.json"
-          },
-          "Domains_ListSharedAccessKeys_Maximum_Base": {
-            "$ref": "./examples/Domains_ListSharedAccessKeys_Maximum_Base.json"
-          },
-          "Domains_ListSharedAccessKeys_Minimum_Base": {
-            "$ref": "./examples/Domains_ListSharedAccessKeys_Minimum_Base.json"
           }
         }
       }
@@ -500,12 +458,6 @@
         "x-ms-examples": {
           "Domains_RegenerateKey": {
             "$ref": "./examples/Domains_RegenerateKey.json"
-          },
-          "Domains_RegenerateKey_Maximum_Base": {
-            "$ref": "./examples/Domains_RegenerateKey_Maximum_Base.json"
-          },
-          "Domains_RegenerateKey_Minimum_Base": {
-            "$ref": "./examples/Domains_RegenerateKey_Minimum_Base.json"
           }
         }
       }
@@ -565,12 +517,6 @@
         "x-ms-examples": {
           "DomainTopics_Get": {
             "$ref": "./examples/DomainTopics_Get.json"
-          },
-          "DomainTopics_Get_Maximum_Base": {
-            "$ref": "./examples/DomainTopics_Get_Maximum_Base.json"
-          },
-          "DomainTopics_Get_Minimum_Base": {
-            "$ref": "./examples/DomainTopics_Get_Minimum_Base.json"
           }
         }
       },
@@ -628,12 +574,6 @@
         "x-ms-examples": {
           "DomainTopics_CreateOrUpdate": {
             "$ref": "./examples/DomainTopics_CreateOrUpdate.json"
-          },
-          "DomainTopics_CreateOrUpdate_Maximum_Base": {
-            "$ref": "./examples/DomainTopics_CreateOrUpdate_Maximum_Base.json"
-          },
-          "DomainTopics_CreateOrUpdate_Minimum_Base": {
-            "$ref": "./examples/DomainTopics_CreateOrUpdate_Minimum_Base.json"
           }
         },
         "x-ms-long-running-operation": true
@@ -692,12 +632,6 @@
         "x-ms-examples": {
           "DomainTopics_Delete": {
             "$ref": "./examples/DomainTopics_Delete.json"
-          },
-          "DomainTopics_Delete_Maximum_Base": {
-            "$ref": "./examples/DomainTopics_Delete_Maximum_Base.json"
-          },
-          "DomainTopics_Delete_Minimum_Base": {
-            "$ref": "./examples/DomainTopics_Delete_Minimum_Base.json"
           }
         },
         "x-ms-long-running-operation": true
@@ -757,12 +691,6 @@
         "x-ms-examples": {
           "DomainTopics_ListByDomain": {
             "$ref": "./examples/DomainTopics_ListByDomain.json"
-          },
-          "DomainTopics_ListByDomain_Maximum_Base": {
-            "$ref": "./examples/DomainTopics_ListByDomain_Maximum_Base.json"
-          },
-          "DomainTopics_ListByDomain_Minimum_Base": {
-            "$ref": "./examples/DomainTopics_ListByDomain_Minimum_Base.json"
           }
         },
         "x-ms-pageable": {
@@ -825,12 +753,6 @@
           },
           "EventSubscriptions_GetForCustomTopic": {
             "$ref": "./examples/EventSubscriptions_GetForCustomTopic.json"
-          },
-          "EventSubscriptions_Get_Maximum_Base": {
-            "$ref": "./examples/EventSubscriptions_Get_Maximum_Base.json"
-          },
-          "EventSubscriptions_Get_Minimum_Base": {
-            "$ref": "./examples/EventSubscriptions_Get_Minimum_Base.json"
           }
         }
       },
@@ -908,12 +830,6 @@
           },
           "EventSubscriptions_CreateOrUpdateForCustomTopic_StorageQueueDestination": {
             "$ref": "./examples/EventSubscriptions_CreateOrUpdateForCustomTopic_StorageQueueDestination.json"
-          },
-          "EventSubscriptions_CreateOrUpdate_Maximum_Base": {
-            "$ref": "./examples/EventSubscriptions_CreateOrUpdate_Maximum_Base.json"
-          },
-          "EventSubscriptions_CreateOrUpdate_Minimum_Base": {
-            "$ref": "./examples/EventSubscriptions_CreateOrUpdate_Minimum_Base.json"
           }
         },
         "x-ms-long-running-operation": true
@@ -975,12 +891,6 @@
           },
           "EventSubscriptions_DeleteForCustomTopic": {
             "$ref": "./examples/EventSubscriptions_DeleteForCustomTopic.json"
-          },
-          "EventSubscriptions_Delete_Maximum_Base": {
-            "$ref": "./examples/EventSubscriptions_Delete_Maximum_Base.json"
-          },
-          "EventSubscriptions_Delete_Minimum_Base": {
-            "$ref": "./examples/EventSubscriptions_Delete_Minimum_Base.json"
           }
         },
         "x-ms-long-running-operation": true
@@ -1050,12 +960,6 @@
           },
           "EventSubscriptions_UpdateForCustomTopic": {
             "$ref": "./examples/EventSubscriptions_UpdateForCustomTopic.json"
-          },
-          "EventSubscriptions_Update_Maximum_Base": {
-            "$ref": "./examples/EventSubscriptions_Update_Maximum_Base.json"
-          },
-          "EventSubscriptions_Update_Minimum_Base": {
-            "$ref": "./examples/EventSubscriptions_Update_Minimum_Base.json"
           }
         },
         "x-ms-long-running-operation": true
@@ -1116,12 +1020,6 @@
           },
           "EventSubscriptions_GetFullUrlForCustomTopic": {
             "$ref": "./examples/EventSubscriptions_GetFullUrlForCustomTopic.json"
-          },
-          "EventSubscriptions_GetFullUrl_Maximum_Base": {
-            "$ref": "./examples/EventSubscriptions_GetFullUrl_Maximum_Base.json"
-          },
-          "EventSubscriptions_GetFullUrl_Minimum_Base": {
-            "$ref": "./examples/EventSubscriptions_GetFullUrl_Minimum_Base.json"
           }
         }
       }
@@ -1169,12 +1067,6 @@
         "x-ms-examples": {
           "EventSubscriptions_ListGlobalBySubscription": {
             "$ref": "./examples/EventSubscriptions_ListGlobalBySubscription.json"
-          },
-          "EventSubscriptions_ListGlobalBySubscription_Maximum_Base": {
-            "$ref": "./examples/EventSubscriptions_ListGlobalBySubscription_Maximum_Base.json"
-          },
-          "EventSubscriptions_ListGlobalBySubscription_Minimum_Base": {
-            "$ref": "./examples/EventSubscriptions_ListGlobalBySubscription_Minimum_Base.json"
           }
         }
       }
@@ -1229,12 +1121,6 @@
         "x-ms-examples": {
           "EventSubscriptions_ListGlobalBySubscriptionForTopicType": {
             "$ref": "./examples/EventSubscriptions_ListGlobalBySubscriptionForTopicType.json"
-          },
-          "EventSubscriptions_ListGlobalBySubscriptionForTopicType_Maximum_Base": {
-            "$ref": "./examples/EventSubscriptions_ListGlobalBySubscriptionForTopicType_Maximum_Base.json"
-          },
-          "EventSubscriptions_ListGlobalBySubscriptionForTopicType_Minimum_Base": {
-            "$ref": "./examples/EventSubscriptions_ListGlobalBySubscriptionForTopicType_Minimum_Base.json"
           }
         }
       }
@@ -1289,12 +1175,6 @@
         "x-ms-examples": {
           "EventSubscriptions_ListGlobalByResourceGroup": {
             "$ref": "./examples/EventSubscriptions_ListGlobalByResourceGroup.json"
-          },
-          "EventSubscriptions_ListGlobalByResourceGroup_Maximum_Base": {
-            "$ref": "./examples/EventSubscriptions_ListGlobalByResourceGroup_Maximum_Base.json"
-          },
-          "EventSubscriptions_ListGlobalByResourceGroup_Minimum_Base": {
-            "$ref": "./examples/EventSubscriptions_ListGlobalByResourceGroup_Minimum_Base.json"
           }
         }
       }
@@ -1356,12 +1236,6 @@
         "x-ms-examples": {
           "EventSubscriptions_ListGlobalByResourceGroupForTopicType": {
             "$ref": "./examples/EventSubscriptions_ListGlobalByResourceGroupForTopicType.json"
-          },
-          "EventSubscriptions_ListGlobalByResourceGroupForTopicType_Maximum_Base": {
-            "$ref": "./examples/EventSubscriptions_ListGlobalByResourceGroupForTopicType_Maximum_Base.json"
-          },
-          "EventSubscriptions_ListGlobalByResourceGroupForTopicType_Minimum_Base": {
-            "$ref": "./examples/EventSubscriptions_ListGlobalByResourceGroupForTopicType_Minimum_Base.json"
           }
         }
       }
@@ -1416,12 +1290,6 @@
         "x-ms-examples": {
           "EventSubscriptions_ListRegionalBySubscription": {
             "$ref": "./examples/EventSubscriptions_ListRegionalBySubscription.json"
-          },
-          "EventSubscriptions_ListRegionalBySubscription_Maximum_Base": {
-            "$ref": "./examples/EventSubscriptions_ListRegionalBySubscription_Maximum_Base.json"
-          },
-          "EventSubscriptions_ListRegionalBySubscription_Minimum_Base": {
-            "$ref": "./examples/EventSubscriptions_ListRegionalBySubscription_Minimum_Base.json"
           }
         }
       }
@@ -1483,12 +1351,6 @@
         "x-ms-examples": {
           "EventSubscriptions_ListRegionalByResourceGroup": {
             "$ref": "./examples/EventSubscriptions_ListRegionalByResourceGroup.json"
-          },
-          "EventSubscriptions_ListRegionalByResourceGroup_Maximum_Base": {
-            "$ref": "./examples/EventSubscriptions_ListRegionalByResourceGroup_Maximum_Base.json"
-          },
-          "EventSubscriptions_ListRegionalByResourceGroup_Minimum_Base": {
-            "$ref": "./examples/EventSubscriptions_ListRegionalByResourceGroup_Minimum_Base.json"
           }
         }
       }
@@ -1550,12 +1412,6 @@
         "x-ms-examples": {
           "EventSubscriptions_ListRegionalBySubscriptionForTopicType": {
             "$ref": "./examples/EventSubscriptions_ListRegionalBySubscriptionForTopicType.json"
-          },
-          "EventSubscriptions_ListRegionalBySubscriptionForTopicType_Maximum_Base": {
-            "$ref": "./examples/EventSubscriptions_ListRegionalBySubscriptionForTopicType_Maximum_Base.json"
-          },
-          "EventSubscriptions_ListRegionalBySubscriptionForTopicType_Minimum_Base": {
-            "$ref": "./examples/EventSubscriptions_ListRegionalBySubscriptionForTopicType_Minimum_Base.json"
           }
         }
       }
@@ -1624,12 +1480,6 @@
         "x-ms-examples": {
           "EventSubscriptions_ListRegionalByResourceGroupForTopicType": {
             "$ref": "./examples/EventSubscriptions_ListRegionalByResourceGroupForTopicType.json"
-          },
-          "EventSubscriptions_ListRegionalByResourceGroupForTopicType_Maximum_Base": {
-            "$ref": "./examples/EventSubscriptions_ListRegionalByResourceGroupForTopicType_Maximum_Base.json"
-          },
-          "EventSubscriptions_ListRegionalByResourceGroupForTopicType_Minimum_Base": {
-            "$ref": "./examples/EventSubscriptions_ListRegionalByResourceGroupForTopicType_Minimum_Base.json"
           }
         }
       }
@@ -1702,12 +1552,6 @@
         "x-ms-examples": {
           "EventSubscriptions_ListByResource": {
             "$ref": "./examples/EventSubscriptions_ListByResource.json"
-          },
-          "EventSubscriptions_ListByResource_Maximum_Base": {
-            "$ref": "./examples/EventSubscriptions_ListByResource_Maximum_Base.json"
-          },
-          "EventSubscriptions_ListByResource_Minimum_Base": {
-            "$ref": "./examples/EventSubscriptions_ListByResource_Minimum_Base.json"
           }
         },
         "x-ms-pageable": {
@@ -1776,12 +1620,6 @@
         "x-ms-examples": {
           "EventSubscriptions_ListByDomainTopic": {
             "$ref": "./examples/EventSubscriptions_ListByDomainTopic.json"
-          },
-          "EventSubscriptions_ListByDomainTopic_Maximum_Base": {
-            "$ref": "./examples/EventSubscriptions_ListByDomainTopic_Maximum_Base.json"
-          },
-          "EventSubscriptions_ListByDomainTopic_Minimum_Base": {
-            "$ref": "./examples/EventSubscriptions_ListByDomainTopic_Minimum_Base.json"
           }
         },
         "x-ms-pageable": {
@@ -1823,12 +1661,6 @@
         "x-ms-examples": {
           "Operations_List": {
             "$ref": "./examples/Operations_List.json"
-          },
-          "Operations_List_Maximum_Base": {
-            "$ref": "./examples/Operations_List_Maximum_Base.json"
-          },
-          "Operations_List_Minimum_Base": {
-            "$ref": "./examples/Operations_List_Minimum_Base.json"
           }
         }
       }
@@ -1881,12 +1713,6 @@
         "x-ms-examples": {
           "Topics_Get": {
             "$ref": "./examples/Topics_Get.json"
-          },
-          "Topics_Get_Maximum_Base": {
-            "$ref": "./examples/Topics_Get_Maximum_Base.json"
-          },
-          "Topics_Get_Minimum_Base": {
-            "$ref": "./examples/Topics_Get_Minimum_Base.json"
           }
         }
       },
@@ -1948,12 +1774,6 @@
         "x-ms-examples": {
           "Topics_CreateOrUpdate": {
             "$ref": "./examples/Topics_CreateOrUpdate.json"
-          },
-          "Topics_CreateOrUpdate_Maximum_Base": {
-            "$ref": "./examples/Topics_CreateOrUpdate_Maximum_Base.json"
-          },
-          "Topics_CreateOrUpdate_Minimum_Base": {
-            "$ref": "./examples/Topics_CreateOrUpdate_Minimum_Base.json"
           }
         },
         "x-ms-long-running-operation": true
@@ -2005,12 +1825,6 @@
         "x-ms-examples": {
           "Topics_Delete": {
             "$ref": "./examples/Topics_Delete.json"
-          },
-          "Topics_Delete_Maximum_Base": {
-            "$ref": "./examples/Topics_Delete_Maximum_Base.json"
-          },
-          "Topics_Delete_Minimum_Base": {
-            "$ref": "./examples/Topics_Delete_Minimum_Base.json"
           }
         },
         "x-ms-long-running-operation": true
@@ -2076,12 +1890,6 @@
         "x-ms-examples": {
           "Topics_Update": {
             "$ref": "./examples/Topics_Update.json"
-          },
-          "Topics_Update_Maximum_Base": {
-            "$ref": "./examples/Topics_Update_Maximum_Base.json"
-          },
-          "Topics_Update_Minimum_Base": {
-            "$ref": "./examples/Topics_Update_Minimum_Base.json"
           }
         },
         "x-ms-long-running-operation": true
@@ -2130,12 +1938,6 @@
         "x-ms-examples": {
           "Topics_ListBySubscription": {
             "$ref": "./examples/Topics_ListBySubscription.json"
-          },
-          "Topics_ListBySubscription_Maximum_Base": {
-            "$ref": "./examples/Topics_ListBySubscription_Maximum_Base.json"
-          },
-          "Topics_ListBySubscription_Minimum_Base": {
-            "$ref": "./examples/Topics_ListBySubscription_Minimum_Base.json"
           }
         }
       }
@@ -2190,12 +1992,6 @@
         "x-ms-examples": {
           "Topics_ListByResourceGroup": {
             "$ref": "./examples/Topics_ListByResourceGroup.json"
-          },
-          "Topics_ListByResourceGroup_Maximum_Base": {
-            "$ref": "./examples/Topics_ListByResourceGroup_Maximum_Base.json"
-          },
-          "Topics_ListByResourceGroup_Minimum_Base": {
-            "$ref": "./examples/Topics_ListByResourceGroup_Minimum_Base.json"
           }
         }
       }
@@ -2248,12 +2044,6 @@
         "x-ms-examples": {
           "Topics_ListSharedAccessKeys": {
             "$ref": "./examples/Topics_ListSharedAccessKeys.json"
-          },
-          "Topics_ListSharedAccessKeys_Maximum_Base": {
-            "$ref": "./examples/Topics_ListSharedAccessKeys_Maximum_Base.json"
-          },
-          "Topics_ListSharedAccessKeys_Minimum_Base": {
-            "$ref": "./examples/Topics_ListSharedAccessKeys_Minimum_Base.json"
           }
         }
       }
@@ -2317,12 +2107,6 @@
         "x-ms-examples": {
           "Topics_RegenerateKey": {
             "$ref": "./examples/Topics_RegenerateKey.json"
-          },
-          "Topics_RegenerateKey_Maximum_Base": {
-            "$ref": "./examples/Topics_RegenerateKey_Maximum_Base.json"
-          },
-          "Topics_RegenerateKey_Minimum_Base": {
-            "$ref": "./examples/Topics_RegenerateKey_Minimum_Base.json"
           }
         }
       }
@@ -2393,12 +2177,6 @@
         "x-ms-examples": {
           "PrivateEndpointConnections_Get": {
             "$ref": "./examples/PrivateEndpointConnections_Get.json"
-          },
-          "PrivateEndpointConnections_Get_Maximum_Base": {
-            "$ref": "./examples/PrivateEndpointConnections_Get_Maximum_Base.json"
-          },
-          "PrivateEndpointConnections_Get_Minimum_Base": {
-            "$ref": "./examples/PrivateEndpointConnections_Get_Minimum_Base.json"
           }
         }
       },
@@ -2484,12 +2262,6 @@
         "x-ms-examples": {
           "PrivateEndpointConnections_Update": {
             "$ref": "./examples/PrivateEndpointConnections_Update.json"
-          },
-          "PrivateEndpointConnections_Update_Maximum_Base": {
-            "$ref": "./examples/PrivateEndpointConnections_Update_Maximum_Base.json"
-          },
-          "PrivateEndpointConnections_Update_Minimum_Base": {
-            "$ref": "./examples/PrivateEndpointConnections_Update_Minimum_Base.json"
           }
         },
         "x-ms-long-running-operation": true
@@ -2559,12 +2331,6 @@
         "x-ms-examples": {
           "PrivateEndpointConnections_Delete": {
             "$ref": "./examples/PrivateEndpointConnections_Delete.json"
-          },
-          "PrivateEndpointConnections_Delete_Maximum_Base": {
-            "$ref": "./examples/PrivateEndpointConnections_Delete_Maximum_Base.json"
-          },
-          "PrivateEndpointConnections_Delete_Minimum_Base": {
-            "$ref": "./examples/PrivateEndpointConnections_Delete_Minimum_Base.json"
           }
         },
         "x-ms-long-running-operation": true
@@ -2635,12 +2401,6 @@
         "x-ms-examples": {
           "PrivateEndpointConnections_ListByResource": {
             "$ref": "./examples/PrivateEndpointConnections_ListByResource.json"
-          },
-          "PrivateEndpointConnections_ListByResource_Maximum_Base": {
-            "$ref": "./examples/PrivateEndpointConnections_ListByResource_Maximum_Base.json"
-          },
-          "PrivateEndpointConnections_ListByResource_Minimum_Base": {
-            "$ref": "./examples/PrivateEndpointConnections_ListByResource_Minimum_Base.json"
           }
         },
         "x-ms-pageable": {
@@ -2710,12 +2470,6 @@
         "x-ms-examples": {
           "PrivateLinkResources_Get": {
             "$ref": "./examples/PrivateLinkResources_Get.json"
-          },
-          "PrivateLinkResources_Get_Maximum_Base": {
-            "$ref": "./examples/PrivateLinkResources_Get_Maximum_Base.json"
-          },
-          "PrivateLinkResources_Get_Minimum_Base": {
-            "$ref": "./examples/PrivateLinkResources_Get_Minimum_Base.json"
           }
         }
       }
@@ -2781,12 +2535,6 @@
         "x-ms-examples": {
           "PrivateLinkResources_ListByResource": {
             "$ref": "./examples/PrivateLinkResources_ListByResource.json"
-          },
-          "PrivateLinkResources_ListByResource_Maximum_Base": {
-            "$ref": "./examples/PrivateLinkResources_ListByResource_Maximum_Base.json"
-          },
-          "PrivateLinkResources_ListByResource_Minimum_Base": {
-            "$ref": "./examples/PrivateLinkResources_ListByResource_Minimum_Base.json"
           }
         },
         "x-ms-pageable": {
@@ -2859,12 +2607,6 @@
         "x-ms-examples": {
           "Topics_ListEventTypes": {
             "$ref": "./examples/Topics_ListEventTypes.json"
-          },
-          "Topics_ListEventTypes_Maximum_Base": {
-            "$ref": "./examples/Topics_ListEventTypes_Maximum_Base.json"
-          },
-          "Topics_ListEventTypes_Minimum_Base": {
-            "$ref": "./examples/Topics_ListEventTypes_Minimum_Base.json"
           }
         }
       }
@@ -2903,12 +2645,6 @@
         "x-ms-examples": {
           "TopicTypes_List": {
             "$ref": "./examples/TopicTypes_List.json"
-          },
-          "TopicTypes_List_Maximum_Base": {
-            "$ref": "./examples/TopicTypes_List_Maximum_Base.json"
-          },
-          "TopicTypes_List_Minimum_Base": {
-            "$ref": "./examples/TopicTypes_List_Minimum_Base.json"
           }
         }
       }
@@ -2951,12 +2687,6 @@
         "x-ms-examples": {
           "TopicTypes_Get": {
             "$ref": "./examples/TopicTypes_Get.json"
-          },
-          "TopicTypes_Get_Maximum_Base": {
-            "$ref": "./examples/TopicTypes_Get_Maximum_Base.json"
-          },
-          "TopicTypes_Get_Minimum_Base": {
-            "$ref": "./examples/TopicTypes_Get_Minimum_Base.json"
           }
         }
       }
@@ -3002,12 +2732,6 @@
         "x-ms-examples": {
           "TopicTypes_ListEventTypes": {
             "$ref": "./examples/TopicTypes_ListEventTypes.json"
-          },
-          "TopicTypes_ListEventTypes_Maximum_Base": {
-            "$ref": "./examples/TopicTypes_ListEventTypes_Maximum_Base.json"
-          },
-          "TopicTypes_ListEventTypes_Minimum_Base": {
-            "$ref": "./examples/TopicTypes_ListEventTypes_Minimum_Base.json"
           }
         }
       }

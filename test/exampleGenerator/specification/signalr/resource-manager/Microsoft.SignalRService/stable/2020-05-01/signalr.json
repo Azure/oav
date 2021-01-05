@@ -48,12 +48,6 @@
         "x-ms-examples": {
           "Operations_List": {
             "$ref": "./examples/Operations_List.json"
-          },
-          "Operations_List_Maximum_Base": {
-            "$ref": "./examples/Operations_List_Maximum_Base.json"
-          },
-          "Operations_List_Minimum_Base": {
-            "$ref": "./examples/Operations_List_Minimum_Base.json"
           }
         }
       }
@@ -106,12 +100,6 @@
         "x-ms-examples": {
           "SignalR_CheckNameAvailability": {
             "$ref": "./examples/SignalR_CheckNameAvailability.json"
-          },
-          "SignalR_CheckNameAvailability_Maximum_Base": {
-            "$ref": "./examples/SignalR_CheckNameAvailability_Maximum_Base.json"
-          },
-          "SignalR_CheckNameAvailability_Minimum_Base": {
-            "$ref": "./examples/SignalR_CheckNameAvailability_Minimum_Base.json"
           }
         }
       }
@@ -151,12 +139,6 @@
         "x-ms-examples": {
           "SignalR_ListBySubscription": {
             "$ref": "./examples/SignalR_ListBySubscription.json"
-          },
-          "SignalR_ListBySubscription_Maximum_Base": {
-            "$ref": "./examples/SignalR_ListBySubscription_Maximum_Base.json"
-          },
-          "SignalR_ListBySubscription_Minimum_Base": {
-            "$ref": "./examples/SignalR_ListBySubscription_Minimum_Base.json"
           }
         }
       }
@@ -199,12 +181,6 @@
         "x-ms-examples": {
           "SignalR_ListByResourceGroup": {
             "$ref": "./examples/SignalR_ListByResourceGroup.json"
-          },
-          "SignalR_ListByResourceGroup_Maximum_Base": {
-            "$ref": "./examples/SignalR_ListByResourceGroup_Maximum_Base.json"
-          },
-          "SignalR_ListByResourceGroup_Minimum_Base": {
-            "$ref": "./examples/SignalR_ListByResourceGroup_Minimum_Base.json"
           }
         }
       }
@@ -254,12 +230,6 @@
         "x-ms-examples": {
           "SignalRPrivateEndpointConnections_Get": {
             "$ref": "./examples/SignalRPrivateEndpointConnections_Get.json"
-          },
-          "SignalRPrivateEndpointConnections_Get_Maximum_Base": {
-            "$ref": "./examples/SignalRPrivateEndpointConnections_Get_Maximum_Base.json"
-          },
-          "SignalRPrivateEndpointConnections_Get_Minimum_Base": {
-            "$ref": "./examples/SignalRPrivateEndpointConnections_Get_Minimum_Base.json"
           }
         }
       },
@@ -316,12 +286,6 @@
         "x-ms-examples": {
           "SignalRPrivateEndpointConnections_Update": {
             "$ref": "./examples/SignalRPrivateEndpointConnections_Update.json"
-          },
-          "SignalRPrivateEndpointConnections_Update_Maximum_Base": {
-            "$ref": "./examples/SignalRPrivateEndpointConnections_Update_Maximum_Base.json"
-          },
-          "SignalRPrivateEndpointConnections_Update_Minimum_Base": {
-            "$ref": "./examples/SignalRPrivateEndpointConnections_Update_Minimum_Base.json"
           }
         }
       },
@@ -370,12 +334,6 @@
         "x-ms-examples": {
           "SignalRPrivateEndpointConnections_Delete": {
             "$ref": "./examples/SignalRPrivateEndpointConnections_Delete.json"
-          },
-          "SignalRPrivateEndpointConnections_Delete_Maximum_Base": {
-            "$ref": "./examples/SignalRPrivateEndpointConnections_Delete_Maximum_Base.json"
-          },
-          "SignalRPrivateEndpointConnections_Delete_Minimum_Base": {
-            "$ref": "./examples/SignalRPrivateEndpointConnections_Delete_Minimum_Base.json"
           }
         }
       }
@@ -421,12 +379,6 @@
         "x-ms-examples": {
           "SignalRPrivateLinkResources_List": {
             "$ref": "./examples/SignalRPrivateLinkResources_List.json"
-          },
-          "SignalRPrivateLinkResources_List_Maximum_Base": {
-            "$ref": "./examples/SignalRPrivateLinkResources_List_Maximum_Base.json"
-          },
-          "SignalRPrivateLinkResources_List_Minimum_Base": {
-            "$ref": "./examples/SignalRPrivateLinkResources_List_Minimum_Base.json"
           }
         }
       }
@@ -469,12 +421,6 @@
         "x-ms-examples": {
           "SignalR_ListKeys": {
             "$ref": "./examples/SignalR_ListKeys.json"
-          },
-          "SignalR_ListKeys_Maximum_Base": {
-            "$ref": "./examples/SignalR_ListKeys_Maximum_Base.json"
-          },
-          "SignalR_ListKeys_Minimum_Base": {
-            "$ref": "./examples/SignalR_ListKeys_Minimum_Base.json"
           }
         }
       }
@@ -530,12 +476,6 @@
         "x-ms-examples": {
           "SignalR_RegenerateKey": {
             "$ref": "./examples/SignalR_RegenerateKey.json"
-          },
-          "SignalR_RegenerateKey_Maximum_Base": {
-            "$ref": "./examples/SignalR_RegenerateKey_Maximum_Base.json"
-          },
-          "SignalR_RegenerateKey_Minimum_Base": {
-            "$ref": "./examples/SignalR_RegenerateKey_Minimum_Base.json"
           }
         }
       }
@@ -578,12 +518,6 @@
         "x-ms-examples": {
           "SignalR_Get": {
             "$ref": "./examples/SignalR_Get.json"
-          },
-          "SignalR_Get_Maximum_Base": {
-            "$ref": "./examples/SignalR_Get_Maximum_Base.json"
-          },
-          "SignalR_Get_Minimum_Base": {
-            "$ref": "./examples/SignalR_Get_Minimum_Base.json"
           }
         }
       },
@@ -643,12 +577,6 @@
         "x-ms-examples": {
           "SignalR_CreateOrUpdate": {
             "$ref": "./examples/SignalR_CreateOrUpdate.json"
-          },
-          "SignalR_CreateOrUpdate_Maximum_Base": {
-            "$ref": "./examples/SignalR_CreateOrUpdate_Maximum_Base.json"
-          },
-          "SignalR_CreateOrUpdate_Minimum_Base": {
-            "$ref": "./examples/SignalR_CreateOrUpdate_Minimum_Base.json"
           }
         }
       },
@@ -690,12 +618,6 @@
         "x-ms-examples": {
           "SignalR_Delete": {
             "$ref": "./examples/SignalR_Delete.json"
-          },
-          "SignalR_Delete_Maximum_Base": {
-            "$ref": "./examples/SignalR_Delete_Maximum_Base.json"
-          },
-          "SignalR_Delete_Minimum_Base": {
-            "$ref": "./examples/SignalR_Delete_Minimum_Base.json"
           }
         }
       },
@@ -749,12 +671,6 @@
         "x-ms-examples": {
           "SignalR_Update": {
             "$ref": "./examples/SignalR_Update.json"
-          },
-          "SignalR_Update_Maximum_Base": {
-            "$ref": "./examples/SignalR_Update_Maximum_Base.json"
-          },
-          "SignalR_Update_Minimum_Base": {
-            "$ref": "./examples/SignalR_Update_Minimum_Base.json"
           }
         }
       }
@@ -801,12 +717,6 @@
         "x-ms-examples": {
           "SignalR_Restart": {
             "$ref": "./examples/SignalR_Restart.json"
-          },
-          "SignalR_Restart_Maximum_Base": {
-            "$ref": "./examples/SignalR_Restart_Maximum_Base.json"
-          },
-          "SignalR_Restart_Minimum_Base": {
-            "$ref": "./examples/SignalR_Restart_Minimum_Base.json"
           }
         }
       }
@@ -853,12 +763,6 @@
         "x-ms-examples": {
           "Usages_List": {
             "$ref": "./examples/Usages_List.json"
-          },
-          "Usages_List_Maximum_Base": {
-            "$ref": "./examples/Usages_List_Maximum_Base.json"
-          },
-          "Usages_List_Minimum_Base": {
-            "$ref": "./examples/Usages_List_Minimum_Base.json"
           }
         }
       }
@@ -1151,7 +1055,7 @@
         "kind": {
           "$ref": "#/definitions/ServiceKind",
           "description": "The kind of the service - e.g. \"SignalR\", or \"RawWebSockets\" for \"Microsoft.SignalRService/SignalR\"",
-          "": [
+          "x-ms-mutability": [
             "read",
             "create"
           ]
