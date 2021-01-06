@@ -198,6 +198,7 @@ interface BaseSchema {
   };
   type?: string;
   items?: Schema | Schema[];
+  $ref?: string;
 }
 
 export type SchemaType = "object" | "array" | "string" | "integer" | "number" | "boolean" | "null";
@@ -303,6 +304,8 @@ export interface SwaggerExample {
     [parameterName: string]: any;
   };
   responses: { [responseCode: string]: any };
+
+  $ref?: string;
 }
 
 // --------------------------------- Spec ------------------------------------
