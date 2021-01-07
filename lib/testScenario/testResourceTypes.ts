@@ -26,6 +26,7 @@ export type TestStepArmTemplateDeployment = TestStepBase & {
 export type TestStepExampleFileRestCall = TestStepBase & {
   type: "exampleFile";
   exampleFile: string;
+  operationId?: string;
   replace: ExampleReplace[];
 
   operation: Operation;
@@ -144,6 +145,9 @@ export const TestDefinitionSchema: Schema & {
             $ref: "#/definitions/ExampleReplace",
           },
           default: [],
+        },
+        operationId: {
+          type: "string"
         },
       }
     },

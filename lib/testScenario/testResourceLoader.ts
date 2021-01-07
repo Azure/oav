@@ -46,13 +46,14 @@ export class TestResourceLoader implements Loader<any> {
   private transformContext: TransformContext;
   private schemaValidator: SchemaValidator;
   private validateTestResourceFile: ValidateFunction;
-  private exampleToOperation: Map<string, Operation> = new Map();
+  private exampleToOperation: Map<string, { [operationId: string]: Operation }> = new Map();
   private initialized: boolean = false;
 
   constructor(private opts: TestResourceLoaderOption) {
     setDefaultOpts(opts, {
       swaggerFilePaths: [],
       eraseXmsExamples: false,
+      eraseDescription: false,
       skipResolveRefKeys: ["x-ms-examples"]
     })
 
@@ -91,18 +92,24 @@ export class TestResourceLoader implements Loader<any> {
 
     for (const spec of allSpecs) {
       traverseSwagger(spec, {
-        onOperation: (operation: Operation) => {
+        onOperation: (operation) => {
+          if (operation.operationId === undefined) {
+            throw new Error(`OperationId is undefined for operation ${operation._method} ${operation._path._pathTemplate}`);
+          }
+
           const xMsExamples = operation["x-ms-examples"] ?? {};
           for (const exampleName of Object.keys(xMsExamples)) {
             const example = xMsExamples[exampleName];
             if (typeof example.$ref !== "string") {
-              throw new Error(`Example ${exampleName} doesn't use $ref`);
+              throw new Error(`Example doesn't use $ref: ${exampleName}`);
             }
             const exampleFilePath = this.jsonLoader.getRealPath(example.$ref);
-            if (this.exampleToOperation.has(exampleFilePath)) {
-              throw new Error(`Example ${exampleFilePath} is referenced by two operations`);
+            let opMap = this.exampleToOperation.get(exampleFilePath);
+            if (opMap === undefined) {
+              opMap = {};
+              this.exampleToOperation.set(exampleFilePath, opMap);
             }
-            this.exampleToOperation.set(exampleFilePath, operation);
+            opMap[operation.operationId] = operation;
           }
         },
       });
@@ -182,11 +189,23 @@ export class TestResourceLoader implements Loader<any> {
   ) {
     step.type = "exampleFile";
     const filePath = pathJoin(dirname(testDef._filePath), step.exampleFile);
-    const operation = this.exampleToOperation.get(filePath);
-    if (operation === undefined) {
-      throw new Error(`Example file ${filePath} is not referenced by any operation`);
+    const opMap = this.exampleToOperation.get(filePath);
+    if (opMap === undefined) {
+      throw new Error(`Example file is not referenced by any operation: ${filePath}`);
     }
-    step.operation = operation;
+
+    if (step.operationId !== undefined) {
+      step.operation = opMap[step.operationId];
+      if (step.operation === undefined) {
+        throw new Error(`Example file with operationId is not found in swagger: ${step.operationId} ${filePath}`);
+      }
+    } else {
+      const ops = Object.values(opMap);
+      if (ops.length > 1) {
+        throw new Error(`Example file is refereced by multiple operation: ${Object.keys(opMap)} ${filePath}`);
+      }
+      step.operation = ops[0];
+    }
 
     const fileContent = await this.fileLoader.load(filePath);
     step.exampleFileContent = JSON.parse(fileContent);

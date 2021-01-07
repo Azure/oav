@@ -148,6 +148,7 @@ export interface Operation {
   provider?: string;
 
   _path: Path;
+  _method: LowerHttpMethods;
 
   _queryTransform?: MutableStringMap<TransformFn>;
   _headerTransform?: MutableStringMap<TransformFn>;

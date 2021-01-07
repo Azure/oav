@@ -2,6 +2,7 @@ import { TestResourceLoader } from "./testResourceLoader";
 
 const main = async () => {
   const loader = new TestResourceLoader({
+    useJsonParser: false,
     checkUnderFileRoot: false,
     fileRoot: "/home/htc/azure-rest-api-specs/specification/operationalinsights/resource-manager",
     swaggerFilePaths: [
