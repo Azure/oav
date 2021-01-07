@@ -1,0 +1,43 @@
+{
+    "liveRequest": {
+        "headers": {
+            "connection": "keep-alive",
+            "accept": "application/json",
+            "accept-Encoding": "gzip;deflate",
+            "accept-Language": "en-US",
+            "host": "management.azure.com",
+            "user-Agent": "python/3.6.10;(Linux-4.15.0-1096-azure-x86_64-with-debian-buster-sid);msrest/0.6.18;msrest_azure/0.6.3;azure-mgmt-sql/0.21.0;Azure-SDK-For-Python;AZURECLI/2.12.1;(DEB)",
+            "x-ms-client-request-id": "13d6122e-1727-11eb-8d07-000d3a2682f8",
+            "commandName": "sql db export",
+            "parameterSetName": "-g -s -n -p -u --storage-key --storage-key-type --storage-uri --out",
+            "x-ms-arm-resource-system-data": "{\"lastModifiedBy\":\"ca8e24d3-f95b-426f-a20c-938a48d0caa8\",\"lastModifiedByType\":\"Application\",\"lastModifiedAt\":\"2020-10-26T01:03:37.6162045Z\"}"
+        },
+        "method": "POST",
+        "url": "/subscriptions/8bfdf431-1de2-4aa6-b4e8-42b1a98da897/resourceGroups/ulimit/providers/Microsoft.Sql/servers/ulimitsqlserver/databases/tempCNMdb/export?api-version=2020-02-02-preview",
+        "body": {
+            "storageKeyType": "StorageAccessKey",
+            "storageKey": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "storageUri": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "administratorLogin": "aaa",
+            "administratorLoginPassword": "aaaaaaaaaaaaaa"
+        },
+        "query": {
+            "api-version": "2020-02-02-preview"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "202",
+        "headers": {
+            "retry-After": "15",
+            "azure-AsyncOperation": "https://management.azure.com/subscriptions/8bfdf431-1de2-4aa6-b4e8-42b1a98da897/providers/Microsoft.Sql/locations/westeurope/importExportAzureAsyncOperation/97cac3bd-3822-4415-ab1c-c95ef188ee93-ulimitsqlserver?api-version=2020-02-02-preview",
+            "x-ms-request-id": "1b65888d-562d-43aa-a108-85e36c0d5406",
+            "date": "Mon, 26 Oct 2020 01:03:37 GMT",
+            "location": "https://management.azure.com/subscriptions/8bfdf431-1de2-4aa6-b4e8-42b1a98da897/providers/Microsoft.Sql/locations/westeurope/importExportOperationResults/97cac3bd-3822-4415-ab1c-c95ef188ee93-ulimitsqlserver?api-version=2020-02-02-preview",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "operation": "aaaaaa",
+            "startTime": "2020-10-26T01:03:38.1819377Z"
+        }
+    }
+}

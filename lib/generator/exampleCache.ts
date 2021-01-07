@@ -1,5 +1,20 @@
+import {RuleValidatorFunc } from "./exampleRule";
+
 /* tslint:disable:max-classes-per-file */
-export class MockerCache {
+interface BaseCache {
+  get(modelName:string):CacheItem|undefined
+  set(modelName: string, example: CacheItem):void
+  has(modelName: string):boolean
+}
+
+const isBaseResource = (cacheKey:string) => {
+  const pieces = cacheKey.split("/")
+  if(pieces.length < 2) {
+    return false;
+  }
+  return ["resource","proxyresource","trackedresource","azureentityresource"].some(r => r === pieces[pieces.length-1].toLowerCase())
+}
+export class MockerCache implements BaseCache {
   private caches = new Map<string, CacheItem>();
 
   public get(modelName: string) {
@@ -20,58 +35,85 @@ export class MockerCache {
     if (!schema || !example) {
       return;
     }
-    if ("$ref" in schema && !this.has(schema.$ref.split("#")[1])) {
-      this.caches.set(schema.$ref.split("#")[1], example);
+    const cacheKey = schema.$ref && schema.$ref.includes("#") ? schema.$ref.split("#")[1] : undefined
+    if (cacheKey && !isBaseResource(cacheKey) && !this.has(cacheKey)) {
+      this.set(cacheKey, example);
     }
   }
 }
-export class PayloadCache {
+export class PayloadCache implements BaseCache {
   private requestCaches = new Map<string, CacheItem>();
   private responseCaches = new Map<string, CacheItem>();
   private mergedCaches = new Map<string, CacheItem>();
-  public has(modelName: string, isRequest: boolean) {
+
+  private hasByDirection(modelName: string, isRequest: boolean) {
     const cache = isRequest ? this.requestCaches : this.responseCaches;
     return cache.has(modelName);
   }
-  public set(modelName: string, example: CacheItem, isRequest: boolean) {
+  private setByDirection(modelName: string, example: CacheItem, isRequest: boolean) {
     const cache = isRequest ? this.requestCaches : this.responseCaches;
     if (!cache.has(modelName)) {
       cache.set(modelName, example);
     }
   }
-  public get(modelName: string, isRequest: boolean) {
+  private getByDirection(modelName: string, isRequest: boolean) {
     const cache = isRequest ? this.requestCaches : this.responseCaches;
     if (cache.has(modelName)) {
       return cache.get(modelName);
     }
     return undefined;
   }
-  public getMergedCache(modelName: string) {
+  public get(modelName: string) {
     if (this.mergedCaches.has(modelName)) {
       return this.mergedCaches.get(modelName);
     }
     return undefined;
   }
-  public checkAndCache(schema: any, example: CacheItem, isRequest: boolean) {
+
+  public set(key: string, value: CacheItem) {
+    if (!this.mergedCaches.has(key)) {
+      this.mergedCaches.set(key, value);
+    }
+  }
+
+  public has(modelName: string) {
+    return this.mergedCaches.has(modelName);
+  }
+
+  public checkAndCache(schema: any, example: CacheItem|undefined, isRequest: boolean) {
     if (!schema || !example) {
       return;
     }
-    if ("$ref" in schema && !this.has(schema.$ref.split("#")[1], isRequest)) {
-      this.set(schema.$ref.split("#")[1], example, isRequest);
+    const cacheKey = schema.$ref && schema.$ref.includes("#") ? schema.$ref.split("#")[1] : undefined
+    if (cacheKey && !isBaseResource(cacheKey) && !this.hasByDirection(cacheKey, isRequest)) {
+      this.setByDirection(cacheKey, example, isRequest);
     }
   }
   /**
-   *
+   *  picking value priority : non-mocked value > mocked value , target value > source value  
    * @param target The target item that to be merged into
    * @param source The source item that needs to merge
    */
   public mergeItem(target: CacheItem, source: CacheItem): CacheItem {
     const result = target;
+    if (!source || !target) {
+      return target ? target :source
+    }
+
     if (Array.isArray(result.child) && Array.isArray(source.child)) {
-      if (result.child.length < source.child.length) {
-        result.child = (result.child as CacheItem[]).concat(
-          source.child.slice(result.child.length)
-        );
+      const resultArr = result.child as CacheItem[];
+      const sourceArr = source.child as CacheItem[];
+      if (resultArr.length === 0 || sourceArr.length === 0) {
+        return resultArr.length === 0 ? source : result
+      }
+      // only when source is not mocked and target is mocked , choose source cache.
+      if (resultArr[0].isMocked && !sourceArr[0].isMocked) {
+        return source
+      }
+      for ( let i = 0; i < resultArr.length; i++) {
+        if (i < sourceArr.length) {
+          resultArr[i] = this.mergeItem(resultArr[i], sourceArr[i]);
+        }
       }
     } else if (source.child && result.child) {
       const resultObj = result.child as CacheItemObject;
@@ -84,7 +126,10 @@ export class PayloadCache {
         }
       }
     }
-    return result;
+    else {
+      return result.isMocked && !source.isMocked ? source : result;
+    }
+    return result
   }
 
   /**
@@ -93,75 +138,32 @@ export class PayloadCache {
    */
   public mergeCache() {
     for (const [key, requestCache] of this.requestCaches.entries()) {
-      if (this.has(key, false) && !requestCache.isLeaf) {
-        const responseCache = this.get(key, false);
+      if (this.hasByDirection(key, false) && !requestCache.isLeaf) {
+        const responseCache = this.getByDirection(key, false);
         if (responseCache) {
           if (responseCache.isLeaf) {
-            console.error(`The response cache and request cache is inconsistent! key:${key}`);
+            console.error(`the response cache and request cache is inconsistent! key:${key}`);
           } else {
             const mergedCache = this.mergeItem(requestCache, responseCache);
-            this.setMergedCache(key, mergedCache);
+            this.set(key, mergedCache);
             continue;
           }
         }
       }
-      this.setMergedCache(key, requestCache);
+      this.set(key, requestCache);
     }
     for (const [key, responseCache] of this.responseCaches.entries()) {
-      if (!this.has(key, true)) {
-        this.setMergedCache(key, responseCache);
+      if (!this.hasByDirection(key, true)) {
+        this.set(key, responseCache);
       }
     }
     this.requestCaches.clear();
     this.responseCaches.clear();
   }
-  private setMergedCache(key: string, value: CacheItem) {
-    if (!this.mergedCaches.has(key)) {
-      this.mergedCaches.set(key, value);
-    }
-  }
+
 }
 
-const shouldSkip = (cache: CacheItem | undefined, isRequest: boolean) => {
-  return (isRequest && cache?.options?.isReadonly) || (!isRequest && cache?.options?.isXmsSecret);
-};
-
-export const reBuildExample = (cache: CacheItem | undefined, isRequest: boolean): any => {
-  if (!cache) {
-    return undefined;
-  }
-  if (shouldSkip(cache, isRequest)) {
-    return undefined;
-  }
-  if (cache.isLeaf) {
-    return cache.value;
-  }
-  if (Array.isArray(cache.child)) {
-    const result = [];
-    for (const item of cache.child) {
-      if (shouldSkip(cache, isRequest)) {
-        continue;
-      }
-      result.push(reBuildExample(item, isRequest));
-    }
-    return result;
-  } else if (cache.child) {
-    const result: any = {};
-    for (const key of Object.keys(cache.child)) {
-      if (shouldSkip(cache, isRequest)) {
-        continue;
-      }
-      const value = reBuildExample(cache.child[key], isRequest);
-      if (value !== undefined) {
-        result[key] = value;
-      }
-    }
-    return result;
-  }
-  return undefined;
-};
-
-type CacheItemValue = string | number | object;
+type CacheItemValue = string | number | object | boolean;
 interface CacheItemObject {
   [index: string]: CacheItem;
 }
@@ -169,19 +171,25 @@ type CacheItemChild = CacheItemObject | CacheItem[];
 interface CacheItemOptions {
   isReadonly?: boolean;
   isXmsSecret?: boolean;
+  isRequired?: boolean;
+  isWriteOnly?:boolean;
 }
 export interface CacheItem {
   value?: CacheItemValue;
   child?: CacheItemChild;
   options?: CacheItemOptions;
   isLeaf: boolean;
+  required?: string[];
+  isMocked?:boolean
 }
 
 export const buildItemOption = (schema: any) => {
   if (schema) {
     const isReadonly = !!schema.readOnly;
     const isXmsSecret = !!schema["x-ms-secret"];
-    if (!isReadonly && !isXmsSecret) {
+    const isRequired = !!schema.required;
+    const isWriteOnly = schema["x-ms-mutability"] ? schema["x-ms-mutability"].indexOf("read") === -1 : false
+    if (!isReadonly && !isXmsSecret && !isRequired && !isWriteOnly) {
       return undefined;
     }
     let option: CacheItemOptions = {};
@@ -190,6 +198,12 @@ export const buildItemOption = (schema: any) => {
     }
     if (isXmsSecret) {
       option = { ...option, isXmsSecret: true };
+    }
+    if (isWriteOnly) {
+      option = { ...option, isWriteOnly: true };
+    }
+    if (schema.required === true) {
+      option = {...option, isRequired: true}
     }
     return option;
   }
@@ -223,3 +237,43 @@ export const createTrunkItem = (
   }
   return item;
 };
+
+export const reBuildExample = (
+  cache: CacheItem | undefined,
+  isRequest: boolean,
+  schema: any,
+  validator:RuleValidatorFunc | undefined
+): any => {
+  if (!cache) {
+    return undefined;
+  }
+  if (validator && !validator({schemaCache:cache, isRequest })) {
+    return undefined;
+  }
+  if (cache.isLeaf) {
+    return cache.value;
+  }
+  if (Array.isArray(cache.child)) {
+    const result = [];
+    for (const item of cache.child) {
+      if (validator && !validator({ schemaCache: item, isRequest,schema })) {
+        continue;
+      }
+      result.push(reBuildExample(item, isRequest,schema,validator,));
+    }
+    return result;
+  } else if (cache.child) {
+    const result: any = {};
+    for (const key of Object.keys(cache.child)) {
+      if (!validator || validator({ schemaCache:cache, propertyName: key, isRequest, schema})) {
+        const value = reBuildExample(cache.child[key], isRequest, schema,validator);
+        if (value !== undefined) {
+          result[key] = value;
+        }
+      }
+    }
+    return result;
+  }
+  return undefined;
+};
+

@@ -1,0 +1,58 @@
+{
+    "liveRequest": {
+        "headers": {
+            "x-ms-request-id": "71088dbb-1ab8-45e8-9af9-057295ac60c9",
+            "date": "Fri, 02 Oct 2020 12:20:06 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "method": "GET",
+        "url": "/subscriptions/e0dfc9a2-b6f8-496a-9d37-0339a15c61a7/resourceGroups/dservplatform-tst-rg/providers/Microsoft.Sql/managedInstances/dservplatform-tst-sql-srvmi/databases?api-version=2020-02-02-preview",
+        "query": {
+            "api-version": "2020-02-02-preview"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "200",
+        "headers": {
+            "x-ms-request-id": "71088dbb-1ab8-45e8-9af9-057295ac60c9",
+            "date": "Fri, 02 Oct 2020 12:20:06 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "value": [
+                {
+                    "properties": {
+                        "collation": "aaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                        "status": "Online",
+                        "creationDate": "2020-01-21T09:48:12.347Z",
+                        "earliestRestorePoint": "2020-09-25T12:20:07.763173Z",
+                        "defaultSecondaryLocation": "aaaaaaaaaaa"
+                    },
+                    "location": "aaaaaaaaaa",
+                    "tags": {
+                        "SecurexArchitectureBuildingBlock": "aaaaaaaaaaaaaaaaaaaaaa"
+                    },
+                    "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                    "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                    "type": "Microsoft.Sql/managedInstances/databases"
+                },
+                {
+                    "properties": {
+                        "collation": "aaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                        "status": "Online",
+                        "creationDate": "2020-01-21T09:46:50.19Z",
+                        "earliestRestorePoint": "2020-09-25T12:20:07.763173Z",
+                        "defaultSecondaryLocation": "aaaaaaaaaaa"
+                    },
+                    "location": "aaaaaaaaaa",
+                    "tags": {
+                        "SecurexArchitectureBuildingBlock": "aaaaaaaaaaaaaaaaaaaaaa"
+                    },
+                    "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                    "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                    "type": "Microsoft.Sql/managedInstances/databases"
+                }
+            ]
+        }
+    }
+}

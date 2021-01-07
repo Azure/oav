@@ -1,0 +1,37 @@
+{
+    "liveRequest": {
+        "headers": {
+            "accept-Language": "en-US",
+            "host": "management.azure.com",
+            "user-Agent": "FxVersion/4.7.3163.0;OSName/Windows;OSVersion/Microsoft.Windows.10.0.9200.;Microsoft.Azure.Management.SignalR.SignalRManagementClient/1.1.0.0;AzurePowershell/v0.0.0;PSVersion/v5.1.15063.726",
+            "x-ms-client-request-id": "34c2313d-d286-4475-818d-57165def9bbb",
+            "commandName": "Get-AzSignalRKey",
+            "parameterSetName": "ResourceGroupParameterSet",
+            "x-ms-arm-resource-system-data": "{\"lastModifiedBy\":\"4376d4d4-6ea5-45d7-86a6-22cba9616051\",\"lastModifiedByType\":\"Application\",\"lastModifiedAt\":\"2020-11-04T04:31:32.3639024Z\"}"
+        },
+        "method": "POST",
+        "url": "/subscriptions/3b2aa0af-be3e-4e0d-83f1-4f6db81bb7f8/resourceGroups/Dev-0Infrastructure-ResourceGroup-Common/providers/Microsoft.SignalRService/signalR/E2E-0Infrastructure-SignalR-QSite/listKeys?api-version=2020-05-01",
+        "query": {
+            "api-version": "2020-05-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "200",
+        "headers": {
+            "transfer-Encoding": "chunked",
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "x-content-type-options": "nosniff",
+            "x-ms-client-request-id": "34c2313d-d286-4475-818d-57165def9bbb",
+            "x-rp-server-mvid": "e36e6838-7779-4ba2-b738-62cf73818870",
+            "x-ms-request-id": "aa363d72-ae9b-4135-80c8-55842d72bc1d",
+            "date": "Wed, 04 Nov 2020 04:31:32 GMT",
+            "server": "Kestrel"
+        },
+        "body": {
+            "primaryKey": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "secondaryKey": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "primaryConnectionString": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "secondaryConnectionString": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+    }
+}

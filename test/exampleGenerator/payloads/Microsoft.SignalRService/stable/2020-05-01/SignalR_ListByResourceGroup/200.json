@@ -1,0 +1,86 @@
+{
+    "liveRequest": {
+        "headers": {
+            "accept-Language": "en-US",
+            "host": "management.azure.com",
+            "user-Agent": "FxVersion/4.700.20.26901;OSName/Windows;OSVersion/Microsoft.Windows.6.3.9600;Microsoft.Azure.Management.SignalR.SignalRManagementClient/1.1.0.0",
+            "x-ms-client-request-id": "ec3e11ed-52a3-4d11-9e23-0f59203fe9e4"
+        },
+        "method": "GET",
+        "url": "/subscriptions/264ee3dc-0301-47b0-aa82-f71b131f502b/resourceGroups/inflow-cloud-staging/providers/Microsoft.SignalRService/signalR?api-version=2020-05-01",
+        "query": {
+            "api-version": "2020-05-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "200",
+        "headers": {
+            "transfer-Encoding": "chunked",
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "x-content-type-options": "nosniff",
+            "x-ms-client-request-id": "ec3e11ed-52a3-4d11-9e23-0f59203fe9e4",
+            "x-rp-server-mvid": "e36e6838-7779-4ba2-b738-62cf73818870",
+            "x-ms-request-id": "4bc9738e-8785-4c44-a5ef-1c28fc4ba1f5",
+            "date": "Wed, 04 Nov 2020 04:43:18 GMT",
+            "server": "Kestrel"
+        },
+        "body": {
+            "value": [
+                {
+                    "sku": {
+                        "name": "aaaaaaaaaaa",
+                        "tier": "Standard",
+                        "size": "aa",
+                        "capacity": 1
+                    },
+                    "properties": {
+                        "provisioningState": "Succeeded",
+                        "externalIP": "aaaaaaaaaaaaa",
+                        "hostName": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                        "publicPort": 443,
+                        "serverPort": 443,
+                        "version": "aaa",
+                        "privateEndpointConnections": [],
+                        "hostNamePrefix": "aaaaaaaaaaaaaaaaaaaa",
+                        "features": [
+                            {
+                                "flag": "ServiceMode",
+                                "value": "aaaaaaa",
+                                "properties": {}
+                            }
+                        ],
+                        "cors": {
+                            "allowedOrigins": [
+                                "a"
+                            ]
+                        },
+                        "upstream": {
+                            "templates": null
+                        },
+                        "networkACLs": {
+                            "defaultAction": "Deny",
+                            "publicNetwork": {
+                                "allow": [
+                                    "ServerConnection",
+                                    "ClientConnection",
+                                    "RESTAPI"
+                                ],
+                                "deny": null
+                            },
+                            "privateEndpoints": []
+                        }
+                    },
+                    "kind": "SignalR",
+                    "location": "aaaaaaaaa",
+                    "tags": {
+                        "displayName": "aaaaaaa",
+                        "environment": "aaaaaaa"
+                    },
+                    "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                    "name": "aaaaaaaaaaaaaaaaaaaa",
+                    "type": "Microsoft.SignalRService/SignalR"
+                }
+            ]
+        }
+    }
+}

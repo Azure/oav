@@ -1,0 +1,43 @@
+{
+    "liveRequest": {
+        "headers": {
+            "accept": "application/json",
+            "cookie": "sendgrid_frontend=b9a3fc5eda2479ae51751dcaf9024c3d:ded4ccad278e8be7f5e552c1a1a73ac6f3f67412",
+            "host": "westus2.management.azure.com",
+            "user-Agent": "AzureResourceGraph/1.20.0.0",
+            "x-ms-client-request-id": "a828c64b-d640-4bdc-9e74-942badd3f7cd"
+        },
+        "method": "GET",
+        "url": "/subscriptions/5b4b650e-28b9-4790-b3ab-ddbd88d727c4/resourceGroups/AzureEventGridRunnerRGCentralUS/providers/Microsoft.EventGrid/topics/egcrudrunnerqueuetopic1fbd82c5CentralUS?api-version=2020-06-01&MaskCMKEnabledProperties=true",
+        "query": {
+            "api-version": "2020-06-01",
+            "MaskCMKEnabledProperties": "true"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "200",
+        "headers": {
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "x-ms-request-id": "2c29bbc1-dd3e-465a-82db-c45034b36a87",
+            "date": "Thu, 29 Oct 2020 02:25:14 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "properties": {
+                "provisioningState": "Succeeded",
+                "endpoint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "inputSchema": "EventGridSchema",
+                "metricResourceId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "publicNetworkAccess": "Enabled"
+            },
+            "location": "aaaaaaaaaa",
+            "tags": {
+                "NewTag1": "aaaaaaaaa",
+                "NewTag2": "aaaaaaaaa"
+            },
+            "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "name": "egcrudrunnerqueuetopic1fbd82c5CentralUS",
+            "type": "Microsoft.EventGrid/topics"
+        }
+    }
+}

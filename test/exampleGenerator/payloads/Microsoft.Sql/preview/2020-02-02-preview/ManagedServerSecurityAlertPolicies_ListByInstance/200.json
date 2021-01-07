@@ -1,0 +1,35 @@
+{
+    "liveRequest": {
+        "headers": {
+            "x-ms-request-id": "fdd3adb7-48ae-4e5a-a79f-01942c6c783e",
+            "date": "Fri, 02 Oct 2020 11:19:48 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "method": "GET",
+        "url": "/subscriptions/2a87b660-97e1-4229-8b97-a796874830d0/resourceGroups/WebCAT_Irag_DEV_Testing/providers/Microsoft.Sql/managedInstances/webcat-iraq-dev/securityAlertPolicies?api-version=2020-02-02-preview",
+        "query": {
+            "api-version": "2020-02-02-preview"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "200",
+        "headers": {
+            "x-ms-request-id": "fdd3adb7-48ae-4e5a-a79f-01942c6c783e",
+            "date": "Fri, 02 Oct 2020 11:19:48 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "value": [
+                {
+                    "properties": {
+                        "state": "Enabled",
+                        "creationTime": "2020-05-06T14:37:15.927Z"
+                    },
+                    "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                    "name": "aaaaaaa",
+                    "type": "Microsoft.Sql/managedInstances/securityAlertPolicies"
+                }
+            ]
+        }
+    }
+}

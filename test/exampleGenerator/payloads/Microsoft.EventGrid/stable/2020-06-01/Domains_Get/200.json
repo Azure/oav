@@ -1,0 +1,42 @@
+{
+    "liveRequest": {
+        "headers": {
+            "accept": "application/json",
+            "host": "westus2.management.azure.com",
+            "user-Agent": "AzureResourceGraph/1.20.0.0",
+            "x-ms-client-request-id": "bd17c10d-32f0-406f-8a8c-ac0fa436ab35"
+        },
+        "method": "GET",
+        "url": "/subscriptions/5b4b650e-28b9-4790-b3ab-ddbd88d727c4/resourceGroups/AzureEventGridRunnerRGKoreaSouth/providers/Microsoft.EventGrid/domains/egcrudrunnerdomain2151d5baKoreaSouth?api-version=2020-06-01&MaskCMKEnabledProperties=true",
+        "query": {
+            "api-version": "2020-06-01",
+            "MaskCMKEnabledProperties": "true"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "200",
+        "headers": {
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "x-ms-request-id": "489a732d-30ac-42b5-bd20-bd8d65710a5d",
+            "date": "Thu, 29 Oct 2020 02:22:17 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "properties": {
+                "provisioningState": "Succeeded",
+                "endpoint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "inputSchema": "EventGridSchema",
+                "metricResourceId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "publicNetworkAccess": "Enabled"
+            },
+            "location": "aaaaaaaaaaa",
+            "tags": {
+                "NewTag1": "aaaaaaaaa",
+                "NewTag2": "aaaaaaaaa"
+            },
+            "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "name": "egcrudrunnerdomain2151d5baKoreaSouth",
+            "type": "Microsoft.EventGrid/domains"
+        }
+    }
+}

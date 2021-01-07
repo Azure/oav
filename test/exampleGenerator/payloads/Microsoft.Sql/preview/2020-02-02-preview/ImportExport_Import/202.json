@@ -1,0 +1,43 @@
+{
+    "liveRequest": {
+        "headers": {
+            "connection": "keep-alive",
+            "accept": "application/json",
+            "accept-Encoding": "gzip;deflate",
+            "accept-Language": "en-US",
+            "host": "management.azure.com",
+            "user-Agent": "python/3.6.8;(Windows-10-10.0.14393-SP0);msrest/0.6.18;VSTS_f047b45b-c265-4a60-93c6-18eb371a42d9_build_80_0;msrest_azure/0.6.3;azure-mgmt-sql/0.21.0;Azure-SDK-For-Python;AZURECLI/2.12.1;(MSI)",
+            "x-ms-client-request-id": "3db6538c-1513-11eb-9ce1-00155d00043a",
+            "commandName": "sql db import",
+            "parameterSetName": "-s -n -u -p -g --storage-key --storage-key-type --storage-uri",
+            "x-ms-arm-resource-system-data": "{\"lastModifiedBy\":\"ca6a3c77-ae18-455a-b313-0a4551903543\",\"lastModifiedByType\":\"Application\",\"lastModifiedAt\":\"2020-10-23T09:36:35.7860958Z\"}"
+        },
+        "method": "POST",
+        "url": "/subscriptions/61e25dca-a55a-45ee-9a73-80b5b16e99a2/resourceGroups/branchtestgroup/providers/Microsoft.Sql/servers/armdeploy/databases/ABP-26339Instance1/import?api-version=2020-02-02-preview",
+        "body": {
+            "storageKeyType": "StorageAccessKey",
+            "storageKey": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "storageUri": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "administratorLogin": "aaaaaaaa",
+            "administratorLoginPassword": "aaaaaaaa"
+        },
+        "query": {
+            "api-version": "2020-02-02-preview"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "202",
+        "headers": {
+            "retry-After": "15",
+            "azure-AsyncOperation": "https://management.azure.com/subscriptions/61e25dca-a55a-45ee-9a73-80b5b16e99a2/providers/Microsoft.Sql/locations/uksouth/importExportAzureAsyncOperation/227eb029-c34b-4bda-860e-8eff9cfcbdac-armdeploy?api-version=2020-02-02-preview",
+            "x-ms-request-id": "03f0195f-7241-4a2c-b774-b32ec5f85fbe",
+            "date": "Fri, 23 Oct 2020 09:36:35 GMT",
+            "location": "https://management.azure.com/subscriptions/61e25dca-a55a-45ee-9a73-80b5b16e99a2/providers/Microsoft.Sql/locations/uksouth/importExportOperationResults/227eb029-c34b-4bda-860e-8eff9cfcbdac-armdeploy?api-version=2020-02-02-preview",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "operation": "aaaaaa",
+            "startTime": "2020-10-23T09:36:36.2720164Z"
+        }
+    }
+}

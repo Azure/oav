@@ -1,0 +1,40 @@
+{
+    "liveRequest": {
+        "headers": {
+            "x-ms-request-id": "49f45c77-3d13-4b64-b140-ac8d5001deb5",
+            "date": "Tue, 29 Sep 2020 11:21:43 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "method": "GET",
+        "url": "/subscriptions/ec26575a-89c8-4f80-be00-51a3228017b2/resourceGroups/sqlmitestRG/providers/Microsoft.Sql/locations/Australia East/serverTrustGroups/sqlmigrp?api-version=2020-02-02-preview",
+        "query": {
+            "api-version": "2020-02-02-preview"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "200",
+        "headers": {
+            "x-ms-request-id": "49f45c77-3d13-4b64-b140-ac8d5001deb5",
+            "date": "Tue, 29 Sep 2020 11:21:43 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "properties": {
+                "groupMembers": [
+                    {
+                        "serverId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                    },
+                    {
+                        "serverId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                    }
+                ],
+                "trustScopes": [
+                    "GlobalTransactions"
+                ]
+            },
+            "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "name": "aaaaaaaa",
+            "type": "Microsoft.Sql/locations/serverTrustGroups"
+        }
+    }
+}

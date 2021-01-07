@@ -1,0 +1,42 @@
+{
+    "liveRequest": {
+        "headers": {
+            "accept-Encoding": "gzip;deflate",
+            "host": "management.azure.com",
+            "user-Agent": "PolicyScan",
+            "x-ms-client-request-id": "efbe87f8-6c91-4181-862e-40855c6937cc"
+        },
+        "method": "GET",
+        "url": "/subscriptions/89c95378-a0e1-4def-92dc-15f90d1a3a08/resourceGroups/IT-Meena-ResourceGroup-DEV/providers/Microsoft.EventGrid/topics?api-version=2020-06-01",
+        "query": {
+            "api-version": "2020-06-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "200",
+        "headers": {
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "x-ms-request-id": "7c3ecd9c-0091-4333-a62c-5434423cbcda",
+            "date": "Thu, 22 Oct 2020 23:56:13 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "value": [
+                {
+                    "properties": {
+                        "provisioningState": "Succeeded",
+                        "endpoint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                        "inputSchema": "EventGridSchema",
+                        "metricResourceId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                        "publicNetworkAccess": "Enabled"
+                    },
+                    "location": "aaaaaaaaaaaaaa",
+                    "tags": {},
+                    "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                    "name": "sqldbpermissions-eg",
+                    "type": "Microsoft.EventGrid/topics"
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,39 @@
+{
+    "liveRequest": {
+        "headers": {
+            "accept-Encoding": "gzip;deflate",
+            "accept-Language": "en",
+            "host": "management.azure.com",
+            "x-ms-client-request-id": "c6f0f6ed-90f7-4bf5-aa3f-6cd09888426b",
+            "x-ms-arm-request-tracking-id": "17d7ec07-d2a3-42b6-9f80-464d1d5e0026",
+            "x-ms-client-location": "westeurope",
+            "x-ms-arm-service-request-id": "90a4c02e-9f1b-4725-a1be-9cb3ca3eb743",
+            "x-ms-activity-vector": "IN.01.IN.0X"
+        },
+        "method": "GET",
+        "url": "/subscriptions/11d7f2f2-b250-45c9-9a98-649b4e0d9fa3/resourcegroups/VISRA-Playground2/providers/Microsoft.Sql/servers/visra-playground2-sqlserver/databases/testdb/backupShortTermRetentionPolicies?api-version=2020-02-02-preview",
+        "query": {
+            "api-version": "2020-02-02-preview"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "200",
+        "headers": {
+            "x-ms-request-id": "7b62e093-a93a-4986-adf1-e01fc81e7120",
+            "date": "Tue, 13 Oct 2020 12:31:37 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "value": [
+                {
+                    "properties": {
+                        "retentionDays": 7
+                    },
+                    "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                    "name": "aaaaaaa",
+                    "type": "Microsoft.Sql/servers/databases/backupShortTermRetentionPolicies"
+                }
+            ]
+        }
+    }
+}

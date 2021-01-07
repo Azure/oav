@@ -1,0 +1,31 @@
+{
+    "liveRequest": {
+        "headers": {
+            "accept-Encoding": "gzip;deflate",
+            "accept-Language": "en",
+            "host": "management.azure.com",
+            "x-ms-client-session-id": "b2f820e14cf549c7b00aa58e5833e9b9",
+            "x-ms-client-request-id": "6f157cf7-3fe4-4312-9553-2179b7a3600c",
+            "x-ms-arm-request-tracking-id": "1326e0b8-df59-4b11-b916-6389ccfc35b3",
+            "x-ms-client-location": "westeurope",
+            "x-ms-arm-service-request-id": "f2682300-0e66-448f-8e29-bb4c1095f79f",
+            "x-ms-activity-vector": "IN.01"
+        },
+        "method": "GET",
+        "url": "/subscriptions/2f60e214-1576-4d28-aa51-f53b44e6c9a2/resourceGroups/AZ-AS-EX-RGP-SEQ00060-PERMIT-VISION-POC/providers/Microsoft.Sql/managedInstances/pvpocsql/serverTrustGroups?api-version=2020-02-02-preview",
+        "query": {
+            "api-version": "2020-02-02-preview"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "200",
+        "headers": {
+            "x-ms-request-id": "0b0d927d-3761-449c-84e1-3ac801eb81c3",
+            "date": "Fri, 16 Oct 2020 10:41:37 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "value": []
+        }
+    }
+}

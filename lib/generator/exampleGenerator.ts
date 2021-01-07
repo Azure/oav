@@ -10,6 +10,17 @@ import { MockerCache, PayloadCache } from "./exampleCache";
 import SwaggerMocker from "./swaggerMocker";
 import Translator from "./translator";
 import * as util from "./util";
+import { AjvSchemaValidator } from "../swaggerValidator/ajvSchemaValidator";
+import { TransformContext, getTransformContext } from "../transform/context";
+import { xmsPathsTransformer } from "../transform/xmsPathsTransformer";
+import { resolveNestedDefinitionTransformer } from "../transform/resolveNestedDefinitionTransformer";
+import { referenceFieldsTransformer } from "../transform/referenceFieldsTransformer";
+import { discriminatorTransformer } from "../transform/discriminatorTransformer";
+import { allOfTransformer } from "../transform/allOfTransformer";
+import { noAdditionalPropertiesTransformer } from "../transform/noAdditionalPropertiesTransformer";
+import { applySpecTransformers, applyGlobalTransformers } from "../transform/transformer";
+import { ExampleRule, RuleSet } from "./exampleRule";
+import { log } from "../util/logging";
 const _ = deepdash(lodash);
 
 export default class Generator {
@@ -22,16 +33,33 @@ export default class Generator {
   private shouldMock: boolean;
   private mockerCache: MockerCache;
   private payloadCache: PayloadCache;
-
+  public readonly transformContext: TransformContext;
+  
   public constructor(specFilePath: string, payloadDir?: string) {
     this.shouldMock = payloadDir ? false : true;
     this.specFilePath = specFilePath;
     this.payloadDir = payloadDir;
-    this.jsonLoader = JsonLoader.create({});
+    this.jsonLoader = JsonLoader.create({
+      useJsonParser: false,
+      eraseXmsExamples: false
+    });
     this.mockerCache = new MockerCache();
     this.payloadCache = new PayloadCache();
-    this.swaggerMocker = new SwaggerMocker(this.jsonLoader, this.mockerCache);
-    this.translator = new Translator(this.jsonLoader, this.payloadCache);
+    this.swaggerMocker = new SwaggerMocker(this.jsonLoader, this.mockerCache,this.payloadCache);
+    this.translator = new Translator(
+      this.jsonLoader,
+      this.payloadCache,
+      this.shouldMock ? this.swaggerMocker : undefined
+    );
+    const schemaValidator = new AjvSchemaValidator(this.jsonLoader);
+    this.transformContext = getTransformContext(this.jsonLoader, schemaValidator, [
+      xmsPathsTransformer,
+      resolveNestedDefinitionTransformer,
+      referenceFieldsTransformer,
+      discriminatorTransformer,
+      allOfTransformer,
+      noAdditionalPropertiesTransformer
+    ]);
   }
 
   private getSpecItem(spec: any, operationId: string): any {
@@ -50,9 +78,17 @@ export default class Generator {
     return null;
   }
 
-  public async generateAll(): Promise<readonly ModelValidationError[]> {
-    this.spec = (await (this.jsonLoader.load(this.specFilePath) as unknown)) as SwaggerSpec;
+  public async load() {
+    this.spec = await(this.jsonLoader.load(this.specFilePath) as unknown) as SwaggerSpec;
+    applySpecTransformers(this.spec, this.transformContext);
+    applyGlobalTransformers(this.transformContext)
+    await this.cacheExistingExamples();
+  }
 
+  public async generateAll(): Promise<readonly ModelValidationError[]> {
+    if (!this.spec) {
+      await this.load();
+    }
     const errs: any[] = [];
     await traverseSwaggerAsync(this.spec, {
       onPath: async (apiPath, pathTemplate) => {
@@ -77,12 +113,113 @@ export default class Generator {
     return errs;
   }
 
+  public async cacheExistingExamples() {
+    if (!this.shouldMock) {
+      return
+    }
+    await traverseSwaggerAsync(this.spec, {
+      onOperation: async (operation: Operation, pathObject, methodName) => {
+        const pathName = pathObject._pathTemplate;
+        const specItem = {
+          path: pathName,
+          methodName,
+          content: operation
+        };
+        const examples = operation["x-ms-examples"] || undefined;
+        if (!examples) {
+          return
+        }
+ 
+        const operationId = operation.operationId 
+        /*
+        const validateErrors = await validate.validateExamples(this.specFilePath, operationId, {
+        });
+        if(validateErrors.length > 0) {
+          console.warn(`invalid examples for operation:${operationId}.`);
+          console.warn(validateErrors);
+          return
+        } */
+        for (const key of Object.keys(examples)) {
+          if (key.match(new RegExp(`^${operationId}_.*_Gen$`))) {
+            continue
+          }
+          const example = this.jsonLoader.resolveRefObj(examples[key]);
+          if (!example) {
+            continue
+          }
+          this.translator.extractParameters(specItem, example.parameters);
+          for (const code of Object.keys(operation.responses)) {
+            if (example.responses && example.responses[code]) {
+              this.translator.extractResponse(specItem,example.responses[code],code);
+            }
+          }
+        }
+        return true;
+      }
+    });
+    // reuse the payloadCache as exampleCache.
+    this.payloadCache.mergeCache()
+  }
+
+  private async generateExample( operationId: string,
+    specItem: any, rule: ExampleRule) {
+    
+    this.translator.setRule(rule);
+    this.swaggerMocker.setRule(rule);
+    let example 
+    console.log(`start generated example for ${operationId}, rule:${rule.ruleName}`);
+    if (!this.shouldMock) {
+      example = this.getExampleFromPayload(operationId, specItem);
+      if (!example) {
+        return [];
+      }
+    } else {
+      example = {
+        parameters: {},
+        responses: this.extractResponse(specItem, {})
+      };
+      this.swaggerMocker.mockForExample(
+        example,
+        specItem,
+        this.spec,
+        util.getBaseName(this.specFilePath).split(".")[0]
+      );
+    }
+
+    log.info(example);
+    const unifiedExample = this.unifyCommonProperty(example);
+    const newSpec = util.referenceExmInSpec(
+      this.specFilePath,
+      specItem.path,
+      specItem.methodName,
+      `${operationId}_${rule.exampleNamePostfix}_Gen`
+    );
+    util.updateExmAndSpecFile(
+      unifiedExample,
+      newSpec,
+      this.specFilePath,
+      `${operationId}_${rule.exampleNamePostfix}_Gen.json`
+    );
+
+    log.info(`start validating generated example for ${operationId}`);
+    const validateErrors = await validate.validateExamples(this.specFilePath, operationId, {
+      //   consoleLogLevel: "error"
+    });
+    if (validateErrors.length > 0) {
+      log.error(`the validation raised below error:`)
+      log.error(validateErrors);
+      return validateErrors;
+    }
+    console.log(`generated example for ${operationId}, rule:${rule.ruleName} successfully!`);
+    return []
+  }
+
   public async generate(
     operationId: string,
     specItem?: any
   ): Promise<readonly ModelValidationError[]> {
     if (!this.spec) {
-      this.spec = (await (this.jsonLoader.load(this.specFilePath) as unknown)) as SwaggerSpec;
+      await this.load()
     }
     if (!specItem) {
       specItem = this.getSpecItem(this.spec, operationId);
@@ -91,47 +228,23 @@ export default class Generator {
         return [];
       }
     }
-
-    const example = this.getExampleFromPayload(operationId, specItem);
-    if (!example) {
-      return [];
-    }
-    console.log(example);
-
-    if (this.shouldMock) {
-      this.swaggerMocker.mockForExample(
-        example,
-        specItem,
-        this.spec,
-        util.getBaseName(this.specFilePath).split(".")[0]
-      );
-      console.log(example);
-    }
-
-    const unifiedExample = this.unifyCommonProperty(example);
-
-    const newSpec = util.referenceExmInSpec(
-      this.specFilePath,
-      specItem.path,
-      specItem.methodName,
-      `${operationId}_Base`
-    );
-    util.updateExmAndSpecFile(
-      unifiedExample,
-      newSpec,
-      this.specFilePath,
-      `${operationId}_Base.json`
-    );
-
-    console.log(`start validating generated example for ${operationId}`);
-    const validateErrors = await validate.validateExamples(this.specFilePath, operationId, {
-      //   consoleLogLevel: "error",
+    const ruleSet: RuleSet = []
+    ruleSet.push({
+      exampleNamePostfix: "MaximumSet",
+      ruleName: "MaximumSet"
     });
-    // if (validateErrors.length > 0) {
-    //   console.error(validateErrors);
-    // }
-
-    return validateErrors;
+    ruleSet.push({
+      exampleNamePostfix: "MinimumSet",
+      ruleName: "MinimumSet"
+    });
+    for (const rule of ruleSet) {
+     
+      const error = await this.generateExample(operationId,specItem,rule)
+      if (error.length) {
+        return error
+      }
+    }
+    return []
   }
 
   private unifyCommonProperty(example: any) {
@@ -183,7 +296,7 @@ export default class Generator {
       example.responses,
       (value, key, parentValue, context) => {
         if (!parentValue) {
-          console.debug(`parent is null`);
+          log.warn(`parent is null`);
         }
         if (
           ["integer", "number", "string"].some((type) => typeof value === type) &&
@@ -234,19 +347,18 @@ export default class Generator {
 
   private getExampleFromPayload(operationId: string, specItem: any) {
     if (this.payloadDir) {
-      const payload: any = util.readPayloadFile(this.payloadDir, operationId);
+      const subPaths = path.dirname(this.specFilePath).split(/\\|\//).slice(-3).join("/")
+      const payloadDir = path.join(this.payloadDir,subPaths)
+      const payload: any = util.readPayloadFile(payloadDir, operationId);
       if (!payload) {
-        console.log(
+        log.info(
           `no payload file for operationId ${operationId} under directory ${path.resolve(
-            this.payloadDir,
+            payloadDir,
             operationId
           )} named with <statusCode>.json`
         );
         return;
       }
-
-      console.log(`start generating example for ${operationId}`);
-
       this.validatePayload(specItem, payload, operationId);
       this.cachePayload(specItem, payload);
       const example = {
@@ -255,10 +367,7 @@ export default class Generator {
       };
       return example;
     }
-    return {
-      parameters: {},
-      responses: this.extractResponse(specItem, {}),
-    };
+    return undefined
   }
 
   private cachePayload(specItem: any, payload: any) {
@@ -289,7 +398,7 @@ export default class Generator {
       const realApiVersion = payload[statusCode].liveRequest.query["api-version"];
       if (realApiVersion && realApiVersion !== specApiVersion) {
         delete payload[statusCode];
-        console.log(
+        log.error(
           `${operationId} payload ${statusCode}.json's api-version is ${realApiVersion}, inconsistent with swagger spec's api-version ${specApiVersion}`
         );
       }
@@ -297,11 +406,11 @@ export default class Generator {
   }
 
   private extractRequest(specItem: any, payload: any) {
-    console.log("extractRequest");
+    log.info("extractRequest");
 
     const liveRequest: any = this.getRequestPayload(specItem, payload);
     if (!liveRequest) {
-      console.log(`no AI record`);
+      log.warn(`no live request in payload`);
       return {};
     }
     const request = this.translator.extractRequest(specItem, liveRequest) || {};
@@ -321,7 +430,7 @@ export default class Generator {
   }
 
   private extractResponse(specItem: any, payload: any) {
-    console.log("extractResponse");
+    log.info("extractResponse");
 
     const specResp = specItem.content.responses;
     const longRunning: boolean = specItem.content["x-ms-long-running-operation"];

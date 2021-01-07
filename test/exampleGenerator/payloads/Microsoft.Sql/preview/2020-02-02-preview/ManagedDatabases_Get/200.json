@@ -1,0 +1,40 @@
+{
+    "liveRequest": {
+        "headers": {
+            "x-ms-request-id": "517d8b13-29ac-49dd-9ab6-bc786aa450cc",
+            "date": "Sat, 10 Oct 2020 05:55:27 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "method": "GET",
+        "url": "/subscriptions/90224f4a-e446-4a8d-af06-96e27ec158b8/resourcegroups/RG-ISN-EUW-O-SQLMI/providers/Microsoft.Sql/managedInstances/sqlmi-isn-euw-o-instance01/databases/ICT_DBA_mRemoteNG?api-version=2020-02-02-preview",
+        "query": {
+            "api-version": "2020-02-02-preview"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "200",
+        "headers": {
+            "x-ms-request-id": "517d8b13-29ac-49dd-9ab6-bc786aa450cc",
+            "date": "Sat, 10 Oct 2020 05:55:27 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "properties": {
+                "collation": "aaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "status": "Online",
+                "creationDate": "2020-05-06T05:42:24.643Z",
+                "earliestRestorePoint": "2020-10-03T05:55:27.3231387Z",
+                "defaultSecondaryLocation": "aaaaaaaaaaa"
+            },
+            "location": "aaaaaaaaaa",
+            "tags": {
+                "Werkmaatschappij": "aaa",
+                "ServiceTeam": "aaa",
+                "Applicatie": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            },
+            "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "name": "aaaaaaaaaaaaaaaaa",
+            "type": "Microsoft.Sql/managedInstances/databases"
+        }
+    }
+}

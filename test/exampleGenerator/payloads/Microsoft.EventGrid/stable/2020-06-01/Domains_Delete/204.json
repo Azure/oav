@@ -1,0 +1,26 @@
+{
+    "liveRequest": {
+        "headers": {
+            "user-Agent": "azure-resource-manager/2.0",
+            "x-ms-client-request-id": "760410dc-d899-4765-8d29-f56426014286",
+            "x-ms-arm-request-tracking-id": "94219438-30b5-4be8-9909-d1355687002f",
+            "x-ms-client-location": "westus",
+            "accept-Language": "en-US",
+            "x-ms-arm-service-request-id": "798e0700-9b16-447f-a6c3-6a10bf75b063",
+            "x-ms-activity-vector": "IN.1J"
+        },
+        "method": "DELETE",
+        "url": "/subscriptions/619f1ab9-764e-4308-8360-da885b1c9eaa/resourcegroups/CI-1984942-5264e576-3c6f-51f6-f055-fab409685f20/providers/Microsoft.EventGrid/domains/mydljh-dev-cvx?api-version=2020-06-01",
+        "query": {
+            "api-version": "2020-06-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "204",
+        "headers": {
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "date": "Tue, 20 Oct 2020 21:17:34 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        }
+    }
+}

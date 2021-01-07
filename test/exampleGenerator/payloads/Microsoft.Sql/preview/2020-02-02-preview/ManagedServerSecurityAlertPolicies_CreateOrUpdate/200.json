@@ -1,0 +1,29 @@
+{
+    "liveRequest": {
+        "headers": {
+            "user-Agent": "azure-resource-manager/2.0",
+            "x-ms-client-request-id": "dd5f550d-ed5e-4f66-869e-3d19a45977da",
+            "x-ms-arm-request-tracking-id": "1796b363-fe28-4cf7-858e-2a032c2f762c",
+            "x-ms-client-location": "germanynorth",
+            "accept-Language": "en-US",
+            "x-ms-arm-service-request-id": "b6e2a6bc-b3c9-4b40-8840-d72ca8ddbd60",
+            "x-ms-activity-vector": "IN.0M"
+        },
+        "method": "GET",
+        "url": "/subscriptions/5de5bc3f-19a4-4e19-af62-541f7adb7e21/providers/Microsoft.Sql/locations/westeurope/managedServerSecurityAlertPoliciesAzureAsyncOperation/3fe1a3bb-899b-482f-9430-9c3054f42f18?api-version=2020-02-02-preview"
+    },
+    "liveResponse": {
+        "statusCode": "OK",
+        "headers": {
+            "retry-After": "3",
+            "x-ms-request-id": "f935f489-701c-4531-8432-10e36737d214",
+            "date": "Wed, 21 Oct 2020 13:41:04 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "status": "Succeeded",
+            "startTime": "2020-10-21T13:41:01.143Z"
+        }
+    }
+}
