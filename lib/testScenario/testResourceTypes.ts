@@ -124,8 +124,7 @@ export const TestDefinitionSchema: Schema & {
         armTemplateDeployment: {
           type: "string",
         },
-      },
-      required: ["armTemplateDeployment"],
+      }
     },
     TestStepExampleFileRestCall: {
       type: "object",
@@ -146,8 +145,7 @@ export const TestDefinitionSchema: Schema & {
           },
           default: [],
         },
-      },
-      required: ["exampleFile"],
+      }
     },
     TestStep: {
       type: "object",

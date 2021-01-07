@@ -1,5 +1,4 @@
 import { getDefaultAzureCredential, TokenCredential } from "@azure/identity";
-import { ServiceClient } from "@azure/core-http";
 import { setDefaultOpts } from "../swagger/loader";
 
 export interface TestScenarioRunnerOption {
@@ -8,9 +7,9 @@ export interface TestScenarioRunnerOption {
 }
 
 export class TestScenarioRunner {
-  constructor(private opts: TestScenarioRunnerOption) {
+  constructor(opts: TestScenarioRunnerOption) {
     setDefaultOpts(opts, {
-      credential: getDefaultAzureCredential()
+      credential: getDefaultAzureCredential(),
       resource: "https://management.azure.com",
     });
   }

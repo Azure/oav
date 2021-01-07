@@ -1,9 +1,16 @@
-import { Loader } from "../swagger/loader";
+import { Loader, setDefaultOpts } from "../swagger/loader";
 import { FileLoaderOption, FileLoader } from "../swagger/fileLoader";
 import { safeLoad } from "js-yaml";
 import { JsonLoader, JsonLoaderOption } from "../swagger/jsonLoader";
 import { default as AjvInit, ValidateFunction } from "ajv";
-import { TestDefinitionSchema, TestDefinitionFile, TestScenario, TestStep, TestStepExampleFileRestCall, TestStepArmTemplateDeployment } from "./testResourceTypes";
+import {
+  TestDefinitionSchema,
+  TestDefinitionFile,
+  TestScenario,
+  TestStep,
+  TestStepExampleFileRestCall,
+  TestStepArmTemplateDeployment,
+} from "./testResourceTypes";
 import { getTransformContext, TransformContext } from "../transform/context";
 import { SchemaValidator } from "../swaggerValidator/schemaValidator";
 import { AjvSchemaValidator } from "../swaggerValidator/ajvSchemaValidator";
@@ -15,18 +22,20 @@ import { allOfTransformer } from "../transform/allOfTransformer";
 import { noAdditionalPropertiesTransformer } from "../transform/noAdditionalPropertiesTransformer";
 import { nullableTransformer } from "../transform/nullableTransformer";
 import { pureObjectTransformer } from "../transform/pureObjectTransformer";
-import { SwaggerLoader } from "../swagger/swaggerLoader";
+import { SwaggerLoader, SwaggerLoaderOption } from "../swagger/swaggerLoader";
 import { applySpecTransformers, applyGlobalTransformers } from "../transform/transformer";
 import { SwaggerSpec, Operation } from "../swagger/swaggerTypes";
 import { traverseSwagger } from "../transform/traverseSwagger";
 import { join as pathJoin, dirname } from "path";
 
 const ajv = new AjvInit({
-  useDefaults: true
+  useDefaults: true,
 });
 
-
-export interface TestResourceLoaderOption extends FileLoaderOption, JsonLoaderOption, SwaggerLoader {
+export interface TestResourceLoaderOption
+  extends FileLoaderOption,
+    JsonLoaderOption,
+    SwaggerLoaderOption {
   swaggerFilePaths: string[];
 }
 
@@ -38,8 +47,15 @@ export class TestResourceLoader implements Loader<any> {
   private schemaValidator: SchemaValidator;
   private validateTestResourceFile: ValidateFunction;
   private exampleToOperation: Map<string, Operation> = new Map();
+  private initialized: boolean = false;
 
   constructor(private opts: TestResourceLoaderOption) {
+    setDefaultOpts(opts, {
+      swaggerFilePaths: [],
+      eraseXmsExamples: false,
+      skipResolveRefKeys: ["x-ms-examples"]
+    })
+
     this.fileLoader = FileLoader.create(opts);
     this.jsonLoader = JsonLoader.create(opts);
     this.swaggerLoader = SwaggerLoader.create(opts);
@@ -61,6 +77,10 @@ export class TestResourceLoader implements Loader<any> {
   }
 
   public async initialize() {
+    if (this.initialized) {
+      throw new Error("Already initialized");
+    }
+
     const allSpecs: SwaggerSpec[] = [];
     for (const swaggerFilePath of this.opts.swaggerFilePaths) {
       const swaggerSpec = await this.swaggerLoader.load(swaggerFilePath);
@@ -78,30 +98,34 @@ export class TestResourceLoader implements Loader<any> {
             if (typeof example.$ref !== "string") {
               throw new Error(`Example ${exampleName} doesn't use $ref`);
             }
-            const exampleFilePath = pathJoin(dirname(spec._filePath), example.$ref);
+            const exampleFilePath = this.jsonLoader.getRealPath(example.$ref);
             if (this.exampleToOperation.has(exampleFilePath)) {
               throw new Error(`Example ${exampleFilePath} is referenced by two operations`);
             }
             this.exampleToOperation.set(exampleFilePath, operation);
           }
-        }
+        },
       });
     }
   }
 
   public async load(filePath: string): Promise<TestDefinitionFile> {
+    if (!this.initialized) {
+      await this.initialize();
+    }
+
     const fileContent = await this.fileLoader.load(filePath);
     const filePayload = safeLoad(fileContent);
     if (!this.validateTestResourceFile(filePayload)) {
       const err = this.validateTestResourceFile.errors![0];
-      throw new Error(`Failed to validate test resource file: ${err.dataPath} ${err.message}`);
+      throw new Error(`Failed to validate test resource file ${filePath}: ${err.dataPath} ${err.message}`);
     }
     const testDef = filePayload as TestDefinitionFile;
     testDef._filePath = this.fileLoader.relativePath(filePath);
 
     for (const step of testDef.prepareSteps) {
       step.isScopePrepareStep = true;
-      this.loadTestStep(step, testDef);
+      await this.loadTestStep(step, testDef);
     }
 
     for (const testScenario of testDef.testScenarios) {
@@ -111,11 +135,11 @@ export class TestResourceLoader implements Loader<any> {
     return filePayload;
   }
 
-  public async goThroughTestScenario(testScenario: TestScenario, visitors: {
-    onStep: (testStep: TestStep, variableEnv: VariableEnvironment) => Promise<void>
-  }) {
+  // public async goThroughTestScenario(testScenario: TestScenario, visitors: {
+  //   onStep: (testStep: TestStep) => Promise<void>
+  // }) {
 
-  }
+  // }
 
   private async loadTestScenario(testScenario: TestScenario, testDef: TestDefinitionFile) {
     testScenario._testDef = testDef;
@@ -127,7 +151,7 @@ export class TestResourceLoader implements Loader<any> {
     }
 
     for (const step of testScenario.steps) {
-      this.loadTestStep(step, testDef);
+      await this.loadTestStep(step, testDef);
       resolvedSteps.push(step);
     }
   }
@@ -142,14 +166,20 @@ export class TestResourceLoader implements Loader<any> {
     }
   }
 
-  private async loadTestStepArmTemplate(step: TestStepArmTemplateDeployment, testDef: TestDefinitionFile) {
+  private async loadTestStepArmTemplate(
+    step: TestStepArmTemplateDeployment,
+    testDef: TestDefinitionFile
+  ) {
     step.type = "armTemplateDeployment";
     const filePath = pathJoin(dirname(testDef._filePath), step.armTemplateDeployment);
     const armTemplateContent = await this.fileLoader.load(filePath);
     step.armTemplatePayload = JSON.parse(armTemplateContent);
   }
 
-  private async loadTestStepExampleFileRestCall(step: TestStepExampleFileRestCall, testDef: TestDefinitionFile) {
+  private async loadTestStepExampleFileRestCall(
+    step: TestStepExampleFileRestCall,
+    testDef: TestDefinitionFile
+  ) {
     step.type = "exampleFile";
     const filePath = pathJoin(dirname(testDef._filePath), step.exampleFile);
     const operation = this.exampleToOperation.get(filePath);
@@ -161,7 +191,6 @@ export class TestResourceLoader implements Loader<any> {
     const fileContent = await this.fileLoader.load(filePath);
     step.exampleFileContent = JSON.parse(fileContent);
 
-    step.exampleFileContent.parameters
-
+    step.exampleFileContent.parameters;
   }
 }
