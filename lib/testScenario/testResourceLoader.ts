@@ -3,7 +3,7 @@ import { FileLoaderOption, FileLoader } from "../swagger/fileLoader";
 import { safeLoad } from "js-yaml";
 import { JsonLoader, JsonLoaderOption } from "../swagger/jsonLoader";
 import { default as AjvInit, ValidateFunction } from "ajv";
-import { TestDefinitionSchema, TestDefinitionFile, TestScenario, TestStep } from "./testResourceTypes";
+import { TestDefinitionSchema, TestDefinitionFile, TestScenario, TestStep, TestStepExampleFileRestCall, TestStepArmTemplateDeployment } from "./testResourceTypes";
 import { getTransformContext, TransformContext } from "../transform/context";
 import { SchemaValidator } from "../swaggerValidator/schemaValidator";
 import { AjvSchemaValidator } from "../swaggerValidator/ajvSchemaValidator";
@@ -134,20 +134,34 @@ export class TestResourceLoader implements Loader<any> {
 
   private async loadTestStep(step: TestStep, testDef: TestDefinitionFile) {
     if ("armTemplateDeployment" in step) {
-      step.type = "armTemplateDeployment";
-      const filePath = pathJoin(dirname(testDef._filePath), step.armTemplateDeployment);
-      const armTemplateContent = await this.fileLoader.load(filePath);
-      step.armTemplatePayload = JSON.parse(armTemplateContent);
-
+      await this.loadTestStepArmTemplate(step, testDef);
     } else if ("exampleFile" in step) {
-      step.type = "exampleFile";
-      const filePath = pathJoin(dirname(testDef._filePath), step.exampleFile);
-      const operation = this.exampleToOperation.get(filePath);
-      if (operation === undefined) {
-        throw new Error(`Example file ${filePath} is not referenced by any operation`);
-      }
-      step.operation = operation;
-
+      await this.loadTestStepExampleFileRestCall(step, testDef);
+    } else {
+      throw new Error(`Unknown step type: ${JSON.stringify(step)}`);
     }
+  }
+
+  private async loadTestStepArmTemplate(step: TestStepArmTemplateDeployment, testDef: TestDefinitionFile) {
+    step.type = "armTemplateDeployment";
+    const filePath = pathJoin(dirname(testDef._filePath), step.armTemplateDeployment);
+    const armTemplateContent = await this.fileLoader.load(filePath);
+    step.armTemplatePayload = JSON.parse(armTemplateContent);
+  }
+
+  private async loadTestStepExampleFileRestCall(step: TestStepExampleFileRestCall, testDef: TestDefinitionFile) {
+    step.type = "exampleFile";
+    const filePath = pathJoin(dirname(testDef._filePath), step.exampleFile);
+    const operation = this.exampleToOperation.get(filePath);
+    if (operation === undefined) {
+      throw new Error(`Example file ${filePath} is not referenced by any operation`);
+    }
+    step.operation = operation;
+
+    const fileContent = await this.fileLoader.load(filePath);
+    step.exampleFileContent = JSON.parse(fileContent);
+
+    step.exampleFileContent.parameters
+
   }
 }

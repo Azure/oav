@@ -1,4 +1,4 @@
-import { Operation, Schema } from "../swagger/swaggerTypes";
+import { Operation, Schema, SwaggerExample } from "../swagger/swaggerTypes";
 
 export type TestDefinitionFile = {
   scope: 'ResourceGroup';
@@ -29,6 +29,7 @@ export type TestStepExampleFileRestCall = TestStepBase & {
   replace: ExampleReplace[];
 
   operation: Operation;
+  exampleFileContent: SwaggerExample;
   url: string;
 };
 
