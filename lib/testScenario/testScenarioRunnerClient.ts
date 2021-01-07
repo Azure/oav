@@ -18,6 +18,5 @@ export class TestScenarioRunnerClient extends ServiceClient {
   }
 
   public async sendSomeRequest() {
-    this.sendOperationRequest
   }
 }

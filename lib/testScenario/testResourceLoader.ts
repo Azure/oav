@@ -142,11 +142,13 @@ export class TestResourceLoader implements Loader<any> {
     return filePayload;
   }
 
-  // public async goThroughTestScenario(testScenario: TestScenario, visitors: {
-  //   onStep: (testStep: TestStep) => Promise<void>
-  // }) {
-
-  // }
+  public async goThroughTestScenario(testScenario: TestScenario, visitors: {
+    onStep: (testStep: TestStep) => Promise<void>
+  }) {
+    for (const step of testScenario._resolvedSteps) {
+      await visitors.onStep(step);
+    }
+  }
 
   private async loadTestScenario(testScenario: TestScenario, testDef: TestDefinitionFile) {
     testScenario._testDef = testDef;
