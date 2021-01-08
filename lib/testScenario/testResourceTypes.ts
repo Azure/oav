@@ -1,7 +1,7 @@
 import { Operation, Schema, SwaggerExample } from "../swagger/swaggerTypes";
 
 export type TestDefinitionFile = {
-  scope: 'ResourceGroup';
+  scope: "ResourceGroup";
   prepareSteps: TestStep[];
   testScenarios: TestScenario[];
 
@@ -10,7 +10,7 @@ export type TestDefinitionFile = {
 
 export type VariableScope = {
   variables: { [variableName: string]: string };
-}
+};
 
 export type TestStepBase = VariableScope & {
   isScopePrepareStep: boolean;
@@ -20,7 +20,15 @@ export type TestStepArmTemplateDeployment = TestStepBase & {
   type: "armTemplateDeployment";
   armTemplateDeployment: string;
 
-  armTemplatePayload: any;
+  armTemplatePayload: ArmTemplate;
+};
+
+export type ArmTemplate = {
+  parameters?: {
+    [name: string]: {
+      type: "string" | "securestring" | "int" | "bool" | "object" | "secureObject" | "array";
+    };
+  };
 };
 
 export type TestStepExampleFileRestCall = TestStepBase & {
@@ -30,8 +38,9 @@ export type TestStepExampleFileRestCall = TestStepBase & {
   replace: ExampleReplace[];
 
   operation: Operation;
+  exampleFilePath: string;
   exampleFileContent: SwaggerExample;
-  url: string;
+  exampleTemplate: SwaggerExample;
 };
 
 export type ExampleReplace = {
@@ -44,7 +53,7 @@ export type TestStep = TestStepArmTemplateDeployment | TestStepExampleFileRestCa
 
 export type TestScenario = {
   description: string;
-  shareTestScope: true;
+  shareTestScope: boolean | string;
   steps: TestStep[];
 
   _testDef: TestDefinitionFile;
@@ -58,24 +67,22 @@ export const TestDefinitionSchema: Schema & {
   properties: {
     scope: {
       type: "string",
-      enum: [
-        "ResourceGroup"
-      ],
-      default: "ResourceGroup"
+      enum: ["ResourceGroup"],
+      default: "ResourceGroup",
     },
     prepareSteps: {
       type: "array",
       items: {
-        $ref: "#/definitions/TestStep"
+        $ref: "#/definitions/TestStep",
       },
-      default: []
+      default: [],
     },
     testScenarios: {
       type: "array",
       items: {
-        $ref: "#/definitions/TestScenario"
-      }
-    }
+        $ref: "#/definitions/TestScenario",
+      },
+    },
   },
   required: ["testScenarios"],
 
@@ -84,20 +91,20 @@ export const TestDefinitionSchema: Schema & {
       type: "object",
       properties: {
         description: {
-          type: "string"
+          type: "string",
         },
         steps: {
           type: "array",
           items: {
-            $ref: "#/definitions/TestStep"
-          }
+            $ref: "#/definitions/TestStep",
+          },
         },
         shareTestScope: {
           type: "string",
-          default: "sharedDefaultScope"
-        }
+          default: "sharedDefaultScope",
+        },
       },
-      required: ["description", "steps"]
+      required: ["description", "steps"],
     },
     TestStepBase: {
       type: "object",
@@ -125,7 +132,7 @@ export const TestDefinitionSchema: Schema & {
         armTemplateDeployment: {
           type: "string",
         },
-      }
+      },
     },
     TestStepExampleFileRestCall: {
       type: "object",
@@ -147,9 +154,9 @@ export const TestDefinitionSchema: Schema & {
           default: [],
         },
         operationId: {
-          type: "string"
+          type: "string",
         },
-      }
+      },
     },
     TestStep: {
       type: "object",
@@ -166,16 +173,16 @@ export const TestDefinitionSchema: Schema & {
       type: "object",
       properties: {
         pathInPayload: {
-          type: "string"
+          type: "string",
         },
         pathInExample: {
-          type: "string"
+          type: "string",
         },
         to: {
-          type: "string"
-        }
+          type: "string",
+        },
       },
-      required: ["to"]
-    }
+      required: ["to"],
+    },
   },
 };

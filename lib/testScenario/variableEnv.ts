@@ -3,12 +3,16 @@ const allowedVariableNameRegExp = new RegExp(`^[${allowedVariableName}]+$`);
 const regExpCache: { [key: string]: RegExp } = {};
 
 export class VariableEnv {
+  private baseEnv?: VariableEnv;
   private data: { [key: string]: string } = {};
+  private writeEnv: { [key: string]: string };
 
   constructor(baseEnv?: VariableEnv) {
     if (baseEnv !== undefined) {
       this.data.__proto__ = baseEnv.data as any;
+      this.baseEnv = baseEnv;
     }
+    this.writeEnv = this.data;
   }
 
   public get(key: string): string | undefined {
@@ -19,13 +23,17 @@ export class VariableEnv {
     if (allowedVariableNameRegExp.exec(key) === null) {
       throw new Error(`Variable name is not allowed with [${allowedVariableName}]: ${key}`);
     }
-    this.data[key] = value;
+    this.writeEnv[key] = value;
   }
 
   public setBatch(values: { [key: string]: string }) {
     for (const key of Object.keys(values)) {
       this.set(key, values[key]);
     }
+  }
+
+  public setWriteEnv(env: VariableEnv) {
+    this.writeEnv = env.data;
   }
 
   public resolveString(source: string, matchLeft: string = "\\$\\(", matchRight: string = "\\)") {
@@ -94,7 +102,7 @@ export class VariableEnv {
       return val;
     }
 
-    val = new RegExp(`${matchLeft}([${allowedVariableName}]+)${matchRight}`);
+    val = new RegExp(`${matchLeft}([${allowedVariableName}]+?)${matchRight}`);
     regExpCache[key] = val;
     return val;
   }

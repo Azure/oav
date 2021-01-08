@@ -142,14 +142,6 @@ export class TestResourceLoader implements Loader<any> {
     return filePayload;
   }
 
-  public async goThroughTestScenario(testScenario: TestScenario, visitors: {
-    onStep: (testStep: TestStep) => Promise<void>
-  }) {
-    for (const step of testScenario._resolvedSteps) {
-      await visitors.onStep(step);
-    }
-  }
-
   private async loadTestScenario(testScenario: TestScenario, testDef: TestDefinitionFile) {
     testScenario._testDef = testDef;
     const resolvedSteps: TestStep[] = [];
@@ -191,6 +183,7 @@ export class TestResourceLoader implements Loader<any> {
   ) {
     step.type = "exampleFile";
     const filePath = pathJoin(dirname(testDef._filePath), step.exampleFile);
+    step.exampleFilePath = filePath;
     const opMap = this.exampleToOperation.get(filePath);
     if (opMap === undefined) {
       throw new Error(`Example file is not referenced by any operation: ${filePath}`);
@@ -212,6 +205,7 @@ export class TestResourceLoader implements Loader<any> {
     const fileContent = await this.fileLoader.load(filePath);
     step.exampleFileContent = JSON.parse(fileContent);
 
-    step.exampleFileContent.parameters;
+    // TODO transform template
+    step.exampleTemplate = step.exampleFileContent
   }
 }
