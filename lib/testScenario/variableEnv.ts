@@ -1,4 +1,4 @@
-const allowedVariableName = "a-zA-Z0-9_\-\.";
+const allowedVariableName = "a-zA-Z0-9_\\-\\.";
 const allowedVariableNameRegExp = new RegExp(`^[${allowedVariableName}]+$`);
 const regExpCache: { [key: string]: RegExp } = {};
 
@@ -17,6 +17,18 @@ export class VariableEnv {
 
   public get(key: string): string | undefined {
     return this.data[key];
+  }
+
+  public getRequired(key: string): string {
+    const val = this.get(key);
+    if (val === undefined) {
+      throw new Error(`Variable is required but is not found in VariableEnv: ${key}`);
+    }
+    return val;
+  }
+
+  public getBaseEnv() {
+    return this.baseEnv;
   }
 
   public set(key: string, value: string) {

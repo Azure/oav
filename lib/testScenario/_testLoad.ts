@@ -1,4 +1,3 @@
-import { DefaultAzureCredential } from "@azure/identity";
 import { TestResourceLoader } from "./testResourceLoader";
 import { TestScenarioRunner } from "./testScenarioRunner";
 import { VariableEnv } from "./variableEnv";
@@ -38,15 +37,18 @@ const main = async () => {
 
   console.log(testDef);
 
-  const variableEnv = new VariableEnv();
-  variableEnv.setBatch({
-    subscriptionId: "4e7b30e5-96b6-4d26-ae34-bd0b75fdafb4"
+  const env = new VariableEnv();
+  env.setBatch({
+    subscriptionId: "4e7b30e5-96b6-4d26-ae34-bd0b75fdafb4",
+    location: "westus"
   });
 
-  const runner = new TestScenarioRunner({
-    credential: new DefaultAzureCredential()
+  const runner = new TestScenarioRunner({ 
+    jsonLoader: loader.jsonLoader,
+    env,
   });
 
+  await runner.executeScenario(testDef.testScenarios[0]);
 };
 
 console.time("TestLoad");

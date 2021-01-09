@@ -1,9 +1,11 @@
+import { HttpMethods } from "@azure/core-http";
 import { getDefaultAzureCredential } from "@azure/identity";
 import { JsonLoader } from "../swagger/jsonLoader";
 import { setDefaultOpts } from "../swagger/loader";
 import { getLazyBuilder } from "../util/lazyBuilder";
 import {
   ArmTemplate,
+  TestDefinitionFile,
   TestScenario,
   TestStep,
   TestStepArmTemplateDeployment,
@@ -13,19 +15,37 @@ import { TestScenarioRestClient } from "./testScenarioRestClient";
 import { VariableEnv } from "./variableEnv";
 
 export interface TestScenarioRunnerOption {
-  variableEnv?: VariableEnv;
+  env?: VariableEnv;
   client?: TestScenarioRunnerClient;
   jsonLoader: JsonLoader;
 }
 
+export type ArmDeploymentTracking = {
+  deploymentName: string;
+  step: TestStepArmTemplateDeployment;
+  details: {
+    scope: "ResourceGroup";
+    subscriptionId: string;
+    resourceGroupName: string;
+  };
+};
+
 interface TestScopeTracking {
   provisioned?: boolean;
-  scope: string;
+  scope: TestDefinitionFile["scope"];
   prepareSteps: TestStep[];
-  variableEnv: VariableEnv;
+  env: VariableEnv;
+  armDeployments: ArmDeploymentTracking[];
 }
 
+export type TestStepEnv = {
+  env: VariableEnv;
+  scope: TestDefinitionFile["scope"];
+  armDeployments: ArmDeploymentTracking[];
+};
+
 export interface TestScenarioClientRequest {
+  method: HttpMethods;
   path: string;
   headers: { [headerName: string]: string };
   query: { [headerName: string]: string };
@@ -33,35 +53,80 @@ export interface TestScenarioClientRequest {
 }
 
 export interface TestScenarioRunnerClient {
+  createResourceGruop(
+    subscriptionId: string,
+    resourceGroupName: string,
+    location: string
+  ): Promise<void>;
+
   sendExampleRequest(
-    req: TestScenarioClientRequest,
+    request: TestScenarioClientRequest,
     step: TestStepExampleFileRestCall,
-    env: VariableEnv
+    stepEnv: TestStepEnv
   ): Promise<void>;
 
   sendArmTemplateDeployment(
-    req: ArmTemplate,
+    armTemplate: ArmTemplate,
     params: { [name: string]: string },
+    armDeployment: ArmDeploymentTracking,
     step: TestStepArmTemplateDeployment,
-    variableEnv: VariableEnv
+    stepEnv: TestStepEnv
   ): Promise<void>;
 }
+
+const numbers = "0123456789";
+const lowerCases = "abcedfghijklmnopqrskuvwxyz";
+const upperCases = "ABCEDFGHIJKLMNOPQRSKUVWXYZ";
+export const getRandomString = (
+  config: {
+    length?: number;
+    lowerCase?: boolean;
+    upperCase?: boolean;
+    number?: boolean;
+  } = {}
+) => {
+  setDefaultOpts(config, {
+    length: 6,
+    lowerCase: true,
+    upperCase: false,
+    number: false,
+  });
+
+  const allowedChars = `${config.number ? numbers : ""}${config.lowerCase ? lowerCases : ""}${
+    config.upperCase ? upperCases : ""
+  }`;
+  let result = "";
+  for (let idx = 0; idx < config.length!; idx++) {
+    result = result + allowedChars[Math.floor(Math.random() * allowedChars.length)];
+  }
+  return result;
+};
 
 export class TestScenarioRunner {
   private jsonLoader: JsonLoader;
   private client: TestScenarioRunnerClient;
-  private variableEnv: VariableEnv;
-  private testScopeTracking: { [scopeName: string]: {} };
+  private env: VariableEnv;
+  private testScopeTracking: { [scopeName: string]: TestScopeTracking };
 
   private provisionTestScope = getLazyBuilder(
     "provisioned",
-    async (testScopeTracking: TestScopeTracking) => {
-      if (testScopeTracking.scope !== "ResourceGroup") {
-        throw new Error(`TestScope is not supported yet: ${testScopeTracking.scope}`);
+    async (testScope: TestScopeTracking) => {
+      if (testScope.scope !== "ResourceGroup") {
+        throw new Error(`TestScope is not supported yet: ${testScope.scope}`);
       }
 
-      for (const step of testScopeTracking.prepareSteps) {
-        await this.executeStep(step, testScopeTracking.variableEnv);
+      const subscriptionId = testScope.env.getRequired("subscriptionId");
+      const location = testScope.env.getRequired("location");
+      const resourceGroupPrefix = testScope.env.get("resourceGroupPrefix") ?? "test-";
+      const resourceGroupName =
+        resourceGroupPrefix +
+        getRandomString({ length: 6, lowerCase: true, upperCase: true, number: true });
+      testScope.env.setBatch({ resourceGroupName });
+
+      await this.client.createResourceGruop(subscriptionId, resourceGroupName, location);
+
+      for (const step of testScope.prepareSteps) {
+        await this.executeStep(step, testScope.env, testScope);
       }
 
       return true;
@@ -69,48 +134,69 @@ export class TestScenarioRunner {
   );
 
   constructor(opts: TestScenarioRunnerOption) {
-    this.variableEnv = opts.variableEnv ?? new VariableEnv();
+    this.env = opts.env ?? new VariableEnv();
     this.client = opts.client ?? new TestScenarioRestClient(getDefaultAzureCredential(), {});
     this.jsonLoader = opts.jsonLoader;
     this.testScopeTracking = {};
   }
 
-  public async prepareScenario(testScenario: TestScenario): Promise<VariableEnv> {
+  public async prepareScenario(testScenario: TestScenario): Promise<TestScopeTracking> {
     const s = testScenario.shareTestScope;
-    const testScopeName = typeof s === "string" ? s : s ? "_defaultScope" : `_randomScope${Math.random().toString(36)}`;
-    let testScope = this.testScopeTracking[testScenario.shareTestScope];
+    const testScopeName =
+      typeof s === "string" ? s : s ? "_defaultScope" : `_randomScope_${getRandomString()}`;
+
+    let testScope = this.testScopeTracking[testScopeName];
+    if (testScope === undefined) {
+      const testDef = testScenario._testDef;
+      const env = new VariableEnv(this.env);
+      testScope = {
+        scope: testDef.scope,
+        prepareSteps: testDef.prepareSteps,
+        env,
+        armDeployments: [],
+      };
+      this.testScopeTracking[testScopeName] = testScope;
+    }
+
+    await this.provisionTestScope(testScope);
+    return testScope;
   }
 
   public async executeScenario(testScenario: TestScenario) {
-    const prepareEnv = await this.prepareScenario(testScenario);
-    const env = new VariableEnv(prepareEnv);
+    const testScope = await this.prepareScenario(testScenario);
+    const env = new VariableEnv(testScope.env);
 
     for (const step of testScenario.steps) {
-      await this.executeStep(step, env);
+      await this.executeStep(step, env, testScope);
     }
   }
 
-  public async executeStep(step: TestStep, env: VariableEnv) {
+  public async executeStep(step: TestStep, env: VariableEnv, testScope: TestScopeTracking) {
     const stepEnv = new VariableEnv(env);
     stepEnv.setBatch(step.variables);
     stepEnv.setWriteEnv(env);
 
     switch (step.type) {
       case "exampleFile":
-        await this.executeExampleFileStep(step, env);
+        await this.executeExampleFileStep(step, env, testScope);
         break;
 
       case "armTemplateDeployment":
-        await this.executeArmTemplateStep(step, env);
+        await this.executeArmTemplateStep(step, env, testScope);
         break;
     }
   }
 
-  private async executeExampleFileStep(step: TestStepExampleFileRestCall, env: VariableEnv) {
+  private async executeExampleFileStep(
+    step: TestStepExampleFileRestCall,
+    env: VariableEnv,
+    testScope: TestScopeTracking
+  ) {
     const operation = step.operation;
 
     const pathEnv = new VariableEnv();
     let req: TestScenarioClientRequest = {
+      method: step.operation._method.toUpperCase() as HttpMethods,
       path: "",
       headers: {},
       query: {},
@@ -147,10 +233,18 @@ export class TestScenarioRunner {
     req = env.resolveObjectValues(req);
     console.log(req);
 
-    await this.client.sendExampleRequest(req, step, env);
+    await this.client.sendExampleRequest(req, step, {
+      env,
+      scope: testScope.scope,
+      armDeployments: testScope.armDeployments,
+    });
   }
 
-  private async executeArmTemplateStep(step: TestStepArmTemplateDeployment, env: VariableEnv) {
+  private async executeArmTemplateStep(
+    step: TestStepArmTemplateDeployment,
+    env: VariableEnv,
+    testScope: TestScopeTracking
+  ) {
     const params: { [key: string]: string } = {};
     const paramsDef = step.armTemplatePayload.parameters ?? {};
     for (const paramName of Object.keys(paramsDef)) {
@@ -168,6 +262,30 @@ export class TestScenarioRunner {
       params[paramName] = paramValue;
     }
 
-    await this.client.sendArmTemplateDeployment(step.armTemplatePayload, params, step, env);
+    const subscriptionId = env.getRequired("subscriptionId");
+    const resourceGroupName = env.getRequired("resourceGroupName");
+
+    const armDeployment: ArmDeploymentTracking = {
+      deploymentName: `${resourceGroupName}-deploy-${getRandomString()}`,
+      step,
+      details: {
+        scope: testScope.scope,
+        subscriptionId,
+        resourceGroupName,
+      },
+    };
+    testScope.armDeployments.push(armDeployment);
+
+    await this.client.sendArmTemplateDeployment(
+      step.armTemplatePayload,
+      params,
+      armDeployment,
+      step,
+      {
+        env,
+        scope: testScope.scope,
+        armDeployments: testScope.armDeployments,
+      }
+    );
   }
 }

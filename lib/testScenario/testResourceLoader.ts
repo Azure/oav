@@ -41,7 +41,7 @@ export interface TestResourceLoaderOption
 
 export class TestResourceLoader implements Loader<any> {
   private fileLoader: FileLoader;
-  private jsonLoader: JsonLoader;
+  public jsonLoader: JsonLoader;
   private swaggerLoader: SwaggerLoader;
   private transformContext: TransformContext;
   private schemaValidator: SchemaValidator;
