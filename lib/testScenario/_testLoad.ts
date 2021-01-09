@@ -39,8 +39,8 @@ const main = async () => {
 
   const env = new VariableEnv();
   env.setBatch({
-    subscriptionId: "4e7b30e5-96b6-4d26-ae34-bd0b75fdafb4",
-    location: "westus"
+    subscriptionId: "db5eb68e-73e2-4fa8-b18a-46cd1be4cce5",
+    location: "eastasia"
   });
 
   const runner = new TestScenarioRunner({ 
@@ -48,7 +48,13 @@ const main = async () => {
     env,
   });
 
-  await runner.executeScenario(testDef.testScenarios[0]);
+  try {
+    await runner.executeScenario(testDef.testScenarios[0]);
+  } catch (e) {
+    console.log(e.message, e.stack);
+  } finally {
+    await runner.cleanAllTestScope();
+  }
 };
 
 console.time("TestLoad");

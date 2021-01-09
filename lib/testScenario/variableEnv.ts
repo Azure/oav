@@ -39,6 +39,9 @@ export class VariableEnv {
   }
 
   public setBatch(values: { [key: string]: string }) {
+    if (values === undefined) {
+      return;
+    }
     for (const key of Object.keys(values)) {
       this.set(key, values[key]);
     }

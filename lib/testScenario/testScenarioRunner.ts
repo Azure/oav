@@ -53,10 +53,15 @@ export interface TestScenarioClientRequest {
 }
 
 export interface TestScenarioRunnerClient {
-  createResourceGruop(
+  createResourceGroup(
     subscriptionId: string,
     resourceGroupName: string,
     location: string
+  ): Promise<void>;
+
+  deleteResourceGroup(
+    subscriptionId: string,
+    resourceGroupName: string,
   ): Promise<void>;
 
   sendExampleRequest(
@@ -120,10 +125,10 @@ export class TestScenarioRunner {
       const resourceGroupPrefix = testScope.env.get("resourceGroupPrefix") ?? "test-";
       const resourceGroupName =
         resourceGroupPrefix +
-        getRandomString({ length: 6, lowerCase: true, upperCase: true, number: true });
+        getRandomString({ length: 6, lowerCase: true, upperCase: false, number: false });
       testScope.env.setBatch({ resourceGroupName });
 
-      await this.client.createResourceGruop(subscriptionId, resourceGroupName, location);
+      await this.client.createResourceGroup(subscriptionId, resourceGroupName, location);
 
       for (const step of testScope.prepareSteps) {
         await this.executeStep(step, testScope.env, testScope);
@@ -184,6 +189,14 @@ export class TestScenarioRunner {
       case "armTemplateDeployment":
         await this.executeArmTemplateStep(step, env, testScope);
         break;
+    }
+  }
+
+  public async cleanAllTestScope() {
+    for (const testScope of Object.values(this.testScopeTracking)) {
+      const subscriptionId = testScope.env.getRequired("subscriptionId");
+      const resourceGroupName = testScope.env.getRequired("resourceGroupName");
+      await this.client.deleteResourceGroup(subscriptionId, resourceGroupName);
     }
   }
 
