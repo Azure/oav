@@ -197,7 +197,7 @@ export class TestResourceLoader implements Loader<any> {
     } else {
       const ops = Object.values(opMap);
       if (ops.length > 1) {
-        throw new Error(`Example file is refereced by multiple operation: ${Object.keys(opMap)} ${filePath}`);
+        throw new Error(`Example file is referenced by multiple operation: ${Object.keys(opMap)} ${filePath}`);
       }
       step.operation = ops[0];
     }

@@ -1,6 +1,6 @@
 {
   "name": "oav",
-  "version": "2.0.1-test-scenario-1",
+  "version": "2.0.1-test-scenario-2",
   "author": {
     "name": "Microsoft Corporation",
     "email": "azsdkteam@microsoft.com",
@@ -11,6 +11,7 @@
   "dependencies": {
     "@azure-tools/openapi-tools-common": "^1.2.2",
     "@azure/arm-resources": "^4.0.0",
+    "@azure/core-lro": "^1.0.3",
     "@azure/identity": "^1.2.0",
     "@azure/ms-rest-azure-js": "^2.0.2",
     "@azure/ms-rest-js": "^2.1.0",
