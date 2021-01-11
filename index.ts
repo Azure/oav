@@ -48,5 +48,19 @@ export {
 export { LiveRequest, LiveResponse } from "./lib/liveValidation/operationValidator";
 export { SpecResolver } from "./lib/validators/specResolver";
 
+export { TestResourceLoader } from "./lib/testScenario/testResourceLoader";
+export {
+  TestDefinitionFile,
+  TestScenario,
+  TestStep,
+  TestStepArmTemplateDeployment,
+  TestStepExampleFileRestCall,
+} from "./lib/testScenario/testResourceTypes";
+export { VariableEnv } from "./lib/testScenario/variableEnv";
+export {
+  TestScenarioRunner,
+  TestScenarioRunnerClient,
+} from "./lib/testScenario/testScenarioRunner";
+
 // Constants
 export const Constants = C;
