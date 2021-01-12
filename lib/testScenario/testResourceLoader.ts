@@ -165,16 +165,16 @@ export class TestResourceLoader implements Loader<any> {
     }
 
     for (const step of testScenario.steps) {
-      await this.loadTestStep(step, testDef);
+      await this.loadTestStep(step, testDef, testScenario);
       resolvedSteps.push(step);
     }
 
     await this.exampleTemplateGenerator.generateExampleTemplateForTestScenario(testScenario);
   }
 
-  private async loadTestStep(step: TestStep, testDef: TestDefinitionFile) {
+  private async loadTestStep(step: TestStep, testDef: TestDefinitionFile, testScenario?: TestScenario) {
     if ("armTemplateDeployment" in step) {
-      await this.loadTestStepArmTemplate(step, testDef);
+      await this.loadTestStepArmTemplate(step, testDef, testScenario);
     } else if ("exampleFile" in step) {
       await this.loadTestStepExampleFileRestCall(step, testDef);
     } else {
@@ -184,12 +184,27 @@ export class TestResourceLoader implements Loader<any> {
 
   private async loadTestStepArmTemplate(
     step: TestStepArmTemplateDeployment,
-    testDef: TestDefinitionFile
+    testDef: TestDefinitionFile,
+    testScenario?: TestScenario
   ) {
     step.type = "armTemplateDeployment";
     const filePath = pathJoin(dirname(testDef._filePath), step.armTemplateDeployment);
     const armTemplateContent = await this.fileLoader.load(filePath);
     step.armTemplatePayload = JSON.parse(armTemplateContent);
+
+    const params = step.armTemplatePayload.parameters;
+    if (params !== undefined) {
+      for (const paramName of Object.keys(params)) {
+        if (params[paramName].type !== "string") {
+          throw new Error(`Only string type is supported in arm template params: ${paramName}`);
+        }
+        if (testScenario !== undefined) {
+          testScenario.requiredVariables.push(paramName);
+        } else {
+          testDef.requiredVariables.push(paramName);
+        }
+      }
+    }
   }
 
   private async loadTestStepExampleFileRestCall(

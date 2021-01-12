@@ -47,7 +47,7 @@ export interface TestScenarioClientRequest {
   path: string;
   headers: { [headerName: string]: string };
   query: { [headerName: string]: string };
-  body: any;
+  body?: any;
 }
 
 export interface TestScenarioRunnerClient {
@@ -211,7 +211,6 @@ export class TestScenarioRunner {
       path: "",
       headers: {},
       query: {},
-      body: {},
     };
 
     for (const p of operation.parameters ?? []) {
