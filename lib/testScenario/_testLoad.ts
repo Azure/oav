@@ -53,6 +53,7 @@ const main = async () => {
   } catch (e) {
     console.log(e.message, e.stack);
   } finally {
+    console.timeLog("TestLoad");
     await runner.cleanAllTestScope();
   }
 };

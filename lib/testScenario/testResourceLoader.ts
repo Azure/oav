@@ -130,6 +130,13 @@ export class TestResourceLoader implements Loader<any> {
     const testDef = filePayload as TestDefinitionFile;
     testDef._filePath = this.fileLoader.relativePath(filePath);
 
+    if (testDef.scope === "ResourceGroup") {
+      const requiredVariables = new Set(testDef.requiredVariables);
+      requiredVariables.add("subscriptionId");
+      requiredVariables.add("location");
+      testDef.requiredVariables = [...requiredVariables];
+    }
+
     for (const step of testDef.prepareSteps) {
       step.isScopePrepareStep = true;
       await this.loadTestStep(step, testDef);
@@ -146,6 +153,9 @@ export class TestResourceLoader implements Loader<any> {
     testScenario._testDef = testDef;
     const resolvedSteps: TestStep[] = [];
     testScenario._resolvedSteps = resolvedSteps;
+
+    const requiredVariables = new Set([...testScenario.requiredVariables, ...testDef.requiredVariables]);
+    testScenario.requiredVariables = [...requiredVariables];
 
     for (const step of testDef.prepareSteps) {
       resolvedSteps.push(step);

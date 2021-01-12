@@ -2,6 +2,7 @@ import { Operation, Schema, SwaggerExample } from "../swagger/swaggerTypes";
 
 export type TestDefinitionFile = {
   scope: "ResourceGroup";
+  requiredVariables: string[];
   prepareSteps: TestStep[];
   testScenarios: TestScenario[];
 
@@ -53,6 +54,7 @@ export type TestStep = TestStepArmTemplateDeployment | TestStepExampleFileRestCa
 
 export type TestScenario = {
   description: string;
+  requiredVariables: string[];
   shareTestScope: boolean | string;
   steps: TestStep[];
 
@@ -69,6 +71,13 @@ export const TestDefinitionSchema: Schema & {
       type: "string",
       enum: ["ResourceGroup"],
       default: "ResourceGroup",
+    },
+    requiredVariables: {
+      type: "array",
+      items: {
+        type: "string",
+      },
+      default: [],
     },
     prepareSteps: {
       type: "array",
@@ -92,6 +101,13 @@ export const TestDefinitionSchema: Schema & {
       properties: {
         description: {
           type: "string",
+        },
+        requiredVariables: {
+          type: "array",
+          items: {
+            type: "string",
+          },
+          default: [],
         },
         steps: {
           type: "array",
