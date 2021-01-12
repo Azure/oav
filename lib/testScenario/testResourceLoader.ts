@@ -235,7 +235,16 @@ export class TestResourceLoader implements Loader<any> {
     const fileContent = await this.fileLoader.load(filePath);
     step.exampleFileContent = JSON.parse(fileContent);
 
-    // TODO transform template
+    for (const replaceDef of step.replace) {
+      if (replaceDef.pathInExample) {
+
+      }
+    }
+
+    // This one will be replaced by exampleTemplateGenerator in the later steps
     step.exampleTemplate = step.exampleFileContent
   }
 }
+
+// const replaceObjInPath = (obj: any, path: string, replaceTo: string) => {
+// }

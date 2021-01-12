@@ -15,6 +15,7 @@ import {
 } from "./testScenarioRunner";
 import { JsonLoader } from "../swagger/jsonLoader";
 import { escapeRegExp } from "lodash";
+import { SwaggerExample } from "../swagger/swaggerTypes";
 
 const placeholderToBeDetermined = "__to_be_determined__";
 
@@ -37,25 +38,7 @@ export class ExampleTemplateGenerator implements TestScenarioRunnerClient {
     const exampleTemplate = cloneDeep(step.exampleFileContent);
     step.exampleTemplate = exampleTemplate;
 
-    const toMatch: string[] = [];
-    const matchReplace: { [toMatch: string]: string } = {};
-
-    for (const paramName of Object.keys(exampleTemplate.parameters)) {
-      if (stepEnv.env.get(paramName) === undefined) {
-        continue;
-      }
-
-      const paramValue = exampleTemplate.parameters[paramName];
-      if (typeof paramValue !== "string") {
-        continue;
-      }
-
-      toMatch.push(paramValue);
-      const toReplace = `$(${paramName})`;
-      matchReplace[paramValue] = toReplace;
-      exampleTemplate.parameters[paramName] = toReplace;
-      replaceAllInObject(exampleTemplate.responses, toMatch, matchReplace);
-    }
+    this.replaceWithParameterConvention(step.exampleTemplate, stepEnv.env);
   }
 
   public async sendArmTemplateDeployment(
@@ -93,6 +76,28 @@ export class ExampleTemplateGenerator implements TestScenarioRunnerClient {
     });
 
     await runner.executeScenario(testScenario);
+  }
+
+  private replaceWithParameterConvention(exampleTemplate: SwaggerExample, env: VariableEnv) {
+    const toMatch: string[] = [];
+    const matchReplace: { [toMatch: string]: string } = {};
+
+    for (const paramName of Object.keys(exampleTemplate.parameters)) {
+      if (env.get(paramName) === undefined) {
+        continue;
+      }
+
+      const paramValue = exampleTemplate.parameters[paramName];
+      if (typeof paramValue !== "string") {
+        continue;
+      }
+
+      toMatch.push(paramValue);
+      const toReplace = `$(${paramName})`;
+      matchReplace[paramValue] = toReplace;
+      exampleTemplate.parameters[paramName] = toReplace;
+    }
+    replaceAllInObject(exampleTemplate.responses, toMatch, matchReplace);
   }
 
   // private analysePathTemplate(pathTemplate: string, operation: Operation) {
