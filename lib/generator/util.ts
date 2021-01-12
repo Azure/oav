@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
+import { URL } from "url";
 
 const ATTR_MAP: any = {
   location: "location",

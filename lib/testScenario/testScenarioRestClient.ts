@@ -20,6 +20,7 @@ import {
 import { ArmDeploymentTracking, TestScenarioClientRequest, TestScenarioRunnerClient, TestStepEnv } from "./testScenarioRunner";
 import { LROPoller as MsLROPoller } from "@azure/ms-rest-azure-js";
 import { LROPoller, BaseResult, lroPolicy } from "./lro";
+import { URL } from "url";
 
 export interface TestScenarioRestClientOption extends ServiceClientOptions {
   endpoint?: string;
@@ -103,7 +104,7 @@ export class TestScenarioRestClient extends ServiceClient implements TestScenari
     const { _response: initialResponse } = result;
 
     if (initialResponse.status >= 400) {
-      throw new Error(`Fail to send request ${req.method} ${req.path}:\n${result.bodyAsText}`);
+      throw new Error(`Fail to send request ${req.method} ${req.path}:\n${initialResponse.bodyAsText}`);
     }
 
     if (step.operation["x-ms-long-running-operation"]) {

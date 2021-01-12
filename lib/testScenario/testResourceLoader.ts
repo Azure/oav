@@ -27,6 +27,7 @@ import { applySpecTransformers, applyGlobalTransformers } from "../transform/tra
 import { SwaggerSpec, Operation } from "../swagger/swaggerTypes";
 import { traverseSwagger } from "../transform/traverseSwagger";
 import { join as pathJoin, dirname } from "path";
+import { ExampleTemplateGenerator } from "./exampleTemplateGenerator";
 
 const ajv = new AjvInit({
   useDefaults: true,
@@ -48,6 +49,7 @@ export class TestResourceLoader implements Loader<any> {
   private validateTestResourceFile: ValidateFunction;
   private exampleToOperation: Map<string, { [operationId: string]: Operation }> = new Map();
   private initialized: boolean = false;
+  private exampleTemplateGenerator: ExampleTemplateGenerator;
 
   constructor(private opts: TestResourceLoaderOption) {
     setDefaultOpts(opts, {
@@ -55,12 +57,13 @@ export class TestResourceLoader implements Loader<any> {
       eraseXmsExamples: false,
       eraseDescription: false,
       skipResolveRefKeys: ["x-ms-examples"]
-    })
+    });
 
     this.fileLoader = FileLoader.create(opts);
     this.jsonLoader = JsonLoader.create(opts);
     this.swaggerLoader = SwaggerLoader.create(opts);
     this.schemaValidator = new AjvSchemaValidator(this.jsonLoader);
+    this.exampleTemplateGenerator = new ExampleTemplateGenerator(this.jsonLoader);
 
     this.transformContext = getTransformContext(this.jsonLoader, this.schemaValidator, [
       xmsPathsTransformer,
@@ -165,6 +168,8 @@ export class TestResourceLoader implements Loader<any> {
       await this.loadTestStep(step, testDef);
       resolvedSteps.push(step);
     }
+
+    await this.exampleTemplateGenerator.generateExampleTemplateForTestScenario(testScenario);
   }
 
   private async loadTestStep(step: TestStep, testDef: TestDefinitionFile) {

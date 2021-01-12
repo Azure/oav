@@ -24,10 +24,18 @@ export type TestStepArmTemplateDeployment = TestStepBase & {
   armTemplatePayload: ArmTemplate;
 };
 
+export type ArmTemplateVariableType = "string" | "securestring" | "int" | "bool" | "object" | "secureObject" | "array";
+
 export type ArmTemplate = {
   parameters?: {
     [name: string]: {
-      type: "string" | "securestring" | "int" | "bool" | "object" | "secureObject" | "array";
+      type: ArmTemplateVariableType;
+    };
+  };
+  outputs?: {
+    [name: string]: {
+      condition?: string;
+      type: ArmTemplateVariableType;
     };
   };
 };

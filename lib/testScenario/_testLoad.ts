@@ -1,6 +1,8 @@
 import { TestResourceLoader } from "./testResourceLoader";
 import { TestScenarioRunner } from "./testScenarioRunner";
 import { VariableEnv } from "./variableEnv";
+import { TestScenarioRestClient } from "./testScenarioRestClient";
+import { getDefaultAzureCredential } from "@azure/identity";
 
 const main = async () => {
   const loader = new TestResourceLoader({
@@ -46,6 +48,7 @@ const main = async () => {
   const runner = new TestScenarioRunner({ 
     jsonLoader: loader.jsonLoader,
     env,
+    client: new TestScenarioRestClient(getDefaultAzureCredential(), {})
   });
 
   try {

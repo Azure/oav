@@ -1,5 +1,4 @@
 import { HttpMethods } from "@azure/core-http";
-import { getDefaultAzureCredential } from "@azure/identity";
 import { JsonLoader } from "../swagger/jsonLoader";
 import { setDefaultOpts } from "../swagger/loader";
 import { getLazyBuilder } from "../util/lazyBuilder";
@@ -11,12 +10,11 @@ import {
   TestStepArmTemplateDeployment,
   TestStepExampleFileRestCall,
 } from "./testResourceTypes";
-import { TestScenarioRestClient } from "./testScenarioRestClient";
 import { VariableEnv } from "./variableEnv";
 
 export interface TestScenarioRunnerOption {
-  env?: VariableEnv;
-  client?: TestScenarioRunnerClient;
+  env: VariableEnv;
+  client: TestScenarioRunnerClient;
   jsonLoader: JsonLoader;
 }
 
@@ -139,8 +137,8 @@ export class TestScenarioRunner {
   );
 
   constructor(opts: TestScenarioRunnerOption) {
-    this.env = opts.env ?? new VariableEnv();
-    this.client = opts.client ?? new TestScenarioRestClient(getDefaultAzureCredential(), {});
+    this.env = opts.env;
+    this.client = opts.client;
     this.jsonLoader = opts.jsonLoader;
     this.testScopeTracking = {};
   }
@@ -244,7 +242,6 @@ export class TestScenarioRunner {
     }
     req.path = pathEnv.resolveString(operation._path._pathTemplate, "{", "}");
     req = env.resolveObjectValues(req);
-    console.log(req);
 
     await this.client.sendExampleRequest(req, step, {
       env,

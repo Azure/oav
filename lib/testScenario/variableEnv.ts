@@ -2,6 +2,10 @@ const allowedVariableName = "a-zA-Z0-9_\\-\\.";
 const allowedVariableNameRegExp = new RegExp(`^[${allowedVariableName}]+$`);
 const regExpCache: { [key: string]: RegExp } = {};
 
+export const escapeRegExp = (str: string) => {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+};
+
 export class VariableEnv {
   private baseEnv?: VariableEnv;
   private data: { [key: string]: string } = {};
