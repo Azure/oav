@@ -213,10 +213,13 @@ export class TestScenarioRunner {
     for (const p of operation.parameters ?? []) {
       const param = this.jsonLoader.resolveRefObj(p);
       const paramValue = step.exampleTemplate.parameters[param.name];
-      if (paramValue === undefined && !param.required) {
-        throw new Error(
-          `Parameter value for "${param.name}" is not found in example: ${step.exampleFilePath}`
-        );
+      if (paramValue === undefined) {
+        if (param.required) {
+          throw new Error(
+            `Parameter value for "${param.name}" is not found in example: ${step.exampleFilePath}`
+          );
+        }
+        continue;
       }
 
       switch (param.in) {
