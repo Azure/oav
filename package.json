@@ -1,6 +1,6 @@
 {
   "name": "oav",
-  "version": "2.0.1-test-scenario-rev03",
+  "version": "2.0.1-test-scenario-3",
   "author": {
     "name": "Microsoft Corporation",
     "email": "azsdkteam@microsoft.com",
@@ -110,7 +110,7 @@
   ],
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "run-p tsc lint",
+    "build": "rm -rf dist && run-p tsc lint",
     "tsc": "tsc",
     "lint": "eslint ./lib/**/*.ts ./test/**/*.ts ./*.ts",
     "lint-fix": "eslint ./lib/**/*.ts ./test/**/*.ts ./*.ts --fix",
