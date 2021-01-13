@@ -7,9 +7,9 @@ export const escapeRegExp = (str: string) => {
 };
 
 export class VariableEnv {
-  private baseEnv?: VariableEnv;
-  private data: { [key: string]: string } = {};
-  private writeEnv: { [key: string]: string };
+  protected baseEnv?: VariableEnv;
+  protected data: { [key: string]: string } = {};
+  protected writeEnv: { [key: string]: string };
 
   public constructor(baseEnv?: VariableEnv) {
     if (baseEnv !== undefined) {
@@ -125,5 +125,19 @@ export class VariableEnv {
     val = new RegExp(`${matchLeft}([${allowedVariableName}]+?)${matchRight}`);
     regExpCache[key] = val;
     return val;
+  }
+}
+
+export class ReflectiveVariableEnv extends VariableEnv {
+  public constructor(leftPart: string, rightPart: string) {
+    super(undefined);
+    const originalData = this.data;
+    this.data = new Proxy(this.data, {
+      get: (_, propertyKey) => {
+        const key = propertyKey as string;
+        const val = originalData[key];
+        return val === undefined ? `${leftPart}${propertyKey as string}${rightPart}` : val;
+      },
+    });
   }
 }
