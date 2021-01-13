@@ -49,7 +49,10 @@ export class TestResourceLoader implements Loader<any> {
   private transformContext: TransformContext;
   private schemaValidator: SchemaValidator;
   private validateTestResourceFile: ValidateFunction;
-  private exampleToOperation: Map<string, { [operationId: string]: Operation }> = new Map();
+  private exampleToOperation: Map<
+    string,
+    { [operationId: string]: [Operation, string] }
+  > = new Map();
   private initialized: boolean = false;
   private exampleTemplateGenerator: ExampleTemplateGenerator;
 
@@ -116,7 +119,7 @@ export class TestResourceLoader implements Loader<any> {
               opMap = {};
               this.exampleToOperation.set(exampleFilePath, opMap);
             }
-            opMap[operation.operationId] = operation;
+            opMap[operation.operationId] = [operation, exampleName];
           }
         },
       });
@@ -235,7 +238,7 @@ export class TestResourceLoader implements Loader<any> {
     }
 
     if (step.operationId !== undefined) {
-      step.operation = opMap[step.operationId];
+      [step.operation, step.exampleId] = opMap[step.operationId];
       if (step.operation === undefined) {
         throw new Error(
           `Example file with operationId is not found in swagger: ${step.operationId} ${filePath}`
@@ -248,7 +251,7 @@ export class TestResourceLoader implements Loader<any> {
           `Example file is referenced by multiple operation: ${Object.keys(opMap)} ${filePath}`
         );
       }
-      step.operation = ops[0];
+      [step.operation, step.exampleId] = ops[0];
     }
 
     // Load example file

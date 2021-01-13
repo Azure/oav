@@ -54,6 +54,7 @@ export type TestStepExampleFileRestCall = TestStepBase & {
   replace: ExampleReplace[];
 
   operation: Operation;
+  exampleId: string;
   exampleFilePath: string;
   exampleFileContent: SwaggerExample;
   exampleTemplate: SwaggerExample;
