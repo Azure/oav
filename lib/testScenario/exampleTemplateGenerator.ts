@@ -135,6 +135,9 @@ const replaceAllInObject = (
   toMatch: string[],
   matchReplace: { [match: string]: string }
 ) => {
+  if (toMatch.length === 0) {
+    return;
+  }
   const matchRegExp = new RegExp(toMatch.map(escapeRegExp).join("|"), "g");
 
   const replaceString = (input: string) => {
