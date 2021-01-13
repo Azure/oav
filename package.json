@@ -49,6 +49,7 @@
     "z-schema": "^4.2.2"
   },
   "devDependencies": {
+    "@rushstack/eslint-config": "^2.3.2",
     "@types/ajv-keywords": "^3.4.0",
     "@types/ajv-merge-patch": "^4.1.0",
     "@types/commonmark": "^0.27.3",
@@ -109,7 +110,7 @@
   ],
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "run-p tsc",
+    "build": "run-p tsc lint",
     "tsc": "tsc",
     "lint": "eslint ./lib/**/*.ts ./test/**/*.ts ./*.ts",
     "lint-fix": "eslint ./lib/**/*.ts ./test/**/*.ts ./*.ts --fix",

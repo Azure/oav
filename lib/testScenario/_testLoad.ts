@@ -1,8 +1,8 @@
+import { getDefaultAzureCredential } from "@azure/identity";
 import { TestResourceLoader } from "./testResourceLoader";
 import { TestScenarioRunner } from "./testScenarioRunner";
 import { VariableEnv } from "./variableEnv";
 import { TestScenarioRestClient } from "./testScenarioRestClient";
-import { getDefaultAzureCredential } from "@azure/identity";
 
 const main = async () => {
   const loader = new TestResourceLoader({
@@ -42,13 +42,13 @@ const main = async () => {
   const env = new VariableEnv();
   env.setBatch({
     subscriptionId: "db5eb68e-73e2-4fa8-b18a-46cd1be4cce5",
-    location: "eastasia"
+    location: "eastasia",
   });
 
-  const runner = new TestScenarioRunner({ 
+  const runner = new TestScenarioRunner({
     jsonLoader: loader.jsonLoader,
     env,
-    client: new TestScenarioRestClient(getDefaultAzureCredential(), {})
+    client: new TestScenarioRestClient(getDefaultAzureCredential(), {}),
   });
 
   try {

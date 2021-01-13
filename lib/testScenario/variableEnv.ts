@@ -3,7 +3,7 @@ const allowedVariableNameRegExp = new RegExp(`^[${allowedVariableName}]+$`);
 const regExpCache: { [key: string]: RegExp } = {};
 
 export const escapeRegExp = (str: string) => {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
 };
 
 export class VariableEnv {
@@ -11,7 +11,7 @@ export class VariableEnv {
   private data: { [key: string]: string } = {};
   private writeEnv: { [key: string]: string };
 
-  constructor(baseEnv?: VariableEnv) {
+  public constructor(baseEnv?: VariableEnv) {
     if (baseEnv !== undefined) {
       this.data.__proto__ = baseEnv.data as any;
       this.baseEnv = baseEnv;
@@ -63,6 +63,7 @@ export class VariableEnv {
     let str = source;
     let count = 0;
 
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       const matchResult = captureVariable.exec(str);
       if (matchResult === null) {
@@ -71,7 +72,7 @@ export class VariableEnv {
 
       count++;
       if (count > 100) {
-        throw new Error(`More than 100 times of variable replace in: ${source}`);
+        throw new Error(`More than ${count} times of variable replace in: ${source}`);
       }
 
       const match = matchResult[0];

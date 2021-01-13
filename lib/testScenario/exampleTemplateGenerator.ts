@@ -1,3 +1,6 @@
+import { escapeRegExp } from "lodash";
+import { JsonLoader } from "../swagger/jsonLoader";
+import { SwaggerExample } from "../swagger/swaggerTypes";
 import {
   TestScenario,
   ArmTemplate,
@@ -12,14 +15,11 @@ import {
   ArmDeploymentTracking,
   TestScenarioRunner,
 } from "./testScenarioRunner";
-import { JsonLoader } from "../swagger/jsonLoader";
-import { escapeRegExp } from "lodash";
-import { SwaggerExample } from "../swagger/swaggerTypes";
 
 const placeholderToBeDetermined = "__to_be_determined__";
 
 export class ExampleTemplateGenerator implements TestScenarioRunnerClient {
-  constructor(private jsonLoader: JsonLoader) {}
+  public constructor(private jsonLoader: JsonLoader) {}
 
   public async createResourceGroup(): Promise<void> {
     // Pass
@@ -68,7 +68,7 @@ export class ExampleTemplateGenerator implements TestScenarioRunnerClient {
     const runner = new TestScenarioRunner({
       jsonLoader: this.jsonLoader,
       client: this,
-      env
+      env,
     });
 
     await runner.executeScenario(testScenario);
@@ -135,8 +135,8 @@ const replaceAllInObject = (
   toMatch: string[],
   matchReplace: { [match: string]: string }
 ) => {
-  const matchRegExp = new RegExp(toMatch.map(escapeRegExp).join('|'), "g");
-  
+  const matchRegExp = new RegExp(toMatch.map(escapeRegExp).join("|"), "g");
+
   const replaceString = (input: string) => {
     if (typeof input !== "string") {
       return input;
@@ -149,7 +149,10 @@ const replaceAllInObject = (
       const matchStr = match[0];
       const toReplace = matchReplace[matchStr];
       const index = match.index!;
-      result = result.substr(0, index + offset) + toReplace + result.substr(index + matchStr.length + offset);
+      result =
+        result.substr(0, index + offset) +
+        toReplace +
+        result.substr(index + matchStr.length + offset);
 
       offset = offset + toReplace.length - matchStr.length;
     }

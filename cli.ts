@@ -31,8 +31,8 @@ yargs
     describe: `Pretty print`,
   })
   .global(["h", "l", "f", "p"])
-  .help().argv;
+  .help();
 
 if (yargs.argv._.length === 0 && yargs.argv.h === false) {
-  yargs.coerce("help", (_) => true).argv;
+  yargs.coerce("help", (_) => true);
 }

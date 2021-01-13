@@ -1,16 +1,11 @@
+/* eslint-disable require-atomic-updates */
+import { join as pathJoin, dirname } from "path";
+import { safeLoad } from "js-yaml";
+import { default as AjvInit, ValidateFunction } from "ajv";
+import { JSONPath } from "jsonpath-plus";
 import { Loader, setDefaultOpts } from "../swagger/loader";
 import { FileLoaderOption, FileLoader } from "../swagger/fileLoader";
-import { safeLoad } from "js-yaml";
 import { JsonLoader, JsonLoaderOption } from "../swagger/jsonLoader";
-import { default as AjvInit, ValidateFunction } from "ajv";
-import {
-  TestDefinitionSchema,
-  TestDefinitionFile,
-  TestScenario,
-  TestStep,
-  TestStepExampleFileRestCall,
-  TestStepArmTemplateDeployment,
-} from "./testResourceTypes";
 import { getTransformContext, TransformContext } from "../transform/context";
 import { SchemaValidator } from "../swaggerValidator/schemaValidator";
 import { AjvSchemaValidator } from "../swaggerValidator/ajvSchemaValidator";
@@ -26,9 +21,15 @@ import { SwaggerLoader, SwaggerLoaderOption } from "../swagger/swaggerLoader";
 import { applySpecTransformers, applyGlobalTransformers } from "../transform/transformer";
 import { SwaggerSpec, Operation } from "../swagger/swaggerTypes";
 import { traverseSwagger } from "../transform/traverseSwagger";
-import { join as pathJoin, dirname } from "path";
+import {
+  TestDefinitionSchema,
+  TestDefinitionFile,
+  TestScenario,
+  TestStep,
+  TestStepExampleFileRestCall,
+  TestStepArmTemplateDeployment,
+} from "./testResourceTypes";
 import { ExampleTemplateGenerator } from "./exampleTemplateGenerator";
-import { JSONPath } from "jsonpath-plus";
 
 const ajv = new AjvInit({
   useDefaults: true,
@@ -52,7 +53,7 @@ export class TestResourceLoader implements Loader<any> {
   private initialized: boolean = false;
   private exampleTemplateGenerator: ExampleTemplateGenerator;
 
-  constructor(private opts: TestResourceLoaderOption) {
+  public constructor(private opts: TestResourceLoaderOption) {
     setDefaultOpts(opts, {
       swaggerFilePaths: [],
       eraseXmsExamples: false,

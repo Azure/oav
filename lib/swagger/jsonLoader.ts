@@ -54,6 +54,19 @@ export class JsonLoader implements Loader<Json> {
     return fileContent;
   });
 
+  public static create = getLoaderBuilder((opts: JsonLoaderOption) => new JsonLoader(opts));
+  private constructor(private opts: JsonLoaderOption) {
+    setDefaultOpts(opts, {
+      useJsonParser: true,
+      eraseDescription: true,
+      eraseXmsExamples: true,
+      transformRef: true,
+      supportYaml: false,
+    });
+    this.skipResolveRefKeys = new Set(opts.skipResolveRefKeys);
+    this.fileLoader = FileLoader.create(opts);
+  }
+
   private parseFileContent(cache: FileCache, fileString: string): any {
     if (cache.filePath.endsWith(".json")) {
       return this.opts.useJsonParser
@@ -72,19 +85,6 @@ export class JsonLoader implements Loader<Json> {
     }
 
     throw new Error(`Unknown file format while loading file ${cache.filePath}`);
-  }
-
-  public static create = getLoaderBuilder((opts: JsonLoaderOption) => new JsonLoader(opts));
-  private constructor(private opts: JsonLoaderOption) {
-    setDefaultOpts(opts, {
-      useJsonParser: true,
-      eraseDescription: true,
-      eraseXmsExamples: true,
-      transformRef: true,
-      supportYaml: false,
-    });
-    this.skipResolveRefKeys = new Set(opts.skipResolveRefKeys);
-    this.fileLoader = FileLoader.create(opts);
   }
 
   public async load(inputFilePath: string, skipResolveRef?: boolean): Promise<Json> {

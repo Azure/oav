@@ -1,3 +1,4 @@
+import { URL } from "url";
 import {
   getDefaultUserAgentValue,
   ServiceClient,
@@ -7,20 +8,24 @@ import {
   createPipelineFromOptions,
   isTokenCredential,
   bearerTokenAuthenticationPolicy,
-  signingPolicy
+  signingPolicy,
 } from "@azure/core-http";
 import { TokenCredentials as MsRestTokenCredential } from "@azure/ms-rest-js";
-import { setDefaultOpts } from "../swagger/loader";
 import { ResourceManagementClient } from "@azure/arm-resources";
+import { LROPoller as MsLROPoller } from "@azure/ms-rest-azure-js";
+import { setDefaultOpts } from "../swagger/loader";
 import {
   ArmTemplate,
   TestStepArmTemplateDeployment,
   TestStepExampleFileRestCall,
 } from "./testResourceTypes";
-import { ArmDeploymentTracking, TestScenarioClientRequest, TestScenarioRunnerClient, TestStepEnv } from "./testScenarioRunner";
-import { LROPoller as MsLROPoller } from "@azure/ms-rest-azure-js";
+import {
+  ArmDeploymentTracking,
+  TestScenarioClientRequest,
+  TestScenarioRunnerClient,
+  TestStepEnv,
+} from "./testScenarioRunner";
 import { LROPoller, BaseResult, lroPolicy } from "./lro";
-import { URL } from "url";
 
 export interface TestScenarioRestClientOption extends ServiceClientOptions {
   endpoint?: string;
@@ -30,20 +35,17 @@ export class TestScenarioRestClient extends ServiceClient implements TestScenari
   private opts: TestScenarioRestClientOption;
   private credential: TokenCredential;
 
-  constructor(credential: TokenCredential, opts: TestScenarioRestClientOption) {
+  public constructor(credential: TokenCredential, opts: TestScenarioRestClientOption) {
     setDefaultOpts(opts, {
       credentialScopes: ["https://management.azure.com/.default"],
       userAgent: `TestScenarioRunnerClient/1.0.0 ${getDefaultUserAgentValue()}`,
-      endpoint: "https://management.azure.com"
+      endpoint: "https://management.azure.com",
     });
     const credsPolicy = isTokenCredential(credential)
-      ? bearerTokenAuthenticationPolicy(
-          credential,
-          "https://management.azure.com/.default"
-        )
+      ? bearerTokenAuthenticationPolicy(credential, "https://management.azure.com/.default")
       : signingPolicy(credential);
     const pipeline = createPipelineFromOptions(opts, credsPolicy);
-    if (Array.isArray(pipeline.requestPolicyFactories)){
+    if (Array.isArray(pipeline.requestPolicyFactories)) {
       pipeline.requestPolicyFactories.unshift(lroPolicy());
     }
 
@@ -58,29 +60,35 @@ export class TestScenarioRestClient extends ServiceClient implements TestScenari
   public async createResourceGroup(
     subscriptionId: string,
     resourceGroupName: string,
-    location: string,
+    location: string
   ): Promise<void> {
     console.log(`Create ResourceGroup: ${resourceGroupName}`);
-    const resourcesClient = new ResourceManagementClient(await this.getMsRestCredential(), subscriptionId);
+    const resourcesClient = new ResourceManagementClient(
+      await this.getMsRestCredential(),
+      subscriptionId
+    );
     await resourcesClient.resourceGroups.createOrUpdate(resourceGroupName, {
-      location
+      location,
     });
-  };
+  }
 
   public async deleteResourceGroup(
     subscriptionId: string,
-    resourceGroupName: string,
+    resourceGroupName: string
   ): Promise<void> {
     console.log(`Delete ResourceGroup: ${resourceGroupName}`);
-    const resourcesClient = new ResourceManagementClient(await this.getMsRestCredential(), subscriptionId);
+    const resourcesClient = new ResourceManagementClient(
+      await this.getMsRestCredential(),
+      subscriptionId
+    );
     const poller = await resourcesClient.resourceGroups.beginDeleteMethod(resourceGroupName);
     await this.fastPollMsLROPoller(poller);
-  };
+  }
 
   public async sendExampleRequest(
     req: TestScenarioClientRequest,
     step: TestStepExampleFileRestCall,
-    _stepEnv: TestStepEnv,
+    _stepEnv: TestStepEnv
   ): Promise<void> {
     console.log(`Send request: ${req.method} ${req.path}`);
     const url = new URL(req.path, this.opts.endpoint!);
@@ -97,14 +105,16 @@ export class TestScenarioRestClient extends ServiceClient implements TestScenari
     const sendOperation = async (request: RequestPrepareOptions): Promise<BaseResult> => {
       const result = await this.sendRequest(request);
       return {
-        _response: result
+        _response: result,
       };
-    }
+    };
     const result = await sendOperation(initialRequest);
     const { _response: initialResponse } = result;
 
     if (initialResponse.status >= 400) {
-      throw new Error(`Fail to send request ${req.method} ${req.path}:\n${initialResponse.bodyAsText}`);
+      throw new Error(
+        `Fail to send request ${req.method} ${req.path}:\n${initialResponse.bodyAsText}`
+      );
     }
 
     if (step.operation["x-ms-long-running-operation"]) {
@@ -129,17 +139,27 @@ export class TestScenarioRestClient extends ServiceClient implements TestScenari
   ) {
     console.log(`Deploy ARM template ${armDeployment.deploymentName}`);
     const { subscriptionId, resourceGroupName } = armDeployment.details;
-    const resourcesClient = new ResourceManagementClient(await this.getMsRestCredential(), subscriptionId);
-    const poller = await resourcesClient.deployments.beginCreateOrUpdate(resourceGroupName, armDeployment.deploymentName, {
-      properties: {
-        mode: "Complete",
-        template: armTemplate,
-        parameters: params
+    const resourcesClient = new ResourceManagementClient(
+      await this.getMsRestCredential(),
+      subscriptionId
+    );
+    const poller = await resourcesClient.deployments.beginCreateOrUpdate(
+      resourceGroupName,
+      armDeployment.deploymentName,
+      {
+        properties: {
+          mode: "Complete",
+          template: armTemplate,
+          parameters: params,
+        },
       }
-    });
+    );
     await this.fastPollMsLROPoller(poller);
 
-    const deployResult = await resourcesClient.deployments.get(resourceGroupName, armDeployment.deploymentName);
+    const deployResult = await resourcesClient.deployments.get(
+      resourceGroupName,
+      armDeployment.deploymentName
+    );
     const outputs = deployResult.properties?.outputs;
     console.log(outputs);
     if (outputs) {
@@ -158,7 +178,7 @@ export class TestScenarioRestClient extends ServiceClient implements TestScenari
     let delayInSeconds = 1;
     const isDone = "isFinished" in poller ? poller.isFinished : poller.isDone;
     while (!isDone.call(poller)) {
-      await new Promise(resolve => setTimeout(resolve, delayInSeconds * 1000));
+      await new Promise((resolve) => setTimeout(resolve, delayInSeconds * 1000));
       if (delayInSeconds < 4) {
         delayInSeconds = delayInSeconds * 2;
       }

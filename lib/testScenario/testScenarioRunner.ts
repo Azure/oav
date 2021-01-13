@@ -18,7 +18,7 @@ export interface TestScenarioRunnerOption {
   jsonLoader: JsonLoader;
 }
 
-export type ArmDeploymentTracking = {
+export interface ArmDeploymentTracking {
   deploymentName: string;
   step: TestStepArmTemplateDeployment;
   details: {
@@ -26,7 +26,7 @@ export type ArmDeploymentTracking = {
     subscriptionId: string;
     resourceGroupName: string;
   };
-};
+}
 
 interface TestScopeTracking {
   provisioned?: boolean;
@@ -36,11 +36,11 @@ interface TestScopeTracking {
   armDeployments: ArmDeploymentTracking[];
 }
 
-export type TestStepEnv = {
+export interface TestStepEnv {
   env: VariableEnv;
   scope: TestDefinitionFile["scope"];
   armDeployments: ArmDeploymentTracking[];
-};
+}
 
 export interface TestScenarioClientRequest {
   method: HttpMethods;
@@ -57,10 +57,7 @@ export interface TestScenarioRunnerClient {
     location: string
   ): Promise<void>;
 
-  deleteResourceGroup(
-    subscriptionId: string,
-    resourceGroupName: string,
-  ): Promise<void>;
+  deleteResourceGroup(subscriptionId: string, resourceGroupName: string): Promise<void>;
 
   sendExampleRequest(
     request: TestScenarioClientRequest,
@@ -136,7 +133,7 @@ export class TestScenarioRunner {
     }
   );
 
-  constructor(opts: TestScenarioRunnerOption) {
+  public constructor(opts: TestScenarioRunnerOption) {
     this.env = opts.env;
     this.client = opts.client;
     this.jsonLoader = opts.jsonLoader;

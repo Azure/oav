@@ -11,7 +11,7 @@ export class FileLoader implements Loader<string> {
   public static create = getLoaderBuilder((opts: FileLoaderOption) => new FileLoader(opts));
   private constructor(private opts: FileLoaderOption) {
     setDefaultOpts(opts, {
-      checkUnderFileRoot: true
+      checkUnderFileRoot: true,
     });
 
     if (this.opts.fileRoot) {

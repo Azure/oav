@@ -1,17 +1,17 @@
 import { Operation, Schema, SwaggerExample } from "../swagger/swaggerTypes";
 
-export type TestDefinitionFile = {
+export interface TestDefinitionFile {
   scope: "ResourceGroup";
   requiredVariables: string[];
   prepareSteps: TestStep[];
   testScenarios: TestScenario[];
 
   _filePath: string;
-};
+}
 
-export type VariableScope = {
+export interface VariableScope {
   variables: { [variableName: string]: string };
-};
+}
 
 export type TestStepBase = VariableScope & {
   isScopePrepareStep: boolean;
@@ -24,9 +24,16 @@ export type TestStepArmTemplateDeployment = TestStepBase & {
   armTemplatePayload: ArmTemplate;
 };
 
-export type ArmTemplateVariableType = "string" | "securestring" | "int" | "bool" | "object" | "secureObject" | "array";
+export type ArmTemplateVariableType =
+  | "string"
+  | "securestring"
+  | "int"
+  | "bool"
+  | "object"
+  | "secureObject"
+  | "array";
 
-export type ArmTemplate = {
+export interface ArmTemplate {
   parameters?: {
     [name: string]: {
       type: ArmTemplateVariableType;
@@ -38,7 +45,7 @@ export type ArmTemplate = {
       type: ArmTemplateVariableType;
     };
   };
-};
+}
 
 export type TestStepExampleFileRestCall = TestStepBase & {
   type: "exampleFile";
@@ -52,15 +59,15 @@ export type TestStepExampleFileRestCall = TestStepBase & {
   exampleTemplate: SwaggerExample;
 };
 
-export type ExampleReplace = {
+export interface ExampleReplace {
   pathInBody?: string; // Format: json path
   pathInExample?: string; // Format: json path
   to: string;
-};
+}
 
 export type TestStep = TestStepArmTemplateDeployment | TestStepExampleFileRestCall;
 
-export type TestScenario = {
+export interface TestScenario {
   description: string;
   requiredVariables: string[];
   shareTestScope: boolean | string;
@@ -68,7 +75,7 @@ export type TestScenario = {
 
   _testDef: TestDefinitionFile;
   _resolvedSteps: TestStep[];
-};
+}
 
 export const TestDefinitionSchema: Schema & {
   definitions: { [def: string]: Schema };
