@@ -1,3 +1,4 @@
+import { PostmanCollectionGenerator } from "./lib/testScenario/postmanCollectionGenerator";
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 import * as C from "./lib/util/constants";
@@ -61,6 +62,12 @@ export {
   TestScenarioRunner,
   TestScenarioRunnerClient,
 } from "./lib/testScenario/testScenarioRunner";
+
+export { PostmanCollectionRunnerClient } from "./lib/testScenario/postmanCollectionRunnerClient";
+export {
+  PostmanCollectionGenerator,
+  PostmanCollectionGeneratorOption,
+} from "./lib/testScenario/postmanCollectionGenerator";
 
 // Constants
 export const Constants = C;

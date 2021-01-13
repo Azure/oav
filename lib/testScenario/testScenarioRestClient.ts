@@ -119,7 +119,7 @@ export class TestScenarioRestClient extends ServiceClient implements TestScenari
 
     if (initialResponse.status >= 400) {
       throw new Error(
-        `Fail to send request ${req.method} ${req.path}:\n${initialResponse.bodyAsText}`
+        `Fail to send request ${req.method} ${req.path}:\n${result._response.bodyAsText}`
       );
     }
 

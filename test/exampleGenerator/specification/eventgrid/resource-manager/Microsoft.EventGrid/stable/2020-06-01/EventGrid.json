@@ -64,6 +64,12 @@
         "x-ms-examples": {
           "Domains_Get": {
             "$ref": "./examples/Domains_Get.json"
+          },
+          "Domains_Get_MaximumSet_Gen": {
+            "$ref": "./examples/Domains_Get_MaximumSet_Gen.json"
+          },
+          "Domains_Get_MinimumSet_Gen": {
+            "$ref": "./examples/Domains_Get_MinimumSet_Gen.json"
           }
         }
       },
@@ -125,6 +131,12 @@
         "x-ms-examples": {
           "Domains_CreateOrUpdate": {
             "$ref": "./examples/Domains_CreateOrUpdate.json"
+          },
+          "Domains_CreateOrUpdate_MaximumSet_Gen": {
+            "$ref": "./examples/Domains_CreateOrUpdate_MaximumSet_Gen.json"
+          },
+          "Domains_CreateOrUpdate_MinimumSet_Gen": {
+            "$ref": "./examples/Domains_CreateOrUpdate_MinimumSet_Gen.json"
           }
         },
         "x-ms-long-running-operation": true
@@ -176,6 +188,12 @@
         "x-ms-examples": {
           "Domains_Delete": {
             "$ref": "./examples/Domains_Delete.json"
+          },
+          "Domains_Delete_MaximumSet_Gen": {
+            "$ref": "./examples/Domains_Delete_MaximumSet_Gen.json"
+          },
+          "Domains_Delete_MinimumSet_Gen": {
+            "$ref": "./examples/Domains_Delete_MinimumSet_Gen.json"
           }
         },
         "x-ms-long-running-operation": true
@@ -241,6 +259,12 @@
         "x-ms-examples": {
           "Domains_Update": {
             "$ref": "./examples/Domains_Update.json"
+          },
+          "Domains_Update_MaximumSet_Gen": {
+            "$ref": "./examples/Domains_Update_MaximumSet_Gen.json"
+          },
+          "Domains_Update_MinimumSet_Gen": {
+            "$ref": "./examples/Domains_Update_MinimumSet_Gen.json"
           }
         },
         "x-ms-long-running-operation": true
@@ -286,6 +310,12 @@
         "x-ms-examples": {
           "Domains_ListBySubscription": {
             "$ref": "./examples/Domains_ListBySubscription.json"
+          },
+          "Domains_ListBySubscription_MaximumSet_Gen": {
+            "$ref": "./examples/Domains_ListBySubscription_MaximumSet_Gen.json"
+          },
+          "Domains_ListBySubscription_MinimumSet_Gen": {
+            "$ref": "./examples/Domains_ListBySubscription_MinimumSet_Gen.json"
           }
         },
         "x-ms-pageable": {
@@ -340,6 +370,12 @@
         "x-ms-examples": {
           "Domains_ListByResourceGroup": {
             "$ref": "./examples/Domains_ListByResourceGroup.json"
+          },
+          "Domains_ListByResourceGroup_MaximumSet_Gen": {
+            "$ref": "./examples/Domains_ListByResourceGroup_MaximumSet_Gen.json"
+          },
+          "Domains_ListByResourceGroup_MinimumSet_Gen": {
+            "$ref": "./examples/Domains_ListByResourceGroup_MinimumSet_Gen.json"
           }
         },
         "x-ms-pageable": {
@@ -395,6 +431,12 @@
         "x-ms-examples": {
           "Domains_ListSharedAccessKeys": {
             "$ref": "./examples/Domains_ListSharedAccessKeys.json"
+          },
+          "Domains_ListSharedAccessKeys_MaximumSet_Gen": {
+            "$ref": "./examples/Domains_ListSharedAccessKeys_MaximumSet_Gen.json"
+          },
+          "Domains_ListSharedAccessKeys_MinimumSet_Gen": {
+            "$ref": "./examples/Domains_ListSharedAccessKeys_MinimumSet_Gen.json"
           }
         }
       }
@@ -458,6 +500,12 @@
         "x-ms-examples": {
           "Domains_RegenerateKey": {
             "$ref": "./examples/Domains_RegenerateKey.json"
+          },
+          "Domains_RegenerateKey_MaximumSet_Gen": {
+            "$ref": "./examples/Domains_RegenerateKey_MaximumSet_Gen.json"
+          },
+          "Domains_RegenerateKey_MinimumSet_Gen": {
+            "$ref": "./examples/Domains_RegenerateKey_MinimumSet_Gen.json"
           }
         }
       }
@@ -517,6 +565,12 @@
         "x-ms-examples": {
           "DomainTopics_Get": {
             "$ref": "./examples/DomainTopics_Get.json"
+          },
+          "DomainTopics_Get_MaximumSet_Gen": {
+            "$ref": "./examples/DomainTopics_Get_MaximumSet_Gen.json"
+          },
+          "DomainTopics_Get_MinimumSet_Gen": {
+            "$ref": "./examples/DomainTopics_Get_MinimumSet_Gen.json"
           }
         }
       },
@@ -574,6 +628,12 @@
         "x-ms-examples": {
           "DomainTopics_CreateOrUpdate": {
             "$ref": "./examples/DomainTopics_CreateOrUpdate.json"
+          },
+          "DomainTopics_CreateOrUpdate_MaximumSet_Gen": {
+            "$ref": "./examples/DomainTopics_CreateOrUpdate_MaximumSet_Gen.json"
+          },
+          "DomainTopics_CreateOrUpdate_MinimumSet_Gen": {
+            "$ref": "./examples/DomainTopics_CreateOrUpdate_MinimumSet_Gen.json"
           }
         },
         "x-ms-long-running-operation": true
@@ -632,6 +692,12 @@
         "x-ms-examples": {
           "DomainTopics_Delete": {
             "$ref": "./examples/DomainTopics_Delete.json"
+          },
+          "DomainTopics_Delete_MaximumSet_Gen": {
+            "$ref": "./examples/DomainTopics_Delete_MaximumSet_Gen.json"
+          },
+          "DomainTopics_Delete_MinimumSet_Gen": {
+            "$ref": "./examples/DomainTopics_Delete_MinimumSet_Gen.json"
           }
         },
         "x-ms-long-running-operation": true
@@ -691,6 +757,12 @@
         "x-ms-examples": {
           "DomainTopics_ListByDomain": {
             "$ref": "./examples/DomainTopics_ListByDomain.json"
+          },
+          "DomainTopics_ListByDomain_MaximumSet_Gen": {
+            "$ref": "./examples/DomainTopics_ListByDomain_MaximumSet_Gen.json"
+          },
+          "DomainTopics_ListByDomain_MinimumSet_Gen": {
+            "$ref": "./examples/DomainTopics_ListByDomain_MinimumSet_Gen.json"
           }
         },
         "x-ms-pageable": {
@@ -753,6 +825,12 @@
           },
           "EventSubscriptions_GetForCustomTopic": {
             "$ref": "./examples/EventSubscriptions_GetForCustomTopic.json"
+          },
+          "EventSubscriptions_Get_MaximumSet_Gen": {
+            "$ref": "./examples/EventSubscriptions_Get_MaximumSet_Gen.json"
+          },
+          "EventSubscriptions_Get_MinimumSet_Gen": {
+            "$ref": "./examples/EventSubscriptions_Get_MinimumSet_Gen.json"
           }
         }
       },
@@ -830,6 +908,12 @@
           },
           "EventSubscriptions_CreateOrUpdateForCustomTopic_StorageQueueDestination": {
             "$ref": "./examples/EventSubscriptions_CreateOrUpdateForCustomTopic_StorageQueueDestination.json"
+          },
+          "EventSubscriptions_CreateOrUpdate_MaximumSet_Gen": {
+            "$ref": "./examples/EventSubscriptions_CreateOrUpdate_MaximumSet_Gen.json"
+          },
+          "EventSubscriptions_CreateOrUpdate_MinimumSet_Gen": {
+            "$ref": "./examples/EventSubscriptions_CreateOrUpdate_MinimumSet_Gen.json"
           }
         },
         "x-ms-long-running-operation": true
@@ -891,6 +975,12 @@
           },
           "EventSubscriptions_DeleteForCustomTopic": {
             "$ref": "./examples/EventSubscriptions_DeleteForCustomTopic.json"
+          },
+          "EventSubscriptions_Delete_MaximumSet_Gen": {
+            "$ref": "./examples/EventSubscriptions_Delete_MaximumSet_Gen.json"
+          },
+          "EventSubscriptions_Delete_MinimumSet_Gen": {
+            "$ref": "./examples/EventSubscriptions_Delete_MinimumSet_Gen.json"
           }
         },
         "x-ms-long-running-operation": true
@@ -960,6 +1050,12 @@
           },
           "EventSubscriptions_UpdateForCustomTopic": {
             "$ref": "./examples/EventSubscriptions_UpdateForCustomTopic.json"
+          },
+          "EventSubscriptions_Update_MaximumSet_Gen": {
+            "$ref": "./examples/EventSubscriptions_Update_MaximumSet_Gen.json"
+          },
+          "EventSubscriptions_Update_MinimumSet_Gen": {
+            "$ref": "./examples/EventSubscriptions_Update_MinimumSet_Gen.json"
           }
         },
         "x-ms-long-running-operation": true
@@ -1020,6 +1116,12 @@
           },
           "EventSubscriptions_GetFullUrlForCustomTopic": {
             "$ref": "./examples/EventSubscriptions_GetFullUrlForCustomTopic.json"
+          },
+          "EventSubscriptions_GetFullUrl_MaximumSet_Gen": {
+            "$ref": "./examples/EventSubscriptions_GetFullUrl_MaximumSet_Gen.json"
+          },
+          "EventSubscriptions_GetFullUrl_MinimumSet_Gen": {
+            "$ref": "./examples/EventSubscriptions_GetFullUrl_MinimumSet_Gen.json"
           }
         }
       }
@@ -1067,6 +1169,12 @@
         "x-ms-examples": {
           "EventSubscriptions_ListGlobalBySubscription": {
             "$ref": "./examples/EventSubscriptions_ListGlobalBySubscription.json"
+          },
+          "EventSubscriptions_ListGlobalBySubscription_MaximumSet_Gen": {
+            "$ref": "./examples/EventSubscriptions_ListGlobalBySubscription_MaximumSet_Gen.json"
+          },
+          "EventSubscriptions_ListGlobalBySubscription_MinimumSet_Gen": {
+            "$ref": "./examples/EventSubscriptions_ListGlobalBySubscription_MinimumSet_Gen.json"
           }
         }
       }
@@ -1121,6 +1229,12 @@
         "x-ms-examples": {
           "EventSubscriptions_ListGlobalBySubscriptionForTopicType": {
             "$ref": "./examples/EventSubscriptions_ListGlobalBySubscriptionForTopicType.json"
+          },
+          "EventSubscriptions_ListGlobalBySubscriptionForTopicType_MaximumSet_Gen": {
+            "$ref": "./examples/EventSubscriptions_ListGlobalBySubscriptionForTopicType_MaximumSet_Gen.json"
+          },
+          "EventSubscriptions_ListGlobalBySubscriptionForTopicType_MinimumSet_Gen": {
+            "$ref": "./examples/EventSubscriptions_ListGlobalBySubscriptionForTopicType_MinimumSet_Gen.json"
           }
         }
       }
@@ -1175,6 +1289,12 @@
         "x-ms-examples": {
           "EventSubscriptions_ListGlobalByResourceGroup": {
             "$ref": "./examples/EventSubscriptions_ListGlobalByResourceGroup.json"
+          },
+          "EventSubscriptions_ListGlobalByResourceGroup_MaximumSet_Gen": {
+            "$ref": "./examples/EventSubscriptions_ListGlobalByResourceGroup_MaximumSet_Gen.json"
+          },
+          "EventSubscriptions_ListGlobalByResourceGroup_MinimumSet_Gen": {
+            "$ref": "./examples/EventSubscriptions_ListGlobalByResourceGroup_MinimumSet_Gen.json"
           }
         }
       }
@@ -1290,6 +1410,12 @@
         "x-ms-examples": {
           "EventSubscriptions_ListRegionalBySubscription": {
             "$ref": "./examples/EventSubscriptions_ListRegionalBySubscription.json"
+          },
+          "EventSubscriptions_ListRegionalBySubscription_MaximumSet_Gen": {
+            "$ref": "./examples/EventSubscriptions_ListRegionalBySubscription_MaximumSet_Gen.json"
+          },
+          "EventSubscriptions_ListRegionalBySubscription_MinimumSet_Gen": {
+            "$ref": "./examples/EventSubscriptions_ListRegionalBySubscription_MinimumSet_Gen.json"
           }
         }
       }
@@ -1552,6 +1678,12 @@
         "x-ms-examples": {
           "EventSubscriptions_ListByResource": {
             "$ref": "./examples/EventSubscriptions_ListByResource.json"
+          },
+          "EventSubscriptions_ListByResource_MaximumSet_Gen": {
+            "$ref": "./examples/EventSubscriptions_ListByResource_MaximumSet_Gen.json"
+          },
+          "EventSubscriptions_ListByResource_MinimumSet_Gen": {
+            "$ref": "./examples/EventSubscriptions_ListByResource_MinimumSet_Gen.json"
           }
         },
         "x-ms-pageable": {
@@ -1620,6 +1752,12 @@
         "x-ms-examples": {
           "EventSubscriptions_ListByDomainTopic": {
             "$ref": "./examples/EventSubscriptions_ListByDomainTopic.json"
+          },
+          "EventSubscriptions_ListByDomainTopic_MaximumSet_Gen": {
+            "$ref": "./examples/EventSubscriptions_ListByDomainTopic_MaximumSet_Gen.json"
+          },
+          "EventSubscriptions_ListByDomainTopic_MinimumSet_Gen": {
+            "$ref": "./examples/EventSubscriptions_ListByDomainTopic_MinimumSet_Gen.json"
           }
         },
         "x-ms-pageable": {
@@ -1713,6 +1851,12 @@
         "x-ms-examples": {
           "Topics_Get": {
             "$ref": "./examples/Topics_Get.json"
+          },
+          "Topics_Get_MaximumSet_Gen": {
+            "$ref": "./examples/Topics_Get_MaximumSet_Gen.json"
+          },
+          "Topics_Get_MinimumSet_Gen": {
+            "$ref": "./examples/Topics_Get_MinimumSet_Gen.json"
           }
         }
       },
@@ -1774,6 +1918,12 @@
         "x-ms-examples": {
           "Topics_CreateOrUpdate": {
             "$ref": "./examples/Topics_CreateOrUpdate.json"
+          },
+          "Topics_CreateOrUpdate_MaximumSet_Gen": {
+            "$ref": "./examples/Topics_CreateOrUpdate_MaximumSet_Gen.json"
+          },
+          "Topics_CreateOrUpdate_MinimumSet_Gen": {
+            "$ref": "./examples/Topics_CreateOrUpdate_MinimumSet_Gen.json"
           }
         },
         "x-ms-long-running-operation": true
@@ -1825,6 +1975,12 @@
         "x-ms-examples": {
           "Topics_Delete": {
             "$ref": "./examples/Topics_Delete.json"
+          },
+          "Topics_Delete_MaximumSet_Gen": {
+            "$ref": "./examples/Topics_Delete_MaximumSet_Gen.json"
+          },
+          "Topics_Delete_MinimumSet_Gen": {
+            "$ref": "./examples/Topics_Delete_MinimumSet_Gen.json"
           }
         },
         "x-ms-long-running-operation": true
@@ -1890,6 +2046,12 @@
         "x-ms-examples": {
           "Topics_Update": {
             "$ref": "./examples/Topics_Update.json"
+          },
+          "Topics_Update_MaximumSet_Gen": {
+            "$ref": "./examples/Topics_Update_MaximumSet_Gen.json"
+          },
+          "Topics_Update_MinimumSet_Gen": {
+            "$ref": "./examples/Topics_Update_MinimumSet_Gen.json"
           }
         },
         "x-ms-long-running-operation": true
@@ -1938,6 +2100,12 @@
         "x-ms-examples": {
           "Topics_ListBySubscription": {
             "$ref": "./examples/Topics_ListBySubscription.json"
+          },
+          "Topics_ListBySubscription_MaximumSet_Gen": {
+            "$ref": "./examples/Topics_ListBySubscription_MaximumSet_Gen.json"
+          },
+          "Topics_ListBySubscription_MinimumSet_Gen": {
+            "$ref": "./examples/Topics_ListBySubscription_MinimumSet_Gen.json"
           }
         }
       }
@@ -1992,6 +2160,12 @@
         "x-ms-examples": {
           "Topics_ListByResourceGroup": {
             "$ref": "./examples/Topics_ListByResourceGroup.json"
+          },
+          "Topics_ListByResourceGroup_MaximumSet_Gen": {
+            "$ref": "./examples/Topics_ListByResourceGroup_MaximumSet_Gen.json"
+          },
+          "Topics_ListByResourceGroup_MinimumSet_Gen": {
+            "$ref": "./examples/Topics_ListByResourceGroup_MinimumSet_Gen.json"
           }
         }
       }
@@ -2044,6 +2218,12 @@
         "x-ms-examples": {
           "Topics_ListSharedAccessKeys": {
             "$ref": "./examples/Topics_ListSharedAccessKeys.json"
+          },
+          "Topics_ListSharedAccessKeys_MaximumSet_Gen": {
+            "$ref": "./examples/Topics_ListSharedAccessKeys_MaximumSet_Gen.json"
+          },
+          "Topics_ListSharedAccessKeys_MinimumSet_Gen": {
+            "$ref": "./examples/Topics_ListSharedAccessKeys_MinimumSet_Gen.json"
           }
         }
       }
@@ -2107,6 +2287,12 @@
         "x-ms-examples": {
           "Topics_RegenerateKey": {
             "$ref": "./examples/Topics_RegenerateKey.json"
+          },
+          "Topics_RegenerateKey_MaximumSet_Gen": {
+            "$ref": "./examples/Topics_RegenerateKey_MaximumSet_Gen.json"
+          },
+          "Topics_RegenerateKey_MinimumSet_Gen": {
+            "$ref": "./examples/Topics_RegenerateKey_MinimumSet_Gen.json"
           }
         }
       }
@@ -2401,6 +2587,12 @@
         "x-ms-examples": {
           "PrivateEndpointConnections_ListByResource": {
             "$ref": "./examples/PrivateEndpointConnections_ListByResource.json"
+          },
+          "PrivateEndpointConnections_ListByResource_MaximumSet_Gen": {
+            "$ref": "./examples/PrivateEndpointConnections_ListByResource_MaximumSet_Gen.json"
+          },
+          "PrivateEndpointConnections_ListByResource_MinimumSet_Gen": {
+            "$ref": "./examples/PrivateEndpointConnections_ListByResource_MinimumSet_Gen.json"
           }
         },
         "x-ms-pageable": {
