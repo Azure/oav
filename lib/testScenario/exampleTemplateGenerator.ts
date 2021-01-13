@@ -1,4 +1,3 @@
-import { cloneDeep } from "@azure-tools/openapi-tools-common";
 import {
   TestScenario,
   ArmTemplate,
@@ -35,9 +34,6 @@ export class ExampleTemplateGenerator implements TestScenarioRunnerClient {
     step: TestStepExampleFileRestCall,
     stepEnv: TestStepEnv
   ): Promise<void> {
-    const exampleTemplate = cloneDeep(step.exampleFileContent);
-    step.exampleTemplate = exampleTemplate;
-
     this.replaceWithParameterConvention(step.exampleTemplate, stepEnv.env);
   }
 

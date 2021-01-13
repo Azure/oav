@@ -53,7 +53,7 @@ export type TestStepExampleFileRestCall = TestStepBase & {
 };
 
 export type ExampleReplace = {
-  pathInPayload?: string; // Format: json path
+  pathInBody?: string; // Format: json path
   pathInExample?: string; // Format: json path
   to: string;
 };

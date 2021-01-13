@@ -28,6 +28,7 @@ import { SwaggerSpec, Operation } from "../swagger/swaggerTypes";
 import { traverseSwagger } from "../transform/traverseSwagger";
 import { join as pathJoin, dirname } from "path";
 import { ExampleTemplateGenerator } from "./exampleTemplateGenerator";
+import { JSONPath } from "jsonpath-plus";
 
 const ajv = new AjvInit({
   useDefaults: true,
@@ -56,7 +57,7 @@ export class TestResourceLoader implements Loader<any> {
       swaggerFilePaths: [],
       eraseXmsExamples: false,
       eraseDescription: false,
-      skipResolveRefKeys: ["x-ms-examples"]
+      skipResolveRefKeys: ["x-ms-examples"],
     });
 
     this.fileLoader = FileLoader.create(opts);
@@ -97,7 +98,9 @@ export class TestResourceLoader implements Loader<any> {
       traverseSwagger(spec, {
         onOperation: (operation) => {
           if (operation.operationId === undefined) {
-            throw new Error(`OperationId is undefined for operation ${operation._method} ${operation._path._pathTemplate}`);
+            throw new Error(
+              `OperationId is undefined for operation ${operation._method} ${operation._path._pathTemplate}`
+            );
           }
 
           const xMsExamples = operation["x-ms-examples"] ?? {};
@@ -128,7 +131,9 @@ export class TestResourceLoader implements Loader<any> {
     const filePayload = safeLoad(fileContent);
     if (!this.validateTestResourceFile(filePayload)) {
       const err = this.validateTestResourceFile.errors![0];
-      throw new Error(`Failed to validate test resource file ${filePath}: ${err.dataPath} ${err.message}`);
+      throw new Error(
+        `Failed to validate test resource file ${filePath}: ${err.dataPath} ${err.message}`
+      );
     }
     const testDef = filePayload as TestDefinitionFile;
     testDef._filePath = this.fileLoader.relativePath(filePath);
@@ -157,7 +162,10 @@ export class TestResourceLoader implements Loader<any> {
     const resolvedSteps: TestStep[] = [];
     testScenario._resolvedSteps = resolvedSteps;
 
-    const requiredVariables = new Set([...testScenario.requiredVariables, ...testDef.requiredVariables]);
+    const requiredVariables = new Set([
+      ...testScenario.requiredVariables,
+      ...testDef.requiredVariables,
+    ]);
     testScenario.requiredVariables = [...requiredVariables];
 
     for (const step of testDef.prepareSteps) {
@@ -172,7 +180,11 @@ export class TestResourceLoader implements Loader<any> {
     await this.exampleTemplateGenerator.generateExampleTemplateForTestScenario(testScenario);
   }
 
-  private async loadTestStep(step: TestStep, testDef: TestDefinitionFile, testScenario?: TestScenario) {
+  private async loadTestStep(
+    step: TestStep,
+    testDef: TestDefinitionFile,
+    testScenario?: TestScenario
+  ) {
     if ("armTemplateDeployment" in step) {
       await this.loadTestStepArmTemplate(step, testDef, testScenario);
     } else if ("exampleFile" in step) {
@@ -214,6 +226,8 @@ export class TestResourceLoader implements Loader<any> {
     step.type = "exampleFile";
     const filePath = pathJoin(dirname(testDef._filePath), step.exampleFile);
     step.exampleFilePath = filePath;
+
+    // Load Operation
     const opMap = this.exampleToOperation.get(filePath);
     if (opMap === undefined) {
       throw new Error(`Example file is not referenced by any operation: ${filePath}`);
@@ -222,29 +236,55 @@ export class TestResourceLoader implements Loader<any> {
     if (step.operationId !== undefined) {
       step.operation = opMap[step.operationId];
       if (step.operation === undefined) {
-        throw new Error(`Example file with operationId is not found in swagger: ${step.operationId} ${filePath}`);
+        throw new Error(
+          `Example file with operationId is not found in swagger: ${step.operationId} ${filePath}`
+        );
       }
     } else {
       const ops = Object.values(opMap);
       if (ops.length > 1) {
-        throw new Error(`Example file is referenced by multiple operation: ${Object.keys(opMap)} ${filePath}`);
+        throw new Error(
+          `Example file is referenced by multiple operation: ${Object.keys(opMap)} ${filePath}`
+        );
       }
       step.operation = ops[0];
     }
 
+    // Load example file
     const fileContent = await this.fileLoader.load(filePath);
     step.exampleFileContent = JSON.parse(fileContent);
+    step.exampleTemplate = JSON.parse(fileContent);
 
-    for (const replaceDef of step.replace) {
-      if (replaceDef.pathInExample) {
-
+    // Handle replace
+    for (const { pathInExample, pathInBody, to } of step.replace) {
+      if (pathInExample !== undefined) {
+        replaceObjInPath(step.exampleTemplate, pathInExample, to);
+      }
+      if (pathInBody !== undefined) {
+        const bodyParamName = step.operation.parameters?.filter(
+          (param) => this.jsonLoader.resolveRefObj(param).in === "body"
+        )[0]?.name;
+        if (bodyParamName !== undefined) {
+          replaceObjInPath(step.exampleTemplate.parameters[bodyParamName], pathInBody, to);
+        }
+        for (const code of Object.keys(step.exampleTemplate.responses)) {
+          replaceObjInPath(step.exampleTemplate.responses[code], pathInBody, to);
+        }
       }
     }
-
-    // This one will be replaced by exampleTemplateGenerator in the later steps
-    step.exampleTemplate = step.exampleFileContent
   }
 }
 
-// const replaceObjInPath = (obj: any, path: string, replaceTo: string) => {
-// }
+const replaceObjInPath = (obj: any, path: string, replaceTo: string) => {
+  const resultArr = JSONPath({
+    path,
+    json: obj,
+    resultType: "all",
+  });
+  for (const result of resultArr) {
+    if (result.parent === null) {
+      throw new Error(`Cannot replace top level object: ${path}`);
+    }
+    result.parent[result.parentProperty] = replaceTo;
+  }
+};
