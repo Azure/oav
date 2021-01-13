@@ -1,4 +1,5 @@
 import { URL } from "url";
+import AbortController from "node-abort-controller";
 import {
   getDefaultUserAgentValue,
   ServiceClient,
@@ -30,6 +31,10 @@ import { LROPoller, BaseResult, lroPolicy } from "./lro";
 export interface TestScenarioRestClientOption extends ServiceClientOptions {
   endpoint?: string;
 }
+
+export const delaySeconds = (seconds: number) => {
+  return new Promise((resolve) => setTimeout(resolve, seconds * 1000));
+};
 
 export class TestScenarioRestClient extends ServiceClient implements TestScenarioRunnerClient {
   private opts: TestScenarioRestClientOption;
@@ -91,6 +96,7 @@ export class TestScenarioRestClient extends ServiceClient implements TestScenari
     _stepEnv: TestStepEnv
   ): Promise<void> {
     console.log(`Send request: ${req.method} ${req.path}`);
+    console.log(JSON.stringify(step.exampleTemplate, null, 2));
     const url = new URL(req.path, this.opts.endpoint!);
     for (const queryName of Object.keys(req.query)) {
       url.searchParams.set(queryName, req.query[queryName]);
@@ -127,7 +133,7 @@ export class TestScenarioRestClient extends ServiceClient implements TestScenari
       await this.fastPollMsLROPoller(poller);
     }
 
-    console.log(result);
+    console.log(initialResponse.bodyAsText);
   }
 
   public async sendArmTemplateDeployment(
@@ -178,12 +184,14 @@ export class TestScenarioRestClient extends ServiceClient implements TestScenari
     let delayInSeconds = 1;
     const isDone = "isFinished" in poller ? poller.isFinished : poller.isDone;
     while (!isDone.call(poller)) {
-      await new Promise((resolve) => setTimeout(resolve, delayInSeconds * 1000));
+      await delaySeconds(delayInSeconds);
       if (delayInSeconds < 4) {
         delayInSeconds = delayInSeconds * 2;
       }
       console.log("Polling...");
-      await poller.poll();
+      const abortController = new AbortController();
+      await Promise.race([poller.poll({ abortSignal: abortController.signal }), delaySeconds(5)]);
+      abortController.abort();
     }
   }
 }
