@@ -102,6 +102,22 @@ export const getRandomString = (
   return result;
 };
 
+const pathParamRegex = /{(.+?)}/g;
+const resolvePathTemplate = (pathTemplate: string, env: VariableEnv) => {
+  let result = pathTemplate;
+  let offset = 0;
+
+  const matches = pathTemplate.matchAll(pathParamRegex);
+  for (const match of matches) {
+    const idx = match.index! + offset;
+    const toReplace = env.getRequired(match[1]);
+    result = result.substr(0, idx) + toReplace + result.substr(idx + match[0].length);
+    offset = offset + toReplace.length - match[0].length;
+  }
+
+  return result;
+};
+
 export class TestScenarioRunner {
   private jsonLoader: JsonLoader;
   private client: TestScenarioRunnerClient;
@@ -239,7 +255,8 @@ export class TestScenarioRunner {
           throw new Error(`Parameter "in" not supported: ${param.in}`);
       }
     }
-    req.path = pathEnv.resolveString(operation._path._pathTemplate, "{", "}");
+    const pathTemplate = operation._path._pathTemplate;
+    req.path = resolvePathTemplate(pathTemplate, pathEnv);
     req = env.resolveObjectValues(req);
 
     await this.client.sendExampleRequest(req, step, {
