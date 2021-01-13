@@ -88,9 +88,10 @@ export class ExampleTemplateGenerator implements TestScenarioRunnerClient {
         continue;
       }
 
-      toMatch.push(paramValue);
+      const valueLower = paramValue.toLowerCase();
+      toMatch.push(valueLower);
       const toReplace = `$(${paramName})`;
-      matchReplace[paramValue] = toReplace;
+      matchReplace[valueLower] = toReplace;
       exampleTemplate.parameters[paramName] = toReplace;
     }
     replaceAllInObject(exampleTemplate.responses, toMatch, matchReplace);
@@ -138,7 +139,7 @@ const replaceAllInObject = (
   if (toMatch.length === 0) {
     return;
   }
-  const matchRegExp = new RegExp(toMatch.map(escapeRegExp).join("|"), "g");
+  const matchRegExp = new RegExp(toMatch.map(escapeRegExp).join("|"), "gi");
 
   const replaceString = (input: string) => {
     if (typeof input !== "string") {
@@ -149,13 +150,10 @@ const replaceAllInObject = (
     let result = input;
     let offset = 0;
     for (const match of matches) {
-      const matchStr = match[0];
+      const matchStr = match[0].toLowerCase();
       const toReplace = matchReplace[matchStr];
-      const index = match.index!;
-      result =
-        result.substr(0, index + offset) +
-        toReplace +
-        result.substr(index + matchStr.length + offset);
+      const index = match.index! + offset;
+      result = result.substr(0, index) + toReplace + result.substr(index + matchStr.length);
 
       offset = offset + toReplace.length - matchStr.length;
     }
