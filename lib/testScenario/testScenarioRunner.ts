@@ -67,7 +67,7 @@ export interface TestScenarioRunnerClient {
 
   sendArmTemplateDeployment(
     armTemplate: ArmTemplate,
-    params: { [name: string]: string },
+    params: { [name: string]: any },
     armDeployment: ArmDeploymentTracking,
     step: TestStepArmTemplateDeployment,
     stepEnv: TestStepEnv
@@ -273,7 +273,7 @@ export class TestScenarioRunner {
     env: VariableEnv,
     testScope: TestScopeTracking
   ) {
-    const params: { [key: string]: string } = {};
+    let params: { [key: string]: any } = {};
     const paramsDef = step.armTemplatePayload.parameters ?? {};
     for (const paramName of Object.keys(paramsDef)) {
       const paramDef = paramsDef[paramName];
@@ -288,6 +288,10 @@ export class TestScenarioRunner {
 
       paramValue = env.resolveString(paramValue);
       params[paramName] = paramValue;
+    }
+
+    if (step.armTemplateParametersPayload !== undefined) {
+      params = { ...params, ...step.armTemplateParametersPayload.parameters };
     }
 
     const subscriptionId = env.getRequired("subscriptionId");
