@@ -138,7 +138,7 @@ export class TestScenarioRestClient extends ServiceClient implements TestScenari
 
   public async sendArmTemplateDeployment(
     armTemplate: ArmTemplate,
-    params: { [name: string]: string },
+    params: { [name: string]: any },
     armDeployment: ArmDeploymentTracking,
     _step: TestStepArmTemplateDeployment,
     stepEnv: TestStepEnv

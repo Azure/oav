@@ -20,8 +20,16 @@ export type TestStepBase = VariableScope & {
 export type TestStepArmTemplateDeployment = TestStepBase & {
   type: "armTemplateDeployment";
   armTemplateDeployment: string;
+  armTemplateParameters?: string;
 
   armTemplatePayload: ArmTemplate;
+  armTemplateParametersPayload?: {
+    parameters: {
+      [name: string]: {
+        value: any;
+      };
+    };
+  };
 };
 
 export type ArmTemplateVariableType =
@@ -37,6 +45,7 @@ export interface ArmTemplate {
   parameters?: {
     [name: string]: {
       type: ArmTemplateVariableType;
+      defaultValue?: any;
     };
   };
   outputs?: {

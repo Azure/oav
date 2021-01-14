@@ -208,11 +208,28 @@ export class TestResourceLoader implements Loader<any> {
     const armTemplateContent = await this.fileLoader.load(filePath);
     step.armTemplatePayload = JSON.parse(armTemplateContent);
 
+    const definedParameters = [];
+    if (step.armTemplateParameters !== undefined) {
+      const armTemplateParametersPath = pathJoin(
+        dirname(testDef._filePath),
+        step.armTemplateParameters
+      );
+      const armTemplateParametersContent = await this.fileLoader.load(armTemplateParametersPath);
+      step.armTemplateParametersPayload = JSON.parse(armTemplateParametersContent);
+      definedParameters.push(...Object.keys(step.armTemplateParametersPayload!.parameters));
+    }
+    const definedParameterSet = new Set(definedParameters);
+
     const params = step.armTemplatePayload.parameters;
     if (params !== undefined) {
       for (const paramName of Object.keys(params)) {
+        if (definedParameterSet.has(paramName) || params[paramName].defaultValue !== undefined) {
+          continue;
+        }
         if (params[paramName].type !== "string") {
-          throw new Error(`Only string type is supported in arm template params: ${paramName}`);
+          throw new Error(
+            `Only string type is supported in arm template params, please specify defaultValue or add it in arm template parameter file with armTemplateParameters: ${paramName}`
+          );
         }
         if (testScenario !== undefined) {
           testScenario.requiredVariables.push(paramName);
