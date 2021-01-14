@@ -176,6 +176,9 @@ export const TestDefinitionSchema: Schema & {
         armTemplateDeployment: {
           type: "string",
         },
+        armTemplateParameters: {
+          type: "string",
+        },
       },
     },
     TestStepExampleFileRestCall: {
