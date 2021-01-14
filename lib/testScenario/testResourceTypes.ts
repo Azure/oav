@@ -1,17 +1,17 @@
 import { Operation, Schema, SwaggerExample } from "../swagger/swaggerTypes";
 
-export interface TestDefinitionFile {
+export interface VariableScope {
+  variables: { [variableName: string]: string };
+}
+
+export type TestDefinitionFile = VariableScope & {
   scope: "ResourceGroup";
   requiredVariables: string[];
   prepareSteps: TestStep[];
   testScenarios: TestScenario[];
 
   _filePath: string;
-}
-
-export interface VariableScope {
-  variables: { [variableName: string]: string };
-}
+};
 
 export type TestStepBase = VariableScope & {
   isScopePrepareStep: boolean;
@@ -68,7 +68,7 @@ export interface ExampleReplace {
 
 export type TestStep = TestStepArmTemplateDeployment | TestStepExampleFileRestCall;
 
-export interface TestScenario {
+export type TestScenario = VariableScope & {
   description: string;
   requiredVariables: string[];
   shareTestScope: boolean | string;
@@ -76,12 +76,13 @@ export interface TestScenario {
 
   _testDef: TestDefinitionFile;
   _resolvedSteps: TestStep[];
-}
+};
 
 export const TestDefinitionSchema: Schema & {
   definitions: { [def: string]: Schema };
 } = {
   type: "object",
+  allOf: [{ $ref: "#/definitions/VariableScope" }],
   properties: {
     scope: {
       type: "string",
@@ -112,8 +113,21 @@ export const TestDefinitionSchema: Schema & {
   required: ["testScenarios"],
 
   definitions: {
+    VariableScope: {
+      type: "object",
+      properties: {
+        variables: {
+          type: "object",
+          additionalProperties: {
+            type: "string",
+          },
+          default: {},
+        },
+      },
+    },
     TestScenario: {
       type: "object",
+      allOf: [{ $ref: "#/definitions/VariableScope" }],
       properties: {
         description: {
           type: "string",
@@ -139,18 +153,7 @@ export const TestDefinitionSchema: Schema & {
       required: ["description", "steps"],
     },
     TestStepBase: {
-      type: "object",
-      properties: {
-        variables: {
-          type: "object",
-          additionalProperties: {
-            type: "string",
-          },
-        },
-      },
-      default: {
-        variables: {},
-      },
+      allOf: [{ $ref: "#/definitions/VariableScope" }],
     },
     TestStepArmTemplateDeployment: {
       type: "object",
