@@ -165,6 +165,7 @@ export class TestScenarioRunner {
     if (testScope === undefined) {
       const testDef = testScenario._testDef;
       const env = new VariableEnv(this.env);
+      env.setBatch(testDef.variables);
       testScope = {
         scope: testDef.scope,
         prepareSteps: testDef.prepareSteps,
@@ -181,6 +182,7 @@ export class TestScenarioRunner {
   public async executeScenario(testScenario: TestScenario) {
     const testScope = await this.prepareScenario(testScenario);
     const env = new VariableEnv(testScope.env);
+    env.setBatch(testScenario.variables);
 
     for (const step of testScenario.steps) {
       await this.executeStep(step, env, testScope);
