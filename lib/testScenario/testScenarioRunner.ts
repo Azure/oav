@@ -273,7 +273,7 @@ export class TestScenarioRunner {
     env: VariableEnv,
     testScope: TestScopeTracking
   ) {
-    let params: { [key: string]: any } = {};
+    let params: { [key: string]: { value: any } } = {};
     const paramsDef = step.armTemplatePayload.parameters ?? {};
     for (const paramName of Object.keys(paramsDef)) {
       const paramDef = paramsDef[paramName];
@@ -287,7 +287,7 @@ export class TestScenarioRunner {
       }
 
       paramValue = env.resolveString(paramValue);
-      params[paramName] = paramValue;
+      params[paramName] = { value: paramValue };
     }
 
     if (step.armTemplateParametersPayload !== undefined) {
