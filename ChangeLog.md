@@ -1,5 +1,10 @@
 # Change Log - oav
 
+## 2.1.0
+Fri, 15 Jan 2021
+
+- Enable support for test scenario parsing
+
 ## 2.0.1
 Wed, 25 Nov 2020
 
