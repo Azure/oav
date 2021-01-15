@@ -9,7 +9,7 @@ import { cliSuppressExceptions } from "../cliSuppressExceptions";
 import { log } from "../util/logging";
 import * as validate from "../validate";
 
-export const command = "generate-examples <spec-path>";
+export const command = "generate-examples [spec-path]";
 
 export const describe = "Generate swagger examples from real payload records.";
 
@@ -24,6 +24,16 @@ export const builder: yargs.CommandBuilder = {
     describe: "the directory path contains payload.",
     string: true,
   },
+  c: {
+    alias: "config",
+    describe: "the readme config path.",
+    string: true,
+  },
+  tag: {
+    alias: "tagName",
+    describe: "the readme tag name.",
+    string: true,
+  }
 };
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
@@ -34,8 +44,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       consoleLogLevel: argv.logLevel,
       logFilepath: argv.f,
     };
-
-    await validate.generateExamples(specPath, argv.payload, argv.o, vOptions);
+    await validate.generateExamples(specPath, argv.payload, argv.o, argv.config, argv.tag, vOptions);
     return 0;
   });
 }

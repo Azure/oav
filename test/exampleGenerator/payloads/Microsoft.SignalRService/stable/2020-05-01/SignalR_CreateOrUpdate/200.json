@@ -1,0 +1,34 @@
+{
+    "liveRequest": {
+        "headers": {
+            "user-Agent": "azure-resource-manager/2.0",
+            "x-ms-client-request-id": "05b8fa08-29d7-4d5d-8bc3-317d52211b8c",
+            "x-ms-arm-request-tracking-id": "53a439d5-823c-4412-bb13-72e6f82fc7ef",
+            "x-ms-client-location": "germanynorth",
+            "accept-Language": "en-US",
+            "x-ms-arm-service-request-id": "57fdf48b-eb38-4f0b-bfde-7043ff97e128",
+            "x-ms-activity-vector": "IN.0M"
+        },
+        "method": "GET",
+        "url": "/subscriptions/446247d4-0807-4bc1-9f14-14a3afad48de/resourceGroups/app-tr-test1-dev/providers/Microsoft.SignalRService/locations/westeurope/operationStatuses/tr-test1-dev-vava/operationId/1d4b2cd0-c5d7-441b-8210-fd4b6354faf5?api-version=2020-05-01"
+    },
+    "liveResponse": {
+        "statusCode": "OK",
+        "headers": {
+            "transfer-Encoding": "chunked",
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "x-content-type-options": "nosniff",
+            "x-ms-client-request-id": "05b8fa08-29d7-4d5d-8bc3-317d52211b8c",
+            "x-rp-server-mvid": "e36e6838-7779-4ba2-b738-62cf73818870",
+            "x-ms-request-id": "57ea1b12-896a-4775-8ea1-f0a18748a09f",
+            "date": "Mon, 02 Nov 2020 12:39:22 GMT",
+            "server": "Kestrel"
+        },
+        "body": {
+            "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "status": "Running",
+            "startTime": "aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+    }
+}

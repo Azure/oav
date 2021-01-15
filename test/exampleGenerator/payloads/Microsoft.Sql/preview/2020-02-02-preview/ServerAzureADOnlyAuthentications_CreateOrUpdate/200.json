@@ -1,0 +1,33 @@
+{
+    "liveRequest": {
+        "headers": {
+            "user-Agent": "azure-resource-manager/2.0",
+            "x-ms-client-request-id": "64ab4f12-0d08-441b-93e0-001343b44c70",
+            "x-ms-arm-request-tracking-id": "790f08b4-9b59-4939-97d2-87be8e37a50d",
+            "x-ms-client-location": "westus",
+            "accept-Language": "en-US",
+            "x-ms-arm-service-request-id": "e336a01d-2876-4709-b5c9-781cecd51bf9",
+            "x-ms-activity-vector": "IN.0K"
+        },
+        "method": "GET",
+        "url": "/subscriptions/f086153c-a894-4b6f-b512-76964c001041/resourceGroups/dev-pronet-rg-002/providers/Microsoft.Sql/locations/westus2/serverAdministratorAzureAsyncOperation/94563394-bfe8-42ca-bc07-d24f6341a673?api-version=2020-02-02-preview"
+    },
+    "liveResponse": {
+        "statusCode": "OK",
+        "headers": {
+            "retry-After": "15",
+            "x-ms-request-id": "3847b909-cf88-4819-be0f-b8cc6e8ef1f1",
+            "date": "Thu, 22 Oct 2020 23:24:39 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "status": "Failed",
+            "startTime": "2020-10-22T23:24:23.85Z",
+            "error": {
+                "code": "aaaaaaaaaaaaaaaaaaa",
+                "message": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            }
+        }
+    }
+}

@@ -1,0 +1,34 @@
+{
+    "liveRequest": {
+        "headers": {
+            "accept-Language": "en-US",
+            "host": "management.azure.com",
+            "user-Agent": "FxVersion/4.700.20.41105;OSName/Windows;OSVersion/Microsoft.Windows.10.0.14393;Microsoft.Azure.Management.EventGrid.EventGridManagementClient/6.0.0.0;AzurePowershell/v4.8.0;PSVersion/v7.0.3",
+            "x-ms-client-request-id": "01a68c49-6611-4a6b-867e-541f807ae587",
+            "commandName": "New-AzEventGridTopicKey",
+            "parameterSetName": "ResourceIdEventSubscriptionParameterSet",
+            "x-ms-arm-resource-system-data": "{\"lastModifiedBy\":\"b0647e89-6ddb-4744-8a92-815558d113d3\",\"lastModifiedByType\":\"Application\",\"lastModifiedAt\":\"2020-10-27T19:25:06.7110819Z\"}"
+        },
+        "method": "POST",
+        "url": "/subscriptions/8dfda8ea-7132-4de2-8e5f-4b382669d0cd/resourceGroups/scip-prod-rg/providers/Microsoft.EventGrid/topics/scip-prod-eg/regenerateKey?api-version=2020-06-01",
+        "body": {
+            "keyName": "aaaa"
+        },
+        "query": {
+            "api-version": "2020-06-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "200",
+        "headers": {
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "x-ms-request-id": "72308594-6444-4b4c-87b5-56ccf2191c1a",
+            "date": "Tue, 27 Oct 2020 19:25:06 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "key1": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "key2": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+    }
+}

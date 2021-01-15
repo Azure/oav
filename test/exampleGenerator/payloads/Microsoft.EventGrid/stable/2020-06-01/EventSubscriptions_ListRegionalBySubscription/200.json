@@ -1,0 +1,28 @@
+{
+    "liveRequest": {
+        "headers": {
+            "accept": "application/json",
+            "accept-Language": "en-US",
+            "host": "management.azure.com",
+            "user-Agent": "FxVersion/4.8.4210.0;OSName/Windows;OSVersion/10.0.14393.0;Microsoft.Azure.Management.EventGrid.EventGridManagementClient/6.0.0.0",
+            "x-ms-client-request-id": "c63ee45c-d731-41eb-bbed-7a9451a2806d"
+        },
+        "method": "GET",
+        "url": "/subscriptions/4241a48f-eff7-4b9c-a98e-9bdbc5c7f846/providers/Microsoft.EventGrid/locations/southcentralus/eventSubscriptions?api-version=2020-06-01",
+        "query": {
+            "api-version": "2020-06-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "200",
+        "headers": {
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "x-ms-request-id": "c56de574-eeff-4efe-bd7a-85e64db84be2",
+            "date": "Sat, 24 Oct 2020 09:17:34 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "value": []
+        }
+    }
+}

@@ -1,0 +1,30 @@
+{
+    "liveRequest": {
+        "headers": {
+            "accept-Encoding": "gzip;deflate",
+            "accept-Language": "en",
+            "host": "management.azure.com",
+            "x-ms-client-request-id": "22c127f3-091a-40f3-bfb1-2ef1df849fd1",
+            "x-ms-arm-request-tracking-id": "ddd513b3-1bf2-4728-b839-033646debc3f",
+            "x-ms-client-location": "northcentralus",
+            "x-ms-arm-service-request-id": "97e06ee5-4dfd-49cf-b5da-80468cefffbe",
+            "x-ms-activity-vector": "IN.01.IN.1Z"
+        },
+        "method": "GET",
+        "url": "/subscriptions/68a3e366-e873-447c-b29a-acfa993ba0f2/resourcegroups/o-isd-onlinerapp-d/providers/Microsoft.Sql/servers/o-isd-onlinerapp-sqlsvr-d/azureADOnlyAuthentications?api-version=2020-02-02-preview",
+        "query": {
+            "api-version": "2020-02-02-preview"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "200",
+        "headers": {
+            "x-ms-request-id": "6af58273-0276-484f-a1bf-4f019363a1f2",
+            "date": "Mon, 26 Oct 2020 16:32:17 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "value": []
+        }
+    }
+}

@@ -1,0 +1,31 @@
+{
+    "liveRequest": {
+        "headers": {
+            "accept-Encoding": "gzip;deflate",
+            "accept-Language": "en",
+            "host": "management.azure.com",
+            "x-ms-client-request-id": "a028a8b1-16e9-4890-b396-3ae5758c373a",
+            "x-ms-arm-request-tracking-id": "97021fef-072f-4368-a9e3-dece3f47d4fe",
+            "x-ms-client-location": "northcentralus",
+            "x-ms-arm-service-request-id": "e6369660-8b15-4ddb-9129-ba84da7e5585",
+            "x-ms-activity-vector": "IN.01.IN.07"
+        },
+        "method": "GET",
+        "url": "/subscriptions/22a2a606-729b-41be-ad66-cd3f3e107c7e/resourcegroups/rg-dts-navica-reporting-dev/providers/Microsoft.EventGrid/domains/eg-dts-reporting-dev/privateEndpointConnections?api-version=2020-06-01",
+        "query": {
+            "api-version": "2020-06-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "200",
+        "headers": {
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "x-ms-request-id": "ea4192ec-826b-4e49-aa79-cf0eb8808d16",
+            "date": "Wed, 28 Oct 2020 20:41:09 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "value": []
+        }
+    }
+}

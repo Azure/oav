@@ -1,0 +1,26 @@
+{
+    "liveRequest": {
+        "headers": {
+            "accept-Language": "en-US",
+            "host": "management.azure.com",
+            "user-Agent": "FxVersion/4.700.20.41105;OSName/Windows;OSVersion/Microsoft.Windows.10.0.19041;Microsoft.Azure.Management.EventGrid.EventGridManagementClient/6.0.0.0",
+            "x-ms-client-request-id": "5beeb55a-d886-41d7-b729-c72653373349"
+        },
+        "method": "DELETE",
+        "url": "/subscriptions/6d60e572-e8d3-4cae-9d4a-4d4e902d2c7c/resourceGroups/rsg-eventplatform-prm-dev/providers/Microsoft.EventGrid/domains/egd-dev-eventobjects/topics/eventplatformtopicd18289d191a5490b889a7e145a860821?api-version=2020-06-01",
+        "query": {
+            "api-version": "2020-06-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "202",
+        "headers": {
+            "retry-After": "10",
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "azure-AsyncOperation": "https://management.azure.com:443/subscriptions/6d60e572-e8d3-4cae-9d4a-4d4e902d2c7c/providers/Microsoft.EventGrid/locations/westeurope/operationsStatus/E40DD30B-240F-46EF-8B25-D00224228C8F?api-version=2020-06-01",
+            "date": "Mon, 26 Oct 2020 23:17:08 GMT",
+            "location": "https://management.azure.com/subscriptions/6d60e572-e8d3-4cae-9d4a-4d4e902d2c7c/providers/Microsoft.EventGrid/locations/westeurope/operationResults/E40DD30B-240F-46EF-8B25-D00224228C8F?api-version=2020-06-01",
+            "server": "Microsoft-HTTPAPI/2.0"
+        }
+    }
+}

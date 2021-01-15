@@ -1,0 +1,30 @@
+{
+    "liveRequest": {
+        "headers": {
+            "connection": "keep-alive",
+            "accept": "application/json",
+            "accept-Encoding": "gzip;deflate",
+            "host": "management.azure.com",
+            "user-Agent": "python/3.6.10;(Linux-4.15.0-1096-azure-x86_64-with-debian-buster-sid);msrest/0.6.18;msrest_azure/0.6.3;azure-mgmt-sql/0.21.0;Azure-SDK-For-Python;AZURECLI/2.12.1;(DEB)",
+            "x-ms-client-request-id": "13d6122e-1727-11eb-8d07-000d3a2682f8",
+            "commandName": "sql db export",
+            "parameterSetName": "-g -s -n -p -u --storage-key --storage-key-type --storage-uri --out"
+        },
+        "method": "GET",
+        "url": "/subscriptions/8bfdf431-1de2-4aa6-b4e8-42b1a98da897/providers/Microsoft.Sql/locations/westeurope/importExportAzureAsyncOperation/97cac3bd-3822-4415-ab1c-c95ef188ee93-ulimitsqlserver?api-version=2020-02-02-preview"
+    },
+    "liveResponse": {
+        "statusCode": "OK",
+        "headers": {
+            "retry-After": "15",
+            "x-ms-request-id": "f57be66a-2a61-46e1-9fdf-f5d46dbdda98",
+            "date": "Mon, 26 Oct 2020 01:03:53 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "status": "InProgress",
+            "startTime": "2020-10-26T01:03:38Z"
+        }
+    }
+}

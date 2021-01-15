@@ -1,0 +1,39 @@
+{
+    "liveRequest": {
+        "headers": {
+            "user-Agent": "azure-resource-manager/2.0",
+            "x-ms-client-request-id": "ccfdb824-6037-4d9b-a29e-e68a3cffc52c",
+            "x-ms-arm-request-tracking-id": "f38b6f4e-50e2-4efe-9fa4-7b249b9d777f",
+            "x-ms-client-location": "westus",
+            "x-ms-arm-resource-system-data": "{\"createdBy\":\"BSnyder@prohcn.com\",\"createdByType\":\"User\",\"createdAt\":\"2020-10-22T23:24:23.6640365Z\",\"lastModifiedBy\":\"BSnyder@prohcn.com\",\"lastModifiedByType\":\"User\",\"lastModifiedAt\":\"2020-10-22T23:24:23.6640365Z\"}",
+            "accept-Language": "en-US",
+            "x-ms-arm-service-request-id": "e336a01d-2876-4709-b5c9-781cecd51bf9",
+            "x-ms-activity-vector": "IN.0K"
+        },
+        "method": "PUT",
+        "url": "/subscriptions/f086153c-a894-4b6f-b512-76964c001041/resourcegroups/dev-pronet-rg-002/providers/Microsoft.Sql/servers/dev-pronet-sqlp-002/azureADOnlyAuthentications/Default?api-version=2020-02-02-preview",
+        "body": {
+            "properties": {
+                "azureADOnlyAuthentication": false
+            }
+        },
+        "query": {
+            "api-version": "2020-02-02-preview"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "202",
+        "headers": {
+            "retry-After": "15",
+            "azure-AsyncOperation": "https://management.azure.com/subscriptions/f086153c-a894-4b6f-b512-76964c001041/resourceGroups/dev-pronet-rg-002/providers/Microsoft.Sql/locations/westus2/serverAdministratorAzureAsyncOperation/94563394-bfe8-42ca-bc07-d24f6341a673?api-version=2020-02-02-preview",
+            "x-ms-request-id": "d23b2f12-b07b-48e7-9aab-67802ab51ab8",
+            "date": "Thu, 22 Oct 2020 23:24:23 GMT",
+            "location": "https://management.azure.com/subscriptions/f086153c-a894-4b6f-b512-76964c001041/resourceGroups/dev-pronet-rg-002/providers/Microsoft.Sql/locations/westus2/serverAdministratorOperationResults/94563394-bfe8-42ca-bc07-d24f6341a673?api-version=2020-02-02-preview",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "operation": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "startTime": "2020-10-22T23:24:23.85Z"
+        }
+    }
+}

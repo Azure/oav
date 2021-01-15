@@ -1,0 +1,26 @@
+{
+    "liveRequest": {
+        "headers": {
+            "accept-Language": "en-US",
+            "host": "management.azure.com",
+            "user-Agent": "FxVersion/4.700.20.47201;OSName/Linux;OSVersion/Linux.4.15.0.112.generic.113.Ubuntu.SMP.Thu.Jul.9.23.41.39.UTC.2020;Microsoft.Azure.Management.EventGrid.EventGridManagementClient/6.0.0.0",
+            "x-ms-client-request-id": "2c900a12-e968-4203-911d-015a3a34deb1",
+            "request-Context": "appId=cid-v1:6365d199-2511-4926-9648-04ad7734e271",
+            "request-Id": "|da446fbf5b1d7140901b05473120a06a.f0fb45f47bd50040.",
+            "traceparent": "00-da446fbf5b1d7140901b05473120a06a-f0fb45f47bd50040-00"
+        },
+        "method": "DELETE",
+        "url": "/subscriptions/0bec681a-d2cb-4fce-afe3-09be923d6248/resourceGroups/stas33-raft/providers/Microsoft.EventGrid/domains/stas33-raft-events/topics/fuzzstring/providers/Microsoft.EventGrid/eventSubscriptions/JobStatus?api-version=2020-06-01",
+        "query": {
+            "api-version": "2020-06-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "204",
+        "headers": {
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "date": "Fri, 23 Oct 2020 23:14:00 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        }
+    }
+}

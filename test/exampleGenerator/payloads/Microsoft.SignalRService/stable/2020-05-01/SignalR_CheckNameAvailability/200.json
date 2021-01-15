@@ -1,0 +1,36 @@
+{
+    "liveRequest": {
+        "headers": {
+            "accept-Language": "en-US",
+            "host": "management.azure.com",
+            "user-Agent": "FxVersion/4.700.20.47201;OSName/Windows;OSVersion/Microsoft.Windows.10.0.17763;Microsoft.Azure.Management.SignalR.SignalRManagementClient/1.1.0.0;MacAddressHash/f8d09900c77c1c6d22f347cb17c2adfb881f9668d9d225dd9e3327c88c09e977",
+            "x-ms-client-request-id": "e4bf2cf4-1766-4bd1-9da2-3a9fc3444f02",
+            "x-ms-arm-resource-system-data": "{\"lastModifiedBy\":\"0cd46022-d2da-4e25-8465-a7a7d9344504\",\"lastModifiedByType\":\"Application\",\"lastModifiedAt\":\"2020-10-30T15:43:09.0858092Z\"}"
+        },
+        "method": "POST",
+        "url": "/subscriptions/9dd2b4d0-3dad-4aeb-85d8-c3addb78127a/providers/Microsoft.SignalRService/locations/eastus/checkNameAvailability?api-version=2020-05-01",
+        "body": {
+            "type": "Microsoft.SignalRService/SignalR",
+            "name": "aaaaaaaaaaaaa"
+        },
+        "query": {
+            "api-version": "2020-05-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "200",
+        "headers": {
+            "transfer-Encoding": "chunked",
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "x-content-type-options": "nosniff",
+            "x-ms-client-request-id": "e4bf2cf4-1766-4bd1-9da2-3a9fc3444f02",
+            "x-rp-server-mvid": "e36e6838-7779-4ba2-b738-62cf73818870",
+            "x-ms-request-id": "550dc480-923d-498b-ba4f-4cc089dfd883",
+            "date": "Fri, 30 Oct 2020 15:43:11 GMT",
+            "server": "Kestrel"
+        },
+        "body": {
+            "nameAvailable": true
+        }
+    }
+}

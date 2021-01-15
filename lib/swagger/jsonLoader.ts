@@ -115,8 +115,8 @@ export class JsonLoader implements Loader<Json> {
     while (isRefLike(refObj)) {
       const $ref = refObj.$ref;
       const idx = $ref.indexOf("#");
-      const mockName = $ref.substr(0, idx);
-      const refObjPath = $ref.substr(idx + 1);
+      const mockName = idx === -1 ? $ref : $ref.substr(0, idx);
+      const refObjPath = idx === -1 ? "" : $ref.substr(idx + 1);
       const filePath = this.mockNameMap[mockName];
       const cache = this.fileCache.get(filePath);
       if (cache === undefined) {

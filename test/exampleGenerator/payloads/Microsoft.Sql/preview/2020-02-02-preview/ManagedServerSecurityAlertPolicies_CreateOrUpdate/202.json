@@ -1,0 +1,39 @@
+{
+    "liveRequest": {
+        "headers": {
+            "user-Agent": "azure-resource-manager/2.0",
+            "x-ms-client-request-id": "b936e714-417a-4160-8976-5d9258c1694f",
+            "x-ms-arm-request-tracking-id": "3c5c009a-0169-4ab8-914d-0d553bf16fd5",
+            "x-ms-client-location": "germanynorth",
+            "x-ms-arm-resource-system-data": "{\"createdBy\":\"przemasw@atena.pl\",\"createdByType\":\"User\",\"createdAt\":\"2020-10-21T13:41:01.0812231Z\",\"lastModifiedBy\":\"przemasw@atena.pl\",\"lastModifiedByType\":\"User\",\"lastModifiedAt\":\"2020-10-21T13:41:01.0812231Z\"}",
+            "accept-Language": "en-US",
+            "x-ms-arm-service-request-id": "b6e2a6bc-b3c9-4b40-8840-d72ca8ddbd60",
+            "x-ms-activity-vector": "IN.0M"
+        },
+        "method": "PUT",
+        "url": "/subscriptions/5de5bc3f-19a4-4e19-af62-541f7adb7e21/resourcegroups/d2-sql/providers/Microsoft.Sql/managedInstances/d2-sql-mi2/securityAlertPolicies/Default?api-version=2020-02-02-preview",
+        "body": {
+            "properties": {
+                "state": "Disabled"
+            }
+        },
+        "query": {
+            "api-version": "2020-02-02-preview"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "202",
+        "headers": {
+            "retry-After": "3",
+            "azure-AsyncOperation": "https://management.azure.com/subscriptions/5de5bc3f-19a4-4e19-af62-541f7adb7e21/providers/Microsoft.Sql/locations/westeurope/managedServerSecurityAlertPoliciesAzureAsyncOperation/3fe1a3bb-899b-482f-9430-9c3054f42f18?api-version=2020-02-02-preview",
+            "x-ms-request-id": "3fe1a3bb-899b-482f-9430-9c3054f42f18",
+            "date": "Wed, 21 Oct 2020 13:41:00 GMT",
+            "location": "https://management.azure.com/subscriptions/5de5bc3f-19a4-4e19-af62-541f7adb7e21/providers/Microsoft.Sql/locations/westeurope/managedServerSecurityAlertPoliciesOperationResults/3fe1a3bb-899b-482f-9430-9c3054f42f18?api-version=2020-02-02-preview",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "operation": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "startTime": "2020-10-21T13:41:01.143Z"
+        }
+    }
+}

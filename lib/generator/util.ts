@@ -1,6 +1,8 @@
 import * as fs from "fs";
 import * as path from "path";
 import { URL } from "url";
+import { parseMarkdown, readFile } from "@azure-tools/openapi-tools-common";
+import * as amd from "@azure/openapi-markdown";
 
 const ATTR_MAP: any = {
   location: "location",
@@ -95,11 +97,10 @@ export function updateExmAndSpecFile(
     fs.mkdirSync(outputDir);
   }
   const outputPath = path.resolve(outputDir, exampleName);
-
   console.log("example file path: " + outputPath);
-  fs.writeFileSync(outputPath, JSON.stringify(example, null, 2), "utf8");
+   fs.writeFileSync(outputPath, JSON.stringify(example, null, 2), "utf8");
   if (newSpec) {
-    console.log("updated swagger file path: " + specFilePath);
+    //log.info("updated swagger file path: " + specFilePath);
     fs.writeFileSync(specFilePath, JSON.stringify(newSpec, null, 2), "utf8");
   }
 }
@@ -121,4 +122,10 @@ export function referenceExmInSpec(
     };
     return spec;
   }
+}
+
+export async function getInputFiles(readMe:string, tag: string) {
+  const readMeStr = await readFile(readMe);
+  const cmd = parseMarkdown(readMeStr);
+  return amd.getInputFilesForTag(cmd.markDown,tag);
 }

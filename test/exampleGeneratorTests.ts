@@ -3,6 +3,8 @@ import * as fs from "fs";
 import * as path from "path";
 import ExampleGenerator from "../lib/generator/exampleGenerator";
 import { ModelValidationError } from "../lib/util/modelValidationError";
+import { generateExamples } from "../lib/validate";
+import { log } from "../lib/util/logging";
 
 const payloadDir = `test/exampleGenerator/payloads`;
 const specRepoDir = `azure-rest-api-specs`;
@@ -25,6 +27,75 @@ describe.skip("mock examples", () => {
     });
   }
 });
+
+describe("test generate example",()=> {
+  const originalError = log.error;
+  //const originalLog = log.info;
+  const originalWarn = log.warn;
+  let consoleOutput: any[] = [];
+  const recordOutput = (output:any) => {
+    if (typeof output === "string" && output.indexOf("\\") !== -1) {
+      const result = output.replace(/\\/gi, "/");
+      consoleOutput.push(result);
+    } else {
+      consoleOutput.push(output);
+    }
+  }
+  //const mockedLog = (output: any) => recordOutput(output);
+  const mockedError = (output: any) => recordOutput(output);
+  const mockedWarn = (output: any) => recordOutput(output);
+  beforeAll(() => {
+    consoleOutput = []
+    //log.info = mockedLog as any
+    log.error = mockedError as any
+    log.warn = mockedWarn as any;
+  });
+
+  afterAll(() => {
+    log.error = originalError;
+    //log.info = originalLog;
+    log.warn = originalWarn;
+  })
+ 
+  test.each<string[]>([
+    ["sql", "package-pure-2020-02-preview"],
+    ["signalr", "package-2020-05-01"],
+    ["eventgrid", "package-2020-06"]
+  ])(
+    "from payload,rp:%s",
+    async (resourceProviderName, tag) => {
+      await generateExamples(
+        "",
+        payloadDir,
+        undefined,
+        `test/exampleGenerator/specification/${resourceProviderName}/resource-manager/readme.md`,
+        tag
+      );
+      expect(consoleOutput).toMatchSnapshot(`,tag:${tag}`);
+    },
+    1000000
+  );
+  
+  test.each<string[]>([
+    ["sql", "package-pure-2020-02-preview"],
+    ["signalr", "package-2020-05-01"],
+    ["eventgrid", "package-2020-06"]
+  ])(
+    "from mocker,readme:%s",
+    async (resourceProviderName, tag) => {
+      await generateExamples(
+        "",
+        undefined,
+        undefined,
+        `test/exampleGenerator/specification/${resourceProviderName}/resource-manager/readme.md`,
+        tag
+      );
+      expect(consoleOutput).toMatchSnapshot(`,tag:${tag}`);
+    },
+    1000000
+  );
+
+})
 
 export function getSpecFilePaths(repoDir: string) {
   const rpList = fs.readdirSync(path.resolve(repoDir, "specification"));

@@ -1,0 +1,92 @@
+{
+    "liveRequest": {
+        "headers": {
+            "accept-Encoding": "gzip;deflate",
+            "host": "management.azure.com",
+            "user-Agent": "PolicyScan",
+            "x-ms-client-request-id": "c9c3d021-459b-49df-92cd-d4e2c9a27204"
+        },
+        "method": "GET",
+        "url": "/subscriptions/11f9d236-1ce9-4377-9146-0743c63c0416/providers/Microsoft.EventGrid/topics?api-version=2020-06-01",
+        "query": {
+            "api-version": "2020-06-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "200",
+        "headers": {
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "x-ms-request-id": "4b5d10b8-4a3a-4654-be6e-9936c8a31f09",
+            "date": "Thu, 29 Oct 2020 02:22:08 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "value": [
+                {
+                    "properties": {
+                        "provisioningState": "Succeeded",
+                        "endpoint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                        "inputSchema": "EventGridSchema",
+                        "metricResourceId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                        "publicNetworkAccess": "Enabled"
+                    },
+                    "location": "aaaaaaaaaa",
+                    "tags": {
+                        "environment": "aaa"
+                    },
+                    "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                    "name": "egt-euw-wfm-dev",
+                    "type": "Microsoft.EventGrid/topics"
+                },
+                {
+                    "properties": {
+                        "provisioningState": "Succeeded",
+                        "endpoint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                        "inputSchema": "EventGridSchema",
+                        "metricResourceId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                        "publicNetworkAccess": "Enabled"
+                    },
+                    "location": "aaaaaaaaaa",
+                    "tags": {
+                        "environment": "aa"
+                    },
+                    "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                    "name": "egt-euw-wfm-qa",
+                    "type": "Microsoft.EventGrid/topics"
+                },
+                {
+                    "properties": {
+                        "provisioningState": "Succeeded",
+                        "endpoint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                        "inputSchema": "EventGridSchema",
+                        "metricResourceId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                        "publicNetworkAccess": "Enabled"
+                    },
+                    "location": "aaaaaaaaaa",
+                    "tags": {
+                        "environment": "aaaaa"
+                    },
+                    "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                    "name": "egt-euw-wfm-stage",
+                    "type": "Microsoft.EventGrid/topics"
+                },
+                {
+                    "properties": {
+                        "provisioningState": "Succeeded",
+                        "endpoint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                        "inputSchema": "EventGridSchema",
+                        "metricResourceId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                        "publicNetworkAccess": "Enabled"
+                    },
+                    "location": "aaaaaaaaaa",
+                    "tags": {
+                        "environment": "aaaa"
+                    },
+                    "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                    "name": "egt-euw-wfm-prod",
+                    "type": "Microsoft.EventGrid/topics"
+                }
+            ]
+        }
+    }
+}

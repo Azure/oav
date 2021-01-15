@@ -1,3 +1,5 @@
+import { log } from "../util/logging";
+
 export default class Mocker {
   public mock(paramSpec: any, paramName: string, arrItem?: any): any {
     switch (paramSpec.type) {
@@ -12,7 +14,7 @@ export default class Mocker {
       case "array":
         return this.generateArray(paramSpec, paramName, arrItem);
       default:
-        console.log(`Unknown type ${paramSpec.type}.`);
+        log.warn(`unknown type ${paramSpec.type}.`);
     }
   }
 
@@ -124,7 +126,7 @@ export default class Mocker {
 
   private generateArray(paramSpec: any, paramName: any, arrItem: any) {
     if (!arrItem) {
-      console.log(`array ${paramName} item is null, it may be caused by circular reference`);
+      log.warn(`array ${paramName} item is null, it may be caused by circular reference`);
       return [];
     }
     const minItems = "minItems" in paramSpec ? paramSpec.minItems : 1;

@@ -1,0 +1,79 @@
+{
+    "liveRequest": {
+        "headers": {
+            "user-Agent": "azure-resource-manager/2.0",
+            "x-ms-client-request-id": "9e7abfc0-5877-4485-8eb0-02a688067848",
+            "x-ms-arm-request-tracking-id": "e624afa7-6678-465b-9684-ca145e3f3bb9",
+            "x-ms-client-location": "francecentral",
+            "x-ms-arm-resource-system-data": "{\"lastModifiedBy\":\"e1f85203-b996-4f81-ad54-a6559604ed32\",\"lastModifiedByType\":\"Application\",\"lastModifiedAt\":\"2020-11-03T15:54:39.9159196Z\"}",
+            "accept-Language": "en-US",
+            "x-ms-arm-service-request-id": "1da6f1bb-cbaf-4e7f-942e-905e98a744d9",
+            "x-ms-activity-vector": "IN.1A"
+        },
+        "method": "PUT",
+        "url": "/subscriptions/cbe9d379-0f71-4dbc-994b-804713d41dec/resourcegroups/RGDEVDVLGENSEAWE01/providers/Microsoft.SignalRService/SignalR/SRDEVDVLGENDEAWE01?api-version=2020-05-01",
+        "body": {
+            "sku": {
+                "name": "aaaaaaaaaaa",
+                "tier": "Standard",
+                "size": "aa",
+                "capacity": 1
+            },
+            "kind": "SignalR",
+            "location": "aaaaaaaaaaa",
+            "tags": {
+                "BU": "aaa",
+                "Environment": "aaa"
+            },
+            "properties": {
+                "hostNamePrefix": "aaaaaaaaaaaaaaaaaa",
+                "features": [
+                    {
+                        "flag": "ServiceMode",
+                        "value": "aaaaaaaaaa",
+                        "properties": {}
+                    },
+                    {
+                        "flag": "EnableConnectivityLogs",
+                        "value": "aaaa",
+                        "properties": {}
+                    }
+                ],
+                "cors": {
+                    "allowedOrigins": [
+                        "a"
+                    ]
+                },
+                "upstream": {},
+                "networkACLs": {
+                    "defaultAction": "Deny",
+                    "publicNetwork": {
+                        "allow": [
+                            "ServerConnection",
+                            "ClientConnection",
+                            "RESTAPI"
+                        ]
+                    },
+                    "privateEndpoints": []
+                }
+            }
+        },
+        "query": {
+            "api-version": "2020-05-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "202",
+        "headers": {
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "x-content-type-options": "nosniff",
+            "x-ms-client-request-id": "9e7abfc0-5877-4485-8eb0-02a688067848",
+            "x-rp-server-mvid": "e36e6838-7779-4ba2-b738-62cf73818870",
+            "azure-AsyncOperation": "https://management.azure.com/subscriptions/cbe9d379-0f71-4dbc-994b-804713d41dec/resourceGroups/RGDEVDVLGENSEAWE01/providers/Microsoft.SignalRService/locations/westeurope/operationStatuses/SRDEVDVLGENDEAWE01/operationId/9fa5fe0e-4d24-4810-86e6-3ab9bbe1550d?api-version=2020-05-01",
+            "x-ms-request-id": "33be171a-5c53-474b-bbfe-094e22976103",
+            "date": "Tue, 03 Nov 2020 15:54:39 GMT",
+            "location": "https://management.azure.com/subscriptions/cbe9d379-0f71-4dbc-994b-804713d41dec/resourceGroups/RGDEVDVLGENSEAWE01/providers/Microsoft.SignalRService/locations/westeurope/operationResults/9fa5fe0e-4d24-4810-86e6-3ab9bbe1550d/SignalR/SRDEVDVLGENDEAWE01?api-version=2020-05-01",
+            "server": "Kestrel"
+        }
+    }
+}
