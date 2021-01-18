@@ -148,6 +148,7 @@ export interface Operation {
   provider?: string;
 
   _path: Path;
+  _method: LowerHttpMethods;
 
   _queryTransform?: MutableStringMap<TransformFn>;
   _headerTransform?: MutableStringMap<TransformFn>;
@@ -198,6 +199,7 @@ interface BaseSchema {
   };
   type?: string;
   items?: Schema | Schema[];
+  $ref?: string;
 }
 
 export type SchemaType = "object" | "array" | "string" | "integer" | "number" | "boolean" | "null";
@@ -303,6 +305,8 @@ export interface SwaggerExample {
     [parameterName: string]: any;
   };
   responses: { [responseCode: string]: any };
+
+  $ref?: string;
 }
 
 // --------------------------------- Spec ------------------------------------

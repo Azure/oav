@@ -200,10 +200,10 @@ const shouldSkipError = (error: ErrorObject, cxt: SchemaValidateContext) => {
     ((keyword === "required" &&
       (parentSchema.properties?.[(params as any).missingProperty]?.[xmsMutability]?.indexOf(
         "read"
-      ) === -1 || 
-      // required check is ignored when x-ms-secret is true
-      (parentSchema.properties?.[(params as any).missingProperty] as any)?.[xmsSecret] === true
-      )) ||
+      ) === -1 ||
+        // required check is ignored when x-ms-secret is true
+        (parentSchema.properties?.[(params as any).missingProperty] as any)?.[xmsSecret] ===
+          true)) ||
       (keyword === "type" && data === null && parentSchema[xmsMutability]?.indexOf("read") === -1))
   ) {
     return true;

@@ -140,7 +140,7 @@ export const validateSwaggerLiveResponse = async (
 
 const transformBodyValue = (body: any, operation: Operation): any => {
   return operation._bodyTransform === undefined ? body : operation._bodyTransform(body);
-}
+};
 
 const transformLiveHeader = (
   headers: StringMap<string>,

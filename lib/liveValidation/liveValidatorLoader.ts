@@ -168,8 +168,7 @@ export class LiveValidatorLoader implements Loader<SwaggerSpec> {
           if (param.required) {
             copyInfo(param, schema);
             this.addRequiredToSchema(schema, "body");
-          }
-          else {
+          } else {
             operation._bodyTransform = bodyTransformIfNotRequiredAndEmpty;
           }
           break;
@@ -272,11 +271,10 @@ const parameterTransform = {
 const bodyTransformIfNotRequiredAndEmpty = (body: any) => {
   if (body && Object.keys(body).length === 0 && body.constructor === Object) {
     return undefined;
-  }
-  else {
+  } else {
     return body;
   }
-}
+};
 
 const addParamTransform = (it: Operation | Response, param: Parameter) => {
   const transform = parameterTransform[param.type! as keyof typeof parameterTransform];
