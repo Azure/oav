@@ -28,26 +28,26 @@ describe.skip("mock examples", () => {
   }
 });
 
-describe("test generate example",()=> {
+describe("test generate example", () => {
   const originalError = log.error;
   //const originalLog = log.info;
   const originalWarn = log.warn;
   let consoleOutput: any[] = [];
-  const recordOutput = (output:any) => {
+  const recordOutput = (output: any) => {
     if (typeof output === "string" && output.indexOf("\\") !== -1) {
       const result = output.replace(/\\/gi, "/");
       consoleOutput.push(result);
     } else {
       consoleOutput.push(output);
     }
-  }
+  };
   //const mockedLog = (output: any) => recordOutput(output);
   const mockedError = (output: any) => recordOutput(output);
   const mockedWarn = (output: any) => recordOutput(output);
   beforeAll(() => {
-    consoleOutput = []
+    consoleOutput = [];
     //log.info = mockedLog as any
-    log.error = mockedError as any
+    log.error = mockedError as any;
     log.warn = mockedWarn as any;
   });
 
@@ -55,12 +55,12 @@ describe("test generate example",()=> {
     log.error = originalError;
     //log.info = originalLog;
     log.warn = originalWarn;
-  })
- 
+  });
+
   test.each<string[]>([
     ["sql", "package-pure-2020-02-preview"],
     ["signalr", "package-2020-05-01"],
-    ["eventgrid", "package-2020-06"]
+    ["eventgrid", "package-2020-06"],
   ])(
     "from payload,rp:%s",
     async (resourceProviderName, tag) => {
@@ -75,11 +75,11 @@ describe("test generate example",()=> {
     },
     1000000
   );
-  
+
   test.each<string[]>([
     ["sql", "package-pure-2020-02-preview"],
     ["signalr", "package-2020-05-01"],
-    ["eventgrid", "package-2020-06"]
+    ["eventgrid", "package-2020-06"],
   ])(
     "from mocker,readme:%s",
     async (resourceProviderName, tag) => {
@@ -94,8 +94,7 @@ describe("test generate example",()=> {
     },
     1000000
   );
-
-})
+});
 
 export function getSpecFilePaths(repoDir: string) {
   const rpList = fs.readdirSync(path.resolve(repoDir, "specification"));

@@ -123,6 +123,7 @@ export class TestScenarioRunner {
   private client: TestScenarioRunnerClient;
   private env: VariableEnv;
   private testScopeTracking: { [scopeName: string]: TestScopeTracking };
+  private testScenarioScopeTracking: Map<TestScenario, TestScopeTracking> = new Map();
 
   private provisionTestScope = getLazyBuilder(
     "provisioned",
@@ -157,26 +158,68 @@ export class TestScenarioRunner {
   }
 
   public async prepareScenario(testScenario: TestScenario): Promise<TestScopeTracking> {
-    const s = testScenario.shareTestScope;
-    const testScopeName =
-      typeof s === "string" ? s : s ? "_defaultScope" : `_randomScope_${getRandomString()}`;
-
-    let testScope = this.testScopeTracking[testScopeName];
+    let testScope = this.testScenarioScopeTracking.get(testScenario);
     if (testScope === undefined) {
-      const testDef = testScenario._testDef;
-      const env = new VariableEnv(this.env);
-      env.setBatch(testDef.variables);
-      testScope = {
-        scope: testDef.scope,
-        prepareSteps: testDef.prepareSteps,
-        env,
-        armDeployments: [],
-      };
-      this.testScopeTracking[testScopeName] = testScope;
+      const s = testScenario.shareTestScope;
+      const testScopeName =
+        typeof s === "string" ? s : s ? "_defaultScope" : `_randomScope_${getRandomString()}`;
+
+      testScope = this.testScopeTracking[testScopeName];
+      if (testScope === undefined) {
+        const testDef = testScenario._testDef;
+        const env = new VariableEnv(this.env);
+        env.setBatch(testDef.variables);
+        testScope = {
+          scope: testDef.scope,
+          prepareSteps: testDef.prepareSteps,
+          env,
+          armDeployments: [],
+        };
+        this.testScopeTracking[testScopeName] = testScope;
+      }
+
+      this.testScenarioScopeTracking.set(testScenario, testScope);
     }
 
     await this.provisionTestScope(testScope);
     return testScope;
+  }
+
+  public testScopePreparedExternal(
+    testScopeInput: Pick<TestScopeTracking, "env" | "armDeployments" | "provisioned">,
+    info: {
+      testScenario?: TestScenario;
+      testScopeName?: string;
+      testDef?: TestDefinitionFile;
+    }
+  ): void {
+    const { testScenario, testScopeName } = info;
+    const testDef = testScenario?._testDef ?? info.testDef;
+
+    if (testDef === undefined) {
+      throw new Error("Either testScenario or testDef must be provided.");
+    }
+
+    const testScope = {
+      scope: testDef.scope,
+      prepareSteps: testDef.prepareSteps,
+      ...testScopeInput,
+    };
+    if (testScopeName !== undefined) {
+      if (this.testScopeTracking[testScopeName] !== undefined) {
+        throw new Error(`TestScope already created: ${testScopeName}`);
+      }
+      this.testScopeTracking[testScopeName] = testScope;
+    }
+
+    if (testScenario !== undefined) {
+      if (this.testScenarioScopeTracking.get(testScenario) !== undefined) {
+        throw new Error(
+          `TestScope already created for scenario: ${testScenario.description} , scopeName: ${testScopeName}`
+        );
+      }
+      this.testScenarioScopeTracking.set(testScenario, testScope);
+    }
   }
 
   public async executeScenario(testScenario: TestScenario) {

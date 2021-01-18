@@ -33,7 +33,7 @@ export const builder: yargs.CommandBuilder = {
     alias: "tagName",
     describe: "the readme tag name.",
     string: true,
-  }
+  },
 };
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
@@ -44,7 +44,14 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       consoleLogLevel: argv.logLevel,
       logFilepath: argv.f,
     };
-    await validate.generateExamples(specPath, argv.payload, argv.o, argv.config, argv.tag, vOptions);
+    await validate.generateExamples(
+      specPath,
+      argv.payload,
+      argv.o,
+      argv.config,
+      argv.tag,
+      vOptions
+    );
     return 0;
   });
 }
