@@ -1,0 +1,35 @@
+{
+    "liveRequest": {
+        "headers": {
+            "pragma": "no-cache",
+            "strict-Transport-Security": "max-age=15724800; includeSubDomains",
+            "x-Content-Type-Options": "nosniff",
+            "connection": "close",
+            "cache-Control": "no-cache",
+            "date": "Fri, 17 Jul 2020 01:59:34 GMT",
+            "server": "Microsoft-IIS/10.0",
+            "x-Powered-By": "ASP.NET"
+        },
+        "method": "POST",
+        "url": "/subscriptions/b3ee3a7f-7614-4644-ad07-afa832620b4b/resourcegroups/babylonTest/providers/Microsoft.DataFactory/factories/lineageTest0416df/integrationruntimes/SelfIR-TestMSSQL1/removeLinks?api-version=2018-06-01",
+        "body": {
+            "factoryName": "aaaaaaaaaaaaaaaaaaaa"
+        },
+        "query": {
+            "api-version": "2018-06-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "200",
+        "headers": {
+            "pragma": "no-cache",
+            "strict-Transport-Security": "max-age=15724800; includeSubDomains",
+            "x-Content-Type-Options": "nosniff",
+            "connection": "close",
+            "cache-Control": "no-cache",
+            "date": "Fri, 17 Jul 2020 01:59:34 GMT",
+            "server": "Microsoft-IIS/10.0",
+            "x-Powered-By": "ASP.NET"
+        }
+    }
+}

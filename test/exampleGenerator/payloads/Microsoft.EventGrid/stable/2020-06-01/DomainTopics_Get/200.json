@@ -1,0 +1,32 @@
+{
+    "liveRequest": {
+        "headers": {
+            "accept-Encoding": "gzip;deflate",
+            "host": "management.azure.com",
+            "user-Agent": "PolicyScan-GF",
+            "x-ms-client-request-id": "eee3277c-c1ad-4f7b-859e-254a1dd41f69"
+        },
+        "method": "GET",
+        "url": "/subscriptions/249e518e-f896-4022-8612-c4a5897d9a3d/resourceGroups/Geneva-Health/providers/Microsoft.EventGrid/domains/GenevaHealth-ConfigSync-prod/topics/MicrosoftSqlShoeboxCentralUSEUAP?api-version=2020-06-01",
+        "query": {
+            "api-version": "2020-06-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "200",
+        "headers": {
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "x-ms-request-id": "64633260-966e-43b3-ad4b-2ea16d5d4a26",
+            "date": "Thu, 29 Oct 2020 02:09:54 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "properties": {
+                "provisioningState": "Succeeded"
+            },
+            "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "name": "MicrosoftSqlShoeboxCentralUSEUAP",
+            "type": "Microsoft.EventGrid/domains/topics"
+        }
+    }
+}

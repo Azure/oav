@@ -1,0 +1,27 @@
+{
+    "liveRequest": {
+        "headers": {
+            "accept-Encoding": "gzip;deflate",
+            "host": "management.azure.com",
+            "user-Agent": "PolicyScan",
+            "x-ms-client-request-id": "e256f62c-b470-47f5-947b-b67e1d607805"
+        },
+        "method": "GET",
+        "url": "/subscriptions/3b4c0417-62bc-49c3-b967-35bd18ca752a/resourceGroups/MAHSBC-RGP-0262-CoreInfra/providers/Microsoft.EventGrid/eventSubscriptions?api-version=2020-06-01",
+        "query": {
+            "api-version": "2020-06-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "200",
+        "headers": {
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "x-ms-request-id": "ec9b97a5-3b1e-4cdb-9b88-b7f773cf78c7",
+            "date": "Thu, 29 Oct 2020 02:21:52 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "value": []
+        }
+    }
+}

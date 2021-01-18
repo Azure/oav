@@ -1,0 +1,33 @@
+{
+    "liveRequest": {
+        "headers": {
+            "pragma": "no-cache",
+            "strict-Transport-Security": "max-age=15724800; includeSubDomains",
+            "x-Content-Type-Options": "nosniff",
+            "cache-Control": "no-cache",
+            "date": "Fri, 18 Sep 2020 01:45:10 GMT",
+            "server": "Microsoft-IIS/10.0",
+            "x-Powered-By": "ASP.NET"
+        },
+        "method": "GET",
+        "url": "/subscriptions/2b7588cd-de19-4e4f-ab76-f8b2d60f353d/resourceGroups/TiPRG/providers/Microsoft.DataFactory/factories/IRWorkerTiPDataFactory-201811-EU2/integrationRuntimes/irinttipne-new-2009180131-78a5b9d4/stop/operationstatuses/4364095bb54c431c92c4e88a480f5995?api-version=2018-06-01"
+    },
+    "liveResponse": {
+        "statusCode": "OK",
+        "headers": {
+            "pragma": "no-cache",
+            "strict-Transport-Security": "max-age=15724800; includeSubDomains",
+            "x-Content-Type-Options": "nosniff",
+            "cache-Control": "no-cache",
+            "date": "Fri, 18 Sep 2020 01:45:10 GMT",
+            "server": "Microsoft-IIS/10.0",
+            "x-Powered-By": "ASP.NET"
+        },
+        "body": {
+            "status": "InProgress",
+            "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "properties": null,
+            "error": null
+        }
+    }
+}

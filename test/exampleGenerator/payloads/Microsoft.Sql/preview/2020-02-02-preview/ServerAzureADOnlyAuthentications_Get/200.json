@@ -1,0 +1,30 @@
+{
+    "liveRequest": {
+        "headers": {
+            "x-ms-request-id": "ba6a5d12-c9c3-4b81-b66a-071622b2aabe",
+            "date": "Fri, 02 Oct 2020 19:36:01 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "method": "GET",
+        "url": "/subscriptions/e1775f9f-a286-474d-b6f0-29c42ac74554/resourceGroups/sqldbca/providers/Microsoft.Sql/servers/aadauthonly/azureADOnlyAuthentications/Default?api-version=2020-02-02-preview",
+        "query": {
+            "api-version": "2020-02-02-preview"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "200",
+        "headers": {
+            "x-ms-request-id": "ba6a5d12-c9c3-4b81-b66a-071622b2aabe",
+            "date": "Fri, 02 Oct 2020 19:36:01 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "properties": {
+                "azureADOnlyAuthentication": false
+            },
+            "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "name": "aaaaaaa",
+            "type": "Microsoft.Sql/servers"
+        }
+    }
+}

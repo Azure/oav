@@ -1,0 +1,67 @@
+{
+    "liveRequest": {
+        "headers": {
+            "expect": "100-continue",
+            "host": "management.azure.com",
+            "user-Agent": "AzurePowershell/v6.9.0;PSVersion/v5.1.15063.726",
+            "parameterSetName": "ByResourceId",
+            "commandName": "Set-AzureRmResource",
+            "x-ms-arm-resource-system-data": "{\"lastModifiedBy\":\"36284908-6b13-4b4a-83f4-6fc48c81efe6\",\"lastModifiedByType\":\"Application\",\"lastModifiedAt\":\"2020-10-26T18:48:48.8706488Z\"}"
+        },
+        "method": "PATCH",
+        "url": "/subscriptions/f8adaac3-c507-468f-819e-b881eed733ec/resourceGroups/SAS-WEU-TEDS-UAT-RG/providers/Microsoft.EventGrid/domains/TEDS-UAT-EVENTGRID-DOMAIN?api-version=2020-06-01",
+        "body": {
+            "tags": {
+                "BCIO": "aaaaaaaaaaaaaa",
+                "BA ID": "aaaaa",
+                "Business Area": "aaaaaaaaaaaaaaaaaaa",
+                "Application Name": "aaaa",
+                "SAS SDM": "aaaaaaaaaaaaaa",
+                "Resource Managed By": "aaaa",
+                "Application SLA": "aaaaaa",
+                "Email": "aaaaaaaaaaa",
+                "Environment": "aaa",
+                "Cost Center": "aaaaa"
+            }
+        },
+        "query": {
+            "api-version": "2020-06-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "201",
+        "headers": {
+            "retry-After": "10",
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "azure-AsyncOperation": "https://management.azure.com:443/subscriptions/f8adaac3-c507-468f-819e-b881eed733ec/providers/Microsoft.EventGrid/locations/westeurope/operationsStatus/BD3CAA57-473F-4725-9000-0E7E337FE784?api-version=2020-06-01",
+            "x-ms-request-id": "a890a810-0a30-4054-bab1-34025d2e525d",
+            "date": "Mon, 26 Oct 2020 18:48:48 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "properties": {
+                "provisioningState": "Updating",
+                "endpoint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "inputSchema": "EventGridSchema",
+                "metricResourceId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "publicNetworkAccess": "Enabled"
+            },
+            "location": "aaaaaaaaaa",
+            "tags": {
+                "BCIO": "aaaaaaaaaaaaaa",
+                "BA ID": "aaaaa",
+                "Business Area": "aaaaaaaaaaaaaaaaaaa",
+                "Application Name": "aaaa",
+                "SAS SDM": "aaaaaaaaaaaaaa",
+                "Resource Managed By": "aaaa",
+                "Application SLA": "aaaaaa",
+                "Email": "aaaaaaaaaaa",
+                "Environment": "aaa",
+                "Cost Center": "aaaaa"
+            },
+            "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "name": "TEDS-UAT-EVENTGRID-DOMAIN",
+            "type": "Microsoft.EventGrid/domains"
+        }
+    }
+}

@@ -1,0 +1,24 @@
+{
+    "liveRequest": {
+        "headers": {
+            "connection": "close",
+            "date": "Thu, 17 Sep 2020 14:41:15 GMT",
+            "location": "https://management.azure.com/subscriptions/85b3dbca-5974-4067-9669-67a141095a76/providers/Microsoft.DataShare/locations/westeurope/operationResults/e08257fb-3446-4318-9f19-12bed63058f8?api-version=2019-11-01",
+            "server": "Kestrel"
+        },
+        "method": "DELETE",
+        "url": "/subscriptions/85b3dbca-5974-4067-9669-67a141095a76/resourceGroups/acctest-datashare-200917143721301254/providers/Microsoft.DataShare/accounts/acctest-dsa-200917143721301254?api-version=2019-11-01",
+        "query": {
+            "api-version": "2019-11-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "202",
+        "headers": {
+            "connection": "close",
+            "date": "Thu, 17 Sep 2020 14:41:15 GMT",
+            "location": "https://management.azure.com/subscriptions/85b3dbca-5974-4067-9669-67a141095a76/providers/Microsoft.DataShare/locations/westeurope/operationResults/e08257fb-3446-4318-9f19-12bed63058f8?api-version=2019-11-01",
+            "server": "Kestrel"
+        }
+    }
+}

@@ -1,0 +1,28 @@
+{
+    "liveRequest": {
+        "headers": {
+            "pragma": "no-cache",
+            "retry-After": "15",
+            "x-ms-request-id": "westeurope:4ed8eadc-3916-40eb-b763-b3b8d43218e3",
+            "cache-Control": "no-cache",
+            "date": "Sun, 26 Jul 2020 23:32:48 GMT",
+            "location": "https://management.azure.com/subscriptions/285056e8-22a0-472c-ad80-8fe218ed93dd/resourceGroups/vnet-285056e8-westeurope-354-rg/providers/Microsoft.Databricks/locations/westeurope/operationStatuses/eyJmdWxseVF1YWxpZmllZEFwcGxpYW5jZUlkIjoiL3N1YnNjcmlwdGlvbnMvMjg1MDU2ZTgtMjJhMC00NzJjLWFkODAtOGZlMjE4ZWQ5M2RkL3Jlc291cmNlR3JvdXBzL3ZuZXQtMjg1MDU2ZTgtd2VzdGV1cm9wZS0zNTQtcmcvcHJvdmlkZXJzL01pY3Jvc29mdC5EYXRhYnJpY2tzL3dvcmtzcGFjZXMvZGF0YWZsb3ctNjI2YmQxOGYtNjhjMy00NTE5LTlhNzUtNjU4ZTc0NWVkNGI1Iiwiam9iSWQiOiJBcHBsaWFuY2VEZXByb3Zpc2lvbmluZ0pvYjoyRFJHQToyRFZORVQ6M0EyRDI4NTA1NkU4OjNBMkRXRVNURVVST1BFOjNBMkQzNTQ6M0EyRFJHOjJEREFUQUZMT1c6M0EyRDYyNkJEMThGOjNBMkR8NTQ5RUVFMzMwNDM3MDA1MyJ9?api-version=2018-04-01"
+        },
+        "method": "DELETE",
+        "url": "/subscriptions/285056e8-22a0-472c-ad80-8fe218ed93dd/resourceGroups/vnet-285056e8-westeurope-354-rg/providers/Microsoft.Databricks/workspaces/dataflow-626bd18f-68c3-4519-9a75-658e745ed4b5?api-version=2018-04-01",
+        "query": {
+            "api-version": "2018-04-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "202",
+        "headers": {
+            "pragma": "no-cache",
+            "retry-After": "15",
+            "x-ms-request-id": "westeurope:4ed8eadc-3916-40eb-b763-b3b8d43218e3",
+            "cache-Control": "no-cache",
+            "date": "Sun, 26 Jul 2020 23:32:48 GMT",
+            "location": "https://management.azure.com/subscriptions/285056e8-22a0-472c-ad80-8fe218ed93dd/resourceGroups/vnet-285056e8-westeurope-354-rg/providers/Microsoft.Databricks/locations/westeurope/operationStatuses/eyJmdWxseVF1YWxpZmllZEFwcGxpYW5jZUlkIjoiL3N1YnNjcmlwdGlvbnMvMjg1MDU2ZTgtMjJhMC00NzJjLWFkODAtOGZlMjE4ZWQ5M2RkL3Jlc291cmNlR3JvdXBzL3ZuZXQtMjg1MDU2ZTgtd2VzdGV1cm9wZS0zNTQtcmcvcHJvdmlkZXJzL01pY3Jvc29mdC5EYXRhYnJpY2tzL3dvcmtzcGFjZXMvZGF0YWZsb3ctNjI2YmQxOGYtNjhjMy00NTE5LTlhNzUtNjU4ZTc0NWVkNGI1Iiwiam9iSWQiOiJBcHBsaWFuY2VEZXByb3Zpc2lvbmluZ0pvYjoyRFJHQToyRFZORVQ6M0EyRDI4NTA1NkU4OjNBMkRXRVNURVVST1BFOjNBMkQzNTQ6M0EyRFJHOjJEREFUQUZMT1c6M0EyRDYyNkJEMThGOjNBMkR8NTQ5RUVFMzMwNDM3MDA1MyJ9?api-version=2018-04-01"
+        }
+    }
+}

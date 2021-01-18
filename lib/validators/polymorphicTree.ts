@@ -7,8 +7,8 @@
  * model is one of it's children.
  */
 export class PolymorphicTree {
-  public name: string
-  public children: Map<string, PolymorphicTree>
+  public name: string;
+  public children: Map<string, PolymorphicTree>;
   /**
    * @constructor
    * Initializes a new instance of the PolymorphicTree
@@ -26,14 +26,14 @@ export class PolymorphicTree {
     ) {
       throw new Error(
         "name is a required property of type string and it cannot be an empty string."
-      )
+      );
     }
 
     if (children !== null && children !== undefined && !(children instanceof Map)) {
-      throw new Error("children is an optional property of type Map<string, PolymorphicTree>.")
+      throw new Error("children is an optional property of type Map<string, PolymorphicTree>.");
     }
-    this.name = name
-    this.children = children || new Map()
+    this.name = name;
+    this.children = children || new Map();
   }
 
   /**
@@ -45,12 +45,12 @@ export class PolymorphicTree {
    */
   public addChildByObject(childObj: PolymorphicTree): PolymorphicTree {
     if (childObj === null || childObj === undefined || !(childObj instanceof PolymorphicTree)) {
-      throw new Error("childObj is a required parameter of type PolymorphicTree.")
+      throw new Error("childObj is a required parameter of type PolymorphicTree.");
     }
 
     if (!this.children.has(childObj.name)) {
-      this.children.set(childObj.name, childObj)
+      this.children.set(childObj.name, childObj);
     }
-    return childObj
+    return childObj;
   }
 }

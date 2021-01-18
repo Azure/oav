@@ -1,0 +1,32 @@
+{
+    "liveRequest": {
+        "headers": {
+            "user-Agent": "azure-resource-manager/2.0",
+            "x-ms-client-request-id": "dad4a2b8-7826-4fcf-a69a-0fc2517657d1",
+            "x-ms-arm-request-tracking-id": "4f85957e-1565-4e5c-8388-f94f79d77b5b",
+            "x-ms-client-location": "southcentralus",
+            "x-ms-arm-resource-system-data": "{\"lastModifiedBy\":\"18abcec9-f9a4-4112-9786-736653bd8b27\",\"lastModifiedByType\":\"Application\",\"lastModifiedAt\":\"2020-10-28T23:25:44.8444147Z\"}",
+            "accept-Language": "en-US",
+            "x-ms-arm-service-request-id": "ae2115da-c739-4da1-80be-9b30db07c093",
+            "x-ms-activity-vector": "IN.10"
+        },
+        "method": "POST",
+        "url": "/subscriptions/d1a1f81a-188e-4325-96ac-27324c66d413/resourcegroups/Chevron-DataLake-dev/providers/Microsoft.EventGrid/domains/cvxdl-dev-aue1-cvx-domain/listKeys?api-version=2020-06-01",
+        "query": {
+            "api-version": "2020-06-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "200",
+        "headers": {
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "x-ms-request-id": "55347d13-2a54-4c4f-b7c9-5dd7805cf4ea",
+            "date": "Wed, 28 Oct 2020 23:25:44 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "key1": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "key2": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+    }
+}

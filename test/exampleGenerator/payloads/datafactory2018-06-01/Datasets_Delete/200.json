@@ -1,0 +1,30 @@
+{
+    "liveRequest": {
+        "headers": {
+            "pragma": "no-cache",
+            "strict-Transport-Security": "max-age=15724800; includeSubDomains",
+            "x-Content-Type-Options": "nosniff",
+            "cache-Control": "no-cache",
+            "date": "Fri, 18 Sep 2020 03:02:10 GMT",
+            "server": "Microsoft-IIS/10.0",
+            "x-Powered-By": "ASP.NET"
+        },
+        "method": "DELETE",
+        "url": "/subscriptions/22bcbdc6-4a3b-4e7f-93bd-fbbd93c1aaa0/resourceGroups/WWLBIResourceGroup/providers/Microsoft.DataFactory/factories/wwlbiproddatafactory/datasets/etlcontroller_prod_sourcedataset_1019_4_msft_xptotal?api-version=2018-06-01",
+        "query": {
+            "api-version": "2018-06-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "200",
+        "headers": {
+            "pragma": "no-cache",
+            "strict-Transport-Security": "max-age=15724800; includeSubDomains",
+            "x-Content-Type-Options": "nosniff",
+            "cache-Control": "no-cache",
+            "date": "Fri, 18 Sep 2020 03:02:10 GMT",
+            "server": "Microsoft-IIS/10.0",
+            "x-Powered-By": "ASP.NET"
+        }
+    }
+}

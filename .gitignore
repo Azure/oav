@@ -91,3 +91,4 @@ coverage/
 test-results.xml
 
 .clinic/*
+junit.xml

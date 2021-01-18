@@ -1,0 +1,32 @@
+{
+    "liveRequest": {
+        "headers": {
+            "host": "management.azure.com",
+            "user-Agent": "FxVersion/4.7.3163.0;OSName/Windows;OSVersion/Microsoft.Windows.10.0.9200.;Microsoft.Azure.Management.SignalR.SignalRManagementClient/1.1.0.0;AzurePowershell/v0.0.0;PSVersion/v5.1.15063.726",
+            "commandName": "Update-AzSignalR",
+            "parameterSetName": "ResourceGroupParameterSet",
+            "x-ms-client-request-id": "a5bd6de8-0b97-4fe6-a216-e4d7d13aa58f"
+        },
+        "method": "GET",
+        "url": "/subscriptions/06e41510-47a2-4b54-b772-8280ba517792/resourceGroups/TopmotiveProduction/providers/Microsoft.SignalRService/locations/westeurope/operationStatuses/TopmotiveChatProductionSignalRService/operationId/33d3ee69-b48e-4783-83a2-ddd40c61ef97?api-version=2020-05-01"
+    },
+    "liveResponse": {
+        "statusCode": "OK",
+        "headers": {
+            "transfer-Encoding": "chunked",
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "x-content-type-options": "nosniff",
+            "x-ms-client-request-id": "a5bd6de8-0b97-4fe6-a216-e4d7d13aa58f",
+            "x-rp-server-mvid": "4c9f3738-e421-405d-a61a-30930239dab2",
+            "x-ms-request-id": "73b6b397-4069-4c61-9075-8128ef0e2b71",
+            "date": "Mon, 26 Oct 2020 14:56:32 GMT",
+            "server": "Kestrel"
+        },
+        "body": {
+            "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "status": "Running",
+            "startTime": "aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+    }
+}

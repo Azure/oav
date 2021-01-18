@@ -16,7 +16,7 @@
     }
   },
   "liveResponse": {
-    "statusCode": "200",
+    "statusCode": "OK",
     "headers": {
       "x-ms-request-id": "8e3485b6-c8a7-45c2-a9f5-59b826e42880",
       "x-ms-correlation-request-id": "8e3485b6-c8a7-45c2-a9f5-59b826e42880",

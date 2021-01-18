@@ -1,5 +1,51 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Live Validator Initialize cache and validate should return no errors for valid input with optional parameter body empty 1`] = `
+Object {
+  "requestValidationResult": Object {
+    "errors": Array [],
+    "isSuccessful": true,
+    "operationInfo": Object {
+      "apiVersion": "2020-01-01",
+      "operationId": "User_Patch",
+    },
+    "runtimeException": undefined,
+  },
+  "responseValidationResult": Object {
+    "errors": Array [],
+    "isSuccessful": true,
+    "operationInfo": Object {
+      "apiVersion": "2020-01-01",
+      "operationId": "User_Patch",
+    },
+    "runtimeException": undefined,
+  },
+}
+`;
+
+exports[`Live Validator Initialize cache and validate should return no errors for valid input with optional parameter body null 1`] = `
+Object {
+  "requestValidationResult": Object {
+    "errors": Array [],
+    "isSuccessful": true,
+    "operationInfo": Object {
+      "apiVersion": "2020-01-01",
+      "operationId": "User_Patch",
+    },
+    "runtimeException": undefined,
+  },
+  "responseValidationResult": Object {
+    "errors": Array [],
+    "isSuccessful": true,
+    "operationInfo": Object {
+      "apiVersion": "2020-01-01",
+      "operationId": "User_Patch",
+    },
+    "runtimeException": undefined,
+  },
+}
+`;
+
 exports[`Live validator snapshot validation should match all errors for no options 1`] = `
 Object {
   "requestValidationResult": Object {
@@ -7,7 +53,6 @@ Object {
       Object {
         "code": "OBJECT_MISSING_REQUIRED_PROPERTY",
         "documentationUrl": "",
-        "inner": undefined,
         "jsonPathsInPayload": Array [
           "$.properties.email",
         ],
@@ -16,9 +61,9 @@ Object {
           "email",
         ],
         "pathsInPayload": Array [
-          "properties/email",
+          "/properties/email",
         ],
-        "schemaPath": "",
+        "schemaPath": "#/required",
         "severity": 0,
         "source": Object {
           "jsonRef": "#/definitions/UserCreateParameterProperties",
@@ -42,7 +87,6 @@ Object {
       Object {
         "code": "INVALID_TYPE",
         "documentationUrl": "",
-        "inner": undefined,
         "jsonPathsInPayload": Array [
           "$.properties.lastName",
         ],
@@ -52,9 +96,9 @@ Object {
           "integer",
         ],
         "pathsInPayload": Array [
-          "properties/lastName",
+          "/properties/lastName",
         ],
-        "schemaPath": "",
+        "schemaPath": "#/properties/lastName/type",
         "severity": 0,
         "source": Object {
           "jsonRef": "#/definitions/UserContractProperties/properties/lastName",
@@ -66,34 +110,8 @@ Object {
         },
       },
       Object {
-        "code": "ENUM_CASE_MISMATCH",
-        "documentationUrl": "",
-        "inner": undefined,
-        "jsonPathsInPayload": Array [
-          "$.properties.state",
-        ],
-        "message": "Enum does not match case for: Active",
-        "params": Array [
-          "Active",
-        ],
-        "pathsInPayload": Array [
-          "properties/state",
-        ],
-        "schemaPath": "",
-        "severity": 1,
-        "source": Object {
-          "jsonRef": "#/definitions/UserEntityBaseParameters/properties/state",
-          "position": Object {
-            "column": 18,
-            "line": 750,
-          },
-          "url": "specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimusers.json",
-        },
-      },
-      Object {
         "code": "INVALID_FORMAT",
         "documentationUrl": "",
-        "inner": undefined,
         "jsonPathsInPayload": Array [
           "$.properties.registrationDate",
         ],
@@ -103,9 +121,9 @@ Object {
           "2018-09-11",
         ],
         "pathsInPayload": Array [
-          "properties/registrationDate",
+          "/properties/registrationDate",
         ],
-        "schemaPath": "",
+        "schemaPath": "#/properties/registrationDate/format",
         "severity": 0,
         "source": Object {
           "jsonRef": "#/definitions/UserContractProperties/properties/registrationDate",
@@ -119,7 +137,6 @@ Object {
       Object {
         "code": "OBJECT_ADDITIONAL_PROPERTIES",
         "documentationUrl": "",
-        "inner": undefined,
         "jsonPathsInPayload": Array [
           "$.properties.groups[0].id",
         ],
@@ -128,9 +145,9 @@ Object {
           "id",
         ],
         "pathsInPayload": Array [
-          "properties/groups/0/id",
+          "/properties/groups/0/id",
         ],
-        "schemaPath": "",
+        "schemaPath": "#/additionalProperties",
         "severity": 0,
         "source": Object {
           "jsonRef": "#/definitions/GroupContractProperties",
@@ -139,6 +156,36 @@ Object {
             "line": 593,
           },
           "url": "specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimgroups.json",
+        },
+      },
+      Object {
+        "code": "ENUM_CASE_MISMATCH",
+        "documentationUrl": "",
+        "jsonPathsInPayload": Array [
+          "$.properties.state",
+        ],
+        "message": "Enum does not match case for: Active",
+        "params": Array [
+          "Active",
+          Array [
+            "active",
+            "blocked",
+            "pending",
+            "deleted",
+          ],
+        ],
+        "pathsInPayload": Array [
+          "/properties/state",
+        ],
+        "schemaPath": "#/properties/state/enum",
+        "severity": 1,
+        "source": Object {
+          "jsonRef": "#/definitions/UserEntityBaseParameters/properties/state",
+          "position": Object {
+            "column": 18,
+            "line": 750,
+          },
+          "url": "specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimusers.json",
         },
       },
     ],
@@ -166,9 +213,58 @@ Object {
   "responseValidationResult": Object {
     "errors": Array [
       Object {
+        "code": "INVALID_FORMAT",
+        "documentationUrl": "",
+        "jsonPathsInPayload": Array [
+          "$.properties.policyId",
+        ],
+        "message": "Object didn't pass validation for format uuid: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "params": Array [
+          "uuid",
+          "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        ],
+        "pathsInPayload": Array [
+          "/properties/policyId",
+        ],
+        "schemaPath": "#/properties/policyId/format",
+        "severity": 0,
+        "source": Object {
+          "jsonRef": "#/definitions/ContentKeyPolicyProperties/properties/policyId",
+          "position": Object {
+            "column": 21,
+            "line": 688,
+          },
+          "url": "specification/mediaservices/resource-manager/Microsoft.Media/2018-07-01/ContentKeyPolicies.json",
+        },
+      },
+      Object {
+        "code": "INVALID_FORMAT",
+        "documentationUrl": "",
+        "jsonPathsInPayload": Array [
+          "$.properties.options[0].policyOptionId",
+        ],
+        "message": "Object didn't pass validation for format uuid: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "params": Array [
+          "uuid",
+          "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        ],
+        "pathsInPayload": Array [
+          "/properties/options/0/policyOptionId",
+        ],
+        "schemaPath": "#/properties/policyOptionId/format",
+        "severity": 0,
+        "source": Object {
+          "jsonRef": "#/definitions/ContentKeyPolicyOption/properties/policyOptionId",
+          "position": Object {
+            "column": 27,
+            "line": 659,
+          },
+          "url": "specification/mediaservices/resource-manager/Microsoft.Media/2018-07-01/ContentKeyPolicies.json",
+        },
+      },
+      Object {
         "code": "OBJECT_MISSING_REQUIRED_PROPERTY",
         "documentationUrl": "",
-        "inner": undefined,
         "jsonPathsInPayload": Array [
           "$.properties.options[0].restriction.audience",
         ],
@@ -177,9 +273,9 @@ Object {
           "audience",
         ],
         "pathsInPayload": Array [
-          "properties/options/0/restriction/audience",
+          "/properties/options/0/restriction/audience",
         ],
-        "schemaPath": "",
+        "schemaPath": "#/discriminatorMap",
         "severity": 0,
         "source": Object {
           "jsonRef": "#/definitions/ContentKeyPolicyTokenRestriction",
@@ -201,150 +297,6 @@ Object {
 }
 `;
 
-exports[`Live validator snapshot validation should report expected error with correct path information for secret property 1`] = `
-Object {
-  "requestValidationResult": Object {
-    "errors": Array [],
-    "isSuccessful": true,
-    "operationInfo": Object {
-      "apiVersion": "2020-01-01-preview",
-      "operationId": "VendorSkus_List",
-    },
-    "runtimeException": undefined,
-  },
-  "responseValidationResult": Object {
-    "errors": Array [
-      Object {
-        "code": "SECRET_PROPERTY",
-        "documentationUrl": "",
-        "inner": undefined,
-        "jsonPathsInPayload": Array [
-          "$.value[0].properties.virtualNetworkFunctionTemplate.virtualNetworkFunctionRoleConfigurations[0].imageReference.sasUri",
-          "$.value[1].properties.virtualNetworkFunctionTemplate.virtualNetworkFunctionRoleConfigurations[0].imageReference.sasUri",
-          "$.value[2].properties.virtualNetworkFunctionTemplate.virtualNetworkFunctionRoleConfigurations[0].imageReference.sasUri",
-        ],
-        "message": "Secret property \`\\"sasUri\\"\`, cannot be sent in the response.",
-        "params": Array [
-          "sasUri",
-          "",
-        ],
-        "pathsInPayload": Array [
-          "value/0/properties/virtualNetworkFunctionTemplate/virtualNetworkFunctionRoleConfigurations/0/imageReference/sasUri",
-          "value/1/properties/virtualNetworkFunctionTemplate/virtualNetworkFunctionRoleConfigurations/0/imageReference/sasUri",
-          "value/2/properties/virtualNetworkFunctionTemplate/virtualNetworkFunctionRoleConfigurations/0/imageReference/sasUri",
-        ],
-        "schemaPath": "",
-        "severity": 0,
-        "source": Object {
-          "jsonRef": "#/definitions/ImageReference/properties/sasUri",
-          "position": Object {
-            "column": 19,
-            "line": 1412,
-          },
-          "url": "specification/hybridnetwork/resource-manager/2020-01-01-preview/vendor.json",
-        },
-      },
-      Object {
-        "code": "WRITEONLY_PROPERTY_NOT_ALLOWED_IN_RESPONSE",
-        "documentationUrl": "",
-        "inner": undefined,
-        "jsonPathsInPayload": Array [
-          "$.value[0].properties.virtualNetworkFunctionTemplate.virtualNetworkFunctionRoleConfigurations[0].imageReference.sasUri",
-          "$.value[1].properties.virtualNetworkFunctionTemplate.virtualNetworkFunctionRoleConfigurations[0].imageReference.sasUri",
-          "$.value[2].properties.virtualNetworkFunctionTemplate.virtualNetworkFunctionRoleConfigurations[0].imageReference.sasUri",
-        ],
-        "message": "Write-only property \`\\"sasUri\\"\`, is not allowed in the response.",
-        "params": Array [
-          "sasUri",
-          "",
-        ],
-        "pathsInPayload": Array [
-          "value/0/properties/virtualNetworkFunctionTemplate/virtualNetworkFunctionRoleConfigurations/0/imageReference/sasUri",
-          "value/1/properties/virtualNetworkFunctionTemplate/virtualNetworkFunctionRoleConfigurations/0/imageReference/sasUri",
-          "value/2/properties/virtualNetworkFunctionTemplate/virtualNetworkFunctionRoleConfigurations/0/imageReference/sasUri",
-        ],
-        "schemaPath": "",
-        "severity": 0,
-        "source": Object {
-          "jsonRef": "#/definitions/ImageReference/properties/sasUri",
-          "position": Object {
-            "column": 19,
-            "line": 1412,
-          },
-          "url": "specification/hybridnetwork/resource-manager/2020-01-01-preview/vendor.json",
-        },
-      },
-      Object {
-        "code": "SECRET_PROPERTY",
-        "documentationUrl": "",
-        "inner": undefined,
-        "jsonPathsInPayload": Array [
-          "$.value[0].properties.virtualNetworkFunctionTemplate.virtualNetworkFunctionRoleConfigurations[0].osProfile.adminPassword",
-          "$.value[1].properties.virtualNetworkFunctionTemplate.virtualNetworkFunctionRoleConfigurations[0].osProfile.adminPassword",
-          "$.value[2].properties.virtualNetworkFunctionTemplate.virtualNetworkFunctionRoleConfigurations[0].osProfile.adminPassword",
-        ],
-        "message": "Secret property \`\\"adminPassword\\"\`, cannot be sent in the response.",
-        "params": Array [
-          "adminPassword",
-          "",
-        ],
-        "pathsInPayload": Array [
-          "value/0/properties/virtualNetworkFunctionTemplate/virtualNetworkFunctionRoleConfigurations/0/osProfile/adminPassword",
-          "value/1/properties/virtualNetworkFunctionTemplate/virtualNetworkFunctionRoleConfigurations/0/osProfile/adminPassword",
-          "value/2/properties/virtualNetworkFunctionTemplate/virtualNetworkFunctionRoleConfigurations/0/osProfile/adminPassword",
-        ],
-        "schemaPath": "",
-        "severity": 0,
-        "source": Object {
-          "jsonRef": "#/definitions/OsProfile/properties/adminPassword",
-          "position": Object {
-            "column": 26,
-            "line": 1448,
-          },
-          "url": "specification/hybridnetwork/resource-manager/2020-01-01-preview/vendor.json",
-        },
-      },
-      Object {
-        "code": "WRITEONLY_PROPERTY_NOT_ALLOWED_IN_RESPONSE",
-        "documentationUrl": "",
-        "inner": undefined,
-        "jsonPathsInPayload": Array [
-          "$.value[0].properties.virtualNetworkFunctionTemplate.virtualNetworkFunctionRoleConfigurations[0].osProfile.adminPassword",
-          "$.value[1].properties.virtualNetworkFunctionTemplate.virtualNetworkFunctionRoleConfigurations[0].osProfile.adminPassword",
-          "$.value[2].properties.virtualNetworkFunctionTemplate.virtualNetworkFunctionRoleConfigurations[0].osProfile.adminPassword",
-        ],
-        "message": "Write-only property \`\\"adminPassword\\"\`, is not allowed in the response.",
-        "params": Array [
-          "adminPassword",
-          "",
-        ],
-        "pathsInPayload": Array [
-          "value/0/properties/virtualNetworkFunctionTemplate/virtualNetworkFunctionRoleConfigurations/0/osProfile/adminPassword",
-          "value/1/properties/virtualNetworkFunctionTemplate/virtualNetworkFunctionRoleConfigurations/0/osProfile/adminPassword",
-          "value/2/properties/virtualNetworkFunctionTemplate/virtualNetworkFunctionRoleConfigurations/0/osProfile/adminPassword",
-        ],
-        "schemaPath": "",
-        "severity": 0,
-        "source": Object {
-          "jsonRef": "#/definitions/OsProfile/properties/adminPassword",
-          "position": Object {
-            "column": 26,
-            "line": 1448,
-          },
-          "url": "specification/hybridnetwork/resource-manager/2020-01-01-preview/vendor.json",
-        },
-      },
-    ],
-    "isSuccessful": false,
-    "operationInfo": Object {
-      "apiVersion": "2020-01-01-preview",
-      "operationId": "VendorSkus_List",
-    },
-    "runtimeException": undefined,
-  },
-}
-`;
-
 exports[`Live validator snapshot validation should return expected error for readonly property in the request 1`] = `
 Object {
   "requestValidationResult": Object {
@@ -352,25 +304,24 @@ Object {
       Object {
         "code": "READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST",
         "documentationUrl": "",
-        "inner": undefined,
         "jsonPathsInPayload": Array [
-          "$.readOnlyProperty",
+          "$.name",
         ],
-        "message": "ReadOnly property \`\\"readOnlyProperty\\": \\"test\\"\`, cannot be sent in the request.",
+        "message": "ReadOnly property \\"name\\" cannot be sent in the request",
         "params": Array [
-          "readOnlyProperty",
-          "test",
+          "name",
+          null,
         ],
         "pathsInPayload": Array [
-          "readOnlyProperty",
+          "/name",
         ],
-        "schemaPath": "",
+        "schemaPath": "#/properties/name/readOnly",
         "severity": 0,
         "source": Object {
-          "jsonRef": "#/definitions/User/properties/readOnlyProperty",
+          "jsonRef": "#/definitions/User/properties/name",
           "position": Object {
-            "column": 29,
-            "line": 132,
+            "column": 17,
+            "line": 122,
           },
           "url": "specification/contoso/resource-manager/Microsoft.Contoso/2020-01-01/contoso.json",
         },
@@ -378,25 +329,24 @@ Object {
       Object {
         "code": "READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST",
         "documentationUrl": "",
-        "inner": undefined,
         "jsonPathsInPayload": Array [
-          "$.name",
+          "$.readOnlyProperty",
         ],
-        "message": "ReadOnly property \`\\"name\\": \\"foo\\"\`, cannot be sent in the request.",
+        "message": "ReadOnly property \\"readOnlyProperty\\" cannot be sent in the request",
         "params": Array [
-          "name",
-          "foo",
+          "readOnlyProperty",
+          null,
         ],
         "pathsInPayload": Array [
-          "name",
+          "/readOnlyProperty",
         ],
-        "schemaPath": "",
+        "schemaPath": "#/properties/readOnlyProperty/x-ms-mutability",
         "severity": 0,
         "source": Object {
-          "jsonRef": "#/definitions/User/properties/name",
+          "jsonRef": "#/definitions/User/properties/readOnlyProperty",
           "position": Object {
-            "column": 17,
-            "line": 122,
+            "column": 29,
+            "line": 132,
           },
           "url": "specification/contoso/resource-manager/Microsoft.Contoso/2020-01-01/contoso.json",
         },
@@ -444,52 +394,6 @@ Object {
 }
 `;
 
-exports[`Live validator snapshot validation should return no errors for valid input with optional parameter body empty 1`] = `
-Object {
-  "requestValidationResult": Object {
-    "errors": Array [],
-    "isSuccessful": true,
-    "operationInfo": Object {
-      "apiVersion": "2020-01-01",
-      "operationId": "User_Patch",
-    },
-    "runtimeException": undefined,
-  },
-  "responseValidationResult": Object {
-    "errors": Array [],
-    "isSuccessful": true,
-    "operationInfo": Object {
-      "apiVersion": "2020-01-01",
-      "operationId": "User_Patch",
-    },
-    "runtimeException": undefined,
-  },
-}
-`;
-
-exports[`Live validator snapshot validation should return no errors for valid input with optional parameter body null 1`] = `
-Object {
-  "requestValidationResult": Object {
-    "errors": Array [],
-    "isSuccessful": true,
-    "operationInfo": Object {
-      "apiVersion": "2020-01-01",
-      "operationId": "User_Patch",
-    },
-    "runtimeException": undefined,
-  },
-  "responseValidationResult": Object {
-    "errors": Array [],
-    "isSuccessful": true,
-    "operationInfo": Object {
-      "apiVersion": "2020-01-01",
-      "operationId": "User_Patch",
-    },
-    "runtimeException": undefined,
-  },
-}
-`;
-
 exports[`Live validator snapshot validation should return the expected error requestResponse validation for ENUM_CASE_MISMATCH 1`] = `
 Object {
   "requestValidationResult": Object {
@@ -506,18 +410,22 @@ Object {
       Object {
         "code": "ENUM_CASE_MISMATCH",
         "documentationUrl": "",
-        "inner": undefined,
         "jsonPathsInPayload": Array [
           "$.properties.groups[0].type",
         ],
         "message": "Enum does not match case for: System",
         "params": Array [
           "System",
+          Array [
+            "custom",
+            "system",
+            "external",
+          ],
         ],
         "pathsInPayload": Array [
-          "properties/groups/0/type",
+          "/properties/groups/0/type",
         ],
-        "schemaPath": "",
+        "schemaPath": "#/properties/type/enum",
         "severity": 1,
         "source": Object {
           "jsonRef": "#/definitions/GroupContractProperties/properties/type",
@@ -546,18 +454,23 @@ Object {
       Object {
         "code": "ENUM_MISMATCH",
         "documentationUrl": "",
-        "inner": undefined,
         "jsonPathsInPayload": Array [
           "$.properties.state",
         ],
         "message": "No enum match for: dasda",
         "params": Array [
           "dasda",
+          Array [
+            "active",
+            "blocked",
+            "pending",
+            "deleted",
+          ],
         ],
         "pathsInPayload": Array [
-          "properties/state",
+          "/properties/state",
         ],
-        "schemaPath": "",
+        "schemaPath": "#/properties/state/enum",
         "severity": 0,
         "source": Object {
           "jsonRef": "#/definitions/UserEntityBaseParameters/properties/state",
@@ -581,18 +494,22 @@ Object {
       Object {
         "code": "ENUM_MISMATCH",
         "documentationUrl": "",
-        "inner": undefined,
         "jsonPathsInPayload": Array [
           "$.properties.groups[0].type",
         ],
         "message": "No enum match for: banana",
         "params": Array [
           "banana",
+          Array [
+            "custom",
+            "system",
+            "external",
+          ],
         ],
         "pathsInPayload": Array [
-          "properties/groups/0/type",
+          "/properties/groups/0/type",
         ],
-        "schemaPath": "",
+        "schemaPath": "#/properties/type/enum",
         "severity": 0,
         "source": Object {
           "jsonRef": "#/definitions/GroupContractProperties/properties/type",
@@ -630,7 +547,6 @@ Object {
       Object {
         "code": "INVALID_FORMAT",
         "documentationUrl": "",
-        "inner": undefined,
         "jsonPathsInPayload": Array [
           "$.properties.createdAtUtc",
         ],
@@ -640,9 +556,9 @@ Object {
           "0001-01-01T00:00:00",
         ],
         "pathsInPayload": Array [
-          "properties/createdAtUtc",
+          "/properties/createdAtUtc",
         ],
-        "schemaPath": "",
+        "schemaPath": "#/properties/createdAtUtc/format",
         "severity": 0,
         "source": Object {
           "jsonRef": "#/definitions/ApiManagementServiceBaseProperties/properties/createdAtUtc",
@@ -658,6 +574,100 @@ Object {
     "operationInfo": Object {
       "apiVersion": "2018-01-01",
       "operationId": "ApiManagementService_Get",
+    },
+    "runtimeException": undefined,
+  },
+}
+`;
+
+exports[`Live validator snapshot validation should return the expected error requestResponse validation for INVALID_RESPONSE_BODY 1`] = `
+Object {
+  "requestValidationResult": Object {
+    "errors": Array [],
+    "isSuccessful": true,
+    "operationInfo": Object {
+      "apiVersion": "2018-01-01",
+      "operationId": "Api_Get",
+    },
+    "runtimeException": undefined,
+  },
+  "responseValidationResult": Object {
+    "errors": Array [
+      Object {
+        "code": "INVALID_RESPONSE_BODY",
+        "documentationUrl": "",
+        "jsonPathsInPayload": Array [
+          ".body",
+        ],
+        "message": "Body is required in response but not provided",
+        "params": Array [
+          "body",
+        ],
+        "pathsInPayload": Array [
+          "/body",
+        ],
+        "schemaPath": "#/required",
+        "severity": 0,
+        "source": Object {
+          "position": Object {
+            "column": 18,
+            "line": 178,
+          },
+          "url": "specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimapis.json",
+        },
+      },
+    ],
+    "isSuccessful": false,
+    "operationInfo": Object {
+      "apiVersion": "2018-01-01",
+      "operationId": "Api_Get",
+    },
+    "runtimeException": undefined,
+  },
+}
+`;
+
+exports[`Live validator snapshot validation should return the expected error requestResponse validation for INVALID_RESPONSE_HEADER 1`] = `
+Object {
+  "requestValidationResult": Object {
+    "errors": Array [],
+    "isSuccessful": true,
+    "operationInfo": Object {
+      "apiVersion": "2018-01-01",
+      "operationId": "Api_Get",
+    },
+    "runtimeException": undefined,
+  },
+  "responseValidationResult": Object {
+    "errors": Array [
+      Object {
+        "code": "INVALID_RESPONSE_HEADER",
+        "documentationUrl": "",
+        "jsonPathsInPayload": Array [
+          ".headers.etag",
+        ],
+        "message": "Header etag is required in response but not provided",
+        "params": Array [
+          "etag",
+        ],
+        "pathsInPayload": Array [
+          "/headers/etag",
+        ],
+        "schemaPath": "#/properties/headers/required",
+        "severity": 0,
+        "source": Object {
+          "position": Object {
+            "column": 23,
+            "line": 184,
+          },
+          "url": "specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimapis.json",
+        },
+      },
+    ],
+    "isSuccessful": false,
+    "operationInfo": Object {
+      "apiVersion": "2018-01-01",
+      "operationId": "Api_Get",
     },
     "runtimeException": undefined,
   },
@@ -680,7 +690,6 @@ Object {
       Object {
         "code": "INVALID_TYPE",
         "documentationUrl": "",
-        "inner": undefined,
         "jsonPathsInPayload": Array [
           "$.properties.hostnameConfigurations",
         ],
@@ -690,9 +699,9 @@ Object {
           "string",
         ],
         "pathsInPayload": Array [
-          "properties/hostnameConfigurations",
+          "/properties/hostnameConfigurations",
         ],
-        "schemaPath": "",
+        "schemaPath": "#/properties/hostnameConfigurations/type",
         "severity": 0,
         "source": Object {
           "jsonRef": "#/definitions/ApiManagementServiceBaseProperties/properties/hostnameConfigurations",
@@ -730,7 +739,6 @@ Object {
       Object {
         "code": "MAX_LENGTH",
         "documentationUrl": "",
-        "inner": undefined,
         "jsonPathsInPayload": Array [
           "$.properties.description",
         ],
@@ -740,15 +748,15 @@ Object {
           1000,
         ],
         "pathsInPayload": Array [
-          "properties/description",
+          "/properties/description",
         ],
-        "schemaPath": "",
+        "schemaPath": "#/properties/description/maxLength",
         "severity": 0,
         "source": Object {
           "jsonRef": "#/definitions/OperationEntityBaseContract/properties/description",
           "position": Object {
             "column": 24,
-            "line": 4071,
+            "line": 4076,
           },
           "url": "specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimapis.json",
         },
@@ -771,20 +779,24 @@ Object {
       Object {
         "code": "MISSING_REQUIRED_PARAMETER",
         "documentationUrl": "",
-        "inner": undefined,
-        "jsonPathsInPayload": Array [],
+        "jsonPathsInPayload": Array [
+          ".body",
+        ],
         "message": "Value is required but was not provided",
-        "params": undefined,
-        "pathsInPayload": Array [],
-        "schemaPath": "#/paths/~1subscriptions~1{subscriptionId}~1resourceGroups~1{resourceGroupName}~1providers~1Microsoft.ApiManagement~1service~1{serviceName}~1users~1{uid}/put/parameters/3",
+        "params": Array [
+          "body",
+        ],
+        "pathsInPayload": Array [
+          "/body",
+        ],
+        "schemaPath": "#/required",
         "severity": 0,
         "source": Object {
-          "jsonRef": "",
           "position": Object {
-            "column": -1,
-            "line": -1,
+            "column": 11,
+            "line": 197,
           },
-          "url": undefined,
+          "url": "specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimusers.json",
         },
       },
     ],
@@ -823,7 +835,6 @@ Object {
       Object {
         "code": "OBJECT_ADDITIONAL_PROPERTIES",
         "documentationUrl": "",
-        "inner": undefined,
         "jsonPathsInPayload": Array [
           "$.properties.groups[0].id",
           "$.properties.groups[1].id",
@@ -833,10 +844,10 @@ Object {
           "id",
         ],
         "pathsInPayload": Array [
-          "properties/groups/0/id",
-          "properties/groups/1/id",
+          "/properties/groups/0/id",
+          "/properties/groups/1/id",
         ],
-        "schemaPath": "",
+        "schemaPath": "#/additionalProperties",
         "severity": 0,
         "source": Object {
           "jsonRef": "#/definitions/GroupContractProperties",
@@ -874,7 +885,6 @@ Object {
       Object {
         "code": "OBJECT_MISSING_REQUIRED_PROPERTY",
         "documentationUrl": "",
-        "inner": undefined,
         "jsonPathsInPayload": Array [
           "$.properties.groups[0].displayName",
         ],
@@ -883,9 +893,9 @@ Object {
           "displayName",
         ],
         "pathsInPayload": Array [
-          "properties/groups/0/displayName",
+          "/properties/groups/0/displayName",
         ],
-        "schemaPath": "",
+        "schemaPath": "#/required",
         "severity": 0,
         "source": Object {
           "jsonRef": "#/definitions/GroupContractProperties",
@@ -901,6 +911,104 @@ Object {
     "operationInfo": Object {
       "apiVersion": "2018-01-01",
       "operationId": "User_CreateOrUpdate",
+    },
+    "runtimeException": undefined,
+  },
+}
+`;
+
+exports[`Live validator snapshot validation should return the expected error requestResponse validation for OBJECT_PROPERTIES_MAXIMUM 1`] = `
+Object {
+  "requestValidationResult": Object {
+    "errors": Array [],
+    "isSuccessful": true,
+    "operationInfo": Object {
+      "apiVersion": "2018-01-01",
+      "operationId": "Api_Get",
+    },
+    "runtimeException": undefined,
+  },
+  "responseValidationResult": Object {
+    "errors": Array [
+      Object {
+        "code": "OBJECT_PROPERTIES_MAXIMUM",
+        "documentationUrl": "",
+        "jsonPathsInPayload": Array [
+          "$.testMaxMinProperties",
+        ],
+        "message": "Too many properties defined (4), maximum 3",
+        "params": Array [
+          4,
+          3,
+        ],
+        "pathsInPayload": Array [
+          "/testMaxMinProperties",
+        ],
+        "schemaPath": "#/properties/testMaxMinProperties/maxProperties",
+        "severity": 0,
+        "source": Object {
+          "jsonRef": "#/definitions/ApiContract/properties/testMaxMinProperties",
+          "position": Object {
+            "column": 33,
+            "line": 3505,
+          },
+          "url": "specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimapis.json",
+        },
+      },
+    ],
+    "isSuccessful": false,
+    "operationInfo": Object {
+      "apiVersion": "2018-01-01",
+      "operationId": "Api_Get",
+    },
+    "runtimeException": undefined,
+  },
+}
+`;
+
+exports[`Live validator snapshot validation should return the expected error requestResponse validation for OBJECT_PROPERTIES_MINIMUM 1`] = `
+Object {
+  "requestValidationResult": Object {
+    "errors": Array [],
+    "isSuccessful": true,
+    "operationInfo": Object {
+      "apiVersion": "2018-01-01",
+      "operationId": "Api_Get",
+    },
+    "runtimeException": undefined,
+  },
+  "responseValidationResult": Object {
+    "errors": Array [
+      Object {
+        "code": "OBJECT_PROPERTIES_MINIMUM",
+        "documentationUrl": "",
+        "jsonPathsInPayload": Array [
+          "$.testMaxMinProperties",
+        ],
+        "message": "Too few properties defined (1), minimum 2",
+        "params": Array [
+          1,
+          2,
+        ],
+        "pathsInPayload": Array [
+          "/testMaxMinProperties",
+        ],
+        "schemaPath": "#/properties/testMaxMinProperties/minProperties",
+        "severity": 0,
+        "source": Object {
+          "jsonRef": "#/definitions/ApiContract/properties/testMaxMinProperties",
+          "position": Object {
+            "column": 33,
+            "line": 3505,
+          },
+          "url": "specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimapis.json",
+        },
+      },
+    ],
+    "isSuccessful": false,
+    "operationInfo": Object {
+      "apiVersion": "2018-01-01",
+      "operationId": "Api_Get",
     },
     "runtimeException": undefined,
   },
@@ -923,25 +1031,24 @@ Object {
       Object {
         "code": "SECRET_PROPERTY",
         "documentationUrl": "",
-        "inner": undefined,
         "jsonPathsInPayload": Array [
           "$.properties.password",
         ],
-        "message": "Secret property \`\\"password\\"\`, cannot be sent in the response.",
+        "message": "Secret property \\"password\\" cannot be sent in the response",
         "params": Array [
           "password",
-          "",
+          null,
         ],
         "pathsInPayload": Array [
-          "properties/password",
+          "/properties/password",
         ],
-        "schemaPath": "",
+        "schemaPath": "#/properties/password/x-ms-secret",
         "severity": 0,
         "source": Object {
           "jsonRef": "#/definitions/SecretUserContractProperties/properties/password",
           "position": Object {
             "column": 21,
-            "line": 134,
+            "line": 146,
           },
           "url": "specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimusersecret.json",
         },
@@ -973,19 +1080,18 @@ Object {
       Object {
         "code": "WRITEONLY_PROPERTY_NOT_ALLOWED_IN_RESPONSE",
         "documentationUrl": "",
-        "inner": undefined,
         "jsonPathsInPayload": Array [
           "$.properties.propertyUsage",
         ],
-        "message": "Write-only property \`\\"propertyUsage\\"\`, is not allowed in the response.",
+        "message": "Write-only property \\"propertyUsage\\" is not allowed in the response",
         "params": Array [
           "propertyUsage",
-          "",
+          null,
         ],
         "pathsInPayload": Array [
-          "properties/propertyUsage",
+          "/properties/propertyUsage",
         ],
-        "schemaPath": "",
+        "schemaPath": "#/properties/propertyUsage/x-ms-mutability",
         "severity": 0,
         "source": Object {
           "jsonRef": "#/definitions/WriteOnlyPropertyContractProperties/properties/propertyUsage",

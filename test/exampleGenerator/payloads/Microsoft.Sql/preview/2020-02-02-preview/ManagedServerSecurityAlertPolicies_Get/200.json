@@ -1,0 +1,31 @@
+{
+    "liveRequest": {
+        "headers": {
+            "x-ms-request-id": "cab602c7-0469-4ed6-ad63-10875673ae70",
+            "date": "Sun, 04 Oct 2020 18:28:38 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "method": "GET",
+        "url": "/subscriptions/97f85b86-b715-4c61-b44e-0069faf73a05/resourcegroups/RG-PROD/providers/Microsoft.Sql/managedInstances/niipinfprodsqldb/securityAlertPolicies/Default?api-version=2020-02-02-preview",
+        "query": {
+            "api-version": "2020-02-02-preview"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "200",
+        "headers": {
+            "x-ms-request-id": "cab602c7-0469-4ed6-ad63-10875673ae70",
+            "date": "Sun, 04 Oct 2020 18:28:38 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "properties": {
+                "state": "Enabled",
+                "creationTime": "2020-07-27T05:26:17.953Z"
+            },
+            "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "name": "aaaaaaa",
+            "type": "Microsoft.Sql/managedInstances/securityAlertPolicies"
+        }
+    }
+}

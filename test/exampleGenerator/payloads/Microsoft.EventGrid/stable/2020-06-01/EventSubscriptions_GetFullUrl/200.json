@@ -1,0 +1,31 @@
+{
+    "liveRequest": {
+        "headers": {
+            "accept-Language": "en-US",
+            "host": "management.azure.com",
+            "user-Agent": "FxVersion/4.700.20.41105;OSName/Windows;OSVersion/Microsoft.Windows.10.0.14393;Microsoft.Azure.Management.EventGrid.EventGridManagementClient/6.0.0.0",
+            "x-ms-client-request-id": "8f53b87c-a957-4680-91d9-d76c4f1d52d7",
+            "request-Context": "appId=cid-v1:ca0247ea-bfa0-464a-98d9-daccae0d4cc2",
+            "request-Id": "|59aa05945aa9324d9e2da7d3d5aaa08b.19e789f6e6053943.",
+            "traceparent": "00-59aa05945aa9324d9e2da7d3d5aaa08b-19e789f6e6053943-00",
+            "x-ms-arm-resource-system-data": "{\"lastModifiedBy\":\"50444b3e-133d-481a-bf02-d8447b76b629\",\"lastModifiedByType\":\"Application\",\"lastModifiedAt\":\"2020-10-20T07:18:15.4019562Z\"}"
+        },
+        "method": "POST",
+        "url": "/subscriptions/5023f8ef-7ec0-4877-8103-b3b9bac698d1/resourceGroups/devpfm-tco-sbx-rg/providers/microsoft.eventgrid/domains/devpfm-tco-sbx-domain/topics/persons/providers/Microsoft.EventGrid/eventSubscriptions/persons-cd80ea99-b69d-4b59-9b1c-6b752e768125/getFullUrl?api-version=2020-06-01",
+        "query": {
+            "api-version": "2020-06-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "200",
+        "headers": {
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "x-ms-request-id": "bec11d51-a246-467f-aa2d-994c2a42e6c3",
+            "date": "Tue, 20 Oct 2020 07:18:15 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "endpointUrl": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+    }
+}

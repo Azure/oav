@@ -1,0 +1,29 @@
+{
+    "liveRequest": {
+        "headers": {
+            "user-Agent": "azure-resource-manager/2.0",
+            "x-ms-client-request-id": "785d9b8d-aed5-4f40-bf17-3d934a9c2a4a",
+            "x-ms-arm-request-tracking-id": "c0d7d382-51d6-4fc8-bf57-193697e8029d",
+            "x-ms-client-location": "southcentralus",
+            "accept-Language": "en-US",
+            "x-ms-arm-service-request-id": "56ac1fef-d6bb-415c-8b1a-b07dc647db85",
+            "x-ms-activity-vector": "IN.1D"
+        },
+        "method": "DELETE",
+        "url": "/subscriptions/619f1ab9-764e-4308-8360-da885b1c9eaa/resourcegroups/CI-1984738-5264e576-3c6f-51f6-f055-fab409685f20/providers/Microsoft.EventGrid/domains/jzumsq-dev-cvx?api-version=2020-06-01",
+        "query": {
+            "api-version": "2020-06-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "202",
+        "headers": {
+            "retry-After": "10",
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "azure-AsyncOperation": "https://management.azure.com:443/subscriptions/619f1ab9-764e-4308-8360-da885b1c9eaa/providers/Microsoft.EventGrid/locations/southcentralus/operationsStatus/20AFD657-B20F-4FC9-97CA-ED3FB9379650?api-version=2020-06-01",
+            "date": "Tue, 20 Oct 2020 20:25:59 GMT",
+            "location": "https://management.azure.com/subscriptions/619f1ab9-764e-4308-8360-da885b1c9eaa/providers/Microsoft.EventGrid/locations/southcentralus/operationResults/20AFD657-B20F-4FC9-97CA-ED3FB9379650?api-version=2020-06-01",
+            "server": "Microsoft-HTTPAPI/2.0"
+        }
+    }
+}

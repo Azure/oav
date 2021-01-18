@@ -1,0 +1,93 @@
+{
+    "liveRequest": {
+        "headers": {
+            "accept-Language": "en-US",
+            "host": "management.azure.com",
+            "user-Agent": "FxVersion/4.700.20.41105;OSName/Linux;OSVersion/Linux.4.15.0.1098.azure.109.16.04.1.Ubuntu.SMP.Wed.Sep.30.18.53.14.UTC.2020;Microsoft.Azure.Management.EventGrid.EventGridManagementClient/6.0.0.0",
+            "x-ms-client-request-id": "8958d69c-18c2-4104-9d91-e7c327882bf8",
+            "request-Context": "appId=cid-v1:6ec011c6-1fe9-4453-987a-1914ba9f6a41",
+            "request-Id": "|424777ee65841249b5174f11394ca5b2.0c5680ec23159642.",
+            "traceparent": "00-424777ee65841249b5174f11394ca5b2-0c5680ec23159642-00",
+            "x-ms-arm-resource-system-data": "{\"createdBy\":\"c8310a91-4b7d-47c2-bded-40bc65b2d5b9\",\"createdByType\":\"Application\",\"createdAt\":\"2020-10-29T00:36:01.8401189Z\",\"lastModifiedBy\":\"c8310a91-4b7d-47c2-bded-40bc65b2d5b9\",\"lastModifiedByType\":\"Application\",\"lastModifiedAt\":\"2020-10-29T00:36:01.8401189Z\"}"
+        },
+        "method": "PUT",
+        "url": "/subscriptions/62c92aac-e354-48f0-b36f-88152b410f5e/resourceGroups/NextPlatform.Production/providers/Microsoft.EventGrid/topics/next-platform-production/providers/Microsoft.EventGrid/eventSubscriptions/product-service?api-version=2020-06-01",
+        "body": {
+            "properties": {
+                "destination": {
+                    "endpointType": "WebHook",
+                    "properties": {
+                        "endpointUrl": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                    }
+                },
+                "filter": {
+                    "includedEventTypes": [
+                        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                    ]
+                },
+                "retryPolicy": {
+                    "maxDeliveryAttempts": 30,
+                    "eventTimeToLiveInMinutes": 1440
+                },
+                "deadLetterDestination": {
+                    "endpointType": "StorageBlob",
+                    "properties": {
+                        "resourceId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                        "blobContainerName": "aaaaaaaaaaaaaaaaaa"
+                    }
+                }
+            }
+        },
+        "query": {
+            "api-version": "2020-06-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "201",
+        "headers": {
+            "retry-After": "10",
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "azure-AsyncOperation": "https://management.azure.com:443/subscriptions/62c92aac-e354-48f0-b36f-88152b410f5e/providers/Microsoft.EventGrid/locations/westeurope/operationsStatus/56432EA7-D072-4D09-B3D7-777126213B6F?api-version=2020-06-01",
+            "x-ms-request-id": "6bb2802e-5976-44cf-a4ff-b98b00f15705",
+            "date": "Thu, 29 Oct 2020 00:36:01 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "properties": {
+                "topic": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "provisioningState": "Updating",
+                "destination": {
+                    "properties": {
+                        "endpointUrl": null,
+                        "endpointBaseUrl": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                    },
+                    "endpointType": "WebHook"
+                },
+                "filter": {
+                    "includedEventTypes": [
+                        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                    ]
+                },
+                "labels": null,
+                "retryPolicy": {
+                    "maxDeliveryAttempts": 30,
+                    "eventTimeToLiveInMinutes": 1440
+                },
+                "deadLetterDestination": {
+                    "properties": {
+                        "resourceId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                        "blobContainerName": "aaaaaaaaaaaaaaaaaa"
+                    },
+                    "endpointType": "StorageBlob"
+                }
+            },
+            "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "name": "product-service",
+            "type": "Microsoft.EventGrid/eventSubscriptions"
+        }
+    }
+}

@@ -1,0 +1,25 @@
+{
+    "liveRequest": {
+        "headers": {
+            "x-ms-request-id": "e08555ca-ba36-4530-9759-834f900b8fef",
+            "date": "Mon, 28 Sep 2020 12:34:19 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "method": "GET",
+        "url": "/subscriptions/bc4468a2-9b43-4787-a460-656f1ef07900/resourcegroups/central-rg/providers/Microsoft.Sql/managedInstances/aznb-sql/azureADOnlyAuthentications?api-version=2020-02-02-preview",
+        "query": {
+            "api-version": "2020-02-02-preview"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "200",
+        "headers": {
+            "x-ms-request-id": "e08555ca-ba36-4530-9759-834f900b8fef",
+            "date": "Mon, 28 Sep 2020 12:34:19 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "value": []
+        }
+    }
+}

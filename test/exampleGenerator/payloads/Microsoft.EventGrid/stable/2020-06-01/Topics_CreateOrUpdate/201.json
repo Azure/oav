@@ -1,0 +1,48 @@
+{
+    "liveRequest": {
+        "headers": {
+            "user-Agent": "azure-resource-manager/2.0",
+            "x-ms-client-request-id": "31bf1ef8-80ab-4516-a853-c35e055a99a0",
+            "x-ms-arm-request-tracking-id": "f5fc0859-5858-4ffe-9025-d4b18d79eec6",
+            "x-ms-client-location": "eastus",
+            "x-ms-arm-resource-system-data": "{\"lastModifiedBy\":\"28aff506-4e51-4b2a-a991-7e6785482a87\",\"lastModifiedByType\":\"Application\",\"lastModifiedAt\":\"2020-10-28T23:48:16.6408211Z\"}",
+            "accept-Language": "en-US",
+            "x-ms-arm-service-request-id": "0129c726-f0e4-45b7-aa01-8e0f296515de",
+            "x-ms-activity-vector": "IN.18"
+        },
+        "method": "PUT",
+        "url": "/subscriptions/d2cc63c7-b16c-4459-8b5c-86a45c8a1b93/resourcegroups/Rg-matlabaz-USSC-DEV/providers/Microsoft.EventGrid/topics/ExxonMobil-matlabaz-OutputResultsSqlCreated?api-version=2020-06-01",
+        "body": {
+            "location": "aaaaaaaaaaaaaa",
+            "properties": {
+                "inputSchema": "EventGridSchema"
+            }
+        },
+        "query": {
+            "api-version": "2020-06-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "201",
+        "headers": {
+            "retry-After": "10",
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "azure-AsyncOperation": "https://management.azure.com:443/subscriptions/d2cc63c7-b16c-4459-8b5c-86a45c8a1b93/providers/Microsoft.EventGrid/locations/southcentralus/operationsStatus/8D21BC08-485A-43DD-8950-AFB9DB0B5138?api-version=2020-06-01",
+            "x-ms-request-id": "1df713fd-1a83-4f5e-8fba-9badf5ca398f",
+            "date": "Wed, 28 Oct 2020 23:48:17 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "properties": {
+                "provisioningState": "Updating",
+                "endpoint": null,
+                "inputSchema": "EventGridSchema"
+            },
+            "location": "aaaaaaaaaaaaaa",
+            "tags": null,
+            "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "name": "ExxonMobil-matlabaz-OutputResultsSqlCreated",
+            "type": "Microsoft.EventGrid/topics"
+        }
+    }
+}

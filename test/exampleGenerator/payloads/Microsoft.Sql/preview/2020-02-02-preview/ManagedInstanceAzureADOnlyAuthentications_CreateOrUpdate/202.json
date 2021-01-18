@@ -1,0 +1,39 @@
+{
+    "liveRequest": {
+        "headers": {
+            "accept-Language": "en-US",
+            "expect": "100-continue",
+            "host": "management.azure.com",
+            "user-Agent": "FxVersion/4.8.4250.0;OSName/Windows;OSVersion/Microsoft.Windows.10.0.18363.;Microsoft.Azure.Management.Sql.SqlManagementClient/1.44.2.0;AzurePowershell/v0.0.0;PSVersion/v5.1.18362.1110",
+            "x-ms-client-request-id": "12216c48-44c5-4c5f-9c09-52b230510c47",
+            "commandName": "Get-AzSqlInstanceActiveDirectoryOnlyAuthentication",
+            "parameterSetName": "UseResourceGroupAndInstanceNameParameterSet",
+            "x-ms-arm-resource-system-data": "{\"createdBy\":\"UserSqlSecurityManager@aadsqldboutlook.onmicrosoft.com\",\"createdByType\":\"User\",\"createdAt\":\"2020-10-27T01:09:39.3185437Z\",\"lastModifiedBy\":\"UserSqlSecurityManager@aadsqldboutlook.onmicrosoft.com\",\"lastModifiedByType\":\"User\",\"lastModifiedAt\":\"2020-10-27T01:09:39.3185437Z\"}"
+        },
+        "method": "PUT",
+        "url": "/subscriptions/e1775f9f-a286-474d-b6f0-29c42ac74554/resourceGroups/rg-sso/providers/Microsoft.Sql/managedInstances/ssomitest/azureADOnlyAuthentications/Default?api-version=2020-02-02-preview",
+        "body": {
+            "properties": {
+                "azureADOnlyAuthentication": false
+            }
+        },
+        "query": {
+            "api-version": "2020-02-02-preview"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "202",
+        "headers": {
+            "retry-After": "15",
+            "azure-AsyncOperation": "https://management.azure.com/subscriptions/e1775f9f-a286-474d-b6f0-29c42ac74554/resourceGroups/rg-sso/providers/Microsoft.Sql/locations/eastus/administratorAzureAsyncOperation/8b27b23e-0909-41f9-96b4-8e430a87bd17?api-version=2020-02-02-preview",
+            "x-ms-request-id": "8b27b23e-0909-41f9-96b4-8e430a87bd17",
+            "date": "Tue, 27 Oct 2020 01:09:38 GMT",
+            "location": "https://management.azure.com/subscriptions/e1775f9f-a286-474d-b6f0-29c42ac74554/resourceGroups/rg-sso/providers/Microsoft.Sql/locations/eastus/administratorOperationResults/8b27b23e-0909-41f9-96b4-8e430a87bd17?api-version=2020-02-02-preview",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "operation": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "startTime": "2020-10-27T01:09:39.447Z"
+        }
+    }
+}

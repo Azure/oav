@@ -1,0 +1,26 @@
+{
+    "liveRequest": {
+        "headers": {
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "date": "Fri, 18 Sep 2020 02:34:59 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "method": "GET",
+        "url": "/subscriptions/e54229a3-0e6f-40b3-82a1-ae9cda6e2b81/providers/Microsoft.ContainerRegistry/locations/southeastasia/operationResults/registries-90b805a1-eb02-4231-af71-624cd3023088?api-version=2019-05-01"
+    },
+    "liveResponse": {
+        "statusCode": "Conflict",
+        "headers": {
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "date": "Fri, 18 Sep 2020 02:34:59 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "error": {
+                "code": "aaaaaaaa",
+                "message": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            },
+            "status": "Failed"
+        }
+    }
+}

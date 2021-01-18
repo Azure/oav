@@ -1,0 +1,48 @@
+{
+    "liveRequest": {
+        "headers": {
+            "retry-After": "15",
+            "azure-AsyncOperation": "https://management.azure.com/subscriptions/34867346-35f0-445b-bc36-cb53a3e45e92/providers/Microsoft.Sql/locations/westeurope/managedDatabaseAzureAsyncOperation/1aac840c-f6fb-4d5c-a2a6-1716c88eab9a?api-version=2020-02-02-preview",
+            "x-ms-request-id": "1aac840c-f6fb-4d5c-a2a6-1716c88eab9a",
+            "date": "Sun, 04 Oct 2020 23:15:30 GMT",
+            "location": "https://management.azure.com/subscriptions/34867346-35f0-445b-bc36-cb53a3e45e92/providers/Microsoft.Sql/locations/westeurope/managedDatabaseOperationResults/1aac840c-f6fb-4d5c-a2a6-1716c88eab9a?api-version=2020-02-02-preview",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "method": "PATCH",
+        "url": "/subscriptions/34867346-35f0-445b-bc36-cb53a3e45e92/resourceGroups/HQ-ASESQL-PRD-rg/providers/Microsoft.Sql/managedInstances/hq-sqlmi-prd/databases/Vesta?api-version=2020-02-02-preview",
+        "body": {
+            "tags": {
+                "RG-Applicationname": "",
+                "RG-TechContact-others": "",
+                "RG-Environment": "aaa",
+                "RG-Business_Entity": "aaaaa",
+                "RG-SLA": "",
+                "RG-AppContact-others": "",
+                "RG-ServiceMode": "aaaaaaaaa",
+                "RG-PO-InvoiceInfo": "",
+                "RG-TechContact": "aaaaaaaaaaaaaaaaaaaaaa",
+                "RG-AppContact": "aaaaaaaaaaaaaaaaaaaaaa",
+                "RG-Service-Window": "",
+                "RG-IO-InvoiceInfo": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            }
+        },
+        "query": {
+            "api-version": "2020-02-02-preview"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "202",
+        "headers": {
+            "retry-After": "15",
+            "azure-AsyncOperation": "https://management.azure.com/subscriptions/34867346-35f0-445b-bc36-cb53a3e45e92/providers/Microsoft.Sql/locations/westeurope/managedDatabaseAzureAsyncOperation/1aac840c-f6fb-4d5c-a2a6-1716c88eab9a?api-version=2020-02-02-preview",
+            "x-ms-request-id": "1aac840c-f6fb-4d5c-a2a6-1716c88eab9a",
+            "date": "Sun, 04 Oct 2020 23:15:30 GMT",
+            "location": "https://management.azure.com/subscriptions/34867346-35f0-445b-bc36-cb53a3e45e92/providers/Microsoft.Sql/locations/westeurope/managedDatabaseOperationResults/1aac840c-f6fb-4d5c-a2a6-1716c88eab9a?api-version=2020-02-02-preview",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "operation": "aaaaaaaaaaaaaaaaaaaa",
+            "startTime": "2020-10-04T23:15:30.363Z"
+        }
+    }
+}

@@ -1,0 +1,98 @@
+{
+    "liveRequest": {
+        "headers": {
+            "connection": "keep-alive",
+            "accept": "application/json",
+            "accept-Encoding": "gzip;deflate",
+            "accept-Language": "en-US",
+            "host": "management.azure.com",
+            "user-Agent": "python/3.6.10;(Linux-4.15.0-1098-azure-x86_64-with-debian-stretch-sid);msrest/0.6.18;VSTS_41bf5486-7392-4b7a-a7e3-a735c767e3b3_Release__3216294_10053393_1;msrest_azure/0.6.3;azure-mgmt-signalr/0.4.0;Azure-SDK-For-Python;AZURECLI/2.13.0;(DEB)",
+            "x-ms-client-request-id": "465ac28b-1e07-11eb-9f0e-000d3afdfa83",
+            "commandName": "signalr list",
+            "parameterSetName": "--query"
+        },
+        "method": "GET",
+        "url": "/subscriptions/ef72249e-9785-4799-a76b-7cdd80e1b1d0/providers/Microsoft.SignalRService/signalR?api-version=2020-05-01",
+        "query": {
+            "api-version": "2020-05-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "200",
+        "headers": {
+            "transfer-Encoding": "chunked",
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "x-content-type-options": "nosniff",
+            "x-ms-client-request-id": "465ac28b-1e07-11eb-9f0e-000d3afdfa83",
+            "x-rp-server-mvid": "e36e6838-7779-4ba2-b738-62cf73818870",
+            "x-ms-request-id": "acea4a61-b857-4eb7-891b-527fd535f082",
+            "date": "Tue, 03 Nov 2020 19:03:36 GMT",
+            "server": "Kestrel"
+        },
+        "body": {
+            "value": [
+                {
+                    "sku": {
+                        "name": "aaaaaaaaaaa",
+                        "tier": "Standard",
+                        "size": "aa",
+                        "capacity": 2
+                    },
+                    "properties": {
+                        "provisioningState": "Succeeded",
+                        "externalIP": "aaaaaaaaaaa",
+                        "hostName": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                        "publicPort": 443,
+                        "serverPort": 443,
+                        "version": "aaa",
+                        "privateEndpointConnections": [],
+                        "hostNamePrefix": "aaaaaaaaaaaaaaaaaaaaaa",
+                        "features": [
+                            {
+                                "flag": "ServiceMode",
+                                "value": "aaaaaaa",
+                                "properties": {}
+                            },
+                            {
+                                "flag": "EnableConnectivityLogs",
+                                "value": "aaaaa",
+                                "properties": {}
+                            },
+                            {
+                                "flag": "EnableMessagingLogs",
+                                "value": "aaaaa",
+                                "properties": {}
+                            }
+                        ],
+                        "cors": {
+                            "allowedOrigins": [
+                                "a"
+                            ]
+                        },
+                        "upstream": {
+                            "templates": null
+                        },
+                        "networkACLs": {
+                            "defaultAction": "Allow",
+                            "publicNetwork": {
+                                "allow": [
+                                    "ServerConnection",
+                                    "ClientConnection",
+                                    "RESTAPI"
+                                ],
+                                "deny": null
+                            },
+                            "privateEndpoints": []
+                        }
+                    },
+                    "kind": "SignalR",
+                    "location": "aaaaaaa",
+                    "tags": null,
+                    "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                    "name": "aaaaaaaaaaaaaaaaaaaaaa",
+                    "type": "Microsoft.SignalRService/SignalR"
+                }
+            ]
+        }
+    }
+}

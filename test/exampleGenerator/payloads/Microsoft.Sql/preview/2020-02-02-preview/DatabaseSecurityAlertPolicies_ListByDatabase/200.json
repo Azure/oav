@@ -1,0 +1,40 @@
+{
+    "liveRequest": {
+        "headers": {
+            "accept-Encoding": "gzip;deflate",
+            "accept-Language": "en-US",
+            "host": "management.azure.com",
+            "x-ms-client-request-id": "fb2199e1-9921-4132-bbbe-60f214c0126c",
+            "x-ms-arm-request-tracking-id": "eff12922-840f-40a0-bf4f-467c13cd7ca4",
+            "x-ms-client-location": "westeurope",
+            "x-ms-arm-service-request-id": "3dd118d2-024d-404b-896a-c57767c58e33",
+            "x-ms-activity-vector": "IN.53"
+        },
+        "method": "GET",
+        "url": "/subscriptions/41ba7f59-9483-4232-a946-ce58fb21c2b1/resourcegroups/rgDR1964Qualitydocum/providers/Microsoft.Sql/servers/dbs1dr1964qualitydocum/databases/db2dr1964qualitydocum/securityAlertPolicies?api-version=2020-02-02-preview",
+        "query": {
+            "api-version": "2020-02-02-preview"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "200",
+        "headers": {
+            "x-ms-request-id": "e7e25337-24c4-40e3-8f3a-126d5b52086e",
+            "date": "Tue, 27 Oct 2020 05:24:16 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "value": [
+                {
+                    "properties": {
+                        "state": "Disabled",
+                        "creationTime": "2017-06-15T07:47:40.837Z"
+                    },
+                    "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                    "name": "aaaaaaa",
+                    "type": "Microsoft.Sql/servers/databases/securityAlertPolicies"
+                }
+            ]
+        }
+    }
+}

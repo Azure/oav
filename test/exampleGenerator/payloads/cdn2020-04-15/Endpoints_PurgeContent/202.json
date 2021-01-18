@@ -1,0 +1,45 @@
+{
+    "liveRequest": {
+        "headers": {
+            "pragma": "no-cache",
+            "retry-After": "10",
+            "x-ms-request-id": "c237784b-e6f3-4a6e-9fd8-eb684266b762",
+            "x-ms-client-request-id": "045067e8-f953-11ea-8000-000d3a20b959",
+            "azure-AsyncOperation": "https://management.azure.com/subscriptions/a75c7008-66c1-4373-a0f3-859abaefccdb/resourcegroups/resp-dev-rg-we/providers/Microsoft.Cdn/operationresults/4c1af7fe-1de2-43b2-b611-6a929266ef16?api-version=2020-04-15",
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "cache-Control": "no-cache",
+            "date": "Fri, 18 Sep 2020 02:02:36 GMT",
+            "location": "https://management.azure.com/subscriptions/a75c7008-66c1-4373-a0f3-859abaefccdb/resourcegroups/resp-dev-rg-we/providers/Microsoft.Cdn/operationresults/4c1af7fe-1de2-43b2-b611-6a929266ef16/profileresults/resp-dev-cdnp-we/endpointresults/resp-dev-cdne-we?api-version=2020-04-15",
+            "server": "Microsoft-IIS/10.0",
+            "x-AspNet-Version": "4.0.30319",
+            "x-Powered-By": "ASP.NET"
+        },
+        "method": "POST",
+        "url": "/subscriptions/a75c7008-66c1-4373-a0f3-859abaefccdb/resourceGroups/resp-dev-rg-we/providers/Microsoft.Cdn/profiles/resp-dev-cdnp-we/endpoints/resp-dev-cdne-we/purge?api-version=2020-04-15",
+        "body": {
+            "contentPaths": [
+                "aa"
+            ]
+        },
+        "query": {
+            "api-version": "2020-04-15"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "202",
+        "headers": {
+            "pragma": "no-cache",
+            "retry-After": "10",
+            "x-ms-request-id": "c237784b-e6f3-4a6e-9fd8-eb684266b762",
+            "x-ms-client-request-id": "045067e8-f953-11ea-8000-000d3a20b959",
+            "azure-AsyncOperation": "https://management.azure.com/subscriptions/a75c7008-66c1-4373-a0f3-859abaefccdb/resourcegroups/resp-dev-rg-we/providers/Microsoft.Cdn/operationresults/4c1af7fe-1de2-43b2-b611-6a929266ef16?api-version=2020-04-15",
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "cache-Control": "no-cache",
+            "date": "Fri, 18 Sep 2020 02:02:36 GMT",
+            "location": "https://management.azure.com/subscriptions/a75c7008-66c1-4373-a0f3-859abaefccdb/resourcegroups/resp-dev-rg-we/providers/Microsoft.Cdn/operationresults/4c1af7fe-1de2-43b2-b611-6a929266ef16/profileresults/resp-dev-cdnp-we/endpointresults/resp-dev-cdne-we?api-version=2020-04-15",
+            "server": "Microsoft-IIS/10.0",
+            "x-AspNet-Version": "4.0.30319",
+            "x-Powered-By": "ASP.NET"
+        }
+    }
+}

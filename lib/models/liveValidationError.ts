@@ -26,6 +26,7 @@ export class LiveValidationError {
    * @returns {object} metadata of LiveValidationError
    *
    */
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   public mapper() {
     return {
       required: false,
@@ -38,18 +39,18 @@ export class LiveValidationError {
             required: true,
             serializedName: "code",
             type: {
-              name: "String"
-            }
+              name: "String",
+            },
           },
           message: {
             required: true,
             serializedName: "message",
             type: {
-              name: "String"
-            }
-          }
-        }
-      }
-    }
+              name: "String",
+            },
+          },
+        },
+      },
+    };
   }
 }

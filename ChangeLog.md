@@ -1,41 +1,24 @@
-# Changelog
+# Change Log - oav
 
-## 10/16/2020 0.22.9
+## 2.0.1
+Wed, 25 Nov 2020
 
-- Output model detail in log when resolve it with failure.
-- Report error when the example reference is not defined or is not correct.
+- Ignore required validation rule in response when x-ms-secret is true
+- Ignore schema validation when request body is not required and value is empty {}
 
-## 10/15/2020 0.22.9
+## 2.0.0
+Mon, 23 Nov 2020
 
-- Ignore required validation rule in response when x-ms-secret is true.
-
-## 09/29/2020 0.22.8
-
-- The behaviour of optional parameter body of null and {} should be consistent.
-
-## 09/16/2020 0.22.7
-
-- Ignore invalid yaml object when parse error.
-
-## 09/07/2020 0.22.6
-
-- New function for unified pipeline to extract semantic validation inner error.
-
-## 08/18/2020 0.22.5
-
-- Remove sensitive value of write only property and update the JSON path calculation.
-
-## 08/17/2020 0.22.4
-
-- Remove sensitive value of x-ms-secret from the Live Validation result.
-
-## 08/14/2020 0.22.3
-
-- Export more methods from oav for validation in unified pipeline.
-
-## 08/11/2020 0.22.2
-
-- Upgrade yargs version to fix security vulnerability warning.
+- Replace ts-common libraries by openapi-tools-common single library
+- Adding example generation functionality
+- Bugfix show source in response code not found
+- Bugfix error on response body root
+- Bugfix content type
+- Downgrade tsconfig target to es2018
+- Bugfix Don't report error if readme.md is found outside of rootpath
+- Remove readonly/writeonly/secret value in description and params
+- Bugfix exclusiveMinimum not reported
+- Adding new code DISCRIMINATOR_VALUE_NOT_FOUND
 
 ## 07/24/2020 0.22.1
 

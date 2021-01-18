@@ -1,0 +1,38 @@
+{
+    "liveRequest": {
+        "headers": {
+            "accept-Language": "en-US",
+            "host": "management.azure.com",
+            "user-Agent": "FxVersion/4.700.20.41105;OSName/Windows;OSVersion/Microsoft.Windows.10.0.14393;Microsoft.Azure.Management.EventGrid.EventGridManagementClient/6.0.0.0",
+            "x-ms-client-request-id": "a0c398c5-d3ca-46dd-931d-eacbb75e45a9",
+            "request-Context": "appId=cid-v1:fd2fc703-85a9-4199-b8a3-8ae8abb0a715",
+            "request-Id": "|e5cfb8119609004e9a9df043ccbe0274.164532710d69a348.",
+            "traceparent": "00-e5cfb8119609004e9a9df043ccbe0274-164532710d69a348-00",
+            "x-ms-arm-resource-system-data": "{\"createdBy\":\"2f8f3d9e-a27b-48ad-95b5-b0cfa2e89939\",\"createdByType\":\"Application\",\"createdAt\":\"2020-10-29T01:35:00.1930494Z\",\"lastModifiedBy\":\"2f8f3d9e-a27b-48ad-95b5-b0cfa2e89939\",\"lastModifiedByType\":\"Application\",\"lastModifiedAt\":\"2020-10-29T01:35:00.1930494Z\"}"
+        },
+        "method": "PUT",
+        "url": "/subscriptions/fc15e017-f1f1-4eab-b6ba-952357c0fb68/resourceGroups/rg-dxdataplatform-weu-prod/providers/Microsoft.EventGrid/domains/dca-eg-domain-dxdataplatform-weu-prod/topics/cds-danchurchaid-entities-contact?api-version=2020-06-01",
+        "query": {
+            "api-version": "2020-06-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "201",
+        "headers": {
+            "retry-After": "10",
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "azure-AsyncOperation": "https://management.azure.com:443/subscriptions/fc15e017-f1f1-4eab-b6ba-952357c0fb68/providers/Microsoft.EventGrid/locations/westeurope/operationsStatus/D9115107-51BD-46A6-B085-9DF8A7FC1A82?api-version=2020-06-01",
+            "x-ms-request-id": "9429ed4c-2364-4d8f-bdbf-45883a1ba22b",
+            "date": "Thu, 29 Oct 2020 01:35:00 GMT",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "properties": {
+                "provisioningState": "Updating"
+            },
+            "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "name": "cds-danchurchaid-entities-contact",
+            "type": "Microsoft.EventGrid/domains/topics"
+        }
+    }
+}

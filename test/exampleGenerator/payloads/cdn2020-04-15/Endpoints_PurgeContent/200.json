@@ -1,0 +1,40 @@
+{
+    "liveRequest": {
+        "headers": {
+            "pragma": "no-cache",
+            "x-ms-request-id": "eaed292f-0486-4b08-9618-1f57ae9cd671",
+            "x-ms-client-request-id": "045067e8-f953-11ea-8000-000d3a20b959",
+            "oData-Version": "4.0",
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "cache-Control": "no-cache",
+            "date": "Fri, 18 Sep 2020 02:02:46 GMT",
+            "server": "Microsoft-IIS/10.0",
+            "x-AspNet-Version": "4.0.30319",
+            "x-Powered-By": "ASP.NET"
+        },
+        "method": "GET",
+        "url": "/subscriptions/a75c7008-66c1-4373-a0f3-859abaefccdb/resourcegroups/resp-dev-rg-we/providers/Microsoft.Cdn/operationresults/4c1af7fe-1de2-43b2-b611-6a929266ef16?api-version=2020-04-15"
+    },
+    "liveResponse": {
+        "statusCode": "OK",
+        "headers": {
+            "pragma": "no-cache",
+            "x-ms-request-id": "eaed292f-0486-4b08-9618-1f57ae9cd671",
+            "x-ms-client-request-id": "045067e8-f953-11ea-8000-000d3a20b959",
+            "oData-Version": "4.0",
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "cache-Control": "no-cache",
+            "date": "Fri, 18 Sep 2020 02:02:46 GMT",
+            "server": "Microsoft-IIS/10.0",
+            "x-AspNet-Version": "4.0.30319",
+            "x-Powered-By": "ASP.NET"
+        },
+        "body": {
+            "status": "aaaaaaaaaa",
+            "error": {
+                "code": "aaaa",
+                "message": null
+            }
+        }
+    }
+}

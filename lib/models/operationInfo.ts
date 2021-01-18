@@ -31,7 +31,8 @@ export class OperationInfo {
    * @returns metadata of OperationInfo
    *
    */
-  public mapper(): object {
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  public mapper() {
     return {
       required: false,
       serializedName: "OperationInfo",
@@ -43,18 +44,18 @@ export class OperationInfo {
             required: true,
             serializedName: "operationId",
             type: {
-              name: "String"
-            }
+              name: "String",
+            },
           },
           apiVersion: {
             required: true,
             serializedName: "apiVersion",
             type: {
-              name: "String"
-            }
-          }
-        }
-      }
-    }
+              name: "String",
+            },
+          },
+        },
+      },
+    };
   }
 }

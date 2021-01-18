@@ -1,0 +1,129 @@
+{
+    "liveRequest": {
+        "headers": {
+            "user-Agent": "azure-resource-manager/2.0",
+            "x-ms-client-request-id": "3075204d-17fc-452b-b6f2-b038b65a2e04",
+            "x-ms-arm-request-tracking-id": "fb8e5aa0-765f-4bf3-b684-8197bfa34f4e",
+            "x-ms-client-location": "germanynorth",
+            "x-ms-arm-resource-system-data": "{\"createdBy\":\"sso@vava.cars\",\"createdByType\":\"User\",\"createdAt\":\"2020-11-02T12:37:13.5073196Z\",\"lastModifiedBy\":\"sso@vava.cars\",\"lastModifiedByType\":\"User\",\"lastModifiedAt\":\"2020-11-02T12:37:13.5073196Z\"}",
+            "accept-Language": "en-US",
+            "x-ms-arm-service-request-id": "57fdf48b-eb38-4f0b-bfde-7043ff97e128",
+            "x-ms-activity-vector": "IN.0M"
+        },
+        "method": "PUT",
+        "url": "/subscriptions/446247d4-0807-4bc1-9f14-14a3afad48de/resourcegroups/app-tr-test1-dev/providers/Microsoft.SignalRService/SignalR/tr-test1-dev-vava?api-version=2020-05-01",
+        "body": {
+            "sku": {
+                "name": "aaaaaaaaaaa",
+                "capacity": 5
+            },
+            "location": "aaaaaaaaaa",
+            "tags": {
+                "realm": "aaa",
+                "env": "aaaaa",
+                "market": "aa",
+                "displayName": "aaaaaaa"
+            },
+            "properties": {
+                "features": [
+                    {
+                        "flag": "ServiceMode",
+                        "value": "aaaaaaa"
+                    },
+                    {
+                        "flag": "EnableConnectivityLogs",
+                        "value": "aaaa"
+                    },
+                    {
+                        "flag": "EnableMessagingLogs",
+                        "value": "aaaaa"
+                    }
+                ]
+            }
+        },
+        "query": {
+            "api-version": "2020-05-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "201",
+        "headers": {
+            "transfer-Encoding": "chunked",
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "x-content-type-options": "nosniff",
+            "x-ms-client-request-id": "3075204d-17fc-452b-b6f2-b038b65a2e04",
+            "x-rp-server-mvid": "e36e6838-7779-4ba2-b738-62cf73818870",
+            "azure-AsyncOperation": "https://management.azure.com/subscriptions/446247d4-0807-4bc1-9f14-14a3afad48de/resourceGroups/app-tr-test1-dev/providers/Microsoft.SignalRService/locations/westeurope/operationStatuses/tr-test1-dev-vava/operationId/1d4b2cd0-c5d7-441b-8210-fd4b6354faf5?api-version=2020-05-01",
+            "x-ms-request-id": "c5eb831e-b2ca-44fb-8da9-1c5c96c9395b",
+            "date": "Mon, 02 Nov 2020 12:37:18 GMT",
+            "location": "https://management.azure.com/subscriptions/446247d4-0807-4bc1-9f14-14a3afad48de/resourceGroups/app-tr-test1-dev/providers/Microsoft.SignalRService/locations/westeurope/operationResults/1d4b2cd0-c5d7-441b-8210-fd4b6354faf5/SignalR/tr-test1-dev-vava?api-version=2020-05-01",
+            "server": "Kestrel"
+        },
+        "body": {
+            "sku": {
+                "name": "aaaaaaaaaaa",
+                "tier": "Standard",
+                "size": "aa",
+                "capacity": 5
+            },
+            "properties": {
+                "provisioningState": "Creating",
+                "externalIP": null,
+                "hostName": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "publicPort": 443,
+                "serverPort": 443,
+                "version": "aaaaaaaaaaa",
+                "privateEndpointConnections": [],
+                "hostNamePrefix": "aaaaaaaaaaaaaaaaa",
+                "features": [
+                    {
+                        "flag": "ServiceMode",
+                        "value": "aaaaaaa",
+                        "properties": {}
+                    },
+                    {
+                        "flag": "EnableConnectivityLogs",
+                        "value": "aaaa",
+                        "properties": {}
+                    },
+                    {
+                        "flag": "EnableMessagingLogs",
+                        "value": "aaaaa",
+                        "properties": {}
+                    }
+                ],
+                "cors": {
+                    "allowedOrigins": [
+                        "a"
+                    ]
+                },
+                "upstream": {
+                    "templates": null
+                },
+                "networkACLs": {
+                    "defaultAction": "Deny",
+                    "publicNetwork": {
+                        "allow": [
+                            "ServerConnection",
+                            "ClientConnection",
+                            "RESTAPI"
+                        ],
+                        "deny": null
+                    },
+                    "privateEndpoints": []
+                }
+            },
+            "kind": "SignalR",
+            "location": "aaaaaaaaaa",
+            "tags": {
+                "realm": "aaa",
+                "env": "aaaaa",
+                "market": "aa",
+                "displayName": "aaaaaaa"
+            },
+            "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "name": "aaaaaaaaaaaaaaaaa",
+            "type": "Microsoft.SignalRService/SignalR"
+        }
+    }
+}

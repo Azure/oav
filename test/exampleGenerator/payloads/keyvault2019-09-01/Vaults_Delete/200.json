@@ -1,0 +1,36 @@
+{
+    "liveRequest": {
+        "headers": {
+            "pragma": "no-cache",
+            "x-ms-keyvault-service-version": "1.1.0.284",
+            "x-ms-request-id": "a4f624d2-0fc2-4572-8994-d81f4e2c4592",
+            "strict-Transport-Security": "max-age=31536000;includeSubDomains",
+            "x-Content-Type-Options": "nosniff",
+            "cache-Control": "no-cache",
+            "date": "Sun, 26 Jul 2020 20:10:47 GMT",
+            "server": "Microsoft-IIS/10.0",
+            "x-AspNet-Version": "4.0.30319",
+            "x-Powered-By": "ASP.NET"
+        },
+        "method": "DELETE",
+        "url": "/subscriptions/7ad5283f-8555-4f0b-9543-a78cc07bf0e5/resourceGroups/test-scenario-ws-rg-c72f09d3/providers/Microsoft.KeyVault/vaults/testworkkeyvaultba627fce?api-version=2019-09-01",
+        "query": {
+            "api-version": "2019-09-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "200",
+        "headers": {
+            "pragma": "no-cache",
+            "x-ms-keyvault-service-version": "1.1.0.284",
+            "x-ms-request-id": "a4f624d2-0fc2-4572-8994-d81f4e2c4592",
+            "strict-Transport-Security": "max-age=31536000;includeSubDomains",
+            "x-Content-Type-Options": "nosniff",
+            "cache-Control": "no-cache",
+            "date": "Sun, 26 Jul 2020 20:10:47 GMT",
+            "server": "Microsoft-IIS/10.0",
+            "x-AspNet-Version": "4.0.30319",
+            "x-Powered-By": "ASP.NET"
+        }
+    }
+}

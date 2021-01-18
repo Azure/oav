@@ -1,0 +1,67 @@
+{
+    "liveRequest": {
+        "headers": {
+            "retry-After": "10",
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "date": "Fri, 18 Sep 2020 02:32:51 GMT",
+            "location": "https://management.azure.com/subscriptions/e54229a3-0e6f-40b3-82a1-ae9cda6e2b81/providers/Microsoft.ContainerRegistry/locations/southeastasia/operationResults/registries-90b805a1-eb02-4231-af71-624cd3023088?api-version=2019-05-01",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "method": "DELETE",
+        "url": "/subscriptions/e54229a3-0e6f-40b3-82a1-ae9cda6e2b81/resourceGroups/jamespf-privatelink-test/providers/Microsoft.ContainerRegistry/registries/cranx6zliirxww4?api-version=2019-05-01",
+        "query": {
+            "api-version": "2019-05-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "202",
+        "headers": {
+            "retry-After": "10",
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "date": "Fri, 18 Sep 2020 02:32:51 GMT",
+            "location": "https://management.azure.com/subscriptions/e54229a3-0e6f-40b3-82a1-ae9cda6e2b81/providers/Microsoft.ContainerRegistry/locations/southeastasia/operationResults/registries-90b805a1-eb02-4231-af71-624cd3023088?api-version=2019-05-01",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "sku": {
+                "name": "Premium",
+                "tier": "Premium"
+            },
+            "type": "Microsoft.ContainerRegistry/registries",
+            "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "name": "cranx6zliirxww4",
+            "location": "aaaaaaaaaaaaa",
+            "tags": {},
+            "properties": {
+                "loginServer": "aaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "creationDate": "2020-09-18T02:25:17.7092377Z",
+                "provisioningState": "Deleting",
+                "adminUserEnabled": true,
+                "networkRuleSet": {
+                    "defaultAction": "Deny",
+                    "virtualNetworkRules": [
+                        {
+                            "action": "Allow",
+                            "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                        }
+                    ],
+                    "ipRules": []
+                },
+                "policies": {
+                    "quarantinePolicy": {
+                        "status": "disabled"
+                    },
+                    "trustPolicy": {
+                        "type": "Notary",
+                        "status": "disabled"
+                    },
+                    "retentionPolicy": {
+                        "days": 7,
+                        "lastUpdatedTime": "2020-09-18T02:25:21.9030696+00:00",
+                        "status": "disabled"
+                    }
+                }
+            }
+        }
+    }
+}

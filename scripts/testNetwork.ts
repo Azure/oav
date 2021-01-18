@@ -1,6 +1,5 @@
-import * as oav from "../index"
+import * as oav from "../index";
 //import * as fs from "fs"
-//import * as it from "@ts-common/iterator"
 //import * as path from "path"
 
 const f = async () => {
@@ -46,20 +45,20 @@ const f = async () => {
 
   for (const swagger of [
     // tslint:disable-next-line:max-line-length
-    "C:/github.com/Azure/azure-rest-api-specs/specification/logic/resource-manager/Microsoft.Logic/preview/2018-07-01-preview/logic.json"
+    "C:/github.com/Azure/azure-rest-api-specs/specification/logic/resource-manager/Microsoft.Logic/preview/2018-07-01-preview/logic.json",
   ]) {
     try {
-      await oav.validateExamples(swagger, undefined, { consoleLogLevel: 'error', pretty: true });
+      await oav.validateExamples(swagger, undefined, { consoleLogLevel: "error", pretty: true });
     } catch (e) {
       // tslint:disable-next-line:no-console
-      console.error("error: ")
+      console.error("error: ");
       // tslint:disable-next-line:no-console
-      console.error(e)
+      console.error(e);
     }
   }
-}
+};
 
-const x = f()
+const x = f();
 
 // tslint:disable-next-line:no-console
-console.log(x)
+console.log(x);

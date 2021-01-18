@@ -1,0 +1,40 @@
+{
+    "liveRequest": {
+        "headers": {
+            "pragma": "no-cache",
+            "retry-After": "5",
+            "x-ms-keyvault-service-version": "1.1.0.284",
+            "x-ms-request-id": "392971e8-8951-4cf8-9d98-490d6ef8256c",
+            "strict-Transport-Security": "max-age=31536000;includeSubDomains",
+            "x-Content-Type-Options": "nosniff",
+            "cache-Control": "no-cache",
+            "date": "Mon, 27 Jul 2020 00:18:37 GMT",
+            "location": "https://management.azure.com/subscriptions/ae4ccf72-b6f1-499b-a4ec-81a8f3c28427/providers/Microsoft.KeyVault/locations/westeurope/operationResults/VVR8MDYzNzMxNDA1OTE5MDAxNDg3M3w5N0VDMjkxMEEyQjc0QjNGQUY1NzRFN0M5Qzc4NDcyNQ?api-version=2019-09-01",
+            "server": "Microsoft-IIS/10.0",
+            "x-AspNet-Version": "4.0.30319",
+            "x-Powered-By": "ASP.NET"
+        },
+        "method": "POST",
+        "url": "/subscriptions/ae4ccf72-b6f1-499b-a4ec-81a8f3c28427/providers/Microsoft.KeyVault/locations/westeurope/deletedVaults/ab1fec2e2-c444-4af4/purge?api-version=2019-09-01",
+        "query": {
+            "api-version": "2019-09-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "202",
+        "headers": {
+            "pragma": "no-cache",
+            "retry-After": "5",
+            "x-ms-keyvault-service-version": "1.1.0.284",
+            "x-ms-request-id": "392971e8-8951-4cf8-9d98-490d6ef8256c",
+            "strict-Transport-Security": "max-age=31536000;includeSubDomains",
+            "x-Content-Type-Options": "nosniff",
+            "cache-Control": "no-cache",
+            "date": "Mon, 27 Jul 2020 00:18:37 GMT",
+            "location": "https://management.azure.com/subscriptions/ae4ccf72-b6f1-499b-a4ec-81a8f3c28427/providers/Microsoft.KeyVault/locations/westeurope/operationResults/VVR8MDYzNzMxNDA1OTE5MDAxNDg3M3w5N0VDMjkxMEEyQjc0QjNGQUY1NzRFN0M5Qzc4NDcyNQ?api-version=2019-09-01",
+            "server": "Microsoft-IIS/10.0",
+            "x-AspNet-Version": "4.0.30319",
+            "x-Powered-By": "ASP.NET"
+        }
+    }
+}

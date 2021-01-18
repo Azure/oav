@@ -1,0 +1,39 @@
+{
+    "liveRequest": {
+        "headers": {
+            "user-Agent": "azure-resource-manager/2.0",
+            "x-ms-client-request-id": "c75a7ce8-aca2-4be2-8768-8f2ef6a8a7c0",
+            "x-ms-arm-request-tracking-id": "8e0f6aab-5260-476f-b38c-6b358922c1e7",
+            "x-ms-client-location": "westeurope",
+            "x-ms-arm-resource-system-data": "{\"createdBy\":\"725f822a-e440-4fca-bba9-686e5bf298d3\",\"createdByType\":\"Application\",\"createdAt\":\"2020-10-20T03:31:11.5420963Z\",\"lastModifiedBy\":\"725f822a-e440-4fca-bba9-686e5bf298d3\",\"lastModifiedByType\":\"Application\",\"lastModifiedAt\":\"2020-10-20T03:31:11.5420963Z\"}",
+            "accept-Language": "en-US",
+            "x-ms-arm-service-request-id": "4c422f7f-5e51-48ad-96b5-e08c2b36aa80",
+            "x-ms-activity-vector": "IN.1O"
+        },
+        "method": "PUT",
+        "url": "/subscriptions/809cfd4d-6bf5-4e2b-828a-2e20529586dc/resourcegroups/oAltRdWeu1Dev001/providers/Microsoft.Sql/servers/osqscatdev001altrdweu1/databases/tenantcatalog/backupShortTermRetentionPolicies/default?api-version=2020-02-02-preview",
+        "body": {
+            "properties": {
+                "retentionDays": 7
+            }
+        },
+        "query": {
+            "api-version": "2020-02-02-preview"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "202",
+        "headers": {
+            "retry-After": "15",
+            "azure-AsyncOperation": "https://management.azure.com/subscriptions/809cfd4d-6bf5-4e2b-828a-2e20529586dc/resourceGroups/oAltRdWeu1Dev001/providers/Microsoft.Sql/locations/westeurope/shortTermRetentionPolicyAzureAsyncOperation/a60d9c75-e84f-4c16-8824-cc14f4b02ebc?api-version=2020-02-02-preview",
+            "x-ms-request-id": "a60d9c75-e84f-4c16-8824-cc14f4b02ebc",
+            "date": "Tue, 20 Oct 2020 03:31:11 GMT",
+            "location": "https://management.azure.com/subscriptions/809cfd4d-6bf5-4e2b-828a-2e20529586dc/resourceGroups/oAltRdWeu1Dev001/providers/Microsoft.Sql/locations/westeurope/shortTermRetentionPolicyOperationResults/a60d9c75-e84f-4c16-8824-cc14f4b02ebc?api-version=2020-02-02-preview",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "body": {
+            "operation": "aaaaaaaaaaaaaaaaaaaaa",
+            "startTime": "2020-10-20T03:31:11.58Z"
+        }
+    }
+}

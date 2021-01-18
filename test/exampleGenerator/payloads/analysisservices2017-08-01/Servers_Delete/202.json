@@ -1,0 +1,38 @@
+{
+    "liveRequest": {
+        "headers": {
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "azure-AsyncOperation": "https://api-dogfood.resources.windows-int.net/subscriptions/613192d7-503f-477a-9cfe-4efc3ee2bd60/providers/Microsoft.AnalysisServices/locations/westus/operationstatuses/198A01F9-F9E7-4D46-A795-4285E7205452?api-version=2016-05-16",
+            "x-ms-request-id": "15f6abb6-d54e-4bbb-a7a6-88b8c845f702",
+            "x-ms-current-utc-date": "7/28/2020 7:05:21 AM",
+            "x-Frame-Options": "deny",
+            "x-Content-Type-Options": "nosniff",
+            "x-XSS-Protection": "1; mode=block",
+            "content-Security-Policy": "script-src 'self'",
+            "date": "Tue, 28 Jul 2020 07:05:22 GMT",
+            "location": "https://api-dogfood.resources.windows-int.net/subscriptions/613192d7-503f-477a-9cfe-4efc3ee2bd60/providers/Microsoft.AnalysisServices/locations/westus/operationresults/198A01F9-F9E7-4D46-A795-4285E7205452?api-version=2016-05-16",
+            "server": "Microsoft-HTTPAPI/2.0"
+        },
+        "method": "DELETE",
+        "url": "/subscriptions/613192d7-503f-477a-9cfe-4efc3ee2bd60/resourceGroups/FT_Temp_Group_A_700020200728041317/providers/Microsoft.AnalysisServices/servers/efa235eb23?api-version=2017-08-01",
+        "query": {
+            "api-version": "2017-08-01"
+        }
+    },
+    "liveResponse": {
+        "statusCode": "202",
+        "headers": {
+            "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "azure-AsyncOperation": "https://api-dogfood.resources.windows-int.net/subscriptions/613192d7-503f-477a-9cfe-4efc3ee2bd60/providers/Microsoft.AnalysisServices/locations/westus/operationstatuses/198A01F9-F9E7-4D46-A795-4285E7205452?api-version=2016-05-16",
+            "x-ms-request-id": "15f6abb6-d54e-4bbb-a7a6-88b8c845f702",
+            "x-ms-current-utc-date": "7/28/2020 7:05:21 AM",
+            "x-Frame-Options": "deny",
+            "x-Content-Type-Options": "nosniff",
+            "x-XSS-Protection": "1; mode=block",
+            "content-Security-Policy": "script-src 'self'",
+            "date": "Tue, 28 Jul 2020 07:05:22 GMT",
+            "location": "https://api-dogfood.resources.windows-int.net/subscriptions/613192d7-503f-477a-9cfe-4efc3ee2bd60/providers/Microsoft.AnalysisServices/locations/westus/operationresults/198A01F9-F9E7-4D46-A795-4285E7205452?api-version=2016-05-16",
+            "server": "Microsoft-HTTPAPI/2.0"
+        }
+    }
+}
