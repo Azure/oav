@@ -6,10 +6,6 @@ import { Operation, SwaggerSpec } from "../swagger/swaggerTypes";
 import { traverseSwaggerAsync } from "../transform/traverseSwagger";
 import { ModelValidationError } from "../util/modelValidationError";
 import * as validate from "../validate";
-import { MockerCache, PayloadCache } from "./exampleCache";
-import SwaggerMocker from "./swaggerMocker";
-import Translator from "./translator";
-import * as util from "./util";
 import { AjvSchemaValidator } from "../swaggerValidator/ajvSchemaValidator";
 import { TransformContext, getTransformContext } from "../transform/context";
 import { xmsPathsTransformer } from "../transform/xmsPathsTransformer";
@@ -19,8 +15,12 @@ import { discriminatorTransformer } from "../transform/discriminatorTransformer"
 import { allOfTransformer } from "../transform/allOfTransformer";
 import { noAdditionalPropertiesTransformer } from "../transform/noAdditionalPropertiesTransformer";
 import { applySpecTransformers, applyGlobalTransformers } from "../transform/transformer";
-import { ExampleRule, RuleSet } from "./exampleRule";
 import { log } from "../util/logging";
+import { ExampleRule, RuleSet } from "./exampleRule";
+import * as util from "./util";
+import Translator from "./translator";
+import SwaggerMocker from "./swaggerMocker";
+import { MockerCache, PayloadCache } from "./exampleCache";
 const _ = deepdash(lodash);
 
 export default class Generator {
@@ -34,18 +34,18 @@ export default class Generator {
   private mockerCache: MockerCache;
   private payloadCache: PayloadCache;
   public readonly transformContext: TransformContext;
-  
+
   public constructor(specFilePath: string, payloadDir?: string) {
     this.shouldMock = payloadDir ? false : true;
     this.specFilePath = specFilePath;
     this.payloadDir = payloadDir;
     this.jsonLoader = JsonLoader.create({
       useJsonParser: false,
-      eraseXmsExamples: false
+      eraseXmsExamples: false,
     });
     this.mockerCache = new MockerCache();
     this.payloadCache = new PayloadCache();
-    this.swaggerMocker = new SwaggerMocker(this.jsonLoader, this.mockerCache,this.payloadCache);
+    this.swaggerMocker = new SwaggerMocker(this.jsonLoader, this.mockerCache, this.payloadCache);
     this.translator = new Translator(
       this.jsonLoader,
       this.payloadCache,
@@ -58,7 +58,7 @@ export default class Generator {
       referenceFieldsTransformer,
       discriminatorTransformer,
       allOfTransformer,
-      noAdditionalPropertiesTransformer
+      noAdditionalPropertiesTransformer,
     ]);
   }
 
@@ -79,9 +79,9 @@ export default class Generator {
   }
 
   public async load() {
-    this.spec = await(this.jsonLoader.load(this.specFilePath) as unknown) as SwaggerSpec;
+    this.spec = (await (this.jsonLoader.load(this.specFilePath) as unknown)) as SwaggerSpec;
     applySpecTransformers(this.spec, this.transformContext);
-    applyGlobalTransformers(this.transformContext)
+    applyGlobalTransformers(this.transformContext);
     await this.cacheExistingExamples();
   }
 
@@ -115,7 +115,7 @@ export default class Generator {
 
   public async cacheExistingExamples() {
     if (!this.shouldMock) {
-      return
+      return;
     }
     await traverseSwaggerAsync(this.spec, {
       onOperation: async (operation: Operation, pathObject, methodName) => {
@@ -123,14 +123,14 @@ export default class Generator {
         const specItem = {
           path: pathName,
           methodName,
-          content: operation
+          content: operation,
         };
         const examples = operation["x-ms-examples"] || undefined;
         if (!examples) {
-          return
+          return;
         }
- 
-        const operationId = operation.operationId 
+
+        const operationId = operation.operationId;
         /*
         const validateErrors = await validate.validateExamples(this.specFilePath, operationId, {
         });
@@ -141,32 +141,30 @@ export default class Generator {
         } */
         for (const key of Object.keys(examples)) {
           if (key.match(new RegExp(`^${operationId}_.*_Gen$`))) {
-            continue
+            continue;
           }
           const example = this.jsonLoader.resolveRefObj(examples[key]);
           if (!example) {
-            continue
+            continue;
           }
           this.translator.extractParameters(specItem, example.parameters);
           for (const code of Object.keys(operation.responses)) {
             if (example.responses && example.responses[code]) {
-              this.translator.extractResponse(specItem,example.responses[code],code);
+              this.translator.extractResponse(specItem, example.responses[code], code);
             }
           }
         }
         return true;
-      }
+      },
     });
     // reuse the payloadCache as exampleCache.
-    this.payloadCache.mergeCache()
+    this.payloadCache.mergeCache();
   }
 
-  private async generateExample( operationId: string,
-    specItem: any, rule: ExampleRule) {
-    
+  private async generateExample(operationId: string, specItem: any, rule: ExampleRule) {
     this.translator.setRule(rule);
     this.swaggerMocker.setRule(rule);
-    let example 
+    let example;
     console.log(`start generated example for ${operationId}, rule:${rule.ruleName}`);
     if (!this.shouldMock) {
       example = this.getExampleFromPayload(operationId, specItem);
@@ -176,7 +174,7 @@ export default class Generator {
     } else {
       example = {
         parameters: {},
-        responses: this.extractResponse(specItem, {})
+        responses: this.extractResponse(specItem, {}),
       };
       this.swaggerMocker.mockForExample(
         example,
@@ -206,12 +204,12 @@ export default class Generator {
       //   consoleLogLevel: "error"
     });
     if (validateErrors.length > 0) {
-      log.error(`the validation raised below error:`)
+      log.error(`the validation raised below error:`);
       log.error(validateErrors);
       return validateErrors;
     }
     console.log(`generated example for ${operationId}, rule:${rule.ruleName} successfully!`);
-    return []
+    return [];
   }
 
   public async generate(
@@ -219,7 +217,7 @@ export default class Generator {
     specItem?: any
   ): Promise<readonly ModelValidationError[]> {
     if (!this.spec) {
-      await this.load()
+      await this.load();
     }
     if (!specItem) {
       specItem = this.getSpecItem(this.spec, operationId);
@@ -228,23 +226,22 @@ export default class Generator {
         return [];
       }
     }
-    const ruleSet: RuleSet = []
+    const ruleSet: RuleSet = [];
     ruleSet.push({
       exampleNamePostfix: "MaximumSet",
-      ruleName: "MaximumSet"
+      ruleName: "MaximumSet",
     });
     ruleSet.push({
       exampleNamePostfix: "MinimumSet",
-      ruleName: "MinimumSet"
+      ruleName: "MinimumSet",
     });
     for (const rule of ruleSet) {
-     
-      const error = await this.generateExample(operationId,specItem,rule)
+      const error = await this.generateExample(operationId, specItem, rule);
       if (error.length) {
-        return error
+        return error;
       }
     }
-    return []
+    return [];
   }
 
   private unifyCommonProperty(example: any) {
@@ -347,8 +344,8 @@ export default class Generator {
 
   private getExampleFromPayload(operationId: string, specItem: any) {
     if (this.payloadDir) {
-      const subPaths = path.dirname(this.specFilePath).split(/\\|\//).slice(-3).join("/")
-      const payloadDir = path.join(this.payloadDir,subPaths)
+      const subPaths = path.dirname(this.specFilePath).split(/\\|\//).slice(-3).join("/");
+      const payloadDir = path.join(this.payloadDir, subPaths);
       const payload: any = util.readPayloadFile(payloadDir, operationId);
       if (!payload) {
         log.info(
@@ -367,7 +364,7 @@ export default class Generator {
       };
       return example;
     }
-    return undefined
+    return undefined;
   }
 
   private cachePayload(specItem: any, payload: any) {

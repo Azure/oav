@@ -1,4 +1,5 @@
 import { JsonLoader } from "../swagger/jsonLoader";
+import { log } from "../util/logging";
 import {
   buildItemOption,
   CacheItem,
@@ -7,30 +8,29 @@ import {
   PayloadCache,
   reBuildExample,
 } from "./exampleCache";
-import * as utils  from "./util";
+import * as utils from "./util";
 import { ExampleRule, getRuleValidator } from "./exampleRule";
 import SwaggerMocker from "./swaggerMocker";
-import { log } from "../util/logging";
 
 export default class Translator {
   private jsonLoader: JsonLoader;
   private payloadCache: PayloadCache;
-  private exampleRule ?: ExampleRule
-  private mocker:SwaggerMocker|undefined
-  public constructor(jsonLoader: JsonLoader, payloadCache: PayloadCache,mocker?:SwaggerMocker) {
+  private exampleRule?: ExampleRule;
+  private mocker: SwaggerMocker | undefined;
+  public constructor(jsonLoader: JsonLoader, payloadCache: PayloadCache, mocker?: SwaggerMocker) {
     this.jsonLoader = jsonLoader;
     this.payloadCache = payloadCache;
-    this.mocker = mocker
+    this.mocker = mocker;
   }
 
-  public setRule(exampleRule ?: ExampleRule) {
-    this.exampleRule = exampleRule
+  public setRule(exampleRule?: ExampleRule) {
+    this.exampleRule = exampleRule;
   }
 
   public extractRequest(specItem: any, request: any) {
     const path = request.url.split("?")[0];
     const pathValues = this.getPathParameters(specItem.path, path);
-    const queryValues = this.getQueryParameters(specItem,request.query);
+    const queryValues = this.getQueryParameters(specItem, request.query);
     const parameters = this.getBodyParameters(specItem, request.body);
     const result = {
       ...parameters,
@@ -57,14 +57,17 @@ export default class Translator {
     }
   }
 
-  private getMatchedParameters(paramterSchema:any,parameters:any) {
+  private getMatchedParameters(paramterSchema: any, parameters: any) {
     const bodyRes: any = {};
-    const validator = getRuleValidator(this.exampleRule).onParameter
+    const validator = getRuleValidator(this.exampleRule).onParameter;
     paramterSchema.forEach((item: any) => {
-      const itemSchema = this.getDefSpec(item)
+      const itemSchema = this.getDefSpec(item);
       if (parameters[itemSchema.name]) {
-        if (!validator || validator({schema:itemSchema})) {
-          bodyRes[itemSchema.name] = this.filterBodyContent(parameters[itemSchema.name], itemSchema.in === "body" ? itemSchema.schema : item);
+        if (!validator || validator({ schema: itemSchema })) {
+          bodyRes[itemSchema.name] = this.filterBodyContent(
+            parameters[itemSchema.name],
+            itemSchema.in === "body" ? itemSchema.schema : item
+          );
         }
       }
     });
@@ -73,7 +76,7 @@ export default class Translator {
 
   private getQueryParameters(specItem: any, body: any): any {
     if (!specItem || !body) {
-      return
+      return;
     }
     const parametersSpec = specItem.content.parameters
       .map((item: any) => this.getDefSpec(item))
@@ -83,13 +86,13 @@ export default class Translator {
       log.info("no query parameter definition in spec file");
       return;
     }
-    return this.getMatchedParameters(parametersSpec,body)
+    return this.getMatchedParameters(parametersSpec, body);
   }
 
   // for payload cache
   private getBodyParameters(specItem: any, body: any): any {
     if (!specItem || !body) {
-      return
+      return;
     }
     const parametersSpec = specItem.content.parameters
       .map((item: any) => this.getDefSpec(item))
@@ -99,10 +102,10 @@ export default class Translator {
       log.info("no body parameter definition in spec file");
       return;
     }
-    const bodyParameterName = parametersSpec[0].name
-    const exampleBody : any = {}
-    exampleBody[bodyParameterName] = body
-    return this.getMatchedParameters(parametersSpec,exampleBody)
+    const bodyParameterName = parametersSpec[0].name;
+    const exampleBody: any = {};
+    exampleBody[bodyParameterName] = body;
+    return this.getMatchedParameters(parametersSpec, exampleBody);
   }
 
   /**
@@ -113,8 +116,8 @@ export default class Translator {
 
   public filterBodyContent(body: any, schema: any, isRequest: boolean = true) {
     const cache = this.cacheBodyContent(body, schema, isRequest);
-    const validator = getRuleValidator(this.exampleRule).onSchema
-    return reBuildExample(cache, isRequest,schema,validator);
+    const validator = getRuleValidator(this.exampleRule).onSchema;
+    return reBuildExample(cache, isRequest, schema, validator);
   }
   public cacheBodyContent(body: any, schema: any, isRequest: boolean) {
     if (!schema) {
@@ -130,19 +133,19 @@ export default class Translator {
       const properties = this.getProperties(definitionSpec);
       if (body) {
         Object.keys(body)
-        .filter((key) => key in properties)
-        .forEach((key: string) => {
-          bodyContent[key] = this.cacheBodyContent(body[key], properties[key], isRequest);
-        });
+          .filter((key) => key in properties)
+          .forEach((key: string) => {
+            bodyContent[key] = this.cacheBodyContent(body[key], properties[key], isRequest);
+          });
       }
       // to mock the properties that not exists in the body.
       // it's not needed when generating from payload.
       if (this.mocker !== undefined) {
         Object.keys(properties)
-        .filter(key => !body?.[key])
-        .forEach((key: string) => {
-          bodyContent[key] = this.mocker?.getMockCachedObj(key,properties[key], isRequest);
-        });
+          .filter((key) => !body?.[key])
+          .forEach((key: string) => {
+            bodyContent[key] = this.mocker?.getMockCachedObj(key, properties[key], isRequest);
+          });
       }
       cacheItem = createTrunkItem(bodyContent, buildItemOption(definitionSpec));
     } else if (definitionSpec.type === "array") {
@@ -151,22 +154,19 @@ export default class Translator {
           return this.cacheBodyContent(i, schema.items, isRequest);
         });
         cacheItem = createTrunkItem(result, buildItemOption(definitionSpec));
+      } else if (this.mocker !== undefined) {
+        return this.mocker?.getMockCachedObj("mock array", schema, isRequest);
       }
-      else if (this.mocker !== undefined) {
-        return this.mocker?.getMockCachedObj("mock array",schema, isRequest);
-      }
-    
     } else {
       if (body !== undefined) {
         cacheItem = createLeafItem(body, buildItemOption(definitionSpec));
-      }
-      else if (this.mocker){
-        return this.mocker?.getMockCachedObj("",schema, isRequest);
+      } else if (this.mocker) {
+        return this.mocker?.getMockCachedObj("", schema, isRequest);
       }
     }
-    const requiredProperties = this.getRequiredProperties(definitionSpec)
+    const requiredProperties = this.getRequiredProperties(definitionSpec);
     if (requiredProperties && requiredProperties.length > 0 && cacheItem !== undefined) {
-      cacheItem.required = requiredProperties
+      cacheItem.required = requiredProperties;
     }
     this.payloadCache.checkAndCache(schema, cacheItem, isRequest);
     return cacheItem;
@@ -191,20 +191,22 @@ export default class Translator {
     };
   }
 
-   /**
+  /**
    * return all required properties of the object, including parent's properties defined by 'allOf'
    * It will not spread properties' properties.
    * @param definitionSpec
    */
   private getRequiredProperties(definitionSpec: any) {
-    let requiredProperties: string[] = Array.isArray(definitionSpec.required) ? definitionSpec.required : [];
+    let requiredProperties: string[] = Array.isArray(definitionSpec.required)
+      ? definitionSpec.required
+      : [];
     definitionSpec.allOf?.map((item: any) => {
       requiredProperties = [
         ...requiredProperties,
         ...this.getRequiredProperties(this.getDefSpec(item)),
       ];
     });
-    return requiredProperties
+    return requiredProperties;
   }
 
   private getDefSpec(item: any) {
@@ -218,7 +220,10 @@ export default class Translator {
     const resp: any = {};
     if (statusCode === "201" || statusCode === "202") {
       resp.headers = {
-        Location: response.headers && "location" in response.headers ? response.headers.location : undefined ,
+        Location:
+          response.headers && "location" in response.headers
+            ? response.headers.location
+            : undefined,
         "Azure-AsyncOperation":
           response.headers && "azure-AsyncOperation" in response.headers
             ? response.headers["azure-AsyncOperation"]
@@ -226,11 +231,12 @@ export default class Translator {
       };
     }
     if ("schema" in specItemContent.responses[statusCode] && response.body) {
-      resp.body = this.filterBodyContent(
-        response.body,
-        specItemContent.responses[statusCode].schema,
-        false
-      ) || {}
+      resp.body =
+        this.filterBodyContent(
+          response.body,
+          specItemContent.responses[statusCode].schema,
+          false
+        ) || {};
     }
     return resp;
   }
