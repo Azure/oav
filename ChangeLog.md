@@ -1,6 +1,11 @@
 # Change Log - oav
 
 ## 2.2.0
+Thur, 21 Jan 2021
+
+- Bugfix should copy required array for allOf transformer
+
+## 2.2.0
 Fri, 15 Jan 2021
 
 - Enable support for test scenario parsing
