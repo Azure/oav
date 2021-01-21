@@ -292,6 +292,10 @@ export const ajvErrorCodeToOavErrorCode = (
     message: error.message!,
   };
 
+  if ((error as any)._realData !== undefined) {
+    data = (error as any)._realData;
+  }
+
   switch (keyword) {
     case "enum":
       const { allowedValues } = params as any;
