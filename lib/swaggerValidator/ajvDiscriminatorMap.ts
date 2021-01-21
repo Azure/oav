@@ -52,6 +52,8 @@ export const ajvEnableDiscriminatorMap = (ajv: Ajv, loader: JsonLoader) => {
               schemaPath: "/discriminator",
               schema: schemas,
               parentSchema,
+              _realSchema: schemas,
+              _realData: data,
             } as ErrorObject,
           ];
           return false;
@@ -61,6 +63,8 @@ export const ajvEnableDiscriminatorMap = (ajv: Ajv, loader: JsonLoader) => {
           if (!valid && validate.errors) {
             for (const err of validate.errors) {
               err.dataPath = dataPath + err.dataPath;
+              (err as any)._realSchema = err.schema;
+              (err as any)._realData = err.data;
             }
             errors.push(...validate.errors);
           }
@@ -83,7 +87,9 @@ export const ajvEnableDiscriminatorMap = (ajv: Ajv, loader: JsonLoader) => {
                 schemaPath: "/additionalProperties",
                 schema: false,
                 parentSchema,
-              });
+                _realSchema: false,
+                _realData: data,
+              } as ErrorObject);
             }
           }
         }
