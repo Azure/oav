@@ -9,13 +9,26 @@ import * as validate from "../lib/validate"
 import { ModelValidator } from "../lib/validators/modelValidator"
 
 const testPath = __dirname
-
+jest.setTimeout(1500000)
 const specPath =
   `${testPath}/modelValidation/swaggers/specification/scenarios/resource-manager/` +
   `Microsoft.Test/2016-01-01/test.json`
-
 describe("Model Validation", () => {
-  describe("Path validation - ", () => {
+  describe("xms extension", () => {
+    it("should pass secret appears in response of post operation", async () => {
+      const operationIds = "User_List"
+      const testSpecPath = `${testPath}/modelValidation/swaggers/specification/xmssecret/contoso.json`
+      const result = await validate.validateExamples(testSpecPath, operationIds, {
+        consoleLogLevel: "off"
+      })
+      assert(
+        result.length === 0,
+        `swagger "${specPath}" with operation "${operationIds}" ` +
+          `contains model validation errors.`
+      )
+    })
+  })
+  describe.only("Path validation - ", () => {
     it("should pass when path parameter has forward slashes", async () => {
       const operationIds = "StorageAccounts_pathParameterWithForwardSlashes"
       const result = await validate.validateExamples(specPath, operationIds, {
@@ -43,7 +56,7 @@ describe("Model Validation", () => {
       // console.log(result)
     })
 
-    it("should fail with collapsed similar array elements errors", async () => {
+    it.only("should fail with collapsed similar array elements errors", async () => {
       const localSpecPath = `${testPath}/modelValidation/swaggers/specification/polymorphic/polymorphicSwagger.json`
       const operationIds = "CircularAnimal_IncorrectSibling_List"
       const result = await validate.validateExamples(localSpecPath, operationIds, {

@@ -1,0 +1,102 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Contoso Services",
+    "version": "2020-01-01"
+  },
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "securityDefinitions": {
+    "azure_auth": {
+      "type": "oauth2",
+      "authorizationUrl": "https://login.microsoftonline.com/common/oauth2/authorize",
+      "flow": "implicit",
+      "description": "Azure Active Directory OAuth2 Flow",
+      "scopes": {
+        "user_impersonation": "Impersonate your user account"
+      }
+    }
+  },
+  "paths": {
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Contoso/listUsers": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "x-ms-examples": {
+          "Users_List": {
+            "$ref": "./examples/Users_List.json"
+          }
+        },
+        "operationId": "User_List",
+        "description": "List user.",
+        "parameters": [
+          {
+            "$ref": "#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "#/parameters/ApiVersionParameter"
+          },
+          {
+            "$ref": "#/parameters/SubscriptionIdParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User was successfully returned.",
+            "schema": {
+              "$ref": "#/definitions/SecretUser"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "SecretUser": {
+      "properties": {
+        "firstName": {
+          "type": "string",
+          "description": "First name."
+        },
+        "password": {
+          "type": "string",
+          "description": "password.",
+          "x-ms-secret": true
+        }
+      },
+      "required": [
+        "firstName"
+      ],
+      "description": "User profile."
+    }
+  },
+  "parameters": {
+    "SubscriptionIdParameter": {
+      "name": "subscriptionId",
+      "in": "path",
+      "required": true,
+      "type": "string",
+      "description": "The ID of the target subscription."
+    },
+    "ApiVersionParameter": {
+      "name": "api-version",
+      "in": "query",
+      "required": true,
+      "type": "string",
+      "description": "The API version to use for this operation."
+    },
+    "ResourceGroupNameParameter": {
+      "name": "resourceGroupName",
+      "in": "path",
+      "required": true,
+      "type": "string",
+      "description": "The name of the resource group.",
+      "x-ms-parameter-location": "method"
+    }
+  }
+}

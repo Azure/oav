@@ -1,5 +1,9 @@
 # Changelog
 
+## 01/21/2021 0.22.10
+
+- Ignore x-ms-secret validation in case of post operations in model validation.
+
 ## 10/16/2020 0.22.9
 
 - Output model detail in log when resolve it with failure.

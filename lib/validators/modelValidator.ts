@@ -532,9 +532,16 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
     ) {
       throw new Error("responseWrapper cannot be null or undefined and must be of type 'object'.")
     }
-    // this.sampleResponse = responseWrapper
-    // TODO: update responseWrapper
-    return operationOrResponse.validateResponse(responseWrapper as Sway.LiveResponse)
+
+    // Ignore x-ms-secret validation in case of post operation because secret is allowed to return in post operation
+    let validateOptions
+    if (operationOrResponse.method === "post") {
+      validateOptions = { includeErrors: ["SECRET_PROPERTY"] }
+    }
+    return operationOrResponse.validateResponse(
+      responseWrapper as Sway.LiveResponse,
+      validateOptions
+    )
   }
 
   /*
