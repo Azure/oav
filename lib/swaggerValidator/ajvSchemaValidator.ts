@@ -292,6 +292,8 @@ export const ajvErrorCodeToOavErrorCode = (
     message: error.message!,
   };
 
+  // Workaround for incorrect ajv behavior.
+  // See https://github.com/ajv-validator/ajv/blob/v6/lib/dot/custom.jst#L74
   if ((error as any)._realData !== undefined) {
     data = (error as any)._realData;
   }
