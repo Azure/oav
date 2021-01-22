@@ -62,7 +62,7 @@ const buildPathRegex = (
   params.forEach((v, i) => {
     if (path.startsWith(`/{${v}}`) && pathParams.get(v)) {
       // We allow first param in path as multi path param
-      path = path.replace("{" + v + "}", "(.*)");
+      path = path.replace("/{" + v + "}", "(.*)");
       hasMultiPathParam = true;
     } else {
       hostTemplate = hostTemplate.replace("{" + v + "}", ":" + i);
