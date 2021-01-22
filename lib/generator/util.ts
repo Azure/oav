@@ -113,10 +113,10 @@ export function referenceExmInSpec(
 ): any {
   const data = fs.readFileSync(specFilePath);
   const spec = JSON.parse(data.toString());
-  if (
-    !spec.paths[apiPath][methodName]["x-ms-examples"] ||
-    !(exampleName in spec.paths[apiPath][methodName]["x-ms-examples"])
-  ) {
+  if (!spec.paths[apiPath][methodName]["x-ms-examples"]) {
+    spec.paths[apiPath][methodName]["x-ms-examples"] = {}
+  }
+  if (!(exampleName in spec.paths[apiPath][methodName]["x-ms-examples"])) {
     spec.paths[apiPath][methodName]["x-ms-examples"][exampleName] = {
       $ref: `./examples/${exampleName}.json`,
     };
