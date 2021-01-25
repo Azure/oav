@@ -200,10 +200,10 @@ const shouldSkipError = (error: ErrorObject, cxt: SchemaValidateContext) => {
     ((keyword === "required" &&
       (parentSchema.properties?.[(params as any).missingProperty]?.[xmsMutability]?.indexOf(
         "read"
-      ) === -1 || 
-      // required check is ignored when x-ms-secret is true
-      (parentSchema.properties?.[(params as any).missingProperty] as any)?.[xmsSecret] === true
-      )) ||
+      ) === -1 ||
+        // required check is ignored when x-ms-secret is true
+        (parentSchema.properties?.[(params as any).missingProperty] as any)?.[xmsSecret] ===
+          true)) ||
       (keyword === "type" && data === null && parentSchema[xmsMutability]?.indexOf("read") === -1))
   ) {
     return true;
@@ -291,6 +291,12 @@ export const ajvErrorCodeToOavErrorCode = (
     code: "NOT_PASSED",
     message: error.message!,
   };
+
+  // Workaround for incorrect ajv behavior.
+  // See https://github.com/ajv-validator/ajv/blob/v6/lib/dot/custom.jst#L74
+  if ((error as any)._realData !== undefined) {
+    data = (error as any)._realData;
+  }
 
   switch (keyword) {
     case "enum":

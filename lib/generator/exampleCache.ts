@@ -1,19 +1,21 @@
-import {RuleValidatorFunc } from "./exampleRule";
+import { RuleValidatorFunc } from "./exampleRule";
 
 /* tslint:disable:max-classes-per-file */
 interface BaseCache {
-  get(modelName:string):CacheItem|undefined
-  set(modelName: string, example: CacheItem):void
-  has(modelName: string):boolean
+  get(modelName: string): CacheItem | undefined;
+  set(modelName: string, example: CacheItem): void;
+  has(modelName: string): boolean;
 }
 
-const isBaseResource = (cacheKey:string) => {
-  const pieces = cacheKey.split("/")
-  if(pieces.length < 2) {
+const isBaseResource = (cacheKey: string) => {
+  const pieces = cacheKey.split("/");
+  if (pieces.length < 2) {
     return false;
   }
-  return ["resource","proxyresource","trackedresource","azureentityresource"].some(r => r === pieces[pieces.length-1].toLowerCase())
-}
+  return ["resource", "proxyresource", "trackedresource", "azureentityresource"].some(
+    (r) => r === pieces[pieces.length - 1].toLowerCase()
+  );
+};
 export class MockerCache implements BaseCache {
   private caches = new Map<string, CacheItem>();
 
@@ -35,7 +37,8 @@ export class MockerCache implements BaseCache {
     if (!schema || !example) {
       return;
     }
-    const cacheKey = schema.$ref && schema.$ref.includes("#") ? schema.$ref.split("#")[1] : undefined
+    const cacheKey =
+      schema.$ref && schema.$ref.includes("#") ? schema.$ref.split("#")[1] : undefined;
     if (cacheKey && !isBaseResource(cacheKey) && !this.has(cacheKey)) {
       this.set(cacheKey, example);
     }
@@ -80,37 +83,38 @@ export class PayloadCache implements BaseCache {
     return this.mergedCaches.has(modelName);
   }
 
-  public checkAndCache(schema: any, example: CacheItem|undefined, isRequest: boolean) {
+  public checkAndCache(schema: any, example: CacheItem | undefined, isRequest: boolean) {
     if (!schema || !example) {
       return;
     }
-    const cacheKey = schema.$ref && schema.$ref.includes("#") ? schema.$ref.split("#")[1] : undefined
+    const cacheKey =
+      schema.$ref && schema.$ref.includes("#") ? schema.$ref.split("#")[1] : undefined;
     if (cacheKey && !isBaseResource(cacheKey) && !this.hasByDirection(cacheKey, isRequest)) {
       this.setByDirection(cacheKey, example, isRequest);
     }
   }
   /**
-   *  picking value priority : non-mocked value > mocked value , target value > source value  
+   *  picking value priority : non-mocked value > mocked value , target value > source value
    * @param target The target item that to be merged into
    * @param source The source item that needs to merge
    */
   public mergeItem(target: CacheItem, source: CacheItem): CacheItem {
     const result = target;
     if (!source || !target) {
-      return target ? target :source
+      return target ? target : source;
     }
 
     if (Array.isArray(result.child) && Array.isArray(source.child)) {
       const resultArr = result.child as CacheItem[];
       const sourceArr = source.child as CacheItem[];
       if (resultArr.length === 0 || sourceArr.length === 0) {
-        return resultArr.length === 0 ? source : result
+        return resultArr.length === 0 ? source : result;
       }
       // only when source is not mocked and target is mocked , choose source cache.
       if (resultArr[0].isMocked && !sourceArr[0].isMocked) {
-        return source
+        return source;
       }
-      for ( let i = 0; i < resultArr.length; i++) {
+      for (let i = 0; i < resultArr.length; i++) {
         if (i < sourceArr.length) {
           resultArr[i] = this.mergeItem(resultArr[i], sourceArr[i]);
         }
@@ -125,11 +129,10 @@ export class PayloadCache implements BaseCache {
           resultObj[key] = this.mergeItem(resultObj[key], sourceObj[key]);
         }
       }
-    }
-    else {
+    } else {
       return result.isMocked && !source.isMocked ? source : result;
     }
-    return result
+    return result;
   }
 
   /**
@@ -160,7 +163,6 @@ export class PayloadCache implements BaseCache {
     this.requestCaches.clear();
     this.responseCaches.clear();
   }
-
 }
 
 type CacheItemValue = string | number | object | boolean;
@@ -172,7 +174,7 @@ interface CacheItemOptions {
   isReadonly?: boolean;
   isXmsSecret?: boolean;
   isRequired?: boolean;
-  isWriteOnly?:boolean;
+  isWriteOnly?: boolean;
 }
 export interface CacheItem {
   value?: CacheItemValue;
@@ -180,7 +182,7 @@ export interface CacheItem {
   options?: CacheItemOptions;
   isLeaf: boolean;
   required?: string[];
-  isMocked?:boolean
+  isMocked?: boolean;
 }
 
 export const buildItemOption = (schema: any) => {
@@ -188,7 +190,9 @@ export const buildItemOption = (schema: any) => {
     const isReadonly = !!schema.readOnly;
     const isXmsSecret = !!schema["x-ms-secret"];
     const isRequired = !!schema.required;
-    const isWriteOnly = schema["x-ms-mutability"] ? schema["x-ms-mutability"].indexOf("read") === -1 : false
+    const isWriteOnly = schema["x-ms-mutability"]
+      ? schema["x-ms-mutability"].indexOf("read") === -1
+      : false;
     if (!isReadonly && !isXmsSecret && !isRequired && !isWriteOnly) {
       return undefined;
     }
@@ -203,7 +207,7 @@ export const buildItemOption = (schema: any) => {
       option = { ...option, isWriteOnly: true };
     }
     if (schema.required === true) {
-      option = {...option, isRequired: true}
+      option = { ...option, isRequired: true };
     }
     return option;
   }
@@ -242,12 +246,12 @@ export const reBuildExample = (
   cache: CacheItem | undefined,
   isRequest: boolean,
   schema: any,
-  validator:RuleValidatorFunc | undefined
+  validator: RuleValidatorFunc | undefined
 ): any => {
   if (!cache) {
     return undefined;
   }
-  if (validator && !validator({schemaCache:cache, isRequest })) {
+  if (validator && !validator({ schemaCache: cache, isRequest })) {
     return undefined;
   }
   if (cache.isLeaf) {
@@ -256,17 +260,17 @@ export const reBuildExample = (
   if (Array.isArray(cache.child)) {
     const result = [];
     for (const item of cache.child) {
-      if (validator && !validator({ schemaCache: item, isRequest,schema })) {
+      if (validator && !validator({ schemaCache: item, isRequest, schema })) {
         continue;
       }
-      result.push(reBuildExample(item, isRequest,schema,validator,));
+      result.push(reBuildExample(item, isRequest, schema, validator));
     }
     return result;
   } else if (cache.child) {
     const result: any = {};
     for (const key of Object.keys(cache.child)) {
-      if (!validator || validator({ schemaCache:cache, propertyName: key, isRequest, schema})) {
-        const value = reBuildExample(cache.child[key], isRequest, schema,validator);
+      if (!validator || validator({ schemaCache: cache, propertyName: key, isRequest, schema })) {
+        const value = reBuildExample(cache.child[key], isRequest, schema, validator);
         if (value !== undefined) {
           result[key] = value;
         }
@@ -276,4 +280,3 @@ export const reBuildExample = (
   }
   return undefined;
 };
-

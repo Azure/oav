@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
+import { URL } from "url";
 import { parseMarkdown, readFile } from "@azure-tools/openapi-tools-common";
 import * as amd from "@azure/openapi-markdown";
 
@@ -97,7 +98,7 @@ export function updateExmAndSpecFile(
   }
   const outputPath = path.resolve(outputDir, exampleName);
   console.log("example file path: " + outputPath);
-   fs.writeFileSync(outputPath, JSON.stringify(example, null, 2), "utf8");
+  fs.writeFileSync(outputPath, JSON.stringify(example, null, 2), "utf8");
   if (newSpec) {
     //log.info("updated swagger file path: " + specFilePath);
     fs.writeFileSync(specFilePath, JSON.stringify(newSpec, null, 2), "utf8");
@@ -112,10 +113,10 @@ export function referenceExmInSpec(
 ): any {
   const data = fs.readFileSync(specFilePath);
   const spec = JSON.parse(data.toString());
-  if (
-    !spec.paths[apiPath][methodName]["x-ms-examples"] ||
-    !(exampleName in spec.paths[apiPath][methodName]["x-ms-examples"])
-  ) {
+  if (!spec.paths[apiPath][methodName]["x-ms-examples"]) {
+    spec.paths[apiPath][methodName]["x-ms-examples"] = {};
+  }
+  if (!(exampleName in spec.paths[apiPath][methodName]["x-ms-examples"])) {
     spec.paths[apiPath][methodName]["x-ms-examples"][exampleName] = {
       $ref: `./examples/${exampleName}.json`,
     };
@@ -123,8 +124,8 @@ export function referenceExmInSpec(
   }
 }
 
-export async function getInputFiles(readMe:string, tag: string) {
+export async function getInputFiles(readMe: string, tag: string) {
   const readMeStr = await readFile(readMe);
   const cmd = parseMarkdown(readMeStr);
-  return amd.getInputFilesForTag(cmd.markDown,tag);
+  return amd.getInputFilesForTag(cmd.markDown, tag);
 }

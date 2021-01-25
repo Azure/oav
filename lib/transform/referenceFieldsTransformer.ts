@@ -23,8 +23,9 @@ export const referenceFieldsTransformer: SpecTransformer = {
         path._spec = spec;
         path._pathTemplate = pathTemplate;
       },
-      onOperation: (operation, path) => {
+      onOperation: (operation, path, method) => {
         operation._path = path;
+        operation._method = method;
         if (operation.consumes === undefined) {
           operation.consumes = spec.consumes;
         } else if (isDefaultMime(operation.consumes)) {

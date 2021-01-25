@@ -700,11 +700,11 @@ describe("Live Validator", () => {
         isPathCaseSensitive: false,
         useRelativeSourceLocationUrl: true,
         swaggerPathsPattern: [
-          "specification\\contoso\\resource-manager\\Microsoft.Contoso\\**\\*.json"
+          "specification\\contoso\\resource-manager\\Microsoft.Contoso\\**\\*.json",
         ],
         git: {
-          shouldClone: false
-        }
+          shouldClone: false,
+        },
       };
       const liveValidator = new LiveValidator(options);
       await liveValidator.initialize();
@@ -719,11 +719,11 @@ describe("Live Validator", () => {
         isPathCaseSensitive: false,
         useRelativeSourceLocationUrl: true,
         swaggerPathsPattern: [
-          "specification\\contoso\\resource-manager\\Microsoft.Contoso\\**\\*.json"
+          "specification\\contoso\\resource-manager\\Microsoft.Contoso\\**\\*.json",
         ],
         git: {
-          shouldClone: false
-        }
+          shouldClone: false,
+        },
       };
       const liveValidator = new LiveValidator(options);
       await liveValidator.initialize();
@@ -731,18 +731,18 @@ describe("Live Validator", () => {
       const validationResult = await liveValidator.validateLiveRequestResponse(payload);
       expect(validationResult).toMatchSnapshot();
     });
-  
+
     it(`should return no errors for valid input with optional parameter body empty`, async () => {
       const options = {
         directory: `${__dirname}/liveValidation/swaggers/`,
         isPathCaseSensitive: false,
         useRelativeSourceLocationUrl: true,
         swaggerPathsPattern: [
-          "specification\\contoso\\resource-manager\\Microsoft.Contoso\\**\\*.json"
+          "specification\\contoso\\resource-manager\\Microsoft.Contoso\\**\\*.json",
         ],
         git: {
-          shouldClone: false
-        }
+          shouldClone: false,
+        },
       };
       const liveValidator = new LiveValidator(options);
       await liveValidator.initialize();
