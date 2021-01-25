@@ -12,19 +12,24 @@ Params:
 
 
 Options:
-  --payload          Set the payload directory which contains all the payload file, the file format is listed below. If no payload file is provided under the directory, then no examples will be generated. If the option '--payload' is not set, the example values will be mocked for all operations.
-  -o                 Specify operationId to generate example only for the operation
-  -l, --logLevel     Set the logging level for console.
+  --version                Show version number                         [boolean]
+  -l, --logLevel           Set the logging level for console.
   [choices: "off", "json", "error", "warn", "info", "verbose", "debug", "silly"]
-                                                               [default: "warn"]
-  -f, --logFilepath  Set the log file path. It must be an absolute filepath. By
-                     default the logs will stored in a timestamp based log file
-                     at "C:\Users\abc\oav_output".
-  -h, --help         Show help                                         [boolean]
+                                                               [default: "info"]
+  -f, --logFilepath        Set the log file path. It must be an absolute
+                           filepath. By default the logs will stored in a
+                           timestamp based log file at
+                           "/home/abc/oav_output".
+  -p, --pretty             Pretty print
+  -o, --operationId        operation id.                                [string]
+  --payload, --payloadDir  the directory path contains payload.         [string]
+  -c, --config             the readme config path.                      [string]
+  --tag, --tagName         the readme tag name.                         [string]
+  -h, --help               Show help                                   [boolean]
 
 ```
 ## payload file
-Payload directory should contains folders named by operationId. Put payload files named by status code under the folder.
+Payload directory should contain sub folders named by `[RP_namespace]/[stable|preview]/[api-version]/[operationId]`, for example, `Microsoft.AppPlatform/stable/2020-07-01/SignalR_Get`. Put payload files named by status code under this correspondent folder of `operationId`.
 ```bash
 .
 └── SignalR_Get
