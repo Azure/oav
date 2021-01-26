@@ -1,5 +1,10 @@
 # Change Log - oav
 
+## 2.2.2
+Thur, 22 Jan 2021
+
+- Bugfix for example generator: resolve reference undefined property.
+
 ## 2.2.1
 Thur, 21 Jan 2021
 
