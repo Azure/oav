@@ -1,5 +1,10 @@
 # Change Log - oav
 
+## 2.2.3
+Thur, 22 Jan 2021
+
+- Bugfix collect correct err.data in discriminator validation for multiple level allOf
+
 ## 2.2.2
 Thur, 22 Jan 2021
 
