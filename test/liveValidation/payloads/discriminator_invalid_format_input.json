@@ -12,10 +12,11 @@
     "method": "PUT",
     "url": "/subscriptions/randomSub/resourceGroups/randomRG/providers/Microsoft.Contoso/users?api-version=2020-01-01",
     "body": {
-      "id": null,
-      "name": "foo",
-      "readOnlyProperty": "test",
-      "type": "User"
+      "type": "UserWithPet",
+      "pet": {
+        "type": "Cat",
+        "lifetime": "abc"
+      }
     }
   },
   "liveResponse": {
