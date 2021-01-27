@@ -1,6 +1,6 @@
 {
   "name": "oav",
-  "version": "2.2.0",
+  "version": "2.2.3",
   "author": {
     "name": "Microsoft Corporation",
     "email": "azsdkteam@microsoft.com",
@@ -111,7 +111,7 @@
   ],
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "rm -rf dist && run-p tsc lint",
+    "build": "run-p tsc lint",
     "tsc": "tsc",
     "lint": "eslint ./lib/**/*.ts ./test/**/*.ts ./*.ts",
     "lint-fix": "eslint ./lib/**/*.ts ./test/**/*.ts ./*.ts --fix",

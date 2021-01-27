@@ -27,7 +27,7 @@ const transformAllOfSchema = (schema: Schema, baseSchemas: Set<Schema>, jsonLoad
     }
     if (required !== undefined && required.length > 0) {
       if (schema.required === undefined) {
-        schema.required = required;
+        schema.required = [...required];
       } else {
         for (const key of required) {
           if (!schema.required.includes(key)) {
