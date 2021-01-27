@@ -19,7 +19,8 @@ import { log } from "../util/logging";
 import { Severity } from "../util/severity";
 import * as utils from "../util/utils";
 import { ExtendedErrorCode, RuntimeException } from "../util/validationError";
-import { LiveValidatorLoader, LiveValidatorLoaderOptions } from "./liveValidatorLoader";
+import { AllOpts, inversifyGetInstance } from "../inversifyUtils";
+import { LiveValidatorLoader } from "./liveValidatorLoader";
 import { getProviderFromPathTemplate, OperationSearcher } from "./operationSearcher";
 import {
   LiveRequest,
@@ -30,7 +31,7 @@ import {
   ValidationRequest,
 } from "./operationValidator";
 
-export interface LiveValidatorOptions extends LiveValidatorLoaderOptions {
+export interface LiveValidatorOptions extends AllOpts {
   swaggerPaths: string[];
   git: {
     shouldClone: boolean;
@@ -183,7 +184,7 @@ export class LiveValidator {
     // Construct array of swagger paths to be used for building a cache
     this.logging("Get swagger path.");
     const swaggerPaths = await this.getSwaggerPaths();
-    this.loader = LiveValidatorLoader.create({
+    this.loader = inversifyGetInstance(LiveValidatorLoader, {
       fileRoot: this.options.directory,
       ...this.options,
     });

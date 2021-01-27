@@ -2,12 +2,13 @@ import { dirname as pathDirname, join as pathJoin } from "path";
 import { Json, parseJson } from "@azure-tools/openapi-tools-common";
 import { safeLoad as parseYaml } from "js-yaml";
 import { default as jsonPointer } from "json-pointer";
-import { xmsExamples } from "../util/constants";
+import { inject, injectable } from "inversify";
+import { TYPES, xmsExamples } from "../util/constants";
 import { getLazyBuilder } from "../util/lazyBuilder";
-import { FileLoader, FileLoaderOption } from "./fileLoader";
-import { getLoaderBuilder, Loader, setDefaultOpts } from "./loader";
+import { FileLoader } from "./fileLoader";
+import { Loader, setDefaultOpts } from "./loader";
 
-export interface JsonLoaderOption extends FileLoaderOption {
+export interface JsonLoaderOption {
   useJsonParser?: boolean;
   eraseDescription?: boolean;
   eraseXmsExamples?: boolean;
@@ -27,9 +28,8 @@ interface FileCache {
 
 export const $id = "id";
 
+@injectable()
 export class JsonLoader implements Loader<Json> {
-  private fileLoader: FileLoader;
-
   private mockNameMap: { [mockName: string]: string } = {};
   private globalMockNameId = 0;
 
@@ -54,8 +54,10 @@ export class JsonLoader implements Loader<Json> {
     return fileContent;
   });
 
-  public static create = getLoaderBuilder((opts: JsonLoaderOption) => new JsonLoader(opts));
-  private constructor(private opts: JsonLoaderOption) {
+  public constructor(
+    @inject(TYPES.opts) private opts: JsonLoaderOption,
+    private fileLoader: FileLoader
+  ) {
     setDefaultOpts(opts, {
       useJsonParser: true,
       eraseDescription: true,
@@ -64,7 +66,6 @@ export class JsonLoader implements Loader<Json> {
       supportYaml: false,
     });
     this.skipResolveRefKeys = new Set(opts.skipResolveRefKeys);
-    this.fileLoader = FileLoader.create(opts);
   }
 
   private parseFileContent(cache: FileCache, fileString: string): any {

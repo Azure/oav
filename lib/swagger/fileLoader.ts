@@ -1,15 +1,17 @@
 import { relative as pathRelative, resolve as pathResolve } from "path";
 import { readFile as vfsReadFile } from "@azure-tools/openapi-tools-common";
-import { getLoaderBuilder, Loader, setDefaultOpts } from "./loader";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../util/constants";
+import { Loader, setDefaultOpts } from "./loader";
 
 export interface FileLoaderOption {
   fileRoot?: string;
   checkUnderFileRoot?: boolean;
 }
 
+@injectable()
 export class FileLoader implements Loader<string> {
-  public static create = getLoaderBuilder((opts: FileLoaderOption) => new FileLoader(opts));
-  private constructor(private opts: FileLoaderOption) {
+  public constructor(@inject(TYPES.opts) private opts: FileLoaderOption) {
     setDefaultOpts(opts, {
       checkUnderFileRoot: true,
     });

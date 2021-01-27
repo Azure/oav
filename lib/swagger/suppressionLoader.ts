@@ -7,30 +7,33 @@ import {
   SuppressionItem,
 } from "@azure/openapi-markdown";
 import { JSONPath } from "jsonpath-plus";
+import { inject, injectable } from "inversify";
 import { log } from "../util/logging";
-import { FileLoader, FileLoaderOption } from "./fileLoader";
-import { getLoaderBuilder, Loader } from "./loader";
+import { TYPES } from "../util/constants";
+import { FileLoader } from "./fileLoader";
+import { Loader } from "./loader";
 import { SwaggerSpec } from "./swaggerTypes";
 
-export interface SuppressionLoaderOption extends FileLoaderOption {
+export interface SuppressionLoaderOption {
   loadSuppression?: string[];
 }
 
+@injectable()
 export class SuppressionLoader implements Loader<void, SwaggerSpec> {
-  private fileLoader: FileLoader;
-
   private suppressionCache = new Map<string, SuppressionItem[]>();
   private suppressionToLoad: Set<string>;
 
-  public static create = getLoaderBuilder(
-    (opts: SuppressionLoaderOption) => new SuppressionLoader(opts)
-  );
-  private constructor(opts: SuppressionLoaderOption) {
-    this.fileLoader = FileLoader.create(opts);
+  private constructor(
+    @inject(TYPES.opts) opts: SuppressionLoaderOption,
+    private fileLoader: FileLoader
+  ) {
     this.suppressionToLoad = new Set(opts?.loadSuppression ?? []);
   }
 
   public async load(spec: SwaggerSpec) {
+    if (this.suppressionToLoad.size === 0) {
+      return;
+    }
     const filePath = this.fileLoader.resolvePath(spec._filePath);
     const readmePath = await findReadMe(filePath);
     if (readmePath === undefined) {
