@@ -16,6 +16,7 @@ import { allOfTransformer } from "../transform/allOfTransformer";
 import { noAdditionalPropertiesTransformer } from "../transform/noAdditionalPropertiesTransformer";
 import { applySpecTransformers, applyGlobalTransformers } from "../transform/transformer";
 import { log } from "../util/logging";
+import { inversifyGetInstance } from "../inversifyUtils";
 import { ExampleRule, RuleSet } from "./exampleRule";
 import * as util from "./util";
 import Translator from "./translator";
@@ -39,7 +40,7 @@ export default class Generator {
     this.shouldMock = payloadDir ? false : true;
     this.specFilePath = specFilePath;
     this.payloadDir = payloadDir;
-    this.jsonLoader = JsonLoader.create({
+    this.jsonLoader = inversifyGetInstance(JsonLoader, {
       useJsonParser: false,
       eraseXmsExamples: false,
     });

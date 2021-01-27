@@ -3,9 +3,10 @@ import { join as pathJoin, dirname } from "path";
 import { safeLoad } from "js-yaml";
 import { default as AjvInit, ValidateFunction } from "ajv";
 import { JSONPath } from "jsonpath-plus";
+import { inject, injectable } from "inversify";
 import { Loader, setDefaultOpts } from "../swagger/loader";
-import { FileLoaderOption, FileLoader } from "../swagger/fileLoader";
-import { JsonLoader, JsonLoaderOption } from "../swagger/jsonLoader";
+import { FileLoader } from "../swagger/fileLoader";
+import { JsonLoader } from "../swagger/jsonLoader";
 import { getTransformContext, TransformContext } from "../transform/context";
 import { SchemaValidator } from "../swaggerValidator/schemaValidator";
 import { AjvSchemaValidator } from "../swaggerValidator/ajvSchemaValidator";
@@ -17,10 +18,11 @@ import { allOfTransformer } from "../transform/allOfTransformer";
 import { noAdditionalPropertiesTransformer } from "../transform/noAdditionalPropertiesTransformer";
 import { nullableTransformer } from "../transform/nullableTransformer";
 import { pureObjectTransformer } from "../transform/pureObjectTransformer";
-import { SwaggerLoader, SwaggerLoaderOption } from "../swagger/swaggerLoader";
+import { SwaggerLoader } from "../swagger/swaggerLoader";
 import { applySpecTransformers, applyGlobalTransformers } from "../transform/transformer";
 import { SwaggerSpec, Operation } from "../swagger/swaggerTypes";
 import { traverseSwagger } from "../transform/traverseSwagger";
+import { AllOpts, inversifyGetInstance } from "../inversifyUtils";
 import {
   TestDefinitionSchema,
   TestDefinitionFile,
@@ -30,22 +32,18 @@ import {
   TestStepArmTemplateDeployment,
 } from "./testResourceTypes";
 import { ExampleTemplateGenerator } from "./exampleTemplateGenerator";
+import { TYPES } from "../util/constants";
 
 const ajv = new AjvInit({
   useDefaults: true,
 });
 
-export interface TestResourceLoaderOption
-  extends FileLoaderOption,
-    JsonLoaderOption,
-    SwaggerLoaderOption {
-  swaggerFilePaths: string[];
+export interface TestResourceLoaderOption {
+  swaggerFilePaths?: string[];
 }
 
-export class TestResourceLoader implements Loader<any> {
-  private fileLoader: FileLoader;
-  public jsonLoader: JsonLoader;
-  private swaggerLoader: SwaggerLoader;
+@injectable()
+export class TestResourceLoader implements Loader<TestDefinitionFile> {
   private transformContext: TransformContext;
   private schemaValidator: SchemaValidator;
   private validateTestResourceFile: ValidateFunction;
@@ -56,17 +54,16 @@ export class TestResourceLoader implements Loader<any> {
   private initialized: boolean = false;
   private exampleTemplateGenerator: ExampleTemplateGenerator;
 
-  public constructor(private opts: TestResourceLoaderOption) {
+  public constructor(
+    @inject(TYPES.opts) private opts: TestResourceLoaderOption,
+    private fileLoader: FileLoader,
+    public jsonLoader: JsonLoader,
+    private swaggerLoader: SwaggerLoader
+  ) {
     setDefaultOpts(opts, {
       swaggerFilePaths: [],
-      eraseXmsExamples: false,
-      eraseDescription: false,
-      skipResolveRefKeys: ["x-ms-examples"],
     });
 
-    this.fileLoader = FileLoader.create(opts);
-    this.jsonLoader = JsonLoader.create(opts);
-    this.swaggerLoader = SwaggerLoader.create(opts);
     this.schemaValidator = new AjvSchemaValidator(this.jsonLoader);
     this.exampleTemplateGenerator = new ExampleTemplateGenerator(this.jsonLoader);
 
@@ -85,13 +82,22 @@ export class TestResourceLoader implements Loader<any> {
     this.validateTestResourceFile = ajv.compile(TestDefinitionSchema);
   }
 
+  public static create(opts: AllOpts) {
+    setDefaultOpts(opts, {
+      eraseXmsExamples: false,
+      eraseDescription: false,
+      skipResolveRefKeys: ["x-ms-examples"],
+    });
+    return inversifyGetInstance(TestResourceLoader, opts);
+  }
+
   public async initialize() {
     if (this.initialized) {
       throw new Error("Already initialized");
     }
 
     const allSpecs: SwaggerSpec[] = [];
-    for (const swaggerFilePath of this.opts.swaggerFilePaths) {
+    for (const swaggerFilePath of this.opts.swaggerFilePaths ?? []) {
       const swaggerSpec = await this.swaggerLoader.load(swaggerFilePath);
       allSpecs.push(swaggerSpec);
       applySpecTransformers(swaggerSpec, this.transformContext);

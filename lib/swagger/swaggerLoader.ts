@@ -1,28 +1,26 @@
+import { inject, injectable } from "inversify";
+import { TYPES } from "../util/constants";
 import { FileLoader } from "./fileLoader";
-import { JsonLoader, JsonLoaderOption } from "./jsonLoader";
-import { getLoaderBuilder, Loader, setDefaultOpts } from "./loader";
-import { SuppressionLoader, SuppressionLoaderOption } from "./suppressionLoader";
+import { JsonLoader } from "./jsonLoader";
+import { Loader, setDefaultOpts } from "./loader";
+import { SuppressionLoader } from "./suppressionLoader";
 import { SwaggerSpec } from "./swaggerTypes";
 
-export interface SwaggerLoaderOption extends SuppressionLoaderOption, JsonLoaderOption {
+export interface SwaggerLoaderOption {
   setFilePath?: boolean;
 }
 
+@injectable()
 export class SwaggerLoader implements Loader<SwaggerSpec> {
-  private suppressionLoader: SuppressionLoader;
-  private jsonLoader: JsonLoader;
-  private fileLoader: FileLoader;
-
-  public static create = getLoaderBuilder((opts: SwaggerLoaderOption) => new SwaggerLoader(opts));
-
-  private constructor(private opts: SwaggerLoaderOption) {
+  private constructor(
+    @inject(TYPES.opts) private opts: SwaggerLoaderOption,
+    private suppressionLoader: SuppressionLoader,
+    private jsonLoader: JsonLoader,
+    private fileLoader: FileLoader
+  ) {
     setDefaultOpts(opts, {
       setFilePath: true,
     });
-
-    this.jsonLoader = JsonLoader.create(opts);
-    this.suppressionLoader = SuppressionLoader.create(opts);
-    this.fileLoader = FileLoader.create(opts);
   }
 
   // TODO reportError
@@ -33,9 +31,7 @@ export class SwaggerLoader implements Loader<SwaggerSpec> {
       swaggerSpec._filePath = this.fileLoader.relativePath(specFilePath);
     }
 
-    if (this.opts.loadSuppression) {
-      await this.suppressionLoader.load(swaggerSpec);
-    }
+    await this.suppressionLoader.load(swaggerSpec);
 
     return swaggerSpec;
   }

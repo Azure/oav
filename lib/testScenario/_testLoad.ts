@@ -1,3 +1,5 @@
+import "reflect-metadata";
+
 import { getDefaultAzureCredential } from "@azure/identity";
 import { TestResourceLoader } from "./testResourceLoader";
 import { TestScenarioRunner } from "./testScenarioRunner";
@@ -5,7 +7,7 @@ import { VariableEnv } from "./variableEnv";
 import { TestScenarioRestClient } from "./testScenarioRestClient";
 
 const main = async () => {
-  const loader = new TestResourceLoader({
+  const loader = TestResourceLoader.create({
     useJsonParser: false,
     checkUnderFileRoot: false,
     fileRoot: "/home/htc/azure-rest-api-specs/specification/operationalinsights/resource-manager",
