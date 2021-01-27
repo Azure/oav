@@ -63,8 +63,10 @@ export const ajvEnableDiscriminatorMap = (ajv: Ajv, loader: JsonLoader) => {
           if (!valid && validate.errors) {
             for (const err of validate.errors) {
               err.dataPath = dataPath + err.dataPath;
-              (err as any)._realSchema = err.schema;
-              (err as any)._realData = err.data;
+              if ((err as any)._realSchema === undefined) {
+                (err as any)._realSchema = err.schema;
+                (err as any)._realData = err.data;
+              }
             }
             errors.push(...validate.errors);
           }

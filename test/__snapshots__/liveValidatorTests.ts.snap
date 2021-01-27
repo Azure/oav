@@ -297,6 +297,55 @@ Object {
 }
 `;
 
+exports[`Live validator snapshot validation should pass discriminator tests 1`] = `
+Object {
+  "requestValidationResult": Object {
+    "errors": Array [
+      Object {
+        "code": "INVALID_FORMAT",
+        "documentationUrl": "",
+        "jsonPathsInPayload": Array [
+          "$.pet.lifetime",
+        ],
+        "message": "Object didn't pass validation for format date-time: abc",
+        "params": Array [
+          "date-time",
+          "abc",
+        ],
+        "pathsInPayload": Array [
+          "/pet/lifetime",
+        ],
+        "schemaPath": "#/discriminatorMap",
+        "severity": 0,
+        "source": Object {
+          "jsonRef": "#/definitions/Cat/properties/lifetime",
+          "position": Object {
+            "column": 21,
+            "line": 169,
+          },
+          "url": "specification/contoso/resource-manager/Microsoft.Contoso/2020-01-01/contoso.json",
+        },
+      },
+    ],
+    "isSuccessful": false,
+    "operationInfo": Object {
+      "apiVersion": "2020-01-01",
+      "operationId": "User_CreateOrUpdate",
+    },
+    "runtimeException": undefined,
+  },
+  "responseValidationResult": Object {
+    "errors": Array [],
+    "isSuccessful": true,
+    "operationInfo": Object {
+      "apiVersion": "2020-01-01",
+      "operationId": "User_CreateOrUpdate",
+    },
+    "runtimeException": undefined,
+  },
+}
+`;
+
 exports[`Live validator snapshot validation should return expected error for readonly property in the request 1`] = `
 Object {
   "requestValidationResult": Object {
@@ -321,7 +370,7 @@ Object {
           "jsonRef": "#/definitions/User/properties/name",
           "position": Object {
             "column": 17,
-            "line": 122,
+            "line": 123,
           },
           "url": "specification/contoso/resource-manager/Microsoft.Contoso/2020-01-01/contoso.json",
         },
