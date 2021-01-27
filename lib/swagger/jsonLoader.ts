@@ -48,7 +48,7 @@ export class JsonLoader implements Loader<Json> {
     cache.resolved = fileContent;
     (fileContent as any)[$id] = cache.mockName;
     if (cache.skipResolveRef !== true) {
-      fileContent = await this.resolveRef(fileContent, ["$"], fileContent, cache.filePath, false);
+      fileContent = await this.resolveRef(fileContent, fileContent, cache.filePath, false);
     }
     this.loadedFiles.push(fileContent);
     return fileContent;
@@ -103,6 +103,8 @@ export class JsonLoader implements Loader<Json> {
     return this.loadFile(cache);
   }
 
+  public async reloadFileSegment(realFilePath: string, )
+
   public async resolveFile(mockName: string): Promise<any> {
     const filePath = this.mockNameMap[mockName];
     const cache = this.fileCache.get(filePath);
@@ -136,7 +138,6 @@ export class JsonLoader implements Loader<Json> {
 
   private async resolveRef(
     object: Json,
-    pathArr: string[],
     rootObject: Json,
     relativeFilePath: string,
     skipResolveChildRef: boolean
@@ -174,7 +175,6 @@ export class JsonLoader implements Loader<Json> {
         if (typeof item === "object" && item !== null) {
           const newRef = await this.resolveRef(
             item,
-            pathArr.concat([idx.toString()]),
             rootObject,
             relativeFilePath,
             skipResolveChildRef
@@ -199,7 +199,6 @@ export class JsonLoader implements Loader<Json> {
         if (typeof item === "object" && item !== null) {
           const newRef = await this.resolveRef(
             item,
-            pathArr.concat([key]),
             rootObject,
             relativeFilePath,
             skipResolveChildRef || this.skipResolveRefKeys.has(key)

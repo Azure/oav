@@ -42,21 +42,23 @@ export interface TestResourceLoaderOption
   swaggerFilePaths: string[];
 }
 
-export class TestResourceLoader implements Loader<any> {
-  private fileLoader: FileLoader;
+export class TestResourceLoader implements Loader<TestDefinitionFile> {
   public jsonLoader: JsonLoader;
-  private swaggerLoader: SwaggerLoader;
-  private transformContext: TransformContext;
-  private schemaValidator: SchemaValidator;
-  private validateTestResourceFile: ValidateFunction;
-  private exampleToOperation: Map<
+
+  protected fileLoader: FileLoader;
+  protected swaggerLoader: SwaggerLoader;
+  protected schemaValidator: SchemaValidator;
+  protected exampleToOperation: Map<
     string,
     { [operationId: string]: [Operation, string] }
   > = new Map();
+
+  private transformContext: TransformContext;
+  private validateTestResourceFile: ValidateFunction;
   private initialized: boolean = false;
   private exampleTemplateGenerator: ExampleTemplateGenerator;
 
-  public constructor(private opts: TestResourceLoaderOption) {
+  public constructor(protected opts: TestResourceLoaderOption) {
     setDefaultOpts(opts, {
       swaggerFilePaths: [],
       eraseXmsExamples: false,
