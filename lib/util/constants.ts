@@ -3,10 +3,6 @@
 
 import { StringMap } from "@azure-tools/openapi-tools-common";
 
-export const TYPES = {
-  opts: Symbol("InversifyTYPES.opts"),
-};
-
 export const xmsParameterizedHost = "x-ms-parameterized-host";
 
 export const xmsPaths = "x-ms-paths";

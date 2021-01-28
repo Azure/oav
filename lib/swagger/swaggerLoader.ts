@@ -1,12 +1,15 @@
 import { inject, injectable } from "inversify";
-import { TYPES } from "../util/constants";
-import { FileLoader } from "./fileLoader";
-import { JsonLoader } from "./jsonLoader";
+import { TYPES } from "../inversifyUtils";
+import { FileLoader, FileLoaderOption } from "./fileLoader";
+import { JsonLoader, JsonLoaderOption } from "./jsonLoader";
 import { Loader, setDefaultOpts } from "./loader";
-import { SuppressionLoader } from "./suppressionLoader";
+import { SuppressionLoader, SuppressionLoaderOption } from "./suppressionLoader";
 import { SwaggerSpec } from "./swaggerTypes";
 
-export interface SwaggerLoaderOption {
+export interface SwaggerLoaderOption
+  extends SuppressionLoaderOption,
+    JsonLoaderOption,
+    FileLoaderOption {
   setFilePath?: boolean;
 }
 

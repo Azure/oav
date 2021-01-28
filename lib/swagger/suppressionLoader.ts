@@ -9,12 +9,12 @@ import {
 import { JSONPath } from "jsonpath-plus";
 import { inject, injectable } from "inversify";
 import { log } from "../util/logging";
-import { TYPES } from "../util/constants";
-import { FileLoader } from "./fileLoader";
+import { TYPES } from "../inversifyUtils";
+import { FileLoader, FileLoaderOption } from "./fileLoader";
 import { Loader } from "./loader";
 import { SwaggerSpec } from "./swaggerTypes";
 
-export interface SuppressionLoaderOption {
+export interface SuppressionLoaderOption extends FileLoaderOption {
   loadSuppression?: string[];
 }
 

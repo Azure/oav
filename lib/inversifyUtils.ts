@@ -1,36 +1,13 @@
 import { Container, interfaces } from "inversify";
-import {
-  LiveValidatorLoader,
-  LiveValidatorLoaderOption,
-} from "./liveValidation/liveValidatorLoader";
-import { FileLoader, FileLoaderOption } from "./swagger/fileLoader";
-import { JsonLoader, JsonLoaderOption } from "./swagger/jsonLoader";
 import { setDefaultOpts } from "./swagger/loader";
-import { SuppressionLoader, SuppressionLoaderOption } from "./swagger/suppressionLoader";
-import { SwaggerLoader, SwaggerLoaderOption } from "./swagger/swaggerLoader";
-import { TestResourceLoader, TestResourceLoaderOption } from "./testScenario/testResourceLoader";
-import { TYPES } from "./util/constants";
 
-export const inversifyBindClasses = (container: Container, allOpts: AllOpts) => {
-  container.bind(FileLoader).toSelf();
-  container.bind(JsonLoader).toSelf();
-  container.bind(SuppressionLoader).toSelf();
-  container.bind(SwaggerLoader).toSelf();
-  container.bind(LiveValidatorLoader).toSelf();
-  container.bind(TestResourceLoader).toSelf();
-  container.bind(TYPES.opts).toConstantValue(allOpts);
+export const TYPES = {
+  opts: Symbol("InversifyTYPES.opts"),
 };
 
-export type AllOpts = FileLoaderOption &
-  JsonLoaderOption &
-  SuppressionLoaderOption &
-  SwaggerLoaderOption &
-  LiveValidatorLoaderOption &
-  TestResourceLoaderOption;
-
-export const inversifyGetInstance = <T>(
+export const inversifyGetInstance = <T, Opt = {}>(
   claz: interfaces.Newable<T>,
-  opts: AllOpts &
+  opts: Opt &
     interfaces.ContainerOptions & {
       container?: Container;
     }
@@ -38,9 +15,10 @@ export const inversifyGetInstance = <T>(
   if (opts.container === undefined) {
     setDefaultOpts(opts, {
       defaultScope: "Singleton",
-    });
+      autoBindInjectable: true,
+    } as any);
     opts.container = new Container(opts);
   }
-  inversifyBindClasses(opts.container, opts);
+  opts.container.bind(TYPES.opts).toConstantValue(opts);
   return opts.container.get(claz);
 };

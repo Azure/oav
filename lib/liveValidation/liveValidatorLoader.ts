@@ -1,9 +1,10 @@
 import { copyInfo, StringMap } from "@azure-tools/openapi-tools-common";
 import { inject, injectable } from "inversify";
+import { TYPES } from "../inversifyUtils";
 
 import { JsonLoader } from "../swagger/jsonLoader";
 import { Loader, setDefaultOpts } from "../swagger/loader";
-import { SwaggerLoader } from "../swagger/swaggerLoader";
+import { SwaggerLoader, SwaggerLoaderOption } from "../swagger/swaggerLoader";
 import {
   Operation,
   Parameter,
@@ -28,11 +29,10 @@ import { schemaV4ToV7Transformer } from "../transform/schemaV4ToV7Transformer";
 import { applyGlobalTransformers, applySpecTransformers } from "../transform/transformer";
 import { traverseSwaggerAsync } from "../transform/traverseSwagger";
 import { xmsPathsTransformer } from "../transform/xmsPathsTransformer";
-import { TYPES } from "../util/constants";
 import { getLazyBuilder } from "../util/lazyBuilder";
 import { waitUntilLowLoad } from "../util/utils";
 
-export interface LiveValidatorLoaderOption {
+export interface LiveValidatorLoaderOption extends SwaggerLoaderOption {
   transformToNewSchemaFormat?: boolean;
 }
 
