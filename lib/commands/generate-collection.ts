@@ -5,7 +5,10 @@
 
 import * as fs from "fs";
 import * as yargs from "yargs";
-import { PostmanCollectionGeneratorOption } from "../testScenario/postmanCollectionGenerator";
+import {
+  PostmanCollectionGenerator,
+  PostmanCollectionGeneratorOption,
+} from "../testScenario/postmanCollectionGenerator";
 
 import { cliSuppressExceptions } from "../cliSuppressExceptions";
 export const command = "generate-collection [testScenario-path]";
