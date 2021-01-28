@@ -1,5 +1,5 @@
 import { relative as pathRelative, resolve as pathResolve } from "path";
-import { readFile as vfsReadFile } from "@azure-tools/openapi-tools-common";
+import { readFile as vfsReadFile, asyncWriteFile } from "@azure-tools/openapi-tools-common";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../inversifyUtils";
 import { Loader, setDefaultOpts } from "./loader";
@@ -53,5 +53,10 @@ export class FileLoader implements Loader<string> {
     }
     filePath = pathResolve(this.opts.fileRoot, filePath);
     return filePath.startsWith(this.opts.fileRoot);
+  }
+
+  public async writeFile(filePath: string, content: string) {
+    filePath = this.resolvePath(filePath);
+    return asyncWriteFile(filePath, content);
   }
 }

@@ -38,6 +38,7 @@ export class DotnetReordingLoader implements Loader<RequestTracking, [RecordingF
 
       const request: SingleRequestTracking = {
         method: entry.RequestMethod,
+        path: url.path!,
         url: url.href!,
         headers: transformHeaders(entry.RequestHeaders),
         query: url.query as { [key: string]: string },

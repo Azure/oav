@@ -4,13 +4,21 @@ import { FileLoader, FileLoaderOption } from "./fileLoader";
 import { JsonLoader, JsonLoaderOption } from "./jsonLoader";
 import { Loader, setDefaultOpts } from "./loader";
 import { SuppressionLoader, SuppressionLoaderOption } from "./suppressionLoader";
-import { SwaggerSpec } from "./swaggerTypes";
+import { SwaggerExample, SwaggerSpec } from "./swaggerTypes";
 
 export interface SwaggerLoaderOption
   extends SuppressionLoaderOption,
     JsonLoaderOption,
     FileLoaderOption {
   setFilePath?: boolean;
+}
+
+export interface ExampleUpdateEntry {
+  swaggerPath: string;
+  operationId: string;
+  exampleName: string;
+  exampleFilePath: string;
+  exampleContent: SwaggerExample;
 }
 
 @injectable()

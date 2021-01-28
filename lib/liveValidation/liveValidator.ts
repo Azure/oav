@@ -533,92 +533,12 @@ export class LiveValidator {
     }
   }
 
-  /**
-   * Parse the validation request information.
-   *
-   * @param  requestUrl The url of service api call.
-   *
-   * @param requestMethod The http verb for the method to be used for lookup.
-   *
-   * @param correlationId The id to correlate the api calls.
-   *
-   * @returns parsed ValidationRequest info.
-   */
   public parseValidationRequest(
     requestUrl: string,
     requestMethod: string | undefined | null,
     correlationId: string
   ): ValidationRequest {
-    if (
-      requestUrl === undefined ||
-      requestUrl === null ||
-      typeof requestUrl.valueOf() !== "string" ||
-      !requestUrl.trim().length
-    ) {
-      const msg =
-        "An error occurred while trying to parse validation payload." +
-        'requestUrl is a required parameter of type "string" and it cannot be an empty string.';
-      const e = new models.LiveValidationError(
-        C.ErrorCodes.PotentialOperationSearchError.name,
-        msg
-      );
-      throw e;
-    }
-
-    if (
-      requestMethod === undefined ||
-      requestMethod === null ||
-      typeof requestMethod.valueOf() !== "string" ||
-      !requestMethod.trim().length
-    ) {
-      const msg =
-        "An error occurred while trying to parse validation payload." +
-        'requestMethod is a required parameter of type "string" and it cannot be an empty string.';
-      const e = new models.LiveValidationError(
-        C.ErrorCodes.PotentialOperationSearchError.name,
-        msg
-      );
-      throw e;
-    }
-    let queryStr;
-    let apiVersion = "";
-    let resourceType = "";
-    let providerNamespace = "";
-
-    const parsedUrl = url.parse(requestUrl, true);
-    const pathStr = parsedUrl.pathname || "";
-    if (pathStr !== "") {
-      // Lower all the keys and values of query parameters before searching for `api-version`
-      const queryObject = _.transform(
-        parsedUrl.query,
-        (obj: ParsedUrlQuery, value, key) =>
-          (obj[key.toLowerCase()] = _.isString(value) ? value.toLowerCase() : value)
-      );
-      apiVersion = (queryObject["api-version"] || C.unknownApiVersion) as string;
-      providerNamespace = getProviderFromPathTemplate(pathStr) || C.unknownResourceProvider;
-      resourceType = utils.getResourceType(pathStr, providerNamespace);
-
-      // Provider would be provider found from the path or Microsoft.Unknown
-      providerNamespace = providerNamespace || C.unknownResourceProvider;
-      if (providerNamespace === C.unknownResourceProvider) {
-        apiVersion = C.unknownApiVersion;
-      }
-      providerNamespace = providerNamespace.toLowerCase();
-      apiVersion = apiVersion.toLowerCase();
-      queryStr = queryObject;
-      requestMethod = requestMethod.toLowerCase();
-    }
-    return {
-      providerNamespace,
-      resourceType,
-      apiVersion,
-      requestMethod: requestMethod as LowerHttpMethods,
-      host: parsedUrl.host!,
-      pathStr,
-      query: queryStr,
-      correlationId,
-      requestUrl,
-    };
+    return parseValidationRequest(requestUrl, requestMethod, correlationId);
   }
 
   private async getMatchedPaths(jsonsPattern: string | string[]): Promise<string[]> {
@@ -738,3 +658,85 @@ export class LiveValidator {
 export function formatUrlToExpectedFormat(requestUrl: string): string {
   return requestUrl.substring(requestUrl.search("/?(subscriptions|providers)/i"));
 }
+
+/**
+ * Parse the validation request information.
+ *
+ * @param  requestUrl The url of service api call.
+ *
+ * @param requestMethod The http verb for the method to be used for lookup.
+ *
+ * @param correlationId The id to correlate the api calls.
+ *
+ * @returns parsed ValidationRequest info.
+ */
+export const parseValidationRequest = (
+  requestUrl: string,
+  requestMethod: string | undefined | null,
+  correlationId: string
+): ValidationRequest => {
+  if (
+    requestUrl === undefined ||
+    requestUrl === null ||
+    typeof requestUrl.valueOf() !== "string" ||
+    !requestUrl.trim().length
+  ) {
+    const msg =
+      "An error occurred while trying to parse validation payload." +
+      'requestUrl is a required parameter of type "string" and it cannot be an empty string.';
+    const e = new models.LiveValidationError(C.ErrorCodes.PotentialOperationSearchError.name, msg);
+    throw e;
+  }
+
+  if (
+    requestMethod === undefined ||
+    requestMethod === null ||
+    typeof requestMethod.valueOf() !== "string" ||
+    !requestMethod.trim().length
+  ) {
+    const msg =
+      "An error occurred while trying to parse validation payload." +
+      'requestMethod is a required parameter of type "string" and it cannot be an empty string.';
+    const e = new models.LiveValidationError(C.ErrorCodes.PotentialOperationSearchError.name, msg);
+    throw e;
+  }
+  let queryStr;
+  let apiVersion = "";
+  let resourceType = "";
+  let providerNamespace = "";
+
+  const parsedUrl = url.parse(requestUrl, true);
+  const pathStr = parsedUrl.pathname || "";
+  if (pathStr !== "") {
+    // Lower all the keys and values of query parameters before searching for `api-version`
+    const queryObject = _.transform(
+      parsedUrl.query,
+      (obj: ParsedUrlQuery, value, key) =>
+        (obj[key.toLowerCase()] = _.isString(value) ? value.toLowerCase() : value)
+    );
+    apiVersion = (queryObject["api-version"] || C.unknownApiVersion) as string;
+    providerNamespace = getProviderFromPathTemplate(pathStr) || C.unknownResourceProvider;
+    resourceType = utils.getResourceType(pathStr, providerNamespace);
+
+    // Provider would be provider found from the path or Microsoft.Unknown
+    providerNamespace = providerNamespace || C.unknownResourceProvider;
+    if (providerNamespace === C.unknownResourceProvider) {
+      apiVersion = C.unknownApiVersion;
+    }
+    providerNamespace = providerNamespace.toLowerCase();
+    apiVersion = apiVersion.toLowerCase();
+    queryStr = queryObject;
+    requestMethod = requestMethod.toLowerCase();
+  }
+  return {
+    providerNamespace,
+    resourceType,
+    apiVersion,
+    requestMethod: requestMethod as LowerHttpMethods,
+    host: parsedUrl.host!,
+    pathStr,
+    query: queryStr,
+    correlationId,
+    requestUrl,
+  };
+};

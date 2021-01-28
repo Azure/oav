@@ -24,6 +24,7 @@ import { getLROData } from "../lro/requestUtils";
 export type SingleRequestTracking = TestScenarioClientRequest & {
   timeStart?: Date;
   timeEnd?: Date;
+  url: string;
   responseBody: any;
   responseCode: number;
   responseHeaders: { [headerName: string]: string };
