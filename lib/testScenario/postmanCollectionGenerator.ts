@@ -2,7 +2,6 @@ import { VariableEnv } from "./variableEnv";
 import { TestResourceLoader } from "./testResourceLoader";
 import { PostmanCollectionRunnerClient } from "./postmanCollectionRunnerClient";
 import { TestScenarioRunner } from "./testScenarioRunner";
-
 export interface PostmanCollectionGeneratorOption {
   name: string;
   fileRoot: string;
@@ -18,7 +17,7 @@ export class PostmanCollectionGenerator {
   private outputFolder: string;
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
   constructor(private opt: PostmanCollectionGeneratorOption) {
-    this.testResourceLoader = new TestResourceLoader({
+    this.testResourceLoader = TestResourceLoader.create({
       useJsonParser: false,
       checkUnderFileRoot: false,
       fileRoot: this.opt.fileRoot,
