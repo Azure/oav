@@ -14,7 +14,8 @@
     "body": {
       "id": null,
       "name": "foo",
-      "readOnlyProperty": "test"
+      "readOnlyProperty": "test",
+      "type": "User"
     }
   },
   "liveResponse": {

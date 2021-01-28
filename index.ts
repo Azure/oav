@@ -1,6 +1,6 @@
-import { PostmanCollectionGenerator } from "./lib/testScenario/postmanCollectionGenerator";
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
+import "reflect-metadata";
 import * as C from "./lib/util/constants";
 
 // Easy to use methods from validate.ts

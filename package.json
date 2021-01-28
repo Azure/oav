@@ -1,6 +1,6 @@
 {
   "name": "oav",
-  "version": "2.1.0",
+  "version": "2.2.3",
   "author": {
     "name": "Microsoft Corporation",
     "email": "azsdkteam@microsoft.com",
@@ -26,6 +26,7 @@
     "glob": "^7.1.2",
     "globby": "^9.2.0",
     "handlebars": "^4.7.1",
+    "inversify": "^5.0.5",
     "js-yaml": "^3.14.1",
     "json-pointer": "^0.6.0",
     "json-refs": "^3.0.13",
@@ -38,10 +39,11 @@
     "mockjs": "^1.1.0",
     "moment": "^2.24.0",
     "ms-rest": "^2.5.4",
-    "node-abort-controller": "^1.1.0",
     "newman": "^5.2.2",
+    "node-abort-controller": "^1.1.0",
     "path-to-regexp": "^6.1.0",
     "postman-collection": "^3.6.9",
+    "reflect-metadata": "^0.1.13",
     "swagger-parser": "^6.0.5",
     "swagger2-to-postmanv2": "^2.0.0",
     "toposort": "^2.0.2",
@@ -116,7 +118,7 @@
   ],
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "run-p tsc",
+    "build": "run-p tsc lint",
     "tsc": "tsc",
     "lint": "eslint ./lib/**/*.ts ./test/**/*.ts ./*.ts",
     "lint-fix": "eslint ./lib/**/*.ts ./test/**/*.ts ./*.ts --fix",

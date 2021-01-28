@@ -89,6 +89,9 @@ dist/
 coverage/
 .nyc_output
 test-results.xml
-
+newman/
+fixtures/
+lib/testScenario/_testAKS.ts
+snapshot.patch
 .clinic/*
 junit.xml
