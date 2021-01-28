@@ -1,6 +1,6 @@
 {
   "name": "oav",
-  "version": "2.1.0",
+  "version": "2.2.3",
   "author": {
     "name": "Microsoft Corporation",
     "email": "azsdkteam@microsoft.com",
@@ -40,9 +40,10 @@
     "moment": "^2.24.0",
     "ms-rest": "^2.5.4",
     "newman": "^5.2.2",
+    "postman-collection": "^3.6.9",
     "node-abort-controller": "^1.1.0",
     "path-to-regexp": "^6.1.0",
-    "postman-collection": "^3.6.9",
+    "reflect-metadata": "^0.1.13",
     "swagger-parser": "^6.0.5",
     "swagger2-to-postmanv2": "^2.0.0",
     "toposort": "^2.0.2",
@@ -117,7 +118,7 @@
   ],
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "run-p tsc",
+    "build": "run-p tsc lint",
     "tsc": "tsc",
     "lint": "eslint ./lib/**/*.ts ./test/**/*.ts ./*.ts",
     "lint-fix": "eslint ./lib/**/*.ts ./test/**/*.ts ./*.ts --fix",
