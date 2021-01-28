@@ -1,7 +1,7 @@
 import { relative as pathRelative, resolve as pathResolve } from "path";
 import { readFile as vfsReadFile } from "@azure-tools/openapi-tools-common";
 import { inject, injectable } from "inversify";
-import { TYPES } from "../util/constants";
+import { TYPES } from "../inversifyUtils";
 import { Loader, setDefaultOpts } from "./loader";
 
 export interface FileLoaderOption {

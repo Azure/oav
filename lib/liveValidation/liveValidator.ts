@@ -19,8 +19,8 @@ import { log } from "../util/logging";
 import { Severity } from "../util/severity";
 import * as utils from "../util/utils";
 import { ExtendedErrorCode, RuntimeException } from "../util/validationError";
-import { AllOpts, inversifyGetInstance } from "../inversifyUtils";
-import { LiveValidatorLoader } from "./liveValidatorLoader";
+import { inversifyGetInstance } from "../inversifyUtils";
+import { LiveValidatorLoader, LiveValidatorLoaderOption } from "./liveValidatorLoader";
 import { getProviderFromPathTemplate, OperationSearcher } from "./operationSearcher";
 import {
   LiveRequest,
@@ -31,7 +31,7 @@ import {
   ValidationRequest,
 } from "./operationValidator";
 
-export interface LiveValidatorOptions extends AllOpts {
+export interface LiveValidatorOptions extends LiveValidatorLoaderOption {
   swaggerPaths: string[];
   git: {
     shouldClone: boolean;

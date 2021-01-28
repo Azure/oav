@@ -3,12 +3,13 @@ import { Json, parseJson } from "@azure-tools/openapi-tools-common";
 import { safeLoad as parseYaml } from "js-yaml";
 import { default as jsonPointer } from "json-pointer";
 import { inject, injectable } from "inversify";
-import { TYPES, xmsExamples } from "../util/constants";
+import { xmsExamples } from "../util/constants";
 import { getLazyBuilder } from "../util/lazyBuilder";
-import { FileLoader } from "./fileLoader";
+import { TYPES } from "../inversifyUtils";
+import { FileLoader, FileLoaderOption } from "./fileLoader";
 import { Loader, setDefaultOpts } from "./loader";
 
-export interface JsonLoaderOption {
+export interface JsonLoaderOption extends FileLoaderOption {
   useJsonParser?: boolean;
   eraseDescription?: boolean;
   eraseXmsExamples?: boolean;
