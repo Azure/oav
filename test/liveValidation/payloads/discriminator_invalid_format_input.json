@@ -1,0 +1,33 @@
+{
+  "liveRequest": {
+    "headers": {
+      "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+      "x-ms-request-id": "8e3485b6-c8a7-45c2-a9f5-59b826e42880",
+      "x-ms-correlation-request-id": "3b743f34-70a8-4f74-b812-892ebfe1b64f",
+      "date": "Tue, 11 Sep 2018 18:45:41 GMT",
+      "eTag": "\"AAAAAAAAjAIAAAAAAACL/A==\"",
+      "server": "Microsoft-HTTPAPI/2.0",
+      "Content-Type": "application/json"
+    },
+    "method": "PUT",
+    "url": "/subscriptions/randomSub/resourceGroups/randomRG/providers/Microsoft.Contoso/users?api-version=2020-01-01",
+    "body": {
+      "type": "UserWithPet",
+      "pet": {
+        "type": "Cat",
+        "lifetime": "abc"
+      }
+    }
+  },
+  "liveResponse": {
+    "statusCode": "200",
+    "headers": {
+      "x-ms-request-id": "8e3485b6-c8a7-45c2-a9f5-59b826e42880",
+      "x-ms-correlation-request-id": "8e3485b6-c8a7-45c2-a9f5-59b826e42880",
+      "date": "Tue, 11 Sep 2018 18:45:41 GMT",
+      "eTag": "\"AAAAAAAAjAIAAAAAAACL/A==\"",
+      "server": "Microsoft-HTTPAPI/2.0",
+      "Content-Type": "application/json"
+    }
+  }
+}
