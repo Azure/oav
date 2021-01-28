@@ -43,7 +43,6 @@ export class PostmanTestScript {
     if (parameter.types.includes("OverwriteVariables")) {
       ret += this.generateOverWriteVariablesScript(parameter.variables!);
     }
-    console.log(ret + end);
     return ret + end;
   }
 

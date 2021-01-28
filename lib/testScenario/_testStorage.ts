@@ -31,8 +31,6 @@ const main = async () => {
     await postmanCollectionGenerator.GenerateCollection();
   } catch (e) {
     console.log(e.message, e.stack);
-  } finally {
-    // await runner.cleanAllTestScope();
   }
 };
 

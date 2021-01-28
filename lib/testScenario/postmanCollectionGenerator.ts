@@ -64,7 +64,6 @@ export class PostmanCollectionGenerator {
         .idx(i)
         .events.idx(0)
         .update({ script: { type: "text/javascript", exec: env.resolveString(exec) } });
-      console.log(client.collection.items.idx(i).events.idx(0));
     }
   }
 }

@@ -31,7 +31,6 @@ export const builder: yargs.CommandBuilder = {
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
   await cliSuppressExceptions(async () => {
-    console.log(JSON.stringify(argv));
     const swaggerFilePaths: string[] = [
       "Microsoft.Storage/stable/2019-06-01/storage.json",
       "Microsoft.Storage/stable/2019-06-01/blob.json",
@@ -45,6 +44,9 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     if (argv.e !== undefined) {
       env = JSON.parse(fs.readFileSync(argv.e).toString());
     }
+    console.log(
+      `generating postman collection from ${argv.testScenarioPath}. outputDir: ${argv.output}`
+    );
     const opt: PostmanCollectionGeneratorOption = {
       name: argv.testScenarioPath.replace(/^.*[\\\/]/, "").replace(".yaml", ""),
       testDef: argv.testScenarioPath,
@@ -58,7 +60,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     }
     const generator = new PostmanCollectionGenerator(opt);
     await generator.GenerateCollection();
-    // generate success. print some log.
+    console.log(`succeed`);
     return 0;
   });
 }
