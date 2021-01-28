@@ -1,4 +1,3 @@
-import { PostmanCollectionGenerator } from "./../testScenario/postmanCollectionGenerator";
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
@@ -28,7 +27,6 @@ export const builder: yargs.CommandBuilder = {
 };
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
-  console.log("hello");
   await cliSuppressExceptions(async () => {
     console.log(JSON.stringify(argv));
     const swaggerFilePaths: string[] = [
