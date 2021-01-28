@@ -2,10 +2,10 @@ import { parse as urlParse } from "url";
 import { Key, pathToRegexp } from "path-to-regexp";
 import { lowerHttpMethods, Parameter, PathParameter, Schema } from "../swagger/swaggerTypes";
 import { xmsParameterizedHost } from "../util/constants";
+import { OperationMatch } from "../liveValidation/operationSearcher";
 import { resolveNestedDefinitionTransformer } from "./resolveNestedDefinitionTransformer";
 import { SpecTransformer, TransformerType } from "./transformer";
 import { traverseSwagger } from "./traverseSwagger";
-import { OperationMatch } from "../liveValidation/operationSearcher";
 
 export type RegExpWithKeys = RegExp & {
   _keys: string[];
@@ -169,4 +169,4 @@ export const extractPathParamValue = ({ pathRegex, pathMatch }: OperationMatch) 
     }
   }
   return pathParam;
-}
+};
