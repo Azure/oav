@@ -39,6 +39,7 @@
     "mockjs": "^1.1.0",
     "moment": "^2.24.0",
     "ms-rest": "^2.5.4",
+    "newman": "^5.2.2",
     "node-abort-controller": "^1.1.0",
     "path-to-regexp": "^6.1.0",
     "reflect-metadata": "^0.1.13",

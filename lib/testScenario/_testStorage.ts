@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import { PostmanCollectionGenerator } from "./postmanCollectionGenerator";
 
 // oav generate-postmanCollection testScenario --env

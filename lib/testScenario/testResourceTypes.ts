@@ -78,6 +78,7 @@ export interface ExampleReplace {
 export type TestStep = TestStepArmTemplateDeployment | TestStepExampleFileRestCall;
 
 export type TestScenario = VariableScope & {
+  name: string;
   description: string;
   requiredVariables: string[];
   shareTestScope: boolean | string;
