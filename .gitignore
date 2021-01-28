@@ -95,3 +95,5 @@ lib/testScenario/_testAKS.ts
 snapshot.patch
 .clinic/*
 junit.xml
+generated_collections/
+env.json

@@ -32,7 +32,7 @@ export class PostmanCollectionGenerator {
     const testDef = await this.testResourceLoader.load(this.opt.testDef);
     for (const item of testDef.testScenarios) {
       const client = new PostmanCollectionRunnerClient(
-        `${this.opt.name}_${item.name}`,
+        `${this.opt.name}_${item.description.replace(/\s/g, "")}`,
         this.testResourceLoader.jsonLoader,
         this.env
       );
