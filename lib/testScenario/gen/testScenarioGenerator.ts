@@ -3,7 +3,7 @@ import { inject, injectable } from "inversify";
 import { HttpHeaders } from "@azure/core-http";
 import { inversifyGetInstance, TYPES } from "../../inversifyUtils";
 import { parseValidationRequest } from "../../liveValidation/liveValidator";
-import { OperationSearcher } from "../../liveValidation/operationSearcher";
+import { OperationMatch, OperationSearcher } from "../../liveValidation/operationSearcher";
 import { JsonLoader } from "../../swagger/jsonLoader";
 import { ExampleUpdateEntry, SwaggerLoader } from "../../swagger/swaggerLoader";
 import { AjvSchemaValidator } from "../../swaggerValidator/ajvSchemaValidator";
@@ -42,6 +42,7 @@ export class TestScenarioGenerator {
   private exampleEntries: ExampleUpdateEntry[] = [];
   private testDefToWrite: TestDefinitionFile[] = [];
   private operationSearcher: OperationSearcher;
+  private idx: number = 0;
 
   public constructor(
     @inject(TYPES.opts) private opts: TestScenarioGeneratorOption,
@@ -98,6 +99,7 @@ export class TestScenarioGenerator {
       _filePath: testScenarioFilePath,
     };
 
+    this.idx = 0;
     for (const track of requestTracking) {
       const testScenario = await this.generateTestScenario(track);
       testDef.testScenarios.push(testScenario);
@@ -108,6 +110,10 @@ export class TestScenarioGenerator {
     return testDef;
   }
 
+  private getIdx() {
+    return this.idx++;
+  }
+
   private async generateTestScenario(requestTracking: RequestTracking): Promise<TestScenario> {
     const testScenario: TestScenario = ({
       description: requestTracking.description,
@@ -116,24 +122,32 @@ export class TestScenarioGenerator {
     } as Partial<TestScenario>) as TestScenario;
 
     const records = [...requestTracking.requests];
-    let idx = 0;
     while (records.length > 0) {
-      const testStep = await this.generateTestStep(records, idx++);
-      testScenario.steps.push(testStep);
+      const testStep = await this.generateTestStep(records);
+      if (testStep !== undefined) {
+        testScenario.steps.push(testStep);
+      }
     }
 
     return testScenario;
   }
 
-  private async generateTestStep(records: SingleRequestTracking[], idx: number): Promise<TestStep> {
+  private async generateTestStep(records: SingleRequestTracking[]): Promise<TestStep | undefined> {
     const record = records.shift()!;
 
     const info = parseValidationRequest(record.url, record.method, "");
-    const { operationMatch } = this.operationSearcher.search(info);
+    let operationMatch: OperationMatch;
+    try {
+      const result = this.operationSearcher.search(info);
+      operationMatch = result.operationMatch;
+    } catch (e) {
+      console.error(`Operation not found for url: ${record.url}`);
+      return;
+    }
     const { operation } = operationMatch;
 
     const operationId = operation.operationId!;
-    const exampleName = `${operationId}_Generated_${idx}`;
+    const exampleName = `${operationId}_Generated_${this.getIdx()}`;
     const swaggerPath = operation._path._spec._filePath;
 
     const example: SwaggerExample = {

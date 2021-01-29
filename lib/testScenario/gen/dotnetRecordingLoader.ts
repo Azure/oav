@@ -1,9 +1,9 @@
 import { basename } from "path";
 import { parse as parseURL } from "url";
 import { HttpMethods } from "@azure/core-http";
+import { injectable } from "inversify";
 import { Loader } from "../../swagger/loader";
 import { RequestTracking, SingleRequestTracking } from "./testScenarioGenerator";
-import { injectable } from "inversify";
 
 interface RecordingFile {
   Names: { [testName: string]: string[] };
@@ -42,7 +42,8 @@ export class DotnetReordingLoader implements Loader<RequestTracking, [RecordingF
         url: url.href!,
         headers: transformHeaders(entry.RequestHeaders),
         query: url.query as { [key: string]: string },
-        responseBody: JSON.parse(entry.ResponseBody),
+        body: parseJson(entry.RequestBody) ?? {},
+        responseBody: parseJson(entry.ResponseBody),
         responseCode: entry.StatusCode,
         responseHeaders: transformHeaders(entry.ResponseHeaders),
       };
@@ -60,4 +61,11 @@ const transformHeaders = (headers: { [headerName: string]: string[] }) => {
     result[headerName] = headers[headerName].join(" ");
   }
   return result;
+};
+
+const parseJson = (content: string) => {
+  if (content.length === 0) {
+    return undefined;
+  }
+  return JSON.parse(content);
 };

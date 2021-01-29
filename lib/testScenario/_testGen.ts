@@ -1,29 +1,37 @@
+import globby from "globby";
 import "reflect-metadata";
 import { inversifyGetInstance } from "../inversifyUtils";
 import { TestRecordingLoader } from "./gen/testRecordingLoader";
 
-import { TestScenarioGenerator } from "./gen/testScenarioGenerator";
+import { RequestTracking, TestScenarioGenerator } from "./gen/testScenarioGenerator";
 
 const main = async () => {
+  const swaggerFilePaths = await globby(
+    "/home/htc/azure-rest-api-specs/specification/containerservice/resource-manager/Microsoft.ContainerService/stable/*/*.json"
+  );
+  console.log(swaggerFilePaths);
   const generator = TestScenarioGenerator.create({
     useJsonParser: false,
     checkUnderFileRoot: false,
     fileRoot: "/home/htc/azure-rest-api-specs/specification/containerservice/resource-manager",
-    swaggerFilePaths: [
-      "Microsoft.ContainerService/stable/2019-08-01/location.json",
-      "Microsoft.ContainerService/stable/2019-08-01/managedClusters.json",
-    ],
+    swaggerFilePaths,
   });
 
   await generator.initialize();
 
   const recordingLoader = inversifyGetInstance(TestRecordingLoader, {});
-  const tracking = await recordingLoader.load(
-    "/mnt/c/dev/azure-powershell/src/Aks/Aks.Test/SessionRecords/Commands.Aks.Test.ScenarioTests.GetAksVersionTests/TestAksVersion.json"
+  const fileList = await globby(
+    "/mnt/c/dev/azure-powershell/src/Aks/Aks.Test/SessionRecords/**/*.json"
   );
+  const trackingList: RequestTracking[] = [];
+  for (const filePath of fileList) {
+    console.log(filePath);
+    const tracking = await recordingLoader.load(filePath);
+    trackingList.push(tracking);
+  }
   const testDef = await generator.generateTestDefinition(
-    [tracking],
-    "/Microsoft.ContainerService/stable/2019-08-01/test-scenarios/testAksVersion.yaml"
+    trackingList,
+    "Microsoft.ContainerService/stable/2019-08-01/test-scenarios/testAksVersion.yaml"
   );
 
   console.log(JSON.stringify(testDef, undefined, 2));
@@ -32,4 +40,6 @@ const main = async () => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
-main();
+main().catch((e) => {
+  console.error(e);
+});
