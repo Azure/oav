@@ -14,10 +14,10 @@ import {
   ExtendedErrorCode,
   SourceLocation,
 } from "../util/validationError";
+import { extractPathParamValue } from "../transform/pathRegexTransformer";
 import { LiveValidationIssue } from "./liveValidator";
 import { LiveValidatorLoader } from "./liveValidatorLoader";
 import { OperationMatch } from "./operationSearcher";
-import { extractPathParamValue } from "../transform/pathRegexTransformer";
 
 export interface ValidationRequest {
   providerNamespace: string;

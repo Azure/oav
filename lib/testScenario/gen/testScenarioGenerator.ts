@@ -1,4 +1,5 @@
-import { join as pathJoin, dirname } from "path";
+import { join as pathJoin, relative as pathRelative, dirname } from "path";
+import { default as jsonStringify } from "fast-json-stable-stringify";
 import { inject, injectable } from "inversify";
 import { HttpHeaders } from "@azure/core-http";
 import { inversifyGetInstance, TYPES } from "../../inversifyUtils";
@@ -43,6 +44,8 @@ export class TestScenarioGenerator {
   private testDefToWrite: TestDefinitionFile[] = [];
   private operationSearcher: OperationSearcher;
   private idx: number = 0;
+  // Key: OperationId_content, Value: path to example
+  private exampleCache = new Map<string, string>();
 
   public constructor(
     @inject(TYPES.opts) private opts: TestScenarioGeneratorOption,
@@ -50,7 +53,7 @@ export class TestScenarioGenerator {
     private swaggerLoader: SwaggerLoader,
     private jsonLoader: JsonLoader
   ) {
-    this.operationSearcher = new OperationSearcher((msg) => console.log(msg));
+    this.operationSearcher = new OperationSearcher((_) => {});
   }
   public static create(opts: TestScenarioGeneratorOption) {
     return inversifyGetInstance(TestScenarioGenerator, opts);
@@ -100,8 +103,9 @@ export class TestScenarioGenerator {
     };
 
     this.idx = 0;
+    this.exampleCache = new Map<string, string>();
     for (const track of requestTracking) {
-      const testScenario = await this.generateTestScenario(track);
+      const testScenario = await this.generateTestScenario(track, testScenarioFilePath);
       testDef.testScenarios.push(testScenario);
     }
 
@@ -114,7 +118,10 @@ export class TestScenarioGenerator {
     return this.idx++;
   }
 
-  private async generateTestScenario(requestTracking: RequestTracking): Promise<TestScenario> {
+  private async generateTestScenario(
+    requestTracking: RequestTracking,
+    testScenarioFilePath: string
+  ): Promise<TestScenario> {
     const testScenario: TestScenario = ({
       description: requestTracking.description,
       variables: {},
@@ -123,7 +130,7 @@ export class TestScenarioGenerator {
 
     const records = [...requestTracking.requests];
     while (records.length > 0) {
-      const testStep = await this.generateTestStep(records);
+      const testStep = await this.generateTestStep(records, testScenarioFilePath);
       if (testStep !== undefined) {
         testScenario.steps.push(testStep);
       }
@@ -132,7 +139,10 @@ export class TestScenarioGenerator {
     return testScenario;
   }
 
-  private async generateTestStep(records: SingleRequestTracking[]): Promise<TestStep | undefined> {
+  private async generateTestStep(
+    records: SingleRequestTracking[],
+    testDefFilePath: string
+  ): Promise<TestStep | undefined> {
     const record = records.shift()!;
 
     const info = parseValidationRequest(record.url, record.method, "");
@@ -147,7 +157,6 @@ export class TestScenarioGenerator {
     const { operation } = operationMatch;
 
     const operationId = operation.operationId!;
-    const exampleName = `${operationId}_Generated_${this.getIdx()}`;
     const swaggerPath = operation._path._spec._filePath;
 
     const example: SwaggerExample = {
@@ -171,18 +180,25 @@ export class TestScenarioGenerator {
       ...pathParamValue,
     };
 
-    this.exampleEntries.push({
-      swaggerPath,
-      operationId,
-      exampleName,
-      exampleFilePath: pathJoin(dirname(swaggerPath), "examples", exampleName + ".json"),
-      exampleContent: example,
-    });
+    const exampleCacheKey = this.getExampleCacheKey(operationId, example);
+    let exampleFilePath = this.exampleCache.get(exampleCacheKey);
+    if (exampleFilePath === undefined) {
+      const exampleName = `${operationId}_Generated_${this.getIdx()}`;
+      exampleFilePath = pathJoin(dirname(swaggerPath), "examples", exampleName + ".json");
+      this.exampleEntries.push({
+        swaggerPath,
+        operationId,
+        exampleName,
+        exampleFilePath,
+        exampleContent: example,
+      });
+      this.exampleCache.set(exampleCacheKey, exampleFilePath);
+    }
 
     await this.skipLroPoll(records, operation, record);
 
     return ({
-      exampleFile: `./examples/${exampleName}.json`,
+      exampleFile: pathRelative(dirname(testDefFilePath), exampleFilePath),
     } as Partial<TestStep>) as TestStep;
   }
 
@@ -217,11 +233,17 @@ export class TestScenarioGenerator {
       await poller.poll();
     }
   }
+
+  private getExampleCacheKey(operationId: string, exampleContent: SwaggerExample) {
+    const exampleStr = jsonStringify(exampleContent);
+    return `${operationId}_${exampleStr}`;
+  }
 }
 
 const recordToHttpResponse = (record: SingleRequestTracking) => {
   const response: LROOperationResponse = {
     parsedHeaders: record.responseHeaders,
+    parsedBody: record.responseBody,
     headers: new HttpHeaders(record.responseHeaders),
     request: {
       method: record.method,

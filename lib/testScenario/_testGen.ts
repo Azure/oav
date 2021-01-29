@@ -9,7 +9,7 @@ const main = async () => {
   const swaggerFilePaths = await globby(
     "/home/htc/azure-rest-api-specs/specification/containerservice/resource-manager/Microsoft.ContainerService/stable/*/*.json"
   );
-  console.log(swaggerFilePaths);
+  // console.log(swaggerFilePaths);
   const generator = TestScenarioGenerator.create({
     useJsonParser: false,
     checkUnderFileRoot: false,
@@ -21,20 +21,18 @@ const main = async () => {
 
   const recordingLoader = inversifyGetInstance(TestRecordingLoader, {});
   const fileList = await globby(
-    "/mnt/c/dev/azure-powershell/src/Aks/Aks.Test/SessionRecords/**/*.json"
+    "/mnt/c/dev/azure-powershell/src/Aks/Aks.Test/SessionRecords/*/*.json"
   );
   const trackingList: RequestTracking[] = [];
   for (const filePath of fileList) {
-    console.log(filePath);
+    // console.log(filePath);
     const tracking = await recordingLoader.load(filePath);
     trackingList.push(tracking);
   }
-  const testDef = await generator.generateTestDefinition(
+  await generator.generateTestDefinition(
     trackingList,
-    "Microsoft.ContainerService/stable/2019-08-01/test-scenarios/testAksVersion.yaml"
+    "Microsoft.ContainerService/stable/2020-07-01/test-scenarios/testAksVersion.yaml"
   );
-
-  console.log(JSON.stringify(testDef, undefined, 2));
 
   await generator.writeGeneratedFiles();
 };

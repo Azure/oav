@@ -51,6 +51,14 @@ export class DotnetReordingLoader implements Loader<RequestTracking, [RecordingF
       result.requests.push(request);
     }
 
+    result.requests.sort((a, b) =>
+      new Date(a.responseHeaders.Date) < new Date(b.responseHeaders.Date) ? -1 : 1
+    );
+
+    // for (const entry of result.requests) {
+    //   console.log(`${entry.method}\t${entry.path}`);
+    // }
+
     return result;
   }
 }
