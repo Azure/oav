@@ -235,6 +235,19 @@ export class TestScenarioGenerator {
   }
 
   private getExampleCacheKey(operationId: string, exampleContent: SwaggerExample) {
+    const example: SwaggerExample = {
+      ...exampleContent,
+      parameters: {
+        ...exampleContent.parameters,
+      },
+    };
+    if (example.parameters.resourceGroupName !== undefined) {
+      example.parameters.resourceGroupName = "rg";
+    }
+    if (example.parameters.subscriptionId !== undefined) {
+      example.parameters.resourceGroupName = "subsId";
+    }
+
     const exampleStr = jsonStringify(exampleContent);
     return `${operationId}_${exampleStr}`;
   }
