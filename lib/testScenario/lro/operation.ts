@@ -10,9 +10,9 @@ export function makeOperation<TResult extends BaseResult>(
     state: { ...state },
     update,
     cancel,
-    toString: function(this: LROOperation<TResult>) {
+    toString: function (this: LROOperation<TResult>) {
       return JSON.stringify(this.state);
-    }
+    },
   };
 }
 
@@ -41,9 +41,7 @@ async function update<TResult extends BaseResult>(
   const currentLroData = currentResponse.result._response[LROSYM];
 
   if (!currentLroData) {
-    throw new Error(
-      "Expected lroData to be defined for updating LRO operation"
-    );
+    throw new Error("Expected lroData to be defined for updating LRO operation");
   }
 
   if (state.result) {
