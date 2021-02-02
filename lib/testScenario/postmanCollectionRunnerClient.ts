@@ -15,6 +15,7 @@ import {
   QueryParamDefinition,
   VariableDefinition,
   ItemDefinition,
+  Response,
 } from "postman-collection";
 
 import { JsonLoader } from "../swagger/jsonLoader";
@@ -31,6 +32,7 @@ import {
   TestStepEnv,
 } from "./testScenarioRunner";
 import { ReflectiveVariableEnv, VariableEnv } from "./variableEnv";
+import { typeToDescription } from "./postmanItemTypes";
 
 export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
   public collection: Collection;
@@ -39,6 +41,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
   constructor(private name: string, private jsonLoader: JsonLoader, private env: VariableEnv) {
     this.collection = new Collection();
+    this.collection.name = name;
     this.collectionEnv = new VariableScope({});
     this.collectionEnv.set("bearerToken", "<bearerToken>", "string");
     this.postmanTestScript = new PostmanTestScript();
@@ -60,6 +63,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
         },
       },
     });
+    item.description = typeToDescription({ type: "prepare" });
     const authorizationHeader = new Header({
       key: "Authorization",
       value: `Bearer {{bearerToken}}`,
@@ -118,6 +122,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
       url: "",
       body: { mode: "raw" } as RequestBodyDefinition,
     });
+    item.description = step.operation.operationId || "";
     const queryParams: QueryParamDefinition[] = [];
     const urlVariables: VariableDefinition[] = [];
     for (const p of step.operation.parameters ?? []) {
@@ -129,6 +134,10 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
           paramValue,
           typeof step.exampleTemplate.parameters[param.name]
         );
+      }
+      for (const [k, v] of Object.entries(step.exampleFileContent.responses)) {
+        const exampleResp = new Response({ code: +k, body: v.body, responseTime: 0 });
+        item.responses.add(exampleResp);
       }
 
       switch (param.in) {
@@ -171,14 +180,25 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     item.request.addQueryParams(queryParams);
 
     if (step.operation["x-ms-long-running-operation"]) {
+      item.description = typeToDescription({
+        type: "LRO",
+        poller_item_name: `${item.name}_poller`,
+        operationId: step.operation.operationId || "",
+        exampleName: step.exampleFile,
+      });
       this.addAsLongRunningOperationItem(item);
     } else {
+      item.description = typeToDescription({
+        type: "simple",
+        operationId: step.operation.operationId || "",
+        exampleName: step.exampleFile,
+      });
       this.collection.items.add(item);
     }
     if (step.operation._method === "put" || step.operation._method === "delete") {
       this.collection.items.add(
         this.getOperationItem(
-          `${item.name}_${step.operation._method}_generated`,
+          `${item.name}_${step.operation._method}_generated_get`,
           item.request.url.toString()
         )
       );
@@ -319,6 +339,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
         url: url,
       },
     });
+    item.description = typeToDescription({ type: "generated-get" });
     this.addAuthorizationHeader(item);
     const scriptTypes: TestScriptType[] = ["DetailResponseLog"];
     if (!name.includes("delete")) {
@@ -339,7 +360,8 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
         header: [{ key: "Authorization", value: "Bearer {{bearerToken}}" }],
       },
     });
-    const delay = this.mockDelayItem(pollerItem.name);
+    pollerItem.description = typeToDescription({ type: "poller", lro_item_name: initialItem.name });
+    const delay = this.mockDelayItem(pollerItem.name, initialItem.name);
     const event = new Event({
       listen: "test",
       script: {
@@ -373,7 +395,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     return ret;
   }
 
-  public mockDelayItem(nextRequestName: string): Item {
+  public mockDelayItem(nextRequestName: string, LROItemName: string): Item {
     const ret = new Item({
       name: `${nextRequestName}_mock_delay`,
       request: {
@@ -382,6 +404,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
       },
     });
 
+    ret.description = typeToDescription({ type: "mock", lro_item_name: LROItemName });
     const event = new Event({
       listen: "prerequest",
       script: {

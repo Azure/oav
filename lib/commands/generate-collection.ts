@@ -35,6 +35,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       "Microsoft.Storage/stable/2019-06-01/storage.json",
       "Microsoft.Storage/stable/2019-06-01/blob.json",
     ];
+    //TODO:detect fileRoot from testScenarios.
     const fileRoot: string =
       "/home/ruowan/work/azure-rest-api-specs/specification/storage/resource-manager";
     let env = {
