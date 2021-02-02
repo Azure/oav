@@ -14,6 +14,7 @@ import {
   ExtendedErrorCode,
   SourceLocation,
 } from "../util/validationError";
+import { extractPathParamValue } from "../transform/pathRegexTransformer";
 import { LiveValidationIssue } from "./liveValidator";
 import { LiveValidatorLoader } from "./liveValidatorLoader";
 import { OperationMatch } from "./operationSearcher";
@@ -57,7 +58,7 @@ export const validateSwaggerLiveRequest = async (
   loader?: LiveValidatorLoader,
   includeErrors?: ExtendedErrorCode[]
 ) => {
-  const { pathRegex, pathMatch, operation } = info.operationMatch!;
+  const { operation } = info.operationMatch!;
   const { body, query } = request;
   const result: LiveValidationIssue[] = [];
 
@@ -69,15 +70,7 @@ export const validateSwaggerLiveRequest = async (
     validate = await loader.getRequestValidator(operation);
   }
 
-  // extract path params
-  const pathParam: MutableStringMap<string> = {};
-  const _keys = pathRegex._keys;
-  for (let idx = 1; idx < pathMatch.length; ++idx) {
-    if (_keys[idx] !== undefined) {
-      pathParam[_keys[idx]] = decodeURIComponent(pathMatch[idx]);
-    }
-  }
-
+  const pathParam = extractPathParamValue(info.operationMatch!);
   transformMapValue(query, operation._queryTransform);
   const headers = transformLiveHeader(request.headers ?? {}, operation);
   validateContentType(operation.consumes!, headers, true, result);

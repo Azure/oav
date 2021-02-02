@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-/* tslint:disable */
+import "reflect-metadata";
 
 import "reflect-metadata";
 import * as yargs from "yargs";

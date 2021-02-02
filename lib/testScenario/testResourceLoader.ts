@@ -1,6 +1,6 @@
 /* eslint-disable require-atomic-updates */
 import { join as pathJoin, dirname } from "path";
-import { safeLoad } from "js-yaml";
+import { dump, safeLoad } from "js-yaml";
 import { default as AjvInit, ValidateFunction } from "ajv";
 import { JSONPath } from "jsonpath-plus";
 import { inject, injectable } from "inversify";
@@ -132,6 +132,11 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
         },
       });
     }
+  }
+
+  public async writeTestDefinitionFile(filePath: string, testDef: TestDefinitionFile) {
+    const fileContent = dump(testDef);
+    return this.fileLoader.writeFile(filePath, fileContent);
   }
 
   public async load(filePath: string): Promise<TestDefinitionFile> {
