@@ -1,6 +1,6 @@
 /* eslint-disable require-atomic-updates */
 import { join as pathJoin, dirname } from "path";
-import { dump, safeLoad } from "js-yaml";
+import { dump, load } from "js-yaml";
 import { default as AjvInit, ValidateFunction } from "ajv";
 import { JSONPath } from "jsonpath-plus";
 import { inject, injectable } from "inversify";
@@ -145,7 +145,7 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
     }
 
     const fileContent = await this.fileLoader.load(filePath);
-    const filePayload = safeLoad(fileContent);
+    const filePayload = load(fileContent);
     if (!this.validateTestResourceFile(filePayload)) {
       const err = this.validateTestResourceFile.errors![0];
       throw new Error(
