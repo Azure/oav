@@ -5,6 +5,7 @@
 
 import * as fs from "fs";
 import * as yargs from "yargs";
+import * as path from "path"
 import {
   PostmanCollectionGenerator,
   PostmanCollectionGeneratorOption,
@@ -17,6 +18,10 @@ export const command = "generate-collection [testScenario-path]";
 export const describe = "Generate postman collection file from test scenario.";
 
 export const builder: yargs.CommandBuilder = {
+  tag: {
+    describe: "the readme tag name.",
+    string: true
+  },
   output: {
     alias: "outputDir",
     describe: "the output folder.",
@@ -45,8 +50,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     const swaggerFilePaths: string[] = autorestConfig["input-file"]
     const testScenarioFile = autorestConfig["test-resources"][0]["test"]
     console.log(testScenarioFile)
-    const fileRoot: string =
-      "/home/codespace/workspace/azure-rest-api-specs/specification/containerservice/resource-manager";
+    const fileRoot: string = path.dirname(readmeMd)
     let env = {
       subscriptionId: "<mySubcriptionId>",
       location: "westus",
