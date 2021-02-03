@@ -2,6 +2,7 @@ import { join as pathJoin, relative as pathRelative, dirname } from "path";
 import { default as jsonStringify } from "fast-json-stable-stringify";
 import { inject, injectable } from "inversify";
 import { HttpHeaders } from "@azure/core-http";
+import { cloneDeep } from "@azure-tools/openapi-tools-common";
 import { inversifyGetInstance, TYPES } from "../../inversifyUtils";
 import { parseValidationRequest } from "../../liveValidation/liveValidator";
 import { OperationSearcher } from "../../liveValidation/operationSearcher";
@@ -18,6 +19,8 @@ import { TestDefinitionFile, TestScenario, TestStep } from "../testResourceTypes
 import { TestScenarioClientRequest } from "../testScenarioRunner";
 import { Operation, Parameter, SwaggerExample } from "../../swagger/swaggerTypes";
 import { unknownApiVersion, xmsLongRunningOperation } from "../../util/constants";
+import { VariableEnv } from "../variableEnv";
+import { ExampleTemplateGenerator } from "../exampleTemplateGenerator";
 
 export type SingleRequestTracking = TestScenarioClientRequest & {
   timeStart?: Date;
@@ -37,6 +40,11 @@ export interface TestScenarioGeneratorOption extends TestResourceLoaderOption {}
 
 const resourceGroupPathRegex = /^\/subscriptions\/[^\/]+\/resourceGroups\/[^\/]+$/i;
 
+interface TestStepGenResult {
+  operation?: Operation;
+  example?: SwaggerExample;
+}
+
 @injectable()
 export class TestScenarioGenerator {
   private exampleEntries: ExampleUpdateEntry[] = [];
@@ -51,7 +59,8 @@ export class TestScenarioGenerator {
     @inject(TYPES.opts) private opts: TestScenarioGeneratorOption,
     private testResourceLoader: TestResourceLoader,
     private swaggerLoader: SwaggerLoader,
-    private jsonLoader: JsonLoader
+    private jsonLoader: JsonLoader,
+    private exampleTemplateGenerator: ExampleTemplateGenerator
   ) {
     this.operationSearcher = new OperationSearcher((_) => {});
   }
@@ -120,7 +129,7 @@ export class TestScenarioGenerator {
 
   private async generateTestScenario(
     requestTracking: RequestTracking,
-    testScenarioFilePath: string
+    testDefFilePath: string
   ): Promise<TestScenario> {
     console.log(`\nGenerating ${requestTracking.description}`);
     const testScenario: TestScenario = ({
@@ -130,9 +139,36 @@ export class TestScenarioGenerator {
     } as Partial<TestScenario>) as TestScenario;
 
     const records = [...requestTracking.requests];
+    let lastOperation: Operation | undefined = undefined;
     while (records.length > 0) {
-      const testStep = await this.generateTestStep(records, testScenarioFilePath);
-      if (testStep !== undefined) {
+      const { operation, example } = await this.generateTestStep(records);
+      if (lastOperation === operation && lastOperation?._method === "get") {
+        // Skip same get operation
+        continue;
+      }
+
+      if (example !== undefined && operation !== undefined) {
+        const exampleCacheKey = this.getExampleCacheKey(operation, example);
+        const operationId = operation.operationId!;
+        const swaggerPath = operation._path._spec._filePath;
+        let exampleFilePath = this.exampleCache.get(exampleCacheKey);
+        if (exampleFilePath === undefined) {
+          const exampleName = `${operationId}_Generated_${this.getIdx()}`;
+          exampleFilePath = pathJoin(dirname(swaggerPath), "examples", exampleName + ".json");
+          this.exampleEntries.push({
+            swaggerPath,
+            operationId,
+            exampleName,
+            exampleFilePath,
+            exampleContent: example,
+          });
+          this.exampleCache.set(exampleCacheKey, exampleFilePath);
+        }
+        const testStep = ({
+          exampleFile: pathRelative(dirname(testDefFilePath), exampleFilePath),
+        } as Partial<TestStep>) as TestStep;
+
+        lastOperation = operation;
         testScenario.steps.push(testStep);
       }
     }
@@ -153,9 +189,9 @@ export class TestScenarioGenerator {
   private async handleUnknownPath(
     record: SingleRequestTracking,
     records: SingleRequestTracking[]
-  ): Promise<TestStep | undefined> {
+  ): Promise<TestStepGenResult> {
     if (this.lroPollingUrls.has(record.url) && record.method === "GET") {
-      return undefined;
+      return {};
     }
 
     const url = new URL(record.url);
@@ -164,7 +200,7 @@ export class TestScenarioGenerator {
       switch (record.method) {
         case "GET":
         case "PUT":
-          return undefined;
+          return {};
 
         case "DELETE":
           await this.skipLroPoll(
@@ -174,18 +210,15 @@ export class TestScenarioGenerator {
             } as Operation,
             record
           );
-          return undefined;
+          return {};
       }
     }
 
     console.info(`Skip UNKNOWN request:\t${record.method}\t${url.pathname}${url.search}`);
-    return undefined;
+    return {};
   }
 
-  private async generateTestStep(
-    records: SingleRequestTracking[],
-    testDefFilePath: string
-  ): Promise<TestStep | undefined> {
+  private async generateTestStep(records: SingleRequestTracking[]): Promise<TestStepGenResult> {
     const record = records.shift()!;
 
     const operationMatch = this.searchOperation(record);
@@ -195,15 +228,17 @@ export class TestScenarioGenerator {
 
     const { operation } = operationMatch;
 
-    const operationId = operation.operationId!;
-    const swaggerPath = operation._path._spec._filePath;
+    if (record.responseCode === 404) {
+      console.info(`Skip 404 request:\t${record.method}\t${record.url}`);
+      return {};
+    }
 
     const example: SwaggerExample = {
       parameters: { "api-version": unknownApiVersion },
       responses: {},
     };
 
-    example.responses[record.responseCode] = record.body;
+    example.responses[record.responseCode] = record.responseBody;
 
     for (const p of operation.parameters ?? []) {
       const param = this.jsonLoader.resolveRefObj(p);
@@ -219,26 +254,12 @@ export class TestScenarioGenerator {
       ...pathParamValue,
     };
 
-    const exampleCacheKey = this.getExampleCacheKey(operationId, example);
-    let exampleFilePath = this.exampleCache.get(exampleCacheKey);
-    if (exampleFilePath === undefined) {
-      const exampleName = `${operationId}_Generated_${this.getIdx()}`;
-      exampleFilePath = pathJoin(dirname(swaggerPath), "examples", exampleName + ".json");
-      this.exampleEntries.push({
-        swaggerPath,
-        operationId,
-        exampleName,
-        exampleFilePath,
-        exampleContent: example,
-      });
-      this.exampleCache.set(exampleCacheKey, exampleFilePath);
-    }
-
     await this.skipLroPoll(records, operation, record);
 
-    return ({
-      exampleFile: pathRelative(dirname(testDefFilePath), exampleFilePath),
-    } as Partial<TestStep>) as TestStep;
+    return {
+      operation,
+      example,
+    };
   }
 
   private async skipLroPoll(
@@ -251,10 +272,12 @@ export class TestScenarioGenerator {
     }
 
     const headers = new HttpHeaders(initialRecord.responseHeaders);
+    let hasHeader = false;
     for (const headerName of ["Operation-Location", "Azure-AsyncOperation", "Location"]) {
       const headerValue = headers.get(headerName);
-      if (headerValue !== undefined) {
+      if (headerValue !== undefined && headerValue !== initialRecord.url) {
         this.lroPollingUrls.add(headerValue);
+        hasHeader = true;
       }
     }
 
@@ -265,7 +288,21 @@ export class TestScenarioGenerator {
       }
 
       records.unshift(record);
-      return;
+      break;
+    }
+
+    if (!hasHeader) {
+      // User body poller
+      let record = records[0];
+      while (records.length > 0) {
+        record = records.shift()!;
+        if (record.url === initialRecord.url && record.method === "GET") {
+          continue;
+        }
+        break;
+      }
+      // Keep one last polling result in records to build example for GET
+      records.unshift(record);
     }
 
     // const poller = new LROPoller({
@@ -292,22 +329,21 @@ export class TestScenarioGenerator {
     // }
   }
 
-  private getExampleCacheKey(operationId: string, exampleContent: SwaggerExample) {
-    const example: SwaggerExample = {
-      ...exampleContent,
-      parameters: {
-        ...exampleContent.parameters,
-      },
-    };
-    if (example.parameters.resourceGroupName !== undefined) {
-      example.parameters.resourceGroupName = "rg";
-    }
-    if (example.parameters.subscriptionId !== undefined) {
-      example.parameters.resourceGroupName = "subsId";
+  private getExampleCacheKey(operation: Operation, exampleContent: SwaggerExample) {
+    const env = new VariableEnv();
+    for (const p of operation.parameters ?? []) {
+      const param = this.jsonLoader.resolveRefObj(p);
+      if (param.in === "path") {
+        env.set(param.name, `__${param.name}__`);
+      }
     }
 
-    const exampleStr = jsonStringify(exampleContent);
-    return `${operationId}_${exampleStr}`;
+    const example = cloneDeep(exampleContent);
+
+    this.exampleTemplateGenerator.replaceWithParameterConvention(example, env);
+
+    const exampleStr = jsonStringify(example);
+    return `${operation.operationId}_${exampleStr}`;
   }
 }
 
