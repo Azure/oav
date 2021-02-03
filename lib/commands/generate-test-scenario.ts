@@ -12,7 +12,6 @@ import { RequestTracking, TestScenarioGenerator } from "../testScenario/gen/test
 import { getAutorestConfig } from "../util/getAutorestConfig";
 
 export const command = "generate-test-scenario";
-
 export const describe = "Generate swagger examples from real payload records.";
 
 export const builder: yargs.CommandBuilder = {

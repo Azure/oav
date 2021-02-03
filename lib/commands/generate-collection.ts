@@ -11,6 +11,7 @@ import {
 } from "../testScenario/postmanCollectionGenerator";
 
 import { cliSuppressExceptions } from "../cliSuppressExceptions";
+import { getAutorestConfig } from "../util/getAutorestConfig";
 export const command = "generate-collection [testScenario-path]";
 
 export const describe = "Generate postman collection file from test scenario.";
@@ -22,6 +23,11 @@ export const builder: yargs.CommandBuilder = {
     string: true,
     default: "generated_collections",
   },
+  readme: {
+    describe: "path to readme.md file",
+    string: true,
+    demandOption: true,
+  },
   e: {
     alias: "envFile",
     describe: "the env file path.",
@@ -31,6 +37,9 @@ export const builder: yargs.CommandBuilder = {
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
   await cliSuppressExceptions(async () => {
+    const readmeMd: string = argv.readme;
+    const autorestConfig = await getAutorestConfig(argv, readmeMd);
+    console.log(autorestConfig)
     const swaggerFilePaths: string[] = [
       "Microsoft.Storage/stable/2019-06-01/storage.json",
       "Microsoft.Storage/stable/2019-06-01/blob.json",
