@@ -38,15 +38,15 @@ export const builder: yargs.CommandBuilder = {
 export async function handler(argv: yargs.Arguments): Promise<void> {
   await cliSuppressExceptions(async () => {
     const readmeMd: string = argv.readme;
+    argv["try-require"] = "readme.test.md"
     const autorestConfig = await getAutorestConfig(argv, readmeMd);
-    console.log(autorestConfig)
-    const swaggerFilePaths: string[] = [
-      "Microsoft.Storage/stable/2019-06-01/storage.json",
-      "Microsoft.Storage/stable/2019-06-01/blob.json",
-    ];
-    //TODO:detect fileRoot from testScenarios.
+    console.log(autorestConfig["input-file"])
+    console.log(autorestConfig["test-resources"])
+    const swaggerFilePaths: string[] = autorestConfig["input-file"]
+    const testScenarioFile = autorestConfig["test-resources"][0]["test"]
+    console.log(testScenarioFile)
     const fileRoot: string =
-      "/home/ruowan/work/azure-rest-api-specs/specification/storage/resource-manager";
+      "/home/codespace/workspace/azure-rest-api-specs/specification/containerservice/resource-manager";
     let env = {
       subscriptionId: "<mySubcriptionId>",
       location: "westus",
@@ -55,11 +55,11 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       env = JSON.parse(fs.readFileSync(argv.e).toString());
     }
     console.log(
-      `generating postman collection from ${argv.testScenarioPath}. outputDir: ${argv.output}`
+      `generating postman collection from ${testScenarioFile}. outputDir: ${argv.output}`
     );
     const opt: PostmanCollectionGeneratorOption = {
-      name: argv.testScenarioPath.replace(/^.*[\\\/]/, "").replace(".yaml", ""),
-      testDef: argv.testScenarioPath,
+      name: testScenarioFile.replace(/^.*[\\\/]/, "").replace(".yaml", ""),
+      testDef: testScenarioFile,
       swaggerFilePaths: swaggerFilePaths,
       fileRoot: fileRoot,
       env: env,
