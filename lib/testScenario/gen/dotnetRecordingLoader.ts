@@ -1,5 +1,4 @@
 import { basename } from "path";
-import { parse as parseURL } from "url";
 import { HttpMethods } from "@azure/core-http";
 import { injectable } from "inversify";
 import { Loader } from "../../swagger/loader";
@@ -31,17 +30,16 @@ export class DotnetReordingLoader implements Loader<RequestTracking, [RecordingF
     };
 
     for (const entry of content.Entries) {
-      const url = parseURL(entry.RequestUri, true);
-      if (url.host === undefined) {
-        url.host = "https://management.azure.com";
-      }
+      const url = new URL(entry.RequestUri, "https://management.azure.com");
+      const query: { [key: string]: string } = {};
+      url.searchParams.forEach((val, key) => (query[key] = val));
 
       const request: SingleRequestTracking = {
         method: entry.RequestMethod,
-        path: url.path!,
-        url: url.href!,
+        path: url.pathname,
+        url: url.href,
         headers: transformHeaders(entry.RequestHeaders),
-        query: url.query as { [key: string]: string },
+        query,
         body: parseJson(entry.RequestBody) ?? {},
         responseBody: parseJson(entry.ResponseBody),
         responseCode: entry.StatusCode,

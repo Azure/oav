@@ -1,5 +1,5 @@
 import { injectable } from "inversify";
-import { safeLoad } from "js-yaml";
+import { load as yamlLoad } from "js-yaml";
 import { FileLoader } from "../../swagger/fileLoader";
 import { Loader } from "../../swagger/loader";
 import { DotnetReordingLoader } from "./dotnetRecordingLoader";
@@ -40,7 +40,7 @@ export class TestRecordingLoader implements Loader<RequestTracking> {
     }
 
     try {
-      result.content = safeLoad(fileContent);
+      result.content = yamlLoad(fileContent);
       result.isYaml = true;
       return result;
     } catch {
