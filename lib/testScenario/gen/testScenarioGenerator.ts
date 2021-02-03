@@ -4,7 +4,7 @@ import { inject, injectable } from "inversify";
 import { HttpHeaders } from "@azure/core-http";
 import { inversifyGetInstance, TYPES } from "../../inversifyUtils";
 import { parseValidationRequest } from "../../liveValidation/liveValidator";
-import { OperationMatch, OperationSearcher } from "../../liveValidation/operationSearcher";
+import { OperationSearcher } from "../../liveValidation/operationSearcher";
 import { JsonLoader } from "../../swagger/jsonLoader";
 import { ExampleUpdateEntry, SwaggerLoader } from "../../swagger/swaggerLoader";
 import { AjvSchemaValidator } from "../../swaggerValidator/ajvSchemaValidator";
@@ -17,10 +17,7 @@ import { TestResourceLoader, TestResourceLoaderOption } from "../testResourceLoa
 import { TestDefinitionFile, TestScenario, TestStep } from "../testResourceTypes";
 import { TestScenarioClientRequest } from "../testScenarioRunner";
 import { Operation, Parameter, SwaggerExample } from "../../swagger/swaggerTypes";
-import { unknownApiVersion } from "../../util/constants";
-import { LROPoller } from "../lro";
-import { LROOperationResponse, LROSYM } from "../lro/models";
-import { getLROData } from "../lro/requestUtils";
+import { unknownApiVersion, xmsLongRunningOperation } from "../../util/constants";
 
 export type SingleRequestTracking = TestScenarioClientRequest & {
   timeStart?: Date;
@@ -38,6 +35,8 @@ export interface RequestTracking {
 
 export interface TestScenarioGeneratorOption extends TestResourceLoaderOption {}
 
+const resourceGroupPathRegex = /^\/subscriptions\/[^\/]+\/resourceGroups\/[^\/]+$/i;
+
 @injectable()
 export class TestScenarioGenerator {
   private exampleEntries: ExampleUpdateEntry[] = [];
@@ -46,6 +45,7 @@ export class TestScenarioGenerator {
   private idx: number = 0;
   // Key: OperationId_content, Value: path to example
   private exampleCache = new Map<string, string>();
+  private lroPollingUrls = new Set<string>();
 
   public constructor(
     @inject(TYPES.opts) private opts: TestScenarioGeneratorOption,
@@ -122,6 +122,7 @@ export class TestScenarioGenerator {
     requestTracking: RequestTracking,
     testScenarioFilePath: string
   ): Promise<TestScenario> {
+    console.log(`\nGenerating ${requestTracking.description}`);
     const testScenario: TestScenario = ({
       description: requestTracking.description,
       variables: {},
@@ -139,21 +140,59 @@ export class TestScenarioGenerator {
     return testScenario;
   }
 
+  private searchOperation(record: SingleRequestTracking) {
+    const info = parseValidationRequest(record.url, record.method, "");
+    try {
+      const result = this.operationSearcher.search(info);
+      return result.operationMatch;
+    } catch (e) {
+      return undefined;
+    }
+  }
+
+  private async handleUnknownPath(
+    record: SingleRequestTracking,
+    records: SingleRequestTracking[]
+  ): Promise<TestStep | undefined> {
+    if (this.lroPollingUrls.has(record.url) && record.method === "GET") {
+      return undefined;
+    }
+
+    const url = new URL(record.url);
+    const match = resourceGroupPathRegex.exec(url.pathname);
+    if (match !== null) {
+      switch (record.method) {
+        case "GET":
+        case "PUT":
+          return undefined;
+
+        case "DELETE":
+          await this.skipLroPoll(
+            records,
+            {
+              [xmsLongRunningOperation]: true,
+            } as Operation,
+            record
+          );
+          return undefined;
+      }
+    }
+
+    console.info(`Skip UNKNOWN request:\t${record.method}\t${url.pathname}${url.search}`);
+    return undefined;
+  }
+
   private async generateTestStep(
     records: SingleRequestTracking[],
     testDefFilePath: string
   ): Promise<TestStep | undefined> {
     const record = records.shift()!;
 
-    const info = parseValidationRequest(record.url, record.method, "");
-    let operationMatch: OperationMatch;
-    try {
-      const result = this.operationSearcher.search(info);
-      operationMatch = result.operationMatch;
-    } catch (e) {
-      console.error(`Operation not found for url: ${record.url}`);
-      return;
+    const operationMatch = this.searchOperation(record);
+    if (operationMatch === undefined) {
+      return this.handleUnknownPath(record, records);
     }
+
     const { operation } = operationMatch;
 
     const operationId = operation.operationId!;
@@ -211,27 +250,46 @@ export class TestScenarioGenerator {
       return;
     }
 
-    const poller = new LROPoller({
-      initialOperationResult: {
-        _response: recordToHttpResponse(initialRecord),
-      },
-      initialRequestOptions: {
-        method: initialRecord.method,
-      },
-      sendOperation: () => {
-        const record = records.shift();
-        if (record === undefined) {
-          throw new Error("Long running operation not finished in recording");
-        }
-        return Promise.resolve({
-          _response: recordToHttpResponse(record),
-        });
-      },
-    });
-
-    while (!poller.isDone()) {
-      await poller.poll();
+    const headers = new HttpHeaders(initialRecord.responseHeaders);
+    for (const headerName of ["Operation-Location", "Azure-AsyncOperation", "Location"]) {
+      const headerValue = headers.get(headerName);
+      if (headerValue !== undefined) {
+        this.lroPollingUrls.add(headerValue);
+      }
     }
+
+    while (records.length > 0) {
+      const record = records.shift()!;
+      if (this.lroPollingUrls.has(record.url) && record.method === "GET") {
+        continue;
+      }
+
+      records.unshift(record);
+      return;
+    }
+
+    // const poller = new LROPoller({
+    //   initialOperationResult: {
+    //     _response: recordToHttpResponse(initialRecord),
+    //   },
+    //   initialRequestOptions: {
+    //     method: initialRecord.method,
+    //   },
+    //   sendOperation: (request) => {
+    //     const record = records.shift();
+    //     if (record === undefined) {
+    //       throw new Error("Long running operation not finished in recording");
+    //     }
+    //     this.lroPollingUrls.add(record.path);
+    //     return Promise.resolve({
+    //       _response: recordToHttpResponse(record),
+    //     });
+    //   },
+    // });
+
+    // while (!poller.isDone()) {
+    //   await poller.poll();
+    // }
   }
 
   private getExampleCacheKey(operationId: string, exampleContent: SwaggerExample) {
@@ -253,23 +311,23 @@ export class TestScenarioGenerator {
   }
 }
 
-const recordToHttpResponse = (record: SingleRequestTracking) => {
-  const response: LROOperationResponse = {
-    parsedHeaders: record.responseHeaders,
-    parsedBody: record.responseBody,
-    headers: new HttpHeaders(record.responseHeaders),
-    request: {
-      method: record.method,
-      url: record.url,
-      query: record.query,
-      headers: new HttpHeaders(record.headers),
-    } as any,
-    status: record.responseCode,
-  };
-  response[LROSYM] = getLROData(response);
+// const recordToHttpResponse = (record: SingleRequestTracking) => {
+//   const response: LROOperationResponse = {
+//     parsedHeaders: record.responseHeaders,
+//     parsedBody: record.responseBody,
+//     headers: new HttpHeaders(record.responseHeaders),
+//     request: {
+//       method: record.method,
+//       url: record.url,
+//       query: record.query,
+//       headers: new HttpHeaders(record.headers),
+//     } as any,
+//     status: record.responseCode,
+//   };
+//   response[LROSYM] = getLROData(response);
 
-  return response;
-};
+//   return response;
+// };
 
 const getParamValue = (record: SingleRequestTracking, param: Parameter) => {
   switch (param.in) {

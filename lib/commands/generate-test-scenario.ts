@@ -3,8 +3,8 @@
 
 /* eslint-disable id-blacklist */
 
+import { dirname, relative as pathRelative, resolve as pathResolve } from "path";
 import globby from "globby";
-import { dirname } from "path";
 import * as yargs from "yargs";
 import { inversifyGetInstance } from "../inversifyUtils";
 import { TestRecordingLoader } from "../testScenario/gen/testRecordingLoader";
@@ -40,15 +40,20 @@ export const builder: yargs.CommandBuilder = {
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
   const readmeMd: string = argv.readme;
-  const output: string = argv.output;
+  let output: string = argv.output;
   const recording: string = argv.recording;
   argv["try-require"] = "readme.test.md";
 
   const recordingFilePaths = await globby(recording);
+  recordingFilePaths.sort();
   const autorestConfig = await getAutorestConfig(argv, readmeMd);
   const swaggerFilePaths: string[] = autorestConfig["input-file"];
+  const fileRoot = dirname(readmeMd);
+  output = pathResolve(fileRoot, output);
+  output = pathRelative(fileRoot, output);
+
   console.log("input-file:");
-  console.log();
+  console.log(swaggerFilePaths);
   console.log("recording-file:");
   console.log(recordingFilePaths);
   console.log("output-file:");
@@ -57,7 +62,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
   const generator = TestScenarioGenerator.create({
     useJsonParser: false,
     checkUnderFileRoot: false,
-    fileRoot: dirname(readmeMd),
+    fileRoot,
     swaggerFilePaths,
   });
 
@@ -66,11 +71,12 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
   const recordingLoader = inversifyGetInstance(TestRecordingLoader, {});
   const trackingList: RequestTracking[] = [];
   for (const filePath of recordingFilePaths) {
-    // console.log(filePath);
+    console.log(`Transforming:\t${filePath}`);
     const tracking = await recordingLoader.load(filePath);
     trackingList.push(tracking);
   }
   await generator.generateTestDefinition(trackingList, output);
 
   await generator.writeGeneratedFiles();
+  process.exit(0);
 }
