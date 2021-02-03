@@ -1,6 +1,6 @@
 /* eslint-disable require-atomic-updates */
 import { join as pathJoin, dirname } from "path";
-import { dump, safeLoad } from "js-yaml";
+import { dump as yamlDump, load as yamlLoad } from "js-yaml";
 import { default as AjvInit, ValidateFunction } from "ajv";
 import { JSONPath } from "jsonpath-plus";
 import { inject, injectable } from "inversify";
@@ -54,20 +54,19 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
     { [operationId: string]: [Operation, string] }
   > = new Map();
   private initialized: boolean = false;
-  private exampleTemplateGenerator: ExampleTemplateGenerator;
 
   public constructor(
     @inject(TYPES.opts) private opts: TestResourceLoaderOption,
     private fileLoader: FileLoader,
     public jsonLoader: JsonLoader,
-    private swaggerLoader: SwaggerLoader
+    private swaggerLoader: SwaggerLoader,
+    private exampleTemplateGenerator: ExampleTemplateGenerator
   ) {
     setDefaultOpts(opts, {
       swaggerFilePaths: [],
     });
 
     this.schemaValidator = new AjvSchemaValidator(this.jsonLoader);
-    this.exampleTemplateGenerator = new ExampleTemplateGenerator(this.jsonLoader);
 
     this.transformContext = getTransformContext(this.jsonLoader, this.schemaValidator, [
       xmsPathsTransformer,
@@ -135,7 +134,7 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
   }
 
   public async writeTestDefinitionFile(filePath: string, testDef: TestDefinitionFile) {
-    const fileContent = dump(testDef);
+    const fileContent = yamlDump(testDef);
     return this.fileLoader.writeFile(filePath, fileContent);
   }
 
@@ -145,7 +144,7 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
     }
 
     const fileContent = await this.fileLoader.load(filePath);
-    const filePayload = safeLoad(fileContent);
+    const filePayload = yamlLoad(fileContent);
     if (!this.validateTestResourceFile(filePayload)) {
       const err = this.validateTestResourceFile.errors![0];
       throw new Error(

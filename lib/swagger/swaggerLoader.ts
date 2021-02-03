@@ -1,4 +1,4 @@
-import { relative as pathRelative } from "path";
+import { relative as pathRelative, dirname } from "path";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../inversifyUtils";
 import { traverseSwagger } from "../transform/traverseSwagger";
@@ -90,8 +90,15 @@ export class SwaggerLoader implements Loader<SwaggerSpec> {
           }
 
           for (const entry of entriesGroup) {
+            let path = pathRelative(dirname(swaggerPath), entry.exampleFilePath).replace(
+              /\\/g,
+              "/"
+            );
+            if (!path.startsWith(".")) {
+              path = `./${path}`;
+            }
             examples[entry.exampleName] = ({
-              $ref: pathRelative(swaggerPath, entry.exampleFilePath),
+              $ref: path,
             } as Partial<SwaggerExample>) as SwaggerExample;
             toWait.push(
               this.fileLoader.writeFile(entry.exampleFilePath, formatJson(entry.exampleContent))

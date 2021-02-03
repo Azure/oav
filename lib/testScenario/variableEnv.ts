@@ -101,6 +101,9 @@ export class VariableEnv {
     if (typeof obj !== "object") {
       return obj;
     }
+    if (obj === null || obj === undefined) {
+      return obj;
+    }
 
     if (Array.isArray(obj)) {
       return ((obj as any[]).map((v) =>

@@ -1,4 +1,5 @@
 import { escapeRegExp } from "lodash";
+import { injectable } from "inversify";
 import { JsonLoader } from "../swagger/jsonLoader";
 import { SwaggerExample } from "../swagger/swaggerTypes";
 import {
@@ -18,6 +19,7 @@ import {
 
 const placeholderToBeDetermined = "__to_be_determined__";
 
+@injectable()
 export class ExampleTemplateGenerator implements TestScenarioRunnerClient {
   public constructor(private jsonLoader: JsonLoader) {}
 
@@ -74,7 +76,7 @@ export class ExampleTemplateGenerator implements TestScenarioRunnerClient {
     await runner.executeScenario(testScenario);
   }
 
-  private replaceWithParameterConvention(exampleTemplate: SwaggerExample, env: VariableEnv) {
+  public replaceWithParameterConvention(exampleTemplate: SwaggerExample, env: VariableEnv) {
     const toMatch: string[] = [];
     const matchReplace: { [toMatch: string]: string } = {};
 
@@ -162,6 +164,9 @@ const replaceAllInObject = (
   };
 
   const traverseObject = (obj: any) => {
+    if (obj === null || obj === undefined) {
+      return;
+    }
     if (Array.isArray(obj)) {
       for (let idx = 0; idx < obj.length; ++idx) {
         if (typeof obj[idx] === "string") {
