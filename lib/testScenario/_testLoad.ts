@@ -49,9 +49,10 @@ const main = async () => {
   });
 
   try {
-    for (const scenario of testDef.testScenarios) {
-      await runner.executeScenario(scenario);
-    }
+    // for (const scenario of testDef.testScenarios) {
+    //   await runner.executeScenario(scenario);
+    // }
+    await runner.executeScenario(testDef.testScenarios[0]);
   } catch (e) {
     console.log(e.message, e.stack);
   } finally {
