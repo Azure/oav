@@ -5,7 +5,6 @@
 
 import { dirname, relative as pathRelative, resolve as pathResolve } from "path";
 import globby from "globby";
-import { dirname } from "path";
 import * as yargs from "yargs";
 import { inversifyGetInstance } from "../inversifyUtils";
 import { TestRecordingLoader } from "../testScenario/gen/testRecordingLoader";
