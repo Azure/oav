@@ -10,10 +10,11 @@ import { TestScenarioRestClient } from "./testScenarioRestClient";
 
 const main = async () => {
   const readmeMd: string =
-    "/home/htc/azure-rest-api-specs/specification/containerservice/resource-manager/readme.md";
+    "/home/htc/azure-rest-api-specs/specification/network/resource-manager/readme.md";
+  // "/home/htc/azure-rest-api-specs/specification/operationalinsights/resource-manager/readme.md";
   const argv = {
     ["try-require"]: "readme.test.md",
-    tag: "package-2020-07",
+    tag: "package-2020-08",
   };
 
   const autorestConfig = await getAutorestConfig(argv, readmeMd);
@@ -31,15 +32,17 @@ const main = async () => {
   });
 
   const testDef = await loader.load(
-    "Microsoft.ContainerService/stable/2020-07-01/test-scenarios/testAks.yml"
+    // "Microsoft.ContainerService/stable/2020-07-01/test-scenarios/testAks.yml"
+    // "Microsoft.OperationalInsights/stable/2020-08-01/test-scenarios/testDataExport.yaml"
+    "Microsoft.Network/stable/2020-08-01/test-scenarios/testNetworkPublicIp.yaml"
   );
 
-  console.log(testDef);
+  console.log(testDef.testScenarios[0].steps);
 
   const env = new VariableEnv();
   env.setBatch({
     subscriptionId: "db5eb68e-73e2-4fa8-b18a-46cd1be4cce5",
-    location: "eastasia",
+    location: "westus",
   });
 
   const runner = new TestScenarioRunner({

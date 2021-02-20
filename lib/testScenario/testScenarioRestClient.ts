@@ -15,11 +15,7 @@ import { TokenCredentials as MsRestTokenCredential } from "@azure/ms-rest-js";
 import { ResourceManagementClient } from "@azure/arm-resources";
 import { LROPoller as MsLROPoller } from "@azure/ms-rest-azure-js";
 import { setDefaultOpts } from "../swagger/loader";
-import {
-  ArmTemplate,
-  TestStepArmTemplateDeployment,
-  TestStepExampleFileRestCall,
-} from "./testResourceTypes";
+import { ArmTemplate, TestStepArmTemplateDeployment, TestStepRestCall } from "./testResourceTypes";
 import {
   ArmDeploymentTracking,
   TestScenarioClientRequest,
@@ -92,11 +88,11 @@ export class TestScenarioRestClient extends ServiceClient implements TestScenari
 
   public async sendExampleRequest(
     req: TestScenarioClientRequest,
-    step: TestStepExampleFileRestCall,
+    step: TestStepRestCall,
     _stepEnv: TestStepEnv
   ): Promise<void> {
     console.log(`Send request: ${req.method} ${req.path}`);
-    console.log(JSON.stringify(step.exampleTemplate, null, 2));
+    console.log(JSON.stringify(req.body, null, 2));
     const url = new URL(req.path, this.opts.endpoint!);
     for (const queryName of Object.keys(req.query)) {
       url.searchParams.set(queryName, req.query[queryName]);
