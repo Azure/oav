@@ -99,3 +99,4 @@ generated_collections/
 env.json
 generated_examples/
 generated_reports/
+generated_diff/

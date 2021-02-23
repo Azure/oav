@@ -1,14 +1,14 @@
 import "reflect-metadata";
-import { PostmanReportParser } from "./postmanReportParser";
+import { ExampleGenerator } from "./exampleGenerator";
 
 // oav generate-postmanCollection testScenario --env
 const main = async () => {
   try {
-    const parser = new PostmanReportParser(
-      "//home/ruowan/work/oav/newman/newman-run-report-2021-02-09-07-44-08-992-0.json",
-      "./generated_reports/generated_report.json"
+    const generator = new ExampleGenerator(
+      "/home/ruowan/work/oav/generated_reports/generated_report.json",
+      "generated_examples"
     );
-    parser.generateRawReport();
+    generator.generateExamples();
   } catch (e) {
     console.log(e.message, e.stack);
   }

@@ -76,7 +76,8 @@ export class PostmanReportParser {
     };
     ret.statusCode = resp.code.toString();
     ret.headers = this.parseHeader(resp.headers.toJSON());
-    ret.body = resp.body?.toString() || "";
+
+    ret.body = resp.stream?.toString() || "";
     return ret;
   }
 

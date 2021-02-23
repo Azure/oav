@@ -95,7 +95,7 @@ export interface RawReport {
 export interface RawExecution {
   request: RawRequest;
   response: RawResponse;
-  annotation?: string;
+  annotation?: any;
 }
 export interface RawRequest {
   url: string;
