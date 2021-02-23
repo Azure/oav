@@ -16,7 +16,6 @@ export class ExampleGenerator {
     const rawReport: RawReport = JSON.parse(fs.readFileSync(this.rawReportPath).toString());
     const variables = rawReport.variables;
     const examples: Map<string, any> = new Map<string, any>();
-    console.log(variables);
     for (const it of rawReport.executions) {
       if (it.annotation === undefined) {
         continue;
