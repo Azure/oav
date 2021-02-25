@@ -132,7 +132,7 @@ export const validateSwaggerLiveResponse = async (
     isResponse: true,
     includeErrors,
     statusCode,
-    isGetPutHttpMethods: operation._method === "get" || operation._method === "put",
+    httpMethod: operation._method,
   };
   const errors = validate(ctx, {
     headers,

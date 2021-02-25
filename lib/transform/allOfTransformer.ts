@@ -18,7 +18,7 @@ const transformAllOfSchema = (schema: Schema, baseSchemas: Set<Schema>, jsonLoad
     transformAllOfSchema(sch, baseSchemas, jsonLoader);
 
     const { properties, required, additionalProperties: aProperties } = sch;
-    if (sch["x-ms-azure-resource"] === true) {
+    if (sch["x-ms-azure-resource"] === true && schema["x-ms-azure-resource"] === undefined) {
       schema["x-ms-azure-resource"] = true;
     }
     if (properties !== undefined) {

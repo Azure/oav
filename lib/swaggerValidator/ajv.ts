@@ -61,7 +61,7 @@ export const ajvEnableXmsAzureResource = (ajv: Ajv) => {
     inline: (it: CompilationContext, _keyword: string, isResource: boolean) => {
       const data = `data${it.dataLevel || ""}`;
       return isResource
-        ? `!(this.isResponse && this.isGetPutHttpMethods) || (${data}.id !== null && ${data}.id !== undefined)`
+        ? `!(this.isResponse && (this.httpMethod === 'get' || this.httpMethod === 'put')) || (${data}.id !== null && ${data}.id !== undefined)`
         : "1";
     },
   });
