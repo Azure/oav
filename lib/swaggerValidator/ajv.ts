@@ -1,7 +1,7 @@
 import { Ajv, CompilationContext } from "ajv";
 import { JsonLoader } from "../swagger/jsonLoader";
 import { Schema } from "../swagger/swaggerTypes";
-import { xmsMutability, xmsSecret } from "../util/constants";
+import { xmsAzureResource, xmsMutability, xmsSecret } from "../util/constants";
 import { ajvEnableDiscriminatorMap } from "./ajvDiscriminatorMap";
 
 export const ajvEnableReadOnlyAndXmsMutability = (ajv: Ajv) => {
@@ -51,6 +51,18 @@ export const ajvEnableXmsSecret = (ajv: Ajv) => {
     inline: (it: CompilationContext, _keyword: string, isSecret: boolean) => {
       const data = `data${it.dataLevel || ""}`;
       return isSecret ? `!this.isResponse || ${data} === null || ${data} === undefined` : "1";
+    },
+  });
+};
+
+export const ajvEnableXmsAzureResource = (ajv: Ajv) => {
+  ajv.addKeyword(xmsAzureResource, {
+    metaSchema: { type: "boolean" } as Schema,
+    inline: (it: CompilationContext, _keyword: string, isResource: boolean) => {
+      const data = `data${it.dataLevel || ""}`;
+      return isResource
+        ? `!(this.isResponse && this.isGetPutHttpMethods) || (${data}.id !== null && ${data}.id !== undefined)`
+        : "1";
     },
   });
 };
@@ -145,4 +157,8 @@ export const ajvEnableAll = (ajv: Ajv, jsonLoader: JsonLoader) => {
   ajvEnableDateTimeRfc1123Format(ajv);
   ajvAddFormatsDefaultValidation(ajv, "string", ["byte", "password", "file"]);
   ajvAddFormatsDefaultValidation(ajv, "number", ["double", "float", "decimal"]);
+};
+
+export const ajvEnableArmRule = (ajv: Ajv) => {
+  ajvEnableXmsAzureResource(ajv);
 };

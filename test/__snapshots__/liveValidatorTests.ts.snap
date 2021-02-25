@@ -1,5 +1,51 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Live Validator Initialize cache and validate should report error in response for GET/PUT resource calls when id is not returned 1`] = `
+Object {
+  "requestValidationResult": Object {
+    "errors": Array [],
+    "isSuccessful": true,
+    "operationInfo": Object {
+      "apiVersion": "2021-01-01-privatepreview",
+      "operationId": "Linker_CreateOrUpdate",
+    },
+    "runtimeException": undefined,
+  },
+  "responseValidationResult": Object {
+    "errors": Array [
+      Object {
+        "code": "MISSING_RESOURCE_ID",
+        "documentationUrl": "",
+        "jsonPathsInPayload": Array [
+          "$",
+        ],
+        "message": "id is required to return in response of GET/PUT resource calls but not provided",
+        "params": Array [],
+        "pathsInPayload": Array [
+          "",
+        ],
+        "schemaPath": "",
+        "severity": 0,
+        "source": Object {
+          "jsonRef": "#/definitions/LinkerResource",
+          "position": Object {
+            "column": 23,
+            "line": 566,
+          },
+          "url": "specification/servicelinker/resource-manager/Microsoft.ServiceLinker/preview/2021-01-01-privatepreview/servicelinker.json",
+        },
+      },
+    ],
+    "isSuccessful": false,
+    "operationInfo": Object {
+      "apiVersion": "2021-01-01-privatepreview",
+      "operationId": "Linker_CreateOrUpdate",
+    },
+    "runtimeException": undefined,
+  },
+}
+`;
+
 exports[`Live Validator Initialize cache and validate should return no errors for valid input with optional parameter body empty 1`] = `
 Object {
   "requestValidationResult": Object {
@@ -706,8 +752,8 @@ Object {
         "severity": 0,
         "source": Object {
           "position": Object {
-            "column": 23,
-            "line": 184,
+            "column": 24,
+            "line": 183,
           },
           "url": "specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimapis.json",
         },

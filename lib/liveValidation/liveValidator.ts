@@ -44,6 +44,7 @@ export interface LiveValidatorOptions extends LiveValidatorLoaderOptions {
   isPathCaseSensitive: boolean;
   loadValidatorInBackground: boolean;
   loadValidatorInInitialize: boolean;
+  isArmCall: boolean;
 }
 
 export interface RequestResponsePair {
@@ -163,6 +164,10 @@ export class LiveValidator {
 
     if (ops.loadValidatorInInitialize === undefined) {
       ops.loadValidatorInInitialize = false;
+    }
+
+    if (ops.isArmCall === undefined) {
+      ops.isArmCall = false;
     }
 
     this.options = ops as LiveValidatorOptions;

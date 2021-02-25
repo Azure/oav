@@ -13,6 +13,7 @@ import {
   xmsPaths,
   xmsSkipUrlEncoding,
   xNullable,
+  xmsAzureResource,
 } from "../util/constants";
 import { $id } from "./jsonLoader";
 
@@ -219,6 +220,7 @@ export interface Schema extends BaseSchema {
   example?: { [exampleName: string]: Example };
   required?: string[];
   propertyNames?: Schema;
+  [xmsAzureResource]?: boolean;
 
   // Nullable support
   [xNullable]?: boolean;

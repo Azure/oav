@@ -1,5 +1,10 @@
 # Change Log - oav
 
+## 02/08/2021 2.2.5
+
+- Add new rule of 'MISSING_RESOURCE_ID'.
+- Add option of 'isArmCall' to differentiate rulesets for Arm and RpaaS.
+
 ## 02/08/2021 2.2.4
 
 - Bump version to republish since previous version is stuck to be fetched.

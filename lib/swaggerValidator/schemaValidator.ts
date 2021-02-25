@@ -47,6 +47,7 @@ export const validateErrorMessages: { [key in ExtendedErrorCode]?: (params: any)
   MISSING_REQUIRED_PARAMETER: strTemplate`Value is required but was not provided`,
   INVALID_RESPONSE_BODY: strTemplate`Body is required in response but not provided`,
   INVALID_RESPONSE_HEADER: strTemplate`Header ${"missingProperty"} is required in response but not provided`,
+  MISSING_RESOURCE_ID: strTemplate`id is required to return in response of GET/PUT resource calls but not provided`,
 
   DISCRIMINATOR_VALUE_NOT_FOUND: strTemplate`Discriminator value "${"data"}" not found`,
   ANY_OF_MISSING: strTemplate`Data does not match any schemas from 'anyOf'`,

@@ -53,6 +53,7 @@ export class LiveValidatorLoader implements Loader<SwaggerSpec> {
       }
       if (response.headers !== undefined) {
         const headerSchema: Schema = { properties: {}, required: [] };
+        copyInfo(response.headers, headerSchema);
         schema.properties!.headers = headerSchema;
         for (const headerName of Object.keys(response.headers)) {
           const name = headerName.toLowerCase();
@@ -99,7 +100,7 @@ export class LiveValidatorLoader implements Loader<SwaggerSpec> {
     this.jsonLoader = JsonLoader.create(opts);
     this.swaggerLoader = SwaggerLoader.create(opts);
 
-    this.schemaValidator = new AjvSchemaValidator(this.jsonLoader);
+    this.schemaValidator = new AjvSchemaValidator(this.jsonLoader, opts as any);
 
     this.transformContext = getTransformContext(this.jsonLoader, this.schemaValidator, [
       xmsPathsTransformer,
