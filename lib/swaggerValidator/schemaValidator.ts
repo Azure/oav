@@ -27,6 +27,10 @@ export interface SchemaValidator {
   compileAsync(schema: Schema): Promise<SchemaValidateFunction>;
 }
 
+export interface SchemaValidatorOption {
+  isArmCall?: boolean;
+}
+
 const includeErrorsMap: WeakMap<ExtendedErrorCode[], Set<ExtendedErrorCode>> = new WeakMap();
 
 export const getIncludeErrorsMap = (includeErrors?: ExtendedErrorCode[]) => {

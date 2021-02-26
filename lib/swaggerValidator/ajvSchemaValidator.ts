@@ -20,13 +20,18 @@ import {
   SchemaValidateFunction,
   SchemaValidateIssue,
   SchemaValidator,
+  SchemaValidatorOption,
   validateErrorMessages,
 } from "./schemaValidator";
 
 export class AjvSchemaValidator implements SchemaValidator {
   private ajv: Ajv;
 
-  public constructor(loader: JsonLoader, options?: ajv.Options) {
+  public constructor(
+    loader: JsonLoader,
+    options?: ajv.Options,
+    schemaValidatorOption?: SchemaValidatorOption
+  ) {
     this.ajv = ajvInit({
       // tslint:disable-next-line: no-submodule-imports
       meta: require("ajv/lib/refs/json-schema-draft-04.json"),
@@ -51,7 +56,7 @@ export class AjvSchemaValidator implements SchemaValidator {
     });
     ajvEnableAll(this.ajv, loader);
 
-    if (options && (options as any).isArmCall === true) {
+    if (schemaValidatorOption?.isArmCall === true) {
       ajvEnableArmRule(this.ajv);
     }
   }
