@@ -128,7 +128,12 @@ export const validateSwaggerLiveResponse = async (
     validateContentType(operation.produces!, headers, false, result);
   }
 
-  const ctx = { isResponse: true, includeErrors, statusCode };
+  const ctx = {
+    isResponse: true,
+    includeErrors,
+    statusCode,
+    httpMethod: operation._method,
+  };
   const errors = validate(ctx, {
     headers,
     body,

@@ -11,7 +11,7 @@ import { LiveValidator } from "../lib/liveValidation/liveValidator";
 import { OperationSearcher } from "../lib/liveValidation/operationSearcher";
 import * as Constants from "../lib/util/constants";
 
-const numberOfSpecs = 12;
+const numberOfSpecs = 13;
 jest.setTimeout(999999);
 
 describe("Live Validator", () => {
@@ -25,6 +25,7 @@ describe("Live Validator", () => {
           shouldClone: false,
         },
         directory: path.resolve(os.homedir(), "repo"),
+        isArmCall: false,
         isPathCaseSensitive: false,
         loadValidatorInBackground: true,
         loadValidatorInInitialize: false,
@@ -66,6 +67,7 @@ describe("Live Validator", () => {
     it("should initialize with user provided swaggerPaths", () => {
       const swaggerPaths = ["swaggerPath1", "swaggerPath2"];
       const options = {
+        isArmCall: false,
         isPathCaseSensitive: false,
         excludedSwaggerPathsPattern: Constants.DefaultConfig.ExcludedSwaggerPathsPattern,
         swaggerPaths,
@@ -87,6 +89,7 @@ describe("Live Validator", () => {
       const options = {
         swaggerPaths,
         excludedSwaggerPathsPattern: Constants.DefaultConfig.ExcludedSwaggerPathsPattern,
+        isArmCall: false,
         isPathCaseSensitive: false,
         git: {
           url: "https://github.com/Azure/azure-rest-api-specs.git",
@@ -110,6 +113,7 @@ describe("Live Validator", () => {
       const options = {
         swaggerPaths,
         excludedSwaggerPathsPattern: Constants.DefaultConfig.ExcludedSwaggerPathsPattern,
+        isArmCall: false,
         isPathCaseSensitive: false,
         git: {
           url: git.url,
@@ -140,6 +144,7 @@ describe("Live Validator", () => {
         excludedSwaggerPathsPattern: Constants.DefaultConfig.ExcludedSwaggerPathsPattern,
         git,
         directory,
+        isArmCall: false,
         isPathCaseSensitive: false,
         loadValidatorInBackground: true,
         loadValidatorInInitialize: false,
@@ -711,6 +716,26 @@ describe("Live Validator", () => {
       const payload = require(`${__dirname}/liveValidation/payloads/xmsSecretAndRequired.json`);
       const result = await liveValidator.validateLiveRequestResponse(payload);
       assert.equal(result.responseValidationResult.isSuccessful, true);
+    });
+
+    it(`should report error in response for GET/PUT resource calls when id is not returned`, async () => {
+      const options = {
+        directory: `${__dirname}/liveValidation/swaggers/`,
+        isPathCaseSensitive: false,
+        useRelativeSourceLocationUrl: true,
+        swaggerPathsPattern: [
+          "specification\\servicelinker\\resource-manager\\Microsoft.ServiceLinker\\**\\*.json",
+        ],
+        git: {
+          shouldClone: false,
+        },
+        isArmCall: true,
+      };
+      const liveValidator = new LiveValidator(options);
+      await liveValidator.initialize();
+      const payload = require(`${__dirname}/liveValidation/payloads/missingResourceId_input.json`);
+      const validationResult = await liveValidator.validateLiveRequestResponse(payload);
+      expect(validationResult).toMatchSnapshot();
     });
 
     it(`should return no errors for valid input with optional parameter body null`, async () => {

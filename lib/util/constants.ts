@@ -19,6 +19,8 @@ export const xmsEnum = "x-ms-enum";
 
 export const xmsMutability = "x-ms-mutability";
 
+export const xmsAzureResource = "x-ms-azure-resource";
+
 export const xmsSecret = "x-ms-secret";
 
 export const xNullable = "x-nullable";
