@@ -1,14 +1,18 @@
 import "reflect-metadata";
-import { ExampleGenerator } from "./exampleGenerator";
+import { ReportGenerator } from "./reportGenerator";
 
 // oav generate-postmanCollection testScenario --env
 const main = async () => {
   try {
-    const generator = new ExampleGenerator(
+    const generator = new ReportGenerator(
       "/home/ruowan/work/oav/generated_reports/generated_report.json",
-      "generated_examples"
+      "generated_examples",
+      "",
+      [],
+      "",
+      ""
     );
-    generator.generateExamples();
+    await generator.generateReport();
   } catch (e) {
     console.log(e.message, e.stack);
   }

@@ -15,7 +15,6 @@ import {
   QueryParamDefinition,
   VariableDefinition,
   ItemDefinition,
-  Response,
 } from "postman-collection";
 
 import { JsonLoader } from "../swagger/jsonLoader";
@@ -125,6 +124,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
       const param = this.jsonLoader.resolveRefObj(p);
       const paramValue = stepEnv.env.get(param.name) || step.requestParameters[param.name];
       if (!this.collectionEnv.has(param.name)) {
+<<<<<<< HEAD
         this.collectionEnv.set(param.name, paramValue, typeof step.requestParameters[param.name]);
       }
       const exampleResp = new Response({
@@ -133,6 +133,14 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
         responseTime: 0,
       });
       item.responses.add(exampleResp);
+=======
+        this.collectionEnv.set(
+          param.name,
+          paramValue,
+          typeof step.exampleTemplate.parameters[param.name]
+        );
+      }
+>>>>>>> 8bf3410 (fix generated example format)
 
       switch (param.in) {
         case "path":
@@ -315,9 +323,13 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
       path.resolve(outputFolder, `${this.name}_collection.json`),
       JSON.stringify(this.collection.toJSON(), null, 2)
     );
+
+    const env = this.collectionEnv.toJSON();
+    env.name = this.name + "_env";
+    env._postman_variable_scope = "environment";
     fs.writeFileSync(
       path.resolve(outputFolder, `${this.name}_env.json`),
-      JSON.stringify(this.collectionEnv.toJSON(), null, 2)
+      JSON.stringify(env, null, 2)
     );
   }
 

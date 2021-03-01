@@ -2,6 +2,7 @@ export type PostmanItemType = Simple | LRO | Prepare | GeneratedGet | Mock | Pol
 
 interface Basic {
   operationId: string;
+  exampleFilePath?: string;
 }
 
 type Simple = {

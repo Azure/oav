@@ -401,13 +401,13 @@ export interface RawExecution {
 export interface RawRequest {
   url: string;
   method: string;
-  headers: Array<{ [key: string]: string }>;
+  headers: { [key: string]: any };
   body: string;
 }
 
 export interface RawResponse {
   statusCode: string;
-  headers: Array<{ [key: string]: string }>;
+  headers: { [key: string]: any };
   body: string;
 }
 

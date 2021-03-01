@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import * as fs from "fs";
-import { diff } from "./exampleDiff";
+import { ExampleDiff } from "./exampleDiff";
 
 const main = async () => {
   const newFile = "/home/ruowan/work/oav/generated_examples/ManagedClustersCreate_Update.json";
@@ -8,7 +8,8 @@ const main = async () => {
   const newExample = JSON.parse(fs.readFileSync(newFile).toString()).responses;
   const oldExample = JSON.parse(fs.readFileSync(oldFile).toString()).responses;
 
-  diff(oldExample, newExample);
+  const diff = new ExampleDiff();
+  diff.diff(newExample, oldExample);
 };
 
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
