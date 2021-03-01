@@ -2,6 +2,7 @@
 
 import "reflect-metadata";
 
+import "reflect-metadata";
 import * as yargs from "yargs";
 import { log } from "./lib/util/logging";
 
@@ -9,6 +10,7 @@ const defaultLogDir = log.directory;
 
 const packageVersion = require("../package.json").version;
 
+// eslint-disable-next-line no-unused-expressions
 yargs
   .version(packageVersion)
   .commandDir("lib/commands")
@@ -31,7 +33,7 @@ yargs
     describe: `Pretty print`,
   })
   .global(["h", "l", "f", "p"])
-  .help();
+  .help().argv;
 
 if (yargs.argv._.length === 0 && yargs.argv.h === false) {
   yargs.coerce("help", (_) => true);
