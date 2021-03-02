@@ -1,3 +1,4 @@
+import { ExampleQualityValidator } from './../validators/qualityValidator';
 import * as fs from "fs";
 import * as path from "path";
 import * as _ from "lodash";
@@ -14,9 +15,12 @@ export class ReportGenerator {
   private testResourceLoader: TestResourceLoader;
   private validationResult: any;
   private diffResult: any;
+  private swaggerExampleQualityResult: any;
   private generatedExamples: any;
   private httpRecordingPath: string;
   private testDefFile: TestDefinitionFile | undefined;
+  private exampleFileMapping: any;
+  private operationIds: Set<string>
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
   constructor(
     private newmanReportPath: string,
@@ -39,7 +43,10 @@ export class ReportGenerator {
       loadValidatorInInitialize: true,
       loadValidatorInBackground: false,
     });
+    this.exampleFileMapping = {};
+    this.operationIds = new Set<string>();
     this.validationResult = {};
+    this.swaggerExampleQualityResult = {};
     this.diffResult = {};
     this.generatedExamples = new Map<string, any>();
     this.httpRecordingPath = path.resolve(this.output, "recording.json");
@@ -63,33 +70,53 @@ export class ReportGenerator {
       if (it.annotation === undefined) {
         continue;
       }
-      if (it.annotation.type === "simple" || it.annotation.type === "LRO") {
-        const example: any = {};
-        example.parameters = this.generateParametersFromQuery(variables, it);
-        try {
-          _.extend(example.parameters, { parameters: JSON.parse(it.request.body) });
-          // eslint-disable-next-line no-empty
-        } catch (err) {}
-        const resp: any = this.parseRespBody(it);
-        example.responses = {};
-        _.extend(example.responses, resp);
-        const exampleName = it.annotation.exampleName.replace(/^.*[\\\/]/, "");
-        this.generatedExamples.set(
-          it.annotation.poller_item_name.replace("_poller", "") || exampleName,
-          {
-            exampleName: exampleName,
-            example: example,
-          }
-        );
-        await this.liveValidate(it, exampleName);
-      } else if (it.annotation.type === "poller") {
-        const resp: any = this.parseRespBody(it);
-        this.pollingMap.set(it.annotation.lro_item_name, resp);
-      }
+      await this.generateExample(it, variables);
     }
 
     this.generateDiff(variables);
+    this.writeGeneratedExamples();
+    await this.exampleQuality();
     this.outputResult();
+  }
+
+  private async exampleQuality() {
+    const operationIds = Array.from(this.operationIds)
+    for(const it of this.swaggerFilePaths){
+      const swaggerFileName = it.replace(/^.*[\\\/]/, "")
+      const validator = ExampleQualityValidator.create({swaggerFilePath:  path.resolve(this.output, it.replace(/^.*[\\\/]/, ""))})
+      const result = await validator.validateSwaggerExamples(operationIds)
+      this.swaggerExampleQualityResult[swaggerFileName] = result
+    }
+  }
+
+  private async generateExample(it: RawExecution, variables: any) {
+    if (it.annotation.type === "simple" || it.annotation.type === "LRO") {
+      const example: any = {};
+      if(it.annotation.operationId!==undefined){
+        this.operationIds.add(it.annotation.operationId)
+      }
+      example.parameters = this.generateParametersFromQuery(variables, it);
+      try {
+        _.extend(example.parameters, { parameters: JSON.parse(it.request.body) });
+        // eslint-disable-next-line no-empty
+      } catch (err) {}
+      const resp: any = this.parseRespBody(it);
+      example.responses = {};
+      _.extend(example.responses, resp);
+      const exampleName = it.annotation.exampleName.replace(/^.*[\\\/]/, "");
+      this.generatedExamples.set(
+        it.annotation.poller_item_name.replace("_poller", "") || exampleName,
+        {
+          exampleName: exampleName,
+          operationId: it.annotation.operationId,
+          example: example,
+        }
+      );
+      await this.liveValidate(it, exampleName);
+    } else if (it.annotation.type === "poller") {
+      const resp: any = this.parseRespBody(it);
+      this.pollingMap.set(it.annotation.lro_item_name, resp);
+    }
   }
 
   private copySourceFile() {
@@ -111,12 +138,12 @@ export class ReportGenerator {
   }
 
   private outputResult() {
-    for (const v of this.generatedExamples.values()) {
-      fs.writeFileSync(
-        `${this.output}/examples/${v.exampleName}`,
-        JSON.stringify(v.example, null, 2)
-      );
-    }
+    fs.writeFileSync(`${this.output}/exampleQuality.json`, JSON.stringify(this.swaggerExampleQualityResult, null, 2))
+
+    fs.writeFileSync(
+      `${this.output}/exampleFileMapping.json`,
+      JSON.stringify(this.exampleFileMapping, null, 2)
+    )
 
     fs.writeFileSync(
       `${this.output}/liveValidation.json`,
@@ -124,6 +151,17 @@ export class ReportGenerator {
     );
 
     fs.writeFileSync(`${this.output}/diff.json`, JSON.stringify(this.diffResult, null, 2));
+  }
+
+  private writeGeneratedExamples () {
+    for ( const v of this.generatedExamples.values() ) {
+      const exampleFilePath = path.resolve( `${this.output}/examples/${v.exampleName}` );
+      fs.writeFileSync(
+        exampleFilePath,
+        JSON.stringify( v.example, null, 2 )
+      );
+      this.exampleFileMapping[exampleFilePath] = v.operationId;
+    }
   }
 
   private async liveValidate(it: RawExecution, exampleName: any) {
