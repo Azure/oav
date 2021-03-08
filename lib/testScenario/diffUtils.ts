@@ -1,5 +1,6 @@
 import { default as stableStringify } from "fast-json-stable-stringify";
 import * as jsonPointer from "json-pointer";
+import { cloneDeep } from "@azure-tools/openapi-tools-common";
 import {
   JsonPatchOp,
   JsonPatchOpAdd,
@@ -9,7 +10,6 @@ import {
   JsonPatchOpReplace,
   JsonPatchOpTest,
 } from "./testResourceTypes";
-import { cloneDeep } from "@azure-tools/openapi-tools-common";
 
 interface PatchContext {
   root: any;

@@ -664,4 +664,4 @@ const main = async () => {
   console.log(JSON.stringify(result, null, 2));
 };
 
-main();
+main().catch((e) => console.log(e));
