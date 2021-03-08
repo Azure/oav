@@ -26,7 +26,9 @@ export class ExampleGenerator {
         example.parameters = this.generateParametersFromQuery(variables, it);
         try {
           _.extend(example.parameters, { parameters: JSON.parse(it.request.body) });
-        } catch (err) {}
+        } catch (err) {
+          // Pass
+        }
         const resp: any = this.parseRespBody(it);
         example.responses = {};
         _.extend(example.responses, resp);

@@ -4,8 +4,8 @@
 /* eslint-disable id-blacklist */
 
 import * as fs from "fs";
+import * as path from "path";
 import * as yargs from "yargs";
-import * as path from "path"
 import {
   PostmanCollectionGenerator,
   PostmanCollectionGeneratorOption,
@@ -20,7 +20,7 @@ export const describe = "Generate postman collection file from test scenario.";
 export const builder: yargs.CommandBuilder = {
   tag: {
     describe: "the readme tag name.",
-    string: true
+    string: true,
   },
   output: {
     alias: "outputDir",
@@ -43,14 +43,14 @@ export const builder: yargs.CommandBuilder = {
 export async function handler(argv: yargs.Arguments): Promise<void> {
   await cliSuppressExceptions(async () => {
     const readmeMd: string = argv.readme;
-    argv["try-require"] = "readme.test.md"
+    argv["try-require"] = "readme.test.md";
     const autorestConfig = await getAutorestConfig(argv, readmeMd);
-    console.log(autorestConfig["input-file"])
-    console.log(autorestConfig["test-resources"])
-    const swaggerFilePaths: string[] = autorestConfig["input-file"]
-    const testScenarioFile = autorestConfig["test-resources"][0]["test"]
-    console.log(testScenarioFile)
-    const fileRoot: string = path.dirname(readmeMd)
+    console.log(autorestConfig["input-file"]);
+    console.log(autorestConfig["test-resources"]);
+    const swaggerFilePaths: string[] = autorestConfig["input-file"];
+    const testScenarioFile = autorestConfig["test-resources"][0].test;
+    console.log(testScenarioFile);
+    const fileRoot: string = path.dirname(readmeMd);
     let env = {
       subscriptionId: "<mySubcriptionId>",
       location: "westus",
