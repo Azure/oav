@@ -20,11 +20,7 @@ import {
 
 import { JsonLoader } from "../swagger/jsonLoader";
 import { PostmanTestScript, TestScriptType } from "./postmanTestScript";
-import {
-  ArmTemplate,
-  TestStepArmTemplateDeployment,
-  TestStepExampleFileRestCall,
-} from "./testResourceTypes";
+import { ArmTemplate, TestStepArmTemplateDeployment, TestStepRestCall } from "./testResourceTypes";
 import {
   ArmDeploymentTracking,
   TestScenarioClientRequest,
@@ -109,13 +105,13 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
 
   public async sendExampleRequest(
     _request: TestScenarioClientRequest,
-    step: TestStepExampleFileRestCall,
+    step: TestStepRestCall,
     stepEnv: TestStepEnv
   ): Promise<void> {
     this.auth(stepEnv.env);
     const pathEnv = new ReflectiveVariableEnv(":", "");
     const item = new Item();
-    item.name = step.exampleFilePath;
+    item.name = step.exampleFilePath!;
     item.request = new Request({
       name: step.exampleFilePath,
       method: step.operation._method as string,
@@ -127,18 +123,16 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     const urlVariables: VariableDefinition[] = [];
     for (const p of step.operation.parameters ?? []) {
       const param = this.jsonLoader.resolveRefObj(p);
-      const paramValue = stepEnv.env.get(param.name) || step.exampleTemplate.parameters[param.name];
+      const paramValue = stepEnv.env.get(param.name) || step.requestParameters[param.name];
       if (!this.collectionEnv.has(param.name)) {
-        this.collectionEnv.set(
-          param.name,
-          paramValue,
-          typeof step.exampleTemplate.parameters[param.name]
-        );
+        this.collectionEnv.set(param.name, paramValue, typeof step.requestParameters[param.name]);
       }
-      for (const [k, v] of Object.entries(step.exampleFileContent.responses)) {
-        const exampleResp = new Response({ code: +k, body: v.body, responseTime: 0 });
-        item.responses.add(exampleResp);
-      }
+      const exampleResp = new Response({
+        code: step.statusCode,
+        body: step.responseExpected,
+        responseTime: 0,
+      });
+      item.responses.add(exampleResp);
 
       switch (param.in) {
         case "path":
@@ -184,14 +178,14 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
         type: "LRO",
         poller_item_name: `${item.name}_poller`,
         operationId: step.operation.operationId || "",
-        exampleName: step.exampleFile,
+        exampleName: step.exampleFile!,
       });
       this.addAsLongRunningOperationItem(item);
     } else {
       item.description = typeToDescription({
         type: "simple",
         operationId: step.operation.operationId || "",
-        exampleName: step.exampleFile,
+        exampleName: step.exampleFile!,
       });
       this.collection.items.add(item);
     }
