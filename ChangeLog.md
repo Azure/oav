@@ -17,17 +17,15 @@ Thur, 21 Jan 2021
 - Bugfix collect correct err.data in discriminator validation
 
 ## 2.2.0
-Fri, 15 Jan 2021
-
-- Enable support for test scenario parsing
-
 ## 2.0.1
+
 Wed, 25 Nov 2020
 
 - Ignore required validation rule in response when x-ms-secret is true
 - Ignore schema validation when request body is not required and value is empty {}
 
 ## 2.0.0
+
 Mon, 23 Nov 2020
 
 - Replace ts-common libraries by openapi-tools-common single library

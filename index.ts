@@ -63,5 +63,11 @@ export {
   TestScenarioRunnerClient,
 } from "./lib/testScenario/testScenarioRunner";
 
+export { PostmanCollectionRunnerClient } from "./lib/testScenario/postmanCollectionRunnerClient";
+export {
+  PostmanCollectionGenerator,
+  PostmanCollectionGeneratorOption,
+} from "./lib/testScenario/postmanCollectionGenerator";
+
 // Constants
 export const Constants = C;

@@ -89,6 +89,14 @@ dist/
 coverage/
 .nyc_output
 test-results.xml
-
+newman/
+fixtures/
+lib/testScenario/_testAKS.ts
+snapshot.patch
 .clinic/*
 junit.xml
+generated_collections/
+env.json
+generated_examples/
+generated_reports/
+generated_diff/

@@ -388,6 +388,28 @@ export type TestDefinitionFile = TransformRaw<
     _filePath: string;
   }
 >;
+export interface RawReport {
+  executions: RawExecution[];
+  variables: any;
+}
+
+export interface RawExecution {
+  request: RawRequest;
+  response: RawResponse;
+  annotation?: any;
+}
+export interface RawRequest {
+  url: string;
+  method: string;
+  headers: Array<{ [key: string]: string }>;
+  body: string;
+}
+
+export interface RawResponse {
+  statusCode: string;
+  headers: Array<{ [key: string]: string }>;
+  body: string;
+}
 
 export const TestDefinitionSchema: Schema & {
   definitions: { [def: string]: Schema };
