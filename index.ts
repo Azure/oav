@@ -55,7 +55,7 @@ export {
   TestScenario,
   TestStep,
   TestStepArmTemplateDeployment,
-  TestStepExampleFileRestCall,
+  TestStepRestCall,
 } from "./lib/testScenario/testResourceTypes";
 export { VariableEnv } from "./lib/testScenario/variableEnv";
 export {

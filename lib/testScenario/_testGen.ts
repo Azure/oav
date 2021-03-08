@@ -7,13 +7,15 @@ import { RequestTracking, TestScenarioGenerator } from "./gen/testScenarioGenera
 
 const main = async () => {
   const swaggerFilePaths = await globby(
-    "/home/htc/azure-rest-api-specs/specification/containerservice/resource-manager/Microsoft.ContainerService/stable/*/*.json"
+    // "/home/htc/azure-rest-api-specs/specification/containerservice/resource-manager/Microsoft.ContainerService/stable/*/*.json"
+    "/home/htc/azure-rest-api-specs/specification/network/resource-manager/Microsoft.Network/stable/*/*.json"
   );
   // console.log(swaggerFilePaths);
   const generator = TestScenarioGenerator.create({
     useJsonParser: false,
     checkUnderFileRoot: false,
-    fileRoot: "/home/htc/azure-rest-api-specs/specification/containerservice/resource-manager",
+    fileRoot: "/home/htc/azure-rest-api-specs/specification/network/resource-manager",
+    // fileRoot: "/home/htc/azure-rest-api-specs/specification/containerservice/resource-manager",
     swaggerFilePaths,
   });
 
@@ -21,7 +23,8 @@ const main = async () => {
 
   const recordingLoader = inversifyGetInstance(TestRecordingLoader, {});
   const fileList = await globby(
-    "/mnt/c/dev/azure-powershell/src/Aks/Aks.Test/SessionRecords/*/*.json"
+    "/home/htc/azure-cli/src/azure-cli/azure/cli/command_modules/network/tests/latest/recordings/test_network_public_ip.yaml"
+    // "/mnt/c/dev/azure-powershell/src/Aks/Aks.Test/SessionRecords/*/*.json"
   );
   const trackingList: RequestTracking[] = [];
   for (const filePath of fileList) {
@@ -31,7 +34,8 @@ const main = async () => {
   }
   await generator.generateTestDefinition(
     trackingList,
-    "Microsoft.ContainerService/stable/2020-07-01/test-scenarios/testAksVersion.yaml"
+    "Microsoft.Network/stable/2020-08-01/test-scenarios/testNetworkPublicIp.yaml"
+    // "Microsoft.ContainerService/stable/2020-08-01/test-scenarios/testAks.yaml"
   );
 
   await generator.writeGeneratedFiles();

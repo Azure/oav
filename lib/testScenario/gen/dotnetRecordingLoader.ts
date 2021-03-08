@@ -22,7 +22,7 @@ interface RecordingEntry {
 }
 
 @injectable()
-export class DotnetReordingLoader implements Loader<RequestTracking, [RecordingFile, string]> {
+export class DotnetRecordingLoader implements Loader<RequestTracking, [RecordingFile, string]> {
   public async load([content, filePath]: [RecordingFile, string]): Promise<RequestTracking> {
     const result: RequestTracking = {
       requests: [],
@@ -38,12 +38,12 @@ export class DotnetReordingLoader implements Loader<RequestTracking, [RecordingF
         method: entry.RequestMethod,
         path: url.pathname,
         url: url.href,
-        headers: transformHeaders(entry.RequestHeaders),
+        headers: transformRecordingHeaders(entry.RequestHeaders),
         query,
-        body: parseJson(entry.RequestBody) ?? {},
-        responseBody: parseJson(entry.ResponseBody),
+        body: parseRecordingBodyJson(entry.RequestBody) ?? {},
+        responseBody: parseRecordingBodyJson(entry.ResponseBody),
         responseCode: entry.StatusCode,
-        responseHeaders: transformHeaders(entry.ResponseHeaders),
+        responseHeaders: transformRecordingHeaders(entry.ResponseHeaders),
       };
 
       result.requests.push(request);
@@ -61,7 +61,7 @@ export class DotnetReordingLoader implements Loader<RequestTracking, [RecordingF
   }
 }
 
-const transformHeaders = (headers: { [headerName: string]: string[] }) => {
+export const transformRecordingHeaders = (headers: { [headerName: string]: string[] }) => {
   const result: { [headerName: string]: string } = {};
   for (const headerName of Object.keys(headers)) {
     result[headerName] = headers[headerName].join(" ");
@@ -69,7 +69,7 @@ const transformHeaders = (headers: { [headerName: string]: string[] }) => {
   return result;
 };
 
-const parseJson = (content: string) => {
+export const parseRecordingBodyJson = (content: string) => {
   if (content.length === 0) {
     return undefined;
   }

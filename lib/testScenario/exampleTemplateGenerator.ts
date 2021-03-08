@@ -1,11 +1,11 @@
 import { escapeRegExp } from "lodash";
 import { injectable } from "inversify";
+import { deepClone } from "fast-json-patch";
 import { JsonLoader } from "../swagger/jsonLoader";
-import { SwaggerExample } from "../swagger/swaggerTypes";
 import {
   TestScenario,
   ArmTemplate,
-  TestStepExampleFileRestCall,
+  TestStepRestCall,
   TestStepArmTemplateDeployment,
 } from "./testResourceTypes";
 import { VariableEnv } from "./variableEnv";
@@ -16,6 +16,7 @@ import {
   ArmDeploymentTracking,
   TestScenarioRunner,
 } from "./testScenarioRunner";
+import { getBodyParamName } from "./testResourceLoader";
 
 const placeholderToBeDetermined = "__to_be_determined__";
 
@@ -33,10 +34,10 @@ export class ExampleTemplateGenerator implements TestScenarioRunnerClient {
 
   public async sendExampleRequest(
     _request: TestScenarioClientRequest,
-    step: TestStepExampleFileRestCall,
+    step: TestStepRestCall,
     stepEnv: TestStepEnv
   ): Promise<void> {
-    this.replaceWithParameterConvention(step.exampleTemplate, stepEnv.env);
+    this.replaceWithParameterConvention(step, stepEnv.env);
   }
 
   public async sendArmTemplateDeployment(
@@ -76,16 +77,20 @@ export class ExampleTemplateGenerator implements TestScenarioRunnerClient {
     await runner.executeScenario(testScenario);
   }
 
-  public replaceWithParameterConvention(exampleTemplate: SwaggerExample, env: VariableEnv) {
+  public replaceWithParameterConvention(
+    step: Pick<TestStepRestCall, "requestParameters" | "responseExpected" | "operation">,
+    env: VariableEnv
+  ) {
     const toMatch: string[] = [];
     const matchReplace: { [toMatch: string]: string } = {};
 
-    for (const paramName of Object.keys(exampleTemplate.parameters)) {
+    const requestParameters = deepClone(step.requestParameters);
+    for (const paramName of Object.keys(requestParameters)) {
       if (env.get(paramName) === undefined) {
         continue;
       }
 
-      const paramValue = exampleTemplate.parameters[paramName];
+      const paramValue = requestParameters[paramName];
       if (typeof paramValue !== "string") {
         continue;
       }
@@ -94,9 +99,17 @@ export class ExampleTemplateGenerator implements TestScenarioRunnerClient {
       toMatch.push(valueLower);
       const toReplace = `$(${paramName})`;
       matchReplace[valueLower] = toReplace;
-      exampleTemplate.parameters[paramName] = toReplace;
+      requestParameters[paramName] = toReplace;
     }
-    replaceAllInObject(exampleTemplate.responses, toMatch, matchReplace);
+    step.requestParameters = requestParameters;
+    const bodyParamName = getBodyParamName(step.operation, this.jsonLoader);
+    if (bodyParamName !== undefined) {
+      replaceAllInObject(step.requestParameters[bodyParamName], toMatch, matchReplace);
+    }
+
+    const responseExpected = deepClone(step.responseExpected);
+    replaceAllInObject(responseExpected, toMatch, matchReplace);
+    step.responseExpected = responseExpected;
   }
 
   // private analysePathTemplate(pathTemplate: string, operation: Operation) {
