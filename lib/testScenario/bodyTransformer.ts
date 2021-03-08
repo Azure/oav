@@ -1,6 +1,7 @@
 import { applyOperation } from "fast-json-patch";
 import { inject, injectable } from "inversify";
 import { cloneDeep } from "lodash";
+import * as jp from "json-pointer";
 import { TYPES } from "../inversifyUtils";
 import { Schema } from "../swagger/swaggerTypes";
 import { SchemaValidator } from "../swaggerValidator/schemaValidator";
@@ -57,5 +58,71 @@ export class BodyTransformer {
     // console.log(result);
 
     return result;
+  }
+
+  public deepMerge(dst: any, src: any): { result: any; inconsistentWarningPaths: string[] } {
+    const inconsistentPaths: string[] = [];
+    const result = this.innerDeepMerge(src, dst, [], inconsistentPaths);
+    return {
+      result,
+      inconsistentWarningPaths: inconsistentPaths,
+    };
+  }
+
+  private innerDeepMerge(dst: any, src: any, path: string[], inconsistentPaths: string[]): any {
+    if (typeof src !== typeof dst) {
+      inconsistentPaths.push(jp.compile(path));
+      return src ?? dst;
+    }
+
+    if (Array.isArray(dst) || Array.isArray(src)) {
+      if (!Array.isArray(src) || !Array.isArray(dst)) {
+        inconsistentPaths.push(jp.compile(path));
+        return src;
+      }
+      let length = dst.length;
+      let result = [...dst];
+      if (dst.length !== src.length) {
+        inconsistentPaths.push(jp.compile(path));
+        if (src.length < dst.length) {
+          length = src.length;
+          result = [...src];
+        }
+      }
+      for (let idx = 0; idx < length; idx++) {
+        result[idx] = this.innerDeepMerge(
+          dst[idx],
+          src[idx],
+          path.concat(idx.toString()),
+          inconsistentPaths
+        );
+      }
+      return result;
+    }
+
+    if (typeof dst === "object") {
+      const result: any = { ...dst };
+      for (const key of Object.keys(dst)) {
+        if (key in src) {
+          result[key] = this.innerDeepMerge(
+            dst[key],
+            src[key],
+            path.concat([key]),
+            inconsistentPaths
+          );
+        }
+      }
+      for (const key of Object.keys(src)) {
+        if (!(key in dst)) {
+          result[key] = src[key];
+        }
+      }
+      return result;
+    }
+
+    if (dst !== src) {
+      inconsistentPaths.push(jp.compile(path));
+    }
+    return src;
   }
 }

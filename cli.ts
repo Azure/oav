@@ -1,8 +1,6 @@
 #!/usr/bin/env node
 
 import "reflect-metadata";
-
-import "reflect-metadata";
 import * as yargs from "yargs";
 import { log } from "./lib/util/logging";
 
