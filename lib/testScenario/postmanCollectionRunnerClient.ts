@@ -124,23 +124,8 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
       const param = this.jsonLoader.resolveRefObj(p);
       const paramValue = stepEnv.env.get(param.name) || step.requestParameters[param.name];
       if (!this.collectionEnv.has(param.name)) {
-<<<<<<< HEAD
         this.collectionEnv.set(param.name, paramValue, typeof step.requestParameters[param.name]);
       }
-      const exampleResp = new Response({
-        code: step.statusCode,
-        body: step.responseExpected,
-        responseTime: 0,
-      });
-      item.responses.add(exampleResp);
-=======
-        this.collectionEnv.set(
-          param.name,
-          paramValue,
-          typeof step.exampleTemplate.parameters[param.name]
-        );
-      }
->>>>>>> 8bf3410 (fix generated example format)
 
       switch (param.in) {
         case "path":

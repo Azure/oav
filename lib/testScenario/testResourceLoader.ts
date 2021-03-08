@@ -366,7 +366,6 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
       err.message = `Failed to apply patchRequest in ${step.step}: ${err.message}`;
     }
     try {
-      step.responseExpected = 
       step.responseExpected = applyJsonPatchOp(step.responseExpected, step.patchResponse);
     } catch (e) {
       const err = e as Error;
