@@ -70,8 +70,13 @@ export const transformRecordingHeaders = (headers: { [headerName: string]: strin
 };
 
 export const parseRecordingBodyJson = (content: string) => {
-  if (content.length === 0) {
+  if (typeof content !== "string" || content.length === 0) {
     return undefined;
   }
-  return JSON.parse(content);
+  try {
+    return JSON.parse(content);
+  } catch (e) {
+    console.log(JSON.stringify(content));
+    throw e;
+  }
 };

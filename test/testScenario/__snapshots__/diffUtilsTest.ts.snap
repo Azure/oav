@@ -1,0 +1,53 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DiffUtils should diff and apply patch: 0_sameSimple 1`] = `Array []`;
+
+exports[`DiffUtils should diff and apply patch: 10_diffDeepObj 1`] = `
+Array [
+  Object {
+    "replace": "/a/b/c",
+    "value": 3,
+  },
+  Object {
+    "remove": "/a/b/f",
+  },
+  Object {
+    "add": "/a/b/e",
+    "value": 5,
+  },
+  Object {
+    "replace": "/a/d",
+    "value": 4,
+  },
+]
+`;
+
+exports[`DiffUtils should diff and apply patch: 11_useReplace 1`] = `
+Array [
+  Object {
+    "replace": "/a",
+    "value": Object {
+      "b": Object {
+        "c": 3,
+        "e": 5,
+      },
+      "d": 4,
+    },
+  },
+]
+`;
+
+exports[`DiffUtils should diff and apply patch: 20_arrayIdxSimple 1`] = `
+Array [
+  Object {
+    "add": "/0",
+    "value": Object {
+      "id": 1,
+    },
+  },
+  Object {
+    "replace": "/1/val",
+    "value": "to",
+  },
+]
+`;

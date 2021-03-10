@@ -1,7 +1,7 @@
 import { default as stableStringify } from "fast-json-stable-stringify";
 import * as jsonPointer from "json-pointer";
 import { cloneDeep } from "@azure-tools/openapi-tools-common";
-import { compare as jsonPatchCompare } from "fast-json-patch";
+import { SequenceMatcher } from "difflib";
 import {
   JsonPatchOp,
   JsonPatchOpAdd,
@@ -130,23 +130,204 @@ export const jsonPatchApply = (obj: any, ops: JsonPatchOp[]): any => {
 };
 
 export const getJsonPatchDiff = (from: any, to: any): JsonPatchOp[] => {
-  const ops = jsonPatchCompare(from, to);
-  return ops.map(
-    (op): JsonPatchOp => {
-      switch (op.op) {
-        case "add":
-          return { add: op.path, value: op.value };
-        case "copy":
-          return { copy: op.from, path: op.path };
-        case "move":
-          return { move: op.from, path: op.path };
-        case "remove":
-          return { remove: op.path };
-        case "replace":
-          return { replace: op.path, value: op.value };
-        default:
-          throw new Error(`Internal error`);
+  return calcDiff(from, to, []);
+};
+
+const calcDiff = (from: any, to: any, path: string[]): JsonPatchOp[] => {
+  if (from === to) {
+    return [];
+  }
+  const replaceOp: JsonPatchOp = {
+    replace: getJsonPointer(path),
+    value: to,
+  };
+
+  const fromType = typeof from;
+  const toType = typeof to;
+
+  if (fromType !== toType || fromType !== "object" || from === null || to === null) {
+    return [replaceOp];
+  }
+  const isFromArray = Array.isArray(from);
+  const isToArray = Array.isArray(to);
+  if (isFromArray !== isToArray) {
+    return [replaceOp];
+  }
+
+  const diffOps: JsonPatchOp[] = isFromArray
+    ? calcArrayDiff(from, to, path)
+    : calcObjDiff(from, to, path);
+  if (diffOps.length === 0) {
+    return diffOps;
+  }
+
+  const diffLen = JSON.stringify(diffOps).length;
+  const replaceLen = JSON.stringify(replaceOp).length + 4;
+
+  return diffLen < replaceLen ? diffOps : [replaceOp];
+};
+
+const calcObjDiff = (from: any, to: any, path: string[]) => {
+  const result: JsonPatchOp[] = [];
+
+  for (const key of Object.keys(from)) {
+    if (from[key] === undefined) {
+      continue;
+    }
+    if (to[key] === undefined) {
+      result.push({
+        remove: getJsonPointer(path, key),
+      });
+    } else {
+      const diff = calcDiff(from[key], to[key], path.concat([key]));
+      if (diff.length > 0) {
+        result.push(...diff);
       }
     }
-  );
+  }
+  for (const key of Object.keys(to)) {
+    if (to[key] === undefined || from[key] !== undefined) {
+      continue;
+    }
+    result.push({
+      add: getJsonPointer(path, key),
+      value: to[key],
+    });
+  }
+
+  return result;
+};
+
+const calcArrayDiff = (from: any[], to: any[], path: string[]): JsonPatchOp[] => {
+  let matchSeq = calcArrayDiffWithIndex(from, to);
+  let isKeyMatch = true;
+  if (matchSeq === undefined) {
+    const matcher = new SequenceMatcher(null, from, to);
+    matchSeq = matcher.getOpcodes();
+    isKeyMatch = false;
+  }
+
+  const addReplaceOps: JsonPatchOp[] = [];
+  const removeOps: JsonPatchOp[] = [];
+
+  for (const [op, i0, i1, j0, j1] of matchSeq) {
+    switch (op) {
+      case "equal":
+        if (isKeyMatch) {
+          for (let ix = i0, jx = j0; ix < i1 && jx < j1; ++ix, ++jx) {
+            const diff = calcDiff(from[ix], to[jx], path.concat([jx.toString()]));
+            addReplaceOps.push(...diff);
+          }
+        }
+        break;
+
+      case "insert":
+        for (let idx = j0; idx < j1; ++idx) {
+          addReplaceOps.push({
+            add: getJsonPointer(path, idx.toString()),
+            value: to[idx],
+          });
+        }
+        break;
+
+      case "delete":
+        for (let idx = i0; idx < i1; ++idx) {
+          removeOps.push({
+            remove: getJsonPointer(path.concat([idx.toString()])),
+          });
+        }
+        break;
+
+      case "replace": {
+        let ix = i0;
+        let jx = j0;
+        for (; ix < i1 && jx < j1; ++ix, ++jx) {
+          if (isKeyMatch) {
+            addReplaceOps.push({
+              replace: getJsonPointer(path, jx.toString()),
+              value: to[jx],
+            });
+          } else {
+            const diff = calcDiff(from[ix], to[jx], path.concat([jx.toString()]));
+            addReplaceOps.push(...diff);
+          }
+        }
+        for (; ix < i1; ++ix) {
+          removeOps.push({
+            remove: getJsonPointer(path, ix.toString()),
+          });
+        }
+        for (; jx < j1; ++jx) {
+          addReplaceOps.push({
+            add: getJsonPointer(path, jx.toString()),
+            value: to[jx],
+          });
+        }
+      }
+    }
+  }
+
+  return removeOps.reverse().concat(addReplaceOps);
+};
+
+const calcArrayDiffWithIndex = (
+  from: any[],
+  to: any[]
+): ReturnType<SequenceMatcher<any>["getOpcodes"]> | undefined => {
+  const fromKeys = new Array(from.length);
+  const toKeys = new Array(to.length);
+  let hasKey = false;
+  for (let idx = 0; idx < from.length; ++idx) {
+    const key = getObjKey(from[idx]);
+    if (key !== undefined) {
+      hasKey = true;
+    }
+    fromKeys[idx] = key;
+  }
+  for (let idx = 0; idx < to.length; ++idx) {
+    const key = getObjKey(to[idx]);
+    if (key !== undefined) {
+      hasKey = true;
+    }
+    toKeys[idx] = key;
+  }
+  if (!hasKey) {
+    return undefined;
+  }
+
+  const matcher = new SequenceMatcher(null, fromKeys, toKeys);
+  const matchSeq = matcher.getOpcodes();
+
+  return matchSeq;
+};
+
+const getObjKey = (item: any) => {
+  if (item === undefined || item === null || typeof item !== "object") {
+    return undefined;
+  }
+  return item.id ?? item.name ?? probeObjectKey(item);
+};
+
+const probeObjectKey = (item: any) => {
+  for (const key of Object.keys(item)) {
+    if (typeof item[key] !== "string") {
+      continue;
+    }
+    const lowerKey = key.toLowerCase();
+    if (lowerKey.endsWith("id") || lowerKey.endsWith("name")) {
+      return item[key];
+    }
+  }
+  return undefined;
+};
+
+export const getJsonPointer = (input: string[], additional?: string) => {
+  let result = jsonPointer.compile(input);
+  if (additional !== undefined) {
+    result = `${result}/${jsonPointer.escape(additional)}`;
+  }
+  if (result === "") {
+    result = "/";
+  }
+  return result;
 };

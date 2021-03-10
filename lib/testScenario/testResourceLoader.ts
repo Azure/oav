@@ -397,12 +397,13 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
       target,
       lastStep.operation.responses[lastStep.statusCode].schema!
     );
-    const bodyParamName = getBodyParamName(lastStep.operation, this.jsonLoader);
-    if (bodyParamName !== undefined) {
-      step.requestParameters[bodyParamName] = convertedRequest;
-    }
+    const bodyParamName = getBodyParamName(lastStep.operation, this.jsonLoader)!;
+    step.requestParameters[bodyParamName] = convertedRequest;
 
-    step.responseExpected = target;
+    step.responseExpected = await this.bodyTransformer.requestBodyToResponse(
+      target,
+      step.requestParameters[bodyParamName]
+    );
   }
 
   private async loadTestStepRestCallExampleFile(step: TestStepRestCall, ctx: TestScenarioContext) {
