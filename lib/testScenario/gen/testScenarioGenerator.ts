@@ -3,7 +3,6 @@ import { default as jsonStringify } from "fast-json-stable-stringify";
 import { inject, injectable } from "inversify";
 import { HttpHeaders } from "@azure/core-http";
 import { cloneDeep } from "@azure-tools/openapi-tools-common";
-import { compare as jsonPatchCompare } from "fast-json-patch";
 import { inversifyGetInstance, TYPES } from "../../inversifyUtils";
 import { parseValidationRequest } from "../../liveValidation/liveValidator";
 import { OperationSearcher } from "../../liveValidation/operationSearcher";
@@ -20,12 +19,7 @@ import {
   TestResourceLoader,
   TestResourceLoaderOption,
 } from "../testResourceLoader";
-import {
-  JsonPatchOp,
-  RawTestDefinitionFile,
-  RawTestScenario,
-  TestStepRestCall,
-} from "../testResourceTypes";
+import { RawTestDefinitionFile, RawTestScenario, TestStepRestCall } from "../testResourceTypes";
 import { TestScenarioClientRequest } from "../testScenarioRunner";
 import { Operation, Parameter, SwaggerExample } from "../../swagger/swaggerTypes";
 import { unknownApiVersion, xmsLongRunningOperation } from "../../util/constants";
@@ -33,6 +27,8 @@ import { VariableEnv } from "../variableEnv";
 import { ExampleTemplateGenerator } from "../exampleTemplateGenerator";
 import { traverseSwagger } from "../../transform/traverseSwagger";
 import { BodyTransformer } from "../bodyTransformer";
+import { ArmApiInfo, ArmUrlParser } from "../armUrlParser";
+import { getJsonPatchDiff } from "../diffUtils";
 
 export type SingleRequestTracking = TestScenarioClientRequest & {
   timeStart?: Date;
@@ -54,6 +50,7 @@ const resourceGroupPathRegex = /^\/subscriptions\/[^\/]+\/resourceGroups\/[^\/]+
 
 interface TestScenarioGenContext {
   resourceTracking: Map<string, TestStepRestCall>;
+  resourceNames: Set<string>;
 }
 
 @injectable()
@@ -72,7 +69,8 @@ export class TestScenarioGenerator {
     private swaggerLoader: SwaggerLoader,
     private jsonLoader: JsonLoader,
     private exampleTemplateGenerator: ExampleTemplateGenerator,
-    private bodyTransformer: BodyTransformer
+    private bodyTransformer: BodyTransformer,
+    private armUrlParser: ArmUrlParser
   ) {
     this.operationSearcher = new OperationSearcher((_) => {});
   }
@@ -139,7 +137,7 @@ export class TestScenarioGenerator {
     return testDef;
   }
 
-  private getIdx() {
+  private generateIdx() {
     return this.idx++;
   }
 
@@ -155,6 +153,7 @@ export class TestScenarioGenerator {
 
     const ctx: TestScenarioGenContext = {
       resourceTracking: new Map(),
+      resourceNames: new Set(),
     };
 
     const records = [...requestTracking.requests];
@@ -171,7 +170,7 @@ export class TestScenarioGenerator {
         continue;
       }
 
-      if (testStep.fromStep === undefined) {
+      if (testStep.resourceUpdate === undefined) {
         const example: SwaggerExample = {
           parameters: testStep.requestParameters,
           responses: {
@@ -183,7 +182,7 @@ export class TestScenarioGenerator {
         const swaggerPath = operation._path._spec._filePath;
         let exampleFilePath = this.exampleCache.get(exampleCacheKey);
         if (exampleFilePath === undefined) {
-          const exampleName = `${operationId}_Generated_${this.getIdx()}`;
+          const exampleName = `${operationId}_Generated_${this.generateIdx()}`;
           exampleFilePath = pathJoin(dirname(swaggerPath), "examples", exampleName + ".json");
           this.exampleEntries.push({
             swaggerPath,
@@ -200,12 +199,11 @@ export class TestScenarioGenerator {
 
       testScenario.steps.push({
         step: testStep.step,
-        fromStep: testStep.fromStep,
+        resourceName: testStep.resourceName,
         exampleFile: testStep.exampleFile,
         statusCode: testStep.statusCode === 200 ? undefined : testStep.statusCode,
         operationId: testStep.operationId,
-        patchRequest: testStep.patchRequest?.length > 0 ? testStep.patchRequest : undefined,
-        patchResponse: testStep.patchResponse?.length > 0 ? testStep.patchResponse : undefined,
+        resourceUpdate: testStep.resourceUpdate?.length > 0 ? testStep.resourceUpdate : undefined,
       });
     }
 
@@ -239,12 +237,14 @@ export class TestScenarioGenerator {
           return undefined;
 
         case "DELETE":
+          const armInfo = this.armUrlParser.parseArmApiInfo(record.path, record.method);
           await this.skipLroPoll(
             records,
             {
               [xmsLongRunningOperation]: true,
             } as Operation,
-            record
+            record,
+            armInfo
           );
           return undefined;
       }
@@ -260,23 +260,17 @@ export class TestScenarioGenerator {
   ): Promise<TestStepRestCall | undefined> {
     const record = records.shift()!;
 
-    const operationMatch = this.searchOperation(record);
-    if (operationMatch === undefined) {
-      return this.handleUnknownPath(record, records);
-    }
-
-    const { operation } = operationMatch;
-
+    // TODO do not skip 404
     if (record.responseCode === 404) {
       console.info(`Skip 404 request:\t${record.method}\t${record.url}`);
       return undefined;
     }
 
-    const pathParamValue = extractPathParamValue(operationMatch);
-    const requestParameters: SwaggerExample["parameters"] = {
-      "api-version": unknownApiVersion,
-      ...pathParamValue,
-    };
+    const parseResult = this.parseRecord(record);
+    if (parseResult === undefined) {
+      return this.handleUnknownPath(record, records);
+    }
+    const { operation, requestParameters } = parseResult;
 
     for (const p of operation.parameters ?? []) {
       const param = this.jsonLoader.resolveRefObj(p);
@@ -287,7 +281,7 @@ export class TestScenarioGenerator {
     }
 
     const step = {
-      step: `${operation.operationId}_${this.getIdx()}`,
+      step: `${operation.operationId}_${this.generateIdx()}`,
       statusCode: record.responseCode,
       operation,
       operationId: operation.operationId!,
@@ -295,40 +289,45 @@ export class TestScenarioGenerator {
       responseExpected: record.responseBody,
     } as TestStepRestCall;
 
-    let finalGet = await this.skipLroPoll(records, operation, record);
-    while (
-      ["PUT", "PATCH", "DELETE"].includes(record.method) &&
-      records[0]?.url === record.url &&
-      records[0].method === "GET" &&
-      records[0].responseCode === 200
-    ) {
-      finalGet = records[0];
-      records.shift();
-    }
-
-    if (finalGet !== undefined) {
+    const armInfo = this.armUrlParser.parseArmApiInfo(record.path, record.method);
+    const finalGet = await this.skipLroPoll(records, operation, record, armInfo);
+    if (finalGet !== undefined && operation[xmsLongRunningOperation]) {
       step.statusCode = 200;
       step.responseExpected = finalGet.responseBody;
+    } else if (operation[xmsLongRunningOperation]) {
+      step.statusCode = 200;
     }
 
     if (["PUT"].includes(record.method)) {
       const lastStep = ctx.resourceTracking.get(record.path);
-      if (lastStep !== undefined) {
-        step.fromStep = lastStep.step;
-        // step.patchRequest = getJsonPatch(lastStep.requestParameters, step.requestParameters);
-        const convertedRequest = await this.bodyTransformer.responseBodyToRequest(
-          lastStep.responseExpected,
-          operation.responses[record.responseCode].schema!
-        );
-        const bodyParamName = getBodyParamName(step.operation, this.jsonLoader);
-        const toPatch = { ...lastStep.requestParameters };
-        if (bodyParamName !== undefined) {
-          toPatch[bodyParamName] = convertedRequest;
+      if (lastStep === undefined) {
+        step.resourceName = this.generateResourceName(armInfo, ctx);
+        step.step = `Create_${step.resourceName}`;
+      } else {
+        if (step.operation !== lastStep.operation) {
+          throw new Error(
+            `Two operation detected for one resource path: ${step.operation.operationId} ${step.operation.operationId}`
+          );
         }
-        step.patchRequest = getJsonPatch(toPatch, step.requestParameters);
-        // console.log(step.patchRequest);
-        // console.log(step.requestParameters);
-        step.patchResponse = getJsonPatch(lastStep.responseExpected, step.responseExpected);
+        step.resourceName = lastStep.resourceName;
+        step.step = `Update_${step.resourceName}_${this.generateIdx()}`;
+        const bodyParamName = getBodyParamName(step.operation, this.jsonLoader);
+        if (bodyParamName !== undefined) {
+          const { result, inconsistentWarningPaths } = this.bodyTransformer.deepMerge(
+            step.responseExpected,
+            step.requestParameters[bodyParamName]
+          );
+          if (inconsistentWarningPaths.length > 0) {
+            console.log(
+              `Warning: following paths in payload are inconsistent in request and response: ${record.url}`
+            );
+            for (const p of inconsistentWarningPaths) {
+              console.log(`\t${p}`);
+            }
+          }
+          const diff = getJsonPatchDiff(lastStep.responseExpected, result);
+          step.resourceUpdate = diff;
+        }
       }
       ctx.resourceTracking.set(record.path, step);
     }
@@ -338,81 +337,37 @@ export class TestScenarioGenerator {
 
   private async skipLroPoll(
     records: SingleRequestTracking[],
-    operation: Operation,
-    initialRecord: SingleRequestTracking
+    _operation: Operation,
+    initialRecord: SingleRequestTracking,
+    armInfo: ArmApiInfo
   ) {
-    if (!operation["x-ms-long-running-operation"]) {
-      return;
-    }
-
     let finalGet: SingleRequestTracking | undefined = undefined;
 
     const headers = new HttpHeaders(initialRecord.responseHeaders);
-    let hasHeader = false;
     for (const headerName of ["Operation-Location", "Azure-AsyncOperation", "Location"]) {
       const headerValue = headers.get(headerName);
       if (headerValue !== undefined && headerValue !== initialRecord.url) {
         this.lroPollingUrls.add(headerValue);
-        hasHeader = true;
       }
     }
 
     while (records.length > 0) {
       const record = records.shift()!;
-      if (this.lroPollingUrls.has(record.url) && record.method === "GET") {
-        if (record.url === initialRecord.url && record.responseCode === 200) {
+      if (record.method === "GET") {
+        if (record.path === armInfo.resourceUri) {
           finalGet = record;
+          continue;
         }
-        continue;
+        if (this.lroPollingUrls.has(record.url)) {
+          continue;
+        }
       }
 
       records.unshift(record);
       break;
     }
 
-    if (!hasHeader) {
-      // User body poller
-      let record = records[0];
-      while (records.length > 0) {
-        record = records.shift()!;
-        if (record.url === initialRecord.url && record.method === "GET") {
-          if (record.responseCode === 200) {
-            finalGet = record;
-          }
-          continue;
-        }
-        break;
-      }
-    }
-
-    if (records[0] === finalGet) {
-      records.shift();
-    }
-
     return finalGet;
-
-    // const poller = new LROPoller({
-    //   initialOperationResult: {
-    //     _response: recordToHttpResponse(initialRecord),
-    //   },
-    //   initialRequestOptions: {
-    //     method: initialRecord.method,
-    //   },
-    //   sendOperation: (request) => {
-    //     const record = records.shift();
-    //     if (record === undefined) {
-    //       throw new Error("Long running operation not finished in recording");
-    //     }
-    //     this.lroPollingUrls.add(record.path);
-    //     return Promise.resolve({
-    //       _response: recordToHttpResponse(record),
-    //     });
-    //   },
-    // });
-
-    // while (!poller.isDone()) {
-    //   await poller.poll();
-    // }
   }
 
   private getExampleCacheKey(operation: Operation, exampleContent: SwaggerExample) {
@@ -438,6 +393,45 @@ export class TestScenarioGenerator {
       responseExpected: step.responseExpected,
     });
     return `${operation.operationId}_${exampleStr}`;
+  }
+
+  private generateResourceName(armInfo: ArmApiInfo, ctx: TestScenarioGenContext) {
+    const resourceName = armInfo.resourceName.split("/").pop();
+    const resourceType = armInfo.resourceTypes[0].split("/").pop();
+    let name = `${resourceName}`;
+    if (ctx.resourceNames.has(name)) {
+      name = `${resourceType}_${name}`;
+    }
+    if (ctx.resourceNames.has(name)) {
+      name = `${name}_${this.generateIdx()}`;
+    }
+    ctx.resourceNames.add(name);
+    return name;
+  }
+
+  private parseRecord(record: SingleRequestTracking) {
+    const operationMatch = this.searchOperation(record);
+    if (operationMatch === undefined) {
+      return undefined;
+    }
+
+    const { operation } = operationMatch;
+
+    const pathParamValue = extractPathParamValue(operationMatch);
+    const requestParameters: SwaggerExample["parameters"] = {
+      "api-version": unknownApiVersion,
+      ...pathParamValue,
+    };
+
+    for (const p of operation.parameters ?? []) {
+      const param = this.jsonLoader.resolveRefObj(p);
+      const paramValue = getParamValue(record, param);
+      if (paramValue !== undefined) {
+        requestParameters[param.name] = paramValue;
+      }
+    }
+
+    return { requestParameters, operation };
   }
 }
 
@@ -472,26 +466,4 @@ const getParamValue = (record: SingleRequestTracking, param: Parameter) => {
   }
 
   return undefined;
-};
-
-const getJsonPatch = (from: any, to: any): JsonPatchOp[] => {
-  const ops = jsonPatchCompare(from, to);
-  return ops.map(
-    (op): JsonPatchOp => {
-      switch (op.op) {
-        case "add":
-          return { add: op.path, value: op.value };
-        case "copy":
-          return { copy: op.from, path: op.path };
-        case "move":
-          return { move: op.from, path: op.path };
-        case "remove":
-          return { remove: op.path };
-        case "replace":
-          return { replace: op.path, value: op.value };
-        default:
-          throw new Error(`Internal error`);
-      }
-    }
-  );
 };

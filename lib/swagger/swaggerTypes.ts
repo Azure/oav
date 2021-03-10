@@ -79,9 +79,9 @@ export interface QueryParameter extends BaseParameter, BaseSchema {
   nullable?: boolean;
 }
 
-export interface PathParameter extends BaseParameter {
+export interface PathParameter extends BaseParameter, BaseSchema {
   in: "path";
-  type: string;
+  type: "string";
   required: true | undefined;
 
   [xmsSkipUrlEncoding]?: boolean;
