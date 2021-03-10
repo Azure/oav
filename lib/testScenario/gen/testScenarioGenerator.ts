@@ -46,7 +46,7 @@ export interface RequestTracking {
 
 export interface TestScenarioGeneratorOption extends TestResourceLoaderOption {}
 
-const resourceGroupPathRegex = /^\/subscriptions\/[^\/]+\/resourceGroups\/[^\/]+$/i;
+// const resourceGroupPathRegex = /^\/subscriptions\/[^\/]+\/resourceGroups\/[^\/]+$/i;
 
 interface TestScenarioGenContext {
   resourceTracking: Map<string, TestStepRestCall>;
@@ -125,7 +125,7 @@ export class TestScenarioGenerator {
       testScenarios: [],
     };
 
-    this.idx = 0;
+    // this.idx = 0;
     this.exampleCache = new Map<string, string>();
     for (const track of requestTracking) {
       const testScenario = await this.generateTestScenario(track, testScenarioFilePath);
@@ -229,25 +229,22 @@ export class TestScenarioGenerator {
     }
 
     const url = new URL(record.url);
-    const match = resourceGroupPathRegex.exec(url.pathname);
-    if (match !== null) {
-      switch (record.method) {
-        case "GET":
-        case "PUT":
-          return undefined;
+    switch (record.method) {
+      case "GET":
+        return undefined;
 
-        case "DELETE":
-          const armInfo = this.armUrlParser.parseArmApiInfo(record.path, record.method);
-          await this.skipLroPoll(
-            records,
-            {
-              [xmsLongRunningOperation]: true,
-            } as Operation,
-            record,
-            armInfo
-          );
-          return undefined;
-      }
+      case "DELETE":
+      case "PUT":
+        const armInfo = this.armUrlParser.parseArmApiInfo(record.path, record.method);
+        await this.skipLroPoll(
+          records,
+          {
+            [xmsLongRunningOperation]: true,
+          } as Operation,
+          record,
+          armInfo
+        );
+        return undefined;
     }
 
     console.info(`Skip UNKNOWN request:\t${record.method}\t${url.pathname}${url.search}`);
@@ -263,6 +260,13 @@ export class TestScenarioGenerator {
     // TODO do not skip 404
     if (record.responseCode === 404) {
       console.info(`Skip 404 request:\t${record.method}\t${record.url}`);
+      return undefined;
+    }
+
+    // TODO support dataplane
+    const url = new URL(record.url);
+    if (url.hostname !== "management.azure.com") {
+      console.info(`Skip data-plane operation: ${record.url}`);
       return undefined;
     }
 
@@ -325,7 +329,10 @@ export class TestScenarioGenerator {
               console.log(`\t${p}`);
             }
           }
-          const diff = getJsonPatchDiff(lastStep.responseExpected, result);
+          eraseUnwantedKeys(result);
+          const lastStepResult = cloneDeep(lastStep.responseExpected);
+          eraseUnwantedKeys(lastStepResult);
+          const diff = getJsonPatchDiff(lastStepResult, result);
           step.resourceUpdate = diff;
         }
       }
@@ -398,10 +405,11 @@ export class TestScenarioGenerator {
   private generateResourceName(armInfo: ArmApiInfo, ctx: TestScenarioGenContext) {
     const resourceName = armInfo.resourceName.split("/").pop();
     const resourceType = armInfo.resourceTypes[0].split("/").pop();
-    let name = `${resourceName}`;
-    if (ctx.resourceNames.has(name)) {
-      name = `${resourceType}_${name}`;
-    }
+    // let name = `${resourceName}`;
+    let name = `${resourceType}_${resourceName}`;
+    // if (ctx.resourceNames.has(name)) {
+    //   name = `${resourceType}_${name}`;
+    // }
     if (ctx.resourceNames.has(name)) {
       name = `${name}_${this.generateIdx()}`;
     }
@@ -467,3 +475,26 @@ const getParamValue = (record: SingleRequestTracking, param: Parameter) => {
 
   return undefined;
 };
+
+const unwantedKeys = new Set(['etag']);
+const eraseUnwantedKeys = (obj: any) => {
+  if (obj === null || obj === undefined) {
+    return;
+  }
+  if (typeof obj !== "object") {
+    return;
+  }
+  if (Array.isArray(obj)) {
+    for (let idx = 0; idx < obj.length; ++idx) {
+      eraseUnwantedKeys(obj[idx]);
+    }
+    return;
+  }
+  for (const key of Object.keys(obj)) {
+    if (unwantedKeys.has(key.toLowerCase()) && typeof obj[key] === "string") {
+      obj[key] = undefined;
+    } else {
+      eraseUnwantedKeys(obj[key]);
+    }
+  }
+}

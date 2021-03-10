@@ -142,9 +142,10 @@ export class ArmUrlParser {
 
     if (methodType === "Action") {
       if (resourceSlice.length % 2 === 0) {
-        throw new Error(
-          `Invalid ARM action part, should contains odd path segments: ${resourcePart}`
-        );
+        // throw new Error(
+        //   `Invalid ARM action part, should contains odd path segments: ${resourcePart}`
+        // );
+        console.log(`Invalid ARM action part, should contains odd path segments: ${path}`);
       }
       actionName = resourceTypeArr.pop();
       resourceUri = path.slice(0, path.lastIndexOf("/"));

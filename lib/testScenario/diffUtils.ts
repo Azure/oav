@@ -1,7 +1,6 @@
 import { default as stableStringify } from "fast-json-stable-stringify";
 import * as jsonPointer from "json-pointer";
 import { cloneDeep } from "@azure-tools/openapi-tools-common";
-import { compare as jsonPatchCompare } from "fast-json-patch";
 import {
   JsonPatchOp,
   JsonPatchOpAdd,
@@ -11,6 +10,7 @@ import {
   JsonPatchOpReplace,
   JsonPatchOpTest,
 } from "./testResourceTypes";
+import { DiffPatcher } from "jsondiffpatch";
 
 interface PatchContext {
   root: any;
@@ -129,24 +129,51 @@ export const jsonPatchApply = (obj: any, ops: JsonPatchOp[]): any => {
   return rootObj[rootName];
 };
 
+const diffPatcher = new DiffPatcher({
+  textDiff: {
+    minLength: Number.MAX_VALUE,
+  }
+});
 export const getJsonPatchDiff = (from: any, to: any): JsonPatchOp[] => {
-  const ops = jsonPatchCompare(from, to);
-  return ops.map(
-    (op): JsonPatchOp => {
-      switch (op.op) {
-        case "add":
-          return { add: op.path, value: op.value };
-        case "copy":
-          return { copy: op.from, path: op.path };
-        case "move":
-          return { move: op.from, path: op.path };
-        case "remove":
-          return { remove: op.path };
-        case "replace":
-          return { replace: op.path, value: op.value };
-        default:
-          throw new Error(`Internal error`);
-      }
+  const delta = diffPatcher.diff(from, to);
+  const ops: JsonPatchOp[] = [];
+  diffDeltaToOp(delta, [], ops);
+  return ops;
+};
+
+const diffDeltaToOp = (delta: any, path: string[], ops: JsonPatchOp[]) => {
+  if (delta === undefined || delta === null) {
+    return;
+  }
+  if (Array.isArray(delta)) {
+    if (delta.length === 1) {
+      ops.push({ add: jsonPointer.compile(path), value: delta[0] });
+      return;
     }
-  );
+    if (delta.length === 2) {
+      ops.push({ replace: jsonPointer.compile(path), value: delta[1] });
+      return;
+    }
+    if (delta.length === 3 && delta[1] === 0 && delta[2] === 0) {
+      ops.push({ remove: jsonPointer.compile(path) });
+      return;
+    };
+    throw new Error(`Unknown delta ${JSON.stringify(delta)}`);
+  }
+  if (delta._t !== "a") {
+    for (const key of Object.keys(delta)) {
+      diffDeltaToOp(delta[key], path.concat([key]), ops);
+    }
+  } else {
+    for (const key of Object.keys(delta)) {
+      if (key[0] === "_") {
+        if (key === "_t") {
+          continue;
+        }
+        console.log(`Warning: array diff not supported yet`);
+        continue;
+      }
+      diffDeltaToOp(delta[key], path.concat([key]), ops);
+    }
+  }
 };
