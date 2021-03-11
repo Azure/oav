@@ -39,6 +39,7 @@ export class PostmanReportParser {
     }
     this.report.variables = this.parseVariables(report.environment.values);
     fs.writeFileSync(this.outputFile, JSON.stringify(this.report, null, 2));
+    return this.report;
   }
 
   private generateExampleItem(it: PostmanExecution): RawExecution {

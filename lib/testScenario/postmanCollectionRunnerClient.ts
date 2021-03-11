@@ -28,6 +28,7 @@ import {
 } from "./testScenarioRunner";
 import { ReflectiveVariableEnv, VariableEnv } from "./variableEnv";
 import { typeToDescription } from "./postmanItemTypes";
+import { generatedGet, lroPollingUrl } from "./postmanItemNaming";
 
 export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
   public collection: Collection;
@@ -110,7 +111,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     this.auth(stepEnv.env);
     const pathEnv = new ReflectiveVariableEnv(":", "");
     const item = new Item();
-    item.name = step.exampleFilePath!;
+    item.name = step.step!;
     item.request = new Request({
       name: step.exampleFilePath,
       method: step.operation._method as string,
@@ -172,6 +173,8 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
         poller_item_name: `${item.name}_poller`,
         operationId: step.operation.operationId || "",
         exampleName: step.exampleFile!,
+        itemName: item.name,
+        step: step.step,
       });
       this.addAsLongRunningOperationItem(item);
     } else {
@@ -179,26 +182,33 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
         type: "simple",
         operationId: step.operation.operationId || "",
         exampleName: step.exampleFile!,
+        itemName: item.name,
+        step: step.step,
       });
       this.collection.items.add(item);
     }
+    // generate get
     if (step.operation._method === "put" || step.operation._method === "delete") {
       this.collection.items.add(
-        this.getOperationItem(
-          `${item.name}_${step.operation._method}_generated_get`,
-          item.request.url.toString()
+        this.generatedGetOperationItem(
+          item.name,
+          item.request.url.toString(),
+          step.step,
+          step.operation._method
         )
       );
     }
   }
 
   private addAsLongRunningOperationItem(item: Item) {
-    this.collectionEnv.set(`${item.name}_polling_url`, "<polling_url>", "string");
+    this.collectionEnv.set(`${lroPollingUrl(item.name)}`, "<polling_url>", "string");
     const longRunningEvent = new Event({
       listen: "test",
       script: {
         type: "text/javascript",
-        exec: `pm.environment.set("${item.name}_polling_url", pm.response.headers.get('Location')||pm.response.headers.get('Azure-AsyncOperation')||"https://postman-echo.com/delay/10")`,
+        exec: `pm.environment.set("${lroPollingUrl(
+          item.name
+        )}", pm.response.headers.get('Location')||pm.response.headers.get('Azure-AsyncOperation')||"https://postman-echo.com/delay/10")`,
       },
     });
     item.events.add(longRunningEvent);
@@ -322,18 +332,27 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     newman.run({ collection: this.collection, environment: this.collectionEnv });
   }
 
-  private getOperationItem(name: string, url: string): Item {
+  private generatedGetOperationItem(
+    name: string,
+    url: string,
+    step: string,
+    prevMethod: string = "put"
+  ): Item {
     const item = new Item({
-      name: `${name}`,
+      name: `${generatedGet(name)}`,
       request: {
         method: "get",
         url: url,
       },
     });
-    item.description = typeToDescription({ type: "generated-get" });
+    item.description = typeToDescription({
+      type: "generated-get",
+      lro_item_name: name,
+      step: step,
+    });
     this.addAuthorizationHeader(item);
     const scriptTypes: TestScriptType[] = ["DetailResponseLog"];
-    if (!name.includes("delete")) {
+    if (prevMethod !== "delete") {
       scriptTypes.push("StatusCodeAssertion");
     }
     this.addTestScript(item, scriptTypes);

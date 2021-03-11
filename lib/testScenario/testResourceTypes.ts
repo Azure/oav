@@ -391,6 +391,7 @@ export type TestDefinitionFile = TransformRaw<
 export interface RawReport {
   executions: RawExecution[];
   variables: any;
+  testScenarioName: string;
 }
 
 export interface RawExecution {
