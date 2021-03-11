@@ -72,10 +72,9 @@ export class PostmanReportParser {
   private parseResponse(resp: Response): RawResponse {
     const ret: RawResponse = {
       headers: [],
-      statusCode: "",
+      statusCode: resp.code,
       body: "",
     };
-    ret.statusCode = resp.code.toString();
     ret.headers = this.parseHeader(resp.headers.toJSON());
 
     ret.body = resp.stream?.toString() || "";

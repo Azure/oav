@@ -387,7 +387,7 @@ export type TestDefinitionFile = TransformRaw<
 export interface RawReport {
   executions: RawExecution[];
   variables: any;
-  testScenarioName: string;
+  testScenarioName?: string;
 }
 
 export interface RawExecution {
@@ -403,7 +403,7 @@ export interface RawRequest {
 }
 
 export interface RawResponse {
-  statusCode: string;
+  statusCode: number;
   headers: { [key: string]: any };
   body: string;
 }

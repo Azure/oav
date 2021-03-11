@@ -3,11 +3,31 @@ import * as path from "path";
 import * as _ from "lodash";
 import { LiveValidator } from "../liveValidation/liveValidator";
 import { SwaggerExample } from "./../swagger/swaggerTypes";
-import { ExampleQualityValidator } from "./../validators/qualityValidator";
 import { TestResourceLoader } from "./testResourceLoader";
 import { PostmanReportParser } from "./postmanReportParser";
-import { exampleDiff } from "./exampleDiff";
-import { RawReport, RawExecution, TestDefinitionFile, TestStep } from "./testResourceTypes";
+import {
+  RawReport,
+  RawExecution,
+  TestDefinitionFile,
+  TestStep,
+  JsonPatchOp,
+  TestStepRestCall,
+} from "./testResourceTypes";
+import { VariableEnv } from "./variableEnv";
+import { getJsonPatchDiff } from "./diffUtils";
+
+const safeJsonParse = (content: string) => {
+  try {
+    return JSON.parse(content);
+  } catch (err) {
+    return {};
+  }
+};
+
+const getSwaggerRootPath = (swaggerRootPath: string) => {
+  const idx = swaggerRootPath.lastIndexOf("specification");
+  return swaggerRootPath.substring(0, idx);
+};
 
 type GeneratedExample = {
   exampleName: string;
@@ -15,14 +35,34 @@ type GeneratedExample = {
   operationId: string;
   example: SwaggerExample;
 };
+
+type TestScenarioResult = {
+  [step: string]: StepResult;
+};
+
+type StepResult = {
+  exampleName: string;
+  example?: SwaggerExample;
+  operationId: string;
+  error?: HttpError;
+  diff?: JsonPatchOp[];
+  liveValidationResult?: any;
+  exampleQualityResult?: any;
+};
+
+type HttpError = {
+  statusCode: number;
+  rawExecution: RawExecution;
+};
+
 export class ReportGenerator {
   private liveValidator: LiveValidator;
   private postmanReportParser: PostmanReportParser;
   private testResourceLoader: TestResourceLoader;
   private validationResult: any;
   private diffResult: any;
-  private swaggerExampleQualityResult: any;
-  private generatedExamples: Map<string, GeneratedExample>;
+  private swaggerExampleQualityResult: TestScenarioResult;
+  private generatedExamplesMapping: Map<string, GeneratedExample>;
   private httpRecordingPath: string;
   private testDefFile: TestDefinitionFile | undefined;
   private exampleFileMapping: any;
@@ -45,7 +85,7 @@ export class ReportGenerator {
     });
     this.liveValidator = new LiveValidator({
       swaggerPaths: this.swaggerFilePaths.map((it) => path.resolve(this.swaggerRootPath, it)),
-      directory: this.swaggerRootPath,
+      directory: getSwaggerRootPath(this.swaggerRootPath),
       loadValidatorInInitialize: true,
       loadValidatorInBackground: false,
     });
@@ -54,7 +94,7 @@ export class ReportGenerator {
     this.validationResult = {};
     this.swaggerExampleQualityResult = {};
     this.diffResult = {};
-    this.generatedExamples = new Map<string, GeneratedExample>();
+    this.generatedExamplesMapping = new Map<string, GeneratedExample>();
     this.httpRecordingPath = path.resolve(this.output, "recording.json");
     this.testDefFile = undefined;
     this.postmanReportParser = new PostmanReportParser(
@@ -64,57 +104,93 @@ export class ReportGenerator {
     this.rawReport = this.postmanReportParser.generateRawReport();
   }
 
-  public async generateExamples() {
-    await this.generateExampleFromRawReport(this.rawReport);
-  }
-
-  public async generateExampleFromRawReport(rawReport: RawReport) {
+  public async generateExampleQualityReport(rawReport: RawReport) {
     const variables = rawReport.variables;
     for (const it of rawReport.executions) {
       if (it.annotation === undefined) {
         continue;
       }
       if (it.annotation.type === "simple" || it.annotation.type === "LRO") {
-        const example: any = {};
-        if (it.annotation.operationId !== undefined) {
-          this.operationIds.add(it.annotation.operationId);
+        let error;
+        const generatedExample = this.generateExample(it, variables, rawReport);
+        this.generatedExamplesMapping.set(generatedExample.exampleName, generatedExample);
+        const matchedStep = this.getMatchedStep(it.annotation.step) as TestStepRestCall;
+        if (
+          Math.floor(it.response.statusCode / 200) !== 1 &&
+          it.response.statusCode !== matchedStep.statusCode
+        ) {
+          error = { statusCode: it.response.statusCode, rawExecution: it } as HttpError;
+        } else {
+          // this.validateExample(generatedExample);
         }
-        example.parameters = this.generateParametersFromQuery(variables, it);
-        try {
-          _.extend(example.parameters, { parameters: JSON.parse(it.request.body) });
-          // eslint-disable-next-line no-empty
-        } catch (err) {}
-        const resp: any = this.parseRespBody(it);
-        example.responses = {};
-        _.extend(example.responses, resp);
-        const exampleName = it.annotation.exampleName.replace(/^.*[\\\/]/, "");
-        const generatedGetExecution = this.findGeneratedGetExecution(it, rawReport);
-        if (generatedGetExecution.length > 0) {
-          const getResp = this.parseRespBody(generatedGetExecution[0]);
-          _.extend(example.responses, getResp);
-        }
-        this.generatedExamples.set(exampleName, {
-          exampleName: exampleName,
-          step: it.annotation.step,
+        this.swaggerExampleQualityResult[it.annotation.step] = {
+          exampleName: generatedExample.exampleName,
           operationId: it.annotation.operationId,
-          example: example,
-        });
+          error: error,
+          diff: this.exampleResponseDiff(generatedExample, matchedStep),
+          liveValidationResult: await this.liveValidate(it, generatedExample.exampleName),
+        };
       }
     }
     this.writeGeneratedExamples();
   }
 
-  private validateExample() {
-    for (const example of this.generatedExamples.values()) {
-      const matchedStep = this.getMatchedStep(example.step);
-      if (matchedStep?.type === "restCall") {
-        // do example diff
-        console.log(matchedStep.responseExpected);
-      }
+  // private validateExample(generatedExample: GeneratedExample) {}
+
+  private generateExample(
+    it: RawExecution,
+    variables: any,
+    rawReport: RawReport
+  ): GeneratedExample {
+    const example: any = {};
+    if (it.annotation.operationId !== undefined) {
+      this.operationIds.add(it.annotation.operationId);
     }
+    example.parameters = this.generateParametersFromQuery(variables, it);
+    try {
+      _.extend(example.parameters, { parameters: JSON.parse(it.request.body) });
+      // eslint-disable-next-line no-empty
+    } catch (err) {}
+    const resp: any = this.parseRespBody(it);
+    example.responses = {};
+    _.extend(example.responses, resp);
+    const exampleName = it.annotation.exampleName.replace(/^.*[\\\/]/, "");
+    const generatedGetExecution = this.findGeneratedGetExecution(it, rawReport);
+    if (generatedGetExecution.length > 0) {
+      const getResp = this.parseRespBody(generatedGetExecution[0]);
+      _.extend(example.responses, getResp);
+    }
+    return {
+      exampleName,
+      example,
+      step: it.annotation.step,
+      operationId: it.annotation.operationId,
+    };
   }
 
-  private responseDiff(resp: any, expectedResp: any) {}
+  private exampleResponseDiff(example: GeneratedExample, matchedStep: TestStep): JsonPatchOp[] {
+    if (matchedStep?.type === "restCall") {
+      return this.responseDiff(
+        example.example.responses[matchedStep.statusCode] || {},
+        matchedStep.responseExpected,
+        this.rawReport.variables
+      );
+    }
+    return [];
+  }
+
+  private responseDiff(resp: any, expectedResp: any, variables: any) {
+    const env = new VariableEnv();
+    env.setBatch(variables);
+    try {
+      const expected = env.resolveObjectValues(expectedResp);
+      const delta = getJsonPatchDiff(expected, resp);
+      return delta;
+    } catch (err) {
+      console.log(err);
+    }
+    return [];
+  }
 
   private getMatchedStep(stepName: string): TestStep | undefined {
     for (const testScenario of this.testDefFile?.testScenarios ?? []) {
@@ -141,25 +217,11 @@ export class ReportGenerator {
 
   public async generateReport() {
     this.testDefFile = await this.testResourceLoader.load(this.testDefFilePath);
+    await this.liveValidator.initialize();
     this.ensureGeneratedFolder();
     this.copySourceFile();
-    await this.liveValidator.initialize();
-    await this.generateExamples();
-    this.validateExample();
-    await this.exampleQuality();
+    await this.generateExampleQualityReport(this.rawReport);
     this.outputResult();
-  }
-
-  private async exampleQuality() {
-    const operationIds = Array.from(this.operationIds);
-    for (const it of this.swaggerFilePaths) {
-      const swaggerFileName = it.replace(/^.*[\\\/]/, "");
-      const validator = ExampleQualityValidator.create({
-        swaggerFilePath: path.resolve(this.output, it.replace(/^.*[\\\/]/, "")),
-      });
-      const result = await validator.validateSwaggerExamples(operationIds);
-      this.swaggerExampleQualityResult[swaggerFileName] = result;
-    }
   }
 
   private copySourceFile() {
@@ -200,67 +262,29 @@ export class ReportGenerator {
   }
 
   private writeGeneratedExamples() {
-    for (const v of this.generatedExamples.values()) {
+    for (const v of this.generatedExamplesMapping.values()) {
       const exampleFilePath = path.resolve(`${this.output}/examples/${v.exampleName}`);
       fs.writeFileSync(exampleFilePath, JSON.stringify(v.example, null, 2));
       this.exampleFileMapping[exampleFilePath] = v.operationId;
     }
   }
 
-  private async liveValidate(it: RawExecution, exampleName: any) {
+  private async liveValidate(it: RawExecution, exampleName: any): Promise<any> {
     const validationRes = await this.liveValidator.validateLiveRequestResponse({
       liveRequest: {
         url: it.request.url,
         method: it.request.method,
         headers: this.getValueStringifiedMap(it.request.headers),
-        body: JSON.parse(it.request.body),
+        body: safeJsonParse(it.request.body),
       },
       liveResponse: {
-        statusCode: it.response.statusCode,
+        statusCode: it.response.statusCode.toString(),
         headers: this.getValueStringifiedMap(it.response.headers),
-        body: JSON.parse(it.request.body),
+        body: safeJsonParse(it.response.body),
       },
     });
     this.validationResult[exampleName] = validationRes;
-  }
-
-  private generateDiff(variables: any) {
-    for (const v of this.generatedExamples.values()) {
-      const oldExamplePath = this.findOldExampleFilePath(v.exampleName);
-      if (oldExamplePath === undefined) {
-        continue;
-      }
-      const oldExample = JSON.parse(fs.readFileSync(oldExamplePath).toString());
-      //TODO: get all readonly field and mask it as ignored.
-      const delta = exampleDiff(oldExample, v.example, {
-        suppressionVariables: Object.keys(variables).concat(Object.values(variables)),
-        suppressionPath: [],
-        ignoreRemovedResponse: true,
-        ignoreReplaceInResponse: false,
-      });
-      this.diffResult[v.exampleName] = delta;
-    }
-  }
-
-  private findOldExampleFilePath(exampleName: string) {
-    for (const step of this.testDefFile!.prepareSteps) {
-      if (step.type === "restCall") {
-        if (step.exampleFile?.includes(exampleName)) {
-          return path.resolve(this.swaggerRootPath, step.exampleFilePath!);
-        }
-      }
-    }
-
-    for (const testScenario of this.testDefFile!.testScenarios) {
-      for (const step of testScenario.steps) {
-        if (step.type === "restCall") {
-          if (step.exampleFilePath?.includes(exampleName)) {
-            return path.resolve(this.swaggerRootPath, step.exampleFilePath!);
-          }
-        }
-      }
-    }
-    return undefined;
+    return validationRes;
   }
 
   private ensureGeneratedFolder() {
