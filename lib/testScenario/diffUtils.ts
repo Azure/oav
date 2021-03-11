@@ -1,5 +1,7 @@
 import { default as stableStringify } from "fast-json-stable-stringify";
 import * as jsonPointer from "json-pointer";
+import { cloneDeep } from "@azure-tools/openapi-tools-common";
+import { compare as jsonPatchCompare } from "fast-json-patch";
 import {
   JsonPatchOp,
   JsonPatchOpAdd,
@@ -9,7 +11,6 @@ import {
   JsonPatchOpReplace,
   JsonPatchOpTest,
 } from "./testResourceTypes";
-import { cloneDeep } from "@azure-tools/openapi-tools-common";
 
 interface PatchContext {
   root: any;
@@ -126,4 +127,26 @@ export const jsonPatchApply = (obj: any, ops: JsonPatchOp[]): any => {
     jsonPatchApplyOp(rootObj, op);
   }
   return rootObj[rootName];
+};
+
+export const getJsonPatchDiff = (from: any, to: any): JsonPatchOp[] => {
+  const ops = jsonPatchCompare(from, to);
+  return ops.map(
+    (op): JsonPatchOp => {
+      switch (op.op) {
+        case "add":
+          return { add: op.path, value: op.value };
+        case "copy":
+          return { copy: op.from, path: op.path };
+        case "move":
+          return { move: op.from, path: op.path };
+        case "remove":
+          return { remove: op.path };
+        case "replace":
+          return { replace: op.path, value: op.value };
+        default:
+          throw new Error(`Internal error`);
+      }
+    }
+  );
 };

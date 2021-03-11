@@ -132,12 +132,11 @@ export interface ArmTemplate {
 //#region TestStep RestCall
 
 export type RawTestStepRestCall = RawTestStepBase & {
-  fromStep?: string;
+  resourceName?: string;
   exampleFile?: string;
   operationId?: string;
   statusCode?: number;
-  patchRequest?: JsonPatchOp[];
-  patchResponse?: JsonPatchOp[];
+  resourceUpdate?: JsonPatchOp[];
 };
 
 const testStepRestCallSchema: Schema = {
@@ -148,16 +147,13 @@ const testStepRestCallSchema: Schema = {
       type: "string",
       enum: ["exampleFile"],
     },
+    resourceName: {
+      type: "string",
+    },
     exampleFile: {
       type: "string",
     },
-    patchRequest: {
-      type: "array",
-      items: {
-        $ref: "#/definitions/JsonPatchOp",
-      },
-    },
-    patchResponse: {
+    resourceUpdate: {
       type: "array",
       items: {
         $ref: "#/definitions/JsonPatchOp",
@@ -183,7 +179,7 @@ export type TestStepRestCall = TransformRaw<
     requestParameters: SwaggerExample["parameters"];
     responseExpected: SwaggerExample["responses"]["200"];
   } & TestStepBase,
-  "fromStep" | "exampleFile"
+  "exampleFile" | "resourceName"
 >;
 
 //#endregion

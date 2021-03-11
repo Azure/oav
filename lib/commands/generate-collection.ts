@@ -45,8 +45,16 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     const readmeMd: string = argv.readme;
     argv["try-require"] = "readme.test.md";
     const autorestConfig = await getAutorestConfig(argv, readmeMd);
+<<<<<<< HEAD
     const swaggerFilePaths: string[] = autorestConfig["input-file"];
     const testScenarioFile = autorestConfig["test-resources"][0]["test"];
+=======
+    console.log(autorestConfig["input-file"]);
+    console.log(autorestConfig["test-resources"]);
+    const swaggerFilePaths: string[] = autorestConfig["input-file"];
+    const testScenarioFile = autorestConfig["test-resources"][0].test;
+    console.log(testScenarioFile);
+>>>>>>> origin/test-scenario-main
     const fileRoot: string = path.dirname(readmeMd);
     let env = {
       subscriptionId: "<mySubcriptionId>",

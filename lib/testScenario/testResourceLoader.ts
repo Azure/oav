@@ -3,7 +3,7 @@ import { join as pathJoin, dirname } from "path";
 import { dump as yamlDump, load as yamlLoad } from "js-yaml";
 import { default as AjvInit, ValidateFunction } from "ajv";
 import { inject, injectable } from "inversify";
-import { applyPatch, Operation as JsonPatchOperation } from "fast-json-patch";
+import { cloneDeep } from "@azure-tools/openapi-tools-common";
 import { Loader, setDefaultOpts } from "../swagger/loader";
 import { FileLoader, FileLoaderOption } from "../swagger/fileLoader";
 import { JsonLoader, JsonLoaderOption } from "../swagger/jsonLoader";
@@ -35,10 +35,10 @@ import {
   RawTestStep,
   RawTestStepRestCall,
   RawTestScenario,
-  JsonPatchOp,
 } from "./testResourceTypes";
 import { ExampleTemplateGenerator } from "./exampleTemplateGenerator";
 import { BodyTransformer } from "./bodyTransformer";
+import { jsonPatchApply } from "./diffUtils";
 
 const ajv = new AjvInit({
   useDefaults: true,
@@ -53,7 +53,7 @@ export interface TestResourceLoaderOption
 
 interface TestScenarioContext {
   stepTracking: Map<string, TestStep>;
-  entityTracking: Map<string, SwaggerExample[]>;
+  resourceTracking: Map<string, TestStep>;
   testDef: TestDefinitionFile;
   testScenario?: TestScenario;
 }
@@ -199,7 +199,7 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
 
     const ctx: TestScenarioContext = {
       stepTracking: new Map(),
-      entityTracking: new Map(),
+      resourceTracking: new Map(),
       testDef,
     };
     for (const rawStep of rawTestDef.prepareSteps ?? []) {
@@ -325,20 +325,19 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
         `Property "step" as step name is required for restCall step: ${rawStep.exampleFile}`
       );
     }
-    if (ctx.entityTracking.has(rawStep.step)) {
+    if (ctx.resourceTracking.has(rawStep.step)) {
       throw new Error(`Duplicated step name: ${rawStep.step}`);
     }
 
     const step: TestStepRestCall = {
       type: "restCall",
       step: rawStep.step!,
-      fromStep: rawStep.fromStep,
+      resourceName: rawStep.resourceName,
+      resourceUpdate: rawStep.resourceUpdate ?? [],
       exampleFile: rawStep.exampleFile,
       variables: rawStep.variables ?? {},
       operationId: rawStep.operationId ?? "",
       operation: {} as Operation,
-      patchRequest: rawStep.patchRequest ?? [],
-      patchResponse: rawStep.patchResponse ?? [],
       requestParameters: {} as SwaggerExample["parameters"],
       responseExpected: {},
       exampleId: "",
@@ -353,58 +352,58 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
       step.operation = operation;
     }
 
-    if (step.fromStep !== undefined) {
+    if (step.resourceName !== undefined && step.resourceUpdate.length > 0) {
       await this.loadTestStepRestCallFromStep(step, ctx);
     } else {
       await this.loadTestStepRestCallExampleFile(step, ctx);
     }
 
-    try {
-      step.requestParameters = applyJsonPatchOp(step.requestParameters, step.patchRequest);
-    } catch (e) {
-      const err = e as Error;
-      err.message = `Failed to apply patchRequest in ${step.step}: ${err.message}`;
-    }
-    try {
-      step.responseExpected = applyJsonPatchOp(step.responseExpected, step.patchResponse);
-    } catch (e) {
-      const err = e as Error;
-      err.message = `Failed to apply patchResponse in ${step.step}: ${err.message}`;
-    }
-
     ctx.stepTracking.set(step.step, step);
+    if (step.resourceName !== undefined) {
+      ctx.resourceTracking.set(step.resourceName, step);
+    }
 
     return step;
   }
 
   private async loadTestStepRestCallFromStep(step: TestStepRestCall, ctx: TestScenarioContext) {
     if (step.exampleFile !== undefined) {
-      throw new Error(`Cannot use fromStep along with exampleFile for step: ${step.step}`);
+      throw new Error(`Cannot use updateResource along with exampleFile for step: ${step.step}`);
     }
-    const fromStep = ctx.stepTracking.get(step.fromStep!);
-    if (fromStep === undefined) {
-      throw new Error(`Unknown fromStep name: ${step.fromStep}`);
+    if (step.operation._method !== "put") {
+      throw new Error(`resourceUpdate could only be used with "PUT" operation`);
     }
-    if (fromStep.type !== "restCall") {
-      throw new Error(`Cannot use fromStep from non restCall type for step: ${step.fromStep}`);
+    const lastStep = ctx.resourceTracking.get(step.resourceName!);
+    if (lastStep === undefined) {
+      throw new Error(`Unknown resourceName: ${step.resourceName}`);
+    }
+    if (lastStep.type !== "restCall") {
+      throw new Error(
+        `Cannot use resourceName from non restCall type for step: ${step.resourceName}`
+      );
     }
 
-    step.requestParameters = fromStep.requestParameters;
-    step.responseExpected = fromStep.responseExpected;
-    step.exampleId = fromStep.exampleId;
+    step.requestParameters = { ...lastStep.requestParameters };
+    step.exampleId = lastStep.exampleId;
     if (step.operationId === "") {
-      step.operationId = fromStep.operationId;
-      step.operation = fromStep.operation;
+      step.operationId = lastStep.operationId;
+      step.operation = lastStep.operation;
     }
+
+    let target = cloneDeep(lastStep.responseExpected);
+    target = jsonPatchApply(target, step.resourceUpdate);
 
     const convertedRequest = await this.bodyTransformer.responseBodyToRequest(
-      fromStep.responseExpected,
-      fromStep.operation.responses[fromStep.statusCode].schema!
+      target,
+      lastStep.operation.responses[lastStep.statusCode].schema!
     );
-    const bodyParamName = getBodyParamName(fromStep.operation, this.jsonLoader);
-    if (bodyParamName !== undefined) {
-      step.requestParameters[bodyParamName] = convertedRequest;
-    }
+    const bodyParamName = getBodyParamName(lastStep.operation, this.jsonLoader)!;
+    step.requestParameters[bodyParamName] = convertedRequest;
+
+    step.responseExpected = await this.bodyTransformer.requestBodyToResponse(
+      target,
+      step.requestParameters[bodyParamName]
+    );
   }
 
   private async loadTestStepRestCallExampleFile(step: TestStepRestCall, ctx: TestScenarioContext) {
@@ -448,51 +447,4 @@ export const getBodyParamName = (operation: Operation, jsonLoader: JsonLoader) =
     (param) => jsonLoader.resolveRefObj(param).in === "body"
   );
   return bodyParams?.name;
-};
-
-const jsonOpToJsonPatchOperation = (op: JsonPatchOp): JsonPatchOperation | JsonPatchOperation[] => {
-  if ("add" in op) {
-    return { op: "add", path: op.add, value: op.value };
-  }
-  if ("remove" in op) {
-    return { op: "remove", path: op.remove };
-  }
-  if ("replace" in op) {
-    return { op: "replace", path: op.replace, value: op.value };
-  }
-  if ("copy" in op) {
-    return { op: "copy", from: op.copy, path: op.path };
-  }
-  if ("move" in op) {
-    return { op: "move", from: op.move, path: op.path };
-  }
-  if ("test" in op) {
-    return { op: "test", path: op.test, value: op.value };
-  }
-  if ("merge" in op) {
-    return Object.keys(op.value).map((key) => ({
-      op: "add",
-      path: `${op.merge}/${key}`,
-      value: op.value[key],
-    }));
-  }
-
-  throw new Error(`Unknown jsonPatchOp: ${JSON.stringify(op)}`);
-};
-
-const applyJsonPatchOp = (data: any, ops: JsonPatchOp[]) => {
-  if (ops.length === 0) {
-    return data;
-  }
-  let jsonPatchOps: JsonPatchOperation[] = [];
-  for (const op of ops) {
-    const o = jsonOpToJsonPatchOperation(op);
-    if (Array.isArray(o)) {
-      jsonPatchOps = jsonPatchOps.concat(o);
-    } else {
-      jsonPatchOps.push(o);
-    }
-  }
-  const result = applyPatch(data, jsonPatchOps, undefined, false);
-  return result.newDocument;
 };
