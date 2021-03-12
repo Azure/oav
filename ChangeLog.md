@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 03/12/2021 2.2.6
+
+- Fixed the mock value of 'location' header and 'azure_AsyncOperation' header.
+
 ## 02/08/2021 2.2.5
 
 - Add new rule of 'MISSING_RESOURCE_ID'.

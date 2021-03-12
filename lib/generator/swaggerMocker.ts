@@ -92,7 +92,7 @@ export default class SwaggerMocker {
       return;
     }
     return {
-      [headerAttr]: "LocationURl",
+      [headerAttr]: "https://foo.com/operationstatus",
     };
   }
 
