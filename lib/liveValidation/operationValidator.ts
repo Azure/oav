@@ -98,7 +98,8 @@ export const validateSwaggerLiveResponse = async (
   response: LiveResponse,
   info: OperationContext,
   loader?: LiveValidatorLoader,
-  includeErrors?: ExtendedErrorCode[]
+  includeErrors?: ExtendedErrorCode[],
+  isArmCall?: boolean
 ) => {
   const { operation } = info.operationMatch!;
   const { statusCode, body } = response;
@@ -126,6 +127,9 @@ export const validateSwaggerLiveResponse = async (
   const headers = transformLiveHeader(response.headers ?? {}, rsp);
   if (rsp.schema !== undefined) {
     validateContentType(operation.produces!, headers, false, result);
+    if (isArmCall) {
+      validateLroOperation(operation, statusCode, headers, result);
+    }
   }
 
   const ctx = {
@@ -252,6 +256,36 @@ const schemaValidateIssueToLiveValidationIssue = (
 
     if (!skipIssue) {
       output.push(issue);
+    }
+  }
+};
+
+const validateLroOperation = (
+  operation: Operation,
+  statusCode: string,
+  headers: StringMap<string>,
+  result: LiveValidationIssue[]
+) => {
+  if (operation["x-ms-long-running-operation"] === true) {
+    if (
+      operation._method === "delete" ||
+      operation._method === "patch" ||
+      operation._method === "post"
+    ) {
+      if (statusCode !== "202") {
+        result.push(
+          issueFromErrorCode("LRO_RESPONSE_CODE", {
+            statusCode,
+          })
+        );
+      }
+      if (headers.location === undefined || headers.location === "") {
+        result.push(
+          issueFromErrorCode("LRO_RESPONSE_HEADER", {
+            header: "location",
+          })
+        );
+      }
     }
   }
 };
