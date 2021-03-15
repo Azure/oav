@@ -267,26 +267,48 @@ const validateLroOperation = (
   result: LiveValidationIssue[]
 ) => {
   if (operation["x-ms-long-running-operation"] === true) {
-    if (
-      operation._method === "delete" ||
-      operation._method === "patch" ||
-      operation._method === "post"
-    ) {
-      if (statusCode !== "202") {
-        result.push(
-          issueFromErrorCode("LRO_RESPONSE_CODE", {
-            statusCode,
-          })
-        );
+    if (operation._method === "patch" || operation._method === "post") {
+      if (statusCode !== "202" && statusCode !== "201") {
+        result.push(issueFromErrorCode("LRO_RESPONSE_CODE", { statusCode }, operation.responses));
+      } else {
+        validateLroHeader(operation, headers, result);
       }
-      if (headers.location === undefined || headers.location === "") {
-        result.push(
-          issueFromErrorCode("LRO_RESPONSE_HEADER", {
-            header: "location",
-          })
-        );
+    } else if (operation._method === "delete") {
+      if (statusCode !== "202" && statusCode !== "204") {
+        result.push(issueFromErrorCode("LRO_RESPONSE_CODE", { statusCode }, operation.responses));
+      }
+      if (statusCode === "202") {
+        validateLroHeader(operation, headers, result);
+      }
+    } else if (operation._method === "put") {
+      if (statusCode === "202" || statusCode === "201") {
+        validateLroHeader(operation, headers, result);
+      } else if (statusCode !== "200") {
+        result.push(issueFromErrorCode("LRO_RESPONSE_CODE", { statusCode }, operation.responses));
       }
     }
+  }
+};
+
+const validateLroHeader = (
+  operation: Operation,
+  headers: StringMap<string>,
+  result: LiveValidationIssue[]
+) => {
+  if (
+    (headers.location === undefined || headers.location === "") &&
+    (headers["azure-AsyncOperation"] === undefined || headers["azure-AsyncOperation"] === "") &&
+    (headers["azure-asyncoperation"] === undefined || headers["azure-asyncoperation"] === "")
+  ) {
+    result.push(
+      issueFromErrorCode(
+        "LRO_RESPONSE_HEADER",
+        {
+          header: "location or azure-AsyncOperation",
+        },
+        operation.responses
+      )
+    );
   }
 };
 

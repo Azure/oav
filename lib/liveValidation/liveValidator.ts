@@ -85,7 +85,7 @@ interface Meta {
 export interface ValidateOptions {
   readonly includeErrors?: ExtendedErrorCode[];
   readonly includeOperationMatch?: boolean;
-  isArmCall?: boolean
+  isArmCall?: boolean;
 }
 
 export enum LiveValidatorLoggingLevels {
@@ -385,7 +385,7 @@ export class LiveValidator {
         info,
         this.loader,
         options.includeErrors,
-        options.isArmCall,
+        options.isArmCall
       );
     } catch (resValidationError) {
       const msg =

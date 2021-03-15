@@ -1,5 +1,10 @@
 # Change Log - oav
 
+## 02/08/2021 2.2.7
+
+- Add new rules of 'LRO_RESPONSE_HEADER' and 'LRO_RESPONSE_CODE'.
+- Add option of 'isArmCall' to differentiate rulesets for Arm and RpaaS in validation apis.
+
 ## 03/12/2021 2.2.6
 
 - Fixed the mock value of 'location' header and 'azure_AsyncOperation' header.
