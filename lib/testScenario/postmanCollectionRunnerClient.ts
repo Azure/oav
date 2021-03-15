@@ -28,7 +28,7 @@ import {
 } from "./testScenarioRunner";
 import { ReflectiveVariableEnv, VariableEnv } from "./variableEnv";
 import { typeToDescription } from "./postmanItemTypes";
-import { generatedGet, lroPollingUrl } from "./postmanItemNaming";
+import { generatedGet, lroPollingUrl, generatedPrefix } from "./postmanItemNaming";
 
 export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
   public collection: Collection;
@@ -104,7 +104,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
   }
 
   public async sendExampleRequest(
-    _request: TestScenarioClientRequest,
+    request: TestScenarioClientRequest,
     step: TestStepRestCall,
     stepEnv: TestStepEnv
   ): Promise<void> {
@@ -133,7 +133,9 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
           urlVariables.push({ key: param.name, value: `{{${param.name}}}` });
           break;
         case "query":
-          queryParams.push({ key: param.name, value: paramValue });
+          if (paramValue !== undefined) {
+            queryParams.push({ key: param.name, value: paramValue });
+          }
           break;
         case "header":
           const header = new Header({ key: param.name, value: paramValue });
@@ -142,7 +144,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
         case "body":
           item.request.body = new RequestBody({
             mode: "raw",
-            raw: JSON.stringify(_request.body, null, 2),
+            raw: JSON.stringify(request.body, null, 2),
           });
           break;
         default:
@@ -232,7 +234,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
         type: "text/javascript",
         // generate assertion from example
         exec: this.postmanTestScript.generateScript({
-          name: "status code should be 2xx",
+          name: "response status code assertion.",
           types: types,
           variables: overwriteVariables,
         }),
@@ -339,7 +341,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     prevMethod: string = "put"
   ): Item {
     const item = new Item({
-      name: `${generatedGet(name)}`,
+      name: `${generatedPrefix(generatedGet(name))}`,
       request: {
         method: "get",
         url: url,
@@ -361,7 +363,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
 
   public longRunningOperationItem(initialItem: Item): Item[] {
     const ret: Item[] = [];
-    const pollerItemName = initialItem.name + "_poller";
+    const pollerItemName = generatedPrefix(initialItem.name + "_poller");
     const pollerItem = new Item({
       name: pollerItemName,
       request: {

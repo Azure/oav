@@ -3,7 +3,7 @@ interface ScriptTemplate {
 }
 
 const StatusCodeAssertion: ScriptTemplate = {
-  text: `pm.expect(pm.response.code).to.be.oneOf([200, 201, 202]);`,
+  text: `pm.expect(pm.response.code).to.be.oneOf([200, 201, 202, 204]);`,
 };
 
 const DetailResponseLog: ScriptTemplate = {
