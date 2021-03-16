@@ -127,7 +127,7 @@ export const validateSwaggerLiveResponse = async (
   const headers = transformLiveHeader(response.headers ?? {}, rsp);
   if (rsp.schema !== undefined) {
     validateContentType(operation.produces!, headers, false, result);
-    if (isArmCall) {
+    if (isArmCall && realCode >= 200 && realCode < 300) {
       validateLroOperation(operation, statusCode, headers, result);
     }
   }

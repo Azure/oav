@@ -3,6 +3,7 @@ pool:
 
 trigger:
   - master
+  - develop
 
 pr:
   branches:
