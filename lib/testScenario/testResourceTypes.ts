@@ -193,11 +193,13 @@ export interface JsonPatchOpAdd {
 
 export interface JsonPatchOpRemove {
   remove: string;
+  oldValue?: any;
 }
 
 export interface JsonPatchOpReplace {
   replace: string;
   value: any;
+  oldValue?: any;
 }
 
 export interface JsonPatchOpCopy {
