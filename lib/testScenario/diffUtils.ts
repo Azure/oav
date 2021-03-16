@@ -8,6 +8,7 @@ import {
   JsonPatchOpCopy,
   JsonPatchOpMerge,
   JsonPatchOpMove,
+  JsonPatchOpRemove,
   JsonPatchOpReplace,
   JsonPatchOpTest,
 } from "./testResourceTypes";
@@ -17,6 +18,9 @@ interface PatchContext {
   obj: any;
   propertyName: string;
   arrIdx: number;
+}
+export interface DiffPatchOptions {
+  includeOldValue?: boolean;
 }
 const rootName = "ROOT";
 
@@ -129,11 +133,31 @@ export const jsonPatchApply = (obj: any, ops: JsonPatchOp[]): any => {
   return rootObj[rootName];
 };
 
-export const getJsonPatchDiff = (from: any, to: any): JsonPatchOp[] => {
-  return calcDiff(from, to, []);
+export const getJsonPatchDiff = (
+  from: any,
+  to: any,
+  opts: DiffPatchOptions = {}
+): JsonPatchOp[] => {
+  const patches = calcDiff(from, to, [], opts);
+
+  if (opts.includeOldValue) {
+    for (const patch of patches) {
+      const p = patch as JsonPatchOpReplace & JsonPatchOpRemove;
+      const oldPath = p.remove ?? p.replace;
+      if (oldPath !== undefined) {
+        p.oldValue = getObjValueFromPointer(from, oldPath);
+      }
+    }
+  }
+
+  return patches;
 };
 
-const calcDiff = (from: any, to: any, path: string[]): JsonPatchOp[] => {
+const getObjValueFromPointer = (obj: any, pointer: string) => {
+  return jsonPointer.get(obj, pointer === "/" ? "" : pointer);
+};
+
+const calcDiff = (from: any, to: any, path: string[], opts: DiffPatchOptions): JsonPatchOp[] => {
   if (from === to) {
     return [];
   }
@@ -155,8 +179,8 @@ const calcDiff = (from: any, to: any, path: string[]): JsonPatchOp[] => {
   }
 
   const diffOps: JsonPatchOp[] = isFromArray
-    ? calcArrayDiff(from, to, path)
-    : calcObjDiff(from, to, path);
+    ? calcArrayDiff(from, to, path, opts)
+    : calcObjDiff(from, to, path, opts);
   if (diffOps.length === 0) {
     return diffOps;
   }
@@ -167,7 +191,7 @@ const calcDiff = (from: any, to: any, path: string[]): JsonPatchOp[] => {
   return diffLen < replaceLen ? diffOps : [replaceOp];
 };
 
-const calcObjDiff = (from: any, to: any, path: string[]) => {
+const calcObjDiff = (from: any, to: any, path: string[], opts: DiffPatchOptions) => {
   const result: JsonPatchOp[] = [];
 
   for (const key of Object.keys(from)) {
@@ -179,7 +203,7 @@ const calcObjDiff = (from: any, to: any, path: string[]) => {
         remove: getJsonPointer(path, key),
       });
     } else {
-      const diff = calcDiff(from[key], to[key], path.concat([key]));
+      const diff = calcDiff(from[key], to[key], path.concat([key]), opts);
       if (diff.length > 0) {
         result.push(...diff);
       }
@@ -198,7 +222,12 @@ const calcObjDiff = (from: any, to: any, path: string[]) => {
   return result;
 };
 
-const calcArrayDiff = (from: any[], to: any[], path: string[]): JsonPatchOp[] => {
+const calcArrayDiff = (
+  from: any[],
+  to: any[],
+  path: string[],
+  opts: DiffPatchOptions
+): JsonPatchOp[] => {
   let matchSeq = calcArrayDiffWithIndex(from, to);
   let isKeyMatch = true;
   if (matchSeq === undefined) {
@@ -215,7 +244,7 @@ const calcArrayDiff = (from: any[], to: any[], path: string[]): JsonPatchOp[] =>
       case "equal":
         if (isKeyMatch) {
           for (let ix = i0, jx = j0; ix < i1 && jx < j1; ++ix, ++jx) {
-            const diff = calcDiff(from[ix], to[jx], path.concat([jx.toString()]));
+            const diff = calcDiff(from[ix], to[jx], path.concat([jx.toString()]), opts);
             addReplaceOps.push(...diff);
           }
         }
@@ -248,7 +277,7 @@ const calcArrayDiff = (from: any[], to: any[], path: string[]): JsonPatchOp[] =>
               value: to[jx],
             });
           } else {
-            const diff = calcDiff(from[ix], to[jx], path.concat([jx.toString()]));
+            const diff = calcDiff(from[ix], to[jx], path.concat([jx.toString()]), opts);
             addReplaceOps.push(...diff);
           }
         }
