@@ -352,10 +352,32 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
       step.operation = operation;
     }
 
-    if (step.resourceName !== undefined && step.resourceUpdate.length > 0) {
-      await this.loadTestStepRestCallFromStep(step, ctx);
-    } else {
+    if (step.exampleFilePath !== undefined) {
       await this.loadTestStepRestCallExampleFile(step, ctx);
+    } else {
+      await this.loadTestStepRestCallFromStep(step, ctx);
+    }
+
+    if (step.resourceUpdate.length > 0) {
+      let target = cloneDeep(step.responseExpected);
+      const bodyParamName = getBodyParamName(step.operation, this.jsonLoader);
+      if (bodyParamName !== undefined) {
+        this.bodyTransformer.deepMerge(target, step.requestParameters[bodyParamName]);
+      }
+      target = jsonPatchApply(target, step.resourceUpdate);
+
+      if (bodyParamName !== undefined) {
+        const convertedRequest = await this.bodyTransformer.responseBodyToRequest(
+          target,
+          step.operation.responses[step.statusCode].schema!
+        );
+        step.requestParameters[bodyParamName] = convertedRequest;
+      }
+
+      step.responseExpected = await this.bodyTransformer.requestBodyToResponse(
+        target,
+        step.operation.responses[step.statusCode].schema!
+      );
     }
 
     ctx.stepTracking.set(step.step, step);
@@ -384,26 +406,12 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
     }
 
     step.requestParameters = { ...lastStep.requestParameters };
+    step.responseExpected = lastStep.responseExpected;
     step.exampleId = lastStep.exampleId;
     if (step.operationId === "") {
       step.operationId = lastStep.operationId;
       step.operation = lastStep.operation;
     }
-
-    let target = cloneDeep(lastStep.responseExpected);
-    target = jsonPatchApply(target, step.resourceUpdate);
-
-    const convertedRequest = await this.bodyTransformer.responseBodyToRequest(
-      target,
-      lastStep.operation.responses[lastStep.statusCode].schema!
-    );
-    const bodyParamName = getBodyParamName(lastStep.operation, this.jsonLoader)!;
-    step.requestParameters[bodyParamName] = convertedRequest;
-
-    step.responseExpected = await this.bodyTransformer.requestBodyToResponse(
-      target,
-      step.requestParameters[bodyParamName]
-    );
   }
 
   private async loadTestStepRestCallExampleFile(step: TestStepRestCall, ctx: TestScenarioContext) {
