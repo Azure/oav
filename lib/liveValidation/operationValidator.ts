@@ -98,7 +98,8 @@ export const validateSwaggerLiveResponse = async (
   response: LiveResponse,
   info: OperationContext,
   loader?: LiveValidatorLoader,
-  includeErrors?: ExtendedErrorCode[]
+  includeErrors?: ExtendedErrorCode[],
+  isArmCall?: boolean
 ) => {
   const { operation } = info.operationMatch!;
   const { statusCode, body } = response;
@@ -126,6 +127,9 @@ export const validateSwaggerLiveResponse = async (
   const headers = transformLiveHeader(response.headers ?? {}, rsp);
   if (rsp.schema !== undefined) {
     validateContentType(operation.produces!, headers, false, result);
+    if (isArmCall && realCode >= 200 && realCode < 300) {
+      validateLroOperation(operation, statusCode, headers, result);
+    }
   }
 
   const ctx = {
@@ -253,6 +257,58 @@ const schemaValidateIssueToLiveValidationIssue = (
     if (!skipIssue) {
       output.push(issue);
     }
+  }
+};
+
+const validateLroOperation = (
+  operation: Operation,
+  statusCode: string,
+  headers: StringMap<string>,
+  result: LiveValidationIssue[]
+) => {
+  if (operation["x-ms-long-running-operation"] === true) {
+    if (operation._method === "patch" || operation._method === "post") {
+      if (statusCode !== "202" && statusCode !== "201") {
+        result.push(issueFromErrorCode("LRO_RESPONSE_CODE", { statusCode }, operation.responses));
+      } else {
+        validateLroHeader(operation, headers, result);
+      }
+    } else if (operation._method === "delete") {
+      if (statusCode !== "202" && statusCode !== "204") {
+        result.push(issueFromErrorCode("LRO_RESPONSE_CODE", { statusCode }, operation.responses));
+      }
+      if (statusCode === "202") {
+        validateLroHeader(operation, headers, result);
+      }
+    } else if (operation._method === "put") {
+      if (statusCode === "202" || statusCode === "201") {
+        validateLroHeader(operation, headers, result);
+      } else if (statusCode !== "200") {
+        result.push(issueFromErrorCode("LRO_RESPONSE_CODE", { statusCode }, operation.responses));
+      }
+    }
+  }
+};
+
+const validateLroHeader = (
+  operation: Operation,
+  headers: StringMap<string>,
+  result: LiveValidationIssue[]
+) => {
+  if (
+    (headers.location === undefined || headers.location === "") &&
+    (headers["azure-AsyncOperation"] === undefined || headers["azure-AsyncOperation"] === "") &&
+    (headers["azure-asyncoperation"] === undefined || headers["azure-asyncoperation"] === "")
+  ) {
+    result.push(
+      issueFromErrorCode(
+        "LRO_RESPONSE_HEADER",
+        {
+          header: "location or azure-AsyncOperation",
+        },
+        operation.responses
+      )
+    );
   }
 };
 

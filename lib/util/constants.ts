@@ -13,6 +13,10 @@ export const xmsSkipUrlEncoding = "x-ms-skip-url-encoding";
 
 export const xmsLongRunningOperation = "x-ms-long-running-operation";
 
+export const xmsLongRunningOperationOptions = "x-ms-long-running-operation-options";
+
+export const xmsLongRunningOperationOptionsField = "final-state-via";
+
 export const xmsDiscriminatorValue = "x-ms-discriminator-value";
 
 export const xmsEnum = "x-ms-enum";

@@ -14,6 +14,8 @@ import {
   xmsSkipUrlEncoding,
   xNullable,
   xmsAzureResource,
+  xmsLongRunningOperationOptions,
+  xmsLongRunningOperationOptionsField,
 } from "../util/constants";
 import { $id } from "./jsonLoader";
 
@@ -143,6 +145,7 @@ export interface Operation {
   security?: Security[];
   tags?: string[];
   [xmsLongRunningOperation]?: boolean;
+  [xmsLongRunningOperationOptions]?: { [xmsLongRunningOperationOptionsField]: string };
   [xmsExamples]?: { [description: string]: SwaggerExample };
 
   // TODO check why do we need provider

@@ -46,6 +46,86 @@ Object {
 }
 `;
 
+exports[`Live Validator Initialize cache and validate should report error in response when response code isn't correct in case of long running operation 1`] = `
+Object {
+  "requestValidationResult": Object {
+    "errors": Array [],
+    "isSuccessful": true,
+    "operationInfo": Object {
+      "apiVersion": "2021-01-01-privatepreview",
+      "operationId": "Linker_Update",
+    },
+    "runtimeException": undefined,
+  },
+  "responseValidationResult": Object {
+    "errors": Array [
+      Object {
+        "code": "LRO_RESPONSE_CODE",
+        "documentationUrl": "",
+        "jsonPathsInPayload": Array [],
+        "message": "Patch/Post long running operation must return 201 or 202, Delete long running operation must return 202 or 204, Put long running operation must return 202 or 201 or 200, but 200 returned",
+        "pathsInPayload": Array [],
+        "schemaPath": "",
+        "severity": 0,
+        "source": Object {
+          "position": Object {
+            "column": 22,
+            "line": 300,
+          },
+          "url": "specification/servicelinker/resource-manager/Microsoft.ServiceLinker/preview/2021-01-01-privatepreview/servicelinker.json",
+        },
+      },
+    ],
+    "isSuccessful": false,
+    "operationInfo": Object {
+      "apiVersion": "2021-01-01-privatepreview",
+      "operationId": "Linker_Update",
+    },
+    "runtimeException": undefined,
+  },
+}
+`;
+
+exports[`Live Validator Initialize cache and validate should report error when LRO header is not returned in response in case of long running operation 1`] = `
+Object {
+  "requestValidationResult": Object {
+    "errors": Array [],
+    "isSuccessful": true,
+    "operationInfo": Object {
+      "apiVersion": "2021-01-01-privatepreview",
+      "operationId": "Linker_CreateOrUpdate",
+    },
+    "runtimeException": undefined,
+  },
+  "responseValidationResult": Object {
+    "errors": Array [
+      Object {
+        "code": "LRO_RESPONSE_HEADER",
+        "documentationUrl": "",
+        "jsonPathsInPayload": Array [],
+        "message": "Long running operation should return location or azure-AsyncOperation in header but not provided",
+        "pathsInPayload": Array [],
+        "schemaPath": "",
+        "severity": 0,
+        "source": Object {
+          "position": Object {
+            "column": 22,
+            "line": 177,
+          },
+          "url": "specification/servicelinker/resource-manager/Microsoft.ServiceLinker/preview/2021-01-01-privatepreview/servicelinker.json",
+        },
+      },
+    ],
+    "isSuccessful": false,
+    "operationInfo": Object {
+      "apiVersion": "2021-01-01-privatepreview",
+      "operationId": "Linker_CreateOrUpdate",
+    },
+    "runtimeException": undefined,
+  },
+}
+`;
+
 exports[`Live Validator Initialize cache and validate should return no errors for valid input with optional parameter body empty 1`] = `
 Object {
   "requestValidationResult": Object {

@@ -52,6 +52,8 @@ export const validateErrorMessages: { [key in ExtendedErrorCode]?: (params: any)
   INVALID_RESPONSE_BODY: strTemplate`Body is required in response but not provided`,
   INVALID_RESPONSE_HEADER: strTemplate`Header ${"missingProperty"} is required in response but not provided`,
   MISSING_RESOURCE_ID: strTemplate`id is required to return in response of GET/PUT resource calls but not provided`,
+  LRO_RESPONSE_CODE: strTemplate`Patch/Post long running operation must return 201 or 202, Delete long running operation must return 202 or 204, Put long running operation must return 202 or 201 or 200, but ${"statusCode"} returned`,
+  LRO_RESPONSE_HEADER: strTemplate`Long running operation should return ${"header"} in header but not provided`,
 
   DISCRIMINATOR_VALUE_NOT_FOUND: strTemplate`Discriminator value "${"data"}" not found`,
   ANY_OF_MISSING: strTemplate`Data does not match any schemas from 'anyOf'`,
