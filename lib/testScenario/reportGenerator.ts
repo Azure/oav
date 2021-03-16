@@ -45,7 +45,7 @@ type StepResult = {
   example?: SwaggerExample;
   operationId: string;
   error?: HttpError;
-  diff?: JsonPatchOp[];
+  diff?: { [statusCode: number]: JsonPatchOp[] };
   liveValidationResult?: any;
   exampleQualityResult?: any;
 };
@@ -168,15 +168,19 @@ export class ReportGenerator {
     };
   }
 
-  private exampleResponseDiff(example: GeneratedExample, matchedStep: TestStep): JsonPatchOp[] {
+  private exampleResponseDiff(
+    example: GeneratedExample,
+    matchedStep: TestStep
+  ): { [statusCode: number]: JsonPatchOp[] } {
+    const res: any = {};
     if (matchedStep?.type === "restCall") {
-      return this.responseDiff(
+      res[matchedStep.statusCode] = this.responseDiff(
         example.example.responses[matchedStep.statusCode] || {},
         matchedStep.responseExpected,
         this.rawReport.variables
       );
     }
-    return [];
+    return res;
   }
 
   private responseDiff(resp: any, expectedResp: any, variables: any) {
