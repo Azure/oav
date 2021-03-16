@@ -19,7 +19,12 @@ import {
   TestResourceLoader,
   TestResourceLoaderOption,
 } from "../testResourceLoader";
-import { RawTestDefinitionFile, RawTestScenario, TestStepRestCall } from "../testResourceTypes";
+import {
+  RawTestDefinitionFile,
+  RawTestScenario,
+  TestScenario,
+  TestStepRestCall,
+} from "../testResourceTypes";
 import { TestScenarioClientRequest } from "../testScenarioRunner";
 import { Operation, Parameter, SwaggerExample } from "../../swagger/swaggerTypes";
 import { unknownApiVersion, xmsLongRunningOperation } from "../../util/constants";
@@ -46,11 +51,12 @@ export interface RequestTracking {
 
 export interface TestScenarioGeneratorOption extends TestResourceLoaderOption {}
 
-const resourceGroupPathRegex = /^\/subscriptions\/[^\/]+\/resourceGroups\/[^\/]+$/i;
+// const resourceGroupPathRegex = /^\/subscriptions\/[^\/]+\/resourceGroups\/[^\/]+$/i;
 
 interface TestScenarioGenContext {
   resourceTracking: Map<string, TestStepRestCall>;
   resourceNames: Set<string>;
+  variables: TestScenario["variables"];
 }
 
 @injectable()
@@ -61,6 +67,7 @@ export class TestScenarioGenerator {
   private idx: number = 0;
   // Key: OperationId_content, Value: path to example
   private exampleCache = new Map<string, string>();
+  private exampleFileList = new Set<string>();
   private lroPollingUrls = new Set<string>();
 
   public constructor(
@@ -97,6 +104,8 @@ export class TestScenarioGenerator {
             const exampleContent = this.jsonLoader.resolveRefObj(example);
             const cacheKey = this.getExampleCacheKey(operation, exampleContent);
             this.exampleCache.set(cacheKey, example.$ref!);
+            // TODO unify path
+            this.exampleFileList.add(example.$ref!);
           }
         },
       });
@@ -125,8 +134,7 @@ export class TestScenarioGenerator {
       testScenarios: [],
     };
 
-    this.idx = 0;
-    this.exampleCache = new Map<string, string>();
+    // this.idx = 0;
     for (const track of requestTracking) {
       const testScenario = await this.generateTestScenario(track, testScenarioFilePath);
       testDef.testScenarios.push(testScenario);
@@ -154,6 +162,7 @@ export class TestScenarioGenerator {
     const ctx: TestScenarioGenContext = {
       resourceTracking: new Map(),
       resourceNames: new Set(),
+      variables: {},
     };
 
     const records = [...requestTracking.requests];
@@ -182,8 +191,13 @@ export class TestScenarioGenerator {
         const swaggerPath = operation._path._spec._filePath;
         let exampleFilePath = this.exampleCache.get(exampleCacheKey);
         if (exampleFilePath === undefined) {
-          const exampleName = `${operationId}_Generated_${this.generateIdx()}`;
+          let exampleName = `${testStep.step}_Generated`;
           exampleFilePath = pathJoin(dirname(swaggerPath), "examples", exampleName + ".json");
+          if (this.exampleFileList.has(exampleFilePath)) {
+            exampleName = `${exampleName}_${this.generateIdx()}`;
+            exampleFilePath = pathJoin(dirname(swaggerPath), "examples", exampleName + ".json");
+          }
+
           this.exampleEntries.push({
             swaggerPath,
             operationId,
@@ -192,6 +206,7 @@ export class TestScenarioGenerator {
             exampleContent: example,
           });
           this.exampleCache.set(exampleCacheKey, exampleFilePath);
+          this.exampleFileList.add(exampleFilePath);
         }
         testStep.exampleFile = pathRelative(dirname(testDefFilePath), exampleFilePath);
         lastOperation = operation;
@@ -204,7 +219,12 @@ export class TestScenarioGenerator {
         statusCode: testStep.statusCode === 200 ? undefined : testStep.statusCode,
         operationId: testStep.operationId,
         resourceUpdate: testStep.resourceUpdate?.length > 0 ? testStep.resourceUpdate : undefined,
+        variables: testStep.variables,
       });
+    }
+
+    if (Object.keys(ctx.variables).length > 0) {
+      testScenario.variables = ctx.variables;
     }
 
     return testScenario;
@@ -229,25 +249,22 @@ export class TestScenarioGenerator {
     }
 
     const url = new URL(record.url);
-    const match = resourceGroupPathRegex.exec(url.pathname);
-    if (match !== null) {
-      switch (record.method) {
-        case "GET":
-        case "PUT":
-          return undefined;
+    switch (record.method) {
+      case "GET":
+        return undefined;
 
-        case "DELETE":
-          const armInfo = this.armUrlParser.parseArmApiInfo(record.path, record.method);
-          await this.skipLroPoll(
-            records,
-            {
-              [xmsLongRunningOperation]: true,
-            } as Operation,
-            record,
-            armInfo
-          );
-          return undefined;
-      }
+      case "DELETE":
+      case "PUT":
+        const armInfo = this.armUrlParser.parseArmApiInfo(record.path, record.method);
+        await this.skipLroPoll(
+          records,
+          {
+            [xmsLongRunningOperation]: true,
+          } as Operation,
+          record,
+          armInfo
+        );
+        return undefined;
     }
 
     console.info(`Skip UNKNOWN request:\t${record.method}\t${url.pathname}${url.search}`);
@@ -266,17 +283,29 @@ export class TestScenarioGenerator {
       return undefined;
     }
 
+    // TODO support dataplane
+    const url = new URL(record.url);
+    if (url.hostname !== "management.azure.com") {
+      console.info(`Skip data-plane operation: ${record.url}`);
+      return undefined;
+    }
+
     const parseResult = this.parseRecord(record);
     if (parseResult === undefined) {
       return this.handleUnknownPath(record, records);
     }
-    const { operation, requestParameters } = parseResult;
+    const { operation, requestParameters, pathParamValue } = parseResult;
+    const variables: TestScenario["variables"] = {};
 
-    for (const p of operation.parameters ?? []) {
-      const param = this.jsonLoader.resolveRefObj(p);
-      const paramValue = getParamValue(record, param);
-      if (paramValue !== undefined) {
-        requestParameters[param.name] = paramValue;
+    for (const pathParamKey of Object.keys(pathParamValue)) {
+      const value = pathParamValue[pathParamKey];
+      if (unwantedParams.has(pathParamKey) || ctx.variables[pathParamKey] === value) {
+        continue;
+      }
+      if (ctx.variables[pathParamKey] === undefined) {
+        ctx.variables[pathParamKey] = value;
+      } else {
+        variables[pathParamKey] = value;
       }
     }
 
@@ -287,6 +316,7 @@ export class TestScenarioGenerator {
       operationId: operation.operationId!,
       requestParameters,
       responseExpected: record.responseBody,
+      variables: Object.keys(variables).length > 0 ? variables : undefined,
     } as TestStepRestCall;
 
     const armInfo = this.armUrlParser.parseArmApiInfo(record.path, record.method);
@@ -325,7 +355,10 @@ export class TestScenarioGenerator {
               console.log(`\t${p}`);
             }
           }
-          const diff = getJsonPatchDiff(lastStep.responseExpected, result);
+          eraseUnwantedKeys(result);
+          const lastStepResult = cloneDeep(lastStep.responseExpected);
+          eraseUnwantedKeys(lastStepResult);
+          const diff = getJsonPatchDiff(lastStepResult, result);
           step.resourceUpdate = diff;
         }
       }
@@ -380,11 +413,15 @@ export class TestScenarioGenerator {
     }
 
     const example = cloneDeep(exampleContent);
+    eraseUnwantedKeys(example);
+
+    const statusCode = Object.keys(example.responses)[0];
 
     const step = {
       operation,
+      statusCode,
       requestParameters: example.parameters,
-      responseExpected: Object.values(example.responses)[0],
+      responseExpected: example.responses[statusCode],
     };
     this.exampleTemplateGenerator.replaceWithParameterConvention(step, env);
 
@@ -398,10 +435,11 @@ export class TestScenarioGenerator {
   private generateResourceName(armInfo: ArmApiInfo, ctx: TestScenarioGenContext) {
     const resourceName = armInfo.resourceName.split("/").pop();
     const resourceType = armInfo.resourceTypes[0].split("/").pop();
-    let name = `${resourceName}`;
-    if (ctx.resourceNames.has(name)) {
-      name = `${resourceType}_${name}`;
-    }
+    // let name = `${resourceName}`;
+    let name = `${resourceType}_${resourceName}`;
+    // if (ctx.resourceNames.has(name)) {
+    //   name = `${resourceType}_${name}`;
+    // }
     if (ctx.resourceNames.has(name)) {
       name = `${name}_${this.generateIdx()}`;
     }
@@ -431,9 +469,11 @@ export class TestScenarioGenerator {
       }
     }
 
-    return { requestParameters, operation };
+    return { requestParameters, operation, pathParamValue };
   }
 }
+
+const unwantedParams = new Set(["resourceGroupName", "api-version", "subscriptionId"]);
 
 // const recordToHttpResponse = (record: SingleRequestTracking) => {
 //   const response: LROOperationResponse = {
@@ -466,4 +506,27 @@ const getParamValue = (record: SingleRequestTracking, param: Parameter) => {
   }
 
   return undefined;
+};
+
+const unwantedKeys = new Set(["etag"]);
+const eraseUnwantedKeys = (obj: any) => {
+  if (obj === null || obj === undefined) {
+    return;
+  }
+  if (typeof obj !== "object") {
+    return;
+  }
+  if (Array.isArray(obj)) {
+    for (let idx = 0; idx < obj.length; ++idx) {
+      eraseUnwantedKeys(obj[idx]);
+    }
+    return;
+  }
+  for (const key of Object.keys(obj)) {
+    if (unwantedKeys.has(key.toLowerCase())) {
+      obj[key] = undefined;
+    } else if (typeof obj[key] === "object") {
+      eraseUnwantedKeys(obj[key]);
+    }
+  }
 };

@@ -81,14 +81,13 @@ export class BodyTransformer {
         return src;
       }
       let length = dst.length;
-      let result = [...dst];
       if (dst.length !== src.length) {
         inconsistentPaths.push(jp.compile(path));
         if (src.length < dst.length) {
           length = src.length;
-          result = [...src];
         }
       }
+      const result = new Array(length);
       for (let idx = 0; idx < length; idx++) {
         result[idx] = this.innerDeepMerge(
           dst[idx],
