@@ -21,6 +21,7 @@ interface PatchContext {
 }
 export interface DiffPatchOptions {
   includeOldValue?: boolean;
+  minimizeDiff?: boolean;
 }
 const rootName = "ROOT";
 
@@ -181,7 +182,7 @@ const calcDiff = (from: any, to: any, path: string[], opts: DiffPatchOptions): J
   const diffOps: JsonPatchOp[] = isFromArray
     ? calcArrayDiff(from, to, path, opts)
     : calcObjDiff(from, to, path, opts);
-  if (diffOps.length === 0) {
+  if (diffOps.length === 0 || !opts.minimizeDiff) {
     return diffOps;
   }
 
