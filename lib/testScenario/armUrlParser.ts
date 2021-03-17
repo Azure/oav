@@ -56,7 +56,10 @@ export class ArmUrlParser {
     }
     const providerParamName = this.getParamNameForPathTemplate(provider);
 
-    const firstProviderIdx = sp.findIndex((val) => val.toLowerCase() === "providers");
+    let firstProviderIdx = sp.findIndex((val) => val.toLowerCase() === "providers");
+    if (firstProviderIdx === -1) {
+      firstProviderIdx = sp.length;
+    }
     const scopeSlice = sp.slice(0, firstProviderIdx);
     const scopePart = `/${scopeSlice.join("/")}`;
     const scopeInfo = this.getArmScopeInfo(scopeSlice, path);
@@ -91,16 +94,15 @@ export class ArmUrlParser {
       } else {
         return { scopeType: "Tenant" };
       }
-    } else if (
-      scopeSlice.length === 1 &&
-      this.getParamNameForPathTemplate(scopeSlice[1]) !== undefined
-    ) {
+    }
+
+    if (scopeSlice.length === 1 && this.getParamNameForPathTemplate(scopeSlice[1]) !== undefined) {
       // Special case for extension scope in swagger path template
       return { scopeType: undefined };
-    } else if (scopeSlice.length === 2 && scopeSlice[0].toLowerCase() === "subscriptions") {
-      return { scopeType: "Subscription", subscriptionId: scopeSlice[1] };
-    } else if (
-      scopeSlice.length === 4 &&
+    }
+
+    if (
+      scopeSlice.length >= 4 &&
       scopeSlice[0].toLowerCase() === "subscriptions" &&
       scopeSlice[2].toLowerCase() === "resourcegroups"
     ) {
@@ -109,9 +111,13 @@ export class ArmUrlParser {
         subscriptionId: scopeSlice[1],
         resourceGroupName: scopeSlice[3],
       };
-    } else {
-      throw new Error(`Unknown scope type for path: ${path}`);
     }
+
+    if (scopeSlice.length >= 2 && scopeSlice[0].toLowerCase() === "subscriptions") {
+      return { scopeType: "Subscription", subscriptionId: scopeSlice[1] };
+    }
+
+    throw new Error(`Unknown scope type for path: ${path}`);
   }
 
   private getArmMethodInfo(
