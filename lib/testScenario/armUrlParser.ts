@@ -117,7 +117,7 @@ export class ArmUrlParser {
       return { scopeType: "Subscription", subscriptionId: scopeSlice[1] };
     }
 
-    throw new Error(`Unknown scope type for path: ${path}`);
+    return { scopeType: undefined };
   }
 
   private getArmMethodInfo(
@@ -213,8 +213,8 @@ export class ArmUrlParser {
     return param.enum as string[];
   }
 
-  private getParamNameForPathTemplate(pathSeg: string) {
-    if (pathSeg.startsWith("{") && pathSeg.endsWith("}")) {
+  private getParamNameForPathTemplate(pathSeg: string | undefined) {
+    if (pathSeg !== undefined && pathSeg.startsWith("{") && pathSeg.endsWith("}")) {
       return pathSeg.substr(0, pathSeg.length - 2);
     }
 

@@ -22,6 +22,7 @@ import {
 import {
   RawTestDefinitionFile,
   RawTestScenario,
+  RawTestStepRawCall,
   TestScenario,
   TestStepRestCall,
 } from "../testResourceTypes";
@@ -170,8 +171,15 @@ export class TestScenarioGenerator {
     const records = [...requestTracking.requests];
     let lastOperation: Operation | undefined = undefined;
     while (records.length > 0) {
-      const testStep = await this.generateTestStep(records, ctx);
+      const record = records[0];
+      const testStep = await this.generateTestStepRestCall(records, ctx);
       if (testStep === undefined) {
+        continue;
+      }
+
+      if (testStep === null) {
+        const rawStep = await this.generateTestStepRawCall(record, ctx);
+        testScenario.steps.push(rawStep);
         continue;
       }
 
@@ -245,15 +253,14 @@ export class TestScenarioGenerator {
   private async handleUnknownPath(
     record: SingleRequestTracking,
     records: SingleRequestTracking[]
-  ): Promise<TestStepRestCall | undefined> {
+  ): Promise<TestStepRestCall | undefined | null> {
     if (this.lroPollingUrls.has(record.url) && record.method === "GET") {
       return undefined;
     }
 
-    const url = new URL(record.url);
     switch (record.method) {
       case "GET":
-        return undefined;
+        return null;
 
       case "DELETE":
       case "PUT":
@@ -266,17 +273,33 @@ export class TestScenarioGenerator {
           record,
           armInfo
         );
-        return undefined;
+        return null;
     }
 
-    console.info(`Skip UNKNOWN request:\t${record.method}\t${url.pathname}${url.search}`);
-    return undefined;
+    return null;
   }
 
-  private async generateTestStep(
+  private async generateTestStepRawCall(
+    record: SingleRequestTracking,
+    _ctx: TestScenarioGenContext
+  ): Promise<RawTestStepRawCall> {
+    const toString = (body: any) => (typeof body === "object" ? JSON.stringify(body) : body);
+    const rawCall: RawTestStepRawCall = {
+      step: `RawStep_${this.generateIdx()}`,
+      method: record.method,
+      rawUrl: record.url,
+      requestBody: toString(record.body),
+      requestHeaders: record.responseHeaders,
+      statusCode: record.responseCode === 200 ? undefined : record.responseCode,
+      responseExpected: toString(record.responseBody),
+    };
+    return rawCall;
+  }
+
+  private async generateTestStepRestCall(
     records: SingleRequestTracking[],
     ctx: TestScenarioGenContext
-  ): Promise<TestStepRestCall | undefined> {
+  ): Promise<TestStepRestCall | undefined | null> {
     const record = records.shift()!;
     const armInfo = this.armUrlParser.parseArmApiInfo(record.path, record.method);
 
@@ -287,13 +310,6 @@ export class TestScenarioGenerator {
     // TODO do not skip 404
     if (record.responseCode === 404) {
       console.info(`Skip 404 request:\t${record.method}\t${record.url}`);
-      return undefined;
-    }
-
-    // TODO support dataplane
-    const url = new URL(record.url);
-    if (url.hostname !== "management.azure.com") {
-      console.info(`Skip data-plane operation: ${record.url}`);
       return undefined;
     }
 
@@ -364,7 +380,7 @@ export class TestScenarioGenerator {
           eraseUnwantedKeys(result);
           const lastStepResult = cloneDeep(lastStep.responseExpected);
           eraseUnwantedKeys(lastStepResult);
-          const diff = getJsonPatchDiff(lastStepResult, result, { minimizeDiff: true });
+          const diff = getJsonPatchDiff(lastStepResult, result, { minimizeDiff: false });
           step.resourceUpdate = diff;
         }
       }
