@@ -42,19 +42,14 @@ export class AzureCliRecordingLoader implements Loader<RequestTracking, [Recordi
       url.searchParams.forEach((val, key) => (query[key] = val));
 
       const responseHeaders = transformRecordingHeaders(entry.response.headers);
-      if (responseHeaders["content-type"] === "application/xml") {
-        console.log(`SKIP xml response for request: ${entry.request.uri}`);
-        continue;
-      }
-
       const request: SingleRequestTracking = {
         method: entry.request.method,
         path: url.pathname,
         url: url.href,
         headers: transformRecordingHeaders(entry.request.headers),
         query,
-        body: parseRecordingBodyJson(entry.request.body ?? "{}") ?? {},
-        responseBody: parseRecordingBodyJson(entry.response.body.string ?? "{}"),
+        body: parseRecordingBodyJson(entry.request.body),
+        responseBody: parseRecordingBodyJson(entry.response.body.string),
         responseCode: entry.response.status.code,
         responseHeaders,
       };
