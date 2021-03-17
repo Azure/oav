@@ -364,7 +364,7 @@ export class TestScenarioGenerator {
           eraseUnwantedKeys(result);
           const lastStepResult = cloneDeep(lastStep.responseExpected);
           eraseUnwantedKeys(lastStepResult);
-          const diff = getJsonPatchDiff(lastStepResult, result);
+          const diff = getJsonPatchDiff(lastStepResult, result, { minimizeDiff: true });
           step.resourceUpdate = diff;
         }
       }
