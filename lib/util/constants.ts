@@ -119,6 +119,18 @@ export const ErrorCodes = {
     name: "DISCRIMINATOR_NOT_REQUIRED",
     id: "OAV131",
   },
+  ProvisioningStateShouldBeTerminalStatusIn200Response: {
+    name: "PROVISIONING_STATE_SHOULD_BE_TERMINAL_STATUS_IN_200_RESPONSE",
+    id: "OAV132",
+  },
+  RoundtripInconsistentProperty: {
+    name: "ROUNDTRIP_INCONSISTENT_PROPERTY",
+    id: "OAV133",
+  },
+  RecommendUsingBooleanType: {
+    name: "RECOMMENDED_BOOLEAN_TYPE",
+    id: "OAV134",
+  },
 };
 
 export const knownTitleToResourceProviders: StringMap<string> = {

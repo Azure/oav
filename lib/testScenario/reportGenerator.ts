@@ -1,6 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as _ from "lodash";
+import { ExampleQualityValidator } from "../exampleQualityValidator/exampleQualityValidator";
 import { LiveValidator } from "../liveValidation/liveValidator";
 import { SwaggerExample } from "./../swagger/swaggerTypes";
 import { TestResourceLoader } from "./testResourceLoader";
@@ -37,7 +38,11 @@ type GeneratedExample = {
 };
 
 type TestScenarioResult = {
-  [step: string]: StepResult;
+  testScenario: {
+    testScenarioFilePath: string;
+    readmeFilePath: string;
+  };
+  stepResult: { [step: string]: StepResult };
 };
 
 type StepResult = {
@@ -57,6 +62,7 @@ type HttpError = {
 
 export class ReportGenerator {
   private liveValidator: LiveValidator;
+  private exampleQualityValidator: ExampleQualityValidator;
   private postmanReportParser: PostmanReportParser;
   private testResourceLoader: TestResourceLoader;
   private validationResult: any;
@@ -65,7 +71,7 @@ export class ReportGenerator {
   private generatedExamplesMapping: Map<string, GeneratedExample>;
   private httpRecordingPath: string;
   private testDefFile: TestDefinitionFile | undefined;
-  private exampleFileMapping: any;
+  private exampleFileMapping: Array<{ exampleFilePath: string; operationId: string }>;
   private operationIds: Set<string>;
   private rawReport: RawReport;
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
@@ -83,16 +89,25 @@ export class ReportGenerator {
       fileRoot: this.swaggerRootPath,
       swaggerFilePaths: this.swaggerFilePaths,
     });
+    const swaggerFileAbsolutePaths = this.swaggerFilePaths.map((it) =>
+      path.resolve(this.swaggerRootPath, it)
+    );
     this.liveValidator = new LiveValidator({
-      swaggerPaths: this.swaggerFilePaths.map((it) => path.resolve(this.swaggerRootPath, it)),
+      swaggerPaths: swaggerFileAbsolutePaths,
       directory: getSwaggerRootPath(this.swaggerRootPath),
       loadValidatorInInitialize: true,
       loadValidatorInBackground: false,
     });
-    this.exampleFileMapping = {};
+    this.exampleQualityValidator = ExampleQualityValidator.create({
+      swaggerFilePaths: swaggerFileAbsolutePaths,
+    });
+    this.exampleFileMapping = [];
     this.operationIds = new Set<string>();
     this.validationResult = {};
-    this.swaggerExampleQualityResult = {};
+    this.swaggerExampleQualityResult = {
+      testScenario: { testScenarioFilePath: this.testDefFilePath, readmeFilePath: this.readmePath },
+      stepResult: {},
+    };
     this.diffResult = {};
     this.generatedExamplesMapping = new Map<string, GeneratedExample>();
     this.httpRecordingPath = path.resolve(this.output, "recording.json");
@@ -112,6 +127,7 @@ export class ReportGenerator {
       }
       if (it.annotation.type === "simple" || it.annotation.type === "LRO") {
         let error;
+        let exampleQuality;
         const generatedExample = this.generateExample(it, variables, rawReport);
         this.generatedExamplesMapping.set(generatedExample.exampleName, generatedExample);
         const matchedStep = this.getMatchedStep(it.annotation.step) as TestStepRestCall;
@@ -121,13 +137,14 @@ export class ReportGenerator {
         ) {
           error = { statusCode: it.response.statusCode, rawExecution: it } as HttpError;
         } else {
-          // this.validateExample(generatedExample);
+          exampleQuality = this.validateExample(generatedExample);
         }
-        this.swaggerExampleQualityResult[it.annotation.step] = {
+        this.swaggerExampleQualityResult.stepResult[it.annotation.step] = {
           exampleName: generatedExample.exampleName,
           operationId: it.annotation.operationId,
           error: error,
           diff: this.exampleResponseDiff(generatedExample, matchedStep),
+          exampleQualityResult: exampleQuality,
           liveValidationResult: await this.liveValidate(it, generatedExample.exampleName),
         };
       }
@@ -135,7 +152,16 @@ export class ReportGenerator {
     this.writeGeneratedExamples();
   }
 
-  // private validateExample(generatedExample: GeneratedExample) {}
+  private async validateExample(generatedExample: GeneratedExample) {
+    const res = this.exampleQualityValidator.validateExternalExamples([
+      {
+        example: generatedExample.example,
+        exampleFilePath: "",
+        operationId: generatedExample.operationId,
+      },
+    ]);
+    return res;
+  }
 
   private generateExample(
     it: RawExecution,
@@ -188,7 +214,7 @@ export class ReportGenerator {
     env.setBatch(variables);
     try {
       const expected = env.resolveObjectValues(expectedResp);
-      const delta = getJsonPatchDiff(expected, resp);
+      const delta = getJsonPatchDiff(expected, resp, { includeOldValue: true });
       return delta;
     } catch (err) {
       console.log(err);
@@ -269,7 +295,10 @@ export class ReportGenerator {
     for (const v of this.generatedExamplesMapping.values()) {
       const exampleFilePath = path.resolve(`${this.output}/examples/${v.exampleName}`);
       fs.writeFileSync(exampleFilePath, JSON.stringify(v.example, null, 2));
-      this.exampleFileMapping[exampleFilePath] = v.operationId;
+      this.exampleFileMapping.push({
+        exampleFilePath: exampleFilePath,
+        operationId: v.operationId,
+      });
     }
   }
 
