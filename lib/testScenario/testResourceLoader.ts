@@ -258,7 +258,7 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
   private async loadTestStep(step: RawTestStep, ctx: TestScenarioContext): Promise<TestStep> {
     if ("armTemplateDeployment" in step) {
       return this.loadTestStepArmTemplate(step, ctx);
-    } else if ("exampleFile" in step || "fromStep" in step) {
+    } else if ("exampleFile" in step || "resourceName" in step || "operationId" in step) {
       return this.loadTestStepRestCall(step, ctx);
     } else {
       throw new Error(`Unknown step type: ${JSON.stringify(step)}`);
@@ -352,7 +352,7 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
       step.operation = operation;
     }
 
-    if (step.exampleFilePath !== undefined) {
+    if (step.exampleFile !== undefined) {
       await this.loadTestStepRestCallExampleFile(step, ctx);
     } else {
       await this.loadTestStepRestCallFromStep(step, ctx);
@@ -389,9 +389,6 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
   }
 
   private async loadTestStepRestCallFromStep(step: TestStepRestCall, ctx: TestScenarioContext) {
-    if (step.exampleFile !== undefined) {
-      throw new Error(`Cannot use updateResource along with exampleFile for step: ${step.step}`);
-    }
     if (step.operation._method !== "put") {
       throw new Error(`resourceUpdate could only be used with "PUT" operation`);
     }

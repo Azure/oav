@@ -104,12 +104,19 @@ export class ExampleTemplateGenerator implements TestScenarioRunnerClient {
     step.requestParameters = requestParameters;
     const bodyParamName = getBodyParamName(step.operation, this.jsonLoader);
     if (bodyParamName !== undefined) {
-      replaceAllInObject(step.requestParameters[bodyParamName], toMatch, matchReplace);
+      const requestBody = step.requestParameters[bodyParamName];
+      replaceAllInObject(requestBody, toMatch, matchReplace);
+      if (requestBody.location !== undefined && env.get("location") !== undefined) {
+        requestBody.location = env.get("location");
+      }
     }
 
     const responseExpected = deepClone(step.responseExpected);
     replaceAllInObject(responseExpected, toMatch, matchReplace);
     step.responseExpected = responseExpected;
+    if (responseExpected.location !== undefined && env.get("location") !== undefined) {
+      responseExpected.location = env.get("location");
+    }
   }
 }
 

@@ -57,6 +57,7 @@ interface TestScenarioGenContext {
   resourceTracking: Map<string, TestStepRestCall>;
   resourceNames: Set<string>;
   variables: TestScenario["variables"];
+  lastUpdatedResource: string;
 }
 
 @injectable()
@@ -163,6 +164,7 @@ export class TestScenarioGenerator {
       resourceTracking: new Map(),
       resourceNames: new Set(),
       variables: {},
+      lastUpdatedResource: "",
     };
 
     const records = [...requestTracking.requests];
@@ -276,6 +278,11 @@ export class TestScenarioGenerator {
     ctx: TestScenarioGenContext
   ): Promise<TestStepRestCall | undefined> {
     const record = records.shift()!;
+    const armInfo = this.armUrlParser.parseArmApiInfo(record.path, record.method);
+
+    if (ctx.lastUpdatedResource === armInfo.resourceUri && record.method === "GET") {
+      return undefined;
+    }
 
     // TODO do not skip 404
     if (record.responseCode === 404) {
@@ -319,7 +326,6 @@ export class TestScenarioGenerator {
       variables: Object.keys(variables).length > 0 ? variables : undefined,
     } as TestStepRestCall;
 
-    const armInfo = this.armUrlParser.parseArmApiInfo(record.path, record.method);
     const finalGet = await this.skipLroPoll(records, operation, record, armInfo);
     if (finalGet !== undefined && operation[xmsLongRunningOperation]) {
       step.statusCode = 200;
@@ -329,7 +335,7 @@ export class TestScenarioGenerator {
     }
 
     if (["PUT"].includes(record.method)) {
-      const lastStep = ctx.resourceTracking.get(record.path);
+      const lastStep = ctx.resourceTracking.get(armInfo.resourceUri);
       if (lastStep === undefined) {
         step.resourceName = this.generateResourceName(armInfo, ctx);
         step.step = `Create_${step.resourceName}`;
@@ -362,7 +368,17 @@ export class TestScenarioGenerator {
           step.resourceUpdate = diff;
         }
       }
-      ctx.resourceTracking.set(record.path, step);
+    }
+
+    if (["PUT", "PATCH", "DELETE"].includes(record.method)) {
+      if (record.method === "PUT") {
+        ctx.resourceTracking.set(armInfo.resourceUri, step);
+      }
+      if (record.method === "DELETE") {
+        ctx.resourceTracking.delete(armInfo.resourceUri);
+      }
+      // eslint-disable-next-line require-atomic-updates
+      ctx.lastUpdatedResource = armInfo.resourceUri;
     }
 
     return step;
@@ -405,6 +421,7 @@ export class TestScenarioGenerator {
 
   private getExampleCacheKey(operation: Operation, exampleContent: SwaggerExample) {
     const env = new VariableEnv();
+    env.set("location", "__location__");
     for (const p of operation.parameters ?? []) {
       const param = this.jsonLoader.resolveRefObj(p);
       if (param.in === "path") {
