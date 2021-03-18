@@ -99,7 +99,7 @@ export class ReportGenerator {
       loadValidatorInBackground: false,
     });
     this.exampleQualityValidator = ExampleQualityValidator.create({
-      swaggerFilePaths: swaggerFileAbsolutePaths,
+      swaggerFilePaths: [...swaggerFileAbsolutePaths],
     });
     this.exampleFileMapping = [];
     this.operationIds = new Set<string>();
@@ -137,7 +137,7 @@ export class ReportGenerator {
         ) {
           error = { statusCode: it.response.statusCode, rawExecution: it } as HttpError;
         } else {
-          exampleQuality = this.validateExample(generatedExample);
+          exampleQuality = await this.validateExample(generatedExample);
         }
         this.swaggerExampleQualityResult.stepResult[it.annotation.step] = {
           exampleName: generatedExample.exampleName,
