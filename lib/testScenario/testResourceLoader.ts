@@ -35,6 +35,8 @@ import {
   RawTestStep,
   RawTestStepRestCall,
   RawTestScenario,
+  RawTestStepRawCall,
+  TestStepRawCall,
 } from "./testResourceTypes";
 import { ExampleTemplateGenerator } from "./exampleTemplateGenerator";
 import { BodyTransformer } from "./bodyTransformer";
@@ -260,9 +262,21 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
       return this.loadTestStepArmTemplate(step, ctx);
     } else if ("exampleFile" in step || "resourceName" in step || "operationId" in step) {
       return this.loadTestStepRestCall(step, ctx);
+    } else if ("rawUrl" in step) {
+      return this.loadTestStepRawCall(step, ctx);
     } else {
       throw new Error(`Unknown step type: ${JSON.stringify(step)}`);
     }
+  }
+
+  private async loadTestStepRawCall(rawStep: RawTestStepRawCall, _ctx: TestScenarioContext) {
+    const step: TestStepRawCall = {
+      type: "rawCall",
+      variables: rawStep.variables ?? {},
+      statusCode: rawStep.statusCode ?? 200,
+      ...rawStep,
+    };
+    return step;
   }
 
   private async loadTestStepArmTemplate(

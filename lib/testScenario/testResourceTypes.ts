@@ -1,3 +1,4 @@
+import { HttpMethods } from "@azure/core-http";
 import { Operation, Schema, SwaggerExample } from "../swagger/swaggerTypes";
 
 //#region Common
@@ -31,15 +32,18 @@ const variableScopeSchema: Schema = {
 //#region TestStep Base
 
 type RawTestStepBase = RawVariableScope & {
-  step?: string;
+  step: string;
 };
 
 interface TestStepBase {
   isScopePrepareStep?: boolean;
 }
 
-export type TestStep = TestStepArmTemplateDeployment | TestStepRestCall;
-export type RawTestStep = RawTestStepArmTemplateDeployment | RawTestStepRestCall;
+export type TestStep = TestStepArmTemplateDeployment | TestStepRestCall | TestStepRawCall;
+export type RawTestStep =
+  | RawTestStepArmTemplateDeployment
+  | RawTestStepRestCall
+  | RawTestStepRawCall;
 
 const testStepBaseSchema: Schema = {
   allOf: [{ $ref: "#/definitions/VariableScope" }],
@@ -60,6 +64,9 @@ const testStepSchema: Schema = {
     },
     {
       $ref: "#/definitions/TestStepArmTemplateDeployment",
+    },
+    {
+      $ref: "#/definitions/TestStepRawCall",
     },
   ],
 };
@@ -183,6 +190,57 @@ export type TestStepRestCall = TransformRaw<
 >;
 
 //#endregion
+
+export type RawTestStepRawCall = RawTestStepBase & {
+  method: HttpMethods;
+  rawUrl: string;
+  requestHeaders: { [headName: string]: string };
+  requestBody: string;
+  statusCode?: number;
+  responseExpected?: string;
+};
+
+const testStepRawCallSchema: Schema = {
+  type: "object",
+  allOf: [{ $ref: "#/definitions/TestStepBase" }],
+  properties: {
+    type: {
+      type: "string",
+      enum: ["rawCall"],
+    },
+    method: {
+      type: "string",
+      enum: ["GET", "PUT", "PATCH", "POST", "DELETE", "OPTIONS", "HEAD"],
+    },
+    url: {
+      type: "string",
+    },
+    requestHeaders: {
+      type: "object",
+      additionalProperties: {
+        type: "string",
+      },
+    },
+    requestBody: {
+      type: "string",
+    },
+    statusCode: {
+      type: "number",
+    },
+    responseExpected: {
+      type: "string",
+    },
+  },
+  required: ["method", "url", "requestHeaders", "requestBody"],
+};
+
+export type TestStepRawCall = TransformRaw<
+  RawTestStepRawCall,
+  {
+    type: "rawCall";
+  } & TestStepBase,
+  "responseExpected"
+>;
 
 //#region JsonPatchOp
 
@@ -447,6 +505,7 @@ export const TestDefinitionSchema: Schema & {
     TestStepBase: testStepBaseSchema,
     TestStepArmTemplateDeployment: testStepArmTemplateDeploymentSchema,
     TestStepRestCall: testStepRestCallSchema,
+    TestStepRawCall: testStepRawCallSchema,
     ...jsonPatchOpSchemas,
     TestScenario: testScenarioSchema,
   },

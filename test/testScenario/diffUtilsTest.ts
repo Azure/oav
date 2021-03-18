@@ -56,7 +56,7 @@ describe("DiffUtils", () => {
     for (const testName of (Object.keys(fixtures) as unknown) as Array<keyof typeof fixtures>) {
       // if (testName !== "20_arrayIdxSimple") { continue; }
       const fixture = fixtures[testName];
-      const diff = getJsonPatchDiff(fixture.from, fixture.to);
+      const diff = getJsonPatchDiff(fixture.from, fixture.to, { minimizeDiff: true });
       expect(diff).toMatchSnapshot(testName);
 
       const result = jsonPatchApply(fixture.from, diff);

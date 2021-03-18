@@ -1,4 +1,3 @@
-import { applyOperation } from "fast-json-patch";
 import { inject, injectable } from "inversify";
 import { cloneDeep } from "lodash";
 import * as jp from "json-pointer";
@@ -6,6 +5,7 @@ import { TYPES } from "../inversifyUtils";
 import { Schema } from "../swagger/swaggerTypes";
 import { SchemaValidator } from "../swaggerValidator/schemaValidator";
 import { jsonPathToPointer } from "../util/jsonUtils";
+import { jsonPatchApply } from "./diffUtils";
 
 @injectable()
 export class BodyTransformer {
@@ -23,7 +23,7 @@ export class BodyTransformer {
     for (const err of errors) {
       for (const jsonPath of err.jsonPathsInPayload) {
         const jsonPointer = jsonPathToPointer(jsonPath);
-        applyOperation(result, { op: "remove", path: jsonPointer });
+        jsonPatchApply(result, [{ remove: jsonPointer }]);
       }
     }
 
@@ -49,7 +49,7 @@ export class BodyTransformer {
     for (const err of errors) {
       for (const jsonPath of err.jsonPathsInPayload) {
         const jsonPointer = jsonPathToPointer(jsonPath);
-        applyOperation(result, { op: "remove", path: jsonPointer });
+        jsonPatchApply(result, [{ remove: jsonPointer }]);
       }
     }
 

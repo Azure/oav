@@ -1,6 +1,6 @@
 import { escapeRegExp } from "lodash";
 import { injectable } from "inversify";
-import { deepClone } from "fast-json-patch";
+import { cloneDeep } from "@azure-tools/openapi-tools-common";
 import { JsonLoader } from "../swagger/jsonLoader";
 import {
   TestScenario,
@@ -84,7 +84,7 @@ export class ExampleTemplateGenerator implements TestScenarioRunnerClient {
     const toMatch: string[] = [];
     const matchReplace: { [toMatch: string]: string } = {};
 
-    const requestParameters = deepClone(step.requestParameters);
+    const requestParameters = cloneDeep(step.requestParameters);
     for (const paramName of Object.keys(requestParameters)) {
       if (env.get(paramName) === undefined) {
         continue;
@@ -111,7 +111,7 @@ export class ExampleTemplateGenerator implements TestScenarioRunnerClient {
       }
     }
 
-    const responseExpected = deepClone(step.responseExpected);
+    const responseExpected = cloneDeep(step.responseExpected);
     replaceAllInObject(responseExpected, toMatch, matchReplace);
     step.responseExpected = responseExpected;
     if (responseExpected.location !== undefined && env.get("location") !== undefined) {

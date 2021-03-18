@@ -69,14 +69,14 @@ export const transformRecordingHeaders = (headers: { [headerName: string]: strin
   return result;
 };
 
-export const parseRecordingBodyJson = (content: string) => {
+export const parseRecordingBodyJson = (content: string | undefined | null) => {
   if (typeof content !== "string" || content.length === 0) {
     return undefined;
   }
   try {
     return JSON.parse(content);
   } catch (e) {
-    console.log(JSON.stringify(content));
-    throw e;
+    console.log(`Failed to parse json body. Use string instead: ${JSON.stringify(content)}`);
+    return content;
   }
 };
