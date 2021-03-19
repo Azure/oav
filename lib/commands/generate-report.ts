@@ -57,7 +57,8 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       fileRoot,
       swaggerFilePaths,
       testScenarioFile,
-      readmeMd
+      readmeMd,
+      argv.tag || "default"
     );
     await generator.generateReport();
     console.log(`generate report successfully!`);

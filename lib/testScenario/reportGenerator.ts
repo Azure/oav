@@ -41,6 +41,8 @@ type TestScenarioResult = {
   testScenario: {
     testScenarioFilePath: string;
     readmeFilePath: string;
+    swaggerFilePaths: string[];
+    tag: string;
   };
   stepResult: { [step: string]: StepResult };
 };
@@ -49,10 +51,10 @@ type StepResult = {
   exampleName: string;
   example?: SwaggerExample;
   operationId: string;
-  error?: HttpError;
-  diff?: { [statusCode: number]: JsonPatchOp[] };
+  runtimeError?: HttpError;
+  responseDiffResult?: { [statusCode: number]: JsonPatchOp[] };
   liveValidationResult?: any;
-  exampleQualityResult?: any;
+  stepValidationResult?: any;
 };
 
 type HttpError = {
@@ -81,7 +83,8 @@ export class ReportGenerator {
     private swaggerRootPath: string,
     private swaggerFilePaths: string[],
     private testDefFilePath: string,
-    private readmePath: string
+    private readmePath: string,
+    private tag: string
   ) {
     this.testResourceLoader = TestResourceLoader.create({
       useJsonParser: false,
@@ -105,7 +108,12 @@ export class ReportGenerator {
     this.operationIds = new Set<string>();
     this.validationResult = {};
     this.swaggerExampleQualityResult = {
-      testScenario: { testScenarioFilePath: this.testDefFilePath, readmeFilePath: this.readmePath },
+      testScenario: {
+        testScenarioFilePath: this.testDefFilePath,
+        readmeFilePath: this.readmePath,
+        swaggerFilePaths: swaggerFilePaths,
+        tag: this.tag,
+      },
       stepResult: {},
     };
     this.diffResult = {};
@@ -126,8 +134,7 @@ export class ReportGenerator {
         continue;
       }
       if (it.annotation.type === "simple" || it.annotation.type === "LRO") {
-        let error;
-        let exampleQuality;
+        let error: any = {};
         const generatedExample = this.generateExample(it, variables, rawReport);
         this.generatedExamplesMapping.set(generatedExample.exampleName, generatedExample);
         const matchedStep = this.getMatchedStep(it.annotation.step) as TestStepRestCall;
@@ -136,31 +143,29 @@ export class ReportGenerator {
           it.response.statusCode !== matchedStep.statusCode
         ) {
           error = { statusCode: it.response.statusCode, rawExecution: it } as HttpError;
-        } else {
-          exampleQuality = await this.validateExample(generatedExample);
         }
+        if (matchedStep === undefined) {
+          continue;
+        }
+        // validate real payload.
+        const exampleQuality = await this.exampleQualityValidator.validateExternalExamples([
+          {
+            exampleFilePath: generatedExample.exampleName,
+            example: generatedExample.example,
+            operationId: matchedStep.operationId,
+          },
+        ]);
         this.swaggerExampleQualityResult.stepResult[it.annotation.step] = {
           exampleName: generatedExample.exampleName,
           operationId: it.annotation.operationId,
-          error: error,
-          diff: this.exampleResponseDiff(generatedExample, matchedStep),
-          exampleQualityResult: exampleQuality,
+          runtimeError: error,
+          responseDiffResult: this.exampleResponseDiff(generatedExample, matchedStep),
+          stepValidationResult: exampleQuality,
           liveValidationResult: await this.liveValidate(it, generatedExample.exampleName),
         };
       }
     }
     this.writeGeneratedExamples();
-  }
-
-  private async validateExample(generatedExample: GeneratedExample) {
-    const res = this.exampleQualityValidator.validateExternalExamples([
-      {
-        example: generatedExample.example,
-        exampleFilePath: "",
-        operationId: generatedExample.operationId,
-      },
-    ]);
-    return res;
   }
 
   private generateExample(
@@ -214,7 +219,10 @@ export class ReportGenerator {
     env.setBatch(variables);
     try {
       const expected = env.resolveObjectValues(expectedResp);
-      const delta = getJsonPatchDiff(expected, resp, { includeOldValue: true });
+      const delta = getJsonPatchDiff(expected, resp, {
+        includeOldValue: true,
+        minimizeDiff: false,
+      });
       return delta;
     } catch (err) {
       console.log(err);
@@ -223,6 +231,11 @@ export class ReportGenerator {
   }
 
   private getMatchedStep(stepName: string): TestStep | undefined {
+    for (const it of this.testDefFile?.prepareSteps ?? []) {
+      if (stepName === it.step) {
+        return it;
+      }
+    }
     for (const testScenario of this.testDefFile?.testScenarios ?? []) {
       for (const step of testScenario.steps) {
         if (stepName === step.step) {
@@ -274,7 +287,7 @@ export class ReportGenerator {
 
   private outputResult() {
     fs.writeFileSync(
-      `${this.output}/exampleQuality.json`,
+      `${this.output}/testScenarioRunnerReport.json`,
       JSON.stringify(this.swaggerExampleQualityResult, null, 2)
     );
 
