@@ -193,7 +193,9 @@ export class TestScenarioGenerator {
         const example: SwaggerExample = {
           parameters: testStep.requestParameters,
           responses: {
-            [testStep.statusCode.toString()]: testStep.responseExpected ?? {},
+            [testStep.statusCode.toString()]: {
+              body: testStep.responseExpected,
+            },
           },
         };
         const exampleCacheKey = this.getExampleCacheKey(operation, example);

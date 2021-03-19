@@ -114,8 +114,8 @@ export class ExampleTemplateGenerator implements TestScenarioRunnerClient {
     const responseExpected = cloneDeep(step.responseExpected);
     replaceAllInObject(responseExpected, toMatch, matchReplace);
     step.responseExpected = responseExpected;
-    if (responseExpected.location !== undefined && env.get("location") !== undefined) {
-      responseExpected.location = env.get("location");
+    if (responseExpected.body?.location !== undefined && env.get("location") !== undefined) {
+      responseExpected.body.location = env.get("location");
     }
   }
 }
