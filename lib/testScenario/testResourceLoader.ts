@@ -438,9 +438,9 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
     const exampleFileContent = JSON.parse(fileContent) as SwaggerExample;
 
     step.requestParameters = exampleFileContent.parameters;
-    step.responseExpected = exampleFileContent.responses[step.statusCode];
+    step.responseExpected = exampleFileContent.responses[step.statusCode].body;
     if (step.responseExpected === undefined) {
-      throw new Error(`Response code ${step.statusCode} not defined in example ${exampleFilePath}`);
+      throw new Error(`Body not defined in example: ${step.statusCode} ${exampleFilePath}`);
     }
 
     // Load Operation

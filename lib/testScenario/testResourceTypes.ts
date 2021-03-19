@@ -184,7 +184,7 @@ export type TestStepRestCall = TransformRaw<
     exampleId: string;
     exampleFilePath?: string;
     requestParameters: SwaggerExample["parameters"];
-    responseExpected: SwaggerExample["responses"]["200"];
+    responseExpected: SwaggerExample["responses"]["200"]["body"];
   } & TestStepBase,
   "exampleFile" | "resourceName"
 >;
