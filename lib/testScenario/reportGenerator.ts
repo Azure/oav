@@ -16,6 +16,7 @@ import {
 } from "./testResourceTypes";
 import { VariableEnv } from "./variableEnv";
 import { getJsonPatchDiff } from "./diffUtils";
+import { result } from "lodash";
 
 const safeJsonParse = (content: string) => {
   try {
@@ -48,7 +49,7 @@ type TestScenarioResult = {
 };
 
 type StepResult = {
-  exampleName: string;
+  exampleName?: string;
   example?: SwaggerExample;
   operationId: string;
   runtimeError?: HttpError;
@@ -60,6 +61,16 @@ type StepResult = {
 type HttpError = {
   statusCode: number;
   rawExecution: RawExecution;
+};
+
+type RunnerResultContext = {
+  exampleFile?: string;
+  testScenario: {
+    swaggerFilePaths: [];
+    tag: string;
+    testScenarioFilePath: string;
+    readmeFilePath: string;
+  };
 };
 
 export class ReportGenerator {
@@ -76,6 +87,7 @@ export class ReportGenerator {
   private exampleFileMapping: Array<{ exampleFilePath: string; operationId: string }>;
   private operationIds: Set<string>;
   private rawReport: RawReport;
+  private testScenarioInfo: any;
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
   constructor(
     private newmanReportPath: string,
@@ -107,6 +119,12 @@ export class ReportGenerator {
     this.exampleFileMapping = [];
     this.operationIds = new Set<string>();
     this.validationResult = {};
+    this.testScenarioInfo = {
+      testScenarioFilePath: this.testDefFilePath,
+      readmeFilePath: this.readmePath,
+      swaggerFilePaths: swaggerFilePaths,
+      tag: this.tag,
+    };
     this.swaggerExampleQualityResult = {
       testScenario: {
         testScenarioFilePath: this.testDefFilePath,
@@ -127,8 +145,13 @@ export class ReportGenerator {
     this.rawReport = this.postmanReportParser.generateRawReport();
   }
 
+  private applyContextToResult(context: any, results: any[]) {
+    return results.map((it) => _.extend(context, it));
+  }
+
   public async generateExampleQualityReport(rawReport: RawReport) {
     const variables = rawReport.variables;
+    let res: any[] = [];
     for (const it of rawReport.executions) {
       if (it.annotation === undefined) {
         continue;
@@ -148,19 +171,20 @@ export class ReportGenerator {
           continue;
         }
         // validate real payload.
-        const exampleQuality = await this.exampleQualityValidator.validateExternalExamples([
+        const roundtripErrors = await this.exampleQualityValidator.validateExternalExamples([
           {
             exampleFilePath: generatedExample.exampleName,
             example: generatedExample.example,
             operationId: matchedStep.operationId,
           },
         ]);
+        // res = res.concat(this.applyContextToResult(_.extend(), roundtripErrors));
         this.swaggerExampleQualityResult.stepResult[it.annotation.step] = {
           exampleName: generatedExample.exampleName,
           operationId: it.annotation.operationId,
           runtimeError: error,
           responseDiffResult: this.exampleResponseDiff(generatedExample, matchedStep),
-          stepValidationResult: exampleQuality,
+          stepValidationResult: roundtripErrors,
           liveValidationResult: await this.liveValidate(it, generatedExample.exampleName),
         };
       }

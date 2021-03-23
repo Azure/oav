@@ -30,6 +30,13 @@ export class PostmanCollectionGenerator {
 
   public async GenerateCollection(): Promise<void> {
     const testDef = await this.testResourceLoader.load(this.opt.testDef);
+    for (const it of testDef.requiredVariables) {
+      if (this.env.get(it) === undefined) {
+        throw new Error(
+          `Missing required variable '${it}', please set variable values in env.json.`
+        );
+      }
+    }
     for (const item of testDef.testScenarios) {
       const client = new PostmanCollectionRunnerClient(
         `${this.opt.name}_${item.description.replace(/\s/g, "")}`,

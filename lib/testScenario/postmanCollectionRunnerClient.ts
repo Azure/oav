@@ -144,7 +144,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
         case "body":
           item.request.body = new RequestBody({
             mode: "raw",
-            raw: JSON.stringify(request.body, null, 2),
+            raw: JSON.stringify(stepEnv.env.resolveObjectValues(request.body), null, 2),
           });
           break;
         default:
@@ -316,18 +316,17 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
   }
 
   public writeCollectionToJson(outputFolder: string) {
-    fs.writeFileSync(
-      path.resolve(outputFolder, `${this.name}_collection.json`),
-      JSON.stringify(this.collection.toJSON(), null, 2)
-    );
-
+    const collectionPath = path.resolve(outputFolder, `${this.name}_collection.json`);
+    const envPath = path.resolve(outputFolder, `${this.name}_env.json`);
+    fs.writeFileSync(collectionPath, JSON.stringify(this.collection.toJSON(), null, 2));
     const env = this.collectionEnv.toJSON();
     env.name = this.name + "_env";
     env._postman_variable_scope = "environment";
-    fs.writeFileSync(
-      path.resolve(outputFolder, `${this.name}_env.json`),
-      JSON.stringify(env, null, 2)
-    );
+    fs.writeFileSync(envPath, JSON.stringify(env, null, 2));
+
+    console.log("\ngenerate collection successfully!");
+    console.log(`Postman collection: '${collectionPath}'. Postman env: '${envPath}' `);
+    console.log(`Command: newman run ${collectionPath} -e ${envPath} -r 'json,cli'`);
   }
 
   public async runCollection() {

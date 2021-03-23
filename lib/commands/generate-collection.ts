@@ -47,6 +47,9 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     const autorestConfig = await getAutorestConfig(argv, readmeMd);
     console.log(autorestConfig["input-file"]);
     console.log(autorestConfig["test-resources"]);
+    if (autorestConfig["test-resources"] === undefined) {
+      throw new Error(`No test-scenario file found in '${argv.tag || "default"}'`);
+    }
     const swaggerFilePaths: string[] = autorestConfig["input-file"];
     for (const testResources of autorestConfig["test-resources"]) {
       const testScenarioFile = testResources.test;
@@ -75,7 +78,6 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       const generator = new PostmanCollectionGenerator(opt);
       await generator.GenerateCollection();
     }
-    console.log("generate postman collection successfully!");
     return 0;
   });
 }
