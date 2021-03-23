@@ -6,5 +6,4 @@ const mainConfig = require("../jest.config");
 module.exports = {
   ...mainConfig,
   testMatch: ["**/regression/**/validateExamplesRegression_latestOnly.test.ts"],
-  setupFiles: ["./jest.setup-file.js"],
 };
