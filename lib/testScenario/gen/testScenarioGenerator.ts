@@ -291,7 +291,7 @@ export class TestScenarioGenerator {
       method: record.method,
       rawUrl: record.url,
       requestBody: toString(record.body),
-      requestHeaders: record.responseHeaders,
+      requestHeaders: record.headers,
       statusCode: record.responseCode === 200 ? undefined : record.responseCode,
       responseExpected: toString(record.responseBody),
     };
