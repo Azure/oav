@@ -10,11 +10,12 @@ import { TestScenarioRestClient } from "./testScenarioRestClient";
 
 const main = async () => {
   const readmeMd: string =
-    "/home/htc/azure-rest-api-specs/specification/network/resource-manager/readme.md";
+    "/home/htc/azure-rest-api-specs/specification/containerservice/resource-manager/readme.md";
+  // "/home/htc/azure-rest-api-specs/specification/network/resource-manager/readme.md";
   // "/home/htc/azure-rest-api-specs/specification/operationalinsights/resource-manager/readme.md";
   const argv = {
     ["try-require"]: "readme.test.md",
-    tag: "package-2020-08",
+    tag: "package-2020-12",
   };
 
   const autorestConfig = await getAutorestConfig(argv, readmeMd);
@@ -34,7 +35,8 @@ const main = async () => {
   const testDef = await loader.load(
     // "Microsoft.ContainerService/stable/2020-07-01/test-scenarios/testAks.yml"
     // "Microsoft.OperationalInsights/stable/2020-08-01/test-scenarios/testDataExport.yaml"
-    "Microsoft.Network/stable/2020-08-01/test-scenarios/testNetworkPublicIp.yaml"
+    // "Microsoft.Network/stable/2020-08-01/test-scenarios/testNetworkPublicIp.yaml"
+    "Microsoft.ContainerService/stable/2020-12-01/test-scenarios/containerService.yaml"
   );
 
   console.log(testDef.testScenarios[0].steps);
@@ -43,6 +45,7 @@ const main = async () => {
   env.setBatch({
     subscriptionId: "db5eb68e-73e2-4fa8-b18a-46cd1be4cce5",
     location: "westus",
+    SSH_PUBLIC_KEY: "__public_key_ssh__",
   });
 
   const runner = new TestScenarioRunner({

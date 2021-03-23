@@ -22,7 +22,17 @@ const placeholderToBeDetermined = "__to_be_determined__";
 
 @injectable()
 export class ExampleTemplateGenerator implements TestScenarioRunnerClient {
-  public constructor(private jsonLoader: JsonLoader) {}
+  private baseEnv: VariableEnv;
+  private runner: TestScenarioRunner;
+
+  public constructor(private jsonLoader: JsonLoader) {
+    this.baseEnv = new VariableEnv();
+    this.runner = new TestScenarioRunner({
+      jsonLoader: this.jsonLoader,
+      client: this,
+      env: this.baseEnv,
+    });
+  }
 
   public async createResourceGroup(): Promise<void> {
     // Pass
@@ -63,18 +73,12 @@ export class ExampleTemplateGenerator implements TestScenarioRunnerClient {
   }
 
   public async generateExampleTemplateForTestScenario(testScenario: TestScenario) {
-    const env = new VariableEnv();
+    this.baseEnv.clear();
     for (const requiredVar of testScenario.requiredVariables) {
-      env.set(requiredVar, placeholderToBeDetermined);
+      this.baseEnv.set(requiredVar, placeholderToBeDetermined);
     }
 
-    const runner = new TestScenarioRunner({
-      jsonLoader: this.jsonLoader,
-      client: this,
-      env,
-    });
-
-    await runner.executeScenario(testScenario);
+    await this.runner.executeScenario(testScenario);
   }
 
   public replaceWithParameterConvention(
@@ -107,7 +111,7 @@ export class ExampleTemplateGenerator implements TestScenarioRunnerClient {
       const requestBody = step.requestParameters[bodyParamName];
       replaceAllInObject(requestBody, toMatch, matchReplace);
       if (requestBody.location !== undefined && env.get("location") !== undefined) {
-        requestBody.location = env.get("location");
+        requestBody.location = "$(location)";
       }
     }
 
@@ -115,7 +119,7 @@ export class ExampleTemplateGenerator implements TestScenarioRunnerClient {
     replaceAllInObject(responseExpected, toMatch, matchReplace);
     step.responseExpected = responseExpected;
     if (responseExpected.body?.location !== undefined && env.get("location") !== undefined) {
-      responseExpected.body.location = env.get("location");
+      responseExpected.body.location = "$(location)";
     }
   }
 }
