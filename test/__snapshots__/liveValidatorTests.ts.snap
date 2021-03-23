@@ -30,7 +30,7 @@ Object {
           "jsonRef": "#/definitions/LinkerResource",
           "position": Object {
             "column": 23,
-            "line": 566,
+            "line": 572,
           },
           "url": "specification/servicelinker/resource-manager/Microsoft.ServiceLinker/preview/2021-01-01-privatepreview/servicelinker.json",
         },
@@ -63,7 +63,7 @@ Object {
         "code": "LRO_RESPONSE_CODE",
         "documentationUrl": "",
         "jsonPathsInPayload": Array [],
-        "message": "Patch/Post long running operation must return 201 or 202, Delete long running operation must return 202 or 204, Put long running operation must return 202 or 201 or 200, but 200 returned",
+        "message": "For initial request, Patch/Post long running operation must return 201 or 202, Delete long running operation must return 202 or 204, Put long running operation must return 202 or 201 or 200, but 204 returned",
         "pathsInPayload": Array [],
         "schemaPath": "",
         "severity": 0,
