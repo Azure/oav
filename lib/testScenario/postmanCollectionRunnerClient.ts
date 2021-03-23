@@ -15,7 +15,6 @@ import {
   QueryParamDefinition,
   VariableDefinition,
   ItemDefinition,
-  Response,
 } from "postman-collection";
 
 import { JsonLoader } from "../swagger/jsonLoader";
@@ -29,6 +28,7 @@ import {
 } from "./testScenarioRunner";
 import { ReflectiveVariableEnv, VariableEnv } from "./variableEnv";
 import { typeToDescription } from "./postmanItemTypes";
+import { generatedGet, lroPollingUrl, generatedPrefix } from "./postmanItemNaming";
 
 export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
   public collection: Collection;
@@ -104,14 +104,14 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
   }
 
   public async sendExampleRequest(
-    _request: TestScenarioClientRequest,
+    request: TestScenarioClientRequest,
     step: TestStepRestCall,
     stepEnv: TestStepEnv
   ): Promise<void> {
     this.auth(stepEnv.env);
     const pathEnv = new ReflectiveVariableEnv(":", "");
     const item = new Item();
-    item.name = step.exampleFilePath!;
+    item.name = step.step!;
     item.request = new Request({
       name: step.exampleFilePath,
       method: step.operation._method as string,
@@ -127,19 +127,15 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
       if (!this.collectionEnv.has(param.name)) {
         this.collectionEnv.set(param.name, paramValue, typeof step.requestParameters[param.name]);
       }
-      const exampleResp = new Response({
-        code: step.statusCode,
-        body: step.responseExpected,
-        responseTime: 0,
-      });
-      item.responses.add(exampleResp);
 
       switch (param.in) {
         case "path":
           urlVariables.push({ key: param.name, value: `{{${param.name}}}` });
           break;
         case "query":
-          queryParams.push({ key: param.name, value: paramValue });
+          if (paramValue !== undefined) {
+            queryParams.push({ key: param.name, value: paramValue });
+          }
           break;
         case "header":
           const header = new Header({ key: param.name, value: paramValue });
@@ -148,7 +144,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
         case "body":
           item.request.body = new RequestBody({
             mode: "raw",
-            raw: JSON.stringify(_request.body, null, 2),
+            raw: JSON.stringify(stepEnv.env.resolveObjectValues(request.body), null, 2),
           });
           break;
         default:
@@ -179,6 +175,8 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
         poller_item_name: `${item.name}_poller`,
         operationId: step.operation.operationId || "",
         exampleName: step.exampleFile!,
+        itemName: item.name,
+        step: step.step,
       });
       this.addAsLongRunningOperationItem(item);
     } else {
@@ -186,26 +184,33 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
         type: "simple",
         operationId: step.operation.operationId || "",
         exampleName: step.exampleFile!,
+        itemName: item.name,
+        step: step.step,
       });
       this.collection.items.add(item);
     }
+    // generate get
     if (step.operation._method === "put" || step.operation._method === "delete") {
       this.collection.items.add(
-        this.getOperationItem(
-          `${item.name}_${step.operation._method}_generated_get`,
-          item.request.url.toString()
+        this.generatedGetOperationItem(
+          item.name,
+          item.request.url.toString(),
+          step.step,
+          step.operation._method
         )
       );
     }
   }
 
   private addAsLongRunningOperationItem(item: Item) {
-    this.collectionEnv.set(`${item.name}_polling_url`, "<polling_url>", "string");
+    this.collectionEnv.set(`${lroPollingUrl(item.name)}`, "<polling_url>", "string");
     const longRunningEvent = new Event({
       listen: "test",
       script: {
         type: "text/javascript",
-        exec: `pm.environment.set("${item.name}_polling_url", pm.response.headers.get('Location')||pm.response.headers.get('Azure-AsyncOperation')||"https://postman-echo.com/delay/10")`,
+        exec: `pm.environment.set("${lroPollingUrl(
+          item.name
+        )}", pm.response.headers.get('Location')||pm.response.headers.get('Azure-AsyncOperation')||"https://postman-echo.com/delay/10")`,
       },
     });
     item.events.add(longRunningEvent);
@@ -229,7 +234,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
         type: "text/javascript",
         // generate assertion from example
         exec: this.postmanTestScript.generateScript({
-          name: "status code should be 2xx",
+          name: "response status code assertion.",
           types: types,
           variables: overwriteVariables,
         }),
@@ -311,32 +316,44 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
   }
 
   public writeCollectionToJson(outputFolder: string) {
-    fs.writeFileSync(
-      path.resolve(outputFolder, `${this.name}_collection.json`),
-      JSON.stringify(this.collection.toJSON(), null, 2)
-    );
-    fs.writeFileSync(
-      path.resolve(outputFolder, `${this.name}_env.json`),
-      JSON.stringify(this.collectionEnv.toJSON(), null, 2)
-    );
+    const collectionPath = path.resolve(outputFolder, `${this.name}_collection.json`);
+    const envPath = path.resolve(outputFolder, `${this.name}_env.json`);
+    fs.writeFileSync(collectionPath, JSON.stringify(this.collection.toJSON(), null, 2));
+    const env = this.collectionEnv.toJSON();
+    env.name = this.name + "_env";
+    env._postman_variable_scope = "environment";
+    fs.writeFileSync(envPath, JSON.stringify(env, null, 2));
+
+    console.log("\ngenerate collection successfully!");
+    console.log(`Postman collection: '${collectionPath}'. Postman env: '${envPath}' `);
+    console.log(`Command: newman run ${collectionPath} -e ${envPath} -r 'json,cli'`);
   }
 
   public async runCollection() {
     newman.run({ collection: this.collection, environment: this.collectionEnv });
   }
 
-  private getOperationItem(name: string, url: string): Item {
+  private generatedGetOperationItem(
+    name: string,
+    url: string,
+    step: string,
+    prevMethod: string = "put"
+  ): Item {
     const item = new Item({
-      name: `${name}`,
+      name: `${generatedPrefix(generatedGet(name))}`,
       request: {
         method: "get",
         url: url,
       },
     });
-    item.description = typeToDescription({ type: "generated-get" });
+    item.description = typeToDescription({
+      type: "generated-get",
+      lro_item_name: name,
+      step: step,
+    });
     this.addAuthorizationHeader(item);
     const scriptTypes: TestScriptType[] = ["DetailResponseLog"];
-    if (!name.includes("delete")) {
+    if (prevMethod !== "delete") {
       scriptTypes.push("StatusCodeAssertion");
     }
     this.addTestScript(item, scriptTypes);
@@ -345,7 +362,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
 
   public longRunningOperationItem(initialItem: Item): Item[] {
     const ret: Item[] = [];
-    const pollerItemName = initialItem.name + "_poller";
+    const pollerItemName = generatedPrefix(initialItem.name + "_poller");
     const pollerItem = new Item({
       name: pollerItemName,
       request: {

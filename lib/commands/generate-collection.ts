@@ -47,34 +47,37 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     const autorestConfig = await getAutorestConfig(argv, readmeMd);
     console.log(autorestConfig["input-file"]);
     console.log(autorestConfig["test-resources"]);
+    if (autorestConfig["test-resources"] === undefined) {
+      throw new Error(`No test-scenario file found in '${argv.tag || "default"}'`);
+    }
     const swaggerFilePaths: string[] = autorestConfig["input-file"];
-    const testScenarioFile = autorestConfig["test-resources"][0].test;
-    console.log(testScenarioFile);
-    const fileRoot: string = path.dirname(readmeMd);
-    let env = {
-      subscriptionId: "<mySubcriptionId>",
-      location: "westus",
-    };
-    if (argv.e !== undefined) {
-      env = JSON.parse(fs.readFileSync(argv.e).toString());
+    for (const testResources of autorestConfig["test-resources"]) {
+      const testScenarioFile = testResources.test;
+      const fileRoot: string = path.dirname(readmeMd);
+      let env = {
+        subscriptionId: "<mySubcriptionId>",
+        location: "westus",
+      };
+      if (argv.e !== undefined) {
+        env = JSON.parse(fs.readFileSync(argv.e).toString());
+      }
+      console.log(
+        `generating postman collection from ${testScenarioFile}. outputDir: ${argv.output}`
+      );
+      const opt: PostmanCollectionGeneratorOption = {
+        name: testScenarioFile.replace(/^.*[\\\/]/, "").replace(".yaml", ""),
+        testDef: testScenarioFile,
+        swaggerFilePaths: swaggerFilePaths,
+        fileRoot: fileRoot,
+        env: env,
+        outputFolder: argv.output,
+      };
+      if (!fs.existsSync(argv.output)) {
+        fs.mkdirSync(argv.output);
+      }
+      const generator = new PostmanCollectionGenerator(opt);
+      await generator.GenerateCollection();
     }
-    console.log(
-      `generating postman collection from ${testScenarioFile}. outputDir: ${argv.output}`
-    );
-    const opt: PostmanCollectionGeneratorOption = {
-      name: testScenarioFile.replace(/^.*[\\\/]/, "").replace(".yaml", ""),
-      testDef: testScenarioFile,
-      swaggerFilePaths: swaggerFilePaths,
-      fileRoot: fileRoot,
-      env: env,
-      outputFolder: argv.output,
-    };
-    if (!fs.existsSync(argv.output)) {
-      fs.mkdirSync(argv.output);
-    }
-    const generator = new PostmanCollectionGenerator(opt);
-    await generator.GenerateCollection();
-    console.log(`succeed`);
     return 0;
   });
 }

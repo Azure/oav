@@ -2,6 +2,9 @@ export type PostmanItemType = Simple | LRO | Prepare | GeneratedGet | Mock | Pol
 
 interface Basic {
   operationId: string;
+  exampleFilePath?: string;
+  itemName: string;
+  step: string;
 }
 
 type Simple = {
@@ -19,9 +22,11 @@ interface Prepare {
   type: "prepare";
 }
 
-interface GeneratedGet {
+type GeneratedGet = {
   type: "generated-get";
-}
+  lro_item_name: string;
+  step?: string;
+};
 
 interface Mock {
   type: "mock";
