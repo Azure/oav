@@ -270,20 +270,19 @@ const validateLroOperation = (
     if (operation._method === "post") {
       if (statusCode === "202" || statusCode === "201") {
         validateLroHeader(operation, headers, result);
-      } else if (statusCode !== "200" && statusCode !== "204"){
+      } else if (statusCode !== "200" && statusCode !== "204") {
         result.push(issueFromErrorCode("LRO_RESPONSE_CODE", { statusCode }, operation.responses));
       }
     } else if (operation._method === "patch") {
       if (statusCode === "202" || statusCode === "201") {
         validateLroHeader(operation, headers, result);
-      } else if (statusCode !== "200"){
+      } else if (statusCode !== "200") {
         result.push(issueFromErrorCode("LRO_RESPONSE_CODE", { statusCode }, operation.responses));
       }
     } else if (operation._method === "delete") {
       if (statusCode === "202") {
         validateLroHeader(operation, headers, result);
-      }
-      else if (statusCode !== "200" && statusCode !== "204") {
+      } else if (statusCode !== "200" && statusCode !== "204") {
         result.push(issueFromErrorCode("LRO_RESPONSE_CODE", { statusCode }, operation.responses));
       }
     } else if (operation._method === "put") {
