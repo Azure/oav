@@ -9,7 +9,8 @@ import { log } from "../util/logging";
 
 export const command = "example-quality <spec-path>";
 
-export const describe = "Performs validation of x-ms-examples and examples present in the spec.";
+export const describe =
+  "Performs example quality validation of x-ms-examples and examples present in the spec.";
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
   await cliSuppressExceptions(async () => {
