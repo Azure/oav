@@ -439,9 +439,6 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
 
     step.requestParameters = exampleFileContent.parameters;
     step.responseExpected = exampleFileContent.responses[step.statusCode].body;
-    if (step.responseExpected === undefined) {
-      throw new Error(`Body not defined in example: ${step.statusCode} ${exampleFilePath}`);
-    }
 
     // Load Operation
     if (step.operationId === "") {

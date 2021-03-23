@@ -69,5 +69,6 @@ export {
   PostmanCollectionGeneratorOption,
 } from "./lib/testScenario/postmanCollectionGenerator";
 
+export { getAutorestConfig } from "./lib/util/getAutorestConfig";
 // Constants
 export const Constants = C;
