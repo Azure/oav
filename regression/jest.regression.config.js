@@ -6,5 +6,5 @@ const mainConfig = require("../jest.config");
 module.exports = {
   ...mainConfig,
   testMatch: ["**/regression/**/*.test.ts"],
-  setupFiles: ["./jest.setup-file.js"],
+  setupFiles: ["./jest.setup-file.ts"],
 };
