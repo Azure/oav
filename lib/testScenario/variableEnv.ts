@@ -19,6 +19,12 @@ export class VariableEnv {
     this.writeEnv = this.data;
   }
 
+  public clear() {
+    for (const key of Object.keys(this.data)) {
+      delete this.data[key];
+    }
+  }
+
   public get(key: string): string | undefined {
     return this.data[key];
   }
