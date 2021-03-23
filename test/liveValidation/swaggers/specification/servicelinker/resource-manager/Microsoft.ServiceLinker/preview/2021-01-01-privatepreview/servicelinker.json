@@ -310,6 +310,12 @@
               "$ref": "#/definitions/LinkerResource"
             }
           },
+          "204": {
+            "description": "Long running operation.",
+            "schema": {
+              "$ref": "#/definitions/LinkerResource"
+            }
+          },
           "default": {
             "description": "Error response describing why the operation failed.",
             "schema": {

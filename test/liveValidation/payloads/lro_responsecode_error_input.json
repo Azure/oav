@@ -26,7 +26,7 @@
     }
   },
   "liveResponse": {
-    "statusCode": "200",
+    "statusCode": "204",
     "headers": {
       "strict-Transport-Security": "max-age=31536000; includeSubDomains",
       "x-ms-request-id": "97856fec-304a-4317-87f0-f04c328402d3",
