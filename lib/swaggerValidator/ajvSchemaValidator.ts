@@ -5,16 +5,15 @@ import {
   RootObjectInfo,
 } from "@azure-tools/openapi-tools-common";
 import ajv, { Ajv, default as ajvInit, ErrorObject, ValidateFunction } from "ajv";
-import { inject, injectable } from "inversify";
-import { TYPES } from "../inversifyUtils";
+import { injectable } from "inversify";
 import { $id, JsonLoader } from "../swagger/jsonLoader";
 import { isSuppressed } from "../swagger/suppressionLoader";
 import { refSelfSymbol, Schema, SwaggerSpec } from "../swagger/swaggerTypes";
 import { getNameFromRef } from "../transform/context";
-import { xmsEnum, xmsMutability, xmsSecret } from "../util/constants";
+import { xmsAzureResource, xmsEnum, xmsMutability, xmsSecret } from "../util/constants";
 import { Writable } from "../util/utils";
 import { ExtendedErrorCode, SourceLocation } from "../util/validationError";
-import { ajvEnableAll } from "./ajv";
+import { ajvEnableAll, ajvEnableArmRule } from "./ajv";
 import {
   getIncludeErrorsMap,
   getValidateErrorMessage,
@@ -22,6 +21,7 @@ import {
   SchemaValidateFunction,
   SchemaValidateIssue,
   SchemaValidator,
+  SchemaValidatorOption,
   validateErrorMessages,
 } from "./schemaValidator";
 
@@ -29,7 +29,11 @@ import {
 export class AjvSchemaValidator implements SchemaValidator {
   private ajv: Ajv;
 
-  public constructor(loader: JsonLoader, @inject(TYPES.emptyObject) options?: ajv.Options) {
+  public constructor(
+    loader: JsonLoader,
+    options?: ajv.Options,
+    schemaValidatorOption?: SchemaValidatorOption
+  ) {
     this.ajv = ajvInit({
       // tslint:disable-next-line: no-submodule-imports
       meta: require("ajv/lib/refs/json-schema-draft-04.json"),
@@ -53,6 +57,10 @@ export class AjvSchemaValidator implements SchemaValidator {
       ...options,
     });
     ajvEnableAll(this.ajv, loader);
+
+    if (schemaValidatorOption?.isArmCall === true) {
+      ajvEnableArmRule(this.ajv);
+    }
   }
 
   public async compileAsync(schema: Schema): Promise<SchemaValidateFunction> {
@@ -182,7 +190,7 @@ export const ajvErrorToSchemaValidateIssue = (
     message: errInfo.message,
     params: errInfo.params,
     jsonPathsInPayload: [dataPath],
-    schemaPath: err.schemaPath,
+    schemaPath: errInfo.code === "MISSING_RESOURCE_ID" ? "" : err.schemaPath,
     source,
   };
 
@@ -329,6 +337,11 @@ export const ajvErrorCodeToOavErrorCode = (
           : ctx.isResponse
           ? errorFromErrorCode("WRITEONLY_PROPERTY_NOT_ALLOWED_IN_RESPONSE", param)
           : errorFromErrorCode("READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST", param);
+      break;
+
+    case xmsAzureResource:
+      params = [];
+      result = errorFromErrorCode("MISSING_RESOURCE_ID", "");
       break;
 
     case "oneOf":

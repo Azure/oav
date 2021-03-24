@@ -52,6 +52,7 @@ export class LiveValidatorLoader implements Loader<SwaggerSpec> {
       }
       if (response.headers !== undefined) {
         const headerSchema: Schema = { properties: {}, required: [] };
+        copyInfo(response.headers, headerSchema);
         schema.properties!.headers = headerSchema;
         for (const headerName of Object.keys(response.headers)) {
           const name = headerName.toLowerCase();

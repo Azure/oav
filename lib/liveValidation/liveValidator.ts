@@ -45,6 +45,7 @@ export interface LiveValidatorOptions extends LiveValidatorLoaderOption {
   isPathCaseSensitive: boolean;
   loadValidatorInBackground: boolean;
   loadValidatorInInitialize: boolean;
+  isArmCall: boolean;
 }
 
 export interface RequestResponsePair {
@@ -85,6 +86,7 @@ interface Meta {
 export interface ValidateOptions {
   readonly includeErrors?: ExtendedErrorCode[];
   readonly includeOperationMatch?: boolean;
+  isArmCall?: boolean;
 }
 
 export enum LiveValidatorLoggingLevels {
@@ -164,6 +166,10 @@ export class LiveValidator {
 
     if (ops.loadValidatorInInitialize === undefined) {
       ops.loadValidatorInInitialize = false;
+    }
+
+    if (ops.isArmCall === undefined) {
+      ops.isArmCall = false;
     }
 
     this.options = ops as LiveValidatorOptions;
@@ -379,7 +385,8 @@ export class LiveValidator {
         liveResponse,
         info,
         this.loader,
-        options.includeErrors
+        options.includeErrors,
+        options.isArmCall
       );
     } catch (resValidationError) {
       const msg =

@@ -1,41 +1,50 @@
 # Change Log - oav
 
-## 2.3.0
+## 03/24/2021 2.3.0
 
 - Support load test-scenario file
 - Support generate postman collection from test-scenario
+## 02/08/2021 2.2.7
 
-## 2.2.3
+- Add new rules of 'LRO_RESPONSE_HEADER' and 'LRO_RESPONSE_CODE'.
+- Add option of 'isArmCall' to differentiate rulesets for Arm and RpaaS in validation apis.
 
-Tues, 26 Jan 2021
+## 03/12/2021 2.2.6
+
+- Fixed the mock value of 'location' header and 'azure_AsyncOperation' header.
+
+## 02/08/2021 2.2.5
+
+- Add new rule of 'MISSING_RESOURCE_ID'.
+- Add option of 'isArmCall' to differentiate rulesets for Arm and RpaaS.
+
+## 02/08/2021 2.2.4
+
+- Bump version to republish since previous version is stuck to be fetched.
+
+## 01/26/2021 2.2.3
 
 - Bugfix collect correct err.data in discriminator validation for multiple level allOf
 
-## 2.2.2
-
-Thur, 22 Jan 2021
+## 01/22/2021 2.2.2
 
 - Bugfix for example generator: resolve reference undefined property.
 
-## 2.2.1
-
-Thur, 21 Jan 2021
+## 01/21/2021 2.2.1
 
 - Bugfix should copy required array for allOf transformer
 - Bugfix collect correct err.data in discriminator validation
 
-## 2.2.0
+## 01/15/2021 2.2.0
 
-## 2.0.1
+- Enable support for test scenario parsing
 
-Wed, 25 Nov 2020
+## 11/25/2020 2.0.1
 
 - Ignore required validation rule in response when x-ms-secret is true
 - Ignore schema validation when request body is not required and value is empty {}
 
-## 2.0.0
-
-Mon, 23 Nov 2020
+## 11/23/2020 2.0.0
 
 - Replace ts-common libraries by openapi-tools-common single library
 - Adding example generation functionality

@@ -81,6 +81,9 @@ const errorConstants = {
   DISCRIMINATOR_VALUE_NOT_FOUND: { severity: Severity.Critical, docUrl: "" },
   INVALID_RESPONSE_HEADER: { severity: Severity.Error, docUrl: "" },
   INVALID_RESPONSE_BODY: { severity: Severity.Critical, docUrl: "" },
+  MISSING_RESOURCE_ID: { severity: Severity.Critical, docUrl: "" },
+  LRO_RESPONSE_CODE: { severity: Severity.Critical, docUrl: "" },
+  LRO_RESPONSE_HEADER: { severity: Severity.Critical, docUrl: "" },
 };
 
 const wrapperErrorConstants = {
