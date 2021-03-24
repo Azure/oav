@@ -13,13 +13,13 @@ import globby from "globby";
 import * as models from "../models";
 import { requestResponseDefinition } from "../models/requestResponse";
 import { LowerHttpMethods, SwaggerSpec } from "../swagger/swaggerTypes";
-import { SchemaValidateFunction, SchemaValidateIssue } from "../swaggerValidator/schemaValidator";
+import { SchemaValidateFunction, SchemaValidateIssue, SchemaValidator } from "../swaggerValidator/schemaValidator";
 import * as C from "../util/constants";
 import { log } from "../util/logging";
 import { Severity } from "../util/severity";
 import * as utils from "../util/utils";
 import { allErrorConstants, ExtendedErrorCode, RuntimeException } from "../util/validationError";
-import { inversifyGetInstance } from "../inversifyUtils";
+import { inversifyGetContainer, inversifyGetInstance, TYPES } from "../inversifyUtils";
 import { LiveValidatorLoader, LiveValidatorLoaderOption } from "./liveValidatorLoader";
 import { getProviderFromPathTemplate, OperationSearcher } from "./operationSearcher";
 import {
@@ -175,11 +175,14 @@ export class LiveValidator {
     // Construct array of swagger paths to be used for building a cache
     this.logging("Get swagger path.");
     const swaggerPaths = await this.getSwaggerPaths();
+    const container = inversifyGetContainer();
     this.loader = inversifyGetInstance(LiveValidatorLoader, {
+      container,
       fileRoot: this.options.directory,
       ...this.options,
     });
-    this.validateRequestResponsePair = this.loader.schemaValidator.compile(
+    const schemaValidator = container.get(TYPES.schemaValidator) as SchemaValidator;
+    this.validateRequestResponsePair = await schemaValidator.compileAsync(
       requestResponseDefinition
     );
 

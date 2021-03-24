@@ -7,19 +7,23 @@ export const TYPES = {
 import { Container, interfaces } from "inversify";
 import { setDefaultOpts } from "./swagger/loader";
 
+export const inversifyGetContainer = (opts: interfaces.ContainerOptions = {}) => {
+  setDefaultOpts(opts, {
+    defaultScope: "Singleton",
+    autoBindInjectable: true,
+  } as any);
+  return new Container(opts);
+};
+
 export const inversifyGetInstance = <T, Opt = {}>(
-  claz: interfaces.Newable<T>,
+  claz: interfaces.Newable<T> ,
   opts: Opt &
     interfaces.ContainerOptions & {
       container?: Container;
     }
 ) => {
   if (opts.container === undefined) {
-    setDefaultOpts(opts, {
-      defaultScope: "Singleton",
-      autoBindInjectable: true,
-    } as any);
-    opts.container = new Container(opts);
+    opts.container = inversifyGetContainer(opts);
   }
   opts.container.bind(TYPES.opts).toConstantValue(opts);
   opts.container.bind(TYPES.emptyObject).toConstantValue({});

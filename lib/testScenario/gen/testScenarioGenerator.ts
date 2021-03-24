@@ -8,7 +8,6 @@ import { parseValidationRequest } from "../../liveValidation/liveValidator";
 import { OperationSearcher } from "../../liveValidation/operationSearcher";
 import { JsonLoader } from "../../swagger/jsonLoader";
 import { ExampleUpdateEntry, SwaggerLoader } from "../../swagger/swaggerLoader";
-import { AjvSchemaValidator } from "../../swaggerValidator/ajvSchemaValidator";
 import { getTransformContext } from "../../transform/context";
 import { extractPathParamValue, pathRegexTransformer } from "../../transform/pathRegexTransformer";
 import { referenceFieldsTransformer } from "../../transform/referenceFieldsTransformer";
@@ -35,6 +34,7 @@ import { traverseSwagger } from "../../transform/traverseSwagger";
 import { BodyTransformer } from "../bodyTransformer";
 import { ArmApiInfo, ArmUrlParser } from "../armUrlParser";
 import { getJsonPatchDiff } from "../diffUtils";
+import { SchemaValidator } from "../../swaggerValidator/schemaValidator";
 
 export type SingleRequestTracking = TestScenarioClientRequest & {
   timeStart?: Date;
@@ -79,7 +79,8 @@ export class TestScenarioGenerator {
     private jsonLoader: JsonLoader,
     private exampleTemplateGenerator: ExampleTemplateGenerator,
     private bodyTransformer: BodyTransformer,
-    private armUrlParser: ArmUrlParser
+    private armUrlParser: ArmUrlParser,
+    @inject(TYPES.schemaValidator) private schemaValidator: SchemaValidator
   ) {
     this.operationSearcher = new OperationSearcher((_) => {});
   }
@@ -88,8 +89,7 @@ export class TestScenarioGenerator {
   }
 
   public async initialize() {
-    const schemaValidator = new AjvSchemaValidator(this.jsonLoader);
-    const transformCtx = getTransformContext(this.jsonLoader, schemaValidator, [
+    const transformCtx = getTransformContext(this.jsonLoader, this.schemaValidator, [
       xmsPathsTransformer,
       referenceFieldsTransformer,
       pathRegexTransformer,

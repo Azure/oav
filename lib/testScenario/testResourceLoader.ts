@@ -9,7 +9,6 @@ import { FileLoader, FileLoaderOption } from "../swagger/fileLoader";
 import { JsonLoader, JsonLoaderOption } from "../swagger/jsonLoader";
 import { getTransformContext, TransformContext } from "../transform/context";
 import { SchemaValidator } from "../swaggerValidator/schemaValidator";
-import { AjvSchemaValidator } from "../swaggerValidator/ajvSchemaValidator";
 import { xmsPathsTransformer } from "../transform/xmsPathsTransformer";
 import { resolveNestedDefinitionTransformer } from "../transform/resolveNestedDefinitionTransformer";
 import { referenceFieldsTransformer } from "../transform/referenceFieldsTransformer";
@@ -63,7 +62,6 @@ interface TestScenarioContext {
 @injectable()
 export class TestResourceLoader implements Loader<TestDefinitionFile> {
   private transformContext: TransformContext;
-  private schemaValidator: SchemaValidator;
   private validateTestResourceFile: ValidateFunction;
   private exampleToOperation: Map<
     string,
@@ -78,13 +76,12 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
     public jsonLoader: JsonLoader,
     private swaggerLoader: SwaggerLoader,
     private exampleTemplateGenerator: ExampleTemplateGenerator,
-    private bodyTransformer: BodyTransformer
+    private bodyTransformer: BodyTransformer,
+    @inject(TYPES.schemaValidator) private schemaValidator: SchemaValidator,
   ) {
     setDefaultOpts(opts, {
       swaggerFilePaths: [],
     });
-
-    this.schemaValidator = new AjvSchemaValidator(this.jsonLoader);
 
     this.transformContext = getTransformContext(this.jsonLoader, this.schemaValidator, [
       xmsPathsTransformer,
