@@ -31,6 +31,7 @@ import { traverseSwaggerAsync } from "../transform/traverseSwagger";
 import { xmsPathsTransformer } from "../transform/xmsPathsTransformer";
 import { getLazyBuilder } from "../util/lazyBuilder";
 import { waitUntilLowLoad } from "../util/utils";
+import { allErrorConstants } from "../util/validationError";
 
 export interface LiveValidatorLoaderOption extends SwaggerLoaderOption, SchemaValidatorOption {
   transformToNewSchemaFormat?: boolean;
@@ -94,13 +95,14 @@ export class LiveValidatorLoader implements Loader<SwaggerSpec> {
   ) {
     setDefaultOpts(opts, {
       transformToNewSchemaFormat: false,
+      loadSuppression: Object.keys(allErrorConstants),
     });
 
-    const schemaValidationOption: SchemaValidatorOption = { isArmCall: opts.isArmCall };
+    const schemaValidatorOption: SchemaValidatorOption = { isArmCall: opts.isArmCall };
     this.schemaValidator = new AjvSchemaValidator(
       this.jsonLoader,
       undefined,
-      schemaValidationOption
+      schemaValidatorOption
     );
 
     this.transformContext = getTransformContext(this.jsonLoader, this.schemaValidator, [
