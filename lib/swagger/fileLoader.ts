@@ -1,15 +1,18 @@
-import { relative as pathRelative, resolve as pathResolve } from "path";
-import { readFile as vfsReadFile } from "@azure-tools/openapi-tools-common";
-import { getLoaderBuilder, Loader, setDefaultOpts } from "./loader";
+import { dirname, relative as pathRelative, resolve as pathResolve } from "path";
+import mkdirp from "mkdirp";
+import { readFile as vfsReadFile, asyncWriteFile } from "@azure-tools/openapi-tools-common";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../inversifyUtils";
+import { Loader, setDefaultOpts } from "./loader";
 
 export interface FileLoaderOption {
   fileRoot?: string;
   checkUnderFileRoot?: boolean;
 }
 
+@injectable()
 export class FileLoader implements Loader<string> {
-  public static create = getLoaderBuilder((opts: FileLoaderOption) => new FileLoader(opts));
-  private constructor(private opts: FileLoaderOption) {
+  public constructor(@inject(TYPES.opts) private opts: FileLoaderOption) {
     setDefaultOpts(opts, {
       checkUnderFileRoot: true,
     });
@@ -51,5 +54,11 @@ export class FileLoader implements Loader<string> {
     }
     filePath = pathResolve(this.opts.fileRoot, filePath);
     return filePath.startsWith(this.opts.fileRoot);
+  }
+
+  public async writeFile(filePath: string, content: string) {
+    filePath = this.resolvePath(filePath);
+    await mkdirp(dirname(filePath));
+    return asyncWriteFile(filePath, content);
   }
 }

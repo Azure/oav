@@ -5,6 +5,18 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "address": "TCP/IP address of process to be debugged",
+      "localRoot": "${workspaceFolder}",
+      "name": "Attach to Remote",
+      "port": 9229,
+      "remoteRoot": "Absolute path to the remote directory containing the program",
+      "request": "attach",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "type": "pwa-node"
+    },
+    {
       "type": "node",
       "request": "launch",
       "name": "Validate Spec",
@@ -135,7 +147,7 @@
       "type": "node",
       "request": "attach",
       "name": "Attach to Process",
-      "port": 5858
+      "processId": "${command:PickProcess}"
     }
   ]
 }

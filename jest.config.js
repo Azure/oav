@@ -17,6 +17,7 @@ module.exports = {
       tsConfig: "tsconfig.json",
     },
   },
+  setupFilesAfterEnv: ["<rootDir>/jest.setup-file.js"],
   testMatch: ["**/test/**/*.ts", "!**/test/**/*.d.ts", "!**/test/sample.ts"],
   verbose: true,
 };

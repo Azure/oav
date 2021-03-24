@@ -13,13 +13,19 @@ import globby from "globby";
 import * as models from "../models";
 import { requestResponseDefinition } from "../models/requestResponse";
 import { LowerHttpMethods, SwaggerSpec } from "../swagger/swaggerTypes";
-import { SchemaValidateFunction, SchemaValidateIssue } from "../swaggerValidator/schemaValidator";
+import {
+  SchemaValidateFunction,
+  SchemaValidateIssue,
+  SchemaValidator,
+} from "../swaggerValidator/schemaValidator";
 import * as C from "../util/constants";
 import { log } from "../util/logging";
 import { Severity } from "../util/severity";
 import * as utils from "../util/utils";
-import { ExtendedErrorCode, RuntimeException } from "../util/validationError";
-import { LiveValidatorLoader, LiveValidatorLoaderOptions } from "./liveValidatorLoader";
+import { allErrorConstants, ExtendedErrorCode, RuntimeException } from "../util/validationError";
+import { inversifyGetContainer, inversifyGetInstance, TYPES } from "../inversifyUtils";
+import { setDefaultOpts } from "../swagger/loader";
+import { LiveValidatorLoader, LiveValidatorLoaderOption } from "./liveValidatorLoader";
 import { getProviderFromPathTemplate, OperationSearcher } from "./operationSearcher";
 import {
   LiveRequest,
@@ -30,7 +36,7 @@ import {
   ValidationRequest,
 } from "./operationValidator";
 
-export interface LiveValidatorOptions extends LiveValidatorLoaderOptions {
+export interface LiveValidatorOptions extends LiveValidatorLoaderOption {
   swaggerPaths: string[];
   git: {
     shouldClone: boolean;
@@ -44,7 +50,6 @@ export interface LiveValidatorOptions extends LiveValidatorLoaderOptions {
   isPathCaseSensitive: boolean;
   loadValidatorInBackground: boolean;
   loadValidatorInInitialize: boolean;
-  isArmCall: boolean;
 }
 
 export interface RequestResponsePair {
@@ -85,7 +90,6 @@ interface Meta {
 export interface ValidateOptions {
   readonly includeErrors?: ExtendedErrorCode[];
   readonly includeOperationMatch?: boolean;
-  isArmCall?: boolean;
 }
 
 export enum LiveValidatorLoggingLevels {
@@ -129,13 +133,15 @@ export class LiveValidator {
     const ops: Partial<LiveValidatorOptions> = options || {};
     this.logFunction = logCallback;
 
-    if (!ops.swaggerPaths) {
-      ops.swaggerPaths = [];
-    }
-
-    if (!ops.excludedSwaggerPathsPattern) {
-      ops.excludedSwaggerPathsPattern = C.DefaultConfig.ExcludedSwaggerPathsPattern;
-    }
+    setDefaultOpts(ops, {
+      swaggerPaths: [],
+      excludedSwaggerPathsPattern: C.DefaultConfig.ExcludedSwaggerPathsPattern,
+      directory: path.resolve(os.homedir(), "repo"),
+      isPathCaseSensitive: false,
+      loadValidatorInBackground: true,
+      loadValidatorInInitialize: false,
+      isArmCall: false,
+    });
 
     if (!ops.git) {
       ops.git = {
@@ -149,26 +155,6 @@ export class LiveValidator {
     }
     if (!ops.git.shouldClone) {
       ops.git.shouldClone = false;
-    }
-
-    if (!ops.directory) {
-      ops.directory = path.resolve(os.homedir(), "repo");
-    }
-
-    if (!ops.isPathCaseSensitive) {
-      ops.isPathCaseSensitive = false;
-    }
-
-    if (ops.loadValidatorInBackground === undefined) {
-      ops.loadValidatorInBackground = true;
-    }
-
-    if (ops.loadValidatorInInitialize === undefined) {
-      ops.loadValidatorInInitialize = false;
-    }
-
-    if (ops.isArmCall === undefined) {
-      ops.isArmCall = false;
     }
 
     this.options = ops as LiveValidatorOptions;
@@ -189,11 +175,15 @@ export class LiveValidator {
     // Construct array of swagger paths to be used for building a cache
     this.logging("Get swagger path.");
     const swaggerPaths = await this.getSwaggerPaths();
-    this.loader = LiveValidatorLoader.create({
+    const container = inversifyGetContainer();
+    this.loader = inversifyGetInstance(LiveValidatorLoader, {
+      container,
       fileRoot: this.options.directory,
       ...this.options,
+      loadSuppression: this.options.loadSuppression ?? Object.keys(allErrorConstants),
     });
-    this.validateRequestResponsePair = this.loader.schemaValidator.compile(
+    const schemaValidator = container.get(TYPES.schemaValidator) as SchemaValidator;
+    this.validateRequestResponsePair = await schemaValidator.compileAsync(
       requestResponseDefinition
     );
 
@@ -385,7 +375,7 @@ export class LiveValidator {
         info,
         this.loader,
         options.includeErrors,
-        options.isArmCall
+        this.options.isArmCall
       );
     } catch (resValidationError) {
       const msg =
@@ -539,92 +529,12 @@ export class LiveValidator {
     }
   }
 
-  /**
-   * Parse the validation request information.
-   *
-   * @param  requestUrl The url of service api call.
-   *
-   * @param requestMethod The http verb for the method to be used for lookup.
-   *
-   * @param correlationId The id to correlate the api calls.
-   *
-   * @returns parsed ValidationRequest info.
-   */
   public parseValidationRequest(
     requestUrl: string,
     requestMethod: string | undefined | null,
     correlationId: string
   ): ValidationRequest {
-    if (
-      requestUrl === undefined ||
-      requestUrl === null ||
-      typeof requestUrl.valueOf() !== "string" ||
-      !requestUrl.trim().length
-    ) {
-      const msg =
-        "An error occurred while trying to parse validation payload." +
-        'requestUrl is a required parameter of type "string" and it cannot be an empty string.';
-      const e = new models.LiveValidationError(
-        C.ErrorCodes.PotentialOperationSearchError.name,
-        msg
-      );
-      throw e;
-    }
-
-    if (
-      requestMethod === undefined ||
-      requestMethod === null ||
-      typeof requestMethod.valueOf() !== "string" ||
-      !requestMethod.trim().length
-    ) {
-      const msg =
-        "An error occurred while trying to parse validation payload." +
-        'requestMethod is a required parameter of type "string" and it cannot be an empty string.';
-      const e = new models.LiveValidationError(
-        C.ErrorCodes.PotentialOperationSearchError.name,
-        msg
-      );
-      throw e;
-    }
-    let queryStr;
-    let apiVersion = "";
-    let resourceType = "";
-    let providerNamespace = "";
-
-    const parsedUrl = url.parse(requestUrl, true);
-    const pathStr = parsedUrl.pathname || "";
-    if (pathStr !== "") {
-      // Lower all the keys and values of query parameters before searching for `api-version`
-      const queryObject = _.transform(
-        parsedUrl.query,
-        (obj: ParsedUrlQuery, value, key) =>
-          (obj[key.toLowerCase()] = _.isString(value) ? value.toLowerCase() : value)
-      );
-      apiVersion = (queryObject["api-version"] || C.unknownApiVersion) as string;
-      providerNamespace = getProviderFromPathTemplate(pathStr) || C.unknownResourceProvider;
-      resourceType = utils.getResourceType(pathStr, providerNamespace);
-
-      // Provider would be provider found from the path or Microsoft.Unknown
-      providerNamespace = providerNamespace || C.unknownResourceProvider;
-      if (providerNamespace === C.unknownResourceProvider) {
-        apiVersion = C.unknownApiVersion;
-      }
-      providerNamespace = providerNamespace.toLowerCase();
-      apiVersion = apiVersion.toLowerCase();
-      queryStr = queryObject;
-      requestMethod = requestMethod.toLowerCase();
-    }
-    return {
-      providerNamespace,
-      resourceType,
-      apiVersion,
-      requestMethod: requestMethod as LowerHttpMethods,
-      host: parsedUrl.host!,
-      pathStr,
-      query: queryStr,
-      correlationId,
-      requestUrl,
-    };
+    return parseValidationRequest(requestUrl, requestMethod, correlationId);
   }
 
   private async getMatchedPaths(jsonsPattern: string | string[]): Promise<string[]> {
@@ -744,3 +654,85 @@ export class LiveValidator {
 export function formatUrlToExpectedFormat(requestUrl: string): string {
   return requestUrl.substring(requestUrl.search("/?(subscriptions|providers)/i"));
 }
+
+/**
+ * Parse the validation request information.
+ *
+ * @param  requestUrl The url of service api call.
+ *
+ * @param requestMethod The http verb for the method to be used for lookup.
+ *
+ * @param correlationId The id to correlate the api calls.
+ *
+ * @returns parsed ValidationRequest info.
+ */
+export const parseValidationRequest = (
+  requestUrl: string,
+  requestMethod: string | undefined | null,
+  correlationId: string
+): ValidationRequest => {
+  if (
+    requestUrl === undefined ||
+    requestUrl === null ||
+    typeof requestUrl.valueOf() !== "string" ||
+    !requestUrl.trim().length
+  ) {
+    const msg =
+      "An error occurred while trying to parse validation payload." +
+      'requestUrl is a required parameter of type "string" and it cannot be an empty string.';
+    const e = new models.LiveValidationError(C.ErrorCodes.PotentialOperationSearchError.name, msg);
+    throw e;
+  }
+
+  if (
+    requestMethod === undefined ||
+    requestMethod === null ||
+    typeof requestMethod.valueOf() !== "string" ||
+    !requestMethod.trim().length
+  ) {
+    const msg =
+      "An error occurred while trying to parse validation payload." +
+      'requestMethod is a required parameter of type "string" and it cannot be an empty string.';
+    const e = new models.LiveValidationError(C.ErrorCodes.PotentialOperationSearchError.name, msg);
+    throw e;
+  }
+  let queryStr;
+  let apiVersion = "";
+  let resourceType = "";
+  let providerNamespace = "";
+
+  const parsedUrl = url.parse(requestUrl, true);
+  const pathStr = parsedUrl.pathname || "";
+  if (pathStr !== "") {
+    // Lower all the keys and values of query parameters before searching for `api-version`
+    const queryObject = _.transform(
+      parsedUrl.query,
+      (obj: ParsedUrlQuery, value, key) =>
+        (obj[key.toLowerCase()] = _.isString(value) ? value.toLowerCase() : value)
+    );
+    apiVersion = (queryObject["api-version"] || C.unknownApiVersion) as string;
+    providerNamespace = getProviderFromPathTemplate(pathStr) || C.unknownResourceProvider;
+    resourceType = utils.getResourceType(pathStr, providerNamespace);
+
+    // Provider would be provider found from the path or Microsoft.Unknown
+    providerNamespace = providerNamespace || C.unknownResourceProvider;
+    if (providerNamespace === C.unknownResourceProvider) {
+      apiVersion = C.unknownApiVersion;
+    }
+    providerNamespace = providerNamespace.toLowerCase();
+    apiVersion = apiVersion.toLowerCase();
+    queryStr = queryObject;
+    requestMethod = requestMethod.toLowerCase();
+  }
+  return {
+    providerNamespace,
+    resourceType,
+    apiVersion,
+    requestMethod: requestMethod as LowerHttpMethods,
+    host: parsedUrl.host!,
+    pathStr,
+    query: queryStr,
+    correlationId,
+    requestUrl,
+  };
+};

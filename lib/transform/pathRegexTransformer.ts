@@ -2,6 +2,7 @@ import { parse as urlParse } from "url";
 import { Key, pathToRegexp } from "path-to-regexp";
 import { lowerHttpMethods, Parameter, PathParameter, Schema } from "../swagger/swaggerTypes";
 import { xmsParameterizedHost } from "../util/constants";
+import { OperationMatch } from "../liveValidation/operationSearcher";
 import { resolveNestedDefinitionTransformer } from "./resolveNestedDefinitionTransformer";
 import { SpecTransformer, TransformerType } from "./transformer";
 import { traverseSwagger } from "./traverseSwagger";
@@ -157,4 +158,15 @@ export const pathRegexTransformer: SpecTransformer = {
       },
     });
   },
+};
+
+export const extractPathParamValue = ({ pathRegex, pathMatch }: OperationMatch) => {
+  const pathParam: { [key: string]: string } = {};
+  const _keys = pathRegex._keys;
+  for (let idx = 1; idx < pathMatch.length; ++idx) {
+    if (_keys[idx] !== undefined) {
+      pathParam[_keys[idx]] = decodeURIComponent(pathMatch[idx]);
+    }
+  }
+  return pathParam;
 };

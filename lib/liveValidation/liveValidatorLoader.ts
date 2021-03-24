@@ -1,7 +1,9 @@
 import { copyInfo, StringMap } from "@azure-tools/openapi-tools-common";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../inversifyUtils";
 
 import { JsonLoader } from "../swagger/jsonLoader";
-import { getLoaderBuilder, Loader, setDefaultOpts } from "../swagger/loader";
+import { Loader, setDefaultOpts } from "../swagger/loader";
 import { SwaggerLoader, SwaggerLoaderOption } from "../swagger/swaggerLoader";
 import {
   Operation,
@@ -12,8 +14,11 @@ import {
   Schema,
   SwaggerSpec,
 } from "../swagger/swaggerTypes";
-import { AjvSchemaValidator } from "../swaggerValidator/ajvSchemaValidator";
-import { SchemaValidateFunction, SchemaValidatorOption } from "../swaggerValidator/schemaValidator";
+import {
+  SchemaValidateFunction,
+  SchemaValidator,
+  SchemaValidatorOption,
+} from "../swaggerValidator/schemaValidator";
 import { allOfTransformer } from "../transform/allOfTransformer";
 import { getTransformContext, TransformContext } from "../transform/context";
 import { discriminatorTransformer } from "../transform/discriminatorTransformer";
@@ -29,18 +34,14 @@ import { traverseSwaggerAsync } from "../transform/traverseSwagger";
 import { xmsPathsTransformer } from "../transform/xmsPathsTransformer";
 import { getLazyBuilder } from "../util/lazyBuilder";
 import { waitUntilLowLoad } from "../util/utils";
-import { allErrorConstants } from "../util/validationError";
 
-export interface LiveValidatorLoaderOptions extends SwaggerLoaderOption, SchemaValidatorOption {
+export interface LiveValidatorLoaderOption extends SwaggerLoaderOption, SchemaValidatorOption {
   transformToNewSchemaFormat?: boolean;
 }
 
+@injectable()
 export class LiveValidatorLoader implements Loader<SwaggerSpec> {
-  private swaggerLoader: SwaggerLoader;
-  private jsonLoader: JsonLoader;
-
   public readonly transformContext: TransformContext;
-  public readonly schemaValidator: AjvSchemaValidator;
 
   public getResponseValidator = getLazyBuilder(
     "_validate",
@@ -88,24 +89,15 @@ export class LiveValidatorLoader implements Loader<SwaggerSpec> {
     }
   );
 
-  public static create = getLoaderBuilder(
-    (opts: LiveValidatorLoaderOptions) => new LiveValidatorLoader(opts)
-  );
-  private constructor(private opts: LiveValidatorLoaderOptions) {
+  public constructor(
+    @inject(TYPES.opts) private opts: LiveValidatorLoaderOption,
+    private jsonLoader: JsonLoader,
+    private swaggerLoader: SwaggerLoader,
+    @inject(TYPES.schemaValidator) private schemaValidator: SchemaValidator
+  ) {
     setDefaultOpts(opts, {
       transformToNewSchemaFormat: false,
-      loadSuppression: Object.keys(allErrorConstants),
     });
-
-    this.jsonLoader = JsonLoader.create(opts);
-    this.swaggerLoader = SwaggerLoader.create(opts);
-    const schemaValidatorOption: SchemaValidatorOption = { isArmCall: opts.isArmCall };
-
-    this.schemaValidator = new AjvSchemaValidator(
-      this.jsonLoader,
-      undefined,
-      schemaValidatorOption
-    );
 
     this.transformContext = getTransformContext(this.jsonLoader, this.schemaValidator, [
       xmsPathsTransformer,

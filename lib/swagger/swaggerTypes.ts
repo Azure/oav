@@ -82,9 +82,9 @@ export interface QueryParameter extends BaseParameter, BaseSchema {
   nullable?: boolean;
 }
 
-export interface PathParameter extends BaseParameter {
+export interface PathParameter extends BaseParameter, BaseSchema {
   in: "path";
-  type: string;
+  type: "string";
   required: true | undefined;
 
   [xmsSkipUrlEncoding]?: boolean;
@@ -309,7 +309,12 @@ export interface SwaggerExample {
     "api-version": string;
     [parameterName: string]: any;
   };
-  responses: { [responseCode: string]: any };
+  responses: {
+    [responseCode: string]: {
+      body?: any;
+      headers?: { [headerName: string]: string };
+    };
+  };
 
   $ref?: string;
 }

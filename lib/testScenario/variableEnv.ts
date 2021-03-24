@@ -19,6 +19,12 @@ export class VariableEnv {
     this.writeEnv = this.data;
   }
 
+  public clear() {
+    for (const key of Object.keys(this.data)) {
+      delete this.data[key];
+    }
+  }
+
   public get(key: string): string | undefined {
     return this.data[key];
   }
@@ -99,6 +105,9 @@ export class VariableEnv {
       return (this.resolveStringWithRegExp(obj, captureVariable) as unknown) as T;
     }
     if (typeof obj !== "object") {
+      return obj;
+    }
+    if (obj === null || obj === undefined) {
       return obj;
     }
 

@@ -95,7 +95,7 @@ export function createAzureAsyncOperationStrategy<TResult extends BaseResult>(
       const pollingSpec: RequestPrepareOptions = {
         ...restSpec,
         method: "GET",
-        url: lastKnownPollingUrl
+        url: lastKnownPollingUrl,
       };
 
       const result = await sendOperationFn(pollingSpec);

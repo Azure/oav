@@ -4,7 +4,9 @@ import {
   getRootObjectInfo,
   RootObjectInfo,
 } from "@azure-tools/openapi-tools-common";
-import ajv, { Ajv, default as ajvInit, ErrorObject, ValidateFunction } from "ajv";
+import { Ajv, default as ajvInit, ErrorObject, ValidateFunction } from "ajv";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../inversifyUtils";
 import { $id, JsonLoader } from "../swagger/jsonLoader";
 import { isSuppressed } from "../swagger/suppressionLoader";
 import { refSelfSymbol, Schema, SwaggerSpec } from "../swagger/swaggerTypes";
@@ -24,13 +26,13 @@ import {
   validateErrorMessages,
 } from "./schemaValidator";
 
+@injectable()
 export class AjvSchemaValidator implements SchemaValidator {
   private ajv: Ajv;
 
   public constructor(
     loader: JsonLoader,
-    options?: ajv.Options,
-    schemaValidatorOption?: SchemaValidatorOption
+    @inject(TYPES.opts) schemaValidatorOption?: SchemaValidatorOption
   ) {
     this.ajv = ajvInit({
       // tslint:disable-next-line: no-submodule-imports
@@ -52,7 +54,6 @@ export class AjvSchemaValidator implements SchemaValidator {
         const spec: SwaggerSpec = await loader.resolveFile(uri);
         return { [$id]: spec[$id], definitions: spec.definitions, parameters: spec.parameters };
       },
-      ...options,
     });
     ajvEnableAll(this.ajv, loader);
 

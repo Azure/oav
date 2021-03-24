@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
+import "reflect-metadata";
 import * as C from "./lib/util/constants";
 
 // Easy to use methods from validate.ts
@@ -54,7 +55,7 @@ export {
   TestScenario,
   TestStep,
   TestStepArmTemplateDeployment,
-  TestStepExampleFileRestCall,
+  TestStepRestCall,
 } from "./lib/testScenario/testResourceTypes";
 export { VariableEnv } from "./lib/testScenario/variableEnv";
 export {
@@ -62,5 +63,12 @@ export {
   TestScenarioRunnerClient,
 } from "./lib/testScenario/testScenarioRunner";
 
+export { PostmanCollectionRunnerClient } from "./lib/testScenario/postmanCollectionRunnerClient";
+export {
+  PostmanCollectionGenerator,
+  PostmanCollectionGeneratorOption,
+} from "./lib/testScenario/postmanCollectionGenerator";
+
+export { getAutorestConfig } from "./lib/util/getAutorestConfig";
 // Constants
 export const Constants = C;

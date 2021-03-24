@@ -1,48 +1,51 @@
+import "reflect-metadata";
+
+import { dirname } from "path";
 import { getDefaultAzureCredential } from "@azure/identity";
+import { getAutorestConfig } from "../util/getAutorestConfig";
 import { TestResourceLoader } from "./testResourceLoader";
 import { TestScenarioRunner } from "./testScenarioRunner";
 import { VariableEnv } from "./variableEnv";
 import { TestScenarioRestClient } from "./testScenarioRestClient";
 
 const main = async () => {
-  const loader = new TestResourceLoader({
+  const readmeMd: string =
+    "/home/htc/azure-rest-api-specs/specification/containerservice/resource-manager/readme.md";
+  // "/home/htc/azure-rest-api-specs/specification/network/resource-manager/readme.md";
+  // "/home/htc/azure-rest-api-specs/specification/operationalinsights/resource-manager/readme.md";
+  const argv = {
+    ["try-require"]: "readme.test.md",
+    tag: "package-2020-12",
+  };
+
+  const autorestConfig = await getAutorestConfig(argv, readmeMd);
+  const swaggerFilePaths: string[] = autorestConfig["input-file"];
+  const fileRoot = dirname(readmeMd);
+
+  console.log("input-file:");
+  console.log(swaggerFilePaths);
+
+  const loader = TestResourceLoader.create({
     useJsonParser: false,
     checkUnderFileRoot: false,
-    fileRoot: "/home/htc/azure-rest-api-specs/specification/operationalinsights/resource-manager",
-    swaggerFilePaths: [
-      "Microsoft.OperationalInsights/stable/2020-08-01/DataExports.json",
-      "Microsoft.OperationalInsights/stable/2020-08-01/DataSources.json",
-      "Microsoft.OperationalInsights/stable/2020-08-01/IntelligencePacks.json",
-      "Microsoft.OperationalInsights/stable/2020-08-01/LinkedServices.json",
-      "Microsoft.OperationalInsights/stable/2020-08-01/LinkedStorageAccounts.json",
-      "Microsoft.OperationalInsights/stable/2020-08-01/ManagementGroups.json",
-      "Microsoft.OperationalInsights/stable/2020-08-01/Operations.json",
-      "Microsoft.OperationalInsights/stable/2020-08-01/OperationStatuses.json",
-      "Microsoft.OperationalInsights/stable/2020-08-01/SharedKeys.json",
-      "Microsoft.OperationalInsights/stable/2020-08-01/Usages.json",
-      "Microsoft.OperationalInsights/stable/2020-08-01/Workspaces.json",
-      "Microsoft.OperationalInsights/stable/2020-08-01/Clusters.json",
-      "Microsoft.OperationalInsights/stable/2020-08-01/StorageInsightConfigs.json",
-      "Microsoft.OperationalInsights/stable/2020-08-01/SavedSearches.json",
-      "Microsoft.OperationalInsights/stable/2020-08-01/AvailableServiceTiers.json",
-      "Microsoft.OperationalInsights/stable/2020-08-01/Gateways.json",
-      "Microsoft.OperationalInsights/stable/2020-08-01/Schema.json",
-      "Microsoft.OperationalInsights/stable/2020-08-01/SharedKeys.json",
-      "Microsoft.OperationalInsights/stable/2020-08-01/WorkspacePurge.json",
-      "Microsoft.OperationalInsights/stable/2020-08-01/Tables.json",
-    ],
+    fileRoot,
+    swaggerFilePaths,
   });
 
   const testDef = await loader.load(
-    "Microsoft.OperationalInsights/stable/2020-08-01/test-scenarios/testDataExport.yaml"
+    // "Microsoft.ContainerService/stable/2020-07-01/test-scenarios/testAks.yml"
+    // "Microsoft.OperationalInsights/stable/2020-08-01/test-scenarios/testDataExport.yaml"
+    // "Microsoft.Network/stable/2020-08-01/test-scenarios/testNetworkPublicIp.yaml"
+    "Microsoft.ContainerService/stable/2020-12-01/test-scenarios/containerService.yaml"
   );
 
-  console.log(testDef);
+  console.log(testDef.testScenarios[0].steps);
 
   const env = new VariableEnv();
   env.setBatch({
     subscriptionId: "db5eb68e-73e2-4fa8-b18a-46cd1be4cce5",
-    location: "eastasia",
+    location: "westus",
+    SSH_PUBLIC_KEY: "__public_key_ssh__",
   });
 
   const runner = new TestScenarioRunner({
@@ -52,6 +55,9 @@ const main = async () => {
   });
 
   try {
+    // for (const scenario of testDef.testScenarios) {
+    //   await runner.executeScenario(scenario);
+    // }
     await runner.executeScenario(testDef.testScenarios[0]);
   } catch (e) {
     console.log(e.message, e.stack);
@@ -64,6 +70,10 @@ const main = async () => {
 console.time("TestLoad");
 console.log("Start");
 
-main().finally(() => {
-  console.timeEnd("TestLoad");
-});
+main()
+  .catch((e) => {
+    console.error(e);
+  })
+  .finally(() => {
+    console.timeEnd("TestLoad");
+  });

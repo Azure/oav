@@ -8,7 +8,7 @@ import {
   TestScenario,
   TestStep,
   TestStepArmTemplateDeployment,
-  TestStepExampleFileRestCall,
+  TestStepRestCall,
 } from "./testResourceTypes";
 import { VariableEnv } from "./variableEnv";
 
@@ -61,7 +61,7 @@ export interface TestScenarioRunnerClient {
 
   sendExampleRequest(
     request: TestScenarioClientRequest,
-    step: TestStepExampleFileRestCall,
+    step: TestStepRestCall,
     stepEnv: TestStepEnv
   ): Promise<void>;
 
@@ -238,8 +238,8 @@ export class TestScenarioRunner {
     stepEnv.setWriteEnv(env);
 
     switch (step.type) {
-      case "exampleFile":
-        await this.executeExampleFileStep(step, env, testScope);
+      case "restCall":
+        await this.executeRestCallStep(step, env, testScope);
         break;
 
       case "armTemplateDeployment":
@@ -256,8 +256,8 @@ export class TestScenarioRunner {
     }
   }
 
-  private async executeExampleFileStep(
-    step: TestStepExampleFileRestCall,
+  private async executeRestCallStep(
+    step: TestStepRestCall,
     env: VariableEnv,
     testScope: TestScopeTracking
   ) {
@@ -273,7 +273,7 @@ export class TestScenarioRunner {
 
     for (const p of operation.parameters ?? []) {
       const param = this.jsonLoader.resolveRefObj(p);
-      const paramValue = step.exampleTemplate.parameters[param.name];
+      const paramValue = step.requestParameters[param.name];
       if (paramValue === undefined) {
         if (param.required) {
           throw new Error(

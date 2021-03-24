@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 03/24/2021 2.3.0
+
+- Support load test-scenario file
+- Support generate postman collection from test-scenario
 ## 02/08/2021 2.2.7
 
 - Add new rules of 'LRO_RESPONSE_HEADER' and 'LRO_RESPONSE_CODE'.

@@ -1,10 +1,11 @@
 import { escapeRegExp } from "lodash";
+import { injectable } from "inversify";
+import { cloneDeep } from "@azure-tools/openapi-tools-common";
 import { JsonLoader } from "../swagger/jsonLoader";
-import { SwaggerExample } from "../swagger/swaggerTypes";
 import {
   TestScenario,
   ArmTemplate,
-  TestStepExampleFileRestCall,
+  TestStepRestCall,
   TestStepArmTemplateDeployment,
 } from "./testResourceTypes";
 import { VariableEnv } from "./variableEnv";
@@ -15,11 +16,23 @@ import {
   ArmDeploymentTracking,
   TestScenarioRunner,
 } from "./testScenarioRunner";
+import { getBodyParamName } from "./testResourceLoader";
 
 const placeholderToBeDetermined = "__to_be_determined__";
 
+@injectable()
 export class ExampleTemplateGenerator implements TestScenarioRunnerClient {
-  public constructor(private jsonLoader: JsonLoader) {}
+  private baseEnv: VariableEnv;
+  private runner: TestScenarioRunner;
+
+  public constructor(private jsonLoader: JsonLoader) {
+    this.baseEnv = new VariableEnv();
+    this.runner = new TestScenarioRunner({
+      jsonLoader: this.jsonLoader,
+      client: this,
+      env: this.baseEnv,
+    });
+  }
 
   public async createResourceGroup(): Promise<void> {
     // Pass
@@ -31,10 +44,10 @@ export class ExampleTemplateGenerator implements TestScenarioRunnerClient {
 
   public async sendExampleRequest(
     _request: TestScenarioClientRequest,
-    step: TestStepExampleFileRestCall,
+    step: TestStepRestCall,
     stepEnv: TestStepEnv
   ): Promise<void> {
-    this.replaceWithParameterConvention(step.exampleTemplate, stepEnv.env);
+    this.replaceWithParameterConvention(step, stepEnv.env);
   }
 
   public async sendArmTemplateDeployment(
@@ -60,30 +73,28 @@ export class ExampleTemplateGenerator implements TestScenarioRunnerClient {
   }
 
   public async generateExampleTemplateForTestScenario(testScenario: TestScenario) {
-    const env = new VariableEnv();
+    this.baseEnv.clear();
     for (const requiredVar of testScenario.requiredVariables) {
-      env.set(requiredVar, placeholderToBeDetermined);
+      this.baseEnv.set(requiredVar, placeholderToBeDetermined);
     }
 
-    const runner = new TestScenarioRunner({
-      jsonLoader: this.jsonLoader,
-      client: this,
-      env,
-    });
-
-    await runner.executeScenario(testScenario);
+    await this.runner.executeScenario(testScenario);
   }
 
-  private replaceWithParameterConvention(exampleTemplate: SwaggerExample, env: VariableEnv) {
+  public replaceWithParameterConvention(
+    step: Pick<TestStepRestCall, "requestParameters" | "responseExpected" | "operation">,
+    env: VariableEnv
+  ) {
     const toMatch: string[] = [];
     const matchReplace: { [toMatch: string]: string } = {};
 
-    for (const paramName of Object.keys(exampleTemplate.parameters)) {
+    const requestParameters = cloneDeep(step.requestParameters);
+    for (const paramName of Object.keys(requestParameters)) {
       if (env.get(paramName) === undefined) {
         continue;
       }
 
-      const paramValue = exampleTemplate.parameters[paramName];
+      const paramValue = requestParameters[paramName];
       if (typeof paramValue !== "string") {
         continue;
       }
@@ -92,43 +103,25 @@ export class ExampleTemplateGenerator implements TestScenarioRunnerClient {
       toMatch.push(valueLower);
       const toReplace = `$(${paramName})`;
       matchReplace[valueLower] = toReplace;
-      exampleTemplate.parameters[paramName] = toReplace;
+      requestParameters[paramName] = toReplace;
     }
-    replaceAllInObject(exampleTemplate.responses, toMatch, matchReplace);
+    step.requestParameters = requestParameters;
+    const bodyParamName = getBodyParamName(step.operation, this.jsonLoader);
+    if (bodyParamName !== undefined) {
+      const requestBody = step.requestParameters[bodyParamName];
+      replaceAllInObject(requestBody, toMatch, matchReplace);
+      if (requestBody.location !== undefined && env.get("location") !== undefined) {
+        requestBody.location = "$(location)";
+      }
+    }
+
+    const responseExpected = cloneDeep(step.responseExpected);
+    replaceAllInObject(responseExpected, toMatch, matchReplace);
+    step.responseExpected = responseExpected;
+    if (responseExpected.body?.location !== undefined && env.get("location") !== undefined) {
+      responseExpected.body.location = "$(location)";
+    }
   }
-
-  // private analysePathTemplate(pathTemplate: string, operation: Operation) {
-  //   const sp = pathTemplate.split("/");
-  //   if (sp[0] !== "") {
-  //     throw new Error(`pathTemplate must starts with "/": ${pathTemplate}`);
-  //   }
-  //   sp.shift();
-
-  //   const providerIdx = sp.lastIndexOf("providers");
-  //   if (providerIdx === -1) {
-  //     throw new Error(`pathTemplate without providers is not supported: ${pathTemplate}`);
-  //   }
-
-  //   const provider = sp[providerIdx + 1];
-  //   if (provider === undefined || this.paramName(provider) !== undefined || provider.length === 0) {
-  //     throw new Error(`provider name cannot be detected in path: ${pathTemplate}`);
-  //   }
-
-  //   const scopeSlice = sp.slice(0, providerIdx);
-  //   const resourceSlice = sp.slice(providerIdx + 2)
-
-  //   const resourceType = resourceSlice.filter((_, idx) => idx === 1 || idx % 2 === 0);
-  //   if (resourceSlice.length % 2 === 0) {
-  //   }
-  // }
-
-  // private paramName(pathSeg: string) {
-  //   if (pathSeg.startsWith("{") && pathSeg.endsWith("}")) {
-  //     return pathSeg.substr(0, pathSeg.length - 2);
-  //   }
-
-  //   return undefined;
-  // }
 }
 
 const replaceAllInObject = (
@@ -162,6 +155,9 @@ const replaceAllInObject = (
   };
 
   const traverseObject = (obj: any) => {
+    if (obj === null || obj === undefined) {
+      return;
+    }
     if (Array.isArray(obj)) {
       for (let idx = 0; idx < obj.length; ++idx) {
         if (typeof obj[idx] === "string") {
