@@ -18,7 +18,7 @@ import * as C from "../util/constants";
 import { log } from "../util/logging";
 import { Severity } from "../util/severity";
 import * as utils from "../util/utils";
-import { ExtendedErrorCode, RuntimeException } from "../util/validationError";
+import { allErrorConstants, ExtendedErrorCode, RuntimeException } from "../util/validationError";
 import { inversifyGetInstance } from "../inversifyUtils";
 import { LiveValidatorLoader, LiveValidatorLoaderOption } from "./liveValidatorLoader";
 import { getProviderFromPathTemplate, OperationSearcher } from "./operationSearcher";
@@ -30,6 +30,7 @@ import {
   validateSwaggerLiveResponse,
   ValidationRequest,
 } from "./operationValidator";
+import { setDefaultOpts } from "../swagger/loader";
 
 export interface LiveValidatorOptions extends LiveValidatorLoaderOption {
   swaggerPaths: string[];
@@ -130,13 +131,17 @@ export class LiveValidator {
     const ops: Partial<LiveValidatorOptions> = options || {};
     this.logFunction = logCallback;
 
-    if (!ops.swaggerPaths) {
-      ops.swaggerPaths = [];
-    }
+    setDefaultOpts(ops, {
+      swaggerPaths: [],
+      excludedSwaggerPathsPattern: C.DefaultConfig.ExcludedSwaggerPathsPattern,
+      loadSuppression: Object.keys(allErrorConstants),
+      directory: path.resolve(os.homedir(), "repo"),
+      isPathCaseSensitive: false,
+      loadValidatorInBackground: true,
+      loadValidatorInInitialize: false,
+      isArmCall: false,
+    });
 
-    if (!ops.excludedSwaggerPathsPattern) {
-      ops.excludedSwaggerPathsPattern = C.DefaultConfig.ExcludedSwaggerPathsPattern;
-    }
 
     if (!ops.git) {
       ops.git = {
@@ -150,26 +155,6 @@ export class LiveValidator {
     }
     if (!ops.git.shouldClone) {
       ops.git.shouldClone = false;
-    }
-
-    if (!ops.directory) {
-      ops.directory = path.resolve(os.homedir(), "repo");
-    }
-
-    if (!ops.isPathCaseSensitive) {
-      ops.isPathCaseSensitive = false;
-    }
-
-    if (ops.loadValidatorInBackground === undefined) {
-      ops.loadValidatorInBackground = true;
-    }
-
-    if (ops.loadValidatorInInitialize === undefined) {
-      ops.loadValidatorInInitialize = false;
-    }
-
-    if (ops.isArmCall === undefined) {
-      ops.isArmCall = false;
     }
 
     this.options = ops as LiveValidatorOptions;
