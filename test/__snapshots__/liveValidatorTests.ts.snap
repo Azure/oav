@@ -12,8 +12,31 @@ Object {
     "runtimeException": undefined,
   },
   "responseValidationResult": Object {
-    "errors": Array [],
-    "isSuccessful": true,
+    "errors": Array [
+      Object {
+        "code": "MISSING_RESOURCE_ID",
+        "documentationUrl": "",
+        "jsonPathsInPayload": Array [
+          "$",
+        ],
+        "message": "id is required to return in response of GET/PUT resource calls but not provided",
+        "params": Array [],
+        "pathsInPayload": Array [
+          "",
+        ],
+        "schemaPath": "",
+        "severity": 0,
+        "source": Object {
+          "jsonRef": "#/definitions/LinkerResource",
+          "position": Object {
+            "column": 23,
+            "line": 572,
+          },
+          "url": "specification/servicelinker/resource-manager/Microsoft.ServiceLinker/preview/2021-01-01-privatepreview/servicelinker.json",
+        },
+      },
+    ],
+    "isSuccessful": false,
     "operationInfo": Object {
       "apiVersion": "2021-01-01-privatepreview",
       "operationId": "Linker_CreateOrUpdate",

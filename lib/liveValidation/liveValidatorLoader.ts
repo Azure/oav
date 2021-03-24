@@ -15,7 +15,7 @@ import {
   SwaggerSpec,
 } from "../swagger/swaggerTypes";
 import { AjvSchemaValidator } from "../swaggerValidator/ajvSchemaValidator";
-import { SchemaValidateFunction } from "../swaggerValidator/schemaValidator";
+import { SchemaValidateFunction, SchemaValidatorOption } from "../swaggerValidator/schemaValidator";
 import { allOfTransformer } from "../transform/allOfTransformer";
 import { getTransformContext, TransformContext } from "../transform/context";
 import { discriminatorTransformer } from "../transform/discriminatorTransformer";
@@ -32,7 +32,7 @@ import { xmsPathsTransformer } from "../transform/xmsPathsTransformer";
 import { getLazyBuilder } from "../util/lazyBuilder";
 import { waitUntilLowLoad } from "../util/utils";
 
-export interface LiveValidatorLoaderOption extends SwaggerLoaderOption {
+export interface LiveValidatorLoaderOption extends SwaggerLoaderOption, SchemaValidatorOption {
   transformToNewSchemaFormat?: boolean;
 }
 
@@ -96,7 +96,12 @@ export class LiveValidatorLoader implements Loader<SwaggerSpec> {
       transformToNewSchemaFormat: false,
     });
 
-    this.schemaValidator = new AjvSchemaValidator(this.jsonLoader);
+    const schemaValidationOption: SchemaValidatorOption = { isArmCall: opts.isArmCall };
+    this.schemaValidator = new AjvSchemaValidator(
+      this.jsonLoader,
+      undefined,
+      schemaValidationOption
+    );
 
     this.transformContext = getTransformContext(this.jsonLoader, this.schemaValidator, [
       xmsPathsTransformer,
