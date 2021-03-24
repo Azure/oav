@@ -14,7 +14,11 @@ import {
   Schema,
   SwaggerSpec,
 } from "../swagger/swaggerTypes";
-import { SchemaValidateFunction, SchemaValidator, SchemaValidatorOption } from "../swaggerValidator/schemaValidator";
+import {
+  SchemaValidateFunction,
+  SchemaValidator,
+  SchemaValidatorOption,
+} from "../swaggerValidator/schemaValidator";
 import { allOfTransformer } from "../transform/allOfTransformer";
 import { getTransformContext, TransformContext } from "../transform/context";
 import { discriminatorTransformer } from "../transform/discriminatorTransformer";

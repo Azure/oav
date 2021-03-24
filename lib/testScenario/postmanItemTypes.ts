@@ -22,11 +22,11 @@ interface Prepare {
   type: "prepare";
 }
 
-type GeneratedGet = {
+interface GeneratedGet {
   type: "generated-get";
   lro_item_name: string;
   step?: string;
-};
+}
 
 interface Mock {
   type: "mock";

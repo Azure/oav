@@ -44,7 +44,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     const autorestConfig = await getAutorestConfig(argv, readmeMd);
     const fileRoot: string = path.dirname(readmeMd);
     const swaggerFilePaths: string[] = autorestConfig["input-file"];
-    const testScenarioFile = autorestConfig["test-resources"][0]["test"];
+    const testScenarioFile = autorestConfig["test-resources"][0].test;
     console.log(
       `generating report from ${newmanReport}. test-scenario: ${testScenarioFile} outputDir: ${argv.output}`
     );

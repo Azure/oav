@@ -13,13 +13,18 @@ import globby from "globby";
 import * as models from "../models";
 import { requestResponseDefinition } from "../models/requestResponse";
 import { LowerHttpMethods, SwaggerSpec } from "../swagger/swaggerTypes";
-import { SchemaValidateFunction, SchemaValidateIssue, SchemaValidator } from "../swaggerValidator/schemaValidator";
+import {
+  SchemaValidateFunction,
+  SchemaValidateIssue,
+  SchemaValidator,
+} from "../swaggerValidator/schemaValidator";
 import * as C from "../util/constants";
 import { log } from "../util/logging";
 import { Severity } from "../util/severity";
 import * as utils from "../util/utils";
 import { allErrorConstants, ExtendedErrorCode, RuntimeException } from "../util/validationError";
 import { inversifyGetContainer, inversifyGetInstance, TYPES } from "../inversifyUtils";
+import { setDefaultOpts } from "../swagger/loader";
 import { LiveValidatorLoader, LiveValidatorLoaderOption } from "./liveValidatorLoader";
 import { getProviderFromPathTemplate, OperationSearcher } from "./operationSearcher";
 import {
@@ -30,7 +35,6 @@ import {
   validateSwaggerLiveResponse,
   ValidationRequest,
 } from "./operationValidator";
-import { setDefaultOpts } from "../swagger/loader";
 
 export interface LiveValidatorOptions extends LiveValidatorLoaderOption {
   swaggerPaths: string[];
@@ -46,7 +50,6 @@ export interface LiveValidatorOptions extends LiveValidatorLoaderOption {
   isPathCaseSensitive: boolean;
   loadValidatorInBackground: boolean;
   loadValidatorInInitialize: boolean;
-  isArmCall: boolean;
 }
 
 export interface RequestResponsePair {
@@ -87,7 +90,6 @@ interface Meta {
 export interface ValidateOptions {
   readonly includeErrors?: ExtendedErrorCode[];
   readonly includeOperationMatch?: boolean;
-  isArmCall?: boolean;
 }
 
 export enum LiveValidatorLoggingLevels {
@@ -134,14 +136,12 @@ export class LiveValidator {
     setDefaultOpts(ops, {
       swaggerPaths: [],
       excludedSwaggerPathsPattern: C.DefaultConfig.ExcludedSwaggerPathsPattern,
-      loadSuppression: Object.keys(allErrorConstants),
       directory: path.resolve(os.homedir(), "repo"),
       isPathCaseSensitive: false,
       loadValidatorInBackground: true,
       loadValidatorInInitialize: false,
       isArmCall: false,
     });
-
 
     if (!ops.git) {
       ops.git = {
@@ -180,6 +180,7 @@ export class LiveValidator {
       container,
       fileRoot: this.options.directory,
       ...this.options,
+      loadSuppression: this.options.loadSuppression ?? Object.keys(allErrorConstants),
     });
     const schemaValidator = container.get(TYPES.schemaValidator) as SchemaValidator;
     this.validateRequestResponsePair = await schemaValidator.compileAsync(
@@ -374,7 +375,7 @@ export class LiveValidator {
         info,
         this.loader,
         options.includeErrors,
-        options.isArmCall
+        this.options.isArmCall
       );
     } catch (resValidationError) {
       const msg =

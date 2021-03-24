@@ -754,9 +754,7 @@ describe("Live Validator", () => {
       const liveValidator = new LiveValidator(options);
       await liveValidator.initialize();
       const payload = require(`${__dirname}/liveValidation/payloads/lro_responsecode_error_input.json`);
-      const validationResult = await liveValidator.validateLiveRequestResponse(payload, {
-        isArmCall: true,
-      });
+      const validationResult = await liveValidator.validateLiveRequestResponse(payload);
       expect(validationResult).toMatchSnapshot();
     });
 
@@ -771,13 +769,12 @@ describe("Live Validator", () => {
         git: {
           shouldClone: false,
         },
+        isArmCall: true,
       };
       const liveValidator = new LiveValidator(options);
       await liveValidator.initialize();
       const payload = require(`${__dirname}/liveValidation/payloads/lro_responseheader_error_input.json`);
-      const validationResult = await liveValidator.validateLiveRequestResponse(payload, {
-        isArmCall: true,
-      });
+      const validationResult = await liveValidator.validateLiveRequestResponse(payload);
       expect(validationResult).toMatchSnapshot();
     });
 
