@@ -30,14 +30,14 @@ const getSwaggerRootPath = (swaggerRootPath: string) => {
   return swaggerRootPath.substring(0, idx);
 };
 
-type GeneratedExample = {
+interface GeneratedExample {
   exampleName: string;
   step: string;
   operationId: string;
   example: SwaggerExample;
-};
+}
 
-type TestScenarioResult = {
+interface TestScenarioResult {
   testScenario: {
     testScenarioFilePath: string;
     readmeFilePath: string;
@@ -45,9 +45,9 @@ type TestScenarioResult = {
     tag: string;
   };
   stepResult: { [step: string]: StepResult };
-};
+}
 
-type StepResult = {
+interface StepResult {
   exampleName?: string;
   example?: SwaggerExample;
   operationId: string;
@@ -55,12 +55,12 @@ type StepResult = {
   responseDiffResult?: { [statusCode: number]: JsonPatchOp[] };
   liveValidationResult?: any;
   stepValidationResult?: any;
-};
+}
 
-type HttpError = {
+interface HttpError {
   statusCode: number;
   rawExecution: RawExecution;
-};
+}
 
 export class ReportGenerator {
   private liveValidator: LiveValidator;

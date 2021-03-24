@@ -116,24 +116,23 @@ Object {
         },
       },
       Object {
-        "code": "INVALID_RESPONSE_HEADER",
+        "code": "MISSING_RESOURCE_ID",
         "documentationUrl": "",
         "jsonPathsInPayload": Array [
-          ".headers.azure-asyncoperation",
+          "$",
         ],
-        "message": "Header azure-asyncoperation is required in response but not provided",
-        "params": Array [
-          "azure-asyncoperation",
-        ],
+        "message": "id is required to return in response of GET/PUT resource calls but not provided",
+        "params": Array [],
         "pathsInPayload": Array [
-          "/headers/azure-asyncoperation",
+          "",
         ],
-        "schemaPath": "#/properties/headers/required",
+        "schemaPath": "",
         "severity": 0,
         "source": Object {
+          "jsonRef": "#/definitions/LinkerResource",
           "position": Object {
-            "column": 24,
-            "line": 189,
+            "column": 23,
+            "line": 572,
           },
           "url": "specification/servicelinker/resource-manager/Microsoft.ServiceLinker/preview/2021-01-01-privatepreview/servicelinker.json",
         },

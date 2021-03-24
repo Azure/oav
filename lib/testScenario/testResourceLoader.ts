@@ -77,7 +77,7 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
     private swaggerLoader: SwaggerLoader,
     private exampleTemplateGenerator: ExampleTemplateGenerator,
     private bodyTransformer: BodyTransformer,
-    @inject(TYPES.schemaValidator) private schemaValidator: SchemaValidator,
+    @inject(TYPES.schemaValidator) private schemaValidator: SchemaValidator
   ) {
     setDefaultOpts(opts, {
       swaggerFilePaths: [],
