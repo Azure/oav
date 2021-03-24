@@ -12,31 +12,8 @@ Object {
     "runtimeException": undefined,
   },
   "responseValidationResult": Object {
-    "errors": Array [
-      Object {
-        "code": "MISSING_RESOURCE_ID",
-        "documentationUrl": "",
-        "jsonPathsInPayload": Array [
-          "$",
-        ],
-        "message": "id is required to return in response of GET/PUT resource calls but not provided",
-        "params": Array [],
-        "pathsInPayload": Array [
-          "",
-        ],
-        "schemaPath": "",
-        "severity": 0,
-        "source": Object {
-          "jsonRef": "#/definitions/LinkerResource",
-          "position": Object {
-            "column": 23,
-            "line": 572,
-          },
-          "url": "specification/servicelinker/resource-manager/Microsoft.ServiceLinker/preview/2021-01-01-privatepreview/servicelinker.json",
-        },
-      },
-    ],
-    "isSuccessful": false,
+    "errors": Array [],
+    "isSuccessful": true,
     "operationInfo": Object {
       "apiVersion": "2021-01-01-privatepreview",
       "operationId": "Linker_CreateOrUpdate",
@@ -111,6 +88,29 @@ Object {
           "position": Object {
             "column": 22,
             "line": 177,
+          },
+          "url": "specification/servicelinker/resource-manager/Microsoft.ServiceLinker/preview/2021-01-01-privatepreview/servicelinker.json",
+        },
+      },
+      Object {
+        "code": "INVALID_RESPONSE_HEADER",
+        "documentationUrl": "",
+        "jsonPathsInPayload": Array [
+          ".headers.azure-asyncoperation",
+        ],
+        "message": "Header azure-asyncoperation is required in response but not provided",
+        "params": Array [
+          "azure-asyncoperation",
+        ],
+        "pathsInPayload": Array [
+          "/headers/azure-asyncoperation",
+        ],
+        "schemaPath": "#/properties/headers/required",
+        "severity": 0,
+        "source": Object {
+          "position": Object {
+            "column": 24,
+            "line": 189,
           },
           "url": "specification/servicelinker/resource-manager/Microsoft.ServiceLinker/preview/2021-01-01-privatepreview/servicelinker.json",
         },
