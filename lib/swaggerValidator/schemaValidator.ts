@@ -51,8 +51,8 @@ export const validateErrorMessages: { [key in ExtendedErrorCode]?: (params: any)
   MISSING_REQUIRED_PARAMETER: strTemplate`Value is required but was not provided`,
   INVALID_RESPONSE_BODY: strTemplate`Body is required in response but not provided`,
   INVALID_RESPONSE_HEADER: strTemplate`Header ${"missingProperty"} is required in response but not provided`,
-  MISSING_RESOURCE_ID: strTemplate`id is required to return in response of GET/PUT resource calls but not provided`,
-  LRO_RESPONSE_CODE: strTemplate`For initial request, Patch/Post long running operation must return 201 or 202, Delete long running operation must return 202 or 204, Put long running operation must return 202 or 201 or 200, but ${"statusCode"} returned`,
+  MISSING_RESOURCE_ID: strTemplate`id is required to return in response of GET/PUT resource calls but not being provided`,
+  LRO_RESPONSE_CODE: strTemplate`Respond to the initial request of a long running operation, Patch/Post call must return 201 or 202, Delete call must return 202 or 204, Put call must return 202 or 201 or 200, but ${"statusCode"} being returned`,
   LRO_RESPONSE_HEADER: strTemplate`Long running operation should return ${"header"} in header but not provided`,
 
   DISCRIMINATOR_VALUE_NOT_FOUND: strTemplate`Discriminator value "${"data"}" not found`,
