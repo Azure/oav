@@ -19,7 +19,7 @@ Object {
         "jsonPathsInPayload": Array [
           "$",
         ],
-        "message": "id is required to return in response of GET/PUT resource calls but not provided",
+        "message": "id is required to return in response of GET/PUT resource calls but not being provided",
         "params": Array [],
         "pathsInPayload": Array [
           "",
@@ -63,7 +63,7 @@ Object {
         "code": "LRO_RESPONSE_CODE",
         "documentationUrl": "",
         "jsonPathsInPayload": Array [],
-        "message": "For initial request, Patch/Post long running operation must return 201 or 202, Delete long running operation must return 202 or 204, Put long running operation must return 202 or 201 or 200, but 204 returned",
+        "message": "Respond to the initial request of a long running operation, Patch/Post call must return 201 or 202, Delete call must return 202 or 204, Put call must return 202 or 201 or 200, but 204 being returned",
         "pathsInPayload": Array [],
         "schemaPath": "",
         "severity": 0,
@@ -121,7 +121,7 @@ Object {
         "jsonPathsInPayload": Array [
           "$",
         ],
-        "message": "id is required to return in response of GET/PUT resource calls but not provided",
+        "message": "id is required to return in response of GET/PUT resource calls but not being provided",
         "params": Array [],
         "pathsInPayload": Array [
           "",
