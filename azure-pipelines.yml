@@ -4,6 +4,7 @@ pool:
 trigger:
   - master
   - release
+  - develop
 
 steps:
   - task: Npm@1
