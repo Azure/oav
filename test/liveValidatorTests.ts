@@ -558,7 +558,7 @@ describe("Live Validator", () => {
         // console.dir(validationResult, { depth: null, colors: true })
       })
     })
-    it(`should match operation in case of extension resource`, async () => {
+    it(`should match operation in case of extension resource in arm scenario`, async () => {
       const options = {
         directory: `${__dirname}/liveValidation/swaggers/`,
         isPathCaseSensitive: false,
@@ -572,7 +572,25 @@ describe("Live Validator", () => {
       }
       const liveValidator = new LiveValidator(options)
       await liveValidator.initialize()
-      const payload = require(`${__dirname}/liveValidation/payloads/extensionResource_input.json`)
+      const payload = require(`${__dirname}/liveValidation/payloads/extensionResourceArm_input.json`)
+      const validationResult = liveValidator.validateLiveRequestResponse(payload)
+      assert.equal(validationResult.responseValidationResult.isSuccessful, true)
+    })
+    it(`should match operation in case of extension resource in rpaas scenario`, async () => {
+      const options = {
+        directory: `${__dirname}/liveValidation/swaggers/`,
+        isPathCaseSensitive: false,
+        useRelativeSourceLocationUrl: true,
+        swaggerPathsPattern: [
+          "specification\\servicelinker\\resource-manager\\Microsoft.ServiceLinker\\**\\*.json"
+        ],
+        git: {
+          shouldClone: false
+        }
+      }
+      const liveValidator = new LiveValidator(options)
+      await liveValidator.initialize()
+      const payload = require(`${__dirname}/liveValidation/payloads/extensionResourceRpaas_input.json`)
       const validationResult = liveValidator.validateLiveRequestResponse(payload)
       assert.equal(validationResult.responseValidationResult.isSuccessful, true)
     })
