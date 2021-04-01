@@ -1,5 +1,9 @@
 # Changelog
 
+## 04/01/2021 0.23.1
+
+- Upgrade yasway to support extension resource operation match in live validator.
+
 ## 10/16/2020 0.22.9
 
 - Output model detail in log when resolve it with failure.

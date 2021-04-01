@@ -10,7 +10,7 @@ import { ResponsesObject } from "yasway"
 import * as Constants from "../lib/util/constants"
 import { LiveValidator } from "../lib/validators/liveValidator"
 
-const numberOfSpecs = 12
+const numberOfSpecs = 13
 jest.setTimeout(150000)
 
 describe("Live Validator", () => {
@@ -557,6 +557,24 @@ describe("Live Validator", () => {
         /* tslint:disable-next-line */
         // console.dir(validationResult, { depth: null, colors: true })
       })
+    })
+    it(`should match operation in case of extension resource`, async () => {
+      const options = {
+        directory: `${__dirname}/liveValidation/swaggers/`,
+        isPathCaseSensitive: false,
+        useRelativeSourceLocationUrl: true,
+        swaggerPathsPattern: [
+          "specification\\servicelinker\\resource-manager\\Microsoft.ServiceLinker\\**\\*.json"
+        ],
+        git: {
+          shouldClone: false
+        }
+      }
+      const liveValidator = new LiveValidator(options)
+      await liveValidator.initialize()
+      const payload = require(`${__dirname}/liveValidation/payloads/extensionResource_input.json`)
+      const validationResult = liveValidator.validateLiveRequestResponse(payload)
+      assert.equal(validationResult.responseValidationResult.isSuccessful, true)
     })
     it("should initialize for defaultErrorOnly and fail on unknown status code", async () => {
       const options = {
