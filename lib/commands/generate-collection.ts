@@ -13,7 +13,8 @@ import {
 
 import { cliSuppressExceptions } from "../cliSuppressExceptions";
 import { getAutorestConfig } from "../util/getAutorestConfig";
-export const command = "generate-collection [testScenario-path]";
+import { inversifyGetInstance } from "./../inversifyUtils";
+export const command = "generate-collection";
 
 export const describe = "Generate postman collection file from test scenario.";
 
@@ -50,10 +51,12 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     if (autorestConfig["test-resources"] === undefined) {
       throw new Error(`No test-scenario file found in '${argv.tag || "default"}'`);
     }
-    const swaggerFilePaths: string[] = autorestConfig["input-file"];
+    const fileRoot: string = path.dirname(readmeMd);
+    const swaggerFilePaths: string[] = autorestConfig["input-file"].map((it: string) =>
+      path.resolve(fileRoot, it)
+    );
     for (const testResources of autorestConfig["test-resources"]) {
-      const testScenarioFile = testResources.test;
-      const fileRoot: string = path.dirname(readmeMd);
+      const testScenarioFilePath = testResources.test;
       let env = {
         subscriptionId: "<mySubcriptionId>",
         location: "westus",
@@ -62,20 +65,26 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
         env = JSON.parse(fs.readFileSync(argv.e).toString());
       }
       console.log(
-        `generating postman collection from ${testScenarioFile}. outputDir: ${argv.output}`
+        `generating postman collection from ${testScenarioFilePath}. outputDir: ${argv.output}`
       );
       const opt: PostmanCollectionGeneratorOption = {
-        name: testScenarioFile.replace(/^.*[\\\/]/, "").replace(".yaml", ""),
-        testDef: testScenarioFile,
+        name: testScenarioFilePath.replace(/^.*[\\\/]/, "").replace(".yaml", ""),
+        testDef: testScenarioFilePath,
         swaggerFilePaths: swaggerFilePaths,
         fileRoot: fileRoot,
+        checkUnderFileRoot: true,
+        useJsonParser: false,
+        runCollection: false,
+        generateCollection: true,
         env: env,
         outputFolder: argv.output,
+        eraseXmsExamples: false,
+        eraseDescription: false,
       };
       if (!fs.existsSync(argv.output)) {
         fs.mkdirSync(argv.output);
       }
-      const generator = new PostmanCollectionGenerator(opt);
+      const generator = inversifyGetInstance(PostmanCollectionGenerator, opt);
       await generator.GenerateCollection();
     }
     return 0;

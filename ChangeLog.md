@@ -1,5 +1,11 @@
 # Change Log - oav
 
+## 04/06/2021 2.3.2
+
+- Support auto generate test scenario based on resource type.
+- Support directly run test scenario file with embedded internal newman runner
+- SUpport analyze dependency from readme tag.
+
 ## 03/30/2021 2.3.1
 
 - Update error message of some rules to align to the document

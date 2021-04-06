@@ -1,3 +1,4 @@
+import { inversifyGetInstance } from "./../inversifyUtils";
 import "reflect-metadata";
 import { PostmanCollectionGenerator } from "./postmanCollectionGenerator";
 
@@ -15,7 +16,7 @@ const main = async () => {
     deploymentName: "createVMSS",
   };
 
-  const postmanCollectionGenerator = new PostmanCollectionGenerator({
+  const postmanCollectionGenerator = inversifyGetInstance(PostmanCollectionGenerator, {
     name: "storage",
     fileRoot: "/home/ruowan/work/azure-rest-api-specs/specification/storage/resource-manager",
     swaggerFilePaths: [
@@ -25,6 +26,8 @@ const main = async () => {
     testDef: "Microsoft.Storage/stable/2019-06-01/test-scenairos/createStorageAccount.yaml",
     env: env,
     outputFolder: "./fixtures",
+    generateCollection: true,
+    runCollection: false,
   });
 
   try {

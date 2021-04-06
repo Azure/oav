@@ -35,9 +35,15 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
   public collectionEnv: VariableScope;
   private postmanTestScript: PostmanTestScript;
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
-  constructor(private name: string, private jsonLoader: JsonLoader, private env: VariableEnv) {
+  constructor(
+    private name: string,
+    private jsonLoader: JsonLoader,
+    private env: VariableEnv,
+    private testScenarioFilePath?: string
+  ) {
     this.collection = new Collection();
-    this.collection.name = name;
+    //TODO: Add testScenarioFilePath as metadata
+    this.collection.name = this.testScenarioFilePath || name;
     this.collectionEnv = new VariableScope({});
     this.collectionEnv.set("bearerToken", "<bearerToken>", "string");
     this.postmanTestScript = new PostmanTestScript();
@@ -330,7 +336,19 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
   }
 
   public async runCollection() {
-    newman.run({ collection: this.collection, environment: this.collectionEnv });
+    newman.run(
+      { collection: this.collection, environment: this.collectionEnv, reporters: "cli" },
+      function (_err, summary: newman.NewmanRunSummary) {
+        if (summary.run.failures.length === 0) {
+          fs.appendFileSync("/home/ruowan/work/oav/res.txt", summary.collection.name);
+        }
+        if (summary.run.failures) {
+          console.log("failed");
+        }
+        console.log(summary);
+        console.log("collection run complete!");
+      }
+    );
   }
 
   private generatedGetOperationItem(
