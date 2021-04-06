@@ -1,13 +1,13 @@
 import * as path from "path";
 import { inject, injectable } from "inversify";
 import { dump as yamlDump } from "js-yaml";
+import { ExampleDependency, SwaggerAnalyzer, SwaggerAnalyzerOption } from "../swaggerAnalyzer";
 import { JsonLoader } from "./../../swagger/jsonLoader";
 import { setDefaultOpts } from "./../../swagger/loader";
 
 import { FileLoader } from "./../../swagger/fileLoader";
 import { RawTestDefinitionFile, TestDefinitionFile } from "./../testResourceTypes";
 import { TestResourceLoaderOption } from "./../testResourceLoader";
-import { ExampleDependency, SwaggerAnalyzer, SwaggerAnalyzerOption } from "./../dependencyAnalyzer";
 import { inversifyGetInstance, TYPES } from "./../../inversifyUtils";
 
 export interface StaticTestScenarioGeneratorOption
@@ -18,7 +18,7 @@ export interface StaticTestScenarioGeneratorOption
 }
 
 /**
- *
+ * Generate test scenario file by analyzing swagger resource type dependencies.
  */
 @injectable()
 export class StaticTestScenarioGenerator {

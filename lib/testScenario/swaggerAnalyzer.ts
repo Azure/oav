@@ -20,7 +20,7 @@ import { xmsPathsTransformer } from "../transform/xmsPathsTransformer";
 import { applyGlobalTransformers, applySpecTransformers } from "../transform/transformer";
 import { traverseSwaggerAsync } from "../transform/traverseSwagger";
 import { getProvider } from "../util/utils";
-import { setDefaultOpts } from "./../swagger/loader";
+import { setDefaultOpts } from "../swagger/loader";
 
 export interface SwaggerAnalyzerOption
   extends FileLoaderOption,

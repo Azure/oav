@@ -15,7 +15,7 @@ import { getSwaggerFilePathsFromTestScenarioFilePath } from "./../testScenario/t
 
 export const command = "run-test-scenario <test-scenario>";
 
-export const describe = "analyze swagger resource type dependency.";
+export const describe = "newman runner run test scenario file.";
 
 export const builder: yargs.CommandBuilder = {
   e: {

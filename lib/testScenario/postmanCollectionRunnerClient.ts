@@ -338,14 +338,10 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
   public async runCollection() {
     newman.run(
       { collection: this.collection, environment: this.collectionEnv, reporters: "cli" },
-      function (_err, summary: newman.NewmanRunSummary) {
-        if (summary.run.failures.length === 0) {
-          fs.appendFileSync("/home/ruowan/work/oav/res.txt", summary.collection.name);
+      function (err) {
+        if (err) {
+          console.log(`collection run failed. ${err}`);
         }
-        if (summary.run.failures) {
-          console.log("failed");
-        }
-        console.log(summary);
         console.log("collection run complete!");
       }
     );
