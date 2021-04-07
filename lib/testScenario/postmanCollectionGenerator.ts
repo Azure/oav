@@ -36,9 +36,9 @@ export class PostmanCollectionGenerator {
         );
       }
     }
-    for (const item of testDef.testScenarios) {
+    for (const testScenario of testDef.testScenarios) {
       const client = new PostmanCollectionRunnerClient(
-        `${this.opt.name}_${item.description.replace(/[\s]/g, "").replace(/\//g, "_")}`,
+        `${this.opt.name}`,
         this.testResourceLoader.jsonLoader,
         this.env,
         this.opt.testDef
@@ -48,7 +48,7 @@ export class PostmanCollectionGenerator {
         env: this.env,
         client: client,
       });
-      await runner.executeScenario(item);
+      await runner.executeScenario(testScenario);
       // If shared resource-group, move clean to one separate scenario.
       await runner.cleanAllTestScope();
       for (let i = 0; i < client.collection.items.count(); i++) {

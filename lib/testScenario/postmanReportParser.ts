@@ -27,7 +27,7 @@ interface PostmanExecution {
 export class PostmanReportParser {
   private report: RawReport;
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
-  constructor(private newmanReportPath: string, private outputFile: string) {
+  constructor(private newmanReportPath: string, private outputFile?: string) {
     this.report = { variables: {}, executions: [] };
   }
 
@@ -38,7 +38,9 @@ export class PostmanReportParser {
       this.report.executions.push(this.generateExampleItem(it));
     }
     this.report.variables = this.parseVariables(report.environment.values);
-    fs.writeFileSync(this.outputFile, JSON.stringify(this.report, null, 2));
+    if (this.outputFile !== undefined) {
+      fs.writeFileSync(this.outputFile, JSON.stringify(this.report, null, 2));
+    }
     return this.report;
   }
 
