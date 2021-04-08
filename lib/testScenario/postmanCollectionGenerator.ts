@@ -1,31 +1,30 @@
+import { inject, injectable } from "inversify";
+import { TYPES } from "../inversifyUtils";
 import { VariableEnv } from "./variableEnv";
-import { TestResourceLoader } from "./testResourceLoader";
+import { TestResourceLoader, TestResourceLoaderOption } from "./testResourceLoader";
 import { PostmanCollectionRunnerClient } from "./postmanCollectionRunnerClient";
 import { TestScenarioRunner } from "./testScenarioRunner";
-export interface PostmanCollectionGeneratorOption {
+export interface PostmanCollectionGeneratorOption extends TestResourceLoaderOption {
   name: string;
   fileRoot: string;
   swaggerFilePaths: string[];
   testDef: string;
   env: {};
   outputFolder: string;
+  runCollection: boolean;
+  generateCollection: boolean;
 }
 
+@injectable()
 export class PostmanCollectionGenerator {
-  private testResourceLoader: TestResourceLoader;
   private env: VariableEnv;
-  private outputFolder: string;
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
-  constructor(private opt: PostmanCollectionGeneratorOption) {
-    this.testResourceLoader = TestResourceLoader.create({
-      useJsonParser: false,
-      checkUnderFileRoot: false,
-      fileRoot: this.opt.fileRoot,
-      swaggerFilePaths: this.opt.swaggerFilePaths,
-    });
+  constructor(
+    @inject(TYPES.opts) private opt: PostmanCollectionGeneratorOption,
+    private testResourceLoader: TestResourceLoader
+  ) {
     this.env = new VariableEnv();
     this.env.setBatch(this.opt.env);
-    this.outputFolder = this.opt.outputFolder;
   }
 
   public async GenerateCollection(): Promise<void> {
@@ -37,24 +36,30 @@ export class PostmanCollectionGenerator {
         );
       }
     }
-    for (const item of testDef.testScenarios) {
+    for (const testScenario of testDef.testScenarios) {
       const client = new PostmanCollectionRunnerClient(
-        `${this.opt.name}_${item.description.replace(/\s/g, "")}`,
+        `${this.opt.name}`,
         this.testResourceLoader.jsonLoader,
-        this.env
+        this.env,
+        this.opt.testDef
       );
       const runner = new TestScenarioRunner({
         jsonLoader: this.testResourceLoader.jsonLoader,
         env: this.env,
         client: client,
       });
-      await runner.executeScenario(item);
+      await runner.executeScenario(testScenario);
       // If shared resource-group, move clean to one separate scenario.
       await runner.cleanAllTestScope();
       for (let i = 0; i < client.collection.items.count(); i++) {
         this.longRunningOperationOrderUpdate(client, i);
       }
-      client.writeCollectionToJson(this.outputFolder);
+      if (this.opt.generateCollection) {
+        client.writeCollectionToJson(this.opt.outputFolder);
+      }
+      if (this.opt.runCollection) {
+        await client.runCollection();
+      }
     }
   }
 

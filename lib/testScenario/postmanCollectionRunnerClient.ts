@@ -35,9 +35,17 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
   public collectionEnv: VariableScope;
   private postmanTestScript: PostmanTestScript;
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
-  constructor(private name: string, private jsonLoader: JsonLoader, private env: VariableEnv) {
+  constructor(
+    private name: string,
+    private jsonLoader: JsonLoader,
+    private env: VariableEnv,
+    private testScenarioFilePath?: string,
+    private reportOutputFolder: string = path.resolve(process.cwd(), "newman")
+  ) {
     this.collection = new Collection();
+    //TODO: Add testScenarioFilePath as metadata
     this.collection.name = name;
+    this.collection.describe(this.testScenarioFilePath || this.name);
     this.collectionEnv = new VariableScope({});
     this.collectionEnv.set("bearerToken", "<bearerToken>", "string");
     this.postmanTestScript = new PostmanTestScript();
@@ -330,7 +338,21 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
   }
 
   public async runCollection() {
-    newman.run({ collection: this.collection, environment: this.collectionEnv });
+    const reportExportPath = path.resolve(this.reportOutputFolder, `${this.name}.json`);
+    newman.run(
+      {
+        collection: this.collection,
+        environment: this.collectionEnv,
+        reporters: ["cli", "json"],
+        reporter: { json: { export: reportExportPath } },
+      },
+      function (err, _summary) {
+        if (err) {
+          console.log(`collection run failed. ${err}`);
+        }
+        console.log("collection run complete!");
+      }
+    );
   }
 
   private generatedGetOperationItem(

@@ -16,7 +16,7 @@ export const inversifyGetContainer = (opts: interfaces.ContainerOptions = {}) =>
 };
 
 export const inversifyGetInstance = <T, Opt = {}>(
-  claz: interfaces.Newable<T> ,
+  claz: interfaces.Newable<T>,
   opts: Opt &
     interfaces.ContainerOptions & {
       container?: Container;

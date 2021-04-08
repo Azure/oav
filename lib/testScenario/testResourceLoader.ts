@@ -1,9 +1,12 @@
 /* eslint-disable require-atomic-updates */
-import { join as pathJoin, dirname } from "path";
+import * as fs from "fs";
+
+import { join as pathJoin, dirname, resolve as pathResolve } from "path";
 import { dump as yamlDump, load as yamlLoad } from "js-yaml";
 import { default as AjvInit, ValidateFunction } from "ajv";
 import { inject, injectable } from "inversify";
 import { cloneDeep } from "@azure-tools/openapi-tools-common";
+import { JSONPath } from "jsonpath-plus";
 import { Loader, setDefaultOpts } from "../swagger/loader";
 import { FileLoader, FileLoaderOption } from "../swagger/fileLoader";
 import { JsonLoader, JsonLoaderOption } from "../swagger/jsonLoader";
@@ -460,4 +463,64 @@ export const getBodyParamName = (operation: Operation, jsonLoader: JsonLoader) =
     (param) => jsonLoader.resolveRefObj(param).in === "body"
   );
   return bodyParams?.name;
+};
+
+const getAllSwaggerFilePathUnderDir = (dir: string): any[] => {
+  const allSwaggerFiles = fs
+    .readdirSync(dir)
+    .map((it) => pathResolve(dir, it))
+    .filter((it) => it.endsWith(".json"));
+  return allSwaggerFiles;
+};
+
+export const getSwaggerFilePathsFromTestScenarioFilePath = (
+  testScenarioFilePath: string
+): string[] => {
+  const fileContent = fs.readFileSync(testScenarioFilePath).toString();
+  const testDef = yamlLoad(fileContent) as RawTestDefinitionFile;
+  const allSwaggerFilePaths = getAllSwaggerFilePathUnderDir(dirname(dirname(testScenarioFilePath)));
+  const allSwaggerFiles = allSwaggerFilePaths.map((it) => {
+    return {
+      swaggerFilePath: it,
+      swaggerObj: JSON.parse(fs.readFileSync(it).toString()),
+    };
+  });
+  const findMatchedSwagger = (exampleFileName: string): string | undefined => {
+    for (const it of allSwaggerFiles) {
+      const allXmsExamplesPath = "$..x-ms-examples..$ref";
+      const allXmsExampleValues = JSONPath({
+        path: allXmsExamplesPath,
+        json: it.swaggerObj,
+        resultType: "all",
+      });
+      if (allXmsExampleValues.some((it: any) => it.value.includes(exampleFileName))) {
+        return it.swaggerFilePath;
+      }
+    }
+    return undefined;
+  };
+  const res: Set<string> = new Set<string>();
+
+  for (const step of testDef.prepareSteps ?? []) {
+    const restCall = step as RawTestStepRestCall;
+    if (restCall !== undefined && restCall.exampleFile !== undefined) {
+      const swaggerFilePath = findMatchedSwagger(restCall.exampleFile.replace(/^.*[\\\/]/, ""));
+      if (swaggerFilePath !== undefined) {
+        res.add(swaggerFilePath);
+      }
+    }
+  }
+
+  for (const testScenario of testDef.testScenarios ?? []) {
+    for (const step of testScenario.steps) {
+      const restCall = step as RawTestStepRestCall;
+      if (restCall !== undefined && restCall.exampleFile !== undefined) {
+        const swaggerFilePath = findMatchedSwagger(restCall.exampleFile.replace(/^.*[\\\/]/, ""));
+        if (swaggerFilePath !== undefined) {
+          res.add(swaggerFilePath);
+        }
+      }
+    }
+  }
+  return Array.from(res.values());
 };
