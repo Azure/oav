@@ -6,5 +6,9 @@ export const generatedGet = (name: string): string => {
 };
 
 export const lroPollingUrl = (name: string): string => {
-  return `${name}_polling_url`;
+  return `${name.replace(/[\s+\.]/g, "_")}_polling_url`;
+};
+
+export const defaultQualityReportFilePath = (newmanReportFilePath: string): string => {
+  return newmanReportFilePath.replace(".json", "_report.json");
 };

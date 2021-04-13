@@ -1,4 +1,4 @@
-import * as fs from "fs";
+import { inject, injectable } from "inversify";
 import {
   RequestDefinition,
   ResponseDefinition,
@@ -7,44 +7,60 @@ import {
   Response,
   DescriptionDefinition,
 } from "postman-collection";
+import { FileLoader, FileLoaderOption } from "./../swagger/fileLoader";
+import { TYPES } from "./../inversifyUtils";
 import { RawExecution, RawReport, RawRequest, RawResponse } from "./testResourceTypes";
 
-interface PostmanReport {
+interface NewmanReport {
   run: Run;
   environment: any;
+  collection: any;
 }
 
 interface Run {
-  executions: PostmanExecution[];
+  executions: NewmanExecution[];
 }
 
-interface PostmanExecution {
+interface NewmanExecution {
   item: ItemDefinition;
   request: RequestDefinition;
   response: ResponseDefinition;
 }
 
-export class PostmanReportParser {
+export interface NewmanReportParserOption extends FileLoaderOption {
+  newmanReportFilePath: string;
+  reportOutputFilePath?: string;
+}
+
+@injectable()
+export class NewmanReportParser {
   private report: RawReport;
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
-  constructor(private newmanReportPath: string, private outputFile?: string) {
-    this.report = { variables: {}, executions: [] };
+  constructor(
+    @inject(TYPES.opts) private opts: NewmanReportParserOption,
+    private fileLoader: FileLoader
+  ) {
+    this.report = { variables: {}, executions: [], metadata: {} };
   }
 
-  public generateRawReport() {
-    const content = fs.readFileSync(this.newmanReportPath).toString();
-    const report = JSON.parse(content) as PostmanReport;
+  public async generateRawReport() {
+    const content = await this.fileLoader.load(this.opts.newmanReportFilePath);
+    const report = JSON.parse(content) as NewmanReport;
+    this.report.metadata.testScenarioFilePath = report.collection.info.description.content; // JSON.parse(report.collection.description.content);
     for (const it of report.run.executions) {
       this.report.executions.push(this.generateExampleItem(it));
     }
     this.report.variables = this.parseVariables(report.environment.values);
-    if (this.outputFile !== undefined) {
-      fs.writeFileSync(this.outputFile, JSON.stringify(this.report, null, 2));
+    if (this.opts.reportOutputFilePath !== undefined) {
+      await this.fileLoader.writeFile(
+        this.opts.reportOutputFilePath,
+        JSON.stringify(this.report, null, 2)
+      );
     }
     return this.report;
   }
 
-  private generateExampleItem(it: PostmanExecution): RawExecution {
+  private generateExampleItem(it: NewmanExecution): RawExecution {
     const resp = new Response(it.response);
     const req = new Request(it.request);
     const rawReq = this.parseRequest(req);
@@ -87,6 +103,12 @@ export class PostmanReportParser {
     const ret: any = {};
     for (const it of headers) {
       ret[it.key] = it.value;
+
+      // Currently only mask bearer token header.
+      // For further sensitive data, should add mask module here
+      if (it.key === "Authorization") {
+        ret[it.key] = "<bearer token>";
+      }
     }
     return ret;
   }

@@ -39,6 +39,11 @@ export const builder: yargs.CommandBuilder = {
     describe: "the env file path.",
     string: true,
   },
+  uploadBlob: {
+    describe: "upload generated collection to blob.",
+    boolean: true,
+    default: false,
+  },
 };
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
@@ -80,6 +85,8 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
         outputFolder: argv.output,
         eraseXmsExamples: false,
         eraseDescription: false,
+        enableBlobUploader: false,
+        blobConnectionString: process.env.blobConnectionString || "",
       };
       if (!fs.existsSync(argv.output)) {
         fs.mkdirSync(argv.output);

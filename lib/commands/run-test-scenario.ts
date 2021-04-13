@@ -11,6 +11,7 @@ import {
   PostmanCollectionGeneratorOption,
 } from "../testScenario/postmanCollectionGenerator";
 import { inversifyGetInstance } from "../inversifyUtils";
+import { getProviderFromFilePath } from "../util/utils";
 import { getSwaggerFilePathsFromTestScenarioFilePath } from "./../testScenario/testResourceLoader";
 
 export const command = "run-test-scenario <test-scenario>";
@@ -29,6 +30,11 @@ export const builder: yargs.CommandBuilder = {
     string: true,
     default: "generated_collections",
   },
+  uploadBlob: {
+    describe: "upload generated collection to blob.",
+    boolean: true,
+    default: false,
+  },
 };
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
@@ -46,19 +52,24 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     }
     // fileRoot is the nearest common root of all swagger file paths
     const fileRoot = path.dirname(swaggerFilePaths[0]);
+    const resourceProvider = getProviderFromFilePath(testScenarioFilePath);
     const opt: PostmanCollectionGeneratorOption = {
-      name: testScenarioFilePath.replace(/^.*[\\\/]/, "").replace(".yaml", ""),
+      name: `${resourceProvider}_${testScenarioFilePath
+        .replace(/^.*[\\\/]/, "")
+        .replace(".yaml", "")}`,
       testDef: testScenarioFilePath,
       swaggerFilePaths: swaggerFilePaths,
       fileRoot: fileRoot,
       checkUnderFileRoot: false,
-      generateCollection: false,
+      generateCollection: true,
       useJsonParser: false,
       runCollection: true,
       env: env,
       outputFolder: argv.output,
       eraseXmsExamples: false,
       eraseDescription: false,
+      enableBlobUploader: argv.uploadBlob,
+      blobConnectionString: process.env.blobConnectionString || "",
     };
     const generator = inversifyGetInstance(PostmanCollectionGenerator, opt);
     await generator.GenerateCollection();

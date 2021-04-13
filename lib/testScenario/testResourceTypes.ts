@@ -448,6 +448,7 @@ export interface RawReport {
   executions: RawExecution[];
   variables: any;
   testScenarioName?: string;
+  metadata: any;
 }
 
 export interface RawExecution {

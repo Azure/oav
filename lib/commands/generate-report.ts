@@ -4,12 +4,12 @@
 /* eslint-disable id-blacklist */
 
 import * as fs from "fs";
-import * as path from "path";
 import * as yargs from "yargs";
 
 import { cliSuppressExceptions } from "../cliSuppressExceptions";
 import { getAutorestConfig } from "../util/getAutorestConfig";
 import { ReportGenerator } from "../testScenario/reportGenerator";
+import { inversifyGetInstance } from "./../inversifyUtils";
 export const command = "generate-report [raw-report-path]";
 
 export const describe = "Generate report from postman report.";
@@ -42,7 +42,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     const newmanReport: string = argv.newmanReport;
     argv["try-require"] = "readme.test.md";
     const autorestConfig = await getAutorestConfig(argv, readmeMd);
-    const fileRoot: string = path.dirname(readmeMd);
+    // const fileRoot: string = path.dirname(readmeMd);
     const swaggerFilePaths: string[] = autorestConfig["input-file"];
     const testScenarioFile = autorestConfig["test-resources"][0].test;
     console.log(
@@ -51,15 +51,10 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     if (!fs.existsSync(argv.output)) {
       fs.mkdirSync(argv.output);
     }
-    const generator = new ReportGenerator(
-      newmanReport,
-      argv.output,
-      fileRoot,
-      swaggerFilePaths,
-      testScenarioFile,
-      readmeMd,
-      argv.tag || "default"
-    );
+    const generator = inversifyGetInstance(ReportGenerator, {
+      newmanReportFilePath: newmanReport,
+      swaggerFilePaths: swaggerFilePaths,
+    });
     await generator.generateReport();
     console.log(`generate report successfully!`);
     return 0;
