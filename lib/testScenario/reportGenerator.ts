@@ -3,6 +3,7 @@ import * as _ from "lodash";
 import { injectable, inject } from "inversify";
 import { ExampleQualityValidator } from "../exampleQualityValidator/exampleQualityValidator";
 import { setDefaultOpts } from "../swagger/loader";
+import { getProviderFromFilePath } from "../util/utils";
 import { defaultQualityReportFilePath } from "./postmanItemNaming";
 import { FileLoader } from "./../swagger/fileLoader";
 import { TYPES } from "./../inversifyUtils";
@@ -146,11 +147,13 @@ export class ReportGenerator {
         JSON.stringify(this.swaggerExampleQualityResult, null, 2)
       );
       if (this.opts.enableBlobUploader) {
-        await this.blobUploader.uploadFile(
-          "report",
-          `${path.parse(this.opts.reportOutputFilePath).name}.json`,
-          this.opts.reportOutputFilePath
+        const provider = getProviderFromFilePath(this.opts.reportOutputFilePath) || "";
+        const idx = this.opts.reportOutputFilePath.indexOf(provider);
+        const blobPath = this.opts.reportOutputFilePath.substr(
+          idx,
+          this.opts.blobConnectionString?.length
         );
+        await this.blobUploader.uploadFile("report", blobPath, this.opts.reportOutputFilePath);
       }
     }
     console.log(JSON.stringify(this.swaggerExampleQualityResult, null, 2));

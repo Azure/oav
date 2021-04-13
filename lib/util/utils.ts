@@ -271,6 +271,10 @@ export function getProviderFromFilePath(pathStr: string): string | undefined {
   }
   return undefined;
 }
+
+export function getApiVersionFromSwaggerFile(swaggerFilePath: string): string {
+  return JSON.parse(fs.readFileSync(swaggerFilePath).toString())?.info?.version || "unknown";
+}
 const providerRegEx = new RegExp("/providers/(:?[^{/]+)", "gi");
 
 /**

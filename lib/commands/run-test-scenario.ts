@@ -11,7 +11,7 @@ import {
   PostmanCollectionGeneratorOption,
 } from "../testScenario/postmanCollectionGenerator";
 import { inversifyGetInstance } from "../inversifyUtils";
-import { getProviderFromFilePath } from "../util/utils";
+import { getApiVersionFromSwaggerFile, getProviderFromFilePath } from "../util/utils";
 import { getSwaggerFilePathsFromTestScenarioFilePath } from "./../testScenario/testResourceLoader";
 
 export const command = "run-test-scenario <test-scenario>";
@@ -53,8 +53,9 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     // fileRoot is the nearest common root of all swagger file paths
     const fileRoot = path.dirname(swaggerFilePaths[0]);
     const resourceProvider = getProviderFromFilePath(testScenarioFilePath);
+    const apiVersion = getApiVersionFromSwaggerFile(swaggerFilePaths[0]);
     const opt: PostmanCollectionGeneratorOption = {
-      name: `${resourceProvider}_${testScenarioFilePath
+      name: `${resourceProvider}/${apiVersion}/${testScenarioFilePath
         .replace(/^.*[\\\/]/, "")
         .replace(".yaml", "")}`,
       testDef: testScenarioFilePath,
