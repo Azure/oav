@@ -1,4 +1,3 @@
-import { defaultQualityReportFilePath } from "./../testScenario/postmanItemNaming";
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
@@ -10,6 +9,7 @@ import {
   NewmanReportAnalyzer,
   NewmanReportAnalyzerOption,
 } from "../testScenario/postmanReportAnalyzer";
+import { defaultQualityReportFilePath } from "./../testScenario/postmanItemNaming";
 import { inversifyGetInstance } from "./../inversifyUtils";
 
 export const command = "analyze-newman-report <newman-report-path>";

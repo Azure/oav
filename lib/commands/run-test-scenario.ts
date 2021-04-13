@@ -28,7 +28,7 @@ export const builder: yargs.CommandBuilder = {
     alias: "outputDir",
     describe: "the output folder.",
     string: true,
-    default: "generated_collections",
+    default: "generated",
   },
   uploadBlob: {
     describe: "upload generated collection to blob.",
