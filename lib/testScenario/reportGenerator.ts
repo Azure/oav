@@ -4,7 +4,7 @@ import { injectable, inject } from "inversify";
 import { ExampleQualityValidator } from "../exampleQualityValidator/exampleQualityValidator";
 import { setDefaultOpts } from "../swagger/loader";
 import { getProviderFromFilePath } from "../util/utils";
-import { defaultQualityReportFilePath } from "./postmanItemNaming";
+import { defaultQualityReportFilePath } from "./defaultNaming";
 import { FileLoader } from "./../swagger/fileLoader";
 import { TYPES } from "./../inversifyUtils";
 import { SwaggerExample } from "./../swagger/swaggerTypes";
@@ -153,6 +153,7 @@ export class ReportGenerator {
           idx,
           this.opts.blobConnectionString?.length
         );
+        //blobPath should follow <ResourceProvider>/<api-version>/<test-scenario-file-name>.json pattern
         await this.blobUploader.uploadFile("report", blobPath, this.opts.reportOutputFilePath);
       }
     }

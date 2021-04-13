@@ -9,7 +9,7 @@ import {
   NewmanReportAnalyzer,
   NewmanReportAnalyzerOption,
 } from "../testScenario/postmanReportAnalyzer";
-import { defaultQualityReportFilePath } from "./../testScenario/postmanItemNaming";
+import { defaultQualityReportFilePath } from "../testScenario/defaultNaming";
 import { inversifyGetInstance } from "./../inversifyUtils";
 
 export const command = "analyze-newman-report <newman-report-path>";

@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import { defaultQualityReportFilePath } from "./postmanItemNaming";
+import { defaultQualityReportFilePath } from "./defaultNaming";
 import { setDefaultOpts } from "./../swagger/loader";
 import { ReportGenerator, ReportGeneratorOption } from "./reportGenerator";
 import { RawReport } from "./testResourceTypes";

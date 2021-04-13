@@ -1,4 +1,4 @@
-export const generatedPrefix = (name: string): string => {
+export const generatedPostmanItem = (name: string): string => {
   return `[generated]${name}`;
 };
 export const generatedGet = (name: string): string => {
@@ -11,4 +11,16 @@ export const lroPollingUrl = (name: string): string => {
 
 export const defaultQualityReportFilePath = (newmanReportFilePath: string): string => {
   return newmanReportFilePath.replace(".json", "_report.json");
+};
+
+export const defaultCollectionFileName = (name: string) => {
+  return `${name}_collection.json`;
+};
+
+export const defaultEnvFileName = (name: string) => {
+  return `${name}_env.json`;
+};
+
+export const defaultNewmanReport = (name: string) => {
+  return `${name}.json`;
 };

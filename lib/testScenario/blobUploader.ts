@@ -7,6 +7,8 @@ export interface TestScenarioBlobUploaderOption {
   enableBlobUploader?: boolean;
 }
 
+type ContainName = "postmancollection" | "newmanreport" | "report";
+
 @injectable()
 export class BlobUploader {
   private blobServiceClient?: BlobServiceClient;
@@ -23,7 +25,7 @@ export class BlobUploader {
     }
   }
 
-  public async uploadFile(containName: string, blobName: string, filePath: string) {
+  public async uploadFile(containName: ContainName, blobName: string, filePath: string) {
     if (!this.opts.enableBlobUploader) {
       return;
     }
