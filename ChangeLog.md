@@ -1,5 +1,10 @@
 # Change Log - oav
 
+## 04/14/2021 2.3.3
+
+- Support auto upload generated file to azure blob.
+- Support mask bearer token
+
 ## 04/06/2021 2.3.2
 
 - Support auto generate test scenario based on resource type.
