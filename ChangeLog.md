@@ -4,6 +4,7 @@
 
 - Support auto upload generated file to azure blob.
 - Support mask bearer token
+- generate-static-test-scenario support generate readme.test.md
 
 ## 04/06/2021 2.3.2
 
