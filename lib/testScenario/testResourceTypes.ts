@@ -469,6 +469,10 @@ export interface RawResponse {
   body: string;
 }
 
+export interface TestResources {
+  ["test-resources"]: Array<{ [key: string]: string }>;
+}
+
 export const TestDefinitionSchema: Schema & {
   definitions: { [def: string]: Schema };
 } = {

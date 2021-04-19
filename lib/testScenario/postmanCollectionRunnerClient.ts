@@ -494,6 +494,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     ret.events.add(event);
     return ret;
   }
+
   public aadAuthAccessTokenItem(env: VariableEnv): Item {
     const urlVariables: VariableDefinition[] = [{ key: "tenantId", value: "{{tenantId}}" }];
     const ret = new Item({

@@ -24,3 +24,7 @@ export const defaultEnvFileName = (name: string) => {
 export const defaultNewmanReport = (name: string) => {
   return `${name}.json`;
 };
+
+export const blobNameDatePostfix = (name: string) => {
+  return `${name}_${new Date().toISOString().slice(0, 10)}`;
+};

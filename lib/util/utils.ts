@@ -272,9 +272,25 @@ export function getProviderFromFilePath(pathStr: string): string | undefined {
   return undefined;
 }
 
+export function findNearestReadmeDir(pathStr: string): string | undefined {
+  let curDir: string = path.resolve(pathStr);
+  if (fs.lstatSync(pathStr).isFile()) {
+    curDir = path.dirname(curDir);
+  }
+  while (curDir !== "/") {
+    const readme = path.resolve(curDir, "readme.md");
+    if (fs.existsSync(readme)) {
+      return curDir;
+    }
+    curDir = path.dirname(curDir);
+  }
+  return undefined;
+}
+
 export function getApiVersionFromSwaggerFile(swaggerFilePath: string): string {
   return JSON.parse(fs.readFileSync(swaggerFilePath).toString())?.info?.version || "unknown";
 }
+
 const providerRegEx = new RegExp("/providers/(:?[^{/]+)", "gi");
 
 /**
