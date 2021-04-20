@@ -183,7 +183,7 @@ export class SwaggerAnalyzer {
   }
 }
 
-function getResourceFromPath(pathTemplate: string): ResourceType[] {
+export function getResourceFromPath(pathTemplate: string): ResourceType[] {
   const provider = getProvider(pathTemplate);
   if (provider === undefined) {
     return [];
@@ -206,7 +206,7 @@ function getResourceFromPath(pathTemplate: string): ResourceType[] {
   return [];
 }
 
-function getResourceTypePath(resourceType: ResourceType[], resourceProvider: string) {
+export function getResourceTypePath(resourceType: ResourceType[], resourceProvider: string) {
   return [resourceProvider, ...resourceType.map((it) => it.resourceType)].join("/");
 }
 

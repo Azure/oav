@@ -1,4 +1,5 @@
 import { inject, injectable } from "inversify";
+import uuid from "uuid";
 import { defaultQualityReportFilePath } from "./defaultNaming";
 import { setDefaultOpts } from "./../swagger/loader";
 import { ReportGenerator, ReportGeneratorOption } from "./reportGenerator";
@@ -10,6 +11,7 @@ import { getSwaggerFilePathsFromTestScenarioFilePath } from "./testResourceLoade
 export interface NewmanReportAnalyzerOption extends NewmanReportParserOption {
   reportOutputFilePath?: string;
   enableUploadBlob?: boolean;
+  runId?: string;
 }
 
 @injectable()
@@ -20,6 +22,7 @@ export class NewmanReportAnalyzer {
     private newmanReportParser: NewmanReportParser
   ) {
     setDefaultOpts(this.opts, {
+      runId: uuid.v4(),
       newmanReportFilePath: "",
       reportOutputFilePath: defaultQualityReportFilePath(this.opts.newmanReportFilePath),
     });
@@ -39,6 +42,7 @@ export class NewmanReportAnalyzer {
       reportOutputFilePath: this.opts.reportOutputFilePath,
       enableBlobUploader: this.opts.enableUploadBlob || false,
       blobConnectionString: process.env.blobConnectionString || "",
+      runId: this.opts.runId,
     };
     const reportGenerator = inversifyGetInstance(ReportGenerator, reportGeneratorOption);
     await reportGenerator.generateReport();

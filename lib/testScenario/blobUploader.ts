@@ -7,7 +7,7 @@ export interface TestScenarioBlobUploaderOption {
   enableBlobUploader?: boolean;
 }
 
-type ContainName = "postmancollection" | "newmanreport" | "report";
+type ContainName = "postmancollection" | "newmanreport" | "report" | "payload";
 
 @injectable()
 export class BlobUploader {
@@ -33,5 +33,15 @@ export class BlobUploader {
     await containerClient.createIfNotExists();
     const blobClient = containerClient.getBlockBlobClient(blobName);
     await blobClient.uploadFile(filePath);
+  }
+
+  public async uploadContent(containName: ContainName, blobName: string, content: string) {
+    if (!this.opts.enableBlobUploader) {
+      return;
+    }
+    const containerClient = this.blobServiceClient!.getContainerClient(containName);
+    await containerClient.createIfNotExists();
+    const blobClient = containerClient.getBlockBlobClient(blobName);
+    await blobClient.uploadData(Buffer.from(content));
   }
 }

@@ -44,12 +44,12 @@ export class PostmanCollectionGenerator {
     let index = 0;
     for (const testScenario of testDef.testScenarios) {
       const client = new PostmanCollectionRunnerClient(
-        `${this.opt.name}-${index}`,
+        `${this.opt.name}/${index}`,
         this.testResourceLoader.jsonLoader,
         this.env,
         this.blobUploader,
         this.opt.testDef,
-        undefined,
+        this.opt.outputFolder,
         this.opt.enableBlobUploader
       );
       const runner = new TestScenarioRunner({

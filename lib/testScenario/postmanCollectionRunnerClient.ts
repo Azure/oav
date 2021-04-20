@@ -15,6 +15,7 @@ import {
   VariableDefinition,
   ItemDefinition,
 } from "postman-collection";
+import * as uuid from "uuid";
 
 import { injectable } from "inversify";
 import { JsonLoader } from "../swagger/jsonLoader";
@@ -59,11 +60,13 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     private blobUploader: BlobUploader,
     private testScenarioFilePath?: string,
     private reportOutputFolder: string = path.resolve(process.cwd(), "newman"),
-    private enableBlobUploader: boolean = false
+    private enableBlobUploader: boolean = false,
+    private runId: string = uuid.v4()
   ) {
     this.collection = new Collection();
     //TODO: Add testScenarioFilePath as metadata
     this.collection.name = name;
+    this.collection.id = this.runId;
     this.collection.describe(this.testScenarioFilePath || this.name);
     this.collectionEnv = new VariableScope({});
     this.collectionEnv.set("bearerToken", "<bearerToken>", "string");
@@ -341,8 +344,11 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
   }
 
   public async writeCollectionToJson(outputFolder: string) {
-    const collectionPath = path.resolve(outputFolder, `${defaultCollectionFileName(this.name)}`);
-    const envPath = path.resolve(outputFolder, `${defaultEnvFileName(this.name)}`);
+    const collectionPath = path.resolve(
+      outputFolder,
+      `${defaultCollectionFileName(this.name, this.runId)}`
+    );
+    const envPath = path.resolve(outputFolder, `${defaultEnvFileName(this.name, this.runId)}`);
     const fileLoader: FileLoader = inversifyGetInstance(FileLoader, { checkUnderFileRoot: false });
     await fileLoader.writeFile(collectionPath, JSON.stringify(this.collection.toJSON(), null, 2));
     const env = this.collectionEnv.toJSON();
@@ -352,13 +358,13 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
 
     await this.blobUploader.uploadFile(
       "postmancollection",
-      `${defaultCollectionFileName(this.name)}`,
+      `${defaultCollectionFileName(this.name, this.runId)}`,
       collectionPath
     );
 
     await this.blobUploader.uploadFile(
       "postmancollection",
-      `${defaultEnvFileName(this.name)}`,
+      `${defaultEnvFileName(this.name, this.runId)}`,
       envPath
     );
 
@@ -368,7 +374,10 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
   }
 
   public async runCollection() {
-    const reportExportPath = path.resolve(this.reportOutputFolder, `${this.name}.json`);
+    const reportExportPath = path.resolve(
+      this.reportOutputFolder,
+      `${defaultNewmanReport(this.name, this.runId)}`
+    );
     newman
       .run(
         {
@@ -388,12 +397,13 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
         if (this.enableBlobUploader) {
           await this.blobUploader.uploadFile(
             "newmanreport",
-            `${defaultNewmanReport(this.name)}`,
+            `${defaultNewmanReport(this.name, this.runId)}`,
             reportExportPath
           );
           const opts: NewmanReportAnalyzerOption = {
             newmanReportFilePath: reportExportPath,
             enableUploadBlob: this.enableBlobUploader,
+            runId: this.runId,
           };
           const reportAnalyzer = inversifyGetInstance(NewmanReportAnalyzer, opts);
           await reportAnalyzer.analyze();

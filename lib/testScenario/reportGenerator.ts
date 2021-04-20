@@ -1,9 +1,15 @@
 import * as path from "path";
+import * as uuid from "uuid";
 import * as _ from "lodash";
 import { injectable, inject } from "inversify";
 import { ExampleQualityValidator } from "../exampleQualityValidator/exampleQualityValidator";
 import { setDefaultOpts } from "../swagger/loader";
-import { getProviderFromFilePath } from "../util/utils";
+import { Severity } from "../util/severity";
+import {
+  findNearestReadmeDir,
+  getApiVersionFromSwaggerFile,
+  getProviderFromFilePath,
+} from "../util/utils";
 import { defaultQualityReportFilePath } from "./defaultNaming";
 import { FileLoader } from "./../swagger/fileLoader";
 import { TYPES } from "./../inversifyUtils";
@@ -23,7 +29,7 @@ import { getJsonPatchDiff } from "./diffUtils";
 import { BlobUploader, TestScenarioBlobUploaderOption } from "./blobUploader";
 
 interface GeneratedExample {
-  exampleName: string;
+  exampleFilePath: string;
   step: string;
   operationId: string;
   example: SwaggerExample;
@@ -35,18 +41,32 @@ interface TestScenarioResult {
     readmeFilePath?: string;
     swaggerFilePaths: string[];
     tag?: string;
+
+    // New added fields
+    environment?: string;
+    armEnv?: string;
+    subscriptionId?: string;
+    fileRoot?: string;
+    resourceProvider?: string;
+    apiVersion?: string;
+    startTime?: string;
+    endTime?: string;
+    runId?: string;
+    repository?: string;
+    branch?: string;
   };
   stepResult: { [step: string]: StepResult };
 }
 
 interface StepResult {
-  exampleName?: string;
+  exampleFilePath?: string;
   example?: SwaggerExample;
   operationId: string;
   runtimeError?: HttpError;
   responseDiffResult?: { [statusCode: number]: JsonPatchOp[] };
   liveValidationResult?: any;
   stepValidationResult?: any;
+  correlationId?: string;
 }
 
 interface HttpError {
@@ -60,6 +80,7 @@ export interface ReportGeneratorOption
     TestScenarioBlobUploaderOption {
   testDefFilePath: string;
   reportOutputFilePath?: string;
+  runId?: string;
 }
 
 @injectable()
@@ -69,6 +90,8 @@ export class ReportGenerator {
   private testDefFile: TestDefinitionFile | undefined;
   private operationIds: Set<string>;
   private rawReport: RawReport | undefined;
+  private fileRoot: string;
+  private recording: Map<string, RawExecution>;
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
   constructor(
     @inject(TYPES.opts) private opts: ReportGeneratorOption,
@@ -83,16 +106,26 @@ export class ReportGenerator {
       enableBlobUploader: false,
       blobConnectionString: "",
       testDefFilePath: "",
+      runId: uuid.v4(),
     });
     const swaggerFileAbsolutePaths = this.opts.swaggerFilePaths!.map((it) => path.resolve(it));
     this.exampleQualityValidator = ExampleQualityValidator.create({
       swaggerFilePaths: [...swaggerFileAbsolutePaths],
     });
+    this.recording = new Map<string, RawExecution>();
     this.operationIds = new Set<string>();
+    this.fileRoot = findNearestReadmeDir(this.opts.testDefFilePath) || "/";
+
     this.swaggerExampleQualityResult = {
       testScenario: {
-        testScenarioFilePath: this.opts.testDefFilePath,
-        swaggerFilePaths: this.opts.swaggerFilePaths!,
+        testScenarioFilePath: path.relative(this.fileRoot, this.opts.testDefFilePath),
+        swaggerFilePaths: this.opts.swaggerFilePaths!.map((it) => path.relative(this.fileRoot, it)),
+        resourceProvider: getProviderFromFilePath(this.opts.testDefFilePath),
+        apiVersion: getApiVersionFromSwaggerFile(this.opts.swaggerFilePaths![0]),
+        runId: this.opts.runId,
+        fileRoot: this.fileRoot,
+        repository: process.env.SPEC_REPOSITORY,
+        branch: process.env.SPEC_BRANCH,
       },
       stepResult: {},
     };
@@ -106,6 +139,7 @@ export class ReportGenerator {
   public async generateExampleQualityReport(rawReport: RawReport) {
     await this.initialize();
     const variables = rawReport.variables;
+    this.swaggerExampleQualityResult.testScenario.subscriptionId = variables.subscriptionId;
     for (const it of rawReport.executions) {
       if (it.annotation === undefined) {
         continue;
@@ -126,18 +160,21 @@ export class ReportGenerator {
         // validate real payload.
         const roundtripErrors = await this.exampleQualityValidator.validateExternalExamples([
           {
-            exampleFilePath: generatedExample.exampleName,
+            exampleFilePath: generatedExample.exampleFilePath,
             example: generatedExample.example,
             operationId: matchedStep.operationId,
           },
         ]);
+        const correlationId = it.response.headers["x-ms-correlation-request-id"];
         this.swaggerExampleQualityResult.stepResult[it.annotation.step] = {
-          exampleName: generatedExample.exampleName,
+          exampleFilePath: generatedExample.exampleFilePath,
           operationId: it.annotation.operationId,
           runtimeError: error,
           responseDiffResult: this.exampleResponseDiff(generatedExample, matchedStep),
           stepValidationResult: roundtripErrors,
+          correlationId: correlationId,
         };
+        this.recording.set(correlationId, it);
       }
     }
     if (this.opts.reportOutputFilePath !== undefined) {
@@ -148,6 +185,7 @@ export class ReportGenerator {
       );
       if (this.opts.enableBlobUploader) {
         const provider = getProviderFromFilePath(this.opts.reportOutputFilePath) || "";
+        console.log(this.opts.reportOutputFilePath);
         const idx = this.opts.reportOutputFilePath.indexOf(provider);
         const blobPath = this.opts.reportOutputFilePath.substr(
           idx,
@@ -155,6 +193,17 @@ export class ReportGenerator {
         );
         //blobPath should follow <ResourceProvider>/<api-version>/<test-scenario-file-name>.json pattern
         await this.blobUploader.uploadFile("report", blobPath, this.opts.reportOutputFilePath);
+        // upload recording here. pattern. <ResourceProvider>/<api-version>/<test-scenario-file-name>/<correlationId>.json
+        // payload path.
+
+        for (const [correlationId, v] of this.recording) {
+          const payloadBlobPath = `${path.dirname(blobPath)}/${correlationId}.json`;
+          await this.blobUploader.uploadContent(
+            "payload",
+            payloadBlobPath,
+            JSON.stringify(v, null, 2)
+          );
+        }
       }
     }
     console.log(JSON.stringify(this.swaggerExampleQualityResult, null, 2));
@@ -177,14 +226,17 @@ export class ReportGenerator {
     const resp: any = this.parseRespBody(it);
     example.responses = {};
     _.extend(example.responses, resp);
-    const exampleName = it.annotation.exampleName.replace(/^.*[\\\/]/, "");
+    const exampleFilePath = path.relative(
+      this.fileRoot,
+      path.resolve(this.opts.testDefFilePath, it.annotation.exampleName)
+    );
     const generatedGetExecution = this.findGeneratedGetExecution(it, rawReport);
     if (generatedGetExecution.length > 0) {
       const getResp = this.parseRespBody(generatedGetExecution[0]);
       _.extend(example.responses, getResp);
     }
     return {
-      exampleName,
+      exampleFilePath: exampleFilePath,
       example,
       step: it.annotation.step,
       operationId: it.annotation.operationId,
@@ -216,6 +268,20 @@ export class ReportGenerator {
       const delta = getJsonPatchDiff(expected, resp, {
         includeOldValue: true,
         minimizeDiff: false,
+      }).map((it: any) => {
+        const ret: any = {};
+        if (it.remove !== undefined) {
+          ret.code = "RESPONSE_ADDITIONAL_VALUE";
+          ret.severity = Severity.Error;
+        } else if (it.add !== undefined) {
+          ret.code = "RESPONSE_MISSING_VALUE";
+          ret.severity = Severity.Error;
+        } else {
+          ret.code = "RESPONSE_INCORRECT_VALUE";
+          ret.severity = Severity.Error;
+        }
+        ret.detail = it;
+        return ret;
       });
       return delta;
     } catch (err) {

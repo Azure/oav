@@ -10,19 +10,19 @@ export const lroPollingUrl = (name: string): string => {
 };
 
 export const defaultQualityReportFilePath = (newmanReportFilePath: string): string => {
-  return newmanReportFilePath.replace(".json", "_report.json");
+  return newmanReportFilePath.replace(".json", "/report.json");
 };
 
-export const defaultCollectionFileName = (name: string) => {
-  return `${name}_collection.json`;
+export const defaultCollectionFileName = (name: string, runId: string) => {
+  return `${name}/${runId}/collection.json`;
 };
 
-export const defaultEnvFileName = (name: string) => {
-  return `${name}_env.json`;
+export const defaultEnvFileName = (name: string, runId: string) => {
+  return `${name}/${runId}/env.json`;
 };
 
-export const defaultNewmanReport = (name: string) => {
-  return `${name}.json`;
+export const defaultNewmanReport = (name: string, runId: string) => {
+  return `${name}/${runId}.json`;
 };
 
 export const blobNameDatePostfix = (name: string) => {
