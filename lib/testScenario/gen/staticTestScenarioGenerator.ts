@@ -1,12 +1,15 @@
 import * as path from "path";
+import * as fs from "fs";
 import { inject, injectable } from "inversify";
 import { dump as yamlDump } from "js-yaml";
 import { ExampleDependency, SwaggerAnalyzer, SwaggerAnalyzerOption } from "../swaggerAnalyzer";
+import { findNearestReadmeDir, getProviderFromFilePath } from "../../util/utils";
+import { ReadmeTestDefinition, ReadmeTestFileLoader } from "../readmeTestFileLoader";
 import { JsonLoader } from "./../../swagger/jsonLoader";
 import { setDefaultOpts } from "./../../swagger/loader";
 
 import { FileLoader } from "./../../swagger/fileLoader";
-import { RawTestDefinitionFile, TestDefinitionFile } from "./../testResourceTypes";
+import { RawTestDefinitionFile, TestDefinitionFile, TestResources } from "./../testResourceTypes";
 import { TestResourceLoaderOption } from "./../testResourceLoader";
 import { inversifyGetInstance, TYPES } from "./../../inversifyUtils";
 
@@ -15,6 +18,7 @@ export interface StaticTestScenarioGeneratorOption
     SwaggerAnalyzerOption {
   swaggerFilePaths: string[];
   rule?: "put-delete";
+  tag?: string;
 }
 
 /**
@@ -28,11 +32,13 @@ export class StaticTestScenarioGenerator {
     @inject(TYPES.opts) private opts: StaticTestScenarioGeneratorOption,
     private swaggerAnalyzer: SwaggerAnalyzer,
     private fileLoader: FileLoader,
-    private jsonLoader: JsonLoader
+    private jsonLoader: JsonLoader,
+    private readmeTestFileLoader: ReadmeTestFileLoader
   ) {}
 
   public static create(opts: StaticTestScenarioGeneratorOption) {
     setDefaultOpts(opts, {
+      tag: "default",
       swaggerFilePaths: [],
       eraseXmsExamples: false,
       eraseDescription: false,
@@ -121,6 +127,38 @@ export class StaticTestScenarioGenerator {
     for (const { testDef, filePath } of this.testDefToWrite) {
       console.log(`write generated file ${filePath}`);
       await this.writeTestDefinitionFile(filePath, testDef);
+    }
+    await this.writeReadmeTest();
+  }
+
+  private async writeReadmeTest() {
+    if (this.testDefToWrite.length === 0) {
+      return;
+    }
+    const testResources: TestResources = { "test-resources": [] };
+    for (const { filePath } of this.testDefToWrite) {
+      const resourceProvider = getProviderFromFilePath(filePath) || "";
+      const relativePath = filePath.substr(filePath.indexOf(resourceProvider), filePath.length);
+      testResources["test-resources"].push({ test: relativePath });
+    }
+    const readmeDir = findNearestReadmeDir(this.testDefToWrite[0].filePath);
+    if (readmeDir === undefined) {
+      throw new Error(`Can not find nearest readme dir.`);
+    }
+    const readmeTestFilePath = path.resolve(
+      findNearestReadmeDir(this.testDefToWrite[0].filePath)!,
+      "readme.test.md"
+    );
+    console.log(`write generated file ${readmeTestFilePath}`);
+    if (fs.existsSync(readmeTestFilePath)) {
+      //Already exist readme.test.md, override yaml block.
+      const currentReadmeTestDef = await this.readmeTestFileLoader.load(readmeTestFilePath);
+      currentReadmeTestDef[this.opts.tag || ""] = testResources;
+      await this.readmeTestFileLoader.writeFile(readmeTestFilePath, currentReadmeTestDef);
+    } else {
+      const readmeTestDef: ReadmeTestDefinition = {};
+      readmeTestDef[this.opts.tag || ""] = testResources;
+      await this.readmeTestFileLoader.writeFile(readmeTestFilePath, readmeTestDef);
     }
   }
 

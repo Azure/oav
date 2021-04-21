@@ -438,7 +438,7 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
     const exampleFileContent = JSON.parse(fileContent) as SwaggerExample;
 
     step.requestParameters = exampleFileContent.parameters;
-    step.responseExpected = exampleFileContent.responses[step.statusCode].body;
+    step.responseExpected = exampleFileContent.responses[step.statusCode]?.body;
 
     // Load Operation
     if (step.operationId === "") {

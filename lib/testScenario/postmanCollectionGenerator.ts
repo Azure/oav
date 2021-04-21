@@ -1,10 +1,13 @@
 import { inject, injectable } from "inversify";
 import { TYPES } from "../inversifyUtils";
+import { BlobUploader, TestScenarioBlobUploaderOption } from "./blobUploader";
 import { VariableEnv } from "./variableEnv";
 import { TestResourceLoader, TestResourceLoaderOption } from "./testResourceLoader";
 import { PostmanCollectionRunnerClient } from "./postmanCollectionRunnerClient";
 import { TestScenarioRunner } from "./testScenarioRunner";
-export interface PostmanCollectionGeneratorOption extends TestResourceLoaderOption {
+export interface PostmanCollectionGeneratorOption
+  extends TestResourceLoaderOption,
+    TestScenarioBlobUploaderOption {
   name: string;
   fileRoot: string;
   swaggerFilePaths: string[];
@@ -21,7 +24,8 @@ export class PostmanCollectionGenerator {
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
   constructor(
     @inject(TYPES.opts) private opt: PostmanCollectionGeneratorOption,
-    private testResourceLoader: TestResourceLoader
+    private testResourceLoader: TestResourceLoader,
+    private blobUploader: BlobUploader
   ) {
     this.env = new VariableEnv();
     this.env.setBatch(this.opt.env);
@@ -36,12 +40,17 @@ export class PostmanCollectionGenerator {
         );
       }
     }
+    //Use index to avoid overwrite newman report
+    let index = 0;
     for (const testScenario of testDef.testScenarios) {
       const client = new PostmanCollectionRunnerClient(
-        `${this.opt.name}`,
+        `${this.opt.name}-${index}`,
         this.testResourceLoader.jsonLoader,
         this.env,
-        this.opt.testDef
+        this.blobUploader,
+        this.opt.testDef,
+        undefined,
+        this.opt.enableBlobUploader
       );
       const runner = new TestScenarioRunner({
         jsonLoader: this.testResourceLoader.jsonLoader,
@@ -55,11 +64,12 @@ export class PostmanCollectionGenerator {
         this.longRunningOperationOrderUpdate(client, i);
       }
       if (this.opt.generateCollection) {
-        client.writeCollectionToJson(this.opt.outputFolder);
+        await client.writeCollectionToJson(this.opt.outputFolder);
       }
       if (this.opt.runCollection) {
         await client.runCollection();
       }
+      index++;
     }
   }
 
