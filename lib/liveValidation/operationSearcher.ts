@@ -1,11 +1,17 @@
 import { ParsedUrlQuery } from "querystring";
 import { LiveValidationError } from "../models";
-import { LowerHttpMethods, Operation, SwaggerSpec } from "../swagger/swaggerTypes";
+import {
+  lowerHttpMethods,
+  LowerHttpMethods,
+  Operation,
+  SwaggerSpec,
+} from "../swagger/swaggerTypes";
 import { RegExpWithKeys } from "../transform/pathRegexTransformer";
 import { traverseSwagger } from "../transform/traverseSwagger";
 import {
   ErrorCodes,
   knownTitleToResourceProviders,
+  multipleResourceProvider,
   unknownApiVersion,
   unknownResourceProvider,
 } from "../util/constants";
@@ -26,15 +32,15 @@ interface PotentialOperationsResult {
   readonly reason?: LiveValidationError;
 }
 
-// Key http method, e.g. get
-type ApiVersion = Map<LowerHttpMethods, Operation[]>;
-
-// Key api-version, e.g. 2020-01-01
-type Provider = Map<string, ApiVersion>;
+interface CacheEntry {
+  fullMatchOps?: Operation[];
+  extendMatchOps?: Operation[];
+  paramOnlyMatchOps?: Operation[];
+}
 
 export class OperationSearcher {
-  // Key provider, e.g. Microsoft.ApiManagement
-  public readonly cache = new Map<string, Provider>();
+  // Key from getOperationCacheKey()
+  public readonly cache = new Map<string, CacheEntry>();
 
   public constructor(
     private logging: (
@@ -46,40 +52,26 @@ export class OperationSearcher {
   ) {}
 
   public addSpecToCache(spec: SwaggerSpec) {
+    const specProvider = getProviderFromSpecPath(spec._filePath);
+
     traverseSwagger(spec, {
-      onOperation: (operation, path, method) => {
-        const httpMethod = method.toLowerCase() as LowerHttpMethods;
+      onPath: (path) => {
         const pathObject = path;
         const pathStr = pathObject._pathTemplate;
         let apiVersion = spec.info.version;
         let provider = getProviderFromPathTemplate(pathStr);
 
-        const addOperationToCache = () => {
-          let apiVersions = this.cache.get(provider!);
-          if (apiVersions === undefined) {
-            apiVersions = new Map();
-            this.cache.set(provider!, apiVersions);
-          }
-
-          let allMethods = apiVersions.get(apiVersion);
-          if (allMethods === undefined) {
-            allMethods = new Map();
-            apiVersions.set(apiVersion, allMethods);
-          }
-
-          let operationsForHttpMethod = allMethods.get(httpMethod);
-          if (operationsForHttpMethod === undefined) {
-            operationsForHttpMethod = [];
-            allMethods.set(httpMethod, operationsForHttpMethod);
-          }
-
-          operationsForHttpMethod.push(operation);
-        };
-
-        this.logging(
-          `${apiVersion}, ${operation.operationId}, ${pathStr}, ${httpMethod}`,
-          LiveValidatorLoggingLevels.debug
-        );
+        if (provider === undefined) {
+          provider = unknownResourceProvider;
+        } else if (provider.startsWith("{") && provider.endsWith("}")) {
+          provider = multipleResourceProvider;
+        } else if (provider !== specProvider) {
+          this.logging(
+            `Provider in path mismatch with spec path: ${pathStr} ${spec._filePath}`,
+            LiveValidatorLoggingLevels.error
+          );
+        }
+        provider = provider.toUpperCase();
 
         if (!apiVersion) {
           this.logging(
@@ -90,26 +82,51 @@ export class OperationSearcher {
         }
         apiVersion = apiVersion.toLowerCase();
 
-        if (!provider) {
-          const title = spec.info.title;
+        let targetSlot: keyof CacheEntry = "fullMatchOps";
+        if (path._pathRegex._hasMultiPathParam) {
+          targetSlot = "extendMatchOps";
+          if (path._pathRegex._keys.length === 1) {
+            let slashCount = 0;
+            for (let idx = 0; idx < path._pathTemplate.length; ++idx) {
+              if (path._pathTemplate[idx] === "/") {
+                slashCount++;
+              }
+            }
+            if (slashCount === 1) {
+              targetSlot = "paramOnlyMatchOps";
+            }
+          }
+        }
 
-          // Whitelist lookups: Look up knownTitleToResourceProviders
-          // Putting the provider namespace onto operation for future use
-          if (title && knownTitleToResourceProviders[title]) {
-            operation.provider = knownTitleToResourceProviders[title];
+        for (const m of Object.keys(path)) {
+          const httpMethod = m as LowerHttpMethods;
+          const operation = path[httpMethod];
+          if (
+            !lowerHttpMethods.includes(httpMethod as LowerHttpMethods) ||
+            operation === undefined
+          ) {
+            continue;
           }
 
-          // Put the operation into 'Microsoft.Unknown' RPs
-          provider = unknownResourceProvider;
+          operation.provider = specProvider;
+          const cacheKey = getOperationCacheKey(provider, apiVersion, httpMethod);
+          let cacheEntry = this.cache.get(cacheKey);
+          if (cacheEntry === undefined) {
+            cacheEntry = {};
+            this.cache.set(cacheKey, cacheEntry);
+          }
+
+          if (cacheEntry[targetSlot] === undefined) {
+            cacheEntry[targetSlot] = [operation];
+          } else {
+            cacheEntry[targetSlot]!.push(operation);
+          }
+
           this.logging(
-            `Unable to find provider for path : "${pathObject._pathTemplate}". ` +
-              `Bucketizing into provider: "${provider}"`,
+            `${apiVersion}, ${operation.operationId}, ${pathStr}, ${httpMethod}`,
             LiveValidatorLoggingLevels.debug
           );
         }
-        provider = provider.toLowerCase();
-
-        addOperationToCache();
       },
     });
   }
@@ -124,6 +141,11 @@ export class OperationSearcher {
     apiVersion: string;
   } {
     const requestInfo = { ...info };
+    let potentialOperations: PotentialOperationsResult;
+
+    if (requestInfo.providerNamespace === unknownResourceProvider) {
+      potentialOperations 
+    }
     const searchOperation = () => {
       const operations = this.getPotentialOperations(requestInfo);
       if (operations.reason !== undefined) {
@@ -136,17 +158,16 @@ export class OperationSearcher {
       }
       return operations;
     };
-    let potentialOperations = searchOperation();
     const firstReason = potentialOperations.reason;
 
     if (potentialOperations!.matches.length === 0) {
       this.logging(
-        `Fallback to ${unknownResourceProvider} -> ${unknownApiVersion}`,
+        `Fallback to ${unknownResourceProvider} -> ${requestInfo.apiVersion}`,
         LiveValidatorLoggingLevels.debug,
         "Oav.OperationSearcher.search",
         requestInfo
       );
-      requestInfo.apiVersion = unknownApiVersion;
+      requestInfo.providerNamespace = unknownResourceProvider;
       potentialOperations = searchOperation();
     }
 
@@ -272,6 +293,14 @@ export class OperationSearcher {
   }
 }
 
+const getOperationCacheKey = (
+  resourceProvider: string,
+  apiVersion: string,
+  httpMethod: LowerHttpMethods
+) => {
+  return `${resourceProvider}|${apiVersion}|${httpMethod}`;
+};
+
 /**
  * Gets provider namespace from the given path. In case of multiple, last one will be returned.
  * @param {string} pathStr The path of the operation.
@@ -308,7 +337,7 @@ export function getProviderFromPathTemplate(pathStr?: string | null): string | u
 
   return result;
 }
-const providerRegEx = new RegExp("/providers/(:?[^{/]+)", "gi");
+const providerRegEx = new RegExp("/providers/(:?[^/]+)", "gi");
 
 export function getProviderFromSpecPath(specPath: string): string | undefined {
   const match = providerInSpecPathRegEx.exec(specPath);
@@ -370,3 +399,28 @@ const getMatchedOperations = (
     ? result
     : multiParamResult;
 };
+
+const getMatchedOperationsInCacheEntry = (host: string, pathStr: string, cacheEntry: CacheEntry, query?: ParsedUrlQuery): OperationMatch[] => {
+  if (cacheEntry.fullMatchOps !== undefined) {
+    const result = getMatchedOperations(host, pathStr, cacheEntry.fullMatchOps, query);
+    if (result.length > 0) {
+      return result;
+    }
+  }
+
+  if (cacheEntry.extendMatchOps !== undefined) {
+    const result = getMatchedOperations(host, pathStr, cacheEntry.extendMatchOps, query);
+    if (result.length > 0) {
+      return result;
+    }
+  }
+
+  if (cacheEntry.paramOnlyMatchOps !== undefined) {
+    const result = getMatchedOperations(host, pathStr, cacheEntry.paramOnlyMatchOps, query);
+    if (result.length > 0) {
+      return result;
+    }
+  }
+
+  return [];
+}

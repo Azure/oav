@@ -35,7 +35,10 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
   console.log("input-file:");
   console.log(swaggerFilePaths);
 
-  const generator = StaticTestScenarioGenerator.create({ swaggerFilePaths: swaggerFilePaths });
+  const generator = StaticTestScenarioGenerator.create({
+    swaggerFilePaths: swaggerFilePaths,
+    tag: autorestConfig.tag,
+  });
 
   await generator.initialize();
 

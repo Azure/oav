@@ -716,10 +716,7 @@ export const parseValidationRequest = (
 
     // Provider would be provider found from the path or Microsoft.Unknown
     providerNamespace = providerNamespace || C.unknownResourceProvider;
-    if (providerNamespace === C.unknownResourceProvider) {
-      apiVersion = C.unknownApiVersion;
-    }
-    providerNamespace = providerNamespace.toLowerCase();
+    providerNamespace = providerNamespace.toUpperCase();
     apiVersion = apiVersion.toLowerCase();
     queryStr = queryObject;
     requestMethod = requestMethod.toLowerCase();

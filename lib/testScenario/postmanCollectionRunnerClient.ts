@@ -1,5 +1,4 @@
 import path from "path";
-import fs from "fs";
 import newman from "newman";
 import {
   VariableScope,
@@ -17,7 +16,12 @@ import {
   ItemDefinition,
 } from "postman-collection";
 
+import { injectable } from "inversify";
 import { JsonLoader } from "../swagger/jsonLoader";
+import { FileLoader } from "./../swagger/fileLoader";
+import { NewmanReportAnalyzer, NewmanReportAnalyzerOption } from "./postmanReportAnalyzer";
+import { inversifyGetInstance } from "./../inversifyUtils";
+import { BlobUploader } from "./blobUploader";
 import { PostmanTestScript, TestScriptType } from "./postmanTestScript";
 import { ArmTemplate, TestStepArmTemplateDeployment, TestStepRestCall } from "./testResourceTypes";
 import {
@@ -28,8 +32,21 @@ import {
 } from "./testScenarioRunner";
 import { ReflectiveVariableEnv, VariableEnv } from "./variableEnv";
 import { typeToDescription } from "./postmanItemTypes";
-import { generatedGet, lroPollingUrl, generatedPrefix } from "./postmanItemNaming";
+import {
+  generatedGet,
+  lroPollingUrl,
+  generatedPostmanItem,
+  defaultCollectionFileName,
+  defaultEnvFileName,
+  defaultNewmanReport,
+} from "./defaultNaming";
 
+export interface PostmanCollectionGeneratorOption {
+  enableBlobUploader: boolean;
+  env: VariableEnv;
+  testScenarioFilePath?: string;
+}
+@injectable()
 export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
   public collection: Collection;
   public collectionEnv: VariableScope;
@@ -39,8 +56,10 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     private name: string,
     private jsonLoader: JsonLoader,
     private env: VariableEnv,
+    private blobUploader: BlobUploader,
     private testScenarioFilePath?: string,
-    private reportOutputFolder: string = path.resolve(process.cwd(), "newman")
+    private reportOutputFolder: string = path.resolve(process.cwd(), "newman"),
+    private enableBlobUploader: boolean = false
   ) {
     this.collection = new Collection();
     //TODO: Add testScenarioFilePath as metadata
@@ -107,7 +126,6 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
         },
       })
     );
-    // delete resource group is long running operation
     this.addAsLongRunningOperationItem(item);
   }
 
@@ -168,7 +186,6 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     item.request.addHeader(contentType);
     item.request.addHeader(authorizationHeader);
 
-    // store example variable. generate auto validation
     this.addTestScript(item);
     item.request.url = new Url({
       path: pathEnv.resolveString(step.operation._path._pathTemplate, "{", "}"),
@@ -323,14 +340,27 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     }
   }
 
-  public writeCollectionToJson(outputFolder: string) {
-    const collectionPath = path.resolve(outputFolder, `${this.name}_collection.json`);
-    const envPath = path.resolve(outputFolder, `${this.name}_env.json`);
-    fs.writeFileSync(collectionPath, JSON.stringify(this.collection.toJSON(), null, 2));
+  public async writeCollectionToJson(outputFolder: string) {
+    const collectionPath = path.resolve(outputFolder, `${defaultCollectionFileName(this.name)}`);
+    const envPath = path.resolve(outputFolder, `${defaultEnvFileName(this.name)}`);
+    const fileLoader: FileLoader = inversifyGetInstance(FileLoader, { checkUnderFileRoot: false });
+    await fileLoader.writeFile(collectionPath, JSON.stringify(this.collection.toJSON(), null, 2));
     const env = this.collectionEnv.toJSON();
     env.name = this.name + "_env";
     env._postman_variable_scope = "environment";
-    fs.writeFileSync(envPath, JSON.stringify(env, null, 2));
+    await fileLoader.writeFile(envPath, JSON.stringify(env, null, 2));
+
+    await this.blobUploader.uploadFile(
+      "postmancollection",
+      `${defaultCollectionFileName(this.name)}`,
+      collectionPath
+    );
+
+    await this.blobUploader.uploadFile(
+      "postmancollection",
+      `${defaultEnvFileName(this.name)}`,
+      envPath
+    );
 
     console.log("\ngenerate collection successfully!");
     console.log(`Postman collection: '${collectionPath}'. Postman env: '${envPath}' `);
@@ -339,20 +369,36 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
 
   public async runCollection() {
     const reportExportPath = path.resolve(this.reportOutputFolder, `${this.name}.json`);
-    newman.run(
-      {
-        collection: this.collection,
-        environment: this.collectionEnv,
-        reporters: ["cli", "json"],
-        reporter: { json: { export: reportExportPath } },
-      },
-      function (err, _summary) {
-        if (err) {
-          console.log(`collection run failed. ${err}`);
+    newman
+      .run(
+        {
+          collection: this.collection,
+          environment: this.collectionEnv,
+          reporters: ["cli", "json"],
+          reporter: { json: { export: reportExportPath } },
+        },
+        function (err, _summary) {
+          if (err) {
+            console.log(`collection run failed. ${err}`);
+          }
+          console.log("collection run complete!");
         }
-        console.log("collection run complete!");
-      }
-    );
+      )
+      .on("done", async (_err, _summary) => {
+        if (this.enableBlobUploader) {
+          await this.blobUploader.uploadFile(
+            "newmanreport",
+            `${defaultNewmanReport(this.name)}`,
+            reportExportPath
+          );
+          const opts: NewmanReportAnalyzerOption = {
+            newmanReportFilePath: reportExportPath,
+            enableUploadBlob: this.enableBlobUploader,
+          };
+          const reportAnalyzer = inversifyGetInstance(NewmanReportAnalyzer, opts);
+          await reportAnalyzer.analyze();
+        }
+      });
   }
 
   private generatedGetOperationItem(
@@ -362,7 +408,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     prevMethod: string = "put"
   ): Item {
     const item = new Item({
-      name: `${generatedPrefix(generatedGet(name))}`,
+      name: `${generatedPostmanItem(generatedGet(name))}`,
       request: {
         method: "get",
         url: url,
@@ -384,11 +430,11 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
 
   public longRunningOperationItem(initialItem: Item): Item[] {
     const ret: Item[] = [];
-    const pollerItemName = generatedPrefix(initialItem.name + "_poller");
+    const pollerItemName = generatedPostmanItem(initialItem.name + "_poller");
     const pollerItem = new Item({
       name: pollerItemName,
       request: {
-        url: `{{${initialItem.name}_polling_url}}`,
+        url: `{{${lroPollingUrl(initialItem.name)}}}`,
         method: "get",
         header: [{ key: "Authorization", value: "Bearer {{bearerToken}}" }],
       },
@@ -448,6 +494,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     ret.events.add(event);
     return ret;
   }
+
   public aadAuthAccessTokenItem(env: VariableEnv): Item {
     const urlVariables: VariableDefinition[] = [{ key: "tenantId", value: "{{tenantId}}" }];
     const ret = new Item({
@@ -482,7 +529,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
           type: "text/javascript",
           exec: this.postmanTestScript.generateScript({
             name: "AAD auth should be successful",
-            types: ["DetailResponseLog", "ResponseDataAssertion", "OverwriteVariables"],
+            types: ["ResponseDataAssertion", "OverwriteVariables"],
             variables: new Map<string, string>([["bearerToken", "access_token"]]),
           }),
         },

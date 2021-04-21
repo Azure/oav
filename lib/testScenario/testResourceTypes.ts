@@ -448,6 +448,7 @@ export interface RawReport {
   executions: RawExecution[];
   variables: any;
   testScenarioName?: string;
+  metadata: any;
 }
 
 export interface RawExecution {
@@ -466,6 +467,10 @@ export interface RawResponse {
   statusCode: number;
   headers: { [key: string]: any };
   body: string;
+}
+
+export interface TestResources {
+  ["test-resources"]: Array<{ [key: string]: string }>;
 }
 
 export const TestDefinitionSchema: Schema & {

@@ -152,7 +152,8 @@ export const EnvironmentVariables = {
   AzureResourcegroup: "AZURE_RESOURCE_GROUP",
 };
 
-export const unknownResourceProvider = "microsoft.unknown";
+export const unknownResourceProvider = "MICROSOFT.UNKNOWN";
+export const multipleResourceProvider = "MICROSOFT.MULTIPLE_PROVIDER_MATCH";
 export const unknownApiVersion = "unknown-api-version";
 export const unknownOperationId = "unknownOperationId";
 export const unknownResourceType = "unknownResourceType";
