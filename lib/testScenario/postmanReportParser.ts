@@ -19,6 +19,7 @@ interface NewmanReport {
 
 interface Run {
   executions: NewmanExecution[];
+  timings: { started: number; completed: number; responseAverage: number };
 }
 
 interface NewmanExecution {
@@ -40,7 +41,7 @@ export class NewmanReportParser {
     @inject(TYPES.opts) private opts: NewmanReportParserOption,
     private fileLoader: FileLoader
   ) {
-    this.report = { variables: {}, executions: [], metadata: {} };
+    this.report = { variables: {}, executions: [], timings: {}, metadata: {} };
   }
 
   public async generateRawReport() {
@@ -50,6 +51,7 @@ export class NewmanReportParser {
     for (const it of report.run.executions) {
       this.report.executions.push(this.generateExampleItem(it));
     }
+    this.report.timings = report.run.timings;
     this.report.variables = this.parseVariables(report.environment.values);
     if (this.opts.reportOutputFilePath !== undefined) {
       await this.fileLoader.writeFile(

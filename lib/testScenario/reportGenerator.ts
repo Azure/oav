@@ -139,6 +139,8 @@ export class ReportGenerator {
   public async generateExampleQualityReport(rawReport: RawReport) {
     await this.initialize();
     const variables = rawReport.variables;
+    this.swaggerExampleQualityResult.testScenario.startTime = rawReport.timings.started;
+    this.swaggerExampleQualityResult.testScenario.endTime = rawReport.timings.completed;
     this.swaggerExampleQualityResult.testScenario.subscriptionId = variables.subscriptionId;
     for (const it of rawReport.executions) {
       if (it.annotation === undefined) {
@@ -191,10 +193,7 @@ export class ReportGenerator {
           idx,
           this.opts.blobConnectionString?.length
         );
-        //blobPath should follow <ResourceProvider>/<api-version>/<test-scenario-file-name>.json pattern
         await this.blobUploader.uploadFile("report", blobPath, this.opts.reportOutputFilePath);
-        // upload recording here. pattern. <ResourceProvider>/<api-version>/<test-scenario-file-name>/<correlationId>.json
-        // payload path.
 
         for (const [correlationId, v] of this.recording) {
           const payloadBlobPath = `${path.dirname(blobPath)}/${correlationId}.json`;

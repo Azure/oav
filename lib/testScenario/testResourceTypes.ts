@@ -447,6 +447,7 @@ export type TestDefinitionFile = TransformRaw<
 >;
 export interface RawReport {
   executions: RawExecution[];
+  timings: any;
   variables: any;
   testScenarioName?: string;
   metadata: any;
