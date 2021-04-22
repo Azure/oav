@@ -54,6 +54,7 @@ interface TestScenarioResult {
     runId?: string;
     repository?: string;
     branch?: string;
+    commitHash?: string;
   };
   stepResult: { [step: string]: StepResult };
 }
@@ -126,6 +127,7 @@ export class ReportGenerator {
         fileRoot: this.fileRoot,
         repository: process.env.SPEC_REPOSITORY,
         branch: process.env.SPEC_BRANCH,
+        commitHash: process.env.COMMIT_HASH,
       },
       stepResult: {},
     };

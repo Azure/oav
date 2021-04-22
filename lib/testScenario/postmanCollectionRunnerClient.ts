@@ -15,7 +15,6 @@ import {
   VariableDefinition,
   ItemDefinition,
 } from "postman-collection";
-import * as uuid from "uuid";
 
 import { injectable } from "inversify";
 import { JsonLoader } from "../swagger/jsonLoader";
@@ -47,6 +46,23 @@ export interface PostmanCollectionGeneratorOption {
   env: VariableEnv;
   testScenarioFilePath?: string;
 }
+
+function makeid(length: number): string {
+  let text = "";
+  const possible = "abcdefghijklmnopqrstuvwxyz0123456789";
+
+  for (let i = 0; i < length; i++)
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+  return text;
+}
+
+export const generateRunId = (): string => {
+  const today = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+  const id = makeid(5);
+  return today + "-" + id;
+};
+
 @injectable()
 export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
   public collection: Collection;
@@ -61,10 +77,9 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     private testScenarioFilePath?: string,
     private reportOutputFolder: string = path.resolve(process.cwd(), "newman"),
     private enableBlobUploader: boolean = false,
-    private runId: string = uuid.v4()
+    private runId: string = generateRunId()
   ) {
     this.collection = new Collection();
-    //TODO: Add testScenarioFilePath as metadata
     this.collection.name = name;
     this.collection.id = this.runId;
     this.collection.describe(this.testScenarioFilePath || this.name);
@@ -386,7 +401,10 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
           reporters: ["cli", "json"],
           reporter: { json: { export: reportExportPath } },
         },
-        function (err, _summary) {
+        function (err, summary) {
+          if (summary.run.failures.length > 0) {
+            process.exitCode = 1;
+          }
           if (err) {
             console.log(`collection run failed. ${err}`);
           }

@@ -3,7 +3,7 @@ import { TYPES } from "../inversifyUtils";
 import { BlobUploader, TestScenarioBlobUploaderOption } from "./blobUploader";
 import { VariableEnv } from "./variableEnv";
 import { TestResourceLoader, TestResourceLoaderOption } from "./testResourceLoader";
-import { PostmanCollectionRunnerClient } from "./postmanCollectionRunnerClient";
+import { generateRunId, PostmanCollectionRunnerClient } from "./postmanCollectionRunnerClient";
 import { TestScenarioRunner } from "./testScenarioRunner";
 export interface PostmanCollectionGeneratorOption
   extends TestResourceLoaderOption,
@@ -42,7 +42,9 @@ export class PostmanCollectionGenerator {
     }
     //Use index to avoid overwrite newman report
     let index = 0;
+    const runId = generateRunId();
     for (const testScenario of testDef.testScenarios) {
+      //TODO: replace index with testScenarioName
       const client = new PostmanCollectionRunnerClient(
         `${this.opt.name}/${index}`,
         this.testResourceLoader.jsonLoader,
@@ -50,7 +52,8 @@ export class PostmanCollectionGenerator {
         this.blobUploader,
         this.opt.testDef,
         this.opt.outputFolder,
-        this.opt.enableBlobUploader
+        this.opt.enableBlobUploader,
+        runId
       );
       const runner = new TestScenarioRunner({
         jsonLoader: this.testResourceLoader.jsonLoader,
