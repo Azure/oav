@@ -24,6 +24,7 @@ export class DataMasker {
     "password",
     "connectionString",
     "accessToken",
+    "token",
     "sas",
   ];
   public maskValues: string[] = [];
