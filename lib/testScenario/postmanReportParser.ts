@@ -11,7 +11,7 @@ import { FileLoader, FileLoaderOption } from "./../swagger/fileLoader";
 import { TYPES } from "./../inversifyUtils";
 import { RawExecution, RawReport, RawRequest, RawResponse } from "./testResourceTypes";
 
-interface NewmanReport {
+export interface NewmanReport {
   run: Run;
   environment: any;
   collection: any;

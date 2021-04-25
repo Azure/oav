@@ -7,11 +7,13 @@ import { inject, injectable } from "inversify";
 import { cloneDeep } from "@azure-tools/openapi-tools-common";
 import { TYPES } from "../inversifyUtils";
 import { setDefaultOpts } from "./../swagger/loader";
+
+type MaskFunction = (content?: string) => string;
 export interface DataMaskerOption {
-  maskValue(string: string): string;
+  maskValue: MaskFunction;
 }
 
-export const defaultMaskValue = (_content: string): string => {
+export const defaultMaskValue = (_content?: string): string => {
   return "<masked>";
 };
 
@@ -25,6 +27,9 @@ export class DataMasker {
     "sas",
   ];
   public maskValues: string[] = [];
+  public maskValuePatterns: RegExp[] = [
+    new RegExp(/Bearer\s[a-zA-Z0-9\-_]+?\.[a-zA-Z0-9\-_]+?\.([a-zA-Z0-9\-_]+)?/),
+  ];
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
   constructor(@inject(TYPES.opts) private opts: DataMaskerOption) {
     setDefaultOpts(this.opts, { maskValue: defaultMaskValue });
@@ -36,6 +41,10 @@ export class DataMasker {
 
   public addMaskedKeys(secretKeys: string[]) {
     this.maskKeys = this.maskKeys.concat(secretKeys);
+  }
+
+  public addMaskedValuePatterns(pattern: RegExp[]) {
+    this.maskValuePatterns = this.maskValuePatterns.concat(pattern);
   }
 
   public jsonStringify(obj: any): string {
@@ -76,7 +85,10 @@ export class DataMasker {
     if (typeof key !== "string") {
       return false;
     }
-    return this.maskKeys.some((it) => key.toLowerCase().includes(it));
+    return (
+      this.maskKeys.some((it) => key.toLowerCase().includes(it)) ||
+      this.maskValuePatterns.some((it) => it.test(key))
+    );
   }
 
   public maybeSecretValue(value: any): boolean {
@@ -93,16 +105,22 @@ export class DataMasker {
     for (const it of this.maskValues) {
       ret = replaceAll(ret, it, this.opts.maskValue(it));
     }
+
+    for (const it of this.maskValuePatterns) {
+      ret = replaceAll(ret, it, this.opts.maskValue());
+    }
     return ret;
   }
 }
 
-export const replaceAll = (content: string, matchStr: string, to: string): string => {
-  let ret = content;
-  let idx = 0;
-  do {
-    idx = ret.indexOf(matchStr);
-    ret = ret.replace(matchStr, to);
-  } while (idx !== -1);
-  return ret;
-};
+function escapeRegExp(string: string) {
+  return string.replace(/[.*+\-?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
+}
+
+function replaceAll(str: string, find: string | RegExp, replace: string): string {
+  if (typeof find === "string") {
+    return str.replace(new RegExp(escapeRegExp(find), "g"), replace);
+  } else {
+    return str.replace(new RegExp(find, "g"), replace);
+  }
+}

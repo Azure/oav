@@ -43,6 +43,7 @@ import {
   defaultEnvFileName,
   defaultNewmanReport,
 } from "./defaultNaming";
+import { NewmanReport } from "./postmanReportParser";
 
 export interface PostmanCollectionRunnerClientOption extends BlobUploaderOption, JsonLoaderOption {
   name: string;
@@ -66,10 +67,23 @@ function makeid(length: number): string {
 }
 
 export const generateRunId = (): string => {
-  const today = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+  const today = new Date();
+  const yyyy = today.getFullYear().toString();
+  const MM = pad(today.getMonth() + 1, 2);
+  const dd = pad(today.getDate(), 2);
+  const hh = pad(today.getHours(), 2);
+  const mm = pad(today.getMinutes(), 2);
   const id = makeid(5);
-  return today + "-" + id;
+  return yyyy + MM + dd + hh + mm + "-" + id;
 };
+
+function pad(number: number, length: number) {
+  let str = "" + number;
+  while (str.length < length) {
+    str = "0" + str;
+  }
+  return str;
+}
 
 @injectable()
 export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
@@ -447,8 +461,17 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
           }
           this.dataMasker.addMaskedValues(values);
           this.dataMasker.addMaskedKeys(keys);
-          // read content and upload. mask newman report
-          const newmanReport = JSON.parse(await this.fileLoader.load(reportExportPath));
+          // read content and upload. mask newman report.
+          const newmanReport = JSON.parse(
+            await this.fileLoader.load(reportExportPath)
+          ) as NewmanReport;
+
+          // add mask environment secret value
+          for (const item of newmanReport.environment.values) {
+            if (this.dataMasker.maybeSecretKey(item.key)) {
+              this.dataMasker.addMaskedValues([item.value]);
+            }
+          }
           await this.blobUploader.uploadContent(
             "newmanreport",
             `${defaultNewmanReport(this.opts.name, this.opts.runId)}`,
