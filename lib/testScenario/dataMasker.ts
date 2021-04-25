@@ -114,11 +114,14 @@ export class DataMasker {
   }
 }
 
+/* ref: https://stackoverflow.com/questions/1144783/how-to-replace-all-occurrences-of-a-string-in-javascript
+ * doc: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#escaping
+ */
 function escapeRegExp(string: string) {
   return string.replace(/[.*+\-?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
 }
 
-function replaceAll(str: string, find: string | RegExp, replace: string): string {
+export function replaceAll(str: string, find: string | RegExp, replace: string): string {
   if (typeof find === "string") {
     return str.replace(new RegExp(escapeRegExp(find), "g"), replace);
   } else {
