@@ -16,12 +16,15 @@ import {
   ItemDefinition,
 } from "postman-collection";
 
-import { injectable } from "inversify";
-import { JsonLoader } from "../swagger/jsonLoader";
+import { inject, injectable } from "inversify";
+import { JsonLoader, JsonLoaderOption } from "../swagger/jsonLoader";
+import { setDefaultOpts } from "../swagger/loader";
+import { SwaggerAnalyzer } from "./swaggerAnalyzer";
+import { DataMasker } from "./dataMasker";
 import { FileLoader } from "./../swagger/fileLoader";
 import { NewmanReportAnalyzer, NewmanReportAnalyzerOption } from "./postmanReportAnalyzer";
-import { inversifyGetInstance } from "./../inversifyUtils";
-import { BlobUploader } from "./blobUploader";
+import { inversifyGetInstance, TYPES } from "./../inversifyUtils";
+import { BlobUploader, BlobUploaderOption } from "./blobUploader";
 import { PostmanTestScript, TestScriptType } from "./postmanTestScript";
 import { ArmTemplate, TestStepArmTemplateDeployment, TestStepRestCall } from "./testResourceTypes";
 import {
@@ -41,10 +44,15 @@ import {
   defaultNewmanReport,
 } from "./defaultNaming";
 
-export interface PostmanCollectionGeneratorOption {
+export interface PostmanCollectionRunnerClientOption extends BlobUploaderOption, JsonLoaderOption {
+  name: string;
   enableBlobUploader: boolean;
   env: VariableEnv;
   testScenarioFilePath?: string;
+  reportOutputFolder?: string;
+  runId: string;
+  jsonLoader?: JsonLoader;
+  swaggerFilePaths?: string[];
 }
 
 function makeid(length: number): string {
@@ -70,19 +78,25 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
   private postmanTestScript: PostmanTestScript;
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
   constructor(
-    private name: string,
-    private jsonLoader: JsonLoader,
-    private env: VariableEnv,
+    @inject(TYPES.opts) private opts: PostmanCollectionRunnerClientOption,
     private blobUploader: BlobUploader,
-    private testScenarioFilePath?: string,
-    private reportOutputFolder: string = path.resolve(process.cwd(), "newman"),
-    private enableBlobUploader: boolean = false,
-    private runId: string = generateRunId()
+    private dataMasker: DataMasker,
+    private swaggerAnalyzer: SwaggerAnalyzer,
+    private fileLoader: FileLoader
   ) {
+    setDefaultOpts(this.opts, {
+      name: "",
+      testScenarioFilePath: "",
+      env: new VariableEnv(),
+      reportOutputFolder: path.resolve(process.cwd(), "newman"),
+      enableBlobUploader: false,
+      runId: generateRunId(),
+      blobConnectionString: process.env.blobConnectionString || "",
+    });
     this.collection = new Collection();
-    this.collection.name = name;
-    this.collection.id = this.runId;
-    this.collection.describe(this.testScenarioFilePath || this.name);
+    this.collection.name = this.opts.name;
+    this.collection.id = this.opts.runId!;
+    this.collection.describe(this.opts.testScenarioFilePath || this.opts.name);
     this.collectionEnv = new VariableScope({});
     this.collectionEnv.set("bearerToken", "<bearerToken>", "string");
     this.postmanTestScript = new PostmanTestScript();
@@ -92,7 +106,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     resourceGroupName: string,
     location: string
   ): Promise<void> {
-    this.auth(this.env);
+    this.auth(this.opts.env);
     const item = new Item({
       name: "createResourceGroup",
       request: {
@@ -166,7 +180,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     const queryParams: QueryParamDefinition[] = [];
     const urlVariables: VariableDefinition[] = [];
     for (const p of step.operation.parameters ?? []) {
-      const param = this.jsonLoader.resolveRefObj(p);
+      const param = this.opts.jsonLoader!.resolveRefObj(p);
       const paramValue = stepEnv.env.get(param.name) || step.requestParameters[param.name];
       if (!this.collectionEnv.has(param.name)) {
         this.collectionEnv.set(param.name, paramValue, typeof step.requestParameters[param.name]);
@@ -361,26 +375,37 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
   public async writeCollectionToJson(outputFolder: string) {
     const collectionPath = path.resolve(
       outputFolder,
-      `${defaultCollectionFileName(this.name, this.runId)}`
+      `${defaultCollectionFileName(this.opts.name, this.opts.runId)}`
     );
-    const envPath = path.resolve(outputFolder, `${defaultEnvFileName(this.name, this.runId)}`);
-    const fileLoader: FileLoader = inversifyGetInstance(FileLoader, { checkUnderFileRoot: false });
-    await fileLoader.writeFile(collectionPath, JSON.stringify(this.collection.toJSON(), null, 2));
+    const envPath = path.resolve(
+      outputFolder,
+      `${defaultEnvFileName(this.opts.name, this.opts.runId)}`
+    );
     const env = this.collectionEnv.toJSON();
-    env.name = this.name + "_env";
+    env.name = this.opts.name + "_env";
     env._postman_variable_scope = "environment";
-    await fileLoader.writeFile(envPath, JSON.stringify(env, null, 2));
+    await this.fileLoader.writeFile(envPath, JSON.stringify(env, null, 2));
+    await this.fileLoader.writeFile(
+      collectionPath,
+      JSON.stringify(this.collection.toJSON(), null, 2)
+    );
 
     await this.blobUploader.uploadFile(
       "postmancollection",
-      `${defaultCollectionFileName(this.name, this.runId)}`,
+      `${defaultCollectionFileName(this.opts.name, this.opts.runId)}`,
       collectionPath
     );
-
-    await this.blobUploader.uploadFile(
+    const values: string[] = [];
+    for (const [k, v] of Object.entries(this.collectionEnv.variables())) {
+      if (this.dataMasker.maybeSecretKey(k)) {
+        values.push(v as string);
+      }
+    }
+    this.dataMasker.addMaskedValues(values);
+    await this.blobUploader.uploadContent(
       "postmancollection",
-      `${defaultEnvFileName(this.name, this.runId)}`,
-      envPath
+      `${defaultEnvFileName(this.opts.name, this.opts.runId)}`,
+      this.dataMasker.jsonStringify(env)
     );
 
     console.log("\ngenerate collection successfully!");
@@ -390,8 +415,8 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
 
   public async runCollection() {
     const reportExportPath = path.resolve(
-      this.reportOutputFolder,
-      `${defaultNewmanReport(this.name, this.runId)}`
+      this.opts.reportOutputFolder!,
+      `${defaultNewmanReport(this.opts.name, this.opts.runId)}`
     );
     newman
       .run(
@@ -412,16 +437,28 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
         }
       )
       .on("done", async (_err, _summary) => {
-        if (this.enableBlobUploader) {
-          await this.blobUploader.uploadFile(
+        if (this.opts.enableBlobUploader) {
+          const keys = await this.swaggerAnalyzer.getAllSecretKey();
+          const values: string[] = [];
+          for (const [k, v] of Object.entries(this.collectionEnv.variables())) {
+            if (this.dataMasker.maybeSecretKey(k)) {
+              values.push(v as string);
+            }
+          }
+          this.dataMasker.addMaskedValues(values);
+          this.dataMasker.addMaskedKeys(keys);
+          // read content and upload. mask newman report
+          const newmanReport = JSON.parse(await this.fileLoader.load(reportExportPath));
+          await this.blobUploader.uploadContent(
             "newmanreport",
-            `${defaultNewmanReport(this.name, this.runId)}`,
-            reportExportPath
+            `${defaultNewmanReport(this.opts.name, this.opts.runId)}`,
+            this.dataMasker.jsonStringify(newmanReport)
           );
           const opts: NewmanReportAnalyzerOption = {
             newmanReportFilePath: reportExportPath,
-            enableUploadBlob: this.enableBlobUploader,
-            runId: this.runId,
+            enableUploadBlob: this.opts.enableBlobUploader,
+            runId: this.opts.runId,
+            swaggerFilePaths: this.opts.swaggerFilePaths,
           };
           const reportAnalyzer = inversifyGetInstance(NewmanReportAnalyzer, opts);
           await reportAnalyzer.analyze();

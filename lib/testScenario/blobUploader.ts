@@ -2,7 +2,7 @@ import { BlobServiceClient } from "@azure/storage-blob";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../inversifyUtils";
 import { setDefaultOpts } from "./../swagger/loader";
-export interface TestScenarioBlobUploaderOption {
+export interface BlobUploaderOption {
   blobConnectionString?: string;
   enableBlobUploader?: boolean;
 }
@@ -13,10 +13,10 @@ type ContainName = "postmancollection" | "newmanreport" | "report" | "payload";
 export class BlobUploader {
   private blobServiceClient?: BlobServiceClient;
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
-  constructor(@inject(TYPES.opts) private opts: TestScenarioBlobUploaderOption) {
+  constructor(@inject(TYPES.opts) private opts: BlobUploaderOption) {
     setDefaultOpts(this.opts, {
       enableBlobUploader: false,
-      blobConnectionString: "",
+      blobConnectionString: process.env.blobConnectionString || "",
     });
     if (opts.enableBlobUploader) {
       this.blobServiceClient = BlobServiceClient.fromConnectionString(

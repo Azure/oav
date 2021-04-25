@@ -1,0 +1,108 @@
+// Copyright (c) 2021 Microsoft Corporation
+//
+// This software is released under the MIT License.
+// https://opensource.org/licenses/MIT
+
+import { inject, injectable } from "inversify";
+import { cloneDeep } from "@azure-tools/openapi-tools-common";
+import { TYPES } from "../inversifyUtils";
+import { setDefaultOpts } from "./../swagger/loader";
+export interface DataMaskerOption {
+  maskValue(string: string): string;
+}
+
+export const defaultMaskValue = (_content: string): string => {
+  return "<masked>";
+};
+
+@injectable()
+export class DataMasker {
+  public maskKeys: string[] = [
+    "client_secret",
+    "password",
+    "connectionString",
+    "accessToken",
+    "sas",
+  ];
+  public maskValues: string[] = [];
+  // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
+  constructor(@inject(TYPES.opts) private opts: DataMaskerOption) {
+    setDefaultOpts(this.opts, { maskValue: defaultMaskValue });
+  }
+
+  public addMaskedValues(secrets: string[]) {
+    this.maskValues = this.maskValues.concat(secrets);
+  }
+
+  public addMaskedKeys(secretKeys: string[]) {
+    this.maskKeys = this.maskKeys.concat(secretKeys);
+  }
+
+  public jsonStringify(obj: any): string {
+    return this.maskString(JSON.stringify(this.maskObject(obj), null, 2));
+  }
+
+  public maskObject(obj: any, addMaskedValue = false): any {
+    const mask = (obj: any) => {
+      for (const k in obj) {
+        if (obj.hasOwnProperty(k) && obj[k] !== null) {
+          if (obj[k].constructor === Object) {
+            mask(obj[k]);
+          } else if (obj[k].constructor === Array) {
+            mask(obj[k]);
+          } else if (typeof obj[k] === "string") {
+            if (this.maybeSecretKey(k)) {
+              if (addMaskedValue) {
+                this.maskValues.push(obj[k]);
+              }
+              obj[k] = this.opts.maskValue(obj[k]);
+            }
+            if (this.maybeSecretValue(obj[k])) {
+              if (addMaskedValue) {
+                this.maskValues.push(obj[k]);
+              }
+              obj[k] = this.opts.maskValue(obj[k]);
+            }
+          }
+        }
+      }
+    };
+    const ret = cloneDeep(obj);
+    mask(ret);
+    return ret;
+  }
+
+  public maybeSecretKey(key: any): boolean {
+    if (typeof key !== "string") {
+      return false;
+    }
+    return this.maskKeys.some((it) => key.toLowerCase().includes(it));
+  }
+
+  public maybeSecretValue(value: any): boolean {
+    // TODO: implement secret pattern value match function here. A new field: valuePatterns
+    // https://dev.azure.com/msazure/One/_git/SecEng-CredScan-SDK?path=%2Fsrc%2FKustoThreatAnalyzer%2FKustoThreatAnalyzer.Core%2FPrefilter%2FPrefilterCore.txt&version=GBCredScanClient_Integration
+    if (typeof value !== "string") {
+      return false;
+    }
+    return this.maskValues.some((it) => value === it);
+  }
+
+  public maskString(content: string): any {
+    let ret = content;
+    for (const it of this.maskValues) {
+      ret = replaceAll(ret, it, this.opts.maskValue(it));
+    }
+    return ret;
+  }
+}
+
+export const replaceAll = (content: string, matchStr: string, to: string): string => {
+  let ret = content;
+  let idx = 0;
+  do {
+    idx = ret.indexOf(matchStr);
+    ret = ret.replace(matchStr, to);
+  } while (idx !== -1);
+  return ret;
+};

@@ -2,7 +2,7 @@ import { JSONPath } from "jsonpath-plus";
 import { inject, injectable } from "inversify";
 import _ from "lodash";
 import { inversifyGetInstance, TYPES } from "../inversifyUtils";
-import { FileLoaderOption } from "../swagger/fileLoader";
+import { FileLoaderOption, FileLoader } from "../swagger/fileLoader";
 import { JsonLoader, JsonLoaderOption } from "../swagger/jsonLoader";
 import { SwaggerLoader, SwaggerLoaderOption } from "../swagger/swaggerLoader";
 import { Path, SwaggerExample, SwaggerSpec } from "../swagger/swaggerTypes";
@@ -73,7 +73,8 @@ export class SwaggerAnalyzer {
   constructor(
     @inject(TYPES.opts) private opts: SwaggerAnalyzerOption,
     public jsonLoader: JsonLoader,
-    private swaggerLoader: SwaggerLoader // private bodyTransformer: BodyTransformer
+    private swaggerLoader: SwaggerLoader,
+    private fileLoader: FileLoader
   ) {
     this.swaggerSpecs = [];
     this.dependencyResult = [];
@@ -180,6 +181,20 @@ export class SwaggerAnalyzer {
       applySpecTransformers(swaggerSpec, this.transformContext);
     }
     applyGlobalTransformers(this.transformContext);
+  }
+
+  public async getAllSecretKey(): Promise<string[]> {
+    let ret: string[] = [];
+    const allXmsSecretsPath = '$..[?(@["x-ms-secret"])]~';
+    for (const swaggerPath of this.opts.swaggerFilePaths ?? []) {
+      const swagger = JSON.parse(await this.fileLoader.load(swaggerPath));
+      const allXmsSecretKeys = JSONPath({
+        path: allXmsSecretsPath,
+        json: swagger,
+      });
+      ret = ret.concat(allXmsSecretKeys);
+    }
+    return ret;
   }
 }
 

@@ -10,6 +10,8 @@ import {
   getApiVersionFromSwaggerFile,
   getProviderFromFilePath,
 } from "../util/utils";
+import { SwaggerAnalyzer } from "./swaggerAnalyzer";
+import { DataMasker } from "./dataMasker";
 import { defaultQualityReportFilePath } from "./defaultNaming";
 import { FileLoader } from "./../swagger/fileLoader";
 import { TYPES } from "./../inversifyUtils";
@@ -26,7 +28,7 @@ import {
 } from "./testResourceTypes";
 import { VariableEnv } from "./variableEnv";
 import { getJsonPatchDiff } from "./diffUtils";
-import { BlobUploader, TestScenarioBlobUploaderOption } from "./blobUploader";
+import { BlobUploader, BlobUploaderOption } from "./blobUploader";
 
 interface GeneratedExample {
   exampleFilePath: string;
@@ -78,7 +80,7 @@ interface HttpError {
 export interface ReportGeneratorOption
   extends NewmanReportParserOption,
     TestResourceLoaderOption,
-    TestScenarioBlobUploaderOption {
+    BlobUploaderOption {
   testDefFilePath: string;
   reportOutputFilePath?: string;
   runId?: string;
@@ -99,7 +101,9 @@ export class ReportGenerator {
     private postmanReportParser: NewmanReportParser,
     private testResourceLoader: TestResourceLoader,
     private fileLoader: FileLoader,
-    private blobUploader: BlobUploader
+    private blobUploader: BlobUploader,
+    private dataMasker: DataMasker,
+    private swaggerAnalyzer: SwaggerAnalyzer
   ) {
     setDefaultOpts(this.opts, {
       newmanReportFilePath: "",
@@ -189,13 +193,26 @@ export class ReportGenerator {
       );
       if (this.opts.enableBlobUploader) {
         const provider = getProviderFromFilePath(this.opts.reportOutputFilePath) || "";
-        console.log(this.opts.reportOutputFilePath);
         const idx = this.opts.reportOutputFilePath.indexOf(provider);
         const blobPath = this.opts.reportOutputFilePath.substr(
           idx,
           this.opts.blobConnectionString?.length
         );
-        await this.blobUploader.uploadFile("report", blobPath, this.opts.reportOutputFilePath);
+        const secretValues: string[] = [];
+        for (const [k, v] of Object.entries(this.rawReport?.variables)) {
+          if (this.dataMasker.maybeSecretKey(k)) {
+            secretValues.push(v as string);
+          }
+        }
+        this.dataMasker.addMaskedValues(secretValues);
+        this.dataMasker.addMaskedKeys(await this.swaggerAnalyzer.getAllSecretKey());
+
+        // mask report here.
+        await this.blobUploader.uploadContent(
+          "report",
+          blobPath,
+          this.dataMasker.jsonStringify(this.swaggerExampleQualityResult)
+        );
 
         for (const [correlationId, v] of this.recording) {
           const payloadBlobPath = `${path.dirname(blobPath)}/${correlationId}.json`;

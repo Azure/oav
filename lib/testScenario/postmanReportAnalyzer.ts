@@ -12,6 +12,7 @@ export interface NewmanReportAnalyzerOption extends NewmanReportParserOption {
   reportOutputFilePath?: string;
   enableUploadBlob?: boolean;
   runId?: string;
+  swaggerFilePaths?: string[];
 }
 
 @injectable()
@@ -25,13 +26,17 @@ export class NewmanReportAnalyzer {
       runId: uuid.v4(),
       newmanReportFilePath: "",
       reportOutputFilePath: defaultQualityReportFilePath(this.opts.newmanReportFilePath),
+      swaggerFilePaths: [],
     });
   }
 
   public async analyze() {
     const rawReport: RawReport = await this.newmanReportParser.generateRawReport();
     const testScenarioFilePath = rawReport.metadata.testScenarioFilePath;
-    const swaggerFilePaths = getSwaggerFilePathsFromTestScenarioFilePath(testScenarioFilePath);
+    const swaggerFilePaths =
+      this.opts.swaggerFilePaths?.length === 0
+        ? getSwaggerFilePathsFromTestScenarioFilePath(testScenarioFilePath)
+        : this.opts.swaggerFilePaths;
     const reportGeneratorOption: ReportGeneratorOption = {
       newmanReportFilePath: this.opts.newmanReportFilePath,
       swaggerFilePaths: swaggerFilePaths,
