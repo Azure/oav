@@ -35,6 +35,8 @@ export {
   RuntimeErrorCode
 } from "./lib/util/validationError"
 
+export { getResourceType, getProvider } from "./lib/util/utils"
+
 // Classes
 export { SpecValidator } from "./lib/validators/specValidator"
 export { ModelValidator } from "./lib/validators/modelValidator"
@@ -49,7 +51,8 @@ export {
   ApiOperationIdentifier,
   RequestResponseLiveValidationResult,
   LiveValidationResult,
-  ValidateOptions
+  ValidateOptions,
+  ValidationRequest
 } from "./lib/validators/liveValidator"
 export { SpecResolver } from "./lib/validators/specResolver"
 export { log } from "./lib/util/logging"
