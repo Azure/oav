@@ -863,14 +863,12 @@ export class LiveValidator {
   private async getSwaggerInitializer(swaggerPath: string): Promise<void> {
     const startTime = Date.now()
     this.logging(`Building cache from: "${swaggerPath}"`, LiveValidatorLoggingLevels.info)
-
-    const validator = new SpecValidator(swaggerPath, null, {
-      isPathCaseSensitive: this.options.isPathCaseSensitive,
-      shouldResolveXmsExamples: false
-    })
-
     try {
       const startTimeLoadSpec = Date.now()
+      const validator = new SpecValidator(swaggerPath, null, {
+        isPathCaseSensitive: this.options.isPathCaseSensitive,
+        shouldResolveXmsExamples: false
+      })
       const api = await validator.initialize()
       const elapsedTimeLoadSpec = Date.now() - startTimeLoadSpec
       this.logging(
