@@ -1,5 +1,9 @@
 # Changelog
 
+## 04/26/2021 0.23.2
+
+- Add more logging entries.
+
 ## 04/01/2021 0.23.1
 
 - Upgrade yasway to support extension resource operation match in live validator.

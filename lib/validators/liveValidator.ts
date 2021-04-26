@@ -195,6 +195,7 @@ export class LiveValidator {
     }
 
     this.options = ops as LiveValidatorOptions
+    this.logging(`Creating livevalidator with options:${JSON.stringify(this.options)}`)
   }
 
   /**
@@ -219,7 +220,7 @@ export class LiveValidator {
     const elapsedTime = Date.now() - startTime
     this.logging(
       `Cache initialization complete with DurationInMs:${elapsedTime}.`,
-      LiveValidatorLoggingLevels.debug,
+      LiveValidatorLoggingLevels.info,
       "Oav.liveValidator.initialize"
     )
   }
@@ -290,7 +291,7 @@ export class LiveValidator {
     const elapsedTime = Date.now() - startTime
     this.logging(
       `DurationInMs:${elapsedTime}`,
-      LiveValidatorLoggingLevels.debug,
+      LiveValidatorLoggingLevels.info,
       "Oav.liveValidator.validateLiveRequest",
       validationRequest
     )
@@ -404,7 +405,7 @@ export class LiveValidator {
     const elapsedTime = Date.now() - startTime
     this.logging(
       `DurationInMs:${elapsedTime}`,
-      LiveValidatorLoggingLevels.debug,
+      LiveValidatorLoggingLevels.info,
       "Oav.liveValidator.validateLiveResponse",
       validationRequest
     )
@@ -546,7 +547,7 @@ export class LiveValidator {
             code = C.ErrorCodes.OperationNotFoundInCacheWithVerb
             this.logging(
               `${msg} with requestUrl ${requestInfo.requestUrl}`,
-              LiveValidatorLoggingLevels.debug,
+              LiveValidatorLoggingLevels.info,
               "Oav.liveValidator.getPotentialOperations",
               requestInfo
             )
@@ -558,7 +559,7 @@ export class LiveValidator {
           code = C.ErrorCodes.OperationNotFoundInCacheWithApi
           this.logging(
             `${msg} with requestUrl ${requestInfo.requestUrl}, we'll search in the resource provider "Microsoft.Unknown".`,
-            LiveValidatorLoggingLevels.debug,
+            LiveValidatorLoggingLevels.info,
             "Oav.liveValidator.getPotentialOperations",
             requestInfo
           )
@@ -569,7 +570,7 @@ export class LiveValidator {
         code = C.ErrorCodes.OperationNotFoundInCacheWithApi
         this.logging(
           `${msg} with requestUrl ${requestInfo.requestUrl}`,
-          LiveValidatorLoggingLevels.debug,
+          LiveValidatorLoggingLevels.info,
           "Oav.liveValidator.getPotentialOperations",
           requestInfo
         )
@@ -580,7 +581,7 @@ export class LiveValidator {
       code = C.ErrorCodes.OperationNotFoundInCacheWithProvider
       this.logging(
         `${msg} with requestUrl ${requestInfo.requestUrl}, we'll search in the resource provider "Microsoft.Unknown".`,
-        LiveValidatorLoggingLevels.debug,
+        LiveValidatorLoggingLevels.info,
         "Oav.liveValidator.getPotentialOperations",
         requestInfo
       )
@@ -594,7 +595,7 @@ export class LiveValidator {
     const elapsedTime = Date.now() - startTime
     this.logging(
       `DurationInMs:${elapsedTime}`,
-      LiveValidatorLoggingLevels.debug,
+      LiveValidatorLoggingLevels.info,
       "Oav.liveValidator.getPotentialOperations",
       requestInfo
     )
@@ -759,7 +760,7 @@ export class LiveValidator {
     const elapsedTime = Date.now() - startTime
     this.logging(
       `DurationInMs:${elapsedTime}`,
-      LiveValidatorLoggingLevels.debug,
+      LiveValidatorLoggingLevels.info,
       "Oav.liveValidator.getPotentialOperationsHelper",
       requestInfo
     )
@@ -831,7 +832,7 @@ export class LiveValidator {
         this.options.directory
       }" and pattern: "${jsonsPattern.toString()}".
       Total paths count: ${matchedPaths.length}`,
-      LiveValidatorLoggingLevels.debug
+      LiveValidatorLoggingLevels.info
     )
     return matchedPaths
   }
@@ -861,7 +862,7 @@ export class LiveValidator {
 
   private async getSwaggerInitializer(swaggerPath: string): Promise<void> {
     const startTime = Date.now()
-    this.logging(`Building cache from: "${swaggerPath}"`, LiveValidatorLoggingLevels.debug)
+    this.logging(`Building cache from: "${swaggerPath}"`, LiveValidatorLoggingLevels.info)
 
     const validator = new SpecValidator(swaggerPath, null, {
       isPathCaseSensitive: this.options.isPathCaseSensitive,
@@ -874,7 +875,7 @@ export class LiveValidator {
       const elapsedTimeLoadSpec = Date.now() - startTimeLoadSpec
       this.logging(
         `Load spec for ${swaggerPath} with DurationInMs:${elapsedTimeLoadSpec}`,
-        LiveValidatorLoggingLevels.debug,
+        LiveValidatorLoggingLevels.info,
         "Oav.liveValidator.getSwaggerInitializer.specValidator.initialize"
       )
 
@@ -905,7 +906,7 @@ export class LiveValidator {
           this.logging(
             `Unable to find provider for path : "${pathObject.path}". ` +
               `Bucketizing into provider: "${provider}"`,
-            LiveValidatorLoggingLevels.debug
+            LiveValidatorLoggingLevels.info
           )
         }
         provider = provider.toLowerCase()
@@ -926,18 +927,13 @@ export class LiveValidator {
       const elapsedTime = Date.now() - startTime
       this.logging(
         `DurationInMs:${elapsedTime}`,
-        LiveValidatorLoggingLevels.debug,
+        LiveValidatorLoggingLevels.info,
         "Oav.liveValidator.getSwaggerInitializer"
       )
     } catch (err) {
-      // Do Not reject promise in case, we cannot initialize one of the swagger
-      this.logging(
-        `Unable to initialize "${swaggerPath}" file from SpecValidator. Error: ${err}`,
-        LiveValidatorLoggingLevels.debug
-      )
       this.logging(
         `Unable to initialize "${swaggerPath}" file from SpecValidator. We are ` +
-          `ignoring this swagger file and continuing to build cache for other valid specs.`,
+          `ignoring this swagger file and continuing to build cache for other valid specs. Error: ${err}`,
         LiveValidatorLoggingLevels.warn
       )
     }
