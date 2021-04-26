@@ -23,17 +23,17 @@ export const describe = "newman runner run test scenario file.";
  * Upload files:
  *
  * 1. newmanReport: containerName: newmanreport path: <ResourceProvider>/<apiVersion>/<testScenarioFileName>/<testScenarioIdx>/<runId>.json
- * E.g path: Microsoft.AppConfiguration/2020-07-01-preview/configurationStores/0/756bfd6b-5d80-47c6-8ef1-fb6795f1ca6d.json
+ * E.g path: Microsoft.AppConfiguration/2020-07-01-preview/configurationStores/0/202104260219-42d2v.json
  *
  * 2. payload: containerName: payload path: <resourceProvider>/<apiVersion>/<testScenarioFileName>/<testScenarioIdx>/<correlationId>.json
  * E.g path: Microsoft.AppConfiguration/2020-07-01-preview/configurationStores/0/516d0a63-4a46-491e-b11c-6bd64ca79999.json
  *
- * 3. report: containerName: report path: <ResourceProvider>/<apiVersion>/<testScenarioFileName>/<testScenarioIdx>/<runId>_report.json
- * e.g path: Microsoft.AppConfiguration/2020-07-01-preview/configurationStores/0/756bfd6b-5d80-47c6-8ef1-fb6795f1ca6d/report.json
+ * 3. report: containerName: report path: <ResourceProvider>/<apiVersion>/<testScenarioFileName>/<testScenarioIdx>/<runId>/report.json
+ * e.g path: Microsoft.AppConfiguration/2020-07-01-preview/configurationStores/0/202104260219-42d2v/report.json
  *
  * 4. postmancollection & postmanenv: container: postmancollection: <ResourceProvider>/<apiVersion>/<testScenarioFileName>/<testScenarioIdx>/<runId>/collection.json
  * postmanenv: <ResourceProvider>/<apiVersion>/<testScenarioFileName>/<testScenarioIdx>/<runId>/env.json
- * e.g path: Microsoft.AppConfiguration/2020-07-01-preview/configurationStores/0/756bfd6b-5d80-47c6-8ef1-fb6795f1ca6d/collection.json
+ * e.g path: Microsoft.AppConfiguration/2020-07-01-preview/configurationStores/0/202104260219-42d2v/collection.json
  *
  */
 export const builder: yargs.CommandBuilder = {
