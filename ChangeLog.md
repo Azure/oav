@@ -1,5 +1,11 @@
 # Change Log - oav
 
+## 04/27/2021 2.3.4
+
+- Optimise report blob path.
+- Support mask client secret, token and swagger sensitive data
+- Refine report schema
+
 ## 04/14/2021 2.3.3
 
 - Support auto upload generated file to azure blob.
