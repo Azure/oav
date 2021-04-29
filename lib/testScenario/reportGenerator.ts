@@ -178,9 +178,7 @@ export class ReportGenerator {
               operationId: matchedStep.operationId,
             },
           ])
-        ).map((it) => {
-          _.omit(it, ["exampleName", "exampleFilePath"]);
-        });
+        ).map((it) => _.omit(it, ["exampleName", "exampleFilePath"]));
         const correlationId = it.response.headers["x-ms-correlation-request-id"];
         this.swaggerExampleQualityResult.stepResult[it.annotation.step] = {
           exampleFilePath: generatedExample.exampleFilePath,
