@@ -466,7 +466,6 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
             await this.fileLoader.load(reportExportPath)
           ) as NewmanReport;
 
-          console.log(newmanReport.environment);
           // add mask environment secret value
           for (const item of newmanReport.environment.values) {
             if (this.dataMasker.maybeSecretKey(item.key)) {

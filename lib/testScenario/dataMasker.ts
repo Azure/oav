@@ -52,6 +52,14 @@ export class DataMasker {
     return this.maskString(JSON.stringify(this.maskObject(obj), null, 2));
   }
 
+  public jsonParse(content: string): any {
+    try {
+      return JSON.parse(this.maskString(content));
+    } catch (err) {
+      return undefined;
+    }
+  }
+
   public maskObject(obj: any, addMaskedValue = false): any {
     const mask = (obj: any) => {
       for (const k in obj) {

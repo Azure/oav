@@ -38,43 +38,44 @@ interface GeneratedExample {
 }
 
 interface TestScenarioResult {
-  testScenario: {
-    testScenarioFilePath: string;
-    readmeFilePath?: string;
-    swaggerFilePaths: string[];
-    tag?: string;
+  testScenarioFilePath: string;
+  readmeFilePath?: string;
+  swaggerFilePaths: string[];
+  tag?: string;
 
-    // New added fields
-    environment?: string;
-    armEnv?: string;
-    subscriptionId?: string;
-    fileRoot?: string;
-    resourceProvider?: string;
-    apiVersion?: string;
-    startTime?: string;
-    endTime?: string;
-    runId?: string;
-    repository?: string;
-    branch?: string;
-    commitHash?: string;
-  };
+  // New added fields
+  environment?: string;
+  armEnv?: string;
+  subscriptionId?: string;
+  rootPath?: string;
+  providerNamespace?: string;
+  apiVersion?: string;
+  startTime?: string;
+  endTime?: string;
+  runId?: string;
+  repository?: string;
+  branch?: string;
+  commitHash?: string;
+  armEndpoint: string;
   stepResult: { [step: string]: StepResult };
 }
 
 interface StepResult {
+  statusCode: number;
   exampleFilePath?: string;
   example?: SwaggerExample;
   operationId: string;
-  runtimeError?: HttpError;
+  runtimeError?: RuntimeError[];
   responseDiffResult?: { [statusCode: number]: JsonPatchOp[] };
   liveValidationResult?: any;
   stepValidationResult?: any;
   correlationId?: string;
 }
 
-interface HttpError {
-  statusCode: number;
-  rawExecution: RawExecution;
+interface RuntimeError {
+  code: string;
+  message: string;
+  detail: string;
 }
 
 export interface ReportGeneratorOption
@@ -122,17 +123,17 @@ export class ReportGenerator {
     this.fileRoot = findNearestReadmeDir(this.opts.testDefFilePath) || "/";
 
     this.swaggerExampleQualityResult = {
-      testScenario: {
-        testScenarioFilePath: path.relative(this.fileRoot, this.opts.testDefFilePath),
-        swaggerFilePaths: this.opts.swaggerFilePaths!.map((it) => path.relative(this.fileRoot, it)),
-        resourceProvider: getProviderFromFilePath(this.opts.testDefFilePath),
-        apiVersion: getApiVersionFromSwaggerFile(this.opts.swaggerFilePaths![0]),
-        runId: this.opts.runId,
-        fileRoot: this.fileRoot,
-        repository: process.env.SPEC_REPOSITORY,
-        branch: process.env.SPEC_BRANCH,
-        commitHash: process.env.COMMIT_HASH,
-      },
+      testScenarioFilePath: path.relative(this.fileRoot, this.opts.testDefFilePath),
+      swaggerFilePaths: this.opts.swaggerFilePaths!.map((it) => path.relative(this.fileRoot, it)),
+      providerNamespace: getProviderFromFilePath(this.opts.testDefFilePath),
+      apiVersion: getApiVersionFromSwaggerFile(this.opts.swaggerFilePaths![0]),
+      runId: this.opts.runId,
+      rootPath: this.fileRoot,
+      repository: process.env.SPEC_REPOSITORY,
+      branch: process.env.SPEC_BRANCH,
+      commitHash: process.env.COMMIT_HASH,
+      environment: process.env.ENVIRONMENT || "test",
+      armEndpoint: "https://management.azure.com",
       stepResult: {},
     };
     this.testDefFile = undefined;
@@ -145,9 +146,9 @@ export class ReportGenerator {
   public async generateExampleQualityReport(rawReport: RawReport) {
     await this.initialize();
     const variables = rawReport.variables;
-    this.swaggerExampleQualityResult.testScenario.startTime = rawReport.timings.started;
-    this.swaggerExampleQualityResult.testScenario.endTime = rawReport.timings.completed;
-    this.swaggerExampleQualityResult.testScenario.subscriptionId = variables.subscriptionId;
+    this.swaggerExampleQualityResult.startTime = rawReport.timings.started;
+    this.swaggerExampleQualityResult.endTime = rawReport.timings.completed;
+    this.swaggerExampleQualityResult.subscriptionId = variables.subscriptionId;
     for (const it of rawReport.executions) {
       if (it.annotation === undefined) {
         continue;
@@ -160,27 +161,32 @@ export class ReportGenerator {
           Math.floor(it.response.statusCode / 200) !== 1 &&
           it.response.statusCode !== matchedStep.statusCode
         ) {
-          error = { statusCode: it.response.statusCode, rawExecution: it } as HttpError;
+          error = this.getRuntimeError(it);
         }
         if (matchedStep === undefined) {
           continue;
         }
         // validate real payload.
-        const roundtripErrors = await this.exampleQualityValidator.validateExternalExamples([
-          {
-            exampleFilePath: generatedExample.exampleFilePath,
-            example: generatedExample.example,
-            operationId: matchedStep.operationId,
-          },
-        ]);
+        const roundtripErrors = (
+          await this.exampleQualityValidator.validateExternalExamples([
+            {
+              exampleFilePath: generatedExample.exampleFilePath,
+              example: generatedExample.example,
+              operationId: matchedStep.operationId,
+            },
+          ])
+        ).map((it) => {
+          _.omit(it, ["exampleName", "exampleFilePath"]);
+        });
         const correlationId = it.response.headers["x-ms-correlation-request-id"];
         this.swaggerExampleQualityResult.stepResult[it.annotation.step] = {
           exampleFilePath: generatedExample.exampleFilePath,
           operationId: it.annotation.operationId,
-          runtimeError: error,
+          runtimeError: [error],
           responseDiffResult: this.exampleResponseDiff(generatedExample, matchedStep),
           stepValidationResult: roundtripErrors,
           correlationId: correlationId,
+          statusCode: it.response.statusCode,
         };
         this.recording.set(correlationId, it);
       }
@@ -290,12 +296,15 @@ export class ReportGenerator {
         const ret: any = {};
         if (it.remove !== undefined) {
           ret.code = "RESPONSE_ADDITIONAL_VALUE";
+          ret.path = it.remove;
           ret.severity = Severity.Error;
         } else if (it.add !== undefined) {
           ret.code = "RESPONSE_MISSING_VALUE";
+          ret.path = it.add;
           ret.severity = Severity.Error;
-        } else {
+        } else if (it.replace !== undefined) {
           ret.code = "RESPONSE_INCORRECT_VALUE";
+          ret.path = it.replace;
           ret.severity = Severity.Error;
         }
         ret.detail = it;
@@ -334,6 +343,14 @@ export class ReportGenerator {
       return finalGet;
     }
     return [];
+  }
+
+  private getRuntimeError(it: RawExecution): RuntimeError {
+    const ret: RuntimeError = { code: "", message: "", detail: it.response.body };
+    const responseObj = this.dataMasker.jsonParse(it.response.body);
+    ret.code = responseObj?.error?.code;
+    ret.message = responseObj?.error?.message;
+    return ret;
   }
 
   public async generateReport() {
