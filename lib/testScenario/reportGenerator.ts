@@ -57,6 +57,7 @@ interface TestScenarioResult {
   branch?: string;
   commitHash?: string;
   armEndpoint: string;
+  testScenarioName?: string;
   stepResult: { [step: string]: StepResult };
 }
 
@@ -84,6 +85,7 @@ export interface ReportGeneratorOption
     BlobUploaderOption {
   testDefFilePath: string;
   reportOutputFilePath?: string;
+  testScenarioName?: string;
   runId?: string;
 }
 
@@ -133,6 +135,7 @@ export class ReportGenerator {
       branch: process.env.SPEC_BRANCH,
       commitHash: process.env.COMMIT_HASH,
       environment: process.env.ENVIRONMENT || "test",
+      testScenarioName: this.opts.testScenarioName,
       armEndpoint: "https://management.azure.com",
       stepResult: {},
     };

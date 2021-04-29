@@ -51,6 +51,7 @@ export interface PostmanCollectionRunnerClientOption extends BlobUploaderOption,
   env: VariableEnv;
   testScenarioFilePath?: string;
   reportOutputFolder?: string;
+  testScenarioName?: string;
   runId: string;
   jsonLoader?: JsonLoader;
   swaggerFilePaths?: string[];
@@ -110,7 +111,12 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     this.collection = new Collection();
     this.collection.name = this.opts.name;
     this.collection.id = this.opts.runId!;
-    this.collection.describe(this.opts.testScenarioFilePath || this.opts.name);
+    this.collection.describe(
+      JSON.stringify({
+        testScenarioFilePath: this.opts.testScenarioFilePath,
+        testScenarioName: this.opts.testScenarioName,
+      })
+    );
     this.collectionEnv = new VariableScope({});
     this.collectionEnv.set("bearerToken", "<bearerToken>", "string");
     this.postmanTestScript = new PostmanTestScript();

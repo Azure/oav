@@ -47,7 +47,7 @@ export class NewmanReportParser {
   public async generateRawReport() {
     const content = await this.fileLoader.load(this.opts.newmanReportFilePath);
     const report = JSON.parse(content) as NewmanReport;
-    this.report.metadata.testScenarioFilePath = report.collection.info.description.content; // JSON.parse(report.collection.description.content);
+    this.report.metadata = JSON.parse(report.collection.info.description.content); // JSON.parse(report.collection.description.content);
     for (const it of report.run.executions) {
       this.report.executions.push(this.generateExampleItem(it));
     }

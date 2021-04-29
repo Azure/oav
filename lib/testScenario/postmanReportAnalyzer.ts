@@ -33,6 +33,7 @@ export class NewmanReportAnalyzer {
   public async analyze() {
     const rawReport: RawReport = await this.newmanReportParser.generateRawReport();
     const testScenarioFilePath = rawReport.metadata.testScenarioFilePath;
+    const testScenarioName = rawReport.metadata.testScenarioName;
     const swaggerFilePaths =
       this.opts.swaggerFilePaths?.length === 0
         ? getSwaggerFilePathsFromTestScenarioFilePath(testScenarioFilePath)
@@ -48,6 +49,7 @@ export class NewmanReportAnalyzer {
       enableBlobUploader: this.opts.enableUploadBlob || false,
       blobConnectionString: process.env.blobConnectionString || "",
       runId: this.opts.runId,
+      testScenarioName: testScenarioName,
     };
     const reportGenerator = inversifyGetInstance(ReportGenerator, reportGeneratorOption);
     await reportGenerator.generateReport();

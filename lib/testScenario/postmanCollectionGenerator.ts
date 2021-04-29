@@ -52,6 +52,7 @@ export class PostmanCollectionGenerator {
       //TODO: replace index with testScenarioName
       const opts: PostmanCollectionRunnerClientOption = {
         name: `${this.opt.name}/${index}`,
+        testScenarioName: `${this.opt.name}/${index}`,
         env: this.env,
         enableBlobUploader: this.opt.enableBlobUploader!,
         testScenarioFilePath: this.opt.testDef,
