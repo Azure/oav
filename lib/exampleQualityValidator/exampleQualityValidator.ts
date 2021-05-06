@@ -140,8 +140,9 @@ const roundtripInconsistentProperty: ExampleValidationFunc = async (
                 code: ErrorCodes.RoundtripInconsistentProperty.name,
                 path: (it as any).replace,
                 detail: it,
-                message:
-                  "The property's value in the response is different from what was set in the request.",
+                message: `The property's value in the response is different from what was set in the request. Path: ${
+                  (it as any).replace
+                }. Request: ${(it as any).oldValue}. Response: ${(it as any).value}`,
                 exampleName: exampleValidationContext.exampleName,
                 exampleFilePath: exampleValidationContext.exampleFilePath,
               })

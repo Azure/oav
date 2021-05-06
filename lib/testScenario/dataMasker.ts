@@ -49,6 +49,9 @@ export class DataMasker {
   }
 
   public jsonStringify(obj: any): string {
+    if (typeof obj === "string") {
+      return this.maskString(obj);
+    }
     return this.maskString(JSON.stringify(this.maskObject(obj), null, 2));
   }
 

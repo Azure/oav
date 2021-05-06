@@ -58,7 +58,7 @@ interface TestScenarioResult {
   commitHash?: string;
   armEndpoint: string;
   testScenarioName?: string;
-  stepResult: { [step: string]: StepResult };
+  stepResult: StepResult[];
 }
 
 interface StepResult {
@@ -71,6 +71,7 @@ interface StepResult {
   liveValidationResult?: any;
   stepValidationResult?: any;
   correlationId?: string;
+  stepName: string;
 }
 
 interface RuntimeError {
@@ -137,7 +138,7 @@ export class ReportGenerator {
       environment: process.env.ENVIRONMENT || "test",
       testScenarioName: this.opts.testScenarioName,
       armEndpoint: "https://management.azure.com",
-      stepResult: {},
+      stepResult: [],
     };
     this.testDefFile = undefined;
   }
@@ -149,8 +150,8 @@ export class ReportGenerator {
   public async generateExampleQualityReport(rawReport: RawReport) {
     await this.initialize();
     const variables = rawReport.variables;
-    this.swaggerExampleQualityResult.startTime = rawReport.timings.started;
-    this.swaggerExampleQualityResult.endTime = rawReport.timings.completed;
+    this.swaggerExampleQualityResult.startTime = new Date(rawReport.timings.started).toISOString();
+    this.swaggerExampleQualityResult.endTime = new Date(rawReport.timings.completed).toISOString();
     this.swaggerExampleQualityResult.subscriptionId = variables.subscriptionId;
     for (const it of rawReport.executions) {
       if (it.annotation === undefined) {
@@ -180,7 +181,7 @@ export class ReportGenerator {
           ])
         ).map((it) => _.omit(it, ["exampleName", "exampleFilePath"]));
         const correlationId = it.response.headers["x-ms-correlation-request-id"];
-        this.swaggerExampleQualityResult.stepResult[it.annotation.step] = {
+        this.swaggerExampleQualityResult.stepResult.push({
           exampleFilePath: generatedExample.exampleFilePath,
           operationId: it.annotation.operationId,
           runtimeError: [error],
@@ -188,7 +189,8 @@ export class ReportGenerator {
           stepValidationResult: roundtripErrors,
           correlationId: correlationId,
           statusCode: it.response.statusCode,
-        };
+          stepName: it.annotation.step,
+        });
         this.recording.set(correlationId, it);
       }
     }
@@ -296,17 +298,28 @@ export class ReportGenerator {
       }).map((it: any) => {
         const ret: any = {};
         if (it.remove !== undefined) {
-          ret.code = "RESPONSE_ADDITIONAL_VALUE";
+          ret.code = "RESPONSE_MISSING_VALUE";
           ret.path = it.remove;
           ret.severity = Severity.Error;
+          ret.message = `The response value is missing. Path: ${
+            ret.path
+          }. Expected: ${this.dataMasker.jsonStringify(it.oldValue)}. Actual: undefined`;
         } else if (it.add !== undefined) {
-          ret.code = "RESPONSE_MISSING_VALUE";
+          ret.code = "RESPONSE_ADDITIONAL_VALUE";
           ret.path = it.add;
           ret.severity = Severity.Error;
+          ret.message = `Return additional response value. Path: ${
+            ret.path
+          }. Expected: undefined. Actual: ${this.dataMasker.jsonStringify(it.value)}`;
         } else if (it.replace !== undefined) {
           ret.code = "RESPONSE_INCORRECT_VALUE";
           ret.path = it.replace;
           ret.severity = Severity.Error;
+          ret.message = `The actual response value is different from example. Path: ${
+            ret.path
+          }. Expected: ${this.dataMasker.jsonStringify(
+            it.oldValue
+          )}. Actual: ${this.dataMasker.jsonStringify(it.value)}`;
         }
         ret.detail = it;
         return ret;
