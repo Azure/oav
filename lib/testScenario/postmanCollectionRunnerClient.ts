@@ -396,11 +396,19 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
   public async writeCollectionToJson(outputFolder: string) {
     const collectionPath = path.resolve(
       outputFolder,
-      `${defaultCollectionFileName(this.opts.testScenarioFileName, this.opts.runId)}`
+      `${defaultCollectionFileName(
+        this.opts.testScenarioFileName,
+        this.opts.runId,
+        this.opts.testScenarioName
+      )}`
     );
     const envPath = path.resolve(
       outputFolder,
-      `${defaultEnvFileName(this.opts.testScenarioFileName, this.opts.runId)}`
+      `${defaultEnvFileName(
+        this.opts.testScenarioFileName,
+        this.opts.runId,
+        this.opts.testScenarioName
+      )}`
     );
     const env = this.collectionEnv.toJSON();
     env.name = this.opts.testScenarioFileName + "_env";
@@ -413,7 +421,11 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
 
     await this.blobUploader.uploadFile(
       "postmancollection",
-      `${defaultCollectionFileName(this.opts.testScenarioFileName, this.opts.runId)}`,
+      `${defaultCollectionFileName(
+        this.opts.testScenarioFileName,
+        this.opts.runId,
+        this.opts.testScenarioName
+      )}`,
       collectionPath
     );
     const values: string[] = [];
@@ -425,7 +437,11 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     this.dataMasker.addMaskedValues(values);
     await this.blobUploader.uploadContent(
       "postmancollection",
-      `${defaultEnvFileName(this.opts.testScenarioFileName, this.opts.runId)}`,
+      `${defaultEnvFileName(
+        this.opts.testScenarioFileName,
+        this.opts.runId,
+        this.opts.testScenarioName
+      )}`,
       this.dataMasker.jsonStringify(env)
     );
 

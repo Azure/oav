@@ -45,7 +45,6 @@ export class PostmanCollectionGenerator {
         );
       }
     }
-    //Use index to avoid overwrite newman report
     let index = 0;
     const runId = generateRunId();
     for (const testScenario of testDef.testScenarios) {

@@ -23,18 +23,14 @@ export const describe = "newman runner run test scenario file.";
  * UploadBlob true. Upload generated file and result to azure blob storage. connection string is passed by `process.env.blobConnectionString`
  * Upload files:
  *
- * 1. newmanReport: containerName: newmanreport path: <ResourceProvider>/<apiVersion>/<testScenarioFileName>/<testScenarioIdx>/<runId>.json
- * E.g path: Microsoft.AppConfiguration/2020-07-01-preview/configurationStores/0/202104260219-42d2v.json
+ * 1. newmanReport: containerName: newmanreport path: <ResourceProvider>/<apiVersion>/<testScenarioFileName>/<runId>/<testScenarioIdx>.json
  *
- * 2. payload: containerName: payload path: <resourceProvider>/<apiVersion>/<testScenarioFileName>/<testScenarioIdx>/<correlationId>.json
- * E.g path: Microsoft.AppConfiguration/2020-07-01-preview/configurationStores/0/516d0a63-4a46-491e-b11c-6bd64ca79999.json
+ * 2. payload: containerName: payload path: <resourceProvider>/<apiVersion>/<testScenarioFileName>/<runId>/<testScenarioIdx>/<correlationId>.json
  *
- * 3. report: containerName: report path: <ResourceProvider>/<apiVersion>/<testScenarioFileName>/<testScenarioIdx>/<runId>/report.json
- * e.g path: Microsoft.AppConfiguration/2020-07-01-preview/configurationStores/0/202104260219-42d2v/report.json
+ * 3. report: containerName: report path: <ResourceProvider>/<apiVersion>/<testScenarioFileName>/<runId>/<testScenarioIdx>/report.json
  *
- * 4. postmancollection & postmanenv: container: postmancollection: <ResourceProvider>/<apiVersion>/<testScenarioFileName>/<testScenarioIdx>/<runId>/collection.json
- * postmanenv: <ResourceProvider>/<apiVersion>/<testScenarioFileName>/<testScenarioIdx>/<runId>/env.json
- * e.g path: Microsoft.AppConfiguration/2020-07-01-preview/configurationStores/0/202104260219-42d2v/collection.json
+ * 4. postmancollection & postmanenv: container: postmancollection: <ResourceProvider>/<apiVersion>/<testScenarioFileName>/<runId>/<testScenarioIdx>/collection.json
+ * postmanenv: <ResourceProvider>/<apiVersion>/<testScenarioFileName>/<runId>/<testScenarioIdx>/env.json
  *
  */
 export const builder: yargs.CommandBuilder = {

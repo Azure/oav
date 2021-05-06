@@ -13,12 +13,20 @@ export const defaultQualityReportFilePath = (newmanReportFilePath: string): stri
   return newmanReportFilePath.replace(".json", "/report.json");
 };
 
-export const defaultCollectionFileName = (name: string, runId: string) => {
-  return `${name}/${runId}/collection.json`;
+export const defaultCollectionFileName = (
+  testScenarioFileName: string,
+  runId: string,
+  testScenarioName: string
+) => {
+  return `${testScenarioFileName}/${runId}/${testScenarioName}/collection.json`;
 };
 
-export const defaultEnvFileName = (name: string, runId: string) => {
-  return `${name}/${runId}/env.json`;
+export const defaultEnvFileName = (
+  testScenarioFileName: string,
+  runId: string,
+  testScenarioName: string
+) => {
+  return `${testScenarioFileName}/${runId}/${testScenarioName}/env.json`;
 };
 
 export const defaultNewmanReport = (
