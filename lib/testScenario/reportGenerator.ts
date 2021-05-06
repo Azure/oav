@@ -4,12 +4,12 @@ import * as _ from "lodash";
 import { injectable, inject } from "inversify";
 import { ExampleQualityValidator } from "../exampleQualityValidator/exampleQualityValidator";
 import { setDefaultOpts } from "../swagger/loader";
-import { Severity } from "../util/severity";
 import {
   findNearestReadmeDir,
   getApiVersionFromSwaggerFile,
   getProviderFromFilePath,
 } from "../util/utils";
+import { SeverityString } from "../util/severity";
 import { SwaggerAnalyzer } from "./swaggerAnalyzer";
 import { DataMasker } from "./dataMasker";
 import { defaultQualityReportFilePath } from "./defaultNaming";
@@ -23,7 +23,6 @@ import {
   RawExecution,
   TestDefinitionFile,
   TestStep,
-  JsonPatchOp,
   TestStepRestCall,
 } from "./testResourceTypes";
 import { VariableEnv } from "./variableEnv";
@@ -67,7 +66,7 @@ interface StepResult {
   example?: SwaggerExample;
   operationId: string;
   runtimeError?: RuntimeError[];
-  responseDiffResult?: { [statusCode: number]: JsonPatchOp[] };
+  responseDiffResult?: { [statusCode: number]: ResponseDiffItem[] };
   liveValidationResult?: any;
   stepValidationResult?: any;
   correlationId?: string;
@@ -76,6 +75,15 @@ interface StepResult {
 
 interface RuntimeError {
   code: string;
+  message: string;
+  detail: string;
+  severity: SeverityString;
+}
+
+interface ResponseDiffItem {
+  code: string;
+  jsonPath: string;
+  severity: SeverityString;
   message: string;
   detail: string;
 }
@@ -144,7 +152,9 @@ export class ReportGenerator {
   }
 
   public async initialize() {
-    this.rawReport = await this.postmanReportParser.generateRawReport();
+    this.rawReport = await this.postmanReportParser.generateRawReport(
+      this.opts.newmanReportFilePath
+    );
   }
 
   public async generateExampleQualityReport(rawReport: RawReport) {
@@ -273,7 +283,7 @@ export class ReportGenerator {
   private exampleResponseDiff(
     example: GeneratedExample,
     matchedStep: TestStep
-  ): { [statusCode: number]: JsonPatchOp[] } {
+  ): { [statusCode: number]: ResponseDiffItem[] } {
     const res: any = {};
     if (matchedStep?.type === "restCall") {
       if (example.example.responses[matchedStep.statusCode] !== undefined) {
@@ -287,41 +297,47 @@ export class ReportGenerator {
     return res;
   }
 
-  private responseDiff(resp: any, expectedResp: any, variables: any) {
+  private responseDiff(resp: any, expectedResp: any, variables: any): ResponseDiffItem[] {
     const env = new VariableEnv();
     env.setBatch(variables);
     try {
       const expected = env.resolveObjectValues(expectedResp);
-      const delta = getJsonPatchDiff(expected, resp, {
+      const delta: ResponseDiffItem[] = getJsonPatchDiff(expected, resp, {
         includeOldValue: true,
         minimizeDiff: false,
       }).map((it: any) => {
-        const ret: any = {};
+        const ret: ResponseDiffItem = {
+          code: "",
+          jsonPath: "",
+          severity: "Error",
+          message: "",
+          detail: "",
+        };
         if (it.remove !== undefined) {
           ret.code = "RESPONSE_MISSING_VALUE";
-          ret.path = it.remove;
-          ret.severity = Severity.Error;
+          ret.jsonPath = it.remove;
+          ret.severity = "Error";
           ret.message = `The response value is missing. Path: ${
-            ret.path
+            ret.jsonPath
           }. Expected: ${this.dataMasker.jsonStringify(it.oldValue)}. Actual: undefined`;
         } else if (it.add !== undefined) {
           ret.code = "RESPONSE_ADDITIONAL_VALUE";
-          ret.path = it.add;
-          ret.severity = Severity.Error;
+          ret.jsonPath = it.add;
+          ret.severity = "Error";
           ret.message = `Return additional response value. Path: ${
-            ret.path
+            ret.jsonPath
           }. Expected: undefined. Actual: ${this.dataMasker.jsonStringify(it.value)}`;
         } else if (it.replace !== undefined) {
           ret.code = "RESPONSE_INCORRECT_VALUE";
-          ret.path = it.replace;
-          ret.severity = Severity.Error;
+          ret.jsonPath = it.replace;
+          ret.severity = "Error";
           ret.message = `The actual response value is different from example. Path: ${
-            ret.path
+            ret.jsonPath
           }. Expected: ${this.dataMasker.jsonStringify(
             it.oldValue
           )}. Actual: ${this.dataMasker.jsonStringify(it.value)}`;
         }
-        ret.detail = it;
+        ret.detail = this.dataMasker.jsonStringify(it);
         return ret;
       });
       return delta;
@@ -360,7 +376,12 @@ export class ReportGenerator {
   }
 
   private getRuntimeError(it: RawExecution): RuntimeError {
-    const ret: RuntimeError = { code: "", message: "", detail: it.response.body };
+    const ret: RuntimeError = {
+      code: "",
+      message: "",
+      severity: "Error",
+      detail: this.dataMasker.jsonStringify(it.response.body),
+    };
     const responseObj = this.dataMasker.jsonParse(it.response.body);
     ret.code = responseObj?.error?.code;
     ret.message = responseObj?.error?.message;

@@ -31,7 +31,9 @@ export class NewmanReportAnalyzer {
   }
 
   public async analyze() {
-    const rawReport: RawReport = await this.newmanReportParser.generateRawReport();
+    const rawReport: RawReport = await this.newmanReportParser.generateRawReport(
+      this.opts.newmanReportFilePath
+    );
     const testScenarioFilePath = rawReport.metadata.testScenarioFilePath;
     const testScenarioName = rawReport.metadata.testScenarioName;
     const swaggerFilePaths =

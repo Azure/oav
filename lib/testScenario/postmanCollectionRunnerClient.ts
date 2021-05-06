@@ -46,12 +46,12 @@ import {
 import { NewmanReport } from "./postmanReportParser";
 
 export interface PostmanCollectionRunnerClientOption extends BlobUploaderOption, JsonLoaderOption {
-  name: string;
+  testScenarioFileName: string;
   enableBlobUploader: boolean;
   env: VariableEnv;
   testScenarioFilePath?: string;
   reportOutputFolder?: string;
-  testScenarioName?: string;
+  testScenarioName: string;
   runId: string;
   jsonLoader?: JsonLoader;
   swaggerFilePaths?: string[];
@@ -100,16 +100,17 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     private fileLoader: FileLoader
   ) {
     setDefaultOpts(this.opts, {
-      name: "",
+      testScenarioFileName: "",
       testScenarioFilePath: "",
       env: new VariableEnv(),
       reportOutputFolder: path.resolve(process.cwd(), "newman"),
       enableBlobUploader: false,
       runId: generateRunId(),
+      testScenarioName: "",
       blobConnectionString: process.env.blobConnectionString || "",
     });
     this.collection = new Collection();
-    this.collection.name = this.opts.name;
+    this.collection.name = this.opts.testScenarioFileName;
     this.collection.id = this.opts.runId!;
     this.collection.describe(
       JSON.stringify({
@@ -395,14 +396,14 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
   public async writeCollectionToJson(outputFolder: string) {
     const collectionPath = path.resolve(
       outputFolder,
-      `${defaultCollectionFileName(this.opts.name, this.opts.runId)}`
+      `${defaultCollectionFileName(this.opts.testScenarioFileName, this.opts.runId)}`
     );
     const envPath = path.resolve(
       outputFolder,
-      `${defaultEnvFileName(this.opts.name, this.opts.runId)}`
+      `${defaultEnvFileName(this.opts.testScenarioFileName, this.opts.runId)}`
     );
     const env = this.collectionEnv.toJSON();
-    env.name = this.opts.name + "_env";
+    env.name = this.opts.testScenarioFileName + "_env";
     env._postman_variable_scope = "environment";
     await this.fileLoader.writeFile(envPath, JSON.stringify(env, null, 2));
     await this.fileLoader.writeFile(
@@ -412,7 +413,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
 
     await this.blobUploader.uploadFile(
       "postmancollection",
-      `${defaultCollectionFileName(this.opts.name, this.opts.runId)}`,
+      `${defaultCollectionFileName(this.opts.testScenarioFileName, this.opts.runId)}`,
       collectionPath
     );
     const values: string[] = [];
@@ -424,7 +425,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     this.dataMasker.addMaskedValues(values);
     await this.blobUploader.uploadContent(
       "postmancollection",
-      `${defaultEnvFileName(this.opts.name, this.opts.runId)}`,
+      `${defaultEnvFileName(this.opts.testScenarioFileName, this.opts.runId)}`,
       this.dataMasker.jsonStringify(env)
     );
 
@@ -436,7 +437,11 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
   public async runCollection() {
     const reportExportPath = path.resolve(
       this.opts.reportOutputFolder!,
-      `${defaultNewmanReport(this.opts.name, this.opts.runId)}`
+      `${defaultNewmanReport(
+        this.opts.testScenarioFileName,
+        this.opts.runId,
+        this.opts.testScenarioName
+      )}`
     );
     newman
       .run(
@@ -480,7 +485,11 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
           }
           await this.blobUploader.uploadContent(
             "newmanreport",
-            `${defaultNewmanReport(this.opts.name, this.opts.runId)}`,
+            `${defaultNewmanReport(
+              this.opts.testScenarioFileName,
+              this.opts.runId,
+              this.opts.testScenarioName
+            )}`,
             this.dataMasker.jsonStringify(newmanReport)
           );
           const opts: NewmanReportAnalyzerOption = {

@@ -12,6 +12,7 @@ import {
 } from "../testScenario/postmanCollectionGenerator";
 import { inversifyGetInstance } from "../inversifyUtils";
 import { getApiVersionFromSwaggerFile, getProviderFromFilePath } from "../util/utils";
+import { getFileNameFromPath } from "../testScenario/defaultNaming";
 import { getSwaggerFilePathsFromTestScenarioFilePath } from "./../testScenario/testResourceLoader";
 
 export const command = "run-test-scenario <test-scenario>";
@@ -73,9 +74,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     const resourceProvider = getProviderFromFilePath(testScenarioFilePath);
     const apiVersion = getApiVersionFromSwaggerFile(swaggerFilePaths[0]);
     const opt: PostmanCollectionGeneratorOption = {
-      name: `${resourceProvider}/${apiVersion}/${testScenarioFilePath
-        .replace(/^.*[\\\/]/, "")
-        .replace(".yaml", "")}`,
+      name: `${resourceProvider}/${apiVersion}/${getFileNameFromPath(testScenarioFilePath)}`,
       testDef: testScenarioFilePath,
       swaggerFilePaths: swaggerFilePaths,
       fileRoot: fileRoot,

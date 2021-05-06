@@ -21,8 +21,16 @@ export const defaultEnvFileName = (name: string, runId: string) => {
   return `${name}/${runId}/env.json`;
 };
 
-export const defaultNewmanReport = (name: string, runId: string) => {
-  return `${name}/${runId}.json`;
+export const defaultNewmanReport = (
+  testScenarioFileName: string,
+  runId: string,
+  testScenarioName: string
+) => {
+  return `${testScenarioFileName}/${runId}/${testScenarioName}.json`;
+};
+
+export const getFileNameFromPath = (filePath: string): string => {
+  return filePath.replace(/^.*[\\\/]/, "").replace(".yaml", "");
 };
 
 export const blobNameDatePostfix = (name: string) => {

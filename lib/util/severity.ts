@@ -8,3 +8,5 @@ export const enum Severity {
   Information = 3,
   Verbose = 4,
 }
+
+export type SeverityString = "Error" | "Critical" | "Warning" | "Info" | "Verbose";

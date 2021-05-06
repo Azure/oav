@@ -35,31 +35,26 @@ export interface NewmanReportParserOption extends FileLoaderOption {
 
 @injectable()
 export class NewmanReportParser {
-  private report: RawReport;
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
   constructor(
     @inject(TYPES.opts) private opts: NewmanReportParserOption,
     private fileLoader: FileLoader
-  ) {
-    this.report = { variables: {}, executions: [], timings: {}, metadata: {} };
-  }
+  ) {}
 
-  public async generateRawReport() {
-    const content = await this.fileLoader.load(this.opts.newmanReportFilePath);
-    const report = JSON.parse(content) as NewmanReport;
-    this.report.metadata = JSON.parse(report.collection.info.description.content); // JSON.parse(report.collection.description.content);
-    for (const it of report.run.executions) {
-      this.report.executions.push(this.generateExampleItem(it));
+  public async generateRawReport(newmanReportFilePath: string) {
+    const ret: RawReport = { variables: {}, executions: [], timings: {}, metadata: {} };
+    const content = await this.fileLoader.load(newmanReportFilePath);
+    const newmanReport = JSON.parse(content) as NewmanReport;
+    ret.metadata = JSON.parse(newmanReport.collection.info.description.content); // JSON.parse(report.collection.description.content);
+    for (const it of newmanReport.run.executions) {
+      ret.executions.push(this.generateExampleItem(it));
     }
-    this.report.timings = report.run.timings;
-    this.report.variables = this.parseVariables(report.environment.values);
+    ret.timings = newmanReport.run.timings;
+    ret.variables = this.parseVariables(newmanReport.environment.values);
     if (this.opts.reportOutputFilePath !== undefined) {
-      await this.fileLoader.writeFile(
-        this.opts.reportOutputFilePath,
-        JSON.stringify(this.report, null, 2)
-      );
+      await this.fileLoader.writeFile(this.opts.reportOutputFilePath, JSON.stringify(ret, null, 2));
     }
-    return this.report;
+    return ret;
   }
 
   private generateExampleItem(it: NewmanExecution): RawExecution {
