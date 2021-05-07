@@ -7,7 +7,12 @@ export interface BlobUploaderOption {
   enableBlobUploader?: boolean;
 }
 
-type ContainName = "postmancollection" | "newmanreport" | "report" | "payload";
+type ContainName =
+  | "postmancollection"
+  | "newmanreport"
+  | "report"
+  | "payload"
+  | "reportforpipeline";
 
 @injectable()
 export class BlobUploader {

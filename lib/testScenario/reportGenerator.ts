@@ -233,6 +233,12 @@ export class ReportGenerator {
           this.dataMasker.jsonStringify(this.swaggerExampleQualityResult)
         );
 
+        await this.blobUploader.uploadContent(
+          "reportforpipeline",
+          blobPath,
+          this.dataMasker.jsonStringify(this.swaggerExampleQualityResult)
+        );
+
         for (const [correlationId, v] of this.recording) {
           const payloadBlobPath = `${path.dirname(blobPath)}/${correlationId}.json`;
           await this.blobUploader.uploadContent(
