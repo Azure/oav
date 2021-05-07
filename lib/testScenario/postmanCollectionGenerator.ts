@@ -10,6 +10,7 @@ import {
   PostmanCollectionRunnerClientOption,
 } from "./postmanCollectionRunnerClient";
 import { TestScenarioRunner } from "./testScenarioRunner";
+import { getFileNameFromPath } from "./defaultNaming";
 export interface PostmanCollectionGeneratorOption
   extends TestResourceLoaderOption,
     BlobUploaderOption,
@@ -51,7 +52,7 @@ export class PostmanCollectionGenerator {
       //TODO: replace index with testScenarioName
       const opts: PostmanCollectionRunnerClientOption = {
         testScenarioFileName: `${this.opt.name}`,
-        testScenarioName: `${index}`,
+        testScenarioName: `${getFileNameFromPath(this.opt.testDef)}_${index}`,
         env: this.env,
         enableBlobUploader: this.opt.enableBlobUploader!,
         testScenarioFilePath: this.opt.testDef,

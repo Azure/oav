@@ -66,7 +66,7 @@ interface StepResult {
   example?: SwaggerExample;
   operationId: string;
   runtimeError?: RuntimeError[];
-  responseDiffResult?: { [statusCode: number]: ResponseDiffItem[] };
+  responseDiffResult?: ResponseDiffItem[];
   liveValidationResult?: any;
   stepValidationResult?: any;
   correlationId?: string;
@@ -289,21 +289,29 @@ export class ReportGenerator {
   private exampleResponseDiff(
     example: GeneratedExample,
     matchedStep: TestStep
-  ): { [statusCode: number]: ResponseDiffItem[] } {
-    const res: any = {};
+  ): ResponseDiffItem[] {
+    let res: ResponseDiffItem[] = [];
     if (matchedStep?.type === "restCall") {
       if (example.example.responses[matchedStep.statusCode] !== undefined) {
-        res[matchedStep.statusCode] = this.responseDiff(
-          example.example.responses[matchedStep.statusCode]?.body || {},
-          matchedStep.responseExpected,
-          this.rawReport!.variables
+        res = res.concat(
+          this.responseDiff(
+            example.example.responses[matchedStep.statusCode]?.body || {},
+            matchedStep.responseExpected,
+            this.rawReport!.variables,
+            `/${matchedStep.statusCode}/body`
+          )
         );
       }
     }
     return res;
   }
 
-  private responseDiff(resp: any, expectedResp: any, variables: any): ResponseDiffItem[] {
+  private responseDiff(
+    resp: any,
+    expectedResp: any,
+    variables: any,
+    jsonPathPrefix: string
+  ): ResponseDiffItem[] {
     const env = new VariableEnv();
     env.setBatch(variables);
     try {
@@ -321,21 +329,21 @@ export class ReportGenerator {
         };
         if (it.remove !== undefined) {
           ret.code = "RESPONSE_MISSING_VALUE";
-          ret.jsonPath = it.remove;
+          ret.jsonPath = jsonPathPrefix + it.remove;
           ret.severity = "Error";
           ret.message = `The response value is missing. Path: ${
             ret.jsonPath
           }. Expected: ${this.dataMasker.jsonStringify(it.oldValue)}. Actual: undefined`;
         } else if (it.add !== undefined) {
           ret.code = "RESPONSE_ADDITIONAL_VALUE";
-          ret.jsonPath = it.add;
+          ret.jsonPath = jsonPathPrefix + it.add;
           ret.severity = "Error";
           ret.message = `Return additional response value. Path: ${
             ret.jsonPath
           }. Expected: undefined. Actual: ${this.dataMasker.jsonStringify(it.value)}`;
         } else if (it.replace !== undefined) {
           ret.code = "RESPONSE_INCORRECT_VALUE";
-          ret.jsonPath = it.replace;
+          ret.jsonPath = jsonPathPrefix + it.replace;
           ret.severity = "Error";
           ret.message = `The actual response value is different from example. Path: ${
             ret.jsonPath
