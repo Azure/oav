@@ -105,7 +105,6 @@ export class DataMasker {
 
   public maybeSecretValue(value: any): boolean {
     // TODO: implement secret pattern value match function here. A new field: valuePatterns
-    // https://dev.azure.com/msazure/One/_git/SecEng-CredScan-SDK?path=%2Fsrc%2FKustoThreatAnalyzer%2FKustoThreatAnalyzer.Core%2FPrefilter%2FPrefilterCore.txt&version=GBCredScanClient_Integration
     if (typeof value !== "string") {
       return false;
     }
