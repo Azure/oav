@@ -5,6 +5,7 @@
 - Optimise report blob path.
 - Support mask client secret, token and swagger sensitive data
 - Refine report schema
+- Response diff ignore Id, location, datetime.
 
 ## 04/14/2021 2.3.3
 

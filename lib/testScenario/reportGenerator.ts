@@ -315,45 +315,57 @@ export class ReportGenerator {
     const env = new VariableEnv();
     env.setBatch(variables);
     try {
+      const ignoredKeys = [/\/body\/id/, /\/body\/location/, /date/i];
+      const ignoreValuePattern = [/\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d(?:\.\d+)?Z?/];
       const expected = env.resolveObjectValues(expectedResp);
       const delta: ResponseDiffItem[] = getJsonPatchDiff(expected, resp, {
         includeOldValue: true,
         minimizeDiff: false,
-      }).map((it: any) => {
-        const ret: ResponseDiffItem = {
-          code: "",
-          jsonPath: "",
-          severity: "Error",
-          message: "",
-          detail: "",
-        };
-        if (it.remove !== undefined) {
-          ret.code = "RESPONSE_MISSING_VALUE";
-          ret.jsonPath = jsonPathPrefix + it.remove;
-          ret.severity = "Error";
-          ret.message = `The response value is missing. Path: ${
-            ret.jsonPath
-          }. Expected: ${this.dataMasker.jsonStringify(it.oldValue)}. Actual: undefined`;
-        } else if (it.add !== undefined) {
-          ret.code = "RESPONSE_ADDITIONAL_VALUE";
-          ret.jsonPath = jsonPathPrefix + it.add;
-          ret.severity = "Error";
-          ret.message = `Return additional response value. Path: ${
-            ret.jsonPath
-          }. Expected: undefined. Actual: ${this.dataMasker.jsonStringify(it.value)}`;
-        } else if (it.replace !== undefined) {
-          ret.code = "RESPONSE_INCORRECT_VALUE";
-          ret.jsonPath = jsonPathPrefix + it.replace;
-          ret.severity = "Error";
-          ret.message = `The actual response value is different from example. Path: ${
-            ret.jsonPath
-          }. Expected: ${this.dataMasker.jsonStringify(
-            it.oldValue
-          )}. Actual: ${this.dataMasker.jsonStringify(it.value)}`;
-        }
-        ret.detail = this.dataMasker.jsonStringify(it);
-        return ret;
-      });
+      })
+        .map((it: any) => {
+          const ret: ResponseDiffItem = {
+            code: "",
+            jsonPath: "",
+            severity: "Error",
+            message: "",
+            detail: "",
+          };
+          if (it.remove !== undefined) {
+            ret.code = "RESPONSE_MISSING_VALUE";
+            ret.jsonPath = jsonPathPrefix + it.remove;
+            ret.severity = "Error";
+            ret.message = `The response value is missing. Path: ${
+              ret.jsonPath
+            }. Expected: ${this.dataMasker.jsonStringify(it.oldValue)}. Actual: undefined`;
+          } else if (it.add !== undefined) {
+            ret.code = "RESPONSE_ADDITIONAL_VALUE";
+            ret.jsonPath = jsonPathPrefix + it.add;
+            ret.severity = "Error";
+            ret.message = `Return additional response value. Path: ${
+              ret.jsonPath
+            }. Expected: undefined. Actual: ${this.dataMasker.jsonStringify(it.value)}`;
+          } else if (it.replace !== undefined) {
+            ret.code = "RESPONSE_INCORRECT_VALUE";
+            ret.jsonPath = jsonPathPrefix + it.replace;
+            ret.severity = "Error";
+            ret.message = `The actual response value is different from example. Path: ${
+              ret.jsonPath
+            }. Expected: ${this.dataMasker.jsonStringify(
+              it.oldValue
+            )}. Actual: ${this.dataMasker.jsonStringify(it.value)}`;
+          }
+          ret.detail = this.dataMasker.jsonStringify(it);
+          if (
+            ignoredKeys.some((key) => ret.jsonPath.search(key) !== -1) ||
+            (ret.code === "RESPONSE_INCORRECT_VALUE" &&
+              typeof it.value === "string" &&
+              ignoreValuePattern.some((valuePattern) => it.value.search(valuePattern) !== -1))
+          ) {
+            return undefined;
+          }
+          return ret;
+        })
+        .filter((it) => it !== undefined) as ResponseDiffItem[];
       return delta;
     } catch (err) {
       console.log(err);
