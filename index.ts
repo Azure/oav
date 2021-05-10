@@ -48,7 +48,11 @@ export {
   LiveValidationResult,
   ValidateOptions,
 } from "./lib/liveValidation/liveValidator";
-export { LiveRequest, LiveResponse, ValidationRequest } from "./lib/liveValidation/operationValidator";
+export {
+  LiveRequest,
+  LiveResponse,
+  ValidationRequest,
+} from "./lib/liveValidation/operationValidator";
 export { SpecResolver } from "./lib/validators/specResolver";
 
 export { TestResourceLoader } from "./lib/testScenario/testResourceLoader";
