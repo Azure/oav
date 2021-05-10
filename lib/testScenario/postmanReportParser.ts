@@ -45,7 +45,7 @@ export class NewmanReportParser {
     const ret: RawReport = { variables: {}, executions: [], timings: {}, metadata: {} };
     const content = await this.fileLoader.load(newmanReportFilePath);
     const newmanReport = JSON.parse(content) as NewmanReport;
-    ret.metadata = JSON.parse(newmanReport.collection.info.description.content); // JSON.parse(report.collection.description.content);
+    ret.metadata = JSON.parse(newmanReport.collection.info.description.content);
     for (const it of newmanReport.run.executions) {
       ret.executions.push(this.generateExampleItem(it));
     }

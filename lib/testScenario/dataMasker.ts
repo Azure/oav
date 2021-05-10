@@ -17,8 +17,13 @@ export const defaultMaskValue = (_content?: string): string => {
   return "<masked>";
 };
 
+/**
+ * @class DataMasker
+ * @description Detect secret and mask data by key pattern and value pattern.
+ */
 @injectable()
 export class DataMasker {
+  //For Json object key value pair if the key contains below strings,the related value is probably a secret.
   public maskKeys: string[] = [
     "client_secret",
     "password",
@@ -28,6 +33,7 @@ export class DataMasker {
     "sas",
   ];
   public maskValues: string[] = [];
+  // Regex patterns to match specific secrets. E.g: bearerToken, DB connectionString.
   public maskValuePatterns: RegExp[] = [
     new RegExp(/Bearer\s[a-zA-Z0-9\-_]+?\.[a-zA-Z0-9\-_]+?\.([a-zA-Z0-9\-_]+)?/),
   ];
@@ -63,6 +69,13 @@ export class DataMasker {
     }
   }
 
+  /**
+   * Recursively mask json object.
+   * For each key-value pair if key matches with predefined key pattern or value matches with values pattern, mask value.
+   * @param obj JSON object to be masked.
+   * @param addMaskedValue option default value is false. If true, for each value to be masked, add the value to this.maskedValues.
+   * @returns masked object.
+   */
   public maskObject(obj: any, addMaskedValue = false): any {
     const mask = (obj: any) => {
       for (const k in obj) {
@@ -97,18 +110,17 @@ export class DataMasker {
     if (typeof key !== "string") {
       return false;
     }
-    return (
-      this.maskKeys.some((it) => key.toLowerCase().includes(it)) ||
-      this.maskValuePatterns.some((it) => it.test(key))
-    );
+    return this.maskKeys.some((it) => key.toLowerCase().includes(it.toLowerCase()));
   }
 
   public maybeSecretValue(value: any): boolean {
-    // TODO: implement secret pattern value match function here. A new field: valuePatterns
     if (typeof value !== "string") {
       return false;
     }
-    return this.maskValues.some((it) => value === it);
+    return (
+      this.maskValues.some((it) => value === it) ||
+      this.maskValuePatterns.some((it) => it.test(value))
+    );
   }
 
   public maskString(content: string): any {

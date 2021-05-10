@@ -244,7 +244,7 @@ export class ReportGenerator {
           await this.blobUploader.uploadContent(
             "payload",
             payloadBlobPath,
-            JSON.stringify(v, null, 2)
+            this.dataMasker.jsonStringify(v)
           );
         }
       }
