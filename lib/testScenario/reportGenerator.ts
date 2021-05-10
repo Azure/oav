@@ -409,7 +409,7 @@ export class ReportGenerator {
       detail: this.dataMasker.jsonStringify(it.response.body),
     };
     const responseObj = this.dataMasker.jsonParse(it.response.body);
-    ret.code = responseObj?.error?.code;
+    ret.code = "RUNTIME_ERROR";
     ret.message = responseObj?.error?.message;
     return ret;
   }
