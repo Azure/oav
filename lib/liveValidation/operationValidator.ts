@@ -18,6 +18,7 @@ import { extractPathParamValue } from "../transform/pathRegexTransformer";
 import { LiveValidationIssue } from "./liveValidator";
 import { LiveValidatorLoader } from "./liveValidatorLoader";
 import { OperationMatch } from "./operationSearcher";
+import { LiveValidatorLoggingLevels } from "./liveValidator";
 
 export interface ValidationRequest {
   providerNamespace: string;
@@ -56,7 +57,13 @@ export const validateSwaggerLiveRequest = async (
   request: LiveRequest,
   info: OperationContext,
   loader?: LiveValidatorLoader,
-  includeErrors?: ExtendedErrorCode[]
+  includeErrors?: ExtendedErrorCode[],
+  logging?: (
+    message: string,
+    level?: LiveValidatorLoggingLevels,
+    operationName?: string,
+    validationRequest?: ValidationRequest
+  ) => void
 ) => {
   const { operation } = info.operationMatch!;
   const { body, query } = request;
@@ -66,6 +73,9 @@ export const validateSwaggerLiveRequest = async (
   if (validate === undefined) {
     if (loader === undefined) {
       throw new Error("Loader is undefined but request validator isn't built yet");
+    }
+    if (logging) {
+      logging("On-demand build request validator", LiveValidatorLoggingLevels.info, operation.operationId, info.validationRequest);
     }
     validate = await loader.getRequestValidator(operation);
   }
@@ -92,7 +102,13 @@ export const validateSwaggerLiveResponse = async (
   info: OperationContext,
   loader?: LiveValidatorLoader,
   includeErrors?: ExtendedErrorCode[],
-  isArmCall?: boolean
+  isArmCall?: boolean,
+  logging?: (
+    message: string,
+    level?: LiveValidatorLoggingLevels,
+    operationName?: string,
+    validationRequest?: ValidationRequest
+  ) => void
 ) => {
   const { operation } = info.operationMatch!;
   const { statusCode, body } = response;
@@ -113,6 +129,9 @@ export const validateSwaggerLiveResponse = async (
   if (validate === undefined) {
     if (loader === undefined) {
       throw new Error("Loader is undefined but request validator isn't built yet");
+    }
+    if (logging) {
+      logging("On-demand build response validator", LiveValidatorLoggingLevels.info, operation.operationId, info.validationRequest);
     }
     validate = await loader.getResponseValidator(rsp);
   }

@@ -79,7 +79,7 @@ export interface LiveValidationIssue extends SchemaValidateIssue {
 /**
  * Additional data to log.
  */
-interface Meta {
+ interface Meta {
   [key: string]: any;
 }
 
@@ -158,7 +158,7 @@ export class LiveValidator {
     }
 
     this.options = ops as LiveValidatorOptions;
-
+    this.logging(`Creating livevalidator with options:${JSON.stringify(this.options)}`);
     this.operationSearcher = new OperationSearcher(this.logging);
   }
 
@@ -306,7 +306,8 @@ export class LiveValidator {
         liveRequest,
         info,
         this.loader,
-        options.includeErrors
+        options.includeErrors,
+        this.logging
       );
     } catch (reqValidationError) {
       const msg =
@@ -324,7 +325,7 @@ export class LiveValidator {
     const elapsedTime = Date.now() - startTime;
     this.logging(
       `DurationInMs:${elapsedTime}`,
-      LiveValidatorLoggingLevels.debug,
+      LiveValidatorLoggingLevels.info,
       "Oav.liveValidator.validateLiveRequest",
       info.validationRequest
     );
@@ -375,7 +376,8 @@ export class LiveValidator {
         info,
         this.loader,
         options.includeErrors,
-        this.options.isArmCall
+        this.options.isArmCall,
+        this.logging
       );
     } catch (resValidationError) {
       const msg =
@@ -393,7 +395,7 @@ export class LiveValidator {
     const elapsedTime = Date.now() - startTime;
     this.logging(
       `DurationInMs:${elapsedTime}`,
-      LiveValidatorLoggingLevels.debug,
+      LiveValidatorLoggingLevels.info,
       "Oav.liveValidator.validateLiveResponse",
       info.validationRequest
     );
@@ -604,14 +606,9 @@ export class LiveValidator {
 
       return spec;
     } catch (err) {
-      // Do Not reject promise in case, we cannot initialize one of the swagger
-      this.logging(
-        `Unable to initialize "${swaggerPath}" file from SpecValidator. Error: ${err}`,
-        LiveValidatorLoggingLevels.debug
-      );
       this.logging(
         `Unable to initialize "${swaggerPath}" file from SpecValidator. We are ` +
-          `ignoring this swagger file and continuing to build cache for other valid specs.`,
+          `ignoring this swagger file and continuing to build cache for other valid specs. Error: ${err}`,
         LiveValidatorLoggingLevels.warn
       );
 
