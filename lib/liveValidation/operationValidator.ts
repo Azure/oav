@@ -15,10 +15,9 @@ import {
   SourceLocation,
 } from "../util/validationError";
 import { extractPathParamValue } from "../transform/pathRegexTransformer";
-import { LiveValidationIssue } from "./liveValidator";
+import { LiveValidationIssue, LiveValidatorLoggingLevels } from "./liveValidator";
 import { LiveValidatorLoader } from "./liveValidatorLoader";
 import { OperationMatch } from "./operationSearcher";
-import { LiveValidatorLoggingLevels } from "./liveValidator";
 
 export interface ValidationRequest {
   providerNamespace: string;
@@ -75,7 +74,12 @@ export const validateSwaggerLiveRequest = async (
       throw new Error("Loader is undefined but request validator isn't built yet");
     }
     if (logging) {
-      logging("On-demand build request validator", LiveValidatorLoggingLevels.info, operation.operationId, info.validationRequest);
+      logging(
+        "On-demand build request validator",
+        LiveValidatorLoggingLevels.info,
+        operation.operationId,
+        info.validationRequest
+      );
     }
     validate = await loader.getRequestValidator(operation);
   }
@@ -131,7 +135,12 @@ export const validateSwaggerLiveResponse = async (
       throw new Error("Loader is undefined but request validator isn't built yet");
     }
     if (logging) {
-      logging("On-demand build response validator", LiveValidatorLoggingLevels.info, operation.operationId, info.validationRequest);
+      logging(
+        "On-demand build response validator",
+        LiveValidatorLoggingLevels.info,
+        operation.operationId,
+        info.validationRequest
+      );
     }
     validate = await loader.getResponseValidator(rsp);
   }

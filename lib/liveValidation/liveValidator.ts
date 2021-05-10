@@ -79,7 +79,7 @@ export interface LiveValidationIssue extends SchemaValidateIssue {
 /**
  * Additional data to log.
  */
- interface Meta {
+interface Meta {
   [key: string]: any;
 }
 
