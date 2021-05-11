@@ -15,7 +15,7 @@
 
 - Support auto generate test scenario based on resource type.
 - Support directly run test scenario file with embedded internal newman runner
-- SUpport analyze dependency from readme tag.
+- Support analyze dependency from readme tag.
 
 ## 03/30/2021 2.3.1
 
