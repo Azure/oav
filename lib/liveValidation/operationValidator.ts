@@ -15,7 +15,7 @@ import {
   SourceLocation,
 } from "../util/validationError";
 import { extractPathParamValue } from "../transform/pathRegexTransformer";
-import { LiveValidationIssue } from "./liveValidator";
+import { LiveValidationIssue, LiveValidatorLoggingLevels } from "./liveValidator";
 import { LiveValidatorLoader } from "./liveValidatorLoader";
 import { OperationMatch } from "./operationSearcher";
 
@@ -56,7 +56,13 @@ export const validateSwaggerLiveRequest = async (
   request: LiveRequest,
   info: OperationContext,
   loader?: LiveValidatorLoader,
-  includeErrors?: ExtendedErrorCode[]
+  includeErrors?: ExtendedErrorCode[],
+  logging?: (
+    message: string,
+    level?: LiveValidatorLoggingLevels,
+    operationName?: string,
+    validationRequest?: ValidationRequest
+  ) => void
 ) => {
   const { operation } = info.operationMatch!;
   const { body, query } = request;
@@ -67,7 +73,16 @@ export const validateSwaggerLiveRequest = async (
     if (loader === undefined) {
       throw new Error("Loader is undefined but request validator isn't built yet");
     }
+    const startTimeToBuild = Date.now();
     validate = await loader.getRequestValidator(operation);
+    if (logging) {
+      logging(
+        `On-demand build request validator with DurationInMs:${Date.now() - startTimeToBuild}`,
+        LiveValidatorLoggingLevels.info,
+        operation.operationId,
+        info.validationRequest
+      );
+    }
   }
 
   const pathParam = extractPathParamValue(info.operationMatch!);
@@ -92,7 +107,13 @@ export const validateSwaggerLiveResponse = async (
   info: OperationContext,
   loader?: LiveValidatorLoader,
   includeErrors?: ExtendedErrorCode[],
-  isArmCall?: boolean
+  isArmCall?: boolean,
+  logging?: (
+    message: string,
+    level?: LiveValidatorLoggingLevels,
+    operationName?: string,
+    validationRequest?: ValidationRequest
+  ) => void
 ) => {
   const { operation } = info.operationMatch!;
   const { statusCode, body } = response;
@@ -114,7 +135,16 @@ export const validateSwaggerLiveResponse = async (
     if (loader === undefined) {
       throw new Error("Loader is undefined but request validator isn't built yet");
     }
+    const startTimeToBuild = Date.now();
     validate = await loader.getResponseValidator(rsp);
+    if (logging) {
+      logging(
+        `On-demand build response validator with DurationInMs:${Date.now() - startTimeToBuild}`,
+        LiveValidatorLoggingLevels.info,
+        operation.operationId,
+        info.validationRequest
+      );
+    }
   }
 
   const headers = transformLiveHeader(response.headers ?? {}, rsp);

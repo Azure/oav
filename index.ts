@@ -35,6 +35,8 @@ export {
   RuntimeException,
 } from "./lib/util/validationError";
 
+export { getResourceType, getProvider } from "./lib/util/utils";
+
 // Classes
 export { SpecValidator } from "./lib/validators/specValidator";
 export {
@@ -46,7 +48,11 @@ export {
   LiveValidationResult,
   ValidateOptions,
 } from "./lib/liveValidation/liveValidator";
-export { LiveRequest, LiveResponse } from "./lib/liveValidation/operationValidator";
+export {
+  LiveRequest,
+  LiveResponse,
+  ValidationRequest,
+} from "./lib/liveValidation/operationValidator";
 export { SpecResolver } from "./lib/validators/specResolver";
 
 export { TestResourceLoader } from "./lib/testScenario/testResourceLoader";
