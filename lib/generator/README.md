@@ -21,7 +21,7 @@ Options:
                            timestamp based log file at
                            "/home/abc/oav_output".
   -p, --pretty             Pretty print
-  -o, --operationId        operation id.                                [string]
+  -o, --operationIds       String of operation ids split by comma.      [string]
   --payload, --payloadDir  the directory path contains payload.         [string]
   -c, --config             the readme config path.                      [string]
   --tag, --tagName         the readme tag name.                         [string]
