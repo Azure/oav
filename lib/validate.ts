@@ -482,7 +482,7 @@ export async function extractXMsExamples(
 export async function generateExamples(
   specPath: string,
   payloadDir?: string,
-  operationId?: string,
+  operationIds?: string,
   readme?: string,
   tag?: string,
   options?: Options
@@ -515,8 +515,11 @@ export async function generateExamples(
   log.filepath = options.logFilepath || log.filepath;
   for (const file of wholeInputFiles) {
     const generator = new ExampleGenerator(file, payloadDir);
-    if (operationId) {
-     await generator.generate(operationId);
+    if (operationIds) {
+     const operationIdArray = operationIds.trim().split(",");
+     for(const operationId of operationIdArray) {
+      await generator.generate(operationId);
+     }
      continue;
     }
     await generator.generateAll();

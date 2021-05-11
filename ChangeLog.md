@@ -1,5 +1,10 @@
 # Change Log - oav
 
+## 05/11/2021 2.4.0
+
+- Support example generation with multiple operations input
+- Added more logging and duration to live validator
+
 ## 04/14/2021 2.3.3
 
 - Support auto upload generated file to azure blob.
