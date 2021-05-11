@@ -608,7 +608,7 @@ export class LiveValidator {
     } catch (err) {
       this.logging(
         `Unable to initialize "${swaggerPath}" file from SpecValidator. We are ` +
-          `ignoring this swagger file and continuing to build cache for other valid specs. Error: ${err}`,
+          `ignoring this swagger file and continuing to build cache for other valid specs. ErrorMessage: ${err?.message};ErrorStack: ${err?.stack}`,
         LiveValidatorLoggingLevels.warn
       );
 
