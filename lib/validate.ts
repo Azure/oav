@@ -516,10 +516,12 @@ export async function generateExamples(
   for (const file of wholeInputFiles) {
     const generator = new ExampleGenerator(file, payloadDir);
     if (operationIds) {
-     const operationIdArray = operationIds.trim().split(",");
-     for(const operationId of operationIdArray) {
-      await generator.generate(operationId);
-     }
+      const operationIdArray = operationIds.trim().split(",");
+      for (const operationId of operationIdArray) {
+        if (operationId) {
+          await generator.generate(operationId);
+        }
+      }
      continue;
     }
     await generator.generateAll();
