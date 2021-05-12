@@ -1,11 +1,16 @@
 # Change Log - oav
 
-## 04/27/2021 2.3.4
+## 05/12/2021 2.5.0
 
 - Optimise report blob path.
 - Support mask client secret, token and swagger sensitive data
 - Refine report schema
 - Response diff ignore Id, location, datetime.
+
+## 05/11/2021 2.4.0
+
+- Support example generation with multiple operations input
+- Added more logging and duration to live validator
 
 ## 04/14/2021 2.3.3
 
@@ -17,7 +22,7 @@
 
 - Support auto generate test scenario based on resource type.
 - Support directly run test scenario file with embedded internal newman runner
-- SUpport analyze dependency from readme tag.
+- Support analyze dependency from readme tag.
 
 ## 03/30/2021 2.3.1
 

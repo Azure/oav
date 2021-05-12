@@ -129,7 +129,7 @@ export class OperationSearcher {
       if (operations.reason !== undefined) {
         this.logging(
           `${operations.reason.message} with requestUrl ${requestInfo.requestUrl}`,
-          LiveValidatorLoggingLevels.debug,
+          LiveValidatorLoggingLevels.info,
           "Oav.OperationSearcher.getPotentialOperations",
           requestInfo
         );
@@ -142,7 +142,7 @@ export class OperationSearcher {
     if (potentialOperations!.matches.length === 0) {
       this.logging(
         `Fallback to ${unknownResourceProvider} -> ${unknownApiVersion}`,
-        LiveValidatorLoggingLevels.debug,
+        LiveValidatorLoggingLevels.info,
         "Oav.OperationSearcher.search",
         requestInfo
       );
@@ -172,7 +172,7 @@ export class OperationSearcher {
         `Operation Information: ${JSON.stringify(operationInfos)}`;
       this.logging(
         msg,
-        LiveValidatorLoggingLevels.debug,
+        LiveValidatorLoggingLevels.info,
         "Oav.liveValidator.findSpecOperation",
         requestInfo
       );

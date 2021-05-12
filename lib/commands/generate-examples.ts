@@ -15,8 +15,8 @@ export const describe = "Generate swagger examples from real payload records.";
 
 export const builder: yargs.CommandBuilder = {
   o: {
-    alias: "operationId",
-    describe: "operation id.",
+    alias: "operationIds",
+    describe: "string of operation ids split by comma.",
     string: true,
   },
   payload: {
