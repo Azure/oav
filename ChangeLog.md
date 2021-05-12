@@ -6,6 +6,7 @@
 - Support mask client secret, token and swagger sensitive data
 - Refine report schema
 - Response diff ignore Id, location, datetime.
+- Bump handlebars version to fix vulnerability issue
 
 ## 05/11/2021 2.4.0
 
