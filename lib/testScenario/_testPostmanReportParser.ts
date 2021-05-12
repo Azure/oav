@@ -12,7 +12,7 @@ const main = async () => {
       reportOutputFilePath: "./generated_reports/generated_report.json",
     };
     const parser = inversifyGetInstance(NewmanReportParser, opts);
-    await parser.generateRawReport();
+    await parser.generateRawReport(opts.newmanReportFilePath);
   } catch (e) {
     console.log(e.message, e.stack);
   }

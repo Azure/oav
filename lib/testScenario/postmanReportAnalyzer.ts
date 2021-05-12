@@ -1,4 +1,5 @@
 import { inject, injectable } from "inversify";
+import uuid from "uuid";
 import { defaultQualityReportFilePath } from "./defaultNaming";
 import { setDefaultOpts } from "./../swagger/loader";
 import { ReportGenerator, ReportGeneratorOption } from "./reportGenerator";
@@ -10,6 +11,8 @@ import { getSwaggerFilePathsFromTestScenarioFilePath } from "./testResourceLoade
 export interface NewmanReportAnalyzerOption extends NewmanReportParserOption {
   reportOutputFilePath?: string;
   enableUploadBlob?: boolean;
+  runId?: string;
+  swaggerFilePaths?: string[];
 }
 
 @injectable()
@@ -20,15 +23,23 @@ export class NewmanReportAnalyzer {
     private newmanReportParser: NewmanReportParser
   ) {
     setDefaultOpts(this.opts, {
+      runId: uuid.v4(),
       newmanReportFilePath: "",
       reportOutputFilePath: defaultQualityReportFilePath(this.opts.newmanReportFilePath),
+      swaggerFilePaths: [],
     });
   }
 
   public async analyze() {
-    const rawReport: RawReport = await this.newmanReportParser.generateRawReport();
+    const rawReport: RawReport = await this.newmanReportParser.generateRawReport(
+      this.opts.newmanReportFilePath
+    );
     const testScenarioFilePath = rawReport.metadata.testScenarioFilePath;
-    const swaggerFilePaths = getSwaggerFilePathsFromTestScenarioFilePath(testScenarioFilePath);
+    const testScenarioName = rawReport.metadata.testScenarioName;
+    const swaggerFilePaths =
+      this.opts.swaggerFilePaths?.length === 0
+        ? getSwaggerFilePathsFromTestScenarioFilePath(testScenarioFilePath)
+        : this.opts.swaggerFilePaths;
     const reportGeneratorOption: ReportGeneratorOption = {
       newmanReportFilePath: this.opts.newmanReportFilePath,
       swaggerFilePaths: swaggerFilePaths,
@@ -39,6 +50,8 @@ export class NewmanReportAnalyzer {
       reportOutputFilePath: this.opts.reportOutputFilePath,
       enableBlobUploader: this.opts.enableUploadBlob || false,
       blobConnectionString: process.env.blobConnectionString || "",
+      runId: this.opts.runId,
+      testScenarioName: testScenarioName,
     };
     const reportGenerator = inversifyGetInstance(ReportGenerator, reportGeneratorOption);
     await reportGenerator.generateReport();

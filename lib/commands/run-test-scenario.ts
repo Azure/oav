@@ -12,12 +12,27 @@ import {
 } from "../testScenario/postmanCollectionGenerator";
 import { inversifyGetInstance } from "../inversifyUtils";
 import { getApiVersionFromSwaggerFile, getProviderFromFilePath } from "../util/utils";
+import { getFileNameFromPath } from "../testScenario/defaultNaming";
 import { getSwaggerFilePathsFromTestScenarioFilePath } from "./../testScenario/testResourceLoader";
 
 export const command = "run-test-scenario <test-scenario>";
 
 export const describe = "newman runner run test scenario file.";
 
+/**
+ * UploadBlob true. Upload generated file and result to azure blob storage. connection string is passed by `process.env.blobConnectionString`
+ * Upload files:
+ *
+ * 1. newmanReport: containerName: newmanreport path: <ResourceProvider>/<apiVersion>/<testScenarioFileName>/<runId>/<testScenarioIdx>.json
+ *
+ * 2. payload: containerName: payload path: <resourceProvider>/<apiVersion>/<testScenarioFileName>/<runId>/<testScenarioIdx>/<correlationId>.json
+ *
+ * 3. report: containerName: report path: <ResourceProvider>/<apiVersion>/<testScenarioFileName>/<runId>/<testScenarioIdx>/report.json
+ *
+ * 4. postmancollection & postmanenv: container: postmancollection: <ResourceProvider>/<apiVersion>/<testScenarioFileName>/<runId>/<testScenarioIdx>/collection.json
+ * postmanenv: <ResourceProvider>/<apiVersion>/<testScenarioFileName>/<runId>/<testScenarioIdx>/env.json
+ *
+ */
 export const builder: yargs.CommandBuilder = {
   e: {
     alias: "envFile",
@@ -55,9 +70,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     const resourceProvider = getProviderFromFilePath(testScenarioFilePath);
     const apiVersion = getApiVersionFromSwaggerFile(swaggerFilePaths[0]);
     const opt: PostmanCollectionGeneratorOption = {
-      name: `${resourceProvider}/${apiVersion}/${testScenarioFilePath
-        .replace(/^.*[\\\/]/, "")
-        .replace(".yaml", "")}`,
+      name: `${resourceProvider}/${apiVersion}/${getFileNameFromPath(testScenarioFilePath)}`,
       testDef: testScenarioFilePath,
       swaggerFilePaths: swaggerFilePaths,
       fileRoot: fileRoot,

@@ -18,8 +18,8 @@ import { pureObjectTransformer } from "../transform/pureObjectTransformer";
 import { AjvSchemaValidator } from "../swaggerValidator/ajvSchemaValidator";
 import { getJsonPatchDiff } from "../testScenario/diffUtils";
 import { BodyTransformer } from "../testScenario/bodyTransformer";
-import { Severity } from "../util/severity";
 import { ErrorCodes } from "../util/constants";
+import { SeverityString } from "../util/severity";
 import { inversifyGetInstance, TYPES } from "./../inversifyUtils";
 import { setDefaultOpts } from "./../swagger/loader";
 import { traverseSwaggerAsync } from "./../transform/traverseSwagger";
@@ -56,9 +56,9 @@ type ExampleValidationFunc = (
 
 interface ExampleValidationRule {
   id: string;
-  severity: Severity;
+  severity: SeverityString;
   code: string;
-  path: string;
+  jsonPath: string;
   message: string;
   exampleName: string;
   exampleFilePath: string;
@@ -86,9 +86,9 @@ const provisioningStateShouldBeTerminalStatusIn200Response: ExampleValidationFun
       if (!terminalStatues.includes(it.value.provisioningState.toLowerCase())) {
         ret.push({
           id: ErrorCodes.ProvisioningStateShouldBeTerminalStatusIn200Response.id,
-          severity: Severity.Error,
+          severity: "Error",
           code: ErrorCodes.ProvisioningStateShouldBeTerminalStatusIn200Response.name,
-          path: `${it.pointer}/provisioningState`,
+          jsonPath: `${it.pointer}/provisioningState`,
           message:
             "The resource's provisioning state should be terminal status in http 200 response.",
           exampleName: exampleValidationContext.exampleName,
@@ -136,12 +136,13 @@ const roundtripInconsistentProperty: ExampleValidationFunc = async (
             .forEach((it) =>
               ret.push({
                 id: ErrorCodes.RoundtripInconsistentProperty.id,
-                severity: Severity.Error,
+                severity: "Error",
                 code: ErrorCodes.RoundtripInconsistentProperty.name,
-                path: (it as any).replace,
-                detail: it,
-                message:
-                  "The property’s value in the response is different from what was set in the request.",
+                jsonPath: (it as any).replace,
+                detail: JSON.stringify(it),
+                message: `The property's value in the response is different from what was set in the request. Path: ${
+                  (it as any).replace
+                }. Request: ${(it as any).oldValue}. Response: ${(it as any).value}`,
                 exampleName: exampleValidationContext.exampleName,
                 exampleFilePath: exampleValidationContext.exampleFilePath,
               })

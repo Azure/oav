@@ -1,9 +1,17 @@
 import * as path from "path";
+import * as uuid from "uuid";
 import * as _ from "lodash";
 import { injectable, inject } from "inversify";
 import { ExampleQualityValidator } from "../exampleQualityValidator/exampleQualityValidator";
 import { setDefaultOpts } from "../swagger/loader";
-import { getProviderFromFilePath } from "../util/utils";
+import {
+  findNearestReadmeDir,
+  getApiVersionFromSwaggerFile,
+  getProviderFromFilePath,
+} from "../util/utils";
+import { SeverityString } from "../util/severity";
+import { SwaggerAnalyzer } from "./swaggerAnalyzer";
+import { DataMasker } from "./dataMasker";
 import { defaultQualityReportFilePath } from "./defaultNaming";
 import { FileLoader } from "./../swagger/fileLoader";
 import { TYPES } from "./../inversifyUtils";
@@ -15,51 +23,79 @@ import {
   RawExecution,
   TestDefinitionFile,
   TestStep,
-  JsonPatchOp,
   TestStepRestCall,
 } from "./testResourceTypes";
 import { VariableEnv } from "./variableEnv";
 import { getJsonPatchDiff } from "./diffUtils";
-import { BlobUploader, TestScenarioBlobUploaderOption } from "./blobUploader";
+import { BlobUploader, BlobUploaderOption } from "./blobUploader";
 
 interface GeneratedExample {
-  exampleName: string;
+  exampleFilePath: string;
   step: string;
   operationId: string;
   example: SwaggerExample;
 }
 
 interface TestScenarioResult {
-  testScenario: {
-    testScenarioFilePath: string;
-    readmeFilePath?: string;
-    swaggerFilePaths: string[];
-    tag?: string;
-  };
-  stepResult: { [step: string]: StepResult };
+  testScenarioFilePath: string;
+  readmeFilePath?: string;
+  swaggerFilePaths: string[];
+  tag?: string;
+
+  // New added fields
+  environment?: string;
+  armEnv?: string;
+  subscriptionId?: string;
+  rootPath?: string;
+  providerNamespace?: string;
+  apiVersion?: string;
+  startTime?: string;
+  endTime?: string;
+  runId?: string;
+  repository?: string;
+  branch?: string;
+  commitHash?: string;
+  armEndpoint: string;
+  testScenarioName?: string;
+  stepResult: StepResult[];
 }
 
 interface StepResult {
-  exampleName?: string;
+  statusCode: number;
+  exampleFilePath?: string;
   example?: SwaggerExample;
   operationId: string;
-  runtimeError?: HttpError;
-  responseDiffResult?: { [statusCode: number]: JsonPatchOp[] };
+  runtimeError?: RuntimeError[];
+  responseDiffResult?: ResponseDiffItem[];
   liveValidationResult?: any;
   stepValidationResult?: any;
+  correlationId?: string;
+  stepName: string;
 }
 
-interface HttpError {
-  statusCode: number;
-  rawExecution: RawExecution;
+interface RuntimeError {
+  code: string;
+  message: string;
+  detail: string;
+  severity: SeverityString;
+}
+
+interface ResponseDiffItem {
+  code: string;
+  jsonPath: string;
+  severity: SeverityString;
+  message: string;
+  detail: string;
 }
 
 export interface ReportGeneratorOption
   extends NewmanReportParserOption,
     TestResourceLoaderOption,
-    TestScenarioBlobUploaderOption {
+    BlobUploaderOption {
   testDefFilePath: string;
   reportOutputFilePath?: string;
+  testScenarioName?: string;
+  runId?: string;
 }
 
 @injectable()
@@ -69,13 +105,17 @@ export class ReportGenerator {
   private testDefFile: TestDefinitionFile | undefined;
   private operationIds: Set<string>;
   private rawReport: RawReport | undefined;
+  private fileRoot: string;
+  private recording: Map<string, RawExecution>;
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
   constructor(
     @inject(TYPES.opts) private opts: ReportGeneratorOption,
     private postmanReportParser: NewmanReportParser,
     private testResourceLoader: TestResourceLoader,
     private fileLoader: FileLoader,
-    private blobUploader: BlobUploader
+    private blobUploader: BlobUploader,
+    private dataMasker: DataMasker,
+    private swaggerAnalyzer: SwaggerAnalyzer
   ) {
     setDefaultOpts(this.opts, {
       newmanReportFilePath: "",
@@ -83,29 +123,46 @@ export class ReportGenerator {
       enableBlobUploader: false,
       blobConnectionString: "",
       testDefFilePath: "",
+      runId: uuid.v4(),
     });
     const swaggerFileAbsolutePaths = this.opts.swaggerFilePaths!.map((it) => path.resolve(it));
     this.exampleQualityValidator = ExampleQualityValidator.create({
       swaggerFilePaths: [...swaggerFileAbsolutePaths],
     });
+    this.recording = new Map<string, RawExecution>();
     this.operationIds = new Set<string>();
+    this.fileRoot = findNearestReadmeDir(this.opts.testDefFilePath) || "/";
+
     this.swaggerExampleQualityResult = {
-      testScenario: {
-        testScenarioFilePath: this.opts.testDefFilePath,
-        swaggerFilePaths: this.opts.swaggerFilePaths!,
-      },
-      stepResult: {},
+      testScenarioFilePath: path.relative(this.fileRoot, this.opts.testDefFilePath),
+      swaggerFilePaths: this.opts.swaggerFilePaths!.map((it) => path.relative(this.fileRoot, it)),
+      providerNamespace: getProviderFromFilePath(this.opts.testDefFilePath),
+      apiVersion: getApiVersionFromSwaggerFile(this.opts.swaggerFilePaths![0]),
+      runId: this.opts.runId,
+      rootPath: this.fileRoot,
+      repository: process.env.SPEC_REPOSITORY,
+      branch: process.env.SPEC_BRANCH,
+      commitHash: process.env.COMMIT_HASH,
+      environment: process.env.ENVIRONMENT || "test",
+      testScenarioName: this.opts.testScenarioName,
+      armEndpoint: "https://management.azure.com",
+      stepResult: [],
     };
     this.testDefFile = undefined;
   }
 
   public async initialize() {
-    this.rawReport = await this.postmanReportParser.generateRawReport();
+    this.rawReport = await this.postmanReportParser.generateRawReport(
+      this.opts.newmanReportFilePath
+    );
   }
 
   public async generateExampleQualityReport(rawReport: RawReport) {
     await this.initialize();
     const variables = rawReport.variables;
+    this.swaggerExampleQualityResult.startTime = new Date(rawReport.timings.started).toISOString();
+    this.swaggerExampleQualityResult.endTime = new Date(rawReport.timings.completed).toISOString();
+    this.swaggerExampleQualityResult.subscriptionId = variables.subscriptionId;
     for (const it of rawReport.executions) {
       if (it.annotation === undefined) {
         continue;
@@ -118,26 +175,33 @@ export class ReportGenerator {
           Math.floor(it.response.statusCode / 200) !== 1 &&
           it.response.statusCode !== matchedStep.statusCode
         ) {
-          error = { statusCode: it.response.statusCode, rawExecution: it } as HttpError;
+          error = this.getRuntimeError(it);
         }
         if (matchedStep === undefined) {
           continue;
         }
         // validate real payload.
-        const roundtripErrors = await this.exampleQualityValidator.validateExternalExamples([
-          {
-            exampleFilePath: generatedExample.exampleName,
-            example: generatedExample.example,
-            operationId: matchedStep.operationId,
-          },
-        ]);
-        this.swaggerExampleQualityResult.stepResult[it.annotation.step] = {
-          exampleName: generatedExample.exampleName,
+        const roundtripErrors = (
+          await this.exampleQualityValidator.validateExternalExamples([
+            {
+              exampleFilePath: generatedExample.exampleFilePath,
+              example: generatedExample.example,
+              operationId: matchedStep.operationId,
+            },
+          ])
+        ).map((it) => _.omit(it, ["exampleName", "exampleFilePath"]));
+        const correlationId = it.response.headers["x-ms-correlation-request-id"];
+        this.swaggerExampleQualityResult.stepResult.push({
+          exampleFilePath: generatedExample.exampleFilePath,
           operationId: it.annotation.operationId,
-          runtimeError: error,
+          runtimeError: [error],
           responseDiffResult: this.exampleResponseDiff(generatedExample, matchedStep),
           stepValidationResult: roundtripErrors,
-        };
+          correlationId: correlationId,
+          statusCode: it.response.statusCode,
+          stepName: it.annotation.step,
+        });
+        this.recording.set(correlationId, it);
       }
     }
     if (this.opts.reportOutputFilePath !== undefined) {
@@ -153,8 +217,36 @@ export class ReportGenerator {
           idx,
           this.opts.blobConnectionString?.length
         );
-        //blobPath should follow <ResourceProvider>/<api-version>/<test-scenario-file-name>.json pattern
-        await this.blobUploader.uploadFile("report", blobPath, this.opts.reportOutputFilePath);
+        const secretValues: string[] = [];
+        for (const [k, v] of Object.entries(this.rawReport?.variables)) {
+          if (this.dataMasker.maybeSecretKey(k)) {
+            secretValues.push(v as string);
+          }
+        }
+        this.dataMasker.addMaskedValues(secretValues);
+        this.dataMasker.addMaskedKeys(await this.swaggerAnalyzer.getAllSecretKey());
+
+        // mask report here.
+        await this.blobUploader.uploadContent(
+          "report",
+          blobPath,
+          this.dataMasker.jsonStringify(this.swaggerExampleQualityResult)
+        );
+
+        await this.blobUploader.uploadContent(
+          "reportforpipeline",
+          blobPath,
+          this.dataMasker.jsonStringify(this.swaggerExampleQualityResult)
+        );
+
+        for (const [correlationId, v] of this.recording) {
+          const payloadBlobPath = `${path.dirname(blobPath)}/${correlationId}.json`;
+          await this.blobUploader.uploadContent(
+            "payload",
+            payloadBlobPath,
+            this.dataMasker.jsonStringify(v)
+          );
+        }
       }
     }
     console.log(JSON.stringify(this.swaggerExampleQualityResult, null, 2));
@@ -177,14 +269,17 @@ export class ReportGenerator {
     const resp: any = this.parseRespBody(it);
     example.responses = {};
     _.extend(example.responses, resp);
-    const exampleName = it.annotation.exampleName.replace(/^.*[\\\/]/, "");
+    const exampleFilePath = path.relative(
+      this.fileRoot,
+      path.resolve(this.opts.testDefFilePath, it.annotation.exampleName)
+    );
     const generatedGetExecution = this.findGeneratedGetExecution(it, rawReport);
     if (generatedGetExecution.length > 0) {
       const getResp = this.parseRespBody(generatedGetExecution[0]);
       _.extend(example.responses, getResp);
     }
     return {
-      exampleName,
+      exampleFilePath: exampleFilePath,
       example,
       step: it.annotation.step,
       operationId: it.annotation.operationId,
@@ -194,29 +289,83 @@ export class ReportGenerator {
   private exampleResponseDiff(
     example: GeneratedExample,
     matchedStep: TestStep
-  ): { [statusCode: number]: JsonPatchOp[] } {
-    const res: any = {};
+  ): ResponseDiffItem[] {
+    let res: ResponseDiffItem[] = [];
     if (matchedStep?.type === "restCall") {
       if (example.example.responses[matchedStep.statusCode] !== undefined) {
-        res[matchedStep.statusCode] = this.responseDiff(
-          example.example.responses[matchedStep.statusCode]?.body || {},
-          matchedStep.responseExpected,
-          this.rawReport!.variables
+        res = res.concat(
+          this.responseDiff(
+            example.example.responses[matchedStep.statusCode]?.body || {},
+            matchedStep.responseExpected,
+            this.rawReport!.variables,
+            `/${matchedStep.statusCode}/body`
+          )
         );
       }
     }
     return res;
   }
 
-  private responseDiff(resp: any, expectedResp: any, variables: any) {
+  private responseDiff(
+    resp: any,
+    expectedResp: any,
+    variables: any,
+    jsonPathPrefix: string
+  ): ResponseDiffItem[] {
     const env = new VariableEnv();
     env.setBatch(variables);
     try {
+      const ignoredKeys = [/\/body\/id/, /\/body\/location/, /date/i];
+      const ignoreValuePattern = [/\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d(?:\.\d+)?Z?/];
       const expected = env.resolveObjectValues(expectedResp);
-      const delta = getJsonPatchDiff(expected, resp, {
+      const delta: ResponseDiffItem[] = getJsonPatchDiff(expected, resp, {
         includeOldValue: true,
         minimizeDiff: false,
-      });
+      })
+        .map((it: any) => {
+          const ret: ResponseDiffItem = {
+            code: "",
+            jsonPath: "",
+            severity: "Error",
+            message: "",
+            detail: "",
+          };
+          if (it.remove !== undefined) {
+            ret.code = "RESPONSE_MISSING_VALUE";
+            ret.jsonPath = jsonPathPrefix + it.remove;
+            ret.severity = "Error";
+            ret.message = `The response value is missing. Path: ${
+              ret.jsonPath
+            }. Expected: ${this.dataMasker.jsonStringify(it.oldValue)}. Actual: undefined`;
+          } else if (it.add !== undefined) {
+            ret.code = "RESPONSE_ADDITIONAL_VALUE";
+            ret.jsonPath = jsonPathPrefix + it.add;
+            ret.severity = "Error";
+            ret.message = `Return additional response value. Path: ${
+              ret.jsonPath
+            }. Expected: undefined. Actual: ${this.dataMasker.jsonStringify(it.value)}`;
+          } else if (it.replace !== undefined) {
+            ret.code = "RESPONSE_INCORRECT_VALUE";
+            ret.jsonPath = jsonPathPrefix + it.replace;
+            ret.severity = "Error";
+            ret.message = `The actual response value is different from example. Path: ${
+              ret.jsonPath
+            }. Expected: ${this.dataMasker.jsonStringify(
+              it.oldValue
+            )}. Actual: ${this.dataMasker.jsonStringify(it.value)}`;
+          }
+          ret.detail = this.dataMasker.jsonStringify(it);
+          if (
+            ignoredKeys.some((key) => ret.jsonPath.search(key) !== -1) ||
+            (ret.code === "RESPONSE_INCORRECT_VALUE" &&
+              typeof it.value === "string" &&
+              ignoreValuePattern.some((valuePattern) => it.value.search(valuePattern) !== -1))
+          ) {
+            return undefined;
+          }
+          return ret;
+        })
+        .filter((it) => it !== undefined) as ResponseDiffItem[];
       return delta;
     } catch (err) {
       console.log(err);
@@ -250,6 +399,19 @@ export class ReportGenerator {
       return finalGet;
     }
     return [];
+  }
+
+  private getRuntimeError(it: RawExecution): RuntimeError {
+    const ret: RuntimeError = {
+      code: "",
+      message: "",
+      severity: "Error",
+      detail: this.dataMasker.jsonStringify(it.response.body),
+    };
+    const responseObj = this.dataMasker.jsonParse(it.response.body);
+    ret.code = `RUNTIME_ERROR_${it.response.statusCode}`;
+    ret.message = `code: ${responseObj?.error?.code}, message: ${responseObj?.error?.message}`;
+    return ret;
   }
 
   public async generateReport() {

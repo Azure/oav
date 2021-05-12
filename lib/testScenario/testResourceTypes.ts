@@ -141,6 +141,7 @@ export interface ArmTemplate {
 export type RawTestStepRestCall = RawTestStepBase & {
   resourceName?: string;
   exampleFile?: string;
+  resourceType?: string;
   operationId?: string;
   statusCode?: number;
   resourceUpdate?: JsonPatchOp[];
@@ -446,6 +447,7 @@ export type TestDefinitionFile = TransformRaw<
 >;
 export interface RawReport {
   executions: RawExecution[];
+  timings: any;
   variables: any;
   testScenarioName?: string;
   metadata: any;

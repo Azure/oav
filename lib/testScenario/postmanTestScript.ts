@@ -9,8 +9,6 @@ const StatusCodeAssertion: ScriptTemplate = {
 const DetailResponseLog: ScriptTemplate = {
   text: `
   console.log(pm.response.text())
-  console.log(pm.response.code)
-  console.log(pm.response.headers)
   `,
 };
 

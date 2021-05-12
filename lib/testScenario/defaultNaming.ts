@@ -10,19 +10,35 @@ export const lroPollingUrl = (name: string): string => {
 };
 
 export const defaultQualityReportFilePath = (newmanReportFilePath: string): string => {
-  return newmanReportFilePath.replace(".json", "_report.json");
+  return newmanReportFilePath.replace(".json", "/report.json");
 };
 
-export const defaultCollectionFileName = (name: string) => {
-  return `${name}_collection.json`;
+export const defaultCollectionFileName = (
+  testScenarioFileName: string,
+  runId: string,
+  testScenarioName: string
+) => {
+  return `${testScenarioFileName}/${runId}/${testScenarioName}/collection.json`;
 };
 
-export const defaultEnvFileName = (name: string) => {
-  return `${name}_env.json`;
+export const defaultEnvFileName = (
+  testScenarioFileName: string,
+  runId: string,
+  testScenarioName: string
+) => {
+  return `${testScenarioFileName}/${runId}/${testScenarioName}/env.json`;
 };
 
-export const defaultNewmanReport = (name: string) => {
-  return `${name}.json`;
+export const defaultNewmanReport = (
+  testScenarioFileName: string,
+  runId: string,
+  testScenarioName: string
+) => {
+  return `${testScenarioFileName}/${runId}/${testScenarioName}.json`;
+};
+
+export const getFileNameFromPath = (filePath: string): string => {
+  return filePath.replace(/^.*[\\\/]/, "").replace(".yaml", "");
 };
 
 export const blobNameDatePostfix = (name: string) => {

@@ -1,13 +1,20 @@
 import { inject, injectable } from "inversify";
-import { TYPES } from "../inversifyUtils";
-import { BlobUploader, TestScenarioBlobUploaderOption } from "./blobUploader";
+import { TYPES, inversifyGetInstance } from "../inversifyUtils";
+import { SwaggerAnalyzerOption } from "./swaggerAnalyzer";
+import { BlobUploaderOption } from "./blobUploader";
 import { VariableEnv } from "./variableEnv";
 import { TestResourceLoader, TestResourceLoaderOption } from "./testResourceLoader";
-import { PostmanCollectionRunnerClient } from "./postmanCollectionRunnerClient";
+import {
+  generateRunId,
+  PostmanCollectionRunnerClient,
+  PostmanCollectionRunnerClientOption,
+} from "./postmanCollectionRunnerClient";
 import { TestScenarioRunner } from "./testScenarioRunner";
+import { getFileNameFromPath } from "./defaultNaming";
 export interface PostmanCollectionGeneratorOption
   extends TestResourceLoaderOption,
-    TestScenarioBlobUploaderOption {
+    BlobUploaderOption,
+    SwaggerAnalyzerOption {
   name: string;
   fileRoot: string;
   swaggerFilePaths: string[];
@@ -24,8 +31,7 @@ export class PostmanCollectionGenerator {
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
   constructor(
     @inject(TYPES.opts) private opt: PostmanCollectionGeneratorOption,
-    private testResourceLoader: TestResourceLoader,
-    private blobUploader: BlobUploader
+    private testResourceLoader: TestResourceLoader
   ) {
     this.env = new VariableEnv();
     this.env.setBatch(this.opt.env);
@@ -40,18 +46,22 @@ export class PostmanCollectionGenerator {
         );
       }
     }
-    //Use index to avoid overwrite newman report
     let index = 0;
+    const runId = generateRunId();
     for (const testScenario of testDef.testScenarios) {
-      const client = new PostmanCollectionRunnerClient(
-        `${this.opt.name}-${index}`,
-        this.testResourceLoader.jsonLoader,
-        this.env,
-        this.blobUploader,
-        this.opt.testDef,
-        undefined,
-        this.opt.enableBlobUploader
-      );
+      //TODO: replace index with testScenarioName
+      const opts: PostmanCollectionRunnerClientOption = {
+        testScenarioFileName: `${this.opt.name}`,
+        testScenarioName: `${getFileNameFromPath(this.opt.testDef)}_${index}`,
+        env: this.env,
+        enableBlobUploader: this.opt.enableBlobUploader!,
+        testScenarioFilePath: this.opt.testDef,
+        reportOutputFolder: this.opt.outputFolder,
+        runId: runId,
+        jsonLoader: this.testResourceLoader.jsonLoader,
+      };
+
+      const client = inversifyGetInstance(PostmanCollectionRunnerClient, opts);
       const runner = new TestScenarioRunner({
         jsonLoader: this.testResourceLoader.jsonLoader,
         env: this.env,

@@ -25,6 +25,7 @@ import { applySpecTransformers, applyGlobalTransformers } from "../transform/tra
 import { SwaggerSpec, Operation, SwaggerExample } from "../swagger/swaggerTypes";
 import { traverseSwagger } from "../transform/traverseSwagger";
 import { inversifyGetInstance, TYPES } from "../inversifyUtils";
+import { getProvider } from "../util/utils";
 import {
   TestDefinitionSchema,
   TestDefinitionFile,
@@ -43,6 +44,7 @@ import {
 import { ExampleTemplateGenerator } from "./exampleTemplateGenerator";
 import { BodyTransformer } from "./bodyTransformer";
 import { jsonPatchApply } from "./diffUtils";
+import { getResourceFromPath, getResourceTypePath } from "./swaggerAnalyzer";
 
 const ajv = new AjvInit({
   useDefaults: true,
@@ -355,6 +357,7 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
       requestParameters: {} as SwaggerExample["parameters"],
       responseExpected: {},
       exampleId: "",
+      resourceType: "",
       statusCode: rawStep.statusCode ?? 200,
     };
 
@@ -455,6 +458,12 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
       [step.operation, step.exampleId] = ops[0];
       step.operationId = step.operation.operationId!;
     }
+
+    // Load resource type
+    const resourceChain = getResourceFromPath(step.operation._path._pathTemplate);
+    const resourceProvider = getProvider(step.operation._path._pathTemplate)!;
+    const resourceType = getResourceTypePath(resourceChain, resourceProvider);
+    step.resourceType = resourceType;
   }
 }
 

@@ -16,12 +16,15 @@ import {
   ItemDefinition,
 } from "postman-collection";
 
-import { injectable } from "inversify";
-import { JsonLoader } from "../swagger/jsonLoader";
+import { inject, injectable } from "inversify";
+import { JsonLoader, JsonLoaderOption } from "../swagger/jsonLoader";
+import { setDefaultOpts } from "../swagger/loader";
+import { SwaggerAnalyzer } from "./swaggerAnalyzer";
+import { DataMasker } from "./dataMasker";
 import { FileLoader } from "./../swagger/fileLoader";
 import { NewmanReportAnalyzer, NewmanReportAnalyzerOption } from "./postmanReportAnalyzer";
-import { inversifyGetInstance } from "./../inversifyUtils";
-import { BlobUploader } from "./blobUploader";
+import { inversifyGetInstance, TYPES } from "./../inversifyUtils";
+import { BlobUploader, BlobUploaderOption } from "./blobUploader";
 import { PostmanTestScript, TestScriptType } from "./postmanTestScript";
 import { ArmTemplate, TestStepArmTemplateDeployment, TestStepRestCall } from "./testResourceTypes";
 import {
@@ -40,12 +43,49 @@ import {
   defaultEnvFileName,
   defaultNewmanReport,
 } from "./defaultNaming";
+import { NewmanReport } from "./postmanReportParser";
 
-export interface PostmanCollectionGeneratorOption {
+export interface PostmanCollectionRunnerClientOption extends BlobUploaderOption, JsonLoaderOption {
+  testScenarioFileName: string;
   enableBlobUploader: boolean;
   env: VariableEnv;
   testScenarioFilePath?: string;
+  reportOutputFolder?: string;
+  testScenarioName: string;
+  runId: string;
+  jsonLoader?: JsonLoader;
+  swaggerFilePaths?: string[];
 }
+
+function makeid(length: number): string {
+  let text = "";
+  const possible = "abcdefghijklmnopqrstuvwxyz0123456789";
+
+  for (let i = 0; i < length; i++)
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+  return text;
+}
+
+export const generateRunId = (): string => {
+  const today = new Date();
+  const yyyy = today.getFullYear().toString();
+  const MM = pad(today.getMonth() + 1, 2);
+  const dd = pad(today.getDate(), 2);
+  const hh = pad(today.getHours(), 2);
+  const mm = pad(today.getMinutes(), 2);
+  const id = makeid(5);
+  return yyyy + MM + dd + hh + mm + "-" + id;
+};
+
+function pad(number: number, length: number) {
+  let str = "" + number;
+  while (str.length < length) {
+    str = "0" + str;
+  }
+  return str;
+}
+
 @injectable()
 export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
   public collection: Collection;
@@ -53,18 +93,31 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
   private postmanTestScript: PostmanTestScript;
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
   constructor(
-    private name: string,
-    private jsonLoader: JsonLoader,
-    private env: VariableEnv,
+    @inject(TYPES.opts) private opts: PostmanCollectionRunnerClientOption,
     private blobUploader: BlobUploader,
-    private testScenarioFilePath?: string,
-    private reportOutputFolder: string = path.resolve(process.cwd(), "newman"),
-    private enableBlobUploader: boolean = false
+    private dataMasker: DataMasker,
+    private swaggerAnalyzer: SwaggerAnalyzer,
+    private fileLoader: FileLoader
   ) {
+    setDefaultOpts(this.opts, {
+      testScenarioFileName: "",
+      testScenarioFilePath: "",
+      env: new VariableEnv(),
+      reportOutputFolder: path.resolve(process.cwd(), "newman"),
+      enableBlobUploader: false,
+      runId: generateRunId(),
+      testScenarioName: "",
+      blobConnectionString: process.env.blobConnectionString || "",
+    });
     this.collection = new Collection();
-    //TODO: Add testScenarioFilePath as metadata
-    this.collection.name = name;
-    this.collection.describe(this.testScenarioFilePath || this.name);
+    this.collection.name = this.opts.testScenarioFileName;
+    this.collection.id = this.opts.runId!;
+    this.collection.describe(
+      JSON.stringify({
+        testScenarioFilePath: this.opts.testScenarioFilePath,
+        testScenarioName: this.opts.testScenarioName,
+      })
+    );
     this.collectionEnv = new VariableScope({});
     this.collectionEnv.set("bearerToken", "<bearerToken>", "string");
     this.postmanTestScript = new PostmanTestScript();
@@ -74,7 +127,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     resourceGroupName: string,
     location: string
   ): Promise<void> {
-    this.auth(this.env);
+    this.auth(this.opts.env);
     const item = new Item({
       name: "createResourceGroup",
       request: {
@@ -148,7 +201,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     const queryParams: QueryParamDefinition[] = [];
     const urlVariables: VariableDefinition[] = [];
     for (const p of step.operation.parameters ?? []) {
-      const param = this.jsonLoader.resolveRefObj(p);
+      const param = this.opts.jsonLoader!.resolveRefObj(p);
       const paramValue = stepEnv.env.get(param.name) || step.requestParameters[param.name];
       if (!this.collectionEnv.has(param.name)) {
         this.collectionEnv.set(param.name, paramValue, typeof step.requestParameters[param.name]);
@@ -341,25 +394,55 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
   }
 
   public async writeCollectionToJson(outputFolder: string) {
-    const collectionPath = path.resolve(outputFolder, `${defaultCollectionFileName(this.name)}`);
-    const envPath = path.resolve(outputFolder, `${defaultEnvFileName(this.name)}`);
-    const fileLoader: FileLoader = inversifyGetInstance(FileLoader, { checkUnderFileRoot: false });
-    await fileLoader.writeFile(collectionPath, JSON.stringify(this.collection.toJSON(), null, 2));
+    const collectionPath = path.resolve(
+      outputFolder,
+      `${defaultCollectionFileName(
+        this.opts.testScenarioFileName,
+        this.opts.runId,
+        this.opts.testScenarioName
+      )}`
+    );
+    const envPath = path.resolve(
+      outputFolder,
+      `${defaultEnvFileName(
+        this.opts.testScenarioFileName,
+        this.opts.runId,
+        this.opts.testScenarioName
+      )}`
+    );
     const env = this.collectionEnv.toJSON();
-    env.name = this.name + "_env";
+    env.name = this.opts.testScenarioFileName + "_env";
     env._postman_variable_scope = "environment";
-    await fileLoader.writeFile(envPath, JSON.stringify(env, null, 2));
-
-    await this.blobUploader.uploadFile(
-      "postmancollection",
-      `${defaultCollectionFileName(this.name)}`,
-      collectionPath
+    await this.fileLoader.writeFile(envPath, JSON.stringify(env, null, 2));
+    await this.fileLoader.writeFile(
+      collectionPath,
+      JSON.stringify(this.collection.toJSON(), null, 2)
     );
 
     await this.blobUploader.uploadFile(
       "postmancollection",
-      `${defaultEnvFileName(this.name)}`,
-      envPath
+      `${defaultCollectionFileName(
+        this.opts.testScenarioFileName,
+        this.opts.runId,
+        this.opts.testScenarioName
+      )}`,
+      collectionPath
+    );
+    const values: string[] = [];
+    for (const [k, v] of Object.entries(this.collectionEnv.variables())) {
+      if (this.dataMasker.maybeSecretKey(k)) {
+        values.push(v as string);
+      }
+    }
+    this.dataMasker.addMaskedValues(values);
+    await this.blobUploader.uploadContent(
+      "postmancollection",
+      `${defaultEnvFileName(
+        this.opts.testScenarioFileName,
+        this.opts.runId,
+        this.opts.testScenarioName
+      )}`,
+      this.dataMasker.jsonStringify(env)
     );
 
     console.log("\ngenerate collection successfully!");
@@ -368,7 +451,14 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
   }
 
   public async runCollection() {
-    const reportExportPath = path.resolve(this.reportOutputFolder, `${this.name}.json`);
+    const reportExportPath = path.resolve(
+      this.opts.reportOutputFolder!,
+      `${defaultNewmanReport(
+        this.opts.testScenarioFileName,
+        this.opts.runId,
+        this.opts.testScenarioName
+      )}`
+    );
     newman
       .run(
         {
@@ -377,7 +467,10 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
           reporters: ["cli", "json"],
           reporter: { json: { export: reportExportPath } },
         },
-        function (err, _summary) {
+        function (err, summary) {
+          if (summary.run.failures.length > 0) {
+            process.exitCode = 1;
+          }
           if (err) {
             console.log(`collection run failed. ${err}`);
           }
@@ -385,15 +478,41 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
         }
       )
       .on("done", async (_err, _summary) => {
-        if (this.enableBlobUploader) {
-          await this.blobUploader.uploadFile(
+        if (this.opts.enableBlobUploader) {
+          const keys = await this.swaggerAnalyzer.getAllSecretKey();
+          const values: string[] = [];
+          for (const [k, v] of Object.entries(this.collectionEnv.variables())) {
+            if (this.dataMasker.maybeSecretKey(k)) {
+              values.push(v as string);
+            }
+          }
+          this.dataMasker.addMaskedValues(values);
+          this.dataMasker.addMaskedKeys(keys);
+          // read content and upload. mask newman report.
+          const newmanReport = JSON.parse(
+            await this.fileLoader.load(reportExportPath)
+          ) as NewmanReport;
+
+          // add mask environment secret value
+          for (const item of newmanReport.environment.values) {
+            if (this.dataMasker.maybeSecretKey(item.key)) {
+              this.dataMasker.addMaskedValues([item.value]);
+            }
+          }
+          await this.blobUploader.uploadContent(
             "newmanreport",
-            `${defaultNewmanReport(this.name)}`,
-            reportExportPath
+            `${defaultNewmanReport(
+              this.opts.testScenarioFileName,
+              this.opts.runId,
+              this.opts.testScenarioName
+            )}`,
+            this.dataMasker.jsonStringify(newmanReport)
           );
           const opts: NewmanReportAnalyzerOption = {
             newmanReportFilePath: reportExportPath,
-            enableUploadBlob: this.enableBlobUploader,
+            enableUploadBlob: this.opts.enableBlobUploader,
+            runId: this.opts.runId,
+            swaggerFilePaths: this.opts.swaggerFilePaths,
           };
           const reportAnalyzer = inversifyGetInstance(NewmanReportAnalyzer, opts);
           await reportAnalyzer.analyze();
