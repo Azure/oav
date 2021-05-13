@@ -41,7 +41,7 @@ export const builder: yargs.CommandBuilder = {
   },
   output: {
     alias: "outputDir",
-    describe: "the output folder.",
+    describe: "result output folder.",
     string: true,
     default: "generated",
   },
@@ -49,6 +49,19 @@ export const builder: yargs.CommandBuilder = {
     describe: "upload generated collection to blob.",
     boolean: true,
     default: false,
+  },
+  armEndpoint: {
+    describe: "ARM endpoint",
+    string: true,
+    default: "https://management.azure.com",
+  },
+  location: {
+    describe: "resource provision location parameter",
+    string: true,
+  },
+  subscriptionId: {
+    describe: "subscriptionId to run API test",
+    string: true,
   },
 };
 
@@ -61,7 +74,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
         `Run test scenario failed. can not find related swagger file. ${testScenarioFilePath}`
       );
     }
-    let env = {};
+    let env: any = {};
     if (argv.e !== undefined) {
       env = JSON.parse(fs.readFileSync(argv.e).toString());
     }
@@ -69,6 +82,12 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     const fileRoot = path.dirname(swaggerFilePaths[0]);
     const resourceProvider = getProviderFromFilePath(testScenarioFilePath);
     const apiVersion = getApiVersionFromSwaggerFile(swaggerFilePaths[0]);
+    if (argv.location !== undefined) {
+      env.location = argv.location;
+    }
+    if (argv.subscriptionId !== undefined) {
+      env.subscriptionId = argv.subscriptionId;
+    }
     const opt: PostmanCollectionGeneratorOption = {
       name: `${resourceProvider}/${apiVersion}/${getFileNameFromPath(testScenarioFilePath)}`,
       testDef: testScenarioFilePath,
@@ -84,6 +103,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       eraseDescription: false,
       enableBlobUploader: argv.uploadBlob,
       blobConnectionString: process.env.blobConnectionString || "",
+      baseUrl: argv.armEndpoint,
     };
     const generator = inversifyGetInstance(PostmanCollectionGenerator, opt);
     await generator.GenerateCollection();
