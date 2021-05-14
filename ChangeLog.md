@@ -2,7 +2,7 @@
 
 ## 5/13/2021 2.5.1
 
-- oav support overwrite location, armEndpoint, subscriptionId
+- test scenario runner support overwrite location, armEndpoint, subscriptionId
 
 ## 05/12/2021 2.5.0
 
