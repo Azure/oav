@@ -44,6 +44,11 @@ export const builder: yargs.CommandBuilder = {
     boolean: true,
     default: false,
   },
+  armEndpoint: {
+    describe: "ARM endpoint",
+    string: true,
+    default: "https://management.azure.com",
+  },
 };
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
@@ -87,6 +92,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
         eraseDescription: false,
         enableBlobUploader: false,
         blobConnectionString: process.env.blobConnectionString || "",
+        baseUrl: argv.armEndpoint,
       };
       if (!fs.existsSync(argv.output)) {
         fs.mkdirSync(argv.output);

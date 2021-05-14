@@ -55,6 +55,7 @@ export interface PostmanCollectionRunnerClientOption extends BlobUploaderOption,
   runId: string;
   jsonLoader?: JsonLoader;
   swaggerFilePaths?: string[];
+  baseUrl: string;
 }
 
 function makeid(length: number): string {
@@ -108,6 +109,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
       runId: generateRunId(),
       testScenarioName: "",
       blobConnectionString: process.env.blobConnectionString || "",
+      baseUrl: "https://management.azure.com",
     });
     this.collection = new Collection();
     this.collection.name = this.opts.testScenarioFileName;
@@ -131,7 +133,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     const item = new Item({
       name: "createResourceGroup",
       request: {
-        url: `https://management.azure.com/subscriptions/${subscriptionId}/resourcegroups/{{resourceGroupName}}?api-version=2020-06-01`,
+        url: `${this.opts.baseUrl}/subscriptions/${subscriptionId}/resourcegroups/{{resourceGroupName}}?api-version=2020-06-01`,
         method: "put",
         body: {
           mode: "raw",
@@ -157,7 +159,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     const item = new Item({
       name: "deleteResourceGroup",
       request: {
-        url: `https://management.azure.com/subscriptions/${subscriptionId}/resourcegroups/{{resourceGroupName}}?api-version=2020-06-01`,
+        url: `${this.opts.baseUrl}/subscriptions/${subscriptionId}/resourcegroups/{{resourceGroupName}}?api-version=2020-06-01`,
         method: "delete",
       },
     });
@@ -242,7 +244,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     this.addTestScript(item);
     item.request.url = new Url({
       path: pathEnv.resolveString(step.operation._path._pathTemplate, "{", "}"),
-      host: "https://management.azure.com",
+      host: this.opts.baseUrl,
       variable: urlVariables,
     } as UrlDefinition);
     item.request.addQueryParams(queryParams);
@@ -345,7 +347,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
       body: { mode: "raw" } as RequestBodyDefinition,
     });
     item.request.url = new Url({
-      host: "https://management.azure.com",
+      host: this.opts.baseUrl,
       path: path,
       variable: urlVariables,
     });
@@ -478,27 +480,27 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
         }
       )
       .on("done", async (_err, _summary) => {
-        if (this.opts.enableBlobUploader) {
-          const keys = await this.swaggerAnalyzer.getAllSecretKey();
-          const values: string[] = [];
-          for (const [k, v] of Object.entries(this.collectionEnv.variables())) {
-            if (this.dataMasker.maybeSecretKey(k)) {
-              values.push(v as string);
-            }
+        const keys = await this.swaggerAnalyzer.getAllSecretKey();
+        const values: string[] = [];
+        for (const [k, v] of Object.entries(this.collectionEnv.variables())) {
+          if (this.dataMasker.maybeSecretKey(k)) {
+            values.push(v as string);
           }
-          this.dataMasker.addMaskedValues(values);
-          this.dataMasker.addMaskedKeys(keys);
-          // read content and upload. mask newman report.
-          const newmanReport = JSON.parse(
-            await this.fileLoader.load(reportExportPath)
-          ) as NewmanReport;
+        }
+        this.dataMasker.addMaskedValues(values);
+        this.dataMasker.addMaskedKeys(keys);
+        // read content and upload. mask newman report.
+        const newmanReport = JSON.parse(
+          await this.fileLoader.load(reportExportPath)
+        ) as NewmanReport;
 
-          // add mask environment secret value
-          for (const item of newmanReport.environment.values) {
-            if (this.dataMasker.maybeSecretKey(item.key)) {
-              this.dataMasker.addMaskedValues([item.value]);
-            }
+        // add mask environment secret value
+        for (const item of newmanReport.environment.values) {
+          if (this.dataMasker.maybeSecretKey(item.key)) {
+            this.dataMasker.addMaskedValues([item.value]);
           }
+        }
+        if (this.opts.enableBlobUploader) {
           await this.blobUploader.uploadContent(
             "newmanreport",
             `${defaultNewmanReport(
@@ -508,15 +510,15 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
             )}`,
             this.dataMasker.jsonStringify(newmanReport)
           );
-          const opts: NewmanReportAnalyzerOption = {
-            newmanReportFilePath: reportExportPath,
-            enableUploadBlob: this.opts.enableBlobUploader,
-            runId: this.opts.runId,
-            swaggerFilePaths: this.opts.swaggerFilePaths,
-          };
-          const reportAnalyzer = inversifyGetInstance(NewmanReportAnalyzer, opts);
-          await reportAnalyzer.analyze();
         }
+        const opts: NewmanReportAnalyzerOption = {
+          newmanReportFilePath: reportExportPath,
+          enableUploadBlob: this.opts.enableBlobUploader,
+          runId: this.opts.runId,
+          swaggerFilePaths: this.opts.swaggerFilePaths,
+        };
+        const reportAnalyzer = inversifyGetInstance(NewmanReportAnalyzer, opts);
+        await reportAnalyzer.analyze();
       });
   }
 

@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 5/13/2021 2.5.1
+
+- test scenario runner support overwrite location, armEndpoint, subscriptionId
+
 ## 05/12/2021 2.5.0
 
 - Optimise report blob path.

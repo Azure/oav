@@ -23,6 +23,7 @@ export interface PostmanCollectionGeneratorOption
   outputFolder: string;
   runCollection: boolean;
   generateCollection: boolean;
+  baseUrl: string;
 }
 
 @injectable()
@@ -59,6 +60,7 @@ export class PostmanCollectionGenerator {
         reportOutputFolder: this.opt.outputFolder,
         runId: runId,
         jsonLoader: this.testResourceLoader.jsonLoader,
+        baseUrl: this.opt.baseUrl,
       };
 
       const client = inversifyGetInstance(PostmanCollectionRunnerClient, opts);
