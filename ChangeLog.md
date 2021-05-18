@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 5/18/2021 2.5.2
+
+- Supports different log types in livevalidator
+
 ## 5/13/2021 2.5.1
 
 - test scenario runner support overwrite location, armEndpoint, subscriptionId

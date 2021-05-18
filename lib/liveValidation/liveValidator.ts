@@ -101,6 +101,13 @@ export enum LiveValidatorLoggingLevels {
   silly = "silly",
 }
 
+export enum LiveValidatorLoggingTypes {
+  trace = "trace",
+  perfTrace = "perfTrace",
+  error = "error",
+  incomingRequest = "incomingRequest",
+}
+
 /**
  * @class
  * Live Validator for Azure swagger APIs.
@@ -169,7 +176,18 @@ export class LiveValidator {
     const startTime = Date.now();
     // Clone github repository if required
     if (this.options.git.shouldClone && this.options.git.url) {
+      const cloneStartTime = Date.now();
       utils.gitClone(this.options.directory, this.options.git.url, this.options.git.branch);
+      this.logging(
+        `Clone spec repository ${this.options.git.url}, branch:${this.options.git.branch} in livevalidator.initialize`
+      );
+      this.logging(
+        `Clone spec repository ${this.options.git.url}, branch:${this.options.git.branch}`,
+        LiveValidatorLoggingLevels.info,
+        LiveValidatorLoggingTypes.perfTrace,
+        "Oav.liveValidator.initialize.gitclone",
+        Date.now() - cloneStartTime
+      );
     }
 
     // Construct array of swagger paths to be used for building a cache
@@ -196,8 +214,16 @@ export class LiveValidator {
       }
     }
 
-    this.logging("Transforming all specs.");
+    const startGlobalTransform = Date.now();
+    this.logging("Apply global transforms for all specs");
     this.loader.transformLoadedSpecs();
+    this.logging(
+      "Apply global transforms for all specs",
+      LiveValidatorLoggingLevels.info,
+      LiveValidatorLoggingTypes.perfTrace,
+      "Oav.liveValidator.initialize.loader.transformLoadedSpecs",
+      Date.now() - startGlobalTransform
+    );
 
     if (this.options.loadValidatorInInitialize) {
       while (allSpecs.length > 0) {
@@ -205,16 +231,26 @@ export class LiveValidator {
           const spec = allSpecs.shift()!;
           const loadStart = Date.now();
           await this.loader.buildAjvValidator(spec);
+          const durationInMs = Date.now() - loadStart;
           this.logging(
-            `Build validator for ${spec._filePath} with DurationInMs:${Date.now() - loadStart}.`,
+            `Build validator for ${spec._filePath} with DurationInMs:${durationInMs}`,
+            LiveValidatorLoggingLevels.debug,
+            LiveValidatorLoggingTypes.trace,
+            "Oav.liveValidator.loader.buildAjvValidator"
+          );
+          this.logging(
+            `Build validator for ${spec._filePath} in initialization time`,
             LiveValidatorLoggingLevels.info,
-            "Oav.liveValidator.initialize"
+            LiveValidatorLoggingTypes.perfTrace,
+            "Oav.liveValidator.initialize.loader.buildAjvValidator",
+            durationInMs
           );
         } catch (e) {
           this.logging(
-            e.message,
+            `ErrorMessage:${e?.message}.ErrorStack:${e?.stack}`,
             LiveValidatorLoggingLevels.error,
-            "Oav.liveValidator.loadAllSpec"
+            LiveValidatorLoggingTypes.error,
+            "Oav.liveValidator.initialize.loadValidatorInInitialize"
           );
         }
       }
@@ -225,9 +261,17 @@ export class LiveValidator {
     this.logging("Cache initialization complete.");
     const elapsedTime = Date.now() - startTime;
     this.logging(
-      `Cache initialization complete with DurationInMs:${elapsedTime}.`,
+      `Cache complete initialization with DurationInMs:${elapsedTime}`,
       LiveValidatorLoggingLevels.info,
+      LiveValidatorLoggingTypes.trace,
       "Oav.liveValidator.initialize"
+    );
+    this.logging(
+      `Cache complete initialization`,
+      LiveValidatorLoggingLevels.info,
+      LiveValidatorLoggingTypes.perfTrace,
+      "Oav.liveValidator.initialize",
+      elapsedTime
     );
 
     if (this.options.loadValidatorInBackground) {
@@ -248,26 +292,45 @@ export class LiveValidator {
         const spec = allSpecs.shift()!;
         const startTime = Date.now();
         await this.loader!.buildAjvValidator(spec, { inBackground: true });
+        const elapsedTime = Date.now() - startTime;
         this.logging(
-          `Build validator for ${spec._filePath} in background with DurationInMs:${
-            Date.now() - startTime
-          }.`,
+          `Build validator for ${spec._filePath} in background with DurationInMs:${elapsedTime}.`,
+          LiveValidatorLoggingLevels.debug,
+          LiveValidatorLoggingTypes.trace,
+          "Oav.liveValidator.loadAllSpecValidatorInBackground"
+        );
+        this.logging(
+          `Build validator for ${spec._filePath} in background`,
           LiveValidatorLoggingLevels.info,
-          "Oav.liveValidator.initialize"
+          LiveValidatorLoggingTypes.perfTrace,
+          "Oav.liveValidator.loadAllSpecValidatorInBackground-1",
+          elapsedTime
         );
       } catch (e) {
-        this.logging(e.message, LiveValidatorLoggingLevels.error, "Oav.liveValidator.loadAllSpec");
+        this.logging(
+          `ErrorMessage:${e?.message}.ErrorStack:${e?.stack}`,
+          LiveValidatorLoggingLevels.error,
+          LiveValidatorLoggingTypes.error,
+          "Oav.liveValidator.loadAllSpecValidatorInBackground"
+        );
       }
     }
 
     this.loader = undefined;
     this.loadInBackgroundComplete = true;
+    const elapsedTimeForBuild = Date.now() - backgroundStartTime;
     this.logging(
-      `Build validator for all specs finished in background with DurationInMs:${
-        Date.now() - backgroundStartTime
-      }.`,
+      `Build validator for all specs finished in background with DurationInMs:${elapsedTimeForBuild}.`,
       LiveValidatorLoggingLevels.info,
-      "Oav.liveValidator.loadAllSpec"
+      LiveValidatorLoggingTypes.trace,
+      "Oav.liveValidator.loadAllSpecValidatorInBackground"
+    );
+    this.logging(
+      `Build validator for all specs finished in background`,
+      LiveValidatorLoggingLevels.info,
+      LiveValidatorLoggingTypes.perfTrace,
+      "Oav.liveValidator.loadAllSpecValidatorInBackground",
+      elapsedTimeForBuild
     );
   }
 
@@ -284,9 +347,11 @@ export class LiveValidator {
     const { info, error } = this.getOperationInfo(liveRequest, correlationId, operationInfo);
     if (error !== undefined) {
       this.logging(
-        error.message,
+        `ErrorMessage:${error.message}.ErrorStack:${error.stack}`,
         LiveValidatorLoggingLevels.error,
+        LiveValidatorLoggingTypes.error,
         "Oav.liveValidator.validateLiveRequest",
+        undefined,
         info.validationRequest
       );
       return {
@@ -318,15 +383,19 @@ export class LiveValidator {
       this.logging(
         msg,
         LiveValidatorLoggingLevels.error,
+        LiveValidatorLoggingTypes.error,
         "Oav.liveValidator.validateLiveRequest",
+        undefined,
         info.validationRequest
       );
     }
     const elapsedTime = Date.now() - startTime;
     this.logging(
-      `DurationInMs:${elapsedTime}`,
+      `Complete request validation`,
       LiveValidatorLoggingLevels.info,
+      LiveValidatorLoggingTypes.perfTrace,
       "Oav.liveValidator.validateLiveRequest",
+      elapsedTime,
       info.validationRequest
     );
     if (!options.includeOperationMatch) {
@@ -355,9 +424,11 @@ export class LiveValidator {
     const { info, error } = this.getOperationInfo(specOperation, correlationId, operationInfo);
     if (error !== undefined) {
       this.logging(
-        error.message,
+        `ErrorMessage:${error.message}.ErrorStack:${error.stack}`,
         LiveValidatorLoggingLevels.error,
+        LiveValidatorLoggingTypes.error,
         "Oav.liveValidator.validateLiveResponse",
+        undefined,
         info.validationRequest
       );
       return {
@@ -388,15 +459,19 @@ export class LiveValidator {
       this.logging(
         msg,
         LiveValidatorLoggingLevels.error,
+        LiveValidatorLoggingTypes.error,
         "Oav.liveValidator.validateLiveResponse",
+        undefined,
         info.validationRequest
       );
     }
     const elapsedTime = Date.now() - startTime;
     this.logging(
-      `DurationInMs:${elapsedTime}`,
+      `Complete response validation`,
       LiveValidatorLoggingLevels.info,
+      LiveValidatorLoggingTypes.perfTrace,
       "Oav.liveValidator.validateLiveResponse",
+      elapsedTime,
       info.validationRequest
     );
     if (!options.includeOperationMatch) {
@@ -540,6 +615,7 @@ export class LiveValidator {
   }
 
   private async getMatchedPaths(jsonsPattern: string | string[]): Promise<string[]> {
+    const startTime = Date.now();
     const matchedPaths = await globby(jsonsPattern, {
       ignore: this.options.excludedSwaggerPathsPattern,
       onlyFiles: true,
@@ -550,7 +626,17 @@ export class LiveValidator {
         this.options.directory
       }" and pattern: "${jsonsPattern.toString()}".
       Total paths count: ${matchedPaths.length}`,
-      LiveValidatorLoggingLevels.debug
+      LiveValidatorLoggingLevels.info
+    );
+    this.logging(
+      `Using swaggers found from directory: "${
+        this.options.directory
+      }" and pattern: "${jsonsPattern.toString()}".
+      Total paths count: ${matchedPaths.length}`,
+      LiveValidatorLoggingLevels.info,
+      LiveValidatorLoggingTypes.perfTrace,
+      "Oav.livevalidator.getMatchedPaths",
+      Date.now() - startTime
     );
     return matchedPaths;
   }
@@ -558,7 +644,7 @@ export class LiveValidator {
   private async getSwaggerPaths(): Promise<string[]> {
     if (this.options.swaggerPaths.length !== 0) {
       this.logging(
-        `Using user provided swagger paths. Total paths count: ${this.options.swaggerPaths.length}`
+        `Using user provided swagger paths by options.swaggerPaths. Total paths count: ${this.options.swaggerPaths.length}`
       );
       return this.options.swaggerPaths;
     } else {
@@ -583,24 +669,34 @@ export class LiveValidator {
     swaggerPath: string
   ): Promise<SwaggerSpec | undefined> {
     const startTime = Date.now();
-    this.logging(`Building cache from: "${swaggerPath}"`, LiveValidatorLoggingLevels.debug);
+    this.logging(`Building cache from:${swaggerPath}`, LiveValidatorLoggingLevels.debug);
 
     try {
-      const startTimeLoadSpec = Date.now();
       const spec = await loader.load(pathResolve(swaggerPath));
-      const elapsedTimeLoadSpec = Date.now() - startTimeLoadSpec;
+      const elapsedTimeLoadSpec = Date.now() - startTime;
       this.logging(
-        `Load spec for ${swaggerPath} with DurationInMs:${elapsedTimeLoadSpec}`,
+        `Load spec ${swaggerPath}`,
         LiveValidatorLoggingLevels.info,
-        "Oav.liveValidator.getSwaggerInitializer.specValidator.initialize"
+        LiveValidatorLoggingTypes.perfTrace,
+        "Oav.liveValidator.getSwaggerInitializer.loader.load",
+        elapsedTimeLoadSpec
       );
 
+      const startTimeAddSpecToCache = Date.now();
       this.operationSearcher.addSpecToCache(spec);
+      this.logging(
+        `Add spec to cache ${swaggerPath}`,
+        LiveValidatorLoggingLevels.info,
+        LiveValidatorLoggingTypes.perfTrace,
+        "Oav.liveValidator.getSwaggerInitializer.operationSearcher.addSpecToCache",
+        Date.now() - startTimeAddSpecToCache
+      );
 
       const elapsedTime = Date.now() - startTime;
       this.logging(
-        `DurationInMs:${elapsedTime}`,
+        `Complete loading with DurationInMs:${elapsedTime}`,
         LiveValidatorLoggingLevels.debug,
+        LiveValidatorLoggingTypes.trace,
         "Oav.liveValidator.getSwaggerInitializer"
       );
 
@@ -609,7 +705,8 @@ export class LiveValidator {
       this.logging(
         `Unable to initialize "${swaggerPath}" file from SpecValidator. We are ` +
           `ignoring this swagger file and continuing to build cache for other valid specs. ErrorMessage: ${err?.message};ErrorStack: ${err?.stack}`,
-        LiveValidatorLoggingLevels.warn
+        LiveValidatorLoggingLevels.warn,
+        LiveValidatorLoggingTypes.error
       );
 
       return undefined;
@@ -619,11 +716,15 @@ export class LiveValidator {
   private logging = (
     message: string,
     level?: LiveValidatorLoggingLevels,
+    loggingType?: LiveValidatorLoggingTypes,
     operationName?: string,
+    durationInMilliseconds?: number,
     validationRequest?: ValidationRequest
   ) => {
     level = level || LiveValidatorLoggingLevels.info;
+    loggingType = loggingType || LiveValidatorLoggingTypes.trace;
     operationName = operationName || "";
+    durationInMilliseconds = durationInMilliseconds || 0;
     if (this.logFunction !== undefined) {
       if (validationRequest !== undefined && validationRequest !== null) {
         this.logFunction(message, level, {
@@ -632,10 +733,14 @@ export class LiveValidator {
           ResourceType: validationRequest.resourceType,
           ApiVersion: validationRequest.apiVersion,
           OperationName: operationName,
+          LogggingType: loggingType,
+          DurationInMilliseconds: durationInMilliseconds,
         });
       } else {
         this.logFunction(message, level, {
           OperationName: operationName,
+          LogggingType: loggingType,
+          DurationInMilliseconds: durationInMilliseconds,
         });
       }
     } else {

@@ -10,7 +10,7 @@ import {
   unknownResourceProvider,
 } from "../util/constants";
 import { Writable } from "../util/utils";
-import { LiveValidatorLoggingLevels } from "./liveValidator";
+import { LiveValidatorLoggingLevels, LiveValidatorLoggingTypes } from "./liveValidator";
 import { ValidationRequest } from "./operationValidator";
 
 export interface OperationMatch {
@@ -40,7 +40,9 @@ export class OperationSearcher {
     private logging: (
       message: string,
       level?: LiveValidatorLoggingLevels,
+      loggingType?: LiveValidatorLoggingTypes,
       operationName?: string,
+      durationInMilliseconds?: number,
       validationRequest?: ValidationRequest
     ) => void
   ) {}
@@ -84,7 +86,9 @@ export class OperationSearcher {
         if (!apiVersion) {
           this.logging(
             `Unable to find apiVersion for path : "${pathObject._pathTemplate}".`,
-            LiveValidatorLoggingLevels.error
+            LiveValidatorLoggingLevels.error,
+            LiveValidatorLoggingTypes.error,
+            "Oav.OperationSearcher.addSpecToCache"
           );
           apiVersion = unknownApiVersion;
         }
@@ -123,6 +127,7 @@ export class OperationSearcher {
     operationMatch: OperationMatch;
     apiVersion: string;
   } {
+    const startTime = Date.now();
     const requestInfo = { ...info };
     const searchOperation = () => {
       const operations = this.getPotentialOperations(requestInfo);
@@ -130,7 +135,9 @@ export class OperationSearcher {
         this.logging(
           `${operations.reason.message} with requestUrl ${requestInfo.requestUrl}`,
           LiveValidatorLoggingLevels.info,
-          "Oav.OperationSearcher.getPotentialOperations",
+          LiveValidatorLoggingTypes.trace,
+          "Oav.OperationSearcher.search.getPotentialOperations",
+          undefined,
           requestInfo
         );
       }
@@ -143,7 +150,9 @@ export class OperationSearcher {
       this.logging(
         `Fallback to ${unknownResourceProvider} -> ${unknownApiVersion}`,
         LiveValidatorLoggingLevels.info,
+        LiveValidatorLoggingTypes.trace,
         "Oav.OperationSearcher.search",
+        undefined,
         requestInfo
       );
       requestInfo.apiVersion = unknownApiVersion;
@@ -173,13 +182,23 @@ export class OperationSearcher {
       this.logging(
         msg,
         LiveValidatorLoggingLevels.info,
-        "Oav.liveValidator.findSpecOperation",
+        LiveValidatorLoggingTypes.trace,
+        "Oav.OperationSearcher.Search",
+        undefined,
         requestInfo
       );
       const e = new LiveValidationError(ErrorCodes.MultipleOperationsFound.name, msg);
       throw e;
     }
 
+    this.logging(
+      "Complete operation search",
+      LiveValidatorLoggingLevels.info,
+      LiveValidatorLoggingTypes.perfTrace,
+      "Oav.OperationSearcher.Search",
+      Date.now() - startTime,
+      requestInfo
+    );
     return {
       operationMatch: potentialOperations.matches[0],
       apiVersion: potentialOperations.apiVersion,

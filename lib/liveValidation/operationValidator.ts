@@ -15,7 +15,11 @@ import {
   SourceLocation,
 } from "../util/validationError";
 import { extractPathParamValue } from "../transform/pathRegexTransformer";
-import { LiveValidationIssue, LiveValidatorLoggingLevels } from "./liveValidator";
+import {
+  LiveValidationIssue,
+  LiveValidatorLoggingLevels,
+  LiveValidatorLoggingTypes,
+} from "./liveValidator";
 import { LiveValidatorLoader } from "./liveValidatorLoader";
 import { OperationMatch } from "./operationSearcher";
 
@@ -60,7 +64,9 @@ export const validateSwaggerLiveRequest = async (
   logging?: (
     message: string,
     level?: LiveValidatorLoggingLevels,
+    loggingType?: LiveValidatorLoggingTypes,
     operationName?: string,
+    durationInMilliseconds?: number,
     validationRequest?: ValidationRequest
   ) => void
 ) => {
@@ -75,11 +81,22 @@ export const validateSwaggerLiveRequest = async (
     }
     const startTimeToBuild = Date.now();
     validate = await loader.getRequestValidator(operation);
+    const elapsedTime = Date.now() - startTimeToBuild;
     if (logging) {
       logging(
-        `On-demand build request validator with DurationInMs:${Date.now() - startTimeToBuild}`,
+        `On-demand build request validator with DurationInMs:${elapsedTime}`,
+        LiveValidatorLoggingLevels.debug,
+        LiveValidatorLoggingTypes.trace,
+        "Oav.OperationValidator.validateSwaggerLiveRequest.loader.getRequestValidator",
+        undefined,
+        info.validationRequest
+      );
+      logging(
+        `On-demand build request validator`,
         LiveValidatorLoggingLevels.info,
-        operation.operationId,
+        LiveValidatorLoggingTypes.perfTrace,
+        "Oav.OperationValidator.validateSwaggerLiveRequest.loader.getRequestValidator",
+        elapsedTime,
         info.validationRequest
       );
     }
@@ -111,7 +128,9 @@ export const validateSwaggerLiveResponse = async (
   logging?: (
     message: string,
     level?: LiveValidatorLoggingLevels,
+    loggingType?: LiveValidatorLoggingTypes,
     operationName?: string,
+    durationInMilliseconds?: number,
     validationRequest?: ValidationRequest
   ) => void
 ) => {
@@ -137,11 +156,22 @@ export const validateSwaggerLiveResponse = async (
     }
     const startTimeToBuild = Date.now();
     validate = await loader.getResponseValidator(rsp);
+    const elapsedTime = Date.now() - startTimeToBuild;
     if (logging) {
       logging(
-        `On-demand build response validator with DurationInMs:${Date.now() - startTimeToBuild}`,
+        `On-demand build response validator with DurationInMs:${elapsedTime}`,
+        LiveValidatorLoggingLevels.debug,
+        LiveValidatorLoggingTypes.trace,
+        "Oav.OperationValidator.validateSwaggerLiveResponse.loader.getResponseValidator",
+        undefined,
+        info.validationRequest
+      );
+      logging(
+        `On-demand build request validator`,
         LiveValidatorLoggingLevels.info,
-        operation.operationId,
+        LiveValidatorLoggingTypes.perfTrace,
+        "Oav.OperationValidator.validateSwaggerLiveResponse.loader.getResponseValidator",
+        elapsedTime,
         info.validationRequest
       );
     }
