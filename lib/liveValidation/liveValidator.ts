@@ -214,16 +214,8 @@ export class LiveValidator {
       }
     }
 
-    const startGlobalTransform = Date.now();
     this.logging("Apply global transforms for all specs");
     this.loader.transformLoadedSpecs();
-    this.logging(
-      "Apply global transforms for all specs",
-      LiveValidatorLoggingLevels.info,
-      LiveValidatorLoggingTypes.perfTrace,
-      "Oav.liveValidator.initialize.loader.transformLoadedSpecs",
-      Date.now() - startGlobalTransform
-    );
 
     if (this.options.loadValidatorInInitialize) {
       while (allSpecs.length > 0) {
