@@ -228,7 +228,6 @@ export class SwaggerAnalyzer {
       this.jsonLoader,
       exampleObj.parameters[schemaName]
     );
-    // console.log(`schema: ${JSON.stringify(schema, null, 2)}, ${schemaJsonPointer}`);
     const resourceIdSchemaJsonPath = schema[refSelfSymbol];
     if (resourceIdSchemaJsonPath !== undefined) {
       return resourceIdSchemaJsonPath.substr(3, resourceIdSchemaJsonPath.length);

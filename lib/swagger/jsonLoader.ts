@@ -1,4 +1,3 @@
-import { refSelfSymbol } from "./swaggerTypes";
 import { dirname as pathDirname, join as pathJoin } from "path";
 import { Json, parseJson } from "@azure-tools/openapi-tools-common";
 import { safeLoad as parseYaml } from "js-yaml";
@@ -131,52 +130,6 @@ export class JsonLoader implements Loader<Json> {
     }
 
     return refObj;
-  }
-
-  public resolveRefObjAll<T>(object: T, vis = new Set<string>()): T {
-    if (isRefLike(object)) {
-      if (vis.has(object.$ref)) {
-        return {} as T;
-      } else {
-        vis.add(object.$ref);
-        console.log(object.$ref);
-        object = this.resolveRefObj(object);
-      }
-    }
-
-    if (Array.isArray(object)) {
-      for (let idx = 0; idx < object.length; ++idx) {
-        const item = object[idx];
-        if (typeof item === "object" && (item.$ref === undefined || !vis.has(item.$ref))) {
-          const newRef = this.resolveRefObjAll(item, vis);
-          if (newRef !== item) {
-            // eslint-disable-next-line require-atomic-updates
-            (object as any)[idx] = newRef;
-          }
-        }
-      }
-    } else if (typeof object === "object" && object !== null) {
-      const obj = object as any;
-      for (const key of Object.keys(obj)) {
-        const item = obj[key];
-        if (
-          typeof item === "object" &&
-          (item.$ref === undefined || !vis.has(item.$ref) || item[refSelfSymbol] === undefined)
-        ) {
-          const newRef = this.resolveRefObjAll(item, vis);
-          if (newRef !== item) {
-            if (newRef.properties !== undefined) {
-              obj[key] = newRef.properties;
-            } else {
-              obj[key] = newRef;
-            }
-          }
-        }
-      }
-    } else {
-      throw new Error("Invalid json");
-    }
-    return object;
   }
 
   public getRealPath(mockName: string): string {
