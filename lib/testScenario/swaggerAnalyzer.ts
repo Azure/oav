@@ -1,4 +1,3 @@
-import * as path from "path";
 import { JSONPath } from "jsonpath-plus";
 import { inject, injectable } from "inversify";
 import _ from "lodash";
@@ -328,20 +327,26 @@ export function analyzeExampleDependency(example: SwaggerExample): Dependency[] 
   return ret;
 }
 
-export function swaggerDependency(res: ExampleDependency[], fileRoot = "/") {
+export function swaggerDependency(res: ExampleDependency[], fileRoot = "specification") {
   const dependency: any = {};
   const vis = new Set<string>();
   res
     .filter((it) => it.externalDependency.length > 0)
     .map((it) => {
       return {
-        swaggerFilePath: path.relative(fileRoot, it.swaggerFilePath),
+        swaggerFilePath: it.swaggerFilePath.substr(
+          it.swaggerFilePath.indexOf(fileRoot),
+          it.swaggerFilePath.length
+        ),
         ids: it.externalDependency.map((dependency) => {
           return {
             resourceType: dependency.resourceType,
             exampleJsonPointer: dependency.jsonPointer,
             swaggerResourceIdJsonPath: dependency.resourceIdJsonPath,
-            exampleFilePath: path.relative(fileRoot, it.exampleFilePath),
+            exampleFilePath: it.exampleFilePath.substr(
+              it.exampleFilePath.indexOf(fileRoot),
+              it.exampleFilePath.length
+            ),
           };
         }),
       };
