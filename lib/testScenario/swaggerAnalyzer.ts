@@ -362,7 +362,15 @@ export function swaggerDependency(res: ExampleDependency[], fileRoot = "specific
         }
       }
     });
-  return dependency;
+  let ret: any[] = [];
+  for (const [k, v] of Object.entries(dependency)) {
+    ret = ret.concat(
+      (v as any).map((it: any) => {
+        return { ...it, swaggerFilePath: k };
+      })
+    );
+  }
+  return ret;
 }
 
 const uniqueIndex = (

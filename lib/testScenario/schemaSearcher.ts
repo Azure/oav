@@ -58,7 +58,7 @@ export class SchemaSearcher {
           }
         }
       }
-      return curSchema;
+      return this.getProperties(curSchema, jsonLoader);
     } catch (err) {
       console.log(err);
     }
