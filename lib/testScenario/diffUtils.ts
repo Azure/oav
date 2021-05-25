@@ -154,7 +154,7 @@ export const getJsonPatchDiff = (
   return patches;
 };
 
-const getObjValueFromPointer = (obj: any, pointer: string) => {
+export const getObjValueFromPointer = (obj: any, pointer: string) => {
   return jsonPointer.get(obj, pointer === "/" ? "" : pointer);
 };
 
