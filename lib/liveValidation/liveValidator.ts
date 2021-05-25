@@ -725,13 +725,13 @@ export class LiveValidator {
           ResourceType: validationRequest.resourceType,
           ApiVersion: validationRequest.apiVersion,
           OperationName: operationName,
-          LogggingType: loggingType,
+          LoggingType: loggingType,
           DurationInMilliseconds: durationInMilliseconds,
         });
       } else {
         this.logFunction(message, level, {
           OperationName: operationName,
-          LogggingType: loggingType,
+          LoggingType: loggingType,
           DurationInMilliseconds: durationInMilliseconds,
         });
       }
