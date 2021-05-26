@@ -43,6 +43,7 @@ export interface ExampleDependency {
   apiVersion: string;
   resourceProvider: string;
   resourceType: string;
+  operationId: string;
   internalDependency: Dependency;
   externalDependency: Dependency[];
 }
@@ -60,7 +61,7 @@ interface Dependency {
   resourceType?: string;
   jsonPointer?: string;
   jsonPath?: string;
-  resourceIdJsonPath?: string;
+  resourceIdJsonPointer?: string;
   resourceChain: ResourceType[];
 }
 
@@ -157,7 +158,7 @@ export class SwaggerAnalyzer {
                     (dependency): Dependency => {
                       return {
                         ...dependency,
-                        resourceIdJsonPath: this.getResourceIdJsonPath(
+                        resourceIdJsonPointer: this.getResourceIdJsonPath(
                           dependency,
                           requestBody,
                           example
@@ -177,6 +178,7 @@ export class SwaggerAnalyzer {
                   resourceType: getResourceTypePath(resourceChain, resourceProvider),
                   exampleFilePath: this.jsonLoader.getRealPath(example.$ref!),
                   externalDependency: externalDependency,
+                  operationId: path.put.operationId || "",
                   internalDependency: {
                     resourceProvider: resourceProvider,
                     resourceChain: resourceChain,
@@ -326,8 +328,23 @@ export function analyzeExampleDependency(example: SwaggerExample): Dependency[] 
   }
   return ret;
 }
+export interface DependencyResult {
+  apiVersion: string;
+  exampleName: string;
+  resourceType: string;
+  resourceProvider: string;
+  dependentResourceType: string;
+  exampleJsonPointer: string;
+  swaggerResourceIdJsonPath: string;
+  swaggerFilePath: string;
+  exampleFilePath: string;
+  operationId: string;
+}
 
-export function swaggerDependency(res: ExampleDependency[], fileRoot = "specification") {
+export function normalizeDependency(
+  res: ExampleDependency[],
+  fileRoot = "specification"
+): DependencyResult[] {
   const dependency: any = {};
   const vis = new Set<string>();
   res
@@ -340,9 +357,14 @@ export function swaggerDependency(res: ExampleDependency[], fileRoot = "specific
         ),
         ids: it.externalDependency.map((dependency) => {
           return {
-            resourceType: dependency.resourceType,
+            apiVersion: it.apiVersion,
+            exampleName: it.exampleName,
+            resourceType: it.resourceType,
+            resourceProvider: it.resourceProvider,
+            dependentResourceType: dependency.resourceType,
+            operationId: it.operationId,
             exampleJsonPointer: dependency.jsonPointer,
-            swaggerResourceIdJsonPath: dependency.resourceIdJsonPath,
+            swaggerResourceIdJsonPointer: dependency.resourceIdJsonPointer,
             exampleFilePath: it.exampleFilePath.substr(
               it.exampleFilePath.indexOf(fileRoot),
               it.exampleFilePath.length
@@ -362,7 +384,7 @@ export function swaggerDependency(res: ExampleDependency[], fileRoot = "specific
         }
       }
     });
-  let ret: any[] = [];
+  let ret: DependencyResult[] = [];
   for (const [k, v] of Object.entries(dependency)) {
     ret = ret.concat(
       (v as any).map((it: any) => {

@@ -2,7 +2,7 @@
 //
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
-import { SwaggerAnalyzer, swaggerDependency } from "./../../lib/testScenario/swaggerAnalyzer";
+import { SwaggerAnalyzer, normalizeDependency } from "./../../lib/testScenario/swaggerAnalyzer";
 
 describe("swagger analyzer", () => {
   it("analyze dependency", async () => {
@@ -15,13 +15,18 @@ describe("swagger analyzer", () => {
     });
     await analyzer.initialize();
     const exampleDependencies = await analyzer.analyzeDependency();
-    const normalizedResult = swaggerDependency(exampleDependencies);
+    const normalizedResult = normalizeDependency(exampleDependencies);
     expect(normalizedResult).toStrictEqual([
       {
-        resourceType: "Microsoft.ServiceFabricMesh/networks",
+        apiVersion: "2018-09-01-preview",
+        exampleName: "CreateOrUpdateApplication",
+        resourceType: "Microsoft.ServiceFabricMesh/applications",
+        resourceProvider: "Microsoft.ServiceFabricMesh",
+        dependentResourceType: "Microsoft.ServiceFabricMesh/networks",
+        operationId: "Application_Create",
         exampleJsonPointer:
           "/applicationResourceDescription/properties/services/0/properties/networkRefs/0/name",
-        swaggerResourceIdJsonPath: "/definitions/NetworkRef/properties/name",
+        swaggerResourceIdJsonPointer: "/definitions/NetworkRef/properties/name",
         exampleFilePath:
           "specification/servicefabricmesh/2018-09-01-preview/examples/applications/create_update.json",
         swaggerFilePath:
@@ -40,57 +45,87 @@ describe("swagger analyzer", () => {
     });
     await analyzer.initialize();
     const exampleDependencies = await analyzer.analyzeDependency();
-    const normalizedResult = swaggerDependency(exampleDependencies);
+    const normalizedResult = normalizeDependency(exampleDependencies);
     expect(normalizedResult).toStrictEqual([
       {
-        resourceType: "Microsoft.Kusto/clusters",
+        apiVersion: "2020-09-01",
+        exampleName: "DataSets_KustoCluster_Create",
+        resourceType: "Microsoft.DataShare/accounts/shares/dataSets",
+        resourceProvider: "Microsoft.DataShare",
+        dependentResourceType: "Microsoft.Kusto/clusters",
+        operationId: "DataSets_Create",
         exampleJsonPointer: "/dataSet/properties/kustoClusterResourceId",
-        swaggerResourceIdJsonPath:
+        swaggerResourceIdJsonPointer:
           "/definitions/KustoClusterDataSetProperties/properties/kustoClusterResourceId",
         exampleFilePath:
           "specification/datashare/2020-09-01/examples/DataSets_KustoCluster_Create.json",
         swaggerFilePath: "specification/datashare/2020-09-01/DataShare.json",
       },
       {
-        resourceType: "Microsoft.Kusto/clusters/databases",
+        apiVersion: "2020-09-01",
+        exampleName: "DataSets_KustoDatabase_Create",
+        resourceType: "Microsoft.DataShare/accounts/shares/dataSets",
+        resourceProvider: "Microsoft.DataShare",
+        dependentResourceType: "Microsoft.Kusto/clusters/databases",
+        operationId: "DataSets_Create",
         exampleJsonPointer: "/dataSet/properties/kustoDatabaseResourceId",
-        swaggerResourceIdJsonPath:
+        swaggerResourceIdJsonPointer:
           "/definitions/KustoDatabaseDataSetProperties/properties/kustoDatabaseResourceId",
         exampleFilePath:
           "specification/datashare/2020-09-01/examples/DataSets_KustoDatabase_Create.json",
         swaggerFilePath: "specification/datashare/2020-09-01/DataShare.json",
       },
       {
-        resourceType: "Microsoft.Sql/servers",
+        apiVersion: "2020-09-01",
+        exampleName: "DataSets_SqlDWTable_Create",
+        resourceType: "Microsoft.DataShare/accounts/shares/dataSets",
+        resourceProvider: "Microsoft.DataShare",
+        dependentResourceType: "Microsoft.Sql/servers",
+        operationId: "DataSets_Create",
         exampleJsonPointer: "/dataSet/properties/sqlServerResourceId",
-        swaggerResourceIdJsonPath:
+        swaggerResourceIdJsonPointer:
           "/definitions/SqlDWTableProperties/properties/sqlServerResourceId",
         exampleFilePath:
           "specification/datashare/2020-09-01/examples/DataSets_SqlDWTable_Create.json",
         swaggerFilePath: "specification/datashare/2020-09-01/DataShare.json",
       },
       {
-        resourceType: "Microsoft.Synapse/workspaces/sqlPools/schemas/tables",
+        apiVersion: "2020-09-01",
+        exampleName: "DataSets_SynapseWorkspaceSqlPoolTable_Create",
+        resourceType: "Microsoft.DataShare/accounts/shares/dataSets",
+        resourceProvider: "Microsoft.DataShare",
+        dependentResourceType: "Microsoft.Synapse/workspaces/sqlPools/schemas/tables",
+        operationId: "DataSets_Create",
         exampleJsonPointer: "/dataSet/properties/synapseWorkspaceSqlPoolTableResourceId",
-        swaggerResourceIdJsonPath:
+        swaggerResourceIdJsonPointer:
           "/definitions/SynapseWorkspaceSqlPoolTableDataSetProperties/properties/synapseWorkspaceSqlPoolTableResourceId",
         exampleFilePath:
           "specification/datashare/2020-09-01/examples/DataSets_SynapseWorkspaceSqlPoolTable_Create.json",
         swaggerFilePath: "specification/datashare/2020-09-01/DataShare.json",
       },
       {
-        resourceType: "Microsoft.Sql/servers",
+        apiVersion: "2020-09-01",
+        exampleName: "DataSetMappings_SqlDW_Create",
+        resourceType: "Microsoft.DataShare/accounts/shareSubscriptions/dataSetMappings",
+        resourceProvider: "Microsoft.DataShare",
+        dependentResourceType: "Microsoft.Sql/servers",
+        operationId: "DataSetMappings_Create",
         exampleJsonPointer: "/dataSetMapping/properties/sqlServerResourceId",
-        swaggerResourceIdJsonPath:
+        swaggerResourceIdJsonPointer:
           "/definitions/SqlDWTableDataSetMappingProperties/properties/sqlServerResourceId",
         exampleFilePath:
           "specification/datashare/2020-09-01/examples/DataSetMappings_SqlDW_Create.json",
         swaggerFilePath: "specification/datashare/2020-09-01/DataShare.json",
       },
       {
-        resourceType: "Microsoft.Synapse/workspaces/sqlPools/schemas/tables",
+        apiVersion: "2020-09-01",
+        exampleName: "DataSetMappings_SynapseWorkspaceSqlPoolTable_Create",
+        resourceType: "Microsoft.DataShare/accounts/shareSubscriptions/dataSetMappings",
+        resourceProvider: "Microsoft.DataShare",
+        dependentResourceType: "Microsoft.Synapse/workspaces/sqlPools/schemas/tables",
+        operationId: "DataSetMappings_Create",
         exampleJsonPointer: "/dataSetMapping/properties/synapseWorkspaceSqlPoolTableResourceId",
-        swaggerResourceIdJsonPath:
+        swaggerResourceIdJsonPointer:
           "/definitions/SynapseWorkspaceSqlPoolTableDataSetMappingProperties/properties/synapseWorkspaceSqlPoolTableResourceId",
         exampleFilePath:
           "specification/datashare/2020-09-01/examples/DataSetMappings_SynapseWorkspaceSqlPoolTable_Create.json",
