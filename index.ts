@@ -48,6 +48,7 @@ export {
   LiveValidationResult,
   ValidateOptions,
   LiveValidatorLoggingTypes,
+  parseValidationRequest,
 } from "./lib/liveValidation/liveValidator";
 export {
   LiveRequest,
