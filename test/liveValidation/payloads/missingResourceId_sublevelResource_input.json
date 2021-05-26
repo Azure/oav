@@ -1,0 +1,51 @@
+{
+  "liveRequest": {
+    "headers": {
+      "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+      "x-ms-request-id": "97856fec-304a-4317-87f0-f04c328402d3",
+      "x-ms-correlation-request-id": "97856fec-304a-4317-87f0-f04c328402d3",
+      "date": "Tue, 11 Sep 2018 19:00:21 GMT",
+      "eTag": "\"AAAAAAAAQqUAAAAAAABCpw==\"",
+      "server": "Microsoft-HTTPAPI/2.0",
+      "Content-Type": "application/json"
+    },
+    "method": "GET",
+    "url": "/subscriptions/a712f8f5-3c93-4d8f-a2cd-d888635158e6/resourceGroups/adme2e/providers/Microsoft.OperationsManagement/solutions/ServiceMap(adme2e)?api-version=2015-11-01-preview&MaskCMKEnabledProperties=true",
+    "query": {
+      "api-version": "2021-01-01-privatepreview"
+    }
+  },
+  "liveResponse": {
+    "statusCode": "200",
+    "headers": {
+      "strict-Transport-Security": "max-age=31536000; includeSubDomains",
+      "x-ms-request-id": "97856fec-304a-4317-87f0-f04c328402d3",
+      "x-ms-correlation-request-id": "97856fec-304a-4317-87f0-f04c328402d3",
+      "date": "Tue, 11 Sep 2018 19:00:21 GMT",
+      "eTag": "\"AAAAAAAAQqUAAAAAAABCpw==\"",
+      "server": "Microsoft-HTTPAPI/2.0",
+      "Content-Type": "application/json",
+      "Azure-AsyncOperation": "https://management.azure.com/subscriptions/subid/providers/Microsoft.ServiceLinker/...pathToOperationStatus..."
+    },
+    "body": {
+      "plan": {
+        "name": "ServiceMap(adme2e)",
+        "publisher": "Microsoft",
+        "promotionCode": "",
+        "product": "OMSGallery/ServiceMap"
+      },
+      "properties": {
+        "workspaceResourceId": "/subscriptions/a712f8f5-3c93-4d8f-a2cd-d888635158e6/resourcegroups/adme2e/providers/Microsoft.OperationalInsights/workspaces/adme2e",
+        "provisioningState": "Succeeded",
+        "containedResources": [
+          "/subscriptions/a712f8f5-3c93-4d8f-a2cd-d888635158e6/resourceGroups/adme2e/providers/microsoft.operationalinsights/workspaces/adme2e/views/ServiceMap(adme2e)"
+        ]
+      },
+      "location": "East US",
+      "tags": {},
+      "id": "/subscriptions/a712f8f5-3c93-4d8f-a2cd-d888635158e6/resourceGroups/adme2e/providers/microsoft.operationsmanagement/solutions/ServiceMap(adme2e)",
+      "name": "ServiceMap(adme2e)",
+      "type": "microsoft.operationsmanagement/solutions"
+    }
+  }
+}

@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 5/25/2021 2.5.3
+
+- Ignore MISSING_RESOURCE_ID rule for sub level azure resources
+
 ## 5/18/2021 2.5.2
 
 - Supports different log types in livevalidator

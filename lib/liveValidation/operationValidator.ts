@@ -275,6 +275,14 @@ const schemaValidateIssueToLiveValidationIssue = (
       const isMissingRequiredProperty = issue.code === "OBJECT_MISSING_REQUIRED_PROPERTY";
       const isBodyIssue = path.startsWith(".body");
 
+      if (issue.code === "MISSING_RESOURCE_ID") {
+        // ignore this error for sub level resources
+        if (path.includes("properties")) {
+          skipIssue = true;
+          return "";
+        }
+      }
+
       if (isBodyIssue && (path.length > 5 || !isMissingRequiredProperty)) {
         path = "$" + path.substr(5);
         issue.jsonPathsInPayload[idx] = path;
