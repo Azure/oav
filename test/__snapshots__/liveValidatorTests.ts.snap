@@ -1,5 +1,28 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Live Validator Initialize cache and validate should not report error in response for GET/PUT resource calls when id is not returned in sub-level resources 1`] = `
+Object {
+  "requestValidationResult": Object {
+    "errors": Array [],
+    "isSuccessful": true,
+    "operationInfo": Object {
+      "apiVersion": "2015-11-01-preview",
+      "operationId": "Solutions_Get",
+    },
+    "runtimeException": undefined,
+  },
+  "responseValidationResult": Object {
+    "errors": Array [],
+    "isSuccessful": true,
+    "operationInfo": Object {
+      "apiVersion": "2015-11-01-preview",
+      "operationId": "Solutions_Get",
+    },
+    "runtimeException": undefined,
+  },
+}
+`;
+
 exports[`Live Validator Initialize cache and validate should report error in response for GET/PUT resource calls when id is not returned 1`] = `
 Object {
   "requestValidationResult": Object {
@@ -30,7 +53,7 @@ Object {
           "jsonRef": "#/definitions/LinkerResource",
           "position": Object {
             "column": 23,
-            "line": 572,
+            "line": 524,
           },
           "url": "specification/servicelinker/resource-manager/Microsoft.ServiceLinker/preview/2021-01-01-privatepreview/servicelinker.json",
         },
@@ -70,7 +93,7 @@ Object {
         "source": Object {
           "position": Object {
             "column": 22,
-            "line": 300,
+            "line": 252,
           },
           "url": "specification/servicelinker/resource-manager/Microsoft.ServiceLinker/preview/2021-01-01-privatepreview/servicelinker.json",
         },
@@ -110,7 +133,7 @@ Object {
         "source": Object {
           "position": Object {
             "column": 22,
-            "line": 177,
+            "line": 153,
           },
           "url": "specification/servicelinker/resource-manager/Microsoft.ServiceLinker/preview/2021-01-01-privatepreview/servicelinker.json",
         },
@@ -132,7 +155,7 @@ Object {
           "jsonRef": "#/definitions/LinkerResource",
           "position": Object {
             "column": 23,
-            "line": 572,
+            "line": 524,
           },
           "url": "specification/servicelinker/resource-manager/Microsoft.ServiceLinker/preview/2021-01-01-privatepreview/servicelinker.json",
         },

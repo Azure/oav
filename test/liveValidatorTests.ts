@@ -11,7 +11,7 @@ import { LiveValidator } from "../lib/liveValidation/liveValidator";
 import { OperationSearcher } from "../lib/liveValidation/operationSearcher";
 import * as Constants from "../lib/util/constants";
 
-const numberOfSpecs = 13;
+const numberOfSpecs = 14;
 jest.setTimeout(999999);
 
 describe("Live Validator", () => {
@@ -734,6 +734,26 @@ describe("Live Validator", () => {
       const liveValidator = new LiveValidator(options);
       await liveValidator.initialize();
       const payload = require(`${__dirname}/liveValidation/payloads/missingResourceId_input.json`);
+      const validationResult = await liveValidator.validateLiveRequestResponse(payload);
+      expect(validationResult).toMatchSnapshot();
+    });
+
+    it(`should not report error in response for GET/PUT resource calls when id is not returned in sub-level resources`, async () => {
+      const options = {
+        directory: `${__dirname}/liveValidation/swaggers/`,
+        isPathCaseSensitive: false,
+        useRelativeSourceLocationUrl: true,
+        swaggerPathsPattern: [
+          "specification\\operationsmanagement\\resource-manager\\Microsoft.OperationsManagement\\**\\*.json",
+        ],
+        git: {
+          shouldClone: false,
+        },
+        isArmCall: true,
+      };
+      const liveValidator = new LiveValidator(options);
+      await liveValidator.initialize();
+      const payload = require(`${__dirname}/liveValidation/payloads/missingResourceId_sublevelResource_input.json`);
       const validationResult = await liveValidator.validateLiveRequestResponse(payload);
       expect(validationResult).toMatchSnapshot();
     });
