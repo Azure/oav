@@ -42,7 +42,7 @@ export interface ExampleDependency {
   swaggerFilePath: string;
   apiVersion: string;
   resourceProvider: string;
-  resourceType: string;
+  fullResourceType: string;
   operationId: string;
   internalDependency: Dependency;
   externalDependency: Dependency[];
@@ -58,7 +58,7 @@ function noExternalDependency(exampleDependency: ExampleDependency): boolean {
 
 interface Dependency {
   resourceProvider: string;
-  resourceType?: string;
+  fullResourceType?: string;
   jsonPointer?: string;
   jsonPath?: string;
   resourceIdJsonPointer?: string;
@@ -175,14 +175,14 @@ export class SwaggerAnalyzer {
                   resourceProvider: resourceProvider,
                   swaggerFilePath: swaggerSpec._filePath,
                   exampleName: exampleName,
-                  resourceType: getResourceTypePath(resourceChain, resourceProvider),
+                  fullResourceType: getResourceTypePath(resourceChain, resourceProvider),
                   exampleFilePath: this.jsonLoader.getRealPath(example.$ref!),
                   externalDependency: externalDependency,
                   operationId: path.put.operationId || "",
                   internalDependency: {
                     resourceProvider: resourceProvider,
                     resourceChain: resourceChain,
-                    resourceType: getResourceTypePath(resourceChain, resourceProvider),
+                    fullResourceType: getResourceTypePath(resourceChain, resourceProvider),
                   },
                 };
                 dependencyResult.push(exampleDependency);
@@ -319,7 +319,7 @@ export function analyzeExampleDependency(example: SwaggerExample): Dependency[] 
         ret.push({
           resourceProvider: provider,
           resourceChain: resourceChain,
-          resourceType: resourceType,
+          fullResourceType: resourceType,
           jsonPointer: it.pointer,
           jsonPath: it.path,
         });
@@ -331,9 +331,9 @@ export function analyzeExampleDependency(example: SwaggerExample): Dependency[] 
 export interface DependencyResult {
   apiVersion: string;
   exampleName: string;
-  resourceType: string;
+  fullResourceType: string;
   resourceProvider: string;
-  dependentResourceType: string;
+  fullDependentResourceType: string;
   exampleJsonPointer: string;
   swaggerResourceIdJsonPath: string;
   swaggerFilePath: string;
@@ -359,9 +359,9 @@ export function normalizeDependency(
           return {
             apiVersion: it.apiVersion,
             exampleName: it.exampleName,
-            resourceType: it.resourceType,
+            fullResourceType: it.fullResourceType,
             resourceProvider: it.resourceProvider,
-            dependentResourceType: dependency.resourceType,
+            fullDependentResourceType: dependency.fullResourceType,
             operationId: it.operationId,
             exampleJsonPointer: dependency.jsonPointer,
             swaggerResourceIdJsonPointer: dependency.resourceIdJsonPointer,
@@ -378,9 +378,11 @@ export function normalizeDependency(
         dependency[it.swaggerFilePath] = [];
       }
       for (const id of it.ids) {
-        if (!vis.has(uniqueIndex(id.exampleJsonPointer!, it.swaggerFilePath, id.resourceType!))) {
+        if (
+          !vis.has(uniqueIndex(id.exampleJsonPointer!, it.swaggerFilePath, id.fullResourceType!))
+        ) {
           dependency[it.swaggerFilePath].push(id);
-          vis.add(uniqueIndex(id.exampleJsonPointer!, it.swaggerFilePath, id.resourceType!));
+          vis.add(uniqueIndex(id.exampleJsonPointer!, it.swaggerFilePath, id.fullResourceType!));
         }
       }
     });

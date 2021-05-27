@@ -165,7 +165,7 @@ export class StaticTestScenarioGenerator {
   public async generateTestDefFiles() {
     const resourceTypes: Set<string> = new Set<string>();
     for (const it of this.exampleDependencies) {
-      resourceTypes.add(it.resourceType);
+      resourceTypes.add(it.fullResourceType);
     }
     for (const resourceType of resourceTypes) {
       if (this.opts.rule === "put-delete") {

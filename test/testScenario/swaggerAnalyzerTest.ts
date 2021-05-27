@@ -20,9 +20,9 @@ describe("swagger analyzer", () => {
       {
         apiVersion: "2018-09-01-preview",
         exampleName: "CreateOrUpdateApplication",
-        resourceType: "Microsoft.ServiceFabricMesh/applications",
+        fullResourceType: "Microsoft.ServiceFabricMesh/applications",
         resourceProvider: "Microsoft.ServiceFabricMesh",
-        dependentResourceType: "Microsoft.ServiceFabricMesh/networks",
+        fullDependentResourceType: "Microsoft.ServiceFabricMesh/networks",
         operationId: "Application_Create",
         exampleJsonPointer:
           "/applicationResourceDescription/properties/services/0/properties/networkRefs/0/name",
@@ -50,9 +50,9 @@ describe("swagger analyzer", () => {
       {
         apiVersion: "2020-09-01",
         exampleName: "DataSets_KustoCluster_Create",
-        resourceType: "Microsoft.DataShare/accounts/shares/dataSets",
+        fullResourceType: "Microsoft.DataShare/accounts/shares/dataSets",
         resourceProvider: "Microsoft.DataShare",
-        dependentResourceType: "Microsoft.Kusto/clusters",
+        fullDependentResourceType: "Microsoft.Kusto/clusters",
         operationId: "DataSets_Create",
         exampleJsonPointer: "/dataSet/properties/kustoClusterResourceId",
         swaggerResourceIdJsonPointer:
@@ -64,9 +64,9 @@ describe("swagger analyzer", () => {
       {
         apiVersion: "2020-09-01",
         exampleName: "DataSets_KustoDatabase_Create",
-        resourceType: "Microsoft.DataShare/accounts/shares/dataSets",
+        fullResourceType: "Microsoft.DataShare/accounts/shares/dataSets",
         resourceProvider: "Microsoft.DataShare",
-        dependentResourceType: "Microsoft.Kusto/clusters/databases",
+        fullDependentResourceType: "Microsoft.Kusto/clusters/databases",
         operationId: "DataSets_Create",
         exampleJsonPointer: "/dataSet/properties/kustoDatabaseResourceId",
         swaggerResourceIdJsonPointer:
@@ -78,9 +78,9 @@ describe("swagger analyzer", () => {
       {
         apiVersion: "2020-09-01",
         exampleName: "DataSets_SqlDWTable_Create",
-        resourceType: "Microsoft.DataShare/accounts/shares/dataSets",
+        fullResourceType: "Microsoft.DataShare/accounts/shares/dataSets",
         resourceProvider: "Microsoft.DataShare",
-        dependentResourceType: "Microsoft.Sql/servers",
+        fullDependentResourceType: "Microsoft.Sql/servers",
         operationId: "DataSets_Create",
         exampleJsonPointer: "/dataSet/properties/sqlServerResourceId",
         swaggerResourceIdJsonPointer:
@@ -92,9 +92,9 @@ describe("swagger analyzer", () => {
       {
         apiVersion: "2020-09-01",
         exampleName: "DataSets_SynapseWorkspaceSqlPoolTable_Create",
-        resourceType: "Microsoft.DataShare/accounts/shares/dataSets",
+        fullResourceType: "Microsoft.DataShare/accounts/shares/dataSets",
         resourceProvider: "Microsoft.DataShare",
-        dependentResourceType: "Microsoft.Synapse/workspaces/sqlPools/schemas/tables",
+        fullDependentResourceType: "Microsoft.Synapse/workspaces/sqlPools/schemas/tables",
         operationId: "DataSets_Create",
         exampleJsonPointer: "/dataSet/properties/synapseWorkspaceSqlPoolTableResourceId",
         swaggerResourceIdJsonPointer:
@@ -106,9 +106,9 @@ describe("swagger analyzer", () => {
       {
         apiVersion: "2020-09-01",
         exampleName: "DataSetMappings_SqlDW_Create",
-        resourceType: "Microsoft.DataShare/accounts/shareSubscriptions/dataSetMappings",
+        fullResourceType: "Microsoft.DataShare/accounts/shareSubscriptions/dataSetMappings",
         resourceProvider: "Microsoft.DataShare",
-        dependentResourceType: "Microsoft.Sql/servers",
+        fullDependentResourceType: "Microsoft.Sql/servers",
         operationId: "DataSetMappings_Create",
         exampleJsonPointer: "/dataSetMapping/properties/sqlServerResourceId",
         swaggerResourceIdJsonPointer:
@@ -120,9 +120,9 @@ describe("swagger analyzer", () => {
       {
         apiVersion: "2020-09-01",
         exampleName: "DataSetMappings_SynapseWorkspaceSqlPoolTable_Create",
-        resourceType: "Microsoft.DataShare/accounts/shareSubscriptions/dataSetMappings",
+        fullResourceType: "Microsoft.DataShare/accounts/shareSubscriptions/dataSetMappings",
         resourceProvider: "Microsoft.DataShare",
-        dependentResourceType: "Microsoft.Synapse/workspaces/sqlPools/schemas/tables",
+        fullDependentResourceType: "Microsoft.Synapse/workspaces/sqlPools/schemas/tables",
         operationId: "DataSetMappings_Create",
         exampleJsonPointer: "/dataSetMapping/properties/synapseWorkspaceSqlPoolTableResourceId",
         swaggerResourceIdJsonPointer:
