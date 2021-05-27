@@ -18,11 +18,11 @@ export const builder: yargs.CommandBuilder = {
     string: true,
   },
   swagger: {
-    describe: "swagger file to analyze.",
+    describe: "swagger file to analyze. this option is to analyze single swagger file dependency.",
     string: true,
   },
   readme: {
-    describe: "path to readme.md file",
+    describe: "path to readme.md file.",
     string: true,
   },
   filterTopLevelResource: {
