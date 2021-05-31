@@ -154,18 +154,16 @@ export class SwaggerAnalyzer {
                   (it: any) => it.in === "body"
                 )[0] as BodyParameter;
                 try {
-                  externalDependency = externalDependency.map(
-                    (dependency): Dependency => {
-                      return {
-                        ...dependency,
-                        resourceIdJsonPointer: this.getResourceIdJsonPath(
-                          dependency,
-                          requestBody,
-                          example
-                        ),
-                      };
-                    }
-                  );
+                  externalDependency = externalDependency.map((dependency): Dependency => {
+                    return {
+                      ...dependency,
+                      resourceIdJsonPointer: this.getResourceIdJsonPath(
+                        dependency,
+                        requestBody,
+                        example
+                      ),
+                    };
+                  });
                 } catch (err) {
                   console.log(err);
                 }
