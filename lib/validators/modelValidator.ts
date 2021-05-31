@@ -450,9 +450,9 @@ export class ModelValidator extends SpecValidator<SpecValidationResult> {
 
     let result: RequestValidation = {};
     if (bodyParam && bodyParam.schema && bodyParam.schema.example) {
-      const exampleParameterValues: openapiToolsCommon.MutableStringMap<openapiToolsCommon.StringMap<
-        unknown
-      >> = {};
+      const exampleParameterValues: openapiToolsCommon.MutableStringMap<
+        openapiToolsCommon.StringMap<unknown>
+      > = {};
       for (const parameter of parameters) {
         log.debug(
           `Getting sample value for parameter "${parameter.name}" in operation ` +

@@ -68,10 +68,8 @@ interface TestScenarioContext {
 export class TestResourceLoader implements Loader<TestDefinitionFile> {
   private transformContext: TransformContext;
   private validateTestResourceFile: ValidateFunction;
-  private exampleToOperation: Map<
-    string,
-    { [operationId: string]: [Operation, string] }
-  > = new Map();
+  private exampleToOperation: Map<string, { [operationId: string]: [Operation, string] }> =
+    new Map();
   private nameToOperation: Map<string, Operation> = new Map();
   private initialized: boolean = false;
 

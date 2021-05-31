@@ -67,7 +67,7 @@ export const discriminatorTransformer: GlobalTransformer = {
         };
         copyInfo(baseSch, baseSch.discriminatorMap);
       }
-      baseSch.discriminatorMap[discriminatorValue] = ({ $ref } as unknown) as Schema;
+      baseSch.discriminatorMap[discriminatorValue] = { $ref } as unknown as Schema;
     }
   },
 };

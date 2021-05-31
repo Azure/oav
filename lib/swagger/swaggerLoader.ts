@@ -97,9 +97,9 @@ export class SwaggerLoader implements Loader<SwaggerSpec> {
             if (!path.startsWith(".")) {
               path = `./${path}`;
             }
-            examples[entry.exampleName] = ({
+            examples[entry.exampleName] = {
               $ref: path,
-            } as Partial<SwaggerExample>) as SwaggerExample;
+            } as Partial<SwaggerExample> as SwaggerExample;
             toWait.push(
               this.fileLoader.writeFile(entry.exampleFilePath, formatJson(entry.exampleContent))
             );
