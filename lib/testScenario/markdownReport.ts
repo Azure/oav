@@ -6,33 +6,37 @@ import * as _ from "lodash";
 import * as hd from "humanize-duration";
 import { ResponseDiffItem, RuntimeError, StepResult, TestScenarioResult } from "./reportGenerator";
 
-Handlebars.logger.log = function(level) {
-    if(level >= Handlebars.logger.level) {
-      console.log.apply(console, ([] as any).concat(["Handlebars: "], _.toArray(arguments)));
-    }
-  };
-  // DEBUG: 0, INFO: 1, WARN: 2, ERROR: 3, 
-  Handlebars.registerHelper('log', Handlebars.logger.log);
-  // Std level is 3, when set to 0, handlebars will log all compilation results
-  Handlebars.logger.level = 0;
+Handlebars.logger.log = function (level) {
+  if (level >= Handlebars.logger.level) {
+    console.log.apply(console, ([] as any).concat(["Handlebars: "], _.toArray(arguments)));
+  }
+};
+// DEBUG: 0, INFO: 1, WARN: 2, ERROR: 3,
+Handlebars.registerHelper("log", Handlebars.logger.log);
+// Std level is 3, when set to 0, handlebars will log all compilation results
+Handlebars.logger.level = 0;
 
 const commonHelper = (opts: HelperOpts) => ({
-  renderPlain: (s: string) => { return s; },
+  renderPlain: (s: string) => {
+    return s;
+  },
   renderUri: (s: string) => `${path.join(opts.swaggerRootDir, s)}`,
   renderSymbol: (result: ResultState) => {
-    console.log('result=', result)
-  return `${resultStateSymbol[result]}`
-},
+    console.log("result=", result);
+    return `${resultStateSymbol[result]}`;
+  },
   renderScenarioTitle: (ts: TestScenarioMarkdownResult) =>
     `${ts.testScenarioName}: ${ts.fatalStepsCount} Fatals, ${ts.failedStepsCount} Errors`,
   renderStepTitle: (ts: TestScenarioMarkdownStepResult) =>
     `${ts.stepName}: ${ts.fatalStepsCount} Fatals, ${ts.failedStepsCount} Errors`,
-  renderDuration: (start: Date, end: Date) => `${hd.default(moment.duration(moment(end).diff(moment(start))).asMilliseconds())}`,
-  shouldReportError: (sr: TestScenarioMarkdownStepResult) => (sr.failedStepsCount + sr.fatalStepsCount) > 0,
+  renderDuration: (start: Date, end: Date) =>
+    `${hd.default(moment.duration(moment(end).diff(moment(start))).asMilliseconds())}`,
+  shouldReportError: (sr: TestScenarioMarkdownStepResult) =>
+    sr.failedStepsCount + sr.fatalStepsCount > 0,
   renderFatalErrorCode: (e: RuntimeError) => `${e.severity} ${e.code}`,
   renderFatalErrorDetail: (e: RuntimeError) => `${e.message}`, // todo add detail
   renderDiffErrorCode: (e: ResponseDiffItem) => `${e.severity} ${e.code}`,
-  renderDiffErrorDetail: (e: ResponseDiffItem) => `${e.jsonPath} ${e.message}` // todo add detail
+  renderDiffErrorDetail: (e: ResponseDiffItem) => `${e.jsonPath} ${e.message}`, // todo add detail
 });
 
 type ResultState = keyof typeof ResultStateStrings;
@@ -41,14 +45,14 @@ const ResultStateStrings = {
   fatal: `Fatal`,
   failed: `Failed`,
   succeeded: `Succeeded`,
-  warning: `Warning`
+  warning: `Warning`,
 };
 
 export const resultStateSymbol: { [key in ResultState]: string } = {
   fatal: "❌",
   failed: "❌",
   succeeded: "️✔️",
-  warning: "⚠️"
+  warning: "⚠️",
 };
 
 interface TestScenarioMarkdownStepResult {
@@ -96,7 +100,7 @@ export const compileHandlebarsTemplate = <T>(fileName: string, opts: HelperOpts)
 };
 
 const generateView = compileHandlebarsTemplate<MarkdownResult>("markdownReport.handlebars", {
-  swaggerRootDir: "root"
+  swaggerRootDir: "root",
 });
 
 const stepIsFatal = (sr: StepResult) => sr.runtimeError && sr.runtimeError.length > 0;
@@ -115,16 +119,17 @@ const asMarkdownStepResult = (sr: StepResult): TestScenarioMarkdownStepResult =>
     fatalStepsCount: sr.runtimeError ? sr.runtimeError.length : 0,
     failedStepsCount: sr.responseDiffResult ? sr.responseDiffResult.length : 0,
     warningStepsCount: 0,
-    ...sr
+    ...sr,
   };
   return r;
 };
 
 const asMarkdownResult = (tsr: TestScenarioResult): TestScenarioMarkdownResult => {
-  const fatalCount = tsr.stepResult.filter(sr => sr.runtimeError && sr.runtimeError.length > 0)
-    .length;
+  const fatalCount = tsr.stepResult.filter(
+    (sr) => sr.runtimeError && sr.runtimeError.length > 0
+  ).length;
   const errorCount = tsr.stepResult.filter(
-    sr => sr.responseDiffResult && sr.responseDiffResult.length > 0
+    (sr) => sr.responseDiffResult && sr.responseDiffResult.length > 0
   ).length;
   let resultState: ResultState = "succeeded";
   if (fatalCount > 0) {
@@ -145,7 +150,7 @@ const asMarkdownResult = (tsr: TestScenarioResult): TestScenarioMarkdownResult =
     fatalStepsCount: fatalCount,
     failedStepsCount: errorCount,
     warningStepsCount: 0,
-    steps: tsr.stepResult.map(asMarkdownStepResult)
+    steps: tsr.stepResult.map(asMarkdownStepResult),
   };
 
   return r;
@@ -156,9 +161,9 @@ export const generateMarkdownReport = (testScenarioResult: TestScenarioResult[])
     const result = testScenarioResult.map(asMarkdownResult);
     const body = generateView({
       title: "Azure API Test Report",
-      scenarios: result
+      scenarios: result,
     });
-    console.log(JSON.stringify(result))
+    console.log(JSON.stringify(result));
     return body;
   } catch (e) {
     console.error(e);
