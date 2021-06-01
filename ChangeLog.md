@@ -1,5 +1,12 @@
 # Change Log - oav
 
+## 5/27/2021 2.5.4
+
+- Analyze dependency return resource id schema reference
+- Bug fix: test scenario get arm deployment parameters
+- Bug fix: test scenario definition step use anyOf instead of oneOf.
+- Postman runner support check armTemplate deployment status
+
 ## 5/25/2021 2.5.3
 
 - Ignore MISSING_RESOURCE_ID rule for sub level azure resources

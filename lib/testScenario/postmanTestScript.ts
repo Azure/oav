@@ -6,6 +6,10 @@ const StatusCodeAssertion: ScriptTemplate = {
   text: `pm.expect(pm.response.code).to.be.oneOf([200, 201, 202, 204]);`,
 };
 
+const ARMDeploymentStatusAssertion: ScriptTemplate = {
+  text: `pm.expect(pm.response.json().status).to.be.oneOf(["Succeeded", "Accepted", "Running", "Ready", "Creating", "Created", "Deleting", "Deleted", "Canceled", "Updating"]);`,
+};
+
 const DetailResponseLog: ScriptTemplate = {
   text: `
   console.log(pm.response.text())
@@ -22,7 +26,8 @@ export type TestScriptType =
   | "StatusCodeAssertion"
   | "ResponseDataAssertion"
   | "DetailResponseLog"
-  | "OverwriteVariables";
+  | "OverwriteVariables"
+  | "ARMDeploymentStatusAssertion";
 
 export class PostmanTestScript {
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
@@ -40,6 +45,9 @@ export class PostmanTestScript {
     }
     if (parameter.types.includes("OverwriteVariables")) {
       ret += this.generateOverWriteVariablesScript(parameter.variables!);
+    }
+    if (parameter.types.includes("ARMDeploymentStatusAssertion")) {
+      ret += ARMDeploymentStatusAssertion.text;
     }
     return ret + end;
   }

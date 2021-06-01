@@ -102,7 +102,7 @@ export class VariableEnv {
 
   private resolveObjectValuesWithRegExp<T>(obj: T, captureVariable: RegExp): T {
     if (typeof obj === "string") {
-      return (this.resolveStringWithRegExp(obj, captureVariable) as unknown) as T;
+      return this.resolveStringWithRegExp(obj, captureVariable) as unknown as T;
     }
     if (typeof obj !== "object") {
       return obj;
@@ -112,9 +112,9 @@ export class VariableEnv {
     }
 
     if (Array.isArray(obj)) {
-      return ((obj as any[]).map((v) =>
+      return (obj as any[]).map((v) =>
         this.resolveObjectValuesWithRegExp(v, captureVariable)
-      ) as unknown) as T;
+      ) as unknown as T;
     }
 
     const result: any = {};

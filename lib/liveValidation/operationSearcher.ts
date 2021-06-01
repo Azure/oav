@@ -121,9 +121,7 @@ export class OperationSearcher {
   /**
    * Gets the swagger operation based on the HTTP url and method
    */
-  public search(
-    info: ValidationRequest
-  ): {
+  public search(info: ValidationRequest): {
     operationMatch: OperationMatch;
     apiVersion: string;
   } {

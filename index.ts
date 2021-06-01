@@ -76,6 +76,13 @@ export {
   PostmanCollectionGenerator,
   PostmanCollectionGeneratorOption,
 } from "./lib/testScenario/postmanCollectionGenerator";
+export {
+  SwaggerAnalyzer,
+  SwaggerAnalyzerOption,
+  ExampleDependency,
+  DependencyResult,
+  normalizeDependency,
+} from "./lib/testScenario/swaggerAnalyzer";
 
 export { getAutorestConfig } from "./lib/util/getAutorestConfig";
 // Constants

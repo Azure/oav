@@ -283,7 +283,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     }
   }
 
-  private addAsLongRunningOperationItem(item: Item) {
+  private addAsLongRunningOperationItem(item: Item, checkStatus: boolean = false) {
     this.collectionEnv.set(`${lroPollingUrl(item.name)}`, "<polling_url>", "string");
     const longRunningEvent = new Event({
       listen: "test",
@@ -296,7 +296,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     });
     item.events.add(longRunningEvent);
     this.collection.items.add(item);
-    for (const it of this.longRunningOperationItem(item)) {
+    for (const it of this.longRunningOperationItem(item, checkStatus)) {
       this.collection.items.append(it);
     }
   }
@@ -333,7 +333,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
   ): Promise<void> {
     this.auth(stepEnv.env);
     const item = new Item();
-    item.name = step.armTemplateDeployment;
+    item.name = step.step;
     const path =
       "/subscriptions/:subscriptionId/resourcegroups/:resourceGroupName/providers/Microsoft.Resources/deployments/{{deploymentName}}?api-version=2020-06-01";
     const urlVariables: VariableDefinition[] = [
@@ -342,7 +342,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     ];
     this.collectionEnv.set("deploymentName", stepEnv.env.get("deploymentName"), "string");
     item.request = new Request({
-      name: step.armTemplateDeployment,
+      name: step.step,
       method: "put",
       url: "",
       body: { mode: "raw" } as RequestBodyDefinition,
@@ -369,15 +369,16 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
         listen: "test",
         script: {
           type: "text/javascript",
-          exec: `pm.test("Status code is 200", function () {
-          console.log(pm.response.text())
-          pm.response.to.have.status(200);
-      });
-      `,
+          exec: this.postmanTestScript.generateScript({
+            name: "response status code assertion.",
+            types: ["DetailResponseLog", "StatusCodeAssertion"],
+            variables: undefined,
+          }),
         },
       })
     );
     this.collection.items.add(item);
+    this.addAsLongRunningOperationItem(item, true);
   }
 
   private addAuthorizationHeader(item: Item) {
@@ -550,7 +551,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     return item;
   }
 
-  public longRunningOperationItem(initialItem: Item): Item[] {
+  public longRunningOperationItem(initialItem: Item, checkStatus: boolean = false): Item[] {
     const ret: Item[] = [];
     const pollerItemName = generatedPostmanItem(initialItem.name + "_poller");
     const pollerItem = new Item({
@@ -589,7 +590,21 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
       }`,
       },
     });
+
     pollerItem.events.add(event);
+    if (checkStatus) {
+      const checkStatusEvent = new Event({
+        listen: "test",
+        script: {
+          type: "text/javascript",
+          exec: this.postmanTestScript.generateScript({
+            name: "armTemplate deployment status check",
+            types: ["StatusCodeAssertion", "ARMDeploymentStatusAssertion"],
+          }),
+        },
+      });
+      pollerItem.events.add(checkStatusEvent);
+    }
 
     ret.push(pollerItem);
     ret.push(delay);

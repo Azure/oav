@@ -12,7 +12,8 @@ type ContainName =
   | "newmanreport"
   | "report"
   | "payload"
-  | "reportforpipeline";
+  | "reportforpipeline"
+  | "dependency";
 
 @injectable()
 export class BlobUploader {

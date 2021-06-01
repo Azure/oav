@@ -58,7 +58,7 @@ const testStepBaseSchema: Schema = {
 };
 
 const testStepSchema: Schema = {
-  oneOf: [
+  anyOf: [
     {
       $ref: "#/definitions/TestStepRestCall",
     },

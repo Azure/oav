@@ -27,8 +27,10 @@ import {
 import { generatedPrefix } from "./cloudError";
 import { getSchemaObjectInfo, setSchemaInfo, setSchemaTitle } from "./specTransformer";
 
-const skipIfUndefined = <T>(f: (v: T) => T): ((v: T | undefined) => T | undefined) => (v) =>
-  v !== undefined ? f(v) : undefined;
+const skipIfUndefined =
+  <T>(f: (v: T) => T): ((v: T | undefined) => T | undefined) =>
+  (v) =>
+    v !== undefined ? f(v) : undefined;
 
 export const resolveNestedDefinitions = (spec: SwaggerObject): SwaggerObject => {
   const generatedDefinitions: MutableStringMap<SchemaObject> = {};

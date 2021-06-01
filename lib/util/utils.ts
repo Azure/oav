@@ -189,6 +189,7 @@ export function getObject(doc: StringMap<unknown>, ptr: string): unknown {
   try {
     result = jsonPointer.get(doc, ptr);
   } catch (err) {
+    log.error(`cannot get object from jsonPointer ${ptr}`);
     log.error(err);
     throw err;
   }
