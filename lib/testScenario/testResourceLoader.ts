@@ -297,10 +297,10 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
     step.armTemplatePayload = JSON.parse(armTemplateContent);
 
     const definedParameters = [];
-    if (step.armTemplateParameters !== undefined) {
+    if (rawStep.armTemplateParameters !== undefined) {
       const armTemplateParametersPath = pathJoin(
         dirname(testDef._filePath),
-        step.armTemplateParameters
+        rawStep.armTemplateParameters
       );
       const armTemplateParametersContent = await this.fileLoader.load(armTemplateParametersPath);
       step.armTemplateParametersPayload = JSON.parse(armTemplateParametersContent);
