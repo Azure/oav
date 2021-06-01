@@ -21,6 +21,7 @@ export interface PostmanCollectionGeneratorOption
   testDef: string;
   env: {};
   outputFolder: string;
+  markdownReportPath: string;
   runCollection: boolean;
   generateCollection: boolean;
   baseUrl: string;
@@ -58,6 +59,7 @@ export class PostmanCollectionGenerator {
         enableBlobUploader: this.opt.enableBlobUploader!,
         testScenarioFilePath: this.opt.testDef,
         reportOutputFolder: this.opt.outputFolder,
+        markdownReportPath: this.opt.markdownReportPath,
         runId: runId,
         jsonLoader: this.testResourceLoader.jsonLoader,
         baseUrl: this.opt.baseUrl,

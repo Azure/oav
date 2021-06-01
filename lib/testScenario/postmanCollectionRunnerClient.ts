@@ -51,6 +51,7 @@ export interface PostmanCollectionRunnerClientOption extends BlobUploaderOption,
   env: VariableEnv;
   testScenarioFilePath?: string;
   reportOutputFolder?: string;
+  markdownReportPath?: string;
   testScenarioName: string;
   runId: string;
   jsonLoader?: JsonLoader;

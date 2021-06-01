@@ -45,6 +45,12 @@ export const builder: yargs.CommandBuilder = {
     string: true,
     default: "generated",
   },
+  markdown: {
+    alias: "markdownReportPath",
+    describe: "markdown report output path.",
+    string: true,
+    default: "summary.md",
+  },
   uploadBlob: {
     describe: "upload generated collection to blob.",
     boolean: true,
@@ -99,6 +105,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       runCollection: true,
       env: env,
       outputFolder: argv.output,
+      markdownReportPath: argv.markdownReportPath,
       eraseXmsExamples: false,
       eraseDescription: false,
       enableBlobUploader: argv.uploadBlob,
