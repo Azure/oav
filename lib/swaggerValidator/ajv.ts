@@ -106,7 +106,8 @@ export const ajvEnableDateTimeRfc1123Format = (ajv: Ajv) => {
   // https://tools.ietf.org/html/rfc822#section-5
   ajv.addFormat("date-time-rfc1123", {
     type: "string",
-    validate: /^(?:(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun), )?[0-3]\d (?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d\d(?:\d\d)? (?:[0-2]\d:[0-5]\d(?::[0-5]\d)|23:59:60) (?:[A-Z]{1,3})?(?:[+-]\d\d\d\d)?$/,
+    validate:
+      /^(?:(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun), )?[0-3]\d (?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d\d(?:\d\d)? (?:[0-2]\d:[0-5]\d(?::[0-5]\d)|23:59:60) (?:[A-Z]{1,3})?(?:[+-]\d\d\d\d)?$/,
   });
 };
 
@@ -114,7 +115,8 @@ export const ajvEnableDurationFormat = (ajv: Ajv) => {
   // https://en.wikipedia.org/wiki/ISO_8601#Durations
   ajv.addFormat("duration", {
     type: "string",
-    validate: /^P([0-9]+(?:[,\.][0-9]+)?Y)?([0-9]+(?:[,\.][0-9]+)?M)?([0-9]+(?:[,\.][0-9]+)?D)?(?:T([0-9]+(?:[,\.][0-9]+)?H)?([0-9]+(?:[,\.][0-9]+)?M)?([0-9]+(?:[,\.][0-9]+)?S)?)?$/,
+    validate:
+      /^P([0-9]+(?:[,\.][0-9]+)?Y)?([0-9]+(?:[,\.][0-9]+)?M)?([0-9]+(?:[,\.][0-9]+)?D)?(?:T([0-9]+(?:[,\.][0-9]+)?H)?([0-9]+(?:[,\.][0-9]+)?M)?([0-9]+(?:[,\.][0-9]+)?S)?)?$/,
   });
 };
 

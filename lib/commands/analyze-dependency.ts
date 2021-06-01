@@ -17,10 +17,13 @@ export const builder: yargs.CommandBuilder = {
     describe: "the readme tag name.",
     string: true,
   },
-  readme: {
-    describe: "path to readme.md file",
+  swagger: {
+    describe: "swagger file to analyze. this option is to analyze single swagger file dependency.",
     string: true,
-    demandOption: true,
+  },
+  readme: {
+    describe: "path to readme.md file.",
+    string: true,
   },
   filterTopLevelResource: {
     alias: "t",
@@ -38,13 +41,18 @@ export const builder: yargs.CommandBuilder = {
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
   await cliSuppressExceptions(async () => {
-    const readmeMd: string = argv.readme;
-
-    const autorestConfig = await getAutorestConfig(argv, readmeMd);
-    const fileRoot = path.dirname(readmeMd);
-    const swaggerFilePaths: string[] = autorestConfig["input-file"].map((it: string) =>
-      path.resolve(fileRoot, it)
-    );
+    let swaggerFilePaths: string[] = [];
+    if (argv.readme !== undefined) {
+      const readmeMd: string = argv.readme;
+      const autorestConfig = await getAutorestConfig(argv, readmeMd);
+      const fileRoot = path.dirname(readmeMd);
+      swaggerFilePaths = autorestConfig["input-file"].map((it: string) =>
+        path.resolve(fileRoot, it)
+      );
+    }
+    if (argv.swagger !== undefined) {
+      swaggerFilePaths.push(path.resolve(argv.swagger));
+    }
     const analyzer = SwaggerAnalyzer.create({
       swaggerFilePaths: swaggerFilePaths,
       filerTopLevelResourceType: argv.filterTopLevelResource,

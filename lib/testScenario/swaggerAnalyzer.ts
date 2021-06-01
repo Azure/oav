@@ -3,17 +3,21 @@ import { inject, injectable } from "inversify";
 import _ from "lodash";
 import { inversifyGetInstance, TYPES } from "../inversifyUtils";
 import { FileLoaderOption, FileLoader } from "../swagger/fileLoader";
-import { JsonLoader, JsonLoaderOption } from "../swagger/jsonLoader";
+import { JsonLoader, JsonLoaderOption, isRefLike } from "../swagger/jsonLoader";
 import { SwaggerLoader, SwaggerLoaderOption } from "../swagger/swaggerLoader";
-import { Path, SwaggerExample, SwaggerSpec } from "../swagger/swaggerTypes";
+import {
+  BodyParameter,
+  Path,
+  SwaggerExample,
+  SwaggerSpec,
+  refSelfSymbol,
+} from "../swagger/swaggerTypes";
 import { AjvSchemaValidator } from "../swaggerValidator/ajvSchemaValidator";
 import { SchemaValidator } from "../swaggerValidator/schemaValidator";
 import { allOfTransformer } from "../transform/allOfTransformer";
 import { getTransformContext, TransformContext } from "../transform/context";
 import { discriminatorTransformer } from "../transform/discriminatorTransformer";
 import { noAdditionalPropertiesTransformer } from "../transform/noAdditionalPropertiesTransformer";
-import { nullableTransformer } from "../transform/nullableTransformer";
-import { pureObjectTransformer } from "../transform/pureObjectTransformer";
 import { referenceFieldsTransformer } from "../transform/referenceFieldsTransformer";
 import { resolveNestedDefinitionTransformer } from "../transform/resolveNestedDefinitionTransformer";
 import { xmsPathsTransformer } from "../transform/xmsPathsTransformer";
@@ -21,6 +25,7 @@ import { applyGlobalTransformers, applySpecTransformers } from "../transform/tra
 import { traverseSwaggerAsync } from "../transform/traverseSwagger";
 import { getProvider } from "../util/utils";
 import { setDefaultOpts } from "../swagger/loader";
+import { SchemaSearcher } from "./schemaSearcher";
 
 export interface SwaggerAnalyzerOption
   extends FileLoaderOption,
@@ -34,9 +39,11 @@ export interface SwaggerAnalyzerOption
 export interface ExampleDependency {
   exampleFilePath: string;
   exampleName: string;
+  swaggerFilePath: string;
   apiVersion: string;
   resourceProvider: string;
-  resourceType: string;
+  fullResourceType: string;
+  operationId: string;
   internalDependency: Dependency;
   externalDependency: Dependency[];
 }
@@ -51,6 +58,10 @@ function noExternalDependency(exampleDependency: ExampleDependency): boolean {
 
 interface Dependency {
   resourceProvider: string;
+  fullResourceType?: string;
+  jsonPointer?: string;
+  jsonPath?: string;
+  resourceIdJsonPointer?: string;
   resourceChain: ResourceType[];
 }
 
@@ -87,8 +98,6 @@ export class SwaggerAnalyzer {
       discriminatorTransformer,
       allOfTransformer,
       noAdditionalPropertiesTransformer,
-      nullableTransformer,
-      pureObjectTransformer,
     ]);
 
     this.resourceTypePathMapping = new Map<string, Path[]>();
@@ -131,19 +140,47 @@ export class SwaggerAnalyzer {
               for (const [exampleName, example] of Object.entries(
                 path.put["x-ms-examples"] || {}
               )) {
-                const externalDependency = analyzeExampleDependency(
+                let externalDependency = analyzeExampleDependency(
                   this.jsonLoader.resolveRefObj(example)
                 );
+                const parameters = path.put.parameters?.map((it) => {
+                  if (isRefLike(it)) {
+                    return this.jsonLoader.resolveRefObj(it);
+                  } else {
+                    return it;
+                  }
+                });
+                const requestBody: BodyParameter = parameters?.filter(
+                  (it: any) => it.in === "body"
+                )[0] as BodyParameter;
+                try {
+                  externalDependency = externalDependency.map((dependency): Dependency => {
+                    return {
+                      ...dependency,
+                      resourceIdJsonPointer: this.getResourceIdJsonPath(
+                        dependency,
+                        requestBody,
+                        example
+                      ),
+                    };
+                  });
+                } catch (err) {
+                  console.log(err);
+                }
+
                 const exampleDependency: ExampleDependency = {
                   apiVersion: swaggerSpec.info.version,
                   resourceProvider: resourceProvider,
+                  swaggerFilePath: swaggerSpec._filePath,
                   exampleName: exampleName,
-                  resourceType: getResourceTypePath(resourceChain, resourceProvider),
+                  fullResourceType: getResourceTypePath(resourceChain, resourceProvider),
                   exampleFilePath: this.jsonLoader.getRealPath(example.$ref!),
                   externalDependency: externalDependency,
+                  operationId: path.put.operationId || "",
                   internalDependency: {
                     resourceProvider: resourceProvider,
                     resourceChain: resourceChain,
+                    fullResourceType: getResourceTypePath(resourceChain, resourceProvider),
                   },
                 };
                 dependencyResult.push(exampleDependency);
@@ -165,6 +202,37 @@ export class SwaggerAnalyzer {
 
   public getPathByResourceType(resourceType: string): Path[] | undefined {
     return this.resourceTypePathMapping.get(resourceType);
+  }
+
+  public getResourceIdJsonPath(
+    dependency: Dependency,
+    requestBody: BodyParameter,
+    example: any
+  ): string {
+    const getSchemaJsonPointer = (jsonPointer: string) => {
+      const ret = jsonPointer.substring(jsonPointer.indexOf("/", 1), jsonPointer.length);
+      return ret;
+    };
+
+    const getSchemaName = (jsonPointer: string) => {
+      const ret = jsonPointer.split("/")[1];
+      return ret;
+    };
+    const schemaJsonPointer = getSchemaJsonPointer(dependency.jsonPointer!);
+    const schemaName = getSchemaName(dependency.jsonPointer!);
+    const exampleObj = this.jsonLoader.resolveRefObj(example);
+    const schema = SchemaSearcher.findSchemaByJsonPointer(
+      schemaJsonPointer,
+      requestBody.schema!,
+      this.jsonLoader,
+      exampleObj.parameters[schemaName]
+    );
+    const resourceIdSchemaJsonPath = schema[refSelfSymbol];
+    if (resourceIdSchemaJsonPath !== undefined) {
+      return resourceIdSchemaJsonPath.substr(3, resourceIdSchemaJsonPath.length);
+    } else {
+      return "";
+    }
   }
 
   public getExampleDependencyByExamplePath(exampleFilePath: string): ExampleDependency | undefined {
@@ -245,9 +313,92 @@ export function analyzeExampleDependency(example: SwaggerExample): Dependency[] 
       const provider = getProvider(it.value);
       if (provider !== undefined) {
         const resourceChain = getResourceFromPath(it.value);
-        ret.push({ resourceProvider: provider, resourceChain: resourceChain });
+        const resourceType = getResourceTypePath(resourceChain, provider);
+        ret.push({
+          resourceProvider: provider,
+          resourceChain: resourceChain,
+          fullResourceType: resourceType,
+          jsonPointer: it.pointer,
+          jsonPath: it.path,
+        });
       }
     }
   }
   return ret;
 }
+export interface DependencyResult {
+  apiVersion: string;
+  exampleName: string;
+  fullResourceType: string;
+  resourceProvider: string;
+  fullDependentResourceType: string;
+  exampleJsonPointer: string;
+  swaggerResourceIdJsonPath: string;
+  swaggerFilePath: string;
+  exampleFilePath: string;
+  operationId: string;
+}
+
+export function normalizeDependency(
+  res: ExampleDependency[],
+  fileRoot = "specification"
+): DependencyResult[] {
+  const dependency: any = {};
+  const vis = new Set<string>();
+  res
+    .filter((it) => it.externalDependency.length > 0)
+    .map((it) => {
+      return {
+        swaggerFilePath: it.swaggerFilePath.substr(
+          it.swaggerFilePath.indexOf(fileRoot),
+          it.swaggerFilePath.length
+        ),
+        ids: it.externalDependency.map((dependency) => {
+          return {
+            apiVersion: it.apiVersion,
+            exampleName: it.exampleName,
+            fullResourceType: it.fullResourceType,
+            resourceProvider: it.resourceProvider,
+            fullDependentResourceType: dependency.fullResourceType,
+            operationId: it.operationId,
+            exampleJsonPointer: dependency.jsonPointer,
+            swaggerResourceIdJsonPointer: dependency.resourceIdJsonPointer,
+            exampleFilePath: it.exampleFilePath.substr(
+              it.exampleFilePath.indexOf(fileRoot),
+              it.exampleFilePath.length
+            ),
+          };
+        }),
+      };
+    })
+    .forEach((it) => {
+      if (dependency[it.swaggerFilePath] === undefined) {
+        dependency[it.swaggerFilePath] = [];
+      }
+      for (const id of it.ids) {
+        if (
+          !vis.has(uniqueIndex(id.exampleJsonPointer!, it.swaggerFilePath, id.fullResourceType!))
+        ) {
+          dependency[it.swaggerFilePath].push(id);
+          vis.add(uniqueIndex(id.exampleJsonPointer!, it.swaggerFilePath, id.fullResourceType!));
+        }
+      }
+    });
+  let ret: DependencyResult[] = [];
+  for (const [k, v] of Object.entries(dependency)) {
+    ret = ret.concat(
+      (v as any).map((it: any) => {
+        return { ...it, swaggerFilePath: k };
+      })
+    );
+  }
+  return ret;
+}
+
+const uniqueIndex = (
+  jsonPointer: string,
+  swaggerFilePath: string,
+  resourceType: string
+): string => {
+  return `${jsonPointer}_${swaggerFilePath}_${resourceType}`;
+};

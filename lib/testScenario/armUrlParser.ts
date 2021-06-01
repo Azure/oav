@@ -86,9 +86,10 @@ export class ArmUrlParser {
     managementGroupName?: string;
   } {
     if (scopeSlice.length === 0) {
-      const managementGroupMatch = /^\/providers\/Microsoft\.Management\/managementGroups\/(?<mgmtGroupName>[^\/]+*)/gi.exec(
-        path
-      );
+      const managementGroupMatch =
+        /^\/providers\/Microsoft\.Management\/managementGroups\/(?<mgmtGroupName>[^\/]+*)/gi.exec(
+          path
+        );
       if (managementGroupMatch !== null) {
         return { scopeType: "ManagementGroup", managementGroupName: managementGroupMatch[1] };
       } else {

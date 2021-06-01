@@ -126,9 +126,7 @@ const getNodesFromWhere = (
   const output = [];
   for (const wh of where) {
     try {
-      output.push(
-        ...JSONPath<any[]>({ path: wh, json: spec, resultType: "value" })
-      );
+      output.push(...JSONPath<any[]>({ path: wh, json: spec, resultType: "value" }));
     } catch (e) {
       log.error(e);
     }

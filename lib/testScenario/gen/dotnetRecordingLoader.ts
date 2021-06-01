@@ -1,4 +1,5 @@
 import { basename } from "path";
+import { URL } from "url";
 import { HttpMethods } from "@azure/core-http";
 import { injectable } from "inversify";
 import { Loader } from "../../swagger/loader";

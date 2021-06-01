@@ -68,10 +68,8 @@ interface TestScenarioContext {
 export class TestResourceLoader implements Loader<TestDefinitionFile> {
   private transformContext: TransformContext;
   private validateTestResourceFile: ValidateFunction;
-  private exampleToOperation: Map<
-    string,
-    { [operationId: string]: [Operation, string] }
-  > = new Map();
+  private exampleToOperation: Map<string, { [operationId: string]: [Operation, string] }> =
+    new Map();
   private nameToOperation: Map<string, Operation> = new Map();
   private initialized: boolean = false;
 
@@ -299,10 +297,10 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
     step.armTemplatePayload = JSON.parse(armTemplateContent);
 
     const definedParameters = [];
-    if (step.armTemplateParameters !== undefined) {
+    if (rawStep.armTemplateParameters !== undefined) {
       const armTemplateParametersPath = pathJoin(
         dirname(testDef._filePath),
-        step.armTemplateParameters
+        rawStep.armTemplateParameters
       );
       const armTemplateParametersContent = await this.fileLoader.load(armTemplateParametersPath);
       step.armTemplateParametersPayload = JSON.parse(armTemplateParametersContent);
