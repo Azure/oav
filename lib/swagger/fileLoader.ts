@@ -1,7 +1,8 @@
 import { dirname, relative as pathRelative, resolve as pathResolve } from "path";
-import mkdirp from "mkdirp";
-import { readFile as vfsReadFile, asyncWriteFile } from "@azure-tools/openapi-tools-common";
+import { asyncWriteFile, readFile as vfsReadFile } from "@azure-tools/openapi-tools-common";
+import * as fs from "fs-extra";
 import { inject, injectable } from "inversify";
+import mkdirp from "mkdirp";
 import { TYPES } from "../inversifyUtils";
 import { Loader, setDefaultOpts } from "./loader";
 
@@ -60,5 +61,10 @@ export class FileLoader implements Loader<string> {
     filePath = this.resolvePath(filePath);
     await mkdirp(dirname(filePath));
     return asyncWriteFile(filePath, content);
+  }
+
+  public async appendFile(filePath: string, content: string) {
+    filePath = this.resolvePath(filePath);
+    await fs.appendFile(filePath, content);
   }
 }

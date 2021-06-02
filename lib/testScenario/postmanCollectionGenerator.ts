@@ -1,5 +1,7 @@
+import * as path from "path";
 import { inject, injectable } from "inversify";
 import { TYPES, inversifyGetInstance } from "../inversifyUtils";
+import { FileLoader } from "../swagger/fileLoader";
 import { SwaggerAnalyzerOption } from "./swaggerAnalyzer";
 import { BlobUploaderOption } from "./blobUploader";
 import { VariableEnv } from "./variableEnv";
@@ -11,6 +13,7 @@ import {
 } from "./postmanCollectionRunnerClient";
 import { TestScenarioRunner } from "./testScenarioRunner";
 import { getFileNameFromPath } from "./defaultNaming";
+import { generateMarkdownReportHeader } from "./markdownReport";
 export interface PostmanCollectionGeneratorOption
   extends TestResourceLoaderOption,
     BlobUploaderOption,
@@ -33,7 +36,8 @@ export class PostmanCollectionGenerator {
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
   constructor(
     @inject(TYPES.opts) private opt: PostmanCollectionGeneratorOption,
-    private testResourceLoader: TestResourceLoader
+    private testResourceLoader: TestResourceLoader,
+    private fileLoader: FileLoader
   ) {
     this.env = new VariableEnv();
     this.env.setBatch(this.opt.env);
@@ -50,6 +54,12 @@ export class PostmanCollectionGenerator {
     }
     let index = 0;
     const runId = generateRunId();
+    if (this.opt.markdownReportPath) {
+      await this.fileLoader.writeFile(
+        path.join(process.cwd(), this.opt.markdownReportPath),
+        generateMarkdownReportHeader()
+      );
+    }
     for (const testScenario of testDef.testScenarios) {
       //TODO: replace index with testScenarioName
       const opts: PostmanCollectionRunnerClientOption = {

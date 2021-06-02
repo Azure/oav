@@ -1,30 +1,14 @@
 import { readFileSync } from "fs";
 import path from "path";
 import Handlebars from "handlebars";
-import moment from "moment";
-import * as _ from "lodash";
 import * as hd from "humanize-duration";
+import moment from "moment";
 import { ResponseDiffItem, RuntimeError, StepResult, TestScenarioResult } from "./reportGenerator";
 
-Handlebars.logger.log = function (level) {
-  if (level >= Handlebars.logger.level) {
-    console.log.apply(console, ([] as any).concat(["Handlebars: "], _.toArray(arguments)));
-  }
-};
-// DEBUG: 0, INFO: 1, WARN: 2, ERROR: 3,
-Handlebars.registerHelper("log", Handlebars.logger.log);
-// Std level is 3, when set to 0, handlebars will log all compilation results
-Handlebars.logger.level = 0;
-
 const commonHelper = (opts: HelperOpts) => ({
-  renderPlain: (s: string) => {
-    return s;
-  },
+  renderPlain: (s: string) => s,
   renderUri: (s: string) => `${path.join(opts.swaggerRootDir, s)}`,
-  renderSymbol: (result: ResultState) => {
-    console.log("result=", result);
-    return `${resultStateSymbol[result]}`;
-  },
+  renderSymbol: (result: ResultState) => `${resultStateSymbol[result]}`,
   renderScenarioTitle: (ts: TestScenarioMarkdownResult) =>
     `${ts.testScenarioName}: ${ts.fatalStepsCount} Fatals, ${ts.failedStepsCount} Errors`,
   renderStepTitle: (ts: TestScenarioMarkdownStepResult) =>
@@ -34,9 +18,9 @@ const commonHelper = (opts: HelperOpts) => ({
   shouldReportError: (sr: TestScenarioMarkdownStepResult) =>
     sr.failedStepsCount + sr.fatalStepsCount > 0,
   renderFatalErrorCode: (e: RuntimeError) => `${e.severity} ${e.code}`,
-  renderFatalErrorDetail: (e: RuntimeError) => `${e.message}`, // todo add detail
+  renderFatalErrorDetail: (e: RuntimeError) => `${e.message}`,
   renderDiffErrorCode: (e: ResponseDiffItem) => `${e.severity} ${e.code}`,
-  renderDiffErrorDetail: (e: ResponseDiffItem) => `${e.jsonPath} ${e.message}`, // todo add detail
+  renderDiffErrorDetail: (e: ResponseDiffItem) => `${e.jsonPath} ${e.message}`,
 });
 
 type ResultState = keyof typeof ResultStateStrings;
@@ -81,11 +65,6 @@ interface TestScenarioMarkdownResult {
   steps: TestScenarioMarkdownStepResult[];
 }
 
-interface MarkdownResult {
-  title: string;
-  scenarios: TestScenarioMarkdownResult[];
-}
-
 interface HelperOpts {
   swaggerRootDir: "root";
 }
@@ -99,9 +78,12 @@ export const compileHandlebarsTemplate = <T>(fileName: string, opts: HelperOpts)
   return (data: T) => templateDelegate(data, { helpers });
 };
 
-const generateView = compileHandlebarsTemplate<MarkdownResult>("markdownReport.handlebars", {
-  swaggerRootDir: "root",
-});
+const generateView = compileHandlebarsTemplate<TestScenarioMarkdownResult>(
+  "markdownReport.handlebars",
+  {
+    swaggerRootDir: "root",
+  }
+);
 
 const stepIsFatal = (sr: StepResult) => sr.runtimeError && sr.runtimeError.length > 0;
 const stepIsFailed = (sr: StepResult) => sr.responseDiffResult && sr.responseDiffResult.length > 0;
@@ -156,17 +138,9 @@ const asMarkdownResult = (tsr: TestScenarioResult): TestScenarioMarkdownResult =
   return r;
 };
 
-export const generateMarkdownReport = (testScenarioResult: TestScenarioResult[]): string => {
-  try {
-    const result = testScenarioResult.map(asMarkdownResult);
-    const body = generateView({
-      title: "Azure API Test Report",
-      scenarios: result,
-    });
-    console.log(JSON.stringify(result));
-    return body;
-  } catch (e) {
-    console.error(e);
-  }
-  return "";
+export const generateMarkdownReportHeader = (): string => "<h3>Azure API Test Report</h3>";
+export const generateMarkdownReport = (testScenarioResult: TestScenarioResult): string => {
+  const result = asMarkdownResult(testScenarioResult);
+  const body = generateView(result);
+  return body;
 };

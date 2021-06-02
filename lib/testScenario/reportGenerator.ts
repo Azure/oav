@@ -259,9 +259,9 @@ export class ReportGenerator {
 
   public async generateMarkdownQualityReport() {
     if (this.opts.markdownReportPath) {
-      await this.fileLoader.writeFile(
+      await this.fileLoader.appendFile(
         this.opts.markdownReportPath,
-        generateMarkdownReport([this.swaggerExampleQualityResult])
+        generateMarkdownReport(this.swaggerExampleQualityResult)
       );
     }
   }
@@ -432,7 +432,6 @@ export class ReportGenerator {
     this.testDefFile = await this.testResourceLoader.load(this.opts.testDefFilePath);
     await this.initialize();
     await this.generateTestScenarioResult(this.rawReport!);
-    console.log(JSON.stringify(this.swaggerExampleQualityResult));
     await this.generateExampleQualityReport();
     await this.generateMarkdownQualityReport();
   }

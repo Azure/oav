@@ -1,0 +1,115 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`markdownReport Should generate markdown report: body 1`] = `
+"
+  <details>
+    <summary>
+      <code>
+        ❌
+      </code>
+      <b>
+        galleries_1: 1 Fatals, 0 Errors
+      </b>
+    </summary>
+    <br />
+    <ul>
+      <li>
+        Duration:
+        1 minute, 20.231 seconds
+      </li>
+      <li>
+        Swagger Files
+        <ul>
+            <li>
+              <a href=\\"Microsoft.Compute/preview/2020-09-30/gallery.json\\">
+                Microsoft.Compute/preview/2020-09-30/gallery.json
+              </a>
+            </li>
+        </ul>
+      </li>
+      <li>
+        Run Id: 202106011456-d4udg
+      </li>
+    </ul>
+    <b>
+      API Test Steps:
+    </b>
+    <ol>
+<li>
+  <code>
+        ❌
+  </code>
+<b>
+        Create or update a simple gallery with sharing profile.: 1 Fatals, 0 Errors
+</b>
+</li>
+<ul>
+  <li>
+      Duration:
+      0 seconds
+    </li>
+    <li>
+      Example:
+      <a href=\\"\\">
+        Microsoft.Compute/preview/2020-09-30/test-scenarios/examples/CreateOrUpdateASimpleGalleryWithSharingProfile.json
+      </a>
+    </li>
+    <li>
+      Correlation Id:
+      cb309eda-ffb6-41f7-8a5e-42fc2a25aa5e
+    </li>
+  </ul>
+  <br />
+
+| Rule | Message |
+|------|---------|
+| <code> ❌ </code> Error RUNTIME_ERROR_400 | code: BadRequest, message: Subscription 'db5eb68e-73e2-4fa8-b18a-46cd1be4cce5' is not registered with the feature Microsoft.Compute/SIGSharing. Please register the subscription before retrying the call. |
+
+<li>
+  <code>
+        ️✔️
+  </code>
+<b>
+        Delete a gallery.: 0 Fatals, 0 Errors
+</b>
+</li>
+<ul>
+  <li>
+      Duration:
+      0 seconds
+    </li>
+    <li>
+      Example:
+      <a href=\\"\\">
+        Microsoft.Compute/preview/2020-09-30/test-scenarios/examples/DeleteAGallery.json
+      </a>
+    </li>
+    <li>
+      Correlation Id:
+      7153d6b9-8ffe-45a8-83c6-dc61ba334a77
+    </li>
+  </ul>
+  <br />
+
+
+
+</ol>
+</details>
+"
+`;
+
+exports[`markdownReport Should generate markdown report: footer 1`] = `
+"<sub>
+  Posted by
+  <b>
+    Swagger Pipeline
+  </b>
+  |
+  <a href=\\"https://aka.ms/ci-fix\\">
+    How to fix these errors?
+  </a>
+</sub>
+"
+`;
+
+exports[`markdownReport Should generate markdown report: header 1`] = `"<h3>Azure API Test Report</h3>"`;

@@ -2,7 +2,10 @@
 //
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
-import { generateMarkdownReport } from "../../lib/testScenario/markdownReport";
+import {
+  generateMarkdownReport,
+  generateMarkdownReportHeader,
+} from "../../lib/testScenario/markdownReport";
 import { TestScenarioResult } from "../../lib/testScenario/reportGenerator";
 
 describe("markdownReport", () => {
@@ -54,7 +57,9 @@ describe("markdownReport", () => {
       endTime: "2021-06-01T06:58:07.066Z",
       subscriptionId: "db5eb68e-73e2-4fa8-b18a-46cd1be4cce5",
     } as TestScenarioResult;
-    const ret = generateMarkdownReport([ts]);
-    expect(ret).toMatchSnapshot();
+    const header = generateMarkdownReportHeader();
+    const body = generateMarkdownReport(ts);
+    expect(header).toMatchSnapshot("header");
+    expect(body).toMatchSnapshot("body");
   });
 });

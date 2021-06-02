@@ -1,43 +1,40 @@
-<h3>
-  {{renderPlain title}}
-</h3>
-{{#each scenarios}}
-  {{#with this as |ts|}}
-    <details>
-      <summary>
-        <code>
-          {{renderSymbol ts.result}}
-        </code>
-        <b>
-          {{renderScenarioTitle ts}}
-        </b>
-      </summary>
-      <br />
-      <ul>
-        <li>
-          Duration:
-          {{renderDuration ts.startTime ts.endTime}}
-        </li>
-        <li>
-          Swagger Files
-          <ul>
-            {{#each ts.swaggerFilePaths}}
-              <li>
-                <a href="{{renderPlain this}}">
-                  {{renderPlain this}}
-                </a>
-              </li>
-            {{/each}}
-          </ul>
-        </li>
-        <li>
-          Run Id: {{renderPlain ts.runId}}
-        </li>
-      </ul>
+
+{{#with this as |ts|}}
+  <details>
+    <summary>
+      <code>
+        {{renderSymbol ts.result}}
+      </code>
       <b>
-        API Test Steps:
+        {{renderScenarioTitle ts}}
       </b>
-      <ol>
+    </summary>
+    <br />
+    <ul>
+      <li>
+        Duration:
+        {{renderDuration ts.startTime ts.endTime}}
+      </li>
+      <li>
+        Swagger Files
+        <ul>
+          {{#each ts.swaggerFilePaths}}
+            <li>
+              <a href="{{renderPlain this}}">
+                {{renderPlain this}}
+              </a>
+            </li>
+          {{/each}}
+        </ul>
+      </li>
+      <li>
+        Run Id: {{renderPlain ts.runId}}
+      </li>
+    </ul>
+    <b>
+      API Test Steps:
+    </b>
+    <ol>
 {{#each ts.steps}}
   {{#with this as |s|}}
 <li>
@@ -75,7 +72,6 @@
 | <code> {{renderSymbol "fatal"}} </code> {{renderFatalErrorCode re}} | {{renderFatalErrorDetail re}} |
               {{/with}}
             {{/each}}
-
             {{#each s.responseDiffResult}}
             {{#with this as |rd|}}
 | <code> {{renderSymbol "failed"}} </code> {{renderDiffErrorCode rd}} | {{renderDiffErrorDetail rd}} |
@@ -86,15 +82,4 @@
 
 </ol>
 </details>
-  {{/with}}
-{{/each}}
-<sub>
-  Posted by
-  <b>
-    Swagger Pipeline
-  </b>
-  |
-  <a href="https://aka.ms/ci-fix">
-    How to fix these errors?
-  </a>
-</sub>
+{{/with}}

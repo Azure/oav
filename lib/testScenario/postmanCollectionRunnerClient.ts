@@ -515,6 +515,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
         }
         const opts: NewmanReportAnalyzerOption = {
           newmanReportFilePath: reportExportPath,
+          markdownReportPath: this.opts.markdownReportPath,
           enableUploadBlob: this.opts.enableBlobUploader,
           runId: this.opts.runId,
           swaggerFilePaths: this.opts.swaggerFilePaths,
