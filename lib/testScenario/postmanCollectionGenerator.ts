@@ -24,7 +24,7 @@ export interface PostmanCollectionGeneratorOption
   testDef: string;
   env: {};
   outputFolder: string;
-  markdownReportPath: string;
+  markdownReportPath?: string;
   runCollection: boolean;
   generateCollection: boolean;
   baseUrl: string;

@@ -49,7 +49,6 @@ export const builder: yargs.CommandBuilder = {
     alias: "markdownReportPath",
     describe: "markdown report output path.",
     string: true,
-    default: "summary.md",
   },
   uploadBlob: {
     describe: "upload generated collection to blob.",
