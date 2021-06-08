@@ -20,7 +20,7 @@ const commonHelper = (opts: HelperOpts) => ({
   renderFatalErrorCode: (e: RuntimeError) => `${e.severity} ${e.code}`,
   renderFatalErrorDetail: (e: RuntimeError) => `${e.message}`,
   renderDiffErrorCode: (e: ResponseDiffItem) => `${e.severity} ${e.code}`,
-  renderDiffErrorDetail: (e: ResponseDiffItem) => `${e.jsonPath} ${e.message}`,
+  renderDiffErrorDetail: (e: ResponseDiffItem) => `${e.message}`,
 });
 
 type ResultState = keyof typeof ResultStateStrings;
