@@ -13,11 +13,12 @@ import { RawTestDefinitionFile, TestDefinitionFile, TestResources } from "./../t
 import { TestResourceLoaderOption } from "./../testResourceLoader";
 import { inversifyGetInstance, TYPES } from "./../../inversifyUtils";
 
+type GenerationRule = "put-delete" | "listOperation";
 export interface StaticTestScenarioGeneratorOption
   extends TestResourceLoaderOption,
     SwaggerAnalyzerOption {
   swaggerFilePaths: string[];
-  rule?: "put-delete";
+  rules?: GenerationRule[];
   tag?: string;
 }
 
@@ -44,13 +45,40 @@ export class StaticTestScenarioGenerator {
       eraseDescription: false,
       filerTopLevelResourceType: true,
       noExternalDependencyResourceType: true,
-      rule: "put-delete",
+      rules: ["put-delete"],
     });
     return inversifyGetInstance(StaticTestScenarioGenerator, opts);
   }
 
   public async initialize() {
     this.exampleDependencies = await this.swaggerAnalyzer.analyzeDependency();
+  }
+
+  private async generateListOperationTestScenario(): Promise<any> {
+    const testDef: RawTestDefinitionFile = {
+      scope: "ResourceGroup",
+      testScenarios: [],
+    };
+    const paths = await this.swaggerAnalyzer.getOperationListPath();
+    for (const it of paths) {
+      const example = Object.values(it.get?.["x-ms-examples"] || {});
+      const listOperationsExampleFilePath = this.swaggerAnalyzer.jsonLoader.getRealPath(
+        example[0].$ref!
+      );
+      const exampleDir = path.dirname(listOperationsExampleFilePath);
+      const testStep = [
+        {
+          step: "operationsList",
+          exampleFile: getExampleOutputPath(listOperationsExampleFilePath),
+        },
+      ];
+      testDef.testScenarios.push({ description: `operationsList`, steps: testStep });
+      this.testDefToWrite.push({
+        testDef: testDef,
+        filePath: getTestDefOutputPath(exampleDir, `operationsList`),
+      });
+    }
+    return testDef;
   }
 
   /**
@@ -168,7 +196,10 @@ export class StaticTestScenarioGenerator {
       resourceTypes.add(it.fullResourceType);
     }
     for (const resourceType of resourceTypes) {
-      if (this.opts.rule === "put-delete") {
+      if (this.opts.rules?.includes("listOperation")) {
+        await this.generateListOperationTestScenario();
+      }
+      if (this.opts.rules?.includes("put-delete")) {
         await this.generatePutDeleteTestScenario(resourceType);
       }
     }

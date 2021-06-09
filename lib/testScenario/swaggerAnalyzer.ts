@@ -204,6 +204,24 @@ export class SwaggerAnalyzer {
     return this.resourceTypePathMapping.get(resourceType);
   }
 
+  public async getOperationListPath(): Promise<Path[]> {
+    const ret: Path[] = [];
+    for (const swaggerSpec of this.swaggerSpecs) {
+      await traverseSwaggerAsync(swaggerSpec, {
+        onPath: async (path, pathTemplate) => {
+          const resourceProvider = getProvider(pathTemplate);
+          if (resourceProvider) {
+            const operationListPath = operationsPath(resourceProvider);
+            if (path._pathTemplate === operationListPath) {
+              ret.push(path);
+            }
+          }
+        },
+      });
+    }
+    return ret;
+  }
+
   public getResourceIdJsonPath(
     dependency: Dependency,
     requestBody: BodyParameter,
@@ -291,6 +309,10 @@ export function getResourceFromPath(pathTemplate: string): ResourceType[] {
 
 export function getResourceTypePath(resourceType: ResourceType[], resourceProvider: string) {
   return [resourceProvider, ...resourceType.map((it) => it.resourceType)].join("/");
+}
+
+export function operationsPath(resourceProvider: string): string {
+  return `/providers/${resourceProvider}/operations`;
 }
 
 export function analyzeExampleDependency(example: SwaggerExample): Dependency[] {
