@@ -85,9 +85,9 @@ const provisioningStateShouldBeTerminalStatusIn200Response: ExampleValidationFun
     for (const it of provisioningStates) {
       if (!terminalStatues.includes(it.value.provisioningState.toLowerCase())) {
         ret.push({
-          id: ErrorCodes.ProvisioningStateShouldBeTerminalStatusIn200Response.id,
+          id: ErrorCodes.IncorrectProvisioningState.id,
           severity: "Error",
-          code: ErrorCodes.ProvisioningStateShouldBeTerminalStatusIn200Response.name,
+          code: ErrorCodes.IncorrectProvisioningState.name,
           jsonPath: `${it.pointer}/provisioningState`,
           message:
             "The resource's provisioning state should be terminal status in http 200 response.",
