@@ -1,5 +1,10 @@
 # Change Log - oav
 
+## 6/10/2021 2.5.5
+
+- add markdown report support for test scenario runner
+- support rule based test scenario generation
+
 ## 5/27/2021 2.5.4
 
 - Analyze dependency return resource id schema reference
