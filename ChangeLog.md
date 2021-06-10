@@ -4,6 +4,7 @@
 
 - add markdown report support for test scenario runner
 - support rule based test scenario generation
+- rename error code
 
 ## 5/27/2021 2.5.4
 
