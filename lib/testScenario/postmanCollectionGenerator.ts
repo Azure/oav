@@ -1,4 +1,3 @@
-import * as path from "path";
 import { inject, injectable } from "inversify";
 import { TYPES, inversifyGetInstance } from "../inversifyUtils";
 import { FileLoader } from "../swagger/fileLoader";
@@ -55,10 +54,7 @@ export class PostmanCollectionGenerator {
     let index = 0;
     const runId = generateRunId();
     if (this.opt.markdownReportPath) {
-      await this.fileLoader.writeFile(
-        path.join(process.cwd(), this.opt.markdownReportPath),
-        generateMarkdownReportHeader()
-      );
+      await this.fileLoader.writeFile(this.opt.markdownReportPath, generateMarkdownReportHeader());
     }
     for (const testScenario of testDef.testScenarios) {
       //TODO: replace index with testScenarioName
