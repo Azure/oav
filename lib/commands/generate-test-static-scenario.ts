@@ -30,7 +30,7 @@ export const builder: yargs.CommandBuilder = {
 };
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
-  const readmeMd: string = argv.readme;
+  const readmeMd: string = pathResolve(argv.readme);
 
   const autorestConfig = await getAutorestConfig(argv, readmeMd);
   const fileRoot = dirname(readmeMd);

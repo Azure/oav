@@ -72,7 +72,7 @@ export const builder: yargs.CommandBuilder = {
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
   await cliSuppressExceptions(async () => {
-    const testScenarioFilePath = argv.testScenario;
+    const testScenarioFilePath = path.resolve(argv.testScenario);
     const swaggerFilePaths = getSwaggerFilePathsFromTestScenarioFilePath(testScenarioFilePath);
     if (swaggerFilePaths.length === 0) {
       throw new Error(
