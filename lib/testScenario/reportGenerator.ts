@@ -28,6 +28,7 @@ import {
 import { VariableEnv } from "./variableEnv";
 import { getJsonPatchDiff } from "./diffUtils";
 import { BlobUploader, BlobUploaderOption } from "./blobUploader";
+import { generateMarkdownReport } from "./markdownReport";
 
 interface GeneratedExample {
   exampleFilePath: string;
@@ -36,7 +37,7 @@ interface GeneratedExample {
   example: SwaggerExample;
 }
 
-interface TestScenarioResult {
+export interface TestScenarioResult {
   testScenarioFilePath: string;
   readmeFilePath?: string;
   swaggerFilePaths: string[];
@@ -60,7 +61,7 @@ interface TestScenarioResult {
   stepResult: StepResult[];
 }
 
-interface StepResult {
+export interface StepResult {
   statusCode: number;
   exampleFilePath?: string;
   example?: SwaggerExample;
@@ -73,14 +74,14 @@ interface StepResult {
   stepName: string;
 }
 
-interface RuntimeError {
+export interface RuntimeError {
   code: string;
   message: string;
   detail: string;
   severity: SeverityString;
 }
 
-interface ResponseDiffItem {
+export interface ResponseDiffItem {
   code: string;
   jsonPath: string;
   severity: SeverityString;
@@ -94,6 +95,7 @@ export interface ReportGeneratorOption
     BlobUploaderOption {
   testDefFilePath: string;
   reportOutputFilePath?: string;
+  markdownReportPath?: string;
   testScenarioName?: string;
   runId?: string;
 }
@@ -157,7 +159,7 @@ export class ReportGenerator {
     );
   }
 
-  public async generateExampleQualityReport(rawReport: RawReport) {
+  public async generateTestScenarioResult(rawReport: RawReport) {
     await this.initialize();
     const variables = rawReport.variables;
     this.swaggerExampleQualityResult.startTime = new Date(rawReport.timings.started).toISOString();
@@ -168,14 +170,14 @@ export class ReportGenerator {
         continue;
       }
       if (it.annotation.type === "simple" || it.annotation.type === "LRO") {
-        let error: any = {};
+        const runtimeError = [];
         const generatedExample = this.generateExample(it, variables, rawReport);
         const matchedStep = this.getMatchedStep(it.annotation.step) as TestStepRestCall;
         if (
           Math.floor(it.response.statusCode / 200) !== 1 &&
           it.response.statusCode !== matchedStep.statusCode
         ) {
-          error = this.getRuntimeError(it);
+          runtimeError.push(this.getRuntimeError(it));
         }
         if (matchedStep === undefined) {
           continue;
@@ -194,7 +196,7 @@ export class ReportGenerator {
         this.swaggerExampleQualityResult.stepResult.push({
           exampleFilePath: generatedExample.exampleFilePath,
           operationId: it.annotation.operationId,
-          runtimeError: [error],
+          runtimeError,
           responseDiffResult: this.exampleResponseDiff(generatedExample, matchedStep),
           stepValidationResult: roundtripErrors,
           correlationId: correlationId,
@@ -204,6 +206,9 @@ export class ReportGenerator {
         this.recording.set(correlationId, it);
       }
     }
+  }
+
+  public async generateExampleQualityReport() {
     if (this.opts.reportOutputFilePath !== undefined) {
       console.log(`Write generated report file: ${this.opts.reportOutputFilePath}`);
       await this.fileLoader.writeFile(
@@ -250,6 +255,15 @@ export class ReportGenerator {
       }
     }
     console.log(JSON.stringify(this.swaggerExampleQualityResult, null, 2));
+  }
+
+  public async generateMarkdownQualityReport() {
+    if (this.opts.markdownReportPath) {
+      await this.fileLoader.appendFile(
+        this.opts.markdownReportPath,
+        generateMarkdownReport(this.swaggerExampleQualityResult)
+      );
+    }
   }
 
   private generateExample(
@@ -417,7 +431,9 @@ export class ReportGenerator {
   public async generateReport() {
     this.testDefFile = await this.testResourceLoader.load(this.opts.testDefFilePath);
     await this.initialize();
-    await this.generateExampleQualityReport(this.rawReport!);
+    await this.generateTestScenarioResult(this.rawReport!);
+    await this.generateExampleQualityReport();
+    await this.generateMarkdownQualityReport();
   }
 
   private parseRespBody(it: RawExecution) {
