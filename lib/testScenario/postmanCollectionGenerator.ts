@@ -1,3 +1,4 @@
+import * as path from "path";
 import { inject, injectable } from "inversify";
 import { TYPES, inversifyGetInstance } from "../inversifyUtils";
 import { FileLoader } from "../swagger/fileLoader";
