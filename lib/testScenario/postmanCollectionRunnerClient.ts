@@ -52,6 +52,7 @@ export interface PostmanCollectionRunnerClientOption extends BlobUploaderOption,
   testScenarioFilePath?: string;
   reportOutputFolder?: string;
   markdownReportPath?: string;
+  junitReportPath?: string;
   testScenarioName: string;
   runId: string;
   jsonLoader?: JsonLoader;
@@ -516,6 +517,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
         const opts: NewmanReportAnalyzerOption = {
           newmanReportFilePath: reportExportPath,
           markdownReportPath: this.opts.markdownReportPath,
+          junitReportPath: this.opts.junitReportPath,
           enableUploadBlob: this.opts.enableBlobUploader,
           runId: this.opts.runId,
           swaggerFilePaths: this.opts.swaggerFilePaths,
