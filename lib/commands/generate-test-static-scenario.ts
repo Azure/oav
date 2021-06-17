@@ -21,10 +21,16 @@ export const builder: yargs.CommandBuilder = {
     string: true,
     demandOption: true,
   },
+  rules: {
+    describe:
+      "generate test scenarios file rules split by comma. example: listOperation, put-delete.",
+    string: true,
+    default: "resource-put-delete",
+  },
 };
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
-  const readmeMd: string = argv.readme;
+  const readmeMd: string = pathResolve(argv.readme);
 
   const autorestConfig = await getAutorestConfig(argv, readmeMd);
   const fileRoot = dirname(readmeMd);
@@ -38,6 +44,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
   const generator = StaticTestScenarioGenerator.create({
     swaggerFilePaths: swaggerFilePaths,
     tag: autorestConfig.tag,
+    rules: argv.rules.split(","),
   });
 
   await generator.initialize();

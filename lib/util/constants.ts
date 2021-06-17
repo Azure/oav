@@ -125,8 +125,8 @@ export const ErrorCodes = {
     name: "DISCRIMINATOR_NOT_REQUIRED",
     id: "OAV131",
   },
-  ProvisioningStateShouldBeTerminalStatusIn200Response: {
-    name: "PROVISIONING_STATE_SHOULD_BE_TERMINAL_STATUS_IN_200_RESPONSE",
+  IncorrectProvisioningState: {
+    name: "INCORRECT_PROVISIONING_STATE",
     id: "OAV132",
   },
   RoundtripInconsistentProperty: {
