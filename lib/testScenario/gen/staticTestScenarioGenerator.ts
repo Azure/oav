@@ -13,7 +13,7 @@ import { RawTestDefinitionFile, TestDefinitionFile, TestResources } from "./../t
 import { TestResourceLoaderOption } from "./../testResourceLoader";
 import { inversifyGetInstance, TYPES } from "./../../inversifyUtils";
 
-type GenerationRule = "put-delete" | "operations-list";
+type GenerationRule = "resource-put-delete" | "operations-list";
 export interface StaticTestScenarioGeneratorOption
   extends TestResourceLoaderOption,
     SwaggerAnalyzerOption {
@@ -45,7 +45,7 @@ export class StaticTestScenarioGenerator {
       eraseDescription: false,
       filerTopLevelResourceType: true,
       noExternalDependencyResourceType: true,
-      rules: ["put-delete"],
+      rules: ["resource-put-delete"],
     });
     return inversifyGetInstance(StaticTestScenarioGenerator, opts);
   }
@@ -199,7 +199,7 @@ export class StaticTestScenarioGenerator {
       if (this.opts.rules?.includes("operations-list")) {
         await this.generateListOperationTestScenario();
       }
-      if (this.opts.rules?.includes("put-delete")) {
+      if (this.opts.rules?.includes("resource-put-delete")) {
         await this.generatePutDeleteTestScenario(resourceType);
       }
     }

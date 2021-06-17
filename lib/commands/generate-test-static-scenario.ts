@@ -25,7 +25,7 @@ export const builder: yargs.CommandBuilder = {
     describe:
       "generate test scenarios file rules split by comma. example: listOperation, put-delete.",
     string: true,
-    default: "put-delete",
+    default: "resource-put-delete",
   },
 };
 
