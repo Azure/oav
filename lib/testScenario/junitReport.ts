@@ -1,5 +1,6 @@
 import { injectable } from "inversify";
 import { TestScenarioResult } from "./reportGenerator";
+import { generateJUnitCaseReport } from "./markdownReport";
 
 @injectable()
 export class JUnitReporter {
@@ -16,25 +17,16 @@ export class JUnitReporter {
           const tc = suite
             .testCase()
             .className(tsr.testScenarioName)
-            .name(sr.stepName)
-            .file(sr.exampleFilePath)
-            .time(1000);
+            .name(`${tsr.testScenarioName}.${sr.stepName}`)
+            .file(sr.exampleFilePath);
           if (sr.runtimeError && sr.runtimeError.length > 0) {
-            tc.failure(sr.runtimeError[0].message, "RunTimeError");
+            const detail = generateJUnitCaseReport(sr);
+            tc.failure(detail, "RunTimeError");
           } else if (sr.responseDiffResult && sr.responseDiffResult.length > 0) {
-            tc.error(
-              sr.responseDiffResult.map((r) => r.message).join("\n"),
-              "ValidationError",
-              sr.responseDiffResult.map((r) => r.detail).join("\n")
-            )
-              .standardError(
-                sr.responseDiffResult
-                  .map((r) => `${r.message}\t${r.jsonPath}\n${r.detail}`)
-                  .join("\n")
-              )
-              .errorAttachment(sr.exampleFilePath);
+            const detail = generateJUnitCaseReport(sr);
+            tc.failure(detail, "ValidationError").errorAttachment(sr.exampleFilePath);
           } else {
-            tc.standardOutput("This was written to stdout");
+            tc.standardOutput("This step is completed successfully");
           }
         });
         this.builder.writeTo(path);

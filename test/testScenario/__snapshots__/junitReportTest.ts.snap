@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`junitTestReport Should generate junit case report 1`] = `
+"###Create or update a simple gallery with sharing profile.: 1 Fatal Error(s)
+| Rule | Message |
+|------|---------|
+|<code>❌</code>[RUNTIME_ERROR_400]()|code: BadRequest, message: Subscription 'db5eb68e-73e2-4fa8-b18a-46cd1be4cce5' is not registered with the feature Microsoft.Compute/SIGSharing. Please register the subscription before retrying the call.|
+"
+`;

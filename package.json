@@ -1,6 +1,6 @@
 {
   "name": "oav",
-  "version": "2.5.4",
+  "version": "2.5.5",
   "author": {
     "name": "Microsoft Corporation",
     "email": "azsdkteam@microsoft.com",
@@ -124,6 +124,7 @@
     "dist/lib/**/*.d.ts",
     "dist/lib/**/*.js.map",
     "dist/lib/**/*.d.ts.map",
+    "dist/lib/**/*.handlebars",
     "types/**/*.d.ts",
     "*.ts",
     "lib/**/*.ts"
