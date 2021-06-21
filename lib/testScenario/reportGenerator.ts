@@ -89,6 +89,8 @@ export interface ResponseDiffItem {
   detail: string;
 }
 
+export type ValidationLevel = "valid-request" | "default";
+
 export interface ReportGeneratorOption
   extends NewmanReportParserOption,
     TestResourceLoaderOption,
@@ -98,6 +100,7 @@ export interface ReportGeneratorOption
   markdownReportPath?: string;
   testScenarioName?: string;
   runId?: string;
+  validationLevel?: ValidationLevel;
 }
 
 @injectable()
@@ -126,6 +129,7 @@ export class ReportGenerator {
       blobConnectionString: "",
       testDefFilePath: "",
       runId: uuid.v4(),
+      validationLevel: "default",
     });
     const swaggerFileAbsolutePaths = this.opts.swaggerFilePaths!.map((it) => path.resolve(it));
     this.exampleQualityValidator = ExampleQualityValidator.create({
@@ -193,11 +197,15 @@ export class ReportGenerator {
           ])
         ).map((it) => _.omit(it, ["exampleName", "exampleFilePath"]));
         const correlationId = it.response.headers["x-ms-correlation-request-id"];
+        const responseDiffResult: ResponseDiffItem[] =
+          this.opts.validationLevel === "default"
+            ? await this.exampleResponseDiff(generatedExample, matchedStep)
+            : [];
         this.swaggerExampleQualityResult.stepResult.push({
           exampleFilePath: generatedExample.exampleFilePath,
           operationId: it.annotation.operationId,
           runtimeError,
-          responseDiffResult: this.exampleResponseDiff(generatedExample, matchedStep),
+          responseDiffResult: responseDiffResult,
           stepValidationResult: roundtripErrors,
           correlationId: correlationId,
           statusCode: it.response.statusCode,
@@ -300,19 +308,20 @@ export class ReportGenerator {
     };
   }
 
-  private exampleResponseDiff(
+  private async exampleResponseDiff(
     example: GeneratedExample,
     matchedStep: TestStep
-  ): ResponseDiffItem[] {
+  ): Promise<ResponseDiffItem[]> {
     let res: ResponseDiffItem[] = [];
     if (matchedStep?.type === "restCall") {
       if (example.example.responses[matchedStep.statusCode] !== undefined) {
         res = res.concat(
-          this.responseDiff(
+          await this.responseDiff(
             example.example.responses[matchedStep.statusCode]?.body || {},
             matchedStep.responseExpected,
             this.rawReport!.variables,
-            `/${matchedStep.statusCode}/body`
+            `/${matchedStep.statusCode}/body`,
+            matchedStep.operation.responses[matchedStep.statusCode].schema
           )
         );
       }
@@ -320,12 +329,13 @@ export class ReportGenerator {
     return res;
   }
 
-  private responseDiff(
+  private async responseDiff(
     resp: any,
     expectedResp: any,
     variables: any,
-    jsonPathPrefix: string
-  ): ResponseDiffItem[] {
+    jsonPathPrefix: string,
+    schema: any
+  ): Promise<ResponseDiffItem[]> {
     const env = new VariableEnv();
     env.setBatch(variables);
     try {
@@ -344,6 +354,15 @@ export class ReportGenerator {
             message: "",
             detail: "",
           };
+          const jsonPath: string = it.remove || it.add || it.replace;
+          const propertySchema = this.swaggerAnalyzer.findSchemaByJsonPointer(
+            jsonPath,
+            schema,
+            resp
+          );
+          if (propertySchema["x-ms-secret"] === true) {
+            return undefined;
+          }
           if (it.remove !== undefined) {
             ret.code = "RESPONSE_MISSING_VALUE";
             ret.jsonPath = jsonPathPrefix + it.remove;
@@ -361,6 +380,10 @@ export class ReportGenerator {
           } else if (it.replace !== undefined) {
             ret.code = "RESPONSE_INCONSISTENT_VALUE";
             ret.jsonPath = jsonPathPrefix + it.replace;
+            // Ignore diff when propertySchema readonly is true. When property is readonly, it's probably a random generated value which updated dynamically per request.
+            if (propertySchema.readOnly === true) {
+              return undefined;
+            }
             ret.severity = "Error";
             ret.message = `The actual response value is different from example. Path: ${
               ret.jsonPath
@@ -429,7 +452,9 @@ export class ReportGenerator {
   }
 
   public async generateReport() {
-    this.testDefFile = await this.testResourceLoader.load(this.opts.testDefFilePath);
+    if (this.opts.testDefFilePath !== undefined) {
+      this.testDefFile = await this.testResourceLoader.load(this.opts.testDefFilePath);
+    }
     await this.initialize();
     await this.generateTestScenarioResult(this.rawReport!);
     await this.generateExampleQualityReport();

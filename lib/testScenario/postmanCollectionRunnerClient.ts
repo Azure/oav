@@ -19,6 +19,7 @@ import {
 import { inject, injectable } from "inversify";
 import { JsonLoader, JsonLoaderOption } from "../swagger/jsonLoader";
 import { setDefaultOpts } from "../swagger/loader";
+import { ValidationLevel } from "./reportGenerator";
 import { SwaggerAnalyzer } from "./swaggerAnalyzer";
 import { DataMasker } from "./dataMasker";
 import { FileLoader } from "./../swagger/fileLoader";
@@ -57,6 +58,7 @@ export interface PostmanCollectionRunnerClientOption extends BlobUploaderOption,
   jsonLoader?: JsonLoader;
   swaggerFilePaths?: string[];
   baseUrl: string;
+  validationLevel?: ValidationLevel;
 }
 
 function makeid(length: number): string {
@@ -468,7 +470,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
         {
           collection: this.collection,
           environment: this.collectionEnv,
-          reporters: ["cli", "json", "junit"],
+          reporters: ["cli", "json"],
           reporter: { json: { export: reportExportPath } },
         },
         function (err, summary) {
@@ -519,6 +521,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
           enableUploadBlob: this.opts.enableBlobUploader,
           runId: this.opts.runId,
           swaggerFilePaths: this.opts.swaggerFilePaths,
+          validationLevel: this.opts.validationLevel,
         };
         const reportAnalyzer = inversifyGetInstance(NewmanReportAnalyzer, opts);
         await reportAnalyzer.analyze();

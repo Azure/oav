@@ -2,6 +2,7 @@ import * as path from "path";
 import { inject, injectable } from "inversify";
 import { TYPES, inversifyGetInstance } from "../inversifyUtils";
 import { FileLoader } from "../swagger/fileLoader";
+import { ValidationLevel } from "./reportGenerator";
 import { SwaggerAnalyzerOption } from "./swaggerAnalyzer";
 import { BlobUploaderOption } from "./blobUploader";
 import { VariableEnv } from "./variableEnv";
@@ -28,6 +29,7 @@ export interface PostmanCollectionGeneratorOption
   runCollection: boolean;
   generateCollection: boolean;
   baseUrl: string;
+  validationLevel?: ValidationLevel;
 }
 
 @injectable()
@@ -73,6 +75,7 @@ export class PostmanCollectionGenerator {
         runId: runId,
         jsonLoader: this.testResourceLoader.jsonLoader,
         baseUrl: this.opt.baseUrl,
+        validationLevel: this.opt.validationLevel,
       };
 
       const client = inversifyGetInstance(PostmanCollectionRunnerClient, opts);
