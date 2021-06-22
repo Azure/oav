@@ -311,6 +311,10 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     if (overwriteVariables !== undefined) {
       types.push("OverwriteVariables");
     }
+    // For post request do not output response log.
+    if (item.request.method === "POST") {
+      types = types.filter((it) => it !== "DetailResponseLog");
+    }
     const testEvent = new Event({
       listen: "test",
       script: {
