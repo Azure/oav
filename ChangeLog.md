@@ -1,5 +1,11 @@
 # Change Log - oav
 
+## 6/22 2021 2.5.6
+
+- optimise validation logical. Ignore readonly and secret property response check
+- DO NOT output log when request method is POST
+- Support level option. Current two levels: request-check, consistency-check. request-check will only check request parameters. consistency-check check both request and response.
+
 ## 6/10/2021 2.5.5
 
 - add markdown report support for test scenario runner
