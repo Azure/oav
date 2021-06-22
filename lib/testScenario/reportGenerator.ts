@@ -371,7 +371,7 @@ export class ReportGenerator {
               ret.jsonPath
             }. Expected: undefined. Actual: ${this.dataMasker.jsonStringify(it.value)}`;
           } else if (it.replace !== undefined) {
-            ret.code = "RESPONSE_INCORRECT_VALUE";
+            ret.code = "RESPONSE_INCONSISTENT_VALUE";
             ret.jsonPath = jsonPathPrefix + it.replace;
             ret.severity = "Error";
             ret.message = `The actual response value is different from example. Path: ${
@@ -383,7 +383,7 @@ export class ReportGenerator {
           ret.detail = this.dataMasker.jsonStringify(it);
           if (
             ignoredKeys.some((key) => ret.jsonPath.search(key) !== -1) ||
-            (ret.code === "RESPONSE_INCORRECT_VALUE" &&
+            (ret.code === "RESPONSE_INCONSISTENT_VALUE" &&
               typeof it.value === "string" &&
               ignoreValuePattern.some((valuePattern) => it.value.search(valuePattern) !== -1))
           ) {

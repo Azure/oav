@@ -67,7 +67,7 @@ interface ExampleValidationRule {
 
 // ARM RPC guide: https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/Addendum.md#provisioningstate-property
 // https://docs.microsoft.com/en-us/javascript/api/@azure/arm-databricks/provisioningstate?view=azure-node-latest
-const provisioningStateShouldBeTerminalStatusIn200Response: ExampleValidationFunc = async (
+const incorrectProvisioningState: ExampleValidationFunc = async (
   example: SwaggerExample,
   _operation: Operation,
   _jsonLoader: JsonLoader,
@@ -85,9 +85,9 @@ const provisioningStateShouldBeTerminalStatusIn200Response: ExampleValidationFun
     for (const it of provisioningStates) {
       if (!terminalStatues.includes(it.value.provisioningState.toLowerCase())) {
         ret.push({
-          id: ErrorCodes.ProvisioningStateShouldBeTerminalStatusIn200Response.id,
+          id: ErrorCodes.IncorrectProvisioningState.id,
           severity: "Error",
-          code: ErrorCodes.ProvisioningStateShouldBeTerminalStatusIn200Response.name,
+          code: ErrorCodes.IncorrectProvisioningState.name,
           jsonPath: `${it.pointer}/provisioningState`,
           message:
             "The resource's provisioning state should be terminal status in http 200 response.",
@@ -204,10 +204,7 @@ export class ExampleQualityValidator {
     private bodyTransformer: BodyTransformer
   ) {
     this.swaggerSpecs = [];
-    this.validationFuncs = [
-      provisioningStateShouldBeTerminalStatusIn200Response,
-      roundtripInconsistentProperty,
-    ];
+    this.validationFuncs = [incorrectProvisioningState, roundtripInconsistentProperty];
     this.schemaValidator = new AjvSchemaValidator(this.jsonLoader);
     this.transformContext = getTransformContext(this.jsonLoader, this.schemaValidator, [
       xmsPathsTransformer,

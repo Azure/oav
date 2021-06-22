@@ -469,7 +469,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
         {
           collection: this.collection,
           environment: this.collectionEnv,
-          reporters: ["cli", "json"],
+          reporters: ["cli", "json", "junit"],
           reporter: { json: { export: reportExportPath } },
         },
         function (err, summary) {
