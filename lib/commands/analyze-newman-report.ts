@@ -40,7 +40,6 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
   await cliSuppressExceptions(async () => {
     const newmanReportPath = path.resolve(argv.newmanReportPath);
     const reportOutputFilePath = argv.n || defaultQualityReportFilePath(argv.newmanReportPath);
-    console.log(argv.level);
     const opts: NewmanReportAnalyzerOption = {
       newmanReportFilePath: newmanReportPath,
       reportOutputFilePath: reportOutputFilePath,
