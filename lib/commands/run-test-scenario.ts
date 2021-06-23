@@ -50,6 +50,11 @@ export const builder: yargs.CommandBuilder = {
     describe: "markdown report output path.",
     string: true,
   },
+  junit: {
+    alias: "junitReportPath",
+    describe: "junit report output path.",
+    string: true,
+  },
   uploadBlob: {
     describe: "upload generated collection to blob.",
     boolean: true,
@@ -111,6 +116,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       env: env,
       outputFolder: argv.output,
       markdownReportPath: argv.markdownReportPath,
+      junitReportPath: argv.junitReportPath,
       eraseXmsExamples: false,
       eraseDescription: false,
       enableBlobUploader: argv.uploadBlob,

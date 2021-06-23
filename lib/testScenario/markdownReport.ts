@@ -5,22 +5,61 @@ import * as hd from "humanize-duration";
 import moment from "moment";
 import { ResponseDiffItem, RuntimeError, StepResult, TestScenarioResult } from "./reportGenerator";
 
+const spaceReg = /(\n|\t|\r)/gi;
+
 const commonHelper = (opts: HelperOpts) => ({
   renderPlain: (s: string) => s,
+  renderWhitespace: (n: number) => "&nbsp;".repeat(n),
   renderUri: (s: string) => `${path.join(opts.swaggerRootDir, s)}`,
   renderSymbol: (result: ResultState) => `${resultStateSymbol[result]}`,
-  renderScenarioTitle: (ts: TestScenarioMarkdownResult) =>
-    `${ts.testScenarioName}: ${ts.fatalStepsCount} Fatals, ${ts.failedStepsCount} Errors`,
-  renderStepTitle: (ts: TestScenarioMarkdownStepResult) =>
-    `${ts.stepName}: ${ts.fatalStepsCount} Fatals, ${ts.failedStepsCount} Errors`,
+  renderScenarioTitle: (ts: TestScenarioMarkdownResult) => {
+    let s = `${ts.testScenarioName}`;
+    if (ts.failedStepsCount <= 0 && ts.fatalStepsCount <= 0) {
+      return s;
+    }
+    s = `${s}: `;
+    if (ts.fatalStepsCount > 0) {
+      s = `${s}${ts.fatalStepsCount} Fatal Step(s)`;
+    }
+
+    if (ts.fatalStepsCount > 0 && ts.failedStepsCount > 0) {
+      s = `${s}, `;
+    }
+
+    if (ts.failedStepsCount > 0) {
+      s = `${s} ${ts.failedStepsCount} Failed Step(s)`;
+    }
+
+    return s;
+  },
+  renderStepTitle: (ts: TestScenarioMarkdownStepResult) => {
+    let s = `${ts.stepName}`;
+    if (ts.failedErrorsCount <= 0 && ts.fatalErrorsCount <= 0) {
+      return s;
+    }
+    s = `${s}: `;
+    if (ts.fatalErrorsCount > 0) {
+      s = `${s}${ts.fatalErrorsCount} Fatal Error(s)`;
+    }
+
+    if (ts.fatalErrorsCount > 0 && ts.failedErrorsCount > 0) {
+      s = `${s}, `;
+    }
+
+    if (ts.failedErrorsCount > 0) {
+      s = `${s} ${ts.failedErrorsCount} Validation Error(s)`;
+    }
+
+    return s;
+  },
   renderDuration: (start: Date, end: Date) =>
     `${hd.default(moment.duration(moment(end).diff(moment(start))).asMilliseconds())}`,
   shouldReportError: (sr: TestScenarioMarkdownStepResult) =>
-    sr.failedStepsCount + sr.fatalStepsCount > 0,
-  renderFatalErrorCode: (e: RuntimeError) => `${e.severity} ${e.code}`,
-  renderFatalErrorDetail: (e: RuntimeError) => `${e.message}`,
-  renderDiffErrorCode: (e: ResponseDiffItem) => `${e.severity} ${e.code}`,
-  renderDiffErrorDetail: (e: ResponseDiffItem) => `${e.message}`,
+    sr.failedErrorsCount + sr.fatalErrorsCount > 0,
+  renderFatalErrorCode: (e: RuntimeError) => `[${e.code}]()`,
+  renderFatalErrorDetail: (e: RuntimeError) => `${e.message.replace(spaceReg, " ")}`,
+  renderDiffErrorCode: (e: ResponseDiffItem) => `[${e.code}]()`,
+  renderDiffErrorDetail: (e: ResponseDiffItem) => `${e.message.replace(spaceReg, " ")}`,
 });
 
 type ResultState = keyof typeof ResultStateStrings;
@@ -45,9 +84,9 @@ interface TestScenarioMarkdownStepResult {
   exampleFilePath?: string;
   correlationId?: string;
   operationId: string;
-  fatalStepsCount: number;
-  failedStepsCount: number;
-  warningStepsCount: number;
+  fatalErrorsCount: number;
+  failedErrorsCount: number;
+  warningErrorsCount: number;
   runtimeError?: RuntimeError[];
   responseDiffResult?: ResponseDiffItem[];
 }
@@ -78,8 +117,15 @@ export const compileHandlebarsTemplate = <T>(fileName: string, opts: HelperOpts)
   return (data: T) => templateDelegate(data, { helpers });
 };
 
-const generateView = compileHandlebarsTemplate<TestScenarioMarkdownResult>(
+const generateMarkdownReportView = compileHandlebarsTemplate<TestScenarioMarkdownResult>(
   "markdownReport.handlebars",
+  {
+    swaggerRootDir: "root",
+  }
+);
+
+const generateJUnitCaseReportView = compileHandlebarsTemplate<TestScenarioMarkdownStepResult>(
+  "junitCaseReport.handlebars",
   {
     swaggerRootDir: "root",
   }
@@ -98,9 +144,9 @@ const asMarkdownStepResult = (sr: StepResult): TestScenarioMarkdownStepResult =>
 
   const r: TestScenarioMarkdownStepResult = {
     result,
-    fatalStepsCount: sr.runtimeError ? sr.runtimeError.length : 0,
-    failedStepsCount: sr.responseDiffResult ? sr.responseDiffResult.length : 0,
-    warningStepsCount: 0,
+    fatalErrorsCount: sr.runtimeError ? sr.runtimeError.length : 0,
+    failedErrorsCount: sr.responseDiffResult ? sr.responseDiffResult.length : 0,
+    warningErrorsCount: 0,
     ...sr,
   };
   return r;
@@ -141,6 +187,11 @@ const asMarkdownResult = (tsr: TestScenarioResult): TestScenarioMarkdownResult =
 export const generateMarkdownReportHeader = (): string => "<h3>Azure API Test Report</h3>";
 export const generateMarkdownReport = (testScenarioResult: TestScenarioResult): string => {
   const result = asMarkdownResult(testScenarioResult);
-  const body = generateView(result);
+  const body = generateMarkdownReportView(result);
+  return body;
+};
+export const generateJUnitCaseReport = (sr: StepResult): string => {
+  const result = asMarkdownStepResult(sr);
+  const body = generateJUnitCaseReportView(result);
   return body;
 };

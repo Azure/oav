@@ -1,0 +1,17 @@
+{{#with this as |s|}}
+###{{ renderStepTitle s }}
+{{#if (shouldReportError s)}}
+| Rule | Message |
+|------|---------|
+{{/if}}
+{{#each s.runtimeError}}
+  {{#with this as |re|}}
+|<code>{{renderSymbol "fatal"}}</code>{{renderFatalErrorCode re}}|{{renderFatalErrorDetail re}}|
+  {{/with}}
+{{/each}}
+{{#each s.responseDiffResult}}
+  {{#with this as |rd|}}
+|<code>{{renderSymbol "failed"}}</code>{{renderDiffErrorCode rd}}|{{renderDiffErrorDetail rd}}|
+  {{/with}}
+{{/each}}
+{{/with}}

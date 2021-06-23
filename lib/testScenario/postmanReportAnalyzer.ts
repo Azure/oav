@@ -11,6 +11,7 @@ import { getSwaggerFilePathsFromTestScenarioFilePath } from "./testResourceLoade
 export interface NewmanReportAnalyzerOption extends NewmanReportParserOption {
   reportOutputFilePath?: string;
   markdownReportPath?: string;
+  junitReportPath?: string;
   enableUploadBlob?: boolean;
   runId?: string;
   swaggerFilePaths?: string[];
@@ -52,6 +53,7 @@ export class NewmanReportAnalyzer {
       eraseDescription: false,
       reportOutputFilePath: this.opts.reportOutputFilePath,
       markdownReportPath: this.opts.markdownReportPath,
+      junitReportPath: this.opts.junitReportPath,
       enableBlobUploader: this.opts.enableUploadBlob || false,
       blobConnectionString: process.env.blobConnectionString || "",
       runId: this.opts.runId,

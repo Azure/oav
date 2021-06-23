@@ -37,6 +37,7 @@
     "json-refs": "^3.0.13",
     "json-schema-traverse": "^0.4.1",
     "jsonpath-plus": "^4.0.0",
+    "junit-report-builder": "^3.0.0",
     "kind-of": "^6.0.3",
     "linq": "^3.2.0",
     "lodash": "^4.17.15",
@@ -123,6 +124,7 @@
     "dist/lib/**/*.d.ts",
     "dist/lib/**/*.js.map",
     "dist/lib/**/*.d.ts.map",
+    "dist/lib/**/*.handlebars",
     "types/**/*.d.ts",
     "*.ts",
     "lib/**/*.ts"

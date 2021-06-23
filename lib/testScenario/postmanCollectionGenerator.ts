@@ -1,4 +1,3 @@
-import * as path from "path";
 import { inject, injectable } from "inversify";
 import { TYPES, inversifyGetInstance } from "../inversifyUtils";
 import { FileLoader } from "../swagger/fileLoader";
@@ -26,6 +25,7 @@ export interface PostmanCollectionGeneratorOption
   env: {};
   outputFolder: string;
   markdownReportPath?: string;
+  junitReportPath?: string;
   runCollection: boolean;
   generateCollection: boolean;
   baseUrl: string;
@@ -57,11 +57,9 @@ export class PostmanCollectionGenerator {
     let index = 0;
     const runId = generateRunId();
     if (this.opt.markdownReportPath) {
-      await this.fileLoader.writeFile(
-        path.join(process.cwd(), this.opt.markdownReportPath),
-        generateMarkdownReportHeader()
-      );
+      await this.fileLoader.writeFile(this.opt.markdownReportPath, generateMarkdownReportHeader());
     }
+
     for (const testScenario of testDef.testScenarios) {
       //TODO: replace index with testScenarioName
       const opts: PostmanCollectionRunnerClientOption = {
@@ -72,6 +70,7 @@ export class PostmanCollectionGenerator {
         testScenarioFilePath: this.opt.testDef,
         reportOutputFolder: this.opt.outputFolder,
         markdownReportPath: this.opt.markdownReportPath,
+        junitReportPath: this.opt.junitReportPath,
         runId: runId,
         jsonLoader: this.testResourceLoader.jsonLoader,
         baseUrl: this.opt.baseUrl,
@@ -96,6 +95,7 @@ export class PostmanCollectionGenerator {
       if (this.opt.runCollection) {
         await client.runCollection();
       }
+
       index++;
     }
   }
