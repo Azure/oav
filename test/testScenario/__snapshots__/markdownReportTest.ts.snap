@@ -8,7 +8,7 @@ exports[`markdownReport Should generate markdown report: body 1`] = `
         ❌
       </code>
       <b>
-        galleries_1: 1 Fatals, 0 Errors
+        galleries_1: 1 Fatal Step(s)
       </b>
     </summary>
     <br />
@@ -40,7 +40,7 @@ exports[`markdownReport Should generate markdown report: body 1`] = `
         ❌
   </code>
 <b>
-        Create or update a simple gallery with sharing profile.: 1 Fatals, 0 Errors
+        Create or update a simple gallery with sharing profile.: 1 Fatal Error(s)
 </b>
 </li>
 <ul>
@@ -59,17 +59,17 @@ exports[`markdownReport Should generate markdown report: body 1`] = `
       cb309eda-ffb6-41f7-8a5e-42fc2a25aa5e
     </li>
   </ul>
-  <br />
 
-| Rule | Message |
+|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rule&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| Message |
 |------|---------|
-| <code> ❌ </code> Error RUNTIME_ERROR_400 | code: BadRequest, message: Subscription 'db5eb68e-73e2-4fa8-b18a-46cd1be4cce5' is not registered with the feature Microsoft.Compute/SIGSharing. Please register the subscription before retrying the call. |
+| <code> ❌ </code> [RUNTIME_ERROR_400]() | code: BadRequest, message: Subscription 'db5eb68e-73e2-4fa8-b18a-46cd1be4cce5' is not registered with the feature Microsoft.Compute/SIGSharing. Please register the subscription before retrying the call. |
+<br />
 <li>
   <code>
         ️✔️
   </code>
 <b>
-        Delete a gallery.: 0 Fatals, 0 Errors
+        Delete a gallery.
 </b>
 </li>
 <ul>
@@ -88,8 +88,8 @@ exports[`markdownReport Should generate markdown report: body 1`] = `
       7153d6b9-8ffe-45a8-83c6-dc61ba334a77
     </li>
   </ul>
-  <br />
 
+<br />
 
 </ol>
 </details>

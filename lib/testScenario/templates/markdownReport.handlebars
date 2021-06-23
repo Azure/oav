@@ -61,10 +61,9 @@
       {{renderPlain s.correlationId}}
     </li>
   </ul>
-  <br />
 
 {{#if (shouldReportError s)}}
-| Rule | Message |
+|{{renderWhitespace 27}}Rule{{renderWhitespace 27}}| Message |
 |------|---------|
 {{/if}}
             {{#each s.runtimeError}}
@@ -78,7 +77,8 @@
               {{/with}}
             {{/each}}
           {{/with}}
-        {{/each}}
+<br />
+{{/each}}
 
 </ol>
 </details>

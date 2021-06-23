@@ -89,6 +89,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
         env: env,
         outputFolder: argv.output,
         markdownReportPath: argv.markdownReportPath,
+        junitReportPath: argv.junitReportPath,
         eraseXmsExamples: false,
         eraseDescription: false,
         enableBlobUploader: false,

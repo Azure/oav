@@ -29,6 +29,7 @@ import { VariableEnv } from "./variableEnv";
 import { getJsonPatchDiff } from "./diffUtils";
 import { BlobUploader, BlobUploaderOption } from "./blobUploader";
 import { generateMarkdownReport } from "./markdownReport";
+import { JUnitReporter } from "./junitReport";
 
 interface GeneratedExample {
   exampleFilePath: string;
@@ -96,6 +97,7 @@ export interface ReportGeneratorOption
   testDefFilePath: string;
   reportOutputFilePath?: string;
   markdownReportPath?: string;
+  junitReportPath?: string;
   testScenarioName?: string;
   runId?: string;
 }
@@ -117,7 +119,8 @@ export class ReportGenerator {
     private fileLoader: FileLoader,
     private blobUploader: BlobUploader,
     private dataMasker: DataMasker,
-    private swaggerAnalyzer: SwaggerAnalyzer
+    private swaggerAnalyzer: SwaggerAnalyzer,
+    private junitReporter: JUnitReporter
   ) {
     setDefaultOpts(this.opts, {
       newmanReportFilePath: "",
@@ -262,6 +265,15 @@ export class ReportGenerator {
       await this.fileLoader.appendFile(
         this.opts.markdownReportPath,
         generateMarkdownReport(this.swaggerExampleQualityResult)
+      );
+    }
+  }
+
+  public async generateJUnitReport() {
+    if (this.opts.junitReportPath) {
+      await this.junitReporter.addSuiteToBuild(
+        this.swaggerExampleQualityResult,
+        this.opts.junitReportPath
       );
     }
   }
@@ -434,6 +446,7 @@ export class ReportGenerator {
     await this.generateTestScenarioResult(this.rawReport!);
     await this.generateExampleQualityReport();
     await this.generateMarkdownQualityReport();
+    await this.generateJUnitReport();
   }
 
   private parseRespBody(it: RawExecution) {
