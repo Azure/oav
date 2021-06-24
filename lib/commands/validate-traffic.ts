@@ -1,12 +1,11 @@
-import * as yargs from "yargs"
+import * as yargs from "yargs";
 
-import { cliSuppressExceptions } from "../cliSuppressExceptions"
-import { log } from "../util/logging"
-import * as validate from "../validate"
+import { cliSuppressExceptions } from "../cliSuppressExceptions";
+import { log } from "../util/logging";
+import * as validate from "../validate";
 
-export const command = "validate-traffic <traffic-path> <spec-path>"
-
-export const describe = "Performs semantic validation of the spec."
+export const command = "validate-traffic <traffic-path> <spec-path>";
+export const describe = "Validate the swagger file based on the traffic payload";
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
   await cliSuppressExceptions(async () => {
