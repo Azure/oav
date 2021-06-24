@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 6/22 2021 2.5.7
+
+- small fix for passing validation-level
+
 ## 6/22 2021 2.5.6
 
 - optimise validation logical. Ignore readonly and secret property response check
