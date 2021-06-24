@@ -300,7 +300,7 @@ export async function validateTrafficInSpec(
     const specFileDirectory = path.dirname(specPath);
     const swaggerPathsPattern = specPath.slice(specFileDirectory.length + 1);
 
-    return validate(options, async o => {
+    return validate(options, async (o) => {
       o.consoleLogLevel = log.consoleLogLevel;
       o.logFilepath = log.filepath;
       const liveValidationOptions = {
@@ -310,7 +310,7 @@ export async function validateTrafficInSpec(
           shouldClone: false
         }
       }
-      const validator = new LiveValidator(liveValidationOptions)
+      const validator = new LiveValidator(liveValidationOptions);
       const errors: Array<LiveValidationIssue> = [];
       await validator.initialize();
 
@@ -329,7 +329,7 @@ export async function validateTrafficInSpec(
           console.log(JSON.stringify(error));
         }
       } else {
-        console.log('Validation compelete, no errors are detected.')
+        console.log('Validation compelete, no errors are detected.');
       }
 
       return errors;
