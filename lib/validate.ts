@@ -285,13 +285,13 @@ export async function validateTrafficInSpec(
 ): Promise<Array<LiveValidationIssue | Error>>{
   if (!specPath) {
     const error = new Error(`specPath parameter can't be empty, must provide specPath parameter.`);
-    console.log(JSON.stringify(error));
+    console.error(error);
     return [error];
   }
 
   if (!trafficPath) {
     const error = new Error(`trafficPath parameter can't be empty, must provide trafficPath parameter.`);
-    console.log(JSON.stringify(error));
+    console.error(error);
     return [error];
   }
 
@@ -326,16 +326,16 @@ export async function validateTrafficInSpec(
 
       if (errors.length > 0) {
         for (let error of errors) {
-          console.log(JSON.stringify(error));
+          console.error(JSON.stringify(error));
         }
       } else {
-        console.log('Validation compelete, no errors are detected.');
+        console.info('Validation compelete, no errors are detected.');
       }
 
       return errors;
     });
   } catch (error) {
-    console.log(JSON.stringify(error));
+    console.error(error);
     return [error];
   }
 }

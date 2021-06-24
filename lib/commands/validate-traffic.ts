@@ -5,7 +5,7 @@ import { log } from "../util/logging";
 import * as validate from "../validate";
 
 export const command = "validate-traffic <traffic-path> <spec-path>";
-export const describe = "Validate the swagger file based on the traffic payload";
+export const describe = "Validate the spec file based on the traffic payload";
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
   await cliSuppressExceptions(async () => {
