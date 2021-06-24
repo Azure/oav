@@ -593,6 +593,42 @@ describe("Live Validator", () => {
         // console.dir(validationResult, { depth: null, colors: true })
       });
     });
+    it("should throw error when init complete and spec load fails", async () => {
+      const payload = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "GET",
+        url: "/abc/providers/Microsoft.Authorization/roleAssignments?api-version=2018-09-01-preview",
+        query: {
+          "api-version": "2018-09-01-preview",
+        },
+      };
+      const validator = new LiveValidator({
+        directory: "./test/liveValidation/swaggers/specification/unknown-rp",
+        swaggerPathsPattern: ["**/*.json"],
+        loadValidatorInInitialize: true,
+      });
+      await validator.initialize();
+      const result = await validator.validateLiveRequest(payload);
+      expect(result.runtimeException).toMatchInlineSnapshot(`
+        Object {
+          "code": "REQUEST_VALIDATION_ERROR",
+          "message": "An error occurred while validating the live request for operation \\"RoleAssignments_ListForScope\\". The error is:
+         Error: keyword schema is invalid: data should be boolean
+            at Object.useCustomRule (/home/htc/oav/node_modules/ajv/lib/compile/index.js:271:22)
+            at Object.generate_custom [as code] (/home/htc/oav/node_modules/ajv/lib/dotjs/custom.js:32:24)
+            at Object.generate_validate [as validate] (/home/htc/oav/node_modules/ajv/lib/dotjs/validate.js:374:35)
+            at Object.generate_properties [as code] (/home/htc/oav/node_modules/ajv/lib/dotjs/properties.js:201:26)
+            at Object.generate_validate [as validate] (/home/htc/oav/node_modules/ajv/lib/dotjs/validate.js:374:35)
+            at Object.generate_properties [as code] (/home/htc/oav/node_modules/ajv/lib/dotjs/properties.js:201:26)
+            at generate_validate (/home/htc/oav/node_modules/ajv/lib/dotjs/validate.js:374:35)
+            at localCompile (/home/htc/oav/node_modules/ajv/lib/compile/index.js:88:22)
+            at Ajv.compile (/home/htc/oav/node_modules/ajv/lib/compile/index.js:55:13)
+            at Ajv._compile (/home/htc/oav/node_modules/ajv/lib/ajv.js:348:27)",
+        }
+      `);
+    });
     it("should initialize for defaultErrorOnly and fail on unknown status code", async () => {
       const options = {
         directory: "./test/liveValidation/swaggers/specification/defaultIsErrorOnly",
