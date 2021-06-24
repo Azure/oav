@@ -30,6 +30,8 @@ import { getErrorsFromModelValidation } from "./util/getErrorsFromModelValidatio
 import { getSuppressions } from "./validators/suppressions";
 import { log } from "./util/logging";
 import { getInputFiles } from "./generator/util";
+import { LiveValidator } from "../lib/validators/liveValidator"
+import { LiveValidationIssue } from "../lib/validators/liveValidator"
 
 export interface Options extends specResolver.Options, umlGeneratorLib.Options {
   consoleLogLevel?: unknown;
@@ -274,6 +276,68 @@ export async function validateExamplesInCompositeSpec(
     const promiseFactories = docs.map((doc) => async () => validateExamples(doc, undefined, o));
     return utils.executePromisesSequentially(promiseFactories);
   });
+}
+
+export async function validateTrafficInSpec(
+  specPath: string,
+  trafficPath: string,
+  options: Options
+): Promise<Array<LiveValidationIssue | Error>>{
+  if (!specPath) {
+    const error = new Error(`specPath parameter can't be empty, must provide specPath parameter.`);
+    console.log(JSON.stringify(error));
+    return [error];
+  }
+
+  if (!trafficPath) {
+    const error = new Error(`trafficPath parameter can't be empty, must provide trafficPath parameter.`);
+    console.log(JSON.stringify(error));
+    return [error];
+  }
+
+  try {
+    const trafficFile = require(trafficPath);
+    const specFileDirectory = path.dirname(specPath);
+    const swaggerPathsPattern = specPath.slice(specFileDirectory.length + 1);
+
+    return validate(options, async o => {
+      o.consoleLogLevel = log.consoleLogLevel;
+      o.logFilepath = log.filepath;
+      const liveValidationOptions = {
+        directory: specFileDirectory,
+        swaggerPathsPattern: [swaggerPathsPattern],
+        git: {
+          shouldClone: false
+        }
+      }
+      const validator = new LiveValidator(liveValidationOptions)
+      const errors: Array<LiveValidationIssue> = [];
+      await validator.initialize();
+
+      const result = validator.validateLiveRequestResponse(trafficFile);
+    
+      if (!result.requestValidationResult.isSuccessful) {
+        errors.push(...result.requestValidationResult.errors);
+      }
+
+      if (!result.responseValidationResult.isSuccessful) {
+        errors.push(...result.responseValidationResult.errors);
+      }
+
+      if (errors.length > 0) {
+        for (let error of errors) {
+          console.log(JSON.stringify(error));
+        }
+      } else {
+        console.log('Validation compelete, no errors are detected.')
+      }
+
+      return errors;
+    });
+  } catch (error) {
+    console.log(JSON.stringify(error));
+    return [error];
+  }
 }
 
 export async function resolveSpec(
