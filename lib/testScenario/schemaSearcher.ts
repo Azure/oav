@@ -75,6 +75,13 @@ export class SchemaSearcher {
         ...this.getProperties(jsonLoader.resolveRefObj(item), jsonLoader),
       };
     });
+
+    schema.anyOf?.map((item: any) => {
+      ret = {
+        ...ret,
+        ...this.getProperties(jsonLoader.resolveRefObj(item), jsonLoader),
+      };
+    });
     return {
       ...ret,
       ...schema,

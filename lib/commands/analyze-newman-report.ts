@@ -23,6 +23,12 @@ export const builder: yargs.CommandBuilder = {
     string: true,
     alias: "n",
   },
+  level: {
+    describe:
+      "validation level. oav runner validate request and response with different strict level. 'validate-request' only validate request should return 2xx status code. 'validate-request-response' validate both request and response.",
+    string: true,
+    default: "validate-request-response",
+  },
   uploadBlob: {
     describe: "upload generated collection to blob.",
     boolean: true,
@@ -38,6 +44,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       newmanReportFilePath: newmanReportPath,
       reportOutputFilePath: reportOutputFilePath,
       enableUploadBlob: argv.uploadBlob,
+      validationLevel: argv.level,
     };
     const analyzer = inversifyGetInstance(NewmanReportAnalyzer, opts);
     await analyzer.analyze();

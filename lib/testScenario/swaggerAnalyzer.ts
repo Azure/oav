@@ -11,6 +11,7 @@ import {
   SwaggerExample,
   SwaggerSpec,
   refSelfSymbol,
+  Schema,
 } from "../swagger/swaggerTypes";
 import { AjvSchemaValidator } from "../swaggerValidator/ajvSchemaValidator";
 import { SchemaValidator } from "../swaggerValidator/schemaValidator";
@@ -267,6 +268,7 @@ export class SwaggerAnalyzer {
       applySpecTransformers(swaggerSpec, this.transformContext);
     }
     applyGlobalTransformers(this.transformContext);
+    this.initialized = true;
   }
 
   public async getAllSecretKey(): Promise<string[]> {
@@ -281,6 +283,10 @@ export class SwaggerAnalyzer {
       ret = ret.concat(allXmsSecretKeys);
     }
     return ret;
+  }
+
+  public findSchemaByJsonPointer(jsonPointer: string, schema: Schema, body?: any) {
+    return SchemaSearcher.findSchemaByJsonPointer(jsonPointer, schema, this.jsonLoader, body);
   }
 }
 
