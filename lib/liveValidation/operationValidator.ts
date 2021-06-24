@@ -76,6 +76,9 @@ export const validateSwaggerLiveRequest = async (
 
   let validate = operation._validate;
   if (validate === undefined) {
+    if (operation._err__validate !== undefined) {
+      throw operation._err__validate;
+    }
     if (loader === undefined) {
       throw new Error("Loader is undefined but request validator isn't built yet");
     }
@@ -151,6 +154,9 @@ export const validateSwaggerLiveResponse = async (
 
   let validate = rsp._validate;
   if (validate === undefined) {
+    if (rsp._err__validate !== undefined) {
+      throw rsp._err__validate;
+    }
     if (loader === undefined) {
       throw new Error("Loader is undefined but request validator isn't built yet");
     }

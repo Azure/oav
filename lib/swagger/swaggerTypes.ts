@@ -159,6 +159,7 @@ export interface Operation {
   _bodyTransform?: (body: any) => any;
 
   _validate?: SchemaValidateFunction;
+  _err__validate?: Error;
 }
 
 export type TransformFn = (val: string) => string | number | boolean;
@@ -173,6 +174,7 @@ export interface Response {
   _headerTransform?: MutableStringMap<TransformFn>;
 
   _validate?: SchemaValidateFunction;
+  _err__validate?: Error;
 }
 
 // ------------------------------ Schema -------------------------------------
