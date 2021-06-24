@@ -284,25 +284,25 @@ export async function validateTrafficInSpec(
   options: Options
 ): Promise<Array<LiveValidationIssue | Error>>{
   if (!specPath) {
-    const error = new Error(`specPath parameter can't be empty, must provide specPath parameter.`);
-    console.error(error);
-    return [error];
+    const error = new Error(`specPath parameter can't be empty, must provide specPath parameter.`)
+    console.error(error)
+    return [error]
   }
 
   if (!trafficPath) {
-    const error = new Error(`trafficPath parameter can't be empty, must provide trafficPath parameter.`);
-    console.error(error);
-    return [error];
+    const error = new Error(`trafficPath parameter can't be empty, must provide trafficPath parameter.`)
+    console.error(error)
+    return [error]
   }
 
   try {
-    const trafficFile = require(trafficPath);
-    const specFileDirectory = path.dirname(specPath);
-    const swaggerPathsPattern = path.basename(specPath);
+    const trafficFile = require(trafficPath)
+    const specFileDirectory = path.dirname(specPath)
+    const swaggerPathsPattern = path.basename(specPath)
 
     return validate(options, async (o) => {
-      o.consoleLogLevel = log.consoleLogLevel;
-      o.logFilepath = log.filepath;
+      o.consoleLogLevel = log.consoleLogLevel
+      o.logFilepath = log.filepath
       const liveValidationOptions = {
         directory: specFileDirectory,
         swaggerPathsPattern: [swaggerPathsPattern],
@@ -311,32 +311,32 @@ export async function validateTrafficInSpec(
         }
       }
 
-      const validator = new LiveValidator(liveValidationOptions);
-      const errors: Array<LiveValidationIssue> = [];
-      await validator.initialize();
-      const result = validator.validateLiveRequestResponse(trafficFile);
+      const validator = new LiveValidator(liveValidationOptions)
+      const errors: Array<LiveValidationIssue> = []
+      await validator.initialize()
+      const result = validator.validateLiveRequestResponse(trafficFile)
     
       if (!result.requestValidationResult.isSuccessful) {
-        errors.push(...result.requestValidationResult.errors);
+        errors.push(...result.requestValidationResult.errors)
       }
 
       if (!result.responseValidationResult.isSuccessful) {
-        errors.push(...result.responseValidationResult.errors);
+        errors.push(...result.responseValidationResult.errors)
       }
 
       if (errors.length > 0) {
         for (let error of errors) {
-          console.error(JSON.stringify(error));
+          console.error(JSON.stringify(error))
         }
       } else {
-        console.info('Validation compelete, no errors are detected.');
+        console.info('Validation compelete, no errors are detected.')
       }
 
-      return errors;
-    });
+      return errors
+    })
   } catch (error) {
-    console.error(error);
-    return [error];
+    console.error(error)
+    return [error]
   }
 }
 
