@@ -298,7 +298,7 @@ export async function validateTrafficInSpec(
   try {
     const trafficFile = require(trafficPath);
     const specFileDirectory = path.dirname(specPath);
-    const swaggerPathsPattern = specPath.slice(specFileDirectory.length + 1);
+    const swaggerPathsPattern = path.basename(specPath);
 
     return validate(options, async (o) => {
       o.consoleLogLevel = log.consoleLogLevel;
