@@ -30,7 +30,7 @@ export class NewmanReportAnalyzer {
       newmanReportFilePath: "",
       reportOutputFilePath: defaultQualityReportFilePath(this.opts.newmanReportFilePath),
       swaggerFilePaths: [],
-      validationLevel: "consistency-check",
+      validationLevel: "validate-request-response",
     });
   }
 

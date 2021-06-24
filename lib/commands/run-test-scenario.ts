@@ -62,9 +62,9 @@ export const builder: yargs.CommandBuilder = {
   },
   level: {
     describe:
-      "validation level. oav runner validate request and response with different strict level. 'request-check' only validate request should return 2xx status code. 'consistency-check' validate both request and response.",
+      "validation level. oav runner validate request and response with different strict level. 'validate-request' only validate request should return 2xx status code. 'validate-request-response' validate both request and response.",
     string: true,
-    default: "consistency-check",
+    default: "validate-request-response",
   },
   armEndpoint: {
     describe: "ARM endpoint",

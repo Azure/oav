@@ -90,7 +90,7 @@ export interface ResponseDiffItem {
   detail: string;
 }
 
-export type ValidationLevel = "request-check" | "consistency-check";
+export type ValidationLevel = "validate-request" | "validate-request-response";
 
 export interface ReportGeneratorOption
   extends NewmanReportParserOption,
@@ -132,7 +132,7 @@ export class ReportGenerator {
       blobConnectionString: "",
       testDefFilePath: "",
       runId: uuid.v4(),
-      validationLevel: "consistency-check",
+      validationLevel: "validate-request-response",
     });
     const swaggerFileAbsolutePaths = this.opts.swaggerFilePaths!.map((it) => path.resolve(it));
     this.exampleQualityValidator = ExampleQualityValidator.create({
@@ -201,7 +201,7 @@ export class ReportGenerator {
         ).map((it) => _.omit(it, ["exampleName", "exampleFilePath"]));
         const correlationId = it.response.headers["x-ms-correlation-request-id"];
         const responseDiffResult: ResponseDiffItem[] =
-          this.opts.validationLevel === "consistency-check"
+          this.opts.validationLevel === "validate-request-response"
             ? await this.exampleResponseDiff(generatedExample, matchedStep)
             : [];
         this.swaggerExampleQualityResult.stepResult.push({

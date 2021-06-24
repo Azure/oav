@@ -4,7 +4,7 @@
 
 - optimise validation logical. Ignore readonly and secret property response check
 - DO NOT output log when request method is POST
-- Support level option. Current two levels: request-check, consistency-check. request-check will only check request parameters. consistency-check check both request and response.
+- Support level option. Current two levels: validate-request, validate-request-response. validate-request will only check request parameters. validate-request-response check both request and response.
 - Improve test scenario markdown report format
 - Bugfix: packaging issue for handlebar files
 - Add test scenario JUnit xml report support
