@@ -310,10 +310,10 @@ export async function validateTrafficInSpec(
           shouldClone: false
         }
       }
+
       const validator = new LiveValidator(liveValidationOptions);
       const errors: Array<LiveValidationIssue> = [];
       await validator.initialize();
-
       const result = validator.validateLiveRequestResponse(trafficFile);
     
       if (!result.requestValidationResult.isSuccessful) {
