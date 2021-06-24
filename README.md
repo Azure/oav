@@ -42,6 +42,8 @@ Commands:
                                             and examples present in the spec.
   validate-spec <spec-path>                 Performs semantic validation of the
                                             spec.
+  validate-traffic <traffic-path>           Validate the spec file based on the
+  <spec-path>                               traffic payload.
 
 Options:
   --version          Show version number                               [boolean]
