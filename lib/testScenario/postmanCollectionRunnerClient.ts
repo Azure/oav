@@ -449,7 +449,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
       collectionPath
     );
     const values: string[] = [];
-    for (const [k, v] of Object.entries(this.collectionEnv.variables())) {
+    for (const [k, v] of Object.entries(this.collectionEnv.syncVariablesTo())) {
       if (this.dataMasker.maybeSecretKey(k)) {
         values.push(v as string);
       }
@@ -500,7 +500,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
       .on("done", async (_err, _summary) => {
         const keys = await this.swaggerAnalyzer.getAllSecretKey();
         const values: string[] = [];
-        for (const [k, v] of Object.entries(this.collectionEnv.variables())) {
+        for (const [k, v] of Object.entries(this.collectionEnv.syncVariablesTo())) {
           if (this.dataMasker.maybeSecretKey(k)) {
             values.push(v as string);
           }
