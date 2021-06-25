@@ -291,6 +291,11 @@ export class JsonLoader implements Loader<Json> {
   public refObjToModelCache(cacheKey: string) {
     return { $ref: `${modelCacheMockName}#/definitions/${cacheKey}` };
   }
+
+  public disposeModelCacheMap() {
+    this.modelStringifyToModelCacheKey.clear();
+    this.modelToCacheKey.clear();
+  }
 }
 
 export const isRefLike = (obj: any): obj is { $ref: string } => typeof obj.$ref === "string";

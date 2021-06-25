@@ -83,6 +83,10 @@ export class AjvSchemaValidator implements SchemaValidator {
     return this.getValidateFunction(validate);
   }
 
+  public async dispose(): Promise<void> {
+    this.ajv.removeSchema();
+  }
+
   private getValidateFunction(validate: ValidateFunction) {
     const ret = function validateSchema(ctx: SchemaValidateContext, data: any) {
       const result: SchemaValidateIssue[] = [];

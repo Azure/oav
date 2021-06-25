@@ -27,6 +27,7 @@ export type SchemaValidateFunction = (
 export interface SchemaValidator {
   compile(schema: Schema): SchemaValidateFunction;
   compileAsync(schema: Schema): Promise<SchemaValidateFunction>;
+  dispose(): Promise<void>;
 }
 
 export interface SchemaValidatorOption {

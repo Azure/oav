@@ -256,7 +256,7 @@ export class SpecResolver {
   ): Promise<void> {
     let docDir;
 
-    const options = {
+    const options: any = {
       /* TODO: it looks like a bug, relativeBase is always undefined */
       relativeBase: docDir,
       filter: ["relative", "remote"],

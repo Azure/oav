@@ -93,7 +93,7 @@ export class LiveValidatorLoader implements Loader<SwaggerSpec> {
 
   public constructor(
     @inject(TYPES.opts) private opts: LiveValidatorLoaderOption,
-    public jsonLoader: JsonLoader,
+    private jsonLoader: JsonLoader,
     private swaggerLoader: SwaggerLoader,
     @inject(TYPES.schemaValidator) private schemaValidator: SchemaValidator
   ) {
@@ -129,7 +129,12 @@ export class LiveValidatorLoader implements Loader<SwaggerSpec> {
     applyGlobalTransformers(this.transformContext);
     if (this.opts.useUnifiedModelCache) {
       unifyCacheTransformer.transform(this.transformContext);
+      this.jsonLoader.disposeModelCacheMap();
     }
+  }
+
+  public async dispose() {
+    await this.schemaValidator.dispose();
   }
 
   public async buildAjvValidator(spec: SwaggerSpec, options?: { inBackground?: boolean }) {

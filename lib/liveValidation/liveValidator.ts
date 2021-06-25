@@ -203,7 +203,7 @@ export class LiveValidator {
       ...this.options,
       loadSuppression: this.options.loadSuppression ?? Object.keys(allErrorConstants),
     });
-    this.jsonLoader = this.loader.jsonLoader;
+    this.jsonLoader = container.get(JsonLoader);
     const schemaValidator = container.get(TYPES.schemaValidator) as SchemaValidator;
     this.validateRequestResponsePair = await schemaValidator.compileAsync(
       requestResponseDefinition
@@ -251,6 +251,7 @@ export class LiveValidator {
         }
       }
 
+      await this.loader.dispose();
       this.loader = undefined;
     }
 
@@ -312,6 +313,7 @@ export class LiveValidator {
       }
     }
 
+    await this.loader?.dispose();
     this.loader = undefined;
     this.loadInBackgroundComplete = true;
     const elapsedTimeForBuild = Date.now() - backgroundStartTime;
