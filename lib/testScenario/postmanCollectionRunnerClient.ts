@@ -371,7 +371,6 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
       raw: JSON.stringify(body, null, 2),
     });
     this.addAuthorizationHeader(item);
-    console.log(armTemplate.outputs);
     item.events.add(
       new Event({
         listen: "test",
