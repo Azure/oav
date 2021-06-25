@@ -38,6 +38,7 @@ import { waitUntilLowLoad } from "../util/utils";
 
 export interface LiveValidatorLoaderOption extends SwaggerLoaderOption, SchemaValidatorOption {
   transformToNewSchemaFormat?: boolean;
+  useUnifiedModelCache?: boolean;
 }
 
 @injectable()
@@ -98,6 +99,7 @@ export class LiveValidatorLoader implements Loader<SwaggerSpec> {
   ) {
     setDefaultOpts(opts, {
       transformToNewSchemaFormat: true,
+      useUnifiedModelCache: false,
     });
 
     this.transformContext = getTransformContext(this.jsonLoader, this.schemaValidator, [
@@ -125,7 +127,9 @@ export class LiveValidatorLoader implements Loader<SwaggerSpec> {
 
   public transformLoadedSpecs() {
     applyGlobalTransformers(this.transformContext);
-    unifyCacheTransformer.transform(this.transformContext);
+    if (this.opts.useUnifiedModelCache) {
+      unifyCacheTransformer.transform(this.transformContext);
+    }
   }
 
   public async buildAjvValidator(spec: SwaggerSpec, options?: { inBackground?: boolean }) {

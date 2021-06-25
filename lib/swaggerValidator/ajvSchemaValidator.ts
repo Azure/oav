@@ -38,10 +38,10 @@ export class AjvSchemaValidator implements SchemaValidator {
     this.ajv = new Ajv({
       // tslint:disable-next-line: no-submodule-imports
       // meta: require("ajv/lib/refs/json-schema-draft-04.json"),
-      addUsedSchema: false,
+      addUsedSchema: true,
       removeAdditional: false,
       allErrors: true,
-      messages: true,
+      messages: false,
       verbose: true,
       inlineRefs: false,
       passContext: true,
@@ -52,6 +52,14 @@ export class AjvSchemaValidator implements SchemaValidator {
       discriminator: false,
       validateSchema: false,
       jsPropertySyntax: true,
+      code: {
+        // NEW
+        es5: false,
+        lines: false,
+        source: false,
+        process: undefined, // (code: string) => string
+        optimize: false,
+      },
       loadSchema: async (uri) => {
         const spec: SwaggerSpec = await loader.resolveFile(uri);
         return { [$id]: spec[$id], definitions: spec.definitions, parameters: spec.parameters };
