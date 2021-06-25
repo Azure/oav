@@ -10,6 +10,7 @@ import * as url from "url";
 import * as util from "util";
 import * as _ from "lodash";
 import globby from "globby";
+import { JsonLoader } from "../swagger/jsonLoader";
 import * as models from "../models";
 import { requestResponseDefinition } from "../models/requestResponse";
 import { LowerHttpMethods, SwaggerSpec } from "../swagger/swaggerTypes";
@@ -121,6 +122,8 @@ export class LiveValidator {
 
   private loader?: LiveValidatorLoader;
 
+  private jsonLoader?: JsonLoader;
+
   private loadInBackgroundComplete: boolean = false;
 
   private validateRequestResponsePair?: SchemaValidateFunction;
@@ -200,6 +203,7 @@ export class LiveValidator {
       ...this.options,
       loadSuppression: this.options.loadSuppression ?? Object.keys(allErrorConstants),
     });
+    this.jsonLoader = this.loader.jsonLoader;
     const schemaValidator = container.get(TYPES.schemaValidator) as SchemaValidator;
     this.validateRequestResponsePair = await schemaValidator.compileAsync(
       requestResponseDefinition
@@ -362,6 +366,7 @@ export class LiveValidator {
       errors = await validateSwaggerLiveRequest(
         liveRequest,
         info,
+        this.jsonLoader!,
         this.loader,
         options.includeErrors,
         this.logging
@@ -437,6 +442,7 @@ export class LiveValidator {
       errors = await validateSwaggerLiveResponse(
         liveResponse,
         info,
+        this.jsonLoader!,
         this.loader,
         options.includeErrors,
         this.options.isArmCall,
@@ -507,7 +513,10 @@ export class LiveValidator {
       };
     }
 
-    const errors = this.validateRequestResponsePair!({}, requestResponseObj);
+    const errors = this.validateRequestResponsePair!(
+      { jsonLoader: this.jsonLoader! },
+      requestResponseObj
+    );
     if (errors.length > 0) {
       const error = errors[0];
       const message =

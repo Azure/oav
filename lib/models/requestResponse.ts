@@ -90,6 +90,7 @@ export const requestResponseDefinition: Schema = {
           },
         },
         query: {
+          type: "object",
           nullable: true,
           additionalProperties: {
             oneOf: [
@@ -111,9 +112,6 @@ export const requestResponseDefinition: Schema = {
         method: {
           type: "string",
         },
-        body: {
-          nullable: true,
-        },
       },
     },
     liveResponse: {
@@ -126,9 +124,6 @@ export const requestResponseDefinition: Schema = {
           additionalProperties: {
             type: "string",
           },
-        },
-        body: {
-          nullable: true,
         },
       },
     },

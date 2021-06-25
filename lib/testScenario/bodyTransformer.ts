@@ -3,19 +3,27 @@ import { cloneDeep } from "lodash";
 import * as jp from "json-pointer";
 import { TYPES } from "../inversifyUtils";
 import { Schema } from "../swagger/swaggerTypes";
+import { JsonLoader } from "../swagger/jsonLoader";
 import { SchemaValidator } from "../swaggerValidator/schemaValidator";
 import { jsonPathToPointer } from "../util/jsonUtils";
 import { jsonPatchApply } from "./diffUtils";
 
 @injectable()
 export class BodyTransformer {
-  public constructor(@inject(TYPES.schemaValidator) private validator: SchemaValidator) {}
+  public constructor(
+    @inject(TYPES.schemaValidator) private validator: SchemaValidator,
+    private jsonLoader: JsonLoader
+  ) {}
 
   public async responseBodyToRequest(body: any, responseSchema: Schema): Promise<any> {
     const validateFn = await this.validator.compileAsync(responseSchema);
     // Readonly field cannot be set in response, so we could filter readonly fields
     const errors = validateFn(
-      { isResponse: false, includeErrors: ["READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST"] },
+      {
+        isResponse: false,
+        includeErrors: ["READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST"],
+        jsonLoader: this.jsonLoader,
+      },
       body
     );
 
@@ -41,6 +49,7 @@ export class BodyTransformer {
       {
         isResponse: false,
         includeErrors: ["WRITEONLY_PROPERTY_NOT_ALLOWED_IN_RESPONSE", "SECRET_PROPERTY"],
+        jsonLoader: this.jsonLoader,
       },
       body
     );

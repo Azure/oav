@@ -4,7 +4,8 @@ import {
   getRootObjectInfo,
   RootObjectInfo,
 } from "@azure-tools/openapi-tools-common";
-import { Ajv, default as ajvInit, ErrorObject, ValidateFunction } from "ajv";
+import { default as Ajv, ErrorObject, ValidateFunction } from "ajv";
+import addFormats from "ajv-formats";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../inversifyUtils";
 import { $id, JsonLoader } from "../swagger/jsonLoader";
@@ -34,27 +35,29 @@ export class AjvSchemaValidator implements SchemaValidator {
     loader: JsonLoader,
     @inject(TYPES.opts) schemaValidatorOption?: SchemaValidatorOption
   ) {
-    this.ajv = ajvInit({
+    this.ajv = new Ajv({
       // tslint:disable-next-line: no-submodule-imports
-      meta: require("ajv/lib/refs/json-schema-draft-04.json"),
-      schemaId: "auto",
-      extendRefs: "fail",
-      format: "full",
-      missingRefs: true,
+      // meta: require("ajv/lib/refs/json-schema-draft-04.json"),
       addUsedSchema: false,
       removeAdditional: false,
-      nullable: true,
       allErrors: true,
       messages: true,
       verbose: true,
       inlineRefs: false,
       passContext: true,
+      strict: false,
       loopRequired: 2,
+      allowUnionTypes: true,
+      coerceTypes: false,
+      discriminator: false,
+      validateSchema: false,
+      jsPropertySyntax: true,
       loadSchema: async (uri) => {
         const spec: SwaggerSpec = await loader.resolveFile(uri);
         return { [$id]: spec[$id], definitions: spec.definitions, parameters: spec.parameters };
       },
     });
+    addFormats(this.ajv, { mode: "fast" });
     ajvEnableAll(this.ajv, loader);
 
     if (schemaValidatorOption?.isArmCall === true) {
@@ -146,22 +149,24 @@ export const ajvErrorToSchemaValidateIssue = (
   err: ErrorObject,
   ctx: SchemaValidateContext
 ): SchemaValidateIssue | undefined => {
-  const { parentSchema, params } = err;
-  let { schema } = err;
+  const { params } = err;
+  const parentSchema = err.parentSchema as Schema | undefined;
+  let schema = err.schema as any;
 
   if (shouldSkipError(err, ctx)) {
     return undefined;
   }
 
-  let dataPath = err.dataPath;
-  const extraDataPath =
+  let dataPath = err.instancePath;
+  const extraDataPath: string | undefined =
     (params as any).additionalProperty ??
     (params as any).missingProperty ??
-    (parentSchema as Schema).discriminator;
+    parentSchema?.discriminator;
   if (extraDataPath !== undefined) {
     dataPath = `${dataPath}.${extraDataPath}`;
-    if (schema[extraDataPath] !== undefined) {
-      schema = schema[extraDataPath];
+    const potentialSchema = parentSchema?.properties?.[extraDataPath];
+    if (potentialSchema !== undefined) {
+      schema = potentialSchema;
     }
   }
 
@@ -173,7 +178,7 @@ export const ajvErrorToSchemaValidateIssue = (
     return undefined;
   }
 
-  let sch: Schema | undefined = parentSchema;
+  let sch: Schema | undefined = parentSchema as any;
   let info = getInfo(sch);
   if (info === undefined) {
     sch = schema;
@@ -196,8 +201,9 @@ export const ajvErrorToSchemaValidateIssue = (
   return result;
 };
 
-const shouldSkipError = (error: ErrorObject, cxt: SchemaValidateContext) => {
-  const { schema, parentSchema: parentSch, params, keyword, data } = error;
+const shouldSkipError = (error: ErrorObject, ctx: SchemaValidateContext) => {
+  const { parentSchema: parentSch, params, keyword, data } = error;
+  const schema: any = error.schema;
   const parentSchema = parentSch as Schema;
 
   if (schema?._skipError || parentSchema._skipError) {
@@ -205,16 +211,19 @@ const shouldSkipError = (error: ErrorObject, cxt: SchemaValidateContext) => {
   }
 
   // If a response has x-ms-mutability property and its missing the read we can skip this error
+  if (ctx.isResponse && keyword === "required") {
+    const sch = ctx.jsonLoader!.resolveRefObj(
+      parentSchema.properties?.[(params as any).missingProperty]
+    ) as Schema | undefined;
+    if (sch?.[xmsSecret] === true || sch?.[xmsMutability]?.indexOf("read") === -1) {
+      return true;
+    }
+  }
   if (
-    cxt.isResponse &&
-    ((keyword === "required" &&
-      (parentSchema.properties?.[(params as any).missingProperty]?.[xmsMutability]?.indexOf(
-        "read"
-      ) === -1 ||
-        // required check is ignored when x-ms-secret is true
-        (parentSchema.properties?.[(params as any).missingProperty] as any)?.[xmsSecret] ===
-          true)) ||
-      (keyword === "type" && data === null && parentSchema[xmsMutability]?.indexOf("read") === -1))
+    ctx.isResponse &&
+    keyword === "type" &&
+    data === null &&
+    parentSchema[xmsMutability]?.indexOf("read") === -1
   ) {
     return true;
   }
@@ -296,7 +305,8 @@ export const ajvErrorCodeToOavErrorCode = (
 ): MetaErr | undefined => {
   const { keyword, parentSchema: parentSch } = error;
   const parentSchema = parentSch as Schema | undefined;
-  let { params, data } = error;
+  let { params } = error;
+  let data: any = error.data;
   let result: MetaErr | undefined = {
     code: "NOT_PASSED",
     message: error.message!,
@@ -304,8 +314,14 @@ export const ajvErrorCodeToOavErrorCode = (
 
   // Workaround for incorrect ajv behavior.
   // See https://github.com/ajv-validator/ajv/blob/v6/lib/dot/custom.jst#L74
-  if ((error as any)._realData !== undefined) {
-    data = (error as any)._realData;
+  if (params.schemaPath !== undefined) {
+    error.schemaPath = params.schemaPath;
+    error.data = params.data;
+    error.schema = params.schema;
+    data = params.data;
+    delete params.data;
+    delete params.schemaPath;
+    delete params.schema;
   }
 
   switch (keyword) {

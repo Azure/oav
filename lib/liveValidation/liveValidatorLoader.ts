@@ -31,6 +31,7 @@ import { resolveNestedDefinitionTransformer } from "../transform/resolveNestedDe
 import { schemaV4ToV7Transformer } from "../transform/schemaV4ToV7Transformer";
 import { applyGlobalTransformers, applySpecTransformers } from "../transform/transformer";
 import { traverseSwaggerAsync } from "../transform/traverseSwagger";
+import { unifyCacheTransformer } from "../transform/unifyCacheTransformer";
 import { xmsPathsTransformer } from "../transform/xmsPathsTransformer";
 import { getLazyBuilder } from "../util/lazyBuilder";
 import { waitUntilLowLoad } from "../util/utils";
@@ -91,12 +92,12 @@ export class LiveValidatorLoader implements Loader<SwaggerSpec> {
 
   public constructor(
     @inject(TYPES.opts) private opts: LiveValidatorLoaderOption,
-    private jsonLoader: JsonLoader,
+    public jsonLoader: JsonLoader,
     private swaggerLoader: SwaggerLoader,
     @inject(TYPES.schemaValidator) private schemaValidator: SchemaValidator
   ) {
     setDefaultOpts(opts, {
-      transformToNewSchemaFormat: false,
+      transformToNewSchemaFormat: true,
     });
 
     this.transformContext = getTransformContext(this.jsonLoader, this.schemaValidator, [
@@ -124,6 +125,7 @@ export class LiveValidatorLoader implements Loader<SwaggerSpec> {
 
   public transformLoadedSpecs() {
     applyGlobalTransformers(this.transformContext);
+    unifyCacheTransformer.transform(this.transformContext);
   }
 
   public async buildAjvValidator(spec: SwaggerSpec, options?: { inBackground?: boolean }) {

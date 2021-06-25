@@ -1,13 +1,15 @@
-import { Ajv, ErrorObject, ValidateFunction } from "ajv";
+import { default as Ajv, ErrorObject, ValidateFunction } from "ajv";
 import { JsonLoader } from "../swagger/jsonLoader";
 import { Schema } from "../swagger/swaggerTypes";
 
 export const ajvEnableDiscriminatorMap = (ajv: Ajv, loader: JsonLoader) => {
-  ajv.addKeyword("discriminatorMap", {
+  ajv.addKeyword({
     errors: "full",
+    keyword: "discriminatorMap",
     metaSchema: { type: "object", additionalProperty: { type: "object,null" } },
 
-    compile(schemas: { [key: string]: Schema }, parentSchema: Schema) {
+    compile(schemas: { [key: string]: Schema }, _parentSchema: any) {
+      const parentSchema: Schema = _parentSchema;
       const compiled: { [key: string]: ValidateFunction | null } = {};
       const schemaMap: { [key: string]: Schema } = {};
       for (const value of Object.keys(schemas)) {
@@ -22,12 +24,12 @@ export const ajvEnableDiscriminatorMap = (ajv: Ajv, loader: JsonLoader) => {
       const validated = new WeakSet<Schema>();
       const allowedValues = Object.keys(schemas);
 
-      return function v(this: any, data: any, dataPath?: string) {
+      return function v(this: any, data: any, dataCxt) {
         if (data === null || data === undefined || typeof data !== "object") {
           // Should be validated by other schema property.
           return true;
         }
-        dataPath = dataPath ?? "";
+        const dataPath = dataCxt?.instancePath ?? "";
         const discriminatorValue = data[discriminator];
         const validate =
           discriminatorValue !== undefined && discriminatorValue !== null
@@ -47,13 +49,17 @@ export const ajvEnableDiscriminatorMap = (ajv: Ajv, loader: JsonLoader) => {
             {
               keyword: "discriminatorMap",
               data,
-              dataPath,
-              params: { allowedValues, discriminatorValue },
+              instancePath: dataPath,
+              params: {
+                allowedValues,
+                discriminatorValue,
+                schemaPath: "/discriminator",
+                schema: schemas,
+                data,
+              },
               schemaPath: "/discriminator",
               schema: schemas,
               parentSchema,
-              _realSchema: schemas,
-              _realData: data,
             } as ErrorObject,
           ];
           return false;
@@ -62,10 +68,11 @@ export const ajvEnableDiscriminatorMap = (ajv: Ajv, loader: JsonLoader) => {
           const valid = validate.call(this, data);
           if (!valid && validate.errors) {
             for (const err of validate.errors) {
-              err.dataPath = dataPath + err.dataPath;
-              if ((err as any)._realSchema === undefined) {
-                (err as any)._realSchema = err.schema;
-                (err as any)._realData = err.data;
+              err.instancePath = dataPath + err.instancePath;
+              if (err.params.schemaPath === undefined) {
+                err.params.schemaPath = err.schemaPath;
+                err.params.schema = err.schema;
+                err.params.data = err.data;
               }
             }
             errors.push(...validate.errors);
@@ -84,13 +91,16 @@ export const ajvEnableDiscriminatorMap = (ajv: Ajv, loader: JsonLoader) => {
               errors.push({
                 keyword: "additionalProperties",
                 data,
-                dataPath,
-                params: { additionalProperty: key },
+                instancePath: dataPath,
+                params: {
+                  additionalProperty: key,
+                  schemaPath: "/additionalProperties",
+                  schema: false,
+                  data,
+                },
                 schemaPath: "/additionalProperties",
                 schema: false,
                 parentSchema,
-                _realSchema: false,
-                _realData: data,
               } as ErrorObject);
             }
           }

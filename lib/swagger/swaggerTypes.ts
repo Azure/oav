@@ -16,6 +16,7 @@ import {
   xmsAzureResource,
   xmsLongRunningOperationOptions,
   xmsLongRunningOperationOptionsField,
+  xmsSecret,
 } from "../util/constants";
 import { $id } from "./jsonLoader";
 
@@ -224,6 +225,7 @@ export interface Schema extends BaseSchema {
   required?: string[];
   propertyNames?: Schema;
   [xmsAzureResource]?: boolean;
+  [xmsSecret]?: boolean;
 
   // Nullable support
   [xNullable]?: boolean;

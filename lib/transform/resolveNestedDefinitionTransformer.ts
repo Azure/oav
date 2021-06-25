@@ -8,7 +8,7 @@ const visited = new WeakSet<Schema>();
 
 export const resolveNestedDefinitionTransformer: SpecTransformer = {
   type: TransformerType.Spec,
-  transform(spec, { jsonLoader, objSchemas, arrSchemas, primSchemas, allParams }) {
+  transform(spec, { jsonLoader, objSchemas, arrSchemas, primSchemas, allParams, allSpecs }) {
     const visitNestedDefinitions = (s: Schema | undefined, ref?: string) => {
       if (s === undefined || s === null || typeof s !== "object") {
         return;
@@ -83,5 +83,7 @@ export const resolveNestedDefinitionTransformer: SpecTransformer = {
         spec.parameters[key][refSelfSymbol] = `${spec[$id]}#/parameters/${key}`;
       }
     }
+
+    allSpecs.push(spec);
   },
 };

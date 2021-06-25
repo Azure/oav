@@ -1,5 +1,5 @@
 import { JsonLoader } from "../swagger/jsonLoader";
-import { Parameter, refSelfSymbol, Schema } from "../swagger/swaggerTypes";
+import { Parameter, refSelfSymbol, Schema, SwaggerSpec } from "../swagger/swaggerTypes";
 import { SchemaValidator } from "../swaggerValidator/schemaValidator";
 import { GlobalTransformer, sortTransformers, SpecTransformer, Transformer } from "./transformer";
 
@@ -15,6 +15,7 @@ export interface TransformContext {
 
   specTransformers: SpecTransformer[];
   globalTransformers: GlobalTransformer[];
+  allSpecs: SwaggerSpec[];
 }
 
 export const getTransformContext = (
@@ -30,6 +31,7 @@ export const getTransformContext = (
     primSchemas: [],
     allParams: [],
     baseSchemas: new Set(),
+    allSpecs: [],
     ...sortTransformers(transformers.filter(Boolean) as Transformer[]),
   };
 };

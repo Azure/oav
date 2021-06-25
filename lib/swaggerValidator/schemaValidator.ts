@@ -1,3 +1,4 @@
+import { JsonLoader } from "../swagger/jsonLoader";
 import { Schema } from "../swagger/swaggerTypes";
 import { strTemplate } from "../util/strTemplate";
 import { ExtendedErrorCode, SourceLocation } from "../util/validationError";
@@ -6,6 +7,7 @@ export interface SchemaValidateContext {
   isResponse?: boolean;
   includeErrors?: ExtendedErrorCode[];
   statusCode?: string;
+  jsonLoader?: JsonLoader;
 }
 
 export interface SchemaValidateIssue {

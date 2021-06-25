@@ -15,6 +15,7 @@ import {
   SourceLocation,
 } from "../util/validationError";
 import { extractPathParamValue } from "../transform/pathRegexTransformer";
+import { JsonLoader } from "../swagger/jsonLoader";
 import {
   LiveValidationIssue,
   LiveValidatorLoggingLevels,
@@ -59,6 +60,7 @@ export interface LiveResponse {
 export const validateSwaggerLiveRequest = async (
   request: LiveRequest,
   info: OperationContext,
+  jsonLoader: JsonLoader,
   loader?: LiveValidatorLoader,
   includeErrors?: ExtendedErrorCode[],
   logging?: (
@@ -107,7 +109,7 @@ export const validateSwaggerLiveRequest = async (
   const headers = transformLiveHeader(request.headers ?? {}, operation);
   validateContentType(operation.consumes!, headers, true, result);
 
-  const ctx = { isResponse: false, includeErrors };
+  const ctx = { isResponse: false, includeErrors, jsonLoader };
   const errors = validate(ctx, {
     path: pathParam,
     body: transformBodyValue(body, operation),
@@ -122,6 +124,7 @@ export const validateSwaggerLiveRequest = async (
 export const validateSwaggerLiveResponse = async (
   response: LiveResponse,
   info: OperationContext,
+  jsonLoader: JsonLoader,
   loader?: LiveValidatorLoader,
   includeErrors?: ExtendedErrorCode[],
   isArmCall?: boolean,
@@ -190,6 +193,7 @@ export const validateSwaggerLiveResponse = async (
     includeErrors,
     statusCode,
     httpMethod: operation._method,
+    jsonLoader,
   };
   const errors = validate(ctx, {
     headers,

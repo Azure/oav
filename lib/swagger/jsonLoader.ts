@@ -3,6 +3,7 @@ import { Json, parseJson } from "@azure-tools/openapi-tools-common";
 import { safeLoad as parseYaml } from "js-yaml";
 import { default as jsonPointer } from "json-pointer";
 import { inject, injectable } from "inversify";
+import { default as stableStringify } from "fast-json-stable-stringify";
 import { xmsExamples } from "../util/constants";
 import { getLazyBuilder } from "../util/lazyBuilder";
 import { TYPES } from "../inversifyUtils";
@@ -27,11 +28,19 @@ interface FileCache {
   mockName: string;
 }
 
-export const $id = "id";
+export const $id = "$id";
+const modelCacheMockName = "_";
 
 @injectable()
 export class JsonLoader implements Loader<Json> {
   private mockNameMap: { [mockName: string]: string } = {};
+  private modelCache: { [$id]: string; definitions: { [modelName: string]: any } } = {
+    [$id]: modelCacheMockName,
+    definitions: {},
+  };
+  private modelStringifyToModelCacheKey = new Map<string, string>();
+  private modelToCacheKey = new Map<any, string>();
+  private globalModelCacheKeyId = 0;
   private globalMockNameId = 0;
 
   private loadedFiles: any[] = [];
@@ -49,7 +58,7 @@ export class JsonLoader implements Loader<Json> {
     cache.resolved = fileContent;
     (fileContent as any)[$id] = cache.mockName;
     if (cache.skipResolveRef !== true) {
-      fileContent = await this.resolveRef(fileContent, ["$"], fileContent, cache.filePath, false);
+      fileContent = await this.resolveRef(fileContent, ["$"], fileContent, cache, false);
     }
     this.loadedFiles.push(fileContent);
     return fileContent;
@@ -67,6 +76,13 @@ export class JsonLoader implements Loader<Json> {
       supportYaml: false,
     });
     this.skipResolveRefKeys = new Set(opts.skipResolveRefKeys);
+    this.modelCache[$id] = modelCacheMockName;
+    this.mockNameMap[modelCacheMockName] = modelCacheMockName;
+    this.fileCache.set(modelCacheMockName, {
+      filePath: modelCacheMockName,
+      mockName: modelCacheMockName,
+      resolved: this.modelCache,
+    });
   }
 
   private parseFileContent(cache: FileCache, fileString: string): any {
@@ -112,6 +128,9 @@ export class JsonLoader implements Loader<Json> {
   }
 
   public resolveRefObj<T>(object: T): T {
+    if (object === undefined) {
+      return object;
+    }
     let refObj = object;
 
     while (isRefLike(refObj)) {
@@ -136,38 +155,56 @@ export class JsonLoader implements Loader<Json> {
     return this.mockNameMap[mockName];
   }
 
+  private async resolveRefLike(
+    object: { $ref: string },
+    rootObject: Json,
+    fileCache: FileCache,
+    skipResolveChildRef: boolean
+  ): Promise<{ $ref: string; referredObj?: any }> {
+    const ref = object.$ref;
+    const sp = ref.split("#");
+    if (sp.length > 2) {
+      throw new Error("ref format error multiple #");
+    }
+
+    const [refFilePath, refObjPath] = sp;
+    if (refFilePath === "") {
+      // Local reference
+      const referredObj = jsonPointer.get(rootObject as {}, refObjPath);
+      const mockName = (rootObject as any)[$id];
+      return { $ref: `${mockName}#${refObjPath}`, referredObj };
+    }
+    const refObj = await this.load(
+      pathJoin(pathDirname(fileCache.filePath), refFilePath),
+      skipResolveChildRef
+    );
+    const refMockName = (refObj as any)[$id];
+    if (refObjPath !== undefined) {
+      const referredObj = jsonPointer.get(refObj as {}, refObjPath);
+      return { $ref: `${refMockName}#${refObjPath}`, referredObj };
+    } else {
+      return { $ref: refMockName };
+    }
+  }
+
   private async resolveRef(
     object: Json,
     pathArr: string[],
     rootObject: Json,
-    relativeFilePath: string,
+    fileCache: FileCache,
     skipResolveChildRef: boolean
   ): Promise<Json> {
     if (isRefLike(object)) {
-      const ref = object.$ref;
-      const sp = ref.split("#");
-      if (sp.length > 2) {
-        throw new Error("ref format error multiple #");
-      }
-
-      const [refFilePath, refObjPath] = sp;
-      if (refFilePath === "") {
-        // Local reference
-        jsonPointer.get(rootObject as {}, refObjPath);
-        const mockName = (rootObject as any)[$id];
-        return { $ref: `${mockName}#${refObjPath}` };
-      }
-      const refObj = await this.load(
-        pathJoin(pathDirname(relativeFilePath), refFilePath),
+      const { $ref } = await this.resolveRefLike(
+        object,
+        rootObject,
+        fileCache,
         skipResolveChildRef
       );
-      const refMockName = (refObj as any)[$id];
-      if (refObjPath !== undefined) {
-        jsonPointer.get(refObj as {}, refObjPath);
-        return { $ref: `${refMockName}#${refObjPath}` };
-      } else {
-        return { $ref: refMockName };
-      }
+      return { $ref };
+      // }
+      // const modelCacheKey = this.getModelCacheKey(referredObj);
+      // return { $ref: `${modelCacheMockName}#/definitions/${modelCacheKey}` };
     }
 
     if (Array.isArray(object)) {
@@ -178,7 +215,7 @@ export class JsonLoader implements Loader<Json> {
             item,
             pathArr.concat([idx.toString()]),
             rootObject,
-            relativeFilePath,
+            fileCache,
             skipResolveChildRef
           );
           if (newRef !== item) {
@@ -203,7 +240,7 @@ export class JsonLoader implements Loader<Json> {
             item,
             pathArr.concat([key]),
             rootObject,
-            relativeFilePath,
+            fileCache,
             skipResolveChildRef || this.skipResolveRefKeys.has(key)
           );
           if (newRef !== item) {
@@ -223,6 +260,36 @@ export class JsonLoader implements Loader<Json> {
     const mockName = `_${id.toString(36)}`;
     this.mockNameMap[mockName] = filePath;
     return mockName;
+  }
+
+  public preserveModelCacheKey(model: any) {
+    const id = this.globalModelCacheKeyId++;
+    const cacheKey = id.toString(36);
+    this.modelCache.definitions[cacheKey] = model;
+    return cacheKey;
+  }
+
+  public getModelCacheKey(model: any) {
+    let cacheKey = this.modelToCacheKey.get(model);
+    if (cacheKey !== undefined) {
+      return cacheKey;
+    }
+
+    const modelStringify = stableStringify(model);
+    cacheKey = this.modelStringifyToModelCacheKey.get(modelStringify);
+    if (cacheKey !== undefined) {
+      this.modelToCacheKey.set(model, cacheKey);
+      return cacheKey;
+    }
+
+    cacheKey = this.preserveModelCacheKey(model);
+    this.modelToCacheKey.set(model, cacheKey);
+    this.modelStringifyToModelCacheKey.set(modelStringify, cacheKey);
+    return cacheKey;
+  }
+
+  public refObjToModelCache(cacheKey: string) {
+    return { $ref: `${modelCacheMockName}#/definitions/${cacheKey}` };
   }
 }
 

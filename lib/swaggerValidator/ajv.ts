@@ -1,68 +1,74 @@
-import { Ajv, CompilationContext } from "ajv";
+import { Code, default as Ajv, _ } from "ajv";
 import { JsonLoader } from "../swagger/jsonLoader";
 import { Schema } from "../swagger/swaggerTypes";
 import { xmsAzureResource, xmsMutability, xmsSecret } from "../util/constants";
 import { ajvEnableDiscriminatorMap } from "./ajvDiscriminatorMap";
 
+const cxtIsResponse = _`this.isResponse`;
+const cxtHttpMethod = _`this.httpMethod`;
+
 export const ajvEnableReadOnlyAndXmsMutability = (ajv: Ajv) => {
   ajv.removeKeyword("readOnly");
-  ajv.addKeyword("readOnly", {
+  ajv.addKeyword({
     metaSchema: { type: "boolean" },
-    inline: (
-      it: CompilationContext,
-      _keyword: string,
-      isReadOnly: boolean,
-      parentSchema: Schema
-    ) => {
-      if (parentSchema?.[xmsMutability] !== undefined) {
-        return "1";
+    keyword: "readOnly",
+    code: (cxt) => {
+      if (cxt.parentSchema[xmsMutability] !== undefined) {
+        return;
       }
-      const data = `data${it.dataLevel || ""}`;
-      return isReadOnly ? `this.isResponse || ${data} === null || ${data} === undefined` : "1";
+
+      const isReadonly = cxt.schema;
+      if (isReadonly) {
+        cxt.pass(_`${cxtIsResponse} || ${cxt.data} === null || ${cxt.data} === undefined`);
+      }
     },
   });
 
-  ajv.addKeyword(xmsMutability, {
+  ajv.addKeyword({
     metaSchema: { type: "array", items: { enum: ["create", "update", "read"] } } as Schema,
-    inline: (
-      it: CompilationContext,
-      _keyword: string,
-      mutability: Exclude<Schema[typeof xmsMutability], undefined>
-    ) => {
+    keyword: xmsMutability,
+    code: (cxt) => {
+      const mutability: Exclude<Schema[typeof xmsMutability], undefined> = cxt.schema;
       const validInRequest = mutability.includes("create") || mutability.includes("update");
       const validInResponse = mutability.includes("read");
       if (validInRequest && validInResponse) {
-        return "1";
+        return;
       }
       if (!validInRequest && !validInResponse) {
         throw new Error(`Invalid ${xmsMutability} value: ${JSON.stringify(mutability)}`);
       }
-      const data = `data${it.dataLevel || ""}`;
-      return `${
-        validInRequest ? "!" : ""
-      }this.isResponse || ${data} === null || ${data} === undefined`;
+      const couldHave: Code = validInRequest ? _`!${cxtIsResponse}` : cxtIsResponse;
+      return cxt.pass(_`${couldHave} || ${cxt.data} === null || ${cxt.data} === undefined`);
     },
   });
 };
 
 export const ajvEnableXmsSecret = (ajv: Ajv) => {
-  ajv.addKeyword(xmsSecret, {
+  ajv.addKeyword({
     metaSchema: { type: "boolean" } as Schema,
-    inline: (it: CompilationContext, _keyword: string, isSecret: boolean) => {
-      const data = `data${it.dataLevel || ""}`;
-      return isSecret ? `!this.isResponse || ${data} === null || ${data} === undefined` : "1";
+    keyword: xmsSecret,
+    code: (cxt) => {
+      const isSecret = cxt.schema;
+      if (!isSecret) {
+        return;
+      }
+      cxt.pass(_`!${cxtIsResponse} || ${cxt.data} === null || ${cxt.data} === undefined`);
     },
   });
 };
 
 export const ajvEnableXmsAzureResource = (ajv: Ajv) => {
-  ajv.addKeyword(xmsAzureResource, {
+  ajv.addKeyword({
     metaSchema: { type: "boolean" } as Schema,
-    inline: (it: CompilationContext, _keyword: string, isResource: boolean) => {
-      const data = `data${it.dataLevel || ""}`;
-      return isResource
-        ? `!(this.isResponse && (this.httpMethod === 'get' || this.httpMethod === 'put')) || (${data}.id !== null && ${data}.id !== undefined)`
-        : "1";
+    keyword: xmsAzureResource,
+    code: (cxt) => {
+      const isResource = cxt.schema;
+      if (!isResource) {
+        return;
+      }
+      cxt.pass(
+        _`!${cxtIsResponse} || (${cxtHttpMethod} !== 'get' && ${cxtHttpMethod} !== 'put') || (${cxt.data}.id !== null && ${cxt.data}.id !== undefined)`
+      );
     },
   });
 };
@@ -70,7 +76,7 @@ export const ajvEnableXmsAzureResource = (ajv: Ajv) => {
 export const ajvEnableInt32AndInt64Format = (ajv: Ajv) => {
   ajv.addFormat("int32", {
     type: "number",
-    validate: (x) => x % 1 === 0 && x >= -2_147_483_648 && x <= 2_147_483_647,
+    validate: (x: number) => x % 1 === 0 && x >= -2_147_483_648 && x <= 2_147_483_647,
   });
 
   // TODO int64 range exceed Number.MAX_SAFE_INTEGER so we will lost precision when JSON.parse
@@ -78,14 +84,14 @@ export const ajvEnableInt32AndInt64Format = (ajv: Ajv) => {
   const int64Min = BigInt(2) ** BigInt(63) * BigInt(-1);
   ajv.addFormat("int64", {
     type: "number",
-    validate: (x) => x % 1 === 0 && x >= int64Min && x <= int64Max,
+    validate: (x: number) => x % 1 === 0 && x >= int64Min && x <= int64Max,
   });
 };
 
 export const ajvEnableUnixTimeFormat = (ajv: Ajv) => {
   ajv.addFormat("unixtime", {
     type: "number",
-    validate: (x) => x % 1 === 0,
+    validate: (x: number) => x % 1 === 0,
   });
 };
 
@@ -98,7 +104,7 @@ export const ajvAddFormatsDefaultValidation = (
     ajv.addFormat(format, {
       type,
       validate: () => true,
-    });
+    } as any);
   }
 };
 

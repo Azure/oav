@@ -179,7 +179,7 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
     if (!this.validateTestResourceFile(filePayload)) {
       const err = this.validateTestResourceFile.errors![0];
       throw new Error(
-        `Failed to validate test resource file ${filePath}: ${err.dataPath} ${err.message}`
+        `Failed to validate test resource file ${filePath}: ${err.instancePath} ${err.message}`
       );
     }
     const rawTestDef = filePayload as RawTestDefinitionFile;

@@ -1,3 +1,4 @@
+import { allJsonSchemaTypes } from "./nullableTransformer";
 import { GlobalTransformer, TransformerType } from "./transformer";
 
 export const pureObjectTransformer: GlobalTransformer = {
@@ -9,7 +10,8 @@ export const pureObjectTransformer: GlobalTransformer = {
         (sch.properties === undefined || Object.keys(sch.properties).length === 0) &&
         sch.additionalProperties === undefined
       ) {
-        delete sch.type;
+        // delete sch.type;
+        sch.type = allJsonSchemaTypes;
       }
     }
   },

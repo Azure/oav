@@ -4,6 +4,8 @@ import { xNullable } from "../util/constants";
 import { allOfTransformer } from "./allOfTransformer";
 import { GlobalTransformer, TransformerType } from "./transformer";
 
+export const allJsonSchemaTypes = ["object", "array", "string", "number"] as any;
+
 export const nullableTransformer: GlobalTransformer = {
   type: TransformerType.Global,
   after: [allOfTransformer],
@@ -38,6 +40,9 @@ export const nullableTransformer: GlobalTransformer = {
     for (const param of allParams) {
       if (param.in === "query" && param.allowEmptyValue) {
         param.nullable = true;
+        if (param.type === undefined) {
+          param.type = "string";
+        }
       }
     }
   },
@@ -66,6 +71,9 @@ const transformNullable = (s: Schema, jsonLoader: JsonLoader, defaultNullable?: 
     } as Schema;
   } else {
     sch.nullable = true;
+    if (sch.type === undefined) {
+      sch.type = allJsonSchemaTypes;
+    }
     return sch;
   }
 };
