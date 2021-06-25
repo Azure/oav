@@ -1,3 +1,5 @@
+import { ArmTemplate } from "./testResourceTypes";
+
 interface ScriptTemplate {
   text: string;
 }
@@ -12,7 +14,7 @@ const ARMDeploymentStatusAssertion: ScriptTemplate = {
 
 const DetailResponseLog: ScriptTemplate = {
   text: `
-  console.log(pm.response.text())
+  console.log(pm.response.text());
   `,
 };
 
@@ -20,6 +22,7 @@ interface TestScriptParameter {
   name: string;
   types: TestScriptType[];
   variables?: Map<string, string>;
+  armTemplate?: ArmTemplate;
 }
 
 export type TestScriptType =
@@ -27,7 +30,8 @@ export type TestScriptType =
   | "ResponseDataAssertion"
   | "DetailResponseLog"
   | "OverwriteVariables"
-  | "ARMDeploymentStatusAssertion";
+  | "ARMDeploymentStatusAssertion"
+  | "ExtractARMTemplateOutput";
 
 export class PostmanTestScript {
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
@@ -49,13 +53,24 @@ export class PostmanTestScript {
     if (parameter.types.includes("ARMDeploymentStatusAssertion")) {
       ret += ARMDeploymentStatusAssertion.text;
     }
+    if (parameter.types.includes("ExtractARMTemplateOutput")) {
+      ret += this.generateARMTemplateOutputScript(parameter.armTemplate!);
+    }
     return ret + end;
   }
 
   private generateOverWriteVariablesScript(variables: Map<string, string>): string {
     let ret = "";
     for (const [k, v] of variables) {
-      ret += `pm.environment.set("${k}", pm.response.json().${v})`;
+      ret += `pm.environment.set("${k}", pm.response.json().${v});`;
+    }
+    return ret;
+  }
+
+  private generateARMTemplateOutputScript(armTemplate: ArmTemplate): string {
+    let ret = "";
+    for (const key of Object.keys(armTemplate.outputs || {})) {
+      ret += `pm.environment.set("${key}", pm.response.json().properties.outputs.${key}.value);`;
     }
     return ret;
   }
