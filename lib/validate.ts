@@ -285,13 +285,13 @@ export async function validateTrafficInSpec(
 ): Promise<Array<LiveValidationIssue | Error>>{
   if (!fs.existsSync(specPath)) {
     const error = new Error(`Can not find spec file, please check your specPath parameter.`)
-    console.error(error)
+    log.error(error)
     return [error]
   }
 
   if (!fs.existsSync(trafficPath)) {
     const error = new Error(`Can not find traffic file, please check your trafficPath parameter.`)
-    console.error(error)
+    log.error(error)
     return [error]
   }
 
@@ -326,16 +326,16 @@ export async function validateTrafficInSpec(
 
       if (errors.length > 0) {
         for (let error of errors) {
-          console.error(JSON.stringify(error))
+          log.error(JSON.stringify(error))
         }
       } else {
-        console.info('Validation compelete, no errors are detected.')
+        log.info('No errors were found.')
       }
 
       return errors
     })
   } catch (error) {
-    console.error(error)
+    log.error(error)
     return [error]
   }
 }
