@@ -335,7 +335,7 @@ export async function validateTrafficInSpec(
       return errors
     })
   } catch (error) {
-    log.error(error)
+    log.error(JSON.stringify(error))
     throw error
   }
 }
