@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 6/25 2021 2.5.8
+
+- support extract armTemplate deployment output to variables
+
 ## 6/22 2021 2.5.7
 
 - small fix for passing validation-level

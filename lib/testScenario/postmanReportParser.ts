@@ -77,7 +77,7 @@ export class NewmanReportParser {
       headers: [],
       body: "",
     };
-    ret.url = req.url.getRaw();
+    ret.url = req.url.toString();
     ret.headers = this.parseHeader(req.headers.toJSON());
     ret.method = req.method;
     ret.body = req.body?.toString() || "";
