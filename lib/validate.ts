@@ -283,14 +283,14 @@ export async function validateTrafficInSpec(
   trafficPath: string,
   options: Options
 ): Promise<Array<LiveValidationIssue | Error>>{
-  if (!specPath) {
-    const error = new Error(`specPath parameter can't be empty, must provide specPath parameter.`)
+  if (!fs.existsSync(specPath)) {
+    const error = new Error(`Can not find spec file, please check your specPath parameter.`)
     console.error(error)
     return [error]
   }
 
-  if (!trafficPath) {
-    const error = new Error(`trafficPath parameter can't be empty, must provide trafficPath parameter.`)
+  if (!fs.existsSync(trafficPath)) {
+    const error = new Error(`Can not find traffic file, please check your trafficPath parameter.`)
     console.error(error)
     return [error]
   }
