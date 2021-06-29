@@ -307,7 +307,8 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
   private addTestScript(
     item: Item,
     types: TestScriptType[] = ["DetailResponseLog", "StatusCodeAssertion"],
-    overwriteVariables?: Map<string, string>
+    overwriteVariables?: Map<string, string>,
+    armTemplate?: ArmTemplate
   ) {
     if (overwriteVariables !== undefined) {
       types.push("OverwriteVariables");
@@ -325,6 +326,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
           name: "response status code assertion.",
           types: types,
           variables: overwriteVariables,
+          armTemplate,
         }),
       },
     });
@@ -341,13 +343,11 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     this.auth(stepEnv.env);
     const item = new Item();
     item.name = step.step;
-    const path =
-      "/subscriptions/:subscriptionId/resourcegroups/:resourceGroupName/providers/Microsoft.Resources/deployments/{{deploymentName}}?api-version=2020-06-01";
+    const path = `/subscriptions/:subscriptionId/resourcegroups/:resourceGroupName/providers/Microsoft.Resources/deployments/${step.step}?api-version=2020-06-01`;
     const urlVariables: VariableDefinition[] = [
       { key: "subscriptionId", value: "{{subscriptionId}}" },
       { key: "resourceGroupName", value: "{{resourceGroupName}}" },
     ];
-    this.collectionEnv.set("deploymentName", stepEnv.env.get("deploymentName"), "string");
     item.request = new Request({
       name: step.step,
       method: "put",
@@ -386,6 +386,15 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     );
     this.collection.items.add(item);
     this.addAsLongRunningOperationItem(item, true);
+    const generatedGetOperationItem = this.generatedGetOperationItem(
+      item.name,
+      item.request.url.toString(),
+      step.step,
+      "put",
+      ["DetailResponseLog", "ExtractARMTemplateOutput"],
+      armTemplate
+    );
+    this.collection.items.add(generatedGetOperationItem);
   }
 
   private addAuthorizationHeader(item: Item) {
@@ -440,7 +449,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
       collectionPath
     );
     const values: string[] = [];
-    for (const [k, v] of Object.entries(this.collectionEnv.variables())) {
+    for (const [k, v] of Object.entries(this.collectionEnv.syncVariablesTo())) {
       if (this.dataMasker.maybeSecretKey(k)) {
         values.push(v as string);
       }
@@ -491,7 +500,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
       .on("done", async (_err, _summary) => {
         const keys = await this.swaggerAnalyzer.getAllSecretKey();
         const values: string[] = [];
-        for (const [k, v] of Object.entries(this.collectionEnv.variables())) {
+        for (const [k, v] of Object.entries(this.collectionEnv.syncVariablesTo())) {
           if (this.dataMasker.maybeSecretKey(k)) {
             values.push(v as string);
           }
@@ -538,7 +547,9 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     name: string,
     url: string,
     step: string,
-    prevMethod: string = "put"
+    prevMethod: string = "put",
+    scriptTypes: TestScriptType[] = ["DetailResponseLog"],
+    armTemplate?: ArmTemplate
   ): Item {
     const item = new Item({
       name: `${generatedPostmanItem(generatedGet(name))}`,
@@ -553,11 +564,10 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
       step: step,
     });
     this.addAuthorizationHeader(item);
-    const scriptTypes: TestScriptType[] = ["DetailResponseLog"];
     if (prevMethod !== "delete") {
       scriptTypes.push("StatusCodeAssertion");
     }
-    this.addTestScript(item, scriptTypes);
+    this.addTestScript(item, scriptTypes, undefined, armTemplate);
     return item;
   }
 

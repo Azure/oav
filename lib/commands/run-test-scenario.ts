@@ -122,6 +122,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       enableBlobUploader: argv.uploadBlob,
       blobConnectionString: process.env.blobConnectionString || "",
       baseUrl: argv.armEndpoint,
+      validationLevel: argv.level,
     };
     const generator = inversifyGetInstance(PostmanCollectionGenerator, opt);
     await generator.GenerateCollection();
