@@ -325,8 +325,12 @@ export async function validateTrafficInSpec(
       }
 
       if (errors.length > 0) {
-        for (let error of errors) {
-          log.error(JSON.stringify(error))
+        if (o.pretty) {
+          prettyPrint(errors, "error")
+        } else {
+          for (let error of errors) {
+            log.error(JSON.stringify(error))
+          }
         }
       } else {
         log.info('No errors were found.')
