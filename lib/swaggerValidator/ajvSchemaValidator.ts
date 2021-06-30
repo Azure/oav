@@ -52,6 +52,7 @@ export class AjvSchemaValidator implements SchemaValidator {
       discriminator: false,
       validateSchema: false,
       jsPropertySyntax: true,
+      unicodeRegExp: false,
       code: {
         // NEW
         es5: false,

@@ -5,10 +5,10 @@ const main = async () => {
   const liveValidator = new LiveValidator(
     {
       directory: "/home/htc/azure-rest-api-specs",
-      swaggerPathsPattern: ["specification/**/*.json"],
+      swaggerPathsPattern: ["specification/**/resource-manager/**/*.json"],
       loadValidatorInInitialize: true,
       loadValidatorInBackground: false,
-      // useUnifiedModelCache: true,
+      useUnifiedModelCache: true,
       useJsonParser: false,
     },
     (msg, level, _meta) => {

@@ -10,7 +10,13 @@ export const unifyCacheTransformer: GlobalTransformer = {
     const visited = new Map<Schema, string>();
 
     const visitNestedDefinitions = (s: Schema | undefined): Schema | undefined => {
-      if (s === undefined || s === null || typeof s !== "object") {
+      if (
+        s === undefined ||
+        s === null ||
+        typeof s !== "object" ||
+        Array.isArray(s) ||
+        s.type === "file"
+      ) {
         return s;
       }
       const schema = jsonLoader.resolveRefObj(s);
