@@ -191,7 +191,7 @@ export class OperationSearcher {
 
     this.logging(
       "Complete operation search",
-      LiveValidatorLoggingLevels.info,
+      LiveValidatorLoggingLevels.debug,
       LiveValidatorLoggingTypes.perfTrace,
       "Oav.OperationSearcher.Search",
       Date.now() - startTime,

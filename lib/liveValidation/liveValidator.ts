@@ -391,7 +391,7 @@ export class LiveValidator {
     const elapsedTime = Date.now() - startTime;
     this.logging(
       `Complete request validation`,
-      LiveValidatorLoggingLevels.info,
+      LiveValidatorLoggingLevels.debug,
       LiveValidatorLoggingTypes.perfTrace,
       "Oav.liveValidator.validateLiveRequest",
       elapsedTime,
@@ -468,7 +468,7 @@ export class LiveValidator {
     const elapsedTime = Date.now() - startTime;
     this.logging(
       `Complete response validation`,
-      LiveValidatorLoggingLevels.info,
+      LiveValidatorLoggingLevels.debug,
       LiveValidatorLoggingTypes.perfTrace,
       "Oav.liveValidator.validateLiveResponse",
       elapsedTime,
