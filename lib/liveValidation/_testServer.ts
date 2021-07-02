@@ -23,13 +23,13 @@ const main = async () => {
     {
       directory: "/home/htc/azure-rest-api-specs",
       swaggerPathsPattern: ["specification/**/resource-manager/**/*.json"],
-      loadValidatorInInitialize: true,
-      loadValidatorInBackground: false,
+      loadValidatorInInitialize: false,
+      loadValidatorInBackground: true,
       useUnifiedModelCache: true,
       useJsonParser: false,
     },
     (msg, level, _meta) => {
-      if (level !== "debug") {
+      if (level !== "debug" && level !== "info") {
         console.log(level, msg);
       }
     }

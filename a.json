@@ -1,0 +1,53 @@
+{
+  "liveRequest": {
+    "headers": {
+      "cookie": "<masked>",
+      "host": "management.azure.com",
+      "request-Id": "<masked>",
+      "traceparent": "<masked>"
+    },
+    "method": "GET",
+    "url": "/subscriptions/95b43991-050c-4843-9597-b86b0a1400e9/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c?api-version=2015-07-01",
+    "query": { "api-version": "2015-07-01" }
+  },
+  "liveResponse": {
+    "statusCode": "200",
+    "headers": {
+      "pragma": "no-cache",
+      "x-ms-request-id": "8f68eaef-cbcb-4a8e-b3d9-e351a33e997c",
+      "x-Content-Type-Options": "<masked>",
+      "strict-Transport-Security": "<masked>",
+      "cache-Control": "no-cache",
+      "date": "Wed, 23 Jun 2021 11:00:28 GMT",
+      "set-Cookie": "<masked>"
+    },
+    "body": {
+      "properties": {
+        "roleName": "<masked>",
+        "type": "BuiltInRole",
+        "description": "<masked>",
+        "assignableScopes": ["a"],
+        "permissions": [
+          {
+            "actions": ["a"],
+            "notActions": [
+              "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            ]
+          }
+        ],
+        "createdOn": "2015-02-02T21:55:09.8806423Z",
+        "updatedOn": "2020-12-04T00:34:54.8501087Z",
+        "createdBy": null,
+        "updatedBy": null
+      },
+      "id": "<masked>",
+      "type": "Microsoft.Authorization/roleDefinitions",
+      "name": "<masked>"
+    }
+  }
+}

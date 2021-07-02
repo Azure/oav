@@ -381,7 +381,7 @@ export const ajvErrorCodeToOavErrorCode = (
       break;
 
     case "type":
-      (params as any).type = (params as any).type.replace(",null", "");
+      (params as any).type = (params as any).type?.replace(",null", "");
       data = schemaType(data);
       break;
 
