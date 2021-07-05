@@ -181,7 +181,7 @@ export const validateSwaggerLiveResponse = async (
   if (rsp.schema !== undefined) {
     validateContentType(operation.produces!, headers, false, result);
     if (isArmCall && realCode >= 200 && realCode < 300) {
-      validateLroOperation(operation, statusCode, headers, result);
+      validateLroOperation(operation, statusCode, headers, body, result);
     }
   }
 
@@ -325,30 +325,31 @@ const validateLroOperation = (
   operation: Operation,
   statusCode: string,
   headers: StringMap<string>,
+  body: StringMap<unknown> | undefined,
   result: LiveValidationIssue[]
 ) => {
   if (operation["x-ms-long-running-operation"] === true) {
     if (operation._method === "post") {
       if (statusCode === "202" || statusCode === "201") {
-        validateLroHeader(operation, headers, result);
+        validateLroHeader(operation, statusCode, headers, body, result);
       } else if (statusCode !== "200" && statusCode !== "204") {
         result.push(issueFromErrorCode("LRO_RESPONSE_CODE", { statusCode }, operation.responses));
       }
     } else if (operation._method === "patch") {
       if (statusCode === "202" || statusCode === "201") {
-        validateLroHeader(operation, headers, result);
+        validateLroHeader(operation, statusCode, headers, body, result);
       } else if (statusCode !== "200") {
         result.push(issueFromErrorCode("LRO_RESPONSE_CODE", { statusCode }, operation.responses));
       }
     } else if (operation._method === "delete") {
       if (statusCode === "202") {
-        validateLroHeader(operation, headers, result);
+        validateLroHeader(operation, statusCode, headers, body, result);
       } else if (statusCode !== "200" && statusCode !== "204") {
         result.push(issueFromErrorCode("LRO_RESPONSE_CODE", { statusCode }, operation.responses));
       }
     } else if (operation._method === "put") {
       if (statusCode === "202" || statusCode === "201") {
-        validateLroHeader(operation, headers, result);
+        validateLroHeader(operation, statusCode, headers, body, result);
       } else if (statusCode !== "200") {
         result.push(issueFromErrorCode("LRO_RESPONSE_CODE", { statusCode }, operation.responses));
       }
@@ -358,9 +359,25 @@ const validateLroOperation = (
 
 const validateLroHeader = (
   operation: Operation,
+  statusCode: string,
   headers: StringMap<string>,
+  body: StringMap<unknown> | undefined,
   result: LiveValidationIssue[]
 ) => {
+  if (statusCode === "201" && body?.["properties"] !== undefined) {
+    const properties = body.properties as any;
+    if (
+      properties &&
+      (properties.provisioningState === undefined ||
+        properties.provisioningState === "Succeeded" ||
+        properties.provisioningState === "Failed" ||
+        properties.provisioningState === "Canceled")
+    ) {
+      // Ignore LRO header check when it's sync call
+      return;
+    }
+  }
+
   if (
     (headers.location === undefined || headers.location === "") &&
     (headers["azure-AsyncOperation"] === undefined || headers["azure-AsyncOperation"] === "") &&

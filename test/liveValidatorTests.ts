@@ -798,6 +798,26 @@ describe("Live Validator", () => {
       expect(validationResult).toMatchSnapshot();
     });
 
+    it(`should not report error when LRO header is not returned in response in case of sync call`, async () => {
+      const options = {
+        directory: `${__dirname}/liveValidation/swaggers/`,
+        isPathCaseSensitive: false,
+        useRelativeSourceLocationUrl: true,
+        swaggerPathsPattern: [
+          "specification\\servicelinker\\resource-manager\\Microsoft.ServiceLinker\\**\\*.json",
+        ],
+        git: {
+          shouldClone: false,
+        },
+        isArmCall: true,
+      };
+      const liveValidator = new LiveValidator(options);
+      await liveValidator.initialize();
+      const payload = require(`${__dirname}/liveValidation/payloads/lro_responseheader_ignore_input.json`);
+      const validationResult = await liveValidator.validateLiveRequestResponse(payload);
+      expect(validationResult).toMatchSnapshot();
+    });
+
     it(`should return no errors for valid input with optional parameter body null`, async () => {
       const options = {
         directory: `${__dirname}/liveValidation/swaggers/`,
