@@ -18,4 +18,4 @@ export { ErrorWrapper } from "./errorWrapper";
 export { RequestValidationResult } from "./requestValidationResult";
 export { ResponseValidationResult } from "./responseValidationResult";
 export { ValidationResult } from "./validationResult";
-export { PotentialOperationsResult } from "./potentialOperationsResult"
+export { PotentialOperationsResult } from "./potentialOperationsResult";

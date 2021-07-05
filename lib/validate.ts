@@ -284,25 +284,25 @@ export async function validateTrafficInSpec(
   options: Options
 ): Promise<Array<LiveValidationIssue>>{
   if (!fs.existsSync(specPath)) {
-    const error = new Error(`Can not find spec file, please check your specPath parameter.`)
-    log.error(JSON.stringify(error))
-    throw error
+    const error = new Error(`Can not find spec file, please check your specPath parameter.`);
+    log.error(JSON.stringify(error));
+    throw error;
   }
 
   if (!fs.existsSync(trafficPath)) {
-    const error = new Error(`Can not find traffic file, please check your trafficPath parameter.`)
-    log.error(JSON.stringify(error))
-    throw error
+    const error = new Error(`Can not find traffic file, please check your trafficPath parameter.`);
+    log.error(JSON.stringify(error));
+    throw error;
   }
 
   try {
-    const trafficFile = require(trafficPath)
-    const specFileDirectory = path.dirname(specPath)
-    const swaggerPathsPattern = path.basename(specPath)
+    const trafficFile = require(trafficPath);
+    const specFileDirectory = path.dirname(specPath);
+    const swaggerPathsPattern = path.basename(specPath);
 
     return validate(options, async (o) => {
-      o.consoleLogLevel = log.consoleLogLevel
-      o.logFilepath = log.filepath
+      o.consoleLogLevel = log.consoleLogLevel;
+      o.logFilepath = log.filepath;
       const liveValidationOptions = {
         directory: specFileDirectory,
         swaggerPathsPattern: [swaggerPathsPattern],
@@ -311,36 +311,36 @@ export async function validateTrafficInSpec(
         }
       }
 
-      const validator = new LiveValidator(liveValidationOptions)
-      const errors: Array<LiveValidationIssue> = []
-      await validator.initialize()
-      const result = validator.validateLiveRequestResponse(trafficFile)
+      const validator = new LiveValidator(liveValidationOptions);
+      const errors: Array<LiveValidationIssue> = [];
+      await validator.initialize();
+      const result = validator.validateLiveRequestResponse(trafficFile);
     
       if (!result.requestValidationResult.isSuccessful) {
-        errors.push(...result.requestValidationResult.errors)
+        errors.push(...result.requestValidationResult.errors);
       }
 
       if (!result.responseValidationResult.isSuccessful) {
-        errors.push(...result.responseValidationResult.errors)
+        errors.push(...result.responseValidationResult.errors);
       }
 
       if (errors.length > 0) {
         if (o.pretty) {
-          prettyPrint(errors, "error")
+          prettyPrint(errors, "error");
         } else {
           for (let error of errors) {
-            log.error(JSON.stringify(error))
+            log.error(JSON.stringify(error));
           }
         }
       } else {
-        log.info('No errors were found.')
+        log.info('No errors were found.');
       }
 
-      return errors
+      return errors;
     })
   } catch (error) {
-    log.error(JSON.stringify(error))
-    throw error
+    log.error(JSON.stringify(error));
+    throw error;
   }
 }
 
