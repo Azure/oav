@@ -79,6 +79,11 @@ export const builder: yargs.CommandBuilder = {
     describe: "subscriptionId to run API test",
     string: true,
   },
+  cleanUp: {
+    describe: "whether delete resource group when all steps finished",
+    boolean: true,
+    default: true,
+  },
 };
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
@@ -123,6 +128,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       blobConnectionString: process.env.blobConnectionString || "",
       baseUrl: argv.armEndpoint,
       validationLevel: argv.level,
+      cleanUp: argv.cleanUp,
     };
     const generator = inversifyGetInstance(PostmanCollectionGenerator, opt);
     await generator.GenerateCollection();
