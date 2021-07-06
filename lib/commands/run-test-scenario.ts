@@ -79,6 +79,10 @@ export const builder: yargs.CommandBuilder = {
     describe: "subscriptionId to run API test",
     string: true,
   },
+  resourceGroup: {
+    describe: "resource group",
+    string: true,
+  },
   cleanUp: {
     describe: "whether delete resource group when all steps finished",
     boolean: true,
@@ -108,6 +112,10 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     }
     if (argv.subscriptionId !== undefined) {
       env.subscriptionId = argv.subscriptionId;
+    }
+
+    if (argv.resourceGroup !== undefined) {
+      env.resourceGroupName = argv.resourceGroup;
     }
     const opt: PostmanCollectionGeneratorOption = {
       name: `${resourceProvider}/${apiVersion}/${getFileNameFromPath(testScenarioFilePath)}`,
