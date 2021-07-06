@@ -23,6 +23,29 @@ Object {
 }
 `;
 
+exports[`Live Validator Initialize cache and validate should not report error when LRO header is not returned in response in case of sync call 1`] = `
+Object {
+  "requestValidationResult": Object {
+    "errors": Array [],
+    "isSuccessful": true,
+    "operationInfo": Object {
+      "apiVersion": "2021-01-01-privatepreview",
+      "operationId": "Linker_CreateOrUpdate",
+    },
+    "runtimeException": undefined,
+  },
+  "responseValidationResult": Object {
+    "errors": Array [],
+    "isSuccessful": true,
+    "operationInfo": Object {
+      "apiVersion": "2021-01-01-privatepreview",
+      "operationId": "Linker_CreateOrUpdate",
+    },
+    "runtimeException": undefined,
+  },
+}
+`;
+
 exports[`Live Validator Initialize cache and validate should report error in response for GET/PUT resource calls when id is not returned 1`] = `
 Object {
   "requestValidationResult": Object {
