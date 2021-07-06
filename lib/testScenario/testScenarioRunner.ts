@@ -134,7 +134,7 @@ export class TestScenarioRunner {
 
       const subscriptionId = testScope.env.getRequired("subscriptionId");
       const location = testScope.env.getRequired("location");
-      const resourceGroupPrefix = testScope.env.get("resourceGroupPrefix") ?? "test-";
+      const resourceGroupPrefix = testScope.env.get("resourceGroupPrefix") ?? "apiTest-";
       const resourceGroupName =
         resourceGroupPrefix +
         getRandomString({ length: 6, lowerCase: true, upperCase: false, number: false });
