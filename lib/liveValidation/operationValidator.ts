@@ -325,7 +325,7 @@ const validateLroOperation = (
   operation: Operation,
   statusCode: string,
   headers: StringMap<string>,
-  body: StringMap<unknown> | undefined,
+  body: any,
   result: LiveValidationIssue[]
 ) => {
   if (operation["x-ms-long-running-operation"] === true) {
@@ -361,11 +361,11 @@ const validateLroHeader = (
   operation: Operation,
   statusCode: string,
   headers: StringMap<string>,
-  body: StringMap<unknown> | undefined,
+  body: any,
   result: LiveValidationIssue[]
 ) => {
-  if (statusCode === "201" && body?.["properties"] !== undefined) {
-    const properties = body.properties as any;
+  if (statusCode === "201" && body?.properties !== undefined) {
+    const properties = body.properties;
     if (
       properties &&
       (properties.provisioningState === undefined ||
