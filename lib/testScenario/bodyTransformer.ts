@@ -99,21 +99,25 @@ export class BodyTransformer {
       return result;
     }
 
-    if (typeof dst === "object") {
+    if (typeof dst === "object" && typeof src === "object") {
       const result: any = { ...dst };
-      for (const key of Object.keys(dst)) {
-        if (key in src) {
-          result[key] = this.innerDeepMerge(
-            dst[key],
-            src[key],
-            path.concat([key]),
-            inconsistentPaths
-          );
+      if (dst !== null) {
+        for (const key of Object.keys(dst)) {
+          if (src !== null && key in src) {
+            result[key] = this.innerDeepMerge(
+              dst[key],
+              src[key],
+              path.concat([key]),
+              inconsistentPaths
+            );
+          }
         }
       }
-      for (const key of Object.keys(src)) {
-        if (!(key in dst)) {
-          result[key] = src[key];
+      if (src !== null) {
+        for (const key of Object.keys(src)) {
+          if (!(key in dst)) {
+            result[key] = src[key];
+          }
         }
       }
       return result;
