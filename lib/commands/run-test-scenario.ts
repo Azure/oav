@@ -88,6 +88,11 @@ export const builder: yargs.CommandBuilder = {
     boolean: true,
     default: true,
   },
+  dryRun: {
+    describe: "dry run mode. only create postman collection file not run live api test.",
+    boolean: true,
+    default: false,
+  },
 };
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
@@ -125,7 +130,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       checkUnderFileRoot: false,
       generateCollection: true,
       useJsonParser: false,
-      runCollection: true,
+      runCollection: !argv.dryRun,
       env: env,
       outputFolder: argv.output,
       markdownReportPath: argv.markdownReportPath,
