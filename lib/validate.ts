@@ -30,8 +30,8 @@ import { getErrorsFromModelValidation } from "./util/getErrorsFromModelValidatio
 import { getSuppressions } from "./validators/suppressions";
 import { log } from "./util/logging";
 import { getInputFiles } from "./generator/util";
-import { LiveValidator } from "../lib/validators/liveValidator"
-import { LiveValidationIssue } from "../lib/validators/liveValidator"
+import { LiveValidator } from "../lib/liveValidation/liveValidator"
+import { LiveValidationIssue } from "../lib/liveValidation/liveValidator"
 
 export interface Options extends specResolver.Options, umlGeneratorLib.Options {
   consoleLogLevel?: unknown;
@@ -278,7 +278,7 @@ export async function validateExamplesInCompositeSpec(
   });
 }
 
-export async function validateTrafficInSpec(
+export async function validateTrafficAgainstSpec(
   specPath: string,
   trafficPath: string,
   options: Options
@@ -314,7 +314,7 @@ export async function validateTrafficInSpec(
       const validator = new LiveValidator(liveValidationOptions);
       const errors: Array<LiveValidationIssue> = [];
       await validator.initialize();
-      const result = validator.validateLiveRequestResponse(trafficFile);
+      const result = await validator.validateLiveRequestResponse(trafficFile);
     
       if (!result.requestValidationResult.isSuccessful) {
         errors.push(...result.requestValidationResult.errors);

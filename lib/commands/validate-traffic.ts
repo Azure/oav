@@ -17,7 +17,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       logFilepath: argv.f,
       pretty: argv.p,
     };
-    const errors = await validate.validateTrafficInSpec(specPath, trafficPath, vOptions);
+    const errors = await validate.validateTrafficAgainstSpec(specPath, trafficPath, vOptions);
     return errors.length > 0 ? 1 : 0;
   });
 }
