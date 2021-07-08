@@ -1,6 +1,6 @@
 # Change Log - oav
 
-## 07/08/2021 2021 2.6.0
+## 07/08/2021 2.6.0
 
 - Support `validate-traffic <traffic-path> <spec-path>` command in OAV cli
 
