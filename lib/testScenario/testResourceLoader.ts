@@ -68,8 +68,7 @@ interface TestScenarioContext {
 export class TestResourceLoader implements Loader<TestDefinitionFile> {
   private transformContext: TransformContext;
   private validateTestResourceFile: ValidateFunction;
-  private exampleToOperation: Map<string, { [operationId: string]: [Operation, string] }> =
-    new Map();
+  private exampleToOperation = new Map<string, { [operationId: string]: [Operation, string] }>();
   private nameToOperation: Map<string, Operation> = new Map();
   private initialized: boolean = false;
 
@@ -347,7 +346,6 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
       type: "restCall",
       step: rawStep.step!,
       resourceName: rawStep.resourceName,
-      resourceUpdate: rawStep.resourceUpdate ?? [],
       exampleFile: rawStep.exampleFile,
       variables: rawStep.variables ?? {},
       operationId: rawStep.operationId ?? "",
@@ -357,6 +355,10 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
       exampleId: "",
       resourceType: "",
       statusCode: rawStep.statusCode ?? 200,
+      outputVariables: rawStep.outputVariables ?? {},
+      resourceUpdate: rawStep.resourceUpdate ?? [],
+      requestUpdate: rawStep.requestUpdate ?? [],
+      responseUpdate: rawStep.responseUpdate ?? [],
     };
 
     if (rawStep.operationId !== undefined) {
@@ -393,6 +395,16 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
         target,
         step.operation.responses[step.statusCode].schema!
       );
+    }
+
+    if (step.requestUpdate.length > 0) {
+      step.requestParameters = jsonPatchApply(
+        cloneDeep(step.requestParameters),
+        step.requestUpdate
+      );
+    }
+    if (step.responseUpdate.length > 0) {
+      step.responseExpected = jsonPatchApply(cloneDeep(step.responseExpected), step.responseUpdate);
     }
 
     ctx.stepTracking.set(step.step, step);
