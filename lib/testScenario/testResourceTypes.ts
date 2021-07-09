@@ -145,6 +145,13 @@ export type RawTestStepRestCall = RawTestStepBase & {
   operationId?: string;
   statusCode?: number;
   resourceUpdate?: JsonPatchOp[];
+  requestUpdate?: JsonPatchOp[];
+  responseUpdate?: JsonPatchOp[];
+  outputVariables?: {
+    [variableName: string]: {
+      fromResponse: string;
+    };
+  };
 };
 
 const testStepRestCallSchema: Schema = {
@@ -165,6 +172,28 @@ const testStepRestCallSchema: Schema = {
       type: "array",
       items: {
         $ref: "#/definitions/JsonPatchOp",
+      },
+    },
+    requestUpdate: {
+      type: "array",
+      items: {
+        $ref: "#/definitions/JsonPatchOp",
+      },
+    },
+    responseUpdate: {
+      type: "array",
+      items: {
+        $ref: "#/definitions/JsonPatchOp",
+      },
+    },
+    outputVariables: {
+      type: "array",
+      items: {
+        properties: {
+          fromResponse: {
+            type: "string",
+          },
+        },
       },
     },
     operationId: {
