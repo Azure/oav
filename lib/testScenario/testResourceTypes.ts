@@ -190,6 +190,11 @@ const testStepRestCallSchema: Schema = {
       type: "object",
       additionalProperties: {
         type: "object",
+        properties: {
+          fromResponse: {
+            type: "string",
+          },
+        },
       },
     },
     operationId: {
