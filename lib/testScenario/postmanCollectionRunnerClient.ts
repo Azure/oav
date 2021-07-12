@@ -321,7 +321,6 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     overwriteVariables?: Map<string, string>,
     armTemplate?: ArmTemplate
   ) {
-    console.log(overwriteVariables);
     if (overwriteVariables !== undefined) {
       types.push("OverwriteVariables");
     }
