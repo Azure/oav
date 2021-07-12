@@ -56,13 +56,14 @@ export class PostmanTestScript {
     if (parameter.types.includes("ExtractARMTemplateOutput")) {
       ret += this.generateARMTemplateOutputScript(parameter.armTemplate!);
     }
+    console.log(ret + end);
     return ret + end;
   }
 
   private generateOverWriteVariablesScript(variables: Map<string, string>): string {
     let ret = "";
     for (const [k, v] of variables) {
-      ret += `pm.environment.set("${k}", pm.response.json().${v});`;
+      ret += `pm.environment.set("${k}", pm.response.json()${v});`;
     }
     return ret;
   }
