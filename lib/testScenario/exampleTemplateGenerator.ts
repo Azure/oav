@@ -48,6 +48,14 @@ export class ExampleTemplateGenerator implements TestScenarioRunnerClient {
     stepEnv: TestStepEnv
   ): Promise<void> {
     this.replaceWithParameterConvention(step, stepEnv.env);
+
+    const outputVariables = step.outputVariables;
+    if (outputVariables === undefined) {
+      return;
+    }
+    for (const variableName of Object.keys(outputVariables)) {
+      stepEnv.env.set(variableName, placeholderToBeDetermined);
+    }
   }
 
   public async sendArmTemplateDeployment(
