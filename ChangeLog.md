@@ -1,18 +1,27 @@
 # Change Log - oav
 
-## 07/05/2021 2021 2.5.9
+## 7/13/2021 2.6.0
+
+- Oav test scenario runner support output variables from step
+- New oav command "oav run" alias for "oav run-test-scenario" command
+- Oav runner support dryRun mode. Only generate postman collection
+- Oav runner support predefined resourceGroup and skip cleanUp
+- Test scenario schema support "requestUpdate" and "outputVariables" syntax
+- Fix resourceUpdate bug
+
+## 07/05/2021 2.5.9
 
 - Ignore LRO_RESPONSE_HEADER rule check in case of synchronous api call
 
-## 06/25/2021 2021 2.5.8
+## 06/25/2021 2.5.8
 
 - support extract armTemplate deployment output to variables
 
-## 06/22/2021 2021 2.5.7
+## 06/22/2021 2.5.7
 
 - small fix for passing validation-level
 
-## 06/22/2021 2021 2.5.6
+## 06/22/2021 2.5.6
 
 - optimise validation logical. Ignore readonly and secret property response check
 - DO NOT output log when request method is POST

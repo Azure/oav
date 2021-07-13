@@ -1,4 +1,3 @@
-import { getObjValueFromPointer } from "./diffUtils";
 import { ArmTemplate } from "./testResourceTypes";
 
 interface ScriptTemplate {
