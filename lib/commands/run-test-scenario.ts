@@ -96,8 +96,8 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     if (argv.e !== undefined) {
       env = JSON.parse(fs.readFileSync(argv.e).toString());
     }
-    else if (process.env[testScenarioEnvKey]) {
-      env = JSON.parse(process.env[testScenarioEnvKey] as string);
+    if (process.env[testScenarioEnvKey]) {
+      env = {...JSON.parse(process.env[testScenarioEnvKey] as string),...env};
     }
     // fileRoot is the nearest common root of all swagger file paths
     const fileRoot = path.dirname(swaggerFilePaths[0]);
