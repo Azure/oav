@@ -21,6 +21,8 @@ export const aliases = ["run"];
 
 export const describe = "newman runner run test scenario file.";
 
+export const testScenarioEnvKey = "TEST_SCENARIO_JSON_ENV";
+
 /**
  * UploadBlob true. Upload generated file and result to azure blob storage. connection string is passed by `process.env.blobConnectionString`
  * Upload files:
@@ -109,6 +111,9 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     let env: any = {};
     if (argv.e !== undefined) {
       env = JSON.parse(fs.readFileSync(argv.e).toString());
+    }
+    else if (process.env[testScenarioEnvKey]) {
+      env = JSON.parse(process.env[testScenarioEnvKey] as string);
     }
     // fileRoot is the nearest common root of all swagger file paths
     const fileRoot = path.dirname(swaggerFilePaths[0]);
