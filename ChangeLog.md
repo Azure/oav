@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 07/08/2021 2.6.0
+
+- Support `validate-traffic <traffic-path> <spec-path>` command in OAV cli
+
 ## 07/05/2021 2021 2.5.9
 
 - Ignore LRO_RESPONSE_HEADER rule check in case of synchronous api call

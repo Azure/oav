@@ -30,6 +30,8 @@ import { getErrorsFromModelValidation } from "./util/getErrorsFromModelValidatio
 import { getSuppressions } from "./validators/suppressions";
 import { log } from "./util/logging";
 import { getInputFiles } from "./generator/util";
+import { LiveValidator } from "../lib/liveValidation/liveValidator"
+import { LiveValidationIssue } from "../lib/liveValidation/liveValidator"
 
 export interface Options extends specResolver.Options, umlGeneratorLib.Options {
   consoleLogLevel?: unknown;
@@ -274,6 +276,72 @@ export async function validateExamplesInCompositeSpec(
     const promiseFactories = docs.map((doc) => async () => validateExamples(doc, undefined, o));
     return utils.executePromisesSequentially(promiseFactories);
   });
+}
+
+export async function validateTrafficAgainstSpec(
+  specPath: string,
+  trafficPath: string,
+  options: Options
+): Promise<Array<LiveValidationIssue>>{
+  if (!fs.existsSync(specPath)) {
+    const error = new Error(`Can not find spec file, please check your specPath parameter.`);
+    log.error(JSON.stringify(error));
+    throw error;
+  }
+
+  if (!fs.existsSync(trafficPath)) {
+    const error = new Error(`Can not find traffic file, please check your trafficPath parameter.`);
+    log.error(JSON.stringify(error));
+    throw error;
+  }
+
+  try {
+    const trafficFile = require(trafficPath);
+    const specFileDirectory = path.dirname(specPath);
+    const swaggerPathsPattern = path.basename(specPath);
+
+    return validate(options, async (o) => {
+      o.consoleLogLevel = log.consoleLogLevel;
+      o.logFilepath = log.filepath;
+      const liveValidationOptions = {
+        directory: specFileDirectory,
+        swaggerPathsPattern: [swaggerPathsPattern],
+        git: {
+          shouldClone: false
+        }
+      }
+
+      const validator = new LiveValidator(liveValidationOptions);
+      const errors: Array<LiveValidationIssue> = [];
+      await validator.initialize();
+      const result = await validator.validateLiveRequestResponse(trafficFile);
+    
+      if (!result.requestValidationResult.isSuccessful) {
+        errors.push(...result.requestValidationResult.errors);
+      }
+
+      if (!result.responseValidationResult.isSuccessful) {
+        errors.push(...result.responseValidationResult.errors);
+      }
+
+      if (errors.length > 0) {
+        if (o.pretty) {
+          prettyPrint(errors, "error");
+        } else {
+          for (let error of errors) {
+            log.error(JSON.stringify(error));
+          }
+        }
+      } else {
+        log.info('No errors were found.');
+      }
+
+      return errors;
+    })
+  } catch (error) {
+    log.error(JSON.stringify(error));
+    throw error;
+  }
 }
 
 export async function resolveSpec(
