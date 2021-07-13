@@ -17,6 +17,8 @@ import { getSwaggerFilePathsFromTestScenarioFilePath } from "./../testScenario/t
 
 export const command = "run-test-scenario <test-scenario>";
 
+export const aliases = ["run"];
+
 export const describe = "newman runner run test scenario file.";
 
 /**
