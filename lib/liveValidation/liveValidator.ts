@@ -50,6 +50,7 @@ export interface LiveValidatorOptions extends LiveValidatorLoaderOption {
   isPathCaseSensitive: boolean;
   loadValidatorInBackground: boolean;
   loadValidatorInInitialize: boolean;
+  yieldInInitialize: boolean;
 }
 
 export interface RequestResponsePair {
@@ -148,6 +149,7 @@ export class LiveValidator {
       loadValidatorInBackground: true,
       loadValidatorInInitialize: false,
       isArmCall: false,
+      yieldInInitialize: false,
     });
 
     if (!ops.git) {
@@ -212,6 +214,9 @@ export class LiveValidator {
       if (spec !== undefined) {
         allSpecs.push(spec);
       }
+      if (this.options.yieldInInitialize) {
+        await new Promise((resolve) => setTimeout(resolve, 0));
+      }
     }
 
     this.logging("Apply global transforms for all specs");
@@ -244,6 +249,9 @@ export class LiveValidator {
             LiveValidatorLoggingTypes.error,
             "Oav.liveValidator.initialize.loadValidatorInInitialize"
           );
+        }
+        if (this.options.yieldInInitialize) {
+          await new Promise((resolve) => setTimeout(resolve, 0));
         }
       }
 
