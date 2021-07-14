@@ -265,7 +265,7 @@ export const getValueByJsonPointer = (obj: any, pointer: string) => {
 
   for (let i = 0; i < refTokens.length; ++i) {
     const tok = refTokens[i];
-    if (!(typeof obj == "object" && tok in obj)) {
+    if (!(typeof obj === "object" && tok in obj)) {
       throw new Error("Invalid reference token: " + tok);
     }
     obj = obj[tok];
