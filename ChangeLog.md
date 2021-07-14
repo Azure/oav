@@ -1,6 +1,6 @@
 # Change Log - oav
 
-## 7/13/2021 2.6.0
+## 7/13/2021 2.6.1
 
 - Oav test scenario runner support output variables from step
 - New oav command "oav run" alias for "oav run-test-scenario" command
@@ -9,7 +9,12 @@
 - Test scenario schema support "requestUpdate" and "outputVariables" syntax
 - Fix resourceUpdate bug
 
+## 07/08/2021 2.6.0
+
+- Support `validate-traffic <traffic-path> <spec-path>` command in OAV cli
+
 ## 07/05/2021 2.5.9
+
 
 - Ignore LRO_RESPONSE_HEADER rule check in case of synchronous api call
 
