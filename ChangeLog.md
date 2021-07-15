@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 7/15/2021 2.6.2
+
+- LiveValidation support option yieldInInitialize.
+
 ## 7/13/2021 2.6.1
 
 - Oav test scenario runner support output variables from step
