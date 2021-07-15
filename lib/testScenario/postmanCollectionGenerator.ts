@@ -30,6 +30,7 @@ export interface PostmanCollectionGeneratorOption
   generateCollection: boolean;
   baseUrl: string;
   validationLevel?: ValidationLevel;
+  cleanUp: boolean;
 }
 
 @injectable()
@@ -85,7 +86,9 @@ export class PostmanCollectionGenerator {
       });
       await runner.executeScenario(testScenario);
       // If shared resource-group, move clean to one separate scenario.
-      await runner.cleanAllTestScope();
+      if (this.opt.cleanUp) {
+        await runner.cleanAllTestScope();
+      }
       for (let i = 0; i < client.collection.items.count(); i++) {
         this.longRunningOperationOrderUpdate(client, i);
       }

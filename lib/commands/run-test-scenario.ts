@@ -17,6 +17,8 @@ import { getSwaggerFilePathsFromTestScenarioFilePath } from "./../testScenario/t
 
 export const command = "run-test-scenario <test-scenario>";
 
+export const aliases = ["run"];
+
 export const describe = "newman runner run test scenario file.";
 
 /**
@@ -79,6 +81,20 @@ export const builder: yargs.CommandBuilder = {
     describe: "subscriptionId to run API test",
     string: true,
   },
+  resourceGroup: {
+    describe: "resource group",
+    string: true,
+  },
+  cleanUp: {
+    describe: "whether delete resource group when all steps finished",
+    boolean: true,
+    default: true,
+  },
+  dryRun: {
+    describe: "dry run mode. only create postman collection file not run live api test.",
+    boolean: true,
+    default: false,
+  },
 };
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
@@ -104,6 +120,10 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     if (argv.subscriptionId !== undefined) {
       env.subscriptionId = argv.subscriptionId;
     }
+
+    if (argv.resourceGroup !== undefined) {
+      env.resourceGroupName = argv.resourceGroup;
+    }
     const opt: PostmanCollectionGeneratorOption = {
       name: `${resourceProvider}/${apiVersion}/${getFileNameFromPath(testScenarioFilePath)}`,
       testDef: testScenarioFilePath,
@@ -112,7 +132,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       checkUnderFileRoot: false,
       generateCollection: true,
       useJsonParser: false,
-      runCollection: true,
+      runCollection: !argv.dryRun,
       env: env,
       outputFolder: argv.output,
       markdownReportPath: argv.markdownReportPath,
@@ -123,6 +143,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       blobConnectionString: process.env.blobConnectionString || "",
       baseUrl: argv.armEndpoint,
       validationLevel: argv.level,
+      cleanUp: argv.cleanUp,
     };
     const generator = inversifyGetInstance(PostmanCollectionGenerator, opt);
     await generator.GenerateCollection();

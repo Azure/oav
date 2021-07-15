@@ -379,7 +379,12 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
       let target = cloneDeep(step.responseExpected);
       const bodyParamName = getBodyParamName(step.operation, this.jsonLoader);
       if (bodyParamName !== undefined) {
-        this.bodyTransformer.deepMerge(target, step.requestParameters[bodyParamName]);
+        try {
+          this.bodyTransformer.deepMerge(target, step.requestParameters[bodyParamName]);
+        } catch (err) {
+          console.log("err");
+          console.log(err);
+        }
       }
       target = jsonPatchApply(target, step.resourceUpdate);
 
@@ -478,9 +483,10 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
 }
 
 export const getBodyParamName = (operation: Operation, jsonLoader: JsonLoader) => {
-  const bodyParams = operation.parameters?.find(
-    (param) => jsonLoader.resolveRefObj(param).in === "body"
-  );
+  const bodyParams = operation.parameters?.find((param) => {
+    const resolvedObj = jsonLoader.resolveRefObj(param);
+    return resolvedObj.in === "body";
+  });
   return bodyParams?.name;
 };
 

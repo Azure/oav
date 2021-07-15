@@ -260,6 +260,33 @@ export function getProvider(pathStr?: string | null): string | undefined {
   return result;
 }
 
+export const getValueByJsonPointer = (obj: any, pointer: string) => {
+  const refTokens = Array.isArray(pointer) ? pointer : parse(pointer);
+
+  for (let i = 0; i < refTokens.length; ++i) {
+    const tok = refTokens[i];
+    if (!(typeof obj === "object" && tok in obj)) {
+      throw new Error("Invalid reference token: " + tok);
+    }
+    obj = obj[tok];
+  }
+  return obj;
+};
+
+const jsonPointerUnescape = (str: string) => {
+  return str.replace(/~1/g, "/").replace(/~0/g, "~");
+};
+
+const parse = (pointer: string) => {
+  if (pointer === "") {
+    return [];
+  }
+  if (pointer.charAt(0) !== "/") {
+    throw new Error("Invalid JSON pointer: " + pointer);
+  }
+  return pointer.substring(1).split(/\//).map(jsonPointerUnescape);
+};
+
 export function getProviderFromFilePath(pathStr: string): string | undefined {
   const resourceProviderPattern: RegExp = new RegExp(
     `^[A-Z][a-z0-9]+(\.([A-Z]{1,3}[a-z0-9]+)+[A-Z]{0,2})+$`
