@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 07/15/2021 2.6.2
+
+- Bug Fix: `validate-traffic` command doesn't support relative path input
+
 ## 7/13/2021 2.6.1
 
 - Oav test scenario runner support output variables from step
