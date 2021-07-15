@@ -18,6 +18,39 @@ const DetailResponseLog: ScriptTemplate = {
   `,
 };
 
+const GetObjectValueByJsonPointer: ScriptTemplate = {
+  text: `
+  const getValueByJsonPointer = (obj, pointer) => {
+    var refTokens = Array.isArray(pointer) ? pointer : parse(pointer);
+
+    for (var i = 0; i < refTokens.length; ++i) {
+        var tok = refTokens[i];
+        if (!(typeof obj == 'object' && tok in obj)) {
+            throw new Error('Invalid reference token: ' + tok);
+        }
+        obj = obj[tok];
+    }
+    return obj;
+  };
+
+  const jsonPointerUnescape = (str)=>{
+    return str.replace(/~1/g, '/').replace(/~0/g, '~');
+  };
+
+  const parse = (pointer) => {
+    if (pointer === "") {
+      return [];
+    }
+    if (pointer.charAt(0) !== "/") {
+      throw new Error("Invalid JSON pointer: " + pointer);
+    }
+    return pointer.substring(1).split(/\\//).map(jsonPointerUnescape);
+  };
+
+
+  `,
+};
+
 interface TestScriptParameter {
   name: string;
   types: TestScriptType[];
@@ -60,9 +93,9 @@ export class PostmanTestScript {
   }
 
   private generateOverWriteVariablesScript(variables: Map<string, string>): string {
-    let ret = "";
+    let ret = GetObjectValueByJsonPointer.text;
     for (const [k, v] of variables) {
-      ret += `pm.environment.set("${k}", pm.response.json().${v});`;
+      ret += `pm.environment.set("${k}", getValueByJsonPointer(pm.response.json(), "${v}"));`;
     }
     return ret;
   }

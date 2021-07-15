@@ -245,7 +245,18 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     item.request.addHeader(contentType);
     item.request.addHeader(authorizationHeader);
 
-    this.addTestScript(item);
+    const getOverwriteVariables = () => {
+      if (step.outputVariables !== undefined && Object.keys(step.outputVariables).length > 0) {
+        const ret = new Map<string, string>();
+        for (const k of Object.keys(step.outputVariables)) {
+          ret.set(k, step.outputVariables[k].fromResponse);
+        }
+        return ret;
+      }
+      return undefined;
+    };
+
+    this.addTestScript(item, ["DetailResponseLog", "StatusCodeAssertion"], getOverwriteVariables());
     item.request.url = new Url({
       path: pathEnv.resolveString(step.operation._path._pathTemplate, "{", "}"),
       host: this.opts.baseUrl,
@@ -687,7 +698,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
           exec: this.postmanTestScript.generateScript({
             name: "AAD auth should be successful",
             types: ["ResponseDataAssertion", "OverwriteVariables"],
-            variables: new Map<string, string>([["bearerToken", "access_token"]]),
+            variables: new Map<string, string>([["bearerToken", "/access_token"]]),
           }),
         },
       })

@@ -10,11 +10,11 @@ import {
   NewmanReportAnalyzerOption,
 } from "../testScenario/postmanReportAnalyzer";
 import { defaultQualityReportFilePath } from "../testScenario/defaultNaming";
-import { inversifyGetInstance } from "./../inversifyUtils";
+import { inversifyGetInstance } from "../inversifyUtils";
 
-export const command = "analyze-newman-report <newman-report-path>";
+export const command = "analyze-report <newman-report-path>";
 
-export const describe = "analyze newman report.";
+export const describe = "analyze report. default format: newman json report";
 
 export const builder: yargs.CommandBuilder = {
   output: {

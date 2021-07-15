@@ -187,8 +187,9 @@ const testStepRestCallSchema: Schema = {
       },
     },
     outputVariables: {
-      type: "array",
-      items: {
+      type: "object",
+      additionalProperties: {
+        type: "object",
         properties: {
           fromResponse: {
             type: "string",
