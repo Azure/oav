@@ -89,7 +89,6 @@ export class PostmanTestScript {
     if (parameter.types.includes("ExtractARMTemplateOutput")) {
       ret += this.generateARMTemplateOutputScript(parameter.armTemplate!);
     }
-    console.log(ret + end);
     return ret + end;
   }
 
