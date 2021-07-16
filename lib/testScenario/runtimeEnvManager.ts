@@ -67,11 +67,7 @@ export class RuntimeEnvManager {
         `could not load last runtime env for step '${fromStep}', please check the file ${runtimeEnvPath} `
       );
     }
-    const env:any = {}
-    for (const [k, v] of Object.entries(runtimeEnvContainer.beforeStep)) {
-      env[k] = v
-    }
-    return env
+    return runtimeEnvContainer.beforeStep
   };
 
   public repopulateCollectionItems = (from?: string, to?: string) => {
