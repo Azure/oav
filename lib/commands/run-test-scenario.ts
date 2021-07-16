@@ -115,13 +115,7 @@ export const builder: yargs.CommandBuilder = {
     describe: "specify the last runId for debugging",
     string: true,
     demandOption: false,
-  },
-  ci: {
-    describe: "specify if it's in a CI pipeline",
-    boolean: true,
-    default: false,
-    demandOption: false,
-  },
+  }
 };
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
