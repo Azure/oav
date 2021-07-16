@@ -506,7 +506,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     if (this.opts.from) {
       const lastRnv = runtimeEnvManager.loadEnv(this.opts.from);
       this.collectionEnv.syncVariablesFrom(lastRnv)
-      // override variables which exists in the env.json or process.env
+      // use the variables value which exist in the env.json or process.env
       for (const k of Object.keys(this.collectionEnv.syncVariablesTo())) {
         const v = this.opts.env.get(k);
         if (v) {
@@ -546,7 +546,6 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
         }
       })
       .on("done", async (_err, _summary) => {
-        //sinkRuntimeEnv();
         const keys = await this.swaggerAnalyzer.getAllSecretKey();
         const values: string[] = [];
         for (const [k, v] of Object.entries(this.collectionEnv.syncVariablesTo())) {
