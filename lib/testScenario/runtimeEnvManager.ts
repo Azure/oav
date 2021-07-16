@@ -78,6 +78,10 @@ export class RuntimeEnvManager {
     const fromIndex = from ? this.getStepIndex(collection, from) : 0;
     let toIndex = to ? this.getStepIndex(collection, to) : collection.items.count() - 1;
 
+    if (fromIndex > toIndex) {
+      throw new Error(`the step '${from}' is after the step '${to}', please check the command arguments.`)
+    }
+
     // keep the poller and delay steps in the last step.
     while (to && toIndex + 1 < collection.items.count()) {
       const itemName = collection.items.idx(toIndex + 1).name;
