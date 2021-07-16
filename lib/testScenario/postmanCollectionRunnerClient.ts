@@ -1,4 +1,4 @@
-import path from "path";
+import path, { dirname } from "path";
 import newman from "newman";
 import {
   VariableScope,
@@ -45,6 +45,7 @@ import {
   defaultNewmanReport,
 } from "./defaultNaming";
 import { NewmanReport } from "./postmanReportParser";
+import { RuntimeEnvManager } from "./runtimeEnvManager";
 
 export interface PostmanCollectionRunnerClientOption extends BlobUploaderOption, JsonLoaderOption {
   testScenarioFileName: string;
@@ -60,6 +61,8 @@ export interface PostmanCollectionRunnerClientOption extends BlobUploaderOption,
   swaggerFilePaths?: string[];
   baseUrl: string;
   validationLevel?: ValidationLevel;
+  from?: string;
+  to?: string;
 }
 
 function makeid(length: number): string {
@@ -160,6 +163,9 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     subscriptionId: string,
     _resourceGroupName: string
   ): Promise<void> {
+    if (this.opts.from || this.opts.to) {
+      return;
+    }
     const item = new Item({
       name: "deleteResourceGroup",
       request: {
@@ -481,22 +487,39 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     console.log(`Command: newman run ${collectionPath} -e ${envPath} -r 'json,cli'`);
   }
 
+  public reportExportPath = path.resolve(
+    this.opts.reportOutputFolder!,
+    `${defaultNewmanReport(
+      this.opts.testScenarioFileName,
+      this.opts.runId,
+      this.opts.testScenarioName
+    )}`
+  );
+
   public async runCollection() {
-    const reportExportPath = path.resolve(
-      this.opts.reportOutputFolder!,
-      `${defaultNewmanReport(
-        this.opts.testScenarioFileName,
-        this.opts.runId,
-        this.opts.testScenarioName
-      )}`
+    const runtimeEnvManager = new RuntimeEnvManager(
+      path.join(dirname(this.reportExportPath), this.opts.testScenarioName),
+      this.opts,this.collection
     );
+
+    if (this.opts.from) {
+      const lastRnv = runtimeEnvManager.loadEnv(this.opts.from);
+      this.collectionEnv.syncVariablesFrom(lastRnv)
+      for(const [k,v] of Object.entries(this.opts.env)) {
+        this.collectionEnv.set(k,v,typeof v);
+      }
+    }
+    if (this.opts.from || this.opts.to) {
+      runtimeEnvManager.repopulateCollectionItems(this.opts.from, this.opts.to)
+    }
+
     newman
       .run(
         {
           collection: this.collection,
           environment: this.collectionEnv,
           reporters: ["cli", "json"],
-          reporter: { json: { export: reportExportPath } },
+          reporter: { json: { export: this.reportExportPath } },
         },
         function (err, summary) {
           if (summary.run.failures.length > 0) {
@@ -508,7 +531,18 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
           console.log("collection run complete!");
         }
       )
+      .on("beforeItem", async function (this: any, _err, _summary) {
+        if (!_err) {
+          runtimeEnvManager.save(_summary.item.name, this, "beforeStep");
+        }
+      })
+      .on("item", async function (this: any, _err, _summary) {
+        if (!_err) {
+          runtimeEnvManager.clean();
+        }
+      })
       .on("done", async (_err, _summary) => {
+        //sinkRuntimeEnv();
         const keys = await this.swaggerAnalyzer.getAllSecretKey();
         const values: string[] = [];
         for (const [k, v] of Object.entries(this.collectionEnv.syncVariablesTo())) {
@@ -520,7 +554,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
         this.dataMasker.addMaskedKeys(keys);
         // read content and upload. mask newman report.
         const newmanReport = JSON.parse(
-          await this.fileLoader.load(reportExportPath)
+          await this.fileLoader.load(this.reportExportPath)
         ) as NewmanReport;
 
         // add mask environment secret value
@@ -541,7 +575,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
           );
         }
         const opts: NewmanReportAnalyzerOption = {
-          newmanReportFilePath: reportExportPath,
+          newmanReportFilePath: this.reportExportPath,
           markdownReportPath: this.opts.markdownReportPath,
           junitReportPath: this.opts.junitReportPath,
           enableUploadBlob: this.opts.enableBlobUploader,

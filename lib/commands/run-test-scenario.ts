@@ -97,6 +97,31 @@ export const builder: yargs.CommandBuilder = {
     boolean: true,
     default: false,
   },
+  from: {
+    describe:
+      "the step to start with in current run, it's used for debugging and the resource group will not be deleted",
+    string: true,
+    demandOption: false,
+    implies: "runId",
+  },
+  to: {
+    describe:
+      "the step to end in current run,it's used for debugging and the resource group will not be deleted",
+    string: true,
+    demandOption: false,
+    implies: "runId",
+  },
+  runId: {
+    describe: "specify the last runId for debugging",
+    string: true,
+    demandOption: false,
+  },
+  ci: {
+    describe: "specify if it's in a CI pipeline",
+    boolean: true,
+    default: false,
+    demandOption: false,
+  },
 };
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
@@ -149,6 +174,10 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       baseUrl: argv.armEndpoint,
       validationLevel: argv.level,
       cleanUp: argv.cleanUp,
+      from: argv.from,
+      to: argv.to,
+      runId:argv.runId,
+      ci:argv.ci
     };
     const generator = inversifyGetInstance(PostmanCollectionGenerator, opt);
     await generator.GenerateCollection();
