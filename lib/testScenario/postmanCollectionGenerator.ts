@@ -34,7 +34,6 @@ export interface PostmanCollectionGeneratorOption
   from?:string,
   to?:string,
   runId?:string
-  ci?:boolean
 }
 
 @injectable()
