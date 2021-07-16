@@ -487,39 +487,43 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     console.log(`Command: newman run ${collectionPath} -e ${envPath} -r 'json,cli'`);
   }
 
-  public reportExportPath = path.resolve(
-    this.opts.reportOutputFolder!,
-    `${defaultNewmanReport(
-      this.opts.testScenarioFileName,
-      this.opts.runId,
-      this.opts.testScenarioName
-    )}`
-  );
+  
 
   public async runCollection() {
+    const reportExportPath = path.resolve(
+      this.opts.reportOutputFolder!,
+      `${defaultNewmanReport(
+        this.opts.testScenarioFileName,
+        this.opts.runId,
+        this.opts.testScenarioName
+      )}`
+    );
     const runtimeEnvManager = new RuntimeEnvManager(
-      path.join(dirname(this.reportExportPath), this.opts.testScenarioName),
+      path.join(dirname(reportExportPath), this.opts.testScenarioName),
       this.opts,this.collection
     );
 
     if (this.opts.from) {
       const lastRnv = runtimeEnvManager.loadEnv(this.opts.from);
       this.collectionEnv.syncVariablesFrom(lastRnv)
-      for(const [k,v] of Object.entries(this.opts.env)) {
-        this.collectionEnv.set(k,v,typeof v);
+      // override variables which exists in the env.json or process.env
+      for (const k of Object.keys(this.collectionEnv.syncVariablesTo())) {
+        const v = this.opts.env.get(k);
+        if (v) {
+          this.collectionEnv.set(k, v, typeof v);
+        }
       }
     }
     if (this.opts.from || this.opts.to) {
       runtimeEnvManager.repopulateCollectionItems(this.opts.from, this.opts.to)
     }
-
     newman
       .run(
         {
           collection: this.collection,
           environment: this.collectionEnv,
           reporters: ["cli", "json"],
-          reporter: { json: { export: this.reportExportPath } },
+          reporter: { json: { export: reportExportPath } },
         },
         function (err, summary) {
           if (summary.run.failures.length > 0) {
@@ -554,7 +558,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
         this.dataMasker.addMaskedKeys(keys);
         // read content and upload. mask newman report.
         const newmanReport = JSON.parse(
-          await this.fileLoader.load(this.reportExportPath)
+          await this.fileLoader.load(reportExportPath)
         ) as NewmanReport;
 
         // add mask environment secret value
@@ -575,7 +579,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
           );
         }
         const opts: NewmanReportAnalyzerOption = {
-          newmanReportFilePath: this.reportExportPath,
+          newmanReportFilePath: reportExportPath,
           markdownReportPath: this.opts.markdownReportPath,
           junitReportPath: this.opts.junitReportPath,
           enableUploadBlob: this.opts.enableBlobUploader,

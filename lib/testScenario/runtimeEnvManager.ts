@@ -55,7 +55,7 @@ export class RuntimeEnvManager {
     const runtimeEnvPath = this.generateRuntimeEnvPath(fromStep);
      if (!existsSync(runtimeEnvPath)) {
        throw new Error(
-         `the last runtime env file ${runtimeEnvPath} for step-${fromStep} did not exist ,it might be cleaned up. `
+         `the last runtime env file ${runtimeEnvPath} for step '${fromStep}' did not exist. `
        );
      }
     const runtimeEnvContainer = JSON.parse(
@@ -64,7 +64,7 @@ export class RuntimeEnvManager {
 
     if (!runtimeEnvContainer.beforeStep) {
       throw new Error(
-        `can not load last runtime env for step '${fromStep}', please check the file ${runtimeEnvPath} `
+        `could not load last runtime env for step '${fromStep}', please check the file ${runtimeEnvPath} `
       );
     }
     const env:any = {}
@@ -128,7 +128,7 @@ export class RuntimeEnvManager {
   private getStepIndex = (collection: Collection, stepName: string) => {
     const item = collection.items.find((item) => item.name === stepName, null);
     if (!item) {
-      throw new Error(`the runtime environment file for step '${stepName}' does not exist in the test scenario.`);
+      throw new Error(`the runtime environment file for step '${stepName}' did not exist in the test scenario.`);
     }
     return collection.items.indexOf(item.id);
   };
