@@ -90,7 +90,7 @@ export const builder: yargs.CommandBuilder = {
   cleanUp: {
     describe: "whether delete resource group when all steps finished",
     boolean: true,
-    default: true,
+    default: false,
   },
   dryRun: {
     describe: "dry run mode. only create postman collection file not run live api test.",
@@ -99,14 +99,14 @@ export const builder: yargs.CommandBuilder = {
   },
   from: {
     describe:
-      "the step to start with in current run, it's used for debugging and the resource group will not be deleted",
+      "the step to start with in current run, it's used for debugging and make sure not use --cleanUp to delete resource group in the previous run.",
     string: true,
     demandOption: false,
     implies: "runId",
   },
   to: {
     describe:
-      "the step to end in current run,it's used for debugging and the resource group will not be deleted",
+      "the step to end in current run,it's used for debugging and make sure not use --cleanUp to delete resource group in the previous run.",
     string: true,
     demandOption: false,
     implies: "runId",
@@ -115,7 +115,7 @@ export const builder: yargs.CommandBuilder = {
     describe: "specify the last runId for debugging",
     string: true,
     demandOption: false,
-  }
+  },
 };
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
