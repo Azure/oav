@@ -132,7 +132,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       env = JSON.parse(fs.readFileSync(argv.e).toString());
     }
     if (process.env[testScenarioEnvKey]) {
-      env = {...JSON.parse(process.env[testScenarioEnvKey] as string),...env};
+      env = { ...JSON.parse(process.env[testScenarioEnvKey] as string), ...env };
     }
     // fileRoot is the nearest common root of all swagger file paths
     const fileRoot = path.dirname(swaggerFilePaths[0]);
@@ -170,7 +170,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       cleanUp: argv.cleanUp,
       from: argv.from,
       to: argv.to,
-      runId:argv.runId
+      runId: argv.runId,
     };
     const generator = inversifyGetInstance(PostmanCollectionGenerator, opt);
     await generator.GenerateCollection();

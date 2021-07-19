@@ -487,8 +487,6 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     console.log(`Command: newman run ${collectionPath} -e ${envPath} -r 'json,cli'`);
   }
 
-  
-
   public async runCollection() {
     const reportExportPath = path.resolve(
       this.opts.reportOutputFolder!,
@@ -500,12 +498,13 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     );
     const runtimeEnvManager = new RuntimeEnvManager(
       path.join(dirname(reportExportPath), this.opts.testScenarioName),
-      this.opts,this.collection
+      this.opts,
+      this.collection
     );
 
     if (this.opts.from) {
       const lastRnv = runtimeEnvManager.loadEnv(this.opts.from);
-      this.collectionEnv.syncVariablesFrom(lastRnv)
+      this.collectionEnv.syncVariablesFrom(lastRnv);
       // use the variables value which exist in the env.json or process.env
       for (const k of Object.keys(this.collectionEnv.syncVariablesTo())) {
         const v = this.opts.env.get(k);
@@ -515,7 +514,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
       }
     }
     if (this.opts.from || this.opts.to) {
-      runtimeEnvManager.repopulateCollectionItems(this.opts.from, this.opts.to)
+      runtimeEnvManager.repopulateCollectionItems(this.opts.from, this.opts.to);
     }
     newman
       .run(

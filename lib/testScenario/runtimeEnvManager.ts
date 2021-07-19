@@ -1,32 +1,28 @@
 import { existsSync, readFileSync, writeFileSync } from "fs";
-import { Collection, VariableDefinition } from "postman-collection";
 import * as path from "path";
+import { Collection, VariableDefinition } from "postman-collection";
 import { mkdirpSync, removeSync } from "fs-extra";
 import { PostmanCollectionRunnerClientOption } from "./postmanCollectionRunnerClient";
 
-type RuntimeEnvContainer = {
+interface RuntimeEnvContainer {
   afterStep?: { [key: string]: VariableDefinition }; // to save env when the item is completed, not used now.
   beforeStep?: { [key: string]: VariableDefinition }; // to save env when the item starts.
-};
+}
 
 export class RuntimeEnvManager {
-  private runtimeFolder: string;
   private hasCleanedFlag = false;
-  private opts: PostmanCollectionRunnerClientOption;
-  private collection:Collection
-  private runtimeEnvCollection: Map<string, RuntimeEnvContainer> = new Map<string,RuntimeEnvContainer>();
+  private runtimeEnvCollection: Map<string, RuntimeEnvContainer> = new Map<
+    string,
+    RuntimeEnvContainer
+  >();
 
-  constructor(runtimeFolder: string, opts: PostmanCollectionRunnerClientOption,collection:Collection) {
-    this.runtimeFolder = runtimeFolder;
-    this.opts = opts;
-    this.collection = collection
-  }
+  public constructor(
+    private runtimeFolder: string,
+    private opts: PostmanCollectionRunnerClientOption,
+    private collection: Collection
+  ) {}
 
-  public save = (
-    itemName: string,
-    eventEmitter: any,
-    eventType: "beforeStep" | "afterStep"
-  ) => {
+  public save = (itemName: string, eventEmitter: any, eventType: "beforeStep" | "afterStep") => {
     if (eventEmitter && eventEmitter.summary) {
       const environment = eventEmitter.summary.environment.syncVariablesTo();
       let envContainer = this.runtimeEnvCollection.get(itemName);
@@ -53,11 +49,11 @@ export class RuntimeEnvManager {
   };
   public loadEnv = (fromStep: string) => {
     const runtimeEnvPath = this.generateRuntimeEnvPath(fromStep);
-     if (!existsSync(runtimeEnvPath)) {
-       throw new Error(
-         `the last runtime env file ${runtimeEnvPath} for step '${fromStep}' did not exist. `
-       );
-     }
+    if (!existsSync(runtimeEnvPath)) {
+      throw new Error(
+        `the last runtime env file ${runtimeEnvPath} for step '${fromStep}' did not exist. `
+      );
+    }
     const runtimeEnvContainer = JSON.parse(
       readFileSync(runtimeEnvPath).toString()
     ) as RuntimeEnvContainer;
@@ -67,19 +63,21 @@ export class RuntimeEnvManager {
         `could not load last runtime env for step '${fromStep}', please check the file ${runtimeEnvPath} `
       );
     }
-    return runtimeEnvContainer.beforeStep
+    return runtimeEnvContainer.beforeStep;
   };
 
   public repopulateCollectionItems = (from?: string, to?: string) => {
     if (!from && !to) {
       return;
     }
-    const collection = this.collection
+    const collection = this.collection;
     const fromIndex = from ? this.getStepIndex(collection, from) : 0;
     let toIndex = to ? this.getStepIndex(collection, to) : collection.items.count() - 1;
 
     if (fromIndex > toIndex) {
-      throw new Error(`the step '${from}' is after the step '${to}', please check the command arguments.`)
+      throw new Error(
+        `the step '${from}' is after the step '${to}', please check the command arguments.`
+      );
     }
 
     // keep the poller and delay steps in the last step.
@@ -93,8 +91,7 @@ export class RuntimeEnvManager {
     }
     const items = [];
     for (let idx = fromIndex; idx <= toIndex; idx++) {
-      if (idx < collection.items.count())
-        items.push(collection.items.idx(idx));
+      if (idx < collection.items.count()) items.push(collection.items.idx(idx));
     }
     collection.items.repopulate(items);
   };
@@ -128,7 +125,9 @@ export class RuntimeEnvManager {
   private getStepIndex = (collection: Collection, stepName: string) => {
     const item = collection.items.find((item) => item.name === stepName, null);
     if (!item) {
-      throw new Error(`the runtime environment file for step '${stepName}' did not exist in the test scenario.`);
+      throw new Error(
+        `the runtime environment file for step '${stepName}' did not exist in the test scenario.`
+      );
     }
     return collection.items.indexOf(item.id);
   };

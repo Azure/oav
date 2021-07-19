@@ -31,9 +31,9 @@ export interface PostmanCollectionGeneratorOption
   baseUrl: string;
   validationLevel?: ValidationLevel;
   cleanUp: boolean;
-  from?:string,
-  to?:string,
-  runId?:string
+  from?: string;
+  to?: string;
+  runId?: string;
 }
 
 @injectable()
@@ -79,16 +79,16 @@ export class PostmanCollectionGenerator {
         jsonLoader: this.testResourceLoader.jsonLoader,
         baseUrl: this.opt.baseUrl,
         validationLevel: this.opt.validationLevel,
-        from : this.opt.from,
-        to: this.opt.to
+        from: this.opt.from,
+        to: this.opt.to,
       };
 
       const client = inversifyGetInstance(PostmanCollectionRunnerClient, opts);
-       const runner = new TestScenarioRunner({
-         jsonLoader: this.testResourceLoader.jsonLoader,
-         env: this.env,
-         client: client,
-       });
+      const runner = new TestScenarioRunner({
+        jsonLoader: this.testResourceLoader.jsonLoader,
+        env: this.env,
+        client: client,
+      });
       await runner.executeScenario(testScenario);
       // If shared resource-group, move clean to one separate scenario.
       if (this.opt.cleanUp) {
