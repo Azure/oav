@@ -68,8 +68,7 @@ interface TestScenarioContext {
 export class TestResourceLoader implements Loader<TestDefinitionFile> {
   private transformContext: TransformContext;
   private validateTestResourceFile: ValidateFunction;
-  private exampleToOperation: Map<string, { [operationId: string]: [Operation, string] }> =
-    new Map();
+  private exampleToOperation = new Map<string, { [operationId: string]: [Operation, string] }>();
   private nameToOperation: Map<string, Operation> = new Map();
   private initialized: boolean = false;
 
@@ -347,7 +346,6 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
       type: "restCall",
       step: rawStep.step!,
       resourceName: rawStep.resourceName,
-      resourceUpdate: rawStep.resourceUpdate ?? [],
       exampleFile: rawStep.exampleFile,
       variables: rawStep.variables ?? {},
       operationId: rawStep.operationId ?? "",
@@ -357,6 +355,10 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
       exampleId: "",
       resourceType: "",
       statusCode: rawStep.statusCode ?? 200,
+      outputVariables: rawStep.outputVariables ?? {},
+      resourceUpdate: rawStep.resourceUpdate ?? [],
+      requestUpdate: rawStep.requestUpdate ?? [],
+      responseUpdate: rawStep.responseUpdate ?? [],
     };
 
     if (rawStep.operationId !== undefined) {
@@ -377,7 +379,12 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
       let target = cloneDeep(step.responseExpected);
       const bodyParamName = getBodyParamName(step.operation, this.jsonLoader);
       if (bodyParamName !== undefined) {
-        this.bodyTransformer.deepMerge(target, step.requestParameters[bodyParamName]);
+        try {
+          this.bodyTransformer.deepMerge(target, step.requestParameters[bodyParamName]);
+        } catch (err) {
+          console.log("err");
+          console.log(err);
+        }
       }
       target = jsonPatchApply(target, step.resourceUpdate);
 
@@ -393,6 +400,16 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
         target,
         step.operation.responses[step.statusCode].schema!
       );
+    }
+
+    if (step.requestUpdate.length > 0) {
+      step.requestParameters = jsonPatchApply(
+        cloneDeep(step.requestParameters),
+        step.requestUpdate
+      );
+    }
+    if (step.responseUpdate.length > 0) {
+      step.responseExpected = jsonPatchApply(cloneDeep(step.responseExpected), step.responseUpdate);
     }
 
     ctx.stepTracking.set(step.step, step);
@@ -466,9 +483,10 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
 }
 
 export const getBodyParamName = (operation: Operation, jsonLoader: JsonLoader) => {
-  const bodyParams = operation.parameters?.find(
-    (param) => jsonLoader.resolveRefObj(param).in === "body"
-  );
+  const bodyParams = operation.parameters?.find((param) => {
+    const resolvedObj = jsonLoader.resolveRefObj(param);
+    return resolvedObj.in === "body";
+  });
   return bodyParams?.name;
 };
 

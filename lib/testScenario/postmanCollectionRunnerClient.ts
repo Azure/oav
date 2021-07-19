@@ -1,4 +1,4 @@
-import path from "path";
+import path, { dirname } from "path";
 import newman from "newman";
 import {
   VariableScope,
@@ -45,6 +45,7 @@ import {
   defaultNewmanReport,
 } from "./defaultNaming";
 import { NewmanReport } from "./postmanReportParser";
+import { RuntimeEnvManager } from "./runtimeEnvManager";
 
 export interface PostmanCollectionRunnerClientOption extends BlobUploaderOption, JsonLoaderOption {
   testScenarioFileName: string;
@@ -60,6 +61,8 @@ export interface PostmanCollectionRunnerClientOption extends BlobUploaderOption,
   swaggerFilePaths?: string[];
   baseUrl: string;
   validationLevel?: ValidationLevel;
+  from?: string;
+  to?: string;
 }
 
 function makeid(length: number): string {
@@ -160,6 +163,9 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     subscriptionId: string,
     _resourceGroupName: string
   ): Promise<void> {
+    if (this.opts.from || this.opts.to) {
+      return;
+    }
     const item = new Item({
       name: "deleteResourceGroup",
       request: {
@@ -245,7 +251,18 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     item.request.addHeader(contentType);
     item.request.addHeader(authorizationHeader);
 
-    this.addTestScript(item);
+    const getOverwriteVariables = () => {
+      if (step.outputVariables !== undefined && Object.keys(step.outputVariables).length > 0) {
+        const ret = new Map<string, string>();
+        for (const k of Object.keys(step.outputVariables)) {
+          ret.set(k, step.outputVariables[k].fromResponse);
+        }
+        return ret;
+      }
+      return undefined;
+    };
+
+    this.addTestScript(item, ["DetailResponseLog", "StatusCodeAssertion"], getOverwriteVariables());
     item.request.url = new Url({
       path: pathEnv.resolveString(step.operation._path._pathTemplate, "{", "}"),
       host: this.opts.baseUrl,
@@ -470,6 +487,8 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     console.log(`Command: newman run ${collectionPath} -e ${envPath} -r 'json,cli'`);
   }
 
+  
+
   public async runCollection() {
     const reportExportPath = path.resolve(
       this.opts.reportOutputFolder!,
@@ -479,6 +498,25 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
         this.opts.testScenarioName
       )}`
     );
+    const runtimeEnvManager = new RuntimeEnvManager(
+      path.join(dirname(reportExportPath), this.opts.testScenarioName),
+      this.opts,this.collection
+    );
+
+    if (this.opts.from) {
+      const lastRnv = runtimeEnvManager.loadEnv(this.opts.from);
+      this.collectionEnv.syncVariablesFrom(lastRnv)
+      // use the variables value which exist in the env.json or process.env
+      for (const k of Object.keys(this.collectionEnv.syncVariablesTo())) {
+        const v = this.opts.env.get(k);
+        if (v) {
+          this.collectionEnv.set(k, v, typeof v);
+        }
+      }
+    }
+    if (this.opts.from || this.opts.to) {
+      runtimeEnvManager.repopulateCollectionItems(this.opts.from, this.opts.to)
+    }
     newman
       .run(
         {
@@ -497,6 +535,16 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
           console.log("collection run complete!");
         }
       )
+      .on("beforeItem", async function (this: any, _err, _summary) {
+        if (!_err) {
+          runtimeEnvManager.save(_summary.item.name, this, "beforeStep");
+        }
+      })
+      .on("item", async function (this: any, _err, _summary) {
+        if (!_err) {
+          runtimeEnvManager.clean();
+        }
+      })
       .on("done", async (_err, _summary) => {
         const keys = await this.swaggerAnalyzer.getAllSecretKey();
         const values: string[] = [];
@@ -687,7 +735,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
           exec: this.postmanTestScript.generateScript({
             name: "AAD auth should be successful",
             types: ["ResponseDataAssertion", "OverwriteVariables"],
-            variables: new Map<string, string>([["bearerToken", "access_token"]]),
+            variables: new Map<string, string>([["bearerToken", "/access_token"]]),
           }),
         },
       })

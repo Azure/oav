@@ -42,4 +42,35 @@ describe("Utility functions", () => {
       assert.strictEqual(provider, "Microsoft.Authorization");
     });
   });
+
+  describe("Get value by json pointer", () => {
+    const resp = {
+      body: {
+        sku: {
+          sku: "standard",
+        },
+        properties: {
+          value: "kkk",
+          arrayValue: ["abc", "def"],
+        },
+      },
+    };
+    it("should return expected value", () => {
+      const jsonPointer = "/body/properties/value";
+      const res = utils.getValueByJsonPointer(resp, jsonPointer);
+      expect(res).toBe("kkk");
+
+      const secondArrayItemJsonPointer = "/body/properties/arrayValue/1";
+      const arrayItem = utils.getValueByJsonPointer(resp, secondArrayItemJsonPointer);
+      expect(arrayItem).toBe("def");
+    });
+
+    it("should throw error when the jsonPointer is invalid", () => {
+      const t = () => {
+        const jsonPointer = "/body/unknown";
+        utils.getValueByJsonPointer(resp, jsonPointer);
+      };
+      expect(t).toThrow("Invalid reference token: unknown");
+    });
+  });
 });

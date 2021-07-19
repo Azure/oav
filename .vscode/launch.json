@@ -31,6 +31,19 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "Validate Traffic",
+      "program": "${workspaceRoot}/dist/cli.js",
+      "cwd": "${workspaceRoot}",
+      "args": [
+        "validate-traffic",
+        "${workspaceRoot}/test/liveValidation/payloads/test-validate-traffic.json",
+        "${workspaceRoot}/test/liveValidation/swaggers/specification/dns/resource-manager/Microsoft.Network/stable/2018-05-01/dns.json"
+      ],
+      "env": {}
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "Validate example",
       "program": "${workspaceRoot}/dist/cli.js",
       "cwd": "${workspaceRoot}",

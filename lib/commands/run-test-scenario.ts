@@ -17,6 +17,8 @@ import { getSwaggerFilePathsFromTestScenarioFilePath } from "./../testScenario/t
 
 export const command = "run-test-scenario <test-scenario>";
 
+export const aliases = ["run"];
+
 export const describe = "newman runner run test scenario file.";
 
 export const testScenarioEnvKey = "TEST_SCENARIO_JSON_ENV";
@@ -81,6 +83,39 @@ export const builder: yargs.CommandBuilder = {
     describe: "subscriptionId to run API test",
     string: true,
   },
+  resourceGroup: {
+    describe: "resource group",
+    string: true,
+  },
+  cleanUp: {
+    describe: "whether delete resource group when all steps finished",
+    boolean: true,
+    default: false,
+  },
+  dryRun: {
+    describe: "dry run mode. only create postman collection file not run live api test.",
+    boolean: true,
+    default: false,
+  },
+  from: {
+    describe:
+      "the step to start with in current run, it's used for debugging and make sure not use --cleanUp to delete resource group in the previous run.",
+    string: true,
+    demandOption: false,
+    implies: "runId",
+  },
+  to: {
+    describe:
+      "the step to end in current run,it's used for debugging and make sure not use --cleanUp to delete resource group in the previous run.",
+    string: true,
+    demandOption: false,
+    implies: "runId",
+  },
+  runId: {
+    describe: "specify the last runId for debugging",
+    string: true,
+    demandOption: false,
+  },
 };
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
@@ -109,6 +144,10 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     if (argv.subscriptionId !== undefined) {
       env.subscriptionId = argv.subscriptionId;
     }
+
+    if (argv.resourceGroup !== undefined) {
+      env.resourceGroupName = argv.resourceGroup;
+    }
     const opt: PostmanCollectionGeneratorOption = {
       name: `${resourceProvider}/${apiVersion}/${getFileNameFromPath(testScenarioFilePath)}`,
       testDef: testScenarioFilePath,
@@ -117,7 +156,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       checkUnderFileRoot: false,
       generateCollection: true,
       useJsonParser: false,
-      runCollection: true,
+      runCollection: !argv.dryRun,
       env: env,
       outputFolder: argv.output,
       markdownReportPath: argv.markdownReportPath,
@@ -128,6 +167,10 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       blobConnectionString: process.env.blobConnectionString || "",
       baseUrl: argv.armEndpoint,
       validationLevel: argv.level,
+      cleanUp: argv.cleanUp,
+      from: argv.from,
+      to: argv.to,
+      runId:argv.runId
     };
     const generator = inversifyGetInstance(PostmanCollectionGenerator, opt);
     await generator.GenerateCollection();
