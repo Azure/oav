@@ -11,6 +11,9 @@ interface RuntimeEnvContainer {
 
 export class RuntimeEnvManager {
   private hasCleanedFlag = false;
+  /**
+   * the Map key is a test scenario step name, and the value is its runtime env.
+   */
   private runtimeEnvCollection: Map<string, RuntimeEnvContainer> = new Map<
     string,
     RuntimeEnvContainer
