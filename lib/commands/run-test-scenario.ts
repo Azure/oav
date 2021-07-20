@@ -112,7 +112,7 @@ export const builder: yargs.CommandBuilder = {
     implies: "runId",
   },
   runId: {
-    describe: "specify the last runId for debugging",
+    describe: "specify the runId for debugging",
     string: true,
     demandOption: false,
   },

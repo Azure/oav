@@ -291,7 +291,7 @@ export function getProviderFromFilePath(pathStr: string): string | undefined {
   const resourceProviderPattern: RegExp = new RegExp(
     `^[A-Z][a-z0-9]+(\.([A-Z]{1,3}[a-z0-9]+)+[A-Z]{0,2})+$`
   );
-  const words = pathStr.split("/");
+  const words = pathStr.split(/\\|\//ig);
   for (const it of words) {
     if (resourceProviderPattern.test(it)) {
       return it;
