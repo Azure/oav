@@ -30,7 +30,7 @@ export interface PostmanCollectionGeneratorOption
   generateCollection: boolean;
   baseUrl: string;
   validationLevel?: ValidationLevel;
-  cleanUp: boolean;
+  skipCleanUp: boolean;
   from?: string;
   to?: string;
   runId?: string;
@@ -91,7 +91,7 @@ export class PostmanCollectionGenerator {
       });
       await runner.executeScenario(testScenario);
       // If shared resource-group, move clean to one separate scenario.
-      if (this.opt.cleanUp) {
+      if (!this.opt.skipCleanUp && !this.opt.to) {
         await runner.cleanAllTestScope();
       }
       for (let i = 0; i < client.collection.items.count(); i++) {
@@ -102,6 +102,9 @@ export class PostmanCollectionGenerator {
       }
       if (this.opt.runCollection) {
         await client.runCollection();
+      }
+      if (!this.opt.skipCleanUp && !this.opt.to) {
+        console.log(`The resource group is not cleaned up.`)
       }
 
       index++;

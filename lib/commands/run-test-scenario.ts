@@ -87,10 +87,10 @@ export const builder: yargs.CommandBuilder = {
     describe: "resource group",
     string: true,
   },
-  cleanUp: {
+  skipCleanUp: {
     describe: "whether delete resource group when all steps finished",
     boolean: true,
-    default: false,
+    default: true,
   },
   dryRun: {
     describe: "dry run mode. only create postman collection file not run live api test.",
@@ -99,14 +99,14 @@ export const builder: yargs.CommandBuilder = {
   },
   from: {
     describe:
-      "the step to start with in current run, it's used for debugging and make sure not use --cleanUp to delete resource group in the previous run.",
+      "the step to start with in current run, it's used for debugging and make sure use --skipCleanUp to not delete resource group in the previous run.",
     string: true,
     demandOption: false,
     implies: "runId",
   },
   to: {
     describe:
-      "the step to end in current run,it's used for debugging and make sure not use --cleanUp to delete resource group in the previous run.",
+      "the step to end in current run,it's used for debugging and make sure use --skipCleanUp to not delete resource group in the previous run.",
     string: true,
     demandOption: false,
     implies: "runId",
@@ -132,7 +132,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       env = JSON.parse(fs.readFileSync(argv.e).toString());
     }
     if (process.env[testScenarioEnvKey]) {
-      env = { ...JSON.parse(process.env[testScenarioEnvKey] as string), ...env };
+      env = {...env, ...JSON.parse(process.env[testScenarioEnvKey] as string)};
     }
     // fileRoot is the nearest common root of all swagger file paths
     const fileRoot = path.dirname(swaggerFilePaths[0]);
@@ -167,7 +167,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       blobConnectionString: process.env.blobConnectionString || "",
       baseUrl: argv.armEndpoint,
       validationLevel: argv.level,
-      cleanUp: argv.cleanUp,
+      skipCleanUp: argv.skipCleanUp,
       from: argv.from,
       to: argv.to,
       runId: argv.runId,
