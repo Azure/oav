@@ -11,7 +11,7 @@ import {
   PostmanCollectionGeneratorOption,
 } from "../testScenario/postmanCollectionGenerator";
 import { inversifyGetInstance } from "../inversifyUtils";
-import { getApiVersionFromSwaggerFile, getProviderFromFilePath } from "../util/utils";
+import { getApiVersionFromSwaggerFile, getProviderFromFilePath, printWarning } from "../util/utils";
 import { getFileNameFromPath } from "../testScenario/defaultNaming";
 import { getSwaggerFilePathsFromTestScenarioFilePath } from "./../testScenario/testResourceLoader";
 
@@ -89,8 +89,7 @@ export const builder: yargs.CommandBuilder = {
   },
   skipCleanUp: {
     describe: "whether delete resource group when all steps finished",
-    boolean: true,
-    default: true,
+    boolean: true
   },
   dryRun: {
     describe: "dry run mode. only create postman collection file not run live api test.",
@@ -132,7 +131,14 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       env = JSON.parse(fs.readFileSync(argv.e).toString());
     }
     if (process.env[testScenarioEnvKey]) {
-      env = {...env, ...JSON.parse(process.env[testScenarioEnvKey] as string)};
+      const envFromVariable = JSON.parse(process.env[testScenarioEnvKey] as string)
+      for (const key of Object.keys(envFromVariable)) {
+        if (env[key] !== undefined && envFromVariable[key] !== env[key]) {
+         printWarning(`Notice: the varaible '${key}' in '${argv.e}' is overrided by the varaible in the environment '${testScenarioEnvKey}'.`
+          );
+        }
+      }
+      env = {...env, ...envFromVariable};
     }
     // fileRoot is the nearest common root of all swagger file paths
     const fileRoot = path.dirname(swaggerFilePaths[0]);
@@ -170,7 +176,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       skipCleanUp: argv.skipCleanUp,
       from: argv.from,
       to: argv.to,
-      runId: argv.runId,
+      runId: argv.runId
     };
     const generator = inversifyGetInstance(PostmanCollectionGenerator, opt);
     await generator.GenerateCollection();

@@ -30,7 +30,7 @@ export interface PostmanCollectionGeneratorOption
   generateCollection: boolean;
   baseUrl: string;
   validationLevel?: ValidationLevel;
-  skipCleanUp: boolean;
+  skipCleanUp?: boolean;
   from?: string;
   to?: string;
   runId?: string;
@@ -81,6 +81,7 @@ export class PostmanCollectionGenerator {
         validationLevel: this.opt.validationLevel,
         from: this.opt.from,
         to: this.opt.to,
+        skipCleanUp:this.opt.skipCleanUp
       };
 
       const client = inversifyGetInstance(PostmanCollectionRunnerClient, opts);
@@ -103,10 +104,6 @@ export class PostmanCollectionGenerator {
       if (this.opt.runCollection) {
         await client.runCollection();
       }
-      if (!this.opt.skipCleanUp && !this.opt.to) {
-        console.log(`The resource group is not cleaned up.`)
-      }
-
       index++;
     }
   }
