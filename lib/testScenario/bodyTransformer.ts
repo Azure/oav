@@ -113,7 +113,7 @@ export class BodyTransformer {
           }
         }
       }
-      if (src !== null) {
+      if (src !== null && dst !== null) {
         for (const key of Object.keys(src)) {
           if (!(key in dst)) {
             result[key] = src[key];
