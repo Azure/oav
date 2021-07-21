@@ -101,6 +101,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
   public collection: Collection;
   public collectionEnv: VariableScope;
   private postmanTestScript: PostmanTestScript;
+  private stepNameSet: Map<string, number>;
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
   constructor(
     @inject(TYPES.opts) private opts: PostmanCollectionRunnerClientOption,
@@ -120,6 +121,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
       blobConnectionString: process.env.blobConnectionString || "",
       baseUrl: "https://management.azure.com",
     });
+    this.stepNameSet = new Map<string, number>();
     this.collection = new Collection();
     this.collection.name = this.opts.testScenarioFileName;
     this.collection.id = this.opts.runId!;
@@ -204,7 +206,14 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     this.auth(stepEnv.env);
     const pathEnv = new ReflectiveVariableEnv(":", "");
     const item = new Item();
-    item.name = step.step!;
+    if (!this.stepNameSet.has(step.step!)) {
+      item.name = step.step!;
+      this.stepNameSet.set(step.step, 0);
+    } else {
+      const cnt = this.stepNameSet.get(step.step!)! + 1;
+      item.name = `${step.step}_${cnt}`;
+      this.stepNameSet.set(step.step, cnt);
+    }
     item.request = new Request({
       name: step.exampleFilePath,
       method: step.operation._method as string,
@@ -279,7 +288,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
         operationId: step.operation.operationId || "",
         exampleName: step.exampleFile!,
         itemName: item.name,
-        step: step.step,
+        step: item.name,
       });
       this.addAsLongRunningOperationItem(item);
     } else {
@@ -288,7 +297,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
         operationId: step.operation.operationId || "",
         exampleName: step.exampleFile!,
         itemName: item.name,
-        step: step.step,
+        step: item.name,
       });
       this.collection.items.add(item);
     }
@@ -298,7 +307,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
         this.generatedGetOperationItem(
           item.name,
           item.request.url.toString(),
-          step.step,
+          item.name,
           step.operation._method
         )
       );
