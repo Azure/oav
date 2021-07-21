@@ -101,9 +101,9 @@ export class BodyTransformer {
 
     if (typeof dst === "object" && typeof src === "object") {
       const result: any = { ...dst };
-      if (dst !== null) {
+      if (dst !== null && src !== null) {
         for (const key of Object.keys(dst)) {
-          if (src !== null && key in src) {
+          if (key in src) {
             result[key] = this.innerDeepMerge(
               dst[key],
               src[key],

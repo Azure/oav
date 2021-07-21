@@ -3,7 +3,6 @@
 [![Build Status](https://dev.azure.com/azure-public/adx/_apis/build/status/public.Azure.oav)](https://dev.azure.com/azure-public/adx/_build/latest?definitionId=3)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
-
 Regression: [![Build Status](https://dev.azure.com/azure-sdk/public/_apis/build/status/OAV%20Validate%20Examples%20Regression?branchName=master)](https://dev.azure.com/azure-sdk/public/_build/latest?definitionId=163&branchName=master) [How to fix this](#fixing-regression-builds)
 
 Tools for validating OpenAPI (Swagger) files.
@@ -19,6 +18,10 @@ You can install the latest stable release of node.js from [here](https://nodejs.
 ```bash
 npm install -g oav
 ```
+
+### Run API test:
+
+![](./documentation/runApiTest.gif)
 
 #### Command usage:
 
@@ -61,23 +64,20 @@ bash-3.2$
 ### What does the tool do? What issues does the tool catch?
 
 - Semantic validation
-Semantic validation enforces correctness on the swagger specific elements. Such as paths and operations. Ensure the element definition meet the [OpenApi 2.0 specification](https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgithub.com%2FOAI%2FOpenAPI-Specification%2Fblob%2Fmaster%2Fversions%2F2.0.md&data=02%7C01%7Craychen%40microsoft.com%7C8455b2c9dfe54f52d98c08d7cf1aad66%7C72f988bf86f141af91ab2d7cd011db47%7C1%7C0%7C637205585798284783&sdata=zZrZzk4emkODos7%2BqtMT4RG0ipuFiV7uC0lCWeYdRPE%3D&reserved=0).
+  Semantic validation enforces correctness on the swagger specific elements. Such as paths and operations. Ensure the element definition meet the [OpenApi 2.0 specification](https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgithub.com%2FOAI%2FOpenAPI-Specification%2Fblob%2Fmaster%2Fversions%2F2.0.md&data=02%7C01%7Craychen%40microsoft.com%7C8455b2c9dfe54f52d98c08d7cf1aad66%7C72f988bf86f141af91ab2d7cd011db47%7C1%7C0%7C637205585798284783&sdata=zZrZzk4emkODos7%2BqtMT4RG0ipuFiV7uC0lCWeYdRPE%3D&reserved=0).
 - Model validation
-Model validation enforces correctness between example and swagger. It checks whether definitions for request parameters and responses, match an expected input/output payload of the service.
-    Examples of issues:
-    - required properties not sent in requests or responses;
-    - defined types not matching the value provided in the payload;
-    - constraints on properties not met; enumeration values that don’t match the value used by the service.
+  Model validation enforces correctness between example and swagger. It checks whether definitions for request parameters and responses, match an expected input/output payload of the service.
+  Examples of issues: - required properties not sent in requests or responses; - defined types not matching the value provided in the payload; - constraints on properties not met; enumeration values that don’t match the value used by the service.
 
-    References: https://github.com/Azure/azure-rest-api-specs/issues/778 , https://github.com/Azure/azure-rest-api-specs/issues/755 , https://github.com/Azure/azure-rest-api-specs/issues/773
-    
-    Model validation _requires_ example payloads (request/response) of the service, so the data can be matched with the defined models. See [x-ms-examples extension](https://github.com/Azure/azure-rest-api-specs/issues/648) on how to specify the examples/payloads. Swagger “examples” is also supported and data included there is validated as well. To get the most benefit from this tool, make sure to have the simplest and most complex examples possible as part of x-ms-examples.
-    - Please take a look at the redis-cache swagger spec as an example for providing "x-ms-examples" over [here](https://github.com/Azure/azure-rest-api-specs/blob/master/arm-redis/2016-04-01/swagger/redis.json#L45).
-    - The examples need to be provided in a separate file in the examples directory under the api-version directory `azure-rest-api-specs/arm-<yourService>/<api-version>/examples/<exampleName>.json`. You can take a look over [here](https://github.com/Azure/azure-rest-api-specs/tree/master/arm-redis/2016-04-01/examples) for the structure of examples.
-    - We require you to provide us a minimum (just required properties/parameters of the request/response) and a maximum (full blown) example. Feel free to provide more examples as deemed necessary.
-    - We have provided schemas for examples to be provided in the examples directory. It can be found over [here](https://github.com/Azure/autorest/blob/master/schema/example-schema.json). This will help you with intellisene and validation.
-    - If you are using **vscode** to edit your swaggers in the azure-rest-api-specs repo then everything should work out of the box as the schemas have been added in the `.vscode/settings.json` file over [here](https://github.com/Azure/azure-rest-api-specs/blob/master/.vscode/settings.json).
-    - If you are using **Visual Studio** then you can use the urls provided in the settings.json file and put them in the drop down list at the top of a json file when the file is opened in VS.
+      References: https://github.com/Azure/azure-rest-api-specs/issues/778 , https://github.com/Azure/azure-rest-api-specs/issues/755 , https://github.com/Azure/azure-rest-api-specs/issues/773
+
+      Model validation _requires_ example payloads (request/response) of the service, so the data can be matched with the defined models. See [x-ms-examples extension](https://github.com/Azure/azure-rest-api-specs/issues/648) on how to specify the examples/payloads. Swagger “examples” is also supported and data included there is validated as well. To get the most benefit from this tool, make sure to have the simplest and most complex examples possible as part of x-ms-examples.
+      - Please take a look at the redis-cache swagger spec as an example for providing "x-ms-examples" over [here](https://github.com/Azure/azure-rest-api-specs/blob/master/arm-redis/2016-04-01/swagger/redis.json#L45).
+      - The examples need to be provided in a separate file in the examples directory under the api-version directory `azure-rest-api-specs/arm-<yourService>/<api-version>/examples/<exampleName>.json`. You can take a look over [here](https://github.com/Azure/azure-rest-api-specs/tree/master/arm-redis/2016-04-01/examples) for the structure of examples.
+      - We require you to provide us a minimum (just required properties/parameters of the request/response) and a maximum (full blown) example. Feel free to provide more examples as deemed necessary.
+      - We have provided schemas for examples to be provided in the examples directory. It can be found over [here](https://github.com/Azure/autorest/blob/master/schema/example-schema.json). This will help you with intellisene and validation.
+      - If you are using **vscode** to edit your swaggers in the azure-rest-api-specs repo then everything should work out of the box as the schemas have been added in the `.vscode/settings.json` file over [here](https://github.com/Azure/azure-rest-api-specs/blob/master/.vscode/settings.json).
+      - If you are using **Visual Studio** then you can use the urls provided in the settings.json file and put them in the drop down list at the top of a json file when the file is opened in VS.
 
 ### How does this tool fit with others
 
@@ -116,19 +116,19 @@ pipeline:
 const liveValidatorOptions = {
   git: {
     url: "https://github.com/Azure/azure-rest-api-specs.git",
-    shouldClone: true
+    shouldClone: true,
   },
   directory: path.resolve(os.homedir(), "cloneRepo"),
   swaggerPathsPattern: "/specification/**/resource-manager/**/*.json",
   isPathCaseSensitive: false,
-  shouldModelImplicitDefaultResponse: true
-}
+  shouldModelImplicitDefaultResponse: true,
+};
 
-const apiValidator = new oav.LiveValidator(liveValidatorOptions)
-await apiValidator.initialize() // Note that for a large number of specs this can take some time.
+const apiValidator = new oav.LiveValidator(liveValidatorOptions);
+await apiValidator.initialize(); // Note that for a large number of specs this can take some time.
 
 // After `initialize()` finishes we are ready to validate
-const validationResult = apiValidator.validateLiveRequestResponse(requestResponsePair)
+const validationResult = apiValidator.validateLiveRequestResponse(requestResponsePair);
 ```
 
 ### Regression testing
