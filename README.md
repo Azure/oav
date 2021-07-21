@@ -19,6 +19,7 @@ You can install the latest stable release of node.js from [here](https://nodejs.
 npm install -g oav
 ```
 
+![](./documentation/installOav.gif)
 ### Run API test:
 
 ![](./documentation/runApiTest.gif)
