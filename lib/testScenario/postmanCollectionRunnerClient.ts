@@ -19,6 +19,7 @@ import {
 import { inject, injectable } from "inversify";
 import { JsonLoader, JsonLoaderOption } from "../swagger/jsonLoader";
 import { setDefaultOpts } from "../swagger/loader";
+import { printWarning } from "../util/utils";
 import { ValidationLevel } from "./reportGenerator";
 import { SwaggerAnalyzer } from "./swaggerAnalyzer";
 import { DataMasker } from "./dataMasker";
@@ -46,7 +47,6 @@ import {
 } from "./defaultNaming";
 import { NewmanReport } from "./postmanReportParser";
 import { RuntimeEnvManager } from "./runtimeEnvManager";
-import { printWarning } from "../util/utils";
 
 export interface PostmanCollectionRunnerClientOption extends BlobUploaderOption, JsonLoaderOption {
   testScenarioFileName: string;
@@ -62,7 +62,7 @@ export interface PostmanCollectionRunnerClientOption extends BlobUploaderOption,
   swaggerFilePaths?: string[];
   baseUrl: string;
   validationLevel?: ValidationLevel;
-  skipCleanUp?:boolean,
+  skipCleanUp?: boolean;
   from?: string;
   to?: string;
 }
@@ -589,13 +589,13 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
         };
         const reportAnalyzer = inversifyGetInstance(NewmanReportAnalyzer, opts);
         await reportAnalyzer.analyze();
-         if (this.opts.skipCleanUp || this.opts.to) {
-           printWarning(
-             `Notice:the resource group '${this.collectionEnv.get(
-               "resourceGroupName"
-             )}' was not cleaned up.`
-           );
-         }
+        if (this.opts.skipCleanUp || this.opts.to) {
+          printWarning(
+            `Notice:the resource group '${this.collectionEnv.get(
+              "resourceGroupName"
+            )}' was not cleaned up.`
+          );
+        }
       });
   }
 

@@ -81,7 +81,7 @@ export class PostmanCollectionGenerator {
         validationLevel: this.opt.validationLevel,
         from: this.opt.from,
         to: this.opt.to,
-        skipCleanUp:this.opt.skipCleanUp
+        skipCleanUp: this.opt.skipCleanUp,
       };
 
       const client = inversifyGetInstance(PostmanCollectionRunnerClient, opts);
