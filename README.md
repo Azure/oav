@@ -21,7 +21,9 @@ npm install -g oav
 
 ![](./documentation/installOav.gif)
 
-### Run API test:
+### Run API test
+
+OAV support run API test against Azure. You could define test scenario file which compose with serval swagger example file and then use oav to run it. For more details about API test, please refer to this [API test doc](https://github.com/Azure/azure-rest-api-specs/tree/test-scenario-main/documentation/test-scenario).
 
 ![](./documentation/runApiTest.gif)
 
