@@ -16,14 +16,14 @@ You can install the latest stable release of node.js from [here](https://nodejs.
 ### How to install the tool
 
 ```bash
-npm install -g oav
+npm install -g oav@latest
 ```
 
 ![](./documentation/installOav.gif)
 
 ### Run API test
 
-OAV support run API test against Azure. You could define test scenario file which compose with serval swagger example file and then use oav to run it. For more details about API test, please refer to this [API test doc](https://github.com/Azure/azure-rest-api-specs/tree/test-scenario-main/documentation/test-scenario).
+OAV support run API test against Azure and validate request and response. You could define test scenario file which compose with serval swagger example file and then use oav to run it. For more details about API test, please refer to this [API test doc](https://github.com/Azure/azure-rest-api-specs/tree/test-scenario-main/documentation/test-scenario).
 
 ![](./documentation/runApiTest.gif)
 
