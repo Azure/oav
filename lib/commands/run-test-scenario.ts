@@ -11,7 +11,7 @@ import {
   PostmanCollectionGeneratorOption,
 } from "../testScenario/postmanCollectionGenerator";
 import { inversifyGetInstance } from "../inversifyUtils";
-import { getApiVersionFromSwaggerFile, getProviderFromFilePath } from "../util/utils";
+import { getApiVersionFromSwaggerFile, getProviderFromFilePath, printWarning } from "../util/utils";
 import { getFileNameFromPath } from "../testScenario/defaultNaming";
 import { getSwaggerFilePathsFromTestScenarioFilePath } from "./../testScenario/testResourceLoader";
 
@@ -20,6 +20,8 @@ export const command = "run-test-scenario <test-scenario>";
 export const aliases = ["run"];
 
 export const describe = "newman runner run test scenario file.";
+
+export const testScenarioEnvKey = "TEST_SCENARIO_JSON_ENV";
 
 /**
  * UploadBlob true. Upload generated file and result to azure blob storage. connection string is passed by `process.env.blobConnectionString`
@@ -85,15 +87,33 @@ export const builder: yargs.CommandBuilder = {
     describe: "resource group",
     string: true,
   },
-  cleanUp: {
+  skipCleanUp: {
     describe: "whether delete resource group when all steps finished",
     boolean: true,
-    default: true,
   },
   dryRun: {
     describe: "dry run mode. only create postman collection file not run live api test.",
     boolean: true,
     default: false,
+  },
+  from: {
+    describe:
+      "the step to start with in current run, it's used for debugging and make sure use --skipCleanUp to not delete resource group in the previous run.",
+    string: true,
+    demandOption: false,
+    implies: "runId",
+  },
+  to: {
+    describe:
+      "the step to end in current run,it's used for debugging and make sure use --skipCleanUp to not delete resource group in the previous run.",
+    string: true,
+    demandOption: false,
+    implies: "runId",
+  },
+  runId: {
+    describe: "specify the runId for debugging",
+    string: true,
+    demandOption: false,
   },
 };
 
@@ -109,6 +129,17 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     let env: any = {};
     if (argv.e !== undefined) {
       env = JSON.parse(fs.readFileSync(argv.e).toString());
+    }
+    if (process.env[testScenarioEnvKey]) {
+      const envFromVariable = JSON.parse(process.env[testScenarioEnvKey] as string);
+      for (const key of Object.keys(envFromVariable)) {
+        if (env[key] !== undefined && envFromVariable[key] !== env[key]) {
+          printWarning(
+            `Notice: the varaible '${key}' in '${argv.e}' is overrided by the varaible in the environment '${testScenarioEnvKey}'.`
+          );
+        }
+      }
+      env = { ...env, ...envFromVariable };
     }
     // fileRoot is the nearest common root of all swagger file paths
     const fileRoot = path.dirname(swaggerFilePaths[0]);
@@ -143,7 +174,10 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       blobConnectionString: process.env.blobConnectionString || "",
       baseUrl: argv.armEndpoint,
       validationLevel: argv.level,
-      cleanUp: argv.cleanUp,
+      skipCleanUp: argv.skipCleanUp,
+      from: argv.from,
+      to: argv.to,
+      runId: argv.runId,
     };
     const generator = inversifyGetInstance(PostmanCollectionGenerator, opt);
     await generator.GenerateCollection();

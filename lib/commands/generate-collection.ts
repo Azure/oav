@@ -95,7 +95,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
         enableBlobUploader: false,
         blobConnectionString: process.env.blobConnectionString || "",
         baseUrl: argv.armEndpoint,
-        cleanUp: true,
+        skipCleanUp: false,
       };
       if (!fs.existsSync(argv.output)) {
         fs.mkdirSync(argv.output);

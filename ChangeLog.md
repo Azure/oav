@@ -1,5 +1,11 @@
 # Change Log - oav
 
+## 07/21/2021 2.7.0
+
+- Oav runner support specifying option 'runId' with option 'from' and/or 'to' to debug.
+- Oav runner support using env variable 'TEST_SCENARIO_JSON_ENV' to override variables in env.json.
+- Replace Oav runner option 'cleanUp' with 'skipCleanUp'.
+
 ## 07/15/2021 2.6.2
 
 - Bug Fix: `validate-traffic` command doesn't support relative path input

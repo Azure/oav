@@ -291,7 +291,7 @@ export function getProviderFromFilePath(pathStr: string): string | undefined {
   const resourceProviderPattern: RegExp = new RegExp(
     `^[A-Z][a-z0-9]+(\.([A-Z]{1,3}[a-z0-9]+)+[A-Z]{0,2})+$`
   );
-  const words = pathStr.split("/");
+  const words = pathStr.split(/\\|\//gi);
   for (const it of words) {
     if (resourceProviderPattern.test(it)) {
       return it;
@@ -785,4 +785,8 @@ export const shuffleArray = (a: any[]) => {
     [a[i], a[j]] = [a[j], a[i]];
   }
   return a;
+};
+
+export const printWarning = (...args: string[]) => {
+  console.log("\x1b[33m%s\x1b[0m", ...args);
 };

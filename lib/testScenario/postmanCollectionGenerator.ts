@@ -30,7 +30,10 @@ export interface PostmanCollectionGeneratorOption
   generateCollection: boolean;
   baseUrl: string;
   validationLevel?: ValidationLevel;
-  cleanUp: boolean;
+  skipCleanUp?: boolean;
+  from?: string;
+  to?: string;
+  runId?: string;
 }
 
 @injectable()
@@ -56,7 +59,7 @@ export class PostmanCollectionGenerator {
       }
     }
     let index = 0;
-    const runId = generateRunId();
+    const runId = this.opt.runId || generateRunId();
     if (this.opt.markdownReportPath) {
       await this.fileLoader.writeFile(this.opt.markdownReportPath, generateMarkdownReportHeader());
     }
@@ -76,6 +79,9 @@ export class PostmanCollectionGenerator {
         jsonLoader: this.testResourceLoader.jsonLoader,
         baseUrl: this.opt.baseUrl,
         validationLevel: this.opt.validationLevel,
+        from: this.opt.from,
+        to: this.opt.to,
+        skipCleanUp: this.opt.skipCleanUp,
       };
 
       const client = inversifyGetInstance(PostmanCollectionRunnerClient, opts);
@@ -86,7 +92,7 @@ export class PostmanCollectionGenerator {
       });
       await runner.executeScenario(testScenario);
       // If shared resource-group, move clean to one separate scenario.
-      if (this.opt.cleanUp) {
+      if (!this.opt.skipCleanUp && !this.opt.to) {
         await runner.cleanAllTestScope();
       }
       for (let i = 0; i < client.collection.items.count(); i++) {
@@ -98,7 +104,6 @@ export class PostmanCollectionGenerator {
       if (this.opt.runCollection) {
         await client.runCollection();
       }
-
       index++;
     }
   }
