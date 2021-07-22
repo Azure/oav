@@ -682,7 +682,6 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
           }
         }
       }catch(err){
-        console.log(err)
         postman.setNextRequest($(nextRequest))
       }`,
       },
