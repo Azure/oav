@@ -115,6 +115,11 @@ export const builder: yargs.CommandBuilder = {
     string: true,
     demandOption: false,
   },
+  verbose: {
+    describe: "log verbose",
+    default: false,
+    boolean: true,
+  },
 };
 
 export async function handler(argv: yargs.Arguments): Promise<void> {

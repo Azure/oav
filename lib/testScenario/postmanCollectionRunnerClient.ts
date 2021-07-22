@@ -65,6 +65,7 @@ export interface PostmanCollectionRunnerClientOption extends BlobUploaderOption,
   skipCleanUp?: boolean;
   from?: string;
   to?: string;
+  verbose?: boolean;
 }
 
 function makeid(length: number): string {
@@ -272,8 +273,10 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
       }
       return undefined;
     };
-
-    this.addTestScript(item, ["DetailResponseLog", "StatusCodeAssertion"], getOverwriteVariables());
+    const scriptTypes: TestScriptType[] = this.opts.verbose
+      ? ["DetailResponseLog", "StatusCodeAssertion"]
+      : ["StatusCodeAssertion"];
+    this.addTestScript(item, scriptTypes, getOverwriteVariables());
     item.request.url = new Url({
       path: pathEnv.resolveString(step.operation._path._pathTemplate, "{", "}"),
       host: this.opts.baseUrl,
@@ -334,10 +337,13 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
 
   private addTestScript(
     item: Item,
-    types: TestScriptType[] = ["DetailResponseLog", "StatusCodeAssertion"],
+    types: TestScriptType[] = ["StatusCodeAssertion"],
     overwriteVariables?: Map<string, string>,
     armTemplate?: ArmTemplate
   ) {
+    if (this.opts.verbose) {
+      types.push("DetailResponseLog");
+    }
     if (overwriteVariables !== undefined) {
       types.push("OverwriteVariables");
     }
@@ -399,6 +405,9 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
       raw: JSON.stringify(body, null, 2),
     });
     this.addAuthorizationHeader(item);
+    const scriptTypes: TestScriptType[] = this.opts.verbose
+      ? ["StatusCodeAssertion", "DetailResponseLog"]
+      : ["StatusCodeAssertion"];
     item.events.add(
       new Event({
         listen: "test",
@@ -406,7 +415,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
           type: "text/javascript",
           exec: this.postmanTestScript.generateScript({
             name: "response status code assertion.",
-            types: ["DetailResponseLog", "StatusCodeAssertion"],
+            types: scriptTypes,
             variables: undefined,
           }),
         },
@@ -414,12 +423,15 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     );
     this.collection.items.add(item);
     this.addAsLongRunningOperationItem(item, true);
+    const generatedGetScriptTypes: TestScriptType[] = this.opts.verbose
+      ? ["DetailResponseLog", "ExtractARMTemplateOutput"]
+      : ["ExtractARMTemplateOutput"];
     const generatedGetOperationItem = this.generatedGetOperationItem(
       item.name,
       item.request.url.toString(),
       step.step,
       "put",
-      ["DetailResponseLog", "ExtractARMTemplateOutput"],
+      generatedGetScriptTypes,
       armTemplate
     );
     this.collection.items.add(generatedGetOperationItem);
@@ -595,6 +607,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
           runId: this.opts.runId,
           swaggerFilePaths: this.opts.swaggerFilePaths,
           validationLevel: this.opts.validationLevel,
+          verbose: this.opts.verbose,
         };
         const reportAnalyzer = inversifyGetInstance(NewmanReportAnalyzer, opts);
         await reportAnalyzer.analyze();
@@ -613,7 +626,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     url: string,
     step: string,
     prevMethod: string = "put",
-    scriptTypes: TestScriptType[] = ["DetailResponseLog"],
+    scriptTypes: TestScriptType[] = [],
     armTemplate?: ArmTemplate
   ): Item {
     const item = new Item({
@@ -661,7 +674,6 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
           postman.setNextRequest($(nextRequest))
         }
         else{
-          console.log(pm.response.text())
           const terminalStatus = ["Succeeded", "Failed", "Canceled"]
           if(pm.response.json().status!==undefined&&terminalStatus.indexOf(pm.response.json().status)===-1){
             postman.setNextRequest('${delay.name}')

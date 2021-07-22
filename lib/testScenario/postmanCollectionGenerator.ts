@@ -34,6 +34,7 @@ export interface PostmanCollectionGeneratorOption
   from?: string;
   to?: string;
   runId?: string;
+  verbose?: boolean;
 }
 
 @injectable()
@@ -82,6 +83,7 @@ export class PostmanCollectionGenerator {
         from: this.opt.from,
         to: this.opt.to,
         skipCleanUp: this.opt.skipCleanUp,
+        verbose: this.opt.verbose,
       };
 
       const client = inversifyGetInstance(PostmanCollectionRunnerClient, opts);

@@ -103,6 +103,7 @@ export interface ReportGeneratorOption
   testScenarioName?: string;
   runId?: string;
   validationLevel?: ValidationLevel;
+  verbose?: boolean;
 }
 
 @injectable()
@@ -133,6 +134,7 @@ export class ReportGenerator {
       testDefFilePath: "",
       runId: uuid.v4(),
       validationLevel: "validate-request-response",
+      verbose: false,
     });
     const swaggerFileAbsolutePaths = this.opts.swaggerFilePaths!.map((it) => path.resolve(it));
     this.exampleQualityValidator = ExampleQualityValidator.create({
@@ -265,7 +267,9 @@ export class ReportGenerator {
         }
       }
     }
-    console.log(JSON.stringify(this.swaggerExampleQualityResult, null, 2));
+    if (this.opts.verbose) {
+      console.log(JSON.stringify(this.swaggerExampleQualityResult, null, 2));
+    }
   }
 
   public async generateMarkdownQualityReport() {
