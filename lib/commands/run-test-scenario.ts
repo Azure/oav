@@ -183,6 +183,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       from: argv.from,
       to: argv.to,
       runId: argv.runId,
+      verbose: argv.verbose,
     };
     const generator = inversifyGetInstance(PostmanCollectionGenerator, opt);
     await generator.GenerateCollection();

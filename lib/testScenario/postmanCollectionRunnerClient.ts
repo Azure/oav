@@ -755,6 +755,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     this.collectionEnv.set("client_id", env.get("client_id"), "string");
     this.collectionEnv.set("client_secret", env.get("client_secret"), "string");
     this.collectionEnv.set("resourceGroupName", env.get("resourceGroupName"), "string");
+    this.collectionEnv.set("subscriptionId", env.get("subscriptionId"), "string");
     ret.events.add(
       new Event({
         listen: "test",

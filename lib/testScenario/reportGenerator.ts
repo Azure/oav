@@ -420,9 +420,8 @@ export class ReportGenerator {
         })
         .filter((it) => it !== undefined) as ResponseDiffItem[];
       return delta;
-    } catch (err) {
-      console.log(err);
-    }
+      // eslint-disable-next-line no-empty
+    } catch (err) {}
     return [];
   }
 
