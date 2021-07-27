@@ -7,6 +7,8 @@
 - Replace Oav runner option 'cleanUp' with 'skipCleanUp'.
 - Update README.md add gif to show API test
 - Fix bug. Avoid duplicate step name when generate postman collection
+- Small bug fix. Set postman collection subscriptionId env when do AAD auth
+- Response diff ignore exception
 
 ## 07/15/2021 2.6.2
 
