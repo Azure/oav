@@ -5,6 +5,10 @@
 - Oav runner support specifying option 'runId' with option 'from' and/or 'to' to debug.
 - Oav runner support using env variable 'TEST_SCENARIO_JSON_ENV' to override variables in env.json.
 - Replace Oav runner option 'cleanUp' with 'skipCleanUp'.
+- Update README.md add gif to show API test
+- Fix bug. Avoid duplicate step name when generate postman collection
+- Small bug fix. Set postman collection subscriptionId env when do AAD auth
+- Response diff ignore exception
 
 ## 07/15/2021 2.6.2
 
@@ -24,7 +28,6 @@
 - Support `validate-traffic <traffic-path> <spec-path>` command in OAV cli
 
 ## 07/05/2021 2.5.9
-
 
 - Ignore LRO_RESPONSE_HEADER rule check in case of synchronous api call
 

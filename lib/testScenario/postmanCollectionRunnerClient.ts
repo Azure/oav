@@ -65,6 +65,7 @@ export interface PostmanCollectionRunnerClientOption extends BlobUploaderOption,
   skipCleanUp?: boolean;
   from?: string;
   to?: string;
+  verbose?: boolean;
 }
 
 function makeid(length: number): string {
@@ -101,6 +102,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
   public collection: Collection;
   public collectionEnv: VariableScope;
   private postmanTestScript: PostmanTestScript;
+  private stepNameSet: Map<string, number>;
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
   constructor(
     @inject(TYPES.opts) private opts: PostmanCollectionRunnerClientOption,
@@ -120,6 +122,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
       blobConnectionString: process.env.blobConnectionString || "",
       baseUrl: "https://management.azure.com",
     });
+    this.stepNameSet = new Map<string, number>();
     this.collection = new Collection();
     this.collection.name = this.opts.testScenarioFileName;
     this.collection.id = this.opts.runId!;
@@ -204,7 +207,14 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     this.auth(stepEnv.env);
     const pathEnv = new ReflectiveVariableEnv(":", "");
     const item = new Item();
-    item.name = step.step!;
+    if (!this.stepNameSet.has(step.step!)) {
+      item.name = step.step!;
+      this.stepNameSet.set(step.step, 0);
+    } else {
+      const cnt = this.stepNameSet.get(step.step!)! + 1;
+      item.name = `${step.step}_${cnt}`;
+      this.stepNameSet.set(step.step, cnt);
+    }
     item.request = new Request({
       name: step.exampleFilePath,
       method: step.operation._method as string,
@@ -263,8 +273,10 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
       }
       return undefined;
     };
-
-    this.addTestScript(item, ["DetailResponseLog", "StatusCodeAssertion"], getOverwriteVariables());
+    const scriptTypes: TestScriptType[] = this.opts.verbose
+      ? ["DetailResponseLog", "StatusCodeAssertion"]
+      : ["StatusCodeAssertion"];
+    this.addTestScript(item, scriptTypes, getOverwriteVariables());
     item.request.url = new Url({
       path: pathEnv.resolveString(step.operation._path._pathTemplate, "{", "}"),
       host: this.opts.baseUrl,
@@ -279,7 +291,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
         operationId: step.operation.operationId || "",
         exampleName: step.exampleFile!,
         itemName: item.name,
-        step: step.step,
+        step: item.name,
       });
       this.addAsLongRunningOperationItem(item);
     } else {
@@ -288,7 +300,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
         operationId: step.operation.operationId || "",
         exampleName: step.exampleFile!,
         itemName: item.name,
-        step: step.step,
+        step: item.name,
       });
       this.collection.items.add(item);
     }
@@ -298,7 +310,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
         this.generatedGetOperationItem(
           item.name,
           item.request.url.toString(),
-          step.step,
+          item.name,
           step.operation._method
         )
       );
@@ -325,10 +337,13 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
 
   private addTestScript(
     item: Item,
-    types: TestScriptType[] = ["DetailResponseLog", "StatusCodeAssertion"],
+    types: TestScriptType[] = ["StatusCodeAssertion"],
     overwriteVariables?: Map<string, string>,
     armTemplate?: ArmTemplate
   ) {
+    if (this.opts.verbose) {
+      types.push("DetailResponseLog");
+    }
     if (overwriteVariables !== undefined) {
       types.push("OverwriteVariables");
     }
@@ -390,6 +405,9 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
       raw: JSON.stringify(body, null, 2),
     });
     this.addAuthorizationHeader(item);
+    const scriptTypes: TestScriptType[] = this.opts.verbose
+      ? ["StatusCodeAssertion", "DetailResponseLog"]
+      : ["StatusCodeAssertion"];
     item.events.add(
       new Event({
         listen: "test",
@@ -397,7 +415,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
           type: "text/javascript",
           exec: this.postmanTestScript.generateScript({
             name: "response status code assertion.",
-            types: ["DetailResponseLog", "StatusCodeAssertion"],
+            types: scriptTypes,
             variables: undefined,
           }),
         },
@@ -405,12 +423,15 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     );
     this.collection.items.add(item);
     this.addAsLongRunningOperationItem(item, true);
+    const generatedGetScriptTypes: TestScriptType[] = this.opts.verbose
+      ? ["DetailResponseLog", "ExtractARMTemplateOutput"]
+      : ["ExtractARMTemplateOutput"];
     const generatedGetOperationItem = this.generatedGetOperationItem(
       item.name,
       item.request.url.toString(),
       step.step,
       "put",
-      ["DetailResponseLog", "ExtractARMTemplateOutput"],
+      generatedGetScriptTypes,
       armTemplate
     );
     this.collection.items.add(generatedGetOperationItem);
@@ -586,6 +607,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
           runId: this.opts.runId,
           swaggerFilePaths: this.opts.swaggerFilePaths,
           validationLevel: this.opts.validationLevel,
+          verbose: this.opts.verbose,
         };
         const reportAnalyzer = inversifyGetInstance(NewmanReportAnalyzer, opts);
         await reportAnalyzer.analyze();
@@ -604,7 +626,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     url: string,
     step: string,
     prevMethod: string = "put",
-    scriptTypes: TestScriptType[] = ["DetailResponseLog"],
+    scriptTypes: TestScriptType[] = [],
     armTemplate?: ArmTemplate
   ): Item {
     const item = new Item({
@@ -652,7 +674,6 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
           postman.setNextRequest($(nextRequest))
         }
         else{
-          console.log(pm.response.text())
           const terminalStatus = ["Succeeded", "Failed", "Canceled"]
           if(pm.response.json().status!==undefined&&terminalStatus.indexOf(pm.response.json().status)===-1){
             postman.setNextRequest('${delay.name}')
@@ -661,7 +682,6 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
           }
         }
       }catch(err){
-        console.log(err)
         postman.setNextRequest($(nextRequest))
       }`,
       },
@@ -735,6 +755,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     this.collectionEnv.set("client_id", env.get("client_id"), "string");
     this.collectionEnv.set("client_secret", env.get("client_secret"), "string");
     this.collectionEnv.set("resourceGroupName", env.get("resourceGroupName"), "string");
+    this.collectionEnv.set("subscriptionId", env.get("subscriptionId"), "string");
     ret.events.add(
       new Event({
         listen: "test",

@@ -125,7 +125,7 @@ export class JsonLoader implements Loader<Json> {
         throw new Error(`cache not found for ${filePath}`);
       }
 
-      refObj = jsonPointer.get(cache.resolved!, refObjPath);
+      refObj = jsonPointer.get(cache.resolved! as any, refObjPath);
       (object as any).$ref = $ref;
     }
 

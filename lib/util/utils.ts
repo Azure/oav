@@ -211,7 +211,7 @@ export function setObject(
   ptr: string,
   value: unknown,
   overwrite = true
-): void {
+): any {
   let result;
   try {
     if (overwrite || !jsonPointer.has(doc, ptr)) {
