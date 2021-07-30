@@ -539,86 +539,93 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     if (this.opts.from || this.opts.to) {
       runtimeEnvManager.repopulateCollectionItems(this.opts.from, this.opts.to);
     }
-    newman
-      .run(
-        {
-          collection: this.collection,
-          environment: this.collectionEnv,
-          reporters: ["cli", "json"],
-          reporter: { json: { export: reportExportPath } },
-        },
-        function (err, summary) {
-          if (summary.run.failures.length > 0) {
-            process.exitCode = 1;
-          }
-          if (err) {
-            console.log(`collection run failed. ${err}`);
-          }
-          console.log("collection run complete!");
-        }
-      )
-      .on("beforeItem", async function (this: any, _err, _summary) {
-        if (!_err) {
-          runtimeEnvManager.save(_summary.item.name, this, "beforeStep");
-        }
-      })
-      .on("item", async function (this: any, _err, _summary) {
-        if (!_err) {
-          runtimeEnvManager.clean();
-        }
-      })
-      .on("done", async (_err, _summary) => {
-        const keys = await this.swaggerAnalyzer.getAllSecretKey();
-        const values: string[] = [];
-        for (const [k, v] of Object.entries(this.collectionEnv.syncVariablesTo())) {
-          if (this.dataMasker.maybeSecretKey(k)) {
-            values.push(v as string);
-          }
-        }
-        this.dataMasker.addMaskedValues(values);
-        this.dataMasker.addMaskedKeys(keys);
-        // read content and upload. mask newman report.
-        const newmanReport = JSON.parse(
-          await this.fileLoader.load(reportExportPath)
-        ) as NewmanReport;
 
-        // add mask environment secret value
-        for (const item of newmanReport.environment.values) {
-          if (this.dataMasker.maybeSecretKey(item.key)) {
-            this.dataMasker.addMaskedValues([item.value]);
-          }
-        }
-        if (this.opts.enableBlobUploader) {
-          await this.blobUploader.uploadContent(
-            "newmanreport",
-            `${defaultNewmanReport(
-              this.opts.testScenarioFileName,
-              this.opts.runId,
-              this.opts.testScenarioName
-            )}`,
-            this.dataMasker.jsonStringify(newmanReport)
-          );
-        }
-        const opts: NewmanReportAnalyzerOption = {
-          newmanReportFilePath: reportExportPath,
-          markdownReportPath: this.opts.markdownReportPath,
-          junitReportPath: this.opts.junitReportPath,
-          enableUploadBlob: this.opts.enableBlobUploader,
-          runId: this.opts.runId,
-          swaggerFilePaths: this.opts.swaggerFilePaths,
-          validationLevel: this.opts.validationLevel,
-          verbose: this.opts.verbose,
-        };
-        const reportAnalyzer = inversifyGetInstance(NewmanReportAnalyzer, opts);
-        await reportAnalyzer.analyze();
-        if (this.opts.skipCleanUp || this.opts.to) {
-          printWarning(
-            `Notice:the resource group '${this.collectionEnv.get(
-              "resourceGroupName"
-            )}' was not cleaned up.`
-          );
-        }
+    const newmanRun = async () => {
+      return new Promise((resolve) => {
+        newman
+          .run(
+            {
+              collection: this.collection,
+              environment: this.collectionEnv,
+              reporters: ["cli", "json"],
+              reporter: { json: { export: reportExportPath } },
+            },
+            function (err, summary) {
+              if (summary.run.failures.length > 0) {
+                process.exitCode = 1;
+              }
+              if (err) {
+                console.log(`collection run failed. ${err}`);
+              }
+              console.log("collection run complete!");
+            }
+          )
+          .on("beforeItem", async function (this: any, _err, _summary) {
+            if (!_err) {
+              runtimeEnvManager.save(_summary.item.name, this, "beforeStep");
+            }
+          })
+          .on("item", async function (this: any, _err, _summary) {
+            if (!_err) {
+              runtimeEnvManager.clean();
+            }
+          })
+          .on("done", async (_err, _summary) => {
+            const keys = await this.swaggerAnalyzer.getAllSecretKey();
+            const values: string[] = [];
+            for (const [k, v] of Object.entries(this.collectionEnv.syncVariablesTo())) {
+              if (this.dataMasker.maybeSecretKey(k)) {
+                values.push(v as string);
+              }
+            }
+            this.dataMasker.addMaskedValues(values);
+            this.dataMasker.addMaskedKeys(keys);
+            // read content and upload. mask newman report.
+            const newmanReport = JSON.parse(
+              await this.fileLoader.load(reportExportPath)
+            ) as NewmanReport;
+
+            // add mask environment secret value
+            for (const item of newmanReport.environment.values) {
+              if (this.dataMasker.maybeSecretKey(item.key)) {
+                this.dataMasker.addMaskedValues([item.value]);
+              }
+            }
+            if (this.opts.enableBlobUploader) {
+              await this.blobUploader.uploadContent(
+                "newmanreport",
+                `${defaultNewmanReport(
+                  this.opts.testScenarioFileName,
+                  this.opts.runId,
+                  this.opts.testScenarioName
+                )}`,
+                this.dataMasker.jsonStringify(newmanReport)
+              );
+            }
+            const opts: NewmanReportAnalyzerOption = {
+              newmanReportFilePath: reportExportPath,
+              markdownReportPath: this.opts.markdownReportPath,
+              junitReportPath: this.opts.junitReportPath,
+              enableUploadBlob: this.opts.enableBlobUploader,
+              runId: this.opts.runId,
+              swaggerFilePaths: this.opts.swaggerFilePaths,
+              validationLevel: this.opts.validationLevel,
+              verbose: this.opts.verbose,
+            };
+            const reportAnalyzer = inversifyGetInstance(NewmanReportAnalyzer, opts);
+            await reportAnalyzer.analyze();
+            if (this.opts.skipCleanUp || this.opts.to) {
+              printWarning(
+                `Notice:the resource group '${this.collectionEnv.get(
+                  "resourceGroupName"
+                )}' was not cleaned up.`
+              );
+            }
+            resolve(_summary);
+          });
       });
+    };
+    await newmanRun();
   }
 
   private generatedGetOperationItem(
