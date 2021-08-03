@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 07/15/2021 2.7.1
+
+- Disable checkUnderFileRoot in `Validate Traffic` command
+
 ## 07/21/2021 2.7.0
 
 - Oav runner support specifying option 'runId' with option 'from' and/or 'to' to debug.
