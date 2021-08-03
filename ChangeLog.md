@@ -1,6 +1,6 @@
 # Change Log - oav
 
-## 07/15/2021 2.7.1
+## 08/03/2021 2.7.1
 
 - Disable checkUnderFileRoot in `Validate Traffic` command
 
