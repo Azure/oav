@@ -304,6 +304,7 @@ export async function validateTrafficAgainstSpec(
       o.consoleLogLevel = log.consoleLogLevel;
       o.logFilepath = log.filepath;
       const liveValidationOptions = {
+        checkUnderFileRoot: false,
         directory: specFileDirectory,
         swaggerPathsPattern: [swaggerPathsPattern],
         git: {
