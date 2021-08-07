@@ -20,11 +20,11 @@ import {
 } from "../swaggerValidator/schemaValidator";
 import * as C from "../util/constants";
 import { log } from "../util/logging";
-import { Severity } from "../util/severity";
 import * as utils from "../util/utils";
-import { allErrorConstants, ExtendedErrorCode, RuntimeException } from "../util/validationError";
+import { RuntimeException } from "../util/validationError";
 import { inversifyGetContainer, inversifyGetInstance, TYPES } from "../inversifyUtils";
 import { setDefaultOpts } from "../swagger/loader";
+import { TrafficValidationErrorCode, trafficValidationErrors } from "../util/errorDefinitions";
 import { LiveValidatorLoader, LiveValidatorLoaderOption } from "./liveValidatorLoader";
 import { getProviderFromPathTemplate, OperationSearcher } from "./operationSearcher";
 import {
@@ -70,11 +70,11 @@ export interface RequestResponseLiveValidationResult {
   readonly runtimeException?: RuntimeException;
 }
 
-export interface LiveValidationIssue extends SchemaValidateIssue {
-  readonly pathsInPayload: string[];
-  readonly severity: Severity;
-  readonly documentationUrl?: string;
-}
+export type LiveValidationIssue = {
+  code: TrafficValidationErrorCode;
+  pathsInPayload: string[];
+  documentationUrl?: string;
+} & Omit<SchemaValidateIssue, "code">;
 
 /**
  * Additional data to log.
@@ -88,7 +88,7 @@ interface Meta {
  * If `includeErrors` is missing or empty, all error codes will be included.
  */
 export interface ValidateOptions {
-  readonly includeErrors?: ExtendedErrorCode[];
+  readonly includeErrors?: TrafficValidationErrorCode[];
   readonly includeOperationMatch?: boolean;
 }
 
@@ -198,7 +198,7 @@ export class LiveValidator {
       container,
       fileRoot: this.options.directory,
       ...this.options,
-      loadSuppression: this.options.loadSuppression ?? Object.keys(allErrorConstants),
+      loadSuppression: this.options.loadSuppression ?? Object.keys(trafficValidationErrors),
     });
     const schemaValidator = container.get(TYPES.schemaValidator) as SchemaValidator;
     this.validateRequestResponsePair = await schemaValidator.compileAsync(

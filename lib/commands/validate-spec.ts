@@ -3,7 +3,6 @@
 
 import * as yargs from "yargs";
 
-import { some } from "@azure-tools/openapi-tools-common";
 import { cliSuppressExceptions } from "../cliSuppressExceptions";
 import { log } from "../util/logging";
 import * as validate from "../validate";
@@ -19,14 +18,14 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     const vOptions: validate.Options = {
       consoleLogLevel: argv.logLevel,
       logFilepath: argv.f,
-      pretty: argv.p,
+      pretty: argv.p ?? true,
     };
-    if (specPath.match(/.*composite.*/gi) !== null) {
-      const result = await validate.validateCompositeSpec(specPath, vOptions);
-      return some(result, (v) => !v.validityStatus) ? 1 : 0;
-    } else {
-      const result = await validate.validateSpec(specPath, vOptions);
-      return result.validityStatus ? 0 : 1;
-    }
+    // if (specPath.match(/.*composite.*/gi) !== null) {
+    //   const result = await validate.validateCompositeSpec(specPath, vOptions);
+    //   return some(result, (v) => !v.validityStatus) ? 1 : 0;
+    // } else {
+    const result = await validate.validateSpec(specPath, vOptions);
+    return result.validityStatus ? 0 : 1;
+    // }
   });
 }

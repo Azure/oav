@@ -4,6 +4,7 @@ import {
   flatMap,
   getDescendantFilePosition,
   getFilePosition,
+  getInfo,
   isArray,
   MutableStringMap,
   readFile,
@@ -156,4 +157,29 @@ export const jsonPathToArray = (jsonPath: string): string[] => {
 
 export const jsonPathToPointer = (jsonPath: string): string => {
   return jsonPointer.compile(jsonPathToArray(jsonPath).slice(1));
+};
+
+export const getFilePositionFromJsonPath = (
+  obj: any,
+  jsonPath: string
+): FilePosition | undefined => {
+  const pathArr = jsonPathToArray(jsonPath.substr(1));
+  try {
+    const target = jsonPointer.get(obj, jsonPointer.compile(pathArr));
+    const info = getInfo(target);
+    if (info !== undefined) {
+      return info.position;
+    }
+  } catch (e) {
+    // Pass
+  }
+
+  const lastProperty = pathArr.pop();
+  const target = jsonPointer.get(obj, jsonPointer.compile(pathArr));
+  const info = getInfo(target);
+  if (info !== undefined && lastProperty !== undefined) {
+    return info.primitiveProperties[lastProperty];
+  }
+
+  return undefined;
 };

@@ -1,5 +1,10 @@
 import { sep as pathSep } from "path";
-import { getInfo, MutableStringMap, parseMarkdown } from "@azure-tools/openapi-tools-common";
+import {
+  getInfo,
+  MutableStringMap,
+  ObjectInfo,
+  parseMarkdown,
+} from "@azure-tools/openapi-tools-common";
 import {
   findReadMe,
   getCodeBlocksAndHeadings,
@@ -155,4 +160,38 @@ export const isSuppressed = (node: any, code: string, message: string) => {
   }
 
   return new RegExp(messageRegex).test(message);
+};
+
+const getParentNode = (info: ObjectInfo) => {
+  return info.isChild ? getInfo(info.parent) : undefined;
+};
+
+export const isSuppressedInPath = (node: any, code: string, message: string) => {
+  let info = getInfo(node);
+
+  while (info !== undefined) {
+    const directives = info.position.directives;
+    if (directives === undefined) {
+      info = getParentNode(info);
+      continue;
+    }
+
+    const messageRegex = directives[code] as string | undefined;
+    if (messageRegex === undefined) {
+      info = getParentNode(info);
+      continue;
+    }
+
+    if (messageRegex === ".*") {
+      return true;
+    }
+
+    if (new RegExp(messageRegex).test(message)) {
+      return true;
+    }
+
+    info = getParentNode(info);
+  }
+
+  return false;
 };

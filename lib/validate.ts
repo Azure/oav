@@ -8,6 +8,7 @@ import * as path from "path";
 import * as openapiToolsCommon from "@azure-tools/openapi-tools-common";
 import { Suppression } from "@azure/openapi-markdown";
 import jsYaml from "js-yaml";
+import { LiveValidator, LiveValidationIssue } from "../lib/liveValidation/liveValidator";
 import * as jsonUtils from "./util/jsonUtils";
 import * as specResolver from "./validators/specResolver";
 import * as umlGeneratorLib from "./umlGenerator";
@@ -22,7 +23,6 @@ import {
 import { ModelValidationError } from "./util/modelValidationError";
 import { ModelValidator } from "./validators/modelValidator";
 import { NodeError } from "./util/validationError";
-import { SemanticValidator } from "./validators/semanticValidator";
 import { WireFormatGenerator } from "./wireFormatGenerator";
 import { XMsExampleExtractor } from "./xMsExampleExtractor";
 import ExampleGenerator from "./generator/exampleGenerator";
@@ -30,8 +30,7 @@ import { getErrorsFromModelValidation } from "./util/getErrorsFromModelValidatio
 import { getSuppressions } from "./validators/suppressions";
 import { log } from "./util/logging";
 import { getInputFiles } from "./generator/util";
-import { LiveValidator } from "../lib/liveValidation/liveValidator"
-import { LiveValidationIssue } from "../lib/liveValidation/liveValidator"
+import { SemanticValidator } from "./swaggerValidator/semanticValidator";
 
 export interface Options extends specResolver.Options, umlGeneratorLib.Options {
   consoleLogLevel?: unknown;
@@ -122,26 +121,8 @@ const prettyPrint = <T extends NodeError<T>>(
   }
 };
 
-export const validateSpec = async (
-  specPath: string,
-  options: Options | undefined
-): Promise<SpecValidationResult> =>
+export const validateSpec = async (specPath: string, options: Options | undefined) =>
   validate(options, async (o) => {
-    // As a part of resolving discriminators we replace all the parent references
-    // with a oneOf array containing references to the parent and its children.
-    // This breaks the swagger specification 2.0 schema since oneOf is not supported.
-    // Hence we disable it since it is not required for semantic check.
-
-    o.shouldResolveDiscriminator = false;
-    // parameters in 'x-ms-parameterized-host' extension need not be resolved for semantic
-    // validation as that would not match the path parameters defined in the path template
-    // and cause the semantic validation to fail.
-    o.shouldResolveParameterizedHost = false;
-
-    // We shouldn't be resolving nullable types for semantic validation as we'll replace nodes
-    // with oneOf arrays which are not semantically valid in swagger 2.0 schema.
-    o.shouldResolveNullableTypes = false;
-
     const validator = new SemanticValidator(specPath, null, o);
     try {
       await validator.initialize();
@@ -282,10 +263,10 @@ export async function validateTrafficAgainstSpec(
   specPath: string,
   trafficPath: string,
   options: Options
-): Promise<Array<LiveValidationIssue>>{
+): Promise<LiveValidationIssue[]> {
   specPath = path.resolve(__dirname, specPath);
   trafficPath = path.resolve(__dirname, trafficPath);
-  
+
   if (!fs.existsSync(specPath)) {
     const error = new Error(`Can not find spec file, please check your specPath parameter.`);
     log.error(JSON.stringify(error));
@@ -311,15 +292,15 @@ export async function validateTrafficAgainstSpec(
         directory: specFileDirectory,
         swaggerPathsPattern: [swaggerPathsPattern],
         git: {
-          shouldClone: false
-        }
-      }
+          shouldClone: false,
+        },
+      };
 
       const validator = new LiveValidator(liveValidationOptions);
-      const errors: Array<LiveValidationIssue> = [];
+      const errors: LiveValidationIssue[] = [];
       await validator.initialize();
       const result = await validator.validateLiveRequestResponse(trafficFile);
-    
+
       if (!result.requestValidationResult.isSuccessful) {
         errors.push(...result.requestValidationResult.errors);
       }
@@ -332,16 +313,16 @@ export async function validateTrafficAgainstSpec(
         if (o.pretty) {
           prettyPrint(errors, "error");
         } else {
-          for (let error of errors) {
+          for (const error of errors) {
             log.error(JSON.stringify(error));
           }
         }
       } else {
-        log.info('No errors were found.');
+        log.info("No errors were found.");
       }
 
       return errors;
-    })
+    });
   } catch (error) {
     log.error(JSON.stringify(error));
     throw error;
@@ -401,8 +382,9 @@ export async function resolveCompositeSpec(
     options.consoleLogLevel = log.consoleLogLevel;
     // eslint-disable-next-line require-atomic-updates
     options.logFilepath = log.filepath;
-    const promiseFactories = docs.map((doc) => async () =>
-      resolveSpec(doc, outputDir, options, openapiToolsCommon.defaultErrorReport)
+    const promiseFactories = docs.map(
+      (doc) => async () =>
+        resolveSpec(doc, outputDir, options, openapiToolsCommon.defaultErrorReport)
     );
     await utils.executePromisesSequentially(promiseFactories);
   } catch (err) {
@@ -456,8 +438,8 @@ export async function generateWireFormatInCompositeSpec(
     options.consoleLogLevel = log.consoleLogLevel;
     // eslint-disable-next-line require-atomic-updates
     options.logFilepath = log.filepath;
-    const promiseFactories = docs.map((doc) => async () =>
-      generateWireFormat(doc, outDir, emitYaml, null, options)
+    const promiseFactories = docs.map(
+      (doc) => async () => generateWireFormat(doc, outDir, emitYaml, null, options)
     );
     await utils.executePromisesSequentially(promiseFactories);
   } catch (err) {
@@ -489,7 +471,11 @@ export async function generateUml(
   };
   try {
     const suppression = await getSuppressions(specPath);
-    const result = await jsonUtils.parseJson(suppression, specPath, openapiToolsCommon.defaultErrorReport);
+    const result = await jsonUtils.parseJson(
+      suppression,
+      specPath,
+      openapiToolsCommon.defaultErrorReport
+    );
     const resolver = new specResolver.SpecResolver(
       specPath,
       result,
@@ -562,26 +548,24 @@ export async function generateExamples(
   if (!options) {
     options = {};
   }
-  const wholeInputFiles: string[] = []
+  const wholeInputFiles: string[] = [];
   if (readme && tag) {
     const inputFiles = await getInputFiles(readme, tag);
     if (!inputFiles) {
-      throw Error("get input files from readme tag failed.")
+      throw Error("get input files from readme tag failed.");
     }
-    inputFiles.forEach(file => {
+    inputFiles.forEach((file) => {
       if (path.isAbsolute(file)) {
         wholeInputFiles.push(file);
+      } else {
+        wholeInputFiles.push(path.join(path.dirname(readme), file));
       }
-      else {
-        wholeInputFiles.push(path.join(path.dirname(readme),file));
-      }
-    })
-  }
-  else if (specPath) {
+    });
+  } else if (specPath) {
     wholeInputFiles.push(specPath);
   }
   if (wholeInputFiles.length === 0) {
-    console.error(`no spec file specified !`)
+    console.error(`no spec file specified !`);
   }
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel;
   log.filepath = options.logFilepath || log.filepath;
@@ -594,7 +578,7 @@ export async function generateExamples(
           await generator.generate(operationId);
         }
       }
-     continue;
+      continue;
     }
     await generator.generateAll();
   }

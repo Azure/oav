@@ -1,13 +1,14 @@
 import * as assert from "assert";
 
 import { SwaggerObject } from "yasway";
-import { SemanticValidator } from "../lib/validators/semanticValidator";
+import { SemanticValidator } from "../lib/swaggerValidator/semanticValidator";
 
 describe("Simple semantic validation", () => {
   it("a valid minimal swagger should pass semantic validation", async () => {
     const spec: SwaggerObject = {
       swagger: "2.0",
       info: { title: "sometitle", version: "2018" },
+      paths: {},
     };
     const semanticValidator = new SemanticValidator("some/file/path", spec, {});
     const api = await semanticValidator.initialize();

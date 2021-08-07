@@ -33,7 +33,7 @@ describe("Semantic validation", () => {
     const result = await validate.validateSpec(specPath, undefined);
     assert(result.validityStatus === false);
     assert.strictEqual(
-      (result.resolveSpec as any).code,
+      result.validateSpec?.errors?.[0].code,
       constants.ErrorCodes.JsonParsingError.name
     );
   });

@@ -66,11 +66,13 @@ Object {
           "$",
         ],
         "message": "id is required to return in response of GET/PUT resource calls but not being provided",
-        "params": Array [],
+        "params": Array [
+          "x-ms-azure-resource",
+        ],
         "pathsInPayload": Array [
           "",
         ],
-        "schemaPath": "",
+        "schemaPath": "#/x-ms-azure-resource",
         "severity": 0,
         "source": Object {
           "jsonRef": "#/definitions/LinkerResource",
@@ -168,11 +170,13 @@ Object {
           "$",
         ],
         "message": "id is required to return in response of GET/PUT resource calls but not being provided",
-        "params": Array [],
+        "params": Array [
+          "x-ms-azure-resource",
+        ],
         "pathsInPayload": Array [
           "",
         ],
-        "schemaPath": "",
+        "schemaPath": "#/x-ms-azure-resource",
         "severity": 0,
         "source": Object {
           "jsonRef": "#/definitions/LinkerResource",
@@ -372,7 +376,7 @@ Object {
           "/properties/state",
         ],
         "schemaPath": "#/properties/state/enum",
-        "severity": 1,
+        "severity": 0,
         "source": Object {
           "jsonRef": "#/definitions/UserEntityBaseParameters/properties/state",
           "position": Object {
@@ -669,7 +673,7 @@ Object {
           "/properties/groups/0/type",
         ],
         "schemaPath": "#/properties/type/enum",
-        "severity": 1,
+        "severity": 0,
         "source": Object {
           "jsonRef": "#/definitions/GroupContractProperties/properties/type",
           "position": Object {
@@ -897,7 +901,7 @@ Object {
           "/headers/etag",
         ],
         "schemaPath": "#/properties/headers/required",
-        "severity": 0,
+        "severity": 1,
         "source": Object {
           "position": Object {
             "column": 24,

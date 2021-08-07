@@ -28,7 +28,7 @@ export interface SemanticValidationResult extends CommonValidationResult {
   initialize?: unknown;
 }
 
-export class SemanticValidator extends SpecValidator<SemanticValidationResult> {
+export class SemanticValidatorDeprecated extends SpecValidator<SemanticValidationResult> {
   // eslint-disable-next-line @typescript-eslint/require-await
   public async validateSpec(): Promise<Sway.ValidationResults> {
     this.specValidationResult.validateSpec = {
