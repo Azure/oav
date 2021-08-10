@@ -1,5 +1,10 @@
 # Change Log - oav
 
+## 08/09/2021 2.7.2
+
+- Add runner architecture drawio
+- Oav runner run test scenarios sequentially
+
 ## 08/03/2021 2.7.1
 
 - Disable checkUnderFileRoot in `Validate Traffic` command
