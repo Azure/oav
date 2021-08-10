@@ -236,14 +236,15 @@ export class TestScenarioRunner {
   public async executeStep(step: TestStep, env: VariableEnv, testScope: TestScopeTracking) {
     const stepEnv = new VariableEnv(env);
     stepEnv.setBatch(step.variables);
+    stepEnv.setWriteEnv(env);
 
     switch (step.type) {
       case "restCall":
-        await this.executeRestCallStep(step, env, testScope);
+        await this.executeRestCallStep(step, stepEnv, testScope);
         break;
 
       case "armTemplateDeployment":
-        await this.executeArmTemplateStep(step, env, testScope);
+        await this.executeArmTemplateStep(step, stepEnv, testScope);
         break;
     }
   }
