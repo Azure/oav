@@ -236,7 +236,6 @@ export class TestScenarioRunner {
   public async executeStep(step: TestStep, env: VariableEnv, testScope: TestScopeTracking) {
     const stepEnv = new VariableEnv(env);
     stepEnv.setBatch(step.variables);
-    stepEnv.setWriteEnv(env);
 
     switch (step.type) {
       case "restCall":
