@@ -542,50 +542,6 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     if (this.opts.from || this.opts.to) {
       runtimeEnvManager.repopulateCollectionItems(this.opts.from, this.opts.to);
     }
-    newman
-      .run(
-        {
-          collection: this.collection,
-          environment: this.collectionEnv,
-          reporters: ["cli", "json"],
-          reporter: { json: { export: reportExportPath } },
-        },
-        function (err, summary) {
-          if (summary.run.failures.length > 0) {
-            process.exitCode = 1;
-          }
-          if (err) {
-            console.log(`collection run failed. ${err}`);
-          }
-          console.log("collection run complete!");
-        }
-      )
-      .on("beforeItem", async function (this: any, _err, _summary) {
-        if (!_err) {
-          runtimeEnvManager.save(_summary.item.name, this, "beforeStep");
-        }
-      })
-      .on("item", async function (this: any, _err, _summary) {
-        if (!_err) {
-          runtimeEnvManager.clean();
-          runtimeEnvManager.save(_summary.item.name, this, "afterStep");
-        }
-      })
-      .on("done", async (_err, _summary) => {
-        const keys = await this.swaggerAnalyzer.getAllSecretKey();
-        const values: string[] = [];
-        for (const [k, v] of Object.entries(this.collectionEnv.syncVariablesTo())) {
-          if (this.dataMasker.maybeSecretKey(k)) {
-            values.push(v as string);
-          }
-        }
-        this.dataMasker.addMaskedValues(values);
-        this.dataMasker.addMaskedKeys(keys);
-        // read content and upload. mask newman report.
-        const newmanReport = JSON.parse(
-          await this.fileLoader.load(reportExportPath)
-        ) as NewmanReport;
-
     const newmanRun = async () => {
       return new Promise((resolve) => {
         newman
@@ -614,6 +570,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
           .on("item", async function (this: any, _err, _summary) {
             if (!_err) {
               runtimeEnvManager.clean();
+              runtimeEnvManager.save(_summary.item.name, this, "afterStep");
             }
           })
           .on("done", async (_err, _summary) => {
