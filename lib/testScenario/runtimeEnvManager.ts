@@ -2,8 +2,8 @@ import { existsSync, readFileSync, writeFileSync } from "fs";
 import * as path from "path";
 import { Collection, VariableDefinition } from "postman-collection";
 import { mkdirpSync, removeSync } from "fs-extra";
-import { PostmanCollectionRunnerClientOption } from "./postmanCollectionRunnerClient";
 import { printWarning } from "../util/utils";
+import { PostmanCollectionRunnerClientOption } from "./postmanCollectionRunnerClient";
 
 interface RuntimeEnvContainer {
   afterStep?: { [key: string]: VariableDefinition }; // to save env when the item is completed, not used now.
@@ -55,7 +55,7 @@ export class RuntimeEnvManager {
     let runtimeEnvPath = this.generateRuntimeEnvPath(fromStep);
     const previousStep = this.getLastStepName(fromStep);
     let useBeforeStep = true;
-    if (!existsSync(runtimeEnvPath) ) {
+    if (!existsSync(runtimeEnvPath)) {
       if (previousStep !== undefined) {
         printWarning(
           `could not found the last runtime env file ${runtimeEnvPath}, try using env file of the previous step '${previousStep}' `
@@ -72,13 +72,14 @@ export class RuntimeEnvManager {
           `the last runtime env file ${runtimeEnvPath} for step '${fromStep}' did not exist. `
         );
       }
-     
     }
     const runtimeEnvContainer = JSON.parse(
       readFileSync(runtimeEnvPath).toString()
     ) as RuntimeEnvContainer;
-    const lastRuntimeEnv = useBeforeStep ? !runtimeEnvContainer.beforeStep : !runtimeEnvContainer.afterStep
-    if (lastRuntimeEnv) {
+    const lastRuntimeEnv = useBeforeStep
+      ? runtimeEnvContainer.beforeStep
+      : runtimeEnvContainer.afterStep;
+    if (!lastRuntimeEnv) {
       throw new Error(
         `could not load last runtime env for step '${fromStep}', please check the file ${runtimeEnvPath} `
       );
@@ -86,13 +87,13 @@ export class RuntimeEnvManager {
     return lastRuntimeEnv;
   };
 
-  private getLastStepName(fromStep:string) {
-     const collection = this.collection;
-     const fromIndex = this.getStepIndex(collection, fromStep);
-     if (fromIndex === 0) {
-       return undefined
-     }
-     return collection.items.idx(fromIndex - 1).name;
+  private getLastStepName(fromStep: string) {
+    const collection = this.collection;
+    const fromIndex = this.getStepIndex(collection, fromStep);
+    if (fromIndex === 0) {
+      return undefined;
+    }
+    return collection.items.idx(fromIndex - 1).name;
   }
 
   public repopulateCollectionItems = (from?: string, to?: string) => {
