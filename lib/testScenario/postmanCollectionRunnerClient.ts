@@ -565,6 +565,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
       .on("item", async function (this: any, _err, _summary) {
         if (!_err) {
           runtimeEnvManager.clean();
+          runtimeEnvManager.save(_summary.item.name, this, "afterStep");
         }
       })
       .on("done", async (_err, _summary) => {
