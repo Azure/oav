@@ -53,7 +53,7 @@ export class RuntimeEnvManager {
   };
   public loadEnv = (fromStep: string) => {
     let runtimeEnvPath = this.generateRuntimeEnvPath(fromStep);
-    const previousStep = this.getLastStepName(fromStep);
+    const previousStep = this.getPreviousStepName(fromStep);
     let useBeforeStep = true;
     if (!existsSync(runtimeEnvPath)) {
       if (previousStep !== undefined) {
@@ -87,7 +87,7 @@ export class RuntimeEnvManager {
     return lastRuntimeEnv;
   };
 
-  private getLastStepName(fromStep: string) {
+  private getPreviousStepName(fromStep: string) {
     const collection = this.collection;
     const fromIndex = this.getStepIndex(collection, fromStep);
     if (fromIndex === 0) {
