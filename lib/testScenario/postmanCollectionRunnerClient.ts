@@ -221,9 +221,6 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
       url: "",
       body: { mode: "raw" } as RequestBodyDefinition,
     });
-    if (step.step === "Deployments_CreateOrUpdate") {
-      console.log(JSON.stringify(stepEnv.env, null, 2));
-    }
     item.description = step.operation.operationId || "";
     const queryParams: QueryParamDefinition[] = [];
     const urlVariables: VariableDefinition[] = [];
