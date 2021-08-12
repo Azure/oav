@@ -1,5 +1,11 @@
 # Change Log - oav
 
+## 08/09/2021 2.7.2
+
+- Add runner architecture drawio
+- Oav runner run test scenarios sequentially
+- Oav runner can reuse the 'after-step' environment of the previous step in debugging mode.
+
 ## 08/03/2021 2.7.1
 
 - Disable checkUnderFileRoot in `Validate Traffic` command
