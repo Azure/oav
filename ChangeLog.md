@@ -1,5 +1,10 @@
 # Change Log - oav
 
+## 08/12/2021 2.7.3
+
+- Refactor semantic validation using AJV
+- Enable url path for a swagger loading
+
 ## 08/09/2021 2.7.2
 
 - Add runner architecture drawio

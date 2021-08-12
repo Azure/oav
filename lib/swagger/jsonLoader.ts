@@ -1,5 +1,11 @@
 import { dirname as pathDirname, join as pathJoin } from "path";
-import { Json, parseJson } from "@azure-tools/openapi-tools-common";
+import {
+  FilePosition,
+  getInfo,
+  getRootObjectInfo,
+  Json,
+  parseJson,
+} from "@azure-tools/openapi-tools-common";
 import { safeLoad as parseYaml } from "js-yaml";
 import { default as jsonPointer } from "json-pointer";
 import { inject, injectable } from "inversify";
@@ -27,7 +33,24 @@ interface FileCache {
   mockName: string;
 }
 
-export const $id = "id";
+export const $id = "$id";
+
+export class JsonLoaderRefError extends Error {
+  public position?: FilePosition;
+  public url?: string;
+  public ref?: string;
+
+  public constructor(source: { $ref: string }) {
+    super(`Failed to resolve ref for ${source.$ref}`);
+    const info = getInfo(source);
+    if (info !== undefined) {
+      const rootInfo = getRootObjectInfo(info);
+      this.position = info.position;
+      this.url = rootInfo.url;
+      this.ref = source.$ref;
+    }
+  }
+}
 
 @injectable()
 export class JsonLoader implements Loader<Json> {
@@ -70,12 +93,6 @@ export class JsonLoader implements Loader<Json> {
   }
 
   private parseFileContent(cache: FileCache, fileString: string): any {
-    if (cache.filePath.endsWith(".json")) {
-      return this.opts.useJsonParser
-        ? parseJson(cache.filePath, fileString)
-        : JSON.parse(fileString);
-    }
-
     if (
       this.opts.supportYaml &&
       (cache.filePath.endsWith(".yaml") || cache.filePath.endsWith(".yml"))
@@ -86,7 +103,9 @@ export class JsonLoader implements Loader<Json> {
       });
     }
 
-    throw new Error(`Unknown file format while loading file ${cache.filePath}`);
+    return this.opts.useJsonParser ? parseJson(cache.filePath, fileString) : JSON.parse(fileString);
+
+    // throw new Error(`Unknown file format while loading file ${cache.filePath}`);
   }
 
   public async load(inputFilePath: string, skipResolveRef?: boolean): Promise<Json> {
@@ -107,8 +126,19 @@ export class JsonLoader implements Loader<Json> {
 
   public async resolveFile(mockName: string): Promise<any> {
     const filePath = this.mockNameMap[mockName];
-    const cache = this.fileCache.get(filePath);
-    return this.loadFile(cache!);
+    let cache = this.fileCache.get(filePath);
+    if (cache !== undefined) {
+      return this.loadFile(cache);
+    }
+
+    // Fallback for load file outside our swagger context
+    const contentString = await this.fileLoader.load(mockName);
+    cache = {
+      filePath: mockName,
+      mockName,
+    };
+    const content = this.parseFileContent(cache, contentString);
+    return content;
   }
 
   public resolveRefObj<T>(object: T): T {
@@ -153,7 +183,9 @@ export class JsonLoader implements Loader<Json> {
       const [refFilePath, refObjPath] = sp;
       if (refFilePath === "") {
         // Local reference
-        jsonPointer.get(rootObject as {}, refObjPath);
+        if (!jsonPointer.has(rootObject as {}, refObjPath)) {
+          throw new JsonLoaderRefError(object);
+        }
         const mockName = (rootObject as any)[$id];
         return { $ref: `${mockName}#${refObjPath}` };
       }
@@ -163,7 +195,9 @@ export class JsonLoader implements Loader<Json> {
       );
       const refMockName = (refObj as any)[$id];
       if (refObjPath !== undefined) {
-        jsonPointer.get(refObj as {}, refObjPath);
+        if (!jsonPointer.has(refObj as {}, refObjPath)) {
+          throw new JsonLoaderRefError(object);
+        }
         return { $ref: `${refMockName}#${refObjPath}` };
       } else {
         return { $ref: refMockName };

@@ -10,3 +10,15 @@ export const enum Severity {
 }
 
 export type SeverityString = "Error" | "Critical" | "Warning" | "Info" | "Verbose";
+
+const severityRevMap: { [key: number]: SeverityString } = {
+  [Severity.Critical]: "Critical",
+  [Severity.Error]: "Error",
+  [Severity.Warning]: "Warning",
+  [Severity.Information]: "Info",
+  [Severity.Verbose]: "Verbose",
+};
+
+export const severityStringFromValue = (value: number): SeverityString => {
+  return severityRevMap[value];
+};

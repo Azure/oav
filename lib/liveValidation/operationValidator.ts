@@ -2,19 +2,12 @@ import { ParsedUrlQuery } from "querystring";
 import { getInfo, MutableStringMap, StringMap } from "@azure-tools/openapi-tools-common";
 import { LowerHttpMethods, Operation, Response, TransformFn } from "../swagger/swaggerTypes";
 import { sourceMapInfoToSourceLocation } from "../swaggerValidator/ajvSchemaValidator";
-import {
-  getValidateErrorMessage,
-  SchemaValidateContext,
-  SchemaValidateIssue,
-} from "../swaggerValidator/schemaValidator";
+import { SchemaValidateContext, SchemaValidateIssue } from "../swaggerValidator/schemaValidator";
 import { jsonPathToPointer } from "../util/jsonUtils";
 import { Writable } from "../util/utils";
-import {
-  errorCodeToErrorMetadata,
-  ExtendedErrorCode,
-  SourceLocation,
-} from "../util/validationError";
+import { SourceLocation } from "../util/validationError";
 import { extractPathParamValue } from "../transform/pathRegexTransformer";
+import { getOavErrorMeta, TrafficValidationErrorCode } from "../util/errorDefinitions";
 import {
   LiveValidationIssue,
   LiveValidatorLoggingLevels,
@@ -60,7 +53,7 @@ export const validateSwaggerLiveRequest = async (
   request: LiveRequest,
   info: OperationContext,
   loader?: LiveValidatorLoader,
-  includeErrors?: ExtendedErrorCode[],
+  includeErrors?: TrafficValidationErrorCode[],
   logging?: (
     message: string,
     level?: LiveValidatorLoggingLevels,
@@ -123,7 +116,7 @@ export const validateSwaggerLiveResponse = async (
   response: LiveResponse,
   info: OperationContext,
   loader?: LiveValidatorLoader,
-  includeErrors?: ExtendedErrorCode[],
+  includeErrors?: TrafficValidationErrorCode[],
   isArmCall?: boolean,
   logging?: (
     message: string,
@@ -261,9 +254,7 @@ const schemaValidateIssueToLiveValidationIssue = (
   for (const i of input) {
     const issue = i as Writable<LiveValidationIssue>;
 
-    const meta = errorCodeToErrorMetadata(issue.code);
-    issue.documentationUrl = meta.docUrl;
-    issue.severity = meta.severity;
+    issue.documentationUrl = "";
 
     const source = issue.source as Writable<SourceLocation>;
     if (!source.url) {
@@ -308,8 +299,9 @@ const schemaValidateIssueToLiveValidationIssue = (
           issue.code = "MISSING_REQUIRED_PARAMETER";
         }
 
-        issue.severity = errorCodeToErrorMetadata(issue.code).severity;
-        issue.message = getValidateErrorMessage(issue.code, { missingProperty: issue.params[0] });
+        const meta = getOavErrorMeta(issue.code, { missingProperty: issue.params[0] });
+        issue.severity = meta.severity;
+        issue.message = meta.message;
       }
 
       return jsonPathToPointer(path);
@@ -396,19 +388,19 @@ const validateLroHeader = (
 };
 
 export const issueFromErrorCode = (
-  code: ExtendedErrorCode,
+  code: TrafficValidationErrorCode,
   param: any,
   relatedSchema?: {}
 ): LiveValidationIssue => {
-  const meta = errorCodeToErrorMetadata(code);
+  const meta = getOavErrorMeta(code, param);
   return {
     code,
     severity: meta.severity,
-    message: getValidateErrorMessage(code, param),
+    message: meta.message,
     jsonPathsInPayload: [],
     pathsInPayload: [],
     schemaPath: "",
     source: sourceMapInfoToSourceLocation(getInfo(relatedSchema)),
-    documentationUrl: meta.docUrl,
+    documentationUrl: "",
   };
 };
