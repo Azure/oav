@@ -1,5 +1,5 @@
 import { HttpMethods } from "@azure/core-http";
-import { Operation, Schema, SwaggerExample } from "../swagger/swaggerTypes";
+import { Operation, SwaggerExample } from "../swagger/swaggerTypes";
 
 //#region Common
 
@@ -11,20 +11,16 @@ type TransformRaw<T, Additional = {}, OptionalKey extends keyof T = never> = {
   } &
   Additional;
 
+
 export interface RawVariableScope {
   variables?: { [variableName: string]: string };
 }
 
-const variableScopeSchema: Schema = {
-  type: "object",
-  properties: {
-    variables: {
-      type: "object",
-      additionalProperties: {
-        type: "string",
-      },
-    },
-  },
+
+export interface OutputVariables {
+  [variableName: string]: {
+    fromResponse: string;
+  };
 };
 
 //#endregion
@@ -33,6 +29,8 @@ const variableScopeSchema: Schema = {
 
 type RawTestStepBase = RawVariableScope & {
   step: string;
+  type?: string;
+  outputVariables?: OutputVariables;
 };
 
 interface TestStepBase {
@@ -45,32 +43,6 @@ export type RawTestStep =
   | RawTestStepRestCall
   | RawTestStepRawCall;
 
-const testStepBaseSchema: Schema = {
-  allOf: [{ $ref: "#/definitions/VariableScope" }],
-  properties: {
-    step: {
-      type: "string",
-    },
-    fromStep: {
-      type: "string",
-    },
-  },
-};
-
-const testStepSchema: Schema = {
-  anyOf: [
-    {
-      $ref: "#/definitions/TestStepRestCall",
-    },
-    {
-      $ref: "#/definitions/TestStepArmTemplateDeployment",
-    },
-    {
-      $ref: "#/definitions/TestStepRawCall",
-    },
-  ],
-};
-
 //#endregion
 
 //#region TestStep Arm Template Deployment
@@ -78,20 +50,6 @@ const testStepSchema: Schema = {
 export type RawTestStepArmTemplateDeployment = RawTestStepBase & {
   armTemplateDeployment: string;
   armTemplateParameters?: string;
-};
-
-const testStepArmTemplateDeploymentSchema: Schema = {
-  type: "object",
-  allOf: [{ $ref: "#/definitions/TestStepBase" }],
-  properties: {
-    armTemplateDeployment: {
-      type: "string",
-    },
-    armTemplateParameters: {
-      type: "string",
-    },
-  },
-  required: ["armTemplateDeployment"],
 };
 
 export type TestStepArmTemplateDeployment = TransformRaw<
@@ -139,72 +97,14 @@ export interface ArmTemplate {
 //#region TestStep RestCall
 
 export type RawTestStepRestCall = RawTestStepBase & {
+  type: "exampleFile",
+  exampleFile: string;
   resourceName?: string;
-  exampleFile?: string;
-  resourceType?: string;
   operationId?: string;
   statusCode?: number;
   resourceUpdate?: JsonPatchOp[];
   requestUpdate?: JsonPatchOp[];
   responseUpdate?: JsonPatchOp[];
-  outputVariables?: {
-    [variableName: string]: {
-      fromResponse: string;
-    };
-  };
-};
-
-const testStepRestCallSchema: Schema = {
-  type: "object",
-  allOf: [{ $ref: "#/definitions/TestStepBase" }],
-  properties: {
-    type: {
-      type: "string",
-      enum: ["exampleFile"],
-    },
-    resourceName: {
-      type: "string",
-    },
-    exampleFile: {
-      type: "string",
-    },
-    resourceUpdate: {
-      type: "array",
-      items: {
-        $ref: "#/definitions/JsonPatchOp",
-      },
-    },
-    requestUpdate: {
-      type: "array",
-      items: {
-        $ref: "#/definitions/JsonPatchOp",
-      },
-    },
-    responseUpdate: {
-      type: "array",
-      items: {
-        $ref: "#/definitions/JsonPatchOp",
-      },
-    },
-    outputVariables: {
-      type: "object",
-      additionalProperties: {
-        type: "object",
-        properties: {
-          fromResponse: {
-            type: "string",
-          },
-        },
-      },
-    },
-    operationId: {
-      type: "string",
-    },
-    statusCode: {
-      type: "number",
-    },
-  },
-  required: ["step"],
 };
 
 export type TestStepRestCall = TransformRaw<
@@ -222,47 +122,29 @@ export type TestStepRestCall = TransformRaw<
 
 //#endregion
 
+
+//#region TestStep Named Resource Operation
+export type RawTestStepOperation = RawTestStepBase & {
+  type: "operation";
+  resourceName: string;
+  operationId: string;
+  statusCode?: number;
+  resourceUpdate?: JsonPatchOp[];
+  requestUpdate?: JsonPatchOp[];
+  responseUpdate?: JsonPatchOp[];
+};
+
+//#endregion
+
+//#region TestSTep Raw REST Call
 export type RawTestStepRawCall = RawTestStepBase & {
+  type: "rawCall";
   method: HttpMethods;
   rawUrl: string;
   requestHeaders: { [headName: string]: string };
   requestBody: string;
   statusCode?: number;
   responseExpected?: string;
-};
-
-const testStepRawCallSchema: Schema = {
-  type: "object",
-  allOf: [{ $ref: "#/definitions/TestStepBase" }],
-  properties: {
-    type: {
-      type: "string",
-      enum: ["rawCall"],
-    },
-    method: {
-      type: "string",
-      enum: ["GET", "PUT", "PATCH", "POST", "DELETE", "OPTIONS", "HEAD"],
-    },
-    url: {
-      type: "string",
-    },
-    requestHeaders: {
-      type: "object",
-      additionalProperties: {
-        type: "string",
-      },
-    },
-    requestBody: {
-      type: "string",
-    },
-    statusCode: {
-      type: "number",
-    },
-    responseExpected: {
-      type: "string",
-    },
-  },
-  required: ["method", "url", "requestHeaders", "requestBody"],
 };
 
 export type TestStepRawCall = TransformRaw<
@@ -272,6 +154,7 @@ export type TestStepRawCall = TransformRaw<
   } & TestStepBase,
   "responseExpected"
 >;
+//#endregion
 
 //#region JsonPatchOp
 
@@ -320,97 +203,6 @@ export type JsonPatchOp =
   | JsonPatchOpTest
   | JsonPatchOpMerge;
 
-const jsonPatchOpSchemas: { [key: string]: Schema } = {
-  JsonPatchOp: {
-    type: "object",
-    oneOf: [
-      { $ref: "#/definitions/JsonPatchOpAdd" },
-      { $ref: "#/definitions/JsonPatchOpRemove" },
-      { $ref: "#/definitions/JsonPatchOpReplace" },
-      { $ref: "#/definitions/JsonPatchOpCopy" },
-      { $ref: "#/definitions/JsonPatchOpMove" },
-      { $ref: "#/definitions/JsonPatchOpTest" },
-      { $ref: "#/definitions/JsonPatchOpMerge" },
-    ],
-  },
-  JsonPatchOpAdd: {
-    type: "object",
-    required: ["add", "value"],
-    properties: {
-      add: {
-        type: "string",
-      },
-      value: {},
-    },
-  },
-  JsonPatchOpRemove: {
-    type: "object",
-    required: ["remove"],
-    properties: {
-      remove: {
-        type: "string",
-      },
-    },
-  },
-  JsonPatchOpReplace: {
-    type: "object",
-    required: ["replace", "value"],
-    properties: {
-      replace: {
-        type: "string",
-      },
-      value: {},
-    },
-  },
-  JsonPatchOpCopy: {
-    type: "object",
-    required: ["copy", "path"],
-    properties: {
-      copy: {
-        type: "string",
-      },
-      path: {
-        type: "string",
-      },
-    },
-  },
-  JsonPatchOpMove: {
-    type: "object",
-    required: ["move", "path"],
-    properties: {
-      move: {
-        type: "string",
-      },
-      path: {
-        type: "string",
-      },
-    },
-  },
-  JsonPatchOpTest: {
-    type: "object",
-    required: ["test", "value"],
-    properties: {
-      test: {
-        type: "string",
-      },
-      value: {},
-    },
-  },
-  JsonPatchOpMerge: {
-    type: "object",
-    required: ["merge", "value"],
-    properties: {
-      merge: {
-        type: "string",
-      },
-      value: {
-        type: "object",
-        additionalProperties: true,
-      },
-    },
-  },
-};
-
 //#endregion
 
 //#region TestScenario
@@ -420,32 +212,6 @@ export type RawTestScenario = RawVariableScope & {
   requiredVariables?: string[];
   shareTestScope?: boolean | string;
   steps: RawTestStep[];
-};
-
-const testScenarioSchema: Schema = {
-  type: "object",
-  allOf: [{ $ref: "#/definitions/VariableScope" }],
-  properties: {
-    description: {
-      type: "string",
-    },
-    requiredVariables: {
-      type: "array",
-      items: {
-        type: "string",
-      },
-    },
-    steps: {
-      type: "array",
-      items: {
-        $ref: "#/definitions/TestStep",
-      },
-    },
-    shareTestScope: {
-      type: "string",
-    },
-  },
-  required: ["description", "steps"],
 };
 
 export type TestScenario = TransformRaw<
@@ -504,48 +270,5 @@ export interface RawResponse {
 export interface TestResources {
   ["test-resources"]: Array<{ [key: string]: string }>;
 }
-
-export const TestDefinitionSchema: Schema & {
-  definitions: { [def: string]: Schema };
-} = {
-  type: "object",
-  allOf: [{ $ref: "#/definitions/VariableScope" }],
-  properties: {
-    scope: {
-      type: "string",
-      enum: ["ResourceGroup"],
-    },
-    requiredVariables: {
-      type: "array",
-      items: {
-        type: "string",
-      },
-    },
-    prepareSteps: {
-      type: "array",
-      items: {
-        $ref: "#/definitions/TestStep",
-      },
-    },
-    testScenarios: {
-      type: "array",
-      items: {
-        $ref: "#/definitions/TestScenario",
-      },
-    },
-  },
-  required: ["testScenarios"],
-
-  definitions: {
-    VariableScope: variableScopeSchema,
-    TestStep: testStepSchema,
-    TestStepBase: testStepBaseSchema,
-    TestStepArmTemplateDeployment: testStepArmTemplateDeploymentSchema,
-    TestStepRestCall: testStepRestCallSchema,
-    TestStepRawCall: testStepRawCallSchema,
-    ...jsonPatchOpSchemas,
-    TestScenario: testScenarioSchema,
-  },
-};
 
 //#endregion
