@@ -186,6 +186,7 @@ const JsonPatchOpSchemas: { [key: string]: Schema } = {
       { $ref: "#/definitions/JsonPatchOpCopy" },
       { $ref: "#/definitions/JsonPatchOpMove" },
       { $ref: "#/definitions/JsonPatchOpMerge" },
+      { $ref: "#/definitions/JsonPatchOpTest" },
     ],
   },
   JsonPatchOpAdd: {
@@ -252,6 +253,16 @@ const JsonPatchOpSchemas: { [key: string]: Schema } = {
         type: "object",
         additionalProperties: true,
       },
+    },
+  },
+  JsonPatchOpTest: {
+    type: "object",
+    required: ["test", "value"],
+    properties: {
+      test: {
+        $ref: "#/definitions/JsonPointer",
+      },
+      value: {},
     },
   },
 };

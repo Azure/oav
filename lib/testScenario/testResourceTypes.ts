@@ -11,11 +11,9 @@ type TransformRaw<T, Additional = {}, OptionalKey extends keyof T = never> = {
   } &
   Additional;
 
-
 export interface RawVariableScope {
   variables?: { [variableName: string]: string };
 }
-
 
 export interface OutputVariables {
   [variableName: string]: {
@@ -30,6 +28,7 @@ export interface OutputVariables {
 type RawTestStepBase = RawVariableScope & {
   step: string;
   type?: string;
+  description?: string;
   outputVariables?: OutputVariables;
 };
 
@@ -37,11 +36,53 @@ interface TestStepBase {
   isScopePrepareStep?: boolean;
 }
 
-export type TestStep = TestStepArmTemplateDeployment | TestStepRestCall | TestStepRawCall;
+export type TestStep = TestStepRestCall | TestStepArmTemplateDeployment | TestStepRawCall;
 export type RawTestStep =
-  | RawTestStepArmTemplateDeployment
   | RawTestStepRestCall
+  | RawTestStepOperation
+  | RawTestStepArmTemplateDeployment
   | RawTestStepRawCall;
+
+//#endregion
+
+//#region TestStep RestCall
+
+export type RawTestStepRestCall = RawTestStepBase & {
+  type: "basic",
+  exampleFile: string;
+  resourceName?: string;
+  statusCode?: number;
+  resourceUpdate?: JsonPatchOp[];
+  requestUpdate?: JsonPatchOp[];
+  responseUpdate?: JsonPatchOp[];
+};
+
+export type TestStepRestCall = TransformRaw<
+  RawTestStepRestCall,
+  {
+    type: "restCall";
+    operation: Operation;
+    exampleId: string;
+    exampleFilePath?: string;
+    requestParameters: SwaggerExample["parameters"];
+    responseExpected: SwaggerExample["responses"]["200"]["body"];
+  } & TestStepBase,
+  "exampleFile" | "resourceName"
+>;
+
+//#endregion
+
+
+//#region TestStep Named Resource Operation
+export type RawTestStepOperation = RawTestStepBase & {
+  type: "operation";
+  resourceName: string;
+  operationId: string;
+  statusCode?: number;
+  resourceUpdate?: JsonPatchOp[];
+  requestUpdate?: JsonPatchOp[];
+  responseUpdate?: JsonPatchOp[];
+};
 
 //#endregion
 
@@ -94,48 +135,6 @@ export interface ArmTemplate {
 
 //#endregion
 
-//#region TestStep RestCall
-
-export type RawTestStepRestCall = RawTestStepBase & {
-  type: "exampleFile",
-  exampleFile: string;
-  resourceName?: string;
-  operationId?: string;
-  statusCode?: number;
-  resourceUpdate?: JsonPatchOp[];
-  requestUpdate?: JsonPatchOp[];
-  responseUpdate?: JsonPatchOp[];
-};
-
-export type TestStepRestCall = TransformRaw<
-  RawTestStepRestCall,
-  {
-    type: "restCall";
-    operation: Operation;
-    exampleId: string;
-    exampleFilePath?: string;
-    requestParameters: SwaggerExample["parameters"];
-    responseExpected: SwaggerExample["responses"]["200"]["body"];
-  } & TestStepBase,
-  "exampleFile" | "resourceName"
->;
-
-//#endregion
-
-
-//#region TestStep Named Resource Operation
-export type RawTestStepOperation = RawTestStepBase & {
-  type: "operation";
-  resourceName: string;
-  operationId: string;
-  statusCode?: number;
-  resourceUpdate?: JsonPatchOp[];
-  requestUpdate?: JsonPatchOp[];
-  responseUpdate?: JsonPatchOp[];
-};
-
-//#endregion
-
 //#region TestSTep Raw REST Call
 export type RawTestStepRawCall = RawTestStepBase & {
   type: "rawCall";
@@ -184,14 +183,14 @@ export interface JsonPatchOpMove {
   path: string;
 }
 
-export interface JsonPatchOpTest {
-  test: string;
-  value: any;
-}
-
 export interface JsonPatchOpMerge {
   merge: string;
   value: { [key: string]: any };
+}
+
+export interface JsonPatchOpTest {
+  test: string;
+  value: any;
 }
 
 export type JsonPatchOp =
@@ -200,8 +199,8 @@ export type JsonPatchOp =
   | JsonPatchOpReplace
   | JsonPatchOpCopy
   | JsonPatchOpMove
-  | JsonPatchOpTest
-  | JsonPatchOpMerge;
+  | JsonPatchOpMerge
+  | JsonPatchOpTest;
 
 //#endregion
 
@@ -209,8 +208,6 @@ export type JsonPatchOp =
 
 export type RawTestScenario = RawVariableScope & {
   description: string;
-  requiredVariables?: string[];
-  shareTestScope?: boolean | string;
   steps: RawTestStep[];
 };
 
@@ -241,6 +238,9 @@ export type TestDefinitionFile = TransformRaw<
     _filePath: string;
   }
 >;
+//#endregion
+
+//#region Runner Types
 export interface RawReport {
   executions: RawExecution[];
   timings: any;
