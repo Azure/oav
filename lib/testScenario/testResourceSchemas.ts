@@ -35,7 +35,6 @@ const TestStepBase: Schema = {
   allOf: [{ $ref: "#/definitions/VariableScope" }],
   properties: {
     step: Name,
-    type: String,
     description: String,
     outputVariables: {
       type: "object",
@@ -73,10 +72,6 @@ const TestStepRestCall: Schema = {
   type: "object",
   allOf: [{ $ref: "#/definitions/TestStepBase" }],
   properties: {
-    type: {
-      type: "string",
-      enum: ["basic"],
-    },
     exampleFile: String,
     resourceName: Name,
     resourceUpdate: {
@@ -106,10 +101,6 @@ const TestStepOperation: Schema = {
   type: "object",
   allOf: [{ $ref: "#/definitions/TestStepBase" }],
   properties: {
-    type: {
-      type: "string",
-      enum: ["operation"],
-    },
     operationId: Name,
     resourceName: Name,
     resourceUpdate: {
@@ -140,10 +131,6 @@ const TestStepArmTemplateDeployment: Schema = {
   type: "object",
   allOf: [{ $ref: "#/definitions/TestStepBase" }],
   properties: {
-    type: {
-      type: "string",
-      enum: ["armTemplate"],
-    },
     armTemplateDeployment: String,
     armTemplateParameters: String,
   },
@@ -154,10 +141,6 @@ const TestStepRawCall: Schema = {
   type: "object",
   allOf: [{ $ref: "#/definitions/TestStepBase" }],
   properties: {
-    type: {
-      type: "string",
-      enum: ["rawCall"],
-    },
     method: {
       type: "string",
       enum: ["GET", "PUT", "PATCH", "POST", "DELETE", "OPTIONS", "HEAD"],
@@ -271,6 +254,7 @@ const TestScenario: Schema = {
   type: "object",
   allOf: [{ $ref: "#/definitions/VariableScope" }],
   properties: {
+    scenario: Name,
     description: String,
     steps: {
       type: "array",
@@ -279,7 +263,7 @@ const TestScenario: Schema = {
       },
     },
   },
-  required: ["description", "steps"],
+  required: ["scenario", "steps"],
 };
 
 export const TestDefinition: Schema & {

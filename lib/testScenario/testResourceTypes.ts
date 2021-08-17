@@ -19,7 +19,7 @@ export interface OutputVariables {
   [variableName: string]: {
     fromResponse: string;
   };
-};
+}
 
 //#endregion
 
@@ -27,7 +27,6 @@ export interface OutputVariables {
 
 type RawTestStepBase = RawVariableScope & {
   step: string;
-  type?: string;
   description?: string;
   outputVariables?: OutputVariables;
 };
@@ -36,7 +35,11 @@ interface TestStepBase {
   isScopePrepareStep?: boolean;
 }
 
-export type TestStep = TestStepRestCall | TestStepArmTemplateDeployment | TestStepRawCall;
+export type TestStep =
+  | TestStepRestCall
+  | TestStepOperation
+  | TestStepArmTemplateDeployment
+  | TestStepRawCall;
 export type RawTestStep =
   | RawTestStepRestCall
   | RawTestStepOperation
@@ -48,7 +51,6 @@ export type RawTestStep =
 //#region TestStep RestCall
 
 export type RawTestStepRestCall = RawTestStepBase & {
-  type: "basic",
   exampleFile: string;
   resourceName?: string;
   statusCode?: number;
@@ -67,15 +69,13 @@ export type TestStepRestCall = TransformRaw<
     requestParameters: SwaggerExample["parameters"];
     responseExpected: SwaggerExample["responses"]["200"]["body"];
   } & TestStepBase,
-  "exampleFile" | "resourceName"
+  "exampleFile"
 >;
 
 //#endregion
 
-
 //#region TestStep Named Resource Operation
 export type RawTestStepOperation = RawTestStepBase & {
-  type: "operation";
   resourceName: string;
   operationId: string;
   statusCode?: number;
@@ -83,6 +83,17 @@ export type RawTestStepOperation = RawTestStepBase & {
   requestUpdate?: JsonPatchOp[];
   responseUpdate?: JsonPatchOp[];
 };
+
+export type TestStepOperation = TransformRaw<
+  RawTestStepOperation,
+  {
+    type: "operation";
+    operation: Operation;
+    requestParameters: SwaggerExample["parameters"];
+    responseExpected: SwaggerExample["responses"]["200"]["body"];
+  } & TestStepBase,
+  "operationId" | "resourceName"
+>;
 
 //#endregion
 
@@ -137,7 +148,6 @@ export interface ArmTemplate {
 
 //#region TestSTep Raw REST Call
 export type RawTestStepRawCall = RawTestStepBase & {
-  type: "rawCall";
   method: HttpMethods;
   rawUrl: string;
   requestHeaders: { [headName: string]: string };
@@ -207,7 +217,8 @@ export type JsonPatchOp =
 //#region TestScenario
 
 export type RawTestScenario = RawVariableScope & {
-  description: string;
+  scenario: string;
+  description?: string;
   steps: RawTestStep[];
 };
 
@@ -240,7 +251,7 @@ export type TestDefinitionFile = TransformRaw<
 >;
 //#endregion
 
-//#region Runner Types
+//#region Runner specific types
 export interface RawReport {
   executions: RawExecution[];
   timings: any;
