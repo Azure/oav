@@ -215,7 +215,18 @@ export class LiveValidator {
     }
 
     this.logging("Apply global transforms for all specs");
-    this.loader.transformLoadedSpecs();
+    try {
+      this.loader.transformLoadedSpecs();
+    } catch (e) {
+      const errMsg = `Failed to transform loaded specs, detail error message:${e?.message}.ErrorStack:${e?.stack}`;
+      this.logging(
+        errMsg,
+        LiveValidatorLoggingLevels.error,
+        LiveValidatorLoggingTypes.error,
+        "Oav.liveValidator.initialize.transformLoadedSpecs"
+      );
+      throw new Error(errMsg);
+    }
 
     if (this.options.loadValidatorInInitialize) {
       while (allSpecs.length > 0) {

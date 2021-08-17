@@ -1,5 +1,11 @@
 # Change Log - oav
 
+## 08/17/2021 2.7.4
+
+- Fix type error in nullableTransformer
+- Throw exception when getting error in transformLoadedSpecs at livevalidator initialization
+- Improve wording of error messages
+
 ## 08/12/2021 2.7.3
 
 - Refactor semantic validation using AJV

@@ -65,7 +65,9 @@ const transformNullable = (s: Schema, jsonLoader: JsonLoader, defaultNullable?: 
       _skipError: true,
     } as Schema;
   } else {
-    sch.nullable = true;
+    if (typeof sch === "object") {
+      sch.nullable = true;
+    }
     return sch;
   }
 };

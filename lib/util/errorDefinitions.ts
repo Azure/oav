@@ -181,7 +181,7 @@ export const trafficValidationErrors = {
   },
   INVALID_RESPONSE_CODE: {
     severity: Severity.Critical,
-    message: strTemplate`This operation does not have a defined '${"statusCode"}' response code`,
+    message: strTemplate`The swagger file does not define '${"statusCode"}' response code`,
   },
   INVALID_CONTENT_TYPE: {
     severity: Severity.Error,
