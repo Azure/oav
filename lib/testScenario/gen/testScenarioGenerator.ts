@@ -157,6 +157,7 @@ export class TestScenarioGenerator {
   ): Promise<RawTestScenario> {
     console.log(`\nGenerating ${requestTracking.description}`);
     const testScenario: RawTestScenario = {
+      scenario: requestTracking.description,
       description: requestTracking.description,
       steps: [],
     };
@@ -224,15 +225,24 @@ export class TestScenarioGenerator {
         lastOperation = operation;
       }
 
-      testScenario.steps.push({
-        step: testStep.step,
-        resourceName: testStep.resourceName,
-        exampleFile: testStep.exampleFile,
-        statusCode: testStep.statusCode === 200 ? undefined : testStep.statusCode,
-        operationId: testStep.operationId,
-        resourceUpdate: testStep.resourceUpdate?.length > 0 ? testStep.resourceUpdate : undefined,
-        variables: testStep.variables,
-      });
+      if (testStep.exampleFile !== undefined) {
+        testScenario.steps.push({
+          step: testStep.step,
+          exampleFile: testStep.exampleFile,
+          statusCode: testStep.statusCode === 200 ? undefined : testStep.statusCode,
+          resourceUpdate: testStep.resourceUpdate?.length > 0 ? testStep.resourceUpdate : undefined,
+          variables: testStep.variables,
+        });
+      } else if (testStep.resourceName !== undefined && testStep.operationId !== undefined) {
+        testScenario.steps.push({
+          step: testStep.step,
+          resourceName: testStep.resourceName,
+          operationId: testStep.operationId,
+          statusCode: testStep.statusCode === 200 ? undefined : testStep.statusCode,
+          resourceUpdate: testStep.resourceUpdate?.length > 0 ? testStep.resourceUpdate : undefined,
+          variables: testStep.variables,
+        });
+      }
     }
 
     if (Object.keys(ctx.variables).length > 0) {

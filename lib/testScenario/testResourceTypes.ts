@@ -35,11 +35,7 @@ interface TestStepBase {
   isScopePrepareStep?: boolean;
 }
 
-export type TestStep =
-  | TestStepRestCall
-  | TestStepOperation
-  | TestStepArmTemplateDeployment
-  | TestStepRawCall;
+export type TestStep = TestStepRestCall | TestStepArmTemplateDeployment | TestStepRawCall;
 export type RawTestStep =
   | RawTestStepRestCall
   | RawTestStepOperation
@@ -63,13 +59,15 @@ export type TestStepRestCall = TransformRaw<
   RawTestStepRestCall,
   {
     type: "restCall";
+    operationId: string;
     operation: Operation;
+    resourceType: string;
     exampleId: string;
     exampleFilePath?: string;
     requestParameters: SwaggerExample["parameters"];
     responseExpected: SwaggerExample["responses"]["200"]["body"];
   } & TestStepBase,
-  "exampleFile"
+  "exampleFile" | "resourceName" | "description"
 >;
 
 //#endregion
@@ -83,18 +81,6 @@ export type RawTestStepOperation = RawTestStepBase & {
   requestUpdate?: JsonPatchOp[];
   responseUpdate?: JsonPatchOp[];
 };
-
-export type TestStepOperation = TransformRaw<
-  RawTestStepOperation,
-  {
-    type: "operation";
-    operation: Operation;
-    requestParameters: SwaggerExample["parameters"];
-    responseExpected: SwaggerExample["responses"]["200"]["body"];
-  } & TestStepBase,
-  "operationId" | "resourceName"
->;
-
 //#endregion
 
 //#region TestStep Arm Template Deployment
@@ -117,7 +103,7 @@ export type TestStepArmTemplateDeployment = TransformRaw<
       };
     };
   } & TestStepBase,
-  "armTemplateParameters"
+  "armTemplateParameters" | "description"
 >;
 
 export type ArmTemplateVariableType =
@@ -161,7 +147,7 @@ export type TestStepRawCall = TransformRaw<
   {
     type: "rawCall";
   } & TestStepBase,
-  "responseExpected"
+  "responseExpected" | "description"
 >;
 //#endregion
 
@@ -219,6 +205,7 @@ export type JsonPatchOp =
 export type RawTestScenario = RawVariableScope & {
   scenario: string;
   description?: string;
+  requiredVariables?: string[]; // TODO remove?
   steps: RawTestStep[];
 };
 
@@ -239,6 +226,7 @@ export type RawTestDefinitionFile = RawVariableScope & {
   requiredVariables?: string[];
   prepareSteps?: RawTestStep[];
   testScenarios: RawTestScenario[];
+  cleanUpSteps?: RawTestStep[];
 };
 
 export type TestDefinitionFile = TransformRaw<
@@ -246,6 +234,7 @@ export type TestDefinitionFile = TransformRaw<
   {
     prepareSteps: TestStep[];
     testScenarios: TestScenario[];
+    cleanUpSteps: TestStep[];
     _filePath: string;
   }
 >;

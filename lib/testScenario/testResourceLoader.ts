@@ -26,8 +26,8 @@ import { SwaggerSpec, Operation, SwaggerExample } from "../swagger/swaggerTypes"
 import { traverseSwagger } from "../transform/traverseSwagger";
 import { inversifyGetInstance, TYPES } from "../inversifyUtils";
 import { getProvider } from "../util/utils";
+import { TestDefinitionSchema } from "./testResourceSchemas";
 import {
-  TestDefinitionSchema,
   TestDefinitionFile,
   TestScenario,
   TestStep,
@@ -40,6 +40,7 @@ import {
   RawTestScenario,
   RawTestStepRawCall,
   TestStepRawCall,
+  RawTestStepOperation,
 } from "./testResourceTypes";
 import { ExampleTemplateGenerator } from "./exampleTemplateGenerator";
 import { BodyTransformer } from "./bodyTransformer";
@@ -189,6 +190,7 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
       testScenarios: [],
       _filePath: this.fileLoader.relativePath(filePath),
       variables: rawTestDef.variables ?? {},
+      cleanUpSteps: [],
     };
 
     if (testDef.scope === "ResourceGroup") {
@@ -235,8 +237,8 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
     }
 
     const testScenario: TestScenario = {
-      description: rawTestScenario.description,
-      shareTestScope: rawTestScenario.shareTestScope ?? true,
+      scenario: rawTestScenario.scenario,
+      description: rawTestScenario.description ?? "",
       variables: rawTestScenario.variables ?? {},
       requiredVariables: [...requiredVariables],
       steps,
@@ -256,23 +258,27 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
     return testScenario;
   }
 
-  private async loadTestStep(step: RawTestStep, ctx: TestScenarioContext): Promise<TestStep> {
-    if ("armTemplateDeployment" in step) {
-      return this.loadTestStepArmTemplate(step, ctx);
-    } else if ("exampleFile" in step || "resourceName" in step || "operationId" in step) {
-      return this.loadTestStepRestCall(step, ctx);
-    } else if ("rawUrl" in step) {
-      return this.loadTestStepRawCall(step, ctx);
+  private async loadTestStep(rawStep: RawTestStep, ctx: TestScenarioContext): Promise<TestStep> {
+    if ("exampleFile" in rawStep || "operationId" in rawStep) {
+      return this.loadTestStepRestCall(rawStep, ctx);
+    } else if ("armTemplateDeployment" in rawStep) {
+      return this.loadTestStepArmTemplate(rawStep, ctx);
+    } else if ("rawUrl" in rawStep) {
+      return this.loadTestStepRawCall(rawStep, ctx);
     } else {
-      throw new Error(`Unknown step type: ${JSON.stringify(step)}`);
+      throw new Error(`Invalid step: ${JSON.stringify(rawStep)}`);
     }
   }
 
-  private async loadTestStepRawCall(rawStep: RawTestStepRawCall, _ctx: TestScenarioContext) {
+  private async loadTestStepRawCall(
+    rawStep: RawTestStepRawCall,
+    _ctx: TestScenarioContext
+  ): Promise<TestStepRawCall> {
     const step: TestStepRawCall = {
       type: "rawCall",
       variables: rawStep.variables ?? {},
       statusCode: rawStep.statusCode ?? 200,
+      outputVariables: rawStep.outputVariables ?? {},
       ...rawStep,
     };
     return step;
@@ -285,7 +291,8 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
     const step: TestStepArmTemplateDeployment = {
       type: "armTemplateDeployment",
       variables: rawStep.variables ?? {},
-      step: rawStep.step ?? "__step_with_no_name",
+      outputVariables: rawStep.outputVariables ?? {},
+      step: rawStep.step,
       armTemplateDeployment: rawStep.armTemplateDeployment,
       armTemplatePayload: {},
     };
@@ -330,25 +337,21 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
   }
 
   private async loadTestStepRestCall(
-    rawStep: RawTestStepRestCall,
+    rawStep: RawTestStepRestCall | RawTestStepOperation,
     ctx: TestScenarioContext
   ): Promise<TestStepRestCall> {
-    if (rawStep.step === undefined) {
-      throw new Error(
-        `Property "step" as step name is required for restCall step: ${rawStep.exampleFile}`
-      );
-    }
-    if (ctx.resourceTracking.has(rawStep.step)) {
+    if (ctx.stepTracking.has(rawStep.step)) {
       throw new Error(`Duplicated step name: ${rawStep.step}`);
     }
 
     const step: TestStepRestCall = {
       type: "restCall",
       step: rawStep.step!,
+      description: rawStep.description,
       resourceName: rawStep.resourceName,
-      exampleFile: rawStep.exampleFile,
+      exampleFile: "",
       variables: rawStep.variables ?? {},
-      operationId: rawStep.operationId ?? "",
+      operationId: "",
       operation: {} as Operation,
       requestParameters: {} as SwaggerExample["parameters"],
       responseExpected: {},
@@ -361,18 +364,12 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
       responseUpdate: rawStep.responseUpdate ?? [],
     };
 
-    if (rawStep.operationId !== undefined) {
-      const operation = this.nameToOperation.get(rawStep.operationId);
-      if (operation === undefined) {
-        throw new Error(`Operation not found for ${rawStep.operationId}`);
-      }
-      step.operation = operation;
-    }
-
-    if (step.exampleFile !== undefined) {
-      await this.loadTestStepRestCallExampleFile(step, ctx);
-    } else {
-      await this.loadTestStepRestCallFromStep(step, ctx);
+    if ("exampleFile" in rawStep) {
+      step.exampleFile = rawStep.exampleFile;
+      await this.loadRestCallExampleFile(step, ctx);
+    } else if ("operationId" in rawStep) {
+      step.operationId = rawStep.operationId;
+      await this.loadRestCallOperation(step, ctx);
     }
 
     if (step.resourceUpdate.length > 0) {
@@ -420,30 +417,50 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
     return step;
   }
 
-  private async loadTestStepRestCallFromStep(step: TestStepRestCall, ctx: TestScenarioContext) {
-    if (step.operation._method !== "put") {
-      throw new Error(`resourceUpdate could only be used with "PUT" operation`);
-    }
+  private async loadRestCallOperation(
+    step: TestStepRestCall,
+    ctx: TestScenarioContext
+  ): Promise<TestStepRestCall> {
     const lastStep = ctx.resourceTracking.get(step.resourceName!);
     if (lastStep === undefined) {
-      throw new Error(`Unknown resourceName: ${step.resourceName}`);
+      throw new Error(`Unknown resourceName: ${step.resourceName} in step ${step.step}`);
     }
     if (lastStep.type !== "restCall") {
-      throw new Error(
-        `Cannot use resourceName from non restCall type for step: ${step.resourceName}`
-      );
+      throw new Error(`Cannot use resourceName for non-restCall type in step ${step.step}`);
     }
 
-    step.requestParameters = { ...lastStep.requestParameters };
-    step.responseExpected = lastStep.responseExpected;
-    step.exampleId = lastStep.exampleId;
-    if (step.operationId === "") {
-      step.operationId = lastStep.operationId;
-      step.operation = lastStep.operation;
+    const operation = this.nameToOperation.get(step.operationId);
+    if (operation === undefined) {
+      throw new Error(`Operation not found for ${step.operationId} in step ${step.step}`);
     }
+    step.operation = operation;
+
+    switch (step.operation._method) {
+      case "put":
+        step.requestParameters = { ...lastStep.requestParameters };
+        step.responseExpected = { ...lastStep.responseExpected };
+        break;
+      case "get":
+        step.requestParameters = { ...lastStep.requestParameters };
+        step.responseExpected = { ...lastStep.responseExpected };
+        break;
+      case "patch":
+        step.requestParameters = { ...lastStep.requestParameters };
+        step.responseExpected = { ...lastStep.responseExpected };
+        break;
+      case "delete":
+        step.requestParameters = { ...lastStep.requestParameters };
+        break;
+      case "post":
+        break;
+      default:
+        throw new Error(`Unsupported operation ${step.operationId} in step ${step.step}`);
+    }
+
+    return step;
   }
 
-  private async loadTestStepRestCallExampleFile(step: TestStepRestCall, ctx: TestScenarioContext) {
+  private async loadRestCallExampleFile(step: TestStepRestCall, ctx: TestScenarioContext) {
     const filePath = step.exampleFile;
     if (filePath === undefined) {
       throw new Error(`RestCall step must specify "exampleFile" or "fromStep"`);
@@ -459,20 +476,18 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
     step.responseExpected = exampleFileContent.responses[step.statusCode]?.body;
 
     // Load Operation
-    if (step.operationId === "") {
-      const opMap = this.exampleToOperation.get(exampleFilePath);
-      if (opMap === undefined) {
-        throw new Error(`Example file is not referenced by any operation: ${filePath}`);
-      }
-      const ops = Object.values(opMap);
-      if (ops.length > 1) {
-        throw new Error(
-          `Example file is referenced by multiple operation: ${Object.keys(opMap)} ${filePath}`
-        );
-      }
-      [step.operation, step.exampleId] = ops[0];
-      step.operationId = step.operation.operationId!;
+    const opMap = this.exampleToOperation.get(exampleFilePath);
+    if (opMap === undefined) {
+      throw new Error(`Example file is not referenced by any operation: ${filePath}`);
     }
+    const ops = Object.values(opMap);
+    if (ops.length > 1) {
+      throw new Error(
+        `Example file is referenced by multiple operation: ${Object.keys(opMap)} ${filePath}`
+      );
+    }
+    [step.operation, step.exampleId] = ops[0];
+    step.operationId = step.operation.operationId!;
 
     // Load resource type
     const resourceChain = getResourceFromPath(step.operation._path._pathTemplate);

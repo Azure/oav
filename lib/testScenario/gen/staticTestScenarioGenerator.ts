@@ -72,7 +72,11 @@ export class StaticTestScenarioGenerator {
           exampleFile: getExampleOutputPath(listOperationsExampleFilePath),
         },
       ];
-      testDef.testScenarios.push({ description: `operationsList`, steps: testStep });
+      testDef.testScenarios.push({
+        scenario: "operationsList",
+        description: "Generated scenario for operation list",
+        steps: testStep,
+      });
       this.testDefToWrite.push({
         testDef: testDef,
         filePath: getTestDefOutputPath(exampleDir, `operationsList`),
@@ -134,7 +138,8 @@ export class StaticTestScenarioGenerator {
         });
       }
       testDef.testScenarios.push({
-        description: `${resourceType} ${exampleName}`,
+        scenario: `${resourceType}_${exampleName}`,
+        description: `Generated scenario for ${resourceType} with ${exampleName}`,
         steps: testStep,
       });
     }

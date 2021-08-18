@@ -126,7 +126,6 @@ const TestStepOperation: Schema = {
   required: ["resourceName", "operationId"],
 };
 
-
 const TestStepArmTemplateDeployment: Schema = {
   type: "object",
   allOf: [{ $ref: "#/definitions/TestStepBase" }],
@@ -266,7 +265,7 @@ const TestScenario: Schema = {
   required: ["scenario", "steps"],
 };
 
-export const TestDefinition: Schema & {
+export const TestDefinitionSchema: Schema & {
   definitions: { [def: string]: Schema };
 } = {
   type: "object",
@@ -292,6 +291,12 @@ export const TestDefinition: Schema & {
       type: "array",
       items: {
         $ref: "#/definitions/TestScenario",
+      },
+    },
+    cleanUpSteps: {
+      type: "array",
+      items: {
+        $ref: "#/definitions/TestStep",
       },
     },
   },
