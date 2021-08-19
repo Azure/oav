@@ -33,6 +33,7 @@ type RawTestStepBase = RawVariableScope & {
 
 interface TestStepBase {
   isScopePrepareStep?: boolean;
+  isScopeCleanUpStep?: boolean;
 }
 
 export type TestStep = TestStepRestCall | TestStepArmTemplateDeployment | TestStepRawCall;
@@ -171,17 +172,12 @@ export interface JsonPatchOpReplace {
 
 export interface JsonPatchOpCopy {
   copy: string;
-  path: string;
+  from: string;
 }
 
 export interface JsonPatchOpMove {
   move: string;
-  path: string;
-}
-
-export interface JsonPatchOpMerge {
-  merge: string;
-  value: { [key: string]: any };
+  from: string;
 }
 
 export interface JsonPatchOpTest {
@@ -195,7 +191,6 @@ export type JsonPatchOp =
   | JsonPatchOpReplace
   | JsonPatchOpCopy
   | JsonPatchOpMove
-  | JsonPatchOpMerge
   | JsonPatchOpTest;
 
 //#endregion

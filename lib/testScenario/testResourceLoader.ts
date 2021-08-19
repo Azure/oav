@@ -216,6 +216,12 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
       testDef.testScenarios.push(testScenario);
     }
 
+    for (const rawStep of rawTestDef.cleanUpSteps ?? []) {
+      const step = await this.loadTestStep(rawStep, ctx);
+      step.isScopeCleanUpStep = true;
+      testDef.cleanUpSteps.push(step);
+    }
+
     return testDef;
   }
 

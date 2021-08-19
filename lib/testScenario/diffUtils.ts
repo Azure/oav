@@ -6,7 +6,6 @@ import {
   JsonPatchOp,
   JsonPatchOpAdd,
   JsonPatchOpCopy,
-  JsonPatchOpMerge,
   JsonPatchOpMove,
   JsonPatchOpRemove,
   JsonPatchOpReplace,
@@ -69,14 +68,14 @@ const patchReplace = ({ obj, propertyName }: PatchContext, op: JsonPatchOpReplac
 
 const patchCopy = ({ root, obj, propertyName }: PatchContext, op: JsonPatchOpCopy) => {
   const val = cloneDeep(obj[propertyName]);
-  jsonPointer.set(root, `/${rootName}${op.path}`, val);
+  jsonPointer.set(root, `/${rootName}${op.copy}`, val);
 };
 
 const patchMove = (ctx: PatchContext, op: JsonPatchOpMove) => {
   const { propertyName, obj, root } = ctx;
   const val = obj[propertyName];
   patchRemove(ctx);
-  jsonPointer.set(root, `/${rootName}${op.path}`, val);
+  jsonPointer.set(root, `/${rootName}${op.move}`, val);
 };
 
 const patchTest = ({ obj, propertyName }: PatchContext, op: JsonPatchOpTest) => {
@@ -87,14 +86,6 @@ const patchTest = ({ obj, propertyName }: PatchContext, op: JsonPatchOpTest) => 
     throw new Error(
       `JsonPatch Test failed for path: ${op.test}\nExpect: ${factStr}\nActual: ${factStr}`
     );
-  }
-};
-
-const patchMerge = ({ obj, propertyName }: PatchContext, op: JsonPatchOpMerge) => {
-  const target = obj[propertyName];
-
-  for (const key of Object.keys(op.value)) {
-    target[key] = op.value[key];
   }
 };
 
@@ -109,16 +100,13 @@ const jsonPatchApplyOp = (obj: any, op: JsonPatchOp) => {
     return patchReplace(getCtx(obj, op.replace), op);
   }
   if ("copy" in op) {
-    return patchCopy(getCtx(obj, op.copy), op);
+    return patchCopy(getCtx(obj, op.from), op);
   }
   if ("move" in op) {
-    return patchMove(getCtx(obj, op.move), op);
+    return patchMove(getCtx(obj, op.from), op);
   }
   if ("test" in op) {
     return patchTest(getCtx(obj, op.test), op);
-  }
-  if ("merge" in op) {
-    return patchMerge(getCtx(obj, op.merge), op);
   }
 
   throw new Error(`Unknown jsonPatchOp: ${JSON.stringify(op)}`);
