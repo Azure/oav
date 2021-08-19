@@ -167,7 +167,6 @@ const JsonPatchOpSchemas: { [key: string]: Schema } = {
       { $ref: "#/definitions/JsonPatchOpReplace" },
       { $ref: "#/definitions/JsonPatchOpCopy" },
       { $ref: "#/definitions/JsonPatchOpMove" },
-      { $ref: "#/definitions/JsonPatchOpMerge" },
       { $ref: "#/definitions/JsonPatchOpTest" },
     ],
   },
@@ -202,38 +201,25 @@ const JsonPatchOpSchemas: { [key: string]: Schema } = {
   },
   JsonPatchOpCopy: {
     type: "object",
-    required: ["copy", "path"],
+    required: ["copy", "from"],
     properties: {
       copy: {
         $ref: "#/definitions/JsonPointer",
       },
-      path: {
+      from: {
         $ref: "#/definitions/JsonPointer",
       },
     },
   },
   JsonPatchOpMove: {
     type: "object",
-    required: ["move", "path"],
+    required: ["move", "from"],
     properties: {
       move: {
         $ref: "#/definitions/JsonPointer",
       },
-      path: {
+      from: {
         $ref: "#/definitions/JsonPointer",
-      },
-    },
-  },
-  JsonPatchOpMerge: {
-    type: "object",
-    required: ["merge", "value"],
-    properties: {
-      merge: {
-        $ref: "#/definitions/JsonPointer",
-      },
-      value: {
-        type: "object",
-        additionalProperties: true,
       },
     },
   },
@@ -265,7 +251,7 @@ const TestScenario: Schema = {
   required: ["scenario", "steps"],
 };
 
-export const TestDefinitionSchema: Schema & {
+export const TestDefinition: Schema & {
   definitions: { [def: string]: Schema };
 } = {
   type: "object",
