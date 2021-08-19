@@ -40,7 +40,7 @@ import {
   RawTestScenario,
   RawTestStepRawCall,
   TestStepRawCall,
-  RawTestStepOperation,
+  RawTestStepRestOperation,
 } from "./testResourceTypes";
 import { ExampleTemplateGenerator } from "./exampleTemplateGenerator";
 import { BodyTransformer } from "./bodyTransformer";
@@ -343,7 +343,7 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
   }
 
   private async loadTestStepRestCall(
-    rawStep: RawTestStepRestCall | RawTestStepOperation,
+    rawStep: RawTestStepRestCall | RawTestStepRestOperation,
     ctx: TestScenarioContext
   ): Promise<TestStepRestCall> {
     if (ctx.stepTracking.has(rawStep.step)) {

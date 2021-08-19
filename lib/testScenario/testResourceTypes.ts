@@ -36,10 +36,17 @@ interface TestStepBase {
   isScopeCleanUpStep?: boolean;
 }
 
+type RawTestStepRestBase = RawTestStepBase & {
+  statusCode?: number;
+  resourceUpdate?: JsonPatchOp[];
+  requestUpdate?: JsonPatchOp[];
+  responseUpdate?: JsonPatchOp[];
+};
+
 export type TestStep = TestStepRestCall | TestStepArmTemplateDeployment | TestStepRawCall;
 export type RawTestStep =
   | RawTestStepRestCall
-  | RawTestStepOperation
+  | RawTestStepRestOperation
   | RawTestStepArmTemplateDeployment
   | RawTestStepRawCall;
 
@@ -47,13 +54,9 @@ export type RawTestStep =
 
 //#region TestStep RestCall
 
-export type RawTestStepRestCall = RawTestStepBase & {
+export type RawTestStepRestCall = RawTestStepRestBase & {
   exampleFile: string;
   resourceName?: string;
-  statusCode?: number;
-  resourceUpdate?: JsonPatchOp[];
-  requestUpdate?: JsonPatchOp[];
-  responseUpdate?: JsonPatchOp[];
 };
 
 export type TestStepRestCall = TransformRaw<
@@ -74,13 +77,9 @@ export type TestStepRestCall = TransformRaw<
 //#endregion
 
 //#region TestStep Named Resource Operation
-export type RawTestStepOperation = RawTestStepBase & {
+export type RawTestStepRestOperation = RawTestStepRestBase & {
   resourceName: string;
   operationId: string;
-  statusCode?: number;
-  resourceUpdate?: JsonPatchOp[];
-  requestUpdate?: JsonPatchOp[];
-  responseUpdate?: JsonPatchOp[];
 };
 //#endregion
 
