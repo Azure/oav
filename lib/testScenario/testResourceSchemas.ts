@@ -4,8 +4,9 @@ const String: Schema = {
   type: "string",
 };
 
-const Number: Schema = {
-  type: "number",
+const StatusCode: Schema = {
+  type: "integer",
+  default: 200,
 };
 
 const Name: Schema = {
@@ -24,9 +25,10 @@ const VariableScope: Schema = {
   properties: {
     variables: {
       type: "object",
-      additionalProperties: {
-        type: "string",
+      propertyNames: {
+        $ref: "#/definitions/Name",
       },
+      additionalProperties: String,
     },
   },
 };
@@ -34,10 +36,15 @@ const VariableScope: Schema = {
 const TestStepBase: Schema = {
   allOf: [{ $ref: "#/definitions/VariableScope" }],
   properties: {
-    step: Name,
+    step: {
+      $ref: "#/definitions/Name",
+    },
     description: String,
     outputVariables: {
       type: "object",
+      propertyNames: {
+        $ref: "#/definitions/Name",
+      },
       additionalProperties: {
         type: "object",
         properties: {
@@ -49,6 +56,34 @@ const TestStepBase: Schema = {
     },
   },
   required: ["step"],
+};
+
+const TestStepRestBase: Schema = {
+  allOf: [{ $ref: "#/definitions/TestSTepBase" }],
+  properties: {
+    resourceUpdate: {
+      type: "array",
+      items: {
+        $ref: "#/definitions/JsonPatchOp",
+      },
+      minItems: 1,
+    },
+    requestUpdate: {
+      type: "array",
+      items: {
+        $ref: "#/definitions/JsonPatchOp",
+      },
+      minItems: 1,
+    },
+    responseUpdate: {
+      type: "array",
+      items: {
+        $ref: "#/definitions/JsonPatchOp",
+      },
+      minItems: 1,
+    },
+    statusCode: StatusCode,
+  },
 };
 
 const TestStep: Schema = {
@@ -70,58 +105,26 @@ const TestStep: Schema = {
 
 const TestStepRestCall: Schema = {
   type: "object",
-  allOf: [{ $ref: "#/definitions/TestStepBase" }],
+  allOf: [{ $ref: "#/definitions/TestStepRestBase" }],
   properties: {
     exampleFile: String,
-    resourceName: Name,
-    resourceUpdate: {
-      type: "array",
-      items: {
-        $ref: "#/definitions/JsonPatchOp",
-      },
+    resourceName: {
+      $ref: "#/definitions/Name",
     },
-    requestUpdate: {
-      type: "array",
-      items: {
-        $ref: "#/definitions/JsonPatchOp",
-      },
-    },
-    responseUpdate: {
-      type: "array",
-      items: {
-        $ref: "#/definitions/JsonPatchOp",
-      },
-    },
-    statusCode: Number,
   },
   required: ["exampleFile"],
 };
 
-const TestStepOperation: Schema = {
+const TestStepRestOperation: Schema = {
   type: "object",
-  allOf: [{ $ref: "#/definitions/TestStepBase" }],
+  allOf: [{ $ref: "#/definitions/TestStepRestBase" }],
   properties: {
-    operationId: Name,
-    resourceName: Name,
-    resourceUpdate: {
-      type: "array",
-      items: {
-        $ref: "#/definitions/JsonPatchOp",
-      },
+    operationId: {
+      $ref: "#/definitions/Name",
     },
-    requestUpdate: {
-      type: "array",
-      items: {
-        $ref: "#/definitions/JsonPatchOp",
-      },
+    resourceName: {
+      $ref: "#/definitions/Name",
     },
-    responseUpdate: {
-      type: "array",
-      items: {
-        $ref: "#/definitions/JsonPatchOp",
-      },
-    },
-    statusCode: Number,
   },
   required: ["resourceName", "operationId"],
 };
@@ -152,7 +155,7 @@ const TestStepRawCall: Schema = {
       },
     },
     requestBody: {},
-    statusCode: Number,
+    statusCode: StatusCode,
     responseExpected: {},
   },
   required: ["method", "url", "requestHeaders", "requestBody"],
@@ -239,7 +242,9 @@ const TestScenario: Schema = {
   type: "object",
   allOf: [{ $ref: "#/definitions/VariableScope" }],
   properties: {
-    scenario: Name,
+    scenario: {
+      $ref: "#/definitions/Name",
+    },
     description: String,
     steps: {
       type: "array",
@@ -264,7 +269,7 @@ export const TestDefinition: Schema & {
     requiredVariables: {
       type: "array",
       items: {
-        type: "string",
+        $ref: "#/definitions/Name",
       },
     },
     prepareSteps: {
@@ -289,15 +294,17 @@ export const TestDefinition: Schema & {
   required: ["testScenarios"],
 
   definitions: {
+    Name,
     JsonPointer,
     VariableScope,
     TestStep,
     TestStepBase,
+    TestStepRestBase,
     TestStepRestCall,
-    TestStepOperation,
+    TestStepRestOperation,
     TestStepArmTemplateDeployment,
     TestStepRawCall,
-    TestScenario,
     ...JsonPatchOpSchemas,
+    TestScenario,
   },
 };
