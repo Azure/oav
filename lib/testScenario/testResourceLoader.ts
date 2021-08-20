@@ -185,19 +185,38 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
     const rawTestDef = filePayload as RawTestDefinitionFile;
     const testDef: TestDefinitionFile = {
       scope: rawTestDef.scope ?? "ResourceGroup",
-      requiredVariables: rawTestDef.requiredVariables ?? [],
       prepareSteps: [],
       testScenarios: [],
       _filePath: this.fileLoader.relativePath(filePath),
-      variables: rawTestDef.variables ?? {},
+      variables: {},
       cleanUpSteps: [],
     };
 
+    for (const [k, v] of Object.entries(rawTestDef.variables ?? {})) {
+      if (typeof v === "string") {
+        testDef.variables[k] = {
+          value: v,
+          required: false,
+          secret: false,
+        };
+      } else {
+        testDef.variables[k] = {
+          value: v.defaultValue,
+          secret: v.secret ?? false,
+          required: v.defaultValue === undefined,
+        };
+      }
+    }
+
     if (testDef.scope === "ResourceGroup") {
-      const requiredVariables = new Set(testDef.requiredVariables);
-      requiredVariables.add("subscriptionId");
-      requiredVariables.add("location");
-      testDef.requiredVariables = [...requiredVariables];
+      for (const k in ["subscriptionId", "location"]) {
+        if (testDef.variables[k] === undefined) {
+          testDef.variables[k] = {
+            required: true,
+            secret: false,
+          };
+        }
+      }
     }
 
     const ctx: TestScenarioContext = {
@@ -205,22 +224,27 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
       resourceTracking: new Map(),
       testDef,
     };
-    for (const rawStep of rawTestDef.prepareSteps ?? []) {
-      const step = await this.loadTestStep(rawStep, ctx);
-      step.isScopePrepareStep = true;
-      testDef.prepareSteps.push(step);
-    }
+
+    rawTestDef.prepareSteps?.forEach((s) =>
+      Object.entries(s).forEach(async ([stepName, rawStep]) => {
+        const step = await this.loadTestStep(stepName, rawStep, ctx);
+        step.isPrepareStep = true;
+        testDef.prepareSteps.push(step);
+      })
+    );
 
     for (const rawTestScenario of rawTestDef.testScenarios) {
       const testScenario = await this.loadTestScenario(rawTestScenario, ctx);
       testDef.testScenarios.push(testScenario);
     }
 
-    for (const rawStep of rawTestDef.cleanUpSteps ?? []) {
-      const step = await this.loadTestStep(rawStep, ctx);
-      step.isScopeCleanUpStep = true;
-      testDef.cleanUpSteps.push(step);
-    }
+    rawTestDef.cleanUpSteps?.forEach((s) =>
+      Object.entries(s).forEach(async ([stepName, rawStep]) => {
+        const step = await this.loadTestStep(stepName, rawStep, ctx);
+        step.isCleanUpStep = true;
+        testDef.cleanUpSteps.push(step);
+      })
+    );
 
     return testDef;
   }
@@ -264,7 +288,7 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
     return testScenario;
   }
 
-  private async loadTestStep(rawStep: RawTestStep, ctx: TestScenarioContext): Promise<TestStep> {
+  private async loadTestStep(stepName: string, rawStep: RawTestStep, ctx: TestScenarioContext): Promise<TestStep> {
     if ("exampleFile" in rawStep || "operationId" in rawStep) {
       return this.loadTestStepRestCall(rawStep, ctx);
     } else if ("armTemplateDeployment" in rawStep) {

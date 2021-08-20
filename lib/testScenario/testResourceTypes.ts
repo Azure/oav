@@ -16,10 +16,20 @@ export interface RawVariableScope {
     [variableName: string]:
       | string
       | {
-          secret: boolean;
-          defaultValue: string;
+          secret?: boolean;
+          defaultValue?: string;
         };
   };
+}
+
+export interface VariableScope {
+  variables: {
+    [variableName: string]: {
+      value?: string;
+      secret: boolean;
+      required: boolean;
+    }
+  }
 }
 
 export interface OutputVariables {
@@ -37,7 +47,7 @@ type RawTestStepBase = RawVariableScope & {
   outputVariables?: OutputVariables;
 };
 
-interface TestStepBase {
+type TestStepBase = VariableScope & {
   isPrepareStep?: boolean;
   isCleanUpStep?: boolean;
 }
@@ -215,7 +225,7 @@ export type TestScenario = TransformRaw<
     steps: TestStep[];
     _testDef: TestDefinitionFile;
     _resolvedSteps: TestStep[];
-  }
+  } & VariableScope
 >;
 
 //#endregion
@@ -235,7 +245,7 @@ export type TestDefinitionFile = TransformRaw<
     testScenarios: TestScenario[];
     cleanUpSteps: TestStep[];
     _filePath: string;
-  }
+  } & VariableScope
 >;
 //#endregion
 
