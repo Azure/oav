@@ -33,14 +33,13 @@ export interface OutputVariables {
 //#region TestStep Base
 
 type RawTestStepBase = RawVariableScope & {
-  step: string;
   description?: string;
   outputVariables?: OutputVariables;
 };
 
 interface TestStepBase {
-  isScopePrepareStep?: boolean;
-  isScopeCleanUpStep?: boolean;
+  isPrepareStep?: boolean;
+  isCleanUpStep?: boolean;
 }
 
 type RawTestStepRestBase = RawTestStepBase & {
@@ -70,6 +69,7 @@ export type TestStepRestCall = TransformRaw<
   RawTestStepRestCall,
   {
     type: "restCall";
+    name: string;
     operationId: string;
     operation: Operation;
     resourceType: string;
@@ -85,8 +85,8 @@ export type TestStepRestCall = TransformRaw<
 
 //#region TestStep Named Resource Operation
 export type RawTestStepRestOperation = RawTestStepRestBase & {
-  resourceName: string;
   operationId: string;
+  resourceName: string;
 };
 //#endregion
 
@@ -204,10 +204,9 @@ export type JsonPatchOp =
 //#region TestScenario
 
 export type RawTestScenario = RawVariableScope & {
-  scenario: string;
+  shareScope?: boolean;
   description?: string;
-  requiredVariables?: string[]; // TODO remove?
-  steps: RawTestStep[];
+  steps: { [stepName: string]: RawTestStep }[];
 };
 
 export type TestScenario = TransformRaw<
@@ -224,10 +223,9 @@ export type TestScenario = TransformRaw<
 //#region TestDefinitionFile
 export type RawTestDefinitionFile = RawVariableScope & {
   scope?: "ResourceGroup";
-  requiredVariables?: string[];
-  prepareSteps?: RawTestStep[];
+  prepareSteps?: { [stepName: string]: RawTestStep }[];
   testScenarios: RawTestScenario[];
-  cleanUpSteps?: RawTestStep[];
+  cleanUpSteps?: { [stepName: string]: RawTestStep }[];
 };
 
 export type TestDefinitionFile = TransformRaw<
