@@ -12,7 +12,14 @@ type TransformRaw<T, Additional = {}, OptionalKey extends keyof T = never> = {
   Additional;
 
 export interface RawVariableScope {
-  variables?: { [variableName: string]: string };
+  variables?: {
+    [variableName: string]:
+      | string
+      | {
+          secret: boolean;
+          defaultValue: string;
+        };
+  };
 }
 
 export interface OutputVariables {
@@ -132,7 +139,7 @@ export interface ArmTemplate {
 
 //#endregion
 
-//#region TestSTep Raw REST Call
+//#region TestStep Raw REST Call
 export type RawTestStepRawCall = RawTestStepBase & {
   method: HttpMethods;
   rawUrl: string;

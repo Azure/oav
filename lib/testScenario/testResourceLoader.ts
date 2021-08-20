@@ -26,7 +26,7 @@ import { SwaggerSpec, Operation, SwaggerExample } from "../swagger/swaggerTypes"
 import { traverseSwagger } from "../transform/traverseSwagger";
 import { inversifyGetInstance, TYPES } from "../inversifyUtils";
 import { getProvider } from "../util/utils";
-import { TestDefinition as TestDefinitionSchema } from "./testResourceSchemas";
+import { TestDefinition as TestDefinitionSchema } from "./testResourceSchema";
 import {
   TestDefinitionFile,
   TestScenario,
