@@ -21,6 +21,8 @@ import {
 import {
   RawTestDefinitionFile,
   RawTestScenario,
+  RawTestScenarioContainer,
+  RawTestStepContainer,
   RawTestStepRawCall,
   TestScenario,
   TestStepRestCall,
@@ -138,8 +140,13 @@ export class TestScenarioGenerator {
 
     // this.idx = 0;
     for (const track of requestTracking) {
-      const testScenario = await this.generateTestScenario(track, testScenarioFilePath);
-      testDef.testScenarios.push(testScenario);
+      const [scenarioName, testScenario] = await this.generateTestScenario(
+        track,
+        testScenarioFilePath
+      );
+      const container: RawTestScenarioContainer = {};
+      container[scenarioName] = testScenario;
+      testDef.testScenarios.push(container);
     }
 
     this.testDefToWrite.push({ testDef, filePath: testScenarioFilePath });
@@ -154,10 +161,9 @@ export class TestScenarioGenerator {
   private async generateTestScenario(
     requestTracking: RequestTracking,
     testDefFilePath: string
-  ): Promise<RawTestScenario> {
+  ): Promise<[string, RawTestScenario]> {
     console.log(`\nGenerating ${requestTracking.description}`);
     const testScenario: RawTestScenario = {
-      scenario: requestTracking.description,
       description: requestTracking.description,
       steps: [],
     };
@@ -173,14 +179,16 @@ export class TestScenarioGenerator {
     let lastOperation: Operation | undefined = undefined;
     while (records.length > 0) {
       const record = records[0];
-      const testStep = await this.generateTestStepRestCall(records, ctx);
+      const [stepName, testStep] = await this.generateTestStepRestCall(records, ctx);
       if (testStep === undefined) {
         continue;
       }
 
       if (testStep === null) {
-        const rawStep = await this.generateTestStepRawCall(record, ctx);
-        testScenario.steps.push(rawStep);
+        const [stepName, rawStep] = await this.generateTestStepRawCall(record, ctx);
+        const rawStepContainer: RawTestStepContainer = {};
+        rawStepContainer[stepName] = rawStep;
+        testScenario.steps.push(rawStepContainer);
         continue;
       }
 
@@ -204,7 +212,7 @@ export class TestScenarioGenerator {
         const swaggerPath = operation._path._spec._filePath;
         let exampleFilePath = this.exampleCache.get(exampleCacheKey);
         if (exampleFilePath === undefined) {
-          let exampleName = `${testStep.step}_Generated`;
+          let exampleName = `${stepName}_Generated`;
           exampleFilePath = pathJoin(dirname(swaggerPath), "examples", exampleName + ".json");
           if (this.exampleFileList.has(exampleFilePath)) {
             exampleName = `${exampleName}_${this.generateIdx()}`;
@@ -226,22 +234,24 @@ export class TestScenarioGenerator {
       }
 
       if (testStep.exampleFile !== undefined) {
-        testScenario.steps.push({
-          step: testStep.step,
+        const container: RawTestStepContainer = {};
+        container[stepName] = {
           exampleFile: testStep.exampleFile,
           statusCode: testStep.statusCode === 200 ? undefined : testStep.statusCode,
           resourceUpdate: testStep.resourceUpdate?.length > 0 ? testStep.resourceUpdate : undefined,
           variables: testStep.variables,
-        });
+        }
+        testScenario.steps.push(container);
       } else if (testStep.resourceName !== undefined && testStep.operationId !== undefined) {
-        testScenario.steps.push({
-          step: testStep.step,
+        const container: RawTestStepContainer = {};
+        container[stepName] = {
           resourceName: testStep.resourceName,
           operationId: testStep.operationId,
           statusCode: testStep.statusCode === 200 ? undefined : testStep.statusCode,
           resourceUpdate: testStep.resourceUpdate?.length > 0 ? testStep.resourceUpdate : undefined,
           variables: testStep.variables,
-        });
+        }
+        testScenario.steps.push(container);
       }
     }
 
@@ -249,7 +259,7 @@ export class TestScenarioGenerator {
       testScenario.variables = ctx.variables;
     }
 
-    return testScenario;
+    return [requestTracking.description, testScenario];
   }
 
   private searchOperation(record: SingleRequestTracking) {
@@ -294,10 +304,9 @@ export class TestScenarioGenerator {
   private async generateTestStepRawCall(
     record: SingleRequestTracking,
     _ctx: TestScenarioGenContext
-  ): Promise<RawTestStepRawCall> {
+  ): Promise<[string, RawTestStepRawCall]> {
     const toString = (body: any) => (typeof body === "object" ? JSON.stringify(body) : body);
     const rawCall: RawTestStepRawCall = {
-      step: `RawStep_${this.generateIdx()}`,
       method: record.method,
       rawUrl: record.url,
       requestBody: toString(record.body),
@@ -305,29 +314,29 @@ export class TestScenarioGenerator {
       statusCode: record.responseCode === 200 ? undefined : record.responseCode,
       responseExpected: toString(record.responseBody),
     };
-    return rawCall;
+    return [`RawStep_${this.generateIdx()}`, rawCall];
   }
 
   private async generateTestStepRestCall(
     records: SingleRequestTracking[],
     ctx: TestScenarioGenContext
-  ): Promise<TestStepRestCall | undefined | null> {
+  ): Promise<[string, TestStepRestCall | undefined | null]> {
     const record = records.shift()!;
     const armInfo = this.armUrlParser.parseArmApiInfo(record.path, record.method);
 
     if (ctx.lastUpdatedResource === armInfo.resourceUri && record.method === "GET") {
-      return undefined;
+      return ["", undefined];
     }
 
     // TODO do not skip 404
     if (record.responseCode === 404) {
       console.info(`Skip 404 request:\t${record.method}\t${record.url}`);
-      return undefined;
+      return ["", undefined];
     }
 
     const parseResult = this.parseRecord(record);
     if (parseResult === undefined) {
-      return this.handleUnknownPath(record, records);
+      return ["", await this.handleUnknownPath(record, records)];
     }
     const { operation, requestParameters, pathParamValue } = parseResult;
     const variables: TestScenario["variables"] = {};
@@ -344,8 +353,8 @@ export class TestScenarioGenerator {
       }
     }
 
+    let stepName = `${operation.operationId}_${this.generateIdx()}`;
     const step = {
-      step: `${operation.operationId}_${this.generateIdx()}`,
       statusCode: record.responseCode,
       operation,
       operationId: operation.operationId!,
@@ -366,7 +375,7 @@ export class TestScenarioGenerator {
       const lastStep = ctx.resourceTracking.get(armInfo.resourceUri);
       if (lastStep === undefined) {
         step.resourceName = this.generateResourceName(armInfo, ctx);
-        step.step = `Create_${step.resourceName}`;
+        stepName = `Create_${step.resourceName}`;
       } else {
         if (step.operation !== lastStep.operation) {
           throw new Error(
@@ -374,7 +383,7 @@ export class TestScenarioGenerator {
           );
         }
         step.resourceName = lastStep.resourceName;
-        step.step = `Update_${step.resourceName}_${this.generateIdx()}`;
+        stepName = `Update_${step.resourceName}_${this.generateIdx()}`;
         const bodyParamName = getBodyParamName(step.operation, this.jsonLoader);
         if (bodyParamName !== undefined) {
           const { result, inconsistentWarningPaths } = this.bodyTransformer.deepMerge(
@@ -409,7 +418,7 @@ export class TestScenarioGenerator {
       ctx.lastUpdatedResource = armInfo.resourceUri;
     }
 
-    return step;
+    return [stepName, step];
   }
 
   private async skipLroPoll(
