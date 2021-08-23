@@ -7,10 +7,13 @@ export type TrafficValidationErrorCode = keyof typeof trafficValidationErrors;
 
 export type SemanticValidationErrorCode = keyof typeof semanticValidationErrors;
 
+export type ApiValidationErrorCode = keyof typeof apiValidationErrors;
+
 export type OavAllErrorCode =
   | SchemaValidationErrorCode
   | TrafficValidationErrorCode
-  | SemanticValidationErrorCode;
+  | SemanticValidationErrorCode
+  | ApiValidationErrorCode;
 
 let allErrors: {
   [code: string]: { severity: Severity; message: TemplateFunc<string>; id?: string };
@@ -21,6 +24,7 @@ export const getOavErrorMeta = <T extends OavAllErrorCode>(code: T, param: Recor
       ...schemaValidationErrors,
       ...trafficValidationErrors,
       ...semanticValidationErrors,
+      ...apiValidationErrors,
     };
   }
   const errorInfo = allErrors[code];
@@ -62,6 +66,10 @@ export const internalErrors = {
 export const schemaValidationErrors = {
   ...internalErrors,
 
+  UNRESOLVABLE_REFERENCE: {
+    severity: Severity.Critical,
+    message: strTemplate`Reference could not be resolved: ${"ref"}`,
+  },
   DISCRIMINATOR_VALUE_NOT_FOUND: {
     severity: Severity.Critical,
     message: strTemplate`Discriminator value "${"data"}" not found`,
@@ -164,6 +172,7 @@ export const schemaValidationErrors = {
   },
 } as const;
 
+// used in both example validation and api validation
 export const trafficValidationErrors = {
   ...schemaValidationErrors,
 
@@ -211,18 +220,19 @@ export const trafficValidationErrors = {
     severity: Severity.Critical,
     message: strTemplate`Long running operation should return ${"header"} in header but not provided`,
   },
+  INVALID_REQUEST_PARAMETER: {
+    severity: Severity.Critical,
+    message: strTemplate`The type of request parameter ${"param"} is invalid`,
+  },
 } as const;
 
+// used in semantic validation only
 export const semanticValidationErrors = {
   ...schemaValidationErrors,
 
   JSON_PARSING_ERROR: {
     severity: Severity.Critical,
     message: strTemplate`Json parsing error: ${"details"}`,
-  },
-  UNRESOLVABLE_REFERENCE: {
-    severity: Severity.Critical,
-    message: strTemplate`Reference could not be resolved: ${"ref"}`,
   },
   OBJECT_MISSING_REQUIRED_PROPERTY_DEFINITION: {
     severity: Severity.Critical,
@@ -270,3 +280,37 @@ export const semanticValidationErrors = {
     message: strTemplate`Path parameter is declared but is not defined: ${"name"}`,
   },
 } as const;
+
+// used in api validation only
+export const apiValidationRuntimeErrors = {
+  OPERATION_NOT_FOUND_IN_CACHE: {
+    severity: Severity.Critical,
+    message: strTemplate`operation cannot be found in memory cache`,
+  },
+  OPERATION_NOT_FOUND_IN_CACHE_WITH_VERB: {
+    severity: Severity.Critical,
+    message: strTemplate`operation cannot be found in cache.verb array`,
+  },
+  OPERATION_NOT_FOUND_IN_CACHE_WITH_API: {
+    severity: Severity.Critical,
+    message: strTemplate`operation cannot be found in cache.api array`,
+  },
+  OPERATION_NOT_FOUND_IN_CACHE_WITH_PROVIDER: {
+    severity: Severity.Critical,
+    message: strTemplate`operation cannot be found in cache.provider array`,
+  },
+} as const;
+
+export const apiValidationErrors = {
+  ...trafficValidationErrors,
+  ...apiValidationRuntimeErrors,
+
+  MULTIPLE_OPERATIONS_FOUND: {
+    severity: Severity.Critical,
+    message: strTemplate`multiple operations matched from the operations cache`,
+  },
+  PII_MISMATCH: {
+    severity: Severity.Warning,
+    message: strTemplate`The value contains PII data`,
+  },
+};

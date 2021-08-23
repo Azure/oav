@@ -24,7 +24,7 @@ import * as utils from "../util/utils";
 import { RuntimeException } from "../util/validationError";
 import { inversifyGetContainer, inversifyGetInstance, TYPES } from "../inversifyUtils";
 import { setDefaultOpts } from "../swagger/loader";
-import { TrafficValidationErrorCode, trafficValidationErrors } from "../util/errorDefinitions";
+import { apiValidationErrors, ApiValidationErrorCode } from "../util/errorDefinitions";
 import { LiveValidatorLoader, LiveValidatorLoaderOption } from "./liveValidatorLoader";
 import { getProviderFromPathTemplate, OperationSearcher } from "./operationSearcher";
 import {
@@ -71,7 +71,7 @@ export interface RequestResponseLiveValidationResult {
 }
 
 export type LiveValidationIssue = {
-  code: TrafficValidationErrorCode;
+  code: ApiValidationErrorCode;
   pathsInPayload: string[];
   documentationUrl?: string;
 } & Omit<SchemaValidateIssue, "code">;
@@ -88,7 +88,7 @@ interface Meta {
  * If `includeErrors` is missing or empty, all error codes will be included.
  */
 export interface ValidateOptions {
-  readonly includeErrors?: TrafficValidationErrorCode[];
+  readonly includeErrors?: ApiValidationErrorCode[];
   readonly includeOperationMatch?: boolean;
 }
 
@@ -198,8 +198,12 @@ export class LiveValidator {
       container,
       fileRoot: this.options.directory,
       ...this.options,
-      loadSuppression: this.options.loadSuppression ?? Object.keys(trafficValidationErrors),
+      loadSuppression: this.options.loadSuppression ?? Object.keys(apiValidationErrors),
     });
+    this.loader.logging = this.logging;
+
+    // re-set the transform context after set the logging function
+    this.loader.setTransformContext();
     const schemaValidator = container.get(TYPES.schemaValidator) as SchemaValidator;
     this.validateRequestResponsePair = await schemaValidator.compileAsync(
       requestResponseDefinition
@@ -233,16 +237,22 @@ export class LiveValidator {
         try {
           const spec = allSpecs.shift()!;
           const loadStart = Date.now();
+          this.logging(
+            `Start building validator for ${spec._filePath}`,
+            LiveValidatorLoggingLevels.debug,
+            LiveValidatorLoggingTypes.trace,
+            "Oav.liveValidator.loader.buildAjvValidator"
+          );
           await this.loader.buildAjvValidator(spec);
           const durationInMs = Date.now() - loadStart;
           this.logging(
-            `Build validator for ${spec._filePath} with DurationInMs:${durationInMs}`,
+            `Complete building validator for ${spec._filePath} with DurationInMs:${durationInMs}`,
             LiveValidatorLoggingLevels.debug,
             LiveValidatorLoggingTypes.trace,
             "Oav.liveValidator.loader.buildAjvValidator"
           );
           this.logging(
-            `Build validator for ${spec._filePath} in initialization time`,
+            `Complete building validator for ${spec._filePath} in initialization time`,
             LiveValidatorLoggingLevels.info,
             LiveValidatorLoggingTypes.perfTrace,
             "Oav.liveValidator.initialize.loader.buildAjvValidator",
@@ -294,16 +304,22 @@ export class LiveValidator {
       try {
         const spec = allSpecs.shift()!;
         const startTime = Date.now();
+        this.logging(
+          `Start building validator for ${spec._filePath} in background`,
+          LiveValidatorLoggingLevels.debug,
+          LiveValidatorLoggingTypes.trace,
+          "Oav.liveValidator.loadAllSpecValidatorInBackground"
+        );
         await this.loader!.buildAjvValidator(spec, { inBackground: true });
         const elapsedTime = Date.now() - startTime;
         this.logging(
-          `Build validator for ${spec._filePath} in background with DurationInMs:${elapsedTime}.`,
+          `Complete building validator for ${spec._filePath} in background with DurationInMs:${elapsedTime}.`,
           LiveValidatorLoggingLevels.debug,
           LiveValidatorLoggingTypes.trace,
           "Oav.liveValidator.loadAllSpecValidatorInBackground"
         );
         this.logging(
-          `Build validator for ${spec._filePath} in background`,
+          `Complete building for ${spec._filePath} in background`,
           LiveValidatorLoggingLevels.info,
           LiveValidatorLoggingTypes.perfTrace,
           "Oav.liveValidator.loadAllSpecValidatorInBackground-1",
