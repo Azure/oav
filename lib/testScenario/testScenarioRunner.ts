@@ -161,7 +161,9 @@ export class TestScenarioRunner {
   public async prepareScenario(testScenario: TestScenario): Promise<TestScopeTracking> {
     let testScope = this.testScenarioScopeTracking.get(testScenario);
     if (testScope === undefined) {
-      const testScopeName = "_defaultScope";
+      const testScopeName = testScenario.shareScope
+        ? "_defaultScope"
+        : `_randomScope_${getRandomString()}`;
 
       testScope = this.testScopeTracking[testScopeName];
       if (testScope === undefined) {
