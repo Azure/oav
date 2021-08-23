@@ -52,6 +52,7 @@ export class PostmanCollectionGenerator {
 
   public async GenerateCollection(): Promise<void> {
     const testDef = await this.testResourceLoader.load(this.opt.testDef);
+    this.env.setBatch(testDef.variables);
     for (const it of testDef.requiredVariables) {
       if (this.env.get(it) === undefined) {
         throw new Error(

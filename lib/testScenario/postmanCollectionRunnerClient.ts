@@ -273,6 +273,9 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
       }
       return undefined;
     };
+    for (const k of Object.keys(step.outputVariables)) {
+      stepEnv.env.set(k, `{{${k}}}`);
+    }
     const scriptTypes: TestScriptType[] = this.opts.verbose
       ? ["DetailResponseLog", "StatusCodeAssertion"]
       : ["StatusCodeAssertion"];
@@ -395,7 +398,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     });
     const body = {
       properties: {
-        mode: "Complete",
+        mode: "Incremental",
         template: armTemplate,
         parameters: params,
       },

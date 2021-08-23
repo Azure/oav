@@ -233,7 +233,11 @@ export class TestScenarioRunner {
     }
   }
 
-  public async executeStep(step: TestStep, env: VariableEnv, testScope: TestScopeTracking) {
+  public async executeStep(
+    step: TestStep,
+    env: VariableEnv,
+    testScope: TestScopeTracking
+  ): Promise<any> {
     const stepEnv = new VariableEnv(env);
     stepEnv.setBatch(step.variables);
     stepEnv.setWriteEnv(env);
@@ -247,6 +251,7 @@ export class TestScenarioRunner {
         await this.executeArmTemplateStep(step, stepEnv, testScope);
         break;
     }
+    return stepEnv;
   }
 
   public async cleanAllTestScope() {
@@ -333,6 +338,7 @@ export class TestScenarioRunner {
       paramValue = env.resolveString(paramValue);
       params[paramName] = { value: paramValue };
     }
+    step.armTemplatePayload = env.resolveObjectValues(step.armTemplatePayload);
 
     if (step.armTemplateParametersPayload !== undefined) {
       params = { ...params, ...step.armTemplateParametersPayload.parameters };

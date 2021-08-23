@@ -85,7 +85,8 @@ export class VariableEnv {
       const variableName = matchResult[1];
       const value = this.get(variableName);
       if (value === undefined) {
-        throw new Error(`Variable not defined while resolving ${source}: ${match}`);
+        return source;
+        // throw new Error(`Variable not defined while resolving ${source}: ${match}`);
       }
 
       str = str.substr(0, matchResult.index) + value + str.substr(matchResult.index + match.length);
