@@ -48,6 +48,7 @@ type RawTestStepBase = RawVariableScope & {
 };
 
 type TestStepBase = VariableScope & {
+  name: string;
   isPrepareStep?: boolean;
   isCleanUpStep?: boolean;
 }
@@ -79,7 +80,6 @@ export type TestStepRestCall = TransformRaw<
   RawTestStepRestCall,
   {
     type: "restCall";
-    name: string;
     operationId: string;
     operation: Operation;
     resourceType: string;
@@ -222,6 +222,7 @@ export type RawTestScenario = RawVariableScope & {
 export type TestScenario = TransformRaw<
   RawTestScenario,
   {
+    name: string;
     steps: TestStep[];
     _testDef: TestDefinitionFile;
     _resolvedSteps: TestStep[];

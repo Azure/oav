@@ -28,11 +28,13 @@ import { inversifyGetInstance, TYPES } from "../inversifyUtils";
 import { getProvider } from "../util/utils";
 import { TestDefinition as TestDefinitionSchema } from "./testResourceSchema";
 import {
+  VariableScope,
   TestDefinitionFile,
   TestScenario,
   TestStep,
   TestStepRestCall,
   TestStepArmTemplateDeployment,
+  RawVariableScope,
   RawTestDefinitionFile,
   RawTestStepArmTemplateDeployment,
   RawTestStep,
@@ -188,25 +190,9 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
       prepareSteps: [],
       testScenarios: [],
       _filePath: this.fileLoader.relativePath(filePath),
-      variables: {},
+      variables: convertVariables(rawTestDef.variables),
       cleanUpSteps: [],
     };
-
-    for (const [k, v] of Object.entries(rawTestDef.variables ?? {})) {
-      if (typeof v === "string") {
-        testDef.variables[k] = {
-          value: v,
-          required: false,
-          secret: false,
-        };
-      } else {
-        testDef.variables[k] = {
-          value: v.defaultValue,
-          secret: v.secret ?? false,
-          required: v.defaultValue === undefined,
-        };
-      }
-    }
 
     if (testDef.scope === "ResourceGroup") {
       for (const k in ["subscriptionId", "location"]) {
@@ -225,31 +211,34 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
       testDef,
     };
 
-    rawTestDef.prepareSteps?.forEach((s) =>
-      Object.entries(s).forEach(async ([stepName, rawStep]) => {
-        const step = await this.loadTestStep(stepName, rawStep, ctx);
+    for (const raw of rawTestDef.prepareSteps ?? []) {
+      for (const [name, rawStep] of Object.entries(raw)) {
+        const step = await this.loadTestStep(name, rawStep, ctx);
         step.isPrepareStep = true;
         testDef.prepareSteps.push(step);
-      })
-    );
-
-    for (const rawTestScenario of rawTestDef.testScenarios) {
-      const testScenario = await this.loadTestScenario(rawTestScenario, ctx);
-      testDef.testScenarios.push(testScenario);
+      }
     }
 
-    rawTestDef.cleanUpSteps?.forEach((s) =>
-      Object.entries(s).forEach(async ([stepName, rawStep]) => {
-        const step = await this.loadTestStep(stepName, rawStep, ctx);
+    for (const raw of rawTestDef.cleanUpSteps ?? []) {
+      for (const [name, rawStep] of Object.entries(raw)) {
+        const step = await this.loadTestStep(name, rawStep, ctx);
         step.isCleanUpStep = true;
         testDef.cleanUpSteps.push(step);
-      })
-    );
+      }
+    }
+
+    for (const raw of rawTestDef.testScenarios) {
+      for (const [name, rawTestScenario] of Object.entries(raw)) {
+        const testScenario = await this.loadTestScenario(name, rawTestScenario, ctx);
+        testDef.testScenarios.push(testScenario);
+      }
+    }
 
     return testDef;
   }
 
   private async loadTestScenario(
+    name: string,
     rawTestScenario: RawTestScenario,
     ctx: TestScenarioContext
   ): Promise<TestScenario> {
@@ -257,30 +246,31 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
     const steps: TestStep[] = [];
     const { testDef } = ctx;
 
-    const requiredVariables = new Set([
-      ...(rawTestScenario.requiredVariables ?? []),
-      ...testDef.requiredVariables,
-    ]);
-
     for (const step of testDef.prepareSteps) {
       resolvedSteps.push(step);
     }
 
     const testScenario: TestScenario = {
-      scenario: rawTestScenario.scenario,
+      name,
       description: rawTestScenario.description ?? "",
-      variables: rawTestScenario.variables ?? {},
-      requiredVariables: [...requiredVariables],
+      shareScope: rawTestScenario.shareScope ?? true,
+      variables: convertVariables(rawTestScenario.variables),
       steps,
       _resolvedSteps: resolvedSteps,
       _testDef: testDef,
     };
     ctx.testScenario = testScenario;
 
-    for (const rawStep of rawTestScenario.steps) {
-      const step = await this.loadTestStep(rawStep, ctx);
+    for (const raw of rawTestScenario.steps) {
+      for (const [name, rawStep] of Object.entries(raw)) {
+        const step = await this.loadTestStep(name, rawStep, ctx);
+        resolvedSteps.push(step);
+        steps.push(step);
+      }
+    }
+
+    for (const step of testDef.cleanUpSteps) {
       resolvedSteps.push(step);
-      steps.push(step);
     }
 
     await this.exampleTemplateGenerator.generateExampleTemplateForTestScenario(testScenario);
@@ -288,41 +278,48 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
     return testScenario;
   }
 
-  private async loadTestStep(stepName: string, rawStep: RawTestStep, ctx: TestScenarioContext): Promise<TestStep> {
+  private async loadTestStep(
+    name: string,
+    rawStep: RawTestStep,
+    ctx: TestScenarioContext
+  ): Promise<TestStep> {
     if ("exampleFile" in rawStep || "operationId" in rawStep) {
-      return this.loadTestStepRestCall(rawStep, ctx);
+      return this.loadTestStepRestCall(name, rawStep, ctx);
     } else if ("armTemplateDeployment" in rawStep) {
-      return this.loadTestStepArmTemplate(rawStep, ctx);
+      return this.loadTestStepArmTemplate(name, rawStep, ctx);
     } else if ("rawUrl" in rawStep) {
-      return this.loadTestStepRawCall(rawStep, ctx);
+      return this.loadTestStepRawCall(name, rawStep, ctx);
     } else {
-      throw new Error(`Invalid step: ${JSON.stringify(rawStep)}`);
+      throw new Error(`Invalid step: ${name} ${JSON.stringify(rawStep)}`);
     }
   }
 
   private async loadTestStepRawCall(
+    name: string,
     rawStep: RawTestStepRawCall,
     _ctx: TestScenarioContext
   ): Promise<TestStepRawCall> {
     const step: TestStepRawCall = {
+      name,
       type: "rawCall",
-      variables: rawStep.variables ?? {},
+      ...rawStep,
+      variables: convertVariables(rawStep.variables),
       statusCode: rawStep.statusCode ?? 200,
       outputVariables: rawStep.outputVariables ?? {},
-      ...rawStep,
     };
     return step;
   }
 
   private async loadTestStepArmTemplate(
+    name: string,
     rawStep: RawTestStepArmTemplateDeployment,
     ctx: TestScenarioContext
   ): Promise<TestStepArmTemplateDeployment> {
     const step: TestStepArmTemplateDeployment = {
+      name,
       type: "armTemplateDeployment",
-      variables: rawStep.variables ?? {},
+      variables: convertVariables(rawStep.variables),
       outputVariables: rawStep.outputVariables ?? {},
-      step: rawStep.step,
       armTemplateDeployment: rawStep.armTemplateDeployment,
       armTemplatePayload: {},
     };
@@ -356,9 +353,15 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
           );
         }
         if (testScenario !== undefined) {
-          testScenario.requiredVariables.push(paramName);
+          testScenario.variables[paramName] = {
+            required: true,
+            secret: false,
+          };
         } else {
-          testDef.requiredVariables.push(paramName);
+          testDef.variables[paramName] = {
+            required: true,
+            secret: false,
+          };
         }
       }
     }
@@ -367,20 +370,21 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
   }
 
   private async loadTestStepRestCall(
+    name: string,
     rawStep: RawTestStepRestCall | RawTestStepRestOperation,
     ctx: TestScenarioContext
   ): Promise<TestStepRestCall> {
-    if (ctx.stepTracking.has(rawStep.step)) {
-      throw new Error(`Duplicated step name: ${rawStep.step}`);
+    if (ctx.stepTracking.has(name)) {
+      throw new Error(`Duplicated step name: ${name}`);
     }
 
     const step: TestStepRestCall = {
       type: "restCall",
-      step: rawStep.step!,
+      name,
       description: rawStep.description,
       resourceName: rawStep.resourceName,
       exampleFile: "",
-      variables: rawStep.variables ?? {},
+      variables: convertVariables(rawStep.variables),
       operationId: "",
       operation: {} as Operation,
       requestParameters: {} as SwaggerExample["parameters"],
@@ -439,7 +443,7 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
       step.responseExpected = jsonPatchApply(cloneDeep(step.responseExpected), step.responseUpdate);
     }
 
-    ctx.stepTracking.set(step.step, step);
+    ctx.stepTracking.set(step.name, step);
     if (step.resourceName !== undefined) {
       ctx.resourceTracking.set(step.resourceName, step);
     }
@@ -453,15 +457,15 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
   ): Promise<TestStepRestCall> {
     const lastStep = ctx.resourceTracking.get(step.resourceName!);
     if (lastStep === undefined) {
-      throw new Error(`Unknown resourceName: ${step.resourceName} in step ${step.step}`);
+      throw new Error(`Unknown resourceName: ${step.resourceName} in step ${step.name}`);
     }
     if (lastStep.type !== "restCall") {
-      throw new Error(`Cannot use resourceName for non-restCall type in step ${step.step}`);
+      throw new Error(`Cannot use resourceName for non-restCall type in step ${step.name}`);
     }
 
     const operation = this.nameToOperation.get(step.operationId);
     if (operation === undefined) {
-      throw new Error(`Operation not found for ${step.operationId} in step ${step.step}`);
+      throw new Error(`Operation not found for ${step.operationId} in step ${step.name}`);
     }
     step.operation = operation;
 
@@ -484,7 +488,7 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
       case "post":
         break;
       default:
-        throw new Error(`Unsupported operation ${step.operationId} in step ${step.step}`);
+        throw new Error(`Unsupported operation ${step.operationId} in step ${step.name}`);
     }
 
     return step;
@@ -571,21 +575,34 @@ export const getSwaggerFilePathsFromTestScenarioFilePath = (
   };
   const res: Set<string> = new Set<string>();
 
-  for (const step of testDef.prepareSteps ?? []) {
-    const restCall = step as RawTestStepRestCall;
-    if (restCall !== undefined && restCall.exampleFile !== undefined) {
-      const swaggerFilePath = findMatchedSwagger(restCall.exampleFile.replace(/^.*[\\\/]/, ""));
-      if (swaggerFilePath !== undefined) {
-        res.add(swaggerFilePath);
+  for (const raw of testDef.prepareSteps ?? []) {
+    for (const [_, rawStep] of Object.entries(raw)) {
+      if ("exampleFile" in rawStep) {
+        const swaggerFilePath = findMatchedSwagger(rawStep.exampleFile.replace(/^.*[\\\/]/, ""));
+        if (swaggerFilePath !== undefined) {
+          res.add(swaggerFilePath);
+        }
       }
     }
   }
 
   for (const testScenario of testDef.testScenarios ?? []) {
-    for (const step of testScenario.steps) {
-      const restCall = step as RawTestStepRestCall;
-      if (restCall !== undefined && restCall.exampleFile !== undefined) {
-        const swaggerFilePath = findMatchedSwagger(restCall.exampleFile.replace(/^.*[\\\/]/, ""));
+    for (const raw of testScenario.steps) {
+      for (const [_, rawStep] of Object.entries(raw)) {
+        if ("exampleFile" in rawStep) {
+          const swaggerFilePath = findMatchedSwagger(rawStep.exampleFile.replace(/^.*[\\\/]/, ""));
+          if (swaggerFilePath !== undefined) {
+            res.add(swaggerFilePath);
+          }
+        }
+      }
+    }
+  }
+
+  for (const raw of testDef.cleanUpSteps ?? []) {
+    for (const [_, rawStep] of Object.entries(raw)) {
+      if ("exampleFile" in rawStep) {
+        const swaggerFilePath = findMatchedSwagger(rawStep.exampleFile.replace(/^.*[\\\/]/, ""));
         if (swaggerFilePath !== undefined) {
           res.add(swaggerFilePath);
         }
@@ -593,4 +610,24 @@ export const getSwaggerFilePathsFromTestScenarioFilePath = (
     }
   }
   return Array.from(res.values());
+};
+
+const convertVariables = (variables: RawVariableScope["variables"]) => {
+  const result: VariableScope["variables"] = {};
+  for (const [k, v] of Object.entries(variables ?? {})) {
+    if (typeof v === "string") {
+      result[k] = {
+        value: v,
+        required: false,
+        secret: false,
+      };
+    } else {
+      result[k] = {
+        value: v.defaultValue,
+        secret: v.secret ?? false,
+        required: v.defaultValue === undefined,
+      };
+    }
+  }
+  return result;
 };
