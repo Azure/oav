@@ -427,13 +427,13 @@ export class ReportGenerator {
 
   private getMatchedStep(stepName: string): TestStep | undefined {
     for (const it of this.testDefFile?.prepareSteps ?? []) {
-      if (stepName === it.step) {
+      if (stepName === it.name) {
         return it;
       }
     }
     for (const testScenario of this.testDefFile?.testScenarios ?? []) {
       for (const step of testScenario.steps) {
-        if (stepName === step.step) {
+        if (stepName === step.name) {
           return step;
         }
       }

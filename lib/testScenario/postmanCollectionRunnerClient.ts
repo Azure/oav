@@ -207,13 +207,13 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     this.auth(stepEnv.env);
     const pathEnv = new ReflectiveVariableEnv(":", "");
     const item = new Item();
-    if (!this.stepNameSet.has(step.step!)) {
-      item.name = step.step!;
-      this.stepNameSet.set(step.step, 0);
+    if (!this.stepNameSet.has(step.name!)) {
+      item.name = step.name!;
+      this.stepNameSet.set(step.name, 0);
     } else {
-      const cnt = this.stepNameSet.get(step.step!)! + 1;
-      item.name = `${step.step}_${cnt}`;
-      this.stepNameSet.set(step.step, cnt);
+      const cnt = this.stepNameSet.get(step.name!)! + 1;
+      item.name = `${step.name}_${cnt}`;
+      this.stepNameSet.set(step.name, cnt);
     }
     item.request = new Request({
       name: step.exampleFilePath,
@@ -376,14 +376,14 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
   ): Promise<void> {
     this.auth(stepEnv.env);
     const item = new Item();
-    item.name = step.step;
-    const path = `/subscriptions/:subscriptionId/resourcegroups/:resourceGroupName/providers/Microsoft.Resources/deployments/${step.step}?api-version=2020-06-01`;
+    item.name = step.name;
+    const path = `/subscriptions/:subscriptionId/resourcegroups/:resourceGroupName/providers/Microsoft.Resources/deployments/${step.name}?api-version=2020-06-01`;
     const urlVariables: VariableDefinition[] = [
       { key: "subscriptionId", value: "{{subscriptionId}}" },
       { key: "resourceGroupName", value: "{{resourceGroupName}}" },
     ];
     item.request = new Request({
-      name: step.step,
+      name: step.name,
       method: "put",
       url: "",
       body: { mode: "raw" } as RequestBodyDefinition,
@@ -429,7 +429,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     const generatedGetOperationItem = this.generatedGetOperationItem(
       item.name,
       item.request.url.toString(),
-      step.step,
+      step.name,
       "put",
       generatedGetScriptTypes,
       armTemplate
