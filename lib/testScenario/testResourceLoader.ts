@@ -246,6 +246,11 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
       resolvedSteps.push(step);
     }
 
+    const variableScope = convertVariables(rawTestScenario.variables);
+    variableScope.requiredVariables = [
+      ...new Set([...testDef.requiredVariables, ...variableScope.requiredVariables]),
+    ];
+
     const testScenario: TestScenario = {
       name,
       description: rawTestScenario.description ?? "",
@@ -253,7 +258,7 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
       steps,
       _resolvedSteps: resolvedSteps,
       _testDef: testDef,
-      ...convertVariables(rawTestScenario.variables),
+      ...variableScope,
     };
     ctx.testScenario = testScenario;
 
