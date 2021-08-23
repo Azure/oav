@@ -576,13 +576,17 @@ export const getSwaggerFilePathsFromTestScenarioFilePath = (
     }
   }
 
-  for (const testScenario of testDef.testScenarios ?? []) {
-    for (const raw of testScenario.steps) {
-      for (const [_, rawStep] of Object.entries(raw)) {
-        if ("exampleFile" in rawStep) {
-          const swaggerFilePath = findMatchedSwagger(rawStep.exampleFile.replace(/^.*[\\\/]/, ""));
-          if (swaggerFilePath !== undefined) {
-            res.add(swaggerFilePath);
+  for (const raw of testDef.testScenarios ?? []) {
+    for (const [_, rawScenario] of Object.entries(raw)) {
+      for (const raw of rawScenario.steps) {
+        for (const [_, rawStep] of Object.entries(raw)) {
+          if ("exampleFile" in rawStep) {
+            const swaggerFilePath = findMatchedSwagger(
+              rawStep.exampleFile.replace(/^.*[\\\/]/, "")
+            );
+            if (swaggerFilePath !== undefined) {
+              res.add(swaggerFilePath);
+            }
           }
         }
       }
