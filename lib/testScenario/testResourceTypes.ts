@@ -62,6 +62,7 @@ export type RawTestStep =
   | RawTestStepRestOperation
   | RawTestStepArmTemplateDeployment
   | RawTestStepRawCall;
+export type RawTestStepContainer = { [stepName: string]: RawTestStep };
 
 //#endregion
 
@@ -212,7 +213,11 @@ export type JsonPatchOp =
 export type RawTestScenario = RawVariableScope & {
   shareScope?: boolean;
   description?: string;
-  steps: { [stepName: string]: RawTestStep }[];
+  steps: RawTestStepContainer[];
+};
+
+export type RawTestScenarioContainer = {
+  [scenarioName: string]: RawTestScenario;
 };
 
 export type TestScenario = TransformRaw<
@@ -230,9 +235,9 @@ export type TestScenario = TransformRaw<
 //#region TestDefinitionFile
 export type RawTestDefinitionFile = RawVariableScope & {
   scope?: "ResourceGroup";
-  prepareSteps?: { [stepName: string]: RawTestStep }[];
-  testScenarios: RawTestScenario[];
-  cleanUpSteps?: { [stepName: string]: RawTestStep }[];
+  prepareSteps?: RawTestStepContainer[];
+  testScenarios: RawTestScenarioContainer[];
+  cleanUpSteps?: RawTestStepContainer[];
 };
 
 export type TestDefinitionFile = TransformRaw<

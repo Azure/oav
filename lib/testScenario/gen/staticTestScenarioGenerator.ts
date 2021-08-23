@@ -9,7 +9,13 @@ import { JsonLoader } from "./../../swagger/jsonLoader";
 import { setDefaultOpts } from "./../../swagger/loader";
 
 import { FileLoader } from "./../../swagger/fileLoader";
-import { RawTestDefinitionFile, TestDefinitionFile, TestResources } from "./../testResourceTypes";
+import {
+  RawTestDefinitionFile,
+  RawTestScenarioContainer,
+  RawTestStepContainer,
+  TestDefinitionFile,
+  TestResources,
+} from "./../testResourceTypes";
 import { TestResourceLoaderOption } from "./../testResourceLoader";
 import { inversifyGetInstance, TYPES } from "./../../inversifyUtils";
 
@@ -66,16 +72,18 @@ export class StaticTestScenarioGenerator {
         example[0].$ref!
       );
       const exampleDir = path.dirname(listOperationsExampleFilePath);
-      const testStep = [
+      const testSteps: RawTestStepContainer[] = [
         {
-          step: "operationsList",
-          exampleFile: getExampleOutputPath(listOperationsExampleFilePath),
+          operationsList: {
+            exampleFile: getExampleOutputPath(listOperationsExampleFilePath),
+          },
         },
       ];
       testDef.testScenarios.push({
-        scenario: "operationsList",
-        description: "Generated scenario for operation list",
-        steps: testStep,
+        operationsListScenario: {
+          description: "Generated scenario for operation list",
+          steps: testSteps,
+        },
       });
       this.testDefToWrite.push({
         testDef: testDef,
@@ -123,25 +131,28 @@ export class StaticTestScenarioGenerator {
       }
 
       // TODO: get dependency and inject dependency ARM template into step
-      const testStep = [
-        {
-          step: exampleName,
-          exampleFile: getExampleOutputPath(
-            this.swaggerAnalyzer.jsonLoader.getRealPath(exampleRef.$ref!)
-          ),
-        },
-      ];
+      const testStep: RawTestStepContainer = {};
+      testStep[exampleName] = {
+        exampleFile: getExampleOutputPath(
+          this.swaggerAnalyzer.jsonLoader.getRealPath(exampleRef.$ref!)
+        ),
+      };
+      const testSteps = [testStep];
       if (deleteExampleFilePath !== "") {
-        testStep.push({
-          step: deleteExampleName,
+        const testStep: RawTestStepContainer = {};
+        testStep[deleteExampleName] = {
           exampleFile: deleteExampleFilePath,
-        });
+        };
+        testSteps.push(testStep);
       }
-      testDef.testScenarios.push({
-        scenario: `${resourceType}_${exampleName}`,
+
+      const scenarioName = `${resourceType}_${exampleName}`;
+      const testScenarioContainer: RawTestScenarioContainer = {};
+      testScenarioContainer[scenarioName] = {
         description: `Generated scenario for ${resourceType} with ${exampleName}`,
-        steps: testStep,
-      });
+        steps: testSteps,
+      };
+      testDef.testScenarios.push(testScenarioContainer);
     }
     this.testDefToWrite.push({
       testDef: testDef,
