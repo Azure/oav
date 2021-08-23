@@ -621,7 +621,7 @@ const convertVariables = (rawVariables: RawVariableScope["variables"]) => {
       } else {
         result.requiredVariables.push(key);
       }
-      if (!!val.secret) {
+      if (val.secret) {
         result.secretVariables.push(key);
       }
     }

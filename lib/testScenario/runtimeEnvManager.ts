@@ -111,7 +111,7 @@ export class RuntimeEnvManager {
     }
 
     // keep the poller and delay steps in the last step.
-    while (to && toIndex + 1 < collection.items.count()) {
+    while (toIndex + 1 < collection.items.count()) {
       const itemName = collection.items.idx(toIndex + 1).name;
       if (itemName.startsWith(`[generated]${to}`)) {
         toIndex++;

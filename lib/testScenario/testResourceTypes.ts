@@ -62,7 +62,9 @@ export type RawTestStep =
   | RawTestStepRestOperation
   | RawTestStepArmTemplateDeployment
   | RawTestStepRawCall;
-export type RawTestStepContainer = { [stepName: string]: RawTestStep };
+export interface RawTestStepContainer {
+  [stepName: string]: RawTestStep;
+}
 
 //#endregion
 
@@ -216,9 +218,9 @@ export type RawTestScenario = RawVariableScope & {
   steps: RawTestStepContainer[];
 };
 
-export type RawTestScenarioContainer = {
+export interface RawTestScenarioContainer {
   [scenarioName: string]: RawTestScenario;
-};
+}
 
 export type TestScenario = TransformRaw<
   RawTestScenario,
