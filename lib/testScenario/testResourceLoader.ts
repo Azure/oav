@@ -190,19 +190,15 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
       prepareSteps: [],
       testScenarios: [],
       _filePath: this.fileLoader.relativePath(filePath),
-      variables: convertVariables(rawTestDef.variables),
       cleanUpSteps: [],
+      ...convertVariables(rawTestDef.variables),
     };
 
     if (testDef.scope === "ResourceGroup") {
-      for (const k in ["subscriptionId", "location"]) {
-        if (testDef.variables[k] === undefined) {
-          testDef.variables[k] = {
-            required: true,
-            secret: false,
-          };
-        }
-      }
+      const requiredVariables = new Set(testDef.requiredVariables);
+      requiredVariables.add("subscriptionId");
+      requiredVariables.add("location");
+      testDef.requiredVariables = [...requiredVariables];
     }
 
     const ctx: TestScenarioContext = {
@@ -254,10 +250,10 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
       name,
       description: rawTestScenario.description ?? "",
       shareScope: rawTestScenario.shareScope ?? true,
-      variables: convertVariables(rawTestScenario.variables),
       steps,
       _resolvedSteps: resolvedSteps,
       _testDef: testDef,
+      ...convertVariables(rawTestScenario.variables),
     };
     ctx.testScenario = testScenario;
 
@@ -303,9 +299,9 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
       name,
       type: "rawCall",
       ...rawStep,
-      variables: convertVariables(rawStep.variables),
       statusCode: rawStep.statusCode ?? 200,
       outputVariables: rawStep.outputVariables ?? {},
+      ...convertVariables(rawStep.variables),
     };
     return step;
   }
@@ -318,10 +314,10 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
     const step: TestStepArmTemplateDeployment = {
       name,
       type: "armTemplateDeployment",
-      variables: convertVariables(rawStep.variables),
       outputVariables: rawStep.outputVariables ?? {},
       armTemplateDeployment: rawStep.armTemplateDeployment,
       armTemplatePayload: {},
+      ...convertVariables(rawStep.variables),
     };
     const { testDef, testScenario } = ctx;
 
@@ -353,15 +349,9 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
           );
         }
         if (testScenario !== undefined) {
-          testScenario.variables[paramName] = {
-            required: true,
-            secret: false,
-          };
+          testScenario.requiredVariables.push(paramName);
         } else {
-          testDef.variables[paramName] = {
-            required: true,
-            secret: false,
-          };
+          testDef.requiredVariables.push(paramName);
         }
       }
     }
@@ -384,7 +374,6 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
       description: rawStep.description,
       resourceName: rawStep.resourceName,
       exampleFile: "",
-      variables: convertVariables(rawStep.variables),
       operationId: "",
       operation: {} as Operation,
       requestParameters: {} as SwaggerExample["parameters"],
@@ -396,6 +385,7 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
       resourceUpdate: rawStep.resourceUpdate ?? [],
       requestUpdate: rawStep.requestUpdate ?? [],
       responseUpdate: rawStep.responseUpdate ?? [],
+      ...convertVariables(rawStep.variables),
     };
 
     if ("exampleFile" in rawStep) {
@@ -612,21 +602,24 @@ export const getSwaggerFilePathsFromTestScenarioFilePath = (
   return Array.from(res.values());
 };
 
-const convertVariables = (variables: RawVariableScope["variables"]) => {
-  const result: VariableScope["variables"] = {};
-  for (const [k, v] of Object.entries(variables ?? {})) {
-    if (typeof v === "string") {
-      result[k] = {
-        value: v,
-        required: false,
-        secret: false,
-      };
+const convertVariables = (rawVariables: RawVariableScope["variables"]) => {
+  const result: VariableScope = {
+    variables: {},
+    requiredVariables: [],
+    secretVariables: [],
+  };
+  for (const [key, val] of Object.entries(rawVariables ?? {})) {
+    if (typeof val === "string") {
+      result.variables[key] = val;
     } else {
-      result[k] = {
-        value: v.defaultValue,
-        secret: v.secret ?? false,
-        required: v.defaultValue === undefined,
-      };
+      if (val.defaultValue !== undefined) {
+        result.variables[key] = val.defaultValue;
+      } else {
+        result.requiredVariables.push(key);
+      }
+      if (!!val.secret) {
+        result.secretVariables.push(key);
+      }
     }
   }
   return result;

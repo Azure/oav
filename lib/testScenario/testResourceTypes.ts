@@ -23,13 +23,9 @@ export interface RawVariableScope {
 }
 
 export interface VariableScope {
-  variables: {
-    [variableName: string]: {
-      value?: string;
-      secret: boolean;
-      required: boolean;
-    }
-  }
+  variables: { [variableName: string]: string };
+  requiredVariables: string[];
+  secretVariables: string[];
 }
 
 export interface OutputVariables {
@@ -51,7 +47,7 @@ type TestStepBase = VariableScope & {
   name: string;
   isPrepareStep?: boolean;
   isCleanUpStep?: boolean;
-}
+};
 
 type RawTestStepRestBase = RawTestStepBase & {
   statusCode?: number;
