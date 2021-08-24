@@ -16,7 +16,7 @@ export interface RawVariableScope {
     [variableName: string]:
       | string
       | {
-          secret?: boolean;
+          type?: TestScenarioVariableType;
           defaultValue?: string;
         };
   };
@@ -30,6 +30,7 @@ export interface VariableScope {
 
 export interface OutputVariables {
   [variableName: string]: {
+    type?: TestScenarioVariableType;
     fromResponse: string;
   };
 }
@@ -117,10 +118,18 @@ export type TestStepArmTemplateDeployment = TransformRaw<
           value: any;
         };
       };
+      outputs: {
+        [name: string]: {
+          type: any;
+          value: any;
+        };
+      };
     };
   } & TestStepBase,
   "armTemplateParameters" | "description"
 >;
+
+export type TestScenarioVariableType = "string" | "secureString";
 
 export type ArmTemplateVariableType =
   | "string"

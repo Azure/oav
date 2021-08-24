@@ -284,15 +284,25 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
     rawStep: RawTestStep,
     ctx: TestScenarioContext
   ): Promise<TestStep> {
+    let testStep: TestStep;
+
     if ("exampleFile" in rawStep || "operationId" in rawStep) {
-      return this.loadTestStepRestCall(name, rawStep, ctx);
+      testStep = await this.loadTestStepRestCall(name, rawStep, ctx);
     } else if ("armTemplateDeployment" in rawStep) {
-      return this.loadTestStepArmTemplate(name, rawStep, ctx);
+      testStep = await this.loadTestStepArmTemplate(name, rawStep, ctx);
     } else if ("rawUrl" in rawStep) {
-      return this.loadTestStepRawCall(name, rawStep, ctx);
+      testStep = await this.loadTestStepRawCall(name, rawStep, ctx);
     } else {
       throw new Error(`Invalid step: ${name} ${JSON.stringify(rawStep)}`);
     }
+
+    if (ctx.testScenario !== undefined) {
+      declareOutputVariables(testStep.outputVariables, ctx.testScenario);
+    } else {
+      declareOutputVariables(testStep.outputVariables, ctx.testDef);
+    }
+
+    return testStep;
   }
 
   private async loadTestStepRawCall(
@@ -358,6 +368,15 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
         } else {
           testDef.requiredVariables.push(paramName);
         }
+      }
+    }
+
+    const outputs = step.armTemplatePayload.outputs;
+    if (outputs !== undefined) {
+      if (testScenario !== undefined) {
+        declareOutputVariables(outputs, testScenario);
+      } else {
+        declareOutputVariables(outputs, testDef);
       }
     }
 
@@ -626,10 +645,24 @@ const convertVariables = (rawVariables: RawVariableScope["variables"]) => {
       } else {
         result.requiredVariables.push(key);
       }
-      if (val.secret) {
+      if (val.type === "secureString") {
         result.secretVariables.push(key);
       }
     }
   }
   return result;
+};
+
+const declareOutputVariables = (
+  outputVariables: { [key: string]: { type?: any } },
+  scope: VariableScope
+) => {
+  for (const [key, val] of Object.entries(outputVariables)) {
+    if (scope.variables[key] === undefined) {
+      scope.variables[key] = `{{${key}}}`;
+    }
+    if (val.type === "secureString" || val.type === "securestring") {
+      scope.secretVariables.push(key);
+    }
+  }
 };

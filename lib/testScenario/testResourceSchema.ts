@@ -68,9 +68,10 @@ export const TestDefinition: Schema & {
           {
             type: "object",
             properties: {
-              secret: {
-                type: "boolean",
-                default: false,
+              type: {
+                type: "string",
+                enum: ["string", "secureString"],
+                default: "string",
               },
               defaultValue: {
                 type: "string",
@@ -150,6 +151,11 @@ export const TestDefinition: Schema & {
           additionalProperties: {
             type: "object",
             properties: {
+              type: {
+                type: "string",
+                enum: ["string", "secureString"],
+                default: "string",
+              },
               fromResponse: {
                 type: "string",
               },
