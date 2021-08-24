@@ -36,7 +36,7 @@ export default class SwaggerMocker {
     const preHandledStatusCode = ["200", "201", "202", "204"]; // above status code prehandle in exampleGenerator.ts extractResponse()
     this.spec = spec;
     for (const statusCode of Object.keys(specItem.content.responses)) {
-      if (statusCode !== "default" && !preHandledStatusCode.includes(statusCode)) {
+      if (statusCode !== "default" || Object.keys(example.responses).length === 0 || !preHandledStatusCode.includes(statusCode)) {
         example.responses[`${statusCode}`] = {};
       }
     }
@@ -96,7 +96,7 @@ export default class SwaggerMocker {
   }
 
   private mockRequest(paramExample: any, paramSpec: any, rp: string) {
-    const validator = getRuleValidator(this.exampleRule).onParameter;
+    const validator = getRuleValidator(this.exampleRule);
     for (const pName of Object.keys(paramSpec)) {
       const element = paramSpec[pName];
       const visited = new Set<string>();
@@ -115,7 +115,10 @@ export default class SwaggerMocker {
         //       "$ref": "#/definitions/SignalRResource"
         //     }
         // }
-        if (!validator || validator({ schema: paramEle })) {
+        if (
+          !validator.onParameter ||
+          (validator.onParameter && validator.onParameter({ schema: paramEle }))
+        ) {
           paramExample[paramEle.name] = this.mockObj(
             paramEle.name,
             paramEle.schema,
@@ -134,7 +137,10 @@ export default class SwaggerMocker {
         //     "required": true,
         //     "type": "string"
         // }
-        if (!validator || validator({ schema: paramEle })) {
+        if (
+          !validator.onParameter ||
+          (validator.onParameter && validator.onParameter({ schema: paramEle }))
+        ) {
           paramExample[paramEle.name] = this.mockObj(
             paramEle.name,
             element, // use the original schema  containing "$ref" which will hit the cached value
