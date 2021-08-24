@@ -104,7 +104,7 @@ export default class SwaggerMocker {
   }
 
   private mockRequest(paramExample: any, paramSpec: any, rp: string) {
-    const validator = getRuleValidator(this.exampleRule);
+    const validator = getRuleValidator(this.exampleRule).onParameter;
     for (const pName of Object.keys(paramSpec)) {
       const element = paramSpec[pName];
       const visited = new Set<string>();
@@ -123,10 +123,7 @@ export default class SwaggerMocker {
         //       "$ref": "#/definitions/SignalRResource"
         //     }
         // }
-        if (
-          !validator.onParameter ||
-          (validator.onParameter && validator.onParameter({ schema: paramEle }))
-        ) {
+        if (!validator || validator({ schema: paramEle })) {
           paramExample[paramEle.name] = this.mockObj(
             paramEle.name,
             paramEle.schema,
@@ -145,10 +142,7 @@ export default class SwaggerMocker {
         //     "required": true,
         //     "type": "string"
         // }
-        if (
-          !validator.onParameter ||
-          (validator.onParameter && validator.onParameter({ schema: paramEle }))
-        ) {
+        if (!validator || validator({ schema: paramEle })) {
           paramExample[paramEle.name] = this.mockObj(
             paramEle.name,
             element, // use the original schema  containing "$ref" which will hit the cached value
