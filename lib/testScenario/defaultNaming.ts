@@ -1,5 +1,5 @@
 export const generatedPostmanItem = (name: string): string => {
-  return `[generated]${name}`;
+  return `_${name}`;
 };
 export const generatedGet = (name: string): string => {
   return `${name}_generated_get`;

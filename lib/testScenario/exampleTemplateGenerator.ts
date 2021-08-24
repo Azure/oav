@@ -18,8 +18,6 @@ import {
 } from "./testScenarioRunner";
 import { getBodyParamName } from "./testResourceLoader";
 
-const placeholderToBeDetermined = "__to_be_determined__";
-
 @injectable()
 export class ExampleTemplateGenerator implements TestScenarioRunnerClient {
   private baseEnv: VariableEnv;
@@ -54,7 +52,7 @@ export class ExampleTemplateGenerator implements TestScenarioRunnerClient {
       return;
     }
     for (const variableName of Object.keys(outputVariables)) {
-      stepEnv.env.set(variableName, placeholderToBeDetermined);
+      stepEnv.env.set(variableName, `{{${variableName}}}`);
     }
   }
 
@@ -76,14 +74,14 @@ export class ExampleTemplateGenerator implements TestScenarioRunnerClient {
         continue;
       }
 
-      stepEnv.env.set(outputName, placeholderToBeDetermined);
+      stepEnv.env.set(outputName, `{{${outputName}}}`);
     }
   }
 
   public async generateExampleTemplateForTestScenario(testScenario: TestScenario) {
     this.baseEnv.clear();
     for (const requiredVar of testScenario.requiredVariables) {
-      this.baseEnv.set(requiredVar, placeholderToBeDetermined);
+      this.baseEnv.set(requiredVar, `{{${requiredVar}}}`);
     }
 
     await this.runner.executeScenario(testScenario);
