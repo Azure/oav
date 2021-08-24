@@ -1,5 +1,10 @@
 # Change Log - oav
 
+## 08/24/2021 2.7.4
+
+- Fix validate-traffic file path resolved error.
+- Fix generate-examples can't generate some http code in response
+
 ## 08/12/2021 2.7.3
 
 - Refactor semantic validation using AJV
