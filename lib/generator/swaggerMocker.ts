@@ -33,10 +33,10 @@ export default class SwaggerMocker {
   }
 
   public mockForExample(example: any, specItem: any, spec: any, rp: string) {
-    const preHandleStatusCode = ["200", "201", "202", "204"]; // above status code prehandle in exampleGenerator.ts extractResponse()
+    const preHandledStatusCode = ["200", "201", "202", "204"]; // above status code prehandle in exampleGenerator.ts extractResponse()
     this.spec = spec;
     for (const statusCode of Object.keys(specItem.content.responses)) {
-      if (statusCode !== "default" && !preHandleStatusCode.includes(statusCode)) {
+      if (statusCode !== "default" && !preHandledStatusCode.includes(statusCode)) {
         example.responses[`${statusCode}`] = {};
       }
     }
