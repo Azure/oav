@@ -12,18 +12,18 @@ import { isSuppressed } from "../swagger/suppressionLoader";
 import { refSelfSymbol, Schema, SwaggerSpec } from "../swagger/swaggerTypes";
 import { getNameFromRef } from "../transform/context";
 import { xmsAzureResource, xmsEnum, xmsMutability, xmsSecret } from "../util/constants";
+import { getOavErrorMeta, TrafficValidationErrorCode } from "../util/errorDefinitions";
+import { Severity } from "../util/severity";
 import { Writable } from "../util/utils";
-import { ExtendedErrorCode, SourceLocation } from "../util/validationError";
+import { SourceLocation } from "../util/validationError";
 import { ajvEnableAll, ajvEnableArmRule } from "./ajv";
 import {
   getIncludeErrorsMap,
-  getValidateErrorMessage,
   SchemaValidateContext,
   SchemaValidateFunction,
   SchemaValidateIssue,
   SchemaValidator,
   SchemaValidatorOption,
-  validateErrorMessages,
 } from "./schemaValidator";
 
 @injectable()
@@ -184,14 +184,10 @@ export const ajvErrorToSchemaValidateIssue = (
     source.jsonRef = sch[refSelfSymbol]!.substr(sch[refSelfSymbol]!.indexOf("#"));
   }
 
-  const result: SchemaValidateIssue = {
-    code: errInfo.code,
-    message: errInfo.message,
-    params: errInfo.params,
-    jsonPathsInPayload: [dataPath],
-    schemaPath: errInfo.code === "MISSING_RESOURCE_ID" ? "" : err.schemaPath,
-    source,
-  };
+  const result = errInfo as SchemaValidateIssue;
+  result.jsonPathsInPayload = [dataPath];
+  result.schemaPath = err.schemaPath;
+  result.source = source;
 
   return result;
 };
@@ -222,7 +218,7 @@ const shouldSkipError = (error: ErrorObject, cxt: SchemaValidateContext) => {
   return false;
 };
 
-const errorKeywordsMapping: { [key: string]: ExtendedErrorCode } = {
+const errorKeywordsMapping: { [key: string]: TrafficValidationErrorCode } = {
   additionalProperties: "OBJECT_ADDITIONAL_PROPERTIES",
   required: "OBJECT_MISSING_REQUIRED_PROPERTY",
   format: "INVALID_FORMAT",
@@ -244,23 +240,24 @@ const errorKeywordsMapping: { [key: string]: ExtendedErrorCode } = {
   dependencies: "OBJECT_DEPENDENCY_KEY",
   multiple: "MULTIPLE_OF",
   discriminatorMap: "DISCRIMINATOR_VALUE_NOT_FOUND",
+  [xmsAzureResource]: "MISSING_RESOURCE_ID",
 };
 // Should be type "never" to ensure we've covered all the errors
-export type MissingErrorCode = Exclude<
-  ExtendedErrorCode,
-  | keyof typeof validateErrorMessages
-  | "PII_MISMATCH" // Used in openapi-validate
-  | "INTERNAL_ERROR" // Used in liveValidator
-  | "UNRESOLVABLE_REFERENCE"
-  | "NOT_PASSED" // If keyword mapping not found then we use this error
-  | "OPERATION_NOT_FOUND_IN_CACHE_WITH_PROVIDER" // Covered by liveValidator
-  | "OPERATION_NOT_FOUND_IN_CACHE_WITH_API"
-  | "OPERATION_NOT_FOUND_IN_CACHE_WITH_VERB"
-  | "OPERATION_NOT_FOUND_IN_CACHE"
-  | "MULTIPLE_OPERATIONS_FOUND"
-  | "INVALID_RESPONSE_HEADER"
-  | "INVALID_REQUEST_PARAMETER"
->;
+// export type MissingErrorCode = Exclude<
+//   ExtendedErrorCode,
+//   | keyof typeof validateErrorMessages
+//   | "PII_MISMATCH" // Used in openapi-validate
+//   | "INTERNAL_ERROR" // Used in liveValidator
+//   | "UNRESOLVABLE_REFERENCE"
+//   | "NOT_PASSED" // If keyword mapping not found then we use this error
+//   | "OPERATION_NOT_FOUND_IN_CACHE_WITH_PROVIDER" // Covered by liveValidator
+//   | "OPERATION_NOT_FOUND_IN_CACHE_WITH_API"
+//   | "OPERATION_NOT_FOUND_IN_CACHE_WITH_VERB"
+//   | "OPERATION_NOT_FOUND_IN_CACHE"
+//   | "MULTIPLE_OPERATIONS_FOUND"
+//   | "INVALID_RESPONSE_HEADER"
+//   | "INVALID_REQUEST_PARAMETER"
+// >;
 
 const transformParamsKeyword = new Set([
   "pattern",
@@ -269,6 +266,7 @@ const transformParamsKeyword = new Set([
   "format",
   "multipleOf",
   "required",
+  xmsAzureResource,
 ]);
 
 const transformReverseParamsKeyword = new Set([
@@ -286,8 +284,9 @@ const transformReverseParamsKeyword = new Set([
 ]);
 
 interface MetaErr {
-  code: ExtendedErrorCode;
+  code: string;
   message: string;
+  severity: Severity;
   params?: any;
 }
 export const ajvErrorCodeToOavErrorCode = (
@@ -300,6 +299,7 @@ export const ajvErrorCodeToOavErrorCode = (
   let result: MetaErr | undefined = {
     code: "NOT_PASSED",
     message: error.message!,
+    severity: Severity.Verbose,
   };
 
   // Workaround for incorrect ajv behavior.
@@ -315,10 +315,10 @@ export const ajvErrorCodeToOavErrorCode = (
         data === null && parentSchema?.nullable
           ? undefined
           : isEnumCaseMismatch(data, allowedValues)
-          ? errorFromErrorCode("ENUM_CASE_MISMATCH", { data })
+          ? getOavErrorMeta("ENUM_CASE_MISMATCH", { data })
           : parentSchema?.[xmsEnum]?.modelAsString
           ? undefined
-          : errorFromErrorCode("ENUM_MISMATCH", { data });
+          : getOavErrorMeta("ENUM_MISMATCH", { data });
       params = [data, allowedValues];
       break;
 
@@ -332,22 +332,17 @@ export const ajvErrorCodeToOavErrorCode = (
       params = [param.key, null];
       result =
         keyword === xmsSecret
-          ? errorFromErrorCode("SECRET_PROPERTY", param)
+          ? getOavErrorMeta("SECRET_PROPERTY", param)
           : ctx.isResponse
-          ? errorFromErrorCode("WRITEONLY_PROPERTY_NOT_ALLOWED_IN_RESPONSE", param)
-          : errorFromErrorCode("READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST", param);
-      break;
-
-    case xmsAzureResource:
-      params = [];
-      result = errorFromErrorCode("MISSING_RESOURCE_ID", "");
+          ? getOavErrorMeta("WRITEONLY_PROPERTY_NOT_ALLOWED_IN_RESPONSE", param)
+          : getOavErrorMeta("READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST", param);
       break;
 
     case "oneOf":
       result =
         (params as any).passingSchemas === null
-          ? errorFromErrorCode("ONE_OF_MISSING", {})
-          : errorFromErrorCode("ONE_OF_MULTIPLE", {});
+          ? getOavErrorMeta("ONE_OF_MISSING", {})
+          : getOavErrorMeta("ONE_OF_MULTIPLE", {});
       params = [];
       break;
 
@@ -382,7 +377,7 @@ export const ajvErrorCodeToOavErrorCode = (
 
   const code = errorKeywordsMapping[keyword];
   if (code !== undefined) {
-    result = { code, message: getValidateErrorMessage(code, { ...params, data }) };
+    result = getOavErrorMeta(code, { ...params, data });
   }
 
   if (transformParamsKeyword.has(keyword)) {
@@ -400,11 +395,6 @@ export const ajvErrorCodeToOavErrorCode = (
   }
   return result;
 };
-
-const errorFromErrorCode = (code: ExtendedErrorCode, param: any) => ({
-  code,
-  message: (validateErrorMessages as any)[code](param),
-});
 
 const isEnumCaseMismatch = (data: string, enumList: Array<string | number>) => {
   if (typeof data !== "string") {

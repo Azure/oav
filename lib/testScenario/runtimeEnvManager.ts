@@ -2,6 +2,7 @@ import { existsSync, readFileSync, writeFileSync } from "fs";
 import * as path from "path";
 import { Collection, VariableDefinition } from "postman-collection";
 import { mkdirpSync, removeSync } from "fs-extra";
+import { printWarning } from "../util/utils";
 import { PostmanCollectionRunnerClientOption } from "./postmanCollectionRunnerClient";
 
 interface RuntimeEnvContainer {
@@ -51,23 +52,49 @@ export class RuntimeEnvManager {
     }
   };
   public loadEnv = (fromStep: string) => {
-    const runtimeEnvPath = this.generateRuntimeEnvPath(fromStep);
+    let runtimeEnvPath = this.generateRuntimeEnvPath(fromStep);
+    const previousStep = this.getPreviousStepName(fromStep);
+    let useBeforeStep = true;
     if (!existsSync(runtimeEnvPath)) {
-      throw new Error(
-        `the last runtime env file ${runtimeEnvPath} for step '${fromStep}' did not exist. `
-      );
+      if (previousStep !== undefined) {
+        printWarning(
+          `could not found the last runtime env file ${runtimeEnvPath}, try using env file of the previous step '${previousStep}' `
+        );
+        runtimeEnvPath = this.generateRuntimeEnvPath(previousStep);
+        if (!existsSync(runtimeEnvPath)) {
+          throw new Error(
+            `could not found the runtime env file ${runtimeEnvPath} for the previous step of '${fromStep}' . `
+          );
+        }
+        useBeforeStep = false;
+      } else {
+        throw new Error(
+          `the last runtime env file ${runtimeEnvPath} for step '${fromStep}' did not exist. `
+        );
+      }
     }
     const runtimeEnvContainer = JSON.parse(
       readFileSync(runtimeEnvPath).toString()
     ) as RuntimeEnvContainer;
-
-    if (!runtimeEnvContainer.beforeStep) {
+    const lastRuntimeEnv = useBeforeStep
+      ? runtimeEnvContainer.beforeStep
+      : runtimeEnvContainer.afterStep;
+    if (!lastRuntimeEnv) {
       throw new Error(
         `could not load last runtime env for step '${fromStep}', please check the file ${runtimeEnvPath} `
       );
     }
-    return runtimeEnvContainer.beforeStep;
+    return lastRuntimeEnv;
   };
+
+  private getPreviousStepName(fromStep: string) {
+    const collection = this.collection;
+    const fromIndex = this.getStepIndex(collection, fromStep);
+    if (fromIndex === 0) {
+      return undefined;
+    }
+    return collection.items.idx(fromIndex - 1).name;
+  }
 
   public repopulateCollectionItems = (from?: string, to?: string) => {
     if (!from && !to) {

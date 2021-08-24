@@ -1,6 +1,6 @@
 {
   "name": "oav",
-  "version": "2.7.0",
+  "version": "2.7.3",
   "author": {
     "name": "Microsoft Corporation",
     "email": "azsdkteam@microsoft.com",
@@ -9,6 +9,7 @@
   "description": "Validate Azure REST API Specifications",
   "license": "MIT",
   "dependencies": {
+    "@autorest/schemas": "^1.2.0",
     "@azure-tools/openapi-tools-common": "^1.2.2",
     "@azure/arm-resources": "^4.0.0",
     "@azure/core-lro": "^1.0.3",

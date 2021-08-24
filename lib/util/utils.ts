@@ -260,7 +260,7 @@ export function getProvider(pathStr?: string | null): string | undefined {
   return result;
 }
 
-export const getValueByJsonPointer = (obj: any, pointer: string) => {
+export const getValueByJsonPointer = (obj: any, pointer: string | string[]) => {
   const refTokens = Array.isArray(pointer) ? pointer : parse(pointer);
 
   for (let i = 0; i < refTokens.length; ++i) {

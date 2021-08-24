@@ -1011,28 +1011,28 @@ describe("Live validator snapshot validation", () => {
    * this case is invalid because we can detect unresolved reference erro in the stage of resolve spec
    * TODO: this error code should be removed from the doc later
    */
-  test.skip(`should return expected error for unresolvable reference`, async () => {
-    const options = {
-      directory: `${__dirname}/liveValidation/swaggers/`,
-      isPathCaseSensitive: false,
-      useRelativeSourceLocationUrl: true,
-      swaggerPathsPattern: [
-        "specification\\rpsaas\\resource-manager\\Microsoft.Contoso\\stable\\2019-01-01\\*.json",
-      ],
-      git: {
-        shouldClone: false,
-      },
-    };
-    const liveValidator = new LiveValidator(options);
-    await liveValidator.initialize();
+  // test.skip(`should return expected error for unresolvable reference`, async () => {
+  //   const options = {
+  //     directory: `${__dirname}/liveValidation/swaggers/`,
+  //     isPathCaseSensitive: false,
+  //     useRelativeSourceLocationUrl: true,
+  //     swaggerPathsPattern: [
+  //       "specification\\rpsaas\\resource-manager\\Microsoft.Contoso\\stable\\2019-01-01\\*.json",
+  //     ],
+  //     git: {
+  //       shouldClone: false,
+  //     },
+  //   };
+  //   const liveValidator = new LiveValidator(options);
+  //   await liveValidator.initialize();
 
-    const payload = require(`${__dirname}/liveValidation/payloads/unresolvableReference_input.json`);
-    const result = await liveValidator.validateLiveRequest(payload.input.request, {
-      includeErrors: ["UNRESOLVABLE_REFERENCE"],
-    });
-    expect(result.isSuccessful === false);
-    expect(result.errors[0].code === "UNRESOLVABLE_REFERENCE");
-  });
+  //   const payload = require(`${__dirname}/liveValidation/payloads/unresolvableReference_input.json`);
+  //   const result = await liveValidator.validateLiveRequest(payload.input.request, {
+  //     includeErrors: ["UNRESOLVABLE_REFERENCE"],
+  //   });
+  //   expect(result.isSuccessful === false);
+  //   expect(result.errors[0].code === "UNRESOLVABLE_REFERENCE");
+  // });
 
   errors.forEach((error) => {
     test(`should return the expected error requestResponse validation for ${error}`, async () => {

@@ -240,11 +240,11 @@ export class TestScenarioRunner {
 
     switch (step.type) {
       case "restCall":
-        await this.executeRestCallStep(step, env, testScope);
+        await this.executeRestCallStep(step, stepEnv, testScope);
         break;
 
       case "armTemplateDeployment":
-        await this.executeArmTemplateStep(step, env, testScope);
+        await this.executeArmTemplateStep(step, stepEnv, testScope);
         break;
     }
   }
