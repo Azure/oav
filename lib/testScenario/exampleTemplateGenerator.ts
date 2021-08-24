@@ -52,7 +52,7 @@ export class ExampleTemplateGenerator implements TestScenarioRunnerClient {
       return;
     }
     for (const variableName of Object.keys(outputVariables)) {
-      stepEnv.env.set(variableName, `{{${variableName}}}`);
+      stepEnv.env.set(variableName, `$(${variableName})`);
     }
   }
 
@@ -74,14 +74,14 @@ export class ExampleTemplateGenerator implements TestScenarioRunnerClient {
         continue;
       }
 
-      stepEnv.env.set(outputName, `{{${outputName}}}`);
+      stepEnv.env.set(outputName, `$(${outputName})`);
     }
   }
 
   public async generateExampleTemplateForTestScenario(testScenario: TestScenario) {
     this.baseEnv.clear();
     for (const requiredVar of testScenario.requiredVariables) {
-      this.baseEnv.set(requiredVar, `{{${requiredVar}}}`);
+      this.baseEnv.set(requiredVar, `$(${requiredVar})`);
     }
 
     await this.runner.executeScenario(testScenario);

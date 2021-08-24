@@ -659,7 +659,7 @@ const declareOutputVariables = (
 ) => {
   for (const [key, val] of Object.entries(outputVariables)) {
     if (scope.variables[key] === undefined) {
-      scope.variables[key] = `{{${key}}}`;
+      scope.variables[key] = `$(${key})`;
     }
     if (val.type === "secureString" || val.type === "securestring") {
       scope.secretVariables.push(key);

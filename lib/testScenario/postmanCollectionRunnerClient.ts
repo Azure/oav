@@ -278,7 +278,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
       : ["StatusCodeAssertion"];
     this.addTestScript(item, scriptTypes, getOverwriteVariables());
     item.request.url = new Url({
-      path: pathEnv.resolveString(step.operation._path._pathTemplate, "{", "}"),
+      path: pathEnv.resolveString(step.operation._path._pathTemplate, true),
       host: this.opts.baseUrl,
       variable: urlVariables,
     } as UrlDefinition);

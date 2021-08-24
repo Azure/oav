@@ -1,11 +1,5 @@
-const allowedVariableName = "a-zA-Z0-9_\\-\\.";
-const allowedVariableNameRegExp = new RegExp(`^[${allowedVariableName}]+$`);
-const regExpCache: { [key: string]: RegExp } = {};
-
-export const escapeRegExp = (str: string) => {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
-};
-
+const variableRegex = /\$\(([A-Za-z_][A-Za-z0-9_]*)\)/g;
+const pathVariableRegex = /\{([A-Za-z_][A-Za-z0-9_]*)\}/g;
 export class VariableEnv {
   protected baseEnv?: VariableEnv;
   protected data: { [key: string]: string } = {};
@@ -42,9 +36,6 @@ export class VariableEnv {
   }
 
   public set(key: string, value: string) {
-    if (allowedVariableNameRegExp.exec(key) === null) {
-      throw new Error(`Variable name is not allowed with [${allowedVariableName}]: ${key}`);
-    }
     this.writeEnv[key] = value;
   }
 
@@ -61,48 +52,35 @@ export class VariableEnv {
     this.writeEnv = env.data;
   }
 
-  public resolveString(source: string, matchLeft: string = "\\$\\(", matchRight: string = "\\)") {
-    return this.resolveStringWithRegExp(source, this.getVariableRegExp(matchLeft, matchRight));
+  public resolveString(source: string, isPathVariable?: boolean): string {
+    return this.resolveStringWithRegex(source, isPathVariable || false);
   }
 
-  private resolveStringWithRegExp(source: string, captureVariable: RegExp) {
-    let str = source;
-    let count = 0;
-
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
-      const matchResult = captureVariable.exec(str);
-      if (matchResult === null) {
-        return str;
+  private resolveStringWithRegex(source: string, isPathVariable: boolean): string {
+    let match;
+    const regex = isPathVariable ? pathVariableRegex : variableRegex;
+    while (regex.test(source)) {
+      const current = source;
+      while ((match = regex.exec(source))) {
+        source =
+          source.substring(0, match.index) +
+          this.getRequired(match[1]) +
+          source.substring(match.index + match[0].length);
       }
-
-      count++;
-      if (count > 100) {
-        throw new Error(`More than ${count} times of variable replace in: ${source}`);
+      if (current === source) {
+        break;
       }
-
-      const match = matchResult[0];
-      const variableName = matchResult[1];
-      const value = this.get(variableName);
-      if (value === undefined) {
-        throw new Error(`Variable not defined while resolving ${source}: ${match}`);
-      }
-
-      str = str.substr(0, matchResult.index) + value + str.substr(matchResult.index + match.length);
     }
+    return source;
   }
 
-  public resolveObjectValues<T>(
-    obj: T,
-    matchLeft: string = "\\$\\(",
-    matchRight: string = "\\)"
-  ): T {
-    return this.resolveObjectValuesWithRegExp(obj, this.getVariableRegExp(matchLeft, matchRight));
+  public resolveObjectValues<T>(obj: T): T {
+    return this.resolveObjectValuesWithRegex(obj);
   }
 
-  private resolveObjectValuesWithRegExp<T>(obj: T, captureVariable: RegExp): T {
+  private resolveObjectValuesWithRegex<T>(obj: T): T {
     if (typeof obj === "string") {
-      return this.resolveStringWithRegExp(obj, captureVariable) as unknown as T;
+      return this.resolveStringWithRegex(obj, false) as unknown as T;
     }
     if (typeof obj !== "object") {
       return obj;
@@ -112,28 +90,14 @@ export class VariableEnv {
     }
 
     if (Array.isArray(obj)) {
-      return (obj as any[]).map((v) =>
-        this.resolveObjectValuesWithRegExp(v, captureVariable)
-      ) as unknown as T;
+      return (obj as any[]).map((v) => this.resolveObjectValuesWithRegex(v)) as unknown as T;
     }
 
     const result: any = {};
     for (const key of Object.keys(obj)) {
-      result[key] = this.resolveObjectValuesWithRegExp((obj as any)[key], captureVariable);
+      result[key] = this.resolveObjectValuesWithRegex((obj as any)[key]);
     }
     return result;
-  }
-
-  private getVariableRegExp(matchLeft: string, matchRight: string) {
-    const key = matchLeft + matchRight;
-    let val = regExpCache[key];
-    if (val !== undefined) {
-      return val;
-    }
-
-    val = new RegExp(`${matchLeft}([${allowedVariableName}]+?)${matchRight}`);
-    regExpCache[key] = val;
-    return val;
   }
 }
 
