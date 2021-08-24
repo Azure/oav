@@ -433,7 +433,7 @@ export default class Generator {
     const specResp = specItem.content.responses;
     const longRunning: boolean = specItem.content["x-ms-long-running-operation"];
 
-    // blow handled status code also should add in swaggerMocker.ts mockForExample() preHandledStatusCode array
+    // below handled status code also should add in swaggerMocker.ts mockForExample() preHandledStatusCode array
 
     if (longRunning && !("202" in specResp) && !("201" in specResp)) {
       // console.warn('x-ms-long-running-operation is true, but no 202 or 201 response');
