@@ -53,9 +53,6 @@ export class ExampleTemplateGenerator implements TestScenarioRunnerClient {
     if (outputVariables === undefined) {
       return;
     }
-    // for (const variableName of Object.keys(outputVariables)) {
-    //   stepEnv.env.set(variableName, placeholderToBeDetermined);
-    // }
   }
 
   public async sendArmTemplateDeployment(
@@ -75,8 +72,6 @@ export class ExampleTemplateGenerator implements TestScenarioRunnerClient {
       if (outputDef.type !== "string") {
         continue;
       }
-
-      // stepEnv.env.set(outputName, placeholderToBeDetermined);
     }
   }
 

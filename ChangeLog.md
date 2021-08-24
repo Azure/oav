@@ -1,5 +1,10 @@
 # Change Log - oav
 
+## 8/24/2021 2.7.4
+
+- Support resolve body variables in armTemplate
+- Do not write default variable with placeholder
+
 ## 08/12/2021 2.7.3
 
 - Refactor semantic validation using AJV
