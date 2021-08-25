@@ -1,5 +1,5 @@
 import { JsonLoader } from "../swagger/jsonLoader";
-import { Parameter, refSelfSymbol, Schema } from "../swagger/swaggerTypes";
+import { LoggingFn, Parameter, refSelfSymbol, Schema } from "../swagger/swaggerTypes";
 import { SchemaValidator } from "../swaggerValidator/schemaValidator";
 import { GlobalTransformer, sortTransformers, SpecTransformer, Transformer } from "./transformer";
 
@@ -15,12 +15,15 @@ export interface TransformContext {
 
   specTransformers: SpecTransformer[];
   globalTransformers: GlobalTransformer[];
+
+  logging?: LoggingFn;
 }
 
 export const getTransformContext = (
   jsonLoader: JsonLoader,
   schemaValidator: SchemaValidator,
-  transformers: Array<Transformer | undefined>
+  transformers: Array<Transformer | undefined>,
+  logging?: LoggingFn
 ): TransformContext => {
   return {
     jsonLoader,
@@ -31,6 +34,7 @@ export const getTransformContext = (
     allParams: [],
     baseSchemas: new Set(),
     ...sortTransformers(transformers.filter(Boolean) as Transformer[]),
+    logging,
   };
 };
 
