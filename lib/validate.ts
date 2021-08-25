@@ -266,7 +266,7 @@ export async function validateTrafficAgainstSpec(
 ): Promise<Array<LiveValidationIssue>>{
   specPath = path.resolve(process.cwd(), specPath);
   trafficPath = path.resolve(process.cwd(), trafficPath);
-  
+
   if (!fs.existsSync(specPath)) {
     const error = new Error(`Can not find spec file, please check your specPath parameter.`);
     log.error(JSON.stringify(error));
