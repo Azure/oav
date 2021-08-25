@@ -6,6 +6,8 @@
 - Fix type error in nullableTransformer
 - Throw exception when getting error in transformLoadedSpecs at livevalidator initialization
 - Improve wording of error messages
+- Fix validate-traffic file path resolved error.
+- Fix generate-examples can't generate some http code in response
 
 ## 08/12/2021 2.7.3
 
