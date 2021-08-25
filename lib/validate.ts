@@ -263,9 +263,9 @@ export async function validateTrafficAgainstSpec(
   specPath: string,
   trafficPath: string,
   options: Options
-): Promise<LiveValidationIssue[]> {
-  specPath = path.resolve(__dirname, specPath);
-  trafficPath = path.resolve(__dirname, trafficPath);
+): Promise<Array<LiveValidationIssue>>{
+  specPath = path.resolve(process.cwd(), specPath);
+  trafficPath = path.resolve(process.cwd(), trafficPath);
 
   if (!fs.existsSync(specPath)) {
     const error = new Error(`Can not find spec file, please check your specPath parameter.`);
@@ -289,6 +289,7 @@ export async function validateTrafficAgainstSpec(
       o.logFilepath = log.filepath;
       const liveValidationOptions = {
         checkUnderFileRoot: false,
+        loadValidatorInBackground: false,
         directory: specFileDirectory,
         swaggerPathsPattern: [swaggerPathsPattern],
         git: {

@@ -9,6 +9,9 @@
 - Improve wording of error messages
 - Support resolve body variables in armTemplate
 - Do not write default variable with placeholder
+- Fix validate-traffic file path resolved error.
+- Fix generate-examples can't generate some http code in response
+
 
 ## 08/12/2021 2.7.3
 
