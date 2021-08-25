@@ -7,30 +7,50 @@ import { GlobalTransformer, TransformerType } from "./transformer";
 export const nullableTransformer: GlobalTransformer = {
   type: TransformerType.Global,
   after: [allOfTransformer],
-  transform({ objSchemas, allParams, arrSchemas, jsonLoader }) {
+  transform({ objSchemas, allParams, arrSchemas, jsonLoader, logging }) {
     for (const sch of objSchemas) {
-      if (sch.properties !== undefined) {
-        for (const key of Object.keys(sch.properties)) {
-          sch.properties[key] = transformNullable(
-            sch.properties[key],
-            jsonLoader,
-            !sch.required?.includes(key)
+      try {
+        if (sch.properties !== undefined) {
+          for (const key of Object.keys(sch.properties)) {
+            sch.properties[key] = transformNullable(
+              sch.properties[key],
+              jsonLoader,
+              !sch.required?.includes(key)
+            );
+          }
+        }
+
+        const aProperty = sch.additionalProperties;
+        if (typeof aProperty === "object" && aProperty !== null) {
+          sch.additionalProperties = transformNullable(aProperty, jsonLoader);
+        }
+      } catch (e) {
+        if (logging) {
+          logging(`Fail to transform ${sch}. ErrorMessage:${e?.message};ErrorStack:${e?.stack}.`);
+        } else {
+          console.log(
+            `Fail to transform ${sch}. ErrorMessage:${e?.message};ErrorStack:${e?.stack}.`
           );
         }
-      }
-
-      const aProperty = sch.additionalProperties;
-      if (typeof aProperty === "object" && aProperty !== null) {
-        sch.additionalProperties = transformNullable(aProperty, jsonLoader);
       }
     }
 
     for (const sch of arrSchemas) {
-      if (sch.items) {
-        if (Array.isArray(sch.items)) {
-          sch.items = sch.items.map((item) => transformNullable(item, jsonLoader));
+      try {
+        if (sch.items) {
+          if (Array.isArray(sch.items)) {
+            sch.items = sch.items.map((item) => transformNullable(item, jsonLoader));
+          } else {
+            sch.items = transformNullable(sch.items, jsonLoader);
+          }
+        }
+      } catch (e) {
+        if (logging) {
+          logging(`Fail to transform ${sch}. ErrorMessage:${e?.message};ErrorStack:${e?.stack}.`);
         } else {
-          sch.items = transformNullable(sch.items, jsonLoader);
+          console.log(
+            `Fail to transform ${sch}. ErrorMessage:${e?.message};ErrorStack:${e?.stack}.`
+          );
         }
       }
     }
@@ -65,7 +85,9 @@ const transformNullable = (s: Schema, jsonLoader: JsonLoader, defaultNullable?: 
       _skipError: true,
     } as Schema;
   } else {
-    sch.nullable = true;
+    if (typeof sch === "object") {
+      sch.nullable = true;
+    }
     return sch;
   }
 };

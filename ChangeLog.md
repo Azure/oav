@@ -1,7 +1,12 @@
 # Change Log - oav
 
-## 8/24/2021 2.7.4
 
+## 08/17/2021 2.8.0
+
+- Isolate RP when running transform on cache model in live validator so that the transform won't fail on global cache level
+- Fix type error in nullableTransformer
+- Throw exception when getting error in transformLoadedSpecs at livevalidator initialization
+- Improve wording of error messages
 - Support resolve body variables in armTemplate
 - Do not write default variable with placeholder
 
