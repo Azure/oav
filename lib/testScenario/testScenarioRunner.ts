@@ -333,6 +333,7 @@ export class TestScenarioRunner {
       paramValue = env.resolveString(paramValue);
       params[paramName] = { value: paramValue };
     }
+    step.armTemplatePayload = env.resolveObjectValues(step.armTemplatePayload);
 
     if (step.armTemplateParametersPayload !== undefined) {
       params = { ...params, ...step.armTemplateParametersPayload.parameters };
