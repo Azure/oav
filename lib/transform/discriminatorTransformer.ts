@@ -49,25 +49,35 @@ const getDiscriminatorValue = (sch: Schema) => {
 export const discriminatorTransformer: GlobalTransformer = {
   type: TransformerType.Global,
   before: [allOfTransformer],
-  transform({ objSchemas, baseSchemas, jsonLoader }) {
+  transform({ objSchemas, baseSchemas, jsonLoader, logging }) {
     const visited = new Map<Schema, string | null>();
     for (const sch of objSchemas) {
-      const rootRef = getDiscriminatorRoot(sch, visited, baseSchemas, jsonLoader);
-      if (rootRef === null) {
-        continue;
-      }
+      try {
+        const rootRef = getDiscriminatorRoot(sch, visited, baseSchemas, jsonLoader);
+        if (rootRef === null) {
+          continue;
+        }
 
-      const baseSch = jsonLoader.resolveRefObj({ $ref: rootRef } as Schema);
-      const $ref = sch[refSelfSymbol];
-      const discriminatorValue = getDiscriminatorValue(sch);
+        const baseSch = jsonLoader.resolveRefObj({ $ref: rootRef } as Schema);
+        const $ref = sch[refSelfSymbol];
+        const discriminatorValue = getDiscriminatorValue(sch);
 
-      if (baseSch.discriminatorMap === undefined) {
-        baseSch.discriminatorMap = {
-          [getDiscriminatorValue(baseSch)]: null,
-        };
-        copyInfo(baseSch, baseSch.discriminatorMap);
+        if (baseSch.discriminatorMap === undefined) {
+          baseSch.discriminatorMap = {
+            [getDiscriminatorValue(baseSch)]: null,
+          };
+          copyInfo(baseSch, baseSch.discriminatorMap);
+        }
+        baseSch.discriminatorMap[discriminatorValue] = { $ref } as unknown as Schema;
+      } catch (e) {
+        if (logging) {
+          logging(`Fail to transform ${sch}. ErrorMessage:${e?.message};ErrorStack:${e?.stack}.`);
+        } else {
+          console.log(
+            `Fail to transform ${sch}. ErrorMessage:${e?.message};ErrorStack:${e?.stack}.`
+          );
+        }
       }
-      baseSch.discriminatorMap[discriminatorValue] = { $ref } as unknown as Schema;
     }
   },
 };

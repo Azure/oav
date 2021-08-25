@@ -1,6 +1,11 @@
 // https://github.com/mohsen1/swagger.d.ts
 
 import { MutableStringMap } from "@azure-tools/openapi-tools-common";
+import {
+  LiveValidatorLoggingLevels,
+  LiveValidatorLoggingTypes,
+} from "../liveValidation/liveValidator";
+import { ValidationRequest } from "../liveValidation/operationValidator";
 import { SchemaValidateFunction } from "../swaggerValidator/schemaValidator";
 import { RegExpWithKeys } from "../transform/pathRegexTransformer";
 import {
@@ -162,6 +167,15 @@ export interface Operation {
 }
 
 export type TransformFn = (val: string) => string | number | boolean;
+
+export type LoggingFn = (
+  message: string,
+  level?: LiveValidatorLoggingLevels,
+  loggingType?: LiveValidatorLoggingTypes,
+  operationName?: string,
+  durationInMilliseconds?: number,
+  validationRequest?: ValidationRequest
+) => void;
 
 // ----------------------------- Response ------------------------------------
 export interface Response {

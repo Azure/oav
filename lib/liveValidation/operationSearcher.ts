@@ -9,6 +9,7 @@ import {
   unknownApiVersion,
   unknownResourceProvider,
 } from "../util/constants";
+import { getOavErrorMeta } from "../util/errorDefinitions";
 import { Writable } from "../util/utils";
 import { LiveValidatorLoggingLevels, LiveValidatorLoggingTypes } from "./liveValidator";
 import { ValidationRequest } from "./operationValidator";
@@ -234,11 +235,15 @@ export class OperationSearcher {
 
     // Search using provider
     const allApiVersions = this.cache.get(requestInfo.providerNamespace);
+    let meta;
     if (allApiVersions === undefined) {
       // provider does not exist in cache
+      meta = getOavErrorMeta(ErrorCodes.OperationNotFoundInCacheWithProvider.name as any, {
+        providerNamespace: requestInfo.providerNamespace,
+      });
       ret.reason = new LiveValidationError(
         ErrorCodes.OperationNotFoundInCacheWithProvider.name,
-        `Could not find provider "${requestInfo.providerNamespace}" in the cache.`
+        meta.message
       );
       return ret;
     }
@@ -254,9 +259,13 @@ export class OperationSearcher {
 
     const allMethods = allApiVersions.get(requestInfo.apiVersion);
     if (allMethods === undefined) {
+      meta = getOavErrorMeta(ErrorCodes.OperationNotFoundInCacheWithApi.name as any, {
+        apiVersion: requestInfo.apiVersion,
+        providerNamespace: requestInfo.providerNamespace,
+      });
       ret.reason = new LiveValidationError(
         ErrorCodes.OperationNotFoundInCacheWithApi.name,
-        `Could not find exact api-version "${requestInfo.apiVersion}" for provider "${requestInfo.providerNamespace}" in the cache.`
+        meta.message
       );
       return ret;
     }
@@ -264,9 +273,14 @@ export class OperationSearcher {
     const operationsForHttpMethod = allMethods?.get(requestInfo.requestMethod);
     // Search using requestMethod provided by user
     if (operationsForHttpMethod === undefined) {
+      meta = getOavErrorMeta(ErrorCodes.OperationNotFoundInCacheWithVerb.name as any, {
+        requestMethod: requestInfo.requestMethod,
+        apiVersion: requestInfo.apiVersion,
+        providerNamespace: requestInfo.providerNamespace,
+      });
       ret.reason = new LiveValidationError(
         ErrorCodes.OperationNotFoundInCacheWithVerb.name,
-        `Could not find any methods with verb "${requestInfo.requestMethod}" for api-version "${requestInfo.apiVersion}" and provider "${requestInfo.providerNamespace}" in the cache.`
+        meta.message
       );
       return ret;
     }
@@ -279,10 +293,12 @@ export class OperationSearcher {
       requestInfo.query
     );
     if (ret.matches.length === 0 && ret.reason === undefined) {
-      ret.reason = new LiveValidationError(
-        ErrorCodes.OperationNotFoundInCache.name,
-        `Could not find best match operation for verb "${requestInfo.requestMethod}" for api-version "${requestInfo.apiVersion}" and provider "${requestInfo.providerNamespace}" in the cache.`
-      );
+      meta = getOavErrorMeta(ErrorCodes.OperationNotFoundInCache.name as any, {
+        requestMethod: requestInfo.requestMethod,
+        apiVersion: requestInfo.apiVersion,
+        providerNamespace: requestInfo.providerNamespace,
+      });
+      ret.reason = new LiveValidationError(ErrorCodes.OperationNotFoundInCache.name, meta.message);
     }
 
     return ret;

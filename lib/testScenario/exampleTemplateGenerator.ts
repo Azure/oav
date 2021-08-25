@@ -61,7 +61,7 @@ export class ExampleTemplateGenerator implements TestScenarioRunnerClient {
     _params: { [name: string]: string },
     _armDeployment: ArmDeploymentTracking,
     step: TestStepArmTemplateDeployment,
-    stepEnv: TestStepEnv
+    _stepEnv: TestStepEnv
   ): Promise<void> {
     const outputs = step.armTemplatePayload.outputs;
     if (outputs === undefined) {
@@ -74,7 +74,7 @@ export class ExampleTemplateGenerator implements TestScenarioRunnerClient {
         continue;
       }
 
-      stepEnv.env.set(outputName, `$(${outputName})`);
+      _stepEnv.env.set(outputName, `$(${outputName})`);
     }
   }
 

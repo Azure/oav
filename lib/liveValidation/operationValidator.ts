@@ -1,13 +1,23 @@
 import { ParsedUrlQuery } from "querystring";
 import { getInfo, MutableStringMap, StringMap } from "@azure-tools/openapi-tools-common";
-import { LowerHttpMethods, Operation, Response, TransformFn } from "../swagger/swaggerTypes";
+import {
+  LoggingFn,
+  LowerHttpMethods,
+  Operation,
+  Response,
+  TransformFn,
+} from "../swagger/swaggerTypes";
 import { sourceMapInfoToSourceLocation } from "../swaggerValidator/ajvSchemaValidator";
 import { SchemaValidateContext, SchemaValidateIssue } from "../swaggerValidator/schemaValidator";
 import { jsonPathToPointer } from "../util/jsonUtils";
 import { Writable } from "../util/utils";
 import { SourceLocation } from "../util/validationError";
 import { extractPathParamValue } from "../transform/pathRegexTransformer";
-import { getOavErrorMeta, TrafficValidationErrorCode } from "../util/errorDefinitions";
+import {
+  ApiValidationErrorCode,
+  getOavErrorMeta,
+  TrafficValidationErrorCode,
+} from "../util/errorDefinitions";
 import {
   LiveValidationIssue,
   LiveValidatorLoggingLevels,
@@ -53,15 +63,8 @@ export const validateSwaggerLiveRequest = async (
   request: LiveRequest,
   info: OperationContext,
   loader?: LiveValidatorLoader,
-  includeErrors?: TrafficValidationErrorCode[],
-  logging?: (
-    message: string,
-    level?: LiveValidatorLoggingLevels,
-    loggingType?: LiveValidatorLoggingTypes,
-    operationName?: string,
-    durationInMilliseconds?: number,
-    validationRequest?: ValidationRequest
-  ) => void
+  includeErrors?: ApiValidationErrorCode[],
+  logging?: LoggingFn
 ) => {
   const { operation } = info.operationMatch!;
   const { body, query } = request;
@@ -99,8 +102,7 @@ export const validateSwaggerLiveRequest = async (
   transformMapValue(query, operation._queryTransform);
   const headers = transformLiveHeader(request.headers ?? {}, operation);
   validateContentType(operation.consumes!, headers, true, result);
-
-  const ctx = { isResponse: false, includeErrors };
+  const ctx = { isResponse: false, includeErrors: includeErrors as any };
   const errors = validate(ctx, {
     path: pathParam,
     body: transformBodyValue(body, operation),
@@ -116,16 +118,9 @@ export const validateSwaggerLiveResponse = async (
   response: LiveResponse,
   info: OperationContext,
   loader?: LiveValidatorLoader,
-  includeErrors?: TrafficValidationErrorCode[],
+  includeErrors?: ApiValidationErrorCode[],
   isArmCall?: boolean,
-  logging?: (
-    message: string,
-    level?: LiveValidatorLoggingLevels,
-    loggingType?: LiveValidatorLoggingTypes,
-    operationName?: string,
-    durationInMilliseconds?: number,
-    validationRequest?: ValidationRequest
-  ) => void
+  logging?: LoggingFn
 ) => {
   const { operation } = info.operationMatch!;
   const { statusCode, body } = response;
@@ -180,7 +175,7 @@ export const validateSwaggerLiveResponse = async (
 
   const ctx = {
     isResponse: true,
-    includeErrors,
+    includeErrors: includeErrors as any,
     statusCode,
     httpMethod: operation._method,
   };

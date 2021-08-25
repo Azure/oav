@@ -55,10 +55,20 @@ const transformAllOfSchema = (schema: Schema, baseSchemas: Set<Schema>, jsonLoad
 // Must after transformDiscriminator
 export const allOfTransformer: GlobalTransformer = {
   type: TransformerType.Global,
-  transform({ objSchemas, baseSchemas, jsonLoader }) {
+  transform({ objSchemas, baseSchemas, jsonLoader, logging }) {
     for (const sch of objSchemas) {
-      if (sch.allOf !== undefined) {
-        transformAllOfSchema(sch, baseSchemas, jsonLoader);
+      try {
+        if (sch.allOf !== undefined) {
+          transformAllOfSchema(sch, baseSchemas, jsonLoader);
+        }
+      } catch (e) {
+        if (logging) {
+          logging(`Fail to transform ${sch}. ErrorMessage:${e?.message};ErrorStack:${e?.stack}.`);
+        } else {
+          console.log(
+            `Fail to transform ${sch}. ErrorMessage:${e?.message};ErrorStack:${e?.stack}.`
+          );
+        }
       }
     }
   },
