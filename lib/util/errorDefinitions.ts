@@ -285,19 +285,19 @@ export const semanticValidationErrors = {
 export const apiValidationRuntimeErrors = {
   OPERATION_NOT_FOUND_IN_CACHE: {
     severity: Severity.Critical,
-    message: strTemplate`operation cannot be found in memory cache`,
+    message: strTemplate`Could not find best match operation for verb "${"requestMethod"}" for api-version "${"apiVersion"}" and provider "${"providerNamespace"}" in the cache.`,
   },
   OPERATION_NOT_FOUND_IN_CACHE_WITH_VERB: {
     severity: Severity.Critical,
-    message: strTemplate`operation cannot be found in cache.verb array`,
+    message: strTemplate`Could not find any methods with verb "${"requestMethod"}" for api-version "${"apiVersion"}" and provider "${"providerNamespace"}" in the cache.`,
   },
   OPERATION_NOT_FOUND_IN_CACHE_WITH_API: {
     severity: Severity.Critical,
-    message: strTemplate`operation cannot be found in cache.api array`,
+    message: strTemplate`Could not find exact api-version "${"apiVersion"}" for provider "${"providerNamespace"}" in the cache.`,
   },
   OPERATION_NOT_FOUND_IN_CACHE_WITH_PROVIDER: {
     severity: Severity.Critical,
-    message: strTemplate`operation cannot be found in cache.provider array`,
+    message: strTemplate`Could not find provider "${"providerNamespace"}" in the cache.`,
   },
 } as const;
 
