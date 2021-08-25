@@ -6,6 +6,7 @@ import { JsonLoader } from "../swagger/jsonLoader";
 import { Loader, setDefaultOpts } from "../swagger/loader";
 import { SwaggerLoader, SwaggerLoaderOption } from "../swagger/swaggerLoader";
 import {
+  LoggingFn,
   Operation,
   Parameter,
   PathParameter,
@@ -41,7 +42,8 @@ export interface LiveValidatorLoaderOption extends SwaggerLoaderOption, SchemaVa
 
 @injectable()
 export class LiveValidatorLoader implements Loader<SwaggerSpec> {
-  public readonly transformContext: TransformContext;
+  private transformContext: TransformContext;
+  public logging: LoggingFn;
 
   public getResponseValidator = getLazyBuilder(
     "_validate",
@@ -98,20 +100,28 @@ export class LiveValidatorLoader implements Loader<SwaggerSpec> {
     setDefaultOpts(opts, {
       transformToNewSchemaFormat: false,
     });
+    this.setTransformContext();
+  }
 
-    this.transformContext = getTransformContext(this.jsonLoader, this.schemaValidator, [
-      xmsPathsTransformer,
-      resolveNestedDefinitionTransformer,
-      this.opts.transformToNewSchemaFormat ? schemaV4ToV7Transformer : undefined,
-      referenceFieldsTransformer,
-      pathRegexTransformer,
+  public setTransformContext() {
+    this.transformContext = getTransformContext(
+      this.jsonLoader,
+      this.schemaValidator,
+      [
+        xmsPathsTransformer,
+        resolveNestedDefinitionTransformer,
+        this.opts.transformToNewSchemaFormat ? schemaV4ToV7Transformer : undefined,
+        referenceFieldsTransformer,
+        pathRegexTransformer,
 
-      discriminatorTransformer,
-      allOfTransformer,
-      noAdditionalPropertiesTransformer,
-      nullableTransformer,
-      pureObjectTransformer,
-    ]);
+        discriminatorTransformer,
+        allOfTransformer,
+        noAdditionalPropertiesTransformer,
+        nullableTransformer,
+        pureObjectTransformer,
+      ],
+      this.logging
+    );
   }
 
   public async load(specFilePath: string): Promise<SwaggerSpec> {
