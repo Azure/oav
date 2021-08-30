@@ -41,7 +41,7 @@ export class ReadmeTestFileLoader {
       if (node.type === "code_block") {
         const tag = getTagFromBlockInfo(node.info || "");
         if (tag !== undefined) {
-          const testResources: TestResources = load(node.literal || "");
+          const testResources = load(node.literal || "") as TestResources;
           ret[tag] = testResources;
         }
       }

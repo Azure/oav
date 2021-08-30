@@ -54,7 +54,7 @@ async function analyzeSwagger(
   autoRestApi: extensionBase.Host
 ): Promise<void> {
   const swaggerFile = await autoRestApi.ReadFile(swaggerFileName);
-  const swagger = yaml.safeLoad(swaggerFile);
+  const swagger = yaml.load(swaggerFile);
   const exampleValidationResults = await openApiValidationExample(swagger, swaggerFileName);
   for (const result of exampleValidationResults) {
     autoRestApi.Message({

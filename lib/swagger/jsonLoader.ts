@@ -6,7 +6,7 @@ import {
   Json,
   parseJson,
 } from "@azure-tools/openapi-tools-common";
-import { safeLoad as parseYaml } from "js-yaml";
+import { load as parseYaml } from "js-yaml";
 import { default as jsonPointer } from "json-pointer";
 import { inject, injectable } from "inversify";
 import { xmsExamples } from "../util/constants";
