@@ -228,6 +228,7 @@ export interface Schema extends BaseSchema {
   oneOf?: Schema[];
   additionalProperties?: boolean | Schema;
   properties?: { [propertyName: string]: Schema };
+  patternProperties?: { [propertyPattern: string]: Schema };
   discriminator?: string;
   [xmsDiscriminatorValue]?: string;
   readOnly?: boolean;
