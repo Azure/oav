@@ -6,7 +6,7 @@ import { ReportGenerator, ReportGeneratorOption, ValidationLevel } from "./repor
 import { RawReport } from "./apiScenarioTypes";
 import { inversifyGetInstance, TYPES } from "./../inversifyUtils";
 import { NewmanReportParser, NewmanReportParserOption } from "./postmanReportParser";
-import { getSwaggerFilePathsFromApiScenarioFilePath } from "./apiScenarioLoader";
+import { getSwaggerFilePathsFromApiScenarioFilePath } from "./apiScenarioYamlLoader";
 
 export interface NewmanReportAnalyzerOption extends NewmanReportParserOption {
   reportOutputFilePath?: string;

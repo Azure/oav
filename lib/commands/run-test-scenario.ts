@@ -13,7 +13,7 @@ import {
 import { inversifyGetInstance } from "../inversifyUtils";
 import { getApiVersionFromSwaggerFile, getProviderFromFilePath, printWarning } from "../util/utils";
 import { getFileNameFromPath } from "../testScenario/defaultNaming";
-import { getSwaggerFilePathsFromApiScenarioFilePath } from "../testScenario/apiScenarioLoader";
+import { getSwaggerFilePathsFromApiScenarioFilePath } from "../testScenario/apiScenarioYamlLoader";
 
 export const command = "run-test-scenario <test-scenario>";
 

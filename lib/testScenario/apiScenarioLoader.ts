@@ -1,12 +1,9 @@
 /* eslint-disable require-atomic-updates */
-import * as fs from "fs";
 
-import { join as pathJoin, dirname, resolve as pathResolve } from "path";
-import { dump as yamlDump, load as yamlLoad } from "js-yaml";
-import { default as AjvInit, ValidateFunction } from "ajv";
+import { join as pathJoin, dirname } from "path";
+import { dump as yamlDump } from "js-yaml";
 import { inject, injectable } from "inversify";
 import { cloneDeep } from "@azure-tools/openapi-tools-common";
-import { JSONPath } from "jsonpath-plus";
 import { Loader, setDefaultOpts } from "../swagger/loader";
 import { FileLoader, FileLoaderOption } from "../swagger/fileLoader";
 import { JsonLoader, JsonLoaderOption } from "../swagger/jsonLoader";
@@ -26,7 +23,6 @@ import { SwaggerSpec, Operation, SwaggerExample } from "../swagger/swaggerTypes"
 import { traverseSwagger } from "../transform/traverseSwagger";
 import { inversifyGetInstance, TYPES } from "../inversifyUtils";
 import { getProvider } from "../util/utils";
-import { ApiScenarioDefinition as ApiScenarioDefinitionSchema } from "./apiScenarioSchema";
 import {
   VariableScope,
   ScenarioDefinition,
@@ -48,10 +44,7 @@ import { ExampleTemplateGenerator } from "./exampleTemplateGenerator";
 import { BodyTransformer } from "./bodyTransformer";
 import { jsonPatchApply } from "./diffUtils";
 import { getResourceFromPath, getResourceTypePath } from "./swaggerAnalyzer";
-
-const ajv = new AjvInit({
-  useDefaults: true,
-});
+import { ApiScenarioYamlLoader } from "./apiScenarioYamlLoader";
 
 export interface ApiScenarioLoaderOption
   extends FileLoaderOption,
@@ -70,7 +63,6 @@ interface ApiScenarioContext {
 @injectable()
 export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
   private transformContext: TransformContext;
-  private validateTestResourceFile: ValidateFunction;
   private exampleToOperation = new Map<string, { [operationId: string]: [Operation, string] }>();
   private nameToOperation: Map<string, Operation> = new Map();
   private initialized: boolean = false;
@@ -80,6 +72,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     private fileLoader: FileLoader,
     public jsonLoader: JsonLoader,
     private swaggerLoader: SwaggerLoader,
+    private apiScenarioYamlLoader: ApiScenarioYamlLoader,
     private exampleTemplateGenerator: ExampleTemplateGenerator,
     private bodyTransformer: BodyTransformer,
     @inject(TYPES.schemaValidator) private schemaValidator: SchemaValidator
@@ -99,8 +92,6 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       nullableTransformer,
       pureObjectTransformer,
     ]);
-
-    this.validateTestResourceFile = ajv.compile(ApiScenarioDefinitionSchema);
   }
 
   public static create(opts: ApiScenarioLoaderOption) {
@@ -176,15 +167,8 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       await this.initialize();
     }
 
-    const fileContent = await this.fileLoader.load(filePath);
-    const filePayload = yamlLoad(fileContent);
-    if (!this.validateTestResourceFile(filePayload)) {
-      const err = this.validateTestResourceFile.errors![0];
-      throw new Error(
-        `Failed to validate test resource file ${filePath}: ${err.dataPath} ${err.message}`
-      );
-    }
-    const rawTestDef = filePayload as RawScenarioDefinition;
+    const rawTestDef = await this.apiScenarioYamlLoader.load(filePath);
+
     const scenarioDef: ScenarioDefinition = {
       scope: rawTestDef.scope ?? "ResourceGroup",
       prepareSteps: [],
@@ -524,77 +508,6 @@ export const getBodyParamName = (operation: Operation, jsonLoader: JsonLoader) =
     return resolvedObj.in === "body";
   });
   return bodyParams?.name;
-};
-
-const getAllSwaggerFilePathUnderDir = (dir: string): any[] => {
-  const allSwaggerFiles = fs
-    .readdirSync(dir)
-    .map((it) => pathResolve(dir, it))
-    .filter((it) => it.endsWith(".json"));
-  return allSwaggerFiles;
-};
-
-export const getSwaggerFilePathsFromApiScenarioFilePath = (
-  apiScenarioFilePath: string
-): string[] => {
-  const fileContent = fs.readFileSync(apiScenarioFilePath).toString();
-  const rawScenarioDef = yamlLoad(fileContent) as RawScenarioDefinition;
-  const allSwaggerFilePaths = getAllSwaggerFilePathUnderDir(dirname(dirname(apiScenarioFilePath)));
-  const allSwaggerFiles = allSwaggerFilePaths.map((it) => {
-    return {
-      swaggerFilePath: it,
-      swaggerObj: JSON.parse(fs.readFileSync(it).toString()),
-    };
-  });
-  const findMatchedSwagger = (exampleFileName: string): string | undefined => {
-    for (const it of allSwaggerFiles) {
-      const allXmsExamplesPath = "$..x-ms-examples..$ref";
-      const allXmsExampleValues = JSONPath({
-        path: allXmsExamplesPath,
-        json: it.swaggerObj,
-        resultType: "all",
-      });
-      if (allXmsExampleValues.some((it: any) => it.value.includes(exampleFileName))) {
-        return it.swaggerFilePath;
-      }
-    }
-    return undefined;
-  };
-  const res: Set<string> = new Set<string>();
-
-  for (const raw of rawScenarioDef.prepareSteps ?? []) {
-    for (const [_, rawStep] of Object.entries(raw)) {
-      if ("exampleFile" in rawStep) {
-        const swaggerFilePath = findMatchedSwagger(rawStep.exampleFile.replace(/^.*[\\\/]/, ""));
-        if (swaggerFilePath !== undefined) {
-          res.add(swaggerFilePath);
-        }
-      }
-    }
-  }
-
-  for (const rawScenario of rawScenarioDef.scenarios ?? []) {
-    for (const rawStep of rawScenario.steps) {
-      if ("exampleFile" in rawStep) {
-        const swaggerFilePath = findMatchedSwagger(rawStep.exampleFile.replace(/^.*[\\\/]/, ""));
-        if (swaggerFilePath !== undefined) {
-          res.add(swaggerFilePath);
-        }
-      }
-    }
-  }
-
-  for (const raw of rawScenarioDef.cleanUpSteps ?? []) {
-    for (const [_, rawStep] of Object.entries(raw)) {
-      if ("exampleFile" in rawStep) {
-        const swaggerFilePath = findMatchedSwagger(rawStep.exampleFile.replace(/^.*[\\\/]/, ""));
-        if (swaggerFilePath !== undefined) {
-          res.add(swaggerFilePath);
-        }
-      }
-    }
-  }
-  return Array.from(res.values());
 };
 
 const convertVariables = (rawVariables: RawVariableScope["variables"]) => {
