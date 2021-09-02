@@ -1,49 +1,41 @@
 import { Schema } from "../swagger/swaggerTypes";
 
-export const TestDefinition: Schema & {
+export const ApiScenarioDefinition: Schema & {
   definitions: { [def: string]: Schema };
 } = {
   type: "object",
   properties: {
-    variables: {
-      $ref: "#/definitions/Variables",
-    },
     scope: {
       type: "string",
       enum: ["ResourceGroup"],
     },
-    requiredVariables: {
-      type: "array",
-      description: "Variables required at runtime",
-      items: {
-        $ref: "#/definitions/Name",
-      },
+    variables: {
+      $ref: "#/definitions/Variables",
     },
     prepareSteps: {
-      $ref: "#/definitions/TestStepList",
-      description: "Prepare steps before executing scenarios",
-    },
-    testScenarios: {
       type: "array",
-      description: "Test scenarios",
+      description: "Prepare steps before executing scenarios",
       items: {
-        propertyNames: {
-          $ref: "#/definitions/Name",
-        },
-        additionalProperties: {
-          $ref: "#/definitions/TestScenario",
-        },
-        minProperties: 1,
-        maxProperties: 1,
+        $ref: "#/definitions/Step",
+      },
+    },
+    scenarios: {
+      type: "array",
+      description: "API scenarios",
+      items: {
+        $ref: "#/definitions/Scenario",
       },
       minItems: 1,
     },
     cleanUpSteps: {
-      $ref: "#/definitions/TestStepList",
+      type: "array",
       description: "Clean up steps after executing scenarios",
+      items: {
+        $ref: "#/definitions/Step",
+      },
     },
   },
-  required: ["testScenarios"],
+  required: ["scenarios"],
   additionalProperties: false,
   definitions: {
     Name: {
@@ -64,6 +56,7 @@ export const TestDefinition: Schema & {
         oneOf: [
           {
             type: "string",
+            description: "Default value of the variable",
           },
           {
             type: "object",
@@ -75,6 +68,7 @@ export const TestDefinition: Schema & {
               },
               defaultValue: {
                 type: "string",
+                description: "Default value of the variable",
               },
             },
             additionalProperties: false,
@@ -82,9 +76,17 @@ export const TestDefinition: Schema & {
         ],
       },
     },
-    TestScenario: {
+    Scenario: {
       type: "object",
       properties: {
+        scenario: {
+          $ref: "#/definitions/Name",
+          description: "Name of the scenario",
+        },
+        description: {
+          type: "string",
+          description: "A long description of the scenario",
+        },
         variables: {
           $ref: "#/definitions/Variables",
         },
@@ -93,55 +95,44 @@ export const TestDefinition: Schema & {
           description: "Whether to share the scope and prepareSteps with other scenarios",
           default: true,
         },
-        description: {
-          type: "string",
-          description: "A long description of the scenario",
-        },
         steps: {
-          $ref: "#/definitions/TestStepList",
+          type: "array",
+          items: {
+            $ref: "#/definitions/Step",
+          },
         },
       },
       required: ["steps"],
       additionalProperties: false,
     },
-    TestStepList: {
-      type: "array",
-      items: {
-        description: "Pair of name and step",
-        propertyNames: {
-          $ref: "#/definitions/Name",
-        },
-        additionalProperties: {
-          $ref: "#/definitions/TestStep",
-        },
-        minProperties: 1,
-        maxProperties: 1,
-      },
-    },
-    TestStep: {
+    Step: {
       oneOf: [
         {
-          $ref: "#/definitions/TestStepRestCall",
+          $ref: "#/definitions/StepRestCall",
         },
         {
-          $ref: "#/definitions/TestStepRestOperation",
+          $ref: "#/definitions/StepRestOperation",
         },
         {
-          $ref: "#/definitions/TestStepArmTemplateDeployment",
+          $ref: "#/definitions/StepArmTemplateDeployment",
         },
         {
-          $ref: "#/definitions/TestStepRawCall",
+          $ref: "#/definitions/StepRawCall",
         },
       ],
     },
-    TestStepBase: {
+    StepBase: {
       properties: {
-        variables: {
-          $ref: "#/definitions/Variables",
+        step: {
+          $ref: "#/definitions/Name",
+          description: "Name of the step",
         },
         description: {
           type: "string",
           description: "A long description of the step",
+        },
+        variables: {
+          $ref: "#/definitions/Variables",
         },
         outputVariables: {
           type: "object",
@@ -164,10 +155,10 @@ export const TestDefinition: Schema & {
         },
       },
     },
-    TestStepRestBase: {
+    StepRestBase: {
       allOf: [
         {
-          $ref: "#/definitions/TestStepBase",
+          $ref: "#/definitions/StepBase",
         },
       ],
       properties: {
@@ -202,11 +193,11 @@ export const TestDefinition: Schema & {
         },
       },
     },
-    TestStepRestCall: {
+    StepRestCall: {
       type: "object",
       allOf: [
         {
-          $ref: "#/definitions/TestStepRestBase",
+          $ref: "#/definitions/StepRestBase",
         },
       ],
       properties: {
@@ -220,11 +211,11 @@ export const TestDefinition: Schema & {
       },
       required: ["exampleFile"],
     },
-    TestStepRestOperation: {
+    StepRestOperation: {
       type: "object",
       allOf: [
         {
-          $ref: "#/definitions/TestStepRestBase",
+          $ref: "#/definitions/StepRestBase",
         },
       ],
       properties: {
@@ -239,28 +230,25 @@ export const TestDefinition: Schema & {
       },
       required: ["operationId", "resourceName"],
     },
-    TestStepArmTemplateDeployment: {
+    StepArmTemplateDeployment: {
       type: "object",
       allOf: [
         {
-          $ref: "#/definitions/TestStepBase",
+          $ref: "#/definitions/StepBase",
         },
       ],
       properties: {
         armTemplateDeployment: {
           type: "string",
         },
-        armTemplateParameters: {
-          type: "string",
-        },
       },
       required: ["armTemplateDeployment"],
     },
-    TestStepRawCall: {
+    StepRawCall: {
       type: "object",
       allOf: [
         {
-          $ref: "#/definitions/TestStepBase",
+          $ref: "#/definitions/StepBase",
         },
       ],
       properties: {

@@ -1,4 +1,4 @@
-import { ArmTemplate } from "./testResourceTypes";
+import { ArmTemplate } from "./apiScenarioTypes";
 
 interface ScriptTemplate {
   text: string;

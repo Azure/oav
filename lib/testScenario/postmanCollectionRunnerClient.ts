@@ -28,13 +28,13 @@ import { NewmanReportAnalyzer, NewmanReportAnalyzerOption } from "./postmanRepor
 import { inversifyGetInstance, TYPES } from "./../inversifyUtils";
 import { BlobUploader, BlobUploaderOption } from "./blobUploader";
 import { PostmanTestScript, TestScriptType } from "./postmanTestScript";
-import { ArmTemplate, TestStepArmTemplateDeployment, TestStepRestCall } from "./testResourceTypes";
+import { ArmTemplate, StepArmTemplate, StepRestCall } from "./apiScenarioTypes";
 import {
   ArmDeploymentTracking,
-  TestScenarioClientRequest,
-  TestScenarioRunnerClient,
-  TestStepEnv,
-} from "./testScenarioRunner";
+  ApiScenarioClientRequest,
+  ApiScenarioRunnerClient,
+  StepEnv,
+} from "./apiScenarioRunner";
 import { ReflectiveVariableEnv, VariableEnv } from "./variableEnv";
 import { typeToDescription } from "./postmanItemTypes";
 import {
@@ -98,7 +98,7 @@ function pad(number: number, length: number) {
 }
 
 @injectable()
-export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
+export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
   public collection: Collection;
   public collectionEnv: VariableScope;
   private postmanTestScript: PostmanTestScript;
@@ -200,20 +200,20 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
   }
 
   public async sendExampleRequest(
-    request: TestScenarioClientRequest,
-    step: TestStepRestCall,
-    stepEnv: TestStepEnv
+    request: ApiScenarioClientRequest,
+    step: StepRestCall,
+    stepEnv: StepEnv
   ): Promise<void> {
     this.auth(stepEnv.env);
     const pathEnv = new ReflectiveVariableEnv(":", "");
     const item = new Item();
-    if (!this.stepNameSet.has(step.name!)) {
-      item.name = step.name!;
-      this.stepNameSet.set(step.name, 0);
+    if (!this.stepNameSet.has(step.step!)) {
+      item.name = step.step!;
+      this.stepNameSet.set(step.step, 0);
     } else {
-      const cnt = this.stepNameSet.get(step.name!)! + 1;
-      item.name = `${step.name}_${cnt}`;
-      this.stepNameSet.set(step.name, cnt);
+      const cnt = this.stepNameSet.get(step.step!)! + 1;
+      item.name = `${step.step}_${cnt}`;
+      this.stepNameSet.set(step.step, cnt);
     }
     item.request = new Request({
       name: step.exampleFilePath,
@@ -374,19 +374,19 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     armTemplate: ArmTemplate,
     params: { [name: string]: string },
     _armDeployment: ArmDeploymentTracking,
-    step: TestStepArmTemplateDeployment,
-    stepEnv: TestStepEnv
+    step: StepArmTemplate,
+    stepEnv: StepEnv
   ): Promise<void> {
     this.auth(stepEnv.env);
     const item = new Item();
-    item.name = step.name;
-    const path = `/subscriptions/:subscriptionId/resourcegroups/:resourceGroupName/providers/Microsoft.Resources/deployments/${step.name}?api-version=2020-06-01`;
+    item.name = step.step;
+    const path = `/subscriptions/:subscriptionId/resourcegroups/:resourceGroupName/providers/Microsoft.Resources/deployments/${step.step}?api-version=2020-06-01`;
     const urlVariables: VariableDefinition[] = [
       { key: "subscriptionId", value: "{{subscriptionId}}" },
       { key: "resourceGroupName", value: "{{resourceGroupName}}" },
     ];
     item.request = new Request({
-      name: step.name,
+      name: step.step,
       method: "put",
       url: "",
       body: { mode: "raw" } as RequestBodyDefinition,
@@ -432,7 +432,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     const generatedGetOperationItem = this.generatedGetOperationItem(
       item.name,
       item.request.url.toString(),
-      step.name,
+      step.step,
       "put",
       generatedGetScriptTypes,
       armTemplate

@@ -3,8 +3,8 @@ import "reflect-metadata";
 import { dirname } from "path";
 import { getDefaultAzureCredential } from "@azure/identity";
 import { getAutorestConfig } from "../util/getAutorestConfig";
-import { TestResourceLoader } from "./testResourceLoader";
-import { TestScenarioRunner } from "./testScenarioRunner";
+import { ApiScenarioLoader } from "./apiScenarioLoader";
+import { ApiScenarioRunner } from "./apiScenarioRunner";
 import { VariableEnv } from "./variableEnv";
 import { TestScenarioRestClient } from "./testScenarioRestClient";
 
@@ -25,7 +25,7 @@ const main = async () => {
   console.log("input-file:");
   console.log(swaggerFilePaths);
 
-  const loader = TestResourceLoader.create({
+  const loader = ApiScenarioLoader.create({
     useJsonParser: false,
     checkUnderFileRoot: false,
     fileRoot,
@@ -39,7 +39,7 @@ const main = async () => {
     "Microsoft.ContainerService/stable/2020-12-01/test-scenarios/containerService.yaml"
   );
 
-  console.log(testDef.testScenarios[0].steps);
+  console.log(testDef.scenarios[0].steps);
 
   const env = new VariableEnv();
   env.setBatch({
@@ -48,7 +48,7 @@ const main = async () => {
     SSH_PUBLIC_KEY: "__public_key_ssh__",
   });
 
-  const runner = new TestScenarioRunner({
+  const runner = new ApiScenarioRunner({
     jsonLoader: loader.jsonLoader,
     env,
     client: new TestScenarioRestClient(getDefaultAzureCredential(), {}),
@@ -58,12 +58,12 @@ const main = async () => {
     // for (const scenario of testDef.testScenarios) {
     //   await runner.executeScenario(scenario);
     // }
-    await runner.executeScenario(testDef.testScenarios[0]);
+    await runner.executeScenario(testDef.scenarios[0]);
   } catch (e) {
     console.log(e.message, e.stack);
   } finally {
     console.timeLog("TestLoad");
-    await runner.cleanAllTestScope();
+    await runner.cleanAllScope();
   }
 };
 

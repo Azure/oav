@@ -16,7 +16,7 @@ export interface RawVariableScope {
     [variableName: string]:
       | string
       | {
-          type?: TestScenarioVariableType;
+          type?: VariableType;
           defaultValue?: string;
         };
   };
@@ -30,54 +30,47 @@ export interface VariableScope {
 
 export interface OutputVariables {
   [variableName: string]: {
-    type?: TestScenarioVariableType;
+    type?: VariableType;
     fromResponse: string;
   };
 }
 
 //#endregion
 
-//#region TestStep Base
+//#region Step Base
 
-type RawTestStepBase = RawVariableScope & {
+type RawStepBase = RawVariableScope & {
+  step: string;
   description?: string;
   outputVariables?: OutputVariables;
 };
 
-type TestStepBase = VariableScope & {
-  name: string;
+type StepBase = VariableScope & {
   isPrepareStep?: boolean;
   isCleanUpStep?: boolean;
 };
 
-type RawTestStepRestBase = RawTestStepBase & {
+type RawStepRestBase = RawStepBase & {
   statusCode?: number;
   resourceUpdate?: JsonPatchOp[];
   requestUpdate?: JsonPatchOp[];
   responseUpdate?: JsonPatchOp[];
 };
 
-export type TestStep = TestStepRestCall | TestStepArmTemplateDeployment | TestStepRawCall;
-export type RawTestStep =
-  | RawTestStepRestCall
-  | RawTestStepRestOperation
-  | RawTestStepArmTemplateDeployment
-  | RawTestStepRawCall;
-export interface RawTestStepContainer {
-  [stepName: string]: RawTestStep;
-}
+export type Step = StepRestCall | StepArmTemplate | StepRawCall;
+export type RawStep = RawStepRestCall | RawStepRestOperation | RawStepArmTemplate | RawStepRawCall;
 
 //#endregion
 
-//#region TestStep RestCall
+//#region Step RestCall
 
-export type RawTestStepRestCall = RawTestStepRestBase & {
+export type RawStepRestCall = RawStepRestBase & {
   exampleFile: string;
   resourceName?: string;
 };
 
-export type TestStepRestCall = TransformRaw<
-  RawTestStepRestCall,
+export type StepRestCall = TransformRaw<
+  RawStepRestCall,
   {
     type: "restCall";
     operationId: string;
@@ -87,28 +80,27 @@ export type TestStepRestCall = TransformRaw<
     exampleFilePath?: string;
     requestParameters: SwaggerExample["parameters"];
     responseExpected: SwaggerExample["responses"]["200"]["body"];
-  } & TestStepBase,
+  } & StepBase,
   "exampleFile" | "resourceName" | "description"
 >;
 
 //#endregion
 
-//#region TestStep Named Resource Operation
-export type RawTestStepRestOperation = RawTestStepRestBase & {
+//#region Step Named Resource Operation
+export type RawStepRestOperation = RawStepRestBase & {
   operationId: string;
   resourceName: string;
 };
 //#endregion
 
-//#region TestStep Arm Template Deployment
+//#region Step Arm Template Deployment
 
-export type RawTestStepArmTemplateDeployment = RawTestStepBase & {
+export type RawStepArmTemplate = RawStepBase & {
   armTemplateDeployment: string;
-  armTemplateParameters?: string;
 };
 
-export type TestStepArmTemplateDeployment = TransformRaw<
-  RawTestStepArmTemplateDeployment,
+export type StepArmTemplate = TransformRaw<
+  RawStepArmTemplate,
   {
     type: "armTemplateDeployment";
     armTemplatePayload: ArmTemplate;
@@ -125,11 +117,11 @@ export type TestStepArmTemplateDeployment = TransformRaw<
         };
       };
     };
-  } & TestStepBase,
-  "armTemplateParameters" | "description"
+  } & StepBase,
+  "description"
 >;
 
-export type TestScenarioVariableType = "string" | "secureString";
+export type VariableType = "string" | "secureString";
 
 export type ArmTemplateVariableType =
   | "string"
@@ -157,8 +149,8 @@ export interface ArmTemplate {
 
 //#endregion
 
-//#region TestStep Raw REST Call
-export type RawTestStepRawCall = RawTestStepBase & {
+//#region Step Raw REST Call
+export type RawStepRawCall = RawStepBase & {
   method: HttpMethods;
   rawUrl: string;
   requestHeaders: { [headName: string]: string };
@@ -167,11 +159,11 @@ export type RawTestStepRawCall = RawTestStepBase & {
   responseExpected?: string;
 };
 
-export type TestStepRawCall = TransformRaw<
-  RawTestStepRawCall,
+export type StepRawCall = TransformRaw<
+  RawStepRawCall,
   {
     type: "rawCall";
-  } & TestStepBase,
+  } & StepBase,
   "responseExpected" | "description"
 >;
 //#endregion
@@ -219,44 +211,40 @@ export type JsonPatchOp =
 
 //#endregion
 
-//#region TestScenario
+//#region Scenario
 
-export type RawTestScenario = RawVariableScope & {
+export type RawScenario = RawVariableScope & {
+  scenario: string;
   shareScope?: boolean;
   description?: string;
-  steps: RawTestStepContainer[];
+  steps: RawStep[];
 };
 
-export interface RawTestScenarioContainer {
-  [scenarioName: string]: RawTestScenario;
-}
-
-export type TestScenario = TransformRaw<
-  RawTestScenario,
+export type Scenario = TransformRaw<
+  RawScenario,
   {
-    name: string;
-    steps: TestStep[];
-    _testDef: TestDefinitionFile;
-    _resolvedSteps: TestStep[];
+    steps: Step[];
+    _scenarioDef: ScenarioDefinition;
+    _resolvedSteps: Step[];
   } & VariableScope
 >;
 
 //#endregion
 
-//#region TestDefinitionFile
-export type RawTestDefinitionFile = RawVariableScope & {
+//#region ScenarioDefinitionFile
+export type RawScenarioDefinition = RawVariableScope & {
   scope?: "ResourceGroup";
-  prepareSteps?: RawTestStepContainer[];
-  testScenarios: RawTestScenarioContainer[];
-  cleanUpSteps?: RawTestStepContainer[];
+  prepareSteps?: RawStep[];
+  scenarios: RawScenario[];
+  cleanUpSteps?: RawStep[];
 };
 
-export type TestDefinitionFile = TransformRaw<
-  RawTestDefinitionFile,
+export type ScenarioDefinition = TransformRaw<
+  RawScenarioDefinition,
   {
-    prepareSteps: TestStep[];
-    testScenarios: TestScenario[];
-    cleanUpSteps: TestStep[];
+    prepareSteps: Step[];
+    scenarios: Scenario[];
+    cleanUpSteps: Step[];
     _filePath: string;
   } & VariableScope
 >;

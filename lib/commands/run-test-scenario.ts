@@ -13,7 +13,7 @@ import {
 import { inversifyGetInstance } from "../inversifyUtils";
 import { getApiVersionFromSwaggerFile, getProviderFromFilePath, printWarning } from "../util/utils";
 import { getFileNameFromPath } from "../testScenario/defaultNaming";
-import { getSwaggerFilePathsFromTestScenarioFilePath } from "./../testScenario/testResourceLoader";
+import { getSwaggerFilePathsFromApiScenarioFilePath } from "../testScenario/apiScenarioLoader";
 
 export const command = "run-test-scenario <test-scenario>";
 
@@ -125,7 +125,7 @@ export const builder: yargs.CommandBuilder = {
 export async function handler(argv: yargs.Arguments): Promise<void> {
   await cliSuppressExceptions(async () => {
     const testScenarioFilePath = path.resolve(argv.testScenario);
-    const swaggerFilePaths = getSwaggerFilePathsFromTestScenarioFilePath(testScenarioFilePath);
+    const swaggerFilePaths = getSwaggerFilePathsFromApiScenarioFilePath(testScenarioFilePath);
     if (swaggerFilePaths.length === 0) {
       throw new Error(
         `Run test scenario failed. can not find related swagger file. ${testScenarioFilePath}`

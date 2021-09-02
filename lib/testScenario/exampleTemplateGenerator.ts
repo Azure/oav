@@ -2,30 +2,25 @@ import { escapeRegExp } from "lodash";
 import { injectable } from "inversify";
 import { cloneDeep } from "@azure-tools/openapi-tools-common";
 import { JsonLoader } from "../swagger/jsonLoader";
-import {
-  TestScenario,
-  ArmTemplate,
-  TestStepRestCall,
-  TestStepArmTemplateDeployment,
-} from "./testResourceTypes";
+import { Scenario, ArmTemplate, StepRestCall, StepArmTemplate } from "./apiScenarioTypes";
 import { VariableEnv } from "./variableEnv";
 import {
-  TestScenarioRunnerClient,
-  TestScenarioClientRequest,
-  TestStepEnv,
+  ApiScenarioRunnerClient,
+  ApiScenarioClientRequest,
+  StepEnv,
   ArmDeploymentTracking,
-  TestScenarioRunner,
-} from "./testScenarioRunner";
-import { getBodyParamName } from "./testResourceLoader";
+  ApiScenarioRunner,
+} from "./apiScenarioRunner";
+import { getBodyParamName } from "./apiScenarioLoader";
 
 @injectable()
-export class ExampleTemplateGenerator implements TestScenarioRunnerClient {
+export class ExampleTemplateGenerator implements ApiScenarioRunnerClient {
   private baseEnv: VariableEnv;
-  private runner: TestScenarioRunner;
+  private runner: ApiScenarioRunner;
 
   public constructor(private jsonLoader: JsonLoader) {
     this.baseEnv = new VariableEnv();
-    this.runner = new TestScenarioRunner({
+    this.runner = new ApiScenarioRunner({
       jsonLoader: this.jsonLoader,
       client: this,
       env: this.baseEnv,
@@ -41,9 +36,9 @@ export class ExampleTemplateGenerator implements TestScenarioRunnerClient {
   }
 
   public async sendExampleRequest(
-    _request: TestScenarioClientRequest,
-    step: TestStepRestCall,
-    stepEnv: TestStepEnv
+    _request: ApiScenarioClientRequest,
+    step: StepRestCall,
+    stepEnv: StepEnv
   ): Promise<void> {
     this.replaceWithParameterConvention(step, stepEnv.env);
 
@@ -60,8 +55,8 @@ export class ExampleTemplateGenerator implements TestScenarioRunnerClient {
     _armTemplate: ArmTemplate,
     _params: { [name: string]: string },
     _armDeployment: ArmDeploymentTracking,
-    step: TestStepArmTemplateDeployment,
-    _stepEnv: TestStepEnv
+    step: StepArmTemplate,
+    _stepEnv: StepEnv
   ): Promise<void> {
     const outputs = step.armTemplatePayload.outputs;
     if (outputs === undefined) {
@@ -78,7 +73,7 @@ export class ExampleTemplateGenerator implements TestScenarioRunnerClient {
     }
   }
 
-  public async generateExampleTemplateForTestScenario(testScenario: TestScenario) {
+  public async generateExampleTemplateForTestScenario(testScenario: Scenario) {
     this.baseEnv.clear();
     for (const requiredVar of testScenario.requiredVariables) {
       this.baseEnv.set(requiredVar, `$(${requiredVar})`);
@@ -88,7 +83,7 @@ export class ExampleTemplateGenerator implements TestScenarioRunnerClient {
   }
 
   public replaceWithParameterConvention(
-    step: Pick<TestStepRestCall, "requestParameters" | "responseExpected" | "operation">,
+    step: Pick<StepRestCall, "requestParameters" | "responseExpected" | "operation">,
     env: VariableEnv
   ) {
     const toMatch: string[] = [];

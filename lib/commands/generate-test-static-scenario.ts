@@ -6,7 +6,7 @@
 import { dirname, resolve as pathResolve } from "path";
 import * as yargs from "yargs";
 import { getAutorestConfig } from "../util/getAutorestConfig";
-import { StaticTestScenarioGenerator } from "./../testScenario/gen/staticTestScenarioGenerator";
+import { StaticApiScenarioGenerator } from "./../testScenario/gen/staticTestScenarioGenerator";
 
 export const command = "generate-static-test-scenario";
 export const describe = "Generate test-scenario from swagger.";
@@ -41,7 +41,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
   console.log("input-file:");
   console.log(swaggerFilePaths);
 
-  const generator = StaticTestScenarioGenerator.create({
+  const generator = StaticApiScenarioGenerator.create({
     swaggerFilePaths: swaggerFilePaths,
     tag: autorestConfig.tag,
     rules: argv.rules.split(","),

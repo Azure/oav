@@ -10,7 +10,7 @@ import * as openapiMarkdown from "@azure/openapi-markdown";
 import { TYPES } from "../inversifyUtils";
 import { FileLoader, FileLoaderOption } from "../swagger/fileLoader";
 import { setDefaultOpts } from "./../swagger/loader";
-import { TestResources } from "./testResourceTypes";
+import { TestResources } from "./apiScenarioTypes";
 
 export interface ReadmeTestFileLoaderOption extends FileLoaderOption {}
 

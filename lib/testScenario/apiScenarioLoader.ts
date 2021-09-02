@@ -26,24 +26,24 @@ import { SwaggerSpec, Operation, SwaggerExample } from "../swagger/swaggerTypes"
 import { traverseSwagger } from "../transform/traverseSwagger";
 import { inversifyGetInstance, TYPES } from "../inversifyUtils";
 import { getProvider } from "../util/utils";
-import { TestDefinition as TestDefinitionSchema } from "./testResourceSchema";
+import { ApiScenarioDefinition as ApiScenarioDefinitionSchema } from "./apiScenarioSchema";
 import {
   VariableScope,
-  TestDefinitionFile,
-  TestScenario,
-  TestStep,
-  TestStepRestCall,
-  TestStepArmTemplateDeployment,
+  ScenarioDefinition,
+  Scenario,
+  Step,
+  StepRestCall,
+  StepArmTemplate,
   RawVariableScope,
-  RawTestDefinitionFile,
-  RawTestStepArmTemplateDeployment,
-  RawTestStep,
-  RawTestStepRestCall,
-  RawTestScenario,
-  RawTestStepRawCall,
-  TestStepRawCall,
-  RawTestStepRestOperation,
-} from "./testResourceTypes";
+  RawScenarioDefinition,
+  RawStepArmTemplate,
+  RawStep,
+  RawStepRestCall,
+  RawScenario,
+  RawStepRawCall,
+  StepRawCall,
+  RawStepRestOperation,
+} from "./apiScenarioTypes";
 import { ExampleTemplateGenerator } from "./exampleTemplateGenerator";
 import { BodyTransformer } from "./bodyTransformer";
 import { jsonPatchApply } from "./diffUtils";
@@ -53,22 +53,22 @@ const ajv = new AjvInit({
   useDefaults: true,
 });
 
-export interface TestResourceLoaderOption
+export interface ApiScenarioLoaderOption
   extends FileLoaderOption,
     JsonLoaderOption,
     SwaggerLoaderOption {
   swaggerFilePaths?: string[];
 }
 
-interface TestScenarioContext {
-  stepTracking: Map<string, TestStep>;
-  resourceTracking: Map<string, TestStep>;
-  testDef: TestDefinitionFile;
-  testScenario?: TestScenario;
+interface ApiScenarioContext {
+  stepTracking: Map<string, Step>;
+  resourceTracking: Map<string, Step>;
+  scenarioDef: ScenarioDefinition;
+  scenario?: Scenario;
 }
 
 @injectable()
-export class TestResourceLoader implements Loader<TestDefinitionFile> {
+export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
   private transformContext: TransformContext;
   private validateTestResourceFile: ValidateFunction;
   private exampleToOperation = new Map<string, { [operationId: string]: [Operation, string] }>();
@@ -76,7 +76,7 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
   private initialized: boolean = false;
 
   public constructor(
-    @inject(TYPES.opts) private opts: TestResourceLoaderOption,
+    @inject(TYPES.opts) private opts: ApiScenarioLoaderOption,
     private fileLoader: FileLoader,
     public jsonLoader: JsonLoader,
     private swaggerLoader: SwaggerLoader,
@@ -100,16 +100,16 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
       pureObjectTransformer,
     ]);
 
-    this.validateTestResourceFile = ajv.compile(TestDefinitionSchema);
+    this.validateTestResourceFile = ajv.compile(ApiScenarioDefinitionSchema);
   }
 
-  public static create(opts: TestResourceLoaderOption) {
+  public static create(opts: ApiScenarioLoaderOption) {
     setDefaultOpts(opts, {
       eraseXmsExamples: false,
       eraseDescription: false,
       skipResolveRefKeys: ["x-ms-examples"],
     });
-    return inversifyGetInstance(TestResourceLoader, opts);
+    return inversifyGetInstance(ApiScenarioLoader, opts);
   }
 
   public async initialize() {
@@ -166,12 +166,12 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
     this.initialized = true;
   }
 
-  public async writeTestDefinitionFile(filePath: string, testDef: RawTestDefinitionFile) {
+  public async writeTestDefinitionFile(filePath: string, testDef: RawScenarioDefinition) {
     const fileContent = yamlDump(testDef);
     return this.fileLoader.writeFile(filePath, fileContent);
   }
 
-  public async load(filePath: string): Promise<TestDefinitionFile> {
+  public async load(filePath: string): Promise<ScenarioDefinition> {
     if (!this.initialized) {
       await this.initialize();
     }
@@ -184,63 +184,56 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
         `Failed to validate test resource file ${filePath}: ${err.dataPath} ${err.message}`
       );
     }
-    const rawTestDef = filePayload as RawTestDefinitionFile;
-    const testDef: TestDefinitionFile = {
+    const rawTestDef = filePayload as RawScenarioDefinition;
+    const scenarioDef: ScenarioDefinition = {
       scope: rawTestDef.scope ?? "ResourceGroup",
       prepareSteps: [],
-      testScenarios: [],
+      scenarios: [],
       _filePath: this.fileLoader.relativePath(filePath),
       cleanUpSteps: [],
       ...convertVariables(rawTestDef.variables),
     };
 
-    if (testDef.scope === "ResourceGroup") {
-      const requiredVariables = new Set(testDef.requiredVariables);
+    if (scenarioDef.scope === "ResourceGroup") {
+      const requiredVariables = new Set(scenarioDef.requiredVariables);
       requiredVariables.add("subscriptionId");
       requiredVariables.add("location");
-      testDef.requiredVariables = [...requiredVariables];
+      scenarioDef.requiredVariables = [...requiredVariables];
     }
 
-    const ctx: TestScenarioContext = {
+    const ctx: ApiScenarioContext = {
       stepTracking: new Map(),
       resourceTracking: new Map(),
-      testDef,
+      scenarioDef: scenarioDef,
     };
 
-    for (const raw of rawTestDef.prepareSteps ?? []) {
-      for (const [name, rawStep] of Object.entries(raw)) {
-        const step = await this.loadTestStep(name, rawStep, ctx);
-        step.isPrepareStep = true;
-        testDef.prepareSteps.push(step);
-      }
+    for (const rawStep of rawTestDef.prepareSteps ?? []) {
+      const step = await this.loadTestStep(rawStep, ctx);
+      step.isPrepareStep = true;
+      scenarioDef.prepareSteps.push(step);
     }
 
-    for (const raw of rawTestDef.cleanUpSteps ?? []) {
-      for (const [name, rawStep] of Object.entries(raw)) {
-        const step = await this.loadTestStep(name, rawStep, ctx);
-        step.isCleanUpStep = true;
-        testDef.cleanUpSteps.push(step);
-      }
+    for (const rawStep of rawTestDef.cleanUpSteps ?? []) {
+      const step = await this.loadTestStep(rawStep, ctx);
+      step.isCleanUpStep = true;
+      scenarioDef.cleanUpSteps.push(step);
     }
 
-    for (const raw of rawTestDef.testScenarios) {
-      for (const [name, rawTestScenario] of Object.entries(raw)) {
-        const testScenario = await this.loadTestScenario(name, rawTestScenario, ctx);
-        testDef.testScenarios.push(testScenario);
-      }
+    for (const rawScenario of rawTestDef.scenarios) {
+      const testScenario = await this.loadTestScenario(rawScenario, ctx);
+      scenarioDef.scenarios.push(testScenario);
     }
 
-    return testDef;
+    return scenarioDef;
   }
 
   private async loadTestScenario(
-    name: string,
-    rawTestScenario: RawTestScenario,
-    ctx: TestScenarioContext
-  ): Promise<TestScenario> {
-    const resolvedSteps: TestStep[] = [];
-    const steps: TestStep[] = [];
-    const { testDef } = ctx;
+    rawTestScenario: RawScenario,
+    ctx: ApiScenarioContext
+  ): Promise<Scenario> {
+    const resolvedSteps: Step[] = [];
+    const steps: Step[] = [];
+    const { scenarioDef: testDef } = ctx;
 
     for (const step of testDef.prepareSteps) {
       resolvedSteps.push(step);
@@ -251,23 +244,21 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
       ...new Set([...testDef.requiredVariables, ...variableScope.requiredVariables]),
     ];
 
-    const testScenario: TestScenario = {
-      name,
+    const testScenario: Scenario = {
+      scenario: rawTestScenario.scenario,
       description: rawTestScenario.description ?? "",
       shareScope: rawTestScenario.shareScope ?? true,
       steps,
       _resolvedSteps: resolvedSteps,
-      _testDef: testDef,
+      _scenarioDef: testDef,
       ...variableScope,
     };
-    ctx.testScenario = testScenario;
+    ctx.scenario = testScenario;
 
-    for (const raw of rawTestScenario.steps) {
-      for (const [name, rawStep] of Object.entries(raw)) {
-        const step = await this.loadTestStep(name, rawStep, ctx);
-        resolvedSteps.push(step);
-        steps.push(step);
-      }
+    for (const rawStep of rawTestScenario.steps) {
+      const step = await this.loadTestStep(rawStep, ctx);
+      resolvedSteps.push(step);
+      steps.push(step);
     }
 
     for (const step of testDef.cleanUpSteps) {
@@ -279,39 +270,33 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
     return testScenario;
   }
 
-  private async loadTestStep(
-    name: string,
-    rawStep: RawTestStep,
-    ctx: TestScenarioContext
-  ): Promise<TestStep> {
-    let testStep: TestStep;
+  private async loadTestStep(rawStep: RawStep, ctx: ApiScenarioContext): Promise<Step> {
+    let testStep: Step;
 
     if ("exampleFile" in rawStep || "operationId" in rawStep) {
-      testStep = await this.loadTestStepRestCall(name, rawStep, ctx);
+      testStep = await this.loadTestStepRestCall(rawStep, ctx);
     } else if ("armTemplateDeployment" in rawStep) {
-      testStep = await this.loadTestStepArmTemplate(name, rawStep, ctx);
+      testStep = await this.loadTestStepArmTemplate(rawStep, ctx);
     } else if ("rawUrl" in rawStep) {
-      testStep = await this.loadTestStepRawCall(name, rawStep, ctx);
+      testStep = await this.loadTestStepRawCall(rawStep, ctx);
     } else {
-      throw new Error(`Invalid step: ${name} ${JSON.stringify(rawStep)}`);
+      throw new Error(`Invalid step: ${JSON.stringify(rawStep)}`);
     }
 
-    if (ctx.testScenario !== undefined) {
-      declareOutputVariables(testStep.outputVariables, ctx.testScenario);
+    if (ctx.scenario !== undefined) {
+      declareOutputVariables(testStep.outputVariables, ctx.scenario);
     } else {
-      declareOutputVariables(testStep.outputVariables, ctx.testDef);
+      declareOutputVariables(testStep.outputVariables, ctx.scenarioDef);
     }
 
     return testStep;
   }
 
   private async loadTestStepRawCall(
-    name: string,
-    rawStep: RawTestStepRawCall,
-    _ctx: TestScenarioContext
-  ): Promise<TestStepRawCall> {
-    const step: TestStepRawCall = {
-      name,
+    rawStep: RawStepRawCall,
+    _ctx: ApiScenarioContext
+  ): Promise<StepRawCall> {
+    const step: StepRawCall = {
       type: "rawCall",
       ...rawStep,
       statusCode: rawStep.statusCode ?? 200,
@@ -322,35 +307,24 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
   }
 
   private async loadTestStepArmTemplate(
-    name: string,
-    rawStep: RawTestStepArmTemplateDeployment,
-    ctx: TestScenarioContext
-  ): Promise<TestStepArmTemplateDeployment> {
-    const step: TestStepArmTemplateDeployment = {
-      name,
+    rawStep: RawStepArmTemplate,
+    ctx: ApiScenarioContext
+  ): Promise<StepArmTemplate> {
+    const step: StepArmTemplate = {
       type: "armTemplateDeployment",
+      step: rawStep.step,
       outputVariables: rawStep.outputVariables ?? {},
       armTemplateDeployment: rawStep.armTemplateDeployment,
       armTemplatePayload: {},
       ...convertVariables(rawStep.variables),
     };
-    const { testDef, testScenario } = ctx;
+    const { scenarioDef: testDef, scenario: testScenario } = ctx;
 
     const filePath = pathJoin(dirname(testDef._filePath), step.armTemplateDeployment);
     const armTemplateContent = await this.fileLoader.load(filePath);
     step.armTemplatePayload = JSON.parse(armTemplateContent);
 
-    const definedParameters = [];
-    if (rawStep.armTemplateParameters !== undefined) {
-      const armTemplateParametersPath = pathJoin(
-        dirname(testDef._filePath),
-        rawStep.armTemplateParameters
-      );
-      const armTemplateParametersContent = await this.fileLoader.load(armTemplateParametersPath);
-      step.armTemplateParametersPayload = JSON.parse(armTemplateParametersContent);
-      definedParameters.push(...Object.keys(step.armTemplateParametersPayload!.parameters));
-    }
-    const definedParameterSet = new Set(definedParameters);
+    const definedParameterSet = new Set();
 
     const params = step.armTemplatePayload.parameters;
     if (params !== undefined) {
@@ -384,17 +358,16 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
   }
 
   private async loadTestStepRestCall(
-    name: string,
-    rawStep: RawTestStepRestCall | RawTestStepRestOperation,
-    ctx: TestScenarioContext
-  ): Promise<TestStepRestCall> {
-    if (ctx.stepTracking.has(name)) {
-      throw new Error(`Duplicated step name: ${name}`);
+    rawStep: RawStepRestCall | RawStepRestOperation,
+    ctx: ApiScenarioContext
+  ): Promise<StepRestCall> {
+    if (ctx.stepTracking.has(rawStep.step)) {
+      throw new Error(`Duplicated step name: ${rawStep.step}`);
     }
 
-    const step: TestStepRestCall = {
+    const step: StepRestCall = {
       type: "restCall",
-      name,
+      step: rawStep.step,
       description: rawStep.description,
       resourceName: rawStep.resourceName,
       exampleFile: "",
@@ -457,7 +430,7 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
       step.responseExpected = jsonPatchApply(cloneDeep(step.responseExpected), step.responseUpdate);
     }
 
-    ctx.stepTracking.set(step.name, step);
+    ctx.stepTracking.set(step.step, step);
     if (step.resourceName !== undefined) {
       ctx.resourceTracking.set(step.resourceName, step);
     }
@@ -466,20 +439,20 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
   }
 
   private async loadRestCallOperation(
-    step: TestStepRestCall,
-    ctx: TestScenarioContext
-  ): Promise<TestStepRestCall> {
+    step: StepRestCall,
+    ctx: ApiScenarioContext
+  ): Promise<StepRestCall> {
     const lastStep = ctx.resourceTracking.get(step.resourceName!);
     if (lastStep === undefined) {
-      throw new Error(`Unknown resourceName: ${step.resourceName} in step ${step.name}`);
+      throw new Error(`Unknown resourceName: ${step.resourceName} in step ${step.step}`);
     }
     if (lastStep.type !== "restCall") {
-      throw new Error(`Cannot use resourceName for non-restCall type in step ${step.name}`);
+      throw new Error(`Cannot use resourceName for non-restCall type in step ${step.step}`);
     }
 
     const operation = this.nameToOperation.get(step.operationId);
     if (operation === undefined) {
-      throw new Error(`Operation not found for ${step.operationId} in step ${step.name}`);
+      throw new Error(`Operation not found for ${step.operationId} in step ${step.step}`);
     }
     step.operation = operation;
 
@@ -502,19 +475,19 @@ export class TestResourceLoader implements Loader<TestDefinitionFile> {
       case "post":
         break;
       default:
-        throw new Error(`Unsupported operation ${step.operationId} in step ${step.name}`);
+        throw new Error(`Unsupported operation ${step.operationId} in step ${step.step}`);
     }
 
     return step;
   }
 
-  private async loadRestCallExampleFile(step: TestStepRestCall, ctx: TestScenarioContext) {
+  private async loadRestCallExampleFile(step: StepRestCall, ctx: ApiScenarioContext) {
     const filePath = step.exampleFile;
     if (filePath === undefined) {
       throw new Error(`RestCall step must specify "exampleFile" or "fromStep"`);
     }
 
-    const exampleFilePath = pathJoin(dirname(ctx.testDef._filePath), filePath);
+    const exampleFilePath = pathJoin(dirname(ctx.scenarioDef._filePath), filePath);
 
     // Load example file
     const fileContent = await this.fileLoader.load(exampleFilePath);
@@ -561,12 +534,12 @@ const getAllSwaggerFilePathUnderDir = (dir: string): any[] => {
   return allSwaggerFiles;
 };
 
-export const getSwaggerFilePathsFromTestScenarioFilePath = (
-  testScenarioFilePath: string
+export const getSwaggerFilePathsFromApiScenarioFilePath = (
+  apiScenarioFilePath: string
 ): string[] => {
-  const fileContent = fs.readFileSync(testScenarioFilePath).toString();
-  const testDef = yamlLoad(fileContent) as RawTestDefinitionFile;
-  const allSwaggerFilePaths = getAllSwaggerFilePathUnderDir(dirname(dirname(testScenarioFilePath)));
+  const fileContent = fs.readFileSync(apiScenarioFilePath).toString();
+  const rawScenarioDef = yamlLoad(fileContent) as RawScenarioDefinition;
+  const allSwaggerFilePaths = getAllSwaggerFilePathUnderDir(dirname(dirname(apiScenarioFilePath)));
   const allSwaggerFiles = allSwaggerFilePaths.map((it) => {
     return {
       swaggerFilePath: it,
@@ -589,7 +562,7 @@ export const getSwaggerFilePathsFromTestScenarioFilePath = (
   };
   const res: Set<string> = new Set<string>();
 
-  for (const raw of testDef.prepareSteps ?? []) {
+  for (const raw of rawScenarioDef.prepareSteps ?? []) {
     for (const [_, rawStep] of Object.entries(raw)) {
       if ("exampleFile" in rawStep) {
         const swaggerFilePath = findMatchedSwagger(rawStep.exampleFile.replace(/^.*[\\\/]/, ""));
@@ -600,24 +573,18 @@ export const getSwaggerFilePathsFromTestScenarioFilePath = (
     }
   }
 
-  for (const raw of testDef.testScenarios ?? []) {
-    for (const [_, rawScenario] of Object.entries(raw)) {
-      for (const raw of rawScenario.steps) {
-        for (const [_, rawStep] of Object.entries(raw)) {
-          if ("exampleFile" in rawStep) {
-            const swaggerFilePath = findMatchedSwagger(
-              rawStep.exampleFile.replace(/^.*[\\\/]/, "")
-            );
-            if (swaggerFilePath !== undefined) {
-              res.add(swaggerFilePath);
-            }
-          }
+  for (const rawScenario of rawScenarioDef.scenarios ?? []) {
+    for (const rawStep of rawScenario.steps) {
+      if ("exampleFile" in rawStep) {
+        const swaggerFilePath = findMatchedSwagger(rawStep.exampleFile.replace(/^.*[\\\/]/, ""));
+        if (swaggerFilePath !== undefined) {
+          res.add(swaggerFilePath);
         }
       }
     }
   }
 
-  for (const raw of testDef.cleanUpSteps ?? []) {
+  for (const raw of rawScenarioDef.cleanUpSteps ?? []) {
     for (const [_, rawStep] of Object.entries(raw)) {
       if ("exampleFile" in rawStep) {
         const swaggerFilePath = findMatchedSwagger(rawStep.exampleFile.replace(/^.*[\\\/]/, ""));

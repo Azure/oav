@@ -10,18 +10,18 @@ import { setDefaultOpts } from "./../../swagger/loader";
 
 import { FileLoader } from "./../../swagger/fileLoader";
 import {
-  RawTestDefinitionFile,
-  RawTestScenarioContainer,
-  RawTestStepContainer,
-  TestDefinitionFile,
+  RawScenarioDefinition,
+  ScenarioDefinition,
   TestResources,
-} from "./../testResourceTypes";
-import { TestResourceLoaderOption } from "./../testResourceLoader";
+  RawStep,
+  RawScenario,
+} from "../apiScenarioTypes";
+import { ApiScenarioLoaderOption } from "../apiScenarioLoader";
 import { inversifyGetInstance, TYPES } from "./../../inversifyUtils";
 
 type GenerationRule = "resource-put-delete" | "operations-list";
-export interface StaticTestScenarioGeneratorOption
-  extends TestResourceLoaderOption,
+export interface StaticApiScenarioGeneratorOption
+  extends ApiScenarioLoaderOption,
     SwaggerAnalyzerOption {
   swaggerFilePaths: string[];
   rules?: GenerationRule[];
@@ -32,18 +32,18 @@ export interface StaticTestScenarioGeneratorOption
  * Generate test scenario file by analyzing swagger resource type dependencies.
  */
 @injectable()
-export class StaticTestScenarioGenerator {
+export class StaticApiScenarioGenerator {
   private exampleDependencies: ExampleDependency[] = [];
-  private testDefToWrite: Array<{ testDef: RawTestDefinitionFile; filePath: string }> = [];
+  private scenarioDefToWrite: Array<{ scenarioDef: RawScenarioDefinition; filePath: string }> = [];
   public constructor(
-    @inject(TYPES.opts) private opts: StaticTestScenarioGeneratorOption,
+    @inject(TYPES.opts) private opts: StaticApiScenarioGeneratorOption,
     private swaggerAnalyzer: SwaggerAnalyzer,
     private fileLoader: FileLoader,
     private jsonLoader: JsonLoader,
     private readmeTestFileLoader: ReadmeTestFileLoader
   ) {}
 
-  public static create(opts: StaticTestScenarioGeneratorOption) {
+  public static create(opts: StaticApiScenarioGeneratorOption) {
     setDefaultOpts(opts, {
       tag: "default",
       swaggerFilePaths: [],
@@ -53,7 +53,7 @@ export class StaticTestScenarioGenerator {
       noExternalDependencyResourceType: true,
       rules: ["resource-put-delete"],
     });
-    return inversifyGetInstance(StaticTestScenarioGenerator, opts);
+    return inversifyGetInstance(StaticApiScenarioGenerator, opts);
   }
 
   public async initialize() {
@@ -61,9 +61,9 @@ export class StaticTestScenarioGenerator {
   }
 
   private async generateListOperationTestScenario(): Promise<any> {
-    const testDef: RawTestDefinitionFile = {
+    const scenarioDef: RawScenarioDefinition = {
       scope: "ResourceGroup",
-      testScenarios: [],
+      scenarios: [],
     };
     const paths = await this.swaggerAnalyzer.getOperationListPath();
     for (const it of paths) {
@@ -72,25 +72,23 @@ export class StaticTestScenarioGenerator {
         example[0].$ref!
       );
       const exampleDir = path.dirname(listOperationsExampleFilePath);
-      const testSteps: RawTestStepContainer[] = [
+      const testSteps: RawStep[] = [
         {
-          operationsList: {
+          step: "operationsList",
             exampleFile: getExampleOutputPath(listOperationsExampleFilePath),
-          },
         },
       ];
-      testDef.testScenarios.push({
-        operationsListScenario: {
+      scenarioDef.scenarios.push({
+        scenario: "operationsListScenario",
           description: "Generated scenario for operation list",
           steps: testSteps,
-        },
       });
-      this.testDefToWrite.push({
-        testDef: testDef,
+      this.scenarioDefToWrite.push({
+        scenarioDef: scenarioDef,
         filePath: getTestDefOutputPath(exampleDir, `operationsList`),
       });
     }
-    return testDef;
+    return scenarioDef;
   }
 
   /**
@@ -98,10 +96,10 @@ export class StaticTestScenarioGenerator {
    * @param resourceType ResourceType. e.g.Microsoft.Compute/snapshots
    * @returns
    */
-  private async generatePutDeleteTestScenario(resourceType: string): Promise<TestDefinitionFile> {
-    const testDef: RawTestDefinitionFile = {
+  private async generatePutDeleteApiScenario(resourceType: string): Promise<ScenarioDefinition> {
+    const scenarioDef: RawScenarioDefinition = {
       scope: "ResourceGroup",
-      testScenarios: [],
+      scenarios: [],
     };
     let exampleDir = "";
     const paths = this.swaggerAnalyzer.getPathByResourceType(resourceType);
@@ -131,66 +129,66 @@ export class StaticTestScenarioGenerator {
       }
 
       // TODO: get dependency and inject dependency ARM template into step
-      const testStep: RawTestStepContainer = {};
-      testStep[exampleName] = {
+      const step: RawStep = {
+        step: exampleName,
         exampleFile: getExampleOutputPath(
           this.swaggerAnalyzer.jsonLoader.getRealPath(exampleRef.$ref!)
         ),
       };
-      const testSteps = [testStep];
+      const steps = [step];
       if (deleteExampleFilePath !== "") {
-        const testStep: RawTestStepContainer = {};
-        testStep[deleteExampleName] = {
+        const step: RawStep = {
+          step: deleteExampleName,
           exampleFile: deleteExampleFilePath,
         };
-        testSteps.push(testStep);
+        steps.push(step);
       }
 
       const scenarioName = `${resourceType}_${exampleName}`;
-      const testScenarioContainer: RawTestScenarioContainer = {};
-      testScenarioContainer[scenarioName] = {
+      const scenario: RawScenario = {
+        scenario: scenarioName,
         description: `Generated scenario for ${resourceType} with ${exampleName}`,
-        steps: testSteps,
+        steps: steps,
       };
-      testDef.testScenarios.push(testScenarioContainer);
+      scenarioDef.scenarios.push(scenario);
     }
-    this.testDefToWrite.push({
-      testDef: testDef,
+    this.scenarioDefToWrite.push({
+      scenarioDef: scenarioDef,
       filePath: getTestDefOutputPath(exampleDir, `${resourceType}`),
     });
 
     return {} as any;
   }
 
-  public async writeTestDefinitionFile(filePath: string, testDef: RawTestDefinitionFile) {
-    const fileContent = yamlDump(testDef);
+  public async writeScenarioDefinitionFile(filePath: string, scenarioDef: RawScenarioDefinition) {
+    const fileContent = yamlDump(scenarioDef);
     return this.fileLoader.writeFile(filePath, fileContent);
   }
 
   public async writeGeneratedFiles() {
-    for (const { testDef, filePath } of this.testDefToWrite) {
+    for (const { scenarioDef: scenarioDef, filePath } of this.scenarioDefToWrite) {
       console.log(`write generated file ${filePath}`);
-      await this.writeTestDefinitionFile(filePath, testDef);
+      await this.writeScenarioDefinitionFile(filePath, scenarioDef);
     }
     await this.writeReadmeTest();
   }
 
   private async writeReadmeTest() {
-    if (this.testDefToWrite.length === 0) {
+    if (this.scenarioDefToWrite.length === 0) {
       return;
     }
     const testResources: TestResources = { "test-resources": [] };
-    for (const { filePath } of this.testDefToWrite) {
+    for (const { filePath } of this.scenarioDefToWrite) {
       const resourceProvider = getProviderFromFilePath(filePath) || "";
       const relativePath = filePath.substr(filePath.indexOf(resourceProvider), filePath.length);
       testResources["test-resources"].push({ test: relativePath });
     }
-    const readmeDir = findNearestReadmeDir(this.testDefToWrite[0].filePath);
+    const readmeDir = findNearestReadmeDir(this.scenarioDefToWrite[0].filePath);
     if (readmeDir === undefined) {
       throw new Error(`Can not find nearest readme dir.`);
     }
     const readmeTestFilePath = path.resolve(
-      findNearestReadmeDir(this.testDefToWrite[0].filePath)!,
+      findNearestReadmeDir(this.scenarioDefToWrite[0].filePath)!,
       "readme.test.md"
     );
     console.log(`write generated file ${readmeTestFilePath}`);
@@ -216,7 +214,7 @@ export class StaticTestScenarioGenerator {
         await this.generateListOperationTestScenario();
       }
       if (this.opts.rules?.includes("resource-put-delete")) {
-        await this.generatePutDeleteTestScenario(resourceType);
+        await this.generatePutDeleteApiScenario(resourceType);
       }
     }
   }

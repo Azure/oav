@@ -15,13 +15,13 @@ import { TokenCredentials as MsRestTokenCredential } from "@azure/ms-rest-js";
 import { ResourceManagementClient } from "@azure/arm-resources";
 import { LROPoller as MsLROPoller } from "@azure/ms-rest-azure-js";
 import { setDefaultOpts } from "../swagger/loader";
-import { ArmTemplate, TestStepArmTemplateDeployment, TestStepRestCall } from "./testResourceTypes";
+import { ArmTemplate, StepArmTemplate, StepRestCall } from "./apiScenarioTypes";
 import {
   ArmDeploymentTracking,
-  TestScenarioClientRequest,
-  TestScenarioRunnerClient,
-  TestStepEnv,
-} from "./testScenarioRunner";
+  ApiScenarioClientRequest,
+  ApiScenarioRunnerClient,
+  StepEnv,
+} from "./apiScenarioRunner";
 import { LROPoller, BaseResult, lroPolicy } from "./lro";
 
 export interface TestScenarioRestClientOption extends ServiceClientOptions {
@@ -32,7 +32,7 @@ export const delaySeconds = (seconds: number) => {
   return new Promise((resolve) => setTimeout(resolve, seconds * 1000));
 };
 
-export class TestScenarioRestClient extends ServiceClient implements TestScenarioRunnerClient {
+export class TestScenarioRestClient extends ServiceClient implements ApiScenarioRunnerClient {
   private opts: TestScenarioRestClientOption;
   private credential: TokenCredential;
 
@@ -87,9 +87,9 @@ export class TestScenarioRestClient extends ServiceClient implements TestScenari
   }
 
   public async sendExampleRequest(
-    req: TestScenarioClientRequest,
-    step: TestStepRestCall,
-    _stepEnv: TestStepEnv
+    req: ApiScenarioClientRequest,
+    step: StepRestCall,
+    _stepEnv: StepEnv
   ): Promise<void> {
     console.log(`Send request: ${req.method} ${req.path}`);
     console.log(JSON.stringify(req.body, null, 2));
@@ -136,8 +136,8 @@ export class TestScenarioRestClient extends ServiceClient implements TestScenari
     armTemplate: ArmTemplate,
     params: { [name: string]: any },
     armDeployment: ArmDeploymentTracking,
-    _step: TestStepArmTemplateDeployment,
-    stepEnv: TestStepEnv
+    _step: StepArmTemplate,
+    stepEnv: StepEnv
   ) {
     console.log(`Deploy ARM template ${armDeployment.deploymentName}`);
     const { subscriptionId, resourceGroupName } = armDeployment.details;

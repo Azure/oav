@@ -5,17 +5,17 @@ import { ValidationLevel } from "./reportGenerator";
 import { SwaggerAnalyzerOption } from "./swaggerAnalyzer";
 import { BlobUploaderOption } from "./blobUploader";
 import { VariableEnv } from "./variableEnv";
-import { TestResourceLoader, TestResourceLoaderOption } from "./testResourceLoader";
+import { ApiScenarioLoader, ApiScenarioLoaderOption } from "./apiScenarioLoader";
 import {
   generateRunId,
   PostmanCollectionRunnerClient,
   PostmanCollectionRunnerClientOption,
 } from "./postmanCollectionRunnerClient";
-import { TestScenarioRunner } from "./testScenarioRunner";
+import { ApiScenarioRunner } from "./apiScenarioRunner";
 import { getFileNameFromPath } from "./defaultNaming";
 import { generateMarkdownReportHeader } from "./markdownReport";
 export interface PostmanCollectionGeneratorOption
-  extends TestResourceLoaderOption,
+  extends ApiScenarioLoaderOption,
     BlobUploaderOption,
     SwaggerAnalyzerOption {
   name: string;
@@ -43,7 +43,7 @@ export class PostmanCollectionGenerator {
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
   constructor(
     @inject(TYPES.opts) private opt: PostmanCollectionGeneratorOption,
-    private testResourceLoader: TestResourceLoader,
+    private testResourceLoader: ApiScenarioLoader,
     private fileLoader: FileLoader
   ) {
     this.env = new VariableEnv();
@@ -66,7 +66,7 @@ export class PostmanCollectionGenerator {
       await this.fileLoader.writeFile(this.opt.markdownReportPath, generateMarkdownReportHeader());
     }
 
-    for (const testScenario of testDef.testScenarios) {
+    for (const testScenario of testDef.scenarios) {
       //TODO: replace index with testScenarioName
       const opts: PostmanCollectionRunnerClientOption = {
         testScenarioFileName: `${this.opt.name}`,
@@ -88,7 +88,7 @@ export class PostmanCollectionGenerator {
       };
 
       const client = inversifyGetInstance(PostmanCollectionRunnerClient, opts);
-      const runner = new TestScenarioRunner({
+      const runner = new ApiScenarioRunner({
         jsonLoader: this.testResourceLoader.jsonLoader,
         env: this.env,
         client: client,
@@ -96,7 +96,7 @@ export class PostmanCollectionGenerator {
       await runner.executeScenario(testScenario);
       // If shared resource-group, move clean to one separate scenario.
       if (!this.opt.skipCleanUp && !this.opt.to) {
-        await runner.cleanAllTestScope();
+        await runner.cleanAllScope();
       }
       for (let i = 0; i < client.collection.items.count(); i++) {
         this.longRunningOperationOrderUpdate(client, i);

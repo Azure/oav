@@ -16,15 +16,15 @@ import { defaultQualityReportFilePath } from "./defaultNaming";
 import { FileLoader } from "./../swagger/fileLoader";
 import { TYPES } from "./../inversifyUtils";
 import { SwaggerExample } from "./../swagger/swaggerTypes";
-import { TestResourceLoader, TestResourceLoaderOption } from "./testResourceLoader";
+import { ApiScenarioLoader, ApiScenarioLoaderOption } from "./apiScenarioLoader";
 import { NewmanReportParser, NewmanReportParserOption } from "./postmanReportParser";
 import {
   RawReport,
   RawExecution,
-  TestDefinitionFile,
-  TestStep,
-  TestStepRestCall,
-} from "./testResourceTypes";
+  ScenarioDefinition,
+  Step,
+  StepRestCall,
+} from "./apiScenarioTypes";
 import { VariableEnv } from "./variableEnv";
 import { getJsonPatchDiff } from "./diffUtils";
 import { BlobUploader, BlobUploaderOption } from "./blobUploader";
@@ -94,7 +94,7 @@ export type ValidationLevel = "validate-request" | "validate-request-response";
 
 export interface ReportGeneratorOption
   extends NewmanReportParserOption,
-    TestResourceLoaderOption,
+    ApiScenarioLoaderOption,
     BlobUploaderOption {
   testDefFilePath: string;
   reportOutputFilePath?: string;
@@ -110,7 +110,7 @@ export interface ReportGeneratorOption
 export class ReportGenerator {
   private exampleQualityValidator: ExampleQualityValidator;
   private swaggerExampleQualityResult: TestScenarioResult;
-  private testDefFile: TestDefinitionFile | undefined;
+  private testDefFile: ScenarioDefinition | undefined;
   private operationIds: Set<string>;
   private rawReport: RawReport | undefined;
   private fileRoot: string;
@@ -119,7 +119,7 @@ export class ReportGenerator {
   constructor(
     @inject(TYPES.opts) private opts: ReportGeneratorOption,
     private postmanReportParser: NewmanReportParser,
-    private testResourceLoader: TestResourceLoader,
+    private testResourceLoader: ApiScenarioLoader,
     private fileLoader: FileLoader,
     private blobUploader: BlobUploader,
     private dataMasker: DataMasker,
@@ -181,7 +181,7 @@ export class ReportGenerator {
       if (it.annotation.type === "simple" || it.annotation.type === "LRO") {
         const runtimeError = [];
         const generatedExample = this.generateExample(it, variables, rawReport);
-        const matchedStep = this.getMatchedStep(it.annotation.step) as TestStepRestCall;
+        const matchedStep = this.getMatchedStep(it.annotation.step) as StepRestCall;
         if (
           Math.floor(it.response.statusCode / 200) !== 1 &&
           it.response.statusCode !== matchedStep.statusCode
@@ -326,7 +326,7 @@ export class ReportGenerator {
 
   private async exampleResponseDiff(
     example: GeneratedExample,
-    matchedStep: TestStep
+    matchedStep: Step
   ): Promise<ResponseDiffItem[]> {
     let res: ResponseDiffItem[] = [];
     if (matchedStep?.type === "restCall") {
@@ -425,15 +425,15 @@ export class ReportGenerator {
     return [];
   }
 
-  private getMatchedStep(stepName: string): TestStep | undefined {
+  private getMatchedStep(stepName: string): Step | undefined {
     for (const it of this.testDefFile?.prepareSteps ?? []) {
-      if (stepName === it.name) {
+      if (stepName === it.step) {
         return it;
       }
     }
-    for (const testScenario of this.testDefFile?.testScenarios ?? []) {
+    for (const testScenario of this.testDefFile?.scenarios ?? []) {
       for (const step of testScenario.steps) {
-        if (stepName === step.name) {
+        if (stepName === step.step) {
           return step;
         }
       }

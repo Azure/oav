@@ -3,10 +3,10 @@ import uuid from "uuid";
 import { defaultQualityReportFilePath } from "./defaultNaming";
 import { setDefaultOpts } from "./../swagger/loader";
 import { ReportGenerator, ReportGeneratorOption, ValidationLevel } from "./reportGenerator";
-import { RawReport } from "./testResourceTypes";
+import { RawReport } from "./apiScenarioTypes";
 import { inversifyGetInstance, TYPES } from "./../inversifyUtils";
 import { NewmanReportParser, NewmanReportParserOption } from "./postmanReportParser";
-import { getSwaggerFilePathsFromTestScenarioFilePath } from "./testResourceLoader";
+import { getSwaggerFilePathsFromApiScenarioFilePath } from "./apiScenarioLoader";
 
 export interface NewmanReportAnalyzerOption extends NewmanReportParserOption {
   reportOutputFilePath?: string;
@@ -44,7 +44,7 @@ export class NewmanReportAnalyzer {
     const testScenarioName = rawReport.metadata.testScenarioName;
     const swaggerFilePaths =
       this.opts.swaggerFilePaths?.length === 0
-        ? getSwaggerFilePathsFromTestScenarioFilePath(testScenarioFilePath)
+        ? getSwaggerFilePathsFromApiScenarioFilePath(testScenarioFilePath)
         : this.opts.swaggerFilePaths;
     const reportGeneratorOption: ReportGeneratorOption = {
       newmanReportFilePath: this.opts.newmanReportFilePath,

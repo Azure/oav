@@ -10,7 +10,7 @@ import {
   JsonPatchOpRemove,
   JsonPatchOpReplace,
   JsonPatchOpTest,
-} from "./testResourceTypes";
+} from "./apiScenarioTypes";
 
 interface PatchContext {
   root: any;

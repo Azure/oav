@@ -9,7 +9,7 @@ import {
 } from "postman-collection";
 import { FileLoader, FileLoaderOption } from "./../swagger/fileLoader";
 import { TYPES } from "./../inversifyUtils";
-import { RawExecution, RawReport, RawRequest, RawResponse } from "./testResourceTypes";
+import { RawExecution, RawReport, RawRequest, RawResponse } from "./apiScenarioTypes";
 
 export interface NewmanReport {
   run: Run;
