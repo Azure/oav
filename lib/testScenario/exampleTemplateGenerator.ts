@@ -83,7 +83,7 @@ export class ExampleTemplateGenerator implements ApiScenarioRunnerClient {
   }
 
   public replaceWithParameterConvention(
-    step: Pick<StepRestCall, "requestParameters" | "responseExpected" | "operation">,
+    step: Pick<StepRestCall, "requestParameters" | "expectedResponse" | "operation">,
     env: VariableEnv
   ) {
     const toMatch: string[] = [];
@@ -116,11 +116,11 @@ export class ExampleTemplateGenerator implements ApiScenarioRunnerClient {
       }
     }
 
-    const responseExpected = cloneDeep(step.responseExpected);
-    replaceAllInObject(responseExpected, toMatch, matchReplace);
-    step.responseExpected = responseExpected;
-    if (responseExpected.body?.location !== undefined && env.get("location") !== undefined) {
-      responseExpected.body.location = "$(location)";
+    const expectedResponse = cloneDeep(step.expectedResponse);
+    replaceAllInObject(expectedResponse, toMatch, matchReplace);
+    step.expectedResponse = expectedResponse;
+    if (expectedResponse.body?.location !== undefined && env.get("location") !== undefined) {
+      expectedResponse.body.location = "$(location)";
     }
   }
 }

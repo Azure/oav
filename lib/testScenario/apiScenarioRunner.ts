@@ -102,22 +102,6 @@ export const getRandomString = (
   return result;
 };
 
-const pathParamRegex = /{(.+?)}/g;
-const resolvePathTemplate = (pathTemplate: string, env: VariableEnv) => {
-  let result = pathTemplate;
-  let offset = 0;
-
-  const matches = pathTemplate.matchAll(pathParamRegex);
-  for (const match of matches) {
-    const idx = match.index! + offset;
-    const toReplace = env.getRequired(match[1]);
-    result = result.substr(0, idx) + toReplace + result.substr(idx + match[0].length);
-    offset = offset + toReplace.length - match[0].length;
-  }
-
-  return result;
-};
-
 export class ApiScenarioRunner {
   private jsonLoader: JsonLoader;
   private client: ApiScenarioRunnerClient;
@@ -255,8 +239,6 @@ export class ApiScenarioRunner {
   }
 
   private async executeRestCallStep(step: StepRestCall, env: VariableEnv, scope: ScopeTracking) {
-    const operation = step.operation;
-
     const pathEnv = new VariableEnv();
     let req: ApiScenarioClientRequest = {
       method: step.operation._method.toUpperCase() as HttpMethods,
@@ -265,16 +247,13 @@ export class ApiScenarioRunner {
       query: {},
     };
 
-    for (const p of operation.parameters ?? []) {
+    for (const p of step.operation.parameters ?? []) {
       const param = this.jsonLoader.resolveRefObj(p);
       const paramValue = step.requestParameters[param.name];
-      if (paramValue === undefined) {
-        if (param.required) {
-          throw new Error(
-            `Parameter value for "${param.name}" is not found in example: ${step.exampleFilePath}`
-          );
-        }
-        continue;
+      if (paramValue === undefined && param.required) {
+        throw new Error(
+          `Parameter value for "${param.name}" is not found in example: ${step.exampleFilePath}`
+        );
       }
 
       switch (param.in) {
@@ -294,8 +273,8 @@ export class ApiScenarioRunner {
           throw new Error(`Parameter "in" not supported: ${param.in}`);
       }
     }
-    const pathTemplate = operation._path._pathTemplate;
-    req.path = resolvePathTemplate(pathTemplate, pathEnv);
+    const pathTemplate = step.operation._path._pathTemplate;
+    req.path = pathEnv.resolveString(pathTemplate, true);
     req = env.resolveObjectValues(req);
 
     await this.client.sendExampleRequest(req, step, {

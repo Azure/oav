@@ -271,7 +271,7 @@ export const ApiScenarioDefinition: Schema & {
           description: "Expected response code",
           default: 200,
         },
-        responseExpected: {},
+        expectedResponse: {},
       },
       required: ["method", "url", "requestHeaders", "requestBody"],
     },

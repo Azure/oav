@@ -13,11 +13,7 @@ import { extractPathParamValue, pathRegexTransformer } from "../../transform/pat
 import { referenceFieldsTransformer } from "../../transform/referenceFieldsTransformer";
 import { applyGlobalTransformers, applySpecTransformers } from "../../transform/transformer";
 import { xmsPathsTransformer } from "../../transform/xmsPathsTransformer";
-import {
-  getBodyParamName,
-  ApiScenarioLoader,
-  ApiScenarioLoaderOption,
-} from "../apiScenarioLoader";
+import { getBodyParamName, ApiScenarioLoader, ApiScenarioLoaderOption } from "../apiScenarioLoader";
 import {
   RawScenarioDefinition,
   RawScenario,
@@ -138,10 +134,7 @@ export class TestScenarioGenerator {
 
     // this.idx = 0;
     for (const track of requestTracking) {
-      const testScenario = await this.generateTestScenario(
-        track,
-        testScenarioFilePath
-      );
+      const testScenario = await this.generateTestScenario(track, testScenarioFilePath);
       testDef.scenarios.push(testScenario);
     }
 
@@ -198,7 +191,7 @@ export class TestScenarioGenerator {
           parameters: testStep.requestParameters,
           responses: {
             [testStep.statusCode.toString()]: {
-              body: testStep.responseExpected,
+              body: testStep.expectedResponse,
             },
           },
         };
@@ -244,8 +237,7 @@ export class TestScenarioGenerator {
           statusCode: testStep.statusCode === 200 ? undefined : testStep.statusCode,
           resourceUpdate: testStep.resourceUpdate?.length > 0 ? testStep.resourceUpdate : undefined,
           variables: testStep.variables,
-        }
-        );
+        });
       }
     }
 
@@ -307,7 +299,7 @@ export class TestScenarioGenerator {
       requestBody: toString(record.body),
       requestHeaders: record.headers,
       statusCode: record.responseCode === 200 ? undefined : record.responseCode,
-      responseExpected: toString(record.responseBody),
+      expectedResponse: toString(record.responseBody),
     };
     return rawCall;
   }
@@ -354,14 +346,14 @@ export class TestScenarioGenerator {
       operation,
       operationId: operation.operationId!,
       requestParameters,
-      responseExpected: record.responseBody,
+      expectedResponse: record.responseBody,
       variables: Object.keys(variables).length > 0 ? variables : undefined,
     } as StepRestCall;
 
     const finalGet = await this.skipLroPoll(records, operation, record, armInfo);
     if (finalGet !== undefined && operation[xmsLongRunningOperation]) {
       step.statusCode = 200;
-      step.responseExpected = finalGet.responseBody;
+      step.expectedResponse = finalGet.responseBody;
     } else if (operation[xmsLongRunningOperation]) {
       step.statusCode = 200;
     }
@@ -382,7 +374,7 @@ export class TestScenarioGenerator {
         const bodyParamName = getBodyParamName(step.operation, this.jsonLoader);
         if (bodyParamName !== undefined) {
           const { result, inconsistentWarningPaths } = this.bodyTransformer.deepMerge(
-            step.responseExpected,
+            step.expectedResponse,
             step.requestParameters[bodyParamName]
           );
           if (inconsistentWarningPaths.length > 0) {
@@ -394,7 +386,7 @@ export class TestScenarioGenerator {
             }
           }
           eraseUnwantedKeys(result);
-          const lastStepResult = cloneDeep(lastStep.responseExpected);
+          const lastStepResult = cloneDeep(lastStep.expectedResponse);
           eraseUnwantedKeys(lastStepResult);
           const diff = getJsonPatchDiff(lastStepResult, result, { minimizeDiff: false });
           step.resourceUpdate = diff;
@@ -470,13 +462,13 @@ export class TestScenarioGenerator {
       operation,
       statusCode,
       requestParameters: example.parameters,
-      responseExpected: example.responses[statusCode],
+      expectedResponse: example.responses[statusCode],
     };
     this.exampleTemplateGenerator.replaceWithParameterConvention(step, env);
 
     const exampleStr = jsonStringify({
       requestParameters: step.requestParameters,
-      responseExpected: step.responseExpected,
+      expectedResponse: step.expectedResponse,
     });
     return `${operation.operationId}_${exampleStr}`;
   }

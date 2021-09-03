@@ -167,15 +167,15 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       await this.initialize();
     }
 
-    const rawTestDef = await this.apiScenarioYamlLoader.load(filePath);
+    const rawDef = await this.apiScenarioYamlLoader.load(filePath);
 
     const scenarioDef: ScenarioDefinition = {
-      scope: rawTestDef.scope ?? "ResourceGroup",
+      scope: rawDef.scope ?? "ResourceGroup",
       prepareSteps: [],
       scenarios: [],
       _filePath: this.fileLoader.relativePath(filePath),
       cleanUpSteps: [],
-      ...convertVariables(rawTestDef.variables),
+      ...convertVariables(rawDef.variables),
     };
 
     if (scenarioDef.scope === "ResourceGroup") {
@@ -191,70 +191,67 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       scenarioDef: scenarioDef,
     };
 
-    for (const rawStep of rawTestDef.prepareSteps ?? []) {
-      const step = await this.loadTestStep(rawStep, ctx);
+    for (const rawStep of rawDef.prepareSteps ?? []) {
+      const step = await this.loadStep(rawStep, ctx);
       step.isPrepareStep = true;
       scenarioDef.prepareSteps.push(step);
     }
 
-    for (const rawStep of rawTestDef.cleanUpSteps ?? []) {
-      const step = await this.loadTestStep(rawStep, ctx);
+    for (const rawStep of rawDef.cleanUpSteps ?? []) {
+      const step = await this.loadStep(rawStep, ctx);
       step.isCleanUpStep = true;
       scenarioDef.cleanUpSteps.push(step);
     }
 
-    for (const rawScenario of rawTestDef.scenarios) {
-      const testScenario = await this.loadTestScenario(rawScenario, ctx);
-      scenarioDef.scenarios.push(testScenario);
+    for (const rawScenario of rawDef.scenarios) {
+      const scenario = await this.loadScenario(rawScenario, ctx);
+      scenarioDef.scenarios.push(scenario);
     }
 
     return scenarioDef;
   }
 
-  private async loadTestScenario(
-    rawTestScenario: RawScenario,
-    ctx: ApiScenarioContext
-  ): Promise<Scenario> {
+  private async loadScenario(rawScenario: RawScenario, ctx: ApiScenarioContext): Promise<Scenario> {
     const resolvedSteps: Step[] = [];
     const steps: Step[] = [];
-    const { scenarioDef: testDef } = ctx;
+    const { scenarioDef } = ctx;
 
-    for (const step of testDef.prepareSteps) {
+    for (const step of scenarioDef.prepareSteps) {
       resolvedSteps.push(step);
     }
 
-    const variableScope = convertVariables(rawTestScenario.variables);
+    const variableScope = convertVariables(rawScenario.variables);
     variableScope.requiredVariables = [
-      ...new Set([...testDef.requiredVariables, ...variableScope.requiredVariables]),
+      ...new Set([...scenarioDef.requiredVariables, ...variableScope.requiredVariables]),
     ];
 
-    const testScenario: Scenario = {
-      scenario: rawTestScenario.scenario,
-      description: rawTestScenario.description ?? "",
-      shareScope: rawTestScenario.shareScope ?? true,
+    const scenario: Scenario = {
+      scenario: rawScenario.scenario,
+      description: rawScenario.description ?? "",
+      shareScope: rawScenario.shareScope ?? true,
       steps,
       _resolvedSteps: resolvedSteps,
-      _scenarioDef: testDef,
+      _scenarioDef: scenarioDef,
       ...variableScope,
     };
-    ctx.scenario = testScenario;
+    ctx.scenario = scenario;
 
-    for (const rawStep of rawTestScenario.steps) {
-      const step = await this.loadTestStep(rawStep, ctx);
+    for (const rawStep of rawScenario.steps) {
+      const step = await this.loadStep(rawStep, ctx);
       resolvedSteps.push(step);
       steps.push(step);
     }
 
-    for (const step of testDef.cleanUpSteps) {
+    for (const step of scenarioDef.cleanUpSteps) {
       resolvedSteps.push(step);
     }
 
-    await this.exampleTemplateGenerator.generateExampleTemplateForTestScenario(testScenario);
+    await this.exampleTemplateGenerator.generateExampleTemplateForTestScenario(scenario);
 
-    return testScenario;
+    return scenario;
   }
 
-  private async loadTestStep(rawStep: RawStep, ctx: ApiScenarioContext): Promise<Step> {
+  private async loadStep(rawStep: RawStep, ctx: ApiScenarioContext): Promise<Step> {
     let testStep: Step;
 
     if ("exampleFile" in rawStep || "operationId" in rawStep) {
@@ -358,7 +355,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       operationId: "",
       operation: {} as Operation,
       requestParameters: {} as SwaggerExample["parameters"],
-      responseExpected: {},
+      expectedResponse: {},
       exampleId: "",
       resourceType: "",
       statusCode: rawStep.statusCode ?? 200,
@@ -378,7 +375,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     }
 
     if (step.resourceUpdate.length > 0) {
-      let target = cloneDeep(step.responseExpected);
+      let target = cloneDeep(step.expectedResponse);
       const bodyParamName = getBodyParamName(step.operation, this.jsonLoader);
       if (bodyParamName !== undefined) {
         try {
@@ -398,7 +395,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
         step.requestParameters[bodyParamName] = convertedRequest;
       }
 
-      step.responseExpected = await this.bodyTransformer.requestBodyToResponse(
+      step.expectedResponse = await this.bodyTransformer.requestBodyToResponse(
         target,
         step.operation.responses[step.statusCode].schema!
       );
@@ -411,7 +408,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       );
     }
     if (step.responseUpdate.length > 0) {
-      step.responseExpected = jsonPatchApply(cloneDeep(step.responseExpected), step.responseUpdate);
+      step.expectedResponse = jsonPatchApply(cloneDeep(step.expectedResponse), step.responseUpdate);
     }
 
     ctx.stepTracking.set(step.step, step);
@@ -443,15 +440,15 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     switch (step.operation._method) {
       case "put":
         step.requestParameters = { ...lastStep.requestParameters };
-        step.responseExpected = { ...lastStep.responseExpected };
+        step.expectedResponse = { ...lastStep.expectedResponse };
         break;
       case "get":
         step.requestParameters = { ...lastStep.requestParameters };
-        step.responseExpected = { ...lastStep.responseExpected };
+        step.expectedResponse = { ...lastStep.expectedResponse };
         break;
       case "patch":
         step.requestParameters = { ...lastStep.requestParameters };
-        step.responseExpected = { ...lastStep.responseExpected };
+        step.expectedResponse = { ...lastStep.expectedResponse };
         break;
       case "delete":
         step.requestParameters = { ...lastStep.requestParameters };
@@ -468,7 +465,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
   private async loadRestCallExampleFile(step: StepRestCall, ctx: ApiScenarioContext) {
     const filePath = step.exampleFile;
     if (filePath === undefined) {
-      throw new Error(`RestCall step must specify "exampleFile" or "fromStep"`);
+      throw new Error(`RestCall step must specify "exampleFile" or "operationId"`);
     }
 
     const exampleFilePath = pathJoin(dirname(ctx.scenarioDef._filePath), filePath);
@@ -478,10 +475,12 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     const exampleFileContent = JSON.parse(fileContent) as SwaggerExample;
 
     step.requestParameters = exampleFileContent.parameters;
-    step.responseExpected = exampleFileContent.responses[step.statusCode]?.body;
+    step.expectedResponse = exampleFileContent.responses[step.statusCode]?.body;
 
     // Load Operation
-    const opMap = this.exampleToOperation.get(exampleFilePath);
+    const opMap = exampleFileContent.operationId
+      ? this.nameToOperation.get(exampleFileContent.operationId)
+      : this.exampleToOperation.get(exampleFilePath);
     if (opMap === undefined) {
       throw new Error(`Example file is not referenced by any operation: ${filePath}`);
     }

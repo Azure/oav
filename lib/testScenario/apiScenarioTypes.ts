@@ -79,7 +79,7 @@ export type StepRestCall = TransformRaw<
     exampleId: string;
     exampleFilePath?: string;
     requestParameters: SwaggerExample["parameters"];
-    responseExpected: SwaggerExample["responses"]["200"]["body"];
+    expectedResponse: SwaggerExample["responses"]["200"]["body"];
   } & StepBase,
   "exampleFile" | "resourceName" | "description"
 >;
@@ -156,7 +156,7 @@ export type RawStepRawCall = RawStepBase & {
   requestHeaders: { [headName: string]: string };
   requestBody: string;
   statusCode?: number;
-  responseExpected?: string;
+  expectedResponse?: string;
 };
 
 export type StepRawCall = TransformRaw<
@@ -164,7 +164,7 @@ export type StepRawCall = TransformRaw<
   {
     type: "rawCall";
   } & StepBase,
-  "responseExpected" | "description"
+  "expectedResponse" | "description"
 >;
 //#endregion
 

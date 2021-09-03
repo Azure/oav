@@ -334,7 +334,7 @@ export class ReportGenerator {
         res = res.concat(
           await this.responseDiff(
             example.example.responses[matchedStep.statusCode]?.body || {},
-            matchedStep.responseExpected,
+            matchedStep.expectedResponse,
             this.rawReport!.variables,
             `/${matchedStep.statusCode}/body`,
             matchedStep.operation.responses[matchedStep.statusCode].schema

@@ -320,6 +320,9 @@ export interface XMsParameterizedHost {
 
 // ---------------------------- Example --------------------------------------
 export interface SwaggerExample {
+  operationId?: string;
+  title?: string;
+  description?: string;
   parameters: {
     "api-version": string;
     [parameterName: string]: any;

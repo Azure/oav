@@ -14,14 +14,16 @@ const ajv = new AjvInit({
 });
 @injectable()
 export class ApiScenarioYamlLoader implements Loader<RawScenarioDefinition> {
-  private validateApiScenarioFile: ValidateFunction;
   private fileCache: Map<string, string> = new Map();
+  private validateApiScenarioFile: ValidateFunction;
 
   public constructor(private fileLoader: FileLoader) {
     this.validateApiScenarioFile = ajv.compile(ApiScenarioDefinition);
   }
 
   public async load(filePath: string): Promise<RawScenarioDefinition> {
+    this.fileCache.clear();
+
     const fileContent = await this.fileLoader.load(filePath);
     yamlLoad(fileContent, {
       schema: DEFAULT_SCHEMA.extend(
@@ -30,7 +32,9 @@ export class ApiScenarioYamlLoader implements Loader<RawScenarioDefinition> {
           resolve: (data: any) => {
             if (typeof data === "string") {
               data = data.toLowerCase();
-              return data.endsWith(".ps1") || data.endsWith(".sh");
+              if (data.endsWith(".ps1") || data.endsWith(".sh")) {
+                return true;
+              }
             }
             throw new YAMLException(`unsupported include file: ${data}`);
           },
@@ -41,6 +45,7 @@ export class ApiScenarioYamlLoader implements Loader<RawScenarioDefinition> {
         })
       ),
     });
+
     for (const file of this.fileCache.keys()) {
       const fileContent = await this.fileLoader.load(pathResolve(dirname(filePath), file));
       this.fileCache.set(file, fileContent);
