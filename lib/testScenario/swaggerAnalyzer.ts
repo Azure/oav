@@ -26,7 +26,9 @@ import { applyGlobalTransformers, applySpecTransformers } from "../transform/tra
 import { traverseSwaggerAsync } from "../transform/traverseSwagger";
 import { getProvider } from "../util/utils";
 import { setDefaultOpts } from "../swagger/loader";
+import { TestDefinitionFile } from "./testResourceTypes";
 import { SchemaSearcher } from "./schemaSearcher";
+import { CoverageCalculator, OperationCoverageResult } from "./coverageCalculator";
 
 export interface SwaggerAnalyzerOption
   extends FileLoaderOption,
@@ -113,6 +115,10 @@ export class SwaggerAnalyzer {
       filerTopLevelResourceType: false,
     });
     return inversifyGetInstance(SwaggerAnalyzer, opts);
+  }
+
+  public calculateOperationCoverage(testDef: TestDefinitionFile): OperationCoverageResult {
+    return CoverageCalculator.calculateOperationCoverage(testDef, this.swaggerSpecs);
   }
 
   public async analyzeDependency(): Promise<ExampleDependency[]> {

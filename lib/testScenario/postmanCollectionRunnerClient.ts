@@ -28,7 +28,12 @@ import { NewmanReportAnalyzer, NewmanReportAnalyzerOption } from "./postmanRepor
 import { inversifyGetInstance, TYPES } from "./../inversifyUtils";
 import { BlobUploader, BlobUploaderOption } from "./blobUploader";
 import { PostmanTestScript, TestScriptType } from "./postmanTestScript";
-import { ArmTemplate, TestStepArmTemplateDeployment, TestStepRestCall } from "./testResourceTypes";
+import {
+  ArmTemplate,
+  TestDefinitionFile,
+  TestStepArmTemplateDeployment,
+  TestStepRestCall,
+} from "./testResourceTypes";
 import {
   ArmDeploymentTracking,
   TestScenarioClientRequest,
@@ -52,6 +57,7 @@ export interface PostmanCollectionRunnerClientOption extends BlobUploaderOption,
   testScenarioFileName: string;
   enableBlobUploader: boolean;
   env: VariableEnv;
+  testDef?: TestDefinitionFile;
   testScenarioFilePath?: string;
   reportOutputFolder?: string;
   markdownReportPath?: string;
@@ -508,7 +514,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
       this.dataMasker.jsonStringify(env)
     );
 
-    console.log("\ngenerate collection successfully!");
+    console.log(`\ngenerate collection successfully!`);
     console.log(`Postman collection: '${collectionPath}'. Postman env: '${envPath}' `);
     console.log(`Command: newman run ${collectionPath} -e ${envPath} -r 'json,cli'`);
   }
