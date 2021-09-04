@@ -124,11 +124,11 @@ export const builder: yargs.CommandBuilder = {
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
   await cliSuppressExceptions(async () => {
-    const testScenarioFilePath = path.resolve(argv.testScenario);
-    const swaggerFilePaths = getSwaggerFilePathsFromApiScenarioFilePath(testScenarioFilePath);
+    const scenarioFilePath = path.resolve(argv.testScenario);
+    const swaggerFilePaths = getSwaggerFilePathsFromApiScenarioFilePath(scenarioFilePath);
     if (swaggerFilePaths.length === 0) {
       throw new Error(
-        `Run test scenario failed. can not find related swagger file. ${testScenarioFilePath}`
+        `Failed to run api scenario: Could not find related swagger file. ${scenarioFilePath}`
       );
     }
     let env: any = {};
@@ -140,7 +140,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       for (const key of Object.keys(envFromVariable)) {
         if (env[key] !== undefined && envFromVariable[key] !== env[key]) {
           printWarning(
-            `Notice: the varaible '${key}' in '${argv.e}' is overrided by the varaible in the environment '${testScenarioEnvKey}'.`
+            `Notice: the variable '${key}' in '${argv.e}' is overwritten by the variable in the environment '${testScenarioEnvKey}'.`
           );
         }
       }
@@ -148,7 +148,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     }
     // fileRoot is the nearest common root of all swagger file paths
     const fileRoot = path.dirname(swaggerFilePaths[0]);
-    const resourceProvider = getProviderFromFilePath(testScenarioFilePath);
+    const resourceProvider = getProviderFromFilePath(scenarioFilePath);
     const apiVersion = getApiVersionFromSwaggerFile(swaggerFilePaths[0]);
     if (argv.location !== undefined) {
       env.location = argv.location;
@@ -161,8 +161,8 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       env.resourceGroupName = argv.resourceGroup;
     }
     const opt: PostmanCollectionGeneratorOption = {
-      name: `${resourceProvider}/${apiVersion}/${getFileNameFromPath(testScenarioFilePath)}`,
-      testDef: testScenarioFilePath,
+      name: `${resourceProvider}/${apiVersion}/${getFileNameFromPath(scenarioFilePath)}`,
+      scenarioDef: scenarioFilePath,
       swaggerFilePaths: swaggerFilePaths,
       fileRoot: fileRoot,
       checkUnderFileRoot: false,

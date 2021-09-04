@@ -1,5 +1,5 @@
-const variableRegex = /\$\(([A-Za-z_][A-Za-z0-9_]*)\)/g;
-const pathVariableRegex = /\{([A-Za-z_][A-Za-z0-9_]*)\}/g;
+const variableRegex = /\$\(([A-Za-z_][A-Za-z0-9_]*)\)/;
+const pathVariableRegex = /\{([A-Za-z_][A-Za-z0-9_]*)\}/;
 export class VariableEnv {
   protected baseEnv?: VariableEnv;
   protected data: { [key: string]: string } = {};
@@ -59,9 +59,10 @@ export class VariableEnv {
   private resolveStringWithRegex(source: string, isPathVariable: boolean): string {
     let match;
     const regex = isPathVariable ? pathVariableRegex : variableRegex;
+    const globalRegex = new RegExp(regex, "g");
     while (regex.test(source)) {
       const current = source;
-      while ((match = regex.exec(source))) {
+      while ((match = globalRegex.exec(source))) {
         source =
           source.substring(0, match.index) +
           this.getRequired(match[1]) +

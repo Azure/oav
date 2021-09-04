@@ -79,7 +79,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       );
       const opt: PostmanCollectionGeneratorOption = {
         name: testScenarioFilePath.replace(/^.*[\\\/]/, "").replace(".yaml", ""),
-        testDef: testScenarioFilePath,
+        scenarioDef: testScenarioFilePath,
         swaggerFilePaths: swaggerFilePaths,
         fileRoot: fileRoot,
         checkUnderFileRoot: true,

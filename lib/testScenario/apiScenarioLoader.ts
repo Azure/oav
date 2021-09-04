@@ -356,7 +356,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       operation: {} as Operation,
       requestParameters: {} as SwaggerExample["parameters"],
       expectedResponse: {},
-      exampleId: "",
+      exampleName: "",
       resourceType: "",
       statusCode: rawStep.statusCode ?? 200,
       outputVariables: rawStep.outputVariables ?? {},
@@ -465,7 +465,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
   private async loadRestCallExampleFile(step: StepRestCall, ctx: ApiScenarioContext) {
     const filePath = step.exampleFile;
     if (filePath === undefined) {
-      throw new Error(`RestCall step must specify "exampleFile" or "operationId"`);
+      throw new Error(`RestCall step must specify "exampleFile" or "operationName"`);
     }
 
     const exampleFilePath = pathJoin(dirname(ctx.scenarioDef._filePath), filePath);
@@ -490,7 +490,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
         `Example file is referenced by multiple operation: ${Object.keys(opMap)} ${filePath}`
       );
     }
-    [step.operation, step.exampleId] = ops[0];
+    [step.operation, step.exampleName] = ops[0];
     step.operationId = step.operation.operationId!;
 
     // Load resource type

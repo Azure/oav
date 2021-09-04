@@ -21,7 +21,7 @@ export interface PostmanCollectionGeneratorOption
   name: string;
   fileRoot: string;
   swaggerFilePaths: string[];
-  testDef: string;
+  scenarioDef: string;
   env: {};
   outputFolder: string;
   markdownReportPath?: string;
@@ -43,7 +43,7 @@ export class PostmanCollectionGenerator {
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
   constructor(
     @inject(TYPES.opts) private opt: PostmanCollectionGeneratorOption,
-    private testResourceLoader: ApiScenarioLoader,
+    private apiScenarioLoader: ApiScenarioLoader,
     private fileLoader: FileLoader
   ) {
     this.env = new VariableEnv();
@@ -51,9 +51,9 @@ export class PostmanCollectionGenerator {
   }
 
   public async GenerateCollection(): Promise<void> {
-    const testDef = await this.testResourceLoader.load(this.opt.testDef);
-    this.env.setBatch(testDef.variables);
-    for (const it of testDef.requiredVariables) {
+    const scenarioDef = await this.apiScenarioLoader.load(this.opt.scenarioDef);
+    this.env.setBatch(scenarioDef.variables);
+    for (const it of scenarioDef.requiredVariables) {
       if (this.env.get(it) === undefined) {
         throw new Error(
           `Missing required variable '${it}', please set variable values in env.json.`
@@ -66,19 +66,19 @@ export class PostmanCollectionGenerator {
       await this.fileLoader.writeFile(this.opt.markdownReportPath, generateMarkdownReportHeader());
     }
 
-    for (const testScenario of testDef.scenarios) {
+    for (const scenario of scenarioDef.scenarios) {
       //TODO: replace index with testScenarioName
       const opts: PostmanCollectionRunnerClientOption = {
         testScenarioFileName: `${this.opt.name}`,
-        testScenarioName: `${getFileNameFromPath(this.opt.testDef)}_${index}`,
+        testScenarioName: `${getFileNameFromPath(this.opt.scenarioDef)}_${index}`,
         env: this.env,
         enableBlobUploader: this.opt.enableBlobUploader!,
-        testScenarioFilePath: this.opt.testDef,
+        testScenarioFilePath: this.opt.scenarioDef,
         reportOutputFolder: this.opt.outputFolder,
         markdownReportPath: this.opt.markdownReportPath,
         junitReportPath: this.opt.junitReportPath,
         runId: runId,
-        jsonLoader: this.testResourceLoader.jsonLoader,
+        jsonLoader: this.apiScenarioLoader.jsonLoader,
         baseUrl: this.opt.baseUrl,
         validationLevel: this.opt.validationLevel,
         from: this.opt.from,
@@ -89,11 +89,11 @@ export class PostmanCollectionGenerator {
 
       const client = inversifyGetInstance(PostmanCollectionRunnerClient, opts);
       const runner = new ApiScenarioRunner({
-        jsonLoader: this.testResourceLoader.jsonLoader,
+        jsonLoader: this.apiScenarioLoader.jsonLoader,
         env: this.env,
         client: client,
       });
-      await runner.executeScenario(testScenario);
+      await runner.executeScenario(scenario);
       // If shared resource-group, move clean to one separate scenario.
       if (!this.opt.skipCleanUp && !this.opt.to) {
         await runner.cleanAllScope();
