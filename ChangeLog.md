@@ -5,6 +5,7 @@
 - support calculate test scenario operation coverage
 - OAV runner support step scope variables
 - Fix runner armTemplate output as runtime variable
+- Runner support identify step level variables by using different variable name prefix.
 
 ## 08/17/2021 2.8.0
 
