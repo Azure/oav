@@ -381,33 +381,6 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       await this.loadRestCallOperation(step, ctx);
     }
 
-    if (step.resourceUpdate.length > 0) {
-      let target = cloneDeep(step.expectedResponse);
-      const bodyParamName = getBodyParamName(step.operation, this.jsonLoader);
-      if (bodyParamName !== undefined) {
-        try {
-          this.bodyTransformer.deepMerge(target, step.requestParameters[bodyParamName]);
-        } catch (err) {
-          console.error(err);
-        }
-      }
-      target = jsonPatchApply(target, step.resourceUpdate);
-
-      if (bodyParamName !== undefined) {
-        const convertedRequest = await this.bodyTransformer.resourceToRequest(
-          target,
-          // TODO use request schema? (step.operation.parameters[bodyParamName] as BodyParameter).schema!
-          step.operation.responses[step.statusCode].schema!
-        );
-        step.requestParameters[bodyParamName] = convertedRequest;
-      }
-
-      step.expectedResponse = await this.bodyTransformer.resourceToResponse(
-        target,
-        step.operation.responses[step.statusCode].schema!
-      );
-    }
-
     if (step.requestUpdate.length > 0) {
       step.requestParameters = jsonPatchApply(
         cloneDeep(step.requestParameters),
@@ -436,9 +409,9 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     }
     step.operation = operation;
 
-    const previousResource = cloneDeep(resource.resource);
+    const target = cloneDeep(resource.resource);
     if (step.resourceUpdate.length > 0) {
-      resource.resource = jsonPatchApply(resource.resource, step.resourceUpdate);
+      jsonPatchApply(target, step.resourceUpdate);
     }
     const bodyParamName = getBodyParamName(step.operation, this.jsonLoader);
 
@@ -447,32 +420,29 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
         step.requestParameters = { ...resource.identifier };
         if (bodyParamName !== undefined) {
           step.requestParameters[bodyParamName] = await this.bodyTransformer.resourceToRequest(
-            resource.resource,
+            target,
             step.operation.responses[step.statusCode].schema!
           );
         }
         step.expectedResponse = await this.bodyTransformer.resourceToResponse(
-          resource.resource,
+          target,
           step.operation.responses[step.statusCode].schema!
         );
         break;
       case "get":
         step.requestParameters = { ...resource.identifier };
         step.expectedResponse = await this.bodyTransformer.resourceToResponse(
-          resource.resource,
+          target,
           step.operation.responses[step.statusCode].schema!
         );
         break;
       case "patch":
         step.requestParameters = { ...resource.identifier };
         if (bodyParamName !== undefined) {
-          step.requestParameters[bodyParamName] = jsonMergePatchGenerate(
-            previousResource,
-            resource.resource
-          );
+          step.requestParameters[bodyParamName] = jsonMergePatchGenerate(resource.resource, target);
         }
         step.expectedResponse = await this.bodyTransformer.resourceToResponse(
-          resource.resource,
+          target,
           step.operation.responses[step.statusCode].schema!
         );
         break;
@@ -485,6 +455,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       default:
         throw new Error(`Unsupported operation ${step.operationId} in step ${step.step}`);
     }
+    resource.resource = target;
 
     return step;
   }
@@ -519,6 +490,33 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     }
     [step.operation, step.exampleName] = ops[0];
     step.operationId = step.operation.operationId!;
+
+    if (step.resourceUpdate.length > 0) {
+      let target = cloneDeep(step.expectedResponse);
+      const bodyParamName = getBodyParamName(step.operation, this.jsonLoader);
+      if (bodyParamName !== undefined) {
+        try {
+          this.bodyTransformer.deepMerge(target, step.requestParameters[bodyParamName]);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+      target = jsonPatchApply(target, step.resourceUpdate);
+
+      if (bodyParamName !== undefined) {
+        const convertedRequest = await this.bodyTransformer.resourceToRequest(
+          target,
+          // TODO use request schema? (step.operation.parameters[bodyParamName] as BodyParameter).schema!
+          step.operation.responses[step.statusCode].schema!
+        );
+        step.requestParameters[bodyParamName] = convertedRequest;
+      }
+
+      step.expectedResponse = await this.bodyTransformer.resourceToResponse(
+        target,
+        step.operation.responses[step.statusCode].schema!
+      );
+    }
 
     if (step.resourceName) {
       if (!["put", "get"].includes(step.operation._method)) {
