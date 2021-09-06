@@ -116,7 +116,7 @@ const roundtripInconsistentProperty: ExampleValidationFunc = async (
       const respSchema = operation.responses[statusCode].schema;
       if (reqSchema && reqSchema.schema?.$ref === respSchema?.$ref) {
         const schema = jsonLoader.resolveRefObj(respSchema);
-        const responseObj = await exampleValidationContext.bodyTransform?.responseBodyToRequest(
+        const responseObj = await exampleValidationContext.bodyTransform?.resourceToRequest(
           example.responses[statusCode].body,
           schema!
         );

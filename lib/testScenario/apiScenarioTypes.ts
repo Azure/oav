@@ -75,7 +75,6 @@ export type StepRestCall = TransformRaw<
     type: "restCall";
     operationId: string;
     operation: Operation;
-    resourceType: string;
     exampleName: string;
     exampleFilePath?: string;
     requestParameters: SwaggerExample["parameters"];

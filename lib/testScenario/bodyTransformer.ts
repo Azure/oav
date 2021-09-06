@@ -11,15 +11,15 @@ import { jsonPatchApply } from "./diffUtils";
 export class BodyTransformer {
   public constructor(@inject(TYPES.schemaValidator) private validator: SchemaValidator) {}
 
-  public async responseBodyToRequest(body: any, responseSchema: Schema): Promise<any> {
+  public async resourceToRequest(resource: any, responseSchema: Schema): Promise<any> {
     const validateFn = await this.validator.compileAsync(responseSchema);
     // Readonly field cannot be set in response, so we could filter readonly fields
     const errors = validateFn(
       { isResponse: false, includeErrors: ["READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST"] },
-      body
+      resource
     );
 
-    const result = cloneDeep(body);
+    const result = cloneDeep(resource);
     for (const err of errors) {
       for (const jsonPath of err.jsonPathsInPayload) {
         const jsonPointer = jsonPathToPointer(jsonPath);
@@ -34,7 +34,7 @@ export class BodyTransformer {
     return result;
   }
 
-  public async requestBodyToResponse(body: any, requestSchema: Schema): Promise<any> {
+  public async resourceToResponse(resource: any, requestSchema: Schema): Promise<any> {
     const validateFn = await this.validator.compileAsync(requestSchema);
     // Writeonly field cannot be set in request, so we could filter writeonly fields
     const errors = validateFn(
@@ -42,10 +42,10 @@ export class BodyTransformer {
         isResponse: false,
         includeErrors: ["WRITEONLY_PROPERTY_NOT_ALLOWED_IN_RESPONSE", "SECRET_PROPERTY"],
       },
-      body
+      resource
     );
 
-    const result = cloneDeep(body);
+    const result = cloneDeep(resource);
     for (const err of errors) {
       for (const jsonPath of err.jsonPathsInPayload) {
         const jsonPointer = jsonPathToPointer(jsonPath);

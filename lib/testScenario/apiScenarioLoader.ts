@@ -2,6 +2,8 @@
 
 import { join as pathJoin, dirname } from "path";
 import { dump as yamlDump } from "js-yaml";
+import { pickBy } from "lodash";
+import { generate as jsonMergePatchGenerate } from "json-merge-patch";
 import { inject, injectable } from "inversify";
 import { cloneDeep } from "@azure-tools/openapi-tools-common";
 import { Loader, setDefaultOpts } from "../swagger/loader";
@@ -19,10 +21,9 @@ import { nullableTransformer } from "../transform/nullableTransformer";
 import { pureObjectTransformer } from "../transform/pureObjectTransformer";
 import { SwaggerLoader, SwaggerLoaderOption } from "../swagger/swaggerLoader";
 import { applySpecTransformers, applyGlobalTransformers } from "../transform/transformer";
-import { SwaggerSpec, Operation, SwaggerExample } from "../swagger/swaggerTypes";
+import { SwaggerSpec, Operation, SwaggerExample, Parameter } from "../swagger/swaggerTypes";
 import { traverseSwagger } from "../transform/traverseSwagger";
 import { inversifyGetInstance, TYPES } from "../inversifyUtils";
-import { getProvider } from "../util/utils";
 import {
   VariableScope,
   ScenarioDefinition,
@@ -43,7 +44,6 @@ import {
 import { ExampleTemplateGenerator } from "./exampleTemplateGenerator";
 import { BodyTransformer } from "./bodyTransformer";
 import { jsonPatchApply } from "./diffUtils";
-import { getResourceFromPath, getResourceTypePath } from "./swaggerAnalyzer";
 import { ApiScenarioYamlLoader } from "./apiScenarioYamlLoader";
 
 export interface ApiScenarioLoaderOption
@@ -53,9 +53,14 @@ export interface ApiScenarioLoaderOption
   swaggerFilePaths?: string[];
 }
 
+interface Resource {
+  identifier: SwaggerExample["parameters"];
+  resource: any;
+}
+
 interface ApiScenarioContext {
   stepTracking: Map<string, Step>;
-  resourceTracking: Map<string, Step>;
+  resourceTracking: Map<string, Resource>;
   scenarioDef: ScenarioDefinition;
   scenario?: Scenario;
 }
@@ -246,6 +251,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       resolvedSteps.push(step);
     }
 
+    // TODO
     await this.exampleTemplateGenerator.generateExampleTemplateForTestScenario(scenario);
 
     return scenario;
@@ -255,11 +261,11 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     let testStep: Step;
 
     if ("exampleFile" in rawStep || "operationId" in rawStep) {
-      testStep = await this.loadTestStepRestCall(rawStep, ctx);
+      testStep = await this.loadStepRestCall(rawStep, ctx);
     } else if ("armTemplateDeployment" in rawStep) {
-      testStep = await this.loadTestStepArmTemplate(rawStep, ctx);
+      testStep = await this.loadStepArmTemplate(rawStep, ctx);
     } else if ("rawUrl" in rawStep) {
-      testStep = await this.loadTestStepRawCall(rawStep, ctx);
+      testStep = await this.loadStepRawCall(rawStep, ctx);
     } else {
       throw new Error(`Invalid step: ${JSON.stringify(rawStep)}`);
     }
@@ -273,7 +279,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     return testStep;
   }
 
-  private async loadTestStepRawCall(
+  private async loadStepRawCall(
     rawStep: RawStepRawCall,
     _ctx: ApiScenarioContext
   ): Promise<StepRawCall> {
@@ -287,7 +293,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     return step;
   }
 
-  private async loadTestStepArmTemplate(
+  private async loadStepArmTemplate(
     rawStep: RawStepArmTemplate,
     ctx: ApiScenarioContext
   ): Promise<StepArmTemplate> {
@@ -338,7 +344,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     return step;
   }
 
-  private async loadTestStepRestCall(
+  private async loadStepRestCall(
     rawStep: RawStepRestCall | RawStepRestOperation,
     ctx: ApiScenarioContext
   ): Promise<StepRestCall> {
@@ -357,7 +363,6 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       requestParameters: {} as SwaggerExample["parameters"],
       expectedResponse: {},
       exampleName: "",
-      resourceType: "",
       statusCode: rawStep.statusCode ?? 200,
       outputVariables: rawStep.outputVariables ?? {},
       resourceUpdate: rawStep.resourceUpdate ?? [],
@@ -366,9 +371,11 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       ...convertVariables(rawStep.variables),
     };
 
+    ctx.stepTracking.set(step.step, step);
+
     if ("exampleFile" in rawStep) {
       step.exampleFile = rawStep.exampleFile;
-      await this.loadRestCallExampleFile(step, ctx);
+      await this.loadRestCallExample(step, ctx);
     } else if ("operationId" in rawStep) {
       step.operationId = rawStep.operationId;
       await this.loadRestCallOperation(step, ctx);
@@ -381,21 +388,21 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
         try {
           this.bodyTransformer.deepMerge(target, step.requestParameters[bodyParamName]);
         } catch (err) {
-          console.log("err");
-          console.log(err);
+          console.error(err);
         }
       }
       target = jsonPatchApply(target, step.resourceUpdate);
 
       if (bodyParamName !== undefined) {
-        const convertedRequest = await this.bodyTransformer.responseBodyToRequest(
+        const convertedRequest = await this.bodyTransformer.resourceToRequest(
           target,
+          // TODO use request schema? (step.operation.parameters[bodyParamName] as BodyParameter).schema!
           step.operation.responses[step.statusCode].schema!
         );
         step.requestParameters[bodyParamName] = convertedRequest;
       }
 
-      step.expectedResponse = await this.bodyTransformer.requestBodyToResponse(
+      step.expectedResponse = await this.bodyTransformer.resourceToResponse(
         target,
         step.operation.responses[step.statusCode].schema!
       );
@@ -411,11 +418,6 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       step.expectedResponse = jsonPatchApply(cloneDeep(step.expectedResponse), step.responseUpdate);
     }
 
-    ctx.stepTracking.set(step.step, step);
-    if (step.resourceName !== undefined) {
-      ctx.resourceTracking.set(step.resourceName, step);
-    }
-
     return step;
   }
 
@@ -423,12 +425,9 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     step: StepRestCall,
     ctx: ApiScenarioContext
   ): Promise<StepRestCall> {
-    const lastStep = ctx.resourceTracking.get(step.resourceName!);
-    if (lastStep === undefined) {
+    const resource = ctx.resourceTracking.get(step.resourceName!);
+    if (resource === undefined) {
       throw new Error(`Unknown resourceName: ${step.resourceName} in step ${step.step}`);
-    }
-    if (lastStep.type !== "restCall") {
-      throw new Error(`Cannot use resourceName for non-restCall type in step ${step.step}`);
     }
 
     const operation = this.nameToOperation.get(step.operationId);
@@ -437,23 +436,51 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     }
     step.operation = operation;
 
+    const previousResource = cloneDeep(resource.resource);
+    if (step.resourceUpdate.length > 0) {
+      resource.resource = jsonPatchApply(resource.resource, step.resourceUpdate);
+    }
+    const bodyParamName = getBodyParamName(step.operation, this.jsonLoader);
+
     switch (step.operation._method) {
       case "put":
-        step.requestParameters = { ...lastStep.requestParameters };
-        step.expectedResponse = { ...lastStep.expectedResponse };
+        step.requestParameters = { ...resource.identifier };
+        if (bodyParamName !== undefined) {
+          step.requestParameters[bodyParamName] = await this.bodyTransformer.resourceToRequest(
+            resource.resource,
+            step.operation.responses[step.statusCode].schema!
+          );
+        }
+        step.expectedResponse = await this.bodyTransformer.resourceToResponse(
+          resource.resource,
+          step.operation.responses[step.statusCode].schema!
+        );
         break;
       case "get":
-        step.requestParameters = { ...lastStep.requestParameters };
-        step.expectedResponse = { ...lastStep.expectedResponse };
+        step.requestParameters = { ...resource.identifier };
+        step.expectedResponse = await this.bodyTransformer.resourceToResponse(
+          resource.resource,
+          step.operation.responses[step.statusCode].schema!
+        );
         break;
       case "patch":
-        step.requestParameters = { ...lastStep.requestParameters };
-        step.expectedResponse = { ...lastStep.expectedResponse };
+        step.requestParameters = { ...resource.identifier };
+        if (bodyParamName !== undefined) {
+          step.requestParameters[bodyParamName] = jsonMergePatchGenerate(
+            previousResource,
+            resource.resource
+          );
+        }
+        step.expectedResponse = await this.bodyTransformer.resourceToResponse(
+          resource.resource,
+          step.operation.responses[step.statusCode].schema!
+        );
         break;
       case "delete":
-        step.requestParameters = { ...lastStep.requestParameters };
+        step.requestParameters = { ...resource.identifier };
         break;
       case "post":
+        step.requestParameters = { ...resource.identifier };
         break;
       default:
         throw new Error(`Unsupported operation ${step.operationId} in step ${step.step}`);
@@ -462,7 +489,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     return step;
   }
 
-  private async loadRestCallExampleFile(step: StepRestCall, ctx: ApiScenarioContext) {
+  private async loadRestCallExample(step: StepRestCall, ctx: ApiScenarioContext) {
     const filePath = step.exampleFile;
     if (filePath === undefined) {
       throw new Error(`RestCall step must specify "exampleFile" or "operationName"`);
@@ -493,20 +520,36 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     [step.operation, step.exampleName] = ops[0];
     step.operationId = step.operation.operationId!;
 
-    // Load resource type
-    const resourceChain = getResourceFromPath(step.operation._path._pathTemplate);
-    const resourceProvider = getProvider(step.operation._path._pathTemplate)!;
-    const resourceType = getResourceTypePath(resourceChain, resourceProvider);
-    step.resourceType = resourceType;
+    if (step.resourceName) {
+      if (!["put", "get"].includes(step.operation._method)) {
+        throw new Error(
+          `resourceName could only be used with examples of PUT/GET operations: ${step.step}`
+        );
+      }
+      const pathParams = pickParams(step.operation, "path", this.jsonLoader);
+      const identifier = pickBy(
+        step.requestParameters,
+        (_, paramName) => "api-version" === paramName || pathParams?.includes(paramName)
+      ) as SwaggerExample["parameters"];
+      ctx.resourceTracking.set(step.resourceName, {
+        identifier,
+        resource: step.expectedResponse,
+      });
+    }
   }
 }
 
 export const getBodyParamName = (operation: Operation, jsonLoader: JsonLoader) => {
-  const bodyParams = operation.parameters?.find((param) => {
-    const resolvedObj = jsonLoader.resolveRefObj(param);
-    return resolvedObj.in === "body";
-  });
-  return bodyParams?.name;
+  const bodyParams = pickParams(operation, "body", jsonLoader);
+  return bodyParams?.[0];
+};
+
+const pickParams = (operation: Operation, location: Parameter["in"], jsonLoader: JsonLoader) => {
+  const pathParams = operation.parameters
+    ?.map((param) => jsonLoader.resolveRefObj(param))
+    .filter((resolvedObj) => resolvedObj.in === location)
+    .map((param) => param.name);
+  return pathParams;
 };
 
 const convertVariables = (rawVariables: RawVariableScope["variables"]) => {
