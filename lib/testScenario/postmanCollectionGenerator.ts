@@ -114,7 +114,7 @@ export class PostmanCollectionGenerator {
     }
     const operationIdCoverageResult = this.swaggerAnalyzer.calculateOperationCoverage(testDef);
     console.log(
-      `Operation coverage ${operationIdCoverageResult.coverage.toFixed(2) + "%"} (${
+      `Operation coverage ${(operationIdCoverageResult.coverage * 100).toFixed(2) + "%"} (${
         operationIdCoverageResult.coveredOperationNumber
       }/${operationIdCoverageResult.totalOperationNumber})`
     );
