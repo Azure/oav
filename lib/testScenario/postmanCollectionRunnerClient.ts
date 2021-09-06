@@ -412,6 +412,9 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
         parameters: params,
       },
     };
+    for (const k of Object.keys(step.armTemplatePayload.outputs || {})) {
+      stepEnv.env.set(k, `{{${k}}}`);
+    }
     item.request.body = new RequestBody({
       mode: "raw",
       raw: JSON.stringify(body, null, 2),

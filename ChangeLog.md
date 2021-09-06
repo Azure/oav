@@ -3,6 +3,8 @@
 ## 09/03/2021 2.8.1
 
 - support calculate test scenario operation coverage
+- OAV runner support step scope variables
+- Fix runner armTemplate output as runtime variable
 
 ## 08/17/2021 2.8.0
 
