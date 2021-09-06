@@ -233,13 +233,16 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     for (const p of step.operation.parameters ?? []) {
       const param = this.opts.jsonLoader!.resolveRefObj(p);
       const paramValue = stepEnv.env.get(param.name) || step.requestParameters[param.name];
-      if (!this.collectionEnv.has(param.name)) {
-        this.collectionEnv.set(param.name, paramValue, typeof step.requestParameters[param.name]);
+      const paramName = Object.keys(step.variables).includes(param.name)
+        ? `${item.name}_${param.name}`
+        : param.name;
+      if (!this.collectionEnv.has(paramName)) {
+        this.collectionEnv.set(paramName, paramValue, typeof step.requestParameters[param.name]);
       }
 
       switch (param.in) {
         case "path":
-          urlVariables.push({ key: param.name, value: `{{${param.name}}}` });
+          urlVariables.push({ key: param.name, value: `{{${paramName}}}` });
           break;
         case "query":
           if (paramValue !== undefined) {
