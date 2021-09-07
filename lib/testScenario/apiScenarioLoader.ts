@@ -334,8 +334,10 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     const params = step.armTemplatePayload.parameters;
     if (params !== undefined) {
       for (const paramName of Object.keys(params)) {
+        if (params[paramName].defaultValue !== undefined) {
+          continue;
+        }
         if (
-          params[paramName].defaultValue === undefined &&
           params[paramName].type !== "string" &&
           params[paramName].type !== "securestring" &&
           !variableScope.requiredVariables.includes(paramName)
