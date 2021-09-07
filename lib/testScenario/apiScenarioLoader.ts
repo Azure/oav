@@ -55,7 +55,7 @@ export interface ApiScenarioLoaderOption
 
 interface Resource {
   identifier: SwaggerExample["parameters"];
-  resource: any;
+  body: any;
 }
 
 interface ApiScenarioContext {
@@ -409,7 +409,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     }
     step.operation = operation;
 
-    const target = cloneDeep(resource.resource);
+    const target = cloneDeep(resource.body);
     if (step.resourceUpdate.length > 0) {
       jsonPatchApply(target, step.resourceUpdate);
     }
@@ -439,7 +439,22 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       case "patch":
         step.requestParameters = { ...resource.identifier };
         if (bodyParamName !== undefined) {
-          step.requestParameters[bodyParamName] = jsonMergePatchGenerate(resource.resource, target);
+          step.requestParameters[bodyParamName] = pickBy(
+            target,
+            (_, propertyName) =>
+              propertyName !== "properties" &&
+              propertyName !== "location" &&
+              propertyName !== "type" &&
+              propertyName !== "name" &&
+              propertyName !== "id"
+          );
+          const propertiesMergePatch = jsonMergePatchGenerate(
+            resource.body.properties,
+            target.properties
+          );
+          if (propertiesMergePatch !== undefined) {
+            step.requestParameters[bodyParamName].properties = propertiesMergePatch;
+          }
         }
         step.expectedResponse = await this.bodyTransformer.resourceToResponse(
           target,
@@ -455,7 +470,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       default:
         throw new Error(`Unsupported operation ${step.operationId} in step ${step.step}`);
     }
-    resource.resource = target;
+    resource.body = target;
 
     return step;
   }
@@ -531,7 +546,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       ) as SwaggerExample["parameters"];
       ctx.resourceTracking.set(step.resourceName, {
         identifier,
-        resource: step.expectedResponse,
+        body: step.expectedResponse,
       });
     }
   }
