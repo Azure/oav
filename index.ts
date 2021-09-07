@@ -57,19 +57,16 @@ export {
 } from "./lib/liveValidation/operationValidator";
 export { SpecResolver } from "./lib/validators/specResolver";
 
-export { ApiScenarioLoader as TestResourceLoader } from "./lib/testScenario/apiScenarioLoader";
+export { ApiScenarioLoader } from "./lib/testScenario/apiScenarioLoader";
 export {
-  ScenarioDefinition as TestDefinitionFile,
-  Scenario as TestScenario,
-  Step as TestStep,
-  StepArmTemplate as TestStepArmTemplateDeployment,
-  StepRestCall as TestStepRestCall,
+  ScenarioDefinition,
+  Scenario,
+  Step,
+  StepArmTemplate,
+  StepRestCall,
 } from "./lib/testScenario/apiScenarioTypes";
 export { VariableEnv } from "./lib/testScenario/variableEnv";
-export {
-  ApiScenarioRunner as TestScenarioRunner,
-  ApiScenarioRunnerClient as TestScenarioRunnerClient,
-} from "./lib/testScenario/apiScenarioRunner";
+export { ApiScenarioRunner, ApiScenarioRunnerClient } from "./lib/testScenario/apiScenarioRunner";
 
 export { PostmanCollectionRunnerClient } from "./lib/testScenario/postmanCollectionRunnerClient";
 export {
