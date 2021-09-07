@@ -41,10 +41,12 @@ import {
   StepRawCall,
   RawStepRestOperation,
 } from "./apiScenarioTypes";
-import { ExampleTemplateGenerator } from "./exampleTemplateGenerator";
+import { TemplateGenerator } from "./templateGenerator";
 import { BodyTransformer } from "./bodyTransformer";
 import { jsonPatchApply } from "./diffUtils";
 import { ApiScenarioYamlLoader } from "./apiScenarioYamlLoader";
+import { ApiScenarioRunner } from "./apiScenarioRunner";
+import { VariableEnv } from "./variableEnv";
 
 export interface ApiScenarioLoaderOption
   extends FileLoaderOption,
@@ -71,6 +73,8 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
   private exampleToOperation = new Map<string, { [operationId: string]: [Operation, string] }>();
   private nameToOperation: Map<string, Operation> = new Map();
   private initialized: boolean = false;
+  private env: VariableEnv;
+  private templateGenerationRunner: ApiScenarioRunner;
 
   public constructor(
     @inject(TYPES.opts) private opts: ApiScenarioLoaderOption,
@@ -78,7 +82,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     public jsonLoader: JsonLoader,
     private swaggerLoader: SwaggerLoader,
     private apiScenarioYamlLoader: ApiScenarioYamlLoader,
-    private exampleTemplateGenerator: ExampleTemplateGenerator,
+    private templateGenerator: TemplateGenerator,
     private bodyTransformer: BodyTransformer,
     @inject(TYPES.schemaValidator) private schemaValidator: SchemaValidator
   ) {
@@ -90,13 +94,18 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       xmsPathsTransformer,
       resolveNestedDefinitionTransformer,
       referenceFieldsTransformer,
-
       discriminatorTransformer,
       allOfTransformer,
       noAdditionalPropertiesTransformer,
       nullableTransformer,
       pureObjectTransformer,
     ]);
+    this.env = new VariableEnv();
+    this.templateGenerationRunner = new ApiScenarioRunner({
+      env: this.env,
+      jsonLoader: this.jsonLoader,
+      client: this.templateGenerator,
+    });
   }
 
   public static create(opts: ApiScenarioLoaderOption) {
@@ -251,10 +260,17 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       resolvedSteps.push(step);
     }
 
-    // TODO
-    await this.exampleTemplateGenerator.generateExampleTemplateForTestScenario(scenario);
+    await this.generateTemplate(scenario);
 
     return scenario;
+  }
+
+  private async generateTemplate(scenario: Scenario) {
+    this.env.clear();
+    for (const requiredVar of scenario.requiredVariables) {
+      this.env.set(requiredVar, `$(${requiredVar})`);
+    }
+    await this.templateGenerationRunner.executeScenario(scenario);
   }
 
   private async loadStep(rawStep: RawStep, ctx: ApiScenarioContext): Promise<Step> {
@@ -270,14 +286,14 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       } else {
         throw new Error("Invalid step");
       }
-
-      if (ctx.scenario !== undefined) {
-        declareOutputVariables(testStep.outputVariables, ctx.scenario);
-      } else {
-        declareOutputVariables(testStep.outputVariables, ctx.scenarioDef);
-      }
     } catch (error) {
-      throw new Error(`Failed to load step ${rawStep.step}: ${JSON.stringify(error)}`);
+      throw new Error(`Failed to load step ${rawStep.step}: ${(error as any).message}`);
+    }
+
+    if (ctx.scenario !== undefined) {
+      declareOutputVariables(testStep.outputVariables, ctx.scenario);
+    } else {
+      declareOutputVariables(testStep.outputVariables, ctx.scenarioDef);
     }
     return testStep;
   }
@@ -385,13 +401,10 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     }
 
     if (step.requestUpdate.length > 0) {
-      step.requestParameters = jsonPatchApply(
-        cloneDeep(step.requestParameters),
-        step.requestUpdate
-      );
+      jsonPatchApply(step.requestParameters, step.requestUpdate);
     }
     if (step.responseUpdate.length > 0) {
-      step.expectedResponse = jsonPatchApply(cloneDeep(step.expectedResponse), step.responseUpdate);
+      jsonPatchApply(step.expectedResponse, step.responseUpdate);
     }
 
     return step;

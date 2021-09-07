@@ -25,7 +25,7 @@ import { ApiScenarioClientRequest } from "../apiScenarioRunner";
 import { Operation, Parameter, SwaggerExample } from "../../swagger/swaggerTypes";
 import { unknownApiVersion, xmsLongRunningOperation } from "../../util/constants";
 import { VariableEnv } from "../variableEnv";
-import { ExampleTemplateGenerator } from "../exampleTemplateGenerator";
+import { TemplateGenerator } from "../templateGenerator";
 import { traverseSwagger } from "../../transform/traverseSwagger";
 import { BodyTransformer } from "../bodyTransformer";
 import { ArmApiInfo, ArmUrlParser } from "../armUrlParser";
@@ -73,7 +73,7 @@ export class TestScenarioGenerator {
     private testResourceLoader: ApiScenarioLoader,
     private swaggerLoader: SwaggerLoader,
     private jsonLoader: JsonLoader,
-    private exampleTemplateGenerator: ExampleTemplateGenerator,
+    private exampleTemplateGenerator: TemplateGenerator,
     private bodyTransformer: BodyTransformer,
     private armUrlParser: ArmUrlParser,
     @inject(TYPES.schemaValidator) private schemaValidator: SchemaValidator

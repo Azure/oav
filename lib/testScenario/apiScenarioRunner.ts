@@ -139,7 +139,7 @@ export class ApiScenarioRunner {
     this.scopeTracking = {};
   }
 
-  public async prepareScenario(scenario: Scenario): Promise<ScopeTracking> {
+  public async prepareScope(scenario: Scenario): Promise<ScopeTracking> {
     let scope = this.scenarioScopeTracking.get(scenario);
     if (scope === undefined) {
       const testScopeName = scenario.shareScope
@@ -205,7 +205,7 @@ export class ApiScenarioRunner {
   }
 
   public async executeScenario(scenario: Scenario) {
-    const scope = await this.prepareScenario(scenario);
+    const scope = await this.prepareScope(scenario);
     const env = new VariableEnv(scope.env);
     env.setBatch(scenario.variables);
 

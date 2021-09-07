@@ -2,30 +2,19 @@ import { escapeRegExp } from "lodash";
 import { injectable } from "inversify";
 import { cloneDeep } from "@azure-tools/openapi-tools-common";
 import { JsonLoader } from "../swagger/jsonLoader";
-import { Scenario, ArmTemplate, StepRestCall, StepArmTemplate } from "./apiScenarioTypes";
+import { ArmTemplate, StepRestCall, StepArmTemplate } from "./apiScenarioTypes";
 import { VariableEnv } from "./variableEnv";
 import {
   ApiScenarioRunnerClient,
   ApiScenarioClientRequest,
   StepEnv,
   ArmDeploymentTracking,
-  ApiScenarioRunner,
 } from "./apiScenarioRunner";
 import { getBodyParamName } from "./apiScenarioLoader";
 
 @injectable()
-export class ExampleTemplateGenerator implements ApiScenarioRunnerClient {
-  private baseEnv: VariableEnv;
-  private runner: ApiScenarioRunner;
-
-  public constructor(private jsonLoader: JsonLoader) {
-    this.baseEnv = new VariableEnv();
-    this.runner = new ApiScenarioRunner({
-      jsonLoader: this.jsonLoader,
-      client: this,
-      env: this.baseEnv,
-    });
-  }
+export class TemplateGenerator implements ApiScenarioRunnerClient {
+  public constructor(private jsonLoader: JsonLoader) {}
 
   public async createResourceGroup(): Promise<void> {
     // Pass
@@ -71,15 +60,6 @@ export class ExampleTemplateGenerator implements ApiScenarioRunnerClient {
 
       _stepEnv.env.set(outputName, `$(${outputName})`);
     }
-  }
-
-  public async generateExampleTemplateForTestScenario(testScenario: Scenario) {
-    this.baseEnv.clear();
-    for (const requiredVar of testScenario.requiredVariables) {
-      this.baseEnv.set(requiredVar, `$(${requiredVar})`);
-    }
-
-    await this.runner.executeScenario(testScenario);
   }
 
   public replaceWithParameterConvention(
