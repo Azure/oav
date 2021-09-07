@@ -103,19 +103,6 @@ export type StepArmTemplate = TransformRaw<
   {
     type: "armTemplateDeployment";
     armTemplatePayload: ArmTemplate;
-    armTemplateParametersPayload?: {
-      parameters: {
-        [name: string]: {
-          value: any;
-        };
-      };
-      outputs: {
-        [name: string]: {
-          type: any;
-          value: any;
-        };
-      };
-    };
   } & StepBase,
   "description"
 >;

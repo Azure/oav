@@ -324,40 +324,33 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       armTemplatePayload: {},
       ...convertVariables(rawStep.variables),
     };
-    const { scenarioDef: testDef, scenario: testScenario } = ctx;
+    const { scenarioDef, scenario } = ctx;
+    const variableScope: VariableScope = scenario ?? scenarioDef;
 
-    const filePath = pathJoin(dirname(testDef._filePath), step.armTemplateDeployment);
+    const filePath = pathJoin(dirname(scenarioDef._filePath), step.armTemplateDeployment);
     const armTemplateContent = await this.fileLoader.load(filePath);
     step.armTemplatePayload = JSON.parse(armTemplateContent);
-
-    const definedParameterSet = new Set();
 
     const params = step.armTemplatePayload.parameters;
     if (params !== undefined) {
       for (const paramName of Object.keys(params)) {
-        if (definedParameterSet.has(paramName) || params[paramName].defaultValue !== undefined) {
-          continue;
-        }
-        if (params[paramName].type !== "string") {
+        if (
+          params[paramName].defaultValue === undefined &&
+          params[paramName].type !== "string" &&
+          params[paramName].type !== "securestring" &&
+          !variableScope.requiredVariables.includes(paramName)
+        ) {
           throw new Error(
-            `Only string type is supported in arm template params, please specify defaultValue or add it in arm template parameter file with armTemplateParameters: ${paramName}`
+            `Only string and securestring type is supported in arm template params, please specify defaultValue for: ${paramName}`
           );
         }
-        if (testScenario !== undefined) {
-          testScenario.requiredVariables.push(paramName);
-        } else {
-          testDef.requiredVariables.push(paramName);
-        }
+        variableScope.requiredVariables.push(paramName);
       }
     }
 
     const outputs = step.armTemplatePayload.outputs;
     if (outputs !== undefined) {
-      if (testScenario !== undefined) {
-        declareOutputVariables(outputs, testScenario);
-      } else {
-        declareOutputVariables(outputs, testDef);
-      }
+      declareOutputVariables(outputs, variableScope);
     }
 
     return step;

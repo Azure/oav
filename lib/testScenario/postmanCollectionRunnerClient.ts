@@ -372,7 +372,6 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
 
   public async sendArmTemplateDeployment(
     armTemplate: ArmTemplate,
-    params: { [name: string]: string },
     _armDeployment: ArmDeploymentTracking,
     step: StepArmTemplate,
     stepEnv: StepEnv
@@ -400,7 +399,6 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       properties: {
         mode: "Incremental",
         template: armTemplate,
-        parameters: params,
       },
     };
     item.request.body = new RequestBody({

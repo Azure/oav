@@ -134,7 +134,6 @@ export class TestScenarioRestClient extends ServiceClient implements ApiScenario
 
   public async sendArmTemplateDeployment(
     armTemplate: ArmTemplate,
-    params: { [name: string]: any },
     armDeployment: ArmDeploymentTracking,
     _step: StepArmTemplate,
     stepEnv: StepEnv
@@ -152,7 +151,6 @@ export class TestScenarioRestClient extends ServiceClient implements ApiScenario
         properties: {
           mode: "Complete",
           template: armTemplate,
-          parameters: params,
         },
       }
     );

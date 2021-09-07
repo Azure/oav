@@ -67,7 +67,6 @@ export interface ApiScenarioRunnerClient {
 
   sendArmTemplateDeployment(
     armTemplate: ArmTemplate,
-    params: { [name: string]: any },
     armDeployment: ArmDeploymentTracking,
     step: StepArmTemplate,
     stepEnv: StepEnv
@@ -289,27 +288,7 @@ export class ApiScenarioRunner {
     env: VariableEnv,
     scope: ScopeTracking
   ) {
-    let params: { [key: string]: { value: any } } = {};
-    const paramsDef = step.armTemplatePayload.parameters ?? {};
-    for (const paramName of Object.keys(paramsDef)) {
-      const paramDef = paramsDef[paramName];
-      if (paramDef.type !== "string") {
-        continue;
-      }
-
-      let paramValue = env.get(paramName);
-      if (paramValue === undefined) {
-        continue;
-      }
-
-      paramValue = env.resolveString(paramValue);
-      params[paramName] = { value: paramValue };
-    }
     step.armTemplatePayload = env.resolveObjectValues(step.armTemplatePayload);
-
-    if (step.armTemplateParametersPayload !== undefined) {
-      params = { ...params, ...step.armTemplateParametersPayload.parameters };
-    }
 
     const subscriptionId = env.getRequired("subscriptionId");
     const resourceGroupName = env.getRequired("resourceGroupName");
@@ -325,16 +304,10 @@ export class ApiScenarioRunner {
     };
     scope.armDeployments.push(armDeployment);
 
-    await this.client.sendArmTemplateDeployment(
-      step.armTemplatePayload,
-      params,
-      armDeployment,
-      step,
-      {
-        env,
-        scope: scope.scope,
-        armDeployments: scope.armDeployments,
-      }
-    );
+    await this.client.sendArmTemplateDeployment(step.armTemplatePayload, armDeployment, step, {
+      env,
+      scope: scope.scope,
+      armDeployments: scope.armDeployments,
+    });
   }
 }

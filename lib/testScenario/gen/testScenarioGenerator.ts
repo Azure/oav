@@ -464,7 +464,7 @@ export class TestScenarioGenerator {
       requestParameters: example.parameters,
       expectedResponse: example.responses[statusCode],
     };
-    this.exampleTemplateGenerator.replaceWithParameterConvention(step, env);
+    this.exampleTemplateGenerator.exampleParameterConvention(step, env);
 
     const exampleStr = jsonStringify({
       requestParameters: step.requestParameters,

@@ -29,7 +29,7 @@ export class TemplateGenerator implements ApiScenarioRunnerClient {
     step: StepRestCall,
     stepEnv: StepEnv
   ): Promise<void> {
-    this.replaceWithParameterConvention(step, stepEnv.env);
+    this.exampleParameterConvention(step, stepEnv.env);
 
     const outputVariables = step.outputVariables;
     if (outputVariables === undefined) {
@@ -42,11 +42,12 @@ export class TemplateGenerator implements ApiScenarioRunnerClient {
 
   public async sendArmTemplateDeployment(
     _armTemplate: ArmTemplate,
-    _params: { [name: string]: string },
     _armDeployment: ArmDeploymentTracking,
     step: StepArmTemplate,
-    _stepEnv: StepEnv
+    stepEnv: StepEnv
   ): Promise<void> {
+    this.armTemplateParameterConvention(step, stepEnv.env);
+
     const outputs = step.armTemplatePayload.outputs;
     if (outputs === undefined) {
       return;
@@ -58,11 +59,36 @@ export class TemplateGenerator implements ApiScenarioRunnerClient {
         continue;
       }
 
-      _stepEnv.env.set(outputName, `$(${outputName})`);
+      stepEnv.env.set(outputName, `$(${outputName})`);
     }
   }
 
-  public replaceWithParameterConvention(
+  public armTemplateParameterConvention(
+    step: Pick<StepArmTemplate, "armTemplatePayload" | "secretVariables">,
+    env: VariableEnv
+  ) {
+    if (step.armTemplatePayload.parameters === undefined) {
+      return;
+    }
+    for (const paramName of Object.keys(step.armTemplatePayload.parameters)) {
+      if (env.get(paramName) === undefined) {
+        continue;
+      }
+
+      const param = step.armTemplatePayload.parameters[paramName];
+      if (param.type !== "string" && param.type !== "securestring") {
+        continue;
+      }
+
+      param.defaultValue = `$(${paramName})`;
+
+      if (param.type === "securestring" && !step.secretVariables.includes(paramName)) {
+        step.secretVariables.push(paramName);
+      }
+    }
+  }
+
+  public exampleParameterConvention(
     step: Pick<StepRestCall, "requestParameters" | "expectedResponse" | "operation">,
     env: VariableEnv
   ) {
