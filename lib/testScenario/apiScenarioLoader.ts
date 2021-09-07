@@ -260,22 +260,25 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
   private async loadStep(rawStep: RawStep, ctx: ApiScenarioContext): Promise<Step> {
     let testStep: Step;
 
-    if ("exampleFile" in rawStep || "operationId" in rawStep) {
-      testStep = await this.loadStepRestCall(rawStep, ctx);
-    } else if ("armTemplateDeployment" in rawStep) {
-      testStep = await this.loadStepArmTemplate(rawStep, ctx);
-    } else if ("rawUrl" in rawStep) {
-      testStep = await this.loadStepRawCall(rawStep, ctx);
-    } else {
-      throw new Error(`Invalid step: ${JSON.stringify(rawStep)}`);
-    }
+    try {
+      if ("exampleFile" in rawStep || "operationId" in rawStep) {
+        testStep = await this.loadStepRestCall(rawStep, ctx);
+      } else if ("armTemplateDeployment" in rawStep) {
+        testStep = await this.loadStepArmTemplate(rawStep, ctx);
+      } else if ("rawUrl" in rawStep) {
+        testStep = await this.loadStepRawCall(rawStep, ctx);
+      } else {
+        throw new Error("Invalid step");
+      }
 
-    if (ctx.scenario !== undefined) {
-      declareOutputVariables(testStep.outputVariables, ctx.scenario);
-    } else {
-      declareOutputVariables(testStep.outputVariables, ctx.scenarioDef);
+      if (ctx.scenario !== undefined) {
+        declareOutputVariables(testStep.outputVariables, ctx.scenario);
+      } else {
+        declareOutputVariables(testStep.outputVariables, ctx.scenarioDef);
+      }
+    } catch (error) {
+      throw new Error(`Failed to load step ${rawStep.step}: ${JSON.stringify(error)}`);
     }
-
     return testStep;
   }
 
