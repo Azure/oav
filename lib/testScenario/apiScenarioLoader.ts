@@ -21,7 +21,13 @@ import { nullableTransformer } from "../transform/nullableTransformer";
 import { pureObjectTransformer } from "../transform/pureObjectTransformer";
 import { SwaggerLoader, SwaggerLoaderOption } from "../swagger/swaggerLoader";
 import { applySpecTransformers, applyGlobalTransformers } from "../transform/transformer";
-import { SwaggerSpec, Operation, SwaggerExample, Parameter } from "../swagger/swaggerTypes";
+import {
+  SwaggerSpec,
+  Operation,
+  SwaggerExample,
+  Parameter,
+  BodyParameter,
+} from "../swagger/swaggerTypes";
 import { traverseSwagger } from "../transform/traverseSwagger";
 import { inversifyGetInstance, TYPES } from "../inversifyUtils";
 import {
@@ -424,15 +430,15 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     if (step.resourceUpdate.length > 0) {
       jsonPatchApply(target, step.resourceUpdate);
     }
-    const bodyParamName = getBodyParamName(step.operation, this.jsonLoader);
+    const bodyParam = getBodyParam(step.operation, this.jsonLoader);
 
     switch (step.operation._method) {
       case "put":
         step.requestParameters = { ...resource.identifier };
-        if (bodyParamName !== undefined) {
-          step.requestParameters[bodyParamName] = await this.bodyTransformer.resourceToRequest(
+        if (bodyParam !== undefined) {
+          step.requestParameters[bodyParam.name] = await this.bodyTransformer.resourceToRequest(
             target,
-            step.operation.responses[step.statusCode].schema!
+            bodyParam.schema!
           );
         }
         step.expectedResponse = await this.bodyTransformer.resourceToResponse(
@@ -449,8 +455,8 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
         break;
       case "patch":
         step.requestParameters = { ...resource.identifier };
-        if (bodyParamName !== undefined) {
-          step.requestParameters[bodyParamName] = pickBy(
+        if (bodyParam !== undefined) {
+          step.requestParameters[bodyParam.name] = pickBy(
             target,
             (_, propertyName) =>
               propertyName !== "properties" &&
@@ -464,7 +470,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
             target.properties
           );
           if (propertiesMergePatch !== undefined) {
-            step.requestParameters[bodyParamName].properties = propertiesMergePatch;
+            step.requestParameters[bodyParam.name].properties = propertiesMergePatch;
           }
         }
         step.expectedResponse = await this.bodyTransformer.resourceToResponse(
@@ -479,8 +485,9 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
         step.requestParameters = { ...resource.identifier };
         break;
       default:
-        throw new Error(`Unsupported operation ${step.operationId} in step ${step.step}`);
+        throw new Error(`Unsupported operation ${step.operationId}`);
     }
+
     resource.body = target;
 
     return step;
@@ -518,24 +525,29 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     step.operationId = step.operation.operationId!;
 
     if (step.resourceUpdate.length > 0) {
-      let target = cloneDeep(step.expectedResponse);
-      const bodyParamName = getBodyParamName(step.operation, this.jsonLoader);
-      if (bodyParamName !== undefined) {
+      if (!["put", "patch", "get"].includes(step.operation._method)) {
+        throw new Error(
+          `resourceUpdate could only be used in PUT/PATCH/GET operations with exampleFile`
+        );
+      }
+
+      const target = cloneDeep(step.expectedResponse);
+      const bodyParam = getBodyParam(step.operation, this.jsonLoader);
+      if (bodyParam !== undefined) {
         try {
-          this.bodyTransformer.deepMerge(target, step.requestParameters[bodyParamName]);
+          this.bodyTransformer.deepMerge(target, step.requestParameters[bodyParam.name]);
         } catch (err) {
           console.error(err);
         }
       }
-      target = jsonPatchApply(target, step.resourceUpdate);
+      jsonPatchApply(target, step.resourceUpdate);
 
-      if (bodyParamName !== undefined) {
+      if (bodyParam !== undefined) {
         const convertedRequest = await this.bodyTransformer.resourceToRequest(
           target,
-          // TODO use request schema? (step.operation.parameters[bodyParamName] as BodyParameter).schema!
-          step.operation.responses[step.statusCode].schema!
+          bodyParam.schema!
         );
-        step.requestParameters[bodyParamName] = convertedRequest;
+        step.requestParameters[bodyParam.name] = convertedRequest;
       }
 
       step.expectedResponse = await this.bodyTransformer.resourceToResponse(
@@ -545,15 +557,17 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     }
 
     if (step.resourceName) {
-      if (!["put", "get"].includes(step.operation._method)) {
+      if (!["put", "patch", "get"].includes(step.operation._method)) {
         throw new Error(
-          `resourceName could only be used with examples of PUT/GET operations: ${step.step}`
+          `resourceName could only be used in PUT/PATCH/GET operations with exampleFile`
         );
       }
       const pathParams = pickParams(step.operation, "path", this.jsonLoader);
       const identifier = pickBy(
         step.requestParameters,
-        (_, paramName) => "api-version" === paramName || pathParams?.includes(paramName)
+        (_, paramName) =>
+          "api-version" === paramName ||
+          pathParams?.find((param) => param.name === paramName) !== undefined
       ) as SwaggerExample["parameters"];
       ctx.resourceTracking.set(step.resourceName, {
         identifier,
@@ -563,17 +577,16 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
   }
 }
 
-export const getBodyParamName = (operation: Operation, jsonLoader: JsonLoader) => {
-  const bodyParams = pickParams(operation, "body", jsonLoader);
+export const getBodyParam = (operation: Operation, jsonLoader: JsonLoader) => {
+  const bodyParams = pickParams(operation, "body", jsonLoader) as BodyParameter[] | undefined;
   return bodyParams?.[0];
 };
 
 const pickParams = (operation: Operation, location: Parameter["in"], jsonLoader: JsonLoader) => {
-  const pathParams = operation.parameters
+  const params = operation.parameters
     ?.map((param) => jsonLoader.resolveRefObj(param))
-    .filter((resolvedObj) => resolvedObj.in === location)
-    .map((param) => param.name);
-  return pathParams;
+    .filter((resolvedObj) => resolvedObj.in === location);
+  return params;
 };
 
 const convertVariables = (rawVariables: RawVariableScope["variables"]) => {

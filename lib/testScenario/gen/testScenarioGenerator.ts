@@ -13,7 +13,7 @@ import { extractPathParamValue, pathRegexTransformer } from "../../transform/pat
 import { referenceFieldsTransformer } from "../../transform/referenceFieldsTransformer";
 import { applyGlobalTransformers, applySpecTransformers } from "../../transform/transformer";
 import { xmsPathsTransformer } from "../../transform/xmsPathsTransformer";
-import { getBodyParamName, ApiScenarioLoader, ApiScenarioLoaderOption } from "../apiScenarioLoader";
+import { getBodyParam, ApiScenarioLoader, ApiScenarioLoaderOption } from "../apiScenarioLoader";
 import {
   RawScenarioDefinition,
   RawScenario,
@@ -371,11 +371,11 @@ export class TestScenarioGenerator {
         }
         step.resourceName = lastStep.resourceName;
         step.step = `Update_${step.resourceName}_${this.generateIdx()}`;
-        const bodyParamName = getBodyParamName(step.operation, this.jsonLoader);
-        if (bodyParamName !== undefined) {
+        const bodyParam = getBodyParam(step.operation, this.jsonLoader);
+        if (bodyParam !== undefined) {
           const { result, inconsistentWarningPaths } = this.bodyTransformer.deepMerge(
             step.expectedResponse,
-            step.requestParameters[bodyParamName]
+            step.requestParameters[bodyParam.name]
           );
           if (inconsistentWarningPaths.length > 0) {
             console.log(

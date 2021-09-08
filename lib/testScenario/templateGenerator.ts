@@ -10,7 +10,7 @@ import {
   StepEnv,
   ArmDeploymentTracking,
 } from "./apiScenarioRunner";
-import { getBodyParamName } from "./apiScenarioLoader";
+import { getBodyParam } from "./apiScenarioLoader";
 
 @injectable()
 export class TemplateGenerator implements ApiScenarioRunnerClient {
@@ -113,9 +113,9 @@ export class TemplateGenerator implements ApiScenarioRunnerClient {
       requestParameters[paramName] = toReplace;
     }
     step.requestParameters = requestParameters;
-    const bodyParamName = getBodyParamName(step.operation, this.jsonLoader);
-    if (bodyParamName !== undefined) {
-      const requestBody = step.requestParameters[bodyParamName];
+    const bodyParam = getBodyParam(step.operation, this.jsonLoader);
+    if (bodyParam !== undefined) {
+      const requestBody = step.requestParameters[bodyParam.name];
       replaceAllInObject(requestBody, toMatch, matchReplace);
       if (requestBody.location !== undefined && env.get("location") !== undefined) {
         requestBody.location = "$(location)";
