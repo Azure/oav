@@ -32,6 +32,7 @@ interface ScopeTracking {
   provisioned?: boolean;
   scope: ScenarioDefinition["scope"];
   prepareSteps: Step[];
+  cleanUpSteps: Step[];
   env: VariableEnv;
   armDeployments: ArmDeploymentTracking[];
 }
@@ -153,6 +154,7 @@ export class ApiScenarioRunner {
         scope = {
           scope: scenarioDef.scope,
           prepareSteps: scenarioDef.prepareSteps,
+          cleanUpSteps: scenarioDef.cleanUpSteps,
           env,
           armDeployments: [],
         };
@@ -184,6 +186,7 @@ export class ApiScenarioRunner {
     const scope = {
       scope: scenarioDef.scope,
       prepareSteps: scenarioDef.prepareSteps,
+      cleanUpSteps: scenarioDef.cleanUpSteps,
       ...scopeInput,
     };
     if (scopeName !== undefined) {
@@ -231,6 +234,9 @@ export class ApiScenarioRunner {
 
   public async cleanAllScope() {
     for (const scope of Object.values(this.scopeTracking)) {
+      for (const step of scope.cleanUpSteps) {
+        await this.executeStep(step, scope.env, scope);
+      }
       const subscriptionId = scope.env.getRequired("subscriptionId");
       const resourceGroupName = scope.env.getRequired("resourceGroupName");
       await this.client.deleteResourceGroup(subscriptionId, resourceGroupName);
