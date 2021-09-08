@@ -221,14 +221,17 @@ export class ApiScenarioRunner {
     stepEnv.setBatch(step.variables);
     stepEnv.setWriteEnv(env);
 
-    switch (step.type) {
-      case "restCall":
-        await this.executeRestCallStep(step, stepEnv, scope);
-        break;
-
-      case "armTemplateDeployment":
-        await this.executeArmTemplateStep(step, stepEnv, scope);
-        break;
+    try {
+      switch (step.type) {
+        case "restCall":
+          await this.executeRestCallStep(step, stepEnv, scope);
+          break;
+        case "armTemplateDeployment":
+          await this.executeArmTemplateStep(step, stepEnv, scope);
+          break;
+      }
+    } catch (error) {
+      throw new Error(`Failed to execute step ${step.step}: ${(error as any).message}`);
     }
   }
 
