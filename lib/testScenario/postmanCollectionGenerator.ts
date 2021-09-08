@@ -2,7 +2,7 @@ import { inject, injectable } from "inversify";
 import { TYPES, inversifyGetInstance } from "../inversifyUtils";
 import { FileLoader } from "../swagger/fileLoader";
 import { ValidationLevel } from "./reportGenerator";
-import { SwaggerAnalyzerOption } from "./swaggerAnalyzer";
+import { SwaggerAnalyzer, SwaggerAnalyzerOption } from "./swaggerAnalyzer";
 import { BlobUploaderOption } from "./blobUploader";
 import { VariableEnv } from "./variableEnv";
 import { ApiScenarioLoader, ApiScenarioLoaderOption } from "./apiScenarioLoader";
@@ -44,7 +44,8 @@ export class PostmanCollectionGenerator {
   constructor(
     @inject(TYPES.opts) private opt: PostmanCollectionGeneratorOption,
     private apiScenarioLoader: ApiScenarioLoader,
-    private fileLoader: FileLoader
+    private fileLoader: FileLoader,
+    private swaggerAnalyzer: SwaggerAnalyzer
   ) {
     this.env = new VariableEnv();
     this.env.setBatch(this.opt.env);
@@ -53,6 +54,7 @@ export class PostmanCollectionGenerator {
   public async GenerateCollection(): Promise<void> {
     const scenarioDef = await this.apiScenarioLoader.load(this.opt.scenarioDef);
     this.env.setBatch(scenarioDef.variables);
+    await this.swaggerAnalyzer.initialize();
     for (const it of scenarioDef.requiredVariables) {
       if (this.env.get(it) === undefined) {
         throw new Error(
@@ -70,6 +72,7 @@ export class PostmanCollectionGenerator {
       //TODO: replace index with testScenarioName
       const opts: PostmanCollectionRunnerClientOption = {
         testScenarioFileName: `${this.opt.name}`,
+        testDef: scenarioDef,
         testScenarioName: `${getFileNameFromPath(this.opt.scenarioDef)}_${index}`,
         env: this.env,
         enableBlobUploader: this.opt.enableBlobUploader!,
@@ -108,6 +111,16 @@ export class PostmanCollectionGenerator {
         await client.runCollection();
       }
       index++;
+    }
+    const operationIdCoverageResult = this.swaggerAnalyzer.calculateOperationCoverage(scenarioDef);
+    console.log(
+      `Operation coverage ${(operationIdCoverageResult.coverage * 100).toFixed(2) + "%"} (${
+        operationIdCoverageResult.coveredOperationNumber
+      }/${operationIdCoverageResult.totalOperationNumber})`
+    );
+    if (operationIdCoverageResult.uncoveredOperationIds.length > 0) {
+      console.log("Uncovered operationIds: ");
+      console.log(operationIdCoverageResult.uncoveredOperationIds);
     }
   }
 
