@@ -28,7 +28,12 @@ import { NewmanReportAnalyzer, NewmanReportAnalyzerOption } from "./postmanRepor
 import { inversifyGetInstance, TYPES } from "./../inversifyUtils";
 import { BlobUploader, BlobUploaderOption } from "./blobUploader";
 import { PostmanTestScript, TestScriptType } from "./postmanTestScript";
-import { ArmTemplate, TestStepArmTemplateDeployment, TestStepRestCall } from "./testResourceTypes";
+import {
+  ArmTemplate,
+  TestDefinitionFile,
+  TestStepArmTemplateDeployment,
+  TestStepRestCall,
+} from "./testResourceTypes";
 import {
   ArmDeploymentTracking,
   TestScenarioClientRequest,
@@ -52,6 +57,7 @@ export interface PostmanCollectionRunnerClientOption extends BlobUploaderOption,
   testScenarioFileName: string;
   enableBlobUploader: boolean;
   env: VariableEnv;
+  testDef?: TestDefinitionFile;
   testScenarioFilePath?: string;
   reportOutputFolder?: string;
   markdownReportPath?: string;
@@ -227,13 +233,16 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
     for (const p of step.operation.parameters ?? []) {
       const param = this.opts.jsonLoader!.resolveRefObj(p);
       const paramValue = stepEnv.env.get(param.name) || step.requestParameters[param.name];
-      if (!this.collectionEnv.has(param.name)) {
-        this.collectionEnv.set(param.name, paramValue, typeof step.requestParameters[param.name]);
+      const paramName = Object.keys(step.variables).includes(param.name)
+        ? `${item.name}_${param.name}`
+        : param.name;
+      if (!this.collectionEnv.has(paramName)) {
+        this.collectionEnv.set(paramName, paramValue, typeof step.requestParameters[param.name]);
       }
 
       switch (param.in) {
         case "path":
-          urlVariables.push({ key: param.name, value: `{{${param.name}}}` });
+          urlVariables.push({ key: param.name, value: `{{${paramName}}}` });
           break;
         case "query":
           if (paramValue !== undefined) {
@@ -403,6 +412,9 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
         parameters: params,
       },
     };
+    for (const k of Object.keys(step.armTemplatePayload.outputs || {})) {
+      stepEnv.env.set(k, `{{${k}}}`);
+    }
     item.request.body = new RequestBody({
       mode: "raw",
       raw: JSON.stringify(body, null, 2),
@@ -508,7 +520,7 @@ export class PostmanCollectionRunnerClient implements TestScenarioRunnerClient {
       this.dataMasker.jsonStringify(env)
     );
 
-    console.log("\ngenerate collection successfully!");
+    console.log(`\ngenerate collection successfully!`);
     console.log(`Postman collection: '${collectionPath}'. Postman env: '${envPath}' `);
     console.log(`Command: newman run ${collectionPath} -e ${envPath} -r 'json,cli'`);
   }
