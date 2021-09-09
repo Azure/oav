@@ -7,7 +7,7 @@ export const cliSuppressExceptions = async (f: () => Promise<number>): Promise<v
   try {
     process.exitCode = await f();
   } catch (err) {
-    const message = `fatal error: ${err.message}`;
+    const message = `fatal error: ${err.message}, ${JSON.stringify(err)}`;
     log.error(message);
     // eslint-disable-next-line no-console
     console.error(message);
