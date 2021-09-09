@@ -47,7 +47,7 @@ export class PostmanCollectionGenerator {
     private fileLoader: FileLoader,
     private swaggerAnalyzer: SwaggerAnalyzer
   ) {
-    this.env = new VariableEnv();
+    this.env = new VariableEnv("runtime");
     this.env.setBatch(this.opt.env);
   }
 

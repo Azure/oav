@@ -106,11 +106,12 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       nullableTransformer,
       pureObjectTransformer,
     ]);
-    this.env = new VariableEnv();
+    this.env = new VariableEnv("global");
     this.templateGenerationRunner = new ApiScenarioRunner({
       env: this.env,
       jsonLoader: this.jsonLoader,
       client: this.templateGenerator,
+      loadMode: true,
     });
   }
 

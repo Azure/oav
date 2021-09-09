@@ -1,16 +1,17 @@
 const variableRegex = /\$\(([A-Za-z_][A-Za-z0-9_]*)\)/;
 const pathVariableRegex = /\{([A-Za-z_][A-Za-z0-9_]*)\}/;
+
+export type VariableEnvScope = "runtime" | "global" | "scope" | "scenario" | "step" | "local";
 export class VariableEnv {
+  protected scope: VariableEnvScope;
   protected baseEnv?: VariableEnv;
   protected data: { [key: string]: string } = {};
-  protected writeEnv: { [key: string]: string };
 
-  public constructor(baseEnv?: VariableEnv) {
+  public constructor(scope?: VariableEnvScope, baseEnv?: VariableEnv) {
+    this.scope = scope ?? "local";
     if (baseEnv !== undefined) {
-      this.data.__proto__ = baseEnv.data as any;
       this.baseEnv = baseEnv;
     }
-    this.writeEnv = this.data;
   }
 
   public clear() {
@@ -19,24 +20,35 @@ export class VariableEnv {
     }
   }
 
+  public getWithScope(key: string): [string, VariableEnvScope] | undefined {
+    if (this.data[key] !== undefined) {
+      return [this.data[key], this.scope];
+    }
+    return this.baseEnv?.getWithScope(key);
+  }
+
+  public getRequiredWithScope(key: string): [string, VariableEnvScope] {
+    const result = this.getWithScope(key);
+    if (result === undefined) {
+      throw new Error(`Variable is required but is not found in VariableEnv: ${key}`);
+    }
+    return result;
+  }
+
   public get(key: string): string | undefined {
-    return this.data[key];
+    return this.getWithScope(key)?.[0];
   }
 
   public getRequired(key: string): string {
-    const val = this.get(key);
-    if (val === undefined) {
-      throw new Error(`Variable is required but is not found in VariableEnv: ${key}`);
-    }
-    return val;
-  }
-
-  public getBaseEnv() {
-    return this.baseEnv;
+    return this.getRequiredWithScope(key)?.[0];
   }
 
   public set(key: string, value: string) {
-    this.writeEnv[key] = value;
+    this.data[key] = value;
+  }
+
+  public output(key: string, value: string) {
+    this.baseEnv?.set(key, value);
   }
 
   public setBatch(values: { [key: string]: string }) {
@@ -46,10 +58,6 @@ export class VariableEnv {
     for (const key of Object.keys(values)) {
       this.set(key, values[key]);
     }
-  }
-
-  public setWriteEnv(env: VariableEnv) {
-    this.writeEnv = env.data;
   }
 
   public resolveString(source: string, isPathVariable?: boolean): string {

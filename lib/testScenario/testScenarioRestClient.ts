@@ -164,7 +164,7 @@ export class TestScenarioRestClient extends ServiceClient implements ApiScenario
     console.log(outputs);
     if (outputs) {
       for (const outputKey of Object.keys(outputs)) {
-        stepEnv.env.set(outputKey, outputs[outputKey].value);
+        stepEnv.env.output(outputKey, outputs[outputKey].value);
       }
     }
   }

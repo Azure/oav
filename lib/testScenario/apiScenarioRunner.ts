@@ -16,6 +16,7 @@ export interface ApiScenarioRunnerOption {
   env: VariableEnv;
   client: ApiScenarioRunnerClient;
   jsonLoader: JsonLoader;
+  loadMode?: boolean;
 }
 
 export interface ArmDeploymentTracking {
@@ -108,6 +109,9 @@ export class ApiScenarioRunner {
   private env: VariableEnv;
   private scopeTracking: { [scopeName: string]: ScopeTracking };
   private scenarioScopeTracking: Map<Scenario, ScopeTracking> = new Map();
+  private loadMode: boolean;
+
+  private resourceTracking: { [resourceName: string]: VariableEnv };
 
   private provisionScope = getLazyBuilder("provisioned", async (scope: ScopeTracking) => {
     if (scope.scope !== "ResourceGroup") {
@@ -136,7 +140,9 @@ export class ApiScenarioRunner {
     this.env = opts.env;
     this.client = opts.client;
     this.jsonLoader = opts.jsonLoader;
+    this.loadMode = opts.loadMode ?? false;
     this.scopeTracking = {};
+    this.resourceTracking = {};
   }
 
   public async prepareScope(scenario: Scenario): Promise<ScopeTracking> {
@@ -149,7 +155,7 @@ export class ApiScenarioRunner {
       scope = this.scopeTracking[testScopeName];
       if (scope === undefined) {
         const scenarioDef = scenario._scenarioDef;
-        const env = new VariableEnv(this.env);
+        const env = new VariableEnv("scope", this.env);
         env.setBatch(scenarioDef.variables);
         scope = {
           scope: scenarioDef.scope,
@@ -208,7 +214,7 @@ export class ApiScenarioRunner {
 
   public async executeScenario(scenario: Scenario) {
     const scope = await this.prepareScope(scenario);
-    const env = new VariableEnv(scope.env);
+    const env = new VariableEnv("scenario", scope.env);
     env.setBatch(scenario.variables);
 
     for (const step of scenario.steps) {
@@ -217,17 +223,20 @@ export class ApiScenarioRunner {
   }
 
   public async executeStep(step: Step, env: VariableEnv, scope: ScopeTracking) {
-    const stepEnv = new VariableEnv(env);
+    const stepEnv = new VariableEnv("step", env);
     stepEnv.setBatch(step.variables);
-    stepEnv.setWriteEnv(env);
 
-    switch (step.type) {
-      case "restCall":
-        await this.executeRestCallStep(step, stepEnv, scope);
-        break;
-      case "armTemplateDeployment":
-        await this.executeArmTemplateStep(step, stepEnv, scope);
-        break;
+    try {
+      switch (step.type) {
+        case "restCall":
+          await this.executeRestCallStep(step, stepEnv, scope);
+          break;
+        case "armTemplateDeployment":
+          await this.executeArmTemplateStep(step, stepEnv, scope);
+          break;
+      }
+    } catch (error) {
+      throw new Error(`Failed to execute step ${step.step}: ${(error as any).message}`);
     }
   }
 
@@ -243,7 +252,11 @@ export class ApiScenarioRunner {
   }
 
   private async executeRestCallStep(step: StepRestCall, env: VariableEnv, scope: ScopeTracking) {
-    const pathEnv = new VariableEnv();
+    const localEnv = new VariableEnv("local", env);
+    if (step.resourceName !== undefined && this.resourceTracking[step.resourceName] === undefined) {
+      this.resourceTracking[step.resourceName] = localEnv;
+    }
+
     let req: ApiScenarioClientRequest = {
       method: step.operation._method.toUpperCase() as HttpMethods,
       path: "",
@@ -262,7 +275,20 @@ export class ApiScenarioRunner {
 
       switch (param.in) {
         case "path":
-          pathEnv.set(param.name, paramValue);
+          if (this.loadMode || step.resourceName === undefined) {
+            localEnv.set(param.name, paramValue);
+          } else {
+            if (localEnv === this.resourceTracking[step.resourceName]) {
+              // Save resource path parameters
+              localEnv.set(param.name, localEnv.get(param.name) ?? paramValue);
+            } else {
+              // Reuse resource path parameters
+              localEnv.set(
+                param.name,
+                this.resourceTracking[step.resourceName].getRequired(param.name)
+              );
+            }
+          }
           break;
         case "query":
           req.query[param.name] = paramValue;
@@ -278,11 +304,12 @@ export class ApiScenarioRunner {
       }
     }
     const pathTemplate = step.operation._path._pathTemplate;
-    req.path = pathEnv.resolveString(pathTemplate, true);
-    req = env.resolveObjectValues(req);
+
+    req.path = localEnv.resolveString(pathTemplate, true);
+    req = localEnv.resolveObjectValues(req);
 
     await this.client.sendExampleRequest(req, step, {
-      env,
+      env: this.loadMode ? env : localEnv,
       scope: scope.scope,
       armDeployments: scope.armDeployments,
     });
