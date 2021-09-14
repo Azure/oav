@@ -266,7 +266,10 @@ export class ApiScenarioRunner {
 
     for (const p of step.operation.parameters ?? []) {
       const param = this.jsonLoader.resolveRefObj(p);
-      const paramValue = step.requestParameters[param.name];
+      let paramValue = step.requestParameters[param.name];
+      if (paramValue === `$(${param.name})`) {
+        paramValue = env.get(param.name);
+      }
       if (paramValue === undefined && param.required) {
         throw new Error(
           `Parameter value for "${param.name}" is not found in example: ${step.exampleFilePath}`
