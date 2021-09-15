@@ -252,10 +252,7 @@ export class ApiScenarioRunner {
   }
 
   private async executeRestCallStep(step: StepRestCall, env: VariableEnv, scope: ScopeTracking) {
-    const localEnv = new VariableEnv("local", env);
-    if (step.resourceName !== undefined && this.resourceTracking[step.resourceName] === undefined) {
-      this.resourceTracking[step.resourceName] = localEnv;
-    }
+    let localEnv = new VariableEnv("local", env);
 
     let req: ApiScenarioClientRequest = {
       method: step.operation._method.toUpperCase() as HttpMethods,
@@ -266,10 +263,7 @@ export class ApiScenarioRunner {
 
     for (const p of step.operation.parameters ?? []) {
       const param = this.jsonLoader.resolveRefObj(p);
-      let paramValue = step.requestParameters[param.name];
-      if (paramValue === `$(${param.name})`) {
-        paramValue = env.get(param.name);
-      }
+      const paramValue = step.requestParameters[param.name];
       if (paramValue === undefined && param.required) {
         throw new Error(
           `Parameter value for "${param.name}" is not found in example: ${step.exampleFilePath}`
@@ -278,20 +272,7 @@ export class ApiScenarioRunner {
 
       switch (param.in) {
         case "path":
-          if (this.loadMode || step.resourceName === undefined) {
-            localEnv.set(param.name, paramValue);
-          } else {
-            if (localEnv === this.resourceTracking[step.resourceName]) {
-              // Save resource path parameters
-              localEnv.set(param.name, localEnv.get(param.name) ?? paramValue);
-            } else {
-              // Reuse resource path parameters
-              localEnv.set(
-                param.name,
-                this.resourceTracking[step.resourceName].getRequired(param.name)
-              );
-            }
-          }
+          localEnv.set(param.name, paramValue);
           break;
         case "query":
           req.query[param.name] = paramValue;
@@ -306,13 +287,24 @@ export class ApiScenarioRunner {
           throw new Error(`Parameter "in" not supported: ${param.in}`);
       }
     }
-    const pathTemplate = step.operation._path._pathTemplate;
 
-    req.path = localEnv.resolveString(pathTemplate, true);
+    if (!this.loadMode && step.resourceName !== undefined) {
+      if (this.resourceTracking[step.resourceName] === undefined) {
+        // resolve and save pathEnv
+        localEnv.resolve();
+        this.resourceTracking[step.resourceName] = localEnv;
+      } else {
+        // reuse pathEnv
+        localEnv = this.resourceTracking[step.resourceName];
+        localEnv.setBaseEnv(env);
+      }
+    }
+
+    req.path = localEnv.resolveString(step.operation._path._pathTemplate, true);
     req = localEnv.resolveObjectValues(req);
 
     await this.client.sendExampleRequest(req, step, {
-      env: this.loadMode ? env : localEnv,
+      env: localEnv,
       scope: scope.scope,
       armDeployments: scope.armDeployments,
     });

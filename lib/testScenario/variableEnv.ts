@@ -20,9 +20,17 @@ export class VariableEnv {
     }
   }
 
+  public setBaseEnv(baseEnv: VariableEnv) {
+    this.baseEnv = baseEnv;
+  }
+
   public getWithScope(key: string): [string, VariableEnvScope] | undefined {
     if (this.data[key] !== undefined) {
-      return [this.data[key], this.scope];
+      const refKey = variableRegex.exec(this.data[key])?.[1];
+      if (refKey === undefined) {
+        return [this.data[key], this.scope];
+      }
+      return refKey === key ? this.baseEnv?.getWithScope(key) : this.getWithScope(refKey);
     }
     return this.baseEnv?.getWithScope(key);
   }
@@ -57,6 +65,12 @@ export class VariableEnv {
     }
     for (const key of Object.keys(values)) {
       this.set(key, values[key]);
+    }
+  }
+
+  public resolve() {
+    for (const key of Object.keys(this.data)) {
+      this.set(key, this.getRequired(key));
     }
   }
 
