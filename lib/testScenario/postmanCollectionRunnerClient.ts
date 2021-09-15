@@ -278,7 +278,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       return undefined;
     };
     for (const k of Object.keys(step.outputVariables)) {
-      stepEnv.env.set(k, `{{${k}}}`);
+      stepEnv.env.output(k, `{{${k}}}`);
     }
     const scriptTypes: TestScriptType[] = this.opts.verbose
       ? ["DetailResponseLog", "StatusCodeAssertion"]
@@ -406,7 +406,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       },
     };
     for (const k of Object.keys(step.armTemplatePayload.outputs || {})) {
-      stepEnv.env.set(k, `{{${k}}}`);
+      stepEnv.env.output(k, `{{${k}}}`);
     }
     item.request.body = new RequestBody({
       mode: "raw",
