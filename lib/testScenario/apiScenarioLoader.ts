@@ -275,7 +275,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
   private async generateTemplate(scenario: Scenario) {
     this.env.clear();
     for (const requiredVar of scenario.requiredVariables) {
-      this.env.set(requiredVar, `_placeholder_${requiredVar}`);
+      this.env.set(requiredVar, `$(${requiredVar})`);
     }
     await this.templateGenerationRunner.executeScenario(scenario);
   }
@@ -619,7 +619,7 @@ const declareOutputVariables = (
 ) => {
   for (const [key, val] of Object.entries(outputVariables)) {
     if (scope.variables[key] === undefined) {
-      scope.variables[key] = `_placeholder_${key}`;
+      scope.variables[key] = `$(${key})`;
     }
     if (val.type === "secureString" || val.type === "securestring") {
       scope.secretVariables.push(key);

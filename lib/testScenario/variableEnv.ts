@@ -27,10 +27,10 @@ export class VariableEnv {
   public getWithScope(key: string): [string, VariableEnvScope] | undefined {
     if (this.data[key] !== undefined) {
       const refKey = variableRegex.exec(this.data[key])?.[1];
-      if (refKey === undefined) {
+      if (refKey === undefined || refKey === key) {
         return [this.data[key], this.scope];
       }
-      return refKey === key ? this.baseEnv?.getWithScope(key) : this.getWithScope(refKey);
+      return this.getWithScope(refKey);
     }
     return this.baseEnv?.getWithScope(key);
   }

@@ -36,7 +36,7 @@ export class TemplateGenerator implements ApiScenarioRunnerClient {
       return;
     }
     for (const variableName of Object.keys(outputVariables)) {
-      stepEnv.env.output(variableName, `_placeholder_${variableName}`);
+      stepEnv.env.output(variableName, `$(${variableName})`);
     }
   }
 
@@ -59,7 +59,7 @@ export class TemplateGenerator implements ApiScenarioRunnerClient {
         continue;
       }
 
-      stepEnv.env.output(outputName, `_placeholder_${outputName}`);
+      stepEnv.env.output(outputName, `$(${outputName})`);
     }
   }
 
