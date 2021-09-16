@@ -384,10 +384,38 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     const item = new Item();
     item.name = step.step;
     const path = `/subscriptions/:subscriptionId/resourcegroups/:resourceGroupName/providers/Microsoft.Resources/deployments/${step.step}?api-version=2020-06-01`;
+
+    const subscriptionIdValue = covertToPostmanVariable(stepEnv.env.get("subscriptionId") || "");
+    const resourceGroupNameValue = covertToPostmanVariable(
+      stepEnv.env.get("resourceGroupName") || ""
+    );
+    const subscriptionIdParamName = Object.keys(step.variables).includes("subscriptionId")
+      ? `${item.name}_subscriptionId`
+      : "subscriptionId";
+    const resourceGroupNameParamName = Object.keys(step.variables).includes("resourceGroupName")
+      ? `${item.name}_resourceGroupName`
+      : "resourceGroupName";
     const urlVariables: VariableDefinition[] = [
-      { key: "subscriptionId", value: "{{subscriptionId}}" },
-      { key: "resourceGroupName", value: "{{resourceGroupName}}" },
+      { key: "subscriptionId", value: `{{${subscriptionIdParamName}}}` },
+      { key: "resourceGroupName", value: `{{${resourceGroupNameParamName}}}` },
     ];
+
+    if (!this.collectionEnv.has(subscriptionIdParamName)) {
+      this.collectionEnv.set(
+        subscriptionIdParamName,
+        subscriptionIdValue,
+        typeof subscriptionIdValue
+      );
+    }
+
+    if (!this.collectionEnv.has(resourceGroupNameValue)) {
+      this.collectionEnv.set(
+        resourceGroupNameParamName,
+        resourceGroupNameValue,
+        typeof resourceGroupNameValue
+      );
+    }
+
     item.request = new Request({
       name: step.step,
       method: "put",
@@ -787,3 +815,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     return ret;
   }
 }
+
+const covertToPostmanVariable = (value: string): string => {
+  return value.replace("$(", "{{").replace(")", "}}");
+};
