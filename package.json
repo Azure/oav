@@ -50,6 +50,7 @@
     "newman": "^5.3.0",
     "node-abort-controller": "^1.1.0",
     "path-to-regexp": "^6.1.0",
+    "postman-collection": "^4.1.0",
     "reflect-metadata": "^0.1.13",
     "swagger-parser": "^6.0.5",
     "toposort": "^2.0.2",
