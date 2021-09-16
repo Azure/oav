@@ -221,7 +221,7 @@ export class LiveValidator {
     this.logging("Apply global transforms for all specs");
     try {
       this.loader.transformLoadedSpecs();
-    } catch (e: any) {
+    } catch (e) {
       const errMsg = `Failed to transform loaded specs, detail error message:${e?.message}.ErrorStack:${e?.stack}`;
       this.logging(
         errMsg,
@@ -258,7 +258,7 @@ export class LiveValidator {
             "Oav.liveValidator.initialize.loader.buildAjvValidator",
             durationInMs
           );
-        } catch (e: any) {
+        } catch (e) {
           this.logging(
             `ErrorMessage:${e?.message}.ErrorStack:${e?.stack}`,
             LiveValidatorLoggingLevels.error,
@@ -325,7 +325,7 @@ export class LiveValidator {
           "Oav.liveValidator.loadAllSpecValidatorInBackground-1",
           elapsedTime
         );
-      } catch (e: any) {
+      } catch (e) {
         this.logging(
           `ErrorMessage:${e?.message}.ErrorStack:${e?.stack}`,
           LiveValidatorLoggingLevels.error,
@@ -720,7 +720,7 @@ export class LiveValidator {
       );
 
       return spec;
-    } catch (err: any) {
+    } catch (err) {
       this.logging(
         `Unable to initialize "${swaggerPath}" file from SpecValidator. We are ` +
           `ignoring this swagger file and continuing to build cache for other valid specs. ErrorMessage: ${err?.message};ErrorStack: ${err?.stack}`,
