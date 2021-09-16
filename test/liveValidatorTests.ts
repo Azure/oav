@@ -4,7 +4,7 @@
 import * as assert from "assert";
 import * as os from "os";
 import * as path from "path";
-import * as globby from "globby";
+import { globby } from "globby";
 import * as lodash from "lodash";
 import { ResponsesObject } from "yasway";
 import { LiveValidator } from "../lib/liveValidation/liveValidator";
@@ -574,11 +574,11 @@ describe("Live Validator", () => {
     });
   });
 
-  describe("Initialize cache and validate", () => {
-    const livePaths = globby.sync(
+  describe("Initialize cache and validate", async () => {
+    const livePaths = await globby(
       path.join(__dirname, "test/liveValidation/swaggers/**/live/*.json")
     );
-    livePaths.forEach((livePath) => {
+    livePaths.forEach((livePath: string) => {
       it(`should validate request and response for "${livePath}"`, async () => {
         const options = {
           directory: "./test/liveValidation/swaggers/specification/storage",

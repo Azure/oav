@@ -4,7 +4,7 @@
 /* eslint-disable id-blacklist */
 
 import { dirname, relative as pathRelative, resolve as pathResolve } from "path";
-import globby from "globby";
+import { globby } from "globby";
 import * as yargs from "yargs";
 import { inversifyGetInstance } from "../inversifyUtils";
 import { TestRecordingLoader } from "../testScenario/gen/testRecordingLoader";
