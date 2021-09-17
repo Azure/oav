@@ -27,8 +27,11 @@ export class VariableEnv {
   public getWithScope(key: string): [string, VariableEnvScope] | undefined {
     if (this.data[key] !== undefined) {
       const refKey = variableRegex.exec(this.data[key])?.[1];
-      if (refKey === undefined || refKey === key) {
+      if (refKey === undefined) {
         return [this.data[key], this.scope];
+      }
+      if (refKey === key) {
+        return this.baseEnv?.getWithScope(key) ?? [this.data[key], this.scope];
       }
       return this.getWithScope(refKey);
     }
@@ -82,16 +85,12 @@ export class VariableEnv {
     let match;
     const regex = isPathVariable ? pathVariableRegex : variableRegex;
     const globalRegex = new RegExp(regex, "g");
-    while (regex.test(source)) {
-      const current = source;
+    if (regex.test(source)) {
       while ((match = globalRegex.exec(source))) {
         source =
           source.substring(0, match.index) +
           this.getRequired(match[1]) +
           source.substring(match.index + match[0].length);
-      }
-      if (current === source) {
-        break;
       }
     }
     return source;

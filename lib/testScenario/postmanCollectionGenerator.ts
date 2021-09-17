@@ -95,6 +95,7 @@ export class PostmanCollectionGenerator {
         jsonLoader: this.apiScenarioLoader.jsonLoader,
         env: this.env,
         client: client,
+        resolveVariables: false,
       });
       await runner.executeScenario(scenario);
       // If shared resource-group, move clean to one separate scenario.

@@ -17,6 +17,7 @@ export interface ApiScenarioRunnerOption {
   client: ApiScenarioRunnerClient;
   jsonLoader: JsonLoader;
   loadMode?: boolean;
+  resolveVariables?: boolean;
 }
 
 export interface ArmDeploymentTracking {
@@ -110,6 +111,7 @@ export class ApiScenarioRunner {
   private scopeTracking: { [scopeName: string]: ScopeTracking };
   private scenarioScopeTracking: Map<Scenario, ScopeTracking> = new Map();
   private loadMode: boolean;
+  private resolveVariables: boolean;
 
   private resourceTracking: { [resourceName: string]: VariableEnv };
 
@@ -141,6 +143,7 @@ export class ApiScenarioRunner {
     this.client = opts.client;
     this.jsonLoader = opts.jsonLoader;
     this.loadMode = opts.loadMode ?? false;
+    this.resolveVariables = opts.resolveVariables ?? true;
     this.scopeTracking = {};
     this.resourceTracking = {};
   }
@@ -301,10 +304,12 @@ export class ApiScenarioRunner {
     }
 
     req.path = localEnv.resolveString(step.operation._path._pathTemplate, true);
-    req = localEnv.resolveObjectValues(req);
+    if (this.resolveVariables) {
+      req = localEnv.resolveObjectValues(req);
+    }
 
     await this.client.sendExampleRequest(req, step, {
-      env: localEnv,
+      env: step.resourceName !== undefined ? this.resourceTracking[step.resourceName] : localEnv,
       scope: scope.scope,
       armDeployments: scope.armDeployments,
     });
@@ -315,8 +320,6 @@ export class ApiScenarioRunner {
     env: VariableEnv,
     scope: ScopeTracking
   ) {
-    step.armTemplatePayload = env.resolveObjectValues(step.armTemplatePayload);
-
     const subscriptionId = env.getRequired("subscriptionId");
     const resourceGroupName = env.getRequired("resourceGroupName");
 
@@ -330,6 +333,10 @@ export class ApiScenarioRunner {
       },
     };
     scope.armDeployments.push(armDeployment);
+
+    if (this.resolveVariables) {
+      step.armTemplatePayload = env.resolveObjectValues(step.armTemplatePayload);
+    }
 
     await this.client.sendArmTemplateDeployment(step.armTemplatePayload, armDeployment, step, {
       env,
