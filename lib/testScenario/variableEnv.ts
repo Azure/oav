@@ -1,7 +1,6 @@
 const variableRegex = /\$\(([A-Za-z_][A-Za-z0-9_]*)\)/;
 const pathVariableRegex = /\{([A-Za-z_][A-Za-z0-9_]*)\}/;
 
-
 export type VariableEnvScope = "runtime" | "global" | "scope" | "scenario" | "step" | "local";
 export class VariableEnv {
   protected scope: VariableEnvScope;
