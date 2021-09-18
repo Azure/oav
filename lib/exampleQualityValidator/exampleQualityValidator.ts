@@ -16,8 +16,8 @@ import { noAdditionalPropertiesTransformer } from "../transform/noAdditionalProp
 import { nullableTransformer } from "../transform/nullableTransformer";
 import { pureObjectTransformer } from "../transform/pureObjectTransformer";
 import { AjvSchemaValidator } from "../swaggerValidator/ajvSchemaValidator";
-import { getJsonPatchDiff } from "../testScenario/diffUtils";
-import { BodyTransformer } from "../testScenario/bodyTransformer";
+import { getJsonPatchDiff } from "../apiScenario/diffUtils";
+import { BodyTransformer } from "../apiScenario/bodyTransformer";
 import { ErrorCodes } from "../util/constants";
 import { SeverityString } from "../util/severity";
 import { inversifyGetInstance, TYPES } from "./../inversifyUtils";
