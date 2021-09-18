@@ -2,7 +2,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import { getJsonPatchDiff, jsonPatchApply } from "../../lib/apiScenario/diffUtils";
+import { getJsonPatchDiff, jsonPatchApply } from "../../lib/testScenario/diffUtils";
 
 const fixtures = {
   "0_sameSimple": {

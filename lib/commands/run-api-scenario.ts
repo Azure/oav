@@ -9,11 +9,11 @@ import { cliSuppressExceptions } from "../cliSuppressExceptions";
 import {
   PostmanCollectionGenerator,
   PostmanCollectionGeneratorOption,
-} from "../apiScenario/postmanCollectionGenerator";
+} from "../testScenario/postmanCollectionGenerator";
 import { inversifyGetInstance } from "../inversifyUtils";
 import { getApiVersionFromSwaggerFile, getProviderFromFilePath, printWarning } from "../util/utils";
-import { getFileNameFromPath } from "../apiScenario/defaultNaming";
-import { getSwaggerFilePathsFromApiScenarioFilePath } from "../apiScenario/apiScenarioYamlLoader";
+import { getFileNameFromPath } from "../testScenario/defaultNaming";
+import { getSwaggerFilePathsFromApiScenarioFilePath } from "../testScenario/apiScenarioYamlLoader";
 
 export const command = "run-api-scenario <api-scenario>";
 

@@ -7,8 +7,8 @@ import { dirname, relative as pathRelative, resolve as pathResolve } from "path"
 import globby from "globby";
 import * as yargs from "yargs";
 import { inversifyGetInstance } from "../inversifyUtils";
-import { TestRecordingLoader } from "../apiScenario/gen/testRecordingLoader";
-import { RequestTracking, TestScenarioGenerator } from "../apiScenario/gen/testScenarioGenerator";
+import { TestRecordingLoader } from "../testScenario/gen/testRecordingLoader";
+import { RequestTracking, TestScenarioGenerator } from "../testScenario/gen/testScenarioGenerator";
 import { getAutorestConfig } from "../util/getAutorestConfig";
 
 export const command = "generate-test-scenario";

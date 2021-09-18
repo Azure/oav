@@ -57,29 +57,29 @@ export {
 } from "./lib/liveValidation/operationValidator";
 export { SpecResolver } from "./lib/validators/specResolver";
 
-export { ApiScenarioLoader } from "./lib/apiScenario/apiScenarioLoader";
+export { ApiScenarioLoader } from "./lib/testScenario/apiScenarioLoader";
 export {
   ScenarioDefinition,
   Scenario,
   Step,
   StepArmTemplate,
   StepRestCall,
-} from "./lib/apiScenario/apiScenarioTypes";
-export { VariableEnv } from "./lib/apiScenario/variableEnv";
-export { ApiScenarioRunner, ApiScenarioRunnerClient } from "./lib/apiScenario/apiScenarioRunner";
+} from "./lib/testScenario/apiScenarioTypes";
+export { VariableEnv } from "./lib/testScenario/variableEnv";
+export { ApiScenarioRunner, ApiScenarioRunnerClient } from "./lib/testScenario/apiScenarioRunner";
 
-export { PostmanCollectionRunnerClient } from "./lib/apiScenario/postmanCollectionRunnerClient";
+export { PostmanCollectionRunnerClient } from "./lib/testScenario/postmanCollectionRunnerClient";
 export {
   PostmanCollectionGenerator,
   PostmanCollectionGeneratorOption,
-} from "./lib/apiScenario/postmanCollectionGenerator";
+} from "./lib/testScenario/postmanCollectionGenerator";
 export {
   SwaggerAnalyzer,
   SwaggerAnalyzerOption,
   ExampleDependency,
   DependencyResult,
   normalizeDependency,
-} from "./lib/apiScenario/swaggerAnalyzer";
+} from "./lib/testScenario/swaggerAnalyzer";
 
 export { getAutorestConfig } from "./lib/util/getAutorestConfig";
 // Constants

@@ -8,8 +8,8 @@ import { cliSuppressExceptions } from "../cliSuppressExceptions";
 import {
   NewmanReportAnalyzer,
   NewmanReportAnalyzerOption,
-} from "../apiScenario/postmanReportAnalyzer";
-import { defaultQualityReportFilePath } from "../apiScenario/defaultNaming";
+} from "../testScenario/postmanReportAnalyzer";
+import { defaultQualityReportFilePath } from "../testScenario/defaultNaming";
 import { inversifyGetInstance } from "../inversifyUtils";
 
 export const command = "analyze-report <newman-report-path>";

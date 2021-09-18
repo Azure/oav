@@ -9,7 +9,7 @@ import * as yargs from "yargs";
 import {
   PostmanCollectionGenerator,
   PostmanCollectionGeneratorOption,
-} from "../apiScenario/postmanCollectionGenerator";
+} from "../testScenario/postmanCollectionGenerator";
 
 import { cliSuppressExceptions } from "../cliSuppressExceptions";
 import { getAutorestConfig } from "../util/getAutorestConfig";

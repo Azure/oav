@@ -2,7 +2,7 @@
 //
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
-import { SwaggerAnalyzer, normalizeDependency } from "../../lib/apiScenario/swaggerAnalyzer";
+import { SwaggerAnalyzer, normalizeDependency } from "../../lib/testScenario/swaggerAnalyzer";
 
 describe("swagger analyzer", () => {
   it("analyze dependency", async () => {
