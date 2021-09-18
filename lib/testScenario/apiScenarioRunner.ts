@@ -255,7 +255,7 @@ export class ApiScenarioRunner {
   }
 
   private async executeRestCallStep(step: StepRestCall, env: VariableEnv, scope: ScopeTracking) {
-    let localEnv = new VariableEnv("local", env);
+    const pathEnv = new VariableEnv();
 
     let req: ApiScenarioClientRequest = {
       method: step.operation._method.toUpperCase() as HttpMethods,
@@ -275,7 +275,15 @@ export class ApiScenarioRunner {
 
       switch (param.in) {
         case "path":
-          localEnv.set(param.name, paramValue);
+          pathEnv.set(param.name, paramValue);
+          if (
+            !this.loadMode &&
+            step.resourceName !== undefined &&
+            this.resourceTracking[step.resourceName] !== undefined
+          ) {
+            // reuse path variable
+            env.set(param.name, this.resourceTracking[step.resourceName].getRequired(param.name));
+          }
           break;
         case "query":
           req.query[param.name] = paramValue;
@@ -290,26 +298,25 @@ export class ApiScenarioRunner {
           throw new Error(`Parameter "in" not supported: ${param.in}`);
       }
     }
+    req.path = pathEnv.resolveString(step.operation._path._pathTemplate, true);
 
-    if (!this.loadMode && step.resourceName !== undefined) {
-      if (this.resourceTracking[step.resourceName] === undefined) {
-        // resolve and save pathEnv
-        localEnv.resolve();
-        this.resourceTracking[step.resourceName] = localEnv;
-      } else {
-        // reuse pathEnv
-        localEnv = this.resourceTracking[step.resourceName];
-        localEnv.setBaseEnv(env);
-      }
+    if (
+      !this.loadMode &&
+      step.resourceName !== undefined &&
+      this.resourceTracking[step.resourceName] === undefined
+    ) {
+      // resolve and save pathEnv
+      pathEnv.setBaseEnv(env);
+      pathEnv.resolve();
+      this.resourceTracking[step.resourceName] = pathEnv;
     }
 
-    req.path = localEnv.resolveString(step.operation._path._pathTemplate, true);
     if (this.resolveVariables) {
-      req = localEnv.resolveObjectValues(req);
+      req = env.resolveObjectValues(req);
     }
 
     await this.client.sendExampleRequest(req, step, {
-      env: step.resourceName !== undefined ? this.resourceTracking[step.resourceName] : localEnv,
+      env,
       scope: scope.scope,
       armDeployments: scope.armDeployments,
     });
