@@ -15,26 +15,26 @@ import { getApiVersionFromSwaggerFile, getProviderFromFilePath, printWarning } f
 import { getFileNameFromPath } from "../apiScenario/defaultNaming";
 import { getSwaggerFilePathsFromApiScenarioFilePath } from "../apiScenario/apiScenarioYamlLoader";
 
-export const command = "run-test-scenario <test-scenario>";
+export const command = "run-api-scenario <api-scenario>";
 
 export const aliases = ["run"];
 
-export const describe = "newman runner run test scenario file.";
+export const describe = "newman runner run API scenario file.";
 
-export const testScenarioEnvKey = "TEST_SCENARIO_JSON_ENV";
+export const apiScenarioEnvKey = "API_SCENARIO_JSON_ENV";
 
 /**
  * UploadBlob true. Upload generated file and result to azure blob storage. connection string is passed by `process.env.blobConnectionString`
  * Upload files:
  *
- * 1. newmanReport: containerName: newmanreport path: <ResourceProvider>/<apiVersion>/<testScenarioFileName>/<runId>/<testScenarioIdx>.json
+ * 1. newmanReport: containerName: newmanreport path: <ResourceProvider>/<apiVersion>/<apiScenarioFileName>/<runId>/<scenarioIdx>.json
  *
- * 2. payload: containerName: payload path: <resourceProvider>/<apiVersion>/<testScenarioFileName>/<runId>/<testScenarioIdx>/<correlationId>.json
+ * 2. payload: containerName: payload path: <resourceProvider>/<apiVersion>/<apiScenarioFileName>/<runId>/<scenarioIdx>/<correlationId>.json
  *
- * 3. report: containerName: report path: <ResourceProvider>/<apiVersion>/<testScenarioFileName>/<runId>/<testScenarioIdx>/report.json
+ * 3. report: containerName: report path: <ResourceProvider>/<apiVersion>/<apiScenarioFileName>/<runId>/<scenarioIdx>/report.json
  *
- * 4. postmancollection & postmanenv: container: postmancollection: <ResourceProvider>/<apiVersion>/<testScenarioFileName>/<runId>/<testScenarioIdx>/collection.json
- * postmanenv: <ResourceProvider>/<apiVersion>/<testScenarioFileName>/<runId>/<testScenarioIdx>/env.json
+ * 4. postmancollection & postmanenv: container: postmancollection: <ResourceProvider>/<apiVersion>/<apiScenarioFileName>/<runId>/<scenarioIdx>/collection.json
+ * postmanenv: <ResourceProvider>/<apiVersion>/<apiScenarioFileName>/<runId>/<scenarioIdx>/env.json
  *
  */
 export const builder: yargs.CommandBuilder = {
@@ -124,7 +124,7 @@ export const builder: yargs.CommandBuilder = {
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
   await cliSuppressExceptions(async () => {
-    const scenarioFilePath = path.resolve(argv.testScenario);
+    const scenarioFilePath = path.resolve(argv.apiScenario);
     const swaggerFilePaths = getSwaggerFilePathsFromApiScenarioFilePath(scenarioFilePath);
     if (swaggerFilePaths.length === 0) {
       throw new Error(
@@ -135,12 +135,12 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     if (argv.e !== undefined) {
       env = JSON.parse(fs.readFileSync(argv.e).toString());
     }
-    if (process.env[testScenarioEnvKey]) {
-      const envFromVariable = JSON.parse(process.env[testScenarioEnvKey] as string);
+    if (process.env[apiScenarioEnvKey]) {
+      const envFromVariable = JSON.parse(process.env[apiScenarioEnvKey] as string);
       for (const key of Object.keys(envFromVariable)) {
         if (env[key] !== undefined && envFromVariable[key] !== env[key]) {
           printWarning(
-            `Notice: the variable '${key}' in '${argv.e}' is overwritten by the variable in the environment '${testScenarioEnvKey}'.`
+            `Notice: the variable '${key}' in '${argv.e}' is overwritten by the variable in the environment '${apiScenarioEnvKey}'.`
           );
         }
       }

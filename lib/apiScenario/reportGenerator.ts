@@ -10,12 +10,12 @@ import {
   getProviderFromFilePath,
 } from "../util/utils";
 import { SeverityString } from "../util/severity";
-import { SwaggerAnalyzer } from "./swaggerAnalyzer";
-import { DataMasker } from "./dataMasker";
-import { defaultQualityReportFilePath } from "./defaultNaming";
 import { FileLoader } from "../swagger/fileLoader";
 import { TYPES } from "../inversifyUtils";
 import { SwaggerExample } from "../swagger/swaggerTypes";
+import { SwaggerAnalyzer } from "./swaggerAnalyzer";
+import { DataMasker } from "./dataMasker";
+import { defaultQualityReportFilePath } from "./defaultNaming";
 import { ApiScenarioLoader, ApiScenarioLoaderOption } from "./apiScenarioLoader";
 import { NewmanReportParser, NewmanReportParserOption } from "./postmanReportParser";
 import {

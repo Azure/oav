@@ -1,10 +1,10 @@
 import { inject, injectable } from "inversify";
 import uuid from "uuid";
-import { defaultQualityReportFilePath } from "./defaultNaming";
 import { setDefaultOpts } from "../swagger/loader";
+import { inversifyGetInstance, TYPES } from "../inversifyUtils";
+import { defaultQualityReportFilePath } from "./defaultNaming";
 import { ReportGenerator, ReportGeneratorOption, ValidationLevel } from "./reportGenerator";
 import { RawReport } from "./apiScenarioTypes";
-import { inversifyGetInstance, TYPES } from "../inversifyUtils";
 import { NewmanReportParser, NewmanReportParserOption } from "./postmanReportParser";
 import { getSwaggerFilePathsFromApiScenarioFilePath } from "./apiScenarioYamlLoader";
 
