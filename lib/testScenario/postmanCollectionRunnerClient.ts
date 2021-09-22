@@ -430,7 +430,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     const body = {
       properties: {
         mode: "Incremental",
-        template: armTemplate,
+        template: stepEnv.env.resolveObjectValues(armTemplate),
       },
     };
     for (const k of Object.keys(step.armTemplatePayload.outputs || {})) {
