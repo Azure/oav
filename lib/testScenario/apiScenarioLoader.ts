@@ -461,10 +461,11 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
             target,
             (_, propertyName) =>
               propertyName !== "properties" &&
-              propertyName !== "location" &&
-              propertyName !== "type" &&
+              propertyName !== "id" &&
               propertyName !== "name" &&
-              propertyName !== "id"
+              propertyName !== "type" &&
+              propertyName !== "location" &&
+              propertyName !== "systemData"
           );
           const propertiesMergePatch = jsonMergePatchGenerate(
             resource.body.properties,
