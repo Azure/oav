@@ -16,7 +16,7 @@
     "@azure/identity": "^1.2.0",
     "@azure/ms-rest-azure-js": "^2.0.2",
     "@azure/ms-rest-js": "^2.1.0",
-    "@azure/openapi-markdown": "^0.9.2",
+    "@azure/openapi-markdown": "^0.9.3",
     "@azure/storage-blob": "^12.5.0",
     "@microsoft.azure/autorest-extension-base": "1.0.13",
     "@ts-common/commonmark-to-markdown": "^2.0.2",
