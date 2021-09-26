@@ -30,7 +30,7 @@
     "fast-json-stable-stringify": "^2.1.0",
     "fs-extra": "^10.0.0",
     "glob": "^7.1.2",
-    "globby": "^9.2.0",
+    "globby": "^10.0.2",
     "humanize-duration": "^3.26.0",
     "inversify": "^5.0.5",
     "js-yaml": "^4.0.0",
