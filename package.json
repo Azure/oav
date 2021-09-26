@@ -1,122 +1,122 @@
 {
-  "name": "oav",
-  "version": "0.24.1",
-  "author": {
-    "name": "Microsoft Corporation",
-    "email": "azsdkteam@microsoft.com",
-    "url": "https://github.com/azure/oav"
-  },
-  "description": "Validate Azure REST API Specifications",
-  "license": "MIT",
-  "dependencies": {
-    "@azure/openapi-markdown": "^0.9.4",
-    "@microsoft.azure/autorest-extension-base": "1.0.13",
-    "@ts-common/commonmark-to-markdown": "^2.0.2",
-    "@ts-common/iterator": "^0.3.6",
-    "@ts-common/json": "^0.3.1",
-    "@ts-common/json-parser": "^0.9.0",
-    "@ts-common/property-set": "^0.1.0",
-    "@ts-common/source-map": "^0.5.0",
-    "@ts-common/string-map": "^0.3.0",
-    "@ts-common/virtual-fs": "^0.3.0",
-    "@types/jsonpath": "^0.2.0",
-    "commonmark": "^0.29.0",
-    "glob": "^5.0.15",
-    "globby": "^9.2.0",
-    "js-yaml": "^3.13.1",
-    "json-pointer": "^0.6.0",
-    "json-refs": "^3.0.13",
-    "jsonpath": "^1.0.1",
-    "kind-of": "^6.0.3",
-    "linq": "^3.2.0",
-    "lodash": "^4.17.15",
-    "md5-file": "^4.0.0",
-    "moment": "^2.24.0",
-    "ms-rest": "^2.5.4",
-    "swagger-parser": "^6.0.5",
-    "uuid": "^3.3.2",
-    "vscode-jsonrpc": "^3.6.2",
-    "winston": "^3.2.1",
-    "yargs": "^15.4.1",
-    "yasway": "^1.10.7",
-    "yuml2svg": "^4.2.1",
-    "z-schema": "^4.2.2"
-  },
-  "devDependencies": {
-    "@types/commonmark": "^0.27.3",
-    "@types/glob": "^7.1.1",
-    "@types/jest": "^24.0.25",
-    "@types/js-yaml": "^3.12.1",
-    "@types/json-pointer": "^1.0.30",
-    "@types/lodash": "^4.14.149",
-    "@types/md5-file": "^4.0.0",
-    "@types/node": "^10.12.18",
-    "@types/request": "^2.48.1",
-    "@types/swagger-parser": "^4.0.3",
-    "@types/uuid": "^3.4.4",
-    "@types/yargs": "^11.1.2",
-    "handlebars": "^4.7.6",
-    "jest": "^26.3.0",
-    "jest-junit": "^6.3.0",
-    "kind-of": "^6.0.3",
-    "prettier": "^1.18.2",
-    "should": "^13.2.3",
-    "ts-jest": "^26.1.4",
-    "tslint": "~5.17.0",
-    "tslint-config-prettier": "^1.18.0",
-    "tslint-plugin-prettier": "^2.0.1",
-    "glob-parent": "^5.1.2",
-    "set-value": "^4.0.1",
-    "typescript": "~3.5.3"
-  },
-  "homepage": "https://github.com/azure/oav",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/azure/oav.git"
-  },
-  "bugs": {
-    "url": "http://github.com/azure/oav/issues"
-  },
-  "main": "./dist/index.js",
-  "bin": {
-    "oav": "./dist/cli.js"
-  },
-  "files": [
-    "dist/*.js",
-    "dist/*.d.ts",
-    "dist/*.js.map",
-    "dist/*.d.ts.map",
-    "dist/lib/**/*.js",
-    "dist/lib/**/*.d.ts",
-    "dist/lib/**/*.js.map",
-    "dist/lib/**/*.d.ts.map",
-    "types/**/*.d.ts",
-    "*.ts",
-    "lib/**/*.ts"
-  ],
-  "types": [
-    "./dist/index.d.ts",
-    "./types/*.d.ts"
-  ],
-  "scripts": {
-    "tsc": "tsc",
-    "tslint": "tslint --project tsconfig.json ./*.ts ./lib/**/*.ts ./test/**/*.ts ./types/**/*.ts",
-    "tslint-fix": "tslint --fix --project tsconfig.json ./*.ts ./lib/**/*.ts ./test/**/*.ts ./types/**/*.ts",
-    "test": "npm run tsc && npm run --silent tslint && jest --ci --reporters=default --reporters=jest-junit",
-    "fast-test": "jest --ci --reporters=default --reporters=jest-junit --config ./jest.config.js ",
-    "slow-test": "node --max-old-space-size=10192 ./node_modules/.bin/jest -u --runInBand --ci --reporters=default --reporters=jest-junit --config ./regression/jest.regression.config.js ",
-    "slow-test-sample": "node --max-old-space-size=10192 ./node_modules/.bin/jest -u --runInBand --ci --reporters=default --reporters=jest-junit --config ./regression/jest.regression-sample.config.js ",
-    "jest": "jest",
-    "start": "node ./dist/lib/autorestPlugin/pluginHost.js",
-    "tslint-check": "tslint-config-prettier-check ./tslint.json",
-    "prepack": "npm install && tsc && npm run tslint",
-    "cli": "node dist/cli.js",
-    "li": "npm install @ts-common/local-install --no-save && local-install"
-  },
-  "engines": {
-    "node": ">=10.11.0"
-  },
-  "jest-junit": {
-    "output": "test-results.xml"
-  }
+	"name": "oav",
+	"version": "0.24.2",
+	"author": {
+		"name": "Microsoft Corporation",
+		"email": "azsdkteam@microsoft.com",
+		"url": "https://github.com/azure/oav"
+	},
+	"description": "Validate Azure REST API Specifications",
+	"license": "MIT",
+	"dependencies": {
+		"@azure/openapi-markdown": "^0.9.4",
+		"@microsoft.azure/autorest-extension-base": "1.0.13",
+		"@ts-common/commonmark-to-markdown": "^2.0.2",
+		"@ts-common/iterator": "^0.3.6",
+		"@ts-common/json": "^0.3.1",
+		"@ts-common/json-parser": "^0.9.0",
+		"@ts-common/property-set": "^0.1.0",
+		"@ts-common/source-map": "^0.5.0",
+		"@ts-common/string-map": "^0.3.0",
+		"@ts-common/virtual-fs": "^0.3.0",
+		"@types/jsonpath": "^0.2.0",
+		"commonmark": "^0.29.0",
+		"glob": "^5.0.15",
+		"globby": "^9.2.0",
+		"js-yaml": "^3.13.1",
+		"json-pointer": "^0.6.1",
+		"json-refs": "^3.0.13",
+		"jsonpath": "^1.1.1",
+		"kind-of": "^6.0.3",
+		"linq": "^3.2.0",
+		"lodash": "^4.17.21",
+		"md5-file": "^4.0.0",
+		"moment": "^2.24.0",
+		"ms-rest": "^2.5.4",
+		"swagger-parser": "^6.0.5",
+		"uuid": "^3.3.2",
+		"vscode-jsonrpc": "^3.6.2",
+		"winston": "^3.2.1",
+		"yargs": "^15.4.1",
+		"yasway": "^1.10.7",
+		"yuml2svg": "^4.2.1",
+		"z-schema": "^4.2.2"
+	},
+	"devDependencies": {
+		"@types/commonmark": "^0.27.3",
+		"@types/glob": "^7.1.1",
+		"@types/jest": "^24.0.25",
+		"@types/js-yaml": "^3.12.1",
+		"@types/json-pointer": "^1.0.30",
+		"@types/lodash": "^4.14.149",
+		"@types/md5-file": "^4.0.0",
+		"@types/node": "^10.12.18",
+		"@types/request": "^2.48.1",
+		"@types/swagger-parser": "^4.0.3",
+		"@types/uuid": "^3.4.4",
+		"@types/yargs": "^11.1.2",
+		"glob-parent": "^5.1.2",
+		"handlebars": "^4.7.7",
+		"jest": "^27.2.2",
+		"jest-junit": "^12.3.0",
+		"kind-of": "^6.0.3",
+		"prettier": "^1.18.2",
+		"set-value": "^4.0.1",
+		"should": "^13.2.3",
+		"ts-jest": "^26.1.4",
+		"tslint": "~5.17.0",
+		"tslint-config-prettier": "^1.18.0",
+		"tslint-plugin-prettier": "^2.0.1",
+		"typescript": "~3.5.3"
+	},
+	"homepage": "https://github.com/azure/oav",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/azure/oav.git"
+	},
+	"bugs": {
+		"url": "http://github.com/azure/oav/issues"
+	},
+	"main": "./dist/index.js",
+	"bin": {
+		"oav": "./dist/cli.js"
+	},
+	"files": [
+		"dist/*.js",
+		"dist/*.d.ts",
+		"dist/*.js.map",
+		"dist/*.d.ts.map",
+		"dist/lib/**/*.js",
+		"dist/lib/**/*.d.ts",
+		"dist/lib/**/*.js.map",
+		"dist/lib/**/*.d.ts.map",
+		"types/**/*.d.ts",
+		"*.ts",
+		"lib/**/*.ts"
+	],
+	"types": [
+		"./dist/index.d.ts",
+		"./types/*.d.ts"
+	],
+	"scripts": {
+		"tsc": "tsc",
+		"tslint": "tslint --project tsconfig.json ./*.ts ./lib/**/*.ts ./test/**/*.ts ./types/**/*.ts",
+		"tslint-fix": "tslint --fix --project tsconfig.json ./*.ts ./lib/**/*.ts ./test/**/*.ts ./types/**/*.ts",
+		"test": "npm run tsc && npm run --silent tslint && jest --ci --reporters=default --reporters=jest-junit",
+		"fast-test": "jest --ci --reporters=default --reporters=jest-junit --config ./jest.config.js ",
+		"slow-test": "node --max-old-space-size=10192 ./node_modules/.bin/jest -u --runInBand --ci --reporters=default --reporters=jest-junit --config ./regression/jest.regression.config.js ",
+		"slow-test-sample": "node --max-old-space-size=10192 ./node_modules/.bin/jest -u --runInBand --ci --reporters=default --reporters=jest-junit --config ./regression/jest.regression-sample.config.js ",
+		"jest": "jest",
+		"start": "node ./dist/lib/autorestPlugin/pluginHost.js",
+		"tslint-check": "tslint-config-prettier-check ./tslint.json",
+		"prepack": "npm install && tsc && npm run tslint",
+		"cli": "node dist/cli.js",
+		"li": "npm install @ts-common/local-install --no-save && local-install"
+	},
+	"engines": {
+		"node": ">=10.11.0"
+	},
+	"jest-junit": {
+		"output": "test-results.xml"
+	}
 }
