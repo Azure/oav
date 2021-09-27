@@ -133,7 +133,6 @@
     "*.ts",
     "lib/**/*.ts"
   ],
-  "type": "module",
   "types": "./dist/index.d.ts",
   "scripts": {
     "copy-templates": "copyfiles -V -E -u 1 lib/testScenario/templates/* dist/lib",
@@ -152,7 +151,7 @@
     "li": "npm install @ts-common/local-install --no-save && local-install"
   },
   "engines": {
-    "node": ">=10.11.0"
+    "node": ">=12.20"
   },
   "jest-junit": {
     "output": "test-results.xml"
