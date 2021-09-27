@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { basename, dirname } from "path";
-import globby from "globby";
+import { globby } from "globby";
 import { inversifyGetInstance } from "../inversifyUtils";
 import { getAutorestConfig } from "../util/getAutorestConfig";
 import { TestRecordingLoader } from "./gen/testRecordingLoader";

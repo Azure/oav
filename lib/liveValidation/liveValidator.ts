@@ -9,7 +9,7 @@ import { ParsedUrlQuery } from "querystring";
 import * as url from "url";
 import * as util from "util";
 import * as _ from "lodash";
-import globby from "globby";
+import { globby } from "globby";
 import * as models from "../models";
 import { requestResponseDefinition } from "../models/requestResponse";
 import { LowerHttpMethods, SwaggerSpec } from "../swagger/swaggerTypes";

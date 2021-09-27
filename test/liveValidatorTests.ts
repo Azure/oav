@@ -575,7 +575,7 @@ describe("Live Validator", () => {
   });
 
   describe("Initialize cache and validate", () => {
-    const livePaths = globby.sync(
+    const livePaths = globby.globbySync(
       path.join(__dirname, "test/liveValidation/swaggers/**/live/*.json")
     );
     livePaths.forEach((livePath) => {
