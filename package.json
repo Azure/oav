@@ -137,7 +137,7 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "copy-templates": "copyfiles -V -E -u 1 lib/testScenario/templates/* dist/lib",
-    "build": "run-p tsc lint && npm run copy-templates",
+    "build": "run-p tsc && npm run copy-templates",
     "tsc": "tsc && npm run copy-templates",
     "lint": "eslint ./lib/**/*.ts ./test/**/*.ts ./*.ts",
     "lint-fix": "eslint ./lib/**/*.ts ./test/**/*.ts ./*.ts --fix",

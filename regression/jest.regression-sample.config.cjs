@@ -1,6 +1,6 @@
 // @ts-check
 
-const mainConfig = import("../jest.config");
+const mainConfig = await import("../jest.config");
 
 /** @type {jest.InitialOptions} */
 module.exports = {

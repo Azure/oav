@@ -11,6 +11,7 @@
 
 // Happy linting! 💖
 // */
+export default
 
 import("@rushstack/eslint-config/patch/modern-module-resolution");
 module.exports = {
