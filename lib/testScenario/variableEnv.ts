@@ -33,10 +33,10 @@ export class VariableEnv {
           const refVal = refKey === key ? this.baseEnv?.get(key) ?? val : this.get(refKey);
           replaceArray.push([match.index, match.index + match[0].length, refVal]);
         }
-        let pair;
-        while ((pair = replaceArray.pop())) {
-          if (pair[2] !== undefined) {
-            val = val.substring(0, pair[0]) + pair[2] + val.substring(pair[1]);
+        let r;
+        while ((r = replaceArray.pop())) {
+          if (r[2] !== undefined) {
+            val = val.substring(0, r[0]) + r[2] + val.substring(r[1]);
           }
         }
       }
@@ -81,15 +81,17 @@ export class VariableEnv {
   }
 
   private resolveStringWithRegex(source: string, isPathVariable: boolean): string {
-    let match;
     const regex = isPathVariable ? pathVariableRegex : variableRegex;
     if (regex.test(source)) {
       const globalRegex = new RegExp(regex, "g");
+      const replaceArray: Array<[number, number, string]> = [];
+      let match;
       while ((match = globalRegex.exec(source))) {
-        source =
-          source.substring(0, match.index) +
-          this.getRequired(match[1]) +
-          source.substring(match.index + match[0].length);
+        replaceArray.push([match.index, match.index + match[0].length, this.getRequired(match[1])]);
+      }
+      let r;
+      while ((r = replaceArray.pop())) {
+        source = source.substring(0, r[0]) + r[2] + source.substring(r[1]);
       }
     }
     return source;
