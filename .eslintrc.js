@@ -12,7 +12,7 @@
 // Happy linting! 💖
 // */
 
-require("@rushstack/eslint-config/patch/modern-module-resolution");
+import("@rushstack/eslint-config/patch/modern-module-resolution");
 
 module.exports = {
   env: {

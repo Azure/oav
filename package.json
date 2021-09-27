@@ -133,6 +133,7 @@
     "*.ts",
     "lib/**/*.ts"
   ],
+  "type": "module",
   "types": "./dist/index.d.ts",
   "scripts": {
     "copy-templates": "copyfiles -V -E -u 1 lib/testScenario/templates/* dist/lib",

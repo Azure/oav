@@ -1,6 +1,6 @@
 // @ts-check
 
-const mainConfig = require("../jest.config");
+const mainConfig = import("../jest.config");
 
 /** @type {jest.InitialOptions} */
 module.exports = {
