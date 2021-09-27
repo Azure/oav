@@ -4,7 +4,7 @@
 import * as assert from "assert";
 import * as os from "os";
 import * as path from "path";
-import * as globby from "globby";
+import { globby } from "globby";
 import * as lodash from "lodash";
 import { ResponsesObject } from "yasway";
 import { LiveValidator } from "../lib/liveValidation/liveValidator";
