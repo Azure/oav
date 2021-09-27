@@ -158,7 +158,7 @@ export class ApiScenarioRunner {
       scope = this.scopeTracking[testScopeName];
       if (scope === undefined) {
         const scenarioDef = scenario._scenarioDef;
-        const env = new VariableEnv("scope", this.env);
+        const env = new VariableEnv(this.env);
         env.setBatch(scenarioDef.variables);
         scope = {
           scope: scenarioDef.scope,
@@ -217,7 +217,7 @@ export class ApiScenarioRunner {
 
   public async executeScenario(scenario: Scenario) {
     const scope = await this.prepareScope(scenario);
-    const env = new VariableEnv("scenario", scope.env);
+    const env = new VariableEnv(scope.env);
     env.setBatch(scenario.variables);
 
     for (const step of scenario.steps) {
@@ -226,7 +226,7 @@ export class ApiScenarioRunner {
   }
 
   public async executeStep(step: Step, env: VariableEnv, scope: ScopeTracking) {
-    const stepEnv = new VariableEnv("step", env);
+    const stepEnv = new VariableEnv(env);
     stepEnv.setBatch(step.variables);
 
     try {

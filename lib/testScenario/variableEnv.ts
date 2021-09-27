@@ -1,14 +1,11 @@
 const variableRegex = /\$\(([A-Za-z_][A-Za-z0-9_]*)\)/;
 const pathVariableRegex = /\{([A-Za-z_][A-Za-z0-9_]*)\}/;
 
-export type VariableEnvScope = "runtime" | "global" | "scope" | "scenario" | "step" | "local";
 export class VariableEnv {
-  protected scope: VariableEnvScope;
   protected baseEnv?: VariableEnv;
   protected data: { [key: string]: string } = {};
 
-  public constructor(scope?: VariableEnvScope, baseEnv?: VariableEnv) {
-    this.scope = scope ?? "local";
+  public constructor(baseEnv?: VariableEnv) {
     if (baseEnv !== undefined) {
       this.baseEnv = baseEnv;
     }
@@ -24,34 +21,36 @@ export class VariableEnv {
     this.baseEnv = baseEnv;
   }
 
-  public getWithScope(key: string): [string, VariableEnvScope] | undefined {
-    if (this.data[key] !== undefined) {
-      const refKey = variableRegex.exec(this.data[key])?.[1];
-      if (refKey === undefined) {
-        return [this.data[key], this.scope];
+  public get(key: string): string | undefined {
+    let val = this.data[key];
+    if (val !== undefined) {
+      if (variableRegex.test(val)) {
+        const globalRegex = new RegExp(variableRegex, "g");
+        const replaceArray: Array<[number, number, string | undefined]> = [];
+        let match;
+        while ((match = globalRegex.exec(val))) {
+          const refKey = match[1];
+          const refVal = refKey === key ? this.baseEnv?.get(key) ?? val : this.get(refKey);
+          replaceArray.push([match.index, match.index + match[0].length, refVal]);
+        }
+        let pair;
+        while ((pair = replaceArray.pop())) {
+          if (pair[2] !== undefined) {
+            val = val.substring(0, pair[0]) + pair[2] + val.substring(pair[1]);
+          }
+        }
       }
-      if (refKey === key) {
-        return this.baseEnv?.getWithScope(key) ?? [this.data[key], this.scope];
-      }
-      return this.getWithScope(refKey);
+      return val;
     }
-    return this.baseEnv?.getWithScope(key);
+    return this.baseEnv?.get(key);
   }
 
-  public getRequiredWithScope(key: string): [string, VariableEnvScope] {
-    const result = this.getWithScope(key);
+  public getRequired(key: string): string {
+    const result = this.get(key);
     if (result === undefined) {
       throw new Error(`Variable is required but is not found in VariableEnv: ${key}`);
     }
     return result;
-  }
-
-  public get(key: string): string | undefined {
-    return this.getWithScope(key)?.[0];
-  }
-
-  public getRequired(key: string): string {
-    return this.getRequiredWithScope(key)?.[0];
   }
 
   public set(key: string, value: string) {
@@ -84,8 +83,8 @@ export class VariableEnv {
   private resolveStringWithRegex(source: string, isPathVariable: boolean): string {
     let match;
     const regex = isPathVariable ? pathVariableRegex : variableRegex;
-    const globalRegex = new RegExp(regex, "g");
     if (regex.test(source)) {
+      const globalRegex = new RegExp(regex, "g");
       while ((match = globalRegex.exec(source))) {
         source =
           source.substring(0, match.index) +
