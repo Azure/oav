@@ -4,7 +4,6 @@
 /* eslint-disable id-blacklist */
 
 import { dirname, relative as pathRelative, resolve as pathResolve } from "path";
-import globby from "globby";
 import * as yargs from "yargs";
 import { inversifyGetInstance } from "../inversifyUtils";
 import { TestRecordingLoader } from "../testScenario/gen/testRecordingLoader";
@@ -13,6 +12,8 @@ import { getAutorestConfig } from "../util/getAutorestConfig";
 
 export const command = "generate-test-scenario";
 export const describe = "Generate swagger examples from real payload records.";
+
+const glob = require("glob");
 
 export const builder: yargs.CommandBuilder = {
   tag: {
@@ -43,7 +44,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
   const recording: string = argv.recording;
   argv["try-require"] = "readme.test.md";
 
-  const recordingFilePaths = await globby(recording);
+  const recordingFilePaths = glob.sync(recording);
   recordingFilePaths.sort();
   const autorestConfig = await getAutorestConfig(argv, readmeMd);
   const swaggerFilePaths: string[] = autorestConfig["input-file"];
