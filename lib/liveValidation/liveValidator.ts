@@ -9,7 +9,6 @@ import { ParsedUrlQuery } from "querystring";
 import * as url from "url";
 import * as util from "util";
 import * as _ from "lodash";
-import globby from "globby";
 import * as models from "../models";
 import { requestResponseDefinition } from "../models/requestResponse";
 import { LowerHttpMethods, SwaggerSpec } from "../swagger/swaggerTypes";
@@ -35,6 +34,8 @@ import {
   validateSwaggerLiveResponse,
   ValidationRequest,
 } from "./operationValidator";
+
+const glob = require("glob");
 
 export interface LiveValidatorOptions extends LiveValidatorLoaderOption {
   swaggerPaths: string[];
@@ -635,11 +636,22 @@ export class LiveValidator {
 
   private async getMatchedPaths(jsonsPattern: string | string[]): Promise<string[]> {
     const startTime = Date.now();
-    const matchedPaths = await globby(jsonsPattern, {
-      ignore: this.options.excludedSwaggerPathsPattern,
-      onlyFiles: true,
-      unique: true,
-    });
+    let matchedPaths: string[] = [];
+    if (typeof jsonsPattern === "string") {
+      matchedPaths = glob.sync(jsonsPattern, {
+        ignore: this.options.excludedSwaggerPathsPattern,
+        nodir: true,
+      });
+    } else {
+      for (const pattern of jsonsPattern) {
+        const res: string[] = glob.sync(pattern, {
+          ignore: this.options.excludedSwaggerPathsPattern,
+          nodir: true,
+        });
+        matchedPaths = matchedPaths.concat(res);
+      }
+    }
+
     this.logging(
       `Using swaggers found from directory: "${
         this.options.directory
