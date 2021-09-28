@@ -229,6 +229,8 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       scenarioDef.scenarios.push(scenario);
     }
 
+    await this.templateGenerationRunner.cleanAllScope();
+
     return scenarioDef;
   }
 
