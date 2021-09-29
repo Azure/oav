@@ -70,7 +70,7 @@
     "@types/fs-extra": "^9.0.11",
     "@types/glob": "^7.1.1",
     "@types/humanize-duration": "^3.25.0",
-    "@types/jest": "^24.0.25",
+    "@types/jest": "^27.0.2",
     "@types/js-yaml": "^3.12.1",
     "@types/json-pointer": "^1.0.30",
     "@types/json-schema-traverse": "^0.4.0",
