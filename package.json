@@ -56,7 +56,7 @@
     "uuid": "^3.3.2",
     "vscode-jsonrpc": "^3.6.2",
     "winston": "^3.2.1",
-    "yargs": "^7.1.2",
+    "yargs": "^15.4.1",
     "yasway": "^1.10.7",
     "yuml2svg": "^4.2.1",
     "z-schema": "^4.2.2"
