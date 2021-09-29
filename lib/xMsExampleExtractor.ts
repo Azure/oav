@@ -221,11 +221,20 @@ export class XMsExampleExtractor {
                     bodyParamValue !== "" ? JSON.parse(bodyParamValue) : "";
                 }
               }
+
+              const parseResponseBody = (body: any) => {
+                try {
+                  return JSON.parse(body);
+                } catch (err) {
+                  return body;
+                }
+              };
+
               for (const _v of keys(infoFromOperation.responses)) {
                 const statusCodeFromRecording = recordingEntry.StatusCode;
                 let responseBody = recordingEntry.ResponseBody;
                 if (typeof responseBody === "string" && responseBody !== "") {
-                  responseBody = JSON.parse(responseBody);
+                  responseBody = parseResponseBody(responseBody);
                 }
                 exampleL.responses[statusCodeFromRecording] = {
                   body: responseBody,
