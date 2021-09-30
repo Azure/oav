@@ -1,5 +1,9 @@
 # Changelog
 
+## 09/30/2021 0.24.2
+
+- Fix CG alerts caused by glob-parent and ansi-regex
+
 ## 09/24/2021 0.24.1
 
 - Add more logging entries.
