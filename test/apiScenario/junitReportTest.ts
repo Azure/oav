@@ -2,8 +2,8 @@
 //
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
-import { generateJUnitCaseReport } from "../../lib/testScenario/markdownReport";
-import { StepResult } from "../../lib/testScenario/reportGenerator";
+import { generateJUnitCaseReport } from "../../lib/apiScenario/markdownReport";
+import { StepResult } from "../../lib/apiScenario/reportGenerator";
 
 describe("junitTestReport", () => {
   it("Should generate junit case report", () => {

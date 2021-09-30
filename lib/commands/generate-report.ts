@@ -8,7 +8,7 @@ import * as yargs from "yargs";
 
 import { cliSuppressExceptions } from "../cliSuppressExceptions";
 import { getAutorestConfig } from "../util/getAutorestConfig";
-import { ReportGenerator } from "../testScenario/reportGenerator";
+import { ReportGenerator } from "../apiScenario/reportGenerator";
 import { inversifyGetInstance } from "./../inversifyUtils";
 export const command = "generate-report [raw-report-path]";
 

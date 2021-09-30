@@ -91,7 +91,7 @@ coverage/
 test-results.xml
 newman/
 # fixtures/
-lib/testScenario/_testAKS.ts
+lib/apiScenario/_testAKS.ts
 snapshot.patch
 .clinic/*
 junit.xml

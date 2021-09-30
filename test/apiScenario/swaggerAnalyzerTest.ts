@@ -2,12 +2,12 @@
 //
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
-import { SwaggerAnalyzer, normalizeDependency } from "../../lib/testScenario/swaggerAnalyzer";
+import { SwaggerAnalyzer, normalizeDependency } from "../../lib/apiScenario/swaggerAnalyzer";
 
 describe("swagger analyzer", () => {
   it("analyze dependency", async () => {
     const swaggerFilePath =
-      "test/testScenario/fixtures/specification/servicefabricmesh/2018-09-01-preview/servicefabricmesh.json";
+      "test/apiScenario/fixtures/specification/servicefabricmesh/2018-09-01-preview/servicefabricmesh.json";
     const analyzer = SwaggerAnalyzer.create({
       swaggerFilePaths: [swaggerFilePath],
       noExternalDependencyResourceType: false,
@@ -37,7 +37,7 @@ describe("swagger analyzer", () => {
 
   it("analyze dependency with discriminator schema", async () => {
     const swaggerFilePath =
-      "test/testScenario/fixtures/specification/datashare/2020-09-01/DataShare.json";
+      "test/apiScenario/fixtures/specification/datashare/2020-09-01/DataShare.json";
     const analyzer = SwaggerAnalyzer.create({
       swaggerFilePaths: [swaggerFilePath],
       noExternalDependencyResourceType: false,

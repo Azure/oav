@@ -6,11 +6,11 @@
 import { dirname, relative as pathRelative, resolve as pathResolve } from "path";
 import * as yargs from "yargs";
 import { inversifyGetInstance } from "../inversifyUtils";
-import { TestRecordingLoader } from "../testScenario/gen/testRecordingLoader";
-import { RequestTracking, TestScenarioGenerator } from "../testScenario/gen/testScenarioGenerator";
+import { TestRecordingLoader } from "../apiScenario/gen/testRecordingLoader";
+import { RequestTracking, TestScenarioGenerator } from "../apiScenario/gen/testScenarioGenerator";
 import { getAutorestConfig } from "../util/getAutorestConfig";
 
-export const command = "generate-test-scenario";
+export const command = "generate-api-scenario";
 export const describe = "Generate swagger examples from real payload records.";
 
 const glob = require("glob");

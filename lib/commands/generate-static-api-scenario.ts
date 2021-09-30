@@ -6,9 +6,9 @@
 import { dirname, resolve as pathResolve } from "path";
 import * as yargs from "yargs";
 import { getAutorestConfig } from "../util/getAutorestConfig";
-import { StaticApiScenarioGenerator } from "../testScenario/gen/staticTestScenarioGenerator";
+import { StaticApiScenarioGenerator } from "../apiScenario/gen/staticTestScenarioGenerator";
 
-export const command = "generate-static-test-scenario";
+export const command = "generate-static-api-scenario";
 export const describe = "Generate test-scenario from swagger.";
 
 export const builder: yargs.CommandBuilder = {

@@ -2,7 +2,7 @@
 //
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
-import { DataMasker, DataMaskerOption, defaultMaskValue } from "../../lib/testScenario/dataMasker";
+import { DataMasker, DataMaskerOption, defaultMaskValue } from "../../lib/apiScenario/dataMasker";
 import { inversifyGetInstance } from "../../lib/inversifyUtils";
 
 describe("dataMasker", () => {

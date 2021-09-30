@@ -5,8 +5,8 @@
 import {
   generateMarkdownReport,
   generateMarkdownReportHeader,
-} from "../../lib/testScenario/markdownReport";
-import { TestScenarioResult } from "../../lib/testScenario/reportGenerator";
+} from "../../lib/apiScenario/markdownReport";
+import { TestScenarioResult } from "../../lib/apiScenario/reportGenerator";
 
 describe("markdownReport", () => {
   it("Should generate markdown report", () => {

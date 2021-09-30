@@ -1,5 +1,14 @@
 # Change Log - oav
 
+## 09/30/2021 2.9.0
+
+- Rename test scenario to API scenario
+- Implement API scenario v1.1 schema
+- Support PATCH operation in API scenario step
+- Add convention for ArmTemplate parameters
+- Support cleanUp steps
+- Fix xMsExampleExtractor bug
+
 ## 09/03/2021 2.8.1
 
 - support calculate test scenario operation coverage
