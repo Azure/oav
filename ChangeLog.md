@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 09/30/2021 2.9.1
+
+- Example extractor support add url parameter if define x-ms-parameterized-host
+
 ## 09/30/2021 2.9.0
 
 - Rename test scenario to API scenario
