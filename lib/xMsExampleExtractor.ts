@@ -145,6 +145,7 @@ export class XMsExampleExtractor {
         const parsedUrl = url.parse(recordingEntry.RequestUri, true);
         let recordingPath = parsedUrl.href || "";
         queryParams = parsedUrl.query || {};
+        const hostUrl = parsedUrl ? parsedUrl.protocol! + "//" + parsedUrl.hostname! : undefined;
 
         const headerParams = recordingEntry.RequestHeaders;
 
@@ -166,6 +167,9 @@ export class XMsExampleExtractor {
             for (const [p, v] of mapEntries(pathParams)) {
               const index = v;
               pathParamsValues[p] = recordingPathParts[index];
+            }
+            if (hostUrl !== undefined) {
+              pathParamsValues.url = hostUrl;
             }
 
             // found a match in the recording
@@ -240,7 +244,9 @@ export class XMsExampleExtractor {
                   body: responseBody,
                 };
               }
-              log.info(`Writing x-ms-examples at ${outputExamples + exampleFileName}`);
+              log.info(
+                `Writing x-ms-examples at ${pathlib.resolve(outputExamples, exampleFileName)}`
+              );
               const examplePath = pathlib.join(outputExamples, exampleFileName);
               const dir = pathlib.dirname(examplePath);
               mkdirRecursiveSync(dir);
