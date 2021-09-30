@@ -228,6 +228,7 @@ export interface Schema extends BaseSchema {
   oneOf?: Schema[];
   additionalProperties?: boolean | Schema;
   properties?: { [propertyName: string]: Schema };
+  patternProperties?: { [propertyPattern: string]: Schema };
   discriminator?: string;
   [xmsDiscriminatorValue]?: string;
   readOnly?: boolean;
@@ -319,6 +320,9 @@ export interface XMsParameterizedHost {
 
 // ---------------------------- Example --------------------------------------
 export interface SwaggerExample {
+  operationId?: string;
+  title?: string;
+  description?: string;
   parameters: {
     "api-version": string;
     [parameterName: string]: any;

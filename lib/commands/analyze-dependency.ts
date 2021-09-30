@@ -6,7 +6,7 @@ import * as yargs from "yargs";
 
 import { cliSuppressExceptions } from "../cliSuppressExceptions";
 import { getAutorestConfig } from "../util/getAutorestConfig";
-import { SwaggerAnalyzer } from "../testScenario/swaggerAnalyzer";
+import { SwaggerAnalyzer } from "../apiScenario/swaggerAnalyzer";
 
 export const command = "analyze-dependency";
 

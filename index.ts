@@ -57,32 +57,29 @@ export {
 } from "./lib/liveValidation/operationValidator";
 export { SpecResolver } from "./lib/validators/specResolver";
 
-export { TestResourceLoader } from "./lib/testScenario/testResourceLoader";
+export { ApiScenarioLoader } from "./lib/apiScenario/apiScenarioLoader";
 export {
-  TestDefinitionFile,
-  TestScenario,
-  TestStep,
-  TestStepArmTemplateDeployment,
-  TestStepRestCall,
-} from "./lib/testScenario/testResourceTypes";
-export { VariableEnv } from "./lib/testScenario/variableEnv";
-export {
-  TestScenarioRunner,
-  TestScenarioRunnerClient,
-} from "./lib/testScenario/testScenarioRunner";
+  ScenarioDefinition,
+  Scenario,
+  Step,
+  StepArmTemplate,
+  StepRestCall,
+} from "./lib/apiScenario/apiScenarioTypes";
+export { VariableEnv } from "./lib/apiScenario/variableEnv";
+export { ApiScenarioRunner, ApiScenarioRunnerClient } from "./lib/apiScenario/apiScenarioRunner";
 
-export { PostmanCollectionRunnerClient } from "./lib/testScenario/postmanCollectionRunnerClient";
+export { PostmanCollectionRunnerClient } from "./lib/apiScenario/postmanCollectionRunnerClient";
 export {
   PostmanCollectionGenerator,
   PostmanCollectionGeneratorOption,
-} from "./lib/testScenario/postmanCollectionGenerator";
+} from "./lib/apiScenario/postmanCollectionGenerator";
 export {
   SwaggerAnalyzer,
   SwaggerAnalyzerOption,
   ExampleDependency,
   DependencyResult,
   normalizeDependency,
-} from "./lib/testScenario/swaggerAnalyzer";
+} from "./lib/apiScenario/swaggerAnalyzer";
 
 export { getAutorestConfig } from "./lib/util/getAutorestConfig";
 // Constants

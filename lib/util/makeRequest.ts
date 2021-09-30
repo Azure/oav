@@ -36,7 +36,7 @@ export function parseContent(
     if (/.*\.json$/gi.test(filePath)) {
       return parseJson(filePath, sanitizedContent, reportError) as SwaggerObject;
     } else if (/.*\.ya?ml$/gi.test(filePath)) {
-      return yaml.safeLoad(sanitizedContent) as SwaggerObject;
+      return yaml.load(sanitizedContent) as SwaggerObject;
     } else {
       const msg =
         `We currently support "*.json" and "*.yaml | *.yml" file formats for` +

@@ -90,8 +90,8 @@ coverage/
 .nyc_output
 test-results.xml
 newman/
-fixtures/
-lib/testScenario/_testAKS.ts
+# fixtures/
+lib/apiScenario/_testAKS.ts
 snapshot.patch
 .clinic/*
 junit.xml

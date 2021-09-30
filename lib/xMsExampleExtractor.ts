@@ -3,7 +3,15 @@
 
 import * as fs from "fs";
 import * as pathlib from "path";
-import { MutableStringMap, StringMap, entries, mapEntries, keys, values } from "@azure-tools/openapi-tools-common";
+import * as url from "url";
+import {
+  MutableStringMap,
+  StringMap,
+  entries,
+  mapEntries,
+  keys,
+  values,
+} from "@azure-tools/openapi-tools-common";
 import swaggerParser from "swagger-parser";
 import { log } from "./util/logging";
 
@@ -131,16 +139,12 @@ export class XMsExampleExtractor {
       // the data
       const recordingEntries: StringMap<any> = recording.Entries;
       let entryIndex = 0;
-      const queryParams: MutableStringMap<unknown> = {};
+      let queryParams: any = {};
       for (const recordingEntry of values(recordingEntries)) {
         entryIndex++;
-        let recordingPath = JSON.stringify(recordingEntry.RequestUri);
-        const recordingPathQueryParams = recordingPath.split("?")[1].slice(0, -1);
-        const queryParamsArray = recordingPathQueryParams.split("&");
-        for (const value of queryParamsArray) {
-          const queryParam = value.split("=");
-          queryParams[queryParam[0]] = queryParam[1];
-        }
+        const parsedUrl = url.parse(recordingEntry.RequestUri, true);
+        let recordingPath = parsedUrl.href || "";
+        queryParams = parsedUrl.query || {};
 
         const headerParams = recordingEntry.RequestHeaders;
 
@@ -217,11 +221,23 @@ export class XMsExampleExtractor {
                     bodyParamValue !== "" ? JSON.parse(bodyParamValue) : "";
                 }
               }
+
+              const parseResponseBody = (body: any) => {
+                try {
+                  return JSON.parse(body);
+                } catch (err) {
+                  return body;
+                }
+              };
+
               for (const _v of keys(infoFromOperation.responses)) {
                 const statusCodeFromRecording = recordingEntry.StatusCode;
-                const responseBody = recordingEntry.ResponseBody;
+                let responseBody = recordingEntry.ResponseBody;
+                if (typeof responseBody === "string" && responseBody !== "") {
+                  responseBody = parseResponseBody(responseBody);
+                }
                 exampleL.responses[statusCodeFromRecording] = {
-                  body: responseBody !== "" ? JSON.parse(responseBody) : "",
+                  body: responseBody,
                 };
               }
               log.info(`Writing x-ms-examples at ${outputExamples + exampleFileName}`);

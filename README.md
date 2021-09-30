@@ -21,7 +21,7 @@ npm install -g oav@latest
 
 ### Run API test
 
-OAV support run API test against Azure and validate request and response. You could define test scenario file which compose with several swagger example files and then use oav to execute it. For more details about API test, please refer to this [Test scenario documentation](https://github.com/Azure/azure-rest-api-specs/tree/main/documentation/test-scenario).
+OAV support run API test against Azure and validate request and response. You could define API scenario file which compose with several swagger example files and then use oav to execute it. For more details about API test, please refer to this [API scenario documentation](https://github.com/Azure/azure-rest-api-specs/tree/main/documentation/api-scenario).
 
 ![](./documentation/runApiTest.gif)
 
@@ -40,13 +40,13 @@ $ oav -h    Commands:
   <recordings>                              given swagger from the .NET session
                                             recordings and saves them in a file.
   generate-collection                       Generate postman collection file
-                                            from test scenario.
+                                            from API scenario.
   generate-examples [spec-path]             Generate swagger examples from real
                                             payload records.
   generate-report [raw-report-path]         Generate report from postman report.
-  generate-test-scenario                    Generate swagger examples from real
+  generate-api-scenario                     Generate swagger examples from real
                                             payload records.
-  generate-static-test-scenario             Generate test-scenario from swagger.
+  generate-static-api-scenario              Generate API-scenario from swagger.
   generate-uml <spec-path>                  Generates a class diagram of the
                                             model definitions in the given
                                             swagger spec.
@@ -57,7 +57,7 @@ $ oav -h    Commands:
   resolve-spec <spec-path>                  Resolves the swagger spec based on
                                             the selected options like allOfs,
                                             relativePaths, examples etc.
-  run-test-scenario <test-scenario>         newman runner run test scenario
+  run-api-scenario <api-scenario>           newman runner run API scenario
                                             file.                 [aliases: run]
   validate-example <spec-path>              Performs validation of x-ms-examples
                                             and examples present in the spec.

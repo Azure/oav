@@ -9,7 +9,7 @@ import * as yargs from "yargs";
 import {
   PostmanCollectionGenerator,
   PostmanCollectionGeneratorOption,
-} from "../testScenario/postmanCollectionGenerator";
+} from "../apiScenario/postmanCollectionGenerator";
 
 import { cliSuppressExceptions } from "../cliSuppressExceptions";
 import { getAutorestConfig } from "../util/getAutorestConfig";
@@ -79,7 +79,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       );
       const opt: PostmanCollectionGeneratorOption = {
         name: testScenarioFilePath.replace(/^.*[\\\/]/, "").replace(".yaml", ""),
-        testDef: testScenarioFilePath,
+        scenarioDef: testScenarioFilePath,
         swaggerFilePaths: swaggerFilePaths,
         fileRoot: fileRoot,
         checkUnderFileRoot: true,
