@@ -22,7 +22,6 @@
     "@types/jsonpath": "^0.2.0",
     "commonmark": "^0.29.0",
     "glob": "^5.0.15",
-    "globby": "^9.2.0",
     "js-yaml": "^3.13.1",
     "json-pointer": "^0.6.0",
     "json-refs": "^3.0.13",
