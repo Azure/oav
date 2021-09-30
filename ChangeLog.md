@@ -1,5 +1,9 @@
 # Changelog
 
+## 09/24/2021 0.24.1
+
+- Add more logging entries.
+
 ## 04/26/2021 0.23.2
 
 - Add more logging entries.
