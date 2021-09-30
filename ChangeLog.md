@@ -2,7 +2,8 @@
 
 ## 09/30/2021 0.24.2
 
-- Fix CG alerts caused by glob-parent and ansi-regex
+- Fix security vulnerabilities alerts caused by glob-parent and ansi-regex
+- Remove dependency on globby and use glob instead
 
 ## 09/24/2021 0.24.1
 
