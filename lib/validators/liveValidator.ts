@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 import { MutableStringMap } from "@ts-common/string-map"
-import globby from "globby"
+import glob from "glob"
 import * as http from "http"
 import * as _ from "lodash"
 import * as msRest from "ms-rest"
@@ -822,11 +822,22 @@ export class LiveValidator {
   }
 
   private async getMatchedPaths(jsonsPattern: string | string[]): Promise<string[]> {
-    const matchedPaths = await globby(jsonsPattern, {
-      ignore: this.options.excludedSwaggerPathsPattern,
-      onlyFiles: true,
-      unique: true
-    })
+    let matchedPaths: string[] = []
+    if (typeof jsonsPattern === "string") {
+      matchedPaths = glob.sync(jsonsPattern, {
+        ignore: this.options.excludedSwaggerPathsPattern,
+        nodir: true
+      })
+    } else {
+      for (const pattern of jsonsPattern) {
+        const res: string[] = glob.sync(pattern, {
+          ignore: this.options.excludedSwaggerPathsPattern,
+          nodir: true
+        })
+        matchedPaths = matchedPaths.concat(res)
+      }
+    }
+
     this.logging(
       `Using swaggers found from directory: "${
         this.options.directory

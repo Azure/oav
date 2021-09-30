@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 import * as assert from "assert"
-import * as globby from "globby"
+import * as glob from "glob"
 import * as lodash from "lodash"
 import * as os from "os"
 import * as path from "path"
@@ -540,10 +540,10 @@ describe("Live Validator", () => {
   })
 
   describe("Initialize cache and validate", () => {
-    const livePaths = globby.sync(
-      path.join(__dirname, "test/liveValidation/swaggers/**/live/*.json")
-    )
-    livePaths.forEach(livePath => {
+    const livePaths = glob
+      .sync("test/liveValidation/swaggers/**/live/*.json")
+      .map((it: any) => path.resolve(process.cwd(), it))
+    livePaths.forEach((livePath: any) => {
       it(`should validate request and response for "${livePath}"`, async () => {
         const options = {
           directory: "./test/liveValidation/swaggers/specification/storage",
@@ -564,7 +564,7 @@ describe("Live Validator", () => {
         isPathCaseSensitive: false,
         useRelativeSourceLocationUrl: true,
         swaggerPathsPattern: [
-          "specification\\servicelinker\\resource-manager\\Microsoft.ServiceLinker\\**\\*.json"
+          "specification/servicelinker/resource-manager/Microsoft.ServiceLinker/**/*.json"
         ],
         git: {
           shouldClone: false
@@ -582,7 +582,7 @@ describe("Live Validator", () => {
         isPathCaseSensitive: false,
         useRelativeSourceLocationUrl: true,
         swaggerPathsPattern: [
-          "specification\\servicelinker\\resource-manager\\Microsoft.ServiceLinker\\**\\*.json"
+          "specification/servicelinker/resource-manager/Microsoft.ServiceLinker/**/*.json"
         ],
         git: {
           shouldClone: false
@@ -685,7 +685,7 @@ describe("Live Validator", () => {
       const options = {
         directory: "./test/liveValidation/swaggers/",
         swaggerPathsPattern: [
-          "specification\\resources\\resource-manager\\Microsoft.Resources\\2015-11-01\\*.json"
+          "specification/resources/resource-manager/Microsoft.Resources/2015-11-01/*.json"
         ]
       }
       const validator = new LiveValidator(options)
@@ -704,9 +704,7 @@ describe("Live Validator", () => {
         directory: `${__dirname}/liveValidation/swaggers/`,
         isPathCaseSensitive: false,
         useRelativeSourceLocationUrl: true,
-        swaggerPathsPattern: [
-          "specification\\contoso\\resource-manager\\Microsoft.Contoso\\**\\*.json"
-        ],
+        swaggerPathsPattern: ["specification/contoso/resource-manager/Microsoft.Contoso/**/*.json"],
         git: {
           shouldClone: false
         }
@@ -769,7 +767,7 @@ describe("Live validator snapshot validation", () => {
       isPathCaseSensitive: false,
       useRelativeSourceLocationUrl: true,
       swaggerPathsPattern: [
-        "specification\\apimanagement\\resource-manager\\Microsoft.ApiManagement\\preview\\2018-01-01\\*.json"
+        "specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/*.json"
       ],
       git: {
         shouldClone: false
@@ -778,7 +776,7 @@ describe("Live validator snapshot validation", () => {
     validator = new LiveValidator(options)
     await validator.initialize()
     options.swaggerPathsPattern = [
-      "specification\\mediaservices\\resource-manager\\Microsoft.Media\\2018-07-01\\*.json"
+      "specification/mediaservices/resource-manager/Microsoft.Media/2018-07-01/*.json"
     ]
     validatorOneOf = new LiveValidator(options)
     await validatorOneOf.initialize()
@@ -795,9 +793,7 @@ describe("Live validator snapshot validation", () => {
       directory: `${__dirname}/liveValidation/swaggers/`,
       isPathCaseSensitive: false,
       useRelativeSourceLocationUrl: true,
-      swaggerPathsPattern: [
-        "specification\\contoso\\resource-manager\\Microsoft.Contoso\\**\\*.json"
-      ],
+      swaggerPathsPattern: ["specification/contoso/resource-manager/Microsoft.Contoso/**/*.json"],
       git: {
         shouldClone: false
       }
@@ -814,9 +810,7 @@ describe("Live validator snapshot validation", () => {
       directory: `${__dirname}/liveValidation/swaggers/`,
       isPathCaseSensitive: false,
       useRelativeSourceLocationUrl: true,
-      swaggerPathsPattern: [
-        "specification\\contoso\\resource-manager\\Microsoft.Contoso\\**\\*.json"
-      ],
+      swaggerPathsPattern: ["specification/contoso/resource-manager/Microsoft.Contoso/**/*.json"],
       git: {
         shouldClone: false
       }
@@ -834,7 +828,7 @@ describe("Live validator snapshot validation", () => {
       isPathCaseSensitive: false,
       useRelativeSourceLocationUrl: true,
       swaggerPathsPattern: [
-        "specification\\mediaservices\\resource-manager\\Microsoft.Media\\**\\*.json"
+        "specification/mediaservices/resource-manager/Microsoft.Media/**/*.json"
       ],
       git: {
         shouldClone: false
@@ -868,9 +862,7 @@ describe("Live validator snapshot validation", () => {
       directory: `${__dirname}/liveValidation/swaggers/`,
       isPathCaseSensitive: false,
       useRelativeSourceLocationUrl: true,
-      swaggerPathsPattern: [
-        "specification\\contoso\\resource-manager\\Microsoft.Contoso\\**\\*.json"
-      ],
+      swaggerPathsPattern: ["specification/contoso/resource-manager/Microsoft.Contoso/**/*.json"],
       git: {
         shouldClone: false
       }
@@ -889,7 +881,7 @@ describe("Live validator snapshot validation", () => {
       isPathCaseSensitive: false,
       useRelativeSourceLocationUrl: true,
       swaggerPathsPattern: [
-        "specification\\hybridnetwork\\resource-manager\\2020-01-01-preview\\*.json"
+        "specification/hybridnetwork/resource-manager/2020-01-01-preview/*.json"
       ],
       git: {
         shouldClone: false
@@ -913,7 +905,7 @@ describe("Live validator snapshot validation", () => {
       isPathCaseSensitive: false,
       useRelativeSourceLocationUrl: true,
       swaggerPathsPattern: [
-        "specification\\rpsaas\\resource-manager\\Microsoft.Contoso\\stable\\2019-01-01\\*.json"
+        "specification/rpsaas/resource-manager/Microsoft.Contoso/stable/2019-01-01/*.json"
       ],
       git: {
         shouldClone: false
