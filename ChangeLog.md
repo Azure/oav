@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 10/10/2021 2.10.0
+
+- Add new version of model validation
+
 ## 09/30/2021 2.9.1
 
 - Example extractor support add url parameter if define x-ms-parameterized-host
