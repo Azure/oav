@@ -162,6 +162,20 @@ export class JsonLoader implements Loader<Json> {
     return refObj;
   }
 
+  public resolveMockedFile(fileName: string): any {
+    let refObj;
+    if (!!fileName && fileName.startsWith("_")) {
+      const filePath = this.mockNameMap[fileName];
+      const cache = this.fileCache.get(filePath);
+      if (cache === undefined) {
+        throw new Error(`cache not found for ${filePath} and mockName ${fileName}`);
+      }
+
+      refObj = jsonPointer.get(cache.resolved! as any, "");
+    }
+    return refObj;
+  }
+
   public getRealPath(mockName: string): string {
     return this.mockNameMap[mockName];
   }

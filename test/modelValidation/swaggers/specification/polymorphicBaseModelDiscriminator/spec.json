@@ -4,8 +4,12 @@
     "title": "some title",
     "version": "2099-11-11"
   },
-  "consumes": ["application/json"],
-  "produces": ["application/json"],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
   "definitions": {
     "A": {
       "title": "yeah",
@@ -13,7 +17,10 @@
       "properties": {
         "dType": {
           "title": "d property",
-          "enum": ["typeA", "typeB"],
+          "enum": [
+            "typeA",
+            "typeB"
+          ],
           "x-ms-enum": {
             "name": "someName",
             "modelAsString": true
@@ -24,7 +31,19 @@
     "B": {
       "title": "no",
       "x-ms-discriminator-value": "typeB",
-      "allOf": [{ "$ref": "#/definitions/A" }]
+      "allOf": [
+        {
+          "$ref": "#/definitions/A"
+        }
+      ]
+    },
+    "typeA": {
+      "title": "no",
+      "allOf": [
+        {
+          "$ref": "#/definitions/A"
+        }
+      ]
     }
   },
   "paths": {

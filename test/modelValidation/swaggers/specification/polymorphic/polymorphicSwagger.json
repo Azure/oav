@@ -297,9 +297,9 @@
       "type": "string",
       "enum": [
         "Tiger",
-        "Cat",
-        "Mouse",
-        "Mammal"
+        "Microsoft.Cat",
+        "Microsoft.Mouse",
+        "Microsoft.Mammal"
       ]
     },
     "Tiger": {
@@ -328,7 +328,7 @@
           "description": "Type of food.",
           "enum": [
             "Meat",
-            "Jain"
+            "Microsoft.Jain"
           ]
         }
       },
