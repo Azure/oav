@@ -188,11 +188,11 @@ export const validateSwaggerLiveResponse = async (
   return result;
 };
 
-const transformBodyValue = (body: any, operation: Operation): any => {
+export const transformBodyValue = (body: any, operation: Operation): any => {
   return operation._bodyTransform === undefined ? body : operation._bodyTransform(body);
 };
 
-const transformLiveHeader = (
+export const transformLiveHeader = (
   headers: StringMap<string>,
   it: Operation | Response
 ): StringMap<string> => {
@@ -240,7 +240,7 @@ const validateContentType = (
   }
 };
 
-const schemaValidateIssueToLiveValidationIssue = (
+export const schemaValidateIssueToLiveValidationIssue = (
   input: SchemaValidateIssue[],
   operation: Operation,
   ctx: SchemaValidateContext,

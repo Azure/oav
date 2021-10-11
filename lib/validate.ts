@@ -21,12 +21,11 @@ import {
 } from "./validators/specValidator";
 
 import { ModelValidationError } from "./util/modelValidationError";
-import { ModelValidator } from "./validators/modelValidator";
+import { NewModelValidator as ModelValidator} from "./swaggerValidator/modelValidator";
 import { NodeError } from "./util/validationError";
 import { WireFormatGenerator } from "./wireFormatGenerator";
 import { XMsExampleExtractor } from "./xMsExampleExtractor";
 import ExampleGenerator from "./generator/exampleGenerator";
-import { getErrorsFromModelValidation } from "./util/getErrorsFromModelValidation";
 import { getSuppressions } from "./validators/suppressions";
 import { log } from "./util/logging";
 import { getInputFiles } from "./generator/util";
@@ -108,12 +107,8 @@ const prettyPrint = <T extends NodeError<T>>(
       const yaml = jsYaml.dump(error);
       if (process.env["Agent.Id"]) {
         // eslint-disable-next-line no-console
-        console.error(vsoLogIssueWrapper(errorType, errorType));
-        // eslint-disable-next-line no-console
         console.error(vsoLogIssueWrapper(errorType, yaml));
       } else {
-        // eslint-disable-next-line no-console
-        console.error("\x1b[31m", errorType, ":", "\x1b[0m");
         // eslint-disable-next-line no-console
         console.error(yaml);
       }
@@ -196,23 +191,31 @@ export async function validateExamples(
   options?: Options
 ): Promise<readonly ModelValidationError[]> {
   return validate(options, async (o) => {
-    const validator = new ModelValidator(specPath, null, o);
     try {
+      const validator = new ModelValidator(specPath, o);
       await validator.initialize();
       log.info(`Validating "examples" and "x-ms-examples" in  ${specPath}:\n`);
       await validator.validateOperations(operationIds);
-      updateEndResultOfSingleValidation(validator);
-      logDetailedInfo(validator);
-      const errors = getErrorsFromModelValidation(validator.specValidationResult);
+      const errors = validator.result;
       if (o.pretty) {
         if (errors.length > 0) {
-          console.log(
-            vsoLogIssueWrapper(
-              "error",
-              `Validating "examples" and "x-ms-examples" in  ${specPath}:\n`
-            )
-          );
+          if (process.env["Agent.Id"]) {
+            console.log(
+              vsoLogIssueWrapper(
+                "error",
+                `Validating "examples" and "x-ms-examples" in  ${specPath}:\n`
+              )
+            );
+          } else {
+            console.log(`Validating "examples" and "x-ms-examples" in  ${specPath}:\n`);
+          }
           prettyPrint(errors, "error");
+        }
+      } else {
+        for (const error of errors) {
+          const yaml = jsYaml.dump(error);
+          // eslint-disable-next-line no-console
+          log.error(yaml);
         }
       }
       return errors;
@@ -234,8 +237,6 @@ export async function validateExamples(
       } else {
         log.error(e);
       }
-      validator.specValidationResult.validityStatus = false;
-      updateEndResultOfSingleValidation(validator);
       return [{ inner: e }];
     }
   });
