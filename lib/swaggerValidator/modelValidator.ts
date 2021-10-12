@@ -25,6 +25,7 @@ import {
   ErrorCodeConstants,
   getOavErrorMeta,
   ModelValidationErrorCode,
+  modelValidationErrors,
 } from "../util/errorDefinitions";
 import { traverseSwaggerAsync } from "../transform/traverseSwagger";
 import { xmsPathsTransformer } from "../transform/xmsPathsTransformer";
@@ -38,7 +39,11 @@ import { nullableTransformer } from "../transform/nullableTransformer";
 import { pureObjectTransformer } from "../transform/pureObjectTransformer";
 import { getTransformContext } from "../transform/context";
 import { applyGlobalTransformers, applySpecTransformers } from "../transform/transformer";
-import { transformBodyValue, transformLiveHeader } from "../liveValidation/operationValidator";
+import {
+  transformBodyValue,
+  transformLiveHeader,
+  transformMapValue,
+} from "../liveValidation/operationValidator";
 import { log } from "../util/logging";
 import { getFilePositionFromJsonPath } from "../util/jsonUtils";
 import { SchemaValidateIssue, SchemaValidator, SchemaValidatorOption } from "./schemaValidator";
@@ -409,6 +414,7 @@ export class SwaggerExampleValidator {
         exampleRequestHeaders[parameter.name] = parameterValue;
       } // doesn't cover formData case
     } // end of parameters for loop
+    transformMapValue(queryParameters, operation._queryTransform);
     const validate = operation._validate!;
     const ctx = { isResponse: false };
     const headers = transformLiveHeader(exampleRequestHeaders, operation);
@@ -416,7 +422,7 @@ export class SwaggerExampleValidator {
       path: pathParameters,
       body: transformBodyValue(bodyParameter, operation),
       headers,
-      queryParameters,
+      query: queryParameters,
     });
     this.schemaIssuesToModelValidationIssues(
       true,
@@ -827,10 +833,21 @@ export class SwaggerExampleValidator {
   };
 }
 
+// load all error codes of model validation errors to as suppression option
+const loadSuppression = [];
+for (const errorCode of Object.keys(modelValidationErrors)) {
+  const meta = modelValidationErrors[errorCode as ModelValidationErrorCode];
+  if ("id" in meta) {
+    loadSuppression.push(meta.id);
+  }
+  loadSuppression.push(errorCode);
+}
+
 const defaultOpts: ExampleValidationOption = {
   eraseDescription: false,
   eraseXmsExamples: false,
   useJsonParser: true,
+  loadSuppression,
 };
 
 // Compatible wrapper for old SemanticValidator

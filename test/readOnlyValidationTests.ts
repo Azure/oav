@@ -19,9 +19,9 @@ describe("Read Only properties", () => {
       true,
       `swagger "${specPath}" should throw an error with code READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST`
     );
-    assert.equal(
-      'ReadOnly property `"provisioningState": "Creating"`, cannot be sent in the request.',
-      result[0].details!.message
+    assert.strictEqual(
+      result[0].message,
+      'ReadOnly property "provisioningState" cannot be sent in the request'
     );
   });
 
@@ -35,12 +35,12 @@ describe("Read Only properties", () => {
       `swagger "${specPath}" with operation should contain 2 model validation errors.`
     );
     assert.strictEqual(
-      result[0].code === "READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST",
+      result[0].code === "INVALID_TYPE",
       true,
       `swagger "${specPath}" should throw an error with code READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST`
     );
     assert.strictEqual(
-      result[1].code === "INVALID_TYPE",
+      result[1].code === "READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST",
       true,
       `swagger "${specPath}" should throw an error with code READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST`
     );

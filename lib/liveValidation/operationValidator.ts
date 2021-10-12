@@ -204,7 +204,7 @@ export const transformLiveHeader = (
   return result;
 };
 
-const transformMapValue = (
+export const transformMapValue = (
   data?: MutableStringMap<string | number | boolean | Array<string | number | boolean>>,
   transforms?: StringMap<TransformFn>
 ) => {
