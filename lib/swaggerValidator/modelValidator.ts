@@ -1,4 +1,3 @@
-import * as path from "path";
 import { ParsedUrlQuery } from "querystring";
 import { inject, injectable } from "inversify";
 import { FilePosition, getInfo, ParseError, StringMap } from "@azure-tools/openapi-tools-common";
@@ -6,7 +5,6 @@ import * as openapiToolsCommon from "@azure-tools/openapi-tools-common";
 import jsonPointer from "json-pointer";
 import * as C from "../util/constants";
 import { inversifyGetContainer, inversifyGetInstance, TYPES } from "../inversifyUtils";
-import { LiveValidationIssue } from "../liveValidation/liveValidator";
 import { LiveValidatorLoader } from "../liveValidation/liveValidatorLoader";
 import { JsonLoader, JsonLoaderRefError } from "../swagger/jsonLoader";
 import { isSuppressedInPath, SuppressionLoader } from "../swagger/suppressionLoader";
@@ -51,7 +49,6 @@ import { SchemaValidateIssue, SchemaValidator, SchemaValidatorOption } from "./s
 @injectable()
 export class SwaggerExampleValidator {
   private specPath: string;
-  private specDir: string;
   private swagger: SwaggerSpec;
   public errors: SwaggerExampleErrorDetail[] = [];
 
@@ -89,23 +86,24 @@ export class SwaggerExampleValidator {
       await this.liveValidatorLoader.buildAjvValidator(this.swagger);
       await traverseSwaggerAsync(this.swagger, {
         onOperation: async (_operation: Operation, _path: Path, _method: LowerHttpMethods) => {
-          if (!_operation["x-ms-examples"]) {
-            const meta = getOavErrorMeta(ErrorCodeConstants.XMS_EXAMPLE_NOTFOUND_ERROR as any, {
-              operationId: _operation.operationId,
-            });
-            this.addErrorsFromErrorCode(undefined, meta, _operation);
-            return;
-          }
           if (
             operationIdArray.length === 0 ||
             (operationIdArray.length > 0 && operationIdArray.includes(_operation.operationId!))
           ) {
+            if (!_operation["x-ms-examples"]) {
+              const meta = getOavErrorMeta(ErrorCodeConstants.XMS_EXAMPLE_NOTFOUND_ERROR as any, {
+                operationId: _operation.operationId,
+              });
+              this.addErrorsFromErrorCode(undefined, meta, _operation);
+              return;
+            }
             await this.validateOperation(_operation);
           }
         },
       });
     } catch (e) {
       log.error(`validateOperations - ErrorMessage:${e?.message}.ErrorStack:${e?.stack}`);
+      throw e;
     }
   }
 
@@ -129,18 +127,6 @@ export class SwaggerExampleValidator {
       );
     }
     this.specPath = specPath;
-    this.specDir = path.dirname(this.specPath);
-    const pathPattern = path.basename(this.specPath);
-    const liveValidationOptions = {
-      swaggerPaths: [this.specPath],
-      checkUnderFileRoot: false,
-      loadValidatorInInitialize: true,
-      loadValidatorInBackground: false,
-      directory: this.specDir,
-      swaggerPathsPattern: [pathPattern],
-      excludedSwaggerPathsPattern: [],
-      isArmCall: true,
-    };
   }
 
   private async validateOperation(operation: Operation): Promise<void> {
@@ -148,10 +134,14 @@ export class SwaggerExampleValidator {
     let exampleContent;
     let exampleFileUrl;
     for (const scenario of Object.keys(operation["x-ms-examples"]!)) {
-      exampleContent = this.jsonLoader.resolveMockedFile(
-        operation["x-ms-examples"]![scenario].$ref!
-      ) as SwaggerExample;
-      exampleFileUrl = this.jsonLoader.getRealPath(operation["x-ms-examples"]![scenario].$ref!);
+      const mockUrl = operation["x-ms-examples"]![scenario].$ref!;
+      if (mockUrl === undefined) {
+        throw new Error(
+          `$ref is undefined in x-ms-examples defintion for operation ${operation.operationId}.`
+        );
+      }
+      exampleContent = this.jsonLoader.resolveMockedFile(mockUrl) as SwaggerExample;
+      exampleFileUrl = this.jsonLoader.getRealPath(mockUrl);
       this.validateRequest(operation, exampleContent, exampleFileUrl);
       this.validateResponse(operation, exampleContent, exampleFileUrl);
     } // end of scenario for loop
@@ -268,7 +258,6 @@ export class SwaggerExampleValidator {
           operation,
           exampleResponseStatusCode,
           headers,
-          operation,
           exampleResponseHeaders
         );
         const validate = responseSchema._validate!;
@@ -287,7 +276,8 @@ export class SwaggerExampleValidator {
           exampleFileUrl,
           exampleContent,
           undefined,
-          exampleResponseStatusCode
+          exampleResponseStatusCode,
+          operation._method
         );
       }
     }
@@ -312,39 +302,12 @@ export class SwaggerExampleValidator {
   }
 
   private validateRequest(operation: Operation, exampleContent: any, exampleFileUrl: string) {
-    let baseUrl;
     const parameterizedHostDef = operation._path._spec["x-ms-parameterized-host"];
     const useSchemePrefix = parameterizedHostDef
       ? parameterizedHostDef.useSchemePrefix === undefined
         ? true
         : parameterizedHostDef.useSchemePrefix
       : null;
-    const hostTemplate = parameterizedHostDef?.hostTemplate;
-    if (operation._path._spec.host || hostTemplate) {
-      let scheme = "https";
-      let basePath = "";
-      let host = "";
-      host = (operation._path._spec.host || hostTemplate)!;
-      if (host.endsWith("/")) {
-        host = host.slice(0, host.length - 1);
-      }
-      if (
-        operation._path._spec.schemes &&
-        !operation._path._spec.schemes.some((item) => !!item && item.toLowerCase() === "https")
-      ) {
-        scheme = operation._path._spec.schemes[0];
-      }
-      if (operation._path._spec.basePath) {
-        basePath = operation._path._spec.basePath;
-      }
-      if (!basePath.startsWith("/")) {
-        basePath = `/${basePath}`;
-      }
-      baseUrl =
-        host.startsWith(scheme + "://") || (hostTemplate && !useSchemePrefix)
-          ? `${host}${basePath}`
-          : `${scheme}://${host}${basePath}`;
-    }
     const pathTemplate = operation._path._pathTemplate;
     const parameters = operation.parameters;
     const pathParameters: { [key: string]: string } = {};
@@ -390,7 +353,6 @@ export class SwaggerExampleValidator {
             this.addErrorsFromErrorCode(exampleFileUrl, meta, operation, undefined, p);
             break;
           }
-
           // replacing characters that may cause validator failed  with empty string because this messes up Sways regex
           // validation of path segment.
           parameterValue = parameterValue.replace(/\//gi, "");
@@ -513,14 +475,16 @@ export class SwaggerExampleValidator {
     exampleUrl: string,
     exampleContent: any,
     parameters?: Parameter[],
-    statusCode?: string
+    statusCode?: string,
+    httpMethod?: string
   ) {
     for (const err of errors) {
       // ignore below schema errors
       if (
-        err.code === "NOT_PASSED" &&
-        (err.message.includes('should match "else" schema') ||
-          err.message.includes('should match "then" schema'))
+        (err.code === "NOT_PASSED" &&
+          (err.message.includes('should match "else" schema') ||
+            err.message.includes('should match "then" schema'))) ||
+        ((err.code as any) === "SECRET_PROPERTY" && httpMethod === "post")
       ) {
         continue;
       }
@@ -596,6 +560,7 @@ export class SwaggerExampleValidator {
     }
     const idx = err.source.jsonRef.indexOf("#");
     jsonRef = err.source.jsonRef.substr(idx + 1);
+    /*eslint no-constant-condition: ["error", { "checkLoops": false }]*/
     while (true) {
       try {
         node = jsonPointer.get(this.swagger, jsonRef);
@@ -742,7 +707,6 @@ export class SwaggerExampleValidator {
     operation: Operation,
     statusCode: string,
     headers: StringMap<string>,
-    schemaObj?: any,
     exampleObj?: any
   ) => {
     if (operation["x-ms-long-running-operation"] === true) {
@@ -803,7 +767,6 @@ export class SwaggerExampleValidator {
     operation: Operation,
     statusCode: string,
     headers: StringMap<string>,
-    schemaObj?: any,
     exampleObj?: any
   ) => {
     if (statusCode === "201") {
@@ -854,7 +817,7 @@ const defaultOpts: ExampleValidationOption = {
 export class NewModelValidator {
   public validator: SwaggerExampleValidator;
   public result: SwaggerExampleErrorDetail[] = [];
-  public constructor(public specPath: string, options?: any) {
+  public constructor(public specPath: string) {
     const container = inversifyGetContainer();
     this.validator = inversifyGetInstance(SwaggerExampleValidator, {
       ...defaultOpts,
@@ -872,18 +835,6 @@ export class NewModelValidator {
   public async validateOperations(operationIds?: string) {
     await this.validator.validateOperations(operationIds);
   }
-}
-
-export interface ScenarioExamples {
-  scenario: string;
-  $ref: string;
-}
-
-export interface SwaggerExampleValidationError {
-  operationId?: string;
-  scenario?: string;
-  responseCode?: string;
-  details?: Array<LiveValidationIssue | SwaggerExampleErrorDetail>;
 }
 
 export interface SwaggerExampleErrorDetail {

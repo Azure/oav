@@ -204,6 +204,7 @@ export class SwaggerSemanticValidator {
       }
       err.jsonPathsInPayload = err.jsonPathsInPayload.filter((jsonPath) => {
         let node;
+        /*eslint no-constant-condition: ["error", { "checkLoops": false }]*/
         while (true) {
           try {
             node = jsonPointer.get(rootObj, jsonPathToPointer(jsonPath));

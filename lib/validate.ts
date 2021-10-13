@@ -192,7 +192,7 @@ export async function validateExamples(
 ): Promise<readonly ModelValidationError[]> {
   return validate(options, async (o) => {
     try {
-      const validator = new ModelValidator(specPath, o);
+      const validator = new ModelValidator(specPath);
       await validator.initialize();
       log.info(`Validating "examples" and "x-ms-examples" in  ${specPath}:\n`);
       await validator.validateOperations(operationIds);
