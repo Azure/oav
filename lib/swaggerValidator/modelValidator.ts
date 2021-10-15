@@ -44,6 +44,8 @@ import {
 } from "../liveValidation/operationValidator";
 import { log } from "../util/logging";
 import { getFilePositionFromJsonPath } from "../util/jsonUtils";
+import { Severity } from "../util/severity";
+import { ValidationResultSource } from "../util/validationResultSource";
 import { SchemaValidateIssue, SchemaValidator, SchemaValidatorOption } from "./schemaValidator";
 
 @injectable()
@@ -94,7 +96,7 @@ export class SwaggerExampleValidator {
               const meta = getOavErrorMeta(ErrorCodeConstants.XMS_EXAMPLE_NOTFOUND_ERROR as any, {
                 operationId: _operation.operationId,
               });
-              this.addErrorsFromErrorCode(undefined, meta, _operation);
+              this.addErrorsFromErrorCode(_operation.operationId!, undefined, meta, _operation);
               return;
             }
             await this.validateOperation(_operation);
@@ -174,12 +176,14 @@ export class SwaggerExampleValidator {
           operationId: operation.operationId,
         });
         this.addErrorsFromErrorCode(
+          operation.operationId!,
           exampleFileUrl,
           meta,
           responseDefinition,
           undefined,
           exampleResponsesObj,
-          `$response.${exampleResponseStatusCode}`
+          `$response.${exampleResponseStatusCode}`,
+          ValidationResultSource.RESPONSE
         );
         continue;
       }
@@ -202,16 +206,19 @@ export class SwaggerExampleValidator {
             operationId: operation.operationId,
           });
           this.addErrorsFromErrorCode(
+            operation.operationId!,
             exampleFileUrl,
             meta,
             responseDefinition,
             undefined,
             exampleResponsesObj,
-            `$response.${exampleResponseStatusCode}/body`
+            `$response.${exampleResponseStatusCode}/body`,
+            ValidationResultSource.RESPONSE
           );
           continue;
         } else if (responseSchema.schema.type !== typeof exampleResponseBody) {
           const validBody = this.validateBodyType(
+            operation.operationId!,
             responseSchema,
             exampleResponseBody,
             exampleFileUrl,
@@ -230,12 +237,14 @@ export class SwaggerExampleValidator {
           operationId: operation.operationId,
         });
         this.addErrorsFromErrorCode(
+          operation.operationId!,
           exampleFileUrl,
           meta,
           responseDefinition,
           undefined,
           exampleResponsesObj,
-          `$response.${exampleResponseStatusCode}`
+          `$response.${exampleResponseStatusCode}`,
+          ValidationResultSource.RESPONSE
         );
         continue;
       }
@@ -244,6 +253,7 @@ export class SwaggerExampleValidator {
       if (responseSchema.schema !== undefined) {
         if (headers["content-type"] !== undefined) {
           this.validateContentType(
+            operation.operationId!,
             exampleFileUrl,
             operation.produces!,
             headers,
@@ -271,6 +281,7 @@ export class SwaggerExampleValidator {
           body: exampleResponseBody,
         });
         this.schemaIssuesToModelValidationIssues(
+          operation.operationId!,
           false,
           ajvValidatorErrors,
           exampleFileUrl,
@@ -290,12 +301,14 @@ export class SwaggerExampleValidator {
           { statusCodeInSwagger, operationId: operation.operationId }
         );
         this.addErrorsFromErrorCode(
+          operation.operationId!,
           exampleFileUrl,
           meta,
           operation.responses[statusCodeInSwagger],
           undefined,
           exampleResponsesObj,
-          `response`
+          `response`,
+          ValidationResultSource.RESPONSE
         );
       }
     }
@@ -313,6 +326,7 @@ export class SwaggerExampleValidator {
     const pathParameters: { [key: string]: string } = {};
     let bodyParameter: any = {};
     const queryParameters: ParsedUrlQuery = {};
+    const formData: { [key: string]: string } = {};
     const exampleRequestHeaders: { [propertyName: string]: string } = {};
     if (parameters === undefined) {
       return;
@@ -326,7 +340,14 @@ export class SwaggerExampleValidator {
             ErrorCodeConstants.REQUIRED_PARAMETER_EXAMPLE_NOT_FOUND as any,
             { operationId: operation.operationId, name: parameter.name }
           );
-          this.addErrorsFromErrorCode(exampleFileUrl, meta, operation, undefined, p);
+          this.addErrorsFromErrorCode(
+            operation.operationId!,
+            exampleFileUrl,
+            meta,
+            operation,
+            undefined,
+            p
+          );
           break;
         }
         continue;
@@ -350,7 +371,14 @@ export class SwaggerExampleValidator {
               parameterValue,
               pathTemplate,
             });
-            this.addErrorsFromErrorCode(exampleFileUrl, meta, operation, undefined, p);
+            this.addErrorsFromErrorCode(
+              operation.operationId!,
+              exampleFileUrl,
+              meta,
+              operation,
+              undefined,
+              p
+            );
             break;
           }
           // replacing characters that may cause validator failed  with empty string because this messes up Sways regex
@@ -374,7 +402,9 @@ export class SwaggerExampleValidator {
         bodyParameter = parameterValue;
       } else if (location === "header") {
         exampleRequestHeaders[parameter.name] = parameterValue;
-      } // doesn't cover formData case
+      } else if (location === "formData") {
+        formData[parameter.name] = parameterValue;
+      }
     } // end of parameters for loop
     transformMapValue(queryParameters, operation._queryTransform);
     const validate = operation._validate!;
@@ -383,10 +413,12 @@ export class SwaggerExampleValidator {
     const ajvValidatorErrors = validate(ctx, {
       path: pathParameters,
       body: transformBodyValue(bodyParameter, operation),
-      headers,
       query: queryParameters,
+      headers,
+      formData,
     });
     this.schemaIssuesToModelValidationIssues(
+      operation.operationId!,
       true,
       ajvValidatorErrors,
       exampleFileUrl,
@@ -444,12 +476,14 @@ export class SwaggerExampleValidator {
   }
 
   private addErrorsFromErrorCode(
+    operationId: string,
     exampleUrl: string | undefined,
     meta: ReturnType<typeof getOavErrorMeta>,
     schemaObj?: any,
     schemaJsonPath?: string,
     exampleObj?: any,
-    exampleJsonPath?: string
+    exampleJsonPath?: string,
+    source?: ValidationResultSource
   ) {
     if (isSuppressedInPath(schemaObj, meta.id!, meta.message)) {
       return;
@@ -466,10 +500,14 @@ export class SwaggerExampleValidator {
       schemaJsonPath: schemaJsonPath ?? schemaObj?.[refSelfSymbol],
       examplePosition: exampleInfo?.position,
       exampleJsonPath: exampleJsonPath,
+      severity: meta.severity,
+      source: source ?? ValidationResultSource.GLOBAL,
+      operationId,
     });
   }
 
   private schemaIssuesToModelValidationIssues(
+    operationId: string,
     isRequest: boolean,
     errors: SchemaValidateIssue[],
     exampleUrl: string,
@@ -498,12 +536,13 @@ export class SwaggerExampleValidator {
           if (
             err.schemaPath.indexOf(parameter.name) > 0 ||
             (err.jsonPathsInPayload.length > 0 &&
-              err.jsonPathsInPayload[0].includes(".body") &&
-              parameter.in === "body")
+              (err.jsonPathsInPayload[0].includes(parameter.name) ||
+                (err.jsonPathsInPayload[0].includes(".body") && parameter.in === "body")))
           ) {
             schemaPosition = err.source.position;
             if (parameter.in !== "body") {
-              err.schemaPath = err.schemaPath.substr(err.schemaPath.indexOf(parameter.name));
+              const index = err.schemaPath.indexOf(parameter.name);
+              err.schemaPath = index > 0 ? err.schemaPath.substr(index) : err.schemaPath;
             }
             if (isSuppressedInPath(parameter, err.code, err.message)) {
               isSuppressed = true;
@@ -546,6 +585,9 @@ export class SwaggerExampleValidator {
             schemaJsonPath: err.schemaPath,
             examplePosition,
             exampleJsonPath: jsonPath,
+            severity: err.severity,
+            source: isRequest ? ValidationResultSource.REQUEST : ValidationResultSource.RESPONSE,
+            operationId,
           });
         }
       }
@@ -595,13 +637,15 @@ export class SwaggerExampleValidator {
     return node;
   };
   private issueFromErrorCode = (
+    operationId: string,
     examplePath: string,
     code: ModelValidationErrorCode,
     param: any,
     schemaObj?: any,
     schemaJsonPath?: string,
     exampleObj?: any,
-    exampleJsonPath?: string
+    exampleJsonPath?: string,
+    source?: ValidationResultSource
   ): SwaggerExampleErrorDetail => {
     const meta = getOavErrorMeta(code, param);
     const schemaInfo = schemaObj ? getInfo(schemaObj) : schemaObj;
@@ -615,10 +659,14 @@ export class SwaggerExampleValidator {
       schemaJsonPath: schemaJsonPath,
       examplePosition: exampleInfo?.position,
       exampleJsonPath: exampleJsonPath,
+      severity: meta.severity,
+      source: source ?? ValidationResultSource.GLOBAL,
+      operationId,
     };
   };
 
   private validateBodyType = (
+    operationId: string,
     responseSchema: any,
     body: any,
     exampleFileUrl: string,
@@ -628,9 +676,13 @@ export class SwaggerExampleValidator {
   ): boolean => {
     let expectedType = responseSchema.schema.type;
     const actualType = typeof body;
-    let bodySchema;
-    // in case of body providing primitive type
-    if (expectedType === undefined) {
+    let bodySchema: any = {};
+
+    if (responseSchema.schema.format === "file" || expectedType === "file") {
+      // ignore validation in case of file type
+      return true;
+    } else if (expectedType === undefined) {
+      // in case of body providing primitive type
       bodySchema = this.jsonLoader.resolveRefObj(responseSchema.schema);
       // set excpectedType as 'object' if the schema has properties key or additionalProperties key
       if (
@@ -643,11 +695,12 @@ export class SwaggerExampleValidator {
         expectedType = bodySchema.type;
       }
     }
+    
     let invalidTypeError: boolean = false;
     if (
       (actualType === "number" && expectedType === "integer") ||
       (actualType === "object" && expectedType === "array") ||
-      (Object.keys(bodySchema).length === 0 && Object.keys(body).length === 0)
+      (Object.keys(bodySchema)?.length === 0 && Object.keys(body)?.length === 0)
     ) {
       invalidTypeError = false;
     } else if (expectedType !== actualType) {
@@ -660,12 +713,14 @@ export class SwaggerExampleValidator {
         data: actualType,
       });
       this.addErrorsFromErrorCode(
+        operationId,
         exampleFileUrl,
         meta,
         responseDefinition,
         undefined,
         exampleResponsesObj,
-        `$response.${exampleResponseStatusCode}/body`
+        `$response.${exampleResponseStatusCode}/body`,
+        ValidationResultSource.RESPONSE
       );
       return false;
     }
@@ -673,6 +728,7 @@ export class SwaggerExampleValidator {
   };
 
   private validateContentType = (
+    operationId: string,
     examplePath: string,
     allowedContentTypes: string[],
     headers: StringMap<string>,
@@ -687,6 +743,7 @@ export class SwaggerExampleValidator {
     if (contentType !== undefined && !allowedContentTypes.includes(contentType)) {
       this.errors.push(
         this.issueFromErrorCode(
+          operationId,
           examplePath,
           "INVALID_CONTENT_TYPE",
           {
@@ -696,7 +753,8 @@ export class SwaggerExampleValidator {
           schemaObj,
           undefined,
           exampleObj,
-          `responses/${statusCode}/headers`
+          `responses/${statusCode}/headers`,
+          ValidationResultSource.RESPONSE
         )
       );
     }
@@ -716,13 +774,15 @@ export class SwaggerExampleValidator {
         } else if (statusCode !== "200" && statusCode !== "204") {
           this.errors.push(
             this.issueFromErrorCode(
+              operation.operationId!,
               examplePath,
               "LRO_RESPONSE_CODE",
               { statusCode },
               operation.responses,
               undefined,
               exampleObj,
-              `responses/${statusCode}`
+              `responses/${statusCode}`,
+              ValidationResultSource.RESPONSE
             )
           );
         }
@@ -732,13 +792,15 @@ export class SwaggerExampleValidator {
         } else if (statusCode !== "200") {
           this.errors.push(
             this.issueFromErrorCode(
+              operation.operationId!,
               examplePath,
               "LRO_RESPONSE_CODE",
               { statusCode },
               operation.responses,
               undefined,
               exampleObj,
-              `responses/${statusCode}`
+              `responses/${statusCode}`,
+              ValidationResultSource.RESPONSE
             )
           );
         }
@@ -748,13 +810,15 @@ export class SwaggerExampleValidator {
         } else if (statusCode !== "200" && statusCode !== "204") {
           this.errors.push(
             this.issueFromErrorCode(
+              operation.operationId!,
               examplePath,
               "LRO_RESPONSE_CODE",
               { statusCode },
               operation.responses,
               undefined,
               exampleObj,
-              `responses/${statusCode}`
+              `responses/${statusCode}`,
+              ValidationResultSource.RESPONSE
             )
           );
         }
@@ -781,6 +845,7 @@ export class SwaggerExampleValidator {
     ) {
       this.errors.push(
         this.issueFromErrorCode(
+          operation.operationId!,
           examplePath,
           "LRO_RESPONSE_HEADER",
           {
@@ -789,7 +854,8 @@ export class SwaggerExampleValidator {
           operation.responses,
           undefined,
           exampleObj,
-          `responses/${statusCode}/headers`
+          `responses/${statusCode}/headers`,
+          ValidationResultSource.RESPONSE
         )
       );
     }
@@ -847,6 +913,9 @@ export interface SwaggerExampleErrorDetail {
   examplePosition?: FilePosition;
   exampleUrl?: string;
   exampleJsonPath?: string;
+  severity?: Severity;
+  source?: ValidationResultSource;
+  operationId?: string;
 }
 
 export interface ExampleValidationOption extends SwaggerLoaderOption, SchemaValidatorOption {}

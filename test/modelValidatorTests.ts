@@ -155,7 +155,7 @@ describe("Model Validation", () => {
   });
 
   describe("for parameters in formdata", () => {
-    it.skip("should validate correctly", async () => {
+    it("should validate correctly", async () => {
       const specPath2 = `${testPath}/modelValidation/swaggers/specification/formdata/spellCheck.json`;
       const result = await validate.validateExamples(specPath2, undefined, {
         consoleLogLevel: "off",
@@ -424,7 +424,7 @@ describe("Model Validation", () => {
   });
 
   describe("Content type - ", () => {
-    it.skip("should pass for consumes application/octet-stream", async () => {
+    it("should pass for consumes application/octet-stream", async () => {
       const specPath2 = `${testPath}/modelValidation/swaggers/specification/contenttype/datalake.json`;
       const result = await validate.validateExamples(specPath2, undefined, {
         consoleLogLevel: "off",
