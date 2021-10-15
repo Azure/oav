@@ -220,7 +220,15 @@ interface BaseSchema {
   $ref?: string;
 }
 
-export type SchemaType = "object" | "array" | "string" | "integer" | "number" | "boolean" | "null" | "file";
+export type SchemaType =
+  | "object"
+  | "array"
+  | "string"
+  | "integer"
+  | "number"
+  | "boolean"
+  | "null"
+  | "file";
 export interface Schema extends BaseSchema {
   type?: SchemaType;
   allOf?: Schema[];

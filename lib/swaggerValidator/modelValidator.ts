@@ -695,7 +695,7 @@ export class SwaggerExampleValidator {
         expectedType = bodySchema.type;
       }
     }
-    
+
     let invalidTypeError: boolean = false;
     if (
       (actualType === "number" && expectedType === "integer") ||
