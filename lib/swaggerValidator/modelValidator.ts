@@ -582,7 +582,7 @@ export class SwaggerExampleValidator {
         } else {
           schemaPosition = err.source.position;
         }
-        
+
         for (const path of err.jsonPathsInPayload) {
           exampleJsonPaths.push(`$responses.${statusCode}${path}`);
         }
