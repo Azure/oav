@@ -554,7 +554,7 @@ export class SwaggerExampleValidator {
       } else {
         // response error case
         // check x-nullable value when body is null
-        if (err.jsonPathsInPayload.length === 1 && err.jsonPathsInPayload[0] === ".body") {
+        if (err.jsonPathsInPayload.length === 1 && err.jsonPathsInPayload[0].includes(".body")) {
           const idx = err.source.jsonRef?.indexOf("#");
           if (idx !== undefined && idx !== -1) {
             const jsonRef = err.source.jsonRef?.substr(idx + 1);
@@ -568,6 +568,7 @@ export class SwaggerExampleValidator {
         if (node === undefined) {
           continue;
         }
+        schemaPosition = getInfo(node)?.position;
         for (const path of err.jsonPathsInPayload) {
           exampleJsonPaths.push(`$responses.${statusCode}${path}`);
         }
