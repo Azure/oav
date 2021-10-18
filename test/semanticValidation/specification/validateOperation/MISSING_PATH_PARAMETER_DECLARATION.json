@@ -1,0 +1,41 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "title",
+    "description": "",
+    "version": "2016-11-01"
+  },
+  "host": "host",
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/hello": {
+      "get": {
+        "tags": [
+          "Insipid"
+        ],
+        "operationId": "Insipid_Hello",
+        "description": "Very boring operation",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "file"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ]
+      }
+    }
+  }
+}

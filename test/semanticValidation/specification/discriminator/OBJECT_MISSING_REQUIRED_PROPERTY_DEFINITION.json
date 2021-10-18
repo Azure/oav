@@ -1,0 +1,43 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "title",
+    "description": "",
+    "version": "2016-11-01"
+  },
+  "host": "host",
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/hello": {
+      "get": {
+        "tags": [
+          "Insipid"
+        ],
+        "operationId": "Insipid_Hello",
+        "description": "Very boring operation",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Artifact"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Artifact": {
+      "type": "object",
+      "discriminator": "kind",
+      "description": "Represents an artifact.",
+      "properties": {
+      },
+      "required": [
+        "kind"
+      ]
+    }
+  }
+}
