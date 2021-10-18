@@ -529,6 +529,8 @@ export class SwaggerExampleValidator {
       let isSuppressed = false;
       let schemaPosition;
       let examplePosition;
+      let externalSwagger;
+      let schemaUrl = this.specPath;
       const exampleJsonPaths: string[] = [];
       if (isRequest) {
         for (const p of parameters!) {
@@ -558,7 +560,14 @@ export class SwaggerExampleValidator {
           const idx = err.source.jsonRef?.indexOf("#");
           if (idx !== undefined && idx !== -1) {
             const jsonRef = err.source.jsonRef?.substr(idx + 1);
-            const bodySchema = jsonPointer.get(this.swagger, jsonRef!);
+            let bodySchema;
+            if (err.source.url === this.swagger._filePath) {
+              bodySchema = jsonPointer.get(this.swagger, jsonRef!);
+            } else {
+              externalSwagger = this.jsonLoader.getFileContentFromCache(err.source.url);
+              bodySchema = jsonPointer.get(externalSwagger!, jsonRef!);
+              schemaUrl = err.source.url;
+            }
             if (bodySchema?.[C.xNullable] === true) {
               continue;
             }
@@ -568,7 +577,12 @@ export class SwaggerExampleValidator {
         if (node === undefined) {
           continue;
         }
-        schemaPosition = getInfo(node)?.position;
+        if (externalSwagger === undefined) {
+          schemaPosition = getInfo(node)?.position;
+        } else {
+          schemaPosition = err.source.position;
+        }
+        
         for (const path of err.jsonPathsInPayload) {
           exampleJsonPaths.push(`$responses.${statusCode}${path}`);
         }
@@ -580,7 +594,7 @@ export class SwaggerExampleValidator {
           this.errors.push({
             code: err.code,
             message: err.message,
-            schemaUrl: this.specPath,
+            schemaUrl,
             exampleUrl,
             schemaPosition: schemaPosition,
             schemaJsonPath: err.schemaPath,
@@ -606,7 +620,12 @@ export class SwaggerExampleValidator {
     /*eslint no-constant-condition: ["error", { "checkLoops": false }]*/
     while (true) {
       try {
-        node = jsonPointer.get(this.swagger, jsonRef);
+        if (err.source.url === this.swagger._filePath) {
+          node = jsonPointer.get(this.swagger, jsonRef);
+        } else {
+          const externalSwagger = this.jsonLoader.getFileContentFromCache(err.source.url);
+          node = jsonPointer.get(externalSwagger!, jsonRef);
+        }
         const isSuppressed = isSuppressedInPath(node, err.code, err.message);
         if (isSuppressed) {
           return undefined;

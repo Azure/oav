@@ -124,6 +124,14 @@ export class JsonLoader implements Loader<Json> {
     return this.loadFile(cache);
   }
 
+  public getFileContentFromCache(filePath: string): Json | undefined {
+    if (this.fileCache !== undefined) {
+      let cache = this.fileCache.get(filePath);
+      return cache?.resolved;
+    }
+    return undefined;
+  }
+
   public async resolveFile(mockName: string): Promise<any> {
     const filePath = this.mockNameMap[mockName];
     let cache = this.fileCache.get(filePath);
