@@ -7,6 +7,10 @@ import { ResponseDiffItem, RuntimeError, StepResult, TestScenarioResult } from "
 
 const spaceReg = /(\n|\t|\r)/gi;
 
+const getErrorCodeDocLink = (code: string): string => {
+  return `https://github.com/Azure/azure-rest-api-specs/blob/main/documentation/api-scenario/references/ErrorCodeReference.md#${code}`;
+};
+
 const commonHelper = (opts: HelperOpts) => ({
   renderPlain: (s: string) => s,
   renderWhitespace: (n: number) => "&nbsp;".repeat(n),
@@ -56,9 +60,9 @@ const commonHelper = (opts: HelperOpts) => ({
     `${hd.default(moment.duration(moment(end).diff(moment(start))).asMilliseconds())}`,
   shouldReportError: (sr: TestScenarioMarkdownStepResult) =>
     sr.failedErrorsCount + sr.fatalErrorsCount > 0,
-  renderFatalErrorCode: (e: RuntimeError) => `[${e.code}]()`,
+  renderFatalErrorCode: (e: RuntimeError) => `[${e.code}](${getErrorCodeDocLink(e.code)})`,
   renderFatalErrorDetail: (e: RuntimeError) => `${e.message.replace(spaceReg, " ")}`,
-  renderDiffErrorCode: (e: ResponseDiffItem) => `[${e.code}]()`,
+  renderDiffErrorCode: (e: ResponseDiffItem) => `[${e.code}](${getErrorCodeDocLink(e.code)})`,
   renderDiffErrorDetail: (e: ResponseDiffItem) => `${e.message.replace(spaceReg, " ")}`,
 });
 

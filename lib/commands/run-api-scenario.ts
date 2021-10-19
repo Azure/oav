@@ -37,6 +37,19 @@ export const apiScenarioEnvKey = "API_SCENARIO_JSON_ENV";
  * postmanenv: <ResourceProvider>/<apiVersion>/<apiScenarioFileName>/<runId>/<scenarioIdx>/env.json
  *
  */
+
+interface StringMap {
+  [key: string]: string;
+}
+
+const CloudEndpointMap: StringMap = {
+  AzureCloud: "https://management.azure.com",
+  AzureChinaCloud: "https://management.chinacloudapi.cn",
+  AzureUSGovernment: "https://management.usgovcloudapi.net",
+  AzureGermanCloud: "https://management.microsoftazure.de",
+  dogfood: "https://api-dogfood.resources.windows-int.net",
+};
+
 export const builder: yargs.CommandBuilder = {
   e: {
     alias: "envFile",
@@ -74,6 +87,12 @@ export const builder: yargs.CommandBuilder = {
     describe: "ARM endpoint",
     string: true,
     default: "https://management.azure.com",
+  },
+  cloudName: {
+    describe:
+      "Cloud name, used to specify ARM endpoint, including AzureCloud, AzureChinaCloud, AzureUSGovernment, AzureGermanCloud",
+    string: true,
+    default: "AzureCloud",
   },
   location: {
     describe: "resource provision location parameter",
@@ -177,7 +196,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       eraseDescription: false,
       enableBlobUploader: argv.uploadBlob,
       blobConnectionString: process.env.blobConnectionString || "",
-      baseUrl: argv.armEndpoint,
+      baseUrl: CloudEndpointMap[argv.CloudName] ?? argv.armEndpoint,
       validationLevel: argv.level,
       skipCleanUp: argv.skipCleanUp,
       from: argv.from,
