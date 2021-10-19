@@ -48,7 +48,6 @@ describe("Semantic validation", () => {
       const specPath = `${testPath}/semanticValidation/specification/invalidReference/searchindex.json`;
       const result = await validate.validateSpec(specPath, undefined);
       assert(result.validityStatus === false);
-      console.log(result.validateSpec?.errors);
     });
   });
 
@@ -92,7 +91,7 @@ describe("Semantic validation", () => {
   describe("validateCompile", () => {
     // INTERNAL_ERROR
     it("should fail when cannot compile validator on operation", async () => {
-      const specPath = `${testPath}/semanticValidation/specification/validateOperation/INVALID_PARAMETER_COMBINATION.json`;
+      const specPath = `${testPath}/semanticValidation/specification/validateCompile/Compile-INTERNAL_ERROR.json`;
       const result = await validate.validateSpec(specPath, undefined);
       assert(result.validityStatus === false);
       assert.strictEqual(result.validateSpec?.errors?.[0].code, "INTERNAL_ERROR");
@@ -177,7 +176,7 @@ describe("Semantic validation", () => {
       const specPath = `${testPath}/semanticValidation/specification/validateOperation/INVALID_PARAMETER_COMBINATION.json`;
       const result = await validate.validateSpec(specPath, undefined);
       assert(result.validityStatus === false);
-      assert.strictEqual(result.validateSpec?.errors?.[1].code, "INVALID_PARAMETER_COMBINATION");
+      assert.strictEqual(result.validateSpec?.errors?.[0].code, "INVALID_PARAMETER_COMBINATION");
     });
     // MISSING_PATH_PARAMETER_DECLARATION
     it("should fail when path parameter is defined but is not declared", async () => {
