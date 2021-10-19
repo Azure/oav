@@ -1,5 +1,10 @@
 # Change Log - oav
 
+## 10/19/2021 2.9.2
+
+- Increase semantic validation test coverage to 90%+
+- Export loader types
+
 ## 10/10/2021 2.10.0
 
 - Add new version of model validation
