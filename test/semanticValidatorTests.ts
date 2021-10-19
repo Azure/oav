@@ -26,6 +26,30 @@ describe("Semantic validation", () => {
       assert(result.validityStatus === false);
       assert.strictEqual(result.validateSpec?.errors?.[0].code, "UNRESOLVABLE_REFERENCE");
     });
+    it("should validate correctly when the spec contains an x-ms-parameterized-host", async () => {
+      const specPath = `${testPath}/semanticValidation/specification/parameterizedhost/face.json`;
+      const result = await validate.validateSpec(specPath, undefined);
+      // console.dir(result, { depth: null })
+      assert(
+        result.validityStatus === true,
+        `swagger "${specPath}" contains semantic validation errors.`
+      );
+    });
+    it("should validate correctly when the spec does not contain a definitions section", async () => {
+      const specPath = `${testPath}/semanticValidation/specification/definitions/definitions.json`;
+      const result = await validate.validateSpec(specPath, undefined);
+      // console.dir(result, { depth: null })
+      assert(
+        result.validityStatus === true,
+        `swagger "${specPath}" contains semantic validation errors.`
+      );
+    });
+    it("should fail when validating a swagger with invalid internal reference", async () => {
+      const specPath = `${testPath}/semanticValidation/specification/invalidReference/searchindex.json`;
+      const result = await validate.validateSpec(specPath, undefined);
+      assert(result.validityStatus === false);
+      console.log(result.validateSpec?.errors);
+    });
   });
 
   describe("internalErrors", () => {
@@ -175,38 +199,10 @@ describe("Semantic validation", () => {
         "MISSING_PATH_PARAMETER_DEFINITION"
       );
     });
+    it("should succeed when discriminator is not a required property and the error is suppressed", async () => {
+      const specPath = `${testPath}/semanticValidation/specification/discriminator/notRequiredDiscriminatorWithSuppression.json`;
+      const result = await validate.validateSpec(specPath, undefined);
+      assert(result.validityStatus === true);
+    });
   });
 });
-
-// it("should validate correctly when the spec contains an x-ms-parameterized-host", async () => {
-//   const specPath = `${testPath}/semanticValidation/specification/parameterizedhost/face.json`;
-//   const result = await validate.validateSpec(specPath, undefined);
-//   // console.dir(result, { depth: null })
-//   assert(
-//     result.validityStatus === true,
-//     `swagger "${specPath}" contains semantic validation errors.`
-//   );
-// });
-//
-// it("should validate correctly when the spec does not contain a definitions section", async () => {
-//   const specPath = `${testPath}/semanticValidation/specification/definitions/definitions.json`;
-//   const result = await validate.validateSpec(specPath, undefined);
-//   // console.dir(result, { depth: null })
-//   assert(
-//     result.validityStatus === true,
-//     `swagger "${specPath}" contains semantic validation errors.`
-//   );
-// });
-//
-// it("should succeed when discriminator is not a required property and the error is suppressed", async () => {
-//   const specPath = `${testPath}/semanticValidation/specification/discriminator/notRequiredDiscriminatorWithSuppression.json`;
-//   const result = await validate.validateSpec(specPath, undefined);
-//   assert(result.validityStatus === true);
-// });
-//
-// it("should fail when validating a swagger with invalid internal reference", async () => {
-//   const specPath = `${testPath}/semanticValidation/specification/invalidReference/searchindex.json`;
-//   const result = await validate.validateSpec(specPath, undefined);
-//   assert(result.validityStatus === false);
-//   console.log(result.validateSpec?.errors);
-// });
