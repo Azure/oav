@@ -1,0 +1,73 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "title",
+    "description": "",
+    "version": "2016-11-01"
+  },
+  "host": "host",
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/users": {
+      "post": {
+        "summary": "Creates a new user.",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "user1",
+            "description": "The user to create.",
+            "schema": {
+              "type": "object",
+              "required": [
+                "userName"
+              ],
+              "properties": {
+                "userName": {
+                  "type": "string"
+                },
+                "firstName": {
+                  "type": "string"
+                },
+                "lastName": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "in": "body",
+            "name": "user2",
+            "description": "The user to create.",
+            "schema": {
+              "type": "object",
+              "required": [
+                "userName"
+              ],
+              "properties": {
+                "userName": {
+                  "type": "string"
+                },
+                "firstName": {
+                  "type": "string"
+                },
+                "lastName": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        }
+      }
+    }
+  }
+}
