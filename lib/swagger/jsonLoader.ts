@@ -126,7 +126,7 @@ export class JsonLoader implements Loader<Json> {
 
   public getFileContentFromCache(filePath: string): Json | undefined {
     if (this.fileCache !== undefined) {
-      let cache = this.fileCache.get(filePath);
+      const cache = this.fileCache.get(filePath);
       return cache?.resolved;
     }
     return undefined;
