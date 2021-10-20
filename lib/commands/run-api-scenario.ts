@@ -47,7 +47,7 @@ const CloudEndpointMap: StringMap = {
   AzureChinaCloud: "https://management.chinacloudapi.cn",
   AzureUSGovernment: "https://management.usgovcloudapi.net",
   AzureGermanCloud: "https://management.microsoftazure.de",
-  dogfood: "https://api-dogfood.resources.windows-int.net",
+  DogFood: "https://api-dogfood.resources.windows-int.net",
 };
 
 export const builder: yargs.CommandBuilder = {
@@ -90,7 +90,7 @@ export const builder: yargs.CommandBuilder = {
   },
   cloudName: {
     describe:
-      "Cloud name, used to specify ARM endpoint, including AzureCloud, AzureChinaCloud, AzureUSGovernment, AzureGermanCloud",
+      "Cloud name, used to specify ARM endpoint, including AzureCloud, AzureChinaCloud, AzureUSGovernment, AzureGermanCloud, DogFood",
     string: true,
     default: "AzureCloud",
   },
@@ -196,7 +196,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       eraseDescription: false,
       enableBlobUploader: argv.uploadBlob,
       blobConnectionString: process.env.blobConnectionString || "",
-      baseUrl: CloudEndpointMap[argv.CloudName] ?? argv.armEndpoint,
+      baseUrl: CloudEndpointMap[argv.cloudName] ?? argv.armEndpoint,
       validationLevel: argv.level,
       skipCleanUp: argv.skipCleanUp,
       from: argv.from,
