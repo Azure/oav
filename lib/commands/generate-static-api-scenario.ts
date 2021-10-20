@@ -33,22 +33,29 @@ export const builder: yargs.CommandBuilder = {
 };
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
-  const readmeMd: string = pathResolve(argv.readme);
-  const swaggerFiles = argv.swaggers;
-  console.log(swaggerFiles);
-
-  const autorestConfig = await getAutorestConfig(argv, readmeMd);
-  const fileRoot = dirname(readmeMd);
-  const swaggerFilePaths: string[] = autorestConfig["input-file"].map((it: string) =>
-    pathResolve(fileRoot, it)
-  );
+  const swaggerFilePaths: string[] = (argv.swaggers || []).map((it: string) => pathResolve(it));
+  let tag = "default";
+  if (argv.readme !== undefined) {
+    const readmeMd: string = pathResolve(argv.readme);
+    const autorestConfig = await getAutorestConfig(argv, readmeMd);
+    tag = autorestConfig.tag;
+    const fileRoot = dirname(readmeMd);
+    const inputSwaggerFile = autorestConfig["input-file"].map((it: string) =>
+      pathResolve(fileRoot, it)
+    );
+    for (const it of inputSwaggerFile) {
+      if (swaggerFilePaths.indexOf(it) !== -1) {
+        swaggerFilePaths.push(it);
+      }
+    }
+  }
 
   console.log("input-file:");
   console.log(swaggerFilePaths);
 
   const generator = StaticApiScenarioGenerator.create({
     swaggerFilePaths: swaggerFilePaths,
-    tag: autorestConfig.tag,
+    tag: tag,
     rules: argv.rules.split(","),
   });
 
