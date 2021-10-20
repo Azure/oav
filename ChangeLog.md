@@ -1,5 +1,10 @@
 # Change Log - oav
 
+## 10/19/2021 2.9.2
+
+- Increase semantic validation test coverage to 90%+
+- Export loader types
+
 ## 09/30/2021 2.9.1
 
 - Example extractor support add url parameter if define x-ms-parameterized-host

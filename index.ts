@@ -81,6 +81,14 @@ export {
   normalizeDependency,
 } from "./lib/apiScenario/swaggerAnalyzer";
 
+export { FileLoaderOption, FileLoader } from "./lib/swagger/fileLoader";
+
+export { SwaggerLoaderOption, SwaggerLoader } from "./lib/swagger/swaggerLoader";
+
+export { SuppressionLoaderOption, SuppressionLoader } from "./lib/swagger/suppressionLoader";
+
+export { JsonLoader, JsonLoaderOption, JsonLoaderRefError } from "./lib/swagger/jsonLoader";
+
 export { getAutorestConfig } from "./lib/util/getAutorestConfig";
 // Constants
 export const Constants = C;

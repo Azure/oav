@@ -375,7 +375,7 @@ export class SwaggerSemanticValidator {
         const argMatches = normalizedPath.match(/\{.*?\}/g);
         let idx = 0;
         for (const arg of argMatches ?? []) {
-          if (arg === "") {
+          if (arg === "{}") {
             const meta = getOavErrorMeta("EMPTY_PATH_PARAMETER_DECLARATION", { pathTemplate });
             this.addErrorsFromErrorCode(errors, url, meta, path);
           } else {
@@ -401,6 +401,8 @@ export class SwaggerSemanticValidator {
           if (visitedOperationId.has(operationId)) {
             const meta = getOavErrorMeta("DUPLICATE_OPERATIONID", { operationId });
             this.addErrorsFromErrorCode(errors, url, meta, operation);
+          } else {
+            visitedOperationId.add(operationId);
           }
         }
 
