@@ -6,8 +6,6 @@
 import assert from "assert";
 import * as validate from "../lib/validate";
 
-import { ModelValidator } from "../lib/validators/modelValidator";
-
 const testPath = __dirname;
 
 const specPath =
@@ -51,28 +49,13 @@ describe("Model Validation", () => {
       });
 
       assert(
-        result.length === 1,
-        `swagger "${specPath} with operation "${operationIds}" should report only 1 error.`
+        result.length === 2,
+        `swagger "${specPath} with operation "${operationIds}" should report two errors.`
       );
-
-      if (result[0].details === undefined) {
-        throw new Error("result[0].details === undefined");
-      }
-      if (result[0].details.similarPaths === undefined) {
-        throw new Error("result[0].details.similarPaths === undefined");
-      }
-      if (result[0].details.similarJsonPaths === undefined) {
-        throw new Error("result[0].details.similarJsonPaths === undefined");
-      }
-      assert(
-        result[0].details.similarPaths.length === 1,
-        `swagger "${specPath} with operation "${operationIds}" error should have a similar path.`
-      );
-      assert(
-        result[0].details.similarJsonPaths.length === 1,
-        `swagger "${specPath} with operation "${operationIds}" error should have a similar JSON path.`
-      );
-      // console.log(result)
+      assert(result[0].code === "OBJECT_ADDITIONAL_PROPERTIES", "error code should be OBJECT_ADDITIONAL_PROPERTIES.");
+      assert((result[0] as any).exampleJsonPath === "$responses.200.body.value[3].siblings[0].sanctuary", "error path in example is incorrect.");
+      assert(result[1].code === "OBJECT_ADDITIONAL_PROPERTIES", "error code should be OBJECT_ADDITIONAL_PROPERTIES.");
+      assert((result[1] as any).exampleJsonPath === "$responses.200.body.value[4].siblings[0].sanctuary", "error path in example is incorrect.");
     });
 
     it("should pass for paths in x-ms-paths with question mark", async () => {
@@ -155,58 +138,6 @@ describe("Model Validation", () => {
         `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
       );
       // console.log(result)
-    });
-
-    it("should fail for CircularAnimal_IncorrectSibling_List", async () => {
-      const specPath2 = `${testPath}/modelValidation/swaggers/specification/polymorphic/polymorphicSwagger.json`;
-      const operationIds = "CircularAnimal_IncorrectSibling_List";
-      const validator = new ModelValidator(specPath2, null, {
-        consoleLogLevel: "off",
-      });
-      await validator.initialize();
-      await validator.validateOperations(operationIds);
-      const result = validator.specValidationResult;
-      assert(
-        result.validityStatus === false,
-        `swagger "${specPath2}" with operation "${operationIds}" contains model validation errors.`
-      );
-      const operationResult = result.operations.CircularAnimal_IncorrectSibling_List;
-      if (operationResult === undefined) {
-        throw new Error("operationResult === undefined");
-      }
-      const example = operationResult["x-ms-examples"];
-      if (example === undefined) {
-        throw new Error("example === undefined");
-      }
-      const scenarios = example.scenarios;
-      if (scenarios === undefined) {
-        throw new Error("scenarios === undefined");
-      }
-      const scenario =
-        scenarios[
-          "Tests ploymorphic circular array, " +
-            "dictionary of animals with incorrect sibling (negative)"
-        ];
-      if (scenario === undefined) {
-        throw new Error("scenario === undefined");
-      }
-      if (scenario.responses === undefined) {
-        throw new Error("scenario.responses === undefined");
-      }
-      const responseError = scenario.responses["200"];
-      assert.strictEqual(responseError.isValid, false);
-      if (responseError.error === undefined) {
-        throw new Error("no error");
-      }
-      assert.strictEqual(responseError.error.code, "RESPONSE_VALIDATION_ERROR");
-      if (responseError.error.innerErrors === undefined) {
-        throw new Error("innerErrors is undefined");
-      }
-      const errors = responseError.error.innerErrors[0].errors;
-      if (errors === undefined) {
-        throw new Error("innerErrors is undefined");
-      }
-      assert.strictEqual(errors[0].code, "ANY_OF_MISSING");
     });
 
     it("should pass for Entities_Search", async () => {
@@ -583,7 +514,6 @@ describe("Model Validation", () => {
         consoleLogLevel: "off",
       });
       assert.strictEqual(result.length, 1);
-      // it should report the real error `INVALID_TYPE` instead of the wrapper `ONE_OF_MISSING`
       assert.strictEqual(result[0].code, "INVALID_TYPE");
     });
   });
@@ -609,13 +539,34 @@ describe("Model Validation", () => {
     });
   });
 
+  describe("Secret property in response validation", () => {
+    it("Validation should report error when secret appears in response of non-Post operation", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/secretProperty/secretSwagger.json`;
+      const operationId = "SecretUser_Get";
+      const result = await validate.validateExamples(specPath2, operationId, {
+        consoleLogLevel: "off",
+      });
+      assert.strictEqual(result.length, 1);
+      assert.strictEqual(result[0].code, "SECRET_PROPERTY");
+    });
+    it("Validation should not report error when secret appears in response of post operation", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/secretProperty/secretSwagger.json`;
+      const operationId = "SecretUser_Post";
+      const result = await validate.validateExamples(specPath2, operationId, {
+        consoleLogLevel: "off",
+      });
+      assert.strictEqual(result.length, 0);
+    });
+  });
+
   describe("Discriminator is required property", () => {
-    it("assumes the type to be the defined type in swagger if discriminator is missing", async () => {
+    it("report error when discriminator is missing", async () => {
       const specPath2 = `${testPath}/modelValidation/swaggers/specification/polymorphicRequired/spec.json`;
       const result = await validate.validateExamples(specPath2, undefined, {
         consoleLogLevel: "off",
       });
-      assert.strictEqual(result.length, 0);
+      assert.strictEqual(result.length, 1);
+      assert.strictEqual(result[0].code, "DISCRIMINATOR_VALUE_NOT_FOUND");
     });
   });
 

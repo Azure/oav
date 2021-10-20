@@ -4,8 +4,12 @@
     "title": "Contoso Services",
     "version": "2020-01-01"
   },
-  "consumes": ["application/json"],
-  "produces": ["application/json"],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
   "securityDefinitions": {
     "azure_auth": {
       "type": "oauth2",
@@ -20,7 +24,9 @@
   "paths": {
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Contoso/users": {
       "put": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "operationId": "User_CreateOrUpdate",
         "description": "Creates or Updates a user.",
         "parameters": [
@@ -50,7 +56,9 @@
         }
       },
       "patch": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "operationId": "User_Patch",
         "description": "Patch a user.",
         "parameters": [
@@ -82,7 +90,9 @@
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Contoso/users/{uid}": {
       "get": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "operationId": "User_Get",
         "description": "Gets a user.",
         "parameters": [
@@ -132,16 +142,22 @@
         "readOnlyProperty": {
           "type": "string",
           "description": "random property.",
-          "x-ms-mutability": ["read"]
+          "x-ms-mutability": [
+            "read"
+          ]
         }
       },
       "type": "object",
-      "required": ["type"]
+      "required": [
+        "type"
+      ]
     },
     "UserWithPet": {
-      "allOf": [{
-        "$ref": "#/definitions/User"
-      }],
+      "allOf": [
+        {
+          "$ref": "#/definitions/User"
+        }
+      ],
       "properties": {
         "pet": {
           "$ref": "#/definitions/Pet"
@@ -184,7 +200,10 @@
           "x-ms-secret": true
         }
       },
-      "required": ["firstName", "password"],
+      "required": [
+        "firstName",
+        "password"
+      ],
       "description": "User profile."
     }
   },

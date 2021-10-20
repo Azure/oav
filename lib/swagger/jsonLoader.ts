@@ -124,6 +124,14 @@ export class JsonLoader implements Loader<Json> {
     return this.loadFile(cache);
   }
 
+  public getFileContentFromCache(filePath: string): Json | undefined {
+    if (this.fileCache !== undefined) {
+      const cache = this.fileCache.get(filePath);
+      return cache?.resolved;
+    }
+    return undefined;
+  }
+
   public async resolveFile(mockName: string): Promise<any> {
     const filePath = this.mockNameMap[mockName];
     let cache = this.fileCache.get(filePath);
@@ -159,6 +167,20 @@ export class JsonLoader implements Loader<Json> {
       (object as any).$ref = $ref;
     }
 
+    return refObj;
+  }
+
+  public resolveMockedFile(fileName: string): any {
+    let refObj;
+    if (!!fileName && fileName.startsWith("_")) {
+      const filePath = this.mockNameMap[fileName];
+      const cache = this.fileCache.get(filePath);
+      if (cache === undefined) {
+        throw new Error(`cache not found for ${filePath} and mockName ${fileName}`);
+      }
+
+      refObj = jsonPointer.get(cache.resolved! as any, "");
+    }
     return refObj;
   }
 

@@ -46,16 +46,6 @@ describe("suppression", () => {
     );
     assert.strictEqual(result.length, 1);
   });
-  it("suppress request parameter", async () => {
-    const result = await validateExamples(
-      "./test/modelValidation/swaggers/specification/suppressionsForRequest/test.json",
-      undefined,
-      {
-        consoleLogLevel: "off",
-      }
-    );
-    assert.strictEqual(result.length, 0);
-  });
   it("suppress where 2", async () => {
     const result = await validateExamples(
       "./test/modelValidation/swaggers/specification/suppressionsWhere2/test.json",
@@ -65,9 +55,6 @@ describe("suppression", () => {
       }
     );
     assert.strictEqual(result.length, 1);
-    if (result[0].details === undefined) {
-      throw new Error("result[0].details === undefined");
-    }
-    assert.strictEqual(result[0].details.message, "Additional properties not allowed: some");
+    assert.strictEqual(result[0].message, "Additional properties not allowed: some");
   });
 });
