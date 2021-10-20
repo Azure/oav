@@ -92,7 +92,6 @@ export const builder: yargs.CommandBuilder = {
     describe:
       "Cloud name, used to specify ARM endpoint, including AzureCloud, AzureChinaCloud, AzureUSGovernment, AzureGermanCloud, DogFood",
     string: true,
-    default: "AzureCloud",
   },
   location: {
     describe: "resource provision location parameter",
