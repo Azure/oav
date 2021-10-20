@@ -209,10 +209,11 @@ export class StaticApiScenarioGenerator {
     for (const it of this.exampleDependencies) {
       resourceTypes.add(it.fullResourceType);
     }
+    if (this.opts.rules?.includes("operations-list")) {
+      console.log("generate operations list");
+      await this.generateListOperationTestScenario();
+    }
     for (const resourceType of resourceTypes) {
-      if (this.opts.rules?.includes("operations-list")) {
-        await this.generateListOperationTestScenario();
-      }
       if (this.opts.rules?.includes("resource-put-delete")) {
         await this.generatePutDeleteApiScenario(resourceType);
       }

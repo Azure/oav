@@ -19,11 +19,14 @@ export const builder: yargs.CommandBuilder = {
   readme: {
     describe: "path to readme.md file",
     string: true,
-    demandOption: true,
+  },
+  swaggers: {
+    describe: "one or more swagger file paths. type: array",
+    type: "array",
   },
   rules: {
     describe:
-      "generate test scenarios file rules split by comma. example: listOperation, put-delete.",
+      "generate test scenarios file rules split by comma. supported: operations-list , put-delete.",
     string: true,
     default: "resource-put-delete",
   },
@@ -31,6 +34,8 @@ export const builder: yargs.CommandBuilder = {
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
   const readmeMd: string = pathResolve(argv.readme);
+  const swaggerFiles = argv.swaggers;
+  console.log(swaggerFiles);
 
   const autorestConfig = await getAutorestConfig(argv, readmeMd);
   const fileRoot = dirname(readmeMd);
