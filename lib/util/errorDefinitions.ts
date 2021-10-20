@@ -3,17 +3,23 @@ import { strTemplate, TemplateFunc } from "./strTemplate";
 
 export type SchemaValidationErrorCode = keyof typeof schemaValidationErrors;
 
+// common error code including payload validation and example validation
 export type TrafficValidationErrorCode = keyof typeof trafficValidationErrors;
 
 export type SemanticValidationErrorCode = keyof typeof semanticValidationErrors;
 
+// error code for live validation
 export type ApiValidationErrorCode = keyof typeof apiValidationErrors;
+
+// error code for model validation
+export type ModelValidationErrorCode = keyof typeof modelValidationErrors;
 
 export type OavAllErrorCode =
   | SchemaValidationErrorCode
   | TrafficValidationErrorCode
   | SemanticValidationErrorCode
-  | ApiValidationErrorCode;
+  | ApiValidationErrorCode
+  | ModelValidationErrorCode;
 
 let allErrors: {
   [code: string]: { severity: Severity; message: TemplateFunc<string>; id?: string };
@@ -25,6 +31,7 @@ export const getOavErrorMeta = <T extends OavAllErrorCode>(code: T, param: Recor
       ...trafficValidationErrors,
       ...semanticValidationErrors,
       ...apiValidationErrors,
+      ...modelValidationErrors,
     };
   }
   const errorInfo = allErrors[code];
@@ -313,4 +320,55 @@ export const apiValidationErrors = {
     severity: Severity.Warning,
     message: strTemplate`The value contains PII data`,
   },
+};
+
+export const modelValidationErrors = {
+  ...trafficValidationErrors,
+
+  XMS_EXAMPLE_NOTFOUND_ERROR: {
+    severity: Severity.Critical,
+    message: strTemplate`x-ms-example not found in ${"operationId"}.`,
+    id: "OAV107",
+  },
+  REQUIRED_PARAMETER_EXAMPLE_NOT_FOUND: {
+    severity: Severity.Critical,
+    message: strTemplate`In operation ${"operationId"}, parameter ${"name"} is required in the swagger spec but is not present in the provided example parameter values.`,
+    id: "OAV105",
+  },
+  DOUBLE_FORWARD_SLASHES_IN_URL: {
+    severity: Severity.Critical,
+    message: strTemplate`In operation ${"operationId"}, example for parameter ${"parameterName"}: ${"parameterValue"} starts with a forward slash and the path template: ${"pathTemplate"} contains a forward slash before the parameter starts. This will cause double forward slashes in the request url. Thus making it incorrect.`,
+    id: "OAV129",
+  },
+  RESPONSE_STATUS_CODE_NOT_IN_SPEC: {
+    severity: Severity.Critical,
+    message: strTemplate`Response statusCode ${"exampleResponseStatusCode"} for operation ${"operationId"} is provided in exampleResponseValue, however it is not present in the swagger spec.`,
+    id: "OAV112",
+  },
+  RESPONSE_SCHEMA_NOT_IN_SPEC: {
+    severity: Severity.Critical,
+    message: strTemplate`Response statusCode ${"exampleResponseStatusCode"} for operation ${"operationId"} has response body provided in the example, however the response does not have a "schema" defined in the swagger spec.`,
+    id: "OAV112",
+  },
+  RESPONSE_BODY_NOT_IN_EXAMPLE: {
+    severity: Severity.Critical,
+    message: strTemplate`Response statusCode ${"exampleResponseStatusCode"} for operation ${"operationId"} has no response body provided in the example, however the response does have a "schema" defined in the swagger spec.`,
+    id: "OAV130",
+  },
+  RESPONSE_STATUS_CODE_NOT_IN_EXAMPLE: {
+    severity: Severity.Critical,
+    message: strTemplate`Following response status codes ${"statusCodeInSwagger"} for operation ${"operationId"} were present in the swagger spec, however they were not present in x-ms-examples. Please provide them.`,
+    id: "OAV111",
+  },
+};
+
+export const ErrorCodeConstants = {
+  XMS_EXAMPLE_NOTFOUND_ERROR: "XMS_EXAMPLE_NOTFOUND_ERROR",
+  REQUIRED_PARAMETER_EXAMPLE_NOT_FOUND: "REQUIRED_PARAMETER_EXAMPLE_NOT_FOUND",
+  DOUBLE_FORWARD_SLASHES_IN_URL: "DOUBLE_FORWARD_SLASHES_IN_URL",
+  RESPONSE_STATUS_CODE_NOT_IN_SPEC: "RESPONSE_STATUS_CODE_NOT_IN_SPEC",
+  RESPONSE_SCHEMA_NOT_IN_SPEC: "RESPONSE_SCHEMA_NOT_IN_SPEC",
+  RESPONSE_BODY_NOT_IN_EXAMPLE: "RESPONSE_BODY_NOT_IN_EXAMPLE",
+  RESPONSE_STATUS_CODE_NOT_IN_EXAMPLE: "RESPONSE_STATUS_CODE_NOT_IN_EXAMPLE",
+  INVALID_TYPE: "INVALID_TYPE",
 };

@@ -14,9 +14,6 @@ describe("Invalid examples", () => {
       2,
       `swagger "${specPath}" with operation should contain 2 model validation errors.`
     );
-    if (result[0].details === undefined) {
-      throw new Error("result[0].details === undefined");
-    }
-    assert.strictEqual(result[0].details.code, "RESPONSE_STATUS_CODE_NOT_IN_EXAMPLE");
+    assert.strictEqual(result[0].code, "RESPONSE_STATUS_CODE_NOT_IN_EXAMPLE");
   });
 });

@@ -121,11 +121,13 @@ export class SwaggerSemanticValidator {
 
       await this.suppressionLoader.load(swagger);
 
+      // validate x-ms-* extensions
       await this.validateSwaggerSchema(swagger, errors);
       if (errors.length > 0) {
         return errors;
       }
 
+      // compile swagger schema
       const transformCtx = await this.validateCompile(swagger, errors);
 
       await this.validateDiscriminator(transformCtx, errors);
@@ -190,17 +192,55 @@ export class SwaggerSemanticValidator {
     rootObj: any,
     errors: SemanticErrorDetail[]
   ) {
+    const existedJsonPaths: string[] = [];
     for (const err of result) {
+      // ignore below schema errors
+      if (
+        err.code === "NOT_PASSED" &&
+        (err.message.includes('should match "else" schema') ||
+          err.message.includes('should match "then" schema'))
+      ) {
+        continue;
+      }
       err.jsonPathsInPayload = err.jsonPathsInPayload.filter((jsonPath) => {
-        const node = jsonPointer.get(rootObj, jsonPathToPointer(jsonPath));
-        return !isSuppressedInPath(node, err.code, err.message);
+        let node;
+        /*eslint no-constant-condition: ["error", { "checkLoops": false }]*/
+        while (true) {
+          try {
+            node = jsonPointer.get(rootObj, jsonPathToPointer(jsonPath));
+            const isSuppressed = isSuppressedInPath(node, err.code, err.message);
+            if (!isSuppressed) {
+              existedJsonPaths.push(jsonPath);
+            }
+            return !isSuppressed;
+          } catch (e) {
+            let isContinue = false;
+            // the jsonPathsInPayload will include non-existed path, so it needs to walk back to
+            // exclude the unexisted path
+            if (e.message.includes("Invalid reference token:")) {
+              const token = e.message.substring("Invalid reference token:".length + 1);
+              const index = jsonPath.lastIndexOf(token);
+              if (index > 0) {
+                jsonPath = jsonPath.substring(0, index);
+                if (jsonPath.endsWith(".") || jsonPath.endsWith("/")) {
+                  jsonPath = jsonPath.substring(0, jsonPath.length - 1);
+                }
+                isContinue = true;
+              }
+            }
+            // if it's not the case of containing unexisted path, then throw this error
+            if (isContinue === false) {
+              throw e;
+            }
+          }
+        }
       });
 
       if (err.jsonPathsInPayload.length === 0) {
         continue;
       }
 
-      const jsonPath = err.jsonPathsInPayload[0];
+      const jsonPath = existedJsonPaths[0];
       const position = getFilePositionFromJsonPath(rootObj, jsonPath);
 
       errors.push({

@@ -1,7 +1,6 @@
 import { copyInfo, StringMap } from "@azure-tools/openapi-tools-common";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../inversifyUtils";
-
 import { JsonLoader } from "../swagger/jsonLoader";
 import { Loader, setDefaultOpts } from "../swagger/loader";
 import { SwaggerLoader, SwaggerLoaderOption } from "../swagger/swaggerLoader";
@@ -83,6 +82,7 @@ export class LiveValidatorLoader implements Loader<SwaggerSpec> {
           query: { properties: {} },
           headers: { properties: {} },
           path: { properties: {} },
+          formData: { properties: {} },
         },
       };
       this.addParamToSchema(schema, operation._path.parameters, operation);
@@ -172,6 +172,10 @@ export class LiveValidatorLoader implements Loader<SwaggerSpec> {
       const param = this.jsonLoader.resolveRefObj(p);
       switch (param.in) {
         case "body":
+          // ignore validation in case of file type
+          if (param.schema?.type === "file") {
+            break;
+          }
           properties.body = param.schema ?? {};
           if (param.required) {
             copyInfo(param, schema);
@@ -216,8 +220,22 @@ export class LiveValidatorLoader implements Loader<SwaggerSpec> {
           properties.path.properties![param.name] = param as Schema;
           break;
 
+        case "formData":
+          // ignore validation in case of file type
+          if (param.type === "file") {
+            break;
+          }
+          if (param.required) {
+            this.addRequiredToSchema(properties.formData, param.name);
+          }
+          // Remove param.required as it have different meaning in swagger and json schema
+          param.required = undefined;
+          properties.formData.properties![param.name] = param as Schema;
+          addParamTransform(operation, param);
+          break;
+
         default:
-          throw new Error(`Not Supported parameter in: ${param.in}`);
+          throw new Error(`Not Supported parameter in: ${param}`);
       }
     }
   }

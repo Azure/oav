@@ -5,11 +5,15 @@
     "version": "2020-01-01-preview",
     "description": "Azure Connected Cluster Resource Provider API for adopting any Kubernetes Cluster"
   },
-  "schemes": ["https"],
+  "schemes": [
+    "https"
+  ],
   "host": "management.azure.com",
   "security": [
     {
-      "azure_auth": ["user_impersonation"]
+      "azure_auth": [
+        "user_impersonation"
+      ]
     }
   ],
   "securityDefinitions": {
@@ -29,8 +33,12 @@
         "summary": "Registers a new K8s cluster.",
         "operationId": "ConnectedCluster_Create",
         "description": "API to register a new K8s cluster and thereby create a tracked resource in ARM",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
         "x-ms-examples": {
           "CreateClusterExample": {
             "$ref": "./examples/testglobalparamexample.json"
@@ -68,7 +76,10 @@
     "ConnectedCluster": {
       "x-ms-azure-resource": true,
       "type": "object",
-      "required": ["location", "identity"],
+      "required": [
+        "location",
+        "identity"
+      ],
       "properties": {
         "id": {
           "readOnly": true,
@@ -104,7 +115,9 @@
     },
     "ConnectedClusterIdentity": {
       "type": "object",
-      "required": ["type"],
+      "required": [
+        "type"
+      ],
       "properties": {
         "principalId": {
           "readOnly": true,
@@ -119,7 +132,9 @@
         "type": {
           "type": "string",
           "description": "The type of identity used for the connected cluster. The type 'SystemAssigned, includes a system created identity.",
-          "enum": ["SystemAssigned"],
+          "enum": [
+            "SystemAssigned"
+          ],
           "x-ms-enum": {
             "name": "ResourceIdentityType",
             "modelAsString": false

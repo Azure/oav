@@ -15,8 +15,8 @@ describe("sourceMap", () => {
     });
     assert.strictEqual(result.length, 1);
     const result0 = result[0];
-    const e = result0.details as any;
-    expect(e.jsonPath).toMatchInlineSnapshot(`"$['parameters']['takeCount']"`);
+    const e = result0 as any;
+    assert.strictEqual(e.exampleJsonPath, "$parameters.query");
     assert.strictEqual(e.code, "INVALID_TYPE");
     assert.strictEqual(e.message, "Expected type integer but found type string");
   });

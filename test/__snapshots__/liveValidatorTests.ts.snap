@@ -519,7 +519,7 @@ Object {
           "jsonRef": "#/definitions/Cat/properties/lifetime",
           "position": Object {
             "column": 21,
-            "line": 169,
+            "line": 185,
           },
           "url": "specification/contoso/resource-manager/Microsoft.Contoso/2020-01-01/contoso.json",
         },
@@ -568,7 +568,7 @@ Object {
           "jsonRef": "#/definitions/User/properties/name",
           "position": Object {
             "column": 17,
-            "line": 123,
+            "line": 133,
           },
           "url": "specification/contoso/resource-manager/Microsoft.Contoso/2020-01-01/contoso.json",
         },
@@ -593,7 +593,7 @@ Object {
           "jsonRef": "#/definitions/User/properties/readOnlyProperty",
           "position": Object {
             "column": 29,
-            "line": 132,
+            "line": 142,
           },
           "url": "specification/contoso/resource-manager/Microsoft.Contoso/2020-01-01/contoso.json",
         },

@@ -45,17 +45,22 @@ export class SuppressionLoader implements Loader<void, SwaggerSpec> {
       return;
     }
 
-    let items = this.suppressionCache.get(readmePath);
-    if (items === undefined) {
-      items = await this.getSuppression(readmePath);
-      this.suppressionCache.set(readmePath, items);
-    }
-
-    for (const item of items) {
-      if (!matchFileFrom(filePath, item.from)) {
-        continue;
+    try {
+      let items = this.suppressionCache.get(readmePath);
+      if (items === undefined) {
+        items = await this.getSuppression(readmePath);
+        this.suppressionCache.set(readmePath, items);
       }
-      applySuppression(spec, item);
+
+      for (const item of items) {
+        if (!matchFileFrom(filePath, item.from)) {
+          continue;
+        }
+        applySuppression(spec, item);
+      }
+    } catch (e) {
+      const msg = `Error in loading suppression from readme:${readmePath}.\nDetails:${e.message}\n${e.stack}`;
+      throw new Error(msg);
     }
   }
 

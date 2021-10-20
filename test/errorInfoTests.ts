@@ -16,9 +16,9 @@ describe("error info", () => {
         }
       );
       assert.strictEqual(result.length, 2);
-      const r = result[0].details as any;
+      const r = result[0] as any;
       assert.strictEqual(
-        r.url,
+        r.schemaUrl,
         "./test/modelValidation/swaggers/specification/errorInfo/apimusers.json"
       );
     } catch (e) {

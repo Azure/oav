@@ -220,7 +220,15 @@ interface BaseSchema {
   $ref?: string;
 }
 
-export type SchemaType = "object" | "array" | "string" | "integer" | "number" | "boolean" | "null";
+export type SchemaType =
+  | "object"
+  | "array"
+  | "string"
+  | "integer"
+  | "number"
+  | "boolean"
+  | "null"
+  | "file";
 export interface Schema extends BaseSchema {
   type?: SchemaType;
   allOf?: Schema[];
@@ -351,7 +359,7 @@ export interface SwaggerSpec {
   paths: { [pathTemplate: string]: Path };
   [xmsPaths]?: { [pathTemplate: string]: Path };
   definitions?: { [definitionsName: string]: Schema };
-  parameters?: { [parameterName: string]: BodyParameter | QueryParameter };
+  parameters?: { [parameterName: string]: BodyParameter | QueryParameter | FormDataParameter };
   responses?: { [responseName: string]: Response };
   security?: Security[];
   securityDefinitions?: { [securityDefinitionName: string]: Security };
