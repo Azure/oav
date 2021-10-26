@@ -89,6 +89,20 @@ export { SuppressionLoaderOption, SuppressionLoader } from "./lib/swagger/suppre
 
 export { JsonLoader, JsonLoaderOption, JsonLoaderRefError } from "./lib/swagger/jsonLoader";
 
+export {
+  SwaggerExampleErrorDetail,
+  SwaggerExampleValidator,
+  NewModelValidator,
+  ExampleValidationOption,
+} from "./lib/swaggerValidator/modelValidator";
+
+export {
+  SemanticErrorDetail,
+  SwaggerSemanticValidator,
+  SemanticValidationOption,
+  SemanticValidator,
+} from "./lib/swaggerValidator/semanticValidator";
+
 export { getAutorestConfig } from "./lib/util/getAutorestConfig";
 // Constants
 export const Constants = C;
