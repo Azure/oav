@@ -483,6 +483,27 @@ describe("Model Validation", () => {
     });
   });
 
+  describe("Null body in response if schema is defined for response", () => {
+    it("should pass on example if response schema has x-nullable equals true", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/nullBodyInResponse/test.json`;
+      const opertionIds = "op_nullable";
+      const result = await validate.validateExamples(specPath2, opertionIds, {
+        consoleLogLevel: "off",
+      });
+      assert(result.length === 0);
+    });
+    it("should fail on example if response schema doesn't have x-nullable equals true", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/nullBodyInResponse/test.json`;
+      const opertionIds = "op_notNullable";
+      const result = await validate.validateExamples(specPath2, opertionIds, {
+        consoleLogLevel: "off",
+      });
+      assert(result.length === 1);
+      assert.strictEqual(result[0].code, "INVALID_TYPE");
+      assert.strictEqual(result[0].message, "Expected type object but found type null");
+    });
+  });
+
   describe("Extra body in response even it's not defined in schema", () => {
     it("should fail on example when extra body defined in response", async () => {
       const specPath2 = `${testPath}/modelValidation/swaggers/specification/extraBodyInResponse/test.json`;

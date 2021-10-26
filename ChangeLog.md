@@ -1,10 +1,11 @@
 # Change Log - oav
 
-## 10/25/2021 2.10.1
+## 10/26/2021 2.10.1
 
+- MV - Fix error conversion issue of invalid token parsing in model validation
 - api scenario generation support swagger file as input parameters
 
-## 10/10/2021 2.10.0
+## 10/20/2021 2.10.0
 
 - Add new version of model validation
 

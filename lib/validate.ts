@@ -21,7 +21,7 @@ import {
 } from "./validators/specValidator";
 
 import { ModelValidationError } from "./util/modelValidationError";
-import { NewModelValidator as ModelValidator} from "./swaggerValidator/modelValidator";
+import { NewModelValidator as ModelValidator, SwaggerExampleErrorDetail} from "./swaggerValidator/modelValidator";
 import { NodeError } from "./util/validationError";
 import { WireFormatGenerator } from "./wireFormatGenerator";
 import { XMsExampleExtractor } from "./xMsExampleExtractor";
@@ -30,6 +30,7 @@ import { getSuppressions } from "./validators/suppressions";
 import { log } from "./util/logging";
 import { getInputFiles } from "./generator/util";
 import { SemanticValidator } from "./swaggerValidator/semanticValidator";
+import { ErrorCodeConstants } from "./util/errorDefinitions";
 
 export interface Options extends specResolver.Options, umlGeneratorLib.Options {
   consoleLogLevel?: unknown;
@@ -123,25 +124,21 @@ export const validateSpec = async (specPath: string, options: Options | undefine
       await validator.initialize();
       log.info(`Semantically validating  ${specPath}:\n`);
       const validationResults = await validator.validateSpec();
-      updateEndResultOfSingleValidation(validator);
-      logDetailedInfo(validator);
       if (o.pretty) {
-        const resolveSpecError = validator.specValidationResult.resolveSpec;
-        if (resolveSpecError !== undefined || validationResults.errors.length > 0) {
-          console.log(vsoLogIssueWrapper("error", `Semantically validating  ${specPath}:\n`));
-        } else if (validationResults.warnings && validationResults.warnings.length > 0) {
-          console.log(vsoLogIssueWrapper("warning", `Semantically validating  ${specPath}:\n`));
+        if (validationResults.errors.length > 0) {
+          logMessage(`Semantically validating ${specPath}`, "error");
         } else {
-          console.log(`Semantically validating  ${specPath}: without error.\n`);
-        }
-        if (resolveSpecError !== undefined) {
-          prettyPrint([resolveSpecError], "error");
+          logMessage(`Semantically validating ${specPath} without error`, "info");
         }
         if (validationResults.errors.length > 0) {
+          logMessage(`Errors reported:`, "error");
           prettyPrint(validationResults.errors, "error");
         }
-        if (validationResults.warnings && validationResults.warnings.length > 0) {
-          prettyPrint(validationResults.warnings, "warning");
+      } else {
+        logMessage(`Errors reported:`, "error");
+        for (const error of validationResults.errors) {
+          // eslint-disable-next-line no-console
+          console.error(error);
         }
       }
       return validator.specValidationResult;
@@ -151,16 +148,10 @@ export const validateSpec = async (specPath: string, options: Options | undefine
         outputMsg = jsYaml.dump(err);
       }
       if (o.pretty) {
-        if (process.env["Agent.Id"]) {
-          console.error(vsoLogIssueWrapper("error", `Semantically validating ${specPath}:\n`));
-          console.error(vsoLogIssueWrapper("error", outputMsg));
-        } else {
-          console.error(`Semantically validating ${specPath}:\n`);
-          console.error("\x1b[31m", "error", ":", "\x1b[0m");
-          console.error(outputMsg);
-        }
+        logMessage(`Semantically validating ${specPath}`);
+        logMessage(`${outputMsg}`, "error");
       } else {
-        log.error(outputMsg);
+        console.log(`Detail error:${err?.message}.ErrorStack:${err?.stack}`);
       }
       validator.specValidationResult.validityStatus = false;
       return validator.specValidationResult;
@@ -189,7 +180,7 @@ export async function validateExamples(
   specPath: string,
   operationIds: string | undefined,
   options?: Options
-): Promise<readonly ModelValidationError[]> {
+): Promise<SwaggerExampleErrorDetail[]> {
   return validate(options, async (o) => {
     try {
       const validator = new ModelValidator(specPath);
@@ -199,45 +190,30 @@ export async function validateExamples(
       const errors = validator.result;
       if (o.pretty) {
         if (errors.length > 0) {
-          if (process.env["Agent.Id"]) {
-            console.log(
-              vsoLogIssueWrapper(
-                "error",
-                `Validating "examples" and "x-ms-examples" in  ${specPath}:\n`
-              )
-            );
-          } else {
-            console.log(`Validating "examples" and "x-ms-examples" in  ${specPath}:\n`);
-          }
+          logMessage(`Validating "examples" and "x-ms-examples" in ${specPath}`, "error");
+          logMessage("Error reported:");
           prettyPrint(errors, "error");
         }
       } else {
+        logMessage("Error reported:");
         for (const error of errors) {
           const yaml = jsYaml.dump(error);
           // eslint-disable-next-line no-console
           log.error(yaml);
+          console.error(error);
         }
       }
       return errors;
     } catch (e) {
-      if (o.pretty) {
-        if (process.env["Agent.Id"]) {
-          console.log(
-            vsoLogIssueWrapper(
-              "error",
-              `Validating "examples" and "x-ms-examples" in  ${specPath}:\n`
-            )
-          );
-          console.error(vsoLogIssueWrapper("error", e));
-        } else {
-          console.error(`Validating "examples" and "x-ms-examples" in  ${specPath}:\n`);
-          console.error("\x1b[31m", "error", ":", "\x1b[0m");
-          console.error(e);
-        }
-      } else {
-        log.error(e);
-      }
-      return [{ inner: e }];
+      logMessage(`Validating x-ms-examples in ${specPath}`, "error");
+      logMessage("Unexpected runtime exception:");
+      console.error(e);
+      const error: SwaggerExampleErrorDetail = { 
+        inner: e,
+        message: "Unexpected internal error",
+        code: ErrorCodeConstants.INTERNAL_ERROR as any
+      };
+      return [error];
     }
   });
 }
@@ -585,3 +561,12 @@ export async function generateExamples(
     await generator.generateAll();
   }
 }
+
+const logMessage = (message: string, level?: string) => {
+  const logLevel = level || "error";
+  if (process.env["Agent.Id"]) {
+    console.error(vsoLogIssueWrapper(`${logLevel}`, `${message}\n`));
+  } else {
+    console.error(`${message}\n`);
+  }
+};
