@@ -2,7 +2,8 @@
 
 ## 10/26/2021 2.10.1
 
-- Fix error conversion issue of invalid token parsing in model validation
+- MV - Fix error conversion issue of invalid token parsing in model validation
+- api scenario generation support swagger file as input parameters
 
 ## 10/20/2021 2.10.0
 
