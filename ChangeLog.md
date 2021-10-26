@@ -1,13 +1,17 @@
 # Change Log - oav
 
+## 10/26/2021 2.10.1
+
+- Fix error conversion issue of invalid token parsing in model validation
+
+## 10/20/2021 2.10.0
+
+- Add new version of model validation
+
 ## 10/19/2021 2.9.2
 
 - Increase semantic validation test coverage to 90%+
 - Export loader types
-
-## 10/10/2021 2.10.0
-
-- Add new version of model validation
 
 ## 09/30/2021 2.9.1
 

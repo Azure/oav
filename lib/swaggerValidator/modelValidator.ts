@@ -555,19 +555,19 @@ export class SwaggerExampleValidator {
         }
       } else {
         // response error case
+        let sourceSwagger = this.swagger;
+        if (err.source.url !== this.swagger._filePath) {
+          // use external swagger when the error points to external file
+          sourceSwagger = this.jsonLoader.getFileContentFromCache(err.source.url) as any;
+          schemaUrl = err.source.url;
+        }
+
         // check x-nullable value when body is null
-        if (err.jsonPathsInPayload.length === 1 && err.jsonPathsInPayload[0].includes(".body")) {
+        if (err.jsonPathsInPayload.length === 1 && err.jsonPathsInPayload[0] === ".body") {
           const idx = err.source.jsonRef?.indexOf("#");
           if (idx !== undefined && idx !== -1) {
             const jsonRef = err.source.jsonRef?.substr(idx + 1);
-            let bodySchema;
-            if (err.source.url === this.swagger._filePath) {
-              bodySchema = jsonPointer.get(this.swagger, jsonRef!);
-            } else {
-              externalSwagger = this.jsonLoader.getFileContentFromCache(err.source.url);
-              bodySchema = jsonPointer.get(externalSwagger!, jsonRef!);
-              schemaUrl = err.source.url;
-            }
+            const bodySchema = jsonPointer.get(sourceSwagger, jsonRef!);
             if (bodySchema?.[C.xNullable] === true) {
               continue;
             }

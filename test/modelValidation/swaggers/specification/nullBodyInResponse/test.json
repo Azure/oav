@@ -1,0 +1,74 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "sometitle",
+    "version": "2018-01-01"
+  },
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/somepath": {
+      "get": {
+        "operationId": "op_nullable",
+        "responses": {
+          "200": {
+            "description": "somedescription",
+            "schema": {
+              "$ref": "#/definitions/NullableObj"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Fail": {
+            "$ref": "./examples/pass.json"
+          }
+        }
+      }
+    },
+    "/somepath2": {
+      "get": {
+        "operationId": "op_notNullable",
+        "responses": {
+          "200": {
+            "description": "somedescription2",
+            "schema": {
+              "$ref": "#/definitions/NotNullableObj"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Fail": {
+            "$ref": "./examples/fail.json"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "NullableObj": {
+      "properties": {
+        "algorithm": {
+          "type": "string",
+          "description": "Gets or sets the content hash algorithm used to hash the content."
+        }
+      },
+      "type": "object",
+      "x-nullable": true,
+      "description": "Definition of the runbook property type."
+    },
+    "NotNullableObj": {
+      "properties": {
+        "algorithm2": {
+          "type": "string",
+          "description": "Gets or sets the content hash algorithm used to hash the content."
+        }
+      },
+      "type": "object",
+      "description": "Definition of the runbook property type."
+    }
+  }
+}
