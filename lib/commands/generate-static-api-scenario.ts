@@ -19,31 +19,43 @@ export const builder: yargs.CommandBuilder = {
   readme: {
     describe: "path to readme.md file",
     string: true,
-    demandOption: true,
+  },
+  swaggers: {
+    describe: "one or more swagger file paths. type: array",
+    type: "array",
   },
   rules: {
     describe:
-      "generate test scenarios file rules split by comma. example: listOperation, put-delete.",
+      "generate test scenarios file rules split by comma. supported: operations-list , put-delete.",
     string: true,
     default: "resource-put-delete",
   },
 };
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
-  const readmeMd: string = pathResolve(argv.readme);
-
-  const autorestConfig = await getAutorestConfig(argv, readmeMd);
-  const fileRoot = dirname(readmeMd);
-  const swaggerFilePaths: string[] = autorestConfig["input-file"].map((it: string) =>
-    pathResolve(fileRoot, it)
-  );
+  const swaggerFilePaths: string[] = (argv.swaggers || []).map((it: string) => pathResolve(it));
+  let tag = "default";
+  if (argv.readme !== undefined) {
+    const readmeMd: string = pathResolve(argv.readme);
+    const autorestConfig = await getAutorestConfig(argv, readmeMd);
+    tag = autorestConfig.tag;
+    const fileRoot = dirname(readmeMd);
+    const inputSwaggerFile = autorestConfig["input-file"].map((it: string) =>
+      pathResolve(fileRoot, it)
+    );
+    for (const it of inputSwaggerFile) {
+      if (swaggerFilePaths.indexOf(it) !== -1) {
+        swaggerFilePaths.push(it);
+      }
+    }
+  }
 
   console.log("input-file:");
   console.log(swaggerFilePaths);
 
   const generator = StaticApiScenarioGenerator.create({
     swaggerFilePaths: swaggerFilePaths,
-    tag: autorestConfig.tag,
+    tag: tag,
     rules: argv.rules.split(","),
   });
 

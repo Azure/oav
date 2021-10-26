@@ -1,13 +1,17 @@
 # Change Log - oav
 
-## 10/19/2021 2.9.2
+## 10/25/2021 2.10.1
 
-- Increase semantic validation test coverage to 90%+
-- Export loader types
+- api scenario generation support swagger file as input parameters
 
 ## 10/10/2021 2.10.0
 
 - Add new version of model validation
+
+## 10/19/2021 2.9.2
+
+- Increase semantic validation test coverage to 90%+
+- Export loader types
 
 ## 09/30/2021 2.9.1
 
