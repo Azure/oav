@@ -68,6 +68,10 @@ export class StaticApiScenarioGenerator {
     const paths = await this.swaggerAnalyzer.getOperationListPath();
     for (const it of paths) {
       const example = Object.values(it.get?.["x-ms-examples"] || {});
+      if (example[0] === undefined) {
+        console.log("can not found example for operations-list");
+        continue;
+      }
       const listOperationsExampleFilePath = this.swaggerAnalyzer.jsonLoader.getRealPath(
         example[0].$ref!
       );
