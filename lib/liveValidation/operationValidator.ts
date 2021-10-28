@@ -99,6 +99,7 @@ export const validateSwaggerLiveRequest = async (
   }
 
   const pathParam = extractPathParamValue(info.operationMatch!);
+  transformMapValue(pathParam, operation._pathTransform);
   transformMapValue(query, operation._queryTransform);
   const headers = transformLiveHeader(request.headers ?? {}, operation);
   validateContentType(operation.consumes!, headers, true, result);
