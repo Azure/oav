@@ -4,11 +4,13 @@ import { glob } from "glob";
 import { LiveValidationIssue, LiveValidator } from "../liveValidation/liveValidator";
 import { DefaultConfig } from "../util/constants";
 import { ErrorCodeConstants } from "../util/errorDefinitions";
+import { OperationContext } from "../liveValidation/operationValidator";
 
 export interface TrafficValidationIssue {
   payloadFilePath?: string;
   specFilePath?: string;
   errors?: LiveValidationIssue[];
+  operationInfo?: OperationContext;
   runtimeExceptions?: RuntimeException[];
 }
 
@@ -74,6 +76,7 @@ export class TrafficValidator {
         payloadFilePath = trafficFile;
         const payload = require(trafficFile);
         const validationResult = await this.liveValidator.validateLiveRequestResponse(payload);
+        const operationInfo = validationResult.requestValidationResult?.operationInfo;
         const errorResult: LiveValidationIssue[] = [];
         const runtimeExceptions: RuntimeException[] = [];
         if (validationResult.requestValidationResult.isSuccessful === undefined) {
@@ -92,6 +95,7 @@ export class TrafficValidator {
             payloadFilePath,
             errors: errorResult,
             runtimeExceptions,
+            operationInfo: operationInfo,
           });
         }
       }

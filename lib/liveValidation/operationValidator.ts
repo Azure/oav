@@ -232,6 +232,15 @@ const validateContentType = (
   const contentType =
     headers["content-type"]?.split(";")[0] || (isRequest ? undefined : "application/octet-stream");
   if (contentType !== undefined && !allowedContentTypes.includes(contentType)) {
+    // in some cases, produces value could have colon in type like 'application/json;odata=minimalmetadata'
+    for (const allowedContentType of allowedContentTypes) {
+      if (allowedContentType.includes(";")) {
+        const subAllowedContentType = allowedContentType.split(";")[0];
+        if (subAllowedContentType.includes(contentType)) {
+          return;
+        }
+      }
+    }
     result.push(
       issueFromErrorCode("INVALID_CONTENT_TYPE", {
         contentType,
