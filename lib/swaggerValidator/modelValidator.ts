@@ -407,6 +407,7 @@ export class SwaggerExampleValidator {
       }
     } // end of parameters for loop
     transformMapValue(queryParameters, operation._queryTransform);
+    transformMapValue(pathParameters, operation._pathTransform);
     const validate = operation._validate!;
     const ctx = { isResponse: false };
     const headers = transformLiveHeader(exampleRequestHeaders, operation);
@@ -899,7 +900,7 @@ const defaultOpts: ExampleValidationOption = {
   loadSuppression,
 };
 
-// Compatible wrapper for old SemanticValidator
+// Compatible wrapper for old ModelValidator
 export class NewModelValidator {
   public validator: SwaggerExampleValidator;
   public result: SwaggerExampleErrorDetail[] = [];

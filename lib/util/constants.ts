@@ -186,4 +186,12 @@ export const DefaultConfig = {
     "**/storage/data-plane/**/*",
     "**/timeseriesinsights/data-plane/**/*",
   ],
+  ExcludedExamplesAndCommonFiles: [
+    "**/examples/**/*",
+    "**/quickstart-templates/**/*",
+    "**/schema/**/*",
+    "**/live/**/*",
+    "**/wire-format/**/*",
+    "**/azurestack/**/*",
+  ],
 };

@@ -154,7 +154,7 @@ export class OperationSearcher {
         undefined,
         requestInfo
       );
-      requestInfo.apiVersion = unknownApiVersion;
+      //requestInfo.apiVersion = unknownApiVersion;
       potentialOperations = searchOperation();
     }
 
