@@ -4,6 +4,7 @@
 
 - traffic validation - support multiple swaggers and multiple payloads
 - extends format types in AJV schema validation
+- Bug fix. Check discriminator property type must be string.
 
 ## 10/26/2021 2.10.1
 
