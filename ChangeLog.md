@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 11/04/2021 2.10.2
+
+- Bug fix. Check discriminator property type must be string.
+
 ## 10/26/2021 2.10.1
 
 - MV - Fix error conversion issue of invalid token parsing in model validation
