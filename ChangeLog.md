@@ -1,10 +1,12 @@
 # Change Log - oav
 
-## 10/27/2021 2.10.2
+## 11/04/2021 2.10.2
 
+- traffic validation - support multiple swaggers and multiple payloads
+- extends format types in AJV schema validation
 - bug fix for generate api scenario
 
-## 10/25/2021 2.10.1
+## 10/26/2021 2.10.1
 
 - MV - Fix error conversion issue of invalid token parsing in model validation
 - api scenario generation support swagger file as input parameters
