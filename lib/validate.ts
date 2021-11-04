@@ -8,7 +8,6 @@ import * as path from "path";
 import * as openapiToolsCommon from "@azure-tools/openapi-tools-common";
 import { Suppression } from "@azure/openapi-markdown";
 import jsYaml from "js-yaml";
-import { LiveValidator, LiveValidationIssue } from "../lib/liveValidation/liveValidator";
 import * as jsonUtils from "./util/jsonUtils";
 import * as specResolver from "./validators/specResolver";
 import * as umlGeneratorLib from "./umlGenerator";
@@ -30,7 +29,8 @@ import { getSuppressions } from "./validators/suppressions";
 import { log } from "./util/logging";
 import { getInputFiles } from "./generator/util";
 import { SemanticValidator } from "./swaggerValidator/semanticValidator";
-import { ErrorCodeConstants } from "./util/errorDefinitions";
+import { ErrorCodeConstants} from "./util/errorDefinitions";
+import { TrafficValidationIssue, TrafficValidator} from "./swaggerValidator/trafficValidator";
 
 export interface Options extends specResolver.Options, umlGeneratorLib.Options {
   consoleLogLevel?: unknown;
@@ -100,6 +100,24 @@ const validate = async <T>(
 type ErrorType = "error" | "warning";
 
 const prettyPrint = <T extends NodeError<T>>(
+  errors: readonly T[] | undefined,
+  errorType: ErrorType
+) => {
+  if (errors !== undefined) {
+    for (const error of errors) {
+      const yaml = jsYaml.dump(error);
+      if (process.env["Agent.Id"]) {
+        // eslint-disable-next-line no-console
+        console.error(vsoLogIssueWrapper(errorType, yaml));
+      } else {
+        // eslint-disable-next-line no-console
+        console.error(yaml);
+      }
+    }
+  }
+};
+
+const prettyPrintInfo = <T>(
   errors: readonly T[] | undefined,
   errorType: ErrorType
 ) => {
@@ -240,71 +258,56 @@ export async function validateTrafficAgainstSpec(
   specPath: string,
   trafficPath: string,
   options: Options
-): Promise<Array<LiveValidationIssue>>{
+): Promise<Array<TrafficValidationIssue>>{
   specPath = path.resolve(process.cwd(), specPath);
   trafficPath = path.resolve(process.cwd(), trafficPath);
-
   if (!fs.existsSync(specPath)) {
-    const error = new Error(`Can not find spec file, please check your specPath parameter.`);
+    const error = new Error(`Can not find specPath:${specPath}, please check your specPath parameter.`);
     log.error(JSON.stringify(error));
     throw error;
   }
 
   if (!fs.existsSync(trafficPath)) {
-    const error = new Error(`Can not find traffic file, please check your trafficPath parameter.`);
+    const error = new Error(`Can not find trafficPath:${trafficPath}, please check your trafficPath parameter.`);
     log.error(JSON.stringify(error));
     throw error;
   }
-
-  try {
-    const trafficFile = require(trafficPath);
-    const specFileDirectory = path.dirname(specPath);
-    const swaggerPathsPattern = path.basename(specPath);
-
-    return validate(options, async (o) => {
-      o.consoleLogLevel = log.consoleLogLevel;
-      o.logFilepath = log.filepath;
-      const liveValidationOptions = {
-        checkUnderFileRoot: false,
-        loadValidatorInBackground: false,
-        directory: specFileDirectory,
-        swaggerPathsPattern: [swaggerPathsPattern],
-        git: {
-          shouldClone: false,
-        },
-      };
-
-      const validator = new LiveValidator(liveValidationOptions);
-      const errors: LiveValidationIssue[] = [];
+  return validate(options, async (o) => {
+    o.consoleLogLevel = log.consoleLogLevel;
+    o.logFilepath = log.filepath;
+    const trafficValidationResult: TrafficValidationIssue[] = [];
+    try {
+      const validator = new TrafficValidator(specPath, trafficPath);
       await validator.initialize();
-      const result = await validator.validateLiveRequestResponse(trafficFile);
-
-      if (!result.requestValidationResult.isSuccessful) {
-        errors.push(...result.requestValidationResult.errors);
-      }
-
-      if (!result.responseValidationResult.isSuccessful) {
-        errors.push(...result.responseValidationResult.errors);
-      }
-
-      if (errors.length > 0) {
-        if (o.pretty) {
-          prettyPrint(errors, "error");
-        } else {
-          for (const error of errors) {
-            log.error(JSON.stringify(error));
+      const result = await validator.validate();
+      trafficValidationResult.push(...result);
+    } catch (err) {
+      const msg = `Detail error message:${err?.message}. ErrorStack:${err?.Stack}`
+      log.error(msg);
+      trafficValidationResult.push({
+        payloadFilePath: specPath,
+        runtimeExceptions: [
+          {
+            code: ErrorCodeConstants.RUNTIME_ERROR,
+            message: msg,
           }
-        }
+        ],
+      });
+    }
+    if (trafficValidationResult.length > 0) {
+      if (o.pretty) {
+        prettyPrintInfo(trafficValidationResult, "error");
       } else {
-        log.info("No errors were found.");
+        for (const error of trafficValidationResult) {
+          const errorInfo = JSON.stringify(error);
+          log.error(errorInfo);
+        }
       }
-
-      return errors;
-    });
-  } catch (error) {
-    log.error(JSON.stringify(error));
-    throw error;
-  }
+    } else {
+      log.info("No errors were found.");
+    }
+    return trafficValidationResult;
+  });
 }
 
 export async function resolveSpec(
