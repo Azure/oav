@@ -2,14 +2,16 @@
 
 ## 11/04/2021 2.10.2
 
-- traffic validation - support multiple swaggers and multiple payloads
-- extends format types in AJV schema validation
-- Bug fix. Check discriminator property type must be string.
+- Traffic validation - support multiple swaggers and multiple payloads
+- Extends format types in AJV schema validation
+- Bug fix - check discriminator property type must be string
+- Upgrade autorest scheams about x-ms-enum change
+
 
 ## 10/26/2021 2.10.1
 
 - MV - Fix error conversion issue of invalid token parsing in model validation
-- api scenario generation support swagger file as input parameters
+- Api scenario generation support swagger file as input parameters
 
 ## 10/20/2021 2.10.0
 
