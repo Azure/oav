@@ -43,8 +43,9 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     const inputSwaggerFile = autorestConfig["input-file"].map((it: string) =>
       pathResolve(fileRoot, it)
     );
+    console.log(`input swagger files: ${inputSwaggerFile}`);
     for (const it of inputSwaggerFile) {
-      if (swaggerFilePaths.indexOf(it) !== -1) {
+      if (swaggerFilePaths.indexOf(it) === -1) {
         swaggerFilePaths.push(it);
       }
     }
