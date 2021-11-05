@@ -346,6 +346,11 @@ export class SwaggerSemanticValidator {
           property: d,
         });
         this.addErrorsFromErrorCode(errors, rootInfo.url, meta, sch);
+      } else if (sch.properties[d].type !== "string") {
+        const meta = getOavErrorMeta("DISCRIMINATOR_PROPERTY_TYPE_NOT_STRING", {
+          property: d,
+        });
+        this.addErrorsFromErrorCode(errors, rootInfo.url, meta, sch);
       }
     }
   }

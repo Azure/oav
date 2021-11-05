@@ -120,6 +120,16 @@ describe("Semantic validation", () => {
         "OBJECT_MISSING_REQUIRED_PROPERTY_DEFINITION"
       );
     });
+    // DISCRIMINATOR_PROPERTY_TYPE_NOT_STRING
+    it("should fail when discriminator property type is not string", async () => {
+      const specPath = `${testPath}/semanticValidation/specification/discriminator/DISCRIMINATOR_PROPERTY_TYPE_NOT_STRING.json`;
+      const result = await validate.validateSpec(specPath, undefined);
+      assert(result.validityStatus === false);
+      assert.strictEqual(
+        result.validateSpec?.errors?.[0].code,
+        "DISCRIMINATOR_PROPERTY_TYPE_NOT_STRING"
+      );
+    });
   });
 
   describe("validateSchemaRequiredProperties", () => {
