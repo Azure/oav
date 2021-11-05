@@ -254,6 +254,11 @@ export const semanticValidationErrors = {
     message: strTemplate`Discriminator must be a required property.`,
     id: "OAV131",
   },
+  DISCRIMINATOR_PROPERTY_TYPE_NOT_STRING: {
+    severity: Severity.Critical,
+    message: strTemplate`The property type of discriminator must be string.`,
+    id: "OAV132",
+  },
   MULTIPLE_BODY_PARAMETERS: {
     severity: Severity.Critical,
     message: strTemplate`Operation cannot have multiple body parameters`,
@@ -372,4 +377,5 @@ export const ErrorCodeConstants = {
   RESPONSE_STATUS_CODE_NOT_IN_EXAMPLE: "RESPONSE_STATUS_CODE_NOT_IN_EXAMPLE",
   INVALID_TYPE: "INVALID_TYPE",
   INTERNAL_ERROR: "INTERNAL_ERROR",
+  RUNTIME_ERROR: "RUNTIME_ERROR",
 };

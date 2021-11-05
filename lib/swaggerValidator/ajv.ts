@@ -157,7 +157,7 @@ export const ajvEnableAll = (ajv: Ajv, jsonLoader: JsonLoader) => {
   ajvEnableInt32AndInt64Format(ajv);
   ajvEnableDurationFormat(ajv);
   ajvEnableDateTimeRfc1123Format(ajv);
-  ajvAddFormatsDefaultValidation(ajv, "string", ["byte", "password", "file"]);
+  ajvAddFormatsDefaultValidation(ajv, "string", ["byte", "password", "file", "base64url"]);
   ajvAddFormatsDefaultValidation(ajv, "number", ["double", "float", "decimal"]);
 };
 

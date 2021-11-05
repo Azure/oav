@@ -218,6 +218,7 @@ export class LiveValidatorLoader implements Loader<SwaggerSpec> {
           this.addRequiredToSchema(properties.path, param.name);
           param.required = undefined;
           properties.path.properties![param.name] = param as Schema;
+          addParamTransform(operation, param);
           break;
 
         case "formData":
@@ -318,5 +319,11 @@ const addParamTransform = (it: Operation | Response, param: Parameter) => {
       it._headerTransform = {};
     }
     it._headerTransform[param.name.toLowerCase()] = transform;
+  } else if (param.in === "path") {
+    const op = it as Operation;
+    if (op._pathTransform === undefined) {
+      op._pathTransform = {};
+    }
+    op._pathTransform[param.name] = transform;
   }
 };

@@ -122,11 +122,7 @@ export const requestResponseDefinition: Schema = {
         statusCode: {
           type: "string",
         },
-        headers: {
-          additionalProperties: {
-            type: "string",
-          },
-        },
+        headers: {},
         body: {
           nullable: true,
         },
