@@ -164,8 +164,14 @@ export const getFilePositionFromJsonPath = (
   jsonPath: string
 ): FilePosition | undefined => {
   const pathArr = jsonPathToArray(jsonPath.substr(1));
+  const newPathArr = pathArr.slice(0);
+  const index = newPathArr.findIndex((str) => str.includes("/providers/Microsoft"));
+  if (index !== -1 && newPathArr[index + 1] !== undefined) {
+    newPathArr[index] += "." + newPathArr[index + 1];
+    newPathArr.splice(index + 1, 1);
+  }
   try {
-    const target = jsonPointer.get(obj, jsonPointer.compile(pathArr));
+    const target = jsonPointer.get(obj, jsonPointer.compile(newPathArr));
     const info = getInfo(target);
     if (info !== undefined) {
       return info.position;
@@ -174,8 +180,8 @@ export const getFilePositionFromJsonPath = (
     // Pass
   }
 
-  const lastProperty = pathArr.pop();
-  const target = jsonPointer.get(obj, jsonPointer.compile(pathArr));
+  const lastProperty = newPathArr.pop();
+  const target = jsonPointer.get(obj, jsonPointer.compile(newPathArr));
   const info = getInfo(target);
   if (info !== undefined && lastProperty !== undefined) {
     return info.primitiveProperties[lastProperty];

@@ -6,6 +6,7 @@
 - Extends format types in AJV schema validation
 - Bug fix - check discriminator property type must be string
 - Bug fix for generate api scenario
+- Fix jsonPathToArray bug (which will incorrectly transform ["Microsoft.something"] into ["Microsoft", "something"])
 - Upgrade autorest scheams about x-ms-enum change
 - Model/Live validation - fix content-type validation and unknown format issue during validator building
 
