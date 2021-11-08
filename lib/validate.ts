@@ -216,7 +216,7 @@ export async function validateExamples(
           logMessage("Error reported:");
           prettyPrint(errors, "error");
         } else {
-          logMessage("Validation completes without errors.");
+          logMessage("Validation completes without errors.", "info");
         }
       } else {
         if (errors.length > 0) {
@@ -225,7 +225,7 @@ export async function validateExamples(
             log.error(error);
           }
         } else {
-          logMessage("Validation completes without errors.");
+          logMessage("Validation completes without errors.", "info");
         }
       }
       return errors;
