@@ -6,6 +6,8 @@
 - extends format types in AJV schema validation
 - bug fix for generate api scenario
 - Bug fix. Check discriminator property type must be string.
+- fix jsonPathToArray bug (which will incorrectly transform ["Microsoft.something"] into ["Microsoft", "something"])
+- update snapshot for test
 
 ## 10/26/2021 2.10.1
 
