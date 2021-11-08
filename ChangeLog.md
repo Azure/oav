@@ -1,5 +1,10 @@
 # Change Log - oav
 
+## 11/08/2021 2.10.3
+
+- fix jsonPathToArray bug (which will incorrectly transform ["Microsoft.something"] into ["Microsoft", "something"])
+- update snapshot for test
+
 ## 11/04/2021 2.10.2
 
 - traffic validation - support multiple swaggers and multiple payloads
