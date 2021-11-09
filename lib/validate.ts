@@ -153,10 +153,14 @@ export const validateSpec = async (specPath: string, options: Options | undefine
           prettyPrint(validationResults.errors, "error");
         }
       } else {
-        logMessage(`Errors reported:`, "error");
-        for (const error of validationResults.errors) {
-          // eslint-disable-next-line no-console
-          console.error(error);
+        if (validationResults.errors.length > 0) {
+          logMessage(`Errors reported:`, "error");
+          for (const error of validationResults.errors) {
+            // eslint-disable-next-line no-console
+            log.error(error);
+          }
+        } else {
+          logMessage(`Semantically validating ${specPath} without error`, "info");
         }
       }
       return validator.specValidationResult;
@@ -169,7 +173,7 @@ export const validateSpec = async (specPath: string, options: Options | undefine
         logMessage(`Semantically validating ${specPath}`);
         logMessage(`${outputMsg}`, "error");
       } else {
-        console.log(`Detail error:${err?.message}.ErrorStack:${err?.stack}`);
+        log.error(`Detail error:${err?.message}.ErrorStack:${err?.stack}`);
       }
       validator.specValidationResult.validityStatus = false;
       return validator.specValidationResult;
@@ -211,21 +215,28 @@ export async function validateExamples(
           logMessage(`Validating "examples" and "x-ms-examples" in ${specPath}`, "error");
           logMessage("Error reported:");
           prettyPrint(errors, "error");
+        } else {
+          logMessage("Validation completes without errors.", "info");
         }
       } else {
-        logMessage("Error reported:");
-        for (const error of errors) {
-          const yaml = jsYaml.dump(error);
-          // eslint-disable-next-line no-console
-          log.error(yaml);
-          console.error(error);
+        if (errors.length > 0) {
+          logMessage("Error reported:");
+          for (const error of errors) {
+            log.error(error);
+          }
+        } else {
+          logMessage("Validation completes without errors.", "info");
         }
       }
       return errors;
     } catch (e) {
       logMessage(`Validating x-ms-examples in ${specPath}`, "error");
       logMessage("Unexpected runtime exception:");
-      console.error(e);
+      if (o.pretty) {
+        logMessage(`Detail error:${e?.message}.ErrorStack:${e?.stack}`, "error");
+      } else {
+        log.error(`Detail error:${e?.message}.ErrorStack:${e?.stack}`);
+      }
       const error: SwaggerExampleErrorDetail = { 
         inner: e,
         message: "Unexpected internal error",
