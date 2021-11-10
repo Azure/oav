@@ -51,7 +51,7 @@ export default class Mocker {
     let mockedValue = "a".repeat(length);
 
     if (paramSpec.format === "uri") {
-      const prefix = "https://a";
+      const prefix = "https://microsoft.com/a";
       mockedValue = prefix + mockedValue.slice(prefix.length);
     }
 

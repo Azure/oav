@@ -1,0 +1,45 @@
+{
+  "parameters": {
+    "resourceId": "aaaa",
+    "testRunId": "aaaaaa",
+    "api-version": "2021-07-01-preview"
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "testRunId": "aa",
+        "displayName": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "testName": "aaaaaaaaaaaaaaaaaaaaaaaaa",
+        "resourceId": "aaaaaaaaaaaaaaaaaaaaaa",
+        "description": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "status": "aaaaaaaa",
+        "startDateTime": "2021-11-10T09:10:34.110Z",
+        "endDateTime": "2021-11-10T09:10:34.110Z",
+        "loadTestConfig": {
+          "engineSize": "aaaaaaaaaaaaaa",
+          "engineInstances": 8
+        },
+        "testArtifacts": {
+          "inputArtifacts": {
+            "configUrl": "aaaaaaaaaaaaaa",
+            "testScriptUrl": "https://microsoft.com/aaaaaaaa",
+            "additionalUrls": {
+              "key5399": "aaaaaaaaaa"
+            }
+          },
+          "outputArtifacts": {
+            "resultUrl": "https://microsoft.com/a",
+            "logsUrl": "https://microsoft.com/a",
+            "additionalUrls": {
+              "key549": "aaaaaaaaaaaaaaaaaaaa"
+            }
+          }
+        },
+        "executedDateTime": "2021-11-10T09:10:34.111Z",
+        "createdDateTime": "2021-11-10T09:10:34.111Z",
+        "createdBy": "aaaaaaaaaaaaaaaaa",
+        "portalUrl": "aaa"
+      }
+    }
+  }
+}

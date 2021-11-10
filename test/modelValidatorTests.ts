@@ -607,4 +607,13 @@ describe("Model Validation", () => {
       assert.strictEqual(result.length, 1);
     });
   });
+
+  describe("should pass for TestRun_StopTestRun", () => {
+    it("should pass when string format is uri", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/loadtestservice/loadtestservice.json`;
+      const result = await validate.validateExamples(specPath2, 'TestRun_StopTestRun');
+      console.log(JSON.stringify(result));
+      assert.strictEqual(result.length, 0);
+    });
+  });
 });

@@ -1,0 +1,2265 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "CloudNativeTest",
+    "version": "2021-07-01-preview"
+  },
+  "paths": {
+    "/appcomponents/{name}": {
+      "patch": {
+        "tags": [
+          "AppComponent"
+        ],
+        "summary": "Associate app component (a azure resource model) to a test model or test run",
+        "operationId": "AppComponent_CreateOrUpdateAppComponents",
+        "consumes": [
+          "application/merge-patch+json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "resourceId",
+            "description": "Fully qualified resource Id e.g subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "name",
+            "description": "Unique identifier for app component name, must be a valid URL character ^[0-9a-z_-]+$/",
+            "required": true,
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 2
+          },
+          {
+            "in": "query",
+            "name": "api-version",
+            "description": "Api version",
+            "required": true,
+            "type": "string",
+            "default": "2021-07-01-preview"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "App component model",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AppComponentsMap"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The app component were updated",
+            "schema": {
+              "$ref": "#/definitions/AppComponentsMap"
+            }
+          },
+          "201": {
+            "description": "The app component were created",
+            "schema": {
+              "$ref": "#/definitions/AppComponentsMap"
+            }
+          },
+          "default": {
+            "description": "***Error Responses: ***\n\n * \"400\", \"InvalidResourceId\", \"ResourceId is not valid\" .\n\n * \"400\", \"RequiredAppComponentName\", \"name field is required\"\n\n * \"400\", \"RequiredTestOrTestRun\", \"Either test name or test run name is required\"\n\n * \"400\", \"InvalidAppComponentName\", \"name field should be valid\"\n\n * \"400\", \"InvalidValue\",  \"value field is either null or not a valid map\".\n\n * \"404\", \"TestRunNotFound\", \"test run not found with given name\"\n\n * \"404\", \"TestNotFound\", \"Test not found with given name\"\n\n* \"500\", \"InternalServerError\", \"Internal Server Error\"",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponseBody"
+            },
+            "x-ms-error-response": true
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "AppComponent"
+        ],
+        "summary": "Delete app component",
+        "operationId": "AppComponent_DeleteAppComponent",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "description": "Unique identifier for app component name, must be a valid URL character ^[0-9a-z_-]+$/",
+            "required": true,
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 2
+          },
+          {
+            "in": "query",
+            "name": "resourceId",
+            "description": "Fully qualified resource Id e.g subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "api-version",
+            "description": "Api version",
+            "required": true,
+            "type": "string",
+            "default": "2021-07-01-preview"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The app component is deleted"
+          },
+          "default": {
+            "description": "*** Error Responses: ***\n\n * \"400\", \"InvalidResourceId\", \"ResourceId is not valid\"\n\n * \"400\", \"RequiredAppComponentName\", \"name field is required\"\n\n * \"400\", \"InvalidAppComponentName\", \"name field should be valid\"\n\n * \"404\", \"AppComponentNotFound\", \"AppComponent not found with given name\"\n\n * \"500\", \"InternalServerError\", \"Internal Server Error\"",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponseBody"
+            },
+            "x-ms-error-response": true
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "AppComponent"
+        ],
+        "summary": "Get App components for a given appComponentName in query param.",
+        "operationId": "AppComponent_GetAppComponentByName",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "resourceId",
+            "description": "Fully qualified resource Id e.g subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "name",
+            "description": "Unique identifier for app component name, must be a valid URL character ^[0-9a-z_-]+$/",
+            "required": true,
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 2
+          },
+          {
+            "in": "query",
+            "name": "api-version",
+            "description": "Api version",
+            "required": true,
+            "type": "string",
+            "default": "2021-07-01-preview"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested app components",
+            "schema": {
+              "$ref": "#/definitions/AppComponentsMap"
+            }
+          },
+          "default": {
+            "description": "***Error Responses: ***\n\n * \"400\", \"InvalidResourceId\", \"ResourceId is not valid\" .\n\n * \"400\", \"RequiredAppComponentName\", \"name field is required\"\n\n * \"400\", \"InvalidAppComponentName\", \"name field should be valid\"\n\n * \"500\", \"InternalServerError\", \"Internal Server Error\"",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponseBody"
+            },
+            "x-ms-error-response": true
+          }
+        }
+      }
+    },
+    "/appcomponents": {
+      "get": {
+        "tags": [
+          "AppComponent"
+        ],
+        "summary": "Get App components for a test model or a test run of given name in query param.",
+        "operationId": "AppComponent_GetAppComponent",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "resourceId",
+            "description": "Fully qualified resource Id e.g subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "testName",
+            "description": "Required test name, if test run name is not provided",
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 2
+          },
+          {
+            "in": "query",
+            "name": "testRunName",
+            "description": "Required test run name, if test name is not provided",
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 2
+          },
+          {
+            "in": "query",
+            "name": "api-version",
+            "description": "Api version",
+            "required": true,
+            "type": "string",
+            "default": "2021-07-01-preview"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested app components",
+            "schema": {
+              "$ref": "#/definitions/AppComponentsMap"
+            }
+          },
+          "default": {
+            "description": "***Error Responses: ***\n\n * \"400\", \"InvalidResourceId\", \"ResourceId is not valid\" .\n\n  * \"400\", \"RequiredTestOrTestRun\", \"Either test name or test run name is required\"\n\n  * \"404\", \"TestRunNotFound\", \"test run not found with given name\"\n\n * \"404\", \"TestNotFound\", \"Test not found with given name\"\n\n * \"500\", \"InternalServerError\", \"Internal Server Error\"",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponseBody"
+            },
+            "x-ms-error-response": true
+          }
+        }
+      }
+    },
+    "/file/{fileName}:validate": {
+      "post": {
+        "tags": [
+          "File"
+        ],
+        "summary": "Validate input file. File name must be a valid URL character ^[0-9a-z_-]+$/. File size can't be more than 50 MB.",
+        "operationId": "File_FileValidate",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "resourceId",
+            "description": "Fully qualified resource Id e.g subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "fileName",
+            "description": "Unique identifier for test file name, must be a valid URL character ^[0-9a-z_-]+$/",
+            "required": true,
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 2
+          },
+          {
+            "in": "query",
+            "name": "api-version",
+            "description": "Api version",
+            "required": true,
+            "type": "string",
+            "default": "2021-07-01-preview"
+          },
+          {
+            "in": "formData",
+            "name": "file",
+            "required": true,
+            "type": "file"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The file is validated ",
+            "schema": {
+              "$ref": "#/definitions/FileValidateResponse"
+            }
+          },
+          "default": {
+            "description": "*** Error Responses: ***\n\n * \"400\", \"InvalidResourceId\", \"ResourceId is not valid\"\n\n * \"400\", RequiredFileName - file name is required\n\n  * \"400\", \"InvalidFileName\", \"File name is not valid\"   \n\n * \"500\", \"InternalServerError\", \"Internal Server Error\"",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponseBody"
+            },
+            "x-ms-error-response": true
+          }
+        }
+      }
+    },
+    "/serverMetricsConfig/{name}": {
+      "patch": {
+        "tags": [
+          "ServerMetrics"
+        ],
+        "summary": "Associate server metrics config to a test model or test run",
+        "operationId": "ServerMetrics_CreateOrUpdateServerMetricsConfig",
+        "consumes": [
+          "application/merge-patch+json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "resourceId",
+            "description": "Fully qualified resource Id e.g subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "name",
+            "description": "Unique identifier for server metric name, must be a valid URL character ^[0-9a-z_-]+$/",
+            "required": true,
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 2
+          },
+          {
+            "in": "query",
+            "name": "api-version",
+            "description": "Api version",
+            "required": true,
+            "type": "string",
+            "default": "2021-07-01-preview"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Server metrics config model",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ServerMetricsModel"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The server metrics were updated",
+            "schema": {
+              "$ref": "#/definitions/ServerMetricsModel"
+            }
+          },
+          "201": {
+            "description": "The server metrics were created",
+            "schema": {
+              "$ref": "#/definitions/ServerMetricsModel"
+            }
+          },
+          "default": {
+            "description": "***Error Responses: ***\n\n * \"400\", \"InvalidResourceId\", \"ResourceId is not valid\" .\n\n * \"400\", \"RequiredServerMetricsName\", \"name is required\"\n\n * \"400\", \"RequiredTestOrTestRun\", \"Either test name or test run name is required\"\n\n * \"500\", \"InternalServerError\", \"Internal Server Error\"",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponseBody"
+            },
+            "x-ms-error-response": true
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "ServerMetrics"
+        ],
+        "summary": "Get server metrics config for a given name in query param.",
+        "operationId": "ServerMetrics_GetServerMetricsByName",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "resourceId",
+            "description": "Fully qualified resource Id e.g subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "name",
+            "description": "Unique identifier for server metric name, must be a valid URL character ^[0-9a-z_-]+$/",
+            "required": true,
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 2
+          },
+          {
+            "in": "query",
+            "name": "api-version",
+            "description": "Api version",
+            "required": true,
+            "type": "string",
+            "default": "2021-07-01-preview"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested server metrics",
+            "schema": {
+              "$ref": "#/definitions/ServerMetricsModel"
+            }
+          },
+          "default": {
+            "description": "***Error Responses: ***\n\n * \"400\", \"InvalidResourceId\", \"ResourceId is not valid\".\n\n  * \"400\", \"RequiredServerMetricsName\", \"name field is required\"\n\n * \"400\", \"InvalidServerMetricsConfigName\", \"name field should be valid\"\n\n * \"500\", \"InternalServerError\", \"Internal Server Error\"",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponseBody"
+            },
+            "x-ms-error-response": true
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "ServerMetrics"
+        ],
+        "summary": "Delete server metrics config by given name",
+        "operationId": "ServerMetrics_DeleteServerMetrics",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "description": "Unique identifier for server metric name, must be a valid URL character ^[0-9a-z_-]+$/",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "resourceId",
+            "description": "Fully qualified resource Id e.g subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "api-version",
+            "description": "Api version",
+            "required": true,
+            "type": "string",
+            "default": "2021-07-01-preview"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The server metrics config is deleted"
+          },
+          "default": {
+            "description": "*** Error Responses: ***\n\n * \"400\", \"InvalidResourceId\", \"ResourceId is not valid\"\n\n * \"400\", \"RequiredServerMetricsName\", \"name is required\"\n\n * \"404\", \"ServerMetricsNotFound\",  \"No server metrics found with given name\"\n\n * \"500\", \"InternalServerError\", \"Internal Server Error\"",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponseBody"
+            },
+            "x-ms-error-response": true
+          }
+        }
+      }
+    },
+    "/serverMetricsConfig": {
+      "get": {
+        "tags": [
+          "ServerMetrics"
+        ],
+        "summary": "Get server metrics config for a test model or test run of given name in query param.",
+        "operationId": "ServerMetrics_GetServerMetrics",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "resourceId",
+            "description": "Fully qualified resource Id e.g subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "testName",
+            "description": "Required test name, if test run name is not provided",
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 2
+          },
+          {
+            "in": "query",
+            "name": "testRunName",
+            "description": "Required test run name, if test name is not provided",
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 2
+          },
+          {
+            "in": "query",
+            "name": "api-version",
+            "description": "Api version",
+            "required": true,
+            "type": "string",
+            "default": "2021-07-01-preview"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested server metrics",
+            "schema": {
+              "$ref": "#/definitions/ServerMetricsModel"
+            }
+          },
+          "default": {
+            "description": "***Error Responses: ***\n\n * \"400\", \"InvalidResourceId\", \"ResourceId is not valid\" .\n\n  * \"400\", \"RequiredTestOrTestRun\", \"Either test name or test run name is required\"\n\n  * \"500\", \"InternalServerError\", \"Internal Server Error\"",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponseBody"
+            },
+            "x-ms-error-response": true
+          }
+        }
+      }
+    },
+    "/serverMetricsConfig/default": {
+      "get": {
+        "tags": [
+          "ServerMetrics"
+        ],
+        "summary": "Get all default server metrics config with supported resource type",
+        "operationId": "ServerMetrics_GetServerDefaultMetrics",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "resourceId",
+            "description": "Fully qualified resource Id e.g subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "api-version",
+            "description": "Api version",
+            "required": true,
+            "type": "string",
+            "default": "2021-07-01-preview"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested server default metrics",
+            "schema": {
+              "$ref": "#/definitions/DefaultServerMetricsConfigListModel"
+            }
+          },
+          "default": {
+            "description": "***Error Responses: ***\n\n * \"400\", \"InvalidResourceId\", \"ResourceId is not valid\" .\n\n * \"500\", \"InternalServerError\", \"Internal Server Error\"",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponseBody"
+            },
+            "x-ms-error-response": true
+          }
+        }
+      }
+    },
+    "/serverMetricsConfig/supportedResourceTypes": {
+      "get": {
+        "tags": [
+          "ServerMetrics"
+        ],
+        "summary": "Get all supported resource types for app components(azure resource types)",
+        "operationId": "ServerMetrics_ListSupportedResourceType",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "api-version",
+            "description": "Api version",
+            "required": true,
+            "type": "string",
+            "default": "2021-07-01-preview"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The supported resource types and metrics for server side metrics",
+            "schema": {
+              "$ref": "#/definitions/SupportedResourceType"
+            }
+          },
+          "default": {
+            "description": "***Error Responses: ***\n\n * \"500\", \"InternalServerError\", \"Internal Server Error\"",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponseBody"
+            },
+            "x-ms-error-response": true
+          }
+        }
+      }
+    },
+    "/loadtests/{testId}": {
+      "patch": {
+        "tags": [
+          "Test"
+        ],
+        "summary": "Creates/Updates a new load test. Test name must be a valid URL character ^[0-9a-z_-]+$/",
+        "operationId": "Test_CreateOrUpdateTestRun",
+        "consumes": [
+          "application/merge-patch+json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "resourceId",
+            "description": "Fully qualified resource Id e.g subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "testId",
+            "description": "Unique identifier for load test name, must be a valid URL character ^[0-9a-z_-]+$/",
+            "required": true,
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 2
+          },
+          {
+            "in": "query",
+            "name": "api-version",
+            "description": "Api version",
+            "required": true,
+            "type": "string",
+            "default": "2021-07-01-preview"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Load test model",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TestModel"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The loadtest was updated",
+            "schema": {
+              "$ref": "#/definitions/TestModel"
+            }
+          },
+          "201": {
+            "description": "The loadtest was created",
+            "schema": {
+              "$ref": "#/definitions/TestModel"
+            }
+          },
+          "default": {
+            "description": "***Error Responses: ***\n\n* \"400\", \"InvalidResourceId\", \"ResourceId is not valid\"\n\n* \"400\", \"InvalidTestId\", \"testId field should be valid\"\n\n* \"400\", \"RequiredTestId\", \"testId field is required\"\n\n* \"400\", \"InvalidEngineSize\", \"Invalid engine size\"\n\n* \"500\", \"InternalServerError\", \"Internal Server Error\"",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponseBody"
+            },
+            "x-ms-error-response": true
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Test"
+        ],
+        "summary": "Delete a test with given name. Test name must be a valid URL character ^[0-9a-z_-]+$/",
+        "operationId": "Test_DeleteLoadTest",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "testId",
+            "description": "Unique identifier for load test name, must be a valid URL character ^[0-9a-z_-]+$/",
+            "required": true,
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 2
+          },
+          {
+            "in": "query",
+            "name": "resourceId",
+            "description": "Fully qualified resource Id e.g subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "api-version",
+            "description": "Api version",
+            "required": true,
+            "type": "string",
+            "default": "2021-07-01-preview"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The test is deleted"
+          },
+          "default": {
+            "description": "*** Error Responses: ***\n\n * \"400\", \"InvalidResourceId\", \"ResourceId is not valid\"\n\n * \"400\", \"RequiredTestId\", \"testId field is required\"\n\n * \"400\", \"InvalidTestId\", \"testId field should be valid\"\n\n * \"404\", \"TestNotFound\", \"Test not found with given identifier\"\n\n * \"500\", \"InternalServerError\", \"Internal Server Error\"",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponseBody"
+            },
+            "x-ms-error-response": true
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Test"
+        ],
+        "summary": "Get load test model of given test name",
+        "operationId": "Test_GetLoadTest",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "resourceId",
+            "description": "Fully qualified resource Id e.g subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "testId",
+            "description": "Unique identifier for load test name, must be a valid URL character ^[0-9a-z_-]+$/",
+            "required": true,
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 2
+          },
+          {
+            "in": "query",
+            "name": "api-version",
+            "description": "Api version",
+            "required": true,
+            "type": "string",
+            "default": "2021-07-01-preview"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested load test",
+            "schema": {
+              "$ref": "#/definitions/TestModel"
+            }
+          },
+          "default": {
+            "description": "*** Error Responses: ***\n\n * \"400\", \"InvalidResourceId\", \"ResourceId is not valid\"\n\n * \"400\", \"RequiredTestId\", \"testId field is required\"\n\n * \"400\", \"InvalidTestId\", \"testId field should be valid\"\n\n * \"404\", \"TestNotFound\", \"Test not found with given identifier\"\n\n* \"500\", \"InternalServerError\", \"Internal Server Error\"",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponseBody"
+            },
+            "x-ms-error-response": true
+          }
+        }
+      }
+    },
+    "/loadtests/sortAndFilter": {
+      "get": {
+        "tags": [
+          "Test"
+        ],
+        "summary": "Get all load tests for a given Fully qualified resource Id e.g subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}",
+        "operationId": "Test_ListLoadTestSearch",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "resourceId",
+            "description": "Fully qualified resource Id e.g subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "orderBy",
+            "description": "Sort on one of the field - lastModifiedDateTime, testId, createdBy in (field asc/desc) format. eg: testId asc",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "description": "Filter search based on searchable fields- testName, createdBy.",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "lastUpdatedStartTime",
+            "description": "Start DateTime(Iso8601Literal format) of the last updated time range to filter tests.",
+            "type": "string",
+            "format": "date-time"
+          },
+          {
+            "in": "query",
+            "name": "lastUpdatedEndTime",
+            "description": "End DateTime(Iso8601Literal format) of the last updated time range to filter tests.",
+            "type": "string",
+            "format": "date-time"
+          },
+          {
+            "in": "query",
+            "name": "nextLink",
+            "description": "NextLink Token to get next page of response",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "maxPageSize",
+            "description": "No of results in response",
+            "type": "integer",
+            "format": "int32",
+            "default": 20
+          },
+          {
+            "in": "query",
+            "name": "api-version",
+            "description": "Api version",
+            "required": true,
+            "type": "string",
+            "default": "2021-07-01-preview"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested loadtests",
+            "schema": {
+              "$ref": "#/definitions/TestModelResourceList"
+            }
+          },
+          "default": {
+            "description": "*** Error Responses: ***\n\n * \"400\", \"InvalidResourceId\", \"ResourceId is not valid\"\n\n* \"500\", \"InternalServerError\", \"Internal Server Error\"",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponseBody"
+            },
+            "x-ms-error-response": true
+          }
+        }
+      }
+    },
+    "/loadtests/{testId}/files/{fileName}": {
+      "put": {
+        "tags": [
+          "Test"
+        ],
+        "summary": "Upload input file for a given test name. File name must be a valid URL character ^[0-9a-z_-]+$/. File size can't be more than 50 MB. Existing file with same name for the given test will be overwritten.",
+        "operationId": "Test_UploadTestFile",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "resourceId",
+            "description": "Fully qualified resource Id e.g subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "testId",
+            "description": "Unique identifier for load test name, must be a valid URL character ^[0-9a-z_-]+$/",
+            "required": true,
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 2
+          },
+          {
+            "in": "path",
+            "name": "fileName",
+            "description": "Unique identifier for test file name, must be a valid URL character ^[0-9a-z_-]+$/",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "api-version",
+            "description": "Api version",
+            "required": true,
+            "type": "string",
+            "default": "2021-07-01-preview"
+          },
+          {
+            "in": "formData",
+            "name": "file",
+            "required": true,
+            "type": "file"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "The test artifact was uploaded",
+            "schema": {
+              "$ref": "#/definitions/TestModel"
+            }
+          },
+          "default": {
+            "description": "*** Error Responses: ***\n\n * \"400\", \"InvalidResourceId\", \"ResourceId is not valid\"\n\n * \"400\", \"RequiredTestId\", \"testId field is required\"\n\n * \"400\", \"InvalidTestId\", \"testId field should be valid\"\n\n * \"400\", \"RequiredFileName\", \"fileName field is required\"\n\n * \"400\", \"InvalidFile\", \"File is not valid error -\"\n\n * \"404\", \"TestNotFound\", \"Test not found with given identifier\"\n\n * \"500\", \"InternalServerError\", \"Internal Server Error\"",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponseBody"
+            },
+            "x-ms-error-response": true
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Test"
+        ],
+        "summary": "Get test file with given file name.",
+        "operationId": "Test_GetTestFile",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "resourceId",
+            "description": "Fully qualified resource Id e.g subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "testId",
+            "description": "Unique identifier for load test name, must be a valid URL character ^[0-9a-z_-]+$/",
+            "required": true,
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 2
+          },
+          {
+            "in": "path",
+            "name": "fileName",
+            "description": "Unique identifier for test file name, must be a valid URL character ^[0-9a-z_-]+$/",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "api-version",
+            "description": "Api version",
+            "required": true,
+            "type": "string",
+            "default": "2021-07-01-preview"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested test file url",
+            "schema": {
+              "$ref": "#/definitions/FileUrlPath"
+            }
+          },
+          "default": {
+            "description": "*** Error Responses: ***\n\n * \"400\", \"InvalidResourceId\", \"ResourceId is not valid\"\n\n * \"400\", \"RequiredTestId\", \"testId field is required\"\n\n * \"400\", \"InvalidTestId\", \"testId field should be valid\"\n\n * \"400\", \"RequiredFileName\", \"fileName field is required\"\n\n * \"404\", \"TestNotFound\", \"Test not found with given identifier\"\n\n * \"404\", \"TestFileNotFound\",  \"Test file not found with given name\"\n\n* \"500\", \"InternalServerError\", \"Internal Server Error\"",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponseBody"
+            },
+            "x-ms-error-response": true
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Test"
+        ],
+        "summary": "Delete file of given file name for a test. File name must be a valid URL character ^[0-9a-z_-]+$/",
+        "operationId": "Test_DeleteTestFile",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "resourceId",
+            "description": "Fully qualified resource Id e.g subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "testId",
+            "description": "Unique identifier for load test name, must be a valid URL character ^[0-9a-z_-]+$/",
+            "required": true,
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 2
+          },
+          {
+            "in": "path",
+            "name": "fileName",
+            "description": "Unique identifier for test file name, must be a valid URL character ^[0-9a-z_-]+$/",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "api-version",
+            "description": "Api version",
+            "required": true,
+            "type": "string",
+            "default": "2021-07-01-preview"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The requested artifact is deleted"
+          },
+          "default": {
+            "description": "*** Error Responses: ***\n\n * \"400\", \"InvalidResourceId\", \"ResourceId is not valid\"\n\n * \"400\", \"RequiredTestId\", \"testId field is required\"\n\n * \"400\", \"InvalidTestId\", \"testId field should be valid\"\n\n * \"400\", \"RequiredFileName\", \"fileName field is required\"\n\n* \"404\", \"TestNotFound\", \"Test not found with given identifier\"\n\n * \"404\", \"TestFileNotFound\",  \"Test file not found with given name\"\n\n* \"500\", \"InternalServerError\", \"Internal Server Error\"",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponseBody"
+            },
+            "x-ms-error-response": true
+          }
+        }
+      }
+    },
+    "/loadtests/{testId}/files": {
+      "get": {
+        "tags": [
+          "Test"
+        ],
+        "summary": "Get all test files.",
+        "operationId": "Test_GetAllTestFiles",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "resourceId",
+            "description": "Fully qualified resource Id e.g subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "testId",
+            "description": "Unique identifier for load test name, must be a valid URL character ^[0-9a-z_-]+$/",
+            "required": true,
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 2
+          },
+          {
+            "in": "query",
+            "name": "api-version",
+            "description": "Api version",
+            "required": true,
+            "type": "string",
+            "default": "2021-07-01-preview"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested test files urls",
+            "schema": {
+              "$ref": "#/definitions/FileUrlList"
+            }
+          },
+          "default": {
+            "description": "*** Error Responses: ***\n\n * \"400\", \"InvalidResourceId\", \"ResourceId is not valid\"\n\n * \"400\", \"RequiredTestId\", \"testId field is required\"\n\n * \"400\", \"InvalidTestId\", \"testId field should be valid\"\n\n* \"404\", \"TestNotFound\", \"Test not found with given identifier\"\n\n* \"500\", \"InternalServerError\", \"Internal Server Error\"",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponseBody"
+            },
+            "x-ms-error-response": true
+          }
+        }
+      }
+    },
+    "/testruns/{testRunId}": {
+      "delete": {
+        "tags": [
+          "TestRun"
+        ],
+        "summary": "Delete a test run with given name. Test run name must be a valid URL character ^[0-9a-z_-]+$/",
+        "operationId": "TestRun_DeleteTestRun",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "testRunId",
+            "description": "Unique identifier for load test run name, must be a valid URL character ^[0-9a-z_-]+$/",
+            "required": true,
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 2
+          },
+          {
+            "in": "query",
+            "name": "resourceId",
+            "description": "Fully qualified resource Id e.g subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "api-version",
+            "description": "Api version",
+            "required": true,
+            "type": "string",
+            "default": "2021-07-01-preview"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The test run is deleted"
+          },
+          "default": {
+            "description": "*** Error Responses: ***\n\n * \"400\", \"InvalidResourceId\", \"ResourceId is not valid\"\n\n * \"400\", \"RequiredTestRunId\", \"testRunId field is required\"\n\n* \"400\", \"InvalidTestRunId\", \"testRunId field should be valid\"\n\n * \"404\", \"TestRunNotFound\", \"test run not found with given identifier\"\n\n * \"500\", \"InternalServerError\", \"Internal Server Error\"",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponseBody"
+            },
+            "x-ms-error-response": true
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "TestRun"
+        ],
+        "summary": "Create and start new test run of the given name, test run name must be a valid URL character ^[0-9a-z_-]+$/",
+        "operationId": "TestRun_CreateAndUpdateTest",
+        "consumes": [
+          "application/merge-patch+json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "tenantId",
+            "description": "Azure tenantId",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "testRunId",
+            "description": "Unique identifier for load test run name, must be a valid URL character ^[0-9a-z_-]+$/",
+            "required": true,
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 2
+          },
+          {
+            "in": "query",
+            "name": "api-version",
+            "description": "Api version",
+            "required": true,
+            "type": "string",
+            "default": "2021-07-01-preview"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Load test run model",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TestRunModel"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The test run is updated",
+            "schema": {
+              "$ref": "#/definitions/TestRunModel"
+            }
+          },
+          "202": {
+            "description": "The test run request was accepted",
+            "schema": {
+              "$ref": "#/definitions/TestRunModel"
+            }
+          },
+          "default": {
+            "description": "*** Error Responses: ***\n\n * \"400\", \"InvalidResourceId\", \"ResourceId is not valid\"\n\n * \"400\", \"RequiredTestRunId\", \"testRunId field is required\"\n\n * \"400\", \"InvalidTestRunId\", \"testRunId field should be valid\"\n\n * \"500\", \"InternalServerError\", \"Internal Server Error\"",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponseBody"
+            },
+            "x-ms-error-response": true
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "TestRun"
+        ],
+        "summary": "Get test run of given name.",
+        "operationId": "TestRun_GetTestRun",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "resourceId",
+            "description": "Fully qualified resource Id e.g subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "testRunId",
+            "description": "Unique identifier for load test run name, must be a valid URL character ^[0-9a-z_-]+$/",
+            "required": true,
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 2
+          },
+          {
+            "in": "query",
+            "name": "api-version",
+            "description": "Api version",
+            "required": true,
+            "type": "string",
+            "default": "2021-07-01-preview"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested test run",
+            "schema": {
+              "$ref": "#/definitions/TestRunModel"
+            }
+          },
+          "default": {
+            "description": "*** Error Responses: ***\n\n * \"400\", \"InvalidResourceId\", \"ResourceId is not valid\"\n\n * \"400\", \"RequiredTestRunId\", \"testRunId field is required\"\n\n * \"400\", \"InvalidTestRunId\", \"testRunId field should be valid\"\n\n * \"404\", \"TestRunNotFound\", \"test run not found with given identifier\"\n\n* \"500\", \"InternalServerError\", \"Internal Server Error\"",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponseBody"
+            },
+            "x-ms-error-response": true
+          }
+        }
+      }
+    },
+    "/testruns/{testRunId}/files/{fileName}": {
+      "get": {
+        "tags": [
+          "TestRun"
+        ],
+        "summary": "Get testrun file with given file name.",
+        "operationId": "TestRun_GetTestRunFile",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "resourceId",
+            "description": "Fully qualified resource Id e.g subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "testRunId",
+            "description": "Unique identifier for load test run name, must be a valid URL character ^[0-9a-z_-]+$/",
+            "required": true,
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 2
+          },
+          {
+            "in": "path",
+            "name": "fileName",
+            "description": "Unique identifier for test run File Name",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "api-version",
+            "description": "Api version",
+            "required": true,
+            "type": "string",
+            "default": "2021-07-01-preview"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested testrun file url",
+            "schema": {
+              "$ref": "#/definitions/FileUrlPath"
+            }
+          },
+          "default": {
+            "description": "*** Error Responses: ***\n\n * \"400\", \"InvalidResourceId\", \"ResourceId is not valid\"\n\n * \"400\", \"RequiredTestRunId\", \"testRunId field is required\"\n\n* \"400\", \"InvalidTestRunId\", \"testRunId field should be valid\"\n\n * \"400\", \"RequiredFileName\", \"fileName field is required\"\n\n * \"404\", \"TestRunNotFound\", \"test run not found with given identifier\"\n\n * \"404\", \"TestRunFileNotFound\", \"test run file not found\"\n\n * \"500\", \"InternalServerError\", \"Internal Server Error\"",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponseBody"
+            },
+            "x-ms-error-response": true
+          }
+        }
+      }
+    },
+    "/testruns/sortAndFilter": {
+      "get": {
+        "tags": [
+          "TestRun"
+        ],
+        "summary": "Get all test runs with given filters",
+        "operationId": "TestRun_GetAppTestRunsSearch",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "resourceId",
+            "description": "Fully qualified resource Id e.g subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "orderBy",
+            "description": "Sort on one of the field - status, testRunId, executedDateTime in (field asc/desc) format. eg: testRunId asc",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "nextLink",
+            "description": "NextLink Token to get next page of response",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "description": "Filter search based on searchable fields - description, executedUser.",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "testId",
+            "description": "Unique identifier for load test name, must be a valid URL character ^[0-9a-z_-]+$/",
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 2
+          },
+          {
+            "in": "query",
+            "name": "executionFrom",
+            "description": "The end DateTime(Iso8601Literal format) of test-run execution time filter range.",
+            "type": "string",
+            "format": "date-time"
+          },
+          {
+            "in": "query",
+            "name": "executionTo",
+            "description": "The start DateTime(Iso8601Literal format) of test-run execution time filter range.",
+            "type": "string",
+            "format": "date-time"
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "description": "Comma separated list of test run status, value can be -  \"ACCEPTED\", \"NOTSTARTED\",\"PROVISIONING\",\"PROVISIONED\",\"CONFIGURING\",\n\"CONFIGURED\",\"EXECUTING\",\"EXECUTED\",\"DEPROVISIONING\",\"DEPROVISIONED\",\"DONE\",\"CANCELLED\",\"FAILED\"",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "maxPageSize",
+            "description": "No of results in response",
+            "type": "integer",
+            "format": "int32",
+            "default": 20
+          },
+          {
+            "in": "query",
+            "name": "api-version",
+            "description": "Api version",
+            "required": true,
+            "type": "string",
+            "default": "2021-07-01-preview"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested test runs",
+            "schema": {
+              "$ref": "#/definitions/TestRunModelResourceList"
+            }
+          },
+          "default": {
+            "description": "*** Error Responses: ***\n\n * \"400\", \"InvalidResourceId\", \"ResourceId is not valid\"\n\n * \"404\", \"TestRunNotFound\", \"test run not found with given identifier\"\n\n* \"500\", \"InternalServerError\", \"Internal Server Error\"",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponseBody"
+            },
+            "x-ms-error-response": true
+          }
+        }
+      }
+    },
+    "/testruns/{testRunId}:stop": {
+      "post": {
+        "tags": [
+          "TestRun"
+        ],
+        "summary": "Stop test run of given name.",
+        "operationId": "TestRun_StopTestRun",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "resourceId",
+            "description": "Fully qualified resource Id e.g subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "testRunId",
+            "description": "Unique identifier for load test run name, must be a valid URL character ^[0-9a-z_-]+$/",
+            "required": true,
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 2
+          },
+          {
+            "in": "query",
+            "name": "api-version",
+            "description": "Api version",
+            "required": true,
+            "type": "string",
+            "default": "2021-07-01-preview"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested test run is stopped. Call GET /testruns/{testRunId} to check the status",
+            "schema": {
+              "$ref": "#/definitions/TestRunModel"
+            }
+          },
+          "default": {
+            "description": "*** Error Responses: ***\n\n * \"400\", \"InvalidResourceId\", \"ResourceId is not valid\"\n\n* \"400\", \"RequiredTestRunId\", \"testRunId field is required\"\n\n * \"400\", \"InvalidTestRunId\", \"testRunId field should be valid\"\n\n * \"404\", \"TestRunNotFound\", \"test run not found with given identifier\"\n\n * \"500\", \"InternalServerError\", \"Internal Server Error\"",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponseBody"
+            },
+            "x-ms-error-response": true
+          }
+        },
+        "x-ms-examples": {
+          "TestRun_StopTestRun_MaximumSet_Gen": {
+            "$ref": "./examples/TestRun_StopTestRun_MaximumSet_Gen.json"
+          }
+        }
+      }
+    },
+    "/testruns/{testRunId}/clientMetrics": {
+      "get": {
+        "tags": [
+          "TestRun"
+        ],
+        "summary": "Get all client metrics for a given load test run",
+        "operationId": "TestRun_GetTestRunClientMetrics",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "resourceId",
+            "description": "Fully qualified resource Id e.g subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "testRunId",
+            "description": "Unique identifier for load test run name, must be a valid URL character ^[0-9a-z_-]+$/",
+            "required": true,
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 2
+          },
+          {
+            "in": "query",
+            "name": "filter",
+            "description": "Filter to be used in metrics queries, filters can be applied on following fields : request, error, percentile( possible values : 90, 99, 95) or time (can be between start and end time). Request and error filter values can be get from /clientMetricsFilter API. Example of filter : (request eq 'HTTP Request1' or request eq 'total-4bec6d5b-c3c3-4f5f-be09-5c4abb28aedd') and (error eq 'Non HTTP response code: org.apache.http.conn.ConnectTimeoutException' or error eq 'total-4bec6d5b-c3c3-4f5f-be09-5c4abb28aedd') and (percentile eq 90) and (time ge 1626346535054 and time le 1626346924744)",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "groupByInterval",
+            "description": "Group by time interval, in which interval metrics needs to be retrieved, values can be 10s,20s,30s,1m,2m,5m,1h",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "api-version",
+            "description": "Api version",
+            "required": true,
+            "type": "string",
+            "default": "2021-07-01-preview"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested client metrics",
+            "schema": {
+              "$ref": "#/definitions/ClientMetricsResults"
+            }
+          },
+          "default": {
+            "description": "*** Error Responses: ***\n\n * \"400\", \"InvalidResourceId\", \"ResourceId is not valid\"\n\n * \"400\", \"RequiredTestRunId\", \"testRunId field is required\"\n\n * \"400\", \"InvalidTestRunId\", \"testRunId field should be valid\"\n\n * \"404\", \"TestRunNotFound\", \"test run not found with given identifier\"\n\n * \"500\", \"InternalServerError\", \"Internal Server Error\"",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponseBody"
+            },
+            "x-ms-error-response": true
+          }
+        }
+      }
+    },
+    "/testruns/{testRunId}/clientMetricsFilters": {
+      "get": {
+        "tags": [
+          "TestRun"
+        ],
+        "summary": "Get all client metrics supported filters list for a given load test run",
+        "operationId": "TestRun_GetTestRunClientMetricsFilters",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "resourceId",
+            "description": "Fully qualified resource Id e.g subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "testRunId",
+            "description": "Unique identifier for load test run name, must be a valid URL character ^[0-9a-z_-]+$/",
+            "required": true,
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 2
+          },
+          {
+            "in": "query",
+            "name": "api-version",
+            "description": "Api version",
+            "required": true,
+            "type": "string",
+            "default": "2021-07-01-preview"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested client metrics filters",
+            "schema": {
+              "$ref": "#/definitions/ClientMetricsFilters"
+            }
+          },
+          "default": {
+            "description": "***Error Responses: ***\n\n* \"400\", \"InvalidResourceId\", \"ResourceId is not valid\"\n\n * \"400\", \"InvalidTestRunId\", \"testRunId field should be valid\"\n\n * \"400\", \"RequiredTestRunId\", \"testRunId field is required\"  * \"404\", \"TestRunNotFound\", \"test run not found with given identifier\"\n\n  * \"500\", \"InternalServerError\", \"Internal Server Error\"",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponseBody"
+            },
+            "x-ms-error-response": true
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "AppComponent": {
+      "description": "The Azure resource object (Refer azure generic resource model : https://docs.microsoft.com/en-us/rest/api/resources/resources/get-by-id#genericresource)",
+      "type": "object",
+      "properties": {
+        "resourceId": {
+          "description": "[ReadOnly] Fully qualified resource Id e.g subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}",
+          "type": "string"
+        },
+        "resourceName": {
+          "description": "Azure resource name",
+          "type": "string"
+        },
+        "resourceType": {
+          "description": "Azure resource type",
+          "type": "string"
+        },
+        "displayName": {
+          "description": "[ReadOnly] Azure resource display name",
+          "type": "string"
+        },
+        "resourceGroup": {
+          "description": "[ReadOnly] Resource group name of Azure resource",
+          "type": "string"
+        },
+        "subscriptionId": {
+          "description": "[ReadOnly] Subscription Id of Azure resource",
+          "type": "string"
+        },
+        "kind": {
+          "description": "Kind of Azure resource type",
+          "type": "string"
+        }
+      }
+    },
+    "AppComponentsMap": {
+      "description": "App components model",
+      "required": [
+        "value"
+      ],
+      "type": "object",
+      "properties": {
+        "resourceId": {
+          "description": "[ReadOnly] Load test resource id",
+          "type": "string"
+        },
+        "testName": {
+          "description": "[Required if testRunName is not given] Load test Name",
+          "type": "string"
+        },
+        "testRunName": {
+          "description": "[Required if testName is not given] Load test run name",
+          "type": "string"
+        },
+        "name": {
+          "description": "[ReadOnly] AppComponent name",
+          "type": "string"
+        },
+        "value": {
+          "description": "AppComponents Map { resource id (Fully qualified resource Id e.g subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}) : resource object } ",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/AppComponent"
+          }
+        }
+      }
+    },
+    "ErrorResponseBody": {
+      "description": "The definition of an error object.",
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "The error code.",
+          "type": "string"
+        },
+        "message": {
+          "description": "The error message.",
+          "type": "string"
+        },
+        "target": {
+          "description": "The error target.",
+          "type": "string"
+        },
+        "details": {
+          "description": "Additional details and inner errors.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ErrorResponseBody"
+          }
+        }
+      }
+    },
+    "FileValidateResponse": {
+      "description": "File validation response",
+      "type": "object",
+      "properties": {
+        "valid": {
+          "description": "File is valid or not",
+          "type": "boolean"
+        },
+        "error": {
+          "description": "In case file is not valid then error message",
+          "type": "string"
+        }
+      }
+    },
+    "ServerMetricName": {
+      "description": "Metric name object",
+      "required": [
+        "localizedValue",
+        "value"
+      ],
+      "type": "object",
+      "properties": {
+        "value": {
+          "description": "Metric name value",
+          "type": "string"
+        },
+        "localizedValue": {
+          "description": "Metric localized name",
+          "type": "string"
+        }
+      }
+    },
+    "ResourceMetricModel": {
+      "description": "Associated metric definition for particular metrics of the azure resource ( Refer : https://docs.microsoft.com/en-us/rest/api/monitor/metric-definitions/list#metricdefinition)",
+      "required": [
+        "aggregation",
+        "displayDescription",
+        "metricnamespace",
+        "name",
+        "resourceId",
+        "unit"
+      ],
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "[ReadOnly]  Unique identifier for metric",
+          "type": "string"
+        },
+        "resourceId": {
+          "description": "Azure resource id",
+          "type": "string"
+        },
+        "metricnamespace": {
+          "description": "Metric name space",
+          "type": "string"
+        },
+        "displayDescription": {
+          "description": "Metric namespace",
+          "type": "string"
+        },
+        "name": {
+          "$ref": "#/definitions/ServerMetricName"
+        },
+        "aggregation": {
+          "description": "Metric aggregation",
+          "type": "string"
+        },
+        "unit": {
+          "description": "Metric unit",
+          "type": "string"
+        }
+      }
+    },
+    "ServerMetricsModel": {
+      "description": "Server metrics config model",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "[ReadOnly] Server metrics config name",
+          "type": "string"
+        },
+        "testName": {
+          "description": "[Required if testRunName is not given] Load test name",
+          "type": "string"
+        },
+        "testRunName": {
+          "description": "[Required if testName is not given] Load test run name",
+          "type": "string"
+        },
+        "metrics": {
+          "description": "Metrics map {metric id : metrics object} (Refer : https://docs.microsoft.com/en-us/rest/api/monitor/metric-definitions/list#metricdefinition for metric id)",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/ResourceMetricModel"
+          }
+        }
+      }
+    },
+    "LocalizedName": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "localizedValue": {
+          "type": "string"
+        }
+      }
+    },
+    "DefaultServerMetricsConfigModel": {
+      "description": "Metrics config model",
+      "type": "object",
+      "properties": {
+        "metricnamespace": {
+          "type": "string"
+        },
+        "aggregation": {
+          "type": "string"
+        },
+        "name": {
+          "$ref": "#/definitions/LocalizedName"
+        },
+        "unit": {
+          "type": "string"
+        },
+        "displayDescription": {
+          "type": "string"
+        }
+      }
+    },
+    "DefaultServerMetricsConfigListModel": {
+      "description": "Default server metrics config",
+      "type": "object",
+      "properties": {
+        "defaultMetrics": {
+          "description": "Default metrics map {resourceType : list of metrics config} (Refer for metrics structure: https://docs.microsoft.com/en-us/rest/api/monitor/metric-definitions/list#metricdefinition)",
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/DefaultServerMetricsConfigModel"
+            }
+          }
+        }
+      }
+    },
+    "SupportedResourceType": {
+      "description": "Supported azure resource types for app component like Microsoft.LoadTestService/loadtests, Microsoft.ClassicCompute, Microsoft.ClassicStorage etc. (Refer for full list of available resource types in azure : https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/resource-providers-and-types, some of them we are supporting for server side metrics configuration)",
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "LoadTestConfig": {
+      "description": "The load test configuration",
+      "type": "object",
+      "properties": {
+        "engineSize": {
+          "description": "The engine size to execute load test. Supported values: s, m, l for Small, Medium and Large respectively. Required for creating a new Test.",
+          "type": "string"
+        },
+        "engineInstances": {
+          "format": "int32",
+          "description": "The number of engine instances to execute load test. Supported values are in range of 1-50. Required for creating a new Test.",
+          "type": "integer"
+        }
+      }
+    },
+    "TestModel": {
+      "description": "Load test model",
+      "type": "object",
+      "properties": {
+        "testId": {
+          "description": "[ReadOnly] Unique test name as identifier",
+          "maxLength": 50,
+          "minLength": 2,
+          "type": "string"
+        },
+        "description": {
+          "description": "The test description",
+          "maxLength": 100,
+          "type": "string"
+        },
+        "displayName": {
+          "description": "Display name of a test ",
+          "maxLength": 50,
+          "minLength": 2,
+          "type": "string"
+        },
+        "resourceId": {
+          "description": "[ReadOnly] Fully qualified resource Id e.g /subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}",
+          "type": "string"
+        },
+        "loadTestConfig": {
+          "$ref": "#/definitions/LoadTestConfig"
+        },
+        "createdDateTime": {
+          "format": "date-time",
+          "description": "[ReadOnly] The created DateTime(Iso8601Literal format) of the test model",
+          "type": "string"
+        },
+        "createdBy": {
+          "description": "[ReadOnly] The user that created the test model",
+          "type": "string"
+        },
+        "lastModifiedDateTime": {
+          "format": "date-time",
+          "description": "[ReadOnly] The last Modified DateTime(Iso8601Literal format) of the test model",
+          "type": "string"
+        },
+        "lastModifiedBy": {
+          "description": "[ReadOnly] The user that last modified the test model",
+          "type": "string"
+        }
+      }
+    },
+    "TestModelResourceList": {
+      "description": "List of Resources",
+      "type": "object",
+      "properties": {
+        "value": {
+          "description": "List of Resources",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TestModel"
+          }
+        },
+        "continuationToken": {
+          "description": "Continuation token for list of resources in case of paginated results, if applicable",
+          "type": "string"
+        }
+      }
+    },
+    "FileUrlPath": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Path of the file",
+          "type": "string"
+        },
+        "url": {
+          "description": "url of the file",
+          "type": "string"
+        },
+        "expireTime": {
+          "format": "date-time",
+          "description": "Expiry time of the file",
+          "type": "string"
+        }
+      }
+    },
+    "FileUrl": {
+      "description": "FileUrl Model",
+      "type": "object",
+      "properties": {
+        "url": {
+          "description": "File url",
+          "type": "string"
+        },
+        "filename": {
+          "description": "Name of the file",
+          "type": "string"
+        },
+        "expireTime": {
+          "format": "date-time",
+          "description": "Expiry time of the file",
+          "type": "string"
+        }
+      }
+    },
+    "FileUrlList": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "description": "List of file urls",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FileUrl"
+          }
+        }
+      }
+    },
+    "InputTestArtifacts": {
+      "description": "[ReadOnly]The input artifacts for the test",
+      "type": "object",
+      "properties": {
+        "configUrl": {
+          "type": "string"
+        },
+        "testScriptUrl": {
+          "format": "uri",
+          "description": "[ReadOnly]The script url for the test, eg. jmx",
+          "type": "string"
+        },
+        "additionalUrls": {
+          "description": "[ReadOnly]The input artifacts file { name : url } map for the test run",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "OutputTestArtifacts": {
+      "description": "The output artifacts for the test run",
+      "required": [
+        "logsUrl",
+        "resultUrl"
+      ],
+      "type": "object",
+      "properties": {
+        "resultUrl": {
+          "format": "uri",
+          "description": "[ReadOnly]The result file url for the test run",
+          "type": "string"
+        },
+        "logsUrl": {
+          "format": "uri",
+          "description": "[ReadOnly]The logs file url for the test run",
+          "type": "string"
+        },
+        "additionalUrls": {
+          "description": "[ReadOnly]Other additional output file { name : url } map for the test run",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "TestArtifacts": {
+      "required": [
+        "inputArtifacts"
+      ],
+      "type": "object",
+      "properties": {
+        "inputArtifacts": {
+          "$ref": "#/definitions/InputTestArtifacts"
+        },
+        "outputArtifacts": {
+          "$ref": "#/definitions/OutputTestArtifacts"
+        }
+      }
+    },
+    "TestRunModel": {
+      "description": "Load test run model",
+      "type": "object",
+      "properties": {
+        "testRunId": {
+          "description": "[ReadOnly] Unique test run name as identifier",
+          "type": "string"
+        },
+        "displayName": {
+          "description": "Display name of a testRun ",
+          "maxLength": 50,
+          "minLength": 2,
+          "type": "string"
+        },
+        "testName": {
+          "description": "[ReadOnly] Associated test name",
+          "maxLength": 50,
+          "minLength": 2,
+          "type": "string"
+        },
+        "resourceId": {
+          "description": "[ReadOnly] Load test resource Id",
+          "type": "string"
+        },
+        "description": {
+          "description": "The test run description",
+          "maxLength": 100,
+          "type": "string"
+        },
+        "status": {
+          "description": "[ReadOnly] The test run status",
+          "type": "string"
+        },
+        "startDateTime": {
+          "format": "date-time",
+          "description": "[ReadOnly] The test run start DateTime(Iso8601Literal format)",
+          "type": "string"
+        },
+        "endDateTime": {
+          "format": "date-time",
+          "description": "[ReadOnly] The test run end DateTime(Iso8601Literal format)",
+          "type": "string"
+        },
+        "loadTestConfig": {
+          "$ref": "#/definitions/LoadTestConfig"
+        },
+        "testArtifacts": {
+          "$ref": "#/definitions/TestArtifacts"
+        },
+        "executedDateTime": {
+          "format": "date-time",
+          "description": "[ReadOnly] Test run initiated time",
+          "type": "string"
+        },
+        "createdDateTime": {
+          "format": "date-time",
+          "description": "[ReadOnly] The created DateTime(Iso8601Literal format) of the test run",
+          "type": "string"
+        },
+        "createdBy": {
+          "description": "[ReadOnly] The user that created the test run",
+          "type": "string"
+        },
+        "portalUrl": {
+          "description": "[ReadOnly] Portal url ",
+          "type": "string"
+        }
+      }
+    },
+    "TestRunModelResourceList": {
+      "description": "List of Resources",
+      "type": "object",
+      "properties": {
+        "value": {
+          "description": "List of Resources",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TestRunModel"
+          }
+        },
+        "continuationToken": {
+          "description": "Continuation token for list of resources in case of paginated results, if applicable",
+          "type": "string"
+        }
+      }
+    },
+    "TimeSeries": {
+      "type": "object",
+      "properties": {
+        "timestamp": {
+          "format": "date-time",
+          "description": "Timestamp(Iso8601Literal format)",
+          "type": "string"
+        },
+        "value": {
+          "format": "double",
+          "description": "Value at timestamp",
+          "type": "number"
+        }
+      }
+    },
+    "Series": {
+      "type": "object",
+      "properties": {
+        "activeUsers": {
+          "description": "Active users time series data",
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/TimeSeries"
+            }
+          }
+        },
+        "responseTime": {
+          "description": "Response time, time series data",
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/TimeSeries"
+            }
+          }
+        },
+        "throughput": {
+          "description": "Throughput time series data",
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/TimeSeries"
+            }
+          }
+        },
+        "errors": {
+          "description": "Errors time series data",
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/TimeSeries"
+            }
+          }
+        }
+      }
+    },
+    "ClientMetricsResults": {
+      "type": "object",
+      "properties": {
+        "testRunName": {
+          "description": "Test run name for which client metrics results is required.",
+          "type": "string"
+        },
+        "timeSeries": {
+          "$ref": "#/definitions/Series"
+        }
+      }
+    },
+    "Filters": {
+      "type": "object",
+      "properties": {
+        "requestSamplerValues": {
+          "description": "List of request sampler for the test run, for which client metrics can be filtered",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "errorFiltersValues": {
+          "description": "List of errors occurred for the test run, for which client metrics can be filtered",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "TimeRange": {
+      "type": "object",
+      "properties": {
+        "startTime": {
+          "format": "date-time",
+          "description": "start DateTime(Iso8601Literal format) for the requested client metrics filter",
+          "type": "string"
+        },
+        "endTime": {
+          "format": "date-time",
+          "description": "end DateTime(Iso8601Literal format) for the requested client metrics filter",
+          "type": "string"
+        }
+      }
+    },
+    "ClientMetricsFilters": {
+      "type": "object",
+      "properties": {
+        "testRunName": {
+          "description": "Test run name for which client metrics filters is required.",
+          "type": "string"
+        },
+        "filters": {
+          "$ref": "#/definitions/Filters"
+        },
+        "timeRange": {
+          "$ref": "#/definitions/TimeRange"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header",
+      "description": "JWT Authorization header using the Bearer scheme."
+    }
+  },
+  "security": [
+    {
+      "Bearer": []
+    }
+  ]
+}
