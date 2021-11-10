@@ -1420,6 +1420,11 @@
             },
             "x-ms-error-response": true
           }
+        },
+        "x-ms-examples": {
+          "TestRun_GetAppTestRunsSearch_MaximumSet_Gen": {
+            "$ref": "./examples/TestRun_GetAppTestRunsSearch_MaximumSet_Gen.json"
+          }
         }
       }
     },
