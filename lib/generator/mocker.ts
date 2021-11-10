@@ -48,7 +48,14 @@ export default class Mocker {
       );
     }
     const length = this.getRandomInt(minLength, maxLength);
-    return "a".repeat(length);
+    let mockedValue = "a".repeat(length);
+
+    if (paramSpec.format === "uri") {
+      const prefix = "https://a";
+      mockedValue = prefix + mockedValue.slice(prefix.length);
+    }
+
+    return mockedValue;
   }
 
   // Note: complex regular expression may produce wrong value,
