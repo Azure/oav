@@ -608,7 +608,7 @@ describe("Model Validation", () => {
     });
   });
 
-  describe("should pass for TestRun_StopTestRun", () => {
+  describe("should pass for validate generated 'uri' format string", () => {
     it("should pass when examples match the 'uri' format definition of swagger file", async () => {
       const specPath2 = `${testPath}/modelValidation/swaggers/specification/loadtestservice/loadtestservice.json`;
       const result = await validate.validateExamples(specPath2, 'TestRun_StopTestRun');
