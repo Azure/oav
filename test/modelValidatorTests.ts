@@ -612,7 +612,6 @@ describe("Model Validation", () => {
     it("should pass when examples match the 'uri' format definition of swagger file", async () => {
       const specPath2 = `${testPath}/modelValidation/swaggers/specification/loadtestservice/loadtestservice.json`;
       const result = await validate.validateExamples(specPath2, 'TestRun_StopTestRun');
-      console.log(JSON.stringify(result));
       assert.strictEqual(result.length, 0);
     });
 
