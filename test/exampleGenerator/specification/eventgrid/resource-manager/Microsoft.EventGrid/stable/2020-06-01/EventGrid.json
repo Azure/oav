@@ -3155,6 +3155,11 @@
         "key2": {
           "description": "Shared access key2 for the domain.",
           "type": "string"
+        },
+        "urlFormatKey": {
+          "description": "Shared access key1 for the domain.",
+          "format": "uri",
+          "type": "string"
         }
       }
     },

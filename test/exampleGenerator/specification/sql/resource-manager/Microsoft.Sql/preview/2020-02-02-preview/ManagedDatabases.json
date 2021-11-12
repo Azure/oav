@@ -587,8 +587,7 @@
       "properties": {
         "lastBackupName": {
           "description": "The last backup name to apply",
-          "type": "string",
-          "format": "uri"
+          "type": "string"
         }
       }
     }
