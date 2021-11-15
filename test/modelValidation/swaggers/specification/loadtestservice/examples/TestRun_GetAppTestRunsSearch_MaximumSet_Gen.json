@@ -1,0 +1,57 @@
+{
+  "parameters": {
+    "resourceId": "aaaaaaaaaaaaaaa",
+    "orderBy": "aaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "nextLink": "aaaaaaaaaaaa",
+    "search": "aaaaaaaaaaa",
+    "testId": "aaaaaaaaaaaaaaaaaaaaaaa",
+    "executionFrom": "2021-11-10T09:32:31.243Z",
+    "executionTo": "2021-11-10T09:32:31.243Z",
+    "status": "aaaaaaaaaaaaaaa",
+    "maxPageSize": 1,
+    "api-version": "2021-07-01-preview"
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "value": [
+          {
+            "testRunId": "aaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "displayName": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "testName": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "resourceId": "aaaaaaaaaaaaaaaaaaaaaaaaa",
+            "description": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "status": "aaaa",
+            "startDateTime": "2021-11-10T09:32:29.757Z",
+            "endDateTime": "2021-11-10T09:32:29.757Z",
+            "loadTestConfig": {
+              "engineSize": "aaaaaaaaaaaa",
+              "engineInstances": 25
+            },
+            "testArtifacts": {
+              "inputArtifacts": {
+                "configUrl": "aaaaaaaaaaaaaaaa",
+                "testScriptUrl": "aaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "additionalUrls": {
+                  "key7707": "aaaaaaaaaaaaaaaaaaa"
+                }
+              },
+              "outputArtifacts": {
+                "resultUrl": "aaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "logsUrl": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "additionalUrls": {
+                  "key6079": "aaa"
+                }
+              }
+            },
+            "executedDateTime": "2021-11-10T09:32:29.757Z",
+            "createdDateTime": "2021-11-10T09:32:29.757Z",
+            "createdBy": "aaaaaaaaaaaaaaaaaaaa",
+            "portalUrl": "aaaaaaaaaaaa"
+          }
+        ],
+        "continuationToken": "aaaaaaaaaaaaaaaaaa"
+      }
+    }
+  }
+}

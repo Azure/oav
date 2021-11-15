@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 11/10/2021 2.10.3
+
+- Fix 'generate-examples' command failed to generate correct format for ‘uri’ format parameter
+
 ## 11/04/2021 2.10.2
 
 - Traffic validation - support multiple swaggers and multiple payloads
