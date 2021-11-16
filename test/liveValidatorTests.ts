@@ -811,7 +811,7 @@ describe("Live Validator", () => {
       expect(validationResult).toMatchSnapshot();
     });
 
-    it(`should not report error when LRO header is not returned in response in case of sync call`, async () => {
+    it(`should not report error when LRO header is not returned in response in case of returning 201 code`, async () => {
       const options = {
         directory: `${__dirname}/liveValidation/swaggers/`,
         isPathCaseSensitive: false,
