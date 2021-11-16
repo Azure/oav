@@ -489,6 +489,15 @@ export function isUrlEncoded(str: string): boolean {
   }
 }
 
+export function paramsToObject(entries: any) {
+  const result: any = {};
+  for (const [key, value] of entries) {
+    // each 'entry' is a [key, value] tupple
+    result[key] = value;
+  }
+  return result;
+}
+
 /**
  * Determines whether the given model is a pure (free-form) object candidate (i.e. equivalent of the
  * C# Object type).
