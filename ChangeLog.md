@@ -5,6 +5,7 @@
 - Fix 'generate-examples' command failed to generate correct format for ‘uri’ format parameter
 - LiveValidatorLoader - make response headers as optional for swagger 2.0
 - LiveValidator - ignore LRO header check if using 201/200+ provisioningState
+- ModelValidator/SemanticValidator - support suppression on error code
 
 ## 11/04/2021 2.10.2
 
