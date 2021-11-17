@@ -260,7 +260,10 @@ export class SwaggerSemanticValidator {
     obj: any,
     jsonPath?: string
   ) {
-    if (isSuppressedInPath(obj, meta.id!, meta.message)) {
+    if (
+      isSuppressedInPath(obj, meta.id!, meta.message) ||
+      isSuppressedInPath(obj, meta.code, meta.message)
+    ) {
       return;
     }
 
