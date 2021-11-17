@@ -383,7 +383,9 @@ export class LiveValidator {
       };
     }
     if (!liveRequest.query) {
-      liveRequest.query = paramsToObject(new URL(liveRequest.url).searchParams);
+      liveRequest.query = paramsToObject(
+        new URL(liveRequest.url, "https://management.azure.com").searchParams
+      );
     }
     let errors: LiveValidationIssue[] = [];
     let runtimeException;
@@ -836,7 +838,7 @@ export const parseValidationRequest = (
   let resourceType = "";
   let providerNamespace = "";
 
-  const parsedUrl = new URL(requestUrl);
+  const parsedUrl = new URL(requestUrl, "https://management.azure.com");
   const pathStr = parsedUrl.pathname || "";
   if (pathStr !== "") {
     // Lower all the keys and values of query parameters before searching for `api-version`

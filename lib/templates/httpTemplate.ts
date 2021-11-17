@@ -30,7 +30,9 @@ export class HttpTemplate {
 
   protected getHost(): string | undefined {
     const requestUrl = this.request.url;
-    return requestUrl ? new URL(requestUrl).host : "management.azure.com";
+    return requestUrl
+      ? new URL(requestUrl, "https://management.azure.com").host
+      : "management.azure.com";
   }
 
   protected getCurlRequestHeaders(padding?: string): string {

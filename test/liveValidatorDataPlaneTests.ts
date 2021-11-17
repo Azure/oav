@@ -7,7 +7,7 @@ import { LiveValidator } from "../lib/liveValidation/liveValidator";
 
 describe("LiveValidator for data-plane", () => {
   describe("Initialization", () => {
-    it("should initialize data-plane swagger with no errors", async () => {
+    it("should initialize data-plane swagger without errors", async () => {
       const tableSwaggerFilePath =
         "cosmos-db/data-plane/Microsoft.Tables/preview/2019-02-02/table.json";
 
@@ -19,6 +19,10 @@ describe("LiveValidator for data-plane", () => {
       await liveValidator.initialize();
       expect(liveValidator.operationSearcher.cache.size).toEqual(1);
       console.log(liveValidator.operationSearcher.cache.keys());
+    });
+
+    it("should initialize multi data-plane swagger without conflict", async () => {
+      // const swaggerPathsPattern = [];
     });
   });
 });
