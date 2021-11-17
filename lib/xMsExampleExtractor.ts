@@ -143,7 +143,7 @@ export class XMsExampleExtractor {
       let queryParams: any = {};
       for (const recordingEntry of values(recordingEntries)) {
         entryIndex++;
-        const parsedUrl = new URL(recordingEntry.RequestUri);
+        const parsedUrl = new URL(recordingEntry.RequestUri, "https://management.azure.com");
         let recordingPath = parsedUrl.href || "";
 
         queryParams = paramsToObject(parsedUrl.searchParams) || {};
