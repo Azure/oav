@@ -249,6 +249,13 @@ describe("Live Validator", () => {
             "get": 2,
             "put": 1,
           },
+          "2019-02-02": Object {
+            "delete": 2,
+            "get": 6,
+            "patch": 1,
+            "post": 2,
+            "put": 3,
+          },
         }
       `);
       assert.strictEqual(numberOfSpecs, cache.size);
