@@ -130,6 +130,20 @@ describe("Semantic validation", () => {
         "DISCRIMINATOR_PROPERTY_TYPE_NOT_STRING"
       );
     });
+    // DISCRIMINATOR_VALUE_NOT_IN_ENUM
+    it("should fail when discriminator value is not in enum list", async () => {
+      const specPath = `${testPath}/semanticValidation/specification/discriminator/DISCRIMINATOR_VALUE_NOT_IN_ENUM.json`;
+      const result = await validate.validateSpec(specPath, undefined);
+      assert(result.validityStatus === false);
+      assert.strictEqual(result.validateSpec?.errors?.[0].code, "DISCRIMINATOR_VALUE_NOT_IN_ENUM");
+    });
+    // DISCRIMINATOR_MISSING_IN_PARENT
+    it("should fail when parent's discriminator is missing", async () => {
+      const specPath = `${testPath}/semanticValidation/specification/discriminator/DISCRIMINATOR_MISSING_IN_PARENT.json`;
+      const result = await validate.validateSpec(specPath, undefined);
+      assert(result.validityStatus === false);
+      assert.strictEqual(result.validateSpec?.errors?.[0].code, "DISCRIMINATOR_MISSING_IN_PARENT");
+    });
   });
 
   describe("validateSchemaRequiredProperties", () => {

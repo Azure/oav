@@ -259,6 +259,16 @@ export const semanticValidationErrors = {
     message: strTemplate`The property type of discriminator must be string.`,
     id: "OAV132",
   },
+  DISCRIMINATOR_VALUE_NOT_IN_ENUM: {
+    severity: Severity.Critical,
+    message: strTemplate`The value of x-ms-dicriminator-value is not in the discriminator enum list: ${"value"}`,
+    id: "OAV133",
+  },
+  DISCRIMINATOR_MISSING_IN_PARENT: {
+    severity: Severity.Critical,
+    message: strTemplate`Discriminator is missing in the parent of the x-ms-dicriminator-value: ${"value"}`,
+    id: "OAV134",
+  },
   MULTIPLE_BODY_PARAMETERS: {
     severity: Severity.Critical,
     message: strTemplate`Operation cannot have multiple body parameters`,

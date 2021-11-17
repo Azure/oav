@@ -55,6 +55,9 @@ export const discriminatorTransformer: GlobalTransformer = {
       try {
         const rootRef = getDiscriminatorRoot(sch, visited, baseSchemas, jsonLoader);
         if (rootRef === null) {
+          if (sch[xmsDiscriminatorValue] !== undefined) {
+            sch._missingDiscriminator = true;
+          }
           continue;
         }
 

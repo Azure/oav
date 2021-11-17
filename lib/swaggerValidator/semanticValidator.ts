@@ -36,6 +36,7 @@ import { noAdditionalPropertiesTransformer } from "../transform/noAdditionalProp
 import { nullableTransformer } from "../transform/nullableTransformer";
 import { pureObjectTransformer } from "../transform/pureObjectTransformer";
 import { isSuppressedInPath, SuppressionLoader } from "../swagger/suppressionLoader";
+import { xmsDiscriminatorValue } from "../util/constants";
 import {
   SchemaValidateFunction,
   SchemaValidateIssue,
@@ -326,7 +327,7 @@ export class SwaggerSemanticValidator {
     transformCtx: TransformContext,
     errors: SemanticErrorDetail[]
   ) {
-    const { objSchemas } = transformCtx;
+    const { objSchemas, jsonLoader } = transformCtx;
     for (const sch of objSchemas) {
       const d = sch.discriminator;
       if (d === undefined) {
@@ -346,12 +347,49 @@ export class SwaggerSemanticValidator {
           property: d,
         });
         this.addErrorsFromErrorCode(errors, rootInfo.url, meta, sch);
-      } else if (sch.properties[d].type !== "string") {
-        const meta = getOavErrorMeta("DISCRIMINATOR_PROPERTY_TYPE_NOT_STRING", {
-          property: d,
-        });
-        this.addErrorsFromErrorCode(errors, rootInfo.url, meta, sch);
+      } else {
+        const discriminatorProp = jsonLoader.resolveRefObj(sch.properties[d]);
+        if (discriminatorProp.type !== "string") {
+          const meta = getOavErrorMeta("DISCRIMINATOR_PROPERTY_TYPE_NOT_STRING", {
+            property: d,
+          });
+          this.addErrorsFromErrorCode(errors, rootInfo.url, meta, sch);
+        }
+
+        if (discriminatorProp.enum !== undefined && sch.discriminatorMap !== undefined) {
+          for (const childSchRef of Object.values(sch.discriminatorMap)) {
+            if (childSchRef === null) {
+              continue;
+            }
+
+            const childSch = jsonLoader.resolveRefObj(childSchRef);
+            const discriminatorValue = childSch[xmsDiscriminatorValue];
+            if (
+              discriminatorValue !== undefined &&
+              !discriminatorProp.enum.includes(discriminatorValue)
+            ) {
+              const meta = getOavErrorMeta("DISCRIMINATOR_VALUE_NOT_IN_ENUM", {
+                value: discriminatorValue,
+              });
+              const url = getRootObjectInfo(getInfo(childSch)!).url;
+              this.addErrorsFromErrorCode(errors, url, meta, childSch);
+            }
+          }
+        }
       }
+    }
+
+    for (const sch of objSchemas) {
+      if (!sch._missingDiscriminator) {
+        continue;
+      }
+
+      const info = getInfo(sch);
+      const rootInfo = getRootObjectInfo(info!);
+      const meta = getOavErrorMeta("DISCRIMINATOR_MISSING_IN_PARENT", {
+        value: sch[xmsDiscriminatorValue],
+      });
+      this.addErrorsFromErrorCode(errors, rootInfo.url, meta, sch);
     }
   }
 

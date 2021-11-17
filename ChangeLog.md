@@ -3,6 +3,7 @@
 ## 11/10/2021 2.10.3
 
 - Fix 'generate-examples' command failed to generate correct format for ‘uri’ format parameter
+- Add new rules of 'DISCRIMINATOR_VALUE_NOT_IN_ENUM' and 'DISCRIMINATOR_MISSING_IN_PARENT'
 
 ## 11/04/2021 2.10.2
 

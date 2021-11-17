@@ -260,6 +260,9 @@ export interface Schema extends BaseSchema {
   [refSelfSymbol]?: string;
 
   _skipError?: boolean;
+
+  // x-ms-discriminator-value exists but discriminator missing
+  _missingDiscriminator?: boolean;
 }
 
 export interface XML {
