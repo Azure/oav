@@ -350,7 +350,7 @@ export class SwaggerSemanticValidator {
       } else {
         const discriminatorProp = jsonLoader.resolveRefObj(sch.properties[d]);
         if (discriminatorProp.type !== "string") {
-          const meta = getOavErrorMeta("DISCRIMINATOR_PROPERTY_TYPE_NOT_STRING", {
+          const meta = getOavErrorMeta("INVALID_DISCRIMINATOR_TYPE", {
             property: d,
           });
           this.addErrorsFromErrorCode(errors, rootInfo.url, meta, sch);
@@ -368,7 +368,7 @@ export class SwaggerSemanticValidator {
               discriminatorValue !== undefined &&
               !discriminatorProp.enum.includes(discriminatorValue)
             ) {
-              const meta = getOavErrorMeta("DISCRIMINATOR_VALUE_NOT_IN_ENUM", {
+              const meta = getOavErrorMeta("INVALID_DISCRIMINATOR_VALUE", {
                 value: discriminatorValue,
               });
               const url = getRootObjectInfo(getInfo(childSch)!).url;
@@ -386,7 +386,7 @@ export class SwaggerSemanticValidator {
 
       const info = getInfo(sch);
       const rootInfo = getRootObjectInfo(info!);
-      const meta = getOavErrorMeta("DISCRIMINATOR_MISSING_IN_PARENT", {
+      const meta = getOavErrorMeta("DISCRIMINATOR_PROPERTY_NOT_FOUND", {
         value: sch[xmsDiscriminatorValue],
       });
       this.addErrorsFromErrorCode(errors, rootInfo.url, meta, sch);
