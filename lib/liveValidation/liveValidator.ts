@@ -24,7 +24,7 @@ import { RuntimeException } from "../util/validationError";
 import { inversifyGetContainer, inversifyGetInstance, TYPES } from "../inversifyUtils";
 import { setDefaultOpts } from "../swagger/loader";
 import { apiValidationErrors, ApiValidationErrorCode } from "../util/errorDefinitions";
-import { kvPairToObject } from "../util/utils";
+import { kvPairsToObject } from "../util/utils";
 import { LiveValidatorLoader, LiveValidatorLoaderOption } from "./liveValidatorLoader";
 import { getProviderFromPathTemplate, OperationSearcher } from "./operationSearcher";
 import {
@@ -383,7 +383,7 @@ export class LiveValidator {
       };
     }
     if (!liveRequest.query) {
-      liveRequest.query = kvPairToObject(
+      liveRequest.query = kvPairsToObject(
         new URL(liveRequest.url, "https://management.azure.com").searchParams
       );
     }

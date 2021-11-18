@@ -14,7 +14,7 @@ import {
 } from "@azure-tools/openapi-tools-common";
 import swaggerParser from "swagger-parser";
 import { log } from "./util/logging";
-import { kvPairToObject } from "./util/utils";
+import { kvPairsToObject } from "./util/utils";
 
 interface Options {
   output?: string;
@@ -146,7 +146,7 @@ export class XMsExampleExtractor {
         const parsedUrl = new URL(recordingEntry.RequestUri, "https://management.azure.com");
         let recordingPath = parsedUrl.href || "";
 
-        queryParams = kvPairToObject(parsedUrl.searchParams) || {};
+        queryParams = kvPairsToObject(parsedUrl.searchParams) || {};
         const hostUrl = parsedUrl ? parsedUrl.protocol! + "//" + parsedUrl.hostname! : undefined;
 
         const headerParams = recordingEntry.RequestHeaders;
