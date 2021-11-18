@@ -486,7 +486,10 @@ export class SwaggerExampleValidator {
     exampleJsonPath?: string,
     source?: ValidationResultSource
   ) {
-    if (isSuppressedInPath(schemaObj, meta.id!, meta.message)) {
+    if (
+      isSuppressedInPath(schemaObj, meta.id!, meta.message) ||
+      isSuppressedInPath(schemaObj, meta.code, meta.message)
+    ) {
       return;
     }
 

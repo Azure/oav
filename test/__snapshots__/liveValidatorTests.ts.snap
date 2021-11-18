@@ -23,7 +23,7 @@ Object {
 }
 `;
 
-exports[`Live Validator Initialize cache and validate should not report error when LRO header is not returned in response in case of sync call 1`] = `
+exports[`Live Validator Initialize cache and validate should not report error when LRO header is not returned in response in case of returning 201 code 1`] = `
 Object {
   "requestValidationResult": Object {
     "errors": Array [],
@@ -141,7 +141,7 @@ Object {
     "isSuccessful": true,
     "operationInfo": Object {
       "apiVersion": "2021-01-01-privatepreview",
-      "operationId": "Linker_CreateOrUpdate",
+      "operationId": "Linker_Update",
     },
     "runtimeException": undefined,
   },
@@ -158,31 +158,7 @@ Object {
         "source": Object {
           "position": Object {
             "column": 22,
-            "line": 153,
-          },
-          "url": "specification/servicelinker/resource-manager/Microsoft.ServiceLinker/preview/2021-01-01-privatepreview/servicelinker.json",
-        },
-      },
-      Object {
-        "code": "MISSING_RESOURCE_ID",
-        "documentationUrl": "",
-        "jsonPathsInPayload": Array [
-          "$",
-        ],
-        "message": "id is required to return in response of GET/PUT resource calls but not being provided",
-        "params": Array [
-          "x-ms-azure-resource",
-        ],
-        "pathsInPayload": Array [
-          "",
-        ],
-        "schemaPath": "#/x-ms-azure-resource",
-        "severity": 0,
-        "source": Object {
-          "jsonRef": "#/definitions/LinkerResource",
-          "position": Object {
-            "column": 23,
-            "line": 524,
+            "line": 252,
           },
           "url": "specification/servicelinker/resource-manager/Microsoft.ServiceLinker/preview/2021-01-01-privatepreview/servicelinker.json",
         },
@@ -191,7 +167,7 @@ Object {
     "isSuccessful": false,
     "operationInfo": Object {
       "apiVersion": "2021-01-01-privatepreview",
-      "operationId": "Linker_CreateOrUpdate",
+      "operationId": "Linker_Update",
     },
     "runtimeException": undefined,
   },
@@ -858,7 +834,7 @@ Object {
         "source": Object {
           "position": Object {
             "column": 18,
-            "line": 178,
+            "line": 192,
           },
           "url": "specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimapis.json",
         },
@@ -888,24 +864,25 @@ Object {
   "responseValidationResult": Object {
     "errors": Array [
       Object {
-        "code": "INVALID_RESPONSE_HEADER",
+        "code": "INVALID_TYPE",
         "documentationUrl": "",
         "jsonPathsInPayload": Array [
-          ".headers.etag",
+          ".headers.featureaflag",
         ],
-        "message": "Header etag is required in response but not provided",
+        "message": "Expected type boolean but found type string",
         "params": Array [
-          "etag",
+          "boolean",
+          "string",
         ],
         "pathsInPayload": Array [
-          "/headers/etag",
+          "/headers/featureaflag",
         ],
-        "schemaPath": "#/properties/headers/required",
-        "severity": 1,
+        "schemaPath": "#/properties/headers/properties/featureaflag/type",
+        "severity": 0,
         "source": Object {
           "position": Object {
-            "column": 24,
-            "line": 183,
+            "column": 31,
+            "line": 198,
           },
           "url": "specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimapis.json",
         },
@@ -1003,7 +980,7 @@ Object {
           "jsonRef": "#/definitions/OperationEntityBaseContract/properties/description",
           "position": Object {
             "column": 24,
-            "line": 4076,
+            "line": 4236,
           },
           "url": "specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimapis.json",
         },
@@ -1197,7 +1174,7 @@ Object {
           "jsonRef": "#/definitions/ApiContract/properties/testMaxMinProperties",
           "position": Object {
             "column": 33,
-            "line": 3505,
+            "line": 3643,
           },
           "url": "specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimapis.json",
         },
@@ -1246,7 +1223,7 @@ Object {
           "jsonRef": "#/definitions/ApiContract/properties/testMaxMinProperties",
           "position": Object {
             "column": 33,
-            "line": 3505,
+            "line": 3643,
           },
           "url": "specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimapis.json",
         },

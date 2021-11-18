@@ -6,12 +6,20 @@
     "version": "2018-01-01"
   },
   "host": "management.azure.com",
-  "schemes": ["https"],
-  "consumes": ["application/json"],
-  "produces": ["application/json"],
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
   "security": [
     {
-      "azure_auth": ["user_impersonation"]
+      "azure_auth": [
+        "user_impersonation"
+      ]
     }
   ],
   "securityDefinitions": {
@@ -28,7 +36,9 @@
   "paths": {
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis": {
       "get": {
-        "tags": ["Apis"],
+        "tags": [
+          "Apis"
+        ],
         "operationId": "Api_ListByService",
         "description": "Lists all APIs of the API Management service instance.",
         "externalDocs": {
@@ -96,7 +106,9 @@
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}": {
       "head": {
-        "tags": ["Apis"],
+        "tags": [
+          "Apis"
+        ],
         "operationId": "Api_GetEntityTag",
         "description": "Gets the entity state (Etag) version of the API specified by its identifier.",
         "x-ms-examples": {
@@ -140,7 +152,9 @@
         }
       },
       "get": {
-        "tags": ["Apis"],
+        "tags": [
+          "Apis"
+        ],
         "operationId": "Api_Get",
         "description": "Gets the details of the API specified by its identifier.",
         "x-ms-examples": {
@@ -181,9 +195,9 @@
               "$ref": "#/definitions/ApiContract"
             },
             "headers": {
-              "ETag": {
-                "description": "Current entity state version. Should be treated as opaque and used to make conditional HTTP requests.",
-                "type": "string"
+              "featureAFlag": {
+                "description": "Feature flag of feature a.",
+                "type": "boolean"
               }
             }
           },
@@ -196,7 +210,9 @@
         }
       },
       "put": {
-        "tags": ["Apis"],
+        "tags": [
+          "Apis"
+        ],
         "operationId": "Api_CreateOrUpdate",
         "description": "Creates new or updates existing specified API of the API Management service instance.",
         "x-ms-examples": {
@@ -288,7 +304,9 @@
         }
       },
       "patch": {
-        "tags": ["Apis"],
+        "tags": [
+          "Apis"
+        ],
         "operationId": "Api_Update",
         "description": "Updates the specified API of the API Management service instance.",
         "x-ms-examples": {
@@ -338,7 +356,9 @@
         }
       },
       "delete": {
-        "tags": ["Apis"],
+        "tags": [
+          "Apis"
+        ],
         "operationId": "Api_Delete",
         "description": "Deletes the specified API of the API Management service instance.",
         "x-ms-examples": {
@@ -391,7 +411,9 @@
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/revisions": {
       "get": {
-        "tags": ["Revisions"],
+        "tags": [
+          "Revisions"
+        ],
         "operationId": "ApiRevisions_List",
         "description": "Lists all revisions of an API.",
         "x-ms-examples": {
@@ -451,7 +473,9 @@
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/releases": {
       "get": {
-        "tags": ["Releases"],
+        "tags": [
+          "Releases"
+        ],
         "operationId": "ApiRelease_List",
         "description": "Lists all releases of an API. An API release is created when making an API Revision current. Releases are also used to rollback to previous revisions. Results will be paged and can be constrained by the $top and $skip parameters.",
         "x-ms-examples": {
@@ -511,7 +535,9 @@
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/releases/{releaseId}": {
       "head": {
-        "tags": ["Releases"],
+        "tags": [
+          "Releases"
+        ],
         "operationId": "ApiRelease_GetEntityTag",
         "description": "Returns the etag of an API release.",
         "x-ms-examples": {
@@ -558,7 +584,9 @@
         }
       },
       "get": {
-        "tags": ["Releases"],
+        "tags": [
+          "Releases"
+        ],
         "operationId": "ApiRelease_Get",
         "description": "Returns the details of an API release.",
         "x-ms-examples": {
@@ -602,7 +630,9 @@
         }
       },
       "put": {
-        "tags": ["Releases"],
+        "tags": [
+          "Releases"
+        ],
         "operationId": "ApiRelease_Create",
         "description": "Creates a new Release for the API.",
         "x-ms-examples": {
@@ -661,7 +691,9 @@
         }
       },
       "patch": {
-        "tags": ["Releases"],
+        "tags": [
+          "Releases"
+        ],
         "operationId": "ApiRelease_Update",
         "description": "Updates the details of the release of the API specified by its identifier.",
         "x-ms-examples": {
@@ -714,7 +746,9 @@
         }
       },
       "delete": {
-        "tags": ["Releases"],
+        "tags": [
+          "Releases"
+        ],
         "operationId": "ApiRelease_Delete",
         "description": "Deletes the specified release in the API.",
         "x-ms-examples": {
@@ -763,7 +797,9 @@
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/operations": {
       "get": {
-        "tags": ["Operations"],
+        "tags": [
+          "Operations"
+        ],
         "operationId": "ApiOperation_ListByApi",
         "description": "Lists a collection of the operations for the specified API.",
         "x-ms-examples": {
@@ -823,7 +859,9 @@
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/operations/{operationId}": {
       "head": {
-        "tags": ["Operations"],
+        "tags": [
+          "Operations"
+        ],
         "operationId": "ApiOperation_GetEntityTag",
         "description": "Gets the entity state (Etag) version of the API operation specified by its identifier.",
         "x-ms-examples": {
@@ -870,7 +908,9 @@
         }
       },
       "get": {
-        "tags": ["Operations"],
+        "tags": [
+          "Operations"
+        ],
         "operationId": "ApiOperation_Get",
         "description": "Gets the details of the API Operation specified by its identifier.",
         "x-ms-examples": {
@@ -920,7 +960,9 @@
         }
       },
       "put": {
-        "tags": ["Operations"],
+        "tags": [
+          "Operations"
+        ],
         "operationId": "ApiOperation_CreateOrUpdate",
         "description": "Creates a new operation in the API or updates an existing one.",
         "x-ms-examples": {
@@ -982,7 +1024,9 @@
         }
       },
       "patch": {
-        "tags": ["Operations"],
+        "tags": [
+          "Operations"
+        ],
         "operationId": "ApiOperation_Update",
         "description": "Updates the details of the operation in the API specified by its identifier.",
         "x-ms-examples": {
@@ -1035,7 +1079,9 @@
         }
       },
       "delete": {
-        "tags": ["Operations"],
+        "tags": [
+          "Operations"
+        ],
         "operationId": "ApiOperation_Delete",
         "description": "Deletes the specified operation in the API.",
         "x-ms-examples": {
@@ -1084,7 +1130,9 @@
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/operations/{operationId}/policies": {
       "get": {
-        "tags": ["ApiOperationPolicies"],
+        "tags": [
+          "ApiOperationPolicies"
+        ],
         "operationId": "ApiOperationPolicy_ListByOperation",
         "description": "Get the list of policy configuration at the API Operation level.",
         "x-ms-examples": {
@@ -1130,7 +1178,9 @@
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/operations/{operationId}/policies/{policyId}": {
       "head": {
-        "tags": ["ApiOperationPolicies"],
+        "tags": [
+          "ApiOperationPolicies"
+        ],
         "operationId": "ApiOperationPolicy_GetEntityTag",
         "description": "Gets the entity state (Etag) version of the API operation policy specified by its identifier.",
         "x-ms-examples": {
@@ -1180,7 +1230,9 @@
         }
       },
       "get": {
-        "tags": ["ApiOperationPolicies"],
+        "tags": [
+          "ApiOperationPolicies"
+        ],
         "operationId": "ApiOperationPolicy_Get",
         "description": "Get the policy configuration at the API Operation level.",
         "x-ms-examples": {
@@ -1233,7 +1285,9 @@
         }
       },
       "put": {
-        "tags": ["ApiOperationPolicies"],
+        "tags": [
+          "ApiOperationPolicies"
+        ],
         "operationId": "ApiOperationPolicy_CreateOrUpdate",
         "description": "Creates or updates policy configuration for the API Operation level.",
         "x-ms-examples": {
@@ -1298,7 +1352,9 @@
         }
       },
       "delete": {
-        "tags": ["ApiOperationPolicies"],
+        "tags": [
+          "ApiOperationPolicies"
+        ],
         "operationId": "ApiOperationPolicy_Delete",
         "description": "Deletes the policy configuration at the Api Operation.",
         "x-ms-examples": {
@@ -1350,7 +1406,9 @@
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/products": {
       "get": {
-        "tags": ["ApiProduct"],
+        "tags": [
+          "ApiProduct"
+        ],
         "operationId": "ApiProduct_ListByApis",
         "description": "Lists all Products, which the API is part of.",
         "x-ms-examples": {
@@ -1410,7 +1468,9 @@
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/policies": {
       "get": {
-        "tags": ["ApiPolicy"],
+        "tags": [
+          "ApiPolicy"
+        ],
         "operationId": "ApiPolicy_ListByApi",
         "description": "Get the policy configuration at the API level.",
         "x-ms-examples": {
@@ -1459,7 +1519,9 @@
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/policies/{policyId}": {
       "head": {
-        "tags": ["ApiPolicy"],
+        "tags": [
+          "ApiPolicy"
+        ],
         "operationId": "ApiPolicy_GetEntityTag",
         "description": "Gets the entity state (Etag) version of the API policy specified by its identifier.",
         "x-ms-examples": {
@@ -1506,7 +1568,9 @@
         }
       },
       "get": {
-        "tags": ["ApiPolicy"],
+        "tags": [
+          "ApiPolicy"
+        ],
         "operationId": "ApiPolicy_Get",
         "description": "Get the policy configuration at the API level.",
         "x-ms-examples": {
@@ -1561,7 +1625,9 @@
         }
       },
       "put": {
-        "tags": ["ApiPolicy"],
+        "tags": [
+          "ApiPolicy"
+        ],
         "operationId": "ApiPolicy_CreateOrUpdate",
         "description": "Creates or updates policy configuration for the API.",
         "x-ms-examples": {
@@ -1631,7 +1697,9 @@
         }
       },
       "delete": {
-        "tags": ["ApiPolicy"],
+        "tags": [
+          "ApiPolicy"
+        ],
         "operationId": "ApiPolicy_Delete",
         "description": "Deletes the policy configuration at the Api.",
         "x-ms-examples": {
@@ -1680,7 +1748,9 @@
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/schemas": {
       "get": {
-        "tags": ["ApiSchema"],
+        "tags": [
+          "ApiSchema"
+        ],
         "operationId": "ApiSchema_ListByApi",
         "description": "Get the schema configuration at the API level.",
         "x-ms-examples": {
@@ -1732,7 +1802,9 @@
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/schemas/{schemaId}": {
       "head": {
-        "tags": ["ApiSchema"],
+        "tags": [
+          "ApiSchema"
+        ],
         "operationId": "ApiSchema_GetEntityTag",
         "description": "Gets the entity state (Etag) version of the schema specified by its identifier.",
         "x-ms-examples": {
@@ -1779,7 +1851,9 @@
         }
       },
       "get": {
-        "tags": ["ApiSchema"],
+        "tags": [
+          "ApiSchema"
+        ],
         "operationId": "ApiSchema_Get",
         "description": "Get the schema configuration at the API level.",
         "x-ms-examples": {
@@ -1829,7 +1903,9 @@
         }
       },
       "put": {
-        "tags": ["ApiSchema"],
+        "tags": [
+          "ApiSchema"
+        ],
         "operationId": "ApiSchema_CreateOrUpdate",
         "description": "Creates or updates schema configuration for the API.",
         "x-ms-examples": {
@@ -1891,7 +1967,9 @@
         }
       },
       "delete": {
-        "tags": ["ApiSchema"],
+        "tags": [
+          "ApiSchema"
+        ],
         "operationId": "ApiSchema_Delete",
         "description": "Deletes the schema configuration at the Api.",
         "x-ms-examples": {
@@ -1940,7 +2018,9 @@
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apisByTags": {
       "get": {
-        "tags": ["ApisByTags"],
+        "tags": [
+          "ApisByTags"
+        ],
         "operationId": "Api_ListByTags",
         "description": "Lists a collection of apis associated with tags.",
         "x-ms-examples": {
@@ -1991,7 +2071,9 @@
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/diagnostics": {
       "get": {
-        "tags": ["ApiDiagnostics"],
+        "tags": [
+          "ApiDiagnostics"
+        ],
         "operationId": "ApiDiagnostic_ListByService",
         "description": "Lists all diagnostics of an API.",
         "x-ms-examples": {
@@ -2051,7 +2133,9 @@
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/diagnostics/{diagnosticId}": {
       "head": {
-        "tags": ["ApiDiagnostics"],
+        "tags": [
+          "ApiDiagnostics"
+        ],
         "operationId": "ApiDiagnostic_GetEntityTag",
         "description": "Gets the entity state (Etag) version of the Diagnostic for an API specified by its identifier.",
         "x-ms-examples": {
@@ -2098,7 +2182,9 @@
         }
       },
       "get": {
-        "tags": ["ApiDiagnostics"],
+        "tags": [
+          "ApiDiagnostics"
+        ],
         "operationId": "ApiDiagnostic_Get",
         "description": "Gets the details of the Diagnostic for an API specified by its identifier.",
         "x-ms-examples": {
@@ -2148,7 +2234,9 @@
         }
       },
       "put": {
-        "tags": ["ApiDiagnostics"],
+        "tags": [
+          "ApiDiagnostics"
+        ],
         "operationId": "ApiDiagnostic_CreateOrUpdate",
         "description": "Creates a new Diagnostic for an API or updates an existing one.",
         "x-ms-examples": {
@@ -2210,7 +2298,9 @@
         }
       },
       "patch": {
-        "tags": ["ApiDiagnostics"],
+        "tags": [
+          "ApiDiagnostics"
+        ],
         "operationId": "ApiDiagnostic_Update",
         "description": "Updates the details of the Diagnostic for an API specified by its identifier.",
         "x-ms-examples": {
@@ -2263,7 +2353,9 @@
         }
       },
       "delete": {
-        "tags": ["ApiDiagnostics"],
+        "tags": [
+          "ApiDiagnostics"
+        ],
         "operationId": "ApiDiagnostic_Delete",
         "description": "Deletes the specified Diagnostic from an API.",
         "x-ms-examples": {
@@ -2312,7 +2404,9 @@
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/diagnostics/{diagnosticId}/loggers": {
       "get": {
-        "tags": ["ApiDiagnosticLoggers"],
+        "tags": [
+          "ApiDiagnosticLoggers"
+        ],
         "operationId": "ApiDiagnosticLogger_ListByService",
         "description": "Lists all loggers assosiated with the specified Diagnostic of an API.",
         "x-ms-examples": {
@@ -2375,7 +2469,9 @@
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/diagnostics/{diagnosticId}/loggers/{loggerid}": {
       "head": {
-        "tags": ["ApiDiagnosticLoggers"],
+        "tags": [
+          "ApiDiagnosticLoggers"
+        ],
         "operationId": "ApiDiagnosticLogger_CheckEntityExists",
         "description": "Checks that logger entity specified by identifier is associated with the diagnostics entity.",
         "x-ms-examples": {
@@ -2422,7 +2518,9 @@
         }
       },
       "put": {
-        "tags": ["ApiDiagnosticLoggers"],
+        "tags": [
+          "ApiDiagnosticLoggers"
+        ],
         "operationId": "ApiDiagnosticLogger_CreateOrUpdate",
         "description": "Attaches a logger to a dignostic for an API.",
         "x-ms-examples": {
@@ -2475,7 +2573,9 @@
         }
       },
       "delete": {
-        "tags": ["ApiDiagnosticLoggers"],
+        "tags": [
+          "ApiDiagnosticLoggers"
+        ],
         "operationId": "ApiDiagnosticLogger_Delete",
         "description": "Deletes the specified Logger from Diagnostic for an API.",
         "x-ms-examples": {
@@ -2524,7 +2624,9 @@
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/issues": {
       "get": {
-        "tags": ["ApiIssues"],
+        "tags": [
+          "ApiIssues"
+        ],
         "operationId": "ApiIssue_ListByService",
         "description": "Lists all issues assosiated with the specified API.",
         "x-ms-examples": {
@@ -2584,7 +2686,9 @@
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/issues/{issueId}": {
       "head": {
-        "tags": ["ApiIssues"],
+        "tags": [
+          "ApiIssues"
+        ],
         "operationId": "ApiIssue_GetEntityTag",
         "description": "Gets the entity state (Etag) version of the Issue for an API specified by its identifier.",
         "x-ms-examples": {
@@ -2631,7 +2735,9 @@
         }
       },
       "get": {
-        "tags": ["ApiIssues"],
+        "tags": [
+          "ApiIssues"
+        ],
         "operationId": "ApiIssue_Get",
         "description": "Gets the details of the Issue for an API specified by its identifier.",
         "x-ms-examples": {
@@ -2681,7 +2787,9 @@
         }
       },
       "put": {
-        "tags": ["ApiIssues"],
+        "tags": [
+          "ApiIssues"
+        ],
         "operationId": "ApiIssue_CreateOrUpdate",
         "description": "Creates a new Issue for an API or updates an existing one.",
         "x-ms-examples": {
@@ -2747,7 +2855,9 @@
         }
       },
       "delete": {
-        "tags": ["ApiIssues"],
+        "tags": [
+          "ApiIssues"
+        ],
         "operationId": "ApiIssue_Delete",
         "description": "Deletes the specified Issue from an API.",
         "x-ms-examples": {
@@ -2800,7 +2910,9 @@
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/issues/{issueId}/comments": {
       "get": {
-        "tags": ["ApiIssueComments"],
+        "tags": [
+          "ApiIssueComments"
+        ],
         "operationId": "ApiIssueComment_ListByService",
         "description": "Lists all comments for the Issue assosiated with the specified API.",
         "x-ms-examples": {
@@ -2863,7 +2975,9 @@
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/issues/{issueId}/comments/{commentId}": {
       "head": {
-        "tags": ["ApiIssueComments"],
+        "tags": [
+          "ApiIssueComments"
+        ],
         "operationId": "ApiIssueComment_GetEntityTag",
         "description": "Gets the entity state (Etag) version of the issue Comment for an API specified by its identifier.",
         "x-ms-examples": {
@@ -2913,7 +3027,9 @@
         }
       },
       "get": {
-        "tags": ["ApiIssueComments"],
+        "tags": [
+          "ApiIssueComments"
+        ],
         "operationId": "ApiIssueComment_Get",
         "description": "Gets the details of the issue Comment for an API specified by its identifier.",
         "x-ms-examples": {
@@ -2966,7 +3082,9 @@
         }
       },
       "put": {
-        "tags": ["ApiIssueComments"],
+        "tags": [
+          "ApiIssueComments"
+        ],
         "operationId": "ApiIssueComment_CreateOrUpdate",
         "description": "Creates a new Comment for the Issue in an API or updates an existing one.",
         "x-ms-examples": {
@@ -3035,7 +3153,9 @@
         }
       },
       "delete": {
-        "tags": ["ApiIssueComments"],
+        "tags": [
+          "ApiIssueComments"
+        ],
         "operationId": "ApiIssueComment_Delete",
         "description": "Deletes the specified comment from an Issue.",
         "x-ms-examples": {
@@ -3091,7 +3211,9 @@
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/issues/{issueId}/attachments": {
       "get": {
-        "tags": ["ApiIssueAttachments"],
+        "tags": [
+          "ApiIssueAttachments"
+        ],
         "operationId": "ApiIssueAttachment_ListByService",
         "description": "Lists all comments for the Issue assosiated with the specified API.",
         "x-ms-examples": {
@@ -3154,7 +3276,9 @@
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/issues/{issueId}/attachments/{attachmentId}": {
       "head": {
-        "tags": ["ApiIssueAttachments"],
+        "tags": [
+          "ApiIssueAttachments"
+        ],
         "operationId": "ApiIssueAttachment_GetEntityTag",
         "description": "Gets the entity state (Etag) version of the issue Attachment for an API specified by its identifier.",
         "x-ms-examples": {
@@ -3204,7 +3328,9 @@
         }
       },
       "get": {
-        "tags": ["ApiIssueAttachments"],
+        "tags": [
+          "ApiIssueAttachments"
+        ],
         "operationId": "ApiIssueAttachment_Get",
         "description": "Gets the details of the issue Attachment for an API specified by its identifier.",
         "x-ms-examples": {
@@ -3257,7 +3383,9 @@
         }
       },
       "put": {
-        "tags": ["ApiIssueAttachments"],
+        "tags": [
+          "ApiIssueAttachments"
+        ],
         "operationId": "ApiIssueAttachment_CreateOrUpdate",
         "description": "Creates a new Attachment for the Issue in an API or updates an existing one.",
         "x-ms-examples": {
@@ -3326,7 +3454,9 @@
         }
       },
       "delete": {
-        "tags": ["ApiIssueAttachments"],
+        "tags": [
+          "ApiIssueAttachments"
+        ],
         "operationId": "ApiIssueAttachment_Delete",
         "description": "Deletes the specified comment from an Issue.",
         "x-ms-examples": {
@@ -3384,7 +3514,9 @@
   "x-ms-paths": {
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}?export=true": {
       "get": {
-        "tags": ["Apis"],
+        "tags": [
+          "Apis"
+        ],
         "operationId": "ApiExport_Get",
         "description": "Gets the details of the API specified by its identifier in the format specified to the Storage Blob with SAS Key valid for 5 minutes.",
         "x-ms-examples": {
@@ -3407,7 +3539,11 @@
             "in": "query",
             "required": true,
             "type": "string",
-            "enum": ["swagger-link", "wadl-link", "wsdl-link"],
+            "enum": [
+              "swagger-link",
+              "wadl-link",
+              "wsdl-link"
+            ],
             "x-ms-enum": {
               "name": "ExportFormat",
               "modelAsString": true,
@@ -3436,7 +3572,9 @@
             "in": "query",
             "required": true,
             "type": "string",
-            "enum": ["true"],
+            "enum": [
+              "true"
+            ],
             "x-ms-enum": {
               "modelAsString": true,
               "name": "ExportApi"
@@ -3590,7 +3728,10 @@
         "apiType": {
           "type": "string",
           "description": "Type of Api to create. \n * `http` creates a SOAP to REST API \n * `soap` creates a SOAP pass-through API .",
-          "enum": ["http", "soap"],
+          "enum": [
+            "http",
+            "soap"
+          ],
           "x-ms-client-name": "SoapApiType",
           "x-ms-enum": {
             "name": "SoapApiType",
@@ -3641,7 +3782,10 @@
           "type": "array",
           "items": {
             "type": "string",
-            "enum": ["http", "https"],
+            "enum": [
+              "http",
+              "https"
+            ],
             "x-ms-enum": {
               "name": "Protocol",
               "modelAsString": false
@@ -3658,7 +3802,9 @@
           "$ref": "#/definitions/ApiEntityBaseContract"
         }
       ],
-      "required": ["path"],
+      "required": [
+        "path"
+      ],
       "description": "Api Entity Properties"
     },
     "ApiUpdateContract": {
@@ -3695,7 +3841,10 @@
           "type": "array",
           "items": {
             "type": "string",
-            "enum": ["http", "https"],
+            "enum": [
+              "http",
+              "https"
+            ],
             "x-ms-enum": {
               "name": "Protocol",
               "modelAsString": false
@@ -3728,7 +3877,10 @@
         "type": {
           "type": "string",
           "description": "Type of API.",
-          "enum": ["http", "soap"],
+          "enum": [
+            "http",
+            "soap"
+          ],
           "x-ms-client-name": "ApiType",
           "x-ms-enum": {
             "name": "ApiType",
@@ -3878,7 +4030,11 @@
         "versioningScheme": {
           "type": "string",
           "description": "An value that determines where the API Version identifer will be located in a HTTP request.",
-          "enum": ["Segment", "Query", "Header"]
+          "enum": [
+            "Segment",
+            "Query",
+            "Header"
+          ]
         },
         "versionQueryName": {
           "type": "string",
@@ -4031,7 +4187,11 @@
           "$ref": "#/definitions/OperationEntityBaseContract"
         }
       ],
-      "required": ["displayName", "method", "urlTemplate"],
+      "required": [
+        "displayName",
+        "method",
+        "urlTemplate"
+      ],
       "description": "Operation Contract Properties"
     },
     "OperationUpdateContractProperties": {
@@ -4136,7 +4296,10 @@
           "description": "Parameter values."
         }
       },
-      "required": ["name", "type"],
+      "required": [
+        "name",
+        "type"
+      ],
       "description": "Operation parameters details."
     },
     "RepresentationContract": {
@@ -4165,7 +4328,9 @@
           "description": "Collection of form parameters. Required if 'contentType' value is either 'application/x-www-form-urlencoded' or 'multipart/form-data'.."
         }
       },
-      "required": ["contentType"],
+      "required": [
+        "contentType"
+      ],
       "description": "Operation request/response representation details."
     },
     "RequestContract": {
@@ -4224,7 +4389,9 @@
           "description": "Collection of operation response headers."
         }
       },
-      "required": ["statusCode"],
+      "required": [
+        "statusCode"
+      ],
       "description": "Operation response details."
     },
     "SubscriptionKeyParameterNamesContract": {
@@ -4291,7 +4458,9 @@
           "description": "Properties of the Schema Document."
         }
       },
-      "required": ["contentType"],
+      "required": [
+        "contentType"
+      ],
       "description": "Schema contract Properties."
     },
     "SchemaDocumentProperties": {
@@ -4354,7 +4523,13 @@
         "state": {
           "type": "string",
           "description": "Status of the issue.",
-          "enum": ["proposed", "open", "removed", "resolved", "closed"],
+          "enum": [
+            "proposed",
+            "open",
+            "removed",
+            "resolved",
+            "closed"
+          ],
           "x-ms-enum": {
             "name": "State",
             "modelAsString": false,
@@ -4391,7 +4566,11 @@
           "description": "A resource identifier for the API the issue was created for."
         }
       },
-      "required": ["title", "description", "userId"],
+      "required": [
+        "title",
+        "description",
+        "userId"
+      ],
       "description": "Issue contract Properties."
     },
     "IssueCommentCollection": {
@@ -4443,7 +4622,10 @@
           "description": "A resource identifier for the user who left the comment."
         }
       },
-      "required": ["text", "userId"],
+      "required": [
+        "text",
+        "userId"
+      ],
       "description": "Issue Comment contract Properties."
     },
     "IssueAttachmentCollection": {
@@ -4494,7 +4676,11 @@
           "description": "An HTTP link or Base64-encoded binary data."
         }
       },
-      "required": ["title", "contentFormat", "content"],
+      "required": [
+        "title",
+        "contentFormat",
+        "content"
+      ],
       "description": "Issue Attachment contract Properties."
     }
   },

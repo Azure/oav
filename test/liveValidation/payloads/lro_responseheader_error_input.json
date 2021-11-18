@@ -9,7 +9,7 @@
       "server": "Microsoft-HTTPAPI/2.0",
       "Content-Type": "application/json"
     },
-    "method": "PUT",
+    "method": "PATCH",
     "url": "/subscriptions/937bc588-a144-4083-8612-5f9ffbbddb14/resourceGroups/canaryrg/providers/Microsoft.Web/sites/canarywebapp/providers/Microsoft.ServiceLinker/linkers/SpiderMan?api-version=2021-01-01-privatepreview",
     "body": {
       "properties": {
@@ -26,7 +26,7 @@
     }
   },
   "liveResponse": {
-    "statusCode": "201",
+    "statusCode": "202",
     "headers": {
       "strict-Transport-Security": "max-age=31536000; includeSubDomains",
       "x-ms-request-id": "97856fec-304a-4317-87f0-f04c328402d3",

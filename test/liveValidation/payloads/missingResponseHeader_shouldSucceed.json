@@ -23,8 +23,7 @@
       "x-ms-correlation-request-id": "53e62a45-dba0-46ab-965b-5c6d06cf9007",
       "date": "Tue, 11 Sep 2018 19:12:21 GMT",
       "server": "Microsoft-HTTPAPI/2.0",
-      "Content-Type": "application/json",
-      "featureAFlag": "stringflag"
+      "Content-Type": "application/json"
     },
     "body": {
       "properties": {
