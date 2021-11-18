@@ -208,6 +208,11 @@ describe("Semantic validation", () => {
         "MISSING_PATH_PARAMETER_DEFINITION"
       );
     });
+    it("should succeed when path args defined in path parameters", async () => {
+      const specPath = `${testPath}/semanticValidation/specification/validateOperation/pathParameterDefinition.json`;
+      const result = await validate.validateSpec(specPath, undefined);
+      assert(result.validityStatus === true);
+    });
     it("should succeed when discriminator is not a required property and the error is suppressed", async () => {
       const specPath = `${testPath}/semanticValidation/specification/discriminator/notRequiredDiscriminatorWithSuppression.json`;
       const result = await validate.validateSpec(specPath, undefined);
