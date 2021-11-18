@@ -7,6 +7,7 @@
 - LiveValidator - ignore LRO header check if using 201/200+ provisioningState
 - SemanticValidator - Fix false alarm for MISSING_PATH_PARAMETER_DEFINITION
 - ModelValidator/SemanticValidator - support suppression on error code
+- Use `new URL` instead of `url.parse`. Since url.parse will encode url and will be deprecated.
 
 ## 11/04/2021 2.10.2
 
