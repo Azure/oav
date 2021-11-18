@@ -701,6 +701,19 @@ describe("Live Validator", () => {
       assert.strictEqual(payload.liveResponse.statusCode, "200");
     });
 
+    it(`should pass response header tests`, async () => {
+      const options = {
+        directory: `./test/liveValidation/swaggers/`,
+        swaggerPathsPattern: ["specification/apimanagement/resource-manager/Microsoft.ApiManagement/**/*.json"],
+      };
+      const validator = new LiveValidator(options);
+      await validator.initialize();
+  
+      const payload = require(`${__dirname}/liveValidation/payloads/missingResponseHeader_shouldSucceed.json`);
+      const result = await validator.validateLiveRequestResponse(payload);
+      assert.strictEqual(result.responseValidationResult.isSuccessful, true);
+    });
+
     it(`should not report error in response when both x-ms-secret and requried are declared`, async () => {
       const options = {
         directory: `${__dirname}/liveValidation/swaggers/`,
@@ -798,7 +811,7 @@ describe("Live Validator", () => {
       expect(validationResult).toMatchSnapshot();
     });
 
-    it(`should not report error when LRO header is not returned in response in case of sync call`, async () => {
+    it(`should not report error when LRO header is not returned in response in case of returning 201 code`, async () => {
       const options = {
         directory: `${__dirname}/liveValidation/swaggers/`,
         isPathCaseSensitive: false,

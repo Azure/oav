@@ -58,10 +58,10 @@ export class LiveValidatorLoader implements Loader<SwaggerSpec> {
         copyInfo(response.headers, headerSchema);
         schema.properties!.headers = headerSchema;
         for (const headerName of Object.keys(response.headers)) {
+          // Per swagger 2.0 spec, header is optional by default
           const name = headerName.toLowerCase();
           const sch = response.headers[headerName];
           headerSchema.properties![name] = sch;
-          headerSchema.required!.push(name);
           addParamTransform(response, { type: sch.type, name, in: "header" });
         }
         if (headerSchema.required?.length === 0) {

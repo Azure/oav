@@ -256,7 +256,7 @@
               "$ref": "#/definitions/LinkerResource"
             }
           },
-          "201": {
+          "202": {
             "description": "Long running operation.",
             "schema": {
               "$ref": "#/definitions/LinkerResource"
