@@ -259,14 +259,14 @@ export const semanticValidationErrors = {
     message: strTemplate`The property type of discriminator must be string.`,
     id: "OAV132",
   },
-  INVALID_DISCRIMINATOR_VALUE: {
+  INVALID_XMS_DISCRIMINATOR_VALUE: {
     severity: Severity.Critical,
     message: strTemplate`The value of x-ms-dicriminator-value is not in the discriminator enum list: ${"value"}`,
     id: "OAV133",
   },
   DISCRIMINATOR_PROPERTY_NOT_FOUND: {
     severity: Severity.Critical,
-    message: strTemplate`Discriminator is missing in the parent of the x-ms-dicriminator-value: ${"value"}`,
+    message: strTemplate`Missing discriminator in base model. This derived model has x-ms-dicriminator-value: ${"value"}`,
     id: "OAV134",
   },
   MULTIPLE_BODY_PARAMETERS: {

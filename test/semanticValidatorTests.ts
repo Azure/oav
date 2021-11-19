@@ -127,12 +127,12 @@ describe("Semantic validation", () => {
       assert(result.validityStatus === false);
       assert.strictEqual(result.validateSpec?.errors?.[0].code, "INVALID_DISCRIMINATOR_TYPE");
     });
-    // INVALID_DISCRIMINATOR_VALUE
+    // INVALID_XMS_DISCRIMINATOR_VALUE
     it("should fail when discriminator value is not in enum list", async () => {
-      const specPath = `${testPath}/semanticValidation/specification/discriminator/INVALID_DISCRIMINATOR_VALUE.json`;
+      const specPath = `${testPath}/semanticValidation/specification/discriminator/INVALID_XMS_DISCRIMINATOR_VALUE.json`;
       const result = await validate.validateSpec(specPath, undefined);
       assert(result.validityStatus === false);
-      assert.strictEqual(result.validateSpec?.errors?.[0].code, "INVALID_DISCRIMINATOR_VALUE");
+      assert.strictEqual(result.validateSpec?.errors?.[0].code, "INVALID_XMS_DISCRIMINATOR_VALUE");
     });
     // DISCRIMINATOR_PROPERTY_NOT_FOUND
     it("should fail when parent's discriminator is missing", async () => {

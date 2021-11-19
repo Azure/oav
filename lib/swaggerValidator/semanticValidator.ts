@@ -370,7 +370,7 @@ export class SwaggerSemanticValidator {
               discriminatorValue !== undefined &&
               !discriminatorProp.enum.includes(discriminatorValue)
             ) {
-              const meta = getOavErrorMeta("INVALID_DISCRIMINATOR_VALUE", {
+              const meta = getOavErrorMeta("INVALID_XMS_DISCRIMINATOR_VALUE", {
                 value: discriminatorValue,
               });
               const url = getRootObjectInfo(getInfo(childSch)!).url;
