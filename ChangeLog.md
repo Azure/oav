@@ -3,9 +3,9 @@
 ## 11/10/2021 2.10.3
 
 - Fix 'generate-examples' command failed to generate correct format for ‘uri’ format parameter
-- Fix false alarm for MISSING_PATH_PARAMETER_DEFINITION
 - LiveValidatorLoader - make response headers as optional for swagger 2.0
 - LiveValidator - ignore LRO header check if using 201/200+ provisioningState
+- SemanticValidator - Fix false alarm for MISSING_PATH_PARAMETER_DEFINITION
 - ModelValidator/SemanticValidator - support suppression on error code
 
 ## 11/04/2021 2.10.2
