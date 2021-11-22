@@ -353,7 +353,9 @@ export class SwaggerSemanticValidator {
       } else {
         const discriminatorProp = jsonLoader.resolveRefObj(sch.properties[d]);
         if (discriminatorProp.type !== "string") {
-          const meta = getOavErrorMeta("INVALID_DISCRIMINATOR_TYPE", {});
+          const meta = getOavErrorMeta("INVALID_DISCRIMINATOR_TYPE", {
+            property: d,
+          });
           this.addErrorsFromErrorCode(errors, rootInfo.url, meta, sch);
           continue;
         }

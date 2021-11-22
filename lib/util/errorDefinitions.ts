@@ -256,7 +256,7 @@ export const semanticValidationErrors = {
   },
   INVALID_DISCRIMINATOR_TYPE: {
     severity: Severity.Critical,
-    message: strTemplate`The property type of discriminator must be string.`,
+    message: strTemplate`The property type of discriminator must be string: ${"property"}`,
     id: "OAV132",
   },
   INVALID_XMS_DISCRIMINATOR_VALUE: {
