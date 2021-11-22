@@ -1,0 +1,93 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "title",
+    "description": "",
+    "version": "2016-11-01"
+  },
+  "host": "host",
+  "schemes": ["https"],
+  "paths": {
+    "/hello": {
+      "get": {
+        "tags": ["Insipid"],
+        "operationId": "Insipid_Hello",
+        "description": "Very boring operation",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Animal"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Animal": {
+      "discriminator": "animalType",
+      "description": "An animal.",
+      "properties": {
+        "name": {
+          "description": "Animal name.",
+          "type": "string"
+        },
+        "animalType": {
+          "$ref": "#/definitions/AnimalType",
+          "description": "Type of activity."
+        },
+        "siblings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Animal"
+          }
+        }
+      },
+      "required": ["name", "animalType"]
+    },
+    "Mammal": {
+      "x-ms-discriminator-value": "Microsoft.Mammal",
+      "description": "Base class for all Mammals.",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Animal"
+        }
+      ],
+      "properties": {
+        "makeNoise": {
+          "description": "Whether make noise or not.",
+          "type": "boolean"
+        }
+      }
+    },
+    "Mouse": {
+      "x-ms-discriminator-value": "Microsoft.Mouse1",
+      "description": "class for Mouse mammal animal.",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Mammal"
+        }
+      ]
+    },
+    "Cat": {
+      "x-ms-discriminator-value": "Microsoft.Cat",
+      "description": "class for Cat.",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Mammal"
+        }
+      ],
+      "properties": {
+        "color": {
+          "type": "string"
+        }
+      }
+    },
+    "AnimalType": {
+      "description": "Animal type.",
+      "type": "string",
+      "enum": ["Tiger", "Microsoft.Cat", "Microsoft.Mouse", "Microsoft.Mammal"]
+    }
+  }
+}

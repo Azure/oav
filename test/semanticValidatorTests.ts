@@ -120,15 +120,26 @@ describe("Semantic validation", () => {
         "OBJECT_MISSING_REQUIRED_PROPERTY_DEFINITION"
       );
     });
-    // DISCRIMINATOR_PROPERTY_TYPE_NOT_STRING
+    // INVALID_DISCRIMINATOR_TYPE
     it("should fail when discriminator property type is not string", async () => {
-      const specPath = `${testPath}/semanticValidation/specification/discriminator/DISCRIMINATOR_PROPERTY_TYPE_NOT_STRING.json`;
+      const specPath = `${testPath}/semanticValidation/specification/discriminator/INVALID_DISCRIMINATOR_TYPE.json`;
       const result = await validate.validateSpec(specPath, undefined);
       assert(result.validityStatus === false);
-      assert.strictEqual(
-        result.validateSpec?.errors?.[0].code,
-        "DISCRIMINATOR_PROPERTY_TYPE_NOT_STRING"
-      );
+      assert.strictEqual(result.validateSpec?.errors?.[0].code, "INVALID_DISCRIMINATOR_TYPE");
+    });
+    // INVALID_XMS_DISCRIMINATOR_VALUE
+    it("should fail when discriminator value is not in enum list", async () => {
+      const specPath = `${testPath}/semanticValidation/specification/discriminator/INVALID_XMS_DISCRIMINATOR_VALUE.json`;
+      const result = await validate.validateSpec(specPath, undefined);
+      assert(result.validityStatus === false);
+      assert.strictEqual(result.validateSpec?.errors?.[0].code, "INVALID_XMS_DISCRIMINATOR_VALUE");
+    });
+    // DISCRIMINATOR_PROPERTY_NOT_FOUND
+    it("should fail when parent's discriminator is missing", async () => {
+      const specPath = `${testPath}/semanticValidation/specification/discriminator/DISCRIMINATOR_PROPERTY_NOT_FOUND.json`;
+      const result = await validate.validateSpec(specPath, undefined);
+      assert(result.validityStatus === false);
+      assert.strictEqual(result.validateSpec?.errors?.[0].code, "DISCRIMINATOR_PROPERTY_NOT_FOUND");
     });
   });
 

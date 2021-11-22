@@ -8,6 +8,7 @@
 - SemanticValidator - Fix false alarm for MISSING_PATH_PARAMETER_DEFINITION
 - ModelValidator/SemanticValidator - support suppression on error code
 - Use `new URL` instead of `url.parse`. Since url.parse will encode url and will be deprecated.
+- SemanticValidator - Add new rules of 'INVALID_XMS_DISCRIMINATOR_VALUE' and 'DISCRIMINATOR_PROPERTY_NOT_FOUND'
 
 ## 11/04/2021 2.10.2
 
