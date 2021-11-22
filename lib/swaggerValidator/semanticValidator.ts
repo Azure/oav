@@ -413,10 +413,12 @@ export class SwaggerSemanticValidator {
     const visitedPathTemplate = new Set<string>();
     const url = spec._filePath;
     const pathArgs = new Set<string>();
+    let pathParams: Parameter[] | undefined;
 
     traverseSwagger(spec, {
       onPath: (path) => {
         pathArgs.clear();
+        pathParams = path.parameters;
         const pathTemplate = path._pathTemplate;
         let normalizedPath = pathTemplate;
 
@@ -444,6 +446,7 @@ export class SwaggerSemanticValidator {
         const requiredPathArgs = new Set(pathArgs);
         const visitedParamName = new Set<string>();
         const { operationId, parameters } = operation;
+        const mergedParameters = [...(parameters ?? []), ...(pathParams ?? [])];
 
         if (operationId !== undefined) {
           if (visitedOperationId.has(operationId)) {
@@ -454,7 +457,7 @@ export class SwaggerSemanticValidator {
           }
         }
 
-        for (const p of parameters ?? []) {
+        for (const p of mergedParameters) {
           const param = this.jsonLoader.resolveRefObj(p);
           const { name } = param;
 
