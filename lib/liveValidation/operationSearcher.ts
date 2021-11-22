@@ -358,7 +358,7 @@ export function getProviderFromSpecPath(specPath: string): PathProvider | undefi
     : { provider: manageManagementMatch[1], type: "resource-manager" };
 }
 const managementPlaneProviderInSpecPathRegEx = new RegExp("/(resource-manager)/(:?[^{/]+)", "gi");
-const dataPlaneProviderInSpecPathRegEx = new RegExp("/(resource-manager)/(:?[^{/]+)", "gi");
+const dataPlaneProviderInSpecPathRegEx = new RegExp("/(data-plane)/(:?[^{/]+)", "gi");
 
 /**
  * Gets list of matched operations objects for given url.
