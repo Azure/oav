@@ -844,7 +844,7 @@ export const parseValidationRequest = (
     // Lower all the keys and values of query parameters before searching for `api-version`
     const queryObject: ParsedUrlQuery = {};
     parsedUrl.searchParams.forEach((value, key) => {
-      queryObject[key.toLowerCase()] = value;
+      queryObject[key.toLowerCase()] = value.toLowerCase();
     });
 
     apiVersion = (queryObject["api-version"] || C.unknownApiVersion) as string;
