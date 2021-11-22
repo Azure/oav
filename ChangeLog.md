@@ -7,6 +7,7 @@
 - LiveValidator - ignore LRO header check if using 201/200+ provisioningState
 - SemanticValidator - Fix false alarm for MISSING_PATH_PARAMETER_DEFINITION
 - ModelValidator/SemanticValidator - support suppression on error code
+- SemanticValidator - Add new rules of 'INVALID_XMS_DISCRIMINATOR_VALUE' and 'DISCRIMINATOR_PROPERTY_NOT_FOUND'
 
 ## 11/04/2021 2.10.2
 
