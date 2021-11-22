@@ -18,11 +18,9 @@ describe("LiveValidator for data-plane", () => {
       const liveValidator = new LiveValidator(options);
       await liveValidator.initialize();
       expect(liveValidator.operationSearcher.cache.size).toEqual(1);
-      console.log(liveValidator.operationSearcher.cache.keys());
-    });
-
-    it("should initialize multi data-plane swagger without conflict", async () => {
-      // const swaggerPathsPattern = [];
+      expect(Array.from(liveValidator.operationSearcher.cache.keys())).toEqual([
+        "microsoft.unknown",
+      ]);
     });
   });
 });
