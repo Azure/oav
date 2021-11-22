@@ -5,6 +5,7 @@
 - Fix 'generate-examples' command failed to generate correct format for ‘uri’ format parameter
 - LiveValidatorLoader - make response headers as optional for swagger 2.0
 - LiveValidator - ignore LRO header check if using 201/200+ provisioningState
+- SemanticValidator - Fix false alarm for MISSING_PATH_PARAMETER_DEFINITION
 - ModelValidator/SemanticValidator - support suppression on error code
 - SemanticValidator - Add new rules of 'INVALID_XMS_DISCRIMINATOR_VALUE' and 'DISCRIMINATOR_PROPERTY_NOT_FOUND'
 
