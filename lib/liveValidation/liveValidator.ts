@@ -6,8 +6,8 @@ import * as os from "os";
 import * as path from "path";
 import { resolve as pathResolve } from "path";
 import { ParsedUrlQuery } from "querystring";
-import * as url from "url";
 import * as util from "util";
+import { URL } from "url";
 import * as _ from "lodash";
 import * as models from "../models";
 import { requestResponseDefinition } from "../models/requestResponse";
@@ -24,6 +24,7 @@ import { RuntimeException } from "../util/validationError";
 import { inversifyGetContainer, inversifyGetInstance, TYPES } from "../inversifyUtils";
 import { setDefaultOpts } from "../swagger/loader";
 import { apiValidationErrors, ApiValidationErrorCode } from "../util/errorDefinitions";
+import { kvPairsToObject } from "../util/utils";
 import { LiveValidatorLoader, LiveValidatorLoaderOption } from "./liveValidatorLoader";
 import { getProviderFromPathTemplate, OperationSearcher } from "./operationSearcher";
 import {
@@ -382,7 +383,9 @@ export class LiveValidator {
       };
     }
     if (!liveRequest.query) {
-      liveRequest.query = url.parse(liveRequest.url, true).query;
+      liveRequest.query = kvPairsToObject(
+        new URL(liveRequest.url, "https://management.azure.com").searchParams
+      );
     }
     let errors: LiveValidationIssue[] = [];
     let runtimeException;
@@ -715,6 +718,7 @@ export class LiveValidator {
 
       const startTimeAddSpecToCache = Date.now();
       this.operationSearcher.addSpecToCache(spec);
+      // TODO: add data-plane RP to cache.
       this.logging(
         `Add spec to cache ${swaggerPath}`,
         LiveValidatorLoggingLevels.info,
@@ -834,15 +838,15 @@ export const parseValidationRequest = (
   let resourceType = "";
   let providerNamespace = "";
 
-  const parsedUrl = url.parse(requestUrl, true);
+  const parsedUrl = new URL(requestUrl, "https://management.azure.com");
   const pathStr = parsedUrl.pathname || "";
   if (pathStr !== "") {
     // Lower all the keys and values of query parameters before searching for `api-version`
-    const queryObject = _.transform(
-      parsedUrl.query,
-      (obj: ParsedUrlQuery, value, key) =>
-        (obj[key.toLowerCase()] = _.isString(value) ? value.toLowerCase() : value)
-    );
+    const queryObject: ParsedUrlQuery = {};
+    parsedUrl.searchParams.forEach((value, key) => {
+      queryObject[key.toLowerCase()] = value.toLowerCase();
+    });
+
     apiVersion = (queryObject["api-version"] || C.unknownApiVersion) as string;
     providerNamespace = getProviderFromPathTemplate(pathStr) || C.unknownResourceProvider;
     resourceType = utils.getResourceType(pathStr, providerNamespace);

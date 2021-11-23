@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import * as url from "url";
+import { URL } from "url";
 import { mapEntries, MutableStringMap } from "@azure-tools/openapi-tools-common";
 import * as msRest from "ms-rest";
 
@@ -30,7 +30,9 @@ export class HttpTemplate {
 
   protected getHost(): string | undefined {
     const requestUrl = this.request.url;
-    return requestUrl ? url.parse(requestUrl).host : "management.azure.com";
+    return requestUrl
+      ? new URL(requestUrl, "https://management.azure.com").host
+      : "management.azure.com";
   }
 
   protected getCurlRequestHeaders(padding?: string): string {

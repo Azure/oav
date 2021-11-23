@@ -3,7 +3,7 @@
 
 import * as fs from "fs";
 import * as pathlib from "path";
-import * as url from "url";
+import { URL } from "url";
 import {
   MutableStringMap,
   StringMap,
@@ -14,6 +14,7 @@ import {
 } from "@azure-tools/openapi-tools-common";
 import swaggerParser from "swagger-parser";
 import { log } from "./util/logging";
+import { kvPairsToObject } from "./util/utils";
 
 interface Options {
   output?: string;
@@ -142,9 +143,10 @@ export class XMsExampleExtractor {
       let queryParams: any = {};
       for (const recordingEntry of values(recordingEntries)) {
         entryIndex++;
-        const parsedUrl = url.parse(recordingEntry.RequestUri, true);
+        const parsedUrl = new URL(recordingEntry.RequestUri, "https://management.azure.com");
         let recordingPath = parsedUrl.href || "";
-        queryParams = parsedUrl.query || {};
+
+        queryParams = kvPairsToObject(parsedUrl.searchParams) || {};
         const hostUrl = parsedUrl ? parsedUrl.protocol! + "//" + parsedUrl.hostname! : undefined;
 
         const headerParams = recordingEntry.RequestHeaders;
