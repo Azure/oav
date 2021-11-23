@@ -634,7 +634,7 @@ export class LiveValidator {
   }
 
   private getOperationInfo(
-    request: { url: string; method: string },
+    request: { url: string; method: string; headers?: { [propertyName: string]: string } },
     correlationId: string,
     operationInfo?: OperationContext
   ): {
@@ -650,7 +650,8 @@ export class LiveValidator {
         info.validationRequest = this.parseValidationRequest(
           request.url,
           request.method,
-          correlationId
+          correlationId,
+          request.headers?.["x-ms-resource-provider"]
         );
       }
       if (info.operationMatch === undefined) {
@@ -668,9 +669,10 @@ export class LiveValidator {
   public parseValidationRequest(
     requestUrl: string,
     requestMethod: string | undefined | null,
-    correlationId: string
+    correlationId: string,
+    resourceProvider?: string
   ): ValidationRequest {
-    return parseValidationRequest(requestUrl, requestMethod, correlationId);
+    return parseValidationRequest(requestUrl, requestMethod, correlationId, resourceProvider);
   }
 
   private async getMatchedPaths(jsonsPattern: string | string[]): Promise<string[]> {
@@ -753,8 +755,8 @@ export class LiveValidator {
       );
 
       const startTimeAddSpecToCache = Date.now();
-      this.operationSearcher.addSpecToCache(spec);
-      // TODO: add data-plane RP to cache.
+      const provider = getProviderFromSpecPath(swaggerPath);
+      this.operationSearcher.addSpecToCache(spec, provider);
       this.logging(
         `Add spec to cache ${swaggerPath}`,
         LiveValidatorLoggingLevels.info,
@@ -862,7 +864,8 @@ export function formatUrlToExpectedFormat(requestUrl: string): string {
 export const parseValidationRequest = (
   requestUrl: string,
   requestMethod: string | undefined | null,
-  correlationId: string
+  correlationId: string,
+  resourceProvider?: string
 ): ValidationRequest => {
   if (
     requestUrl === undefined ||
@@ -904,7 +907,8 @@ export const parseValidationRequest = (
     });
 
     apiVersion = (queryObject["api-version"] || C.unknownApiVersion) as string;
-    providerNamespace = getProviderFromPathTemplate(pathStr) || C.unknownResourceProvider;
+    providerNamespace =
+      getProviderFromPathTemplate(pathStr) || resourceProvider || C.unknownResourceProvider;
     resourceType = utils.getResourceType(pathStr, providerNamespace);
 
     // Provider would be provider found from the path or Microsoft.Unknown

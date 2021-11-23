@@ -48,14 +48,16 @@ export class OperationSearcher {
     ) => void
   ) {}
 
-  public addSpecToCache(spec: SwaggerSpec) {
+  public addSpecToCache(spec: SwaggerSpec, resourceProvider: PathProvider | undefined = undefined) {
     traverseSwagger(spec, {
       onOperation: (operation, path, method) => {
         const httpMethod = method.toLowerCase() as LowerHttpMethods;
         const pathObject = path;
         const pathStr = pathObject._pathTemplate;
         let apiVersion = spec.info.version;
-        let provider = getProviderFromPathTemplate(pathStr);
+        const dataPlaneProvider =
+          resourceProvider?.type === "data-plane" ? resourceProvider.provider : undefined;
+        let provider = getProviderFromPathTemplate(pathStr) || dataPlaneProvider;
 
         const addOperationToCache = () => {
           let apiVersions = this.cache.get(provider!);
