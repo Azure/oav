@@ -135,6 +135,9 @@ export type Path = {
   _spec: SwaggerSpec;
 };
 
+// indicate data-plane or management-plane.
+export const operationTypeSymbol = Symbol.for("operationTypeSymbol");
+
 // ----------------------------- Operation -----------------------------------
 export interface Operation {
   responses: { [responseName: string]: Response };
@@ -152,6 +155,7 @@ export interface Operation {
   [xmsLongRunningOperation]?: boolean;
   [xmsLongRunningOperationOptions]?: { [xmsLongRunningOperationOptionsField]: string };
   [xmsExamples]?: { [description: string]: SwaggerExample };
+  [operationTypeSymbol]: string;
 
   // TODO check why do we need provider
   provider?: string;

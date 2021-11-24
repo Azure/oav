@@ -25,6 +25,8 @@ export const xmsMutability = "x-ms-mutability";
 
 export const xmsAzureResource = "x-ms-azure-resource";
 
+export const xmsResourceProvider = "x-ms-resource-provider";
+
 export const xmsSecret = "x-ms-secret";
 
 export const xNullable = "x-nullable";

@@ -1,6 +1,6 @@
 import { ParsedUrlQuery } from "querystring";
 import { LiveValidationError } from "../models";
-import { LowerHttpMethods, Operation, SwaggerSpec } from "../swagger/swaggerTypes";
+
 import { RegExpWithKeys } from "../transform/pathRegexTransformer";
 import { traverseSwagger } from "../transform/traverseSwagger";
 import {
@@ -11,6 +11,12 @@ import {
 } from "../util/constants";
 import { getOavErrorMeta } from "../util/errorDefinitions";
 import { Writable } from "../util/utils";
+import {
+  operationTypeSymbol,
+  LowerHttpMethods,
+  Operation,
+  SwaggerSpec,
+} from "./../swagger/swaggerTypes";
 import { LiveValidatorLoggingLevels, LiveValidatorLoggingTypes } from "./liveValidator";
 import { ValidationRequest } from "./operationValidator";
 
@@ -58,6 +64,7 @@ export class OperationSearcher {
         const dataPlaneProvider =
           resourceProvider?.type === "data-plane" ? resourceProvider.provider : undefined;
         let provider = getProviderFromPathTemplate(pathStr) || dataPlaneProvider;
+        const operationType = resourceProvider?.type || "resource-manager";
 
         const addOperationToCache = () => {
           let apiVersions = this.cache.get(provider!);
@@ -77,6 +84,7 @@ export class OperationSearcher {
             operationsForHttpMethod = [];
             allMethods.set(httpMethod, operationsForHttpMethod);
           }
+          operation[operationTypeSymbol] = operationType;
 
           operationsForHttpMethod.push(operation);
         };
