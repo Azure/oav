@@ -651,7 +651,7 @@ export class LiveValidator {
           request.url,
           request.method,
           correlationId,
-          request.headers?.["x-ms-resource-provider"]
+          request.headers?.[C.xmsResourceProvider]
         );
       }
       if (info.operationMatch === undefined) {
