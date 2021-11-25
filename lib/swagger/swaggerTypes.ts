@@ -372,4 +372,5 @@ export interface SwaggerSpec {
   [xmsParameterizedHost]?: XMsParameterizedHost;
 
   _filePath: string;
+  _providerNamespace?: string;
 }

@@ -28,14 +28,15 @@ import { OperationMatch } from "./operationSearcher";
 
 export interface ValidationRequest {
   providerNamespace: string;
-  resourceType: string;
+  resourceType?: string;
   apiVersion: string;
-  requestMethod: LowerHttpMethods;
-  host: string;
-  pathStr: string;
+  requestMethod?: LowerHttpMethods;
+  host?: string;
+  pathStr?: string;
   query?: ParsedUrlQuery;
   correlationId?: string;
-  requestUrl: string;
+  requestUrl?: string;
+  specName?: string;
 }
 
 export interface OperationContext {

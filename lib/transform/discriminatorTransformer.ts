@@ -1,4 +1,5 @@
 import { copyInfo } from "@azure-tools/openapi-tools-common";
+import { LiveValidatorLoggingLevels } from "../liveValidation/liveValidator";
 import { isRefLike, JsonLoader } from "../swagger/jsonLoader";
 import { refSelfSymbol, Schema } from "../swagger/swaggerTypes";
 import { xmsDiscriminatorValue } from "../util/constants";
@@ -74,7 +75,10 @@ export const discriminatorTransformer: GlobalTransformer = {
         baseSch.discriminatorMap[discriminatorValue] = { $ref } as unknown as Schema;
       } catch (e) {
         if (logging) {
-          logging(`Fail to transform ${sch}. ErrorMessage:${e?.message};ErrorStack:${e?.stack}.`);
+          logging(
+            `Fail to transform ${sch}. ErrorMessage:${e?.message};ErrorStack:${e?.stack}.`,
+            LiveValidatorLoggingLevels.error
+          );
         } else {
           console.log(
             `Fail to transform ${sch}. ErrorMessage:${e?.message};ErrorStack:${e?.stack}.`
