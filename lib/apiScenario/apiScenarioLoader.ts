@@ -46,6 +46,9 @@ import {
   RawStepRawCall,
   StepRawCall,
   RawStepRestOperation,
+  RawStepArmScript,
+  ArmTemplate,
+  VariableType,
 } from "./apiScenarioTypes";
 import { TemplateGenerator } from "./templateGenerator";
 import { BodyTransformer } from "./bodyTransformer";
@@ -53,6 +56,10 @@ import { jsonPatchApply } from "./diffUtils";
 import { ApiScenarioYamlLoader } from "./apiScenarioYamlLoader";
 import { ApiScenarioRunner } from "./apiScenarioRunner";
 import { VariableEnv } from "./variableEnv";
+
+import armDeploymentScriptTemplate from "./templates/armScriptTemplate.json";
+
+const variableRegex = /\$\(([A-Za-z_][A-Za-z0-9_]*)\)/;
 
 export interface ApiScenarioLoaderOption
   extends FileLoaderOption,
@@ -288,8 +295,10 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     try {
       if ("exampleFile" in rawStep || "operationId" in rawStep) {
         testStep = await this.loadStepRestCall(rawStep, ctx);
-      } else if ("armTemplateDeployment" in rawStep) {
+      } else if ("armTemplate" in rawStep) {
         testStep = await this.loadStepArmTemplate(rawStep, ctx);
+      } else if ("armDeploymentScript" in rawStep) {
+        testStep = await this.loadStepArmDeploymentScript(rawStep, ctx);
       } else if ("rawUrl" in rawStep) {
         testStep = await this.loadStepRawCall(rawStep, ctx);
       } else {
@@ -321,6 +330,76 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     return step;
   }
 
+  private async loadStepArmDeploymentScript(
+    rawStep: RawStepArmScript,
+    ctx: ApiScenarioContext
+  ): Promise<StepArmTemplate> {
+    const step: StepArmTemplate = {
+      type: "armTemplateDeployment",
+      step: rawStep.step,
+      outputVariables: rawStep.outputVariables ?? {},
+      armTemplate: "",
+      armTemplatePayload: {},
+      ...convertVariables(rawStep.variables),
+    };
+    const { scenarioDef } = ctx;
+
+    const payload = cloneDeep(armDeploymentScriptTemplate) as ArmTemplate;
+    step.armTemplatePayload = payload;
+
+    const resource = payload.resources![0];
+    resource.name = rawStep.step;
+
+    if (rawStep.armDeploymentScript.endsWith(".ps1")) {
+      resource.kind = "AzurePowerShell";
+      resource.properties.azPowerShellVersion = "6.2";
+    } else {
+      resource.kind = "AzureCLI";
+      resource.properties.azCliVersion = "2.0.80";
+    }
+
+    const filePath = pathJoin(dirname(scenarioDef._filePath), rawStep.armDeploymentScript);
+    const scriptContent = await this.fileLoader.load(filePath);
+    resource.properties.scriptContent = scriptContent;
+
+    for (const variable of rawStep.environmentVariables ?? []) {
+      if (this.getVariableType(variable.value, step, ctx) === "secureString") {
+        resource.properties.environmentVariables.push({
+          name: variable.name,
+          secureValue: variable.value,
+        });
+      } else {
+        resource.properties.environmentVariables.push({
+          name: variable.name,
+          value: variable.value,
+        });
+      }
+    }
+
+    return step;
+  }
+
+  private getVariableType(variable: string, step: Step, ctx: ApiScenarioContext): VariableType {
+    const { scenarioDef, scenario } = ctx;
+
+    if (variableRegex.test(variable)) {
+      const globalRegex = new RegExp(variableRegex, "g");
+      let match;
+      while ((match = globalRegex.exec(variable))) {
+        const refKey = match[1];
+        if (
+          step.secretVariables.includes(refKey) ||
+          scenario?.secretVariables.includes(refKey) ||
+          scenarioDef.secretVariables.includes(refKey)
+        ) {
+          return "secureString";
+        }
+      }
+    }
+
+    return "string";
+  }
+
   private async loadStepArmTemplate(
     rawStep: RawStepArmTemplate,
     ctx: ApiScenarioContext
@@ -329,14 +408,14 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       type: "armTemplateDeployment",
       step: rawStep.step,
       outputVariables: rawStep.outputVariables ?? {},
-      armTemplateDeployment: rawStep.armTemplateDeployment,
+      armTemplate: rawStep.armTemplate,
       armTemplatePayload: {},
       ...convertVariables(rawStep.variables),
     };
     const { scenarioDef, scenario } = ctx;
     const variableScope: VariableScope = scenario ?? scenarioDef;
 
-    const filePath = pathJoin(dirname(scenarioDef._filePath), step.armTemplateDeployment);
+    const filePath = pathJoin(dirname(scenarioDef._filePath), step.armTemplate);
     const armTemplateContent = await this.fileLoader.load(filePath);
     step.armTemplatePayload = JSON.parse(armTemplateContent);
 

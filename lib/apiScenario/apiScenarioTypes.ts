@@ -58,7 +58,12 @@ type RawStepRestBase = RawStepBase & {
 };
 
 export type Step = StepRestCall | StepArmTemplate | StepRawCall;
-export type RawStep = RawStepRestCall | RawStepRestOperation | RawStepArmTemplate | RawStepRawCall;
+export type RawStep =
+  | RawStepRestCall
+  | RawStepRestOperation
+  | RawStepArmTemplate
+  | RawStepArmScript
+  | RawStepRawCall;
 
 //#endregion
 
@@ -92,10 +97,21 @@ export type RawStepRestOperation = RawStepRestBase & {
 };
 //#endregion
 
+//#region Step Arm Script Template
+export type RawStepArmScript = RawStepBase & {
+  armDeploymentScript: string;
+  arguments?: string;
+  environmentVariables?: Array<{
+    name: string;
+    value: string;
+  }>;
+};
+//#endregion
+
 //#region Step Arm Template Deployment
 
 export type RawStepArmTemplate = RawStepBase & {
-  armTemplateDeployment: string;
+  armTemplate: string;
 };
 
 export type StepArmTemplate = TransformRaw<
@@ -118,6 +134,8 @@ export type ArmTemplateVariableType =
   | "secureObject"
   | "array";
 
+export type ArmScriptKind = "AzurePowerShell" | "AzureCLI";
+
 export interface ArmTemplate {
   parameters?: {
     [name: string]: {
@@ -131,6 +149,21 @@ export interface ArmTemplate {
       type: ArmTemplateVariableType;
     };
   };
+  resources?: Array<{
+    name: string;
+    kind: ArmScriptKind;
+    properties: {
+      arguments?: string;
+      azPowerShellVersion?: string;
+      azCliVersion?: string;
+      scriptContent: string;
+      environmentVariables: Array<{
+        name: string;
+        value?: string;
+        secureValue?: string;
+      }>;
+    };
+  }>;
 }
 
 //#endregion

@@ -117,6 +117,9 @@ export const ApiScenarioDefinition: Schema & {
           $ref: "#/definitions/StepArmTemplateDeployment",
         },
         {
+          $ref: "#/definitions/StepArmDeploymentScript",
+        },
+        {
           $ref: "#/definitions/StepRawCall",
         },
       ],
@@ -238,11 +241,43 @@ export const ApiScenarioDefinition: Schema & {
         },
       ],
       properties: {
-        armTemplateDeployment: {
+        armTemplate: {
           type: "string",
         },
       },
-      required: ["armTemplateDeployment"],
+      required: ["armTemplate"],
+    },
+    StepArmDeploymentScript: {
+      type: "object",
+      allOf: [
+        {
+          $ref: "#/definitions/StepBase",
+        },
+      ],
+      properties: {
+        armDeploymentScript: {
+          type: "string",
+        },
+        arguments: {
+          type: "string",
+        },
+        environmentVariables: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              name: {
+                type: "string",
+              },
+              value: {
+                type: "string",
+              },
+            },
+            required: ["name", "value"],
+          },
+        },
+      },
+      required: ["armDeploymentScript"],
     },
     StepRawCall: {
       type: "object",
