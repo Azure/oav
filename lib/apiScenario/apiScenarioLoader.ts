@@ -364,12 +364,12 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
 
     for (const variable of rawStep.environmentVariables ?? []) {
       if (this.getVariableType(variable.value, step, ctx) === "secureString") {
-        resource.properties.environmentVariables.push({
+        resource.properties.environmentVariables!.push({
           name: variable.name,
           secureValue: variable.value,
         });
       } else {
-        resource.properties.environmentVariables.push({
+        resource.properties.environmentVariables!.push({
           name: variable.name,
           value: variable.value,
         });

@@ -134,7 +134,30 @@ export type ArmTemplateVariableType =
   | "secureObject"
   | "array";
 
+export type ArmResource = ArmDeploymentScriptResource;
+
+interface ArmResourceBase {
+  name: string;
+  apiVersion: string;
+}
+
 export type ArmScriptKind = "AzurePowerShell" | "AzureCLI";
+
+export type ArmDeploymentScriptResource = ArmResourceBase & {
+  type: "Microsoft.Resources/deploymentScripts";
+  kind: ArmScriptKind;
+  properties: {
+    arguments?: string;
+    azPowerShellVersion?: string;
+    azCliVersion?: string;
+    scriptContent: string;
+    environmentVariables?: Array<{
+      name: string;
+      value?: string;
+      secureValue?: string;
+    }>;
+  };
+};
 
 export interface ArmTemplate {
   parameters?: {
@@ -149,21 +172,7 @@ export interface ArmTemplate {
       type: ArmTemplateVariableType;
     };
   };
-  resources?: Array<{
-    name: string;
-    kind: ArmScriptKind;
-    properties: {
-      arguments?: string;
-      azPowerShellVersion?: string;
-      azCliVersion?: string;
-      scriptContent: string;
-      environmentVariables: Array<{
-        name: string;
-        value?: string;
-        secureValue?: string;
-      }>;
-    };
-  }>;
+  resources?: ArmResource[];
 }
 
 //#endregion

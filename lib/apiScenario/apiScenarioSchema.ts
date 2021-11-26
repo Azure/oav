@@ -114,7 +114,7 @@ export const ApiScenarioDefinition: Schema & {
           $ref: "#/definitions/StepRestOperation",
         },
         {
-          $ref: "#/definitions/StepArmTemplateDeployment",
+          $ref: "#/definitions/StepArmTemplate",
         },
         {
           $ref: "#/definitions/StepArmDeploymentScript",
@@ -233,7 +233,7 @@ export const ApiScenarioDefinition: Schema & {
       },
       required: ["operationId", "resourceName"],
     },
-    StepArmTemplateDeployment: {
+    StepArmTemplate: {
       type: "object",
       allOf: [
         {
