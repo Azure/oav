@@ -13,7 +13,7 @@ import * as Constants from "../lib/util/constants";
 // eslint-disable-next-line no-var
 var glob = require("glob").glob;
 
-const numberOfSpecs = 14;
+const numberOfSpecs = 15;
 jest.setTimeout(999999);
 
 describe("Live Validator", () => {
@@ -248,13 +248,6 @@ describe("Live Validator", () => {
             "delete": 1,
             "get": 2,
             "put": 1,
-          },
-          "2019-02-02": Object {
-            "delete": 2,
-            "get": 6,
-            "patch": 1,
-            "post": 2,
-            "put": 3,
           },
         }
       `);
@@ -711,11 +704,13 @@ describe("Live Validator", () => {
     it(`should pass response header tests`, async () => {
       const options = {
         directory: `./test/liveValidation/swaggers/`,
-        swaggerPathsPattern: ["specification/apimanagement/resource-manager/Microsoft.ApiManagement/**/*.json"],
+        swaggerPathsPattern: [
+          "specification/apimanagement/resource-manager/Microsoft.ApiManagement/**/*.json",
+        ],
       };
       const validator = new LiveValidator(options);
       await validator.initialize();
-  
+
       const payload = require(`${__dirname}/liveValidation/payloads/missingResponseHeader_shouldSucceed.json`);
       const result = await validator.validateLiveRequestResponse(payload);
       assert.strictEqual(result.responseValidationResult.isSuccessful, true);
