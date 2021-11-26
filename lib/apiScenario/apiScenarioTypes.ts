@@ -138,17 +138,28 @@ export type ArmResource = {
   name: string;
   apiVersion: string;
   type: string;
+  location?: string;
   properties?: object;
 };
 
 export type ArmDeploymentScriptResource = ArmResource & {
   type: "Microsoft.Resources/deploymentScripts";
   kind: "AzurePowerShell" | "AzureCLI";
+  identity?: {
+    type: "UserAssigned";
+    userAssignedIdentities: {
+      [name: string]: {};
+    };
+  };
   properties: {
     arguments?: string;
     azPowerShellVersion?: string;
     azCliVersion?: string;
     scriptContent: string;
+    forceUpdateTag?: string;
+    timeout?: string;
+    cleanupPreference?: string;
+    retentionInterval?: string;
     environmentVariables?: Array<{
       name: string;
       value?: string;
@@ -158,6 +169,7 @@ export type ArmDeploymentScriptResource = ArmResource & {
 };
 
 export type ArmTemplate = {
+  contentVersion?: string;
   parameters?: {
     [name: string]: {
       type: ArmTemplateVariableType;

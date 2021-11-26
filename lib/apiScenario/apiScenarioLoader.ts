@@ -57,8 +57,7 @@ import { jsonPatchApply } from "./diffUtils";
 import { ApiScenarioYamlLoader } from "./apiScenarioYamlLoader";
 import { ApiScenarioRunner } from "./apiScenarioRunner";
 import { VariableEnv } from "./variableEnv";
-
-import armDeploymentScriptTemplate from "./templates/armScriptTemplate.json";
+import { armDeploymentScriptTemplate } from "./constants";
 
 const variableRegex = /\$\(([A-Za-z_][A-Za-z0-9_]*)\)/;
 
