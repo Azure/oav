@@ -49,6 +49,7 @@ import {
   RawStepArmScript,
   ArmTemplate,
   VariableType,
+  ArmDeploymentScriptResource,
 } from "./apiScenarioTypes";
 import { TemplateGenerator } from "./templateGenerator";
 import { BodyTransformer } from "./bodyTransformer";
@@ -347,7 +348,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     const payload = cloneDeep(armDeploymentScriptTemplate) as ArmTemplate;
     step.armTemplatePayload = payload;
 
-    const resource = payload.resources![0];
+    const resource = payload.resources![0] as ArmDeploymentScriptResource;
     resource.name = rawStep.step;
 
     if (rawStep.armDeploymentScript.endsWith(".ps1")) {
