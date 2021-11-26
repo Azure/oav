@@ -169,6 +169,7 @@ export type ArmDeploymentScriptResource = ArmResource & {
 };
 
 export type ArmTemplate = {
+  $schema?: string;
   contentVersion?: string;
   parameters?: {
     [name: string]: {
