@@ -16,21 +16,22 @@ const initializeTableValidator = async () => {
   return validator;
 };
 
+let liveValidatorPromise: Promise<LiveValidator>;
+beforeAll(() => {
+  liveValidatorPromise = initializeTableValidator();
+});
+
 describe("Initialize data-plane swagger", () => {
   it("Initialization", async () => {
-    const liveValidator = await initializeTableValidator();
+    const liveValidator = await liveValidatorPromise;
     expect(liveValidator.operationSearcher.cache.size).toEqual(1);
     expect(Array.from(liveValidator.operationSearcher.cache.keys())).toEqual(["microsoft.tables"]);
   });
 });
 
 describe("Validate data-plane swagger", () => {
-  let liveValidator: LiveValidator;
-  beforeAll(async () => {
-    liveValidator = await initializeTableValidator();
-  });
-
   it("should return success when validate with x-ms-resource-provider", async () => {
+    const liveValidator = await liveValidatorPromise;
     const payloadPathWithProvider = path.resolve(
       "test/liveValidation/payloads/dataplane/deleteCosmosTable_input_withProviderInfo.json"
     );
@@ -53,6 +54,7 @@ describe("Validate data-plane swagger", () => {
   });
 
   it("should return failed when validate without x-ms-resource-provider", async () => {
+    const liveValidator = await liveValidatorPromise;
     const payloadPath = path.resolve(
       "test/liveValidation/payloads/dataplane/deleteCosmosTable_input.json"
     );
