@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 11/30/2021 2.11.0
+- Api scenario - add new step armDeploymentScript
+- Api scenario - rename step armTemplateDeployment to armTemplate
+
 ## 11/10/2021 2.10.3
 
 - Fix 'generate-examples' command failed to generate correct format for ‘uri’ format parameter

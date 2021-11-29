@@ -11,7 +11,7 @@ type TransformRaw<T, Additional = {}, OptionalKey extends keyof T = never> = {
   } &
   Additional;
 
-export interface RawVariableScope {
+export type RawVariableScope = {
   variables?: {
     [variableName: string]:
       | string
@@ -20,20 +20,20 @@ export interface RawVariableScope {
           defaultValue?: string;
         };
   };
-}
+};
 
-export interface VariableScope {
+export type VariableScope = {
   variables: { [variableName: string]: string };
   requiredVariables: string[];
   secretVariables: string[];
-}
+};
 
-export interface OutputVariables {
+export type OutputVariables = {
   [variableName: string]: {
     type?: VariableType;
     fromResponse: string;
   };
-}
+};
 
 //#endregion
 
@@ -58,7 +58,12 @@ type RawStepRestBase = RawStepBase & {
 };
 
 export type Step = StepRestCall | StepArmTemplate | StepRawCall;
-export type RawStep = RawStepRestCall | RawStepRestOperation | RawStepArmTemplate | RawStepRawCall;
+export type RawStep =
+  | RawStepRestCall
+  | RawStepRestOperation
+  | RawStepArmTemplate
+  | RawStepArmScript
+  | RawStepRawCall;
 
 //#endregion
 
@@ -92,10 +97,21 @@ export type RawStepRestOperation = RawStepRestBase & {
 };
 //#endregion
 
+//#region Step Arm Script Template
+export type RawStepArmScript = RawStepBase & {
+  armDeploymentScript: string;
+  arguments?: string;
+  environmentVariables?: Array<{
+    name: string;
+    value: string;
+  }>;
+};
+//#endregion
+
 //#region Step Arm Template Deployment
 
 export type RawStepArmTemplate = RawStepBase & {
-  armTemplateDeployment: string;
+  armTemplate: string;
 };
 
 export type StepArmTemplate = TransformRaw<
@@ -118,7 +134,43 @@ export type ArmTemplateVariableType =
   | "secureObject"
   | "array";
 
-export interface ArmTemplate {
+export type ArmResource = {
+  name: string;
+  apiVersion: string;
+  type: string;
+  location?: string;
+  properties?: object;
+};
+
+export type ArmDeploymentScriptResource = ArmResource & {
+  type: "Microsoft.Resources/deploymentScripts";
+  kind: "AzurePowerShell" | "AzureCLI";
+  identity?: {
+    type: "UserAssigned";
+    userAssignedIdentities: {
+      [name: string]: {};
+    };
+  };
+  properties: {
+    arguments?: string;
+    azPowerShellVersion?: string;
+    azCliVersion?: string;
+    scriptContent: string;
+    forceUpdateTag?: string;
+    timeout?: string;
+    cleanupPreference?: string;
+    retentionInterval?: string;
+    environmentVariables?: Array<{
+      name: string;
+      value?: string;
+      secureValue?: string;
+    }>;
+  };
+};
+
+export type ArmTemplate = {
+  $schema?: string;
+  contentVersion?: string;
   parameters?: {
     [name: string]: {
       type: ArmTemplateVariableType;
@@ -131,7 +183,8 @@ export interface ArmTemplate {
       type: ArmTemplateVariableType;
     };
   };
-}
+  resources?: ArmResource[];
+};
 
 //#endregion
 
@@ -156,36 +209,36 @@ export type StepRawCall = TransformRaw<
 
 //#region JsonPatchOp
 
-export interface JsonPatchOpAdd {
+export type JsonPatchOpAdd = {
   add: string;
   value: any;
-}
+};
 
-export interface JsonPatchOpRemove {
+export type JsonPatchOpRemove = {
   remove: string;
   oldValue?: any;
-}
+};
 
-export interface JsonPatchOpReplace {
+export type JsonPatchOpReplace = {
   replace: string;
   value: any;
   oldValue?: any;
-}
+};
 
-export interface JsonPatchOpCopy {
+export type JsonPatchOpCopy = {
   copy: string;
   from: string;
-}
+};
 
-export interface JsonPatchOpMove {
+export type JsonPatchOpMove = {
   move: string;
   from: string;
-}
+};
 
-export interface JsonPatchOpTest {
+export type JsonPatchOpTest = {
   test: string;
   value: any;
-}
+};
 
 export type JsonPatchOp =
   | JsonPatchOpAdd
@@ -237,34 +290,34 @@ export type ScenarioDefinition = TransformRaw<
 //#endregion
 
 //#region Runner specific types
-export interface RawReport {
+export type RawReport = {
   executions: RawExecution[];
   timings: any;
   variables: any;
   testScenarioName?: string;
   metadata: any;
-}
+};
 
-export interface RawExecution {
+export type RawExecution = {
   request: RawRequest;
   response: RawResponse;
   annotation?: any;
-}
-export interface RawRequest {
+};
+export type RawRequest = {
   url: string;
   method: string;
   headers: { [key: string]: any };
   body: string;
-}
+};
 
-export interface RawResponse {
+export type RawResponse = {
   statusCode: number;
   headers: { [key: string]: any };
   body: string;
-}
+};
 
-export interface TestResources {
+export type TestResources = {
   ["test-resources"]: Array<{ [key: string]: string }>;
-}
+};
 
 //#endregion
