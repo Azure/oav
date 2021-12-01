@@ -3,6 +3,7 @@ import { inject, injectable } from "inversify";
 import { TYPES } from "../inversifyUtils";
 import { traverseSwagger } from "../transform/traverseSwagger";
 import { xmsExamples } from "../util/constants";
+import { getProviderFromSpecPath } from "../liveValidation/operationSearcher";
 import { FileLoader, FileLoaderOption } from "./fileLoader";
 import { JsonLoader, JsonLoaderOption } from "./jsonLoader";
 import { Loader, setDefaultOpts } from "./loader";
@@ -43,6 +44,8 @@ export class SwaggerLoader implements Loader<SwaggerSpec> {
 
     if (this.opts.setFilePath) {
       swaggerSpec._filePath = this.fileLoader.relativePath(specFilePath);
+      const pathProvider = getProviderFromSpecPath(swaggerSpec._filePath);
+      swaggerSpec._providerNamespace = pathProvider ? pathProvider.provider : "unknown";
     }
 
     await this.suppressionLoader.load(swaggerSpec);

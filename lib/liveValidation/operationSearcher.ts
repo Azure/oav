@@ -88,8 +88,14 @@ export class OperationSearcher {
           this.logging(
             `Unable to find apiVersion for path : "${pathObject._pathTemplate}".`,
             LiveValidatorLoggingLevels.error,
-            LiveValidatorLoggingTypes.error,
-            "Oav.OperationSearcher.addSpecToCache"
+            LiveValidatorLoggingTypes.specTrace,
+            "Oav.OperationSearcher.addSpecToCache",
+            undefined,
+            {
+              providerNamespace: spec._providerNamespace ?? "unknown",
+              apiVersion: spec.info.version,
+              specName: spec._filePath,
+            }
           );
           apiVersion = unknownApiVersion;
         }
@@ -109,7 +115,15 @@ export class OperationSearcher {
           this.logging(
             `Unable to find provider for path : "${pathObject._pathTemplate}". ` +
               `Bucketizing into provider: "${provider}"`,
-            LiveValidatorLoggingLevels.debug
+            LiveValidatorLoggingLevels.warn,
+            LiveValidatorLoggingTypes.specTrace,
+            "Oav.OperationSearcher.addSpecToCache",
+            undefined,
+            {
+              providerNamespace: spec._providerNamespace ?? "unknown",
+              apiVersion: spec.info.version,
+              specName: spec._filePath,
+            }
           );
         }
         provider = provider.toLowerCase();
@@ -270,7 +284,7 @@ export class OperationSearcher {
       return ret;
     }
 
-    const operationsForHttpMethod = allMethods?.get(requestInfo.requestMethod);
+    const operationsForHttpMethod = allMethods?.get(requestInfo.requestMethod!);
     // Search using requestMethod provided by user
     if (operationsForHttpMethod === undefined) {
       meta = getOavErrorMeta(ErrorCodes.OperationNotFoundInCacheWithVerb.name as any, {
@@ -287,8 +301,8 @@ export class OperationSearcher {
 
     // Find the best match using regex on path
     ret.matches = getMatchedOperations(
-      requestInfo.host,
-      requestInfo.pathStr,
+      requestInfo.host!,
+      requestInfo.pathStr!,
       operationsForHttpMethod,
       requestInfo.query
     );

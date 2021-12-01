@@ -26,7 +26,11 @@ import { setDefaultOpts } from "../swagger/loader";
 import { apiValidationErrors, ApiValidationErrorCode } from "../util/errorDefinitions";
 import { kvPairsToObject } from "../util/utils";
 import { LiveValidatorLoader, LiveValidatorLoaderOption } from "./liveValidatorLoader";
-import { getProviderFromPathTemplate, OperationSearcher } from "./operationSearcher";
+import {
+  getProviderFromPathTemplate,
+  getProviderFromSpecPath,
+  OperationSearcher,
+} from "./operationSearcher";
 import {
   LiveRequest,
   LiveResponse,
@@ -108,6 +112,7 @@ export enum LiveValidatorLoggingTypes {
   perfTrace = "perfTrace",
   error = "error",
   incomingRequest = "incomingRequest",
+  specTrace = "specTrace",
 }
 
 /**
@@ -224,35 +229,26 @@ export class LiveValidator {
     try {
       this.loader.transformLoadedSpecs();
     } catch (e) {
+      // keeps building validator if it fails to tranform specs coz global transformers catches the exceptions and continue other schema transformings;
+      // this error will be reported in validator building or validation runtime.
       const errMsg = `Failed to transform loaded specs, detail error message:${e?.message}.ErrorStack:${e?.stack}`;
       this.logging(
         errMsg,
         LiveValidatorLoggingLevels.error,
-        LiveValidatorLoggingTypes.error,
+        LiveValidatorLoggingTypes.specTrace,
         "Oav.liveValidator.initialize.transformLoadedSpecs"
       );
-      throw new Error(errMsg);
     }
 
     if (this.options.loadValidatorInInitialize) {
+      this.logging("Building validator in initialization time...");
+      let spec;
       while (allSpecs.length > 0) {
         try {
-          const spec = allSpecs.shift()!;
+          spec = allSpecs.shift()!;
           const loadStart = Date.now();
-          this.logging(
-            `Start building validator for ${spec._filePath}`,
-            LiveValidatorLoggingLevels.debug,
-            LiveValidatorLoggingTypes.trace,
-            "Oav.liveValidator.loader.buildAjvValidator"
-          );
           await this.loader.buildAjvValidator(spec);
           const durationInMs = Date.now() - loadStart;
-          this.logging(
-            `Complete building validator for ${spec._filePath} with DurationInMs:${durationInMs}`,
-            LiveValidatorLoggingLevels.debug,
-            LiveValidatorLoggingTypes.trace,
-            "Oav.liveValidator.loader.buildAjvValidator"
-          );
           this.logging(
             `Complete building validator for ${spec._filePath} in initialization time`,
             LiveValidatorLoggingLevels.info,
@@ -260,12 +256,31 @@ export class LiveValidator {
             "Oav.liveValidator.initialize.loader.buildAjvValidator",
             durationInMs
           );
-        } catch (e) {
           this.logging(
-            `ErrorMessage:${e?.message}.ErrorStack:${e?.stack}`,
+            `Complete building validator for spec ${spec._filePath}`,
+            LiveValidatorLoggingLevels.info,
+            LiveValidatorLoggingTypes.specTrace,
+            "Oav.liveValidator.initialize.loader.buildAjvValidator",
+            durationInMs,
+            {
+              providerNamespace: spec._providerNamespace ?? "unknown",
+              apiVersion: spec.info.version,
+              specName: spec._filePath,
+            }
+          );
+        } catch (e) {
+          const errMsg = `ErrorMessage:${e?.message}.ErrorStack:${e?.stack}`;
+          this.logging(
+            `Failed to build validator for spec ${spec?._filePath}. ${errMsg}`,
             LiveValidatorLoggingLevels.error,
-            LiveValidatorLoggingTypes.error,
-            "Oav.liveValidator.initialize.loadValidatorInInitialize"
+            LiveValidatorLoggingTypes.specTrace,
+            "Oav.liveValidator.initialize.loader.buildAjvValidator",
+            undefined,
+            {
+              providerNamespace: spec?._providerNamespace ?? "unknown",
+              apiVersion: spec?.info.version ?? "unknown",
+              specName: spec?._filePath,
+            }
           );
         }
       }
@@ -290,6 +305,7 @@ export class LiveValidator {
     );
 
     if (this.options.loadValidatorInBackground) {
+      this.logging("Building validator in background...");
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
       this.loadAllSpecValidatorInBackground(allSpecs);
     }
@@ -303,8 +319,9 @@ export class LiveValidator {
     const backgroundStartTime = Date.now();
     utils.shuffleArray(allSpecs);
     while (allSpecs.length > 0) {
+      let spec;
       try {
-        const spec = allSpecs.shift()!;
+        spec = allSpecs.shift()!;
         const startTime = Date.now();
         this.logging(
           `Start building validator for ${spec._filePath} in background`,
@@ -321,18 +338,37 @@ export class LiveValidator {
           "Oav.liveValidator.loadAllSpecValidatorInBackground"
         );
         this.logging(
-          `Complete building for ${spec._filePath} in background`,
+          `Complete building validator for ${spec._filePath} in background`,
           LiveValidatorLoggingLevels.info,
           LiveValidatorLoggingTypes.perfTrace,
-          "Oav.liveValidator.loadAllSpecValidatorInBackground-1",
+          "Oav.liveValidator.loadAllSpecValidatorInBackground",
           elapsedTime
         );
-      } catch (e) {
         this.logging(
-          `ErrorMessage:${e?.message}.ErrorStack:${e?.stack}`,
+          `Complete building validator for spec ${spec._filePath}`,
+          LiveValidatorLoggingLevels.info,
+          LiveValidatorLoggingTypes.specTrace,
+          "Oav.liveValidator.loadAllSpecValidatorInBackground",
+          elapsedTime,
+          {
+            providerNamespace: spec._providerNamespace ?? "unknown",
+            apiVersion: spec.info.version,
+            specName: spec._filePath,
+          }
+        );
+      } catch (e) {
+        const errMsg = `ErrorMessage:${e?.message}.ErrorStack:${e?.stack}`;
+        this.logging(
+          `Failed to build validator for spec ${spec?._filePath}. ${errMsg}`,
           LiveValidatorLoggingLevels.error,
-          LiveValidatorLoggingTypes.error,
-          "Oav.liveValidator.loadAllSpecValidatorInBackground"
+          LiveValidatorLoggingTypes.specTrace,
+          "Oav.liveValidator.loadAllSpecValidatorInBackground",
+          undefined,
+          {
+            providerNamespace: spec?._providerNamespace ?? "unknown",
+            apiVersion: spec?.info.version ?? "unknown",
+            specName: spec?._filePath,
+          }
         );
       }
     }
@@ -341,13 +377,13 @@ export class LiveValidator {
     this.loadInBackgroundComplete = true;
     const elapsedTimeForBuild = Date.now() - backgroundStartTime;
     this.logging(
-      `Build validator for all specs finished in background with DurationInMs:${elapsedTimeForBuild}.`,
+      `Completed building validator for all specs in background with DurationInMs:${elapsedTimeForBuild}.`,
       LiveValidatorLoggingLevels.info,
       LiveValidatorLoggingTypes.trace,
       "Oav.liveValidator.loadAllSpecValidatorInBackground"
     );
     this.logging(
-      `Build validator for all specs finished in background`,
+      `Completed building validator for all specs in background`,
       LiveValidatorLoggingLevels.info,
       LiveValidatorLoggingTypes.perfTrace,
       "Oav.liveValidator.loadAllSpecValidatorInBackground",
@@ -704,9 +740,9 @@ export class LiveValidator {
   ): Promise<SwaggerSpec | undefined> {
     const startTime = Date.now();
     this.logging(`Building cache from:${swaggerPath}`, LiveValidatorLoggingLevels.debug);
-
+    let spec;
     try {
-      const spec = await loader.load(pathResolve(swaggerPath));
+      spec = await loader.load(pathResolve(swaggerPath));
       const elapsedTimeLoadSpec = Date.now() - startTime;
       this.logging(
         `Load spec ${swaggerPath}`,
@@ -729,10 +765,16 @@ export class LiveValidator {
 
       const elapsedTime = Date.now() - startTime;
       this.logging(
-        `Complete loading with DurationInMs:${elapsedTime}`,
-        LiveValidatorLoggingLevels.debug,
-        LiveValidatorLoggingTypes.trace,
-        "Oav.liveValidator.getSwaggerInitializer"
+        `Complete loading spec ${spec._filePath}`,
+        LiveValidatorLoggingLevels.info,
+        LiveValidatorLoggingTypes.specTrace,
+        "Oav.liveValidator.getSwaggerInitializer",
+        elapsedTime,
+        {
+          providerNamespace: spec._providerNamespace ?? "unknown",
+          apiVersion: spec.info.version,
+          specName: spec._filePath,
+        }
       );
 
       return spec;
@@ -742,6 +784,19 @@ export class LiveValidator {
           `ignoring this swagger file and continuing to build cache for other valid specs. ErrorMessage: ${err?.message};ErrorStack: ${err?.stack}`,
         LiveValidatorLoggingLevels.warn,
         LiveValidatorLoggingTypes.error
+      );
+      const pathProvider = getProviderFromSpecPath(swaggerPath);
+      this.logging(
+        `Failed to load spec ${swaggerPath}`,
+        LiveValidatorLoggingLevels.error,
+        LiveValidatorLoggingTypes.specTrace,
+        "Oav.liveValidator.getSwaggerInitializer",
+        undefined,
+        {
+          providerNamespace: pathProvider ? pathProvider.provider : "unknown",
+          apiVersion: spec ? spec.info.version : "unknown",
+          specName: swaggerPath,
+        }
       );
 
       return undefined;
@@ -770,6 +825,7 @@ export class LiveValidator {
           OperationName: operationName,
           LoggingType: loggingType,
           DurationInMilliseconds: durationInMilliseconds,
+          SpecName: validationRequest.specName,
         });
       } else {
         this.logFunction(message, level, {
