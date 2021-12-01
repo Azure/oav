@@ -1,5 +1,11 @@
 # Change Log - oav
 
+## 12/1/2021 2.12.0
+
+- Extractor provider into from spec file path for data-plane
+- Implement data-plane cache and match operation logic. Support data-plane validate
+- Add markdown lint config in `setting.json`
+
 ## 12/01/2021 2.11.2
 
 - LiveValidator - add more unittest for data-plane spec path
