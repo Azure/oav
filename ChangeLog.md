@@ -1,8 +1,12 @@
 # Change Log - oav
 
-## 11/10/2021 2.10.4
+## 12/01/2021 2.11.1
 
 - LiveValidator - Supports logging spec loading traces separately
+
+## 11/30/2021 2.11.0
+- Api scenario - add new step armDeploymentScript
+- Api scenario - rename step armTemplateDeployment to armTemplate
 
 ## 11/10/2021 2.10.3
 
