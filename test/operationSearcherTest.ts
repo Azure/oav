@@ -15,5 +15,24 @@ describe("Get resource provider from spec path", () => {
     specPath = "specification/cosmos-db/data-plane/Microsoft.Tables/preview/2019-02-02/table.json";
     provider = getProviderFromSpecPath(specPath);
     expect(provider).toEqual({ provider: "Microsoft.Tables", type: "data-plane" });
+
+    specPath = "specification/cosmos-db/data-plane/Microsoft/preview/2019-02-02/table.json";
+    provider = getProviderFromSpecPath(specPath);
+    expect(provider).toEqual({ provider: "Microsoft", type: "data-plane" });
+
+    specPath =
+      "specification/cognitiveservices/data-plane/TextAnalytics/preview/v3.2-preview.1/TextAnalytics.json";
+    provider = getProviderFromSpecPath(specPath);
+    expect(provider).toEqual({ provider: "TextAnalytics", type: "data-plane" });
+
+    specPath =
+      "/specification/purview/data-plane/Azure.Analytics.Purview.Account/preview/2019-11-01-preview/account.json";
+    provider = getProviderFromSpecPath(specPath);
+    expect(provider).toEqual({ provider: "Azure.Analytics.Purview.Account", type: "data-plane" });
+
+    specPath =
+      "specification/search/data-plane/Microsoft.Azure.Search.Service/preview/2015-02-28-preview/searchservice.json";
+    provider = getProviderFromSpecPath(specPath);
+    expect(provider).toEqual({ provider: "Microsoft.Azure.Search.Service", type: "data-plane" });
   });
 });
