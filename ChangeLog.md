@@ -2,8 +2,8 @@
 
 ## 12/01/2021 2.11.2
 
-- Add more unittest for data-plane spec path
-- Use local variable instead glob regex
+- LiveValidator - add more unittest for data-plane spec path
+- OperationSearcher - use local variable instead of glob regex
 
 ## 12/01/2021 2.11.1
 
