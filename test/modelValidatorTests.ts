@@ -645,4 +645,22 @@ describe("Model Validation", () => {
       assert.strictEqual(result[2].code, "INVALID_FORMAT");
     });
   });
+
+  describe("Enum matching ", () => {
+    it("should fail when enum value provided in example or in traffic payload doesn't match the case of an allowed value", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/enum/enumCaseMismatch/test.json`;
+      const result = await validate.validateExamples(specPath2, undefined);
+      assert.strictEqual(result.length, 1);
+      assert.strictEqual(result[0].code, "ENUM_CASE_MISMATCH");
+      assert.strictEqual(result[0].message, "Enum does not match case for: none");
+    });
+
+    it("should fail when enum value provided in example or in traffic payload doesn't match an allowed value", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/enum/enumMismatch/test.json`;
+      const result = await validate.validateExamples(specPath2, undefined);
+      assert.strictEqual(result.length, 1);
+      assert.strictEqual(result[0].code, "ENUM_MISMATCH");
+      assert.strictEqual(result[0].message, "No enum match for: null");
+    });
+  });
 });
