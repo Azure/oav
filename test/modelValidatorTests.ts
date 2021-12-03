@@ -729,4 +729,17 @@ describe("Model Validation", () => {
       );
     });
   });
+
+  describe("parameter required validation", () => {
+    it("should fail when missing write required parameters in example", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/parameterRequiredValidation/test.json`;
+      const result = await validate.validateExamples(specPath2, undefined);
+      assert.strictEqual(result.length, 1);
+      assert.strictEqual(result[0].code, "REQUIRED_PARAMETER_EXAMPLE_NOT_FOUND");
+      assert.strictEqual(
+        result[0].message,
+        "In operation SqlServers_Get, parameter peeringServiceName is required in the swagger spec but is not present in the provided example parameter values."
+      );
+    });
+  });
 });
