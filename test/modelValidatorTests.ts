@@ -674,4 +674,28 @@ describe("Model Validation", () => {
       assert.strictEqual(result[0].message, "No enum match for: null");
     });
   });
+
+  describe("Long running operation response", () => {
+    it("should fail when long running operation missing return some headers in header", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/LRO-response/LRO-responseHeader/test.json`;
+      const result = await validate.validateExamples(specPath2, undefined);
+      assert.strictEqual(result.length, 1);
+      assert.strictEqual(result[0].code, "LRO_RESPONSE_HEADER");
+      assert.strictEqual(
+        result[0].message,
+        "Long running operation should return location or azure-AsyncOperation in header but not provided"
+      );
+    });
+
+    it("should fail when long running operation return wrong response code", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/LRO-response/LRO-responseCode/test.json`;
+      const result = await validate.validateExamples(specPath2, undefined);
+      assert.strictEqual(result.length, 1);
+      assert.strictEqual(result[0].code, "LRO_RESPONSE_CODE");
+      assert.strictEqual(
+        result[0].message,
+        "Respond to the initial request of a long running operation, Patch/Post call must return 201 or 202, Delete call must return 202 or 204, Put call must return 202 or 201 or 200, but 409 being returned"
+      );
+    });
+  });
 });
