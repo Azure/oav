@@ -1,6 +1,10 @@
 # Change Log - oav
 
-## 12/01/2021 2.11.2
+## 12/03/2021 2.11.3
+
+- Utils - move get provider related functions to utils because of DI error
+
+## 12/02/2021 2.11.2
 
 - LiveValidator - add more unittest for data-plane spec path
 - OperationSearcher - use local variable instead of glob regex

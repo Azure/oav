@@ -12,6 +12,7 @@ export {
   validateExamplesInCompositeSpec,
   resolveSpec,
   resolveCompositeSpec,
+  validateTrafficAgainstSpec,
 } from "./lib/validate";
 
 export { BaseValidationError } from "./lib/util/baseValidationError";
@@ -102,6 +103,11 @@ export {
   SemanticValidationOption,
   SemanticValidator,
 } from "./lib/swaggerValidator/semanticValidator";
+
+export {
+  TrafficValidationIssue,
+  TrafficValidator,
+} from "./lib/swaggerValidator/trafficValidator";
 
 export { getAutorestConfig } from "./lib/util/getAutorestConfig";
 // Constants

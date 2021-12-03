@@ -10,7 +10,7 @@ import {
   unknownResourceProvider,
 } from "../util/constants";
 import { getOavErrorMeta } from "../util/errorDefinitions";
-import { Writable } from "../util/utils";
+import { getProviderFromPathTemplate, Writable } from "../util/utils";
 import { LiveValidatorLoggingLevels, LiveValidatorLoggingTypes } from "./liveValidator";
 import { ValidationRequest } from "./operationValidator";
 
@@ -317,61 +317,6 @@ export class OperationSearcher {
 
     return ret;
   }
-}
-
-/**
- * Gets provider namespace from the given path. In case of multiple, last one will be returned.
- * @param {string} pathStr The path of the operation.
- *                 Example "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/
- *                  providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/
- *                  {resourceName}/providers/Microsoft.Authorization/roleAssignments"
- *                 will return "Microsoft.Authorization".
- *
- * @returns {string} result - provider namespace from the given path.
- */
-export function getProviderFromPathTemplate(pathStr?: string | null): string | undefined {
-  if (
-    pathStr === null ||
-    pathStr === undefined ||
-    typeof pathStr.valueOf() !== "string" ||
-    !pathStr.trim().length
-  ) {
-    throw new Error(
-      "pathStr is a required parameter of type string and it cannot be an empty string."
-    );
-  }
-
-  let result;
-
-  // Loop over the paths to find the last matched provider namespace
-  // eslint-disable-next-line no-constant-condition
-  while (true) {
-    const pathMatch = providerRegEx.exec(pathStr);
-    if (pathMatch === null) {
-      break;
-    }
-    result = pathMatch[1];
-  }
-
-  return result;
-}
-const providerRegEx = new RegExp("/providers/(:?[^{/]+)", "gi");
-
-export interface PathProvider {
-  provider: string;
-  type: "resource-manager" | "data-plane";
-}
-
-export function getProviderFromSpecPath(specPath: string): PathProvider | undefined {
-  const managementPlaneProviderInSpecPathRegEx: RegExp = /\/resource-manager\/(.*?)\//gi;
-  const dataPlaneProviderInSpecPathRegEx: RegExp = /\/data-plane\/(.*?)\//gi;
-  const manageManagementMatch = managementPlaneProviderInSpecPathRegEx.exec(specPath);
-  const dataPlaneMatch = dataPlaneProviderInSpecPathRegEx.exec(specPath);
-  return manageManagementMatch === null
-    ? dataPlaneMatch === null
-      ? undefined
-      : { provider: dataPlaneMatch[1], type: "data-plane" }
-    : { provider: manageManagementMatch[1], type: "resource-manager" };
 }
 
 /**
