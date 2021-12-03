@@ -742,4 +742,14 @@ describe("Model Validation", () => {
       );
     });
   });
+
+  describe("x-ms-examples validation", () => {
+    it("should fail when missing example defined in operation", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/xmsExampleNotFound/test.json`;
+      const result = await validate.validateExamples(specPath2, undefined);
+      assert.strictEqual(result.length, 1);
+      assert.strictEqual(result[0].code, "XMS_EXAMPLE_NOTFOUND_ERROR");
+      assert.strictEqual(result[0].message, "x-ms-example not found in Operations_List.");
+    });
+  });
 });
