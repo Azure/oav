@@ -3,7 +3,7 @@ import { inject, injectable } from "inversify";
 import { TYPES } from "../inversifyUtils";
 import { traverseSwagger } from "../transform/traverseSwagger";
 import { xmsExamples } from "../util/constants";
-import { getProviderFromSpecPath } from "../liveValidation/operationSearcher";
+import { getProviderFromSpecPath } from "../util/utils";
 import { FileLoader, FileLoaderOption } from "./fileLoader";
 import { JsonLoader, JsonLoaderOption } from "./jsonLoader";
 import { Loader, setDefaultOpts } from "./loader";

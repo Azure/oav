@@ -3,7 +3,7 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
-import { getProviderFromSpecPath } from "../lib/liveValidation/operationSearcher";
+import { getProviderFromSpecPath } from "../lib/util/utils";
 
 describe("Get resource provider from spec path", () => {
   it("should return the correct provider", () => {
