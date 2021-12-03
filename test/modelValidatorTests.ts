@@ -657,7 +657,7 @@ describe("Model Validation", () => {
     });
   });
 
-  describe("Enum matching ", () => {
+  describe("Enum matching validation", () => {
     it("should fail when enum value provided in example or in traffic payload doesn't match the case of an allowed value", async () => {
       const specPath2 = `${testPath}/modelValidation/swaggers/specification/enum/enumCaseMismatch/test.json`;
       const result = await validate.validateExamples(specPath2, undefined);
@@ -675,7 +675,7 @@ describe("Model Validation", () => {
     });
   });
 
-  describe("Long running operation response", () => {
+  describe("Long running operation response validation", () => {
     it("should fail when long running operation missing return some headers in header", async () => {
       const specPath2 = `${testPath}/modelValidation/swaggers/specification/LRO-response/LRO-responseHeader/test.json`;
       const result = await validate.validateExamples(specPath2, undefined);
@@ -696,6 +696,24 @@ describe("Model Validation", () => {
         result[0].message,
         "Respond to the initial request of a long running operation, Patch/Post call must return 201 or 202, Delete call must return 202 or 204, Put call must return 202 or 201 or 200, but 409 being returned"
       );
+    });
+  });
+
+  describe("string length validation", () => {
+    it("should fail when the provided string is greater than maximum length", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/stringLength/maxLength/test.json`;
+      const result = await validate.validateExamples(specPath2, undefined);
+      assert.strictEqual(result.length, 1);
+      assert.strictEqual(result[0].code, "MAX_LENGTH");
+      assert.strictEqual(result[0].message, "String is too long (258 chars), maximum 256");
+    });
+
+    it("should fail when the provided string is less than minimum length", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/stringLength/minLength/test.json`;
+      const result = await validate.validateExamples(specPath2, undefined);
+      assert.strictEqual(result.length, 1);
+      assert.strictEqual(result[0].code, "MIN_LENGTH");
+      assert.strictEqual(result[0].message, "String is too short (10 chars), minimum 11");
     });
   });
 });
