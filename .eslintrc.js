@@ -25,7 +25,6 @@ module.exports = {
     sourceType: "module",
     tsconfigRootDir: __dirname,
   },
-  plugins: ["@typescript-eslint", "import", "prettier"],
   extends: [
     "@rushstack/eslint-config/profile/node",
     "plugin:prettier/recommended",
