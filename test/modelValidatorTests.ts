@@ -665,4 +665,20 @@ describe("Model Validation", () => {
       assert.strictEqual(result[0].code, "ENUM_MISMATCH");
     });
   });
+
+  describe("Long running operation response validation", () => {
+    it("should fail when long running operation missing return some headers in header", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/LRO-response/LRO-responseHeader/test.json`;
+      const result = await validate.validateExamples(specPath2, undefined);
+      assert.strictEqual(result.length, 1);
+      assert.strictEqual(result[0].code, "LRO_RESPONSE_HEADER");
+    });
+
+    it("should fail when long running operation return wrong response code", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/LRO-response/LRO-responseCode/test.json`;
+      const result = await validate.validateExamples(specPath2, undefined);
+      assert.strictEqual(result.length, 1);
+      assert.strictEqual(result[0].code, "LRO_RESPONSE_CODE");
+    });
+  });
 });
