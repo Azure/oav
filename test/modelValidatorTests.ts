@@ -697,4 +697,22 @@ describe("Model Validation", () => {
       assert.strictEqual(result[0].code, "MIN_LENGTH");
     });
   });
+
+  describe("write only properties validation", () => {
+    it("should fail when finding write only properties in the request", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/validateWriteOnly/test.json`;
+      const result = await validate.validateExamples(specPath2, undefined);
+      assert.strictEqual(result.length, 1);
+      assert.strictEqual(result[0].code, "WRITEONLY_PROPERTY_NOT_ALLOWED_IN_RESPONSE");
+    });
+  });
+
+  describe("parameter required validation", () => {
+    it("should fail when missing write required parameters in example", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/parameterRequiredValidation/test.json`;
+      const result = await validate.validateExamples(specPath2, undefined);
+      assert.strictEqual(result.length, 1);
+      assert.strictEqual(result[0].code, "REQUIRED_PARAMETER_EXAMPLE_NOT_FOUND");
+    });
+  });
 });
