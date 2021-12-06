@@ -734,19 +734,19 @@ describe("Model Validation", () => {
   });
 
   describe("specPath validation", () => {
-    // it("should fail when specPath is an empty string", async () => {
-    //   const specPath2 = "";
-    //   const result = await validate.validateExamples(specPath2, undefined);
-    //   assert.strictEqual(result.length, 1);
-    //   assert.strictEqual(result[0].code, "INTERNAL_ERROR");
-    // });
-
-    it("should pass when specPath is a url starting with https://github", async () => {
-      const specPath2 =
-        "https://github.com/Azure/oav/blob/develop/test/modelValidation/swaggers/specification/xmsExampleNotFound/test.json";
+    it("should fail when specPath is an empty string", async () => {
+      const specPath2 = "";
       const result = await validate.validateExamples(specPath2, undefined);
       assert.strictEqual(result.length, 1);
-      assert.strictEqual(result[0].code, "XMS_EXAMPLE_NOTFOUND_ERROR");
+      assert.strictEqual(result[0].code, "INTERNAL_ERROR");
     });
+
+    // it("should pass when specPath is a url starting with https://github", async () => {
+    //   const specPath2 =
+    //     "https://github.com/Azure/oav/blob/develop/test/modelValidation/swaggers/specification/xmsExampleNotFound/test.json";
+    //   const result = await validate.validateExamples(specPath2, undefined);
+    //   assert.strictEqual(result.length, 1);
+    //   assert.strictEqual(result[0].code, "XMS_EXAMPLE_NOTFOUND_ERROR");
+    // });
   });
 });
