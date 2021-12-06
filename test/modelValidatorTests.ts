@@ -448,7 +448,9 @@ describe("Model Validation", () => {
 
     it("should fail when request/response doesn't have allowed content-type", async () => {
       const specPath2 = `${testPath}/modelValidation/swaggers/specification/invalidContentType/test.json`;
-      const result = await validate.validateExamples(specPath2, undefined);
+      const result = await validate.validateExamples(specPath2, undefined, {
+        consoleLogLevel: "off",
+      });
       assert.strictEqual(result.length, 1);
       assert.strictEqual(result[0].code, "INVALID_CONTENT_TYPE");
       assert.strictEqual(
@@ -626,7 +628,9 @@ describe("Model Validation", () => {
   describe("WithIn Reference", () => {
     it("should fail when validating a swagger with invalid reference", async () => {
       const specPath2 = `${testPath}/modelValidation/swaggers/specification/invalidReference/searchindex.json`;
-      const result = await validate.validateExamples(specPath2, undefined);
+      const result = await validate.validateExamples(specPath2, undefined, {
+        consoleLogLevel: "off",
+      });
       assert.strictEqual(result.length, 1);
       assert.strictEqual(result[0].code, "UNRESOLVABLE_REFERENCE");
       assert.strictEqual(
@@ -656,7 +660,9 @@ describe("Model Validation", () => {
   describe("Enum matching validation", () => {
     it("should fail when enum value provided in example or in traffic payload doesn't match the case of an allowed value", async () => {
       const specPath2 = `${testPath}/modelValidation/swaggers/specification/enum/enumCaseMismatch/test.json`;
-      const result = await validate.validateExamples(specPath2, undefined);
+      const result = await validate.validateExamples(specPath2, undefined, {
+        consoleLogLevel: "off",
+      });
       assert.strictEqual(result.length, 1);
       assert.strictEqual(result[0].code, "ENUM_CASE_MISMATCH");
       assert.strictEqual(result[0].message, "Enum does not match case for: none");
@@ -664,7 +670,9 @@ describe("Model Validation", () => {
 
     it("should fail when enum value provided in example or in traffic payload doesn't match an allowed value", async () => {
       const specPath2 = `${testPath}/modelValidation/swaggers/specification/enum/enumMismatch/test.json`;
-      const result = await validate.validateExamples(specPath2, undefined);
+      const result = await validate.validateExamples(specPath2, undefined, {
+        consoleLogLevel: "off",
+      });
       assert.strictEqual(result.length, 1);
       assert.strictEqual(result[0].code, "ENUM_MISMATCH");
       assert.strictEqual(result[0].message, "No enum match for: null");
@@ -674,7 +682,9 @@ describe("Model Validation", () => {
   describe("Long running operation response validation", () => {
     it("should fail when long running operation missing return some headers in header", async () => {
       const specPath2 = `${testPath}/modelValidation/swaggers/specification/LRO-response/LRO-responseHeader/test.json`;
-      const result = await validate.validateExamples(specPath2, undefined);
+      const result = await validate.validateExamples(specPath2, undefined, {
+        consoleLogLevel: "off",
+      });
       assert.strictEqual(result.length, 1);
       assert.strictEqual(result[0].code, "LRO_RESPONSE_HEADER");
       assert.strictEqual(
@@ -685,7 +695,9 @@ describe("Model Validation", () => {
 
     it("should fail when long running operation return wrong response code", async () => {
       const specPath2 = `${testPath}/modelValidation/swaggers/specification/LRO-response/LRO-responseCode/test.json`;
-      const result = await validate.validateExamples(specPath2, undefined);
+      const result = await validate.validateExamples(specPath2, undefined, {
+        consoleLogLevel: "off",
+      });
       assert.strictEqual(result.length, 1);
       assert.strictEqual(result[0].code, "LRO_RESPONSE_CODE");
       assert.strictEqual(
@@ -698,7 +710,9 @@ describe("Model Validation", () => {
   describe("string length validation", () => {
     it("should fail when the provided string is greater than maximum length", async () => {
       const specPath2 = `${testPath}/modelValidation/swaggers/specification/stringLength/maxLength/test.json`;
-      const result = await validate.validateExamples(specPath2, undefined);
+      const result = await validate.validateExamples(specPath2, undefined, {
+        consoleLogLevel: "off",
+      });
       assert.strictEqual(result.length, 1);
       assert.strictEqual(result[0].code, "MAX_LENGTH");
       assert.strictEqual(result[0].message, "String is too long (258 chars), maximum 256");
@@ -706,7 +720,9 @@ describe("Model Validation", () => {
 
     it("should fail when the provided string is less than minimum length", async () => {
       const specPath2 = `${testPath}/modelValidation/swaggers/specification/stringLength/minLength/test.json`;
-      const result = await validate.validateExamples(specPath2, undefined);
+      const result = await validate.validateExamples(specPath2, undefined, {
+        consoleLogLevel: "off",
+      });
       assert.strictEqual(result.length, 1);
       assert.strictEqual(result[0].code, "MIN_LENGTH");
       assert.strictEqual(result[0].message, "String is too short (10 chars), minimum 11");
@@ -716,7 +732,9 @@ describe("Model Validation", () => {
   describe("write only properties validation", () => {
     it("should fail when finding write only properties in the request", async () => {
       const specPath2 = `${testPath}/modelValidation/swaggers/specification/validateWriteOnly/test.json`;
-      const result = await validate.validateExamples(specPath2, undefined);
+      const result = await validate.validateExamples(specPath2, undefined, {
+        consoleLogLevel: "off",
+      });
       assert.strictEqual(result.length, 1);
       assert.strictEqual(result[0].code, "WRITEONLY_PROPERTY_NOT_ALLOWED_IN_RESPONSE");
       assert.strictEqual(
@@ -729,7 +747,9 @@ describe("Model Validation", () => {
   describe("parameter required validation", () => {
     it("should fail when missing write required parameters in example", async () => {
       const specPath2 = `${testPath}/modelValidation/swaggers/specification/parameterRequiredValidation/test.json`;
-      const result = await validate.validateExamples(specPath2, undefined);
+      const result = await validate.validateExamples(specPath2, undefined, {
+        consoleLogLevel: "off",
+      });
       assert.strictEqual(result.length, 1);
       assert.strictEqual(result[0].code, "REQUIRED_PARAMETER_EXAMPLE_NOT_FOUND");
       assert.strictEqual(
@@ -742,7 +762,9 @@ describe("Model Validation", () => {
   describe("x-ms-examples validation", () => {
     it("should fail when missing example defined in operation", async () => {
       const specPath2 = `${testPath}/modelValidation/swaggers/specification/xmsExampleValidation/xmsExampleNotFound/test.json`;
-      const result = await validate.validateExamples(specPath2, undefined);
+      const result = await validate.validateExamples(specPath2, undefined, {
+        consoleLogLevel: "off",
+      });
       assert.strictEqual(result.length, 1);
       assert.strictEqual(result[0].code, "XMS_EXAMPLE_NOTFOUND_ERROR");
       assert.strictEqual(result[0].message, "x-ms-example not found in Operations_List.");
@@ -750,7 +772,9 @@ describe("Model Validation", () => {
 
     it("should fail when missing $ref in x-ms-examples", async () => {
       const specPath2 = `${testPath}/modelValidation/swaggers/specification/xmsExampleValidation/undefinedXmsExampleRef/test.json`;
-      const result = await validate.validateExamples(specPath2, undefined);
+      const result = await validate.validateExamples(specPath2, undefined, {
+        consoleLogLevel: "off",
+      });
       console.log(`result: ${JSON.stringify(result)}`);
       assert.strictEqual(result.length, 1);
       assert.strictEqual(result[0].code, "INTERNAL_ERROR");
@@ -761,8 +785,9 @@ describe("Model Validation", () => {
   describe("specPath validation", () => {
     it("should fail when specPath is an empty string", async () => {
       const specPath2 = "";
-      const operationIds = undefined;
-      const result = await validate.validateExamples(specPath2, operationIds);
+      const result = await validate.validateExamples(specPath2, undefined, {
+        consoleLogLevel: "off",
+      });
       assert.strictEqual(result.length, 1);
       assert.strictEqual(result[0].code, "INTERNAL_ERROR");
       assert.strictEqual(result[0].message, "Unexpected internal error");
@@ -771,8 +796,9 @@ describe("Model Validation", () => {
     it("should pass when specPath is a url starting with https://github", async () => {
       const specPath2 =
         "https://github.com/Azure/oav/blob/develop/test/modelValidation/swaggers/specification/xmsExampleNotFound/test.json";
-      const operationIds = undefined;
-      const result = await validate.validateExamples(specPath2, operationIds);
+      const result = await validate.validateExamples(specPath2, undefined, {
+        consoleLogLevel: "off",
+      });
       assert.strictEqual(result.length, 1);
       assert.strictEqual(result[0].code, "XMS_EXAMPLE_NOTFOUND_ERROR");
       assert.strictEqual(result[0].message, "x-ms-example not found in Operations_List.");
