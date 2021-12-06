@@ -448,7 +448,9 @@ describe("Model Validation", () => {
 
     it("should fail when request/response doesn't have allowed content-type", async () => {
       const specPath2 = `${testPath}/modelValidation/swaggers/specification/invalidContentType/test.json`;
-      const result = await validate.validateExamples(specPath2, undefined);
+      const result = await validate.validateExamples(specPath2, undefined, {
+        consoleLogLevel: "off",
+      });
       assert.strictEqual(result.length, 1);
       assert.strictEqual(result[0].code, "INVALID_CONTENT_TYPE");
       assert.strictEqual(
