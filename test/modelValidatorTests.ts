@@ -715,4 +715,21 @@ describe("Model Validation", () => {
       assert.strictEqual(result[0].code, "REQUIRED_PARAMETER_EXAMPLE_NOT_FOUND");
     });
   });
+
+  describe("x-ms-examples validation", () => {
+    it("should fail when missing example defined in operation", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/xmsExampleValidation/xmsExampleNotFound/test.json`;
+      const result = await validate.validateExamples(specPath2, undefined);
+      assert.strictEqual(result.length, 1);
+      assert.strictEqual(result[0].code, "XMS_EXAMPLE_NOTFOUND_ERROR");
+    });
+
+    it("should fail when missing $ref in x-ms-examples", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/xmsExampleValidation/undefinedXmsExampleRef/test.json`;
+      const result = await validate.validateExamples(specPath2, undefined);
+      console.log(`result: ${JSON.stringify(result)}`);
+      assert.strictEqual(result.length, 1);
+      assert.strictEqual(result[0].code, "INTERNAL_ERROR");
+    });
+  });
 });
