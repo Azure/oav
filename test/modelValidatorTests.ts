@@ -101,14 +101,10 @@ describe("Model Validation", () => {
           consoleLogLevel: "off",
         });
         assert(
-          result.length === 1,
-          `swagger "${specPath}" with operation "${operationIds}" should report one error.`
+          result.length !== 0,
+          `swagger "${specPath}" with operation "${operationIds}" contains passed incorrectly.`
         );
-        assert(
-          result[0].code === "DOUBLE_FORWARD_SLASHES_IN_URL",
-          "error code should be DOUBLE_FORWARD_SLASHES_IN_URL."
-        );
-        // console.log(`result: ${JSON.stringify(result)}`);
+        // console.log(result)
       } catch (err) {
         assert.strictEqual(err.code, "REQUEST_VALIDATION_ERROR");
         assert.strictEqual(err.innerErrors[0].code, "DOUBLE_FORWARD_SLASHES_IN_URL");
@@ -745,11 +741,20 @@ describe("Model Validation", () => {
 
   describe("x-ms-examples validation", () => {
     it("should fail when missing example defined in operation", async () => {
-      const specPath2 = `${testPath}/modelValidation/swaggers/specification/xmsExampleNotFound/test.json`;
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/xmsExampleValidation/xmsExampleNotFound/test.json`;
       const result = await validate.validateExamples(specPath2, undefined);
       assert.strictEqual(result.length, 1);
       assert.strictEqual(result[0].code, "XMS_EXAMPLE_NOTFOUND_ERROR");
       assert.strictEqual(result[0].message, "x-ms-example not found in Operations_List.");
+    });
+
+    it("should fail when missing $ref in x-ms-examples", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/xmsExampleValidation/undefinedXmsExampleRef/test.json`;
+      const result = await validate.validateExamples(specPath2, undefined);
+      console.log(`result: ${JSON.stringify(result)}`);
+      assert.strictEqual(result.length, 1);
+      assert.strictEqual(result[0].code, "INTERNAL_ERROR");
+      assert.strictEqual(result[0].message, "Unexpected internal error");
     });
   });
 
@@ -758,7 +763,6 @@ describe("Model Validation", () => {
       const specPath2 = "";
       const operationIds = undefined;
       const result = await validate.validateExamples(specPath2, operationIds);
-      console.log(`result: ${JSON.stringify(result)}`);
       assert.strictEqual(result.length, 1);
       assert.strictEqual(result[0].code, "INTERNAL_ERROR");
       assert.strictEqual(result[0].message, "Unexpected internal error");
