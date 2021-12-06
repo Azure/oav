@@ -1,3 +1,4 @@
+import { LiveValidatorLoggingLevels } from "../liveValidation/liveValidator";
 import { JsonLoader } from "../swagger/jsonLoader";
 import { Schema } from "../swagger/swaggerTypes";
 import { xNullable } from "../util/constants";
@@ -26,7 +27,10 @@ export const nullableTransformer: GlobalTransformer = {
         }
       } catch (e) {
         if (logging) {
-          logging(`Fail to transform ${sch}. ErrorMessage:${e?.message};ErrorStack:${e?.stack}.`);
+          logging(
+            `Fail to transform ${sch}. ErrorMessage:${e?.message};ErrorStack:${e?.stack}.`,
+            LiveValidatorLoggingLevels.error
+          );
         } else {
           console.log(
             `Fail to transform ${sch}. ErrorMessage:${e?.message};ErrorStack:${e?.stack}.`
@@ -46,7 +50,10 @@ export const nullableTransformer: GlobalTransformer = {
         }
       } catch (e) {
         if (logging) {
-          logging(`Fail to transform ${sch}. ErrorMessage:${e?.message};ErrorStack:${e?.stack}.`);
+          logging(
+            `Fail to transform ${sch}. ErrorMessage:${e?.message};ErrorStack:${e?.stack}.`,
+            LiveValidatorLoggingLevels.error
+          );
         } else {
           console.log(
             `Fail to transform ${sch}. ErrorMessage:${e?.message};ErrorStack:${e?.stack}.`

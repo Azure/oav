@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import assert from "assert";
-import { getProviderFromPathTemplate } from "../lib/liveValidation/operationSearcher";
+import { getProviderFromPathTemplate } from "../lib/util/utils";
 
 describe("Utility functions", () => {
   describe("Get Provider", () => {
