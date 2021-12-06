@@ -766,13 +766,12 @@ describe("Model Validation", () => {
 
     it("should pass when specPath is a url starting with https://github", async () => {
       const specPath2 =
-        "https://github.com/Azure/azure-rest-api-specs/blob/main/specification/applicationinsights/resource-manager/Microsoft.Insights/preview/2021-03-03-preview/diagnosticServicesToken_API.json";
+        "https://github.com/Azure/oav/blob/develop/test/modelValidation/swaggers/specification/xmsExampleNotFound/test.json";
       const operationIds = undefined;
       const result = await validate.validateExamples(specPath2, operationIds);
-      console.log(`result: ${JSON.stringify(result)}`);
-      // assert.strictEqual(result.length, 1);
-      // assert.strictEqual(result[0].code, "INTERNAL_ERROR");
-      // assert.strictEqual(result[0].message, "Unexpected internal error");
+      assert.strictEqual(result.length, 1);
+      assert.strictEqual(result[0].code, "XMS_EXAMPLE_NOTFOUND_ERROR");
+      assert.strictEqual(result[0].message, "x-ms-example not found in Operations_List.");
     });
   });
 });
