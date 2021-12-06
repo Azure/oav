@@ -445,6 +445,17 @@ describe("Model Validation", () => {
       assert(result.length === 0, `swagger "${specPath2}" contains model validation errors.`);
       // console.log(result)
     });
+
+    it("should fail when request/response doesn't have allowed content-type", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/invalidContentType/test.json`;
+      const result = await validate.validateExamples(specPath2, undefined);
+      assert.strictEqual(result.length, 1);
+      assert.strictEqual(result[0].code, "INVALID_CONTENT_TYPE");
+      assert.strictEqual(
+        result[0].message,
+        "Invalid Content-Type (text/powershell).  These are supported: application/json"
+      );
+    });
   });
 
   describe("Queries - ", () => {
