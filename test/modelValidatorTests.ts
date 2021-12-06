@@ -52,10 +52,22 @@ describe("Model Validation", () => {
         result.length === 2,
         `swagger "${specPath} with operation "${operationIds}" should report two errors.`
       );
-      assert(result[0].code === "OBJECT_ADDITIONAL_PROPERTIES", "error code should be OBJECT_ADDITIONAL_PROPERTIES.");
-      assert((result[0] as any).exampleJsonPath === "$responses.200.body.value[3].siblings[0].sanctuary", "error path in example is incorrect.");
-      assert(result[1].code === "OBJECT_ADDITIONAL_PROPERTIES", "error code should be OBJECT_ADDITIONAL_PROPERTIES.");
-      assert((result[1] as any).exampleJsonPath === "$responses.200.body.value[4].siblings[0].sanctuary", "error path in example is incorrect.");
+      assert(
+        result[0].code === "OBJECT_ADDITIONAL_PROPERTIES",
+        "error code should be OBJECT_ADDITIONAL_PROPERTIES."
+      );
+      assert(
+        (result[0] as any).exampleJsonPath === "$responses.200.body.value[3].siblings[0].sanctuary",
+        "error path in example is incorrect."
+      );
+      assert(
+        result[1].code === "OBJECT_ADDITIONAL_PROPERTIES",
+        "error code should be OBJECT_ADDITIONAL_PROPERTIES."
+      );
+      assert(
+        (result[1] as any).exampleJsonPath === "$responses.200.body.value[4].siblings[0].sanctuary",
+        "error path in example is incorrect."
+      );
     });
 
     it("should pass for paths in x-ms-paths with question mark", async () => {
@@ -611,13 +623,13 @@ describe("Model Validation", () => {
   describe("should pass for validate generated 'uri' format string", () => {
     it("should pass when examples match the 'uri' format definition of swagger file", async () => {
       const specPath2 = `${testPath}/modelValidation/swaggers/specification/loadtestservice/loadtestservice.json`;
-      const result = await validate.validateExamples(specPath2, 'TestRun_StopTestRun');
+      const result = await validate.validateExamples(specPath2, "TestRun_StopTestRun");
       assert.strictEqual(result.length, 0);
     });
 
     it("should failed when examples doesn't match the 'uri' format definition of swagger file", async () => {
       const specPath2 = `${testPath}/modelValidation/swaggers/specification/loadtestservice/loadtestservice.json`;
-      const result = await validate.validateExamples(specPath2, 'TestRun_GetAppTestRunsSearch');
+      const result = await validate.validateExamples(specPath2, "TestRun_GetAppTestRunsSearch");
       assert.strictEqual(result.length, 3);
       assert.strictEqual(result[0].code, "INVALID_FORMAT");
       assert.strictEqual(result[1].code, "INVALID_FORMAT");
