@@ -681,4 +681,20 @@ describe("Model Validation", () => {
       assert.strictEqual(result[0].code, "LRO_RESPONSE_CODE");
     });
   });
+
+  describe("string length validation", () => {
+    it("should fail when the provided string is greater than maximum length", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/stringLength/maxLength/test.json`;
+      const result = await validate.validateExamples(specPath2, undefined);
+      assert.strictEqual(result.length, 1);
+      assert.strictEqual(result[0].code, "MAX_LENGTH");
+    });
+
+    it("should fail when the provided string is less than minimum length", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/stringLength/minLength/test.json`;
+      const result = await validate.validateExamples(specPath2, undefined);
+      assert.strictEqual(result.length, 1);
+      assert.strictEqual(result[0].code, "MIN_LENGTH");
+    });
+  });
 });
