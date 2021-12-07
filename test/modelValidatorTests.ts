@@ -724,13 +724,21 @@ describe("Model Validation", () => {
       assert.strictEqual(result[0].code, "XMS_EXAMPLE_NOTFOUND_ERROR");
     });
 
-    // it("should fail when missing $ref in x-ms-examples", async () => {
-    //   const specPath2 = `${testPath}/modelValidation/swaggers/specification/xmsExampleValidation/undefinedXmsExampleRef/test.json`;
-    //   const result = await validate.validateExamples(specPath2, undefined);
-    //   console.log(`result: ${JSON.stringify(result)}`);
-    //   assert.strictEqual(result.length, 1);
-    //   assert.strictEqual(result[0].code, "INTERNAL_ERROR");
-    // });
+    it("should fail when missing $ref in x-ms-examples", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/xmsExampleValidation/undefinedXmsExampleRef/test.json`;
+      const result = await validate.validateExamples(specPath2, undefined);
+      assert.strictEqual(result.length, 1);
+      assert.strictEqual(result[0].code, "INTERNAL_ERROR");
+    });
+  });
+
+  describe("operationIds validation", () => {
+    it("should fail when operationIds isn't string or undefined", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/xmsExampleValidation/xmsExampleNotFound/test.json`;
+      const result = await validate.validateExamples(specPath2, 123 as any);
+      assert.strictEqual(result.length, 1);
+      assert.strictEqual(result[0].code, "INTERNAL_ERROR");
+    });
   });
 
   describe("specPath validation", () => {
