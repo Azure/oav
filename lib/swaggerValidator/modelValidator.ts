@@ -801,28 +801,10 @@ export class SwaggerExampleValidator {
     exampleObj?: any
   ) => {
     if (operation["x-ms-long-running-operation"] === true) {
-      if (operation._method === "post") {
-        if (statusCode === "202" || statusCode === "201") {
+      if (operation._method === "patch" || operation._method === "post") {
+        if (statusCode === "201" || statusCode === "202") {
           this.validateLroHeader(examplePath, operation, statusCode, headers);
-        } else if (statusCode !== "200" && statusCode !== "204") {
-          this.errors.push(
-            this.issueFromErrorCode(
-              operation.operationId!,
-              examplePath,
-              "LRO_RESPONSE_CODE",
-              { statusCode },
-              operation.responses,
-              undefined,
-              exampleObj,
-              `responses/${statusCode}`,
-              ValidationResultSource.RESPONSE
-            )
-          );
-        }
-      } else if (operation._method === "patch") {
-        if (statusCode === "202" || statusCode === "201") {
-          this.validateLroHeader(examplePath, operation, statusCode, headers);
-        } else if (statusCode !== "200") {
+        } else if (statusCode === "200" || statusCode === "204") {
           this.errors.push(
             this.issueFromErrorCode(
               operation.operationId!,
@@ -838,9 +820,27 @@ export class SwaggerExampleValidator {
           );
         }
       } else if (operation._method === "delete") {
-        if (statusCode === "202") {
+        if (statusCode === "202" || statusCode === "204") {
           this.validateLroHeader(examplePath, operation, statusCode, headers);
-        } else if (statusCode !== "200" && statusCode !== "204") {
+        } else if (statusCode === "200" || statusCode === "201") {
+          this.errors.push(
+            this.issueFromErrorCode(
+              operation.operationId!,
+              examplePath,
+              "LRO_RESPONSE_CODE",
+              { statusCode },
+              operation.responses,
+              undefined,
+              exampleObj,
+              `responses/${statusCode}`,
+              ValidationResultSource.RESPONSE
+            )
+          );
+        }
+      } else if (operation._method === "put") {
+        if (statusCode === "202" || statusCode === "201" || statusCode === "200") {
+          this.validateLroHeader(examplePath, operation, statusCode, headers);
+        } else if (statusCode === "204") {
           this.errors.push(
             this.issueFromErrorCode(
               operation.operationId!,

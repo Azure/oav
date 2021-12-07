@@ -128,7 +128,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "201": {
             "description": "OK. The request has succeeded.",
             "schema": {
               "$ref": "#/definitions/Profile"

@@ -31,16 +31,11 @@ describe("Read Only properties", () => {
     });
     assert.strictEqual(
       result.length,
-      2,
+      1,
       `swagger "${specPath}" with operation should contain 2 model validation errors.`
     );
     assert.strictEqual(
-      result[0].code === "INVALID_TYPE",
-      true,
-      `swagger "${specPath}" should throw an error with code READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST`
-    );
-    assert.strictEqual(
-      result[1].code === "READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST",
+      result[0].code === "READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST",
       true,
       `swagger "${specPath}" should throw an error with code READONLY_PROPERTY_NOT_ALLOWED_IN_REQUEST`
     );

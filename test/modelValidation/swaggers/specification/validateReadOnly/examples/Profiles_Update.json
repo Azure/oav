@@ -10,12 +10,12 @@
         "name": "Standard_Verizon"
       },
       "properties": {
-        "provisioningState": 5
+        "provisioningState": "Creating"
       }
     }
   },
   "responses": {
-    "200": {
+    "201": {
       "body": {
         "name": "profile1",
         "id": "/subscriptions/subid/resourcegroups/RG/providers/Microsoft.Cdn/profiles/profile1",

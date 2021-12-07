@@ -16,6 +16,9 @@
   },
   "responses": {
     "200": {
+      "headers": {
+        "location": "https://management.azure.com/subscriptions/subid/resourceGroups/RG/providers/Microsoft.Cdn/profiles/profile1?api-version=2017-04-02"
+      },
       "body": {
         "name": "profile1",
         "id": "/subscriptions/subid/resourcegroups/RG/providers/Microsoft.Cdn/profiles/profile1",
@@ -48,6 +51,9 @@
       }
     },
     "202": {
+      "headers": {
+        "location": "https://management.azure.com/subscriptions/subid/resourceGroups/RG/providers/Microsoft.Cdn/profiles/profile1?api-version=2017-04-02"
+      },
       "body": {
         "name": "profile1",
         "id": "/subscriptions/subid/resourcegroups/RG/providers/Microsoft.Cdn/profiles/profile1",
