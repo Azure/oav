@@ -22,7 +22,10 @@
                       "delayMilliseconds": 850,
                       "delaySigma": 100,
                       "correlationPercent": 10,
-                      "distribution": "normal"
+                      "distribution": "normal",
+                      "format": {
+                        "type": "TextFormat"
+                      }
                     }
                   ]
                 }

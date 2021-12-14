@@ -9,6 +9,8 @@ const visited = new WeakSet<Schema>();
 export const resolveNestedDefinitionTransformer: SpecTransformer = {
   type: TransformerType.Spec,
   transform(spec, { jsonLoader, objSchemas, arrSchemas, primSchemas, allParams }) {
+    const queue = new Array<string>();
+
     const visitNestedDefinitions = (s: Schema | undefined, ref?: string) => {
       if (s === undefined || s === null || typeof s !== "object") {
         return;
@@ -25,6 +27,9 @@ export const resolveNestedDefinitionTransformer: SpecTransformer = {
       }
       if (schema.type === undefined || schema.type === "object") {
         objSchemas.push(schema);
+        if (schema.discriminator !== undefined && schema[refSelfSymbol] !== undefined) {
+          queue.push(schema[refSelfSymbol]!);
+        }
       } else if (schema.type === "array") {
         arrSchemas.push(schema);
       } else {
@@ -81,13 +86,6 @@ export const resolveNestedDefinitionTransformer: SpecTransformer = {
     if (spec.parameters !== undefined) {
       for (const key of Object.keys(spec.parameters)) {
         spec.parameters[key][refSelfSymbol] = `${spec[$id]}#/parameters/${key}`;
-      }
-    }
-
-    const queue = new Array<string>();
-    for (const sch of objSchemas) {
-      if (sch.discriminator !== undefined && sch[refSelfSymbol] !== undefined) {
-        queue.push(sch[refSelfSymbol]!);
       }
     }
 

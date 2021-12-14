@@ -148,7 +148,7 @@
       "request": "launch",
       "name": "Jest Current File",
       "program": "${workspaceFolder}/node_modules/.bin/jest",
-      "args": ["--runTestsByPath", "test/liveValidatorTests.ts", "--coverage", "false"],
+      "args": ["--runTestsByPath", "test/modelValidatorTests.ts", "--coverage", "false"],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "disableOptimisticBPs": true,
