@@ -34,7 +34,7 @@ steps:
       reportDirectory: "$(System.DefaultWorkingDirectory)/**/coverage"
 
   # this command will return non zero if git repo has changes ie if the snapshots have been updated
-  - script: echo "If this step fails, go to the published artifacts apply the patch provided to your local git repo using `git apply <file>`" && git diff-index --quiet HEAD --
+  - script: echo "If this step fails, go to the published artifacts apply the patch provided to your local git repo using `git apply <file>`" && git status && git diff-index --quiet HEAD --
     displayName: Fail test if snapshots have been updated
     condition: always()
 
