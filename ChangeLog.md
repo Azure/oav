@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 12/15/2021 2.11.4
+
+- ModelValidator - fix failed to resolve discriminator models in nested definitions
+
 ## 12/03/2021 2.11.3
 
 - Utils - move get provider related functions to utils because of DI error
