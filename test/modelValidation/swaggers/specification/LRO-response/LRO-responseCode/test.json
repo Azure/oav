@@ -48,10 +48,16 @@
         ],
         "responses": {
           "200": {
-            "description": "OK. The request has succeeded."
+            "description": "OK. The request has succeeded.",
+            "schema": {
+              "$ref": "#/definitions/DeleteAtBillingProfileResult"
+            }
           },
-          "204": {
-            "description": "The resource was not found."
+          "201": {
+            "description": "The resource was not found.",
+            "schema": {
+              "$ref": "#/definitions/DeleteAtBillingProfileResult"
+            }
           },
           "202": {
             "description": "Accepted",
@@ -85,6 +91,14 @@
     }
   },
   "definitions": {
+    "DeleteAtBillingProfileResult": {
+      "properties": {
+        "name": {
+          "readOnly": true,
+          "type": "string"
+        }
+      }
+    },
     "ErrorResponse": {
       "description": "Error response indicates that the service is not able to process the incoming request. The reason is provided in the error message.",
       "type": "object",

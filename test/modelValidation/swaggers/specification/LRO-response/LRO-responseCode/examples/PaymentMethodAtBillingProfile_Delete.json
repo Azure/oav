@@ -12,8 +12,16 @@
         "Retry-After": "60"
       }
     },
-    "200": {},
-    "204": {},
+    "200": {
+      "body": {
+        "name": "ABCDABCDABC0"
+      }
+    },
+    "201": {
+      "body": {
+        "name": "ABCDABCDABC0"
+      }
+    },
     "409": {
       "body": {
         "error": {
