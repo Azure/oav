@@ -2,6 +2,7 @@
 
 ## 12/15/2021 2.11.4
 
+- ModelValidator - Increase model validation test coverage to 90%+
 - ModelValidator - fix failed to resolve discriminator models in nested definitions
 
 ## 12/03/2021 2.11.3
