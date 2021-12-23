@@ -10122,44 +10122,6 @@ Array [
     "source": "request",
   },
   Object {
-    "code": "LRO_RESPONSE_CODE",
-    "exampleJsonPath": "responses/default",
-    "examplePosition": Object {
-      "column": 18,
-      "line": 40,
-    },
-    "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/iotcentral/resource-manager/Microsoft.IoTCentral/stable/2018-09-01/examples/Apps_Update.json",
-    "message": "Respond to the initial request of a long running operation, Patch/Post call must return 201 or 202, Delete call must return 202 or 204, Put call must return 202 or 201 or 200, but default being returned",
-    "operationId": "Apps_Update",
-    "schemaJsonPath": undefined,
-    "schemaPosition": Object {
-      "column": 22,
-      "line": 174,
-    },
-    "schemaUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/iotcentral/resource-manager/Microsoft.IoTCentral/stable/2018-09-01/iotcentral.json",
-    "severity": 0,
-    "source": "response",
-  },
-  Object {
-    "code": "LRO_RESPONSE_CODE",
-    "exampleJsonPath": "responses/default",
-    "examplePosition": Object {
-      "column": 18,
-      "line": 20,
-    },
-    "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/iotcentral/resource-manager/Microsoft.IoTCentral/stable/2018-09-01/examples/Apps_Delete.json",
-    "message": "Respond to the initial request of a long running operation, Patch/Post call must return 201 or 202, Delete call must return 202 or 204, Put call must return 202 or 201 or 200, but default being returned",
-    "operationId": "Apps_Delete",
-    "schemaJsonPath": undefined,
-    "schemaPosition": Object {
-      "column": 22,
-      "line": 219,
-    },
-    "schemaUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/iotcentral/resource-manager/Microsoft.IoTCentral/stable/2018-09-01/iotcentral.json",
-    "severity": 0,
-    "source": "response",
-  },
-  Object {
     "code": "PATTERN",
     "exampleJsonPath": "$parameters.operationInputs",
     "examplePosition": Object {
@@ -11046,22 +11008,6 @@ Array [
     "examplePosition": undefined,
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/iothub/resource-manager/Microsoft.Devices/stable/2018-04-01/examples/iothub_delete.json",
     "message": "Long running operation should return location or azure-AsyncOperation in header but not provided",
-    "operationId": "IotHubResource_Delete",
-    "schemaJsonPath": undefined,
-    "schemaPosition": Object {
-      "column": 22,
-      "line": 270,
-    },
-    "schemaUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/iothub/resource-manager/Microsoft.Devices/stable/2018-04-01/iothub.json",
-    "severity": 0,
-    "source": "response",
-  },
-  Object {
-    "code": "LRO_RESPONSE_CODE",
-    "exampleJsonPath": "responses/404",
-    "examplePosition": undefined,
-    "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/iothub/resource-manager/Microsoft.Devices/stable/2018-04-01/examples/iothub_delete.json",
-    "message": "Respond to the initial request of a long running operation, Patch/Post call must return 201 or 202, Delete call must return 202 or 204, Put call must return 202 or 201 or 200, but 404 being returned",
     "operationId": "IotHubResource_Delete",
     "schemaJsonPath": undefined,
     "schemaPosition": Object {

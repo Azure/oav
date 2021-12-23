@@ -3,6 +3,7 @@ import { inject, injectable } from "inversify";
 import { FilePosition, getInfo, ParseError, StringMap } from "@azure-tools/openapi-tools-common";
 import * as openapiToolsCommon from "@azure-tools/openapi-tools-common";
 import jsonPointer from "json-pointer";
+import { parseInt } from "lodash";
 import * as C from "../util/constants";
 import { inversifyGetContainer, inversifyGetInstance, TYPES } from "../inversifyUtils";
 import { LiveValidatorLoader } from "../liveValidation/liveValidatorLoader";
@@ -800,7 +801,7 @@ export class SwaggerExampleValidator {
     headers: StringMap<string>,
     exampleObj?: any
   ) => {
-    if (operation["x-ms-long-running-operation"] === true) {
+    if (operation["x-ms-long-running-operation"] === true && parseInt(statusCode, 10) < 300) {
       if (operation._method === "post") {
         if (statusCode === "202" || statusCode === "201") {
           this.validateLroHeader(examplePath, operation, statusCode, headers);
@@ -841,6 +842,22 @@ export class SwaggerExampleValidator {
         if (statusCode === "202") {
           this.validateLroHeader(examplePath, operation, statusCode, headers);
         } else if (statusCode !== "200" && statusCode !== "204") {
+          this.errors.push(
+            this.issueFromErrorCode(
+              operation.operationId!,
+              examplePath,
+              "LRO_RESPONSE_CODE",
+              { statusCode },
+              operation.responses,
+              undefined,
+              exampleObj,
+              `responses/${statusCode}`,
+              ValidationResultSource.RESPONSE
+            )
+          );
+        }
+      } else if (operation._method === "put") {
+        if (statusCode !== "200" && statusCode !== "201" && statusCode !== "202") {
           this.errors.push(
             this.issueFromErrorCode(
               operation.operationId!,
