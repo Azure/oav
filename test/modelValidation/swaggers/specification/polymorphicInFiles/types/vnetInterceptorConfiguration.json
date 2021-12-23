@@ -1,0 +1,271 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Configuration Types",
+    "version": "2021-11-12-preview"
+  },
+  "paths": {},
+  "definitions": {
+    "vnetInterceptorConfiguration": {
+      "type": "object",
+      "description": "Model that represents a configuration resource.",
+      "properties": {
+        "properties": {
+          "description": "The properties of the vnet interceptor configuration resource.",
+          "x-ms-client-flatten": true,
+          "$ref": "#/definitions/configurationProperties"
+        }
+      },
+      "required": ["properties"]
+    },
+    "configurationProperties": {
+      "description": "Model that represents the vnet interceptor configuration properties model.",
+      "type": "object",
+      "properties": {
+        "routes": {
+          "type": "array",
+          "description": "List of Route references.",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions/route"
+          }
+        }
+      },
+      "required": ["routes"],
+      "additionalProperties": false
+    },
+    "vnetInterceptorConfigurationListResult": {
+      "type": "object",
+      "description": "Model that represents a list of httpsServiceConfigurations and a link for pagination.",
+      "properties": {
+        "value": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/vnetInterceptorConfiguration"
+          },
+          "description": "List of vnetInterceptor configuration resources.",
+          "readOnly": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "route": {
+      "type": "object",
+      "description": "Model that represents a route rule.",
+      "properties": {
+        "priority": {
+          "type": "integer",
+          "description": "The priority of the current route rule",
+          "minimum": 1
+        },
+        "destination": {
+          "description": "The destination ip address and port",
+          "type": "string",
+          "minLength": 1
+        },
+        "ipControls": {
+          "type": "array",
+          "description": "List of IP Control objects",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions/ipControl"
+          }
+        },
+        "name": {
+          "type": "string",
+          "description": "String of the name of a Route."
+        }
+      },
+      "required": ["name", "priority", "ipControls", "destination"],
+      "additionalProperties": false
+    },
+    "ipControl": {
+      "type": "object",
+      "description": "The control object that mutates the TCP traffic",
+      "discriminator": "type",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["latency", "bandwidth", "https", "qos"]
+        }
+      },
+      "required": ["type"]
+    },
+    "latency": {
+      "type": "object",
+      "description": "Model that represents the IP Latency Control",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ipControl"
+        },
+        {
+          "properties": {
+            "delayMilliseconds": {
+              "type": "integer",
+              "description": "The latency in milliseconds"
+            },
+            "delaySigma": {
+              "type": "integer",
+              "description": "The latency sigma in milliseconds"
+            },
+            "correlationPercent": {
+              "type": "number",
+              "description": "the percentage of correlation"
+            },
+            "distribution": {
+              "type": "string",
+              "description": "The distribution of the latency"
+            },
+            "format": {
+              "description": "The format of files.",
+              "$ref": "#/definitions/DatasetStorageFormat"
+            }
+          },
+          "required": ["delayMilliseconds", "delaySigma", "correlationPercent", "distribution"]
+        }
+      ]
+    },
+    "DatasetStorageFormat": {
+      "discriminator": "type",
+      "description": "The format definition of a storage.",
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Type of dataset storage format."
+        },
+        "serializer": {
+          "type": "object",
+          "description": "Serializer. Type: string (or Expression with resultType string)."
+        },
+        "deserializer": {
+          "type": "object",
+          "description": "Deserializer. Type: string (or Expression with resultType string)."
+        }
+      },
+      "additionalProperties": {
+        "type": "object"
+      },
+      "required": ["type"]
+    },
+    "TextFormat": {
+      "description": "The data stored in text format.",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/DatasetStorageFormat"
+        }
+      ],
+      "properties": {
+        "columnDelimiter": {
+          "type": "object",
+          "description": "The column delimiter. Type: string (or Expression with resultType string)."
+        },
+        "rowDelimiter": {
+          "type": "object",
+          "description": "The row delimiter. Type: string (or Expression with resultType string)."
+        },
+        "escapeChar": {
+          "type": "object",
+          "description": "The escape character. Type: string (or Expression with resultType string)."
+        },
+        "quoteChar": {
+          "type": "object",
+          "description": "The quote character. Type: string (or Expression with resultType string)."
+        },
+        "nullValue": {
+          "type": "object",
+          "description": "The null value string. Type: string (or Expression with resultType string)."
+        },
+        "encodingName": {
+          "type": "object",
+          "description": "The code page name of the preferred encoding. If miss, the default value is ΓÇ£utf-8ΓÇ¥, unless BOM denotes another Unicode encoding. Refer to the ΓÇ£NameΓÇ¥ column of the table in the following link to set supported values: https://msdn.microsoft.com/library/system.text.encoding.aspx. Type: string (or Expression with resultType string)."
+        },
+        "treatEmptyAsNull": {
+          "type": "object",
+          "description": "Treat empty column values in the text file as null. The default value is true. Type: boolean (or Expression with resultType boolean)."
+        },
+        "skipLineCount": {
+          "type": "object",
+          "description": "The number of lines/rows to be skipped when parsing text files. The default value is 0. Type: integer (or Expression with resultType integer)."
+        },
+        "firstRowAsHeader": {
+          "type": "object",
+          "description": "When used as input, treat the first row of data as headers. When used as output,write the headers into the output as the first row of data. The default value is false. Type: boolean (or Expression with resultType boolean)."
+        }
+      }
+    },
+    "Bandwidth": {
+      "type": "object",
+      "description": "Model that represents the IP Bandwidth Control",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ipControl"
+        },
+        {
+          "properties": {
+            "ingressBandwidthLimit": {
+              "type": "integer",
+              "description": "The bandwidth limit of the ingress traffic"
+            },
+            "egressBandwidthLimit": {
+              "type": "integer",
+              "description": "The bandwidth limit of the egress traffic"
+            }
+          },
+          "required": ["ingressBandwidthLimit", "egressBandwidthLimit"]
+        }
+      ]
+    },
+    "Https": {
+      "type": "object",
+      "description": "Model that represents the IP Https Control",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ipControl"
+        },
+        {
+          "properties": {
+            "httpsPortsToIntercept": {
+              "type": "array",
+              "description": "The https ports to intercept",
+              "items": {
+                "type": "integer"
+              }
+            }
+          },
+          "required": ["httpsPortsToIntercept"]
+        }
+      ]
+    },
+    "Qos": {
+      "type": "object",
+      "description": "Model that represents the IP Qos Control",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ipControl"
+        },
+        {
+          "properties": {
+            "packetLossRate": {
+              "type": "number",
+              "description": "the rate of packet loss",
+              "minimum": 0
+            },
+            "packetCorruptionRate": {
+              "type": "number",
+              "description": "the rate of packet corruption",
+              "minimum": 0
+            },
+            "packetDuplicationRate": {
+              "type": "number",
+              "description": "the rate of packet duplication",
+              "minimum": 0
+            }
+          },
+          "required": ["packetLossRate", "packetCorruptionRate", "packetDuplicationRate"]
+        }
+      ]
+    }
+  }
+}

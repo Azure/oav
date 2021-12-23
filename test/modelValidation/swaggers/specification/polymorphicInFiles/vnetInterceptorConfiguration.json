@@ -1,0 +1,38 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Moxy Control Plane",
+    "description": "Moxy Resource Provider REST API",
+    "version": "2021-11-12-preview"
+  },
+  "host": "management.azure.com",
+  "schemes": ["https"],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "paths": {
+    "/subscriptions/{subscriptionId}/providers/Microsoft.Moxy/vnetInterceptorConfigurations": {
+      "get": {
+        "description": "Get a list of vnetInterceptorConfigurations in a subscription.",
+        "tags": ["VnetInterceptorConfigurations"],
+        "operationId": "VnetInterceptorConfigurations_ListAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of vnetInterceptor configuration resources returned if request was successful.",
+            "schema": {
+              "$ref": "./types/vnetInterceptorConfiguration.json#/definitions/vnetInterceptorConfigurationListResult"
+            }
+          }
+        },
+        "x-ms-pageable": {
+          "nextLinkName": "nextLink"
+        },
+        "x-ms-examples": {
+          "List all VnetInterceptorConfigurations in a resource group.": {
+            "$ref": "./examples/vnetInterceptorConfigurations/ListAllVnetInterceptorConfigurations.json"
+          }
+        }
+      }
+    }
+  }
+}

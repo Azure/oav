@@ -1,0 +1,39 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-0000-0000-0000-000000000000",
+    "continuationToken": null,
+    "api-version": "2021-11-12-preview"
+  },
+  "responses": {
+    "200": {
+      "headers": {},
+      "body": {
+        "value": [
+          {
+            "properties": {
+              "routes": [
+                {
+                  "name": "exampleRoute",
+                  "priority": 1,
+                  "destination": "10.140.1.2:8080",
+                  "ipControls": [
+                    {
+                      "type": "latency",
+                      "delayMilliseconds": 850,
+                      "delaySigma": 100,
+                      "correlationPercent": 10,
+                      "distribution": "normal",
+                      "format": {
+                        "type": "TextFormat"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+}
