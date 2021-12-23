@@ -1,6 +1,6 @@
 import { arrayKeywords, keywords, propsKeywords } from "json-schema-traverse";
 import { $id } from "../swagger/jsonLoader";
-import { Operation, Path, refSelfSymbol, Schema } from "../swagger/swaggerTypes";
+import { Operation, Path, refSelfSymbol, Schema, SwaggerSpec } from "../swagger/swaggerTypes";
 import { SpecTransformer, TransformerType } from "./transformer";
 import { traverseSwagger } from "./traverseSwagger";
 
@@ -9,6 +9,8 @@ const visited = new WeakSet<Schema>();
 export const resolveNestedDefinitionTransformer: SpecTransformer = {
   type: TransformerType.Spec,
   transform(spec, { jsonLoader, objSchemas, arrSchemas, primSchemas, allParams }) {
+    const queue = new Array<string>();
+
     const visitNestedDefinitions = (s: Schema | undefined, ref?: string) => {
       if (s === undefined || s === null || typeof s !== "object") {
         return;
@@ -25,6 +27,9 @@ export const resolveNestedDefinitionTransformer: SpecTransformer = {
       }
       if (schema.type === undefined || schema.type === "object") {
         objSchemas.push(schema);
+        if (schema.discriminator !== undefined && schema[refSelfSymbol] !== undefined) {
+          queue.push(schema[refSelfSymbol]!);
+        }
       } else if (schema.type === "array") {
         arrSchemas.push(schema);
       } else {
@@ -81,6 +86,27 @@ export const resolveNestedDefinitionTransformer: SpecTransformer = {
     if (spec.parameters !== undefined) {
       for (const key of Object.keys(spec.parameters)) {
         spec.parameters[key][refSelfSymbol] = `${spec[$id]}#/parameters/${key}`;
+      }
+    }
+
+    while (queue.length > 0) {
+      const ref = queue.shift()!;
+      const idx = ref.indexOf("#");
+      const mockName = idx === -1 ? ref : ref.substr(0, idx);
+      const specFile: SwaggerSpec = jsonLoader.resolveMockedFile(mockName);
+
+      if (specFile.definitions !== undefined) {
+        for (const key of Object.keys(specFile.definitions)) {
+          const sch = specFile.definitions[key];
+          if (
+            sch.allOf?.find(function (s) {
+              return s.$ref === ref;
+            }) !== undefined
+          ) {
+            visitNestedDefinitions(specFile.definitions[key], `${mockName}#/definitions/${key}`);
+            queue.push(`${mockName}#/definitions/${key}`);
+          }
+        }
       }
     }
   },
