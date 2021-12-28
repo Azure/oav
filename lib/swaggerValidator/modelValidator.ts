@@ -324,15 +324,17 @@ export class SwaggerExampleValidator {
       : null;
     const pathTemplate = operation._path._pathTemplate;
     const parameters = operation.parameters;
+    const publicParameters = operation._path.parameters;
+    const mergedParameters = [...(parameters ?? []), ...(publicParameters ?? [])];
     const pathParameters: { [key: string]: string } = {};
     let bodyParameter: any = {};
     const queryParameters: ParsedUrlQuery = {};
     const formData: { [key: string]: string } = {};
     const exampleRequestHeaders: { [propertyName: string]: string } = {};
-    if (parameters === undefined) {
+    if (mergedParameters === undefined) {
       return;
     }
-    for (const p of parameters) {
+    for (const p of mergedParameters) {
       const parameter = this.jsonLoader.resolveRefObj(p);
       let parameterValue = exampleContent?.parameters[parameter.name];
       if (!parameterValue) {
@@ -406,7 +408,7 @@ export class SwaggerExampleValidator {
       } else if (location === "formData") {
         formData[parameter.name] = parameterValue;
       }
-    } // end of parameters for loop
+    } // end of mergedParameters for loop
     transformMapValue(queryParameters, operation._queryTransform);
     transformMapValue(pathParameters, operation._pathTransform);
     const validate = operation._validate!;

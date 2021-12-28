@@ -29,6 +29,11 @@
   },
   "paths": {
     "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Kubernetes/connectedClusters/{clusterName}": {
+      "parameters": [
+        {
+          "$ref": "#/parameters/ConnectedClusterParameter"
+        }
+      ],
       "put": {
         "summary": "Registers a new K8s cluster.",
         "operationId": "ConnectedCluster_Create",
@@ -41,7 +46,48 @@
         ],
         "x-ms-examples": {
           "CreateClusterExample": {
-            "$ref": "./examples/testglobalparamexample.json"
+            "$ref": "./examples/CreateConnectedCluster.json"
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/SubscriptionIdPathParam"
+          },
+          {
+            "$ref": "#/parameters/ResourceGroupNamePathParam"
+          },
+          {
+            "$ref": "#/parameters/ClusterNamePathParam"
+          },
+          {
+            "$ref": "#/parameters/Api-VersionQueryParam"
+          },
+          {
+            "$ref": "#/parameters/ConnectedClusterBodyParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The resource was created successfully",
+            "schema": {
+              "$ref": "#/definitions/ConnectedCluster"
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Registers a new K8s cluster.",
+        "operationId": "ConnectedCluster_CreateOrUpdate",
+        "description": "API to register a new K8s cluster and thereby create a tracked resource in ARM",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "x-ms-examples": {
+          "CreateClusterExample": {
+            "$ref": "./examples/CreateOrUpdateConnectedCluster.json"
           }
         },
         "parameters": [
@@ -145,6 +191,14 @@
     }
   },
   "parameters": {
+    "ConnectedClusterParameter": {
+      "name": "connectedClusterName",
+      "in": "path",
+      "required": true,
+      "type": "string",
+      "description": "The name of the connected cluster on which get is called.",
+      "x-ms-parameter-location": "method"
+    },
     "ClusterNamePathParam": {
       "name": "clusterName",
       "in": "path",
