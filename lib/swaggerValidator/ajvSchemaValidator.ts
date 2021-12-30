@@ -193,7 +193,7 @@ export const ajvErrorToSchemaValidateIssue = (
 };
 
 const shouldSkipError = (error: ErrorObject, cxt: SchemaValidateContext) => {
-  const { schema, parentSchema: parentSch, params, keyword, data } = error;
+  const { schema, parentSchema: parentSch, params, keyword, data, dataPath } = error;
   const parentSchema = parentSch as Schema;
 
   if (schema?._skipError || parentSchema._skipError) {
@@ -211,6 +211,15 @@ const shouldSkipError = (error: ErrorObject, cxt: SchemaValidateContext) => {
         (parentSchema.properties?.[(params as any).missingProperty] as any)?.[xmsSecret] ===
           true)) ||
       (keyword === "type" && data === null && parentSchema[xmsMutability]?.indexOf("read") === -1))
+  ) {
+    return true;
+  }
+
+  // If a response has property which x-ms-secret value is true in post we can skip this error
+  if (
+    cxt.isResponse &&
+    (parentSchema.properties?.[(params as any).missingProperty] as any)?.[xmsSecret] === true &&
+    dataPath.substring(dataPath.length - 4) === "post"
   ) {
     return true;
   }
