@@ -193,7 +193,7 @@ export const ajvErrorToSchemaValidateIssue = (
 };
 
 const shouldSkipError = (error: ErrorObject, cxt: SchemaValidateContext) => {
-  const { schema, parentSchema: parentSch, params, keyword, data, dataPath } = error;
+  const { schema, parentSchema: parentSch, params, keyword, data } = error;
   const parentSchema = parentSch as Schema;
 
   if (schema?._skipError || parentSchema._skipError) {
@@ -219,7 +219,7 @@ const shouldSkipError = (error: ErrorObject, cxt: SchemaValidateContext) => {
   if (
     cxt.isResponse &&
     (parentSchema.properties?.[(params as any).missingProperty] as any)?.[xmsSecret] === true &&
-    dataPath.substring(dataPath.length - 4) === "post"
+    cxt.httpMethod === "post"
   ) {
     return true;
   }

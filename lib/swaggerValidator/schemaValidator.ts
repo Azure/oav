@@ -7,6 +7,7 @@ export interface SchemaValidateContext {
   isResponse?: boolean;
   includeErrors?: TrafficValidationErrorCode[];
   statusCode?: string;
+  httpMethod?: string;
 }
 
 export interface SchemaValidateIssue {
