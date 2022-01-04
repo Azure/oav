@@ -218,8 +218,9 @@ const shouldSkipError = (error: ErrorObject, cxt: SchemaValidateContext) => {
   // If a response has property which x-ms-secret value is true in post we can skip this error
   if (
     cxt.isResponse &&
-    (parentSchema.properties?.[(params as any).missingProperty] as any)?.[xmsSecret] === true &&
-    cxt.httpMethod === "post"
+    (cxt as any)?.httpMethod === "post" &&
+    ((keyword === "x-ms-secret" && (parentSchema as any)?.[xmsSecret] === true) ||
+      (keyword === "x-ms-mutability" && parentSchema[xmsMutability]?.indexOf("read") === -1))
   ) {
     return true;
   }
