@@ -583,7 +583,7 @@ describe("Model Validation", () => {
       assert.strictEqual(result.length, 1);
       assert.strictEqual(result[0].code, "OBJECT_MISSING_REQUIRED_PROPERTY");
     });
-    it("Should pass when path have global parameters", async () => {
+    it("Should pass when path have common path scope parameters", async () => {
       const specPath2 = `${testPath}/modelValidation/swaggers/specification/globalParamsInRequest/test.json`;
       const result = await validate.validateExamples(specPath2, "ConnectedCluster_CreateOrUpdate", {
         consoleLogLevel: "off",
