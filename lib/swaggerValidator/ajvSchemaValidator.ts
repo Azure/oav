@@ -215,12 +215,17 @@ const shouldSkipError = (error: ErrorObject, cxt: SchemaValidateContext) => {
     return true;
   }
 
-  // If a response has property which x-ms-secret value is true in post we can skip this error
+  // If a response has property which x-ms-secret value is "true" in post we can skip this error
   if (
     cxt.isResponse &&
     (cxt as any)?.httpMethod === "post" &&
+    // if keyword is x-ms-secret, required check can be ignored when x-ms-secret is "true"
     ((keyword === "x-ms-secret" && (parentSchema as any)?.[xmsSecret] === true) ||
-      (keyword === "x-ms-mutability" && parentSchema[xmsMutability]?.indexOf("read") === -1))
+      // if keyword is x-ms-mutability,
+      // required check can be ignored when x-ms-secret is "true" and x-ms-mutability is "create" and "update"
+      (keyword === "x-ms-mutability" &&
+        (parentSchema as any)?.[xmsSecret] === true &&
+        parentSchema[xmsMutability]?.indexOf("read") === -1))
   ) {
     return true;
   }
