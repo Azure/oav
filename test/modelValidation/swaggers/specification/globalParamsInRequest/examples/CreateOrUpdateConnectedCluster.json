@@ -2,11 +2,15 @@
   "parameters": {
     "subscriptionId": "1bfbb5d0-917e-4346-9026-1d3b344417f5",
     "resourceGroupName": "k8sc-rg",
+    "connectedClusterName": "testCluster",
     "clusterName": "testCluster",
     "api-version": "2020-01-01-preview",
     "ConnectedCluster": {
       "location": "East US",
-      "tags": {}
+      "tags": {},
+      "identity": {
+        "type": "SystemAssigned"
+      }
     }
   },
   "responses": {
