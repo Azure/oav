@@ -13,7 +13,7 @@ import * as Constants from "../lib/util/constants";
 // eslint-disable-next-line no-var
 var glob = require("glob").glob;
 
-const numberOfSpecs = 14;
+const numberOfSpecs = 15;
 jest.setTimeout(999999);
 
 describe("Live Validator", () => {
@@ -736,6 +736,117 @@ describe("Live Validator", () => {
       const payload = require(`${__dirname}/liveValidation/payloads/xmsSecretAndRequired.json`);
       const result = await liveValidator.validateLiveRequestResponse(payload);
       assert.equal(result.responseValidationResult.isSuccessful, true);
+    });
+
+    describe("x-ms-secret validation", () => {
+      // [√]httpMethod: POST, [√]x-ms-secret: "true", [X]x-ms-mutability: "create" and "update"
+      it(`should not report error in response for POST when the value of x-ms-secret is true`, async () => {
+        const options = {
+          directory: `${__dirname}/liveValidation/swaggers/`,
+          isPathCaseSensitive: false,
+          useRelativeSourceLocationUrl: true,
+          swaggerPathsPattern: [
+            "specification/signalr/resource-manager/Microsoft.SignalRService/2021-01-01/*.json",
+          ],
+          git: {
+            shouldClone: false,
+          },
+        };
+        const liveValidator = new LiveValidator(options);
+        await liveValidator.initialize();
+        const payload = require(`${__dirname}/liveValidation/payloads/xmsSecretAndPOST/xmsSecretAndPOST_2021-01-01.json`);
+        const result = await liveValidator.validateLiveRequestResponse(payload);
+        assert.equal(result.responseValidationResult.isSuccessful, true);
+      });
+
+      // [√]httpMethod: POST, [√]x-ms-secret: "true", [√]x-ms-mutability: "create" and "update"
+      it(`should not report error in response for POST,
+      when x-ms-secret is "true" and x-ms-mutability is "create" and "update"`, async () => {
+        const options = {
+          directory: `${__dirname}/liveValidation/swaggers/`,
+          isPathCaseSensitive: false,
+          useRelativeSourceLocationUrl: true,
+          swaggerPathsPattern: [
+            "specification/signalr/resource-manager/Microsoft.SignalRService/2021-02-01/*.json",
+          ],
+          git: {
+            shouldClone: false,
+          },
+        };
+        const liveValidator = new LiveValidator(options);
+        await liveValidator.initialize();
+        const payload = require(`${__dirname}/liveValidation/payloads/xmsSecretAndPOST/xmsSecretAndPOST_2021-02-01.json`);
+        const result = await liveValidator.validateLiveRequestResponse(payload);
+        assert.equal(result.responseValidationResult.isSuccessful, true);
+      });
+
+      // [√]httpMethod: POST, [X]x-ms-secret: "true", [√]x-ms-mutability: "create" and "update"
+      it(`should report error in response for POST when x-ms-mutability is "create" and "update"`, async () => {
+        const options = {
+          directory: `${__dirname}/liveValidation/swaggers/`,
+          isPathCaseSensitive: false,
+          useRelativeSourceLocationUrl: true,
+          swaggerPathsPattern: [
+            "specification/signalr/resource-manager/Microsoft.SignalRService/2021-03-01/*.json",
+          ],
+          git: {
+            shouldClone: false,
+          },
+        };
+        const liveValidator = new LiveValidator(options);
+        await liveValidator.initialize();
+        const payload = require(`${__dirname}/liveValidation/payloads/xmsSecretAndPOST/xmsSecretAndPOST_2021-03-01.json`);
+        const result = await liveValidator.validateLiveRequestResponse(payload);
+        assert.equal(result.responseValidationResult.isSuccessful, false);
+        const errors = result.responseValidationResult.errors;
+        for (const error of errors) {
+          assert.equal(
+            (error.schemaPath.indexOf("x-ms-secret") !== -1 && error.code === "SECRET_PROPERTY") ||
+              (error.schemaPath.indexOf("x-ms-mutability") !== -1 &&
+                error.code === "WRITEONLY_PROPERTY_NOT_ALLOWED_IN_RESPONSE"),
+            true
+          );
+        }
+      });
+
+      // [X]httpMethod: POST
+      it(`should report error in response for httpMethod which is not POST,
+      when x-ms-secret is "true" or x-ms-mutability is "create" and "update"`, async () => {
+        const swaggers = [
+          // [√]x-ms-secret: "true", [X]x-ms-mutability: "create" and "update"
+          "2021-01-01-preview/*.json",
+          // [√]x-ms-secret: "true", [√]x-ms-mutability: "create" and "update"
+          "2021-02-01-preview/*.json",
+          // [X]x-ms-secret: "true", [√]x-ms-mutability: "create" and "update"
+          "2021-03-01-preview/*.json",
+        ];
+        for (const swagger of swaggers) {
+          const options = {
+            directory: `${__dirname}/liveValidation/swaggers/specification/signalr/resource-manager/Microsoft.SignalRService/`,
+            isPathCaseSensitive: false,
+            useRelativeSourceLocationUrl: true,
+            swaggerPathsPattern: [swagger],
+            git: {
+              shouldClone: false,
+            },
+          };
+          const liveValidator = new LiveValidator(options);
+          await liveValidator.initialize();
+          const payloadVersion = swagger.slice(0, -7);
+          const payload = require(`${__dirname}/liveValidation/payloads/xmsSecretAndPOST/xmsSecretButGet_${payloadVersion}.json`);
+          const result = await liveValidator.validateLiveRequestResponse(payload);
+          assert.equal(result.responseValidationResult.isSuccessful, false);
+					const errors = result.responseValidationResult.errors;
+					for (const error of errors) {
+						assert.equal(
+							(error.schemaPath.indexOf("x-ms-secret") !== -1 && error.code === "SECRET_PROPERTY") ||
+								(error.schemaPath.indexOf("x-ms-mutability") !== -1 &&
+									error.code === "WRITEONLY_PROPERTY_NOT_ALLOWED_IN_RESPONSE"),
+							true
+						);
+					}
+				}
+      });
     });
 
     it(`should report error in response for GET/PUT resource calls when id is not returned`, async () => {
