@@ -801,8 +801,9 @@ describe("Live Validator", () => {
         const errors = result.responseValidationResult.errors;
         for (const error of errors) {
           assert.equal(
-            error.code === "WRITEONLY_PROPERTY_NOT_ALLOWED_IN_RESPONSE" ||
-              error.code === "SECRET_PROPERTY",
+            (error.schemaPath.indexOf("x-ms-secret") !== -1 && error.code === "SECRET_PROPERTY") ||
+              (error.schemaPath.indexOf("x-ms-mutability") !== -1 &&
+                error.code === "WRITEONLY_PROPERTY_NOT_ALLOWED_IN_RESPONSE"),
             true
           );
         }
@@ -838,8 +839,9 @@ describe("Live Validator", () => {
 					const errors = result.responseValidationResult.errors;
 					for (const error of errors) {
 						assert.equal(
-							error.code === "WRITEONLY_PROPERTY_NOT_ALLOWED_IN_RESPONSE" ||
-								error.code === "SECRET_PROPERTY",
+							(error.schemaPath.indexOf("x-ms-secret") !== -1 && error.code === "SECRET_PROPERTY") ||
+								(error.schemaPath.indexOf("x-ms-mutability") !== -1 &&
+									error.code === "WRITEONLY_PROPERTY_NOT_ALLOWED_IN_RESPONSE"),
 							true
 						);
 					}
