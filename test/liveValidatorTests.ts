@@ -798,6 +798,14 @@ describe("Live Validator", () => {
         const payload = require(`${__dirname}/liveValidation/payloads/xmsSecretAndPOST/xmsSecretAndPOST_2021-03-01.json`);
         const result = await liveValidator.validateLiveRequestResponse(payload);
         assert.equal(result.responseValidationResult.isSuccessful, false);
+        const errors = result.responseValidationResult.errors;
+        for (const error of errors) {
+          assert.equal(
+            error.code === "WRITEONLY_PROPERTY_NOT_ALLOWED_IN_RESPONSE" ||
+              error.code === "SECRET_PROPERTY",
+            true
+          );
+        }
       });
 
       // [X]httpMethod: POST
@@ -827,7 +835,15 @@ describe("Live Validator", () => {
           const payload = require(`${__dirname}/liveValidation/payloads/xmsSecretAndPOST/xmsSecretButGet_${payloadVersion}.json`);
           const result = await liveValidator.validateLiveRequestResponse(payload);
           assert.equal(result.responseValidationResult.isSuccessful, false);
-        }
+					const errors = result.responseValidationResult.errors;
+					for (const error of errors) {
+						assert.equal(
+							error.code === "WRITEONLY_PROPERTY_NOT_ALLOWED_IN_RESPONSE" ||
+								error.code === "SECRET_PROPERTY",
+							true
+						);
+					}
+				}
       });
     });
 
