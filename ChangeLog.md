@@ -2,6 +2,7 @@
 
 ## 12/15/2021 2.11.4
 
+- LiveValidator - Ignore required validation rule in response when x-ms-secret is true and the httpMethod is POST
 - ModelValidator - Increase model validation test coverage to 90%+
 - ModelValidator - Ignore LRO_RESPONSE_CODE validation in case of error responses
 - ModelValidator - fix failed to resolve discriminator models in nested definitions
