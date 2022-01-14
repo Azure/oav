@@ -219,6 +219,10 @@ interface BaseSchema {
   type?: string;
   items?: Schema | Schema[];
   $ref?: string;
+  if?: Schema;
+  then?: Schema;
+  else?: Schema;
+  const?: string | boolean | number | any;
 }
 
 export type SchemaType =

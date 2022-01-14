@@ -41,11 +41,8 @@ import {
   RawScenarioDefinition,
   RawStepArmTemplate,
   RawStep,
-  RawStepRestCall,
+  RawStepExample,
   RawScenario,
-  RawStepRawCall,
-  StepRawCall,
-  RawStepRestOperation,
   RawStepArmScript,
   ArmTemplate,
   VariableType,
@@ -452,7 +449,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
   }
 
   private async loadStepRestCall(
-    rawStep: RawStepRestCall | RawStepRestOperation,
+    rawStep: RawStepExample | RawStepRestOperation,
     ctx: ApiScenarioContext
   ): Promise<StepRestCall> {
     if (ctx.stepTracking.has(rawStep.step)) {
@@ -687,8 +684,8 @@ const convertVariables = (rawVariables: RawVariableScope["variables"]) => {
     if (typeof val === "string") {
       result.variables[key] = val;
     } else {
-      if (val.defaultValue !== undefined) {
-        result.variables[key] = val.defaultValue;
+      if (val.value !== undefined) {
+        result.variables[key] = val.value;
       } else {
         result.requiredVariables.push(key);
       }

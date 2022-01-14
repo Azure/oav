@@ -1,4 +1,3 @@
-import { HttpMethods } from "@azure/core-http";
 import { Operation, SwaggerExample } from "../swagger/swaggerTypes";
 
 //#region Common
@@ -11,19 +10,31 @@ type TransformRaw<T, Additional = {}, OptionalKey extends keyof T = never> = {
   } &
   Additional;
 
+export type VariableType =
+  | "array"
+  | "bool"
+  | "int"
+  | "object"
+  | "secureObject"
+  | "secureString"
+  | "string";
+
+export type ValueType = boolean | number | string | ValueType[] | { [key: string]: ValueType };
+
+export type ValueContainer = {
+  type: VariableType;
+  value?: ValueType;
+  patches?: JsonPatchOp[];
+};
+
 export type RawVariableScope = {
   variables?: {
-    [variableName: string]:
-      | string
-      | {
-          type?: VariableType;
-          defaultValue?: string;
-        };
+    [variableName: string]: string | ValueContainer;
   };
 };
 
 export type VariableScope = {
-  variables: { [variableName: string]: string };
+  variables: { [variableName: string]: ValueContainer };
   requiredVariables: string[];
   secretVariables: string[];
 };
@@ -31,6 +42,7 @@ export type VariableScope = {
 export type OutputVariables = {
   [variableName: string]: {
     type?: VariableType;
+    fromRequest: string;
     fromResponse: string;
   };
 };
@@ -40,7 +52,7 @@ export type OutputVariables = {
 //#region Step Base
 
 type RawStepBase = RawVariableScope & {
-  step: string;
+  step?: string;
   description?: string;
   outputVariables?: OutputVariables;
 };
@@ -50,54 +62,41 @@ type StepBase = VariableScope & {
   isCleanUpStep?: boolean;
 };
 
-type RawStepRestBase = RawStepBase & {
-  statusCode?: number;
-  resourceUpdate?: JsonPatchOp[];
-  requestUpdate?: JsonPatchOp[];
-  responseUpdate?: JsonPatchOp[];
-};
-
-export type Step = StepRestCall | StepArmTemplate | StepRawCall;
-export type RawStep =
-  | RawStepRestCall
-  | RawStepRestOperation
-  | RawStepArmTemplate
-  | RawStepArmScript
-  | RawStepRawCall;
+export type Step = StepRestCall | StepArmTemplate;
+export type RawStep = RawStepOperation | RawStepExample | RawStepArmTemplate | RawStepArmScript;
 
 //#endregion
 
 //#region Step RestCall
 
-export type RawStepRestCall = RawStepRestBase & {
+export type RawStepExample = RawStepBase & {
   exampleFile: string;
-  resourceName?: string;
+  resourceUpdate?: JsonPatchOp[];
+  requestUpdate?: JsonPatchOp[];
+  responseUpdate?: JsonPatchOp[];
 };
 
-export type StepRestCall = TransformRaw<
-  RawStepRestCall,
-  {
-    type: "restCall";
-    operationId: string;
-    operation: Operation;
-    exampleName: string;
-    exampleFilePath?: string;
-    requestParameters: SwaggerExample["parameters"];
-    expectedResponse: SwaggerExample["responses"]["200"]["body"];
-  } & StepBase,
-  "exampleFile" | "resourceName" | "description"
->;
-
-//#endregion
-
-//#region Step Named Resource Operation
-export type RawStepRestOperation = RawStepRestBase & {
+export type RawStepOperation = RawStepBase & {
   operationId: string;
-  resourceName: string;
+  swagger?: string;
+  parameters?: { [parameterName: string]: ValueType };
+  responses?: SwaggerExample["responses"];
 };
+
+export type StepRestCall = StepBase & {
+  type: "restCall";
+  step: string;
+  description?: string;
+  operationId: string;
+  operation: Operation;
+  exampleFile?: string;
+  requestParameters: RawStepOperation["parameters"];
+  responseExpected: RawStepOperation["responses"];
+};
+
 //#endregion
 
-//#region Step Arm Script Template
+//#region Step Arm Deployment Script
 export type RawStepArmScript = RawStepBase & {
   armDeploymentScript: string;
   arguments?: string;
@@ -108,22 +107,7 @@ export type RawStepArmScript = RawStepBase & {
 };
 //#endregion
 
-//#region Step Arm Template Deployment
-
-export type RawStepArmTemplate = RawStepBase & {
-  armTemplate: string;
-};
-
-export type StepArmTemplate = TransformRaw<
-  RawStepArmTemplate,
-  {
-    type: "armTemplateDeployment";
-    armTemplatePayload: ArmTemplate;
-  } & StepBase,
-  "description"
->;
-
-export type VariableType = "string" | "secureString";
+//#region Step Arm Template
 
 export type ArmTemplateVariableType =
   | "string"
@@ -133,6 +117,19 @@ export type ArmTemplateVariableType =
   | "object"
   | "secureObject"
   | "array";
+
+export type RawStepArmTemplate = RawStepBase & {
+  armTemplate: string;
+};
+
+export type StepArmTemplate = TransformRaw<
+  RawStepArmTemplate,
+  StepBase & {
+    type: "armTemplateDeployment";
+    armTemplatePayload: ArmTemplate;
+  },
+  "description"
+>;
 
 export type ArmResource = {
   name: string;
@@ -186,25 +183,6 @@ export type ArmTemplate = {
   resources?: ArmResource[];
 };
 
-//#endregion
-
-//#region Step Raw REST Call
-export type RawStepRawCall = RawStepBase & {
-  method: HttpMethods;
-  rawUrl: string;
-  requestHeaders: { [headName: string]: string };
-  requestBody: string;
-  statusCode?: number;
-  expectedResponse?: string;
-};
-
-export type StepRawCall = TransformRaw<
-  RawStepRawCall,
-  {
-    type: "rawCall";
-  } & StepBase,
-  "expectedResponse" | "description"
->;
 //#endregion
 
 //#region JsonPatchOp
