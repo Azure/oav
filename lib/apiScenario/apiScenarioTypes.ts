@@ -231,7 +231,7 @@ export type JsonPatchOp =
 //#region Scenario
 
 export type RawScenario = RawVariableScope & {
-  scenario: string;
+  scenario?: string;
   shareScope?: boolean;
   description?: string;
   steps: RawStep[];
@@ -251,6 +251,7 @@ export type Scenario = TransformRaw<
 //#region ScenarioDefinitionFile
 export type RawScenarioDefinition = RawVariableScope & {
   scope?: "ResourceGroup";
+  swaggers: string[];
   prepareSteps?: RawStep[];
   scenarios: RawScenario[];
   cleanUpSteps?: RawStep[];

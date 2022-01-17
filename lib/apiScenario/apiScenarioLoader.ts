@@ -61,9 +61,7 @@ const variableRegex = /\$\(([A-Za-z_][A-Za-z0-9_]*)\)/;
 export interface ApiScenarioLoaderOption
   extends FileLoaderOption,
     JsonLoaderOption,
-    SwaggerLoaderOption {
-  swaggerFilePaths?: string[];
-}
+    SwaggerLoaderOption {}
 
 interface Resource {
   identifier: SwaggerExample["parameters"];
@@ -75,6 +73,8 @@ interface ApiScenarioContext {
   resourceTracking: Map<string, Resource>;
   scenarioDef: ScenarioDefinition;
   scenario?: Scenario;
+  scenarioIndex: number;
+  stepIndex: number;
 }
 
 @injectable()
@@ -96,10 +96,6 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     private bodyTransformer: BodyTransformer,
     @inject(TYPES.schemaValidator) private schemaValidator: SchemaValidator
   ) {
-    setDefaultOpts(opts, {
-      swaggerFilePaths: [],
-    });
-
     this.transformContext = getTransformContext(this.jsonLoader, this.schemaValidator, [
       xmsPathsTransformer,
       resolveNestedDefinitionTransformer,
@@ -128,13 +124,13 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     return inversifyGetInstance(ApiScenarioLoader, opts);
   }
 
-  public async initialize() {
+  private async initialize(swaggerFilePaths: string[]) {
     if (this.initialized) {
       throw new Error("Already initialized");
     }
 
     const allSpecs: SwaggerSpec[] = [];
-    for (const swaggerFilePath of this.opts.swaggerFilePaths ?? []) {
+    for (const swaggerFilePath of swaggerFilePaths ?? []) {
       const swaggerSpec = await this.swaggerLoader.load(swaggerFilePath);
       allSpecs.push(swaggerSpec);
       applySpecTransformers(swaggerSpec, this.transformContext);
@@ -188,14 +184,13 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
   }
 
   public async load(filePath: string): Promise<ScenarioDefinition> {
-    if (!this.initialized) {
-      await this.initialize();
-    }
-
     const rawDef = await this.apiScenarioYamlLoader.load(filePath);
+
+    await this.initialize(rawDef.swaggers);
 
     const scenarioDef: ScenarioDefinition = {
       scope: rawDef.scope ?? "ResourceGroup",
+      swaggers: rawDef.swaggers,
       prepareSteps: [],
       scenarios: [],
       _filePath: this.fileLoader.relativePath(filePath),
@@ -214,6 +209,8 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       stepTracking: new Map(),
       resourceTracking: new Map(),
       scenarioDef: scenarioDef,
+      scenarioIndex: -1,
+      stepIndex: 0,
     };
 
     for (const rawStep of rawDef.prepareSteps ?? []) {
@@ -253,7 +250,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     ];
 
     const scenario: Scenario = {
-      scenario: rawScenario.scenario,
+      scenario: rawScenario.scenario ?? "",
       description: rawScenario.description ?? "",
       shareScope: rawScenario.shareScope ?? true,
       steps,
@@ -290,14 +287,14 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     let testStep: Step;
 
     try {
-      if ("exampleFile" in rawStep || "operationId" in rawStep) {
+      if ("operationId" in rawStep) {
+        // TODO
+      } else if ("exampleFile" in rawStep) {
         testStep = await this.loadStepRestCall(rawStep, ctx);
       } else if ("armTemplate" in rawStep) {
         testStep = await this.loadStepArmTemplate(rawStep, ctx);
       } else if ("armDeploymentScript" in rawStep) {
         testStep = await this.loadStepArmDeploymentScript(rawStep, ctx);
-      } else if ("rawUrl" in rawStep) {
-        testStep = await this.loadStepRawCall(rawStep, ctx);
       } else {
         throw new Error("Invalid step");
       }
@@ -449,7 +446,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
   }
 
   private async loadStepRestCall(
-    rawStep: RawStepExample | RawStepRestOperation,
+    rawStep: RawStepExample,
     ctx: ApiScenarioContext
   ): Promise<StepRestCall> {
     if (ctx.stepTracking.has(rawStep.step)) {

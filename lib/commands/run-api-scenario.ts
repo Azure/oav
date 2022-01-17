@@ -11,9 +11,7 @@ import {
   PostmanCollectionGeneratorOption,
 } from "../apiScenario/postmanCollectionGenerator";
 import { inversifyGetInstance } from "../inversifyUtils";
-import { getApiVersionFromSwaggerFile, getProviderFromFilePath, printWarning } from "../util/utils";
-import { getFileNameFromPath } from "../apiScenario/defaultNaming";
-import { getSwaggerFilePathsFromApiScenarioFilePath } from "../apiScenario/apiScenarioYamlLoader";
+import { printWarning } from "../util/utils";
 
 export const command = "run-api-scenario <api-scenario>";
 
@@ -125,12 +123,6 @@ export const builder: yargs.CommandBuilder = {
 export async function handler(argv: yargs.Arguments): Promise<void> {
   await cliSuppressExceptions(async () => {
     const scenarioFilePath = path.resolve(argv.apiScenario);
-    const swaggerFilePaths = getSwaggerFilePathsFromApiScenarioFilePath(scenarioFilePath);
-    if (swaggerFilePaths.length === 0) {
-      throw new Error(
-        `Failed to run api scenario: Could not find related swagger file. ${scenarioFilePath}`
-      );
-    }
     let env: any = {};
     if (argv.e !== undefined) {
       env = JSON.parse(fs.readFileSync(argv.e).toString());
@@ -147,23 +139,19 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       env = { ...env, ...envFromVariable };
     }
     // fileRoot is the nearest common root of all swagger file paths
-    const fileRoot = path.dirname(swaggerFilePaths[0]);
-    const resourceProvider = getProviderFromFilePath(scenarioFilePath);
-    const apiVersion = getApiVersionFromSwaggerFile(swaggerFilePaths[0]);
+    const fileRoot = path.dirname(scenarioFilePath);
     if (argv.location !== undefined) {
       env.location = argv.location;
     }
     if (argv.subscriptionId !== undefined) {
       env.subscriptionId = argv.subscriptionId;
     }
-
     if (argv.resourceGroup !== undefined) {
       env.resourceGroupName = argv.resourceGroup;
     }
     const opt: PostmanCollectionGeneratorOption = {
-      name: `${resourceProvider}/${apiVersion}/${getFileNameFromPath(scenarioFilePath)}`,
+      name: path.basename(scenarioFilePath),
       scenarioDef: scenarioFilePath,
-      swaggerFilePaths: swaggerFilePaths,
       fileRoot: fileRoot,
       checkUnderFileRoot: false,
       generateCollection: true,

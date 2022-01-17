@@ -20,7 +20,6 @@ export interface PostmanCollectionGeneratorOption
     SwaggerAnalyzerOption {
   name: string;
   fileRoot: string;
-  swaggerFilePaths: string[];
   scenarioDef: string;
   env: {};
   outputFolder: string;
