@@ -229,11 +229,11 @@ const shouldSkipError = (error: ErrorObject, cxt: SchemaValidateContext) => {
     return true;
   }
 
-  // If a response data has multipleOf property, and it can divide multipleOf value, we can skip this error
+  // If a response data has multipleOf property, and it divided by multipleOf value is an integer, we can skip this error
   if (
     cxt.isResponse &&
     keyword === "multipleOf" &&
-    // should skip error when response data can divide multipleOf value
+    // should skip error when response data divided by multipleOf value is an integer
     (() => {
       let newSchema = schema;
       let newData = data;

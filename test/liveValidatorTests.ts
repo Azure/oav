@@ -849,6 +849,25 @@ describe("Live Validator", () => {
       });
     });
 
+    it(`should not report error in response when response data divided by its multipleOf value is an integer`, async () => {
+      const options = {
+        directory: `${__dirname}/liveValidation/swaggers/`,
+        isPathCaseSensitive: false,
+        useRelativeSourceLocationUrl: true,
+        swaggerPathsPattern: [
+          "specification/netapp/resource-manager/Microsoft.NetApp/2020-07-01/*.json",
+        ],
+        git: {
+          shouldClone: false,
+        },
+      };
+      const liveValidator = new LiveValidator(options);
+      await liveValidator.initialize();
+      const payload = require(`${__dirname}/liveValidation/payloads/multipleOfError.json`);
+      const result = await liveValidator.validateLiveRequestResponse(payload);
+      assert.equal(result.responseValidationResult.isSuccessful, true);
+    });
+
     it(`should report error in response for GET/PUT resource calls when id is not returned`, async () => {
       const options = {
         directory: `${__dirname}/liveValidation/swaggers/`,
