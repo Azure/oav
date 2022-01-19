@@ -75,11 +75,6 @@
           "default": {
             "description": "Error response describing why the operation failed."
           }
-        },
-        "x-ms-examples": {
-          "Volumes_Get": {
-            "$ref": "examples/Volumes_Get.json"
-          }
         }
       }
     }
