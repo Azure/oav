@@ -229,6 +229,27 @@ const shouldSkipError = (error: ErrorObject, cxt: SchemaValidateContext) => {
     return true;
   }
 
+  // If a response data has multipleOf property, and it can divide multipleOf value, we can skip this error
+  if (
+    cxt.isResponse &&
+    keyword === "multipleOf" &&
+    // should skip error when response data can divide multipleOf value
+    (() => {
+      let newSchema = schema;
+      let newData = data;
+      if (typeof schema === "number" && typeof data === "number") {
+        while (newSchema <= 1) {
+          newSchema *= 10;
+          newData *= 10;
+        }
+      }
+      const result = newData / newSchema;
+      return result === parseInt(String(result));
+    })
+  ) {
+    return true;
+  }
+
   return false;
 };
 
