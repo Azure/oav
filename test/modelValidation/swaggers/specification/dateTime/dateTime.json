@@ -1,0 +1,259 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "2021-07-12",
+    "title": "Desktop Virtualization API Client"
+  },
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "host": "management.azure.com",
+  "securityDefinitions": {
+    "azure_auth": {
+      "type": "oauth2",
+      "authorizationUrl": "https://login.microsoftonline.com/common/oauth2/authorize",
+      "flow": "implicit",
+      "description": "Azure Active Directory OAuth2 Flow",
+      "scopes": {
+        "user_impersonation": "impersonate your user account"
+      }
+    }
+  },
+  "paths": {
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DesktopVirtualization/hostPools/{hostPoolName}/sessionHosts/{sessionHostName}/userSessions": {
+      "get": {
+        "tags": [
+          "UserSession"
+        ],
+        "operationId": "UserSessions_List",
+        "description": "List userSessions.",
+        "x-ms-examples": {
+          "UserSession_List": {
+            "$ref": "./examples/UserSession_List.json"
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/ApiVersionParameter"
+          },
+          {
+            "$ref": "#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "#/parameters/HostPoolNameParameter"
+          },
+          {
+            "$ref": "#/parameters/SessionHostNameParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved user sessions in session host.",
+            "schema": {
+              "$ref": "#/definitions/UserSessionList"
+            }
+          },
+          "default": {
+            "description": "Automation error response describing why the operation failed.",
+            "schema": {
+              "$ref": "#/definitions/CloudError"
+            }
+          }
+        },
+        "x-ms-pageable": {
+          "nextLinkName": "nextLink"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Resource": {
+      "title": "Resource",
+      "description": "Common fields that are returned in the response for all Azure Resource Manager resources",
+      "type": "object",
+      "properties": {
+        "id": {
+          "readOnly": true,
+          "type": "string",
+          "description": "Fully qualified resource ID for the resource. Ex - /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}"
+        },
+        "name": {
+          "readOnly": true,
+          "type": "string",
+          "description": "The name of the resource"
+        },
+        "type": {
+          "readOnly": true,
+          "type": "string",
+          "description": "The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or \"Microsoft.Storage/storageAccounts\""
+        }
+      },
+      "x-ms-azure-resource": true
+    },
+    "CloudError": {
+      "x-ms-external": true,
+      "properties": {
+        "error": {
+          "$ref": "#/definitions/CloudErrorProperties"
+        }
+      }
+    },
+    "CloudErrorProperties": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "Error code",
+          "type": "string"
+        },
+        "message": {
+          "description": "Error message indicating why the operation failed.",
+          "type": "string"
+        }
+      }
+    },
+    "UserSession": {
+      "type": "object",
+      "description": "Represents a UserSession definition.",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Resource"
+        }
+      ],
+      "properties": {
+        "properties": {
+          "description": "Detailed properties for UserSession",
+          "x-ms-client-flatten": true,
+          "$ref": "#/definitions/UserSessionProperties"
+        }
+      }
+    },
+    "UserSessionProperties": {
+      "description": "Schema for UserSession properties.",
+      "type": "object",
+      "properties": {
+        "objectId": {
+          "type": "string",
+          "description": "ObjectId of user session. (internal use)",
+          "readOnly": true
+        },
+        "userPrincipalName": {
+          "type": "string",
+          "description": "The user principal name."
+        },
+        "applicationType": {
+          "enum": [
+            "RemoteApp",
+            "Desktop"
+          ],
+          "x-ms-enum": {
+            "name": "ApplicationType",
+            "modelAsString": true
+          },
+          "type": "string",
+          "description": "Application type of application."
+        },
+        "sessionState": {
+          "enum": [
+            "Unknown",
+            "Active",
+            "Disconnected",
+            "Pending",
+            "LogOff",
+            "UserProfileDiskMounted"
+          ],
+          "x-ms-enum": {
+            "name": "SessionState",
+            "modelAsString": true
+          },
+          "type": "string",
+          "description": "State of user session."
+        },
+        "activeDirectoryUserName": {
+          "type": "string",
+          "description": "The active directory user name."
+        },
+        "createTime": {
+          "format": "date-time",
+          "type": "string",
+          "description": "The timestamp of the user session create."
+        }
+      }
+    },
+    "UserSessionList": {
+      "type": "object",
+      "title": "UserSessionList",
+      "description": "List of UserSession definitions.",
+      "properties": {
+        "value": {
+          "type": "array",
+          "description": "List of UserSession definitions.",
+          "items": {
+            "$ref": "#/definitions/UserSession"
+          }
+        },
+        "nextLink": {
+          "type": "string",
+          "readOnly": true,
+          "description": "Link to the next page of results."
+        }
+      }
+    }
+  },
+  "parameters": {
+    "HostPoolNameParameter": {
+      "name": "hostPoolName",
+      "in": "path",
+      "required": true,
+      "type": "string",
+      "description": "The name of the host pool within the specified resource group",
+      "maxLength": 64,
+      "minLength": 3,
+      "x-ms-parameter-location": "method"
+    },
+    "SessionHostNameParameter": {
+      "name": "sessionHostName",
+      "in": "path",
+      "required": true,
+      "type": "string",
+      "description": "The name of the session host within the specified host pool",
+      "maxLength": 48,
+      "minLength": 3,
+      "x-ms-parameter-location": "method"
+    },
+    "SubscriptionIdParameter": {
+      "name": "subscriptionId",
+      "in": "path",
+      "required": true,
+      "type": "string",
+      "description": "The ID of the target subscription.",
+      "minLength": 1
+    },
+    "ApiVersionParameter": {
+      "name": "api-version",
+      "in": "query",
+      "required": true,
+      "type": "string",
+      "description": "The API version to use for this operation.",
+      "minLength": 1
+    },
+    "ResourceGroupNameParameter": {
+      "name": "resourceGroupName",
+      "in": "path",
+      "required": true,
+      "type": "string",
+      "description": "The name of the resource group. The name is case insensitive.",
+      "minLength": 1,
+      "maxLength": 90,
+      "x-ms-parameter-location": "method"
+    }
+  }
+}

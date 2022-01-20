@@ -229,6 +229,20 @@ const shouldSkipError = (error: ErrorObject, cxt: SchemaValidateContext) => {
     return true;
   }
 
+  // If a response has property which x-ms-secret value is "true" in post we can skip this error
+  if (
+    cxt.isResponse &&
+    keyword === "format" &&
+    schema === "date-time" &&
+    /^\d+-(0\d|1[0-2])-([02]\d|3[01])T([01]\d|2[0-3]):[0-5][0-9]:[0-5][0-9]/.test(
+      data.slice(0, 19)
+    ) &&
+    data.slice(11, 13) === new Date(data + "Z").toUTCString().slice(17, 19) &&
+    data.slice(8, 10) === new Date(data + "Z").toUTCString().slice(5, 7)
+  ) {
+    return true;
+  }
+
   return false;
 };
 
