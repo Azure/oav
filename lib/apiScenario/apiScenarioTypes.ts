@@ -34,7 +34,9 @@ export type RawVariableScope = {
 };
 
 export type VariableScope = {
-  variables: { [variableName: string]: ValueContainer };
+  variables: {
+    [variableName: string]: ValueContainer;
+  };
   requiredVariables: string[];
   secretVariables: string[];
 };
@@ -92,6 +94,7 @@ export type StepRestCall = StepBase & {
   exampleFile?: string;
   requestParameters: RawStepOperation["parameters"];
   responseExpected: RawStepOperation["responses"];
+  outputVariables?: OutputVariables;
 };
 
 //#endregion
@@ -259,12 +262,12 @@ export type RawScenarioDefinition = RawVariableScope & {
 
 export type ScenarioDefinition = TransformRaw<
   RawScenarioDefinition,
-  {
+  VariableScope & {
     prepareSteps: Step[];
     scenarios: Scenario[];
     cleanUpSteps: Step[];
     _filePath: string;
-  } & VariableScope
+  }
 >;
 //#endregion
 

@@ -2,8 +2,6 @@
 
 import { join as pathJoin, dirname } from "path";
 import { dump as yamlDump } from "js-yaml";
-import { pickBy } from "lodash";
-import { generate as jsonMergePatchGenerate } from "json-merge-patch";
 import { inject, injectable } from "inversify";
 import { cloneDeep } from "@azure-tools/openapi-tools-common";
 import { Loader, setDefaultOpts } from "../swagger/loader";
@@ -45,8 +43,8 @@ import {
   RawScenario,
   RawStepArmScript,
   ArmTemplate,
-  VariableType,
   ArmDeploymentScriptResource,
+  RawStepOperation,
 } from "./apiScenarioTypes";
 import { TemplateGenerator } from "./templateGenerator";
 import { BodyTransformer } from "./bodyTransformer";
@@ -63,18 +61,12 @@ export interface ApiScenarioLoaderOption
     JsonLoaderOption,
     SwaggerLoaderOption {}
 
-interface Resource {
-  identifier: SwaggerExample["parameters"];
-  body: any;
-}
-
 interface ApiScenarioContext {
   stepTracking: Map<string, Step>;
-  resourceTracking: Map<string, Resource>;
   scenarioDef: ScenarioDefinition;
   scenario?: Scenario;
-  scenarioIndex: number;
-  stepIndex: number;
+  scenarioIndex?: number;
+  stepIndex?: number;
 }
 
 @injectable()
@@ -207,32 +199,41 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
 
     const ctx: ApiScenarioContext = {
       stepTracking: new Map(),
-      resourceTracking: new Map(),
       scenarioDef: scenarioDef,
-      scenarioIndex: -1,
       stepIndex: 0,
     };
 
-    for (const rawStep of rawDef.prepareSteps ?? []) {
-      const step = await this.loadStep(rawStep, ctx);
-      step.isPrepareStep = true;
-      scenarioDef.prepareSteps.push(step);
-    }
+    await this.loadPrepareSteps(rawDef, ctx);
+    await this.loadCleanUpSteps(rawDef, ctx);
 
-    for (const rawStep of rawDef.cleanUpSteps ?? []) {
-      const step = await this.loadStep(rawStep, ctx);
-      step.isCleanUpStep = true;
-      scenarioDef.cleanUpSteps.push(step);
-    }
-
+    ctx.scenarioIndex = 0;
     for (const rawScenario of rawDef.scenarios) {
       const scenario = await this.loadScenario(rawScenario, ctx);
       scenarioDef.scenarios.push(scenario);
+      ctx.scenarioIndex++;
     }
 
     await this.templateGenerationRunner.cleanAllScope();
 
     return scenarioDef;
+  }
+
+  private async loadPrepareSteps(rawDef: RawScenarioDefinition, ctx: ApiScenarioContext) {
+    ctx.stepIndex = 0;
+    for (const rawStep of rawDef.prepareSteps ?? []) {
+      const step = await this.loadStep(rawStep, ctx);
+      step.isPrepareStep = true;
+      ctx.scenarioDef.prepareSteps.push(step);
+    }
+  }
+
+  private async loadCleanUpSteps(rawDef: RawScenarioDefinition, ctx: ApiScenarioContext) {
+    ctx.stepIndex = 0;
+    for (const rawStep of rawDef.cleanUpSteps ?? []) {
+      const step = await this.loadStep(rawStep, ctx);
+      step.isCleanUpStep = true;
+      ctx.scenarioDef.cleanUpSteps.push(step);
+    }
   }
 
   private async loadScenario(rawScenario: RawScenario, ctx: ApiScenarioContext): Promise<Scenario> {
@@ -250,7 +251,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     ];
 
     const scenario: Scenario = {
-      scenario: rawScenario.scenario ?? "",
+      scenario: rawScenario.scenario ?? `scenario_${ctx.scenarioIndex}`,
       description: rawScenario.description ?? "",
       shareScope: rawScenario.shareScope ?? true,
       steps,
@@ -258,7 +259,9 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       _scenarioDef: scenarioDef,
       ...variableScope,
     };
+
     ctx.scenario = scenario;
+    ctx.stepIndex = 0;
 
     for (const rawStep of rawScenario.steps) {
       const step = await this.loadStep(rawStep, ctx);
@@ -277,9 +280,10 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
 
   private async generateTemplate(scenario: Scenario) {
     this.env.clear();
-    for (const requiredVar of scenario.requiredVariables) {
-      this.env.set(requiredVar, `$(${requiredVar})`);
-    }
+    // TODO
+    // for (const requiredVar of scenario.requiredVariables) {
+    //   this.env.set(requiredVar, `$(${requiredVar})`);
+    // }
     await this.templateGenerationRunner.executeScenario(scenario);
   }
 
@@ -287,9 +291,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     let testStep: Step;
 
     try {
-      if ("operationId" in rawStep) {
-        // TODO
-      } else if ("exampleFile" in rawStep) {
+      if ("operationId" in rawStep || "exampleFile" in rawStep) {
         testStep = await this.loadStepRestCall(rawStep, ctx);
       } else if ("armTemplate" in rawStep) {
         testStep = await this.loadStepArmTemplate(rawStep, ctx);
@@ -302,26 +304,122 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       throw new Error(`Failed to load step ${rawStep.step}: ${(error as any).message}`);
     }
 
-    if (ctx.scenario !== undefined) {
-      declareOutputVariables(testStep.outputVariables, ctx.scenario);
-    } else {
-      declareOutputVariables(testStep.outputVariables, ctx.scenarioDef);
-    }
+    // TODO
+    // if (ctx.scenario !== undefined) {
+    //   declareOutputVariables(testStep.outputVariables, ctx.scenario);
+    // } else {
+    //   declareOutputVariables(testStep.outputVariables, ctx.scenarioDef);
+    // }
+
+    ctx.stepIndex!++;
     return testStep;
   }
 
-  private async loadStepRawCall(
-    rawStep: RawStepRawCall,
-    _ctx: ApiScenarioContext
-  ): Promise<StepRawCall> {
-    const step: StepRawCall = {
-      type: "rawCall",
-      ...rawStep,
-      statusCode: rawStep.statusCode ?? 200,
+  private async loadStepRestCall(
+    rawStep: RawStepOperation | RawStepExample,
+    ctx: ApiScenarioContext
+  ): Promise<StepRestCall> {
+    if (rawStep.step !== undefined && ctx.stepTracking.has(rawStep.step)) {
+      throw new Error(`Duplicated step name: ${rawStep.step}`);
+    }
+
+    const step: StepRestCall = {
+      type: "restCall",
+      step: rawStep.step ?? `${ctx.scenarioIndex ?? ""}_step_${ctx.stepIndex}`,
+      description: rawStep.description,
+      operationId: "",
+      operation: {} as Operation,
+      requestParameters: {} as SwaggerExample["parameters"],
+      responseExpected: {} as SwaggerExample["responses"],
       outputVariables: rawStep.outputVariables ?? {},
       ...convertVariables(rawStep.variables),
     };
+
+    ctx.stepTracking.set(step.step, step);
+
+    if ("operationId" in rawStep) {
+      step.operationId = rawStep.operationId;
+
+      const operation = this.nameToOperation.get(step.operationId);
+      if (operation === undefined) {
+        // TODO support cross-rp swagger
+        throw new Error(`Operation not found for ${step.operationId} in step ${step.step}`);
+      }
+      step.operation = operation;
+    } else {
+      step.exampleFile = rawStep.exampleFile;
+
+      const exampleFilePath = pathJoin(dirname(ctx.scenarioDef._filePath), step.exampleFile!);
+
+      // Load example file
+      const fileContent = await this.fileLoader.load(exampleFilePath);
+      const exampleFileContent = JSON.parse(fileContent) as SwaggerExample;
+
+      step.requestParameters = exampleFileContent.parameters;
+      step.responseExpected = exampleFileContent.responses;
+
+      // Load Operation
+      const opMap = exampleFileContent.operationId
+        ? this.nameToOperation.get(exampleFileContent.operationId)
+        : this.exampleToOperation.get(exampleFilePath);
+      if (opMap === undefined) {
+        throw new Error(`Example file is not referenced by any operation: ${step.exampleFile}`);
+      }
+      const ops = Object.values(opMap);
+      if (ops.length > 1) {
+        throw new Error(
+          `Example file is referenced by multiple operation: ${Object.keys(opMap)} ${
+            step.exampleFile
+          }`
+        );
+      }
+      let exampleName;
+      [step.operation, exampleName] = ops[0];
+      step.operationId = step.operation.operationId!;
+      step.description = step.description ?? exampleName;
+
+      await this.applyPatches(step, rawStep);
+    }
     return step;
+  }
+
+  private async applyPatches(step: StepRestCall, rawStep: RawStepExample) {
+    if (rawStep.resourceUpdate) {
+      if (!["put", "patch", "get"].includes(step.operation._method)) {
+        throw new Error(
+          `resourceUpdate could only be used in PUT/PATCH/GET operations with exampleFile`
+        );
+      }
+      // TODO apply resourceUpdate
+      // const target = cloneDeep(step.responseExpected);
+      // const bodyParam = getBodyParam(step.operation, this.jsonLoader);
+      // if (bodyParam !== undefined) {
+      //   try {
+      //     this.bodyTransformer.deepMerge(target, step.requestParameters[bodyParam.name]);
+      //   } catch (err) {
+      //     console.error(err);
+      //   }
+      // }
+      // jsonPatchApply(target, rawStep.resourceUpdate);
+      // if (bodyParam !== undefined) {
+      //   const convertedRequest = await this.bodyTransformer.resourceToRequest(
+      //     target,
+      //     bodyParam.schema!
+      //   );
+      //   step.requestParameters[bodyParam.name] = convertedRequest;
+      // }
+      // step.responseExpected = await this.bodyTransformer.resourceToResponse(
+      //   target,
+      //   step.operation.responses[step.statusCode].schema!
+      // );
+    }
+
+    if (rawStep.requestUpdate) {
+      jsonPatchApply(step.requestParameters, rawStep.requestUpdate);
+    }
+    if (rawStep.responseUpdate) {
+      jsonPatchApply(step.responseExpected, rawStep.responseUpdate);
+    }
   }
 
   private async loadStepArmDeploymentScript(
@@ -330,7 +428,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
   ): Promise<StepArmTemplate> {
     const step: StepArmTemplate = {
       type: "armTemplateDeployment",
-      step: rawStep.step,
+      step: rawStep.step ?? `step_${ctx.stepIndex}`,
       outputVariables: rawStep.outputVariables ?? {},
       armTemplate: "",
       armTemplatePayload: {},
@@ -342,7 +440,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     step.armTemplatePayload = payload;
 
     const resource = payload.resources![0] as ArmDeploymentScriptResource;
-    resource.name = rawStep.step;
+    resource.name = step.step;
 
     if (rawStep.armDeploymentScript.endsWith(".ps1")) {
       resource.kind = "AzurePowerShell";
@@ -357,7 +455,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     resource.properties.scriptContent = scriptContent;
 
     for (const variable of rawStep.environmentVariables ?? []) {
-      if (this.getVariableType(variable.value, step, ctx) === "secureString") {
+      if (this.isSecretVariable(variable.value, step, ctx)) {
         resource.properties.environmentVariables!.push({
           name: variable.name,
           secureValue: variable.value,
@@ -373,7 +471,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     return step;
   }
 
-  private getVariableType(variable: string, step: Step, ctx: ApiScenarioContext): VariableType {
+  private isSecretVariable(variable: string, step: Step, ctx: ApiScenarioContext): boolean {
     const { scenarioDef, scenario } = ctx;
 
     if (variableRegex.test(variable)) {
@@ -386,12 +484,12 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
           scenario?.secretVariables.includes(refKey) ||
           scenarioDef.secretVariables.includes(refKey)
         ) {
-          return "secureString";
+          return true;
         }
       }
     }
 
-    return "string";
+    return false;
   }
 
   private async loadStepArmTemplate(
@@ -400,7 +498,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
   ): Promise<StepArmTemplate> {
     const step: StepArmTemplate = {
       type: "armTemplateDeployment",
-      step: rawStep.step,
+      step: rawStep.step ?? `step_${ctx.stepIndex}`,
       outputVariables: rawStep.outputVariables ?? {},
       armTemplate: rawStep.armTemplate,
       armTemplatePayload: {},
@@ -444,219 +542,6 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
 
     return step;
   }
-
-  private async loadStepRestCall(
-    rawStep: RawStepExample,
-    ctx: ApiScenarioContext
-  ): Promise<StepRestCall> {
-    if (ctx.stepTracking.has(rawStep.step)) {
-      throw new Error(`Duplicated step name: ${rawStep.step}`);
-    }
-
-    const step: StepRestCall = {
-      type: "restCall",
-      step: rawStep.step,
-      description: rawStep.description,
-      resourceName: rawStep.resourceName,
-      exampleFile: "",
-      operationId: "",
-      operation: {} as Operation,
-      requestParameters: {} as SwaggerExample["parameters"],
-      expectedResponse: {},
-      exampleName: "",
-      statusCode: rawStep.statusCode ?? 200,
-      outputVariables: rawStep.outputVariables ?? {},
-      resourceUpdate: rawStep.resourceUpdate ?? [],
-      requestUpdate: rawStep.requestUpdate ?? [],
-      responseUpdate: rawStep.responseUpdate ?? [],
-      ...convertVariables(rawStep.variables),
-    };
-
-    ctx.stepTracking.set(step.step, step);
-
-    if ("exampleFile" in rawStep) {
-      step.exampleFile = rawStep.exampleFile;
-      await this.loadRestCallExample(step, ctx);
-    } else if ("operationId" in rawStep) {
-      step.operationId = rawStep.operationId;
-      await this.loadRestCallOperation(step, ctx);
-    }
-
-    if (step.requestUpdate.length > 0) {
-      jsonPatchApply(step.requestParameters, step.requestUpdate);
-    }
-    if (step.responseUpdate.length > 0) {
-      jsonPatchApply(step.expectedResponse, step.responseUpdate);
-    }
-
-    return step;
-  }
-
-  private async loadRestCallOperation(
-    step: StepRestCall,
-    ctx: ApiScenarioContext
-  ): Promise<StepRestCall> {
-    const resource = ctx.resourceTracking.get(step.resourceName!);
-    if (resource === undefined) {
-      throw new Error(`Unknown resourceName: ${step.resourceName} in step ${step.step}`);
-    }
-
-    const operation = this.nameToOperation.get(step.operationId);
-    if (operation === undefined) {
-      throw new Error(`Operation not found for ${step.operationId} in step ${step.step}`);
-    }
-    step.operation = operation;
-
-    const target = cloneDeep(resource.body);
-    if (step.resourceUpdate.length > 0) {
-      jsonPatchApply(target, step.resourceUpdate);
-    }
-    const bodyParam = getBodyParam(step.operation, this.jsonLoader);
-
-    switch (step.operation._method) {
-      case "put":
-        step.requestParameters = { ...resource.identifier };
-        if (bodyParam !== undefined) {
-          step.requestParameters[bodyParam.name] = await this.bodyTransformer.resourceToRequest(
-            target,
-            bodyParam.schema!
-          );
-        }
-        step.expectedResponse = await this.bodyTransformer.resourceToResponse(
-          target,
-          step.operation.responses[step.statusCode].schema!
-        );
-        break;
-      case "get":
-        step.requestParameters = { ...resource.identifier };
-        step.expectedResponse = await this.bodyTransformer.resourceToResponse(
-          target,
-          step.operation.responses[step.statusCode].schema!
-        );
-        break;
-      case "patch":
-        step.requestParameters = { ...resource.identifier };
-        if (bodyParam !== undefined) {
-          step.requestParameters[bodyParam.name] = pickBy(
-            target,
-            (_, propertyName) =>
-              propertyName !== "properties" &&
-              propertyName !== "id" &&
-              propertyName !== "name" &&
-              propertyName !== "type" &&
-              propertyName !== "location" &&
-              propertyName !== "systemData"
-          );
-          const propertiesMergePatch = jsonMergePatchGenerate(
-            resource.body.properties,
-            target.properties
-          );
-          if (propertiesMergePatch !== undefined) {
-            step.requestParameters[bodyParam.name].properties = propertiesMergePatch;
-          }
-        }
-        step.expectedResponse = await this.bodyTransformer.resourceToResponse(
-          target,
-          step.operation.responses[step.statusCode].schema!
-        );
-        break;
-      case "delete":
-        step.requestParameters = { ...resource.identifier };
-        break;
-      case "post":
-        step.requestParameters = { ...resource.identifier };
-        break;
-      default:
-        throw new Error(`Unsupported operation ${step.operationId}`);
-    }
-
-    resource.body = target;
-
-    return step;
-  }
-
-  private async loadRestCallExample(step: StepRestCall, ctx: ApiScenarioContext) {
-    const filePath = step.exampleFile;
-    if (filePath === undefined) {
-      throw new Error(`RestCall step must specify "exampleFile" or "operationName"`);
-    }
-
-    const exampleFilePath = pathJoin(dirname(ctx.scenarioDef._filePath), filePath);
-
-    // Load example file
-    const fileContent = await this.fileLoader.load(exampleFilePath);
-    const exampleFileContent = JSON.parse(fileContent) as SwaggerExample;
-
-    step.requestParameters = exampleFileContent.parameters;
-    step.expectedResponse = exampleFileContent.responses[step.statusCode]?.body;
-
-    // Load Operation
-    const opMap = exampleFileContent.operationId
-      ? this.nameToOperation.get(exampleFileContent.operationId)
-      : this.exampleToOperation.get(exampleFilePath);
-    if (opMap === undefined) {
-      throw new Error(`Example file is not referenced by any operation: ${filePath}`);
-    }
-    const ops = Object.values(opMap);
-    if (ops.length > 1) {
-      throw new Error(
-        `Example file is referenced by multiple operation: ${Object.keys(opMap)} ${filePath}`
-      );
-    }
-    [step.operation, step.exampleName] = ops[0];
-    step.operationId = step.operation.operationId!;
-
-    if (step.resourceUpdate.length > 0) {
-      if (!["put", "patch", "get"].includes(step.operation._method)) {
-        throw new Error(
-          `resourceUpdate could only be used in PUT/PATCH/GET operations with exampleFile`
-        );
-      }
-
-      const target = cloneDeep(step.expectedResponse);
-      const bodyParam = getBodyParam(step.operation, this.jsonLoader);
-      if (bodyParam !== undefined) {
-        try {
-          this.bodyTransformer.deepMerge(target, step.requestParameters[bodyParam.name]);
-        } catch (err) {
-          console.error(err);
-        }
-      }
-      jsonPatchApply(target, step.resourceUpdate);
-
-      if (bodyParam !== undefined) {
-        const convertedRequest = await this.bodyTransformer.resourceToRequest(
-          target,
-          bodyParam.schema!
-        );
-        step.requestParameters[bodyParam.name] = convertedRequest;
-      }
-
-      step.expectedResponse = await this.bodyTransformer.resourceToResponse(
-        target,
-        step.operation.responses[step.statusCode].schema!
-      );
-    }
-
-    if (step.resourceName) {
-      if (!["put", "patch", "get"].includes(step.operation._method)) {
-        throw new Error(
-          `resourceName could only be used in PUT/PATCH/GET operations with exampleFile`
-        );
-      }
-      const pathParams = pickParams(step.operation, "path", this.jsonLoader);
-      const identifier = pickBy(
-        step.requestParameters,
-        (_, paramName) =>
-          "api-version" === paramName ||
-          pathParams?.find((param) => param.name === paramName) !== undefined
-      ) as SwaggerExample["parameters"];
-      ctx.resourceTracking.set(step.resourceName, {
-        identifier,
-        body: step.expectedResponse,
-      });
-    }
-  }
 }
 
 export const getBodyParam = (operation: Operation, jsonLoader: JsonLoader) => {
@@ -679,14 +564,17 @@ const convertVariables = (rawVariables: RawVariableScope["variables"]) => {
   };
   for (const [key, val] of Object.entries(rawVariables ?? {})) {
     if (typeof val === "string") {
-      result.variables[key] = val;
+      result.variables[key] = {
+        type: "string",
+        value: val,
+      };
     } else {
       if (val.value !== undefined) {
-        result.variables[key] = val.value;
+        result.variables[key] = val;
       } else {
         result.requiredVariables.push(key);
       }
-      if (val.type === "secureString") {
+      if (val.type === "secureString" || val.type === "secureObject") {
         result.secretVariables.push(key);
       }
     }
@@ -700,9 +588,12 @@ const declareOutputVariables = (
 ) => {
   for (const [key, val] of Object.entries(outputVariables)) {
     if (scope.variables[key] === undefined) {
-      scope.variables[key] = `$(${key})`;
+      scope.variables[key] = {
+        type: val.type ?? "string",
+        value: `$(${key})`,
+      };
     }
-    if (val.type === "secureString" || val.type === "securestring") {
+    if (val.type === "secureString" || val.type === "securestring" || val.type === "secureObject") {
       scope.secretVariables.push(key);
     }
   }

@@ -1,9 +1,11 @@
+import { ValueContainer } from "./apiScenarioTypes";
+
 const variableRegex = /\$\(([A-Za-z_][A-Za-z0-9_]*)\)/;
 const pathVariableRegex = /\{([A-Za-z_][A-Za-z0-9_]*)\}/;
 
 export class VariableEnv {
   protected baseEnv?: VariableEnv;
-  protected data: { [key: string]: string } = {};
+  protected data: { [key: string]: ValueContainer } = {};
 
   public constructor(baseEnv?: VariableEnv) {
     if (baseEnv !== undefined) {
@@ -21,31 +23,31 @@ export class VariableEnv {
     this.baseEnv = baseEnv;
   }
 
-  public get(key: string): string | undefined {
+  public get(key: string): ValueContainer | undefined {
     let val = this.data[key];
     if (val !== undefined) {
-      if (variableRegex.test(val)) {
-        const globalRegex = new RegExp(variableRegex, "g");
-        const replaceArray: Array<[number, number, string | undefined]> = [];
-        let match;
-        while ((match = globalRegex.exec(val))) {
-          const refKey = match[1];
-          const refVal = refKey === key ? this.baseEnv?.get(key) ?? val : this.get(refKey);
-          replaceArray.push([match.index, match.index + match[0].length, refVal]);
-        }
-        let r;
-        while ((r = replaceArray.pop())) {
-          if (r[2] !== undefined) {
-            val = val.substring(0, r[0]) + r[2] + val.substring(r[1]);
-          }
-        }
-      }
+      // if (variableRegex.test(val.value)) {
+      //   const globalRegex = new RegExp(variableRegex, "g");
+      //   const replaceArray: Array<[number, number, string | undefined]> = [];
+      //   let match;
+      //   while ((match = globalRegex.exec(val))) {
+      //     const refKey = match[1];
+      //     const refVal = refKey === key ? this.baseEnv?.get(key) ?? val : this.get(refKey);
+      //     replaceArray.push([match.index, match.index + match[0].length, refVal]);
+      //   }
+      //   let r;
+      //   while ((r = replaceArray.pop())) {
+      //     if (r[2] !== undefined) {
+      //       val = val.substring(0, r[0]) + r[2] + val.substring(r[1]);
+      //     }
+      //   }
+      // }
       return val;
     }
     return this.baseEnv?.get(key);
   }
 
-  public getRequired(key: string): string {
+  public getRequired(key: string): ValueContainer {
     const result = this.get(key);
     if (result === undefined) {
       throw new Error(`Variable is required but is not found in VariableEnv: ${key}`);
@@ -53,15 +55,15 @@ export class VariableEnv {
     return result;
   }
 
-  public set(key: string, value: string) {
+  public set(key: string, value: ValueContainer) {
     this.data[key] = value;
   }
 
-  public output(key: string, value: string) {
+  public output(key: string, value: ValueContainer) {
     this.baseEnv?.set(key, value);
   }
 
-  public setBatch(values: { [key: string]: string }) {
+  public setBatch(values: { [key: string]: ValueContainer }) {
     if (values === undefined) {
       return;
     }
@@ -87,7 +89,7 @@ export class VariableEnv {
       const replaceArray: Array<[number, number, string]> = [];
       let match;
       while ((match = globalRegex.exec(source))) {
-        replaceArray.push([match.index, match.index + match[0].length, this.getRequired(match[1])]);
+        // replaceArray.push([match.index, match.index + match[0].length, this.getRequired(match[1])]);
       }
       let r;
       while ((r = replaceArray.pop())) {
