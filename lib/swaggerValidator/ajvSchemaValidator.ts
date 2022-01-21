@@ -234,13 +234,16 @@ const shouldSkipError = (error: ErrorObject, cxt: SchemaValidateContext) => {
     cxt.isResponse &&
     keyword === "format" &&
     schema === "date-time" &&
-    /^\d+-(0\d|1[0-2])-([02]\d|3[01])T([01]\d|2[0-3]):[0-5][0-9]:[0-5][0-9]/.test(
-      data.slice(0, 19)
-    ) &&
-    data.slice(11, 13) === new Date(data + "Z").toUTCString().slice(17, 19) &&
-    data.slice(8, 10) === new Date(data + "Z").toUTCString().slice(5, 7)
+    typeof data === "string"
   ) {
-    return true;
+    const reg = /^\d+-(0\d|1[0-2])-([02]\d|3[01])T([01]\d|2[0-3]):[0-5][0-9]:[0-5][0-9]/;
+    const time = data.slice(0, 19);
+    if (reg.test(time)) {
+      const dateZ = new Date(data + "Z").toUTCString();
+      const ifHoursAreSame = time.slice(11, 13) === dateZ.slice(17, 19);
+      const ifDaysAreSame = time.slice(8, 10) === dateZ.slice(5, 7);
+      return ifHoursAreSame && ifDaysAreSame;
+    }
   }
 
   return false;
