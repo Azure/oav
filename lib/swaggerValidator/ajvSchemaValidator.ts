@@ -229,7 +229,7 @@ const shouldSkipError = (error: ErrorObject, cxt: SchemaValidateContext) => {
     return true;
   }
 
-  // If a response has property which x-ms-secret value is "true" in post we can skip this error
+  // If payload has property with date-time parameter and its value is valid except missing "Z" in the end we can skip this error
   if (
     cxt.isResponse &&
     keyword === "format" &&
@@ -237,10 +237,13 @@ const shouldSkipError = (error: ErrorObject, cxt: SchemaValidateContext) => {
     typeof data === "string"
   ) {
     const reg = /^\d+-(0\d|1[0-2])-([02]\d|3[01])T([01]\d|2[0-3]):[0-5][0-9]:[0-5][0-9]/;
+    // intercept time, example: 2008-09-22T14:01:54
     const time = data.slice(0, 19);
     if (reg.test(time)) {
       const dateZ = new Date(data + "Z").toUTCString();
+      // validate hour
       const ifHoursAreSame = time.slice(11, 13) === dateZ.slice(17, 19);
+      // validate day for leap year, example: 2008-02-29
       const ifDaysAreSame = time.slice(8, 10) === dateZ.slice(5, 7);
       return ifHoursAreSame && ifDaysAreSame;
     }

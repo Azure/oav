@@ -773,12 +773,4 @@ describe("Model Validation", () => {
       assert.strictEqual(result[0].code, "XMS_EXAMPLE_NOTFOUND_ERROR");
     });
   });
-
-  describe("date-time validation", () => {
-    it("should pass when date-time is just missing a Z in the end", async () => {
-      const specPath2 = `${testPath}/modelValidation/swaggers/specification/dateTime/dateTime.json`;
-      const result = await validate.validateExamples(specPath2, undefined);
-      assert.strictEqual(result.length, 0);
-    });
-  });
 });
