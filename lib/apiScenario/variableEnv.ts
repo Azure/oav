@@ -1,11 +1,12 @@
-import { ValueContainer } from "./apiScenarioTypes";
+import { Variable } from "./apiScenarioTypes";
+import { jsonPatchApply } from "./diffUtils";
 
 const variableRegex = /\$\(([A-Za-z_][A-Za-z0-9_]*)\)/;
 const pathVariableRegex = /\{([A-Za-z_][A-Za-z0-9_]*)\}/;
 
 export class VariableEnv {
   protected baseEnv?: VariableEnv;
-  protected data: { [key: string]: ValueContainer } = {};
+  protected data: { [key: string]: Variable } = {};
 
   public constructor(baseEnv?: VariableEnv) {
     if (baseEnv !== undefined) {
@@ -23,47 +24,81 @@ export class VariableEnv {
     this.baseEnv = baseEnv;
   }
 
-  public get(key: string): ValueContainer | undefined {
+  public get(key: string): Variable | undefined {
     let val = this.data[key];
     if (val !== undefined) {
-      // if (variableRegex.test(val.value)) {
-      //   const globalRegex = new RegExp(variableRegex, "g");
-      //   const replaceArray: Array<[number, number, string | undefined]> = [];
-      //   let match;
-      //   while ((match = globalRegex.exec(val))) {
-      //     const refKey = match[1];
-      //     const refVal = refKey === key ? this.baseEnv?.get(key) ?? val : this.get(refKey);
-      //     replaceArray.push([match.index, match.index + match[0].length, refVal]);
-      //   }
-      //   let r;
-      //   while ((r = replaceArray.pop())) {
-      //     if (r[2] !== undefined) {
-      //       val = val.substring(0, r[0]) + r[2] + val.substring(r[1]);
-      //     }
-      //   }
-      // }
+      switch (val.type) {
+        case "string":
+        case "secureString":
+          if (val.value && variableRegex.test(val.value)) {
+            const globalRegex = new RegExp(variableRegex, "g");
+            const replaceArray: Array<[number, number, string | undefined]> = [];
+            let match;
+            while ((match = globalRegex.exec(val.value))) {
+              const refKey = match[1];
+              const refVal = refKey === key ? this.baseEnv?.get(key) ?? val : this.get(refKey);
+              if (refVal && refVal.type !== "string" && refVal.type !== "secureString") {
+                throw new Error(`Invalid reference variable type: ${refKey}`);
+              }
+              if (refVal?.type === "secureString") {
+                val.type = "secureString";
+              }
+              replaceArray.push([match.index, match.index + match[0].length, refVal?.value]);
+            }
+            let r;
+            while ((r = replaceArray.pop())) {
+              if (r[2] !== undefined) {
+                val.value = val.value.substring(0, r[0]) + r[2] + val.value.substring(r[1]);
+              }
+            }
+          }
+          break;
+        case "object":
+        case "secureObject":
+        case "array":
+          if (val.value) {
+            val.value = this.resolveObjectValues(val.value);
+          } else if (val.patches) {
+            const refVal = this.baseEnv?.get(key);
+            if (refVal && refVal.type !== "object" && refVal.type !== "secureObject") {
+              throw new Error(`Invalid reference variable type: ${key}`);
+            }
+            if (refVal?.type === "secureObject") {
+              val.type = "secureObject";
+            }
+            if (refVal?.value) {
+              val.value = refVal.value;
+              val.value = jsonPatchApply(val.value, val.patches);
+            }
+          }
+          break;
+        case "bool":
+        case "int":
+        default:
+          break;
+      }
       return val;
     }
     return this.baseEnv?.get(key);
   }
 
-  public getRequired(key: string): ValueContainer {
+  public getRequired(key: string): Variable {
     const result = this.get(key);
-    if (result === undefined) {
+    if (result?.value === undefined) {
       throw new Error(`Variable is required but is not found in VariableEnv: ${key}`);
     }
     return result;
   }
 
-  public set(key: string, value: ValueContainer) {
+  public set(key: string, value: Variable) {
     this.data[key] = value;
   }
 
-  public output(key: string, value: ValueContainer) {
+  public output(key: string, value: Variable) {
     this.baseEnv?.set(key, value);
   }
 
-  public setBatch(values: { [key: string]: ValueContainer }) {
+  public setBatch(values: { [key: string]: Variable }) {
     if (values === undefined) {
       return;
     }
@@ -89,7 +124,11 @@ export class VariableEnv {
       const replaceArray: Array<[number, number, string]> = [];
       let match;
       while ((match = globalRegex.exec(source))) {
-        // replaceArray.push([match.index, match.index + match[0].length, this.getRequired(match[1])]);
+        const variable = this.getRequired(match[1]);
+        if (variable.type !== "string" && variable.type !== "secureString") {
+          throw new Error(`Variable type is not string: ${match[1]}`);
+        }
+        replaceArray.push([match.index, match.index + match[0].length, variable.value!]);
       }
       let r;
       while ((r = replaceArray.pop())) {

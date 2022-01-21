@@ -10,32 +10,66 @@ type TransformRaw<T, Additional = {}, OptionalKey extends keyof T = never> = {
   } &
   Additional;
 
-export type VariableType =
-  | "array"
-  | "bool"
-  | "int"
-  | "object"
-  | "secureObject"
-  | "secureString"
-  | "string";
+export type VarType = Variable["type"];
 
-export type ValueType = boolean | number | string | ValueType[] | { [key: string]: ValueType };
+export type VarValue = boolean | number | string | VarValue[] | { [key: string]: VarValue };
 
-export type ValueContainer = {
-  type: VariableType;
-  value?: ValueType;
+export type Variable =
+  | BoolVariable
+  | IntVariable
+  | StringVariable
+  | SecureStringVariable
+  | ArrayVariable
+  | ObjectVariable
+  | SecureObjectVariable;
+
+type StringVariable = {
+  type: "string";
+  value?: string;
+};
+
+type SecureStringVariable = {
+  type: "secureString";
+  value?: string;
+};
+
+type BoolVariable = {
+  type: "bool";
+  value?: boolean;
+};
+
+type IntVariable = {
+  type: "int";
+  value?: number;
+};
+
+type ObjectVariable = {
+  type: "object";
+  value?: { [key: string]: VarValue };
+  patches?: JsonPatchOp[];
+};
+
+type SecureObjectVariable = {
+  type: "secureObject";
+  value?: { [key: string]: VarValue };
+  patches?: JsonPatchOp[];
+};
+
+type ArrayVariable = {
+  type: "array";
+  value?: VarValue[];
   patches?: JsonPatchOp[];
 };
 
 export type RawVariableScope = {
   variables?: {
-    [variableName: string]: string | ValueContainer;
+    [variableName: string]: string | Variable;
   };
 };
 
 export type VariableScope = {
   variables: {
-    [variableName: string]: ValueContainer;
+    [variableName: string]: Variable;
   };
   requiredVariables: string[];
   secretVariables: string[];
@@ -43,7 +77,7 @@ export type VariableScope = {
 
 export type OutputVariables = {
   [variableName: string]: {
-    type?: VariableType;
+    type?: VarType;
     fromRequest: string;
     fromResponse: string;
   };
@@ -81,7 +115,7 @@ export type RawStepExample = RawStepBase & {
 export type RawStepOperation = RawStepBase & {
   operationId: string;
   swagger?: string;
-  parameters?: { [parameterName: string]: ValueType };
+  parameters?: { [parameterName: string]: VarValue };
   responses?: SwaggerExample["responses"];
 };
 

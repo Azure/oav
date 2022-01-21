@@ -74,13 +74,6 @@ export const ApiScenarioDefinition: Schema & {
               type: {
                 $ref: "#/definitions/VariableType",
               },
-              value: {},
-              patches: {
-                type: "array",
-                items: {
-                  $ref: "#/definitions/JsonPatchOp",
-                },
-              },
             },
             required: ["type"],
             allOf: [
@@ -94,10 +87,12 @@ export const ApiScenarioDefinition: Schema & {
                 },
                 then: {
                   properties: {
+                    type: {},
                     value: {
                       type: "string",
                     },
                   },
+                  additionalProperties: false,
                 },
               },
               {
@@ -110,11 +105,31 @@ export const ApiScenarioDefinition: Schema & {
                   required: ["type"],
                 },
                 then: {
-                  properties: {
-                    value: {
-                      type: "object",
+                  oneOf: [
+                    {
+                      properties: {
+                        type: {},
+                        value: {
+                          type: "object",
+                        },
+                      },
+                      required: ["value"],
+                      additionalProperties: false,
                     },
-                  },
+                    {
+                      properties: {
+                        type: {},
+                        patches: {
+                          type: "array",
+                          items: {
+                            $ref: "#/definitions/JsonPatchOp",
+                          },
+                        },
+                      },
+                      required: ["patches"],
+                      additionalProperties: false,
+                    },
+                  ],
                 },
               },
               {
@@ -127,12 +142,32 @@ export const ApiScenarioDefinition: Schema & {
                   required: ["type"],
                 },
                 then: {
-                  properties: {
-                    value: {
-                      type: "array",
-                      items: {},
+                  oneOf: [
+                    {
+                      properties: {
+                        type: {},
+                        value: {
+                          type: "array",
+                          items: {},
+                        },
+                      },
+                      required: ["value"],
+                      additionalProperties: false,
                     },
-                  },
+                    {
+                      properties: {
+                        type: {},
+                        patches: {
+                          type: "array",
+                          items: {
+                            $ref: "#/definitions/JsonPatchOp",
+                          },
+                        },
+                      },
+                      required: ["patches"],
+                      additionalProperties: false,
+                    },
+                  ],
                 },
               },
               {
@@ -146,10 +181,13 @@ export const ApiScenarioDefinition: Schema & {
                 },
                 then: {
                   properties: {
+                    type: {},
                     value: {
                       type: "boolean",
                     },
                   },
+                  required: ["value"],
+                  additionalProperties: false,
                 },
               },
               {
@@ -163,14 +201,16 @@ export const ApiScenarioDefinition: Schema & {
                 },
                 then: {
                   properties: {
+                    type: {},
                     value: {
                       type: "integer",
                     },
                   },
+                  required: ["value"],
+                  additionalProperties: false,
                 },
               },
             ],
-            additionalProperties: false,
           },
         ],
       },
