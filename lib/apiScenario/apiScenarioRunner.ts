@@ -1,6 +1,5 @@
 import { HttpMethods } from "@azure/core-http";
 import { JsonLoader } from "../swagger/jsonLoader";
-import { setDefaultOpts } from "../swagger/loader";
 import { getLazyBuilder } from "../util/lazyBuilder";
 import {
   ArmTemplate,
@@ -16,7 +15,6 @@ export interface ApiScenarioRunnerOption {
   env: VariableEnv;
   client: ApiScenarioRunnerClient;
   jsonLoader: JsonLoader;
-  loadMode?: boolean;
   resolveVariables?: boolean;
 }
 
@@ -76,60 +74,37 @@ export interface ApiScenarioRunnerClient {
   ): Promise<void>;
 }
 
-const numbers = "0123456789";
-const lowerCases = "abcedfghijklmnopqrskuvwxyz";
-const upperCases = "ABCEDFGHIJKLMNOPQRSKUVWXYZ";
-export const getRandomString = (
-  config: {
-    length?: number;
-    lowerCase?: boolean;
-    upperCase?: boolean;
-    number?: boolean;
-  } = {}
-) => {
-  setDefaultOpts(config, {
-    length: 6,
-    lowerCase: true,
-    upperCase: false,
-    number: false,
-  });
-
-  const allowedChars = `${config.number ? numbers : ""}${config.lowerCase ? lowerCases : ""}${
-    config.upperCase ? upperCases : ""
-  }`;
-  let result = "";
-  for (let idx = 0; idx < config.length!; idx++) {
-    result = result + allowedChars[Math.floor(Math.random() * allowedChars.length)];
-  }
-  return result;
-};
+const getRandomString = (length?: number) =>
+  Math.random()
+    .toString(36)
+    .slice(0 - (length ?? 6));
 
 export class ApiScenarioRunner {
   private jsonLoader: JsonLoader;
   private client: ApiScenarioRunnerClient;
   private env: VariableEnv;
   private scopeTracking: { [scopeName: string]: ScopeTracking };
-  private scenarioScopeTracking: Map<Scenario, ScopeTracking> = new Map();
-  private loadMode: boolean;
+  private scenarioScopeTracking: Map<Scenario, ScopeTracking>;
   private resolveVariables: boolean;
-
-  private resourceTracking: { [resourceName: string]: VariableEnv };
 
   private provisionScope = getLazyBuilder("provisioned", async (scope: ScopeTracking) => {
     if (scope.scope !== "ResourceGroup") {
       throw new Error(`Scope is not supported yet: ${scope.scope}`);
     }
 
-    const subscriptionId = scope.env.getRequired("subscriptionId");
-    const location = scope.env.getRequired("location");
-    const resourceGroupPrefix = scope.env.get("resourceGroupPrefix") ?? "apiTest-";
-    const resourceGroupName =
-      scope.env.get("resourceGroupName") ??
-      resourceGroupPrefix +
-        getRandomString({ length: 6, lowerCase: true, upperCase: false, number: false });
-    scope.env.setBatch({ resourceGroupName });
+    if (scope.env.get("resourceGroupName") === undefined) {
+      const resourceGroupPrefix = scope.env.getString("resourceGroupPrefix") ?? "apiTest-";
+      scope.env.set("resourceGroupName", {
+        type: "string",
+        value: resourceGroupPrefix + getRandomString(),
+      });
+    }
 
-    await this.client.createResourceGroup(subscriptionId, resourceGroupName, location);
+    await this.client.createResourceGroup(
+      scope.env.getRequiredString("subscriptionId"),
+      scope.env.getRequiredString("resourceGroupName"),
+      scope.env.getRequiredString("location")
+    );
 
     for (const step of scope.prepareSteps) {
       await this.executeStep(step, scope.env, scope);
@@ -142,20 +117,17 @@ export class ApiScenarioRunner {
     this.env = opts.env;
     this.client = opts.client;
     this.jsonLoader = opts.jsonLoader;
-    this.loadMode = opts.loadMode ?? false;
     this.resolveVariables = opts.resolveVariables ?? true;
     this.scopeTracking = {};
-    this.resourceTracking = {};
+    this.scenarioScopeTracking = new Map();
   }
 
   public async prepareScope(scenario: Scenario): Promise<ScopeTracking> {
     let scope = this.scenarioScopeTracking.get(scenario);
     if (scope === undefined) {
-      const testScopeName = scenario.shareScope
-        ? "_defaultScope"
-        : `_randomScope_${getRandomString()}`;
+      const scopeName = scenario.shareScope ? "_defaultScope" : `_randomScope_${getRandomString()}`;
 
-      scope = this.scopeTracking[testScopeName];
+      scope = this.scopeTracking[scopeName];
       if (scope === undefined) {
         const scenarioDef = scenario._scenarioDef;
         const env = new VariableEnv(this.env);
@@ -167,7 +139,7 @@ export class ApiScenarioRunner {
           env,
           armDeployments: [],
         };
-        this.scopeTracking[testScopeName] = scope;
+        this.scopeTracking[scopeName] = scope;
       }
 
       this.scenarioScopeTracking.set(scenario, scope);
@@ -248,8 +220,8 @@ export class ApiScenarioRunner {
       for (const step of scope.cleanUpSteps) {
         await this.executeStep(step, scope.env, scope);
       }
-      const subscriptionId = scope.env.getRequired("subscriptionId");
-      const resourceGroupName = scope.env.getRequired("resourceGroupName");
+      const subscriptionId = scope.env.getRequiredString("subscriptionId");
+      const resourceGroupName = scope.env.getRequiredString("resourceGroupName");
       await this.client.deleteResourceGroup(subscriptionId, resourceGroupName);
     }
   }
@@ -266,50 +238,29 @@ export class ApiScenarioRunner {
 
     for (const p of step.operation.parameters ?? []) {
       const param = this.jsonLoader.resolveRefObj(p);
-      const paramValue = step.requestParameters[param.name];
-      if (paramValue === undefined && param.required) {
-        throw new Error(
-          `Parameter value for "${param.name}" is not found in example: ${step.exampleFilePath}`
-        );
+      const paramVal = step.requestParameters[param.name];
+      if (paramVal === undefined && param.required && env.get(param.name) === undefined) {
+        throw new Error(`Parameter value for "${param.name}" is not found in step: ${step.step}`);
       }
 
       switch (param.in) {
         case "path":
-          pathEnv.set(param.name, paramValue);
-          if (
-            !this.loadMode &&
-            step.resourceName !== undefined &&
-            this.resourceTracking[step.resourceName] !== undefined
-          ) {
-            // reuse path variable
-            env.set(param.name, this.resourceTracking[step.resourceName].getRequired(param.name));
-          }
+          pathEnv.set(param.name, paramVal);
           break;
         case "query":
-          req.query[param.name] = paramValue;
+          req.query[param.name] = paramVal;
           break;
         case "header":
-          req.headers[param.name] = paramValue;
+          req.headers[param.name] = paramVal;
           break;
         case "body":
-          req.body = paramValue;
+          req.body = paramVal;
           break;
         default:
           throw new Error(`Parameter "in" not supported: ${param.in}`);
       }
     }
     req.path = pathEnv.resolveString(step.operation._path._pathTemplate, true);
-
-    if (
-      !this.loadMode &&
-      step.resourceName !== undefined &&
-      this.resourceTracking[step.resourceName] === undefined
-    ) {
-      // resolve and save pathEnv
-      pathEnv.setBaseEnv(env);
-      pathEnv.resolve();
-      this.resourceTracking[step.resourceName] = pathEnv;
-    }
 
     if (this.resolveVariables) {
       req = env.resolveObjectValues(req);
@@ -327,8 +278,8 @@ export class ApiScenarioRunner {
     env: VariableEnv,
     scope: ScopeTracking
   ) {
-    const subscriptionId = env.getRequired("subscriptionId");
-    const resourceGroupName = env.getRequired("resourceGroupName");
+    const subscriptionId = env.getRequiredString("subscriptionId");
+    const resourceGroupName = env.getRequiredString("resourceGroupName");
 
     const armDeployment: ArmDeploymentTracking = {
       deploymentName: `${resourceGroupName}-deploy-${getRandomString()}`,

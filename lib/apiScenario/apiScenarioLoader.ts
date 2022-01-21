@@ -72,8 +72,9 @@ interface ApiScenarioContext {
 @injectable()
 export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
   private transformContext: TransformContext;
-  private exampleToOperation = new Map<string, { [operationId: string]: [Operation, string] }>();
-  private nameToOperation: Map<string, Operation> = new Map();
+  private operationsMap = new Map<string, Operation>();
+  private apiVersionsMap = new Map<string, string>();
+  private exampleToOperation = new Map<string, { [operationId: string]: string }>();
   private initialized: boolean = false;
   private env: VariableEnv;
   private templateGenerationRunner: ApiScenarioRunner;
@@ -103,7 +104,6 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       env: this.env,
       jsonLoader: this.jsonLoader,
       client: this.templateGenerator,
-      loadMode: true,
     });
   }
 
@@ -138,16 +138,17 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
             );
           }
 
-          if (this.nameToOperation.has(operation.operationId)) {
+          if (this.operationsMap.has(operation.operationId)) {
             throw new Error(
               `Duplicated operationId ${operation.operationId}: ${
                 operation._path._pathTemplate
               }\nConflict with path: ${
-                this.nameToOperation.get(operation.operationId)?._path._pathTemplate
+                this.operationsMap.get(operation.operationId)?._path._pathTemplate
               }`
             );
           }
-          this.nameToOperation.set(operation.operationId, operation);
+          this.operationsMap.set(operation.operationId, operation);
+          this.apiVersionsMap.set(operation.operationId, spec.info.version);
 
           const xMsExamples = operation["x-ms-examples"] ?? {};
           for (const exampleName of Object.keys(xMsExamples)) {
@@ -161,7 +162,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
               opMap = {};
               this.exampleToOperation.set(exampleFilePath, opMap);
             }
-            opMap[operation.operationId] = [operation, exampleName];
+            opMap[operation.operationId] = exampleName;
           }
         },
       });
@@ -280,23 +281,25 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
 
   private async generateTemplate(scenario: Scenario) {
     this.env.clear();
-    // TODO
-    // for (const requiredVar of scenario.requiredVariables) {
-    //   this.env.set(requiredVar, `$(${requiredVar})`);
-    // }
+    for (const requiredVar of scenario.requiredVariables) {
+      this.env.set(requiredVar, {
+        type: "string",
+        value: `$(${requiredVar})`,
+      });
+    }
     await this.templateGenerationRunner.executeScenario(scenario);
   }
 
   private async loadStep(rawStep: RawStep, ctx: ApiScenarioContext): Promise<Step> {
-    let testStep: Step;
+    let step: Step;
 
     try {
       if ("operationId" in rawStep || "exampleFile" in rawStep) {
-        testStep = await this.loadStepRestCall(rawStep, ctx);
+        step = await this.loadStepRestCall(rawStep, ctx);
       } else if ("armTemplate" in rawStep) {
-        testStep = await this.loadStepArmTemplate(rawStep, ctx);
+        step = await this.loadStepArmTemplate(rawStep, ctx);
       } else if ("armDeploymentScript" in rawStep) {
-        testStep = await this.loadStepArmDeploymentScript(rawStep, ctx);
+        step = await this.loadStepArmDeploymentScript(rawStep, ctx);
       } else {
         throw new Error("Invalid step");
       }
@@ -304,15 +307,16 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       throw new Error(`Failed to load step ${rawStep.step}: ${(error as any).message}`);
     }
 
-    // TODO
-    // if (ctx.scenario !== undefined) {
-    //   declareOutputVariables(testStep.outputVariables, ctx.scenario);
-    // } else {
-    //   declareOutputVariables(testStep.outputVariables, ctx.scenarioDef);
-    // }
+    if (step.outputVariables) {
+      if (ctx.scenario !== undefined) {
+        declareOutputVariables(step.outputVariables, ctx.scenario);
+      } else {
+        declareOutputVariables(step.outputVariables, ctx.scenarioDef);
+      }
+    }
 
     ctx.stepIndex!++;
-    return testStep;
+    return step;
   }
 
   private async loadStepRestCall(
@@ -340,12 +344,20 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     if ("operationId" in rawStep) {
       step.operationId = rawStep.operationId;
 
-      const operation = this.nameToOperation.get(step.operationId);
+      const operation = this.operationsMap.get(step.operationId);
       if (operation === undefined) {
         // TODO support cross-rp swagger
         throw new Error(`Operation not found for ${step.operationId} in step ${step.step}`);
       }
       step.operation = operation;
+      if (rawStep.parameters) {
+        for (const [name, value] of Object.entries(rawStep.parameters)) {
+          step.requestParameters[name] = value;
+        }
+        if (step.requestParameters["api-version"] === undefined) {
+          step.requestParameters["api-version"] = this.apiVersionsMap.get(step.operationId)!;
+        }
+      }
     } else {
       step.exampleFile = rawStep.exampleFile;
 
@@ -355,28 +367,36 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       const fileContent = await this.fileLoader.load(exampleFilePath);
       const exampleFileContent = JSON.parse(fileContent) as SwaggerExample;
 
+      // Load Operation
+      if (exampleFileContent.operationId) {
+        step.operationId = exampleFileContent.operationId;
+
+        const operation = this.operationsMap.get(step.operationId);
+        if (operation === undefined) {
+          // TODO support cross-rp swagger
+          throw new Error(`Operation not found for ${step.operationId} in step ${step.step}`);
+        }
+        step.operation = operation;
+      } else {
+        const opMap = this.exampleToOperation.get(exampleFilePath);
+        if (opMap === undefined) {
+          throw new Error(`Example file is not referenced by any operation: ${step.exampleFile}`);
+        }
+        const ops = Object.values(opMap);
+        if (ops.length > 1) {
+          throw new Error(
+            `Example file is referenced by multiple operation: ${Object.keys(opMap)} ${
+              step.exampleFile
+            }`
+          );
+        }
+        let exampleName;
+        [step.operationId, exampleName] = ops[0];
+        step.operation = this.operationsMap.get(step.operationId)!;
+        step.description = step.description ?? exampleName;
+      }
       step.requestParameters = exampleFileContent.parameters;
       step.responseExpected = exampleFileContent.responses;
-
-      // Load Operation
-      const opMap = exampleFileContent.operationId
-        ? this.nameToOperation.get(exampleFileContent.operationId)
-        : this.exampleToOperation.get(exampleFilePath);
-      if (opMap === undefined) {
-        throw new Error(`Example file is not referenced by any operation: ${step.exampleFile}`);
-      }
-      const ops = Object.values(opMap);
-      if (ops.length > 1) {
-        throw new Error(
-          `Example file is referenced by multiple operation: ${Object.keys(opMap)} ${
-            step.exampleFile
-          }`
-        );
-      }
-      let exampleName;
-      [step.operation, exampleName] = ops[0];
-      step.operationId = step.operation.operationId!;
-      step.description = step.description ?? exampleName;
 
       await this.applyPatches(step, rawStep);
     }

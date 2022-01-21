@@ -23,39 +23,39 @@ export type Variable =
   | ObjectVariable
   | SecureObjectVariable;
 
-type StringVariable = {
+export type StringVariable = {
   type: "string";
   value?: string;
 };
 
-type SecureStringVariable = {
+export type SecureStringVariable = {
   type: "secureString";
   value?: string;
 };
 
-type BoolVariable = {
+export type BoolVariable = {
   type: "bool";
   value?: boolean;
 };
 
-type IntVariable = {
+export type IntVariable = {
   type: "int";
   value?: number;
 };
 
-type ObjectVariable = {
+export type ObjectVariable = {
   type: "object";
   value?: { [key: string]: VarValue };
   patches?: JsonPatchOp[];
 };
 
-type SecureObjectVariable = {
+export type SecureObjectVariable = {
   type: "secureObject";
   value?: { [key: string]: VarValue };
   patches?: JsonPatchOp[];
 };
 
-type ArrayVariable = {
+export type ArrayVariable = {
   type: "array";
   value?: VarValue[];
   patches?: JsonPatchOp[];
@@ -119,6 +119,8 @@ export type RawStepOperation = RawStepBase & {
   responses?: SwaggerExample["responses"];
 };
 
+export type StepRestCallExample = StepBase & {};
+
 export type StepRestCall = StepBase & {
   type: "restCall";
   step: string;
@@ -126,8 +128,8 @@ export type StepRestCall = StepBase & {
   operationId: string;
   operation: Operation;
   exampleFile?: string;
-  requestParameters: RawStepOperation["parameters"];
-  responseExpected: RawStepOperation["responses"];
+  requestParameters: SwaggerExample["parameters"];
+  responseExpected: SwaggerExample["responses"];
   outputVariables?: OutputVariables;
 };
 

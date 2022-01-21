@@ -1,4 +1,12 @@
-import { Variable } from "./apiScenarioTypes";
+import {
+  Variable,
+  StringVariable,
+  SecureStringVariable,
+  ObjectVariable,
+  SecureObjectVariable,
+  VarValue,
+  ArrayVariable,
+} from "./apiScenarioTypes";
 import { jsonPatchApply } from "./diffUtils";
 
 const variableRegex = /\$\(([A-Za-z_][A-Za-z0-9_]*)\)/;
@@ -24,70 +32,100 @@ export class VariableEnv {
     this.baseEnv = baseEnv;
   }
 
-  public get(key: string): Variable | undefined {
-    let val = this.data[key];
-    if (val !== undefined) {
-      switch (val.type) {
-        case "string":
-        case "secureString":
-          if (val.value && variableRegex.test(val.value)) {
-            const globalRegex = new RegExp(variableRegex, "g");
-            const replaceArray: Array<[number, number, string | undefined]> = [];
-            let match;
-            while ((match = globalRegex.exec(val.value))) {
-              const refKey = match[1];
-              const refVal = refKey === key ? this.baseEnv?.get(key) ?? val : this.get(refKey);
-              if (refVal && refVal.type !== "string" && refVal.type !== "secureString") {
-                throw new Error(`Invalid reference variable type: ${refKey}`);
-              }
-              if (refVal?.type === "secureString") {
-                val.type = "secureString";
-              }
-              replaceArray.push([match.index, match.index + match[0].length, refVal?.value]);
-            }
-            let r;
-            while ((r = replaceArray.pop())) {
-              if (r[2] !== undefined) {
-                val.value = val.value.substring(0, r[0]) + r[2] + val.value.substring(r[1]);
-              }
-            }
-          }
-          break;
-        case "object":
-        case "secureObject":
-        case "array":
-          if (val.value) {
-            val.value = this.resolveObjectValues(val.value);
-          } else if (val.patches) {
-            const refVal = this.baseEnv?.get(key);
-            if (refVal && refVal.type !== "object" && refVal.type !== "secureObject") {
-              throw new Error(`Invalid reference variable type: ${key}`);
-            }
-            if (refVal?.type === "secureObject") {
-              val.type = "secureObject";
-            }
-            if (refVal?.value) {
-              val.value = refVal.value;
-              val.value = jsonPatchApply(val.value, val.patches);
-            }
-          }
-          break;
-        case "bool":
-        case "int":
-        default:
-          break;
-      }
-      return val;
+  public getType(key: string): Variable["type"] | undefined {
+    return this.get(key)?.type;
+  }
+
+  public getString(key: string): string | undefined {
+    const val = this.get(key);
+    if (val?.type === "string" || val?.type === "secureString") {
+      return val.value;
     }
-    return this.baseEnv?.get(key);
+    return undefined;
+  }
+
+  public getObject(key: string): { [key: string]: VarValue } | undefined {
+    const val = this.get(key);
+    if (val?.type === "object" || val?.type === "secureObject") {
+      return val.value;
+    }
+    return undefined;
+  }
+
+  public getArray(key: string): VarValue[] | undefined {
+    const val = this.get(key);
+    if (val?.type === "array") {
+      return val.value;
+    }
+    return undefined;
+  }
+
+  public getBool(key: string): boolean | undefined {
+    const val = this.get(key);
+    if (val?.type === "bool") {
+      return val.value;
+    }
+    return undefined;
+  }
+
+  public getInt(key: string): number | undefined {
+    const val = this.get(key);
+    if (val && val.type === "int") {
+      return val.value;
+    }
+    return undefined;
+  }
+
+  public get(key: string): Variable | undefined {
+    return this.data[key] ?? this.baseEnv?.get(key);
+  }
+
+  public getRequiredString(key: string): string {
+    const val = this.getRequired(key);
+    if (val.type !== "string" && val.type !== "secureString") {
+      throw new Error(`Variable ${key} is not a string`);
+    }
+    return val.value as string;
+  }
+
+  public getRequiredObject(key: string): { [key: string]: VarValue } {
+    const val = this.getRequired(key);
+    if (val.type !== "object" && val.type !== "secureObject") {
+      throw new Error(`Variable ${key} is not an object`);
+    }
+    return val.value as { [key: string]: VarValue };
+  }
+
+  public getRequiredArray(key: string): VarValue[] {
+    const val = this.getRequired(key);
+    if (val.type !== "array") {
+      throw new Error(`Variable ${key} is not an array`);
+    }
+    return val.value as VarValue[];
+  }
+
+  public getRequiredBool(key: string): boolean {
+    const val = this.getRequired(key);
+    if (val.type !== "bool") {
+      throw new Error(`Variable ${key} is not a boolean`);
+    }
+    return val.value as boolean;
+  }
+
+  public getRequiredInt(key: string): number {
+    const val = this.getRequired(key);
+    if (val.type !== "int") {
+      throw new Error(`Variable ${key} is not an integer`);
+    }
+    return val.value as number;
   }
 
   public getRequired(key: string): Variable {
-    const result = this.get(key);
-    if (result?.value === undefined) {
+    const val = this.get(key);
+    if (val?.value === undefined) {
       throw new Error(`Variable is required but is not found in VariableEnv: ${key}`);
     }
-    return result;
+    return val;
   }
 
   public set(key: string, value: Variable) {
@@ -108,8 +146,75 @@ export class VariableEnv {
   }
 
   public resolve() {
+    this.baseEnv?.resolve();
     for (const key of Object.keys(this.data)) {
-      this.set(key, this.getRequired(key));
+      const val = this.data[key];
+      switch (val.type) {
+        case "string":
+        case "secureString":
+          this.doResolveStringVariable(key, val);
+          break;
+        case "object":
+        case "secureObject":
+        case "array":
+          this.doResolveObjectVariable(key, val);
+          break;
+        case "bool":
+        case "int":
+        default:
+          break;
+      }
+    }
+  }
+
+  private doResolveStringVariable(key: string, val: StringVariable | SecureStringVariable) {
+    if (val.value && variableRegex.test(val.value)) {
+      const globalRegex = new RegExp(variableRegex, "g");
+      const replaceArray: Array<[number, number, string | undefined]> = [];
+      let match;
+      while ((match = globalRegex.exec(val.value))) {
+        const refKey = match[1];
+        const refVal = refKey === key ? this.baseEnv?.get(key) ?? val : this.get(refKey);
+        if (refVal && refVal.type !== "string" && refVal.type !== "secureString") {
+          throw new Error(`Invalid reference variable type: ${refKey}`);
+        }
+        if (refVal?.type === "secureString") {
+          val.type = "secureString";
+        }
+        replaceArray.push([match.index, match.index + match[0].length, refVal?.value]);
+      }
+      let r;
+      while ((r = replaceArray.pop())) {
+        if (r[2] !== undefined) {
+          val.value = val.value.substring(0, r[0]) + r[2] + val.value.substring(r[1]);
+        }
+      }
+    }
+  }
+
+  private doResolveObjectVariable(
+    key: string,
+    val: ObjectVariable | SecureObjectVariable | ArrayVariable
+  ) {
+    if (val.value) {
+      val.value = this.resolveObjectValues(val.value);
+    } else if (val.patches) {
+      const refVal = this.baseEnv?.get(key);
+      if (
+        refVal &&
+        refVal.type !== "object" &&
+        refVal.type !== "secureObject" &&
+        refVal.type !== "array"
+      ) {
+        throw new Error(`Invalid reference variable type: ${key}`);
+      }
+      if (refVal?.type === "secureObject") {
+        val.type = "secureObject";
+      }
+      if (refVal?.value) {
+        val.value = refVal.value;
+        val.value = jsonPatchApply(val.value, val.patches);
+      }
     }
   }
 
