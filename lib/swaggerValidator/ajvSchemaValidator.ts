@@ -233,21 +233,17 @@ const shouldSkipError = (error: ErrorObject, cxt: SchemaValidateContext) => {
   if (
     cxt.isResponse &&
     keyword === "multipleOf" &&
-    // should skip error when response data divided by multipleOf value is an integer
-    (() => {
-      let newSchema = schema;
-      let newData = data;
-      if (typeof schema === "number" && typeof data === "number") {
-        while (newSchema <= 1) {
-          newSchema *= 10;
-          newData *= 10;
-        }
-      }
-      const result = newData / newSchema;
-      return result === parseInt(String(result));
-    })
+    typeof schema === "number" &&
+    typeof data === "number"
   ) {
-    return true;
+    // should skip error when response data divided by multipleOf value is an integer
+    let [newSchema, newData] = [schema, data];
+    while (newSchema < 1) {
+      newSchema *= 10;
+      newData *= 10;
+    }
+    const result = newData / newSchema;
+    return result === parseInt(String(result));
   }
 
   return false;
