@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 01/21/2022 2.11.5
+
+- LiveValidator - Validate multipleOf data again when ajv validation results have error about multipleOf in response
+
 ## 12/15/2021 2.11.4
 
 - LiveValidator - Ignore required validation rule in response when x-ms-secret is true and the httpMethod is POST

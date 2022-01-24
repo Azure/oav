@@ -1,0 +1,588 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Microsoft NetApp",
+    "description": "Microsoft NetApp Azure Resource Provider specification",
+    "version": "2020-07-01",
+    "x-ms-code-generation-settings": {
+      "name": "AzureNetAppFilesManagementClient"
+    }
+  },
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "https"
+  ],
+  "host": "management.azure.com",
+  "security": [
+    {
+      "azure_auth": [
+        "user_impersonation"
+      ]
+    }
+  ],
+  "securityDefinitions": {
+    "azure_auth": {
+      "type": "oauth2",
+      "authorizationUrl": "https://login.microsoftonline.com/common/oauth2/authorize",
+      "flow": "implicit",
+      "description": "Azure Active Directory OAuth2 Flow",
+      "scopes": {
+        "user_impersonation": "impersonate your user account"
+      }
+    }
+  },
+  "paths": {
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}": {
+      "get": {
+        "tags": [
+          "Volumes"
+        ],
+        "operationId": "Volumes_Get",
+        "summary": "Describe a volume",
+        "description": "Get the details of the specified volume",
+        "parameters": [
+          {
+            "$ref": "#/parameters/SubscriptionId"
+          },
+          {
+            "$ref": "#/parameters/ResourceGroup"
+          },
+          {
+            "$ref": "#/parameters/AccountName"
+          },
+          {
+            "$ref": "#/parameters/PoolName"
+          },
+          {
+            "$ref": "#/parameters/VolumeName"
+          },
+          {
+            "$ref": "#/parameters/ApiVersionParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/volume"
+            }
+          },
+          "default": {
+            "description": "Error response describing why the operation failed."
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "volume": {
+      "description": "Volume resource",
+      "type": "object",
+      "x-ms-azure-resource": true,
+      "required": [
+        "properties"
+      ],
+      "properties": {
+        "location": {
+          "type": "string",
+          "description": "Resource location",
+          "x-ms-mutability": [
+            "read",
+            "create"
+          ]
+        },
+        "id": {
+          "type": "string",
+          "readOnly": true,
+          "description": "Resource Id"
+        },
+        "name": {
+          "type": "string",
+          "readOnly": true,
+          "description": "Resource name"
+        },
+        "type": {
+          "type": "string",
+          "readOnly": true,
+          "description": "Resource type"
+        },
+        "tags": {
+          "description": "Resource tags",
+          "$ref": "#/definitions/resourceTags"
+        },
+        "properties": {
+          "description": "Volume properties",
+          "$ref": "#/definitions/volumeProperties",
+          "x-ms-client-flatten": true
+        }
+      }
+    },
+    "resourceTags": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Tags are a list of key-value pairs that describe the resource"
+    },
+    "volumeProperties": {
+      "description": "Volume properties",
+      "type": "object",
+      "properties": {
+        "fileSystemId": {
+          "title": "FileSystem ID",
+          "type": "string",
+          "readOnly": true,
+          "description": "Unique FileSystem Identifier.",
+          "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+          "maxLength": 36,
+          "minLength": 36,
+          "example": "9760acf5-4638-11e7-9bdb-020073ca7778"
+        },
+        "creationToken": {
+          "title": "Creation Token or File Path",
+          "type": "string",
+          "description": "A unique file path for the volume. Used when creating mount targets",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9\\-]{0,79}$",
+          "minLength": 1,
+          "maxLength": 80,
+          "example": "some-amazing-filepath"
+        },
+        "serviceLevel": {
+          "title": "serviceLevel",
+          "type": "string",
+          "description": "The service level of the file system",
+          "enum": [
+            "Standard",
+            "Premium",
+            "Ultra"
+          ],
+          "x-ms-enum": {
+            "name": "ServiceLevel",
+            "modelAsString": true,
+            "values": [
+              {
+                "value": "Standard",
+                "description": "Standard service level"
+              },
+              {
+                "value": "Premium",
+                "description": "Premium service level"
+              },
+              {
+                "value": "Ultra",
+                "description": "Ultra service level"
+              }
+            ]
+          },
+          "example": "Ultra",
+          "default": "Premium"
+        },
+        "usageThreshold": {
+          "title": "usageThreshold",
+          "type": "integer",
+          "format": "int64",
+          "description": "Maximum storage quota allowed for a file system in bytes. This is a soft quota used for alerting only. Minimum size is 100 GiB. Upper limit is 100TiB. Specified in bytes.",
+          "minimum": 107374182400,
+          "maximum": 109951162777600,
+          "default": 107374182400,
+          "example": 107374182400
+        },
+        "exportPolicy": {
+          "title": "exportPolicy",
+          "description": "Set of export policy rules",
+          "properties": {
+            "rules": {
+              "title": "Export policy rule",
+              "description": "Export policy rule",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/exportPolicyRule"
+              }
+            }
+          }
+        },
+        "protocolTypes": {
+          "title": "protocolTypes",
+          "description": "Set of protocol types, default NFSv3, CIFS for SMB protocol",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "NFSv4.1"
+          ]
+        },
+        "provisioningState": {
+          "type": "string",
+          "readOnly": true,
+          "description": "Azure lifecycle management"
+        },
+        "snapshotId": {
+          "title": "Snapshot ID",
+          "type": "string",
+          "x-nullable": true,
+          "description": "UUID v4 or resource identifier used to identify the Snapshot.",
+          "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}|(\\\\?([^\\/]*[\\/])*)([^\\/]+)$",
+          "maxLength": 36,
+          "minLength": 36,
+          "example": "9760acf5-4638-11e7-9bdb-020073ca3333"
+        },
+        "backupId": {
+          "title": "Backup ID",
+          "type": "string",
+          "description": "UUID v4 or resource identifier used to identify the Backup.",
+          "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}|(\\\\?([^\\/]*[\\/])*)([^\\/]+)$",
+          "maxLength": 36,
+          "minLength": 36,
+          "example": "9760acf5-4638-11e7-9bdb-020073ca3333"
+        },
+        "baremetalTenantId": {
+          "title": "Baremetal Tenant ID",
+          "type": "string",
+          "readOnly": true,
+          "description": "Unique Baremetal Tenant Identifier.",
+          "example": "9560acf5-4e3a-12e7-9bdb-02007cca7779"
+        },
+        "subnetId": {
+          "type": "string",
+          "description": "The Azure Resource URI for a delegated subnet. Must have the delegation Microsoft.NetApp/volumes"
+        },
+        "mountTargets": {
+          "title": "mountTargets",
+          "type": "array",
+          "readOnly": true,
+          "description": "List of mount targets",
+          "items": {
+            "$ref": "#/definitions/mountTargetProperties"
+          }
+        },
+        "volumeType": {
+          "type": "string",
+          "description": "What type of volume is this",
+          "example": "DataProtection"
+        },
+        "dataProtection": {
+          "title": "DataProtection",
+          "description": "DataProtection type volumes include an object containing details of the replication",
+          "properties": {
+            "backup": {
+              "title": "Backup",
+              "description": "Backup Properties",
+              "type": "object",
+              "$ref": "#/definitions/volumeBackupProperties"
+            },
+            "replication": {
+              "title": "Replication",
+              "description": "Replication properties",
+              "type": "object",
+              "$ref": "#/definitions/replicationObject"
+            },
+            "snapshot": {
+              "title": "Snapshot",
+              "description": "Snapshot properties.",
+              "$ref": "#/definitions/volumeSnapshotProperties"
+            }
+          }
+        },
+        "isRestoring": {
+          "type": "boolean",
+          "description": "Restoring"
+        },
+        "snapshotDirectoryVisible": {
+          "type": "boolean",
+          "default": true,
+          "description": "If enabled (true) the volume will contain a read-only .snapshot directory which provides access to each of the volume's snapshots (default to true)."
+        },
+        "kerberosEnabled": {
+          "type": "boolean",
+          "description": "Describe if a volume is KerberosEnabled. To be use with swagger version 2020-05-01 or later",
+          "example": false,
+          "default": false
+        },
+        "securityStyle": {
+          "type": "string",
+          "description": "The security style of volume, default unix, ntfs for dual protocol or CIFS protocol",
+          "default": "unix",
+          "enum": [
+            "ntfs",
+            "unix"
+          ],
+          "x-ms-enum": {
+            "name": "SecurityStyle",
+            "modelAsString": true
+          }
+        },
+        "throughputMibps": {
+          "title": "Maximum throughput in Mibps that can be achieved by this volume",
+          "type": "number",
+          "default": 0.0,
+          "example": 128.22,
+          "maximum": 4500,
+          "minimum": 0,
+          "multipleOf": 0.001
+        }
+      }
+    },
+    "exportPolicyRule": {
+      "description": "Volume Export Policy Rule",
+      "type": "object",
+      "properties": {
+        "ruleIndex": {
+          "type": "integer",
+          "description": "Order index",
+          "format": "int32"
+        },
+        "unixReadOnly": {
+          "type": "boolean",
+          "description": "Read only access"
+        },
+        "unixReadWrite": {
+          "type": "boolean",
+          "description": "Read and write access"
+        },
+        "kerberos5ReadOnly": {
+          "type": "boolean",
+          "description": "Kerberos5 Read only access. To be use with swagger version 2020-05-01 or later",
+          "example": false,
+          "default": false
+        },
+        "kerberos5ReadWrite": {
+          "type": "boolean",
+          "description": "Kerberos5 Read and write access. To be use with swagger version 2020-05-01 or later",
+          "example": true,
+          "default": false
+        },
+        "kerberos5iReadOnly": {
+          "type": "boolean",
+          "description": "Kerberos5i Read only access. To be use with swagger version 2020-05-01 or later",
+          "example": false,
+          "default": false
+        },
+        "kerberos5iReadWrite": {
+          "type": "boolean",
+          "description": "Kerberos5i Read and write access. To be use with swagger version 2020-05-01 or later",
+          "example": true,
+          "default": false
+        },
+        "kerberos5pReadOnly": {
+          "type": "boolean",
+          "description": "Kerberos5p Read only access. To be use with swagger version 2020-05-01 or later",
+          "example": false,
+          "default": false
+        },
+        "kerberos5pReadWrite": {
+          "type": "boolean",
+          "description": "Kerberos5p Read and write access. To be use with swagger version 2020-05-01 or later",
+          "example": true,
+          "default": false
+        },
+        "cifs": {
+          "type": "boolean",
+          "default": false,
+          "description": "Allows CIFS protocol"
+        },
+        "nfsv3": {
+          "type": "boolean",
+          "description": "Allows NFSv3 protocol. Enable only for NFSv3 type volumes"
+        },
+        "nfsv41": {
+          "type": "boolean",
+          "description": "Allows NFSv4.1 protocol. Enable only for NFSv4.1 type volumes"
+        },
+        "allowedClients": {
+          "type": "string",
+          "description": "Client ingress specification as comma separated string with IPv4 CIDRs, IPv4 host addresses and host names"
+        },
+        "hasRootAccess": {
+          "type": "boolean",
+          "description": "Has root access to volume",
+          "example": true,
+          "default": true
+        }
+      }
+    },
+    "volumeBackupProperties": {
+      "description": "Volume Backup Properties",
+      "type": "object",
+      "properties": {
+        "backupPolicyId": {
+          "type": "string",
+          "description": "Backup Policy Resource ID"
+        },
+        "policyEnforced": {
+          "type": "boolean",
+          "description": "Policy Enforced"
+        },
+        "vaultId": {
+          "type": "string",
+          "description": "Vault Resource ID"
+        },
+        "backupEnabled": {
+          "type": "boolean",
+          "description": "Backup Enabled"
+        }
+      }
+    },
+    "replicationObject": {
+      "description": "Replication properties",
+      "type": "object",
+      "required": [
+        "replicationSchedule",
+        "remoteVolumeResourceId"
+      ],
+      "properties": {
+        "replicationId": {
+          "type": "string",
+          "description": "Id"
+        },
+        "endpointType": {
+          "type": "string",
+          "description": "Indicates whether the local volume is the source or destination for the Volume Replication",
+          "enum": [
+            "src",
+            "dst"
+          ],
+          "x-ms-enum": {
+            "name": "EndpointType",
+            "modelAsString": true
+          }
+        },
+        "replicationSchedule": {
+          "type": "string",
+          "description": "Schedule",
+          "enum": [
+            "_10minutely",
+            "hourly",
+            "daily"
+          ],
+          "x-ms-enum": {
+            "name": "ReplicationSchedule",
+            "modelAsString": true
+          }
+        },
+        "remoteVolumeResourceId": {
+          "type": "string",
+          "description": "The resource ID of the remote volume."
+        },
+        "remoteVolumeRegion": {
+          "type": "string",
+          "description": "The remote region for the other end of the Volume Replication."
+        }
+      }
+    },
+    "volumeSnapshotProperties": {
+      "description": "Volume Snapshot Properties",
+      "type": "object",
+      "properties": {
+        "snapshotPolicyId": {
+          "type": "string",
+          "description": "Snapshot Policy ResourceId"
+        }
+      }
+    },
+    "mountTargetProperties": {
+      "description": "Mount target properties",
+      "type": "object",
+      "required": [
+        "fileSystemId"
+      ],
+      "properties": {
+        "mountTargetId": {
+          "title": "mountTargetId",
+          "type": "string",
+          "readOnly": true,
+          "description": "UUID v4 used to identify the MountTarget",
+          "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+          "maxLength": 36,
+          "minLength": 36,
+          "example": "9760acf5-4638-11e7-9bdb-020073ca3333"
+        },
+        "fileSystemId": {
+          "title": "fileSystemId",
+          "type": "string",
+          "description": "UUID v4 used to identify the MountTarget",
+          "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+          "maxLength": 36,
+          "minLength": 36,
+          "example": "9760acf5-4638-11e7-9bdb-020073ca3333"
+        },
+        "ipAddress": {
+          "title": "ipAddress",
+          "description": "The mount target's IPv4 address",
+          "type": "string",
+          "readOnly": true,
+          "example": "1.2.3.4"
+        },
+        "smbServerFqdn": {
+          "title": "smbServerFQDN",
+          "description": "The SMB server's Fully Qualified Domain Name, FQDN",
+          "type": "string",
+          "example": "fullyqualified.domainname.com"
+        }
+      }
+    }
+  },
+  "parameters": {
+    "SubscriptionId": {
+      "name": "subscriptionId",
+      "in": "path",
+      "required": true,
+      "type": "string",
+      "description": "Subscription credentials which uniquely identify Microsoft Azure subscription. The subscription ID forms part of the URI for every service call."
+    },
+    "ResourceGroup": {
+      "name": "resourceGroupName",
+      "in": "path",
+      "required": true,
+      "type": "string",
+      "description": "The name of the resource group.",
+      "pattern": "^[-\\w\\._\\(\\)]+$",
+      "minLength": 1,
+      "maxLength": 90,
+      "x-ms-parameter-location": "method"
+    },
+    "AccountName": {
+      "name": "accountName",
+      "type": "string",
+      "in": "path",
+      "required": true,
+      "description": "The name of the NetApp account",
+      "x-ms-parameter-location": "method"
+    },
+    "PoolName": {
+      "name": "poolName",
+      "type": "string",
+      "in": "path",
+      "required": true,
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9\\-_]{0,63}$",
+      "minLength": 1,
+      "maxLength": 64,
+      "description": "The name of the capacity pool",
+      "x-ms-parameter-location": "method"
+    },
+    "VolumeName": {
+      "name": "volumeName",
+      "type": "string",
+      "in": "path",
+      "required": true,
+      "pattern": "^[a-zA-Z][a-zA-Z0-9\\-_]{0,63}$",
+      "minLength": 1,
+      "maxLength": 64,
+      "description": "The name of the volume",
+      "x-ms-parameter-location": "method"
+    },
+    "ApiVersionParameter": {
+      "name": "api-version",
+      "description": "Version of the API to be used with the client request.",
+      "in": "query",
+      "type": "string",
+      "required": true,
+      "default": "2020-07-01"
+    }
+  }
+}
