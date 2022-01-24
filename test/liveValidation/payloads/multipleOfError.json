@@ -1,0 +1,100 @@
+{
+  "liveRequest": {
+    "headers": {
+      "Content-Type": "application/json",
+      "accept-Language": "en-US",
+      "host": "management.azure.com",
+      "user-Agent": "FxVersion/4.8.4420.0;OSName/Windows;OSVersion/Microsoft.Windows.10.0.19042.;Microsoft.Azure.Management.NetApp.AzureNetAppFilesManagementClient/1.8.0.0;AzurePowershell/v0.0.0;PSVersion/v5.1.19041.1320",
+      "x-ms-client-request-id": "10dccfac-f2be-4fa3-b907-387faba05a7e",
+      "commandName": "Get-AzNetAppFilesVolume",
+      "parameterSetName": "ByResourceIdParameterSet"
+    },
+    "method": "GET",
+    "url": "/subscriptions/b55b247d-4a5e-4873-8877-a89aab0a5c96/resourceGroups/RG-NP-0001771/providers/Microsoft.NetApp/netAppAccounts/ANF-NP-0001771/capacityPools/ANFPOOL-Premium-0001771/volumes/hanashared-0001713-01?api-version=2020-07-01"
+  },
+  "liveResponse": {
+    "statusCode": "OK",
+    "headers": {
+      "Content-Type": "application/json",
+      "pragma": "no-cache",
+      "x-ms-request-id": "971b5d15-32c3-4be4-9b0e-a1707d44b423",
+      "cache-Control": "no-cache",
+      "date": "Mon, 10 Jan 2022 16:48:56 GMT",
+      "eTag": "W/\"datetime'2022-01-09T17%3A08%3A58.5367484Z'\"",
+      "server": "Microsoft-IIS/10.0",
+      "x-Powered-By": "aaaaaaa"
+    },
+    "body": {
+      "id": "a",
+      "name": "a",
+      "type": "Microsoft.NetApp/netAppAccounts/capacityPools/volumes",
+      "location": "aaaaaa",
+      "tags": {
+        "Maintenance_Window": "",
+        "ID": "",
+        "Subscription": "aaaaaaaaaaaaa",
+        "Name": "aaaaaaaaaaaaa",
+        "Compliance_Designation": "",
+        "Managed_Vendor": "",
+        "Department": "",
+        "APM": "aaaaaaaaaa",
+        "Owner": "aaaaaaaaa",
+        "Used For": "",
+        "UpdateTimeStamp": "aaa",
+        "Organization": "aaaaaaaaaaaaaaaaaa",
+        "Environment": "aaa",
+        "Support_Group": "aaaaaaaaaaaaaaaaaaaaa",
+        "Application": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "Update_Timestamp": "aaaaaaaaaa",
+        "DowEnv": "aaa"
+      },
+      "properties": {
+        "mountTargets": [
+          {
+            "mountTargetId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "fileSystemId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "ipAddress": "aaaaaaaaaaaa"
+          }
+        ],
+        "throughputMibps": 390.4,
+        "dataProtection": {
+          "snapshot": {
+            "snapshotPolicyId": ""
+          }
+        },
+        "provisioningState": "aaaaaaaaa",
+        "fileSystemId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+        "serviceLevel": "Premium",
+        "creationToken": "aaaaaaaaaaaaaaaaaaaaa",
+        "usageThreshold": 6549825126400,
+        "exportPolicy": {
+          "rules": [
+            {
+              "ruleIndex": 1,
+              "unixReadOnly": false,
+              "unixReadWrite": true,
+              "cifs": false,
+              "nfsv3": false,
+              "nfsv41": true,
+              "allowedClients": "aaaaaaaaa",
+              "kerberos5ReadOnly": false,
+              "kerberos5ReadWrite": false,
+              "kerberos5iReadOnly": false,
+              "kerberos5iReadWrite": false,
+              "kerberos5pReadOnly": false,
+              "kerberos5pReadWrite": false
+            }
+          ]
+        },
+        "protocolTypes": [
+          "aaaaaaa"
+        ],
+        "baremetalTenantId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+        "subnetId": "a",
+        "snapshotDirectoryVisible": true,
+        "kerberosEnabled": false,
+        "securityStyle": "unix"
+      }
+    }
+  }
+}
