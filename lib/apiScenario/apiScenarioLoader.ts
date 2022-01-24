@@ -473,6 +473,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     const filePath = pathJoin(dirname(scenarioDef._filePath), rawStep.armDeploymentScript);
     const scriptContent = await this.fileLoader.load(filePath);
     resource.properties.scriptContent = scriptContent;
+    resource.properties.arguments = rawStep.arguments;
 
     for (const variable of rawStep.environmentVariables ?? []) {
       if (this.isSecretVariable(variable.value, step, ctx)) {
