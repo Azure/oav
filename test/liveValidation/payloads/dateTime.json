@@ -75,7 +75,6 @@
         "ring": null,
         "registrationInfo": {
           "expirationTime": "2024-02-29T02:33:35",
-          "expirationTimeRfc1123": "Fri, 29 Feb 2024 02:33:35 GMT",
           "token": "a",
           "registrationTokenOperation": "Update"
         },

@@ -483,11 +483,6 @@
           "type": "string",
           "description": "Expiration time of registration token."
         },
-        "expirationTimeRfc1123": {
-          "format": "date-time-rfc1123",
-          "type": "string",
-          "description": "Expiration time of registration token."
-        },
         "token": {
           "type": "string",
           "description": "The registration token base64 encoded string."

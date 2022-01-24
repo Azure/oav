@@ -107,7 +107,7 @@ export const ajvEnableDateTimeRfc1123Format = (ajv: Ajv) => {
   ajv.addFormat("date-time-rfc1123", {
     type: "string",
     validate:
-      /^((Mon|Tue|Wed|Thu|Fri|Sat|Sun), )((((([0-2]\d|3[01]) (Jan|Mar|May|Jul|Aug|Oct|Dec))|(([0-2]\d|30) (Apr|Jun|Sep|Nov))|(([01]\d|2[0-8]) Feb)) \d{4})|(29 Feb ((([0-9]{2})(0[48]|[2468][048]|[13579][26]))|((0[48]|[2468][048]|[3579][26])00)))) ([01]\d|2[0-3]):[0-5][0-9]:[0-5][0-9] GMT$/,
+      /^(?:(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun), )?[0-3]\d (?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d\d(?:\d\d)? (?:[0-2]\d:[0-5]\d(?::[0-5]\d)|23:59:60) (?:[A-Z]{1,3})?(?:[+-]\d\d\d\d)?$/,
   });
 };
 
