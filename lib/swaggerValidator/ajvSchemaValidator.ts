@@ -231,7 +231,7 @@ const shouldSkipError = (error: ErrorObject, cxt: SchemaValidateContext) => {
 
   // If a response data has multipleOf property, and it divided by multipleOf value is an integer, we can skip this error
   if (
-    cxt.isResponse &&
+    (cxt.isResponse === true || cxt.isResponse === false) &&
     keyword === "multipleOf" &&
     typeof schema === "number" &&
     typeof data === "number"
