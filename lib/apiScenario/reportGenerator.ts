@@ -104,6 +104,7 @@ export interface ReportGeneratorOption
   runId?: string;
   validationLevel?: ValidationLevel;
   verbose?: boolean;
+  swaggerFilePaths?: string[];
 }
 
 @injectable()

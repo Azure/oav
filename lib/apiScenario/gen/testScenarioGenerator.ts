@@ -461,13 +461,13 @@ export class TestScenarioGenerator {
       operation,
       statusCode,
       requestParameters: example.parameters,
-      expectedResponse: example.responses[statusCode],
+      responseExpected: example.responses,
     };
     this.exampleTemplateGenerator.exampleParameterConvention(step, env);
 
     const exampleStr = jsonStringify({
       requestParameters: step.requestParameters,
-      expectedResponse: step.expectedResponse,
+      expectedResponse: step.responseExpected,
     });
     return `${operation.operationId}_${exampleStr}`;
   }

@@ -217,7 +217,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       this.stepNameSet.set(step.step, cnt);
     }
     item.request = new Request({
-      name: step.exampleFilePath,
+      name: step.step,
       method: step.operation._method as string,
       url: "",
       body: { mode: "raw" } as RequestBodyDefinition,
@@ -277,8 +277,11 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       }
       return undefined;
     };
-    for (const k of Object.keys(step.outputVariables)) {
-      stepEnv.env.output(k, `{{${k}}}`);
+    for (const outputName of Object.keys(step.outputVariables ?? {})) {
+      stepEnv.env.output(outputName, {
+        type: "string",
+        value: `{{${outputName}}}`,
+      });
     }
     const scriptTypes: TestScriptType[] = this.opts.verbose
       ? ["DetailResponseLog", "StatusCodeAssertion"]
@@ -385,9 +388,9 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     item.name = step.step;
     const path = `/subscriptions/:subscriptionId/resourcegroups/:resourceGroupName/providers/Microsoft.Resources/deployments/${step.step}?api-version=2020-06-01`;
 
-    const subscriptionIdValue = covertToPostmanVariable(stepEnv.env.get("subscriptionId") || "");
+    const subscriptionIdValue = covertToPostmanVariable(stepEnv.env.getString("subscriptionId") || "");
     const resourceGroupNameValue = covertToPostmanVariable(
-      stepEnv.env.get("resourceGroupName") || ""
+      stepEnv.env.getString("resourceGroupName") || ""
     );
     const subscriptionIdParamName = Object.keys(step.variables).includes("subscriptionId")
       ? `${item.name}_subscriptionId`
@@ -433,8 +436,11 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
         template: stepEnv.env.resolveObjectValues(armTemplate),
       },
     };
-    for (const k of Object.keys(step.armTemplatePayload.outputs || {})) {
-      stepEnv.env.output(k, `{{${k}}}`);
+    for (const outputName of Object.keys(step.armTemplatePayload.outputs || {})) {
+      stepEnv.env.output(outputName, {
+        type: "string",
+        value: `{{${outputName}}}`,
+      });
     }
     item.request.body = new RequestBody({
       mode: "raw",

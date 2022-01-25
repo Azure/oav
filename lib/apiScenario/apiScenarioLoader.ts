@@ -47,7 +47,6 @@ import {
   RawStepOperation,
 } from "./apiScenarioTypes";
 import { TemplateGenerator } from "./templateGenerator";
-import { BodyTransformer } from "./bodyTransformer";
 import { jsonPatchApply } from "./diffUtils";
 import { ApiScenarioYamlLoader } from "./apiScenarioYamlLoader";
 import { ApiScenarioRunner } from "./apiScenarioRunner";
@@ -80,13 +79,11 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
   private templateGenerationRunner: ApiScenarioRunner;
 
   public constructor(
-    @inject(TYPES.opts) private opts: ApiScenarioLoaderOption,
     private fileLoader: FileLoader,
     public jsonLoader: JsonLoader,
     private swaggerLoader: SwaggerLoader,
     private apiScenarioYamlLoader: ApiScenarioYamlLoader,
     private templateGenerator: TemplateGenerator,
-    private bodyTransformer: BodyTransformer,
     @inject(TYPES.schemaValidator) private schemaValidator: SchemaValidator
   ) {
     this.transformContext = getTransformContext(this.jsonLoader, this.schemaValidator, [

@@ -36,7 +36,9 @@ export class TemplateGenerator implements ApiScenarioRunnerClient {
       return;
     }
     for (const variableName of Object.keys(outputVariables)) {
-      stepEnv.env.output(variableName, `$(${variableName})`);
+      stepEnv.env.output(variableName, {
+        type: outputVariables[variableName].type ?? "string",
+      });
     }
   }
 
@@ -53,13 +55,9 @@ export class TemplateGenerator implements ApiScenarioRunnerClient {
       return;
     }
 
-    for (const outputName of Object.keys(outputs)) {
-      const outputDef = outputs[outputName];
-      if (outputDef.type !== "string") {
-        continue;
-      }
-
-      stepEnv.env.output(outputName, `$(${outputName})`);
+    for (const [outputName, outputDef] of Object.entries(outputs)) {
+      const variableType = outputDef.type === "securestring" ? "secureString" : outputDef.type;
+      stepEnv.env.output(outputName, { type: variableType });
     }
   }
 
@@ -89,7 +87,7 @@ export class TemplateGenerator implements ApiScenarioRunnerClient {
   }
 
   public exampleParameterConvention(
-    step: Pick<StepRestCall, "requestParameters" | "expectedResponse" | "operation">,
+    step: Pick<StepRestCall, "requestParameters" | "responseExpected" | "operation">,
     env: VariableEnv
   ) {
     const toMatch: string[] = [];
@@ -122,11 +120,11 @@ export class TemplateGenerator implements ApiScenarioRunnerClient {
       }
     }
 
-    const expectedResponse = cloneDeep(step.expectedResponse);
-    replaceAllInObject(expectedResponse, toMatch, matchReplace);
-    step.expectedResponse = expectedResponse;
-    if (expectedResponse.body?.location !== undefined && env.get("location") !== undefined) {
-      expectedResponse.body.location = "$(location)";
+    const expectedResponseBody = cloneDeep(step.responseExpected["200"].body);
+    replaceAllInObject(expectedResponseBody, toMatch, matchReplace);
+    step.responseExpected["200"].body = expectedResponseBody;
+    if (expectedResponseBody.body?.location !== undefined && env.get("location") !== undefined) {
+      expectedResponseBody.body.location = "$(location)";
     }
   }
 }
