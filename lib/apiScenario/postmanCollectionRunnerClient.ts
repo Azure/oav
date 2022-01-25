@@ -388,7 +388,9 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     item.name = step.step;
     const path = `/subscriptions/:subscriptionId/resourcegroups/:resourceGroupName/providers/Microsoft.Resources/deployments/${step.step}?api-version=2020-06-01`;
 
-    const subscriptionIdValue = covertToPostmanVariable(stepEnv.env.getString("subscriptionId") || "");
+    const subscriptionIdValue = covertToPostmanVariable(
+      stepEnv.env.getString("subscriptionId") || ""
+    );
     const resourceGroupNameValue = covertToPostmanVariable(
       stepEnv.env.getString("resourceGroupName") || ""
     );

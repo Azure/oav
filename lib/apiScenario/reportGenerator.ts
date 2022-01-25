@@ -183,10 +183,7 @@ export class ReportGenerator {
         const runtimeError = [];
         const generatedExample = this.generateExample(it, variables, rawReport);
         const matchedStep = this.getMatchedStep(it.annotation.step) as StepRestCall;
-        if (
-          Math.floor(it.response.statusCode / 200) !== 1 &&
-          it.response.statusCode !== matchedStep.statusCode
-        ) {
+        if (it.response.statusCode >= 400) {
           runtimeError.push(this.getRuntimeError(it));
         }
         if (matchedStep === undefined) {
@@ -331,14 +328,14 @@ export class ReportGenerator {
   ): Promise<ResponseDiffItem[]> {
     let res: ResponseDiffItem[] = [];
     if (matchedStep?.type === "restCall") {
-      if (example.example.responses[matchedStep.statusCode] !== undefined) {
+      if (example.example.responses["200"] !== undefined) {
         res = res.concat(
           await this.responseDiff(
-            example.example.responses[matchedStep.statusCode]?.body || {},
-            matchedStep.expectedResponse,
+            example.example.responses["200"]?.body || {},
+            matchedStep.responseExpected["200"]?.body || {},
             this.rawReport!.variables,
-            `/${matchedStep.statusCode}/body`,
-            matchedStep.operation.responses[matchedStep.statusCode].schema
+            `/200/body`,
+            matchedStep.operation.responses["200"].schema
           )
         );
       }
