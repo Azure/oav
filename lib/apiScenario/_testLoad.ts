@@ -2,7 +2,6 @@ import "reflect-metadata";
 
 import { dirname } from "path";
 import { getDefaultAzureCredential } from "@azure/identity";
-import { getAutorestConfig } from "../util/getAutorestConfig";
 import { ApiScenarioLoader } from "./apiScenarioLoader";
 import { ApiScenarioRunner } from "./apiScenarioRunner";
 import { VariableEnv } from "./variableEnv";
@@ -13,23 +12,12 @@ const main = async () => {
     "/home/htc/azure-rest-api-specs/specification/containerservice/resource-manager/readme.md";
   // "/home/htc/azure-rest-api-specs/specification/network/resource-manager/readme.md";
   // "/home/htc/azure-rest-api-specs/specification/operationalinsights/resource-manager/readme.md";
-  const argv = {
-    ["try-require"]: "readme.test.md",
-    tag: "package-2020-12",
-  };
-
-  const autorestConfig = await getAutorestConfig(argv, readmeMd);
-  const swaggerFilePaths: string[] = autorestConfig["input-file"];
   const fileRoot = dirname(readmeMd);
-
-  console.log("input-file:");
-  console.log(swaggerFilePaths);
 
   const loader = ApiScenarioLoader.create({
     useJsonParser: false,
     checkUnderFileRoot: false,
     fileRoot,
-    swaggerFilePaths,
   });
 
   const testDef = await loader.load(
@@ -43,9 +31,18 @@ const main = async () => {
 
   const env = new VariableEnv();
   env.setBatch({
-    subscriptionId: "db5eb68e-73e2-4fa8-b18a-46cd1be4cce5",
-    location: "westus",
-    SSH_PUBLIC_KEY: "__public_key_ssh__",
+    subscriptionId: {
+      type: "string",
+      value: "db5eb68e-73e2-4fa8-b18a-46cd1be4cce5",
+    },
+    location: {
+      type: "string",
+      value: "westus",
+    },
+    SSH_PUBLIC_KEY: {
+      type: "secureString",
+      value: "__public_key_ssh__",
+    },
   });
 
   const runner = new ApiScenarioRunner({
@@ -60,7 +57,7 @@ const main = async () => {
     // }
     await runner.executeScenario(testDef.scenarios[0]);
   } catch (e) {
-    console.log(e.message, e.stack);
+    console.log(e);
   } finally {
     console.timeLog("TestLoad");
     await runner.cleanAllScope();

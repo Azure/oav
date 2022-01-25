@@ -140,8 +140,8 @@ export class VariableEnv {
     if (values === undefined) {
       return;
     }
-    for (const key of Object.keys(values)) {
-      this.set(key, values[key]);
+    for (const [key, value] of Object.entries(values)) {
+      this.set(key, value);
     }
   }
 

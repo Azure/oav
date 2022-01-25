@@ -64,6 +64,7 @@ export class StaticApiScenarioGenerator {
     const scenarioDef: RawScenarioDefinition = {
       scope: "ResourceGroup",
       scenarios: [],
+      swaggers: [],
     };
     const paths = await this.swaggerAnalyzer.getOperationListPath();
     for (const it of paths) {

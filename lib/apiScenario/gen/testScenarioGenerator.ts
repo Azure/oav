@@ -14,13 +14,7 @@ import { referenceFieldsTransformer } from "../../transform/referenceFieldsTrans
 import { applyGlobalTransformers, applySpecTransformers } from "../../transform/transformer";
 import { xmsPathsTransformer } from "../../transform/xmsPathsTransformer";
 import { getBodyParam, ApiScenarioLoader, ApiScenarioLoaderOption } from "../apiScenarioLoader";
-import {
-  RawScenarioDefinition,
-  RawScenario,
-  RawStepRawCall,
-  Scenario,
-  StepRestCall,
-} from "../apiScenarioTypes";
+import { RawScenarioDefinition, RawScenario, Scenario, StepRestCall } from "../apiScenarioTypes";
 import { ApiScenarioClientRequest } from "../apiScenarioRunner";
 import { Operation, Parameter, SwaggerExample } from "../../swagger/swaggerTypes";
 import { unknownApiVersion, xmsLongRunningOperation } from "../../util/constants";
