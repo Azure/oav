@@ -47,7 +47,7 @@ export class PostmanCollectionGenerator {
     private swaggerAnalyzer: SwaggerAnalyzer
   ) {
     this.env = new VariableEnv();
-    this.env.setBatch(this.opt.env);
+    this.env.setBatchEnv(this.opt.env);
   }
 
   public async GenerateCollection(): Promise<void> {
@@ -131,7 +131,7 @@ export class PostmanCollectionGenerator {
         i + 2 < client.collection.items.count()
           ? `'${client.collection.items.idx(i + 2).name}'`
           : "null";
-      env.setBatch({ nextRequest: nextRequestName });
+      env.setBatchEnv({ nextRequest: nextRequestName });
       const exec = client.collection.items.idx(i).events.idx(0).script.toSource() as string;
       client.collection.items
         .idx(i)

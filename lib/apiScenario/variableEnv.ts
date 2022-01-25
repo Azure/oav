@@ -145,6 +145,19 @@ export class VariableEnv {
     }
   }
 
+  public setBatchEnv(environmentVariables: { [key: string]: string }) {
+    for (const [key, value] of Object.entries(environmentVariables)) {
+      const varType = this.getType(key);
+      if (varType !== "string" && varType !== "secureString") {
+        throw new Error(`String value is not assignable to variable ${key} of type ${varType}`);
+      }
+      this.set(key, {
+        type: varType,
+        value,
+      });
+    }
+  }
+
   public resolve() {
     this.baseEnv?.resolve();
     for (const key of Object.keys(this.data)) {

@@ -30,19 +30,10 @@ const main = async () => {
   console.log(testDef.scenarios[0].steps);
 
   const env = new VariableEnv();
-  env.setBatch({
-    subscriptionId: {
-      type: "string",
-      value: "db5eb68e-73e2-4fa8-b18a-46cd1be4cce5",
-    },
-    location: {
-      type: "string",
-      value: "westus",
-    },
-    SSH_PUBLIC_KEY: {
-      type: "secureString",
-      value: "__public_key_ssh__",
-    },
+  env.setBatchEnv({
+    subscriptionId: "db5eb68e-73e2-4fa8-b18a-46cd1be4cce5",
+    location: "westus",
+    SSH_PUBLIC_KEY: "__public_key_ssh__",
   });
 
   const runner = new ApiScenarioRunner({
