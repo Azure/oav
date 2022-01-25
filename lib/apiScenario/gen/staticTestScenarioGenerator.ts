@@ -105,6 +105,7 @@ export class StaticApiScenarioGenerator {
     const scenarioDef: RawScenarioDefinition = {
       scope: "ResourceGroup",
       scenarios: [],
+      swaggers: [],
     };
     let exampleDir = "";
     const paths = this.swaggerAnalyzer.getPathByResourceType(resourceType);

@@ -1,4 +1,4 @@
-import { join as pathJoin, relative as pathRelative, dirname } from "path";
+// import { join as pathJoin, relative as pathRelative, dirname } from "path";
 import { default as jsonStringify } from "fast-json-stable-stringify";
 import { inject, injectable } from "inversify";
 import { HttpHeaders } from "@azure/core-http";
@@ -13,7 +13,7 @@ import { extractPathParamValue, pathRegexTransformer } from "../../transform/pat
 import { referenceFieldsTransformer } from "../../transform/referenceFieldsTransformer";
 import { applyGlobalTransformers, applySpecTransformers } from "../../transform/transformer";
 import { xmsPathsTransformer } from "../../transform/xmsPathsTransformer";
-import { getBodyParam, ApiScenarioLoader, ApiScenarioLoaderOption } from "../apiScenarioLoader";
+import { ApiScenarioLoader, ApiScenarioLoaderOption } from "../apiScenarioLoader";
 import { RawScenarioDefinition, RawScenario, Scenario, StepRestCall } from "../apiScenarioTypes";
 import { ApiScenarioClientRequest } from "../apiScenarioRunner";
 import { Operation, Parameter, SwaggerExample } from "../../swagger/swaggerTypes";
@@ -21,9 +21,9 @@ import { unknownApiVersion, xmsLongRunningOperation } from "../../util/constants
 import { VariableEnv } from "../variableEnv";
 import { TemplateGenerator } from "../templateGenerator";
 import { traverseSwagger } from "../../transform/traverseSwagger";
-import { BodyTransformer } from "../bodyTransformer";
+// import { BodyTransformer } from "../bodyTransformer";
 import { ArmApiInfo, ArmUrlParser } from "../armUrlParser";
-import { getJsonPatchDiff } from "../diffUtils";
+// import { getJsonPatchDiff } from "../diffUtils";
 import { SchemaValidator } from "../../swaggerValidator/schemaValidator";
 
 export type SingleRequestTracking = ApiScenarioClientRequest & {
@@ -40,7 +40,9 @@ export interface RequestTracking {
   description: string;
 }
 
-export interface TestScenarioGeneratorOption extends ApiScenarioLoaderOption {}
+export interface TestScenarioGeneratorOption extends ApiScenarioLoaderOption {
+  swaggerFilePaths: string[];
+}
 
 // const resourceGroupPathRegex = /^\/subscriptions\/[^\/]+\/resourceGroups\/[^\/]+$/i;
 
@@ -56,7 +58,7 @@ export class TestScenarioGenerator {
   private exampleEntries: ExampleUpdateEntry[] = [];
   private testDefToWrite: Array<{ testDef: RawScenarioDefinition; filePath: string }> = [];
   private operationSearcher: OperationSearcher;
-  private idx: number = 0;
+  // private idx: number = 0;
   // Key: OperationId_content, Value: path to example
   private exampleCache = new Map<string, string>();
   private exampleFileList = new Set<string>();
@@ -68,7 +70,7 @@ export class TestScenarioGenerator {
     private swaggerLoader: SwaggerLoader,
     private jsonLoader: JsonLoader,
     private exampleTemplateGenerator: TemplateGenerator,
-    private bodyTransformer: BodyTransformer,
+    // private bodyTransformer: BodyTransformer,
     private armUrlParser: ArmUrlParser,
     @inject(TYPES.schemaValidator) private schemaValidator: SchemaValidator
   ) {
@@ -124,6 +126,7 @@ export class TestScenarioGenerator {
     const testDef: RawScenarioDefinition = {
       scope: "ResourceGroup",
       scenarios: [],
+      swaggers: [], // TODO
     };
 
     // this.idx = 0;
@@ -137,13 +140,13 @@ export class TestScenarioGenerator {
     return testDef;
   }
 
-  private generateIdx() {
-    return this.idx++;
-  }
+  // private generateIdx() {
+  //   return this.idx++;
+  // }
 
   private async generateTestScenario(
     requestTracking: RequestTracking,
-    testDefFilePath: string
+    _: string // testDefFilePath
   ): Promise<RawScenario> {
     console.log(`\nGenerating ${requestTracking.description}`);
     const testScenario: RawScenario = {
@@ -160,79 +163,80 @@ export class TestScenarioGenerator {
     };
 
     const records = [...requestTracking.requests];
-    let lastOperation: Operation | undefined = undefined;
+    // let lastOperation: Operation | undefined = undefined;
     while (records.length > 0) {
-      const record = records[0];
+      // const record = records[0];
       const testStep = await this.generateTestStepRestCall(records, ctx);
       if (testStep === undefined) {
         continue;
       }
 
-      if (testStep === null) {
-        const rawStep = await this.generateTestStepRawCall(record, ctx);
-        testScenario.steps.push(rawStep);
-        continue;
-      }
+      // TODO
+      // if (testStep === null) {
+      //   const rawStep = await this.generateTestStepRawCall(record, ctx);
+      //   testScenario.steps.push(rawStep);
+      //   continue;
+      // }
 
-      const { operation } = testStep;
-      if (lastOperation === operation && lastOperation?._method === "get") {
-        // Skip same get operation
-        continue;
-      }
+      // const { operation } = testStep;
+      // if (lastOperation === operation && lastOperation?._method === "get") {
+      //   // Skip same get operation
+      //   continue;
+      // }
 
-      if (testStep.resourceUpdate === undefined) {
-        const example: SwaggerExample = {
-          parameters: testStep.requestParameters,
-          responses: {
-            [testStep.statusCode.toString()]: {
-              body: testStep.expectedResponse,
-            },
-          },
-        };
-        const exampleCacheKey = this.getExampleCacheKey(operation, example);
-        const operationId = operation.operationId!;
-        const swaggerPath = operation._path._spec._filePath;
-        let exampleFilePath = this.exampleCache.get(exampleCacheKey);
-        if (exampleFilePath === undefined) {
-          let exampleName = `${testStep.step}_Generated`;
-          exampleFilePath = pathJoin(dirname(swaggerPath), "examples", exampleName + ".json");
-          if (this.exampleFileList.has(exampleFilePath)) {
-            exampleName = `${exampleName}_${this.generateIdx()}`;
-            exampleFilePath = pathJoin(dirname(swaggerPath), "examples", exampleName + ".json");
-          }
+      //   if (testStep.resourceUpdate === undefined) {
+      //     const example: SwaggerExample = {
+      //       parameters: testStep.requestParameters,
+      //       responses: {
+      //         [testStep.statusCode.toString()]: {
+      //           body: testStep.expectedResponse,
+      //         },
+      //       },
+      //     };
+      //     const exampleCacheKey = this.getExampleCacheKey(operation, example);
+      //     const operationId = operation.operationId!;
+      //     const swaggerPath = operation._path._spec._filePath;
+      //     let exampleFilePath = this.exampleCache.get(exampleCacheKey);
+      //     if (exampleFilePath === undefined) {
+      //       let exampleName = `${testStep.step}_Generated`;
+      //       exampleFilePath = pathJoin(dirname(swaggerPath), "examples", exampleName + ".json");
+      //       if (this.exampleFileList.has(exampleFilePath)) {
+      //         exampleName = `${exampleName}_${this.generateIdx()}`;
+      //         exampleFilePath = pathJoin(dirname(swaggerPath), "examples", exampleName + ".json");
+      //       }
 
-          this.exampleEntries.push({
-            swaggerPath,
-            operationId,
-            exampleName,
-            exampleFilePath,
-            exampleContent: example,
-          });
-          this.exampleCache.set(exampleCacheKey, exampleFilePath);
-          this.exampleFileList.add(exampleFilePath);
-        }
-        testStep.exampleFile = pathRelative(dirname(testDefFilePath), exampleFilePath);
-        lastOperation = operation;
-      }
+      //       this.exampleEntries.push({
+      //         swaggerPath,
+      //         operationId,
+      //         exampleName,
+      //         exampleFilePath,
+      //         exampleContent: example,
+      //       });
+      //       this.exampleCache.set(exampleCacheKey, exampleFilePath);
+      //       this.exampleFileList.add(exampleFilePath);
+      //     }
+      //     testStep.exampleFile = pathRelative(dirname(testDefFilePath), exampleFilePath);
+      //     lastOperation = operation;
+      //   }
 
-      if (testStep.exampleFile !== undefined) {
-        testScenario.steps.push({
-          step: testStep.step,
-          exampleFile: testStep.exampleFile,
-          statusCode: testStep.statusCode === 200 ? undefined : testStep.statusCode,
-          resourceUpdate: testStep.resourceUpdate?.length > 0 ? testStep.resourceUpdate : undefined,
-          variables: testStep.variables,
-        });
-      } else if (testStep.resourceName !== undefined && testStep.operationId !== undefined) {
-        testScenario.steps.push({
-          step: testStep.step,
-          resourceName: testStep.resourceName,
-          operationId: testStep.operationId,
-          statusCode: testStep.statusCode === 200 ? undefined : testStep.statusCode,
-          resourceUpdate: testStep.resourceUpdate?.length > 0 ? testStep.resourceUpdate : undefined,
-          variables: testStep.variables,
-        });
-      }
+      //   if (testStep.exampleFile !== undefined) {
+      //     testScenario.steps.push({
+      //       step: testStep.step,
+      //       exampleFile: testStep.exampleFile,
+      //       statusCode: testStep.statusCode === 200 ? undefined : testStep.statusCode,
+      //       resourceUpdate: testStep.resourceUpdate?.length > 0 ? testStep.resourceUpdate : undefined,
+      //       variables: testStep.variables,
+      //     });
+      //   } else if (testStep.resourceName !== undefined && testStep.operationId !== undefined) {
+      //     testScenario.steps.push({
+      //       step: testStep.step,
+      //       resourceName: testStep.resourceName,
+      //       operationId: testStep.operationId,
+      //       statusCode: testStep.statusCode === 200 ? undefined : testStep.statusCode,
+      //       resourceUpdate: testStep.resourceUpdate?.length > 0 ? testStep.resourceUpdate : undefined,
+      //       variables: testStep.variables,
+      //   });
+      // }
     }
 
     if (Object.keys(ctx.variables).length > 0) {
@@ -281,22 +285,22 @@ export class TestScenarioGenerator {
     return null;
   }
 
-  private async generateTestStepRawCall(
-    record: SingleRequestTracking,
-    _ctx: TestScenarioGenContext
-  ): Promise<RawStepRawCall> {
-    const toString = (body: any) => (typeof body === "object" ? JSON.stringify(body) : body);
-    const rawCall: RawStepRawCall = {
-      step: `RawStep_${this.generateIdx()}`,
-      method: record.method,
-      rawUrl: record.url,
-      requestBody: toString(record.body),
-      requestHeaders: record.headers,
-      statusCode: record.responseCode === 200 ? undefined : record.responseCode,
-      expectedResponse: toString(record.responseBody),
-    };
-    return rawCall;
-  }
+  // private async generateTestStepRawCall(
+  //   record: SingleRequestTracking,
+  //   _ctx: TestScenarioGenContext
+  // ): Promise<RawStepRawCall> {
+  //   const toString = (body: any) => (typeof body === "object" ? JSON.stringify(body) : body);
+  //   const rawCall: RawStepRawCall = {
+  //     step: `RawStep_${this.generateIdx()}`,
+  //     method: record.method,
+  //     rawUrl: record.url,
+  //     requestBody: toString(record.body),
+  //     requestHeaders: record.headers,
+  //     statusCode: record.responseCode === 200 ? undefined : record.responseCode,
+  //     expectedResponse: toString(record.responseBody),
+  //   };
+  //   return rawCall;
+  // }
 
   private async generateTestStepRestCall(
     records: SingleRequestTracking[],
@@ -319,87 +323,88 @@ export class TestScenarioGenerator {
     if (parseResult === undefined) {
       return await this.handleUnknownPath(record, records);
     }
-    const { operation, requestParameters, pathParamValue } = parseResult;
-    const variables: Scenario["variables"] = {};
+    // const { operation, requestParameters, pathParamValue } = parseResult;
+    // const variables: Scenario["variables"] = {};
 
-    for (const pathParamKey of Object.keys(pathParamValue)) {
-      const value = pathParamValue[pathParamKey];
-      if (unwantedParams.has(pathParamKey) || ctx.variables[pathParamKey] === value) {
-        continue;
-      }
-      if (ctx.variables[pathParamKey] === undefined) {
-        ctx.variables[pathParamKey] = value;
-      } else {
-        variables[pathParamKey] = value;
-      }
-    }
+    // for (const pathParamKey of Object.keys(pathParamValue)) {
+    //   const value = pathParamValue[pathParamKey];
+    //   if (unwantedParams.has(pathParamKey) || ctx.variables[pathParamKey] === value) {
+    //     continue;
+    //   }
+    //   if (ctx.variables[pathParamKey] === undefined) {
+    //     ctx.variables[pathParamKey] = value;
+    //   } else {
+    //     variables[pathParamKey] = value;
+    //   }
+    // }
 
-    const step = {
-      step: `${operation.operationId}_${this.generateIdx()}`,
-      statusCode: record.responseCode,
-      operation,
-      operationId: operation.operationId!,
-      requestParameters,
-      expectedResponse: record.responseBody,
-      variables: Object.keys(variables).length > 0 ? variables : undefined,
-    } as StepRestCall;
+    // const step = {
+    //   step: `${operation.operationId}_${this.generateIdx()}`,
+    //   statusCode: record.responseCode,
+    //   operation,
+    //   operationId: operation.operationId!,
+    //   requestParameters,
+    //   expectedResponse: record.responseBody,
+    //   variables: Object.keys(variables).length > 0 ? variables : undefined,
+    // } as StepRestCall;
 
-    const finalGet = await this.skipLroPoll(records, operation, record, armInfo);
-    if (finalGet !== undefined && operation[xmsLongRunningOperation]) {
-      step.statusCode = 200;
-      step.expectedResponse = finalGet.responseBody;
-    } else if (operation[xmsLongRunningOperation]) {
-      step.statusCode = 200;
-    }
+    // const finalGet = await this.skipLroPoll(records, operation, record, armInfo);
+    // if (finalGet !== undefined && operation[xmsLongRunningOperation]) {
+    //   step.statusCode = 200;
+    //   step.expectedResponse = finalGet.responseBody;
+    // } else if (operation[xmsLongRunningOperation]) {
+    //   step.statusCode = 200;
+    // }
 
-    if (["PUT"].includes(record.method)) {
-      const lastStep = ctx.resourceTracking.get(armInfo.resourceUri);
-      if (lastStep === undefined) {
-        step.resourceName = this.generateResourceName(armInfo, ctx);
-        step.step = `Create_${step.resourceName}`;
-      } else {
-        if (step.operation !== lastStep.operation) {
-          throw new Error(
-            `Two operation detected for one resource path: ${step.operation.operationId} ${step.operation.operationId}`
-          );
-        }
-        step.resourceName = lastStep.resourceName;
-        step.step = `Update_${step.resourceName}_${this.generateIdx()}`;
-        const bodyParam = getBodyParam(step.operation, this.jsonLoader);
-        if (bodyParam !== undefined) {
-          const { result, inconsistentWarningPaths } = this.bodyTransformer.deepMerge(
-            step.expectedResponse,
-            step.requestParameters[bodyParam.name]
-          );
-          if (inconsistentWarningPaths.length > 0) {
-            console.log(
-              `Warning: following paths in payload are inconsistent in request and response: ${record.url}`
-            );
-            for (const p of inconsistentWarningPaths) {
-              console.log(`\t${p}`);
-            }
-          }
-          eraseUnwantedKeys(result);
-          const lastStepResult = cloneDeep(lastStep.expectedResponse);
-          eraseUnwantedKeys(lastStepResult);
-          const diff = getJsonPatchDiff(lastStepResult, result, { minimizeDiff: false });
-          step.resourceUpdate = diff;
-        }
-      }
-    }
+    // if (["PUT"].includes(record.method)) {
+    //   const lastStep = ctx.resourceTracking.get(armInfo.resourceUri);
+    //   if (lastStep === undefined) {
+    //     step.resourceName = this.generateResourceName(armInfo, ctx);
+    //     step.step = `Create_${step.resourceName}`;
+    //   } else {
+    //     if (step.operation !== lastStep.operation) {
+    //       throw new Error(
+    //         `Two operation detected for one resource path: ${step.operation.operationId} ${step.operation.operationId}`
+    //       );
+    //     }
+    //     step.resourceName = lastStep.resourceName;
+    //     step.step = `Update_${step.resourceName}_${this.generateIdx()}`;
+    //     const bodyParam = getBodyParam(step.operation, this.jsonLoader);
+    //     if (bodyParam !== undefined) {
+    //       const { result, inconsistentWarningPaths } = this.bodyTransformer.deepMerge(
+    //         step.expectedResponse,
+    //         step.requestParameters[bodyParam.name]
+    //       );
+    //       if (inconsistentWarningPaths.length > 0) {
+    //         console.log(
+    //           `Warning: following paths in payload are inconsistent in request and response: ${record.url}`
+    //         );
+    //         for (const p of inconsistentWarningPaths) {
+    //           console.log(`\t${p}`);
+    //         }
+    //       }
+    //       eraseUnwantedKeys(result);
+    //       const lastStepResult = cloneDeep(lastStep.expectedResponse);
+    //       eraseUnwantedKeys(lastStepResult);
+    //       const diff = getJsonPatchDiff(lastStepResult, result, { minimizeDiff: false });
+    //       step.resourceUpdate = diff;
+    //     }
+    //   }
+    // }
 
-    if (["PUT", "PATCH", "DELETE"].includes(record.method)) {
-      if (record.method === "PUT") {
-        ctx.resourceTracking.set(armInfo.resourceUri, step);
-      }
-      if (record.method === "DELETE") {
-        ctx.resourceTracking.delete(armInfo.resourceUri);
-      }
-      // eslint-disable-next-line require-atomic-updates
-      ctx.lastUpdatedResource = armInfo.resourceUri;
-    }
+    // if (["PUT", "PATCH", "DELETE"].includes(record.method)) {
+    //   if (record.method === "PUT") {
+    //     ctx.resourceTracking.set(armInfo.resourceUri, step);
+    //   }
+    //   if (record.method === "DELETE") {
+    //     ctx.resourceTracking.delete(armInfo.resourceUri);
+    //   }
+    //   // eslint-disable-next-line require-atomic-updates
+    //   ctx.lastUpdatedResource = armInfo.resourceUri;
+    // }
 
-    return step;
+    // return step;
+    return undefined;
   }
 
   private async skipLroPoll(
@@ -439,11 +444,11 @@ export class TestScenarioGenerator {
 
   private getExampleCacheKey(operation: Operation, exampleContent: SwaggerExample) {
     const env = new VariableEnv();
-    env.set("location", "__location__");
+    env.set("location", { type:"string", value: "__location__"});
     for (const p of operation.parameters ?? []) {
       const param = this.jsonLoader.resolveRefObj(p);
       if (param.in === "path") {
-        env.set(param.name, `__${param.name}__`);
+        env.set(param.name, { type: "string", value: `__${param.name}__` });
       }
     }
 
@@ -467,20 +472,20 @@ export class TestScenarioGenerator {
     return `${operation.operationId}_${exampleStr}`;
   }
 
-  private generateResourceName(armInfo: ArmApiInfo, ctx: TestScenarioGenContext) {
-    const resourceName = armInfo.resourceName.split("/").pop();
-    const resourceType = armInfo.resourceTypes[0].split("/").pop();
-    // let name = `${resourceName}`;
-    let name = `${resourceType}_${resourceName}`;
-    // if (ctx.resourceNames.has(name)) {
-    //   name = `${resourceType}_${name}`;
-    // }
-    if (ctx.resourceNames.has(name)) {
-      name = `${name}_${this.generateIdx()}`;
-    }
-    ctx.resourceNames.add(name);
-    return name;
-  }
+  // private generateResourceName(armInfo: ArmApiInfo, ctx: TestScenarioGenContext) {
+  //   const resourceName = armInfo.resourceName.split("/").pop();
+  //   const resourceType = armInfo.resourceTypes[0].split("/").pop();
+  //   // let name = `${resourceName}`;
+  //   let name = `${resourceType}_${resourceName}`;
+  //   // if (ctx.resourceNames.has(name)) {
+  //   //   name = `${resourceType}_${name}`;
+  //   // }
+  //   if (ctx.resourceNames.has(name)) {
+  //     name = `${name}_${this.generateIdx()}`;
+  //   }
+  //   ctx.resourceNames.add(name);
+  //   return name;
+  // }
 
   private parseRecord(record: SingleRequestTracking) {
     const operationMatch = this.searchOperation(record);
@@ -508,7 +513,7 @@ export class TestScenarioGenerator {
   }
 }
 
-const unwantedParams = new Set(["resourceGroupName", "api-version", "subscriptionId"]);
+// const unwantedParams = new Set(["resourceGroupName", "api-version", "subscriptionId"]);
 
 // const recordToHttpResponse = (record: SingleRequestTracking) => {
 //   const response: LROOperationResponse = {
