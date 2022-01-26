@@ -2,6 +2,7 @@
 
 ## 01/21/2022 2.11.5
 
+- LiveValidator - Loosen date-time validation for missing "Z" in the end
 - LiveValidator - Validate multipleOf data again when ajv validation results have error about multipleOf in response
 
 ## 12/15/2021 2.11.4
