@@ -1,0 +1,94 @@
+{
+  "liveRequest": {
+    "headers": {
+      "Content-Type": "application/json",
+      "expect": "aaaaaaaaaaaa",
+      "host": "management.azure.com",
+      "user-Agent": "AzurePowershell/v0.0.0;PSVersion/v5.1.17763.2268;Az.DesktopVirtualization/3.1.0",
+      "x-ms-unique-id": "a",
+      "x-ms-client-request-id": "6314700c-9e77-4fb7-b62a-ad8d24aef6fc",
+      "commandName": "Az.DesktopVirtualization\\New-AzWvdHostPool",
+      "fullCommandName": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "parameterSetName": "__AllParameterSets",
+      "x-ms-arm-resource-system-data": "a"
+    },
+    "method": "PUT",
+    "url": "/subscriptions/be5ce746-52ca-483a-9c9b-782111a94978/resourceGroups/rgpwvd/providers/Microsoft.DesktopVirtualization/hostPools/svpwvdhp?api-version=2021-07-12",
+    "body": {
+      "location": "aaaaaaaaaa",
+      "properties": {
+        "registrationInfo": {
+          "expirationTime": "2022-01-21T02:33:35.0000000",
+          "registrationTokenOperation": "Update"
+        },
+        "friendlyName": "",
+        "description": "",
+        "hostPoolType": "Pooled",
+        "customRdpProperty": "a",
+        "maxSessionLimit": 4,
+        "loadBalancerType": "BreadthFirst",
+        "ring": 0,
+        "validationEnvironment": false,
+        "vmTemplate": "",
+        "preferredAppGroupType": "Desktop"
+      }
+    }
+  },
+  "liveResponse": {
+    "statusCode": "OK",
+    "headers": {
+      "Content-Type": "application/json",
+      "transfer-Encoding": "aaaaaaa",
+      "vary": "Accept-Encoding",
+      "x-Rate-Limit-Limit": "a",
+      "x-Rate-Limit-Remaining": "aaaaaaaaaaaaaaaaaaa",
+      "x-Rate-Limit-Reset": "a",
+      "x-ms-opsarmpath64": "a",
+      "x-ms-lamport-ts": "aaaaaaaaaa",
+      "x-ms-correlation-id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "x-ms-request-id": "6314700c-9e77-4fb7-b62a-ad8d24aef6fc",
+      "x-Content-Type-Options": "aaaaaaa",
+      "set-Cookie": "a",
+      "server": "Microsoft-IIS/10.0",
+      "x-Powered-By": "aaaaaaa",
+      "date": "Thu, 20 Jan 2022 22:33:36 GMT"
+    },
+    "body": {
+      "name": "aaaaaaaa",
+      "id": "a",
+      "type": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "location": "aaaaaaaaaa",
+      "tags": null,
+      "kind": null,
+      "properties": {
+        "friendlyName": null,
+        "description": null,
+        "hostPoolType": "Pooled",
+        "personalDesktopAssignmentType": null,
+        "applicationGroupReferences": [
+          "a"
+        ],
+        "customRdpProperty": "a",
+        "maxSessionLimit": 4,
+        "loadBalancerType": "BreadthFirst",
+        "validationEnvironment": false,
+        "ring": null,
+        "registrationInfo": {
+          "expirationTime": "2024-02-29T02:33:35",
+          "token": "a",
+          "registrationTokenOperation": "Update"
+        },
+        "vmTemplate": null,
+        "preferredAppGroupType": "Desktop",
+        "migrationRequest": null,
+        "cloudPcResource": false,
+        "startVMOnConnect": false,
+        "ssoadfsAuthority": null,
+        "ssoClientId": null,
+        "ssoClientSecretKeyVaultPath": null,
+        "ssoSecretType": null,
+        "objectId": "a"
+      }
+    }
+  }
+}
