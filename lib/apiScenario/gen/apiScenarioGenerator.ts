@@ -1,0 +1,354 @@
+import Heap from "heap";
+import { inject, injectable } from "inversify";
+import { inversifyGetInstance, TYPES } from "../../inversifyUtils";
+import { FileLoader } from "../../swagger/fileLoader";
+import { JsonLoader } from "../../swagger/jsonLoader";
+import { SwaggerLoader } from "../../swagger/swaggerLoader";
+import { SwaggerSpec, LowerHttpMethods, Schema, Parameter } from "../../swagger/swaggerTypes";
+import { traverseSwagger } from "../../transform/traverseSwagger";
+import { ApiScenarioLoaderOption } from "../apiScenarioLoader";
+import { RawScenario, RawScenarioDefinition, Variable, VarValue } from "../apiScenarioTypes";
+import * as util from "../../generator/util";
+import { setDefaultOpts } from "../../swagger/loader";
+import { pathJoin, pathResolve } from "@azure-tools/openapi-tools-common";
+import { relative } from "path";
+import { dump } from "js-yaml";
+import yuml2svg from "yuml2svg";
+
+export interface ApiScenarioGeneratorOption extends ApiScenarioLoaderOption {
+  swaggerFilePaths: string[];
+  dependencyPath: string;
+  outputDir: string;
+}
+
+type Dependency = {
+  producer_endpoint: string;
+  producer_method: string;
+  producer_resource_name: string;
+  consumer_param: string;
+};
+
+type Dependencies = {
+  [path: string]: {
+    [method: string]: {
+      Path?: Dependency[];
+      Query?: Dependency[];
+    };
+  };
+};
+
+type Node = {
+  operationId: string;
+  method: LowerHttpMethods;
+  children: Map<string, Node>;
+  inDegree: number;
+  outDegree: number;
+  visited: boolean;
+  priority: number;
+};
+
+const methodOrder: Array<LowerHttpMethods> = ["put", "get", "patch", "post", "delete"];
+
+const envVariables = ["api-version", "subscriptionId", "resourceGroupName", "location"];
+
+@injectable()
+export class ApiScenarioGenerator {
+  private swaggers: SwaggerSpec[];
+  private graph: Map<string, Node>;
+
+  public constructor(
+    @inject(TYPES.opts) private opts: ApiScenarioGeneratorOption,
+    private swaggerLoader: SwaggerLoader,
+    private fileLoader: FileLoader,
+    private jsonLoader: JsonLoader
+  ) {
+    this.swaggers = [];
+  }
+
+  public static create(opts: ApiScenarioGeneratorOption) {
+    setDefaultOpts(opts, {
+      swaggerFilePaths: [],
+      outputDir: ".",
+      dependencyPath: "",
+    });
+    return inversifyGetInstance(ApiScenarioGenerator, opts);
+  }
+
+  public async initialize() {
+    this.opts.outputDir = pathResolve(this.opts.outputDir);
+    this.opts.swaggerFilePaths = this.opts.swaggerFilePaths.map((p) => pathResolve(p));
+    for (const path of this.opts.swaggerFilePaths) {
+      const swagger = await this.swaggerLoader.load(path);
+      this.swaggers.push(swagger);
+    }
+    await this.generateGraph();
+  }
+
+  public async generate() {
+    const definition: RawScenarioDefinition = {
+      scope: "ResourceGroup",
+      swaggers: this.opts.swaggerFilePaths.map((p) => relative(this.opts.outputDir, p)),
+      variables: undefined,
+      scenarios: [],
+    };
+    definition.scenarios.push(this.generateSteps());
+    definition.variables = this.getVariables();
+
+    await this.writeFile(definition);
+  }
+
+  private async writeFile(definition: RawScenarioDefinition) {
+    const fileContent = dump(definition);
+    await this.fileLoader.writeFile(pathJoin(this.opts.outputDir, "basic.yaml"), fileContent);
+  }
+
+  private getVariables() {
+    const variables: { [name: string]: string | Variable } = {};
+
+    const genValue = (name: string, schema: Schema): VarValue => {
+      if (util.isObject(schema)) {
+        const ret: VarValue = {};
+        for (const name of schema.required ?? []) {
+          const prop = this.jsonLoader.resolveRefObj(schema.properties![name]);
+          ret[name] = genValue(name, prop);
+        }
+
+        for (const allOf of schema.allOf ?? []) {
+          const prop = this.jsonLoader.resolveRefObj(allOf);
+          const value = genValue("", prop) as { [key: string]: VarValue };
+          for (const key of Object.keys(value)) {
+            ret[key] = value[key];
+          }
+        }
+        return ret;
+      }
+
+      if (schema.enum) {
+        return schema.enum[0];
+      }
+
+      switch (schema.type) {
+        case "boolean":
+          return true;
+        case "integer":
+        case "number":
+          return 0;
+        case "array":
+          return [];
+        case "string":
+          return name + "Test";
+        default:
+          return "";
+      }
+    };
+
+    const checkTypeAndAdd = (parameter: Parameter): boolean => {
+      if (!parameter.type) {
+        return false;
+      }
+      if (parameter.type === "integer") {
+        variables[parameter.name] = {
+          type: "int",
+          value: 0,
+        };
+      } else {
+        variables[parameter.name] = parameter.name + "Test";
+      }
+      return true;
+    };
+
+    for (const swagger of this.swaggers) {
+      traverseSwagger(swagger, {
+        onOperation: (operation) => {
+          for (let parameter of operation.parameters ?? []) {
+            parameter = this.jsonLoader.resolveRefObj(parameter);
+            if (
+              !parameter.required ||
+              variables[parameter.name] ||
+              envVariables.includes(parameter.name)
+            ) {
+              continue;
+            }
+
+            if (checkTypeAndAdd(parameter)) {
+              continue;
+            }
+
+            if (parameter.in === "body") {
+              const schema = this.jsonLoader.resolveRefObj(parameter.schema!);
+              const value: Variable = {
+                type: "object",
+                value: genValue(parameter.name, schema) as { [key: string]: VarValue },
+              };
+              variables[parameter.name] = value;
+            }
+          }
+        },
+      });
+    }
+
+    return variables;
+  }
+
+  private generateSteps() {
+    const scenario: RawScenario = {
+      steps: [],
+    };
+
+    const heap = new Heap<Node>((a, b) => {
+      const priority = b.priority - a.priority;
+      if (priority) {
+        return priority;
+      }
+
+      const degree = b.outDegree - a.outDegree;
+      if (degree) {
+        return degree;
+      }
+      return methodOrder.indexOf(a.method) - methodOrder.indexOf(b.method);
+    });
+
+    for (const node of this.graph.values()) {
+      if (node.operationId.includes("CheckNameAvailability")) {
+        scenario.steps.push({ operationId: node.operationId });
+        node.visited = true;
+        continue;
+      }
+      if (node.inDegree === 0 && node.method === "put") {
+        heap.push(node);
+      }
+    }
+
+    const deleteStack: Node[] = [];
+
+    while (!heap.empty()) {
+      const node = heap.pop();
+      if (node.visited) {
+        console.error("node is visited: ", node.operationId, node.method);
+        continue;
+      }
+      node.visited = true;
+
+      scenario.steps.push({ operationId: node.operationId });
+      const operation = node.operationId.split("_")[0];
+
+      for (const n of node.children.values()) {
+        n.inDegree--;
+        if (n.inDegree === 0 && n.method === "put") {
+          heap.push(n);
+        }
+      }
+
+      if (node.method !== "put") {
+        continue;
+      }
+
+      for (const n of this.graph.values()) {
+        if (n.inDegree === 0 && !n.visited && n.operationId.split("_")[0] === operation) {
+          n.priority = 1;
+          if (n.method === "delete") {
+            n.visited = true;
+            deleteStack.push(n);
+          } else {
+            heap.push(n);
+          }
+        }
+      }
+    }
+
+    for (const node of this.graph.values()) {
+      if (!node.visited) {
+        scenario.steps.push({ operationId: node.operationId });
+        if (node.inDegree !== 0) {
+          console.error("node inDegree is not 0 ", node.operationId, node.method);
+        }
+      }
+    }
+
+    while (deleteStack.length > 0) {
+      const node = deleteStack.pop()!;
+      scenario.steps.push({ operationId: node.operationId });
+    }
+
+    return scenario;
+  }
+
+  private async generateGraph() {
+    this.graph = new Map<string, Node>();
+    let yuml = "";
+    const dependencies = (await this.jsonLoader.load(this.opts.dependencyPath)) as Dependencies;
+    for (const path of Object.keys(dependencies)) {
+      if (!path.startsWith("/")) {
+        continue;
+      }
+      for (const method of Object.keys(dependencies[path])) {
+        const operationId = this.getOperationId(path, method);
+        if (!operationId) {
+          console.warn(`can't find operationId, ${path} ${method}`);
+          continue;
+        }
+        yuml += `[root]->[${operationId}]\n`;
+        const node = this.getNode(operationId);
+        node.method = method.toLowerCase() as LowerHttpMethods;
+
+        for (const dependency of [
+          ...(dependencies[path][method].Path ?? []),
+          ...(dependencies[path][method].Query ?? []),
+        ]) {
+          if (dependency.producer_endpoint && dependency.producer_method) {
+            const producerOperationId = this.getOperationId(
+              dependency.producer_endpoint,
+              dependency.producer_method
+            );
+            this.addDependency(operationId, producerOperationId);
+            yuml += `[${operationId}]->[${producerOperationId}]\n`;
+          }
+        }
+      }
+    }
+
+    const svg = await yuml2svg(yuml, {
+      isDark: false,
+      type: "class",
+      dir: "LR",
+    });
+    await this.fileLoader.writeFile("test.svg", svg);
+  }
+
+  private addDependency(operationId: string, producerOperationId: string) {
+    const node = this.getNode(operationId);
+    const dependNode = this.getNode(producerOperationId);
+
+    node.inDegree++;
+    dependNode.children.set(operationId, node);
+    dependNode.outDegree++;
+  }
+
+  private getNode(operationId: string) {
+    if (!this.graph.has(operationId)) {
+      const node: Node = {
+        operationId: operationId,
+        children: new Map<string, Node>(),
+        inDegree: 0,
+        outDegree: 0,
+        visited: false,
+        method: "get",
+        priority: 0,
+      };
+      this.graph.set(operationId, node);
+    }
+
+    return this.graph.get(operationId)!;
+  }
+
+  private getOperationId(path: string, method: string) {
+    const m = method.toLowerCase() as LowerHttpMethods;
+    for (const spec of this.swaggers) {
+      const operationId = spec.paths[path]?.[m]?.operationId;
+      if (operationId) {
+        return operationId;
+      }
+    }
+    return "";
+  }
+}
