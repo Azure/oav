@@ -46,11 +46,11 @@ import {
   ArmDeploymentScriptResource,
   RawStepOperation,
 } from "./apiScenarioTypes";
-import { TemplateGenerator } from "./templateGenerator";
+// import { TemplateGenerator } from "./templateGenerator";
 import { jsonPatchApply } from "./diffUtils";
 import { ApiScenarioYamlLoader } from "./apiScenarioYamlLoader";
-import { ApiScenarioRunner } from "./apiScenarioRunner";
-import { VariableEnv } from "./variableEnv";
+// import { ApiScenarioRunner } from "./apiScenarioRunner";
+// import { VariableEnv } from "./variableEnv";
 import { armDeploymentScriptTemplate } from "./constants";
 
 const variableRegex = /\$\(([A-Za-z_][A-Za-z0-9_]*)\)/;
@@ -75,15 +75,15 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
   private apiVersionsMap = new Map<string, string>();
   private exampleToOperation = new Map<string, { [operationId: string]: string }>();
   private initialized: boolean = false;
-  private env: VariableEnv;
-  private templateGenerationRunner: ApiScenarioRunner;
+  // private env: VariableEnv;
+  // private templateGenerationRunner: ApiScenarioRunner;
 
   public constructor(
     private fileLoader: FileLoader,
     public jsonLoader: JsonLoader,
     private swaggerLoader: SwaggerLoader,
     private apiScenarioYamlLoader: ApiScenarioYamlLoader,
-    private templateGenerator: TemplateGenerator,
+    // private templateGenerator: TemplateGenerator,
     @inject(TYPES.schemaValidator) private schemaValidator: SchemaValidator
   ) {
     this.transformContext = getTransformContext(this.jsonLoader, this.schemaValidator, [
@@ -96,12 +96,12 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       nullableTransformer,
       pureObjectTransformer,
     ]);
-    this.env = new VariableEnv();
-    this.templateGenerationRunner = new ApiScenarioRunner({
-      env: this.env,
-      jsonLoader: this.jsonLoader,
-      client: this.templateGenerator,
-    });
+    // this.env = new VariableEnv();
+    // this.templateGenerationRunner = new ApiScenarioRunner({
+    //   env: this.env,
+    //   jsonLoader: this.jsonLoader,
+    //   client: this.templateGenerator,
+    // });
   }
 
   public static create(opts: ApiScenarioLoaderOption) {
@@ -211,7 +211,8 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       ctx.scenarioIndex++;
     }
 
-    await this.templateGenerationRunner.cleanAllScope();
+    // await this.templateGenerationRunner.cleanAllScope();
+    // await this.writeTestDefinitionFile("./test.yaml", scenarioDef);
 
     return scenarioDef;
   }
@@ -271,21 +272,21 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       resolvedSteps.push(step);
     }
 
-    await this.generateTemplate(scenario);
+    // await this.generateTemplate(scenario);
 
     return scenario;
   }
 
-  private async generateTemplate(scenario: Scenario) {
-    this.env.clear();
-    for (const requiredVar of scenario.requiredVariables) {
-      this.env.set(requiredVar, {
-        type: "string",
-        value: `$(${requiredVar})`,
-      });
-    }
-    await this.templateGenerationRunner.executeScenario(scenario);
-  }
+  // private async generateTemplate(scenario: Scenario) {
+  //   this.env.clear();
+  //   for (const requiredVar of scenario.requiredVariables) {
+  //     this.env.set(requiredVar, {
+  //       type: "string",
+  //       value: `$(${requiredVar})`,
+  //     });
+  //   }
+  //   await this.templateGenerationRunner.executeScenario(scenario);
+  // }
 
   private async loadStep(rawStep: RawStep, ctx: ApiScenarioContext): Promise<Step> {
     let step: Step;
@@ -338,8 +339,17 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
 
     ctx.stepTracking.set(step.step, step);
 
+    const getVariable = (name: string) => {
+      return (
+        step.variables[name] ?? ctx.scenario?.variables[name] ?? ctx.scenarioDef.variables[name]
+      );
+    };
+
     if ("operationId" in rawStep) {
       step.operationId = rawStep.operationId;
+      if (!rawStep.step) {
+        step.step = `${step.step}_${rawStep.operationId}`;
+      }
 
       const operation = this.operationsMap.get(step.operationId);
       if (operation === undefined) {
@@ -347,13 +357,53 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
         throw new Error(`Operation not found for ${step.operationId} in step ${step.step}`);
       }
       step.operation = operation;
+
+      if (rawStep.variables) {
+        for (const [name, value] of Object.entries(rawStep.variables)) {
+          if (typeof value === "string") {
+            step.variables[name] = { type: "string", value };
+            continue;
+          }
+
+          if (value.type === "object" || value.type === "secureObject" || value.type === "array") {
+            if (value.patches) {
+              const obj = cloneDeep(ctx.scenarioDef.variables[name]);
+              if (typeof obj !== "object") {
+                // TODO dynamic json patch
+                throw new Error(`Can not Json Patch on ${name}, type of ${typeof obj}`);
+              }
+              jsonPatchApply(obj.value, value.patches);
+              step.variables[name] = obj;
+              continue;
+            }
+          }
+          step.variables[name] = value;
+        }
+      }
+
+      operation.parameters?.forEach((param) => {
+        param = this.jsonLoader.resolveRefObj(param);
+        if (param.name === "api-version") {
+          return;
+        }
+        if (param.required) {
+          if (param.type === "string") {
+            step.requestParameters[param.name] =
+              getVariable(param.name)?.value ?? `$(${param.name})`;
+          } else {
+            step.requestParameters[param.name] = getVariable(param.name)?.value;
+          }
+        }
+      });
+
       if (rawStep.parameters) {
         for (const [name, value] of Object.entries(rawStep.parameters)) {
           step.requestParameters[name] = value;
         }
-        if (step.requestParameters["api-version"] === undefined) {
-          step.requestParameters["api-version"] = this.apiVersionsMap.get(step.operationId)!;
-        }
+      }
+
+      if (step.requestParameters["api-version"] === undefined) {
+        step.requestParameters["api-version"] = this.apiVersionsMap.get(step.operationId)!;
       }
     } else {
       step.exampleFile = rawStep.exampleFile;

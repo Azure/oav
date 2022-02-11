@@ -53,7 +53,7 @@ export class PostmanCollectionGenerator {
   public async GenerateCollection(): Promise<void> {
     const scenarioDef = await this.apiScenarioLoader.load(this.opt.scenarioDef);
     this.env.setBatch(scenarioDef.variables);
-    await this.swaggerAnalyzer.initialize();
+    await this.swaggerAnalyzer.initialize(scenarioDef.swaggers);
     for (const it of scenarioDef.requiredVariables) {
       if (this.env.get(it) === undefined) {
         throw new Error(

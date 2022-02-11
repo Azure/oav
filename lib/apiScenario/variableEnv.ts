@@ -15,6 +15,7 @@ const pathVariableRegex = /\{([A-Za-z_][A-Za-z0-9_]*)\}/;
 export class VariableEnv {
   protected baseEnv?: VariableEnv;
   protected data: { [key: string]: Variable } = {};
+  protected defaultValue: { [key: string]: Variable } = {};
 
   public constructor(baseEnv?: VariableEnv) {
     if (baseEnv !== undefined) {
@@ -30,6 +31,10 @@ export class VariableEnv {
 
   public setBaseEnv(baseEnv: VariableEnv) {
     this.baseEnv = baseEnv;
+  }
+
+  public setDefaultValue(defaultValue: { [key: string]: Variable }) {
+    this.defaultValue = defaultValue;
   }
 
   public getType(key: string): Variable["type"] | undefined {
@@ -77,7 +82,7 @@ export class VariableEnv {
   }
 
   public get(key: string): Variable | undefined {
-    return this.data[key] ?? this.baseEnv?.get(key);
+    return this.data[key] ?? this.baseEnv?.get(key) ?? this.defaultValue[key];
   }
 
   public getRequiredString(key: string): string {
@@ -147,7 +152,7 @@ export class VariableEnv {
 
   public setBatchEnv(environmentVariables: { [key: string]: string }) {
     for (const [key, value] of Object.entries(environmentVariables)) {
-      const varType = this.getType(key);
+      const varType = this.getType(key) ?? "string";
       if (varType !== "string" && varType !== "secureString") {
         throw new Error(`String value is not assignable to variable ${key} of type ${varType}`);
       }
@@ -232,10 +237,13 @@ export class VariableEnv {
   }
 
   public resolveString(source: string, isPathVariable?: boolean): string {
-    return this.resolveStringWithRegex(source, isPathVariable || false);
+    return this.resolveStringWithRegex(source, isPathVariable || false) as string;
   }
 
-  private resolveStringWithRegex(source: string, isPathVariable: boolean): string {
+  private resolveStringWithRegex(
+    source: string,
+    isPathVariable: boolean
+  ): string | number | boolean {
     const regex = isPathVariable ? pathVariableRegex : variableRegex;
     if (regex.test(source)) {
       const globalRegex = new RegExp(regex, "g");
@@ -243,10 +251,18 @@ export class VariableEnv {
       let match;
       while ((match = globalRegex.exec(source))) {
         const variable = this.getRequired(match[1]);
-        if (variable.type !== "string" && variable.type !== "secureString") {
-          throw new Error(`Variable type is not string: ${match[1]}`);
+        if (
+          variable.type !== "string" &&
+          variable.type !== "secureString" &&
+          variable.type !== "int" &&
+          variable.type !== "bool"
+        ) {
+          throw new Error(`Variable type is not string, int, bool: ${match[1]}`);
         }
-        replaceArray.push([match.index, match.index + match[0].length, variable.value!]);
+        if (match.index === 0 && match[0].length === source.length) {
+          return variable.value!;
+        }
+        replaceArray.push([match.index, match.index + match[0].length, variable.value!.toString()]);
       }
       let r;
       while ((r = replaceArray.pop())) {
@@ -257,13 +273,13 @@ export class VariableEnv {
   }
 
   public resolveObjectValues<T>(obj: T): T {
+    if (typeof obj === "string") {
+      return this.resolveStringWithRegex(obj, false) as unknown as T;
+    }
     return this.resolveObjectValuesWithRegex(obj);
   }
 
   private resolveObjectValuesWithRegex<T>(obj: T): T {
-    if (typeof obj === "string") {
-      return this.resolveStringWithRegex(obj, false) as unknown as T;
-    }
     if (typeof obj !== "object") {
       return obj;
     }
@@ -272,12 +288,21 @@ export class VariableEnv {
     }
 
     if (Array.isArray(obj)) {
-      return (obj as any[]).map((v) => this.resolveObjectValuesWithRegex(v)) as unknown as T;
+      return (obj as any[]).map((v) => {
+        if (typeof v === "string") {
+          return this.resolveStringWithRegex(v, false);
+        }
+        return this.resolveObjectValuesWithRegex(v);
+      }) as unknown as T;
     }
 
     const result: any = {};
     for (const key of Object.keys(obj)) {
-      result[key] = this.resolveObjectValuesWithRegex((obj as any)[key]);
+      if (typeof (obj as any)[key] === "string") {
+        result[key] = this.resolveStringWithRegex((obj as any)[key], false);
+      } else {
+        result[key] = this.resolveObjectValuesWithRegex((obj as any)[key]);
+      }
     }
     return result;
   }
@@ -288,10 +313,12 @@ export class ReflectiveVariableEnv extends VariableEnv {
     super(undefined);
     const originalData = this.data;
     this.data = new Proxy(this.data, {
-      get: (_, propertyKey) => {
+      get: (_, propertyKey): Variable => {
         const key = propertyKey as string;
         const val = originalData[key];
-        return val === undefined ? `${leftPart}${propertyKey as string}${rightPart}` : val;
+        return val === undefined
+          ? { type: "string", value: `${leftPart}${propertyKey as string}${rightPart}` }
+          : val;
       },
     });
   }

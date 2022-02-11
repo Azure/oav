@@ -7,13 +7,18 @@ import { SwaggerLoader } from "../../swagger/swaggerLoader";
 import { SwaggerSpec, LowerHttpMethods, Schema, Parameter } from "../../swagger/swaggerTypes";
 import { traverseSwagger } from "../../transform/traverseSwagger";
 import { ApiScenarioLoaderOption } from "../apiScenarioLoader";
-import { RawScenario, RawScenarioDefinition, Variable, VarValue } from "../apiScenarioTypes";
+import {
+  RawScenario,
+  RawScenarioDefinition,
+  RawStepOperation,
+  Variable,
+  VarValue,
+} from "../apiScenarioTypes";
 import * as util from "../../generator/util";
 import { setDefaultOpts } from "../../swagger/loader";
 import { pathJoin, pathResolve } from "@azure-tools/openapi-tools-common";
 import { relative } from "path";
 import { dump } from "js-yaml";
-import yuml2svg from "yuml2svg";
 
 export interface ApiScenarioGeneratorOption extends ApiScenarioLoaderOption {
   swaggerFilePaths: string[];
@@ -50,6 +55,15 @@ type Node = {
 const methodOrder: Array<LowerHttpMethods> = ["put", "get", "patch", "post", "delete"];
 
 const envVariables = ["api-version", "subscriptionId", "resourceGroupName", "location"];
+
+function randomString(length: number): string {
+  const possible = "abcdefghijklmnopqrstuvwxyz";
+  let ret = "";
+
+  for (let i = 0; i < length; i++)
+    ret += possible.charAt(Math.floor(Math.random() * possible.length));
+  return ret;
+}
 
 @injectable()
 export class ApiScenarioGenerator {
@@ -92,7 +106,7 @@ export class ApiScenarioGenerator {
       scenarios: [],
     };
     definition.scenarios.push(this.generateSteps());
-    definition.variables = this.getVariables();
+    this.getVariables(definition);
 
     await this.writeFile(definition);
   }
@@ -102,9 +116,64 @@ export class ApiScenarioGenerator {
     await this.fileLoader.writeFile(pathJoin(this.opts.outputDir, "basic.yaml"), fileContent);
   }
 
-  private getVariables() {
+  private getVariables(definition: RawScenarioDefinition) {
     const variables: { [name: string]: string | Variable } = {};
+    const map = new Map();
 
+    for (const swagger of this.swaggers) {
+      traverseSwagger(swagger, {
+        onOperation: (operation) => {
+          for (let parameter of operation.parameters ?? []) {
+            parameter = this.jsonLoader.resolveRefObj(parameter);
+            if (!parameter.required || envVariables.includes(parameter.name)) {
+              continue;
+            }
+
+            let key: any = parameter.name;
+
+            if (parameter.in === "body") {
+              key = this.jsonLoader.resolveRefObj(parameter.schema!);
+            }
+
+            const value = map.get(key);
+
+            if (value) {
+              value.count++;
+            } else {
+              map.set(key, {
+                operationId: operation.operationId,
+                name: parameter.name,
+                count: 1,
+                value: this.generateVariable(parameter),
+              });
+            }
+          }
+        },
+      });
+    }
+
+    [...map.values()]
+      .sort((a, b) => b.count - a.count)
+      .forEach((v) => {
+        if (!variables[v.name]) {
+          variables[v.name] = v.value;
+          return;
+        }
+
+        const step = definition.scenarios[0].steps.find(
+          (s) => (s as RawStepOperation).operationId === v.operationId
+        )!;
+        if (!step.variables) {
+          step.variables = {};
+        }
+
+        step.variables[v.name] = v.value;
+      });
+
+    definition.variables = variables;
+  }
+
+  private generateVariable(parameter: Parameter): Variable | string {
     const genValue = (name: string, schema: Schema): VarValue => {
       if (util.isObject(schema)) {
         const ret: VarValue = {};
@@ -136,58 +205,32 @@ export class ApiScenarioGenerator {
         case "array":
           return [];
         case "string":
-          return name + "Test";
+          if (envVariables.includes(name)) {
+            return `$(${name})`;
+          }
+          return randomString(5);
         default:
           return "";
       }
     };
 
-    const checkTypeAndAdd = (parameter: Parameter): boolean => {
-      if (!parameter.type) {
-        return false;
-      }
-      if (parameter.type === "integer") {
-        variables[parameter.name] = {
-          type: "int",
-          value: 0,
-        };
-      } else {
-        variables[parameter.name] = parameter.name + "Test";
-      }
-      return true;
-    };
-
-    for (const swagger of this.swaggers) {
-      traverseSwagger(swagger, {
-        onOperation: (operation) => {
-          for (let parameter of operation.parameters ?? []) {
-            parameter = this.jsonLoader.resolveRefObj(parameter);
-            if (
-              !parameter.required ||
-              variables[parameter.name] ||
-              envVariables.includes(parameter.name)
-            ) {
-              continue;
-            }
-
-            if (checkTypeAndAdd(parameter)) {
-              continue;
-            }
-
-            if (parameter.in === "body") {
-              const schema = this.jsonLoader.resolveRefObj(parameter.schema!);
-              const value: Variable = {
-                type: "object",
-                value: genValue(parameter.name, schema) as { [key: string]: VarValue },
-              };
-              variables[parameter.name] = value;
-            }
-          }
-        },
-      });
+    if (parameter.in === "body") {
+      const schema = this.jsonLoader.resolveRefObj(parameter.schema!);
+      const value: Variable = {
+        type: "object",
+        value: genValue(parameter.name, schema) as { [key: string]: VarValue },
+      };
+      return value;
     }
 
-    return variables;
+    if (parameter.type === "integer") {
+      return {
+        type: "int",
+        value: 0,
+      };
+    } else {
+      return randomString(5);
+    }
   }
 
   private generateSteps() {
@@ -275,7 +318,7 @@ export class ApiScenarioGenerator {
 
   private async generateGraph() {
     this.graph = new Map<string, Node>();
-    let yuml = "";
+    // let yuml = "";
     const dependencies = (await this.jsonLoader.load(this.opts.dependencyPath)) as Dependencies;
     for (const path of Object.keys(dependencies)) {
       if (!path.startsWith("/")) {
@@ -287,7 +330,7 @@ export class ApiScenarioGenerator {
           console.warn(`can't find operationId, ${path} ${method}`);
           continue;
         }
-        yuml += `[root]->[${operationId}]\n`;
+        // yuml += `[root]->[${operationId}]\n`;
         const node = this.getNode(operationId);
         node.method = method.toLowerCase() as LowerHttpMethods;
 
@@ -301,18 +344,18 @@ export class ApiScenarioGenerator {
               dependency.producer_method
             );
             this.addDependency(operationId, producerOperationId);
-            yuml += `[${operationId}]->[${producerOperationId}]\n`;
+            // yuml += `[${operationId}]->[${producerOperationId}]\n`;
           }
         }
       }
     }
 
-    const svg = await yuml2svg(yuml, {
-      isDark: false,
-      type: "class",
-      dir: "LR",
-    });
-    await this.fileLoader.writeFile("test.svg", svg);
+    // const svg = await yuml2svg(yuml, {
+    //   isDark: false,
+    //   type: "class",
+    //   dir: "LR",
+    // });
+    // await this.fileLoader.writeFile("test.svg", svg);
   }
 
   private addDependency(operationId: string, producerOperationId: string) {

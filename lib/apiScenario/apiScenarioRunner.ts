@@ -200,6 +200,11 @@ export class ApiScenarioRunner {
   public async executeStep(step: Step, env: VariableEnv, scope: ScopeTracking) {
     const stepEnv = new VariableEnv(env);
     stepEnv.setBatch(step.variables);
+    // stepEnv.setDefault(step.defaultValues);
+
+    if (this.resolveVariables) {
+      stepEnv.resolve();
+    }
 
     try {
       switch (step.type) {
@@ -211,7 +216,9 @@ export class ApiScenarioRunner {
           break;
       }
     } catch (error) {
-      throw new Error(`Failed to execute step ${step.step}: ${(error as any).message}`);
+      throw new Error(
+        `Failed to execute step ${step.step}: ${(error as any).message} \n${error.stack}`
+      );
     }
   }
 
@@ -238,6 +245,10 @@ export class ApiScenarioRunner {
 
     for (const p of step.operation.parameters ?? []) {
       const param = this.jsonLoader.resolveRefObj(p);
+      if (pathEnv.get(param.name)) {
+        continue;
+      }
+
       const paramVal = step.requestParameters[param.name];
       if (paramVal === undefined && param.required && env.get(param.name) === undefined) {
         throw new Error(`Parameter value for "${param.name}" is not found in step: ${step.step}`);
@@ -245,7 +256,7 @@ export class ApiScenarioRunner {
 
       switch (param.in) {
         case "path":
-          pathEnv.set(param.name, paramVal);
+          pathEnv.set(param.name, { type: "string", value: paramVal });
           break;
         case "query":
           req.query[param.name] = paramVal;

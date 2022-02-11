@@ -227,12 +227,12 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     const urlVariables: VariableDefinition[] = [];
     for (const p of step.operation.parameters ?? []) {
       const param = this.opts.jsonLoader!.resolveRefObj(p);
-      const paramValue = stepEnv.env.get(param.name) || step.requestParameters[param.name];
+      const paramValue = stepEnv.env.get(param.name)?.value || step.requestParameters[param.name];
       const paramName = Object.keys(step.variables).includes(param.name)
         ? `${item.name}_${param.name}`
         : param.name;
       if (!this.collectionEnv.has(paramName)) {
-        this.collectionEnv.set(paramName, paramValue, typeof step.requestParameters[param.name]);
+        this.collectionEnv.set(paramName, paramValue, typeof paramValue);
       }
 
       switch (param.in) {
@@ -575,8 +575,8 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       // use the variables value which exist in the env.json or process.env
       for (const k of Object.keys(this.collectionEnv.syncVariablesTo())) {
         const v = this.opts.env.get(k);
-        if (v) {
-          this.collectionEnv.set(k, v, typeof v);
+        if (v?.value) {
+          this.collectionEnv.set(k, v.value, typeof v.value);
         }
       }
     }
@@ -802,11 +802,11 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       host: "https://login.microsoftonline.com",
       variable: urlVariables,
     } as UrlDefinition);
-    this.collectionEnv.set("tenantId", env.get("tenantId"), "string");
-    this.collectionEnv.set("client_id", env.get("client_id"), "string");
-    this.collectionEnv.set("client_secret", env.get("client_secret"), "string");
-    this.collectionEnv.set("resourceGroupName", env.get("resourceGroupName"), "string");
-    this.collectionEnv.set("subscriptionId", env.get("subscriptionId"), "string");
+    this.collectionEnv.set("tenantId", env.get("tenantId")?.value, "string");
+    this.collectionEnv.set("client_id", env.get("client_id")?.value, "string");
+    this.collectionEnv.set("client_secret", env.get("client_secret")?.value, "string");
+    this.collectionEnv.set("resourceGroupName", env.get("resourceGroupName")?.value, "string");
+    this.collectionEnv.set("subscriptionId", env.get("subscriptionId")?.value, "string");
     ret.events.add(
       new Event({
         listen: "test",
