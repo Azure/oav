@@ -19,12 +19,6 @@ You can install the latest stable release of node.js from [here](https://nodejs.
 npm install -g oav@latest
 ```
 
-### Run API test
-
-OAV support run API test against Azure and validate request and response. You could define API scenario file which compose with several swagger example files and then use oav to execute it. For more details about API test, please refer to this [API scenario documentation](https://github.com/Azure/azure-rest-api-specs/tree/main/documentation/api-scenario).
-
-![](./documentation/runApiTest.gif)
-
 #### Command usage:
 
 ```bash
@@ -124,6 +118,12 @@ pipeline:
   swagger-document/model-validator:
     input: swagger-document/identity
 ```
+
+### Run API test
+
+OAV support run API test against Azure and validate request and response. You could define API scenario file which compose with several swagger example files and then use oav to execute it. For more details about API test, please refer to this [API scenario documentation](https://github.com/Azure/azure-rest-api-specs/tree/main/documentation/api-scenario).
+
+![](./documentation/runApiTest.gif)
 
 ### Live Validation Mode
 
