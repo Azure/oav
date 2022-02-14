@@ -1,5 +1,10 @@
 # Change Log - oav
 
+## 02/14/2022 2.11.6
+
+- Upgrade newman package to 5.3.1. Fix intel license issue.
+- Fix simple git high security issue.
+
 ## 01/21/2022 2.11.5
 
 - LiveValidator - Loosen date-time validation for missing "Z" in the end
