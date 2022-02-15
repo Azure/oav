@@ -2,6 +2,7 @@
 
 ## 02/14/2022 2.11.6
 
+- LiveValidator - Fix bug about date-time validation.
 - Upgrade newman package to 5.3.1. Fix intel license issue.
 - Fix simple git high security issue.
 
