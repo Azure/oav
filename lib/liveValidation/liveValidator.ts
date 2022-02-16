@@ -690,7 +690,7 @@ export class LiveValidator {
         matchedPaths = matchedPaths.concat(res);
       }
     }
-
+    matchedPaths = [...new Set(matchedPaths)];
     this.logging(
       `Using swaggers found from directory: "${
         this.options.directory
