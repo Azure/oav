@@ -18,7 +18,7 @@
       "location": "aaaaaaaaaa",
       "properties": {
         "registrationInfo": {
-          "expirationTime": "2022-01-21T02:33:35.0000000",
+          "expirationTime": "2022-01-11T02:33:35.0000000",
           "registrationTokenOperation": "Update"
         },
         "friendlyName": "",
@@ -75,7 +75,6 @@
         "ring": null,
         "registrationInfo": {
           "expirationTime": "2024-02-29T02:33:35",
-          "expirationTime2": "2024-02-19T02:33:35",
           "token": "a",
           "registrationTokenOperation": "Update"
         },

@@ -483,11 +483,6 @@
           "type": "string",
           "description": "Expiration time of registration token."
         },
-        "expirationTime2": {
-          "format": "date-time",
-          "type": "string",
-          "description": "Another expiration time of registration token."
-        },
         "token": {
           "type": "string",
           "description": "The registration token base64 encoded string."
