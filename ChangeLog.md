@@ -3,6 +3,7 @@
 ## 02/15/2022 2.11.7
 
 - LiveValidator - Fix bug about date-time validation.
+- LiveValidator - Fix bug about duplicated swagger files when loading by path patterns.
 
 ## 02/14/2022 2.11.6
 
