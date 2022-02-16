@@ -231,7 +231,7 @@ const shouldSkipError = (error: ErrorObject, cxt: SchemaValidateContext) => {
 
   // If payload has property with date-time parameter and its value is valid except missing "Z" in the end we can skip this error
   if (keyword === "format" && schema === "date-time" && typeof data === "string") {
-    const reg = /^\d+-(0\d|1[0-2])-([02]\d|3[01])T([01]\d|2[0-3]):[0-5][0-9]:[0-5][0-9]/;
+    const reg = /^\d+-(0\d|1[0-2])-([0-2]\d|3[01])T([01]\d|2[0-3]):[0-5][0-9]:[0-5][0-9]/;
     // intercept time, example: 2008-09-22T14:01:54
     const time = data.slice(0, 19);
     if (reg.test(time)) {
