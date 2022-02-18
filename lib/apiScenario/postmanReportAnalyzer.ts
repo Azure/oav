@@ -1,3 +1,4 @@
+import { dirname } from "path";
 import { inject, injectable } from "inversify";
 import uuid from "uuid";
 import { setDefaultOpts } from "../swagger/loader";
@@ -62,6 +63,7 @@ export class NewmanReportAnalyzer {
       testScenarioName: testScenarioName,
       validationLevel: this.opts.validationLevel,
       verbose: this.opts.verbose,
+      fileRoot: dirname(testScenarioFilePath),
     };
     const reportGenerator = inversifyGetInstance(ReportGenerator, reportGeneratorOption);
     await reportGenerator.generateReport();

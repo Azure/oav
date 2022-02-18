@@ -136,9 +136,8 @@ export class ReportGenerator {
       runId: uuid.v4(),
       validationLevel: "validate-request-response",
       verbose: false,
-      swaggerFilePaths: this.testDefFile?.swaggers,
     });
-    const swaggerFileAbsolutePaths = this.opts.swaggerFilePaths!.map((it) => path.resolve(it));
+    const swaggerFileAbsolutePaths = this.opts.swaggerFilePaths!;
     this.exampleQualityValidator = ExampleQualityValidator.create({
       swaggerFilePaths: [...swaggerFileAbsolutePaths],
     });

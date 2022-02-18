@@ -29,6 +29,11 @@ export class VariableEnv {
     }
   }
 
+  public getKeyList(): string[] {
+    const keys = this.baseEnv?.getKeyList() ?? [];
+    return [...keys, ...Object.keys(this.data)];
+  }
+
   public setBaseEnv(baseEnv: VariableEnv) {
     this.baseEnv = baseEnv;
   }

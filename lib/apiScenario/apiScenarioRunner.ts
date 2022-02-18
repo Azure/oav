@@ -40,7 +40,6 @@ interface ScopeTracking {
 export interface StepEnv {
   env: VariableEnv;
   scope: ScenarioDefinition["scope"];
-  armDeployments: ArmDeploymentTracking[];
 }
 
 export interface ApiScenarioClientRequest {
@@ -280,7 +279,6 @@ export class ApiScenarioRunner {
     await this.client.sendExampleRequest(req, step, {
       env,
       scope: scope.scope,
-      armDeployments: scope.armDeployments,
     });
   }
 
@@ -310,7 +308,6 @@ export class ApiScenarioRunner {
     await this.client.sendArmTemplateDeployment(step.armTemplatePayload, armDeployment, step, {
       env,
       scope: scope.scope,
-      armDeployments: scope.armDeployments,
     });
   }
 }

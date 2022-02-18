@@ -21,11 +21,10 @@ import { JsonLoader, JsonLoaderOption } from "../swagger/jsonLoader";
 import { setDefaultOpts } from "../swagger/loader";
 import { printWarning } from "../util/utils";
 import { FileLoader } from "../swagger/fileLoader";
-import { inversifyGetInstance, TYPES } from "../inversifyUtils";
+import { TYPES } from "../inversifyUtils";
 import { ValidationLevel } from "./reportGenerator";
 import { SwaggerAnalyzer } from "./swaggerAnalyzer";
 import { DataMasker } from "./dataMasker";
-import { NewmanReportAnalyzer, NewmanReportAnalyzerOption } from "./postmanReportAnalyzer";
 import { BlobUploader, BlobUploaderOption } from "./blobUploader";
 import { PostmanTestScript, TestScriptType } from "./postmanTestScript";
 import { ArmTemplate, StepArmTemplate, StepRestCall, ScenarioDefinition } from "./apiScenarioTypes";
@@ -200,8 +199,44 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     this.addAsLongRunningOperationItem(item);
   }
 
+  private convertString(source: string): string {
+    const regex = /\$\(([A-Za-z_][A-Za-z0-9_]*)\)/;
+    if (regex.test(source)) {
+      const globalRegex = new RegExp(regex, "g");
+      let match;
+      while ((match = globalRegex.exec(source))) {
+        source =
+          source.substring(0, match.index) +
+          `{{${match[1]}}}` +
+          source.substring(match.index + match[0].length);
+      }
+    }
+    return source;
+  }
+
+  private convertPostmanFormat<T>(obj: T): T {
+    if (typeof obj === "string") {
+      return this.convertString(obj) as unknown as T;
+    }
+    if (typeof obj !== "object") {
+      return obj;
+    }
+    if (obj === null || obj === undefined) {
+      return obj;
+    }
+    if (Array.isArray(obj)) {
+      return (obj as any[]).map((v) => this.convertPostmanFormat(v)) as unknown as T;
+    }
+
+    const result: any = {};
+    for (const key of Object.keys(obj)) {
+      result[key] = this.convertPostmanFormat((obj as any)[key]);
+    }
+    return result;
+  }
+
   public async sendExampleRequest(
-    request: ApiScenarioClientRequest,
+    _: ApiScenarioClientRequest,
     step: StepRestCall,
     stepEnv: StepEnv
   ): Promise<void> {
@@ -227,13 +262,10 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     const urlVariables: VariableDefinition[] = [];
     for (const p of step.operation.parameters ?? []) {
       const param = this.opts.jsonLoader!.resolveRefObj(p);
-      const paramValue = stepEnv.env.get(param.name)?.value || step.requestParameters[param.name];
+      const paramValue = this.convertPostmanFormat(step.requestParameters[param.name]);
       const paramName = Object.keys(step.variables).includes(param.name)
         ? `${item.name}_${param.name}`
         : param.name;
-      if (!this.collectionEnv.has(paramName)) {
-        this.collectionEnv.set(paramName, paramValue, typeof paramValue);
-      }
 
       switch (param.in) {
         case "path":
@@ -251,7 +283,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
         case "body":
           item.request.body = new RequestBody({
             mode: "raw",
-            raw: JSON.stringify(stepEnv.env.resolveObjectValues(request.body), null, 2),
+            raw: JSON.stringify(paramValue, null, 2),
           });
           break;
         default:
@@ -259,6 +291,33 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       }
       this.collection.items.add(item);
     }
+
+    stepEnv.env.resolve();
+    for (const p of step.operation.parameters ?? []) {
+      const param = this.opts.jsonLoader!.resolveRefObj(p);
+      const paramValue = stepEnv.env.get(param.name)?.value;
+      if (!paramValue) {
+        continue;
+      }
+
+      const paramName = Object.keys(step.variables).includes(param.name)
+        ? `${item.name}_${param.name}`
+        : param.name;
+      if (!this.collectionEnv.has(paramName)) {
+        this.collectionEnv.set(paramName, paramValue, typeof paramValue);
+      }
+    }
+
+    stepEnv.env.getKeyList().forEach((key) => {
+      if (!this.collectionEnv.has(key)) {
+        this.collectionEnv.set(
+          key,
+          stepEnv.env.get(key)?.value,
+          typeof stepEnv.env.get(key)?.value
+        );
+      }
+    });
+
     const authorizationHeader = new Header({
       key: "Authorization",
       value: `Bearer {{bearerToken}}`,
@@ -389,10 +448,10 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     const path = `/subscriptions/:subscriptionId/resourcegroups/:resourceGroupName/providers/Microsoft.Resources/deployments/${step.step}?api-version=2020-06-01`;
 
     const subscriptionIdValue = covertToPostmanVariable(
-      stepEnv.env.getString("subscriptionId") || ""
+      stepEnv.env.resolveString(stepEnv.env.getString("subscriptionId") || "")
     );
     const resourceGroupNameValue = covertToPostmanVariable(
-      stepEnv.env.getString("resourceGroupName") || ""
+      stepEnv.env.resolveString(stepEnv.env.getString("resourceGroupName") || "")
     );
     const subscriptionIdParamName = Object.keys(step.variables).includes("subscriptionId")
       ? `${item.name}_subscriptionId`
@@ -413,7 +472,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       );
     }
 
-    if (!this.collectionEnv.has(resourceGroupNameValue)) {
+    if (!this.collectionEnv.has(resourceGroupNameParamName)) {
       this.collectionEnv.set(
         resourceGroupNameParamName,
         resourceGroupNameValue,
@@ -646,18 +705,18 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
                 this.dataMasker.jsonStringify(newmanReport)
               );
             }
-            const opts: NewmanReportAnalyzerOption = {
-              newmanReportFilePath: reportExportPath,
-              markdownReportPath: this.opts.markdownReportPath,
-              junitReportPath: this.opts.junitReportPath,
-              enableUploadBlob: this.opts.enableBlobUploader,
-              runId: this.opts.runId,
-              swaggerFilePaths: this.opts.swaggerFilePaths,
-              validationLevel: this.opts.validationLevel,
-              verbose: this.opts.verbose,
-            };
-            const reportAnalyzer = inversifyGetInstance(NewmanReportAnalyzer, opts);
-            await reportAnalyzer.analyze();
+            // const opts: NewmanReportAnalyzerOption = {
+            //   newmanReportFilePath: reportExportPath,
+            //   markdownReportPath: this.opts.markdownReportPath,
+            //   junitReportPath: this.opts.junitReportPath,
+            //   enableUploadBlob: this.opts.enableBlobUploader,
+            //   runId: this.opts.runId,
+            //   swaggerFilePaths: this.opts.swaggerFilePaths,
+            //   validationLevel: this.opts.validationLevel,
+            //   verbose: this.opts.verbose,
+            // };
+            // const reportAnalyzer = inversifyGetInstance(NewmanReportAnalyzer, opts);
+            // await reportAnalyzer.analyze();
             if (this.opts.skipCleanUp || this.opts.to) {
               printWarning(
                 `Notice:the resource group '${this.collectionEnv.get(

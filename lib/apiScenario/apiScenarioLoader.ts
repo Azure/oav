@@ -340,9 +340,12 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     ctx.stepTracking.set(step.step, step);
 
     const getVariable = (name: string) => {
-      return (
-        step.variables[name] ?? ctx.scenario?.variables[name] ?? ctx.scenarioDef.variables[name]
-      );
+      const variable =
+        step.variables[name] ?? ctx.scenario?.variables[name] ?? ctx.scenarioDef.variables[name];
+      if (variable === undefined) {
+        throw new Error(`Variable ${name} is not defined`);
+      }
+      return variable;
     };
 
     if ("operationId" in rawStep) {
@@ -381,6 +384,24 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
         }
       }
 
+      if (rawStep.parameters) {
+        for (const [name, value] of Object.entries(rawStep.parameters)) {
+          if (typeof value === "string") {
+            step.variables[name] = { type: "string", value };
+          } else if (Array.isArray(value)) {
+            step.variables[name] = { type: "array", value };
+          } else if (typeof value === "object") {
+            step.variables[name] = { type: "object", value };
+          } else if (typeof value === "boolean") {
+            step.variables[name] = { type: "bool", value };
+          } else if (typeof value === "number") {
+            step.variables[name] = { type: "int", value };
+          } else {
+            throw new Error(`Invalid type of parameter ${name}`);
+          }
+        }
+      }
+
       operation.parameters?.forEach((param) => {
         param = this.jsonLoader.resolveRefObj(param);
         if (param.name === "api-version") {
@@ -388,19 +409,12 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
         }
         if (param.required) {
           if (param.type === "string") {
-            step.requestParameters[param.name] =
-              getVariable(param.name)?.value ?? `$(${param.name})`;
+            step.requestParameters[param.name] = `$(${param.name})`;
           } else {
             step.requestParameters[param.name] = getVariable(param.name)?.value;
           }
         }
       });
-
-      if (rawStep.parameters) {
-        for (const [name, value] of Object.entries(rawStep.parameters)) {
-          step.requestParameters[name] = value;
-        }
-      }
 
       if (step.requestParameters["api-version"] === undefined) {
         step.requestParameters["api-version"] = this.apiVersionsMap.get(step.operationId)!;
