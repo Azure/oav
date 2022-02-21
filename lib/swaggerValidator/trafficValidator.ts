@@ -5,6 +5,7 @@ import { LiveValidationIssue, LiveValidator } from "../liveValidation/liveValida
 import { DefaultConfig } from "../util/constants";
 import { ErrorCodeConstants } from "../util/errorDefinitions";
 import { OperationContext } from "../liveValidation/operationValidator";
+import { log } from "../util/logging";
 
 export interface TrafficValidationIssue {
   payloadFilePath?: string;
@@ -25,6 +26,8 @@ export class TrafficValidator {
   private trafficFiles: string[] = [];
   private specPath: string;
   private trafficPath: string;
+  private trafficOperation: Map<string, Set<string>> = new Map<string, Set<string>>();
+  public coverageResult: Map<string, number> = new Map<string, number>();
 
   public constructor(specPath: string, trafficPath: string) {
     this.specPath = specPath;
@@ -77,6 +80,15 @@ export class TrafficValidator {
         const payload = require(trafficFile);
         const validationResult = await this.liveValidator.validateLiveRequestResponse(payload);
         const operationInfo = validationResult.requestValidationResult?.operationInfo;
+
+        const swaggerFile = this.findSwaggerByOperationId(operationInfo.operationId);
+        if (swaggerFile !== undefined) {
+          if (this.trafficOperation.get(swaggerFile) === undefined) {
+            this.trafficOperation.set(swaggerFile, new Set<string>());
+          }
+          this.trafficOperation.get(swaggerFile)?.add(operationInfo.operationId);
+        }
+
         const errorResult: LiveValidationIssue[] = [];
         const runtimeExceptions: RuntimeException[] = [];
         if (validationResult.requestValidationResult.isSuccessful === undefined) {
@@ -111,6 +123,28 @@ export class TrafficValidator {
         ],
       });
     }
+    this.liveValidator.operationSpecMapper.forEach((value: Set<string>, key: string) => {
+      if (this.trafficOperation.get(key) === undefined) {
+        this.coverageResult.set(key, 0);
+      } else {
+        if (value !== undefined) {
+          this.coverageResult.set(key, this.trafficOperation.get(key)!.size / value.size);
+        }
+      }
+    });
+    this.coverageResult.forEach((value: number, key: string) => {
+      log.info(`${key} - ${value}`);
+    });
     return this.trafficValidationResult;
+  }
+
+  private findSwaggerByOperationId(OperationID: string) {
+    let result = undefined;
+    this.liveValidator.operationSpecMapper.forEach((value: Set<string>, key: string) => {
+      if (value.has(OperationID)) {
+        result = key;
+      }
+    });
+    return result;
   }
 }

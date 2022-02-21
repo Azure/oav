@@ -11,7 +11,7 @@ import { URL } from "url";
 import * as _ from "lodash";
 import * as models from "../models";
 import { requestResponseDefinition } from "../models/requestResponse";
-import { LowerHttpMethods, SwaggerSpec } from "../swagger/swaggerTypes";
+import { Operation, Path, LowerHttpMethods, SwaggerSpec } from "../swagger/swaggerTypes";
 import {
   SchemaValidateFunction,
   SchemaValidateIssue,
@@ -29,6 +29,7 @@ import {
   getProviderFromPathTemplate,
   getProviderFromSpecPath,
 } from "../util/utils";
+import { traverseSwagger } from "../transform/traverseSwagger";
 import { LiveValidatorLoader, LiveValidatorLoaderOption } from "./liveValidatorLoader";
 import { OperationSearcher } from "./operationSearcher";
 import {
@@ -124,6 +125,8 @@ export class LiveValidator {
 
   public operationSearcher: OperationSearcher;
 
+  public operationSpecMapper: Map<string, Set<string>>;
+
   private logFunction?: (message: string, level: string, meta?: Meta) => void;
 
   private loader?: LiveValidatorLoader;
@@ -174,6 +177,7 @@ export class LiveValidator {
     this.options = ops as LiveValidatorOptions;
     this.logging(`Creating livevalidator with options:${JSON.stringify(this.options)}`);
     this.operationSearcher = new OperationSearcher(this.logging);
+    this.operationSpecMapper = new Map<string, Set<string>>();
   }
 
   /**
@@ -222,8 +226,23 @@ export class LiveValidator {
       const spec = await this.getSwaggerInitializer(this.loader!, swaggerPath);
       if (spec !== undefined) {
         allSpecs.push(spec);
+
+        // Get Swagger - operation mapper.
+        if (this.operationSpecMapper.get(swaggerPath) === undefined) {
+          this.operationSpecMapper.set(swaggerPath, new Set<string>());
+        }
+        traverseSwagger(spec, {
+          onOperation: (operation: Operation, _path: Path, _method: LowerHttpMethods) => {
+            this.operationSpecMapper.get(swaggerPath)!.add(operation.operationId!);
+          },
+        });
       }
     }
+    this.logging("Finished building Swagger - operation mapper.");
+    this.operationSpecMapper.forEach((value: Set<string>, key: string) => {
+      this.logging(`${key} - ${value.size}`);
+      value.forEach((v) => this.logging(v));
+    });
 
     this.logging("Apply global transforms for all specs");
     try {
