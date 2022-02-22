@@ -5,7 +5,6 @@ import { LiveValidationIssue, LiveValidator } from "../liveValidation/liveValida
 import { DefaultConfig } from "../util/constants";
 import { ErrorCodeConstants } from "../util/errorDefinitions";
 import { OperationContext } from "../liveValidation/operationValidator";
-import { log } from "../util/logging";
 
 export interface TrafficValidationIssue {
   payloadFilePath?: string;
@@ -35,6 +34,7 @@ export class TrafficValidator {
   }
 
   public async initialize() {
+    console.log(`${this.trafficPath}, ${this.specPath}`);
     const specPathStats = fs.statSync(this.specPath);
     const trafficPathStats = fs.statSync(this.trafficPath);
     let specFileDirectory = "";
@@ -73,20 +73,28 @@ export class TrafficValidator {
   }
 
   public async validate(): Promise<TrafficValidationIssue[]> {
+    console.log(`!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!`);
     let payloadFilePath;
+    console.log(`${this.trafficFiles.join("\n")}`);
     try {
       for (const trafficFile of this.trafficFiles) {
+        console.log(`${trafficFile}`);
         payloadFilePath = trafficFile;
+        console.log("0");
         const payload = require(trafficFile);
+        console.log("1");
         const validationResult = await this.liveValidator.validateLiveRequestResponse(payload);
+        console.log("2");
         const operationInfo = validationResult.requestValidationResult?.operationInfo;
-
+        console.log(operationInfo.operationId);
         const swaggerFile = this.findSwaggerByOperationId(operationInfo.operationId);
+        console.log(`Get swagger ${swaggerFile} by operationID ${operationInfo.operationId}`);
         if (swaggerFile !== undefined) {
           if (this.trafficOperation.get(swaggerFile) === undefined) {
             this.trafficOperation.set(swaggerFile, new Set<string>());
           }
           this.trafficOperation.get(swaggerFile)?.add(operationInfo.operationId);
+          console.log(`add operaionid ${operationInfo.operationId} to trafficOperationMap ${swaggerFile}`)
         }
 
         const errorResult: LiveValidationIssue[] = [];
@@ -112,6 +120,7 @@ export class TrafficValidator {
         }
       }
     } catch (err) {
+      console.log(`${err.message}`);
       const msg = `Detail error message:${err?.message}. ErrorStack:${err?.Stack}`;
       this.trafficValidationResult.push({
         payloadFilePath,
@@ -133,7 +142,7 @@ export class TrafficValidator {
       }
     });
     this.coverageResult.forEach((value: number, key: string) => {
-      log.info(`${key} - ${value}`);
+      console.log(`${key} - ${value}`);
     });
     return this.trafficValidationResult;
   }
