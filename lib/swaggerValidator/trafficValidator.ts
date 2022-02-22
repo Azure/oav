@@ -34,8 +34,6 @@ export class TrafficValidator {
   }
 
   public async initialize() {
-    console.log("trafficpath & specpath");
-    console.log(`${this.trafficPath}, ${this.specPath}`);
     const specPathStats = fs.statSync(this.specPath);
     const trafficPathStats = fs.statSync(this.trafficPath);
     let specFileDirectory = "";
@@ -114,7 +112,6 @@ export class TrafficValidator {
         }
       }
     } catch (err) {
-      console.log(`${err.message}`);
       const msg = `Detail error message:${err?.message}. ErrorStack:${err?.Stack}`;
       this.trafficValidationResult.push({
         payloadFilePath,
