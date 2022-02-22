@@ -204,8 +204,6 @@ export class LiveValidator {
     // Construct array of swagger paths to be used for building a cache
     this.logging("Get swagger path.");
     const swaggerPaths = await this.getSwaggerPaths();
-    console.log("Swagger Path!!!!!!!");
-    console.log(`${swaggerPaths.join("\n")}`);
     const container = inversifyGetContainer();
     this.loader = inversifyGetInstance(LiveValidatorLoader, {
       container,
@@ -240,11 +238,6 @@ export class LiveValidator {
         });
       }
     }
-    /*console.log("Finished building Swagger - operation mapper.");
-    this.operationSpecMapper.forEach((value: Set<string>, key: string) => {
-      console.log(`${key} - ${value.size}`);
-      value.forEach((v) => console.log(v));
-    });*/
 
     this.logging("Apply global transforms for all specs");
     try {

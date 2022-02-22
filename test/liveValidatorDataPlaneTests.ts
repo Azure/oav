@@ -5,6 +5,7 @@
 
 import { LiveValidator } from "../lib/liveValidation/liveValidator";
 import { TrafficValidator} from "../lib/swaggerValidator/trafficValidator";
+import * as path from "path";
 
 describe("LiveValidator for data-plane", () => {
   describe("Initialization", () => {
@@ -41,12 +42,17 @@ describe("LiveValidator for data-plane", () => {
     });
 
     it("should get coverage after validation", async () => {
-      const specPath =
-        "test/liveValidation/swaggers/specification/cosmos-db/data-plane/Microsoft.Tables/preview/2019-02-02/table.json";
-      const trafficPath = "test/liveValidation/payloads/dataplane/deleteCosmosTable_input.json";
+      let specPath =
+        "test/liveValidation/swaggers/specification/";
+      let trafficPath = "test/liveValidation/payloads/coverage/";
+      specPath = path.resolve(process.cwd(), specPath);
+      trafficPath = path.resolve(process.cwd(), trafficPath);
+      const keyPath = path.resolve(process.cwd(), "test/liveValidation/swaggers/specification/contoso/resource-manager/Microsoft.Contoso/2020-01-01/contoso.json");
       const validator = new TrafficValidator(specPath, trafficPath);
       await validator.initialize();
       await validator.validate();
+      expect(validator.coverageResult.size).toEqual(67);
+      expect(validator.coverageResult.get(keyPath)).toEqual(1.0/3.0); 
     });
   });
 });

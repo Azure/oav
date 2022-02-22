@@ -34,6 +34,7 @@ export class TrafficValidator {
   }
 
   public async initialize() {
+    console.log("trafficpath & specpath");
     console.log(`${this.trafficPath}, ${this.specPath}`);
     const specPathStats = fs.statSync(this.specPath);
     const trafficPathStats = fs.statSync(this.trafficPath);
@@ -73,22 +74,15 @@ export class TrafficValidator {
   }
 
   public async validate(): Promise<TrafficValidationIssue[]> {
-    console.log(`!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!`);
     let payloadFilePath;
-    console.log(`${this.trafficFiles.join("\n")}`);
     try {
       for (const trafficFile of this.trafficFiles) {
-        console.log(`${trafficFile}`);
         payloadFilePath = trafficFile;
-        console.log("0");
         const payload = require(trafficFile);
-        console.log("1");
         const validationResult = await this.liveValidator.validateLiveRequestResponse(payload);
-        console.log("2");
         const operationInfo = validationResult.requestValidationResult?.operationInfo;
-        console.log(operationInfo.operationId);
+        validationResult.requestValidationResult.operationInfo.validationRequest?.providerNamespace
         const swaggerFile = this.findSwaggerByOperationId(operationInfo.operationId);
-        console.log(`Get swagger ${swaggerFile} by operationID ${operationInfo.operationId}`);
         if (swaggerFile !== undefined) {
           if (this.trafficOperation.get(swaggerFile) === undefined) {
             this.trafficOperation.set(swaggerFile, new Set<string>());
@@ -140,9 +134,6 @@ export class TrafficValidator {
           this.coverageResult.set(key, this.trafficOperation.get(key)!.size / value.size);
         }
       }
-    });
-    this.coverageResult.forEach((value: number, key: string) => {
-      console.log(`${key} - ${value}`);
     });
     return this.trafficValidationResult;
   }
