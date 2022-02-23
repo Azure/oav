@@ -86,9 +86,6 @@ export class TrafficValidator {
             this.trafficOperation.set(swaggerFile, new Set<string>());
           }
           this.trafficOperation.get(swaggerFile)?.add(operationInfo.operationId);
-          console.log(
-            `add operaionid ${operationInfo.operationId} to trafficOperationMap ${swaggerFile}`
-          );
         }
 
         const errorResult: LiveValidationIssue[] = [];
@@ -129,8 +126,10 @@ export class TrafficValidator {
       if (this.trafficOperation.get(key) === undefined) {
         this.coverageResult.set(key, 0);
       } else {
-        if (value !== undefined) {
+        if (value !== undefined && value.size !== 0) {
           this.coverageResult.set(key, this.trafficOperation.get(key)!.size / value.size);
+        } else {
+          this.coverageResult.set(key, 0);
         }
       }
     });
