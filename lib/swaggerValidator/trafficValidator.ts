@@ -1,6 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import { glob } from "glob";
+import { toLower } from "lodash";
 import { LiveValidationIssue, LiveValidator } from "../liveValidation/liveValidator";
 import { DefaultConfig } from "../util/constants";
 import { ErrorCodeConstants } from "../util/errorDefinitions";
@@ -79,14 +80,15 @@ export class TrafficValidator {
         const payload = require(trafficFile);
         const validationResult = await this.liveValidator.validateLiveRequestResponse(payload);
         const operationInfo = validationResult.requestValidationResult?.operationInfo;
-        validationResult.requestValidationResult.operationInfo.validationRequest?.providerNamespace
-        const swaggerFile = this.findSwaggerByOperationId(operationInfo.operationId);
+        const swaggerFile = this.findSwaggerByOperationId(operationInfo);
         if (swaggerFile !== undefined) {
           if (this.trafficOperation.get(swaggerFile) === undefined) {
             this.trafficOperation.set(swaggerFile, new Set<string>());
           }
           this.trafficOperation.get(swaggerFile)?.add(operationInfo.operationId);
-          console.log(`add operaionid ${operationInfo.operationId} to trafficOperationMap ${swaggerFile}`)
+          console.log(
+            `add operaionid ${operationInfo.operationId} to trafficOperationMap ${swaggerFile}`
+          );
         }
 
         const errorResult: LiveValidationIssue[] = [];
@@ -135,11 +137,16 @@ export class TrafficValidator {
     return this.trafficValidationResult;
   }
 
-  private findSwaggerByOperationId(OperationID: string) {
+  private findSwaggerByOperationId(operationInfo: OperationContext) {
     let result = undefined;
     this.liveValidator.operationSpecMapper.forEach((value: Set<string>, key: string) => {
-      if (value.has(OperationID)) {
-        result = key;
+      if (
+        toLower(key).includes(toLower(operationInfo.apiVersion)) &&
+        toLower(key).includes(toLower(operationInfo.validationRequest?.providerNamespace))
+      ) {
+        if (value.has(operationInfo.operationId)) {
+          result = key;
+        }
       }
     });
     return result;

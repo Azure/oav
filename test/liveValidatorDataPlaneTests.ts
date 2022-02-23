@@ -44,15 +44,15 @@ describe("LiveValidator for data-plane", () => {
     it("should get coverage after validation", async () => {
       let specPath =
         "test/liveValidation/swaggers/specification/";
-      let trafficPath = "test/liveValidation/payloads/coverage/";
+      let trafficPath = "test/liveValidation/payloads/coveragetest/";
       specPath = path.resolve(process.cwd(), specPath);
       trafficPath = path.resolve(process.cwd(), trafficPath);
-      const keyPath = path.resolve(process.cwd(), "test/liveValidation/swaggers/specification/contoso/resource-manager/Microsoft.Contoso/2020-01-01/contoso.json");
+      const keyPath = path.resolve(process.cwd(), "test/liveValidation/swaggers/specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimusers.json");
       const validator = new TrafficValidator(specPath, trafficPath);
       await validator.initialize();
       await validator.validate();
       expect(validator.coverageResult.size).toEqual(67);
-      expect(validator.coverageResult.get(keyPath)).toEqual(1.0/3.0); 
+      expect(validator.coverageResult.get(keyPath)).toEqual(2.0/11.0); 
     });
   });
 });
