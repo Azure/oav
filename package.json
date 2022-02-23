@@ -20,6 +20,7 @@
     "@azure/storage-blob": "^12.5.0",
     "@microsoft.azure/autorest-extension-base": "1.0.13",
     "@ts-common/commonmark-to-markdown": "^2.0.2",
+    "@types/heap": "^0.2.29",
     "ajv": "6.12.6",
     "ajv-keywords": "^3.5.0",
     "ajv-pack": "^0.3.1",
