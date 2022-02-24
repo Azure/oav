@@ -37,8 +37,8 @@ describe("LiveValidator for data-plane", () => {
       await liveValidator.initialize();
       expect(liveValidator.operationSpecMapper.size).toEqual(2);
       const operationidSet = liveValidator.operationSpecMapper.get(specPath);
-      expect(operationidSet?.size).toEqual(14);
-      expect(operationidSet?.has("Table_Query")).toBeTruthy();
+      expect(operationidSet?.length).toEqual(14);
+      expect(operationidSet?.includes("Table_Query")).toBeTruthy();
     });
 
     it("should get coverage after validation", async () => {

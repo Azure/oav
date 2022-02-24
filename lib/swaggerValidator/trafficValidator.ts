@@ -26,7 +26,7 @@ export class TrafficValidator {
   private trafficFiles: string[] = [];
   private specPath: string;
   private trafficPath: string;
-  private trafficOperation: Map<string, Set<string>> = new Map<string, Set<string>>();
+  private trafficOperation: Map<string, string[]> = new Map<string, string[]>();
   public coverageResult: Map<string, number> = new Map<string, number>();
 
   public constructor(specPath: string, trafficPath: string) {
@@ -80,12 +80,14 @@ export class TrafficValidator {
         const payload = require(trafficFile);
         const validationResult = await this.liveValidator.validateLiveRequestResponse(payload);
         const operationInfo = validationResult.requestValidationResult?.operationInfo;
-        const swaggerFile = this.findSwaggerByOperationId(operationInfo);
+        const swaggerFile = this.findSwaggerByOperationInfo(operationInfo);
         if (swaggerFile !== undefined) {
           if (this.trafficOperation.get(swaggerFile) === undefined) {
-            this.trafficOperation.set(swaggerFile, new Set<string>());
+            this.trafficOperation.set(swaggerFile, []);
           }
-          this.trafficOperation.get(swaggerFile)?.add(operationInfo.operationId);
+          if (!this.trafficOperation.get(swaggerFile)?.includes(operationInfo.operationId)) {
+            this.trafficOperation.get(swaggerFile)?.push(operationInfo.operationId);
+          }
         }
 
         const errorResult: LiveValidationIssue[] = [];
@@ -122,12 +124,12 @@ export class TrafficValidator {
         ],
       });
     }
-    this.liveValidator.operationSpecMapper.forEach((value: Set<string>, key: string) => {
+    this.liveValidator.operationSpecMapper.forEach((value: string[], key: string) => {
       if (this.trafficOperation.get(key) === undefined) {
         this.coverageResult.set(key, 0);
       } else {
-        if (value !== undefined && value.size !== 0) {
-          this.coverageResult.set(key, this.trafficOperation.get(key)!.size / value.size);
+        if (value !== undefined && value.length !== 0) {
+          this.coverageResult.set(key, this.trafficOperation.get(key)!.length / value.length);
         } else {
           this.coverageResult.set(key, 0);
         }
@@ -136,14 +138,14 @@ export class TrafficValidator {
     return this.trafficValidationResult;
   }
 
-  private findSwaggerByOperationId(operationInfo: OperationContext) {
+  private findSwaggerByOperationInfo(operationInfo: OperationContext) {
     let result = undefined;
-    this.liveValidator.operationSpecMapper.forEach((value: Set<string>, key: string) => {
+    this.liveValidator.operationSpecMapper.forEach((value: string[], key: string) => {
       if (
         toLower(key).includes(toLower(operationInfo.apiVersion)) &&
         toLower(key).includes(toLower(operationInfo.validationRequest?.providerNamespace))
       ) {
-        if (value.has(operationInfo.operationId)) {
+        if (value.includes(operationInfo.operationId)) {
           result = key;
         }
       }

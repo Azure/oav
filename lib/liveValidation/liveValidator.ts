@@ -125,7 +125,7 @@ export class LiveValidator {
 
   public operationSearcher: OperationSearcher;
 
-  public operationSpecMapper: Map<string, Set<string>>;
+  public operationSpecMapper: Map<string, string[]>;
 
   private logFunction?: (message: string, level: string, meta?: Meta) => void;
 
@@ -177,7 +177,7 @@ export class LiveValidator {
     this.options = ops as LiveValidatorOptions;
     this.logging(`Creating livevalidator with options:${JSON.stringify(this.options)}`);
     this.operationSearcher = new OperationSearcher(this.logging);
-    this.operationSpecMapper = new Map<string, Set<string>>();
+    this.operationSpecMapper = new Map<string, string[]>();
   }
 
   /**
@@ -229,11 +229,16 @@ export class LiveValidator {
 
         // Get Swagger - operation mapper.
         if (this.operationSpecMapper.get(swaggerPath) === undefined) {
-          this.operationSpecMapper.set(swaggerPath, new Set<string>());
+          this.operationSpecMapper.set(swaggerPath, []);
         }
         traverseSwagger(spec, {
           onOperation: (operation: Operation, _path: Path, _method: LowerHttpMethods) => {
-            this.operationSpecMapper.get(swaggerPath)!.add(operation.operationId!);
+            if (
+              operation.operationId !== undefined &&
+              !this.operationSpecMapper.get(swaggerPath)?.includes(operation.operationId)
+            ) {
+              this.operationSpecMapper.get(swaggerPath)!.push(operation.operationId);
+            }
           },
         });
       }
