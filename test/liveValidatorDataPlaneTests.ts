@@ -26,17 +26,16 @@ describe("LiveValidator for data-plane", () => {
     });
 
     it("should load operationSpecMapper during initialization", async () => {
-      const tableSwaggerFilePath = "co*/**/*.json";
-      const specPath =
+      let specPath =
         "test/liveValidation/swaggers/specification/cosmos-db/data-plane/Microsoft.Tables/preview/2019-02-02/table.json";
-      const options = {
-        swaggerPathsPattern: [tableSwaggerFilePath],
-        directory: "test/liveValidation/swaggers/specification",
-      };
-      const liveValidator = new LiveValidator(options);
-      await liveValidator.initialize();
-      expect(liveValidator.operationSpecMapper.size).toEqual(2);
-      const operationidSet = liveValidator.operationSpecMapper.get(specPath);
+      let trafficPath = "test/liveValidation/payloads/coveragetest/";
+      specPath = path.resolve(process.cwd(), specPath);
+      trafficPath = path.resolve(process.cwd(), trafficPath);
+      const validator = new TrafficValidator(specPath, trafficPath);
+      await validator.initialize();
+      expect(validator.operationSpecMapper.size).toEqual(1);
+      specPath = path.resolve(process.cwd(),specPath);
+      const operationidSet = validator.operationSpecMapper.get(specPath);
       expect(operationidSet?.length).toEqual(14);
       expect(operationidSet?.includes("Table_Query")).toBeTruthy();
     });

@@ -11,7 +11,7 @@ import { URL } from "url";
 import * as _ from "lodash";
 import * as models from "../models";
 import { requestResponseDefinition } from "../models/requestResponse";
-import { Operation, Path, LowerHttpMethods, SwaggerSpec } from "../swagger/swaggerTypes";
+import { LowerHttpMethods, SwaggerSpec } from "../swagger/swaggerTypes";
 import {
   SchemaValidateFunction,
   SchemaValidateIssue,
@@ -29,7 +29,6 @@ import {
   getProviderFromPathTemplate,
   getProviderFromSpecPath,
 } from "../util/utils";
-import { traverseSwagger } from "../transform/traverseSwagger";
 import { LiveValidatorLoader, LiveValidatorLoaderOption } from "./liveValidatorLoader";
 import { OperationSearcher } from "./operationSearcher";
 import {
@@ -125,7 +124,7 @@ export class LiveValidator {
 
   public operationSearcher: OperationSearcher;
 
-  public operationSpecMapper: Map<string, string[]>;
+  public swaggerList: string[];
 
   private logFunction?: (message: string, level: string, meta?: Meta) => void;
 
@@ -177,7 +176,6 @@ export class LiveValidator {
     this.options = ops as LiveValidatorOptions;
     this.logging(`Creating livevalidator with options:${JSON.stringify(this.options)}`);
     this.operationSearcher = new OperationSearcher(this.logging);
-    this.operationSpecMapper = new Map<string, string[]>();
   }
 
   /**
@@ -221,26 +219,13 @@ export class LiveValidator {
     );
 
     const allSpecs: SwaggerSpec[] = [];
+    this.swaggerList = [];
     while (swaggerPaths.length > 0) {
       const swaggerPath = swaggerPaths.shift()!;
+      this.swaggerList.push(swaggerPath);
       const spec = await this.getSwaggerInitializer(this.loader!, swaggerPath);
       if (spec !== undefined) {
         allSpecs.push(spec);
-
-        // Get Swagger - operation mapper.
-        if (this.operationSpecMapper.get(swaggerPath) === undefined) {
-          this.operationSpecMapper.set(swaggerPath, []);
-        }
-        traverseSwagger(spec, {
-          onOperation: (operation: Operation, _path: Path, _method: LowerHttpMethods) => {
-            if (
-              operation.operationId !== undefined &&
-              !this.operationSpecMapper.get(swaggerPath)?.includes(operation.operationId)
-            ) {
-              this.operationSpecMapper.get(swaggerPath)!.push(operation.operationId);
-            }
-          },
-        });
       }
     }
 

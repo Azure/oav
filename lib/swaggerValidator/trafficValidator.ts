@@ -1,11 +1,16 @@
 import * as fs from "fs";
 import * as path from "path";
+import { resolve as pathResolve } from "path";
 import { glob } from "glob";
 import { toLower } from "lodash";
 import { LiveValidationIssue, LiveValidator } from "../liveValidation/liveValidator";
 import { DefaultConfig } from "../util/constants";
-import { ErrorCodeConstants } from "../util/errorDefinitions";
+import { apiValidationErrors, ErrorCodeConstants } from "../util/errorDefinitions";
 import { OperationContext } from "../liveValidation/operationValidator";
+import { traverseSwagger } from "../transform/traverseSwagger";
+import { Operation, Path, LowerHttpMethods } from "../swagger/swaggerTypes";
+import { LiveValidatorLoader } from "../liveValidation/liveValidatorLoader";
+import { inversifyGetContainer, inversifyGetInstance } from "../inversifyUtils";
 
 export interface TrafficValidationIssue {
   payloadFilePath?: string;
@@ -26,7 +31,9 @@ export class TrafficValidator {
   private trafficFiles: string[] = [];
   private specPath: string;
   private trafficPath: string;
-  private trafficOperation: Map<string, string[]> = new Map<string, string[]>();
+  private loader?: LiveValidatorLoader;
+  public trafficOperation: Map<string, string[]> = new Map<string, string[]>();
+  public operationSpecMapper: Map<string, string[]> = new Map<string, string[]>();
   public coverageResult: Map<string, number> = new Map<string, number>();
 
   public constructor(specPath: string, trafficPath: string) {
@@ -70,6 +77,44 @@ export class TrafficValidator {
 
     this.liveValidator = new LiveValidator(liveValidationOptions);
     await this.liveValidator.initialize();
+
+    const container = inversifyGetContainer();
+    this.loader = inversifyGetInstance(LiveValidatorLoader, {
+      container,
+      fileRoot: liveValidationOptions.directory,
+      ...liveValidationOptions,
+      loadSuppression: Object.keys(apiValidationErrors),
+    });
+
+    // re-set the transform context after set the logging function
+    this.loader.setTransformContext();
+    const swaggerPaths = this.liveValidator.swaggerList;
+
+    while (swaggerPaths.length > 0) {
+      const swaggerPath = swaggerPaths.shift()!;
+      let spec;
+      try {
+        spec = await this.loader.load(pathResolve(swaggerPath));
+      } catch (e) {
+        console.log(e);
+      }
+      if (spec !== undefined) {
+        // Get Swagger - operation mapper.
+        if (this.operationSpecMapper.get(swaggerPath) === undefined) {
+          this.operationSpecMapper.set(swaggerPath, []);
+        }
+        traverseSwagger(spec, {
+          onOperation: (operation: Operation, _path: Path, _method: LowerHttpMethods) => {
+            if (
+              operation.operationId !== undefined &&
+              !this.operationSpecMapper.get(swaggerPath)?.includes(operation.operationId)
+            ) {
+              this.operationSpecMapper.get(swaggerPath)!.push(operation.operationId);
+            }
+          },
+        });
+      }
+    }
   }
 
   public async validate(): Promise<TrafficValidationIssue[]> {
@@ -124,7 +169,7 @@ export class TrafficValidator {
         ],
       });
     }
-    this.liveValidator.operationSpecMapper.forEach((value: string[], key: string) => {
+    this.operationSpecMapper.forEach((value: string[], key: string) => {
       if (this.trafficOperation.get(key) === undefined) {
         this.coverageResult.set(key, 0);
       } else {
@@ -140,7 +185,7 @@ export class TrafficValidator {
 
   private findSwaggerByOperationInfo(operationInfo: OperationContext) {
     let result = undefined;
-    this.liveValidator.operationSpecMapper.forEach((value: string[], key: string) => {
+    this.operationSpecMapper.forEach((value: string[], key: string) => {
       if (
         toLower(key).includes(toLower(operationInfo.apiVersion)) &&
         toLower(key).includes(toLower(operationInfo.validationRequest?.providerNamespace))
