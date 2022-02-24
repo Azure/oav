@@ -4,7 +4,7 @@
 // https://opensource.org/licenses/MIT
 
 import { LiveValidator } from "../lib/liveValidation/liveValidator";
-import { TrafficValidator} from "../lib/swaggerValidator/trafficValidator";
+import { TrafficValidator } from "../lib/swaggerValidator/trafficValidator";
 import * as path from "path";
 
 describe("LiveValidator for data-plane", () => {
@@ -54,6 +54,13 @@ describe("LiveValidator for data-plane", () => {
       expect(validator.coverageResult.get(keyPath)).toEqual(2.0/11.0); 
       keyPath = path.resolve(process.cwd(), "test/liveValidation/swaggers/specification/cosmos-db/data-plane/Microsoft.Tables/preview/2019-02-02/table.json");
       expect(validator.coverageResult.get(keyPath)).toEqual(1.0/14.0);
+      expect(validator.coverageData.length).toEqual(67);
+      for (let i of validator.coverageData) {
+        if (i.spec === keyPath) {
+          expect(i.coveredOperaions).toEqual(1);
+          expect(i.totalOperations).toEqual(14);
+        }
+      }
     });
   });
 });

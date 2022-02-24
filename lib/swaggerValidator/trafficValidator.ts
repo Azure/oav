@@ -25,6 +25,13 @@ export interface RuntimeException {
   message: string;
 }
 
+export interface CoverageInfo {
+  readonly spec: string;
+  readonly coveredOperaions: number;
+  readonly totalOperations: number;
+  readonly coverageRate: number;
+}
+
 export class TrafficValidator {
   private liveValidator: LiveValidator;
   private trafficValidationResult: TrafficValidationIssue[] = [];
@@ -32,9 +39,10 @@ export class TrafficValidator {
   private specPath: string;
   private trafficPath: string;
   private loader?: LiveValidatorLoader;
-  public trafficOperation: Map<string, string[]> = new Map<string, string[]>();
+  private trafficOperation: Map<string, string[]> = new Map<string, string[]>();
   public operationSpecMapper: Map<string, string[]> = new Map<string, string[]>();
   public coverageResult: Map<string, number> = new Map<string, number>();
+  public coverageData: CoverageInfo[] = [];
 
   public constructor(specPath: string, trafficPath: string) {
     this.specPath = specPath;
@@ -172,9 +180,21 @@ export class TrafficValidator {
     this.operationSpecMapper.forEach((value: string[], key: string) => {
       if (this.trafficOperation.get(key) === undefined) {
         this.coverageResult.set(key, 0);
+        this.coverageData.push({
+          spec: key,
+          coveredOperaions: 0,
+          totalOperations: value.length,
+          coverageRate: 0,
+        });
       } else {
         if (value !== undefined && value.length !== 0) {
           this.coverageResult.set(key, this.trafficOperation.get(key)!.length / value.length);
+          this.coverageData.push({
+            spec: key,
+            coveredOperaions: this.trafficOperation.get(key)!.length,
+            totalOperations: value.length,
+            coverageRate: this.trafficOperation.get(key)!.length / value.length,
+          });
         } else {
           this.coverageResult.set(key, 0);
         }
