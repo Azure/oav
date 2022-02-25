@@ -43,25 +43,22 @@ describe("LiveValidator for data-plane", () => {
 
     it("should get coverage after validation", async () => {
       let specPath =
-        "test/liveValidation/swaggers/specification/";
-      let trafficPath = "test/liveValidation/payloads/coveragetest/";
+        "test/liveValidation/swaggers/specification/cosmos-db/data-plane/Microsoft.Tables";
+      let trafficPath = "test/liveValidation/payloads/dataplane/";
       specPath = path.resolve(process.cwd(), specPath);
       trafficPath = path.resolve(process.cwd(), trafficPath);
-      let keyPath = toLower(path.resolve(process.cwd(), "test/liveValidation/swaggers/specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimusers.json"));
+      const keyPath = toLower(path.resolve(process.cwd(), "test/liveValidation/swaggers/specification/cosmos-db/data-plane/Microsoft.Tables/preview/2019-02-02/table.json"));
       const validator = new TrafficValidator(specPath, trafficPath);
       await validator.initialize();
       await validator.validate();
-      expect(validator.coverageResult.size).toEqual(67);
-      expect(validator.coverageResult.get(keyPath)).toEqual(2.0/11.0); 
-      // keyPath = toLower(path.resolve(process.cwd(), "test/liveValidation/swaggers/specification/cosmos-db/data-plane/Microsoft.Tables/preview/2019-02-02/table.json"));
-      // expect(validator.coverageResult.get(keyPath)).toEqual(1.0/14.0);
-      // expect(validator.coverageData.length).toEqual(67);
-      /*for (let i of validator.coverageData) {
+      expect(validator.coverageResult.size).toEqual(1);
+      expect(validator.coverageResult.get(keyPath)).toEqual(1.0/14.0); 
+      for (let i of validator.coverageData) {
         if (i.spec === keyPath) {
           expect(i.coveredOperaions).toEqual(1);
           expect(i.totalOperations).toEqual(14);
         }
-      }*/
+      }
     });
   });
 });

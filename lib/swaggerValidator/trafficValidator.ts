@@ -138,7 +138,12 @@ export class TrafficValidator {
         const liveRequest = payload.liveRequest;
         const correlationId = liveRequest.headers?.["x-ms-correlation-request-id"] || "";
         const opInfo = await this.liveValidator.getOperationInfo(liveRequest, correlationId);
-        const swaggerFile = this.findSwaggerByOperationInfo(opInfo.info);
+        let swaggerFile;
+        if (liveRequest.url.includes("provider")) {
+          swaggerFile = this.findSwaggerByOperationInfo(opInfo.info);
+        } else {
+          swaggerFile = this.findSwaggerByOperationId(opInfo.info);
+        }
         if (swaggerFile !== undefined) {
           if (this.trafficOperation.get(swaggerFile) === undefined) {
             this.trafficOperation.set(swaggerFile, []);
@@ -215,7 +220,7 @@ export class TrafficValidator {
     if (operationInfo.validationRequest === undefined) {
       return result;
     }
-    for (let key of this.operationSpecMapper.keys()) {
+    for (const key of this.operationSpecMapper.keys()) {
       const value = this.operationSpecMapper.get(key);
       if (
         key.includes(toLower(operationInfo.apiVersion)) &&
@@ -225,6 +230,21 @@ export class TrafficValidator {
           result = key;
           return result;
         }
+      }
+    }
+    return result;
+  }
+
+  private findSwaggerByOperationId(operationInfo: OperationContext) {
+    let result = undefined;
+    for (const key of this.operationSpecMapper.keys()) {
+      const value = this.operationSpecMapper.get(key);
+      if (
+        key.includes(toLower(operationInfo.apiVersion)) &&
+        value!.includes(operationInfo.operationId)
+      ) {
+        result = key;
+        return result;
       }
     }
     return result;
