@@ -25,7 +25,7 @@ export interface RuntimeException {
   message: string;
 }
 
-export interface CoverageInfo {
+export interface OperationCoverageInfo {
   readonly spec: string;
   readonly coveredOperaions: number;
   readonly totalOperations: number;
@@ -42,7 +42,7 @@ export class TrafficValidator {
   private trafficOperation: Map<string, string[]> = new Map<string, string[]>();
   public operationSpecMapper: Map<string, string[]> = new Map<string, string[]>();
   public coverageResult: Map<string, number> = new Map<string, number>();
-  public coverageData: CoverageInfo[] = [];
+  public coverageData: OperationCoverageInfo[] = [];
 
   public constructor(specPath: string, trafficPath: string) {
     this.specPath = specPath;
@@ -94,10 +94,7 @@ export class TrafficValidator {
       loadSuppression: Object.keys(apiValidationErrors),
     });
 
-    // re-set the transform context after set the logging function
-    this.loader.setTransformContext();
     const swaggerPaths = this.liveValidator.swaggerList;
-
     while (swaggerPaths.length > 0) {
       const swaggerPath = swaggerPaths.shift()!;
       let spec;

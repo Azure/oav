@@ -124,7 +124,7 @@ export class LiveValidator {
 
   public operationSearcher: OperationSearcher;
 
-  public swaggerList: string[];
+  public swaggerList: string[] = [];
 
   private logFunction?: (message: string, level: string, meta?: Meta) => void;
 
@@ -219,7 +219,6 @@ export class LiveValidator {
     );
 
     const allSpecs: SwaggerSpec[] = [];
-    this.swaggerList = [];
     while (swaggerPaths.length > 0) {
       const swaggerPath = swaggerPaths.shift()!;
       this.swaggerList.push(swaggerPath);
