@@ -96,7 +96,7 @@ export class TrafficValidator {
 
     const swaggerPaths = this.liveValidator.swaggerList;
     while (swaggerPaths.length > 0) {
-      const swaggerPath = swaggerPaths.shift()!;
+      let swaggerPath = swaggerPaths.shift()!;
       let spec;
       try {
         spec = await this.loader.load(pathResolve(swaggerPath));
@@ -104,6 +104,7 @@ export class TrafficValidator {
         console.log(e);
       }
       if (spec !== undefined) {
+        swaggerPath = toLower(swaggerPath);
         // Get Swagger - operation mapper.
         if (this.operationSpecMapper.get(swaggerPath) === undefined) {
           this.operationSpecMapper.set(swaggerPath, []);
@@ -204,8 +205,8 @@ export class TrafficValidator {
     let result = undefined;
     this.operationSpecMapper.forEach((value: string[], key: string) => {
       if (
-        toLower(key).includes(toLower(operationInfo.apiVersion)) &&
-        toLower(key).includes(toLower(operationInfo.validationRequest?.providerNamespace))
+        key.includes(toLower(operationInfo.apiVersion)) &&
+        key.includes(toLower(operationInfo.validationRequest?.providerNamespace))
       ) {
         if (value.includes(operationInfo.operationId)) {
           result = key;
