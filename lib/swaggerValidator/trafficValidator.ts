@@ -3,7 +3,11 @@ import * as path from "path";
 import { resolve as pathResolve } from "path";
 import { glob } from "glob";
 import { toLower } from "lodash";
-import { LiveValidationIssue, LiveValidator } from "../liveValidation/liveValidator";
+import {
+  LiveValidationIssue,
+  LiveValidator,
+  RequestResponsePair,
+} from "../liveValidation/liveValidator";
 import { DefaultConfig } from "../util/constants";
 import { apiValidationErrors, ErrorCodeConstants } from "../util/errorDefinitions";
 import { OperationContext } from "../liveValidation/operationValidator";
@@ -128,17 +132,22 @@ export class TrafficValidator {
     try {
       for (const trafficFile of this.trafficFiles) {
         payloadFilePath = trafficFile;
-        const payload = require(trafficFile);
+        const payload: RequestResponsePair = require(trafficFile);
         const validationResult = await this.liveValidator.validateLiveRequestResponse(payload);
         const operationInfo = validationResult.requestValidationResult?.operationInfo;
-        const swaggerFile = this.findSwaggerByOperationInfo(operationInfo);
+        const liveRequest = payload.liveRequest;
+        const correlationId = liveRequest.headers?.["x-ms-correlation-request-id"] || "";
+        const opInfo = await this.liveValidator.getOperationInfo(liveRequest, correlationId);
+        const swaggerFile = this.findSwaggerByOperationInfo(opInfo.info);
         if (swaggerFile !== undefined) {
           if (this.trafficOperation.get(swaggerFile) === undefined) {
             this.trafficOperation.set(swaggerFile, []);
           }
-          if (!this.trafficOperation.get(swaggerFile)?.includes(operationInfo.operationId)) {
-            this.trafficOperation.get(swaggerFile)?.push(operationInfo.operationId);
+          if (!this.trafficOperation.get(swaggerFile)?.includes(opInfo.info.operationId)) {
+            this.trafficOperation.get(swaggerFile)?.push(opInfo.info.operationId);
           }
+        } else {
+          console.log(`Error: Undefined operation ${JSON.stringify(opInfo.info)}`);
         }
 
         const errorResult: LiveValidationIssue[] = [];
@@ -203,16 +212,21 @@ export class TrafficValidator {
 
   private findSwaggerByOperationInfo(operationInfo: OperationContext) {
     let result = undefined;
-    this.operationSpecMapper.forEach((value: string[], key: string) => {
+    if (operationInfo.validationRequest === undefined) {
+      return result;
+    }
+    for (let key of this.operationSpecMapper.keys()) {
+      const value = this.operationSpecMapper.get(key);
       if (
         key.includes(toLower(operationInfo.apiVersion)) &&
         key.includes(toLower(operationInfo.validationRequest?.providerNamespace))
       ) {
-        if (value.includes(operationInfo.operationId)) {
+        if (value!.includes(operationInfo.operationId)) {
           result = key;
+          return result;
         }
       }
-    });
+    }
     return result;
   }
 }

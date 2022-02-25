@@ -636,7 +636,7 @@ export class LiveValidator {
     }
   }
 
-  private getOperationInfo(
+  public getOperationInfo(
     request: { url: string; method: string },
     correlationId: string,
     operationInfo?: OperationContext
