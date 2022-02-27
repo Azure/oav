@@ -687,7 +687,12 @@ export class LiveValidator {
           ignore: this.options.excludedSwaggerPathsPattern,
           nodir: true,
         });
-        matchedPaths = matchedPaths.concat(res);
+        for (const path of res) {
+          if (!matchedPaths.includes(path)) {
+            matchedPaths.push(path);
+          }
+        }
+        //matchedPaths = matchedPaths.concat(res);
       }
     }
     this.logging(
