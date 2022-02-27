@@ -690,7 +690,6 @@ export class LiveValidator {
         matchedPaths = matchedPaths.concat(res);
       }
     }
-    matchedPaths = this.getUniqueArray(matchedPaths);
     this.logging(
       `Using swaggers found from directory: "${
         this.options.directory
@@ -803,13 +802,13 @@ export class LiveValidator {
     }
   }
 
-  private onlyUnique(value: string, index: number, self: string[]) {
+  /*private onlyUnique(value: string, index: number, self: string[]) {
     return self.indexOf(value) === index;
   }
 
   private getUniqueArray(self: string[]) {
     return self.filter(this.onlyUnique);
-  }
+  }*/
 
   private logging = (
     message: string,
