@@ -687,10 +687,13 @@ export class LiveValidator {
           ignore: this.options.excludedSwaggerPathsPattern,
           nodir: true,
         });
-        matchedPaths = matchedPaths.concat(res);
+        for (const path of res) {
+          if (!matchedPaths.includes(path)) {
+            matchedPaths.push(path);
+          }
+        }
       }
     }
-    matchedPaths = [...new Set(matchedPaths)];
     this.logging(
       `Using swaggers found from directory: "${
         this.options.directory
