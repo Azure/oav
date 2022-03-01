@@ -32,6 +32,7 @@ export interface RuntimeException {
 export interface OperationCoverageInfo {
   readonly spec: string;
   readonly coveredOperaions: number;
+  readonly validationFailOperations: number;
   readonly totalOperations: number;
   readonly coverageRate: number;
 }
@@ -44,9 +45,11 @@ export class TrafficValidator {
   private trafficPath: string;
   private loader?: LiveValidatorLoader;
   private trafficOperation: Map<string, string[]> = new Map<string, string[]>();
+  private validationFailOperations: Map<string, string[]> = new Map<string, string[]>();
+  private coverageData: Map<string, number> = new Map<string, number>();
   public operationSpecMapper: Map<string, string[]> = new Map<string, string[]>();
-  public coverageResult: Map<string, number> = new Map<string, number>();
-  public coverageData: OperationCoverageInfo[] = [];
+  public coverageResult: OperationCoverageInfo[] = [];
+  public undefinedResult: number = 0;
 
   public constructor(specPath: string, trafficPath: string) {
     this.specPath = specPath;
@@ -105,7 +108,7 @@ export class TrafficValidator {
       try {
         spec = await this.loader.load(pathResolve(swaggerPath));
       } catch (e) {
-        console.log(e);
+        console.log(`Exception when loading spec ${e}`);
       }
       if (spec !== undefined) {
         swaggerPath = toLower(swaggerPath);
@@ -140,8 +143,10 @@ export class TrafficValidator {
         const opInfo = await this.liveValidator.getOperationInfo(liveRequest, correlationId);
         let swaggerFile;
         if (liveRequest.url.includes("provider")) {
+          // This is for validation of resource-manager
           swaggerFile = this.findSwaggerByOperationInfo(opInfo.info);
         } else {
+          // This is for validation of data-plane
           swaggerFile = this.findSwaggerByOperationId(opInfo.info);
         }
         if (swaggerFile !== undefined) {
@@ -151,8 +156,25 @@ export class TrafficValidator {
           if (!this.trafficOperation.get(swaggerFile)?.includes(opInfo.info.operationId)) {
             this.trafficOperation.get(swaggerFile)?.push(opInfo.info.operationId);
           }
+          if (
+            validationResult.requestValidationResult.isSuccessful === false ||
+            validationResult.requestValidationResult.isSuccessful === undefined ||
+            validationResult.responseValidationResult.isSuccessful === false ||
+            validationResult.responseValidationResult.isSuccessful === undefined ||
+            validationResult.runtimeException !== undefined
+          ) {
+            if (this.validationFailOperations.get(swaggerFile) === undefined) {
+              this.validationFailOperations.set(swaggerFile, []);
+            }
+            if (
+              !this.validationFailOperations.get(swaggerFile)?.includes(opInfo.info.operationId)
+            ) {
+              this.validationFailOperations.get(swaggerFile)?.push(opInfo.info.operationId);
+            }
+          }
         } else {
           console.log(`Error: Undefined operation ${JSON.stringify(opInfo.info)}`);
+          this.undefinedResult = this.undefinedResult + 1;
         }
 
         const errorResult: LiveValidationIssue[] = [];
@@ -189,28 +211,38 @@ export class TrafficValidator {
         ],
       });
     }
+    let coveredOperaions: number;
+    let coverageRate: number;
+    let validationFailOperations: number;
     this.operationSpecMapper.forEach((value: string[], key: string) => {
       if (this.trafficOperation.get(key) === undefined) {
-        this.coverageResult.set(key, 0);
-        this.coverageData.push({
-          spec: key,
-          coveredOperaions: 0,
-          totalOperations: value.length,
-          coverageRate: 0,
-        });
+        coveredOperaions = 0;
+        coverageRate = 0;
+        this.coverageData.set(key, 0);
       } else {
         if (value !== undefined && value.length !== 0) {
-          this.coverageResult.set(key, this.trafficOperation.get(key)!.length / value.length);
-          this.coverageData.push({
-            spec: key,
-            coveredOperaions: this.trafficOperation.get(key)!.length,
-            totalOperations: value.length,
-            coverageRate: this.trafficOperation.get(key)!.length / value.length,
-          });
+          coveredOperaions = this.trafficOperation.get(key)!.length;
+          coverageRate = coveredOperaions / value.length;
+          this.coverageData.set(key, coveredOperaions / value.length);
         } else {
-          this.coverageResult.set(key, 0);
+          coveredOperaions = 0;
+          coverageRate = 0;
+          this.coverageData.set(key, 0);
         }
       }
+
+      if (this.validationFailOperations.get(key) === undefined) {
+        validationFailOperations = 0;
+      } else {
+        validationFailOperations = this.validationFailOperations.get(key)!.length;
+      }
+      this.coverageResult.push({
+        spec: key,
+        coveredOperaions: coveredOperaions,
+        coverageRate: coverageRate,
+        totalOperations: value.length,
+        validationFailOperations: validationFailOperations,
+      });
     });
     return this.trafficValidationResult;
   }

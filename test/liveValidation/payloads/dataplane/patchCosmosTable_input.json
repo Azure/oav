@@ -1,6 +1,6 @@
 {
 	"liveRequest": {
-		"url": "https://fakeendpoint.table.core.windows.net/Tables?api-version=2019-02-02",
+		"url": "https://fakeendpoint.table.core.windows.net/Tables('uttableb8e52e37')?api-version=2019-02-02",
 		"headers": {
 			"Accept": "application/json",
 			"Accept-Encoding": "gzip, deflate",
@@ -13,7 +13,7 @@
 			"x-ms-version": "2019-02-02"
 		},
 		"body": null,
-		"method": "GET"
+		"method": "PATCH"
 	},
 	"liveResponse": {
 		"body": null,
