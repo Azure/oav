@@ -48,8 +48,8 @@ export class TrafficValidator {
   private validationFailOperations: Map<string, string[]> = new Map<string, string[]>();
   private coverageData: Map<string, number> = new Map<string, number>();
   public operationSpecMapper: Map<string, string[]> = new Map<string, string[]>();
-  public coverageResult: OperationCoverageInfo[] = [];
-  public undefinedResult: number = 0;
+  public operationCoverageResult: OperationCoverageInfo[] = [];
+  public operationUndefinedResult: number = 0;
 
   public constructor(specPath: string, trafficPath: string) {
     this.specPath = specPath;
@@ -108,7 +108,7 @@ export class TrafficValidator {
       try {
         spec = await this.loader.load(pathResolve(swaggerPath));
       } catch (e) {
-        console.log(`Exception when loading spec ${e}`);
+        console.log(`ErrorMessage: ${e?.message}; ErrorStack: ${e?.stack}.`);
       }
       if (spec !== undefined) {
         swaggerPath = toLower(swaggerPath);
@@ -174,7 +174,7 @@ export class TrafficValidator {
           }
         } else {
           console.log(`Error: Undefined operation ${JSON.stringify(opInfo.info)}`);
-          this.undefinedResult = this.undefinedResult + 1;
+          this.operationUndefinedResult = this.operationUndefinedResult + 1;
         }
 
         const errorResult: LiveValidationIssue[] = [];
@@ -219,16 +219,14 @@ export class TrafficValidator {
         coveredOperaions = 0;
         coverageRate = 0;
         this.coverageData.set(key, 0);
+      } else if (value !== undefined && value.length !== 0) {
+        coveredOperaions = this.trafficOperation.get(key)!.length;
+        coverageRate = coveredOperaions / value.length;
+        this.coverageData.set(key, coveredOperaions / value.length);
       } else {
-        if (value !== undefined && value.length !== 0) {
-          coveredOperaions = this.trafficOperation.get(key)!.length;
-          coverageRate = coveredOperaions / value.length;
-          this.coverageData.set(key, coveredOperaions / value.length);
-        } else {
-          coveredOperaions = 0;
-          coverageRate = 0;
-          this.coverageData.set(key, 0);
-        }
+        coveredOperaions = 0;
+        coverageRate = 0;
+        this.coverageData.set(key, 0);
       }
 
       if (this.validationFailOperations.get(key) === undefined) {
@@ -236,7 +234,7 @@ export class TrafficValidator {
       } else {
         validationFailOperations = this.validationFailOperations.get(key)!.length;
       }
-      this.coverageResult.push({
+      this.operationCoverageResult.push({
         spec: key,
         coveredOperaions: coveredOperaions,
         coverageRate: coverageRate,

@@ -52,8 +52,8 @@ describe("LiveValidator for data-plane", () => {
       await validator.initialize();
       await validator.validate();
 
-      expect(validator.coverageResult.length).toEqual(1);
-      for (let i of validator.coverageResult) {
+      expect(validator.operationCoverageResult.length).toEqual(1);
+      for (let i of validator.operationCoverageResult) {
         if (i.spec === keyPath) {
           expect(i.coveredOperaions).toEqual(2);
           expect(i.totalOperations).toEqual(14);
@@ -61,7 +61,7 @@ describe("LiveValidator for data-plane", () => {
           expect(i.coverageRate).toEqual(2.0/14.0);
         }
       }
-      expect(validator.undefinedResult).toEqual(1);
+      expect(validator.operationUndefinedResult).toEqual(1);
     });
   });
 });
