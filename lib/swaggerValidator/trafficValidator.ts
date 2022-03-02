@@ -108,7 +108,9 @@ export class TrafficValidator {
       try {
         spec = await this.loader.load(pathResolve(swaggerPath));
       } catch (e) {
-        console.log(`ErrorMessage: ${e?.message}; ErrorStack: ${e?.stack}.`);
+        console.log(
+          `Exception when loading spec, ErrorMessage: ${e?.message}; ErrorStack: ${e?.stack}.`
+        );
       }
       if (spec !== undefined) {
         swaggerPath = toLower(swaggerPath);
@@ -222,7 +224,7 @@ export class TrafficValidator {
       } else if (value !== undefined && value.length !== 0) {
         coveredOperaions = this.trafficOperation.get(key)!.length;
         coverageRate = coveredOperaions / value.length;
-        this.coverageData.set(key, coveredOperaions / value.length);
+        this.coverageData.set(key, coverageRate);
       } else {
         coveredOperaions = 0;
         coverageRate = 0;
