@@ -124,6 +124,8 @@ export class LiveValidator {
 
   public operationSearcher: OperationSearcher;
 
+  public swaggerList: string[] = [];
+
   private logFunction?: (message: string, level: string, meta?: Meta) => void;
 
   private loader?: LiveValidatorLoader;
@@ -219,6 +221,7 @@ export class LiveValidator {
     const allSpecs: SwaggerSpec[] = [];
     while (swaggerPaths.length > 0) {
       const swaggerPath = swaggerPaths.shift()!;
+      this.swaggerList.push(swaggerPath);
       const spec = await this.getSwaggerInitializer(this.loader!, swaggerPath);
       if (spec !== undefined) {
         allSpecs.push(spec);
@@ -633,7 +636,7 @@ export class LiveValidator {
     }
   }
 
-  private getOperationInfo(
+  public getOperationInfo(
     request: { url: string; method: string },
     correlationId: string,
     operationInfo?: OperationContext
