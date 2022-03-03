@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Swagger Accuracy Report:{{ package }} { {{ ApiVersion }} }</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <style type="text/css">
+            body {
+                margin: 40px auto;
+                max-width: 900px;
+                line-height: 1.6;
+                font-size: 14pt;
+                color: #444;
+                padding: 0 10px;
+                font-family: Calibri;
+            }
+        
+            h1, h2, h3 {
+                line-height: 1.2;
+                font-family: Arial;
+            }
+        
+            h1 {
+                border-bottom: 1px solid #43425A;
+                width: 100%;
+                background-color: #F6FFFF
+            }
+        
+            h2 {
+                border-bottom: 1px solid lightgrey;
+                background-color: #F6FFFF;
+            }
+        
+            h3 {
+                color: #707070;
+            }
+
+            h3.datedrop {
+                margin-block-start: .1em;
+                color: lightgrey;
+                font-size: 15px;
+            }
+        
+            table { 
+                width: 750px; 
+                border-collapse: collapse;
+                /*margin:50px auto;*/
+                }
+
+            /* Zebra striping */
+            tr:nth-of-type(odd) { 
+                background: #eee; 
+                }
+
+            th {
+                background: #3498db;
+                color: white;
+                font-weight: bold;
+                text-align: left;
+            }
+
+            td {
+                text-align: left;
+            }
+
+            td,
+            th {
+                padding: 4px;
+                border: 1px solid #ccc;
+                font-size: 18px;
+            }
+
+            .blank {
+                margin: 20px auto;
+                display: inline-block;
+            }
+
+            .inner_table tr:nth-of-type(even) {
+                background: #eee;
+            }
+
+            .inner_td {
+                text-align: left;
+                border: none;
+                border-bottom: 1px solid #ccc;
+            }
+
+            #summary table {
+                width: 100%;
+            }
+
+            #generalTable {
+                max-height: 1000px;
+                overflow: auto;
+            }
+
+            #generalTable table {
+                width: 100%;
+            }
+
+            /* 
+            Max width before this PARTICULAR table gets nasty
+            This query will take effect for any screen smaller than 760px
+            and also iPads specifically.
+            */
+            @media 
+            only screen and (max-width: 760px),
+            (min-device-width: 768px) and (max-device-width: 1024px)  {
+
+                table { 
+                    width: 100%; 
+                }
+
+                /* Force table to not be like tables anymore */
+                table, thead, tbody, th, td, tr { 
+                    display: block; 
+                }
+                
+                /* Hide table headers (but not display: none;, for accessibility) */
+                thead tr { 
+                    position: absolute;
+                    top: -9999px;
+                    left: -9999px;
+                }
+                
+                tr { border: 1px solid #ccc; }
+                
+                td { 
+                    /* Behave  like a "row" */
+                    border: none;
+                    border-bottom: 1px solid #eee; 
+                    position: relative;
+                    padding-left: 50%; 
+                }
+
+                td:before { 
+                    /* Now like a table header */
+                    position: absolute;
+                    /* Top/left values mimic padding */
+                    top: 6px;
+                    left: 6px;
+                    width: 45%; 
+                    padding-right: 10px; 
+                    white-space: nowrap;
+                    /* Label the data */
+                    content: attr(data-column);
+
+                    color: #000;
+                    font-weight: bold;
+                }
+
+            }
+
+            p {
+                padding: .5em;
+            }
+        
+            span {
+                background-color: #E1EAE8;
+            }
+
+            #general-errors {
+                width: 100%;
+                padding: 0;
+                margin: 0;
+                background-color:#FF8680;                
+            }
+
+            #general-errors-content {
+                width: 100%;
+                padding-top: 1em;
+                margin: 0;
+            }
+
+            #general-errors-item {
+                background-color:lightgrey"
+            }
+            
+            #runtime-errors {
+                width: 100%;
+                padding: 0;
+                margin: 0;
+            }
+
+            #runtime-errors-content {
+                width: 100%;
+                padding: 0;
+                margin: 0;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="summary">
+            <h1 style="margin-block-end: .1em">
+                Recording Test Payload Validation Report -- {{ package }}
+            </h1>
+            <!-- TODO: localize the UTC date via JS -->
+            <h3 class="datedrop">
+                Generated {{ formatGeneratedDate }}.
+            </h3>
+            <table>
+                <thead>
+                    <tr>
+                      <th>SDK Language</th>
+                      <th>Package Name</th>
+                      <th>Total Failures</th>
+                    </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>{{ language }}</td>
+                    <td>{{ package }}</td>
+                    <td>{{ getTotalErrors }}</td>
+                  </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="blank"></div>
+        <div id ="coverage-data"> 
+            <h2>
+                Test Coverage Details
+            </h2>
+            <div id="generalTable">
+                  <table>
+                    <thead>
+                        <tr>
+                        <th>SwaggerFile</th>
+                        <th>CoveredOperations</th>
+                        <th>TotalOperations</th>
+                        <th>CoverageRate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                      {{#coverageResults}}
+                        <tr>
+                          <td>
+                            <div style="width: 220px;">{{spec}}</div>
+                          </td>
+                          <td>
+                            <div style="width: 40px;">{{coveredOperaions}}</div>
+                          </td>
+                          <td>
+                            <div style="width: 40px;">{{totalOperations}}</div>
+                          </td>
+                          <td>
+                            <div style="width: 50px;">{{coverageRate}}</div>
+                          </td>
+                        </tr>
+                      {{/coverageResults}}
+                    </tbody>
+                  </table>
+            </div>
+        </div>
+        <div class="blank"></div>
+        <div id="general">
+            <h2>
+                {{ getTotalGeneralErrors }} General Errors
+            </h2>
+            <div id="generalTable">
+                  <table>
+                    <thead>
+                        <tr>
+                        <th>PayloadFilePath</th>
+                        <th>ApiVersion</th>
+                        <th>OperationId</th>
+                        <th>Errors</th>
+                        </tr>
+                    </thead>
+                    {{#getGeneralErrors}}
+                    <tbody>
+                        <tr>
+                          <td>
+                           <div style="width: 200px; word-break: break-word;">{{payloadFilePath}}</div>
+                          </td>
+                          <td>
+                            <div style="width: 100px;">{{operationInfo.apiVersion}}</div>
+                          </td>
+                          <td>
+                            <div style="width: 200px;">{{operationInfo.operationId}}</div>
+                          </td>
+                          <td>
+                            <table class="inner_table">
+                              {{#errors}}
+                              <tr><td class="inner_td">errorCode:{{code}},message:{{message}},jsonPathsInPayload:{{jsonPathsInPayload}},schemaPath:{{schemaPath}},params:{{params}},source:{{source}}</td></tr>
+                              {{/errors}}
+                            </table>
+                          </td>
+                        </tr>
+                    </tbody>
+                    {{/getGeneralErrors}}
+                  </table>
+            </div>
+        </div>
+        <div class="blank"></div>
+        <div id ="runtime-errors"> 
+            <h2>
+                {{ getTotalRunTimeErrors }} RunTime Errors
+            </h2>
+            <div id="generalTable">
+                  <table>
+                    <thead>
+                        <tr>
+                        <th>ErrorCode</th>
+                        <th>ErrorMessage</th>
+                        </tr>
+                    </thead>
+                    {{#getRunTimeErrors}}
+                    <tbody>
+                      {{#runtimeExceptions}}
+                        <tr>
+                          <td>
+                            <div style="width: 170px;">{{code}}</div>
+                          </td>
+                          <td>
+                            <div style="width: 200px; word-break: break-word;">{{message}}</div>
+                          </td>
+                        </tr>
+                      {{/runtimeExceptions}}
+                    </tbody>
+                    {{/getRunTimeErrors}}
+                  </table>
+            </div>
+        </div>
+
+        <div id="mypanel"></div>
+        <script>
+            $(document).ready( () => {
+                console.log("Hello AZSDK. Document.Ready available here.")
+            });
+        </script>
+    </body>
+</html>

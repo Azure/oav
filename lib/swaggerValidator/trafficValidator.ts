@@ -5,7 +5,13 @@ import { LiveValidationIssue, LiveValidator } from "../liveValidation/liveValida
 import { DefaultConfig } from "../util/constants";
 import { ErrorCodeConstants } from "../util/errorDefinitions";
 import { OperationContext } from "../liveValidation/operationValidator";
+import { Options } from "../validate"
 
+export interface TrafficValidationOptions extends Options {
+  sdkPackage?: string,
+  sdkLanguage?: string,
+  reportPath?: string,
+}
 export interface TrafficValidationIssue {
   payloadFilePath?: string;
   specFilePath?: string;

@@ -30,7 +30,8 @@ import { log } from "./util/logging";
 import { getInputFiles } from "./generator/util";
 import { SemanticValidator } from "./swaggerValidator/semanticValidator";
 import { ErrorCodeConstants} from "./util/errorDefinitions";
-import { TrafficValidationIssue, TrafficValidator} from "./swaggerValidator/trafficValidator";
+import { TrafficValidationIssue, TrafficValidationOptions, TrafficValidator} from "./swaggerValidator/trafficValidator";
+import { ReportGenerator } from "./report/generateReport";
 
 export interface Options extends specResolver.Options, umlGeneratorLib.Options {
   consoleLogLevel?: unknown;
@@ -268,7 +269,7 @@ export async function validateExamplesInCompositeSpec(
 export async function validateTrafficAgainstSpec(
   specPath: string,
   trafficPath: string,
-  options: Options
+  options: TrafficValidationOptions
 ): Promise<Array<TrafficValidationIssue>>{
   specPath = path.resolve(process.cwd(), specPath);
   trafficPath = path.resolve(process.cwd(), trafficPath);
@@ -284,11 +285,12 @@ export async function validateTrafficAgainstSpec(
     throw error;
   }
   return validate(options, async (o) => {
+    let validator: TrafficValidator;
     o.consoleLogLevel = log.consoleLogLevel;
     o.logFilepath = log.filepath;
     const trafficValidationResult: TrafficValidationIssue[] = [];
     try {
-      const validator = new TrafficValidator(specPath, trafficPath);
+      validator = new TrafficValidator(specPath, trafficPath);
       await validator.initialize();
       const result = await validator.validate();
       trafficValidationResult.push(...result);
@@ -305,7 +307,11 @@ export async function validateTrafficAgainstSpec(
         ],
       });
     }
-    if (trafficValidationResult.length > 0) {
+    if (options.reportPath) {
+      const generator = new ReportGenerator(trafficValidationResult, validator!.coverageData, options.reportPath, options.sdkPackage, options.sdkLanguage);
+      generator.generateHtmlReport();
+    }
+    else if (trafficValidationResult.length > 0) {
       if (o.pretty) {
         prettyPrintInfo(trafficValidationResult, "error");
       } else {
