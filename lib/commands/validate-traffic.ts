@@ -23,19 +23,19 @@ export const builder: yargs.CommandBuilder = {
     alias: "pkg",
     describe: "The target SDK package name",
     string: true,
-    default: "azure-data-tables"
+    default: "azure-data-tables",
   },
   language: {
     alias: "lang",
     describe: "The target language of SDK",
     string: true,
-    default: "Dotnet"
+    default: "Dotnet",
   },
   report: {
     alias: "r",
     describe: "path and file name for the report",
     string: true,
-    default: "./ValidationReport.html"
+    default: "./SwaggerAccuracyReport.html",
   },
 };
 
@@ -50,7 +50,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       pretty: argv.p,
       sdkPackage: argv.package,
       sdkLanguage: argv.language,
-      reportPath: argv.report
+      reportPath: argv.report,
     };
     const errors = await validate.validateTrafficAgainstSpec(specPath, trafficPath, vOptions);
     return errors.length > 0 ? 1 : 0;

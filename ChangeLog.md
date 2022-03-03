@@ -1,5 +1,10 @@
 # Change Log - oav
 
+## 02/23/2022 2.11.8
+
+- Add coverage for trafficValidator
+- FIx GC introduced by 2.11.7
+
 ## 02/15/2022 2.11.7
 
 - LiveValidator - Fix bug about date-time validation.
