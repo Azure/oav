@@ -13,7 +13,7 @@ import {
   Event,
   QueryParamDefinition,
   VariableDefinition,
-  ItemDefinition,
+  RequestAuth,
 } from "postman-collection";
 
 import { inject, injectable } from "inversify";
@@ -124,29 +124,124 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       baseUrl: "https://management.azure.com",
     });
     this.stepNameSet = new Map<string, number>();
-    this.collection = new Collection();
-    this.collection.name = this.opts.testScenarioFileName;
-    this.collection.id = this.opts.runId!;
+    this.collection = new Collection({
+      info: {
+        id: this.opts.runId,
+        name: this.opts.testScenarioFileName,
+      },
+      variable: [
+        {
+          key: "subscriptionId",
+        },
+        {
+          key: "resourceGroupName",
+        },
+        {
+          key: "location",
+        },
+        {
+          key: "_enableAuth",
+          value: "true",
+        },
+        {
+          key: "_clientId",
+        },
+        {
+          key: "_clientSecret",
+          type: "secret",
+        },
+        {
+          key: "_tenantId",
+        },
+        {
+          key: "_armEndpoint",
+          value: "https://management.azure.com",
+        },
+        {
+          key: "_bearerToken",
+          type: "secret",
+        },
+        {
+          key: "_bearerTokenExpiresOn",
+        },
+      ],
+    });
     this.collection.describe(
       JSON.stringify({
         testScenarioFilePath: this.opts.testScenarioFilePath,
         testScenarioName: this.opts.testScenarioName,
       })
     );
+    this.collection.auth = new RequestAuth({
+      type: "bearer",
+      bearer: [
+        {
+          key: "token",
+          value: "{{_bearerToken}}",
+          type: "string",
+        },
+      ],
+    });
+    this.collection.events.add(
+      new Event({
+        listen: "prerequest",
+        script: {
+          type: "text/javascript",
+          exec: [
+            'pm.test("Check for collectionVariables", function () {',
+            '    if (pm.variables.get("_enableAuth") !== "true") {',
+            '        console.log("Auth disabled");',
+            "        return;",
+            "    }",
+            "    let vars = ['_clientId', '_clientSecret', '_tenantId', 'subscriptionId'];",
+            "    vars.forEach(function (item, index, array) {",
+            '        pm.expect(pm.variables.get(item), item + " variable not set").to.not.be.undefined;',
+            '        pm.expect(pm.variables.get(item), item + " variable not set").to.not.be.empty; ',
+            "    });",
+            "",
+            '    if (!pm.collectionVariables.get("_bearerToken") || Date.now() > new Date(pm.collectionVariables.get("_bearerTokenExpiresOn") * 1000)) {',
+            "        pm.sendRequest({",
+            "            url: 'https://login.microsoftonline.com/' + pm.variables.get(\"_tenantId\") + '/oauth2/token',",
+            "            method: 'POST',",
+            "            header: 'Content-Type: application/x-www-form-urlencoded',",
+            "            body: {",
+            "                mode: 'urlencoded',",
+            "                urlencoded: [",
+            '                    { key: "grant_type", value: "client_credentials", disabled: false },',
+            '                    { key: "client_id", value: pm.variables.get("_clientId"), disabled: false },',
+            '                    { key: "client_secret", value: pm.variables.get("_clientSecret"), disabled: false },',
+            '                    { key: "resource", value: pm.variables.get("_armEndpoint") || "https://management.azure.com", disabled: false }',
+            "                ]",
+            "            }",
+            "        }, function (err, res) {",
+            "            if (err) {",
+            "                console.log(err);",
+            "            } else {",
+            "                let resJson = res.json();",
+            '                pm.collectionVariables.set("_bearerTokenExpiresOn", resJson.expires_on);',
+            '                pm.collectionVariables.set("_bearerToken", resJson.access_token);',
+            "            }",
+            "        });",
+            "    }",
+            "});",
+          ],
+        },
+      })
+    );
+
     this.collectionEnv = new VariableScope({});
-    this.collectionEnv.set("bearerToken", "<bearerToken>", "string");
     this.postmanTestScript = new PostmanTestScript();
   }
+
   public async createResourceGroup(
     subscriptionId: string,
     resourceGroupName: string,
     location: string
   ): Promise<void> {
-    this.auth(this.opts.env);
     const item = new Item({
       name: "createResourceGroup",
       request: {
-        url: `${this.opts.baseUrl}/subscriptions/${subscriptionId}/resourcegroups/{{resourceGroupName}}?api-version=2020-06-01`,
+        url: `${this.opts.baseUrl}/subscriptions/{{subscriptionId}}/resourcegroups/{{resourceGroupName}}?api-version=2020-06-01`,
         method: "put",
         body: {
           mode: "raw",
@@ -155,18 +250,15 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       },
     });
     item.description = typeToDescription({ type: "prepare" });
-    const authorizationHeader = new Header({
-      key: "Authorization",
-      value: `Bearer {{bearerToken}}`,
-    });
     item.request.addHeader(new Header({ key: "Content-Type", value: "application/json" }));
-    item.request.addHeader(authorizationHeader);
     this.addTestScript(item);
     this.collection.items.add(item);
+    this.collectionEnv.set("subscriptionId", subscriptionId, "string");
     this.collectionEnv.set("resourceGroupName", resourceGroupName, "string");
   }
+
   public async deleteResourceGroup(
-    subscriptionId: string,
+    _subscriptionId: string,
     _resourceGroupName: string
   ): Promise<void> {
     if (this.opts.from || this.opts.to) {
@@ -175,16 +267,11 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     const item = new Item({
       name: "deleteResourceGroup",
       request: {
-        url: `${this.opts.baseUrl}/subscriptions/${subscriptionId}/resourcegroups/{{resourceGroupName}}?api-version=2020-06-01`,
+        url: `${this.opts.baseUrl}/subscriptions/{{subscriptionId}}/resourcegroups/{{resourceGroupName}}?api-version=2020-06-01`,
         method: "delete",
       },
     });
-    const authorizationHeader = new Header({
-      key: "Authorization",
-      value: `Bearer {{bearerToken}}`,
-    });
     item.request.addHeader(new Header({ key: "Content-Type", value: "application/json" }));
-    item.request.addHeader(authorizationHeader);
     item.events.add(
       new Event({
         listen: "test",
@@ -241,7 +328,6 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     step: StepRestCall,
     stepEnv: StepEnv
   ): Promise<void> {
-    this.auth(stepEnv.env);
     const pathEnv = new ReflectiveVariableEnv(":", "");
     const item = new Item();
     if (!this.stepNameSet.has(step.step!)) {
@@ -323,13 +409,8 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       }
     });
 
-    const authorizationHeader = new Header({
-      key: "Authorization",
-      value: `Bearer {{bearerToken}}`,
-    });
     const contentType = new Header({ key: "Content-Type", value: "application/json" });
     item.request.addHeader(contentType);
-    item.request.addHeader(authorizationHeader);
 
     const getOverwriteVariables = () => {
       if (step.outputVariables !== undefined && Object.keys(step.outputVariables).length > 0) {
@@ -447,10 +528,9 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     step: StepArmTemplate,
     stepEnv: StepEnv
   ): Promise<void> {
-    this.auth(stepEnv.env);
     const item = new Item();
     item.name = step.step;
-    const path = `/subscriptions/:subscriptionId/resourcegroups/:resourceGroupName/providers/Microsoft.Resources/deployments/${step.step}?api-version=2020-06-01`;
+    const path = `/subscriptions/{{subscriptionId}}/resourcegroups/{{resourceGroupName}}/providers/Microsoft.Resources/deployments/${step.step}?api-version=2020-06-01`;
 
     const subscriptionIdValue = covertToPostmanVariable(
       stepEnv.env.resolveString(stepEnv.env.getString("subscriptionId") || "")
@@ -546,19 +626,8 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
   }
 
   private addAuthorizationHeader(item: Item) {
-    const authorizationHeader = new Header({
-      key: "Authorization",
-      value: `Bearer {{bearerToken}}`,
-    });
     const contentType = new Header({ key: "Content-Type", value: "application/json" });
     item.request.addHeader(contentType);
-    item.request.addHeader(authorizationHeader);
-  }
-
-  private auth(env: VariableEnv) {
-    if (this.collection.items.count() === 0) {
-      this.collection.items.add(this.aadAuthAccessTokenItem(env));
-    }
   }
 
   public async writeCollectionToJson(outputFolder: string) {
@@ -772,7 +841,6 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       request: {
         url: `{{${lroPollingUrl(initialItem.name)}}}`,
         method: "get",
-        header: [{ key: "Authorization", value: "Bearer {{bearerToken}}" }],
       },
     });
     pollerItem.description = typeToDescription({ type: "poller", lro_item_name: initialItem.name });
@@ -840,50 +908,6 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       },
     });
     ret.events.add(event);
-    return ret;
-  }
-
-  public aadAuthAccessTokenItem(env: VariableEnv): Item {
-    const urlVariables: VariableDefinition[] = [{ key: "tenantId", value: "{{tenantId}}" }];
-    const ret = new Item({
-      name: "get Azure AAD Token",
-    } as ItemDefinition);
-    ret.request = new Request({
-      method: "post",
-      url: "",
-      body: {
-        mode: "urlencoded",
-        urlencoded: [
-          { key: "grant_type", value: "client_credentials" },
-          { key: "client_id", value: "{{client_id}}" },
-          { key: "client_secret", value: "{{client_secret}}" },
-          { key: "resource", value: "https://management.azure.com" },
-        ] as QueryParamDefinition[],
-      },
-    });
-    ret.request.url = new Url({
-      path: "/:tenantId/oauth2/token",
-      host: "https://login.microsoftonline.com",
-      variable: urlVariables,
-    } as UrlDefinition);
-    this.collectionEnv.set("tenantId", env.get("tenantId")?.value, "string");
-    this.collectionEnv.set("client_id", env.get("client_id")?.value, "string");
-    this.collectionEnv.set("client_secret", env.get("client_secret")?.value, "string");
-    this.collectionEnv.set("resourceGroupName", env.get("resourceGroupName")?.value, "string");
-    this.collectionEnv.set("subscriptionId", env.get("subscriptionId")?.value, "string");
-    ret.events.add(
-      new Event({
-        listen: "test",
-        script: {
-          type: "text/javascript",
-          exec: this.postmanTestScript.generateScript({
-            name: "AAD auth should be successful",
-            types: ["ResponseDataAssertion", "OverwriteVariables"],
-            variables: new Map<string, string>([["bearerToken", "/access_token"]]),
-          }),
-        },
-      })
-    );
     return ret;
   }
 }
