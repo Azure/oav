@@ -61,7 +61,6 @@ export class PostmanCollectionGenerator {
         );
       }
     }
-
     let index = 0;
     const runId = this.opt.runId || generateRunId();
     if (this.opt.markdownReportPath) {

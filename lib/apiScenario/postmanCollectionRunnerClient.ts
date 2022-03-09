@@ -104,7 +104,6 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
   public collectionEnv: VariableScope;
   private postmanTestScript: PostmanTestScript;
   private stepNameSet: Map<string, number>;
-  private validateNameSet: Set<string>;
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
   constructor(
     @inject(TYPES.opts) private opts: PostmanCollectionRunnerClientOption,
@@ -137,7 +136,6 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     this.collectionEnv = new VariableScope({});
     this.collectionEnv.set("bearerToken", "<bearerToken>", "string");
     this.postmanTestScript = new PostmanTestScript();
-    this.validateNameSet = new Set();
   }
   public async createResourceGroup(
     subscriptionId: string,
@@ -254,8 +252,6 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       item.name = `${step.step}_${cnt}`;
       this.stepNameSet.set(step.step, cnt);
     }
-    this.validateNameSet.add(item.name);
-
     item.request = new Request({
       name: step.step,
       method: step.operation._method as string,
