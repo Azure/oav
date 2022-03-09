@@ -1,6 +1,8 @@
 import { inject, injectable } from "inversify";
 import { TYPES, inversifyGetInstance } from "../inversifyUtils";
 import { FileLoader } from "../swagger/fileLoader";
+import { LiveValidationResult, LiveValidator } from "../liveValidation/liveValidator";
+import { LiveRequest, LiveResponse } from "../liveValidation/operationValidator";
 import { ValidationLevel } from "./reportGenerator";
 import { SwaggerAnalyzer, SwaggerAnalyzerOption } from "./swaggerAnalyzer";
 import { BlobUploaderOption } from "./blobUploader";
@@ -39,6 +41,8 @@ export interface PostmanCollectionGeneratorOption
 @injectable()
 export class PostmanCollectionGenerator {
   private env: VariableEnv;
+  private liveValidator: LiveValidator;
+  private errorResult: LiveValidationResult[];
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
   constructor(
     @inject(TYPES.opts) private opt: PostmanCollectionGeneratorOption,
@@ -48,6 +52,8 @@ export class PostmanCollectionGenerator {
   ) {
     this.env = new VariableEnv();
     this.env.setBatchEnv(this.opt.env);
+
+    this.errorResult = [];
   }
 
   public async GenerateCollection(): Promise<void> {
@@ -61,6 +67,12 @@ export class PostmanCollectionGenerator {
         );
       }
     }
+    this.liveValidator = new LiveValidator({
+      fileRoot: "/",
+      swaggerPaths: scenarioDef.swaggers.map((s) => this.fileLoader.resolvePath(s)),
+    });
+
+    await this.liveValidator.initialize();
     let index = 0;
     const runId = this.opt.runId || generateRunId();
     if (this.opt.markdownReportPath) {
@@ -87,6 +99,8 @@ export class PostmanCollectionGenerator {
         to: this.opt.to,
         skipCleanUp: this.opt.skipCleanUp,
         verbose: this.opt.verbose,
+        swaggerFilePaths: scenarioDef.swaggers.map((s) => this.fileLoader.resolvePath(s)),
+        validateFunction: this.validate.bind(this),
       };
 
       const client = inversifyGetInstance(PostmanCollectionRunnerClient, opts);
@@ -121,6 +135,35 @@ export class PostmanCollectionGenerator {
     if (operationIdCoverageResult.uncoveredOperationIds.length > 0) {
       console.log("Uncovered operationIds: ");
       console.log(operationIdCoverageResult.uncoveredOperationIds);
+    }
+  }
+
+  private async validate(_summary: any) {
+    const request = _summary.request;
+    const response = _summary.response;
+    const liveRequest: LiveRequest = {
+      url: request.url.toString(),
+      method: request.method.toLowerCase(),
+      headers: request.headers.toObject(),
+      query: request.url.query.toObject(),
+      body: JSON.parse(request.body?.raw || "{}"),
+    };
+    const liveResponse: LiveResponse = {
+      statusCode: response.code.toString(),
+      headers: response.headers.toObject(),
+      body: JSON.parse(response.body?.raw || "{}"),
+    };
+
+    const result = await this.liveValidator.validateLiveRequestResponse({
+      liveRequest,
+      liveResponse,
+    });
+    if (!result.requestValidationResult.isSuccessful) {
+      this.errorResult.push(result.requestValidationResult);
+    }
+
+    if (!result.responseValidationResult.isSuccessful) {
+      this.errorResult.push(result.responseValidationResult);
     }
   }
 

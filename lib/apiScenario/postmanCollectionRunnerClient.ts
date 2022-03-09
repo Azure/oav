@@ -21,7 +21,7 @@ import { JsonLoader, JsonLoaderOption } from "../swagger/jsonLoader";
 import { setDefaultOpts } from "../swagger/loader";
 import { printWarning } from "../util/utils";
 import { FileLoader } from "../swagger/fileLoader";
-import { TYPES } from "../inversifyUtils";
+import { inversifyGetInstance, TYPES } from "../inversifyUtils";
 import { ValidationLevel } from "./reportGenerator";
 import { SwaggerAnalyzer } from "./swaggerAnalyzer";
 import { DataMasker } from "./dataMasker";
@@ -46,6 +46,7 @@ import {
 } from "./defaultNaming";
 import { NewmanReport } from "./postmanReportParser";
 import { RuntimeEnvManager } from "./runtimeEnvManager";
+import { NewmanReportAnalyzer, NewmanReportAnalyzerOption } from "./postmanReportAnalyzer";
 
 export interface PostmanCollectionRunnerClientOption extends BlobUploaderOption, JsonLoaderOption {
   testScenarioFileName: string;
@@ -66,6 +67,7 @@ export interface PostmanCollectionRunnerClientOption extends BlobUploaderOption,
   from?: string;
   to?: string;
   verbose?: boolean;
+  validateFunction?: (_summary: any) => Promise<void>;
 }
 
 function makeid(length: number): string {
@@ -103,6 +105,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
   public collectionEnv: VariableScope;
   private postmanTestScript: PostmanTestScript;
   private stepNameSet: Map<string, number>;
+  private validateNameSet: Set<string>;
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
   constructor(
     @inject(TYPES.opts) private opts: PostmanCollectionRunnerClientOption,
@@ -135,6 +138,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     this.collectionEnv = new VariableScope({});
     this.collectionEnv.set("bearerToken", "<bearerToken>", "string");
     this.postmanTestScript = new PostmanTestScript();
+    this.validateNameSet = new Set();
   }
   public async createResourceGroup(
     subscriptionId: string,
@@ -251,6 +255,8 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       item.name = `${step.step}_${cnt}`;
       this.stepNameSet.set(step.step, cnt);
     }
+    this.validateNameSet.add(item.name);
+
     item.request = new Request({
       name: step.step,
       method: step.operation._method as string,
@@ -309,6 +315,10 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     }
 
     stepEnv.env.getKeyList().forEach((key) => {
+      if (Object.keys(step.variables).includes(key)) {
+        return;
+      }
+
       if (!this.collectionEnv.has(key)) {
         this.collectionEnv.set(
           key,
@@ -662,6 +672,15 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
               console.log("collection run complete!");
             }
           )
+          .on("request", async (_, _summary) => {
+            const name = _summary.item.name;
+            if (!this.validateNameSet.has(name)) {
+              return;
+            }
+            if (this.opts.validateFunction) {
+              await this.opts.validateFunction(_summary);
+            }
+          })
           .on("beforeItem", async function (this: any, _err, _summary) {
             if (!_err) {
               runtimeEnvManager.save(_summary.item.name, this, "beforeStep");
@@ -705,18 +724,18 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
                 this.dataMasker.jsonStringify(newmanReport)
               );
             }
-            // const opts: NewmanReportAnalyzerOption = {
-            //   newmanReportFilePath: reportExportPath,
-            //   markdownReportPath: this.opts.markdownReportPath,
-            //   junitReportPath: this.opts.junitReportPath,
-            //   enableUploadBlob: this.opts.enableBlobUploader,
-            //   runId: this.opts.runId,
-            //   swaggerFilePaths: this.opts.swaggerFilePaths,
-            //   validationLevel: this.opts.validationLevel,
-            //   verbose: this.opts.verbose,
-            // };
-            // const reportAnalyzer = inversifyGetInstance(NewmanReportAnalyzer, opts);
-            // await reportAnalyzer.analyze();
+            const opts: NewmanReportAnalyzerOption = {
+              newmanReportFilePath: reportExportPath,
+              markdownReportPath: this.opts.markdownReportPath,
+              junitReportPath: this.opts.junitReportPath,
+              enableUploadBlob: this.opts.enableBlobUploader,
+              runId: this.opts.runId,
+              swaggerFilePaths: this.opts.swaggerFilePaths,
+              validationLevel: this.opts.validationLevel,
+              verbose: this.opts.verbose,
+            };
+            const reportAnalyzer = inversifyGetInstance(NewmanReportAnalyzer, opts);
+            await reportAnalyzer.analyze();
             if (this.opts.skipCleanUp || this.opts.to) {
               printWarning(
                 `Notice:the resource group '${this.collectionEnv.get(

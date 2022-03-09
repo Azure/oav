@@ -13,6 +13,11 @@ import { SeverityString } from "../util/severity";
 import { FileLoader } from "../swagger/fileLoader";
 import { TYPES } from "../inversifyUtils";
 import { SwaggerExample } from "../swagger/swaggerTypes";
+import {
+  LiveValidator,
+  RequestResponseLiveValidationResult,
+} from "../liveValidation/liveValidator";
+import { LiveRequest, LiveResponse } from "../liveValidation/operationValidator";
 import { SwaggerAnalyzer } from "./swaggerAnalyzer";
 import { DataMasker } from "./dataMasker";
 import { defaultQualityReportFilePath } from "./defaultNaming";
@@ -69,7 +74,7 @@ export interface StepResult {
   operationId: string;
   runtimeError?: RuntimeError[];
   responseDiffResult?: ResponseDiffItem[];
-  liveValidationResult?: any;
+  liveValidationResult?: RequestResponseLiveValidationResult;
   stepValidationResult?: any;
   correlationId?: string;
   stepName: string;
@@ -116,6 +121,7 @@ export class ReportGenerator {
   private rawReport: RawReport | undefined;
   private fileRoot: string;
   private recording: Map<string, RawExecution>;
+  private liveValidator: LiveValidator;
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
   constructor(
     @inject(TYPES.opts) private opts: ReportGeneratorOption,
@@ -161,6 +167,11 @@ export class ReportGenerator {
       stepResult: [],
     };
     this.testDefFile = undefined;
+
+    this.liveValidator = new LiveValidator({
+      fileRoot: "/",
+      swaggerPaths: this.opts.swaggerFilePaths!,
+    });
   }
 
   public async initialize() {
@@ -171,6 +182,7 @@ export class ReportGenerator {
 
   public async generateTestScenarioResult(rawReport: RawReport) {
     await this.initialize();
+    await this.liveValidator.initialize();
     const variables = rawReport.variables;
     this.swaggerExampleQualityResult.startTime = new Date(rawReport.timings.started).toISOString();
     this.swaggerExampleQualityResult.endTime = new Date(rawReport.timings.completed).toISOString();
@@ -181,7 +193,6 @@ export class ReportGenerator {
       }
       if (it.annotation.type === "simple" || it.annotation.type === "LRO") {
         const runtimeError = [];
-        const generatedExample = this.generateExample(it, variables, rawReport);
         const matchedStep = this.getMatchedStep(it.annotation.step) as StepRestCall;
         if (it.response.statusCode >= 400) {
           runtimeError.push(this.getRuntimeError(it));
@@ -189,23 +200,31 @@ export class ReportGenerator {
         if (matchedStep === undefined) {
           continue;
         }
-        // validate real payload.
-        const roundtripErrors = (
-          await this.exampleQualityValidator.validateExternalExamples([
-            {
-              exampleFilePath: generatedExample.exampleFilePath,
-              example: generatedExample.example,
-              operationId: matchedStep.operationId,
-            },
-          ])
-        ).map((it) => _.omit(it, ["exampleName", "exampleFilePath"]));
+
+        let generatedExample = undefined;
+        let roundtripErrors = undefined;
+        let responseDiffResult: ResponseDiffItem[] | undefined = undefined;
+        if (it.annotation.exampleName) {
+          generatedExample = this.generateExample(it, variables, rawReport);
+          // validate real payload.
+          roundtripErrors = (
+            await this.exampleQualityValidator.validateExternalExamples([
+              {
+                exampleFilePath: generatedExample.exampleFilePath,
+                example: generatedExample.example,
+                operationId: matchedStep.operationId,
+              },
+            ])
+          ).map((it) => _.omit(it, ["exampleName", "exampleFilePath"]));
+          responseDiffResult =
+            this.opts.validationLevel === "validate-request-response"
+              ? await this.exampleResponseDiff(generatedExample, matchedStep)
+              : [];
+        }
         const correlationId = it.response.headers["x-ms-correlation-request-id"];
-        const responseDiffResult: ResponseDiffItem[] =
-          this.opts.validationLevel === "validate-request-response"
-            ? await this.exampleResponseDiff(generatedExample, matchedStep)
-            : [];
+        const liveValidationResult = await this.validate(it);
         this.swaggerExampleQualityResult.stepResult.push({
-          exampleFilePath: generatedExample.exampleFilePath,
+          exampleFilePath: generatedExample?.exampleFilePath,
           operationId: it.annotation.operationId,
           runtimeError,
           responseDiffResult: responseDiffResult,
@@ -213,10 +232,33 @@ export class ReportGenerator {
           correlationId: correlationId,
           statusCode: it.response.statusCode,
           stepName: it.annotation.step,
+          liveValidationResult: liveValidationResult,
         });
         this.recording.set(correlationId, it);
       }
     }
+  }
+
+  private async validate(_summary: RawExecution) {
+    const request = _summary.request;
+    const response = _summary.response;
+    const liveRequest: LiveRequest = {
+      url: request.url.toString(),
+      method: request.method.toLowerCase(),
+      headers: request.headers,
+      body: JSON.parse(request.body || "{}"),
+    };
+    const liveResponse: LiveResponse = {
+      statusCode: response.statusCode.toString(),
+      headers: response.headers,
+      body: JSON.parse(response.body || "{}"),
+    };
+
+    const result = await this.liveValidator.validateLiveRequestResponse({
+      liveRequest,
+      liveResponse,
+    });
+    return result;
   }
 
   public async generateExampleQualityReport() {

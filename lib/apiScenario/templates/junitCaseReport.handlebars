@@ -14,4 +14,14 @@
 |<code>{{renderSymbol "failed"}}</code>{{renderDiffErrorCode rd}}|{{renderDiffErrorDetail rd}}|
   {{/with}}
 {{/each}}
+{{#each s.liveValidationResult.requestValidationResult.errors}}
+  {{#with this as |rd|}}
+|<code>{{renderSymbol "failed"}}</code>{{renderLiveValidationErrorCode rd}}|{{renderLiveValidationErrorDetail rd}}|
+  {{/with}}
+{{/each}}
+{{#each s.liveValidationResult.responseValidationResult.errors}}
+  {{#with this as |rd|}}
+|<code>{{renderSymbol "failed"}}</code>{{renderLiveValidationErrorCode rd}}|{{renderLiveValidationErrorDetail rd}}|
+  {{/with}}
+{{/each}}
 {{/with}}
