@@ -87,6 +87,7 @@ export class PostmanCollectionGenerator {
         to: this.opt.to,
         skipCleanUp: this.opt.skipCleanUp,
         verbose: this.opt.verbose,
+        swaggerFilePaths: scenarioDef.swaggers.map((s) => this.fileLoader.resolvePath(s)),
       };
 
       const client = inversifyGetInstance(PostmanCollectionRunnerClient, opts);
