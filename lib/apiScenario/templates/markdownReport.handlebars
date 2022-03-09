@@ -50,12 +50,14 @@
       Duration:
       {{renderDuration s.startTime s.endTime}}
     </li>
+    {{#if (shouldReportExample s.exampleFilePath)}}
     <li>
       Example:
       <a href="">
         {{renderPlain s.exampleFilePath}}
       </a>
     </li>
+    {{/if}}
     <li>
       Correlation Id:
       {{renderPlain s.correlationId}}

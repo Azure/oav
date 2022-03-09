@@ -76,6 +76,7 @@ const commonHelper = (opts: HelperOpts) => ({
     `[${e.code}](${getOavErrorCodeDocLink(e.code)})`,
   renderLiveValidationErrorDetail: (e: LiveValidationIssue) =>
     `${e.message.replace(spaceReg, " ")}`,
+  shouldReportExample: (e: string) => e !== undefined && e !== "",
 });
 
 type ResultState = keyof typeof ResultStateStrings;

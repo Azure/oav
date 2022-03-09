@@ -67,7 +67,6 @@ export interface PostmanCollectionRunnerClientOption extends BlobUploaderOption,
   from?: string;
   to?: string;
   verbose?: boolean;
-  validateFunction?: (_summary: any) => Promise<void>;
 }
 
 function makeid(length: number): string {
@@ -672,15 +671,6 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
               console.log("collection run complete!");
             }
           )
-          .on("request", async (_, _summary) => {
-            const name = _summary.item.name;
-            if (!this.validateNameSet.has(name)) {
-              return;
-            }
-            if (this.opts.validateFunction) {
-              await this.opts.validateFunction(_summary);
-            }
-          })
           .on("beforeItem", async function (this: any, _err, _summary) {
             if (!_err) {
               runtimeEnvManager.save(_summary.item.name, this, "beforeStep");
