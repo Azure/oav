@@ -93,6 +93,7 @@ describe("Semantic validation", () => {
       assert(result.validityStatus === false);
       assert.strictEqual(result.validateSpec?.errors?.[0].code, "NOT_PASSED");
       assert.strictEqual(result.validateSpec?.errors?.[0].message, "path DOES NOT start with /");
+      assert.strictEqual(result.validateSpec?.errors?.[0].jsonPath, ".paths['hello']");
     });
   });
 
