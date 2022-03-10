@@ -140,29 +140,29 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
           key: "location",
         },
         {
-          key: "_enableAuth",
+          key: "enable_auth",
           value: "true",
         },
         {
-          key: "_clientId",
+          key: "client_id",
         },
         {
-          key: "_clientSecret",
+          key: "client_secret",
           type: "secret",
         },
         {
-          key: "_tenantId",
+          key: "tenantId",
         },
         {
-          key: "_armEndpoint",
+          key: "arm_endpoint",
           value: "https://management.azure.com",
         },
         {
-          key: "_bearerToken",
+          key: "bearer_token",
           type: "secret",
         },
         {
-          key: "_bearerTokenExpiresOn",
+          key: "bearer_token_expires_on",
         },
       ],
     });
@@ -177,7 +177,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       bearer: [
         {
           key: "token",
-          value: "{{_bearerToken}}",
+          value: "{{bearer_token}}",
           type: "string",
         },
       ],
@@ -188,48 +188,57 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
         script: {
           type: "text/javascript",
           exec: [
-            'pm.test("Check for collectionVariables", function () {',
-            '    if (pm.variables.get("_enableAuth") !== "true") {',
-            '        console.log("Auth disabled");',
-            "        return;",
-            "    }",
-            "    let vars = ['_clientId', '_clientSecret', '_tenantId', 'subscriptionId'];",
-            "    vars.forEach(function (item, index, array) {",
-            '        pm.expect(pm.variables.get(item), item + " variable not set").to.not.be.undefined;',
-            '        pm.expect(pm.variables.get(item), item + " variable not set").to.not.be.empty; ',
-            "    });",
-            "",
-            '    if (!pm.collectionVariables.get("_bearerToken") || Date.now() > new Date(pm.collectionVariables.get("_bearerTokenExpiresOn") * 1000)) {',
-            "        pm.sendRequest({",
-            "            url: 'https://login.microsoftonline.com/' + pm.variables.get(\"_tenantId\") + '/oauth2/token',",
-            "            method: 'POST',",
-            "            header: 'Content-Type: application/x-www-form-urlencoded',",
-            "            body: {",
-            "                mode: 'urlencoded',",
-            "                urlencoded: [",
-            '                    { key: "grant_type", value: "client_credentials", disabled: false },',
-            '                    { key: "client_id", value: pm.variables.get("_clientId"), disabled: false },',
-            '                    { key: "client_secret", value: pm.variables.get("_clientSecret"), disabled: false },',
-            '                    { key: "resource", value: pm.variables.get("_armEndpoint") || "https://management.azure.com", disabled: false }',
-            "                ]",
-            "            }",
-            "        }, function (err, res) {",
-            "            if (err) {",
-            "                console.log(err);",
-            "            } else {",
-            "                let resJson = res.json();",
-            '                pm.collectionVariables.set("_bearerTokenExpiresOn", resJson.expires_on);',
-            '                pm.collectionVariables.set("_bearerToken", resJson.access_token);',
-            "            }",
-            "        });",
-            "    }",
+            'if (pm.variables.get("enable_auth") !== "true") {',
+            '    console.log("Auth disabled");',
+            "    return;",
+            "}",
+            "let vars = ['client_id', 'client_secret', 'tenantId', 'subscriptionId'];",
+            "vars.forEach(function (item, index, array) {",
+            '    pm.expect(pm.variables.get(item), item + " variable not set").to.not.be.undefined;',
+            '    pm.expect(pm.variables.get(item), item + " variable not set").to.not.be.empty; ',
             "});",
+            "",
+            'if (!pm.collectionVariables.get("bearer_token") || Date.now() > new Date(pm.collectionVariables.get("bearer_token_expires_on") * 1000)) {',
+            "    pm.sendRequest({",
+            "        url: 'https://login.microsoftonline.com/' + pm.variables.get(\"tenantId\") + '/oauth2/token',",
+            "        method: 'POST',",
+            "        header: 'Content-Type: application/x-www-form-urlencoded',",
+            "        body: {",
+            "            mode: 'urlencoded',",
+            "            urlencoded: [",
+            '                { key: "grant_type", value: "client_credentials", disabled: false },',
+            '                { key: "client_id", value: pm.variables.get("client_id"), disabled: false },',
+            '                { key: "client_secret", value: pm.variables.get("client_secret"), disabled: false },',
+            '                { key: "resource", value: pm.variables.get("arm_endpoint") || "https://management.azure.com", disabled: false }',
+            "            ]",
+            "        }",
+            "    }, function (err, res) {",
+            "        if (err) {",
+            "            console.log(err);",
+            "        } else {",
+            "            let resJson = res.json();",
+            '            pm.collectionVariables.set("bearer_token_expires_on", resJson.expires_on);',
+            '            pm.collectionVariables.set("bearer_token", resJson.access_token);',
+            "        }",
+            "    });",
+            "}",
           ],
         },
       })
     );
 
     this.collectionEnv = new VariableScope({});
+    this.collectionEnv.set("arm_endpoint", this.opts.baseUrl, "string");
+    this.collectionEnv.set("tenantId", this.opts.env.get("tenantId")?.value, "string");
+    this.collectionEnv.set("client_id", this.opts.env.get("client_id")?.value, "string");
+    this.collectionEnv.set("client_secret", this.opts.env.get("client_secret")?.value, "string");
+    this.collectionEnv.set("subscriptionId", this.opts.env.get("subscriptionId")?.value, "string");
+    this.collectionEnv.set(
+      "resourceGroupName",
+      this.opts.env.get("resourceGroupName")?.value,
+      "string"
+    );
+    this.collectionEnv.set("location", this.opts.env.get("location")?.value, "string");
     this.postmanTestScript = new PostmanTestScript();
   }
 
