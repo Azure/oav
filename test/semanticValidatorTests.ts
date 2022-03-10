@@ -86,6 +86,14 @@ describe("Semantic validation", () => {
       assert(result.validityStatus === false);
       assert.strictEqual(result.validateSpec?.errors?.[0].code, "ENUM_MISMATCH");
     });
+    // NOT_PASSED
+    it("error message should be unique when reporting error about api path started without slash", async () => {
+      const specPath = `${testPath}/semanticValidation/specification/validateSwaggerSchema/notPassed/pathNotStartWithSlash.json`;
+      const result = await validate.validateSpec(specPath, undefined);
+      assert(result.validityStatus === false);
+      assert.strictEqual(result.validateSpec?.errors?.[0].code, "NOT_PASSED");
+      assert.strictEqual(result.validateSpec?.errors?.[0].message, "path DOES NOT start with /");
+    });
   });
 
   describe("validateCompile", () => {

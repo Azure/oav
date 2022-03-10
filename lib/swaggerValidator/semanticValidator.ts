@@ -202,6 +202,8 @@ export class SwaggerSemanticValidator {
           err.message.includes('should match "then" schema'))
       ) {
         continue;
+      } else if (err.code === "NOT_PASSED" && err.schemaPath === "#/additionalProperties/not") {
+        err.message = "path DOES NOT start with /";
       }
       err.jsonPathsInPayload = err.jsonPathsInPayload.filter((jsonPath) => {
         let node;
