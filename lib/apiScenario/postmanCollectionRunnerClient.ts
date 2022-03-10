@@ -233,11 +233,6 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     this.collectionEnv.set("client_id", this.opts.env.get("client_id")?.value, "string");
     this.collectionEnv.set("client_secret", this.opts.env.get("client_secret")?.value, "string");
     this.collectionEnv.set("subscriptionId", this.opts.env.get("subscriptionId")?.value, "string");
-    this.collectionEnv.set(
-      "resourceGroupName",
-      this.opts.env.get("resourceGroupName")?.value,
-      "string"
-    );
     this.collectionEnv.set("location", this.opts.env.get("location")?.value, "string");
     this.postmanTestScript = new PostmanTestScript();
   }
@@ -254,7 +249,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
         method: "put",
         body: {
           mode: "raw",
-          raw: JSON.stringify({ location: location }),
+          raw: '{"location":"{{location}}"}',
         },
       },
     });
@@ -264,6 +259,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     this.collection.items.add(item);
     this.collectionEnv.set("subscriptionId", subscriptionId, "string");
     this.collectionEnv.set("resourceGroupName", resourceGroupName, "string");
+    this.collectionEnv.set("location", location, "string");
   }
 
   public async deleteResourceGroup(
