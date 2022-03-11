@@ -5,6 +5,7 @@
 
 ## 02/23/2022 2.11.8
 
+- SemanticValidator - Clarify the error message when NOT schema of 'path' fails
 - Add coverage for trafficValidator
 - FIx GC introduced by 2.11.7
 
