@@ -66,6 +66,7 @@ interface ApiScenarioContext {
   scenario?: Scenario;
   scenarioIndex?: number;
   stepIndex?: number;
+  stage?: "prepare" | "scenario" | "cleanUp";
 }
 
 @injectable()
@@ -218,6 +219,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
   }
 
   private async loadPrepareSteps(rawDef: RawScenarioDefinition, ctx: ApiScenarioContext) {
+    ctx.stage = "prepare";
     ctx.stepIndex = 0;
     for (const rawStep of rawDef.prepareSteps ?? []) {
       const step = await this.loadStep(rawStep, ctx);
@@ -227,6 +229,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
   }
 
   private async loadCleanUpSteps(rawDef: RawScenarioDefinition, ctx: ApiScenarioContext) {
+    ctx.stage = "cleanUp";
     ctx.stepIndex = 0;
     for (const rawStep of rawDef.cleanUpSteps ?? []) {
       const step = await this.loadStep(rawStep, ctx);
@@ -327,7 +330,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
 
     const step: StepRestCall = {
       type: "restCall",
-      step: rawStep.step ?? `${ctx.scenarioIndex ?? ""}_step_${ctx.stepIndex}`,
+      step: rawStep.step ?? `[${ctx.stage}${ctx.scenarioIndex ?? ""}_${ctx.stepIndex}]`,
       description: rawStep.description,
       operationId: "",
       operation: {} as Operation,
@@ -351,7 +354,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     if ("operationId" in rawStep) {
       step.operationId = rawStep.operationId;
       if (!rawStep.step) {
-        step.step = `${step.step}_${rawStep.operationId}`;
+        step.step += `_${rawStep.operationId}`;
       }
 
       const operation = this.operationsMap.get(step.operationId);
@@ -509,7 +512,9 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
   ): Promise<StepArmTemplate> {
     const step: StepArmTemplate = {
       type: "armTemplateDeployment",
-      step: rawStep.step ?? `step_${ctx.stepIndex}`,
+      step:
+        rawStep.step ??
+        `[${ctx.stage}${ctx.scenarioIndex ?? ""}_${ctx.stepIndex}]_ArmDeploymentScript`,
       outputVariables: rawStep.outputVariables ?? {},
       armTemplate: "",
       armTemplatePayload: {},
@@ -580,7 +585,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
   ): Promise<StepArmTemplate> {
     const step: StepArmTemplate = {
       type: "armTemplateDeployment",
-      step: rawStep.step ?? `step_${ctx.stepIndex}`,
+      step: rawStep.step ?? `[${ctx.stage}${ctx.scenarioIndex ?? ""}_${ctx.stepIndex}]_ArmTemplate`,
       outputVariables: rawStep.outputVariables ?? {},
       armTemplate: rawStep.armTemplate,
       armTemplatePayload: {},
