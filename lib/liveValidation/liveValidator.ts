@@ -56,6 +56,8 @@ export interface LiveValidatorOptions extends LiveValidatorLoaderOption {
   isPathCaseSensitive: boolean;
   loadValidatorInBackground: boolean;
   loadValidatorInInitialize: boolean;
+  legacyYear: number;
+  maxVersionNumberOfLegacyYear: number;
 }
 
 export interface RequestResponsePair {
@@ -115,6 +117,12 @@ export enum LiveValidatorLoggingTypes {
   specTrace = "specTrace",
 }
 
+type SwaggerPathInfo = {
+  version: string;
+  resourceProvider: string;
+  path: string;
+  key: string;
+};
 /**
  * @class
  * Live Validator for Azure swagger APIs.
@@ -133,6 +141,10 @@ export class LiveValidator {
   private loadInBackgroundComplete: boolean = false;
 
   private validateRequestResponsePair?: SchemaValidateFunction;
+
+  private apiVersionMap: Map<string, string[]> = new Map<string, string[]>();
+
+  private apiPathMap: Map<string, string[]> = new Map<string, string[]>();
 
   /**
    * Constructs LiveValidator based on provided options.
@@ -730,7 +742,24 @@ export class LiveValidator {
         this.options.swaggerPathsPattern === undefined ||
         this.options.swaggerPathsPattern.length === 0
       ) {
-        return this.getMatchedPaths(allJsonsPattern);
+        //Apple: Only when either swaggerPathsPattern or swaggerPaths are defined in options,
+        //the api version selection policy will be applied.
+        let allSwaggerPaths = await this.getMatchedPaths(allJsonsPattern);
+        if (
+          this.options.legacyYear !== undefined &&
+          this.options.legacyYear > 0 &&
+          this.options.maxVersionNumberOfLegacyYear !== undefined &&
+          this.options.maxVersionNumberOfLegacyYear > 0
+        ) {
+          this.buildVersionMap(allSwaggerPaths);
+          allSwaggerPaths = this.apiVersionFilter();
+          console.log(
+            `-----------Applied filter - ${allSwaggerPaths.length}
+            \n
+            ${allSwaggerPaths.join("\n")}----------`
+          );
+        }
+        return allSwaggerPaths;
       } else {
         this.options.swaggerPathsPattern.map((item) => {
           swaggerPathPatterns.push(path.join(this.options.directory, item));
@@ -807,6 +836,80 @@ export class LiveValidator {
 
       return undefined;
     }
+  }
+
+  private apiVersionFilter(): string[] {
+    let allSwaggerPaths: string[] = [];
+    const date = new Date();
+    date.setDate(date.getDate() - 365 * this.options.legacyYear);
+    const dateStr = date.toISOString().slice(0, 10);
+    this.apiVersionMap.forEach((value, key) => {
+      let N = this.options.maxVersionNumberOfLegacyYear;
+      value = value.sort((a, b) => (a > b ? -1 : 1));
+      for (const i of value) {
+        if (N <= 0) {
+          break;
+        }
+        if (i < dateStr) {
+          N = N - 1;
+        }
+        const paths = this.apiPathMap.get(key + i);
+        if (paths !== undefined) {
+          allSwaggerPaths = allSwaggerPaths.concat(paths);
+        }
+      }
+    });
+    return allSwaggerPaths;
+  }
+
+  private buildVersionMap(paths: string[]) {
+    paths.forEach((path) => {
+      const swaggerInfo = this.swaggerPathParser(path);
+      if (swaggerInfo !== undefined) {
+        if (this.apiVersionMap.get(swaggerInfo.resourceProvider) === undefined) {
+          this.apiVersionMap.set(swaggerInfo.resourceProvider, new Array<string>());
+        }
+        if (!this.apiVersionMap.get(swaggerInfo.resourceProvider)?.includes(swaggerInfo.version)) {
+          this.apiVersionMap.get(swaggerInfo.resourceProvider)?.push(swaggerInfo.version);
+        }
+        if (this.apiPathMap.get(swaggerInfo.key) === undefined) {
+          this.apiPathMap.set(swaggerInfo.key, new Array<string>());
+        }
+        if (!this.apiPathMap.get(swaggerInfo.key)?.includes(path)) {
+          this.apiPathMap.get(swaggerInfo.key)?.push(path);
+        }
+      } else {
+        this.logging(
+          `Invalid swagger path: ${path} Parsed swagger info: ${JSON.stringify(swaggerInfo)}`
+        );
+      }
+    });
+  }
+
+  private swaggerPathParser(path: string): SwaggerPathInfo | undefined {
+    const dateReg = new RegExp(
+      "20[0-9]{2}-(0[1-9]|1[0-2])-((0[1-9])|[12][0-9]|3[01])(-(preview|alpha|beta|rc|privatepreview))?"
+    );
+    const rpReg = new RegExp("[mM]icrosoft.[a-zA-Z]+");
+    const resourceProvider = this.regMatch(rpReg, path);
+    const version = this.regMatch(dateReg, path);
+    let swaggerInfo;
+    if (version === null || resourceProvider === null) {
+      console.log(`Invalid path ${path}`);
+    } else {
+      swaggerInfo = {
+        resourceProvider: resourceProvider,
+        version: version,
+        path: path,
+        key: resourceProvider + version,
+      };
+    }
+    return swaggerInfo;
+  }
+
+  private regMatch(reg: RegExp, input: string): string | null {
+    const results = input.match(reg);
+    return results === null ? results : results[0];
   }
 
   private logging = (

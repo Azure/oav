@@ -18,6 +18,19 @@ jest.setTimeout(999999);
 
 describe("Live Validator", () => {
   describe("Initialization", () => {
+    it("should initialize with multiple path patterns", async () => {
+      const options = {
+        directory: "./test/liveValidation/swaggers/",
+        maxVersionNumberOfLegacyYear: 2,
+        legacyYear: 1,
+      };
+      const validator = new LiveValidator(options);
+      await validator.initialize();
+      const cache = validator.swaggerList;
+      assert.equal(cache.length, 56);
+      assert.equal(cache.filter(a => a.includes("SignalRService")).length, 3);
+      assert.equal(cache.filter(a => a.includes("SignalRService")).filter(a => a.includes("2021-03-01-preview")).length, 2);
+    });
     it("should initialize with defaults", () => {
       const options = {
         swaggerPaths: [],
