@@ -16,6 +16,7 @@ import { traverseSwagger } from "../transform/traverseSwagger";
 import { Operation, Path, LowerHttpMethods } from "../swagger/swaggerTypes";
 import { LiveValidatorLoader } from "../liveValidation/liveValidatorLoader";
 import { inversifyGetContainer, inversifyGetInstance } from "../inversifyUtils";
+import { getApiVersionFromSwaggerPath } from "../util/utils";
 
 export interface TrafficValidationOptions extends Options {
   sdkPackage?: string;
@@ -37,10 +38,17 @@ export interface RuntimeException {
 
 export interface OperationCoverageInfo {
   readonly spec: string;
+  readonly apiVersion: string;
   readonly coveredOperaions: number;
   readonly validationFailOperations: number;
+  readonly unCoveredOperations: number;
+  readonly unCoveredOperationsList: OperationMeta[];
   readonly totalOperations: number;
   readonly coverageRate: number;
+}
+
+export interface OperationMeta {
+  readonly operationId: string;
 }
 
 export class TrafficValidator {
@@ -222,15 +230,27 @@ export class TrafficValidator {
     let coveredOperaions: number;
     let coverageRate: number;
     let validationFailOperations: number;
+    let unCoveredOperationsList: OperationMeta[];
     this.operationSpecMapper.forEach((value: string[], key: string) => {
+      unCoveredOperationsList = [];
       if (this.trafficOperation.get(key) === undefined) {
         coveredOperaions = 0;
         coverageRate = 0;
         this.coverageData.set(key, 0);
       } else if (value !== undefined && value.length !== 0) {
-        coveredOperaions = this.trafficOperation.get(key)!.length;
+        const validatedOperations = this.trafficOperation.get(key);
+        coveredOperaions = validatedOperations!.length;
         coverageRate = coveredOperaions / value.length;
         this.coverageData.set(key, coverageRate);
+        let unValidatedOperations = [...value];
+        validatedOperations!.forEach(element => {
+          unValidatedOperations.splice(unValidatedOperations.indexOf(element), 1);
+        })
+        unValidatedOperations.forEach(element => {
+          unCoveredOperationsList.push({
+            "operationId": element
+          })
+        });
       } else {
         coveredOperaions = 0;
         coverageRate = 0;
@@ -242,12 +262,26 @@ export class TrafficValidator {
       } else {
         validationFailOperations = this.validationFailOperations.get(key)!.length;
       }
+      const sortedUnCoveredOperationsList = unCoveredOperationsList.sort(function(op1, op2) {
+        var opId1 = op1.operationId;
+        var opId2 = op2.operationId;
+        if (opId1 < opId2) {
+          return -1;
+        }
+        if (opId1 > opId2) {
+          return 1;
+        }
+        return 0;
+      });
       this.operationCoverageResult.push({
         spec: key,
+        apiVersion: getApiVersionFromSwaggerPath(key),
         coveredOperaions: coveredOperaions,
         coverageRate: coverageRate,
+        unCoveredOperations: value.length - coveredOperaions,
         totalOperations: value.length,
         validationFailOperations: validationFailOperations,
+        unCoveredOperationsList: sortedUnCoveredOperationsList
       });
     });
     return this.trafficValidationResult;

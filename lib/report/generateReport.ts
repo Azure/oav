@@ -9,10 +9,15 @@ import {
 // used to pass data to the template rendering engine
 export class CoverageView {
   public package: string;
+  public apiVersion: string = "unknown";
   public generatedDate: Date;
   public validationResults: TrafficValidationIssue[];
+  public sortedValidationResults: TrafficValidationIssue[];
   public coverageResults: OperationCoverageInfo[];
-  public undefinedOperationCount: number;
+  public undefinedOperationCount: number = 0;
+  public operationValidated: number = 0;
+  public operationFailed: number = 0;
+  public operationUnValidated: number = 0;
   public language: string;
   public generalErrorResults: Map<string, TrafficValidationIssue[]>;
 
@@ -30,6 +35,27 @@ export class CoverageView {
     this.generatedDate = new Date();
     this.language = language;
     this.generalErrorResults = new Map();
+    this.setMetrics();
+    this.sortOperationIds();
+  }
+
+  private sortOperationIds() {
+    this.sortedValidationResults = this.validationResults.sort(function(op1, op2) {
+      var opId1 = op1.operationInfo!.operationId;
+      var opId2 = op2.operationInfo!.operationId;
+      if (opId1 < opId2) {
+        return -1;
+      }
+      if (opId1 > opId2) {
+        return 1;
+      }
+      return 0;
+    });
+  }
+  private setMetrics() {
+    if (this.coverageResults?.length > 0) {
+      this.apiVersion = this.coverageResults[0].apiVersion;
+    }
   }
 
   public formatGeneratedDate(): string {
@@ -58,7 +84,7 @@ export class CoverageView {
   }
 
   public getGeneralErrors(): TrafficValidationIssue[] {
-    return this.validationResults.filter((x) => {
+    return this.sortedValidationResults.filter((x) => {
       return x.errors && x.errors.length > 0;
     });
   }

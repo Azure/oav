@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Swagger Accuracy Report:{{ package }} { {{ ApiVersion }} }</title>
+        <title>Swagger Accuracy Report:{{package}}({{ apiVersion }})</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -195,30 +195,13 @@
     <body>
         <div id="summary">
             <h1 style="margin-block-end: .1em">
-                Recording Test Payload Validation Report -- {{ package }}
+                Swagger Accuracy Report:{{package}}({{apiVersion}})
             </h1>
             <!-- TODO: localize the UTC date via JS -->
             <h3 class="datedrop">
                 Generated {{ formatGeneratedDate }}.
             </h3>
-            <table>
-                <thead>
-                    <tr>
-                      <th>SDK Language</th>
-                      <th>Package Name</th>
-                      <th>Total Failures</th>
-                    </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>{{ language }}</td>
-                    <td>{{ package }}</td>
-                    <td>{{ getTotalErrors }}</td>
-                  </tr>
-                </tbody>
-            </table>
         </div>
-        <div class="blank"></div>
         <div id ="coverage-data"> 
             <h2>
                 Test Coverage Details
@@ -227,26 +210,26 @@
                   <table>
                     <thead>
                         <tr>
-                        <th>SwaggerFile</th>
-                        <th>CoveredOperations</th>
-                        <th>TotalOperations</th>
-                        <th>CoverageRate</th>
+                          <th style="background-color:#008000">Operations Tested</th>
+                          <th style="background-color:#ffbf00">Operations Missing Test</th>
+                          <th style="background-color:#ff0000">Operations Failed</th>
+                          <th>Swagger File</th>
                         </tr>
                     </thead>
                     <tbody>
                       {{#coverageResults}}
                         <tr>
                           <td>
-                            <div style="width: 220px;">{{spec}}</div>
-                          </td>
-                          <td>
                             <div style="width: 40px;">{{coveredOperaions}}</div>
                           </td>
                           <td>
-                            <div style="width: 40px;">{{totalOperations}}</div>
+                            <div style="width: 40px;">{{unCoveredOperations}}</div>
                           </td>
                           <td>
-                            <div style="width: 50px;">{{coverageRate}}</div>
+                            <div style="width: 40px;">{{validationFailOperations}}</div>
+                          </td>
+                          <td>
+                            <div style="width: 220px;">{{spec}}</div>
                           </td>
                         </tr>
                       {{/coverageResults}}
@@ -257,15 +240,46 @@
         <div class="blank"></div>
         <div id="general">
             <h2>
-                {{ getTotalGeneralErrors }} General Errors
+                Operations Not Tested
             </h2>
             <div id="generalTable">
                   <table>
                     <thead>
                         <tr>
-                        <th>PayloadFilePath</th>
-                        <th>ApiVersion</th>
+                        <th>SwaggerFile</th>
                         <th>OperationId</th>
+                        </tr>
+                    </thead>
+                    {{#coverageResults}}
+                    <tbody>
+                        <tr>
+                          <td>
+                            <div style="width: 220px;">{{spec}}</div>
+                          </td>
+                          <td>
+                            <table class="inner_table">
+                              {{#unCoveredOperationsList}}
+                              <tr><td class="inner_td">{{operationId}}</td></tr>
+                              {{/unCoveredOperationsList}}
+                            </table>
+                          </td>
+                        </tr>
+                    </tbody>
+                    {{/coverageResults}}
+                  </table>
+            </div>
+        </div>
+        <div class="blank"></div>
+        <div id="general">
+            <h2>
+                Operations Test Failed
+            </h2>
+            <div id="generalTable">
+                  <table>
+                    <thead>
+                        <tr>
+                        <th>OperationId</th>
+                        <th>PayloadFilePath</th>
                         <th>Errors</th>
                         </tr>
                     </thead>
@@ -273,13 +287,10 @@
                     <tbody>
                         <tr>
                           <td>
-                           <div style="width: 200px; word-break: break-word;">{{payloadFilePath}}</div>
-                          </td>
-                          <td>
-                            <div style="width: 100px;">{{operationInfo.apiVersion}}</div>
-                          </td>
-                          <td>
                             <div style="width: 200px;">{{operationInfo.operationId}}</div>
+                          </td>
+                          <td>
+                           <div style="width: 200px; word-break: break-word;">{{payloadFilePath}}</div>
                           </td>
                           <td>
                             <table class="inner_table">
@@ -294,37 +305,6 @@
                   </table>
             </div>
         </div>
-        <div class="blank"></div>
-        <div id ="runtime-errors"> 
-            <h2>
-                {{ getTotalRunTimeErrors }} RunTime Errors
-            </h2>
-            <div id="generalTable">
-                  <table>
-                    <thead>
-                        <tr>
-                        <th>ErrorCode</th>
-                        <th>ErrorMessage</th>
-                        </tr>
-                    </thead>
-                    {{#getRunTimeErrors}}
-                    <tbody>
-                      {{#runtimeExceptions}}
-                        <tr>
-                          <td>
-                            <div style="width: 170px;">{{code}}</div>
-                          </td>
-                          <td>
-                            <div style="width: 200px; word-break: break-word;">{{message}}</div>
-                          </td>
-                        </tr>
-                      {{/runtimeExceptions}}
-                    </tbody>
-                    {{/getRunTimeErrors}}
-                  </table>
-            </div>
-        </div>
-
         <div id="mypanel"></div>
         <script>
             $(document).ready( () => {
