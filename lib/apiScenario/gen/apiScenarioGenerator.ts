@@ -19,6 +19,7 @@ import { setDefaultOpts } from "../../swagger/loader";
 import { pathJoin, pathResolve } from "@azure-tools/openapi-tools-common";
 import { relative } from "path";
 import { dump } from "js-yaml";
+import Mocker from "../../generator/mocker";
 
 export interface ApiScenarioGeneratorOption extends ApiScenarioLoaderOption {
   swaggerFilePaths: string[];
@@ -56,19 +57,11 @@ const methodOrder: Array<LowerHttpMethods> = ["put", "get", "patch", "post", "de
 
 const envVariables = ["api-version", "subscriptionId", "resourceGroupName", "location"];
 
-function randomString(length: number): string {
-  const possible = "abcdefghijklmnopqrstuvwxyz";
-  let ret = "";
-
-  for (let i = 0; i < length; i++)
-    ret += possible.charAt(Math.floor(Math.random() * possible.length));
-  return ret;
-}
-
 @injectable()
 export class ApiScenarioGenerator {
   private swaggers: SwaggerSpec[];
   private graph: Map<string, Node>;
+  private mocker: Mocker;
 
   public constructor(
     @inject(TYPES.opts) private opts: ApiScenarioGeneratorOption,
@@ -77,6 +70,7 @@ export class ApiScenarioGenerator {
     private jsonLoader: JsonLoader
   ) {
     this.swaggers = [];
+    this.mocker = new Mocker();
   }
 
   public static create(opts: ApiScenarioGeneratorOption) {
@@ -192,26 +186,24 @@ export class ApiScenarioGenerator {
         return ret;
       }
 
+      if (schema.default) {
+        return schema.default;
+      }
+
       if (schema.enum) {
         return schema.enum[0];
       }
 
-      switch (schema.type) {
-        case "boolean":
-          return true;
-        case "integer":
-        case "number":
-          return 0;
-        case "array":
-          return [];
-        case "string":
-          if (envVariables.includes(name)) {
-            return `$(${name})`;
-          }
-          return randomString(5);
-        default:
-          return "";
+      if (schema.type === "string" && envVariables.includes(name)) {
+        return `$(${name})`;
       }
+
+      if (schema.type === "array") {
+        const prop = this.jsonLoader.resolveRefObj(schema.items!) as Schema;
+        return this.mocker.mock(schema, name, genValue("", prop));
+      }
+
+      return this.mocker.mock(schema, name);
     };
 
     if (parameter.in === "body") {
@@ -223,14 +215,7 @@ export class ApiScenarioGenerator {
       return value;
     }
 
-    if (parameter.type === "integer") {
-      return {
-        type: "int",
-        value: 0,
-      };
-    } else {
-      return randomString(5);
-    }
+    return this.mocker.mock(parameter, parameter.name);
   }
 
   private generateSteps() {
