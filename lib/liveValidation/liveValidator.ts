@@ -753,11 +753,6 @@ export class LiveValidator {
         ) {
           this.buildVersionMap(allSwaggerPaths);
           allSwaggerPaths = this.apiVersionFilter();
-          console.log(
-            `-----------Applied filter - ${allSwaggerPaths.length}
-            \n
-            ${allSwaggerPaths.join("\n")}----------`
-          );
         }
         return allSwaggerPaths;
       } else {
@@ -866,17 +861,21 @@ export class LiveValidator {
     paths.forEach((path) => {
       const swaggerInfo = this.swaggerPathParser(path);
       if (swaggerInfo !== undefined) {
-        if (this.apiVersionMap.get(swaggerInfo.resourceProvider) === undefined) {
+        let versionList = this.apiVersionMap.get(swaggerInfo.resourceProvider);
+        if (versionList === undefined) {
           this.apiVersionMap.set(swaggerInfo.resourceProvider, new Array<string>());
+          versionList = this.apiVersionMap.get(swaggerInfo.resourceProvider);
         }
-        if (!this.apiVersionMap.get(swaggerInfo.resourceProvider)?.includes(swaggerInfo.version)) {
-          this.apiVersionMap.get(swaggerInfo.resourceProvider)?.push(swaggerInfo.version);
+        if (!versionList?.includes(swaggerInfo.version)) {
+          versionList?.push(swaggerInfo.version);
         }
-        if (this.apiPathMap.get(swaggerInfo.key) === undefined) {
+        let pathList = this.apiPathMap.get(swaggerInfo.key);
+        if (pathList === undefined) {
           this.apiPathMap.set(swaggerInfo.key, new Array<string>());
+          pathList = this.apiPathMap.get(swaggerInfo.key);
         }
-        if (!this.apiPathMap.get(swaggerInfo.key)?.includes(path)) {
-          this.apiPathMap.get(swaggerInfo.key)?.push(path);
+        if (!pathList?.includes(path)) {
+          pathList?.push(path);
         }
       } else {
         this.logging(
