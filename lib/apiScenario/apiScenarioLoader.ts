@@ -46,12 +46,11 @@ import {
   ArmDeploymentScriptResource,
   RawStepOperation,
 } from "./apiScenarioTypes";
-// import { TemplateGenerator } from "./templateGenerator";
+import { TemplateGenerator } from "./templateGenerator";
 import { jsonPatchApply } from "./diffUtils";
 import { ApiScenarioYamlLoader } from "./apiScenarioYamlLoader";
-// import { ApiScenarioRunner } from "./apiScenarioRunner";
-// import { VariableEnv } from "./variableEnv";
 import { armDeploymentScriptTemplate } from "./constants";
+import { BodyTransformer } from "./bodyTransformer";
 
 const variableRegex = /\$\(([A-Za-z_][A-Za-z0-9_]*)\)/;
 
@@ -76,15 +75,14 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
   private apiVersionsMap = new Map<string, string>();
   private exampleToOperation = new Map<string, { [operationId: string]: string }>();
   private initialized: boolean = false;
-  // private env: VariableEnv;
-  // private templateGenerationRunner: ApiScenarioRunner;
 
   public constructor(
     private fileLoader: FileLoader,
     public jsonLoader: JsonLoader,
     private swaggerLoader: SwaggerLoader,
     private apiScenarioYamlLoader: ApiScenarioYamlLoader,
-    // private templateGenerator: TemplateGenerator,
+    private bodyTransformer: BodyTransformer,
+    private templateGenerator: TemplateGenerator,
     @inject(TYPES.schemaValidator) private schemaValidator: SchemaValidator
   ) {
     this.transformContext = getTransformContext(this.jsonLoader, this.schemaValidator, [
@@ -97,12 +95,6 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       nullableTransformer,
       pureObjectTransformer,
     ]);
-    // this.env = new VariableEnv();
-    // this.templateGenerationRunner = new ApiScenarioRunner({
-    //   env: this.env,
-    //   jsonLoader: this.jsonLoader,
-    //   client: this.templateGenerator,
-    // });
   }
 
   public static create(opts: ApiScenarioLoaderOption) {
@@ -212,7 +204,6 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       ctx.scenarioIndex++;
     }
 
-    // await this.templateGenerationRunner.cleanAllScope();
     // await this.writeTestDefinitionFile("./test.yaml", scenarioDef);
 
     return scenarioDef;
@@ -276,21 +267,8 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       resolvedSteps.push(step);
     }
 
-    // await this.generateTemplate(scenario);
-
     return scenario;
   }
-
-  // private async generateTemplate(scenario: Scenario) {
-  //   this.env.clear();
-  //   for (const requiredVar of scenario.requiredVariables) {
-  //     this.env.set(requiredVar, {
-  //       type: "string",
-  //       value: `$(${requiredVar})`,
-  //     });
-  //   }
-  //   await this.templateGenerationRunner.executeScenario(scenario);
-  // }
 
   private async loadStep(rawStep: RawStep, ctx: ApiScenarioContext): Promise<Step> {
     let step: Step;
@@ -346,9 +324,6 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     const getVariable = (name: string) => {
       const variable =
         step.variables[name] ?? ctx.scenario?.variables[name] ?? ctx.scenarioDef.variables[name];
-      if (variable === undefined) {
-        throw new Error(`Variable ${name} is not defined`);
-      }
       return variable;
     };
 
@@ -415,7 +390,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
           if (param.type === "string") {
             step.requestParameters[param.name] = `$(${param.name})`;
           } else {
-            step.requestParameters[param.name] = getVariable(param.name)?.value;
+            step.requestParameters[param.name] = getVariable(param.name)!.value;
           }
         }
       });
@@ -447,7 +422,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
         if (opMap === undefined) {
           throw new Error(`Example file is not referenced by any operation: ${step.exampleFile}`);
         }
-        const ops = Object.values(opMap);
+        const ops = Object.keys(opMap);
         if (ops.length > 1) {
           throw new Error(
             `Example file is referenced by multiple operation: ${Object.keys(opMap)} ${
@@ -455,8 +430,8 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
             }`
           );
         }
-        let exampleName;
-        [step.operationId, exampleName] = ops[0];
+        step.operationId = ops[0];
+        const exampleName = opMap[step.operationId];
         step.operation = this.operationsMap.get(step.operationId)!;
         step.description = step.description ?? exampleName;
       }
@@ -464,11 +439,13 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       step.responseExpected = exampleFileContent.responses;
 
       await this.applyPatches(step, rawStep);
+      this.templateGenerator.exampleParameterConvention(step, getVariable);
     }
     return step;
   }
 
   private async applyPatches(step: StepRestCall, rawStep: RawStepExample) {
+    const statusCode = Object.keys(step.responseExpected).sort()[0];
     if (rawStep.resourceUpdate) {
       if (!["put", "patch", "get"].includes(step.operation._method)) {
         throw new Error(
@@ -476,34 +453,34 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
         );
       }
       // TODO apply resourceUpdate
-      // const target = cloneDeep(step.responseExpected);
-      // const bodyParam = getBodyParam(step.operation, this.jsonLoader);
-      // if (bodyParam !== undefined) {
-      //   try {
-      //     this.bodyTransformer.deepMerge(target, step.requestParameters[bodyParam.name]);
-      //   } catch (err) {
-      //     console.error(err);
-      //   }
-      // }
-      // jsonPatchApply(target, rawStep.resourceUpdate);
-      // if (bodyParam !== undefined) {
-      //   const convertedRequest = await this.bodyTransformer.resourceToRequest(
-      //     target,
-      //     bodyParam.schema!
-      //   );
-      //   step.requestParameters[bodyParam.name] = convertedRequest;
-      // }
-      // step.responseExpected = await this.bodyTransformer.resourceToResponse(
-      //   target,
-      //   step.operation.responses[step.statusCode].schema!
-      // );
+      const target = step.responseExpected[statusCode].body;
+      const bodyParam = getBodyParam(step.operation, this.jsonLoader);
+      if (bodyParam !== undefined) {
+        try {
+          this.bodyTransformer.deepMerge(target, step.requestParameters[bodyParam.name]);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+      jsonPatchApply(target, rawStep.resourceUpdate);
+      if (bodyParam !== undefined) {
+        const convertedRequest = await this.bodyTransformer.resourceToRequest(
+          target,
+          bodyParam.schema!
+        );
+        step.requestParameters[bodyParam.name] = convertedRequest;
+      }
+      step.responseExpected[statusCode].body = await this.bodyTransformer.resourceToResponse(
+        target,
+        step.operation.responses[statusCode].schema!
+      );
     }
 
     if (rawStep.requestUpdate) {
       jsonPatchApply(step.requestParameters, rawStep.requestUpdate);
     }
     if (rawStep.responseUpdate) {
-      jsonPatchApply(step.responseExpected, rawStep.responseUpdate);
+      jsonPatchApply(step.responseExpected[statusCode].body, rawStep.responseUpdate);
     }
   }
 
@@ -677,7 +654,6 @@ const declareOutputVariables = (
     if (scope.variables[key] === undefined) {
       scope.variables[key] = {
         type: val.type ?? "string",
-        value: `$(${key})`,
       };
     }
     if (val.type === "secureString" || val.type === "securestring" || val.type === "secureObject") {
