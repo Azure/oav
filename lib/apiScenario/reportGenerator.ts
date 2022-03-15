@@ -307,9 +307,6 @@ export class ReportGenerator {
         }
       }
     }
-    if (this.opts.verbose) {
-      console.log(JSON.stringify(this.swaggerExampleQualityResult, null, 2));
-    }
   }
 
   public async generateMarkdownQualityReport() {

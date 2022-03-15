@@ -374,7 +374,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
 
           if (value.type === "object" || value.type === "secureObject" || value.type === "array") {
             if (value.patches) {
-              const obj = cloneDeep(ctx.scenarioDef.variables[name]);
+              const obj = cloneDeep(getVariable(name));
               if (typeof obj !== "object") {
                 // TODO dynamic json patch
                 throw new Error(`Can not Json Patch on ${name}, type of ${typeof obj}`);
