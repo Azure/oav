@@ -585,7 +585,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
   ): Promise<StepArmTemplate> {
     const step: StepArmTemplate = {
       type: "armTemplateDeployment",
-      step: rawStep.step ?? `[${ctx.scenarioIndex ?? ctx.stage}_${ctx.stepIndex}_ArmTemplate`,
+      step: rawStep.step ?? `${ctx.scenarioIndex ?? ctx.stage}_${ctx.stepIndex}_ArmTemplate`,
       outputVariables: rawStep.outputVariables ?? {},
       armTemplate: rawStep.armTemplate,
       armTemplatePayload: {},
