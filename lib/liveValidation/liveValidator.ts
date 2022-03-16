@@ -736,10 +736,6 @@ export class LiveValidator {
       );
       return this.options.swaggerPaths;
     } else {
-      console.log(`directory: -------${this.options.directory}-----`);
-      if (this.options.swaggerPathsPattern !== undefined) {
-        console.log(`swagger pattern: ${this.options.swaggerPathsPattern.join("\n")}`);
-      }
       let allJsonsPattern = path.join(this.options.directory, "/specification/**/*.json");
       if (new RegExp("specification$").test(this.options.directory)) {
         allJsonsPattern = path.join(this.options.directory, "/**/*.json");
