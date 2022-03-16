@@ -189,12 +189,27 @@ describe("Live Validator", () => {
     });
     it("should initialize with no version selected policy", async () => {
       const options = {
-        directory: "./test/liveValidation/swaggers/",
+        directory: "./test/liveValidation/swaggers/specification",
       };
       const validator = new LiveValidator(options);
       await validator.initialize();
       const cache = validator.swaggerList;
       assert.equal(cache.length, 67);
+      assert.equal(cache.filter(a => a.includes("SignalRService")).length, 7);
+      assert.equal(cache.filter(a => a.includes("SignalRService")).filter(a => a.includes("2021-03-01-preview")).length, 2);
+    });
+    it("should initialize with no version selected policy", async () => {
+      const options = {
+        directory: "./test/liveValidation/swaggers/specification",
+        maxVersionNumberOfLegacyYear: 2,
+        legacyYear: 1,
+        swaggerPathsPattern: ["/signalr/**/*.json"],
+        
+      };
+      const validator = new LiveValidator(options);
+      await validator.initialize();
+      const cache = validator.swaggerList;
+      assert.equal(cache.length, 7);
       assert.equal(cache.filter(a => a.includes("SignalRService")).length, 7);
       assert.equal(cache.filter(a => a.includes("SignalRService")).filter(a => a.includes("2021-03-01-preview")).length, 2);
     });

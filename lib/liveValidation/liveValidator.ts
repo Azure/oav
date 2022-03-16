@@ -736,13 +736,20 @@ export class LiveValidator {
       );
       return this.options.swaggerPaths;
     } else {
-      const allJsonsPattern = path.join(this.options.directory, "/specification/**/*.json");
+      console.log(`directory: -------${this.options.directory}-----`);
+      if (this.options.swaggerPathsPattern !== undefined) {
+        console.log(`swagger pattern: ${this.options.swaggerPathsPattern.join("\n")}`);
+      }
+      let allJsonsPattern = path.join(this.options.directory, "/specification/**/*.json");
+      if (new RegExp("specification$").test(this.options.directory)) {
+        allJsonsPattern = path.join(this.options.directory, "/**/*.json");
+      }
       const swaggerPathPatterns: string[] = [];
       if (
         this.options.swaggerPathsPattern === undefined ||
         this.options.swaggerPathsPattern.length === 0
       ) {
-        //Apple: Only when either swaggerPathsPattern or swaggerPaths are defined in options,
+        //Note: Only when either swaggerPathsPattern or swaggerPaths are defined in options,
         //the api version selection policy will be applied.
         let allSwaggerPaths = await this.getMatchedPaths(allJsonsPattern);
         if (
@@ -753,6 +760,9 @@ export class LiveValidator {
         ) {
           this.buildVersionMap(allSwaggerPaths);
           allSwaggerPaths = this.apiVersionFilter();
+          console.log(`Filter applied: ${allSwaggerPaths.length}
+          ${allSwaggerPaths.join("\n")}
+          `);
         }
         return allSwaggerPaths;
       } else {
