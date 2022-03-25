@@ -1,3 +1,4 @@
+import * as lodash from "lodash";
 import {
   ChildObjectInfo,
   getInfo,
@@ -77,7 +78,25 @@ export class AjvSchemaValidator implements SchemaValidator {
       const result: SchemaValidateIssue[] = [];
       const isValid = validateSchema.validate.call(ctx, data);
       if (!isValid) {
-        ajvErrorListToSchemaValidateIssueList(validateSchema.validate.errors!, ctx, result);
+        const errors = validateSchema.validate.errors!;
+        const newErrors = lodash.cloneDeep(errors);
+        for (let i = 0; i < errors.length; i++) {
+          const error = errors[i];
+          const newError = shouldRevalidateError(error, ctx);
+          if (typeof newError === "object") {
+            const newData = lodash.cloneDeep(data);
+            const position = (newError as any).position;
+            const value = (newError as any).value;
+            lodash.set(newData, position, value);
+            const newResult = ret(ctx, newData);
+            if (newResult.length === 0) {
+              newErrors.splice(i, 1);
+            }
+          }
+        }
+        if (newErrors.length > 0) {
+          ajvErrorListToSchemaValidateIssueList(errors, ctx, result);
+        }
         validateSchema.validate.errors = null;
       }
       return result;
@@ -190,6 +209,36 @@ export const ajvErrorToSchemaValidateIssue = (
   result.source = source;
 
   return result;
+};
+
+const shouldRevalidateError = (
+  error: ErrorObject,
+  cxt: SchemaValidateContext
+): object | boolean => {
+  const { schema, parentSchema: parentSch, keyword, data, dataPath } = error;
+  const parentSchema = parentSch as Schema;
+
+  // If the value of query parameter is in string format, we can skip this error
+  if (
+    !cxt.isResponse &&
+    keyword === "type" &&
+    schema === "array" &&
+    typeof data === "string" &&
+    (parentSchema as any)?.["in"] === "query"
+  ) {
+    const arrayData = data.split(",").map((item) => {
+      if (parseFloat(item)) {
+        return parseFloat(item);
+      }
+      return item;
+    });
+    return {
+      position: dataPath.substr(1),
+      value: arrayData,
+    };
+  }
+
+  return false;
 };
 
 const shouldSkipError = (error: ErrorObject, cxt: SchemaValidateContext) => {

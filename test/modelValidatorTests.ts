@@ -11,7 +11,7 @@ const testPath = __dirname;
 const specPath =
   `${testPath}/modelValidation/swaggers/specification/scenarios/resource-manager/` +
   `Microsoft.Test/2016-01-01/test.json`;
-
+jest.setTimeout(999999);
 describe("Model Validation", () => {
   describe("Path validation - ", () => {
     it("should pass when path parameter has forward slashes", async () => {
@@ -469,6 +469,13 @@ describe("Model Validation", () => {
       // console.dir(result, { depth: null })
       assert(result.length === 0, `swagger "${specPath2}" contains model validation errors.`);
       // console.log(result)
+    });
+    it("should pass for query parameters in string format", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/query/test.json`;
+      const result = await validate.validateExamples(specPath2, "Query_StringButDefinedAsArray", {
+        consoleLogLevel: "off",
+      });
+      assert(result.length === 0, `swagger "${specPath2}" contains model validation errors.`);
     });
   });
 

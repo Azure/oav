@@ -1,6 +1,7 @@
 {
   "parameters": {
-    "hello": "Wake up at 3:14:16 AM"
+    "hello": "Wake up at 3:14:16 AM",
+    "helloArray": "50.97452,5.86605"
   },
   "responses": {
     "200": {}

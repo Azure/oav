@@ -1,6 +1,8 @@
 # Change Log - oav
 
 ## 03/11/2022 2.11.9
+
+- ModelValidator - Ignore INVALID_TYPE validation in case of query parameter in string format
 - Api Scenario - Fix bug about readonly during example diff.
 
 ## 02/23/2022 2.11.8
