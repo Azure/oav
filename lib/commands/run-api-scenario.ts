@@ -12,6 +12,7 @@ import {
 } from "../apiScenario/postmanCollectionGenerator";
 import { inversifyGetInstance } from "../inversifyUtils";
 import { printWarning } from "../util/utils";
+import { getAutorestConfig } from "../util/getAutorestConfig";
 
 export const command = "run-api-scenario <api-scenario>";
 
@@ -40,6 +41,18 @@ export const builder: yargs.CommandBuilder = {
     alias: "envFile",
     describe: "the env file path.",
     string: true,
+  },
+  tag: {
+    describe: "the readme tag name.",
+    string: true,
+  },
+  readme: {
+    describe: "path to readme.md file",
+    string: true,
+  },
+  specs: {
+    describe: "one or more spec file paths. type: array",
+    type: "array",
   },
   output: {
     alias: "outputDir",
@@ -122,6 +135,25 @@ export const builder: yargs.CommandBuilder = {
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
   await cliSuppressExceptions(async () => {
+    const swaggerFilePaths: string[] = (argv.specs || []).map((it: string) => path.resolve(it));
+    if (argv.readme !== undefined) {
+      const readmeMd: string = path.resolve(argv.readme);
+      const autorestConfig = await getAutorestConfig(argv, readmeMd);
+      const fileRoot = path.dirname(readmeMd);
+      const inputSwaggerFile = autorestConfig["input-file"].map((it: string) =>
+        path.resolve(fileRoot, it)
+      );
+      console.log(`input swagger files: ${inputSwaggerFile}`);
+      for (const it of inputSwaggerFile) {
+        if (swaggerFilePaths.indexOf(it) === -1) {
+          swaggerFilePaths.push(it);
+        }
+      }
+    }
+
+    console.log("input-file:");
+    console.log(swaggerFilePaths);
+
     const scenarioFilePath = path.resolve(argv.apiScenario);
     let env: any = {};
     if (argv.e !== undefined) {
@@ -149,6 +181,8 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     if (argv.resourceGroup !== undefined) {
       env.resourceGroupName = argv.resourceGroup;
     }
+
+    console.log(`fileRoot: ${fileRoot}`);
     const opt: PostmanCollectionGeneratorOption = {
       name: path.basename(scenarioFilePath),
       scenarioDef: scenarioFilePath,
@@ -172,6 +206,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       to: argv.to,
       runId: argv.runId,
       verbose: argv.verbose,
+      swaggerFilePaths: swaggerFilePaths,
     };
     const generator = inversifyGetInstance(PostmanCollectionGenerator, opt);
     await generator.GenerateCollection();

@@ -17,7 +17,6 @@ import {
 import * as util from "../../generator/util";
 import { setDefaultOpts } from "../../swagger/loader";
 import { pathJoin, pathResolve } from "@azure-tools/openapi-tools-common";
-import { relative } from "path";
 import { dump } from "js-yaml";
 import Mocker from "../../generator/mocker";
 
@@ -95,7 +94,6 @@ export class ApiScenarioGenerator {
   public async generate() {
     const definition: RawScenarioDefinition = {
       scope: "ResourceGroup",
-      swaggers: this.opts.swaggerFilePaths.map((p) => relative(this.opts.outputDir, p)),
       variables: undefined,
       scenarios: [],
     };
@@ -149,7 +147,7 @@ export class ApiScenarioGenerator {
     [...map.values()]
       .sort((a, b) => b.count - a.count)
       .forEach((v) => {
-        if (!variables[v.name]) {
+        if (!variables[v.name] && v.count > 1) {
           variables[v.name] = v.value;
           return;
         }

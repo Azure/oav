@@ -126,7 +126,6 @@ export class TestScenarioGenerator {
     const testDef: RawScenarioDefinition = {
       scope: "ResourceGroup",
       scenarios: [],
-      swaggers: [], // TODO
     };
 
     // this.idx = 0;
