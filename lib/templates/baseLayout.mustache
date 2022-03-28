@@ -250,11 +250,13 @@
                         <th>OperationId</th>
                         </tr>
                     </thead>
-                    {{#coverageResults}}
+                    {{#coverageResultsForRendering}}
                     <tbody>
                         <tr>
                           <td>
-                            <div style="width: 220px;">{{spec}}</div>
+                            <div style="width: 220px;">
+                              <a href="{{spec}}">{{specLinkLabel}}</a>
+                            </div>
                           </td>
                           <td>
                             <table class="inner_table">
@@ -265,7 +267,7 @@
                           </td>
                         </tr>
                     </tbody>
-                    {{/coverageResults}}
+                    {{/coverageResultsForRendering}}
                   </table>
             </div>
         </div>
@@ -290,7 +292,9 @@
                             <div style="width: 200px;">{{operationInfo.operationId}}</div>
                           </td>
                           <td>
-                           <div style="width: 200px; word-break: break-word;">{{payloadFilePath}}</div>
+                           <div style="width: 200px; word-break: break-word;">
+                             <a href="{{payloadFilePath}}">{{payloadFileLinkLabel}}</a>
+                           </div>
                           </td>
                           <td>
                             <table class="inner_table">

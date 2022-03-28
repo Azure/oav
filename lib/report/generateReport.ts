@@ -6,20 +6,33 @@ import {
   TrafficValidationIssue,
 } from "../swaggerValidator/trafficValidator";
 
+export interface TrafficValidationIssueForRendering extends TrafficValidationIssue {
+  payloadFileLinkLabel?: string;
+}
+
+export interface OperationCoverageInfoForRendering extends OperationCoverageInfo {
+  specLinkLabel?: string;
+}
+
 // used to pass data to the template rendering engine
 export class CoverageView {
   public package: string;
+  public language: string;
   public apiVersion: string = "unknown";
-  public generatedDate: Date;
-  public validationResults: TrafficValidationIssue[];
-  public sortedValidationResults: TrafficValidationIssue[];
-  public coverageResults: OperationCoverageInfo[];
+  public generatedDate: Date;  
+  
   public undefinedOperationCount: number = 0;
   public operationValidated: number = 0;
   public operationFailed: number = 0;
-  public operationUnValidated: number = 0;
-  public language: string;
+  public operationUnValidated: number = 0;  
   public generalErrorResults: Map<string, TrafficValidationIssue[]>;
+
+  public validationResultsForRendering: TrafficValidationIssueForRendering[] = [];
+  public coverageResultsForRendering: OperationCoverageInfoForRendering[] = [];
+
+  private validationResults: TrafficValidationIssue[];  
+  private sortedValidationResults: TrafficValidationIssue[];
+  private coverageResults: OperationCoverageInfo[];
 
   public constructor(
     validationResults: TrafficValidationIssue[],
@@ -37,6 +50,40 @@ export class CoverageView {
     this.generalErrorResults = new Map();
     this.setMetrics();
     this.sortOperationIds();
+    this.prepareDataForRendering();
+  }
+
+  private prepareDataForRendering() {
+    const specLinkPrefix = "https://github.com/Azure/azure-rest-api-specs/blob/main/";
+    const payloadLinkPrefix = "https://github.com/scbedd/oav-traffic-converter/blob/main/sample-tables-input/"
+
+    try {
+      this.sortedValidationResults.forEach(element => {
+        let payloadFile =  element.payloadFilePath?.substring(element.payloadFilePath.lastIndexOf("/") + 1);
+        this.validationResultsForRendering.push({
+          payloadFilePath: `${payloadLinkPrefix}${payloadFile}`,
+          payloadFileLinkLabel: payloadFile,
+          errors: element.errors,
+          operationInfo: element.operationInfo,
+          runtimeExceptions: element.runtimeExceptions
+        });
+      });
+      this.coverageResults.forEach(element => {
+        this.coverageResultsForRendering.push({
+          spec: `${specLinkPrefix}${element.spec?.substring(element.spec?.indexOf("specification"))}`,
+          specLinkLabel: element.spec?.substring(element.spec?.lastIndexOf("/") + 1),
+          apiVersion: element.apiVersion,
+          coveredOperaions: element.coveredOperaions,
+          validationFailOperations: element.validationFailOperations,
+          unCoveredOperations: element.unCoveredOperations,
+          unCoveredOperationsList: element.unCoveredOperationsList,
+          totalOperations: element.totalOperations,
+          coverageRate: element.coverageRate,
+        });
+      });
+    }catch(e) {
+      console.error(`Faile in prepareDataForRendering with err:${e?.stack};message:${e?.message}`);
+    }
   }
 
   private sortOperationIds() {
@@ -84,7 +131,7 @@ export class CoverageView {
   }
 
   public getGeneralErrors(): TrafficValidationIssue[] {
-    return this.sortedValidationResults.filter((x) => {
+    return this.validationResultsForRendering.filter((x) => {
       return x.errors && x.errors.length > 0;
     });
   }
