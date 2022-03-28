@@ -105,7 +105,9 @@ export class ApiScenarioGenerator {
 
   private async writeFile(definition: RawScenarioDefinition) {
     const fileContent = dump(definition);
-    await this.fileLoader.writeFile(pathJoin(this.opts.outputDir, "basic.yaml"), fileContent);
+    const filePath = pathJoin(this.opts.outputDir, "basic.yaml");
+    await this.fileLoader.writeFile(filePath, fileContent);
+    console.log(`${filePath} is generated.`);
   }
 
   private getVariables(definition: RawScenarioDefinition) {
