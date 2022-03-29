@@ -78,21 +78,12 @@ export class AjvSchemaValidator implements SchemaValidator {
       const result: SchemaValidateIssue[] = [];
       const isValid = validateSchema.validate.call(ctx, data);
       if (!isValid) {
-        const errors = validateSchema.validate.errors!;
-        for (let i = 0; i < errors.length; i++) {
-          const error = errors[i];
-          const newError = ReValidateIfNeed(error, ctx);
-          if (typeof newError === "object") {
-            const newData = lodash.cloneDeep(data);
-            const position = (newError as any).position;
-            const value = (newError as any).value;
-            lodash.set(newData, position, value);
-            const isValid1 = validateSchema.validate.call(ctx, newData);
-            if (isValid1 || validateSchema.validate.errors!.length === errors.length - 1) {
-              errors.splice(i, 1);
-            }
-          }
-        }
+        const errors = ReValidateIfNeed(
+          validateSchema.validate.errors!,
+          ctx,
+          data,
+          validateSchema.validate
+        );
         if (errors.length > 0) {
           ajvErrorListToSchemaValidateIssueList(errors, ctx, result);
         }
@@ -210,31 +201,47 @@ export const ajvErrorToSchemaValidateIssue = (
   return result;
 };
 
-const ReValidateIfNeed = (error: ErrorObject, cxt: SchemaValidateContext): object | boolean => {
-  const { schema, parentSchema: parentSch, keyword, data, dataPath } = error;
-  const parentSchema = parentSch as Schema;
+const ReValidateIfNeed = (
+  errors: ErrorObject[],
+  ctx: SchemaValidateContext,
+  data: any,
+  validate: ValidateFunction
+): ErrorObject[] => {
+  const result: ErrorObject[] = [];
+  const length = errors.length;
+  const newData = lodash.cloneDeep(data);
 
-  // If the value of query parameter is in string format, we can skip this error
-  if (
-    !cxt.isResponse &&
-    keyword === "type" &&
-    schema === "array" &&
-    typeof data === "string" &&
-    (parentSchema as any)?.["in"] === "query"
-  ) {
-    const arrayData = data.split(",").map((item) => {
-      if (parseFloat(item)) {
-        return parseFloat(item);
+  for (let i = 0; i < length; i++) {
+    validate.errors = null;
+    const error = errors[i];
+    const { schema, parentSchema: parentSch, keyword, data: errorData, dataPath } = error;
+    const parentSchema = parentSch as Schema;
+
+    // If the value of query parameter is in string format, we can skip this error
+    if (
+      !ctx.isResponse &&
+      keyword === "type" &&
+      schema === "array" &&
+      typeof errorData === "string" &&
+      (parentSchema as any)?.["in"] === "query"
+    ) {
+      const arrayData = errorData.split(",").map((item) => {
+        if (parseFloat(item)) {
+          return parseFloat(item);
+        }
+        return item;
+      });
+      const position = dataPath.substr(1);
+      lodash.set(newData, position, arrayData);
+      const isValid = validate.call(ctx, newData);
+      if (isValid || !lodash.isEqual(validate.errors![i], error)) {
+        continue;
       }
-      return item;
-    });
-    return {
-      position: dataPath.substr(1),
-      value: arrayData,
-    };
+    }
+    result.push(error);
   }
 
-  return false;
+  return result;
 };
 
 const shouldSkipError = (error: ErrorObject, cxt: SchemaValidateContext) => {
