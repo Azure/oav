@@ -48,8 +48,12 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
   let tag = "default";
   if (argv.readme !== undefined) {
     const readmeMd: string = pathResolve(argv.readme);
-    const autorestConfig = await getAutorestConfig(argv, readmeMd);
+    let autorestConfig = await getAutorestConfig(argv, readmeMd);
     tag = autorestConfig.tag;
+    if (argv.tag === undefined) {
+      argv.tag = tag;
+      autorestConfig = await getAutorestConfig(argv, readmeMd);
+    }
     const fileRoot = dirname(readmeMd);
     const inputSwaggerFile = autorestConfig["input-file"].map((it: string) =>
       pathResolve(fileRoot, it)
