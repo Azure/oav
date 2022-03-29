@@ -79,22 +79,21 @@ export class AjvSchemaValidator implements SchemaValidator {
       const isValid = validateSchema.validate.call(ctx, data);
       if (!isValid) {
         const errors = validateSchema.validate.errors!;
-        const newErrors = lodash.cloneDeep(errors);
         for (let i = 0; i < errors.length; i++) {
           const error = errors[i];
-          const newError = shouldRevalidateError(error, ctx);
+          const newError = ReValidateIfNeed(error, ctx);
           if (typeof newError === "object") {
             const newData = lodash.cloneDeep(data);
             const position = (newError as any).position;
             const value = (newError as any).value;
             lodash.set(newData, position, value);
-            const newResult = ret(ctx, newData);
-            if (newResult.length === 0) {
-              newErrors.splice(i, 1);
+            const isValid1 = validateSchema.validate.call(ctx, newData);
+            if (isValid1 || validateSchema.validate.errors!.length === errors.length - 1) {
+              errors.splice(i, 1);
             }
           }
         }
-        if (newErrors.length > 0) {
+        if (errors.length > 0) {
           ajvErrorListToSchemaValidateIssueList(errors, ctx, result);
         }
         validateSchema.validate.errors = null;
@@ -211,10 +210,7 @@ export const ajvErrorToSchemaValidateIssue = (
   return result;
 };
 
-const shouldRevalidateError = (
-  error: ErrorObject,
-  cxt: SchemaValidateContext
-): object | boolean => {
+const ReValidateIfNeed = (error: ErrorObject, cxt: SchemaValidateContext): object | boolean => {
   const { schema, parentSchema: parentSch, keyword, data, dataPath } = error;
   const parentSchema = parentSch as Schema;
 
