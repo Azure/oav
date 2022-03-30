@@ -11,7 +11,7 @@ const testPath = __dirname;
 const specPath =
   `${testPath}/modelValidation/swaggers/specification/scenarios/resource-manager/` +
   `Microsoft.Test/2016-01-01/test.json`;
-jest.setTimeout(999999);
+
 describe("Model Validation", () => {
   describe("Path validation - ", () => {
     it("should pass when path parameter has forward slashes", async () => {
@@ -778,6 +778,6 @@ describe("Model Validation", () => {
       const result = await validate.validateExamples(specPath2, undefined);
       assert.strictEqual(result.length, 1);
       assert.strictEqual(result[0].code, "XMS_EXAMPLE_NOTFOUND_ERROR");
-    });
+    }, 10000);
   });
 });
