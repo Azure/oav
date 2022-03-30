@@ -13,6 +13,7 @@ import {
 import { inversifyGetInstance } from "../inversifyUtils";
 import { printWarning } from "../util/utils";
 import { getAutorestConfig } from "../util/getAutorestConfig";
+import { getSwaggerFilePathsFromApiScenarioFilePath } from "../apiScenario/apiScenarioYamlLoader";
 
 export const command = "run-api-scenario <api-scenario>";
 
@@ -138,7 +139,12 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     const swaggerFilePaths: string[] = (argv.specs || []).map((it: string) => path.resolve(it));
     if (argv.readme !== undefined) {
       const readmeMd: string = path.resolve(argv.readme);
-      const autorestConfig = await getAutorestConfig(argv, readmeMd);
+      let autorestConfig = await getAutorestConfig(argv, readmeMd);
+      const tag = autorestConfig.tag;
+      if (argv.tag === undefined) {
+        argv.tag = tag;
+        autorestConfig = await getAutorestConfig(argv, readmeMd);
+      }
       const fileRoot = path.dirname(readmeMd);
       const inputSwaggerFile = autorestConfig["input-file"].map((it: string) =>
         path.resolve(fileRoot, it)
@@ -151,10 +157,14 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       }
     }
 
+    const scenarioFilePath = path.resolve(argv.apiScenario);
+    if (swaggerFilePaths.length === 0) {
+      swaggerFilePaths.push(...getSwaggerFilePathsFromApiScenarioFilePath(scenarioFilePath));
+    }
+
     console.log("input-file:");
     console.log(swaggerFilePaths);
 
-    const scenarioFilePath = path.resolve(argv.apiScenario);
     let env: any = {};
     if (argv.e !== undefined) {
       env = JSON.parse(fs.readFileSync(argv.e).toString());
