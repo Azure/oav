@@ -216,7 +216,7 @@ interface BaseSchema {
     modelAsString?: boolean;
     values?: Array<{ value: any; description?: string; name?: string }>;
   };
-  type?: string;
+  type?: string | string[];
   items?: Schema | Schema[];
   $ref?: string;
   if?: Schema;
@@ -235,7 +235,7 @@ export type SchemaType =
   | "null"
   | "file";
 export interface Schema extends BaseSchema {
-  type?: SchemaType;
+  type?: SchemaType | SchemaType[];
   allOf?: Schema[];
   anyOf?: Schema[];
   oneOf?: Schema[];

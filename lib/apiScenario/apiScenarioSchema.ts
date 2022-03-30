@@ -214,17 +214,11 @@ export const ApiScenarioDefinition: Schema & {
       properties: {
         scenario: {
           $ref: "#/definitions/Name",
-          description: "Name of the scenario",
+          description: "Name of the scenario that uniquely identifies it",
         },
         description: {
           type: "string",
           description: "A long description of the scenario",
-        },
-        swaggers: {
-          type: "array",
-          items: {
-            type: "string",
-          },
         },
         variables: {
           $ref: "#/definitions/Variables",
@@ -274,6 +268,16 @@ export const ApiScenarioDefinition: Schema & {
         variables: {
           $ref: "#/definitions/Variables",
         },
+      },
+    },
+    StepRestBase: {
+      type: "object",
+      allOf: [
+        {
+          $ref: "#/definitions/StepBase",
+        },
+      ],
+      properties: {
         outputVariables: {
           type: "object",
           propertyNames: {
@@ -299,19 +303,41 @@ export const ApiScenarioDefinition: Schema & {
       type: "object",
       allOf: [
         {
-          $ref: "#/definitions/StepBase",
+          $ref: "#/definitions/StepRestBase",
         },
       ],
       properties: {
         operationId: {
           type: "string",
         },
-        swagger: {
+        readmeTag: {
           type: "string",
+          format: "uri-reference",
         },
         parameters: {
           type: "object",
           additionalProperties: true,
+        },
+        responses: {
+          type: "object",
+          minProperties: 1,
+          additionalProperties: false,
+          patternProperties: {
+            "^([0-9]{3})$": {
+              type: "object",
+              properties: {
+                headers: {
+                  type: "object",
+                  additionalProperties: {
+                    type: "string",
+                  },
+                },
+                body: {
+                  type: ["object", "number", "array", "integer", "string", "boolean", "null"],
+                },
+              },
+            },
+          },
         },
         step: {},
         description: {},
@@ -325,12 +351,13 @@ export const ApiScenarioDefinition: Schema & {
       type: "object",
       allOf: [
         {
-          $ref: "#/definitions/StepBase",
+          $ref: "#/definitions/StepRestBase",
         },
       ],
       properties: {
         exampleFile: {
           type: "string",
+          format: "uri-reference",
         },
         resourceUpdate: {
           type: "array",
@@ -374,11 +401,11 @@ export const ApiScenarioDefinition: Schema & {
       properties: {
         armTemplate: {
           type: "string",
+          format: "uri-reference",
         },
         step: {},
         description: {},
         variables: {},
-        outputVariables: {},
       },
       required: ["armTemplate"],
       additionalProperties: false,
@@ -393,6 +420,7 @@ export const ApiScenarioDefinition: Schema & {
       properties: {
         armDeploymentScript: {
           type: "string",
+          format: "uri-reference",
         },
         arguments: {
           type: "string",
@@ -415,7 +443,6 @@ export const ApiScenarioDefinition: Schema & {
         step: {},
         description: {},
         variables: {},
-        outputVariables: {},
       },
       required: ["armDeploymentScript"],
       additionalProperties: false,

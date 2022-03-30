@@ -38,18 +38,6 @@ export const apiScenarioEnvKey = "API_SCENARIO_JSON_ENV";
  *
  */
 export const builder: yargs.CommandBuilder = {
-  specs: {
-    describe: "one or more spec file paths. type: array",
-    type: "array",
-  },
-  readme: {
-    describe: "path to readme.md file",
-    type: "string",
-  },
-  tag: {
-    describe: "the readme tag name",
-    type: "string",
-  },
   e: {
     alias: "envFile",
     describe: "the env file path.",
