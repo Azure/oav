@@ -13,7 +13,7 @@ import * as Constants from "../lib/util/constants";
 // eslint-disable-next-line no-var
 var glob = require("glob").glob;
 
-const numberOfSpecs = 15;
+const numberOfSpecs = 17;
 jest.setTimeout(999999);
 
 describe("Live Validator", () => {
@@ -715,7 +715,7 @@ describe("Live Validator", () => {
       };
       const validator = new LiveValidator(options);
       await validator.initialize();
-  
+
       const payload = require(`${__dirname}/liveValidation/payloads/missingResponseHeader_shouldSucceed.json`);
       const result = await validator.validateLiveRequestResponse(payload);
       assert.strictEqual(result.responseValidationResult.isSuccessful, true);
@@ -847,6 +847,25 @@ describe("Live Validator", () => {
 					}
 				}
       });
+    });
+
+    it(`should not report error in response when response data divided by its multipleOf value is an integer`, async () => {
+      const options = {
+        directory: `${__dirname}/liveValidation/swaggers/`,
+        isPathCaseSensitive: false,
+        useRelativeSourceLocationUrl: true,
+        swaggerPathsPattern: [
+          "specification/netapp/resource-manager/Microsoft.NetApp/2020-07-01/*.json",
+        ],
+        git: {
+          shouldClone: false,
+        },
+      };
+      const liveValidator = new LiveValidator(options);
+      await liveValidator.initialize();
+      const payload = require(`${__dirname}/liveValidation/payloads/multipleOfError.json`);
+      const result = await liveValidator.validateLiveRequestResponse(payload);
+      assert.equal(result.responseValidationResult.isSuccessful, true);
     });
 
     it(`should report error in response for GET/PUT resource calls when id is not returned`, async () => {
@@ -1010,6 +1029,25 @@ describe("Live Validator", () => {
       });
       const errors = result.responseValidationResult.errors;
       assert.deepStrictEqual(errors, []);
+    });
+
+    it(`should not report error when payload has property with date-time parameter and its value is valid except missing "Z" in the end`, async () => {
+      const options = {
+        directory: `${__dirname}/liveValidation/swaggers/`,
+        isPathCaseSensitive: false,
+        useRelativeSourceLocationUrl: true,
+        swaggerPathsPattern: [
+          "specification/desktopvirtualization/resource-manager/Microsoft.DesktopVirtualization/*.json",
+        ],
+        git: {
+          shouldClone: false,
+        },
+      };
+      const liveValidator = new LiveValidator(options);
+      await liveValidator.initialize();
+      const payload = require(`${__dirname}/liveValidation/payloads/dateTime.json`);
+      const result = await liveValidator.validateLiveRequestResponse(payload);
+      assert.equal(result.responseValidationResult.isSuccessful, true);
     });
   });
 });

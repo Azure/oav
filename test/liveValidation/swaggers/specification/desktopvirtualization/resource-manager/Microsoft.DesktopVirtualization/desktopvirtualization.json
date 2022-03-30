@@ -1,0 +1,592 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "2021-07-12",
+    "title": "Desktop Virtualization API Client"
+  },
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "host": "management.azure.com",
+  "securityDefinitions": {
+    "azure_auth": {
+      "type": "oauth2",
+      "authorizationUrl": "https://login.microsoftonline.com/common/oauth2/authorize",
+      "flow": "implicit",
+      "description": "Azure Active Directory OAuth2 Flow",
+      "scopes": {
+        "user_impersonation": "impersonate your user account"
+      }
+    }
+  },
+  "paths": {
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DesktopVirtualization/hostPools/{hostPoolName}": {
+      "put": {
+        "tags": [
+          "HostPool"
+        ],
+        "operationId": "HostPools_CreateOrUpdate",
+        "description": "Create or update a host pool.",
+        "parameters": [
+          {
+            "$ref": "#/parameters/ApiVersionParameter"
+          },
+          {
+            "$ref": "#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "#/parameters/HostPoolNameParameter"
+          },
+          {
+            "name": "hostPool",
+            "description": "Object containing HostPool definitions.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/HostPool"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully updated host pool.",
+            "schema": {
+              "$ref": "#/definitions/HostPool"
+            }
+          },
+          "201": {
+            "description": "Successfully created host pool.",
+            "schema": {
+              "$ref": "#/definitions/HostPool"
+            }
+          },
+          "default": {
+            "description": "Automation error response describing why the operation failed.",
+            "schema": {
+              "$ref": "#/definitions/CloudError"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "CloudError": {
+      "x-ms-external": true,
+      "properties": {
+        "error": {
+          "$ref": "#/definitions/CloudErrorProperties"
+        }
+      }
+    },
+    "CloudErrorProperties": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "Error code",
+          "type": "string"
+        },
+        "message": {
+          "description": "Error message indicating why the operation failed.",
+          "type": "string"
+        }
+      }
+    },
+    "HostPool": {
+      "type": "object",
+      "description": "Represents a HostPool definition.",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ResourceModelWithAllowedPropertySet"
+        }
+      ],
+      "required": [
+        "properties"
+      ],
+      "properties": {
+        "properties": {
+          "description": "Detailed properties for HostPool",
+          "x-ms-client-flatten": true,
+          "$ref": "#/definitions/HostPoolProperties",
+          "x-nullable": false
+        }
+      }
+    },
+    "ResourceModelWithAllowedPropertySet": {
+      "description": "The resource model definition containing the full set of allowed properties for a resource. Except properties bag, there cannot be a top level property outside of this set.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "readOnly": true,
+          "type": "string",
+          "x-ms-mutability": [
+            "read"
+          ],
+          "description": "Fully qualified resource ID for the resource. Ex - /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}"
+        },
+        "name": {
+          "readOnly": true,
+          "type": "string",
+          "description": "The name of the resource"
+        },
+        "type": {
+          "readOnly": true,
+          "type": "string",
+          "x-ms-mutability": [
+            "read"
+          ],
+          "description": "The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or \"Microsoft.Storage/storageAccounts\""
+        },
+        "location": {
+          "type": "string",
+          "x-ms-mutability": [
+            "read",
+            "create"
+          ],
+          "description": "The geo-location where the resource lives"
+        },
+        "managedBy": {
+          "type": "string",
+          "x-ms-mutability": [
+            "read",
+            "create",
+            "update"
+          ],
+          "description": "The fully qualified resource ID of the resource that manages this resource. Indicates if this resource is managed by another Azure resource. If this is present, complete mode deployment will not delete the resource if it is removed from the template since it is managed by another resource."
+        },
+        "kind": {
+          "type": "string",
+          "x-ms-mutability": [
+            "read",
+            "create"
+          ],
+          "description": "Metadata used by portal/tooling/etc to render different UX experiences for resources of the same type; e.g. ApiApps are a kind of Microsoft.Web/sites type.  If supported, the resource provider must validate and persist this value.",
+          "pattern": "^[-\\w\\._,\\(\\)]+$"
+        },
+        "etag": {
+          "readOnly": true,
+          "type": "string",
+          "description": "The etag field is *not* required. If it is provided in the response body, it must also be provided as a header per the normal etag convention.  Entity tags are used for comparing two or more entities from the same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields. "
+        },
+        "tags": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "x-ms-mutability": [
+            "read",
+            "create",
+            "update"
+          ],
+          "description": "Resource tags."
+        },
+        "identity": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/Identity"
+            }
+          ]
+        },
+        "sku": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/Sku"
+            }
+          ]
+        },
+        "plan": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/Plan"
+            }
+          ]
+        }
+      },
+      "x-ms-azure-resource": true
+    },
+    "Sku": {
+      "description": "The resource model definition representing SKU",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the SKU. Ex - P3. It is typically a letter+number code"
+        },
+        "tier": {
+          "type": "string",
+          "enum": [
+            "Free",
+            "Basic",
+            "Standard",
+            "Premium"
+          ],
+          "x-ms-enum": {
+            "name": "SkuTier",
+            "modelAsString": false
+          },
+          "description": "This field is required to be implemented by the Resource Provider if the service has more than one tier, but is not required on a PUT."
+        },
+        "size": {
+          "type": "string",
+          "description": "The SKU size. When the name field is the combination of tier and some other value, this would be the standalone code. "
+        },
+        "family": {
+          "type": "string",
+          "description": "If the service has different generations of hardware, for the same SKU, then that can be captured here."
+        },
+        "capacity": {
+          "type": "integer",
+          "format": "int32",
+          "description": "If the SKU supports scale out/in then the capacity integer should be included. If scale out/in is not possible for the resource this may be omitted."
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "Identity": {
+      "description": "Identity for the resource.",
+      "type": "object",
+      "properties": {
+        "principalId": {
+          "readOnly": true,
+          "type": "string",
+          "description": "The principal ID of resource identity."
+        },
+        "tenantId": {
+          "readOnly": true,
+          "type": "string",
+          "description": "The tenant ID of resource."
+        },
+        "type": {
+          "type": "string",
+          "description": "The identity type.",
+          "enum": [
+            "SystemAssigned"
+          ],
+          "x-ms-enum": {
+            "name": "ResourceIdentityType",
+            "modelAsString": false
+          }
+        }
+      }
+    },
+    "Plan": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "A user defined name of the 3rd Party Artifact that is being procured."
+        },
+        "publisher": {
+          "type": "string",
+          "description": "The publisher of the 3rd Party Artifact that is being bought. E.g. NewRelic"
+        },
+        "product": {
+          "type": "string",
+          "description": "The 3rd Party artifact that is being procured. E.g. NewRelic. Product maps to the OfferID specified for the artifact at the time of Data Market onboarding. "
+        },
+        "promotionCode": {
+          "type": "string",
+          "description": "A publisher provided promotion code as provisioned in Data Market for the said product/artifact."
+        },
+        "version": {
+          "type": "string",
+          "description": "The version of the desired product/artifact."
+        }
+      },
+      "description": "Plan for the resource.",
+      "required": [
+        "name",
+        "publisher",
+        "product"
+      ]
+    },
+    "HostPoolProperties": {
+      "description": "Properties of HostPool.",
+      "type": "object",
+      "required": [
+        "hostPoolType",
+        "loadBalancerType",
+        "preferredAppGroupType"
+      ],
+      "properties": {
+        "objectId": {
+          "type": "string",
+          "description": "ObjectId of HostPool. (internal use)",
+          "readOnly": true
+        },
+        "friendlyName": {
+          "type": "string",
+          "description": "Friendly name of HostPool."
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of HostPool."
+        },
+        "hostPoolType": {
+          "enum": [
+            "Personal",
+            "Pooled",
+            "BYODesktop"
+          ],
+          "x-ms-enum": {
+            "name": "HostPoolType",
+            "modelAsString": true,
+            "values": [
+              {
+                "value": "Personal",
+                "description": "Users will be assigned a SessionHost either by administrators (PersonalDesktopAssignmentType = Direct) or upon connecting to the pool (PersonalDesktopAssignmentType = Automatic). They will always be redirected to their assigned SessionHost."
+              },
+              {
+                "value": "Pooled",
+                "description": "Users get a new (random) SessionHost every time it connects to the HostPool."
+              },
+              {
+                "value": "BYODesktop",
+                "description": "Users assign their own machines, load balancing logic remains the same as Personal. PersonalDesktopAssignmentType must be Direct."
+              }
+            ]
+          },
+          "type": "string",
+          "description": "HostPool type for desktop.",
+          "x-nullable": false
+        },
+        "personalDesktopAssignmentType": {
+          "enum": [
+            "Automatic",
+            "Direct"
+          ],
+          "x-ms-enum": {
+            "name": "PersonalDesktopAssignmentType",
+            "modelAsString": true
+          },
+          "type": "string",
+          "description": "PersonalDesktopAssignment type for HostPool."
+        },
+        "customRdpProperty": {
+          "type": "string",
+          "description": "Custom rdp property of HostPool."
+        },
+        "maxSessionLimit": {
+          "type": "integer",
+          "description": "The max session limit of HostPool."
+        },
+        "loadBalancerType": {
+          "enum": [
+            "BreadthFirst",
+            "DepthFirst",
+            "Persistent"
+          ],
+          "x-ms-enum": {
+            "name": "LoadBalancerType",
+            "modelAsString": true
+          },
+          "type": "string",
+          "description": "The type of the load balancer.",
+          "x-nullable": false
+        },
+        "ring": {
+          "type": "integer",
+          "description": "The ring number of HostPool."
+        },
+        "validationEnvironment": {
+          "type": "boolean",
+          "description": "Is validation environment."
+        },
+        "registrationInfo": {
+          "$ref": "#/definitions/RegistrationInfo",
+          "description": "The registration info of HostPool."
+        },
+        "vmTemplate": {
+          "type": "string",
+          "description": "VM template for sessionhosts configuration within hostpool."
+        },
+        "applicationGroupReferences": {
+          "readOnly": true,
+          "type": "array",
+          "description": "List of applicationGroup links.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ssoadfsAuthority": {
+          "type": "string",
+          "description": "URL to customer ADFS server for signing WVD SSO certificates."
+        },
+        "ssoClientId": {
+          "type": "string",
+          "description": "ClientId for the registered Relying Party used to issue WVD SSO certificates."
+        },
+        "ssoClientSecretKeyVaultPath": {
+          "type": "string",
+          "description": "Path to Azure KeyVault storing the secret used for communication to ADFS."
+        },
+        "ssoSecretType": {
+          "enum": [
+            "SharedKey",
+            "Certificate",
+            "SharedKeyInKeyVault",
+            "CertificateInKeyVault"
+          ],
+          "x-ms-enum": {
+            "name": "SSOSecretType",
+            "modelAsString": true
+          },
+          "type": "string",
+          "description": "The type of single sign on Secret Type."
+        },
+        "preferredAppGroupType": {
+          "enum": [
+            "None",
+            "Desktop",
+            "RailApplications"
+          ],
+          "x-ms-enum": {
+            "name": "PreferredAppGroupType",
+            "modelAsString": true
+          },
+          "type": "string",
+          "description": "The type of preferred application group type, default to Desktop Application Group",
+          "x-nullable": false
+        },
+        "startVMOnConnect": {
+          "type": "boolean",
+          "description": "The flag to turn on/off StartVMOnConnect feature."
+        },
+        "migrationRequest": {
+          "$ref": "#/definitions/MigrationRequestProperties",
+          "description": "The registration info of HostPool."
+        },
+        "cloudPcResource": {
+          "type": "boolean",
+          "description": "Is cloud pc resource.",
+          "readOnly": true
+        }
+      }
+    },
+    "RegistrationInfo": {
+      "description": "Represents a RegistrationInfo definition.",
+      "type": "object",
+      "properties": {
+        "expirationTime": {
+          "format": "date-time",
+          "type": "string",
+          "description": "Expiration time of registration token."
+        },
+        "token": {
+          "type": "string",
+          "description": "The registration token base64 encoded string."
+        },
+        "registrationTokenOperation": {
+          "enum": [
+            "Delete",
+            "None",
+            "Update"
+          ],
+          "x-ms-enum": {
+            "name": "RegistrationTokenOperation",
+            "modelAsString": true
+          },
+          "type": "string",
+          "description": "The type of resetting the token.",
+          "x-nullable": false
+        }
+      }
+    },
+    "MigrationRequestProperties": {
+      "type": "object",
+      "description": "Properties for arm migration.",
+      "properties": {
+        "operation": {
+          "enum": [
+            "Start",
+            "Revoke",
+            "Complete",
+            "Hide",
+            "Unhide"
+          ],
+          "x-ms-enum": {
+            "name": "Operation",
+            "modelAsString": true,
+            "values": [
+              {
+                "value": "Start",
+                "description": "Start the migration."
+              },
+              {
+                "value": "Revoke",
+                "description": "Revoke the migration."
+              },
+              {
+                "value": "Complete",
+                "description": "Complete the migration."
+              },
+              {
+                "value": "Hide",
+                "description": "Hide the hostpool."
+              },
+              {
+                "value": "Unhide",
+                "description": "Unhide the hostpool."
+              }
+            ]
+          },
+          "type": "string",
+          "description": "The type of operation for migration."
+        },
+        "migrationPath": {
+          "type": "string",
+          "description": "The path to the legacy object to migrate."
+        }
+      }
+    }
+  },
+  "parameters": {
+    "ApiVersionParameter": {
+      "name": "api-version",
+      "in": "query",
+      "required": true,
+      "type": "string",
+      "description": "The API version to use for this operation.",
+      "minLength": 1
+    },
+    "SubscriptionIdParameter": {
+      "name": "subscriptionId",
+      "in": "path",
+      "required": true,
+      "type": "string",
+      "description": "The ID of the target subscription.",
+      "minLength": 1
+    },
+    "ResourceGroupNameParameter": {
+      "name": "resourceGroupName",
+      "in": "path",
+      "required": true,
+      "type": "string",
+      "description": "The name of the resource group. The name is case insensitive.",
+      "minLength": 1,
+      "maxLength": 90,
+      "x-ms-parameter-location": "method"
+    },
+    "HostPoolNameParameter": {
+      "name": "hostPoolName",
+      "in": "path",
+      "required": true,
+      "type": "string",
+      "description": "The name of the host pool within the specified resource group",
+      "maxLength": 64,
+      "minLength": 3,
+      "x-ms-parameter-location": "method"
+    }
+  }
+}

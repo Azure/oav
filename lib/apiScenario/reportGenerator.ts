@@ -433,9 +433,16 @@ export class ReportGenerator {
           } else if (it.replace !== undefined) {
             ret.code = "RESPONSE_INCONSISTENT_VALUE";
             ret.jsonPath = jsonPathPrefix + it.replace;
-            // Ignore diff when propertySchema readonly is true. When property is readonly, it's probably a random generated value which updated dynamically per request.
-            if (propertySchema.readOnly === true) {
-              return undefined;
+
+            const paths = it.replace.split("/");
+            while (paths.length > 1) {
+              const path = paths.join("/");
+              const sch = this.swaggerAnalyzer.findSchemaByJsonPointer(path, schema, resp);
+              // Ignore diff when propertySchema readonly is true. When property is readonly, it's probably a random generated value which updated dynamically per request.
+              if (sch.readOnly === true) {
+                return undefined;
+              }
+              paths.pop();
             }
             ret.severity = "Error";
             ret.message = `The actual response value is different from example. Path: ${

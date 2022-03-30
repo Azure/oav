@@ -1,5 +1,29 @@
 # Change Log - oav
 
+## 03/11/2022 2.11.9
+- Api Scenario - Fix bug about readonly during example diff.
+
+## 02/23/2022 2.11.8
+
+- SemanticValidator - Clarify the error message when NOT schema of 'path' fails
+- Add coverage for trafficValidator
+- FIx GC introduced by 2.11.7
+
+## 02/15/2022 2.11.7
+
+- LiveValidator - Fix bug about date-time validation.
+- LiveValidator - Fix bug about duplicated swagger files when loading by path patterns.
+
+## 02/14/2022 2.11.6
+
+- Upgrade newman package to 5.3.1. Fix intel license issue.
+- Fix simple git high security issue.
+
+## 01/21/2022 2.11.5
+
+- LiveValidator - Loosen date-time validation for missing "Z" in the end
+- LiveValidator - Validate multipleOf data again when ajv validation results have error about multipleOf in response
+
 ## 12/15/2021 2.11.4
 
 - LiveValidator - Ignore required validation rule in response when x-ms-secret is true and the httpMethod is POST

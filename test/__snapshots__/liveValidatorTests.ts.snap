@@ -766,34 +766,8 @@ Object {
     "runtimeException": undefined,
   },
   "responseValidationResult": Object {
-    "errors": Array [
-      Object {
-        "code": "INVALID_FORMAT",
-        "documentationUrl": "",
-        "jsonPathsInPayload": Array [
-          "$.properties.createdAtUtc",
-        ],
-        "message": "Object didn't pass validation for format date-time: 0001-01-01T00:00:00",
-        "params": Array [
-          "date-time",
-          "0001-01-01T00:00:00",
-        ],
-        "pathsInPayload": Array [
-          "/properties/createdAtUtc",
-        ],
-        "schemaPath": "#/properties/createdAtUtc/format",
-        "severity": 0,
-        "source": Object {
-          "jsonRef": "#/definitions/ApiManagementServiceBaseProperties/properties/createdAtUtc",
-          "position": Object {
-            "column": 25,
-            "line": 903,
-          },
-          "url": "specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimdeployment.json",
-        },
-      },
-    ],
-    "isSuccessful": false,
+    "errors": Array [],
+    "isSuccessful": true,
     "operationInfo": Object {
       "apiVersion": "2018-01-01",
       "operationId": "ApiManagementService_Get",
