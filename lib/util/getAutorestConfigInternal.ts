@@ -46,7 +46,7 @@ const getAutorest = async (version: string | undefined, rfs?: IFileSystem, readm
 };
 
 const getAutorestCoreVersion = async (_args?: any) => {
-  return "latest-installed";
+  return "3.0.6375";
 };
 
 export const getAutorestConfigInternal = async (

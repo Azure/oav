@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import { resolve as pathResolve, dirname } from "path";
+import { JSONPath } from "jsonpath-plus";
 import { injectable } from "inversify";
 import { Type, YAMLException, load as yamlLoad, DEFAULT_SCHEMA } from "js-yaml";
 import { default as AjvInit, ValidateFunction } from "ajv";
@@ -70,10 +71,17 @@ export class ApiScenarioYamlLoader implements Loader<RawScenarioDefinition> {
   }
 }
 
+const getAllSwaggerFilePathUnderDir = (dir: string): any[] => {
+  const allSwaggerFiles = fs
+    .readdirSync(dir)
+    .map((it) => pathResolve(dir, it))
+    .filter((it) => it.endsWith(".json"));
+  return allSwaggerFiles;
+};
+
 export const getSwaggerFilePathsFromApiScenarioFilePath = (
   apiScenarioFilePath: string
 ): string[] => {
-  apiScenarioFilePath.lastIndexOf;
   const fileContent = fs.readFileSync(apiScenarioFilePath).toString();
   const rawScenarioDef = yamlLoad(fileContent, {
     schema: DEFAULT_SCHEMA.extend(
@@ -82,5 +90,56 @@ export const getSwaggerFilePathsFromApiScenarioFilePath = (
       })
     ),
   }) as RawScenarioDefinition;
-  return rawScenarioDef.swaggers.map((path) => pathResolve(dirname(apiScenarioFilePath), path));
+  const allSwaggerFilePaths = getAllSwaggerFilePathUnderDir(dirname(dirname(apiScenarioFilePath)));
+  const allSwaggerFiles = allSwaggerFilePaths.map((it) => {
+    return {
+      swaggerFilePath: it,
+      swaggerObj: JSON.parse(fs.readFileSync(it).toString()),
+    };
+  });
+  const findMatchedSwagger = (exampleFileName: string): string | undefined => {
+    for (const it of allSwaggerFiles) {
+      const allXmsExamplesPath = "$..x-ms-examples..$ref";
+      const allXmsExampleValues = JSONPath({
+        path: allXmsExamplesPath,
+        json: it.swaggerObj,
+        resultType: "all",
+      });
+      if (allXmsExampleValues.some((it: any) => it.value.includes(exampleFileName))) {
+        return it.swaggerFilePath;
+      }
+    }
+    return undefined;
+  };
+  const res: Set<string> = new Set<string>();
+
+  for (const rawStep of rawScenarioDef.prepareSteps ?? []) {
+    if ("exampleFile" in rawStep) {
+      const swaggerFilePath = findMatchedSwagger(rawStep.exampleFile.replace(/^.*[\\\/]/, ""));
+      if (swaggerFilePath !== undefined) {
+        res.add(swaggerFilePath);
+      }
+    }
+  }
+
+  for (const rawScenario of rawScenarioDef.scenarios ?? []) {
+    for (const rawStep of rawScenario.steps) {
+      if ("exampleFile" in rawStep) {
+        const swaggerFilePath = findMatchedSwagger(rawStep.exampleFile.replace(/^.*[\\\/]/, ""));
+        if (swaggerFilePath !== undefined) {
+          res.add(swaggerFilePath);
+        }
+      }
+    }
+  }
+
+  for (const rawStep of rawScenarioDef.cleanUpSteps ?? []) {
+    if ("exampleFile" in rawStep) {
+      const swaggerFilePath = findMatchedSwagger(rawStep.exampleFile.replace(/^.*[\\\/]/, ""));
+      if (swaggerFilePath !== undefined) {
+        res.add(swaggerFilePath);
+      }
+    }
+  }
+  return Array.from(res.values());
 };

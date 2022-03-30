@@ -290,7 +290,6 @@ export type Scenario = TransformRaw<
 //#region ScenarioDefinitionFile
 export type RawScenarioDefinition = RawVariableScope & {
   scope?: "ResourceGroup";
-  swaggers: string[];
   prepareSteps?: RawStep[];
   scenarios: RawScenario[];
   cleanUpSteps?: RawStep[];

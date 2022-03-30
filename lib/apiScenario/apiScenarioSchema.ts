@@ -9,12 +9,6 @@ export const ApiScenarioDefinition: Schema & {
       type: "string",
       enum: ["ResourceGroup"],
     },
-    swaggers: {
-      type: "array",
-      items: {
-        type: "string",
-      },
-    },
     variables: {
       $ref: "#/definitions/Variables",
     },
@@ -41,7 +35,7 @@ export const ApiScenarioDefinition: Schema & {
       },
     },
   },
-  required: ["swaggers", "scenarios"],
+  required: ["scenarios"],
   additionalProperties: false,
   definitions: {
     Name: {

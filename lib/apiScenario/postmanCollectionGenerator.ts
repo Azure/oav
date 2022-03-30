@@ -53,7 +53,7 @@ export class PostmanCollectionGenerator {
   public async GenerateCollection(): Promise<void> {
     const scenarioDef = await this.apiScenarioLoader.load(this.opt.scenarioDef);
     this.env.setBatch(scenarioDef.variables);
-    await this.swaggerAnalyzer.initialize(scenarioDef.swaggers);
+    await this.swaggerAnalyzer.initialize(this.opt.swaggerFilePaths);
     for (const it of scenarioDef.requiredVariables) {
       if (this.env.get(it) === undefined) {
         throw new Error(
@@ -87,7 +87,7 @@ export class PostmanCollectionGenerator {
         to: this.opt.to,
         skipCleanUp: this.opt.skipCleanUp,
         verbose: this.opt.verbose,
-        swaggerFilePaths: scenarioDef.swaggers.map((s) => this.fileLoader.resolvePath(s)),
+        swaggerFilePaths: this.opt.swaggerFilePaths!.map((s) => this.fileLoader.resolvePath(s)),
       };
 
       const client = inversifyGetInstance(PostmanCollectionRunnerClient, opts);
