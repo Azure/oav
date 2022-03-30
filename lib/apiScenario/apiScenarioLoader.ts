@@ -57,7 +57,9 @@ const variableRegex = /\$\(([A-Za-z_][A-Za-z0-9_]*)\)/;
 export interface ApiScenarioLoaderOption
   extends FileLoaderOption,
     JsonLoaderOption,
-    SwaggerLoaderOption {}
+    SwaggerLoaderOption {
+  swaggerFilePaths?: string[];
+}
 
 interface ApiScenarioContext {
   stepTracking: Map<string, Step>;
@@ -77,6 +79,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
   private initialized: boolean = false;
 
   public constructor(
+    @inject(TYPES.opts) private opts: ApiScenarioLoaderOption,
     private fileLoader: FileLoader,
     public jsonLoader: JsonLoader,
     private swaggerLoader: SwaggerLoader,
@@ -102,11 +105,12 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       eraseXmsExamples: false,
       eraseDescription: false,
       skipResolveRefKeys: ["x-ms-examples"],
+      swaggerFilePaths: [],
     });
     return inversifyGetInstance(ApiScenarioLoader, opts);
   }
 
-  private async initialize(swaggerFilePaths: string[]) {
+  private async initialize(swaggerFilePaths?: string[]) {
     if (this.initialized) {
       throw new Error("Already initialized");
     }
@@ -169,11 +173,10 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
   public async load(filePath: string): Promise<ScenarioDefinition> {
     const rawDef = await this.apiScenarioYamlLoader.load(filePath);
 
-    await this.initialize(rawDef.swaggers);
+    await this.initialize(this.opts.swaggerFilePaths);
 
     const scenarioDef: ScenarioDefinition = {
       scope: rawDef.scope ?? "ResourceGroup",
-      swaggers: rawDef.swaggers,
       prepareSteps: [],
       scenarios: [],
       _filePath: this.fileLoader.relativePath(filePath),
