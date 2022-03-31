@@ -1,315 +1,592 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>Swagger Accuracy Report:{{package}}({{ apiVersion }})</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-        <style type="text/css">
-            body {
-                margin: 40px auto;
-                max-width: 900px;
-                line-height: 1.6;
-                font-size: 14pt;
-                color: #444;
-                padding: 0 10px;
-                font-family: Calibri;
-            }
-        
-            h1, h2, h3 {
-                line-height: 1.2;
-                font-family: Arial;
-            }
-        
-            h1 {
-                border-bottom: 1px solid #43425A;
-                width: 100%;
-                background-color: #F6FFFF
-            }
-        
-            h2 {
-                border-bottom: 1px solid lightgrey;
-                background-color: #F6FFFF;
-            }
-        
-            h3 {
-                color: #707070;
-            }
+<head>
+    <title>Swagger Accuracy Report:{{package}}({{ apiVersion }})</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="Coverage, Swagger, Report, Tools">
+    <meta name="description" content="Swagger Accuracy Report">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <style>
+        :root {
+            --report-bg-green: #91cc74;
+            --report-bg-red: #ee6666;
+            --report-bg-yellow: #fac858;
+            --report-bg-blue: #e6e9f0;
+            --report-color-green: #218838;
+            --report-color-yellow: #e0a800;
+            --report-color-red: #c82333;
+            --report-base-color: #333;
+            --border-color: #b7b7b7;
+            --report-color-black: #000;
+            --report-color-white: #fff;
+            --title-small: #707070;
+            --link-color: #1453ff;
+            --link-hover-color: #7096ff;
+            --content-hover-color: #f5f5f5;
+            --line-color: #43425a;
+        }
 
-            h3.datedrop {
-                margin-block-start: .1em;
-                color: lightgrey;
-                font-size: 15px;
-            }
-        
-            table { 
-                width: 750px; 
-                border-collapse: collapse;
-                /*margin:50px auto;*/
-                }
+        .report-content {
+            margin: 10px auto 40px;
+            min-width: 900px;
+            max-width: 1500px;
+            color: var(--report-base-color);
+            font-family: "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", "Microsoft YaHei UI", sans-serif;
+            box-sizing: border-box;
+        }
 
-            /* Zebra striping */
-            tr:nth-of-type(odd) { 
-                background: #eee; 
-                }
+        h2 {
+            margin-bottom: 14px;
+        }
 
-            th {
-                background: #3498db;
-                color: white;
-                font-weight: bold;
-                text-align: left;
-            }
+        a {
+            text-decoration: none;
+            position: relative;
+            display: inline-block;
+            color: var(--link-color);
+        }
 
-            td {
-                text-align: left;
-            }
+        a span {
+            margin: auto;
+            display: inline-block;
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            right: 0;
+            width: 0px;
+            height: 2px;
+            background: var(--link-hover-color);
+            ;
+            transition: .1s;
+            border-radius: 50px;
+        }
 
-            td,
-            th {
-                padding: 4px;
-                border: 1px solid #ccc;
-                font-size: 18px;
-            }
+        a:hover {
+            color: var(--link-hover-color);
+        }
 
-            .blank {
-                margin: 20px auto;
-                display: inline-block;
-            }
+        a:hover span {
+            width: 100%;
+        }
 
-            .inner_table tr:nth-of-type(even) {
-                background: #eee;
-            }
+        .disableTr {
+            display: none;
+        }
 
-            .inner_td {
-                text-align: left;
-                border: none;
-                border-bottom: 1px solid #ccc;
-            }
+        .table-body {
+            overflow-y: auto;
+            max-height: 790px;
+            border-bottom: 1px solid var(--border-color);
+        }
 
-            #summary table {
-                width: 100%;
-            }
+        .table-body::-webkit-scrollbar {
+            display: none;
+            /* Chrome Safari */
+            -ms-overflow-style: none;
+            /* IE 10+ */
+            scrollbar-width: none;
+            /* Firefox */
+        }
 
-            #generalTable {
-                max-height: 1000px;
-                overflow: auto;
-            }
+        table {
+            width: 100%;
+            table-layout: auto;
+            border-collapse: separate;
+            border-spacing: 0;
+            text-align: left;
+            border-left: 1px solid var(--border-color);
+        }
 
-            #generalTable table {
-                width: 100%;
-            }
+        table tr:hover>td {
+            background-color: var(--content-hover-color);
+        }
 
-            /* 
-            Max width before this PARTICULAR table gets nasty
-            This query will take effect for any screen smaller than 760px
-            and also iPads specifically.
-            */
-            @media 
-            only screen and (max-width: 760px),
-            (min-device-width: 768px) and (max-device-width: 1024px)  {
+        th,
+        td {
+            box-sizing: border-box;
+            text-align: center;
+            padding: 16px;
+            height: 55px;
+            line-height: 22px;
+        }
 
-                table { 
-                    width: 100%; 
-                }
+        table>thead>tr>th {
+            font-weight: 500;
+            font-size: 18px;
+            background-color: var(--report-bg-blue);
+            color: var(--report-base-color);
+            font-weight: bold;
+            border-top: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+        }
 
-                /* Force table to not be like tables anymore */
-                table, thead, tbody, th, td, tr { 
-                    display: block; 
-                }
-                
-                /* Hide table headers (but not display: none;, for accessibility) */
-                thead tr { 
-                    position: absolute;
-                    top: -9999px;
-                    left: -9999px;
-                }
-                
-                tr { border: 1px solid #ccc; }
-                
-                td { 
-                    /* Behave  like a "row" */
-                    border: none;
-                    border-bottom: 1px solid #eee; 
-                    position: relative;
-                    padding-left: 50%; 
-                }
+        table>tbody>tr>td {
+            text-align: left;
+            font-size: 16px;
+            transition: background .3s;
+            border-top: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+        }
 
-                td:before { 
-                    /* Now like a table header */
-                    position: absolute;
-                    /* Top/left values mimic padding */
-                    top: 6px;
-                    left: 6px;
-                    width: 45%; 
-                    padding-right: 10px; 
-                    white-space: nowrap;
-                    /* Label the data */
-                    content: attr(data-column);
+        .details {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
 
-                    color: #000;
-                    font-weight: bold;
-                }
+        .details .limitText {
+            width: 92%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
 
-            }
+        .details .btnMore {
+            background-color: transparent;
+            width: 8%;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            border: none;
+            outline: none;
+            position: relative;
+            color: var(--link-color);
+            font-size: 16px;
+        }
 
-            p {
-                padding: .5em;
-            }
-        
-            span {
-                background-color: #E1EAE8;
-            }
+        .details .btnMore span {
+            padding-right: 30px;
+        }
 
-            #general-errors {
-                width: 100%;
-                padding: 0;
-                margin: 0;
-                background-color:#FF8680;                
-            }
+        .details .btnMore::after {
+            content: "";
+            margin: auto;
+            display: inline-block;
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            right: 0;
+            width: 0px;
+            height: 2px;
+            background: var(--link-hover-color);
+            transition: .1s;
+            border-radius: 50px;
+        }
 
-            #general-errors-content {
-                width: 100%;
-                padding-top: 1em;
-                margin: 0;
-            }
+        .details .btnMore:hover {
+            color: var(--link-hover-color);
+        }
 
-            #general-errors-item {
-                background-color:lightgrey"
-            }
-            
-            #runtime-errors {
-                width: 100%;
-                padding: 0;
-                margin: 0;
-            }
+        .details .btnMore:hover:after {
+            width: 100%;
+        }
 
-            #runtime-errors-content {
-                width: 100%;
-                padding: 0;
-                margin: 0;
-            }
-        </style>
-    </head>
+        .details .btnMore .arrow {
+            width: 8px;
+            height: 8px;
+            color: var(--link-color);
+            border-left: 2px solid var(--link-color);
+            border-bottom: 2px solid var(--link-color);
+            border-radius: 10%;
+            display: inline-block;
+            transform: rotate(315deg);
+            transform-origin: 50% 50%;
+            transition: all .2s ease-in;
+            position: absolute;
+            right: 20px;
+            top: 3px;
+        }
 
-    <body>
-        <div id="summary">
-            <h1 style="margin-block-end: .1em">
-                Swagger Accuracy Report:{{package}}({{apiVersion}})
-            </h1>
+        .details .btnMore:hover .arrow {
+            color: var(--link-hover-color);
+            border-color: var(--link-hover-color);
+        }
+
+        .testFailed .details .btnMore .arrow {
+            right: 10px;
+        }
+
+        .details .btnMore .collapse {
+            top: 6px;
+            transform: rotate(225deg);
+        }
+
+        .summary {
+            margin: 40px 0 50px 0;
+        }
+
+        .summary.scroll {
+            margin: 20px 0 20px 0;
+        }
+
+        .summary .title {
+            margin: 0px 0 10px 0px;
+            font-size: 2.5em;
+        }
+
+        .summary .title::after {
+            content: "";
+            display: block;
+            width: 100%;
+            height: 2px;
+            margin-top: 4px;
+            background-color: var(--line-color);
+        }
+
+        .summary .timeStamp {
+            font-size: 16px;
+            margin: 2px 0 0 0;
+            color: var(--title-small);
+        }
+
+        .coverage {
+            margin-bottom: 40px;
+        }
+
+        .coverage table td:nth-child(-n+3) {
+            text-align: center;
+        }
+
+        .coverage table .file {
+            word-wrap: break-word;
+            word-break: break-all;
+        }
+
+        .notTested {
+            margin-bottom: 40px;
+        }
+
+        .notTested table tbody tr td:nth-child(-n+1) {
+            text-align: center;
+            word-break: break-all;
+        }
+
+        .notTested .operationTag {
+            text-align: left;
+        }
+
+        .notTested .operationTag .tag {
+            color: var(--report-base-colo);
+            background-color: var(--report-bg-blue);
+            border: 1px solid var(--report-bg-blue);
+            display: inline-block;
+            height: 32px;
+            padding: 0 10px;
+            margin: 4px 2px;
+            line-height: 30px;
+            font-size: 14px;
+            border-radius: 4px;
+            box-sizing: border-box;
+            white-space: nowrap;
+        }
+
+        .notTested table,
+        .testFailed table,
+        .innerTable table {
+            table-layout: fixed;
+        }
+
+        .testFailed table tbody tr td:nth-child(-n+2) {
+            word-break: break-all;
+        }
+
+        .testFailed table .wrapper-td {
+            background-color: var(--content-hover-color);
+            padding: 0px;
+        }
+
+        .innerTable table {
+            border: none;
+            border-left: 1px solid var(--border-color);
+        }
+
+        .innerTable table th,
+        .innerTable table td {
+            border: none;
+            text-align: left;
+        }
+
+        .innerTable table th {
+            background-color: var(--content-hover-color);
+            color: #000000d9;
+            position: relative;
+            padding: 16px;
+            line-height: 22px;
+            height: 55px;
+            font-size: 18px;
+            box-sizing: border-box;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .innerTable table tr:not(:last-child)>td {
+            border-bottom: 1px solid var(--border-color);
+            transition: background .3s;
+            font-size: 16px;
+            word-break: break-all;
+        }
+
+        .innerTable {
+            margin: 0px 0px 0px 40px;
+        }
+
+        .innerTable table tr {
+            background-color: var(--report-color-white);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="report-content">
+        <section class="summary">
+            <h1 class="title">Swagger Accuracy Report:{{package}}({{apiVersion}})</h1>
             <!-- TODO: localize the UTC date via JS -->
-            <h3 class="datedrop">
-                Generated {{ formatGeneratedDate }}.
-            </h3>
-        </div>
-        <div id ="coverage-data"> 
-            <h2>
-                Test Coverage Details
-            </h2>
-            <div id="generalTable">
-                  <table>
-                    <thead>
-                        <tr>
-                          <th style="background-color:#008000">Operations Tested</th>
-                          <th style="background-color:#ffbf00">Operations Missing Test</th>
-                          <th style="background-color:#ff0000">Operations Failed</th>
-                          <th>Swagger File</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                      {{#coverageResults}}
-                        <tr>
-                          <td>
-                            <div style="width: 40px;">{{coveredOperaions}}</div>
-                          </td>
-                          <td>
-                            <div style="width: 40px;">{{unCoveredOperations}}</div>
-                          </td>
-                          <td>
-                            <div style="width: 40px;">{{validationFailOperations}}</div>
-                          </td>
-                          <td>
-                            <div style="width: 220px;">{{spec}}</div>
-                          </td>
-                        </tr>
-                      {{/coverageResults}}
-                    </tbody>
-                  </table>
-            </div>
-        </div>
-        <div class="blank"></div>
-        <div id="general">
-            <h2>
-                Operations Not Tested
-            </h2>
-            <div id="generalTable">
-                  <table>
-                    <thead>
-                        <tr>
-                        <th>SwaggerFile</th>
-                        <th>OperationId</th>
-                        </tr>
-                    </thead>
-                    {{#coverageResults}}
-                    <tbody>
-                        <tr>
-                          <td>
-                            <div style="width: 220px;">{{spec}}</div>
-                          </td>
-                          <td>
-                            <table class="inner_table">
-                              {{#unCoveredOperationsList}}
-                              <tr><td class="inner_td">{{operationId}}</td></tr>
-                              {{/unCoveredOperationsList}}
-                            </table>
-                          </td>
-                        </tr>
-                    </tbody>
-                    {{/coverageResults}}
-                  </table>
-            </div>
-        </div>
-        <div class="blank"></div>
-        <div id="general">
-            <h2>
-                Operations Test Failed
-            </h2>
-            <div id="generalTable">
-                  <table>
-                    <thead>
-                        <tr>
-                        <th>OperationId</th>
-                        <th>PayloadFilePath</th>
-                        <th>Errors</th>
-                        </tr>
-                    </thead>
-                    {{#getGeneralErrors}}
-                    <tbody>
-                        <tr>
-                          <td>
-                            <div style="width: 200px;">{{operationInfo.operationId}}</div>
-                          </td>
-                          <td>
-                           <div style="width: 200px; word-break: break-word;">{{payloadFilePath}}</div>
-                          </td>
-                          <td>
-                            <table class="inner_table">
-                              {{#errors}}
-                              <tr><td class="inner_td">errorCode:{{code}},message:{{message}},jsonPathsInPayload:{{jsonPathsInPayload}},schemaPath:{{schemaPath}},params:{{params}},source:{{source}}</td></tr>
-                              {{/errors}}
-                            </table>
-                          </td>
-                        </tr>
-                    </tbody>
-                    {{/getGeneralErrors}}
-                  </table>
-            </div>
-        </div>
-        <div id="mypanel"></div>
-        <script>
-            $(document).ready( () => {
-                console.log("Hello AZSDK. Document.Ready available here.")
-            });
-        </script>
-    </body>
+            <h3 class="timeStamp">Generated {{ formatGeneratedDate }}.</h3>
+        </section>
+
+        <section class="coverage">
+            <h2>Test Coverage Details</h2>
+            <article>
+                <div class="table-header">
+                    <table summary="Test Coverage Details" cellspacing="0" cellpadding="0">
+                        <colgroup>
+                            <col style="width: 15%;" />
+                            <col style="width: 20%;" />
+                            <col style="width: 20%;" />
+                            <col style="width: 45%;" />
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th style="background-color: var(--report-bg-green);">Operations Tested</th>
+                                <th style="background-color: var(--report-bg-yellow)">
+                                    Operations Missing Test
+                                </th>
+                                <th style="background-color: var(--report-bg-red);">Operations Failed</th>
+                                <th style="background-color: var(--report-bg-blue);">Swagger File</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+                <div class="table-body">
+                    <table summary="Test Coverage Details" cellspacing="0" cellpadding="0">
+                        <colgroup>
+                            <col style="width: 15%;" />
+                            <col style="width: 20%;" />
+                            <col style="width: 20%;" />
+                            <col style="width: 45%;" />
+                        </colgroup>
+                        <tbody>
+                            {{#coverageResults}}
+                            <tr>
+                                <td style="color: var(--report-color-green)">{{coveredOperaions}}</td>
+                                <td style="color: var(--report-color-yellow)">{{unCoveredOperations}}</td>
+                                <td style="color: var(--report-color-red)">{{validationFailOperations}}</td>
+                                <td>
+                                    <div class="file">
+                                        {{spec}}
+                                    </div>
+                                </td>
+                            </tr>
+                            {{/coverageResults}}
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+        </section>
+
+        <section class="notTested">
+            <h2 class="title">Operations Not Tested</h2>
+            <article>
+                <div class="table-header">
+                    <table summary="Operations Not Tested" cellspacing="0" cellpadding="0">
+                        <colgroup>
+                            <col style="width: 20%" />
+                            <col style="width: 80%" />
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th>SwaggerFile</th>
+                                <th>OperationId</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+                <div class="table-body">
+                    <table summary="Operations Not Tested" cellspacing="0" cellpadding="0">
+                        <colgroup>
+                            <col style="width: 20%" />
+                            <col style="width: 80%" />
+                        </colgroup>
+                        <tbody>
+                            {{#coverageResults}}
+                            <tr>
+                                <td>
+                                    <a href="table.json">{{spec}}<span></span></a>
+                                </td>
+                                <td>
+                                    <div class="details showOperationTag">
+                                        <div class="limitText"></div>
+                                        <button class="btnMore"><span>More</span><i class="arrow collapse"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {{#unCoveredOperationsList}}
+                            <tr class="disableTr">
+                                <td colspan="2">
+                                    <div class="operationTag">
+                                        <span class="tag">{{operationId}}</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            {{/unCoveredOperationsList}}
+                            {{/coverageResults}}
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+        </section>
+
+        <section class="testFailed">
+            <h2 class="title">Operations Test Failed</h2>
+            <article>
+                <div class="table-header">
+                    <table summary="Operations Test Failed" cellspacing="0" cellpadding="0">
+                        <colgroup>
+                            <col style="width: 15%" />
+                            <col style="width: 20%" />
+                            <col style="width: 65%" />
+                        </colgroup>
+                        <thead>
+                            <th>OperationId</th>
+                            <th>PayloadFilePath</th>
+                            <th>Errors</th>
+                        </thead>
+                    </table>
+                </div>
+                <div class="table-body">
+                    <table summary="Operations Test Failed" cellspacing="0" cellpadding="0">
+                        <colgroup>
+                            <col style="width: 15%" />
+                            <col style="width: 20%" />
+                            <col style="width: 65%" />
+                        </colgroup>
+                        <tbody>
+                            {{#getGeneralErrors}}
+                            <tr>
+                                <td>Table_Create</td>
+                                <td>
+                                    <a
+                                        href="https:&#x2F;&#x2F;github.com&#x2F;scbedd&#x2F;oav-traffic-converter&#x2F;blob&#x2F;main&#x2F;sample-tables-input&#x2F;test_retry_async.pyTestStorageRetryAsynctest_retry_on_server_error_async1.json">test_retry_async.pyTestStorageRetryAsynctest_retry_on_server_error_async1.json
+                                        <span></span></a>
+                                </td>
+                                <td>
+                                    <div class="details showTestFailed">
+                                        <div class="limitText"></div>
+                                        <button class="btnMore"><span>More</span><i class="arrow collapse"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="disableTr">
+                                <td colspan="3" class="wrapper-td">
+                                    <div class="innerTable">
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th>errorCode</th>
+                                                    <th>message</th>
+                                                    <th>jsonPathsInPayload</th>
+                                                    <th>schemaPath</th>
+                                                    <th>params</th>
+                                                    <th>source</th>
+                                                </tr>
+                                            </thead>
+                                            <colgroup>
+                                                <col style="width: 17%" />
+                                                <col style="width: 17%" />
+                                                <col style="width: 18%" />
+                                                <col style="width: 17%" />
+                                                <col style="width: 15%" />
+                                                <col style="width: 16%" />
+                                            </colgroup>
+                                            <tbody>
+                                                {{#errors}}
+                                                <tr>
+                                                    <td>{{code}}</td>
+                                                    <td>{{message}}</td>
+                                                    <td>{{jsonPathsInPayload}}</td>
+                                                    <td>{{schemaPath}}</td>
+                                                    <td>{{params}}</td>
+                                                    <td>{{source}}</td>
+                                                </tr>
+                                                {{/errors}}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
+                            {{/getGeneralErrors}}
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+        </section>
+    </div>
+</body>
+
 </html>
+<script>
+    $(document).ready(() => {
+        console.log('Hello AZSDK. Document.Ready available here.');
+        renderOperationTag();
+        showTestFailed();
+        addEachClick();
+    });
+
+    function addEachClick() {
+        $('div.showOperationTag').each(function (index) {
+            $(this).click(function (event) {
+                var disableTr = $(this).parent().parent().next();
+                disableTr.toggle();
+                var arrow = $(this).find(".arrow")[0]
+                $(arrow).toggleClass("collapse");
+            });
+        });
+
+        $('div.showTestFailed').each(function (index) {
+            $(this).click(function (event) {
+                var disableTr = $(this).parent().parent().next();
+                disableTr.toggle();
+                var arrow = $(this).find(".arrow")[0]
+                $(arrow).toggleClass("collapse");
+            });
+        });
+
+    }
+
+    function renderOperationTag() {
+        $('div.showOperationTag > .limitText').each(function (index) {
+            var textElement = $(this).parent().parent().parent().next().find('.tag');
+            var showOperationTagClickMsg = '';
+            textElement.each(function (index, e) {
+                showOperationTagClickMsg += $(e).html().trim() + ', ';
+            });
+            var result = "(" + textElement.length + ") " + showOperationTagClickMsg
+            $(this).text(result)
+        })
+    }
+
+    function showTestFailed() {
+        $('div.showTestFailed > .limitText').each(function (index) {
+            var textElement = $(this).parent().parent().parent().next().children().find('td');
+            var showOperationsTestFailedMsg = ''
+            textElement.each(function (index, e) {
+                showOperationsTestFailedMsg += $(e).html().trim() + ', ';
+            });
+            var trElement = $(this).parent().parent().parent().next().children().find('tr');
+            var result = "(" + (trElement.length - 1) + ") " + showOperationsTestFailedMsg
+            $(this).text(result)
+        })
+    }
+</script>
