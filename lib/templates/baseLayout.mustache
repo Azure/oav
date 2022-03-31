@@ -419,11 +419,11 @@
                             <col style="width: 20%" />
                             <col style="width: 80%" />
                         </colgroup>
+                        {{#coverageResults}}
                         <tbody>
-                            {{#coverageResults}}
                             <tr>
                                 <td>
-                                    <a href="table.json">{{spec}}<span></span></a>
+                                    <a href="{{spec}}">{{specLinkLabel}}<span></span></a>
                                 </td>
                                 <td>
                                     <div class="details showOperationTag">
@@ -432,17 +432,17 @@
                                     </div>
                                 </td>
                             </tr>
-                            {{#unCoveredOperationsList}}
                             <tr class="disableTr">
+                            {{#unCoveredOperationsList}}
                                 <td colspan="2">
                                     <div class="operationTag">
                                         <span class="tag">{{operationId}}</span>
                                     </div>
                                 </td>
-                            </tr>
                             {{/unCoveredOperationsList}}
-                            {{/coverageResults}}
+                            </tr>
                         </tbody>
+                        {{/coverageResults}}
                     </table>
                 </div>
             </article>
@@ -472,14 +472,15 @@
                             <col style="width: 20%" />
                             <col style="width: 65%" />
                         </colgroup>
+                        {{#getGeneralErrors}}
                         <tbody>
-                            {{#getGeneralErrors}}
                             <tr>
-                                <td>Table_Create</td>
+                                <td>{{operationInfo.operationId}}</td>
                                 <td>
-                                    <a
-                                        href="https:&#x2F;&#x2F;github.com&#x2F;scbedd&#x2F;oav-traffic-converter&#x2F;blob&#x2F;main&#x2F;sample-tables-input&#x2F;test_retry_async.pyTestStorageRetryAsynctest_retry_on_server_error_async1.json">test_retry_async.pyTestStorageRetryAsynctest_retry_on_server_error_async1.json
-                                        <span></span></a>
+                                    <a href="{{payloadFilePath}}">
+                                        {{payloadFileLinkLabel}}
+                                        <span></span>
+                                    </a>
                                 </td>
                                 <td>
                                     <div class="details showTestFailed">
@@ -526,8 +527,8 @@
                                     </div>
                                 </td>
                             </tr>
-                            {{/getGeneralErrors}}
                         </tbody>
+                        {{/getGeneralErrors}}
                     </table>
                 </div>
             </article>
