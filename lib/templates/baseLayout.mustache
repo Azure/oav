@@ -107,6 +107,7 @@
             font-weight: bold;
             border-top: 1px solid var(--border-color);
             border-right: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
         }
         table>tbody>tr>td {
             text-align: left;
@@ -114,6 +115,9 @@
             transition: background .3s;
             border-top: 1px solid var(--border-color);
             border-right: 1px solid var(--border-color);
+        }
+        table>tbody>tr:first-child>td {
+            border-top: none;
         }
         .details {
             width: 100%;
@@ -224,8 +228,7 @@
         .notTested {
             margin-bottom: 40px;
         }
-        .notTested table tbody tr td:nth-child(-n+1) {
-            text-align: center;
+        .notTested table tbody tr td:nth-child(2) {
             word-break: break-all;
         }
         .notTested .operationTag {
@@ -373,7 +376,7 @@
                             <col style="width: 20%" />
                             <col style="width: 80%" />
                         </colgroup>
-                        {{#coverageResults}}
+                        {{#coverageResultsForRendering}}
                         <tbody>
                             <tr>
                                 <td>
@@ -387,16 +390,16 @@
                                 </td>
                             </tr>
                             <tr class="disableTr">
-                            {{#unCoveredOperationsList}}
                                 <td colspan="2">
                                     <div class="operationTag">
+                                        {{#unCoveredOperationsList}}
                                         <span class="tag">{{operationId}}</span>
+                                        {{/unCoveredOperationsList}}
                                     </div>
                                 </td>
-                            {{/unCoveredOperationsList}}
                             </tr>
                         </tbody>
-                        {{/coverageResults}}
+                        {{/coverageResultsForRendering}}
                     </table>
                 </div>
             </article>
