@@ -27,7 +27,6 @@
             --content-hover-color: #f5f5f5;
             --line-color: #43425a;
         }
-
         .report-content {
             margin: 10px auto 40px;
             min-width: 900px;
@@ -36,18 +35,15 @@
             font-family: "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", "Microsoft YaHei UI", sans-serif;
             box-sizing: border-box;
         }
-
         h2 {
             margin-bottom: 14px;
         }
-
         a {
             text-decoration: none;
             position: relative;
             display: inline-block;
             color: var(--link-color);
         }
-
         a span {
             margin: auto;
             display: inline-block;
@@ -62,25 +58,20 @@
             transition: .1s;
             border-radius: 50px;
         }
-
         a:hover {
             color: var(--link-hover-color);
         }
-
         a:hover span {
             width: 100%;
         }
-
         .disableTr {
             display: none;
         }
-
         .table-body {
             overflow-y: auto;
             max-height: 790px;
             border-bottom: 1px solid var(--border-color);
         }
-
         .table-body::-webkit-scrollbar {
             display: none;
             /* Chrome Safari */
@@ -89,7 +80,6 @@
             scrollbar-width: none;
             /* Firefox */
         }
-
         table {
             width: 100%;
             table-layout: auto;
@@ -98,11 +88,9 @@
             text-align: left;
             border-left: 1px solid var(--border-color);
         }
-
         table tr:hover>td {
             background-color: var(--content-hover-color);
         }
-
         th,
         td {
             box-sizing: border-box;
@@ -111,7 +99,6 @@
             height: 55px;
             line-height: 22px;
         }
-
         table>thead>tr>th {
             font-weight: 500;
             font-size: 18px;
@@ -121,7 +108,6 @@
             border-top: 1px solid var(--border-color);
             border-right: 1px solid var(--border-color);
         }
-
         table>tbody>tr>td {
             text-align: left;
             font-size: 16px;
@@ -129,21 +115,18 @@
             border-top: 1px solid var(--border-color);
             border-right: 1px solid var(--border-color);
         }
-
         .details {
             width: 100%;
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
-
         .details .limitText {
             width: 92%;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
         }
-
         .details .btnMore {
             background-color: transparent;
             width: 8%;
@@ -156,11 +139,9 @@
             color: var(--link-color);
             font-size: 16px;
         }
-
         .details .btnMore span {
             padding-right: 30px;
         }
-
         .details .btnMore::after {
             content: "";
             margin: auto;
@@ -175,15 +156,12 @@
             transition: .1s;
             border-radius: 50px;
         }
-
         .details .btnMore:hover {
             color: var(--link-hover-color);
         }
-
         .details .btnMore:hover:after {
             width: 100%;
         }
-
         .details .btnMore .arrow {
             width: 8px;
             height: 8px;
@@ -199,34 +177,27 @@
             right: 20px;
             top: 3px;
         }
-
         .details .btnMore:hover .arrow {
             color: var(--link-hover-color);
             border-color: var(--link-hover-color);
         }
-
         .testFailed .details .btnMore .arrow {
             right: 10px;
         }
-
         .details .btnMore .collapse {
             top: 6px;
             transform: rotate(225deg);
         }
-
         .summary {
             margin: 40px 0 50px 0;
         }
-
         .summary.scroll {
             margin: 20px 0 20px 0;
         }
-
         .summary .title {
             margin: 0px 0 10px 0px;
             font-size: 2.5em;
         }
-
         .summary .title::after {
             content: "";
             display: block;
@@ -235,39 +206,31 @@
             margin-top: 4px;
             background-color: var(--line-color);
         }
-
         .summary .timeStamp {
             font-size: 16px;
             margin: 2px 0 0 0;
             color: var(--title-small);
         }
-
         .coverage {
             margin-bottom: 40px;
         }
-
         .coverage table td:nth-child(-n+3) {
             text-align: center;
         }
-
         .coverage table .file {
             word-wrap: break-word;
             word-break: break-all;
         }
-
         .notTested {
             margin-bottom: 40px;
         }
-
         .notTested table tbody tr td:nth-child(-n+1) {
             text-align: center;
             word-break: break-all;
         }
-
         .notTested .operationTag {
             text-align: left;
         }
-
         .notTested .operationTag .tag {
             color: var(--report-base-colo);
             background-color: var(--report-bg-blue);
@@ -282,33 +245,27 @@
             box-sizing: border-box;
             white-space: nowrap;
         }
-
         .notTested table,
         .testFailed table,
         .innerTable table {
             table-layout: fixed;
         }
-
         .testFailed table tbody tr td:nth-child(-n+2) {
             word-break: break-all;
         }
-
         .testFailed table .wrapper-td {
             background-color: var(--content-hover-color);
             padding: 0px;
         }
-
         .innerTable table {
             border: none;
             border-left: 1px solid var(--border-color);
         }
-
         .innerTable table th,
         .innerTable table td {
             border: none;
             text-align: left;
         }
-
         .innerTable table th {
             background-color: var(--content-hover-color);
             color: #000000d9;
@@ -320,18 +277,15 @@
             box-sizing: border-box;
             border-bottom: 1px solid var(--border-color);
         }
-
         .innerTable table tr:not(:last-child)>td {
             border-bottom: 1px solid var(--border-color);
             transition: background .3s;
             font-size: 16px;
             word-break: break-all;
         }
-
         .innerTable {
             margin: 0px 0px 0px 40px;
         }
-
         .innerTable table tr {
             background-color: var(--report-color-white);
         }
@@ -544,7 +498,6 @@
         showTestFailed();
         addEachClick();
     });
-
     function addEachClick() {
         $('div.showOperationTag').each(function (index) {
             $(this).click(function (event) {
@@ -554,7 +507,6 @@
                 $(arrow).toggleClass("collapse");
             });
         });
-
         $('div.showTestFailed').each(function (index) {
             $(this).click(function (event) {
                 var disableTr = $(this).parent().parent().next();
@@ -563,9 +515,7 @@
                 $(arrow).toggleClass("collapse");
             });
         });
-
     }
-
     function renderOperationTag() {
         $('div.showOperationTag > .limitText').each(function (index) {
             var textElement = $(this).parent().parent().parent().next().find('.tag');
@@ -577,7 +527,6 @@
             $(this).text(result)
         })
     }
-
     function showTestFailed() {
         $('div.showTestFailed > .limitText').each(function (index) {
             var textElement = $(this).parent().parent().parent().next().children().find('td');
