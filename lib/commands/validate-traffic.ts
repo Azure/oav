@@ -37,6 +37,18 @@ export const builder: yargs.CommandBuilder = {
     string: true,
     default: "./SwaggerAccuracyReport.html",
   },
+  specLinkPrefix: {
+    alias: "slp",
+    describe: "github specification link prefix",
+    string: true,
+    default: "https://github.com/Azure/azure-rest-api-specs/blob/main/",
+  },
+  payloadLinkPrefix: {
+    alias: "plp",
+    describe: "traffic payload link prefix",
+    string: true,
+    default: "https://github.com/scbedd/oav-traffic-converter/blob/main/sample-tables-input/",
+  },
 };
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
@@ -51,6 +63,8 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       sdkPackage: argv.package,
       sdkLanguage: argv.language,
       reportPath: argv.report,
+      specLinkPrefix: argv.specLinkPrefix,
+      payloadLinkPrefix: argv.payloadLinkPrefix,
     };
     const errors = await validate.validateTrafficAgainstSpec(specPath, trafficPath, vOptions);
     return errors.length > 0 ? 1 : 0;

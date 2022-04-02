@@ -341,8 +341,7 @@ export function getApiVersionFromSwaggerPath(specPath: string): string {
     `^.*\/(stable|preview)+\/([0-9]{4}-[0-9]{2}-[0-9]{2}(-preview)?)\/.*\.json$`
   );
   const apiVersionMatch = apiVersionPattern.exec(specPath);
-  return apiVersionMatch === null
-    ? "" : apiVersionMatch[2];
+  return apiVersionMatch === null ? "" : apiVersionMatch[2];
 }
 
 const providerRegEx = new RegExp("/providers/(:?[^{/]+)", "gi");

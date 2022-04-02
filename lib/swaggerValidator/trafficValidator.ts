@@ -2,7 +2,6 @@ import * as fs from "fs";
 import * as path from "path";
 import { resolve as pathResolve } from "path";
 import { glob } from "glob";
-import { toLower } from "lodash";
 import {
   LiveValidationIssue,
   LiveValidator,
@@ -22,6 +21,8 @@ export interface TrafficValidationOptions extends Options {
   sdkPackage?: string;
   sdkLanguage?: string;
   reportPath?: string;
+  specLinkPrefix?: string;
+  payloadLinkPrefix?: string;
 }
 export interface TrafficValidationIssue {
   payloadFilePath?: string;
@@ -117,7 +118,7 @@ export class TrafficValidator {
 
     const swaggerPaths = this.liveValidator.swaggerList;
     while (swaggerPaths.length > 0) {
-      let swaggerPath = swaggerPaths.shift()!;
+      const swaggerPath = swaggerPaths.shift()!;
       let spec;
       try {
         spec = await this.loader.load(pathResolve(swaggerPath));
@@ -127,7 +128,6 @@ export class TrafficValidator {
         );
       }
       if (spec !== undefined) {
-        swaggerPath = toLower(swaggerPath);
         // Get Swagger - operation mapper.
         if (this.operationSpecMapper.get(swaggerPath) === undefined) {
           this.operationSpecMapper.set(swaggerPath, []);
@@ -242,14 +242,14 @@ export class TrafficValidator {
         coveredOperaions = validatedOperations!.length;
         coverageRate = coveredOperaions / value.length;
         this.coverageData.set(key, coverageRate);
-        let unValidatedOperations = [...value];
-        validatedOperations!.forEach(element => {
+        const unValidatedOperations = [...value];
+        validatedOperations!.forEach((element) => {
           unValidatedOperations.splice(unValidatedOperations.indexOf(element), 1);
-        })
-        unValidatedOperations.forEach(element => {
+        });
+        unValidatedOperations.forEach((element) => {
           unCoveredOperationsList.push({
-            "operationId": element
-          })
+            operationId: element,
+          });
         });
       } else {
         coveredOperaions = 0;
@@ -262,9 +262,9 @@ export class TrafficValidator {
       } else {
         validationFailOperations = this.validationFailOperations.get(key)!.length;
       }
-      const sortedUnCoveredOperationsList = unCoveredOperationsList.sort(function(op1, op2) {
-        var opId1 = op1.operationId;
-        var opId2 = op2.operationId;
+      const sortedUnCoveredOperationsList = unCoveredOperationsList.sort(function (op1, op2) {
+        const opId1 = op1.operationId;
+        const opId2 = op2.operationId;
         if (opId1 < opId2) {
           return -1;
         }
@@ -281,7 +281,7 @@ export class TrafficValidator {
         unCoveredOperations: value.length - coveredOperaions,
         totalOperations: value.length,
         validationFailOperations: validationFailOperations,
-        unCoveredOperationsList: sortedUnCoveredOperationsList
+        unCoveredOperationsList: sortedUnCoveredOperationsList,
       });
     });
     return this.trafficValidationResult;
@@ -295,8 +295,9 @@ export class TrafficValidator {
     for (const key of this.operationSpecMapper.keys()) {
       const value = this.operationSpecMapper.get(key);
       if (
-        key.includes(toLower(operationInfo.apiVersion)) &&
-        key.includes(toLower(operationInfo.validationRequest?.providerNamespace))
+        key.includes(operationInfo.validationRequest?.providerNamespace) &&
+        (key.includes(operationInfo.apiVersion) ||
+          key.toLowerCase().includes(operationInfo.apiVersion))
       ) {
         if (value!.includes(operationInfo.operationId)) {
           result = key;
@@ -312,8 +313,9 @@ export class TrafficValidator {
     for (const key of this.operationSpecMapper.keys()) {
       const value = this.operationSpecMapper.get(key);
       if (
-        key.includes(toLower(operationInfo.apiVersion)) &&
-        value!.includes(operationInfo.operationId)
+        value!.includes(operationInfo.operationId) &&
+        (key.includes(operationInfo.apiVersion) ||
+          key.toLowerCase().includes(operationInfo.apiVersion))
       ) {
         result = key;
         return result;

@@ -308,8 +308,8 @@ export async function validateTrafficAgainstSpec(
       });
     }
     if (options.reportPath) {
-      const generator = new ReportGenerator(trafficValidationResult, validator!.operationCoverageResult, validator!.operationUndefinedResult, options.reportPath, options.sdkPackage, options.sdkLanguage);
-      generator.generateHtmlReport();
+      const generator = new ReportGenerator(trafficValidationResult, validator!.operationCoverageResult, validator!.operationUndefinedResult, options.reportPath, options.sdkPackage, options.sdkLanguage, options.specLinkPrefix, options.payloadLinkPrefix);
+      await generator.generateHtmlReport();
     }
     else if (trafficValidationResult.length > 0) {
       if (o.pretty) {
