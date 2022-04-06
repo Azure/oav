@@ -1,5 +1,8 @@
 # Change Log - oav
 
+## 04/06/2022 2.12.0
+- Traffic Validation - Support validation report generation
+
 ## 03/11/2022 2.11.9
 - Api Scenario - Fix bug about readonly during example diff.
 
