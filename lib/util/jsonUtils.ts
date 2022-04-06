@@ -166,7 +166,11 @@ export const getFilePositionFromJsonPath = (
   const pathArr = jsonPathToArray(jsonPath.substr(1));
   const newPathArr = pathArr.slice(0);
   const index = newPathArr.findIndex((str) => str.includes("/providers/Microsoft"));
-  if (index !== -1 && newPathArr[index + 1] !== undefined) {
+  if (
+    index !== -1 &&
+    newPathArr[index + 1] !== undefined &&
+    newPathArr[index].slice(-20) === "/providers/Microsoft"
+  ) {
     newPathArr[index] += "." + newPathArr[index + 1];
     newPathArr.splice(index + 1, 1);
   }
