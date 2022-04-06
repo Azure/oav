@@ -10,6 +10,7 @@ steps:
   - task: Npm@1
     displayName: "npm install"
     inputs:
+      command: 'install'
       verbose: false
 
   - task: Npm@1
