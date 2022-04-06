@@ -212,7 +212,7 @@
       .coverage {
         margin-bottom: 40px;
       }
-      .coverage table td:nth-child(-n + 3) {
+      .coverage table td:nth-child(-n + 4) {
         text-align: center;
       }
       .coverage table .file {
@@ -346,7 +346,7 @@
                                 <td style="color: var(--report-color-red)">{{validationFailOperations}}</td>
                                 <td>
                                     <div class="file">
-                                        <a href="{{spec}}">{{specLinkLabel}}<span></span></a>
+                                        <a target="_blank" href="{{spec}}">{{specLinkLabel}}<span></span></a>
                                     </div>
                                 </td>
                             </tr>
@@ -388,7 +388,7 @@
                             <tr>
                                 <td>0</td>
                                 <td>
-                                    <a href="{{spec}}">{{specLinkLabel}}<span></span></a>
+                                    <a target="_blank" href="{{spec}}">{{specLinkLabel}}<span></span></a>
                                 </td>
                                 <td>
                                     <div class="details showOperationTag">
@@ -446,7 +446,7 @@
                                 <td>0</td>
                                 <td>{{operationInfo.operationId}}</td>
                                 <td>
-                                    <a href="{{payloadFilePath}}">{{payloadFileLinkLabel}}<span></span></a>
+                                    <a target="_blank" href="{{payloadFilePath}}">{{payloadFileLinkLabel}}<span></span></a>
                                 </td>
                                 <td>
                                     <div class="details showTestFailed">
@@ -481,7 +481,7 @@
                                                 {{#errorsForRendering}}
                                                 <tr>
                                                     <td>
-                                                      <a href="{{link}}">{{friendlyName}}<span></span></a>
+                                                      <a target="_blank" href="{{link}}">{{friendlyName}}<span></span></a>
                                                     </td>
                                                     <td>{{message}}</td>
                                                     <td>{{jsonPathsInPayload}}</td>
@@ -551,24 +551,30 @@
             var textElement = $(this).parent().parent().parent().next().find('.tag');
             var showOperationTagClickMsg = '';
             textElement.each(function (index, e) {
-                showOperationTagClickMsg += $(e).html().trim() + ', ';
+                if(index < textElement.length - 1) {
+                    showOperationTagClickMsg += $(e).text().trim() + ', ';
+                } else {
+                    showOperationTagClickMsg += $(e).text().trim();
+                }
             });
             var result = "(" + textElement.length + ") " + showOperationTagClickMsg;
-            var result1 = result.substring(0, result.length - 1);
-            $(this).text(result1)
+            $(this).text(result);
         })
     }
     function showTestFailed() {
         $('div.showTestFailed > .limitText').each(function (index) {
-            var textElement = $(this).parent().parent().parent().next().children().find('td');
-            var showOperationsTestFailedMsg = ''
-            textElement.each(function (index, e) {
-                showOperationsTestFailedMsg += $(e).html().trim() + ', ';
+            var aElement = $(this).parent().parent().parent().next().children().find('a');
+            var showOperationTagClickMsg = '';
+            aElement.each(function (index, e) {
+                if(index < aElement.length - 1) {
+                    showOperationTagClickMsg += $(e).text().trim() + ', ';
+                } else {
+                    showOperationTagClickMsg += $(e).text().trim();
+                }
             });
             var trElement = $(this).parent().parent().parent().next().children().find('tr');
-            var result = "(" + (trElement.length - 1) + ") " + showOperationsTestFailedMsg;
-            var result1 = result.substring(0, 50);
-            $(this).text(result1);
+            var result = "(" + (trElement.length - 1) + ") " + showOperationTagClickMsg;
+            $(this).text(result);
         })
     }
 </script>
