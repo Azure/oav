@@ -54,9 +54,9 @@
         right: 0;
         width: 0px;
         height: 2px;
-        background: var(--link-hover-color);
         transition: 0.1s;
         border-radius: 50px;
+        background: var(--link-hover-color);
       }
       a:hover {
         color: var(--link-hover-color);
@@ -109,7 +109,6 @@
         border-right: 1px solid var(--border-color);
         border-bottom: 1px solid var(--border-color);
       }
-
       table > tbody > tr > td {
         text-align: left;
         font-size: 16px;
@@ -117,11 +116,9 @@
         border-top: 1px solid var(--border-color);
         border-right: 1px solid var(--border-color);
       }
-
       table > tbody > tr:first-child > td {
         border-top: none;
       }
-
       .details {
         width: 100%;
         display: flex;
@@ -342,18 +339,18 @@
                             <col style="width: 45%;" />
                         </colgroup>
                         <tbody>
-                            {{#coverageResults}}
+                            {{#coverageResultsForRendering}}
                             <tr>
                                 <td style="color: var(--report-color-green)">{{coveredOperaions}}</td>
                                 <td style="color: var(--report-color-yellow)">{{unCoveredOperations}}</td>
                                 <td style="color: var(--report-color-red)">{{validationFailOperations}}</td>
                                 <td>
                                     <div class="file">
-                                        {{spec}}
+                                        <a href="{{spec}}">{{specLinkLabel}}<span></span></a>
                                     </div>
                                 </td>
                             </tr>
-                            {{/coverageResults}}
+                            {{/coverageResultsForRendering}}
                         </tbody>
                     </table>
                 </div>
@@ -449,10 +446,7 @@
                                 <td>0</td>
                                 <td>{{operationInfo.operationId}}</td>
                                 <td>
-                                    <a href="{{payloadFilePath}}">
-                                        {{payloadFileLinkLabel}}
-                                        <span></span>
-                                    </a>
+                                    <a href="{{payloadFilePath}}">{{payloadFileLinkLabel}}<span></span></a>
                                 </td>
                                 <td>
                                     <div class="details showTestFailed">
@@ -484,16 +478,18 @@
                                                 <col style="width: 16%" />
                                             </colgroup>
                                             <tbody>
-                                                {{#errors}}
+                                                {{#errorsForRendering}}
                                                 <tr>
-                                                    <td>{{code}}</td>
+                                                    <td>
+                                                      <a href="{{link}}">{{friendlyName}}<span></span></a>
+                                                    </td>
                                                     <td>{{message}}</td>
                                                     <td>{{jsonPathsInPayload}}</td>
                                                     <td>{{schemaPath}}</td>
                                                     <td>{{params}}</td>
                                                     <td>{{source}}</td>
                                                 </tr>
-                                                {{/errors}}
+                                                {{/errorsForRendering}}
                                             </tbody>
                                         </table>
                                     </div>
@@ -571,7 +567,7 @@
             });
             var trElement = $(this).parent().parent().parent().next().children().find('tr');
             var result = "(" + (trElement.length - 1) + ") " + showOperationsTestFailedMsg;
-            var result1 = result.substring(0, result.length - 1);
+            var result1 = result.substring(0, 50);
             $(this).text(result1);
         })
     }
