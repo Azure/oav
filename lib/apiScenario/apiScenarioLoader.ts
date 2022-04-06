@@ -460,12 +460,11 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
         const target = step.requestParameters[bodyParam.name];
         const propertiesMergePatch = jsonMergePatchGenerate(source, target);
 
-        Object.entries(step.responseExpected).forEach(async (e) => {
-          const statusCode = e[0];
+        Object.keys(step.responseExpected).forEach(async (statusCode) => {
           if (statusCode >= "400") {
             return;
           }
-          const response = e[1];
+          const response = step.responseExpected[statusCode];
           if (response.body) {
             jsonMergeApply(response.body, propertiesMergePatch);
             await this.bodyTransformer.resourceToResponse(

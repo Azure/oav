@@ -307,9 +307,9 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     return source;
   }
 
-  private convertPostmanFormat<T>(obj: T): T {
+  private convertPostmanFormat<T>(obj: T, convertString: (s: string) => string): T {
     if (typeof obj === "string") {
-      return this.convertString(obj) as unknown as T;
+      return convertString(obj) as unknown as T;
     }
     if (typeof obj !== "object") {
       return obj;
@@ -318,12 +318,12 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       return obj;
     }
     if (Array.isArray(obj)) {
-      return (obj as any[]).map((v) => this.convertPostmanFormat(v)) as unknown as T;
+      return (obj as any[]).map((v) => this.convertPostmanFormat(v, convertString)) as unknown as T;
     }
 
     const result: any = {};
     for (const key of Object.keys(obj)) {
-      result[key] = this.convertPostmanFormat((obj as any)[key]);
+      result[key] = this.convertPostmanFormat((obj as any)[key], convertString);
     }
     return result;
   }
@@ -354,10 +354,19 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     const urlVariables: VariableDefinition[] = [];
     for (const p of step.operation.parameters ?? []) {
       const param = this.opts.jsonLoader!.resolveRefObj(p);
-      const paramValue = this.convertPostmanFormat(step.requestParameters[param.name]);
+      const paramValue = this.convertPostmanFormat(
+        step.requestParameters[param.name],
+        this.convertString
+      );
       const paramName = Object.keys(step.variables).includes(param.name)
         ? `${item.name}_${param.name}`
         : param.name;
+
+      if (paramName !== param.name) {
+        step.responseExpected = this.convertPostmanFormat(step.responseExpected, (s) =>
+          s.replace(`$(${param.name})`, `$(${paramName})`)
+        );
+      }
 
       switch (param.in) {
         case "path":
