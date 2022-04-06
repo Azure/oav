@@ -114,7 +114,7 @@ export class NewmanReportParser {
     const ret: any = {};
     for (const it of environment) {
       if (it.type === "string") {
-        ret[it.key] = it.value;
+        ret[it.key] = { type: "string", value: it.value };
       }
     }
     return ret;

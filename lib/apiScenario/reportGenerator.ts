@@ -186,7 +186,7 @@ export class ReportGenerator {
     const variables = rawReport.variables;
     this.swaggerExampleQualityResult.startTime = new Date(rawReport.timings.started).toISOString();
     this.swaggerExampleQualityResult.endTime = new Date(rawReport.timings.completed).toISOString();
-    this.swaggerExampleQualityResult.subscriptionId = variables.subscriptionId;
+    this.swaggerExampleQualityResult.subscriptionId = variables.subscriptionId.value as string;
     for (const it of rawReport.executions) {
       if (it.annotation === undefined) {
         continue;
@@ -276,9 +276,9 @@ export class ReportGenerator {
           this.opts.blobConnectionString?.length
         );
         const secretValues: string[] = [];
-        for (const [k, v] of Object.entries(this.rawReport?.variables)) {
-          if (this.dataMasker.maybeSecretKey(k)) {
-            secretValues.push(v as string);
+        for (const [k, v] of Object.entries(this.rawReport?.variables!)) {
+          if (this.dataMasker.maybeSecretKey(k) && v.type === "string") {
+            secretValues.push(v.value!);
           }
         }
         this.dataMasker.addMaskedValues(secretValues);
