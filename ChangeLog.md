@@ -1,6 +1,11 @@
 # Change Log - oav
 
+## 04/06/2022 2.11.10
+
+- SemanticValidator - Fix bug about error path.
+
 ## 03/11/2022 2.11.9
+
 - Api Scenario - Fix bug about readonly during example diff.
 
 ## 02/23/2022 2.11.8
