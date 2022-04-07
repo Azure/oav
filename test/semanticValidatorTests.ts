@@ -69,6 +69,10 @@ describe("Semantic validation", () => {
       assert(result.validityStatus === false);
       assert.strictEqual(result.validateSpec?.errors?.[0].code, "ENUM_MISMATCH");
       assert.strictEqual(result.validateSpec?.errors?.[0].message, "No enum match for: false");
+      assert.strictEqual(
+        result.validateSpec?.errors?.[0].jsonPath,
+        ".paths['/providers/Microsoft.ErrorPath/{name}'].get.parameters[0].required"
+      );
     });
   });
 

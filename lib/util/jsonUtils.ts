@@ -164,9 +164,12 @@ export const getFilePositionFromJsonPath = (
   jsonPath: string
 ): FilePosition | undefined => {
   const pathArr = jsonPathToArray(jsonPath.substr(1));
-  // splice Microsoft.Provider when jsonPathToArray() split it to Microsoft and Provider
-  // if newPathArr[index] is like "xxx/providers/Microsoft", it must be a part of "xxx/providers/Microsoft.xxx/xxx",
-  // then the true path should be spliced by newPathArr[index] and newPathArr[index + 1]
+  /*
+   * when jsonPath='/providers/Microsoft.Provider/resource',
+   * the split pathArr will be ['/providers/Microsoft','Provider/resource'].
+   * Only in this case, these two elements in the array need to be composed together by '.'.
+   * So restrict the condition to the path element ends with /providers/Microsoft.
+   */
   const newPathArr = pathArr.slice(0);
   const index = newPathArr.findIndex((str) => str.includes("/providers/Microsoft"));
   if (
