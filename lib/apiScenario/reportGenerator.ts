@@ -361,6 +361,27 @@ export class ReportGenerator {
     };
   }
 
+  private convertPostmanFormat<T>(obj: T, convertString: (s: string) => string): T {
+    if (typeof obj === "string") {
+      return convertString(obj) as unknown as T;
+    }
+    if (typeof obj !== "object") {
+      return obj;
+    }
+    if (obj === null || obj === undefined) {
+      return obj;
+    }
+    if (Array.isArray(obj)) {
+      return (obj as any[]).map((v) => this.convertPostmanFormat(v, convertString)) as unknown as T;
+    }
+
+    const result: any = {};
+    for (const key of Object.keys(obj)) {
+      result[key] = this.convertPostmanFormat((obj as any)[key], convertString);
+    }
+    return result;
+  }
+
   private async exampleResponseDiff(
     example: GeneratedExample,
     matchedStep: Step
@@ -368,6 +389,13 @@ export class ReportGenerator {
     let res: ResponseDiffItem[] = [];
     if (matchedStep?.type === "restCall") {
       if (example.example.responses["200"] !== undefined) {
+        Object.keys(matchedStep.variables).forEach((key) => {
+          const paramName = `${matchedStep.step}_${key}`;
+          matchedStep.responseExpected = this.convertPostmanFormat(
+            matchedStep.responseExpected,
+            (s) => s.replace(`$(${key})`, `$(${paramName})`)
+          );
+        });
         res = res.concat(
           await this.responseDiff(
             example.example.responses["200"]?.body || {},
