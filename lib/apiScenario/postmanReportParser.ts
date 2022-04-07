@@ -113,8 +113,8 @@ export class NewmanReportParser {
   private parseVariables(environment: any[]) {
     const ret: any = {};
     for (const it of environment) {
-      if (it.type === "string") {
-        ret[it.key] = it.value;
+      if (it.type === "string" || it.type === "any") {
+        ret[it.key] = { type: "string", value: it.value };
       }
     }
     return ret;

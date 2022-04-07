@@ -310,7 +310,7 @@ export type ScenarioDefinition = TransformRaw<
 export type RawReport = {
   executions: RawExecution[];
   timings: any;
-  variables: any;
+  variables: { [variableName: string]: Variable };
   testScenarioName?: string;
   metadata: any;
 };

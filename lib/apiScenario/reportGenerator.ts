@@ -186,7 +186,7 @@ export class ReportGenerator {
     const variables = rawReport.variables;
     this.swaggerExampleQualityResult.startTime = new Date(rawReport.timings.started).toISOString();
     this.swaggerExampleQualityResult.endTime = new Date(rawReport.timings.completed).toISOString();
-    this.swaggerExampleQualityResult.subscriptionId = variables.subscriptionId;
+    this.swaggerExampleQualityResult.subscriptionId = variables.subscriptionId.value as string;
     for (const it of rawReport.executions) {
       if (it.annotation === undefined) {
         continue;
@@ -276,9 +276,9 @@ export class ReportGenerator {
           this.opts.blobConnectionString?.length
         );
         const secretValues: string[] = [];
-        for (const [k, v] of Object.entries(this.rawReport?.variables)) {
-          if (this.dataMasker.maybeSecretKey(k)) {
-            secretValues.push(v as string);
+        for (const [k, v] of Object.entries(this.rawReport?.variables!)) {
+          if (this.dataMasker.maybeSecretKey(k) && v.type === "string") {
+            secretValues.push(v.value!);
           }
         }
         this.dataMasker.addMaskedValues(secretValues);
@@ -361,6 +361,27 @@ export class ReportGenerator {
     };
   }
 
+  private convertPostmanFormat<T>(obj: T, convertString: (s: string) => string): T {
+    if (typeof obj === "string") {
+      return convertString(obj) as unknown as T;
+    }
+    if (typeof obj !== "object") {
+      return obj;
+    }
+    if (obj === null || obj === undefined) {
+      return obj;
+    }
+    if (Array.isArray(obj)) {
+      return (obj as any[]).map((v) => this.convertPostmanFormat(v, convertString)) as unknown as T;
+    }
+
+    const result: any = {};
+    for (const key of Object.keys(obj)) {
+      result[key] = this.convertPostmanFormat((obj as any)[key], convertString);
+    }
+    return result;
+  }
+
   private async exampleResponseDiff(
     example: GeneratedExample,
     matchedStep: Step
@@ -368,6 +389,13 @@ export class ReportGenerator {
     let res: ResponseDiffItem[] = [];
     if (matchedStep?.type === "restCall") {
       if (example.example.responses["200"] !== undefined) {
+        Object.keys(matchedStep.variables).forEach((key) => {
+          const paramName = `${matchedStep.step}_${key}`;
+          matchedStep.responseExpected = this.convertPostmanFormat(
+            matchedStep.responseExpected,
+            (s) => s.replace(`$(${key})`, `$(${paramName})`)
+          );
+        });
         res = res.concat(
           await this.responseDiff(
             example.example.responses["200"]?.body || {},

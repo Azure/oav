@@ -2,6 +2,7 @@
 
 import { join as pathJoin, dirname } from "path";
 import { dump as yamlDump } from "js-yaml";
+import { generate as jsonMergePatchGenerate, apply as jsonMergeApply } from "json-merge-patch";
 import { inject, injectable } from "inversify";
 import { cloneDeep } from "@azure-tools/openapi-tools-common";
 import { Loader, setDefaultOpts } from "../swagger/loader";
@@ -84,8 +85,8 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     public jsonLoader: JsonLoader,
     private swaggerLoader: SwaggerLoader,
     private apiScenarioYamlLoader: ApiScenarioYamlLoader,
-    private bodyTransformer: BodyTransformer,
     private templateGenerator: TemplateGenerator,
+    private bodyTransformer: BodyTransformer,
     @inject(TYPES.schemaValidator) private schemaValidator: SchemaValidator
   ) {
     this.transformContext = getTransformContext(this.jsonLoader, this.schemaValidator, [
@@ -448,42 +449,34 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
   }
 
   private async applyPatches(step: StepRestCall, rawStep: RawStepExample) {
-    const statusCode = Object.keys(step.responseExpected).sort()[0];
-    if (rawStep.resourceUpdate) {
-      if (!["put", "patch", "get"].includes(step.operation._method)) {
-        throw new Error(
-          `resourceUpdate could only be used in PUT/PATCH/GET operations with exampleFile`
-        );
-      }
-      // TODO apply resourceUpdate
-      const target = step.responseExpected[statusCode].body;
-      const bodyParam = getBodyParam(step.operation, this.jsonLoader);
-      if (bodyParam !== undefined) {
-        try {
-          this.bodyTransformer.deepMerge(target, step.requestParameters[bodyParam.name]);
-        } catch (err) {
-          console.error(err);
-        }
-      }
-      jsonPatchApply(target, rawStep.resourceUpdate);
-      if (bodyParam !== undefined) {
-        const convertedRequest = await this.bodyTransformer.resourceToRequest(
-          target,
-          bodyParam.schema!
-        );
-        step.requestParameters[bodyParam.name] = convertedRequest;
-      }
-      step.responseExpected[statusCode].body = await this.bodyTransformer.resourceToResponse(
-        target,
-        step.operation.responses[statusCode].schema!
-      );
-    }
-
     if (rawStep.requestUpdate) {
+      const bodyParam = getBodyParam(step.operation, this.jsonLoader);
+      let source;
+      if (bodyParam) {
+        source = cloneDeep(step.requestParameters[bodyParam.name]);
+      }
       jsonPatchApply(step.requestParameters, rawStep.requestUpdate);
+      if (["put", "patch"].includes(step.operation._method) && bodyParam) {
+        const target = step.requestParameters[bodyParam.name];
+        const propertiesMergePatch = jsonMergePatchGenerate(source, target);
+
+        Object.keys(step.responseExpected).forEach(async (statusCode) => {
+          if (statusCode >= "400") {
+            return;
+          }
+          const response = step.responseExpected[statusCode];
+          if (response.body) {
+            jsonMergeApply(response.body, propertiesMergePatch);
+            await this.bodyTransformer.resourceToResponse(
+              response.body,
+              step.operation.responses[statusCode].schema!
+            );
+          }
+        });
+      }
     }
     if (rawStep.responseUpdate) {
-      jsonPatchApply(step.responseExpected[statusCode].body, rawStep.responseUpdate);
+      jsonPatchApply(step.responseExpected, rawStep.responseUpdate);
     }
   }
 
