@@ -308,7 +308,7 @@ export async function validateTrafficAgainstSpec(
       });
     }
     if (options.reportPath) {
-      const generator = new ReportGenerator(trafficValidationResult, validator!.operationCoverageResult, validator!.operationUndefinedResult, options.reportPath, options.sdkPackage, options.sdkLanguage, options.specLinkPrefix, options.payloadLinkPrefix);
+      const generator = new ReportGenerator(trafficValidationResult, validator!.operationCoverageResult, validator!.operationUndefinedResult, options);
       await generator.generateHtmlReport();
     }
     else if (trafficValidationResult.length > 0) {

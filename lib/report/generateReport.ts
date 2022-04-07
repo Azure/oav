@@ -4,6 +4,7 @@ import * as Mustache from "mustache";
 import {
   OperationCoverageInfo,
   TrafficValidationIssue,
+  TrafficValidationOptions,
 } from "../swaggerValidator/trafficValidator";
 import { LiveValidationIssue } from "../liveValidation/liveValidator";
 import { FileLoader } from "../swagger/fileLoader";
@@ -54,6 +55,7 @@ export class CoverageView {
 
   private specLinkPrefix: string;
   private payloadLinkPrefix: string;
+  private overrideLinkInReport: boolean;
 
   public constructor(
     validationResults: TrafficValidationIssue[],
@@ -61,6 +63,7 @@ export class CoverageView {
     undefinedOperationCount: number = 0,
     packageName: string = "",
     language: string = "",
+    overrideLinkInReport: boolean = false,
     specLinkPrefix: string = "",
     payloadLinkPrefix: string = ""
   ) {
@@ -71,18 +74,21 @@ export class CoverageView {
     this.generatedDate = new Date();
     this.generalErrorResults = new Map();
     this.language = language;
+    this.overrideLinkInReport = overrideLinkInReport;
     this.specLinkPrefix = specLinkPrefix;
     this.payloadLinkPrefix = payloadLinkPrefix;
 
-    if (this.specLinkPrefix.endsWith("/")) {
-      this.specLinkPrefix = this.specLinkPrefix.substring(0, this.specLinkPrefix.length - 1);
-    }
+    if (this.overrideLinkInReport === true) {
+      if (this.specLinkPrefix.endsWith("/")) {
+        this.specLinkPrefix = this.specLinkPrefix.substring(0, this.specLinkPrefix.length - 1);
+      }
 
-    if (this.payloadLinkPrefix.endsWith("/")) {
-      this.payloadLinkPrefix = this.payloadLinkPrefix.substring(
-        0,
-        this.payloadLinkPrefix.length - 1
-      );
+      if (this.payloadLinkPrefix.endsWith("/")) {
+        this.payloadLinkPrefix = this.payloadLinkPrefix.substring(
+          0,
+          this.payloadLinkPrefix.length - 1
+        );
+      }
     }
 
     this.setMetrics();
@@ -114,7 +120,9 @@ export class CoverageView {
           });
         });
         this.validationResultsForRendering.push({
-          payloadFilePath: `${this.payloadLinkPrefix}/${payloadFile}`,
+          payloadFilePath: this.overrideLinkInReport
+            ? `${this.payloadLinkPrefix}/${payloadFile}`
+            : element.payloadFilePath,
           payloadFileLinkLabel: payloadFile,
           errors: element.errors,
           errorsForRendering: errorsForRendering,
@@ -123,10 +131,13 @@ export class CoverageView {
         });
       });
       this.coverageResults.forEach((element) => {
+        const specLink = this.overrideLinkInReport
+          ? `${this.specLinkPrefix}/${element.spec?.substring(
+              element.spec?.indexOf("specification")
+            )}`
+          : element.spec;
         this.coverageResultsForRendering.push({
-          spec: `${this.specLinkPrefix}/${element.spec?.substring(
-            element.spec?.indexOf("specification")
-          )}`,
+          spec: specLink,
           specLinkLabel: element.spec?.substring(element.spec?.lastIndexOf("/") + 1),
           apiVersion: element.apiVersion,
           coveredOperaions: element.coveredOperaions,
@@ -231,6 +242,7 @@ export class ReportGenerator {
   private coverageResults: OperationCoverageInfo[];
   private undefinedOperationsCount: number;
   private reportPath: string;
+  private overrideLinkInReport: boolean;
   private specLinkPrefix: string;
   private payloadLinkPrefix: string;
 
@@ -238,20 +250,17 @@ export class ReportGenerator {
     validationResults: TrafficValidationIssue[],
     coverageResults: OperationCoverageInfo[],
     undefinedOperationResults: number,
-    reportPath: string,
-    sdkPackage: string = "",
-    sdkLanguage: string = "",
-    specLinkPrefix: string = "",
-    payloadLinkPrefix: string = ""
+    options: TrafficValidationOptions
   ) {
     this.validationResults = validationResults;
     this.coverageResults = coverageResults;
     this.undefinedOperationsCount = undefinedOperationResults;
-    this.reportPath = path.resolve(process.cwd(), reportPath);
-    this.sdkLanguage = sdkLanguage;
-    this.sdkPackage = sdkPackage;
-    this.specLinkPrefix = specLinkPrefix;
-    this.payloadLinkPrefix = payloadLinkPrefix;
+    this.reportPath = path.resolve(process.cwd(), options.reportPath!);
+    this.sdkLanguage = options.sdkLanguage!;
+    this.sdkPackage = options.sdkPackage!;
+    this.overrideLinkInReport = options.overrideLinkInReport!;
+    this.specLinkPrefix = options.specLinkPrefix!;
+    this.payloadLinkPrefix = options.payloadLinkPrefix!;
   }
 
   public async generateHtmlReport() {
@@ -263,6 +272,7 @@ export class ReportGenerator {
       this.undefinedOperationsCount,
       this.sdkPackage,
       this.sdkLanguage,
+      this.overrideLinkInReport,
       this.specLinkPrefix,
       this.payloadLinkPrefix
     );

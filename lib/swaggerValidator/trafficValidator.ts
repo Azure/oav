@@ -21,6 +21,7 @@ export interface TrafficValidationOptions extends Options {
   sdkPackage?: string;
   sdkLanguage?: string;
   reportPath?: string;
+  overrideLinkInReport?: boolean;
   specLinkPrefix?: string;
   payloadLinkPrefix?: string;
 }

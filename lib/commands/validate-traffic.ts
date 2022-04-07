@@ -37,6 +37,12 @@ export const builder: yargs.CommandBuilder = {
     string: true,
     default: "./SwaggerAccuracyReport.html",
   },
+  overrideLinkInReport: {
+    alias: "overridelink",
+    describe: "override spec link and payload link in report with github url",
+    boolean: true,
+    default: false,
+  },
   specLinkPrefix: {
     alias: "slp",
     describe: "github specification link prefix",
@@ -63,6 +69,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       sdkPackage: argv.package,
       sdkLanguage: argv.language,
       reportPath: argv.report,
+      overrideLinkInReport: argv.overrideLinkInReport,
       specLinkPrefix: argv.specLinkPrefix,
       payloadLinkPrefix: argv.payloadLinkPrefix,
     };
