@@ -62,6 +62,18 @@ describe("Semantic validation", () => {
         constants.ErrorCodes.InternalError.name
       );
     });
+    // error path
+    it("should report truly error when error path contains '/providers/Microsoft'", async () => {
+      const specPath = `${testPath}/semanticValidation/specification/validateSwaggerSchema/internalErrors/errorPath.json`;
+      const result = await validate.validateSpec(specPath, undefined);
+      assert(result.validityStatus === false);
+      assert.strictEqual(result.validateSpec?.errors?.[0].code, "ENUM_MISMATCH");
+      assert.strictEqual(result.validateSpec?.errors?.[0].message, "No enum match for: false");
+      assert.strictEqual(
+        result.validateSpec?.errors?.[0].jsonPath,
+        ".paths['/providers/Microsoft.ErrorPath/{name}'].get.parameters[0].required"
+      );
+    });
   });
 
   describe("validateSwaggerSchema", () => {
