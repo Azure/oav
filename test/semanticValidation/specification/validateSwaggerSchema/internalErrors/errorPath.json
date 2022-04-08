@@ -1,0 +1,37 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "title",
+    "description": "",
+    "version": "2016-11-01"
+  },
+  "host": "host",
+  "paths": {
+    "/providers/Microsoft.ErrorPath/{name}": {
+      "get": {
+        "tags": [
+          "Insipid"
+        ],
+        "operationId": "Insipid_Hello",
+        "description": "Very boring operation",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "description": "Name of metadata entity.",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "file"
+            }
+          }
+        }
+      }
+    }
+  }
+}
