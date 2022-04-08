@@ -470,12 +470,35 @@ describe("Model Validation", () => {
       assert(result.length === 0, `swagger "${specPath2}" contains model validation errors.`);
       // console.log(result)
     });
-    it("should pass for query parameters in string format", async () => {
+    it("should revalidate query parameters in string format which be defined as array(array items are numbers)", async () => {
       const specPath2 = `${testPath}/modelValidation/swaggers/specification/query/test.json`;
-      const result = await validate.validateExamples(specPath2, "Query_StringButDefinedAsArray", {
-        consoleLogLevel: "off",
-      });
+      const result = await validate.validateExamples(
+        specPath2,
+        "Query_StringButDefinedAsArray_numberItem",
+        { consoleLogLevel: "off" }
+      );
       assert(result.length === 0, `swagger "${specPath2}" contains model validation errors.`);
+    });
+    it("should revalidate query parameters in string format which be defined as array(array item is boolean)", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/query/test.json`;
+      const result = await validate.validateExamples(
+        specPath2,
+        "Query_StringButDefinedAsArray_booleanItem",
+        { consoleLogLevel: "off" }
+      );
+      assert(result.length === 0, `swagger "${specPath2}" contains model validation errors.`);
+    });
+    it("should revalidate query parameters in string format which be defined as array", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/query/test.json`;
+      const result = await validate.validateExamples(
+        specPath2,
+        "Query_StringButDefinedAsArray_numberItem_extraError",
+        { consoleLogLevel: "off" }
+      );
+      assert(result.length === 1);
+      assert.strictEqual(result[0].code, "INVALID_TYPE");
+      assert.strictEqual(result[0].message, "Expected type number but found type string");
+      assert.strictEqual(result[0].schemaJsonPath, "helloArray/items/type");
     });
   });
 

@@ -226,17 +226,41 @@ const ReValidateIfNeed = (
       (parentSchema as any)?.["in"] === "query"
     ) {
       const arrayData = errorData.split(",").map((item) => {
-        if (parseFloat(item)) {
+        // when item is number
+        const numberRegex = /^[+-]?\d+(\.\d+)?([Ee]\+?\d+)?$/g;
+        if (numberRegex.test(item)) {
+          // delete extra 0 in front and end of item
+          if (!item.includes("e") && !item.includes("E")) {
+            item = item.includes(".")
+              ? item.replace(/^0+/g, "").replace(/0+$/g, "")
+              : item.replace(/^0+/g, "");
+          }
           return parseFloat(item);
+        }
+        // when item is boolean
+        if (item === "true" || item === "false") {
+          return item === "true";
         }
         return item;
       });
       const position = dataPath.substr(1);
       lodash.set(newData, position, arrayData);
       const isValid = validate.call(ctx, newData);
-      if (isValid || !lodash.isEqual(validate.errors![i], error)) {
-        continue;
+      if (!isValid) {
+        // if validate.errors have new errors, add them to result
+        validate.errors!.forEach((error) => {
+          let isNewError = true;
+          for (const error1 of errors) {
+            if (lodash.isEqual(error, error1)) {
+              isNewError = false;
+            }
+          }
+          if (isNewError) {
+            result.push(validate.errors![i]);
+          }
+        });
       }
+      continue;
     }
     result.push(error);
   }
