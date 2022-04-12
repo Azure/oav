@@ -11,64 +11,6 @@
   "consumes": [],
   "produces": [],
   "paths": {
-    "/query/string/encoded": {
-      "post": {
-        "tags": [
-          "Query"
-        ],
-        "operationId": "Query_StringEncoded",
-        "description": "The parameter is a query, an encoded string",
-        "x-ms-examples": {
-          "queryStringEncoded": {
-            "$ref": "./examples/string.json"
-          }
-        },
-        "parameters": [
-          {
-            "name": "hello",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "description": "Encoded query string",
-            "x-ms-skip-url-encoding": false
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/query/string/notEncoded": {
-      "post": {
-        "tags": [
-          "Query"
-        ],
-        "operationId": "Query_StringNotEncoded",
-        "description": "The parameter is a query, a not encoded string",
-        "x-ms-examples": {
-          "queryStringNotEncoded": {
-            "$ref": "./examples/string.json"
-          }
-        },
-        "parameters": [
-          {
-            "name": "hello",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "description": "Not encoded query string",
-            "x-ms-skip-url-encoding": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
     "/query/string/definedAsArray/number": {
       "post": {
         "tags": [
@@ -87,41 +29,7 @@
             "in": "query",
             "required": false,
             "type": "array",
-            "description": "array",
-            "minItems": 2,
-            "maxItems": 2,
-            "items": {
-              "type": "number",
-              "format": "double"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/query/string/definedAsArray/number/extraError": {
-      "post": {
-        "tags": [
-          "Query"
-        ],
-        "operationId": "Query_StringButDefinedAsArray_numberItem_extraError",
-        "description": "The parameter is a query, a string but defined as an array",
-        "x-ms-examples": {
-          "queryStringButDefinedAsArray": {
-            "$ref": "./examples/stringWithNumberExtraError.json"
-          }
-        },
-        "parameters": [
-          {
-            "name": "helloArray",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "description": "array",
+            "description": "array items are numbers",
             "minItems": 2,
             "maxItems": 2,
             "items": {
@@ -155,7 +63,7 @@
             "in": "query",
             "required": false,
             "type": "array",
-            "description": "array",
+            "description": "array item is boolean",
             "items": {
               "type": "boolean"
             }
@@ -168,197 +76,44 @@
         }
       }
     },
-    "/query/bool/encoded": {
+    "/query/string/definedAsArray/extraError": {
       "post": {
         "tags": [
           "Query"
         ],
-        "operationId": "Query_BoolEncoded",
-        "description": "The parameter is a query, an encoded bool",
+        "operationId": "Query_StringButDefinedAsArray_extraError",
+        "description": "The parameter is a query, a string but defined as an array",
         "x-ms-examples": {
-          "queryBoolEncoded": {
-            "$ref": "./examples/bool.json"
+          "queryStringButDefinedAsArray": {
+            "$ref": "./examples/stringWithExtraError.json"
           }
         },
         "parameters": [
           {
-            "name": "hello",
-            "in": "query",
-            "required": false,
-            "type": "boolean",
-            "description": "Encoded query bool",
-            "x-ms-skip-url-encoding": false
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/query/bool/notEncoded": {
-      "post": {
-        "tags": [
-          "Query"
-        ],
-        "operationId": "Query_BoolNotEncoded",
-        "description": "The parameter is a query, a not encoded bool",
-        "x-ms-examples": {
-          "queryBoolNotEncoded": {
-            "$ref": "./examples/bool.json"
-          }
-        },
-        "parameters": [
-          {
-            "name": "hello",
-            "in": "query",
-            "required": false,
-            "type": "boolean",
-            "description": "Not encoded query bool",
-            "x-ms-skip-url-encoding": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/query/array/encoded": {
-      "post": {
-        "tags": [
-          "Query"
-        ],
-        "operationId": "Query_ArrayEncoded",
-        "description": "The parameter is a query, an encoded array",
-        "x-ms-examples": {
-          "queryArrayEncoded": {
-            "$ref": "./examples/array.json"
-          }
-        },
-        "parameters": [
-          {
-            "name": "hello",
+            "name": "helloArray",
             "in": "query",
             "required": false,
             "type": "array",
-            "description": "Encoded query array",
-            "x-ms-skip-url-encoding": false,
-            "collectionFormat": "csv",
+            "description": "array items are numbers",
+            "minItems": 2,
+            "maxItems": 2,
             "items": {
-              "type": "string",
-              "x-nullable": false,
-              "x-ms-enum": {
-                "name": "Hello",
-                "modelAsString": true
-              },
-              "enum": [
-                "Wake up at 3:14:16 AM",
-                "World"
-              ]
+              "type": "number",
+              "format": "double"
             }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/query/array/notEncoded": {
-      "post": {
-        "tags": [
-          "Query"
-        ],
-        "operationId": "Query_ArrayNotEncoded",
-        "description": "The parameter is a query, a not encoded array",
-        "x-ms-examples": {
-          "queryArrayNotEncoded": {
-            "$ref": "./examples/array.json"
-          }
-        },
-        "parameters": [
+          },
           {
-            "name": "hello",
+            "name": "name",
             "in": "query",
             "required": false,
             "type": "array",
-            "description": "Encoded query array",
-            "x-ms-skip-url-encoding": true,
-            "collectionFormat": "csv",
+            "description": "array items are numbers",
+            "minItems": 2,
+            "maxItems": 2,
             "items": {
               "type": "string",
-              "x-nullable": false,
-              "x-ms-enum": {
-                "name": "Hello",
-                "modelAsString": true
-              },
-              "enum": [
-                "Wake up at 3:14:16 AM",
-                "World"
-              ]
+              "maxLength": 5
             }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/query/integer/encoded": {
-      "post": {
-        "tags": [
-          "Query"
-        ],
-        "operationId": "Query_IntegerEncoded",
-        "description": "The parameter is a query, an encoded integer",
-        "x-ms-examples": {
-          "queryIntegerEncoded": {
-            "$ref": "./examples/integer.json"
-          }
-        },
-        "parameters": [
-          {
-            "name": "hello",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "description": "Encoded query integer",
-            "x-ms-skip-url-encoding": false
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/query/integer/notEncoded": {
-      "post": {
-        "tags": [
-          "Query"
-        ],
-        "operationId": "Query_IntegerNotEncoded",
-        "description": "The parameter is a query, a not encoded integer",
-        "x-ms-examples": {
-          "queryIntegerNotEncoded": {
-            "$ref": "./examples/integer.json"
-          }
-        },
-        "parameters": [
-          {
-            "name": "hello",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "description": "Not encoded query integer",
-            "x-ms-skip-url-encoding": true
           }
         ],
         "responses": {

@@ -202,22 +202,23 @@ export const ajvErrorToSchemaValidateIssue = (
 };
 
 const ReValidateIfNeed = (
-  errors: ErrorObject[],
+  originalErrors: ErrorObject[],
   ctx: SchemaValidateContext,
   data: any,
   validate: ValidateFunction
 ): ErrorObject[] => {
   const result: ErrorObject[] = [];
-  const length = errors.length;
+  // const length = originalErrors.length;
   const newData = lodash.cloneDeep(data);
 
-  for (let i = 0; i < length; i++) {
+  for (const originalError of originalErrors) {
+    // for (let i = 0; i < length; i++) {
     validate.errors = null;
-    const error = errors[i];
-    const { schema, parentSchema: parentSch, keyword, data: errorData, dataPath } = error;
+    // const originalError = originalErrors[i];
+    const { schema, parentSchema: parentSch, keyword, data: errorData, dataPath } = originalError;
     const parentSchema = parentSch as Schema;
 
-    // If the value of query parameter is in string format, we can skip this error
+    // If the value of query parameter is in string format, we can revalidate this error
     if (
       !ctx.isResponse &&
       keyword === "type" &&
@@ -229,12 +230,6 @@ const ReValidateIfNeed = (
         // when item is number
         const numberRegex = /^[+-]?\d+(\.\d+)?([Ee]\+?\d+)?$/g;
         if (numberRegex.test(item)) {
-          // delete extra 0 in front and end of item
-          if (!item.includes("e") && !item.includes("E")) {
-            item = item.includes(".")
-              ? item.replace(/^0+/g, "").replace(/0+$/g, "")
-              : item.replace(/^0+/g, "");
-          }
           return parseFloat(item);
         }
         // when item is boolean
@@ -248,21 +243,32 @@ const ReValidateIfNeed = (
       const isValid = validate.call(ctx, newData);
       if (!isValid) {
         // if validate.errors have new errors, add them to result
-        validate.errors!.forEach((error) => {
-          let isNewError = true;
-          for (const error1 of errors) {
-            if (lodash.isEqual(error, error1)) {
-              isNewError = false;
+        for (const newError of validate.errors!) {
+          let [includedInResult, includedInOriginalErrors] = [false, false];
+          for (const resultError of result) {
+            if (lodash.isEqual(newError, resultError)) {
+              // error is included in result
+              includedInResult = true;
+              break;
             }
           }
-          if (isNewError) {
-            result.push(validate.errors![i]);
+          if (!includedInResult) {
+            for (const eachOriginalError of originalErrors) {
+              if (lodash.isEqual(newError, eachOriginalError)) {
+                // error is included in originalErrors
+                includedInOriginalErrors = true;
+                break;
+              }
+            }
+            if (!includedInOriginalErrors) {
+              result.push(newError);
+            }
           }
-        });
+        }
       }
       continue;
     }
-    result.push(error);
+    result.push(originalError);
   }
 
   return result;

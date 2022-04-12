@@ -1,8 +1,0 @@
-{
-  "parameters": {
-    "helloArray": "127.0.0.1,1.2E+2"
-  },
-  "responses": {
-    "200": {}
-  }
-}

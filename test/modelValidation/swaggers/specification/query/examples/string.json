@@ -1,8 +1,0 @@
-{
-  "parameters": {
-    "hello": "Wake up at 3:14:16 AM"
-  },
-  "responses": {
-    "200": {}
-  }
-}
