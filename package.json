@@ -60,8 +60,7 @@
     "winston": "^3.2.1",
     "yargs": "^15.4.1",
     "yasway": "^1.10.7",
-    "yuml2svg": "^4.2.1",
-    "z-schema": "^4.2.2"
+    "yuml2svg": "^4.2.1"
   },
   "devDependencies": {
     "@rushstack/eslint-config": "^2.3.2",
