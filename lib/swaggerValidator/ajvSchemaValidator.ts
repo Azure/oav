@@ -208,13 +208,10 @@ const ReValidateIfNeed = (
   validate: ValidateFunction
 ): ErrorObject[] => {
   const result: ErrorObject[] = [];
-  // const length = originalErrors.length;
   const newData = lodash.cloneDeep(data);
 
   for (const originalError of originalErrors) {
-    // for (let i = 0; i < length; i++) {
     validate.errors = null;
-    // const originalError = originalErrors[i];
     const { schema, parentSchema: parentSch, keyword, data: errorData, dataPath } = originalError;
     const parentSchema = parentSch as Schema;
 
