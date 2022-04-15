@@ -106,6 +106,5 @@ export {
 
 export { TrafficValidationIssue, TrafficValidator } from "./lib/swaggerValidator/trafficValidator";
 
-export { getAutorestConfig } from "./lib/util/getAutorestConfig";
 // Constants
 export const Constants = C;

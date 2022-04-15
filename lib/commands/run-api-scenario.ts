@@ -12,8 +12,8 @@ import {
 } from "../apiScenario/postmanCollectionGenerator";
 import { inversifyGetInstance } from "../inversifyUtils";
 import { printWarning } from "../util/utils";
-import { getAutorestConfig } from "../util/getAutorestConfig";
 import { getSwaggerFilePathsFromApiScenarioFilePath } from "../apiScenario/apiScenarioYamlLoader";
+import { getSwaggerListFromReadme } from "../util/readmeUtils";
 
 export const command = "run-api-scenario <api-scenario>";
 
@@ -139,16 +139,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     const swaggerFilePaths: string[] = (argv.specs || []).map((it: string) => path.resolve(it));
     if (argv.readme !== undefined) {
       const readmeMd: string = path.resolve(argv.readme);
-      let autorestConfig = await getAutorestConfig(argv, readmeMd);
-      const tag = autorestConfig.tag;
-      if (argv.tag === undefined) {
-        argv.tag = tag;
-        autorestConfig = await getAutorestConfig(argv, readmeMd);
-      }
-      const fileRoot = path.dirname(readmeMd);
-      const inputSwaggerFile = autorestConfig["input-file"].map((it: string) =>
-        path.resolve(fileRoot, it)
-      );
+      const inputSwaggerFile = await getSwaggerListFromReadme(readmeMd, argv.tag);
       console.log(`input swagger files: ${inputSwaggerFile}`);
       for (const it of inputSwaggerFile) {
         if (swaggerFilePaths.indexOf(it) === -1) {
