@@ -11,7 +11,7 @@ import {
   RequestTracking,
   TestScenarioGenerator,
 } from "../../apiScenario/gen/testScenarioGenerator";
-import { getAutorestConfig } from "../../util/getAutorestConfig";
+import { getSwaggerListFromReadme } from "../../util/readmeUtils";
 
 export const command = "recording";
 export const describe = "Generate spec examples from real payload records.";
@@ -49,8 +49,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
 
   const recordingFilePaths = glob.sync(recording);
   recordingFilePaths.sort();
-  const autorestConfig = await getAutorestConfig(argv, readmeMd);
-  const swaggerFilePaths: string[] = autorestConfig["input-file"];
+  const swaggerFilePaths = await getSwaggerListFromReadme(readmeMd, argv.tag);
   const fileRoot = dirname(readmeMd);
   output = pathResolve(fileRoot, output);
   output = pathRelative(fileRoot, output);

@@ -5,8 +5,8 @@ import * as path from "path";
 import * as yargs from "yargs";
 
 import { cliSuppressExceptions } from "../cliSuppressExceptions";
-import { getAutorestConfig } from "../util/getAutorestConfig";
 import { SwaggerAnalyzer } from "../apiScenario/swaggerAnalyzer";
+import { getSwaggerListFromReadme } from "../util/readmeUtils";
 
 export const command = "analyze-dependency";
 
@@ -44,11 +44,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     let swaggerFilePaths: string[] = [];
     if (argv.readme !== undefined) {
       const readmeMd: string = argv.readme;
-      const autorestConfig = await getAutorestConfig(argv, readmeMd);
-      const fileRoot = path.dirname(readmeMd);
-      swaggerFilePaths = autorestConfig["input-file"].map((it: string) =>
-        path.resolve(fileRoot, it)
-      );
+      swaggerFilePaths = await getSwaggerListFromReadme(readmeMd, argv.tag);
     }
     if (argv.swagger !== undefined) {
       swaggerFilePaths.push(path.resolve(argv.swagger));

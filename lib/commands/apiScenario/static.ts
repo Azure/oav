@@ -3,11 +3,12 @@
 
 /* eslint-disable id-blacklist */
 
-import { dirname, resolve as pathResolve } from "path";
+import { resolve as pathResolve } from "path";
 import * as yargs from "yargs";
-import { getAutorestConfig } from "../../util/getAutorestConfig";
 import { StaticApiScenarioGenerator } from "../../apiScenario/gen/staticTestScenarioGenerator";
 import { ApiScenarioGenerator } from "../../apiScenario/gen/apiScenarioGenerator";
+import { getSwaggerListFromReadme } from "../../util/readmeUtils";
+import { cliSuppressExceptions } from "../../cliSuppressExceptions";
 
 export const command = "static";
 export const describe = "Generate api-scenario from specs.";
@@ -44,52 +45,45 @@ export const builder: yargs.CommandBuilder = {
 };
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
-  const swaggerFilePaths: string[] = (argv.specs || []).map((it: string) => pathResolve(it));
-  let tag = "default";
-  if (argv.readme !== undefined) {
-    const readmeMd: string = pathResolve(argv.readme);
-    let autorestConfig = await getAutorestConfig(argv, readmeMd);
-    tag = autorestConfig.tag;
-    if (argv.tag === undefined) {
-      argv.tag = tag;
-      autorestConfig = await getAutorestConfig(argv, readmeMd);
-    }
-    const fileRoot = dirname(readmeMd);
-    const inputSwaggerFile = autorestConfig["input-file"].map((it: string) =>
-      pathResolve(fileRoot, it)
-    );
-    console.log(`input swagger files: ${inputSwaggerFile}`);
-    for (const it of inputSwaggerFile) {
-      if (swaggerFilePaths.indexOf(it) === -1) {
-        swaggerFilePaths.push(it);
+  await cliSuppressExceptions(async () => {
+    const swaggerFilePaths: string[] = (argv.specs || []).map((it: string) => pathResolve(it));
+    let tag = "default";
+    if (argv.readme !== undefined) {
+      const readmeMd: string = pathResolve(argv.readme);
+      const inputSwaggerFile = await getSwaggerListFromReadme(readmeMd, argv.tag);
+      console.log(`input swagger files: ${inputSwaggerFile}`);
+      for (const it of inputSwaggerFile) {
+        if (swaggerFilePaths.indexOf(it) === -1) {
+          swaggerFilePaths.push(it);
+        }
       }
     }
-  }
 
-  console.log("input-file:");
-  console.log(swaggerFilePaths);
+    console.log("input-file:");
+    console.log(swaggerFilePaths);
 
-  if (argv.dependency) {
-    const generator = ApiScenarioGenerator.create({
-      swaggerFilePaths: swaggerFilePaths,
-      outputDir: argv.outputDir,
-      dependencyPath: argv.dependency,
-    });
+    if (argv.dependency) {
+      const generator = ApiScenarioGenerator.create({
+        swaggerFilePaths: swaggerFilePaths,
+        outputDir: argv.outputDir,
+        dependencyPath: argv.dependency,
+      });
 
-    await generator.initialize();
-    await generator.generate();
-  } else {
-    const generator = StaticApiScenarioGenerator.create({
-      swaggerFilePaths: swaggerFilePaths,
-      tag: tag,
-      rules: argv.rules.split(","),
-    });
+      await generator.initialize();
+      await generator.generate();
+    } else {
+      const generator = StaticApiScenarioGenerator.create({
+        swaggerFilePaths: swaggerFilePaths,
+        tag: tag,
+        rules: argv.rules.split(","),
+      });
 
-    await generator.initialize();
+      await generator.initialize();
 
-    await generator.generateTestDefFiles();
+      await generator.generateTestDefFiles();
 
-    await generator.writeGeneratedFiles();
-  }
-  process.exit(0);
+      await generator.writeGeneratedFiles();
+    }
+    return 0;
+  });
 }
