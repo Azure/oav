@@ -1,3 +1,4 @@
+import * as lodash from "lodash";
 import {
   ChildObjectInfo,
   getInfo,
@@ -77,7 +78,15 @@ export class AjvSchemaValidator implements SchemaValidator {
       const result: SchemaValidateIssue[] = [];
       const isValid = validateSchema.validate.call(ctx, data);
       if (!isValid) {
-        ajvErrorListToSchemaValidateIssueList(validateSchema.validate.errors!, ctx, result);
+        const errors = ReValidateIfNeed(
+          validateSchema.validate.errors!,
+          ctx,
+          data,
+          validateSchema.validate
+        );
+        if (errors.length > 0) {
+          ajvErrorListToSchemaValidateIssueList(errors, ctx, result);
+        }
         validateSchema.validate.errors = null;
       }
       return result;
@@ -188,6 +197,76 @@ export const ajvErrorToSchemaValidateIssue = (
   result.jsonPathsInPayload = [dataPath];
   result.schemaPath = err.schemaPath;
   result.source = source;
+
+  return result;
+};
+
+const ReValidateIfNeed = (
+  originalErrors: ErrorObject[],
+  ctx: SchemaValidateContext,
+  data: any,
+  validate: ValidateFunction
+): ErrorObject[] => {
+  const result: ErrorObject[] = [];
+  const newData = lodash.cloneDeep(data);
+
+  for (const originalError of originalErrors) {
+    validate.errors = null;
+    const { schema, parentSchema: parentSch, keyword, data: errorData, dataPath } = originalError;
+    const parentSchema = parentSch as Schema;
+
+    // If the value of query parameter is in string format, we can revalidate this error
+    if (
+      !ctx.isResponse &&
+      keyword === "type" &&
+      schema === "array" &&
+      typeof errorData === "string" &&
+      (parentSchema as any)?.["in"] === "query"
+    ) {
+      const arrayData = errorData.split(",").map((item) => {
+        // when item is number
+        const numberRegex = /^[+-]?\d+(\.\d+)?([Ee]\+?\d+)?$/g;
+        if (numberRegex.test(item)) {
+          return parseFloat(item);
+        }
+        // when item is boolean
+        if (item === "true" || item === "false") {
+          return item === "true";
+        }
+        return item;
+      });
+      const position = dataPath.substr(1);
+      lodash.set(newData, position, arrayData);
+      const isValid = validate.call(ctx, newData);
+      if (!isValid) {
+        // if validate.errors have new errors, add them to result
+        for (const newError of validate.errors!) {
+          let [includedInResult, includedInOriginalErrors] = [false, false];
+          for (const resultError of result) {
+            if (lodash.isEqual(newError, resultError)) {
+              // error is included in result
+              includedInResult = true;
+              break;
+            }
+          }
+          if (!includedInResult) {
+            for (const eachOriginalError of originalErrors) {
+              if (lodash.isEqual(newError, eachOriginalError)) {
+                // error is included in originalErrors
+                includedInOriginalErrors = true;
+                break;
+              }
+            }
+            if (!includedInOriginalErrors) {
+              result.push(newError);
+            }
+          }
+        }
+      }
+      continue;
+    }
+    result.push(originalError);
+  }
 
   return result;
 };
