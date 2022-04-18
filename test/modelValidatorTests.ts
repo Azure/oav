@@ -461,14 +461,40 @@ describe("Model Validation", () => {
   });
 
   describe("Queries - ", () => {
-    it("should pass for various query parameters", async () => {
-      const specPath2 = `${testPath}/modelValidation/swaggers/specification/query/test.json`;
-      const result = await validate.validateExamples(specPath2, undefined, {
-        consoleLogLevel: "off",
+    describe("Should revalidate query parameters in string format which be defined as array", () => {
+      it("array items are numbers", async () => {
+        const specPath2 = `${testPath}/modelValidation/swaggers/specification/query/test.json`;
+        const result = await validate.validateExamples(
+          specPath2,
+          "Query_StringButDefinedAsArray_numberItem",
+          { consoleLogLevel: "off" }
+        );
+        assert(result.length === 0, `swagger "${specPath2}" contains model validation errors.`);
       });
-      // console.dir(result, { depth: null })
-      assert(result.length === 0, `swagger "${specPath2}" contains model validation errors.`);
-      // console.log(result)
+      it("array item is boolean", async () => {
+        const specPath2 = `${testPath}/modelValidation/swaggers/specification/query/test.json`;
+        const result = await validate.validateExamples(
+          specPath2,
+          "Query_StringButDefinedAsArray_booleanItem",
+          { consoleLogLevel: "off" }
+        );
+        assert(result.length === 0, `swagger "${specPath2}" contains model validation errors.`);
+      });
+      it("should report other error and skip INVALID_TYPE error about query parameter", async () => {
+        const specPath2 = `${testPath}/modelValidation/swaggers/specification/query/test.json`;
+        const result = await validate.validateExamples(
+          specPath2,
+          "Query_StringButDefinedAsArray_extraError",
+          { consoleLogLevel: "off" }
+        );
+        assert(result.length === 2);
+        assert.strictEqual(result[0].code, "INVALID_TYPE");
+        assert.strictEqual(result[0].message, "Expected type number but found type string");
+        assert.strictEqual(result[0].schemaJsonPath, "helloArray/items/type");
+        assert.strictEqual(result[1].code, "MAX_LENGTH");
+        assert.strictEqual(result[1].message, "String is too long (6 chars), maximum 5");
+        assert.strictEqual(result[1].schemaJsonPath, "name/items/maxLength");
+      });
     });
   });
 
@@ -771,6 +797,6 @@ describe("Model Validation", () => {
       const result = await validate.validateExamples(specPath2, undefined);
       assert.strictEqual(result.length, 1);
       assert.strictEqual(result[0].code, "XMS_EXAMPLE_NOTFOUND_ERROR");
-    });
+    }, 10000);
   });
 });
