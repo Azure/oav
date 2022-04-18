@@ -12,7 +12,7 @@ import {
   keys,
   values,
 } from "@azure-tools/openapi-tools-common";
-import swaggerParser from "swagger-parser";
+import swaggerParser from "@apidevtools/swagger-parser";
 import { log } from "./util/logging";
 import { kvPairsToObject } from "./util/utils";
 
