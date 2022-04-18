@@ -53,14 +53,15 @@
     "path-to-regexp": "^6.1.0",
     "postman-collection": "^4.1.0",
     "reflect-metadata": "^0.1.13",
-    "swagger-parser": "^6.0.5",
+    "swagger-parser": "^10.0.3",
     "toposort": "^2.0.2",
     "uuid": "^3.3.2",
     "vscode-jsonrpc": "^3.6.2",
     "winston": "^3.3.4",
     "yargs": "^15.4.1",
     "yasway": "^1.10.7",
-    "yuml2svg": "^4.2.1"
+    "yuml2svg": "^4.2.1",
+    "z-schema": "^5.0.3"
   },
   "devDependencies": {
     "@rushstack/eslint-config": "^2.3.2",
