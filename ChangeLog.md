@@ -1,8 +1,13 @@
 # Change Log - oav
 
-## 03/30/2022 2.11.10
+## 04/07/2022 2.12.0
 
 - ModelValidator - Ignore INVALID_TYPE validation in case of query parameter in string format
+- Traffic Validation - Support validation report generation
+
+## 04/06/2022 2.11.10
+
+- SemanticValidator - Fix bug about error path.
 
 ## 03/11/2022 2.11.9
 

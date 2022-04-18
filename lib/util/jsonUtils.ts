@@ -164,9 +164,19 @@ export const getFilePositionFromJsonPath = (
   jsonPath: string
 ): FilePosition | undefined => {
   const pathArr = jsonPathToArray(jsonPath.substr(1));
+  /*
+   * when jsonPath='/providers/Microsoft.Provider/resource',
+   * the split pathArr will be ['/providers/Microsoft','Provider/resource'].
+   * Only in this case, these two elements in the array need to be composed together by '.'.
+   * So restrict the condition to the path element ends with /providers/Microsoft.
+   */
   const newPathArr = pathArr.slice(0);
   const index = newPathArr.findIndex((str) => str.includes("/providers/Microsoft"));
-  if (index !== -1 && newPathArr[index + 1] !== undefined) {
+  if (
+    index !== -1 &&
+    newPathArr[index + 1] !== undefined &&
+    newPathArr[index].slice(-20) === "/providers/Microsoft"
+  ) {
     newPathArr[index] += "." + newPathArr[index + 1];
     newPathArr.splice(index + 1, 1);
   }
