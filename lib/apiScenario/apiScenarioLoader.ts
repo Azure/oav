@@ -303,6 +303,14 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     return step;
   }
 
+  private getVariableFunction(step: Step, ctx: ApiScenarioContext) {
+    return (name: string) => {
+      const variable =
+        step.variables[name] ?? ctx.scenario?.variables[name] ?? ctx.scenarioDef.variables[name];
+      return variable;
+    };
+  }
+
   private async loadStepRestCall(
     rawStep: RawStepOperation | RawStepExample,
     ctx: ApiScenarioContext
@@ -528,6 +536,11 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       }
     }
 
+    this.templateGenerator.armTemplateParameterConvention(
+      step,
+      this.getVariableFunction(step, ctx)
+    );
+
     return step;
   }
 
@@ -599,6 +612,11 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     if (outputs !== undefined) {
       declareOutputVariables(outputs, variableScope);
     }
+
+    this.templateGenerator.armTemplateParameterConvention(
+      step,
+      this.getVariableFunction(step, ctx)
+    );
 
     return step;
   }
