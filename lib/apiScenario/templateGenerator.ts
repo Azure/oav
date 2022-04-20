@@ -11,13 +11,13 @@ export class TemplateGenerator {
 
   public armTemplateParameterConvention(
     step: Pick<StepArmTemplate, "armTemplatePayload" | "secretVariables">,
-    variables: { [variableName: string]: Variable }
+    variables: (name: string) => Variable
   ) {
     if (step.armTemplatePayload.parameters === undefined) {
       return;
     }
     for (const paramName of Object.keys(step.armTemplatePayload.parameters)) {
-      if (variables[paramName] === undefined) {
+      if (variables(paramName) === undefined) {
         continue;
       }
 
