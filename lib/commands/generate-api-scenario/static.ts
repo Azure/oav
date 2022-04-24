@@ -5,7 +5,7 @@
 
 import { resolve as pathResolve } from "path";
 import * as yargs from "yargs";
-import { StaticApiScenarioGenerator } from "../../apiScenario/gen/staticTestScenarioGenerator";
+import { StaticApiScenarioGenerator } from "../../apiScenario/gen/staticApiScenarioGenerator";
 import { ApiScenarioGenerator } from "../../apiScenario/gen/apiScenarioGenerator";
 import { getSwaggerListFromReadme } from "../../util/readmeUtils";
 import { cliSuppressExceptions } from "../../cliSuppressExceptions";

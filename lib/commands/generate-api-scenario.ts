@@ -8,7 +8,7 @@ export const command = "generate-api-scenario <command>";
 export const describe = "Generate api scenario.";
 
 export function builder() {
-  return yargs.commandDir("apiScenario");
+  return yargs.commandDir("generate-api-scenario");
 }
 
 export async function handler() {}

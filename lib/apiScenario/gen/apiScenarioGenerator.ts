@@ -1,5 +1,7 @@
 import Heap from "heap";
 import { inject, injectable } from "inversify";
+import { dump } from "js-yaml";
+import { pathJoin, pathResolve } from "@azure-tools/openapi-tools-common";
 import { inversifyGetInstance, TYPES } from "../../inversifyUtils";
 import { FileLoader } from "../../swagger/fileLoader";
 import { JsonLoader } from "../../swagger/jsonLoader";
@@ -16,8 +18,6 @@ import {
 } from "../apiScenarioTypes";
 import * as util from "../../generator/util";
 import { setDefaultOpts } from "../../swagger/loader";
-import { pathJoin, pathResolve } from "@azure-tools/openapi-tools-common";
-import { dump } from "js-yaml";
 import Mocker from "../../generator/mocker";
 
 export interface ApiScenarioGeneratorOption extends ApiScenarioLoaderOption {
@@ -26,23 +26,23 @@ export interface ApiScenarioGeneratorOption extends ApiScenarioLoaderOption {
   outputDir: string;
 }
 
-type Dependency = {
+interface Dependency {
   producer_endpoint: string;
   producer_method: string;
   producer_resource_name: string;
   consumer_param: string;
-};
+}
 
-type Dependencies = {
+interface Dependencies {
   [path: string]: {
     [method: string]: {
       Path?: Dependency[];
       Query?: Dependency[];
     };
   };
-};
+}
 
-type Node = {
+interface Node {
   operationId: string;
   method: LowerHttpMethods;
   children: Map<string, Node>;
@@ -50,9 +50,9 @@ type Node = {
   outDegree: number;
   visited: boolean;
   priority: number;
-};
+}
 
-const methodOrder: Array<LowerHttpMethods> = ["put", "get", "patch", "post", "delete"];
+const methodOrder: LowerHttpMethods[] = ["put", "get", "patch", "post", "delete"];
 
 const envVariables = ["api-version", "subscriptionId", "resourceGroupName", "location"];
 

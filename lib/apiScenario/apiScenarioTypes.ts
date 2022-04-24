@@ -23,65 +23,65 @@ export type Variable =
   | ObjectVariable
   | SecureObjectVariable;
 
-export type StringVariable = {
+export interface StringVariable {
   type: "string";
   value?: string;
-};
+}
 
-export type SecureStringVariable = {
+export interface SecureStringVariable {
   type: "secureString";
   value?: string;
-};
+}
 
-export type BoolVariable = {
+export interface BoolVariable {
   type: "bool";
   value?: boolean;
-};
+}
 
-export type IntVariable = {
+export interface IntVariable {
   type: "int";
   value?: number;
-};
+}
 
-export type ObjectVariable = {
+export interface ObjectVariable {
   type: "object";
   value?: { [key: string]: VarValue };
   patches?: JsonPatchOp[];
-};
+}
 
-export type SecureObjectVariable = {
+export interface SecureObjectVariable {
   type: "secureObject";
   value?: { [key: string]: VarValue };
   patches?: JsonPatchOp[];
-};
+}
 
-export type ArrayVariable = {
+export interface ArrayVariable {
   type: "array";
   value?: VarValue[];
   patches?: JsonPatchOp[];
-};
+}
 
-export type RawVariableScope = {
+export interface RawVariableScope {
   variables?: {
     [variableName: string]: string | Variable;
   };
-};
+}
 
-export type VariableScope = {
+export interface VariableScope {
   variables: {
     [variableName: string]: Variable;
   };
   requiredVariables: string[];
   secretVariables: string[];
-};
+}
 
-export type OutputVariables = {
+export interface OutputVariables {
   [variableName: string]: {
     type?: VarType;
     fromRequest: string;
     fromResponse: string;
   };
-};
+}
 
 //#endregion
 
@@ -170,13 +170,13 @@ export type StepArmTemplate = TransformRaw<
   "description"
 >;
 
-export type ArmResource = {
+export interface ArmResource {
   name: string;
   apiVersion: string;
   type: string;
   location?: string;
   properties?: object;
-};
+}
 
 export type ArmDeploymentScriptResource = ArmResource & {
   type: "Microsoft.Resources/deploymentScripts";
@@ -204,7 +204,7 @@ export type ArmDeploymentScriptResource = ArmResource & {
   };
 };
 
-export type ArmTemplate = {
+export interface ArmTemplate {
   $schema?: string;
   contentVersion?: string;
   parameters?: {
@@ -220,42 +220,42 @@ export type ArmTemplate = {
     };
   };
   resources?: ArmResource[];
-};
+}
 
 //#endregion
 
 //#region JsonPatchOp
 
-export type JsonPatchOpAdd = {
+export interface JsonPatchOpAdd {
   add: string;
   value: any;
-};
+}
 
-export type JsonPatchOpRemove = {
+export interface JsonPatchOpRemove {
   remove: string;
   oldValue?: any;
-};
+}
 
-export type JsonPatchOpReplace = {
+export interface JsonPatchOpReplace {
   replace: string;
   value: any;
   oldValue?: any;
-};
+}
 
-export type JsonPatchOpCopy = {
+export interface JsonPatchOpCopy {
   copy: string;
   from: string;
-};
+}
 
-export type JsonPatchOpMove = {
+export interface JsonPatchOpMove {
   move: string;
   from: string;
-};
+}
 
-export type JsonPatchOpTest = {
+export interface JsonPatchOpTest {
   test: string;
   value: any;
-};
+}
 
 export type JsonPatchOp =
   | JsonPatchOpAdd
@@ -307,34 +307,34 @@ export type ScenarioDefinition = TransformRaw<
 //#endregion
 
 //#region Runner specific types
-export type RawReport = {
+export interface RawReport {
   executions: RawExecution[];
   timings: any;
   variables: { [variableName: string]: Variable };
   testScenarioName?: string;
   metadata: any;
-};
+}
 
-export type RawExecution = {
+export interface RawExecution {
   request: RawRequest;
   response: RawResponse;
   annotation?: any;
-};
-export type RawRequest = {
+}
+export interface RawRequest {
   url: string;
   method: string;
   headers: { [key: string]: any };
   body: string;
-};
+}
 
-export type RawResponse = {
+export interface RawResponse {
   statusCode: number;
   headers: { [key: string]: any };
   body: string;
-};
+}
 
-export type TestResources = {
+export interface TestResources {
   ["test-resources"]: Array<{ [key: string]: string }>;
-};
+}
 
 //#endregion
