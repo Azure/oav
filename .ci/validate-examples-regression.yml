@@ -12,8 +12,9 @@ pr:
 
 steps:
   - task: Npm@1
-    displayName: "npm install"
+    displayName: "npm ci"
     inputs:
+      command: ci
       verbose: false
 
   - task: Npm@1

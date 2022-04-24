@@ -1,6 +1,6 @@
 {
   "parameters": {
-    "hello": 31416
+    "helloArray": "true"
   },
   "responses": {
     "200": {}
