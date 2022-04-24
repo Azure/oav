@@ -19,6 +19,7 @@ import * as jsonUtils from "../util/jsonUtils";
 import { log } from "../util/logging";
 import * as processErrors from "../util/processErrors";
 import { OperationResult } from "../util/scenarioReducer";
+import { resolveGithubUrl } from "../util/utils";
 import * as specResolver from "./specResolver";
 
 import { getTitle } from "./specTransformer";
@@ -150,15 +151,7 @@ export class SpecValidator<T extends CommonValidationResult> {
         "specPath is a required parameter of type string and it cannot be an empty string."
       );
     }
-    // If the spec path is a url starting with https://github then let us auto convert it to an
-    // https://raw.githubusercontent url.
-    if (specPath.startsWith("https://github")) {
-      specPath = specPath.replace(
-        /^https:\/\/(github.com)(.*)blob\/(.*)/gi,
-        "https://raw.githubusercontent.com$2$3"
-      );
-    }
-    this.specPath = specPath;
+    this.specPath = resolveGithubUrl(specPath);
     this.specDir = path.dirname(this.specPath);
     this.specInJson = specInJson as Sway.SwaggerObject;
     const base: CommonValidationResult = {

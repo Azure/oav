@@ -136,11 +136,9 @@ export const builder: yargs.CommandBuilder = {
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
   await cliSuppressExceptions(async () => {
-    const swaggerFilePaths: string[] = (argv.specs || []).map((it: string) => path.resolve(it));
+    const swaggerFilePaths: string[] = argv.specs || [];
     if (argv.readme !== undefined) {
-      const readmeMd: string = path.resolve(argv.readme);
-      const inputSwaggerFile = await getSwaggerListFromReadme(readmeMd, argv.tag);
-      console.log(`input swagger files: ${inputSwaggerFile}`);
+      const inputSwaggerFile = await getSwaggerListFromReadme(argv.readme, argv.tag);
       for (const it of inputSwaggerFile) {
         if (swaggerFilePaths.indexOf(it) === -1) {
           swaggerFilePaths.push(it);
@@ -148,7 +146,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       }
     }
 
-    const scenarioFilePath = path.resolve(argv.apiScenario);
+    const scenarioFilePath = argv.apiScenario;
     if (swaggerFilePaths.length === 0) {
       swaggerFilePaths.push(...getSwaggerFilePathsFromApiScenarioFilePath(scenarioFilePath));
     }

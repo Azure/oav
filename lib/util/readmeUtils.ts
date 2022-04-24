@@ -1,10 +1,11 @@
-import { dirname, resolve as pathResolve } from "path";
+import { dirname, join as pathJoin } from "path";
 import * as YAML from "js-yaml";
 import * as openApiMd from "@azure/openapi-markdown";
 import * as md from "@ts-common/commonmark-to-markdown";
 import * as commonmark from "commonmark";
 import { FileLoader } from "../swagger/fileLoader";
 import { inversifyGetInstance } from "../inversifyUtils";
+import { resolveGithubUrl } from "./utils";
 
 const safeLoad = (content: string) => {
   try {
@@ -48,16 +49,16 @@ const getDefaultTag = (markDown: commonmark.Node): string | undefined => {
 
 export async function getSwaggerListFromReadme(filepath: string, tag?: string): Promise<string[]> {
   const fileLoader = inversifyGetInstance(FileLoader, {});
-  const m = md.parse(await fileLoader.load(filepath));
+  const m = md.parse(await fileLoader.load(resolveGithubUrl(filepath)));
   if (!tag || tag === "default") {
     tag = getDefaultTag(m.markDown);
   }
-  if (!tag) {
-    return [];
+  if (tag) {
+    const fileRoot = dirname(filepath);
+    const rawInputFiles = openApiMd.getInputFilesForTag(m.markDown, tag);
+    if (rawInputFiles) {
+      return rawInputFiles.map((f) => pathJoin(fileRoot, f));
+    }
   }
-  const fileRoot = dirname(filepath);
-  const inputFiles = openApiMd
-    .getInputFilesForTag(m.markDown, tag)!
-    .map((it: string) => pathResolve(fileRoot, it));
-  return (inputFiles as any) || [];
+  return [];
 }

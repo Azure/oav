@@ -127,6 +127,18 @@ export function joinPath(...args: string[]): string {
   return finalPath;
 }
 
+// If the spec path is a url starting with https://github then let us auto convert it to an
+// https://raw.githubusercontent url.
+export function resolveGithubUrl(githubPath: string): string {
+  if (githubPath.startsWith("https://github")) {
+    return githubPath.replace(
+      /^https:\/\/(github.com)(.*)blob\/(.*)/gi,
+      "https://raw.githubusercontent.com$2$3"
+    );
+  }
+  return githubPath;
+}
+
 /*
  * Merges source object into the target object
  * @param {object} source The object that needs to be merged
