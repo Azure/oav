@@ -132,8 +132,8 @@ export function joinPath(...args: string[]): string {
 export function resolveGithubUrl(githubPath: string): string {
   if (githubPath.startsWith("https://github")) {
     return githubPath.replace(
-      /^https:\/\/(github.com)(.*)blob\/(.*)/gi,
-      "https://raw.githubusercontent.com$2$3"
+      /^https:\/\/github\.com\/(.*)\/blob\/(.*)/gi,
+      "https://raw.githubusercontent.com/$1/$2"
     );
   }
   return githubPath;
