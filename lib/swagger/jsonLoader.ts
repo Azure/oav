@@ -109,7 +109,8 @@ export class JsonLoader implements Loader<Json> {
     // throw new Error(`Unknown file format while loading file ${cache.filePath}`);
   }
 
-  public async load(filePath: string, skipResolveRef?: boolean): Promise<Json> {
+  public async load(inputFilePath: string, skipResolveRef?: boolean): Promise<Json> {
+    const filePath = this.fileLoader.relativePath(inputFilePath);
     let cache = this.fileCache.get(filePath);
     if (cache === undefined) {
       cache = {
