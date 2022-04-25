@@ -58,18 +58,20 @@ export class FileLoader implements Loader<string> {
   }
 
   public resolvePath(filePath: string) {
-    if (!path.isAbsolute(filePath) && this.opts.fileRoot) {
-      const url = urlParse(filePath);
-      if (url) {
-        filePath = checkAndResolveGithubUrl(filePath);
-      } else {
-        filePath = pathJoin(this.opts.fileRoot, filePath);
-      }
-      if (this.opts.checkUnderFileRoot && !filePath.startsWith(this.opts.fileRoot)) {
-        throw new Error(
-          `Try to load file "${filePath}" outside of root folder ${this.opts.fileRoot}`
-        );
-      }
+    const url = urlParse(filePath);
+    if (url) {
+      filePath = checkAndResolveGithubUrl(filePath);
+    } else if (this.opts.fileRoot && !path.isAbsolute(filePath)) {
+      filePath = pathJoin(this.opts.fileRoot, filePath);
+    }
+    if (
+      this.opts.fileRoot &&
+      this.opts.checkUnderFileRoot &&
+      !filePath.startsWith(this.opts.fileRoot)
+    ) {
+      throw new Error(
+        `Try to load file "${filePath}" outside of root folder ${this.opts.fileRoot}`
+      );
     }
     return filePath;
   }
