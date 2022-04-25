@@ -385,25 +385,6 @@ export async function getInputFiles(readMe: string, tag?: string): Promise<strin
   return result;
 }
 
-export function findNearestReadmeDir(pathStr: string): string | undefined {
-  let curDir: string = path.resolve(pathStr);
-  if (fs.lstatSync(pathStr).isFile()) {
-    curDir = path.dirname(curDir);
-  }
-  while (curDir !== "/") {
-    const readme = path.resolve(curDir, "readme.md");
-    if (fs.existsSync(readme)) {
-      return curDir;
-    }
-    curDir = path.dirname(curDir);
-  }
-  return undefined;
-}
-
-export function getApiVersionFromSwaggerFile(swaggerFilePath: string): string {
-  return JSON.parse(fs.readFileSync(swaggerFilePath).toString())?.info?.version || "unknown";
-}
-
 export function getApiVersionFromSwaggerPath(specPath: string): string {
   const apiVersionPattern: RegExp = new RegExp(
     `^.*\/(stable|preview)+\/([0-9]{4}-[0-9]{2}-[0-9]{2}(-preview)?)\/.*\.json$`

@@ -150,7 +150,9 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
             if (typeof example.$ref !== "string") {
               throw new Error(`Example doesn't use $ref: ${exampleName}`);
             }
-            const exampleFilePath = this.jsonLoader.getRealPath(example.$ref);
+            const exampleFilePath = this.fileLoader.relativePath(
+              this.jsonLoader.getRealPath(example.$ref)
+            );
             let opMap = this.exampleToOperation.get(exampleFilePath);
             if (opMap === undefined) {
               opMap = {};

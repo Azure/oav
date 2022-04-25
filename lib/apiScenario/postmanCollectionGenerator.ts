@@ -70,12 +70,12 @@ export class PostmanCollectionGenerator {
     for (const scenario of scenarioDef.scenarios) {
       //TODO: replace index with testScenarioName
       const opts: PostmanCollectionRunnerClientOption = {
-        testScenarioFileName: `${this.opt.name}`,
-        testDef: scenarioDef,
-        testScenarioName: `${getFileNameFromPath(this.opt.scenarioDef)}_${index}`,
+        apiScenarioFileName: `${this.opt.name}`,
+        scenarioDef: scenarioDef,
+        apiScenarioName: `${getFileNameFromPath(this.opt.scenarioDef)}_${index}`,
         env: this.env,
         enableBlobUploader: this.opt.enableBlobUploader!,
-        testScenarioFilePath: this.opt.scenarioDef,
+        apiScenarioFilePath: this.opt.scenarioDef,
         reportOutputFolder: this.opt.outputFolder,
         markdownReportPath: this.opt.markdownReportPath,
         junitReportPath: this.opt.junitReportPath,
@@ -87,7 +87,7 @@ export class PostmanCollectionGenerator {
         to: this.opt.to,
         skipCleanUp: this.opt.skipCleanUp,
         verbose: this.opt.verbose,
-        swaggerFilePaths: this.opt.swaggerFilePaths!.map((s) => this.fileLoader.resolvePath(s)),
+        swaggerFilePaths: this.opt.swaggerFilePaths,
       };
 
       const client = inversifyGetInstance(PostmanCollectionRunnerClient, opts);

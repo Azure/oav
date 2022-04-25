@@ -6,7 +6,7 @@ import * as path from "path";
 import * as yargs from "yargs";
 
 import { findReadMe } from "@azure/openapi-markdown";
-import { pathDirName, pathResolve } from "@azure-tools/openapi-tools-common";
+import { pathDirName, pathJoin, pathResolve } from "@azure-tools/openapi-tools-common";
 import { cliSuppressExceptions } from "../cliSuppressExceptions";
 import {
   PostmanCollectionGenerator,
@@ -14,7 +14,6 @@ import {
 } from "../apiScenario/postmanCollectionGenerator";
 import { inversifyGetInstance } from "../inversifyUtils";
 import { printWarning, getInputFiles } from "../util/utils";
-import { getSwaggerFilePathsFromApiScenarioFilePath } from "../apiScenario/apiScenarioYamlLoader";
 
 export const command = "run-api-scenario <api-scenario>";
 
@@ -142,20 +141,20 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       ? pathResolve(argv.readme)
       : await findReadMe(pathDirName(scenarioFilePath));
 
+    // fileRoot is the nearest common root of all swagger file paths
+    const fileRoot = readmePath ? pathDirName(readmePath) : pathDirName(scenarioFilePath);
+    console.log(`fileRoot: ${fileRoot}`);
+
     const swaggerFilePaths: string[] = argv.specs || [];
     if (readmePath && argv.tag !== undefined) {
       const inputSwaggerFile = await getInputFiles(readmePath, argv.tag);
       if (inputSwaggerFile) {
         for (const it of inputSwaggerFile) {
           if (swaggerFilePaths.indexOf(it) === -1) {
-            swaggerFilePaths.push(it);
+            swaggerFilePaths.push(pathJoin(fileRoot, it));
           }
         }
       }
-    }
-
-    if (swaggerFilePaths.length === 0) {
-      swaggerFilePaths.push(...getSwaggerFilePathsFromApiScenarioFilePath(scenarioFilePath));
     }
 
     console.log("input-file:");
@@ -176,9 +175,6 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       }
       env = { ...env, ...envFromVariable };
     }
-    // fileRoot is the nearest common root of all swagger file paths
-    const fileRoot = readmePath ? pathDirName(readmePath) : pathDirName(scenarioFilePath);
-    console.log(`fileRoot: ${fileRoot}`);
 
     if (argv.location !== undefined) {
       env.location = argv.location;

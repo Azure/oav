@@ -7,7 +7,6 @@ import { defaultQualityReportFilePath } from "./defaultNaming";
 import { ReportGenerator, ReportGeneratorOption, ValidationLevel } from "./reportGenerator";
 import { RawReport } from "./apiScenarioTypes";
 import { NewmanReportParser, NewmanReportParserOption } from "./postmanReportParser";
-import { getSwaggerFilePathsFromApiScenarioFilePath } from "./apiScenarioYamlLoader";
 
 export interface NewmanReportAnalyzerOption extends NewmanReportParserOption {
   reportOutputFilePath?: string;
@@ -31,7 +30,6 @@ export class NewmanReportAnalyzer {
       runId: uuid.v4(),
       newmanReportFilePath: "",
       reportOutputFilePath: defaultQualityReportFilePath(this.opts.newmanReportFilePath),
-      swaggerFilePaths: [],
       validationLevel: "validate-request-response",
       verbose: false,
     });
@@ -41,16 +39,12 @@ export class NewmanReportAnalyzer {
     const rawReport: RawReport = await this.newmanReportParser.generateRawReport(
       this.opts.newmanReportFilePath
     );
-    const testScenarioFilePath = rawReport.metadata.testScenarioFilePath;
-    const testScenarioName = rawReport.metadata.testScenarioName;
-    const swaggerFilePaths =
-      this.opts.swaggerFilePaths?.length === 0
-        ? getSwaggerFilePathsFromApiScenarioFilePath(testScenarioFilePath)
-        : this.opts.swaggerFilePaths;
+    const apiScenarioFilePath = rawReport.metadata.apiScenarioFilePath;
     const reportGeneratorOption: ReportGeneratorOption = {
       newmanReportFilePath: this.opts.newmanReportFilePath,
-      swaggerFilePaths: swaggerFilePaths,
-      testDefFilePath: testScenarioFilePath,
+      apiScenarioFilePath,
+      apiScenarioName: rawReport.metadata.apiScenarioName,
+      swaggerFilePaths: rawReport.metadata.swaggerFilePaths,
       checkUnderFileRoot: false,
       eraseXmsExamples: false,
       eraseDescription: false,
@@ -60,10 +54,9 @@ export class NewmanReportAnalyzer {
       enableBlobUploader: this.opts.enableUploadBlob || false,
       blobConnectionString: process.env.blobConnectionString || "",
       runId: this.opts.runId,
-      testScenarioName: testScenarioName,
       validationLevel: this.opts.validationLevel,
       verbose: this.opts.verbose,
-      fileRoot: dirname(testScenarioFilePath),
+      fileRoot: dirname(apiScenarioFilePath),
     };
     const reportGenerator = inversifyGetInstance(ReportGenerator, reportGeneratorOption);
     await reportGenerator.generateReport();
