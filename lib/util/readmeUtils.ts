@@ -1,11 +1,12 @@
-import { dirname, join as pathJoin } from "path";
+import { dirname } from "path";
+import { pathJoin } from "@azure-tools/openapi-tools-common";
 import * as YAML from "js-yaml";
 import * as openApiMd from "@azure/openapi-markdown";
 import * as md from "@ts-common/commonmark-to-markdown";
 import * as commonmark from "commonmark";
 import { FileLoader } from "../swagger/fileLoader";
 import { inversifyGetInstance } from "../inversifyUtils";
-import { resolveGithubUrl } from "./utils";
+import { checkAndResolveGithubUrl } from "./utils";
 
 const safeLoad = (content: string) => {
   try {
@@ -49,7 +50,7 @@ const getDefaultTag = (markDown: commonmark.Node): string | undefined => {
 
 export async function getSwaggerListFromReadme(filepath: string, tag?: string): Promise<string[]> {
   const fileLoader = inversifyGetInstance(FileLoader, {});
-  const m = md.parse(await fileLoader.load(resolveGithubUrl(filepath)));
+  const m = md.parse(await fileLoader.load(checkAndResolveGithubUrl(filepath)));
   if (!tag || tag === "default") {
     tag = getDefaultTag(m.markDown);
   }

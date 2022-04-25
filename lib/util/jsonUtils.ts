@@ -20,7 +20,7 @@ import { DocCache } from "./documents";
 import { log } from "./logging";
 import { parseContent } from "./makeRequest";
 import { isSubPath, splitPathAndReverse } from "./path";
-import { resolveGithubUrl } from "./utils";
+import { checkAndResolveGithubUrl } from "./utils";
 
 const setSuppression = (info: FilePosition | undefined, item: SuppressionItem) => {
   if (info !== undefined) {
@@ -103,7 +103,7 @@ export async function parseJson(
     return doc;
   }
 
-  specPath = resolveGithubUrl(specPath);
+  specPath = checkAndResolveGithubUrl(specPath);
 
   const createSwaggerObject = async () => {
     const fileContent = await getSpecContent(specPath);

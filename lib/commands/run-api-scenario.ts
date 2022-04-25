@@ -5,6 +5,8 @@ import * as fs from "fs";
 import * as path from "path";
 import * as yargs from "yargs";
 
+import { findReadMe } from "@azure/openapi-markdown";
+import { pathDirName } from "@azure-tools/openapi-tools-common";
 import { cliSuppressExceptions } from "../cliSuppressExceptions";
 import {
   PostmanCollectionGenerator,
@@ -170,7 +172,10 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       env = { ...env, ...envFromVariable };
     }
     // fileRoot is the nearest common root of all swagger file paths
-    const fileRoot = path.dirname(scenarioFilePath);
+    const readmePath = await findReadMe(pathDirName(scenarioFilePath));
+    const fileRoot = readmePath ? pathDirName(readmePath) : pathDirName(scenarioFilePath);
+    console.log(`fileRoot: ${fileRoot}`);
+
     if (argv.location !== undefined) {
       env.location = argv.location;
     }
@@ -181,7 +186,6 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       env.resourceGroupName = argv.resourceGroup;
     }
 
-    console.log(`fileRoot: ${fileRoot}`);
     const opt: PostmanCollectionGeneratorOption = {
       name: path.basename(scenarioFilePath),
       scenarioDef: scenarioFilePath,

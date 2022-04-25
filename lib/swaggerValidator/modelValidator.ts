@@ -45,7 +45,7 @@ import {
 } from "../liveValidation/operationValidator";
 import { log } from "../util/logging";
 import { getFilePositionFromJsonPath } from "../util/jsonUtils";
-import { resolveGithubUrl } from "../util/utils";
+import { checkAndResolveGithubUrl } from "../util/utils";
 import { Severity } from "../util/severity";
 import { ValidationResultSource } from "../util/validationResultSource";
 import { SchemaValidateIssue, SchemaValidator, SchemaValidatorOption } from "./schemaValidator";
@@ -122,7 +122,7 @@ export class SwaggerExampleValidator {
         "specPath is a required parameter of type string and it cannot be an empty string."
       );
     }
-    this.specPath = resolveGithubUrl(specPath);
+    this.specPath = checkAndResolveGithubUrl(specPath);
   }
 
   private async validateOperation(operation: Operation): Promise<void> {

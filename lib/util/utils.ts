@@ -129,14 +129,14 @@ export function joinPath(...args: string[]): string {
 
 // If the spec path is a url starting with https://github then let us auto convert it to an
 // https://raw.githubusercontent url.
-export function resolveGithubUrl(githubPath: string): string {
-  if (githubPath.startsWith("https://github")) {
-    return githubPath.replace(
+export function checkAndResolveGithubUrl(inputPath: string): string {
+  if (inputPath.startsWith("https://github")) {
+    return inputPath.replace(
       /^https:\/\/github\.com\/(.*)\/blob\/(.*)/gi,
       "https://raw.githubusercontent.com/$1/$2"
     );
   }
-  return githubPath;
+  return inputPath;
 }
 
 /*
