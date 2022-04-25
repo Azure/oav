@@ -58,7 +58,7 @@ export class FileLoader implements Loader<string> {
   }
 
   public resolvePath(filePath: string) {
-    if (this.opts.fileRoot) {
+    if (!path.isAbsolute(filePath) && this.opts.fileRoot) {
       const url = urlParse(filePath);
       if (url) {
         filePath = checkAndResolveGithubUrl(filePath);

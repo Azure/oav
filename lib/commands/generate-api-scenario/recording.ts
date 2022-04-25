@@ -11,7 +11,7 @@ import {
   RequestTracking,
   TestScenarioGenerator,
 } from "../../apiScenario/gen/testScenarioGenerator";
-import { getSwaggerListFromReadme } from "../../util/readmeUtils";
+import { getInputFiles } from "../../util/utils";
 
 export const command = "recording";
 export const describe = "Generate spec examples from real payload records.";
@@ -49,7 +49,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
 
   const recordingFilePaths = glob.sync(recording);
   recordingFilePaths.sort();
-  const swaggerFilePaths = await getSwaggerListFromReadme(readmeMd, argv.tag);
+  const swaggerFilePaths = await getInputFiles(readmeMd, argv.tag);
   const fileRoot = dirname(readmeMd);
   output = pathResolve(fileRoot, output);
   output = pathRelative(fileRoot, output);

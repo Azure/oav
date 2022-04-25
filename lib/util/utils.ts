@@ -7,6 +7,7 @@ import * as http from "http";
 import * as path from "path";
 import * as util from "util";
 import * as jsonPointer from "json-pointer";
+import * as YAML from "js-yaml";
 import * as lodash from "lodash";
 import {
   cloneDeep,
@@ -17,8 +18,12 @@ import {
   mapEntries,
   MutableStringMap,
   StringMap,
+  parseMarkdown,
+  readFile,
 } from "@azure-tools/openapi-tools-common";
+import * as amd from "@azure/openapi-markdown";
 import { DataType, ParameterObject, SchemaObject } from "yasway";
+import * as commonmark from "commonmark";
 import { getSchemaObjectInfo, setSchemaInfo } from "../validators/specTransformer";
 import { log } from "./logging";
 
@@ -327,6 +332,57 @@ export function getProviderFromFilePath(pathStr: string): string | undefined {
     }
   }
   return undefined;
+}
+
+const safeLoad = (content: string) => {
+  try {
+    return YAML.load(content) as any;
+  } catch (err) {
+    return undefined;
+  }
+};
+
+/**
+ * @return return undefined indicates not found, otherwise return non-empty string.
+ */
+export const getDefaultReadmeTag = (markDown: commonmark.Node): string | undefined => {
+  const startNode = markDown;
+  const codeBlockMap = amd.getCodeBlocksAndHeadings(startNode);
+  const latestHeader = "Basic Information";
+  const headerBlock = codeBlockMap[latestHeader];
+  if (headerBlock && headerBlock.literal) {
+    const latestDefinition = safeLoad(headerBlock.literal);
+    if (latestDefinition && latestDefinition.tag) {
+      return latestDefinition.tag;
+    }
+  }
+  for (const idx of Object.keys(codeBlockMap)) {
+    const block = codeBlockMap[idx];
+    if (
+      !block ||
+      !block.info ||
+      !block.literal ||
+      !/^(yaml|json)$/.test(block.info.trim().toLowerCase())
+    ) {
+      continue;
+    }
+    const latestDefinition = safeLoad(block.literal);
+    if (latestDefinition && latestDefinition.tag) {
+      return latestDefinition.tag;
+    }
+  }
+  return undefined;
+};
+
+export async function getInputFiles(readMe: string, tag?: string): Promise<string[]> {
+  const result: string[] = [];
+  const readMeStr = await readFile(checkAndResolveGithubUrl(readMe));
+  const cmd = parseMarkdown(readMeStr);
+  tag = tag ?? getDefaultReadmeTag(cmd.markDown);
+  if (tag) {
+    amd.getInputFilesForTag(cmd.markDown, tag)?.forEach((file) => result.push(file));
+  }
+  return result;
 }
 
 export function findNearestReadmeDir(pathStr: string): string | undefined {
