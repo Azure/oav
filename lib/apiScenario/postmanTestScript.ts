@@ -5,7 +5,7 @@ interface ScriptTemplate {
 }
 
 const StatusCodeAssertion: ScriptTemplate = {
-  text: `pm.expect(pm.response.code).to.be.oneOf([200, 201, 202, 204]);`,
+  text: `pm.response.pm.response.to.be.success;`,
 };
 
 const ARMDeploymentStatusAssertion: ScriptTemplate = {
