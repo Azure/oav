@@ -78,6 +78,13 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
   private operationsMap = new Map<string, Operation>();
   private apiVersionsMap = new Map<string, string>();
   private exampleToOperation = new Map<string, { [operationId: string]: string }>();
+  private additionalMap = new Map<
+    string,
+    {
+      operationsMap: Map<string, Operation>;
+      apiVersionsMap: Map<string, string>;
+    }
+  >();
   private initialized: boolean = false;
 
   public constructor(
@@ -117,26 +124,56 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       throw new Error("Already initialized");
     }
 
-    const additionalSwaggerFiles: string[] = [];
-
-    if (readmeTags) {
-      console.log("Additional readme tag:");
-      console.log(readmeTags);
-
-      for (const e of readmeTags) {
-        const inputFiles = await getInputFiles(e.readme, e.tag);
-        inputFiles?.forEach((f) => {
-          additionalSwaggerFiles.push(pathJoin(pathDirName(e.readme), f));
-        });
-      }
-
-      console.log("Additional input-file:");
-      console.log(additionalSwaggerFiles);
+    if (swaggerFilePaths) {
+      await this.loadSwaggers(
+        swaggerFilePaths,
+        this.operationsMap,
+        this.apiVersionsMap,
+        this.exampleToOperation
+      );
     }
 
+    if (readmeTags) {
+      for (const e of readmeTags) {
+        console.log("Additional readme tag:");
+        console.log(readmeTags);
+
+        const inputFiles = await getInputFiles(e.filePath, e.tag);
+        if (inputFiles) {
+          this.additionalMap.set(e.name, {
+            operationsMap: new Map<string, Operation>(),
+            apiVersionsMap: new Map<string, string>(),
+          });
+
+          const additionalSwaggerFiles: string[] = [];
+          inputFiles.forEach((f) => {
+            additionalSwaggerFiles.push(pathJoin(pathDirName(e.filePath), f));
+          });
+
+          console.log("Additional input-file:");
+          console.log(additionalSwaggerFiles);
+
+          await this.loadSwaggers(
+            additionalSwaggerFiles,
+            this.additionalMap.get(e.name)!.operationsMap,
+            this.additionalMap.get(e.name)!.apiVersionsMap
+          );
+        }
+      }
+    }
+
+    this.initialized = true;
+  }
+
+  private async loadSwaggers(
+    swaggerFilePaths: string[],
+    opsMap: Map<string, Operation>,
+    verMap: Map<string, string>,
+    egOpMap?: Map<string, { [operationId: string]: string }>
+  ) {
     const allSpecs: SwaggerSpec[] = [];
 
-    for (const swaggerFilePath of (swaggerFilePaths ?? []).concat(additionalSwaggerFiles)) {
+    for (const swaggerFilePath of swaggerFilePaths ?? []) {
       const swaggerSpec = await this.swaggerLoader.load(swaggerFilePath);
       allSpecs.push(swaggerSpec);
       applySpecTransformers(swaggerSpec, this.transformContext);
@@ -152,39 +189,37 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
             );
           }
 
-          if (this.operationsMap.has(operation.operationId)) {
+          if (opsMap.has(operation.operationId)) {
             throw new Error(
               `Duplicated operationId ${operation.operationId}: ${
                 operation._path._pathTemplate
-              }\nConflict with path: ${
-                this.operationsMap.get(operation.operationId)?._path._pathTemplate
-              }`
+              }\nConflict with path: ${opsMap.get(operation.operationId)?._path._pathTemplate}`
             );
           }
-          this.operationsMap.set(operation.operationId, operation);
-          this.apiVersionsMap.set(operation.operationId, spec.info.version);
+          opsMap.set(operation.operationId, operation);
+          verMap.set(operation.operationId, spec.info.version);
 
-          const xMsExamples = operation["x-ms-examples"] ?? {};
-          for (const exampleName of Object.keys(xMsExamples)) {
-            const example = xMsExamples[exampleName];
-            if (typeof example.$ref !== "string") {
-              throw new Error(`Example doesn't use $ref: ${exampleName}`);
+          if (egOpMap) {
+            const xMsExamples = operation["x-ms-examples"] ?? {};
+            for (const exampleName of Object.keys(xMsExamples)) {
+              const example = xMsExamples[exampleName];
+              if (typeof example.$ref !== "string") {
+                throw new Error(`Example doesn't use $ref: ${exampleName}`);
+              }
+              const exampleFilePath = this.fileLoader.relativePath(
+                this.jsonLoader.getRealPath(example.$ref)
+              );
+              let opMap = egOpMap.get(exampleFilePath);
+              if (opMap === undefined) {
+                opMap = {};
+                egOpMap.set(exampleFilePath, opMap);
+              }
+              opMap[operation.operationId] = exampleName;
             }
-            const exampleFilePath = this.fileLoader.relativePath(
-              this.jsonLoader.getRealPath(example.$ref)
-            );
-            let opMap = this.exampleToOperation.get(exampleFilePath);
-            if (opMap === undefined) {
-              opMap = {};
-              this.exampleToOperation.set(exampleFilePath, opMap);
-            }
-            opMap[operation.operationId] = exampleName;
           }
         },
       });
     }
-
-    this.initialized = true;
   }
 
   public async writeTestDefinitionFile(filePath: string, testDef: RawScenarioDefinition) {

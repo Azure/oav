@@ -1,4 +1,4 @@
-import { pathDirName, pathJoin, pathResolve } from "@azure-tools/openapi-tools-common";
+import { pathDirName, pathJoin, pathResolve, urlParse } from "@azure-tools/openapi-tools-common";
 import { default as AjvInit, ValidateFunction } from "ajv";
 import { injectable } from "inversify";
 import { DEFAULT_SCHEMA, load as yamlLoad, Type, YAMLException } from "js-yaml";
@@ -78,8 +78,13 @@ export class ApiScenarioYamlLoader implements Loader<[RawScenarioDefinition, Rea
           tempSet.add(step.readmeTag);
           const match = /(\S+\/readme\.md)(#([a-z][a-z0-9-]+))?/i.exec(step.readmeTag);
           if (match) {
+            const readmeFilePath = urlParse(match[1])
+              ? match[1]
+              : pathResolve(pathJoin(pathDirName(filePath), match[1]));
+
             readmeTags.push({
-              readme: pathResolve(pathJoin(pathDirName(filePath), match[1])),
+              name: step.readmeTag,
+              filePath: readmeFilePath,
               tag: match[3],
             });
           } else {

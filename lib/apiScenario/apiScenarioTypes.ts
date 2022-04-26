@@ -84,7 +84,8 @@ export interface OutputVariables {
 }
 
 export interface ReadmeTag {
-  readme: string;
+  name: string;
+  filePath: string;
   tag?: string;
 }
 
