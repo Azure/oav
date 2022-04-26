@@ -1,11 +1,11 @@
-import { resolve as pathResolve, dirname } from "path";
-import { injectable } from "inversify";
-import { Type, YAMLException, load as yamlLoad, DEFAULT_SCHEMA } from "js-yaml";
+import { pathDirName, pathJoin, pathResolve } from "@azure-tools/openapi-tools-common";
 import { default as AjvInit, ValidateFunction } from "ajv";
-import { Loader } from "../swagger/loader";
+import { injectable } from "inversify";
+import { DEFAULT_SCHEMA, load as yamlLoad, Type, YAMLException } from "js-yaml";
 import { FileLoader } from "../swagger/fileLoader";
-import { RawScenarioDefinition, RawStep, ReadmeTag } from "./apiScenarioTypes";
+import { Loader } from "../swagger/loader";
 import { ApiScenarioDefinition } from "./apiScenarioSchema";
+import { RawScenarioDefinition, RawStep, ReadmeTag } from "./apiScenarioTypes";
 
 const ajv = new AjvInit({
   useDefaults: true,
@@ -46,7 +46,9 @@ export class ApiScenarioYamlLoader implements Loader<[RawScenarioDefinition, Rea
     });
 
     for (const file of this.fileCache.keys()) {
-      const fileContent = await this.fileLoader.load(pathResolve(dirname(filePath), file));
+      const fileContent = await this.fileLoader.load(
+        pathResolve(pathJoin(pathDirName(filePath), file))
+      );
       this.fileCache.set(file, fileContent);
     }
 
@@ -74,11 +76,11 @@ export class ApiScenarioYamlLoader implements Loader<[RawScenarioDefinition, Rea
       if ("readmeTag" in step && step.readmeTag) {
         if (!tempSet.has(step.readmeTag)) {
           tempSet.add(step.readmeTag);
-          const match = /(\S+\/readme\.md)(#[a-z][a-z0-9-]+)?/i.exec(step.readmeTag);
+          const match = /(\S+\/readme\.md)(#([a-z][a-z0-9-]+))?/i.exec(step.readmeTag);
           if (match) {
             readmeTags.push({
-              readme: match[1],
-              tag: match[2],
+              readme: pathResolve(pathJoin(pathDirName(filePath), match[1])),
+              tag: match[3],
             });
           } else {
             throw new Error(`Invalid readmeTag: ${step.readmeTag} in step ${step}`);

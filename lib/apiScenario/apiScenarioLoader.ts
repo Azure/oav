@@ -1,57 +1,58 @@
 /* eslint-disable require-atomic-updates */
 
-import { dump as yamlDump } from "js-yaml";
-import { generate as jsonMergePatchGenerate, apply as jsonMergeApply } from "json-merge-patch";
-import { inject, injectable } from "inversify";
 import { cloneDeep, pathDirName, pathJoin } from "@azure-tools/openapi-tools-common";
-import { Loader, setDefaultOpts } from "../swagger/loader";
+import { inject, injectable } from "inversify";
+import { dump as yamlDump } from "js-yaml";
+import { apply as jsonMergeApply, generate as jsonMergePatchGenerate } from "json-merge-patch";
+import { inversifyGetInstance, TYPES } from "../inversifyUtils";
 import { FileLoader, FileLoaderOption } from "../swagger/fileLoader";
 import { JsonLoader, JsonLoaderOption } from "../swagger/jsonLoader";
-import { getTransformContext, TransformContext } from "../transform/context";
+import { Loader, setDefaultOpts } from "../swagger/loader";
+import { SwaggerLoader, SwaggerLoaderOption } from "../swagger/swaggerLoader";
+import {
+  BodyParameter,
+  Operation,
+  Parameter,
+  SwaggerExample,
+  SwaggerSpec,
+} from "../swagger/swaggerTypes";
 import { SchemaValidator } from "../swaggerValidator/schemaValidator";
-import { xmsPathsTransformer } from "../transform/xmsPathsTransformer";
-import { resolveNestedDefinitionTransformer } from "../transform/resolveNestedDefinitionTransformer";
-import { referenceFieldsTransformer } from "../transform/referenceFieldsTransformer";
-import { discriminatorTransformer } from "../transform/discriminatorTransformer";
 import { allOfTransformer } from "../transform/allOfTransformer";
+import { getTransformContext, TransformContext } from "../transform/context";
+import { discriminatorTransformer } from "../transform/discriminatorTransformer";
 import { noAdditionalPropertiesTransformer } from "../transform/noAdditionalPropertiesTransformer";
 import { nullableTransformer } from "../transform/nullableTransformer";
 import { pureObjectTransformer } from "../transform/pureObjectTransformer";
-import { SwaggerLoader, SwaggerLoaderOption } from "../swagger/swaggerLoader";
-import { applySpecTransformers, applyGlobalTransformers } from "../transform/transformer";
-import {
-  SwaggerSpec,
-  Operation,
-  SwaggerExample,
-  Parameter,
-  BodyParameter,
-} from "../swagger/swaggerTypes";
+import { referenceFieldsTransformer } from "../transform/referenceFieldsTransformer";
+import { resolveNestedDefinitionTransformer } from "../transform/resolveNestedDefinitionTransformer";
+import { applyGlobalTransformers, applySpecTransformers } from "../transform/transformer";
 import { traverseSwagger } from "../transform/traverseSwagger";
-import { inversifyGetInstance, TYPES } from "../inversifyUtils";
+import { xmsPathsTransformer } from "../transform/xmsPathsTransformer";
+import { getInputFiles } from "../util/utils";
 import {
-  VariableScope,
-  ScenarioDefinition,
-  Scenario,
-  Step,
-  StepRestCall,
-  StepArmTemplate,
-  RawVariableScope,
-  RawScenarioDefinition,
-  RawStepArmTemplate,
-  RawStep,
-  RawStepExample,
-  RawScenario,
-  RawStepArmScript,
-  ArmTemplate,
   ArmDeploymentScriptResource,
+  ArmTemplate,
+  RawScenario,
+  RawScenarioDefinition,
+  RawStep,
+  RawStepArmScript,
+  RawStepArmTemplate,
+  RawStepExample,
   RawStepOperation,
+  RawVariableScope,
   ReadmeTag,
+  Scenario,
+  ScenarioDefinition,
+  Step,
+  StepArmTemplate,
+  StepRestCall,
+  VariableScope,
 } from "./apiScenarioTypes";
-import { TemplateGenerator } from "./templateGenerator";
-import { jsonPatchApply } from "./diffUtils";
 import { ApiScenarioYamlLoader } from "./apiScenarioYamlLoader";
-import { armDeploymentScriptTemplate } from "./constants";
 import { BodyTransformer } from "./bodyTransformer";
+import { armDeploymentScriptTemplate } from "./constants";
+import { jsonPatchApply } from "./diffUtils";
+import { TemplateGenerator } from "./templateGenerator";
 
 const variableRegex = /\$\(([A-Za-z_][A-Za-z0-9_]*)\)/;
 
@@ -116,11 +117,26 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       throw new Error("Already initialized");
     }
 
-    console.log(readmeTags);
+    const additionalSwaggerFiles: string[] = [];
+
+    if (readmeTags) {
+      console.log("Additional readme tag:");
+      console.log(readmeTags);
+
+      for (const e of readmeTags) {
+        const inputFiles = await getInputFiles(e.readme, e.tag);
+        inputFiles?.forEach((f) => {
+          additionalSwaggerFiles.push(pathJoin(pathDirName(e.readme), f));
+        });
+      }
+
+      console.log("Additional input-file:");
+      console.log(additionalSwaggerFiles);
+    }
 
     const allSpecs: SwaggerSpec[] = [];
 
-    for (const swaggerFilePath of swaggerFilePaths ?? []) {
+    for (const swaggerFilePath of (swaggerFilePaths ?? []).concat(additionalSwaggerFiles)) {
       const swaggerSpec = await this.swaggerLoader.load(swaggerFilePath);
       allSpecs.push(swaggerSpec);
       applySpecTransformers(swaggerSpec, this.transformContext);
