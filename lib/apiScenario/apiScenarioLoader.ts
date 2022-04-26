@@ -401,9 +401,10 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
         step.step += `_${rawStep.operationId}`;
       }
 
-      const operation = this.operationsMap.get(step.operationId);
+      const operation = rawStep.readmeTag
+        ? this.additionalMap.get(rawStep.readmeTag)?.operationsMap.get(step.operationId)
+        : this.operationsMap.get(step.operationId);
       if (operation === undefined) {
-        // TODO support cross-rp swagger
         throw new Error(`Operation not found for ${step.operationId} in step ${step.step}`);
       }
       step.operation = operation;
@@ -464,7 +465,9 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       });
 
       if (step.requestParameters["api-version"] === undefined) {
-        step.requestParameters["api-version"] = this.apiVersionsMap.get(step.operationId)!;
+        step.requestParameters["api-version"] = rawStep.readmeTag
+          ? this.additionalMap.get(rawStep.readmeTag)?.apiVersionsMap.get(step.operationId)!
+          : this.apiVersionsMap.get(step.operationId)!;
       }
     } else {
       step.exampleFile = rawStep.exampleFile;

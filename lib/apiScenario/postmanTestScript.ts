@@ -5,7 +5,7 @@ interface ScriptTemplate {
 }
 
 const StatusCodeAssertion: ScriptTemplate = {
-  text: `pm.response.pm.response.to.be.success;`,
+  text: `pm.response.to.be.success;`,
 };
 
 const ARMDeploymentStatusAssertion: ScriptTemplate = {
