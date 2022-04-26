@@ -6,7 +6,7 @@ import * as yargs from "yargs";
 
 import { cliSuppressExceptions } from "../cliSuppressExceptions";
 import { SwaggerAnalyzer } from "../apiScenario/swaggerAnalyzer";
-import { getSwaggerListFromReadme } from "../util/readmeUtils";
+import { getInputFiles } from "../util/utils";
 
 export const command = "analyze-dependency";
 
@@ -44,7 +44,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     let swaggerFilePaths: string[] = [];
     if (argv.readme !== undefined) {
       const readmeMd: string = argv.readme;
-      swaggerFilePaths = await getSwaggerListFromReadme(readmeMd, argv.tag);
+      swaggerFilePaths = await getInputFiles(readmeMd, argv.tag);
     }
     if (argv.swagger !== undefined) {
       swaggerFilePaths.push(path.resolve(argv.swagger));

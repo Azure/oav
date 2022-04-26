@@ -2,13 +2,10 @@ import * as path from "path";
 import * as uuid from "uuid";
 import * as _ from "lodash";
 import { injectable, inject } from "inversify";
+import { findReadMe } from "@azure/openapi-markdown";
 import { ExampleQualityValidator } from "../exampleQualityValidator/exampleQualityValidator";
 import { setDefaultOpts } from "../swagger/loader";
-import {
-  findNearestReadmeDir,
-  getApiVersionFromSwaggerFile,
-  getProviderFromFilePath,
-} from "../util/utils";
+import { getApiVersionFromSwaggerPath, getProviderFromFilePath } from "../util/utils";
 import { SeverityString } from "../util/severity";
 import { FileLoader } from "../swagger/fileLoader";
 import { TYPES } from "../inversifyUtils";
@@ -101,15 +98,14 @@ export interface ReportGeneratorOption
   extends NewmanReportParserOption,
     ApiScenarioLoaderOption,
     BlobUploaderOption {
-  testDefFilePath: string;
+  apiScenarioFilePath: string;
   reportOutputFilePath?: string;
   markdownReportPath?: string;
   junitReportPath?: string;
-  testScenarioName?: string;
+  apiScenarioName?: string;
   runId?: string;
   validationLevel?: ValidationLevel;
   verbose?: boolean;
-  swaggerFilePaths?: string[];
 }
 
 @injectable()
@@ -138,31 +134,36 @@ export class ReportGenerator {
       reportOutputFilePath: defaultQualityReportFilePath(this.opts.newmanReportFilePath),
       enableBlobUploader: false,
       blobConnectionString: "",
-      testDefFilePath: "",
+      apiScenarioFilePath: "",
       runId: uuid.v4(),
       validationLevel: "validate-request-response",
       verbose: false,
     });
+  }
+
+  public async initialize() {
     const swaggerFileAbsolutePaths = this.opts.swaggerFilePaths!;
     this.exampleQualityValidator = ExampleQualityValidator.create({
       swaggerFilePaths: [...swaggerFileAbsolutePaths],
     });
     this.recording = new Map<string, RawExecution>();
     this.operationIds = new Set<string>();
-    this.fileRoot = findNearestReadmeDir(this.opts.testDefFilePath) || "/";
+    this.fileRoot = (await findReadMe(this.opts.apiScenarioFilePath)) || "/";
 
     this.swaggerExampleQualityResult = {
-      testScenarioFilePath: path.relative(this.fileRoot, this.opts.testDefFilePath),
-      swaggerFilePaths: this.opts.swaggerFilePaths!.map((it) => path.relative(this.fileRoot, it)),
-      providerNamespace: getProviderFromFilePath(this.opts.testDefFilePath),
-      apiVersion: getApiVersionFromSwaggerFile(this.opts.swaggerFilePaths![0]),
+      testScenarioFilePath: path.relative(this.fileRoot, this.opts.apiScenarioFilePath),
+      swaggerFilePaths: this.opts.swaggerFilePaths!,
+      providerNamespace: getProviderFromFilePath(this.opts.apiScenarioFilePath),
+      apiVersion: getApiVersionFromSwaggerPath(
+        this.fileLoader.resolvePath(this.opts.swaggerFilePaths![0])
+      ),
       runId: this.opts.runId,
       rootPath: this.fileRoot,
       repository: process.env.SPEC_REPOSITORY,
       branch: process.env.SPEC_BRANCH,
       commitHash: process.env.COMMIT_HASH,
       environment: process.env.ENVIRONMENT || "test",
-      testScenarioName: this.opts.testScenarioName,
+      testScenarioName: this.opts.apiScenarioName,
       armEndpoint: "https://management.azure.com",
       stepResult: [],
     };
@@ -172,9 +173,7 @@ export class ReportGenerator {
       fileRoot: "/",
       swaggerPaths: this.opts.swaggerFilePaths!,
     });
-  }
 
-  public async initialize() {
     this.rawReport = await this.postmanReportParser.generateRawReport(
       this.opts.newmanReportFilePath
     );
@@ -346,7 +345,7 @@ export class ReportGenerator {
     _.extend(example.responses, resp);
     const exampleFilePath = path.relative(
       this.fileRoot,
-      path.resolve(this.opts.testDefFilePath, it.annotation.exampleName)
+      path.resolve(this.opts.apiScenarioFilePath, it.annotation.exampleName)
     );
     const generatedGetExecution = this.findGeneratedGetExecution(it, rawReport);
     if (generatedGetExecution.length > 0) {
@@ -539,8 +538,8 @@ export class ReportGenerator {
   }
 
   public async generateReport() {
-    if (this.opts.testDefFilePath !== undefined) {
-      this.testDefFile = await this.testResourceLoader.load(this.opts.testDefFilePath);
+    if (this.opts.apiScenarioFilePath !== undefined) {
+      this.testDefFile = await this.testResourceLoader.load(this.opts.apiScenarioFilePath);
     }
     await this.initialize();
     await this.generateTestScenarioResult(this.rawReport!);

@@ -19,7 +19,7 @@ import * as jsonUtils from "../util/jsonUtils";
 import { log } from "../util/logging";
 import * as processErrors from "../util/processErrors";
 import { OperationResult } from "../util/scenarioReducer";
-import { resolveGithubUrl } from "../util/utils";
+import { checkAndResolveGithubUrl } from "../util/utils";
 import * as specResolver from "./specResolver";
 
 import { getTitle } from "./specTransformer";
@@ -151,7 +151,7 @@ export class SpecValidator<T extends CommonValidationResult> {
         "specPath is a required parameter of type string and it cannot be an empty string."
       );
     }
-    this.specPath = resolveGithubUrl(specPath);
+    this.specPath = checkAndResolveGithubUrl(specPath);
     this.specDir = path.dirname(this.specPath);
     this.specInJson = specInJson as Sway.SwaggerObject;
     const base: CommonValidationResult = {

@@ -7,8 +7,8 @@ import { resolve as pathResolve } from "path";
 import * as yargs from "yargs";
 import { StaticApiScenarioGenerator } from "../../apiScenario/gen/staticApiScenarioGenerator";
 import { ApiScenarioGenerator } from "../../apiScenario/gen/apiScenarioGenerator";
-import { getSwaggerListFromReadme } from "../../util/readmeUtils";
 import { cliSuppressExceptions } from "../../cliSuppressExceptions";
+import { getInputFiles } from "../../util/utils";
 
 export const command = "static";
 export const describe = "Generate api-scenario from specs.";
@@ -50,7 +50,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     let tag = "default";
     if (argv.readme !== undefined) {
       const readmeMd: string = pathResolve(argv.readme);
-      const inputSwaggerFile = await getSwaggerListFromReadme(readmeMd, argv.tag);
+      const inputSwaggerFile = await getInputFiles(readmeMd, argv.tag);
       console.log(`input swagger files: ${inputSwaggerFile}`);
       for (const it of inputSwaggerFile) {
         if (swaggerFilePaths.indexOf(it) === -1) {

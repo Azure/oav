@@ -1,4 +1,4 @@
-import { dirname, relative as pathRelative, resolve as pathResolveOrigin } from "path";
+import * as path from "path";
 import {
   asyncWriteFile,
   readFile as vfsReadFile,
@@ -10,6 +10,7 @@ import * as fs from "fs-extra";
 import { inject, injectable } from "inversify";
 import mkdirp from "mkdirp";
 import { TYPES } from "../inversifyUtils";
+import { checkAndResolveGithubUrl } from "../util/utils";
 import { Loader, setDefaultOpts } from "./loader";
 
 export interface FileLoaderOption {
@@ -27,7 +28,7 @@ export class FileLoader implements Loader<string> {
     });
 
     if (this.opts.fileRoot) {
-      this.opts.fileRoot = pathResolve(this.opts.fileRoot);
+      this.opts.fileRoot = checkAndResolveGithubUrl(pathResolve(this.opts.fileRoot));
     }
   }
 
@@ -46,27 +47,31 @@ export class FileLoader implements Loader<string> {
     if (this.opts.fileRoot) {
       filePath = this.resolvePath(filePath);
       const url = urlParse(filePath);
-      if (url === undefined) {
-        filePath = pathRelative(this.opts.fileRoot, filePath);
-      } else {
+      if (url) {
         const rootUrl = urlParse(this.opts.fileRoot);
-        filePath = rootUrl === undefined ? filePath : pathRelative(rootUrl.path, url.path);
+        filePath = rootUrl === undefined ? filePath : path.relative(rootUrl.path, url.path);
+      } else {
+        filePath = path.relative(this.opts.fileRoot, filePath);
       }
     }
     return filePath;
   }
 
   public resolvePath(filePath: string) {
-    if (this.opts.fileRoot) {
-      filePath =
-        urlParse(filePath) !== undefined
-          ? filePath
-          : pathResolveOrigin(this.opts.fileRoot, filePath);
-      if (this.opts.checkUnderFileRoot && !filePath.startsWith(this.opts.fileRoot)) {
-        throw new Error(
-          `Try to load file "${filePath}" outside of root folder ${this.opts.fileRoot}`
-        );
-      }
+    const url = urlParse(filePath);
+    if (url) {
+      filePath = checkAndResolveGithubUrl(filePath);
+    } else if (this.opts.fileRoot && !path.isAbsolute(filePath)) {
+      filePath = pathJoin(this.opts.fileRoot, filePath);
+    }
+    if (
+      this.opts.fileRoot &&
+      this.opts.checkUnderFileRoot &&
+      !filePath.startsWith(this.opts.fileRoot)
+    ) {
+      throw new Error(
+        `Try to load file "${filePath}" outside of root folder ${this.opts.fileRoot}`
+      );
     }
     return filePath;
   }
@@ -81,7 +86,7 @@ export class FileLoader implements Loader<string> {
 
   public async writeFile(filePath: string, content: string) {
     filePath = this.resolvePath(filePath);
-    await mkdirp(dirname(filePath));
+    await mkdirp(path.dirname(filePath));
     return asyncWriteFile(filePath, content);
   }
 

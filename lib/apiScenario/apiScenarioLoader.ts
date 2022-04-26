@@ -1,10 +1,9 @@
 /* eslint-disable require-atomic-updates */
 
-import { join as pathJoin, dirname } from "path";
 import { dump as yamlDump } from "js-yaml";
 import { generate as jsonMergePatchGenerate, apply as jsonMergeApply } from "json-merge-patch";
 import { inject, injectable } from "inversify";
-import { cloneDeep } from "@azure-tools/openapi-tools-common";
+import { cloneDeep, pathDirName, pathJoin } from "@azure-tools/openapi-tools-common";
 import { Loader, setDefaultOpts } from "../swagger/loader";
 import { FileLoader, FileLoaderOption } from "../swagger/fileLoader";
 import { JsonLoader, JsonLoaderOption } from "../swagger/jsonLoader";
@@ -151,7 +150,9 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
             if (typeof example.$ref !== "string") {
               throw new Error(`Example doesn't use $ref: ${exampleName}`);
             }
-            const exampleFilePath = this.jsonLoader.getRealPath(example.$ref);
+            const exampleFilePath = this.fileLoader.relativePath(
+              this.jsonLoader.getRealPath(example.$ref)
+            );
             let opMap = this.exampleToOperation.get(exampleFilePath);
             if (opMap === undefined) {
               opMap = {};
@@ -413,7 +414,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     } else {
       step.exampleFile = rawStep.exampleFile;
 
-      const exampleFilePath = pathJoin(dirname(ctx.scenarioDef._filePath), step.exampleFile!);
+      const exampleFilePath = pathJoin(pathDirName(ctx.scenarioDef._filePath), step.exampleFile!);
 
       // Load example file
       const fileContent = await this.fileLoader.load(exampleFilePath);
@@ -517,7 +518,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       resource.properties.azCliVersion = "2.0.80";
     }
 
-    const filePath = pathJoin(dirname(scenarioDef._filePath), rawStep.armDeploymentScript);
+    const filePath = pathJoin(pathDirName(scenarioDef._filePath), rawStep.armDeploymentScript);
     const scriptContent = await this.fileLoader.load(filePath);
     resource.properties.scriptContent = scriptContent;
     resource.properties.arguments = rawStep.arguments;
@@ -580,7 +581,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     const { scenarioDef, scenario } = ctx;
     const variableScope: VariableScope = scenario ?? scenarioDef;
 
-    const filePath = pathJoin(dirname(scenarioDef._filePath), step.armTemplate);
+    const filePath = pathJoin(pathDirName(scenarioDef._filePath), step.armTemplate);
     const armTemplateContent = await this.fileLoader.load(filePath);
     step.armTemplatePayload = JSON.parse(armTemplateContent);
 

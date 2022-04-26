@@ -2,8 +2,9 @@ import * as path from "path";
 import * as fs from "fs";
 import { inject, injectable } from "inversify";
 import { dump as yamlDump } from "js-yaml";
+import { findReadMe } from "@azure/openapi-markdown";
 import { ExampleDependency, SwaggerAnalyzer, SwaggerAnalyzerOption } from "../swaggerAnalyzer";
-import { findNearestReadmeDir, getProviderFromFilePath } from "../../util/utils";
+import { getProviderFromFilePath } from "../../util/utils";
 import { ReadmeTestDefinition, ReadmeTestFileLoader } from "../readmeTestFileLoader";
 import { JsonLoader } from "../../swagger/jsonLoader";
 import { setDefaultOpts } from "../../swagger/loader";
@@ -187,12 +188,12 @@ export class StaticApiScenarioGenerator {
       const relativePath = filePath.substr(filePath.indexOf(resourceProvider), filePath.length);
       testResources["test-resources"].push({ test: relativePath });
     }
-    const readmeDir = findNearestReadmeDir(this.scenarioDefToWrite[0].filePath);
+    const readmeDir = await findReadMe(this.scenarioDefToWrite[0].filePath);
     if (readmeDir === undefined) {
       throw new Error(`Can not find nearest readme dir.`);
     }
     const readmeTestFilePath = path.resolve(
-      findNearestReadmeDir(this.scenarioDefToWrite[0].filePath)!,
+      (await findReadMe(this.scenarioDefToWrite[0].filePath))!,
       "readme.test.md"
     );
     console.log(`write generated file ${readmeTestFilePath}`);

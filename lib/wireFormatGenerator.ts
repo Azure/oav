@@ -48,7 +48,7 @@ export class WireFormatGenerator {
         "specPath is a required parameter of type string and it cannot be an empty string."
       );
     }
-    this.specPath = utils.resolveGithubUrl(specPath);
+    this.specPath = utils.checkAndResolveGithubUrl(specPath);
     this.specDir = path.dirname(this.specPath);
     let wfDir = path.join(this.specDir, "wire-format");
     if (specPath.startsWith("https://")) {

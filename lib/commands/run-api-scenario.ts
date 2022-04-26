@@ -5,15 +5,15 @@ import * as fs from "fs";
 import * as path from "path";
 import * as yargs from "yargs";
 
+import { findReadMe } from "@azure/openapi-markdown";
+import { pathDirName, pathJoin, pathResolve } from "@azure-tools/openapi-tools-common";
 import { cliSuppressExceptions } from "../cliSuppressExceptions";
 import {
   PostmanCollectionGenerator,
   PostmanCollectionGeneratorOption,
 } from "../apiScenario/postmanCollectionGenerator";
 import { inversifyGetInstance } from "../inversifyUtils";
-import { printWarning } from "../util/utils";
-import { getSwaggerFilePathsFromApiScenarioFilePath } from "../apiScenario/apiScenarioYamlLoader";
-import { getSwaggerListFromReadme } from "../util/readmeUtils";
+import { printWarning, getInputFiles } from "../util/utils";
 
 export const command = "run-api-scenario <api-scenario>";
 
@@ -136,19 +136,25 @@ export const builder: yargs.CommandBuilder = {
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
   await cliSuppressExceptions(async () => {
+    const scenarioFilePath = pathResolve(argv.apiScenario);
+    const readmePath = argv.readme
+      ? pathResolve(argv.readme)
+      : await findReadMe(pathDirName(scenarioFilePath));
+
+    // fileRoot is the nearest common root of all swagger file paths
+    const fileRoot = readmePath ? pathDirName(readmePath) : pathDirName(scenarioFilePath);
+    console.log(`fileRoot: ${fileRoot}`);
+
     const swaggerFilePaths: string[] = argv.specs || [];
-    if (argv.readme !== undefined) {
-      const inputSwaggerFile = await getSwaggerListFromReadme(argv.readme, argv.tag);
-      for (const it of inputSwaggerFile) {
-        if (swaggerFilePaths.indexOf(it) === -1) {
-          swaggerFilePaths.push(it);
+    if (readmePath && argv.tag !== undefined) {
+      const inputSwaggerFile = await getInputFiles(readmePath, argv.tag);
+      if (inputSwaggerFile) {
+        for (const it of inputSwaggerFile) {
+          if (swaggerFilePaths.indexOf(it) === -1) {
+            swaggerFilePaths.push(pathJoin(fileRoot, it));
+          }
         }
       }
-    }
-
-    const scenarioFilePath = argv.apiScenario;
-    if (swaggerFilePaths.length === 0) {
-      swaggerFilePaths.push(...getSwaggerFilePathsFromApiScenarioFilePath(scenarioFilePath));
     }
 
     console.log("input-file:");
@@ -169,8 +175,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       }
       env = { ...env, ...envFromVariable };
     }
-    // fileRoot is the nearest common root of all swagger file paths
-    const fileRoot = path.dirname(scenarioFilePath);
+
     if (argv.location !== undefined) {
       env.location = argv.location;
     }
@@ -181,7 +186,6 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       env.resourceGroupName = argv.resourceGroup;
     }
 
-    console.log(`fileRoot: ${fileRoot}`);
     const opt: PostmanCollectionGeneratorOption = {
       name: path.basename(scenarioFilePath),
       scenarioDef: scenarioFilePath,

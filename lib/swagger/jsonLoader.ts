@@ -1,10 +1,11 @@
-import { dirname as pathDirname, join as pathJoin } from "path";
+import { dirname as pathDirname } from "path";
 import {
   FilePosition,
   getInfo,
   getRootObjectInfo,
   Json,
   parseJson,
+  pathJoin,
 } from "@azure-tools/openapi-tools-common";
 import { load as parseYaml } from "js-yaml";
 import { default as jsonPointer } from "json-pointer";
@@ -108,8 +109,7 @@ export class JsonLoader implements Loader<Json> {
     // throw new Error(`Unknown file format while loading file ${cache.filePath}`);
   }
 
-  public async load(inputFilePath: string, skipResolveRef?: boolean): Promise<Json> {
-    const filePath = this.fileLoader.relativePath(inputFilePath);
+  public async load(filePath: string, skipResolveRef?: boolean): Promise<Json> {
     let cache = this.fileCache.get(filePath);
     if (cache === undefined) {
       cache = {
