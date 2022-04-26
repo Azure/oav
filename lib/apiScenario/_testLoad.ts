@@ -1,7 +1,7 @@
 import "reflect-metadata";
 
-import { dirname } from "path";
 import { getDefaultAzureCredential } from "@azure/identity";
+import { pathDirName } from "@azure-tools/openapi-tools-common";
 import { ApiScenarioLoader } from "./apiScenarioLoader";
 import { ApiScenarioRunner } from "./apiScenarioRunner";
 import { VariableEnv } from "./variableEnv";
@@ -9,22 +9,18 @@ import { ApiScenarioRestClient } from "./apiScenarioRestClient";
 
 const main = async () => {
   const readmeMd: string =
-    "/home/htc/azure-rest-api-specs/specification/containerservice/resource-manager/readme.md";
-  // "/home/htc/azure-rest-api-specs/specification/network/resource-manager/readme.md";
-  // "/home/htc/azure-rest-api-specs/specification/operationalinsights/resource-manager/readme.md";
-  const fileRoot = dirname(readmeMd);
+    "https://github.com/Azure/azure-rest-api-specs/blob/apiscenario/specification/appplatform/resource-manager/readme.md";
+  const fileRoot = pathDirName(readmeMd);
 
   const loader = ApiScenarioLoader.create({
     useJsonParser: false,
     checkUnderFileRoot: false,
     fileRoot,
+    swaggerFilePaths: ["Microsoft.AppPlatform/preview/2020-11-01-preview/appplatform.json"],
   });
 
   const testDef = await loader.load(
-    // "Microsoft.ContainerService/stable/2020-07-01/test-scenarios/testAks.yml"
-    // "Microsoft.OperationalInsights/stable/2020-08-01/test-scenarios/testDataExport.yaml"
-    // "Microsoft.Network/stable/2020-08-01/test-scenarios/testNetworkPublicIp.yaml"
-    "Microsoft.ContainerService/stable/2020-12-01/test-scenarios/containerService.yaml"
+    "Microsoft.AppPlatform/preview/2020-11-01-preview/scenarios/Spring.yaml"
   );
 
   console.log(testDef.scenarios[0].steps);
