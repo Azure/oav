@@ -45,6 +45,7 @@ import {
   ArmTemplate,
   ArmDeploymentScriptResource,
   RawStepOperation,
+  ReadmeTag,
 } from "./apiScenarioTypes";
 import { TemplateGenerator } from "./templateGenerator";
 import { jsonPatchApply } from "./diffUtils";
@@ -110,12 +111,15 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     return inversifyGetInstance(ApiScenarioLoader, opts);
   }
 
-  private async initialize(swaggerFilePaths?: string[]) {
+  private async initialize(swaggerFilePaths?: string[], readmeTags?: ReadmeTag[]) {
     if (this.initialized) {
       throw new Error("Already initialized");
     }
 
+    console.log(readmeTags);
+
     const allSpecs: SwaggerSpec[] = [];
+
     for (const swaggerFilePath of swaggerFilePaths ?? []) {
       const swaggerSpec = await this.swaggerLoader.load(swaggerFilePath);
       allSpecs.push(swaggerSpec);
@@ -173,9 +177,9 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
   }
 
   public async load(filePath: string): Promise<ScenarioDefinition> {
-    const rawDef = await this.apiScenarioYamlLoader.load(filePath);
+    const [rawDef, readmeTags] = await this.apiScenarioYamlLoader.load(filePath);
 
-    await this.initialize(this.opts.swaggerFilePaths);
+    await this.initialize(this.opts.swaggerFilePaths, readmeTags);
 
     const scenarioDef: ScenarioDefinition = {
       scope: rawDef.scope ?? "ResourceGroup",

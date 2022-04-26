@@ -4,14 +4,15 @@ import { Type, YAMLException, load as yamlLoad, DEFAULT_SCHEMA } from "js-yaml";
 import { default as AjvInit, ValidateFunction } from "ajv";
 import { Loader } from "../swagger/loader";
 import { FileLoader } from "../swagger/fileLoader";
-import { RawScenarioDefinition } from "./apiScenarioTypes";
+import { RawScenarioDefinition, RawStep, ReadmeTag } from "./apiScenarioTypes";
 import { ApiScenarioDefinition } from "./apiScenarioSchema";
 
 const ajv = new AjvInit({
   useDefaults: true,
 });
+
 @injectable()
-export class ApiScenarioYamlLoader implements Loader<RawScenarioDefinition> {
+export class ApiScenarioYamlLoader implements Loader<[RawScenarioDefinition, ReadmeTag[]]> {
   private fileCache: Map<string, string> = new Map();
   private validateApiScenarioFile: ValidateFunction;
 
@@ -19,7 +20,7 @@ export class ApiScenarioYamlLoader implements Loader<RawScenarioDefinition> {
     this.validateApiScenarioFile = ajv.compile(ApiScenarioDefinition);
   }
 
-  public async load(filePath: string): Promise<RawScenarioDefinition> {
+  public async load(filePath: string): Promise<[RawScenarioDefinition, ReadmeTag[]]> {
     this.fileCache.clear();
 
     const fileContent = await this.fileLoader.load(filePath);
@@ -65,6 +66,31 @@ export class ApiScenarioYamlLoader implements Loader<RawScenarioDefinition> {
       );
     }
 
-    return filePayload as RawScenarioDefinition;
+    const readmeTags: ReadmeTag[] = [];
+    const tempSet = new Set<string>();
+    const rawDef = filePayload as RawScenarioDefinition;
+
+    const consumeStep = (step: RawStep) => {
+      if ("readmeTag" in step && step.readmeTag) {
+        if (!tempSet.has(step.readmeTag)) {
+          tempSet.add(step.readmeTag);
+          const match = /(\S+\/readme\.md)(#[a-z][a-z0-9-]+)?/i.exec(step.readmeTag);
+          if (match) {
+            readmeTags.push({
+              readme: match[1],
+              tag: match[2],
+            });
+          } else {
+            throw new Error(`Invalid readmeTag: ${step.readmeTag} in step ${step}`);
+          }
+        }
+      }
+    };
+
+    rawDef.prepareSteps?.forEach(consumeStep);
+    rawDef.scenarios.forEach((scenario) => scenario.steps.forEach(consumeStep));
+    rawDef.cleanUpSteps?.forEach(consumeStep);
+
+    return [rawDef, readmeTags];
   }
 }

@@ -359,14 +359,6 @@ export const ApiScenarioDefinition: Schema & {
           type: "string",
           format: "uri-reference",
         },
-        resourceUpdate: {
-          type: "array",
-          description: "Update resource properties in body for both request and expected response",
-          items: {
-            $ref: "#/definitions/JsonPatchOp",
-          },
-          minItems: 1,
-        },
         requestUpdate: {
           type: "array",
           description: "Update request parameters",

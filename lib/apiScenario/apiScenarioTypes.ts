@@ -83,6 +83,11 @@ export interface OutputVariables {
   };
 }
 
+export interface ReadmeTag {
+  readme: string;
+  tag?: string;
+}
+
 //#endregion
 
 //#region Step Base
@@ -107,14 +112,13 @@ export type RawStep = RawStepOperation | RawStepExample | RawStepArmTemplate | R
 
 export type RawStepExample = RawStepBase & {
   exampleFile: string;
-  resourceUpdate?: JsonPatchOp[];
   requestUpdate?: JsonPatchOp[];
   responseUpdate?: JsonPatchOp[];
 };
 
 export type RawStepOperation = RawStepBase & {
   operationId: string;
-  swagger?: string;
+  readmeTag?: string;
   parameters?: { [parameterName: string]: VarValue };
   responses?: SwaggerExample["responses"];
 };
