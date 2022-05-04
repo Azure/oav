@@ -210,7 +210,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
             '                { key: "grant_type", value: "client_credentials", disabled: false },',
             '                { key: "client_id", value: pm.variables.get("client_id"), disabled: false },',
             '                { key: "client_secret", value: pm.variables.get("client_secret"), disabled: false },',
-            '                { key: "resource", value: pm.variables.get("arm_endpoint") || "https://management.azure.com", disabled: false }',
+            `                { key: "resource", value: "${this.opts.baseUrl}", disabled: false }`,
             "            ]",
             "        }",
             "    }, function (err, res) {",
@@ -229,7 +229,6 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     );
 
     this.collectionEnv = new VariableScope({});
-    this.collectionEnv.set("arm_endpoint", this.opts.baseUrl, "string");
     this.collectionEnv.set("tenantId", this.opts.env.get("tenantId")?.value, "string");
     this.collectionEnv.set("client_id", this.opts.env.get("client_id")?.value, "string");
     this.collectionEnv.set("client_secret", this.opts.env.get("client_secret")?.value, "string");
@@ -249,7 +248,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
         method: "post",
         body: {
           mode: "raw",
-          raw: `{"x-recording-file": "/recordings/${this.opts.apiScenarioName}_${this.opts.runId}.json"}`,
+          raw: `{"x-recording-file": "./recordings/${this.opts.apiScenarioName}_${this.opts.runId}.json"}`,
         },
       },
     });
@@ -310,7 +309,9 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     const item = new Item({
       name: "createResourceGroup",
       request: {
-        url: `${this.opts.baseUrl}/subscriptions/{{subscriptionId}}/resourcegroups/{{resourceGroupName}}?api-version=2020-06-01`,
+        url: `${
+          this.opts.testProxy ?? this.opts.baseUrl
+        }/subscriptions/{{subscriptionId}}/resourcegroups/{{resourceGroupName}}?api-version=2020-06-01`,
         method: "put",
         body: {
           mode: "raw",
@@ -319,12 +320,21 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       },
     });
     item.description = typeToDescription({ type: "prepare" });
-    item.request.addHeader(new Header({ key: "Content-Type", value: "application/json" }));
+
+    item.request.addHeader({ key: "Content-Type", value: "application/json" });
+    if (this.opts.testProxy) {
+      item.request.addHeader({ key: "x-recording-upstream-base-uri", value: this.opts.baseUrl });
+      item.request.addHeader({ key: "x-recording-id", value: "{{x_recording_id}}" });
+      item.request.addHeader({ key: "x-recording-mode", value: "record" });
+    }
+
     this.addTestScript(item);
-    this.collection.items.add(item);
+
     this.collectionEnv.set("subscriptionId", subscriptionId, "string");
     this.collectionEnv.set("resourceGroupName", resourceGroupName, "string");
     this.collectionEnv.set("location", location, "string");
+
+    this.collection.items.add(item);
   }
 
   public async deleteResourceGroup(
@@ -337,11 +347,19 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     const item = new Item({
       name: "deleteResourceGroup",
       request: {
-        url: `${this.opts.baseUrl}/subscriptions/{{subscriptionId}}/resourcegroups/{{resourceGroupName}}?api-version=2020-06-01`,
+        url: `${
+          this.opts.testProxy ?? this.opts.baseUrl
+        }/subscriptions/{{subscriptionId}}/resourcegroups/{{resourceGroupName}}?api-version=2020-06-01`,
         method: "delete",
       },
     });
-    item.request.addHeader(new Header({ key: "Content-Type", value: "application/json" }));
+    item.request.addHeader({ key: "Content-Type", value: "application/json" });
+    if (this.opts.testProxy) {
+      item.request.addHeader({ key: "x-recording-upstream-base-uri", value: this.opts.baseUrl });
+      item.request.addHeader({ key: "x-recording-id", value: "{{x_recording_id}}" });
+      item.request.addHeader({ key: "x-recording-mode", value: "record" });
+    }
+
     item.events.add(
       new Event({
         listen: "test",
@@ -354,6 +372,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
         },
       })
     );
+
     this.addAsLongRunningOperationItem(item);
   }
 
@@ -488,8 +507,12 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       }
     });
 
-    const contentType = new Header({ key: "Content-Type", value: "application/json" });
-    item.request.addHeader(contentType);
+    item.request.addHeader({ key: "Content-Type", value: "application/json" });
+    if (this.opts.testProxy) {
+      item.request.addHeader({ key: "x-recording-upstream-base-uri", value: this.opts.baseUrl });
+      item.request.addHeader({ key: "x-recording-id", value: "{{x_recording_id}}" });
+      item.request.addHeader({ key: "x-recording-mode", value: "record" });
+    }
 
     const getOverwriteVariables = () => {
       if (step.outputVariables !== undefined && Object.keys(step.outputVariables).length > 0) {
@@ -513,7 +536,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     this.addTestScript(item, scriptTypes, getOverwriteVariables());
     item.request.url = new Url({
       path: pathEnv.resolveString(step.operation._path._pathTemplate, true),
-      host: this.opts.baseUrl,
+      host: this.opts.testProxy ?? this.opts.baseUrl,
       variable: urlVariables,
     } as UrlDefinition);
     item.request.addQueryParams(queryParams);
@@ -651,7 +674,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       body: { mode: "raw" } as RequestBodyDefinition,
     });
     item.request.url = new Url({
-      host: this.opts.baseUrl,
+      host: this.opts.testProxy ?? this.opts.baseUrl,
       path: path,
       variable: urlVariables,
     });
@@ -674,7 +697,12 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       mode: "raw",
       raw: JSON.stringify(body, null, 2),
     });
-    this.addAuthorizationHeader(item);
+    item.request.addHeader({ key: "Content-Type", value: "application/json" });
+    if (this.opts.testProxy) {
+      item.request.addHeader({ key: "x-recording-upstream-base-uri", value: this.opts.baseUrl });
+      item.request.addHeader({ key: "x-recording-id", value: "{{x_recording_id}}" });
+      item.request.addHeader({ key: "x-recording-mode", value: "record" });
+    }
     const scriptTypes: TestScriptType[] = this.opts.verbose
       ? ["StatusCodeAssertion", "DetailResponseLog"]
       : ["StatusCodeAssertion"];
@@ -705,11 +733,6 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       armTemplate
     );
     this.collection.items.add(generatedGetOperationItem);
-  }
-
-  private addAuthorizationHeader(item: Item) {
-    const contentType = new Header({ key: "Content-Type", value: "application/json" });
-    item.request.addHeader(contentType);
   }
 
   public async writeCollectionToJson(outputFolder: string) {
@@ -907,7 +930,12 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       lro_item_name: name,
       step: step,
     });
-    this.addAuthorizationHeader(item);
+    item.request.addHeader({ key: "Content-Type", value: "application/json" });
+    if (this.opts.testProxy) {
+      item.request.addHeader({ key: "x-recording-upstream-base-uri", value: this.opts.baseUrl });
+      item.request.addHeader({ key: "x-recording-id", value: "{{x_recording_id}}" });
+      item.request.addHeader({ key: "x-recording-mode", value: "record" });
+    }
     if (prevMethod !== "delete") {
       scriptTypes.push("StatusCodeAssertion");
     }
