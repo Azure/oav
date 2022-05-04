@@ -1,52 +1,51 @@
 import path, { dirname } from "path";
+import { inject, injectable } from "inversify";
 import newman from "newman";
 import {
-  VariableScope,
   Collection,
+  Event,
   Header,
   Item,
+  QueryParamDefinition,
   Request,
+  RequestAuth,
   RequestBody,
   RequestBodyDefinition,
   Url,
   UrlDefinition,
-  Event,
-  QueryParamDefinition,
   VariableDefinition,
-  RequestAuth,
+  VariableScope,
 } from "postman-collection";
-
-import { inject, injectable } from "inversify";
+import { inversifyGetInstance, TYPES } from "../inversifyUtils";
+import { FileLoader } from "../swagger/fileLoader";
 import { JsonLoader, JsonLoaderOption } from "../swagger/jsonLoader";
 import { setDefaultOpts } from "../swagger/loader";
 import { printWarning } from "../util/utils";
-import { FileLoader } from "../swagger/fileLoader";
-import { inversifyGetInstance, TYPES } from "../inversifyUtils";
-import { ValidationLevel } from "./reportGenerator";
-import { SwaggerAnalyzer } from "./swaggerAnalyzer";
-import { DataMasker } from "./dataMasker";
-import { BlobUploader, BlobUploaderOption } from "./blobUploader";
-import { PostmanTestScript, TestScriptType } from "./postmanTestScript";
-import { ArmTemplate, StepArmTemplate, StepRestCall, ScenarioDefinition } from "./apiScenarioTypes";
 import {
-  ArmDeploymentTracking,
   ApiScenarioClientRequest,
   ApiScenarioRunnerClient,
+  ArmDeploymentTracking,
   StepEnv,
 } from "./apiScenarioRunner";
-import { ReflectiveVariableEnv, VariableEnv } from "./variableEnv";
-import { typeToDescription } from "./postmanItemTypes";
+import { ArmTemplate, ScenarioDefinition, StepArmTemplate, StepRestCall } from "./apiScenarioTypes";
+import { BlobUploader, BlobUploaderOption } from "./blobUploader";
+import { DataMasker } from "./dataMasker";
 import {
-  generatedGet,
-  lroPollingUrl,
-  generatedPostmanItem,
   defaultCollectionFileName,
   defaultEnvFileName,
   defaultNewmanReport,
+  generatedGet,
+  generatedPostmanItem,
+  lroPollingUrl,
 } from "./defaultNaming";
-import { NewmanReport } from "./postmanReportParser";
-import { RuntimeEnvManager } from "./runtimeEnvManager";
+import { typeToDescription } from "./postmanItemTypes";
 import { NewmanReportAnalyzer, NewmanReportAnalyzerOption } from "./postmanReportAnalyzer";
+import { NewmanReport } from "./postmanReportParser";
+import { PostmanTestScript, TestScriptType } from "./postmanTestScript";
+import { ValidationLevel } from "./reportGenerator";
+import { RuntimeEnvManager } from "./runtimeEnvManager";
+import { SwaggerAnalyzer } from "./swaggerAnalyzer";
+import { ReflectiveVariableEnv, VariableEnv } from "./variableEnv";
 
 export interface PostmanCollectionRunnerClientOption extends BlobUploaderOption, JsonLoaderOption {
   apiScenarioFileName: string;
@@ -62,6 +61,7 @@ export interface PostmanCollectionRunnerClientOption extends BlobUploaderOption,
   jsonLoader?: JsonLoader;
   swaggerFilePaths?: string[];
   baseUrl: string;
+  testProxy?: string;
   validationLevel?: ValidationLevel;
   skipCleanUp?: boolean;
   from?: string;
@@ -236,6 +236,70 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     this.collectionEnv.set("subscriptionId", this.opts.env.get("subscriptionId")?.value, "string");
     this.collectionEnv.set("location", this.opts.env.get("location")?.value, "string");
     this.postmanTestScript = new PostmanTestScript();
+  }
+
+  public async startTestProxyRecording(): Promise<void> {
+    if (!this.opts.testProxy) {
+      return;
+    }
+    const item = new Item({
+      name: "startTestProxyRecording",
+      request: {
+        url: `${this.opts.testProxy}/record/start`,
+        method: "post",
+        body: {
+          mode: "raw",
+          raw: `{"x-recording-file": "/recordings/${this.opts.apiScenarioName}_${this.opts.runId}.json"}`,
+        },
+      },
+    });
+    item.events.add(
+      new Event({
+        listen: "test",
+        script: {
+          type: "text/javascript",
+          exec: `
+          pm.test("Started TestProxy recording", function(){
+              pm.response.to.be.success;
+              pm.response.to.have.header('x-recording-id');
+              pm.collectionVariables.set('x_recording_id', pm.response.headers.get('x-recording-id'));
+          });
+          `,
+        },
+      })
+    );
+    this.collection.items.add(item);
+  }
+
+  public async stopTestProxyRecording(): Promise<void> {
+    if (!this.opts.testProxy) {
+      return;
+    }
+    const item = new Item({
+      name: "stopTestProxyRecording",
+      request: {
+        url: `${this.opts.testProxy}/record/stop`,
+        method: "post",
+      },
+    });
+    item.request.addHeader({
+      key: "x-recording-id",
+      value: "{{x_recording_id}}",
+    });
+    item.events.add(
+      new Event({
+        listen: "test",
+        script: {
+          type: "text/javascript",
+          exec: `
+          pm.test("Stopped TestProxy recording", function(){
+              pm.response.to.be.success;
+          });
+          `,
+        },
+      })
+    );
+    this.collection.items.add(item);
   }
 
   public async createResourceGroup(

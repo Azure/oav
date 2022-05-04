@@ -1,19 +1,19 @@
 import { inject, injectable } from "inversify";
-import { TYPES, inversifyGetInstance } from "../inversifyUtils";
+import { inversifyGetInstance, TYPES } from "../inversifyUtils";
 import { FileLoader } from "../swagger/fileLoader";
-import { ValidationLevel } from "./reportGenerator";
-import { SwaggerAnalyzer, SwaggerAnalyzerOption } from "./swaggerAnalyzer";
-import { BlobUploaderOption } from "./blobUploader";
-import { VariableEnv } from "./variableEnv";
 import { ApiScenarioLoader, ApiScenarioLoaderOption } from "./apiScenarioLoader";
+import { ApiScenarioRunner } from "./apiScenarioRunner";
+import { BlobUploaderOption } from "./blobUploader";
+import { getFileNameFromPath } from "./defaultNaming";
+import { generateMarkdownReportHeader } from "./markdownReport";
 import {
   generateRunId,
   PostmanCollectionRunnerClient,
   PostmanCollectionRunnerClientOption,
 } from "./postmanCollectionRunnerClient";
-import { ApiScenarioRunner } from "./apiScenarioRunner";
-import { getFileNameFromPath } from "./defaultNaming";
-import { generateMarkdownReportHeader } from "./markdownReport";
+import { ValidationLevel } from "./reportGenerator";
+import { SwaggerAnalyzer, SwaggerAnalyzerOption } from "./swaggerAnalyzer";
+import { VariableEnv } from "./variableEnv";
 export interface PostmanCollectionGeneratorOption
   extends ApiScenarioLoaderOption,
     BlobUploaderOption,
@@ -28,6 +28,7 @@ export interface PostmanCollectionGeneratorOption
   runCollection: boolean;
   generateCollection: boolean;
   baseUrl: string;
+  testProxy?: string;
   validationLevel?: ValidationLevel;
   skipCleanUp?: boolean;
   from?: string;
@@ -82,6 +83,7 @@ export class PostmanCollectionGenerator {
         runId: runId,
         jsonLoader: this.apiScenarioLoader.jsonLoader,
         baseUrl: this.opt.baseUrl,
+        testProxy: this.opt.testProxy,
         validationLevel: this.opt.validationLevel,
         from: this.opt.from,
         to: this.opt.to,
@@ -97,11 +99,21 @@ export class PostmanCollectionGenerator {
         client: client,
         resolveVariables: false,
       });
+
+      if (this.opt.testProxy) {
+        await client.startTestProxyRecording();
+      }
+
       await runner.executeScenario(scenario);
       // If shared resource-group, move clean to one separate scenario.
       if (!this.opt.skipCleanUp && !this.opt.to) {
         await runner.cleanAllScope();
       }
+
+      if (this.opt.testProxy) {
+        await client.stopTestProxyRecording();
+      }
+
       for (let i = 0; i < client.collection.items.count(); i++) {
         this.longRunningOperationOrderUpdate(client, i);
       }
@@ -111,6 +123,7 @@ export class PostmanCollectionGenerator {
       if (this.opt.runCollection) {
         await client.runCollection();
       }
+
       index++;
     }
     const operationIdCoverageResult = this.swaggerAnalyzer.calculateOperationCoverage(scenarioDef);

@@ -3,17 +3,16 @@
 
 import * as fs from "fs";
 import * as path from "path";
-import * as yargs from "yargs";
-
-import { findReadMe } from "@azure/openapi-markdown";
 import { pathDirName, pathJoin, pathResolve } from "@azure-tools/openapi-tools-common";
-import { cliSuppressExceptions } from "../cliSuppressExceptions";
+import { findReadMe } from "@azure/openapi-markdown";
+import * as yargs from "yargs";
 import {
   PostmanCollectionGenerator,
   PostmanCollectionGeneratorOption,
 } from "../apiScenario/postmanCollectionGenerator";
+import { cliSuppressExceptions } from "../cliSuppressExceptions";
 import { inversifyGetInstance } from "../inversifyUtils";
-import { printWarning, getInputFiles } from "../util/utils";
+import { getInputFiles, printWarning } from "../util/utils";
 
 export const command = "run-api-scenario <api-scenario>";
 
@@ -86,6 +85,10 @@ export const builder: yargs.CommandBuilder = {
     describe: "ARM endpoint",
     string: true,
     default: "https://management.azure.com",
+  },
+  testProxy: {
+    describe: "TestProxy endpoint, e.g., http://localhost:5000. If not set, no proxy will be used.",
+    string: true,
   },
   location: {
     describe: "resource provision location parameter",
@@ -203,6 +206,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       enableBlobUploader: argv.uploadBlob,
       blobConnectionString: process.env.blobConnectionString || "",
       baseUrl: argv.armEndpoint,
+      testProxy: argv.testProxy,
       validationLevel: argv.level,
       skipCleanUp: argv.skipCleanUp,
       from: argv.from,
