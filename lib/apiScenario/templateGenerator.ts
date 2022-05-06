@@ -36,7 +36,7 @@ export class TemplateGenerator {
 
   public exampleParameterConvention(
     step: Pick<StepRestCall, "requestParameters" | "responseExpected" | "operation">,
-    variables: (name: string) => Variable
+    variables: (name: string) => any
   ) {
     const toMatch: string[] = [];
     const matchReplace: { [toMatch: string]: string } = {};
