@@ -36,7 +36,6 @@ import {
   defaultNewmanReport,
   generatedGet,
   generatedPostmanItem,
-  lroPollingUrl,
 } from "./defaultNaming";
 import { typeToDescription } from "./postmanItemTypes";
 import { NewmanReportAnalyzer, NewmanReportAnalyzerOption } from "./postmanReportAnalyzer";
@@ -152,10 +151,6 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
         },
         {
           key: "tenantId",
-        },
-        {
-          key: "arm_endpoint",
-          value: "https://management.azure.com",
         },
         {
           key: "bearer_token",
@@ -575,14 +570,20 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
   }
 
   private addAsLongRunningOperationItem(item: Item, checkStatus: boolean = false) {
-    this.collectionEnv.set(`${lroPollingUrl(item.name)}`, "<polling_url>", "string");
     const longRunningEvent = new Event({
       listen: "test",
       script: {
         type: "text/javascript",
-        exec: `pm.environment.set("${lroPollingUrl(
-          item.name
-        )}", pm.response.headers.get('Location')||pm.response.headers.get('Azure-AsyncOperation')||"https://postman-echo.com/delay/10")`,
+        exec: `
+        const pollingUrl = pm.response.headers.get('Location') || pm.response.headers.get('Azure-AsyncOperation');
+        if (pollingUrl) {
+          pm.collectionVariables.set("x_polling_url", ${
+            this.opts.testProxy
+              ? `pollingUrl.replace("${this.opts.baseUrl}","${this.opts.testProxy}")`
+              : "pollingUrl"
+          });
+      }
+        `,
       },
     });
     item.events.add(longRunningEvent);
@@ -945,30 +946,41 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
 
   public longRunningOperationItem(initialItem: Item, checkStatus: boolean = false): Item[] {
     const ret: Item[] = [];
+
     const pollerItemName = generatedPostmanItem(initialItem.name + "_poller");
     const pollerItem = new Item({
       name: pollerItemName,
       request: {
-        url: `{{${lroPollingUrl(initialItem.name)}}}`,
+        url: `{{x_polling_url}}`,
         method: "get",
       },
     });
+    if (this.opts.testProxy) {
+      pollerItem.request.addHeader({
+        key: "x-recording-upstream-base-uri",
+        value: this.opts.baseUrl,
+      });
+      pollerItem.request.addHeader({ key: "x-recording-id", value: "{{x_recording_id}}" });
+      pollerItem.request.addHeader({ key: "x-recording-mode", value: "record" });
+    }
     pollerItem.description = typeToDescription({ type: "poller", lro_item_name: initialItem.name });
+
     const delay = this.mockDelayItem(pollerItem.name, initialItem.name);
+
     const event = new Event({
       listen: "test",
       script: {
         type: "text/javascript",
         exec: `
       try{
-        if(pm.response.code===202){
+        if(pm.response.code === 202){
           postman.setNextRequest('${delay.name}')
-        }else if(pm.response.code==204){
+        }else if(pm.response.code === 204){
           postman.setNextRequest($(nextRequest))
         }
         else{
           const terminalStatus = ["Succeeded", "Failed", "Canceled"]
-          if(pm.response.json().status!==undefined&&terminalStatus.indexOf(pm.response.json().status)===-1){
+          if(pm.response.json().status !== undefined && terminalStatus.indexOf(pm.response.json().status) === -1){
             postman.setNextRequest('${delay.name}')
           }else{
             postman.setNextRequest($(nextRequest))
@@ -979,8 +991,8 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       }`,
       },
     });
-
     pollerItem.events.add(event);
+
     if (checkStatus) {
       const checkStatusEvent = new Event({
         listen: "test",
