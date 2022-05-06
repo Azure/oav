@@ -389,13 +389,12 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
 
     ctx.stepTracking.set(step.step, step);
 
-    const getVariable = (name: string) => {
-      const variable =
-        step.variables[name] ?? ctx.scenario?.variables[name] ?? ctx.scenarioDef.variables[name];
-      return variable;
-    };
-
     if ("operationId" in rawStep) {
+      const getVariable = (name: string) => {
+        const variable =
+          step.variables[name] ?? ctx.scenario?.variables[name] ?? ctx.scenarioDef.variables[name];
+        return variable;
+      };
       step.operationId = rawStep.operationId;
       if (!rawStep.step) {
         step.step += `_${rawStep.operationId}`;
@@ -510,6 +509,18 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       step.responseExpected = exampleFileContent.responses;
 
       await this.applyPatches(step, rawStep);
+      const getVariable = (name: string) => {
+        const variable =
+          step.variables[name] ?? ctx.scenario?.variables[name] ?? ctx.scenarioDef.variables[name];
+        if (variable === undefined) {
+          const requiredVariables =
+            ctx.scenario?.requiredVariables ?? ctx.scenarioDef.requiredVariables;
+          if (requiredVariables.includes(name)) {
+            return `$(${name})`;
+          }
+        }
+        return variable;
+      };
       this.templateGenerator.exampleParameterConvention(step, getVariable);
     }
     return step;
