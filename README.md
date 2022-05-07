@@ -83,10 +83,10 @@ Options:
   Model validation enforces correctness between example and swagger. It checks whether definitions for request parameters and responses, match an expected input/output payload of the service.
   
      Examples of issues detected: 
-      - Required properties not sent in requests or responses
-      - Defined types not matching the value provided in the payload
-      - Constraints on properties not met
-      - Enumeration values that don’t match the value used by the service.
+     - Required properties not sent in requests or responses
+     - Defined types not matching the value provided in the payload
+     - Constraints on properties not met
+     - Enumeration values that don’t match the value used by the service.
 
      Model validation _requires_ example payloads (request/response) of the service, so the data can be matched with the defined models. See [x-ms-examples extension](https://github.com/Azure/azure-rest-api-specs/issues/648) on how to specify the examples/payloads. Swagger “examples” is also supported and data included there is validated as well. To get the most benefit from this tool, make sure to have the simplest and most complex examples possible as part of x-ms-examples.
      - Please take a look at the redis-cache swagger spec as an example for providing "x-ms-examples" over [here](https://github.com/Azure/azure-rest-api-specs/blob/master/arm-redis/2016-04-01/swagger/redis.json#L45).
