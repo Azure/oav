@@ -135,8 +135,8 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
 
     if (readmeTags) {
       for (const e of readmeTags) {
-        console.log("Additional readme tag:");
-        console.log(readmeTags);
+        // console.log("Additional readme tag:");
+        // console.log(readmeTags);
 
         const inputFiles = await getInputFiles(e.filePath, e.tag);
         if (inputFiles) {
@@ -150,8 +150,8 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
             additionalSwaggerFiles.push(pathJoin(pathDirName(e.filePath), f));
           });
 
-          console.log("Additional input-file:");
-          console.log(additionalSwaggerFiles);
+          // console.log("Additional input-file:");
+          // console.log(additionalSwaggerFiles);
 
           await this.loadSwaggers(
             additionalSwaggerFiles,
