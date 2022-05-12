@@ -12,6 +12,7 @@ import { FileLoader } from "../swagger/fileLoader";
 export interface TrafficValidationIssueForRendering extends TrafficValidationIssue {
   payloadFileLinkLabel?: string;
   errorsForRendering?: LiveValidationIssueForRendering[];
+  errorCodeLen: number;
 }
 
 export interface LiveValidationIssueForRendering extends LiveValidationIssue {
@@ -31,6 +32,7 @@ export interface ErrorDefinition {
 
 export interface OperationCoverageInfoForRendering extends OperationCoverageInfo {
   specLinkLabel?: string;
+  validationPassOperations?: number;
 }
 
 // used to pass data to the template rendering engine
@@ -126,6 +128,7 @@ export class CoverageView {
           payloadFileLinkLabel: payloadFile,
           errors: element.errors,
           errorsForRendering: errorsForRendering,
+          errorCodeLen: errorsForRendering.length,
           operationInfo: element.operationInfo,
           runtimeExceptions: element.runtimeExceptions,
         });
@@ -141,9 +144,11 @@ export class CoverageView {
           specLinkLabel: element.spec?.substring(element.spec?.lastIndexOf("/") + 1),
           apiVersion: element.apiVersion,
           coveredOperaions: element.coveredOperaions,
+          validationPassOperations: element.coveredOperaions - element.validationFailOperations,
           validationFailOperations: element.validationFailOperations,
           unCoveredOperations: element.unCoveredOperations,
           unCoveredOperationsList: element.unCoveredOperationsList,
+          unCoveredOperationsListGen: element.unCoveredOperationsListGen,
           totalOperations: element.totalOperations,
           coverageRate: element.coverageRate,
         });
