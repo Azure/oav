@@ -8,9 +8,9 @@ trigger:
 
 steps:
   - task: Npm@1
-    displayName: "npm install"
+    displayName: "npm ci"
     inputs:
-      command: 'install'
+      command: ci
       verbose: false
 
   - task: Npm@1

@@ -1,6 +1,12 @@
 # Change Log - oav
 
+## 04/20/2022 2.12.1
+
+- Fix bug about copyfiles command during build
+
 ## 04/07/2022 2.12.0
+
+- ModelValidator - Ignore INVALID_TYPE validation in case of query parameter in string format
 - Traffic Validation - Support validation report generation
 
 ## 04/06/2022 2.11.10

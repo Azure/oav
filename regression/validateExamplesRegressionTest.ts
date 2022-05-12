@@ -5,10 +5,7 @@ import * as validate from "../lib/validate";
 export const validateExamplesRegressionTest = async (file: string) => {
   try {
     const hash = await new Promise((resolve) =>
-      md5File(file, (e, h) => {
-        if (e) {
-          throw e;
-        }
+      md5File(file).then((h) => {
         resolve(h);
       })
     );
