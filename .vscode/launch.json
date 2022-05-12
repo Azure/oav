@@ -36,8 +36,8 @@
       "cwd": "${workspaceRoot}",
       "args": [
         "validate-traffic",
-        "/home/tianenx/github/jacktn/payloads",
-        "/home/tianenx/github/azure/azure-rest-api-specs/specification/cosmos-db/data-plane/Microsoft.Tables/preview/2019-02-02/table.json"
+        "${workspaceRoot}/test/liveValidation/payloads/test-validate-traffic.json",
+        "${workspaceRoot}/test/liveValidation/swaggers/specification/dns/resource-manager/Microsoft.Network/stable/2018-05-01/dns.json"
       ],
       "env": {}
     },
