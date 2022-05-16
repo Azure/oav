@@ -272,8 +272,13 @@ const ReValidateIfNeed = (
 };
 
 const shouldSkipError = (error: ErrorObject, cxt: SchemaValidateContext) => {
-  const { schema, parentSchema: parentSch, params, keyword, data } = error;
+  const { parentSchema: parentSch, params, keyword } = error;
   const parentSchema = parentSch as Schema;
+  // If schema has allof property, we can get schema in "_realschema", so is data
+  const schema = Object.keys(error).includes("_realSchema")
+    ? (error as any)._realSchema
+    : error.schema;
+  const data = Object.keys(error).includes("_realData") ? (error as any)._realData : error.data;
 
   if (schema?._skipError || parentSchema._skipError) {
     return true;

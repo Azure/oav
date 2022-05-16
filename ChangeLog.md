@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 04/20/2022 2.12.2
+
+- LiveValidator - Get real schema and data while error's schema has allOf property
+
 ## 04/20/2022 2.12.1
 
 - Fix bug about copyfiles command during build
