@@ -474,10 +474,34 @@
         }
       }
     },
+    "RemindDueDate": {
+      "description": "Remind the due date of registration.",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/RegistrationInfo"
+        }
+      ],
+      "properties": {
+        "remindTime": {
+          "format": "date-time",
+          "type": "string",
+          "description": "Remind time of registration due date."
+        }
+      },
+      "x-ms-discriminator-value": "RemindDueDate"
+    },
     "RegistrationInfo": {
       "description": "Represents a RegistrationInfo definition.",
       "type": "object",
+      "required": [
+        "timeType"
+      ],
       "properties": {
+        "timeType": {
+          "description": "Type of time.",
+          "type": "string"
+        },
         "expirationTime": {
           "format": "date-time",
           "type": "string",
@@ -501,7 +525,8 @@
           "description": "The type of resetting the token.",
           "x-nullable": false
         }
-      }
+      },
+      "discriminator": "timeType"
     },
     "MigrationRequestProperties": {
       "type": "object",

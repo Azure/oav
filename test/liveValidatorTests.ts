@@ -1037,7 +1037,7 @@ describe("Live Validator", () => {
         isPathCaseSensitive: false,
         useRelativeSourceLocationUrl: true,
         swaggerPathsPattern: [
-          "specification/desktopvirtualization/resource-manager/Microsoft.DesktopVirtualization/*.json",
+          "specification/date-time/resource-manager/Microsoft.DateTime/test.json",
         ],
         git: {
           shouldClone: false,
