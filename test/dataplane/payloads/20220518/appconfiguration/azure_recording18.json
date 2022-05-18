@@ -1,0 +1,69 @@
+{
+    "liveRequest": {
+        "url": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor0d24fb8d36/ListKeys?api-version=2020-06-01",
+        "headers": {
+            "Accept": "application/json",
+            "Authorization": "Sanitized",
+            "Content-Length": "0",
+            "User-Agent": "restler/8.5.0"
+        },
+        "body": null,
+        "method": "POST"
+    },
+    "liveResponse": {
+        "body": {
+            "value": [
+                {
+                    "id": "J9Rl-l2-s0:scET/VsNqzYBzsudzOzp",
+                    "name": "Primary",
+                    "value": "GVK2Yv2qowFzQ8I57ptUf+NDUuHreZ+mTV7baQ1cfII=",
+                    "connectionString": "Endpoint=https://configstor0d24fb8d36.azconfig.io;Id=J9Rl-l2-s0:scET/VsNqzYBzsudzOzp;Secret=GVK2Yv2qowFzQ8I57ptUf+NDUuHreZ+mTV7baQ1cfII=",
+                    "lastModified": "2022-04-29T20:55:59+00:00",
+                    "readOnly": false
+                },
+                {
+                    "id": "wdBP-l2-s0:SYOGOim8fbdiWQg0IV2D",
+                    "name": "Secondary",
+                    "value": "M+nqS6HeJQf9o4b+McCojCB5purRchtcTCYZjJFye0k=",
+                    "connectionString": "Endpoint=https://configstor0d24fb8d36.azconfig.io;Id=wdBP-l2-s0:SYOGOim8fbdiWQg0IV2D;Secret=M+nqS6HeJQf9o4b+McCojCB5purRchtcTCYZjJFye0k=",
+                    "lastModified": "2022-04-29T20:55:59+00:00",
+                    "readOnly": false
+                },
+                {
+                    "id": "wNrm-l2-s0:bR0taxPbhk1ag+15Vt8s",
+                    "name": "Primary Read Only",
+                    "value": "E+Nfqk0CvLSlZ7TfeNFA6cieq/WiYY5n1GXw9dk+nkY=",
+                    "connectionString": "Endpoint=https://configstor0d24fb8d36.azconfig.io;Id=wNrm-l2-s0:bR0taxPbhk1ag+15Vt8s;Secret=E+Nfqk0CvLSlZ7TfeNFA6cieq/WiYY5n1GXw9dk+nkY=",
+                    "lastModified": "2022-04-29T20:55:59+00:00",
+                    "readOnly": true
+                },
+                {
+                    "id": "gQ8E-l2-s0:i2/fWlyFLfV+tnCEGMmw",
+                    "name": "Secondary Read Only",
+                    "value": "KjfPnG0cXFNglwPfUGR/K2gHrliT5pnYzMYcL1C+sME=",
+                    "connectionString": "Endpoint=https://configstor0d24fb8d36.azconfig.io;Id=gQ8E-l2-s0:i2/fWlyFLfV+tnCEGMmw;Secret=KjfPnG0cXFNglwPfUGR/K2gHrliT5pnYzMYcL1C+sME=",
+                    "lastModified": "2022-04-29T20:55:59+00:00",
+                    "readOnly": true
+                }
+            ],
+            "nextLink": null
+        },
+        "statusCode": "200",
+        "headers": {
+            "Cache-Control": "no-cache",
+            "Content-Length": "1373",
+            "Content-Type": "application/json; charset=utf-8",
+            "Date": "Fri, 29 Apr 2022 20:56:00 GMT",
+            "Expires": "-1",
+            "Pragma": "no-cache",
+            "Server": "nginx/1.17.10",
+            "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "Vary": "Accept-Encoding",
+            "X-Content-Type-Options": "nosniff",
+            "x-ms-correlation-request-id": "f5b5f45b-afbc-43f5-b077-28954147313a",
+            "x-ms-ratelimit-remaining-subscription-writes": "1198",
+            "x-ms-request-id": "2bf21d87-3528-4288-9018-1ded228d52b4",
+            "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205600Z:f5b5f45b-afbc-43f5-b077-28954147313a"
+        }
+    }
+}

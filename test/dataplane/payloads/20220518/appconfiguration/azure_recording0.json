@@ -1,0 +1,40 @@
+{
+    "liveRequest": {
+        "url": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/providers/Microsoft.AppConfiguration/checkNameAvailability?api-version=2020-06-01",
+        "headers": {
+            "Accept": "application/json",
+            "Authorization": "Sanitized",
+            "Content-Length": "86",
+            "Content-Type": "application/json",
+            "User-Agent": "restler/8.5.0"
+        },
+        "body": {
+            "name": "contoso",
+            "type": "Microsoft.AppConfiguration/configurationStores"
+        },
+        "method": "POST"
+    },
+    "liveResponse": {
+        "body": {
+            "nameAvailable": false,
+            "message": "The specified name is already in use.",
+            "reason": "AlreadyExists"
+        },
+        "statusCode": "200",
+        "headers": {
+            "Cache-Control": "no-cache",
+            "Content-Length": "98",
+            "Content-Type": "application/json; charset=utf-8",
+            "Date": "Fri, 29 Apr 2022 20:55:30 GMT",
+            "Expires": "-1",
+            "Pragma": "no-cache",
+            "Server": "nginx/1.17.10",
+            "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "X-Content-Type-Options": "nosniff",
+            "x-ms-correlation-request-id": "6bb0e7fb-9732-4bfa-ab94-32d30d6dee55",
+            "x-ms-ratelimit-remaining-subscription-reads": "11999",
+            "x-ms-request-id": "fe2e08f0-2ca4-4366-b1be-4f1c99414cf1",
+            "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205531Z:6bb0e7fb-9732-4bfa-ab94-32d30d6dee55"
+        }
+    }
+}

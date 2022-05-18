@@ -1,0 +1,31 @@
+{
+    "liveRequest": {
+        "url": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstore8a415f9ac?api-version=2020-06-01",
+        "headers": {
+            "Accept": "application/json",
+            "Authorization": "Sanitized",
+            "Content-Length": "0",
+            "User-Agent": "restler/8.5.0"
+        },
+        "body": null,
+        "method": "DELETE"
+    },
+    "liveResponse": {
+        "body": null,
+        "statusCode": "200",
+        "headers": {
+            "Cache-Control": "no-cache",
+            "Content-Length": "0",
+            "Date": "Fri, 29 Apr 2022 20:56:18 GMT",
+            "Expires": "-1",
+            "Pragma": "no-cache",
+            "Server": "nginx/1.17.10",
+            "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "X-Content-Type-Options": "nosniff",
+            "x-ms-correlation-request-id": "35954fd4-4307-4a6b-9281-315ae9dea7c7",
+            "x-ms-ratelimit-remaining-subscription-deletes": "14989",
+            "x-ms-request-id": "b90b7e26-155e-4f57-b7a5-e48b8bae80d7",
+            "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205619Z:35954fd4-4307-4a6b-9281-315ae9dea7c7"
+        }
+    }
+}

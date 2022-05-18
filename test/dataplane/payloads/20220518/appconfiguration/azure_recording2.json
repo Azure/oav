@@ -1,0 +1,59 @@
+{
+    "liveRequest": {
+        "url": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores?api-version=2020-06-01",
+        "headers": {
+            "Accept": "application/json",
+            "Authorization": "Sanitized",
+            "Content-Length": "0",
+            "User-Agent": "restler/8.5.0"
+        },
+        "body": null,
+        "method": "GET"
+    },
+    "liveResponse": {
+        "body": {
+            "value": [
+                {
+                    "type": "Microsoft.AppConfiguration/configurationStores",
+                    "location": "westus2",
+                    "properties": {
+                        "provisioningState": "Succeeded",
+                        "creationDate": "2022-04-28T19:41:55+00:00",
+                        "endpoint": "https://configstor02b68495a4.azconfig.io",
+                        "encryption": {
+                            "keyVaultProperties": null
+                        },
+                        "privateEndpointConnections": null
+                    },
+                    "sku": {
+                        "name": "standard"
+                    },
+                    "id": "/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor02b68495a4",
+                    "name": "configstor02b68495a4",
+                    "tags": {
+                        "myTag": "myTagValue"
+                    }
+                }
+            ],
+            "nextLink": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores?api-version=2020-06-01&$skipToken=configstor02b68495a4"
+        },
+        "statusCode": "200",
+        "headers": {
+            "Cache-Control": "no-cache",
+            "Content-Length": "807",
+            "Content-Type": "application/json; charset=utf-8",
+            "Date": "Fri, 29 Apr 2022 20:55:45 GMT",
+            "Expires": "-1",
+            "Link": "</subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores?api-version=2020-06-01&$skipToken=configstor02b68495a4>; rel=\"next\"",
+            "Pragma": "no-cache",
+            "Server": "nginx/1.17.10",
+            "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "Vary": "Accept-Encoding",
+            "X-Content-Type-Options": "nosniff",
+            "x-ms-correlation-request-id": "b05848df-c964-41c8-a505-aada41a2dcbd",
+            "x-ms-ratelimit-remaining-subscription-reads": "11998",
+            "x-ms-request-id": "fdd9bd11-09ad-448d-adcc-59821fc1a47e",
+            "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205546Z:b05848df-c964-41c8-a505-aada41a2dcbd"
+        }
+    }
+}

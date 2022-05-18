@@ -1,0 +1,61 @@
+{
+    "liveRequest": {
+        "url": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstorb7d424b5d3?api-version=2020-06-01",
+        "headers": {
+            "Accept": "application/json",
+            "Authorization": "Sanitized",
+            "Content-Length": "131",
+            "Content-Type": "application/json",
+            "User-Agent": "restler/8.5.0"
+        },
+        "body": {
+            "sku": {
+                "name": "Standard"
+            },
+            "location": "westus2",
+            "tags": {
+                "myTag": "myTagValue"
+            }
+        },
+        "method": "PUT"
+    },
+    "liveResponse": {
+        "body": {
+            "type": "Microsoft.AppConfiguration/configurationStores",
+            "location": "westus2",
+            "properties": {
+                "provisioningState": "Creating",
+                "creationDate": "2022-04-29T20:55:47.8483832+00:00",
+                "endpoint": null,
+                "encryption": null,
+                "privateEndpointConnections": null
+            },
+            "sku": {
+                "name": "Standard"
+            },
+            "id": "/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstorb7d424b5d3",
+            "name": "configstorb7d424b5d3",
+            "tags": {
+                "myTag": "myTagValue"
+            }
+        },
+        "statusCode": "201",
+        "headers": {
+            "Azure-AsyncOperation": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/providers/Microsoft.AppConfiguration/locations/westus2/operationsStatus/I8X_ffdBk2AOrPwhkHZ03p3WPF9yF8mhLsmcp0bnitY?api-version=2020-06-01",
+            "Cache-Control": "no-cache",
+            "Content-Length": "501",
+            "Content-Type": "application/json; charset=utf-8",
+            "Date": "Fri, 29 Apr 2022 20:55:47 GMT",
+            "Expires": "-1",
+            "Pragma": "no-cache",
+            "Retry-After": "10",
+            "Server": "nginx/1.17.10",
+            "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "X-Content-Type-Options": "nosniff",
+            "x-ms-correlation-request-id": "9039a40c-790d-4034-904a-c806c2bf2332",
+            "x-ms-ratelimit-remaining-subscription-writes": "1199",
+            "x-ms-request-id": "09a6d2e2-7003-4d4f-abc2-7f339df98918",
+            "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205548Z:9039a40c-790d-4034-904a-c806c2bf2332"
+        }
+    }
+}
