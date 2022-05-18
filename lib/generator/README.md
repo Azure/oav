@@ -26,6 +26,7 @@ Options:
   -c, --config             the readme config path.                      [string]
   --tag, --tagName         the readme tag name.                         [string]
   -h, --help               Show help                                   [boolean]
+  --exception              Show runtime exceptions                     [boolean]
 
 ```
 ## payload file

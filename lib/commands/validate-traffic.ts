@@ -43,6 +43,12 @@ export const builder: yargs.CommandBuilder = {
     boolean: true,
     default: false,
   },
+  runtimeException: {
+    alias: "exception",
+    describe: "when run report with payloads exception",
+    boolean: true,
+    default: false,
+  },
   specLinkPrefix: {
     alias: "slp",
     describe: "github specification link prefix",
@@ -70,6 +76,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       sdkLanguage: argv.language,
       reportPath: argv.report,
       overrideLinkInReport: argv.overrideLinkInReport,
+      runtimeException: argv.runtimeException,
       specLinkPrefix: argv.specLinkPrefix,
       payloadLinkPrefix: argv.payloadLinkPrefix,
     };

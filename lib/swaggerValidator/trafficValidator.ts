@@ -22,6 +22,7 @@ export interface TrafficValidationOptions extends Options {
   sdkLanguage?: string;
   reportPath?: string;
   overrideLinkInReport?: boolean;
+  runtimeException?: boolean;
   specLinkPrefix?: string;
   payloadLinkPrefix?: string;
 }
@@ -29,8 +30,8 @@ export interface TrafficValidationIssue {
   payloadFilePath?: string;
   specFilePath?: string;
   errors?: LiveValidationIssue[];
-  operationInfo?: OperationContext;
   runtimeExceptions?: RuntimeException[];
+  operationInfo?: OperationContext;
 }
 
 export interface RuntimeException {
@@ -321,8 +322,6 @@ export class TrafficValidator {
         []
       );
 
-      console.log(sortedUnCoveredOperationsListGen);
-
       this.operationCoverageResult.push({
         spec: key,
         apiVersion: getApiVersionFromSwaggerPath(key),
@@ -346,7 +345,7 @@ export class TrafficValidator {
     for (const key of this.operationSpecMapper.keys()) {
       const value = this.operationSpecMapper.get(key);
       if (
-        key.includes(operationInfo.validationRequest?.providerNamespace) &&
+        key.toLowerCase().includes(operationInfo.validationRequest?.providerNamespace) &&
         (key.includes(operationInfo.apiVersion) ||
           key.toLowerCase().includes(operationInfo.apiVersion))
       ) {
