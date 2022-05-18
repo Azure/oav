@@ -309,7 +309,7 @@
         }
 
         .testFailed table tbody tr td:nth-child(-n + 3) {
-            word-break: break-all;
+            word-break: break-word;
         }
 
         .testFailed .table-body table tbody tr .wrapper-td {
@@ -552,7 +552,7 @@
                   </table>
                 </div>
                 <div class="table-body">
-                    <table summary="runtime Exceptions" cellspacing="0" cellpadding="0">
+                    <table id="runtimeExceptionsTable" summary="runtime Exceptions" cellspacing="0" cellpadding="0">
                         <colgroup>
                             <col style="width: 20%" />
                             <col style="width: 40%" />
@@ -588,8 +588,16 @@
     $(document).ready(() => {
         console.log('Hello AZSDK. Document.Ready available here.');
         addFailedEachClick();
+        renderRunTimeException();
     });
     
+    function renderRunTimeException() {
+        if($('#runtimeExceptionsTable tbody tr').length === 0){
+            console.log( $('section.runtimeExceptions'));
+            $('section.runtimeExceptions').hide();
+        }
+    }
+
     function addFailedEachClick() {
         $('div.showTestFailed').each(function (index) {
             $(this).click(function (event) {
