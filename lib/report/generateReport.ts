@@ -283,10 +283,9 @@ export class CoverageView {
 
   public getRunTimeErrors(): TrafficValidationIssue[] {
     if (this.runtimeException) {
-      const res = this.validationResults.filter((x) => {
+      return this.validationResults.filter((x) => {
         return x.runtimeExceptions && x.runtimeExceptions.length > 0;
       });
-      return res;
     } else {
       return [];
     }

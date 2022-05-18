@@ -528,6 +528,7 @@
             </article>
         </section>
 
+        {{#runtimeException}}
         <section class="runtimeExceptions">
             <h2 class="title" id="runtimeExceptions">runtime Exceptions</h2>
             <article>
@@ -552,7 +553,7 @@
                   </table>
                 </div>
                 <div class="table-body">
-                    <table id="runtimeExceptionsTable" summary="runtime Exceptions" cellspacing="0" cellpadding="0">
+                    <table summary="runtime Exceptions" cellspacing="0" cellpadding="0">
                         <colgroup>
                             <col style="width: 20%" />
                             <col style="width: 40%" />
@@ -580,6 +581,7 @@
                 </div>
             </article>
         </section>
+        {{/runtimeException}}
     </div>
 </body>
 
@@ -588,15 +590,7 @@
     $(document).ready(() => {
         console.log('Hello AZSDK. Document.Ready available here.');
         addFailedEachClick();
-        renderRunTimeException();
     });
-    
-    function renderRunTimeException() {
-        if($('#runtimeExceptionsTable tbody tr').length === 0){
-            console.log( $('section.runtimeExceptions'));
-            $('section.runtimeExceptions').hide();
-        }
-    }
 
     function addFailedEachClick() {
         $('div.showTestFailed').each(function (index) {
