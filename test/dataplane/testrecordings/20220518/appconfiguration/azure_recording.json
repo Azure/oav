@@ -1,0 +1,1967 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/providers/Microsoft.AppConfiguration/checkNameAvailability?api-version=2020-06-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Authorization": "Sanitized",
+        "Content-Length": "86",
+        "Content-Type": "application/json",
+        "User-Agent": "restler/8.5.0"
+      },
+      "RequestBody": {
+        "name": "contoso",
+        "type": "Microsoft.AppConfiguration/configurationStores"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "98",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 20:55:30 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": "nginx/1.17.10",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "6bb0e7fb-9732-4bfa-ab94-32d30d6dee55",
+        "x-ms-ratelimit-remaining-subscription-reads": "11999",
+        "x-ms-request-id": "fe2e08f0-2ca4-4366-b1be-4f1c99414cf1",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205531Z:6bb0e7fb-9732-4bfa-ab94-32d30d6dee55"
+      },
+      "ResponseBody": {
+        "nameAvailable": false,
+        "message": "The specified name is already in use.",
+        "reason": "AlreadyExists"
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/providers/Microsoft.AppConfiguration/operations?api-version=2020-06-01\u0026$skipToken=fuzzstring",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "restler/8.5.0"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "12974",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 20:55:45 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": "nginx/1.17.10",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "91447b60-315f-441c-9f89-8e4bbda24fd4",
+        "x-ms-ratelimit-remaining-tenant-reads": "11999",
+        "x-ms-request-id": "a49fc3df-81da-45a9-a2a0-ab26def25013",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205545Z:91447b60-315f-441c-9f89-8e4bbda24fd4"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "name": "Microsoft.AppConfiguration/operations/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft App Configuration",
+              "resource": "Operation",
+              "operation": "List Operations",
+              "description": "Lists all of the operations supported by Microsoft App Configuration."
+            },
+            "properties": null
+          },
+          {
+            "name": "Microsoft.AppConfiguration/register/action",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft App Configuration",
+              "resource": "Microsoft App Configuration",
+              "operation": "Register for Microsoft App Configuration",
+              "description": "Registers a subscription to use Microsoft App Configuration."
+            },
+            "properties": null
+          },
+          {
+            "name": "Microsoft.AppConfiguration/unregister/action",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft App Configuration",
+              "resource": "Microsoft App Configuration",
+              "operation": "Unregister for Microsoft App Configuration",
+              "description": "Unregisters a subscription from using Microsoft App Configuration."
+            },
+            "properties": null
+          },
+          {
+            "name": "Microsoft.AppConfiguration/locations/operationsStatus/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft App Configuration",
+              "resource": null,
+              "operation": "Get Operation Status",
+              "description": "Get the status of an operation."
+            },
+            "properties": null
+          },
+          {
+            "name": "Microsoft.AppConfiguration/checkNameAvailability/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft App Configuration",
+              "resource": null,
+              "operation": "Check Name Availability",
+              "description": "Check whether the resource name is available for use."
+            },
+            "properties": null
+          },
+          {
+            "name": "Microsoft.AppConfiguration/locations/checkNameAvailability/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft App Configuration",
+              "resource": null,
+              "operation": "Check Name Availability",
+              "description": "Check whether the resource name is available for use."
+            },
+            "properties": null
+          },
+          {
+            "name": "Microsoft.AppConfiguration/configurationStores/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft App Configuration",
+              "resource": "Configuration Store",
+              "operation": "Get Configuration Store or List Configuration Stores",
+              "description": "Gets the properties of the specified configuration store or lists all the configuration stores under the specified resource group or subscription."
+            },
+            "properties": null
+          },
+          {
+            "name": "Microsoft.AppConfiguration/configurationStores/write",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft App Configuration",
+              "resource": "Configuration Store",
+              "operation": "Create or Update Configuration Store",
+              "description": "Create or update a configuration store with the specified parameters."
+            },
+            "properties": null
+          },
+          {
+            "name": "Microsoft.AppConfiguration/configurationStores/delete",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft App Configuration",
+              "resource": "Configuration Store",
+              "operation": "Delete Configuration Store",
+              "description": "Deletes a configuration store."
+            },
+            "properties": null
+          },
+          {
+            "name": "Microsoft.AppConfiguration/configurationStores/ListKeys/action",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft App Configuration",
+              "resource": "Configuration Store",
+              "operation": "List Configuration Store API Keys",
+              "description": "Lists the API keys for the specified configuration store."
+            },
+            "properties": null
+          },
+          {
+            "name": "Microsoft.AppConfiguration/configurationStores/RegenerateKey/action",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft App Configuration",
+              "resource": "Configuration Store",
+              "operation": "Regenerate Configuration Store API Key",
+              "description": "Regenerates of the API key\u0027s for the specified configuration store."
+            },
+            "properties": null
+          },
+          {
+            "name": "Microsoft.AppConfiguration/configurationStores/ListKeyValue/action",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft App Configuration",
+              "resource": "Configuration Store",
+              "operation": "List Configuration Store Key-Value",
+              "description": "Lists a key-value for the specified configuration store."
+            },
+            "properties": null
+          },
+          {
+            "name": "Microsoft.AppConfiguration/configurationStores/eventGridFilters/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft App Configuration",
+              "resource": "Configuration Store Event Grid Filter",
+              "operation": "Get Configuration Store Event Grid Filter or List Configuration Store Event Grid Filters",
+              "description": "Gets the properties of the specified configuration store event grid filter or lists all the configuration store event grid filters under the specified configuration store."
+            },
+            "properties": null
+          },
+          {
+            "name": "Microsoft.AppConfiguration/configurationStores/eventGridFilters/write",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft App Configuration",
+              "resource": "Configuration Store Event Grid Filter",
+              "operation": "Create or Update Configuration Store Event Grid Filter",
+              "description": "Create or update a configuration store event grid filter with the specified parameters."
+            },
+            "properties": null
+          },
+          {
+            "name": "Microsoft.AppConfiguration/configurationStores/eventGridFilters/delete",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft App Configuration",
+              "resource": "Configuration Store Event Grid Filter",
+              "operation": "Delete Configuration Store Event Grid Filter",
+              "description": "Deletes a configuration store event grid filter."
+            },
+            "properties": null
+          },
+          {
+            "origin": "System",
+            "name": "Microsoft.AppConfiguration/configurationStores/providers/Microsoft.Insights/metricDefinitions/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft App Configuration",
+              "resource": "Microsoft App Configuration Metric Definition.",
+              "operation": "Read Configuration Store Metric Definitions",
+              "description": "Retrieve all metric definitions for Microsoft App Configuration."
+            },
+            "properties": {
+              "serviceSpecification": {
+                "metricSpecifications": [
+                  {
+                    "name": "HttpIncomingRequestCount",
+                    "displayName": "HttpIncomingRequestCount",
+                    "displayDescription": "Total number of incoming http requests.",
+                    "unit": "Count",
+                    "aggregationType": "Count",
+                    "internalMetricName": "HttpIncomingRequestCount",
+                    "dimensions": [
+                      {
+                        "name": "StatusCode",
+                        "internalName": "StatusCode",
+                        "displayName": "HttpStatusCode"
+                      },
+                      {
+                        "name": "Authentication",
+                        "internalName": "Authentication",
+                        "displayName": "AuthenticationScheme"
+                      }
+                    ]
+                  },
+                  {
+                    "name": "HttpIncomingRequestDuration",
+                    "displayName": "HttpIncomingRequestDuration",
+                    "displayDescription": "Latency on an http request.",
+                    "unit": "Count",
+                    "aggregationType": "Average",
+                    "internalMetricName": "HttpIncomingRequestDuration",
+                    "dimensions": [
+                      {
+                        "name": "StatusCode",
+                        "internalName": "StatusCode",
+                        "displayName": "HttpStatusCode"
+                      },
+                      {
+                        "name": "Authentication",
+                        "internalName": "Authentication",
+                        "displayName": "AuthenticationScheme"
+                      }
+                    ]
+                  },
+                  {
+                    "name": "ThrottledHttpRequestCount",
+                    "displayName": "ThrottledHttpRequestCount",
+                    "displayDescription": "Throttled http requests.",
+                    "unit": "Count",
+                    "aggregationType": "Count",
+                    "internalMetricName": "ThrottledHttpRequestCount"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "origin": "System",
+            "name": "Microsoft.AppConfiguration/configurationStores/providers/Microsoft.Insights/diagnosticSettings/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft App Configuration",
+              "resource": "Configuration Store",
+              "operation": "Read Configuration Store Diagnostic Settings",
+              "description": "Read all Diagnostic Settings values for a Configuration Store."
+            },
+            "properties": null
+          },
+          {
+            "origin": "System",
+            "name": "Microsoft.AppConfiguration/configurationStores/providers/Microsoft.Insights/diagnosticSettings/write",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft App Configuration",
+              "resource": "Configuration Store",
+              "operation": "Write Configuration Store Diagnostic Settings",
+              "description": "Write/Overwrite Diagnostic Settings for Microsoft App Configuration."
+            },
+            "properties": null
+          },
+          {
+            "name": "Microsoft.AppConfiguration/configurationStores/providers/Microsoft.Insights/logDefinitions/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft App Configuration",
+              "resource": "Microsoft App Configuration Log Definition.",
+              "operation": "Read Configuration Store Log Definitions",
+              "description": "Retrieve all log definitions for Microsoft App Configuration."
+            },
+            "properties": {
+              "serviceSpecification": {
+                "metricSpecifications": null
+              }
+            }
+          },
+          {
+            "name": "Microsoft.AppConfiguration/configurationStores/privateEndpointConnectionProxies/validate/action",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft App Configuration",
+              "resource": "Private Endpoint Connection Proxy",
+              "operation": "Validate Private Endpoint Connection Proxy",
+              "description": "Validate a private endpoint connection proxy under the specified configuration store."
+            },
+            "properties": null
+          },
+          {
+            "name": "Microsoft.AppConfiguration/configurationStores/privateEndpointConnectionProxies/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft App Configuration",
+              "resource": "Private Endpoint Connection Proxy",
+              "operation": "Get Private Endpoint Connection Proxy",
+              "description": "Get a private endpoint connection proxy under the specified configuration store."
+            },
+            "properties": null
+          },
+          {
+            "name": "Microsoft.AppConfiguration/configurationStores/privateEndpointConnectionProxies/write",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft App Configuration",
+              "resource": "Private Endpoint Connection Proxy",
+              "operation": "Create or Update Private Endpoint Connection Proxy",
+              "description": "Create or update a private endpoint connection proxy under the specified configuration store."
+            },
+            "properties": null
+          },
+          {
+            "name": "Microsoft.AppConfiguration/configurationStores/privateEndpointConnectionProxies/delete",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft App Configuration",
+              "resource": "Private Endpoint Connection Proxy",
+              "operation": "Delete Private Endpoint Connection Proxy",
+              "description": "Delete a private endpoint connection proxy under the specified configuration store."
+            },
+            "properties": null
+          },
+          {
+            "name": "Microsoft.AppConfiguration/configurationStores/privateEndpointConnections/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft App Configuration",
+              "resource": "Private Endpoint Connection",
+              "operation": "Get Private Endpoint Connection or List Private Endpoint Connections",
+              "description": "Get a private endpoint connection or list private endpoint connections under the specified configuration store."
+            },
+            "properties": null
+          },
+          {
+            "name": "Microsoft.AppConfiguration/configurationStores/privateEndpointConnections/write",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft App Configuration",
+              "resource": "Private Endpoint Connection",
+              "operation": "Approve or Reject Private Endpoint Connection",
+              "description": "Approve or reject a private endpoint connection under the specified configuration store."
+            },
+            "properties": null
+          },
+          {
+            "name": "Microsoft.AppConfiguration/configurationStores/privateEndpointConnections/delete",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft App Configuration",
+              "resource": "Private Endpoint Connection",
+              "operation": "Delete Private Endpoint Connection",
+              "description": "Delete a private endpoint connection under the specified configuration store."
+            },
+            "properties": null
+          },
+          {
+            "name": "Microsoft.AppConfiguration/configurationStores/PrivateEndpointConnectionsApproval/action",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft App Configuration",
+              "resource": "Private Endpoint Connection",
+              "operation": "Auto-Approve Private Endpoint Connection",
+              "description": "Auto-Approve a private endpoint connection under the specified configuration store."
+            },
+            "properties": null
+          },
+          {
+            "name": "Microsoft.AppConfiguration/configurationStores/privateLinkResources/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft App Configuration",
+              "resource": "Private Link",
+              "operation": "List Private Link",
+              "description": "Lists all the private link resources under the specified configuration store."
+            },
+            "properties": null
+          },
+          {
+            "name": "Microsoft.AppConfiguration/configurationStores/keyValues/read",
+            "isDataAction": true,
+            "display": {
+              "provider": "Microsoft App Configuration",
+              "resource": "Key-Value",
+              "operation": "Read Key-Value",
+              "description": "Reads a key-value from the configuration store."
+            },
+            "properties": null
+          },
+          {
+            "name": "Microsoft.AppConfiguration/configurationStores/keyValues/write",
+            "isDataAction": true,
+            "display": {
+              "provider": "Microsoft App Configuration",
+              "resource": "Key-Value",
+              "operation": "Write Key-Value",
+              "description": "Creates or updates a key-value in the configuration store."
+            },
+            "properties": null
+          },
+          {
+            "name": "Microsoft.AppConfiguration/configurationStores/keyValues/delete",
+            "isDataAction": true,
+            "display": {
+              "provider": "Microsoft App Configuration",
+              "resource": "Key-Value",
+              "operation": "Delete Key-Value",
+              "description": "Deletes an existing key-value from the configuration store."
+            },
+            "properties": null
+          },
+          {
+            "name": "Microsoft.AppConfiguration/locations/deletedConfigurationStores/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft App Configuration",
+              "resource": "Deleted Configuration Store",
+              "operation": "Get Deleted Configuration Store or List Deleted Configuration Stores",
+              "description": "Gets the properties of the specified deleted configuration store or lists all the deleted configuration stores under the specified subscription."
+            },
+            "properties": null
+          },
+          {
+            "name": "Microsoft.AppConfiguration/locations/deletedConfigurationStores/purge/action",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft App Configuration",
+              "resource": "Deleted Configuration Store",
+              "operation": "Purge Deleted Configuration Store",
+              "description": "Purge the specified deleted configuration store."
+            },
+            "properties": null
+          }
+        ],
+        "nextLink": null
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores?api-version=2020-06-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "restler/8.5.0"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "807",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 20:55:45 GMT",
+        "Expires": "-1",
+        "Link": "\u003C/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores?api-version=2020-06-01\u0026$skipToken=configstor02b68495a4\u003E; rel=\u0022next\u0022",
+        "Pragma": "no-cache",
+        "Server": "nginx/1.17.10",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "b05848df-c964-41c8-a505-aada41a2dcbd",
+        "x-ms-ratelimit-remaining-subscription-reads": "11998",
+        "x-ms-request-id": "fdd9bd11-09ad-448d-adcc-59821fc1a47e",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205546Z:b05848df-c964-41c8-a505-aada41a2dcbd"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "type": "Microsoft.AppConfiguration/configurationStores",
+            "location": "westus2",
+            "properties": {
+              "provisioningState": "Succeeded",
+              "creationDate": "2022-04-28T19:41:55\u002B00:00",
+              "endpoint": "https://configstor02b68495a4.azconfig.io",
+              "encryption": {
+                "keyVaultProperties": null
+              },
+              "privateEndpointConnections": null
+            },
+            "sku": {
+              "name": "standard"
+            },
+            "id": "/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor02b68495a4",
+            "name": "configstor02b68495a4",
+            "tags": {
+              "myTag": "myTagValue"
+            }
+          }
+        ],
+        "nextLink": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores?api-version=2020-06-01\u0026$skipToken=configstor02b68495a4"
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstorb7d424b5d3?api-version=2020-06-01",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Authorization": "Sanitized",
+        "Content-Length": "131",
+        "Content-Type": "application/json",
+        "User-Agent": "restler/8.5.0"
+      },
+      "RequestBody": {
+        "sku": {
+          "name": "Standard"
+        },
+        "location": "westus2",
+        "tags": {
+          "myTag": "myTagValue"
+        }
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/providers/Microsoft.AppConfiguration/locations/westus2/operationsStatus/I8X_ffdBk2AOrPwhkHZ03p3WPF9yF8mhLsmcp0bnitY?api-version=2020-06-01",
+        "Cache-Control": "no-cache",
+        "Content-Length": "501",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 20:55:47 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Retry-After": "10",
+        "Server": "nginx/1.17.10",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "9039a40c-790d-4034-904a-c806c2bf2332",
+        "x-ms-ratelimit-remaining-subscription-writes": "1199",
+        "x-ms-request-id": "09a6d2e2-7003-4d4f-abc2-7f339df98918",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205548Z:9039a40c-790d-4034-904a-c806c2bf2332"
+      },
+      "ResponseBody": {
+        "type": "Microsoft.AppConfiguration/configurationStores",
+        "location": "westus2",
+        "properties": {
+          "provisioningState": "Creating",
+          "creationDate": "2022-04-29T20:55:47.8483832\u002B00:00",
+          "endpoint": null,
+          "encryption": null,
+          "privateEndpointConnections": null
+        },
+        "sku": {
+          "name": "Standard"
+        },
+        "id": "/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstorb7d424b5d3",
+        "name": "configstorb7d424b5d3",
+        "tags": {
+          "myTag": "myTagValue"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/providers/Microsoft.AppConfiguration/configurationStores?api-version=2020-06-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "restler/8.5.0"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1578",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 20:55:47 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "9270b961-82fa-4ea5-8688-a19f02daf728",
+        "x-ms-original-request-ids": [
+          "1f569d9d-9d2f-48e4-b124-34d81756d2dd",
+          "69b9b38b-ae9d-4cab-8943-6b8f077ae0c3"
+        ],
+        "x-ms-ratelimit-remaining-subscription-reads": "11997",
+        "x-ms-request-id": "9270b961-82fa-4ea5-8688-a19f02daf728",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205548Z:9270b961-82fa-4ea5-8688-a19f02daf728"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "type": "Microsoft.AppConfiguration/configurationStores",
+            "location": "westus2",
+            "properties": {
+              "provisioningState": "Succeeded",
+              "creationDate": "2022-04-28T19:41:55\u002B00:00",
+              "endpoint": "https://configstor02b68495a4.azconfig.io",
+              "encryption": {
+                "keyVaultProperties": null
+              },
+              "privateEndpointConnections": null
+            },
+            "sku": {
+              "name": "standard"
+            },
+            "id": "/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor02b68495a4",
+            "name": "configstor02b68495a4",
+            "tags": {
+              "myTag": "myTagValue"
+            }
+          },
+          {
+            "type": "Microsoft.AppConfiguration/configurationStores",
+            "location": "westus3",
+            "properties": {
+              "provisioningState": "Succeeded",
+              "creationDate": "2022-04-28T04:57:25\u002B00:00",
+              "endpoint": "https://restlerfuzzconfig1.azconfig.io",
+              "encryption": {
+                "keyVaultProperties": null
+              },
+              "privateEndpointConnections": null
+            },
+            "sku": {
+              "name": "standard"
+            },
+            "id": "/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-marinapo-save/providers/Microsoft.AppConfiguration/configurationStores/restlerfuzzconfig1",
+            "name": "restlerfuzzconfig1",
+            "tags": {}
+          }
+        ],
+        "nextLink": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/providers/Microsoft.AppConfiguration/configurationStores?api-version=2020-06-01\u0026%24skiptoken=1Y9BasMwFETvIkJXkSVLrpwYQiklu3bllK4l5SsRriWhL4fikLvXJV30Cl0OM2%2fgXUmAr%2fLqw4Cku5KPfX947wXpyLmUhB1jow76BCOEUul5ylDZODKcDNrsU%2fExIGtFY5S0nMrWCNrII9Atd4oqqVqja%2bOUFSzlePFHyMjevM0RoyvVc0ovMTh%2fmrL%2buWL2b%2bpLzIBPOnl6Wbil3wkuOOWK8vphhYNPhzhA2N0pXOZcGLVpto%2b6IetfF%2fm%2fXBbj8gnZTfN816rJ7fYN"
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstore8a415f9ac?api-version=2020-06-01",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Authorization": "Sanitized",
+        "Content-Length": "131",
+        "Content-Type": "application/json",
+        "User-Agent": "restler/8.5.0"
+      },
+      "RequestBody": {
+        "sku": {
+          "name": "Standard"
+        },
+        "location": "westus2",
+        "tags": {
+          "myTag": "myTagValue"
+        }
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/providers/Microsoft.AppConfiguration/locations/westus2/operationsStatus/jTv7QaWc4ZtB28llRsxf2bV5sUXm4B6c2MLp8h1NEB4?api-version=2020-06-01",
+        "Cache-Control": "no-cache",
+        "Content-Length": "501",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 20:55:49 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Retry-After": "10",
+        "Server": "nginx/1.17.10",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "2f048eda-77de-4ddc-bd17-ee43aaa498ba",
+        "x-ms-ratelimit-remaining-subscription-writes": "1198",
+        "x-ms-request-id": "1e266b15-9095-4776-9c0d-72ea4d362112",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205550Z:2f048eda-77de-4ddc-bd17-ee43aaa498ba"
+      },
+      "ResponseBody": {
+        "type": "Microsoft.AppConfiguration/configurationStores",
+        "location": "westus2",
+        "properties": {
+          "provisioningState": "Creating",
+          "creationDate": "2022-04-29T20:55:49.7565559\u002B00:00",
+          "endpoint": null,
+          "encryption": null,
+          "privateEndpointConnections": null
+        },
+        "sku": {
+          "name": "Standard"
+        },
+        "id": "/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstore8a415f9ac",
+        "name": "configstore8a415f9ac",
+        "tags": {
+          "myTag": "myTagValue"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstore8a415f9ac/privateLinkResources/fuzzstring?api-version=2020-06-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "restler/8.5.0"
+      },
+      "RequestBody": null,
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "96",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 20:55:49 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": "nginx/1.17.10",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "62ad4315-99a7-426c-94c1-7decdab557a5",
+        "x-ms-ratelimit-remaining-subscription-reads": "11996",
+        "x-ms-request-id": "cee38af8-e1f2-4105-a2ca-9733e69c24e0",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205550Z:62ad4315-99a7-426c-94c1-7decdab557a5"
+      },
+      "ResponseBody": {
+        "code": "EntityNotFound",
+        "message": "The resource with id \u0027configstore8a415f9ac\u0027 was not found."
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor2a4e575363?api-version=2020-06-01",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Authorization": "Sanitized",
+        "Content-Length": "131",
+        "Content-Type": "application/json",
+        "User-Agent": "restler/8.5.0"
+      },
+      "RequestBody": {
+        "sku": {
+          "name": "Standard"
+        },
+        "location": "westus2",
+        "tags": {
+          "myTag": "myTagValue"
+        }
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/providers/Microsoft.AppConfiguration/locations/westus2/operationsStatus/bswOPm2e5AKKkce3_DR8iIToHHrjS6nKIcAamHYRUE8?api-version=2020-06-01",
+        "Cache-Control": "no-cache",
+        "Content-Length": "501",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 20:55:50 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Retry-After": "10",
+        "Server": "nginx/1.17.10",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "41ce4a3e-34ca-4203-bf23-0a5f2ba24381",
+        "x-ms-ratelimit-remaining-subscription-writes": "1197",
+        "x-ms-request-id": "cc2a1827-700b-4618-9f11-882204ca8799",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205551Z:41ce4a3e-34ca-4203-bf23-0a5f2ba24381"
+      },
+      "ResponseBody": {
+        "type": "Microsoft.AppConfiguration/configurationStores",
+        "location": "westus2",
+        "properties": {
+          "provisioningState": "Creating",
+          "creationDate": "2022-04-29T20:55:51.4207643\u002B00:00",
+          "endpoint": null,
+          "encryption": null,
+          "privateEndpointConnections": null
+        },
+        "sku": {
+          "name": "Standard"
+        },
+        "id": "/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor2a4e575363",
+        "name": "configstor2a4e575363",
+        "tags": {
+          "myTag": "myTagValue"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor2a4e575363?api-version=2020-06-01",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Authorization": "Sanitized",
+        "Content-Length": "106",
+        "Content-Type": "application/json",
+        "User-Agent": "restler/8.5.0"
+      },
+      "RequestBody": [
+        "{\n",
+        "    \u0022sku\u0022:\n",
+        "        {\n",
+        "            \u0022name\u0022:\u0022Standard\u0022\n",
+        "        }\n",
+        "    ,\n",
+        "    \u0022tags\u0022:{\u0027myTag\u0027: \u0027myTagValue\u0027}}\r\n"
+      ],
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "555",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 20:55:51 GMT",
+        "ETag": "W/\u00222f0039d1-0000-0800-0000-626c50d80000\u0022",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": "nginx/1.17.10",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "c0d50eca-ab5b-4694-a190-feb309ae9e78",
+        "x-ms-ratelimit-remaining-subscription-writes": "1196",
+        "x-ms-request-id": "f5a59a59-b2fe-416c-b9c1-5b3a8a037a7b",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205552Z:c0d50eca-ab5b-4694-a190-feb309ae9e78"
+      },
+      "ResponseBody": {
+        "type": "Microsoft.AppConfiguration/configurationStores",
+        "location": "westus2",
+        "properties": {
+          "provisioningState": "Succeeded",
+          "creationDate": "2022-04-29T20:55:51\u002B00:00",
+          "endpoint": "https://configstor2a4e575363.azconfig.io",
+          "encryption": {
+            "keyVaultProperties": null
+          },
+          "privateEndpointConnections": null
+        },
+        "sku": {
+          "name": "standard"
+        },
+        "id": "/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor2a4e575363",
+        "name": "configstor2a4e575363",
+        "tags": {
+          "myTag": "myTagValue"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor81321f77cb?api-version=2020-06-01",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Authorization": "Sanitized",
+        "Content-Length": "131",
+        "Content-Type": "application/json",
+        "User-Agent": "restler/8.5.0"
+      },
+      "RequestBody": {
+        "sku": {
+          "name": "Standard"
+        },
+        "location": "westus2",
+        "tags": {
+          "myTag": "myTagValue"
+        }
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/providers/Microsoft.AppConfiguration/locations/westus2/operationsStatus/qsqQCutQ5p4mTsAkS1C9zASktuaWBCV3xG0TpQ6lFvw?api-version=2020-06-01",
+        "Cache-Control": "no-cache",
+        "Content-Length": "501",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 20:55:52 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Retry-After": "10",
+        "Server": "nginx/1.17.10",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "b2f4e87f-67d5-456f-9e67-bb517e63ac1c",
+        "x-ms-ratelimit-remaining-subscription-writes": "1195",
+        "x-ms-request-id": "8e6a6a2b-05bd-4c1b-b8eb-712ea59d3ec0",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205553Z:b2f4e87f-67d5-456f-9e67-bb517e63ac1c"
+      },
+      "ResponseBody": {
+        "type": "Microsoft.AppConfiguration/configurationStores",
+        "location": "westus2",
+        "properties": {
+          "provisioningState": "Creating",
+          "creationDate": "2022-04-29T20:55:53.4353739\u002B00:00",
+          "endpoint": null,
+          "encryption": null,
+          "privateEndpointConnections": null
+        },
+        "sku": {
+          "name": "Standard"
+        },
+        "id": "/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor81321f77cb",
+        "name": "configstor81321f77cb",
+        "tags": {
+          "myTag": "myTagValue"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor81321f77cb/listKeyValue?api-version=2020-06-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Authorization": "Sanitized",
+        "Content-Length": "47",
+        "Content-Type": "application/json",
+        "User-Agent": "restler/8.5.0"
+      },
+      "RequestBody": {
+        "key": "MaxRequests",
+        "label": "dev"
+      },
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "96",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 20:55:53 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": "nginx/1.17.10",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "dde73102-0e52-446c-9e95-9928f5010049",
+        "x-ms-ratelimit-remaining-subscription-writes": "1199",
+        "x-ms-request-id": "81eaa842-1b51-436b-9413-2a4e5cdf5942",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205554Z:dde73102-0e52-446c-9e95-9928f5010049"
+      },
+      "ResponseBody": {
+        "code": "EntityNotFound",
+        "message": "The resource with id \u0027configstor81321f77cb\u0027 was not found."
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor09eddf4df1?api-version=2020-06-01",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Authorization": "Sanitized",
+        "Content-Length": "131",
+        "Content-Type": "application/json",
+        "User-Agent": "restler/8.5.0"
+      },
+      "RequestBody": {
+        "sku": {
+          "name": "Standard"
+        },
+        "location": "westus2",
+        "tags": {
+          "myTag": "myTagValue"
+        }
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/providers/Microsoft.AppConfiguration/locations/westus2/operationsStatus/n_yigCj6uVMbkT45w8t60g8UYBUW-xS9Ln2Vwh5xCmM?api-version=2020-06-01",
+        "Cache-Control": "no-cache",
+        "Content-Length": "500",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 20:55:54 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Retry-After": "10",
+        "Server": "nginx/1.17.10",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "990fa60f-5f22-45e2-82b9-a5fcef688d10",
+        "x-ms-ratelimit-remaining-subscription-writes": "1194",
+        "x-ms-request-id": "acd69534-92fb-46be-9f93-ee91cb263e9e",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205555Z:990fa60f-5f22-45e2-82b9-a5fcef688d10"
+      },
+      "ResponseBody": {
+        "type": "Microsoft.AppConfiguration/configurationStores",
+        "location": "westus2",
+        "properties": {
+          "provisioningState": "Creating",
+          "creationDate": "2022-04-29T20:55:54.961664\u002B00:00",
+          "endpoint": null,
+          "encryption": null,
+          "privateEndpointConnections": null
+        },
+        "sku": {
+          "name": "Standard"
+        },
+        "id": "/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor09eddf4df1",
+        "name": "configstor09eddf4df1",
+        "tags": {
+          "myTag": "myTagValue"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor09eddf4df1?api-version=2020-06-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "restler/8.5.0"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "555",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 20:55:54 GMT",
+        "ETag": "W/\u00221a0007ec-0000-0800-0000-626c50db0000\u0022",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": "nginx/1.17.10",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "2dd82e4c-0936-48f5-9f05-375e9db074ce",
+        "x-ms-ratelimit-remaining-subscription-reads": "11995",
+        "x-ms-request-id": "04e9b920-61ca-4735-a26c-a82ab3373e74",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205555Z:2dd82e4c-0936-48f5-9f05-375e9db074ce"
+      },
+      "ResponseBody": {
+        "type": "Microsoft.AppConfiguration/configurationStores",
+        "location": "westus2",
+        "properties": {
+          "provisioningState": "Succeeded",
+          "creationDate": "2022-04-29T20:55:55\u002B00:00",
+          "endpoint": "https://configstor09eddf4df1.azconfig.io",
+          "encryption": {
+            "keyVaultProperties": null
+          },
+          "privateEndpointConnections": null
+        },
+        "sku": {
+          "name": "standard"
+        },
+        "id": "/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor09eddf4df1",
+        "name": "configstor09eddf4df1",
+        "tags": {
+          "myTag": "myTagValue"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstora915e73a3c?api-version=2020-06-01",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Authorization": "Sanitized",
+        "Content-Length": "131",
+        "Content-Type": "application/json",
+        "User-Agent": "restler/8.5.0"
+      },
+      "RequestBody": {
+        "sku": {
+          "name": "Standard"
+        },
+        "location": "westus2",
+        "tags": {
+          "myTag": "myTagValue"
+        }
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/providers/Microsoft.AppConfiguration/locations/westus2/operationsStatus/2DeEv7QCFez9FwaIJSMEuFzoMcguMGM7xJf5rVcTalk?api-version=2020-06-01",
+        "Cache-Control": "no-cache",
+        "Content-Length": "501",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 20:55:55 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Retry-After": "10",
+        "Server": "nginx/1.17.10",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "07ea5c57-c7af-4a24-a76a-f2480c170f01",
+        "x-ms-ratelimit-remaining-subscription-writes": "1193",
+        "x-ms-request-id": "a2f9ed79-78fe-4a7b-b492-4c47eae6028b",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205556Z:07ea5c57-c7af-4a24-a76a-f2480c170f01"
+      },
+      "ResponseBody": {
+        "type": "Microsoft.AppConfiguration/configurationStores",
+        "location": "westus2",
+        "properties": {
+          "provisioningState": "Creating",
+          "creationDate": "2022-04-29T20:55:56.4626858\u002B00:00",
+          "endpoint": null,
+          "encryption": null,
+          "privateEndpointConnections": null
+        },
+        "sku": {
+          "name": "Standard"
+        },
+        "id": "/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstora915e73a3c",
+        "name": "configstora915e73a3c",
+        "tags": {
+          "myTag": "myTagValue"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstora915e73a3c/privateLinkResources?api-version=2020-06-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "restler/8.5.0"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "485",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 20:55:56 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": "nginx/1.17.10",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "b6779210-e38c-412a-8b90-1a53c4726c69",
+        "x-ms-ratelimit-remaining-subscription-reads": "11994",
+        "x-ms-request-id": "c2e663df-1488-46c3-90dc-ec27cfd09edc",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205557Z:b6779210-e38c-412a-8b90-1a53c4726c69"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "id": "/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstora915e73a3c/privateLinkResources/configurationStores",
+            "name": "configurationStores",
+            "type": "Microsoft.AppConfiguration/configurationStores/privateLinkResources",
+            "properties": {
+              "groupId": "configurationStores",
+              "requiredMembers": [
+                "configurationStores"
+              ],
+              "requiredZoneNames": [
+                "privatelink.azconfig.io"
+              ]
+            }
+          }
+        ],
+        "nextLink": null
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor5891fe32da?api-version=2020-06-01",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Authorization": "Sanitized",
+        "Content-Length": "131",
+        "Content-Type": "application/json",
+        "User-Agent": "restler/8.5.0"
+      },
+      "RequestBody": {
+        "sku": {
+          "name": "Standard"
+        },
+        "location": "westus2",
+        "tags": {
+          "myTag": "myTagValue"
+        }
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/providers/Microsoft.AppConfiguration/locations/westus2/operationsStatus/2Dfvtb3s5vUPGGSUrSikSXyU0WURSgRifhH7oZ-sn9c?api-version=2020-06-01",
+        "Cache-Control": "no-cache",
+        "Content-Length": "501",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 20:55:57 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Retry-After": "10",
+        "Server": "nginx/1.17.10",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "d1bf2329-18ca-4b09-9b42-15f013df4a1d",
+        "x-ms-ratelimit-remaining-subscription-writes": "1192",
+        "x-ms-request-id": "315dd5ec-2c4e-40d5-a119-8eca12e66f66",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205558Z:d1bf2329-18ca-4b09-9b42-15f013df4a1d"
+      },
+      "ResponseBody": {
+        "type": "Microsoft.AppConfiguration/configurationStores",
+        "location": "westus2",
+        "properties": {
+          "provisioningState": "Creating",
+          "creationDate": "2022-04-29T20:55:57.9012945\u002B00:00",
+          "endpoint": null,
+          "encryption": null,
+          "privateEndpointConnections": null
+        },
+        "sku": {
+          "name": "Standard"
+        },
+        "id": "/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor5891fe32da",
+        "name": "configstor5891fe32da",
+        "tags": {
+          "myTag": "myTagValue"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor5891fe32da/privateEndpointConnections?api-version=2020-06-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "restler/8.5.0"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "28",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 20:55:57 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": "nginx/1.17.10",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "4e9c59f2-971d-4273-9423-3e379d2bf2ac",
+        "x-ms-ratelimit-remaining-subscription-reads": "11993",
+        "x-ms-request-id": "63e52469-97cb-40aa-abc5-c64c753d6db1",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205558Z:4e9c59f2-971d-4273-9423-3e379d2bf2ac"
+      },
+      "ResponseBody": {
+        "value": [],
+        "nextLink": null
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor0d24fb8d36?api-version=2020-06-01",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Authorization": "Sanitized",
+        "Content-Length": "131",
+        "Content-Type": "application/json",
+        "User-Agent": "restler/8.5.0"
+      },
+      "RequestBody": {
+        "sku": {
+          "name": "Standard"
+        },
+        "location": "westus2",
+        "tags": {
+          "myTag": "myTagValue"
+        }
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/providers/Microsoft.AppConfiguration/locations/westus2/operationsStatus/gQN0zcgzGvoUAmkg2l1IwBwjrIq_UXZ8gRlPoCEostg?api-version=2020-06-01",
+        "Cache-Control": "no-cache",
+        "Content-Length": "501",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 20:55:59 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Retry-After": "10",
+        "Server": "nginx/1.17.10",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "d3fb4e6a-c685-4d28-b1b6-f14d34f5a76e",
+        "x-ms-ratelimit-remaining-subscription-writes": "1191",
+        "x-ms-request-id": "c82d9a83-28d1-4004-9af7-e84d07eafafb",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205559Z:d3fb4e6a-c685-4d28-b1b6-f14d34f5a76e"
+      },
+      "ResponseBody": {
+        "type": "Microsoft.AppConfiguration/configurationStores",
+        "location": "westus2",
+        "properties": {
+          "provisioningState": "Creating",
+          "creationDate": "2022-04-29T20:55:59.3720371\u002B00:00",
+          "endpoint": null,
+          "encryption": null,
+          "privateEndpointConnections": null
+        },
+        "sku": {
+          "name": "Standard"
+        },
+        "id": "/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor0d24fb8d36",
+        "name": "configstor0d24fb8d36",
+        "tags": {
+          "myTag": "myTagValue"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor0d24fb8d36/ListKeys?api-version=2020-06-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "restler/8.5.0"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1373",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 20:56:00 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": "nginx/1.17.10",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "f5b5f45b-afbc-43f5-b077-28954147313a",
+        "x-ms-ratelimit-remaining-subscription-writes": "1198",
+        "x-ms-request-id": "2bf21d87-3528-4288-9018-1ded228d52b4",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205600Z:f5b5f45b-afbc-43f5-b077-28954147313a"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "id": "J9Rl-l2-s0:scET/VsNqzYBzsudzOzp",
+            "name": "Primary",
+            "value": "GVK2Yv2qowFzQ8I57ptUf\u002BNDUuHreZ\u002BmTV7baQ1cfII=",
+            "connectionString": "Endpoint=https://configstor0d24fb8d36.azconfig.io;Id=J9Rl-l2-s0:scET/VsNqzYBzsudzOzp;Secret=GVK2Yv2qowFzQ8I57ptUf\u002BNDUuHreZ\u002BmTV7baQ1cfII=",
+            "lastModified": "2022-04-29T20:55:59\u002B00:00",
+            "readOnly": false
+          },
+          {
+            "id": "wdBP-l2-s0:SYOGOim8fbdiWQg0IV2D",
+            "name": "Secondary",
+            "value": "M\u002BnqS6HeJQf9o4b\u002BMcCojCB5purRchtcTCYZjJFye0k=",
+            "connectionString": "Endpoint=https://configstor0d24fb8d36.azconfig.io;Id=wdBP-l2-s0:SYOGOim8fbdiWQg0IV2D;Secret=M\u002BnqS6HeJQf9o4b\u002BMcCojCB5purRchtcTCYZjJFye0k=",
+            "lastModified": "2022-04-29T20:55:59\u002B00:00",
+            "readOnly": false
+          },
+          {
+            "id": "wNrm-l2-s0:bR0taxPbhk1ag\u002B15Vt8s",
+            "name": "Primary Read Only",
+            "value": "E\u002BNfqk0CvLSlZ7TfeNFA6cieq/WiYY5n1GXw9dk\u002BnkY=",
+            "connectionString": "Endpoint=https://configstor0d24fb8d36.azconfig.io;Id=wNrm-l2-s0:bR0taxPbhk1ag\u002B15Vt8s;Secret=E\u002BNfqk0CvLSlZ7TfeNFA6cieq/WiYY5n1GXw9dk\u002BnkY=",
+            "lastModified": "2022-04-29T20:55:59\u002B00:00",
+            "readOnly": true
+          },
+          {
+            "id": "gQ8E-l2-s0:i2/fWlyFLfV\u002BtnCEGMmw",
+            "name": "Secondary Read Only",
+            "value": "KjfPnG0cXFNglwPfUGR/K2gHrliT5pnYzMYcL1C\u002BsME=",
+            "connectionString": "Endpoint=https://configstor0d24fb8d36.azconfig.io;Id=gQ8E-l2-s0:i2/fWlyFLfV\u002BtnCEGMmw;Secret=KjfPnG0cXFNglwPfUGR/K2gHrliT5pnYzMYcL1C\u002BsME=",
+            "lastModified": "2022-04-29T20:55:59\u002B00:00",
+            "readOnly": true
+          }
+        ],
+        "nextLink": null
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor1f5652f655?api-version=2020-06-01",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Authorization": "Sanitized",
+        "Content-Length": "131",
+        "Content-Type": "application/json",
+        "User-Agent": "restler/8.5.0"
+      },
+      "RequestBody": {
+        "sku": {
+          "name": "Standard"
+        },
+        "location": "westus2",
+        "tags": {
+          "myTag": "myTagValue"
+        }
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/providers/Microsoft.AppConfiguration/locations/westus2/operationsStatus/b8AmWmX79LYYwUbF0sYGhw9lR8gvDacgmRQTM0TP-24?api-version=2020-06-01",
+        "Cache-Control": "no-cache",
+        "Content-Length": "501",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 20:56:01 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Retry-After": "10",
+        "Server": "nginx/1.17.10",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "e881504e-ee78-4c42-8948-e3c53e3958e5",
+        "x-ms-ratelimit-remaining-subscription-writes": "1190",
+        "x-ms-request-id": "568baa36-b062-4aef-9d3e-8b361c79edc6",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205601Z:e881504e-ee78-4c42-8948-e3c53e3958e5"
+      },
+      "ResponseBody": {
+        "type": "Microsoft.AppConfiguration/configurationStores",
+        "location": "westus2",
+        "properties": {
+          "provisioningState": "Creating",
+          "creationDate": "2022-04-29T20:56:00.9511642\u002B00:00",
+          "endpoint": null,
+          "encryption": null,
+          "privateEndpointConnections": null
+        },
+        "sku": {
+          "name": "Standard"
+        },
+        "id": "/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor1f5652f655",
+        "name": "configstor1f5652f655",
+        "tags": {
+          "myTag": "myTagValue"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor1f5652f655/RegenerateKey?api-version=2020-06-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Authorization": "Sanitized",
+        "Content-Length": "32",
+        "Content-Type": "application/json",
+        "User-Agent": "restler/8.5.0"
+      },
+      "RequestBody": {
+        "id": "439AD01B4BE67DB1"
+      },
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "92",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 20:56:01 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": "nginx/1.17.10",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "5085bee5-3030-4463-8eae-6771cc2b3920",
+        "x-ms-ratelimit-remaining-subscription-writes": "1197",
+        "x-ms-request-id": "7708120c-ebdd-4a2b-8a6d-3cd9cb813ffd",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205601Z:5085bee5-3030-4463-8eae-6771cc2b3920"
+      },
+      "ResponseBody": {
+        "code": "EntityNotFound",
+        "message": "The resource with id \u0027439AD01B4BE67DB1\u0027 was not found."
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor7c9283d92d?api-version=2020-06-01",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Authorization": "Sanitized",
+        "Content-Length": "131",
+        "Content-Type": "application/json",
+        "User-Agent": "restler/8.5.0"
+      },
+      "RequestBody": {
+        "sku": {
+          "name": "Standard"
+        },
+        "location": "westus2",
+        "tags": {
+          "myTag": "myTagValue"
+        }
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/providers/Microsoft.AppConfiguration/locations/westus2/operationsStatus/d_LmSknIUqp1HVaLceYZhYOYKk1A8czE-0msBCgwask?api-version=2020-06-01",
+        "Cache-Control": "no-cache",
+        "Content-Length": "501",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 20:56:02 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Retry-After": "10",
+        "Server": "nginx/1.17.10",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "410cdf40-fdfe-435e-a178-9188ad0e9bbb",
+        "x-ms-ratelimit-remaining-subscription-writes": "1189",
+        "x-ms-request-id": "513b65b1-b476-4902-bba5-4098191d2133",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205602Z:410cdf40-fdfe-435e-a178-9188ad0e9bbb"
+      },
+      "ResponseBody": {
+        "type": "Microsoft.AppConfiguration/configurationStores",
+        "location": "westus2",
+        "properties": {
+          "provisioningState": "Creating",
+          "creationDate": "2022-04-29T20:56:02.5454621\u002B00:00",
+          "endpoint": null,
+          "encryption": null,
+          "privateEndpointConnections": null
+        },
+        "sku": {
+          "name": "Standard"
+        },
+        "id": "/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor7c9283d92d",
+        "name": "configstor7c9283d92d",
+        "tags": {
+          "myTag": "myTagValue"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor7c9283d92d?api-version=2020-06-01",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "restler/8.5.0"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "0",
+        "Date": "Fri, 29 Apr 2022 20:56:05 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": "nginx/1.17.10",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "b3db077f-fc37-49a5-b545-3d6a6396745f",
+        "x-ms-ratelimit-remaining-subscription-deletes": "14999",
+        "x-ms-request-id": "3e4063eb-9f0c-4e45-803a-22f9537027ee",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205605Z:b3db077f-fc37-49a5-b545-3d6a6396745f"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor945c6d872c?api-version=2020-06-01",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Authorization": "Sanitized",
+        "Content-Length": "131",
+        "Content-Type": "application/json",
+        "User-Agent": "restler/8.5.0"
+      },
+      "RequestBody": {
+        "sku": {
+          "name": "Standard"
+        },
+        "location": "westus2",
+        "tags": {
+          "myTag": "myTagValue"
+        }
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/providers/Microsoft.AppConfiguration/locations/westus2/operationsStatus/yD-_n_dEgOZqkNBfzGjCsjvE11k-wzGcLY1igl5RunU?api-version=2020-06-01",
+        "Cache-Control": "no-cache",
+        "Content-Length": "501",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 20:56:06 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Retry-After": "10",
+        "Server": "nginx/1.17.10",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "61c2ecd5-8a13-4210-be59-68801de4b43d",
+        "x-ms-ratelimit-remaining-subscription-writes": "1188",
+        "x-ms-request-id": "1825a9e6-c2f7-4d0b-9c2b-0b1c57a1d23f",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205606Z:61c2ecd5-8a13-4210-be59-68801de4b43d"
+      },
+      "ResponseBody": {
+        "type": "Microsoft.AppConfiguration/configurationStores",
+        "location": "westus2",
+        "properties": {
+          "provisioningState": "Creating",
+          "creationDate": "2022-04-29T20:56:06.3112785\u002B00:00",
+          "endpoint": null,
+          "encryption": null,
+          "privateEndpointConnections": null
+        },
+        "sku": {
+          "name": "Standard"
+        },
+        "id": "/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor945c6d872c",
+        "name": "configstor945c6d872c",
+        "tags": {
+          "myTag": "myTagValue"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor945c6d872c/privateEndpointConnections/privateendb07225b975?api-version=2020-06-01",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Authorization": "Sanitized",
+        "Content-Length": "223",
+        "Content-Type": "application/json",
+        "User-Agent": "restler/8.5.0"
+      },
+      "RequestBody": {
+        "properties": {
+          "privateLinkServiceConnectionState": {
+            "status": "Approved",
+            "description": "Auto-Approved"
+          }
+        }
+      },
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "96",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 29 Apr 2022 20:56:06 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": "nginx/1.17.10",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "f1dbfe2c-73bc-430c-857f-aafc8b4d9ab3",
+        "x-ms-ratelimit-remaining-subscription-writes": "1187",
+        "x-ms-request-id": "d49021bd-c29a-43dc-8ead-4cc18db19713",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205607Z:f1dbfe2c-73bc-430c-857f-aafc8b4d9ab3"
+      },
+      "ResponseBody": {
+        "code": "EntityNotFound",
+        "message": "The resource with id \u0027privateendb07225b975\u0027 was not found."
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor945c6d872c?api-version=2020-06-01",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "restler/8.5.0"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "0",
+        "Date": "Fri, 29 Apr 2022 20:56:08 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": "nginx/1.17.10",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "7fefe8d1-e0a7-4369-92f5-f79d716ebdd6",
+        "x-ms-ratelimit-remaining-subscription-deletes": "14998",
+        "x-ms-request-id": "73578bcf-8077-4d3e-a171-3cd5e2042cc3",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205608Z:7fefe8d1-e0a7-4369-92f5-f79d716ebdd6"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor7c9283d92d?api-version=2020-06-01",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "restler/8.5.0"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Date": "Fri, 29 Apr 2022 20:56:08 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "598a9f54-caba-4a90-adc0-f8ae3fdef27f",
+        "x-ms-ratelimit-remaining-subscription-deletes": "14997",
+        "x-ms-request-id": "598a9f54-caba-4a90-adc0-f8ae3fdef27f",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205608Z:598a9f54-caba-4a90-adc0-f8ae3fdef27f"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor1f5652f655?api-version=2020-06-01",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "restler/8.5.0"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "0",
+        "Date": "Fri, 29 Apr 2022 20:56:10 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": "nginx/1.17.10",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "1bd22a8d-18d2-4737-add9-355fb54395ee",
+        "x-ms-ratelimit-remaining-subscription-deletes": "14996",
+        "x-ms-request-id": "3e29d36d-4a76-4bd3-9915-ca439ec64b9a",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205610Z:1bd22a8d-18d2-4737-add9-355fb54395ee"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor0d24fb8d36?api-version=2020-06-01",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "restler/8.5.0"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "0",
+        "Date": "Fri, 29 Apr 2022 20:56:11 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": "nginx/1.17.10",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "f3d90e81-a169-4a13-8a31-e77b7788e931",
+        "x-ms-ratelimit-remaining-subscription-deletes": "14995",
+        "x-ms-request-id": "ae581f4d-19db-4958-831d-862768c44541",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205611Z:f3d90e81-a169-4a13-8a31-e77b7788e931"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor5891fe32da?api-version=2020-06-01",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "restler/8.5.0"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "0",
+        "Date": "Fri, 29 Apr 2022 20:56:12 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": "nginx/1.17.10",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "e833e640-a93c-4695-8321-b672707823cb",
+        "x-ms-ratelimit-remaining-subscription-deletes": "14994",
+        "x-ms-request-id": "2e84fa74-ca40-4ac0-b946-75812a549aed",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205613Z:e833e640-a93c-4695-8321-b672707823cb"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstora915e73a3c?api-version=2020-06-01",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "restler/8.5.0"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "0",
+        "Date": "Fri, 29 Apr 2022 20:56:14 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": "nginx/1.17.10",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "1985e878-de66-4ab9-a9d7-3ab117dc92f6",
+        "x-ms-ratelimit-remaining-subscription-deletes": "14993",
+        "x-ms-request-id": "920b29f6-cc71-4c5d-a0e7-d0027395402d",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205614Z:1985e878-de66-4ab9-a9d7-3ab117dc92f6"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor09eddf4df1?api-version=2020-06-01",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "restler/8.5.0"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "0",
+        "Date": "Fri, 29 Apr 2022 20:56:15 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": "nginx/1.17.10",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "3649d052-1110-466e-86ce-bc504395d11e",
+        "x-ms-ratelimit-remaining-subscription-deletes": "14992",
+        "x-ms-request-id": "67f53a6f-dc49-4f0d-8eb5-f7872b74e58a",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205615Z:3649d052-1110-466e-86ce-bc504395d11e"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor81321f77cb?api-version=2020-06-01",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "restler/8.5.0"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "0",
+        "Date": "Fri, 29 Apr 2022 20:56:16 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": "nginx/1.17.10",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "1e413fb8-0e4b-4248-bc6d-f00f9b89f983",
+        "x-ms-ratelimit-remaining-subscription-deletes": "14991",
+        "x-ms-request-id": "73c54929-453e-4f21-94a0-a8dcf13c7148",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205616Z:1e413fb8-0e4b-4248-bc6d-f00f9b89f983"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor2a4e575363?api-version=2020-06-01",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "restler/8.5.0"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "0",
+        "Date": "Fri, 29 Apr 2022 20:56:17 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": "nginx/1.17.10",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "475daa00-17a5-4791-aa37-329d57198f2e",
+        "x-ms-ratelimit-remaining-subscription-deletes": "14990",
+        "x-ms-request-id": "5c831748-6d6a-4e0d-96cd-8921d9cbae1f",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205617Z:475daa00-17a5-4791-aa37-329d57198f2e"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstore8a415f9ac?api-version=2020-06-01",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "restler/8.5.0"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "0",
+        "Date": "Fri, 29 Apr 2022 20:56:18 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": "nginx/1.17.10",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "35954fd4-4307-4a6b-9281-315ae9dea7c7",
+        "x-ms-ratelimit-remaining-subscription-deletes": "14989",
+        "x-ms-request-id": "b90b7e26-155e-4f57-b7a5-e48b8bae80d7",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205619Z:35954fd4-4307-4a6b-9281-315ae9dea7c7"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstorb7d424b5d3?api-version=2020-06-01",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "restler/8.5.0"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "0",
+        "Date": "Fri, 29 Apr 2022 20:56:20 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": "nginx/1.17.10",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "034de11f-4591-4374-ade4-dc3af3ee04a8",
+        "x-ms-ratelimit-remaining-subscription-deletes": "14988",
+        "x-ms-request-id": "5325f40b-4a68-4591-adf7-eb406a63cffa",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205620Z:034de11f-4591-4374-ade4-dc3af3ee04a8"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}

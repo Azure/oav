@@ -1,0 +1,38 @@
+{
+    "liveRequest": {
+        "url": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor1f5652f655/RegenerateKey?api-version=2020-06-01",
+        "headers": {
+            "Accept": "application/json",
+            "Authorization": "Sanitized",
+            "Content-Length": "32",
+            "Content-Type": "application/json",
+            "User-Agent": "restler/8.5.0"
+        },
+        "body": {
+            "id": "439AD01B4BE67DB1"
+        },
+        "method": "POST"
+    },
+    "liveResponse": {
+        "body": {
+            "code": "EntityNotFound",
+            "message": "The resource with id '439AD01B4BE67DB1' was not found."
+        },
+        "statusCode": "404",
+        "headers": {
+            "Cache-Control": "no-cache",
+            "Content-Length": "92",
+            "Content-Type": "application/json; charset=utf-8",
+            "Date": "Fri, 29 Apr 2022 20:56:01 GMT",
+            "Expires": "-1",
+            "Pragma": "no-cache",
+            "Server": "nginx/1.17.10",
+            "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "X-Content-Type-Options": "nosniff",
+            "x-ms-correlation-request-id": "5085bee5-3030-4463-8eae-6771cc2b3920",
+            "x-ms-ratelimit-remaining-subscription-writes": "1197",
+            "x-ms-request-id": "7708120c-ebdd-4a2b-8a6d-3cd9cb813ffd",
+            "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205601Z:5085bee5-3030-4463-8eae-6771cc2b3920"
+        }
+    }
+}

@@ -1,0 +1,54 @@
+{
+    "liveRequest": {
+        "url": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor09eddf4df1?api-version=2020-06-01",
+        "headers": {
+            "Accept": "application/json",
+            "Authorization": "Sanitized",
+            "Content-Length": "0",
+            "User-Agent": "restler/8.5.0"
+        },
+        "body": null,
+        "method": "GET"
+    },
+    "liveResponse": {
+        "body": {
+            "type": "Microsoft.AppConfiguration/configurationStores",
+            "location": "westus2",
+            "properties": {
+                "provisioningState": "Succeeded",
+                "creationDate": "2022-04-29T20:55:55+00:00",
+                "endpoint": "https://configstor09eddf4df1.azconfig.io",
+                "encryption": {
+                    "keyVaultProperties": null
+                },
+                "privateEndpointConnections": null
+            },
+            "sku": {
+                "name": "standard"
+            },
+            "id": "/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor09eddf4df1",
+            "name": "configstor09eddf4df1",
+            "tags": {
+                "myTag": "myTagValue"
+            }
+        },
+        "statusCode": "200",
+        "headers": {
+            "Cache-Control": "no-cache",
+            "Content-Length": "555",
+            "Content-Type": "application/json; charset=utf-8",
+            "Date": "Fri, 29 Apr 2022 20:55:54 GMT",
+            "ETag": "W/\"1a0007ec-0000-0800-0000-626c50db0000\"",
+            "Expires": "-1",
+            "Pragma": "no-cache",
+            "Server": "nginx/1.17.10",
+            "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "Vary": "Accept-Encoding",
+            "X-Content-Type-Options": "nosniff",
+            "x-ms-correlation-request-id": "2dd82e4c-0936-48f5-9f05-375e9db074ce",
+            "x-ms-ratelimit-remaining-subscription-reads": "11995",
+            "x-ms-request-id": "04e9b920-61ca-4735-a26c-a82ab3373e74",
+            "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205555Z:2dd82e4c-0936-48f5-9f05-375e9db074ce"
+        }
+    }
+}

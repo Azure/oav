@@ -1,0 +1,63 @@
+{
+    "liveRequest": {
+        "url": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor2a4e575363?api-version=2020-06-01",
+        "headers": {
+            "Accept": "application/json",
+            "Authorization": "Sanitized",
+            "Content-Length": "106",
+            "Content-Type": "application/json",
+            "User-Agent": "restler/8.5.0"
+        },
+        "body": [
+            "{\n",
+            "    \"sku\":\n",
+            "        {\n",
+            "            \"name\":\"Standard\"\n",
+            "        }\n",
+            "    ,\n",
+            "    \"tags\":{'myTag': 'myTagValue'}}\r\n"
+        ],
+        "method": "PATCH"
+    },
+    "liveResponse": {
+        "body": {
+            "type": "Microsoft.AppConfiguration/configurationStores",
+            "location": "westus2",
+            "properties": {
+                "provisioningState": "Succeeded",
+                "creationDate": "2022-04-29T20:55:51+00:00",
+                "endpoint": "https://configstor2a4e575363.azconfig.io",
+                "encryption": {
+                    "keyVaultProperties": null
+                },
+                "privateEndpointConnections": null
+            },
+            "sku": {
+                "name": "standard"
+            },
+            "id": "/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor2a4e575363",
+            "name": "configstor2a4e575363",
+            "tags": {
+                "myTag": "myTagValue"
+            }
+        },
+        "statusCode": "200",
+        "headers": {
+            "Cache-Control": "no-cache",
+            "Content-Length": "555",
+            "Content-Type": "application/json; charset=utf-8",
+            "Date": "Fri, 29 Apr 2022 20:55:51 GMT",
+            "ETag": "W/\"2f0039d1-0000-0800-0000-626c50d80000\"",
+            "Expires": "-1",
+            "Pragma": "no-cache",
+            "Server": "nginx/1.17.10",
+            "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "Vary": "Accept-Encoding",
+            "X-Content-Type-Options": "nosniff",
+            "x-ms-correlation-request-id": "c0d50eca-ab5b-4694-a190-feb309ae9e78",
+            "x-ms-ratelimit-remaining-subscription-writes": "1196",
+            "x-ms-request-id": "f5a59a59-b2fe-416c-b9c1-5b3a8a037a7b",
+            "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205552Z:c0d50eca-ab5b-4694-a190-feb309ae9e78"
+        }
+    }
+}

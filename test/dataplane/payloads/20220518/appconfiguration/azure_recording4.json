@@ -1,0 +1,79 @@
+{
+    "liveRequest": {
+        "url": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/providers/Microsoft.AppConfiguration/configurationStores?api-version=2020-06-01",
+        "headers": {
+            "Accept": "application/json",
+            "Authorization": "Sanitized",
+            "Content-Length": "0",
+            "User-Agent": "restler/8.5.0"
+        },
+        "body": null,
+        "method": "GET"
+    },
+    "liveResponse": {
+        "body": {
+            "value": [
+                {
+                    "type": "Microsoft.AppConfiguration/configurationStores",
+                    "location": "westus2",
+                    "properties": {
+                        "provisioningState": "Succeeded",
+                        "creationDate": "2022-04-28T19:41:55+00:00",
+                        "endpoint": "https://configstor02b68495a4.azconfig.io",
+                        "encryption": {
+                            "keyVaultProperties": null
+                        },
+                        "privateEndpointConnections": null
+                    },
+                    "sku": {
+                        "name": "standard"
+                    },
+                    "id": "/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor02b68495a4",
+                    "name": "configstor02b68495a4",
+                    "tags": {
+                        "myTag": "myTagValue"
+                    }
+                },
+                {
+                    "type": "Microsoft.AppConfiguration/configurationStores",
+                    "location": "westus3",
+                    "properties": {
+                        "provisioningState": "Succeeded",
+                        "creationDate": "2022-04-28T04:57:25+00:00",
+                        "endpoint": "https://restlerfuzzconfig1.azconfig.io",
+                        "encryption": {
+                            "keyVaultProperties": null
+                        },
+                        "privateEndpointConnections": null
+                    },
+                    "sku": {
+                        "name": "standard"
+                    },
+                    "id": "/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-marinapo-save/providers/Microsoft.AppConfiguration/configurationStores/restlerfuzzconfig1",
+                    "name": "restlerfuzzconfig1",
+                    "tags": {}
+                }
+            ],
+            "nextLink": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/providers/Microsoft.AppConfiguration/configurationStores?api-version=2020-06-01&%24skiptoken=1Y9BasMwFETvIkJXkSVLrpwYQiklu3bllK4l5SsRriWhL4fikLvXJV30Cl0OM2%2fgXUmAr%2fLqw4Cku5KPfX947wXpyLmUhB1jow76BCOEUul5ylDZODKcDNrsU%2fExIGtFY5S0nMrWCNrII9Atd4oqqVqja%2bOUFSzlePFHyMjevM0RoyvVc0ovMTh%2fmrL%2buWL2b%2bpLzIBPOnl6Wbil3wkuOOWK8vphhYNPhzhA2N0pXOZcGLVpto%2b6IetfF%2fm%2fXBbj8gnZTfN816rJ7fYN"
+        },
+        "statusCode": "200",
+        "headers": {
+            "Cache-Control": "no-cache",
+            "Content-Length": "1578",
+            "Content-Type": "application/json; charset=utf-8",
+            "Date": "Fri, 29 Apr 2022 20:55:47 GMT",
+            "Expires": "-1",
+            "Pragma": "no-cache",
+            "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "X-Content-Type-Options": "nosniff",
+            "x-ms-correlation-request-id": "9270b961-82fa-4ea5-8688-a19f02daf728",
+            "x-ms-original-request-ids": [
+                "1f569d9d-9d2f-48e4-b124-34d81756d2dd",
+                "69b9b38b-ae9d-4cab-8943-6b8f077ae0c3"
+            ],
+            "x-ms-ratelimit-remaining-subscription-reads": "11997",
+            "x-ms-request-id": "9270b961-82fa-4ea5-8688-a19f02daf728",
+            "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205548Z:9270b961-82fa-4ea5-8688-a19f02daf728"
+        }
+    }
+}

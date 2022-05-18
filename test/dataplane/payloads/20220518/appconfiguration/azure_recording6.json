@@ -1,0 +1,35 @@
+{
+    "liveRequest": {
+        "url": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstore8a415f9ac/privateLinkResources/fuzzstring?api-version=2020-06-01",
+        "headers": {
+            "Accept": "application/json",
+            "Authorization": "Sanitized",
+            "Content-Length": "0",
+            "User-Agent": "restler/8.5.0"
+        },
+        "body": null,
+        "method": "GET"
+    },
+    "liveResponse": {
+        "body": {
+            "code": "EntityNotFound",
+            "message": "The resource with id 'configstore8a415f9ac' was not found."
+        },
+        "statusCode": "404",
+        "headers": {
+            "Cache-Control": "no-cache",
+            "Content-Length": "96",
+            "Content-Type": "application/json; charset=utf-8",
+            "Date": "Fri, 29 Apr 2022 20:55:49 GMT",
+            "Expires": "-1",
+            "Pragma": "no-cache",
+            "Server": "nginx/1.17.10",
+            "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "X-Content-Type-Options": "nosniff",
+            "x-ms-correlation-request-id": "62ad4315-99a7-426c-94c1-7decdab557a5",
+            "x-ms-ratelimit-remaining-subscription-reads": "11996",
+            "x-ms-request-id": "cee38af8-e1f2-4105-a2ca-9733e69c24e0",
+            "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205550Z:62ad4315-99a7-426c-94c1-7decdab557a5"
+        }
+    }
+}

@@ -1,0 +1,39 @@
+{
+    "liveRequest": {
+        "url": "https://management.azure.com/subscriptions/724b63c0-37b2-43de-90f6-6367ba1bf6c2/resourceGroups/restler-fuzz-042222/providers/Microsoft.AppConfiguration/configurationStores/configstor81321f77cb/listKeyValue?api-version=2020-06-01",
+        "headers": {
+            "Accept": "application/json",
+            "Authorization": "Sanitized",
+            "Content-Length": "47",
+            "Content-Type": "application/json",
+            "User-Agent": "restler/8.5.0"
+        },
+        "body": {
+            "key": "MaxRequests",
+            "label": "dev"
+        },
+        "method": "POST"
+    },
+    "liveResponse": {
+        "body": {
+            "code": "EntityNotFound",
+            "message": "The resource with id 'configstor81321f77cb' was not found."
+        },
+        "statusCode": "404",
+        "headers": {
+            "Cache-Control": "no-cache",
+            "Content-Length": "96",
+            "Content-Type": "application/json; charset=utf-8",
+            "Date": "Fri, 29 Apr 2022 20:55:53 GMT",
+            "Expires": "-1",
+            "Pragma": "no-cache",
+            "Server": "nginx/1.17.10",
+            "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+            "X-Content-Type-Options": "nosniff",
+            "x-ms-correlation-request-id": "dde73102-0e52-446c-9e95-9928f5010049",
+            "x-ms-ratelimit-remaining-subscription-writes": "1199",
+            "x-ms-request-id": "81eaa842-1b51-436b-9413-2a4e5cdf5942",
+            "x-ms-routing-request-id": "WESTCENTRALUS:20220429T205554Z:dde73102-0e52-446c-9e95-9928f5010049"
+        }
+    }
+}
