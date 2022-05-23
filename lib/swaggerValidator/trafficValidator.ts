@@ -22,6 +22,7 @@ export interface TrafficValidationOptions extends Options {
   sdkLanguage?: string;
   reportPath?: string;
   overrideLinkInReport?: boolean;
+  outputExceptionInReport?: boolean;
   specLinkPrefix?: string;
   payloadLinkPrefix?: string;
 }
@@ -29,8 +30,8 @@ export interface TrafficValidationIssue {
   payloadFilePath?: string;
   specFilePath?: string;
   errors?: LiveValidationIssue[];
-  operationInfo?: OperationContext;
   runtimeExceptions?: RuntimeException[];
+  operationInfo?: OperationContext;
 }
 
 export interface RuntimeException {
@@ -45,12 +46,20 @@ export interface OperationCoverageInfo {
   readonly validationFailOperations: number;
   readonly unCoveredOperations: number;
   readonly unCoveredOperationsList: OperationMeta[];
+  readonly unCoveredOperationsListGen: unCoveredOperationsFormat[];
   readonly totalOperations: number;
   readonly coverageRate: number;
 }
-
 export interface OperationMeta {
   readonly operationId: string;
+}
+
+export interface unCoveredOperationsFormatInner extends OperationMeta {
+  readonly key: string;
+}
+
+export interface unCoveredOperationsFormat {
+  readonly operationIdList: unCoveredOperationsFormatInner[];
 }
 
 export class TrafficValidator {
@@ -231,7 +240,8 @@ export class TrafficValidator {
     let coveredOperaions: number;
     let coverageRate: number;
     let validationFailOperations: number;
-    let unCoveredOperationsList: OperationMeta[];
+    let unCoveredOperationsList: unCoveredOperationsFormatInner[];
+    const unCoveredOperationsListFormat: unCoveredOperationsFormat[] = [];
     this.operationSpecMapper.forEach((value: string[], key: string) => {
       unCoveredOperationsList = [];
       if (this.trafficOperation.get(key) === undefined) {
@@ -249,7 +259,24 @@ export class TrafficValidator {
         });
         unValidatedOperations.forEach((element) => {
           unCoveredOperationsList.push({
+            key: element.split("_")[0],
             operationId: element,
+          });
+        });
+        const unCoveredOperationsInnerList: unCoveredOperationsFormatInner[][] = Object.values(
+          unCoveredOperationsList.reduce(
+            (res: { [key: string]: unCoveredOperationsFormatInner[] }, item) => {
+              /* eslint-disable no-unused-expressions */
+              res[item.key] ? res[item.key].push(item) : (res[item.key] = [item]);
+              /* eslint-enable no-unused-expressions */
+              return res;
+            },
+            {}
+          )
+        );
+        unCoveredOperationsInnerList.forEach((element) => {
+          unCoveredOperationsListFormat.push({
+            operationIdList: element,
           });
         });
       } else {
@@ -274,6 +301,27 @@ export class TrafficValidator {
         }
         return 0;
       });
+      const sortedUnCoveredOperationsListGen = unCoveredOperationsListFormat.reduce(
+        (res: unCoveredOperationsFormat[], item) => {
+          item.operationIdList.sort(function (op1, op2) {
+            const opId1 = op1.operationId;
+            const opId2 = op2.operationId;
+            if (opId1 < opId2) {
+              return -1;
+            }
+            if (opId1 > opId2) {
+              return 1;
+            }
+            return 0;
+          });
+          res.push({
+            operationIdList: item.operationIdList,
+          });
+          return res;
+        },
+        []
+      );
+
       this.operationCoverageResult.push({
         spec: key,
         apiVersion: getApiVersionFromSwaggerPath(key),
@@ -283,6 +331,7 @@ export class TrafficValidator {
         totalOperations: value.length,
         validationFailOperations: validationFailOperations,
         unCoveredOperationsList: sortedUnCoveredOperationsList,
+        unCoveredOperationsListGen: sortedUnCoveredOperationsListGen,
       });
     });
     return this.trafficValidationResult;
@@ -296,7 +345,7 @@ export class TrafficValidator {
     for (const key of this.operationSpecMapper.keys()) {
       const value = this.operationSpecMapper.get(key);
       if (
-        key.includes(operationInfo.validationRequest?.providerNamespace) &&
+        key.toLowerCase().includes(operationInfo.validationRequest?.providerNamespace) &&
         (key.includes(operationInfo.apiVersion) ||
           key.toLowerCase().includes(operationInfo.apiVersion))
       ) {
