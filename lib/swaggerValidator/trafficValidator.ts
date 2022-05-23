@@ -22,7 +22,7 @@ export interface TrafficValidationOptions extends Options {
   sdkLanguage?: string;
   reportPath?: string;
   overrideLinkInReport?: boolean;
-  runtimeException?: boolean;
+  outputExceptionInReport?: boolean;
   specLinkPrefix?: string;
   payloadLinkPrefix?: string;
 }

@@ -43,9 +43,9 @@ export const builder: yargs.CommandBuilder = {
     boolean: true,
     default: false,
   },
-  runtimeException: {
-    alias: "exception",
-    describe: "when run report with payloads exception",
+  outputExceptionInReport: {
+    alias: "oe",
+    describe: "Whether rendering the runtime exceptions in the validation report",
     boolean: true,
     default: false,
   },
@@ -76,7 +76,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       sdkLanguage: argv.language,
       reportPath: argv.report,
       overrideLinkInReport: argv.overrideLinkInReport,
-      runtimeException: argv.runtimeException,
+      outputExceptionInReport: argv.outputExceptionInReport,
       specLinkPrefix: argv.specLinkPrefix,
       payloadLinkPrefix: argv.payloadLinkPrefix,
     };

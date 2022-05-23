@@ -68,7 +68,7 @@ export class CoverageView {
   private specLinkPrefix: string;
   private payloadLinkPrefix: string;
   private overrideLinkInReport: boolean;
-  private runtimeException: boolean;
+  private outputExceptionInReport: boolean;
 
   public constructor(
     validationResults: TrafficValidationIssue[],
@@ -77,7 +77,7 @@ export class CoverageView {
     packageName: string = "",
     language: string = "",
     overrideLinkInReport: boolean = false,
-    runtimeException: boolean = false,
+    outputExceptionInReport: boolean = false,
     specLinkPrefix: string = "",
     payloadLinkPrefix: string = ""
   ) {
@@ -89,7 +89,7 @@ export class CoverageView {
     this.generalErrorResults = new Map();
     this.language = language;
     this.overrideLinkInReport = overrideLinkInReport;
-    this.runtimeException = runtimeException;
+    this.outputExceptionInReport = outputExceptionInReport;
     this.specLinkPrefix = specLinkPrefix;
     this.payloadLinkPrefix = payloadLinkPrefix;
 
@@ -282,7 +282,7 @@ export class CoverageView {
   }
 
   public getRunTimeErrors(): TrafficValidationIssue[] {
-    if (this.runtimeException) {
+    if (this.outputExceptionInReport) {
       return this.validationResults.filter((x) => {
         return x.runtimeExceptions && x.runtimeExceptions.length > 0;
       });
@@ -304,7 +304,7 @@ export class ReportGenerator {
   private undefinedOperationsCount: number;
   private reportPath: string;
   private overrideLinkInReport: boolean;
-  private runtimeException: boolean;
+  private outputExceptionInReport: boolean;
   private specLinkPrefix: string;
   private payloadLinkPrefix: string;
 
@@ -321,7 +321,7 @@ export class ReportGenerator {
     this.sdkLanguage = options.sdkLanguage!;
     this.sdkPackage = options.sdkPackage!;
     this.overrideLinkInReport = options.overrideLinkInReport!;
-    this.runtimeException = options.runtimeException!;
+    this.outputExceptionInReport = options.outputExceptionInReport!;
     this.specLinkPrefix = options.specLinkPrefix!;
     this.payloadLinkPrefix = options.payloadLinkPrefix!;
   }
@@ -336,7 +336,7 @@ export class ReportGenerator {
       this.sdkPackage,
       this.sdkLanguage,
       this.overrideLinkInReport,
-      this.runtimeException,
+      this.outputExceptionInReport,
       this.specLinkPrefix,
       this.payloadLinkPrefix
     );
