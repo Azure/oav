@@ -74,7 +74,9 @@
         "validationEnvironment": false,
         "ring": null,
         "registrationInfo": {
+          "timeType": "RemindDueDate",
           "expirationTime": "2024-02-29T02:33:35",
+          "remindTime": "2024-01-29T02:33:35",
           "token": "a",
           "registrationTokenOperation": "Update"
         },
