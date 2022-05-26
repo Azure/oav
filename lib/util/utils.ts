@@ -909,3 +909,15 @@ export const shuffleArray = (a: any[]) => {
 export const printWarning = (...args: string[]) => {
   console.log("\x1b[33m%s\x1b[0m", ...args);
 };
+
+export let usePsudorandom = {
+  flag: false,
+  seed: 0,
+};
+
+export const getRandomString = (length?: number) =>
+  usePsudorandom.flag
+    ? (usePsudorandom.seed++).toString()
+    : Math.random()
+        .toString(36)
+        .slice(0 - (length ?? 6));

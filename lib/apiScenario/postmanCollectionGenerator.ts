@@ -1,6 +1,8 @@
 import { inject, injectable } from "inversify";
+import { Collection } from "postman-collection";
 import { inversifyGetInstance, TYPES } from "../inversifyUtils";
 import { FileLoader } from "../swagger/fileLoader";
+import { getRandomString } from "../util/utils";
 import { ApiScenarioLoader, ApiScenarioLoaderOption } from "./apiScenarioLoader";
 import { ApiScenarioRunner } from "./apiScenarioRunner";
 import { BlobUploaderOption } from "./blobUploader";
@@ -51,7 +53,7 @@ export class PostmanCollectionGenerator {
     this.env.setBatchEnv(this.opt.env);
   }
 
-  public async GenerateCollection(): Promise<void> {
+  public async GenerateCollection(): Promise<Collection[]> {
     const scenarioDef = await this.apiScenarioLoader.load(this.opt.scenarioDef);
     this.env.setBatch(scenarioDef.variables);
     await this.swaggerAnalyzer.initialize(this.opt.swaggerFilePaths);
@@ -67,6 +69,8 @@ export class PostmanCollectionGenerator {
     if (this.opt.markdownReportPath) {
       await this.fileLoader.writeFile(this.opt.markdownReportPath, generateMarkdownReportHeader());
     }
+
+    const result: Collection[] = [];
 
     for (const scenario of scenarioDef.scenarios) {
       //TODO: replace index with testScenarioName
@@ -124,6 +128,8 @@ export class PostmanCollectionGenerator {
         await client.runCollection();
       }
 
+      result.push(client.collection);
+
       index++;
     }
     const operationIdCoverageResult = this.swaggerAnalyzer.calculateOperationCoverage(scenarioDef);
@@ -136,6 +142,8 @@ export class PostmanCollectionGenerator {
       console.log("Uncovered operationIds: ");
       console.log(operationIdCoverageResult.uncoveredOperationIds);
     }
+
+    return result;
   }
 
   private longRunningOperationOrderUpdate(client: PostmanCollectionRunnerClient, i: number) {
@@ -150,7 +158,13 @@ export class PostmanCollectionGenerator {
       client.collection.items
         .idx(i)
         .events.idx(0)
-        .update({ script: { type: "text/javascript", exec: env.resolveString(exec) } });
+        .update({
+          script: {
+            id: getRandomString(),
+            type: "text/javascript",
+            exec: env.resolveString(exec),
+          },
+        });
     }
   }
 }
