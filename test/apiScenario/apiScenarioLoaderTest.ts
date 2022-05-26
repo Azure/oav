@@ -20,7 +20,7 @@ describe("ApiScenarioLoader", () => {
     expect(testDef).toMatchSnapshot();
   });
 
-  it("load valid cross-RP scenario - compute", async () => {
+  it.skip("load valid cross-RP scenario - compute", async () => {
     const fileRoot = "test/apiScenario/fixtures/specification/compute/resource-manager/";
 
     const loader = ApiScenarioLoader.create({
@@ -38,7 +38,7 @@ describe("ApiScenarioLoader", () => {
     expect(testDef).toMatchSnapshot();
   });
 
-  it("load valid scenario with deps - compute", async () => {
+  it.skip("load valid scenario with deps - compute", async () => {
     const fileRoot = "test/apiScenario/fixtures/specification/compute/resource-manager/";
 
     const loader = ApiScenarioLoader.create({
@@ -56,7 +56,7 @@ describe("ApiScenarioLoader", () => {
     expect(testDef).toMatchSnapshot();
   });
 
-  it("load valid example based scenario - appplatform", async () => {
+  it.skip("load valid example based scenario - appplatform", async () => {
     const fileRoot = "test/apiScenario/fixtures/specification/appplatform/resource-manager/";
 
     const loader = ApiScenarioLoader.create({
