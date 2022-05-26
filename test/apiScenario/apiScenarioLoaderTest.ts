@@ -1,6 +1,6 @@
 import "reflect-metadata";
 
-// import { pathDirName } from "@azure-tools/openapi-tools-common";
+import { pathDirName } from "@azure-tools/openapi-tools-common";
 import { ApiScenarioLoader } from "../../lib/apiScenario/apiScenarioLoader";
 
 describe("ApiScenarioLoader", () => {
@@ -22,21 +22,22 @@ describe("ApiScenarioLoader", () => {
     expect(testDef).toMatchSnapshot();
   });
 
-  // it("load valid scenario from uri", async () => {
-  //   const readmeMd: string =
-  //     "https://github.com/Azure/azure-rest-api-specs/blob/apiscenario/specification/appplatform/resource-manager/readme.md";
-  //   const fileRoot = pathDirName(readmeMd);
+  it("load valid scenario from uri", async () => {
+    const readmeMd: string =
+      "https://github.com/Azure/azure-rest-api-specs/blob/apiscenario/specification/signalr/resource-manager/readme.md";
+    const fileRoot = pathDirName(readmeMd);
 
-  //   const loader = ApiScenarioLoader.create({
-  //     useJsonParser: false,
-  //     checkUnderFileRoot: false,
-  //     fileRoot,
-  //     swaggerFilePaths: ["Microsoft.AppPlatform/preview/2020-11-01-preview/appplatform.json"],
-  //   });
+    const loader = ApiScenarioLoader.create({
+      useJsonParser: false,
+      checkUnderFileRoot: false,
+      fileRoot,
+      swaggerFilePaths: ["Microsoft.SignalRService/preview/2021-06-01-preview/signalr.json"],
+      includeOperation: false,
+    });
 
-  //   const testDef = await loader.load(
-  //     "Microsoft.AppPlatform/preview/2020-11-01-preview/scenarios/Spring.yaml"
-  //   );
-  //   expect(testDef).toMatchSnapshot();
-  // });
+    const testDef = await loader.load(
+      "Microsoft.SignalRService/preview/2021-06-01-preview/scenarios/signalR.yaml"
+    );
+    expect(testDef).toBeDefined();
+  }, 20000);
 });
