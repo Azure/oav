@@ -80,7 +80,7 @@ export class ApiScenarioYamlLoader implements Loader<[RawScenarioDefinition, Rea
           if (match) {
             const readmeFilePath = urlParse(match[1])
               ? match[1]
-              : pathResolve(pathJoin(pathDirName(filePath), match[1]));
+              : pathResolve(pathJoin(pathDirName(this.fileLoader.resolvePath(filePath)), match[1]));
 
             readmeTags.push({
               name: step.readmeTag,
