@@ -910,6 +910,7 @@ export const printWarning = (...args: string[]) => {
   console.log("\x1b[33m%s\x1b[0m", ...args);
 };
 
+// eslint-disable-next-line prefer-const
 export let usePsudorandom = {
   flag: false,
   seed: 0,
