@@ -35,19 +35,19 @@ export class TemplateGenerator {
   }
 
   public exampleParameterConvention(
-    step: Pick<StepRestCall, "requestParameters" | "responseExpected" | "operation">,
+    step: Pick<StepRestCall, "parameters" | "responses" | "operation">,
     variables: (name: string) => any
   ) {
     const toMatch: string[] = [];
     const matchReplace: { [toMatch: string]: string } = {};
 
-    const requestParameters = cloneDeep(step.requestParameters);
-    for (const paramName of Object.keys(requestParameters)) {
+    const parameters = cloneDeep(step.parameters);
+    for (const paramName of Object.keys(parameters)) {
       if (variables(paramName) === undefined) {
         continue;
       }
 
-      const paramValue = requestParameters[paramName];
+      const paramValue = parameters[paramName];
       if (typeof paramValue !== "string") {
         continue;
       }
@@ -56,24 +56,24 @@ export class TemplateGenerator {
       toMatch.push(valueLower);
       const toReplace = `$(${paramName})`;
       matchReplace[valueLower] = toReplace;
-      requestParameters[paramName] = toReplace;
+      parameters[paramName] = toReplace;
     }
-    step.requestParameters = requestParameters;
+    step.parameters = parameters;
     const bodyParam = getBodyParam(step.operation, this.jsonLoader);
     if (bodyParam !== undefined) {
-      const requestBody = step.requestParameters[bodyParam.name];
+      const requestBody = step.parameters[bodyParam.name];
       replaceAllInObject(requestBody, toMatch, matchReplace);
       if (requestBody.location !== undefined) {
         requestBody.location = "$(location)";
       }
     }
 
-    const statusCode = Object.keys(step.responseExpected).sort()[0];
-    const expectedResponseBody = cloneDeep(step.responseExpected[statusCode].body);
-    replaceAllInObject(expectedResponseBody, toMatch, matchReplace);
-    step.responseExpected[statusCode].body = expectedResponseBody;
-    if (expectedResponseBody.body?.location !== undefined) {
-      expectedResponseBody.body.location = "$(location)";
+    const statusCode = Object.keys(step.responses).sort()[0];
+    const responseBody = cloneDeep(step.responses[statusCode].body);
+    replaceAllInObject(responseBody, toMatch, matchReplace);
+    step.responses[statusCode].body = responseBody;
+    if (responseBody.body?.location !== undefined) {
+      responseBody.body.location = "$(location)";
     }
   }
 }

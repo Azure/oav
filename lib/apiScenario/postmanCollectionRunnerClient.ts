@@ -433,16 +433,13 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     const urlVariables: VariableDefinition[] = [];
     for (const p of step.operation.parameters ?? []) {
       const param = this.opts.jsonLoader!.resolveRefObj(p);
-      const paramValue = this.convertPostmanFormat(
-        step.requestParameters[param.name],
-        this.convertString
-      );
+      const paramValue = this.convertPostmanFormat(step.parameters[param.name], this.convertString);
       const paramName = Object.keys(step.variables).includes(param.name)
         ? `${item.name}_${param.name}`
         : param.name;
 
       if (paramName !== param.name) {
-        step.responseExpected = this.convertPostmanFormat(step.responseExpected, (s) =>
+        step.responses = this.convertPostmanFormat(step.responses, (s) =>
           s.replace(`$(${param.name})`, `$(${paramName})`)
         );
       }

@@ -381,8 +381,8 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       description: rawStep.description,
       operationId: "",
       operation: {} as Operation,
-      requestParameters: {} as SwaggerExample["parameters"],
-      responseExpected: {} as SwaggerExample["responses"],
+      parameters: {} as SwaggerExample["parameters"],
+      responses: {} as SwaggerExample["responses"],
       outputVariables: rawStep.outputVariables ?? {},
       ...convertVariables(rawStep.variables),
     };
@@ -434,16 +434,16 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       operation.parameters?.forEach((param) => {
         param = this.jsonLoader.resolveRefObj(param);
         if (param.name === "api-version") {
-          step.requestParameters["api-version"] = rawStep.readmeTag
+          step.parameters["api-version"] = rawStep.readmeTag
             ? this.additionalMap.get(rawStep.readmeTag)?.apiVersionsMap.get(step.operationId)!
             : this.apiVersionsMap.get(step.operationId)!;
         }
         if (rawStep.parameters?.[param.name]) {
-          step.requestParameters[param.name] = rawStep.parameters[param.name];
+          step.parameters[param.name] = rawStep.parameters[param.name];
         } else {
           const v = getVariable(param.name);
           if (v) {
-            step.requestParameters[param.name] = v.value ?? `$(${param.name})`;
+            step.parameters[param.name] = v.value ?? `$(${param.name})`;
           }
         }
       });
@@ -484,8 +484,8 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
         step.operation = this.operationsMap.get(step.operationId)!;
         step.description = step.description ?? exampleName;
       }
-      step.requestParameters = exampleFileContent.parameters;
-      step.responseExpected = exampleFileContent.responses;
+      step.parameters = exampleFileContent.parameters;
+      step.responses = exampleFileContent.responses;
 
       await this.applyPatches(step, rawStep);
       const getVariable = (name: string) => {
@@ -510,18 +510,18 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       const bodyParam = getBodyParam(step.operation, this.jsonLoader);
       let source;
       if (bodyParam) {
-        source = cloneDeep(step.requestParameters[bodyParam.name]);
+        source = cloneDeep(step.parameters[bodyParam.name]);
       }
-      jsonPatchApply(step.requestParameters, rawStep.requestUpdate);
+      jsonPatchApply(step.parameters, rawStep.requestUpdate);
       if (["put", "patch"].includes(step.operation._method) && bodyParam) {
-        const target = step.requestParameters[bodyParam.name];
+        const target = step.parameters[bodyParam.name];
         const propertiesMergePatch = jsonMergePatchGenerate(source, target);
 
-        Object.keys(step.responseExpected).forEach(async (statusCode) => {
+        Object.keys(step.responses).forEach(async (statusCode) => {
           if (statusCode >= "400") {
             return;
           }
-          const response = step.responseExpected[statusCode];
+          const response = step.responses[statusCode];
           if (response.body) {
             jsonMergeApply(response.body, propertiesMergePatch);
             await this.bodyTransformer.resourceToResponse(
@@ -533,7 +533,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       }
     }
     if (rawStep.responseUpdate) {
-      jsonPatchApply(step.responseExpected, rawStep.responseUpdate);
+      jsonPatchApply(step.responses, rawStep.responseUpdate);
     }
   }
 
