@@ -1,5 +1,3 @@
-import "reflect-metadata";
-
 import { pathDirName } from "@azure-tools/openapi-tools-common";
 import { ApiScenarioLoader } from "../../lib/apiScenario/apiScenarioLoader";
 
@@ -40,7 +38,7 @@ describe("ApiScenarioLoader", () => {
     expect(testDef).toMatchSnapshot();
   });
 
-  it("load valid scenario from uri", async () => {
+  it.skip("load valid scenario from uri", async () => {
     const readmeMd: string =
       "https://github.com/Azure/azure-rest-api-specs/blob/apiscenario/specification/signalr/resource-manager/readme.md";
     const fileRoot = pathDirName(readmeMd);
