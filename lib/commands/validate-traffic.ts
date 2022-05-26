@@ -43,6 +43,12 @@ export const builder: yargs.CommandBuilder = {
     boolean: true,
     default: false,
   },
+  outputExceptionInReport: {
+    alias: "oe",
+    describe: "Whether rendering the runtime exceptions in the validation report",
+    boolean: true,
+    default: false,
+  },
   specLinkPrefix: {
     alias: "slp",
     describe: "github specification link prefix",
@@ -70,6 +76,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       sdkLanguage: argv.language,
       reportPath: argv.report,
       overrideLinkInReport: argv.overrideLinkInReport,
+      outputExceptionInReport: argv.outputExceptionInReport,
       specLinkPrefix: argv.specLinkPrefix,
       payloadLinkPrefix: argv.payloadLinkPrefix,
     };

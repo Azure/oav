@@ -9,15 +9,26 @@ import {
 import { LiveValidationIssue } from "../liveValidation/liveValidator";
 import { FileLoader } from "../swagger/fileLoader";
 import { checkAndResolveGithubUrl } from "../util/utils";
+import { OperationContext } from "../liveValidation/operationValidator";
 
 export interface TrafficValidationIssueForRendering extends TrafficValidationIssue {
   payloadFileLinkLabel?: string;
   errorsForRendering?: LiveValidationIssueForRendering[];
+  errorCodeLen: number;
+}
+
+export interface TrafficValidationIssueForRenderingInner {
+  generalErrorsInner: TrafficValidationIssueForRendering[];
+  errorCodeLen: number;
+  operationInfo: OperationContext;
+  errorsForRendering: LiveValidationIssueForRendering[];
 }
 
 export interface LiveValidationIssueForRendering extends LiveValidationIssue {
   friendlyName?: string;
   link?: string;
+  payloadFilePath?: string | undefined;
+  payloadFileLinkLabel?: string | undefined;
 }
 
 export interface ErrorDefinitionDoc {
@@ -32,6 +43,7 @@ export interface ErrorDefinition {
 
 export interface OperationCoverageInfoForRendering extends OperationCoverageInfo {
   specLinkLabel?: string;
+  validationPassOperations?: number;
 }
 
 // used to pass data to the template rendering engine
@@ -57,6 +69,7 @@ export class CoverageView {
   private specLinkPrefix: string;
   private payloadLinkPrefix: string;
   private overrideLinkInReport: boolean;
+  private outputExceptionInReport: boolean;
 
   public constructor(
     validationResults: TrafficValidationIssue[],
@@ -65,6 +78,7 @@ export class CoverageView {
     packageName: string = "",
     language: string = "",
     overrideLinkInReport: boolean = false,
+    outputExceptionInReport: boolean = false,
     specLinkPrefix: string = "",
     payloadLinkPrefix: string = ""
   ) {
@@ -76,6 +90,7 @@ export class CoverageView {
     this.generalErrorResults = new Map();
     this.language = language;
     this.overrideLinkInReport = overrideLinkInReport;
+    this.outputExceptionInReport = outputExceptionInReport;
     this.specLinkPrefix = specLinkPrefix;
     this.payloadLinkPrefix = payloadLinkPrefix;
 
@@ -118,6 +133,10 @@ export class CoverageView {
             severity: error.severity,
             source: error.source,
             params: error.params,
+            payloadFilePath: this.overrideLinkInReport
+              ? `${this.payloadLinkPrefix}/${payloadFile}`
+              : element.payloadFilePath,
+            payloadFileLinkLabel: payloadFile,
           });
         });
         this.validationResultsForRendering.push({
@@ -127,6 +146,7 @@ export class CoverageView {
           payloadFileLinkLabel: payloadFile,
           errors: element.errors,
           errorsForRendering: errorsForRendering,
+          errorCodeLen: errorsForRendering.length,
           operationInfo: element.operationInfo,
           runtimeExceptions: element.runtimeExceptions,
         });
@@ -142,9 +162,11 @@ export class CoverageView {
           specLinkLabel: element.spec?.substring(element.spec?.lastIndexOf("/") + 1),
           apiVersion: element.apiVersion,
           coveredOperaions: element.coveredOperaions,
+          validationPassOperations: element.coveredOperaions - element.validationFailOperations,
           validationFailOperations: element.validationFailOperations,
           unCoveredOperations: element.unCoveredOperations,
           unCoveredOperationsList: element.unCoveredOperationsList,
+          unCoveredOperationsListGen: element.unCoveredOperationsListGen,
           totalOperations: element.totalOperations,
           coverageRate: element.coverageRate,
         });
@@ -211,10 +233,45 @@ export class CoverageView {
     return this.validationResults.length;
   }
 
-  public getGeneralErrors(): TrafficValidationIssue[] {
+  public getGeneralErrors(): TrafficValidationIssueForRendering[] {
     return this.validationResultsForRendering.filter((x) => {
       return x.errors && x.errors.length > 0;
     });
+  }
+
+  public getGeneralErrorsGen(): TrafficValidationIssueForRenderingInner[] {
+    const generalErrorsInnerOrigin = this.getGeneralErrors();
+    const generalErrorsInnerFormat: TrafficValidationIssueForRendering[][] = Object.values(
+      generalErrorsInnerOrigin.reduce(
+        (res: { [key: string]: TrafficValidationIssueForRendering[] }, item) => {
+          /* eslint-disable no-unused-expressions */
+          res[item!.operationInfo!.operationId]
+            ? res[item!.operationInfo!.operationId].push(item)
+            : (res[item!.operationInfo!.operationId] = [item]);
+          /* eslint-enable no-unused-expressions */
+          return res;
+        },
+        {}
+      )
+    );
+    const generalErrorsInnerList: TrafficValidationIssueForRenderingInner[] = [];
+    generalErrorsInnerFormat.forEach((element) => {
+      let errorCodeLen: number = 0;
+      element.forEach((item) => {
+        errorCodeLen = errorCodeLen + item.errorCodeLen;
+      });
+      let errorsForRendering: LiveValidationIssueForRendering[] = [];
+      element.forEach((item) => {
+        errorsForRendering = errorsForRendering.concat(item.errorsForRendering!);
+      });
+      generalErrorsInnerList.push({
+        generalErrorsInner: element,
+        errorCodeLen: errorCodeLen,
+        errorsForRendering: errorsForRendering,
+        operationInfo: element[0]!.operationInfo!,
+      });
+    });
+    return generalErrorsInnerList;
   }
 
   public getTotalGeneralErrors(): number {
@@ -222,9 +279,13 @@ export class CoverageView {
   }
 
   public getRunTimeErrors(): TrafficValidationIssue[] {
-    return this.validationResults.filter((x) => {
-      return x.runtimeExceptions && x.runtimeExceptions.length > 0;
-    });
+    if (this.outputExceptionInReport) {
+      return this.validationResults.filter((x) => {
+        return x.runtimeExceptions && x.runtimeExceptions.length > 0;
+      });
+    } else {
+      return [];
+    }
   }
 
   public getTotalRunTimeErrors(): number {
@@ -240,6 +301,7 @@ export class ReportGenerator {
   private undefinedOperationsCount: number;
   private reportPath: string;
   private overrideLinkInReport: boolean;
+  private outputExceptionInReport: boolean;
   private specLinkPrefix: string;
   private payloadLinkPrefix: string;
 
@@ -256,6 +318,7 @@ export class ReportGenerator {
     this.sdkLanguage = options.sdkLanguage!;
     this.sdkPackage = options.sdkPackage!;
     this.overrideLinkInReport = options.overrideLinkInReport!;
+    this.outputExceptionInReport = options.outputExceptionInReport!;
     this.specLinkPrefix = options.specLinkPrefix!;
     this.payloadLinkPrefix = options.payloadLinkPrefix!;
   }
@@ -270,6 +333,7 @@ export class ReportGenerator {
       this.sdkPackage,
       this.sdkLanguage,
       this.overrideLinkInReport,
+      this.outputExceptionInReport,
       this.specLinkPrefix,
       this.payloadLinkPrefix
     );
@@ -277,9 +341,11 @@ export class ReportGenerator {
 
     const general_errors = view.getGeneralErrors();
     const runtime_errors = view.getRunTimeErrors();
+    const general_errors_gen = view.getGeneralErrorsGen();
 
     console.log(general_errors);
     console.log(runtime_errors);
+    console.log(general_errors_gen);
 
     const text = Mustache.render(template, view);
     fs.writeFileSync(this.reportPath, text, "utf-8");

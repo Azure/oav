@@ -2,410 +2,454 @@
 <html lang="en">
 
 <head>
-    <title>Swagger Accuracy Report:{{package}}({{ apiVersion }})</title>
+    <title>Swagger Accuracy Report:{{package}}( {{ apiVersion }} )</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="keywords" content="Coverage, Swagger, Report, Tools">
     <meta name="description" content="Swagger Accuracy Report">
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <style>
-      :root {
-        --report-bg-green: #91cc74;
-        --report-bg-red: #ee6666;
-        --report-bg-yellow: #fac858;
-        --report-bg-blue: #e6e9f0;
-        --report-color-green: #218838;
-        --report-color-yellow: #e0a800;
-        --report-color-red: #c82333;
-        --report-base-color: #333;
-        --border-color: #b7b7b7;
-        --report-color-black: #000;
-        --report-color-white: #fff;
-        --title-small: #707070;
-        --link-color: #1453ff;
-        --link-hover-color: #7096ff;
-        --content-hover-color: #f5f5f5;
-        --line-color: #43425a;
-      }
-      .report-content {
-        margin: 10px auto 40px;
-        min-width: 900px;
-        max-width: 1500px;
-        color: var(--report-base-color);
-        font-family: 'Helvetica Neue', Helvetica, Arial, 'Hiragino Sans GB',
-          'Microsoft YaHei UI', sans-serif;
-        box-sizing: border-box;
-      }
-      h2 {
-        margin-bottom: 14px;
-      }
-      a {
-        text-decoration: none;
-        position: relative;
-        display: inline-block;
-        color: var(--link-color);
-      }
-      a span {
-        margin: auto;
-        display: inline-block;
-        position: absolute;
-        bottom: -4px;
-        left: 0;
-        right: 0;
-        width: 0px;
-        height: 2px;
-        transition: 0.1s;
-        border-radius: 50px;
-        background: var(--link-hover-color);
-      }
-      a:hover {
-        color: var(--link-hover-color);
-      }
-      a:hover span {
-        width: 100%;
-      }
-      .disableTr {
-        display: none;
-      }
-      .table-body {
-        overflow-y: auto;
-        max-height: 790px;
-        border-bottom: 1px solid var(--border-color);
-      }
-      .table-body::-webkit-scrollbar {
-        display: none;
-        /* Chrome Safari */
-        -ms-overflow-style: none;
-        /* IE 10+ */
-        scrollbar-width: none;
-        /* Firefox */
-      }
-      table {
-        width: 100%;
-        table-layout: auto;
-        border-collapse: separate;
-        border-spacing: 0;
-        text-align: left;
-        border-left: 1px solid var(--border-color);
-      }
-      table tr:hover > td {
-        background-color: var(--content-hover-color);
-      }
-      th,
-      td {
-        box-sizing: border-box;
-        text-align: center;
-        padding: 16px;
-        height: 55px;
-        line-height: 22px;
-      }
-      table > thead > tr > th {
-        font-weight: 500;
-        font-size: 18px;
-        background-color: var(--report-bg-blue);
-        color: var(--report-base-color);
-        font-weight: bold;
-        border-top: 1px solid var(--border-color);
-        border-right: 1px solid var(--border-color);
-        border-bottom: 1px solid var(--border-color);
-      }
-      table > tbody > tr > td {
-        text-align: left;
-        font-size: 16px;
-        transition: background 0.3s;
-        border-top: 1px solid var(--border-color);
-        border-right: 1px solid var(--border-color);
-      }
-      table > tbody > tr:first-child > td {
-        border-top: none;
-      }
-      .details {
-        width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-      }
-      .details .limitText {
-        width: 92%;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-      .details .btnMore {
-        background-color: transparent;
-        border: none;
-        outline: none;
-        position: relative;
-        color: var(--link-color);
-        font-size: 16px;
-        margin-right: 5px;
-      }
-      .details .btnMore span {
-        display:block;
-      }
-      .details .btnMore::after {
-        content: '';
-        margin: auto;
-        display: inline-block;
-        position: absolute;
-        bottom: -4px;
-        left: 0;
-        right: 0;
-        width: 0px;
-        height: 2px;
-        background: var(--link-hover-color);
-        transition: 0.1s;
-        border-radius: 50px;
-      }
-      .details .btnMore:hover {
-        color: var(--link-hover-color);
-      }
-      .details .btnMore:hover:after {
-        width: 100%;
-      }
-      .details .btnMore .arrow {
-        width: 8px;
-        height: 8px;
-        color: var(--link-color);
-        border-left: 2px solid var(--link-color);
-        border-bottom: 2px solid var(--link-color);
-        border-radius: 10%;
-        display: inline-block;
-        transform: rotate(315deg);
-        transform-origin: 50% 50%;
-        transition: all 0.2s ease-in;
-        position: absolute;
-        right: -10px;
-        top: 3px;
-      }
-      .details .btnMore:hover .arrow {
-        color: var(--link-hover-color);
-        border-color: var(--link-hover-color);
-      }
-      .details .btnMore .collapse {
-        top: 6px;
-        transform: rotate(225deg);
-      }
-      .summary {
-        margin: 40px 0 50px 0;
-      }
-      .summary.scroll {
-        margin: 20px 0 20px 0;
-      }
-      .summary .title {
-        margin: 0px 0 10px 0px;
-        font-size: 2.5em;
-      }
-      .summary .title::after {
-        content: '';
-        display: block;
-        width: 100%;
-        height: 2px;
-        margin-top: 4px;
-        background-color: var(--line-color);
-      }
-      .summary .timeStamp {
-        font-size: 16px;
-        margin: 2px 0 0 0;
-        color: var(--title-small);
-      }
-      .coverage {
-        margin-bottom: 40px;
-      }
-      .coverage table td:nth-child(-n + 4) {
-        text-align: center;
-      }
-      .coverage table .file {
-        word-wrap: break-word;
-        word-break: break-all;
-      }
-      .notTested {
-        margin-bottom: 40px;
-      }
-      .notTested table tbody tr td:nth-child(-n + 2) {
-        text-align: center;
-        word-break: break-all;
-      }
-      .notTested .operationTag {
-        text-align: left;
-      }
-      .notTested .operationTag .tag {
-        color: var(--report-base-colo);
-        background-color: var(--report-bg-blue);
-        border: 1px solid var(--report-bg-blue);
-        display: inline-block;
-        height: 32px;
-        padding: 0 10px;
-        margin: 4px 2px;
-        line-height: 30px;
-        font-size: 14px;
-        border-radius: 4px;
-        box-sizing: border-box;
-        white-space: nowrap;
-      }
-      .notTested table,
-      .testFailed table,
-      .innerTable table {
-        table-layout: fixed;
-      }
-      .testFailed
-        > article
-        > .table-body
-        > table
-        > tbody
-        > tr
-        > td:first-child {
-        text-align: center;
-      }
-      .testFailed table tbody tr td:nth-child(-n + 3) {
-        word-break: break-all;
-      }
-      .testFailed table .wrapper-td {
-        background-color: var(--content-hover-color);
-        padding: 0px;
-      }
-      .innerTable table {
-        border: none;
-        border-left: 1px solid var(--border-color);
-      }
-      .innerTable table th,
-      .innerTable table td {
-        border: none;
-        text-align: left;
-      }
-      .innerTable table th {
-        background-color: var(--content-hover-color);
-        color: #000000d9;
-        position: relative;
-        padding: 16px;
-        line-height: 22px;
-        height: 55px;
-        font-size: 18px;
-        box-sizing: border-box;
-        border-bottom: 1px solid var(--border-color);
-      }
-      .innerTable table tr:not(:last-child) > td {
-        border-bottom: 1px solid var(--border-color);
-        transition: background 0.3s;
-        font-size: 16px;
-        word-break: break-all;
-      }
-      .innerTable {
-        margin: 0px 0px 0px 40px;
-      }
-      .innerTable table tr {
-        background-color: var(--report-color-white);
-      }
+        :root {
+            --report-bg-green: #91cc74;
+            --report-bg-red: #ee6666;
+            --report-bg-yellow: #fac858;
+            --report-bg-blue: #e6e9f0;
+            --report-color-green: #218838;
+            --report-color-yellow: #e0a800;
+            --report-color-red: #c82333;
+            --report-base-color: #333;
+            --border-color: #b7b7b7;
+            --report-color-black: #000;
+            --report-color-white: #fff;
+            --title-small: #707070;
+            --link-color: #1453ff;
+            --link-hover-color: #7096ff;
+            --content-hover-color: #f5f5f5;
+            --line-color: #43425a;
+        }
+
+        .report-content {
+            margin: 10px auto 40px;
+            min-width: 900px;
+            max-width: 1500px;
+            color: var(--report-base-color);
+            font-family: 'Helvetica Neue', Helvetica, Arial, 'Hiragino Sans GB',
+                'Microsoft YaHei UI', sans-serif;
+            box-sizing: border-box;
+        }
+
+        h2 {
+            margin-bottom: 14px;
+        }
+
+        a {
+            text-decoration: none;
+            position: relative;
+            display: inline-block;
+            color: var(--link-color);
+        }
+
+        .disableTr {
+            display: none;
+        }
+
+        .table-body {
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .table-body::-webkit-scrollbar {
+            display: none;
+            /* Chrome Safari */
+            -ms-overflow-style: none;
+            /* IE 10+ */
+            scrollbar-width: none;
+            /* Firefox */
+        }
+
+        table {
+            width: 100%;
+            table-layout: auto;
+            border-collapse: separate;
+            border-spacing: 0;
+            text-align: left;
+            border-left: 1px solid var(--border-color);
+        }
+
+        table tr:hover>td {
+            background-color: var(--content-hover-color);
+        }
+
+        th,
+        td {
+            box-sizing: border-box;
+            text-align: center;
+            padding: 16px;
+            height: 55px;
+            line-height: 22px;
+        }
+
+        table>thead>tr>th {
+            font-weight: 500;
+            font-size: 18px;
+            background-color: var(--report-bg-blue);
+            color: var(--report-base-color);
+            font-weight: bold;
+            border-top: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        table>tbody>tr>td {
+            text-align: left;
+            font-size: 16px;
+            transition: background 0.3s;
+            border-top: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+        }
+
+        table>tbody>tr:first-child>td {
+            border-top: none;
+        }
+
+        .details {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: start;
+        }
+
+        .details .limitText {
+            width: 92%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .details .btnMore {
+            background-color: transparent;
+            border: none;
+            outline: none;
+            position: relative;
+            color: var(--link-color);
+            font-size: 16px;
+            margin-right: 5px;
+        }
+
+        .details .btnMore span {
+            display: block;
+        }
+
+        .details .btnMore::after {
+            content: '';
+            margin: auto;
+            display: inline-block;
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            right: 0;
+            width: 0px;
+            height: 2px;
+            background: var(--link-hover-color);
+            transition: 0.1s;
+            border-radius: 50px;
+        }
+
+        .details .btnMore:hover {
+            color: var(--link-hover-color);
+        }
+
+        .details .btnMore .arrow {
+            width: 8px;
+            height: 8px;
+            color: var(--link-color);
+            border-left: 2px solid var(--link-color);
+            border-bottom: 2px solid var(--link-color);
+            border-radius: 10%;
+            display: inline-block;
+            transform: rotate(315deg);
+            transform-origin: 50% 50%;
+            transition: all 0.2s ease-in;
+            position: absolute;
+            right: -10px;
+            top: 3px;
+        }
+
+        .details .btnMore:hover .arrow {
+            color: var(--link-hover-color);
+            border-color: var(--link-hover-color);
+        }
+
+        .details .btnMore .collapse {
+            top: 6px;
+            transform: rotate(225deg);
+        }
+
+        .summary {
+            margin: 40px 0 50px 0;
+        }
+
+        .summary.scroll {
+            margin: 20px 0 20px 0;
+        }
+
+        .summary .title {
+            margin: 0px 0 10px 0px;
+            font-size: 2.5em;
+        }
+
+        .summary .title::after {
+            content: '';
+            display: block;
+            width: 100%;
+            height: 2px;
+            margin-top: 4px;
+            background-color: var(--line-color);
+        }
+
+        .summary .timeStamp {
+            font-size: 16px;
+            margin: 2px 0 0 0;
+            color: var(--title-small);
+        }
+
+        .coverage {
+            margin-bottom: 40px;
+        }
+
+        .coverage table td:nth-child(-n + 5) {
+            text-align: center;
+        }
+
+        .coverage table .file {
+            word-wrap: break-word;
+            word-break: break-all;
+        }
+
+        .coverage .table-header table th a {
+            color: var(--report-color-black);
+        }
+
+        .coverage .table-header table th a:hover {
+            color: var(--report-color-black);
+        }
+
+        .notTested {
+            margin-bottom: 40px;
+        }
+        
+        .notTested table {
+            border: none;
+        }
+
+        .notTested .table-body {
+            border: none;
+        }
+
+        .notTested .table-body>table>tbody>tr>td {
+            border: none;
+        }
+
+        .notTested .table-body table tbody tr td {
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .notTested table tbody tr td:nth-child(-n + 2) {
+            text-align: center;
+            word-break: break-all;
+        }
+
+        .notTested .operationTag {
+            text-align: left;
+        }
+
+        .notTested .operationTag .tag {
+            color: var(--report-base-colo);
+            background-color: var(--report-bg-blue);
+            border: 1px solid var(--report-bg-blue);
+            display: inline-block;
+            height: 32px;
+            padding: 0 10px;
+            margin: 4px 2px;
+            line-height: 30px;
+            font-size: 14px;
+            border-radius: 4px;
+            box-sizing: border-box;
+            white-space: nowrap;
+        }
+
+        .notTested table,
+        .testFailed table,
+        .runtimeExceptions table,
+        .innerTable table {
+            table-layout: fixed;
+        }
+
+        .testFailed table {
+            border: none;
+        }
+        .testFailed .table-body {
+            border: none;
+        }
+
+        .testFailed .table-body {
+            border: none;
+        }
+
+        .testFailed .table-body>table>tbody>tr>td {
+            border: none;
+        }
+
+        .testFailed .table-body table tbody tr td {
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .testFailed>article>.table-body>table>tbody>tr>td:first-child {
+            text-align: left;
+            border-right: none;
+        }
+
+        .testFailed table tbody tr td:nth-child(-n + 3) {
+            word-break: break-word;
+        }
+
+        .testFailed .table-body table tbody tr .wrapper-td {
+            background-color: var(--content-hover-color);
+            padding: 0px;
+        }
+
+        .innerTable {
+            border-left: 1px solid var(--border-color);
+            padding: 0px 0px 0px 40px;
+        }
+
+        .innerTable table {
+            border: none;
+        }
+
+        .innerTable table tr {
+            background-color: var(--report-color-white);
+        }
+
+        .innerTable table th,
+        .innerTable table td {
+            border: none;
+            text-align: left;
+        }
+
+        .testFailed .table-body .innerTable table tbody tr td {
+            border-bottom: none;
+        }
+
+        .runtimeExceptions .table-body {
+            overflow-y: auto;
+            max-height: 400px;
+        }
+
+        .runtimeExceptions table tbody tr td {
+            word-break: break-all;
+        }
+
+        .innerTable>table>thead>tr>th:last-child,
+        .innerTable>table>tbody>tr>td:last-child {
+            border-right: 1px solid var(--border-color);
+        }
+
+        .innerTable>table>tbody>tr>td:first-child {
+            border-left: 1px solid var(--border-color);
+        }
+
+        .innerTable table th {
+            background-color: var(--content-hover-color);
+            color: #000000d9;
+            position: relative;
+            padding: 16px;
+            line-height: 22px;
+            height: 55px;
+            font-size: 18px;
+            box-sizing: border-box;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .innerTable table tr:not(:last-child)>td {
+            border-bottom: 1px solid var(--border-color);
+            transition: background 0.3s;
+            font-size: 16px;
+            word-break: break-all;
+        }
     </style>
 </head>
 
 <body>
     <div class="report-content">
         <section class="summary">
-            <h1 class="title">Swagger Accuracy Report:{{package}}({{apiVersion}})</h1>
+            <h1 class="title">Swagger Accuracy Report:{{package}}( {{apiVersion}} )</h1>
             <!-- TODO: localize the UTC date via JS -->
             <h3 class="timeStamp">Generated {{ formatGeneratedDate }}.</h3>
         </section>
 
         <section class="coverage">
-            <h2>Test Coverage Details</h2>
+            <h2>Operations Summary</h2>
             <article>
                 <div class="table-header">
                     <table summary="Test Coverage Details" cellspacing="0" cellpadding="0">
                         <colgroup>
-                            <col style="width: 15%;" />
-                            <col style="width: 20%;" />
-                            <col style="width: 20%;" />
-                            <col style="width: 45%;" />
+                            <col style="width: 13%;" />
+                            <col style="width: 19%;" />
+                            <col style="width: 19%;" />
+                            <col style="width: 19%;" />
+                            <col style="width: 30%;" />
                         </colgroup>
                         <thead>
-                            <tr>
-                                <th style="background-color: var(--report-bg-green);">Operations Tested</th>
-                                <th style="background-color: var(--report-bg-yellow)">
-                                    Operations Missing Test
-                                </th>
-                                <th style="background-color: var(--report-bg-red);">Operations Failed</th>
-                                <th style="background-color: var(--report-bg-blue);">Swagger File</th>
-                            </tr>
-                        </thead>
-                    </table>
-                </div>
-                <div class="table-body">
-                    <table summary="Test Coverage Details" cellspacing="0" cellpadding="0">
-                        <colgroup>
-                            <col style="width: 15%;" />
-                            <col style="width: 20%;" />
-                            <col style="width: 20%;" />
-                            <col style="width: 45%;" />
-                        </colgroup>
-                        <tbody>
                             {{#coverageResultsForRendering}}
                             <tr>
-                                <td style="color: var(--report-color-green)">{{coveredOperaions}}</td>
-                                <td style="color: var(--report-color-yellow)">{{unCoveredOperations}}</td>
-                                <td style="color: var(--report-color-red)">{{validationFailOperations}}</td>
-                                <td>
+                                <th>Total ( {{totalOperations}} )</th>
+                                <th style="background-color: var(--report-bg-yellow)">
+                                   Untested<a href="#MissingTest"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2048 2048" class="svg_dd790ee3 x-hidden-focus" focusable="false" width="25" height="15" style="vertical-align: middle;"><path d="M1707 715q76 27 139 75t108 111 69 138 25 156q0 106-40 199t-110 162-163 110-199 41h-512q-106 0-199-40t-162-110-110-163-41-199q0-106 40-199t110-162 163-110 199-41h171q0 35-13 66t-37 54-55 36-66 14q-71 0-133 27t-108 73-73 109-27 133q0 71 27 133t73 108 108 73 133 27h512q70 0 132-27t109-73 73-108 27-133q0-92-46-168t-124-123V715zM171 683q0 91 46 167t124 124v189q-76-27-139-75T94 977 25 839 0 683q0-106 40-199t110-162 163-110 199-41h512q106 0 199 40t162 110 110 163 41 199q0 106-40 199t-110 162-163 110-199 41H853q0-35 13-66t37-54 54-37 67-14q70 0 132-27t109-73 73-108 27-133q0-70-26-132t-73-109-109-74-133-27H512q-71 0-133 27t-108 73-73 109-27 133z" class="x-hidden-focus"></path></svg>
+                                   ( {{unCoveredOperations}} )
+                                   </a>
+                                </th>
+                                <th style="background-color: var(--report-bg-red);">
+                                   Fail<a href="#testFailed"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2048 2048" class="svg_dd790ee3 x-hidden-focus" focusable="false" width="25" height="15" style="vertical-align: middle;"><path d="M1707 715q76 27 139 75t108 111 69 138 25 156q0 106-40 199t-110 162-163 110-199 41h-512q-106 0-199-40t-162-110-110-163-41-199q0-106 40-199t110-162 163-110 199-41h171q0 35-13 66t-37 54-55 36-66 14q-71 0-133 27t-108 73-73 109-27 133q0 71 27 133t73 108 108 73 133 27h512q70 0 132-27t109-73 73-108 27-133q0-92-46-168t-124-123V715zM171 683q0 91 46 167t124 124v189q-76-27-139-75T94 977 25 839 0 683q0-106 40-199t110-162 163-110 199-41h512q106 0 199 40t162 110 110 163 41 199q0 106-40 199t-110 162-163 110-199 41H853q0-35 13-66t37-54 54-37 67-14q70 0 132-27t109-73 73-108 27-133q0-70-26-132t-73-109-109-74-133-27H512q-71 0-133 27t-108 73-73 109-27 133z" class="x-hidden-focus"></path></svg></a>
+                                ( {{validationFailOperations}} )
+                                </th>
+                                <th style="background-color: var(--report-bg-green);">Pass ( {{validationPassOperations}} )</th>
+                                <th style="background-color: var(--report-bg-blue);">
                                     <div class="file">
-                                        <a target="_blank" href="{{spec}}">{{specLinkLabel}}<span></span></a>
+                                        {{specLinkLabel}}<a target="_blank" href="{{spec}}"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2048 2048" class="svg_dd790ee3 x-hidden-focus" focusable="false" width="25" height="15" style="vertical-align: middle;"><path d="M1707 715q76 27 139 75t108 111 69 138 25 156q0 106-40 199t-110 162-163 110-199 41h-512q-106 0-199-40t-162-110-110-163-41-199q0-106 40-199t110-162 163-110 199-41h171q0 35-13 66t-37 54-55 36-66 14q-71 0-133 27t-108 73-73 109-27 133q0 71 27 133t73 108 108 73 133 27h512q70 0 132-27t109-73 73-108 27-133q0-92-46-168t-124-123V715zM171 683q0 91 46 167t124 124v189q-76-27-139-75T94 977 25 839 0 683q0-106 40-199t110-162 163-110 199-41h512q106 0 199 40t162 110 110 163 41 199q0 106-40 199t-110 162-163 110-199 41H853q0-35 13-66t37-54 54-37 67-14q70 0 132-27t109-73 73-108 27-133q0-70-26-132t-73-109-109-74-133-27H512q-71 0-133 27t-108 73-73 109-27 133z" class="x-hidden-focus"></path></svg></a>
                                     </div>
-                                </td>
+                                </th>
                             </tr>
                             {{/coverageResultsForRendering}}
-                        </tbody>
+                        </thead>
                     </table>
                 </div>
             </article>
         </section>
 
         <section class="notTested">
-            <h2 class="title">Operations Not Tested</h2>
+            {{#coverageResultsForRendering}}
+            <h2 class="title" id="MissingTest">Untested Operations ( {{unCoveredOperations}} )</h2>
+            {{/coverageResultsForRendering}}
             <article>
-                <div class="table-header">
-                    <table summary="Operations Not Tested" cellspacing="0" cellpadding="0">
-                        <colgroup>
-                            <col style="width: 5%" />
-                            <col style="width: 15%" />
-                            <col style="width: 80%" />
-                        </colgroup>
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>SwaggerFile</th>
-                                <th>OperationId</th>
-                            </tr>
-                        </thead>
-                    </table>
-                </div>
                 <div class="table-body">
                     <table summary="Operations Not Tested" cellspacing="0" cellpadding="0">
                         <colgroup>
-                            <col style="width: 5%" />
                             <col style="width: 15%" />
-                            <col style="width: 80%" />
+                            <col style="width: 85%" />
                         </colgroup>
                         <tbody>
                         {{#coverageResultsForRendering}}
+                            {{#unCoveredOperationsListGen}}
                             <tr>
-                                <td>0</td>
-                                <td>
-                                    <a target="_blank" href="{{spec}}">{{specLinkLabel}}<span></span></a>
-                                </td>
-                                <td>
-                                    <div class="details showOperationTag">
-                                        <div class="limitText">loading...</div>
-                                        <button class="btnMore"><span>Details<i class="arrow collapse"></i></span></button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr class="disableTr">
-                                <td colspan="3">
+                                <td colspan="2">
                                     <div class="operationTag">
-                                        {{#unCoveredOperationsList}}
-                                        <span class="tag">{{operationId}}</span>
-                                        {{/unCoveredOperationsList}}
+                                        {{#operationIdList}}
+                                        <span class="tag">{{operationId}}<a target="_blank" href="{{spec}}"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2048 2048" class="svg_dd790ee3 x-hidden-focus" focusable="false" width="25" height="15" style="vertical-align: middle;"><path d="M1707 715q76 27 139 75t108 111 69 138 25 156q0 106-40 199t-110 162-163 110-199 41h-512q-106 0-199-40t-162-110-110-163-41-199q0-106 40-199t110-162 163-110 199-41h171q0 35-13 66t-37 54-55 36-66 14q-71 0-133 27t-108 73-73 109-27 133q0 71 27 133t73 108 108 73 133 27h512q70 0 132-27t109-73 73-108 27-133q0-92-46-168t-124-123V715zM171 683q0 91 46 167t124 124v189q-76-27-139-75T94 977 25 839 0 683q0-106 40-199t110-162 163-110 199-41h512q106 0 199 40t162 110 110 163 41 199q0 106-40 199t-110 162-163 110-199 41H853q0-35 13-66t37-54 54-37 67-14q70 0 132-27t109-73 73-108 27-133q0-70-26-132t-73-109-109-74-133-27H512q-71 0-133 27t-108 73-73 109-27 133z" class="x-hidden-focus"></path></svg></a></span>
+                                        {{/operationIdList}}
                                     </div>
                                 </td>
                             </tr>
+                            {{/unCoveredOperationsListGen}}
                         {{/coverageResultsForRendering}}
                         </tbody>
                     </table>
@@ -414,49 +458,32 @@
         </section>
 
         <section class="testFailed">
-            <h2 class="title">Operations Test Failed</h2>
+            {{#coverageResultsForRendering}}
+            <h2 class="title" id="testFailed">Failed Operations ( {{validationFailOperations}} )</h2>
+            {{/coverageResultsForRendering}}
             <article>
-                <div class="table-header">
-                    <table summary="Operations Test Failed" cellspacing="0" cellpadding="0">
-                        <colgroup>
-                            <col style="width: 5%" />
-                            <col style="width: 15%" />
-                            <col style="width: 20%" />
-                            <col style="width: 60%" />
-                        </colgroup>
-                        <thead>
-                            <th>#</th>
-                            <th>OperationId</th>
-                            <th>PayloadFilePath</th>
-                            <th>Errors</th>
-                        </thead>
-                    </table>
-                </div>
                 <div class="table-body">
                     <table summary="Operations Test Failed" cellspacing="0" cellpadding="0">
                         <colgroup>
-                            <col style="width: 5%" />
-                            <col style="width: 15%" />
                             <col style="width: 20%" />
-                            <col style="width: 60%" />
+                            <col style="width: 80%" />
                         </colgroup>
                         <tbody>
-                        {{#getGeneralErrors}}
+                        {{#getGeneralErrorsGen}}
                             <tr>
-                                <td>0</td>
-                                <td>{{operationInfo.operationId}}</td>
-                                <td>
-                                    <a target="_blank" href="{{payloadFilePath}}">{{payloadFileLinkLabel}}<span></span></a>
-                                </td>
+                                <td>{{operationInfo.operationId}}
+                                {{#coverageResultsForRendering}}
+                                <a target="_blank" href="{{spec}}"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2048 2048" class="svg_dd790ee3 x-hidden-focus" focusable="false" width="25" height="15" style="vertical-align: middle;"><path d="M1707 715q76 27 139 75t108 111 69 138 25 156q0 106-40 199t-110 162-163 110-199 41h-512q-106 0-199-40t-162-110-110-163-41-199q0-106 40-199t110-162 163-110 199-41h171q0 35-13 66t-37 54-55 36-66 14q-71 0-133 27t-108 73-73 109-27 133q0 71 27 133t73 108 108 73 133 27h512q70 0 132-27t109-73 73-108 27-133q0-92-46-168t-124-123V715zM171 683q0 91 46 167t124 124v189q-76-27-139-75T94 977 25 839 0 683q0-106 40-199t110-162 163-110 199-41h512q106 0 199 40t162 110 110 163 41 199q0 106-40 199t-110 162-163 110-199 41H853q0-35 13-66t37-54 54-37 67-14q70 0 132-27t109-73 73-108 27-133q0-70-26-132t-73-109-109-74-133-27H512q-71 0-133 27t-108 73-73 109-27 133z" class="x-hidden-focus"></path></svg></a>
+                                 {{/coverageResultsForRendering}}
+                                ( {{errorCodeLen}} )</td>
                                 <td>
                                     <div class="details showTestFailed">
-                                        <div class="limitText">loading...</div>
                                         <button class="btnMore"><span>Details<i class="arrow collapse"></i></span></button>
                                     </div>
                                 </td>
                             </tr>
                             <tr class="disableTr">
-                                <td colspan="4" class="wrapper-td">
+                                <td colspan="2" class="wrapper-td">
                                     <div class="innerTable">
                                         <table>
                                             <thead>
@@ -465,29 +492,28 @@
                                                     <th>message</th>
                                                     <th>jsonPathsInPayload</th>
                                                     <th>schemaPath</th>
-                                                    <th>params</th>
-                                                    <th>source</th>
+                                                    <th>payloadFilePath</th>
                                                 </tr>
                                             </thead>
                                             <colgroup>
-                                                <col style="width: 17%" />
-                                                <col style="width: 17%" />
                                                 <col style="width: 18%" />
-                                                <col style="width: 17%" />
-                                                <col style="width: 15%" />
-                                                <col style="width: 16%" />
+                                                <col style="width: 24%" />
+                                                <col style="width: 18%" />
+                                                <col style="width: 20%" />
+                                                <col style="width: 24%" />
                                             </colgroup>
                                             <tbody>
                                                 {{#errorsForRendering}}
                                                 <tr>
                                                     <td>
-                                                      <a target="_blank" href="{{link}}">{{friendlyName}}<span></span></a>
+                                                      {{friendlyName}}<a target="_blank" href="{{link}}"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2048 2048" class="svg_dd790ee3 x-hidden-focus" focusable="false" width="25" height="15" style="vertical-align: middle;"><path d="M1707 715q76 27 139 75t108 111 69 138 25 156q0 106-40 199t-110 162-163 110-199 41h-512q-106 0-199-40t-162-110-110-163-41-199q0-106 40-199t110-162 163-110 199-41h171q0 35-13 66t-37 54-55 36-66 14q-71 0-133 27t-108 73-73 109-27 133q0 71 27 133t73 108 108 73 133 27h512q70 0 132-27t109-73 73-108 27-133q0-92-46-168t-124-123V715zM171 683q0 91 46 167t124 124v189q-76-27-139-75T94 977 25 839 0 683q0-106 40-199t110-162 163-110 199-41h512q106 0 199 40t162 110 110 163 41 199q0 106-40 199t-110 162-163 110-199 41H853q0-35 13-66t37-54 54-37 67-14q70 0 132-27t109-73 73-108 27-133q0-70-26-132t-73-109-109-74-133-27H512q-71 0-133 27t-108 73-73 109-27 133z" class="x-hidden-focus"></path></svg></a>
                                                     </td>
                                                     <td>{{message}}</td>
                                                     <td>{{jsonPathsInPayload}}</td>
                                                     <td>{{schemaPath}}</td>
-                                                    <td>{{params}}</td>
-                                                    <td>{{source}}</td>
+                                                    <td>
+                                                        {{payloadFileLinkLabel}}<a target="_blank" href="{{payloadFilePath}}"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2048 2048" class="svg_dd790ee3 x-hidden-focus" focusable="false" width="25" height="15" style="vertical-align: middle;"><path d="M1707 715q76 27 139 75t108 111 69 138 25 156q0 106-40 199t-110 162-163 110-199 41h-512q-106 0-199-40t-162-110-110-163-41-199q0-106 40-199t110-162 163-110 199-41h171q0 35-13 66t-37 54-55 36-66 14q-71 0-133 27t-108 73-73 109-27 133q0 71 27 133t73 108 108 73 133 27h512q70 0 132-27t109-73 73-108 27-133q0-92-46-168t-124-123V715zM171 683q0 91 46 167t124 124v189q-76-27-139-75T94 977 25 839 0 683q0-106 40-199t110-162 163-110 199-41h512q106 0 199 40t162 110 110 163 41 199q0 106-40 199t-110 162-163 110-199 41H853q0-35 13-66t37-54 54-37 67-14q70 0 132-27t109-73 73-108 27-133q0-70-26-132t-73-109-109-74-133-27H512q-71 0-133 27t-108 73-73 109-27 133z" class="x-hidden-focus"></path></svg></a>
+                                                    </td>
                                                 </tr>
                                                 {{/errorsForRendering}}
                                             </tbody>
@@ -495,12 +521,67 @@
                                     </div>
                                 </td>
                             </tr>
-                        {{/getGeneralErrors}}
+                        {{/getGeneralErrorsGen}}
                         </tbody>
                     </table>
                 </div>
             </article>
         </section>
+
+        {{#outputExceptionInReport}}
+        <section class="runtimeExceptions">
+            <h2 class="title" id="runtimeExceptions">runtime Exceptions</h2>
+            <article>
+                <div class="table-header">
+                  <table
+                    summary="Operations Test Failed"
+                    cellspacing="0"
+                    cellpadding="0"
+                  >
+                    <colgroup>
+                        <col style="width: 20%" />
+                        <col style="width: 40%" />
+                        <col style="width: 30%" />
+                        <col style="width: 10%" />
+                    </colgroup>
+                    <thead>
+                      <th>code</th>
+                      <th>message</th>
+                      <th>payloadFilePath</th>
+                      <th>swagger</th>
+                    </thead>
+                  </table>
+                </div>
+                <div class="table-body">
+                    <table summary="runtime Exceptions" cellspacing="0" cellpadding="0">
+                        <colgroup>
+                            <col style="width: 20%" />
+                            <col style="width: 40%" />
+                            <col style="width: 30%" />
+                            <col style="width: 10%" />
+                        </colgroup>
+                        <tbody>
+                            {{#getRunTimeErrors}}
+                              {{#runtimeExceptions}}
+                                <tr>
+                                    <td>{{code}}</td>
+                                    <td>{{message}}</td>
+                                    <td>{{payloadFilePath}}</td>
+                                    <td>
+                                        {{#coverageResultsForRendering}}
+                                            {{specLinkLabel}}
+                                            <a target="_blank" href="{{spec}}"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2048 2048" class="svg_dd790ee3 x-hidden-focus" focusable="false" width="25" height="15" style="vertical-align: middle;"><path d="M1707 715q76 27 139 75t108 111 69 138 25 156q0 106-40 199t-110 162-163 110-199 41h-512q-106 0-199-40t-162-110-110-163-41-199q0-106 40-199t110-162 163-110 199-41h171q0 35-13 66t-37 54-55 36-66 14q-71 0-133 27t-108 73-73 109-27 133q0 71 27 133t73 108 108 73 133 27h512q70 0 132-27t109-73 73-108 27-133q0-92-46-168t-124-123V715zM171 683q0 91 46 167t124 124v189q-76-27-139-75T94 977 25 839 0 683q0-106 40-199t110-162 163-110 199-41h512q106 0 199 40t162 110 110 163 41 199q0 106-40 199t-110 162-163 110-199 41H853q0-35 13-66t37-54 54-37 67-14q70 0 132-27t109-73 73-108 27-133q0-70-26-132t-73-109-109-74-133-27H512q-71 0-133 27t-108 73-73 109-27 133z" class="x-hidden-focus"></path></svg></a>
+                                        {{/coverageResultsForRendering}}
+                                    </td>
+                                </tr>
+                              {{/runtimeExceptions}}  
+                            {{/getRunTimeErrors}}
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+        </section>
+        {{/outputExceptionInReport}}
     </div>
 </body>
 
@@ -508,35 +589,10 @@
 <script>
     $(document).ready(() => {
         console.log('Hello AZSDK. Document.Ready available here.');
-        renderOperationTag();
-        showTestFailed();
-        addEachClick();
-        renderNotTestTableNum();
-        renderTestFailedTableNum();
+        addFailedEachClick();
     });
-    function renderNotTestTableNum() {
-        for(var i = 0; i <  $('.notTested .table-body tr').length; i++){
-            if(i % 2 === 0) {
-                $('.notTested .table-body tr:eq('+ i +') td:first').text(i / 2);
-            }
-        }
-    }
-    function renderTestFailedTableNum() {
-        for(var i = 0; i <  $('.testFailed>article>.table-body>table>tbody>tr').length; i++){
-            if(i % 2 === 0) {
-                $('.testFailed>article>.table-body>table>tbody>tr:eq('+ i +') td:first').text(i / 2);
-            }
-        }
-    }
-    function addEachClick() {
-        $('div.showOperationTag').each(function (index) {
-            $(this).click(function (event) {
-                var disableTr = $(this).parent().parent().next();
-                disableTr.toggle();
-                var arrow = $(this).find(".arrow")[0];
-                $(arrow).toggleClass("collapse");
-            });
-        });
+
+    function addFailedEachClick() {
         $('div.showTestFailed').each(function (index) {
             $(this).click(function (event) {
                 var disableTr = $(this).parent().parent().next();
@@ -545,36 +601,5 @@
                 $(arrow).toggleClass("collapse");
             });
         });
-    }
-    function renderOperationTag() {
-        $('div.showOperationTag > .limitText').each(function (index) {
-            var textElement = $(this).parent().parent().parent().next().find('.tag');
-            var showOperationTagClickMsg = '';
-            textElement.each(function (index, e) {
-                if(index < textElement.length - 1) {
-                    showOperationTagClickMsg += $(e).text().trim() + ', ';
-                } else {
-                    showOperationTagClickMsg += $(e).text().trim();
-                }
-            });
-            var result = "(" + textElement.length + ") " + showOperationTagClickMsg;
-            $(this).text(result);
-        })
-    }
-    function showTestFailed() {
-        $('div.showTestFailed > .limitText').each(function (index) {
-            var aElement = $(this).parent().parent().parent().next().children().find('a');
-            var showOperationTagClickMsg = '';
-            aElement.each(function (index, e) {
-                if(index < aElement.length - 1) {
-                    showOperationTagClickMsg += $(e).text().trim() + ', ';
-                } else {
-                    showOperationTagClickMsg += $(e).text().trim();
-                }
-            });
-            var trElement = $(this).parent().parent().parent().next().children().find('tr');
-            var result = "(" + (trElement.length - 1) + ") " + showOperationTagClickMsg;
-            $(this).text(result);
-        })
     }
 </script>
