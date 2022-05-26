@@ -61,6 +61,7 @@ export interface ApiScenarioLoaderOption
     JsonLoaderOption,
     SwaggerLoaderOption {
   swaggerFilePaths?: string[];
+  includeOperation?: boolean;
 }
 
 interface ApiScenarioContext {
@@ -115,6 +116,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       eraseDescription: false,
       skipResolveRefKeys: ["x-ms-examples"],
       swaggerFilePaths: [],
+      includeOperation: true,
     });
     return inversifyGetInstance(ApiScenarioLoader, opts);
   }
@@ -135,8 +137,8 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
 
     if (readmeTags) {
       for (const e of readmeTags) {
-        console.log("Additional readme tag:");
-        console.log(readmeTags);
+        // console.log("Additional readme tag:");
+        // console.log(readmeTags);
 
         const inputFiles = await getInputFiles(e.filePath, e.tag);
         if (inputFiles) {
@@ -150,8 +152,8 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
             additionalSwaggerFiles.push(pathJoin(pathDirName(e.filePath), f));
           });
 
-          console.log("Additional input-file:");
-          console.log(additionalSwaggerFiles);
+          // console.log("Additional input-file:");
+          // console.log(additionalSwaggerFiles);
 
           await this.loadSwaggers(
             additionalSwaggerFiles,
@@ -381,8 +383,8 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       description: rawStep.description,
       operationId: "",
       operation: {} as Operation,
-      requestParameters: {} as SwaggerExample["parameters"],
-      responseExpected: {} as SwaggerExample["responses"],
+      parameters: {} as SwaggerExample["parameters"],
+      responses: {} as SwaggerExample["responses"],
       outputVariables: rawStep.outputVariables ?? {},
       ...convertVariables(rawStep.variables),
     };
@@ -390,6 +392,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     ctx.stepTracking.set(step.step, step);
 
     if ("operationId" in rawStep) {
+      // load operation step
       const getVariable = (name: string) => {
         const variable =
           step.variables[name] ?? ctx.scenario?.variables[name] ?? ctx.scenarioDef.variables[name];
@@ -406,7 +409,9 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       if (operation === undefined) {
         throw new Error(`Operation not found for ${step.operationId} in step ${step.step}`);
       }
-      step.operation = operation;
+      if (this.opts.includeOperation) {
+        step.operation = operation;
+      }
 
       if (rawStep.variables) {
         for (const [name, value] of Object.entries(rawStep.variables)) {
@@ -431,44 +436,24 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
         }
       }
 
-      if (rawStep.parameters) {
-        for (const [name, value] of Object.entries(rawStep.parameters)) {
-          if (typeof value === "string") {
-            step.variables[name] = { type: "string", value };
-          } else if (Array.isArray(value)) {
-            step.variables[name] = { type: "array", value };
-          } else if (typeof value === "object") {
-            step.variables[name] = { type: "object", value };
-          } else if (typeof value === "boolean") {
-            step.variables[name] = { type: "bool", value };
-          } else if (typeof value === "number") {
-            step.variables[name] = { type: "int", value };
-          } else {
-            throw new Error(`Invalid type of parameter ${name}`);
-          }
-        }
-      }
-
       operation.parameters?.forEach((param) => {
         param = this.jsonLoader.resolveRefObj(param);
         if (param.name === "api-version") {
-          return;
+          step.parameters["api-version"] = rawStep.readmeTag
+            ? this.additionalMap.get(rawStep.readmeTag)?.apiVersionsMap.get(step.operationId)!
+            : this.apiVersionsMap.get(step.operationId)!;
         }
-        if (param.required) {
-          if (param.type === "string") {
-            step.requestParameters[param.name] = `$(${param.name})`;
-          } else {
-            step.requestParameters[param.name] = getVariable(param.name)!.value;
+        if (rawStep.parameters?.[param.name]) {
+          step.parameters[param.name] = rawStep.parameters[param.name];
+        } else {
+          const v = getVariable(param.name);
+          if (v) {
+            step.parameters[param.name] = v.value ?? `$(${param.name})`;
           }
         }
       });
-
-      if (step.requestParameters["api-version"] === undefined) {
-        step.requestParameters["api-version"] = rawStep.readmeTag
-          ? this.additionalMap.get(rawStep.readmeTag)?.apiVersionsMap.get(step.operationId)!
-          : this.apiVersionsMap.get(step.operationId)!;
-      }
     } else {
+      // load example step
       step.exampleFile = rawStep.exampleFile;
 
       const exampleFilePath = pathJoin(pathDirName(ctx.scenarioDef._filePath), step.exampleFile!);
@@ -477,16 +462,19 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       const fileContent = await this.fileLoader.load(exampleFilePath);
       const exampleFileContent = JSON.parse(fileContent) as SwaggerExample;
 
+      let operation: Operation | undefined;
+
       // Load Operation
       if (exampleFileContent.operationId) {
         step.operationId = exampleFileContent.operationId;
 
-        const operation = this.operationsMap.get(step.operationId);
+        operation = this.operationsMap.get(step.operationId);
         if (operation === undefined) {
-          // TODO support cross-rp swagger
           throw new Error(`Operation not found for ${step.operationId} in step ${step.step}`);
         }
-        step.operation = operation;
+        if (this.opts.includeOperation) {
+          step.operation = operation;
+        }
       } else {
         const opMap = this.exampleToOperation.get(exampleFilePath);
         if (opMap === undefined) {
@@ -502,13 +490,20 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
         }
         step.operationId = ops[0];
         const exampleName = opMap[step.operationId];
-        step.operation = this.operationsMap.get(step.operationId)!;
+        operation = this.operationsMap.get(step.operationId);
+        if (operation === undefined) {
+          throw new Error(`Operation not found for ${step.operationId} in step ${step.step}`);
+        }
+        if (this.opts.includeOperation) {
+          step.operation = operation;
+        }
         step.description = step.description ?? exampleName;
       }
-      step.requestParameters = exampleFileContent.parameters;
-      step.responseExpected = exampleFileContent.responses;
+      step.parameters = exampleFileContent.parameters;
+      step.responses = exampleFileContent.responses;
 
-      await this.applyPatches(step, rawStep);
+      await this.applyPatches(step, rawStep, operation);
+
       const getVariable = (name: string) => {
         const variable =
           step.variables[name] ?? ctx.scenario?.variables[name] ?? ctx.scenarioDef.variables[name];
@@ -526,35 +521,35 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     return step;
   }
 
-  private async applyPatches(step: StepRestCall, rawStep: RawStepExample) {
+  private async applyPatches(step: StepRestCall, rawStep: RawStepExample, operation: Operation) {
     if (rawStep.requestUpdate) {
-      const bodyParam = getBodyParam(step.operation, this.jsonLoader);
+      const bodyParam = getBodyParam(operation, this.jsonLoader);
       let source;
       if (bodyParam) {
-        source = cloneDeep(step.requestParameters[bodyParam.name]);
+        source = cloneDeep(step.parameters[bodyParam.name]);
       }
-      jsonPatchApply(step.requestParameters, rawStep.requestUpdate);
-      if (["put", "patch"].includes(step.operation._method) && bodyParam) {
-        const target = step.requestParameters[bodyParam.name];
+      jsonPatchApply(step.parameters, rawStep.requestUpdate);
+      if (["put", "patch"].includes(operation._method) && bodyParam) {
+        const target = step.parameters[bodyParam.name];
         const propertiesMergePatch = jsonMergePatchGenerate(source, target);
 
-        Object.keys(step.responseExpected).forEach(async (statusCode) => {
+        Object.keys(step.responses).forEach(async (statusCode) => {
           if (statusCode >= "400") {
             return;
           }
-          const response = step.responseExpected[statusCode];
+          const response = step.responses[statusCode];
           if (response.body) {
             jsonMergeApply(response.body, propertiesMergePatch);
             await this.bodyTransformer.resourceToResponse(
               response.body,
-              step.operation.responses[statusCode].schema!
+              operation.responses[statusCode].schema!
             );
           }
         });
       }
     }
     if (rawStep.responseUpdate) {
-      jsonPatchApply(step.responseExpected, rawStep.responseUpdate);
+      jsonPatchApply(step.responses, rawStep.responseUpdate);
     }
   }
 

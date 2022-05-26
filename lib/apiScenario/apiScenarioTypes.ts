@@ -133,8 +133,8 @@ export type StepRestCall = StepBase & {
   operationId: string;
   operation: Operation;
   exampleFile?: string;
-  requestParameters: SwaggerExample["parameters"];
-  responseExpected: SwaggerExample["responses"];
+  parameters: SwaggerExample["parameters"];
+  responses: SwaggerExample["responses"];
   outputVariables?: OutputVariables;
 };
 

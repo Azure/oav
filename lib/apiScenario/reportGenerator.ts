@@ -390,15 +390,14 @@ export class ReportGenerator {
       if (example.example.responses["200"] !== undefined) {
         Object.keys(matchedStep.variables).forEach((key) => {
           const paramName = `${matchedStep.step}_${key}`;
-          matchedStep.responseExpected = this.convertPostmanFormat(
-            matchedStep.responseExpected,
-            (s) => s.replace(`$(${key})`, `$(${paramName})`)
+          matchedStep.responses = this.convertPostmanFormat(matchedStep.responses, (s) =>
+            s.replace(`$(${key})`, `$(${paramName})`)
           );
         });
         res = res.concat(
           await this.responseDiff(
             example.example.responses["200"]?.body || {},
-            matchedStep.responseExpected["200"]?.body || {},
+            matchedStep.responses["200"]?.body || {},
             this.rawReport!.variables,
             `/200/body`,
             matchedStep.operation.responses["200"].schema

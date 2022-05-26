@@ -86,7 +86,7 @@ export class ApiScenarioRestClient extends ServiceClient implements ApiScenarioR
     await this.fastPollMsLROPoller(poller);
   }
 
-  public async sendExampleRequest(
+  public async sendRestCallRequest(
     req: ApiScenarioClientRequest,
     step: StepRestCall,
     _stepEnv: StepEnv
