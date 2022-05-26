@@ -20,7 +20,25 @@ describe("ApiScenarioLoader", () => {
     expect(testDef).toMatchSnapshot();
   });
 
-  it("load valid scenario - appplatform", async () => {
+  it("load valid operation based scenario - appplatform", async () => {
+    const fileRoot = "test/apiScenario/fixtures/specification/appplatform/resource-manager/";
+
+    const loader = ApiScenarioLoader.create({
+      useJsonParser: false,
+      checkUnderFileRoot: false,
+      fileRoot,
+      swaggerFilePaths: ["Microsoft.AppPlatform/preview/2020-11-01-preview/appplatform.json"],
+      includeOperation: false,
+    });
+
+    const testDef = await loader.load(
+      "Microsoft.AppPlatform/preview/2020-11-01-preview/scenarios/basic.yaml"
+    );
+
+    expect(testDef).toMatchSnapshot();
+  });
+
+  it("load valid example based scenario - appplatform", async () => {
     const fileRoot = "test/apiScenario/fixtures/specification/appplatform/resource-manager/";
 
     const loader = ApiScenarioLoader.create({
