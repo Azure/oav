@@ -407,7 +407,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     return result;
   }
 
-  public async sendExampleRequest(
+  public async sendRestCallRequest(
     _: ApiScenarioClientRequest,
     step: StepRestCall,
     stepEnv: StepEnv

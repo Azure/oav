@@ -59,7 +59,7 @@ export interface ApiScenarioRunnerClient {
 
   deleteResourceGroup(subscriptionId: string, resourceGroupName: string): Promise<void>;
 
-  sendExampleRequest(
+  sendRestCallRequest(
     request: ApiScenarioClientRequest,
     step: StepRestCall,
     stepEnv: StepEnv
@@ -233,8 +233,6 @@ export class ApiScenarioRunner {
   }
 
   private async executeRestCallStep(step: StepRestCall, env: VariableEnv, scope: ScopeTracking) {
-    const pathEnv = new VariableEnv();
-
     let req: ApiScenarioClientRequest = {
       method: step.operation._method.toUpperCase() as HttpMethods,
       path: "",
@@ -244,9 +242,6 @@ export class ApiScenarioRunner {
 
     for (const p of step.operation.parameters ?? []) {
       const param = this.jsonLoader.resolveRefObj(p);
-      if (pathEnv.get(param.name)) {
-        continue;
-      }
 
       const paramVal = step.requestParameters[param.name];
       if (paramVal === undefined && param.required && env.get(param.name) === undefined) {
@@ -255,7 +250,10 @@ export class ApiScenarioRunner {
 
       switch (param.in) {
         case "path":
-          pathEnv.set(param.name, { type: "string", value: paramVal });
+          req.path = step.operation._path._pathTemplate.replace(
+            /{([a-z]+)}/gi,
+            (_, group) => `$(${group})`
+          );
           break;
         case "query":
           req.query[param.name] = paramVal;
@@ -270,13 +268,12 @@ export class ApiScenarioRunner {
           throw new Error(`Parameter "in" not supported: ${param.in}`);
       }
     }
-    req.path = pathEnv.resolveString(step.operation._path._pathTemplate, true);
 
     if (this.resolveVariables) {
       req = env.resolveObjectValues(req);
     }
 
-    await this.client.sendExampleRequest(req, step, {
+    await this.client.sendRestCallRequest(req, step, {
       env,
       scope: scope.scope,
     });

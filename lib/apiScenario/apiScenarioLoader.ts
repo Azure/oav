@@ -431,43 +431,22 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
         }
       }
 
-      if (rawStep.parameters) {
-        for (const [name, value] of Object.entries(rawStep.parameters)) {
-          if (typeof value === "string") {
-            step.variables[name] = { type: "string", value };
-          } else if (Array.isArray(value)) {
-            step.variables[name] = { type: "array", value };
-          } else if (typeof value === "object") {
-            step.variables[name] = { type: "object", value };
-          } else if (typeof value === "boolean") {
-            step.variables[name] = { type: "bool", value };
-          } else if (typeof value === "number") {
-            step.variables[name] = { type: "int", value };
-          } else {
-            throw new Error(`Invalid type of parameter ${name}`);
-          }
-        }
-      }
-
       operation.parameters?.forEach((param) => {
         param = this.jsonLoader.resolveRefObj(param);
         if (param.name === "api-version") {
-          return;
+          step.requestParameters["api-version"] = rawStep.readmeTag
+            ? this.additionalMap.get(rawStep.readmeTag)?.apiVersionsMap.get(step.operationId)!
+            : this.apiVersionsMap.get(step.operationId)!;
         }
-        if (param.required) {
-          if (param.type === "string") {
-            step.requestParameters[param.name] = `$(${param.name})`;
-          } else {
-            step.requestParameters[param.name] = getVariable(param.name)!.value;
+        if (rawStep.parameters?.[param.name]) {
+          step.requestParameters[param.name] = rawStep.parameters[param.name];
+        } else {
+          const v = getVariable(param.name);
+          if (v) {
+            step.requestParameters[param.name] = v.value ?? `$(${param.name})`;
           }
         }
       });
-
-      if (step.requestParameters["api-version"] === undefined) {
-        step.requestParameters["api-version"] = rawStep.readmeTag
-          ? this.additionalMap.get(rawStep.readmeTag)?.apiVersionsMap.get(step.operationId)!
-          : this.apiVersionsMap.get(step.operationId)!;
-      }
     } else {
       step.exampleFile = rawStep.exampleFile;
 
