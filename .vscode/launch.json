@@ -148,7 +148,7 @@
       "request": "launch",
       "name": "Jest Current File",
       "program": "${workspaceFolder}/node_modules/.bin/jest",
-      "args": ["--runTestsByPath", "test/apiScenario/apiScenarioLoaderTest.ts", "--coverage", "false"],
+      "args": ["--runTestsByPath", "${file}", "--coverage", "false"],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "disableOptimisticBPs": true,

@@ -98,6 +98,13 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     private bodyTransformer: BodyTransformer,
     @inject(TYPES.schemaValidator) private schemaValidator: SchemaValidator
   ) {
+    setDefaultOpts(opts, {
+      eraseXmsExamples: false,
+      eraseDescription: false,
+      skipResolveRefKeys: ["x-ms-examples"],
+      swaggerFilePaths: [],
+      includeOperation: true,
+    });
     this.transformContext = getTransformContext(this.jsonLoader, this.schemaValidator, [
       xmsPathsTransformer,
       resolveNestedDefinitionTransformer,
@@ -111,13 +118,6 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
   }
 
   public static create(opts: ApiScenarioLoaderOption) {
-    setDefaultOpts(opts, {
-      eraseXmsExamples: false,
-      eraseDescription: false,
-      skipResolveRefKeys: ["x-ms-examples"],
-      swaggerFilePaths: [],
-      includeOperation: true,
-    });
     return inversifyGetInstance(ApiScenarioLoader, opts);
   }
 

@@ -1,6 +1,7 @@
 import { HttpMethods } from "@azure/core-http";
 import { JsonLoader } from "../swagger/jsonLoader";
 import { getLazyBuilder } from "../util/lazyBuilder";
+import { getRandomString } from "../util/utils";
 import {
   ArmTemplate,
   ScenarioDefinition,
@@ -72,11 +73,6 @@ export interface ApiScenarioRunnerClient {
     stepEnv: StepEnv
   ): Promise<void>;
 }
-
-const getRandomString = (length?: number) =>
-  Math.random()
-    .toString(36)
-    .slice(0 - (length ?? 6));
 
 export class ApiScenarioRunner {
   private jsonLoader: JsonLoader;

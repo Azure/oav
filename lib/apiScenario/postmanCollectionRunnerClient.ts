@@ -20,7 +20,7 @@ import { inversifyGetInstance, TYPES } from "../inversifyUtils";
 import { FileLoader } from "../swagger/fileLoader";
 import { JsonLoader, JsonLoaderOption } from "../swagger/jsonLoader";
 import { setDefaultOpts } from "../swagger/loader";
-import { printWarning } from "../util/utils";
+import { getRandomString, printWarning } from "../util/utils";
 import {
   ApiScenarioClientRequest,
   ApiScenarioRunnerClient,
@@ -68,16 +68,6 @@ export interface PostmanCollectionRunnerClientOption extends BlobUploaderOption,
   verbose?: boolean;
 }
 
-function makeid(length: number): string {
-  let text = "";
-  const possible = "abcdefghijklmnopqrstuvwxyz0123456789";
-
-  for (let i = 0; i < length; i++)
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-  return text;
-}
-
 export const generateRunId = (): string => {
   const today = new Date();
   const yyyy = today.getFullYear().toString();
@@ -85,7 +75,7 @@ export const generateRunId = (): string => {
   const dd = pad(today.getDate(), 2);
   const hh = pad(today.getHours(), 2);
   const mm = pad(today.getMinutes(), 2);
-  const id = makeid(5);
+  const id = getRandomString();
   return yyyy + MM + dd + hh + mm + "-" + id;
 };
 
@@ -180,8 +170,10 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     });
     this.collection.events.add(
       new Event({
+        id: getRandomString(),
         listen: "prerequest",
         script: {
+          id: getRandomString(),
           type: "text/javascript",
           exec: [
             'if (pm.variables.get("enable_auth") !== "true") {',
@@ -249,8 +241,10 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     });
     item.events.add(
       new Event({
+        id: getRandomString(),
         listen: "test",
         script: {
+          id: getRandomString(),
           type: "text/javascript",
           exec: `
           pm.test("Started TestProxy recording", function(){
@@ -282,8 +276,10 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     });
     item.events.add(
       new Event({
+        id: getRandomString(),
         listen: "test",
         script: {
+          id: getRandomString(),
           type: "text/javascript",
           exec: `
           pm.test("Stopped TestProxy recording", function(){
@@ -302,6 +298,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     location: string
   ): Promise<void> {
     const item = new Item({
+      id: getRandomString(),
       name: "createResourceGroup",
       request: {
         url: `${
@@ -340,6 +337,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       return;
     }
     const item = new Item({
+      id: getRandomString(),
       name: "deleteResourceGroup",
       request: {
         url: `${
@@ -357,8 +355,10 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
 
     item.events.add(
       new Event({
+        id: getRandomString(),
         listen: "test",
         script: {
+          id: getRandomString(),
           type: "text/javascript",
           exec: this.postmanTestScript.generateScript({
             name: "response code should be 2xx",
@@ -413,7 +413,9 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     stepEnv: StepEnv
   ): Promise<void> {
     const pathEnv = new ReflectiveVariableEnv(":", "");
-    const item = new Item();
+    const item = new Item({
+      id: getRandomString(),
+    });
     if (!this.stepNameSet.has(step.step!)) {
       item.name = step.step!;
       this.stepNameSet.set(step.step, 0);
@@ -568,8 +570,10 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
 
   private addAsLongRunningOperationItem(item: Item, checkStatus: boolean = false) {
     const longRunningEvent = new Event({
+      id: getRandomString(),
       listen: "test",
       script: {
+        id: getRandomString(),
         type: "text/javascript",
         exec: `
         const pollingUrl = pm.response.headers.get('Location') || pm.response.headers.get('Azure-AsyncOperation');
@@ -607,8 +611,10 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       types = types.filter((it) => it !== "DetailResponseLog");
     }
     const testEvent = new Event({
+      id: getRandomString(),
       listen: "test",
       script: {
+        id: getRandomString(),
         type: "text/javascript",
         // generate assertion from example
         exec: this.postmanTestScript.generateScript({
@@ -628,7 +634,9 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     step: StepArmTemplate,
     stepEnv: StepEnv
   ): Promise<void> {
-    const item = new Item();
+    const item = new Item({
+      id: getRandomString(),
+    });
     item.name = step.step;
     const path = `/subscriptions/{{subscriptionId}}/resourcegroups/{{resourceGroupName}}/providers/Microsoft.Resources/deployments/${step.step}?api-version=2020-06-01`;
 
@@ -706,8 +714,10 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       : ["StatusCodeAssertion"];
     item.events.add(
       new Event({
+        id: getRandomString(),
         listen: "test",
         script: {
+          id: getRandomString(),
           type: "text/javascript",
           exec: this.postmanTestScript.generateScript({
             name: "response status code assertion.",
@@ -917,6 +927,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     armTemplate?: ArmTemplate
   ): Item {
     const item = new Item({
+      id: getRandomString(),
       name: `${generatedPostmanItem(generatedGet(name))}`,
       request: {
         method: "get",
@@ -946,6 +957,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
 
     const pollerItemName = generatedPostmanItem(initialItem.name + "_poller");
     const pollerItem = new Item({
+      id: getRandomString(),
       name: pollerItemName,
       request: {
         url: `{{x_polling_url}}`,
@@ -965,8 +977,10 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     const delay = this.mockDelayItem(pollerItem.name, initialItem.name);
 
     const event = new Event({
+      id: getRandomString(),
       listen: "test",
       script: {
+        id: getRandomString(),
         type: "text/javascript",
         exec: `
       try{
@@ -992,8 +1006,10 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
 
     if (checkStatus) {
       const checkStatusEvent = new Event({
+        id: getRandomString(),
         listen: "test",
         script: {
+          id: getRandomString(),
           type: "text/javascript",
           exec: this.postmanTestScript.generateScript({
             name: "armTemplate deployment status check",
@@ -1011,6 +1027,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
 
   public mockDelayItem(nextRequestName: string, LROItemName: string): Item {
     const ret = new Item({
+      id: getRandomString(),
       name: `${nextRequestName}_mock_delay`,
       request: {
         url: "https://postman-echo.com/delay/10",
@@ -1020,8 +1037,10 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
 
     ret.description = typeToDescription({ type: "mock", lro_item_name: LROItemName });
     const event = new Event({
+      id: getRandomString(),
       listen: "prerequest",
       script: {
+        id: getRandomString(),
         type: "text/javascript",
         exec: `postman.setNextRequest('${nextRequestName}')`,
       },
