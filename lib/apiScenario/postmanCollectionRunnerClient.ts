@@ -3,16 +3,13 @@ import { inject, injectable } from "inversify";
 import newman from "newman";
 import {
   Collection,
-  Header,
   Item,
   ItemDefinition,
-  QueryParamDefinition,
   Request,
   RequestAuth,
   RequestBody,
   RequestBodyDefinition,
   Url,
-  UrlDefinition,
   VariableDefinition,
   VariableScope,
 } from "postman-collection";
@@ -25,7 +22,6 @@ import {
   ApiScenarioClientRequest,
   ApiScenarioRunnerClient,
   ArmDeploymentTracking,
-  StepEnv,
 } from "./apiScenarioRunner";
 import { ArmTemplate, ScenarioDefinition, StepArmTemplate, StepRestCall } from "./apiScenarioTypes";
 import { BlobUploader, BlobUploaderOption } from "./blobUploader";
@@ -44,7 +40,7 @@ import * as PostmanHelper from "./postmanHelper";
 import { ValidationLevel } from "./reportGenerator";
 import { RuntimeEnvManager } from "./runtimeEnvManager";
 import { SwaggerAnalyzer } from "./swaggerAnalyzer";
-import { ReflectiveVariableEnv, VariableEnv } from "./variableEnv";
+import { VariableEnv } from "./variableEnv";
 
 export interface PostmanCollectionRunnerClientOption extends BlobUploaderOption, JsonLoaderOption {
   apiScenarioFileName: string;
@@ -87,6 +83,9 @@ function pad(number: number, length: number) {
   return str;
 }
 
+const ARM_ENDPOINT = "https://management.azure.com";
+const ARM_API_VERSION = "2020-06-01";
+
 @injectable()
 export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
   public collection: Collection;
@@ -108,7 +107,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       runId: generateRunId(),
       apiScenarioName: "",
       blobConnectionString: process.env.blobConnectionString || "",
-      baseUrl: "https://management.azure.com",
+      baseUrl: ARM_ENDPOINT,
     });
     this.collection = new Collection({
       info: {
@@ -261,7 +260,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       request: {
         url: `${
           this.opts.testProxy ?? this.opts.baseUrl
-        }/subscriptions/{{subscriptionId}}/resourcegroups/{{resourceGroupName}}?api-version=2020-06-01`,
+        }/subscriptions/{{subscriptionId}}/resourcegroups/{{resourceGroupName}}?api-version=${ARM_API_VERSION}`,
         method: "put",
         body: {
           mode: "raw",
@@ -294,7 +293,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       request: {
         url: `${
           this.opts.testProxy ?? this.opts.baseUrl
-        }/subscriptions/{{subscriptionId}}/resourcegroups/{{resourceGroupName}}?api-version=2020-06-01`,
+        }/subscriptions/{{subscriptionId}}/resourcegroups/{{resourceGroupName}}?api-version=${ARM_API_VERSION}`,
         method: "delete",
       },
     });
@@ -313,128 +312,58 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     this.addAsLongRunningOperationItem(item);
   }
 
-  private convertString(source: string): string {
-    const regex = /\$\(([A-Za-z_][A-Za-z0-9_]*)\)/;
-    if (regex.test(source)) {
-      const globalRegex = new RegExp(regex, "g");
-      let match;
-      while ((match = globalRegex.exec(source))) {
-        source =
-          source.substring(0, match.index) +
-          `{{${match[1]}}}` +
-          source.substring(match.index + match[0].length);
-      }
-    }
-    return source;
-  }
-
-  private convertPostmanFormat<T>(obj: T, convertString: (s: string) => string): T {
-    if (typeof obj === "string") {
-      return convertString(obj) as unknown as T;
-    }
-    if (typeof obj !== "object") {
-      return obj;
-    }
-    if (obj === null || obj === undefined) {
-      return obj;
-    }
-    if (Array.isArray(obj)) {
-      return (obj as any[]).map((v) => this.convertPostmanFormat(v, convertString)) as unknown as T;
-    }
-
-    const result: any = {};
-    for (const key of Object.keys(obj)) {
-      result[key] = this.convertPostmanFormat((obj as any)[key], convertString);
-    }
-    return result;
-  }
-
   public async sendRestCallRequest(
     clientRequest: ApiScenarioClientRequest,
     step: StepRestCall,
-    stepEnv: StepEnv
+    env: VariableEnv
   ): Promise<void> {
-    const pathEnv = new ReflectiveVariableEnv(":", "");
     const item = this.newItem({
       name: step.step,
       request: {
         method: clientRequest.method,
         url: clientRequest.path,
-        body: { mode: "raw" } as RequestBodyDefinition,
+        body: clientRequest.body
+          ? { mode: "raw", raw: JSON.stringify(convertPostmanFormat(clientRequest.body), null, 2) }
+          : undefined,
       },
       description: step.operation.operationId,
     });
-    const queryParams: QueryParamDefinition[] = [];
-    const urlVariables: VariableDefinition[] = [];
-    for (const p of step.operation.parameters ?? []) {
-      const param = this.opts.jsonLoader!.resolveRefObj(p);
-      const paramValue = this.convertPostmanFormat(step.parameters[param.name], this.convertString);
-      const paramName = Object.keys(step.variables).includes(param.name)
-        ? `${item.name}_${param.name}`
-        : param.name;
 
-      if (paramName !== param.name) {
-        step.responses = this.convertPostmanFormat(step.responses, (s) =>
-          s.replace(`$(${param.name})`, `$(${paramName})`)
-        );
-      }
-
-      switch (param.in) {
-        case "path":
-          urlVariables.push({ key: param.name, value: `{{${paramName}}}` });
-          break;
-        case "query":
-          if (paramValue !== undefined) {
-            queryParams.push({ key: param.name, value: paramValue });
-          }
-          break;
-        case "header":
-          const header = new Header({ key: param.name, value: paramValue });
-          item.request.headers.add(header);
-          break;
-        case "body":
-          item.request.body = new RequestBody({
-            mode: "raw",
-            raw: JSON.stringify(paramValue, null, 2),
-          });
-          break;
-        default:
-          throw new Error(`Parameter "in" not supported: ${param.in}`);
-      }
-      this.collection.items.add(item);
-    }
-
-    stepEnv.env.resolve();
-    for (const p of step.operation.parameters ?? []) {
-      const param = this.opts.jsonLoader!.resolveRefObj(p);
-      const paramValue = stepEnv.env.get(param.name)?.value;
-      if (!paramValue) {
-        continue;
-      }
-
-      const paramName = Object.keys(step.variables).includes(param.name)
-        ? `${item.name}_${param.name}`
-        : param.name;
-      if (!this.collectionEnv.has(paramName)) {
-        this.collectionEnv.set(paramName, paramValue, typeof paramValue);
-      }
-    }
-
-    stepEnv.env.getKeyList().forEach((key) => {
-      if (Object.keys(step.variables).includes(key)) {
-        return;
-      }
-
-      if (!this.collectionEnv.has(key)) {
-        this.collectionEnv.set(
-          key,
-          stepEnv.env.get(key)?.value,
-          typeof stepEnv.env.get(key)?.value
-        );
-      }
+    item.request.url = new Url({
+      host: this.opts.testProxy ?? this.opts.baseUrl,
+      path: covertToPostmanVariable(clientRequest.path, true),
+      variable: Object.entries(clientRequest.pathVariables ?? {}).map(([key, _]) => ({
+        key,
+        value: `{{${key}}}`,
+      })),
+      query: Object.entries(clientRequest.query).map(([key, value]) => ({
+        key,
+        value: covertToPostmanVariable(value, true),
+      })),
     });
 
     item.request.addHeader({ key: "Content-Type", value: "application/json" });
+    Object.entries(clientRequest.headers).forEach(([key, value]) => {
+      item.request.addHeader({ key, value: covertToPostmanVariable(value) });
+    });
+
+    this.collection.items.add(item);
+
+    env.resolve();
+
+    if (Object.keys(step.variables).length > 0) {
+      PostmanHelper.createEvent(
+        "prerequest",
+        PostmanHelper.createScript(
+          Object.entries(step.variables)
+            .map(
+              ([key, value]) =>
+                `pm.variables.set("${key}", "${env.resolveObjectValues(value.value)}");`
+            )
+            .join("\n")
+        )
+      );
+    }
 
     const getOverwriteVariables = () => {
       if (step.outputVariables !== undefined && Object.keys(step.outputVariables).length > 0) {
@@ -447,7 +376,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       return undefined;
     };
     for (const outputName of Object.keys(step.outputVariables ?? {})) {
-      stepEnv.env.output(outputName, {
+      env.output(outputName, {
         type: "string",
         value: `{{${outputName}}}`,
       });
@@ -456,12 +385,6 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       ? ["DetailResponseLog", "StatusCodeAssertion"]
       : ["StatusCodeAssertion"];
     this.addTestScript(item, scriptTypes, getOverwriteVariables());
-    item.request.url = new Url({
-      path: pathEnv.resolveString(step.operation._path._pathTemplate, true),
-      host: this.opts.testProxy ?? this.opts.baseUrl,
-      variable: urlVariables,
-    } as UrlDefinition);
-    item.request.addQueryParams(queryParams);
 
     if (step.operation["x-ms-long-running-operation"]) {
       item.description = typeToDescription({
@@ -551,18 +474,18 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     armTemplate: ArmTemplate,
     _armDeployment: ArmDeploymentTracking,
     step: StepArmTemplate,
-    stepEnv: StepEnv
+    env: VariableEnv
   ): Promise<void> {
     const item = this.newItem({
       name: step.step,
     });
-    const path = `/subscriptions/{{subscriptionId}}/resourcegroups/{{resourceGroupName}}/providers/Microsoft.Resources/deployments/${step.step}?api-version=2020-06-01`;
+    const path = `/subscriptions/{{subscriptionId}}/resourcegroups/{{resourceGroupName}}/providers/Microsoft.Resources/deployments/${step.step}?api-version=${ARM_API_VERSION}`;
 
     const subscriptionIdValue = covertToPostmanVariable(
-      stepEnv.env.resolveString(stepEnv.env.getString("subscriptionId") || "")
+      env.resolveString(env.getString("subscriptionId") || "")
     );
     const resourceGroupNameValue = covertToPostmanVariable(
-      stepEnv.env.resolveString(stepEnv.env.getString("resourceGroupName") || "")
+      env.resolveString(env.getString("resourceGroupName") || "")
     );
     const subscriptionIdParamName = Object.keys(step.variables).includes("subscriptionId")
       ? `${item.name}_subscriptionId`
@@ -605,14 +528,11 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     const body = {
       properties: {
         mode: "Incremental",
-        template: this.convertPostmanFormat(
-          stepEnv.env.resolveObjectValues(armTemplate),
-          this.convertString
-        ),
+        template: convertPostmanFormat(env.resolveObjectValues(armTemplate)),
       },
     };
     for (const outputName of Object.keys(step.armTemplatePayload.outputs || {})) {
-      stepEnv.env.output(outputName, {
+      env.output(outputName, {
         type: "string",
         value: `{{${outputName}}}`,
       });
@@ -929,6 +849,27 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
   }
 }
 
-const covertToPostmanVariable = (value: string): string => {
-  return value.replace("$(", "{{").replace(")", "}}");
+const convertPostmanFormat = <T>(obj: T): T => {
+  if (typeof obj === "string") {
+    return covertToPostmanVariable(obj) as unknown as T;
+  }
+  if (typeof obj !== "object") {
+    return obj;
+  }
+  if (obj === null || obj === undefined) {
+    return obj;
+  }
+  if (Array.isArray(obj)) {
+    return (obj as any[]).map((v) => convertPostmanFormat(v)) as unknown as T;
+  }
+
+  const result: any = {};
+  for (const key of Object.keys(obj)) {
+    result[key] = convertPostmanFormat((obj as any)[key]);
+  }
+  return result;
+};
+
+const covertToPostmanVariable = (value: string, isPath: boolean = false): string => {
+  return value.replace(/\$\(([a-z0-9_]+)\)/gi, (_, p1) => (isPath ? `:${p1}` : `{{${p1}}}`));
 };

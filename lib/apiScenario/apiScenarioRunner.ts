@@ -38,16 +38,12 @@ interface ScopeTracking {
   armDeployments: ArmDeploymentTracking[];
 }
 
-export interface StepEnv {
-  env: VariableEnv;
-  scope: ScenarioDefinition["scope"];
-}
-
 export interface ApiScenarioClientRequest {
   method: HttpMethods;
   path: string;
+  pathVariables?: { [variableName: string]: string };
   headers: { [headerName: string]: string };
-  query: { [headerName: string]: string };
+  query: { [key: string]: string };
   body?: any;
 }
 
@@ -63,14 +59,14 @@ export interface ApiScenarioRunnerClient {
   sendRestCallRequest(
     request: ApiScenarioClientRequest,
     step: StepRestCall,
-    stepEnv: StepEnv
+    env: VariableEnv
   ): Promise<void>;
 
   sendArmTemplateDeployment(
     armTemplate: ArmTemplate,
     armDeployment: ArmDeploymentTracking,
     step: StepArmTemplate,
-    stepEnv: StepEnv
+    env: VariableEnv
   ): Promise<void>;
 }
 
@@ -204,7 +200,7 @@ export class ApiScenarioRunner {
     try {
       switch (step.type) {
         case "restCall":
-          await this.executeRestCallStep(step, stepEnv, scope);
+          await this.executeRestCallStep(step, stepEnv);
           break;
         case "armTemplateDeployment":
           await this.executeArmTemplateStep(step, stepEnv, scope);
@@ -228,10 +224,11 @@ export class ApiScenarioRunner {
     }
   }
 
-  private async executeRestCallStep(step: StepRestCall, env: VariableEnv, scope: ScopeTracking) {
+  private async executeRestCallStep(step: StepRestCall, env: VariableEnv) {
     let req: ApiScenarioClientRequest = {
       method: step.operation._method.toUpperCase() as HttpMethods,
-      path: "",
+      path: step.operation._path._pathTemplate.replace(/{([a-z0-9_]+)}/gi, (_, p1) => `$(${p1})`),
+      pathVariables: {},
       headers: {},
       query: {},
     };
@@ -246,10 +243,7 @@ export class ApiScenarioRunner {
 
       switch (param.in) {
         case "path":
-          req.path = step.operation._path._pathTemplate.replace(
-            /{([a-z]+)}/gi,
-            (_, group) => `$(${group})`
-          );
+          req.pathVariables![param.name] = paramVal;
           break;
         case "query":
           req.query[param.name] = paramVal;
@@ -269,10 +263,7 @@ export class ApiScenarioRunner {
       req = env.resolveObjectValues(req);
     }
 
-    await this.client.sendRestCallRequest(req, step, {
-      env,
-      scope: scope.scope,
-    });
+    await this.client.sendRestCallRequest(req, step, env);
   }
 
   private async executeArmTemplateStep(
@@ -298,9 +289,6 @@ export class ApiScenarioRunner {
       step.armTemplatePayload = env.resolveObjectValues(step.armTemplatePayload);
     }
 
-    await this.client.sendArmTemplateDeployment(step.armTemplatePayload, armDeployment, step, {
-      env,
-      scope: scope.scope,
-    });
+    await this.client.sendArmTemplateDeployment(step.armTemplatePayload, armDeployment, step, env);
   }
 }
