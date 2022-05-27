@@ -39,7 +39,7 @@ describe("postmanCollectionGenerator", () => {
       },
       swaggerFilePaths: ["Microsoft.Storage/stable/2021-09-01/storage.json"],
       outputFolder: "generated",
-      runId: "jestRunId",
+      runId: "jestRunIdTestProxy",
       testProxy: "http://localhost:5000",
     });
     const collection = await generator.GenerateCollection();
