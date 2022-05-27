@@ -66,7 +66,7 @@ export type TestScriptType =
   | "ARMDeploymentStatusAssertion"
   | "ExtractARMTemplateOutput";
 
-export class PostmanTestScript {
+export class PostmanTestScriptHelper {
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
   constructor() {}
 

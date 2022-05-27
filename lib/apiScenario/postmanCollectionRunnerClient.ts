@@ -40,7 +40,7 @@ import {
 import { typeToDescription } from "./postmanItemTypes";
 import { NewmanReportAnalyzer, NewmanReportAnalyzerOption } from "./postmanReportAnalyzer";
 import { NewmanReport } from "./postmanReportParser";
-import { PostmanTestScript, TestScriptType } from "./postmanTestScript";
+import { PostmanTestScriptHelper, TestScriptType } from "./postmanTestScript";
 import { ValidationLevel } from "./reportGenerator";
 import { RuntimeEnvManager } from "./runtimeEnvManager";
 import { SwaggerAnalyzer } from "./swaggerAnalyzer";
@@ -91,7 +91,7 @@ function pad(number: number, length: number) {
 export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
   public collection: Collection;
   public collectionEnv: VariableScope;
-  private postmanTestScript: PostmanTestScript;
+  private testScriptHelper: PostmanTestScriptHelper;
   private stepNameSet: Map<string, number>;
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
   constructor(
@@ -221,7 +221,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     this.collectionEnv.set("client_secret", this.opts.env.get("client_secret")?.value, "string");
     this.collectionEnv.set("subscriptionId", this.opts.env.get("subscriptionId")?.value, "string");
     this.collectionEnv.set("location", this.opts.env.get("location")?.value, "string");
-    this.postmanTestScript = new PostmanTestScript();
+    this.testScriptHelper = new PostmanTestScriptHelper();
   }
 
   public async startTestProxyRecording(): Promise<void> {
@@ -360,7 +360,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
         script: {
           id: getRandomString(),
           type: "text/javascript",
-          exec: this.postmanTestScript.generateScript({
+          exec: this.testScriptHelper.generateScript({
             name: "response code should be 2xx",
             types: ["StatusCodeAssertion"],
           }),
@@ -617,7 +617,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
         id: getRandomString(),
         type: "text/javascript",
         // generate assertion from example
-        exec: this.postmanTestScript.generateScript({
+        exec: this.testScriptHelper.generateScript({
           name: "response status code assertion.",
           types: types,
           variables: overwriteVariables,
@@ -719,7 +719,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
         script: {
           id: getRandomString(),
           type: "text/javascript",
-          exec: this.postmanTestScript.generateScript({
+          exec: this.testScriptHelper.generateScript({
             name: "response status code assertion.",
             types: scriptTypes,
             variables: undefined,
@@ -1011,7 +1011,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
         script: {
           id: getRandomString(),
           type: "text/javascript",
-          exec: this.postmanTestScript.generateScript({
+          exec: this.testScriptHelper.generateScript({
             name: "armTemplate deployment status check",
             types: ["StatusCodeAssertion", "ARMDeploymentStatusAssertion"],
           }),
