@@ -585,8 +585,16 @@ export async function generateExamples(
 const logMessage = (message: string, level?: string) => {
   const logLevel = level || "error";
   if (process.env["Agent.Id"]) {
-    console.error(vsoLogIssueWrapper(`${logLevel}`, `${message}\n`));
+    if (level === "error") {
+      console.error(vsoLogIssueWrapper(`${logLevel}`, `${message}\n`));
+    } else {
+      console.info(vsoLogIssueWrapper(`${logLevel}`, `${message}\n`));
+    }
   } else {
-    console.error(`${message}\n`);
+    if (level === "error") {
+      console.error(`${message}\n`);
+    } else {
+      console.info(`${message}\n`);
+    }
   }
 };

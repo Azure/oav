@@ -49,6 +49,13 @@ describe("Semantic validation", () => {
       const result = await validate.validateSpec(specPath, undefined);
       assert(result.validityStatus === false);
     });
+    it("should pass when validating a swagger with using arm-id format for string type", async () => {
+      const specPath = `${testPath}/semanticValidation/specification/validateCompile/Swagger-with-xms-extension.json`;
+      const result = await validate.validateSpec(specPath, undefined);
+      assert(result.validityStatus === true,
+        `swagger "${specPath}" contains semantic validation errors.`
+      );
+    });
   });
 
   describe("internalErrors", () => {
