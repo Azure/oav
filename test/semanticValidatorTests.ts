@@ -7,8 +7,8 @@ import * as validate from "../lib/validate";
 
 const testPath = __dirname;
 
-describe("Semantic validation", () => {
-  describe("loadSwagger", () => {
+describe.only("Semantic validation", () => {
+  describe.only("loadSwagger", () => {
     // JSON_PARSING_ERROR
     it("should fail when validating a JSON file which cannot be parsed successfully", async () => {
       const specPath = `${testPath}/semanticValidation/specification/loadSwagger/JSON_PARSING_ERROR.json`;
@@ -48,6 +48,13 @@ describe("Semantic validation", () => {
       const specPath = `${testPath}/semanticValidation/specification/invalidReference/searchindex.json`;
       const result = await validate.validateSpec(specPath, undefined);
       assert(result.validityStatus === false);
+    });
+    it.only("should pass when validating a swagger with using arm-id format for string type", async () => {
+      const specPath = `${testPath}/semanticValidation/specification/validateCompile/Swagger-with-xms-extension.json`;
+      const result = await validate.validateSpec(specPath, undefined);
+      assert(result.validityStatus === true,
+        `swagger "${specPath}" contains semantic validation errors.`
+      );
     });
   });
 
