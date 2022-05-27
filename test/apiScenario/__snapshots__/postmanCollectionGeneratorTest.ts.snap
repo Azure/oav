@@ -101,7 +101,6 @@ Array [
             "listen": "test",
             "script": Object {
               "exec": Array [
-                "",
                 "pm.test(\\"Started TestProxy recording\\", function(){",
                 "    pm.response.to.be.success;",
                 "    pm.response.to.have.header('x-recording-id');",
@@ -257,7 +256,6 @@ Array [
             },
           ],
           "method": "POST",
-          "name": "checkName",
           "url": Object {
             "host": Array [
               "http://localhost:5000",
@@ -309,8 +307,7 @@ Array [
             "listen": "test",
             "script": Object {
               "exec": Array [
-                "",
-                "        const pollingUrl = pm.response.headers.get('Location') || pm.response.headers.get('Azure-AsyncOperation');",
+                "const pollingUrl = pm.response.headers.get('Location') || pm.response.headers.get('Azure-AsyncOperation');",
                 "        if (pollingUrl) {",
                 "          pm.collectionVariables.set(\\"x_polling_url\\", pollingUrl.replace(\\"https://management.azure.com\\",\\"http://localhost:5000\\"));",
                 "        }",
@@ -361,7 +358,6 @@ Array [
             },
           ],
           "method": "PUT",
-          "name": "createStorageAccount",
           "url": Object {
             "host": Array [
               "http://localhost:5000",
@@ -594,8 +590,7 @@ Array [
             "listen": "test",
             "script": Object {
               "exec": Array [
-                "",
-                "        const pollingUrl = pm.response.headers.get('Location') || pm.response.headers.get('Azure-AsyncOperation');",
+                "const pollingUrl = pm.response.headers.get('Location') || pm.response.headers.get('Azure-AsyncOperation');",
                 "        if (pollingUrl) {",
                 "          pm.collectionVariables.set(\\"x_polling_url\\", pollingUrl.replace(\\"https://management.azure.com\\",\\"http://localhost:5000\\"));",
                 "        }",
@@ -759,7 +754,6 @@ Array [
             "listen": "test",
             "script": Object {
               "exec": Array [
-                "",
                 "pm.test(\\"Stopped TestProxy recording\\", function(){",
                 "    pm.response.to.be.success;",
                 "});",
@@ -1030,7 +1024,6 @@ Array [
             },
           ],
           "method": "POST",
-          "name": "checkName",
           "url": Object {
             "host": Array [
               "https://management",
@@ -1084,8 +1077,7 @@ Array [
             "listen": "test",
             "script": Object {
               "exec": Array [
-                "",
-                "        const pollingUrl = pm.response.headers.get('Location') || pm.response.headers.get('Azure-AsyncOperation');",
+                "const pollingUrl = pm.response.headers.get('Location') || pm.response.headers.get('Azure-AsyncOperation');",
                 "        if (pollingUrl) {",
                 "          pm.collectionVariables.set(\\"x_polling_url\\", pollingUrl);",
                 "        }",
@@ -1124,7 +1116,6 @@ Array [
             },
           ],
           "method": "PUT",
-          "name": "createStorageAccount",
           "url": Object {
             "host": Array [
               "https://management",
@@ -1334,8 +1325,7 @@ Array [
             "listen": "test",
             "script": Object {
               "exec": Array [
-                "",
-                "        const pollingUrl = pm.response.headers.get('Location') || pm.response.headers.get('Azure-AsyncOperation');",
+                "const pollingUrl = pm.response.headers.get('Location') || pm.response.headers.get('Azure-AsyncOperation');",
                 "        if (pollingUrl) {",
                 "          pm.collectionVariables.set(\\"x_polling_url\\", pollingUrl);",
                 "        }",

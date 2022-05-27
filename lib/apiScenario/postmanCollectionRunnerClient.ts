@@ -198,8 +198,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     item.events.add(
       PostmanHelper.createEvent(
         "test",
-        PostmanHelper.createScript(`
-pm.test("Started TestProxy recording", function(){
+        PostmanHelper.createScript(`pm.test("Started TestProxy recording", function(){
     pm.response.to.be.success;
     pm.response.to.have.header('x-recording-id');
     pm.collectionVariables.set('x_recording_id', pm.response.headers.get('x-recording-id'));
@@ -231,11 +230,12 @@ pm.test("Started TestProxy recording", function(){
     item.events.add(
       PostmanHelper.createEvent(
         "test",
-        PostmanHelper.createScript(`
-pm.test("Stopped TestProxy recording", function(){
+        PostmanHelper.createScript(
+          `pm.test("Stopped TestProxy recording", function(){
     pm.response.to.be.success;
 });
-`)
+`
+        )
       )
     );
     this.collection.items.add(item);
@@ -350,7 +350,7 @@ pm.test("Stopped TestProxy recording", function(){
   }
 
   public async sendRestCallRequest(
-    _: ApiScenarioClientRequest,
+    clientRequest: ApiScenarioClientRequest,
     step: StepRestCall,
     stepEnv: StepEnv
   ): Promise<void> {
@@ -358,9 +358,8 @@ pm.test("Stopped TestProxy recording", function(){
     const item = this.newItem({
       name: step.step,
       request: {
-        name: step.step,
-        method: step.operation._method as string,
-        url: "",
+        method: clientRequest.method,
+        url: clientRequest.path,
         body: { mode: "raw" } as RequestBodyDefinition,
       },
       description: step.operation.operationId,
@@ -500,8 +499,8 @@ pm.test("Stopped TestProxy recording", function(){
   private addAsLongRunningOperationItem(item: Item, checkStatus: boolean = false) {
     const longRunningEvent = PostmanHelper.createEvent(
       "test",
-      PostmanHelper.createScript(`
-        const pollingUrl = pm.response.headers.get('Location') || pm.response.headers.get('Azure-AsyncOperation');
+      PostmanHelper.createScript(
+        `const pollingUrl = pm.response.headers.get('Location') || pm.response.headers.get('Azure-AsyncOperation');
         if (pollingUrl) {
           pm.collectionVariables.set("x_polling_url", ${
             this.opts.testProxy
@@ -509,7 +508,8 @@ pm.test("Stopped TestProxy recording", function(){
               : "pollingUrl"
           });
         }
-        `)
+        `
+      )
     );
     item.events.add(longRunningEvent);
     this.collection.items.add(item);
