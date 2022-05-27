@@ -138,9 +138,11 @@ export class PostmanCollectionGenerator {
         operationIdCoverageResult.coveredOperationNumber
       }/${operationIdCoverageResult.totalOperationNumber})`
     );
-    if (operationIdCoverageResult.uncoveredOperationIds.length > 0) {
-      console.log("Uncovered operationIds: ");
-      console.log(operationIdCoverageResult.uncoveredOperationIds);
+    if (this.opt.verbose) {
+      if (operationIdCoverageResult.uncoveredOperationIds.length > 0) {
+        console.log("Uncovered operationIds: ");
+        console.log(operationIdCoverageResult.uncoveredOperationIds);
+      }
     }
 
     return result;
