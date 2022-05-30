@@ -81,6 +81,7 @@ describe("ApiScenarioLoader", () => {
 
     const loader = ApiScenarioLoader.create({
       useJsonParser: false,
+      eraseXmsExamples: false,
       checkUnderFileRoot: false,
       fileRoot,
       swaggerFilePaths: ["Microsoft.SignalRService/preview/2021-06-01-preview/signalr.json"],
