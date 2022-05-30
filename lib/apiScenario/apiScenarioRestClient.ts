@@ -20,9 +20,9 @@ import {
   ArmDeploymentTracking,
   ApiScenarioClientRequest,
   ApiScenarioRunnerClient,
-  StepEnv,
 } from "./apiScenarioRunner";
 import { LROPoller, BaseResult, lroPolicy } from "./lro";
+import { VariableEnv } from "./variableEnv";
 
 export interface ApiScenarioRestClientOption extends ServiceClientOptions {
   endpoint?: string;
@@ -89,7 +89,7 @@ export class ApiScenarioRestClient extends ServiceClient implements ApiScenarioR
   public async sendRestCallRequest(
     req: ApiScenarioClientRequest,
     step: StepRestCall,
-    _stepEnv: StepEnv
+    _env: VariableEnv
   ): Promise<void> {
     console.log(`Send request: ${req.method} ${req.path}`);
     console.log(JSON.stringify(req.body, null, 2));
@@ -136,7 +136,7 @@ export class ApiScenarioRestClient extends ServiceClient implements ApiScenarioR
     armTemplate: ArmTemplate,
     armDeployment: ArmDeploymentTracking,
     _step: StepArmTemplate,
-    stepEnv: StepEnv
+    env: VariableEnv
   ) {
     console.log(`Deploy ARM template ${armDeployment.deploymentName}`);
     const { subscriptionId, resourceGroupName } = armDeployment.details;
@@ -164,7 +164,7 @@ export class ApiScenarioRestClient extends ServiceClient implements ApiScenarioR
     console.log(outputs);
     if (outputs) {
       for (const outputKey of Object.keys(outputs)) {
-        stepEnv.env.output(outputKey, outputs[outputKey].value);
+        env.output(outputKey, outputs[outputKey].value);
       }
     }
   }

@@ -46,6 +46,7 @@ import {
   Step,
   StepArmTemplate,
   StepRestCall,
+  Variable,
   VariableScope,
 } from "./apiScenarioTypes";
 import { ApiScenarioYamlLoader } from "./apiScenarioYamlLoader";
@@ -261,6 +262,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
 
     ctx.scenarioIndex = 0;
     for (const rawScenario of rawDef.scenarios) {
+      ctx.stepTracking.clear();
       const scenario = await this.loadScenario(rawScenario, ctx);
       scenarioDef.scenarios.push(scenario);
       ctx.scenarioIndex++;
@@ -391,13 +393,32 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
 
     ctx.stepTracking.set(step.step, step);
 
+    const getVariable = (name: string): Variable => {
+      const variable =
+        step.variables[name] ?? ctx.scenario?.variables[name] ?? ctx.scenarioDef.variables[name];
+      if (variable === undefined) {
+        const requiredVariables =
+          ctx.scenario?.requiredVariables ?? ctx.scenarioDef.requiredVariables;
+        if (requiredVariables.includes(name)) {
+          return {
+            type: "string",
+            value: `$(${name})`,
+          };
+        }
+      }
+      return variable;
+    };
+
+    const requireVariable = (name: string) => {
+      const requiredVariables =
+        ctx.scenario?.requiredVariables ?? ctx.scenarioDef.requiredVariables;
+      if (!requiredVariables.includes(name)) {
+        requiredVariables.push(`${name}`);
+      }
+    };
+
     if ("operationId" in rawStep) {
       // load operation step
-      const getVariable = (name: string) => {
-        const variable =
-          step.variables[name] ?? ctx.scenario?.variables[name] ?? ctx.scenarioDef.variables[name];
-        return variable;
-      };
       step.operationId = rawStep.operationId;
       if (!rawStep.step) {
         step.step += `_${rawStep.operationId}`;
@@ -442,13 +463,15 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
           step.parameters["api-version"] = rawStep.readmeTag
             ? this.additionalMap.get(rawStep.readmeTag)?.apiVersionsMap.get(step.operationId)!
             : this.apiVersionsMap.get(step.operationId)!;
-        }
-        if (rawStep.parameters?.[param.name]) {
+        } else if (rawStep.parameters?.[param.name]) {
           step.parameters[param.name] = rawStep.parameters[param.name];
         } else {
           const v = getVariable(param.name);
           if (v) {
             step.parameters[param.name] = v.value ?? `$(${param.name})`;
+          } else if (param.in === "path" || param.required) {
+            step.parameters[param.name] = `$(${param.name})`;
+            requireVariable(param.name);
           }
         }
       });
@@ -504,18 +527,6 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
 
       await this.applyPatches(step, rawStep, operation);
 
-      const getVariable = (name: string) => {
-        const variable =
-          step.variables[name] ?? ctx.scenario?.variables[name] ?? ctx.scenarioDef.variables[name];
-        if (variable === undefined) {
-          const requiredVariables =
-            ctx.scenario?.requiredVariables ?? ctx.scenarioDef.requiredVariables;
-          if (requiredVariables.includes(name)) {
-            return `$(${name})`;
-          }
-        }
-        return variable;
-      };
       this.templateGenerator.exampleParameterConvention(step, getVariable);
     }
     return step;
