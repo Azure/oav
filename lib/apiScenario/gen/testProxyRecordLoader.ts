@@ -40,10 +40,10 @@ export class TestProxyRecordingLoader implements Loader<RequestTracking, [Record
         url: url.href,
         headers: entry.RequestHeaders,
         query,
-        body: parseRecordingBodyJson(entry.RequestBody) ?? {},
+        body: entry.RequestBody ?? {},
         responseCode: entry.StatusCode,
         responseHeaders: entry.ResponseHeaders,
-        responseBody: parseRecordingBodyJson(entry.ResponseBody),
+        responseBody: entry.ResponseBody,
       };
 
       result.requests.push(request);
