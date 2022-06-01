@@ -61,8 +61,8 @@ interface TestScenarioGenContext {
 export class TestScenarioGenerator {
   private testDefToWrite: Array<{ testDef: RawScenarioDefinition; filePath: string }> = [];
   private operationSearcher: OperationSearcher;
-  private idx: number = 0;
   private lroPollingUrls = new Set<string>();
+  private operationIdx = new Map<string, number>();
 
   public constructor(
     @inject(TYPES.opts) private opts: TestScenarioGeneratorOption,
@@ -140,8 +140,8 @@ export class TestScenarioGenerator {
       scenarios: [],
     };
 
-    this.idx = 0;
     for (const track of requestTracking) {
+      this.operationIdx.clear();
       const testScenario = await this.generateTestScenario(track, testScenarioFilePath);
       testDef.scenarios.push(testScenario);
     }
@@ -149,10 +149,6 @@ export class TestScenarioGenerator {
     this.testDefToWrite.push({ testDef, filePath: testScenarioFilePath });
 
     return testDef;
-  }
-
-  private generateIdx() {
-    return this.idx++;
   }
 
   private async generateTestScenario(
@@ -256,6 +252,7 @@ export class TestScenarioGenerator {
 
     const parseResult = this.parseRecord(record);
     if (parseResult === undefined) {
+      console.warn(`Skip unknown request:\t${record.method}\t${record.url}`);
       return await this.handleUnknownPath(record, records);
     }
     const { operation, requestParameters } = parseResult;
@@ -293,8 +290,16 @@ export class TestScenarioGenerator {
       }
     }
 
+    let idx = this.operationIdx.get(operation.operationId!);
+    let stepName = `${operation.operationId}_${idx}`;
+    if (idx === undefined) {
+      stepName = operation.operationId!;
+      idx = 0;
+    }
+    this.operationIdx.set(operation.operationId!, ++idx);
+
     const step: RawStepOperation = {
-      step: `${operation.operationId}_${this.generateIdx()}`,
+      step: stepName,
       operationId: operation.operationId!,
       variables: Object.keys(variables).length > 0 ? variables : undefined,
     };
