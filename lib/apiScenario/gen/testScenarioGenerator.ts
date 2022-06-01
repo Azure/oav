@@ -380,6 +380,9 @@ const unwantedParams = new Set(["resourceGroupName", "api-version", "subscriptio
 const getParamValue = (record: SingleRequestTracking, param: Parameter) => {
   switch (param.in) {
     case "body":
+      if (record.body?.location !== undefined) {
+        record.body.location = "$(location)";
+      }
       return record.body;
 
     case "header":

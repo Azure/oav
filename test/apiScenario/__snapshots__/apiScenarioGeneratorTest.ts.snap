@@ -50,7 +50,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -110,7 +110,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -262,7 +262,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "BlobStorage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {
               "accessTier": "Hot",
             },
@@ -416,7 +416,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "BlobStorage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {
               "accessTier": "Hot",
             },
@@ -478,7 +478,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -538,7 +538,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -598,7 +598,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "StorageV2",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {
               "isHnsEnabled": true,
             },
@@ -660,7 +660,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "StorageV2",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {
               "isHnsEnabled": true,
             },
@@ -754,7 +754,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "StorageV2",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {
               "largeFileSharesState": "Enabled",
             },
@@ -852,7 +852,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "StorageV2",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {
               "largeFileSharesState": "Enabled",
             },
@@ -918,7 +918,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Premium_LRS",
@@ -978,7 +978,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Premium_LRS",
@@ -1176,7 +1176,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_LRS",
@@ -1374,7 +1374,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_LRS",
@@ -1460,7 +1460,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "BlobStorage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {
               "accessTier": "Hot",
             },
@@ -1548,7 +1548,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "BlobStorage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {
               "accessTier": "Hot",
             },
@@ -1610,7 +1610,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "BlockBlobStorage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Premium_LRS",
@@ -1670,7 +1670,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "BlockBlobStorage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Premium_LRS",
@@ -1730,7 +1730,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "StorageV2",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {
               "isNfsV3Enabled": false,
             },
@@ -1792,7 +1792,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "StorageV2",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {
               "isNfsV3Enabled": false,
             },
@@ -1854,7 +1854,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {
               "encryption": Object {
                 "keySource": "Microsoft.Storage",
@@ -1926,7 +1926,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {
               "encryption": Object {
                 "keySource": "Microsoft.Storage",
@@ -1998,7 +1998,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "FileStorage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Premium_LRS",
@@ -2058,7 +2058,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "FileStorage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Premium_LRS",
@@ -2154,7 +2154,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {
               "supportsHttpsTrafficOnly": true,
             },
@@ -2252,7 +2252,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {
               "supportsHttpsTrafficOnly": true,
             },
@@ -2314,7 +2314,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "StorageV2",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {
               "largeFileSharesState": "Enabled",
             },
@@ -2376,7 +2376,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "StorageV2",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {
               "largeFileSharesState": "Enabled",
             },
@@ -2438,7 +2438,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "StorageV2",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -2498,7 +2498,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "StorageV2",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -2558,7 +2558,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "StorageV2",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {
               "encryption": Object {
                 "keySource": "Microsoft.Storage",
@@ -2630,7 +2630,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "StorageV2",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {
               "encryption": Object {
                 "keySource": "Microsoft.Storage",
@@ -2779,7 +2779,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {
               "networkAcls": Object {
                 "bypass": "Logging, AzureServices",
@@ -2927,7 +2927,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {
               "networkAcls": Object {
                 "bypass": "Logging, AzureServices",
@@ -3088,7 +3088,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "StorageV2",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -3308,7 +3308,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "StorageV2",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -3499,7 +3499,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "StorageV2",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -3620,7 +3620,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "StorageV2",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -3720,7 +3720,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "StorageV2",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {
               "allowBlobPublicAccess": false,
               "minimumTlsVersion": "TLS1_1",
@@ -3823,7 +3823,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "StorageV2",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {
               "allowBlobPublicAccess": false,
               "minimumTlsVersion": "TLS1_1",
@@ -3896,7 +3896,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "StorageV2",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_LRS",
@@ -3966,7 +3966,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "StorageV2",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_LRS",
@@ -4036,7 +4036,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "StorageV2",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_LRS",
@@ -4106,7 +4106,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "StorageV2",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_LRS",
@@ -4166,7 +4166,7 @@ Object {
               "type": "object",
               "value": Object {
                 "kind": "Storage",
-                "location": "eastus2",
+                "location": "$(location)",
                 "properties": Object {},
                 "sku": Object {
                   "name": "Standard_GRS",
@@ -4217,7 +4217,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -4277,7 +4277,7 @@ Object {
               "type": "object",
               "value": Object {
                 "kind": "Storage",
-                "location": "eastus2",
+                "location": "$(location)",
                 "properties": Object {},
                 "sku": Object {
                   "name": "Standard_GRS",
@@ -4328,7 +4328,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -4412,7 +4412,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "StorageV2",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_RAGRS",
@@ -4472,7 +4472,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "StorageV2",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_RAGRS",
@@ -4591,7 +4591,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -4710,7 +4710,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -4817,7 +4817,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -4924,7 +4924,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -5027,7 +5027,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -5130,7 +5130,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -5214,7 +5214,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -5274,7 +5274,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -5393,7 +5393,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -5512,7 +5512,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -5619,7 +5619,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -5726,7 +5726,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -5833,7 +5833,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -5940,7 +5940,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -6000,7 +6000,7 @@ Object {
               "type": "object",
               "value": Object {
                 "kind": "Storage",
-                "location": "eastus2",
+                "location": "$(location)",
                 "properties": Object {},
                 "sku": Object {
                   "name": "Standard_GRS",
@@ -6051,7 +6051,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -6111,7 +6111,7 @@ Object {
               "type": "object",
               "value": Object {
                 "kind": "Storage",
-                "location": "eastus2",
+                "location": "$(location)",
                 "properties": Object {},
                 "sku": Object {
                   "name": "Standard_GRS",
@@ -6162,7 +6162,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -6222,7 +6222,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {
               "encryption": Object {
                 "keySource": "Microsoft.Storage",
@@ -6294,7 +6294,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {
               "encryption": Object {
                 "keySource": "Microsoft.Storage",
@@ -6450,7 +6450,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "StorageV2",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -6660,7 +6660,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "StorageV2",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -6781,7 +6781,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "StorageV2",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_RAGRS",
@@ -6836,7 +6836,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "StorageV2",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_RAGRS",
@@ -6968,7 +6968,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -7058,7 +7058,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -7134,7 +7134,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -7204,7 +7204,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -7290,7 +7290,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {
               "keyPolicy": Object {
                 "keyExpirationPeriodInDays": 2,
@@ -7384,7 +7384,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {
               "keyPolicy": Object {
                 "keyExpirationPeriodInDays": 2,
@@ -7527,7 +7527,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "StorageV2",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {
               "networkAcls": Object {
                 "bypass": "Logging,AzureServices",
@@ -7673,7 +7673,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "StorageV2",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {
               "networkAcls": Object {
                 "bypass": "Logging,AzureServices",
@@ -7939,7 +7939,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -8194,7 +8194,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -8377,7 +8377,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -8560,7 +8560,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -8664,7 +8664,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -8768,7 +8768,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -8896,7 +8896,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {
               "allowSharedKeyAccess": false,
             },
@@ -9026,7 +9026,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {
               "allowSharedKeyAccess": false,
             },
@@ -9123,7 +9123,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -9218,7 +9218,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -9311,7 +9311,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
@@ -9404,7 +9404,7 @@ Object {
           "type": "object",
           "value": Object {
             "kind": "Storage",
-            "location": "eastus2",
+            "location": "$(location)",
             "properties": Object {},
             "sku": Object {
               "name": "Standard_GRS",
