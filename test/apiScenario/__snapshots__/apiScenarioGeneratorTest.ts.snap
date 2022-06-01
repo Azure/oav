@@ -9,12 +9,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_0",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_1",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -24,12 +24,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_2",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_3",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -69,12 +69,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_4",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_5",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -84,12 +84,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_6",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_7",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -129,12 +129,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_8",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_9",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -144,7 +144,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_10",
+          "step": "StorageAccounts_CheckNameAvailability_1",
           "variables": Object {
             "accountName": Object {
               "patches": Array [
@@ -160,7 +160,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_11",
+          "step": "StorageAccounts_Create_1",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -180,7 +180,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_12",
+          "step": "StorageAccounts_CheckNameAvailability_2",
           "variables": Object {
             "accountName": Object {
               "patches": Array [
@@ -196,7 +196,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_13",
+          "step": "StorageAccounts_Create_2",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -216,12 +216,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_14",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_15",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -231,7 +231,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_16",
+          "step": "StorageAccounts_Delete_1",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -241,7 +241,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_17",
+          "step": "StorageAccounts_Delete_2",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -283,12 +283,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_18",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_19",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -298,7 +298,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_20",
+          "step": "StorageAccounts_CheckNameAvailability_1",
           "variables": Object {
             "accountName": Object {
               "patches": Array [
@@ -314,7 +314,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_21",
+          "step": "StorageAccounts_Create_1",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -334,7 +334,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_22",
+          "step": "StorageAccounts_CheckNameAvailability_2",
           "variables": Object {
             "accountName": Object {
               "patches": Array [
@@ -350,7 +350,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_23",
+          "step": "StorageAccounts_Create_2",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -370,12 +370,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_24",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_25",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -385,7 +385,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_26",
+          "step": "StorageAccounts_Delete_1",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -395,7 +395,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_27",
+          "step": "StorageAccounts_Delete_2",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -437,12 +437,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_28",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_29",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -452,7 +452,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_30",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -462,7 +462,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_31",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
       ],
@@ -497,12 +497,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_32",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_33",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -512,7 +512,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_34",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -522,7 +522,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_35",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
       ],
@@ -557,12 +557,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_36",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_37",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -572,12 +572,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_38",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_39",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -619,12 +619,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_40",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_41",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -634,12 +634,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_42",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_43",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -681,12 +681,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_44",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_45",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -696,7 +696,7 @@ Object {
         },
         Object {
           "operationId": "FileServices_GetServiceProperties",
-          "step": "FileServices_GetServiceProperties_46",
+          "step": "FileServices_GetServiceProperties",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -706,7 +706,7 @@ Object {
         },
         Object {
           "operationId": "FileShares_Create",
-          "step": "FileShares_Create_47",
+          "step": "FileShares_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -716,12 +716,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_48",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_49",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -779,12 +779,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_50",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_51",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -794,7 +794,7 @@ Object {
         },
         Object {
           "operationId": "FileServices_GetServiceProperties",
-          "step": "FileServices_GetServiceProperties_52",
+          "step": "FileServices_GetServiceProperties",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -804,7 +804,7 @@ Object {
         },
         Object {
           "operationId": "FileShares_Create",
-          "step": "FileShares_Create_53",
+          "step": "FileShares_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -814,12 +814,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_54",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_55",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -877,12 +877,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_56",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_57",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -892,12 +892,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_58",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_59",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -937,12 +937,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_60",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_61",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -952,12 +952,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_62",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_63",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -997,12 +997,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_64",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_65",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -1012,7 +1012,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_66",
+          "step": "StorageAccounts_CheckNameAvailability_1",
           "variables": Object {
             "accountName": Object {
               "patches": Array [
@@ -1028,7 +1028,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_67",
+          "step": "StorageAccounts_Create_1",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -1048,7 +1048,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_68",
+          "step": "StorageAccounts_CheckNameAvailability_2",
           "variables": Object {
             "accountName": Object {
               "patches": Array [
@@ -1064,7 +1064,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_69",
+          "step": "StorageAccounts_Create_2",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -1084,7 +1084,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_70",
+          "step": "StorageAccounts_CheckNameAvailability_3",
           "variables": Object {
             "accountName": Object {
               "patches": Array [
@@ -1100,7 +1100,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_71",
+          "step": "StorageAccounts_Create_3",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -1120,12 +1120,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_72",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_73",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -1135,7 +1135,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_74",
+          "step": "StorageAccounts_Delete_1",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -1145,7 +1145,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_75",
+          "step": "StorageAccounts_Delete_2",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -1155,7 +1155,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_76",
+          "step": "StorageAccounts_Delete_3",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -1195,12 +1195,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_77",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_78",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -1210,7 +1210,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_79",
+          "step": "StorageAccounts_CheckNameAvailability_1",
           "variables": Object {
             "accountName": Object {
               "patches": Array [
@@ -1226,7 +1226,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_80",
+          "step": "StorageAccounts_Create_1",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -1246,7 +1246,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_81",
+          "step": "StorageAccounts_CheckNameAvailability_2",
           "variables": Object {
             "accountName": Object {
               "patches": Array [
@@ -1262,7 +1262,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_82",
+          "step": "StorageAccounts_Create_2",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -1282,7 +1282,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_83",
+          "step": "StorageAccounts_CheckNameAvailability_3",
           "variables": Object {
             "accountName": Object {
               "patches": Array [
@@ -1298,7 +1298,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_84",
+          "step": "StorageAccounts_Create_3",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -1318,12 +1318,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_85",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_86",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -1333,7 +1333,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_87",
+          "step": "StorageAccounts_Delete_1",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -1343,7 +1343,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_88",
+          "step": "StorageAccounts_Delete_2",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -1353,7 +1353,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_89",
+          "step": "StorageAccounts_Delete_3",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -1393,12 +1393,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_90",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_91",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -1408,7 +1408,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_92",
+          "step": "StorageAccounts_CheckNameAvailability_1",
           "variables": Object {
             "accountName": Object {
               "patches": Array [
@@ -1424,7 +1424,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_93",
+          "step": "StorageAccounts_Create_1",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -1444,7 +1444,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_94",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
       ],
@@ -1481,12 +1481,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_95",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_96",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -1496,7 +1496,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_97",
+          "step": "StorageAccounts_CheckNameAvailability_1",
           "variables": Object {
             "accountName": Object {
               "patches": Array [
@@ -1512,7 +1512,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_98",
+          "step": "StorageAccounts_Create_1",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -1532,7 +1532,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_99",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
       ],
@@ -1569,12 +1569,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_100",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_101",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -1584,12 +1584,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_102",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_103",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -1629,12 +1629,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_104",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_105",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -1644,12 +1644,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_106",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_107",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -1689,12 +1689,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_108",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_109",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -1704,12 +1704,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_110",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_111",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -1751,12 +1751,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_112",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_113",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -1766,12 +1766,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_114",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_115",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -1813,12 +1813,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_116",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_117",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -1828,12 +1828,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_118",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_119",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -1885,12 +1885,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_120",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_121",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -1900,12 +1900,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_122",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_123",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -1957,12 +1957,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_124",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_125",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -1972,12 +1972,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_126",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_127",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -2017,12 +2017,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_128",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_129",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -2032,12 +2032,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_130",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_131",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -2077,12 +2077,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_132",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_133",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -2092,7 +2092,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_134",
+          "step": "StorageAccounts_CheckNameAvailability_1",
           "variables": Object {
             "accountName": Object {
               "patches": Array [
@@ -2108,7 +2108,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_135",
+          "step": "StorageAccounts_Create_1",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -2128,12 +2128,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_136",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_137",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -2175,12 +2175,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_138",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_139",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -2190,7 +2190,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_140",
+          "step": "StorageAccounts_CheckNameAvailability_1",
           "variables": Object {
             "accountName": Object {
               "patches": Array [
@@ -2206,7 +2206,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_141",
+          "step": "StorageAccounts_Create_1",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -2226,12 +2226,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_142",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_143",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -2273,12 +2273,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_144",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_145",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -2288,12 +2288,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_146",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_147",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -2335,12 +2335,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_148",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_149",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -2350,12 +2350,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_150",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_151",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -2397,12 +2397,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_152",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_153",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -2412,12 +2412,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_154",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_155",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -2457,12 +2457,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_156",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_157",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -2472,12 +2472,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_158",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_159",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -2517,12 +2517,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_160",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_161",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -2532,12 +2532,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_162",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_163",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -2589,12 +2589,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_164",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_165",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -2604,12 +2604,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_166",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_167",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -2661,12 +2661,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_168",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_169",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -2676,7 +2676,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Update",
-          "step": "StorageAccounts_Update_170",
+          "step": "StorageAccounts_Update",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -2715,7 +2715,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Update",
-          "step": "StorageAccounts_Update_171",
+          "step": "StorageAccounts_Update_1",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -2753,12 +2753,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_172",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_173",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -2809,12 +2809,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_174",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_175",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -2824,7 +2824,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Update",
-          "step": "StorageAccounts_Update_176",
+          "step": "StorageAccounts_Update",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -2863,7 +2863,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Update",
-          "step": "StorageAccounts_Update_177",
+          "step": "StorageAccounts_Update_1",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -2901,12 +2901,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_178",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_179",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -2957,12 +2957,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_180",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_181",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -2972,7 +2972,7 @@ Object {
         },
         Object {
           "operationId": "BlobServices_GetServiceProperties",
-          "step": "BlobServices_GetServiceProperties_182",
+          "step": "BlobServices_GetServiceProperties",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -2982,7 +2982,7 @@ Object {
         },
         Object {
           "operationId": "BlobContainers_Create",
-          "step": "BlobContainers_Create_183",
+          "step": "BlobContainers_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -2992,7 +2992,7 @@ Object {
         },
         Object {
           "operationId": "BlobInventoryPolicies_CreateOrUpdate",
-          "step": "BlobInventoryPolicies_CreateOrUpdate_184",
+          "step": "BlobInventoryPolicies_CreateOrUpdate",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -3002,7 +3002,7 @@ Object {
         },
         Object {
           "operationId": "BlobInventoryPolicies_CreateOrUpdate",
-          "step": "BlobInventoryPolicies_CreateOrUpdate_185",
+          "step": "BlobInventoryPolicies_CreateOrUpdate_1",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -3034,7 +3034,7 @@ Object {
         },
         Object {
           "operationId": "BlobInventoryPolicies_Delete",
-          "step": "BlobInventoryPolicies_Delete_186",
+          "step": "BlobInventoryPolicies_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -3044,12 +3044,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_187",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_188",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -3177,12 +3177,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_189",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_190",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -3192,7 +3192,7 @@ Object {
         },
         Object {
           "operationId": "BlobServices_GetServiceProperties",
-          "step": "BlobServices_GetServiceProperties_191",
+          "step": "BlobServices_GetServiceProperties",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -3202,7 +3202,7 @@ Object {
         },
         Object {
           "operationId": "BlobContainers_Create",
-          "step": "BlobContainers_Create_192",
+          "step": "BlobContainers_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -3212,7 +3212,7 @@ Object {
         },
         Object {
           "operationId": "BlobInventoryPolicies_CreateOrUpdate",
-          "step": "BlobInventoryPolicies_CreateOrUpdate_193",
+          "step": "BlobInventoryPolicies_CreateOrUpdate",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -3222,7 +3222,7 @@ Object {
         },
         Object {
           "operationId": "BlobInventoryPolicies_CreateOrUpdate",
-          "step": "BlobInventoryPolicies_CreateOrUpdate_194",
+          "step": "BlobInventoryPolicies_CreateOrUpdate_1",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -3254,7 +3254,7 @@ Object {
         },
         Object {
           "operationId": "BlobInventoryPolicies_Delete",
-          "step": "BlobInventoryPolicies_Delete_195",
+          "step": "BlobInventoryPolicies_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -3264,12 +3264,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_196",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_197",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -3397,12 +3397,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_198",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_199",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -3412,7 +3412,7 @@ Object {
         },
         Object {
           "operationId": "EncryptionScopes_Put",
-          "step": "EncryptionScopes_Put_200",
+          "step": "EncryptionScopes_Put",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -3422,7 +3422,7 @@ Object {
         },
         Object {
           "operationId": "EncryptionScopes_Patch",
-          "step": "EncryptionScopes_Patch_201",
+          "step": "EncryptionScopes_Patch",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -3449,7 +3449,7 @@ Object {
         },
         Object {
           "operationId": "EncryptionScopes_List",
-          "step": "EncryptionScopes_List_202",
+          "step": "EncryptionScopes_List",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -3459,12 +3459,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_203",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_204",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -3518,12 +3518,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_205",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_206",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -3533,7 +3533,7 @@ Object {
         },
         Object {
           "operationId": "EncryptionScopes_Put",
-          "step": "EncryptionScopes_Put_207",
+          "step": "EncryptionScopes_Put",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -3543,7 +3543,7 @@ Object {
         },
         Object {
           "operationId": "EncryptionScopes_Patch",
-          "step": "EncryptionScopes_Patch_208",
+          "step": "EncryptionScopes_Patch",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -3570,7 +3570,7 @@ Object {
         },
         Object {
           "operationId": "EncryptionScopes_List",
-          "step": "EncryptionScopes_List_209",
+          "step": "EncryptionScopes_List",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -3580,12 +3580,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_210",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_211",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -3639,12 +3639,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_212",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_213",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -3654,7 +3654,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Update",
-          "step": "StorageAccounts_Update_214",
+          "step": "StorageAccounts_Update",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -3694,12 +3694,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_215",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_216",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -3742,12 +3742,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_217",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_218",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -3757,7 +3757,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Update",
-          "step": "StorageAccounts_Update_219",
+          "step": "StorageAccounts_Update",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -3797,12 +3797,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_220",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_221",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -3845,12 +3845,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_222",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_223",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -3860,7 +3860,7 @@ Object {
         },
         Object {
           "operationId": "PrivateEndpointConnections_List",
-          "step": "PrivateEndpointConnections_List_224",
+          "step": "PrivateEndpointConnections_List",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -3870,12 +3870,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_225",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_226",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -3915,12 +3915,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_227",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_228",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -3930,7 +3930,7 @@ Object {
         },
         Object {
           "operationId": "PrivateEndpointConnections_List",
-          "step": "PrivateEndpointConnections_List_229",
+          "step": "PrivateEndpointConnections_List",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -3940,12 +3940,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_230",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_231",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -3985,12 +3985,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_232",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_233",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -4000,7 +4000,7 @@ Object {
         },
         Object {
           "operationId": "PrivateLinkResources_ListByStorageAccount",
-          "step": "PrivateLinkResources_ListByStorageAccount_234",
+          "step": "PrivateLinkResources_ListByStorageAccount",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -4010,12 +4010,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_235",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_236",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -4055,12 +4055,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_237",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_238",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -4070,7 +4070,7 @@ Object {
         },
         Object {
           "operationId": "PrivateLinkResources_ListByStorageAccount",
-          "step": "PrivateLinkResources_ListByStorageAccount_239",
+          "step": "PrivateLinkResources_ListByStorageAccount",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -4080,12 +4080,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_240",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_241",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -4125,12 +4125,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_242",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_243",
+          "step": "StorageAccounts_CheckNameAvailability_1",
           "variables": Object {
             "accountName": Object {
               "patches": Array [
@@ -4146,7 +4146,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_244",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -4156,7 +4156,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_245",
+          "step": "StorageAccounts_Create_1",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -4181,12 +4181,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_246",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_247",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -4196,7 +4196,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_248",
+          "step": "StorageAccounts_Delete_1",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -4236,12 +4236,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_249",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_250",
+          "step": "StorageAccounts_CheckNameAvailability_1",
           "variables": Object {
             "accountName": Object {
               "patches": Array [
@@ -4257,7 +4257,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_251",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -4267,7 +4267,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_252",
+          "step": "StorageAccounts_Create_1",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -4292,12 +4292,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_253",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_254",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -4307,7 +4307,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_255",
+          "step": "StorageAccounts_Delete_1",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -4347,7 +4347,7 @@ Object {
       "steps": Array [
         Object {
           "operationId": "DeletedAccounts_List",
-          "step": "DeletedAccounts_List_256",
+          "step": "DeletedAccounts_List",
           "variables": undefined,
         },
       ],
@@ -4359,7 +4359,7 @@ Object {
       "steps": Array [
         Object {
           "operationId": "DeletedAccounts_List",
-          "step": "DeletedAccounts_List_257",
+          "step": "DeletedAccounts_List",
           "variables": undefined,
         },
       ],
@@ -4371,12 +4371,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_258",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_259",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -4386,12 +4386,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_260",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_261",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -4431,12 +4431,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_262",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_263",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -4446,12 +4446,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_264",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_265",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -4491,12 +4491,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_266",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_267",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -4506,7 +4506,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListServiceSAS",
-          "step": "StorageAccounts_ListServiceSAS_268",
+          "step": "StorageAccounts_ListServiceSAS",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -4565,12 +4565,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_269",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_270",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -4610,12 +4610,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_271",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_272",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -4625,7 +4625,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListServiceSAS",
-          "step": "StorageAccounts_ListServiceSAS_273",
+          "step": "StorageAccounts_ListServiceSAS",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -4684,12 +4684,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_274",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_275",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -4729,12 +4729,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_276",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_277",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -4744,7 +4744,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListServiceSAS",
-          "step": "StorageAccounts_ListServiceSAS_278",
+          "step": "StorageAccounts_ListServiceSAS",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -4791,12 +4791,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_279",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_280",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -4836,12 +4836,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_281",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_282",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -4851,7 +4851,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListServiceSAS",
-          "step": "StorageAccounts_ListServiceSAS_283",
+          "step": "StorageAccounts_ListServiceSAS",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -4898,12 +4898,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_284",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_285",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -4943,12 +4943,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_286",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_287",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -4958,7 +4958,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListServiceSAS",
-          "step": "StorageAccounts_ListServiceSAS_288",
+          "step": "StorageAccounts_ListServiceSAS",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -5001,12 +5001,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_289",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_290",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -5046,12 +5046,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_291",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_292",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -5061,7 +5061,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListServiceSAS",
-          "step": "StorageAccounts_ListServiceSAS_293",
+          "step": "StorageAccounts_ListServiceSAS",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -5104,12 +5104,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_294",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_295",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -5149,7 +5149,7 @@ Object {
       "steps": Array [
         Object {
           "operationId": "Skus_List",
-          "step": "Skus_List_296",
+          "step": "Skus_List",
           "variables": undefined,
         },
       ],
@@ -5161,7 +5161,7 @@ Object {
       "steps": Array [
         Object {
           "operationId": "Skus_List",
-          "step": "Skus_List_297",
+          "step": "Skus_List",
           "variables": undefined,
         },
       ],
@@ -5173,12 +5173,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_298",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_299",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -5188,12 +5188,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_300",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_301",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -5233,12 +5233,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_302",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_303",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -5248,12 +5248,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_304",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_305",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -5293,12 +5293,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_306",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_307",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -5308,7 +5308,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListAccountSAS",
-          "step": "StorageAccounts_ListAccountSAS_308",
+          "step": "StorageAccounts_ListAccountSAS",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -5367,12 +5367,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_309",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_310",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -5412,12 +5412,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_311",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_312",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -5427,7 +5427,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListAccountSAS",
-          "step": "StorageAccounts_ListAccountSAS_313",
+          "step": "StorageAccounts_ListAccountSAS",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -5486,12 +5486,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_314",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_315",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -5531,12 +5531,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_316",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_317",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -5546,7 +5546,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListAccountSAS",
-          "step": "StorageAccounts_ListAccountSAS_318",
+          "step": "StorageAccounts_ListAccountSAS",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -5593,12 +5593,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_319",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_320",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -5638,12 +5638,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_321",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_322",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -5653,7 +5653,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListAccountSAS",
-          "step": "StorageAccounts_ListAccountSAS_323",
+          "step": "StorageAccounts_ListAccountSAS",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -5700,12 +5700,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_324",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_325",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -5745,12 +5745,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_326",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_327",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -5760,7 +5760,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListAccountSAS",
-          "step": "StorageAccounts_ListAccountSAS_328",
+          "step": "StorageAccounts_ListAccountSAS",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -5807,12 +5807,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_329",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_330",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -5852,12 +5852,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_331",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_332",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -5867,7 +5867,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListAccountSAS",
-          "step": "StorageAccounts_ListAccountSAS_333",
+          "step": "StorageAccounts_ListAccountSAS",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -5914,12 +5914,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_334",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_335",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -5959,12 +5959,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_336",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_337",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -5974,7 +5974,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_338",
+          "step": "StorageAccounts_CheckNameAvailability_1",
           "variables": Object {
             "accountName": Object {
               "patches": Array [
@@ -5990,7 +5990,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_339",
+          "step": "StorageAccounts_Create_1",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -6015,12 +6015,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_List",
-          "step": "StorageAccounts_List_340",
+          "step": "StorageAccounts_List",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_341",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -6030,7 +6030,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_342",
+          "step": "StorageAccounts_Delete_1",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -6070,12 +6070,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_343",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_344",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -6085,7 +6085,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_345",
+          "step": "StorageAccounts_CheckNameAvailability_1",
           "variables": Object {
             "accountName": Object {
               "patches": Array [
@@ -6101,7 +6101,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_346",
+          "step": "StorageAccounts_Create_1",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -6126,12 +6126,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_List",
-          "step": "StorageAccounts_List_347",
+          "step": "StorageAccounts_List",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_348",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -6141,7 +6141,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_349",
+          "step": "StorageAccounts_Delete_1",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -6181,12 +6181,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_350",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_351",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -6196,12 +6196,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_352",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_353",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -6253,12 +6253,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_354",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_355",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -6268,12 +6268,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_356",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_357",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -6325,12 +6325,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_358",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_359",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -6340,7 +6340,7 @@ Object {
         },
         Object {
           "operationId": "BlobServices_GetServiceProperties",
-          "step": "BlobServices_GetServiceProperties_360",
+          "step": "BlobServices_GetServiceProperties",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -6350,7 +6350,7 @@ Object {
         },
         Object {
           "operationId": "BlobServices_SetServiceProperties",
-          "step": "BlobServices_SetServiceProperties_361",
+          "step": "BlobServices_SetServiceProperties",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -6396,7 +6396,7 @@ Object {
         },
         Object {
           "operationId": "ManagementPolicies_CreateOrUpdate",
-          "step": "ManagementPolicies_CreateOrUpdate_362",
+          "step": "ManagementPolicies_CreateOrUpdate",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -6406,7 +6406,7 @@ Object {
         },
         Object {
           "operationId": "ManagementPolicies_Delete",
-          "step": "ManagementPolicies_Delete_363",
+          "step": "ManagementPolicies_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -6416,12 +6416,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_364",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_365",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -6535,12 +6535,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_366",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_367",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -6550,7 +6550,7 @@ Object {
         },
         Object {
           "operationId": "BlobServices_GetServiceProperties",
-          "step": "BlobServices_GetServiceProperties_368",
+          "step": "BlobServices_GetServiceProperties",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -6560,7 +6560,7 @@ Object {
         },
         Object {
           "operationId": "BlobServices_SetServiceProperties",
-          "step": "BlobServices_SetServiceProperties_369",
+          "step": "BlobServices_SetServiceProperties",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -6606,7 +6606,7 @@ Object {
         },
         Object {
           "operationId": "ManagementPolicies_CreateOrUpdate",
-          "step": "ManagementPolicies_CreateOrUpdate_370",
+          "step": "ManagementPolicies_CreateOrUpdate",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -6616,7 +6616,7 @@ Object {
         },
         Object {
           "operationId": "ManagementPolicies_Delete",
-          "step": "ManagementPolicies_Delete_371",
+          "step": "ManagementPolicies_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -6626,12 +6626,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_372",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_373",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -6745,12 +6745,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_374",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_375",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -6760,7 +6760,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Failover",
-          "step": "StorageAccounts_Failover_376",
+          "step": "StorageAccounts_Failover",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -6800,12 +6800,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_377",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_378",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -6815,7 +6815,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Failover",
-          "step": "StorageAccounts_Failover_379",
+          "step": "StorageAccounts_Failover",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -6855,7 +6855,7 @@ Object {
       "steps": Array [
         Object {
           "operationId": "Operations_List",
-          "step": "Operations_List_380",
+          "step": "Operations_List",
           "variables": undefined,
         },
       ],
@@ -6867,7 +6867,7 @@ Object {
       "steps": Array [
         Object {
           "operationId": "Operations_List",
-          "step": "Operations_List_381",
+          "step": "Operations_List",
           "variables": undefined,
         },
       ],
@@ -6879,7 +6879,7 @@ Object {
       "steps": Array [
         Object {
           "operationId": "Operations_List",
-          "step": "Operations_List_382",
+          "step": "Operations_List",
           "variables": undefined,
         },
       ],
@@ -6891,7 +6891,7 @@ Object {
       "steps": Array [
         Object {
           "operationId": "Operations_List",
-          "step": "Operations_List_383",
+          "step": "Operations_List",
           "variables": undefined,
         },
       ],
@@ -6903,12 +6903,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_384",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_385",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -6918,7 +6918,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListKeys",
-          "step": "StorageAccounts_ListKeys_386",
+          "step": "StorageAccounts_ListKeys",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -6928,7 +6928,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_RegenerateKey",
-          "step": "StorageAccounts_RegenerateKey_387",
+          "step": "StorageAccounts_RegenerateKey",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -6938,12 +6938,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_388",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_389",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -6993,12 +6993,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_390",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_391",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -7008,7 +7008,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListKeys",
-          "step": "StorageAccounts_ListKeys_392",
+          "step": "StorageAccounts_ListKeys",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -7018,7 +7018,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_RegenerateKey",
-          "step": "StorageAccounts_RegenerateKey_393",
+          "step": "StorageAccounts_RegenerateKey",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -7028,12 +7028,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_394",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_395",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -7083,12 +7083,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_396",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_397",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -7098,7 +7098,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_RevokeUserDelegationKeys",
-          "step": "StorageAccounts_RevokeUserDelegationKeys_398",
+          "step": "StorageAccounts_RevokeUserDelegationKeys",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -7108,12 +7108,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_399",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_400",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -7153,12 +7153,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_401",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_402",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -7168,7 +7168,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_RevokeUserDelegationKeys",
-          "step": "StorageAccounts_RevokeUserDelegationKeys_403",
+          "step": "StorageAccounts_RevokeUserDelegationKeys",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -7178,12 +7178,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_404",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_405",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -7223,12 +7223,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_406",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_407",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -7238,7 +7238,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Update",
-          "step": "StorageAccounts_Update_408",
+          "step": "StorageAccounts_Update",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -7317,12 +7317,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_409",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_410",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -7332,7 +7332,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Update",
-          "step": "StorageAccounts_Update_411",
+          "step": "StorageAccounts_Update",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -7411,12 +7411,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_412",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_413",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -7426,7 +7426,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Update",
-          "step": "StorageAccounts_Update_414",
+          "step": "StorageAccounts_Update",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -7478,7 +7478,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Update",
-          "step": "StorageAccounts_Update_415",
+          "step": "StorageAccounts_Update_1",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -7557,12 +7557,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_416",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_417",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -7572,7 +7572,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Update",
-          "step": "StorageAccounts_Update_418",
+          "step": "StorageAccounts_Update",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -7624,7 +7624,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Update",
-          "step": "StorageAccounts_Update_419",
+          "step": "StorageAccounts_Update_1",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -7703,12 +7703,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_420",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_421",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -7718,7 +7718,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Update",
-          "step": "StorageAccounts_Update_422",
+          "step": "StorageAccounts_Update",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -7747,7 +7747,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Update",
-          "step": "StorageAccounts_Update_423",
+          "step": "StorageAccounts_Update_1",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -7791,7 +7791,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Update",
-          "step": "StorageAccounts_Update_424",
+          "step": "StorageAccounts_Update_2",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -7849,7 +7849,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Update",
-          "step": "StorageAccounts_Update_425",
+          "step": "StorageAccounts_Update_3",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -7881,7 +7881,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Update",
-          "step": "StorageAccounts_Update_426",
+          "step": "StorageAccounts_Update_4",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -7913,12 +7913,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_427",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_428",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -7958,12 +7958,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_429",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_430",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -7973,7 +7973,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Update",
-          "step": "StorageAccounts_Update_431",
+          "step": "StorageAccounts_Update",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -8002,7 +8002,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Update",
-          "step": "StorageAccounts_Update_432",
+          "step": "StorageAccounts_Update_1",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -8046,7 +8046,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Update",
-          "step": "StorageAccounts_Update_433",
+          "step": "StorageAccounts_Update_2",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -8104,7 +8104,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Update",
-          "step": "StorageAccounts_Update_434",
+          "step": "StorageAccounts_Update_3",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -8136,7 +8136,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Update",
-          "step": "StorageAccounts_Update_435",
+          "step": "StorageAccounts_Update_4",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -8168,12 +8168,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_436",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_437",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -8213,12 +8213,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_438",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_439",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -8228,49 +8228,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Update",
-          "step": "StorageAccounts_Update_440",
-          "variables": Object {
-            "accountName": Object {
-              "type": "string",
-              "value": "teststoragemgmt8147",
-            },
-            "parameters": Object {
-              "patches": Array [
-                Object {
-                  "remove": "/sku",
-                },
-                Object {
-                  "remove": "/kind",
-                },
-                Object {
-                  "remove": "/location",
-                },
-                Object {
-                  "remove": "/tags",
-                },
-                Object {
-                  "add": "/properties/encryption",
-                  "value": Object {
-                    "keySource": "Microsoft.Storage",
-                    "services": Object {
-                      "blob": Object {
-                        "enabled": true,
-                      },
-                      "file": Object {
-                        "enabled": true,
-                      },
-                    },
-                  },
-                },
-              ],
-              "type": "object",
-              "value": undefined,
-            },
-          },
-        },
-        Object {
-          "operationId": "StorageAccounts_Update",
-          "step": "StorageAccounts_Update_441",
+          "step": "StorageAccounts_Update",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -8312,7 +8270,49 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Update",
-          "step": "StorageAccounts_Update_442",
+          "step": "StorageAccounts_Update_1",
+          "variables": Object {
+            "accountName": Object {
+              "type": "string",
+              "value": "teststoragemgmt8147",
+            },
+            "parameters": Object {
+              "patches": Array [
+                Object {
+                  "remove": "/sku",
+                },
+                Object {
+                  "remove": "/kind",
+                },
+                Object {
+                  "remove": "/location",
+                },
+                Object {
+                  "remove": "/tags",
+                },
+                Object {
+                  "add": "/properties/encryption",
+                  "value": Object {
+                    "keySource": "Microsoft.Storage",
+                    "services": Object {
+                      "blob": Object {
+                        "enabled": true,
+                      },
+                      "file": Object {
+                        "enabled": true,
+                      },
+                    },
+                  },
+                },
+              ],
+              "type": "object",
+              "value": undefined,
+            },
+          },
+        },
+        Object {
+          "operationId": "StorageAccounts_Update",
+          "step": "StorageAccounts_Update_2",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -8351,12 +8351,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_443",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_444",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -8396,12 +8396,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_445",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_446",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -8411,49 +8411,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Update",
-          "step": "StorageAccounts_Update_447",
-          "variables": Object {
-            "accountName": Object {
-              "type": "string",
-              "value": "teststoragemgmt9703",
-            },
-            "parameters": Object {
-              "patches": Array [
-                Object {
-                  "remove": "/sku",
-                },
-                Object {
-                  "remove": "/kind",
-                },
-                Object {
-                  "remove": "/location",
-                },
-                Object {
-                  "remove": "/tags",
-                },
-                Object {
-                  "add": "/properties/encryption",
-                  "value": Object {
-                    "keySource": "Microsoft.Storage",
-                    "services": Object {
-                      "blob": Object {
-                        "enabled": true,
-                      },
-                      "file": Object {
-                        "enabled": true,
-                      },
-                    },
-                  },
-                },
-              ],
-              "type": "object",
-              "value": undefined,
-            },
-          },
-        },
-        Object {
-          "operationId": "StorageAccounts_Update",
-          "step": "StorageAccounts_Update_448",
+          "step": "StorageAccounts_Update",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -8495,7 +8453,49 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Update",
-          "step": "StorageAccounts_Update_449",
+          "step": "StorageAccounts_Update_1",
+          "variables": Object {
+            "accountName": Object {
+              "type": "string",
+              "value": "teststoragemgmt9703",
+            },
+            "parameters": Object {
+              "patches": Array [
+                Object {
+                  "remove": "/sku",
+                },
+                Object {
+                  "remove": "/kind",
+                },
+                Object {
+                  "remove": "/location",
+                },
+                Object {
+                  "remove": "/tags",
+                },
+                Object {
+                  "add": "/properties/encryption",
+                  "value": Object {
+                    "keySource": "Microsoft.Storage",
+                    "services": Object {
+                      "blob": Object {
+                        "enabled": true,
+                      },
+                      "file": Object {
+                        "enabled": true,
+                      },
+                    },
+                  },
+                },
+              ],
+              "type": "object",
+              "value": undefined,
+            },
+          },
+        },
+        Object {
+          "operationId": "StorageAccounts_Update",
+          "step": "StorageAccounts_Update_2",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -8534,12 +8534,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_450",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_451",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -8579,12 +8579,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_452",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_453",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -8594,7 +8594,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Update",
-          "step": "StorageAccounts_Update_454",
+          "step": "StorageAccounts_Update",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -8638,12 +8638,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_455",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_456",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -8683,12 +8683,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_457",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_458",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -8698,7 +8698,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Update",
-          "step": "StorageAccounts_Update_459",
+          "step": "StorageAccounts_Update",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -8742,12 +8742,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_460",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_461",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -8787,12 +8787,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_462",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_463",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -8802,7 +8802,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Update",
-          "step": "StorageAccounts_Update_464",
+          "step": "StorageAccounts_Update",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -8838,7 +8838,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Update",
-          "step": "StorageAccounts_Update_465",
+          "step": "StorageAccounts_Update_1",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -8870,12 +8870,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_466",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_467",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -8917,12 +8917,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_468",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_469",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -8932,7 +8932,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Update",
-          "step": "StorageAccounts_Update_470",
+          "step": "StorageAccounts_Update",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -8968,7 +8968,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Update",
-          "step": "StorageAccounts_Update_471",
+          "step": "StorageAccounts_Update_1",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -9000,12 +9000,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_472",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_473",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -9047,12 +9047,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_474",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_475",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -9062,7 +9062,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Update",
-          "step": "StorageAccounts_Update_476",
+          "step": "StorageAccounts_Update",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -9097,12 +9097,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_477",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_478",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -9142,12 +9142,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_479",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_480",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -9157,7 +9157,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Update",
-          "step": "StorageAccounts_Update_481",
+          "step": "StorageAccounts_Update",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -9192,12 +9192,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_482",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_483",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -9237,12 +9237,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_484",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_485",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -9252,7 +9252,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Update",
-          "step": "StorageAccounts_Update_486",
+          "step": "StorageAccounts_Update",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -9285,12 +9285,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_487",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_488",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -9330,12 +9330,12 @@ Object {
       "steps": Array [
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
-          "step": "StorageAccounts_CheckNameAvailability_489",
+          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
-          "step": "StorageAccounts_Create_490",
+          "step": "StorageAccounts_Create",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -9345,7 +9345,7 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_Update",
-          "step": "StorageAccounts_Update_491",
+          "step": "StorageAccounts_Update",
           "variables": Object {
             "accountName": Object {
               "type": "string",
@@ -9378,12 +9378,12 @@ Object {
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
-          "step": "StorageAccounts_ListByResourceGroup_492",
+          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
-          "step": "StorageAccounts_Delete_493",
+          "step": "StorageAccounts_Delete",
           "variables": Object {
             "accountName": Object {
               "type": "string",
