@@ -10,7 +10,6 @@ import {
   RequestBody,
   RequestBodyDefinition,
   Url,
-  VariableDefinition,
   VariableScope,
 } from "postman-collection";
 import { inversifyGetInstance, TYPES } from "../inversifyUtils";
@@ -145,6 +144,13 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
         {
           key: "bearer_token_expires_on",
         },
+        {
+          key: "x_polling_url",
+        },
+        {
+          key: "x_retry_after",
+          value: "10",
+        },
       ],
     });
     this.collection.describe(
@@ -185,7 +191,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
         name: "startTestProxyRecording",
         request: {
           url: `${this.opts.testProxy}/record/start`,
-          method: "post",
+          method: "POST",
           body: {
             mode: "raw",
             raw: `{"x-recording-file": "./recordings/${this.opts.apiScenarioName}_${this.opts.runId}.json"}`,
@@ -217,7 +223,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
         name: "stopTestProxyRecording",
         request: {
           url: `${this.opts.testProxy}/record/stop`,
-          method: "post",
+          method: "POST",
         },
       },
       false
@@ -257,18 +263,35 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
   ): Promise<void> {
     const item = this.newItem({
       name: "createResourceGroup",
-      request: {
-        url: `${
-          this.opts.testProxy ?? this.opts.baseUrl
-        }/subscriptions/{{subscriptionId}}/resourcegroups/{{resourceGroupName}}?api-version=${ARM_API_VERSION}`,
-        method: "put",
-        body: {
-          mode: "raw",
-          raw: '{"location":"{{location}}"}',
-        },
-      },
-      description: typeToDescription({ type: "prepare" }),
     });
+
+    item.request.method = "PUT";
+    item.request.url = new Url({
+      host: this.opts.testProxy ?? this.opts.baseUrl,
+      path: "/subscriptions/:subscriptionId/resourcegroups/:resourceGroupName",
+      variable: [
+        {
+          key: "subscriptionId",
+          value: "{{subscriptionId}}",
+        },
+        {
+          key: "resourceGroupName",
+          value: "{{resourceGroupName}}",
+        },
+      ],
+      query: [
+        {
+          key: "api-version",
+          value: ARM_API_VERSION,
+        },
+      ],
+    });
+    item.request.body = new RequestBody({
+      mode: "raw",
+      raw: '{"location":"{{location}}"}',
+    });
+
+    item.description = typeToDescription({ type: "prepare" });
 
     item.request.addHeader({ key: "Content-Type", value: "application/json" });
 
@@ -290,13 +313,29 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     }
     const item = this.newItem({
       name: "deleteResourceGroup",
-      request: {
-        url: `${
-          this.opts.testProxy ?? this.opts.baseUrl
-        }/subscriptions/{{subscriptionId}}/resourcegroups/{{resourceGroupName}}?api-version=${ARM_API_VERSION}`,
-        method: "delete",
-      },
     });
+    item.request.method = "DELETE";
+    item.request.url = new Url({
+      host: this.opts.testProxy ?? this.opts.baseUrl,
+      path: "/subscriptions/:subscriptionId/resourcegroups/:resourceGroupName",
+      variable: [
+        {
+          key: "subscriptionId",
+          value: "{{subscriptionId}}",
+        },
+        {
+          key: "resourceGroupName",
+          value: "{{resourceGroupName}}",
+        },
+      ],
+      query: [
+        {
+          key: "api-version",
+          value: ARM_API_VERSION,
+        },
+      ],
+    });
+
     item.request.addHeader({ key: "Content-Type", value: "application/json" });
 
     item.events.add(
@@ -326,19 +365,20 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
           ? { mode: "raw", raw: JSON.stringify(convertPostmanFormat(clientRequest.body), null, 2) }
           : undefined,
       },
-      description: step.operation.operationId,
     });
+
+    item.description = step.operation.operationId;
 
     item.request.url = new Url({
       host: this.opts.testProxy ?? this.opts.baseUrl,
       path: covertToPostmanVariable(clientRequest.path, true),
-      variable: Object.entries(clientRequest.pathVariables ?? {}).map(([key, _]) => ({
+      variable: Object.entries(clientRequest.pathVariables ?? {}).map(([key, value]) => ({
         key,
-        value: `{{${key}}}`,
+        value: convertPostmanFormat(value),
       })),
       query: Object.entries(clientRequest.query).map(([key, value]) => ({
         key,
-        value: covertToPostmanVariable(value, true),
+        value: covertToPostmanVariable(value),
       })),
     });
 
@@ -411,7 +451,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       this.collection.items.add(
         this.generatedGetOperationItem(
           item.name,
-          item.request.url.toString(),
+          item.request.url,
           item.name,
           step.operation._method
         )
@@ -479,55 +519,26 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     const item = this.newItem({
       name: step.step,
     });
-    const path = `/subscriptions/{{subscriptionId}}/resourcegroups/{{resourceGroupName}}/providers/Microsoft.Resources/deployments/${step.step}?api-version=${ARM_API_VERSION}`;
-
-    const subscriptionIdValue = covertToPostmanVariable(
-      env.resolveString(env.getString("subscriptionId") || "")
-    );
-    const resourceGroupNameValue = covertToPostmanVariable(
-      env.resolveString(env.getString("resourceGroupName") || "")
-    );
-    const subscriptionIdParamName = Object.keys(step.variables).includes("subscriptionId")
-      ? `${item.name}_subscriptionId`
-      : "subscriptionId";
-    const resourceGroupNameParamName = Object.keys(step.variables).includes("resourceGroupName")
-      ? `${item.name}_resourceGroupName`
-      : "resourceGroupName";
-    const urlVariables: VariableDefinition[] = [
-      { key: "subscriptionId", value: `{{${subscriptionIdParamName}}}` },
-      { key: "resourceGroupName", value: `{{${resourceGroupNameParamName}}}` },
-    ];
-
-    if (!this.collectionEnv.has(subscriptionIdParamName)) {
-      this.collectionEnv.set(
-        subscriptionIdParamName,
-        subscriptionIdValue,
-        typeof subscriptionIdValue
-      );
-    }
-
-    if (!this.collectionEnv.has(resourceGroupNameParamName)) {
-      this.collectionEnv.set(
-        resourceGroupNameParamName,
-        resourceGroupNameValue,
-        typeof resourceGroupNameValue
-      );
-    }
 
     item.request = new Request({
       name: step.step,
-      method: "put",
+      method: "PUT",
       url: "",
       body: { mode: "raw" } as RequestBodyDefinition,
     });
     item.request.url = new Url({
       host: this.opts.testProxy ?? this.opts.baseUrl,
-      path: path,
-      variable: urlVariables,
+      path: `/subscriptions/:subscriptionId/resourcegroups/:resourceGroupName/providers/Microsoft.Resources/deployments/:deploymentName`,
+      variable: [
+        { key: "subscriptionId", value: `{{subscriptionId}}` },
+        { key: "resourceGroupName", value: `{{resourceGroupName}}` },
+        { key: "deploymentName", value: `${step.step}` },
+      ],
+      query: [{ key: "api-version", value: ARM_API_VERSION }],
     });
     const body = {
       properties: {
-        mode: "Incremental",
+        mode: "Complete",
         template: convertPostmanFormat(env.resolveObjectValues(armTemplate)),
       },
     };
@@ -562,7 +573,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       : ["ExtractARMTemplateOutput"];
     const generatedGetOperationItem = this.generatedGetOperationItem(
       item.name,
-      item.request.url.toString(),
+      item.request.url,
       step.step,
       "put",
       generatedGetScriptTypes,
@@ -748,7 +759,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
 
   private generatedGetOperationItem(
     name: string,
-    url: string,
+    url: Url,
     step: string,
     prevMethod: string = "put",
     scriptTypes: PostmanHelper.TestScriptType[] = [],
@@ -757,10 +768,11 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     const item = this.newItem({
       name: `${generatedPostmanItem(generatedGet(name))}`,
       request: {
-        method: "get",
-        url: url,
+        method: "GET",
+        url: "",
       },
     });
+    item.request.url = url;
     item.description = typeToDescription({
       type: "generated-get",
       lro_item_name: name,
@@ -781,33 +793,32 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       name: generatedPostmanItem(initialItem.name + "_poller"),
       request: {
         url: `{{x_polling_url}}`,
-        method: "get",
+        method: "GET",
       },
-      description: typeToDescription({ type: "poller", lro_item_name: initialItem.name }),
     });
+    pollerItem.description = typeToDescription({ type: "poller", lro_item_name: initialItem.name });
 
     const delay = this.mockDelayItem(pollerItem.name, initialItem.name);
 
     const event = PostmanHelper.createEvent(
       "test",
-      PostmanHelper.createScript(`
-      try{
-        if(pm.response.code === 202){
-          postman.setNextRequest('${delay.name}')
-        }else if(pm.response.code === 204){
-          postman.setNextRequest($(nextRequest))
-        }
-        else{
-          const terminalStatus = ["Succeeded", "Failed", "Canceled"]
-          if(pm.response.json().status !== undefined && terminalStatus.indexOf(pm.response.json().status) === -1){
-            postman.setNextRequest('${delay.name}')
-          }else{
-            postman.setNextRequest($(nextRequest))
-          }
-        }
-      }catch(err){
-        postman.setNextRequest($(nextRequest))
-      }`)
+      PostmanHelper.createScript(`try{
+  if(pm.response.code === 202){
+    postman.setNextRequest('${delay.name}')
+  }else if(pm.response.code === 204){
+    postman.setNextRequest($(nextRequest))
+  }
+  else{
+    const terminalStatus = ["Succeeded", "Failed", "Canceled"]
+    if(pm.response.json().status !== undefined && terminalStatus.indexOf(pm.response.json().status) === -1){
+      postman.setNextRequest('${delay.name}')
+    }else{
+      postman.setNextRequest($(nextRequest))
+    }
+  }
+}catch(err){
+  postman.setNextRequest($(nextRequest))
+}`)
     );
     pollerItem.events.add(event);
 
@@ -832,13 +843,13 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       {
         name: `${nextRequestName}_mock_delay`,
         request: {
-          url: "https://postman-echo.com/delay/10",
-          method: "get",
+          url: "https://postman-echo.com/delay/{{x_retry_after}}",
+          method: "GET",
         },
-        description: typeToDescription({ type: "mock", lro_item_name: LROItemName }),
       },
       false
     );
+    ret.description = typeToDescription({ type: "mock", lro_item_name: LROItemName });
 
     const event = PostmanHelper.createEvent(
       "prerequest",
