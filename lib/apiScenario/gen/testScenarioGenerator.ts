@@ -20,6 +20,7 @@ import {
   StepRestCall,
   Variable,
   RawStepOperation,
+  RawVariableScope,
 } from "../apiScenarioTypes";
 import { ApiScenarioClientRequest } from "../apiScenarioRunner";
 import { Operation, Parameter, SwaggerExample } from "../../swagger/swaggerTypes";
@@ -27,6 +28,8 @@ import { unknownApiVersion, xmsLongRunningOperation } from "../../util/constants
 import { ArmApiInfo, ArmUrlParser } from "../armUrlParser";
 import { SchemaValidator } from "../../swaggerValidator/schemaValidator";
 import { getJsonPatchDiff } from "../diffUtils";
+import { cloneDeep } from "lodash";
+import { replaceAllInObject } from "../variableUtils";
 
 const glob = require("glob");
 
@@ -137,6 +140,7 @@ export class TestScenarioGenerator {
   ): Promise<RawScenarioDefinition> {
     const testDef: RawScenarioDefinition = {
       scope: "ResourceGroup",
+      variables: {},
       scenarios: [],
     };
 
@@ -145,6 +149,16 @@ export class TestScenarioGenerator {
       const testScenario = await this.generateTestScenario(track, testScenarioFilePath);
       testDef.scenarios.push(testScenario);
     }
+
+    const variables = {};
+
+    convertVariables(variables, testDef.scenarios);
+    testDef.scenarios.forEach((scenario) => {
+      if (Object.keys(scenario.variables ?? {}).length === 0) {
+        scenario.variables = undefined;
+      }
+    });
+    testDef.variables = Object.keys(variables).length > 0 ? variables : undefined;
 
     this.testDefToWrite.push({ testDef, filePath: testScenarioFilePath });
 
@@ -188,6 +202,22 @@ export class TestScenarioGenerator {
       lastOperation = operation;
       testScenario.steps.push(step);
     }
+
+    convertVariables(ctx.variables, testScenario.steps);
+    testScenario.steps.forEach((step) => {
+      Object.keys(step.variables ?? {}).forEach((key) => {
+        const variable = step.variables![key] as Variable;
+        step = step as RawStepOperation;
+        if (variable.value !== undefined) {
+          step.parameters = step.parameters || {};
+          step.parameters[key] = variable.value;
+          delete step.variables![key];
+        }
+      });
+      if (Object.keys(step.variables ?? {}).length === 0) {
+        step.variables = undefined;
+      }
+    });
 
     testScenario.variables = Object.keys(ctx.variables).length > 0 ? ctx.variables : undefined;
 
@@ -272,22 +302,17 @@ export class TestScenarioGenerator {
         } else {
           v = { type: "object", value: value };
         }
+      } else if (typeof value === "boolean") {
+        v = { type: "bool", value };
+      } else if (typeof value === "number") {
+        v = { type: "int", value };
       } else {
+        console.warn(
+          `unknown type of value: ${typeof value}, key: ${paramKey}, method: ${record.method}`
+        );
         continue;
       }
-      if (ctx.variables[paramKey] === undefined) {
-        ctx.variables[paramKey] = v;
-      } else {
-        const old = ctx.variables[paramKey];
-        if (old.type === v.type && (v.type === "object" || v.type === "array")) {
-          const diff = getJsonPatchDiff(old.value!, v.value!);
-          if (diff.length > 0) {
-            v.patches = diff;
-            v.value = undefined;
-          }
-        }
-        variables[paramKey] = v;
-      }
+      variables[paramKey] = v;
     }
 
     let idx = this.operationIdx.get(operation.operationId!);
@@ -417,3 +442,92 @@ const eraseUnwantedKeys = (obj: any) => {
     }
   }
 };
+
+const typeMap = {
+  object: "0",
+  array: "1",
+  bool: "2",
+  int: "3",
+  string: "4",
+  secureString: "5",
+  secureObject: "6",
+};
+
+const convertVariables = (root: Scenario["variables"], scopes: RawVariableScope[]) => {
+  const keyToVariables = new Map<string, Array<Variable>>();
+  scopes.forEach((v) => {
+    Object.entries(v.variables ?? {}).forEach(([key, value]) => {
+      value = value as Variable;
+      key = `${key}_${typeMap[value.type]}`;
+      if (value.type === "string") {
+        key = `${key}_${value.value}`;
+      }
+      const vars = keyToVariables.get(key) ?? [];
+      vars.push(value);
+      keyToVariables.set(key, vars);
+    });
+  });
+
+  keyToVariables.forEach((vars, key) => {
+    if (vars.length === 1) {
+      return;
+    }
+    const old = cloneDeep(vars[0]);
+    const [keyName] = key.split("_");
+    if (root[keyName] !== undefined) {
+      if (old.type === "string") {
+        for (let i = 1; ; i++) {
+          key = `${keyName}${i}`;
+          if (root[key] === undefined) {
+            break;
+          }
+        }
+        root[key] = old;
+        replaceAllString(old.value!, key, scopes);
+      }
+      return;
+    }
+    root[keyName] = old;
+
+    if (old.type === "object" || old.type === "array") {
+      for (const newValue of vars) {
+        const diff = getJsonPatchDiff(old.value!, newValue.value!);
+        if (
+          diff.length > 0 &&
+          newValue.type == old.type &&
+          diff.length <= Object.keys(old.value!).length
+        ) {
+          newValue.patches = diff;
+          newValue.value = undefined;
+        }
+
+        if (diff.length === 0) {
+          newValue.value = undefined;
+        }
+      }
+    }
+  });
+
+  scopes.forEach((v) => {
+    Object.keys(v.variables ?? {}).forEach((key) => {
+      const variable = v.variables![key] as Variable;
+      if (variable.type === "array" || variable.type === "object") {
+        if (variable.patches === undefined && variable.value === undefined) {
+          delete v.variables![key];
+        }
+      } else if (root[key] && root[key].value === variable.value) {
+        delete v.variables![key];
+      }
+    });
+  });
+};
+
+const replaceAllString = (toMatch: string, key: string, scopes: RawVariableScope[]) => {
+  toMatch = toMatch.toLowerCase();
+  scopes.forEach((v) => {
+    Object.values(v.variables ?? {}).forEach((value) => {
+      replaceAllInObject(value, [toMatch], { [`${toMatch}`]: `$(${key})` });
+    });
+  });
+};
+
