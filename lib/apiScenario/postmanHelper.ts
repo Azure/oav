@@ -129,7 +129,7 @@ function generateARMTemplateOutputScript(armTemplate: ArmTemplate): string {
   return ret;
 }
 
-export const reservedVariables = [
+export const reservedCollectionVariables = [
   {
     key: "subscriptionId",
   },

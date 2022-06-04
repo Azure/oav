@@ -223,11 +223,6 @@ export const ApiScenarioDefinition: Schema & {
         variables: {
           $ref: "#/definitions/Variables",
         },
-        shareScope: {
-          type: "boolean",
-          description: "Whether to share the scope and prepareSteps with other scenarios",
-          default: true,
-        },
         steps: {
           type: "array",
           items: {
