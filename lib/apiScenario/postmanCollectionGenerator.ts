@@ -203,8 +203,7 @@ export class PostmanCollectionGenerator {
     runtimeEnv: VariableScope
   ) {
     const reportExportPath = resolve(
-      process.cwd(),
-      "newman",
+      this.opt.outputFolder,
       `${defaultNewmanReport(this.opt.name, this.opt.runId!, scenarioName)}`
     );
     const newmanRun = async () => {
