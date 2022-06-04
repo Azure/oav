@@ -10,6 +10,7 @@ import {
   Variable,
   VariableScope,
 } from "postman-collection";
+import { setDefaultOpts } from "../swagger/loader";
 import {
   ApiScenarioClientRequest,
   ApiScenarioRunnerClient,
@@ -43,19 +44,17 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
 
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
   constructor(opts: PostmanCollectionRunnerClientOption) {
-    this.opts = {
-      ...{
-        baseUrl: ARM_ENDPOINT,
-      },
-      ...opts,
-    };
+    this.opts = opts;
+    setDefaultOpts(this.opts, {
+      baseUrl: ARM_ENDPOINT,
+    } as PostmanCollectionRunnerClientOption);
   }
 
   public setOpt(opt: Partial<PostmanCollectionRunnerClientOption>) {
     this.opts = { ...this.opts, ...opt };
   }
 
-  public async provisionScope(scope: Scope): Promise<boolean> {
+  public async provisionScope(scope: Scope): Promise<void> {
     this.collection = new Collection({
       info: {
         id: this.opts.runId,
@@ -148,8 +147,6 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     if (this.opts.testProxy) {
       this.startTestProxyRecording();
     }
-
-    return false;
   }
 
   public outputCollection(): [Collection, VariableScope] {

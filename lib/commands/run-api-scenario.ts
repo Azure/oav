@@ -173,8 +173,8 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       verbose: argv.verbose,
       swaggerFilePaths: swaggerFilePaths,
     };
-    const postmanRunner = inversifyGetInstance(PostmanCollectionGenerator, opt);
-    await postmanRunner.run();
+    const generator = inversifyGetInstance(PostmanCollectionGenerator, opt);
+    await generator.run();
     return 0;
   });
 }

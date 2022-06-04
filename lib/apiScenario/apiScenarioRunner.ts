@@ -49,7 +49,7 @@ export interface ApiScenarioClientRequest {
 }
 
 export interface ApiScenarioRunnerClient {
-  provisionScope(scope: Scope): Promise<boolean>;
+  provisionScope(scope: Scope): Promise<void>;
 
   createResourceGroup(
     subscriptionId: string,
@@ -82,18 +82,15 @@ export class ApiScenarioRunner {
   private skipCleanUp: boolean;
 
   private provisionScope = getLazyBuilder("provisioned", async (scope: Scope) => {
-    const provisioned = await this.client.provisionScope(scope);
-    if (!provisioned) {
-      if (scope.type === "ResourceGroup") {
-        await this.client.createResourceGroup(
-          scope.env.getRequiredString("subscriptionId"),
-          scope.env.getRequiredString("resourceGroupName"),
-          scope.env.getRequiredString("location")
-        );
-      }
-      for (const step of scope.prepareSteps) {
-        await this.executeStep(step, scope);
-      }
+    if (scope.type === "ResourceGroup") {
+      await this.client.createResourceGroup(
+        scope.env.getRequiredString("subscriptionId"),
+        scope.env.getRequiredString("resourceGroupName"),
+        scope.env.getRequiredString("location")
+      );
+    }
+    for (const step of scope.prepareSteps) {
+      await this.executeStep(step, scope);
     }
     return true;
   });
@@ -140,6 +137,8 @@ export class ApiScenarioRunner {
 
       this.scopeTracking[scopeName] = scope;
     }
+
+    await this.client.provisionScope(scope);
 
     await this.provisionScope(scope);
     return scope;

@@ -59,7 +59,7 @@ export class ApiScenarioRestClient extends ServiceClient implements ApiScenarioR
     this.credential = credential;
   }
 
-  public async provisionScope(_: Scope): Promise<boolean> {
+  public async provisionScope(_: Scope): Promise<void> {
     throw new Error("Method not implemented.");
   }
 
