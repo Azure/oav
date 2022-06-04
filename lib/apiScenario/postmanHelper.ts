@@ -130,7 +130,7 @@ function generateARMTemplateOutputScript(armTemplate: ArmTemplate): string {
 }
 
 export function generateAuthScript(baseUrl: string): ScriptDefinition {
-  const script = `if (pm.variables.get("enable_auth") !== "true") {
+  const script = `if (pm.variables.get("x_enable_auth") !== "true") {
     console.log("Auth disabled");
     return;
 }
@@ -143,9 +143,9 @@ vars.forEach(function (item, index, array) {
     pm.expect(pm.variables.get(item), item + " variable not set").to.not.be.empty;
 });
 if (
-    !pm.collectionVariables.get("bearer_token") ||
+    !pm.collectionVariables.get("x_bearer_token") ||
     Date.now() >
-    new Date(pm.collectionVariables.get("bearer_token_expires_on") * 1000)
+    new Date(pm.collectionVariables.get("x_bearer_token_expires_on") * 1000)
 ) {
     pm.sendRequest(
         {
@@ -179,10 +179,10 @@ if (
             } else {
                 let resJson = res.json();
                 pm.collectionVariables.set(
-                    "bearer_token_expires_on",
+                    "x_bearer_token_expires_on",
                     resJson.expires_on
                 );
-                pm.collectionVariables.set("bearer_token", resJson.access_token);
+                pm.collectionVariables.set("x_bearer_token", resJson.access_token);
             }
         }
     );

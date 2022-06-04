@@ -7,7 +7,8 @@ variables:
     value: storagename1
 
 scenarios:
-  - steps:
+  - scenario: basic
+    steps:
       - step: checkName
         operationId: StorageAccounts_CheckNameAvailability
         parameters:
@@ -21,6 +22,53 @@ scenarios:
       - step: createStorageAccount
         operationId: StorageAccounts_Create
         parameters:
+          parameters:
+            sku:
+              name: Standard_LRS
+            kind: StorageV2
+            location: $(location)
+            properties:
+              encryption: {"services": {"blob": {}}, "keySource": "Microsoft.Storage"}
+  - scenario: overrideVariable
+    variables:
+      accountName: $(accountName)2
+    steps:
+      - step: checkName
+        operationId: StorageAccounts_CheckNameAvailability
+        parameters:
+          accountName:
+            name: $(accountName)
+            type: Microsoft.Storage/storageAccounts
+        responses:
+          200:
+            body:
+              nameAvailable: true
+      - step: createStorageAccount
+        operationId: StorageAccounts_Create
+        parameters:
+          parameters:
+            sku:
+              name: Standard_LRS
+            kind: StorageV2
+            location: $(location)
+            properties:
+              encryption: {"services": {"blob": {}}, "keySource": "Microsoft.Storage"}
+  - scenario: primitiveParameter
+    steps:
+      - step: checkName
+        operationId: StorageAccounts_CheckNameAvailability
+        parameters:
+          accountName:
+            name: stafoobar1010
+            type: Microsoft.Storage/storageAccounts
+        responses:
+          200:
+            body:
+              nameAvailable: true
+      - step: createStorageAccount
+        operationId: StorageAccounts_Create
+        parameters:
+          accountName: stafoobar1010
           parameters:
             sku:
               name: Standard_LRS

@@ -1,3 +1,4 @@
+/* eslint-disable no-bitwise */
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
@@ -916,9 +917,26 @@ export let usePsudorandom = {
   seed: 0,
 };
 
-export const getRandomString = (length?: number) =>
-  usePsudorandom.flag
-    ? (usePsudorandom.seed++).toString()
-    : Math.random()
-        .toString(36)
-        .slice(0 - (length ?? 6));
+function* mulberry32(seed: number) {
+  let t = (seed += 0x6d2b79f5);
+  while (true) {
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    yield (t ^ ((t >>> 14) >>> 0)) / 4294967296;
+  }
+}
+
+let generator: any = undefined;
+
+export const getRandomString = (length?: number) => {
+  if (generator === undefined) {
+    if (!usePsudorandom.flag) {
+      usePsudorandom.seed = Math.floor(Math.random() * 100000);
+    }
+    generator = mulberry32(usePsudorandom.seed);
+  }
+  return generator
+    .next()
+    .value.toString(36)
+    .slice(0 - (length ?? 6));
+};

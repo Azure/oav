@@ -410,6 +410,9 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     };
 
     const requireVariable = (name: string) => {
+      if (["resourceGroupName"].includes(name)) {
+        return;
+      }
       const requiredVariables =
         ctx.scenario?.requiredVariables ?? ctx.scenarioDef.requiredVariables;
       if (!requiredVariables.includes(name)) {
@@ -723,9 +726,8 @@ const convertVariables = (rawVariables: RawVariableScope["variables"]) => {
         value: val,
       };
     } else {
-      if (val.value !== undefined) {
-        result.variables[key] = val;
-      } else {
+      result.variables[key] = val;
+      if (val.value === undefined) {
         result.requiredVariables.push(key);
       }
       if (val.type === "secureString" || val.type === "secureObject") {

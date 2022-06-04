@@ -15,11 +15,30 @@ const pathVariableRegex = /\{([A-Za-z_][A-Za-z0-9_]*)\}/;
 export class VariableEnv {
   protected baseEnv?: VariableEnv;
   protected data: { [key: string]: Variable } = {};
-  protected defaultValue: { [key: string]: Variable } = {};
+  protected defaultValue: { [key: string]: Variable };
 
-  public constructor(baseEnv?: VariableEnv) {
+  public constructor(baseEnv?: VariableEnv, defaultValue?: { [key: string]: Variable }) {
     if (baseEnv !== undefined) {
       this.baseEnv = baseEnv;
+    }
+    this.defaultValue = defaultValue ?? {};
+  }
+
+  public *getVariables(): Iterable<[string, Variable]> {
+    const visitedSet = new Set<string>();
+    for (const key of Object.keys(this.data)) {
+      if (!visitedSet.has(key)) {
+        visitedSet.add(key);
+        yield [key, this.get(key)!];
+      }
+    }
+    if (this.baseEnv !== undefined) {
+      for (const [key, value] of this.baseEnv.getVariables()) {
+        if (!visitedSet.has(key)) {
+          visitedSet.add(key);
+          yield [key, value];
+        }
+      }
     }
   }
 

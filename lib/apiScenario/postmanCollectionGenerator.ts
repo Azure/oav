@@ -5,7 +5,6 @@ import { FileLoader } from "../swagger/fileLoader";
 import { getRandomString } from "../util/utils";
 import { ApiScenarioLoader, ApiScenarioLoaderOption } from "./apiScenarioLoader";
 import { ApiScenarioRunner } from "./apiScenarioRunner";
-import { BlobUploaderOption } from "./blobUploader";
 import { getFileNameFromPath } from "./defaultNaming";
 import { generateMarkdownReportHeader } from "./markdownReport";
 import {
@@ -18,7 +17,6 @@ import { SwaggerAnalyzer, SwaggerAnalyzerOption } from "./swaggerAnalyzer";
 import { VariableEnv } from "./variableEnv";
 export interface PostmanCollectionGeneratorOption
   extends ApiScenarioLoaderOption,
-    BlobUploaderOption,
     SwaggerAnalyzerOption {
   name: string;
   fileRoot: string;
@@ -41,24 +39,21 @@ export interface PostmanCollectionGeneratorOption
 
 @injectable()
 export class PostmanCollectionGenerator {
-  private env: VariableEnv;
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
   constructor(
     @inject(TYPES.opts) private opt: PostmanCollectionGeneratorOption,
     private apiScenarioLoader: ApiScenarioLoader,
     private fileLoader: FileLoader,
     private swaggerAnalyzer: SwaggerAnalyzer
-  ) {
-    this.env = new VariableEnv();
-    this.env.setBatchEnv(this.opt.env);
-  }
+  ) {}
 
   public async GenerateCollection(): Promise<Collection[]> {
     const scenarioDef = await this.apiScenarioLoader.load(this.opt.scenarioDef);
-    this.env.setBatch(scenarioDef.variables);
+    const env = new VariableEnv(undefined, scenarioDef.variables);
+    env.setBatchEnv(this.opt.env);
     await this.swaggerAnalyzer.initialize(this.opt.swaggerFilePaths);
     for (const it of scenarioDef.requiredVariables) {
-      if (this.env.get(it) === undefined) {
+      if (env.get(it) === undefined) {
         throw new Error(
           `Missing required variable '${it}', please set variable values in env.json.`
         );
@@ -78,8 +73,7 @@ export class PostmanCollectionGenerator {
         apiScenarioFileName: `${this.opt.name}`,
         scenarioDef: scenarioDef,
         apiScenarioName: `${getFileNameFromPath(this.opt.scenarioDef)}_${index}`,
-        env: this.env,
-        enableBlobUploader: this.opt.enableBlobUploader!,
+        env,
         apiScenarioFilePath: this.opt.scenarioDef,
         reportOutputFolder: this.opt.outputFolder,
         markdownReportPath: this.opt.markdownReportPath,
@@ -99,7 +93,7 @@ export class PostmanCollectionGenerator {
       const client = inversifyGetInstance(PostmanCollectionRunnerClient, opts);
       const runner = new ApiScenarioRunner({
         jsonLoader: this.apiScenarioLoader.jsonLoader,
-        env: this.env,
+        env,
         client: client,
         resolveVariables: false,
       });

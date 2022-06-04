@@ -29,11 +29,6 @@ export const builder: yargs.CommandBuilder = {
     string: true,
     default: "validate-request-response",
   },
-  uploadBlob: {
-    describe: "upload generated collection to blob.",
-    boolean: true,
-    default: false,
-  },
 };
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
@@ -43,7 +38,6 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     const opts: NewmanReportAnalyzerOption = {
       newmanReportFilePath: newmanReportPath,
       reportOutputFilePath: reportOutputFilePath,
-      enableUploadBlob: argv.uploadBlob,
       validationLevel: argv.level,
     };
     const analyzer = inversifyGetInstance(NewmanReportAnalyzer, opts);

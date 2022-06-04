@@ -22,20 +22,6 @@ export const describe = "newman runner run API scenario file.";
 
 export const apiScenarioEnvKey = "API_SCENARIO_JSON_ENV";
 
-/**
- * UploadBlob true. Upload generated file and result to azure blob storage. connection string is passed by `process.env.blobConnectionString`
- * Upload files:
- *
- * 1. newmanReport: containerName: newmanreport path: <ResourceProvider>/<apiVersion>/<apiScenarioFileName>/<runId>/<scenarioIdx>.json
- *
- * 2. payload: containerName: payload path: <resourceProvider>/<apiVersion>/<apiScenarioFileName>/<runId>/<scenarioIdx>/<correlationId>.json
- *
- * 3. report: containerName: report path: <ResourceProvider>/<apiVersion>/<apiScenarioFileName>/<runId>/<scenarioIdx>/report.json
- *
- * 4. postmancollection & postmanenv: container: postmancollection: <ResourceProvider>/<apiVersion>/<apiScenarioFileName>/<runId>/<scenarioIdx>/collection.json
- * postmanenv: <ResourceProvider>/<apiVersion>/<apiScenarioFileName>/<runId>/<scenarioIdx>/env.json
- *
- */
 export const builder: yargs.CommandBuilder = {
   e: {
     alias: "envFile",
@@ -69,11 +55,6 @@ export const builder: yargs.CommandBuilder = {
     alias: "junitReportPath",
     describe: "junit report output path.",
     string: true,
-  },
-  uploadBlob: {
-    describe: "upload generated collection to blob.",
-    boolean: true,
-    default: false,
   },
   level: {
     describe:
@@ -203,8 +184,6 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       junitReportPath: argv.junitReportPath,
       eraseXmsExamples: false,
       eraseDescription: false,
-      enableBlobUploader: argv.uploadBlob,
-      blobConnectionString: process.env.blobConnectionString || "",
       baseUrl: argv.armEndpoint,
       testProxy: argv.testProxy,
       validationLevel: argv.level,
