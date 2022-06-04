@@ -29,7 +29,6 @@ import {
 } from "./apiScenarioTypes";
 import { VariableEnv } from "./variableEnv";
 import { getJsonPatchDiff } from "./diffUtils";
-import { BlobUploader, BlobUploaderOption } from "./blobUploader";
 import { generateMarkdownReport } from "./markdownReport";
 import { JUnitReporter } from "./junitReport";
 
@@ -94,10 +93,7 @@ export interface ResponseDiffItem {
 
 export type ValidationLevel = "validate-request" | "validate-request-response";
 
-export interface ReportGeneratorOption
-  extends NewmanReportParserOption,
-    ApiScenarioLoaderOption,
-    BlobUploaderOption {
+export interface ReportGeneratorOption extends NewmanReportParserOption, ApiScenarioLoaderOption {
   apiScenarioFilePath: string;
   reportOutputFilePath?: string;
   markdownReportPath?: string;
@@ -124,7 +120,6 @@ export class ReportGenerator {
     private postmanReportParser: NewmanReportParser,
     private testResourceLoader: ApiScenarioLoader,
     private fileLoader: FileLoader,
-    private blobUploader: BlobUploader,
     private dataMasker: DataMasker,
     private swaggerAnalyzer: SwaggerAnalyzer,
     private junitReporter: JUnitReporter
@@ -132,8 +127,6 @@ export class ReportGenerator {
     setDefaultOpts(this.opts, {
       newmanReportFilePath: "",
       reportOutputFilePath: defaultQualityReportFilePath(this.opts.newmanReportFilePath),
-      enableBlobUploader: false,
-      blobConnectionString: "",
       apiScenarioFilePath: "",
       runId: uuid.v4(),
       validationLevel: "validate-request-response",
@@ -267,44 +260,6 @@ export class ReportGenerator {
         this.opts.reportOutputFilePath,
         JSON.stringify(this.swaggerExampleQualityResult, null, 2)
       );
-      if (this.opts.enableBlobUploader) {
-        const provider = getProviderFromFilePath(this.opts.reportOutputFilePath) || "";
-        const idx = this.opts.reportOutputFilePath.indexOf(provider);
-        const blobPath = this.opts.reportOutputFilePath.substr(
-          idx,
-          this.opts.blobConnectionString?.length
-        );
-        const secretValues: string[] = [];
-        for (const [k, v] of Object.entries(this.rawReport?.variables!)) {
-          if (this.dataMasker.maybeSecretKey(k) && v.type === "string") {
-            secretValues.push(v.value!);
-          }
-        }
-        this.dataMasker.addMaskedValues(secretValues);
-        this.dataMasker.addMaskedKeys(await this.swaggerAnalyzer.getAllSecretKey());
-
-        // mask report here.
-        await this.blobUploader.uploadContent(
-          "report",
-          blobPath,
-          this.dataMasker.jsonStringify(this.swaggerExampleQualityResult)
-        );
-
-        await this.blobUploader.uploadContent(
-          "reportforpipeline",
-          blobPath,
-          this.dataMasker.jsonStringify(this.swaggerExampleQualityResult)
-        );
-
-        for (const [correlationId, v] of this.recording) {
-          const payloadBlobPath = `${path.dirname(blobPath)}/${correlationId}.json`;
-          await this.blobUploader.uploadContent(
-            "payload",
-            payloadBlobPath,
-            this.dataMasker.jsonStringify(v)
-          );
-        }
-      }
     }
   }
 

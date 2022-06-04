@@ -23,7 +23,6 @@ import {
   ArmDeploymentTracking,
 } from "./apiScenarioRunner";
 import { ArmTemplate, ScenarioDefinition, StepArmTemplate, StepRestCall } from "./apiScenarioTypes";
-import { BlobUploader, BlobUploaderOption } from "./blobUploader";
 import { DataMasker } from "./dataMasker";
 import {
   defaultCollectionFileName,
@@ -41,9 +40,8 @@ import { RuntimeEnvManager } from "./runtimeEnvManager";
 import { SwaggerAnalyzer } from "./swaggerAnalyzer";
 import { VariableEnv } from "./variableEnv";
 
-export interface PostmanCollectionRunnerClientOption extends BlobUploaderOption, JsonLoaderOption {
+export interface PostmanCollectionRunnerClientOption extends JsonLoaderOption {
   apiScenarioFileName: string;
-  enableBlobUploader: boolean;
   env: VariableEnv;
   scenarioDef?: ScenarioDefinition;
   apiScenarioFilePath?: string;
@@ -92,7 +90,6 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
   constructor(
     @inject(TYPES.opts) private opts: PostmanCollectionRunnerClientOption,
-    private blobUploader: BlobUploader,
     private dataMasker: DataMasker,
     private swaggerAnalyzer: SwaggerAnalyzer,
     private fileLoader: FileLoader
@@ -102,10 +99,8 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       apiScenarioFilePath: "",
       env: new VariableEnv(),
       reportOutputFolder: path.resolve(process.cwd(), "newman"),
-      enableBlobUploader: false,
       runId: generateRunId(),
       apiScenarioName: "",
-      blobConnectionString: process.env.blobConnectionString || "",
       baseUrl: ARM_ENDPOINT,
     });
     this.collection = new Collection({
@@ -608,15 +603,6 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       JSON.stringify(this.collection.toJSON(), null, 2)
     );
 
-    await this.blobUploader.uploadFile(
-      "postmancollection",
-      `${defaultCollectionFileName(
-        this.opts.apiScenarioFileName,
-        this.opts.runId,
-        this.opts.apiScenarioName
-      )}`,
-      collectionPath
-    );
     const values: string[] = [];
     for (const [k, v] of Object.entries(this.collectionEnv.syncVariablesTo())) {
       if (this.dataMasker.maybeSecretKey(k)) {
@@ -624,15 +610,6 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       }
     }
     this.dataMasker.addMaskedValues(values);
-    await this.blobUploader.uploadContent(
-      "postmancollection",
-      `${defaultEnvFileName(
-        this.opts.apiScenarioFileName,
-        this.opts.runId,
-        this.opts.apiScenarioName
-      )}`,
-      this.dataMasker.jsonStringify(env)
-    );
 
     console.log(`\ngenerate collection successfully!`);
     console.log(`Postman collection: '${collectionPath}'. Postman env: '${envPath}' `);
@@ -720,22 +697,10 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
                 this.dataMasker.addMaskedValues([item.value]);
               }
             }
-            if (this.opts.enableBlobUploader) {
-              await this.blobUploader.uploadContent(
-                "newmanreport",
-                `${defaultNewmanReport(
-                  this.opts.apiScenarioFileName,
-                  this.opts.runId,
-                  this.opts.apiScenarioName
-                )}`,
-                this.dataMasker.jsonStringify(newmanReport)
-              );
-            }
             const opts: NewmanReportAnalyzerOption = {
               newmanReportFilePath: reportExportPath,
               markdownReportPath: this.opts.markdownReportPath,
               junitReportPath: this.opts.junitReportPath,
-              enableUploadBlob: this.opts.enableBlobUploader,
               runId: this.opts.runId,
               swaggerFilePaths: this.opts.swaggerFilePaths,
               validationLevel: this.opts.validationLevel,

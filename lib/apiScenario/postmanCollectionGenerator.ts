@@ -5,7 +5,6 @@ import { FileLoader } from "../swagger/fileLoader";
 import { getRandomString } from "../util/utils";
 import { ApiScenarioLoader, ApiScenarioLoaderOption } from "./apiScenarioLoader";
 import { ApiScenarioRunner } from "./apiScenarioRunner";
-import { BlobUploaderOption } from "./blobUploader";
 import { getFileNameFromPath } from "./defaultNaming";
 import { generateMarkdownReportHeader } from "./markdownReport";
 import {
@@ -18,7 +17,6 @@ import { SwaggerAnalyzer, SwaggerAnalyzerOption } from "./swaggerAnalyzer";
 import { VariableEnv } from "./variableEnv";
 export interface PostmanCollectionGeneratorOption
   extends ApiScenarioLoaderOption,
-    BlobUploaderOption,
     SwaggerAnalyzerOption {
   name: string;
   fileRoot: string;
@@ -79,7 +77,6 @@ export class PostmanCollectionGenerator {
         scenarioDef: scenarioDef,
         apiScenarioName: `${getFileNameFromPath(this.opt.scenarioDef)}_${index}`,
         env: this.env,
-        enableBlobUploader: this.opt.enableBlobUploader!,
         apiScenarioFilePath: this.opt.scenarioDef,
         reportOutputFolder: this.opt.outputFolder,
         markdownReportPath: this.opt.markdownReportPath,
