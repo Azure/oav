@@ -726,9 +726,8 @@ const convertVariables = (rawVariables: RawVariableScope["variables"]) => {
         value: val,
       };
     } else {
-      if (val.value !== undefined) {
-        result.variables[key] = val;
-      } else {
+      result.variables[key] = val;
+      if (val.value === undefined) {
         result.requiredVariables.push(key);
       }
       if (val.type === "secureString" || val.type === "secureObject") {

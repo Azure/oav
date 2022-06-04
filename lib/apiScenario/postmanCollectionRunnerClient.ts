@@ -10,6 +10,7 @@ import {
   RequestBody,
   RequestBodyDefinition,
   Url,
+  Variable,
   VariableScope,
 } from "postman-collection";
 import { inversifyGetInstance, TYPES } from "../inversifyUtils";
@@ -86,7 +87,7 @@ const ARM_API_VERSION = "2020-06-01";
 @injectable()
 export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
   public collection: Collection;
-  public collectionEnv: VariableScope;
+  public runtimeEnv: VariableScope;
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
   constructor(
     @inject(TYPES.opts) private opts: PostmanCollectionRunnerClientOption,
@@ -169,12 +170,28 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       PostmanHelper.createEvent("prerequest", PostmanHelper.generateAuthScript(this.opts.baseUrl))
     );
 
-    this.collectionEnv = new VariableScope({});
-    this.collectionEnv.set("tenantId", this.opts.env.get("tenantId")?.value, "string");
-    this.collectionEnv.set("client_id", this.opts.env.get("client_id")?.value, "string");
-    this.collectionEnv.set("client_secret", this.opts.env.get("client_secret")?.value, "string");
-    this.collectionEnv.set("subscriptionId", this.opts.env.get("subscriptionId")?.value, "string");
-    this.collectionEnv.set("location", this.opts.env.get("location")?.value, "string");
+    this.runtimeEnv = new VariableScope({});
+    this.runtimeEnv.set("tenantId", this.opts.env.get("tenantId")?.value, "string");
+    this.runtimeEnv.set("client_id", this.opts.env.get("client_id")?.value, "string");
+    this.runtimeEnv.set("client_secret", this.opts.env.get("client_secret")?.value, "string");
+    this.runtimeEnv.set("subscriptionId", this.opts.env.get("subscriptionId")?.value, "string");
+    this.runtimeEnv.set("location", this.opts.env.get("location")?.value, "string");
+
+    for (const [name, variable] of this.opts.env.getVariables()) {
+      if (!this.runtimeEnv.has(name) && !this.collection.variables.has(name)) {
+        if (variable.type === "secureString" || variable.type === "secureObject") {
+          this.runtimeEnv.set(name, variable.value, "secret");
+          this.collection.variables.add(new Variable({ key: name, type: "secret" }));
+        } else {
+          this.collection.variables.add(
+            new Variable({
+              key: name,
+              value: variable.value,
+            })
+          );
+        }
+      }
+    }
   }
 
   public async startTestProxyRecording(): Promise<void> {
@@ -292,9 +309,9 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
 
     this.addTestScript(item);
 
-    this.collectionEnv.set("subscriptionId", subscriptionId, "string");
-    this.collectionEnv.set("resourceGroupName", resourceGroupName, "string");
-    this.collectionEnv.set("location", location, "string");
+    this.runtimeEnv.set("subscriptionId", subscriptionId, "string");
+    this.runtimeEnv.set("resourceGroupName", resourceGroupName, "string");
+    this.runtimeEnv.set("location", location, "string");
 
     this.collection.items.add(item);
   }
@@ -594,8 +611,8 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
         this.opts.apiScenarioName
       )}`
     );
-    const env = this.collectionEnv.toJSON();
-    env.name = this.opts.apiScenarioFileName + "_env";
+    const env = this.runtimeEnv.toJSON();
+    env.name = this.opts.apiScenarioName + ".env";
     env._postman_variable_scope = "environment";
     await this.fileLoader.writeFile(envPath, JSON.stringify(env, null, 2));
     await this.fileLoader.writeFile(
@@ -604,7 +621,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     );
 
     const values: string[] = [];
-    for (const [k, v] of Object.entries(this.collectionEnv.syncVariablesTo())) {
+    for (const [k, v] of Object.entries(this.runtimeEnv.syncVariablesTo())) {
       if (this.dataMasker.maybeSecretKey(k)) {
         values.push(v as string);
       }
@@ -633,12 +650,12 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
 
     if (this.opts.from) {
       const lastRnv = runtimeEnvManager.loadEnv(this.opts.from);
-      this.collectionEnv.syncVariablesFrom(lastRnv);
+      this.runtimeEnv.syncVariablesFrom(lastRnv);
       // use the variables value which exist in the env.json or process.env
-      for (const k of Object.keys(this.collectionEnv.syncVariablesTo())) {
+      for (const k of Object.keys(this.runtimeEnv.syncVariablesTo())) {
         const v = this.opts.env.get(k);
         if (v?.value) {
-          this.collectionEnv.set(k, v.value, typeof v.value);
+          this.runtimeEnv.set(k, v.value, typeof v.value);
         }
       }
     }
@@ -651,7 +668,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
           .run(
             {
               collection: this.collection,
-              environment: this.collectionEnv,
+              environment: this.runtimeEnv,
               reporters: ["cli", "json"],
               reporter: { json: { export: reportExportPath } },
             },
@@ -679,7 +696,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
           .on("done", async (_err, _summary) => {
             const keys = await this.swaggerAnalyzer.getAllSecretKey();
             const values: string[] = [];
-            for (const [k, v] of Object.entries(this.collectionEnv.syncVariablesTo())) {
+            for (const [k, v] of Object.entries(this.runtimeEnv.syncVariablesTo())) {
               if (this.dataMasker.maybeSecretKey(k)) {
                 values.push(v as string);
               }
@@ -710,7 +727,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
             await reportAnalyzer.analyze();
             if (this.opts.skipCleanUp || this.opts.to) {
               printWarning(
-                `Notice:the resource group '${this.collectionEnv.get(
+                `Notice:the resource group '${this.runtimeEnv.get(
                   "resourceGroupName"
                 )}' was not cleaned up.`
               );
