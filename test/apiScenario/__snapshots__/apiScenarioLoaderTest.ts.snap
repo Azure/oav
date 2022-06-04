@@ -71,7 +71,6 @@ Object {
       "requiredVariables": Array [
         "subscriptionId",
         "location",
-        "resourceGroupName",
       ],
       "scenario": "basic",
       "secretVariables": Array [],
@@ -194,7 +193,6 @@ Object {
       "requiredVariables": Array [
         "subscriptionId",
         "location",
-        "resourceGroupName",
       ],
       "scenario": "overrideVariable",
       "secretVariables": Array [],
@@ -322,7 +320,6 @@ Object {
       "requiredVariables": Array [
         "subscriptionId",
         "location",
-        "resourceGroupName",
       ],
       "scenario": "primitiveParameter",
       "secretVariables": Array [],

@@ -237,8 +237,12 @@ export class ApiScenarioRunner {
       const param = this.jsonLoader.resolveRefObj(p);
 
       const paramVal = step.parameters[param.name];
-      if (paramVal === undefined && param.required && env.get(param.name) === undefined) {
-        throw new Error(`Parameter value for "${param.name}" is not found in step: ${step.step}`);
+      if (paramVal === undefined && env.get(param.name) === undefined) {
+        if (param.required) {
+          throw new Error(`Parameter value for "${param.name}" is not found in step: ${step.step}`);
+        } else {
+          continue;
+        }
       }
 
       switch (param.in) {

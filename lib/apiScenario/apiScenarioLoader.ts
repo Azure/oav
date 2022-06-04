@@ -410,6 +410,9 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     };
 
     const requireVariable = (name: string) => {
+      if (["resourceGroupName"].includes(name)) {
+        return;
+      }
       const requiredVariables =
         ctx.scenario?.requiredVariables ?? ctx.scenarioDef.requiredVariables;
       if (!requiredVariables.includes(name)) {
