@@ -4,7 +4,7 @@ scope: ResourceGroup
 variables:
   accountName:
     type: string
-    value: storagename1
+    prefix: sta
 
 scenarios:
   - scenario: basic
@@ -54,12 +54,16 @@ scenarios:
             properties:
               encryption: {"services": {"blob": {}}, "keySource": "Microsoft.Storage"}
   - scenario: primitiveParameter
+    variables:
+      accountName:
+        type: string
+        prefix: foobar
     steps:
       - step: checkName
         operationId: StorageAccounts_CheckNameAvailability
         parameters:
           accountName:
-            name: stafoobar1010
+            name: $(accountName)
             type: Microsoft.Storage/storageAccounts
         responses:
           200:
@@ -68,7 +72,6 @@ scenarios:
       - step: createStorageAccount
         operationId: StorageAccounts_Create
         parameters:
-          accountName: stafoobar1010
           parameters:
             sku:
               name: Standard_LRS

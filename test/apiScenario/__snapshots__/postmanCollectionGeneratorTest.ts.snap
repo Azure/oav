@@ -15,7 +15,7 @@ Array [
     },
     "event": Array [
       Object {
-        "id": "hty0qz",
+        "id": "2r0mc4",
         "listen": "prerequest",
         "script": Object {
           "exec": Array [
@@ -78,7 +78,7 @@ Array [
             "}",
             "",
           ],
-          "id": "20gl49",
+          "id": "56m9l3",
           "type": "text/javascript",
         },
       },
@@ -97,7 +97,7 @@ Array [
       Object {
         "event": Array [
           Object {
-            "id": "2r0mc4",
+            "id": "jy1tzu",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -108,12 +108,12 @@ Array [
                 "});",
                 "",
               ],
-              "id": "56m9l3",
+              "id": "182s89",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "qbyj9c",
+        "id": "hakk8a",
         "name": "startTestProxyRecording",
         "request": Object {
           "body": Object {
@@ -141,7 +141,7 @@ Array [
         "description": "{\\"type\\":\\"prepare\\"}",
         "event": Array [
           Object {
-            "id": "jy1tzu",
+            "id": "tdrxs5",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -151,12 +151,12 @@ Array [
                 "  });",
                 "  ",
               ],
-              "id": "182s89",
+              "id": "y8jsuq",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "hakk8a",
+        "id": "x0t20h",
         "name": "createResourceGroup",
         "request": Object {
           "body": Object {
@@ -218,7 +218,7 @@ Array [
         "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"StorageAccounts_CheckNameAvailability\\",\\"itemName\\":\\"checkName\\",\\"step\\":\\"checkName\\"}",
         "event": Array [
           Object {
-            "id": "tdrxs5",
+            "id": "c6vfm3",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -228,12 +228,12 @@ Array [
                 "  });",
                 "  ",
               ],
-              "id": "y8jsuq",
+              "id": "vwghxn",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "x0t20h",
+        "id": "v9jgfn",
         "name": "checkName",
         "request": Object {
           "body": Object {
@@ -294,7 +294,7 @@ Array [
         "description": "{\\"type\\":\\"LRO\\",\\"poller_item_name\\":\\"createStorageAccount_poller\\",\\"operationId\\":\\"StorageAccounts_Create\\",\\"itemName\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
         "event": Array [
           Object {
-            "id": "c6vfm3",
+            "id": "i2mz21",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -304,12 +304,12 @@ Array [
                 "  });",
                 "  ",
               ],
-              "id": "vwghxn",
+              "id": "jt84jj",
               "type": "text/javascript",
             },
           },
           Object {
-            "id": "jt84jj",
+            "id": "9sf2c9",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -319,12 +319,12 @@ Array [
                 "        }",
                 "        ",
               ],
-              "id": "r3ps8d",
+              "id": "fmkiq3",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "v9jgfn",
+        "id": "r3ps8d",
         "name": "createStorageAccount",
         "request": Object {
           "body": Object {
@@ -393,7 +393,7 @@ Array [
               Object {
                 "key": "accountName",
                 "type": "any",
-                "value": "storagename1",
+                "value": "{{accountName}}",
               },
               Object {
                 "key": "subscriptionId",
@@ -409,7 +409,7 @@ Array [
         "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
         "event": Array [
           Object {
-            "id": "kiosgn",
+            "id": "btr6ql",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -431,12 +431,12 @@ Array [
                 "  postman.setNextRequest('_createStorageAccount_generated_get')",
                 "}",
               ],
-              "id": "z2w7lx",
+              "id": "kat1ua",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "i2mz21",
+        "id": "f0r418",
         "name": "_createStorageAccount_poller",
         "request": Object {
           "header": Array [
@@ -468,18 +468,18 @@ Array [
         "description": "{\\"type\\":\\"mock\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
         "event": Array [
           Object {
-            "id": "f0r418",
+            "id": "1ghyu8",
             "listen": "prerequest",
             "script": Object {
               "exec": Array [
                 "postman.setNextRequest('_createStorageAccount_poller')",
               ],
-              "id": "9sf2c9",
+              "id": "kiosgn",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "fmkiq3",
+        "id": "mibqod",
         "name": "_createStorageAccount_poller_mock_delay",
         "request": Object {
           "method": "GET",
@@ -503,7 +503,7 @@ Array [
         "description": "{\\"type\\":\\"generated-get\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
         "event": Array [
           Object {
-            "id": "btr6ql",
+            "id": "kia3ys",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -513,12 +513,12 @@ Array [
                 "  });",
                 "  ",
               ],
-              "id": "ikm5qg",
+              "id": "rqqhvq",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "1ghyu8",
+        "id": "abct7z",
         "name": "_createStorageAccount_generated_get",
         "request": Object {
           "header": Array [
@@ -569,7 +569,7 @@ Array [
               Object {
                 "key": "accountName",
                 "type": "any",
-                "value": "storagename1",
+                "value": "{{accountName}}",
               },
               Object {
                 "key": "subscriptionId",
@@ -584,7 +584,7 @@ Array [
       Object {
         "event": Array [
           Object {
-            "id": "kia3ys",
+            "id": "iijx4b",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -594,12 +594,12 @@ Array [
                 "  });",
                 "  ",
               ],
-              "id": "rqqhvq",
+              "id": "wcghbk",
               "type": "text/javascript",
             },
           },
           Object {
-            "id": "wcghbk",
+            "id": "xz2p04",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -609,12 +609,12 @@ Array [
                 "        }",
                 "        ",
               ],
-              "id": "9x7w9a",
+              "id": "ezf5ab",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "abct7z",
+        "id": "9x7w9a",
         "name": "deleteResourceGroup",
         "request": Object {
           "header": Array [
@@ -672,7 +672,7 @@ Array [
         "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"deleteResourceGroup\\"}",
         "event": Array [
           Object {
-            "id": "nx8mwd",
+            "id": "du322c",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -694,12 +694,12 @@ Array [
                 "  postman.setNextRequest('stopTestProxyRecording')",
                 "}",
               ],
-              "id": "ip0skq",
+              "id": "n3i517",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "iijx4b",
+        "id": "2bhl8k",
         "name": "_deleteResourceGroup_poller",
         "request": Object {
           "header": Array [
@@ -731,18 +731,18 @@ Array [
         "description": "{\\"type\\":\\"mock\\",\\"lro_item_name\\":\\"deleteResourceGroup\\"}",
         "event": Array [
           Object {
-            "id": "2bhl8k",
+            "id": "tydslq",
             "listen": "prerequest",
             "script": Object {
               "exec": Array [
                 "postman.setNextRequest('_deleteResourceGroup_poller')",
               ],
-              "id": "xz2p04",
+              "id": "nx8mwd",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "ezf5ab",
+        "id": "m34r2f",
         "name": "_deleteResourceGroup_poller_mock_delay",
         "request": Object {
           "method": "GET",
@@ -765,7 +765,7 @@ Array [
       Object {
         "event": Array [
           Object {
-            "id": "du322c",
+            "id": "b00ggo",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -774,12 +774,12 @@ Array [
                 "});",
                 "",
               ],
-              "id": "1b1nyw",
+              "id": "ip0skq",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "tydslq",
+        "id": "z2w7lx",
         "name": "stopTestProxyRecording",
         "request": Object {
           "header": Array [
@@ -810,7 +810,7 @@ Array [
       Object {
         "key": "accountName",
         "type": "any",
-        "value": "storagename1",
+        "value": "staqbyj9c",
       },
       Object {
         "key": "subscriptionId",
@@ -873,7 +873,7 @@ Array [
     },
     "event": Array [
       Object {
-        "id": "n3i517",
+        "id": "q31tu5",
         "listen": "prerequest",
         "script": Object {
           "exec": Array [
@@ -936,7 +936,7 @@ Array [
             "}",
             "",
           ],
-          "id": "kat1ua",
+          "id": "nlg0uw",
           "type": "text/javascript",
         },
       },
@@ -955,7 +955,7 @@ Array [
       Object {
         "event": Array [
           Object {
-            "id": "q31tu5",
+            "id": "bhudq7",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -966,12 +966,12 @@ Array [
                 "});",
                 "",
               ],
-              "id": "nlg0uw",
+              "id": "nn5ykm",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "o0jxqr",
+        "id": "ke5wcj",
         "name": "startTestProxyRecording",
         "request": Object {
           "body": Object {
@@ -999,7 +999,7 @@ Array [
         "description": "{\\"type\\":\\"prepare\\"}",
         "event": Array [
           Object {
-            "id": "bhudq7",
+            "id": "hh0517",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -1009,12 +1009,12 @@ Array [
                 "  });",
                 "  ",
               ],
-              "id": "nn5ykm",
+              "id": "jfr28w",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "ke5wcj",
+        "id": "dso1zs",
         "name": "createResourceGroup",
         "request": Object {
           "body": Object {
@@ -1076,7 +1076,7 @@ Array [
         "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"StorageAccounts_CheckNameAvailability\\",\\"itemName\\":\\"checkName\\",\\"step\\":\\"checkName\\"}",
         "event": Array [
           Object {
-            "id": "hh0517",
+            "id": "wvgtwp",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -1086,12 +1086,12 @@ Array [
                 "  });",
                 "  ",
               ],
-              "id": "jfr28w",
+              "id": "7uldh4",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "dso1zs",
+        "id": "zqq01e",
         "name": "checkName",
         "request": Object {
           "body": Object {
@@ -1152,7 +1152,7 @@ Array [
         "description": "{\\"type\\":\\"LRO\\",\\"poller_item_name\\":\\"createStorageAccount_poller\\",\\"operationId\\":\\"StorageAccounts_Create\\",\\"itemName\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
         "event": Array [
           Object {
-            "id": "wvgtwp",
+            "id": "tkmgla",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -1162,12 +1162,12 @@ Array [
                 "  });",
                 "  ",
               ],
-              "id": "7uldh4",
+              "id": "mffsnm",
               "type": "text/javascript",
             },
           },
           Object {
-            "id": "mffsnm",
+            "id": "yw0u2c",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -1177,12 +1177,12 @@ Array [
                 "        }",
                 "        ",
               ],
-              "id": "xt38nl",
+              "id": "gx8kjh",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "zqq01e",
+        "id": "xt38nl",
         "name": "createStorageAccount",
         "request": Object {
           "body": Object {
@@ -1251,7 +1251,7 @@ Array [
               Object {
                 "key": "accountName",
                 "type": "any",
-                "value": "{{accountName}}2",
+                "value": "{{accountName}}",
               },
               Object {
                 "key": "subscriptionId",
@@ -1267,7 +1267,7 @@ Array [
         "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
         "event": Array [
           Object {
-            "id": "m7bbkx",
+            "id": "7k0une",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -1289,12 +1289,12 @@ Array [
                 "  postman.setNextRequest('_createStorageAccount_generated_get')",
                 "}",
               ],
-              "id": "5m6lxr",
+              "id": "sow0lq",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "tkmgla",
+        "id": "0n1yhz",
         "name": "_createStorageAccount_poller",
         "request": Object {
           "header": Array [
@@ -1326,18 +1326,18 @@ Array [
         "description": "{\\"type\\":\\"mock\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
         "event": Array [
           Object {
-            "id": "0n1yhz",
+            "id": "05mzqq",
             "listen": "prerequest",
             "script": Object {
               "exec": Array [
                 "postman.setNextRequest('_createStorageAccount_poller')",
               ],
-              "id": "yw0u2c",
+              "id": "m7bbkx",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "gx8kjh",
+        "id": "cf51ap",
         "name": "_createStorageAccount_poller_mock_delay",
         "request": Object {
           "method": "GET",
@@ -1361,7 +1361,7 @@ Array [
         "description": "{\\"type\\":\\"generated-get\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
         "event": Array [
           Object {
-            "id": "7k0une",
+            "id": "itmowt",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -1371,12 +1371,12 @@ Array [
                 "  });",
                 "  ",
               ],
-              "id": "begfkq",
+              "id": "japf2l",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "05mzqq",
+        "id": "ugwndo",
         "name": "_createStorageAccount_generated_get",
         "request": Object {
           "header": Array [
@@ -1427,7 +1427,7 @@ Array [
               Object {
                 "key": "accountName",
                 "type": "any",
-                "value": "{{accountName}}2",
+                "value": "{{accountName}}",
               },
               Object {
                 "key": "subscriptionId",
@@ -1442,7 +1442,7 @@ Array [
       Object {
         "event": Array [
           Object {
-            "id": "itmowt",
+            "id": "dabn6g",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -1452,12 +1452,12 @@ Array [
                 "  });",
                 "  ",
               ],
-              "id": "japf2l",
+              "id": "nplftp",
               "type": "text/javascript",
             },
           },
           Object {
-            "id": "nplftp",
+            "id": "efk6nn",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -1467,12 +1467,12 @@ Array [
                 "        }",
                 "        ",
               ],
-              "id": "pxnici",
+              "id": "ms4z7w",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "ugwndo",
+        "id": "pxnici",
         "name": "deleteResourceGroup",
         "request": Object {
           "header": Array [
@@ -1530,7 +1530,7 @@ Array [
         "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"deleteResourceGroup\\"}",
         "event": Array [
           Object {
-            "id": "88bny1",
+            "id": "dq3n1i",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -1552,12 +1552,12 @@ Array [
                 "  postman.setNextRequest('stopTestProxyRecording')",
                 "}",
               ],
-              "id": "7hlrae",
+              "id": "uxpm8s",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "dabn6g",
+        "id": "97or8k",
         "name": "_deleteResourceGroup_poller",
         "request": Object {
           "header": Array [
@@ -1589,18 +1589,18 @@ Array [
         "description": "{\\"type\\":\\"mock\\",\\"lro_item_name\\":\\"deleteResourceGroup\\"}",
         "event": Array [
           Object {
-            "id": "97or8k",
+            "id": "2uech9",
             "listen": "prerequest",
             "script": Object {
               "exec": Array [
                 "postman.setNextRequest('_deleteResourceGroup_poller')",
               ],
-              "id": "efk6nn",
+              "id": "88bny1",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "ms4z7w",
+        "id": "k1svz9",
         "name": "_deleteResourceGroup_poller_mock_delay",
         "request": Object {
           "method": "GET",
@@ -1623,7 +1623,7 @@ Array [
       Object {
         "event": Array [
           Object {
-            "id": "dq3n1i",
+            "id": "47bedt",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -1632,12 +1632,12 @@ Array [
                 "});",
                 "",
               ],
-              "id": "g5i7pc",
+              "id": "7hlrae",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "2uech9",
+        "id": "5m6lxr",
         "name": "stopTestProxyRecording",
         "request": Object {
           "header": Array [
@@ -1668,7 +1668,7 @@ Array [
       Object {
         "key": "accountName",
         "type": "any",
-        "value": "$(accountName)2",
+        "value": "staqbyj9c2",
       },
       Object {
         "key": "subscriptionId",
@@ -1731,7 +1731,7 @@ Array [
     },
     "event": Array [
       Object {
-        "id": "uxpm8s",
+        "id": "h983nu",
         "listen": "prerequest",
         "script": Object {
           "exec": Array [
@@ -1794,7 +1794,7 @@ Array [
             "}",
             "",
           ],
-          "id": "sow0lq",
+          "id": "3nr8w5",
           "type": "text/javascript",
         },
       },
@@ -1813,7 +1813,7 @@ Array [
       Object {
         "event": Array [
           Object {
-            "id": "3nr8w5",
+            "id": "e0qbs3",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -1824,12 +1824,12 @@ Array [
                 "});",
                 "",
               ],
-              "id": "9sugkc",
+              "id": "n7schs",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "sf7p9e",
+        "id": "7hzrgg",
         "name": "startTestProxyRecording",
         "request": Object {
           "body": Object {
@@ -1857,7 +1857,7 @@ Array [
         "description": "{\\"type\\":\\"prepare\\"}",
         "event": Array [
           Object {
-            "id": "n7schs",
+            "id": "hdx4tq",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -1867,12 +1867,12 @@ Array [
                 "  });",
                 "  ",
               ],
-              "id": "7hzrgg",
+              "id": "w1p36w",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "h983nu",
+        "id": "7vdlf6",
         "name": "createResourceGroup",
         "request": Object {
           "body": Object {
@@ -1934,7 +1934,7 @@ Array [
         "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"StorageAccounts_CheckNameAvailability\\",\\"itemName\\":\\"checkName\\",\\"step\\":\\"checkName\\"}",
         "event": Array [
           Object {
-            "id": "w1p36w",
+            "id": "5nctng",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -1944,18 +1944,18 @@ Array [
                 "  });",
                 "  ",
               ],
-              "id": "7vdlf6",
+              "id": "u3xqtl",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "e0qbs3",
+        "id": "msnern",
         "name": "checkName",
         "request": Object {
           "body": Object {
             "mode": "raw",
             "raw": "{
-  \\"name\\": \\"stafoobar1010\\",
+  \\"name\\": \\"{{accountName}}\\",
   \\"type\\": \\"Microsoft.Storage/storageAccounts\\"
 }",
           },
@@ -2010,7 +2010,7 @@ Array [
         "description": "{\\"type\\":\\"LRO\\",\\"poller_item_name\\":\\"createStorageAccount_poller\\",\\"operationId\\":\\"StorageAccounts_Create\\",\\"itemName\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
         "event": Array [
           Object {
-            "id": "u3xqtl",
+            "id": "wg9lot",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -2020,12 +2020,12 @@ Array [
                 "  });",
                 "  ",
               ],
-              "id": "msnern",
+              "id": "ban1li",
               "type": "text/javascript",
             },
           },
           Object {
-            "id": "fza0wg",
+            "id": "nacz97",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -2035,12 +2035,12 @@ Array [
                 "        }",
                 "        ",
               ],
-              "id": "5nctng",
+              "id": "bnsp8a",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "hdx4tq",
+        "id": "fza0wg",
         "name": "createStorageAccount",
         "request": Object {
           "body": Object {
@@ -2109,7 +2109,7 @@ Array [
               Object {
                 "key": "accountName",
                 "type": "any",
-                "value": "stafoobar1010",
+                "value": "{{accountName}}",
               },
               Object {
                 "key": "subscriptionId",
@@ -2125,7 +2125,7 @@ Array [
         "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
         "event": Array [
           Object {
-            "id": "wedaij",
+            "id": "x36f6g",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -2147,12 +2147,12 @@ Array [
                 "  postman.setNextRequest('_createStorageAccount_generated_get')",
                 "}",
               ],
-              "id": "vw448c",
+              "id": "jcdpx4",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "ban1li",
+        "id": "tuqm6d",
         "name": "_createStorageAccount_poller",
         "request": Object {
           "header": Array [
@@ -2184,18 +2184,18 @@ Array [
         "description": "{\\"type\\":\\"mock\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
         "event": Array [
           Object {
-            "id": "nacz97",
+            "id": "g5g54b",
             "listen": "prerequest",
             "script": Object {
               "exec": Array [
                 "postman.setNextRequest('_createStorageAccount_poller')",
               ],
-              "id": "bnsp8a",
+              "id": "akrtdx",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "wg9lot",
+        "id": "wedaij",
         "name": "_createStorageAccount_poller_mock_delay",
         "request": Object {
           "method": "GET",
@@ -2219,7 +2219,7 @@ Array [
         "description": "{\\"type\\":\\"generated-get\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
         "event": Array [
           Object {
-            "id": "lkq45t",
+            "id": "9z43q6",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -2229,12 +2229,12 @@ Array [
                 "  });",
                 "  ",
               ],
-              "id": "g5g54b",
+              "id": "mkla6r",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "akrtdx",
+        "id": "2m3qcr",
         "name": "_createStorageAccount_generated_get",
         "request": Object {
           "header": Array [
@@ -2285,7 +2285,7 @@ Array [
               Object {
                 "key": "accountName",
                 "type": "any",
-                "value": "stafoobar1010",
+                "value": "{{accountName}}",
               },
               Object {
                 "key": "subscriptionId",
@@ -2300,7 +2300,7 @@ Array [
       Object {
         "event": Array [
           Object {
-            "id": "mkla6r",
+            "id": "ajkgtr",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -2310,12 +2310,12 @@ Array [
                 "  });",
                 "  ",
               ],
-              "id": "2m3qcr",
+              "id": "z352rp",
               "type": "text/javascript",
             },
           },
           Object {
-            "id": "yb8vzu",
+            "id": "d3ehv2",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -2325,12 +2325,12 @@ Array [
                 "        }",
                 "        ",
               ],
-              "id": "9z43q6",
+              "id": "5zoegn",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "x36f6g",
+        "id": "yb8vzu",
         "name": "deleteResourceGroup",
         "request": Object {
           "header": Array [
@@ -2388,7 +2388,7 @@ Array [
         "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"deleteResourceGroup\\"}",
         "event": Array [
           Object {
-            "id": "ffynyt",
+            "id": "vw448c",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -2410,12 +2410,12 @@ Array [
                 "  postman.setNextRequest('stopTestProxyRecording')",
                 "}",
               ],
-              "id": "8qnwr5",
+              "id": "3407bl",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "z352rp",
+        "id": "hwlgmh",
         "name": "_deleteResourceGroup_poller",
         "request": Object {
           "header": Array [
@@ -2447,18 +2447,18 @@ Array [
         "description": "{\\"type\\":\\"mock\\",\\"lro_item_name\\":\\"deleteResourceGroup\\"}",
         "event": Array [
           Object {
-            "id": "d3ehv2",
+            "id": "lxdy9q",
             "listen": "prerequest",
             "script": Object {
               "exec": Array [
                 "postman.setNextRequest('_deleteResourceGroup_poller')",
               ],
-              "id": "5zoegn",
+              "id": "flx1rs",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "ajkgtr",
+        "id": "ffynyt",
         "name": "_deleteResourceGroup_poller_mock_delay",
         "request": Object {
           "method": "GET",
@@ -2481,7 +2481,7 @@ Array [
       Object {
         "event": Array [
           Object {
-            "id": "9o92cl",
+            "id": "ndl5z1",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -2490,12 +2490,12 @@ Array [
                 "});",
                 "",
               ],
-              "id": "lxdy9q",
+              "id": "gp8386",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "flx1rs",
+        "id": "8qnwr5",
         "name": "stopTestProxyRecording",
         "request": Object {
           "header": Array [
@@ -2526,7 +2526,7 @@ Array [
       Object {
         "key": "accountName",
         "type": "any",
-        "value": "storagename1",
+        "value": "foobar9sugkc",
       },
       Object {
         "key": "subscriptionId",
@@ -2594,7 +2594,7 @@ Array [
     },
     "event": Array [
       Object {
-        "id": "nprcrj",
+        "id": "tgp8uv",
         "listen": "prerequest",
         "script": Object {
           "exec": Array [
@@ -2657,7 +2657,7 @@ Array [
             "}",
             "",
           ],
-          "id": "r4of8l",
+          "id": "nprcrj",
           "type": "text/javascript",
         },
       },
@@ -2677,7 +2677,7 @@ Array [
         "description": "{\\"type\\":\\"prepare\\"}",
         "event": Array [
           Object {
-            "id": "zq9w6n",
+            "id": "8gypdh",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -2687,12 +2687,12 @@ Array [
                 "  });",
                 "  ",
               ],
-              "id": "gzre88",
+              "id": "zq9w6n",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "tgp8uv",
+        "id": "gzre88",
         "name": "createResourceGroup",
         "request": Object {
           "body": Object {
@@ -2744,7 +2744,7 @@ Array [
         "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"StorageAccounts_CheckNameAvailability\\",\\"itemName\\":\\"checkName\\",\\"step\\":\\"checkName\\"}",
         "event": Array [
           Object {
-            "id": "clnzjc",
+            "id": "9120qs",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -2754,12 +2754,12 @@ Array [
                 "  });",
                 "  ",
               ],
-              "id": "3747vc",
+              "id": "clnzjc",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "8gypdh",
+        "id": "3747vc",
         "name": "checkName",
         "request": Object {
           "body": Object {
@@ -2810,7 +2810,7 @@ Array [
         "description": "{\\"type\\":\\"LRO\\",\\"poller_item_name\\":\\"createStorageAccount_poller\\",\\"operationId\\":\\"StorageAccounts_Create\\",\\"itemName\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
         "event": Array [
           Object {
-            "id": "k8hcud",
+            "id": "39l4a3",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -2820,12 +2820,12 @@ Array [
                 "  });",
                 "  ",
               ],
-              "id": "oipyp5",
+              "id": "k8hcud",
               "type": "text/javascript",
             },
           },
           Object {
-            "id": "g4l6nv",
+            "id": "mcbyik",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -2835,12 +2835,12 @@ Array [
                 "        }",
                 "        ",
               ],
-              "id": "39l4a3",
+              "id": "g4l6nv",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "9120qs",
+        "id": "oipyp5",
         "name": "createStorageAccount",
         "request": Object {
           "body": Object {
@@ -2899,7 +2899,7 @@ Array [
               Object {
                 "key": "accountName",
                 "type": "any",
-                "value": "storagename1",
+                "value": "{{accountName}}",
               },
               Object {
                 "key": "subscriptionId",
@@ -2915,7 +2915,7 @@ Array [
         "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
         "event": Array [
           Object {
-            "id": "hfy1hi",
+            "id": "hlqn5m",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -2937,12 +2937,12 @@ Array [
                 "  postman.setNextRequest('_createStorageAccount_generated_get')",
                 "}",
               ],
-              "id": "igg58r",
+              "id": "zfkej6",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "mcbyik",
+        "id": "zvuzjs",
         "name": "_createStorageAccount_poller",
         "request": Object {
           "method": "GET",
@@ -2960,18 +2960,18 @@ Array [
         "description": "{\\"type\\":\\"mock\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
         "event": Array [
           Object {
-            "id": "1gju0k",
+            "id": "j55iye",
             "listen": "prerequest",
             "script": Object {
               "exec": Array [
                 "postman.setNextRequest('_createStorageAccount_poller')",
               ],
-              "id": "gbupa4",
+              "id": "1gju0k",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "zvuzjs",
+        "id": "gbupa4",
         "name": "_createStorageAccount_poller_mock_delay",
         "request": Object {
           "method": "GET",
@@ -2995,7 +2995,7 @@ Array [
         "description": "{\\"type\\":\\"generated-get\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
         "event": Array [
           Object {
-            "id": "1rcvet",
+            "id": "4fy274",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -3005,12 +3005,12 @@ Array [
                 "  });",
                 "  ",
               ],
-              "id": "7wi32c",
+              "id": "1rcvet",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "hlqn5m",
+        "id": "7wi32c",
         "name": "_createStorageAccount_generated_get",
         "request": Object {
           "header": Array [
@@ -3051,7 +3051,7 @@ Array [
               Object {
                 "key": "accountName",
                 "type": "any",
-                "value": "storagename1",
+                "value": "{{accountName}}",
               },
               Object {
                 "key": "subscriptionId",
@@ -3066,7 +3066,7 @@ Array [
       Object {
         "event": Array [
           Object {
-            "id": "3l45xk",
+            "id": "1ueh28",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -3076,12 +3076,12 @@ Array [
                 "  });",
                 "  ",
               ],
-              "id": "vov58h",
+              "id": "3l45xk",
               "type": "text/javascript",
             },
           },
           Object {
-            "id": "3q0yb6",
+            "id": "6w00ic",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -3091,12 +3091,12 @@ Array [
                 "        }",
                 "        ",
               ],
-              "id": "1ueh28",
+              "id": "3q0yb6",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "4fy274",
+        "id": "vov58h",
         "name": "deleteResourceGroup",
         "request": Object {
           "header": Array [
@@ -3144,7 +3144,7 @@ Array [
         "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"deleteResourceGroup\\"}",
         "event": Array [
           Object {
-            "id": "un6yyw",
+            "id": "igg58r",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -3166,12 +3166,12 @@ Array [
                 "  postman.setNextRequest(null)",
                 "}",
               ],
-              "id": "zfkej6",
+              "id": "9e4snq",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "6w00ic",
+        "id": "m388ep",
         "name": "_deleteResourceGroup_poller",
         "request": Object {
           "method": "GET",
@@ -3189,18 +3189,18 @@ Array [
         "description": "{\\"type\\":\\"mock\\",\\"lro_item_name\\":\\"deleteResourceGroup\\"}",
         "event": Array [
           Object {
-            "id": "j917fd",
+            "id": "rxgyxc",
             "listen": "prerequest",
             "script": Object {
               "exec": Array [
                 "postman.setNextRequest('_deleteResourceGroup_poller')",
               ],
-              "id": "qq5z84",
+              "id": "j917fd",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "m388ep",
+        "id": "qq5z84",
         "name": "_deleteResourceGroup_poller_mock_delay",
         "request": Object {
           "method": "GET",
@@ -3225,7 +3225,7 @@ Array [
       Object {
         "key": "accountName",
         "type": "any",
-        "value": "storagename1",
+        "value": "star4of8l",
       },
       Object {
         "key": "subscriptionId",
@@ -3288,7 +3288,7 @@ Array [
     },
     "event": Array [
       Object {
-        "id": "ezqs5q",
+        "id": "cb8v3t",
         "listen": "prerequest",
         "script": Object {
           "exec": Array [
@@ -3351,7 +3351,7 @@ Array [
             "}",
             "",
           ],
-          "id": "h1l4hw",
+          "id": "ezqs5q",
           "type": "text/javascript",
         },
       },
@@ -3371,7 +3371,7 @@ Array [
         "description": "{\\"type\\":\\"prepare\\"}",
         "event": Array [
           Object {
-            "id": "9vqoea",
+            "id": "9atymt",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -3381,12 +3381,12 @@ Array [
                 "  });",
                 "  ",
               ],
-              "id": "x7qdfp",
+              "id": "9vqoea",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "cb8v3t",
+        "id": "x7qdfp",
         "name": "createResourceGroup",
         "request": Object {
           "body": Object {
@@ -3438,7 +3438,7 @@ Array [
         "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"StorageAccounts_CheckNameAvailability\\",\\"itemName\\":\\"checkName\\",\\"step\\":\\"checkName\\"}",
         "event": Array [
           Object {
-            "id": "jhzmpv",
+            "id": "x6exws",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -3448,12 +3448,12 @@ Array [
                 "  });",
                 "  ",
               ],
-              "id": "d39qgw",
+              "id": "jhzmpv",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "9atymt",
+        "id": "d39qgw",
         "name": "checkName",
         "request": Object {
           "body": Object {
@@ -3504,7 +3504,7 @@ Array [
         "description": "{\\"type\\":\\"LRO\\",\\"poller_item_name\\":\\"createStorageAccount_poller\\",\\"operationId\\":\\"StorageAccounts_Create\\",\\"itemName\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
         "event": Array [
           Object {
-            "id": "bhuvqx",
+            "id": "le21m4",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -3514,12 +3514,12 @@ Array [
                 "  });",
                 "  ",
               ],
-              "id": "6qbw4d",
+              "id": "bhuvqx",
               "type": "text/javascript",
             },
           },
           Object {
-            "id": "7oxzx1",
+            "id": "ssi2a8",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -3529,12 +3529,12 @@ Array [
                 "        }",
                 "        ",
               ],
-              "id": "le21m4",
+              "id": "7oxzx1",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "x6exws",
+        "id": "6qbw4d",
         "name": "createStorageAccount",
         "request": Object {
           "body": Object {
@@ -3593,7 +3593,7 @@ Array [
               Object {
                 "key": "accountName",
                 "type": "any",
-                "value": "{{accountName}}2",
+                "value": "{{accountName}}",
               },
               Object {
                 "key": "subscriptionId",
@@ -3609,7 +3609,7 @@ Array [
         "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
         "event": Array [
           Object {
-            "id": "x6oaag",
+            "id": "i544h5",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -3631,12 +3631,12 @@ Array [
                 "  postman.setNextRequest('_createStorageAccount_generated_get')",
                 "}",
               ],
-              "id": "j58bgv",
+              "id": "dm09uw",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "ssi2a8",
+        "id": "cdpopn",
         "name": "_createStorageAccount_poller",
         "request": Object {
           "method": "GET",
@@ -3654,18 +3654,18 @@ Array [
         "description": "{\\"type\\":\\"mock\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
         "event": Array [
           Object {
-            "id": "49cuyt",
+            "id": "8ew1jk",
             "listen": "prerequest",
             "script": Object {
               "exec": Array [
                 "postman.setNextRequest('_createStorageAccount_poller')",
               ],
-              "id": "5sx5dw",
+              "id": "49cuyt",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "cdpopn",
+        "id": "5sx5dw",
         "name": "_createStorageAccount_poller_mock_delay",
         "request": Object {
           "method": "GET",
@@ -3689,7 +3689,7 @@ Array [
         "description": "{\\"type\\":\\"generated-get\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
         "event": Array [
           Object {
-            "id": "2tccjb",
+            "id": "b9q1ra",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -3699,12 +3699,12 @@ Array [
                 "  });",
                 "  ",
               ],
-              "id": "db187u",
+              "id": "2tccjb",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "i544h5",
+        "id": "db187u",
         "name": "_createStorageAccount_generated_get",
         "request": Object {
           "header": Array [
@@ -3745,7 +3745,7 @@ Array [
               Object {
                 "key": "accountName",
                 "type": "any",
-                "value": "{{accountName}}2",
+                "value": "{{accountName}}",
               },
               Object {
                 "key": "subscriptionId",
@@ -3760,7 +3760,7 @@ Array [
       Object {
         "event": Array [
           Object {
-            "id": "wpbvc4",
+            "id": "6rfjty",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -3770,12 +3770,12 @@ Array [
                 "  });",
                 "  ",
               ],
-              "id": "3zgew6",
+              "id": "wpbvc4",
               "type": "text/javascript",
             },
           },
           Object {
-            "id": "hvl7jw",
+            "id": "odc2fc",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -3785,12 +3785,12 @@ Array [
                 "        }",
                 "        ",
               ],
-              "id": "6rfjty",
+              "id": "hvl7jw",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "b9q1ra",
+        "id": "3zgew6",
         "name": "deleteResourceGroup",
         "request": Object {
           "header": Array [
@@ -3838,7 +3838,7 @@ Array [
         "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"deleteResourceGroup\\"}",
         "event": Array [
           Object {
-            "id": "k97wbk",
+            "id": "j58bgv",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -3860,12 +3860,12 @@ Array [
                 "  postman.setNextRequest(null)",
                 "}",
               ],
-              "id": "dm09uw",
+              "id": "q1cfqt",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "odc2fc",
+        "id": "iqxxs7",
         "name": "_deleteResourceGroup_poller",
         "request": Object {
           "method": "GET",
@@ -3883,18 +3883,18 @@ Array [
         "description": "{\\"type\\":\\"mock\\",\\"lro_item_name\\":\\"deleteResourceGroup\\"}",
         "event": Array [
           Object {
-            "id": "h0fgel",
+            "id": "p03jp7",
             "listen": "prerequest",
             "script": Object {
               "exec": Array [
                 "postman.setNextRequest('_deleteResourceGroup_poller')",
               ],
-              "id": "yh0zn8",
+              "id": "h0fgel",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "iqxxs7",
+        "id": "yh0zn8",
         "name": "_deleteResourceGroup_poller_mock_delay",
         "request": Object {
           "method": "GET",
@@ -3919,7 +3919,7 @@ Array [
       Object {
         "key": "accountName",
         "type": "any",
-        "value": "$(accountName)2",
+        "value": "star4of8l2",
       },
       Object {
         "key": "subscriptionId",
@@ -3982,7 +3982,7 @@ Array [
     },
     "event": Array [
       Object {
-        "id": "vm8psu",
+        "id": "ivu9xy",
         "listen": "prerequest",
         "script": Object {
           "exec": Array [
@@ -4045,7 +4045,7 @@ Array [
             "}",
             "",
           ],
-          "id": "9ezdsu",
+          "id": "lk4mhm",
           "type": "text/javascript",
         },
       },
@@ -4065,7 +4065,7 @@ Array [
         "description": "{\\"type\\":\\"prepare\\"}",
         "event": Array [
           Object {
-            "id": "mge3qz",
+            "id": "qh9z16",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -4075,12 +4075,12 @@ Array [
                 "  });",
                 "  ",
               ],
-              "id": "ivu9xy",
+              "id": "spylrr",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "lk4mhm",
+        "id": "mge3qz",
         "name": "createResourceGroup",
         "request": Object {
           "body": Object {
@@ -4132,7 +4132,7 @@ Array [
         "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"StorageAccounts_CheckNameAvailability\\",\\"itemName\\":\\"checkName\\",\\"step\\":\\"checkName\\"}",
         "event": Array [
           Object {
-            "id": "eq5yyi",
+            "id": "bsqg1o",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -4142,18 +4142,18 @@ Array [
                 "  });",
                 "  ",
               ],
-              "id": "qh9z16",
+              "id": "kqos97",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "spylrr",
+        "id": "eq5yyi",
         "name": "checkName",
         "request": Object {
           "body": Object {
             "mode": "raw",
             "raw": "{
-  \\"name\\": \\"stafoobar1010\\",
+  \\"name\\": \\"{{accountName}}\\",
   \\"type\\": \\"Microsoft.Storage/storageAccounts\\"
 }",
           },
@@ -4198,7 +4198,7 @@ Array [
         "description": "{\\"type\\":\\"LRO\\",\\"poller_item_name\\":\\"createStorageAccount_poller\\",\\"operationId\\":\\"StorageAccounts_Create\\",\\"itemName\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
         "event": Array [
           Object {
-            "id": "a7lkxi",
+            "id": "tyolxx",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -4208,12 +4208,12 @@ Array [
                 "  });",
                 "  ",
               ],
-              "id": "bsqg1o",
+              "id": "65xm09",
               "type": "text/javascript",
             },
           },
           Object {
-            "id": "tyolxx",
+            "id": "gsyqal",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -4223,12 +4223,12 @@ Array [
                 "        }",
                 "        ",
               ],
-              "id": "65xm09",
+              "id": "c9wzyn",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "kqos97",
+        "id": "a7lkxi",
         "name": "createStorageAccount",
         "request": Object {
           "body": Object {
@@ -4287,7 +4287,7 @@ Array [
               Object {
                 "key": "accountName",
                 "type": "any",
-                "value": "stafoobar1010",
+                "value": "{{accountName}}",
               },
               Object {
                 "key": "subscriptionId",
@@ -4303,7 +4303,7 @@ Array [
         "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
         "event": Array [
           Object {
-            "id": "ew9nh8",
+            "id": "bw1q38",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -4325,12 +4325,12 @@ Array [
                 "  postman.setNextRequest('_createStorageAccount_generated_get')",
                 "}",
               ],
-              "id": "fujl6i",
+              "id": "ugk6h2",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "c9wzyn",
+        "id": "wlgh2r",
         "name": "_createStorageAccount_poller",
         "request": Object {
           "method": "GET",
@@ -4348,18 +4348,18 @@ Array [
         "description": "{\\"type\\":\\"mock\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
         "event": Array [
           Object {
-            "id": "d9yng9",
+            "id": "ew9nh8",
             "listen": "prerequest",
             "script": Object {
               "exec": Array [
                 "postman.setNextRequest('_createStorageAccount_poller')",
               ],
-              "id": "wlgh2r",
+              "id": "sp8ib7",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "gsyqal",
+        "id": "d9yng9",
         "name": "_createStorageAccount_poller_mock_delay",
         "request": Object {
           "method": "GET",
@@ -4383,7 +4383,7 @@ Array [
         "description": "{\\"type\\":\\"generated-get\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
         "event": Array [
           Object {
-            "id": "yzy1ec",
+            "id": "ehebqq",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -4393,12 +4393,12 @@ Array [
                 "  });",
                 "  ",
               ],
-              "id": "bw1q38",
+              "id": "l0fzps",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "2vc31r",
+        "id": "yzy1ec",
         "name": "_createStorageAccount_generated_get",
         "request": Object {
           "header": Array [
@@ -4439,7 +4439,7 @@ Array [
               Object {
                 "key": "accountName",
                 "type": "any",
-                "value": "stafoobar1010",
+                "value": "{{accountName}}",
               },
               Object {
                 "key": "subscriptionId",
@@ -4454,7 +4454,7 @@ Array [
       Object {
         "event": Array [
           Object {
-            "id": "zo75y7",
+            "id": "odehko",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -4464,12 +4464,12 @@ Array [
                 "  });",
                 "  ",
               ],
-              "id": "ehebqq",
+              "id": "9quvnq",
               "type": "text/javascript",
             },
           },
           Object {
-            "id": "odehko",
+            "id": "f9zxy5",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -4479,12 +4479,12 @@ Array [
                 "        }",
                 "        ",
               ],
-              "id": "9quvnq",
+              "id": "col7eq",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "l0fzps",
+        "id": "zo75y7",
         "name": "deleteResourceGroup",
         "request": Object {
           "header": Array [
@@ -4532,7 +4532,7 @@ Array [
         "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"deleteResourceGroup\\"}",
         "event": Array [
           Object {
-            "id": "86w5gc",
+            "id": "wa7yg9",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -4554,12 +4554,12 @@ Array [
                 "  postman.setNextRequest(null)",
                 "}",
               ],
-              "id": "wa7yg9",
+              "id": "20gl49",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "col7eq",
+        "id": "76ivhq",
         "name": "_deleteResourceGroup_poller",
         "request": Object {
           "method": "GET",
@@ -4577,18 +4577,18 @@ Array [
         "description": "{\\"type\\":\\"mock\\",\\"lro_item_name\\":\\"deleteResourceGroup\\"}",
         "event": Array [
           Object {
-            "id": "b3xozx",
+            "id": "86w5gc",
             "listen": "prerequest",
             "script": Object {
               "exec": Array [
                 "postman.setNextRequest('_deleteResourceGroup_poller')",
               ],
-              "id": "76ivhq",
+              "id": "8ef99f",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "f9zxy5",
+        "id": "b3xozx",
         "name": "_deleteResourceGroup_poller_mock_delay",
         "request": Object {
           "method": "GET",
@@ -4613,7 +4613,7 @@ Array [
       Object {
         "key": "accountName",
         "type": "any",
-        "value": "storagename1",
+        "value": "foobarvm8psu",
       },
       Object {
         "key": "subscriptionId",

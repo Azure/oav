@@ -106,11 +106,18 @@ export class ApiScenarioRunner {
     }
 
     if (scope.env.get("resourceGroupName") === undefined) {
-      const resourceGroupPrefix = scope.env.getString("resourceGroupPrefix") ?? "apiTest-";
       scope.env.set("resourceGroupName", {
         type: "string",
-        value: resourceGroupPrefix + getRandomString(),
+        prefix: "apiTest-",
       });
+    }
+
+    for (const [_, v] of scope.env.getVariables()) {
+      if (v.type === "string" || v.type === "secureString") {
+        if (v.prefix !== undefined && v.value === undefined) {
+          v.value = v.prefix + getRandomString();
+        }
+      }
     }
 
     await this.client.provisionScope(scope);
@@ -157,6 +164,14 @@ export class ApiScenarioRunner {
   public async executeStep(step: Step, scope: Scope) {
     const stepEnv = new VariableEnv(scope.env).setBatch(step.variables);
 
+    for (const v of Object.values(step.variables)) {
+      if (v.type === "string" || v.type === "secureString") {
+        if (v.prefix !== undefined && v.value === undefined) {
+          v.value = v.prefix + getRandomString();
+        }
+      }
+    }
+
     if (this.resolveVariables) {
       stepEnv.resolve();
     }
@@ -190,7 +205,7 @@ export class ApiScenarioRunner {
       const param = this.jsonLoader.resolveRefObj(p);
 
       const paramVal = step.parameters[param.name];
-      if (paramVal === undefined && env.get(param.name) === undefined) {
+      if (paramVal === undefined) {
         if (param.required) {
           throw new Error(`Parameter value for "${param.name}" is not found in step: ${step.step}`);
         } else {
