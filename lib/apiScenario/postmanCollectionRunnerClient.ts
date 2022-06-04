@@ -106,7 +106,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     this.collection = new Collection({
       info: {
         id: this.opts.runId,
-        name: this.opts.apiScenarioFileName,
+        name: this.opts.apiScenarioName,
       },
       variable: [
         {
@@ -119,10 +119,6 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
           key: "location",
         },
         {
-          key: "enable_auth",
-          value: "true",
-        },
-        {
           key: "client_id",
         },
         {
@@ -133,11 +129,15 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
           key: "tenantId",
         },
         {
-          key: "bearer_token",
+          key: "x_enable_auth",
+          value: "true",
+        },
+        {
+          key: "x_bearer_token",
           type: "secret",
         },
         {
-          key: "bearer_token_expires_on",
+          key: "x_bearer_token_expires_on",
         },
         {
           key: "x_polling_url",
@@ -160,7 +160,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       bearer: [
         {
           key: "token",
-          value: "{{bearer_token}}",
+          value: "{{x_bearer_token}}",
           type: "string",
         },
       ],
