@@ -138,10 +138,7 @@ Array [
         "response": Array [],
       },
       Object {
-        "description": Object {
-          "content": "{\\"type\\":\\"prepare\\"}",
-          "type": "text/plain",
-        },
+        "description": "{\\"type\\":\\"prepare\\"}",
         "event": Array [
           Object {
             "id": "120",
@@ -187,23 +184,32 @@ Array [
           "method": "PUT",
           "url": Object {
             "host": Array [
-              "localhost",
+              "http://localhost:5000",
             ],
             "path": Array [
               "subscriptions",
-              "{{subscriptionId}}",
+              ":subscriptionId",
               "resourcegroups",
-              "{{resourceGroupName}}",
+              ":resourceGroupName",
             ],
-            "port": "5000",
-            "protocol": "http",
             "query": Array [
               Object {
                 "key": "api-version",
                 "value": "2020-06-01",
               },
             ],
-            "variable": Array [],
+            "variable": Array [
+              Object {
+                "key": "subscriptionId",
+                "type": "any",
+                "value": "{{subscriptionId}}",
+              },
+              Object {
+                "key": "resourceGroupName",
+                "type": "any",
+                "value": "{{resourceGroupName}}",
+              },
+            ],
           },
         },
         "response": Array [],
@@ -387,7 +393,7 @@ Array [
               Object {
                 "key": "accountName",
                 "type": "any",
-                "value": "{{accountName}}",
+                "value": "storagename1",
               },
               Object {
                 "key": "subscriptionId",
@@ -400,34 +406,30 @@ Array [
         "response": Array [],
       },
       Object {
-        "description": Object {
-          "content": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
-          "type": "text/plain",
-        },
+        "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
         "event": Array [
           Object {
             "id": "134",
             "listen": "test",
             "script": Object {
               "exec": Array [
-                "",
-                "      try{",
-                "        if(pm.response.code === 202){",
-                "          postman.setNextRequest('_createStorageAccount_poller_mock_delay')",
-                "        }else if(pm.response.code === 204){",
-                "          postman.setNextRequest('_createStorageAccount_generated_get')",
-                "        }",
-                "        else{",
-                "          const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"]",
-                "          if(pm.response.json().status !== undefined && terminalStatus.indexOf(pm.response.json().status) === -1){",
-                "            postman.setNextRequest('_createStorageAccount_poller_mock_delay')",
-                "          }else{",
-                "            postman.setNextRequest('_createStorageAccount_generated_get')",
-                "          }",
-                "        }",
-                "      }catch(err){",
-                "        postman.setNextRequest('_createStorageAccount_generated_get')",
-                "      }",
+                "try{",
+                "  if(pm.response.code === 202){",
+                "    postman.setNextRequest('_createStorageAccount_poller_mock_delay')",
+                "  }else if(pm.response.code === 204){",
+                "    postman.setNextRequest('_createStorageAccount_generated_get')",
+                "  }",
+                "  else{",
+                "    const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"]",
+                "    if(pm.response.json().status !== undefined && terminalStatus.indexOf(pm.response.json().status) === -1){",
+                "      postman.setNextRequest('_createStorageAccount_poller_mock_delay')",
+                "    }else{",
+                "      postman.setNextRequest('_createStorageAccount_generated_get')",
+                "    }",
+                "  }",
+                "}catch(err){",
+                "  postman.setNextRequest('_createStorageAccount_generated_get')",
+                "}",
               ],
               "id": "152",
               "type": "text/javascript",
@@ -463,10 +465,7 @@ Array [
         "response": Array [],
       },
       Object {
-        "description": Object {
-          "content": "{\\"type\\":\\"mock\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
-          "type": "text/plain",
-        },
+        "description": "{\\"type\\":\\"mock\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
         "event": Array [
           Object {
             "id": "132",
@@ -491,7 +490,7 @@ Array [
             ],
             "path": Array [
               "delay",
-              "10",
+              "{{x_retry_after}}",
             ],
             "protocol": "https",
             "query": Array [],
@@ -543,27 +542,41 @@ Array [
           "method": "GET",
           "url": Object {
             "host": Array [
-              "localhost",
+              "http://localhost:5000",
             ],
             "path": Array [
               "subscriptions",
-              "{{subscriptionId}}",
+              ":subscriptionId",
               "resourceGroups",
-              "{{resourceGroupName}}",
+              ":resourceGroupName",
               "providers",
               "Microsoft.Storage",
               "storageAccounts",
-              "{{accountName}}",
+              ":accountName",
             ],
-            "port": "5000",
-            "protocol": "http",
             "query": Array [
               Object {
                 "key": "api-version",
                 "value": "2021-09-01",
               },
             ],
-            "variable": Array [],
+            "variable": Array [
+              Object {
+                "key": "resourceGroupName",
+                "type": "any",
+                "value": "{{resourceGroupName}}",
+              },
+              Object {
+                "key": "accountName",
+                "type": "any",
+                "value": "storagename1",
+              },
+              Object {
+                "key": "subscriptionId",
+                "type": "any",
+                "value": "{{subscriptionId}}",
+              },
+            ],
           },
         },
         "response": Array [],
@@ -625,56 +638,61 @@ Array [
           "method": "DELETE",
           "url": Object {
             "host": Array [
-              "localhost",
+              "http://localhost:5000",
             ],
             "path": Array [
               "subscriptions",
-              "{{subscriptionId}}",
+              ":subscriptionId",
               "resourcegroups",
-              "{{resourceGroupName}}",
+              ":resourceGroupName",
             ],
-            "port": "5000",
-            "protocol": "http",
             "query": Array [
               Object {
                 "key": "api-version",
                 "value": "2020-06-01",
               },
             ],
-            "variable": Array [],
+            "variable": Array [
+              Object {
+                "key": "subscriptionId",
+                "type": "any",
+                "value": "{{subscriptionId}}",
+              },
+              Object {
+                "key": "resourceGroupName",
+                "type": "any",
+                "value": "{{resourceGroupName}}",
+              },
+            ],
           },
         },
         "response": Array [],
       },
       Object {
-        "description": Object {
-          "content": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"deleteResourceGroup\\"}",
-          "type": "text/plain",
-        },
+        "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"deleteResourceGroup\\"}",
         "event": Array [
           Object {
             "id": "148",
             "listen": "test",
             "script": Object {
               "exec": Array [
-                "",
-                "      try{",
-                "        if(pm.response.code === 202){",
-                "          postman.setNextRequest('_deleteResourceGroup_poller_mock_delay')",
-                "        }else if(pm.response.code === 204){",
-                "          postman.setNextRequest('stopTestProxyRecording')",
-                "        }",
-                "        else{",
-                "          const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"]",
-                "          if(pm.response.json().status !== undefined && terminalStatus.indexOf(pm.response.json().status) === -1){",
-                "            postman.setNextRequest('_deleteResourceGroup_poller_mock_delay')",
-                "          }else{",
-                "            postman.setNextRequest('stopTestProxyRecording')",
-                "          }",
-                "        }",
-                "      }catch(err){",
-                "        postman.setNextRequest('stopTestProxyRecording')",
-                "      }",
+                "try{",
+                "  if(pm.response.code === 202){",
+                "    postman.setNextRequest('_deleteResourceGroup_poller_mock_delay')",
+                "  }else if(pm.response.code === 204){",
+                "    postman.setNextRequest('stopTestProxyRecording')",
+                "  }",
+                "  else{",
+                "    const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"]",
+                "    if(pm.response.json().status !== undefined && terminalStatus.indexOf(pm.response.json().status) === -1){",
+                "      postman.setNextRequest('_deleteResourceGroup_poller_mock_delay')",
+                "    }else{",
+                "      postman.setNextRequest('stopTestProxyRecording')",
+                "    }",
+                "  }",
+                "}catch(err){",
+                "  postman.setNextRequest('stopTestProxyRecording')",
+                "}",
               ],
               "id": "153",
               "type": "text/javascript",
@@ -710,10 +728,7 @@ Array [
         "response": Array [],
       },
       Object {
-        "description": Object {
-          "content": "{\\"type\\":\\"mock\\",\\"lro_item_name\\":\\"deleteResourceGroup\\"}",
-          "type": "text/plain",
-        },
+        "description": "{\\"type\\":\\"mock\\",\\"lro_item_name\\":\\"deleteResourceGroup\\"}",
         "event": Array [
           Object {
             "id": "146",
@@ -738,7 +753,7 @@ Array [
             ],
             "path": Array [
               "delay",
-              "10",
+              "{{x_retry_after}}",
             ],
             "protocol": "https",
             "query": Array [],
@@ -828,6 +843,15 @@ Array [
       Object {
         "key": "bearer_token_expires_on",
         "type": "any",
+      },
+      Object {
+        "key": "x_polling_url",
+        "type": "any",
+      },
+      Object {
+        "key": "x_retry_after",
+        "type": "any",
+        "value": "10",
       },
     ],
   },
@@ -967,10 +991,7 @@ Array [
         "response": Array [],
       },
       Object {
-        "description": Object {
-          "content": "{\\"type\\":\\"prepare\\"}",
-          "type": "text/plain",
-        },
+        "description": "{\\"type\\":\\"prepare\\"}",
         "event": Array [
           Object {
             "id": "163",
@@ -1016,23 +1037,32 @@ Array [
           "method": "PUT",
           "url": Object {
             "host": Array [
-              "localhost",
+              "http://localhost:5000",
             ],
             "path": Array [
               "subscriptions",
-              "{{subscriptionId}}",
+              ":subscriptionId",
               "resourcegroups",
-              "{{resourceGroupName}}",
+              ":resourceGroupName",
             ],
-            "port": "5000",
-            "protocol": "http",
             "query": Array [
               Object {
                 "key": "api-version",
                 "value": "2020-06-01",
               },
             ],
-            "variable": Array [],
+            "variable": Array [
+              Object {
+                "key": "subscriptionId",
+                "type": "any",
+                "value": "{{subscriptionId}}",
+              },
+              Object {
+                "key": "resourceGroupName",
+                "type": "any",
+                "value": "{{resourceGroupName}}",
+              },
+            ],
           },
         },
         "response": Array [],
@@ -1216,7 +1246,7 @@ Array [
               Object {
                 "key": "accountName",
                 "type": "any",
-                "value": "{{accountName}}",
+                "value": "{{accountName}}2",
               },
               Object {
                 "key": "subscriptionId",
@@ -1229,34 +1259,30 @@ Array [
         "response": Array [],
       },
       Object {
-        "description": Object {
-          "content": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
-          "type": "text/plain",
-        },
+        "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
         "event": Array [
           Object {
             "id": "177",
             "listen": "test",
             "script": Object {
               "exec": Array [
-                "",
-                "      try{",
-                "        if(pm.response.code === 202){",
-                "          postman.setNextRequest('_createStorageAccount_poller_mock_delay')",
-                "        }else if(pm.response.code === 204){",
-                "          postman.setNextRequest('_createStorageAccount_generated_get')",
-                "        }",
-                "        else{",
-                "          const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"]",
-                "          if(pm.response.json().status !== undefined && terminalStatus.indexOf(pm.response.json().status) === -1){",
-                "            postman.setNextRequest('_createStorageAccount_poller_mock_delay')",
-                "          }else{",
-                "            postman.setNextRequest('_createStorageAccount_generated_get')",
-                "          }",
-                "        }",
-                "      }catch(err){",
-                "        postman.setNextRequest('_createStorageAccount_generated_get')",
-                "      }",
+                "try{",
+                "  if(pm.response.code === 202){",
+                "    postman.setNextRequest('_createStorageAccount_poller_mock_delay')",
+                "  }else if(pm.response.code === 204){",
+                "    postman.setNextRequest('_createStorageAccount_generated_get')",
+                "  }",
+                "  else{",
+                "    const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"]",
+                "    if(pm.response.json().status !== undefined && terminalStatus.indexOf(pm.response.json().status) === -1){",
+                "      postman.setNextRequest('_createStorageAccount_poller_mock_delay')",
+                "    }else{",
+                "      postman.setNextRequest('_createStorageAccount_generated_get')",
+                "    }",
+                "  }",
+                "}catch(err){",
+                "  postman.setNextRequest('_createStorageAccount_generated_get')",
+                "}",
               ],
               "id": "195",
               "type": "text/javascript",
@@ -1292,10 +1318,7 @@ Array [
         "response": Array [],
       },
       Object {
-        "description": Object {
-          "content": "{\\"type\\":\\"mock\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
-          "type": "text/plain",
-        },
+        "description": "{\\"type\\":\\"mock\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
         "event": Array [
           Object {
             "id": "175",
@@ -1320,7 +1343,7 @@ Array [
             ],
             "path": Array [
               "delay",
-              "10",
+              "{{x_retry_after}}",
             ],
             "protocol": "https",
             "query": Array [],
@@ -1372,27 +1395,41 @@ Array [
           "method": "GET",
           "url": Object {
             "host": Array [
-              "localhost",
+              "http://localhost:5000",
             ],
             "path": Array [
               "subscriptions",
-              "{{subscriptionId}}",
+              ":subscriptionId",
               "resourceGroups",
-              "{{resourceGroupName}}",
+              ":resourceGroupName",
               "providers",
               "Microsoft.Storage",
               "storageAccounts",
-              "{{accountName}}",
+              ":accountName",
             ],
-            "port": "5000",
-            "protocol": "http",
             "query": Array [
               Object {
                 "key": "api-version",
                 "value": "2021-09-01",
               },
             ],
-            "variable": Array [],
+            "variable": Array [
+              Object {
+                "key": "resourceGroupName",
+                "type": "any",
+                "value": "{{resourceGroupName}}",
+              },
+              Object {
+                "key": "accountName",
+                "type": "any",
+                "value": "{{accountName}}2",
+              },
+              Object {
+                "key": "subscriptionId",
+                "type": "any",
+                "value": "{{subscriptionId}}",
+              },
+            ],
           },
         },
         "response": Array [],
@@ -1454,56 +1491,61 @@ Array [
           "method": "DELETE",
           "url": Object {
             "host": Array [
-              "localhost",
+              "http://localhost:5000",
             ],
             "path": Array [
               "subscriptions",
-              "{{subscriptionId}}",
+              ":subscriptionId",
               "resourcegroups",
-              "{{resourceGroupName}}",
+              ":resourceGroupName",
             ],
-            "port": "5000",
-            "protocol": "http",
             "query": Array [
               Object {
                 "key": "api-version",
                 "value": "2020-06-01",
               },
             ],
-            "variable": Array [],
+            "variable": Array [
+              Object {
+                "key": "subscriptionId",
+                "type": "any",
+                "value": "{{subscriptionId}}",
+              },
+              Object {
+                "key": "resourceGroupName",
+                "type": "any",
+                "value": "{{resourceGroupName}}",
+              },
+            ],
           },
         },
         "response": Array [],
       },
       Object {
-        "description": Object {
-          "content": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"deleteResourceGroup\\"}",
-          "type": "text/plain",
-        },
+        "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"deleteResourceGroup\\"}",
         "event": Array [
           Object {
             "id": "191",
             "listen": "test",
             "script": Object {
               "exec": Array [
-                "",
-                "      try{",
-                "        if(pm.response.code === 202){",
-                "          postman.setNextRequest('_deleteResourceGroup_poller_mock_delay')",
-                "        }else if(pm.response.code === 204){",
-                "          postman.setNextRequest('stopTestProxyRecording')",
-                "        }",
-                "        else{",
-                "          const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"]",
-                "          if(pm.response.json().status !== undefined && terminalStatus.indexOf(pm.response.json().status) === -1){",
-                "            postman.setNextRequest('_deleteResourceGroup_poller_mock_delay')",
-                "          }else{",
-                "            postman.setNextRequest('stopTestProxyRecording')",
-                "          }",
-                "        }",
-                "      }catch(err){",
-                "        postman.setNextRequest('stopTestProxyRecording')",
-                "      }",
+                "try{",
+                "  if(pm.response.code === 202){",
+                "    postman.setNextRequest('_deleteResourceGroup_poller_mock_delay')",
+                "  }else if(pm.response.code === 204){",
+                "    postman.setNextRequest('stopTestProxyRecording')",
+                "  }",
+                "  else{",
+                "    const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"]",
+                "    if(pm.response.json().status !== undefined && terminalStatus.indexOf(pm.response.json().status) === -1){",
+                "      postman.setNextRequest('_deleteResourceGroup_poller_mock_delay')",
+                "    }else{",
+                "      postman.setNextRequest('stopTestProxyRecording')",
+                "    }",
+                "  }",
+                "}catch(err){",
+                "  postman.setNextRequest('stopTestProxyRecording')",
+                "}",
               ],
               "id": "196",
               "type": "text/javascript",
@@ -1539,10 +1581,7 @@ Array [
         "response": Array [],
       },
       Object {
-        "description": Object {
-          "content": "{\\"type\\":\\"mock\\",\\"lro_item_name\\":\\"deleteResourceGroup\\"}",
-          "type": "text/plain",
-        },
+        "description": "{\\"type\\":\\"mock\\",\\"lro_item_name\\":\\"deleteResourceGroup\\"}",
         "event": Array [
           Object {
             "id": "189",
@@ -1567,7 +1606,7 @@ Array [
             ],
             "path": Array [
               "delay",
-              "10",
+              "{{x_retry_after}}",
             ],
             "protocol": "https",
             "query": Array [],
@@ -1657,6 +1696,15 @@ Array [
       Object {
         "key": "bearer_token_expires_on",
         "type": "any",
+      },
+      Object {
+        "key": "x_polling_url",
+        "type": "any",
+      },
+      Object {
+        "key": "x_retry_after",
+        "type": "any",
+        "value": "10",
       },
     ],
   },
@@ -1796,10 +1844,7 @@ Array [
         "response": Array [],
       },
       Object {
-        "description": Object {
-          "content": "{\\"type\\":\\"prepare\\"}",
-          "type": "text/plain",
-        },
+        "description": "{\\"type\\":\\"prepare\\"}",
         "event": Array [
           Object {
             "id": "206",
@@ -1845,23 +1890,32 @@ Array [
           "method": "PUT",
           "url": Object {
             "host": Array [
-              "localhost",
+              "http://localhost:5000",
             ],
             "path": Array [
               "subscriptions",
-              "{{subscriptionId}}",
+              ":subscriptionId",
               "resourcegroups",
-              "{{resourceGroupName}}",
+              ":resourceGroupName",
             ],
-            "port": "5000",
-            "protocol": "http",
             "query": Array [
               Object {
                 "key": "api-version",
                 "value": "2020-06-01",
               },
             ],
-            "variable": Array [],
+            "variable": Array [
+              Object {
+                "key": "subscriptionId",
+                "type": "any",
+                "value": "{{subscriptionId}}",
+              },
+              Object {
+                "key": "resourceGroupName",
+                "type": "any",
+                "value": "{{resourceGroupName}}",
+              },
+            ],
           },
         },
         "response": Array [],
@@ -2045,7 +2099,7 @@ Array [
               Object {
                 "key": "accountName",
                 "type": "any",
-                "value": "{{accountName}}",
+                "value": "stafoobar1010",
               },
               Object {
                 "key": "subscriptionId",
@@ -2058,34 +2112,30 @@ Array [
         "response": Array [],
       },
       Object {
-        "description": Object {
-          "content": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
-          "type": "text/plain",
-        },
+        "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
         "event": Array [
           Object {
             "id": "220",
             "listen": "test",
             "script": Object {
               "exec": Array [
-                "",
-                "      try{",
-                "        if(pm.response.code === 202){",
-                "          postman.setNextRequest('_createStorageAccount_poller_mock_delay')",
-                "        }else if(pm.response.code === 204){",
-                "          postman.setNextRequest('_createStorageAccount_generated_get')",
-                "        }",
-                "        else{",
-                "          const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"]",
-                "          if(pm.response.json().status !== undefined && terminalStatus.indexOf(pm.response.json().status) === -1){",
-                "            postman.setNextRequest('_createStorageAccount_poller_mock_delay')",
-                "          }else{",
-                "            postman.setNextRequest('_createStorageAccount_generated_get')",
-                "          }",
-                "        }",
-                "      }catch(err){",
-                "        postman.setNextRequest('_createStorageAccount_generated_get')",
-                "      }",
+                "try{",
+                "  if(pm.response.code === 202){",
+                "    postman.setNextRequest('_createStorageAccount_poller_mock_delay')",
+                "  }else if(pm.response.code === 204){",
+                "    postman.setNextRequest('_createStorageAccount_generated_get')",
+                "  }",
+                "  else{",
+                "    const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"]",
+                "    if(pm.response.json().status !== undefined && terminalStatus.indexOf(pm.response.json().status) === -1){",
+                "      postman.setNextRequest('_createStorageAccount_poller_mock_delay')",
+                "    }else{",
+                "      postman.setNextRequest('_createStorageAccount_generated_get')",
+                "    }",
+                "  }",
+                "}catch(err){",
+                "  postman.setNextRequest('_createStorageAccount_generated_get')",
+                "}",
               ],
               "id": "238",
               "type": "text/javascript",
@@ -2121,10 +2171,7 @@ Array [
         "response": Array [],
       },
       Object {
-        "description": Object {
-          "content": "{\\"type\\":\\"mock\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
-          "type": "text/plain",
-        },
+        "description": "{\\"type\\":\\"mock\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
         "event": Array [
           Object {
             "id": "218",
@@ -2149,7 +2196,7 @@ Array [
             ],
             "path": Array [
               "delay",
-              "10",
+              "{{x_retry_after}}",
             ],
             "protocol": "https",
             "query": Array [],
@@ -2201,27 +2248,41 @@ Array [
           "method": "GET",
           "url": Object {
             "host": Array [
-              "localhost",
+              "http://localhost:5000",
             ],
             "path": Array [
               "subscriptions",
-              "{{subscriptionId}}",
+              ":subscriptionId",
               "resourceGroups",
-              "{{resourceGroupName}}",
+              ":resourceGroupName",
               "providers",
               "Microsoft.Storage",
               "storageAccounts",
-              "{{accountName}}",
+              ":accountName",
             ],
-            "port": "5000",
-            "protocol": "http",
             "query": Array [
               Object {
                 "key": "api-version",
                 "value": "2021-09-01",
               },
             ],
-            "variable": Array [],
+            "variable": Array [
+              Object {
+                "key": "resourceGroupName",
+                "type": "any",
+                "value": "{{resourceGroupName}}",
+              },
+              Object {
+                "key": "accountName",
+                "type": "any",
+                "value": "stafoobar1010",
+              },
+              Object {
+                "key": "subscriptionId",
+                "type": "any",
+                "value": "{{subscriptionId}}",
+              },
+            ],
           },
         },
         "response": Array [],
@@ -2283,56 +2344,61 @@ Array [
           "method": "DELETE",
           "url": Object {
             "host": Array [
-              "localhost",
+              "http://localhost:5000",
             ],
             "path": Array [
               "subscriptions",
-              "{{subscriptionId}}",
+              ":subscriptionId",
               "resourcegroups",
-              "{{resourceGroupName}}",
+              ":resourceGroupName",
             ],
-            "port": "5000",
-            "protocol": "http",
             "query": Array [
               Object {
                 "key": "api-version",
                 "value": "2020-06-01",
               },
             ],
-            "variable": Array [],
+            "variable": Array [
+              Object {
+                "key": "subscriptionId",
+                "type": "any",
+                "value": "{{subscriptionId}}",
+              },
+              Object {
+                "key": "resourceGroupName",
+                "type": "any",
+                "value": "{{resourceGroupName}}",
+              },
+            ],
           },
         },
         "response": Array [],
       },
       Object {
-        "description": Object {
-          "content": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"deleteResourceGroup\\"}",
-          "type": "text/plain",
-        },
+        "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"deleteResourceGroup\\"}",
         "event": Array [
           Object {
             "id": "234",
             "listen": "test",
             "script": Object {
               "exec": Array [
-                "",
-                "      try{",
-                "        if(pm.response.code === 202){",
-                "          postman.setNextRequest('_deleteResourceGroup_poller_mock_delay')",
-                "        }else if(pm.response.code === 204){",
-                "          postman.setNextRequest('stopTestProxyRecording')",
-                "        }",
-                "        else{",
-                "          const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"]",
-                "          if(pm.response.json().status !== undefined && terminalStatus.indexOf(pm.response.json().status) === -1){",
-                "            postman.setNextRequest('_deleteResourceGroup_poller_mock_delay')",
-                "          }else{",
-                "            postman.setNextRequest('stopTestProxyRecording')",
-                "          }",
-                "        }",
-                "      }catch(err){",
-                "        postman.setNextRequest('stopTestProxyRecording')",
-                "      }",
+                "try{",
+                "  if(pm.response.code === 202){",
+                "    postman.setNextRequest('_deleteResourceGroup_poller_mock_delay')",
+                "  }else if(pm.response.code === 204){",
+                "    postman.setNextRequest('stopTestProxyRecording')",
+                "  }",
+                "  else{",
+                "    const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"]",
+                "    if(pm.response.json().status !== undefined && terminalStatus.indexOf(pm.response.json().status) === -1){",
+                "      postman.setNextRequest('_deleteResourceGroup_poller_mock_delay')",
+                "    }else{",
+                "      postman.setNextRequest('stopTestProxyRecording')",
+                "    }",
+                "  }",
+                "}catch(err){",
+                "  postman.setNextRequest('stopTestProxyRecording')",
+                "}",
               ],
               "id": "239",
               "type": "text/javascript",
@@ -2368,10 +2434,7 @@ Array [
         "response": Array [],
       },
       Object {
-        "description": Object {
-          "content": "{\\"type\\":\\"mock\\",\\"lro_item_name\\":\\"deleteResourceGroup\\"}",
-          "type": "text/plain",
-        },
+        "description": "{\\"type\\":\\"mock\\",\\"lro_item_name\\":\\"deleteResourceGroup\\"}",
         "event": Array [
           Object {
             "id": "232",
@@ -2396,7 +2459,7 @@ Array [
             ],
             "path": Array [
               "delay",
-              "10",
+              "{{x_retry_after}}",
             ],
             "protocol": "https",
             "query": Array [],
@@ -2486,6 +2549,15 @@ Array [
       Object {
         "key": "bearer_token_expires_on",
         "type": "any",
+      },
+      Object {
+        "key": "x_polling_url",
+        "type": "any",
+      },
+      Object {
+        "key": "x_retry_after",
+        "type": "any",
+        "value": "10",
       },
     ],
   },
@@ -2587,10 +2659,7 @@ Array [
     },
     "item": Array [
       Object {
-        "description": Object {
-          "content": "{\\"type\\":\\"prepare\\"}",
-          "type": "text/plain",
-        },
+        "description": "{\\"type\\":\\"prepare\\"}",
         "event": Array [
           Object {
             "id": "6",
@@ -2624,24 +2693,34 @@ Array [
           "method": "PUT",
           "url": Object {
             "host": Array [
-              "management",
+              "https://management",
               "azure",
               "com",
             ],
             "path": Array [
               "subscriptions",
-              "{{subscriptionId}}",
+              ":subscriptionId",
               "resourcegroups",
-              "{{resourceGroupName}}",
+              ":resourceGroupName",
             ],
-            "protocol": "https",
             "query": Array [
               Object {
                 "key": "api-version",
                 "value": "2020-06-01",
               },
             ],
-            "variable": Array [],
+            "variable": Array [
+              Object {
+                "key": "subscriptionId",
+                "type": "any",
+                "value": "{{subscriptionId}}",
+              },
+              Object {
+                "key": "resourceGroupName",
+                "type": "any",
+                "value": "{{resourceGroupName}}",
+              },
+            ],
           },
         },
         "response": Array [],
@@ -2805,7 +2884,7 @@ Array [
               Object {
                 "key": "accountName",
                 "type": "any",
-                "value": "{{accountName}}",
+                "value": "storagename1",
               },
               Object {
                 "key": "subscriptionId",
@@ -2818,34 +2897,30 @@ Array [
         "response": Array [],
       },
       Object {
-        "description": Object {
-          "content": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
-          "type": "text/plain",
-        },
+        "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
         "event": Array [
           Object {
             "id": "20",
             "listen": "test",
             "script": Object {
               "exec": Array [
-                "",
-                "      try{",
-                "        if(pm.response.code === 202){",
-                "          postman.setNextRequest('_createStorageAccount_poller_mock_delay')",
-                "        }else if(pm.response.code === 204){",
-                "          postman.setNextRequest('_createStorageAccount_generated_get')",
-                "        }",
-                "        else{",
-                "          const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"]",
-                "          if(pm.response.json().status !== undefined && terminalStatus.indexOf(pm.response.json().status) === -1){",
-                "            postman.setNextRequest('_createStorageAccount_poller_mock_delay')",
-                "          }else{",
-                "            postman.setNextRequest('_createStorageAccount_generated_get')",
-                "          }",
-                "        }",
-                "      }catch(err){",
-                "        postman.setNextRequest('_createStorageAccount_generated_get')",
-                "      }",
+                "try{",
+                "  if(pm.response.code === 202){",
+                "    postman.setNextRequest('_createStorageAccount_poller_mock_delay')",
+                "  }else if(pm.response.code === 204){",
+                "    postman.setNextRequest('_createStorageAccount_generated_get')",
+                "  }",
+                "  else{",
+                "    const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"]",
+                "    if(pm.response.json().status !== undefined && terminalStatus.indexOf(pm.response.json().status) === -1){",
+                "      postman.setNextRequest('_createStorageAccount_poller_mock_delay')",
+                "    }else{",
+                "      postman.setNextRequest('_createStorageAccount_generated_get')",
+                "    }",
+                "  }",
+                "}catch(err){",
+                "  postman.setNextRequest('_createStorageAccount_generated_get')",
+                "}",
               ],
               "id": "35",
               "type": "text/javascript",
@@ -2867,10 +2942,7 @@ Array [
         "response": Array [],
       },
       Object {
-        "description": Object {
-          "content": "{\\"type\\":\\"mock\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
-          "type": "text/plain",
-        },
+        "description": "{\\"type\\":\\"mock\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
         "event": Array [
           Object {
             "id": "18",
@@ -2895,7 +2967,7 @@ Array [
             ],
             "path": Array [
               "delay",
-              "10",
+              "{{x_retry_after}}",
             ],
             "protocol": "https",
             "query": Array [],
@@ -2935,28 +3007,43 @@ Array [
           "method": "GET",
           "url": Object {
             "host": Array [
-              "management",
+              "https://management",
               "azure",
               "com",
             ],
             "path": Array [
               "subscriptions",
-              "{{subscriptionId}}",
+              ":subscriptionId",
               "resourceGroups",
-              "{{resourceGroupName}}",
+              ":resourceGroupName",
               "providers",
               "Microsoft.Storage",
               "storageAccounts",
-              "{{accountName}}",
+              ":accountName",
             ],
-            "protocol": "https",
             "query": Array [
               Object {
                 "key": "api-version",
                 "value": "2021-09-01",
               },
             ],
-            "variable": Array [],
+            "variable": Array [
+              Object {
+                "key": "resourceGroupName",
+                "type": "any",
+                "value": "{{resourceGroupName}}",
+              },
+              Object {
+                "key": "accountName",
+                "type": "any",
+                "value": "storagename1",
+              },
+              Object {
+                "key": "subscriptionId",
+                "type": "any",
+                "value": "{{subscriptionId}}",
+              },
+            ],
           },
         },
         "response": Array [],
@@ -3006,57 +3093,63 @@ Array [
           "method": "DELETE",
           "url": Object {
             "host": Array [
-              "management",
+              "https://management",
               "azure",
               "com",
             ],
             "path": Array [
               "subscriptions",
-              "{{subscriptionId}}",
+              ":subscriptionId",
               "resourcegroups",
-              "{{resourceGroupName}}",
+              ":resourceGroupName",
             ],
-            "protocol": "https",
             "query": Array [
               Object {
                 "key": "api-version",
                 "value": "2020-06-01",
               },
             ],
-            "variable": Array [],
+            "variable": Array [
+              Object {
+                "key": "subscriptionId",
+                "type": "any",
+                "value": "{{subscriptionId}}",
+              },
+              Object {
+                "key": "resourceGroupName",
+                "type": "any",
+                "value": "{{resourceGroupName}}",
+              },
+            ],
           },
         },
         "response": Array [],
       },
       Object {
-        "description": Object {
-          "content": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"deleteResourceGroup\\"}",
-          "type": "text/plain",
-        },
+        "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"deleteResourceGroup\\"}",
         "event": Array [
           Object {
             "id": "34",
             "listen": "test",
             "script": Object {
               "exec": Array [
-                "",
-                "      try{",
-                "        if(pm.response.code === 202){",
-                "          postman.setNextRequest('_deleteResourceGroup_poller_mock_delay')",
-                "        }else if(pm.response.code === 204){",
-                "          postman.setNextRequest(null)",
-                "        }",
-                "        else{",
-                "          const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"]",
-                "          if(pm.response.json().status !== undefined && terminalStatus.indexOf(pm.response.json().status) === -1){",
-                "            postman.setNextRequest('_deleteResourceGroup_poller_mock_delay')",
-                "          }else{",
-                "            postman.setNextRequest(null)",
-                "          }",
-                "        }",
-                "      }catch(err){",
-                "        postman.setNextRequest(null)",
-                "      }",
+                "try{",
+                "  if(pm.response.code === 202){",
+                "    postman.setNextRequest('_deleteResourceGroup_poller_mock_delay')",
+                "  }else if(pm.response.code === 204){",
+                "    postman.setNextRequest(null)",
+                "  }",
+                "  else{",
+                "    const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"]",
+                "    if(pm.response.json().status !== undefined && terminalStatus.indexOf(pm.response.json().status) === -1){",
+                "      postman.setNextRequest('_deleteResourceGroup_poller_mock_delay')",
+                "    }else{",
+                "      postman.setNextRequest(null)",
+                "    }",
+                "  }",
+                "}catch(err){",
+                "  postman.setNextRequest(null)",
+                "}",
               ],
               "id": "36",
               "type": "text/javascript",
@@ -3078,10 +3171,7 @@ Array [
         "response": Array [],
       },
       Object {
-        "description": Object {
-          "content": "{\\"type\\":\\"mock\\",\\"lro_item_name\\":\\"deleteResourceGroup\\"}",
-          "type": "text/plain",
-        },
+        "description": "{\\"type\\":\\"mock\\",\\"lro_item_name\\":\\"deleteResourceGroup\\"}",
         "event": Array [
           Object {
             "id": "32",
@@ -3106,7 +3196,7 @@ Array [
             ],
             "path": Array [
               "delay",
-              "10",
+              "{{x_retry_after}}",
             ],
             "protocol": "https",
             "query": Array [],
@@ -3153,6 +3243,15 @@ Array [
       Object {
         "key": "bearer_token_expires_on",
         "type": "any",
+      },
+      Object {
+        "key": "x_polling_url",
+        "type": "any",
+      },
+      Object {
+        "key": "x_retry_after",
+        "type": "any",
+        "value": "10",
       },
     ],
   },
@@ -3249,10 +3348,7 @@ Array [
     },
     "item": Array [
       Object {
-        "description": Object {
-          "content": "{\\"type\\":\\"prepare\\"}",
-          "type": "text/plain",
-        },
+        "description": "{\\"type\\":\\"prepare\\"}",
         "event": Array [
           Object {
             "id": "43",
@@ -3286,24 +3382,34 @@ Array [
           "method": "PUT",
           "url": Object {
             "host": Array [
-              "management",
+              "https://management",
               "azure",
               "com",
             ],
             "path": Array [
               "subscriptions",
-              "{{subscriptionId}}",
+              ":subscriptionId",
               "resourcegroups",
-              "{{resourceGroupName}}",
+              ":resourceGroupName",
             ],
-            "protocol": "https",
             "query": Array [
               Object {
                 "key": "api-version",
                 "value": "2020-06-01",
               },
             ],
-            "variable": Array [],
+            "variable": Array [
+              Object {
+                "key": "subscriptionId",
+                "type": "any",
+                "value": "{{subscriptionId}}",
+              },
+              Object {
+                "key": "resourceGroupName",
+                "type": "any",
+                "value": "{{resourceGroupName}}",
+              },
+            ],
           },
         },
         "response": Array [],
@@ -3467,7 +3573,7 @@ Array [
               Object {
                 "key": "accountName",
                 "type": "any",
-                "value": "{{accountName}}",
+                "value": "{{accountName}}2",
               },
               Object {
                 "key": "subscriptionId",
@@ -3480,34 +3586,30 @@ Array [
         "response": Array [],
       },
       Object {
-        "description": Object {
-          "content": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
-          "type": "text/plain",
-        },
+        "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
         "event": Array [
           Object {
             "id": "57",
             "listen": "test",
             "script": Object {
               "exec": Array [
-                "",
-                "      try{",
-                "        if(pm.response.code === 202){",
-                "          postman.setNextRequest('_createStorageAccount_poller_mock_delay')",
-                "        }else if(pm.response.code === 204){",
-                "          postman.setNextRequest('_createStorageAccount_generated_get')",
-                "        }",
-                "        else{",
-                "          const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"]",
-                "          if(pm.response.json().status !== undefined && terminalStatus.indexOf(pm.response.json().status) === -1){",
-                "            postman.setNextRequest('_createStorageAccount_poller_mock_delay')",
-                "          }else{",
-                "            postman.setNextRequest('_createStorageAccount_generated_get')",
-                "          }",
-                "        }",
-                "      }catch(err){",
-                "        postman.setNextRequest('_createStorageAccount_generated_get')",
-                "      }",
+                "try{",
+                "  if(pm.response.code === 202){",
+                "    postman.setNextRequest('_createStorageAccount_poller_mock_delay')",
+                "  }else if(pm.response.code === 204){",
+                "    postman.setNextRequest('_createStorageAccount_generated_get')",
+                "  }",
+                "  else{",
+                "    const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"]",
+                "    if(pm.response.json().status !== undefined && terminalStatus.indexOf(pm.response.json().status) === -1){",
+                "      postman.setNextRequest('_createStorageAccount_poller_mock_delay')",
+                "    }else{",
+                "      postman.setNextRequest('_createStorageAccount_generated_get')",
+                "    }",
+                "  }",
+                "}catch(err){",
+                "  postman.setNextRequest('_createStorageAccount_generated_get')",
+                "}",
               ],
               "id": "72",
               "type": "text/javascript",
@@ -3529,10 +3631,7 @@ Array [
         "response": Array [],
       },
       Object {
-        "description": Object {
-          "content": "{\\"type\\":\\"mock\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
-          "type": "text/plain",
-        },
+        "description": "{\\"type\\":\\"mock\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
         "event": Array [
           Object {
             "id": "55",
@@ -3557,7 +3656,7 @@ Array [
             ],
             "path": Array [
               "delay",
-              "10",
+              "{{x_retry_after}}",
             ],
             "protocol": "https",
             "query": Array [],
@@ -3597,28 +3696,43 @@ Array [
           "method": "GET",
           "url": Object {
             "host": Array [
-              "management",
+              "https://management",
               "azure",
               "com",
             ],
             "path": Array [
               "subscriptions",
-              "{{subscriptionId}}",
+              ":subscriptionId",
               "resourceGroups",
-              "{{resourceGroupName}}",
+              ":resourceGroupName",
               "providers",
               "Microsoft.Storage",
               "storageAccounts",
-              "{{accountName}}",
+              ":accountName",
             ],
-            "protocol": "https",
             "query": Array [
               Object {
                 "key": "api-version",
                 "value": "2021-09-01",
               },
             ],
-            "variable": Array [],
+            "variable": Array [
+              Object {
+                "key": "resourceGroupName",
+                "type": "any",
+                "value": "{{resourceGroupName}}",
+              },
+              Object {
+                "key": "accountName",
+                "type": "any",
+                "value": "{{accountName}}2",
+              },
+              Object {
+                "key": "subscriptionId",
+                "type": "any",
+                "value": "{{subscriptionId}}",
+              },
+            ],
           },
         },
         "response": Array [],
@@ -3668,57 +3782,63 @@ Array [
           "method": "DELETE",
           "url": Object {
             "host": Array [
-              "management",
+              "https://management",
               "azure",
               "com",
             ],
             "path": Array [
               "subscriptions",
-              "{{subscriptionId}}",
+              ":subscriptionId",
               "resourcegroups",
-              "{{resourceGroupName}}",
+              ":resourceGroupName",
             ],
-            "protocol": "https",
             "query": Array [
               Object {
                 "key": "api-version",
                 "value": "2020-06-01",
               },
             ],
-            "variable": Array [],
+            "variable": Array [
+              Object {
+                "key": "subscriptionId",
+                "type": "any",
+                "value": "{{subscriptionId}}",
+              },
+              Object {
+                "key": "resourceGroupName",
+                "type": "any",
+                "value": "{{resourceGroupName}}",
+              },
+            ],
           },
         },
         "response": Array [],
       },
       Object {
-        "description": Object {
-          "content": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"deleteResourceGroup\\"}",
-          "type": "text/plain",
-        },
+        "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"deleteResourceGroup\\"}",
         "event": Array [
           Object {
             "id": "71",
             "listen": "test",
             "script": Object {
               "exec": Array [
-                "",
-                "      try{",
-                "        if(pm.response.code === 202){",
-                "          postman.setNextRequest('_deleteResourceGroup_poller_mock_delay')",
-                "        }else if(pm.response.code === 204){",
-                "          postman.setNextRequest(null)",
-                "        }",
-                "        else{",
-                "          const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"]",
-                "          if(pm.response.json().status !== undefined && terminalStatus.indexOf(pm.response.json().status) === -1){",
-                "            postman.setNextRequest('_deleteResourceGroup_poller_mock_delay')",
-                "          }else{",
-                "            postman.setNextRequest(null)",
-                "          }",
-                "        }",
-                "      }catch(err){",
-                "        postman.setNextRequest(null)",
-                "      }",
+                "try{",
+                "  if(pm.response.code === 202){",
+                "    postman.setNextRequest('_deleteResourceGroup_poller_mock_delay')",
+                "  }else if(pm.response.code === 204){",
+                "    postman.setNextRequest(null)",
+                "  }",
+                "  else{",
+                "    const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"]",
+                "    if(pm.response.json().status !== undefined && terminalStatus.indexOf(pm.response.json().status) === -1){",
+                "      postman.setNextRequest('_deleteResourceGroup_poller_mock_delay')",
+                "    }else{",
+                "      postman.setNextRequest(null)",
+                "    }",
+                "  }",
+                "}catch(err){",
+                "  postman.setNextRequest(null)",
+                "}",
               ],
               "id": "73",
               "type": "text/javascript",
@@ -3740,10 +3860,7 @@ Array [
         "response": Array [],
       },
       Object {
-        "description": Object {
-          "content": "{\\"type\\":\\"mock\\",\\"lro_item_name\\":\\"deleteResourceGroup\\"}",
-          "type": "text/plain",
-        },
+        "description": "{\\"type\\":\\"mock\\",\\"lro_item_name\\":\\"deleteResourceGroup\\"}",
         "event": Array [
           Object {
             "id": "69",
@@ -3768,7 +3885,7 @@ Array [
             ],
             "path": Array [
               "delay",
-              "10",
+              "{{x_retry_after}}",
             ],
             "protocol": "https",
             "query": Array [],
@@ -3815,6 +3932,15 @@ Array [
       Object {
         "key": "bearer_token_expires_on",
         "type": "any",
+      },
+      Object {
+        "key": "x_polling_url",
+        "type": "any",
+      },
+      Object {
+        "key": "x_retry_after",
+        "type": "any",
+        "value": "10",
       },
     ],
   },
@@ -3911,10 +4037,7 @@ Array [
     },
     "item": Array [
       Object {
-        "description": Object {
-          "content": "{\\"type\\":\\"prepare\\"}",
-          "type": "text/plain",
-        },
+        "description": "{\\"type\\":\\"prepare\\"}",
         "event": Array [
           Object {
             "id": "80",
@@ -3948,24 +4071,34 @@ Array [
           "method": "PUT",
           "url": Object {
             "host": Array [
-              "management",
+              "https://management",
               "azure",
               "com",
             ],
             "path": Array [
               "subscriptions",
-              "{{subscriptionId}}",
+              ":subscriptionId",
               "resourcegroups",
-              "{{resourceGroupName}}",
+              ":resourceGroupName",
             ],
-            "protocol": "https",
             "query": Array [
               Object {
                 "key": "api-version",
                 "value": "2020-06-01",
               },
             ],
-            "variable": Array [],
+            "variable": Array [
+              Object {
+                "key": "subscriptionId",
+                "type": "any",
+                "value": "{{subscriptionId}}",
+              },
+              Object {
+                "key": "resourceGroupName",
+                "type": "any",
+                "value": "{{resourceGroupName}}",
+              },
+            ],
           },
         },
         "response": Array [],
@@ -4129,7 +4262,7 @@ Array [
               Object {
                 "key": "accountName",
                 "type": "any",
-                "value": "{{accountName}}",
+                "value": "stafoobar1010",
               },
               Object {
                 "key": "subscriptionId",
@@ -4142,34 +4275,30 @@ Array [
         "response": Array [],
       },
       Object {
-        "description": Object {
-          "content": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
-          "type": "text/plain",
-        },
+        "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
         "event": Array [
           Object {
             "id": "94",
             "listen": "test",
             "script": Object {
               "exec": Array [
-                "",
-                "      try{",
-                "        if(pm.response.code === 202){",
-                "          postman.setNextRequest('_createStorageAccount_poller_mock_delay')",
-                "        }else if(pm.response.code === 204){",
-                "          postman.setNextRequest('_createStorageAccount_generated_get')",
-                "        }",
-                "        else{",
-                "          const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"]",
-                "          if(pm.response.json().status !== undefined && terminalStatus.indexOf(pm.response.json().status) === -1){",
-                "            postman.setNextRequest('_createStorageAccount_poller_mock_delay')",
-                "          }else{",
-                "            postman.setNextRequest('_createStorageAccount_generated_get')",
-                "          }",
-                "        }",
-                "      }catch(err){",
-                "        postman.setNextRequest('_createStorageAccount_generated_get')",
-                "      }",
+                "try{",
+                "  if(pm.response.code === 202){",
+                "    postman.setNextRequest('_createStorageAccount_poller_mock_delay')",
+                "  }else if(pm.response.code === 204){",
+                "    postman.setNextRequest('_createStorageAccount_generated_get')",
+                "  }",
+                "  else{",
+                "    const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"]",
+                "    if(pm.response.json().status !== undefined && terminalStatus.indexOf(pm.response.json().status) === -1){",
+                "      postman.setNextRequest('_createStorageAccount_poller_mock_delay')",
+                "    }else{",
+                "      postman.setNextRequest('_createStorageAccount_generated_get')",
+                "    }",
+                "  }",
+                "}catch(err){",
+                "  postman.setNextRequest('_createStorageAccount_generated_get')",
+                "}",
               ],
               "id": "109",
               "type": "text/javascript",
@@ -4191,10 +4320,7 @@ Array [
         "response": Array [],
       },
       Object {
-        "description": Object {
-          "content": "{\\"type\\":\\"mock\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
-          "type": "text/plain",
-        },
+        "description": "{\\"type\\":\\"mock\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
         "event": Array [
           Object {
             "id": "92",
@@ -4219,7 +4345,7 @@ Array [
             ],
             "path": Array [
               "delay",
-              "10",
+              "{{x_retry_after}}",
             ],
             "protocol": "https",
             "query": Array [],
@@ -4259,28 +4385,43 @@ Array [
           "method": "GET",
           "url": Object {
             "host": Array [
-              "management",
+              "https://management",
               "azure",
               "com",
             ],
             "path": Array [
               "subscriptions",
-              "{{subscriptionId}}",
+              ":subscriptionId",
               "resourceGroups",
-              "{{resourceGroupName}}",
+              ":resourceGroupName",
               "providers",
               "Microsoft.Storage",
               "storageAccounts",
-              "{{accountName}}",
+              ":accountName",
             ],
-            "protocol": "https",
             "query": Array [
               Object {
                 "key": "api-version",
                 "value": "2021-09-01",
               },
             ],
-            "variable": Array [],
+            "variable": Array [
+              Object {
+                "key": "resourceGroupName",
+                "type": "any",
+                "value": "{{resourceGroupName}}",
+              },
+              Object {
+                "key": "accountName",
+                "type": "any",
+                "value": "stafoobar1010",
+              },
+              Object {
+                "key": "subscriptionId",
+                "type": "any",
+                "value": "{{subscriptionId}}",
+              },
+            ],
           },
         },
         "response": Array [],
@@ -4330,57 +4471,63 @@ Array [
           "method": "DELETE",
           "url": Object {
             "host": Array [
-              "management",
+              "https://management",
               "azure",
               "com",
             ],
             "path": Array [
               "subscriptions",
-              "{{subscriptionId}}",
+              ":subscriptionId",
               "resourcegroups",
-              "{{resourceGroupName}}",
+              ":resourceGroupName",
             ],
-            "protocol": "https",
             "query": Array [
               Object {
                 "key": "api-version",
                 "value": "2020-06-01",
               },
             ],
-            "variable": Array [],
+            "variable": Array [
+              Object {
+                "key": "subscriptionId",
+                "type": "any",
+                "value": "{{subscriptionId}}",
+              },
+              Object {
+                "key": "resourceGroupName",
+                "type": "any",
+                "value": "{{resourceGroupName}}",
+              },
+            ],
           },
         },
         "response": Array [],
       },
       Object {
-        "description": Object {
-          "content": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"deleteResourceGroup\\"}",
-          "type": "text/plain",
-        },
+        "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"deleteResourceGroup\\"}",
         "event": Array [
           Object {
             "id": "108",
             "listen": "test",
             "script": Object {
               "exec": Array [
-                "",
-                "      try{",
-                "        if(pm.response.code === 202){",
-                "          postman.setNextRequest('_deleteResourceGroup_poller_mock_delay')",
-                "        }else if(pm.response.code === 204){",
-                "          postman.setNextRequest(null)",
-                "        }",
-                "        else{",
-                "          const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"]",
-                "          if(pm.response.json().status !== undefined && terminalStatus.indexOf(pm.response.json().status) === -1){",
-                "            postman.setNextRequest('_deleteResourceGroup_poller_mock_delay')",
-                "          }else{",
-                "            postman.setNextRequest(null)",
-                "          }",
-                "        }",
-                "      }catch(err){",
-                "        postman.setNextRequest(null)",
-                "      }",
+                "try{",
+                "  if(pm.response.code === 202){",
+                "    postman.setNextRequest('_deleteResourceGroup_poller_mock_delay')",
+                "  }else if(pm.response.code === 204){",
+                "    postman.setNextRequest(null)",
+                "  }",
+                "  else{",
+                "    const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"]",
+                "    if(pm.response.json().status !== undefined && terminalStatus.indexOf(pm.response.json().status) === -1){",
+                "      postman.setNextRequest('_deleteResourceGroup_poller_mock_delay')",
+                "    }else{",
+                "      postman.setNextRequest(null)",
+                "    }",
+                "  }",
+                "}catch(err){",
+                "  postman.setNextRequest(null)",
+                "}",
               ],
               "id": "110",
               "type": "text/javascript",
@@ -4402,10 +4549,7 @@ Array [
         "response": Array [],
       },
       Object {
-        "description": Object {
-          "content": "{\\"type\\":\\"mock\\",\\"lro_item_name\\":\\"deleteResourceGroup\\"}",
-          "type": "text/plain",
-        },
+        "description": "{\\"type\\":\\"mock\\",\\"lro_item_name\\":\\"deleteResourceGroup\\"}",
         "event": Array [
           Object {
             "id": "106",
@@ -4430,7 +4574,7 @@ Array [
             ],
             "path": Array [
               "delay",
-              "10",
+              "{{x_retry_after}}",
             ],
             "protocol": "https",
             "query": Array [],
@@ -4477,6 +4621,15 @@ Array [
       Object {
         "key": "bearer_token_expires_on",
         "type": "any",
+      },
+      Object {
+        "key": "x_polling_url",
+        "type": "any",
+      },
+      Object {
+        "key": "x_retry_after",
+        "type": "any",
+        "value": "10",
       },
     ],
   },
