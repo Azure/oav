@@ -1,27 +1,33 @@
+import { resolve } from "path";
+import newman from "newman";
 import { inject, injectable } from "inversify";
-import { Collection } from "postman-collection";
+import { Collection, VariableScope } from "postman-collection";
 import { inversifyGetInstance, TYPES } from "../inversifyUtils";
 import { FileLoader } from "../swagger/fileLoader";
-import { getRandomString } from "../util/utils";
+import { getRandomString, printWarning } from "../util/utils";
 import { ApiScenarioLoader, ApiScenarioLoaderOption } from "./apiScenarioLoader";
 import { ApiScenarioRunner } from "./apiScenarioRunner";
-import { getFileNameFromPath } from "./defaultNaming";
 import { generateMarkdownReportHeader } from "./markdownReport";
-import {
-  generateRunId,
-  PostmanCollectionRunnerClient,
-  PostmanCollectionRunnerClientOption,
-} from "./postmanCollectionRunnerClient";
+import { PostmanCollectionRunnerClient } from "./postmanCollectionRunnerClient";
 import { ValidationLevel } from "./reportGenerator";
 import { SwaggerAnalyzer, SwaggerAnalyzerOption } from "./swaggerAnalyzer";
-import { VariableEnv } from "./variableEnv";
+import { EnvironmentVariables, VariableEnv } from "./variableEnv";
+import { NewmanReportAnalyzer, NewmanReportAnalyzerOption } from "./postmanReportAnalyzer";
+import { NewmanReport } from "./postmanReportParser";
+import {
+  defaultCollectionFileName,
+  defaultEnvFileName,
+  defaultNewmanReport,
+} from "./defaultNaming";
+import { DataMasker } from "./dataMasker";
+
 export interface PostmanCollectionGeneratorOption
   extends ApiScenarioLoaderOption,
     SwaggerAnalyzerOption {
   name: string;
   fileRoot: string;
   scenarioDef: string;
-  env: {};
+  env: EnvironmentVariables;
   outputFolder: string;
   markdownReportPath?: string;
   junitReportPath?: string;
@@ -31,100 +37,97 @@ export interface PostmanCollectionGeneratorOption
   testProxy?: string;
   validationLevel?: ValidationLevel;
   skipCleanUp?: boolean;
-  from?: string;
-  to?: string;
   runId?: string;
   verbose?: boolean;
+}
+
+export const generateRunId = (): string => {
+  const today = new Date();
+  const yyyy = today.getFullYear().toString();
+  const MM = pad(today.getMonth() + 1, 2);
+  const dd = pad(today.getDate(), 2);
+  const hh = pad(today.getHours(), 2);
+  const mm = pad(today.getMinutes(), 2);
+  const id = getRandomString();
+  return yyyy + MM + dd + hh + mm + "-" + id;
+};
+
+function pad(number: number, length: number) {
+  let str = "" + number;
+  while (str.length < length) {
+    str = "0" + str;
+  }
+  return str;
 }
 
 @injectable()
 export class PostmanCollectionGenerator {
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
   constructor(
-    @inject(TYPES.opts) private opt: PostmanCollectionGeneratorOption,
+    @inject(TYPES.opts) private opts: PostmanCollectionGeneratorOption,
     private apiScenarioLoader: ApiScenarioLoader,
     private fileLoader: FileLoader,
+    private dataMasker: DataMasker,
     private swaggerAnalyzer: SwaggerAnalyzer
   ) {}
 
-  public async GenerateCollection(): Promise<Collection[]> {
-    const scenarioDef = await this.apiScenarioLoader.load(this.opt.scenarioDef);
-    const env = new VariableEnv(undefined, scenarioDef.variables);
-    env.setBatchEnv(this.opt.env);
-    await this.swaggerAnalyzer.initialize(this.opt.swaggerFilePaths);
+  public async run(): Promise<Collection[]> {
+    const scenarioDef = await this.apiScenarioLoader.load(this.opts.scenarioDef);
+
+    await this.swaggerAnalyzer.initialize(this.opts.swaggerFilePaths);
     for (const it of scenarioDef.requiredVariables) {
-      if (env.get(it) === undefined) {
+      if (this.opts.env[it] === undefined) {
         throw new Error(
           `Missing required variable '${it}', please set variable values in env.json.`
         );
       }
     }
-    let index = 0;
-    const runId = this.opt.runId || generateRunId();
-    if (this.opt.markdownReportPath) {
-      await this.fileLoader.writeFile(this.opt.markdownReportPath, generateMarkdownReportHeader());
+    this.opts.runId = this.opts.runId || generateRunId();
+    if (this.opts.markdownReportPath) {
+      await this.fileLoader.writeFile(this.opts.markdownReportPath, generateMarkdownReportHeader());
     }
 
     const result: Collection[] = [];
 
-    for (const scenario of scenarioDef.scenarios) {
-      //TODO: replace index with testScenarioName
-      const opts: PostmanCollectionRunnerClientOption = {
-        apiScenarioFileName: `${this.opt.name}`,
-        scenarioDef: scenarioDef,
-        apiScenarioName: `${getFileNameFromPath(this.opt.scenarioDef)}_${index}`,
-        env,
-        apiScenarioFilePath: this.opt.scenarioDef,
-        reportOutputFolder: this.opt.outputFolder,
-        markdownReportPath: this.opt.markdownReportPath,
-        junitReportPath: this.opt.junitReportPath,
-        runId: runId,
-        jsonLoader: this.apiScenarioLoader.jsonLoader,
-        baseUrl: this.opt.baseUrl,
-        testProxy: this.opt.testProxy,
-        validationLevel: this.opt.validationLevel,
-        from: this.opt.from,
-        to: this.opt.to,
-        skipCleanUp: this.opt.skipCleanUp,
-        verbose: this.opt.verbose,
-        swaggerFilePaths: this.opt.swaggerFilePaths,
-      };
+    const client = new PostmanCollectionRunnerClient({
+      apiScenarioFileName: this.opts.name,
+      apiScenarioFilePath: this.opts.scenarioDef,
+      runId: this.opts.runId,
+      baseUrl: this.opts.baseUrl,
+      testProxy: this.opts.testProxy,
+      verbose: this.opts.verbose,
+      swaggerFilePaths: this.opts.swaggerFilePaths,
+    });
+    const runner = new ApiScenarioRunner({
+      jsonLoader: this.apiScenarioLoader.jsonLoader,
+      env: this.opts.env,
+      client: client,
+      resolveVariables: false,
+      skipCleanUp: this.opts.skipCleanUp,
+    });
 
-      const client = inversifyGetInstance(PostmanCollectionRunnerClient, opts);
-      const runner = new ApiScenarioRunner({
-        jsonLoader: this.apiScenarioLoader.jsonLoader,
-        env,
-        client: client,
-        resolveVariables: false,
+    for (const scenario of scenarioDef.scenarios) {
+      client.setOpt({
+        apiScenarioName: scenario.scenario,
       });
 
-      if (this.opt.testProxy) {
-        await client.startTestProxyRecording();
-      }
-
       await runner.executeScenario(scenario);
-      // If shared resource-group, move clean to one separate scenario.
-      if (!this.opt.skipCleanUp && !this.opt.to) {
-        await runner.cleanAllScope();
+
+      const [collection, runtimeEnv] = client.outputCollection();
+
+      for (let i = 0; i < collection.items.count(); i++) {
+        this.longRunningOperationOrderUpdate(collection, i);
       }
 
-      if (this.opt.testProxy) {
-        await client.stopTestProxyRecording();
+      if (this.opts.generateCollection) {
+        await this.writeCollectionToJson(scenario.scenario, collection, runtimeEnv);
       }
 
-      for (let i = 0; i < client.collection.items.count(); i++) {
-        this.longRunningOperationOrderUpdate(client, i);
-      }
-      if (this.opt.generateCollection) {
-        await client.writeCollectionToJson(this.opt.outputFolder);
-      }
-      if (this.opt.runCollection) {
-        await client.runCollection();
+      if (this.opts.runCollection) {
+        await this.runCollection(scenario.scenario, collection, runtimeEnv);
       }
 
-      result.push(client.collection);
-
-      index++;
+      result.push(collection);
     }
     const operationIdCoverageResult = this.swaggerAnalyzer.calculateOperationCoverage(scenarioDef);
     console.log(
@@ -132,7 +135,7 @@ export class PostmanCollectionGenerator {
         operationIdCoverageResult.coveredOperationNumber
       }/${operationIdCoverageResult.totalOperationNumber})`
     );
-    if (this.opt.verbose) {
+    if (this.opts.verbose) {
       if (operationIdCoverageResult.uncoveredOperationIds.length > 0) {
         console.log("Uncovered operationIds: ");
         console.log(operationIdCoverageResult.uncoveredOperationIds);
@@ -142,16 +145,14 @@ export class PostmanCollectionGenerator {
     return result;
   }
 
-  private longRunningOperationOrderUpdate(client: PostmanCollectionRunnerClient, i: number) {
-    if (client.collection.items.idx(i).name.search("poller$") !== -1) {
+  private longRunningOperationOrderUpdate(collection: Collection, i: number) {
+    if (collection.items.idx(i).name.search("poller$") !== -1) {
       const env = new VariableEnv();
       const nextRequestName =
-        i + 2 < client.collection.items.count()
-          ? `'${client.collection.items.idx(i + 2).name}'`
-          : "null";
+        i + 2 < collection.items.count() ? `'${collection.items.idx(i + 2).name}'` : "null";
       env.setBatchEnv({ nextRequest: nextRequestName });
-      const exec = client.collection.items.idx(i).events.idx(0).script.toSource() as string;
-      client.collection.items
+      const exec = collection.items.idx(i).events.idx(0).script.toSource() as string;
+      collection.items
         .idx(i)
         .events.idx(0)
         .update({
@@ -162,5 +163,113 @@ export class PostmanCollectionGenerator {
           },
         });
     }
+  }
+
+  private async writeCollectionToJson(
+    scenarioName: string,
+    collection: Collection,
+    runtimeEnv: VariableScope
+  ) {
+    const collectionPath = resolve(
+      this.opts.outputFolder,
+      `${defaultCollectionFileName(this.opts.name, this.opts.runId!, scenarioName)}`
+    );
+    const envPath = resolve(
+      this.opts.outputFolder,
+      `${defaultEnvFileName(this.opts.name, this.opts.runId!, scenarioName)}`
+    );
+    const env = runtimeEnv.toJSON();
+    env.name = scenarioName + ".env";
+    env._postman_variable_scope = "environment";
+    await this.fileLoader.writeFile(envPath, JSON.stringify(env, null, 2));
+    await this.fileLoader.writeFile(collectionPath, JSON.stringify(collection.toJSON(), null, 2));
+
+    const values: string[] = [];
+    for (const [k, v] of Object.entries(runtimeEnv.syncVariablesTo())) {
+      if (this.dataMasker.maybeSecretKey(k)) {
+        values.push(v as string);
+      }
+    }
+    this.dataMasker.addMaskedValues(values);
+
+    console.log(`\ngenerate collection successfully!`);
+    console.log(`Postman collection: '${collectionPath}'. Postman env: '${envPath}' `);
+    console.log(`Command: newman run ${collectionPath} -e ${envPath} -r 'json,cli'`);
+  }
+
+  private async runCollection(
+    scenarioName: string,
+    collection: Collection,
+    runtimeEnv: VariableScope
+  ) {
+    const reportExportPath = resolve(
+      process.cwd(),
+      "newman",
+      `${defaultNewmanReport(this.opts.name, this.opts.runId!, scenarioName)}`
+    );
+    const newmanRun = async () => {
+      return new Promise((resolve) => {
+        newman
+          .run(
+            {
+              collection: collection,
+              environment: runtimeEnv,
+              reporters: ["cli", "json"],
+              reporter: { json: { export: reportExportPath } },
+            },
+            function (err, summary) {
+              if (summary.run.failures.length > 0) {
+                process.exitCode = 1;
+              }
+              if (err) {
+                console.log(`collection run failed. ${err}`);
+              }
+              console.log("collection run complete!");
+            }
+          )
+          .on("done", async (_err, _summary) => {
+            const keys = await this.swaggerAnalyzer.getAllSecretKey();
+            const values: string[] = [];
+            for (const [k, v] of Object.entries(runtimeEnv.syncVariablesTo())) {
+              if (this.dataMasker.maybeSecretKey(k)) {
+                values.push(v as string);
+              }
+            }
+            this.dataMasker.addMaskedValues(values);
+            this.dataMasker.addMaskedKeys(keys);
+            // read content and upload. mask newman report.
+            const newmanReport = JSON.parse(
+              await this.fileLoader.load(reportExportPath)
+            ) as NewmanReport;
+
+            // add mask environment secret value
+            for (const item of newmanReport.environment.values) {
+              if (this.dataMasker.maybeSecretKey(item.key)) {
+                this.dataMasker.addMaskedValues([item.value]);
+              }
+            }
+            const opts: NewmanReportAnalyzerOption = {
+              newmanReportFilePath: reportExportPath,
+              markdownReportPath: this.opts.markdownReportPath,
+              junitReportPath: this.opts.junitReportPath,
+              runId: this.opts.runId,
+              swaggerFilePaths: this.opts.swaggerFilePaths,
+              validationLevel: this.opts.validationLevel,
+              verbose: this.opts.verbose,
+            };
+            const reportAnalyzer = inversifyGetInstance(NewmanReportAnalyzer, opts);
+            await reportAnalyzer.analyze();
+            if (this.opts.skipCleanUp) {
+              printWarning(
+                `Notice:the resource group '${runtimeEnv.get(
+                  "resourceGroupName"
+                )}' was not cleaned up.`
+              );
+            }
+            resolve(_summary);
+          });
+      });
+    };
+    await newmanRun();
   }
 }

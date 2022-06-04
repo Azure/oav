@@ -4,7 +4,6 @@ import { getDefaultAzureCredential } from "@azure/identity";
 import { pathDirName } from "@azure-tools/openapi-tools-common";
 import { ApiScenarioLoader } from "./apiScenarioLoader";
 import { ApiScenarioRunner } from "./apiScenarioRunner";
-import { VariableEnv } from "./variableEnv";
 import { ApiScenarioRestClient } from "./apiScenarioRestClient";
 
 const main = async () => {
@@ -25,16 +24,13 @@ const main = async () => {
 
   console.log(testDef.scenarios[0].steps);
 
-  const env = new VariableEnv();
-  env.setBatchEnv({
-    subscriptionId: "db5eb68e-73e2-4fa8-b18a-46cd1be4cce5",
-    location: "westus",
-    SSH_PUBLIC_KEY: "__public_key_ssh__",
-  });
-
   const runner = new ApiScenarioRunner({
     jsonLoader: loader.jsonLoader,
-    env,
+    env: {
+      subscriptionId: "db5eb68e-73e2-4fa8-b18a-46cd1be4cce5",
+      location: "westus",
+      SSH_PUBLIC_KEY: "__public_key_ssh__",
+    },
     client: new ApiScenarioRestClient(getDefaultAzureCredential(), {}),
   });
 
@@ -47,7 +43,6 @@ const main = async () => {
     console.log(e);
   } finally {
     console.timeLog("TestLoad");
-    await runner.cleanAllScope();
   }
 };
 
