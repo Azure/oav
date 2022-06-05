@@ -82,6 +82,8 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       PostmanHelper.createEvent("prerequest", PostmanHelper.generateAuthScript(this.opts.baseUrl))
     );
 
+    scope.env.resolve();
+
     this.runtimeEnv = new VariableScope({});
     this.runtimeEnv.set("tenantId", scope.env.get("tenantId")?.value, "string");
     this.runtimeEnv.set("client_id", scope.env.get("client_id")?.value, "string");

@@ -38,7 +38,7 @@ Object {
           "operationId": "StorageAccounts_Create",
           "outputVariables": Object {},
           "parameters": Object {
-            "accountName": "storagename1",
+            "accountName": "$(accountName)",
             "api-version": "2021-09-01",
             "parameters": Object {
               "kind": "StorageV2",
@@ -74,7 +74,6 @@ Object {
       ],
       "scenario": "basic",
       "secretVariables": Array [],
-      "shareScope": true,
       "steps": Array [
         Object {
           "description": undefined,
@@ -102,7 +101,7 @@ Object {
           "operationId": "StorageAccounts_Create",
           "outputVariables": Object {},
           "parameters": Object {
-            "accountName": "storagename1",
+            "accountName": "$(accountName)",
             "api-version": "2021-09-01",
             "parameters": Object {
               "kind": "StorageV2",
@@ -160,7 +159,7 @@ Object {
           "operationId": "StorageAccounts_Create",
           "outputVariables": Object {},
           "parameters": Object {
-            "accountName": "$(accountName)2",
+            "accountName": "$(accountName)",
             "api-version": "2021-09-01",
             "parameters": Object {
               "kind": "StorageV2",
@@ -196,7 +195,6 @@ Object {
       ],
       "scenario": "overrideVariable",
       "secretVariables": Array [],
-      "shareScope": true,
       "steps": Array [
         Object {
           "description": undefined,
@@ -224,7 +222,7 @@ Object {
           "operationId": "StorageAccounts_Create",
           "outputVariables": Object {},
           "parameters": Object {
-            "accountName": "$(accountName)2",
+            "accountName": "$(accountName)",
             "api-version": "2021-09-01",
             "parameters": Object {
               "kind": "StorageV2",
@@ -268,7 +266,7 @@ Object {
           "outputVariables": Object {},
           "parameters": Object {
             "accountName": Object {
-              "name": "stafoobar1010",
+              "name": "$(accountName)",
               "type": "Microsoft.Storage/storageAccounts",
             },
             "api-version": "2021-09-01",
@@ -287,7 +285,7 @@ Object {
           "operationId": "StorageAccounts_Create",
           "outputVariables": Object {},
           "parameters": Object {
-            "accountName": "stafoobar1010",
+            "accountName": "$(accountName)",
             "api-version": "2021-09-01",
             "parameters": Object {
               "kind": "StorageV2",
@@ -323,7 +321,6 @@ Object {
       ],
       "scenario": "primitiveParameter",
       "secretVariables": Array [],
-      "shareScope": true,
       "steps": Array [
         Object {
           "description": undefined,
@@ -332,7 +329,7 @@ Object {
           "outputVariables": Object {},
           "parameters": Object {
             "accountName": Object {
-              "name": "stafoobar1010",
+              "name": "$(accountName)",
               "type": "Microsoft.Storage/storageAccounts",
             },
             "api-version": "2021-09-01",
@@ -351,7 +348,7 @@ Object {
           "operationId": "StorageAccounts_Create",
           "outputVariables": Object {},
           "parameters": Object {
-            "accountName": "stafoobar1010",
+            "accountName": "$(accountName)",
             "api-version": "2021-09-01",
             "parameters": Object {
               "kind": "StorageV2",
@@ -379,15 +376,20 @@ Object {
           "variables": Object {},
         },
       ],
-      "variables": Object {},
+      "variables": Object {
+        "accountName": Object {
+          "prefix": "foobar",
+          "type": "string",
+        },
+      },
     },
   ],
   "scope": "ResourceGroup",
   "secretVariables": Array [],
   "variables": Object {
     "accountName": Object {
+      "prefix": "sta",
       "type": "string",
-      "value": "storagename1",
     },
   },
 }
@@ -1678,7 +1680,6 @@ Object {
       ],
       "scenario": "SignalR",
       "secretVariables": Array [],
-      "shareScope": true,
       "steps": Array [
         Object {
           "armTemplate": "./peArmTemplate/Generate_Unique_name_template.json",

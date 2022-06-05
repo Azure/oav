@@ -26,11 +26,13 @@ export type Variable =
 export interface StringVariable {
   type: "string";
   value?: string;
+  prefix?: string;
 }
 
 export interface SecureStringVariable {
   type: "secureString";
   value?: string;
+  prefix?: string;
 }
 
 export interface BoolVariable {
