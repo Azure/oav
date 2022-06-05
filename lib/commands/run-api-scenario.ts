@@ -13,6 +13,7 @@ import {
 import { cliSuppressExceptions } from "../cliSuppressExceptions";
 import { inversifyGetInstance } from "../inversifyUtils";
 import { getInputFiles, printWarning } from "../util/utils";
+import { EnvironmentVariables } from "../apiScenario/variableEnv";
 
 export const command = "run-api-scenario <api-scenario>";
 
@@ -92,25 +93,6 @@ export const builder: yargs.CommandBuilder = {
     boolean: true,
     default: false,
   },
-  from: {
-    describe:
-      "the step to start with in current run, it's used for debugging and make sure use --skipCleanUp to not delete resource group in the previous run.",
-    string: true,
-    demandOption: false,
-    implies: "runId",
-  },
-  to: {
-    describe:
-      "the step to end in current run,it's used for debugging and make sure use --skipCleanUp to not delete resource group in the previous run.",
-    string: true,
-    demandOption: false,
-    implies: "runId",
-  },
-  runId: {
-    describe: "specify the runId for debugging",
-    string: true,
-    demandOption: false,
-  },
   verbose: {
     describe: "log verbose",
     default: false,
@@ -144,7 +126,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     console.log("input-file:");
     console.log(swaggerFilePaths);
 
-    let env: any = {};
+    let env: EnvironmentVariables = {};
     if (argv.e !== undefined) {
       env = JSON.parse(fs.readFileSync(argv.e).toString());
     }
@@ -178,7 +160,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       generateCollection: true,
       useJsonParser: false,
       runCollection: !argv.dryRun,
-      env: env,
+      env,
       outputFolder: argv.output,
       markdownReportPath: argv.markdownReportPath,
       junitReportPath: argv.junitReportPath,
@@ -188,14 +170,11 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       testProxy: argv.testProxy,
       validationLevel: argv.level,
       skipCleanUp: argv.skipCleanUp,
-      from: argv.from,
-      to: argv.to,
-      runId: argv.runId,
       verbose: argv.verbose,
       swaggerFilePaths: swaggerFilePaths,
     };
     const generator = inversifyGetInstance(PostmanCollectionGenerator, opt);
-    await generator.GenerateCollection();
+    await generator.run();
     return 0;
   });
 }

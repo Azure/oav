@@ -1,6 +1,3 @@
-import path, { dirname } from "path";
-import { inject, injectable } from "inversify";
-import newman from "newman";
 import {
   Collection,
   Item,
@@ -13,97 +10,51 @@ import {
   Variable,
   VariableScope,
 } from "postman-collection";
-import { inversifyGetInstance, TYPES } from "../inversifyUtils";
-import { FileLoader } from "../swagger/fileLoader";
-import { JsonLoader, JsonLoaderOption } from "../swagger/jsonLoader";
 import { setDefaultOpts } from "../swagger/loader";
-import { getRandomString, printWarning } from "../util/utils";
 import {
   ApiScenarioClientRequest,
   ApiScenarioRunnerClient,
-  ArmDeploymentTracking,
+  ArmDeployment,
+  Scope,
 } from "./apiScenarioRunner";
-import { ArmTemplate, ScenarioDefinition, StepArmTemplate, StepRestCall } from "./apiScenarioTypes";
-import { DataMasker } from "./dataMasker";
-import {
-  defaultCollectionFileName,
-  defaultEnvFileName,
-  defaultNewmanReport,
-  generatedGet,
-  generatedPostmanItem,
-} from "./defaultNaming";
+import { ArmTemplate, StepArmTemplate, StepRestCall } from "./apiScenarioTypes";
+import { generatedGet, generatedPostmanItem } from "./defaultNaming";
 import { typeToDescription } from "./postmanItemTypes";
-import { NewmanReportAnalyzer, NewmanReportAnalyzerOption } from "./postmanReportAnalyzer";
-import { NewmanReport } from "./postmanReportParser";
 import * as PostmanHelper from "./postmanHelper";
-import { ValidationLevel } from "./reportGenerator";
-import { RuntimeEnvManager } from "./runtimeEnvManager";
-import { SwaggerAnalyzer } from "./swaggerAnalyzer";
 import { VariableEnv } from "./variableEnv";
 
-export interface PostmanCollectionRunnerClientOption extends JsonLoaderOption {
+export interface PostmanCollectionRunnerClientOption {
   apiScenarioFileName: string;
-  env: VariableEnv;
-  scenarioDef?: ScenarioDefinition;
   apiScenarioFilePath?: string;
-  reportOutputFolder?: string;
-  markdownReportPath?: string;
-  junitReportPath?: string;
-  apiScenarioName: string;
+  apiScenarioName?: string;
   runId: string;
-  jsonLoader?: JsonLoader;
   swaggerFilePaths?: string[];
   baseUrl: string;
   testProxy?: string;
-  validationLevel?: ValidationLevel;
-  skipCleanUp?: boolean;
-  from?: string;
-  to?: string;
   verbose?: boolean;
-}
-
-export const generateRunId = (): string => {
-  const today = new Date();
-  const yyyy = today.getFullYear().toString();
-  const MM = pad(today.getMonth() + 1, 2);
-  const dd = pad(today.getDate(), 2);
-  const hh = pad(today.getHours(), 2);
-  const mm = pad(today.getMinutes(), 2);
-  const id = getRandomString();
-  return yyyy + MM + dd + hh + mm + "-" + id;
-};
-
-function pad(number: number, length: number) {
-  let str = "" + number;
-  while (str.length < length) {
-    str = "0" + str;
-  }
-  return str;
 }
 
 const ARM_ENDPOINT = "https://management.azure.com";
 const ARM_API_VERSION = "2020-06-01";
 
-@injectable()
 export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
-  public collection: Collection;
-  public runtimeEnv: VariableScope;
+  private opts: PostmanCollectionRunnerClientOption;
+  private collection: Collection;
+  private runtimeEnv: VariableScope;
+
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
-  constructor(
-    @inject(TYPES.opts) private opts: PostmanCollectionRunnerClientOption,
-    private dataMasker: DataMasker,
-    private swaggerAnalyzer: SwaggerAnalyzer,
-    private fileLoader: FileLoader
-  ) {
+  constructor(opts: PostmanCollectionRunnerClientOption) {
+    this.opts = opts;
     setDefaultOpts(this.opts, {
-      apiScenarioFileName: "",
-      apiScenarioFilePath: "",
-      env: new VariableEnv(),
-      reportOutputFolder: path.resolve(process.cwd(), "newman"),
-      runId: generateRunId(),
-      apiScenarioName: "",
       baseUrl: ARM_ENDPOINT,
-    });
+    } as PostmanCollectionRunnerClientOption);
+  }
+
+  public setOpt(opt: Partial<PostmanCollectionRunnerClientOption>) {
+    this.opts = { ...this.opts, ...opt };
+  }
+
+  public async provisionScope(scope: Scope): Promise<void> {
     this.collection = new Collection({
       info: {
         id: this.opts.runId,
@@ -171,13 +122,13 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     );
 
     this.runtimeEnv = new VariableScope({});
-    this.runtimeEnv.set("tenantId", this.opts.env.get("tenantId")?.value, "string");
-    this.runtimeEnv.set("client_id", this.opts.env.get("client_id")?.value, "string");
-    this.runtimeEnv.set("client_secret", this.opts.env.get("client_secret")?.value, "string");
-    this.runtimeEnv.set("subscriptionId", this.opts.env.get("subscriptionId")?.value, "string");
-    this.runtimeEnv.set("location", this.opts.env.get("location")?.value, "string");
+    this.runtimeEnv.set("tenantId", scope.env.get("tenantId")?.value, "string");
+    this.runtimeEnv.set("client_id", scope.env.get("client_id")?.value, "string");
+    this.runtimeEnv.set("client_secret", scope.env.get("client_secret")?.value, "string");
+    this.runtimeEnv.set("subscriptionId", scope.env.get("subscriptionId")?.value, "string");
+    this.runtimeEnv.set("location", scope.env.get("location")?.value, "string");
 
-    for (const [name, variable] of this.opts.env.getVariables()) {
+    for (const [name, variable] of scope.env.getVariables()) {
       if (!this.runtimeEnv.has(name) && !this.collection.variables.has(name)) {
         if (variable.type === "secureString" || variable.type === "secureObject") {
           this.runtimeEnv.set(name, variable.value, "secret");
@@ -192,12 +143,20 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
         }
       }
     }
+
+    if (this.opts.testProxy) {
+      this.startTestProxyRecording();
+    }
   }
 
-  public async startTestProxyRecording(): Promise<void> {
-    if (!this.opts.testProxy) {
-      return;
+  public outputCollection(): [Collection, VariableScope] {
+    if (this.opts.testProxy) {
+      this.stopTestProxyRecording();
     }
+    return [this.collection, this.runtimeEnv];
+  }
+
+  private startTestProxyRecording() {
     const item = this.newItem(
       {
         name: "startTestProxyRecording",
@@ -226,10 +185,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     this.collection.items.add(item);
   }
 
-  public async stopTestProxyRecording(): Promise<void> {
-    if (!this.opts.testProxy) {
-      return;
-    }
+  private stopTestProxyRecording() {
     const item = this.newItem(
       {
         name: "stopTestProxyRecording",
@@ -320,9 +276,6 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     _subscriptionId: string,
     _resourceGroupName: string
   ): Promise<void> {
-    if (this.opts.from || this.opts.to) {
-      return;
-    }
     const item = this.newItem({
       name: "deleteResourceGroup",
     });
@@ -524,7 +477,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
 
   public async sendArmTemplateDeployment(
     armTemplate: ArmTemplate,
-    _armDeployment: ArmDeploymentTracking,
+    _armDeployment: ArmDeployment,
     step: StepArmTemplate,
     env: VariableEnv
   ): Promise<void> {
@@ -592,151 +545,6 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       armTemplate
     );
     this.collection.items.add(generatedGetOperationItem);
-  }
-
-  public async writeCollectionToJson(outputFolder: string) {
-    const collectionPath = path.resolve(
-      outputFolder,
-      `${defaultCollectionFileName(
-        this.opts.apiScenarioFileName,
-        this.opts.runId,
-        this.opts.apiScenarioName
-      )}`
-    );
-    const envPath = path.resolve(
-      outputFolder,
-      `${defaultEnvFileName(
-        this.opts.apiScenarioFileName,
-        this.opts.runId,
-        this.opts.apiScenarioName
-      )}`
-    );
-    const env = this.runtimeEnv.toJSON();
-    env.name = this.opts.apiScenarioName + ".env";
-    env._postman_variable_scope = "environment";
-    await this.fileLoader.writeFile(envPath, JSON.stringify(env, null, 2));
-    await this.fileLoader.writeFile(
-      collectionPath,
-      JSON.stringify(this.collection.toJSON(), null, 2)
-    );
-
-    const values: string[] = [];
-    for (const [k, v] of Object.entries(this.runtimeEnv.syncVariablesTo())) {
-      if (this.dataMasker.maybeSecretKey(k)) {
-        values.push(v as string);
-      }
-    }
-    this.dataMasker.addMaskedValues(values);
-
-    console.log(`\ngenerate collection successfully!`);
-    console.log(`Postman collection: '${collectionPath}'. Postman env: '${envPath}' `);
-    console.log(`Command: newman run ${collectionPath} -e ${envPath} -r 'json,cli'`);
-  }
-
-  public async runCollection() {
-    const reportExportPath = path.resolve(
-      this.opts.reportOutputFolder!,
-      `${defaultNewmanReport(
-        this.opts.apiScenarioFileName,
-        this.opts.runId,
-        this.opts.apiScenarioName
-      )}`
-    );
-    const runtimeEnvManager = new RuntimeEnvManager(
-      path.join(dirname(reportExportPath), this.opts.apiScenarioName),
-      this.opts,
-      this.collection
-    );
-
-    if (this.opts.from) {
-      const lastRnv = runtimeEnvManager.loadEnv(this.opts.from);
-      this.runtimeEnv.syncVariablesFrom(lastRnv);
-      // use the variables value which exist in the env.json or process.env
-      for (const k of Object.keys(this.runtimeEnv.syncVariablesTo())) {
-        const v = this.opts.env.get(k);
-        if (v?.value) {
-          this.runtimeEnv.set(k, v.value, typeof v.value);
-        }
-      }
-    }
-    if (this.opts.from || this.opts.to) {
-      runtimeEnvManager.repopulateCollectionItems(this.opts.from, this.opts.to);
-    }
-    const newmanRun = async () => {
-      return new Promise((resolve) => {
-        newman
-          .run(
-            {
-              collection: this.collection,
-              environment: this.runtimeEnv,
-              reporters: ["cli", "json"],
-              reporter: { json: { export: reportExportPath } },
-            },
-            function (err, summary) {
-              if (summary.run.failures.length > 0) {
-                process.exitCode = 1;
-              }
-              if (err) {
-                console.log(`collection run failed. ${err}`);
-              }
-              console.log("collection run complete!");
-            }
-          )
-          .on("beforeItem", async function (this: any, _err, _summary) {
-            if (!_err) {
-              runtimeEnvManager.save(_summary.item.name, this, "beforeStep");
-            }
-          })
-          .on("item", async function (this: any, _err, _summary) {
-            if (!_err) {
-              runtimeEnvManager.clean();
-              runtimeEnvManager.save(_summary.item.name, this, "afterStep");
-            }
-          })
-          .on("done", async (_err, _summary) => {
-            const keys = await this.swaggerAnalyzer.getAllSecretKey();
-            const values: string[] = [];
-            for (const [k, v] of Object.entries(this.runtimeEnv.syncVariablesTo())) {
-              if (this.dataMasker.maybeSecretKey(k)) {
-                values.push(v as string);
-              }
-            }
-            this.dataMasker.addMaskedValues(values);
-            this.dataMasker.addMaskedKeys(keys);
-            // read content and upload. mask newman report.
-            const newmanReport = JSON.parse(
-              await this.fileLoader.load(reportExportPath)
-            ) as NewmanReport;
-
-            // add mask environment secret value
-            for (const item of newmanReport.environment.values) {
-              if (this.dataMasker.maybeSecretKey(item.key)) {
-                this.dataMasker.addMaskedValues([item.value]);
-              }
-            }
-            const opts: NewmanReportAnalyzerOption = {
-              newmanReportFilePath: reportExportPath,
-              markdownReportPath: this.opts.markdownReportPath,
-              junitReportPath: this.opts.junitReportPath,
-              runId: this.opts.runId,
-              swaggerFilePaths: this.opts.swaggerFilePaths,
-              validationLevel: this.opts.validationLevel,
-              verbose: this.opts.verbose,
-            };
-            const reportAnalyzer = inversifyGetInstance(NewmanReportAnalyzer, opts);
-            await reportAnalyzer.analyze();
-            if (this.opts.skipCleanUp || this.opts.to) {
-              printWarning(
-                `Notice:the resource group '${this.runtimeEnv.get(
-                  "resourceGroupName"
-                )}' was not cleaned up.`
-              );
-            }
-            resolve(_summary);
-          });
-      });
-    };
-    await newmanRun();
   }
 
   private generatedGetOperationItem(
