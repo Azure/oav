@@ -311,7 +311,6 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     const scenario: Scenario = {
       scenario: rawScenario.scenario ?? `scenario_${ctx.scenarioIndex}`,
       description: rawScenario.description ?? "",
-      shareScope: rawScenario.shareScope ?? true,
       steps,
       _resolvedSteps: resolvedSteps,
       _scenarioDef: scenarioDef,

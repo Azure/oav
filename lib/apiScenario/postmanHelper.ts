@@ -129,6 +129,46 @@ function generateARMTemplateOutputScript(armTemplate: ArmTemplate): string {
   return ret;
 }
 
+export const reservedCollectionVariables = [
+  {
+    key: "subscriptionId",
+  },
+  {
+    key: "resourceGroupName",
+  },
+  {
+    key: "location",
+  },
+  {
+    key: "client_id",
+  },
+  {
+    key: "client_secret",
+    type: "secret",
+  },
+  {
+    key: "tenantId",
+  },
+  {
+    key: "x_enable_auth",
+    value: "true",
+  },
+  {
+    key: "x_bearer_token",
+    type: "secret",
+  },
+  {
+    key: "x_bearer_token_expires_on",
+  },
+  {
+    key: "x_polling_url",
+  },
+  {
+    key: "x_retry_after",
+    value: "10",
+  },
+];
+
 export function generateAuthScript(baseUrl: string): ScriptDefinition {
   const script = `if (pm.variables.get("x_enable_auth") !== "true") {
     console.log("Auth disabled");

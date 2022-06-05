@@ -60,45 +60,6 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
         id: this.opts.runId,
         name: this.opts.apiScenarioName,
       },
-      variable: [
-        {
-          key: "subscriptionId",
-        },
-        {
-          key: "resourceGroupName",
-        },
-        {
-          key: "location",
-        },
-        {
-          key: "client_id",
-        },
-        {
-          key: "client_secret",
-          type: "secret",
-        },
-        {
-          key: "tenantId",
-        },
-        {
-          key: "x_enable_auth",
-          value: "true",
-        },
-        {
-          key: "x_bearer_token",
-          type: "secret",
-        },
-        {
-          key: "x_bearer_token_expires_on",
-        },
-        {
-          key: "x_polling_url",
-        },
-        {
-          key: "x_retry_after",
-          value: "10",
-        },
-      ],
     });
     this.collection.describe(
       JSON.stringify({
@@ -126,6 +87,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     this.runtimeEnv.set("client_id", scope.env.get("client_id")?.value, "string");
     this.runtimeEnv.set("client_secret", scope.env.get("client_secret")?.value, "string");
     this.runtimeEnv.set("subscriptionId", scope.env.get("subscriptionId")?.value, "string");
+    this.runtimeEnv.set("resourceGroupName", scope.env.get("resourceGroupName")?.value, "string");
     this.runtimeEnv.set("location", scope.env.get("location")?.value, "string");
 
     for (const [name, variable] of scope.env.getVariables()) {
@@ -143,6 +105,12 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
         }
       }
     }
+
+    PostmanHelper.reservedCollectionVariables.forEach((variable) => {
+      if (!this.collection.variables.has(variable.key)) {
+        this.collection.variables.add(new Variable(variable));
+      }
+    });
 
     if (this.opts.testProxy) {
       this.startTestProxyRecording();
