@@ -40,6 +40,7 @@ describe("ApiScenarioGenerator", () => {
 
     const generator = TestScenarioGenerator.create({
       specFolders: specFolders,
+      includeARM: true,
     });
 
     await generator.initialize();
