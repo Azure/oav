@@ -57,7 +57,7 @@ const methodOrder: LowerHttpMethods[] = ["put", "get", "patch", "post", "delete"
 const envVariables = ["api-version", "subscriptionId", "resourceGroupName", "location"];
 
 @injectable()
-export class ApiScenarioGenerator {
+export class RestlerApiScenarioGenerator {
   private swaggers: SwaggerSpec[];
   private graph: Map<string, Node>;
   private mocker: Mocker;
@@ -78,7 +78,7 @@ export class ApiScenarioGenerator {
       outputDir: ".",
       dependencyPath: "",
     });
-    return inversifyGetInstance(ApiScenarioGenerator, opts);
+    return inversifyGetInstance(RestlerApiScenarioGenerator, opts);
   }
 
   public async initialize() {

@@ -4,7 +4,7 @@ import { glob } from "glob";
 import { urlParse } from "@azure-tools/openapi-tools-common";
 import { TestRecordingLoader } from "../../lib/apiScenario/gen/testRecordingLoader";
 import { inversifyGetInstance } from "../../lib/inversifyUtils";
-import { TestScenarioGenerator } from "../../lib/apiScenario/gen/testScenarioGenerator";
+import { TestRecordingApiScenarioGenerator } from "../../lib/apiScenario/gen/testRecordingApiScenarioGenerator";
 
 describe("ApiScenarioGenerator", () => {
   it("generate api scenario from recording - storage", async () => {
@@ -38,7 +38,7 @@ describe("ApiScenarioGenerator", () => {
       trackingList.push(await recordingLoader.load(recording));
     }
 
-    const generator = TestScenarioGenerator.create({
+    const generator = TestRecordingApiScenarioGenerator.create({
       specFolders: specFolders,
       includeARM: true,
     });
