@@ -10,7 +10,7 @@ import { glob } from "glob";
 import { urlParse } from "@azure-tools/openapi-tools-common";
 import { inversifyGetInstance } from "../../inversifyUtils";
 import { TestRecordingLoader } from "../../apiScenario/gen/testRecordingLoader";
-import { TestScenarioGenerator } from "../../apiScenario/gen/testScenarioGenerator";
+import { TestRecordingApiScenarioGenerator } from "../../apiScenario/gen/testRecordingApiScenarioGenerator";
 
 export const command = "recording";
 export const describe = "Generate api scenario from test proxy records.";
@@ -70,7 +70,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     trackingList.push(await recordingLoader.load(recording));
   }
 
-  const generator = TestScenarioGenerator.create({
+  const generator = TestRecordingApiScenarioGenerator.create({
     specFolders: argv.specsFolders,
     includeARM: argv.includeARM,
   });

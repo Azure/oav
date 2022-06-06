@@ -47,7 +47,7 @@ export interface RequestTracking {
   description: string;
 }
 
-export interface TestScenarioGeneratorOption extends ApiScenarioLoaderOption {
+export interface TestRecordingApiScenarioGeneratorOption extends ApiScenarioLoaderOption {
   specFolders: string[];
   includeARM: boolean;
 }
@@ -62,14 +62,14 @@ interface TestScenarioGenContext {
 }
 
 @injectable()
-export class TestScenarioGenerator {
+export class TestRecordingApiScenarioGenerator {
   private testDefToWrite: Array<{ testDef: RawScenarioDefinition; filePath: string }> = [];
   private operationSearcher: OperationSearcher;
   private lroPollingUrls = new Set<string>();
   private operationIdx = new Map<string, number>();
 
   public constructor(
-    @inject(TYPES.opts) private opts: TestScenarioGeneratorOption,
+    @inject(TYPES.opts) private opts: TestRecordingApiScenarioGeneratorOption,
     private testResourceLoader: ApiScenarioLoader,
     private swaggerLoader: SwaggerLoader,
     private jsonLoader: JsonLoader,
@@ -78,8 +78,8 @@ export class TestScenarioGenerator {
   ) {
     this.operationSearcher = new OperationSearcher((_) => {});
   }
-  public static create(opts: TestScenarioGeneratorOption) {
-    return inversifyGetInstance(TestScenarioGenerator, opts);
+  public static create(opts: TestRecordingApiScenarioGeneratorOption) {
+    return inversifyGetInstance(TestRecordingApiScenarioGenerator, opts);
   }
 
   public async initialize() {

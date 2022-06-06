@@ -3,7 +3,7 @@ import { URL } from "url";
 import { HttpMethods } from "@azure/core-http";
 import { injectable } from "inversify";
 import { Loader } from "../../swagger/loader";
-import { RequestTracking, SingleRequestTracking } from "./testScenarioGenerator";
+import { RequestTracking, SingleRequestTracking } from "./testRecordingApiScenarioGenerator";
 import { parseRecordingBodyJson, transformRecordingHeaders } from "./dotnetRecordingLoader";
 
 interface RecordingFile {
