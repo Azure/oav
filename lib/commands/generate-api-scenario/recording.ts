@@ -32,6 +32,11 @@ export const builder: yargs.CommandBuilder = {
     demandOption: true,
     default: "test.yaml",
   },
+  includeARM: {
+    describe: "include ARM specs",
+    boolean: true,
+    default: true,
+  },
 };
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
@@ -67,6 +72,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
 
   const generator = TestScenarioGenerator.create({
     specFolders: argv.specsFolders,
+    includeARM: argv.includeARM,
   });
 
   await generator.initialize();

@@ -49,6 +49,7 @@ export interface RequestTracking {
 
 export interface TestScenarioGeneratorOption extends ApiScenarioLoaderOption {
   specFolders: string[];
+  includeARM: boolean;
 }
 
 // const resourceGroupPathRegex = /^\/subscriptions\/[^\/]+\/resourceGroups\/[^\/]+$/i;
@@ -97,6 +98,12 @@ export class TestScenarioGenerator {
     applyGlobalTransformers(transformCtx);
   }
   private async getSwaggerFilePaths() {
+    if (this.opts.includeARM) {
+      const idx = this.opts.specFolders[0].indexOf("specification");
+      this.opts.specFolders.push(
+        path.join(this.opts.specFolders[0].substring(0, idx + "specification".length), "resources")
+      );
+    }
     return await this.getMatchedPaths(
       this.opts.specFolders.map((s) => path.join(path.resolve(s), "**/*.json"))
     );
@@ -140,7 +147,6 @@ export class TestScenarioGenerator {
   ): Promise<RawScenarioDefinition> {
     const testDef: RawScenarioDefinition = {
       scope: "ResourceGroup",
-      variables: {},
       scenarios: [],
     };
 
@@ -149,16 +155,6 @@ export class TestScenarioGenerator {
       const testScenario = await this.generateTestScenario(track, testScenarioFilePath);
       testDef.scenarios.push(testScenario);
     }
-
-    const variables = {};
-
-    convertVariables(variables, testDef.scenarios);
-    testDef.scenarios.forEach((scenario) => {
-      if (Object.keys(scenario.variables ?? {}).length === 0) {
-        scenario.variables = undefined;
-      }
-    });
-    testDef.variables = Object.keys(variables).length > 0 ? variables : undefined;
 
     this.testDefToWrite.push({ testDef, filePath: testScenarioFilePath });
 
@@ -172,7 +168,6 @@ export class TestScenarioGenerator {
     console.log(`\nGenerating ${requestTracking.description}`);
     const testScenario: RawScenario = {
       scenario: requestTracking.description,
-      description: requestTracking.description,
       variables: {},
       steps: [],
     };
@@ -286,6 +281,11 @@ export class TestScenarioGenerator {
       return await this.handleUnknownPath(record, records);
     }
     const { operation, requestParameters } = parseResult;
+
+    if (operation.operationId === "ResourceGroups_CreateOrUpdate") {
+      // todo check scope
+      return undefined;
+    }
     const variables: Scenario["variables"] = {};
 
     for (const paramKey of Object.keys(requestParameters)) {
@@ -495,7 +495,7 @@ const convertVariables = (root: Scenario["variables"], scopes: RawVariableScope[
         if (
           diff.length > 0 &&
           newValue.type == old.type &&
-          diff.length <= Object.keys(old.value!).length
+          diff.filter((d) => Object.keys(d).includes("remove")).length <= 2
         ) {
           newValue.patches = diff;
           newValue.value = undefined;
