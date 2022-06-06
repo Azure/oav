@@ -13,6 +13,7 @@ import {
 import { cliSuppressExceptions } from "../cliSuppressExceptions";
 import { inversifyGetInstance } from "../inversifyUtils";
 import { getInputFiles, printWarning } from "../util/utils";
+import { EnvironmentVariables } from "../apiScenario/variableEnv";
 
 export const command = "run-api-scenario <api-scenario>";
 
@@ -22,20 +23,6 @@ export const describe = "newman runner run API scenario file.";
 
 export const apiScenarioEnvKey = "API_SCENARIO_JSON_ENV";
 
-/**
- * UploadBlob true. Upload generated file and result to azure blob storage. connection string is passed by `process.env.blobConnectionString`
- * Upload files:
- *
- * 1. newmanReport: containerName: newmanreport path: <ResourceProvider>/<apiVersion>/<apiScenarioFileName>/<runId>/<scenarioIdx>.json
- *
- * 2. payload: containerName: payload path: <resourceProvider>/<apiVersion>/<apiScenarioFileName>/<runId>/<scenarioIdx>/<correlationId>.json
- *
- * 3. report: containerName: report path: <ResourceProvider>/<apiVersion>/<apiScenarioFileName>/<runId>/<scenarioIdx>/report.json
- *
- * 4. postmancollection & postmanenv: container: postmancollection: <ResourceProvider>/<apiVersion>/<apiScenarioFileName>/<runId>/<scenarioIdx>/collection.json
- * postmanenv: <ResourceProvider>/<apiVersion>/<apiScenarioFileName>/<runId>/<scenarioIdx>/env.json
- *
- */
 export const builder: yargs.CommandBuilder = {
   e: {
     alias: "envFile",
@@ -69,11 +56,6 @@ export const builder: yargs.CommandBuilder = {
     alias: "junitReportPath",
     describe: "junit report output path.",
     string: true,
-  },
-  uploadBlob: {
-    describe: "upload generated collection to blob.",
-    boolean: true,
-    default: false,
   },
   level: {
     describe:
@@ -111,25 +93,6 @@ export const builder: yargs.CommandBuilder = {
     boolean: true,
     default: false,
   },
-  from: {
-    describe:
-      "the step to start with in current run, it's used for debugging and make sure use --skipCleanUp to not delete resource group in the previous run.",
-    string: true,
-    demandOption: false,
-    implies: "runId",
-  },
-  to: {
-    describe:
-      "the step to end in current run,it's used for debugging and make sure use --skipCleanUp to not delete resource group in the previous run.",
-    string: true,
-    demandOption: false,
-    implies: "runId",
-  },
-  runId: {
-    describe: "specify the runId for debugging",
-    string: true,
-    demandOption: false,
-  },
   verbose: {
     describe: "log verbose",
     default: false,
@@ -163,7 +126,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     console.log("input-file:");
     console.log(swaggerFilePaths);
 
-    let env: any = {};
+    let env: EnvironmentVariables = {};
     if (argv.e !== undefined) {
       env = JSON.parse(fs.readFileSync(argv.e).toString());
     }
@@ -197,26 +160,21 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       generateCollection: true,
       useJsonParser: false,
       runCollection: !argv.dryRun,
-      env: env,
+      env,
       outputFolder: argv.output,
       markdownReportPath: argv.markdownReportPath,
       junitReportPath: argv.junitReportPath,
       eraseXmsExamples: false,
       eraseDescription: false,
-      enableBlobUploader: argv.uploadBlob,
-      blobConnectionString: process.env.blobConnectionString || "",
       baseUrl: argv.armEndpoint,
       testProxy: argv.testProxy,
       validationLevel: argv.level,
       skipCleanUp: argv.skipCleanUp,
-      from: argv.from,
-      to: argv.to,
-      runId: argv.runId,
       verbose: argv.verbose,
       swaggerFilePaths: swaggerFilePaths,
     };
     const generator = inversifyGetInstance(PostmanCollectionGenerator, opt);
-    await generator.GenerateCollection();
+    await generator.run();
     return 0;
   });
 }

@@ -12,7 +12,6 @@ export interface NewmanReportAnalyzerOption extends NewmanReportParserOption {
   reportOutputFilePath?: string;
   markdownReportPath?: string;
   junitReportPath?: string;
-  enableUploadBlob?: boolean;
   runId?: string;
   swaggerFilePaths?: string[];
   validationLevel?: ValidationLevel;
@@ -51,8 +50,6 @@ export class NewmanReportAnalyzer {
       reportOutputFilePath: this.opts.reportOutputFilePath,
       markdownReportPath: this.opts.markdownReportPath,
       junitReportPath: this.opts.junitReportPath,
-      enableBlobUploader: this.opts.enableUploadBlob || false,
-      blobConnectionString: process.env.blobConnectionString || "",
       runId: this.opts.runId,
       validationLevel: this.opts.validationLevel,
       verbose: this.opts.verbose,

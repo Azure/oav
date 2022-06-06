@@ -69,11 +69,6 @@ export {
 export { VariableEnv } from "./lib/apiScenario/variableEnv";
 export { ApiScenarioRunner, ApiScenarioRunnerClient } from "./lib/apiScenario/apiScenarioRunner";
 
-export { PostmanCollectionRunnerClient } from "./lib/apiScenario/postmanCollectionRunnerClient";
-export {
-  PostmanCollectionGenerator,
-  PostmanCollectionGeneratorOption,
-} from "./lib/apiScenario/postmanCollectionGenerator";
 export {
   SwaggerAnalyzer,
   SwaggerAnalyzerOption,

@@ -28,7 +28,7 @@ describe.skip("mock examples", () => {
   }
 });
 
-describe("test generate example", () => {
+describe.skip("test generate example", () => {
   const originalError = log.error;
   //const originalLog = log.info;
   const originalWarn = log.warn;

@@ -1,6 +1,3 @@
-import path, { dirname } from "path";
-import { inject, injectable } from "inversify";
-import newman from "newman";
 import {
   Collection,
   Item,
@@ -10,142 +7,57 @@ import {
   RequestBody,
   RequestBodyDefinition,
   Url,
-  VariableDefinition,
+  Variable,
   VariableScope,
 } from "postman-collection";
-import { inversifyGetInstance, TYPES } from "../inversifyUtils";
-import { FileLoader } from "../swagger/fileLoader";
-import { JsonLoader, JsonLoaderOption } from "../swagger/jsonLoader";
 import { setDefaultOpts } from "../swagger/loader";
-import { getRandomString, printWarning } from "../util/utils";
 import {
   ApiScenarioClientRequest,
   ApiScenarioRunnerClient,
-  ArmDeploymentTracking,
+  ArmDeployment,
 } from "./apiScenarioRunner";
-import { ArmTemplate, ScenarioDefinition, StepArmTemplate, StepRestCall } from "./apiScenarioTypes";
-import { BlobUploader, BlobUploaderOption } from "./blobUploader";
-import { DataMasker } from "./dataMasker";
-import {
-  defaultCollectionFileName,
-  defaultEnvFileName,
-  defaultNewmanReport,
-  generatedGet,
-  generatedPostmanItem,
-} from "./defaultNaming";
+import { ArmTemplate, Scenario, StepArmTemplate, StepRestCall } from "./apiScenarioTypes";
+import { generatedGet, generatedPostmanItem } from "./defaultNaming";
 import { typeToDescription } from "./postmanItemTypes";
-import { NewmanReportAnalyzer, NewmanReportAnalyzerOption } from "./postmanReportAnalyzer";
-import { NewmanReport } from "./postmanReportParser";
 import * as PostmanHelper from "./postmanHelper";
-import { ValidationLevel } from "./reportGenerator";
-import { RuntimeEnvManager } from "./runtimeEnvManager";
-import { SwaggerAnalyzer } from "./swaggerAnalyzer";
 import { VariableEnv } from "./variableEnv";
 
-export interface PostmanCollectionRunnerClientOption extends BlobUploaderOption, JsonLoaderOption {
+export interface PostmanCollectionRunnerClientOption {
   apiScenarioFileName: string;
-  enableBlobUploader: boolean;
-  env: VariableEnv;
-  scenarioDef?: ScenarioDefinition;
   apiScenarioFilePath?: string;
-  reportOutputFolder?: string;
-  markdownReportPath?: string;
-  junitReportPath?: string;
-  apiScenarioName: string;
+  apiScenarioName?: string;
   runId: string;
-  jsonLoader?: JsonLoader;
   swaggerFilePaths?: string[];
   baseUrl: string;
   testProxy?: string;
-  validationLevel?: ValidationLevel;
-  skipCleanUp?: boolean;
-  from?: string;
-  to?: string;
   verbose?: boolean;
-}
-
-export const generateRunId = (): string => {
-  const today = new Date();
-  const yyyy = today.getFullYear().toString();
-  const MM = pad(today.getMonth() + 1, 2);
-  const dd = pad(today.getDate(), 2);
-  const hh = pad(today.getHours(), 2);
-  const mm = pad(today.getMinutes(), 2);
-  const id = getRandomString();
-  return yyyy + MM + dd + hh + mm + "-" + id;
-};
-
-function pad(number: number, length: number) {
-  let str = "" + number;
-  while (str.length < length) {
-    str = "0" + str;
-  }
-  return str;
 }
 
 const ARM_ENDPOINT = "https://management.azure.com";
 const ARM_API_VERSION = "2020-06-01";
 
-@injectable()
 export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
-  public collection: Collection;
-  public collectionEnv: VariableScope;
+  private opts: PostmanCollectionRunnerClientOption;
+  private collection: Collection;
+  private runtimeEnv: VariableScope;
+
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
-  constructor(
-    @inject(TYPES.opts) private opts: PostmanCollectionRunnerClientOption,
-    private blobUploader: BlobUploader,
-    private dataMasker: DataMasker,
-    private swaggerAnalyzer: SwaggerAnalyzer,
-    private fileLoader: FileLoader
-  ) {
+  constructor(opts: PostmanCollectionRunnerClientOption) {
+    this.opts = opts;
     setDefaultOpts(this.opts, {
-      apiScenarioFileName: "",
-      apiScenarioFilePath: "",
-      env: new VariableEnv(),
-      reportOutputFolder: path.resolve(process.cwd(), "newman"),
-      enableBlobUploader: false,
-      runId: generateRunId(),
-      apiScenarioName: "",
-      blobConnectionString: process.env.blobConnectionString || "",
       baseUrl: ARM_ENDPOINT,
-    });
+    } as PostmanCollectionRunnerClientOption);
+  }
+
+  public async prepareScenario(scenario: Scenario, env: VariableEnv): Promise<void> {
+    this.opts.apiScenarioName = scenario.scenario;
+    this.opts.apiScenarioFileName = scenario._scenarioDef._filePath;
+
     this.collection = new Collection({
       info: {
         id: this.opts.runId,
-        name: this.opts.apiScenarioFileName,
+        name: this.opts.apiScenarioName,
       },
-      variable: [
-        {
-          key: "subscriptionId",
-        },
-        {
-          key: "resourceGroupName",
-        },
-        {
-          key: "location",
-        },
-        {
-          key: "enable_auth",
-          value: "true",
-        },
-        {
-          key: "client_id",
-        },
-        {
-          key: "client_secret",
-          type: "secret",
-        },
-        {
-          key: "tenantId",
-        },
-        {
-          key: "bearer_token",
-          type: "secret",
-        },
-        {
-          key: "bearer_token_expires_on",
-        },
-      ],
     });
     this.collection.describe(
       JSON.stringify({
@@ -159,7 +71,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       bearer: [
         {
           key: "token",
-          value: "{{bearer_token}}",
+          value: "{{x_bearer_token}}",
           type: "string",
         },
       ],
@@ -168,24 +80,57 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       PostmanHelper.createEvent("prerequest", PostmanHelper.generateAuthScript(this.opts.baseUrl))
     );
 
-    this.collectionEnv = new VariableScope({});
-    this.collectionEnv.set("tenantId", this.opts.env.get("tenantId")?.value, "string");
-    this.collectionEnv.set("client_id", this.opts.env.get("client_id")?.value, "string");
-    this.collectionEnv.set("client_secret", this.opts.env.get("client_secret")?.value, "string");
-    this.collectionEnv.set("subscriptionId", this.opts.env.get("subscriptionId")?.value, "string");
-    this.collectionEnv.set("location", this.opts.env.get("location")?.value, "string");
+    env.resolve();
+
+    this.runtimeEnv = new VariableScope({});
+    this.runtimeEnv.set("tenantId", env.get("tenantId")?.value, "string");
+    this.runtimeEnv.set("client_id", env.get("client_id")?.value, "string");
+    this.runtimeEnv.set("client_secret", env.get("client_secret")?.value, "string");
+    this.runtimeEnv.set("subscriptionId", env.get("subscriptionId")?.value, "string");
+    this.runtimeEnv.set("resourceGroupName", env.get("resourceGroupName")?.value, "string");
+    this.runtimeEnv.set("location", env.get("location")?.value, "string");
+
+    for (const [name, variable] of env.getVariables()) {
+      if (!this.runtimeEnv.has(name) && !this.collection.variables.has(name)) {
+        if (variable.type === "secureString" || variable.type === "secureObject") {
+          this.runtimeEnv.set(name, variable.value, "secret");
+          this.collection.variables.add(new Variable({ key: name, type: "secret" }));
+        } else {
+          this.collection.variables.add(
+            new Variable({
+              key: name,
+              value: variable.value,
+            })
+          );
+        }
+      }
+    }
+
+    PostmanHelper.reservedCollectionVariables.forEach((variable) => {
+      if (!this.collection.variables.has(variable.key)) {
+        this.collection.variables.add(new Variable(variable));
+      }
+    });
+
+    if (this.opts.testProxy) {
+      this.startTestProxyRecording();
+    }
   }
 
-  public async startTestProxyRecording(): Promise<void> {
-    if (!this.opts.testProxy) {
-      return;
+  public outputCollection(): [Collection, VariableScope] {
+    if (this.opts.testProxy) {
+      this.stopTestProxyRecording();
     }
+    return [this.collection, this.runtimeEnv];
+  }
+
+  private startTestProxyRecording() {
     const item = this.newItem(
       {
         name: "startTestProxyRecording",
         request: {
           url: `${this.opts.testProxy}/record/start`,
-          method: "post",
+          method: "POST",
           body: {
             mode: "raw",
             raw: `{"x-recording-file": "./recordings/${this.opts.apiScenarioName}_${this.opts.runId}.json"}`,
@@ -208,16 +153,13 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     this.collection.items.add(item);
   }
 
-  public async stopTestProxyRecording(): Promise<void> {
-    if (!this.opts.testProxy) {
-      return;
-    }
+  private stopTestProxyRecording() {
     const item = this.newItem(
       {
         name: "stopTestProxyRecording",
         request: {
           url: `${this.opts.testProxy}/record/stop`,
-          method: "post",
+          method: "POST",
         },
       },
       false
@@ -257,26 +199,43 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
   ): Promise<void> {
     const item = this.newItem({
       name: "createResourceGroup",
-      request: {
-        url: `${
-          this.opts.testProxy ?? this.opts.baseUrl
-        }/subscriptions/{{subscriptionId}}/resourcegroups/{{resourceGroupName}}?api-version=${ARM_API_VERSION}`,
-        method: "put",
-        body: {
-          mode: "raw",
-          raw: '{"location":"{{location}}"}',
-        },
-      },
-      description: typeToDescription({ type: "prepare" }),
     });
+
+    item.request.method = "PUT";
+    item.request.url = new Url({
+      host: this.opts.testProxy ?? this.opts.baseUrl,
+      path: "/subscriptions/:subscriptionId/resourcegroups/:resourceGroupName",
+      variable: [
+        {
+          key: "subscriptionId",
+          value: "{{subscriptionId}}",
+        },
+        {
+          key: "resourceGroupName",
+          value: "{{resourceGroupName}}",
+        },
+      ],
+      query: [
+        {
+          key: "api-version",
+          value: ARM_API_VERSION,
+        },
+      ],
+    });
+    item.request.body = new RequestBody({
+      mode: "raw",
+      raw: '{"location":"{{location}}"}',
+    });
+
+    item.description = typeToDescription({ type: "prepare" });
 
     item.request.addHeader({ key: "Content-Type", value: "application/json" });
 
     this.addTestScript(item);
 
-    this.collectionEnv.set("subscriptionId", subscriptionId, "string");
-    this.collectionEnv.set("resourceGroupName", resourceGroupName, "string");
-    this.collectionEnv.set("location", location, "string");
+    this.runtimeEnv.set("subscriptionId", subscriptionId, "string");
+    this.runtimeEnv.set("resourceGroupName", resourceGroupName, "string");
+    this.runtimeEnv.set("location", location, "string");
 
     this.collection.items.add(item);
   }
@@ -285,18 +244,31 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     _subscriptionId: string,
     _resourceGroupName: string
   ): Promise<void> {
-    if (this.opts.from || this.opts.to) {
-      return;
-    }
     const item = this.newItem({
       name: "deleteResourceGroup",
-      request: {
-        url: `${
-          this.opts.testProxy ?? this.opts.baseUrl
-        }/subscriptions/{{subscriptionId}}/resourcegroups/{{resourceGroupName}}?api-version=${ARM_API_VERSION}`,
-        method: "delete",
-      },
     });
+    item.request.method = "DELETE";
+    item.request.url = new Url({
+      host: this.opts.testProxy ?? this.opts.baseUrl,
+      path: "/subscriptions/:subscriptionId/resourcegroups/:resourceGroupName",
+      variable: [
+        {
+          key: "subscriptionId",
+          value: "{{subscriptionId}}",
+        },
+        {
+          key: "resourceGroupName",
+          value: "{{resourceGroupName}}",
+        },
+      ],
+      query: [
+        {
+          key: "api-version",
+          value: ARM_API_VERSION,
+        },
+      ],
+    });
+
     item.request.addHeader({ key: "Content-Type", value: "application/json" });
 
     item.events.add(
@@ -326,19 +298,20 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
           ? { mode: "raw", raw: JSON.stringify(convertPostmanFormat(clientRequest.body), null, 2) }
           : undefined,
       },
-      description: step.operation.operationId,
     });
+
+    item.description = step.operation.operationId;
 
     item.request.url = new Url({
       host: this.opts.testProxy ?? this.opts.baseUrl,
       path: covertToPostmanVariable(clientRequest.path, true),
-      variable: Object.entries(clientRequest.pathVariables ?? {}).map(([key, _]) => ({
+      variable: Object.entries(clientRequest.pathVariables ?? {}).map(([key, value]) => ({
         key,
-        value: `{{${key}}}`,
+        value: convertPostmanFormat(value),
       })),
       query: Object.entries(clientRequest.query).map(([key, value]) => ({
         key,
-        value: covertToPostmanVariable(value, true),
+        value: covertToPostmanVariable(value),
       })),
     });
 
@@ -411,7 +384,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       this.collection.items.add(
         this.generatedGetOperationItem(
           item.name,
-          item.request.url.toString(),
+          item.request.url,
           item.name,
           step.operation._method
         )
@@ -472,62 +445,33 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
 
   public async sendArmTemplateDeployment(
     armTemplate: ArmTemplate,
-    _armDeployment: ArmDeploymentTracking,
+    _armDeployment: ArmDeployment,
     step: StepArmTemplate,
     env: VariableEnv
   ): Promise<void> {
     const item = this.newItem({
       name: step.step,
     });
-    const path = `/subscriptions/{{subscriptionId}}/resourcegroups/{{resourceGroupName}}/providers/Microsoft.Resources/deployments/${step.step}?api-version=${ARM_API_VERSION}`;
-
-    const subscriptionIdValue = covertToPostmanVariable(
-      env.resolveString(env.getString("subscriptionId") || "")
-    );
-    const resourceGroupNameValue = covertToPostmanVariable(
-      env.resolveString(env.getString("resourceGroupName") || "")
-    );
-    const subscriptionIdParamName = Object.keys(step.variables).includes("subscriptionId")
-      ? `${item.name}_subscriptionId`
-      : "subscriptionId";
-    const resourceGroupNameParamName = Object.keys(step.variables).includes("resourceGroupName")
-      ? `${item.name}_resourceGroupName`
-      : "resourceGroupName";
-    const urlVariables: VariableDefinition[] = [
-      { key: "subscriptionId", value: `{{${subscriptionIdParamName}}}` },
-      { key: "resourceGroupName", value: `{{${resourceGroupNameParamName}}}` },
-    ];
-
-    if (!this.collectionEnv.has(subscriptionIdParamName)) {
-      this.collectionEnv.set(
-        subscriptionIdParamName,
-        subscriptionIdValue,
-        typeof subscriptionIdValue
-      );
-    }
-
-    if (!this.collectionEnv.has(resourceGroupNameParamName)) {
-      this.collectionEnv.set(
-        resourceGroupNameParamName,
-        resourceGroupNameValue,
-        typeof resourceGroupNameValue
-      );
-    }
 
     item.request = new Request({
       name: step.step,
-      method: "put",
+      method: "PUT",
       url: "",
       body: { mode: "raw" } as RequestBodyDefinition,
     });
     item.request.url = new Url({
       host: this.opts.testProxy ?? this.opts.baseUrl,
-      path: path,
-      variable: urlVariables,
+      path: `/subscriptions/:subscriptionId/resourcegroups/:resourceGroupName/providers/Microsoft.Resources/deployments/:deploymentName`,
+      variable: [
+        { key: "subscriptionId", value: `{{subscriptionId}}` },
+        { key: "resourceGroupName", value: `{{resourceGroupName}}` },
+        { key: "deploymentName", value: `${step.step}` },
+      ],
+      query: [{ key: "api-version", value: ARM_API_VERSION }],
     });
     const body = {
       properties: {
-        mode: "Incremental",
+        mode: "Complete",
         template: convertPostmanFormat(env.resolveObjectValues(armTemplate)),
       },
     };
@@ -562,7 +506,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       : ["ExtractARMTemplateOutput"];
     const generatedGetOperationItem = this.generatedGetOperationItem(
       item.name,
-      item.request.url.toString(),
+      item.request.url,
       step.step,
       "put",
       generatedGetScriptTypes,
@@ -571,184 +515,9 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     this.collection.items.add(generatedGetOperationItem);
   }
 
-  public async writeCollectionToJson(outputFolder: string) {
-    const collectionPath = path.resolve(
-      outputFolder,
-      `${defaultCollectionFileName(
-        this.opts.apiScenarioFileName,
-        this.opts.runId,
-        this.opts.apiScenarioName
-      )}`
-    );
-    const envPath = path.resolve(
-      outputFolder,
-      `${defaultEnvFileName(
-        this.opts.apiScenarioFileName,
-        this.opts.runId,
-        this.opts.apiScenarioName
-      )}`
-    );
-    const env = this.collectionEnv.toJSON();
-    env.name = this.opts.apiScenarioFileName + "_env";
-    env._postman_variable_scope = "environment";
-    await this.fileLoader.writeFile(envPath, JSON.stringify(env, null, 2));
-    await this.fileLoader.writeFile(
-      collectionPath,
-      JSON.stringify(this.collection.toJSON(), null, 2)
-    );
-
-    await this.blobUploader.uploadFile(
-      "postmancollection",
-      `${defaultCollectionFileName(
-        this.opts.apiScenarioFileName,
-        this.opts.runId,
-        this.opts.apiScenarioName
-      )}`,
-      collectionPath
-    );
-    const values: string[] = [];
-    for (const [k, v] of Object.entries(this.collectionEnv.syncVariablesTo())) {
-      if (this.dataMasker.maybeSecretKey(k)) {
-        values.push(v as string);
-      }
-    }
-    this.dataMasker.addMaskedValues(values);
-    await this.blobUploader.uploadContent(
-      "postmancollection",
-      `${defaultEnvFileName(
-        this.opts.apiScenarioFileName,
-        this.opts.runId,
-        this.opts.apiScenarioName
-      )}`,
-      this.dataMasker.jsonStringify(env)
-    );
-
-    console.log(`\ngenerate collection successfully!`);
-    console.log(`Postman collection: '${collectionPath}'. Postman env: '${envPath}' `);
-    console.log(`Command: newman run ${collectionPath} -e ${envPath} -r 'json,cli'`);
-  }
-
-  public async runCollection() {
-    const reportExportPath = path.resolve(
-      this.opts.reportOutputFolder!,
-      `${defaultNewmanReport(
-        this.opts.apiScenarioFileName,
-        this.opts.runId,
-        this.opts.apiScenarioName
-      )}`
-    );
-    const runtimeEnvManager = new RuntimeEnvManager(
-      path.join(dirname(reportExportPath), this.opts.apiScenarioName),
-      this.opts,
-      this.collection
-    );
-
-    if (this.opts.from) {
-      const lastRnv = runtimeEnvManager.loadEnv(this.opts.from);
-      this.collectionEnv.syncVariablesFrom(lastRnv);
-      // use the variables value which exist in the env.json or process.env
-      for (const k of Object.keys(this.collectionEnv.syncVariablesTo())) {
-        const v = this.opts.env.get(k);
-        if (v?.value) {
-          this.collectionEnv.set(k, v.value, typeof v.value);
-        }
-      }
-    }
-    if (this.opts.from || this.opts.to) {
-      runtimeEnvManager.repopulateCollectionItems(this.opts.from, this.opts.to);
-    }
-    const newmanRun = async () => {
-      return new Promise((resolve) => {
-        newman
-          .run(
-            {
-              collection: this.collection,
-              environment: this.collectionEnv,
-              reporters: ["cli", "json"],
-              reporter: { json: { export: reportExportPath } },
-            },
-            function (err, summary) {
-              if (summary.run.failures.length > 0) {
-                process.exitCode = 1;
-              }
-              if (err) {
-                console.log(`collection run failed. ${err}`);
-              }
-              console.log("collection run complete!");
-            }
-          )
-          .on("beforeItem", async function (this: any, _err, _summary) {
-            if (!_err) {
-              runtimeEnvManager.save(_summary.item.name, this, "beforeStep");
-            }
-          })
-          .on("item", async function (this: any, _err, _summary) {
-            if (!_err) {
-              runtimeEnvManager.clean();
-              runtimeEnvManager.save(_summary.item.name, this, "afterStep");
-            }
-          })
-          .on("done", async (_err, _summary) => {
-            const keys = await this.swaggerAnalyzer.getAllSecretKey();
-            const values: string[] = [];
-            for (const [k, v] of Object.entries(this.collectionEnv.syncVariablesTo())) {
-              if (this.dataMasker.maybeSecretKey(k)) {
-                values.push(v as string);
-              }
-            }
-            this.dataMasker.addMaskedValues(values);
-            this.dataMasker.addMaskedKeys(keys);
-            // read content and upload. mask newman report.
-            const newmanReport = JSON.parse(
-              await this.fileLoader.load(reportExportPath)
-            ) as NewmanReport;
-
-            // add mask environment secret value
-            for (const item of newmanReport.environment.values) {
-              if (this.dataMasker.maybeSecretKey(item.key)) {
-                this.dataMasker.addMaskedValues([item.value]);
-              }
-            }
-            if (this.opts.enableBlobUploader) {
-              await this.blobUploader.uploadContent(
-                "newmanreport",
-                `${defaultNewmanReport(
-                  this.opts.apiScenarioFileName,
-                  this.opts.runId,
-                  this.opts.apiScenarioName
-                )}`,
-                this.dataMasker.jsonStringify(newmanReport)
-              );
-            }
-            const opts: NewmanReportAnalyzerOption = {
-              newmanReportFilePath: reportExportPath,
-              markdownReportPath: this.opts.markdownReportPath,
-              junitReportPath: this.opts.junitReportPath,
-              enableUploadBlob: this.opts.enableBlobUploader,
-              runId: this.opts.runId,
-              swaggerFilePaths: this.opts.swaggerFilePaths,
-              validationLevel: this.opts.validationLevel,
-              verbose: this.opts.verbose,
-            };
-            const reportAnalyzer = inversifyGetInstance(NewmanReportAnalyzer, opts);
-            await reportAnalyzer.analyze();
-            if (this.opts.skipCleanUp || this.opts.to) {
-              printWarning(
-                `Notice:the resource group '${this.collectionEnv.get(
-                  "resourceGroupName"
-                )}' was not cleaned up.`
-              );
-            }
-            resolve(_summary);
-          });
-      });
-    };
-    await newmanRun();
-  }
-
   private generatedGetOperationItem(
     name: string,
-    url: string,
+    url: Url,
     step: string,
     prevMethod: string = "put",
     scriptTypes: PostmanHelper.TestScriptType[] = [],
@@ -757,10 +526,11 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     const item = this.newItem({
       name: `${generatedPostmanItem(generatedGet(name))}`,
       request: {
-        method: "get",
-        url: url,
+        method: "GET",
+        url: "",
       },
     });
+    item.request.url = url;
     item.description = typeToDescription({
       type: "generated-get",
       lro_item_name: name,
@@ -781,33 +551,32 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       name: generatedPostmanItem(initialItem.name + "_poller"),
       request: {
         url: `{{x_polling_url}}`,
-        method: "get",
+        method: "GET",
       },
-      description: typeToDescription({ type: "poller", lro_item_name: initialItem.name }),
     });
+    pollerItem.description = typeToDescription({ type: "poller", lro_item_name: initialItem.name });
 
     const delay = this.mockDelayItem(pollerItem.name, initialItem.name);
 
     const event = PostmanHelper.createEvent(
       "test",
-      PostmanHelper.createScript(`
-      try{
-        if(pm.response.code === 202){
-          postman.setNextRequest('${delay.name}')
-        }else if(pm.response.code === 204){
-          postman.setNextRequest($(nextRequest))
-        }
-        else{
-          const terminalStatus = ["Succeeded", "Failed", "Canceled"]
-          if(pm.response.json().status !== undefined && terminalStatus.indexOf(pm.response.json().status) === -1){
-            postman.setNextRequest('${delay.name}')
-          }else{
-            postman.setNextRequest($(nextRequest))
-          }
-        }
-      }catch(err){
-        postman.setNextRequest($(nextRequest))
-      }`)
+      PostmanHelper.createScript(`try{
+  if(pm.response.code === 202){
+    postman.setNextRequest('${delay.name}')
+  }else if(pm.response.code === 204){
+    postman.setNextRequest($(nextRequest))
+  }
+  else{
+    const terminalStatus = ["Succeeded", "Failed", "Canceled"]
+    if(pm.response.json().status !== undefined && terminalStatus.indexOf(pm.response.json().status) === -1){
+      postman.setNextRequest('${delay.name}')
+    }else{
+      postman.setNextRequest($(nextRequest))
+    }
+  }
+}catch(err){
+  postman.setNextRequest($(nextRequest))
+}`)
     );
     pollerItem.events.add(event);
 
@@ -832,13 +601,13 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       {
         name: `${nextRequestName}_mock_delay`,
         request: {
-          url: "https://postman-echo.com/delay/10",
-          method: "get",
+          url: "https://postman-echo.com/delay/{{x_retry_after}}",
+          method: "GET",
         },
-        description: typeToDescription({ type: "mock", lro_item_name: LROItemName }),
       },
       false
     );
+    ret.description = typeToDescription({ type: "mock", lro_item_name: LROItemName });
 
     const event = PostmanHelper.createEvent(
       "prerequest",

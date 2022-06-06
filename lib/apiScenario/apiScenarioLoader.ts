@@ -410,6 +410,9 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     };
 
     const requireVariable = (name: string) => {
+      if (["resourceGroupName"].includes(name)) {
+        return;
+      }
       const requiredVariables =
         ctx.scenario?.requiredVariables ?? ctx.scenarioDef.requiredVariables;
       if (!requiredVariables.includes(name)) {
@@ -468,7 +471,11 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
         } else {
           const v = getVariable(param.name);
           if (v) {
-            step.parameters[param.name] = v.value ?? `$(${param.name})`;
+            if (param.in === "body") {
+              step.parameters[param.name] = v.value;
+            } else {
+              step.parameters[param.name] = `$(${param.name})`;
+            }
           } else if (param.in === "path" || param.required) {
             step.parameters[param.name] = `$(${param.name})`;
             requireVariable(param.name);
@@ -723,10 +730,17 @@ const convertVariables = (rawVariables: RawVariableScope["variables"]) => {
         value: val,
       };
     } else {
-      if (val.value !== undefined) {
-        result.variables[key] = val;
-      } else {
-        result.requiredVariables.push(key);
+      result.variables[key] = val;
+      if (val.value === undefined) {
+        if (val.type === "string" || val.type === "secureString") {
+          if (val.value === undefined && val.prefix === undefined) {
+            result.requiredVariables.push(key);
+          }
+        } else {
+          throw new Error(
+            `Only string and secureString type is supported in environment variables, please specify value for: ${key}`
+          );
+        }
       }
       if (val.type === "secureString" || val.type === "secureObject") {
         result.secretVariables.push(key);

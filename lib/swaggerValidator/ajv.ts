@@ -166,6 +166,7 @@ export const ajvEnableAll = (ajv: Ajv, jsonLoader: JsonLoader) => {
     "binary",
     "non-iso-duration",
     "char",
+    "arm-id",
   ]);
   ajvAddFormatsDefaultValidation(ajv, "number", ["double", "float", "decimal"]);
 };

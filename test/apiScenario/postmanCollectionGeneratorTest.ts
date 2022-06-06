@@ -21,7 +21,7 @@ describe("postmanCollectionGenerator", () => {
       outputFolder: "generated",
       runId: "jestRunId",
     });
-    const collection = await generator.GenerateCollection();
+    const collection = await generator.run();
     expect(collection).toMatchSnapshot();
   });
 
@@ -42,7 +42,7 @@ describe("postmanCollectionGenerator", () => {
       runId: "jestRunIdTestProxy",
       testProxy: "http://localhost:5000",
     });
-    const collection = await generator.GenerateCollection();
+    const collection = await generator.run();
     expect(collection).toMatchSnapshot();
   });
 });

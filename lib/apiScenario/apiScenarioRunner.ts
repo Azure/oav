@@ -10,16 +10,17 @@ import {
   StepArmTemplate,
   StepRestCall,
 } from "./apiScenarioTypes";
-import { VariableEnv } from "./variableEnv";
+import { EnvironmentVariables, VariableEnv } from "./variableEnv";
 
 export interface ApiScenarioRunnerOption {
-  env: VariableEnv;
+  env: EnvironmentVariables;
   client: ApiScenarioRunnerClient;
   jsonLoader: JsonLoader;
   resolveVariables?: boolean;
+  skipCleanUp?: boolean;
 }
 
-export interface ArmDeploymentTracking {
+export interface ArmDeployment {
   deploymentName: string;
   step: StepArmTemplate;
   details: {
@@ -29,13 +30,12 @@ export interface ArmDeploymentTracking {
   };
 }
 
-interface ScopeTracking {
+export interface Scope {
   provisioned?: boolean;
-  scope: ScenarioDefinition["scope"];
+  type: ScenarioDefinition["scope"];
   prepareSteps: Step[];
   cleanUpSteps: Step[];
   env: VariableEnv;
-  armDeployments: ArmDeploymentTracking[];
 }
 
 export interface ApiScenarioClientRequest {
@@ -48,6 +48,8 @@ export interface ApiScenarioClientRequest {
 }
 
 export interface ApiScenarioRunnerClient {
+  prepareScenario(scenario: Scenario, env: VariableEnv): Promise<void>;
+
   createResourceGroup(
     subscriptionId: string,
     resourceGroupName: string,
@@ -64,7 +66,7 @@ export interface ApiScenarioRunnerClient {
 
   sendArmTemplateDeployment(
     armTemplate: ArmTemplate,
-    armDeployment: ArmDeploymentTracking,
+    armDeployment: ArmDeployment,
     step: StepArmTemplate,
     env: VariableEnv
   ): Promise<void>;
@@ -73,34 +75,22 @@ export interface ApiScenarioRunnerClient {
 export class ApiScenarioRunner {
   private jsonLoader: JsonLoader;
   private client: ApiScenarioRunnerClient;
-  private env: VariableEnv;
-  private scopeTracking: { [scopeName: string]: ScopeTracking };
-  private scenarioScopeTracking: Map<Scenario, ScopeTracking>;
+  private env: EnvironmentVariables;
+  private scopeTracking: { [scopeName: string]: Scope };
   private resolveVariables: boolean;
+  private skipCleanUp: boolean;
 
-  private provisionScope = getLazyBuilder("provisioned", async (scope: ScopeTracking) => {
-    if (scope.scope !== "ResourceGroup") {
-      throw new Error(`Scope is not supported yet: ${scope.scope}`);
+  private doProvisionScope = getLazyBuilder("provisioned", async (scope: Scope) => {
+    if (scope.type === "ResourceGroup") {
+      await this.client.createResourceGroup(
+        scope.env.getRequiredString("subscriptionId"),
+        scope.env.getRequiredString("resourceGroupName"),
+        scope.env.getRequiredString("location")
+      );
     }
-
-    if (scope.env.get("resourceGroupName") === undefined) {
-      const resourceGroupPrefix = scope.env.getString("resourceGroupPrefix") ?? "apiTest-";
-      scope.env.set("resourceGroupName", {
-        type: "string",
-        value: resourceGroupPrefix + getRandomString(),
-      });
-    }
-
-    await this.client.createResourceGroup(
-      scope.env.getRequiredString("subscriptionId"),
-      scope.env.getRequiredString("resourceGroupName"),
-      scope.env.getRequiredString("location")
-    );
-
     for (const step of scope.prepareSteps) {
       await this.executeStep(step, scope.env, scope);
     }
-
     return true;
   });
 
@@ -109,89 +99,94 @@ export class ApiScenarioRunner {
     this.client = opts.client;
     this.jsonLoader = opts.jsonLoader;
     this.resolveVariables = opts.resolveVariables ?? true;
+    this.skipCleanUp = opts.skipCleanUp ?? false;
     this.scopeTracking = {};
-    this.scenarioScopeTracking = new Map();
   }
 
-  public async prepareScope(scenario: Scenario): Promise<ScopeTracking> {
-    let scope = this.scenarioScopeTracking.get(scenario);
+  private async prepareScope(scenario: Scenario): Promise<Scope> {
+    const scopeName = scenario.shareScope ? "_defaultScope" : `_randomScope_${getRandomString()}`;
+    let scope = this.scopeTracking[scopeName];
     if (scope === undefined) {
-      const scopeName = scenario.shareScope ? "_defaultScope" : `_randomScope_${getRandomString()}`;
+      const scenarioDef = scenario._scenarioDef;
+      // Variable scope: ScenarioDef <= RuntimeScope <= Scenario <= Step
+      const scopeEnv =
+        // RuntimeScope
+        new VariableEnv(
+          // ScenarioDef
+          new VariableEnv().setBatch(scenarioDef.variables)
+        ).setBatchEnv(this.env);
+      scope = {
+        type: scenarioDef.scope,
+        prepareSteps: scenarioDef.prepareSteps,
+        cleanUpSteps: scenarioDef.cleanUpSteps,
+        env: scopeEnv,
+      };
 
-      scope = this.scopeTracking[scopeName];
-      if (scope === undefined) {
-        const scenarioDef = scenario._scenarioDef;
-        const env = new VariableEnv(this.env);
-        env.setBatch(scenarioDef.variables);
-        scope = {
-          scope: scenarioDef.scope,
-          prepareSteps: scenarioDef.prepareSteps,
-          cleanUpSteps: scenarioDef.cleanUpSteps,
-          env,
-          armDeployments: [],
-        };
-        this.scopeTracking[scopeName] = scope;
+      if (scope.type !== "ResourceGroup") {
+        throw new Error(`Scope is not supported yet: ${scope.type}`);
       }
 
-      this.scenarioScopeTracking.set(scenario, scope);
-    }
-
-    await this.provisionScope(scope);
-    return scope;
-  }
-
-  public scopePreparedExternal(
-    scopeInput: Pick<ScopeTracking, "env" | "armDeployments" | "provisioned">,
-    info: {
-      scenario?: Scenario;
-      scopeName?: string;
-      scenarioDef?: ScenarioDefinition;
-    }
-  ): void {
-    const { scenario, scopeName } = info;
-    const scenarioDef = scenario?._scenarioDef ?? info.scenarioDef;
-
-    if (scenarioDef === undefined) {
-      throw new Error("Either Scenario or ScenarioDef must be provided.");
-    }
-
-    const scope = {
-      scope: scenarioDef.scope,
-      prepareSteps: scenarioDef.prepareSteps,
-      cleanUpSteps: scenarioDef.cleanUpSteps,
-      ...scopeInput,
-    };
-    if (scopeName !== undefined) {
-      if (this.scopeTracking[scopeName] !== undefined) {
-        throw new Error(`Scope already created: ${scopeName}`);
+      if (scope.env.get("resourceGroupName") === undefined) {
+        scope.env.set("resourceGroupName", {
+          type: "string",
+          prefix: "apiTest-",
+        });
       }
+
+      this.generateValueFromPrefix(scope.env);
+
       this.scopeTracking[scopeName] = scope;
     }
 
-    if (scenario !== undefined) {
-      if (this.scenarioScopeTracking.get(scenario) !== undefined) {
-        throw new Error(
-          `Scope already created for scenario: ${scenario.description} , scopeName: ${scopeName}`
-        );
+    return scope;
+  }
+
+  private async cleanUpScope(scope: Scope): Promise<void> {
+    for (const step of scope.cleanUpSteps) {
+      await this.executeStep(step, scope.env, scope);
+    }
+    const subscriptionId = scope.env.getRequiredString("subscriptionId");
+    const resourceGroupName = scope.env.getRequiredString("resourceGroupName");
+    await this.client.deleteResourceGroup(subscriptionId, resourceGroupName);
+  }
+
+  private generateValueFromPrefix(env: VariableEnv) {
+    for (const [_, v] of env.getVariables()) {
+      if (v.type === "string" || v.type === "secureString") {
+        if (v.prefix !== undefined && v.value === undefined) {
+          v.value = v.prefix + getRandomString();
+        }
       }
-      this.scenarioScopeTracking.set(scenario, scope);
     }
   }
 
   public async executeScenario(scenario: Scenario) {
     const scope = await this.prepareScope(scenario);
-    const env = new VariableEnv(scope.env);
-    env.setBatch(scenario.variables);
+    const scenarioEnv = new VariableEnv(scope.env).setBatch(scenario.variables);
 
-    for (const step of scenario.steps) {
-      await this.executeStep(step, env, scope);
+    this.generateValueFromPrefix(scenarioEnv);
+
+    await this.client.prepareScenario(scenario, scenarioEnv);
+
+    await this.doProvisionScope(scope);
+
+    try {
+      for (const step of scenario.steps) {
+        await this.executeStep(step, scenarioEnv, scope);
+      }
+    } catch (e) {
+      throw new Error(`Failed to execute scenario: ${scenario.scenario}: e`);
+    } finally {
+      if (!this.skipCleanUp) {
+        await this.cleanUpScope(scope);
+      }
     }
   }
 
-  public async executeStep(step: Step, env: VariableEnv, scope: ScopeTracking) {
-    const stepEnv = new VariableEnv(env);
-    stepEnv.setBatch(step.variables);
-    // stepEnv.setDefault(step.defaultValues);
+  public async executeStep(step: Step, env: VariableEnv, scope: Scope) {
+    const stepEnv = new VariableEnv(env).setBatch(step.variables);
+
+    this.generateValueFromPrefix(stepEnv);
 
     if (this.resolveVariables) {
       stepEnv.resolve();
@@ -213,17 +208,6 @@ export class ApiScenarioRunner {
     }
   }
 
-  public async cleanAllScope() {
-    for (const scope of Object.values(this.scopeTracking)) {
-      for (const step of scope.cleanUpSteps) {
-        await this.executeStep(step, scope.env, scope);
-      }
-      const subscriptionId = scope.env.getRequiredString("subscriptionId");
-      const resourceGroupName = scope.env.getRequiredString("resourceGroupName");
-      await this.client.deleteResourceGroup(subscriptionId, resourceGroupName);
-    }
-  }
-
   private async executeRestCallStep(step: StepRestCall, env: VariableEnv) {
     let req: ApiScenarioClientRequest = {
       method: step.operation._method.toUpperCase() as HttpMethods,
@@ -237,8 +221,12 @@ export class ApiScenarioRunner {
       const param = this.jsonLoader.resolveRefObj(p);
 
       const paramVal = step.parameters[param.name];
-      if (paramVal === undefined && param.required && env.get(param.name) === undefined) {
-        throw new Error(`Parameter value for "${param.name}" is not found in step: ${step.step}`);
+      if (paramVal === undefined) {
+        if (param.required) {
+          throw new Error(`Parameter value for "${param.name}" is not found in step: ${step.step}`);
+        } else {
+          continue;
+        }
       }
 
       switch (param.in) {
@@ -266,24 +254,19 @@ export class ApiScenarioRunner {
     await this.client.sendRestCallRequest(req, step, env);
   }
 
-  private async executeArmTemplateStep(
-    step: StepArmTemplate,
-    env: VariableEnv,
-    scope: ScopeTracking
-  ) {
+  private async executeArmTemplateStep(step: StepArmTemplate, env: VariableEnv, scope: Scope) {
     const subscriptionId = env.getRequiredString("subscriptionId");
     const resourceGroupName = env.getRequiredString("resourceGroupName");
 
-    const armDeployment: ArmDeploymentTracking = {
+    const armDeployment: ArmDeployment = {
       deploymentName: `${resourceGroupName}-deploy-${getRandomString()}`,
       step,
       details: {
-        scope: scope.scope,
+        scope: scope.type,
         subscriptionId,
         resourceGroupName,
       },
     };
-    scope.armDeployments.push(armDeployment);
 
     if (this.resolveVariables) {
       step.armTemplatePayload = env.resolveObjectValues(step.armTemplatePayload);

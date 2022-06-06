@@ -12,6 +12,10 @@ import { jsonPatchApply } from "./diffUtils";
 const variableRegex = /\$\(([A-Za-z_][A-Za-z0-9_]*)\)/;
 const pathVariableRegex = /\{([A-Za-z_][A-Za-z0-9_]*)\}/;
 
+export class EnvironmentVariables {
+  [key: string]: string;
+}
+
 export class VariableEnv {
   protected baseEnv?: VariableEnv;
   protected data: { [key: string]: Variable } = {};
@@ -20,6 +24,24 @@ export class VariableEnv {
   public constructor(baseEnv?: VariableEnv) {
     if (baseEnv !== undefined) {
       this.baseEnv = baseEnv;
+    }
+  }
+
+  public *getVariables(): Iterable<[string, Variable]> {
+    const visitedSet = new Set<string>();
+    for (const key of Object.keys(this.data)) {
+      if (!visitedSet.has(key)) {
+        visitedSet.add(key);
+        yield [key, this.get(key)!];
+      }
+    }
+    if (this.baseEnv !== undefined) {
+      for (const [key, value] of this.baseEnv.getVariables()) {
+        if (!visitedSet.has(key)) {
+          visitedSet.add(key);
+          yield [key, value];
+        }
+      }
     }
   }
 
@@ -146,16 +168,14 @@ export class VariableEnv {
     this.baseEnv?.set(key, value);
   }
 
-  public setBatch(values: { [key: string]: Variable }) {
-    if (values === undefined) {
-      return;
-    }
+  public setBatch(values: { [key: string]: Variable }): VariableEnv {
     for (const [key, value] of Object.entries(values)) {
       this.set(key, value);
     }
+    return this;
   }
 
-  public setBatchEnv(environmentVariables: { [key: string]: string }) {
+  public setBatchEnv(environmentVariables: EnvironmentVariables): VariableEnv {
     for (const [key, value] of Object.entries(environmentVariables)) {
       const varType = this.getType(key) ?? "string";
       if (varType !== "string" && varType !== "secureString") {
@@ -166,6 +186,7 @@ export class VariableEnv {
         value,
       });
     }
+    return this;
   }
 
   public resolve() {
@@ -310,21 +331,5 @@ export class VariableEnv {
       }
     }
     return result;
-  }
-}
-
-export class ReflectiveVariableEnv extends VariableEnv {
-  public constructor(leftPart: string, rightPart: string) {
-    super(undefined);
-    const originalData = this.data;
-    this.data = new Proxy(this.data, {
-      get: (_, propertyKey): Variable => {
-        const key = propertyKey as string;
-        const val = originalData[key];
-        return val === undefined
-          ? { type: "string", value: `${leftPart}${propertyKey as string}${rightPart}` }
-          : val;
-      },
-    });
   }
 }
