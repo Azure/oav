@@ -107,10 +107,6 @@ export class PostmanCollectionGenerator {
     });
 
     for (const scenario of scenarioDef.scenarios) {
-      client.setOpt({
-        apiScenarioName: scenario.scenario,
-      });
-
       await runner.executeScenario(scenario);
 
       const [collection, runtimeEnv] = client.outputCollection();

@@ -15,9 +15,8 @@ import {
   ApiScenarioClientRequest,
   ApiScenarioRunnerClient,
   ArmDeployment,
-  Scope,
 } from "./apiScenarioRunner";
-import { ArmTemplate, StepArmTemplate, StepRestCall } from "./apiScenarioTypes";
+import { ArmTemplate, Scenario, StepArmTemplate, StepRestCall } from "./apiScenarioTypes";
 import { generatedGet, generatedPostmanItem } from "./defaultNaming";
 import { typeToDescription } from "./postmanItemTypes";
 import * as PostmanHelper from "./postmanHelper";
@@ -50,11 +49,10 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     } as PostmanCollectionRunnerClientOption);
   }
 
-  public setOpt(opt: Partial<PostmanCollectionRunnerClientOption>) {
-    this.opts = { ...this.opts, ...opt };
-  }
+  public async prepareScenario(scenario: Scenario, env: VariableEnv): Promise<void> {
+    this.opts.apiScenarioName = scenario.scenario;
+    this.opts.apiScenarioFileName = scenario._scenarioDef._filePath;
 
-  public async provisionScope(scope: Scope): Promise<void> {
     this.collection = new Collection({
       info: {
         id: this.opts.runId,
@@ -82,17 +80,17 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       PostmanHelper.createEvent("prerequest", PostmanHelper.generateAuthScript(this.opts.baseUrl))
     );
 
-    scope.env.resolve();
+    env.resolve();
 
     this.runtimeEnv = new VariableScope({});
-    this.runtimeEnv.set("tenantId", scope.env.get("tenantId")?.value, "string");
-    this.runtimeEnv.set("client_id", scope.env.get("client_id")?.value, "string");
-    this.runtimeEnv.set("client_secret", scope.env.get("client_secret")?.value, "string");
-    this.runtimeEnv.set("subscriptionId", scope.env.get("subscriptionId")?.value, "string");
-    this.runtimeEnv.set("resourceGroupName", scope.env.get("resourceGroupName")?.value, "string");
-    this.runtimeEnv.set("location", scope.env.get("location")?.value, "string");
+    this.runtimeEnv.set("tenantId", env.get("tenantId")?.value, "string");
+    this.runtimeEnv.set("client_id", env.get("client_id")?.value, "string");
+    this.runtimeEnv.set("client_secret", env.get("client_secret")?.value, "string");
+    this.runtimeEnv.set("subscriptionId", env.get("subscriptionId")?.value, "string");
+    this.runtimeEnv.set("resourceGroupName", env.get("resourceGroupName")?.value, "string");
+    this.runtimeEnv.set("location", env.get("location")?.value, "string");
 
-    for (const [name, variable] of scope.env.getVariables()) {
+    for (const [name, variable] of env.getVariables()) {
       if (!this.runtimeEnv.has(name) && !this.collection.variables.has(name)) {
         if (variable.type === "secureString" || variable.type === "secureObject") {
           this.runtimeEnv.set(name, variable.value, "secret");
@@ -108,7 +106,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       }
     }
 
-    PostmanHelper.reservedVariables.forEach((variable) => {
+    PostmanHelper.reservedCollectionVariables.forEach((variable) => {
       if (!this.collection.variables.has(variable.key)) {
         this.collection.variables.add(new Variable(variable));
       }
