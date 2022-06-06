@@ -36,7 +36,6 @@ export interface Scope {
   prepareSteps: Step[];
   cleanUpSteps: Step[];
   env: VariableEnv;
-  shared: boolean;
 }
 
 export interface ApiScenarioClientRequest {
@@ -107,9 +106,7 @@ export class ApiScenarioRunner {
   private async prepareScope(scenario: Scenario): Promise<Scope> {
     const scopeName = scenario.shareScope ? "_defaultScope" : `_randomScope_${getRandomString()}`;
     let scope = this.scopeTracking[scopeName];
-    if (scope !== undefined) {
-      scope.shared = true;
-    } else {
+    if (scope === undefined) {
       const scenarioDef = scenario._scenarioDef;
       // Variable scope: ScenarioDef <= RuntimeScope <= Scenario <= Step
       const scopeEnv =
@@ -123,7 +120,6 @@ export class ApiScenarioRunner {
         prepareSteps: scenarioDef.prepareSteps,
         cleanUpSteps: scenarioDef.cleanUpSteps,
         env: scopeEnv,
-        shared: false,
       };
 
       if (scope.type !== "ResourceGroup") {
@@ -181,7 +177,7 @@ export class ApiScenarioRunner {
     } catch (e) {
       throw new Error(`Failed to execute scenario: ${scenario.scenario}: e`);
     } finally {
-      if (!this.skipCleanUp && !scope.shared) {
+      if (!this.skipCleanUp) {
         await this.cleanUpScope(scope);
       }
     }

@@ -83,6 +83,9 @@ export class PostmanCollectionGenerator {
       }
     }
     this.opt.runId = this.opt.runId || generateRunId();
+    this.opt.skipCleanUp =
+      this.opt.skipCleanUp || scenarioDef.scenarios.filter((s) => s.shareScope).length > 1;
+
     if (this.opt.markdownReportPath) {
       await this.fileLoader.writeFile(this.opt.markdownReportPath, generateMarkdownReportHeader());
     }
