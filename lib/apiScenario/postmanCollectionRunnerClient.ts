@@ -108,7 +108,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       }
     }
 
-    PostmanHelper.reservedCollectionVariables.forEach((variable) => {
+    PostmanHelper.reservedVariables.forEach((variable) => {
       if (!this.collection.variables.has(variable.key)) {
         this.collection.variables.add(new Variable(variable));
       }

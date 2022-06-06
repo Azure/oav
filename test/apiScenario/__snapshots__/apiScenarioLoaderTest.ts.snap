@@ -74,6 +74,7 @@ Object {
       ],
       "scenario": "basic",
       "secretVariables": Array [],
+      "shareScope": true,
       "steps": Array [
         Object {
           "description": undefined,
@@ -195,6 +196,7 @@ Object {
       ],
       "scenario": "overrideVariable",
       "secretVariables": Array [],
+      "shareScope": true,
       "steps": Array [
         Object {
           "description": undefined,
@@ -321,6 +323,7 @@ Object {
       ],
       "scenario": "primitiveParameter",
       "secretVariables": Array [],
+      "shareScope": true,
       "steps": Array [
         Object {
           "description": undefined,
@@ -1680,6 +1683,7 @@ Object {
       ],
       "scenario": "SignalR",
       "secretVariables": Array [],
+      "shareScope": true,
       "steps": Array [
         Object {
           "armTemplate": "./peArmTemplate/Generate_Unique_name_template.json",
