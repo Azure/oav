@@ -42,7 +42,6 @@ $ oav -h    Commands:
   generate-report [raw-report-path]         Generate report from postman report.
   generate-api-scenario                     Generate swagger examples from real
                                             payload records.
-  generate-static-api-scenario              Generate API-scenario from swagger.
   generate-uml <spec-path>                  Generates a class diagram of the
                                             model definitions in the given
                                             swagger spec.
