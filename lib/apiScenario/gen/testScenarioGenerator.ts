@@ -453,6 +453,8 @@ const typeMap = {
   secureObject: "6",
 };
 
+const unreplaceWords = ["default"];
+
 const convertVariables = (root: Scenario["variables"], scopes: RawVariableScope[]) => {
   const keyToVariables = new Map<string, Array<Variable>>();
   scopes.forEach((v) => {
@@ -474,17 +476,24 @@ const convertVariables = (root: Scenario["variables"], scopes: RawVariableScope[
     }
     const old = cloneDeep(vars[0]);
     const [keyName] = key.split("_");
-    if (root[keyName] !== undefined) {
-      if (old.type === "string") {
+    if (old.type === "string") {
+      if (unreplaceWords.includes(old.value!)) {
+        return;
+      }
+      if (root[keyName] !== undefined) {
         for (let i = 1; ; i++) {
           key = `${keyName}${i}`;
           if (root[key] === undefined) {
             break;
           }
         }
-        root[key] = old;
-        replaceAllString(old.value!, key, scopes);
+      } else {
+        key = keyName;
       }
+      root[key] = old;
+      replaceAllString(old.value!, key, scopes);
+    }
+    if (root[keyName] !== undefined) {
       return;
     }
     root[keyName] = old;
@@ -525,8 +534,12 @@ const convertVariables = (root: Scenario["variables"], scopes: RawVariableScope[
 const replaceAllString = (toMatch: string, key: string, scopes: RawVariableScope[]) => {
   toMatch = toMatch.toLowerCase();
   scopes.forEach((v) => {
-    Object.values(v.variables ?? {}).forEach((value) => {
+    Object.entries(v.variables ?? {}).forEach(([k, value]) => {
       replaceAllInObject(value, [toMatch], { [`${toMatch}`]: `$(${key})` });
+      value = value as Variable;
+      if (value.type === "string" && value.value === `$(${k})`) {
+        delete v.variables![k];
+      }
     });
   });
 };
