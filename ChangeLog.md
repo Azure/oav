@@ -1,8 +1,10 @@
 # Change Log - oav
 
-## 04/20/2022 2.12.2
+## 05/27/2022 2.12.2
 
 - LiveValidator - Get real schema and data while error's schema has allOf property
+- TrafficValidator - Refine validation report
+- SemanticValidator - Support arm-id format for string type
 
 ## 04/20/2022 2.12.1
 
