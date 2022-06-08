@@ -215,10 +215,15 @@ describe("Semantic validation", () => {
     });
     // MULTIPLE_BODY_PARAMETERS
     it("should fail when operation has multiple body parameters", async () => {
-      const specPath = `${testPath}/semanticValidation/specification/validateOperation/MULTIPLE_BODY_PARAMETERS.json`;
+      const specPath = `${testPath}/semanticValidation/specification/validateOperation/MULTIPLE_BODY_PARAMETERS/MULTIPLE_BODY_PARAMETERS.json`;
       const result = await validate.validateSpec(specPath, undefined);
       assert(result.validityStatus === false);
       assert.strictEqual(result.validateSpec?.errors?.[0].code, "MULTIPLE_BODY_PARAMETERS");
+    });
+    it("should pass when operation has multiple body parameters and consumes has multipart/form-data", async () => {
+      const specPath = `${testPath}/semanticValidation/specification/validateOperation/MULTIPLE_BODY_PARAMETERS/multipartFormData.json`;
+      const result = await validate.validateSpec(specPath, undefined);
+      assert(result.validityStatus === true);
     });
     // INVALID_PARAMETER_COMBINATION
     it("should fail when operation has a body parameter and a formData parameter", async () => {
