@@ -303,7 +303,6 @@ export class ApiScenarioGenerator {
 
   private async generateGraph() {
     this.graph = new Map<string, Node>();
-    // let yuml = "";
     const dependencies = (await this.jsonLoader.load(this.opts.dependencyPath)) as Dependencies;
     for (const path of Object.keys(dependencies)) {
       if (!path.startsWith("/")) {
@@ -315,7 +314,6 @@ export class ApiScenarioGenerator {
           console.warn(`can't find operationId, ${path} ${method}`);
           continue;
         }
-        // yuml += `[root]->[${operationId}]\n`;
         const node = this.getNode(operationId);
         node.method = method.toLowerCase() as LowerHttpMethods;
 
@@ -329,18 +327,10 @@ export class ApiScenarioGenerator {
               dependency.producer_method
             );
             this.addDependency(operationId, producerOperationId);
-            // yuml += `[${operationId}]->[${producerOperationId}]\n`;
           }
         }
       }
     }
-
-    // const svg = await yuml2svg(yuml, {
-    //   isDark: false,
-    //   type: "class",
-    //   dir: "LR",
-    // });
-    // await this.fileLoader.writeFile("test.svg", svg);
   }
 
   private addDependency(operationId: string, producerOperationId: string) {

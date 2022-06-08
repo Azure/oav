@@ -264,11 +264,11 @@ export class SwaggerAnalyzer {
     return this.exampleDependencyMapping.get(exampleFilePath);
   }
 
-  public async initialize(swaggers: string[] = []) {
+  public async initialize() {
     if (this.initialized) {
       throw new Error("Already initialized");
     }
-    for (const swaggerFilePath of this.opts.swaggerFilePaths ?? swaggers) {
+    for (const swaggerFilePath of this.opts.swaggerFilePaths ?? []) {
       const swaggerSpec = await this.swaggerLoader.load(swaggerFilePath);
       this.swaggerSpecs.push(swaggerSpec);
       applySpecTransformers(swaggerSpec, this.transformContext);

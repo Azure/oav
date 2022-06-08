@@ -74,7 +74,7 @@ export class PostmanCollectionGenerator {
   public async run(): Promise<Collection[]> {
     const scenarioDef = await this.apiScenarioLoader.load(this.opt.scenarioDef);
 
-    await this.swaggerAnalyzer.initialize(this.opt.swaggerFilePaths);
+    await this.swaggerAnalyzer.initialize();
     for (const it of scenarioDef.requiredVariables) {
       if (this.opt.env[it] === undefined) {
         throw new Error(
