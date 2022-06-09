@@ -123,7 +123,7 @@ export type RawStepOperation = RawStepBase & {
   operationId: string;
   readmeTag?: string;
   parameters?: { [parameterName: string]: VarValue };
-  responses?: SwaggerExample["responses"];
+  responses?: StepResponseAssertion;
 };
 
 export type StepRestCallExample = StepBase & {};
@@ -137,8 +137,16 @@ export type StepRestCall = StepBase & {
   exampleFile?: string;
   parameters: SwaggerExample["parameters"];
   responses: SwaggerExample["responses"];
+  responseAssertion?: StepResponseAssertion;
   outputVariables?: OutputVariables;
 };
+
+export type StepResponseAssertion =
+  | {
+      headers?: { [headerName: string]: string };
+      body?: any;
+    }
+  | Array<JsonPatchOpTest>;
 
 //#endregion
 
@@ -261,7 +269,8 @@ export interface JsonPatchOpMove {
 
 export interface JsonPatchOpTest {
   test: string;
-  value: any;
+  value?: any;
+  expression?: string;
 }
 
 export type JsonPatchOp =

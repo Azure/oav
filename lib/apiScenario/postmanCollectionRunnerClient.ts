@@ -16,7 +16,13 @@ import {
   ApiScenarioRunnerClient,
   ArmDeployment,
 } from "./apiScenarioRunner";
-import { ArmTemplate, Scenario, StepArmTemplate, StepRestCall } from "./apiScenarioTypes";
+import {
+  ArmTemplate,
+  Scenario,
+  StepArmTemplate,
+  StepResponseAssertion,
+  StepRestCall,
+} from "./apiScenarioTypes";
 import { generatedGet, generatedPostmanItem } from "./defaultNaming";
 import { typeToDescription } from "./postmanItemTypes";
 import * as PostmanHelper from "./postmanHelper";
@@ -357,7 +363,17 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     const scriptTypes: PostmanHelper.TestScriptType[] = this.opts.verbose
       ? ["DetailResponseLog", "StatusCodeAssertion"]
       : ["StatusCodeAssertion"];
-    this.addTestScript(item, scriptTypes, getOverwriteVariables());
+
+    if (step.responseAssertion) {
+      scriptTypes.push("ResponseDataAssertion");
+    }
+    this.addTestScript(
+      item,
+      scriptTypes,
+      getOverwriteVariables(),
+      undefined,
+      step.responseAssertion
+    );
 
     if (step.operation["x-ms-long-running-operation"]) {
       item.description = typeToDescription({
@@ -418,7 +434,8 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     item: Item,
     types: PostmanHelper.TestScriptType[] = ["StatusCodeAssertion"],
     overwriteVariables?: Map<string, string>,
-    armTemplate?: ArmTemplate
+    armTemplate?: ArmTemplate,
+    responseAssertion?: StepResponseAssertion
   ) {
     if (this.opts.verbose) {
       types.push("DetailResponseLog");
@@ -438,6 +455,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
         types: types,
         variables: overwriteVariables,
         armTemplate,
+        responseAssertion,
       })
     );
     item.events.add(testEvent);
