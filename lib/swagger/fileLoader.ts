@@ -98,6 +98,7 @@ export class FileLoader implements Loader<string> {
   }
 
   public preloadExtraFile(filePath: string, content: string) {
+    filePath = this.resolvePath(filePath);
     this.preloadCache.set(filePath, content);
   }
 }
