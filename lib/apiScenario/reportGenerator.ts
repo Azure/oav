@@ -220,7 +220,7 @@ export class ReportGenerator {
             }
           }
           await this.writeExample(`${matchedStep.description ?? matchedStep.step}.json`, example);
-          console.log(`Generated example ${matchedStep.step}: ${JSON.stringify(example, null, 2)}`);
+          // console.log(`Generated example ${matchedStep.step}: ${JSON.stringify(example, null, 2)}`);
         }
         if (it.annotation.exampleName) {
           generatedExample = this.generateExample(
