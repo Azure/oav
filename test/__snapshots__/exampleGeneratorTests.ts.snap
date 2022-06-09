@@ -1,0 +1,769 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test generate example from mocker,readme:eventgrid: ,tag:package-2020-06 1`] = `
+Array [
+  Object {
+    "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
+    "exampleJsonPath": "$response.201",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 16,
+    },
+    "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedDatabases_CreateOrUpdate_MaximumSet_Gen.json",
+    "message": "Response statusCode 201 for operation ManagedDatabases_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
+    "operationId": "ManagedDatabases_CreateOrUpdate",
+    "schemaJsonPath": undefined,
+    "schemaPosition": Object {
+      "column": 22,
+      "line": 146,
+    },
+    "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
+    "severity": 0,
+    "source": "response",
+  },
+  "the validation raised below error:",
+  Array [
+    Object {
+      "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
+      "exampleJsonPath": "$response.201",
+      "examplePosition": Object {
+        "column": 16,
+        "line": 16,
+      },
+      "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedDatabases_CreateOrUpdate_MaximumSet_Gen.json",
+      "message": "Response statusCode 201 for operation ManagedDatabases_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
+      "operationId": "ManagedDatabases_CreateOrUpdate",
+      "schemaJsonPath": undefined,
+      "schemaPosition": Object {
+        "column": 22,
+        "line": 146,
+      },
+      "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
+      "severity": 0,
+      "source": "response",
+    },
+  ],
+  Object {
+    "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
+    "exampleJsonPath": "$response.201",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 14,
+    },
+    "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
+    "message": "Response statusCode 201 for operation ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
+    "operationId": "ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate",
+    "schemaJsonPath": undefined,
+    "schemaPosition": Object {
+      "column": 22,
+      "line": 120,
+    },
+    "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedInstanceAzureADOnlyAuthentications.json",
+    "severity": 0,
+    "source": "response",
+  },
+  "the validation raised below error:",
+  Array [
+    Object {
+      "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
+      "exampleJsonPath": "$response.201",
+      "examplePosition": Object {
+        "column": 16,
+        "line": 14,
+      },
+      "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
+      "message": "Response statusCode 201 for operation ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
+      "operationId": "ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate",
+      "schemaJsonPath": undefined,
+      "schemaPosition": Object {
+        "column": 22,
+        "line": 120,
+      },
+      "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedInstanceAzureADOnlyAuthentications.json",
+      "severity": 0,
+      "source": "response",
+    },
+  ],
+  Object {
+    "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
+    "exampleJsonPath": "$response.201",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 14,
+    },
+    "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ServerAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
+    "message": "Response statusCode 201 for operation ServerAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
+    "operationId": "ServerAzureADOnlyAuthentications_CreateOrUpdate",
+    "schemaJsonPath": undefined,
+    "schemaPosition": Object {
+      "column": 22,
+      "line": 120,
+    },
+    "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ServerAzureADOnlyAuthentications.json",
+    "severity": 0,
+    "source": "response",
+  },
+  "the validation raised below error:",
+  Array [
+    Object {
+      "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
+      "exampleJsonPath": "$response.201",
+      "examplePosition": Object {
+        "column": 16,
+        "line": 14,
+      },
+      "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ServerAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
+      "message": "Response statusCode 201 for operation ServerAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
+      "operationId": "ServerAzureADOnlyAuthentications_CreateOrUpdate",
+      "schemaJsonPath": undefined,
+      "schemaPosition": Object {
+        "column": 22,
+        "line": 120,
+      },
+      "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ServerAzureADOnlyAuthentications.json",
+      "severity": 0,
+      "source": "response",
+    },
+  ],
+]
+`;
+
+exports[`test generate example from mocker,readme:signalr: ,tag:package-2020-05-01 1`] = `
+Array [
+  Object {
+    "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
+    "exampleJsonPath": "$response.201",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 16,
+    },
+    "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedDatabases_CreateOrUpdate_MaximumSet_Gen.json",
+    "message": "Response statusCode 201 for operation ManagedDatabases_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
+    "operationId": "ManagedDatabases_CreateOrUpdate",
+    "schemaJsonPath": undefined,
+    "schemaPosition": Object {
+      "column": 22,
+      "line": 146,
+    },
+    "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
+    "severity": 0,
+    "source": "response",
+  },
+  "the validation raised below error:",
+  Array [
+    Object {
+      "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
+      "exampleJsonPath": "$response.201",
+      "examplePosition": Object {
+        "column": 16,
+        "line": 16,
+      },
+      "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedDatabases_CreateOrUpdate_MaximumSet_Gen.json",
+      "message": "Response statusCode 201 for operation ManagedDatabases_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
+      "operationId": "ManagedDatabases_CreateOrUpdate",
+      "schemaJsonPath": undefined,
+      "schemaPosition": Object {
+        "column": 22,
+        "line": 146,
+      },
+      "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
+      "severity": 0,
+      "source": "response",
+    },
+  ],
+  Object {
+    "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
+    "exampleJsonPath": "$response.201",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 14,
+    },
+    "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
+    "message": "Response statusCode 201 for operation ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
+    "operationId": "ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate",
+    "schemaJsonPath": undefined,
+    "schemaPosition": Object {
+      "column": 22,
+      "line": 120,
+    },
+    "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedInstanceAzureADOnlyAuthentications.json",
+    "severity": 0,
+    "source": "response",
+  },
+  "the validation raised below error:",
+  Array [
+    Object {
+      "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
+      "exampleJsonPath": "$response.201",
+      "examplePosition": Object {
+        "column": 16,
+        "line": 14,
+      },
+      "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
+      "message": "Response statusCode 201 for operation ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
+      "operationId": "ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate",
+      "schemaJsonPath": undefined,
+      "schemaPosition": Object {
+        "column": 22,
+        "line": 120,
+      },
+      "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedInstanceAzureADOnlyAuthentications.json",
+      "severity": 0,
+      "source": "response",
+    },
+  ],
+  Object {
+    "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
+    "exampleJsonPath": "$response.201",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 14,
+    },
+    "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ServerAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
+    "message": "Response statusCode 201 for operation ServerAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
+    "operationId": "ServerAzureADOnlyAuthentications_CreateOrUpdate",
+    "schemaJsonPath": undefined,
+    "schemaPosition": Object {
+      "column": 22,
+      "line": 120,
+    },
+    "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ServerAzureADOnlyAuthentications.json",
+    "severity": 0,
+    "source": "response",
+  },
+  "the validation raised below error:",
+  Array [
+    Object {
+      "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
+      "exampleJsonPath": "$response.201",
+      "examplePosition": Object {
+        "column": 16,
+        "line": 14,
+      },
+      "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ServerAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
+      "message": "Response statusCode 201 for operation ServerAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
+      "operationId": "ServerAzureADOnlyAuthentications_CreateOrUpdate",
+      "schemaJsonPath": undefined,
+      "schemaPosition": Object {
+        "column": 22,
+        "line": 120,
+      },
+      "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ServerAzureADOnlyAuthentications.json",
+      "severity": 0,
+      "source": "response",
+    },
+  ],
+]
+`;
+
+exports[`test generate example from mocker,readme:sql: ,tag:package-pure-2020-02-preview 1`] = `
+Array [
+  Object {
+    "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
+    "exampleJsonPath": "$response.201",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 16,
+    },
+    "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedDatabases_CreateOrUpdate_MaximumSet_Gen.json",
+    "message": "Response statusCode 201 for operation ManagedDatabases_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
+    "operationId": "ManagedDatabases_CreateOrUpdate",
+    "schemaJsonPath": undefined,
+    "schemaPosition": Object {
+      "column": 22,
+      "line": 146,
+    },
+    "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
+    "severity": 0,
+    "source": "response",
+  },
+  "the validation raised below error:",
+  Array [
+    Object {
+      "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
+      "exampleJsonPath": "$response.201",
+      "examplePosition": Object {
+        "column": 16,
+        "line": 16,
+      },
+      "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedDatabases_CreateOrUpdate_MaximumSet_Gen.json",
+      "message": "Response statusCode 201 for operation ManagedDatabases_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
+      "operationId": "ManagedDatabases_CreateOrUpdate",
+      "schemaJsonPath": undefined,
+      "schemaPosition": Object {
+        "column": 22,
+        "line": 146,
+      },
+      "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
+      "severity": 0,
+      "source": "response",
+    },
+  ],
+  Object {
+    "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
+    "exampleJsonPath": "$response.201",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 14,
+    },
+    "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
+    "message": "Response statusCode 201 for operation ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
+    "operationId": "ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate",
+    "schemaJsonPath": undefined,
+    "schemaPosition": Object {
+      "column": 22,
+      "line": 120,
+    },
+    "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedInstanceAzureADOnlyAuthentications.json",
+    "severity": 0,
+    "source": "response",
+  },
+  "the validation raised below error:",
+  Array [
+    Object {
+      "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
+      "exampleJsonPath": "$response.201",
+      "examplePosition": Object {
+        "column": 16,
+        "line": 14,
+      },
+      "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
+      "message": "Response statusCode 201 for operation ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
+      "operationId": "ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate",
+      "schemaJsonPath": undefined,
+      "schemaPosition": Object {
+        "column": 22,
+        "line": 120,
+      },
+      "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedInstanceAzureADOnlyAuthentications.json",
+      "severity": 0,
+      "source": "response",
+    },
+  ],
+  Object {
+    "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
+    "exampleJsonPath": "$response.201",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 14,
+    },
+    "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ServerAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
+    "message": "Response statusCode 201 for operation ServerAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
+    "operationId": "ServerAzureADOnlyAuthentications_CreateOrUpdate",
+    "schemaJsonPath": undefined,
+    "schemaPosition": Object {
+      "column": 22,
+      "line": 120,
+    },
+    "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ServerAzureADOnlyAuthentications.json",
+    "severity": 0,
+    "source": "response",
+  },
+  "the validation raised below error:",
+  Array [
+    Object {
+      "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
+      "exampleJsonPath": "$response.201",
+      "examplePosition": Object {
+        "column": 16,
+        "line": 14,
+      },
+      "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ServerAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
+      "message": "Response statusCode 201 for operation ServerAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
+      "operationId": "ServerAzureADOnlyAuthentications_CreateOrUpdate",
+      "schemaJsonPath": undefined,
+      "schemaPosition": Object {
+        "column": 22,
+        "line": 120,
+      },
+      "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ServerAzureADOnlyAuthentications.json",
+      "severity": 0,
+      "source": "response",
+    },
+  ],
+]
+`;
+
+exports[`test generate example from payload,rp:eventgrid: ,tag:package-2020-06 1`] = `
+Array [
+  Object {
+    "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
+    "exampleJsonPath": "$response.201",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 16,
+    },
+    "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedDatabases_CreateOrUpdate_MaximumSet_Gen.json",
+    "message": "Response statusCode 201 for operation ManagedDatabases_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
+    "operationId": "ManagedDatabases_CreateOrUpdate",
+    "schemaJsonPath": undefined,
+    "schemaPosition": Object {
+      "column": 22,
+      "line": 146,
+    },
+    "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
+    "severity": 0,
+    "source": "response",
+  },
+  "the validation raised below error:",
+  Array [
+    Object {
+      "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
+      "exampleJsonPath": "$response.201",
+      "examplePosition": Object {
+        "column": 16,
+        "line": 16,
+      },
+      "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedDatabases_CreateOrUpdate_MaximumSet_Gen.json",
+      "message": "Response statusCode 201 for operation ManagedDatabases_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
+      "operationId": "ManagedDatabases_CreateOrUpdate",
+      "schemaJsonPath": undefined,
+      "schemaPosition": Object {
+        "column": 22,
+        "line": 146,
+      },
+      "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
+      "severity": 0,
+      "source": "response",
+    },
+  ],
+  Object {
+    "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
+    "exampleJsonPath": "$response.201",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 14,
+    },
+    "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
+    "message": "Response statusCode 201 for operation ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
+    "operationId": "ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate",
+    "schemaJsonPath": undefined,
+    "schemaPosition": Object {
+      "column": 22,
+      "line": 120,
+    },
+    "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedInstanceAzureADOnlyAuthentications.json",
+    "severity": 0,
+    "source": "response",
+  },
+  "the validation raised below error:",
+  Array [
+    Object {
+      "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
+      "exampleJsonPath": "$response.201",
+      "examplePosition": Object {
+        "column": 16,
+        "line": 14,
+      },
+      "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
+      "message": "Response statusCode 201 for operation ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
+      "operationId": "ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate",
+      "schemaJsonPath": undefined,
+      "schemaPosition": Object {
+        "column": 22,
+        "line": 120,
+      },
+      "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedInstanceAzureADOnlyAuthentications.json",
+      "severity": 0,
+      "source": "response",
+    },
+  ],
+  Object {
+    "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
+    "exampleJsonPath": "$response.201",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 14,
+    },
+    "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ServerAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
+    "message": "Response statusCode 201 for operation ServerAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
+    "operationId": "ServerAzureADOnlyAuthentications_CreateOrUpdate",
+    "schemaJsonPath": undefined,
+    "schemaPosition": Object {
+      "column": 22,
+      "line": 120,
+    },
+    "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ServerAzureADOnlyAuthentications.json",
+    "severity": 0,
+    "source": "response",
+  },
+  "the validation raised below error:",
+  Array [
+    Object {
+      "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
+      "exampleJsonPath": "$response.201",
+      "examplePosition": Object {
+        "column": 16,
+        "line": 14,
+      },
+      "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ServerAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
+      "message": "Response statusCode 201 for operation ServerAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
+      "operationId": "ServerAzureADOnlyAuthentications_CreateOrUpdate",
+      "schemaJsonPath": undefined,
+      "schemaPosition": Object {
+        "column": 22,
+        "line": 120,
+      },
+      "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ServerAzureADOnlyAuthentications.json",
+      "severity": 0,
+      "source": "response",
+    },
+  ],
+]
+`;
+
+exports[`test generate example from payload,rp:signalr: ,tag:package-2020-05-01 1`] = `
+Array [
+  Object {
+    "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
+    "exampleJsonPath": "$response.201",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 16,
+    },
+    "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedDatabases_CreateOrUpdate_MaximumSet_Gen.json",
+    "message": "Response statusCode 201 for operation ManagedDatabases_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
+    "operationId": "ManagedDatabases_CreateOrUpdate",
+    "schemaJsonPath": undefined,
+    "schemaPosition": Object {
+      "column": 22,
+      "line": 146,
+    },
+    "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
+    "severity": 0,
+    "source": "response",
+  },
+  "the validation raised below error:",
+  Array [
+    Object {
+      "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
+      "exampleJsonPath": "$response.201",
+      "examplePosition": Object {
+        "column": 16,
+        "line": 16,
+      },
+      "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedDatabases_CreateOrUpdate_MaximumSet_Gen.json",
+      "message": "Response statusCode 201 for operation ManagedDatabases_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
+      "operationId": "ManagedDatabases_CreateOrUpdate",
+      "schemaJsonPath": undefined,
+      "schemaPosition": Object {
+        "column": 22,
+        "line": 146,
+      },
+      "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
+      "severity": 0,
+      "source": "response",
+    },
+  ],
+  Object {
+    "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
+    "exampleJsonPath": "$response.201",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 14,
+    },
+    "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
+    "message": "Response statusCode 201 for operation ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
+    "operationId": "ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate",
+    "schemaJsonPath": undefined,
+    "schemaPosition": Object {
+      "column": 22,
+      "line": 120,
+    },
+    "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedInstanceAzureADOnlyAuthentications.json",
+    "severity": 0,
+    "source": "response",
+  },
+  "the validation raised below error:",
+  Array [
+    Object {
+      "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
+      "exampleJsonPath": "$response.201",
+      "examplePosition": Object {
+        "column": 16,
+        "line": 14,
+      },
+      "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
+      "message": "Response statusCode 201 for operation ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
+      "operationId": "ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate",
+      "schemaJsonPath": undefined,
+      "schemaPosition": Object {
+        "column": 22,
+        "line": 120,
+      },
+      "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedInstanceAzureADOnlyAuthentications.json",
+      "severity": 0,
+      "source": "response",
+    },
+  ],
+  Object {
+    "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
+    "exampleJsonPath": "$response.201",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 14,
+    },
+    "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ServerAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
+    "message": "Response statusCode 201 for operation ServerAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
+    "operationId": "ServerAzureADOnlyAuthentications_CreateOrUpdate",
+    "schemaJsonPath": undefined,
+    "schemaPosition": Object {
+      "column": 22,
+      "line": 120,
+    },
+    "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ServerAzureADOnlyAuthentications.json",
+    "severity": 0,
+    "source": "response",
+  },
+  "the validation raised below error:",
+  Array [
+    Object {
+      "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
+      "exampleJsonPath": "$response.201",
+      "examplePosition": Object {
+        "column": 16,
+        "line": 14,
+      },
+      "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ServerAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
+      "message": "Response statusCode 201 for operation ServerAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
+      "operationId": "ServerAzureADOnlyAuthentications_CreateOrUpdate",
+      "schemaJsonPath": undefined,
+      "schemaPosition": Object {
+        "column": 22,
+        "line": 120,
+      },
+      "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ServerAzureADOnlyAuthentications.json",
+      "severity": 0,
+      "source": "response",
+    },
+  ],
+]
+`;
+
+exports[`test generate example from payload,rp:sql: ,tag:package-pure-2020-02-preview 1`] = `
+Array [
+  Object {
+    "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
+    "exampleJsonPath": "$response.201",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 16,
+    },
+    "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedDatabases_CreateOrUpdate_MaximumSet_Gen.json",
+    "message": "Response statusCode 201 for operation ManagedDatabases_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
+    "operationId": "ManagedDatabases_CreateOrUpdate",
+    "schemaJsonPath": undefined,
+    "schemaPosition": Object {
+      "column": 22,
+      "line": 146,
+    },
+    "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
+    "severity": 0,
+    "source": "response",
+  },
+  "the validation raised below error:",
+  Array [
+    Object {
+      "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
+      "exampleJsonPath": "$response.201",
+      "examplePosition": Object {
+        "column": 16,
+        "line": 16,
+      },
+      "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedDatabases_CreateOrUpdate_MaximumSet_Gen.json",
+      "message": "Response statusCode 201 for operation ManagedDatabases_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
+      "operationId": "ManagedDatabases_CreateOrUpdate",
+      "schemaJsonPath": undefined,
+      "schemaPosition": Object {
+        "column": 22,
+        "line": 146,
+      },
+      "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
+      "severity": 0,
+      "source": "response",
+    },
+  ],
+  Object {
+    "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
+    "exampleJsonPath": "$response.201",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 14,
+    },
+    "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
+    "message": "Response statusCode 201 for operation ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
+    "operationId": "ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate",
+    "schemaJsonPath": undefined,
+    "schemaPosition": Object {
+      "column": 22,
+      "line": 120,
+    },
+    "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedInstanceAzureADOnlyAuthentications.json",
+    "severity": 0,
+    "source": "response",
+  },
+  "the validation raised below error:",
+  Array [
+    Object {
+      "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
+      "exampleJsonPath": "$response.201",
+      "examplePosition": Object {
+        "column": 16,
+        "line": 14,
+      },
+      "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
+      "message": "Response statusCode 201 for operation ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
+      "operationId": "ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate",
+      "schemaJsonPath": undefined,
+      "schemaPosition": Object {
+        "column": 22,
+        "line": 120,
+      },
+      "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedInstanceAzureADOnlyAuthentications.json",
+      "severity": 0,
+      "source": "response",
+    },
+  ],
+  Object {
+    "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
+    "exampleJsonPath": "$response.201",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 14,
+    },
+    "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ServerAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
+    "message": "Response statusCode 201 for operation ServerAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
+    "operationId": "ServerAzureADOnlyAuthentications_CreateOrUpdate",
+    "schemaJsonPath": undefined,
+    "schemaPosition": Object {
+      "column": 22,
+      "line": 120,
+    },
+    "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ServerAzureADOnlyAuthentications.json",
+    "severity": 0,
+    "source": "response",
+  },
+  "the validation raised below error:",
+  Array [
+    Object {
+      "code": "RESPONSE_BODY_NOT_IN_EXAMPLE",
+      "exampleJsonPath": "$response.201",
+      "examplePosition": Object {
+        "column": 16,
+        "line": 14,
+      },
+      "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ServerAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
+      "message": "Response statusCode 201 for operation ServerAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
+      "operationId": "ServerAzureADOnlyAuthentications_CreateOrUpdate",
+      "schemaJsonPath": undefined,
+      "schemaPosition": Object {
+        "column": 22,
+        "line": 120,
+      },
+      "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ServerAzureADOnlyAuthentications.json",
+      "severity": 0,
+      "source": "response",
+    },
+  ],
+]
+`;
