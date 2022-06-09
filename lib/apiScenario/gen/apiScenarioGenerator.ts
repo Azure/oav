@@ -250,7 +250,7 @@ export class ApiScenarioGenerator {
     const deleteStack: Node[] = [];
 
     while (!heap.empty()) {
-      const node = heap.pop();
+      const node = heap.pop()!;
       if (node.visited) {
         console.error("node is visited: ", node.operationId, node.method);
         continue;

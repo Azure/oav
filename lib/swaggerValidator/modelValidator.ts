@@ -624,7 +624,7 @@ export class SwaggerExampleValidator {
           node = jsonPointer.get(this.swagger, jsonRef);
         } else {
           const externalSwagger = this.jsonLoader.getFileContentFromCache(err.source.url);
-          node = jsonPointer.get(externalSwagger!, jsonRef);
+          node = jsonPointer.get(externalSwagger as openapiToolsCommon.JsonObject, jsonRef);
         }
         const isSuppressed = isSuppressedInPath(node, err.code, err.message);
         if (isSuppressed) {
