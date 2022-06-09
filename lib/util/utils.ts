@@ -917,6 +917,9 @@ export let usePsudorandom = {
   seed: 0,
 };
 
+/**
+ * Generates a psudorandom number with seed
+ */
 function* mulberry32(seed: number) {
   let t = (seed += 0x6d2b79f5);
   while (true) {
