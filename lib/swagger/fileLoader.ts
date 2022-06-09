@@ -61,8 +61,10 @@ export class FileLoader implements Loader<string> {
     const url = urlParse(filePath);
     if (url) {
       filePath = checkAndResolveGithubUrl(filePath);
-    } else if (this.opts.fileRoot && !path.isAbsolute(filePath)) {
-      filePath = pathJoin(this.opts.fileRoot, filePath);
+    } else if (!path.isAbsolute(filePath)) {
+      filePath = this.opts.fileRoot
+        ? pathJoin(this.opts.fileRoot, filePath)
+        : path.resolve(filePath);
     }
     if (
       this.opts.fileRoot &&
