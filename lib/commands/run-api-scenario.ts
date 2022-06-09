@@ -107,8 +107,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       ? pathResolve(argv.readme)
       : await findReadMe(pathDirName(scenarioFilePath));
 
-    // fileRoot is the nearest common root of all swagger file paths
-    const fileRoot = readmePath ? pathDirName(readmePath) : pathDirName(scenarioFilePath);
+    const fileRoot = readmePath ? pathDirName(readmePath) : process.cwd();
     console.log(`fileRoot: ${fileRoot}`);
 
     const swaggerFilePaths: string[] = argv.specs || [];
