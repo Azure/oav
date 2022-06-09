@@ -27,6 +27,10 @@ export default class Mocker {
       return new Date().toISOString();
     }
 
+    if (paramSpec.format === "duration") {
+      return `PT${new Date().getMinutes()}M`;
+    }
+
     if ("enum" in paramSpec) {
       if (paramSpec.enum.lengh > 0) {
         console.error(`${paramName}'s enum can not be empty`);

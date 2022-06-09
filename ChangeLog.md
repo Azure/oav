@@ -2,6 +2,7 @@
 
 ## 08/06/2022 2.12.3
 
+- Support duration format when generating examples
 - SemanticValidator - Fix bug about multipart/form-data
 
 ## 05/27/2022 2.12.2
