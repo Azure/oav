@@ -1,6 +1,6 @@
 import { Event, EventDefinition, Item, ItemDefinition, ScriptDefinition } from "postman-collection";
 import { getRandomString } from "../util/utils";
-import { ArmTemplate } from "./apiScenarioTypes";
+import { ArmTemplate, StepResponseAssertion } from "./apiScenarioTypes";
 
 interface ScriptTemplate {
   text: string;
@@ -55,6 +55,7 @@ interface TestScriptParameter {
   types: TestScriptType[];
   variables?: Map<string, string>;
   armTemplate?: ArmTemplate;
+  responseAssertion?: StepResponseAssertion;
 }
 
 export type TestScriptType =
@@ -107,10 +108,20 @@ export function generateScript(parameter: TestScriptParameter): ScriptDefinition
       parameter.types.includes("ExtractARMTemplateOutput")
         ? generateARMTemplateOutputScript(parameter.armTemplate!)
         : "",
+      parameter.types.includes("ResponseDataAssertion")
+        ? generateResponseDataAssertionScript(parameter.responseAssertion!)
+        : "",
     ].join("")}
   });
   `;
   return createScript(script);
+}
+
+function generateResponseDataAssertionScript(responseAssertion: StepResponseAssertion): string {
+  let ret = GetObjectValueByJsonPointer.text;
+  if (Array.isArray(responseAssertion)) {
+  }
+  return ret;
 }
 
 function generateOverWriteVariablesScript(variables: Map<string, string>): string {
