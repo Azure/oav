@@ -75,6 +75,12 @@ export class TemplateGenerator {
     if (responseBody.body?.location !== undefined) {
       responseBody.body.location = "$(location)";
     }
+
+    for (const param of step.operation.parameters ?? []) {
+      if (param.required && step.parameters[param.name]) {
+        step.parameters[param.name] = `$(${param.name})`;
+      }
+    }
   }
 }
 

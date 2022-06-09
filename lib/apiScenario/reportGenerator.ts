@@ -26,6 +26,7 @@ import {
   ScenarioDefinition,
   Step,
   StepRestCall,
+  Variable,
 } from "./apiScenarioTypes";
 import { VariableEnv } from "./variableEnv";
 import { getJsonPatchDiff } from "./diffUtils";
@@ -102,6 +103,8 @@ export interface ReportGeneratorOption extends NewmanReportParserOption, ApiScen
   runId?: string;
   validationLevel?: ValidationLevel;
   verbose?: boolean;
+  swaggerFilePaths?: string[];
+  generateExampleFromTraffic?: boolean;
 }
 
 @injectable()
@@ -160,7 +163,7 @@ export class ReportGenerator {
       armEndpoint: "https://management.azure.com",
       stepResult: [],
     };
-    this.testDefFile = undefined;
+    // this.testDefFile = undefined;
 
     this.liveValidator = new LiveValidator({
       fileRoot: "/",
@@ -169,6 +172,13 @@ export class ReportGenerator {
 
     this.rawReport = await this.postmanReportParser.generateRawReport(
       this.opts.newmanReportFilePath
+    );
+  }
+
+  private async writeExample(filename: string, example: any) {
+    await this.fileLoader.writeFile(
+      path.join("examples", filename),
+      JSON.stringify(example, null, 2)
     );
   }
 
@@ -196,8 +206,30 @@ export class ReportGenerator {
         let generatedExample = undefined;
         let roundtripErrors = undefined;
         let responseDiffResult: ResponseDiffItem[] | undefined = undefined;
+        if (this.opts.generateExampleFromTraffic) {
+          const example = this.generateExample(
+            it,
+            variables,
+            rawReport,
+            matchedStep,
+            "example"
+          ).example;
+          for (const key of Object.keys(example.responses)) {
+            if (key >= "400") {
+              delete example.responses[key];
+            }
+          }
+          await this.writeExample(`${matchedStep.description ?? matchedStep.step}.json`, example);
+          console.log(`Generated example ${matchedStep.step}: ${JSON.stringify(example, null, 2)}`);
+        }
         if (it.annotation.exampleName) {
-          generatedExample = this.generateExample(it, variables, rawReport);
+          generatedExample = this.generateExample(
+            it,
+            variables,
+            rawReport,
+            matchedStep,
+            it.annotation.exampleName
+          );
           // validate real payload.
           roundtripErrors = (
             await this.exampleQualityValidator.validateExternalExamples([
@@ -227,6 +259,41 @@ export class ReportGenerator {
           liveValidationResult: liveValidationResult,
         });
         this.recording.set(correlationId, it);
+      }
+    }
+  }
+
+  public async extractExamples() {
+    if (!this.opts.generateExampleFromTraffic) {
+      return;
+    }
+    await this.initialize();
+    const rawReport = this.rawReport!;
+    const variables = rawReport.variables;
+    for (const it of rawReport.executions) {
+      if (it.annotation === undefined) {
+        continue;
+      }
+      if (it.annotation.type === "simple" || it.annotation.type === "LRO") {
+        const matchedStep = this.getMatchedStep(it.annotation.step) as StepRestCall;
+        if (matchedStep === undefined) {
+          continue;
+        }
+
+        const example = this.generateExample(
+          it,
+          variables,
+          rawReport,
+          matchedStep,
+          "example"
+        ).example;
+        for (const key of Object.keys(example.responses)) {
+          if (key >= "400") {
+            delete example.responses[key];
+          }
+        }
+        await this.writeExample(`${matchedStep.description ?? matchedStep.step}.json`, example);
+        console.log(`Generated example ${matchedStep.step}: ${JSON.stringify(example, null, 2)}`);
       }
     }
   }
@@ -283,14 +350,16 @@ export class ReportGenerator {
 
   private generateExample(
     it: RawExecution,
-    variables: any,
-    rawReport: RawReport
+    variables: { [variableName: string]: Variable },
+    rawReport: RawReport,
+    step: StepRestCall,
+    exampleName: string
   ): GeneratedExample {
     const example: any = {};
     if (it.annotation.operationId !== undefined) {
       this.operationIds.add(it.annotation.operationId);
     }
-    example.parameters = this.generateParametersFromQuery(variables, it);
+    example.parameters = this.generateParametersFromQuery(variables, it, step);
     try {
       _.extend(example.parameters, { parameters: JSON.parse(it.request.body) });
       // eslint-disable-next-line no-empty
@@ -300,7 +369,7 @@ export class ReportGenerator {
     _.extend(example.responses, resp);
     const exampleFilePath = path.relative(
       this.fileRoot,
-      path.resolve(this.opts.apiScenarioFilePath, it.annotation.exampleName)
+      path.resolve(this.opts.apiScenarioFilePath, exampleName)
     );
     const generatedGetExecution = this.findGeneratedGetExecution(it, rawReport);
     if (generatedGetExecution.length > 0) {
@@ -503,20 +572,36 @@ export class ReportGenerator {
 
   private parseRespBody(it: RawExecution) {
     const resp: any = {};
+    const response = it.response;
+    const statusCode = it.response.statusCode;
+
     try {
-      resp[it.response.statusCode] = { body: JSON.parse(it.response.body) };
+      resp[statusCode] = { body: JSON.parse(it.response.body) };
     } catch (err) {
-      resp[it.response.statusCode] = { body: it.response.body };
+      resp[statusCode] = { body: it.response.body };
+    }
+
+    if (statusCode === 201 || statusCode === 202) {
+      resp[statusCode].headers = {
+        Location: response.headers.Location,
+        "Azure-AsyncOperation": response.headers["Azure-AsyncOperation"],
+      };
     }
     return resp;
   }
 
-  private generateParametersFromQuery(variables: any, execution: RawExecution) {
+  private generateParametersFromQuery(
+    variables: { [variableName: string]: Variable },
+    execution: RawExecution,
+    step: StepRestCall
+  ) {
     const ret: any = {};
-    for (const [k, v] of Object.entries(variables)) {
-      if (typeof v === "string") {
-        if (execution.request.url.includes(v as string)) {
-          ret[k] = v;
+    for (const k of Object.keys(step.parameters)) {
+      const paramName = Object.keys(variables).includes(k) ? k : `${step.step}_${k}`;
+      const v = variables[paramName];
+      if (v && v.type === "string") {
+        if (execution.request.url.includes(v.value!)) {
+          ret[k] = v.value;
         }
       }
     }
