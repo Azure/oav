@@ -1,63 +1,59 @@
 /* eslint-disable require-atomic-updates */
 
-import { join as pathJoin, dirname } from "path";
-import { dump as yamlDump } from "js-yaml";
-import { pickBy } from "lodash";
-import { generate as jsonMergePatchGenerate } from "json-merge-patch";
+import { cloneDeep, pathDirName, pathJoin } from "@azure-tools/openapi-tools-common";
 import { inject, injectable } from "inversify";
-import { cloneDeep } from "@azure-tools/openapi-tools-common";
-import { Loader, setDefaultOpts } from "../swagger/loader";
+import { dump as yamlDump } from "js-yaml";
+import { apply as jsonMergeApply, generate as jsonMergePatchGenerate } from "json-merge-patch";
+import { inversifyGetInstance, TYPES } from "../inversifyUtils";
 import { FileLoader, FileLoaderOption } from "../swagger/fileLoader";
 import { JsonLoader, JsonLoaderOption } from "../swagger/jsonLoader";
-import { getTransformContext, TransformContext } from "../transform/context";
+import { Loader, setDefaultOpts } from "../swagger/loader";
+import { SwaggerLoader, SwaggerLoaderOption } from "../swagger/swaggerLoader";
+import {
+  BodyParameter,
+  Operation,
+  Parameter,
+  SwaggerExample,
+  SwaggerSpec,
+} from "../swagger/swaggerTypes";
 import { SchemaValidator } from "../swaggerValidator/schemaValidator";
-import { xmsPathsTransformer } from "../transform/xmsPathsTransformer";
-import { resolveNestedDefinitionTransformer } from "../transform/resolveNestedDefinitionTransformer";
-import { referenceFieldsTransformer } from "../transform/referenceFieldsTransformer";
-import { discriminatorTransformer } from "../transform/discriminatorTransformer";
 import { allOfTransformer } from "../transform/allOfTransformer";
+import { getTransformContext, TransformContext } from "../transform/context";
+import { discriminatorTransformer } from "../transform/discriminatorTransformer";
 import { noAdditionalPropertiesTransformer } from "../transform/noAdditionalPropertiesTransformer";
 import { nullableTransformer } from "../transform/nullableTransformer";
 import { pureObjectTransformer } from "../transform/pureObjectTransformer";
-import { SwaggerLoader, SwaggerLoaderOption } from "../swagger/swaggerLoader";
-import { applySpecTransformers, applyGlobalTransformers } from "../transform/transformer";
-import {
-  SwaggerSpec,
-  Operation,
-  SwaggerExample,
-  Parameter,
-  BodyParameter,
-} from "../swagger/swaggerTypes";
+import { referenceFieldsTransformer } from "../transform/referenceFieldsTransformer";
+import { resolveNestedDefinitionTransformer } from "../transform/resolveNestedDefinitionTransformer";
+import { applyGlobalTransformers, applySpecTransformers } from "../transform/transformer";
 import { traverseSwagger } from "../transform/traverseSwagger";
-import { inversifyGetInstance, TYPES } from "../inversifyUtils";
+import { xmsPathsTransformer } from "../transform/xmsPathsTransformer";
+import { getInputFiles } from "../util/utils";
 import {
-  VariableScope,
-  ScenarioDefinition,
-  Scenario,
-  Step,
-  StepRestCall,
-  StepArmTemplate,
-  RawVariableScope,
-  RawScenarioDefinition,
-  RawStepArmTemplate,
-  RawStep,
-  RawStepRestCall,
-  RawScenario,
-  RawStepRawCall,
-  StepRawCall,
-  RawStepRestOperation,
-  RawStepArmScript,
-  ArmTemplate,
-  VariableType,
   ArmDeploymentScriptResource,
+  ArmTemplate,
+  RawScenario,
+  RawScenarioDefinition,
+  RawStep,
+  RawStepArmScript,
+  RawStepArmTemplate,
+  RawStepExample,
+  RawStepOperation,
+  RawVariableScope,
+  ReadmeTag,
+  Scenario,
+  ScenarioDefinition,
+  Step,
+  StepArmTemplate,
+  StepRestCall,
+  Variable,
+  VariableScope,
 } from "./apiScenarioTypes";
-import { TemplateGenerator } from "./templateGenerator";
-import { BodyTransformer } from "./bodyTransformer";
-import { jsonPatchApply } from "./diffUtils";
 import { ApiScenarioYamlLoader } from "./apiScenarioYamlLoader";
-import { ApiScenarioRunner } from "./apiScenarioRunner";
-import { VariableEnv } from "./variableEnv";
+import { BodyTransformer } from "./bodyTransformer";
 import { armDeploymentScriptTemplate } from "./constants";
+import { jsonPatchApply } from "./diffUtils";
+import { TemplateGenerator } from "./templateGenerator";
 
 const variableRegex = /\$\(([A-Za-z_][A-Za-z0-9_]*)\)/;
 
@@ -66,28 +62,32 @@ export interface ApiScenarioLoaderOption
     JsonLoaderOption,
     SwaggerLoaderOption {
   swaggerFilePaths?: string[];
-}
-
-interface Resource {
-  identifier: SwaggerExample["parameters"];
-  body: any;
+  includeOperation?: boolean;
 }
 
 interface ApiScenarioContext {
   stepTracking: Map<string, Step>;
-  resourceTracking: Map<string, Resource>;
   scenarioDef: ScenarioDefinition;
   scenario?: Scenario;
+  scenarioIndex?: number;
+  stepIndex?: number;
+  stage?: "prepare" | "scenario" | "cleanUp";
 }
 
 @injectable()
 export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
   private transformContext: TransformContext;
-  private exampleToOperation = new Map<string, { [operationId: string]: [Operation, string] }>();
-  private nameToOperation: Map<string, Operation> = new Map();
+  private operationsMap = new Map<string, Operation>();
+  private apiVersionsMap = new Map<string, string>();
+  private exampleToOperation = new Map<string, { [operationId: string]: string }>();
+  private additionalMap = new Map<
+    string,
+    {
+      operationsMap: Map<string, Operation>;
+      apiVersionsMap: Map<string, string>;
+    }
+  >();
   private initialized: boolean = false;
-  private env: VariableEnv;
-  private templateGenerationRunner: ApiScenarioRunner;
 
   public constructor(
     @inject(TYPES.opts) private opts: ApiScenarioLoaderOption,
@@ -100,9 +100,12 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     @inject(TYPES.schemaValidator) private schemaValidator: SchemaValidator
   ) {
     setDefaultOpts(opts, {
+      eraseXmsExamples: false,
+      eraseDescription: false,
+      skipResolveRefKeys: ["x-ms-examples"],
       swaggerFilePaths: [],
+      includeOperation: true,
     });
-
     this.transformContext = getTransformContext(this.jsonLoader, this.schemaValidator, [
       xmsPathsTransformer,
       resolveNestedDefinitionTransformer,
@@ -113,31 +116,67 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       nullableTransformer,
       pureObjectTransformer,
     ]);
-    this.env = new VariableEnv();
-    this.templateGenerationRunner = new ApiScenarioRunner({
-      env: this.env,
-      jsonLoader: this.jsonLoader,
-      client: this.templateGenerator,
-      loadMode: true,
-    });
   }
 
   public static create(opts: ApiScenarioLoaderOption) {
-    setDefaultOpts(opts, {
-      eraseXmsExamples: false,
-      eraseDescription: false,
-      skipResolveRefKeys: ["x-ms-examples"],
-    });
     return inversifyGetInstance(ApiScenarioLoader, opts);
   }
 
-  public async initialize() {
+  private async initialize(swaggerFilePaths?: string[], readmeTags?: ReadmeTag[]) {
     if (this.initialized) {
       throw new Error("Already initialized");
     }
 
+    if (swaggerFilePaths) {
+      await this.loadSwaggers(
+        swaggerFilePaths,
+        this.operationsMap,
+        this.apiVersionsMap,
+        this.exampleToOperation
+      );
+    }
+
+    if (readmeTags) {
+      for (const e of readmeTags) {
+        // console.log("Additional readme tag:");
+        // console.log(readmeTags);
+
+        const inputFiles = await getInputFiles(e.filePath, e.tag);
+        if (inputFiles) {
+          this.additionalMap.set(e.name, {
+            operationsMap: new Map<string, Operation>(),
+            apiVersionsMap: new Map<string, string>(),
+          });
+
+          const additionalSwaggerFiles: string[] = [];
+          inputFiles.forEach((f) => {
+            additionalSwaggerFiles.push(pathJoin(pathDirName(e.filePath), f));
+          });
+
+          // console.log("Additional input-file:");
+          // console.log(additionalSwaggerFiles);
+
+          await this.loadSwaggers(
+            additionalSwaggerFiles,
+            this.additionalMap.get(e.name)!.operationsMap,
+            this.additionalMap.get(e.name)!.apiVersionsMap
+          );
+        }
+      }
+    }
+
+    this.initialized = true;
+  }
+
+  private async loadSwaggers(
+    swaggerFilePaths: string[],
+    opsMap: Map<string, Operation>,
+    verMap: Map<string, string>,
+    egOpMap?: Map<string, { [operationId: string]: string }>
+  ) {
     const allSpecs: SwaggerSpec[] = [];
-    for (const swaggerFilePath of this.opts.swaggerFilePaths ?? []) {
+
+    for (const swaggerFilePath of swaggerFilePaths ?? []) {
       const swaggerSpec = await this.swaggerLoader.load(swaggerFilePath);
       allSpecs.push(swaggerSpec);
       applySpecTransformers(swaggerSpec, this.transformContext);
@@ -153,36 +192,37 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
             );
           }
 
-          if (this.nameToOperation.has(operation.operationId)) {
+          if (opsMap.has(operation.operationId)) {
             throw new Error(
               `Duplicated operationId ${operation.operationId}: ${
                 operation._path._pathTemplate
-              }\nConflict with path: ${
-                this.nameToOperation.get(operation.operationId)?._path._pathTemplate
-              }`
+              }\nConflict with path: ${opsMap.get(operation.operationId)?._path._pathTemplate}`
             );
           }
-          this.nameToOperation.set(operation.operationId, operation);
+          opsMap.set(operation.operationId, operation);
+          verMap.set(operation.operationId, spec.info.version);
 
-          const xMsExamples = operation["x-ms-examples"] ?? {};
-          for (const exampleName of Object.keys(xMsExamples)) {
-            const example = xMsExamples[exampleName];
-            if (typeof example.$ref !== "string") {
-              throw new Error(`Example doesn't use $ref: ${exampleName}`);
+          if (egOpMap) {
+            const xMsExamples = operation["x-ms-examples"] ?? {};
+            for (const exampleName of Object.keys(xMsExamples)) {
+              const example = xMsExamples[exampleName];
+              if (typeof example.$ref !== "string") {
+                throw new Error(`Example doesn't use $ref: ${exampleName}`);
+              }
+              const exampleFilePath = this.fileLoader.relativePath(
+                this.jsonLoader.getRealPath(example.$ref)
+              );
+              let opMap = egOpMap.get(exampleFilePath);
+              if (opMap === undefined) {
+                opMap = {};
+                egOpMap.set(exampleFilePath, opMap);
+              }
+              opMap[operation.operationId] = exampleName;
             }
-            const exampleFilePath = this.jsonLoader.getRealPath(example.$ref);
-            let opMap = this.exampleToOperation.get(exampleFilePath);
-            if (opMap === undefined) {
-              opMap = {};
-              this.exampleToOperation.set(exampleFilePath, opMap);
-            }
-            opMap[operation.operationId] = [operation, exampleName];
           }
         },
       });
     }
-
-    this.initialized = true;
   }
 
   public async writeTestDefinitionFile(filePath: string, testDef: RawScenarioDefinition) {
@@ -191,11 +231,9 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
   }
 
   public async load(filePath: string): Promise<ScenarioDefinition> {
-    if (!this.initialized) {
-      await this.initialize();
-    }
+    const [rawDef, readmeTags] = await this.apiScenarioYamlLoader.load(filePath);
 
-    const rawDef = await this.apiScenarioYamlLoader.load(filePath);
+    await this.initialize(this.opts.swaggerFilePaths, readmeTags);
 
     const scenarioDef: ScenarioDefinition = {
       scope: rawDef.scope ?? "ResourceGroup",
@@ -215,33 +253,48 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
 
     const ctx: ApiScenarioContext = {
       stepTracking: new Map(),
-      resourceTracking: new Map(),
       scenarioDef: scenarioDef,
+      stepIndex: 0,
     };
 
-    for (const rawStep of rawDef.prepareSteps ?? []) {
-      const step = await this.loadStep(rawStep, ctx);
-      step.isPrepareStep = true;
-      scenarioDef.prepareSteps.push(step);
-    }
+    await this.loadPrepareSteps(rawDef, ctx);
+    await this.loadCleanUpSteps(rawDef, ctx);
 
-    for (const rawStep of rawDef.cleanUpSteps ?? []) {
-      const step = await this.loadStep(rawStep, ctx);
-      step.isCleanUpStep = true;
-      scenarioDef.cleanUpSteps.push(step);
-    }
-
+    ctx.scenarioIndex = 0;
     for (const rawScenario of rawDef.scenarios) {
+      ctx.stepTracking.clear();
       const scenario = await this.loadScenario(rawScenario, ctx);
       scenarioDef.scenarios.push(scenario);
+      ctx.scenarioIndex++;
     }
 
-    await this.templateGenerationRunner.cleanAllScope();
+    // await this.writeTestDefinitionFile("./test.yaml", scenarioDef);
 
     return scenarioDef;
   }
 
+  private async loadPrepareSteps(rawDef: RawScenarioDefinition, ctx: ApiScenarioContext) {
+    ctx.stage = "prepare";
+    ctx.stepIndex = 0;
+    for (const rawStep of rawDef.prepareSteps ?? []) {
+      const step = await this.loadStep(rawStep, ctx);
+      step.isPrepareStep = true;
+      ctx.scenarioDef.prepareSteps.push(step);
+    }
+  }
+
+  private async loadCleanUpSteps(rawDef: RawScenarioDefinition, ctx: ApiScenarioContext) {
+    ctx.stage = "cleanUp";
+    ctx.stepIndex = 0;
+    for (const rawStep of rawDef.cleanUpSteps ?? []) {
+      const step = await this.loadStep(rawStep, ctx);
+      step.isCleanUpStep = true;
+      ctx.scenarioDef.cleanUpSteps.push(step);
+    }
+  }
+
   private async loadScenario(rawScenario: RawScenario, ctx: ApiScenarioContext): Promise<Scenario> {
+    ctx.stage = "scenario";
     const resolvedSteps: Step[] = [];
     const steps: Step[] = [];
     const { scenarioDef } = ctx;
@@ -256,7 +309,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     ];
 
     const scenario: Scenario = {
-      scenario: rawScenario.scenario,
+      scenario: rawScenario.scenario ?? `scenario_${ctx.scenarioIndex}`,
       description: rawScenario.description ?? "",
       shareScope: rawScenario.shareScope ?? true,
       steps,
@@ -264,7 +317,9 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       _scenarioDef: scenarioDef,
       ...variableScope,
     };
+
     ctx.scenario = scenario;
+    ctx.stepIndex = 0;
 
     for (const rawStep of rawScenario.steps) {
       const step = await this.loadStep(rawStep, ctx);
@@ -276,31 +331,19 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       resolvedSteps.push(step);
     }
 
-    await this.generateTemplate(scenario);
-
     return scenario;
   }
 
-  private async generateTemplate(scenario: Scenario) {
-    this.env.clear();
-    for (const requiredVar of scenario.requiredVariables) {
-      this.env.set(requiredVar, `$(${requiredVar})`);
-    }
-    await this.templateGenerationRunner.executeScenario(scenario);
-  }
-
   private async loadStep(rawStep: RawStep, ctx: ApiScenarioContext): Promise<Step> {
-    let testStep: Step;
+    let step: Step;
 
     try {
-      if ("exampleFile" in rawStep || "operationId" in rawStep) {
-        testStep = await this.loadStepRestCall(rawStep, ctx);
+      if ("operationId" in rawStep || "exampleFile" in rawStep) {
+        step = await this.loadStepRestCall(rawStep, ctx);
       } else if ("armTemplate" in rawStep) {
-        testStep = await this.loadStepArmTemplate(rawStep, ctx);
+        step = await this.loadStepArmTemplate(rawStep, ctx);
       } else if ("armDeploymentScript" in rawStep) {
-        testStep = await this.loadStepArmDeploymentScript(rawStep, ctx);
-      } else if ("rawUrl" in rawStep) {
-        testStep = await this.loadStepRawCall(rawStep, ctx);
+        step = await this.loadStepArmDeploymentScript(rawStep, ctx);
       } else {
         throw new Error("Invalid step");
       }
@@ -308,26 +351,224 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       throw new Error(`Failed to load step ${rawStep.step}: ${(error as any).message}`);
     }
 
-    if (ctx.scenario !== undefined) {
-      declareOutputVariables(testStep.outputVariables, ctx.scenario);
-    } else {
-      declareOutputVariables(testStep.outputVariables, ctx.scenarioDef);
+    if (step.outputVariables) {
+      if (ctx.scenario !== undefined) {
+        declareOutputVariables(step.outputVariables, ctx.scenario);
+      } else {
+        declareOutputVariables(step.outputVariables, ctx.scenarioDef);
+      }
     }
-    return testStep;
+
+    ctx.stepIndex!++;
+    return step;
   }
 
-  private async loadStepRawCall(
-    rawStep: RawStepRawCall,
-    _ctx: ApiScenarioContext
-  ): Promise<StepRawCall> {
-    const step: StepRawCall = {
-      type: "rawCall",
-      ...rawStep,
-      statusCode: rawStep.statusCode ?? 200,
+  private getVariableFunction(step: Step, ctx: ApiScenarioContext) {
+    return (name: string) => {
+      const variable =
+        step.variables[name] ?? ctx.scenario?.variables[name] ?? ctx.scenarioDef.variables[name];
+      return variable;
+    };
+  }
+
+  private async loadStepRestCall(
+    rawStep: RawStepOperation | RawStepExample,
+    ctx: ApiScenarioContext
+  ): Promise<StepRestCall> {
+    if (rawStep.step !== undefined && ctx.stepTracking.has(rawStep.step)) {
+      throw new Error(`Duplicated step name: ${rawStep.step}`);
+    }
+
+    const step: StepRestCall = {
+      type: "restCall",
+      step: rawStep.step ?? `${ctx.scenarioIndex ?? ctx.stage}_${ctx.stepIndex}`,
+      description: rawStep.description,
+      operationId: "",
+      operation: {} as Operation,
+      parameters: {} as SwaggerExample["parameters"],
+      responses: {} as SwaggerExample["responses"],
       outputVariables: rawStep.outputVariables ?? {},
       ...convertVariables(rawStep.variables),
     };
+
+    ctx.stepTracking.set(step.step, step);
+
+    const getVariable = (name: string): Variable => {
+      const variable =
+        step.variables[name] ?? ctx.scenario?.variables[name] ?? ctx.scenarioDef.variables[name];
+      if (variable === undefined) {
+        const requiredVariables =
+          ctx.scenario?.requiredVariables ?? ctx.scenarioDef.requiredVariables;
+        if (requiredVariables.includes(name)) {
+          return {
+            type: "string",
+            value: `$(${name})`,
+          };
+        }
+      }
+      return variable;
+    };
+
+    const requireVariable = (name: string) => {
+      if (["resourceGroupName"].includes(name)) {
+        return;
+      }
+      const requiredVariables =
+        ctx.scenario?.requiredVariables ?? ctx.scenarioDef.requiredVariables;
+      if (!requiredVariables.includes(name)) {
+        requiredVariables.push(`${name}`);
+      }
+    };
+
+    if ("operationId" in rawStep) {
+      // load operation step
+      step.operationId = rawStep.operationId;
+      if (!rawStep.step) {
+        step.step += `_${rawStep.operationId}`;
+      }
+
+      const operation = rawStep.readmeTag
+        ? this.additionalMap.get(rawStep.readmeTag)?.operationsMap.get(step.operationId)
+        : this.operationsMap.get(step.operationId);
+      if (operation === undefined) {
+        throw new Error(`Operation not found for ${step.operationId} in step ${step.step}`);
+      }
+      if (this.opts.includeOperation) {
+        step.operation = operation;
+      }
+
+      if (rawStep.variables) {
+        for (const [name, value] of Object.entries(rawStep.variables)) {
+          if (typeof value === "string") {
+            step.variables[name] = { type: "string", value };
+            continue;
+          }
+
+          if (value.type === "object" || value.type === "secureObject" || value.type === "array") {
+            if (value.patches) {
+              const obj = cloneDeep(getVariable(name));
+              if (typeof obj !== "object") {
+                // TODO dynamic json patch
+                throw new Error(`Can not Json Patch on ${name}, type of ${typeof obj}`);
+              }
+              jsonPatchApply(obj.value, value.patches);
+              step.variables[name] = obj;
+              continue;
+            }
+          }
+          step.variables[name] = value;
+        }
+      }
+
+      operation.parameters?.forEach((param) => {
+        param = this.jsonLoader.resolveRefObj(param);
+        if (param.name === "api-version") {
+          step.parameters["api-version"] = rawStep.readmeTag
+            ? this.additionalMap.get(rawStep.readmeTag)?.apiVersionsMap.get(step.operationId)!
+            : this.apiVersionsMap.get(step.operationId)!;
+        } else if (rawStep.parameters?.[param.name]) {
+          step.parameters[param.name] = rawStep.parameters[param.name];
+        } else {
+          const v = getVariable(param.name);
+          if (v) {
+            if (param.in === "body") {
+              step.parameters[param.name] = v.value;
+            } else {
+              step.parameters[param.name] = `$(${param.name})`;
+            }
+          } else if (param.in === "path" || param.required) {
+            step.parameters[param.name] = `$(${param.name})`;
+            requireVariable(param.name);
+          }
+        }
+      });
+    } else {
+      // load example step
+      step.exampleFile = rawStep.exampleFile;
+
+      const exampleFilePath = pathJoin(pathDirName(ctx.scenarioDef._filePath), step.exampleFile!);
+
+      // Load example file
+      const fileContent = await this.fileLoader.load(exampleFilePath);
+      const exampleFileContent = JSON.parse(fileContent) as SwaggerExample;
+
+      let operation: Operation | undefined;
+
+      // Load Operation
+      if (exampleFileContent.operationId) {
+        step.operationId = exampleFileContent.operationId;
+
+        operation = this.operationsMap.get(step.operationId);
+        if (operation === undefined) {
+          throw new Error(`Operation not found for ${step.operationId} in step ${step.step}`);
+        }
+        if (this.opts.includeOperation) {
+          step.operation = operation;
+        }
+      } else {
+        const opMap = this.exampleToOperation.get(exampleFilePath);
+        if (opMap === undefined) {
+          throw new Error(`Example file is not referenced by any operation: ${step.exampleFile}`);
+        }
+        const ops = Object.keys(opMap);
+        if (ops.length > 1) {
+          throw new Error(
+            `Example file is referenced by multiple operation: ${Object.keys(opMap)} ${
+              step.exampleFile
+            }`
+          );
+        }
+        step.operationId = ops[0];
+        const exampleName = opMap[step.operationId];
+        operation = this.operationsMap.get(step.operationId);
+        if (operation === undefined) {
+          throw new Error(`Operation not found for ${step.operationId} in step ${step.step}`);
+        }
+        if (this.opts.includeOperation) {
+          step.operation = operation;
+        }
+        step.description = step.description ?? exampleName;
+      }
+      step.parameters = exampleFileContent.parameters;
+      step.responses = exampleFileContent.responses;
+
+      await this.applyPatches(step, rawStep, operation);
+
+      this.templateGenerator.exampleParameterConvention(step, getVariable);
+    }
     return step;
+  }
+
+  private async applyPatches(step: StepRestCall, rawStep: RawStepExample, operation: Operation) {
+    if (rawStep.requestUpdate) {
+      const bodyParam = getBodyParam(operation, this.jsonLoader);
+      let source;
+      if (bodyParam) {
+        source = cloneDeep(step.parameters[bodyParam.name]);
+      }
+      jsonPatchApply(step.parameters, rawStep.requestUpdate);
+      if (["put", "patch"].includes(operation._method) && bodyParam) {
+        const target = step.parameters[bodyParam.name];
+        const propertiesMergePatch = jsonMergePatchGenerate(source, target);
+
+        Object.keys(step.responses).forEach(async (statusCode) => {
+          if (statusCode >= "400") {
+            return;
+          }
+          const response = step.responses[statusCode];
+          if (response.body) {
+            jsonMergeApply(response.body, propertiesMergePatch);
+            await this.bodyTransformer.resourceToResponse(
+              response.body,
+              operation.responses[statusCode].schema!
+            );
+          }
+        });
+      }
+    }
+    if (rawStep.responseUpdate) {
+      jsonPatchApply(step.responses, rawStep.responseUpdate);
+    }
   }
 
   private async loadStepArmDeploymentScript(
@@ -336,7 +577,8 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
   ): Promise<StepArmTemplate> {
     const step: StepArmTemplate = {
       type: "armTemplateDeployment",
-      step: rawStep.step,
+      step:
+        rawStep.step ?? `${ctx.scenarioIndex ?? ctx.stage}_${ctx.stepIndex}_ArmDeploymentScript`,
       outputVariables: rawStep.outputVariables ?? {},
       armTemplate: "",
       armTemplatePayload: {},
@@ -348,7 +590,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     step.armTemplatePayload = payload;
 
     const resource = payload.resources![0] as ArmDeploymentScriptResource;
-    resource.name = rawStep.step;
+    resource.name = step.step;
 
     if (rawStep.armDeploymentScript.endsWith(".ps1")) {
       resource.kind = "AzurePowerShell";
@@ -358,12 +600,13 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       resource.properties.azCliVersion = "2.0.80";
     }
 
-    const filePath = pathJoin(dirname(scenarioDef._filePath), rawStep.armDeploymentScript);
+    const filePath = pathJoin(pathDirName(scenarioDef._filePath), rawStep.armDeploymentScript);
     const scriptContent = await this.fileLoader.load(filePath);
     resource.properties.scriptContent = scriptContent;
+    resource.properties.arguments = rawStep.arguments;
 
     for (const variable of rawStep.environmentVariables ?? []) {
-      if (this.getVariableType(variable.value, step, ctx) === "secureString") {
+      if (this.isSecretVariable(variable.value, step, ctx)) {
         resource.properties.environmentVariables!.push({
           name: variable.name,
           secureValue: variable.value,
@@ -376,10 +619,15 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       }
     }
 
+    this.templateGenerator.armTemplateParameterConvention(
+      step,
+      this.getVariableFunction(step, ctx)
+    );
+
     return step;
   }
 
-  private getVariableType(variable: string, step: Step, ctx: ApiScenarioContext): VariableType {
+  private isSecretVariable(variable: string, step: Step, ctx: ApiScenarioContext): boolean {
     const { scenarioDef, scenario } = ctx;
 
     if (variableRegex.test(variable)) {
@@ -392,12 +640,12 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
           scenario?.secretVariables.includes(refKey) ||
           scenarioDef.secretVariables.includes(refKey)
         ) {
-          return "secureString";
+          return true;
         }
       }
     }
 
-    return "string";
+    return false;
   }
 
   private async loadStepArmTemplate(
@@ -406,7 +654,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
   ): Promise<StepArmTemplate> {
     const step: StepArmTemplate = {
       type: "armTemplateDeployment",
-      step: rawStep.step,
+      step: rawStep.step ?? `${ctx.scenarioIndex ?? ctx.stage}_${ctx.stepIndex}_ArmTemplate`,
       outputVariables: rawStep.outputVariables ?? {},
       armTemplate: rawStep.armTemplate,
       armTemplatePayload: {},
@@ -415,7 +663,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     const { scenarioDef, scenario } = ctx;
     const variableScope: VariableScope = scenario ?? scenarioDef;
 
-    const filePath = pathJoin(dirname(scenarioDef._filePath), step.armTemplate);
+    const filePath = pathJoin(pathDirName(scenarioDef._filePath), step.armTemplate);
     const armTemplateContent = await this.fileLoader.load(filePath);
     step.armTemplatePayload = JSON.parse(armTemplateContent);
 
@@ -448,220 +696,12 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       declareOutputVariables(outputs, variableScope);
     }
 
-    return step;
-  }
-
-  private async loadStepRestCall(
-    rawStep: RawStepRestCall | RawStepRestOperation,
-    ctx: ApiScenarioContext
-  ): Promise<StepRestCall> {
-    if (ctx.stepTracking.has(rawStep.step)) {
-      throw new Error(`Duplicated step name: ${rawStep.step}`);
-    }
-
-    const step: StepRestCall = {
-      type: "restCall",
-      step: rawStep.step,
-      description: rawStep.description,
-      resourceName: rawStep.resourceName,
-      exampleFile: "",
-      operationId: "",
-      operation: {} as Operation,
-      requestParameters: {} as SwaggerExample["parameters"],
-      expectedResponse: {},
-      exampleName: "",
-      statusCode: rawStep.statusCode ?? 200,
-      outputVariables: rawStep.outputVariables ?? {},
-      resourceUpdate: rawStep.resourceUpdate ?? [],
-      requestUpdate: rawStep.requestUpdate ?? [],
-      responseUpdate: rawStep.responseUpdate ?? [],
-      ...convertVariables(rawStep.variables),
-    };
-
-    ctx.stepTracking.set(step.step, step);
-
-    if ("exampleFile" in rawStep) {
-      step.exampleFile = rawStep.exampleFile;
-      await this.loadRestCallExample(step, ctx);
-    } else if ("operationId" in rawStep) {
-      step.operationId = rawStep.operationId;
-      await this.loadRestCallOperation(step, ctx);
-    }
-
-    if (step.requestUpdate.length > 0) {
-      jsonPatchApply(step.requestParameters, step.requestUpdate);
-    }
-    if (step.responseUpdate.length > 0) {
-      jsonPatchApply(step.expectedResponse, step.responseUpdate);
-    }
+    this.templateGenerator.armTemplateParameterConvention(
+      step,
+      this.getVariableFunction(step, ctx)
+    );
 
     return step;
-  }
-
-  private async loadRestCallOperation(
-    step: StepRestCall,
-    ctx: ApiScenarioContext
-  ): Promise<StepRestCall> {
-    const resource = ctx.resourceTracking.get(step.resourceName!);
-    if (resource === undefined) {
-      throw new Error(`Unknown resourceName: ${step.resourceName} in step ${step.step}`);
-    }
-
-    const operation = this.nameToOperation.get(step.operationId);
-    if (operation === undefined) {
-      throw new Error(`Operation not found for ${step.operationId} in step ${step.step}`);
-    }
-    step.operation = operation;
-
-    const target = cloneDeep(resource.body);
-    if (step.resourceUpdate.length > 0) {
-      jsonPatchApply(target, step.resourceUpdate);
-    }
-    const bodyParam = getBodyParam(step.operation, this.jsonLoader);
-
-    switch (step.operation._method) {
-      case "put":
-        step.requestParameters = { ...resource.identifier };
-        if (bodyParam !== undefined) {
-          step.requestParameters[bodyParam.name] = await this.bodyTransformer.resourceToRequest(
-            target,
-            bodyParam.schema!
-          );
-        }
-        step.expectedResponse = await this.bodyTransformer.resourceToResponse(
-          target,
-          step.operation.responses[step.statusCode].schema!
-        );
-        break;
-      case "get":
-        step.requestParameters = { ...resource.identifier };
-        step.expectedResponse = await this.bodyTransformer.resourceToResponse(
-          target,
-          step.operation.responses[step.statusCode].schema!
-        );
-        break;
-      case "patch":
-        step.requestParameters = { ...resource.identifier };
-        if (bodyParam !== undefined) {
-          step.requestParameters[bodyParam.name] = pickBy(
-            target,
-            (_, propertyName) =>
-              propertyName !== "properties" &&
-              propertyName !== "id" &&
-              propertyName !== "name" &&
-              propertyName !== "type" &&
-              propertyName !== "location" &&
-              propertyName !== "systemData"
-          );
-          const propertiesMergePatch = jsonMergePatchGenerate(
-            resource.body.properties,
-            target.properties
-          );
-          if (propertiesMergePatch !== undefined) {
-            step.requestParameters[bodyParam.name].properties = propertiesMergePatch;
-          }
-        }
-        step.expectedResponse = await this.bodyTransformer.resourceToResponse(
-          target,
-          step.operation.responses[step.statusCode].schema!
-        );
-        break;
-      case "delete":
-        step.requestParameters = { ...resource.identifier };
-        break;
-      case "post":
-        step.requestParameters = { ...resource.identifier };
-        break;
-      default:
-        throw new Error(`Unsupported operation ${step.operationId}`);
-    }
-
-    resource.body = target;
-
-    return step;
-  }
-
-  private async loadRestCallExample(step: StepRestCall, ctx: ApiScenarioContext) {
-    const filePath = step.exampleFile;
-    if (filePath === undefined) {
-      throw new Error(`RestCall step must specify "exampleFile" or "operationName"`);
-    }
-
-    const exampleFilePath = pathJoin(dirname(ctx.scenarioDef._filePath), filePath);
-
-    // Load example file
-    const fileContent = await this.fileLoader.load(exampleFilePath);
-    const exampleFileContent = JSON.parse(fileContent) as SwaggerExample;
-
-    step.requestParameters = exampleFileContent.parameters;
-    step.expectedResponse = exampleFileContent.responses[step.statusCode]?.body;
-
-    // Load Operation
-    const opMap = exampleFileContent.operationId
-      ? this.nameToOperation.get(exampleFileContent.operationId)
-      : this.exampleToOperation.get(exampleFilePath);
-    if (opMap === undefined) {
-      throw new Error(`Example file is not referenced by any operation: ${filePath}`);
-    }
-    const ops = Object.values(opMap);
-    if (ops.length > 1) {
-      throw new Error(
-        `Example file is referenced by multiple operation: ${Object.keys(opMap)} ${filePath}`
-      );
-    }
-    [step.operation, step.exampleName] = ops[0];
-    step.operationId = step.operation.operationId!;
-
-    if (step.resourceUpdate.length > 0) {
-      if (!["put", "patch", "get"].includes(step.operation._method)) {
-        throw new Error(
-          `resourceUpdate could only be used in PUT/PATCH/GET operations with exampleFile`
-        );
-      }
-
-      const target = cloneDeep(step.expectedResponse);
-      const bodyParam = getBodyParam(step.operation, this.jsonLoader);
-      if (bodyParam !== undefined) {
-        try {
-          this.bodyTransformer.deepMerge(target, step.requestParameters[bodyParam.name]);
-        } catch (err) {
-          console.error(err);
-        }
-      }
-      jsonPatchApply(target, step.resourceUpdate);
-
-      if (bodyParam !== undefined) {
-        const convertedRequest = await this.bodyTransformer.resourceToRequest(
-          target,
-          bodyParam.schema!
-        );
-        step.requestParameters[bodyParam.name] = convertedRequest;
-      }
-
-      step.expectedResponse = await this.bodyTransformer.resourceToResponse(
-        target,
-        step.operation.responses[step.statusCode].schema!
-      );
-    }
-
-    if (step.resourceName) {
-      if (!["put", "patch", "get"].includes(step.operation._method)) {
-        throw new Error(
-          `resourceName could only be used in PUT/PATCH/GET operations with exampleFile`
-        );
-      }
-      const pathParams = pickParams(step.operation, "path", this.jsonLoader);
-      const identifier = pickBy(
-        step.requestParameters,
-        (_, paramName) =>
-          "api-version" === paramName ||
-          pathParams?.find((param) => param.name === paramName) !== undefined
-      ) as SwaggerExample["parameters"];
-      ctx.resourceTracking.set(step.resourceName, {
-        identifier,
-        body: step.expectedResponse,
-      });
-    }
   }
 }
 
@@ -685,14 +725,24 @@ const convertVariables = (rawVariables: RawVariableScope["variables"]) => {
   };
   for (const [key, val] of Object.entries(rawVariables ?? {})) {
     if (typeof val === "string") {
-      result.variables[key] = val;
+      result.variables[key] = {
+        type: "string",
+        value: val,
+      };
     } else {
-      if (val.defaultValue !== undefined) {
-        result.variables[key] = val.defaultValue;
-      } else {
-        result.requiredVariables.push(key);
+      result.variables[key] = val;
+      if (val.value === undefined) {
+        if (val.type === "string" || val.type === "secureString") {
+          if (val.value === undefined && val.prefix === undefined) {
+            result.requiredVariables.push(key);
+          }
+        } else {
+          throw new Error(
+            `Only string and secureString type is supported in environment variables, please specify value for: ${key}`
+          );
+        }
       }
-      if (val.type === "secureString") {
+      if (val.type === "secureString" || val.type === "secureObject") {
         result.secretVariables.push(key);
       }
     }
@@ -706,9 +756,11 @@ const declareOutputVariables = (
 ) => {
   for (const [key, val] of Object.entries(outputVariables)) {
     if (scope.variables[key] === undefined) {
-      scope.variables[key] = `$(${key})`;
+      scope.variables[key] = {
+        type: val.type ?? "string",
+      };
     }
-    if (val.type === "secureString" || val.type === "securestring") {
+    if (val.type === "secureString" || val.type === "securestring" || val.type === "secureObject") {
       scope.secretVariables.push(key);
     }
   }

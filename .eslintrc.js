@@ -12,8 +12,6 @@
 // Happy linting! 💖
 // */
 
-require("@rushstack/eslint-config/patch/modern-module-resolution");
-
 module.exports = {
   env: {
     browser: true,
@@ -27,7 +25,6 @@ module.exports = {
   },
   plugins: ["@typescript-eslint", "import", "prettier"],
   extends: [
-    "@rushstack/eslint-config/profile/node",
     "plugin:prettier/recommended",
     "plugin:import/errors",
     "plugin:import/warnings",
@@ -38,9 +35,6 @@ module.exports = {
     "import/namespace": "off",
     "@typescript-eslint/typedef": "off",
     "@typescript-eslint/naming-convention": "off",
-    "@rushstack/no-new-null": "off",
-    "@rushstack/typedef-var": "off",
-    "@rushstack/security/no-unsafe-regexp": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-use-before-define": "off",
