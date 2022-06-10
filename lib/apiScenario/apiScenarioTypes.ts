@@ -141,12 +141,14 @@ export type StepRestCall = StepBase & {
   outputVariables?: OutputVariables;
 };
 
-export type StepResponseAssertion =
-  | {
-      headers?: { [headerName: string]: string };
-      body?: any;
-    }
-  | Array<JsonPatchOpTest>;
+export type StepResponseAssertion = {
+  [statusCode: number]:
+    | {
+        headers?: { [headerName: string]: string };
+        body?: any;
+      }
+    | JsonPatchOpTest[];
+};
 
 //#endregion
 
