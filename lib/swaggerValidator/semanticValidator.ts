@@ -488,6 +488,7 @@ export class SwaggerSemanticValidator {
         const visitedParamName = new Set<string>();
         const { operationId, parameters, consumes } = operation;
         const mergedParameters = [...(parameters ?? []), ...(pathParams ?? [])];
+        let NumberOfFileTypeFormData = 0;
 
         if (operationId !== undefined) {
           if (visitedOperationId.has(operationId)) {
@@ -509,6 +510,9 @@ export class SwaggerSemanticValidator {
           visitedParamName.add(name);
 
           if (param.in === "body" || param.in === "formData") {
+            if (param.in === "formData" && param.type === "file") {
+              NumberOfFileTypeFormData++;
+            }
             if (bodyParam !== undefined) {
               const meta = getOavErrorMeta(
                 param.in === bodyParam.in
@@ -519,7 +523,8 @@ export class SwaggerSemanticValidator {
               if (
                 meta.code === "MULTIPLE_BODY_PARAMETERS" &&
                 consumes !== undefined &&
-                consumes.includes("multipart/form-data")
+                consumes.includes("multipart/form-data") &&
+                NumberOfFileTypeFormData < 2
               ) {
                 continue;
               }

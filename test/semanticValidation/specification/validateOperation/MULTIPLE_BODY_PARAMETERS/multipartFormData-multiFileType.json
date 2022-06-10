@@ -46,7 +46,7 @@
             "in": "formData",
             "name": "Glossary",
             "description": "Glossary for the request",
-            "type": "string"
+            "type": "file"
           }
         ],
         "responses": {
