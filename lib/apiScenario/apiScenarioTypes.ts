@@ -4,9 +4,11 @@ import { Operation, SwaggerExample } from "../swagger/swaggerTypes";
 
 type TransformRaw<T, Additional = {}, OptionalKey extends keyof T = never> = {
   [P in OptionalKey]?: T[P];
-} & {
-  [P in Exclude<keyof T, OptionalKey | keyof Additional>]-?: Exclude<T[P], undefined>;
-} & Additional;
+} &
+  {
+    [P in Exclude<keyof T, OptionalKey | keyof Additional>]-?: Exclude<T[P], undefined>;
+  } &
+  Additional;
 
 export type VarType = Variable["type"];
 
