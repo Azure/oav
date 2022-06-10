@@ -384,7 +384,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
         itemName: item.name,
         step: item.name,
       });
-      this.addAsLongRunningOperationItem(item);
+      this.addAsLongRunningOperationItem(item, false, step.responseAssertion);
     } else {
       item.description = typeToDescription({
         type: "simple",
@@ -408,7 +408,11 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     }
   }
 
-  private addAsLongRunningOperationItem(item: Item, checkStatus: boolean = false) {
+  private addAsLongRunningOperationItem(
+    item: Item,
+    checkStatus: boolean = false,
+    responseAssertion?: StepResponseAssertion
+  ) {
     const longRunningEvent = PostmanHelper.createEvent(
       "test",
       PostmanHelper.createScript(
@@ -425,7 +429,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     );
     item.events.add(longRunningEvent);
     this.collection.items.add(item);
-    for (const it of this.longRunningOperationItem(item, checkStatus)) {
+    for (const it of this.longRunningOperationItem(item, checkStatus, responseAssertion)) {
       this.collection.items.append(it);
     }
   }
@@ -562,7 +566,11 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     return item;
   }
 
-  public longRunningOperationItem(initialItem: Item, checkStatus: boolean = false): Item[] {
+  public longRunningOperationItem(
+    initialItem: Item,
+    checkStatus: boolean = false,
+    responseAssertion?: StepResponseAssertion
+  ): Item[] {
     const ret: Item[] = [];
 
     const pollerItem = this.newItem({
@@ -607,6 +615,18 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
         })
       );
       pollerItem.events.add(checkStatusEvent);
+    }
+
+    if (responseAssertion) {
+      const responseAssertionEvent = PostmanHelper.createEvent(
+        "test",
+        PostmanHelper.generateScript({
+          name: "LRO response assertion",
+          types: ["ResponseDataAssertion"],
+          responseAssertion: responseAssertion,
+        })
+      );
+      pollerItem.events.add(responseAssertionEvent);
     }
 
     ret.push(pollerItem);

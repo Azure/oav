@@ -1,3 +1,4 @@
+import * as jsonPointer from "json-pointer";
 import { Event, EventDefinition, Item, ItemDefinition, ScriptDefinition } from "postman-collection";
 import { getRandomString } from "../util/utils";
 import { ArmTemplate, StepResponseAssertion } from "./apiScenarioTypes";
@@ -119,7 +120,44 @@ export function generateScript(parameter: TestScriptParameter): ScriptDefinition
 
 function generateResponseDataAssertionScript(responseAssertion: StepResponseAssertion): string {
   let ret = GetObjectValueByJsonPointer.text;
-  if (Array.isArray(responseAssertion)) {
+  const addBodyAssertion = (jsonPath: string, exp: string) => {
+    ret += `pm.expect(getValueByJsonPointer(pm.response.json(), "${jsonPath}")).${exp};\n`;
+  };
+
+  const addHeaderAssertion = (key: string, exp: string) => {
+    ret += `pm.expect(pm.response.headers.get("${key}")).${exp};\n`;
+  };
+
+  for (const [statusCode, v] of Object.entries(responseAssertion)) {
+    ret += `if (pm.response.code === ${statusCode}) {\n`;
+    if (Array.isArray(v)) {
+      for (const assertion of v) {
+        const exp = assertion.value
+          ? `to.deep.eql(${JSON.stringify(assertion.value)})`
+          : assertion.expression!;
+
+        const pathSegments = jsonPointer.parse(assertion.test);
+        const type = pathSegments.shift();
+
+        if (type === "body") {
+          const jsonPath = jsonPointer.compile(pathSegments);
+          addBodyAssertion(jsonPath, exp);
+        } else {
+          addHeaderAssertion(pathSegments[0], exp);
+        }
+      }
+    } else {
+      Object.entries(v.headers || {}).forEach(([k, v]) => {
+        addHeaderAssertion(k, `to.eql(${JSON.stringify(v)})`);
+      });
+
+      if (v.body) {
+        jsonPointer.walk(v.body, (value, path) => {
+          addBodyAssertion(path, `to.eql(${JSON.stringify(value)})`);
+        });
+      }
+    }
+    ret += "}\n";
   }
   return ret;
 }

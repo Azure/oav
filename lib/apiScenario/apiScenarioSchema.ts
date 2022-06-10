@@ -338,18 +338,29 @@ export const ApiScenarioDefinition: Schema & {
           additionalProperties: false,
           patternProperties: {
             "^([0-9]{3})$": {
-              type: "object",
-              properties: {
-                headers: {
+              oneOf: [
+                {
                   type: "object",
-                  additionalProperties: {
-                    type: "string",
+                  properties: {
+                    headers: {
+                      type: "object",
+                      additionalProperties: {
+                        type: "string",
+                      },
+                    },
+                    body: {
+                      type: ["object", "number", "array", "integer", "string", "boolean", "null"],
+                    },
+                  },
+                  additionalProperties: false,
+                },
+                {
+                  type: "array",
+                  items: {
+                    $ref: "#/definitions/JsonPatchOpTest",
                   },
                 },
-                body: {
-                  type: ["object", "number", "array", "integer", "string", "boolean", "null"],
-                },
-              },
+              ],
             },
           },
         },
@@ -472,9 +483,6 @@ export const ApiScenarioDefinition: Schema & {
         {
           $ref: "#/definitions/JsonPatchOpMove",
         },
-        {
-          $ref: "#/definitions/JsonPatchOpTest",
-        },
       ],
     },
     JsonPatchOpAdd: {
@@ -537,14 +545,38 @@ export const ApiScenarioDefinition: Schema & {
     },
     JsonPatchOpTest: {
       type: "object",
-      required: ["test", "value"],
+      required: ["test"],
       properties: {
         test: {
           $ref: "#/definitions/JsonPointer",
         },
-        value: {},
       },
-      additionalProperties: false,
+      allOf: [
+        {
+          oneOf: [
+            {
+              type: "object",
+              required: ["value"],
+              properties: {
+                test: {},
+                value: {},
+              },
+              additionalProperties: false,
+            },
+            {
+              type: "object",
+              required: ["expression"],
+              properties: {
+                test: {},
+                expression: {
+                  type: "string",
+                },
+              },
+              additionalProperties: false,
+            },
+          ],
+        },
+      ],
     },
   },
 };
