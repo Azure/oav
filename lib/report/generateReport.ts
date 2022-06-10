@@ -8,6 +8,7 @@ import {
 } from "../swaggerValidator/trafficValidator";
 import { LiveValidationIssue } from "../liveValidation/liveValidator";
 import { FileLoader } from "../swagger/fileLoader";
+import { checkAndResolveGithubUrl } from "../util/utils";
 import { OperationContext } from "../liveValidation/operationValidator";
 
 export interface TrafficValidationIssueForRendering extends TrafficValidationIssue {
@@ -177,13 +178,9 @@ export class CoverageView {
 
   private async loadErrorDefinitions(): Promise<Map<string, ErrorDefinition>> {
     const loader = new FileLoader({});
-    let errorDefinitionsDoc =
+    const errorDefinitionsDoc =
       "https://github.com/Azure/oav/blob/develop/documentation/error-definitions.json";
-    errorDefinitionsDoc = errorDefinitionsDoc.replace(
-      /^https:\/\/(github.com)(.*)blob\/(.*)/gi,
-      "https://raw.githubusercontent.com$2$3"
-    );
-    const fileString = await loader.load(errorDefinitionsDoc);
+    const fileString = await loader.load(checkAndResolveGithubUrl(errorDefinitionsDoc));
     const errorDefinitionDoc = JSON.parse(fileString) as ErrorDefinitionDoc;
     const errorsMap: Map<string, ErrorDefinition> = new Map();
     errorDefinitionDoc.ErrorDefinitions.forEach((def) => {

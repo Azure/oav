@@ -69,11 +69,6 @@ export {
 export { VariableEnv } from "./lib/apiScenario/variableEnv";
 export { ApiScenarioRunner, ApiScenarioRunnerClient } from "./lib/apiScenario/apiScenarioRunner";
 
-export { PostmanCollectionRunnerClient } from "./lib/apiScenario/postmanCollectionRunnerClient";
-export {
-  PostmanCollectionGenerator,
-  PostmanCollectionGeneratorOption,
-} from "./lib/apiScenario/postmanCollectionGenerator";
 export {
   SwaggerAnalyzer,
   SwaggerAnalyzerOption,
@@ -106,6 +101,5 @@ export {
 
 export { TrafficValidationIssue, TrafficValidator } from "./lib/swaggerValidator/trafficValidator";
 
-export { getAutorestConfig } from "./lib/util/getAutorestConfig";
 // Constants
 export const Constants = C;

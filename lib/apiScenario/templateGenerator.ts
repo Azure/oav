@@ -2,76 +2,22 @@ import { escapeRegExp } from "lodash";
 import { injectable } from "inversify";
 import { cloneDeep } from "@azure-tools/openapi-tools-common";
 import { JsonLoader } from "../swagger/jsonLoader";
-import { ArmTemplate, StepRestCall, StepArmTemplate } from "./apiScenarioTypes";
-import { VariableEnv } from "./variableEnv";
-import {
-  ApiScenarioRunnerClient,
-  ApiScenarioClientRequest,
-  StepEnv,
-  ArmDeploymentTracking,
-} from "./apiScenarioRunner";
+import { StepRestCall, StepArmTemplate, Variable } from "./apiScenarioTypes";
 import { getBodyParam } from "./apiScenarioLoader";
 
 @injectable()
-export class TemplateGenerator implements ApiScenarioRunnerClient {
+export class TemplateGenerator {
   public constructor(private jsonLoader: JsonLoader) {}
-
-  public async createResourceGroup(): Promise<void> {
-    // Pass
-  }
-
-  public async deleteResourceGroup(): Promise<void> {
-    // Pass
-  }
-
-  public async sendExampleRequest(
-    _request: ApiScenarioClientRequest,
-    step: StepRestCall,
-    stepEnv: StepEnv
-  ): Promise<void> {
-    this.exampleParameterConvention(step, stepEnv.env);
-
-    const outputVariables = step.outputVariables;
-    if (outputVariables === undefined) {
-      return;
-    }
-    for (const variableName of Object.keys(outputVariables)) {
-      stepEnv.env.output(variableName, `$(${variableName})`);
-    }
-  }
-
-  public async sendArmTemplateDeployment(
-    _armTemplate: ArmTemplate,
-    _armDeployment: ArmDeploymentTracking,
-    step: StepArmTemplate,
-    stepEnv: StepEnv
-  ): Promise<void> {
-    this.armTemplateParameterConvention(step, stepEnv.env);
-
-    const outputs = step.armTemplatePayload.outputs;
-    if (outputs === undefined) {
-      return;
-    }
-
-    for (const outputName of Object.keys(outputs)) {
-      const outputDef = outputs[outputName];
-      if (outputDef.type !== "string") {
-        continue;
-      }
-
-      stepEnv.env.output(outputName, `$(${outputName})`);
-    }
-  }
 
   public armTemplateParameterConvention(
     step: Pick<StepArmTemplate, "armTemplatePayload" | "secretVariables">,
-    env: VariableEnv
+    variables: (name: string) => Variable
   ) {
     if (step.armTemplatePayload.parameters === undefined) {
       return;
     }
     for (const paramName of Object.keys(step.armTemplatePayload.parameters)) {
-      if (env.get(paramName) === undefined) {
+      if (variables(paramName) === undefined) {
         continue;
       }
 
@@ -89,19 +35,19 @@ export class TemplateGenerator implements ApiScenarioRunnerClient {
   }
 
   public exampleParameterConvention(
-    step: Pick<StepRestCall, "requestParameters" | "expectedResponse" | "operation">,
-    env: VariableEnv
+    step: Pick<StepRestCall, "parameters" | "responses" | "operation">,
+    variables: (name: string) => any
   ) {
     const toMatch: string[] = [];
     const matchReplace: { [toMatch: string]: string } = {};
 
-    const requestParameters = cloneDeep(step.requestParameters);
-    for (const paramName of Object.keys(requestParameters)) {
-      if (env.get(paramName) === undefined) {
+    const parameters = cloneDeep(step.parameters);
+    for (const paramName of Object.keys(parameters)) {
+      if (variables(paramName) === undefined) {
         continue;
       }
 
-      const paramValue = requestParameters[paramName];
+      const paramValue = parameters[paramName];
       if (typeof paramValue !== "string") {
         continue;
       }
@@ -110,23 +56,24 @@ export class TemplateGenerator implements ApiScenarioRunnerClient {
       toMatch.push(valueLower);
       const toReplace = `$(${paramName})`;
       matchReplace[valueLower] = toReplace;
-      requestParameters[paramName] = toReplace;
+      parameters[paramName] = toReplace;
     }
-    step.requestParameters = requestParameters;
+    step.parameters = parameters;
     const bodyParam = getBodyParam(step.operation, this.jsonLoader);
     if (bodyParam !== undefined) {
-      const requestBody = step.requestParameters[bodyParam.name];
+      const requestBody = step.parameters[bodyParam.name];
       replaceAllInObject(requestBody, toMatch, matchReplace);
-      if (requestBody.location !== undefined && env.get("location") !== undefined) {
+      if (requestBody.location !== undefined) {
         requestBody.location = "$(location)";
       }
     }
 
-    const expectedResponse = cloneDeep(step.expectedResponse);
-    replaceAllInObject(expectedResponse, toMatch, matchReplace);
-    step.expectedResponse = expectedResponse;
-    if (expectedResponse.body?.location !== undefined && env.get("location") !== undefined) {
-      expectedResponse.body.location = "$(location)";
+    const statusCode = Object.keys(step.responses).sort()[0];
+    const responseBody = cloneDeep(step.responses[statusCode].body);
+    replaceAllInObject(responseBody, toMatch, matchReplace);
+    step.responses[statusCode].body = responseBody;
+    if (responseBody.body?.location !== undefined) {
+      responseBody.body.location = "$(location)";
     }
   }
 }

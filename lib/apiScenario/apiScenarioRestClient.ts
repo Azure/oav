@@ -15,14 +15,14 @@ import { TokenCredentials as MsRestTokenCredential } from "@azure/ms-rest-js";
 import { ResourceManagementClient } from "@azure/arm-resources";
 import { LROPoller as MsLROPoller } from "@azure/ms-rest-azure-js";
 import { setDefaultOpts } from "../swagger/loader";
-import { ArmTemplate, StepArmTemplate, StepRestCall } from "./apiScenarioTypes";
+import { ArmTemplate, Scenario, StepArmTemplate, StepRestCall } from "./apiScenarioTypes";
 import {
-  ArmDeploymentTracking,
+  ArmDeployment,
   ApiScenarioClientRequest,
   ApiScenarioRunnerClient,
-  StepEnv,
 } from "./apiScenarioRunner";
 import { LROPoller, BaseResult, lroPolicy } from "./lro";
+import { VariableEnv } from "./variableEnv";
 
 export interface ApiScenarioRestClientOption extends ServiceClientOptions {
   endpoint?: string;
@@ -58,6 +58,10 @@ export class ApiScenarioRestClient extends ServiceClient implements ApiScenarioR
     this.credential = credential;
   }
 
+  public async prepareScenario(_scenario: Scenario, _env: VariableEnv): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
+
   public async createResourceGroup(
     subscriptionId: string,
     resourceGroupName: string,
@@ -86,10 +90,10 @@ export class ApiScenarioRestClient extends ServiceClient implements ApiScenarioR
     await this.fastPollMsLROPoller(poller);
   }
 
-  public async sendExampleRequest(
+  public async sendRestCallRequest(
     req: ApiScenarioClientRequest,
     step: StepRestCall,
-    _stepEnv: StepEnv
+    _env: VariableEnv
   ): Promise<void> {
     console.log(`Send request: ${req.method} ${req.path}`);
     console.log(JSON.stringify(req.body, null, 2));
@@ -134,9 +138,9 @@ export class ApiScenarioRestClient extends ServiceClient implements ApiScenarioR
 
   public async sendArmTemplateDeployment(
     armTemplate: ArmTemplate,
-    armDeployment: ArmDeploymentTracking,
+    armDeployment: ArmDeployment,
     _step: StepArmTemplate,
-    stepEnv: StepEnv
+    env: VariableEnv
   ) {
     console.log(`Deploy ARM template ${armDeployment.deploymentName}`);
     const { subscriptionId, resourceGroupName } = armDeployment.details;
@@ -164,7 +168,7 @@ export class ApiScenarioRestClient extends ServiceClient implements ApiScenarioR
     console.log(outputs);
     if (outputs) {
       for (const outputKey of Object.keys(outputs)) {
-        stepEnv.env.output(outputKey, outputs[outputKey].value);
+        env.output(outputKey, outputs[outputKey].value);
       }
     }
   }

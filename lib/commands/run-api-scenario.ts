@@ -3,17 +3,17 @@
 
 import * as fs from "fs";
 import * as path from "path";
+import { pathDirName, pathJoin, pathResolve } from "@azure-tools/openapi-tools-common";
+import { findReadMe } from "@azure/openapi-markdown";
 import * as yargs from "yargs";
-
-import { cliSuppressExceptions } from "../cliSuppressExceptions";
 import {
   PostmanCollectionGenerator,
   PostmanCollectionGeneratorOption,
 } from "../apiScenario/postmanCollectionGenerator";
+import { cliSuppressExceptions } from "../cliSuppressExceptions";
 import { inversifyGetInstance } from "../inversifyUtils";
-import { getApiVersionFromSwaggerFile, getProviderFromFilePath, printWarning } from "../util/utils";
-import { getFileNameFromPath } from "../apiScenario/defaultNaming";
-import { getSwaggerFilePathsFromApiScenarioFilePath } from "../apiScenario/apiScenarioYamlLoader";
+import { getInputFiles, printWarning } from "../util/utils";
+import { EnvironmentVariables } from "../apiScenario/variableEnv";
 
 export const command = "run-api-scenario <api-scenario>";
 
@@ -23,25 +23,23 @@ export const describe = "newman runner run API scenario file.";
 
 export const apiScenarioEnvKey = "API_SCENARIO_JSON_ENV";
 
-/**
- * UploadBlob true. Upload generated file and result to azure blob storage. connection string is passed by `process.env.blobConnectionString`
- * Upload files:
- *
- * 1. newmanReport: containerName: newmanreport path: <ResourceProvider>/<apiVersion>/<apiScenarioFileName>/<runId>/<scenarioIdx>.json
- *
- * 2. payload: containerName: payload path: <resourceProvider>/<apiVersion>/<apiScenarioFileName>/<runId>/<scenarioIdx>/<correlationId>.json
- *
- * 3. report: containerName: report path: <ResourceProvider>/<apiVersion>/<apiScenarioFileName>/<runId>/<scenarioIdx>/report.json
- *
- * 4. postmancollection & postmanenv: container: postmancollection: <ResourceProvider>/<apiVersion>/<apiScenarioFileName>/<runId>/<scenarioIdx>/collection.json
- * postmanenv: <ResourceProvider>/<apiVersion>/<apiScenarioFileName>/<runId>/<scenarioIdx>/env.json
- *
- */
 export const builder: yargs.CommandBuilder = {
   e: {
     alias: "envFile",
     describe: "the env file path.",
     string: true,
+  },
+  tag: {
+    describe: "the readme tag name.",
+    string: true,
+  },
+  readme: {
+    describe: "path to readme.md file",
+    string: true,
+  },
+  specs: {
+    describe: "one or more spec file paths. type: array",
+    type: "array",
   },
   output: {
     alias: "outputDir",
@@ -59,11 +57,6 @@ export const builder: yargs.CommandBuilder = {
     describe: "junit report output path.",
     string: true,
   },
-  uploadBlob: {
-    describe: "upload generated collection to blob.",
-    boolean: true,
-    default: false,
-  },
   level: {
     describe:
       "validation level. oav runner validate request and response with different strict level. 'validate-request' only validate request should return 2xx status code. 'validate-request-response' validate both request and response.",
@@ -74,6 +67,10 @@ export const builder: yargs.CommandBuilder = {
     describe: "ARM endpoint",
     string: true,
     default: "https://management.azure.com",
+  },
+  testProxy: {
+    describe: "TestProxy endpoint, e.g., http://localhost:5000. If not set, no proxy will be used.",
+    string: true,
   },
   location: {
     describe: "resource provision location parameter",
@@ -96,25 +93,6 @@ export const builder: yargs.CommandBuilder = {
     boolean: true,
     default: false,
   },
-  from: {
-    describe:
-      "the step to start with in current run, it's used for debugging and make sure use --skipCleanUp to not delete resource group in the previous run.",
-    string: true,
-    demandOption: false,
-    implies: "runId",
-  },
-  to: {
-    describe:
-      "the step to end in current run,it's used for debugging and make sure use --skipCleanUp to not delete resource group in the previous run.",
-    string: true,
-    demandOption: false,
-    implies: "runId",
-  },
-  runId: {
-    describe: "specify the runId for debugging",
-    string: true,
-    demandOption: false,
-  },
   verbose: {
     describe: "log verbose",
     default: false,
@@ -124,14 +102,30 @@ export const builder: yargs.CommandBuilder = {
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
   await cliSuppressExceptions(async () => {
-    const scenarioFilePath = path.resolve(argv.apiScenario);
-    const swaggerFilePaths = getSwaggerFilePathsFromApiScenarioFilePath(scenarioFilePath);
-    if (swaggerFilePaths.length === 0) {
-      throw new Error(
-        `Failed to run api scenario: Could not find related swagger file. ${scenarioFilePath}`
-      );
+    const scenarioFilePath = pathResolve(argv.apiScenario);
+    const readmePath = argv.readme
+      ? pathResolve(argv.readme)
+      : await findReadMe(pathDirName(scenarioFilePath));
+
+    const fileRoot = readmePath ? pathDirName(readmePath) : process.cwd();
+    console.log(`fileRoot: ${fileRoot}`);
+
+    const swaggerFilePaths: string[] = argv.specs || [];
+    if (readmePath && argv.tag !== undefined) {
+      const inputSwaggerFile = await getInputFiles(readmePath, argv.tag);
+      if (inputSwaggerFile) {
+        for (const it of inputSwaggerFile) {
+          if (swaggerFilePaths.indexOf(it) === -1) {
+            swaggerFilePaths.push(pathJoin(fileRoot, it));
+          }
+        }
+      }
     }
-    let env: any = {};
+
+    console.log("input-file:");
+    console.log(swaggerFilePaths);
+
+    let env: EnvironmentVariables = {};
     if (argv.e !== undefined) {
       env = JSON.parse(fs.readFileSync(argv.e).toString());
     }
@@ -146,47 +140,40 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       }
       env = { ...env, ...envFromVariable };
     }
-    // fileRoot is the nearest common root of all swagger file paths
-    const fileRoot = path.dirname(swaggerFilePaths[0]);
-    const resourceProvider = getProviderFromFilePath(scenarioFilePath);
-    const apiVersion = getApiVersionFromSwaggerFile(swaggerFilePaths[0]);
+
     if (argv.location !== undefined) {
       env.location = argv.location;
     }
     if (argv.subscriptionId !== undefined) {
       env.subscriptionId = argv.subscriptionId;
     }
-
     if (argv.resourceGroup !== undefined) {
       env.resourceGroupName = argv.resourceGroup;
     }
+
     const opt: PostmanCollectionGeneratorOption = {
-      name: `${resourceProvider}/${apiVersion}/${getFileNameFromPath(scenarioFilePath)}`,
+      name: path.basename(scenarioFilePath),
       scenarioDef: scenarioFilePath,
-      swaggerFilePaths: swaggerFilePaths,
       fileRoot: fileRoot,
       checkUnderFileRoot: false,
       generateCollection: true,
       useJsonParser: false,
       runCollection: !argv.dryRun,
-      env: env,
+      env,
       outputFolder: argv.output,
       markdownReportPath: argv.markdownReportPath,
       junitReportPath: argv.junitReportPath,
       eraseXmsExamples: false,
       eraseDescription: false,
-      enableBlobUploader: argv.uploadBlob,
-      blobConnectionString: process.env.blobConnectionString || "",
       baseUrl: argv.armEndpoint,
+      testProxy: argv.testProxy,
       validationLevel: argv.level,
       skipCleanUp: argv.skipCleanUp,
-      from: argv.from,
-      to: argv.to,
-      runId: argv.runId,
       verbose: argv.verbose,
+      swaggerFilePaths: swaggerFilePaths,
     };
     const generator = inversifyGetInstance(PostmanCollectionGenerator, opt);
-    await generator.GenerateCollection();
+    await generator.run();
     return 0;
   });
 }

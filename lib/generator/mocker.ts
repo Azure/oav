@@ -1,5 +1,14 @@
 import { log } from "../util/logging";
 
+function randomString(length: number): string {
+  const possible = "abcdefghijklmnopqrstuvwxyz";
+  let ret = "";
+
+  for (let i = 0; i < length; i++)
+    ret += possible.charAt(Math.floor(Math.random() * possible.length));
+  return ret;
+}
+
 export default class Mocker {
   public mock(paramSpec: any, paramName: string, arrItem?: any): any {
     switch (paramSpec.type) {
@@ -52,7 +61,7 @@ export default class Mocker {
       );
     }
     const length = this.getRandomInt(minLength, maxLength);
-    let mockedValue = "a".repeat(length);
+    let mockedValue = randomString(length);
 
     if (paramSpec.format === "uri") {
       const prefix = "https://microsoft.com/a";

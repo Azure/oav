@@ -1,10 +1,11 @@
-import { dirname as pathDirname, join as pathJoin } from "path";
+import { dirname as pathDirname } from "path";
 import {
   FilePosition,
   getInfo,
   getRootObjectInfo,
   Json,
   parseJson,
+  pathJoin,
 } from "@azure-tools/openapi-tools-common";
 import { load as parseYaml } from "js-yaml";
 import { default as jsonPointer } from "json-pointer";
