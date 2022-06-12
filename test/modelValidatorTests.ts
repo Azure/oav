@@ -110,6 +110,15 @@ describe("Model Validation", () => {
         assert.strictEqual(err.innerErrors[0].code, "DOUBLE_FORWARD_SLASHES_IN_URL");
       }
     });
+
+    it("should report real exampleJsonPath when additional parameter includes '.'", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/additionalParameter/additionalParameter.json`;
+      const result = await validate.validateExamples(specPath2, undefined);
+      assert.strictEqual(result.length, 1);
+      assert.strictEqual(result[0].code, "OBJECT_ADDITIONAL_PROPERTIES");
+      assert.strictEqual(result[0].message, "Additional properties not allowed: @result.second");
+      assert.strictEqual(result[0].exampleJsonPath, "$responses.200.body['@result.second']");
+    });
   });
 
   describe("Polymorphic models - ", () => {

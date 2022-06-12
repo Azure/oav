@@ -583,7 +583,14 @@ export class SwaggerExampleValidator {
           schemaPosition = err.source.position;
         }
 
-        for (const path of err.jsonPathsInPayload) {
+        for (let path of err.jsonPathsInPayload) {
+          // If parameter name includes ".", path should use "[]" for better understand.
+          for (const parameter of err.params) {
+            const parameterPosition = path.indexOf(parameter);
+            if (parameterPosition !== -1 && parameter.includes(".")) {
+              path = path.substring(0, parameterPosition - 1) + `['${parameter}']`;
+            }
+          }
           exampleJsonPaths.push(`$responses.${statusCode}${path}`);
         }
       }
