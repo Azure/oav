@@ -192,8 +192,7 @@ export class PostmanCollectionGenerator {
     this.dataMasker.addMaskedValues(values);
 
     console.log(`\ngenerate collection successfully!`);
-    console.log(`Postman collection: '${collectionPath}'. Postman env: '${envPath}' `);
-    console.log(`Command: newman run ${collectionPath} -e ${envPath} -r 'json,cli'`);
+    console.log(`Postman collection: ${collectionPath}\nPostman env: ${envPath}`);
   }
 
   private async runCollection(

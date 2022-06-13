@@ -3,7 +3,7 @@
 
 import * as fs from "fs";
 import * as path from "path";
-import { pathDirName, pathJoin, pathResolve } from "@azure-tools/openapi-tools-common";
+import { pathDirName, pathResolve } from "@azure-tools/openapi-tools-common";
 import { findReadMe } from "@azure/openapi-markdown";
 import * as yargs from "yargs";
 import {
@@ -110,14 +110,18 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     const fileRoot = readmePath ? pathDirName(readmePath) : process.cwd();
     console.log(`fileRoot: ${fileRoot}`);
 
-    const swaggerFilePaths: string[] = argv.specs || [];
+    const swaggerFilePaths: string[] = [];
+    for (const spec of argv.specs ?? []) {
+      const specFile = path.relative(fileRoot, pathResolve(spec));
+      if (specFile && swaggerFilePaths.indexOf(specFile) < 0) {
+        swaggerFilePaths.push(specFile);
+      }
+    }
     if (readmePath && argv.tag !== undefined) {
-      const inputSwaggerFile = await getInputFiles(readmePath, argv.tag);
-      if (inputSwaggerFile) {
-        for (const it of inputSwaggerFile) {
-          if (swaggerFilePaths.indexOf(it) === -1) {
-            swaggerFilePaths.push(pathJoin(fileRoot, it));
-          }
+      const inputFile = await getInputFiles(readmePath, argv.tag);
+      for (const it of inputFile ?? []) {
+        if (swaggerFilePaths.indexOf(it) < 0) {
+          swaggerFilePaths.push(it);
         }
       }
     }
