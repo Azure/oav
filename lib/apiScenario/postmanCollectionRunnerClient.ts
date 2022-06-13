@@ -31,6 +31,8 @@ export interface PostmanCollectionRunnerClientOption {
   baseUrl: string;
   testProxy?: string;
   verbose?: boolean;
+  enableAuth?: boolean;
+  enableArmCall?: boolean;
 }
 
 const ARM_ENDPOINT = "https://management.azure.com";
@@ -46,6 +48,8 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     this.opts = opts;
     setDefaultOpts(this.opts, {
       baseUrl: ARM_ENDPOINT,
+      enableAuth: true,
+      enableArmCall: true,
     } as PostmanCollectionRunnerClientOption);
   }
 
@@ -108,7 +112,16 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
 
     PostmanHelper.reservedCollectionVariables.forEach((variable) => {
       if (!this.collection.variables.has(variable.key)) {
-        this.collection.variables.add(new Variable(variable));
+        if (!this.opts.enableAuth && variable.key === "x_enable_auth") {
+          this.collection.variables.add(
+            new Variable({
+              key: variable.key,
+              value: "false",
+            })
+          );
+        } else {
+          this.collection.variables.add(new Variable(variable));
+        }
       }
     });
 
@@ -197,6 +210,8 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     resourceGroupName: string,
     location: string
   ): Promise<void> {
+    if (!this.opts.enableArmCall) return;
+
     const item = this.newItem({
       name: "createResourceGroup",
     });
@@ -244,6 +259,8 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     _subscriptionId: string,
     _resourceGroupName: string
   ): Promise<void> {
+    if (!this.opts.enableArmCall) return;
+
     const item = this.newItem({
       name: "deleteResourceGroup",
     });
@@ -377,7 +394,6 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
         itemName: item.name,
         step: item.name,
       });
-      this.collection.items.add(item);
     }
     // generate get
     if (step.operation._method === "put" || step.operation._method === "delete") {
@@ -408,9 +424,9 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       )
     );
     item.events.add(longRunningEvent);
-    this.collection.items.add(item);
+
     for (const it of this.longRunningOperationItem(item, checkStatus)) {
-      this.collection.items.append(it);
+      this.collection.items.add(it);
     }
   }
 
@@ -449,6 +465,8 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     step: StepArmTemplate,
     env: VariableEnv
   ): Promise<void> {
+    if (!this.opts.enableArmCall) return;
+
     const item = this.newItem({
       name: step.step,
     });
@@ -471,7 +489,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     });
     const body = {
       properties: {
-        mode: "Complete",
+        mode: "Incremental",
         template: convertPostmanFormat(env.resolveObjectValues(armTemplate)),
       },
     };
@@ -500,6 +518,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       )
     );
     this.collection.items.add(item);
+
     this.addAsLongRunningOperationItem(item, true);
     const generatedGetScriptTypes: PostmanHelper.TestScriptType[] = this.opts.verbose
       ? ["DetailResponseLog", "ExtractARMTemplateOutput"]
