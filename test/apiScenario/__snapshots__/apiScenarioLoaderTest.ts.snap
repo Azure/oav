@@ -2,7 +2,7 @@
 
 exports[`ApiScenarioLoader load valid scenario - storage 1`] = `
 Object {
-  "_filePath": "Microsoft.Storage/stable/2021-09-01/scenarios/storageQuickStart.yaml",
+  "_filePath": "Microsoft.Storage/stable/2021-08-01/scenarios/storageQuickStart.yaml",
   "cleanUpSteps": Array [],
   "prepareSteps": Array [],
   "requiredVariables": Array [
@@ -22,7 +22,7 @@ Object {
               "name": "$(accountName)",
               "type": "Microsoft.Storage/storageAccounts",
             },
-            "api-version": "2021-09-01",
+            "api-version": "2021-08-01",
             "subscriptionId": "$(subscriptionId)",
           },
           "requiredVariables": Array [],
@@ -39,7 +39,7 @@ Object {
           "outputVariables": Object {},
           "parameters": Object {
             "accountName": "$(accountName)",
-            "api-version": "2021-09-01",
+            "api-version": "2021-08-01",
             "parameters": Object {
               "kind": "StorageV2",
               "location": "$(location)",
@@ -86,7 +86,7 @@ Object {
               "name": "$(accountName)",
               "type": "Microsoft.Storage/storageAccounts",
             },
-            "api-version": "2021-09-01",
+            "api-version": "2021-08-01",
             "subscriptionId": "$(subscriptionId)",
           },
           "requiredVariables": Array [],
@@ -103,7 +103,7 @@ Object {
           "outputVariables": Object {},
           "parameters": Object {
             "accountName": "$(accountName)",
-            "api-version": "2021-09-01",
+            "api-version": "2021-08-01",
             "parameters": Object {
               "kind": "StorageV2",
               "location": "$(location)",
@@ -144,7 +144,7 @@ Object {
               "name": "$(accountName)",
               "type": "Microsoft.Storage/storageAccounts",
             },
-            "api-version": "2021-09-01",
+            "api-version": "2021-08-01",
             "subscriptionId": "$(subscriptionId)",
           },
           "requiredVariables": Array [],
@@ -161,7 +161,7 @@ Object {
           "outputVariables": Object {},
           "parameters": Object {
             "accountName": "$(accountName)",
-            "api-version": "2021-09-01",
+            "api-version": "2021-08-01",
             "parameters": Object {
               "kind": "StorageV2",
               "location": "$(location)",
@@ -208,7 +208,7 @@ Object {
               "name": "$(accountName)",
               "type": "Microsoft.Storage/storageAccounts",
             },
-            "api-version": "2021-09-01",
+            "api-version": "2021-08-01",
             "subscriptionId": "$(subscriptionId)",
           },
           "requiredVariables": Array [],
@@ -225,7 +225,7 @@ Object {
           "outputVariables": Object {},
           "parameters": Object {
             "accountName": "$(accountName)",
-            "api-version": "2021-09-01",
+            "api-version": "2021-08-01",
             "parameters": Object {
               "kind": "StorageV2",
               "location": "$(location)",
@@ -271,7 +271,7 @@ Object {
               "name": "$(accountName)",
               "type": "Microsoft.Storage/storageAccounts",
             },
-            "api-version": "2021-09-01",
+            "api-version": "2021-08-01",
             "subscriptionId": "$(subscriptionId)",
           },
           "requiredVariables": Array [],
@@ -288,7 +288,7 @@ Object {
           "outputVariables": Object {},
           "parameters": Object {
             "accountName": "$(accountName)",
-            "api-version": "2021-09-01",
+            "api-version": "2021-08-01",
             "parameters": Object {
               "kind": "StorageV2",
               "location": "$(location)",
@@ -335,7 +335,7 @@ Object {
               "name": "$(accountName)",
               "type": "Microsoft.Storage/storageAccounts",
             },
-            "api-version": "2021-09-01",
+            "api-version": "2021-08-01",
             "subscriptionId": "$(subscriptionId)",
           },
           "requiredVariables": Array [],
@@ -352,7 +352,7 @@ Object {
           "outputVariables": Object {},
           "parameters": Object {
             "accountName": "$(accountName)",
-            "api-version": "2021-09-01",
+            "api-version": "2021-08-01",
             "parameters": Object {
               "kind": "StorageV2",
               "location": "$(location)",
