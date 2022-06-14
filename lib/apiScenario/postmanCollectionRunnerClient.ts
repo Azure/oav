@@ -18,7 +18,6 @@ import {
 } from "./apiScenarioRunner";
 import { ArmTemplate, Scenario, StepArmTemplate, StepRestCall } from "./apiScenarioTypes";
 import { generatedGet, generatedPostmanItem } from "./defaultNaming";
-import { typeToDescription } from "./postmanItemTypes";
 import * as PostmanHelper from "./postmanHelper";
 import { VariableEnv } from "./variableEnv";
 
@@ -245,7 +244,7 @@ pm.test("Stopped TestProxy recording", function() {
       raw: '{"location":"{{location}}"}',
     });
 
-    item.description = typeToDescription({ type: "prepare" });
+    item.description = JSON.stringify({ type: "prepare" });
 
     item.request.addHeader({ key: "Content-Type", value: "application/json" });
 
@@ -380,7 +379,7 @@ pm.test("Stopped TestProxy recording", function() {
     this.addTestScript(item, scriptTypes, getOverwriteVariables());
 
     if (step.operation["x-ms-long-running-operation"]) {
-      item.description = typeToDescription({
+      item.description = JSON.stringify({
         type: "LRO",
         poller_item_name: `${item.name}_poller`,
         operationId: step.operation.operationId || "",
@@ -390,7 +389,7 @@ pm.test("Stopped TestProxy recording", function() {
       });
       this.addAsLongRunningOperationItem(item);
     } else {
-      item.description = typeToDescription({
+      item.description = JSON.stringify({
         type: "simple",
         operationId: step.operation.operationId || "",
         exampleName: step.exampleFile!,
@@ -553,7 +552,7 @@ if (pollingUrl) {
       },
     });
     item.request.url = url;
-    item.description = typeToDescription({
+    item.description = JSON.stringify({
       type: "generated-get",
       lro_item_name: name,
       step: step,
@@ -576,7 +575,7 @@ if (pollingUrl) {
         method: "GET",
       },
     });
-    pollerItem.description = typeToDescription({ type: "poller", lro_item_name: initialItem.name });
+    pollerItem.description = JSON.stringify({ type: "poller", lro_item_name: initialItem.name });
 
     const delay = this.mockDelayItem(pollerItem.name, initialItem.name);
 
@@ -631,7 +630,7 @@ try {
       },
       false
     );
-    ret.description = typeToDescription({ type: "mock", lro_item_name: LROItemName });
+    ret.description = JSON.stringify({ type: "mock", lro_item_name: LROItemName });
 
     const event = PostmanHelper.createEvent(
       "prerequest",
