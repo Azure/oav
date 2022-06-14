@@ -155,12 +155,14 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     item.events.add(
       PostmanHelper.createEvent(
         "test",
-        PostmanHelper.createScript(`pm.test("Started TestProxy recording", function(){
+        PostmanHelper.createScript(
+          `
+pm.test("Started TestProxy recording", function() {
     pm.response.to.be.success;
-    pm.response.to.have.header('x-recording-id');
-    pm.collectionVariables.set('x_recording_id', pm.response.headers.get('x-recording-id'));
-});
-`)
+    pm.response.to.have.header("x-recording-id");
+    pm.collectionVariables.set("x_recording_id", pm.response.headers.get("x-recording-id"));
+});`
+        )
       )
     );
     this.collection.items.add(item);
@@ -185,7 +187,8 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       PostmanHelper.createEvent(
         "test",
         PostmanHelper.createScript(
-          `pm.test("Stopped TestProxy recording", function(){
+          `
+pm.test("Stopped TestProxy recording", function() {
     pm.response.to.be.success;
 });
 `
@@ -412,15 +415,15 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     const longRunningEvent = PostmanHelper.createEvent(
       "test",
       PostmanHelper.createScript(
-        `const pollingUrl = pm.response.headers.get('Location') || pm.response.headers.get('Azure-AsyncOperation');
-        if (pollingUrl) {
-          pm.collectionVariables.set("x_polling_url", ${
-            this.opts.testProxy
-              ? `pollingUrl.replace("${this.opts.baseUrl}","${this.opts.testProxy}")`
-              : "pollingUrl"
-          });
-        }
         `
+const pollingUrl = pm.response.headers.get("Location") || pm.response.headers.get("Azure-AsyncOperation");
+if (pollingUrl) {
+    pm.collectionVariables.set("x_polling_url", ${
+      this.opts.testProxy
+        ? `pollingUrl.replace("${this.opts.baseUrl}","${this.opts.testProxy}")`
+        : "pollingUrl"
+    });
+}`
       )
     );
     item.events.add(longRunningEvent);
@@ -579,23 +582,25 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
 
     const event = PostmanHelper.createEvent(
       "test",
-      PostmanHelper.createScript(`try{
-  if(pm.response.code === 202){
-    postman.setNextRequest('${delay.name}')
-  }else if(pm.response.code === 204){
-    postman.setNextRequest($(nextRequest))
-  }
-  else{
-    const terminalStatus = ["Succeeded", "Failed", "Canceled"]
-    if(pm.response.json().status !== undefined && terminalStatus.indexOf(pm.response.json().status) === -1){
-      postman.setNextRequest('${delay.name}')
-    }else{
-      postman.setNextRequest($(nextRequest))
+      PostmanHelper.createScript(
+        `
+try {
+    if (pm.response.code === 202) {
+        postman.setNextRequest('${delay.name}');
+    } else if (pm.response.code === 204) {
+        postman.setNextRequest($(nextRequest));
+    } else {
+        const terminalStatus = ["Succeeded", "Failed", "Canceled"];
+        if (pm.response.json().status !== undefined && terminalStatus.indexOf(pm.response.json().status) === -1) {
+            postman.setNextRequest('${delay.name}')
+        } else {
+            postman.setNextRequest($(nextRequest))
+        }
     }
-  }
-}catch(err){
-  postman.setNextRequest($(nextRequest))
-}`)
+} catch(err) {
+    postman.setNextRequest($(nextRequest))
+}`
+      )
     );
     pollerItem.events.add(event);
 
