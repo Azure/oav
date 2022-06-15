@@ -30,9 +30,9 @@ export interface PostmanCollectionRunnerClientOption {
   baseUrl: string;
   testProxy?: string;
   verbose?: boolean;
-  enableAuth?: boolean;
-  enableArmCall?: boolean;
-  enableLroPoll?: boolean;
+  skipAuth?: boolean;
+  skipArmCall?: boolean;
+  skipLroPoll?: boolean;
 }
 
 const ARM_ENDPOINT = "https://management.azure.com";
@@ -48,9 +48,6 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     this.opts = opts;
     setDefaultOpts(this.opts, {
       baseUrl: ARM_ENDPOINT,
-      enableAuth: true,
-      enableArmCall: true,
-      enableLroPoll: true,
     } as PostmanCollectionRunnerClientOption);
   }
 
@@ -113,7 +110,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
 
     PostmanHelper.reservedCollectionVariables.forEach((variable) => {
       if (!this.collection.variables.has(variable.key)) {
-        if (!this.opts.enableAuth && variable.key === "x_enable_auth") {
+        if (this.opts.skipAuth && variable.key === "x_enable_auth") {
           this.collection.variables.add(
             new Variable({
               key: variable.key,
@@ -214,7 +211,7 @@ pm.test("Stopped TestProxy recording", function() {
     resourceGroupName: string,
     location: string
   ): Promise<void> {
-    if (!this.opts.enableArmCall) return;
+    if (this.opts.skipArmCall) return;
 
     const item = this.newItem({
       name: "createResourceGroup",
@@ -263,7 +260,7 @@ pm.test("Stopped TestProxy recording", function() {
     _subscriptionId: string,
     _resourceGroupName: string
   ): Promise<void> {
-    if (!this.opts.enableArmCall) return;
+    if (this.opts.skipArmCall) return;
 
     const item = this.newItem({
       name: "deleteResourceGroup",
@@ -413,7 +410,7 @@ pm.test("Stopped TestProxy recording", function() {
   }
 
   private addAsLongRunningOperationItem(item: Item, checkStatus: boolean = false) {
-    if (!this.opts.enableLroPoll) return;
+    if (this.opts.skipLroPoll) return;
 
     const longRunningEvent = PostmanHelper.createEvent(
       "test",
@@ -473,7 +470,7 @@ if (pollingUrl) {
     step: StepArmTemplate,
     env: VariableEnv
   ): Promise<void> {
-    if (!this.opts.enableArmCall) return;
+    if (this.opts.skipArmCall) return;
 
     const item = this.newItem({
       name: step.step,

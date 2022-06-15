@@ -101,9 +101,9 @@ export class PostmanCollectionGenerator {
       testProxy: this.opt.testProxy,
       verbose: this.opt.verbose,
       swaggerFilePaths: this.opt.swaggerFilePaths,
-      enableAuth: !this.opt.devMode,
-      enableArmCall: !this.opt.devMode,
-      enableLroPoll: !this.opt.devMode,
+      skipAuth: this.opt.devMode,
+      skipArmCall: this.opt.devMode,
+      skipLroPoll: this.opt.devMode,
     });
     const runner = new ApiScenarioRunner({
       jsonLoader: this.apiScenarioLoader.jsonLoader,
