@@ -244,6 +244,13 @@ export class SwaggerExampleValidator {
       }
       // validate headers
       const headers = transformLiveHeader(exampleResponseHeaders, responseSchema);
+      this.validateLroOperation(
+        exampleFileUrl,
+        operation,
+        exampleResponseStatusCode,
+        headers,
+        exampleResponseHeaders
+      );
       if (responseSchema.schema !== undefined) {
         if (headers["content-type"] !== undefined) {
           this.validateContentType(
@@ -257,13 +264,6 @@ export class SwaggerExampleValidator {
             exampleResponseHeaders
           );
         }
-        this.validateLroOperation(
-          exampleFileUrl,
-          operation,
-          exampleResponseStatusCode,
-          headers,
-          exampleResponseHeaders
-        );
         const validate = responseSchema._validate!;
         const ctx = {
           isResponse: true,
