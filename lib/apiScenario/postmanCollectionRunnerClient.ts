@@ -452,17 +452,19 @@ if (pollingUrl) {
     if (item.request.method === "POST") {
       types = types.filter((it) => it !== "DetailResponseLog");
     }
-    const testEvent = PostmanHelper.createEvent(
-      "test",
-      // generate assertion from example
-      PostmanHelper.generateScript({
-        name: "response status code assertion.",
-        types: types,
-        variables: overwriteVariables,
-        armTemplate,
-      })
-    );
-    item.events.add(testEvent);
+    if (types.length > 0) {
+      const testEvent = PostmanHelper.createEvent(
+        "test",
+        // generate assertion from example
+        PostmanHelper.generateScript({
+          name: "response status code assertion.",
+          types: types,
+          variables: overwriteVariables,
+          armTemplate,
+        })
+      );
+      item.events.add(testEvent);
+    }
   }
 
   public async sendArmTemplateDeployment(
