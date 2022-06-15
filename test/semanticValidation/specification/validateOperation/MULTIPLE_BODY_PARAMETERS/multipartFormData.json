@@ -36,6 +36,19 @@
         ],
         "parameters": [
           {
+            "in": "query",
+            "name": "q1",
+            "description": "test",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "q2",
+            "description": "test",
+            "required": true,
+            "type": "string"
+          },
+          {
             "in": "formData",
             "name": "Document",
             "description": "Actual Document in the form",
@@ -46,7 +59,7 @@
             "in": "formData",
             "name": "Glossary",
             "description": "Glossary for the request",
-            "type": "string"
+            "type": "file"
           }
         ],
         "responses": {

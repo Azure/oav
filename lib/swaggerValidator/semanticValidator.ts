@@ -488,7 +488,6 @@ export class SwaggerSemanticValidator {
         const visitedParamName = new Set<string>();
         const { operationId, parameters, consumes } = operation;
         const mergedParameters = [...(parameters ?? []), ...(pathParams ?? [])];
-        let NumberOfFileTypeFormData = 0;
 
         if (operationId !== undefined) {
           if (visitedOperationId.has(operationId)) {
@@ -509,28 +508,19 @@ export class SwaggerSemanticValidator {
           }
           visitedParamName.add(name);
 
-          if (param.in === "body" || param.in === "formData") {
-            if (param.in === "formData" && param.type === "file") {
-              NumberOfFileTypeFormData++;
-            }
-            if (bodyParam !== undefined) {
-              const meta = getOavErrorMeta(
-                param.in === bodyParam.in
-                  ? "MULTIPLE_BODY_PARAMETERS"
-                  : "INVALID_PARAMETER_COMBINATION",
-                {}
-              );
-              if (
-                meta.code === "MULTIPLE_BODY_PARAMETERS" &&
-                consumes !== undefined &&
-                consumes.includes("multipart/form-data") &&
-                NumberOfFileTypeFormData < 2
-              ) {
-                continue;
+          if (!(consumes !== undefined && consumes.includes("multipart/form-data"))) {
+            if (param.in === "body" || param.in === "formData") {
+              if (bodyParam !== undefined) {
+                const meta = getOavErrorMeta(
+                  param.in === bodyParam.in
+                    ? "MULTIPLE_BODY_PARAMETERS"
+                    : "INVALID_PARAMETER_COMBINATION",
+                  {}
+                );
+                this.addErrorsFromErrorCode(errors, url, meta, operation);
               }
-              this.addErrorsFromErrorCode(errors, url, meta, operation);
+              bodyParam = param;
             }
-            bodyParam = param;
           }
 
           if (param.in === "path") {
