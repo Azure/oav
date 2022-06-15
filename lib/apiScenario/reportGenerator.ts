@@ -104,7 +104,7 @@ export interface ReportGeneratorOption extends NewmanReportParserOption, ApiScen
   validationLevel?: ValidationLevel;
   verbose?: boolean;
   swaggerFilePaths?: string[];
-  generateExampleFromTraffic?: boolean;
+  generateExample?: boolean;
 }
 
 @injectable()
@@ -206,7 +206,7 @@ export class ReportGenerator {
         let generatedExample = undefined;
         let roundtripErrors = undefined;
         let responseDiffResult: ResponseDiffItem[] | undefined = undefined;
-        if (this.opts.generateExampleFromTraffic) {
+        if (this.opts.generateExample) {
           const example = this.generateExample(
             it,
             variables,
@@ -259,41 +259,6 @@ export class ReportGenerator {
           liveValidationResult: liveValidationResult,
         });
         this.recording.set(correlationId, it);
-      }
-    }
-  }
-
-  public async extractExamples() {
-    if (!this.opts.generateExampleFromTraffic) {
-      return;
-    }
-    await this.initialize();
-    const rawReport = this.rawReport!;
-    const variables = rawReport.variables;
-    for (const it of rawReport.executions) {
-      if (it.annotation === undefined) {
-        continue;
-      }
-      if (it.annotation.type === "simple" || it.annotation.type === "LRO") {
-        const matchedStep = this.getMatchedStep(it.annotation.step) as StepRestCall;
-        if (matchedStep === undefined) {
-          continue;
-        }
-
-        const example = this.generateExample(
-          it,
-          variables,
-          rawReport,
-          matchedStep,
-          "example"
-        ).example;
-        for (const key of Object.keys(example.responses)) {
-          if (key >= "400") {
-            delete example.responses[key];
-          }
-        }
-        await this.writeExample(`${matchedStep.description ?? matchedStep.step}.json`, example);
-        console.log(`Generated example ${matchedStep.step}: ${JSON.stringify(example, null, 2)}`);
       }
     }
   }

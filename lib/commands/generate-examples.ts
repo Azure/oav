@@ -7,8 +7,8 @@ import * as yargs from "yargs";
 
 import { cliSuppressExceptions } from "../cliSuppressExceptions";
 import { log } from "../util/logging";
-import * as validate from "../validate";
 
+import * as validate from "../validate";
 export const command = "generate-examples [spec-path]";
 
 export const describe = "Generate swagger examples from real payload records.";

@@ -55,7 +55,7 @@ export class NewmanReportAnalyzer {
       validationLevel: this.opts.validationLevel,
       verbose: this.opts.verbose,
       fileRoot: dirname(apiScenarioFilePath),
-      generateExampleFromTraffic: this.opts.generateExampleFromTraffic,
+      generateExample: this.opts.generateExampleFromTraffic,
     };
     const reportGenerator = inversifyGetInstance(ReportGenerator, reportGeneratorOption);
     await reportGenerator.generateReport();
