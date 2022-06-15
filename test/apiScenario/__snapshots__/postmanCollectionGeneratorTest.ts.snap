@@ -21,7 +21,6 @@ Array [
           "exec": Array [
             "",
             "if (pm.variables.get(\\"x_enable_auth\\") !== \\"true\\") {",
-            "    console.log(\\"Auth disabled\\");",
             "    return;",
             "}",
             "let vars = [\\"client_id\\", \\"client_secret\\", \\"tenantId\\", \\"subscriptionId\\"];",
@@ -691,7 +690,6 @@ Array [
           "exec": Array [
             "",
             "if (pm.variables.get(\\"x_enable_auth\\") !== \\"true\\") {",
-            "    console.log(\\"Auth disabled\\");",
             "    return;",
             "}",
             "let vars = [\\"client_id\\", \\"client_secret\\", \\"tenantId\\", \\"subscriptionId\\"];",
@@ -1286,7 +1284,6 @@ Array [
           "exec": Array [
             "",
             "if (pm.variables.get(\\"x_enable_auth\\") !== \\"true\\") {",
-            "    console.log(\\"Auth disabled\\");",
             "    return;",
             "}",
             "let vars = [\\"client_id\\", \\"client_secret\\", \\"tenantId\\", \\"subscriptionId\\"];",
@@ -1886,7 +1883,6 @@ Array [
           "exec": Array [
             "",
             "if (pm.variables.get(\\"x_enable_auth\\") !== \\"true\\") {",
-            "    console.log(\\"Auth disabled\\");",
             "    return;",
             "}",
             "let vars = [\\"client_id\\", \\"client_secret\\", \\"tenantId\\", \\"subscriptionId\\"];",
@@ -2415,7 +2411,6 @@ Array [
           "exec": Array [
             "",
             "if (pm.variables.get(\\"x_enable_auth\\") !== \\"true\\") {",
-            "    console.log(\\"Auth disabled\\");",
             "    return;",
             "}",
             "let vars = [\\"client_id\\", \\"client_secret\\", \\"tenantId\\", \\"subscriptionId\\"];",
@@ -2879,7 +2874,6 @@ Array [
           "exec": Array [
             "",
             "if (pm.variables.get(\\"x_enable_auth\\") !== \\"true\\") {",
-            "    console.log(\\"Auth disabled\\");",
             "    return;",
             "}",
             "let vars = [\\"client_id\\", \\"client_secret\\", \\"tenantId\\", \\"subscriptionId\\"];",
