@@ -16,6 +16,7 @@ export interface NewmanReportAnalyzerOption extends NewmanReportParserOption {
   swaggerFilePaths?: string[];
   validationLevel?: ValidationLevel;
   verbose?: boolean;
+  generateExampleFromTraffic?: boolean;
 }
 
 @injectable()
@@ -54,6 +55,7 @@ export class NewmanReportAnalyzer {
       validationLevel: this.opts.validationLevel,
       verbose: this.opts.verbose,
       fileRoot: dirname(apiScenarioFilePath),
+      generateExampleFromTraffic: this.opts.generateExampleFromTraffic,
     };
     const reportGenerator = inversifyGetInstance(ReportGenerator, reportGeneratorOption);
     await reportGenerator.generateReport();
