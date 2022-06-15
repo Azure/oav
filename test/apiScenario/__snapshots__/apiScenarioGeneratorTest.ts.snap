@@ -1,0 +1,820 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ApiScenarioGenerator generate api scenario from recording - storage 1`] = `
+Object {
+  "scenarios": Array [
+    Object {
+      "scenario": "AddRemoveTag",
+      "steps": Array [
+        Object {
+          "operationId": "Subscriptions_Get",
+          "step": "Subscriptions_Get",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_CheckNameAvailability",
+          "parameters": Object {
+            "accountName": Object {
+              "name": "$(accountName)",
+              "type": "Microsoft.Storage/storageAccounts",
+            },
+          },
+          "step": "StorageAccounts_CheckNameAvailability",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_Create",
+          "step": "StorageAccounts_Create",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "Tags_GetAtScope",
+          "step": "Tags_GetAtScope",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "Tags_CreateOrUpdateAtScope",
+          "parameters": Object {
+            "parameters": Object {
+              "properties": Object {
+                "tags": Object {
+                  "key": "value",
+                  "key1": "value1",
+                  "key2": "value2",
+                },
+              },
+            },
+          },
+          "step": "Tags_CreateOrUpdateAtScope",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_GetProperties",
+          "step": "StorageAccounts_GetProperties",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "Tags_CreateOrUpdateAtScope",
+          "parameters": Object {
+            "parameters": Object {
+              "properties": Object {
+                "tags": Object {
+                  "key1": "value1",
+                  "key2": "value2",
+                },
+              },
+            },
+          },
+          "step": "Tags_CreateOrUpdateAtScope_1",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_GetProperties",
+          "step": "StorageAccounts_GetProperties_1",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_ListByResourceGroup",
+          "step": "StorageAccounts_ListByResourceGroup",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_Delete",
+          "step": "StorageAccounts_Delete",
+          "variables": undefined,
+        },
+      ],
+      "variables": Object {
+        "accountName": Object {
+          "type": "string",
+          "value": "teststoragemgmt9233",
+        },
+        "parameters": Object {
+          "type": "object",
+          "value": Object {
+            "kind": "Storage",
+            "location": "$(location)",
+            "properties": Object {},
+            "sku": Object {
+              "name": "Standard_GRS",
+            },
+            "tags": Object {
+              "key1": "value1",
+              "key2": "value2",
+            },
+          },
+        },
+        "scope": Object {
+          "type": "string",
+          "value": "subscriptions/db1ab6f0-4769-4b27-930e-01e2ef9c123c/resourceGroups/teststorageRG-8814/providers/Microsoft.Storage/storageAccounts/$(accountName)",
+        },
+      },
+    },
+    Object {
+      "scenario": "CreateStandardAccount",
+      "steps": Array [
+        Object {
+          "operationId": "Subscriptions_Get",
+          "step": "Subscriptions_Get",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_CheckNameAvailability",
+          "step": "StorageAccounts_CheckNameAvailability",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_Create",
+          "parameters": Object {
+            "accountName": "$(accountName1)",
+          },
+          "step": "StorageAccounts_Create",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_CheckNameAvailability",
+          "step": "StorageAccounts_CheckNameAvailability_1",
+          "variables": Object {
+            "accountName": Object {
+              "patches": Array [
+                Object {
+                  "replace": "/name",
+                  "value": "$(accountName2)",
+                },
+              ],
+              "type": "object",
+              "value": undefined,
+            },
+          },
+        },
+        Object {
+          "operationId": "StorageAccounts_Create",
+          "parameters": Object {
+            "accountName": "$(accountName2)",
+          },
+          "step": "StorageAccounts_Create_1",
+          "variables": Object {
+            "parameters": Object {
+              "patches": Array [
+                Object {
+                  "replace": "/sku/name",
+                  "value": "Standard_GRS",
+                },
+              ],
+              "type": "object",
+              "value": undefined,
+            },
+          },
+        },
+        Object {
+          "operationId": "StorageAccounts_CheckNameAvailability",
+          "step": "StorageAccounts_CheckNameAvailability_2",
+          "variables": Object {
+            "accountName": Object {
+              "patches": Array [
+                Object {
+                  "replace": "/name",
+                  "value": "$(accountName3)",
+                },
+              ],
+              "type": "object",
+              "value": undefined,
+            },
+          },
+        },
+        Object {
+          "operationId": "StorageAccounts_Create",
+          "parameters": Object {
+            "accountName": "$(accountName3)",
+          },
+          "step": "StorageAccounts_Create_2",
+          "variables": Object {
+            "parameters": Object {
+              "patches": Array [
+                Object {
+                  "replace": "/sku/name",
+                  "value": "Standard_RAGRS",
+                },
+              ],
+              "type": "object",
+              "value": undefined,
+            },
+          },
+        },
+        Object {
+          "operationId": "StorageAccounts_CheckNameAvailability",
+          "step": "StorageAccounts_CheckNameAvailability_3",
+          "variables": Object {
+            "accountName": Object {
+              "patches": Array [
+                Object {
+                  "replace": "/name",
+                  "value": "$(accountName4)",
+                },
+              ],
+              "type": "object",
+              "value": undefined,
+            },
+          },
+        },
+        Object {
+          "operationId": "StorageAccounts_Create",
+          "parameters": Object {
+            "accountName": "$(accountName4)",
+          },
+          "step": "StorageAccounts_Create_3",
+          "variables": Object {
+            "parameters": Object {
+              "patches": Array [
+                Object {
+                  "replace": "/sku/name",
+                  "value": "Standard_ZRS",
+                },
+              ],
+              "type": "object",
+              "value": undefined,
+            },
+          },
+        },
+        Object {
+          "operationId": "StorageAccounts_ListByResourceGroup",
+          "step": "StorageAccounts_ListByResourceGroup",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_Delete",
+          "parameters": Object {
+            "accountName": "$(accountName1)",
+          },
+          "step": "StorageAccounts_Delete",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_Delete",
+          "parameters": Object {
+            "accountName": "$(accountName4)",
+          },
+          "step": "StorageAccounts_Delete_1",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_Delete",
+          "parameters": Object {
+            "accountName": "$(accountName3)",
+          },
+          "step": "StorageAccounts_Delete_2",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_Delete",
+          "parameters": Object {
+            "accountName": "$(accountName2)",
+          },
+          "step": "StorageAccounts_Delete_3",
+          "variables": undefined,
+        },
+      ],
+      "variables": Object {
+        "accountName": Object {
+          "type": "object",
+          "value": Object {
+            "name": "teststoragemgmt3148",
+            "type": "Microsoft.Storage/storageAccounts",
+          },
+        },
+        "accountName1": Object {
+          "type": "string",
+          "value": "teststoragemgmt3148",
+        },
+        "accountName2": Object {
+          "type": "string",
+          "value": "teststoragemgmt9231",
+        },
+        "accountName3": Object {
+          "type": "string",
+          "value": "teststoragemgmt5066",
+        },
+        "accountName4": Object {
+          "type": "string",
+          "value": "teststoragemgmt405",
+        },
+        "parameters": Object {
+          "type": "object",
+          "value": Object {
+            "kind": "Storage",
+            "location": "$(location)",
+            "properties": Object {},
+            "sku": Object {
+              "name": "Standard_LRS",
+            },
+            "tags": Object {
+              "key1": "value1",
+              "key2": "value2",
+            },
+          },
+        },
+      },
+    },
+    Object {
+      "scenario": "CreateUpdateGetDeleteBlobInventoryPolicy",
+      "steps": Array [
+        Object {
+          "operationId": "Subscriptions_Get",
+          "step": "Subscriptions_Get",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_CheckNameAvailability",
+          "parameters": Object {
+            "accountName": Object {
+              "name": "$(accountName)",
+              "type": "Microsoft.Storage/storageAccounts",
+            },
+          },
+          "step": "StorageAccounts_CheckNameAvailability",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_Create",
+          "parameters": Object {
+            "parameters": Object {
+              "kind": "StorageV2",
+              "location": "$(location)",
+              "properties": Object {},
+              "sku": Object {
+                "name": "Standard_GRS",
+              },
+              "tags": Object {
+                "key1": "value1",
+                "key2": "value2",
+              },
+            },
+          },
+          "step": "StorageAccounts_Create",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "BlobServices_GetServiceProperties",
+          "parameters": Object {
+            "BlobServicesName": "default",
+          },
+          "step": "BlobServices_GetServiceProperties",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "BlobContainers_Create",
+          "parameters": Object {
+            "blobContainer": Object {
+              "properties": Object {},
+            },
+            "containerName": "testblob7262",
+          },
+          "step": "BlobContainers_Create",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "BlobInventoryPolicies_CreateOrUpdate",
+          "parameters": Object {
+            "blobInventoryPolicyName": "default",
+          },
+          "step": "BlobInventoryPolicies_CreateOrUpdate",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "BlobInventoryPolicies_CreateOrUpdate",
+          "parameters": Object {
+            "blobInventoryPolicyName": "default",
+          },
+          "step": "BlobInventoryPolicies_CreateOrUpdate_1",
+          "variables": Object {
+            "properties": Object {
+              "patches": Array [
+                Object {
+                  "add": "/properties/policy/rules/2",
+                  "value": Object {
+                    "definition": Object {
+                      "format": "Parquet",
+                      "objectType": "Container",
+                      "schedule": "Weekly",
+                      "schemaFields": Array [
+                        "Name",
+                      ],
+                    },
+                    "destination": "testblob7262",
+                    "enabled": true,
+                    "name": "rule3",
+                  },
+                },
+              ],
+              "type": "object",
+              "value": undefined,
+            },
+          },
+        },
+        Object {
+          "operationId": "BlobInventoryPolicies_Delete",
+          "parameters": Object {
+            "blobInventoryPolicyName": "default",
+          },
+          "step": "BlobInventoryPolicies_Delete",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_ListByResourceGroup",
+          "step": "StorageAccounts_ListByResourceGroup",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_Delete",
+          "step": "StorageAccounts_Delete",
+          "variables": undefined,
+        },
+      ],
+      "variables": Object {
+        "accountName": Object {
+          "type": "string",
+          "value": "teststoragemgmt1421",
+        },
+        "properties": Object {
+          "type": "object",
+          "value": Object {
+            "properties": Object {
+              "policy": Object {
+                "enabled": true,
+                "rules": Array [
+                  Object {
+                    "definition": Object {
+                      "filters": Object {
+                        "blobTypes": Array [
+                          "blockBlob",
+                        ],
+                        "includeBlobVersions": true,
+                        "includeSnapshots": true,
+                        "prefixMatch": Array [
+                          "prefix1",
+                          "prefix2",
+                        ],
+                      },
+                      "format": "Csv",
+                      "objectType": "Blob",
+                      "schedule": "Weekly",
+                      "schemaFields": Array [
+                        "Name",
+                        "Creation-Time",
+                        "Last-Modified",
+                        "Content-Length",
+                        "Content-MD5",
+                        "BlobType",
+                        "AccessTier",
+                        "AccessTierChangeTime",
+                        "Snapshot",
+                        "VersionId",
+                        "IsCurrentVersion",
+                        "Metadata",
+                        "LastAccessTime",
+                      ],
+                    },
+                    "destination": "testblob7262",
+                    "enabled": true,
+                    "name": "rule1",
+                  },
+                  Object {
+                    "definition": Object {
+                      "format": "Csv",
+                      "objectType": "Container",
+                      "schedule": "Daily",
+                      "schemaFields": Array [
+                        "Name",
+                        "Last-Modified",
+                        "Metadata",
+                        "LeaseStatus",
+                        "LeaseState",
+                        "LeaseDuration",
+                        "PublicAccess",
+                        "HasImmutabilityPolicy",
+                        "HasLegalHold",
+                      ],
+                    },
+                    "destination": "testblob7262",
+                    "enabled": true,
+                    "name": "rule2",
+                  },
+                ],
+                "type": "Inventory",
+              },
+            },
+          },
+        },
+      },
+    },
+    Object {
+      "scenario": "SetGetDeleteManagementPolicy",
+      "steps": Array [
+        Object {
+          "operationId": "Subscriptions_Get",
+          "step": "Subscriptions_Get",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_CheckNameAvailability",
+          "parameters": Object {
+            "accountName": Object {
+              "name": "$(accountName)",
+              "type": "Microsoft.Storage/storageAccounts",
+            },
+          },
+          "step": "StorageAccounts_CheckNameAvailability",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_Create",
+          "step": "StorageAccounts_Create",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "BlobServices_GetServiceProperties",
+          "parameters": Object {
+            "BlobServicesName": "default",
+          },
+          "step": "BlobServices_GetServiceProperties",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "BlobServices_SetServiceProperties",
+          "parameters": Object {
+            "BlobServicesName": "default",
+            "parameters": Object {
+              "properties": Object {
+                "cors": Object {
+                  "corsRules": Array [],
+                },
+                "deleteRetentionPolicy": Object {
+                  "enabled": false,
+                },
+                "lastAccessTimeTrackingPolicy": Object {
+                  "enable": true,
+                },
+              },
+            },
+          },
+          "step": "BlobServices_SetServiceProperties",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "ManagementPolicies_CreateOrUpdate",
+          "parameters": Object {
+            "managementPolicyName": "default",
+            "properties": Object {
+              "properties": Object {
+                "policy": Object {
+                  "rules": Array [
+                    Object {
+                      "definition": Object {
+                        "actions": Object {
+                          "baseBlob": Object {
+                            "delete": Object {
+                              "daysAfterModificationGreaterThan": 1000,
+                            },
+                          },
+                        },
+                        "filters": Object {
+                          "blobTypes": Array [
+                            "blockBlob",
+                            "appendBlob",
+                          ],
+                        },
+                      },
+                      "name": "rule1",
+                      "type": "Lifecycle",
+                    },
+                    Object {
+                      "definition": Object {
+                        "actions": Object {
+                          "baseBlob": Object {
+                            "delete": Object {
+                              "daysAfterModificationGreaterThan": 1000,
+                            },
+                          },
+                        },
+                        "filters": Object {
+                          "blobTypes": Array [
+                            "appendBlob",
+                          ],
+                        },
+                      },
+                      "name": "rule2",
+                      "type": "Lifecycle",
+                    },
+                    Object {
+                      "definition": Object {
+                        "actions": Object {
+                          "baseBlob": Object {
+                            "delete": Object {
+                              "daysAfterModificationGreaterThan": 1000,
+                            },
+                          },
+                        },
+                        "filters": Object {
+                          "blobTypes": Array [
+                            "blockBlob",
+                          ],
+                        },
+                      },
+                      "name": "rule3",
+                      "type": "Lifecycle",
+                    },
+                  ],
+                },
+              },
+            },
+          },
+          "step": "ManagementPolicies_CreateOrUpdate",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "ManagementPolicies_Delete",
+          "parameters": Object {
+            "managementPolicyName": "default",
+          },
+          "step": "ManagementPolicies_Delete",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_ListByResourceGroup",
+          "step": "StorageAccounts_ListByResourceGroup",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_Delete",
+          "step": "StorageAccounts_Delete",
+          "variables": undefined,
+        },
+      ],
+      "variables": Object {
+        "accountName": Object {
+          "type": "string",
+          "value": "teststoragemgmt7320",
+        },
+        "parameters": Object {
+          "type": "object",
+          "value": Object {
+            "kind": "StorageV2",
+            "location": "$(location)",
+            "properties": Object {},
+            "sku": Object {
+              "name": "Standard_GRS",
+            },
+            "tags": Object {
+              "key1": "value1",
+              "key2": "value2",
+            },
+          },
+        },
+      },
+    },
+    Object {
+      "scenario": "UpdateStorageAccount",
+      "steps": Array [
+        Object {
+          "operationId": "Subscriptions_Get",
+          "step": "Subscriptions_Get",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_CheckNameAvailability",
+          "parameters": Object {
+            "accountName": Object {
+              "name": "$(accountName)",
+              "type": "Microsoft.Storage/storageAccounts",
+            },
+          },
+          "step": "StorageAccounts_CheckNameAvailability",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_Create",
+          "step": "StorageAccounts_Create",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_Update",
+          "parameters": Object {
+            "parameters": Object {
+              "properties": Object {},
+              "sku": Object {
+                "name": "Standard_LRS",
+              },
+            },
+          },
+          "step": "StorageAccounts_Update",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_Update",
+          "parameters": Object {
+            "parameters": Object {
+              "properties": Object {},
+              "sku": Object {
+                "name": "Standard_LRS",
+              },
+              "tags": Object {
+                "key3": "value3",
+                "key4": "value4",
+                "key5": "value5",
+              },
+            },
+          },
+          "step": "StorageAccounts_Update_1",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_Update",
+          "parameters": Object {
+            "parameters": Object {
+              "properties": Object {
+                "encryption": Object {
+                  "keySource": "Microsoft.Storage",
+                  "services": Object {
+                    "blob": Object {
+                      "enabled": true,
+                    },
+                    "file": Object {
+                      "enabled": true,
+                    },
+                  },
+                },
+              },
+              "sku": Object {
+                "name": "Standard_LRS",
+              },
+              "tags": Object {
+                "key3": "value3",
+                "key4": "value4",
+                "key5": "value5",
+              },
+            },
+          },
+          "step": "StorageAccounts_Update_2",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_Update",
+          "parameters": Object {
+            "parameters": Object {
+              "properties": Object {
+                "supportsHttpsTrafficOnly": false,
+              },
+            },
+          },
+          "step": "StorageAccounts_Update_3",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_Update",
+          "parameters": Object {
+            "parameters": Object {
+              "properties": Object {
+                "supportsHttpsTrafficOnly": true,
+              },
+            },
+          },
+          "step": "StorageAccounts_Update_4",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_ListByResourceGroup",
+          "step": "StorageAccounts_ListByResourceGroup",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_Delete",
+          "step": "StorageAccounts_Delete",
+          "variables": undefined,
+        },
+      ],
+      "variables": Object {
+        "accountName": Object {
+          "type": "string",
+          "value": "teststoragemgmt7986",
+        },
+        "parameters": Object {
+          "type": "object",
+          "value": Object {
+            "kind": "Storage",
+            "location": "$(location)",
+            "properties": Object {},
+            "sku": Object {
+              "name": "Standard_GRS",
+            },
+            "tags": Object {
+              "key1": "value1",
+              "key2": "value2",
+            },
+          },
+        },
+      },
+    },
+  ],
+  "scope": "ResourceGroup",
+}
+`;

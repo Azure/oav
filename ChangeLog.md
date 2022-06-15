@@ -11,6 +11,7 @@
   - Improve API Scenario generation from RESTler dependencies
   - Support running API Scenario against localhost endpoint
   - Refactor Postman based runner client
+  - Support API Scenario generation from testProxy recording
 
 ## 05/27/2022 2.12.2
 

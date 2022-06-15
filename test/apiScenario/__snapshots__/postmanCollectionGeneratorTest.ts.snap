@@ -85,7 +85,7 @@ Array [
     "info": Object {
       "_postman_id": "jestRunIdTestProxy",
       "description": Object {
-        "content": "{\\"apiScenarioFilePath\\":\\"Microsoft.Storage/stable/2021-09-01/scenarios/storageQuickStart.yaml\\",\\"apiScenarioName\\":\\"basic\\",\\"swaggerFilePaths\\":[\\"Microsoft.Storage/stable/2021-09-01/storage.json\\"]}",
+        "content": "{\\"apiScenarioFilePath\\":\\"Microsoft.Storage/stable/2021-08-01/scenarios/storageQuickStart.yaml\\",\\"apiScenarioName\\":\\"basic\\",\\"swaggerFilePaths\\":[\\"Microsoft.Storage/stable/2021-08-01/storage.json\\"]}",
         "type": "text/plain",
       },
       "name": "basic",
@@ -271,7 +271,7 @@ Array [
             "query": Array [
               Object {
                 "key": "api-version",
-                "value": "2021-09-01",
+                "value": "2021-08-01",
               },
             ],
             "variable": Array [
@@ -374,7 +374,7 @@ Array [
             "query": Array [
               Object {
                 "key": "api-version",
-                "value": "2021-09-01",
+                "value": "2021-08-01",
               },
             ],
             "variable": Array [
@@ -548,7 +548,7 @@ Array [
             "query": Array [
               Object {
                 "key": "api-version",
-                "value": "2021-09-01",
+                "value": "2021-08-01",
               },
             ],
             "variable": Array [
@@ -754,7 +754,7 @@ Array [
     "info": Object {
       "_postman_id": "jestRunIdTestProxy",
       "description": Object {
-        "content": "{\\"apiScenarioFilePath\\":\\"Microsoft.Storage/stable/2021-09-01/scenarios/storageQuickStart.yaml\\",\\"apiScenarioName\\":\\"overrideVariable\\",\\"swaggerFilePaths\\":[\\"Microsoft.Storage/stable/2021-09-01/storage.json\\"]}",
+        "content": "{\\"apiScenarioFilePath\\":\\"Microsoft.Storage/stable/2021-08-01/scenarios/storageQuickStart.yaml\\",\\"apiScenarioName\\":\\"overrideVariable\\",\\"swaggerFilePaths\\":[\\"Microsoft.Storage/stable/2021-08-01/storage.json\\"]}",
         "type": "text/plain",
       },
       "name": "overrideVariable",
@@ -865,7 +865,7 @@ Array [
             "query": Array [
               Object {
                 "key": "api-version",
-                "value": "2021-09-01",
+                "value": "2021-08-01",
               },
             ],
             "variable": Array [
@@ -968,7 +968,7 @@ Array [
             "query": Array [
               Object {
                 "key": "api-version",
-                "value": "2021-09-01",
+                "value": "2021-08-01",
               },
             ],
             "variable": Array [
@@ -1142,7 +1142,7 @@ Array [
             "query": Array [
               Object {
                 "key": "api-version",
-                "value": "2021-09-01",
+                "value": "2021-08-01",
               },
             ],
             "variable": Array [
@@ -1348,7 +1348,7 @@ Array [
     "info": Object {
       "_postman_id": "jestRunIdTestProxy",
       "description": Object {
-        "content": "{\\"apiScenarioFilePath\\":\\"Microsoft.Storage/stable/2021-09-01/scenarios/storageQuickStart.yaml\\",\\"apiScenarioName\\":\\"primitiveParameter\\",\\"swaggerFilePaths\\":[\\"Microsoft.Storage/stable/2021-09-01/storage.json\\"]}",
+        "content": "{\\"apiScenarioFilePath\\":\\"Microsoft.Storage/stable/2021-08-01/scenarios/storageQuickStart.yaml\\",\\"apiScenarioName\\":\\"primitiveParameter\\",\\"swaggerFilePaths\\":[\\"Microsoft.Storage/stable/2021-08-01/storage.json\\"]}",
         "type": "text/plain",
       },
       "name": "primitiveParameter",
@@ -1459,7 +1459,7 @@ Array [
             "query": Array [
               Object {
                 "key": "api-version",
-                "value": "2021-09-01",
+                "value": "2021-08-01",
               },
             ],
             "variable": Array [
@@ -1562,7 +1562,7 @@ Array [
             "query": Array [
               Object {
                 "key": "api-version",
-                "value": "2021-09-01",
+                "value": "2021-08-01",
               },
             ],
             "variable": Array [
@@ -1736,7 +1736,7 @@ Array [
             "query": Array [
               Object {
                 "key": "api-version",
-                "value": "2021-09-01",
+                "value": "2021-08-01",
               },
             ],
             "variable": Array [
@@ -1947,7 +1947,7 @@ Array [
     "info": Object {
       "_postman_id": "jestRunId",
       "description": Object {
-        "content": "{\\"apiScenarioFilePath\\":\\"Microsoft.Storage/stable/2021-09-01/scenarios/storageQuickStart.yaml\\",\\"apiScenarioName\\":\\"basic\\",\\"swaggerFilePaths\\":[\\"Microsoft.Storage/stable/2021-09-01/storage.json\\"]}",
+        "content": "{\\"apiScenarioFilePath\\":\\"Microsoft.Storage/stable/2021-08-01/scenarios/storageQuickStart.yaml\\",\\"apiScenarioName\\":\\"basic\\",\\"swaggerFilePaths\\":[\\"Microsoft.Storage/stable/2021-08-01/storage.json\\"]}",
         "type": "text/plain",
       },
       "name": "basic",
@@ -2070,7 +2070,7 @@ Array [
             "query": Array [
               Object {
                 "key": "api-version",
-                "value": "2021-09-01",
+                "value": "2021-08-01",
               },
             ],
             "variable": Array [
@@ -2163,7 +2163,7 @@ Array [
             "query": Array [
               Object {
                 "key": "api-version",
-                "value": "2021-09-01",
+                "value": "2021-08-01",
               },
             ],
             "variable": Array [
@@ -2313,7 +2313,7 @@ Array [
             "query": Array [
               Object {
                 "key": "api-version",
-                "value": "2021-09-01",
+                "value": "2021-08-01",
               },
             ],
             "variable": Array [
@@ -2475,7 +2475,7 @@ Array [
     "info": Object {
       "_postman_id": "jestRunId",
       "description": Object {
-        "content": "{\\"apiScenarioFilePath\\":\\"Microsoft.Storage/stable/2021-09-01/scenarios/storageQuickStart.yaml\\",\\"apiScenarioName\\":\\"overrideVariable\\",\\"swaggerFilePaths\\":[\\"Microsoft.Storage/stable/2021-09-01/storage.json\\"]}",
+        "content": "{\\"apiScenarioFilePath\\":\\"Microsoft.Storage/stable/2021-08-01/scenarios/storageQuickStart.yaml\\",\\"apiScenarioName\\":\\"overrideVariable\\",\\"swaggerFilePaths\\":[\\"Microsoft.Storage/stable/2021-08-01/storage.json\\"]}",
         "type": "text/plain",
       },
       "name": "overrideVariable",
@@ -2533,7 +2533,7 @@ Array [
             "query": Array [
               Object {
                 "key": "api-version",
-                "value": "2021-09-01",
+                "value": "2021-08-01",
               },
             ],
             "variable": Array [
@@ -2626,7 +2626,7 @@ Array [
             "query": Array [
               Object {
                 "key": "api-version",
-                "value": "2021-09-01",
+                "value": "2021-08-01",
               },
             ],
             "variable": Array [
@@ -2776,7 +2776,7 @@ Array [
             "query": Array [
               Object {
                 "key": "api-version",
-                "value": "2021-09-01",
+                "value": "2021-08-01",
               },
             ],
             "variable": Array [
@@ -2938,7 +2938,7 @@ Array [
     "info": Object {
       "_postman_id": "jestRunId",
       "description": Object {
-        "content": "{\\"apiScenarioFilePath\\":\\"Microsoft.Storage/stable/2021-09-01/scenarios/storageQuickStart.yaml\\",\\"apiScenarioName\\":\\"primitiveParameter\\",\\"swaggerFilePaths\\":[\\"Microsoft.Storage/stable/2021-09-01/storage.json\\"]}",
+        "content": "{\\"apiScenarioFilePath\\":\\"Microsoft.Storage/stable/2021-08-01/scenarios/storageQuickStart.yaml\\",\\"apiScenarioName\\":\\"primitiveParameter\\",\\"swaggerFilePaths\\":[\\"Microsoft.Storage/stable/2021-08-01/storage.json\\"]}",
         "type": "text/plain",
       },
       "name": "primitiveParameter",
@@ -2996,7 +2996,7 @@ Array [
             "query": Array [
               Object {
                 "key": "api-version",
-                "value": "2021-09-01",
+                "value": "2021-08-01",
               },
             ],
             "variable": Array [
@@ -3089,7 +3089,7 @@ Array [
             "query": Array [
               Object {
                 "key": "api-version",
-                "value": "2021-09-01",
+                "value": "2021-08-01",
               },
             ],
             "variable": Array [
@@ -3239,7 +3239,7 @@ Array [
             "query": Array [
               Object {
                 "key": "api-version",
-                "value": "2021-09-01",
+                "value": "2021-08-01",
               },
             ],
             "variable": Array [
