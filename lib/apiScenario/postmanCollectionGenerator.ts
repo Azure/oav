@@ -39,8 +39,7 @@ export interface PostmanCollectionGeneratorOption
   skipCleanUp?: boolean;
   runId?: string;
   verbose?: boolean;
-  enableAuth?: boolean;
-  enableArmCall?: boolean;
+  devMode?: boolean;
 }
 
 export const generateRunId = (): string => {
@@ -102,8 +101,9 @@ export class PostmanCollectionGenerator {
       testProxy: this.opt.testProxy,
       verbose: this.opt.verbose,
       swaggerFilePaths: this.opt.swaggerFilePaths,
-      enableAuth: this.opt.enableAuth,
-      enableArmCall: this.opt.enableArmCall,
+      enableAuth: !this.opt.devMode,
+      enableArmCall: !this.opt.devMode,
+      enableLroPoll: !this.opt.devMode,
     });
     const runner = new ApiScenarioRunner({
       jsonLoader: this.apiScenarioLoader.jsonLoader,

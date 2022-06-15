@@ -32,6 +32,7 @@ export interface PostmanCollectionRunnerClientOption {
   verbose?: boolean;
   enableAuth?: boolean;
   enableArmCall?: boolean;
+  enableLroPoll?: boolean;
 }
 
 const ARM_ENDPOINT = "https://management.azure.com";
@@ -49,6 +50,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       baseUrl: ARM_ENDPOINT,
       enableAuth: true,
       enableArmCall: true,
+      enableLroPoll: true,
     } as PostmanCollectionRunnerClientOption);
   }
 
@@ -411,6 +413,8 @@ pm.test("Stopped TestProxy recording", function() {
   }
 
   private addAsLongRunningOperationItem(item: Item, checkStatus: boolean = false) {
+    if (!this.opts.enableLroPoll) return;
+
     const longRunningEvent = PostmanHelper.createEvent(
       "test",
       PostmanHelper.createScript(

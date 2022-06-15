@@ -180,8 +180,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       skipCleanUp: argv.skipCleanUp,
       verbose: argv.verbose,
       swaggerFilePaths: swaggerFilePaths,
-      enableAuth: !argv.devMode,
-      enableArmCall: !argv.devMode,
+      devMode: argv.devMode,
     };
     const generator = inversifyGetInstance(PostmanCollectionGenerator, opt);
     await generator.run();
