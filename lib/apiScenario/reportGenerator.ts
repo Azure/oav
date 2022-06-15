@@ -160,7 +160,7 @@ export class ReportGenerator {
       armEndpoint: "https://management.azure.com",
       stepResult: [],
     };
-    this.testDefFile = undefined;
+    // this.testDefFile = undefined;
 
     this.liveValidator = new LiveValidator({
       fileRoot: "/",

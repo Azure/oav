@@ -135,7 +135,6 @@ export const reservedCollectionVariables = [
 export function generateAuthScript(baseUrl: string): ScriptDefinition {
   const script = `
 if (pm.variables.get("x_enable_auth") !== "true") {
-    console.log("Auth disabled");
     return;
 }
 let vars = ["client_id", "client_secret", "tenantId", "subscriptionId"];
