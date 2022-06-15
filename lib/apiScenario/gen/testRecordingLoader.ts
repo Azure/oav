@@ -4,7 +4,7 @@ import { FileLoader } from "../../swagger/fileLoader";
 import { Loader } from "../../swagger/loader";
 import { AzureCliRecordingLoader } from "./azureCliRecordingLoader";
 import { TestProxyRecordingLoader } from "./testProxyRecordLoader";
-import { RequestTracking } from "./testScenarioGenerator";
+import { RequestTracking } from "./testRecordingApiScenarioGenerator";
 
 @injectable()
 export class TestRecordingLoader implements Loader<RequestTracking> {

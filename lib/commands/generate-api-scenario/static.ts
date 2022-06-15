@@ -6,7 +6,7 @@
 import { resolve as pathResolve } from "path";
 import * as yargs from "yargs";
 import { StaticApiScenarioGenerator } from "../../apiScenario/gen/staticApiScenarioGenerator";
-import { ApiScenarioGenerator } from "../../apiScenario/gen/apiScenarioGenerator";
+import { RestlerApiScenarioGenerator } from "../../apiScenario/gen/restlerApiScenarioGenerator";
 import { cliSuppressExceptions } from "../../cliSuppressExceptions";
 import { getInputFiles } from "../../util/utils";
 
@@ -63,7 +63,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     console.log(swaggerFilePaths);
 
     if (argv.dependency) {
-      const generator = ApiScenarioGenerator.create({
+      const generator = RestlerApiScenarioGenerator.create({
         swaggerFilePaths: swaggerFilePaths,
         outputDir: argv.outputDir,
         dependencyPath: argv.dependency,

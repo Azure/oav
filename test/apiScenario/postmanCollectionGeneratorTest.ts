@@ -8,7 +8,7 @@ describe("postmanCollectionGenerator", () => {
   it("should generate PostmanCollection - storageQuickStart", async () => {
     const generator = inversifyGetInstance(PostmanCollectionGenerator, {
       name: "storageQuickStart",
-      scenarioDef: "Microsoft.Storage/stable/2021-09-01/scenarios/storageQuickStart.yaml",
+      scenarioDef: "Microsoft.Storage/stable/2021-08-01/scenarios/storageQuickStart.yaml",
       fileRoot: "test/apiScenario/fixtures/specification/storage/resource-manager/",
       checkUnderFileRoot: false,
       generateCollection: true,
@@ -17,7 +17,7 @@ describe("postmanCollectionGenerator", () => {
         subscriptionId: "00000000-0000-0000-0000-000000000000",
         location: "westus",
       },
-      swaggerFilePaths: ["Microsoft.Storage/stable/2021-09-01/storage.json"],
+      swaggerFilePaths: ["Microsoft.Storage/stable/2021-08-01/storage.json"],
       outputFolder: "generated",
       runId: "jestRunId",
     });
@@ -28,7 +28,7 @@ describe("postmanCollectionGenerator", () => {
   it("should generate PostmanCollection - enableTestProxy", async () => {
     const generator = inversifyGetInstance(PostmanCollectionGenerator, {
       name: "storageQuickStart",
-      scenarioDef: "Microsoft.Storage/stable/2021-09-01/scenarios/storageQuickStart.yaml",
+      scenarioDef: "Microsoft.Storage/stable/2021-08-01/scenarios/storageQuickStart.yaml",
       fileRoot: "test/apiScenario/fixtures/specification/storage/resource-manager/",
       checkUnderFileRoot: false,
       generateCollection: true,
@@ -37,7 +37,7 @@ describe("postmanCollectionGenerator", () => {
         subscriptionId: "00000000-0000-0000-0000-000000000000",
         location: "westus",
       },
-      swaggerFilePaths: ["Microsoft.Storage/stable/2021-09-01/storage.json"],
+      swaggerFilePaths: ["Microsoft.Storage/stable/2021-08-01/storage.json"],
       outputFolder: "generated",
       runId: "jestRunIdTestProxy",
       testProxy: "http://localhost:5000",

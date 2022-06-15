@@ -9,12 +9,12 @@ describe("ApiScenarioLoader", () => {
       useJsonParser: false,
       checkUnderFileRoot: false,
       fileRoot,
-      swaggerFilePaths: ["Microsoft.Storage/stable/2021-09-01/storage.json"],
+      swaggerFilePaths: ["Microsoft.Storage/stable/2021-08-01/storage.json"],
       includeOperation: false,
     });
 
     const testDef = await loader.load(
-      "Microsoft.Storage/stable/2021-09-01/scenarios/storageQuickStart.yaml"
+      "Microsoft.Storage/stable/2021-08-01/scenarios/storageQuickStart.yaml"
     );
 
     expect(testDef).toMatchSnapshot();
