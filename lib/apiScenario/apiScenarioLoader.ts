@@ -55,7 +55,7 @@ import { armDeploymentScriptTemplate } from "./constants";
 import { jsonPatchApply } from "./diffUtils";
 import { TemplateGenerator } from "./templateGenerator";
 
-const variableRegex = /\$\(([A-Za-z_][A-Za-z0-9_]*)\)/;
+const variableRegex = /\$\(([A-Za-z_$][A-Za-z0-9_]*)\)/;
 
 export interface ApiScenarioLoaderOption
   extends FileLoaderOption,

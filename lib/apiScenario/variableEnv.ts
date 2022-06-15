@@ -9,8 +9,8 @@ import {
 } from "./apiScenarioTypes";
 import { jsonPatchApply } from "./diffUtils";
 
-const variableRegex = /\$\(([A-Za-z_][A-Za-z0-9_]*)\)/;
-const pathVariableRegex = /\{([A-Za-z_][A-Za-z0-9_]*)\}/;
+const variableRegex = /\$\(([A-Za-z_$][A-Za-z0-9_]*)\)/;
+const pathVariableRegex = /\{([A-Za-z_$][A-Za-z0-9_]*)\}/;
 
 export class EnvironmentVariables {
   [key: string]: string;
