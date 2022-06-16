@@ -39,7 +39,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       newmanReportFilePath: newmanReportPath,
       reportOutputFilePath: reportOutputFilePath,
       validationLevel: argv.level,
-      generateExampleFromTraffic: true,
+      generateExample: true,
     };
     const analyzer = inversifyGetInstance(NewmanReportAnalyzer, opts);
     await analyzer.analyze();
