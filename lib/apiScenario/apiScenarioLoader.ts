@@ -388,7 +388,8 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
           ctx.scenario?.requiredVariables ?? ctx.scenarioDef.requiredVariables;
         if (
           requiredVariables.includes(name) ||
-          (ctx.scenarioDef.scope === "ResourceGroup" && name === "resourceGroupName")
+          (ctx.scenarioDef.scope === "ResourceGroup" &&
+            ["subscriptionId", "resourceGroupName", "location"].indexOf(name) >= 0)
         ) {
           return {
             type: "string",
@@ -520,11 +521,17 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
         step.description = step.description ?? exampleName;
       }
       step.parameters = exampleFileContent.parameters;
+
+      // force update api-version
+      if (step.parameters["api-version"]) {
+        step.parameters["api-version"] = this.apiVersionsMap.get(step.operationId)!;
+      }
+
       step.responses = exampleFileContent.responses;
 
       await this.applyPatches(step, rawStep, operation);
 
-      this.templateGenerator.exampleParameterConvention(step, getVariable);
+      this.templateGenerator.exampleParameterConvention(step, getVariable, operation);
     }
     return step;
   }

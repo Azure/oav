@@ -29,10 +29,10 @@ Object {
           "outputVariables": Object {},
           "parameters": Object {
             "accountName": Object {
-              "name": "sto3363",
+              "name": "$(accountName)",
               "type": "Microsoft.Storage/storageAccounts",
             },
-            "api-version": "2020-08-01-preview",
+            "api-version": "2021-08-01",
             "subscriptionId": "$(subscriptionId)",
           },
           "requiredVariables": Array [],
@@ -56,14 +56,14 @@ Object {
           "outputVariables": Object {},
           "parameters": Object {
             "accountName": "$(accountName)",
-            "api-version": "2021-02-01",
+            "api-version": "2021-08-01",
             "parameters": Object {
               "extendedLocation": Object {
                 "name": "losangeles001",
                 "type": "EdgeZone",
               },
               "kind": "Storage",
-              "location": "eastus",
+              "location": "$(location)",
               "properties": Object {
                 "allowBlobPublicAccess": false,
                 "allowSharedKeyAccess": true,
@@ -215,7 +215,7 @@ Object {
           "outputVariables": Object {},
           "parameters": Object {
             "accountName": "$(accountName)",
-            "api-version": "2021-02-01",
+            "api-version": "2021-08-01",
             "monitor": "true",
             "parameters": Object {
               "properties": Object {
@@ -245,7 +245,7 @@ Object {
                   "defaultAction": "Allow",
                   "resourceAccessRules": Array [
                     Object {
-                      "resourceId": "/subscriptions/a7e99807-abbf-4642-bdec-2c809a96a8bc/resourceGroups/res9407/providers/Microsoft.Synapse/workspaces/testworkspace",
+                      "resourceId": "/subscriptions/a7e99807-abbf-4642-bdec-2c809a96a8bc/resourceGroups/$(resourceGroupName)/providers/Microsoft.Synapse/workspaces/testworkspace",
                       "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
                     },
                   ],
@@ -377,7 +377,7 @@ Object {
           "outputVariables": Object {},
           "parameters": Object {
             "accountName": "$(accountName)",
-            "api-version": "2021-02-01",
+            "api-version": "2021-08-01",
             "monitor": "true",
             "resourceGroupName": "$(resourceGroupName)",
             "subscriptionId": "$(subscriptionId)",
@@ -488,7 +488,7 @@ Object {
           "outputVariables": Object {},
           "parameters": Object {
             "accountName": "$(accountName)",
-            "api-version": "2020-08-01-preview",
+            "api-version": "2021-08-01",
             "monitor": "true",
             "resourceGroupName": "$(resourceGroupName)",
             "subscriptionId": "$(subscriptionId)",
@@ -846,7 +846,7 @@ Object {
                 "type": "SystemAssigned",
               },
               "kind": "SignalR",
-              "location": "eastus",
+              "location": "$(location)",
               "properties": Object {
                 "cors": Object {
                   "allowedOrigins": Array [
@@ -885,7 +885,7 @@ Object {
                       "allow": Array [
                         "ServerConnection",
                       ],
-                      "name": "mysignalrservice.1fa229cd-bf3f-47f0-8c49-afb36723997e",
+                      "name": "$(resourceName).1fa229cd-bf3f-47f0-8c49-afb36723997e",
                     },
                   ],
                   "publicNetwork": Object {
@@ -1342,7 +1342,7 @@ Object {
                 "type": "SystemAssigned",
               },
               "kind": "SignalR",
-              "location": "eastus",
+              "location": "$(location)",
               "properties": Object {
                 "cors": Object {
                   "allowedOrigins": Array [
@@ -1381,7 +1381,7 @@ Object {
                       "allow": Array [
                         "ServerConnection",
                       ],
-                      "name": "mysignalrservice.1fa229cd-bf3f-47f0-8c49-afb36723997e",
+                      "name": "$(resourceName).1fa229cd-bf3f-47f0-8c49-afb36723997e",
                     },
                   ],
                   "publicNetwork": Object {

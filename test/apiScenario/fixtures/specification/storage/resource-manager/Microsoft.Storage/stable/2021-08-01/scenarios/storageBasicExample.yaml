@@ -11,6 +11,9 @@ scenarios:
     steps:
       - step: checkName
         exampleFile: ../examples/StorageAccountCheckNameAvailability.json
+        requestUpdate:
+          - replace: /accountName/name
+            value: $(accountName)
 
       - step: createStorageAccount
         exampleFile: ../examples/StorageAccountCreate.json

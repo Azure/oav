@@ -2042,7 +2042,10 @@ Array [
         "request": Object {
           "body": Object {
             "mode": "raw",
-            "raw": "\\"{{accountName}}\\"",
+            "raw": "{
+  \\"name\\": \\"{{accountName}}\\",
+  \\"type\\": \\"Microsoft.Storage/storageAccounts\\"
+}",
           },
           "header": Array [
             Object {
@@ -2067,7 +2070,7 @@ Array [
             "query": Array [
               Object {
                 "key": "api-version",
-                "value": "2020-08-01-preview",
+                "value": "2021-08-01",
               },
             ],
             "variable": Array [
@@ -2118,7 +2121,55 @@ Array [
         "request": Object {
           "body": Object {
             "mode": "raw",
-            "raw": "\\"{{parameters}}\\"",
+            "raw": "{
+  \\"sku\\": {
+    \\"name\\": \\"Standard_GRS\\"
+  },
+  \\"kind\\": \\"Storage\\",
+  \\"location\\": \\"{{location}}\\",
+  \\"extendedLocation\\": {
+    \\"type\\": \\"EdgeZone\\",
+    \\"name\\": \\"losangeles001\\"
+  },
+  \\"properties\\": {
+    \\"keyPolicy\\": {
+      \\"keyExpirationPeriodInDays\\": 20
+    },
+    \\"sasPolicy\\": {
+      \\"sasExpirationPeriod\\": \\"1.15:59:59\\",
+      \\"expirationAction\\": \\"Log\\"
+    },
+    \\"isHnsEnabled\\": true,
+    \\"isSftpEnabled\\": true,
+    \\"allowBlobPublicAccess\\": false,
+    \\"defaultToOAuthAuthentication\\": false,
+    \\"minimumTlsVersion\\": \\"TLS1_2\\",
+    \\"allowSharedKeyAccess\\": true,
+    \\"routingPreference\\": {
+      \\"routingChoice\\": \\"MicrosoftRouting\\",
+      \\"publishMicrosoftEndpoints\\": true,
+      \\"publishInternetEndpoints\\": true
+    },
+    \\"encryption\\": {
+      \\"services\\": {
+        \\"file\\": {
+          \\"keyType\\": \\"Account\\",
+          \\"enabled\\": true
+        },
+        \\"blob\\": {
+          \\"keyType\\": \\"Account\\",
+          \\"enabled\\": true
+        }
+      },
+      \\"requireInfrastructureEncryption\\": false,
+      \\"keySource\\": \\"Microsoft.Storage\\"
+    }
+  },
+  \\"tags\\": {
+    \\"key1\\": \\"value1\\",
+    \\"key2\\": \\"value2\\"
+  }
+}",
           },
           "header": Array [
             Object {
@@ -2146,7 +2197,7 @@ Array [
             "query": Array [
               Object {
                 "key": "api-version",
-                "value": "2021-02-01",
+                "value": "2021-08-01",
               },
             ],
             "variable": Array [
@@ -2296,7 +2347,7 @@ Array [
             "query": Array [
               Object {
                 "key": "api-version",
-                "value": "2021-02-01",
+                "value": "2021-08-01",
               },
             ],
             "variable": Array [
@@ -2342,7 +2393,50 @@ Array [
         "request": Object {
           "body": Object {
             "mode": "raw",
-            "raw": "\\"{{parameters}}\\"",
+            "raw": "{
+  \\"properties\\": {
+    \\"keyPolicy\\": {
+      \\"keyExpirationPeriodInDays\\": 20
+    },
+    \\"sasPolicy\\": {
+      \\"sasExpirationPeriod\\": \\"1.15:59:59\\",
+      \\"expirationAction\\": \\"Log\\"
+    },
+    \\"allowBlobPublicAccess\\": false,
+    \\"isSftpEnabled\\": true,
+    \\"isLocalUserEnabled\\": true,
+    \\"defaultToOAuthAuthentication\\": false,
+    \\"minimumTlsVersion\\": \\"TLS1_2\\",
+    \\"allowSharedKeyAccess\\": true,
+    \\"networkAcls\\": {
+      \\"resourceAccessRules\\": [
+        {
+          \\"tenantId\\": \\"72f988bf-86f1-41af-91ab-2d7cd011db47\\",
+          \\"resourceId\\": \\"/subscriptions/a7e99807-abbf-4642-bdec-2c809a96a8bc/resourceGroups/{{resourceGroupName}}/providers/Microsoft.Synapse/workspaces/testworkspace\\"
+        }
+      ],
+      \\"defaultAction\\": \\"Allow\\"
+    },
+    \\"routingPreference\\": {
+      \\"routingChoice\\": \\"MicrosoftRouting\\",
+      \\"publishMicrosoftEndpoints\\": true,
+      \\"publishInternetEndpoints\\": true
+    },
+    \\"encryption\\": {
+      \\"services\\": {
+        \\"file\\": {
+          \\"keyType\\": \\"Account\\",
+          \\"enabled\\": true
+        },
+        \\"blob\\": {
+          \\"keyType\\": \\"Account\\",
+          \\"enabled\\": true
+        }
+      },
+      \\"keySource\\": \\"Microsoft.Storage\\"
+    }
+  }
+}",
           },
           "header": Array [
             Object {
@@ -2370,7 +2464,7 @@ Array [
             "query": Array [
               Object {
                 "key": "api-version",
-                "value": "2021-02-01",
+                "value": "2021-08-01",
               },
             ],
             "variable": Array [
@@ -2441,7 +2535,7 @@ Array [
             "query": Array [
               Object {
                 "key": "api-version",
-                "value": "2021-02-01",
+                "value": "2021-08-01",
               },
             ],
             "variable": Array [
@@ -2512,7 +2606,7 @@ Array [
             "query": Array [
               Object {
                 "key": "api-version",
-                "value": "2020-08-01-preview",
+                "value": "2021-08-01",
               },
             ],
             "variable": Array [
@@ -2568,7 +2662,7 @@ Array [
             "query": Array [
               Object {
                 "key": "api-version",
-                "value": "2020-08-01-preview",
+                "value": "2021-08-01",
               },
             ],
             "variable": Array [
