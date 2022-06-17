@@ -70,7 +70,8 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       });
 
       await generator.initialize();
-      await generator.generate();
+      const def = await generator.generate();
+      await generator.writeFile(def);
     } else {
       const generator = StaticApiScenarioGenerator.create({
         swaggerFilePaths: swaggerFilePaths,

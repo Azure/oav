@@ -818,3 +818,465 @@ Object {
   "scope": "ResourceGroup",
 }
 `;
+
+exports[`ApiScenarioGenerator generate api scenario from swagger - storage 1`] = `
+Object {
+  "scenarios": Array [
+    Object {
+      "steps": Array [
+        Object {
+          "operationId": "StorageAccounts_CheckNameAvailability",
+          "variables": Object {
+            "accountName": Object {
+              "type": "object",
+              "value": Object {
+                "name": "nyivqsxktcjxrafxofjqt",
+                "type": "Microsoft.Storage/storageAccounts",
+              },
+            },
+          },
+        },
+        Object {
+          "operationId": "StorageAccounts_Create",
+          "variables": Object {
+            "parameters": Object {
+              "type": "object",
+              "value": Object {
+                "kind": "Storage",
+                "location": "$(location)",
+                "sku": Object {
+                  "name": "Standard_LRS",
+                },
+              },
+            },
+          },
+        },
+        Object {
+          "operationId": "StorageAccounts_List",
+        },
+        Object {
+          "operationId": "StorageAccounts_ListByResourceGroup",
+        },
+        Object {
+          "operationId": "StorageAccounts_GetProperties",
+        },
+        Object {
+          "operationId": "StorageAccounts_Update",
+          "variables": Object {
+            "parameters": Object {
+              "type": "object",
+              "value": Object {},
+            },
+          },
+        },
+        Object {
+          "operationId": "StorageAccounts_RestoreBlobRanges",
+          "variables": Object {
+            "parameters": Object {
+              "type": "object",
+              "value": Object {
+                "blobRanges": Array [
+                  Object {
+                    "endRange": "bckzvowwpboqwiytxsbwoxjqdvd",
+                    "startRange": "jmmp",
+                  },
+                ],
+                "timeToRestore": "2022-06-17T07:47:32.565Z",
+              },
+            },
+          },
+        },
+        Object {
+          "operationId": "StorageAccounts_RevokeUserDelegationKeys",
+        },
+        Object {
+          "operationId": "StorageAccounts_AbortHierarchicalNamespaceMigration",
+        },
+        Object {
+          "operationId": "StorageAccounts_ListServiceSAS",
+          "variables": Object {
+            "parameters": Object {
+              "type": "object",
+              "value": Object {
+                "canonicalizedResource": "heuuruemuuoacjvynykm",
+              },
+            },
+          },
+        },
+        Object {
+          "operationId": "StorageAccounts_ListKeys",
+        },
+        Object {
+          "operationId": "StorageAccounts_RegenerateKey",
+          "variables": Object {
+            "regenerateKey": Object {
+              "type": "object",
+              "value": Object {
+                "keyName": "gmmuunqrpjylwxuyzj",
+              },
+            },
+          },
+        },
+        Object {
+          "operationId": "StorageAccounts_Failover",
+        },
+        Object {
+          "operationId": "StorageAccounts_ListAccountSAS",
+          "variables": Object {
+            "parameters": Object {
+              "type": "object",
+              "value": Object {
+                "signedExpiry": "2022-06-17T07:47:32.565Z",
+                "signedPermission": "r",
+                "signedResourceTypes": "s",
+                "signedServices": "b",
+              },
+            },
+          },
+        },
+        Object {
+          "operationId": "StorageAccounts_HierarchicalNamespaceMigration",
+          "variables": Object {
+            "requestType": "odnclxveordmircpdywbxtygeiudhn",
+          },
+        },
+        Object {
+          "operationId": "BlobContainers_Create",
+        },
+        Object {
+          "operationId": "BlobContainers_List",
+        },
+        Object {
+          "operationId": "BlobContainers_Get",
+        },
+        Object {
+          "operationId": "BlobContainers_Update",
+        },
+        Object {
+          "operationId": "BlobContainers_LockImmutabilityPolicy",
+        },
+        Object {
+          "operationId": "BlobContainers_ObjectLevelWorm",
+        },
+        Object {
+          "operationId": "BlobContainers_Lease",
+        },
+        Object {
+          "operationId": "BlobContainers_ClearLegalHold",
+        },
+        Object {
+          "operationId": "BlobContainers_ExtendImmutabilityPolicy",
+        },
+        Object {
+          "operationId": "BlobContainers_SetLegalHold",
+        },
+        Object {
+          "operationId": "FileShares_Create",
+        },
+        Object {
+          "operationId": "FileShares_List",
+        },
+        Object {
+          "operationId": "FileShares_Get",
+        },
+        Object {
+          "operationId": "FileShares_Update",
+        },
+        Object {
+          "operationId": "FileShares_Lease",
+        },
+        Object {
+          "operationId": "FileShares_Restore",
+          "variables": Object {
+            "deletedShare": Object {
+              "type": "object",
+              "value": Object {
+                "deletedShareName": "nzjvgejegfcil",
+                "deletedShareVersion": "wkgn",
+              },
+            },
+          },
+        },
+        Object {
+          "operationId": "LocalUsers_CreateOrUpdate",
+          "variables": Object {
+            "properties": Object {
+              "type": "object",
+              "value": Object {},
+            },
+          },
+        },
+        Object {
+          "operationId": "LocalUsers_List",
+        },
+        Object {
+          "operationId": "LocalUsers_Get",
+        },
+        Object {
+          "operationId": "LocalUsers_ListKeys",
+        },
+        Object {
+          "operationId": "LocalUsers_RegeneratePassword",
+        },
+        Object {
+          "operationId": "Table_Create",
+        },
+        Object {
+          "operationId": "Table_List",
+        },
+        Object {
+          "operationId": "Table_Get",
+        },
+        Object {
+          "operationId": "Table_Update",
+        },
+        Object {
+          "operationId": "Queue_Create",
+        },
+        Object {
+          "operationId": "Queue_List",
+        },
+        Object {
+          "operationId": "Queue_Get",
+        },
+        Object {
+          "operationId": "Queue_Update",
+        },
+        Object {
+          "operationId": "BlobContainers_CreateOrUpdateImmutabilityPolicy",
+        },
+        Object {
+          "operationId": "BlobContainers_GetImmutabilityPolicy",
+        },
+        Object {
+          "operationId": "EncryptionScopes_Put",
+        },
+        Object {
+          "operationId": "EncryptionScopes_List",
+        },
+        Object {
+          "operationId": "EncryptionScopes_Get",
+        },
+        Object {
+          "operationId": "EncryptionScopes_Patch",
+        },
+        Object {
+          "operationId": "PrivateEndpointConnections_Put",
+          "variables": Object {
+            "properties": Object {
+              "type": "object",
+              "value": Object {},
+            },
+          },
+        },
+        Object {
+          "operationId": "PrivateEndpointConnections_List",
+        },
+        Object {
+          "operationId": "PrivateEndpointConnections_Get",
+        },
+        Object {
+          "operationId": "BlobInventoryPolicies_CreateOrUpdate",
+          "variables": Object {
+            "properties": Object {
+              "type": "object",
+              "value": Object {},
+            },
+          },
+        },
+        Object {
+          "operationId": "BlobInventoryPolicies_List",
+        },
+        Object {
+          "operationId": "BlobInventoryPolicies_Get",
+        },
+        Object {
+          "operationId": "ObjectReplicationPolicies_CreateOrUpdate",
+          "variables": Object {
+            "properties": Object {
+              "type": "object",
+              "value": Object {},
+            },
+          },
+        },
+        Object {
+          "operationId": "ObjectReplicationPolicies_List",
+        },
+        Object {
+          "operationId": "ObjectReplicationPolicies_Get",
+        },
+        Object {
+          "operationId": "ManagementPolicies_CreateOrUpdate",
+          "variables": Object {
+            "properties": Object {
+              "type": "object",
+              "value": Object {},
+            },
+          },
+        },
+        Object {
+          "operationId": "ManagementPolicies_Get",
+        },
+        Object {
+          "operationId": "TableServices_SetServiceProperties",
+          "variables": Object {
+            "parameters": Object {
+              "type": "object",
+              "value": Object {},
+            },
+          },
+        },
+        Object {
+          "operationId": "TableServices_List",
+        },
+        Object {
+          "operationId": "TableServices_GetServiceProperties",
+        },
+        Object {
+          "operationId": "BlobServices_SetServiceProperties",
+          "variables": Object {
+            "parameters": Object {
+              "type": "object",
+              "value": Object {},
+            },
+          },
+        },
+        Object {
+          "operationId": "BlobServices_List",
+        },
+        Object {
+          "operationId": "BlobServices_GetServiceProperties",
+        },
+        Object {
+          "operationId": "QueueServices_SetServiceProperties",
+          "variables": Object {
+            "parameters": Object {
+              "type": "object",
+              "value": Object {},
+            },
+          },
+        },
+        Object {
+          "operationId": "QueueServices_List",
+        },
+        Object {
+          "operationId": "QueueServices_GetServiceProperties",
+        },
+        Object {
+          "operationId": "FileServices_SetServiceProperties",
+          "variables": Object {
+            "parameters": Object {
+              "type": "object",
+              "value": Object {},
+            },
+          },
+        },
+        Object {
+          "operationId": "FileServices_List",
+        },
+        Object {
+          "operationId": "FileServices_GetServiceProperties",
+        },
+        Object {
+          "operationId": "Operations_List",
+        },
+        Object {
+          "operationId": "DeletedAccounts_List",
+        },
+        Object {
+          "operationId": "DeletedAccounts_Get",
+          "variables": Object {
+            "deletedAccountName": "ijtozskwfxyqmvwxznq",
+          },
+        },
+        Object {
+          "operationId": "Usages_ListByLocation",
+        },
+        Object {
+          "operationId": "Skus_List",
+        },
+        Object {
+          "operationId": "PrivateLinkResources_ListByStorageAccount",
+        },
+        Object {
+          "operationId": "ManagementPolicies_Delete",
+        },
+        Object {
+          "operationId": "ObjectReplicationPolicies_Delete",
+        },
+        Object {
+          "operationId": "BlobInventoryPolicies_Delete",
+        },
+        Object {
+          "operationId": "PrivateEndpointConnections_Delete",
+        },
+        Object {
+          "operationId": "BlobContainers_DeleteImmutabilityPolicy",
+        },
+        Object {
+          "operationId": "Queue_Delete",
+        },
+        Object {
+          "operationId": "Table_Delete",
+        },
+        Object {
+          "operationId": "LocalUsers_Delete",
+        },
+        Object {
+          "operationId": "FileShares_Delete",
+        },
+        Object {
+          "operationId": "BlobContainers_Delete",
+        },
+        Object {
+          "operationId": "StorageAccounts_Delete",
+        },
+      ],
+    },
+  ],
+  "scope": "ResourceGroup",
+  "variables": Object {
+    "BlobServicesName": "default",
+    "FileServicesName": "default",
+    "If-Match": "kukzqgpz",
+    "LegalHold": Object {
+      "type": "object",
+      "value": Object {
+        "tags": Array [
+          "yfj",
+        ],
+      },
+    },
+    "accountName": "zbowganzdzvlsoqbn",
+    "blobContainer": Object {
+      "type": "object",
+      "value": Object {},
+    },
+    "blobInventoryPolicyName": "default",
+    "containerName": "qdtqurmxfecghpzjyxocpuwfhkzxqcncrmkgwzk",
+    "encryptionScope": Object {
+      "type": "object",
+      "value": Object {},
+    },
+    "encryptionScopeName": "xpjcrhjmzdh",
+    "fileShare": Object {
+      "type": "object",
+      "value": Object {},
+    },
+    "immutabilityPolicyName": "default",
+    "managementPolicyName": "default",
+    "objectReplicationPolicyId": "webcgcrvlzpedtvq",
+    "privateEndpointConnectionName": "qocldmwqzgx",
+    "queue": Object {
+      "type": "object",
+      "value": Object {},
+    },
+    "queueName": "z1--7-k-------x----1--b6---4rtbee---r-7---3--7",
+    "queueServiceName": "default",
+    "shareName": "nqvxiflhmwutithbpkgfuvzzb",
+    "tableName": "O29gmKsx076fPe9VHUij6cbF5mvwldgbctqhoBkS",
+    "tableServiceName": "default",
+    "username": "rjswkyxoluatlocewttwjeplxiatiettsinqukgtairhgasvsbzkjuo",
+  },
+}
+`;

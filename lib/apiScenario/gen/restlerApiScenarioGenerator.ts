@@ -100,10 +100,10 @@ export class RestlerApiScenarioGenerator {
     definition.scenarios.push(this.generateSteps());
     this.getVariables(definition);
 
-    await this.writeFile(definition);
+    return definition;
   }
 
-  private async writeFile(definition: RawScenarioDefinition) {
+  public async writeFile(definition: RawScenarioDefinition) {
     const fileContent = dump(definition);
     const filePath = pathJoin(this.opts.outputDir, "basic.yaml");
     await this.fileLoader.writeFile(filePath, fileContent);
@@ -244,6 +244,7 @@ export class RestlerApiScenarioGenerator {
       }
       if (node.inDegree === 0 && node.method === "put") {
         heap.push(node);
+        node.visited = true;
       }
     }
 
@@ -251,11 +252,6 @@ export class RestlerApiScenarioGenerator {
 
     while (!heap.empty()) {
       const node = heap.pop()!;
-      if (node.visited) {
-        console.error("node is visited: ", node.operationId, node.method);
-        continue;
-      }
-      node.visited = true;
 
       scenario.steps.push({ operationId: node.operationId });
       const operation = node.operationId.split("_")[0];
@@ -264,6 +260,7 @@ export class RestlerApiScenarioGenerator {
         n.inDegree--;
         if (n.inDegree === 0 && n.method === "put") {
           heap.push(n);
+          n.visited = true;
         }
       }
 
@@ -279,6 +276,7 @@ export class RestlerApiScenarioGenerator {
             deleteStack.push(n);
           } else {
             heap.push(n);
+            n.visited = true;
           }
         }
       }

@@ -26,19 +26,20 @@ These are the global settings for the Storage API.
 
 ``` yaml
 openapi-type: arm
-tag: package-2021-09
+tag: package-2021-08
 ```
-### Tag: package-2021-09
 
-These settings apply only when `--tag=package-2021-09` is specified on the command line.
+### Tag: package-2021-08
 
-``` yaml $(tag) == 'package-2021-09'
+These settings apply only when `--tag=package-2021-08` is specified on the command line.
+
+``` yaml $(tag) == 'package-2021-08'
 input-file:
-- Microsoft.Storage/stable/2021-09-01/storage.json
-- Microsoft.Storage/stable/2021-09-01/blob.json
-- Microsoft.Storage/stable/2021-09-01/file.json
-- Microsoft.Storage/stable/2021-09-01/queue.json
-- Microsoft.Storage/stable/2021-09-01/table.json
+- Microsoft.Storage/stable/2021-08-01/storage.json
+- Microsoft.Storage/stable/2021-08-01/blob.json
+- Microsoft.Storage/stable/2021-08-01/file.json
+- Microsoft.Storage/stable/2021-08-01/queue.json
+- Microsoft.Storage/stable/2021-08-01/table.json
 
 directive:
   - suppress: R3018
