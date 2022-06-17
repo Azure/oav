@@ -931,6 +931,11 @@ function* mulberry32(seed: number) {
 
 let generator: any = undefined;
 
+export const resetPsuedoRandomSeed = (seed?: number) => {
+  usePsudorandom.seed = seed ?? 0;
+  generator = undefined;
+};
+
 export const getRandomString = (length?: number) => {
   if (generator === undefined) {
     if (!usePsudorandom.flag) {

@@ -100,8 +100,6 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     @inject(TYPES.schemaValidator) private schemaValidator: SchemaValidator
   ) {
     setDefaultOpts(opts, {
-      eraseXmsExamples: false,
-      eraseDescription: false,
       skipResolveRefKeys: ["x-ms-examples"],
       swaggerFilePaths: [],
       includeOperation: true,
