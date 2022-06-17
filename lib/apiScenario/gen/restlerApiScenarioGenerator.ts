@@ -1,4 +1,5 @@
 import Heap from "heap";
+import * as path from "path";
 import { inject, injectable } from "inversify";
 import { dump } from "js-yaml";
 import { pathJoin, pathResolve } from "@azure-tools/openapi-tools-common";
@@ -6,12 +7,19 @@ import { inversifyGetInstance, TYPES } from "../../inversifyUtils";
 import { FileLoader } from "../../swagger/fileLoader";
 import { JsonLoader } from "../../swagger/jsonLoader";
 import { SwaggerLoader } from "../../swagger/swaggerLoader";
-import { SwaggerSpec, LowerHttpMethods, Schema, Parameter } from "../../swagger/swaggerTypes";
+import {
+  SwaggerSpec,
+  LowerHttpMethods,
+  Schema,
+  Parameter,
+  Operation,
+} from "../../swagger/swaggerTypes";
 import { traverseSwagger } from "../../transform/traverseSwagger";
 import { ApiScenarioLoaderOption } from "../apiScenarioLoader";
 import {
   RawScenario,
   RawScenarioDefinition,
+  RawStepExample,
   RawStepOperation,
   Variable,
   VarValue,
@@ -19,11 +27,13 @@ import {
 import * as util from "../../generator/util";
 import { setDefaultOpts } from "../../swagger/loader";
 import Mocker from "../../generator/mocker";
+import { cloneDeep } from "lodash";
 
 export interface ApiScenarioGeneratorOption extends ApiScenarioLoaderOption {
   swaggerFilePaths: string[];
   dependencyPath: string;
   outputDir: string;
+  useExample?: boolean;
 }
 
 interface Dependency {
@@ -56,11 +66,16 @@ const methodOrder: LowerHttpMethods[] = ["put", "get", "patch", "post", "delete"
 
 const envVariables = ["api-version", "subscriptionId", "resourceGroupName", "location"];
 
+export const useRandom = {
+  flag: true,
+};
+
 @injectable()
 export class RestlerApiScenarioGenerator {
   private swaggers: SwaggerSpec[];
   private graph: Map<string, Node>;
-  private mocker: Mocker;
+  private mocker: any;
+  private operations: Map<string, Operation>;
 
   public constructor(
     @inject(TYPES.opts) private opts: ApiScenarioGeneratorOption,
@@ -69,7 +84,24 @@ export class RestlerApiScenarioGenerator {
     private jsonLoader: JsonLoader
   ) {
     this.swaggers = [];
-    this.mocker = new Mocker();
+    this.mocker = useRandom.flag
+      ? new Mocker()
+      : {
+          mock: (paramSpec: any): any => {
+            switch (paramSpec.type) {
+              case "string":
+                return "test";
+              case "integer":
+                return 1;
+              case "number":
+                return 1;
+              case "boolean":
+                return true;
+              case "array":
+                return [];
+            }
+          },
+        };
   }
 
   public static create(opts: ApiScenarioGeneratorOption) {
@@ -77,6 +109,8 @@ export class RestlerApiScenarioGenerator {
       swaggerFilePaths: [],
       outputDir: ".",
       dependencyPath: "",
+      eraseXmsExamples: false,
+      skipResolveRefKeys: ["x-ms-examples"],
     });
     return inversifyGetInstance(RestlerApiScenarioGenerator, opts);
   }
@@ -84,9 +118,15 @@ export class RestlerApiScenarioGenerator {
   public async initialize() {
     this.opts.outputDir = pathResolve(this.opts.outputDir);
     this.opts.swaggerFilePaths = this.opts.swaggerFilePaths.map((p) => pathResolve(p));
+    this.operations = new Map();
     for (const path of this.opts.swaggerFilePaths) {
       const swagger = await this.swaggerLoader.load(path);
       this.swaggers.push(swagger);
+      traverseSwagger(swagger, {
+        onOperation: (operation) => {
+          this.operations.set(operation.operationId!, operation);
+        },
+      });
     }
     await this.generateGraph();
   }
@@ -99,6 +139,28 @@ export class RestlerApiScenarioGenerator {
     };
     definition.scenarios.push(this.generateSteps());
     this.getVariables(definition);
+
+    if (this.opts.useExample) {
+      definition.scenarios[0].steps.forEach((step) => {
+        const operationId = (step as any).operationId;
+        const operation = this.operations.get(operationId);
+        if (operation?.["x-ms-examples"] && Object.values(operation["x-ms-examples"])[0]) {
+          const example = Object.values(operation["x-ms-examples"])[0];
+          step.step = (step as any).operationId;
+          (step as any).operationId = undefined;
+          (step as RawStepExample).exampleFile = path.relative(
+            this.opts.outputDir,
+            this.jsonLoader.getRealPath(example.$ref!)
+          );
+        } else {
+          console.warn(`${operationId} has no example.`);
+        }
+      });
+
+      definition.scenarios[0].steps = definition.scenarios[0].steps.filter(
+        (s) => (s as RawStepExample).exampleFile
+      );
+    }
 
     return definition;
   }
@@ -149,14 +211,29 @@ export class RestlerApiScenarioGenerator {
     [...map.values()]
       .sort((a, b) => b.count - a.count)
       .forEach((v) => {
-        if (!variables[v.name] && v.count > 1) {
-          variables[v.name] = v.value;
-          return;
+        const operation = this.operations.get(v.operationId);
+        if (this.opts.useExample) {
+          let p = operation?.parameters?.find((p) => {
+            p = this.jsonLoader.resolveRefObj(p);
+            return p.name === v.name;
+          });
+          if (p) {
+            p = this.jsonLoader.resolveRefObj(p);
+          }
+          if (p?.in !== "path") {
+            return;
+          }
         }
 
         const step = definition.scenarios[0].steps.find(
           (s) => (s as RawStepOperation).operationId === v.operationId
         )!;
+
+        if (!variables[v.name] && v.count > 1) {
+          variables[v.name] = v.value;
+          return;
+        }
+
         if (!step.variables) {
           step.variables = {};
         }
@@ -171,18 +248,23 @@ export class RestlerApiScenarioGenerator {
     const genValue = (name: string, schema: Schema): VarValue => {
       if (util.isObject(schema)) {
         const ret: VarValue = {};
-        for (const name of schema.required ?? []) {
-          const prop = this.jsonLoader.resolveRefObj(schema.properties![name]);
+        const allOf = [...(schema.allOf ?? []), ...(schema.oneOf ?? [])];
+        const s = {
+          required: cloneDeep(schema.required) ?? [],
+          properties: cloneDeep(schema.properties) ?? {},
+        };
+        while (allOf.length > 0) {
+          const item = this.jsonLoader.resolveRefObj(allOf.shift()!);
+          allOf.push(...(item.allOf ?? []), ...(item.oneOf ?? []));
+          s.required = [...s.required, ...(item.required ?? [])];
+          s.properties = { ...s.properties, ...(item.properties ?? {}) };
+        }
+
+        for (const name of s.required) {
+          const prop = this.jsonLoader.resolveRefObj(s.properties[name]);
           ret[name] = genValue(name, prop);
         }
 
-        for (const allOf of schema.allOf ?? []) {
-          const prop = this.jsonLoader.resolveRefObj(allOf);
-          const value = genValue("", prop) as { [key: string]: VarValue };
-          for (const key of Object.keys(value)) {
-            ret[key] = value[key];
-          }
-        }
         return ret;
       }
 
@@ -213,6 +295,10 @@ export class RestlerApiScenarioGenerator {
         value: genValue(parameter.name, schema) as { [key: string]: VarValue },
       };
       return value;
+    }
+
+    if (parameter.in === "path" && parameter.type === "string") {
+      return { type: "string", prefix: `${parameter.name}` };
     }
 
     return this.mocker.mock(parameter, parameter.name);

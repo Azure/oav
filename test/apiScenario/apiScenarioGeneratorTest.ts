@@ -6,10 +6,12 @@ import { TestRecordingLoader } from "../../lib/apiScenario/gen/testRecordingLoad
 import { inversifyGetInstance } from "../../lib/inversifyUtils";
 import { TestRecordingApiScenarioGenerator } from "../../lib/apiScenario/gen/testRecordingApiScenarioGenerator";
 import { getInputFiles } from "../../lib/util/utils";
-import { RestlerApiScenarioGenerator } from "../../lib/apiScenario/gen/restlerApiScenarioGenerator";
-import { usePsudorandom } from "../../lib/util/utils";
+import {
+  RestlerApiScenarioGenerator,
+  useRandom,
+} from "../../lib/apiScenario/gen/restlerApiScenarioGenerator";
 
-usePsudorandom.flag = true;
+useRandom.flag = false;
 
 describe("ApiScenarioGenerator", () => {
   it("generate api scenario from recording - storage", async () => {
@@ -67,6 +69,27 @@ describe("ApiScenarioGenerator", () => {
       swaggerFilePaths: swaggerFilePaths,
       outputDir: ".",
       dependencyPath: "test/apiScenario/fixtures/dependency/storage/dependencies.json",
+    });
+
+    await generator.initialize();
+    const apiScenario = await generator.generate();
+
+    expect(apiScenario).toMatchSnapshot();
+  });
+
+  it("generate api scenario from swagger and example - storage", async () => {
+    const tag = "package-2021-08";
+    const readme = "test/apiScenario/fixtures/specification/storage/resource-manager/readme.md";
+    const readmeMd: string = path.resolve(readme);
+    const swaggerFilePaths = (await getInputFiles(readmeMd, tag)).map((file) =>
+      path.join(path.dirname(readmeMd), file)
+    );
+
+    const generator = RestlerApiScenarioGenerator.create({
+      swaggerFilePaths: swaggerFilePaths,
+      outputDir: ".",
+      dependencyPath: "test/apiScenario/fixtures/dependency/storage/dependencies.json",
+      useExample: true,
     });
 
     await generator.initialize();
