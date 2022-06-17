@@ -295,13 +295,8 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
 
   private async loadScenario(rawScenario: RawScenario, ctx: ApiScenarioContext): Promise<Scenario> {
     ctx.stage = "scenario";
-    const resolvedSteps: Step[] = [];
     const steps: Step[] = [];
     const { scenarioDef } = ctx;
-
-    for (const step of scenarioDef.prepareSteps) {
-      resolvedSteps.push(step);
-    }
 
     const variableScope = convertVariables(rawScenario.variables);
     variableScope.requiredVariables = [
@@ -313,7 +308,6 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       description: rawScenario.description ?? "",
       shareScope: rawScenario.shareScope ?? true,
       steps,
-      _resolvedSteps: resolvedSteps,
       _scenarioDef: scenarioDef,
       ...variableScope,
     };
@@ -323,12 +317,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
 
     for (const rawStep of rawScenario.steps) {
       const step = await this.loadStep(rawStep, ctx);
-      resolvedSteps.push(step);
       steps.push(step);
-    }
-
-    for (const step of scenarioDef.cleanUpSteps) {
-      resolvedSteps.push(step);
     }
 
     return scenario;
@@ -399,7 +388,10 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       if (variable === undefined) {
         const requiredVariables =
           ctx.scenario?.requiredVariables ?? ctx.scenarioDef.requiredVariables;
-        if (requiredVariables.includes(name)) {
+        if (
+          requiredVariables.includes(name) ||
+          (ctx.scenarioDef.scope === "ResourceGroup" && name === "resourceGroupName")
+        ) {
           return {
             type: "string",
             value: `$(${name})`,
