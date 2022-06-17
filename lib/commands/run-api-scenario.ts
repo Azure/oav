@@ -24,42 +24,42 @@ export const describe = "newman runner run API scenario file.";
 export const apiScenarioEnvKey = "API_SCENARIO_JSON_ENV";
 
 export const builder: yargs.CommandBuilder = {
-  e: {
-    alias: "envFile",
-    describe: "the env file path.",
+  envFile: {
+    alias: "e",
+    describe: "The env file path.",
     string: true,
   },
   tag: {
-    describe: "the readme tag name.",
+    describe: "The readme tag name.",
     string: true,
   },
   readme: {
-    describe: "path to readme.md file",
+    describe: "Path to readme.md file",
     string: true,
   },
   specs: {
-    describe: "one or more spec file paths. type: array",
+    describe: "One or more spec file paths. type: array",
     type: "array",
   },
   output: {
     alias: "outputDir",
-    describe: "result output folder.",
+    describe: "Result output folder.",
     string: true,
     default: "generated",
   },
   markdown: {
     alias: "markdownReportPath",
-    describe: "markdown report output path.",
+    describe: "Markdown report output path.",
     string: true,
   },
   junit: {
     alias: "junitReportPath",
-    describe: "junit report output path.",
+    describe: "Junit report output path.",
     string: true,
   },
   level: {
     describe:
-      "validation level. oav runner validate request and response with different strict level. 'validate-request' only validate request should return 2xx status code. 'validate-request-response' validate both request and response.",
+      "Validation level. oav runner validate request and response with different strict level. 'validate-request' validates requests should be successful. 'validate-request-response' validate both request and response.",
     string: true,
     default: "validate-request-response",
   },
@@ -73,28 +73,33 @@ export const builder: yargs.CommandBuilder = {
     string: true,
   },
   location: {
-    describe: "resource provision location parameter",
+    describe: "Resource provision location parameter",
     string: true,
   },
   subscriptionId: {
-    describe: "subscriptionId to run API test",
+    describe: "SubscriptionId to run API test",
     string: true,
   },
   resourceGroup: {
-    describe: "resource group",
+    describe: "Resource group",
     string: true,
   },
   skipCleanUp: {
-    describe: "whether delete resource group when all steps finished",
+    describe: "Whether delete resource group when all steps finished",
     boolean: true,
   },
   dryRun: {
-    describe: "dry run mode. only create postman collection file not run live api test.",
+    describe: "Dry run mode. If set, only create postman collection file not run live API test.",
+    boolean: true,
+    default: false,
+  },
+  devMode: {
+    describe: "Development mode. If set, will skip AAD auth and ARM API call.",
     boolean: true,
     default: false,
   },
   verbose: {
-    describe: "log verbose",
+    describe: "Log verbose",
     default: false,
     boolean: true,
   },
@@ -110,14 +115,18 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     const fileRoot = readmePath ? pathDirName(readmePath) : process.cwd();
     console.log(`fileRoot: ${fileRoot}`);
 
-    const swaggerFilePaths: string[] = argv.specs || [];
+    const swaggerFilePaths: string[] = [];
+    for (const spec of argv.specs ?? []) {
+      const specFile = pathResolve(spec);
+      if (specFile && swaggerFilePaths.indexOf(specFile) < 0) {
+        swaggerFilePaths.push(specFile);
+      }
+    }
     if (readmePath && argv.tag !== undefined) {
-      const inputSwaggerFile = await getInputFiles(readmePath, argv.tag);
-      if (inputSwaggerFile) {
-        for (const it of inputSwaggerFile) {
-          if (swaggerFilePaths.indexOf(it) === -1) {
-            swaggerFilePaths.push(pathJoin(fileRoot, it));
-          }
+      const inputFile = await getInputFiles(readmePath, argv.tag);
+      for (const it of inputFile ?? []) {
+        if (swaggerFilePaths.indexOf(it) < 0) {
+          swaggerFilePaths.push(pathJoin(fileRoot, it));
         }
       }
     }
@@ -126,8 +135,8 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     console.log(swaggerFilePaths);
 
     let env: EnvironmentVariables = {};
-    if (argv.e !== undefined) {
-      env = JSON.parse(fs.readFileSync(argv.e).toString());
+    if (argv.envFile !== undefined) {
+      env = JSON.parse(fs.readFileSync(argv.envFile).toString());
     }
     if (process.env[apiScenarioEnvKey]) {
       const envFromVariable = JSON.parse(process.env[apiScenarioEnvKey] as string);
@@ -171,6 +180,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       skipCleanUp: argv.skipCleanUp,
       verbose: argv.verbose,
       swaggerFilePaths: swaggerFilePaths,
+      devMode: argv.devMode,
     };
     const generator = inversifyGetInstance(PostmanCollectionGenerator, opt);
     await generator.run();

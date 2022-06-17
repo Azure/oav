@@ -1,6 +1,7 @@
 import { injectable } from "inversify";
 import { cloneDeep } from "@azure-tools/openapi-tools-common";
 import { JsonLoader } from "../swagger/jsonLoader";
+import { Operation } from "../swagger/swaggerTypes";
 import { StepRestCall, StepArmTemplate, Variable } from "./apiScenarioTypes";
 import { getBodyParam } from "./apiScenarioLoader";
 import { replaceAllInObject } from "./variableUtils";
@@ -36,7 +37,8 @@ export class TemplateGenerator {
 
   public exampleParameterConvention(
     step: Pick<StepRestCall, "parameters" | "responses" | "operation">,
-    variables: (name: string) => any
+    variables: (name: string) => any,
+    operation: Operation
   ) {
     const toMatch: string[] = [];
     const matchReplace: { [toMatch: string]: string } = {};
@@ -59,7 +61,7 @@ export class TemplateGenerator {
       parameters[paramName] = toReplace;
     }
     step.parameters = parameters;
-    const bodyParam = getBodyParam(step.operation, this.jsonLoader);
+    const bodyParam = getBodyParam(operation, this.jsonLoader);
     if (bodyParam !== undefined) {
       const requestBody = step.parameters[bodyParam.name];
       replaceAllInObject(requestBody, toMatch, matchReplace);

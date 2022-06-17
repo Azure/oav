@@ -286,7 +286,6 @@ export type Scenario = TransformRaw<
   {
     steps: Step[];
     _scenarioDef: ScenarioDefinition;
-    _resolvedSteps: Step[];
   } & VariableScope
 >;
 

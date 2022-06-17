@@ -2,53 +2,15 @@ import { Event, EventDefinition, Item, ItemDefinition, ScriptDefinition } from "
 import { getRandomString } from "../util/utils";
 import { ArmTemplate } from "./apiScenarioTypes";
 
-interface ScriptTemplate {
-  text: string;
+function parseJsonPointer(jsonPointer: string): string[] {
+  if (jsonPointer === "") {
+    return [];
+  }
+  return jsonPointer
+    .substring(1)
+    .split(/\//)
+    .map((seg) => seg.replace(/~1/g, "/").replace(/~0/g, "~"));
 }
-
-const StatusCodeAssertion: ScriptTemplate = {
-  text: `pm.response.to.be.success;\n`,
-};
-
-const ARMDeploymentStatusAssertion: ScriptTemplate = {
-  text: `pm.expect(pm.response.json().status).to.be.oneOf(["Succeeded", "Accepted", "Running", "Ready", "Creating", "Created", "Deleting", "Deleted", "Canceled", "Updating"]);\n`,
-};
-
-const DetailResponseLog: ScriptTemplate = {
-  text: `console.log(pm.response.text());\n
-  `,
-};
-
-const GetObjectValueByJsonPointer: ScriptTemplate = {
-  text: `const getValueByJsonPointer = (obj, pointer) => {
-    var refTokens = Array.isArray(pointer) ? pointer : parse(pointer);
-
-    for (var i = 0; i < refTokens.length; ++i) {
-        var tok = refTokens[i];
-        if (!(typeof obj == 'object' && tok in obj)) {
-            throw new Error('Invalid reference token: ' + tok);
-        }
-        obj = obj[tok];
-    }
-    return obj;
-  };
-
-  const jsonPointerUnescape = (str)=>{
-    return str.replace(/~1/g, '/').replace(/~0/g, '~');
-  };
-
-  const parse = (pointer) => {
-    if (pointer === "") {
-      return [];
-    }
-    if (pointer.charAt(0) !== "/") {
-      throw new Error("Invalid JSON pointer: " + pointer);
-    }
-    return pointer.substring(1).split(/\\//).map(jsonPointerUnescape);
-  };
-
-  `,
-};
 
 interface TestScriptParameter {
   name: string;
@@ -94,39 +56,40 @@ export function createScript(script: string): ScriptDefinition {
 }
 
 export function generateScript(parameter: TestScriptParameter): ScriptDefinition {
-  const script = `pm.test("${parameter.name}", function() {
-    ${[
-      parameter.types.includes("DetailResponseLog") ? DetailResponseLog.text : "",
-      parameter.types.includes("StatusCodeAssertion") ? StatusCodeAssertion.text : "",
-      parameter.types.includes("OverwriteVariables")
-        ? generateOverWriteVariablesScript(parameter.variables!)
-        : "",
-      parameter.types.includes("ARMDeploymentStatusAssertion")
-        ? ARMDeploymentStatusAssertion.text
-        : "",
-      parameter.types.includes("ExtractARMTemplateOutput")
-        ? generateARMTemplateOutputScript(parameter.armTemplate!)
-        : "",
-    ].join("")}
-  });
-  `;
-  return createScript(script);
-}
-
-function generateOverWriteVariablesScript(variables: Map<string, string>): string {
-  let ret = GetObjectValueByJsonPointer.text;
-  for (const [k, v] of variables) {
-    ret += `pm.environment.set("${k}", getValueByJsonPointer(pm.response.json(), "${v}"));`;
+  const script: string[] = [];
+  script.push(`pm.test("${parameter.name}", function() {`);
+  if (parameter.types.includes("DetailResponseLog")) {
+    script.push("console.log(pm.response.text());");
   }
-  return ret;
-}
-
-function generateARMTemplateOutputScript(armTemplate: ArmTemplate): string {
-  let ret = "";
-  for (const key of Object.keys(armTemplate.outputs || {})) {
-    ret += `pm.environment.set("${key}", pm.response.json().properties.outputs.${key}.value);\n`;
+  if (parameter.types.includes("StatusCodeAssertion")) {
+    script.push("pm.response.to.be.success;");
   }
-  return ret;
+  if (parameter.types.includes("OverwriteVariables") && parameter.variables) {
+    for (const [k, v] of parameter.variables) {
+      const segments = parseJsonPointer(v);
+      if (segments.length === 0) {
+        script.push(`pm.environment.set("${k}", pm.response.json());`);
+      } else {
+        script.push(
+          `pm.environment.set("${k}", _.get(pm.response.json(), ${JSON.stringify(segments)}));`
+        );
+      }
+    }
+  }
+  if (parameter.types.includes("ARMDeploymentStatusAssertion")) {
+    script.push(
+      'pm.expect(pm.response.json().status).to.be.oneOf(["Succeeded", "Accepted", "Running", "Ready", "Creating", "Created", "Deleting", "Deleted", "Canceled", "Updating"]);'
+    );
+  }
+  if (parameter.types.includes("ExtractARMTemplateOutput") && parameter.armTemplate?.outputs) {
+    for (const key of Object.keys(parameter.armTemplate.outputs)) {
+      script.push(
+        `pm.environment.set("${key}", pm.response.json().properties.outputs.${key}.value);`
+      );
+    }
+  }
+  script.push("});");
+  return createScript(script.join("\n"));
 }
 
 export const reservedCollectionVariables = [
@@ -170,8 +133,8 @@ export const reservedCollectionVariables = [
 ];
 
 export function generateAuthScript(baseUrl: string): ScriptDefinition {
-  const script = `if (pm.variables.get("x_enable_auth") !== "true") {
-    console.log("Auth disabled");
+  const script = `
+if (pm.variables.get("x_enable_auth") !== "true") {
     return;
 }
 let vars = ["client_id", "client_secret", "tenantId", "subscriptionId"];
@@ -226,7 +189,6 @@ if (
             }
         }
     );
-}
-`;
+}`;
   return createScript(script);
 }

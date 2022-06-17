@@ -211,7 +211,7 @@ export class ApiScenarioRunner {
   private async executeRestCallStep(step: StepRestCall, env: VariableEnv) {
     let req: ApiScenarioClientRequest = {
       method: step.operation._method.toUpperCase() as HttpMethods,
-      path: step.operation._path._pathTemplate.replace(/{([a-z0-9_]+)}/gi, (_, p1) => `$(${p1})`),
+      path: step.operation._path._pathTemplate.replace(/{([a-z0-9_$]+)}/gi, (_, p1) => `$(${p1})`),
       pathVariables: {},
       headers: {},
       query: {},

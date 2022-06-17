@@ -172,8 +172,10 @@ export class RestlerApiScenarioGenerator {
       if (util.isObject(schema)) {
         const ret: VarValue = {};
         for (const name of schema.required ?? []) {
-          const prop = this.jsonLoader.resolveRefObj(schema.properties![name]);
-          ret[name] = genValue(name, prop);
+          if (schema.properties && schema.properties[name]) {
+            const prop = this.jsonLoader.resolveRefObj(schema.properties[name]);
+            ret[name] = genValue(name, prop);
+          }
         }
 
         for (const allOf of schema.allOf ?? []) {

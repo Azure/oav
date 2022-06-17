@@ -55,7 +55,7 @@ import { armDeploymentScriptTemplate } from "./constants";
 import { jsonPatchApply } from "./diffUtils";
 import { TemplateGenerator } from "./templateGenerator";
 
-const variableRegex = /\$\(([A-Za-z_][A-Za-z0-9_]*)\)/;
+const variableRegex = /\$\(([A-Za-z_$][A-Za-z0-9_]*)\)/;
 
 export interface ApiScenarioLoaderOption
   extends FileLoaderOption,
@@ -100,8 +100,6 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     @inject(TYPES.schemaValidator) private schemaValidator: SchemaValidator
   ) {
     setDefaultOpts(opts, {
-      eraseXmsExamples: false,
-      eraseDescription: false,
       skipResolveRefKeys: ["x-ms-examples"],
       swaggerFilePaths: [],
       includeOperation: true,
@@ -295,13 +293,8 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
 
   private async loadScenario(rawScenario: RawScenario, ctx: ApiScenarioContext): Promise<Scenario> {
     ctx.stage = "scenario";
-    const resolvedSteps: Step[] = [];
     const steps: Step[] = [];
     const { scenarioDef } = ctx;
-
-    for (const step of scenarioDef.prepareSteps) {
-      resolvedSteps.push(step);
-    }
 
     const variableScope = convertVariables(rawScenario.variables);
     variableScope.requiredVariables = [
@@ -313,7 +306,6 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       description: rawScenario.description ?? "",
       shareScope: rawScenario.shareScope ?? true,
       steps,
-      _resolvedSteps: resolvedSteps,
       _scenarioDef: scenarioDef,
       ...variableScope,
     };
@@ -323,12 +315,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
 
     for (const rawStep of rawScenario.steps) {
       const step = await this.loadStep(rawStep, ctx);
-      resolvedSteps.push(step);
       steps.push(step);
-    }
-
-    for (const step of scenarioDef.cleanUpSteps) {
-      resolvedSteps.push(step);
     }
 
     return scenario;
@@ -399,7 +386,11 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       if (variable === undefined) {
         const requiredVariables =
           ctx.scenario?.requiredVariables ?? ctx.scenarioDef.requiredVariables;
-        if (requiredVariables.includes(name)) {
+        if (
+          requiredVariables.includes(name) ||
+          (ctx.scenarioDef.scope === "ResourceGroup" &&
+            ["subscriptionId", "resourceGroupName", "location"].indexOf(name) >= 0)
+        ) {
           return {
             type: "string",
             value: `$(${name})`,
@@ -530,11 +521,17 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
         step.description = step.description ?? exampleName;
       }
       step.parameters = exampleFileContent.parameters;
+
+      // force update api-version
+      if (step.parameters["api-version"]) {
+        step.parameters["api-version"] = this.apiVersionsMap.get(step.operationId)!;
+      }
+
       step.responses = exampleFileContent.responses;
 
       await this.applyPatches(step, rawStep, operation);
 
-      this.templateGenerator.exampleParameterConvention(step, getVariable);
+      this.templateGenerator.exampleParameterConvention(step, getVariable, operation);
     }
     return step;
   }
