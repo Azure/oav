@@ -15,7 +15,7 @@ import { traverseSwagger } from "../transform/traverseSwagger";
 import { Operation, Path, LowerHttpMethods } from "../swagger/swaggerTypes";
 import { LiveValidatorLoader } from "../liveValidation/liveValidatorLoader";
 import { inversifyGetContainer, inversifyGetInstance } from "../inversifyUtils";
-import { getApiVersionFromSwaggerPath } from "../util/utils";
+import { findPathsToKey, getApiVersionFromSwaggerPath } from "../util/utils";
 
 export interface TrafficValidationOptions extends Options {
   sdkPackage?: string;
@@ -138,6 +138,8 @@ export class TrafficValidator {
         );
       }
       if (spec !== undefined) {
+        const a = findPathsToKey({ key: "operationId", obj: spec.paths });
+        console.log(a);
         // Get Swagger - operation mapper.
         if (this.operationSpecMapper.get(swaggerPath) === undefined) {
           this.operationSpecMapper.set(swaggerPath, []);

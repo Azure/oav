@@ -33,7 +33,7 @@ import { applyGlobalTransformers, applySpecTransformers } from "../transform/tra
 import { traverseSwaggerAsync } from "../transform/traverseSwagger";
 import { xmsPathsTransformer } from "../transform/xmsPathsTransformer";
 import { getLazyBuilder } from "../util/lazyBuilder";
-import { waitUntilLowLoad } from "../util/utils";
+import { findPathsToKey, findPathToValue, waitUntilLowLoad } from "../util/utils";
 
 export interface LiveValidatorLoaderOption extends SwaggerLoaderOption, SchemaValidatorOption {
   transformToNewSchemaFormat?: boolean;
@@ -126,7 +126,10 @@ export class LiveValidatorLoader implements Loader<SwaggerSpec> {
 
   public async load(specFilePath: string): Promise<SwaggerSpec> {
     const spec = await this.swaggerLoader.load(specFilePath);
-
+    const a = findPathsToKey({ key: "operationId", obj: spec });
+    console.log(a);
+    const b = findPathToValue(a, spec, "PrivateEndpointConnections_Get");
+    console.log(b);
     applySpecTransformers(spec, this.transformContext);
 
     return spec;
