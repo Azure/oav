@@ -42,6 +42,11 @@ export const builder: yargs.CommandBuilder = {
     string: true,
     default: "resource-put-delete",
   },
+  useExample: {
+    describe: "use example in the spec file.",
+    boolean: true,
+    default: false,
+  },
 };
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
@@ -67,10 +72,12 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
         swaggerFilePaths: swaggerFilePaths,
         outputDir: argv.outputDir,
         dependencyPath: argv.dependency,
+        useExample: argv.useExample,
       });
 
       await generator.initialize();
-      await generator.generate();
+      const def = await generator.generate();
+      await generator.writeFile(def);
     } else {
       const generator = StaticApiScenarioGenerator.create({
         swaggerFilePaths: swaggerFilePaths,
