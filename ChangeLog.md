@@ -18,6 +18,8 @@
   - Improve API Scenario generation from RESTler dependencies
   - Support running API Scenario against localhost endpoint
   - Refactor Postman based runner client
+  - Support API Scenario generation from testProxy recording
+  - Support local devMode where AAD auth, ARM call and LRO polling will be disabled
 
 ## 05/27/2022 2.12.2
 

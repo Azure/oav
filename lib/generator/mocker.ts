@@ -76,22 +76,15 @@ export default class Mocker {
   private mockForPattern(
     Mock: any,
     pattern: string,
-    minLength: any,
-    maxLength: any,
-    paramName: string
+    _minLength: any,
+    _maxLength: any,
+    _paramName: string
   ) {
     for (let i = 0; i < 10; i++) {
       const { data } = Mock.mock({
         data: new RegExp(pattern),
       });
-      if ((minLength && data.length < minLength) || (maxLength && data.length > maxLength)) {
-        console.error(
-          `string ${paramName} has both regex pattern an length limit, no example can be generated. Set the length limit by regex and retry`
-        );
-        continue;
-      } else {
-        return data;
-      }
+      return data;
     }
   }
 

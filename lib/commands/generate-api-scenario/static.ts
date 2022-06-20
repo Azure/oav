@@ -6,7 +6,7 @@
 import { resolve as pathResolve } from "path";
 import * as yargs from "yargs";
 import { StaticApiScenarioGenerator } from "../../apiScenario/gen/staticApiScenarioGenerator";
-import { ApiScenarioGenerator } from "../../apiScenario/gen/apiScenarioGenerator";
+import { RestlerApiScenarioGenerator } from "../../apiScenario/gen/restlerApiScenarioGenerator";
 import { cliSuppressExceptions } from "../../cliSuppressExceptions";
 import { getInputFiles } from "../../util/utils";
 
@@ -42,6 +42,11 @@ export const builder: yargs.CommandBuilder = {
     string: true,
     default: "resource-put-delete",
   },
+  useExample: {
+    describe: "use example in the spec file.",
+    boolean: true,
+    default: false,
+  },
 };
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
@@ -63,14 +68,16 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     console.log(swaggerFilePaths);
 
     if (argv.dependency) {
-      const generator = ApiScenarioGenerator.create({
+      const generator = RestlerApiScenarioGenerator.create({
         swaggerFilePaths: swaggerFilePaths,
         outputDir: argv.outputDir,
         dependencyPath: argv.dependency,
+        useExample: argv.useExample,
       });
 
       await generator.initialize();
-      await generator.generate();
+      const def = await generator.generate();
+      await generator.writeFile(def);
     } else {
       const generator = StaticApiScenarioGenerator.create({
         swaggerFilePaths: swaggerFilePaths,

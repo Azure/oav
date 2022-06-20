@@ -39,6 +39,7 @@ export interface PostmanCollectionGeneratorOption
   skipCleanUp?: boolean;
   runId?: string;
   verbose?: boolean;
+  devMode?: boolean;
 }
 
 export const generateRunId = (): string => {
@@ -100,6 +101,9 @@ export class PostmanCollectionGenerator {
       testProxy: this.opt.testProxy,
       verbose: this.opt.verbose,
       swaggerFilePaths: this.opt.swaggerFilePaths,
+      skipAuth: this.opt.devMode,
+      skipArmCall: this.opt.devMode,
+      skipLroPoll: this.opt.devMode,
     });
     const runner = new ApiScenarioRunner({
       jsonLoader: this.apiScenarioLoader.jsonLoader,
@@ -192,8 +196,7 @@ export class PostmanCollectionGenerator {
     this.dataMasker.addMaskedValues(values);
 
     console.log(`\ngenerate collection successfully!`);
-    console.log(`Postman collection: '${collectionPath}'. Postman env: '${envPath}' `);
-    console.log(`Command: newman run ${collectionPath} -e ${envPath} -r 'json,cli'`);
+    console.log(`Postman collection: ${collectionPath}\nPostman env: ${envPath}`);
   }
 
   private async runCollection(
