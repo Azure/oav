@@ -45,7 +45,7 @@ export const builder: yargs.CommandBuilder = {
     alias: "outputDir",
     describe: "Result output folder.",
     string: true,
-    default: "generated",
+    default: ".apitest",
   },
   markdown: {
     alias: "markdownReportPath",
