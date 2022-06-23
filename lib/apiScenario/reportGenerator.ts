@@ -177,7 +177,7 @@ export class ReportGenerator {
 
   private async writeExample(filename: string, example: any) {
     await this.fileLoader.writeFile(
-      path.join("examples", filename),
+      path.join("../examples", filename),
       JSON.stringify(example, null, 2)
     );
   }

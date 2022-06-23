@@ -103,6 +103,11 @@ export const builder: yargs.CommandBuilder = {
     default: false,
     boolean: true,
   },
+  generateExample: {
+    describe: "Whether to generate examples from live traffic after API test",
+    boolean: true,
+    default: false,
+  },
 };
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
@@ -181,6 +186,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       verbose: argv.verbose,
       swaggerFilePaths: swaggerFilePaths,
       devMode: argv.devMode,
+      generateExample: argv.generateExample,
     };
     const generator = inversifyGetInstance(PostmanCollectionGenerator, opt);
     await generator.run();

@@ -40,6 +40,7 @@ export interface PostmanCollectionGeneratorOption
   runId?: string;
   verbose?: boolean;
   devMode?: boolean;
+  generateExample?: boolean;
 }
 
 export const generateRunId = (): string => {
@@ -257,6 +258,7 @@ export class PostmanCollectionGenerator {
               swaggerFilePaths: this.opt.swaggerFilePaths,
               validationLevel: this.opt.validationLevel,
               verbose: this.opt.verbose,
+              generateExample: this.opt.generateExample,
             };
             const reportAnalyzer = inversifyGetInstance(NewmanReportAnalyzer, opts);
             await reportAnalyzer.analyze();
