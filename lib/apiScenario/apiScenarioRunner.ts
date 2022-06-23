@@ -175,7 +175,7 @@ export class ApiScenarioRunner {
         await this.executeStep(step, scenarioEnv, scope);
       }
     } catch (e) {
-      throw new Error(`Failed to execute scenario: ${scenario.scenario}: e`);
+      throw new Error(`Failed to execute scenario: ${scenario.scenario}: ${e.message}`);
     } finally {
       if (!this.skipCleanUp) {
         await this.cleanUpScope(scope);
