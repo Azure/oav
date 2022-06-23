@@ -28,7 +28,6 @@ import {
   kvPairsToObject,
   getProviderFromPathTemplate,
   getProviderFromSpecPath,
-  findPathsToKey,
 } from "../util/utils";
 import { LiveValidatorLoader, LiveValidatorLoaderOption } from "./liveValidatorLoader";
 import { OperationSearcher } from "./operationSearcher";
@@ -225,8 +224,6 @@ export class LiveValidator {
       this.swaggerList.push(swaggerPath);
       const spec = await this.getSwaggerInitializer(this.loader!, swaggerPath);
       if (spec !== undefined) {
-        const a = findPathsToKey({ key: "operationId", obj: spec.paths });
-        console.log(a);
         allSpecs.push(spec);
       }
     }

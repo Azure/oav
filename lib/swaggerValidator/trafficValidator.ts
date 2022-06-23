@@ -15,7 +15,9 @@ import { traverseSwagger } from "../transform/traverseSwagger";
 import { Operation, Path, LowerHttpMethods } from "../swagger/swaggerTypes";
 import { LiveValidatorLoader } from "../liveValidation/liveValidatorLoader";
 import { inversifyGetContainer, inversifyGetInstance } from "../inversifyUtils";
-import { findPathsToKey, getApiVersionFromSwaggerPath } from "../util/utils";
+import { findPathsToKey, findPathToValue, getApiVersionFromSwaggerPath } from "../util/utils";
+import { SwaggerLoader, SwaggerLoaderOption } from "../swagger/swaggerLoader";
+import { getFilePositionFromJsonPath } from "../util/jsonUtils";
 
 export interface TrafficValidationOptions extends Options {
   sdkPackage?: string;
@@ -69,6 +71,7 @@ export class TrafficValidator {
   private specPath: string;
   private trafficPath: string;
   private loader?: LiveValidatorLoader;
+  private swaggerLoader?: SwaggerLoader;
   private trafficOperation: Map<string, string[]> = new Map<string, string[]>();
   private validationFailOperations: Map<string, string[]> = new Map<string, string[]>();
   private coverageData: Map<string, number> = new Map<string, number>();
@@ -138,8 +141,6 @@ export class TrafficValidator {
         );
       }
       if (spec !== undefined) {
-        const a = findPathsToKey({ key: "operationId", obj: spec.paths });
-        console.log(a);
         // Get Swagger - operation mapper.
         if (this.operationSpecMapper.get(swaggerPath) === undefined) {
           this.operationSpecMapper.set(swaggerPath, []);
@@ -160,12 +161,33 @@ export class TrafficValidator {
 
   public async validate(): Promise<TrafficValidationIssue[]> {
     let payloadFilePath;
+    const swaggerOpts: SwaggerLoaderOption = {
+      setFilePath: false,
+    };
+    this.swaggerLoader = inversifyGetInstance(SwaggerLoader, swaggerOpts);
+    const spec = await this.swaggerLoader.load(this.specPath);
+    const operationIdList = findPathsToKey({ key: "operationId", obj: spec });
+    // const a = findPathsToKey({ key: "operationId", obj: spec });
+    // console.log(a);
+    // const b = findPathToValue(a, spec, "PrivateEndpointConnections_Get");
+    // console.log(b);
+    // const position = getFilePositionFromJsonPath(spec, b[0]);
+    // console.log(position);
     try {
       for (const trafficFile of this.trafficFiles) {
         payloadFilePath = trafficFile;
         const payload: RequestResponsePair = require(trafficFile);
+        // const requestList = findPathsToKey({ key: "liveRequest", obj: spec });
+        // console.log(requestList);
+        const trafficSpec = await this.swaggerLoader.load(payloadFilePath);
+        const liveResponseList = findPathsToKey({ key: "liveResponse", obj: trafficSpec });
+        console.log(liveResponseList);
         const validationResult = await this.liveValidator.validateLiveRequestResponse(payload);
-        const operationInfo = validationResult.requestValidationResult?.operationInfo;
+        let operationInfo = validationResult.requestValidationResult?.operationInfo;
+        const operationId = findPathToValue(operationIdList, spec, operationInfo.operationId);
+        const operationIdPosition = getFilePositionFromJsonPath(spec, operationId[0]);
+        console.log(operationIdPosition);
+        operationInfo = Object.assign(operationInfo, { position: operationIdPosition });
         const liveRequest = payload.liveRequest;
         const correlationId = liveRequest.headers?.["x-ms-correlation-request-id"] || "";
         const opInfo = await this.liveValidator.getOperationInfo(liveRequest, correlationId);
