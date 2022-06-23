@@ -508,19 +508,26 @@ export class SwaggerSemanticValidator {
           }
           visitedParamName.add(name);
 
-          if (!(consumes !== undefined && consumes.includes("multipart/form-data"))) {
-            if (param.in === "body" || param.in === "formData") {
-              if (bodyParam !== undefined) {
-                const meta = getOavErrorMeta(
-                  param.in === bodyParam.in
-                    ? "MULTIPLE_BODY_PARAMETERS"
-                    : "INVALID_PARAMETER_COMBINATION",
-                  {}
-                );
+          if (param.in === "body" || param.in === "formData") {
+            if (bodyParam !== undefined) {
+              const meta = getOavErrorMeta(
+                param.in === bodyParam.in
+                  ? "MULTIPLE_BODY_PARAMETERS"
+                  : "INVALID_PARAMETER_COMBINATION",
+                {}
+              );
+              if (
+                !(
+                  meta.code === "MULTIPLE_BODY_PARAMETERS" &&
+                  param.in === "formData" &&
+                  consumes !== undefined &&
+                  consumes.includes("multipart/form-data")
+                )
+              ) {
                 this.addErrorsFromErrorCode(errors, url, meta, operation);
               }
-              bodyParam = param;
             }
+            bodyParam = param;
           }
 
           if (param.in === "path") {

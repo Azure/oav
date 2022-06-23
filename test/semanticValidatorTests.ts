@@ -220,7 +220,7 @@ describe("Semantic validation", () => {
       assert(result.validityStatus === false);
       assert.strictEqual(result.validateSpec?.errors?.[0].code, "MULTIPLE_BODY_PARAMETERS");
     });
-    it("should pass when operation has multiple body parameters and consumes has multipart/form-data", async () => {
+    it("should pass when operation has multiple formData parameters and consumes has multipart/form-data", async () => {
       const specPath = `${testPath}/semanticValidation/specification/validateOperation/MULTIPLE_BODY_PARAMETERS/multipartFormData.json`;
       const result = await validate.validateSpec(specPath, undefined);
       assert(result.validityStatus === true);
