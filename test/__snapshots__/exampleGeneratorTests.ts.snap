@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`test generate example from mocker,LRO header: ,readme:eventgrid: ,tag:package-2020-06 1`] = `
+exports[`test generate example from mocker,LRO header: ,readme:eventgrid,tag:package-2020-06 1`] = `
 Object {
   "201": Object {
     "body": Object {
