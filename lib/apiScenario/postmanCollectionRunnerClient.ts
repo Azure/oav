@@ -329,13 +329,13 @@ pm.test("Stopped TestProxy recording", function() {
       })),
       query: Object.entries(clientRequest.query).map(([key, value]) => ({
         key,
-        value: covertToPostmanVariable(value),
+        value: convertPostmanFormat(value),
       })),
     });
 
     item.request.addHeader({ key: "Content-Type", value: "application/json" });
     Object.entries(clientRequest.headers).forEach(([key, value]) => {
-      item.request.addHeader({ key, value: covertToPostmanVariable(value) });
+      item.request.addHeader({ key, value: convertPostmanFormat(value) });
     });
 
     this.collection.items.add(item);
