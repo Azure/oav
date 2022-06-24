@@ -28,8 +28,8 @@
           }
         },
         "x-ms-examples": {
-          "additionalParameter": {
-            "$ref": "./examples/additionalParameter.json"
+          "additional": {
+            "$ref": "./examples/additional.json"
           }
         }
       }
