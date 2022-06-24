@@ -2,6 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { resolve as pathResolve } from "path";
 import { glob } from "glob";
+import { FilePosition } from "@azure-tools/openapi-tools-common";
 import {
   LiveValidationIssue,
   LiveValidator,
@@ -30,6 +31,7 @@ export interface TrafficValidationOptions extends Options {
 }
 export interface TrafficValidationIssue {
   payloadFilePath?: string;
+  payloadFilePathPosition?: FilePosition | undefined;
   specFilePath?: string;
   errors?: LiveValidationIssue[];
   runtimeExceptions?: RuntimeException[];
@@ -167,21 +169,10 @@ export class TrafficValidator {
     this.swaggerLoader = inversifyGetInstance(SwaggerLoader, swaggerOpts);
     const spec = await this.swaggerLoader.load(this.specPath);
     const operationIdList = findPathsToKey({ key: "operationId", obj: spec });
-    // const a = findPathsToKey({ key: "operationId", obj: spec });
-    // console.log(a);
-    // const b = findPathToValue(a, spec, "PrivateEndpointConnections_Get");
-    // console.log(b);
-    // const position = getFilePositionFromJsonPath(spec, b[0]);
-    // console.log(position);
     try {
       for (const trafficFile of this.trafficFiles) {
         payloadFilePath = trafficFile;
         const payload: RequestResponsePair = require(trafficFile);
-        // const requestList = findPathsToKey({ key: "liveRequest", obj: spec });
-        // console.log(requestList);
-        const trafficSpec = await this.swaggerLoader.load(payloadFilePath);
-        const liveResponseList = findPathsToKey({ key: "liveResponse", obj: trafficSpec });
-        console.log(liveResponseList);
         const validationResult = await this.liveValidator.validateLiveRequestResponse(payload);
         let operationInfo = validationResult.requestValidationResult?.operationInfo;
         const operationId = findPathToValue(operationIdList, spec, operationInfo.operationId);
@@ -241,8 +232,22 @@ export class TrafficValidator {
           errorResult.push(...validationResult.responseValidationResult.errors);
         }
         if (errorResult.length > 0 || runtimeExceptions.length > 0) {
+          const trafficSpec = await this.swaggerLoader.load(payloadFilePath);
+          let liveRequestResponseList;
+          if (validationResult.requestValidationResult.isSuccessful) {
+            liveRequestResponseList = findPathsToKey({ key: "liveRequest", obj: trafficSpec });
+          } else {
+            liveRequestResponseList = findPathsToKey({ key: "liveResponse", obj: trafficSpec });
+          }
+          console.log(liveRequestResponseList);
+          const liveRequestResponsePosition = getFilePositionFromJsonPath(
+            trafficSpec,
+            liveRequestResponseList[0]
+          );
           this.trafficValidationResult.push({
+            specFilePath: this.specPath,
             payloadFilePath,
+            payloadFilePathPosition: liveRequestResponsePosition,
             errors: errorResult,
             runtimeExceptions,
             operationInfo: operationInfo,

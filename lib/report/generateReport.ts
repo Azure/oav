@@ -12,6 +12,7 @@ import { OperationContext } from "../liveValidation/operationValidator";
 
 export interface TrafficValidationIssueForRendering extends TrafficValidationIssue {
   payloadFileLinkLabel?: string;
+  payloadFilePathWithPosition?: string;
   errorsForRendering?: LiveValidationIssueForRendering[];
   errorCodeLen: number;
 }
@@ -19,6 +20,8 @@ export interface TrafficValidationIssueForRendering extends TrafficValidationIss
 export interface TrafficValidationIssueForRenderingInner {
   generalErrorsInner: TrafficValidationIssueForRendering[];
   errorCodeLen: number;
+  specFilePath?: string;
+  specFilePathWithPosition?: string;
   operationInfo: OperationContext;
   errorsForRendering: LiveValidationIssueForRendering[];
 }
@@ -27,6 +30,8 @@ export interface LiveValidationIssueForRendering extends LiveValidationIssue {
   friendlyName?: string;
   link?: string;
   payloadFilePath?: string | undefined;
+  payloadFilePathWithPosition?: string;
+  schemaPathWithPosition?: string;
   payloadFileLinkLabel?: string | undefined;
 }
 
@@ -127,6 +132,11 @@ export class CoverageView {
             code: error.code,
             message: error.message,
             schemaPath: error.schemaPath,
+            schemaPathWithPosition: this.overrideLinkInReport
+              ? `${this.specLinkPrefix}/${element.specFilePath?.substring(
+                  element.specFilePath?.indexOf("specification")
+                )}#L${error.source.position.line}`
+              : `${element.specFilePath}#L${error.source.position.line}`,
             pathsInPayload: error.pathsInPayload,
             jsonPathsInPayload: error.jsonPathsInPayload,
             severity: error.severity,
@@ -135,6 +145,9 @@ export class CoverageView {
             payloadFilePath: this.overrideLinkInReport
               ? `${this.payloadLinkPrefix}/${payloadFile}`
               : element.payloadFilePath,
+            payloadFilePathWithPosition: this.overrideLinkInReport
+              ? `${this.payloadLinkPrefix}/${payloadFile}#L${element.payloadFilePathPosition?.line}`
+              : `${element.payloadFilePath}#L${element.payloadFilePathPosition?.line}`,
             payloadFileLinkLabel: payloadFile,
           });
         });
@@ -143,7 +156,15 @@ export class CoverageView {
             ? `${this.payloadLinkPrefix}/${payloadFile}`
             : element.payloadFilePath,
           payloadFileLinkLabel: payloadFile,
+          payloadFilePathWithPosition: this.overrideLinkInReport
+            ? `${this.payloadLinkPrefix}/${payloadFile}#L${element.payloadFilePathPosition?.line}`
+            : `${element.payloadFilePath}#L${element.payloadFilePathPosition?.line}`,
           errors: element.errors,
+          specFilePath: this.overrideLinkInReport
+            ? `${this.specLinkPrefix}/${element.specFilePath?.substring(
+                element.specFilePath?.indexOf("specification")
+              )}`
+            : element.specFilePath,
           errorsForRendering: errorsForRendering,
           errorCodeLen: errorsForRendering.length,
           operationInfo: element.operationInfo,
@@ -272,6 +293,16 @@ export class CoverageView {
         errorCodeLen: errorCodeLen,
         errorsForRendering: errorsForRendering,
         operationInfo: element[0]!.operationInfo!,
+        specFilePath: this.overrideLinkInReport
+          ? `${this.specLinkPrefix}/${element[0].specFilePath?.substring(
+              element[0].specFilePath?.indexOf("specification")
+            )}`
+          : element[0].specFilePath,
+        specFilePathWithPosition: this.overrideLinkInReport
+          ? `${this.specLinkPrefix}/${element[0].specFilePath?.substring(
+              element[0].specFilePath?.indexOf("specification")
+            )}#L${element[0]!.operationInfo!.position!.line}`
+          : `${element[0].specFilePath}#L${element[0]!.operationInfo!.position!.line}`,
       });
     });
     return generalErrorsInnerList;

@@ -1,5 +1,10 @@
 import { ParsedUrlQuery } from "querystring";
-import { getInfo, MutableStringMap, StringMap } from "@azure-tools/openapi-tools-common";
+import {
+  FilePosition,
+  getInfo,
+  MutableStringMap,
+  StringMap,
+} from "@azure-tools/openapi-tools-common";
 import {
   LoggingFn,
   LowerHttpMethods,
@@ -44,6 +49,7 @@ export interface OperationContext {
   apiVersion: string;
   operationMatch?: OperationMatch;
   validationRequest?: ValidationRequest;
+  position?: FilePosition | undefined;
 }
 
 export interface LiveRequest {

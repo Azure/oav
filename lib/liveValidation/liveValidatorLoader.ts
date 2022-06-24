@@ -126,12 +126,7 @@ export class LiveValidatorLoader implements Loader<SwaggerSpec> {
 
   public async load(specFilePath: string): Promise<SwaggerSpec> {
     const spec = await this.swaggerLoader.load(specFilePath);
-    // const a = findPathsToKey({ key: "operationId", obj: spec });
-    // console.log(a);
-    // const b = findPathToValue(a, spec, "PrivateEndpointConnections_Get");
-    // console.log(b);
-    // const position = getFilePositionFromJsonPath(spec, b[0]);
-    // console.log(position);
+    
     applySpecTransformers(spec, this.transformContext);
 
     return spec;
