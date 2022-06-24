@@ -1,5 +1,13 @@
 # Change Log - oav
 
+## 06/10/2022 3.0.1
+
+- GenerateExamples - Change the domain of LRO header
+- ModelValidator - Still validate LRO operation when response doesn't have schema
+- ModelValidator - Report real exampleJsonPath when additional parameter includes "."
+- Support duration format when generating examples
+- SemanticValidator - Fix bug about multipart/form-data
+
 ## 06/10/2022 3.0.0
 
 - API Scenario runner

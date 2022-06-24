@@ -99,7 +99,7 @@ export default class SwaggerMocker {
       return;
     }
     return {
-      [headerAttr]: "https://foo.com/operationstatus",
+      [headerAttr]: "https://contoso.com/operationstatus",
     };
   }
 

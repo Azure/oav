@@ -486,7 +486,7 @@ export class SwaggerSemanticValidator {
         let bodyParam: Parameter | undefined;
         const requiredPathArgs = new Set(pathArgs);
         const visitedParamName = new Set<string>();
-        const { operationId, parameters } = operation;
+        const { operationId, parameters, consumes } = operation;
         const mergedParameters = [...(parameters ?? []), ...(pathParams ?? [])];
 
         if (operationId !== undefined) {
@@ -516,7 +516,16 @@ export class SwaggerSemanticValidator {
                   : "INVALID_PARAMETER_COMBINATION",
                 {}
               );
-              this.addErrorsFromErrorCode(errors, url, meta, operation);
+              if (
+                !(
+                  meta.code === "MULTIPLE_BODY_PARAMETERS" &&
+                  param.in === "formData" &&
+                  consumes !== undefined &&
+                  consumes.includes("multipart/form-data")
+                )
+              ) {
+                this.addErrorsFromErrorCode(errors, url, meta, operation);
+              }
             }
             bodyParam = param;
           }
