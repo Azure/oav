@@ -58,5 +58,5 @@ async function validateExternalExample(
     });
   }
   const res = await galleryValidator.validateExternalExamples(input);
-  fs.writeFileSync(`generated/${output}`, JSON.stringify(res, null, 2));
+  fs.writeFileSync(`.apitest/${output}`, JSON.stringify(res, null, 2));
 }
