@@ -57,10 +57,10 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
 
     if (argv.readme !== undefined) {
       const readmeMd: string = pathResolve(argv.readme);
-      const inputSwaggerFile = (await getInputFiles(readmeMd, argv.tag)).map((it: string) =>
-        pathJoin(dirname(readmeMd), it)
-      );
       fileRoot = dirname(readmeMd);
+      const inputSwaggerFile = (await getInputFiles(readmeMd, argv.tag)).map((it: string) =>
+        pathJoin(fileRoot, it)
+      );
       console.log(`input swagger files: ${inputSwaggerFile}`);
       for (const it of inputSwaggerFile) {
         if (swaggerFilePaths.indexOf(it) === -1) {
@@ -75,6 +75,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
 
     if (argv.dependency) {
       const generator = RestlerApiScenarioGenerator.create({
+        fileRoot: fileRoot,
         swaggerFilePaths: swaggerFilePaths,
         outputDir: pathResolve(argv.outputDir),
         dependencyPath: argv.dependency,
