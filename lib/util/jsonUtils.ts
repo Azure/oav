@@ -20,6 +20,7 @@ import { DocCache } from "./documents";
 import { log } from "./logging";
 import { parseContent } from "./makeRequest";
 import { isSubPath, splitPathAndReverse } from "./path";
+import { checkAndResolveGithubUrl } from "./utils";
 
 const setSuppression = (info: FilePosition | undefined, item: SuppressionItem) => {
   if (info !== undefined) {
@@ -102,14 +103,7 @@ export async function parseJson(
     return doc;
   }
 
-  // If the spec path is a url starting with https://github then let us auto convert it to an
-  // https://raw.githubusercontent url.
-  if (specPath.startsWith("https://github")) {
-    specPath = specPath.replace(
-      /^https:\/\/(github.com)(.*)blob\/(.*)/gi,
-      "https://raw.githubusercontent.com$2$3"
-    );
-  }
+  specPath = checkAndResolveGithubUrl(specPath);
 
   const createSwaggerObject = async () => {
     const fileContent = await getSpecContent(specPath);

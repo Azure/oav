@@ -3,6 +3,10 @@ import path from "path";
 import Handlebars from "handlebars";
 import * as hd from "humanize-duration";
 import moment from "moment";
+import {
+  LiveValidationIssue,
+  RequestResponseLiveValidationResult,
+} from "../liveValidation/liveValidator";
 import { ResponseDiffItem, RuntimeError, StepResult, TestScenarioResult } from "./reportGenerator";
 
 const spaceReg = /(\n|\t|\r)/gi;
@@ -10,6 +14,10 @@ const spaceReg = /(\n|\t|\r)/gi;
 const getErrorCodeDocLink = (code: string): string => {
   return `https://github.com/Azure/azure-rest-api-specs/blob/main/documentation/api-scenario/references/ErrorCodeReference.md#${code}`;
 };
+
+function getOavErrorCodeDocLink(code: string) {
+  return `https://github.com/Azure/azure-rest-api-specs/blob/main/documentation/Semantic-and-Model-Violations-Reference.md#${code}`;
+}
 
 const commonHelper = (opts: HelperOpts) => ({
   renderPlain: (s: string) => s,
@@ -64,6 +72,11 @@ const commonHelper = (opts: HelperOpts) => ({
   renderFatalErrorDetail: (e: RuntimeError) => `${e.message.replace(spaceReg, " ")}`,
   renderDiffErrorCode: (e: ResponseDiffItem) => `[${e.code}](${getErrorCodeDocLink(e.code)})`,
   renderDiffErrorDetail: (e: ResponseDiffItem) => `${e.message.replace(spaceReg, " ")}`,
+  renderLiveValidationErrorCode: (e: LiveValidationIssue) =>
+    `[${e.code}](${getOavErrorCodeDocLink(e.code)})`,
+  renderLiveValidationErrorDetail: (e: LiveValidationIssue) =>
+    `${e.message.replace(spaceReg, " ")}`,
+  shouldReportExample: (e: string) => e !== undefined && e !== "",
 });
 
 type ResultState = keyof typeof ResultStateStrings;
@@ -93,6 +106,7 @@ interface TestScenarioMarkdownStepResult {
   warningErrorsCount: number;
   runtimeError?: RuntimeError[];
   responseDiffResult?: ResponseDiffItem[];
+  liveValidationResult?: RequestResponseLiveValidationResult;
 }
 
 interface TestScenarioMarkdownResult {
@@ -136,7 +150,10 @@ const generateJUnitCaseReportView = compileHandlebarsTemplate<TestScenarioMarkdo
 );
 
 const stepIsFatal = (sr: StepResult) => sr.runtimeError && sr.runtimeError.length > 0;
-const stepIsFailed = (sr: StepResult) => sr.responseDiffResult && sr.responseDiffResult.length > 0;
+const stepIsFailed = (sr: StepResult) =>
+  (sr.responseDiffResult && sr.responseDiffResult.length > 0) ||
+  (sr.liveValidationResult && sr.liveValidationResult.requestValidationResult.errors.length > 0) ||
+  (sr.liveValidationResult && sr.liveValidationResult.responseValidationResult.errors.length > 0);
 
 const asMarkdownStepResult = (sr: StepResult): TestScenarioMarkdownStepResult => {
   let result: ResultState = "succeeded";
@@ -146,10 +163,15 @@ const asMarkdownStepResult = (sr: StepResult): TestScenarioMarkdownStepResult =>
     result = "failed";
   }
 
+  const failedErrorsCount =
+    (sr.responseDiffResult ? sr.responseDiffResult.length : 0) +
+    (sr.liveValidationResult ? sr.liveValidationResult.requestValidationResult.errors.length : 0) +
+    (sr.liveValidationResult ? sr.liveValidationResult.responseValidationResult.errors.length : 0);
+
   const r: TestScenarioMarkdownStepResult = {
     result,
     fatalErrorsCount: sr.runtimeError ? sr.runtimeError.length : 0,
-    failedErrorsCount: sr.responseDiffResult ? sr.responseDiffResult.length : 0,
+    failedErrorsCount: failedErrorsCount,
     warningErrorsCount: 0,
     ...sr,
   };
@@ -160,9 +182,7 @@ const asMarkdownResult = (tsr: TestScenarioResult): TestScenarioMarkdownResult =
   const fatalCount = tsr.stepResult.filter(
     (sr) => sr.runtimeError && sr.runtimeError.length > 0
   ).length;
-  const errorCount = tsr.stepResult.filter(
-    (sr) => sr.responseDiffResult && sr.responseDiffResult.length > 0
-  ).length;
+  const errorCount = tsr.stepResult.filter((sr) => stepIsFailed(sr)).length;
   let resultState: ResultState = "succeeded";
   if (fatalCount > 0) {
     resultState = "fatal";

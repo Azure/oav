@@ -1,46 +1,100 @@
-import { HttpMethods } from "@azure/core-http";
 import { Operation, SwaggerExample } from "../swagger/swaggerTypes";
 
 //#region Common
 
 type TransformRaw<T, Additional = {}, OptionalKey extends keyof T = never> = {
   [P in OptionalKey]?: T[P];
-} &
-  {
-    [P in Exclude<keyof T, OptionalKey | keyof Additional>]-?: Exclude<T[P], undefined>;
-  } &
-  Additional;
+} & {
+  [P in Exclude<keyof T, OptionalKey | keyof Additional>]-?: Exclude<T[P], undefined>;
+} & Additional;
 
-export type RawVariableScope = {
+export type VarType = Variable["type"];
+
+export type VarValue = boolean | number | string | VarValue[] | { [key: string]: VarValue };
+
+export type Variable =
+  | BoolVariable
+  | IntVariable
+  | StringVariable
+  | SecureStringVariable
+  | ArrayVariable
+  | ObjectVariable
+  | SecureObjectVariable;
+
+export interface StringVariable {
+  type: "string";
+  value?: string;
+  prefix?: string;
+}
+
+export interface SecureStringVariable {
+  type: "secureString";
+  value?: string;
+  prefix?: string;
+}
+
+export interface BoolVariable {
+  type: "bool";
+  value?: boolean;
+}
+
+export interface IntVariable {
+  type: "int";
+  value?: number;
+}
+
+export interface ObjectVariable {
+  type: "object";
+  value?: { [key: string]: VarValue };
+  patches?: JsonPatchOp[];
+}
+
+export interface SecureObjectVariable {
+  type: "secureObject";
+  value?: { [key: string]: VarValue };
+  patches?: JsonPatchOp[];
+}
+
+export interface ArrayVariable {
+  type: "array";
+  value?: VarValue[];
+  patches?: JsonPatchOp[];
+}
+
+export interface RawVariableScope {
   variables?: {
-    [variableName: string]:
-      | string
-      | {
-          type?: VariableType;
-          defaultValue?: string;
-        };
+    [variableName: string]: string | Variable;
   };
-};
+}
 
-export type VariableScope = {
-  variables: { [variableName: string]: string };
+export interface VariableScope {
+  variables: {
+    [variableName: string]: Variable;
+  };
   requiredVariables: string[];
   secretVariables: string[];
-};
+}
 
-export type OutputVariables = {
+export interface OutputVariables {
   [variableName: string]: {
-    type?: VariableType;
+    type?: VarType;
+    fromRequest: string;
     fromResponse: string;
   };
-};
+}
+
+export interface ReadmeTag {
+  name: string;
+  filePath: string;
+  tag?: string;
+}
 
 //#endregion
 
 //#region Step Base
 
 type RawStepBase = RawVariableScope & {
-  step: string;
+  step?: string;
   description?: string;
   outputVariables?: OutputVariables;
 };
@@ -50,54 +104,43 @@ type StepBase = VariableScope & {
   isCleanUpStep?: boolean;
 };
 
-type RawStepRestBase = RawStepBase & {
-  statusCode?: number;
-  resourceUpdate?: JsonPatchOp[];
-  requestUpdate?: JsonPatchOp[];
-  responseUpdate?: JsonPatchOp[];
-};
-
-export type Step = StepRestCall | StepArmTemplate | StepRawCall;
-export type RawStep =
-  | RawStepRestCall
-  | RawStepRestOperation
-  | RawStepArmTemplate
-  | RawStepArmScript
-  | RawStepRawCall;
+export type Step = StepRestCall | StepArmTemplate;
+export type RawStep = RawStepOperation | RawStepExample | RawStepArmTemplate | RawStepArmScript;
 
 //#endregion
 
 //#region Step RestCall
 
-export type RawStepRestCall = RawStepRestBase & {
+export type RawStepExample = RawStepBase & {
   exampleFile: string;
-  resourceName?: string;
+  requestUpdate?: JsonPatchOp[];
+  responseUpdate?: JsonPatchOp[];
 };
 
-export type StepRestCall = TransformRaw<
-  RawStepRestCall,
-  {
-    type: "restCall";
-    operationId: string;
-    operation: Operation;
-    exampleName: string;
-    exampleFilePath?: string;
-    requestParameters: SwaggerExample["parameters"];
-    expectedResponse: SwaggerExample["responses"]["200"]["body"];
-  } & StepBase,
-  "exampleFile" | "resourceName" | "description"
->;
-
-//#endregion
-
-//#region Step Named Resource Operation
-export type RawStepRestOperation = RawStepRestBase & {
+export type RawStepOperation = RawStepBase & {
   operationId: string;
-  resourceName: string;
+  readmeTag?: string;
+  parameters?: { [parameterName: string]: VarValue };
+  responses?: SwaggerExample["responses"];
 };
+
+export type StepRestCallExample = StepBase & {};
+
+export type StepRestCall = StepBase & {
+  type: "restCall";
+  step: string;
+  description?: string;
+  operationId: string;
+  operation: Operation;
+  exampleFile?: string;
+  parameters: SwaggerExample["parameters"];
+  responses: SwaggerExample["responses"];
+  outputVariables?: OutputVariables;
+};
+
 //#endregion
 
-//#region Step Arm Script Template
+//#region Step Arm Deployment Script
 export type RawStepArmScript = RawStepBase & {
   armDeploymentScript: string;
   arguments?: string;
@@ -108,22 +151,7 @@ export type RawStepArmScript = RawStepBase & {
 };
 //#endregion
 
-//#region Step Arm Template Deployment
-
-export type RawStepArmTemplate = RawStepBase & {
-  armTemplate: string;
-};
-
-export type StepArmTemplate = TransformRaw<
-  RawStepArmTemplate,
-  {
-    type: "armTemplateDeployment";
-    armTemplatePayload: ArmTemplate;
-  } & StepBase,
-  "description"
->;
-
-export type VariableType = "string" | "secureString";
+//#region Step Arm Template
 
 export type ArmTemplateVariableType =
   | "string"
@@ -134,13 +162,26 @@ export type ArmTemplateVariableType =
   | "secureObject"
   | "array";
 
-export type ArmResource = {
+export type RawStepArmTemplate = RawStepBase & {
+  armTemplate: string;
+};
+
+export type StepArmTemplate = TransformRaw<
+  RawStepArmTemplate,
+  StepBase & {
+    type: "armTemplateDeployment";
+    armTemplatePayload: ArmTemplate;
+  },
+  "description"
+>;
+
+export interface ArmResource {
   name: string;
   apiVersion: string;
   type: string;
   location?: string;
   properties?: object;
-};
+}
 
 export type ArmDeploymentScriptResource = ArmResource & {
   type: "Microsoft.Resources/deploymentScripts";
@@ -168,7 +209,7 @@ export type ArmDeploymentScriptResource = ArmResource & {
   };
 };
 
-export type ArmTemplate = {
+export interface ArmTemplate {
   $schema?: string;
   contentVersion?: string;
   parameters?: {
@@ -184,61 +225,42 @@ export type ArmTemplate = {
     };
   };
   resources?: ArmResource[];
-};
+}
 
-//#endregion
-
-//#region Step Raw REST Call
-export type RawStepRawCall = RawStepBase & {
-  method: HttpMethods;
-  rawUrl: string;
-  requestHeaders: { [headName: string]: string };
-  requestBody: string;
-  statusCode?: number;
-  expectedResponse?: string;
-};
-
-export type StepRawCall = TransformRaw<
-  RawStepRawCall,
-  {
-    type: "rawCall";
-  } & StepBase,
-  "expectedResponse" | "description"
->;
 //#endregion
 
 //#region JsonPatchOp
 
-export type JsonPatchOpAdd = {
+export interface JsonPatchOpAdd {
   add: string;
   value: any;
-};
+}
 
-export type JsonPatchOpRemove = {
+export interface JsonPatchOpRemove {
   remove: string;
   oldValue?: any;
-};
+}
 
-export type JsonPatchOpReplace = {
+export interface JsonPatchOpReplace {
   replace: string;
   value: any;
   oldValue?: any;
-};
+}
 
-export type JsonPatchOpCopy = {
+export interface JsonPatchOpCopy {
   copy: string;
   from: string;
-};
+}
 
-export type JsonPatchOpMove = {
+export interface JsonPatchOpMove {
   move: string;
   from: string;
-};
+}
 
-export type JsonPatchOpTest = {
+export interface JsonPatchOpTest {
   test: string;
   value: any;
-};
+}
 
 export type JsonPatchOp =
   | JsonPatchOpAdd
@@ -253,7 +275,7 @@ export type JsonPatchOp =
 //#region Scenario
 
 export type RawScenario = RawVariableScope & {
-  scenario: string;
+  scenario?: string;
   shareScope?: boolean;
   description?: string;
   steps: RawStep[];
@@ -264,7 +286,6 @@ export type Scenario = TransformRaw<
   {
     steps: Step[];
     _scenarioDef: ScenarioDefinition;
-    _resolvedSteps: Step[];
   } & VariableScope
 >;
 
@@ -280,44 +301,44 @@ export type RawScenarioDefinition = RawVariableScope & {
 
 export type ScenarioDefinition = TransformRaw<
   RawScenarioDefinition,
-  {
+  VariableScope & {
     prepareSteps: Step[];
     scenarios: Scenario[];
     cleanUpSteps: Step[];
     _filePath: string;
-  } & VariableScope
+  }
 >;
 //#endregion
 
 //#region Runner specific types
-export type RawReport = {
+export interface RawReport {
   executions: RawExecution[];
   timings: any;
-  variables: any;
+  variables: { [variableName: string]: Variable };
   testScenarioName?: string;
   metadata: any;
-};
+}
 
-export type RawExecution = {
+export interface RawExecution {
   request: RawRequest;
   response: RawResponse;
   annotation?: any;
-};
-export type RawRequest = {
+}
+export interface RawRequest {
   url: string;
   method: string;
   headers: { [key: string]: any };
   body: string;
-};
+}
 
-export type RawResponse = {
+export interface RawResponse {
   statusCode: number;
   headers: { [key: string]: any };
   body: string;
-};
+}
 
-export type TestResources = {
+export interface TestResources {
   ["test-resources"]: Array<{ [key: string]: string }>;
-};
+}
 
 //#endregion

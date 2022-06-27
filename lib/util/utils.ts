@@ -1,3 +1,4 @@
+/* eslint-disable no-bitwise */
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
@@ -7,6 +8,7 @@ import * as http from "http";
 import * as path from "path";
 import * as util from "util";
 import * as jsonPointer from "json-pointer";
+import * as YAML from "js-yaml";
 import * as lodash from "lodash";
 import {
   cloneDeep,
@@ -17,8 +19,12 @@ import {
   mapEntries,
   MutableStringMap,
   StringMap,
+  parseMarkdown,
+  readFile,
 } from "@azure-tools/openapi-tools-common";
+import * as amd from "@azure/openapi-markdown";
 import { DataType, ParameterObject, SchemaObject } from "yasway";
+import * as commonmark from "commonmark";
 import { getSchemaObjectInfo, setSchemaInfo } from "../validators/specTransformer";
 import { log } from "./logging";
 
@@ -125,6 +131,18 @@ export function joinPath(...args: string[]): string {
   finalPath = finalPath.replace(/\\/gi, "/");
   finalPath = finalPath.replace(/^(http|https):\/(.*)/gi, "$1://$2");
   return finalPath;
+}
+
+// If the spec path is a url starting with https://github then let us auto convert it to an
+// https://raw.githubusercontent url.
+export function checkAndResolveGithubUrl(inputPath: string): string {
+  if (inputPath.startsWith("https://github")) {
+    return inputPath.replace(
+      /^https:\/\/github\.com\/(.*)\/blob\/(.*)/gi,
+      "https://raw.githubusercontent.com/$1/$2"
+    );
+  }
+  return inputPath;
 }
 
 /*
@@ -317,23 +335,55 @@ export function getProviderFromFilePath(pathStr: string): string | undefined {
   return undefined;
 }
 
-export function findNearestReadmeDir(pathStr: string): string | undefined {
-  let curDir: string = path.resolve(pathStr);
-  if (fs.lstatSync(pathStr).isFile()) {
-    curDir = path.dirname(curDir);
+const safeLoad = (content: string) => {
+  try {
+    return YAML.load(content) as any;
+  } catch (err) {
+    return undefined;
   }
-  while (curDir !== "/") {
-    const readme = path.resolve(curDir, "readme.md");
-    if (fs.existsSync(readme)) {
-      return curDir;
+};
+
+/**
+ * @return return undefined indicates not found, otherwise return non-empty string.
+ */
+export const getDefaultReadmeTag = (markDown: commonmark.Node): string | undefined => {
+  const startNode = markDown;
+  const codeBlockMap = amd.getCodeBlocksAndHeadings(startNode);
+  const latestHeader = "Basic Information";
+  const headerBlock = codeBlockMap[latestHeader];
+  if (headerBlock && headerBlock.literal) {
+    const latestDefinition = safeLoad(headerBlock.literal);
+    if (latestDefinition && latestDefinition.tag) {
+      return latestDefinition.tag;
     }
-    curDir = path.dirname(curDir);
+  }
+  for (const idx of Object.keys(codeBlockMap)) {
+    const block = codeBlockMap[idx];
+    if (
+      !block ||
+      !block.info ||
+      !block.literal ||
+      !/^(yaml|json)$/.test(block.info.trim().toLowerCase())
+    ) {
+      continue;
+    }
+    const latestDefinition = safeLoad(block.literal);
+    if (latestDefinition && latestDefinition.tag) {
+      return latestDefinition.tag;
+    }
   }
   return undefined;
-}
+};
 
-export function getApiVersionFromSwaggerFile(swaggerFilePath: string): string {
-  return JSON.parse(fs.readFileSync(swaggerFilePath).toString())?.info?.version || "unknown";
+export async function getInputFiles(readMe: string, tag?: string): Promise<string[]> {
+  const result: string[] = [];
+  const readMeStr = await readFile(checkAndResolveGithubUrl(readMe));
+  const cmd = parseMarkdown(readMeStr);
+  tag = tag ?? getDefaultReadmeTag(cmd.markDown);
+  if (tag) {
+    amd.getInputFilesForTag(cmd.markDown, tag)?.forEach((file) => result.push(file));
+  }
+  return result;
 }
 
 export function getApiVersionFromSwaggerPath(specPath: string): string {
@@ -859,6 +909,44 @@ export const shuffleArray = (a: any[]) => {
 
 export const printWarning = (...args: string[]) => {
   console.log("\x1b[33m%s\x1b[0m", ...args);
+};
+
+// eslint-disable-next-line prefer-const
+export let usePsudorandom = {
+  flag: false,
+  seed: 0,
+};
+
+/**
+ * Generates a psudorandom number with seed
+ */
+function* mulberry32(seed: number) {
+  let t = (seed += 0x6d2b79f5);
+  while (true) {
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    yield (t ^ ((t >>> 14) >>> 0)) / 4294967296;
+  }
+}
+
+let generator: any = undefined;
+
+export const resetPsuedoRandomSeed = (seed?: number) => {
+  usePsudorandom.seed = seed ?? 0;
+  generator = undefined;
+};
+
+export const getRandomString = (length?: number) => {
+  if (generator === undefined) {
+    if (!usePsudorandom.flag) {
+      usePsudorandom.seed = Math.floor(Math.random() * 100000);
+    }
+    generator = mulberry32(usePsudorandom.seed);
+  }
+  return generator
+    .next()
+    .value.toString(36)
+    .slice(0 - (length ?? 6));
 };
 
 export const findPathsToKey = (options: {

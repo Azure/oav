@@ -3,14 +3,14 @@ import { load as yamlLoad } from "js-yaml";
 import { FileLoader } from "../../swagger/fileLoader";
 import { Loader } from "../../swagger/loader";
 import { AzureCliRecordingLoader } from "./azureCliRecordingLoader";
-import { DotnetRecordingLoader } from "./dotnetRecordingLoader";
-import { RequestTracking } from "./testScenarioGenerator";
+import { TestProxyRecordingLoader } from "./testProxyRecordLoader";
+import { RequestTracking } from "./testRecordingApiScenarioGenerator";
 
 @injectable()
 export class TestRecordingLoader implements Loader<RequestTracking> {
   public constructor(
     private fileLoader: FileLoader,
-    private dotnetRecordingLoader: DotnetRecordingLoader,
+    private testProxyRecordLoader: TestProxyRecordingLoader,
     private azureCliRecordingLoader: AzureCliRecordingLoader
   ) {}
 
@@ -19,7 +19,7 @@ export class TestRecordingLoader implements Loader<RequestTracking> {
     const { content, isJson, isYaml } = this.detectFileType(fileContent, filePath);
     if (isJson) {
       if ("Entries" in content) {
-        return this.dotnetRecordingLoader.load([content, filePath]);
+        return this.testProxyRecordLoader.load([content, filePath]);
       }
     }
     if (isYaml) {

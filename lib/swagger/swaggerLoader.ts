@@ -43,8 +43,8 @@ export class SwaggerLoader implements Loader<SwaggerSpec> {
     const swaggerSpec = (await (this.jsonLoader.load(specFilePath) as unknown)) as SwaggerSpec;
 
     if (this.opts.setFilePath) {
+      const pathProvider = getProviderFromSpecPath(this.fileLoader.resolvePath(specFilePath));
       swaggerSpec._filePath = this.fileLoader.relativePath(specFilePath);
-      const pathProvider = getProviderFromSpecPath(swaggerSpec._filePath);
       swaggerSpec._providerNamespace = pathProvider ? pathProvider.provider : "unknown";
     }
 

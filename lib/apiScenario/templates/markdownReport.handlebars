@@ -50,12 +50,14 @@
       Duration:
       {{renderDuration s.startTime s.endTime}}
     </li>
+    {{#if (shouldReportExample s.exampleFilePath)}}
     <li>
       Example:
       <a href="">
         {{renderPlain s.exampleFilePath}}
       </a>
     </li>
+    {{/if}}
     <li>
       Correlation Id:
       {{renderPlain s.correlationId}}
@@ -74,6 +76,16 @@
             {{#each s.responseDiffResult}}
             {{#with this as |rd|}}
 | <code> {{renderSymbol "failed"}} </code> {{renderDiffErrorCode rd}} | {{renderDiffErrorDetail rd}} |
+              {{/with}}
+            {{/each}}
+            {{#each s.liveValidationResult.requestValidationResult.errors}}
+            {{#with this as |rd|}}
+| <code> {{renderSymbol "failed"}} </code> {{renderLiveValidationErrorCode rd}} | {{renderLiveValidationErrorDetail rd}} |
+              {{/with}}
+            {{/each}}
+            {{#each s.liveValidationResult.responseValidationResult.errors}}
+            {{#with this as |rd|}}
+| <code> {{renderSymbol "failed"}} </code> {{renderLiveValidationErrorCode rd}} | {{renderLiveValidationErrorDetail rd}} |
               {{/with}}
             {{/each}}
           {{/with}}

@@ -70,6 +70,47 @@
           }
         }
       }
+    },
+    "/subscriptions/{subscriptionId}/providers/Microsoft.Addons/supportProviders/{providerName}/supportPlanTypes/{planTypeName}/noResponseSchema": {
+      "delete": {
+        "operationId": "SupportPlanTypes_Delete_noResponseSchema",
+        "description": "Cancels the Canonical support plan of type {type} for the subscription.",
+        "x-ms-long-running-operation": true,
+        "x-ms-examples": {
+          "SupportPlanTypes_Delete": {
+            "$ref": "./examples/SupportPlanTypes_Delete_noResponseSchema.json"
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/ApiVersionParameter"
+          },
+          {
+            "$ref": "#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "#/parameters/SupportProviderName"
+          },
+          {
+            "$ref": "#/parameters/CanonicalSupportPlanType"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "headers": {}
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "BadRequest",
+            "schema": {
+              "$ref": "#/definitions/ErrorDefinition"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {

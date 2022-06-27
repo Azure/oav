@@ -32,6 +32,7 @@ export const armDeploymentScriptTemplate: ArmTemplate = {
     },
     userAssignedIdentity: {
       type: "string",
+      defaultValue: "$(userAssignedIdentity)",
     },
   },
   resources: [armDeploymentScript],

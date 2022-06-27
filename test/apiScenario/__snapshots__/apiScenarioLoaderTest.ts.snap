@@ -1,0 +1,2053 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ApiScenarioLoader load valid example based scenario - storage 1`] = `
+Object {
+  "_filePath": "Microsoft.Storage/stable/2021-08-01/scenarios/storageBasicExample.yaml",
+  "cleanUpSteps": Array [],
+  "prepareSteps": Array [],
+  "requiredVariables": Array [
+    "subscriptionId",
+    "location",
+  ],
+  "scenarios": Array [
+    Object {
+      "_scenarioDef": [Circular],
+      "description": "",
+      "requiredVariables": Array [
+        "subscriptionId",
+        "location",
+      ],
+      "scenario": "StorageBasicExample",
+      "secretVariables": Array [],
+      "shareScope": true,
+      "steps": Array [
+        Object {
+          "description": "StorageAccountCheckNameAvailability",
+          "exampleFile": "../examples/StorageAccountCheckNameAvailability.json",
+          "operation": Object {},
+          "operationId": "StorageAccounts_CheckNameAvailability",
+          "outputVariables": Object {},
+          "parameters": Object {
+            "accountName": Object {
+              "name": "$(accountName)",
+              "type": "Microsoft.Storage/storageAccounts",
+            },
+            "api-version": "2021-08-01",
+            "subscriptionId": "$(subscriptionId)",
+          },
+          "requiredVariables": Array [],
+          "responses": Object {
+            "200": Object {
+              "body": Object {
+                "nameAvailable": true,
+              },
+            },
+          },
+          "secretVariables": Array [],
+          "step": "checkName",
+          "type": "restCall",
+          "variables": Object {},
+        },
+        Object {
+          "description": "StorageAccountCreate",
+          "exampleFile": "../examples/StorageAccountCreate.json",
+          "operation": Object {},
+          "operationId": "StorageAccounts_Create",
+          "outputVariables": Object {},
+          "parameters": Object {
+            "accountName": "$(accountName)",
+            "api-version": "2021-08-01",
+            "parameters": Object {
+              "extendedLocation": Object {
+                "name": "losangeles001",
+                "type": "EdgeZone",
+              },
+              "kind": "Storage",
+              "location": "$(location)",
+              "properties": Object {
+                "allowBlobPublicAccess": false,
+                "allowSharedKeyAccess": true,
+                "defaultToOAuthAuthentication": false,
+                "encryption": Object {
+                  "keySource": "Microsoft.Storage",
+                  "requireInfrastructureEncryption": false,
+                  "services": Object {
+                    "blob": Object {
+                      "enabled": true,
+                      "keyType": "Account",
+                    },
+                    "file": Object {
+                      "enabled": true,
+                      "keyType": "Account",
+                    },
+                  },
+                },
+                "isHnsEnabled": true,
+                "isSftpEnabled": true,
+                "keyPolicy": Object {
+                  "keyExpirationPeriodInDays": 20,
+                },
+                "minimumTlsVersion": "TLS1_2",
+                "routingPreference": Object {
+                  "publishInternetEndpoints": true,
+                  "publishMicrosoftEndpoints": true,
+                  "routingChoice": "MicrosoftRouting",
+                },
+                "sasPolicy": Object {
+                  "expirationAction": "Log",
+                  "sasExpirationPeriod": "1.15:59:59",
+                },
+              },
+              "sku": Object {
+                "name": "Standard_GRS",
+              },
+              "tags": Object {
+                "key1": "value1",
+                "key2": "value2",
+              },
+            },
+            "resourceGroupName": "$(resourceGroupName)",
+            "subscriptionId": "$(subscriptionId)",
+          },
+          "requiredVariables": Array [],
+          "responses": Object {
+            "200": Object {
+              "body": Object {
+                "extendedLocation": Object {
+                  "name": "losangeles001",
+                  "type": "EdgeZone",
+                },
+                "id": "/subscriptions/$(subscriptionId)/resourceGroups/$(resourceGroupName)/providers/Microsoft.Storage/storageAccounts/$(accountName)",
+                "kind": "Storage",
+                "location": "eastus",
+                "name": "$(accountName)",
+                "properties": Object {
+                  "allowBlobPublicAccess": false,
+                  "allowSharedKeyAccess": true,
+                  "creationTime": "2017-05-24T13:25:33.4863236Z",
+                  "encryption": Object {
+                    "keySource": "Microsoft.Storage",
+                    "requireInfrastructureEncryption": false,
+                    "services": Object {
+                      "blob": Object {
+                        "enabled": true,
+                        "keyType": "Account",
+                        "lastEnabledTime": "2019-12-11T20:49:31.7036140Z",
+                      },
+                      "file": Object {
+                        "enabled": true,
+                        "keyType": "Account",
+                        "lastEnabledTime": "2019-12-11T20:49:31.7036140Z",
+                      },
+                    },
+                  },
+                  "isHnsEnabled": true,
+                  "isSftpEnabled": true,
+                  "keyCreationTime": Object {
+                    "key1": "2021-03-18T04:42:22.4322836Z",
+                    "key2": "2021-03-18T04:42:22.4322836Z",
+                  },
+                  "keyPolicy": Object {
+                    "keyExpirationPeriodInDays": 20,
+                  },
+                  "minimumTlsVersion": "TLS1_2",
+                  "primaryEndpoints": Object {
+                    "blob": "https://$(accountName).blob.core.windows.net/",
+                    "dfs": "https://$(accountName).dfs.core.windows.net/",
+                    "file": "https://$(accountName).file.core.windows.net/",
+                    "internetEndpoints": Object {
+                      "blob": "https://$(accountName)-internetrouting.blob.core.windows.net/",
+                      "dfs": "https://$(accountName)-internetrouting.dfs.core.windows.net/",
+                      "file": "https://$(accountName)-internetrouting.file.core.windows.net/",
+                      "web": "https://$(accountName)-internetrouting.web.core.windows.net/",
+                    },
+                    "microsoftEndpoints": Object {
+                      "blob": "https://$(accountName)-microsoftrouting.blob.core.windows.net/",
+                      "dfs": "https://$(accountName)-microsoftrouting.dfs.core.windows.net/",
+                      "file": "https://$(accountName)-microsoftrouting.file.core.windows.net/",
+                      "queue": "https://$(accountName)-microsoftrouting.queue.core.windows.net/",
+                      "table": "https://$(accountName)-microsoftrouting.table.core.windows.net/",
+                      "web": "https://$(accountName)-microsoftrouting.web.core.windows.net/",
+                    },
+                    "queue": "https://$(accountName).queue.core.windows.net/",
+                    "table": "https://$(accountName).table.core.windows.net/",
+                    "web": "https://$(accountName).web.core.windows.net/",
+                  },
+                  "primaryLocation": "eastus2euap",
+                  "provisioningState": "Succeeded",
+                  "routingPreference": Object {
+                    "publishInternetEndpoints": true,
+                    "publishMicrosoftEndpoints": true,
+                    "routingChoice": "MicrosoftRouting",
+                  },
+                  "sasPolicy": Object {
+                    "expirationAction": "Log",
+                    "sasExpirationPeriod": "1.15:59:59",
+                  },
+                  "secondaryLocation": "centraluseuap",
+                  "statusOfPrimary": "available",
+                  "statusOfSecondary": "available",
+                  "supportsHttpsTrafficOnly": true,
+                },
+                "sku": Object {
+                  "name": "Standard_GRS",
+                  "tier": "Standard",
+                },
+                "tags": Object {
+                  "key1": "value1",
+                  "key2": "value2",
+                },
+                "type": "Microsoft.Storage/storageAccounts",
+              },
+            },
+            "202": Object {},
+          },
+          "secretVariables": Array [],
+          "step": "createStorageAccount",
+          "type": "restCall",
+          "variables": Object {},
+        },
+        Object {
+          "description": "StorageAccountUpdate",
+          "exampleFile": "../examples/StorageAccountUpdate.json",
+          "operation": Object {},
+          "operationId": "StorageAccounts_Update",
+          "outputVariables": Object {},
+          "parameters": Object {
+            "accountName": "$(accountName)",
+            "api-version": "2021-08-01",
+            "monitor": "true",
+            "parameters": Object {
+              "properties": Object {
+                "allowBlobPublicAccess": false,
+                "allowSharedKeyAccess": true,
+                "defaultToOAuthAuthentication": false,
+                "encryption": Object {
+                  "keySource": "Microsoft.Storage",
+                  "services": Object {
+                    "blob": Object {
+                      "enabled": true,
+                      "keyType": "Account",
+                    },
+                    "file": Object {
+                      "enabled": true,
+                      "keyType": "Account",
+                    },
+                  },
+                },
+                "isLocalUserEnabled": true,
+                "isSftpEnabled": true,
+                "keyPolicy": Object {
+                  "keyExpirationPeriodInDays": 20,
+                },
+                "minimumTlsVersion": "TLS1_2",
+                "networkAcls": Object {
+                  "defaultAction": "Allow",
+                  "resourceAccessRules": Array [
+                    Object {
+                      "resourceId": "/subscriptions/a7e99807-abbf-4642-bdec-2c809a96a8bc/resourceGroups/$(resourceGroupName)/providers/Microsoft.Synapse/workspaces/testworkspace",
+                      "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+                    },
+                  ],
+                },
+                "routingPreference": Object {
+                  "publishInternetEndpoints": true,
+                  "publishMicrosoftEndpoints": true,
+                  "routingChoice": "MicrosoftRouting",
+                },
+                "sasPolicy": Object {
+                  "expirationAction": "Log",
+                  "sasExpirationPeriod": "1.15:59:59",
+                },
+              },
+            },
+            "resourceGroupName": "$(resourceGroupName)",
+            "subscriptionId": "$(subscriptionId)",
+          },
+          "requiredVariables": Array [],
+          "responses": Object {
+            "200": Object {
+              "body": Object {
+                "id": "/subscriptions/$(subscriptionId)/resourceGroups/$(resourceGroupName)/providers/Microsoft.Storage/storageAccounts/$(accountName)",
+                "kind": "Storage",
+                "location": "eastus2(stage)",
+                "name": "$(accountName)",
+                "properties": Object {
+                  "allowBlobPublicAccess": false,
+                  "allowSharedKeyAccess": true,
+                  "creationTime": "2017-06-01T02:42:41.7633306Z",
+                  "encryption": Object {
+                    "keySource": "Microsoft.Storage",
+                    "services": Object {
+                      "blob": Object {
+                        "enabled": true,
+                        "keyType": "Account",
+                        "lastEnabledTime": "2019-12-11T20:49:31.7036140Z",
+                      },
+                      "file": Object {
+                        "enabled": true,
+                        "keyType": "Account",
+                        "lastEnabledTime": "2019-12-11T20:49:31.7036140Z",
+                      },
+                    },
+                  },
+                  "isHnsEnabled": true,
+                  "isLocalUserEnabled": true,
+                  "isSftpEnabled": true,
+                  "keyCreationTime": Object {
+                    "key1": "2021-03-18T04:42:22.4322836Z",
+                    "key2": "2021-03-18T04:42:22.4322836Z",
+                  },
+                  "keyPolicy": Object {
+                    "keyExpirationPeriodInDays": 20,
+                  },
+                  "minimumTlsVersion": "TLS1_2",
+                  "networkAcls": Object {
+                    "bypass": "AzureServices",
+                    "defaultAction": "Allow",
+                    "ipRules": Array [],
+                    "resourceAccessRules": Array [
+                      Object {
+                        "resourceId": "/subscriptions/a7e99807-abbf-4642-bdec-2c809a96a8bc/resourceGroups/$(resourceGroupName)/providers/Microsoft.Synapse/workspaces/testworkspace",
+                        "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+                      },
+                    ],
+                    "virtualNetworkRules": Array [],
+                  },
+                  "primaryEndpoints": Object {
+                    "blob": "https://$(accountName).blob.core.windows.net/",
+                    "dfs": "https://$(accountName).dfs.core.windows.net/",
+                    "file": "https://$(accountName).file.core.windows.net/",
+                    "internetEndpoints": Object {
+                      "blob": "https://$(accountName)-internetrouting.blob.core.windows.net/",
+                      "dfs": "https://$(accountName)-internetrouting.dfs.core.windows.net/",
+                      "file": "https://$(accountName)-internetrouting.file.core.windows.net/",
+                      "web": "https://$(accountName)-internetrouting.web.core.windows.net/",
+                    },
+                    "microsoftEndpoints": Object {
+                      "blob": "https://$(accountName)-microsoftrouting.blob.core.windows.net/",
+                      "dfs": "https://$(accountName)-microsoftrouting.dfs.core.windows.net/",
+                      "file": "https://$(accountName)-microsoftrouting.file.core.windows.net/",
+                      "queue": "https://$(accountName)-microsoftrouting.queue.core.windows.net/",
+                      "table": "https://$(accountName)-microsoftrouting.table.core.windows.net/",
+                      "web": "https://$(accountName)-microsoftrouting.web.core.windows.net/",
+                    },
+                    "queue": "https://$(accountName).queue.core.windows.net/",
+                    "table": "https://$(accountName).table.core.windows.net/",
+                    "web": "https://$(accountName).web.core.windows.net/",
+                  },
+                  "primaryLocation": "eastus2(stage)",
+                  "provisioningState": "Succeeded",
+                  "routingPreference": Object {
+                    "publishInternetEndpoints": true,
+                    "publishMicrosoftEndpoints": true,
+                    "routingChoice": "MicrosoftRouting",
+                  },
+                  "sasPolicy": Object {
+                    "expirationAction": "Log",
+                    "sasExpirationPeriod": "1.15:59:59",
+                  },
+                  "secondaryLocation": "northcentralus(stage)",
+                  "statusOfPrimary": "available",
+                  "statusOfSecondary": "available",
+                  "supportsHttpsTrafficOnly": false,
+                },
+                "sku": Object {
+                  "name": "Standard_GRS",
+                  "tier": "Standard",
+                },
+                "tags": Object {
+                  "key1": "value1",
+                  "key2": "value2",
+                },
+                "type": "Microsoft.Storage/storageAccounts",
+              },
+            },
+          },
+          "secretVariables": Array [],
+          "step": "updateStorageAccount",
+          "type": "restCall",
+          "variables": Object {},
+        },
+        Object {
+          "description": "StorageAccountGetProperties",
+          "exampleFile": "../examples/StorageAccountGetProperties.json",
+          "operation": Object {},
+          "operationId": "StorageAccounts_GetProperties",
+          "outputVariables": Object {},
+          "parameters": Object {
+            "accountName": "$(accountName)",
+            "api-version": "2021-08-01",
+            "monitor": "true",
+            "resourceGroupName": "$(resourceGroupName)",
+            "subscriptionId": "$(subscriptionId)",
+          },
+          "requiredVariables": Array [],
+          "responses": Object {
+            "200": Object {
+              "body": Object {
+                "id": "/subscriptions/$(subscriptionId)/resourceGroups/$(resourceGroupName)/providers/Microsoft.Storage/storageAccounts/$(accountName)",
+                "kind": "Storage",
+                "location": "eastus2(stage)",
+                "name": "$(accountName)",
+                "properties": Object {
+                  "creationTime": "2017-06-01T02:42:41.7633306Z",
+                  "encryption": Object {
+                    "keySource": "Microsoft.Storage",
+                    "services": Object {
+                      "blob": Object {
+                        "enabled": true,
+                        "keyType": "Account",
+                        "lastEnabledTime": "2019-12-11T20:49:31.7036140Z",
+                      },
+                      "file": Object {
+                        "enabled": true,
+                        "keyType": "Account",
+                        "lastEnabledTime": "2019-12-11T20:49:31.7036140Z",
+                      },
+                    },
+                  },
+                  "geoReplicationStats": Object {
+                    "canFailover": true,
+                    "lastSyncTime": "2018-10-30T00:25:34Z",
+                    "status": "Live",
+                  },
+                  "isHnsEnabled": true,
+                  "keyCreationTime": Object {
+                    "key1": "2021-03-18T04:42:22.4322836Z",
+                    "key2": "2021-03-18T04:42:22.4322836Z",
+                  },
+                  "networkAcls": Object {
+                    "bypass": "AzureServices",
+                    "defaultAction": "Allow",
+                    "ipRules": Array [],
+                    "resourceAccessRules": Array [
+                      Object {
+                        "resourceId": "/subscriptions/a7e99807-abbf-4642-bdec-2c809a96a8bc/resourceGroups/$(resourceGroupName)/providers/Microsoft.Synapse/workspaces/testworkspace",
+                        "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+                      },
+                    ],
+                    "virtualNetworkRules": Array [],
+                  },
+                  "primaryEndpoints": Object {
+                    "blob": "https://$(accountName).blob.core.windows.net/",
+                    "dfs": "https://$(accountName).dfs.core.windows.net/",
+                    "file": "https://$(accountName).file.core.windows.net/",
+                    "internetEndpoints": Object {
+                      "blob": "https://$(accountName)-internetrouting.blob.core.windows.net/",
+                      "dfs": "https://$(accountName)-internetrouting.dfs.core.windows.net/",
+                      "file": "https://$(accountName)-internetrouting.file.core.windows.net/",
+                      "web": "https://$(accountName)-internetrouting.web.core.windows.net/",
+                    },
+                    "microsoftEndpoints": Object {
+                      "blob": "https://$(accountName)-microsoftrouting.blob.core.windows.net/",
+                      "dfs": "https://$(accountName)-microsoftrouting.dfs.core.windows.net/",
+                      "file": "https://$(accountName)-microsoftrouting.file.core.windows.net/",
+                      "queue": "https://$(accountName)-microsoftrouting.queue.core.windows.net/",
+                      "table": "https://$(accountName)-microsoftrouting.table.core.windows.net/",
+                      "web": "https://$(accountName)-microsoftrouting.web.core.windows.net/",
+                    },
+                    "queue": "https://$(accountName).queue.core.windows.net/",
+                    "table": "https://$(accountName).table.core.windows.net/",
+                    "web": "https://$(accountName).web.core.windows.net/",
+                  },
+                  "primaryLocation": "eastus2(stage)",
+                  "provisioningState": "Succeeded",
+                  "routingPreference": Object {
+                    "publishInternetEndpoints": true,
+                    "publishMicrosoftEndpoints": true,
+                    "routingChoice": "MicrosoftRouting",
+                  },
+                  "secondaryLocation": "northcentralus(stage)",
+                  "statusOfPrimary": "available",
+                  "statusOfSecondary": "available",
+                  "supportsHttpsTrafficOnly": false,
+                },
+                "sku": Object {
+                  "name": "Standard_GRS",
+                  "tier": "Standard",
+                },
+                "tags": Object {
+                  "key1": "value1",
+                  "key2": "value2",
+                },
+                "type": "Microsoft.Storage/storageAccounts",
+              },
+            },
+          },
+          "secretVariables": Array [],
+          "step": "getStorageAccount",
+          "type": "restCall",
+          "variables": Object {},
+        },
+        Object {
+          "description": "StorageAccountDelete",
+          "exampleFile": "../examples/StorageAccountDelete.json",
+          "operation": Object {},
+          "operationId": "StorageAccounts_Delete",
+          "outputVariables": Object {},
+          "parameters": Object {
+            "accountName": "$(accountName)",
+            "api-version": "2021-08-01",
+            "monitor": "true",
+            "resourceGroupName": "$(resourceGroupName)",
+            "subscriptionId": "$(subscriptionId)",
+          },
+          "requiredVariables": Array [],
+          "responses": Object {
+            "200": Object {
+              "body": Object {},
+            },
+            "204": Object {},
+          },
+          "secretVariables": Array [],
+          "step": "deleteStorageAccount",
+          "type": "restCall",
+          "variables": Object {},
+        },
+      ],
+      "variables": Object {},
+    },
+  ],
+  "scope": "ResourceGroup",
+  "secretVariables": Array [],
+  "variables": Object {
+    "accountName": Object {
+      "prefix": "sta",
+      "type": "string",
+    },
+  },
+}
+`;
+
+exports[`ApiScenarioLoader load valid scenario - storage 1`] = `
+Object {
+  "_filePath": "Microsoft.Storage/stable/2021-08-01/scenarios/storageQuickStart.yaml",
+  "cleanUpSteps": Array [],
+  "prepareSteps": Array [],
+  "requiredVariables": Array [
+    "subscriptionId",
+    "location",
+  ],
+  "scenarios": Array [
+    Object {
+      "_scenarioDef": [Circular],
+      "description": "",
+      "requiredVariables": Array [
+        "subscriptionId",
+        "location",
+      ],
+      "scenario": "basic",
+      "secretVariables": Array [],
+      "shareScope": true,
+      "steps": Array [
+        Object {
+          "description": undefined,
+          "operation": Object {},
+          "operationId": "StorageAccounts_CheckNameAvailability",
+          "outputVariables": Object {},
+          "parameters": Object {
+            "accountName": Object {
+              "name": "$(accountName)",
+              "type": "Microsoft.Storage/storageAccounts",
+            },
+            "api-version": "2021-08-01",
+            "subscriptionId": "$(subscriptionId)",
+          },
+          "requiredVariables": Array [],
+          "responses": Object {},
+          "secretVariables": Array [],
+          "step": "checkName",
+          "type": "restCall",
+          "variables": Object {},
+        },
+        Object {
+          "description": undefined,
+          "operation": Object {},
+          "operationId": "StorageAccounts_Create",
+          "outputVariables": Object {},
+          "parameters": Object {
+            "accountName": "$(accountName)",
+            "api-version": "2021-08-01",
+            "parameters": Object {
+              "kind": "StorageV2",
+              "location": "$(location)",
+              "properties": Object {
+                "encryption": Object {
+                  "keySource": "Microsoft.Storage",
+                  "services": Object {
+                    "blob": Object {},
+                  },
+                },
+              },
+              "sku": Object {
+                "name": "Standard_LRS",
+              },
+            },
+            "resourceGroupName": "$(resourceGroupName)",
+            "subscriptionId": "$(subscriptionId)",
+          },
+          "requiredVariables": Array [],
+          "responses": Object {},
+          "secretVariables": Array [],
+          "step": "createStorageAccount",
+          "type": "restCall",
+          "variables": Object {},
+        },
+      ],
+      "variables": Object {},
+    },
+    Object {
+      "_scenarioDef": [Circular],
+      "description": "",
+      "requiredVariables": Array [
+        "subscriptionId",
+        "location",
+      ],
+      "scenario": "overrideVariable",
+      "secretVariables": Array [],
+      "shareScope": true,
+      "steps": Array [
+        Object {
+          "description": undefined,
+          "operation": Object {},
+          "operationId": "StorageAccounts_CheckNameAvailability",
+          "outputVariables": Object {},
+          "parameters": Object {
+            "accountName": Object {
+              "name": "$(accountName)",
+              "type": "Microsoft.Storage/storageAccounts",
+            },
+            "api-version": "2021-08-01",
+            "subscriptionId": "$(subscriptionId)",
+          },
+          "requiredVariables": Array [],
+          "responses": Object {},
+          "secretVariables": Array [],
+          "step": "checkName",
+          "type": "restCall",
+          "variables": Object {},
+        },
+        Object {
+          "description": undefined,
+          "operation": Object {},
+          "operationId": "StorageAccounts_Create",
+          "outputVariables": Object {},
+          "parameters": Object {
+            "accountName": "$(accountName)",
+            "api-version": "2021-08-01",
+            "parameters": Object {
+              "kind": "StorageV2",
+              "location": "$(location)",
+              "properties": Object {
+                "encryption": Object {
+                  "keySource": "Microsoft.Storage",
+                  "services": Object {
+                    "blob": Object {},
+                  },
+                },
+              },
+              "sku": Object {
+                "name": "Standard_LRS",
+              },
+            },
+            "resourceGroupName": "$(resourceGroupName)",
+            "subscriptionId": "$(subscriptionId)",
+          },
+          "requiredVariables": Array [],
+          "responses": Object {},
+          "secretVariables": Array [],
+          "step": "createStorageAccount",
+          "type": "restCall",
+          "variables": Object {},
+        },
+      ],
+      "variables": Object {
+        "accountName": Object {
+          "type": "string",
+          "value": "$(accountName)2",
+        },
+      },
+    },
+    Object {
+      "_scenarioDef": [Circular],
+      "description": "",
+      "requiredVariables": Array [
+        "subscriptionId",
+        "location",
+      ],
+      "scenario": "primitiveParameter",
+      "secretVariables": Array [],
+      "shareScope": true,
+      "steps": Array [
+        Object {
+          "description": undefined,
+          "operation": Object {},
+          "operationId": "StorageAccounts_CheckNameAvailability",
+          "outputVariables": Object {},
+          "parameters": Object {
+            "accountName": Object {
+              "name": "$(accountName)",
+              "type": "Microsoft.Storage/storageAccounts",
+            },
+            "api-version": "2021-08-01",
+            "subscriptionId": "$(subscriptionId)",
+          },
+          "requiredVariables": Array [],
+          "responses": Object {},
+          "secretVariables": Array [],
+          "step": "checkName",
+          "type": "restCall",
+          "variables": Object {},
+        },
+        Object {
+          "description": undefined,
+          "operation": Object {},
+          "operationId": "StorageAccounts_Create",
+          "outputVariables": Object {},
+          "parameters": Object {
+            "accountName": "$(accountName)",
+            "api-version": "2021-08-01",
+            "parameters": Object {
+              "kind": "StorageV2",
+              "location": "$(location)",
+              "properties": Object {
+                "encryption": Object {
+                  "keySource": "Microsoft.Storage",
+                  "services": Object {
+                    "blob": Object {},
+                  },
+                },
+              },
+              "sku": Object {
+                "name": "Standard_LRS",
+              },
+            },
+            "resourceGroupName": "$(resourceGroupName)",
+            "subscriptionId": "$(subscriptionId)",
+          },
+          "requiredVariables": Array [],
+          "responses": Object {},
+          "secretVariables": Array [],
+          "step": "createStorageAccount",
+          "type": "restCall",
+          "variables": Object {},
+        },
+      ],
+      "variables": Object {
+        "accountName": Object {
+          "prefix": "foobar",
+          "type": "string",
+        },
+      },
+    },
+  ],
+  "scope": "ResourceGroup",
+  "secretVariables": Array [],
+  "variables": Object {
+    "accountName": Object {
+      "prefix": "sta",
+      "type": "string",
+    },
+  },
+}
+`;
+
+exports[`ApiScenarioLoader load valid scenario from uri 1`] = `
+Object {
+  "_filePath": "Microsoft.SignalRService/preview/2021-06-01-preview/scenarios/signalR.yaml",
+  "cleanUpSteps": Array [],
+  "prepareSteps": Array [],
+  "requiredVariables": Array [
+    "subscriptionId",
+    "location",
+  ],
+  "scenarios": Array [
+    Object {
+      "_scenarioDef": [Circular],
+      "description": "Microsoft.SignalRService/Basic_CRUD",
+      "requiredVariables": Array [
+        "subscriptionId",
+        "location",
+      ],
+      "scenario": "SignalR",
+      "secretVariables": Array [],
+      "shareScope": true,
+      "steps": Array [
+        Object {
+          "armTemplate": "./peArmTemplate/Generate_Unique_name_template.json",
+          "armTemplatePayload": Object {
+            "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "outputs": Object {
+              "resourceName": Object {
+                "type": "string",
+                "value": "[variables('name').value]",
+              },
+            },
+            "resources": Array [],
+            "variables": Object {
+              "name": Object {
+                "metadata": Object {
+                  "description": "Name of the SignalR service.",
+                },
+                "type": "string",
+                "value": "[concat('sw',uniqueString(resourceGroup().id))]",
+              },
+            },
+          },
+          "outputVariables": Object {},
+          "requiredVariables": Array [],
+          "secretVariables": Array [],
+          "step": "Generate_Unique_Name",
+          "type": "armTemplateDeployment",
+          "variables": Object {},
+        },
+        Object {
+          "description": "SignalR_CheckNameAvailability",
+          "exampleFile": "../examples/SignalR_CheckNameAvailability.json",
+          "operation": Object {},
+          "operationId": "SignalR_CheckNameAvailability",
+          "outputVariables": Object {},
+          "parameters": Object {
+            "api-version": "2021-06-01-preview",
+            "location": "$(location)",
+            "parameters": Object {
+              "name": "$(resourceName)",
+              "type": "Microsoft.SignalRService/SignalR",
+            },
+            "subscriptionId": "$(subscriptionId)",
+          },
+          "requiredVariables": Array [],
+          "responses": Object {
+            "200": Object {
+              "body": Object {
+                "message": "The name is already taken. Please try a different name.",
+                "nameAvailable": false,
+                "reason": "AlreadyExists",
+              },
+            },
+          },
+          "secretVariables": Array [],
+          "step": "SignalR_CheckNameAvailability",
+          "type": "restCall",
+          "variables": Object {},
+        },
+        Object {
+          "description": "SignalR_CreateOrUpdate",
+          "exampleFile": "../examples/SignalR_CreateOrUpdate.json",
+          "operation": Object {},
+          "operationId": "SignalR_CreateOrUpdate",
+          "outputVariables": Object {},
+          "parameters": Object {
+            "api-version": "2021-06-01-preview",
+            "parameters": Object {
+              "identity": Object {
+                "type": "SystemAssigned",
+              },
+              "kind": "SignalR",
+              "location": "$(location)",
+              "properties": Object {
+                "cors": Object {
+                  "allowedOrigins": Array [
+                    "https://foo.com",
+                    "https://bar.com",
+                  ],
+                },
+                "disableAadAuth": false,
+                "disableLocalAuth": false,
+                "features": Array [
+                  Object {
+                    "flag": "ServiceMode",
+                    "properties": Object {},
+                    "value": "Serverless",
+                  },
+                  Object {
+                    "flag": "EnableConnectivityLogs",
+                    "properties": Object {},
+                    "value": "True",
+                  },
+                  Object {
+                    "flag": "EnableMessagingLogs",
+                    "properties": Object {},
+                    "value": "False",
+                  },
+                  Object {
+                    "flag": "EnableLiveTrace",
+                    "properties": Object {},
+                    "value": "False",
+                  },
+                ],
+                "networkACLs": Object {
+                  "defaultAction": "Deny",
+                  "privateEndpoints": Array [
+                    Object {
+                      "allow": Array [
+                        "ServerConnection",
+                      ],
+                      "name": "$(resourceName).1fa229cd-bf3f-47f0-8c49-afb36723997e",
+                    },
+                  ],
+                  "publicNetwork": Object {
+                    "allow": Array [
+                      "ClientConnection",
+                    ],
+                  },
+                },
+                "publicNetworkAccess": "Enabled",
+                "tls": Object {
+                  "clientCertEnabled": false,
+                },
+                "upstream": Object {
+                  "templates": Array [
+                    Object {
+                      "auth": Object {
+                        "managedIdentity": Object {
+                          "resource": "api://example",
+                        },
+                        "type": "ManagedIdentity",
+                      },
+                      "categoryPattern": "*",
+                      "eventPattern": "connect,disconnect",
+                      "hubPattern": "*",
+                      "urlTemplate": "https://example.com/chat/api/connect",
+                    },
+                  ],
+                },
+              },
+              "sku": Object {
+                "capacity": 1,
+                "name": "Standard_S1",
+                "tier": "Standard",
+              },
+              "tags": Object {
+                "key1": "value1",
+              },
+            },
+            "resourceGroupName": "$(resourceGroupName)",
+            "resourceName": "$(resourceName)",
+            "subscriptionId": "$(subscriptionId)",
+          },
+          "requiredVariables": Array [],
+          "responses": Object {
+            "200": Object {
+              "body": Object {
+                "id": "/subscriptions/$(subscriptionId)/resourcegroups/$(resourceGroupName)/providers/Microsoft.SignalRService/SignalR/$(resourceName)",
+                "identity": Object {
+                  "principalId": "$(subscriptionId)",
+                  "tenantId": "$(subscriptionId)",
+                  "type": "SystemAssigned",
+                },
+                "kind": "SignalR",
+                "location": "eastus",
+                "name": "$(resourceName)",
+                "properties": Object {
+                  "cors": Object {
+                    "allowedOrigins": Array [
+                      "https://foo.com",
+                      "https://bar.com",
+                    ],
+                  },
+                  "disableAadAuth": false,
+                  "disableLocalAuth": false,
+                  "externalIP": "10.0.0.1",
+                  "features": Array [
+                    Object {
+                      "flag": "ServiceMode",
+                      "properties": Object {},
+                      "value": "Serverless",
+                    },
+                    Object {
+                      "flag": "EnableConnectivityLogs",
+                      "properties": Object {},
+                      "value": "True",
+                    },
+                    Object {
+                      "flag": "EnableMessagingLogs",
+                      "properties": Object {},
+                      "value": "False",
+                    },
+                    Object {
+                      "flag": "EnableLiveTrace",
+                      "properties": Object {},
+                      "value": "False",
+                    },
+                  ],
+                  "hostName": "$(resourceName).service.signalr.net",
+                  "networkACLs": Object {
+                    "defaultAction": "Deny",
+                    "privateEndpoints": Array [
+                      Object {
+                        "allow": Array [
+                          "ServerConnection",
+                        ],
+                        "name": "$(resourceName).1fa229cd-bf3f-47f0-8c49-afb36723997e",
+                      },
+                    ],
+                    "publicNetwork": Object {
+                      "allow": Array [
+                        "ClientConnection",
+                      ],
+                    },
+                  },
+                  "privateEndpointConnections": Array [
+                    Object {
+                      "id": "/subscriptions/$(subscriptionId)/resourcegroups/$(resourceGroupName)/providers/Microsoft.SignalRService/SignalR/$(resourceName)/privateEndpointConnections/$(resourceName).1fa229cd-bf3f-47f0-8c49-afb36723997e",
+                      "name": "$(resourceName).1fa229cd-bf3f-47f0-8c49-afb36723997e",
+                      "properties": Object {
+                        "privateEndpoint": Object {
+                          "id": "/subscriptions/$(subscriptionId)/resourcegroups/$(resourceGroupName)/providers/Microsoft.Network/privateEndpoints/myPrivateEndpoint",
+                        },
+                        "privateLinkServiceConnectionState": Object {
+                          "actionsRequired": "None",
+                          "status": "Approved",
+                        },
+                        "provisioningState": "Succeeded",
+                      },
+                      "systemData": Object {
+                        "createdAt": "2015-02-03T04:05:06Z",
+                        "createdBy": "string",
+                        "createdByType": "User",
+                        "lastModifiedAt": "2015-02-03T04:05:06Z",
+                        "lastModifiedBy": "string",
+                        "lastModifiedByType": "User",
+                      },
+                      "type": "Microsoft.SignalRService/SignalR/privateEndpointConnections",
+                    },
+                  ],
+                  "provisioningState": "Succeeded",
+                  "publicNetworkAccess": "Enabled",
+                  "publicPort": 443,
+                  "serverPort": 443,
+                  "tls": Object {
+                    "clientCertEnabled": true,
+                  },
+                  "upstream": Object {
+                    "templates": Array [
+                      Object {
+                        "urlTemplate": "http://foo.com",
+                      },
+                    ],
+                  },
+                  "version": "1.0",
+                },
+                "sku": Object {
+                  "capacity": 1,
+                  "name": "Standard_S1",
+                  "size": "S1",
+                  "tier": "Standard",
+                },
+                "systemData": Object {
+                  "createdAt": "2015-02-03T04:05:06Z",
+                  "createdBy": "string",
+                  "createdByType": "User",
+                  "lastModifiedAt": "2015-02-03T04:05:06Z",
+                  "lastModifiedBy": "string",
+                  "lastModifiedByType": "User",
+                },
+                "tags": Object {
+                  "key1": "value1",
+                },
+                "type": "Microsoft.SignalRService/SignalR",
+              },
+            },
+            "201": Object {
+              "body": Object {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/myResourceGroup/providers/Microsoft.SignalRService/SignalR/mySignalRService",
+                "identity": Object {
+                  "principalId": "00000000-0000-0000-0000-000000000000",
+                  "tenantId": "00000000-0000-0000-0000-000000000000",
+                  "type": "SystemAssigned",
+                },
+                "kind": "SignalR",
+                "location": "eastus",
+                "name": "mySignalRService",
+                "properties": Object {
+                  "cors": Object {
+                    "allowedOrigins": Array [
+                      "https://foo.com",
+                      "https://bar.com",
+                    ],
+                  },
+                  "disableAadAuth": false,
+                  "disableLocalAuth": false,
+                  "externalIP": "10.0.0.1",
+                  "features": Array [
+                    Object {
+                      "flag": "ServiceMode",
+                      "properties": Object {},
+                      "value": "Serverless",
+                    },
+                    Object {
+                      "flag": "EnableConnectivityLogs",
+                      "properties": Object {},
+                      "value": "True",
+                    },
+                    Object {
+                      "flag": "EnableMessagingLogs",
+                      "properties": Object {},
+                      "value": "False",
+                    },
+                    Object {
+                      "flag": "EnableLiveTrace",
+                      "properties": Object {},
+                      "value": "False",
+                    },
+                  ],
+                  "hostName": "mysignalrservice.service.signalr.net",
+                  "networkACLs": Object {
+                    "defaultAction": "Deny",
+                    "privateEndpoints": Array [
+                      Object {
+                        "allow": Array [
+                          "ServerConnection",
+                        ],
+                        "name": "mysignalrservice.1fa229cd-bf3f-47f0-8c49-afb36723997e",
+                      },
+                    ],
+                    "publicNetwork": Object {
+                      "allow": Array [
+                        "ClientConnection",
+                      ],
+                    },
+                  },
+                  "privateEndpointConnections": Array [
+                    Object {
+                      "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/myResourceGroup/providers/Microsoft.SignalRService/SignalR/mySignalRService/privateEndpointConnections/mysignalrservice.1fa229cd-bf3f-47f0-8c49-afb36723997e",
+                      "name": "mysignalrservice.1fa229cd-bf3f-47f0-8c49-afb36723997e",
+                      "properties": Object {
+                        "privateEndpoint": Object {
+                          "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/myResourceGroup/providers/Microsoft.Network/privateEndpoints/myPrivateEndpoint",
+                        },
+                        "privateLinkServiceConnectionState": Object {
+                          "actionsRequired": "None",
+                          "status": "Approved",
+                        },
+                        "provisioningState": "Succeeded",
+                      },
+                      "systemData": Object {
+                        "createdAt": "2015-02-03T04:05:06Z",
+                        "createdBy": "string",
+                        "createdByType": "User",
+                        "lastModifiedAt": "2015-02-03T04:05:06Z",
+                        "lastModifiedBy": "string",
+                        "lastModifiedByType": "User",
+                      },
+                      "type": "Microsoft.SignalRService/SignalR/privateEndpointConnections",
+                    },
+                  ],
+                  "provisioningState": "Succeeded",
+                  "publicNetworkAccess": "Enabled",
+                  "publicPort": 443,
+                  "serverPort": 443,
+                  "tls": Object {
+                    "clientCertEnabled": true,
+                  },
+                  "upstream": Object {
+                    "templates": Array [
+                      Object {
+                        "urlTemplate": "http://foo.com",
+                      },
+                    ],
+                  },
+                  "version": "1.0",
+                },
+                "sku": Object {
+                  "capacity": 1,
+                  "name": "Standard_S1",
+                  "size": "S1",
+                  "tier": "Standard",
+                },
+                "systemData": Object {
+                  "createdAt": "2015-02-03T04:05:06Z",
+                  "createdBy": "string",
+                  "createdByType": "User",
+                  "lastModifiedAt": "2015-02-03T04:05:06Z",
+                  "lastModifiedBy": "string",
+                  "lastModifiedByType": "User",
+                },
+                "tags": Object {
+                  "key1": "value1",
+                },
+                "type": "Microsoft.SignalRService/SignalR",
+              },
+              "headers": Object {
+                "Azure-AsyncOperation": "https://management.azure.com/subscriptions/subid/providers/Microsoft.SignalRService/...pathToOperationStatus...",
+                "Location": "https://management.azure.com/subscriptions/subid/providers/Microsoft.SignalRService/...pathToOperationResult...",
+              },
+            },
+            "202": Object {
+              "headers": Object {
+                "Azure-AsyncOperation": "https://management.azure.com/subscriptions/subid/providers/Microsoft.SignalRService/...pathToOperationStatus...",
+                "Location": "https://management.azure.com/subscriptions/subid/providers/Microsoft.SignalRService/...pathToOperationResult...",
+              },
+            },
+          },
+          "secretVariables": Array [],
+          "step": "SignalR_CreateOrUpdate",
+          "type": "restCall",
+          "variables": Object {},
+        },
+        Object {
+          "description": "SignalR_Get",
+          "exampleFile": "../examples/SignalR_Get.json",
+          "operation": Object {},
+          "operationId": "SignalR_Get",
+          "outputVariables": Object {},
+          "parameters": Object {
+            "api-version": "2021-06-01-preview",
+            "resourceGroupName": "$(resourceGroupName)",
+            "resourceName": "$(resourceName)",
+            "subscriptionId": "$(subscriptionId)",
+          },
+          "requiredVariables": Array [],
+          "responses": Object {
+            "200": Object {
+              "body": Object {
+                "id": "/subscriptions/$(subscriptionId)/resourcegroups/$(resourceGroupName)/providers/Microsoft.SignalRService/SignalR/$(resourceName)",
+                "identity": Object {
+                  "principalId": "$(subscriptionId)",
+                  "tenantId": "$(subscriptionId)",
+                  "type": "SystemAssigned",
+                },
+                "kind": "SignalR",
+                "location": "eastus",
+                "name": "$(resourceName)",
+                "properties": Object {
+                  "cors": Object {
+                    "allowedOrigins": Array [
+                      "https://foo.com",
+                      "https://bar.com",
+                    ],
+                  },
+                  "disableAadAuth": false,
+                  "disableLocalAuth": false,
+                  "externalIP": "10.0.0.1",
+                  "features": Array [
+                    Object {
+                      "flag": "ServiceMode",
+                      "properties": Object {},
+                      "value": "Serverless",
+                    },
+                    Object {
+                      "flag": "EnableConnectivityLogs",
+                      "properties": Object {},
+                      "value": "True",
+                    },
+                    Object {
+                      "flag": "EnableMessagingLogs",
+                      "properties": Object {},
+                      "value": "False",
+                    },
+                    Object {
+                      "flag": "EnableLiveTrace",
+                      "properties": Object {},
+                      "value": "False",
+                    },
+                  ],
+                  "hostName": "$(resourceName).service.signalr.net",
+                  "networkACLs": Object {
+                    "defaultAction": "Deny",
+                    "privateEndpoints": Array [
+                      Object {
+                        "allow": Array [
+                          "ServerConnection",
+                        ],
+                        "name": "$(resourceName).1fa229cd-bf3f-47f0-8c49-afb36723997e",
+                      },
+                    ],
+                    "publicNetwork": Object {
+                      "allow": Array [
+                        "ClientConnection",
+                      ],
+                    },
+                  },
+                  "privateEndpointConnections": Array [
+                    Object {
+                      "id": "/subscriptions/$(subscriptionId)/resourcegroups/$(resourceGroupName)/providers/Microsoft.SignalRService/SignalR/$(resourceName)/privateEndpointConnections/$(resourceName).1fa229cd-bf3f-47f0-8c49-afb36723997e",
+                      "name": "$(resourceName).1fa229cd-bf3f-47f0-8c49-afb36723997e",
+                      "properties": Object {
+                        "privateEndpoint": Object {
+                          "id": "/subscriptions/$(subscriptionId)/resourcegroups/$(resourceGroupName)/providers/Microsoft.Network/privateEndpoints/myPrivateEndpoint",
+                        },
+                        "privateLinkServiceConnectionState": Object {
+                          "actionsRequired": "None",
+                          "status": "Approved",
+                        },
+                        "provisioningState": "Succeeded",
+                      },
+                      "systemData": Object {
+                        "createdAt": "2015-02-03T04:05:06Z",
+                        "createdBy": "string",
+                        "createdByType": "User",
+                        "lastModifiedAt": "2015-02-03T04:05:06Z",
+                        "lastModifiedBy": "string",
+                        "lastModifiedByType": "User",
+                      },
+                      "type": "Microsoft.SignalRService/SignalR/privateEndpointConnections",
+                    },
+                  ],
+                  "provisioningState": "Succeeded",
+                  "publicNetworkAccess": "Enabled",
+                  "publicPort": 443,
+                  "serverPort": 443,
+                  "tls": Object {
+                    "clientCertEnabled": true,
+                  },
+                  "upstream": Object {
+                    "templates": Array [
+                      Object {
+                        "urlTemplate": "http://foo.com",
+                      },
+                    ],
+                  },
+                  "version": "1.0",
+                },
+                "sku": Object {
+                  "capacity": 1,
+                  "name": "Standard_S1",
+                  "size": "S1",
+                  "tier": "Standard",
+                },
+                "systemData": Object {
+                  "createdAt": "2015-02-03T04:05:06Z",
+                  "createdBy": "string",
+                  "createdByType": "User",
+                  "lastModifiedAt": "2015-02-03T04:05:06Z",
+                  "lastModifiedBy": "string",
+                  "lastModifiedByType": "User",
+                },
+                "tags": Object {
+                  "key1": "value1",
+                },
+                "type": "Microsoft.SignalRService/SignalR",
+              },
+            },
+          },
+          "secretVariables": Array [],
+          "step": "SignalR_Get",
+          "type": "restCall",
+          "variables": Object {},
+        },
+        Object {
+          "description": "SignalR_Update",
+          "exampleFile": "../examples/SignalR_Update.json",
+          "operation": Object {},
+          "operationId": "SignalR_Update",
+          "outputVariables": Object {},
+          "parameters": Object {
+            "api-version": "2021-06-01-preview",
+            "parameters": Object {
+              "identity": Object {
+                "type": "SystemAssigned",
+              },
+              "kind": "SignalR",
+              "location": "$(location)",
+              "properties": Object {
+                "cors": Object {
+                  "allowedOrigins": Array [
+                    "https://foo.com",
+                    "https://bar.com",
+                  ],
+                },
+                "disableAadAuth": false,
+                "disableLocalAuth": false,
+                "features": Array [
+                  Object {
+                    "flag": "ServiceMode",
+                    "properties": Object {},
+                    "value": "Serverless",
+                  },
+                  Object {
+                    "flag": "EnableConnectivityLogs",
+                    "properties": Object {},
+                    "value": "True",
+                  },
+                  Object {
+                    "flag": "EnableMessagingLogs",
+                    "properties": Object {},
+                    "value": "False",
+                  },
+                  Object {
+                    "flag": "EnableLiveTrace",
+                    "properties": Object {},
+                    "value": "False",
+                  },
+                ],
+                "networkACLs": Object {
+                  "defaultAction": "Deny",
+                  "privateEndpoints": Array [
+                    Object {
+                      "allow": Array [
+                        "ServerConnection",
+                      ],
+                      "name": "$(resourceName).1fa229cd-bf3f-47f0-8c49-afb36723997e",
+                    },
+                  ],
+                  "publicNetwork": Object {
+                    "allow": Array [
+                      "ClientConnection",
+                    ],
+                  },
+                },
+                "publicNetworkAccess": "Enabled",
+                "tls": Object {
+                  "clientCertEnabled": false,
+                },
+                "upstream": Object {
+                  "templates": Array [
+                    Object {
+                      "auth": Object {
+                        "managedIdentity": Object {
+                          "resource": "api://example",
+                        },
+                        "type": "ManagedIdentity",
+                      },
+                      "categoryPattern": "*",
+                      "eventPattern": "connect,disconnect",
+                      "hubPattern": "*",
+                      "urlTemplate": "https://example.com/chat/api/connect",
+                    },
+                  ],
+                },
+              },
+              "sku": Object {
+                "capacity": 1,
+                "name": "Standard_S1",
+                "tier": "Standard",
+              },
+              "tags": Object {
+                "key1": "value1",
+              },
+            },
+            "resourceGroupName": "$(resourceGroupName)",
+            "resourceName": "$(resourceName)",
+            "subscriptionId": "$(subscriptionId)",
+          },
+          "requiredVariables": Array [],
+          "responses": Object {
+            "200": Object {
+              "body": Object {
+                "id": "/subscriptions/$(subscriptionId)/resourcegroups/$(resourceGroupName)/providers/Microsoft.SignalRService/SignalR/$(resourceName)",
+                "identity": Object {
+                  "principalId": "$(subscriptionId)",
+                  "tenantId": "$(subscriptionId)",
+                  "type": "SystemAssigned",
+                },
+                "kind": "SignalR",
+                "location": "eastus",
+                "name": "$(resourceName)",
+                "properties": Object {
+                  "cors": Object {
+                    "allowedOrigins": Array [
+                      "https://foo.com",
+                      "https://bar.com",
+                    ],
+                  },
+                  "disableAadAuth": false,
+                  "disableLocalAuth": false,
+                  "externalIP": "10.0.0.1",
+                  "features": Array [
+                    Object {
+                      "flag": "ServiceMode",
+                      "properties": Object {},
+                      "value": "Serverless",
+                    },
+                    Object {
+                      "flag": "EnableConnectivityLogs",
+                      "properties": Object {},
+                      "value": "True",
+                    },
+                    Object {
+                      "flag": "EnableMessagingLogs",
+                      "properties": Object {},
+                      "value": "False",
+                    },
+                    Object {
+                      "flag": "EnableLiveTrace",
+                      "properties": Object {},
+                      "value": "False",
+                    },
+                  ],
+                  "hostName": "$(resourceName).service.signalr.net",
+                  "networkACLs": Object {
+                    "defaultAction": "Deny",
+                    "privateEndpoints": Array [
+                      Object {
+                        "allow": Array [
+                          "ServerConnection",
+                        ],
+                        "name": "$(resourceName).1fa229cd-bf3f-47f0-8c49-afb36723997e",
+                      },
+                    ],
+                    "publicNetwork": Object {
+                      "allow": Array [
+                        "ClientConnection",
+                      ],
+                    },
+                  },
+                  "privateEndpointConnections": Array [
+                    Object {
+                      "id": "/subscriptions/$(subscriptionId)/resourcegroups/$(resourceGroupName)/providers/Microsoft.SignalRService/SignalR/$(resourceName)/privateEndpointConnections/$(resourceName).1fa229cd-bf3f-47f0-8c49-afb36723997e",
+                      "name": "$(resourceName).1fa229cd-bf3f-47f0-8c49-afb36723997e",
+                      "properties": Object {
+                        "privateEndpoint": Object {
+                          "id": "/subscriptions/$(subscriptionId)/resourcegroups/$(resourceGroupName)/providers/Microsoft.Network/privateEndpoints/myPrivateEndpoint",
+                        },
+                        "privateLinkServiceConnectionState": Object {
+                          "actionsRequired": "None",
+                          "status": "Approved",
+                        },
+                        "provisioningState": "Succeeded",
+                      },
+                      "systemData": Object {
+                        "createdAt": "2015-02-03T04:05:06Z",
+                        "createdBy": "string",
+                        "createdByType": "User",
+                        "lastModifiedAt": "2015-02-03T04:05:06Z",
+                        "lastModifiedBy": "string",
+                        "lastModifiedByType": "User",
+                      },
+                      "type": "Microsoft.SignalRService/SignalR/privateEndpointConnections",
+                    },
+                  ],
+                  "provisioningState": "Succeeded",
+                  "publicNetworkAccess": "Enabled",
+                  "publicPort": 443,
+                  "serverPort": 443,
+                  "tls": Object {
+                    "clientCertEnabled": true,
+                  },
+                  "upstream": Object {
+                    "templates": Array [
+                      Object {
+                        "urlTemplate": "http://foo.com",
+                      },
+                    ],
+                  },
+                  "version": "1.0",
+                },
+                "sku": Object {
+                  "capacity": 1,
+                  "name": "Standard_S1",
+                  "size": "S1",
+                  "tier": "Standard",
+                },
+                "systemData": Object {
+                  "createdAt": "2015-02-03T04:05:06Z",
+                  "createdBy": "string",
+                  "createdByType": "User",
+                  "lastModifiedAt": "2015-02-03T04:05:06Z",
+                  "lastModifiedBy": "string",
+                  "lastModifiedByType": "User",
+                },
+                "tags": Object {
+                  "key1": "value1",
+                },
+                "type": "Microsoft.SignalRService/SignalR",
+              },
+            },
+            "202": Object {
+              "headers": Object {
+                "Azure-AsyncOperation": "https://management.azure.com/subscriptions/subid/providers/Microsoft.SignalRService/...pathToOperationStatus...",
+                "Location": "https://management.azure.com/subscriptions/subid/providers/Microsoft.SignalRService/...pathToOperationResult...",
+              },
+            },
+          },
+          "secretVariables": Array [],
+          "step": "SignalR_Update",
+          "type": "restCall",
+          "variables": Object {},
+        },
+        Object {
+          "description": "SignalR_ListKeys",
+          "exampleFile": "../examples/SignalR_ListKeys.json",
+          "operation": Object {},
+          "operationId": "SignalR_ListKeys",
+          "outputVariables": Object {},
+          "parameters": Object {
+            "api-version": "2021-06-01-preview",
+            "resourceGroupName": "$(resourceGroupName)",
+            "resourceName": "$(resourceName)",
+            "subscriptionId": "$(subscriptionId)",
+          },
+          "requiredVariables": Array [],
+          "responses": Object {
+            "200": Object {
+              "body": Object {},
+            },
+          },
+          "secretVariables": Array [],
+          "step": "SignalR_ListKeys",
+          "type": "restCall",
+          "variables": Object {},
+        },
+        Object {
+          "description": "SignalR_RegenerateKey",
+          "exampleFile": "../examples/SignalR_RegenerateKey.json",
+          "operation": Object {},
+          "operationId": "SignalR_RegenerateKey",
+          "outputVariables": Object {},
+          "parameters": Object {
+            "api-version": "2021-06-01-preview",
+            "parameters": Object {
+              "keyType": "Primary",
+            },
+            "resourceGroupName": "$(resourceGroupName)",
+            "resourceName": "$(resourceName)",
+            "subscriptionId": "$(subscriptionId)",
+          },
+          "requiredVariables": Array [],
+          "responses": Object {
+            "202": Object {
+              "body": Object {},
+              "headers": Object {
+                "Azure-AsyncOperation": "https://management.azure.com/subscriptions/subid/providers/Microsoft.SignalRService/...pathToOperationStatus...",
+                "Location": "https://management.azure.com/subscriptions/subid/providers/Microsoft.SignalRService/...pathToOperationResult...",
+              },
+            },
+          },
+          "secretVariables": Array [],
+          "step": "SignalR_RegenerateKey",
+          "type": "restCall",
+          "variables": Object {},
+        },
+        Object {
+          "description": "SignalR_Restart",
+          "exampleFile": "../examples/SignalR_Restart.json",
+          "operation": Object {},
+          "operationId": "SignalR_Restart",
+          "outputVariables": Object {},
+          "parameters": Object {
+            "api-version": "2021-06-01-preview",
+            "resourceGroupName": "$(resourceGroupName)",
+            "resourceName": "$(resourceName)",
+            "subscriptionId": "$(subscriptionId)",
+          },
+          "requiredVariables": Array [],
+          "responses": Object {
+            "202": Object {
+              "body": Object {},
+              "headers": Object {
+                "Azure-AsyncOperation": "https://management.azure.com/subscriptions/subid/providers/Microsoft.SignalRService/...pathToOperationStatus...",
+                "Location": "https://management.azure.com/subscriptions/subid/providers/Microsoft.SignalRService/...pathToOperationResult...",
+              },
+            },
+            "204": Object {},
+          },
+          "secretVariables": Array [],
+          "step": "SignalR_Restart",
+          "type": "restCall",
+          "variables": Object {},
+        },
+        Object {
+          "description": "Usages_List",
+          "exampleFile": "../examples/Usages_List.json",
+          "operation": Object {},
+          "operationId": "Usages_List",
+          "outputVariables": Object {},
+          "parameters": Object {
+            "api-version": "2021-06-01-preview",
+            "location": "$(location)",
+            "subscriptionId": "$(subscriptionId)",
+          },
+          "requiredVariables": Array [],
+          "responses": Object {
+            "200": Object {
+              "body": Object {
+                "nextLink": "https://management.azure.com/subscriptions/subid/providers/Microsoft.SignalRService/...pathToMoreResults...",
+                "value": Array [
+                  Object {
+                    "currentValue": 0,
+                    "id": "/subscriptions/$(subscriptionId)/providers/Microsoft.SignalRService/locations/$(location)/usages/Usage1",
+                    "limit": 100,
+                    "name": Object {
+                      "localizedValue": "Usage1",
+                      "value": "Usage1",
+                    },
+                    "unit": "Count",
+                  },
+                  Object {
+                    "currentValue": 0,
+                    "id": "/subscriptions/$(subscriptionId)/providers/Microsoft.SignalRService/locations/$(location)/usages/Usage2",
+                    "limit": 100,
+                    "name": Object {
+                      "localizedValue": "Usage2",
+                      "value": "Usage2",
+                    },
+                    "unit": "Count",
+                  },
+                ],
+              },
+            },
+          },
+          "secretVariables": Array [],
+          "step": "Usages_List",
+          "type": "restCall",
+          "variables": Object {},
+        },
+        Object {
+          "description": "SignalR_ListByResourceGroup",
+          "exampleFile": "../examples/SignalR_ListByResourceGroup.json",
+          "operation": Object {},
+          "operationId": "SignalR_ListByResourceGroup",
+          "outputVariables": Object {},
+          "parameters": Object {
+            "api-version": "2021-06-01-preview",
+            "resourceGroupName": "$(resourceGroupName)",
+            "subscriptionId": "$(subscriptionId)",
+          },
+          "requiredVariables": Array [],
+          "responses": Object {
+            "200": Object {
+              "body": Object {
+                "value": Array [
+                  Object {
+                    "id": "/subscriptions/$(subscriptionId)/resourcegroups/$(resourceGroupName)/providers/Microsoft.SignalRService/SignalR/mySignalRService",
+                    "identity": Object {
+                      "principalId": "$(subscriptionId)",
+                      "tenantId": "$(subscriptionId)",
+                      "type": "SystemAssigned",
+                    },
+                    "kind": "SignalR",
+                    "location": "eastus",
+                    "name": "mySignalRService",
+                    "properties": Object {
+                      "cors": Object {
+                        "allowedOrigins": Array [
+                          "https://foo.com",
+                          "https://bar.com",
+                        ],
+                      },
+                      "disableAadAuth": false,
+                      "disableLocalAuth": false,
+                      "externalIP": "10.0.0.1",
+                      "features": Array [
+                        Object {
+                          "flag": "ServiceMode",
+                          "properties": Object {},
+                          "value": "Serverless",
+                        },
+                        Object {
+                          "flag": "EnableConnectivityLogs",
+                          "properties": Object {},
+                          "value": "True",
+                        },
+                        Object {
+                          "flag": "EnableMessagingLogs",
+                          "properties": Object {},
+                          "value": "False",
+                        },
+                        Object {
+                          "flag": "EnableLiveTrace",
+                          "properties": Object {},
+                          "value": "False",
+                        },
+                      ],
+                      "hostName": "mysignalrservice.service.signalr.net",
+                      "networkACLs": Object {
+                        "defaultAction": "Deny",
+                        "privateEndpoints": Array [
+                          Object {
+                            "allow": Array [
+                              "ServerConnection",
+                            ],
+                            "name": "mysignalrservice.1fa229cd-bf3f-47f0-8c49-afb36723997e",
+                          },
+                        ],
+                        "publicNetwork": Object {
+                          "allow": Array [
+                            "ClientConnection",
+                          ],
+                        },
+                      },
+                      "privateEndpointConnections": Array [
+                        Object {
+                          "id": "/subscriptions/$(subscriptionId)/resourcegroups/$(resourceGroupName)/providers/Microsoft.SignalRService/SignalR/mySignalRService/privateEndpointConnections/mysignalrservice.1fa229cd-bf3f-47f0-8c49-afb36723997e",
+                          "name": "mysignalrservice.1fa229cd-bf3f-47f0-8c49-afb36723997e",
+                          "properties": Object {
+                            "privateEndpoint": Object {
+                              "id": "/subscriptions/$(subscriptionId)/resourcegroups/$(resourceGroupName)/providers/Microsoft.Network/privateEndpoints/myPrivateEndpoint",
+                            },
+                            "privateLinkServiceConnectionState": Object {
+                              "actionsRequired": "None",
+                              "status": "Approved",
+                            },
+                            "provisioningState": "Succeeded",
+                          },
+                          "systemData": Object {
+                            "createdAt": "2015-02-03T04:05:06Z",
+                            "createdBy": "string",
+                            "createdByType": "User",
+                            "lastModifiedAt": "2015-02-03T04:05:06Z",
+                            "lastModifiedBy": "string",
+                            "lastModifiedByType": "User",
+                          },
+                          "type": "Microsoft.SignalRService/SignalR/privateEndpointConnections",
+                        },
+                      ],
+                      "provisioningState": "Succeeded",
+                      "publicNetworkAccess": "Enabled",
+                      "publicPort": 443,
+                      "serverPort": 443,
+                      "tls": Object {
+                        "clientCertEnabled": true,
+                      },
+                      "upstream": Object {
+                        "templates": Array [
+                          Object {
+                            "urlTemplate": "http://foo.com",
+                          },
+                        ],
+                      },
+                      "version": "1.0",
+                    },
+                    "sku": Object {
+                      "capacity": 1,
+                      "name": "Standard_S1",
+                      "size": "S1",
+                      "tier": "Standard",
+                    },
+                    "systemData": Object {
+                      "createdAt": "2015-02-03T04:05:06Z",
+                      "createdBy": "string",
+                      "createdByType": "User",
+                      "lastModifiedAt": "2015-02-03T04:05:06Z",
+                      "lastModifiedBy": "string",
+                      "lastModifiedByType": "User",
+                    },
+                    "tags": Object {
+                      "key1": "value1",
+                    },
+                    "type": "Microsoft.SignalRService/SignalR",
+                  },
+                ],
+              },
+            },
+          },
+          "secretVariables": Array [],
+          "step": "SignalR_ListByResourceGroup",
+          "type": "restCall",
+          "variables": Object {},
+        },
+        Object {
+          "description": "SignalR_ListBySubscription",
+          "exampleFile": "../examples/SignalR_ListBySubscription.json",
+          "operation": Object {},
+          "operationId": "SignalR_ListBySubscription",
+          "outputVariables": Object {},
+          "parameters": Object {
+            "api-version": "2021-06-01-preview",
+            "subscriptionId": "$(subscriptionId)",
+          },
+          "requiredVariables": Array [],
+          "responses": Object {
+            "200": Object {
+              "body": Object {
+                "value": Array [
+                  Object {
+                    "id": "/subscriptions/$(subscriptionId)/resourcegroups/myResourceGroup/providers/Microsoft.SignalRService/SignalR/mySignalRService",
+                    "identity": Object {
+                      "principalId": "$(subscriptionId)",
+                      "tenantId": "$(subscriptionId)",
+                      "type": "SystemAssigned",
+                    },
+                    "kind": "SignalR",
+                    "location": "eastus",
+                    "name": "mySignalRService",
+                    "properties": Object {
+                      "cors": Object {
+                        "allowedOrigins": Array [
+                          "https://foo.com",
+                          "https://bar.com",
+                        ],
+                      },
+                      "disableAadAuth": false,
+                      "disableLocalAuth": false,
+                      "externalIP": "10.0.0.1",
+                      "features": Array [
+                        Object {
+                          "flag": "ServiceMode",
+                          "properties": Object {},
+                          "value": "Serverless",
+                        },
+                        Object {
+                          "flag": "EnableConnectivityLogs",
+                          "properties": Object {},
+                          "value": "True",
+                        },
+                        Object {
+                          "flag": "EnableMessagingLogs",
+                          "properties": Object {},
+                          "value": "False",
+                        },
+                        Object {
+                          "flag": "EnableLiveTrace",
+                          "properties": Object {},
+                          "value": "False",
+                        },
+                      ],
+                      "hostName": "mysignalrservice.service.signalr.net",
+                      "networkACLs": Object {
+                        "defaultAction": "Deny",
+                        "privateEndpoints": Array [
+                          Object {
+                            "allow": Array [
+                              "ServerConnection",
+                            ],
+                            "name": "mysignalrservice.1fa229cd-bf3f-47f0-8c49-afb36723997e",
+                          },
+                        ],
+                        "publicNetwork": Object {
+                          "allow": Array [
+                            "ClientConnection",
+                          ],
+                        },
+                      },
+                      "privateEndpointConnections": Array [
+                        Object {
+                          "id": "/subscriptions/$(subscriptionId)/resourcegroups/myResourceGroup/providers/Microsoft.SignalRService/SignalR/mySignalRService/privateEndpointConnections/mysignalrservice.1fa229cd-bf3f-47f0-8c49-afb36723997e",
+                          "name": "mysignalrservice.1fa229cd-bf3f-47f0-8c49-afb36723997e",
+                          "properties": Object {
+                            "privateEndpoint": Object {
+                              "id": "/subscriptions/$(subscriptionId)/resourcegroups/myResourceGroup/providers/Microsoft.Network/privateEndpoints/myPrivateEndpoint",
+                            },
+                            "privateLinkServiceConnectionState": Object {
+                              "actionsRequired": "None",
+                              "status": "Approved",
+                            },
+                            "provisioningState": "Succeeded",
+                          },
+                          "systemData": Object {
+                            "createdAt": "2015-02-03T04:05:06Z",
+                            "createdBy": "string",
+                            "createdByType": "User",
+                            "lastModifiedAt": "2015-02-03T04:05:06Z",
+                            "lastModifiedBy": "string",
+                            "lastModifiedByType": "User",
+                          },
+                          "type": "Microsoft.SignalRService/SignalR/privateEndpointConnections",
+                        },
+                      ],
+                      "provisioningState": "Succeeded",
+                      "publicNetworkAccess": "Enabled",
+                      "publicPort": 443,
+                      "serverPort": 443,
+                      "tls": Object {
+                        "clientCertEnabled": true,
+                      },
+                      "upstream": Object {
+                        "templates": Array [
+                          Object {
+                            "urlTemplate": "http://foo.com",
+                          },
+                        ],
+                      },
+                      "version": "1.0",
+                    },
+                    "sku": Object {
+                      "capacity": 1,
+                      "name": "Standard_S1",
+                      "size": "S1",
+                      "tier": "Standard",
+                    },
+                    "systemData": Object {
+                      "createdAt": "2015-02-03T04:05:06Z",
+                      "createdBy": "string",
+                      "createdByType": "User",
+                      "lastModifiedAt": "2015-02-03T04:05:06Z",
+                      "lastModifiedBy": "string",
+                      "lastModifiedByType": "User",
+                    },
+                    "tags": Object {
+                      "key1": "value1",
+                    },
+                    "type": "Microsoft.SignalRService/SignalR",
+                  },
+                ],
+              },
+            },
+          },
+          "secretVariables": Array [],
+          "step": "SignalR_ListBySubscription",
+          "type": "restCall",
+          "variables": Object {},
+        },
+        Object {
+          "description": "Operations_List",
+          "exampleFile": "../examples/Operations_List.json",
+          "operation": Object {},
+          "operationId": "Operations_List",
+          "outputVariables": Object {},
+          "parameters": Object {
+            "api-version": "2021-06-01-preview",
+          },
+          "requiredVariables": Array [],
+          "responses": Object {
+            "200": Object {
+              "body": Object {
+                "nextLink": "providers/Microsoft.SignalRService?$skipToken={opaqueString}",
+                "value": Array [
+                  Object {
+                    "display": Object {
+                      "description": "View the resource settings and configurations in the management portal or through API",
+                      "operation": "Manage SignalR (read-only)",
+                      "provider": "Microsoft.SignalRService",
+                      "resource": "SignalR",
+                    },
+                    "isDataAction": false,
+                    "name": "Microsoft.SignalRService/SignalR/read",
+                    "properties": Object {},
+                  },
+                ],
+              },
+            },
+          },
+          "secretVariables": Array [],
+          "step": "Operations_List",
+          "type": "restCall",
+          "variables": Object {},
+        },
+        Object {
+          "description": "SignalR_Delete",
+          "exampleFile": "../examples/SignalR_Delete.json",
+          "operation": Object {},
+          "operationId": "SignalR_Delete",
+          "outputVariables": Object {},
+          "parameters": Object {
+            "api-version": "2021-06-01-preview",
+            "resourceGroupName": "$(resourceGroupName)",
+            "resourceName": "$(resourceName)",
+            "subscriptionId": "$(subscriptionId)",
+          },
+          "requiredVariables": Array [],
+          "responses": Object {
+            "200": Object {
+              "body": Object {},
+            },
+            "202": Object {
+              "headers": Object {
+                "Azure-AsyncOperation": "https://management.azure.com/subscriptions/subid/providers/Microsoft.SignalRService/...pathToOperationStatus...",
+                "Location": "https://management.azure.com/subscriptions/subid/providers/Microsoft.SignalRService/...pathToOperationResult...",
+              },
+            },
+            "204": Object {},
+          },
+          "secretVariables": Array [],
+          "step": "SignalR_Delete",
+          "type": "restCall",
+          "variables": Object {},
+        },
+      ],
+      "variables": Object {
+        "resourceName": Object {
+          "type": "string",
+        },
+      },
+    },
+  ],
+  "scope": "ResourceGroup",
+  "secretVariables": Array [],
+  "variables": Object {},
+}
+`;

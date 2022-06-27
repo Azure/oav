@@ -1,0 +1,77 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Batch Document Translation Client",
+    "version": "v2.0-preview1"
+  },
+  "paths": {
+    "/translation": {
+      "post": {
+        "tags": [
+          "Document Translator V2"
+        ],
+        "description": "Use this API to translate a single document. the request body should contain the document content and the 'Content-Type' header should contain the document type",
+        "operationId": "DocumentTranslation_TranslateDocument_ApiVersion2Preview1",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "text/plain",
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          "application/msword",
+          "application/vnd.ms-powerpoint",
+          "application/vnd.ms-excel",
+          "application/vnd.oasis.opendocument.text",
+          "application/vnd.oasis.opendocument.presentation",
+          "application/vnd.oasis.opendocument.spreadsheet",
+          "application/vnd.ms-outlook",
+          "text/html",
+          "message/rfc823",
+          "multipart/related",
+          "application/x-mimearchive",
+          "application/vnd.openxmlformats-officedocument",
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "q1",
+            "description": "test",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "q2",
+            "description": "test",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "Document",
+            "description": "Actual Document in the form",
+            "required": true,
+            "type": "file"
+          },
+          {
+            "in": "formData",
+            "name": "Glossary",
+            "description": "Glossary for the request",
+            "type": "file"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful request and the document is translated.  The translated document is returned in the body",
+            "schema": {
+              "format": "byte",
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

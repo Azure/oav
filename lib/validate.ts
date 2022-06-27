@@ -27,7 +27,6 @@ import { XMsExampleExtractor } from "./xMsExampleExtractor";
 import ExampleGenerator from "./generator/exampleGenerator";
 import { getSuppressions } from "./validators/suppressions";
 import { log } from "./util/logging";
-import { getInputFiles } from "./generator/util";
 import { SemanticValidator } from "./swaggerValidator/semanticValidator";
 import { ErrorCodeConstants} from "./util/errorDefinitions";
 import { TrafficValidationIssue, TrafficValidationOptions, TrafficValidator} from "./swaggerValidator/trafficValidator";
@@ -548,7 +547,7 @@ export async function generateExamples(
   }
   const wholeInputFiles: string[] = [];
   if (readme && tag) {
-    const inputFiles = await getInputFiles(readme, tag);
+    const inputFiles = await utils.getInputFiles(readme, tag);
     if (!inputFiles) {
       throw Error("get input files from readme tag failed.");
     }

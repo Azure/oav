@@ -45,6 +45,7 @@ import {
 } from "../liveValidation/operationValidator";
 import { log } from "../util/logging";
 import { getFilePositionFromJsonPath } from "../util/jsonUtils";
+import { checkAndResolveGithubUrl } from "../util/utils";
 import { Severity } from "../util/severity";
 import { ValidationResultSource } from "../util/validationResultSource";
 import { SchemaValidateIssue, SchemaValidator, SchemaValidatorOption } from "./schemaValidator";
@@ -121,15 +122,7 @@ export class SwaggerExampleValidator {
         "specPath is a required parameter of type string and it cannot be an empty string."
       );
     }
-    // If the spec path is a url starting with https://github then let us auto convert it to an
-    // https://raw.githubusercontent url.
-    if (specPath.startsWith("https://github")) {
-      specPath = specPath.replace(
-        /^https:\/\/(github.com)(.*)blob\/(.*)/gi,
-        "https://raw.githubusercontent.com$2$3"
-      );
-    }
-    this.specPath = specPath;
+    this.specPath = checkAndResolveGithubUrl(specPath);
   }
 
   private async validateOperation(operation: Operation): Promise<void> {
@@ -251,6 +244,13 @@ export class SwaggerExampleValidator {
       }
       // validate headers
       const headers = transformLiveHeader(exampleResponseHeaders, responseSchema);
+      this.validateLroOperation(
+        exampleFileUrl,
+        operation,
+        exampleResponseStatusCode,
+        headers,
+        exampleResponseHeaders
+      );
       if (responseSchema.schema !== undefined) {
         if (headers["content-type"] !== undefined) {
           this.validateContentType(
@@ -264,13 +264,6 @@ export class SwaggerExampleValidator {
             exampleResponseHeaders
           );
         }
-        this.validateLroOperation(
-          exampleFileUrl,
-          operation,
-          exampleResponseStatusCode,
-          headers,
-          exampleResponseHeaders
-        );
         const validate = responseSchema._validate!;
         const ctx = {
           isResponse: true,
@@ -590,7 +583,14 @@ export class SwaggerExampleValidator {
           schemaPosition = err.source.position;
         }
 
-        for (const path of err.jsonPathsInPayload) {
+        for (let path of err.jsonPathsInPayload) {
+          // If parameter name includes ".", path should use "[]" for better understand.
+          for (const parameter of err.params) {
+            const parameterPosition = path.indexOf(parameter);
+            if (parameterPosition !== -1 && parameter.includes(".")) {
+              path = path.substring(0, parameterPosition - 1) + `['${parameter}']`;
+            }
+          }
           exampleJsonPaths.push(`$responses.${statusCode}${path}`);
         }
       }
@@ -631,7 +631,7 @@ export class SwaggerExampleValidator {
           node = jsonPointer.get(this.swagger, jsonRef);
         } else {
           const externalSwagger = this.jsonLoader.getFileContentFromCache(err.source.url);
-          node = jsonPointer.get(externalSwagger!, jsonRef);
+          node = jsonPointer.get(externalSwagger as openapiToolsCommon.JsonObject, jsonRef);
         }
         const isSuppressed = isSuppressedInPath(node, err.code, err.message);
         if (isSuppressed) {

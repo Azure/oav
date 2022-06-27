@@ -1,19 +1,18 @@
-import * as fs from "fs";
-import { resolve as pathResolve, dirname } from "path";
-import { JSONPath } from "jsonpath-plus";
-import { injectable } from "inversify";
-import { Type, YAMLException, load as yamlLoad, DEFAULT_SCHEMA } from "js-yaml";
+import { pathDirName, pathJoin, pathResolve, urlParse } from "@azure-tools/openapi-tools-common";
 import { default as AjvInit, ValidateFunction } from "ajv";
-import { Loader } from "../swagger/loader";
+import { injectable } from "inversify";
+import { DEFAULT_SCHEMA, load as yamlLoad, Type, YAMLException } from "js-yaml";
 import { FileLoader } from "../swagger/fileLoader";
-import { RawScenarioDefinition } from "./apiScenarioTypes";
+import { Loader } from "../swagger/loader";
 import { ApiScenarioDefinition } from "./apiScenarioSchema";
+import { RawScenarioDefinition, RawStep, ReadmeTag } from "./apiScenarioTypes";
 
 const ajv = new AjvInit({
   useDefaults: true,
 });
+
 @injectable()
-export class ApiScenarioYamlLoader implements Loader<RawScenarioDefinition> {
+export class ApiScenarioYamlLoader implements Loader<[RawScenarioDefinition, ReadmeTag[]]> {
   private fileCache: Map<string, string> = new Map();
   private validateApiScenarioFile: ValidateFunction;
 
@@ -21,7 +20,7 @@ export class ApiScenarioYamlLoader implements Loader<RawScenarioDefinition> {
     this.validateApiScenarioFile = ajv.compile(ApiScenarioDefinition);
   }
 
-  public async load(filePath: string): Promise<RawScenarioDefinition> {
+  public async load(filePath: string): Promise<[RawScenarioDefinition, ReadmeTag[]]> {
     this.fileCache.clear();
 
     const fileContent = await this.fileLoader.load(filePath);
@@ -47,7 +46,9 @@ export class ApiScenarioYamlLoader implements Loader<RawScenarioDefinition> {
     });
 
     for (const file of this.fileCache.keys()) {
-      const fileContent = await this.fileLoader.load(pathResolve(dirname(filePath), file));
+      const fileContent = await this.fileLoader.load(
+        pathResolve(pathJoin(pathDirName(filePath), file))
+      );
       this.fileCache.set(file, fileContent);
     }
 
@@ -67,79 +68,36 @@ export class ApiScenarioYamlLoader implements Loader<RawScenarioDefinition> {
       );
     }
 
-    return filePayload as RawScenarioDefinition;
-  }
-}
+    const readmeTags: ReadmeTag[] = [];
+    const tempSet = new Set<string>();
+    const rawDef = filePayload as RawScenarioDefinition;
 
-const getAllSwaggerFilePathUnderDir = (dir: string): any[] => {
-  const allSwaggerFiles = fs
-    .readdirSync(dir)
-    .map((it) => pathResolve(dir, it))
-    .filter((it) => it.endsWith(".json"));
-  return allSwaggerFiles;
-};
+    const consumeStep = (step: RawStep) => {
+      if ("readmeTag" in step && step.readmeTag) {
+        if (!tempSet.has(step.readmeTag)) {
+          tempSet.add(step.readmeTag);
+          const match = /(\S+\/readme\.md)(#([a-z][a-z0-9-]+))?/i.exec(step.readmeTag);
+          if (match) {
+            const readmeFilePath = urlParse(match[1])
+              ? match[1]
+              : pathResolve(pathJoin(pathDirName(this.fileLoader.resolvePath(filePath)), match[1]));
 
-export const getSwaggerFilePathsFromApiScenarioFilePath = (
-  apiScenarioFilePath: string
-): string[] => {
-  const fileContent = fs.readFileSync(apiScenarioFilePath).toString();
-  const rawScenarioDef = yamlLoad(fileContent, {
-    schema: DEFAULT_SCHEMA.extend(
-      new Type("!include", {
-        kind: "scalar",
-      })
-    ),
-  }) as RawScenarioDefinition;
-  const allSwaggerFilePaths = getAllSwaggerFilePathUnderDir(dirname(dirname(apiScenarioFilePath)));
-  const allSwaggerFiles = allSwaggerFilePaths.map((it) => {
-    return {
-      swaggerFilePath: it,
-      swaggerObj: JSON.parse(fs.readFileSync(it).toString()),
-    };
-  });
-  const findMatchedSwagger = (exampleFileName: string): string | undefined => {
-    for (const it of allSwaggerFiles) {
-      const allXmsExamplesPath = "$..x-ms-examples..$ref";
-      const allXmsExampleValues = JSONPath({
-        path: allXmsExamplesPath,
-        json: it.swaggerObj,
-        resultType: "all",
-      });
-      if (allXmsExampleValues.some((it: any) => it.value.includes(exampleFileName))) {
-        return it.swaggerFilePath;
-      }
-    }
-    return undefined;
-  };
-  const res: Set<string> = new Set<string>();
-
-  for (const rawStep of rawScenarioDef.prepareSteps ?? []) {
-    if ("exampleFile" in rawStep) {
-      const swaggerFilePath = findMatchedSwagger(rawStep.exampleFile.replace(/^.*[\\\/]/, ""));
-      if (swaggerFilePath !== undefined) {
-        res.add(swaggerFilePath);
-      }
-    }
-  }
-
-  for (const rawScenario of rawScenarioDef.scenarios ?? []) {
-    for (const rawStep of rawScenario.steps) {
-      if ("exampleFile" in rawStep) {
-        const swaggerFilePath = findMatchedSwagger(rawStep.exampleFile.replace(/^.*[\\\/]/, ""));
-        if (swaggerFilePath !== undefined) {
-          res.add(swaggerFilePath);
+            readmeTags.push({
+              name: step.readmeTag,
+              filePath: readmeFilePath,
+              tag: match[3],
+            });
+          } else {
+            throw new Error(`Invalid readmeTag: ${step.readmeTag} in step ${step}`);
+          }
         }
       }
-    }
-  }
+    };
 
-  for (const rawStep of rawScenarioDef.cleanUpSteps ?? []) {
-    if ("exampleFile" in rawStep) {
-      const swaggerFilePath = findMatchedSwagger(rawStep.exampleFile.replace(/^.*[\\\/]/, ""));
-      if (swaggerFilePath !== undefined) {
-        res.add(swaggerFilePath);
-      }
-    }
+    rawDef.prepareSteps?.forEach(consumeStep);
+    rawDef.scenarios.forEach((scenario) => scenario.steps.forEach(consumeStep));
+    rawDef.cleanUpSteps?.forEach(consumeStep);
+
+    return [rawDef, readmeTags];
   }
-  return Array.from(res.values());
-};
+}

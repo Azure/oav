@@ -1,5 +1,27 @@
 # Change Log - oav
 
+## 06/10/2022 3.0.1
+
+- GenerateExamples - Change the domain of LRO header
+- ModelValidator - Still validate LRO operation when response doesn't have schema
+- ModelValidator - Report real exampleJsonPath when additional parameter includes "."
+- Support duration format when generating examples
+- SemanticValidator - Fix bug about multipart/form-data
+
+## 06/10/2022 3.0.0
+
+- API Scenario runner
+  - Implement [API Scenario v1.2 schema](https://github.com/Azure/azure-rest-api-specs/blob/main/documentation/api-scenario/references/v1.2/schema.json)
+    - operationId based step
+    - more variable types and prefix support
+  - Support loading file from remote uri
+  - Support [testProxy](https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy) recording mode when running API Scenario
+  - Improve API Scenario generation from RESTler dependencies
+  - Support running API Scenario against localhost endpoint
+  - Refactor Postman based runner client
+  - Support API Scenario generation from testProxy recording
+  - Support local devMode where AAD auth, ARM call and LRO polling will be disabled
+
 ## 05/27/2022 2.12.2
 
 - LiveValidator - Get real schema and data while error's schema has allOf property

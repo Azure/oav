@@ -7,7 +7,8 @@ export const ApiScenarioDefinition: Schema & {
   properties: {
     scope: {
       type: "string",
-      enum: ["ResourceGroup"],
+      enum: ["ResourceGroup", "None"],
+      default: "None",
     },
     variables: {
       $ref: "#/definitions/Variables",
@@ -40,12 +41,17 @@ export const ApiScenarioDefinition: Schema & {
   definitions: {
     Name: {
       type: "string",
-      pattern: "^[A-Za-z_][A-Za-z0-9_-]*$",
+      pattern: "^[A-Za-z_$][A-Za-z0-9_-]*$",
     },
     JsonPointer: {
       type: "string",
       description: "JSON Pointer described by RFC 6901, e.g. /foo/bar",
       pattern: "^(/(([^/~])|(~[01]))*)*$",
+    },
+    VariableType: {
+      type: "string",
+      enum: ["array", "bool", "int", "object", "secureString", "secureObject", "string"],
+      default: "string",
     },
     Variables: {
       type: "object",
@@ -56,22 +62,163 @@ export const ApiScenarioDefinition: Schema & {
         oneOf: [
           {
             type: "string",
-            description: "Default value of the variable",
           },
           {
             type: "object",
             properties: {
               type: {
-                type: "string",
-                enum: ["string", "secureString"],
-                default: "string",
-              },
-              defaultValue: {
-                type: "string",
-                description: "Default value of the variable",
+                $ref: "#/definitions/VariableType",
               },
             },
-            additionalProperties: false,
+            required: ["type"],
+            allOf: [
+              {
+                if: {
+                  properties: {
+                    type: {
+                      enum: ["string", "secureString"],
+                    },
+                  },
+                },
+                then: {
+                  anyOf: [
+                    {
+                      properties: {
+                        type: {},
+                        value: {
+                          type: "string",
+                        },
+                      },
+                      additionalProperties: false,
+                    },
+                    {
+                      properties: {
+                        type: {},
+                        prefix: {
+                          type: "string",
+                        },
+                      },
+                      additionalProperties: false,
+                    },
+                  ],
+                },
+              },
+              {
+                if: {
+                  properties: {
+                    type: {
+                      enum: ["object", "secureObject"],
+                    },
+                  },
+                  required: ["type"],
+                },
+                then: {
+                  oneOf: [
+                    {
+                      properties: {
+                        type: {},
+                        value: {
+                          type: "object",
+                        },
+                      },
+                      required: ["value"],
+                      additionalProperties: false,
+                    },
+                    {
+                      properties: {
+                        type: {},
+                        patches: {
+                          type: "array",
+                          items: {
+                            $ref: "#/definitions/JsonPatchOp",
+                          },
+                        },
+                      },
+                      required: ["patches"],
+                      additionalProperties: false,
+                    },
+                  ],
+                },
+              },
+              {
+                if: {
+                  properties: {
+                    type: {
+                      const: "array",
+                    },
+                  },
+                  required: ["type"],
+                },
+                then: {
+                  oneOf: [
+                    {
+                      properties: {
+                        type: {},
+                        value: {
+                          type: "array",
+                          items: {},
+                        },
+                      },
+                      required: ["value"],
+                      additionalProperties: false,
+                    },
+                    {
+                      properties: {
+                        type: {},
+                        patches: {
+                          type: "array",
+                          items: {
+                            $ref: "#/definitions/JsonPatchOp",
+                          },
+                        },
+                      },
+                      required: ["patches"],
+                      additionalProperties: false,
+                    },
+                  ],
+                },
+              },
+              {
+                if: {
+                  properties: {
+                    type: {
+                      const: "bool",
+                    },
+                  },
+                  required: ["type"],
+                },
+                then: {
+                  properties: {
+                    type: {},
+                    value: {
+                      type: "boolean",
+                    },
+                  },
+                  required: ["value"],
+                  additionalProperties: false,
+                },
+              },
+              {
+                if: {
+                  properties: {
+                    type: {
+                      const: "int",
+                    },
+                  },
+                  required: ["type"],
+                },
+                then: {
+                  properties: {
+                    type: {},
+                    value: {
+                      type: "integer",
+                    },
+                  },
+                  required: ["value"],
+                  additionalProperties: false,
+                },
+              },
+            ],
           },
         ],
       },
@@ -81,7 +228,7 @@ export const ApiScenarioDefinition: Schema & {
       properties: {
         scenario: {
           $ref: "#/definitions/Name",
-          description: "Name of the scenario",
+          description: "Name of the scenario that uniquely identifies it",
         },
         description: {
           type: "string",
@@ -108,10 +255,10 @@ export const ApiScenarioDefinition: Schema & {
     Step: {
       oneOf: [
         {
-          $ref: "#/definitions/StepRestCall",
+          $ref: "#/definitions/StepOperation",
         },
         {
-          $ref: "#/definitions/StepRestOperation",
+          $ref: "#/definitions/StepExample",
         },
         {
           $ref: "#/definitions/StepArmTemplate",
@@ -119,59 +266,112 @@ export const ApiScenarioDefinition: Schema & {
         {
           $ref: "#/definitions/StepArmDeploymentScript",
         },
-        {
-          $ref: "#/definitions/StepRawCall",
-        },
       ],
     },
     StepBase: {
+      type: "object",
       properties: {
         step: {
           $ref: "#/definitions/Name",
-          description: "Name of the step",
+          description: "The name of the step that uniquely identifies it",
         },
         description: {
           type: "string",
-          description: "A long description of the step",
+          description: "A brief explanation about the step",
         },
         variables: {
           $ref: "#/definitions/Variables",
         },
-        outputVariables: {
-          type: "object",
-          propertyNames: {
-            $ref: "#/definitions/Name",
-          },
-          additionalProperties: {
-            type: "object",
-            properties: {
-              type: {
-                type: "string",
-                enum: ["string", "secureString"],
-                default: "string",
-              },
-              fromResponse: {
-                type: "string",
-              },
-            },
-          },
-        },
       },
     },
     StepRestBase: {
+      type: "object",
       allOf: [
         {
           $ref: "#/definitions/StepBase",
         },
       ],
       properties: {
-        resourceUpdate: {
-          type: "array",
-          description: "Update resource properties in body for both request and expected response",
-          items: {
-            $ref: "#/definitions/JsonPatchOp",
+        outputVariables: {
+          type: "object",
+          propertyNames: {
+            $ref: "#/definitions/Name",
           },
-          minItems: 1,
+          additionalProperties: {
+            properties: {
+              type: {
+                $ref: "#/definitions/VariableType",
+              },
+              fromRequest: {
+                $ref: "#/definitions/JsonPointer",
+              },
+              fromResponse: {
+                $ref: "#/definitions/JsonPointer",
+              },
+            },
+          },
+        },
+      },
+    },
+    StepOperation: {
+      type: "object",
+      allOf: [
+        {
+          $ref: "#/definitions/StepRestBase",
+        },
+      ],
+      properties: {
+        operationId: {
+          type: "string",
+        },
+        readmeTag: {
+          type: "string",
+          format: "uri-reference",
+        },
+        parameters: {
+          type: "object",
+          additionalProperties: true,
+        },
+        responses: {
+          type: "object",
+          minProperties: 1,
+          additionalProperties: false,
+          patternProperties: {
+            "^([0-9]{3})$": {
+              type: "object",
+              properties: {
+                headers: {
+                  type: "object",
+                  additionalProperties: {
+                    type: "string",
+                  },
+                },
+                body: {
+                  type: ["object", "number", "array", "integer", "string", "boolean", "null"],
+                },
+              },
+            },
+          },
+        },
+        step: {},
+        description: {},
+        variables: {},
+        outputVariables: {},
+      },
+      required: ["operationId"],
+      additionalProperties: false,
+    },
+    StepExample: {
+      type: "object",
+      allOf: [
+        {
+          $ref: "#/definitions/StepRestBase",
+        },
+      ],
+      properties: {
+        exampleFile: {
+          type: "string",
+          format: "uri-reference",
         },
         requestUpdate: {
           type: "array",
@@ -189,49 +389,13 @@ export const ApiScenarioDefinition: Schema & {
           },
           minItems: 1,
         },
-        statusCode: {
-          type: "integer",
-          description: "Expected response code",
-          default: 200,
-        },
-      },
-    },
-    StepRestCall: {
-      type: "object",
-      allOf: [
-        {
-          $ref: "#/definitions/StepRestBase",
-        },
-      ],
-      properties: {
-        exampleFile: {
-          type: "string",
-        },
-        resourceName: {
-          $ref: "#/definitions/Name",
-          description: "Name a resource for tracking",
-        },
+        step: {},
+        description: {},
+        variables: {},
+        outputVariables: {},
       },
       required: ["exampleFile"],
-    },
-    StepRestOperation: {
-      type: "object",
-      allOf: [
-        {
-          $ref: "#/definitions/StepRestBase",
-        },
-      ],
-      properties: {
-        operationId: {
-          type: "string",
-          description: "The operationId to perform on a tracking resource",
-        },
-        resourceName: {
-          $ref: "#/definitions/Name",
-          description: "Reference a tracking resource",
-        },
-      },
-      required: ["operationId", "resourceName"],
+      additionalProperties: false,
     },
     StepArmTemplate: {
       type: "object",
@@ -243,9 +407,14 @@ export const ApiScenarioDefinition: Schema & {
       properties: {
         armTemplate: {
           type: "string",
+          format: "uri-reference",
         },
+        step: {},
+        description: {},
+        variables: {},
       },
       required: ["armTemplate"],
+      additionalProperties: false,
     },
     StepArmDeploymentScript: {
       type: "object",
@@ -257,6 +426,7 @@ export const ApiScenarioDefinition: Schema & {
       properties: {
         armDeploymentScript: {
           type: "string",
+          format: "uri-reference",
         },
         arguments: {
           type: "string",
@@ -276,39 +446,12 @@ export const ApiScenarioDefinition: Schema & {
             required: ["name", "value"],
           },
         },
+        step: {},
+        description: {},
+        variables: {},
       },
       required: ["armDeploymentScript"],
-    },
-    StepRawCall: {
-      type: "object",
-      allOf: [
-        {
-          $ref: "#/definitions/StepBase",
-        },
-      ],
-      properties: {
-        method: {
-          type: "string",
-          enum: ["GET", "PUT", "PATCH", "POST", "DELETE", "OPTIONS", "HEAD"],
-        },
-        url: {
-          type: "string",
-        },
-        requestHeaders: {
-          type: "object",
-          additionalProperties: {
-            type: "string",
-          },
-        },
-        requestBody: {},
-        statusCode: {
-          type: "integer",
-          description: "Expected response code",
-          default: 200,
-        },
-        expectedResponse: {},
-      },
-      required: ["method", "url", "requestHeaders", "requestBody"],
+      additionalProperties: false,
     },
     JsonPatchOp: {
       type: "object",
