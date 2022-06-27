@@ -3,7 +3,7 @@
 
 /* eslint-disable id-blacklist */
 
-import { resolve as pathResolve } from "path";
+import { resolve as pathResolve, dirname, join as pathJoin } from "path";
 import * as yargs from "yargs";
 import { StaticApiScenarioGenerator } from "../../apiScenario/gen/staticApiScenarioGenerator";
 import { RestlerApiScenarioGenerator } from "../../apiScenario/gen/restlerApiScenarioGenerator";
@@ -55,7 +55,9 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     let tag = "default";
     if (argv.readme !== undefined) {
       const readmeMd: string = pathResolve(argv.readme);
-      const inputSwaggerFile = await getInputFiles(readmeMd, argv.tag);
+      const inputSwaggerFile = (await getInputFiles(readmeMd, argv.tag)).map((it: string) =>
+        pathJoin(dirname(readmeMd), it)
+      );
       console.log(`input swagger files: ${inputSwaggerFile}`);
       for (const it of inputSwaggerFile) {
         if (swaggerFilePaths.indexOf(it) === -1) {
