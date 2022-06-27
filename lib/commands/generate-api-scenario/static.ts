@@ -76,6 +76,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     if (argv.dependency) {
       const generator = RestlerApiScenarioGenerator.create({
         fileRoot: fileRoot,
+        checkUnderFileRoot: false,
         swaggerFilePaths: swaggerFilePaths,
         outputDir: pathResolve(argv.outputDir),
         dependencyPath: argv.dependency,
