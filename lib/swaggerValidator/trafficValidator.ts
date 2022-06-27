@@ -235,9 +235,9 @@ export class TrafficValidator {
           const trafficSpec = await this.swaggerLoader.load(payloadFilePath);
           let liveRequestResponseList;
           if (validationResult.requestValidationResult.isSuccessful) {
-            liveRequestResponseList = findPathsToKey({ key: "liveRequest", obj: trafficSpec });
-          } else {
             liveRequestResponseList = findPathsToKey({ key: "liveResponse", obj: trafficSpec });
+          } else {
+            liveRequestResponseList = findPathsToKey({ key: "liveRequest", obj: trafficSpec });
           }
           console.log(liveRequestResponseList);
           const liveRequestResponsePosition = getFilePositionFromJsonPath(
