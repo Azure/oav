@@ -220,7 +220,7 @@ export class TestRecordingApiScenarioGenerator {
   }
 
   private searchOperation(record: SingleRequestTracking) {
-    const info = parseValidationRequest(record.url, record.method, "");
+    const info = parseValidationRequest(record.url, record.method, "", "");
     try {
       const result = this.operationSearcher.search(info);
       return result.operationMatch;

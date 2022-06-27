@@ -166,7 +166,12 @@ export class TrafficValidator {
         const operationInfo = validationResult.requestValidationResult?.operationInfo;
         const liveRequest = payload.liveRequest;
         const correlationId = liveRequest.headers?.["x-ms-correlation-request-id"] || "";
-        const opInfo = await this.liveValidator.getOperationInfo(liveRequest, correlationId);
+        const activityId = liveRequest.headers?.["x-ms-request-id"] || "";
+        const opInfo = await this.liveValidator.getOperationInfo(
+          liveRequest,
+          correlationId,
+          activityId
+        );
         let swaggerFile;
         if (liveRequest.url.includes("provider")) {
           // This is for validation of resource-manager
