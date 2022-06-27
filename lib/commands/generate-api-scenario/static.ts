@@ -79,7 +79,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
         checkUnderFileRoot: false,
         swaggerFilePaths: swaggerFilePaths,
         outputDir: pathResolve(argv.outputDir),
-        dependencyPath: argv.dependency,
+        dependencyPath: pathResolve(argv.dependency),
         useExample: argv.useExample,
       });
 
