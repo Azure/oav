@@ -93,6 +93,11 @@ export const builder: yargs.CommandBuilder = {
     boolean: true,
     default: false,
   },
+  savePayload: {
+    describe: "Whether save live traffic payload.",
+    boolean: true,
+    default: false,
+  },
   devMode: {
     describe: "Development mode. If set, will skip AAD auth and ARM API call.",
     boolean: true,
@@ -102,11 +107,6 @@ export const builder: yargs.CommandBuilder = {
     describe: "Log verbose",
     default: false,
     boolean: true,
-  },
-  generateExample: {
-    describe: "Whether to generate examples from live traffic after API test",
-    boolean: true,
-    default: false,
   },
 };
 
@@ -186,7 +186,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       verbose: argv.verbose,
       swaggerFilePaths: swaggerFilePaths,
       devMode: argv.devMode,
-      generateExample: argv.generateExample,
+      savePayload: argv.savePayload,
     };
     const generator = inversifyGetInstance(PostmanCollectionGenerator, opt);
     await generator.run();

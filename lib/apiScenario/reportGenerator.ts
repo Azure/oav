@@ -104,7 +104,6 @@ export interface ReportGeneratorOption extends NewmanReportParserOption, ApiScen
   validationLevel?: ValidationLevel;
   verbose?: boolean;
   swaggerFilePaths?: string[];
-  generateExample?: boolean;
 }
 
 @injectable()
@@ -175,13 +174,6 @@ export class ReportGenerator {
     );
   }
 
-  private async writeExample(filename: string, example: any) {
-    await this.fileLoader.writeFile(
-      path.join("../examples", filename),
-      JSON.stringify(example, null, 2)
-    );
-  }
-
   public async generateTestScenarioResult(rawReport: RawReport) {
     await this.initialize();
     await this.liveValidator.initialize();
@@ -206,22 +198,6 @@ export class ReportGenerator {
         let generatedExample = undefined;
         let roundtripErrors = undefined;
         let responseDiffResult: ResponseDiffItem[] | undefined = undefined;
-        if (this.opts.generateExample) {
-          const example = this.generateExample(
-            it,
-            variables,
-            rawReport,
-            matchedStep,
-            "example"
-          ).example;
-          for (const key of Object.keys(example.responses)) {
-            if (key >= "400") {
-              delete example.responses[key];
-            }
-          }
-          await this.writeExample(`${matchedStep.description ?? matchedStep.step}.json`, example);
-          // console.log(`Generated example ${matchedStep.step}: ${JSON.stringify(example, null, 2)}`);
-        }
         if (it.annotation.exampleName) {
           generatedExample = this.generateExample(
             it,

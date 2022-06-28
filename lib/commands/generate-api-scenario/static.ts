@@ -37,10 +37,9 @@ export const builder: yargs.CommandBuilder = {
     type: "array",
   },
   rules: {
-    describe:
-      "generate api scenarios file rules split by comma. supported: operations-list , put-delete.",
+    describe: "generate api scenarios file rules split by comma. supported: operations-list.",
     string: true,
-    default: "resource-put-delete",
+    default: "operations-list",
   },
   useExample: {
     describe: "use example in the spec file.",
@@ -84,8 +83,6 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
         tag: tag,
         rules: argv.rules.split(","),
       });
-
-      await generator.initialize();
 
       await generator.generateTestDefFiles();
 
