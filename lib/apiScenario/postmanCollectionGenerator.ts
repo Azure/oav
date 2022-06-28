@@ -36,11 +36,11 @@ export interface PostmanCollectionGeneratorOption
   baseUrl: string;
   testProxy?: string;
   validationLevel?: ValidationLevel;
+  savePayload?: boolean;
   skipCleanUp?: boolean;
   runId?: string;
   verbose?: boolean;
   devMode?: boolean;
-  savePayload?: boolean;
 }
 
 export const generateRunId = (): string => {
@@ -257,6 +257,7 @@ export class PostmanCollectionGenerator {
               runId: this.opt.runId,
               swaggerFilePaths: this.opt.swaggerFilePaths,
               validationLevel: this.opt.validationLevel,
+              savePayload: this.opt.savePayload,
               verbose: this.opt.verbose,
             };
             const reportAnalyzer = inversifyGetInstance(NewmanReportAnalyzer, opts);

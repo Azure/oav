@@ -68,10 +68,6 @@ export const builder: yargs.CommandBuilder = {
     string: true,
     default: "https://management.azure.com",
   },
-  testProxy: {
-    describe: "TestProxy endpoint, e.g., http://localhost:5000. If not set, no proxy will be used.",
-    string: true,
-  },
   location: {
     describe: "Resource provision location parameter",
     string: true,
@@ -94,9 +90,13 @@ export const builder: yargs.CommandBuilder = {
     default: false,
   },
   savePayload: {
-    describe: "Whether save live traffic payload.",
+    describe: "Save live traffic payload to file",
     boolean: true,
     default: false,
+  },
+  testProxy: {
+    describe: "TestProxy endpoint, e.g., http://localhost:5000. If not set, no proxy will be used.",
+    string: true,
   },
   devMode: {
     describe: "Development mode. If set, will skip AAD auth and ARM API call.",
