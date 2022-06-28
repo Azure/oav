@@ -43,6 +43,10 @@ export class StaticApiScenarioGenerator {
     return inversifyGetInstance(StaticApiScenarioGenerator, opts);
   }
 
+  public async initialize() {
+    await this.swaggerAnalyzer.initialize();
+  }
+
   private async generateListOperationTestScenario(): Promise<any> {
     const scenarioDef: RawScenarioDefinition = {
       scope: "ResourceGroup",

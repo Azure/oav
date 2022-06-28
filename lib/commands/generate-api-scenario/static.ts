@@ -92,6 +92,8 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
         rules: argv.rules.split(","),
       });
 
+      await generator.initialize();
+
       await generator.generateTestDefFiles();
 
       await generator.writeGeneratedFiles();
