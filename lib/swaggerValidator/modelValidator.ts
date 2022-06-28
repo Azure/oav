@@ -244,6 +244,13 @@ export class SwaggerExampleValidator {
       }
       // validate headers
       const headers = transformLiveHeader(exampleResponseHeaders, responseSchema);
+      this.validateLroOperation(
+        exampleFileUrl,
+        operation,
+        exampleResponseStatusCode,
+        headers,
+        exampleResponseHeaders
+      );
       if (responseSchema.schema !== undefined) {
         if (headers["content-type"] !== undefined) {
           this.validateContentType(
@@ -257,13 +264,6 @@ export class SwaggerExampleValidator {
             exampleResponseHeaders
           );
         }
-        this.validateLroOperation(
-          exampleFileUrl,
-          operation,
-          exampleResponseStatusCode,
-          headers,
-          exampleResponseHeaders
-        );
         const validate = responseSchema._validate!;
         const ctx = {
           isResponse: true,
@@ -583,7 +583,14 @@ export class SwaggerExampleValidator {
           schemaPosition = err.source.position;
         }
 
-        for (const path of err.jsonPathsInPayload) {
+        for (let path of err.jsonPathsInPayload) {
+          // If parameter name includes ".", path should use "[]" for better understand.
+          for (const parameter of err.params) {
+            const parameterPosition = path.indexOf(parameter);
+            if (parameterPosition !== -1 && parameter.includes(".")) {
+              path = path.substring(0, parameterPosition - 1) + `['${parameter}']`;
+            }
+          }
           exampleJsonPaths.push(`$responses.${statusCode}${path}`);
         }
       }

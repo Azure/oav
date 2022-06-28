@@ -1,0 +1,50 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "AdditionalParameter",
+    "description": "Tests for additional parameters"
+  },
+  "host": "management.azure.com",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [],
+  "produces": [],
+  "paths": {
+    "/parameter/additional": {
+      "post": {
+        "tags": [
+          "Additional"
+        ],
+        "operationId": "AdditionalParameter",
+        "description": "The parameter is a additional and includes '.'",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/AdditionalParameter"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "additional": {
+            "$ref": "./examples/additional.json"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "AdditionalParameter": {
+      "type": "object",
+      "properties": {
+        "@result.first": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    }
+  },
+  "parameters": {}
+}
