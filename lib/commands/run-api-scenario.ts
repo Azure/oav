@@ -57,6 +57,11 @@ export const builder: yargs.CommandBuilder = {
     describe: "Junit report output path.",
     string: true,
   },
+  html: {
+    alias: "htmlReportPath",
+    describe: "Html report output path.",
+    string: true,
+  },
   level: {
     describe:
       "Validation level. oav runner validate request and response with different strict level. 'validate-request' validates requests should be successful. 'validate-request-response' validate both request and response.",
@@ -177,6 +182,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       outputFolder: argv.output,
       markdownReportPath: argv.markdownReportPath,
       junitReportPath: argv.junitReportPath,
+      htmlReportPath: argv.htmlReportPath,
       eraseXmsExamples: false,
       eraseDescription: false,
       baseUrl: argv.armEndpoint,

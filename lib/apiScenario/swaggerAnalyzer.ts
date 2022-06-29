@@ -62,6 +62,12 @@ export class SwaggerAnalyzer {
     return CoverageCalculator.calculateOperationCoverage(testDef, this.swaggerSpecs);
   }
 
+  public calculateOperationCoverageBySpec(
+    testDef: ScenarioDefinition
+  ): Map<string, OperationCoverageResult> {
+    return CoverageCalculator.calculateOperationCoverageBySpec(testDef, this.swaggerSpecs);
+  }
+
   public async getOperationListPath(): Promise<Path[]> {
     const ret: Path[] = [];
     for (const swaggerSpec of this.swaggerSpecs) {
