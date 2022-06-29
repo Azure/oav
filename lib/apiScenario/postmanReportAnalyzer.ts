@@ -9,6 +9,7 @@ import { RawReport } from "./apiScenarioTypes";
 import { NewmanReportParser, NewmanReportParserOption } from "./postmanReportParser";
 
 export interface NewmanReportAnalyzerOption extends NewmanReportParserOption {
+  htmlReportPath?: string;
   reportOutputFilePath?: string;
   markdownReportPath?: string;
   junitReportPath?: string;
@@ -56,6 +57,7 @@ export class NewmanReportAnalyzer {
       verbose: this.opts.verbose,
       fileRoot: dirname(apiScenarioFilePath),
       generateExample: this.opts.generateExample,
+      htmlReportPath: this.opts.htmlReportPath,
     };
     const reportGenerator = inversifyGetInstance(ReportGenerator, reportGeneratorOption);
     await reportGenerator.generateReport();
