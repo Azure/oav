@@ -588,11 +588,15 @@ export class ReportGenerator {
 
     const operationCoverageResult: OperationCoverageInfo[] = [];
     operationIdCoverageResult.forEach((result, key) => {
+      let specPath = this.fileLoader.resolvePath(key);
+      specPath = `https://github.com/Azure/azure-rest-api-specs/blob/main/${specPath.substring(
+        specPath.indexOf("specification")
+      )}`;
       operationCoverageResult.push({
         totalOperations: result.totalOperationNumber,
-        spec: key,
+        spec: specPath,
         coverageRate: result.coverage,
-        apiVersion: getApiVersionFromSwaggerPath(key),
+        apiVersion: getApiVersionFromSwaggerPath(specPath),
         unCoveredOperations: result.uncoveredOperationIds.length,
         coveredOperaions: result.totalOperationNumber - result.uncoveredOperationIds.length,
         validationFailOperations: this.trafficValidationResult.filter(
@@ -625,6 +629,7 @@ export class ReportGenerator {
       reportPath: this.opts.htmlReportPath,
       overrideLinkInReport: false,
       outputExceptionInReport: true,
+      sdkPackage: this.swaggerExampleQualityResult.providerNamespace,
     };
 
     const generator = new HtmlReportGenerator(
