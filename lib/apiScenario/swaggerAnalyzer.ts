@@ -121,6 +121,12 @@ export class SwaggerAnalyzer {
     return CoverageCalculator.calculateOperationCoverage(testDef, this.swaggerSpecs);
   }
 
+  public calculateOperationCoverageBySpec(
+    testDef: ScenarioDefinition
+  ): Map<string, OperationCoverageResult> {
+    return CoverageCalculator.calculateOperationCoverageBySpec(testDef, this.swaggerSpecs);
+  }
+
   public async analyzeDependency(): Promise<ExampleDependency[]> {
     if (!this.initialized) {
       await this.initialize();
