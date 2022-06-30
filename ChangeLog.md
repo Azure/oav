@@ -1,8 +1,10 @@
 # Change Log - oav
 
-## 06/30/2022 3.0.3
+## 06/30/2022 3.0.2
 
-- Add activity parsed from request header to logs.
+- traffic-converter
+    - Implement [oav-traffic-converter](https://github.com/Azure/azure-sdk-tools/tree/main/tools/oav-traffic-converter)
+- Add activity parsed from request header to logs
 
 ## 06/10/2022 3.0.1
 
