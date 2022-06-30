@@ -3,7 +3,7 @@
 ## 06/30/2022 3.0.2
 
 - traffic-converter
-    - Implement [oav-traffoc-converter](https://github.com/Azure/azure-sdk-tools/tree/main/tools/oav-traffic-converter)
+    - Implement [oav-traffic-converter](https://github.com/Azure/azure-sdk-tools/tree/main/tools/oav-traffic-converter)
 
 ## 06/10/2022 3.0.1
 
