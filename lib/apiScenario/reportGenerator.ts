@@ -256,6 +256,7 @@ export class ReportGenerator {
             ),
             JSON.stringify(pair, null, 2)
           );
+          trafficValidationIssue.payloadFilePath = `payloads/${matchedStep.step}_${correlationId}.json`;
         }
         const liveValidationResult = await this.liveValidator.validateLiveRequestResponse(pair);
 
