@@ -147,7 +147,7 @@ function convert(directory: string, outDirectory: string) {
 }
 
 export const command = "traffic-convert <input-dir> <output-dir>";
-export const describe = "Convert a folder";
+export const describe = "Convert a folder files to traffic files";
 
 export const builder: yargs.CommandBuilder = {
   inputDir: {
