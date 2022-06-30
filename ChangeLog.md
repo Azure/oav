@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 06/30/2022 3.0.3
+
+- Add activity parsed from request header to logs.
+
 ## 06/10/2022 3.0.1
 
 - GenerateExamples - Change the domain of LRO header
