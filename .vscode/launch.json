@@ -57,6 +57,19 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "Traffic convert",
+      "program": "${workspaceRoot}/dist/cli.js",
+      "cwd": "${workspaceRoot}",
+      "args": [
+        "traffic-convert",
+        "${workspaceRoot}/test/trafficConverter/input-example/",
+        "${workspaceRoot}/test/trafficConverter/output-example/"
+      ],
+      "env": {}
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "Validate Network examples",
       "program": "${workspaceRoot}/dist/scripts/testNetwork.js",
       "cwd": "${workspaceRoot}",
