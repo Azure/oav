@@ -150,7 +150,7 @@ export class RestlerApiScenarioGenerator {
           (step as any).operationId = undefined;
           (step as RawStepExample).exampleFile = path.relative(
             this.opts.outputDir,
-            this.jsonLoader.getRealPath(example.$ref!)
+            this.fileLoader.resolvePath(this.jsonLoader.getRealPath(example.$ref!))
           );
         } else {
           console.warn(`${operationId} has no example.`);
