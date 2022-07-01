@@ -61,6 +61,12 @@ $ oav -h    Commands:
                                             spec.
   validate-traffic <traffic-path>           Validate traffic payload against the
   <spec-path>                               spec.
+  traffic-convert <input-dir>               Showcase what it would look like to 
+  <output-dir>                              transform a directory full of 
+                                            [azure-sdk/test-proxy](https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy) 
+                                            recordings files into traffic payloads 
+                                            consumable by traffic validation command in oav
+  
 
 Options:
   --version          Show version number                               [boolean]

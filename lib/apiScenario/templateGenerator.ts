@@ -65,7 +65,7 @@ export class TemplateGenerator {
     if (bodyParam !== undefined) {
       const requestBody = step.parameters[bodyParam.name];
       replaceAllInObject(requestBody, toMatch, matchReplace);
-      if (requestBody.location !== undefined) {
+      if (requestBody?.location !== undefined) {
         requestBody.location = "$(location)";
       }
     }
