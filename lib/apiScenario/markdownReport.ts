@@ -7,7 +7,12 @@ import {
   LiveValidationIssue,
   RequestResponseLiveValidationResult,
 } from "../liveValidation/liveValidator";
-import { ResponseDiffItem, RuntimeError, StepResult, TestScenarioResult } from "./reportGenerator";
+import {
+  ResponseDiffItem,
+  RuntimeError,
+  StepResult,
+  ApiScenarioTestResult,
+} from "./reportGenerator";
 
 const spaceReg = /(\n|\t|\r)/gi;
 
@@ -178,7 +183,7 @@ const asMarkdownStepResult = (sr: StepResult): TestScenarioMarkdownStepResult =>
   return r;
 };
 
-const asMarkdownResult = (tsr: TestScenarioResult): TestScenarioMarkdownResult => {
+const asMarkdownResult = (tsr: ApiScenarioTestResult): TestScenarioMarkdownResult => {
   const fatalCount = tsr.stepResult.filter(
     (sr) => sr.runtimeError && sr.runtimeError.length > 0
   ).length;
@@ -209,7 +214,7 @@ const asMarkdownResult = (tsr: TestScenarioResult): TestScenarioMarkdownResult =
 };
 
 export const generateMarkdownReportHeader = (): string => "<h3>Azure API Test Report</h3>";
-export const generateMarkdownReport = (testScenarioResult: TestScenarioResult): string => {
+export const generateMarkdownReport = (testScenarioResult: ApiScenarioTestResult): string => {
   const result = asMarkdownResult(testScenarioResult);
   const body = generateMarkdownReportView(result);
   return body;

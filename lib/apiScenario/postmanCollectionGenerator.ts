@@ -38,6 +38,7 @@ export interface PostmanCollectionGeneratorOption
   testProxy?: string;
   validationLevel?: ValidationLevel;
   savePayload?: boolean;
+  generateExample?: boolean;
   skipCleanUp?: boolean;
   runId?: string;
   verbose?: boolean;
@@ -260,6 +261,7 @@ export class PostmanCollectionGenerator {
               swaggerFilePaths: this.opt.swaggerFilePaths,
               validationLevel: this.opt.validationLevel,
               savePayload: this.opt.savePayload,
+              generateExample: this.opt.generateExample,
               verbose: this.opt.verbose,
             };
             const reportAnalyzer = inversifyGetInstance(NewmanReportAnalyzer, opts);

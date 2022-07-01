@@ -17,6 +17,7 @@ export interface NewmanReportAnalyzerOption extends NewmanReportParserOption {
   swaggerFilePaths?: string[];
   validationLevel?: ValidationLevel;
   savePayload?: boolean;
+  generateExample?: boolean;
   verbose?: boolean;
 }
 
@@ -32,7 +33,6 @@ export class NewmanReportAnalyzer {
       newmanReportFilePath: "",
       reportOutputFilePath: defaultQualityReportFilePath(this.opts.newmanReportFilePath),
       validationLevel: "validate-request-response",
-      savePayload: false,
       verbose: false,
     });
   }
@@ -55,6 +55,7 @@ export class NewmanReportAnalyzer {
       junitReportPath: this.opts.junitReportPath,
       runId: this.opts.runId,
       validationLevel: this.opts.validationLevel,
+      generateExample: this.opts.generateExample,
       savePayload: this.opts.savePayload,
       verbose: this.opts.verbose,
       fileRoot: dirname(apiScenarioFilePath),

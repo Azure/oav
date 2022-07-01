@@ -315,7 +315,6 @@ export interface RawReport {
   executions: RawExecution[];
   timings: any;
   variables: { [variableName: string]: Variable };
-  testScenarioName?: string;
   metadata: any;
 }
 

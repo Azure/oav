@@ -99,6 +99,11 @@ export const builder: yargs.CommandBuilder = {
     boolean: true,
     default: false,
   },
+  generateExample: {
+    describe: "Generate examples after API Test",
+    boolean: true,
+    default: false,
+  },
   testProxy: {
     describe: "TestProxy endpoint, e.g., http://localhost:5000. If not set, no proxy will be used.",
     string: true,
@@ -188,11 +193,12 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       baseUrl: argv.armEndpoint,
       testProxy: argv.testProxy,
       validationLevel: argv.level,
+      savePayload: argv.savePayload,
+      generateExample: argv.generateExample,
       skipCleanUp: argv.skipCleanUp,
       verbose: argv.verbose,
       swaggerFilePaths: swaggerFilePaths,
       devMode: argv.devMode,
-      savePayload: argv.savePayload,
     };
     const generator = inversifyGetInstance(PostmanCollectionGenerator, opt);
     await generator.run();
