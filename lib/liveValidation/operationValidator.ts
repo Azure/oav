@@ -35,6 +35,7 @@ export interface ValidationRequest {
   pathStr?: string;
   query?: ParsedUrlQuery;
   correlationId?: string;
+  activityId?: string;
   requestUrl?: string;
   specName?: string;
 }

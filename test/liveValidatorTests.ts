@@ -395,7 +395,7 @@ describe("Live Validator", () => {
       const validator = new LiveValidator(options);
       await validator.initialize();
       // Operations to match is RoleAssignments_Create
-      const validationInfo = validator.parseValidationRequest(requestUrl, "Put", "randomId");
+      const validationInfo = validator.parseValidationRequest(requestUrl, "Put", "randomId", "");
       const operations = validator.operationSearcher.getPotentialOperations(validationInfo).matches;
       assert.strictEqual(0, operations.length);
     });
@@ -414,7 +414,7 @@ describe("Live Validator", () => {
       const validator = new LiveValidator(options);
       await validator.initialize();
       // Operations to match is RoleAssignments_Create
-      const validationInfo = validator.parseValidationRequest(requestUrl, "Put", "randomId");
+      const validationInfo = validator.parseValidationRequest(requestUrl, "Put", "randomId", "");
       const result = validator.operationSearcher.getPotentialOperations(validationInfo);
       const pathObject = result.matches[0].operation._path;
       if (pathObject === undefined) {
@@ -445,7 +445,7 @@ describe("Live Validator", () => {
       const validator = new LiveValidator(options);
       await validator.initialize();
       // Operations to match is StorageAccounts_List
-      let validationInfo = validator.parseValidationRequest(listRequestUrl, "Get", "randomId");
+      let validationInfo = validator.parseValidationRequest(listRequestUrl, "Get", "randomId", "");
       // eslint-disable-next-line dot-notation
       let operations = validator.operationSearcher.getPotentialOperations(validationInfo).matches;
       let pathObject = operations[0].operation._path;
@@ -459,7 +459,7 @@ describe("Live Validator", () => {
       );
 
       // Operations to match is StorageAccounts_CheckNameAvailability
-      validationInfo = validator.parseValidationRequest(postRequestUrl, "PoSt", "randomId");
+      validationInfo = validator.parseValidationRequest(postRequestUrl, "PoSt", "randomId", "");
       // eslint-disable-next-line dot-notation
       operations = validator.operationSearcher.getPotentialOperations(validationInfo).matches;
       pathObject = operations[0].operation._path;
@@ -473,7 +473,7 @@ describe("Live Validator", () => {
       );
 
       // Operations to match is StorageAccounts_Delete
-      validationInfo = validator.parseValidationRequest(deleteRequestUrl, "Delete", "randomId");
+      validationInfo = validator.parseValidationRequest(deleteRequestUrl, "Delete", "randomId", "");
       // eslint-disable-next-line dot-notation
       operations = validator.operationSearcher.getPotentialOperations(validationInfo).matches;
       pathObject = operations[0].operation._path;
@@ -511,7 +511,7 @@ describe("Live Validator", () => {
       await validator.initialize();
       // Operations to match is StorageAccounts_List with api-version 2015-08-15
       // [non cached api version]
-      let validationInfo = validator.parseValidationRequest(nonCachedApiUrl, "Get", "randomId");
+      let validationInfo = validator.parseValidationRequest(nonCachedApiUrl, "Get", "randomId", "");
       let result = validator.operationSearcher.getPotentialOperations(validationInfo);
       let operations = result.matches;
       let reason = result.reason;
@@ -523,7 +523,7 @@ describe("Live Validator", () => {
 
       // Operations to match is StorageAccounts_CheckNameAvailability with provider "Hello.World"
       // [non cached provider]
-      validationInfo = validator.parseValidationRequest(nonCachedProviderUrl, "PoSt", "randomId");
+      validationInfo = validator.parseValidationRequest(nonCachedProviderUrl, "PoSt", "randomId", "");
       result = validator.operationSearcher.getPotentialOperations(validationInfo);
       operations = result.matches;
       reason = result.reason;
@@ -537,7 +537,7 @@ describe("Live Validator", () => {
       );
 
       // Operations to match is StorageAccounts_Delete with verb "head" [non cached http verb]
-      validationInfo = validator.parseValidationRequest(nonCachedVerbUrl, "head", "randomId");
+      validationInfo = validator.parseValidationRequest(nonCachedVerbUrl, "head", "randomId", "");
       result = validator.operationSearcher.getPotentialOperations(validationInfo);
       operations = result.matches;
       reason = result.reason;
@@ -551,7 +551,7 @@ describe("Live Validator", () => {
       // "subscriptions/subscriptionId/providers/Microsoft.Storage/" +
       // "storageAccounts/storageAccounts/accountName/properties/"
       // [non cached path]
-      validationInfo = validator.parseValidationRequest(nonCachedPath, "get", "randomId");
+      validationInfo = validator.parseValidationRequest(nonCachedPath, "get", "randomId", "");
       result = validator.operationSearcher.getPotentialOperations(validationInfo);
       operations = result.matches;
       reason = result.reason;

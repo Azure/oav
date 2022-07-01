@@ -103,3 +103,6 @@ generated_examples/
 generated_reports/
 generated_diff/
 test/exampleGenerator/specification
+
+# customized
+.npmrc
