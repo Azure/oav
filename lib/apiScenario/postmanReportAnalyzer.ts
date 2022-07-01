@@ -16,8 +16,8 @@ export interface NewmanReportAnalyzerOption extends NewmanReportParserOption {
   runId?: string;
   swaggerFilePaths?: string[];
   validationLevel?: ValidationLevel;
+  savePayload?: boolean;
   verbose?: boolean;
-  generateExample?: boolean;
 }
 
 @injectable()
@@ -32,6 +32,7 @@ export class NewmanReportAnalyzer {
       newmanReportFilePath: "",
       reportOutputFilePath: defaultQualityReportFilePath(this.opts.newmanReportFilePath),
       validationLevel: "validate-request-response",
+      savePayload: false,
       verbose: false,
     });
   }
@@ -54,9 +55,9 @@ export class NewmanReportAnalyzer {
       junitReportPath: this.opts.junitReportPath,
       runId: this.opts.runId,
       validationLevel: this.opts.validationLevel,
+      savePayload: this.opts.savePayload,
       verbose: this.opts.verbose,
       fileRoot: dirname(apiScenarioFilePath),
-      generateExample: this.opts.generateExample,
       htmlReportPath: this.opts.htmlReportPath,
     };
     const reportGenerator = inversifyGetInstance(ReportGenerator, reportGeneratorOption);

@@ -73,10 +73,6 @@ export const builder: yargs.CommandBuilder = {
     string: true,
     default: "https://management.azure.com",
   },
-  testProxy: {
-    describe: "TestProxy endpoint, e.g., http://localhost:5000. If not set, no proxy will be used.",
-    string: true,
-  },
   location: {
     describe: "Resource provision location parameter",
     string: true,
@@ -97,6 +93,15 @@ export const builder: yargs.CommandBuilder = {
     describe: "Dry run mode. If set, only create postman collection file not run live API test.",
     boolean: true,
     default: false,
+  },
+  savePayload: {
+    describe: "Save live traffic payload to file",
+    boolean: true,
+    default: false,
+  },
+  testProxy: {
+    describe: "TestProxy endpoint, e.g., http://localhost:5000. If not set, no proxy will be used.",
+    string: true,
   },
   devMode: {
     describe: "Development mode. If set, will skip AAD auth and ARM API call.",
@@ -187,6 +192,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       verbose: argv.verbose,
       swaggerFilePaths: swaggerFilePaths,
       devMode: argv.devMode,
+      savePayload: argv.savePayload,
     };
     const generator = inversifyGetInstance(PostmanCollectionGenerator, opt);
     await generator.run();
