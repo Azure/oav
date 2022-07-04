@@ -355,7 +355,7 @@ export class ReportGenerator {
   }
 
   public async generateHtmlReport() {
-    const templatePath = path.resolve(process.cwd(), "dist/lib/templates/baseLayout.mustache");
+    const templatePath = path.join(__dirname, "../templates/baseLayout.mustache");
     const template = fs.readFileSync(templatePath, "utf-8");
     const view = new CoverageView(
       this.validationResults,

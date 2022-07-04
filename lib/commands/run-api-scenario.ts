@@ -57,6 +57,11 @@ export const builder: yargs.CommandBuilder = {
     describe: "Junit report output path.",
     string: true,
   },
+  html: {
+    alias: "htmlReportPath",
+    describe: "Html report output path.",
+    string: true,
+  },
   level: {
     describe:
       "Validation level. oav runner validate request and response with different strict level. 'validate-request' validates requests should be successful. 'validate-request-response' validate both request and response.",
@@ -67,10 +72,6 @@ export const builder: yargs.CommandBuilder = {
     describe: "ARM endpoint",
     string: true,
     default: "https://management.azure.com",
-  },
-  testProxy: {
-    describe: "TestProxy endpoint, e.g., http://localhost:5000. If not set, no proxy will be used.",
-    string: true,
   },
   location: {
     describe: "Resource provision location parameter",
@@ -92,6 +93,15 @@ export const builder: yargs.CommandBuilder = {
     describe: "Dry run mode. If set, only create postman collection file not run live API test.",
     boolean: true,
     default: false,
+  },
+  savePayload: {
+    describe: "Save live traffic payload to file",
+    boolean: true,
+    default: false,
+  },
+  testProxy: {
+    describe: "TestProxy endpoint, e.g., http://localhost:5000. If not set, no proxy will be used.",
+    string: true,
   },
   devMode: {
     describe: "Development mode. If set, will skip AAD auth and ARM API call.",
@@ -172,6 +182,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       outputFolder: argv.output,
       markdownReportPath: argv.markdownReportPath,
       junitReportPath: argv.junitReportPath,
+      htmlReportPath: argv.htmlReportPath,
       eraseXmsExamples: false,
       eraseDescription: false,
       baseUrl: argv.armEndpoint,
@@ -181,6 +192,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       verbose: argv.verbose,
       swaggerFilePaths: swaggerFilePaths,
       devMode: argv.devMode,
+      savePayload: argv.savePayload,
     };
     const generator = inversifyGetInstance(PostmanCollectionGenerator, opt);
     await generator.run();

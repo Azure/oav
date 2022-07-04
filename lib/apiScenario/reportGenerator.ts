@@ -13,8 +13,16 @@ import { SwaggerExample } from "../swagger/swaggerTypes";
 import {
   LiveValidator,
   RequestResponseLiveValidationResult,
+  RequestResponsePair,
 } from "../liveValidation/liveValidator";
 import { LiveRequest, LiveResponse } from "../liveValidation/operationValidator";
+import { ReportGenerator as HtmlReportGenerator } from "../report/generateReport";
+import {
+  OperationCoverageInfo,
+  TrafficValidationIssue,
+  TrafficValidationOptions,
+  unCoveredOperationsFormat,
+} from "../swaggerValidator/trafficValidator";
 import { SwaggerAnalyzer } from "./swaggerAnalyzer";
 import { DataMasker } from "./dataMasker";
 import { defaultQualityReportFilePath } from "./defaultNaming";
@@ -99,12 +107,13 @@ export interface ReportGeneratorOption extends NewmanReportParserOption, ApiScen
   reportOutputFilePath?: string;
   markdownReportPath?: string;
   junitReportPath?: string;
+  htmlReportPath?: string;
   apiScenarioName?: string;
   runId?: string;
   validationLevel?: ValidationLevel;
+  savePayload?: boolean;
   verbose?: boolean;
   swaggerFilePaths?: string[];
-  generateExample?: boolean;
 }
 
 @injectable()
@@ -117,6 +126,7 @@ export class ReportGenerator {
   private fileRoot: string;
   private recording: Map<string, RawExecution>;
   private liveValidator: LiveValidator;
+  private trafficValidationResult: TrafficValidationIssue[];
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
   constructor(
     @inject(TYPES.opts) private opts: ReportGeneratorOption,
@@ -133,6 +143,7 @@ export class ReportGenerator {
       apiScenarioFilePath: "",
       runId: uuid.v4(),
       validationLevel: "validate-request-response",
+      savePayload: false,
       verbose: false,
     });
   }
@@ -175,16 +186,10 @@ export class ReportGenerator {
     );
   }
 
-  private async writeExample(filename: string, example: any) {
-    await this.fileLoader.writeFile(
-      path.join("examples", filename),
-      JSON.stringify(example, null, 2)
-    );
-  }
-
   public async generateTestScenarioResult(rawReport: RawReport) {
     await this.initialize();
     await this.liveValidator.initialize();
+    this.trafficValidationResult = [];
     const variables = rawReport.variables;
     this.swaggerExampleQualityResult.startTime = new Date(rawReport.timings.started).toISOString();
     this.swaggerExampleQualityResult.endTime = new Date(rawReport.timings.completed).toISOString();
@@ -194,34 +199,30 @@ export class ReportGenerator {
         continue;
       }
       if (it.annotation.type === "simple" || it.annotation.type === "LRO") {
-        const runtimeError = [];
+        const runtimeError: RuntimeError[] = [];
         const matchedStep = this.getMatchedStep(it.annotation.step) as StepRestCall;
+
+        const trafficValidationIssue: TrafficValidationIssue = {
+          runtimeExceptions: [],
+          errors: [],
+        };
         if (it.response.statusCode >= 400) {
-          runtimeError.push(this.getRuntimeError(it));
+          const error = this.getRuntimeError(it);
+          runtimeError.push(error);
+          trafficValidationIssue.runtimeExceptions?.push(error);
         }
         if (matchedStep === undefined) {
           continue;
         }
+        trafficValidationIssue.operationInfo = {
+          operationId: matchedStep.operationId,
+          apiVersion: "",
+        };
+        trafficValidationIssue.specFilePath = matchedStep.operation._path._spec._filePath;
 
         let generatedExample = undefined;
         let roundtripErrors = undefined;
         let responseDiffResult: ResponseDiffItem[] | undefined = undefined;
-        if (this.opts.generateExample) {
-          const example = this.generateExample(
-            it,
-            variables,
-            rawReport,
-            matchedStep,
-            "example"
-          ).example;
-          for (const key of Object.keys(example.responses)) {
-            if (key >= "400") {
-              delete example.responses[key];
-            }
-          }
-          await this.writeExample(`${matchedStep.description ?? matchedStep.step}.json`, example);
-          // console.log(`Generated example ${matchedStep.step}: ${JSON.stringify(example, null, 2)}`);
-        }
         if (it.annotation.exampleName) {
           generatedExample = this.generateExample(
             it,
@@ -246,7 +247,37 @@ export class ReportGenerator {
               : [];
         }
         const correlationId = it.response.headers["x-ms-correlation-request-id"];
-        const liveValidationResult = await this.validate(it);
+        const pair = this.convertToLiveValidationPayload(it);
+        if (this.opts.savePayload) {
+          await this.fileLoader.writeFile(
+            path.resolve(
+              path.dirname(this.opts.newmanReportFilePath),
+              `payloads/${matchedStep.step}_${correlationId}.json`
+            ),
+            JSON.stringify(pair, null, 2)
+          );
+          trafficValidationIssue.payloadFilePath = `payloads/${matchedStep.step}_${correlationId}.json`;
+        }
+        const liveValidationResult = await this.liveValidator.validateLiveRequestResponse(pair);
+
+        trafficValidationIssue.errors?.push(
+          ...liveValidationResult.requestValidationResult.errors,
+          ...liveValidationResult.responseValidationResult.errors
+        );
+        if (liveValidationResult.requestValidationResult.runtimeException) {
+          trafficValidationIssue.runtimeExceptions?.push(
+            liveValidationResult.requestValidationResult.runtimeException
+          );
+        }
+
+        if (liveValidationResult.responseValidationResult.runtimeException) {
+          trafficValidationIssue.runtimeExceptions?.push(
+            liveValidationResult.responseValidationResult.runtimeException
+          );
+        }
+
+        this.trafficValidationResult.push(trafficValidationIssue);
+
         this.swaggerExampleQualityResult.stepResult.push({
           exampleFilePath: generatedExample?.exampleFilePath,
           operationId: it.annotation.operationId,
@@ -263,29 +294,27 @@ export class ReportGenerator {
     }
   }
 
-  private async validate(_summary: RawExecution) {
-    const request = _summary.request;
-    const response = _summary.response;
+  private convertToLiveValidationPayload(rawExecution: RawExecution): RequestResponsePair {
+    const request = rawExecution.request;
+    const response = rawExecution.response;
     const liveRequest: LiveRequest = {
       url: request.url.toString(),
       method: request.method.toLowerCase(),
       headers: request.headers,
-      body: JSON.parse(request.body || "{}"),
+      body: request.body ? JSON.parse(request.body) : undefined,
     };
     const liveResponse: LiveResponse = {
       statusCode: response.statusCode.toString(),
       headers: response.headers,
-      body: JSON.parse(response.body || "{}"),
+      body: response.body ? JSON.parse(response.body) : undefined,
     };
-
-    const result = await this.liveValidator.validateLiveRequestResponse({
+    return {
       liveRequest,
       liveResponse,
-    });
-    return result;
+    };
   }
 
-  public async generateExampleQualityReport() {
+  private async generateExampleQualityReport() {
     if (this.opts.reportOutputFilePath !== undefined) {
       console.log(`Write generated report file: ${this.opts.reportOutputFilePath}`);
       await this.fileLoader.writeFile(
@@ -295,7 +324,7 @@ export class ReportGenerator {
     }
   }
 
-  public async generateMarkdownQualityReport() {
+  private async generateMarkdownQualityReport() {
     if (this.opts.markdownReportPath) {
       await this.fileLoader.appendFile(
         this.opts.markdownReportPath,
@@ -304,7 +333,7 @@ export class ReportGenerator {
     }
   }
 
-  public async generateJUnitReport() {
+  private async generateJUnitReport() {
     if (this.opts.junitReportPath) {
       await this.junitReporter.addSuiteToBuild(
         this.swaggerExampleQualityResult,
@@ -498,6 +527,7 @@ export class ReportGenerator {
     }
     return undefined;
   }
+
   private findGeneratedGetExecution(it: RawExecution, rawReport: RawReport) {
     if (it.annotation.type === "LRO") {
       const finalGet = rawReport.executions.filter(
@@ -528,11 +558,76 @@ export class ReportGenerator {
     if (this.opts.apiScenarioFilePath !== undefined) {
       this.testDefFile = await this.testResourceLoader.load(this.opts.apiScenarioFilePath);
     }
+    await this.swaggerAnalyzer.initialize();
     await this.initialize();
     await this.generateTestScenarioResult(this.rawReport!);
     await this.generateExampleQualityReport();
     await this.generateMarkdownQualityReport();
     await this.generateJUnitReport();
+    await this.generateHtmlReport();
+  }
+
+  private async generateHtmlReport() {
+    if (!this.opts.htmlReportPath) {
+      return;
+    }
+    const operationIdCoverageResult = this.swaggerAnalyzer.calculateOperationCoverageBySpec(
+      this.testDefFile!
+    );
+
+    const operationCoverageResult: OperationCoverageInfo[] = [];
+    operationIdCoverageResult.forEach((result, key) => {
+      let specPath = this.fileLoader.resolvePath(key);
+      specPath = `https://github.com/Azure/azure-rest-api-specs/blob/main/${specPath.substring(
+        specPath.indexOf("specification")
+      )}`;
+      operationCoverageResult.push({
+        totalOperations: result.totalOperationNumber,
+        spec: specPath,
+        coverageRate: result.coverage,
+        apiVersion: getApiVersionFromSwaggerPath(specPath),
+        unCoveredOperations: result.uncoveredOperationIds.length,
+        coveredOperaions: result.totalOperationNumber - result.uncoveredOperationIds.length,
+        validationFailOperations: this.trafficValidationResult.filter(
+          (it) =>
+            it.specFilePath === key && (it.runtimeExceptions!.length > 0 || it.errors!.length > 0)
+        ).length,
+        unCoveredOperationsList: result.uncoveredOperationIds.map((id) => {
+          return { operationId: id };
+        }),
+        unCoveredOperationsListGen: Object.values(
+          result.uncoveredOperationIds
+            .map((id) => {
+              return { operationId: id, key: id.split("_")[0] };
+            })
+            .reduce((res: { [key: string]: unCoveredOperationsFormat }, item) => {
+              /* eslint-disable no-unused-expressions */
+              res[item.key]
+                ? res[item.key].operationIdList.push(item)
+                : (res[item.key] = {
+                    operationIdList: [item],
+                  });
+              /* eslint-enable no-unused-expressions */
+              return res;
+            }, {})
+        ),
+      });
+    });
+
+    const options: TrafficValidationOptions = {
+      reportPath: this.opts.htmlReportPath,
+      overrideLinkInReport: false,
+      outputExceptionInReport: true,
+      sdkPackage: this.swaggerExampleQualityResult.providerNamespace,
+    };
+
+    const generator = new HtmlReportGenerator(
+      this.trafficValidationResult,
+      operationCoverageResult,
+      0,
+      options
+    );
+    await generator.generateHtmlReport();
   }
 
   private parseRespBody(it: RawExecution) {

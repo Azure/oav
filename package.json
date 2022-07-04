@@ -1,6 +1,6 @@
 {
   "name": "oav",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "author": {
     "name": "Microsoft Corporation",
     "email": "azsdkteam@microsoft.com",
@@ -129,6 +129,7 @@
     "dist/lib/**/*.js.map",
     "dist/lib/**/*.d.ts.map",
     "dist/lib/**/*.handlebars",
+    "dist/lib/**/*.mustache",
     "dist/lib/swaggerValidator/*.json",
     "types/**/*.d.ts",
     "*.ts",

@@ -31,11 +31,13 @@ export interface PostmanCollectionGeneratorOption
   outputFolder: string;
   markdownReportPath?: string;
   junitReportPath?: string;
+  htmlReportPath?: string;
   runCollection: boolean;
   generateCollection: boolean;
   baseUrl: string;
   testProxy?: string;
   validationLevel?: ValidationLevel;
+  savePayload?: boolean;
   skipCleanUp?: boolean;
   runId?: string;
   verbose?: boolean;
@@ -253,9 +255,11 @@ export class PostmanCollectionGenerator {
               newmanReportFilePath: reportExportPath,
               markdownReportPath: this.opt.markdownReportPath,
               junitReportPath: this.opt.junitReportPath,
+              htmlReportPath: this.opt.htmlReportPath,
               runId: this.opt.runId,
               swaggerFilePaths: this.opt.swaggerFilePaths,
               validationLevel: this.opt.validationLevel,
+              savePayload: this.opt.savePayload,
               verbose: this.opt.verbose,
             };
             const reportAnalyzer = inversifyGetInstance(NewmanReportAnalyzer, opts);
