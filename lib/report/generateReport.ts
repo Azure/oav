@@ -123,7 +123,7 @@ export class CoverageView {
         element.errors?.forEach((error) => {
           const errorDef = errorDefinitions.get(error.code);
           errorsForRendering.push({
-            friendlyName: errorDef?.friendlyName,
+            friendlyName: errorDef?.friendlyName ?? error.code,
             link: errorDef?.link,
             code: error.code,
             message: error.message,

@@ -11,6 +11,7 @@ import { FileLoader } from "../swagger/fileLoader";
 import { TYPES } from "../inversifyUtils";
 import { SwaggerExample } from "../swagger/swaggerTypes";
 import {
+  LiveValidationIssue,
   LiveValidator,
   RequestResponseLiveValidationResult,
   RequestResponsePair,
@@ -23,6 +24,7 @@ import {
   TrafficValidationOptions,
   unCoveredOperationsFormat,
 } from "../swaggerValidator/trafficValidator";
+import { RuntimeException } from "../util/validationError";
 import { SwaggerAnalyzer } from "./swaggerAnalyzer";
 import { DataMasker } from "./dataMasker";
 import { defaultQualityReportFilePath } from "./defaultNaming";
@@ -209,15 +211,12 @@ export class ReportGenerator {
         if (it.response.statusCode >= 400) {
           const error = this.getRuntimeError(it);
           runtimeError.push(error);
-          trafficValidationIssue.runtimeExceptions?.push(error);
+          trafficValidationIssue.errors?.push(this.convertRuntimeException(error));
         }
         if (matchedStep === undefined) {
           continue;
         }
-        trafficValidationIssue.operationInfo = {
-          operationId: matchedStep.operationId,
-          apiVersion: "",
-        };
+
         trafficValidationIssue.specFilePath = matchedStep.operation._path._spec._filePath;
 
         let generatedExample = undefined;
@@ -260,19 +259,26 @@ export class ReportGenerator {
         }
         const liveValidationResult = await this.liveValidator.validateLiveRequestResponse(pair);
 
+        trafficValidationIssue.operationInfo =
+          liveValidationResult.requestValidationResult.operationInfo;
+
         trafficValidationIssue.errors?.push(
           ...liveValidationResult.requestValidationResult.errors,
           ...liveValidationResult.responseValidationResult.errors
         );
         if (liveValidationResult.requestValidationResult.runtimeException) {
-          trafficValidationIssue.runtimeExceptions?.push(
-            liveValidationResult.requestValidationResult.runtimeException
+          trafficValidationIssue.errors?.push(
+            this.convertRuntimeException(
+              liveValidationResult.requestValidationResult.runtimeException
+            )
           );
         }
 
         if (liveValidationResult.responseValidationResult.runtimeException) {
-          trafficValidationIssue.runtimeExceptions?.push(
-            liveValidationResult.responseValidationResult.runtimeException
+          trafficValidationIssue.errors?.push(
+            this.convertRuntimeException(
+              liveValidationResult.responseValidationResult.runtimeException
+            )
           );
         }
 
@@ -292,6 +298,26 @@ export class ReportGenerator {
         this.recording.set(correlationId, it);
       }
     }
+  }
+
+  private convertRuntimeException(runtimeException: RuntimeException): LiveValidationIssue {
+    const ret = {
+      code: runtimeException.code,
+      pathsInPayload: [],
+      severity: 1,
+      message: runtimeException.message,
+      jsonPathsInPayload: [],
+      schemaPath: "",
+      source: {
+        url: "",
+        position: {
+          column: 0,
+          line: 0,
+        },
+      },
+    };
+
+    return ret as LiveValidationIssue;
   }
 
   private convertToLiveValidationPayload(rawExecution: RawExecution): RequestResponsePair {
@@ -550,7 +576,7 @@ export class ReportGenerator {
     };
     const responseObj = this.dataMasker.jsonParse(it.response.body);
     ret.code = `RUNTIME_ERROR`;
-    ret.message = `code: ${responseObj?.error?.code}, message: ${responseObj?.error?.message}`;
+    ret.message = `statusCode: ${it.response.statusCode}, code: ${responseObj?.error?.code}, message: ${responseObj?.error?.message}`;
     return ret;
   }
 
@@ -617,7 +643,6 @@ export class ReportGenerator {
     const options: TrafficValidationOptions = {
       reportPath: this.opts.htmlReportPath,
       overrideLinkInReport: false,
-      outputExceptionInReport: true,
       sdkPackage: this.swaggerExampleQualityResult.providerNamespace,
     };
 
