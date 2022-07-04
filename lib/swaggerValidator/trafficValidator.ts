@@ -162,23 +162,42 @@ export class TrafficValidator {
   }
 
   public async validate(): Promise<TrafficValidationIssue[]> {
+    const specPathStats = fs.statSync(this.specPath);
+    let specFileDirectory = "";
+    let swaggerPathsPattern = "**/*.json";
+    if (specPathStats.isFile()) {
+      specFileDirectory = path.dirname(this.specPath);
+      swaggerPathsPattern = path.basename(this.specPath);
+    } else if (specPathStats.isDirectory()) {
+      specFileDirectory = this.specPath;
+    }
+    const liveValidationOptions = {
+      checkUnderFileRoot: false,
+      loadValidatorInBackground: false,
+      directory: specFileDirectory,
+      swaggerPathsPattern: [swaggerPathsPattern],
+      excludedSwaggerPathsPattern: DefaultConfig.ExcludedExamplesAndCommonFiles,
+      git: {
+        shouldClone: false,
+      },
+    };
+
+    this.liveValidator = new LiveValidator(liveValidationOptions);
+    await this.liveValidator.initialize();
+    const specsPaths = this.liveValidator.swaggerList;
+
     let payloadFilePath;
     const swaggerOpts: SwaggerLoaderOption = {
       setFilePath: false,
     };
     this.swaggerLoader = inversifyGetInstance(SwaggerLoader, swaggerOpts);
-    const spec = await this.swaggerLoader.load(this.specPath);
-    const operationIdList = findPathsToKey({ key: "operationId", obj: spec });
+
     try {
       for (const trafficFile of this.trafficFiles) {
         payloadFilePath = trafficFile;
         const payload: RequestResponsePair = require(trafficFile);
         const validationResult = await this.liveValidator.validateLiveRequestResponse(payload);
         let operationInfo = validationResult.requestValidationResult?.operationInfo;
-        const operationId = findPathToValue(operationIdList, spec, operationInfo.operationId);
-        const operationIdPosition = getFilePositionFromJsonPath(spec, operationId[0]);
-        console.log(operationIdPosition);
-        operationInfo = Object.assign(operationInfo, { position: operationIdPosition });
         const liveRequest = payload.liveRequest;
         const correlationId = liveRequest.headers?.["x-ms-correlation-request-id"] || "";
         const activityId = liveRequest.headers?.["x-ms-request-id"] || "";
@@ -244,19 +263,27 @@ export class TrafficValidator {
           } else {
             liveRequestResponseList = findPathsToKey({ key: "liveRequest", obj: trafficSpec });
           }
-          console.log(liveRequestResponseList);
           const liveRequestResponsePosition = getFilePositionFromJsonPath(
             trafficSpec,
             liveRequestResponseList[0]
           );
-          this.trafficValidationResult.push({
-            specFilePath: this.specPath,
-            payloadFilePath,
-            payloadFilePathPosition: liveRequestResponsePosition,
-            errors: errorResult,
-            runtimeExceptions,
-            operationInfo: operationInfo,
-          });
+
+          for (const specPath of specsPaths) {
+            const spec = await this.swaggerLoader.load(specPath);
+            const operationIdList = findPathsToKey({ key: "operationId", obj: spec });
+            const operationId = findPathToValue(operationIdList, spec, operationInfo.operationId);
+            const operationIdPosition = getFilePositionFromJsonPath(spec, operationId[0]);
+            console.log(operationIdPosition);
+            operationInfo = Object.assign(operationInfo, { position: operationIdPosition });
+            this.trafficValidationResult.push({
+              specFilePath: specPath,
+              payloadFilePath,
+              payloadFilePathPosition: liveRequestResponsePosition,
+              errors: errorResult,
+              runtimeExceptions,
+              operationInfo,
+            });
+          }
         }
       }
     } catch (err) {

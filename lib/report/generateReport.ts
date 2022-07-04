@@ -66,6 +66,7 @@ export class CoverageView {
 
   public validationResultsForRendering: TrafficValidationIssueForRendering[] = [];
   public coverageResultsForRendering: OperationCoverageInfoForRendering[] = [];
+  public coverageResultsForRenderingSnap: OperationCoverageInfoForRendering[] = [];
 
   private validationResults: TrafficValidationIssue[];
   private sortedValidationResults: TrafficValidationIssue[];
@@ -192,6 +193,7 @@ export class CoverageView {
           coverageRate: element.coverageRate,
         });
       });
+      // this.coverageResultsForRendering
     } catch (e) {
       console.error(`Failed in prepareDataForRendering with err:${e?.stack};message:${e?.message}`);
     }
@@ -223,6 +225,7 @@ export class CoverageView {
       return 0;
     });
   }
+
   private setMetrics() {
     if (this.coverageResults?.length > 0) {
       this.apiVersion = this.coverageResults[0].apiVersion;
