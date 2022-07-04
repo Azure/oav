@@ -1,14 +1,10 @@
 import * as path from "path";
-import * as uuid from "uuid";
-import * as _ from "lodash";
-import { injectable, inject } from "inversify";
 import { findReadMe } from "@azure/openapi-markdown";
-import { setDefaultOpts } from "../swagger/loader";
-import { getApiVersionFromSwaggerPath, getProviderFromFilePath } from "../util/utils";
-import { SeverityString } from "../util/severity";
-import { FileLoader } from "../swagger/fileLoader";
+import { inject, injectable } from "inversify";
+import * as uuid from "uuid";
+import { PayloadCache } from "../generator/exampleCache";
+import Translator from "../generator/translator";
 import { TYPES } from "../inversifyUtils";
-import { SwaggerExample } from "../swagger/swaggerTypes";
 import {
   LiveValidator,
   RequestResponseLiveValidationResult,
@@ -16,29 +12,34 @@ import {
 } from "../liveValidation/liveValidator";
 import { LiveRequest, LiveResponse } from "../liveValidation/operationValidator";
 import { ReportGenerator as HtmlReportGenerator } from "../report/generateReport";
+import { FileLoader } from "../swagger/fileLoader";
+import { JsonLoader } from "../swagger/jsonLoader";
+import { setDefaultOpts } from "../swagger/loader";
+import { SwaggerExample } from "../swagger/swaggerTypes";
 import {
   OperationCoverageInfo,
   TrafficValidationIssue,
   TrafficValidationOptions,
   unCoveredOperationsFormat,
 } from "../swaggerValidator/trafficValidator";
-import { SwaggerAnalyzer } from "./swaggerAnalyzer";
-import { DataMasker } from "./dataMasker";
-import { defaultQualityReportFilePath } from "./defaultNaming";
+import { SeverityString } from "../util/severity";
+import { getApiVersionFromSwaggerPath, getProviderFromFilePath } from "../util/utils";
 import { ApiScenarioLoader, ApiScenarioLoaderOption } from "./apiScenarioLoader";
-import { NewmanReportParser, NewmanReportParserOption } from "./postmanReportParser";
 import {
-  RawReport,
   RawExecution,
+  RawReport,
   ScenarioDefinition,
   Step,
   StepRestCall,
-  Variable,
 } from "./apiScenarioTypes";
-import { VariableEnv } from "./variableEnv";
+import { DataMasker } from "./dataMasker";
+import { defaultQualityReportFilePath } from "./defaultNaming";
 import { getJsonPatchDiff } from "./diffUtils";
-import { generateMarkdownReport } from "./markdownReport";
 import { JUnitReporter } from "./junitReport";
+import { generateMarkdownReport } from "./markdownReport";
+import { NewmanReportParser, NewmanReportParserOption } from "./postmanReportParser";
+import { SwaggerAnalyzer } from "./swaggerAnalyzer";
+import { VariableEnv } from "./variableEnv";
 
 interface GeneratedExample {
   step: string;
@@ -123,12 +124,15 @@ export class ReportGenerator {
   private fileRoot: string;
   private liveValidator: LiveValidator;
   private trafficValidationResult: TrafficValidationIssue[];
+  private payloadCache: PayloadCache;
+  private translator: Translator;
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
   constructor(
     @inject(TYPES.opts) private opts: ReportGeneratorOption,
     private postmanReportParser: NewmanReportParser,
     private testResourceLoader: ApiScenarioLoader,
     private fileLoader: FileLoader,
+    private jsonLoader: JsonLoader,
     private dataMasker: DataMasker,
     private swaggerAnalyzer: SwaggerAnalyzer,
     private junitReporter: JUnitReporter
@@ -143,6 +147,8 @@ export class ReportGenerator {
       generateExample: false,
       verbose: false,
     });
+    this.payloadCache = new PayloadCache();
+    this.translator = new Translator(this.jsonLoader, this.payloadCache);
   }
 
   public async initialize() {
@@ -212,12 +218,24 @@ export class ReportGenerator {
         };
         trafficValidationIssue.specFilePath = matchedStep.operation._path._spec._filePath;
 
-        // Example validation
-        let generatedExample = undefined;
+        const payload = this.convertToLiveValidationPayload(it);
+
         let responseDiffResult: ResponseDiffItem[] | undefined = undefined;
-        const exampleFilePath = `examples/${matchedStep.step}.json`;
+        const statusCode = `${it.response.statusCode}`;
+        const exampleFilePath = `examples/${matchedStep.step}_${statusCode}.json`;
         if (this.opts.generateExample || it.annotation.exampleName) {
-          generatedExample = this.generateExample(it, variables, rawReport, matchedStep);
+          const generatedExample = {
+            parameters: this.translator.extractRequest(matchedStep.operation, payload.liveRequest),
+            responses: {
+              [statusCode]: this.translator.extractResponse(
+                matchedStep.operation,
+                payload.liveResponse,
+                statusCode
+              ),
+            },
+          };
+
+          // Example validation
           if (this.opts.generateExample) {
             await this.fileLoader.writeFile(
               path.resolve(path.dirname(this.opts.newmanReportFilePath), exampleFilePath),
@@ -228,23 +246,29 @@ export class ReportGenerator {
             // validate real payload.
             responseDiffResult =
               this.opts.validationLevel === "validate-request-response"
-                ? await this.exampleResponseDiff(generatedExample, matchedStep)
+                ? await this.exampleResponseDiff(
+                    {
+                      step: matchedStep.step,
+                      operationId: matchedStep.operationId,
+                      example: generatedExample,
+                    },
+                    matchedStep
+                  )
                 : [];
           }
         }
 
         // Schema validation
         const correlationId = it.response.headers["x-ms-correlation-request-id"];
-        const pair = this.convertToLiveValidationPayload(it);
         if (this.opts.savePayload) {
           const payloadFilePath = `payloads/${matchedStep.step}_${correlationId}.json`;
           await this.fileLoader.writeFile(
             path.resolve(path.dirname(this.opts.newmanReportFilePath), payloadFilePath),
-            JSON.stringify(pair, null, 2)
+            JSON.stringify(payload, null, 2)
           );
           trafficValidationIssue.payloadFilePath = payloadFilePath;
         }
-        const liveValidationResult = await this.liveValidator.validateLiveRequestResponse(pair);
+        const liveValidationResult = await this.liveValidator.validateLiveRequestResponse(payload);
 
         trafficValidationIssue.errors?.push(
           ...liveValidationResult.requestValidationResult.errors,
@@ -295,33 +319,6 @@ export class ReportGenerator {
     return {
       liveRequest,
       liveResponse,
-    };
-  }
-
-  private generateExample(
-    it: RawExecution,
-    variables: { [variableName: string]: Variable },
-    rawReport: RawReport,
-    step: StepRestCall
-  ): GeneratedExample {
-    const example: any = {};
-    example.parameters = this.generateParametersFromQuery(variables, it, step);
-    try {
-      _.extend(example.parameters, { parameters: JSON.parse(it.request.body) });
-      // eslint-disable-next-line no-empty
-    } catch (err) {}
-    const resp: any = this.parseRespBody(it);
-    example.responses = {};
-    _.extend(example.responses, resp);
-    const generatedGetExecution = this.findGeneratedGetExecution(it, rawReport);
-    if (generatedGetExecution.length > 0) {
-      const getResp = this.parseRespBody(generatedGetExecution[0]);
-      _.extend(example.responses, getResp);
-    }
-    return {
-      example,
-      step: it.annotation.step,
-      operationId: it.annotation.operationId,
     };
   }
 
@@ -475,19 +472,6 @@ export class ReportGenerator {
     return undefined;
   }
 
-  private findGeneratedGetExecution(it: RawExecution, rawReport: RawReport) {
-    if (it.annotation.type === "LRO") {
-      const finalGet = rawReport.executions.filter(
-        (execution) =>
-          execution.annotation &&
-          execution.annotation.lro_item_name === it.annotation.itemName &&
-          execution.annotation.type === "generated-get"
-      );
-      return finalGet;
-    }
-    return [];
-  }
-
   private getRuntimeError(it: RawExecution): RuntimeError {
     const responseObj = this.dataMasker.jsonParse(it.response.body);
     return {
@@ -592,43 +576,5 @@ export class ReportGenerator {
       options
     );
     await generator.generateHtmlReport();
-  }
-
-  private parseRespBody(it: RawExecution) {
-    const resp: any = {};
-    const response = it.response;
-    const statusCode = it.response.statusCode;
-
-    try {
-      resp[statusCode] = { body: JSON.parse(it.response.body) };
-    } catch (err) {
-      resp[statusCode] = { body: it.response.body };
-    }
-
-    if (statusCode === 201 || statusCode === 202) {
-      resp[statusCode].headers = {
-        Location: response.headers.Location,
-        "Azure-AsyncOperation": response.headers["Azure-AsyncOperation"],
-      };
-    }
-    return resp;
-  }
-
-  private generateParametersFromQuery(
-    variables: { [variableName: string]: Variable },
-    execution: RawExecution,
-    step: StepRestCall
-  ) {
-    const ret: any = {};
-    for (const k of Object.keys(step.parameters)) {
-      const paramName = Object.keys(variables).includes(k) ? k : `${step.step}_${k}`;
-      const v = variables[paramName];
-      if (v && v.type === "string") {
-        if (execution.request.url.includes(v.value!)) {
-          ret[k] = v.value;
-        }
-      }
-    }
-    return ret;
   }
 }
