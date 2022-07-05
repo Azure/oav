@@ -591,6 +591,8 @@ export class ReportGenerator {
     await this.generateMarkdownQualityReport();
     await this.generateJUnitReport();
     await this.generateHtmlReport();
+
+    return this.swaggerExampleQualityResult;
   }
 
   private async generateHtmlReport() {
