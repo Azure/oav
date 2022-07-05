@@ -12,12 +12,12 @@ export class JUnitReporter {
   public addSuiteToBuild = async (tsr: ApiScenarioTestResult, path: string) => {
     return new Promise((resolve, reject) => {
       try {
-        const suite = this.builder.testSuite().name(tsr.testScenarioName);
+        const suite = this.builder.testSuite().name(tsr.apiScenarioName);
         tsr.stepResult.forEach((sr) => {
           const tc = suite
             .testCase()
-            .className(tsr.testScenarioName)
-            .name(`${tsr.testScenarioName}.${sr.stepName}`)
+            .className(tsr.apiScenarioName)
+            .name(`${tsr.apiScenarioName}.${sr.stepName}`)
             .file(sr.exampleFilePath);
           if (sr.runtimeError && sr.runtimeError.length > 0) {
             const detail = generateJUnitCaseReport(sr);

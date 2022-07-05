@@ -9,7 +9,11 @@ import { ApiScenarioLoader, ApiScenarioLoaderOption } from "./apiScenarioLoader"
 import { ApiScenarioRunner } from "./apiScenarioRunner";
 import { generateMarkdownReportHeader } from "./markdownReport";
 import { PostmanCollectionRunnerClient } from "./postmanCollectionRunnerClient";
-import { NewmanReportValidator, ValidationLevel } from "./newmanReportValidator";
+import {
+  NewmanReportValidator,
+  NewmanReportValidatorOption,
+  ValidationLevel,
+} from "./newmanReportValidator";
 import { SwaggerAnalyzer, SwaggerAnalyzerOption } from "./swaggerAnalyzer";
 import { EnvironmentVariables, VariableEnv } from "./variableEnv";
 import { parseNewmanReport, NewmanReport } from "./newmanReportParser";
@@ -17,6 +21,7 @@ import {
   defaultCollectionFileName,
   defaultEnvFileName,
   defaultNewmanReport,
+  defaultQualityReportFilePath,
 } from "./defaultNaming";
 import { DataMasker } from "./dataMasker";
 import { Scenario } from "./apiScenarioTypes";
@@ -234,7 +239,7 @@ export class PostmanCollectionGenerator {
             }
           )
           .on("done", async (_err, _summary) => {
-            await this.postRun(reportExportPath, runtimeEnv);
+            await this.postRun(scenario, reportExportPath, runtimeEnv);
             resolve(_summary);
           });
       });
@@ -242,7 +247,7 @@ export class PostmanCollectionGenerator {
     await newmanRun();
   }
 
-  private async postRun(reportExportPath: string, runtimeEnv: VariableScope) {
+  private async postRun(scenario: Scenario, reportExportPath: string, runtimeEnv: VariableScope) {
     const keys = await this.swaggerAnalyzer.getAllSecretKey();
     const values: string[] = [];
     for (const [k, v] of Object.entries(runtimeEnv.syncVariablesTo())) {
@@ -264,20 +269,32 @@ export class PostmanCollectionGenerator {
 
     const rawReport = parseNewmanReport(newmanReport);
 
-    const reportValidator = inversifyGetInstance(NewmanReportValidator, {
-      newmanReportFilePath: reportExportPath,
+    const newmanReportValidatorOption: NewmanReportValidatorOption = {
+      apiScenarioFilePath: scenario._scenarioDef._filePath,
+      reportOutputFilePath: defaultQualityReportFilePath(reportExportPath),
+      apiScenarioName: scenario.scenario,
+      swaggerFilePaths: rawReport.metadata.swaggerFilePaths,
+      checkUnderFileRoot: false,
+      eraseXmsExamples: false,
+      eraseDescription: false,
       markdownReportPath: this.opt.markdownReportPath,
       junitReportPath: this.opt.junitReportPath,
       htmlReportPath: this.opt.htmlReportPath,
       runId: this.opt.runId,
-      swaggerFilePaths: this.opt.swaggerFilePaths,
       validationLevel: this.opt.validationLevel,
-      savePayload: this.opt.savePayload,
       generateExample: this.opt.generateExample,
+      savePayload: this.opt.savePayload,
       verbose: this.opt.verbose,
-    });
+    };
 
-    await reportValidator.generateReport();
+    const reportValidator = inversifyGetInstance(
+      NewmanReportValidator,
+      newmanReportValidatorOption
+    );
+
+    await reportValidator.initialize(scenario);
+
+    await reportValidator.generateReport(rawReport);
 
     if (this.opt.skipCleanUp) {
       printWarning(

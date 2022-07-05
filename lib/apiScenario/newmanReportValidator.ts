@@ -1,7 +1,6 @@
 import * as path from "path";
 import { findReadMe } from "@azure/openapi-markdown";
 import { inject, injectable } from "inversify";
-import * as uuid from "uuid";
 import { TYPES } from "../inversifyUtils";
 import {
   LiveValidator,
@@ -21,16 +20,9 @@ import {
 } from "../swaggerValidator/trafficValidator";
 import { SeverityString } from "../util/severity";
 import { getApiVersionFromSwaggerPath, getProviderFromFilePath } from "../util/utils";
-import { ApiScenarioLoader, ApiScenarioLoaderOption } from "./apiScenarioLoader";
-import {
-  RawExecution,
-  RawReport,
-  ScenarioDefinition,
-  Step,
-  StepRestCall,
-} from "./apiScenarioTypes";
+import { ApiScenarioLoaderOption } from "./apiScenarioLoader";
+import { RawExecution, RawReport, Scenario, Step, StepRestCall } from "./apiScenarioTypes";
 import { DataMasker } from "./dataMasker";
-import { defaultQualityReportFilePath } from "./defaultNaming";
 import { getJsonPatchDiff } from "./diffUtils";
 import { JUnitReporter } from "./junitReport";
 import { generateMarkdownReport } from "./markdownReport";
@@ -44,7 +36,7 @@ interface GeneratedExample {
 }
 
 export interface ApiScenarioTestResult {
-  testScenarioFilePath: string;
+  apiScenarioFilePath: string;
   readmeFilePath?: string;
   swaggerFilePaths: string[];
   tag?: string;
@@ -63,7 +55,7 @@ export interface ApiScenarioTestResult {
   branch?: string;
   commitHash?: string;
   armEndpoint: string;
-  testScenarioName?: string;
+  apiScenarioName?: string;
   stepResult: StepResult[];
 }
 
@@ -97,9 +89,9 @@ export interface ResponseDiffItem {
 
 export type ValidationLevel = "validate-request" | "validate-request-response";
 
-export interface ReportGeneratorOption extends ApiScenarioLoaderOption {
+export interface NewmanReportValidatorOption extends ApiScenarioLoaderOption {
   apiScenarioFilePath: string;
-  reportOutputFilePath?: string;
+  reportOutputFilePath: string;
   markdownReportPath?: string;
   junitReportPath?: string;
   htmlReportPath?: string;
@@ -109,43 +101,40 @@ export interface ReportGeneratorOption extends ApiScenarioLoaderOption {
   savePayload?: boolean;
   generateExample?: boolean;
   verbose?: boolean;
-  swaggerFilePaths?: string[];
 }
 
 @injectable()
 export class NewmanReportValidator {
+  private scenario: Scenario;
   private swaggerExampleQualityResult: ApiScenarioTestResult;
-  private testDefFile: ScenarioDefinition | undefined;
-  private rawReport: RawReport | undefined;
   private fileRoot: string;
   private liveValidator: LiveValidator;
   private trafficValidationResult: TrafficValidationIssue[];
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
   constructor(
-    @inject(TYPES.opts) private opts: ReportGeneratorOption,
-    private testResourceLoader: ApiScenarioLoader,
+    @inject(TYPES.opts) private opts: NewmanReportValidatorOption,
     private fileLoader: FileLoader,
     private dataMasker: DataMasker,
     private swaggerAnalyzer: SwaggerAnalyzer,
     private junitReporter: JUnitReporter
   ) {
     setDefaultOpts(this.opts, {
-      newmanReportFilePath: "",
-      reportOutputFilePath: defaultQualityReportFilePath(this.opts.newmanReportFilePath),
-      apiScenarioFilePath: "",
-      runId: uuid.v4(),
       validationLevel: "validate-request-response",
       savePayload: false,
       generateExample: false,
       verbose: false,
-    });
+    } as NewmanReportValidatorOption);
   }
 
-  public async initialize() {
-    this.fileRoot = (await findReadMe(this.opts.apiScenarioFilePath)) || "/";
+  public async initialize(scenario: Scenario) {
+    this.scenario = scenario;
+
+    this.fileRoot =
+      (await findReadMe(this.opts.apiScenarioFilePath)) ||
+      path.dirname(this.opts.apiScenarioFilePath);
 
     this.swaggerExampleQualityResult = {
-      testScenarioFilePath: path.relative(this.fileRoot, this.opts.apiScenarioFilePath),
+      apiScenarioFilePath: path.relative(this.fileRoot, this.opts.apiScenarioFilePath),
       swaggerFilePaths: this.opts.swaggerFilePaths!,
       providerNamespace: getProviderFromFilePath(this.opts.apiScenarioFilePath),
       apiVersion: getApiVersionFromSwaggerPath(
@@ -157,26 +146,22 @@ export class NewmanReportValidator {
       branch: process.env.SPEC_BRANCH,
       commitHash: process.env.COMMIT_HASH,
       environment: process.env.ENVIRONMENT || "test",
-      testScenarioName: this.opts.apiScenarioName,
+      apiScenarioName: this.opts.apiScenarioName,
       armEndpoint: "https://management.azure.com",
       stepResult: [],
     };
-    // this.testDefFile = undefined;
 
     this.liveValidator = new LiveValidator({
       fileRoot: "/",
       swaggerPaths: this.opts.swaggerFilePaths!,
     });
     await this.liveValidator.initialize();
+
+    await this.swaggerAnalyzer.initialize();
   }
 
-  public async generateReport() {
-    if (this.opts.apiScenarioFilePath !== undefined) {
-      this.testDefFile = await this.testResourceLoader.load(this.opts.apiScenarioFilePath);
-    }
-    await this.swaggerAnalyzer.initialize();
-    await this.initialize();
-    await this.generateApiScenarioTestResult(this.rawReport!);
+  public async generateReport(rawReport: RawReport) {
+    await this.generateApiScenarioTestResult(rawReport);
 
     await this.outputReport();
   }
@@ -218,9 +203,9 @@ export class NewmanReportValidator {
 
         let responseDiffResult: ResponseDiffItem[] | undefined = undefined;
         const statusCode = `${it.response.statusCode}`;
-        const exampleFilePath = `examples/${matchedStep.step}_${statusCode}.json`;
+        const exampleFilePath = `../examples/${matchedStep.step}_${statusCode}.json`;
         if (this.opts.generateExample || it.annotation.exampleName) {
-          const generatedExample = {};
+          const generatedExample = {} as SwaggerExample;
           // {
           //   parameters: this.translator.extractRequest(matchedStep.operation, payload.liveRequest),
           //   responses: {
@@ -235,7 +220,7 @@ export class NewmanReportValidator {
           // Example validation
           if (this.opts.generateExample) {
             await this.fileLoader.writeFile(
-              path.resolve(path.dirname(this.opts.newmanReportFilePath), exampleFilePath),
+              path.resolve(path.dirname(this.opts.reportOutputFilePath), exampleFilePath),
               JSON.stringify(generatedExample, null, 2)
             );
           }
@@ -249,7 +234,8 @@ export class NewmanReportValidator {
                       operationId: matchedStep.operationId,
                       example: generatedExample,
                     },
-                    matchedStep
+                    matchedStep,
+                    rawReport
                   )
                 : [];
           }
@@ -258,9 +244,9 @@ export class NewmanReportValidator {
         // Schema validation
         const correlationId = it.response.headers["x-ms-correlation-request-id"];
         if (this.opts.savePayload) {
-          const payloadFilePath = `payloads/${matchedStep.step}_${correlationId}.json`;
+          const payloadFilePath = `../payloads/${matchedStep.step}_${correlationId}.json`;
           await this.fileLoader.writeFile(
-            path.resolve(path.dirname(this.opts.newmanReportFilePath), payloadFilePath),
+            path.resolve(path.dirname(this.opts.reportOutputFilePath), payloadFilePath),
             JSON.stringify(payload, null, 2)
           );
           trafficValidationIssue.payloadFilePath = payloadFilePath;
@@ -342,7 +328,8 @@ export class NewmanReportValidator {
 
   private async exampleResponseDiff(
     example: GeneratedExample,
-    matchedStep: Step
+    matchedStep: Step,
+    rawReport: RawReport
   ): Promise<ResponseDiffItem[]> {
     let res: ResponseDiffItem[] = [];
     if (matchedStep?.type === "restCall") {
@@ -357,7 +344,7 @@ export class NewmanReportValidator {
           await this.responseDiff(
             example.example.responses["200"]?.body || {},
             matchedStep.responses["200"]?.body || {},
-            this.rawReport!.variables,
+            rawReport.variables,
             `/200/body`,
             matchedStep.operation.responses["200"].schema
           )
@@ -454,16 +441,9 @@ export class NewmanReportValidator {
   }
 
   private getMatchedStep(stepName: string): Step | undefined {
-    for (const it of this.testDefFile?.prepareSteps ?? []) {
+    for (const it of this.scenario.steps ?? []) {
       if (stepName === it.step) {
         return it;
-      }
-    }
-    for (const testScenario of this.testDefFile?.scenarios ?? []) {
-      for (const step of testScenario.steps) {
-        if (stepName === step.step) {
-          return step;
-        }
       }
     }
     return undefined;
@@ -506,7 +486,7 @@ export class NewmanReportValidator {
 
   private async generateHtmlReport() {
     const operationIdCoverageResult = this.swaggerAnalyzer.calculateOperationCoverageBySpec(
-      this.testDefFile!
+      this.scenario._scenarioDef
     );
 
     const operationCoverageResult: OperationCoverageInfo[] = [];

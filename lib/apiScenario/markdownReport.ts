@@ -198,7 +198,7 @@ const asMarkdownResult = (tsr: ApiScenarioTestResult): TestScenarioMarkdownResul
   }
 
   const r: TestScenarioMarkdownResult = {
-    testScenarioName: tsr.testScenarioName!,
+    testScenarioName: tsr.apiScenarioName!,
     result: resultState,
     swaggerFilePaths: tsr.swaggerFilePaths,
     startTime: new Date(tsr.startTime!),

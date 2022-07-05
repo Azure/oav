@@ -11,14 +11,14 @@ import { ApiScenarioTestResult } from "../../lib/apiScenario/newmanReportValidat
 describe("markdownReport", () => {
   it("Should generate markdown report", () => {
     const ts = {
-      testScenarioFilePath: "Microsoft.Compute/preview/2020-09-30/test-scenarios/galleries.yaml",
+      apiScenarioFilePath: "Microsoft.Compute/preview/2020-09-30/test-scenarios/galleries.yaml",
       swaggerFilePaths: ["Microsoft.Compute/preview/2020-09-30/gallery.json"],
       providerNamespace: "Microsoft.Compute",
       apiVersion: "2020-09-30",
       runId: "202106011456-d4udg",
       rootPath: "/home/zhenglai/repos/azure-rest-api-specs/specification/compute/resource-manager",
       environment: "test",
-      testScenarioName: "galleries_1",
+      apiScenarioName: "galleries_1",
       armEndpoint: "https://management.azure.com",
       stepResult: [
         {
