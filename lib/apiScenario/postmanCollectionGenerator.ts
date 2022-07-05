@@ -20,6 +20,7 @@ import {
   defaultNewmanReport,
 } from "./defaultNaming";
 import { DataMasker } from "./dataMasker";
+import { Scenario } from "./apiScenarioTypes";
 
 export interface PostmanCollectionGeneratorOption
   extends ApiScenarioLoaderOption,
@@ -126,11 +127,11 @@ export class PostmanCollectionGenerator {
       }
 
       if (this.opt.generateCollection) {
-        await this.writeCollectionToJson(scenario.scenario, collection, runtimeEnv);
+        await this.writeCollectionToJson(scenario, collection, runtimeEnv);
       }
 
       if (this.opt.runCollection) {
-        await this.runCollection(scenario.scenario, collection, runtimeEnv);
+        await this.runCollection(scenario, collection, runtimeEnv);
       }
 
       result.push(collection);
@@ -172,10 +173,11 @@ export class PostmanCollectionGenerator {
   }
 
   private async writeCollectionToJson(
-    scenarioName: string,
+    scenario: Scenario,
     collection: Collection,
     runtimeEnv: VariableScope
   ) {
+    const scenarioName = scenario.scenario;
     const collectionPath = resolve(
       this.opt.outputFolder,
       `${defaultCollectionFileName(this.opt.name, this.opt.runId!, scenarioName)}`
@@ -203,10 +205,11 @@ export class PostmanCollectionGenerator {
   }
 
   private async runCollection(
-    scenarioName: string,
+    scenario: Scenario,
     collection: Collection,
     runtimeEnv: VariableScope
   ) {
+    const scenarioName = scenario.scenario;
     const reportExportPath = resolve(
       this.opt.outputFolder,
       `${defaultNewmanReport(this.opt.name, this.opt.runId!, scenarioName)}`
