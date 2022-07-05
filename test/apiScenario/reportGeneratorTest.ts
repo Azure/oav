@@ -26,6 +26,20 @@ describe("reportGenerator", () => {
     reportGeneratorOption.reportOutputFilePath = undefined;
     const report = await reportGenerator.generateReport();
     report.rootPath = "";
+    report.stepResult.forEach((stepResult) => {
+      stepResult.liveValidationResult?.requestValidationResult.errors.forEach((error) => {
+        error.source = {
+          ...error.source,
+          url: "",
+        };
+      });
+      stepResult.liveValidationResult?.responseValidationResult.errors.forEach((error) => {
+        error.source = {
+          ...error.source,
+          url: "",
+        };
+      });
+    });
 
     expect(report).toMatchSnapshot();
   });
