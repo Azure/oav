@@ -199,19 +199,20 @@ export class NewmanReportValidator {
 
         let responseDiffResult: ResponseDiffItem[] | undefined = undefined;
         const statusCode = `${it.response.statusCode}`;
-        const exampleFilePath = `../examples/${matchedStep.step}_${statusCode}.json`;
+        const exampleFilePath = `../examples/${matchedStep.operationId}_${statusCode}.json`;
         if (this.opts.generateExample || it.annotation.exampleName) {
-          const generatedExample = {} as SwaggerExample;
-          // {
-          //   parameters: this.translator.extractRequest(matchedStep.operation, payload.liveRequest),
-          //   responses: {
-          //     [statusCode]: this.translator.extractResponse(
-          //       matchedStep.operation,
-          //       payload.liveResponse,
-          //       statusCode
-          //     ),
-          //   },
-          // };
+          const generatedExample: SwaggerExample = {
+            operationId: matchedStep.operationId,
+            title: matchedStep.step,
+            description: matchedStep.description,
+            parameters: matchedStep._resolvedParameters!,
+            responses: {
+              [statusCode]: {
+                headers: payload.liveResponse.headers,
+                body: payload.liveResponse.body,
+              },
+            },
+          };
 
           // Example validation
           if (this.opts.generateExample) {

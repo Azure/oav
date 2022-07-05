@@ -338,6 +338,8 @@ pm.test("Stopped TestProxy recording", function() {
 
     env.resolve();
 
+    step._resolvedParameters = env.resolveObjectValues(step.parameters);
+
     if (Object.keys(step.variables).length > 0) {
       PostmanHelper.createEvent(
         "prerequest",

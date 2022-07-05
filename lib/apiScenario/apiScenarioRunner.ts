@@ -252,6 +252,10 @@ export class ApiScenarioRunner {
     }
 
     await this.client.sendRestCallRequest(req, step, env);
+
+    if (this.resolveVariables && !step._resolvedParameters) {
+      step._resolvedParameters = env.resolveObjectValues(step.parameters);
+    }
   }
 
   private async executeArmTemplateStep(step: StepArmTemplate, env: VariableEnv, scope: Scope) {
