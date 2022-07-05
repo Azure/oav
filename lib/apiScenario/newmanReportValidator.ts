@@ -3,6 +3,7 @@ import { findReadMe } from "@azure/openapi-markdown";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../inversifyUtils";
 import {
+  LiveValidationIssue,
   LiveValidator,
   RequestResponseLiveValidationResult,
   RequestResponsePair,
@@ -14,6 +15,7 @@ import { setDefaultOpts } from "../swagger/loader";
 import { SwaggerExample } from "../swagger/swaggerTypes";
 import {
   OperationCoverageInfo,
+  RuntimeException,
   TrafficValidationIssue,
   TrafficValidationOptions,
   unCoveredOperationsFormat,
@@ -106,7 +108,6 @@ export interface NewmanReportValidatorOption extends ApiScenarioLoaderOption {
 @injectable()
 export class NewmanReportValidator {
   private scenario: Scenario;
-  private swaggerExampleQualityResult: ApiScenarioTestResult;
   private fileRoot: string;
   private liveValidator: LiveValidator;
   private trafficValidationResult: TrafficValidationIssue[];
@@ -133,7 +134,17 @@ export class NewmanReportValidator {
       (await findReadMe(this.opts.apiScenarioFilePath)) ||
       path.dirname(this.opts.apiScenarioFilePath);
 
-    this.swaggerExampleQualityResult = {
+    this.liveValidator = new LiveValidator({
+      fileRoot: "/",
+      swaggerPaths: this.opts.swaggerFilePaths!,
+    });
+    await this.liveValidator.initialize();
+
+    await this.swaggerAnalyzer.initialize();
+  }
+
+  public async generateReport(rawReport: RawReport) {
+    const swaggerExampleQualityResult: ApiScenarioTestResult = {
       apiScenarioFilePath: path.relative(this.fileRoot, this.opts.apiScenarioFilePath),
       swaggerFilePaths: this.opts.swaggerFilePaths!,
       providerNamespace: getProviderFromFilePath(this.opts.apiScenarioFilePath),
@@ -151,27 +162,22 @@ export class NewmanReportValidator {
       stepResult: [],
     };
 
-    this.liveValidator = new LiveValidator({
-      fileRoot: "/",
-      swaggerPaths: this.opts.swaggerFilePaths!,
-    });
-    await this.liveValidator.initialize();
+    await this.generateApiScenarioTestResult(rawReport, swaggerExampleQualityResult);
 
-    await this.swaggerAnalyzer.initialize();
+    await this.outputReport(swaggerExampleQualityResult);
+
+    return swaggerExampleQualityResult;
   }
 
-  public async generateReport(rawReport: RawReport) {
-    await this.generateApiScenarioTestResult(rawReport);
-
-    await this.outputReport();
-  }
-
-  private async generateApiScenarioTestResult(rawReport: RawReport) {
+  private async generateApiScenarioTestResult(
+    rawReport: RawReport,
+    swaggerExampleQualityResult: ApiScenarioTestResult
+  ) {
     this.trafficValidationResult = [];
     const variables = rawReport.variables;
-    this.swaggerExampleQualityResult.startTime = new Date(rawReport.timings.started).toISOString();
-    this.swaggerExampleQualityResult.endTime = new Date(rawReport.timings.completed).toISOString();
-    this.swaggerExampleQualityResult.subscriptionId = variables.subscriptionId.value as string;
+    swaggerExampleQualityResult.startTime = new Date(rawReport.timings.started).toISOString();
+    swaggerExampleQualityResult.endTime = new Date(rawReport.timings.completed).toISOString();
+    swaggerExampleQualityResult.subscriptionId = variables.subscriptionId.value as string;
     for (const it of rawReport.executions) {
       if (it.annotation === undefined) {
         continue;
@@ -188,15 +194,12 @@ export class NewmanReportValidator {
         if (it.response.statusCode >= 400) {
           const error = this.getRuntimeError(it);
           runtimeError.push(error);
-          trafficValidationIssue.runtimeExceptions?.push(error);
+          trafficValidationIssue.errors?.push(this.convertRuntimeException(error));
         }
         if (matchedStep === undefined) {
           continue;
         }
-        trafficValidationIssue.operationInfo = {
-          operationId: matchedStep.operationId,
-          apiVersion: "",
-        };
+
         trafficValidationIssue.specFilePath = matchedStep.operation._path._spec._filePath;
 
         const payload = this.convertToLiveValidationPayload(it);
@@ -253,25 +256,32 @@ export class NewmanReportValidator {
         }
         const liveValidationResult = await this.liveValidator.validateLiveRequestResponse(payload);
 
+        trafficValidationIssue.operationInfo =
+          liveValidationResult.requestValidationResult.operationInfo;
+
         trafficValidationIssue.errors?.push(
           ...liveValidationResult.requestValidationResult.errors,
           ...liveValidationResult.responseValidationResult.errors
         );
         if (liveValidationResult.requestValidationResult.runtimeException) {
-          trafficValidationIssue.runtimeExceptions?.push(
-            liveValidationResult.requestValidationResult.runtimeException
+          trafficValidationIssue.errors?.push(
+            this.convertRuntimeException(
+              liveValidationResult.requestValidationResult.runtimeException
+            )
           );
         }
 
         if (liveValidationResult.responseValidationResult.runtimeException) {
-          trafficValidationIssue.runtimeExceptions?.push(
-            liveValidationResult.responseValidationResult.runtimeException
+          trafficValidationIssue.errors?.push(
+            this.convertRuntimeException(
+              liveValidationResult.responseValidationResult.runtimeException
+            )
           );
         }
 
         this.trafficValidationResult.push(trafficValidationIssue);
 
-        this.swaggerExampleQualityResult.stepResult.push({
+        swaggerExampleQualityResult.stepResult.push({
           exampleFilePath: exampleFilePath,
           operationId: it.annotation.operationId,
           runtimeError,
@@ -283,6 +293,26 @@ export class NewmanReportValidator {
         });
       }
     }
+  }
+
+  private convertRuntimeException(runtimeException: RuntimeException): LiveValidationIssue {
+    const ret = {
+      code: runtimeException.code,
+      pathsInPayload: [],
+      severity: 1,
+      message: runtimeException.message,
+      jsonPathsInPayload: [],
+      schemaPath: "",
+      source: {
+        url: "",
+        position: {
+          column: 0,
+          line: 0,
+        },
+      },
+    };
+
+    return ret as LiveValidationIssue;
   }
 
   private convertToLiveValidationPayload(rawExecution: RawExecution): RequestResponsePair {
@@ -459,32 +489,32 @@ export class NewmanReportValidator {
     };
   }
 
-  private async outputReport() {
+  private async outputReport(swaggerExampleQualityResult: ApiScenarioTestResult): Promise<void> {
     if (this.opts.reportOutputFilePath !== undefined) {
       console.log(`Write generated report file: ${this.opts.reportOutputFilePath}`);
       await this.fileLoader.writeFile(
         this.opts.reportOutputFilePath,
-        JSON.stringify(this.swaggerExampleQualityResult, null, 2)
+        JSON.stringify(swaggerExampleQualityResult, null, 2)
       );
     }
     if (this.opts.markdownReportPath) {
       await this.fileLoader.appendFile(
         this.opts.markdownReportPath,
-        generateMarkdownReport(this.swaggerExampleQualityResult)
+        generateMarkdownReport(swaggerExampleQualityResult)
       );
     }
     if (this.opts.junitReportPath) {
       await this.junitReporter.addSuiteToBuild(
-        this.swaggerExampleQualityResult,
+        swaggerExampleQualityResult,
         this.opts.junitReportPath
       );
     }
     if (this.opts.htmlReportPath) {
-      await this.generateHtmlReport();
+      await this.generateHtmlReport(swaggerExampleQualityResult);
     }
   }
 
-  private async generateHtmlReport() {
+  private async generateHtmlReport(swaggerExampleQualityResult: ApiScenarioTestResult) {
     const operationIdCoverageResult = this.swaggerAnalyzer.calculateOperationCoverageBySpec(
       this.scenario._scenarioDef
     );
@@ -531,8 +561,7 @@ export class NewmanReportValidator {
     const options: TrafficValidationOptions = {
       reportPath: this.opts.htmlReportPath,
       overrideLinkInReport: false,
-      outputExceptionInReport: true,
-      sdkPackage: this.swaggerExampleQualityResult.providerNamespace,
+      sdkPackage: swaggerExampleQualityResult.providerNamespace,
     };
 
     const generator = new HtmlReportGenerator(
