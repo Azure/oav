@@ -238,6 +238,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       prepareSteps: [],
       scenarios: [],
       _filePath: this.fileLoader.relativePath(filePath),
+      _swaggerFilePaths: this.opts.swaggerFilePaths!,
       cleanUpSteps: [],
       ...convertVariables(rawDef.variables),
     };

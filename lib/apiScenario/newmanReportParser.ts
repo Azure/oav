@@ -6,28 +6,27 @@ import {
   Response,
   DescriptionDefinition,
 } from "postman-collection";
-import { RawExecution, RawReport, RawRequest, RawResponse } from "./apiScenarioTypes";
+import { NewmanExecution, NewmanReport, NewmanRequest, NewmanResponse } from "./apiScenarioTypes";
 
-export interface NewmanReport {
+export interface RawNewmanReport {
   run: Run;
   environment: any;
   collection: any;
 }
 
 interface Run {
-  executions: NewmanExecution[];
+  executions: RawNewmanExecution[];
   timings: { started: number; completed: number; responseAverage: number };
 }
 
-interface NewmanExecution {
+interface RawNewmanExecution {
   item: ItemDefinition;
   request: RequestDefinition;
   response: ResponseDefinition;
 }
 
-export function parseNewmanReport(newmanReport: NewmanReport): RawReport {
-  const ret: RawReport = { variables: {}, executions: [], timings: {}, metadata: {} };
-  ret.metadata = JSON.parse(newmanReport.collection.info.description.content);
+export function parseNewmanReport(newmanReport: RawNewmanReport): NewmanReport {
+  const ret: NewmanReport = { variables: {}, executions: [], timings: {} };
   for (const it of newmanReport.run.executions) {
     ret.executions.push(generateExampleItem(it));
   }
@@ -36,7 +35,7 @@ export function parseNewmanReport(newmanReport: NewmanReport): RawReport {
   return ret;
 }
 
-function generateExampleItem(it: NewmanExecution): RawExecution {
+function generateExampleItem(it: RawNewmanExecution): NewmanExecution {
   const resp = new Response(it.response);
   const req = new Request(it.request);
   const rawReq = parseRequest(req);
@@ -49,8 +48,8 @@ function generateExampleItem(it: NewmanExecution): RawExecution {
   };
 }
 
-function parseRequest(req: Request): RawRequest {
-  const ret: RawRequest = {
+function parseRequest(req: Request): NewmanRequest {
+  const ret: NewmanRequest = {
     url: "",
     method: "",
     headers: [],
@@ -63,8 +62,8 @@ function parseRequest(req: Request): RawRequest {
   return ret;
 }
 
-function parseResponse(resp: Response): RawResponse {
-  const ret: RawResponse = {
+function parseResponse(resp: Response): NewmanResponse {
+  const ret: NewmanResponse = {
     headers: [],
     statusCode: resp.code,
     body: "",

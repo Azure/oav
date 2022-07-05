@@ -16,7 +16,7 @@ import {
 } from "./newmanReportValidator";
 import { SwaggerAnalyzer, SwaggerAnalyzerOption } from "./swaggerAnalyzer";
 import { EnvironmentVariables, VariableEnv } from "./variableEnv";
-import { parseNewmanReport, NewmanReport } from "./newmanReportParser";
+import { parseNewmanReport, RawNewmanReport } from "./newmanReportParser";
 import {
   defaultCollectionFileName,
   defaultEnvFileName,
@@ -102,13 +102,10 @@ export class PostmanCollectionGenerator {
     const result: Collection[] = [];
 
     const client = new PostmanCollectionRunnerClient({
-      apiScenarioFileName: this.opt.name,
-      apiScenarioFilePath: this.opt.scenarioDef,
       runId: this.opt.runId,
       baseUrl: this.opt.baseUrl,
       testProxy: this.opt.testProxy,
       verbose: this.opt.verbose,
-      swaggerFilePaths: this.opt.swaggerFilePaths,
       skipAuth: this.opt.devMode,
       skipArmCall: this.opt.devMode,
       skipLroPoll: this.opt.devMode,
@@ -258,28 +255,26 @@ export class PostmanCollectionGenerator {
     this.dataMasker.addMaskedValues(values);
     this.dataMasker.addMaskedKeys(keys);
     // read content and upload. mask newman report.
-    const newmanReport = JSON.parse(await this.fileLoader.load(reportExportPath)) as NewmanReport;
+    const rawReport = JSON.parse(await this.fileLoader.load(reportExportPath)) as RawNewmanReport;
 
     // add mask environment secret value
-    for (const item of newmanReport.environment.values) {
+    for (const item of rawReport.environment.values) {
       if (this.dataMasker.maybeSecretKey(item.key)) {
         this.dataMasker.addMaskedValues([item.value]);
       }
     }
 
-    const rawReport = parseNewmanReport(newmanReport);
+    const newmanReport = parseNewmanReport(rawReport);
 
     const newmanReportValidatorOption: NewmanReportValidatorOption = {
-      apiScenarioFilePath: scenario._scenarioDef._filePath,
       reportOutputFilePath: defaultQualityReportFilePath(reportExportPath),
-      apiScenarioName: scenario.scenario,
-      swaggerFilePaths: rawReport.metadata.swaggerFilePaths,
       checkUnderFileRoot: false,
       eraseXmsExamples: false,
       eraseDescription: false,
       markdownReportPath: this.opt.markdownReportPath,
       junitReportPath: this.opt.junitReportPath,
       htmlReportPath: this.opt.htmlReportPath,
+      baseUrl: this.opt.baseUrl,
       runId: this.opt.runId,
       validationLevel: this.opt.validationLevel,
       generateExample: this.opt.generateExample,
@@ -294,7 +289,7 @@ export class PostmanCollectionGenerator {
 
     await reportValidator.initialize(scenario);
 
-    await reportValidator.generateReport(rawReport);
+    await reportValidator.generateReport(newmanReport);
 
     if (this.opt.skipCleanUp) {
       printWarning(

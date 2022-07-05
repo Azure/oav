@@ -306,31 +306,31 @@ export type ScenarioDefinition = TransformRaw<
     scenarios: Scenario[];
     cleanUpSteps: Step[];
     _filePath: string;
+    _swaggerFilePaths: string[];
   }
 >;
 //#endregion
 
 //#region Runner specific types
-export interface RawReport {
-  executions: RawExecution[];
+export interface NewmanReport {
+  executions: NewmanExecution[];
   timings: any;
   variables: { [variableName: string]: Variable };
-  metadata: any;
 }
 
-export interface RawExecution {
-  request: RawRequest;
-  response: RawResponse;
+export interface NewmanExecution {
+  request: NewmanRequest;
+  response: NewmanResponse;
   annotation?: any;
 }
-export interface RawRequest {
+export interface NewmanRequest {
   url: string;
   method: string;
   headers: { [key: string]: any };
   body: string;
 }
 
-export interface RawResponse {
+export interface NewmanResponse {
   statusCode: number;
   headers: { [key: string]: any };
   body: string;

@@ -386,11 +386,10 @@ export async function getInputFiles(readMe: string, tag?: string): Promise<strin
   return result;
 }
 
-export function getApiVersionFromSwaggerPath(specPath: string): string {
-  const apiVersionPattern: RegExp = new RegExp(
-    `^.*\/(stable|preview)+\/([0-9]{4}-[0-9]{2}-[0-9]{2}(-preview)?)\/.*\.json$`
-  );
-  const apiVersionMatch = apiVersionPattern.exec(specPath);
+export function getApiVersionFromFilePath(filePath: string): string {
+  const apiVersionPattern: RegExp =
+    /^.*\/(stable|preview)+\/([0-9]{4}-[0-9]{2}-[0-9]{2}(-preview)?)\/.*\.(json|yaml)$/i;
+  const apiVersionMatch = apiVersionPattern.exec(filePath);
   return apiVersionMatch === null ? "" : apiVersionMatch[2];
 }
 
