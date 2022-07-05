@@ -9,11 +9,10 @@ import { ApiScenarioLoader, ApiScenarioLoaderOption } from "./apiScenarioLoader"
 import { ApiScenarioRunner } from "./apiScenarioRunner";
 import { generateMarkdownReportHeader } from "./markdownReport";
 import { PostmanCollectionRunnerClient } from "./postmanCollectionRunnerClient";
-import { ValidationLevel } from "./reportGenerator";
+import { NewmanReportValidator, ValidationLevel } from "./newmanReportValidator";
 import { SwaggerAnalyzer, SwaggerAnalyzerOption } from "./swaggerAnalyzer";
 import { EnvironmentVariables, VariableEnv } from "./variableEnv";
-import { NewmanReportAnalyzer, NewmanReportAnalyzerOption } from "./postmanReportAnalyzer";
-import { NewmanReport } from "./postmanReportParser";
+import { parseNewmanReport, NewmanReport } from "./newmanReportParser";
 import {
   defaultCollectionFileName,
   defaultEnvFileName,
@@ -235,51 +234,55 @@ export class PostmanCollectionGenerator {
             }
           )
           .on("done", async (_err, _summary) => {
-            const keys = await this.swaggerAnalyzer.getAllSecretKey();
-            const values: string[] = [];
-            for (const [k, v] of Object.entries(runtimeEnv.syncVariablesTo())) {
-              if (this.dataMasker.maybeSecretKey(k)) {
-                values.push(v as string);
-              }
-            }
-            this.dataMasker.addMaskedValues(values);
-            this.dataMasker.addMaskedKeys(keys);
-            // read content and upload. mask newman report.
-            const newmanReport = JSON.parse(
-              await this.fileLoader.load(reportExportPath)
-            ) as NewmanReport;
-
-            // add mask environment secret value
-            for (const item of newmanReport.environment.values) {
-              if (this.dataMasker.maybeSecretKey(item.key)) {
-                this.dataMasker.addMaskedValues([item.value]);
-              }
-            }
-            const opts: NewmanReportAnalyzerOption = {
-              newmanReportFilePath: reportExportPath,
-              markdownReportPath: this.opt.markdownReportPath,
-              junitReportPath: this.opt.junitReportPath,
-              htmlReportPath: this.opt.htmlReportPath,
-              runId: this.opt.runId,
-              swaggerFilePaths: this.opt.swaggerFilePaths,
-              validationLevel: this.opt.validationLevel,
-              savePayload: this.opt.savePayload,
-              generateExample: this.opt.generateExample,
-              verbose: this.opt.verbose,
-            };
-            const reportAnalyzer = inversifyGetInstance(NewmanReportAnalyzer, opts);
-            await reportAnalyzer.analyze();
-            if (this.opt.skipCleanUp) {
-              printWarning(
-                `Notice:the resource group '${runtimeEnv.get(
-                  "resourceGroupName"
-                )}' was not cleaned up.`
-              );
-            }
+            await this.postRun(reportExportPath, runtimeEnv);
             resolve(_summary);
           });
       });
     };
     await newmanRun();
+  }
+
+  private async postRun(reportExportPath: string, runtimeEnv: VariableScope) {
+    const keys = await this.swaggerAnalyzer.getAllSecretKey();
+    const values: string[] = [];
+    for (const [k, v] of Object.entries(runtimeEnv.syncVariablesTo())) {
+      if (this.dataMasker.maybeSecretKey(k)) {
+        values.push(v as string);
+      }
+    }
+    this.dataMasker.addMaskedValues(values);
+    this.dataMasker.addMaskedKeys(keys);
+    // read content and upload. mask newman report.
+    const newmanReport = JSON.parse(await this.fileLoader.load(reportExportPath)) as NewmanReport;
+
+    // add mask environment secret value
+    for (const item of newmanReport.environment.values) {
+      if (this.dataMasker.maybeSecretKey(item.key)) {
+        this.dataMasker.addMaskedValues([item.value]);
+      }
+    }
+
+    const rawReport = parseNewmanReport(newmanReport);
+
+    const reportValidator = inversifyGetInstance(NewmanReportValidator, {
+      newmanReportFilePath: reportExportPath,
+      markdownReportPath: this.opt.markdownReportPath,
+      junitReportPath: this.opt.junitReportPath,
+      htmlReportPath: this.opt.htmlReportPath,
+      runId: this.opt.runId,
+      swaggerFilePaths: this.opt.swaggerFilePaths,
+      validationLevel: this.opt.validationLevel,
+      savePayload: this.opt.savePayload,
+      generateExample: this.opt.generateExample,
+      verbose: this.opt.verbose,
+    });
+
+    await reportValidator.generateReport();
+
+    if (this.opt.skipCleanUp) {
+      printWarning(
+        `Notice:the resource group '${runtimeEnv.get("resourceGroupName")}' was not cleaned up.`
+      );
+    }
   }
 }

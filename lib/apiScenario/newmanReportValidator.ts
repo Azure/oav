@@ -2,8 +2,6 @@ import * as path from "path";
 import { findReadMe } from "@azure/openapi-markdown";
 import { inject, injectable } from "inversify";
 import * as uuid from "uuid";
-import { PayloadCache } from "../generator/exampleCache";
-import Translator from "../generator/translator";
 import { TYPES } from "../inversifyUtils";
 import {
   LiveValidator,
@@ -13,7 +11,6 @@ import {
 import { LiveRequest, LiveResponse } from "../liveValidation/operationValidator";
 import { ReportGenerator as HtmlReportGenerator } from "../report/generateReport";
 import { FileLoader } from "../swagger/fileLoader";
-import { JsonLoader } from "../swagger/jsonLoader";
 import { setDefaultOpts } from "../swagger/loader";
 import { SwaggerExample } from "../swagger/swaggerTypes";
 import {
@@ -37,7 +34,6 @@ import { defaultQualityReportFilePath } from "./defaultNaming";
 import { getJsonPatchDiff } from "./diffUtils";
 import { JUnitReporter } from "./junitReport";
 import { generateMarkdownReport } from "./markdownReport";
-import { NewmanReportParser, NewmanReportParserOption } from "./postmanReportParser";
 import { SwaggerAnalyzer } from "./swaggerAnalyzer";
 import { VariableEnv } from "./variableEnv";
 
@@ -101,7 +97,7 @@ export interface ResponseDiffItem {
 
 export type ValidationLevel = "validate-request" | "validate-request-response";
 
-export interface ReportGeneratorOption extends NewmanReportParserOption, ApiScenarioLoaderOption {
+export interface ReportGeneratorOption extends ApiScenarioLoaderOption {
   apiScenarioFilePath: string;
   reportOutputFilePath?: string;
   markdownReportPath?: string;
@@ -117,22 +113,18 @@ export interface ReportGeneratorOption extends NewmanReportParserOption, ApiScen
 }
 
 @injectable()
-export class ReportGenerator {
+export class NewmanReportValidator {
   private swaggerExampleQualityResult: ApiScenarioTestResult;
   private testDefFile: ScenarioDefinition | undefined;
   private rawReport: RawReport | undefined;
   private fileRoot: string;
   private liveValidator: LiveValidator;
   private trafficValidationResult: TrafficValidationIssue[];
-  private payloadCache: PayloadCache;
-  private translator: Translator;
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
   constructor(
     @inject(TYPES.opts) private opts: ReportGeneratorOption,
-    private postmanReportParser: NewmanReportParser,
     private testResourceLoader: ApiScenarioLoader,
     private fileLoader: FileLoader,
-    private jsonLoader: JsonLoader,
     private dataMasker: DataMasker,
     private swaggerAnalyzer: SwaggerAnalyzer,
     private junitReporter: JUnitReporter
@@ -147,8 +139,6 @@ export class ReportGenerator {
       generateExample: false,
       verbose: false,
     });
-    this.payloadCache = new PayloadCache();
-    this.translator = new Translator(this.jsonLoader, this.payloadCache);
   }
 
   public async initialize() {
@@ -177,15 +167,21 @@ export class ReportGenerator {
       fileRoot: "/",
       swaggerPaths: this.opts.swaggerFilePaths!,
     });
-
-    this.rawReport = await this.postmanReportParser.generateRawReport(
-      this.opts.newmanReportFilePath
-    );
+    await this.liveValidator.initialize();
   }
 
-  public async generateApiScenarioTestResult(rawReport: RawReport) {
+  public async generateReport() {
+    if (this.opts.apiScenarioFilePath !== undefined) {
+      this.testDefFile = await this.testResourceLoader.load(this.opts.apiScenarioFilePath);
+    }
+    await this.swaggerAnalyzer.initialize();
     await this.initialize();
-    await this.liveValidator.initialize();
+    await this.generateApiScenarioTestResult(this.rawReport!);
+
+    await this.outputReport();
+  }
+
+  private async generateApiScenarioTestResult(rawReport: RawReport) {
     this.trafficValidationResult = [];
     const variables = rawReport.variables;
     this.swaggerExampleQualityResult.startTime = new Date(rawReport.timings.started).toISOString();
@@ -224,16 +220,17 @@ export class ReportGenerator {
         const statusCode = `${it.response.statusCode}`;
         const exampleFilePath = `examples/${matchedStep.step}_${statusCode}.json`;
         if (this.opts.generateExample || it.annotation.exampleName) {
-          const generatedExample = {
-            parameters: this.translator.extractRequest(matchedStep.operation, payload.liveRequest),
-            responses: {
-              [statusCode]: this.translator.extractResponse(
-                matchedStep.operation,
-                payload.liveResponse,
-                statusCode
-              ),
-            },
-          };
+          const generatedExample = {};
+          // {
+          //   parameters: this.translator.extractRequest(matchedStep.operation, payload.liveRequest),
+          //   responses: {
+          //     [statusCode]: this.translator.extractResponse(
+          //       matchedStep.operation,
+          //       payload.liveResponse,
+          //       statusCode
+          //     ),
+          //   },
+          // };
 
           // Example validation
           if (this.opts.generateExample) {
@@ -480,17 +477,6 @@ export class ReportGenerator {
       severity: "Error",
       detail: this.dataMasker.jsonStringify(it.response.body),
     };
-  }
-
-  public async generateReport() {
-    if (this.opts.apiScenarioFilePath !== undefined) {
-      this.testDefFile = await this.testResourceLoader.load(this.opts.apiScenarioFilePath);
-    }
-    await this.swaggerAnalyzer.initialize();
-    await this.initialize();
-    await this.generateApiScenarioTestResult(this.rawReport!);
-
-    await this.outputReport();
   }
 
   private async outputReport() {

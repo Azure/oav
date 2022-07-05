@@ -1,5 +1,5 @@
 import { injectable } from "inversify";
-import { ApiScenarioTestResult } from "./reportGenerator";
+import { ApiScenarioTestResult } from "./newmanReportValidator";
 import { generateJUnitCaseReport } from "./markdownReport";
 
 @injectable()

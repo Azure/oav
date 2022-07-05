@@ -12,7 +12,7 @@ import {
   RuntimeError,
   StepResult,
   ApiScenarioTestResult,
-} from "./reportGenerator";
+} from "./newmanReportValidator";
 
 const spaceReg = /(\n|\t|\r)/gi;
 

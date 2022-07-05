@@ -6,7 +6,7 @@ import {
   generateMarkdownReport,
   generateMarkdownReportHeader,
 } from "../../lib/apiScenario/markdownReport";
-import { ApiScenarioTestResult } from "../../lib/apiScenario/reportGenerator";
+import { ApiScenarioTestResult } from "../../lib/apiScenario/newmanReportValidator";
 
 describe("markdownReport", () => {
   it("Should generate markdown report", () => {
