@@ -143,8 +143,8 @@ export class NewmanReportValidator {
     await this.swaggerAnalyzer.initialize();
   }
 
-  public async generateReport(rawReport: RawReport) {
-    const swaggerExampleQualityResult: ApiScenarioTestResult = {
+  public async generateReport(rawReport: RawReport): Promise<ApiScenarioTestResult> {
+    const testResult: ApiScenarioTestResult = {
       apiScenarioFilePath: path.relative(this.fileRoot, this.opts.apiScenarioFilePath),
       swaggerFilePaths: this.opts.swaggerFilePaths!,
       providerNamespace: getProviderFromFilePath(this.opts.apiScenarioFilePath),
@@ -162,22 +162,22 @@ export class NewmanReportValidator {
       stepResult: [],
     };
 
-    await this.generateApiScenarioTestResult(rawReport, swaggerExampleQualityResult);
+    await this.generateApiScenarioTestResult(rawReport, testResult);
 
-    await this.outputReport(swaggerExampleQualityResult);
+    await this.outputReport(testResult);
 
-    return swaggerExampleQualityResult;
+    return testResult;
   }
 
   private async generateApiScenarioTestResult(
     rawReport: RawReport,
-    swaggerExampleQualityResult: ApiScenarioTestResult
+    testResult: ApiScenarioTestResult
   ) {
     this.trafficValidationResult = [];
     const variables = rawReport.variables;
-    swaggerExampleQualityResult.startTime = new Date(rawReport.timings.started).toISOString();
-    swaggerExampleQualityResult.endTime = new Date(rawReport.timings.completed).toISOString();
-    swaggerExampleQualityResult.subscriptionId = variables.subscriptionId.value as string;
+    testResult.startTime = new Date(rawReport.timings.started).toISOString();
+    testResult.endTime = new Date(rawReport.timings.completed).toISOString();
+    testResult.subscriptionId = variables.subscriptionId.value as string;
     for (const it of rawReport.executions) {
       if (it.annotation === undefined) {
         continue;
@@ -281,7 +281,7 @@ export class NewmanReportValidator {
 
         this.trafficValidationResult.push(trafficValidationIssue);
 
-        swaggerExampleQualityResult.stepResult.push({
+        testResult.stepResult.push({
           exampleFilePath: exampleFilePath,
           operationId: it.annotation.operationId,
           runtimeError,
@@ -489,32 +489,29 @@ export class NewmanReportValidator {
     };
   }
 
-  private async outputReport(swaggerExampleQualityResult: ApiScenarioTestResult): Promise<void> {
+  private async outputReport(testResult: ApiScenarioTestResult): Promise<void> {
     if (this.opts.reportOutputFilePath !== undefined) {
       console.log(`Write generated report file: ${this.opts.reportOutputFilePath}`);
       await this.fileLoader.writeFile(
         this.opts.reportOutputFilePath,
-        JSON.stringify(swaggerExampleQualityResult, null, 2)
+        JSON.stringify(testResult, null, 2)
       );
     }
     if (this.opts.markdownReportPath) {
       await this.fileLoader.appendFile(
         this.opts.markdownReportPath,
-        generateMarkdownReport(swaggerExampleQualityResult)
+        generateMarkdownReport(testResult)
       );
     }
     if (this.opts.junitReportPath) {
-      await this.junitReporter.addSuiteToBuild(
-        swaggerExampleQualityResult,
-        this.opts.junitReportPath
-      );
+      await this.junitReporter.addSuiteToBuild(testResult, this.opts.junitReportPath);
     }
     if (this.opts.htmlReportPath) {
-      await this.generateHtmlReport(swaggerExampleQualityResult);
+      await this.generateHtmlReport(testResult);
     }
   }
 
-  private async generateHtmlReport(swaggerExampleQualityResult: ApiScenarioTestResult) {
+  private async generateHtmlReport(testResult: ApiScenarioTestResult) {
     const operationIdCoverageResult = this.swaggerAnalyzer.calculateOperationCoverageBySpec(
       this.scenario._scenarioDef
     );
@@ -561,7 +558,7 @@ export class NewmanReportValidator {
     const options: TrafficValidationOptions = {
       reportPath: this.opts.htmlReportPath,
       overrideLinkInReport: false,
-      sdkPackage: swaggerExampleQualityResult.providerNamespace,
+      sdkPackage: testResult.providerNamespace,
     };
 
     const generator = new HtmlReportGenerator(
