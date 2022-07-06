@@ -92,6 +92,7 @@ export interface ResponseDiffItem {
 export type ValidationLevel = "validate-request" | "validate-request-response";
 
 export interface NewmanReportValidatorOption extends ApiScenarioLoaderOption {
+  apiScenarioFilePath: string;
   reportOutputFilePath: string;
   markdownReportPath?: string;
   junitReportPath?: string;
@@ -129,16 +130,16 @@ export class NewmanReportValidator {
 
   public async initialize(scenario: Scenario) {
     this.scenario = scenario;
-    const apiScenarioFilePath = this.scenario._scenarioDef._filePath;
-    const swaggerFilePaths = this.scenario._scenarioDef._swaggerFilePaths;
 
-    this.fileRoot = (await findReadMe(apiScenarioFilePath)) || path.dirname(apiScenarioFilePath);
+    this.fileRoot =
+      (await findReadMe(this.opts.apiScenarioFilePath)) ||
+      path.dirname(this.opts.apiScenarioFilePath);
 
     this.testResult = {
-      apiScenarioFilePath: path.relative(this.fileRoot, apiScenarioFilePath),
-      swaggerFilePaths: swaggerFilePaths,
-      providerNamespace: getProviderFromFilePath(apiScenarioFilePath),
-      apiVersion: getApiVersionFromFilePath(apiScenarioFilePath),
+      apiScenarioFilePath: path.relative(this.fileRoot, this.opts.apiScenarioFilePath),
+      swaggerFilePaths: this.opts.swaggerFilePaths!,
+      providerNamespace: getProviderFromFilePath(this.opts.apiScenarioFilePath),
+      apiVersion: getApiVersionFromFilePath(this.opts.apiScenarioFilePath),
       runId: this.opts.runId,
       rootPath: this.fileRoot,
       repository: process.env.SPEC_REPOSITORY,
@@ -154,7 +155,7 @@ export class NewmanReportValidator {
 
     this.liveValidator = new LiveValidator({
       fileRoot: "/",
-      swaggerPaths: [...swaggerFilePaths],
+      swaggerPaths: [...this.opts.swaggerFilePaths!],
     });
     await this.liveValidator.initialize();
   }
@@ -492,7 +493,7 @@ export class NewmanReportValidator {
       );
     }
     if (this.opts.markdownReportPath) {
-      await this.fileLoader.appendFile(
+      await this.fileLoader.writeFile(
         this.opts.markdownReportPath,
         generateMarkdownReport(this.testResult)
       );

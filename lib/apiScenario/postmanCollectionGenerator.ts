@@ -267,6 +267,8 @@ export class PostmanCollectionGenerator {
     const newmanReport = parseNewmanReport(rawReport);
 
     const newmanReportValidatorOption: NewmanReportValidatorOption = {
+      apiScenarioFilePath: scenario._scenarioDef._filePath,
+      swaggerFilePaths: scenario._scenarioDef._swaggerFilePaths,
       reportOutputFilePath: defaultQualityReportFilePath(reportExportPath),
       checkUnderFileRoot: false,
       eraseXmsExamples: false,
