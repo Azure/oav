@@ -3,6 +3,9 @@
 exports[`ApiScenarioLoader load valid example based scenario - storage 1`] = `
 Object {
   "_filePath": "Microsoft.Storage/stable/2021-08-01/scenarios/storageBasicExample.yaml",
+  "_swaggerFilePaths": Array [
+    "Microsoft.Storage/stable/2021-08-01/storage.json",
+  ],
   "cleanUpSteps": Array [],
   "prepareSteps": Array [],
   "requiredVariables": Array [
@@ -523,6 +526,9 @@ Object {
 exports[`ApiScenarioLoader load valid scenario - storage 1`] = `
 Object {
   "_filePath": "Microsoft.Storage/stable/2021-08-01/scenarios/storageQuickStart.yaml",
+  "_swaggerFilePaths": Array [
+    "Microsoft.Storage/stable/2021-08-01/storage.json",
+  ],
   "cleanUpSteps": Array [],
   "prepareSteps": Array [],
   "requiredVariables": Array [
@@ -756,6 +762,9 @@ Object {
 exports[`ApiScenarioLoader load valid scenario from uri 1`] = `
 Object {
   "_filePath": "Microsoft.SignalRService/preview/2021-06-01-preview/scenarios/signalR.yaml",
+  "_swaggerFilePaths": Array [
+    "Microsoft.SignalRService/preview/2021-06-01-preview/signalr.json",
+  ],
   "cleanUpSteps": Array [],
   "prepareSteps": Array [],
   "requiredVariables": Array [

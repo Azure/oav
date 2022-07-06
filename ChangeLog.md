@@ -1,5 +1,8 @@
 # Change Log - oav
 
+## 07/06/2022 3.0.3
+- Generate high quality examples from API Scenario tests
+
 ## 06/30/2022 3.0.2
 
 - traffic-converter

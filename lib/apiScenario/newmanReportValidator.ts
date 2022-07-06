@@ -1,15 +1,7 @@
 import * as path from "path";
-import * as uuid from "uuid";
-import * as _ from "lodash";
-import { injectable, inject } from "inversify";
 import { findReadMe } from "@azure/openapi-markdown";
-import { ExampleQualityValidator } from "../exampleQualityValidator/exampleQualityValidator";
-import { setDefaultOpts } from "../swagger/loader";
-import { getApiVersionFromSwaggerPath, getProviderFromFilePath } from "../util/utils";
-import { SeverityString } from "../util/severity";
-import { FileLoader } from "../swagger/fileLoader";
+import { inject, injectable } from "inversify";
 import { TYPES } from "../inversifyUtils";
-import { SwaggerExample } from "../swagger/swaggerTypes";
 import {
   LiveValidationIssue,
   LiveValidator,
@@ -18,40 +10,35 @@ import {
 } from "../liveValidation/liveValidator";
 import { LiveRequest, LiveResponse } from "../liveValidation/operationValidator";
 import { ReportGenerator as HtmlReportGenerator } from "../report/generateReport";
+import { FileLoader } from "../swagger/fileLoader";
+import { setDefaultOpts } from "../swagger/loader";
+import { SwaggerExample } from "../swagger/swaggerTypes";
 import {
   OperationCoverageInfo,
+  RuntimeException,
   TrafficValidationIssue,
   TrafficValidationOptions,
   unCoveredOperationsFormat,
 } from "../swaggerValidator/trafficValidator";
-import { RuntimeException } from "../util/validationError";
-import { SwaggerAnalyzer } from "./swaggerAnalyzer";
+import { SeverityString } from "../util/severity";
+import { getApiVersionFromFilePath, getProviderFromFilePath } from "../util/utils";
+import { ApiScenarioLoaderOption } from "./apiScenarioLoader";
+import { NewmanExecution, NewmanReport, Scenario, Step, StepRestCall } from "./apiScenarioTypes";
 import { DataMasker } from "./dataMasker";
-import { defaultQualityReportFilePath } from "./defaultNaming";
-import { ApiScenarioLoader, ApiScenarioLoaderOption } from "./apiScenarioLoader";
-import { NewmanReportParser, NewmanReportParserOption } from "./postmanReportParser";
-import {
-  RawReport,
-  RawExecution,
-  ScenarioDefinition,
-  Step,
-  StepRestCall,
-  Variable,
-} from "./apiScenarioTypes";
-import { VariableEnv } from "./variableEnv";
 import { getJsonPatchDiff } from "./diffUtils";
-import { generateMarkdownReport } from "./markdownReport";
 import { JUnitReporter } from "./junitReport";
+import { generateMarkdownReport } from "./markdownReport";
+import { SwaggerAnalyzer } from "./swaggerAnalyzer";
+import { VariableEnv } from "./variableEnv";
 
 interface GeneratedExample {
-  exampleFilePath: string;
   step: string;
   operationId: string;
   example: SwaggerExample;
 }
 
-export interface TestScenarioResult {
-  testScenarioFilePath: string;
+export interface ApiScenarioTestResult {
+  apiScenarioFilePath: string;
   readmeFilePath?: string;
   swaggerFilePaths: string[];
   tag?: string;
@@ -69,8 +56,8 @@ export interface TestScenarioResult {
   repository?: string;
   branch?: string;
   commitHash?: string;
-  armEndpoint: string;
-  testScenarioName?: string;
+  baseUrl?: string;
+  apiScenarioName?: string;
   stepResult: StepResult[];
 }
 
@@ -104,99 +91,88 @@ export interface ResponseDiffItem {
 
 export type ValidationLevel = "validate-request" | "validate-request-response";
 
-export interface ReportGeneratorOption extends NewmanReportParserOption, ApiScenarioLoaderOption {
+export interface NewmanReportValidatorOption extends ApiScenarioLoaderOption {
   apiScenarioFilePath: string;
-  reportOutputFilePath?: string;
+  reportOutputFilePath: string;
   markdownReportPath?: string;
   junitReportPath?: string;
   htmlReportPath?: string;
-  apiScenarioName?: string;
+  baseUrl?: string;
   runId?: string;
   validationLevel?: ValidationLevel;
   savePayload?: boolean;
+  generateExample?: boolean;
   verbose?: boolean;
-  swaggerFilePaths?: string[];
 }
 
 @injectable()
-export class ReportGenerator {
-  private exampleQualityValidator: ExampleQualityValidator;
-  private swaggerExampleQualityResult: TestScenarioResult;
-  private testDefFile: ScenarioDefinition | undefined;
-  private operationIds: Set<string>;
-  private rawReport: RawReport | undefined;
+export class NewmanReportValidator {
+  private scenario: Scenario;
+  private testResult: ApiScenarioTestResult;
   private fileRoot: string;
-  private recording: Map<string, RawExecution>;
   private liveValidator: LiveValidator;
   private trafficValidationResult: TrafficValidationIssue[];
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
   constructor(
-    @inject(TYPES.opts) private opts: ReportGeneratorOption,
-    private postmanReportParser: NewmanReportParser,
-    private testResourceLoader: ApiScenarioLoader,
+    @inject(TYPES.opts) private opts: NewmanReportValidatorOption,
     private fileLoader: FileLoader,
     private dataMasker: DataMasker,
     private swaggerAnalyzer: SwaggerAnalyzer,
     private junitReporter: JUnitReporter
   ) {
     setDefaultOpts(this.opts, {
-      newmanReportFilePath: "",
-      reportOutputFilePath: defaultQualityReportFilePath(this.opts.newmanReportFilePath),
-      apiScenarioFilePath: "",
-      runId: uuid.v4(),
       validationLevel: "validate-request-response",
       savePayload: false,
+      generateExample: false,
       verbose: false,
-    });
+    } as NewmanReportValidatorOption);
   }
 
-  public async initialize() {
-    const swaggerFileAbsolutePaths = this.opts.swaggerFilePaths!;
-    this.exampleQualityValidator = ExampleQualityValidator.create({
-      swaggerFilePaths: [...swaggerFileAbsolutePaths],
-    });
-    this.recording = new Map<string, RawExecution>();
-    this.operationIds = new Set<string>();
-    this.fileRoot = (await findReadMe(this.opts.apiScenarioFilePath)) || "/";
+  public async initialize(scenario: Scenario) {
+    this.scenario = scenario;
 
-    this.swaggerExampleQualityResult = {
-      testScenarioFilePath: path.relative(this.fileRoot, this.opts.apiScenarioFilePath),
+    this.fileRoot =
+      (await findReadMe(this.opts.apiScenarioFilePath)) ||
+      path.dirname(this.opts.apiScenarioFilePath);
+
+    this.testResult = {
+      apiScenarioFilePath: path.relative(this.fileRoot, this.opts.apiScenarioFilePath),
       swaggerFilePaths: this.opts.swaggerFilePaths!,
       providerNamespace: getProviderFromFilePath(this.opts.apiScenarioFilePath),
-      apiVersion: getApiVersionFromSwaggerPath(
-        this.fileLoader.resolvePath(this.opts.swaggerFilePaths![0])
-      ),
+      apiVersion: getApiVersionFromFilePath(this.opts.apiScenarioFilePath),
       runId: this.opts.runId,
       rootPath: this.fileRoot,
       repository: process.env.SPEC_REPOSITORY,
       branch: process.env.SPEC_BRANCH,
       commitHash: process.env.COMMIT_HASH,
       environment: process.env.ENVIRONMENT || "test",
-      testScenarioName: this.opts.apiScenarioName,
-      armEndpoint: "https://management.azure.com",
+      apiScenarioName: this.scenario.scenario,
+      baseUrl: this.opts.baseUrl,
       stepResult: [],
     };
-    // this.testDefFile = undefined;
+
+    await this.swaggerAnalyzer.initialize();
 
     this.liveValidator = new LiveValidator({
       fileRoot: "/",
-      swaggerPaths: this.opts.swaggerFilePaths!,
+      swaggerPaths: [...this.opts.swaggerFilePaths!],
     });
-
-    this.rawReport = await this.postmanReportParser.generateRawReport(
-      this.opts.newmanReportFilePath
-    );
+    await this.liveValidator.initialize();
   }
 
-  public async generateTestScenarioResult(rawReport: RawReport) {
-    await this.initialize();
-    await this.liveValidator.initialize();
+  public async generateReport(rawReport: NewmanReport) {
+    await this.generateApiScenarioTestResult(rawReport);
+
+    await this.outputReport();
+  }
+
+  private async generateApiScenarioTestResult(newmanReport: NewmanReport) {
     this.trafficValidationResult = [];
-    const variables = rawReport.variables;
-    this.swaggerExampleQualityResult.startTime = new Date(rawReport.timings.started).toISOString();
-    this.swaggerExampleQualityResult.endTime = new Date(rawReport.timings.completed).toISOString();
-    this.swaggerExampleQualityResult.subscriptionId = variables.subscriptionId.value as string;
-    for (const it of rawReport.executions) {
+    const variables = newmanReport.variables;
+    this.testResult.startTime = new Date(newmanReport.timings.started).toISOString();
+    this.testResult.endTime = new Date(newmanReport.timings.completed).toISOString();
+    this.testResult.subscriptionId = variables.subscriptionId.value as string;
+    for (const it of newmanReport.executions) {
       if (it.annotation === undefined) {
         continue;
       }
@@ -208,6 +184,7 @@ export class ReportGenerator {
           runtimeExceptions: [],
           errors: [],
         };
+        // Runtime errors
         if (it.response.statusCode >= 400) {
           const error = this.getRuntimeError(it);
           runtimeError.push(error);
@@ -219,45 +196,60 @@ export class ReportGenerator {
 
         trafficValidationIssue.specFilePath = matchedStep.operation._path._spec._filePath;
 
-        let generatedExample = undefined;
-        let roundtripErrors = undefined;
+        const payload = this.convertToLiveValidationPayload(it);
+
         let responseDiffResult: ResponseDiffItem[] | undefined = undefined;
-        if (it.annotation.exampleName) {
-          generatedExample = this.generateExample(
-            it,
-            variables,
-            rawReport,
-            matchedStep,
-            it.annotation.exampleName
-          );
-          // validate real payload.
-          roundtripErrors = (
-            await this.exampleQualityValidator.validateExternalExamples([
-              {
-                exampleFilePath: generatedExample.exampleFilePath,
-                example: generatedExample.example,
-                operationId: matchedStep.operationId,
+        const statusCode = `${it.response.statusCode}`;
+        const exampleFilePath = `../examples/${matchedStep.operationId}_${statusCode}.json`;
+        if (this.opts.generateExample || it.annotation.exampleName) {
+          const generatedExample: SwaggerExample = {
+            operationId: matchedStep.operationId,
+            title: matchedStep.step,
+            description: matchedStep.description,
+            parameters: matchedStep._resolvedParameters!,
+            responses: {
+              [statusCode]: {
+                headers: payload.liveResponse.headers,
+                body: payload.liveResponse.body,
               },
-            ])
-          ).map((it) => _.omit(it, ["exampleName", "exampleFilePath"]));
-          responseDiffResult =
-            this.opts.validationLevel === "validate-request-response"
-              ? await this.exampleResponseDiff(generatedExample, matchedStep)
-              : [];
+            },
+          };
+
+          // Example validation
+          if (this.opts.generateExample) {
+            await this.fileLoader.writeFile(
+              path.resolve(path.dirname(this.opts.reportOutputFilePath), exampleFilePath),
+              JSON.stringify(generatedExample, null, 2)
+            );
+          }
+          if (it.annotation.exampleName) {
+            // validate real payload.
+            responseDiffResult =
+              this.opts.validationLevel === "validate-request-response"
+                ? await this.exampleResponseDiff(
+                    {
+                      step: matchedStep.step,
+                      operationId: matchedStep.operationId,
+                      example: generatedExample,
+                    },
+                    matchedStep,
+                    newmanReport
+                  )
+                : [];
+          }
         }
+
+        // Schema validation
         const correlationId = it.response.headers["x-ms-correlation-request-id"];
-        const pair = this.convertToLiveValidationPayload(it);
         if (this.opts.savePayload) {
+          const payloadFilePath = `./payloads/${matchedStep.step}_${correlationId}.json`;
           await this.fileLoader.writeFile(
-            path.resolve(
-              path.dirname(this.opts.newmanReportFilePath),
-              `payloads/${matchedStep.step}_${correlationId}.json`
-            ),
-            JSON.stringify(pair, null, 2)
+            path.resolve(path.dirname(this.opts.reportOutputFilePath), "../", payloadFilePath),
+            JSON.stringify(payload, null, 2)
           );
-          trafficValidationIssue.payloadFilePath = `payloads/${matchedStep.step}_${correlationId}.json`;
+          trafficValidationIssue.payloadFilePath = payloadFilePath;
         }
-        const liveValidationResult = await this.liveValidator.validateLiveRequestResponse(pair);
+        const liveValidationResult = await this.liveValidator.validateLiveRequestResponse(payload);
 
         trafficValidationIssue.operationInfo =
           liveValidationResult.requestValidationResult.operationInfo;
@@ -284,18 +276,16 @@ export class ReportGenerator {
 
         this.trafficValidationResult.push(trafficValidationIssue);
 
-        this.swaggerExampleQualityResult.stepResult.push({
-          exampleFilePath: generatedExample?.exampleFilePath,
+        this.testResult.stepResult.push({
+          exampleFilePath: exampleFilePath,
           operationId: it.annotation.operationId,
           runtimeError,
           responseDiffResult: responseDiffResult,
-          stepValidationResult: roundtripErrors,
           correlationId: correlationId,
           statusCode: it.response.statusCode,
           stepName: it.annotation.step,
           liveValidationResult: liveValidationResult,
         });
-        this.recording.set(correlationId, it);
       }
     }
   }
@@ -320,9 +310,9 @@ export class ReportGenerator {
     return ret as LiveValidationIssue;
   }
 
-  private convertToLiveValidationPayload(rawExecution: RawExecution): RequestResponsePair {
-    const request = rawExecution.request;
-    const response = rawExecution.response;
+  private convertToLiveValidationPayload(execution: NewmanExecution): RequestResponsePair {
+    const request = execution.request;
+    const response = execution.response;
     const liveRequest: LiveRequest = {
       url: request.url.toString(),
       method: request.method.toLowerCase(),
@@ -337,70 +327,6 @@ export class ReportGenerator {
     return {
       liveRequest,
       liveResponse,
-    };
-  }
-
-  private async generateExampleQualityReport() {
-    if (this.opts.reportOutputFilePath !== undefined) {
-      console.log(`Write generated report file: ${this.opts.reportOutputFilePath}`);
-      await this.fileLoader.writeFile(
-        this.opts.reportOutputFilePath,
-        JSON.stringify(this.swaggerExampleQualityResult, null, 2)
-      );
-    }
-  }
-
-  private async generateMarkdownQualityReport() {
-    if (this.opts.markdownReportPath) {
-      await this.fileLoader.appendFile(
-        this.opts.markdownReportPath,
-        generateMarkdownReport(this.swaggerExampleQualityResult)
-      );
-    }
-  }
-
-  private async generateJUnitReport() {
-    if (this.opts.junitReportPath) {
-      await this.junitReporter.addSuiteToBuild(
-        this.swaggerExampleQualityResult,
-        this.opts.junitReportPath
-      );
-    }
-  }
-
-  private generateExample(
-    it: RawExecution,
-    variables: { [variableName: string]: Variable },
-    rawReport: RawReport,
-    step: StepRestCall,
-    exampleName: string
-  ): GeneratedExample {
-    const example: any = {};
-    if (it.annotation.operationId !== undefined) {
-      this.operationIds.add(it.annotation.operationId);
-    }
-    example.parameters = this.generateParametersFromQuery(variables, it, step);
-    try {
-      _.extend(example.parameters, { parameters: JSON.parse(it.request.body) });
-      // eslint-disable-next-line no-empty
-    } catch (err) {}
-    const resp: any = this.parseRespBody(it);
-    example.responses = {};
-    _.extend(example.responses, resp);
-    const exampleFilePath = path.relative(
-      this.fileRoot,
-      path.resolve(this.opts.apiScenarioFilePath, exampleName)
-    );
-    const generatedGetExecution = this.findGeneratedGetExecution(it, rawReport);
-    if (generatedGetExecution.length > 0) {
-      const getResp = this.parseRespBody(generatedGetExecution[0]);
-      _.extend(example.responses, getResp);
-    }
-    return {
-      exampleFilePath: exampleFilePath,
-      example,
-      step: it.annotation.step,
-      operationId: it.annotation.operationId,
     };
   }
 
@@ -427,7 +353,8 @@ export class ReportGenerator {
 
   private async exampleResponseDiff(
     example: GeneratedExample,
-    matchedStep: Step
+    matchedStep: Step,
+    rawReport: NewmanReport
   ): Promise<ResponseDiffItem[]> {
     let res: ResponseDiffItem[] = [];
     if (matchedStep?.type === "restCall") {
@@ -442,7 +369,7 @@ export class ReportGenerator {
           await this.responseDiff(
             example.example.responses["200"]?.body || {},
             matchedStep.responses["200"]?.body || {},
-            this.rawReport!.variables,
+            rawReport.variables,
             `/200/body`,
             matchedStep.operation.responses["200"].schema
           )
@@ -539,68 +466,49 @@ export class ReportGenerator {
   }
 
   private getMatchedStep(stepName: string): Step | undefined {
-    for (const it of this.testDefFile?.prepareSteps ?? []) {
+    for (const it of this.scenario.steps ?? []) {
       if (stepName === it.step) {
         return it;
-      }
-    }
-    for (const testScenario of this.testDefFile?.scenarios ?? []) {
-      for (const step of testScenario.steps) {
-        if (stepName === step.step) {
-          return step;
-        }
       }
     }
     return undefined;
   }
 
-  private findGeneratedGetExecution(it: RawExecution, rawReport: RawReport) {
-    if (it.annotation.type === "LRO") {
-      const finalGet = rawReport.executions.filter(
-        (execution) =>
-          execution.annotation &&
-          execution.annotation.lro_item_name === it.annotation.itemName &&
-          execution.annotation.type === "generated-get"
-      );
-      return finalGet;
-    }
-    return [];
-  }
-
-  private getRuntimeError(it: RawExecution): RuntimeError {
-    const ret: RuntimeError = {
-      code: "",
-      message: "",
+  private getRuntimeError(it: NewmanExecution): RuntimeError {
+    const responseObj = this.dataMasker.jsonParse(it.response.body);
+    return {
+      code: "RUNTIME_ERROR",
+      message: `statusCode: ${it.response.statusCode}, errorCode: ${responseObj?.error?.code}, errorMessage: ${responseObj?.error?.message}`,
       severity: "Error",
       detail: this.dataMasker.jsonStringify(it.response.body),
     };
-    const responseObj = this.dataMasker.jsonParse(it.response.body);
-    ret.code = `RUNTIME_ERROR`;
-    ret.message = `statusCode: ${it.response.statusCode}, code: ${responseObj?.error?.code}, message: ${responseObj?.error?.message}`;
-    return ret;
   }
 
-  public async generateReport() {
-    if (this.opts.apiScenarioFilePath !== undefined) {
-      this.testDefFile = await this.testResourceLoader.load(this.opts.apiScenarioFilePath);
+  private async outputReport(): Promise<void> {
+    if (this.opts.reportOutputFilePath !== undefined) {
+      console.log(`Write generated report file: ${this.opts.reportOutputFilePath}`);
+      await this.fileLoader.writeFile(
+        this.opts.reportOutputFilePath,
+        JSON.stringify(this.testResult, null, 2)
+      );
     }
-    await this.swaggerAnalyzer.initialize();
-    await this.initialize();
-    await this.generateTestScenarioResult(this.rawReport!);
-    await this.generateExampleQualityReport();
-    await this.generateMarkdownQualityReport();
-    await this.generateJUnitReport();
-    await this.generateHtmlReport();
-
-    return this.swaggerExampleQualityResult;
+    if (this.opts.markdownReportPath) {
+      await this.fileLoader.writeFile(
+        this.opts.markdownReportPath,
+        generateMarkdownReport(this.testResult)
+      );
+    }
+    if (this.opts.junitReportPath) {
+      await this.junitReporter.addSuiteToBuild(this.testResult, this.opts.junitReportPath);
+    }
+    if (this.opts.htmlReportPath) {
+      await this.generateHtmlReport();
+    }
   }
 
   private async generateHtmlReport() {
-    if (!this.opts.htmlReportPath) {
-      return;
-    }
     const operationIdCoverageResult = this.swaggerAnalyzer.calculateOperationCoverageBySpec(
-      this.testDefFile!
+      this.scenario._scenarioDef
     );
 
     const operationCoverageResult: OperationCoverageInfo[] = [];
@@ -613,7 +521,7 @@ export class ReportGenerator {
         totalOperations: result.totalOperationNumber,
         spec: specPath,
         coverageRate: result.coverage,
-        apiVersion: getApiVersionFromSwaggerPath(specPath),
+        apiVersion: getApiVersionFromFilePath(specPath),
         unCoveredOperations: result.uncoveredOperationIds.length,
         coveredOperaions: result.totalOperationNumber - result.uncoveredOperationIds.length,
         validationFailOperations: this.trafficValidationResult.filter(
@@ -645,7 +553,7 @@ export class ReportGenerator {
     const options: TrafficValidationOptions = {
       reportPath: this.opts.htmlReportPath,
       overrideLinkInReport: false,
-      sdkPackage: this.swaggerExampleQualityResult.providerNamespace,
+      sdkPackage: this.testResult.providerNamespace,
     };
 
     const generator = new HtmlReportGenerator(
@@ -655,43 +563,5 @@ export class ReportGenerator {
       options
     );
     await generator.generateHtmlReport();
-  }
-
-  private parseRespBody(it: RawExecution) {
-    const resp: any = {};
-    const response = it.response;
-    const statusCode = it.response.statusCode;
-
-    try {
-      resp[statusCode] = { body: JSON.parse(it.response.body) };
-    } catch (err) {
-      resp[statusCode] = { body: it.response.body };
-    }
-
-    if (statusCode === 201 || statusCode === 202) {
-      resp[statusCode].headers = {
-        Location: response.headers.Location,
-        "Azure-AsyncOperation": response.headers["Azure-AsyncOperation"],
-      };
-    }
-    return resp;
-  }
-
-  private generateParametersFromQuery(
-    variables: { [variableName: string]: Variable },
-    execution: RawExecution,
-    step: StepRestCall
-  ) {
-    const ret: any = {};
-    for (const k of Object.keys(step.parameters)) {
-      const paramName = Object.keys(variables).includes(k) ? k : `${step.step}_${k}`;
-      const v = variables[paramName];
-      if (v && v.type === "string") {
-        if (execution.request.url.includes(v.value!)) {
-          ret[k] = v.value;
-        }
-      }
-    }
-    return ret;
   }
 }
