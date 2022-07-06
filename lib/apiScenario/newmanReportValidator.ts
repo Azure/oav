@@ -242,9 +242,9 @@ export class NewmanReportValidator {
         // Schema validation
         const correlationId = it.response.headers["x-ms-correlation-request-id"];
         if (this.opts.savePayload) {
-          const payloadFilePath = `../payloads/${matchedStep.step}_${correlationId}.json`;
+          const payloadFilePath = `./payloads/${matchedStep.step}_${correlationId}.json`;
           await this.fileLoader.writeFile(
-            path.resolve(path.dirname(this.opts.reportOutputFilePath), payloadFilePath),
+            path.resolve(path.dirname(this.opts.reportOutputFilePath), "../", payloadFilePath),
             JSON.stringify(payload, null, 2)
           );
           trafficValidationIssue.payloadFilePath = payloadFilePath;
