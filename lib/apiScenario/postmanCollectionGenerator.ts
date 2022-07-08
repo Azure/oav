@@ -9,17 +9,22 @@ import { ApiScenarioLoader, ApiScenarioLoaderOption } from "./apiScenarioLoader"
 import { ApiScenarioRunner } from "./apiScenarioRunner";
 import { generateMarkdownReportHeader } from "./markdownReport";
 import { PostmanCollectionRunnerClient } from "./postmanCollectionRunnerClient";
-import { ValidationLevel } from "./reportGenerator";
+import {
+  NewmanReportValidator,
+  NewmanReportValidatorOption,
+  ValidationLevel,
+} from "./newmanReportValidator";
 import { SwaggerAnalyzer, SwaggerAnalyzerOption } from "./swaggerAnalyzer";
 import { EnvironmentVariables, VariableEnv } from "./variableEnv";
-import { NewmanReportAnalyzer, NewmanReportAnalyzerOption } from "./postmanReportAnalyzer";
-import { NewmanReport } from "./postmanReportParser";
+import { parseNewmanReport, RawNewmanReport } from "./newmanReportParser";
 import {
   defaultCollectionFileName,
   defaultEnvFileName,
   defaultNewmanReport,
+  defaultQualityReportFilePath,
 } from "./defaultNaming";
 import { DataMasker } from "./dataMasker";
+import { Scenario } from "./apiScenarioTypes";
 
 export interface PostmanCollectionGeneratorOption
   extends ApiScenarioLoaderOption,
@@ -38,6 +43,7 @@ export interface PostmanCollectionGeneratorOption
   testProxy?: string;
   validationLevel?: ValidationLevel;
   savePayload?: boolean;
+  generateExample?: boolean;
   skipCleanUp?: boolean;
   runId?: string;
   verbose?: boolean;
@@ -96,13 +102,10 @@ export class PostmanCollectionGenerator {
     const result: Collection[] = [];
 
     const client = new PostmanCollectionRunnerClient({
-      apiScenarioFileName: this.opt.name,
-      apiScenarioFilePath: this.opt.scenarioDef,
       runId: this.opt.runId,
       baseUrl: this.opt.baseUrl,
       testProxy: this.opt.testProxy,
       verbose: this.opt.verbose,
-      swaggerFilePaths: this.opt.swaggerFilePaths,
       skipAuth: this.opt.devMode,
       skipArmCall: this.opt.devMode,
       skipLroPoll: this.opt.devMode,
@@ -125,11 +128,11 @@ export class PostmanCollectionGenerator {
       }
 
       if (this.opt.generateCollection) {
-        await this.writeCollectionToJson(scenario.scenario, collection, runtimeEnv);
+        await this.writeCollectionToJson(scenario, collection, runtimeEnv);
       }
 
       if (this.opt.runCollection) {
-        await this.runCollection(scenario.scenario, collection, runtimeEnv);
+        await this.runCollection(scenario, collection, runtimeEnv);
       }
 
       result.push(collection);
@@ -171,10 +174,11 @@ export class PostmanCollectionGenerator {
   }
 
   private async writeCollectionToJson(
-    scenarioName: string,
+    scenario: Scenario,
     collection: Collection,
     runtimeEnv: VariableScope
   ) {
+    const scenarioName = scenario.scenario;
     const collectionPath = resolve(
       this.opt.outputFolder,
       `${defaultCollectionFileName(this.opt.name, this.opt.runId!, scenarioName)}`
@@ -202,10 +206,11 @@ export class PostmanCollectionGenerator {
   }
 
   private async runCollection(
-    scenarioName: string,
+    scenario: Scenario,
     collection: Collection,
     runtimeEnv: VariableScope
   ) {
+    const scenarioName = scenario.scenario;
     const reportExportPath = resolve(
       this.opt.outputFolder,
       `${defaultNewmanReport(this.opt.name, this.opt.runId!, scenarioName)}`
@@ -231,50 +236,67 @@ export class PostmanCollectionGenerator {
             }
           )
           .on("done", async (_err, _summary) => {
-            const keys = await this.swaggerAnalyzer.getAllSecretKey();
-            const values: string[] = [];
-            for (const [k, v] of Object.entries(runtimeEnv.syncVariablesTo())) {
-              if (this.dataMasker.maybeSecretKey(k)) {
-                values.push(v as string);
-              }
-            }
-            this.dataMasker.addMaskedValues(values);
-            this.dataMasker.addMaskedKeys(keys);
-            // read content and upload. mask newman report.
-            const newmanReport = JSON.parse(
-              await this.fileLoader.load(reportExportPath)
-            ) as NewmanReport;
-
-            // add mask environment secret value
-            for (const item of newmanReport.environment.values) {
-              if (this.dataMasker.maybeSecretKey(item.key)) {
-                this.dataMasker.addMaskedValues([item.value]);
-              }
-            }
-            const opts: NewmanReportAnalyzerOption = {
-              newmanReportFilePath: reportExportPath,
-              markdownReportPath: this.opt.markdownReportPath,
-              junitReportPath: this.opt.junitReportPath,
-              htmlReportPath: this.opt.htmlReportPath,
-              runId: this.opt.runId,
-              swaggerFilePaths: this.opt.swaggerFilePaths,
-              validationLevel: this.opt.validationLevel,
-              savePayload: this.opt.savePayload,
-              verbose: this.opt.verbose,
-            };
-            const reportAnalyzer = inversifyGetInstance(NewmanReportAnalyzer, opts);
-            await reportAnalyzer.analyze();
-            if (this.opt.skipCleanUp) {
-              printWarning(
-                `Notice:the resource group '${runtimeEnv.get(
-                  "resourceGroupName"
-                )}' was not cleaned up.`
-              );
-            }
+            await this.postRun(scenario, reportExportPath, runtimeEnv);
             resolve(_summary);
           });
       });
     };
     await newmanRun();
+  }
+
+  private async postRun(scenario: Scenario, reportExportPath: string, runtimeEnv: VariableScope) {
+    const keys = await this.swaggerAnalyzer.getAllSecretKey();
+    const values: string[] = [];
+    for (const [k, v] of Object.entries(runtimeEnv.syncVariablesTo())) {
+      if (this.dataMasker.maybeSecretKey(k)) {
+        values.push(v as string);
+      }
+    }
+    this.dataMasker.addMaskedValues(values);
+    this.dataMasker.addMaskedKeys(keys);
+    // read content and upload. mask newman report.
+    const rawReport = JSON.parse(await this.fileLoader.load(reportExportPath)) as RawNewmanReport;
+
+    // add mask environment secret value
+    for (const item of rawReport.environment.values) {
+      if (this.dataMasker.maybeSecretKey(item.key)) {
+        this.dataMasker.addMaskedValues([item.value]);
+      }
+    }
+
+    const newmanReport = parseNewmanReport(rawReport);
+
+    const newmanReportValidatorOption: NewmanReportValidatorOption = {
+      apiScenarioFilePath: scenario._scenarioDef._filePath,
+      swaggerFilePaths: scenario._scenarioDef._swaggerFilePaths,
+      reportOutputFilePath: defaultQualityReportFilePath(reportExportPath),
+      checkUnderFileRoot: false,
+      eraseXmsExamples: false,
+      eraseDescription: false,
+      markdownReportPath: this.opt.markdownReportPath,
+      junitReportPath: this.opt.junitReportPath,
+      htmlReportPath: this.opt.htmlReportPath,
+      baseUrl: this.opt.baseUrl,
+      runId: this.opt.runId,
+      validationLevel: this.opt.validationLevel,
+      generateExample: this.opt.generateExample,
+      savePayload: this.opt.savePayload,
+      verbose: this.opt.verbose,
+    };
+
+    const reportValidator = inversifyGetInstance(
+      NewmanReportValidator,
+      newmanReportValidatorOption
+    );
+
+    await reportValidator.initialize(scenario);
+
+    await reportValidator.generateReport(newmanReport);
+
+    if (this.opt.skipCleanUp) {
+      printWarning(
+        `Notice:the resource group '${runtimeEnv.get("resourceGroupName")}' was not cleaned up.`
+      );
+    }
   }
 }

@@ -15,7 +15,7 @@ import { traverseSwagger } from "../transform/traverseSwagger";
 import { Operation, Path, LowerHttpMethods } from "../swagger/swaggerTypes";
 import { LiveValidatorLoader } from "../liveValidation/liveValidatorLoader";
 import { inversifyGetContainer, inversifyGetInstance } from "../inversifyUtils";
-import { getApiVersionFromSwaggerPath } from "../util/utils";
+import { getApiVersionFromFilePath } from "../util/utils";
 
 export interface TrafficValidationOptions extends Options {
   sdkPackage?: string;
@@ -329,7 +329,7 @@ export class TrafficValidator {
 
       this.operationCoverageResult.push({
         spec: key,
-        apiVersion: getApiVersionFromSwaggerPath(key),
+        apiVersion: getApiVersionFromFilePath(key),
         coveredOperaions: coveredOperaions,
         coverageRate: coverageRate,
         unCoveredOperations: value.length - coveredOperaions,
