@@ -62,9 +62,9 @@ export const builder: yargs.CommandBuilder = {
     string: true,
   },
   html: {
-    alias: "htmlReportPath",
-    describe: "Html report output path.",
-    string: true,
+    describe: "Generate html report for each scenario.",
+    boolean: true,
+    default: false,
   },
   level: {
     describe:
@@ -210,7 +210,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
         outputFolder: argv.output,
         markdownReportPath: argv.markdownReportPath,
         junitReportPath: argv.junitReportPath,
-        htmlReportPath: argv.htmlReportPath,
+        html: argv.html,
         eraseXmsExamples: false,
         eraseDescription: false,
         baseUrl: argv.armEndpoint,

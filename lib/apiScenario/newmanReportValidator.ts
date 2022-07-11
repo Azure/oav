@@ -96,7 +96,7 @@ export interface NewmanReportValidatorOption extends ApiScenarioLoaderOption {
   reportOutputFilePath: string;
   markdownReportPath?: string;
   junitReportPath?: string;
-  htmlReportPath?: string;
+  html?: boolean;
   baseUrl?: string;
   runId?: string;
   validationLevel?: ValidationLevel;
@@ -200,7 +200,7 @@ export class NewmanReportValidator {
 
         let responseDiffResult: ResponseDiffItem[] | undefined = undefined;
         const statusCode = `${it.response.statusCode}`;
-        const exampleFilePath = `../examples/${matchedStep.operationId}_${statusCode}.json`;
+        const exampleFilePath = `./examples/${matchedStep.operationId}_${statusCode}.json`;
         if (this.opts.generateExample || it.annotation.exampleName) {
           const generatedExample: SwaggerExample = {
             operationId: matchedStep.operationId,
@@ -244,7 +244,7 @@ export class NewmanReportValidator {
         if (this.opts.savePayload) {
           const payloadFilePath = `./payloads/${matchedStep.step}_${correlationId}.json`;
           await this.fileLoader.writeFile(
-            path.resolve(path.dirname(this.opts.reportOutputFilePath), "../", payloadFilePath),
+            path.resolve(path.dirname(this.opts.reportOutputFilePath), payloadFilePath),
             JSON.stringify(payload, null, 2)
           );
           trafficValidationIssue.payloadFilePath = payloadFilePath;
@@ -493,7 +493,7 @@ export class NewmanReportValidator {
       );
     }
     if (this.opts.markdownReportPath) {
-      await this.fileLoader.writeFile(
+      await this.fileLoader.appendFile(
         this.opts.markdownReportPath,
         generateMarkdownReport(this.testResult)
       );
@@ -501,7 +501,7 @@ export class NewmanReportValidator {
     if (this.opts.junitReportPath) {
       await this.junitReporter.addSuiteToBuild(this.testResult, this.opts.junitReportPath);
     }
-    if (this.opts.htmlReportPath) {
+    if (this.opts.html) {
       await this.generateHtmlReport();
     }
   }
@@ -551,7 +551,7 @@ export class NewmanReportValidator {
     });
 
     const options: TrafficValidationOptions = {
-      reportPath: this.opts.htmlReportPath,
+      reportPath: path.resolve(path.dirname(this.opts.reportOutputFilePath), "report.html"),
       overrideLinkInReport: false,
       sdkPackage: this.testResult.providerNamespace,
     };
