@@ -376,6 +376,70 @@
             font-size: 16px;
             word-break: break-all;
         }
+
+        .content-label {
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .content-label .btnMore {
+            background-color: transparent;
+            border: none;
+            outline: none;
+            position: relative;
+            color: var(--link-color);
+            font-size: 16px;
+            margin-right: 5px;
+        }
+
+        .content-label .btnMore h2 {
+            display: block;
+        }
+
+        .content-label .btnMore::after {
+            content: '';
+            margin: auto;
+            display: inline-block;
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            right: 0;
+            width: 0px;
+            height: 2px;
+            background: var(--report-base-color);
+            transition: 0.1s;
+            border-radius: 50px;
+        }
+
+        .content-label .btnMore:hover {
+            color: var(--report-base-color);
+        }
+
+        .content-label .btnMore .arrow {
+            width: 8px;
+            height: 8px;
+            color: var(--report-base-color);
+            border-left: 2px solid var(--report-base-color);
+            border-bottom: 2px solid var(--report-base-color);
+            border-radius: 10%;
+            display: inline-block;
+            transform: rotate(315deg);
+            transform-origin: 50% 50%;
+            transition: all 0.2s ease-in;
+            position: absolute;
+            right: -10px;
+            top: 30px;
+        }
+
+        .content-label .btnMore:hover .arrow {
+            color: var(--report-base-color);
+            border-color: var(--report-base-color);
+        }
+
+        .content-label .btnMore .collapse {
+            top: 30px;
+            transform: rotate(225deg);
+        }
     </style>
 </head>
 
@@ -387,6 +451,8 @@
             <h3 class="timeStamp">Generated {{ formatGeneratedDate }}.</h3>
         </section>
 
+        <div class="content-label"><button class="btnMore"><h2 style="color: var(--report-base-color);">appconfiguration.json<i class="arrow collapse"></i></h2></button></div>
+        <div style="padding: 0px 15px 0px;">
         <section class="coverage">
             <h2>Operations Summary</h2>
             <article>
@@ -425,7 +491,8 @@
                 </div>
             </article>
         </section>
-
+        </div>
+        <div style="padding: 0px 15px 20px; display:none;" class="content-collapse">
         <section class="notTested">
             {{#coverageResultsForRendering}}
             <h2 class="title" id="MissingTest">Untested Operations ( {{unCoveredOperations}} )</h2>
@@ -465,8 +532,8 @@
                 <div class="table-body">
                     <table summary="Operations Test Failed" cellspacing="0" cellpadding="0">
                         <colgroup>
-                            <col style="width: 20%" />
-                            <col style="width: 80%" />
+                            <col style="width: 30%" />
+                            <col style="width: 70%" />
                         </colgroup>
                         <tbody>
                         {{#getGeneralErrorsGen}}
@@ -527,6 +594,7 @@
                 </div>
             </article>
         </section>
+        </div>
 
         {{#outputExceptionInReport}}
         <section class="runtimeExceptions">
@@ -590,6 +658,7 @@
     $(document).ready(() => {
         console.log('Hello AZSDK. Document.Ready available here.');
         addFailedEachClick();
+        addContentClick();
     });
 
     function addFailedEachClick() {
@@ -597,6 +666,20 @@
             $(this).click(function (event) {
                 var disableTr = $(this).parent().parent().next();
                 disableTr.toggle();
+                var arrow = $(this).find(".arrow")[0];
+                $(arrow).toggleClass("collapse");
+            });
+        });
+    }
+
+    
+    function addContentClick() {
+        $('div.content-label').each(function (index) {
+            $(this).click(function (event) {
+                console.log($(this))
+                var disableCon = $(this).next().next();
+                console.log(disableCon)
+                disableCon.toggle();
                 var arrow = $(this).find(".arrow")[0];
                 $(arrow).toggleClass("collapse");
             });
