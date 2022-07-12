@@ -124,9 +124,11 @@ export const ajvEnableByteFormat = (ajv: Ajv) => {
   // https://datatracker.ietf.org/doc/html/rfc4648#section-4
   ajv.addFormat("byte", {
     type: "string",
-    validate: (x) =>
-      /^(?:[A-Za-z\d+/]{4})*(?:[A-Za-z\d+/]{3}=|[A-Za-z\d+/]{2}==)?$/.test(x) &&
-      /^[ -~]+$/.test(Buffer.from(x, "base64").toString("ascii")),
+    validate: (x) => {
+      const decodedValue = Buffer.from(x, "base64").toString("ascii");
+      const reencodedValue = Buffer.from(decodedValue).toString("base64");
+      return reencodedValue === x;
+    },
   });
 };
 
