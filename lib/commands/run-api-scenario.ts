@@ -154,16 +154,18 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
         }
       }
 
-      const tag = argv.tag ?? (await getDefaultTag(readmePath));
-      scenarioFiles.push(
-        ...(
-          await getApiScenarioFiles(
-            pathJoin(pathDirName(readmePath), "readme.test.md"),
-            tag,
-            argv.flag
-          )
-        ).map((it) => pathJoin(fileRoot, it))
-      );
+      if (!argv.apiScenario) {
+        const tag = argv.tag ?? (await getDefaultTag(readmePath));
+        scenarioFiles.push(
+          ...(
+            await getApiScenarioFiles(
+              pathJoin(pathDirName(readmePath), "readme.test.md"),
+              tag,
+              argv.flag
+            )
+          ).map((it) => pathJoin(fileRoot, it))
+        );
+      }
     }
 
     console.log("input-file:");
