@@ -404,6 +404,12 @@
             "description": "The location of the deleted storage account."
           },
           {
+            "name": "test",
+            "in": "query",
+            "required": true,
+            "type": "integer"
+          },
+          {
             "$ref": "../../../../../common-types/resource-management/v1/types.json#/parameters/ApiVersionParameter"
           },
           {
