@@ -295,6 +295,7 @@ pm.test("Stopped TestProxy recording", function() {
       )
     );
 
+    this.collection.items.add(item);
     this.addAsLongRunningOperationItem(item);
   }
 
@@ -341,15 +342,17 @@ pm.test("Stopped TestProxy recording", function() {
     step._resolvedParameters = env.resolveObjectValues(step.parameters);
 
     if (Object.keys(step.variables).length > 0) {
-      PostmanHelper.createEvent(
-        "prerequest",
-        PostmanHelper.createScript(
-          Object.entries(step.variables)
-            .map(
-              ([key, value]) =>
-                `pm.variables.set("${key}", "${env.resolveObjectValues(value.value)}");`
-            )
-            .join("\n")
+      item.events.add(
+        PostmanHelper.createEvent(
+          "prerequest",
+          PostmanHelper.createScript(
+            Object.entries(step.variables)
+              .map(
+                ([key, value]) =>
+                  `pm.variables.set("${key}", "${env.resolveObjectValues(value.value)}");`
+              )
+              .join("\n")
+          )
         )
       );
     }
