@@ -525,8 +525,7 @@ export class NewmanReportValidator {
         unCoveredOperations: result.uncoveredOperationIds.length,
         coveredOperaions: result.totalOperationNumber - result.uncoveredOperationIds.length,
         validationFailOperations: this.trafficValidationResult.filter(
-          (it) =>
-            it.specFilePath === key && (it.runtimeExceptions!.length > 0 || it.errors!.length > 0)
+          (it) => key.indexOf(it.specFilePath!) !== -1 && it.errors!.length > 0
         ).length,
         unCoveredOperationsList: result.uncoveredOperationIds.map((id) => {
           return { operationId: id };
