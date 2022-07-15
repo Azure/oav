@@ -37,6 +37,7 @@ export interface PostmanCollectionGeneratorOption
   markdownReportPath?: string;
   junitReportPath?: string;
   html?: boolean;
+  htmlSpecPathPrefix: string;
   runCollection: boolean;
   generateCollection: boolean;
   baseUrl: string;
@@ -282,6 +283,7 @@ export class PostmanCollectionGenerator {
       markdownReportPath: this.opt.markdownReportPath,
       junitReportPath: this.opt.junitReportPath,
       html: this.opt.html,
+      htmlSpecPathPrefix: this.opt.htmlSpecPathPrefix,
       baseUrl: this.opt.baseUrl,
       runId: this.opt.runId,
       validationLevel: this.opt.validationLevel,
