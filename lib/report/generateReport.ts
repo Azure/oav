@@ -49,6 +49,7 @@ export interface ErrorDefinition {
 export interface OperationCoverageInfoForRendering extends OperationCoverageInfo {
   specLinkLabel?: string;
   validationPassOperations?: number;
+  generalErrorsInnerList: TrafficValidationIssueForRenderingInner[];
 }
 
 // used to pass data to the template rendering engine
@@ -173,6 +174,49 @@ export class CoverageView {
           runtimeExceptions: element.runtimeExceptions,
         });
       });
+      const generalErrorsInnerOrigin = this.validationResultsForRendering.filter((x) => {
+        return x.errors && x.errors.length > 0;
+      });
+      const generalErrorsInnerFormat: TrafficValidationIssueForRendering[][] = Object.values(
+        generalErrorsInnerOrigin.reduce(
+          (res: { [key: string]: TrafficValidationIssueForRendering[] }, item) => {
+            /* eslint-disable no-unused-expressions */
+            res[item!.operationInfo!.operationId]
+              ? res[item!.operationInfo!.operationId].push(item)
+              : (res[item!.operationInfo!.operationId] = [item]);
+            /* eslint-enable no-unused-expressions */
+            return res;
+          },
+          {}
+        )
+      );
+      const generalErrorsInnerList: TrafficValidationIssueForRenderingInner[] = [];
+      generalErrorsInnerFormat.forEach((element) => {
+        let errorCodeLen: number = 0;
+        element.forEach((item) => {
+          errorCodeLen = errorCodeLen + item.errorCodeLen;
+        });
+        let errorsForRendering: LiveValidationIssueForRendering[] = [];
+        element.forEach((item) => {
+          errorsForRendering = errorsForRendering.concat(item.errorsForRendering!);
+        });
+        generalErrorsInnerList.push({
+          generalErrorsInner: element,
+          errorCodeLen: errorCodeLen,
+          errorsForRendering: errorsForRendering,
+          operationInfo: element[0]!.operationInfo!,
+          specFilePath: this.overrideLinkInReport
+            ? `${this.specLinkPrefix}/${element[0].specFilePath?.substring(
+                element[0].specFilePath?.indexOf("specification")
+              )}`
+            : element[0].specFilePath,
+          specFilePathWithPosition: this.overrideLinkInReport
+            ? `${this.specLinkPrefix}/${element[0].specFilePath?.substring(
+                element[0].specFilePath?.indexOf("specification")
+              )}#L${element[0]!.operationInfo!.position!.line}`
+            : `${element[0].specFilePath}#L${element[0]!.operationInfo!.position!.line}`,
+        });
+      });
       this.coverageResults.forEach((element) => {
         const specLink = this.overrideLinkInReport
           ? `${this.specLinkPrefix}/${element.spec?.substring(
@@ -191,9 +235,9 @@ export class CoverageView {
           unCoveredOperationsListGen: element.unCoveredOperationsListGen,
           totalOperations: element.totalOperations,
           coverageRate: element.coverageRate,
+          generalErrorsInnerList: generalErrorsInnerList,
         });
       });
-      // this.coverageResultsForRendering
     } catch (e) {
       console.error(`Failed in prepareDataForRendering with err:${e?.stack};message:${e?.message}`);
     }
@@ -263,51 +307,6 @@ export class CoverageView {
     });
   }
 
-  public getGeneralErrorsGen(): TrafficValidationIssueForRenderingInner[] {
-    const generalErrorsInnerOrigin = this.getGeneralErrors();
-    const generalErrorsInnerFormat: TrafficValidationIssueForRendering[][] = Object.values(
-      generalErrorsInnerOrigin.reduce(
-        (res: { [key: string]: TrafficValidationIssueForRendering[] }, item) => {
-          /* eslint-disable no-unused-expressions */
-          res[item!.operationInfo!.operationId]
-            ? res[item!.operationInfo!.operationId].push(item)
-            : (res[item!.operationInfo!.operationId] = [item]);
-          /* eslint-enable no-unused-expressions */
-          return res;
-        },
-        {}
-      )
-    );
-    const generalErrorsInnerList: TrafficValidationIssueForRenderingInner[] = [];
-    generalErrorsInnerFormat.forEach((element) => {
-      let errorCodeLen: number = 0;
-      element.forEach((item) => {
-        errorCodeLen = errorCodeLen + item.errorCodeLen;
-      });
-      let errorsForRendering: LiveValidationIssueForRendering[] = [];
-      element.forEach((item) => {
-        errorsForRendering = errorsForRendering.concat(item.errorsForRendering!);
-      });
-      generalErrorsInnerList.push({
-        generalErrorsInner: element,
-        errorCodeLen: errorCodeLen,
-        errorsForRendering: errorsForRendering,
-        operationInfo: element[0]!.operationInfo!,
-        specFilePath: this.overrideLinkInReport
-          ? `${this.specLinkPrefix}/${element[0].specFilePath?.substring(
-              element[0].specFilePath?.indexOf("specification")
-            )}`
-          : element[0].specFilePath,
-        specFilePathWithPosition: this.overrideLinkInReport
-          ? `${this.specLinkPrefix}/${element[0].specFilePath?.substring(
-              element[0].specFilePath?.indexOf("specification")
-            )}#L${element[0]!.operationInfo!.position!.line}`
-          : `${element[0].specFilePath}#L${element[0]!.operationInfo!.position!.line}`,
-      });
-    });
-    return generalErrorsInnerList;
-  }
-
   public getTotalGeneralErrors(): number {
     return this.getGeneralErrors().length;
   }
@@ -375,11 +374,9 @@ export class ReportGenerator {
 
     const general_errors = view.getGeneralErrors();
     const runtime_errors = view.getRunTimeErrors();
-    const general_errors_gen = view.getGeneralErrorsGen();
 
     console.log(general_errors);
     console.log(runtime_errors);
-    console.log(general_errors_gen);
 
     const text = Mustache.render(template, view);
     fs.writeFileSync(this.reportPath, text, "utf-8");
