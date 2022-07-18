@@ -96,7 +96,8 @@ export interface NewmanReportValidatorOption extends ApiScenarioLoaderOption {
   reportOutputFilePath: string;
   markdownReportPath?: string;
   junitReportPath?: string;
-  htmlReportPath?: string;
+  html?: boolean;
+  htmlSpecPathPrefix?: string;
   baseUrl?: string;
   runId?: string;
   validationLevel?: ValidationLevel;
@@ -200,7 +201,7 @@ export class NewmanReportValidator {
 
         let responseDiffResult: ResponseDiffItem[] | undefined = undefined;
         const statusCode = `${it.response.statusCode}`;
-        const exampleFilePath = `../examples/${matchedStep.operationId}_${statusCode}.json`;
+        const exampleFilePath = `./examples/${matchedStep.operationId}_${statusCode}.json`;
         if (this.opts.generateExample || it.annotation.exampleName) {
           const generatedExample: SwaggerExample = {
             operationId: matchedStep.operationId,
@@ -244,7 +245,7 @@ export class NewmanReportValidator {
         if (this.opts.savePayload) {
           const payloadFilePath = `./payloads/${matchedStep.step}_${correlationId}.json`;
           await this.fileLoader.writeFile(
-            path.resolve(path.dirname(this.opts.reportOutputFilePath), "../", payloadFilePath),
+            path.resolve(path.dirname(this.opts.reportOutputFilePath), payloadFilePath),
             JSON.stringify(payload, null, 2)
           );
           trafficValidationIssue.payloadFilePath = payloadFilePath;
@@ -493,7 +494,7 @@ export class NewmanReportValidator {
       );
     }
     if (this.opts.markdownReportPath) {
-      await this.fileLoader.writeFile(
+      await this.fileLoader.appendFile(
         this.opts.markdownReportPath,
         generateMarkdownReport(this.testResult)
       );
@@ -501,7 +502,7 @@ export class NewmanReportValidator {
     if (this.opts.junitReportPath) {
       await this.junitReporter.addSuiteToBuild(this.testResult, this.opts.junitReportPath);
     }
-    if (this.opts.htmlReportPath) {
+    if (this.opts.html) {
       await this.generateHtmlReport();
     }
   }
@@ -513,10 +514,7 @@ export class NewmanReportValidator {
 
     const operationCoverageResult: OperationCoverageInfo[] = [];
     operationIdCoverageResult.forEach((result, key) => {
-      let specPath = this.fileLoader.resolvePath(key);
-      specPath = `https://github.com/Azure/azure-rest-api-specs/blob/main/${specPath.substring(
-        specPath.indexOf("specification")
-      )}`;
+      const specPath = this.fileLoader.resolvePath(key);
       operationCoverageResult.push({
         totalOperations: result.totalOperationNumber,
         spec: specPath,
@@ -525,8 +523,7 @@ export class NewmanReportValidator {
         unCoveredOperations: result.uncoveredOperationIds.length,
         coveredOperaions: result.totalOperationNumber - result.uncoveredOperationIds.length,
         validationFailOperations: this.trafficValidationResult.filter(
-          (it) =>
-            it.specFilePath === key && (it.runtimeExceptions!.length > 0 || it.errors!.length > 0)
+          (it) => key.indexOf(it.specFilePath!) !== -1 && it.errors!.length > 0
         ).length,
         unCoveredOperationsList: result.uncoveredOperationIds.map((id) => {
           return { operationId: id };
@@ -551,8 +548,9 @@ export class NewmanReportValidator {
     });
 
     const options: TrafficValidationOptions = {
-      reportPath: this.opts.htmlReportPath,
-      overrideLinkInReport: false,
+      reportPath: path.resolve(path.dirname(this.opts.reportOutputFilePath), "report.html"),
+      overrideLinkInReport: this.opts.htmlSpecPathPrefix !== undefined,
+      specLinkPrefix: this.opts.htmlSpecPathPrefix,
       sdkPackage: this.testResult.providerNamespace,
     };
 

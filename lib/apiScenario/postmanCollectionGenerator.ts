@@ -36,7 +36,8 @@ export interface PostmanCollectionGeneratorOption
   outputFolder: string;
   markdownReportPath?: string;
   junitReportPath?: string;
-  htmlReportPath?: string;
+  html?: boolean;
+  htmlSpecPathPrefix: string;
   runCollection: boolean;
   generateCollection: boolean;
   baseUrl: string;
@@ -92,6 +93,7 @@ export class PostmanCollectionGenerator {
       }
     }
     this.opt.runId = this.opt.runId || generateRunId();
+    const oldSkipCleanUp = this.opt.skipCleanUp;
     this.opt.skipCleanUp =
       this.opt.skipCleanUp || scenarioDef.scenarios.filter((s) => s.shareScope).length > 1;
 
@@ -118,7 +120,12 @@ export class PostmanCollectionGenerator {
       skipCleanUp: this.opt.skipCleanUp,
     });
 
-    for (const scenario of scenarioDef.scenarios) {
+    for (let i = 0; i < scenarioDef.scenarios.length; i++) {
+      const scenario = scenarioDef.scenarios[i];
+      if (i === scenarioDef.scenarios.length - 1 && !oldSkipCleanUp) {
+        this.opt.skipCleanUp = oldSkipCleanUp;
+        runner.setSkipCleanUp(false);
+      }
       await runner.executeScenario(scenario);
 
       const [collection, runtimeEnv] = client.outputCollection();
@@ -275,7 +282,8 @@ export class PostmanCollectionGenerator {
       eraseDescription: false,
       markdownReportPath: this.opt.markdownReportPath,
       junitReportPath: this.opt.junitReportPath,
-      htmlReportPath: this.opt.htmlReportPath,
+      html: this.opt.html,
+      htmlSpecPathPrefix: this.opt.htmlSpecPathPrefix,
       baseUrl: this.opt.baseUrl,
       runId: this.opt.runId,
       validationLevel: this.opt.validationLevel,

@@ -79,3 +79,11 @@ scenarios:
             location: $(location)
             properties:
               encryption: {"services": {"blob": {}}, "keySource": "Microsoft.Storage"}
+      - step: DeletedAccounts_Get
+        operationId: DeletedAccounts_Get
+        parameters:
+          test: 1
+        variables:
+          deletedAccountName:
+            type: string
+            prefix: foobar

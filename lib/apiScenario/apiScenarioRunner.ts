@@ -80,6 +80,10 @@ export class ApiScenarioRunner {
   private resolveVariables: boolean;
   private skipCleanUp: boolean;
 
+  public setSkipCleanUp(skipCleanUp: boolean) {
+    this.skipCleanUp = skipCleanUp;
+  }
+
   private doProvisionScope = getLazyBuilder("provisioned", async (scope: Scope) => {
     if (scope.type === "ResourceGroup") {
       await this.client.createResourceGroup(

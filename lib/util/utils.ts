@@ -386,6 +386,34 @@ export async function getInputFiles(readMe: string, tag?: string): Promise<strin
   return result;
 }
 
+export async function getDefaultTag(readMe: string): Promise<string | undefined> {
+  const readMeStr = await readFile(checkAndResolveGithubUrl(readMe));
+  const cmd = parseMarkdown(readMeStr);
+  return getDefaultReadmeTag(cmd.markDown);
+}
+
+export async function getApiScenarioFiles(
+  readMe: string,
+  tag: string,
+  flag?: string
+): Promise<string[]> {
+  const readMeStr = await readFile(checkAndResolveGithubUrl(readMe));
+  const cmd = parseMarkdown(readMeStr);
+  const codeBlockMap = amd.getCodeBlocksAndHeadings(cmd.markDown);
+  const pattern = flag ? `yaml $(tag) == '${tag}' && $(${flag})` : `yaml $(tag) == '${tag}'`;
+  for (const idx of Object.keys(codeBlockMap)) {
+    const block = codeBlockMap[idx];
+    if (!block || !block.info || !block.literal || !(block.info.trim() === pattern)) {
+      continue;
+    }
+    const latestDefinition = safeLoad(block.literal);
+    if (latestDefinition && latestDefinition["test-resources"]) {
+      return latestDefinition["test-resources"];
+    }
+  }
+  return [];
+}
+
 export function getApiVersionFromFilePath(filePath: string): string {
   const apiVersionPattern: RegExp =
     /^.*\/(stable|preview)+\/([0-9]{4}-[0-9]{2}-[0-9]{2}(-preview)?)\/.*\.(json|yaml)$/i;
