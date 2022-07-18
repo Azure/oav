@@ -301,7 +301,19 @@ export class RestlerApiScenarioGenerator {
       return { type: "string", prefix: `${parameter.name.toLocaleLowerCase().substring(0, 10)}` };
     }
 
-    return this.mocker.mock(parameter, parameter.name);
+    switch (parameter.type) {
+      case "string":
+        return this.mocker.mock(parameter, parameter.name);
+      case "integer":
+      case "number":
+        return { type: "int", value: this.mocker.mock(parameter, parameter.name) };
+      case "boolean":
+        return { type: "bool", value: this.mocker.mock(parameter, parameter.name) };
+      case "array":
+        return { type: "array", value: this.mocker.mock(parameter, parameter.name) };
+      default:
+        throw new Error(`Unknown parameter type: ${parameter.type}`);
+    }
   }
 
   private generateSteps() {

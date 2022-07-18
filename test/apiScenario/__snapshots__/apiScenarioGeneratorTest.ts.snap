@@ -1185,6 +1185,10 @@ Object {
               "prefix": "deletedacc",
               "type": "string",
             },
+            "test": Object {
+              "type": "int",
+              "value": 1,
+            },
           },
         },
         Object {

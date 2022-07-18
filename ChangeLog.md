@@ -1,5 +1,11 @@
 # Change Log - oav
 
+## 07/20/2022 3.0.4
+- API Scenario
+  - Support readme.test.md run API test
+  - Fix step variable unresolved in newman collection
+  - Fix bugs about html report
+
 ## 07/06/2022 3.0.3
 - Generate high quality examples from API Scenario tests
 

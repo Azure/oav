@@ -739,6 +739,30 @@ Object {
           "type": "restCall",
           "variables": Object {},
         },
+        Object {
+          "description": undefined,
+          "operation": Object {},
+          "operationId": "DeletedAccounts_Get",
+          "outputVariables": Object {},
+          "parameters": Object {
+            "api-version": "2021-08-01",
+            "deletedAccountName": "$(deletedAccountName)",
+            "location": "$(location)",
+            "subscriptionId": "$(subscriptionId)",
+            "test": 1,
+          },
+          "requiredVariables": Array [],
+          "responses": Object {},
+          "secretVariables": Array [],
+          "step": "DeletedAccounts_Get",
+          "type": "restCall",
+          "variables": Object {
+            "deletedAccountName": Object {
+              "prefix": "foobar",
+              "type": "string",
+            },
+          },
+        },
       ],
       "variables": Object {
         "accountName": Object {

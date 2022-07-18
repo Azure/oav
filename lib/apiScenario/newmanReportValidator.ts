@@ -97,6 +97,7 @@ export interface NewmanReportValidatorOption extends ApiScenarioLoaderOption {
   markdownReportPath?: string;
   junitReportPath?: string;
   html?: boolean;
+  htmlSpecPathPrefix?: string;
   baseUrl?: string;
   runId?: string;
   validationLevel?: ValidationLevel;
@@ -513,10 +514,7 @@ export class NewmanReportValidator {
 
     const operationCoverageResult: OperationCoverageInfo[] = [];
     operationIdCoverageResult.forEach((result, key) => {
-      let specPath = this.fileLoader.resolvePath(key);
-      specPath = `https://github.com/Azure/azure-rest-api-specs/blob/main/${specPath.substring(
-        specPath.indexOf("specification")
-      )}`;
+      const specPath = this.fileLoader.resolvePath(key);
       operationCoverageResult.push({
         totalOperations: result.totalOperationNumber,
         spec: specPath,
@@ -525,8 +523,7 @@ export class NewmanReportValidator {
         unCoveredOperations: result.uncoveredOperationIds.length,
         coveredOperaions: result.totalOperationNumber - result.uncoveredOperationIds.length,
         validationFailOperations: this.trafficValidationResult.filter(
-          (it) =>
-            it.specFilePath === key && (it.runtimeExceptions!.length > 0 || it.errors!.length > 0)
+          (it) => key.indexOf(it.specFilePath!) !== -1 && it.errors!.length > 0
         ).length,
         unCoveredOperationsList: result.uncoveredOperationIds.map((id) => {
           return { operationId: id };
@@ -552,7 +549,8 @@ export class NewmanReportValidator {
 
     const options: TrafficValidationOptions = {
       reportPath: path.resolve(path.dirname(this.opts.reportOutputFilePath), "report.html"),
-      overrideLinkInReport: false,
+      overrideLinkInReport: this.opts.htmlSpecPathPrefix !== undefined,
+      specLinkPrefix: this.opts.htmlSpecPathPrefix,
       sdkPackage: this.testResult.providerNamespace,
     };
 

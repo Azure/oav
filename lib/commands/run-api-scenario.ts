@@ -66,6 +66,10 @@ export const builder: yargs.CommandBuilder = {
     boolean: true,
     default: false,
   },
+  htmlSpecPathPrefix: {
+    describe: "The prefix of html report spec path.",
+    string: true,
+  },
   level: {
     describe:
       "Validation level. oav runner validate request and response with different strict level. 'validate-request' validates requests should be successful. 'validate-request-response' validate both request and response.",
@@ -213,6 +217,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
         markdownReportPath: argv.markdownReportPath,
         junitReportPath: argv.junitReportPath,
         html: argv.html,
+        htmlSpecPathPrefix: argv.htmlSpecPathPrefix,
         eraseXmsExamples: false,
         eraseDescription: false,
         baseUrl: argv.armEndpoint,
