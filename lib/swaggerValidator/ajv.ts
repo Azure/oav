@@ -120,6 +120,18 @@ export const ajvEnableDurationFormat = (ajv: Ajv) => {
   });
 };
 
+export const ajvEnableByteFormat = (ajv: Ajv) => {
+  // https://datatracker.ietf.org/doc/html/rfc4648#section-4
+  ajv.addFormat("byte", {
+    type: "string",
+    validate: (x) => {
+      const decodedValue = Buffer.from(x, "base64").toString("ascii");
+      const reencodedValue = Buffer.from(decodedValue).toString("base64");
+      return reencodedValue === x;
+    },
+  });
+};
+
 // for (const keyword of [
 //   "name",
 //   "in",
@@ -157,8 +169,8 @@ export const ajvEnableAll = (ajv: Ajv, jsonLoader: JsonLoader) => {
   ajvEnableInt32AndInt64Format(ajv);
   ajvEnableDurationFormat(ajv);
   ajvEnableDateTimeRfc1123Format(ajv);
+  ajvEnableByteFormat(ajv);
   ajvAddFormatsDefaultValidation(ajv, "string", [
-    "byte",
     "password",
     "file",
     "base64url",

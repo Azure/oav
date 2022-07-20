@@ -1,0 +1,13 @@
+{
+  "parameters": {
+    "name": "byteFormat"
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "NotByteValue": "credentialValue1",
+        "ByteValue": "Y3JlZGVudGlhbFZhbHVlMQ=="
+      }
+    }
+  }
+}

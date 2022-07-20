@@ -40,6 +40,10 @@ export default class Mocker {
       return `PT${new Date().getMinutes()}M`;
     }
 
+    if (paramSpec.format === "byte") {
+      return `${Buffer.from(paramName + "1").toString("base64")}`;
+    }
+
     if ("enum" in paramSpec) {
       if (paramSpec.enum.lengh > 0) {
         console.error(`${paramName}'s enum can not be empty`);

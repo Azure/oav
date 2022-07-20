@@ -1703,6 +1703,41 @@
         }
       }
     },
+    "/providers/Microsoft.EventGrid/byte": {
+      "get": {
+        "tags": [
+          "Byte"
+        ],
+        "summary": "List event data in base64 format.",
+        "description": "List event data in base64 format.",
+        "operationId": "Byte_List",
+        "consumes": [],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/parameters/ApiVersionParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ByteListResult"
+            }
+          },
+          "default": {
+            "description": "*** Error Responses: ***\n\n * 400 Bad Request.\n\n * 500 Internal Server Error."
+          }
+        },
+        "x-ms-examples": {
+          "Operations_List": {
+            "$ref": "./examples/Byte_List.json"
+          }
+        }
+      }
+    },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/topics/{topicName}": {
       "get": {
         "tags": [
@@ -4061,6 +4096,17 @@
           "items": {
             "$ref": "#/definitions/Duration"
           }
+        }
+      }
+    },
+    "ByteListResult": {
+      "description": "Result of the List byte",
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string",
+          "format": "byte",
+          "description": "Base64-encoded data."
         }
       }
     },
