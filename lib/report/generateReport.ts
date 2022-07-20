@@ -52,6 +52,10 @@ export interface OperationCoverageInfoForRendering extends OperationCoverageInfo
   generalErrorsInnerList: TrafficValidationIssueForRenderingInner[];
 }
 
+export interface resultForRendering
+  extends OperationCoverageInfoForRendering,
+    TrafficValidationIssueForRendering {}
+
 // used to pass data to the template rendering engine
 export class CoverageView {
   public package: string;
@@ -67,7 +71,7 @@ export class CoverageView {
 
   public validationResultsForRendering: TrafficValidationIssueForRendering[] = [];
   public coverageResultsForRendering: OperationCoverageInfoForRendering[] = [];
-  public coverageResultsForRenderingSnap: OperationCoverageInfoForRendering[] = [];
+  public resultsForRendering: Array<Partial<resultForRendering>> = [];
 
   private validationResults: TrafficValidationIssue[];
   private sortedValidationResults: TrafficValidationIssue[];
@@ -237,6 +241,14 @@ export class CoverageView {
           coverageRate: element.coverageRate,
           generalErrorsInnerList: generalErrorsInnerList,
         });
+      });
+
+      this.resultsForRendering = this.coverageResultsForRendering.map((item) => {
+        const data = this.validationResultsForRendering.find((i) => item.spec === i.specFilePath);
+        return {
+          ...item,
+          ...data,
+        };
       });
     } catch (e) {
       console.error(`Failed in prepareDataForRendering with err:${e?.stack};message:${e?.message}`);

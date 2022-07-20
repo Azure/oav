@@ -162,30 +162,6 @@ export class TrafficValidator {
   }
 
   public async validate(): Promise<TrafficValidationIssue[]> {
-    const specPathStats = fs.statSync(this.specPath);
-    let specFileDirectory = "";
-    let swaggerPathsPattern = "**/*.json";
-    if (specPathStats.isFile()) {
-      specFileDirectory = path.dirname(this.specPath);
-      swaggerPathsPattern = path.basename(this.specPath);
-    } else if (specPathStats.isDirectory()) {
-      specFileDirectory = this.specPath;
-    }
-    const liveValidationOptions = {
-      checkUnderFileRoot: false,
-      loadValidatorInBackground: false,
-      directory: specFileDirectory,
-      swaggerPathsPattern: [swaggerPathsPattern],
-      excludedSwaggerPathsPattern: DefaultConfig.ExcludedExamplesAndCommonFiles,
-      git: {
-        shouldClone: false,
-      },
-    };
-
-    this.liveValidator = new LiveValidator(liveValidationOptions);
-    await this.liveValidator.initialize();
-    const specsPaths = this.liveValidator.swaggerList;
-
     let payloadFilePath;
     const swaggerOpts: SwaggerLoaderOption = {
       setFilePath: false,
@@ -268,22 +244,19 @@ export class TrafficValidator {
             liveRequestResponseList[0]
           );
 
-          for (const specPath of specsPaths) {
-            const spec = await this.swaggerLoader.load(specPath);
-            const operationIdList = findPathsToKey({ key: "operationId", obj: spec });
-            const operationId = findPathToValue(operationIdList, spec, operationInfo.operationId);
-            const operationIdPosition = getFilePositionFromJsonPath(spec, operationId[0]);
-            console.log(operationIdPosition);
-            operationInfo = Object.assign(operationInfo, { position: operationIdPosition });
-            this.trafficValidationResult.push({
-              specFilePath: specPath,
-              payloadFilePath,
-              payloadFilePathPosition: liveRequestResponsePosition,
-              errors: errorResult,
-              runtimeExceptions,
-              operationInfo,
-            });
-          }
+          const spec = swaggerFile && (await this.swaggerLoader.load(swaggerFile));
+          const operationIdList = findPathsToKey({ key: "operationId", obj: spec });
+          const operationId = findPathToValue(operationIdList, spec, operationInfo.operationId);
+          const operationIdPosition = getFilePositionFromJsonPath(spec, operationId[0]);
+          operationInfo = Object.assign(operationInfo, { position: operationIdPosition });
+          this.trafficValidationResult.push({
+            specFilePath: swaggerFile,
+            payloadFilePath,
+            payloadFilePathPosition: liveRequestResponsePosition,
+            errors: errorResult,
+            runtimeExceptions,
+            operationInfo,
+          });
         }
       }
     } catch (err) {
@@ -298,6 +271,7 @@ export class TrafficValidator {
         ],
       });
     }
+
     let coveredOperaions: number;
     let coverageRate: number;
     let validationFailOperations: number;
