@@ -32,6 +32,9 @@ export interface ApiScenarioTestResult {
   apiScenarioFilePath: string;
   readmeFilePath?: string;
   swaggerFilePaths: string[];
+  operationIds?: {
+    [specPath: string]: string[];
+  };
   tag?: string;
 
   // New added fields
@@ -160,6 +163,7 @@ export class NewmanReportValidator {
 
   private async generateApiScenarioTestResult(newmanReport: NewmanReport) {
     const variables = newmanReport.variables;
+    this.testResult.operationIds = this.swaggerAnalyzer.getOperations();
     this.testResult.startTime = new Date(newmanReport.timings.started).toISOString();
     this.testResult.endTime = new Date(newmanReport.timings.completed).toISOString();
     this.testResult.subscriptionId = variables.subscriptionId.value as string;

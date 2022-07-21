@@ -5,7 +5,7 @@ import { TYPES } from "../inversifyUtils";
 import { FileLoaderOption, FileLoader } from "../swagger/fileLoader";
 import { JsonLoader, JsonLoaderOption } from "../swagger/jsonLoader";
 import { SwaggerLoader, SwaggerLoaderOption } from "../swagger/swaggerLoader";
-import { Path, SwaggerSpec, Schema } from "../swagger/swaggerTypes";
+import { Path, SwaggerSpec, Schema, LowerHttpMethods, Operation } from "../swagger/swaggerTypes";
 import { AjvSchemaValidator } from "../swaggerValidator/ajvSchemaValidator";
 import { SchemaValidator } from "../swaggerValidator/schemaValidator";
 import { allOfTransformer } from "../transform/allOfTransformer";
@@ -16,7 +16,7 @@ import { referenceFieldsTransformer } from "../transform/referenceFieldsTransfor
 import { resolveNestedDefinitionTransformer } from "../transform/resolveNestedDefinitionTransformer";
 import { xmsPathsTransformer } from "../transform/xmsPathsTransformer";
 import { applyGlobalTransformers, applySpecTransformers } from "../transform/transformer";
-import { traverseSwaggerAsync } from "../transform/traverseSwagger";
+import { traverseSwagger, traverseSwaggerAsync } from "../transform/traverseSwagger";
 import { getProvider } from "../util/utils";
 import { ScenarioDefinition } from "./apiScenarioTypes";
 import { SchemaSearcher } from "./schemaSearcher";
@@ -66,6 +66,20 @@ export class SwaggerAnalyzer {
     testDef: ScenarioDefinition
   ): Map<string, OperationCoverageResult> {
     return CoverageCalculator.calculateOperationCoverageBySpec(testDef, this.swaggerSpecs);
+  }
+
+  public getOperations(): { [key: string]: string[] } {
+    const operations: { [key: string]: string[] } = {};
+    for (const swaggerSpec of this.swaggerSpecs) {
+      const allOperationIds = new Set<string>();
+      traverseSwagger(swaggerSpec, {
+        onOperation: (operation: Operation, _path: Path, _method: LowerHttpMethods) => {
+          allOperationIds.add(operation.operationId!);
+        },
+      });
+      operations[swaggerSpec._filePath] = Array.from(allOperationIds);
+    }
+    return operations;
   }
 
   public async getOperationListPath(): Promise<Path[]> {
