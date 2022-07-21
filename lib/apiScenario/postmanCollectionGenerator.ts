@@ -1,15 +1,26 @@
-import { resolve } from "path";
+import * as path from "path";
+import * as fs from "fs";
 import newman from "newman";
 import { inject, injectable } from "inversify";
 import { Collection, VariableScope } from "postman-collection";
 import { inversifyGetInstance, TYPES } from "../inversifyUtils";
+import { ReportGenerator as HtmlReportGenerator } from "../report/generateReport";
 import { FileLoader } from "../swagger/fileLoader";
-import { getRandomString, printWarning } from "../util/utils";
+import { getApiVersionFromFilePath, getRandomString, printWarning } from "../util/utils";
+import {
+  OperationCoverageInfo,
+  RuntimeException,
+  TrafficValidationIssue,
+  TrafficValidationOptions,
+  unCoveredOperationsFormat,
+} from "../swaggerValidator/trafficValidator";
+import { LiveValidationIssue } from "../liveValidation/liveValidator";
 import { ApiScenarioLoader, ApiScenarioLoaderOption } from "./apiScenarioLoader";
 import { ApiScenarioRunner } from "./apiScenarioRunner";
 import { generateMarkdownReportHeader } from "./markdownReport";
 import { PostmanCollectionRunnerClient } from "./postmanCollectionRunnerClient";
 import {
+  ApiScenarioTestResult,
   NewmanReportValidator,
   NewmanReportValidatorOption,
   ValidationLevel,
@@ -20,11 +31,12 @@ import { parseNewmanReport, RawNewmanReport } from "./newmanReportParser";
 import {
   defaultCollectionFileName,
   defaultEnvFileName,
+  defaultNewmanDir,
   defaultNewmanReport,
   defaultQualityReportFilePath,
 } from "./defaultNaming";
 import { DataMasker } from "./dataMasker";
-import { Scenario } from "./apiScenarioTypes";
+import { Scenario, ScenarioDefinition } from "./apiScenarioTypes";
 
 export interface PostmanCollectionGeneratorOption
   extends ApiScenarioLoaderOption,
@@ -34,8 +46,8 @@ export interface PostmanCollectionGeneratorOption
   scenarioDef: string;
   env: EnvironmentVariables;
   outputFolder: string;
-  markdownReportPath?: string;
-  junitReportPath?: string;
+  markdown?: boolean;
+  junit?: boolean;
   html?: boolean;
   htmlSpecPathPrefix: string;
   runCollection: boolean;
@@ -97,8 +109,15 @@ export class PostmanCollectionGenerator {
     this.opt.skipCleanUp =
       this.opt.skipCleanUp || scenarioDef.scenarios.filter((s) => s.shareScope).length > 1;
 
-    if (this.opt.markdownReportPath) {
-      await this.fileLoader.writeFile(this.opt.markdownReportPath, generateMarkdownReportHeader());
+    if (this.opt.markdown) {
+      const reportExportPath = path.resolve(
+        this.opt.outputFolder,
+        `${defaultNewmanDir(this.opt.name, this.opt.runId!)}`
+      );
+      await this.fileLoader.writeFile(
+        path.join(reportExportPath, "report.md"),
+        generateMarkdownReportHeader()
+      );
     }
 
     const result: Collection[] = [];
@@ -157,7 +176,145 @@ export class PostmanCollectionGenerator {
       }
     }
 
+    if (this.opt.html) {
+      await this.generateHtmlReport(scenarioDef);
+    }
+
     return result;
+  }
+
+  private async generateHtmlReport(scenarioDef: ScenarioDefinition) {
+    const trafficValidationResult = new Array<TrafficValidationIssue>();
+    const reportExportPath = path.resolve(
+      this.opt.outputFolder,
+      `${defaultNewmanDir(this.opt.name, this.opt.runId!)}`
+    );
+
+    let providerNamespace;
+
+    for (const dir of fs.readdirSync(reportExportPath, { withFileTypes: true })) {
+      if (dir.isDirectory()) {
+        const report = JSON.parse(
+          await this.fileLoader.load(path.join(reportExportPath, dir.name, "report.json"))
+        ) as ApiScenarioTestResult;
+
+        providerNamespace = report.providerNamespace;
+        for (const step of report.stepResult) {
+          const trafficValidationIssue: TrafficValidationIssue = {
+            errors: [
+              ...step.liveValidationResult!.requestValidationResult.errors,
+              ...step.liveValidationResult!.responseValidationResult.errors,
+            ],
+            specFilePath: step.specFilePath,
+            operationInfo: step.liveValidationResult!.requestValidationResult.operationInfo,
+          };
+
+          if (this.opt.savePayload) {
+            const payloadFilePath = path.join(
+              ".",
+              dir.name,
+              `payloads/${step.stepName}_${step.correlationId}.json`
+            );
+            trafficValidationIssue.payloadFilePath = payloadFilePath;
+          }
+
+          for (const runtimeError of step.runtimeError ?? []) {
+            trafficValidationIssue.errors?.push(this.convertRuntimeException(runtimeError));
+          }
+
+          if (step.liveValidationResult!.requestValidationResult.runtimeException) {
+            trafficValidationIssue.errors?.push(
+              this.convertRuntimeException(
+                step.liveValidationResult!.requestValidationResult.runtimeException
+              )
+            );
+          }
+
+          if (step.liveValidationResult!.responseValidationResult.runtimeException) {
+            trafficValidationIssue.errors?.push(
+              this.convertRuntimeException(
+                step.liveValidationResult!.responseValidationResult.runtimeException
+              )
+            );
+          }
+
+          trafficValidationResult.push(trafficValidationIssue);
+        }
+      }
+    }
+
+    const operationIdCoverageResult =
+      this.swaggerAnalyzer.calculateOperationCoverageBySpec(scenarioDef);
+
+    const operationCoverageResult: OperationCoverageInfo[] = [];
+    operationIdCoverageResult.forEach((result, key) => {
+      const specPath = this.fileLoader.resolvePath(key);
+      operationCoverageResult.push({
+        totalOperations: result.totalOperationNumber,
+        spec: specPath,
+        coverageRate: result.coverage,
+        apiVersion: getApiVersionFromFilePath(specPath),
+        unCoveredOperations: result.uncoveredOperationIds.length,
+        coveredOperaions: result.totalOperationNumber - result.uncoveredOperationIds.length,
+        validationFailOperations: trafficValidationResult.filter(
+          (it) => key.indexOf(it.specFilePath!) !== -1 && it.errors!.length > 0
+        ).length,
+        unCoveredOperationsList: result.uncoveredOperationIds.map((id) => {
+          return { operationId: id };
+        }),
+        unCoveredOperationsListGen: Object.values(
+          result.uncoveredOperationIds
+            .map((id) => {
+              return { operationId: id, key: id.split("_")[0] };
+            })
+            .reduce((res: { [key: string]: unCoveredOperationsFormat }, item) => {
+              /* eslint-disable no-unused-expressions */
+              res[item.key]
+                ? res[item.key].operationIdList.push(item)
+                : (res[item.key] = {
+                    operationIdList: [item],
+                  });
+              /* eslint-enable no-unused-expressions */
+              return res;
+            }, {})
+        ),
+      });
+    });
+
+    const options: TrafficValidationOptions = {
+      reportPath: path.resolve(reportExportPath, "report.html"),
+      overrideLinkInReport: this.opt.htmlSpecPathPrefix !== undefined,
+      specLinkPrefix: this.opt.htmlSpecPathPrefix,
+      sdkPackage: providerNamespace,
+    };
+
+    const generator = new HtmlReportGenerator(
+      trafficValidationResult,
+      operationCoverageResult,
+      0,
+      options
+    );
+    await generator.generateHtmlReport();
+  }
+
+  private convertRuntimeException(runtimeException: RuntimeException): LiveValidationIssue {
+    const ret = {
+      code: runtimeException.code,
+      pathsInPayload: [],
+      severity: 1,
+      message: runtimeException.message,
+      jsonPathsInPayload: [],
+      schemaPath: "",
+      source: {
+        url: "",
+        position: {
+          column: 0,
+          line: 0,
+        },
+      },
+    };
+
+    return ret as LiveValidationIssue;
   }
 
   private longRunningOperationOrderUpdate(collection: Collection, i: number) {
@@ -186,11 +343,11 @@ export class PostmanCollectionGenerator {
     runtimeEnv: VariableScope
   ) {
     const scenarioName = scenario.scenario;
-    const collectionPath = resolve(
+    const collectionPath = path.resolve(
       this.opt.outputFolder,
       `${defaultCollectionFileName(this.opt.name, this.opt.runId!, scenarioName)}`
     );
-    const envPath = resolve(
+    const envPath = path.resolve(
       this.opt.outputFolder,
       `${defaultEnvFileName(this.opt.name, this.opt.runId!, scenarioName)}`
     );
@@ -218,7 +375,7 @@ export class PostmanCollectionGenerator {
     runtimeEnv: VariableScope
   ) {
     const scenarioName = scenario.scenario;
-    const reportExportPath = resolve(
+    const reportExportPath = path.resolve(
       this.opt.outputFolder,
       `${defaultNewmanReport(this.opt.name, this.opt.runId!, scenarioName)}`
     );
@@ -280,8 +437,8 @@ export class PostmanCollectionGenerator {
       checkUnderFileRoot: false,
       eraseXmsExamples: false,
       eraseDescription: false,
-      markdownReportPath: this.opt.markdownReportPath,
-      junitReportPath: this.opt.junitReportPath,
+      markdown: this.opt.markdown,
+      junit: this.opt.junit,
       html: this.opt.html,
       htmlSpecPathPrefix: this.opt.htmlSpecPathPrefix,
       baseUrl: this.opt.baseUrl,

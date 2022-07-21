@@ -3,23 +3,14 @@ import { findReadMe } from "@azure/openapi-markdown";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../inversifyUtils";
 import {
-  LiveValidationIssue,
   LiveValidator,
   RequestResponseLiveValidationResult,
   RequestResponsePair,
 } from "../liveValidation/liveValidator";
 import { LiveRequest, LiveResponse } from "../liveValidation/operationValidator";
-import { ReportGenerator as HtmlReportGenerator } from "../report/generateReport";
 import { FileLoader } from "../swagger/fileLoader";
 import { setDefaultOpts } from "../swagger/loader";
 import { SwaggerExample } from "../swagger/swaggerTypes";
-import {
-  OperationCoverageInfo,
-  RuntimeException,
-  TrafficValidationIssue,
-  TrafficValidationOptions,
-  unCoveredOperationsFormat,
-} from "../swaggerValidator/trafficValidator";
 import { SeverityString } from "../util/severity";
 import { getApiVersionFromFilePath, getProviderFromFilePath } from "../util/utils";
 import { ApiScenarioLoaderOption } from "./apiScenarioLoader";
@@ -63,6 +54,7 @@ export interface ApiScenarioTestResult {
 
 export interface StepResult {
   statusCode: number;
+  specFilePath?: string;
   exampleFilePath?: string;
   example?: SwaggerExample;
   operationId: string;
@@ -94,8 +86,8 @@ export type ValidationLevel = "validate-request" | "validate-request-response";
 export interface NewmanReportValidatorOption extends ApiScenarioLoaderOption {
   apiScenarioFilePath: string;
   reportOutputFilePath: string;
-  markdownReportPath?: string;
-  junitReportPath?: string;
+  markdown?: boolean;
+  junit?: boolean;
   html?: boolean;
   htmlSpecPathPrefix?: string;
   baseUrl?: string;
@@ -112,7 +104,6 @@ export class NewmanReportValidator {
   private testResult: ApiScenarioTestResult;
   private fileRoot: string;
   private liveValidator: LiveValidator;
-  private trafficValidationResult: TrafficValidationIssue[];
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
   constructor(
     @inject(TYPES.opts) private opts: NewmanReportValidatorOption,
@@ -168,7 +159,6 @@ export class NewmanReportValidator {
   }
 
   private async generateApiScenarioTestResult(newmanReport: NewmanReport) {
-    this.trafficValidationResult = [];
     const variables = newmanReport.variables;
     this.testResult.startTime = new Date(newmanReport.timings.started).toISOString();
     this.testResult.endTime = new Date(newmanReport.timings.completed).toISOString();
@@ -181,21 +171,14 @@ export class NewmanReportValidator {
         const runtimeError: RuntimeError[] = [];
         const matchedStep = this.getMatchedStep(it.annotation.step) as StepRestCall;
 
-        const trafficValidationIssue: TrafficValidationIssue = {
-          runtimeExceptions: [],
-          errors: [],
-        };
         // Runtime errors
         if (it.response.statusCode >= 400) {
           const error = this.getRuntimeError(it);
           runtimeError.push(error);
-          trafficValidationIssue.errors?.push(this.convertRuntimeException(error));
         }
         if (matchedStep === undefined) {
           continue;
         }
-
-        trafficValidationIssue.specFilePath = matchedStep.operation._path._spec._filePath;
 
         const payload = this.convertToLiveValidationPayload(it);
 
@@ -248,36 +231,11 @@ export class NewmanReportValidator {
             path.resolve(path.dirname(this.opts.reportOutputFilePath), payloadFilePath),
             JSON.stringify(payload, null, 2)
           );
-          trafficValidationIssue.payloadFilePath = payloadFilePath;
         }
         const liveValidationResult = await this.liveValidator.validateLiveRequestResponse(payload);
 
-        trafficValidationIssue.operationInfo =
-          liveValidationResult.requestValidationResult.operationInfo;
-
-        trafficValidationIssue.errors?.push(
-          ...liveValidationResult.requestValidationResult.errors,
-          ...liveValidationResult.responseValidationResult.errors
-        );
-        if (liveValidationResult.requestValidationResult.runtimeException) {
-          trafficValidationIssue.errors?.push(
-            this.convertRuntimeException(
-              liveValidationResult.requestValidationResult.runtimeException
-            )
-          );
-        }
-
-        if (liveValidationResult.responseValidationResult.runtimeException) {
-          trafficValidationIssue.errors?.push(
-            this.convertRuntimeException(
-              liveValidationResult.responseValidationResult.runtimeException
-            )
-          );
-        }
-
-        this.trafficValidationResult.push(trafficValidationIssue);
-
         this.testResult.stepResult.push({
+          specFilePath: matchedStep.operation._path._spec._filePath,
           exampleFilePath: exampleFilePath,
           operationId: it.annotation.operationId,
           runtimeError,
@@ -289,26 +247,6 @@ export class NewmanReportValidator {
         });
       }
     }
-  }
-
-  private convertRuntimeException(runtimeException: RuntimeException): LiveValidationIssue {
-    const ret = {
-      code: runtimeException.code,
-      pathsInPayload: [],
-      severity: 1,
-      message: runtimeException.message,
-      jsonPathsInPayload: [],
-      schemaPath: "",
-      source: {
-        url: "",
-        position: {
-          column: 0,
-          line: 0,
-        },
-      },
-    };
-
-    return ret as LiveValidationIssue;
   }
 
   private convertToLiveValidationPayload(execution: NewmanExecution): RequestResponsePair {
@@ -493,73 +431,17 @@ export class NewmanReportValidator {
         JSON.stringify(this.testResult, null, 2)
       );
     }
-    if (this.opts.markdownReportPath) {
+    if (this.opts.markdown) {
       await this.fileLoader.appendFile(
-        this.opts.markdownReportPath,
+        path.join(path.dirname(path.dirname(this.opts.reportOutputFilePath)), "report.md"),
         generateMarkdownReport(this.testResult)
       );
     }
-    if (this.opts.junitReportPath) {
-      await this.junitReporter.addSuiteToBuild(this.testResult, this.opts.junitReportPath);
+    if (this.opts.junit) {
+      await this.junitReporter.addSuiteToBuild(
+        this.testResult,
+        path.join(path.dirname(path.dirname(this.opts.reportOutputFilePath)), "junit.xml")
+      );
     }
-    if (this.opts.html) {
-      await this.generateHtmlReport();
-    }
-  }
-
-  private async generateHtmlReport() {
-    const operationIdCoverageResult = this.swaggerAnalyzer.calculateOperationCoverageBySpec(
-      this.scenario._scenarioDef
-    );
-
-    const operationCoverageResult: OperationCoverageInfo[] = [];
-    operationIdCoverageResult.forEach((result, key) => {
-      const specPath = this.fileLoader.resolvePath(key);
-      operationCoverageResult.push({
-        totalOperations: result.totalOperationNumber,
-        spec: specPath,
-        coverageRate: result.coverage,
-        apiVersion: getApiVersionFromFilePath(specPath),
-        unCoveredOperations: result.uncoveredOperationIds.length,
-        coveredOperaions: result.totalOperationNumber - result.uncoveredOperationIds.length,
-        validationFailOperations: this.trafficValidationResult.filter(
-          (it) => key.indexOf(it.specFilePath!) !== -1 && it.errors!.length > 0
-        ).length,
-        unCoveredOperationsList: result.uncoveredOperationIds.map((id) => {
-          return { operationId: id };
-        }),
-        unCoveredOperationsListGen: Object.values(
-          result.uncoveredOperationIds
-            .map((id) => {
-              return { operationId: id, key: id.split("_")[0] };
-            })
-            .reduce((res: { [key: string]: unCoveredOperationsFormat }, item) => {
-              /* eslint-disable no-unused-expressions */
-              res[item.key]
-                ? res[item.key].operationIdList.push(item)
-                : (res[item.key] = {
-                    operationIdList: [item],
-                  });
-              /* eslint-enable no-unused-expressions */
-              return res;
-            }, {})
-        ),
-      });
-    });
-
-    const options: TrafficValidationOptions = {
-      reportPath: path.resolve(path.dirname(this.opts.reportOutputFilePath), "report.html"),
-      overrideLinkInReport: this.opts.htmlSpecPathPrefix !== undefined,
-      specLinkPrefix: this.opts.htmlSpecPathPrefix,
-      sdkPackage: this.testResult.providerNamespace,
-    };
-
-    const generator = new HtmlReportGenerator(
-      this.trafficValidationResult,
-      operationCoverageResult,
-      0,
-      options
-    );
-    await generator.generateHtmlReport();
   }
 }
