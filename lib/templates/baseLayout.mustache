@@ -446,13 +446,13 @@
 <body>
     <div class="report-content">
         <section class="summary">
-            <h1 class="title">Swagger Accuracy Report:{{package}}( {{apiVersion}} )</h1>
+            <h1 class="title">Swagger Accuracy Report:{{package}}</h1>
             <!-- TODO: localize the UTC date via JS -->
             <h3 class="timeStamp">Generated {{ formatGeneratedDate }}.</h3>
         </section>
 
         {{#resultsForRendering}}
-        <div class="content-label"><button class="btnMore"><h2 style="color: var(--report-base-color);">appconfiguration.json<i class="arrow collapse"></i></h2></button></div>
+        <div class="content-label"><button class="btnMore"><h2 style="color: var(--report-base-color);">{{specLinkLabel}}/{{apiVersion}}<i class="arrow collapse"></i></h2></button></div>
         <div style="padding: 0px 15px 0px;">
         <section class="coverage">
             <h2>Operations Summary</h2>

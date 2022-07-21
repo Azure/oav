@@ -957,7 +957,7 @@ export const findPathsToKey = (options: {
   const results = [];
   (function findKey({ key, obj, pathToKey }) {
     const oldPath = `${pathToKey ? pathToKey : ""}`;
-    if (obj.hasOwnProperty(key)) {
+    if (obj && obj.hasOwnProperty(key)) {
       results.push(`${oldPath}.${key}`);
       return;
     }

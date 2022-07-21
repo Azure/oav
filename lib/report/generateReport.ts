@@ -71,7 +71,7 @@ export class CoverageView {
 
   public validationResultsForRendering: TrafficValidationIssueForRendering[] = [];
   public coverageResultsForRendering: OperationCoverageInfoForRendering[] = [];
-  public resultsForRendering: Array<Partial<resultForRendering>> = [];
+  public resultsForRendering: resultForRendering[] = [];
 
   private validationResults: TrafficValidationIssue[];
   private sortedValidationResults: TrafficValidationIssue[];
@@ -178,6 +178,36 @@ export class CoverageView {
           runtimeExceptions: element.runtimeExceptions,
         });
       });
+      this.coverageResults.forEach((element) => {
+        const specLink = this.overrideLinkInReport
+          ? `${this.specLinkPrefix}/${element.spec?.substring(
+              element.spec?.indexOf("specification")
+            )}`
+          : element.spec;
+        this.coverageResultsForRendering.push({
+          spec: specLink,
+          specLinkLabel: element.spec?.substring(element.spec?.lastIndexOf("/") + 1),
+          apiVersion: element.apiVersion,
+          coveredOperaions: element.coveredOperaions,
+          validationPassOperations: element.coveredOperaions - element.validationFailOperations,
+          validationFailOperations: element.validationFailOperations,
+          unCoveredOperations: element.unCoveredOperations,
+          unCoveredOperationsList: element.unCoveredOperationsList,
+          unCoveredOperationsListGen: element.unCoveredOperationsListGen,
+          totalOperations: element.totalOperations,
+          coverageRate: element.coverageRate,
+          generalErrorsInnerList: [],
+        });
+      });
+
+      this.resultsForRendering = this.coverageResultsForRendering.map((item) => {
+        const data = this.validationResultsForRendering.find((i) => item.spec === i.specFilePath);
+        return {
+          ...item,
+          ...data,
+        } as any;
+      });
+
       const generalErrorsInnerOrigin = this.validationResultsForRendering.filter((x) => {
         return x.errors && x.errors.length > 0;
       });
@@ -221,35 +251,14 @@ export class CoverageView {
             : `${element[0].specFilePath}#L${element[0]!.operationInfo!.position!.line}`,
         });
       });
-      this.coverageResults.forEach((element) => {
-        const specLink = this.overrideLinkInReport
-          ? `${this.specLinkPrefix}/${element.spec?.substring(
-              element.spec?.indexOf("specification")
-            )}`
-          : element.spec;
-        this.coverageResultsForRendering.push({
-          spec: specLink,
-          specLinkLabel: element.spec?.substring(element.spec?.lastIndexOf("/") + 1),
-          apiVersion: element.apiVersion,
-          coveredOperaions: element.coveredOperaions,
-          validationPassOperations: element.coveredOperaions - element.validationFailOperations,
-          validationFailOperations: element.validationFailOperations,
-          unCoveredOperations: element.unCoveredOperations,
-          unCoveredOperationsList: element.unCoveredOperationsList,
-          unCoveredOperationsListGen: element.unCoveredOperationsListGen,
-          totalOperations: element.totalOperations,
-          coverageRate: element.coverageRate,
-          generalErrorsInnerList: generalErrorsInnerList,
-        });
-      });
 
-      this.resultsForRendering = this.coverageResultsForRendering.map((item) => {
-        const data = this.validationResultsForRendering.find((i) => item.spec === i.specFilePath);
-        return {
-          ...item,
-          ...data,
-        };
-      });
+      for (const e of this.resultsForRendering) {
+        for (const i of generalErrorsInnerList) {
+          if (e.specFilePath === i.specFilePath && i) {
+            e.generalErrorsInnerList.push(i);
+          }
+        }
+      }
     } catch (e) {
       console.error(`Failed in prepareDataForRendering with err:${e?.stack};message:${e?.message}`);
     }
@@ -325,9 +334,10 @@ export class CoverageView {
 
   public getRunTimeErrors(): TrafficValidationIssue[] {
     if (this.outputExceptionInReport) {
-      return this.validationResults.filter((x) => {
+      const res = this.validationResults.filter((x) => {
         return x.runtimeExceptions && x.runtimeExceptions.length > 0;
       });
+      return res;
     } else {
       return [];
     }

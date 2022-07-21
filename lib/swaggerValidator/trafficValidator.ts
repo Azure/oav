@@ -276,8 +276,8 @@ export class TrafficValidator {
     let coverageRate: number;
     let validationFailOperations: number;
     let unCoveredOperationsList: unCoveredOperationsFormatInner[];
-    const unCoveredOperationsListFormat: unCoveredOperationsFormat[] = [];
     this.operationSpecMapper.forEach((value: string[], key: string) => {
+      const unCoveredOperationsListFormat: unCoveredOperationsFormat[] = [];
       unCoveredOperationsList = [];
       if (this.trafficOperation.get(key) === undefined) {
         coveredOperaions = 0;
