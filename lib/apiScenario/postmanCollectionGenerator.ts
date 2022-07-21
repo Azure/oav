@@ -49,7 +49,7 @@ export interface PostmanCollectionGeneratorOption
   markdown?: boolean;
   junit?: boolean;
   html?: boolean;
-  htmlSpecPathPrefix: string;
+  specPathPrefix: string;
   runCollection: boolean;
   generateCollection: boolean;
   baseUrl: string;
@@ -283,8 +283,8 @@ export class PostmanCollectionGenerator {
 
     const options: TrafficValidationOptions = {
       reportPath: path.resolve(reportExportPath, "report.html"),
-      overrideLinkInReport: this.opt.htmlSpecPathPrefix !== undefined,
-      specLinkPrefix: this.opt.htmlSpecPathPrefix,
+      overrideLinkInReport: this.opt.specPathPrefix !== undefined,
+      specLinkPrefix: this.opt.specPathPrefix,
       sdkPackage: providerNamespace,
     };
 
@@ -440,7 +440,7 @@ export class PostmanCollectionGenerator {
       markdown: this.opt.markdown,
       junit: this.opt.junit,
       html: this.opt.html,
-      htmlSpecPathPrefix: this.opt.htmlSpecPathPrefix,
+      specPathPrefix: this.opt.specPathPrefix,
       baseUrl: this.opt.baseUrl,
       runId: this.opt.runId,
       validationLevel: this.opt.validationLevel,

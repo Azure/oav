@@ -55,8 +55,8 @@ export const builder: yargs.CommandBuilder = {
     describe: "Generate report type. Supported types: html, markdown, junit",
     type: "array",
   },
-  htmlSpecPathPrefix: {
-    describe: "The prefix of html report spec path.",
+  specPathPrefix: {
+    describe: "The prefix of spec path in reports.",
     string: true,
   },
   level: {
@@ -206,7 +206,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
         markdown: (argv.report ?? []).includes("markdown"),
         junit: (argv.report ?? []).includes("junit"),
         html: (argv.report ?? []).includes("html"),
-        htmlSpecPathPrefix: argv.htmlSpecPathPrefix,
+        specPathPrefix: argv.specPathPrefix,
         eraseXmsExamples: false,
         eraseDescription: false,
         baseUrl: argv.armEndpoint,
