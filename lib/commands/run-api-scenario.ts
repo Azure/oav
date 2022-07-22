@@ -51,23 +51,12 @@ export const builder: yargs.CommandBuilder = {
     string: true,
     default: ".apitest",
   },
-  markdown: {
-    alias: "markdownReportPath",
-    describe: "Markdown report output path.",
-    string: true,
+  report: {
+    describe: "Generate report type. Supported types: html, markdown, junit",
+    type: "array",
   },
-  junit: {
-    alias: "junitReportPath",
-    describe: "Junit report output path.",
-    string: true,
-  },
-  html: {
-    describe: "Generate html report for each scenario.",
-    boolean: true,
-    default: false,
-  },
-  htmlSpecPathPrefix: {
-    describe: "The prefix of html report spec path.",
+  specPathPrefix: {
+    describe: "The prefix of spec path in reports.",
     string: true,
   },
   level: {
@@ -214,10 +203,10 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
         runCollection: !argv.dryRun,
         env,
         outputFolder: argv.output,
-        markdownReportPath: argv.markdownReportPath,
-        junitReportPath: argv.junitReportPath,
-        html: argv.html,
-        htmlSpecPathPrefix: argv.htmlSpecPathPrefix,
+        markdown: (argv.report ?? []).includes("markdown"),
+        junit: (argv.report ?? []).includes("junit"),
+        html: (argv.report ?? []).includes("html"),
+        specPathPrefix: argv.specPathPrefix,
         eraseXmsExamples: false,
         eraseDescription: false,
         baseUrl: argv.armEndpoint,

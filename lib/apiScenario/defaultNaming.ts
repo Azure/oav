@@ -33,6 +33,10 @@ export const defaultNewmanReport = (
   return `${testScenarioFileName}/${runId}/${testScenarioName}.json`;
 };
 
+export const defaultNewmanDir = (testScenarioFileName: string, runId: string) => {
+  return `${testScenarioFileName}/${runId}`;
+};
+
 export const getFileNameFromPath = (filePath: string): string => {
   return filePath.replace(/^.*[\\\/]/, "").replace(".yaml", "");
 };

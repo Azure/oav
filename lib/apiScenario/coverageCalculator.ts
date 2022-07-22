@@ -35,15 +35,20 @@ export class CoverageCalculator {
     }
     const coverageOperationIds = new Set<string>();
     for (const step of testDef.prepareSteps) {
-      if (step.type === "restCall") {
+      if (step.type === "restCall" && allOperationIds.has(step.operationId)) {
         coverageOperationIds.add(step.operationId);
       }
     }
     for (const testScenario of testDef.scenarios) {
       for (const step of testScenario.steps) {
-        if (step.type === "restCall") {
+        if (step.type === "restCall" && allOperationIds.has(step.operationId)) {
           coverageOperationIds.add(step.operationId);
         }
+      }
+    }
+    for (const step of testDef.cleanUpSteps) {
+      if (step.type === "restCall" && allOperationIds.has(step.operationId)) {
+        coverageOperationIds.add(step.operationId);
       }
     }
     ret.coverage =
@@ -86,6 +91,11 @@ export class CoverageCalculator {
           if (step.type === "restCall" && allOperationIds.has(step.operationId)) {
             coverageOperationIds.add(step.operationId);
           }
+        }
+      }
+      for (const step of testDef.cleanUpSteps) {
+        if (step.type === "restCall" && allOperationIds.has(step.operationId)) {
+          coverageOperationIds.add(step.operationId);
         }
       }
       result.coverage =
