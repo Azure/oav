@@ -184,6 +184,10 @@ export class NewmanReportValidator {
           continue;
         }
 
+        if (matchedStep.crossRP) {
+          continue;
+        }
+
         const payload = this.convertToLiveValidationPayload(it);
 
         let responseDiffResult: ResponseDiffItem[] | undefined = undefined;

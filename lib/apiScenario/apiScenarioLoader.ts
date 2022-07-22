@@ -425,6 +425,9 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       if (operation === undefined) {
         throw new Error(`Operation not found for ${step.operationId} in step ${step.step}`);
       }
+      if (rawStep.readmeTag) {
+        step.crossRP = true;
+      }
       if (this.opts.includeOperation) {
         step.operation = operation;
       }
