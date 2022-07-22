@@ -184,7 +184,7 @@ export class NewmanReportValidator {
           continue;
         }
 
-        if (matchedStep.crossRP) {
+        if (matchedStep.externalReference) {
           continue;
         }
 

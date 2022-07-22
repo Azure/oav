@@ -136,7 +136,7 @@ export type StepRestCall = StepBase & {
   parameters: SwaggerExample["parameters"];
   responses: SwaggerExample["responses"];
   outputVariables?: OutputVariables;
-  crossRP?: boolean;
+  externalReference?: boolean;
   _resolvedParameters?: SwaggerExample["parameters"];
 };
 
