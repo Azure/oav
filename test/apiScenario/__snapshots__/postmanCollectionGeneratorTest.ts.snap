@@ -1612,7 +1612,7 @@ Array [
                 "    postman.setNextRequest('_createStorageAccount_generated_get')",
                 "}",
               ],
-              "id": "a7lkxi",
+              "id": "col7eq",
               "type": "text/javascript",
             },
           },
@@ -1761,9 +1761,284 @@ Array [
         "response": Array [],
       },
       Object {
+        "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"DeletedAccounts_Get\\",\\"itemName\\":\\"DeletedAccounts_Get\\",\\"step\\":\\"DeletedAccounts_Get\\"}",
         "event": Array [
           Object {
-            "id": "bsqg1o",
+            "id": "a7lkxi",
+            "listen": "prerequest",
+            "script": Object {
+              "exec": Array [
+                "pm.variables.set(\\"deletedAccountName\\", \\"foobareq5yyi\\");",
+              ],
+              "id": "bsqg1o",
+              "type": "text/javascript",
+            },
+          },
+          Object {
+            "id": "tyolxx",
+            "listen": "test",
+            "script": Object {
+              "exec": Array [
+                "pm.test(\\"response status code assertion.\\", function() {",
+                "pm.response.to.be.success;",
+                "});",
+              ],
+              "id": "65xm09",
+              "type": "text/javascript",
+            },
+          },
+        ],
+        "id": "kqos97",
+        "name": "DeletedAccounts_Get",
+        "request": Object {
+          "body": Object {},
+          "header": Array [
+            Object {
+              "key": "x-recording-upstream-base-uri",
+              "value": "https://management.azure.com",
+            },
+            Object {
+              "key": "x-recording-id",
+              "value": "{{x_recording_id}}",
+            },
+            Object {
+              "key": "x-recording-mode",
+              "value": "record",
+            },
+            Object {
+              "key": "Content-Type",
+              "value": "application/json",
+            },
+          ],
+          "method": "GET",
+          "url": Object {
+            "host": Array [
+              "http://localhost:5000",
+            ],
+            "path": Array [
+              "subscriptions",
+              ":subscriptionId",
+              "providers",
+              "Microsoft.Storage",
+              "locations",
+              ":location",
+              "deletedAccounts",
+              ":deletedAccountName",
+            ],
+            "query": Array [
+              Object {
+                "key": "test",
+                "value": 1,
+              },
+              Object {
+                "key": "api-version",
+                "value": "2021-08-01",
+              },
+            ],
+            "variable": Array [
+              Object {
+                "key": "deletedAccountName",
+                "type": "any",
+                "value": "{{deletedAccountName}}",
+              },
+              Object {
+                "key": "location",
+                "type": "any",
+                "value": "{{location}}",
+              },
+              Object {
+                "key": "subscriptionId",
+                "type": "any",
+                "value": "{{subscriptionId}}",
+              },
+            ],
+          },
+        },
+        "response": Array [],
+      },
+      Object {
+        "event": Array [
+          Object {
+            "id": "wlgh2r",
+            "listen": "test",
+            "script": Object {
+              "exec": Array [
+                "pm.test(\\"response code should be 2xx\\", function() {",
+                "pm.response.to.be.success;",
+                "});",
+              ],
+              "id": "gsyqal",
+              "type": "text/javascript",
+            },
+          },
+          Object {
+            "id": "sp8ib7",
+            "listen": "test",
+            "script": Object {
+              "exec": Array [
+                "",
+                "const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\");",
+                "if (pollingUrl) {",
+                "    pm.collectionVariables.set(\\"x_polling_url\\", pollingUrl.replace(\\"https://management.azure.com\\",\\"http://localhost:5000\\"));",
+                "}",
+              ],
+              "id": "d9yng9",
+              "type": "text/javascript",
+            },
+          },
+        ],
+        "id": "c9wzyn",
+        "name": "deleteResourceGroup",
+        "request": Object {
+          "header": Array [
+            Object {
+              "key": "x-recording-upstream-base-uri",
+              "value": "https://management.azure.com",
+            },
+            Object {
+              "key": "x-recording-id",
+              "value": "{{x_recording_id}}",
+            },
+            Object {
+              "key": "x-recording-mode",
+              "value": "record",
+            },
+            Object {
+              "key": "Content-Type",
+              "value": "application/json",
+            },
+          ],
+          "method": "DELETE",
+          "url": Object {
+            "host": Array [
+              "http://localhost:5000",
+            ],
+            "path": Array [
+              "subscriptions",
+              ":subscriptionId",
+              "resourcegroups",
+              ":resourceGroupName",
+            ],
+            "query": Array [
+              Object {
+                "key": "api-version",
+                "value": "2020-06-01",
+              },
+            ],
+            "variable": Array [
+              Object {
+                "key": "subscriptionId",
+                "type": "any",
+                "value": "{{subscriptionId}}",
+              },
+              Object {
+                "key": "resourceGroupName",
+                "type": "any",
+                "value": "{{resourceGroupName}}",
+              },
+            ],
+          },
+        },
+        "response": Array [],
+      },
+      Object {
+        "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"deleteResourceGroup\\"}",
+        "event": Array [
+          Object {
+            "id": "ehebqq",
+            "listen": "test",
+            "script": Object {
+              "exec": Array [
+                "",
+                "try {",
+                "    if (pm.response.code === 202) {",
+                "        postman.setNextRequest('_deleteResourceGroup_poller_mock_delay');",
+                "    } else if (pm.response.code === 204) {",
+                "        postman.setNextRequest('stopTestProxyRecording');",
+                "    } else {",
+                "        const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"];",
+                "        if (pm.response.json().status !== undefined && terminalStatus.indexOf(pm.response.json().status) === -1) {",
+                "            postman.setNextRequest('_deleteResourceGroup_poller_mock_delay')",
+                "        } else {",
+                "            postman.setNextRequest('stopTestProxyRecording')",
+                "        }",
+                "    }",
+                "} catch(err) {",
+                "    postman.setNextRequest('stopTestProxyRecording')",
+                "}",
+              ],
+              "id": "f9zxy5",
+              "type": "text/javascript",
+            },
+          },
+        ],
+        "id": "ew9nh8",
+        "name": "_deleteResourceGroup_poller",
+        "request": Object {
+          "header": Array [
+            Object {
+              "key": "x-recording-upstream-base-uri",
+              "value": "https://management.azure.com",
+            },
+            Object {
+              "key": "x-recording-id",
+              "value": "{{x_recording_id}}",
+            },
+            Object {
+              "key": "x-recording-mode",
+              "value": "record",
+            },
+          ],
+          "method": "GET",
+          "url": Object {
+            "host": Array [
+              "{{x_polling_url}}",
+            ],
+            "query": Array [],
+            "variable": Array [],
+          },
+        },
+        "response": Array [],
+      },
+      Object {
+        "description": "{\\"type\\":\\"mock\\",\\"lro_item_name\\":\\"deleteResourceGroup\\"}",
+        "event": Array [
+          Object {
+            "id": "yzy1ec",
+            "listen": "prerequest",
+            "script": Object {
+              "exec": Array [
+                "postman.setNextRequest('_deleteResourceGroup_poller')",
+              ],
+              "id": "bw1q38",
+              "type": "text/javascript",
+            },
+          },
+        ],
+        "id": "2vc31r",
+        "name": "_deleteResourceGroup_poller_mock_delay",
+        "request": Object {
+          "method": "GET",
+          "url": Object {
+            "host": Array [
+              "postman-echo",
+              "com",
+            ],
+            "path": Array [
+              "delay",
+              "{{x_retry_after}}",
+            ],
+            "protocol": "https",
+            "query": Array [],
+            "variable": Array [],
+          },
+        },
+        "response": Array [],
+      },
+      Object {
+        "event": Array [
+          Object {
+            "id": "odehko",
             "listen": "test",
             "script": Object {
               "exec": Array [
@@ -1773,12 +2048,12 @@ Array [
                 "});",
                 "",
               ],
-              "id": "kqos97",
+              "id": "9quvnq",
               "type": "text/javascript",
             },
           },
         ],
-        "id": "eq5yyi",
+        "id": "zo75y7",
         "name": "stopTestProxyRecording",
         "request": Object {
           "header": Array [
@@ -2680,6 +2955,81 @@ Array [
                 "key": "subscriptionId",
                 "type": "any",
                 "value": "{{subscriptionId}}",
+              },
+            ],
+          },
+        },
+        "response": Array [],
+      },
+      Object {
+        "event": Array [
+          Object {
+            "id": "9e4snq",
+            "listen": "test",
+            "script": Object {
+              "exec": Array [
+                "pm.test(\\"response code should be 2xx\\", function() {",
+                "pm.response.to.be.success;",
+                "});",
+              ],
+              "id": "zfkej6",
+              "type": "text/javascript",
+            },
+          },
+          Object {
+            "id": "ezqs5q",
+            "listen": "test",
+            "script": Object {
+              "exec": Array [
+                "",
+                "const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\");",
+                "if (pollingUrl) {",
+                "    pm.collectionVariables.set(\\"x_polling_url\\", pollingUrl);",
+                "}",
+              ],
+              "id": "h1l4hw",
+              "type": "text/javascript",
+            },
+          },
+        ],
+        "id": "igg58r",
+        "name": "deleteResourceGroup",
+        "request": Object {
+          "header": Array [
+            Object {
+              "key": "Content-Type",
+              "value": "application/json",
+            },
+          ],
+          "method": "DELETE",
+          "url": Object {
+            "host": Array [
+              "https://management",
+              "azure",
+              "com",
+            ],
+            "path": Array [
+              "subscriptions",
+              ":subscriptionId",
+              "resourcegroups",
+              ":resourceGroupName",
+            ],
+            "query": Array [
+              Object {
+                "key": "api-version",
+                "value": "2020-06-01",
+              },
+            ],
+            "variable": Array [
+              Object {
+                "key": "subscriptionId",
+                "type": "any",
+                "value": "{{subscriptionId}}",
+              },
+              Object {
+                "key": "resourceGroupName",
+                "type": "any",
+                "value": "{{resourceGroupName}}",
               },
             ],
           },
@@ -4101,7 +4451,7 @@ Array [
                 "    postman.setNextRequest('_createStorageAccount_generated_get')",
                 "}",
               ],
-              "id": "iqxxs7",
+              "id": "bsqg1o",
               "type": "text/javascript",
             },
           },
@@ -4221,6 +4571,247 @@ Array [
                 "value": "{{subscriptionId}}",
               },
             ],
+          },
+        },
+        "response": Array [],
+      },
+      Object {
+        "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"DeletedAccounts_Get\\",\\"itemName\\":\\"DeletedAccounts_Get\\",\\"step\\":\\"DeletedAccounts_Get\\"}",
+        "event": Array [
+          Object {
+            "id": "p03jp7",
+            "listen": "prerequest",
+            "script": Object {
+              "exec": Array [
+                "pm.variables.set(\\"deletedAccountName\\", \\"foobariqxxs7\\");",
+              ],
+              "id": "h0fgel",
+              "type": "text/javascript",
+            },
+          },
+          Object {
+            "id": "j58bgv",
+            "listen": "test",
+            "script": Object {
+              "exec": Array [
+                "pm.test(\\"response status code assertion.\\", function() {",
+                "pm.response.to.be.success;",
+                "});",
+              ],
+              "id": "k97wbk",
+              "type": "text/javascript",
+            },
+          },
+        ],
+        "id": "yh0zn8",
+        "name": "DeletedAccounts_Get",
+        "request": Object {
+          "body": Object {},
+          "header": Array [
+            Object {
+              "key": "Content-Type",
+              "value": "application/json",
+            },
+          ],
+          "method": "GET",
+          "url": Object {
+            "host": Array [
+              "https://management",
+              "azure",
+              "com",
+            ],
+            "path": Array [
+              "subscriptions",
+              ":subscriptionId",
+              "providers",
+              "Microsoft.Storage",
+              "locations",
+              ":location",
+              "deletedAccounts",
+              ":deletedAccountName",
+            ],
+            "query": Array [
+              Object {
+                "key": "test",
+                "value": 1,
+              },
+              Object {
+                "key": "api-version",
+                "value": "2021-08-01",
+              },
+            ],
+            "variable": Array [
+              Object {
+                "key": "deletedAccountName",
+                "type": "any",
+                "value": "{{deletedAccountName}}",
+              },
+              Object {
+                "key": "location",
+                "type": "any",
+                "value": "{{location}}",
+              },
+              Object {
+                "key": "subscriptionId",
+                "type": "any",
+                "value": "{{subscriptionId}}",
+              },
+            ],
+          },
+        },
+        "response": Array [],
+      },
+      Object {
+        "event": Array [
+          Object {
+            "id": "9ezdsu",
+            "listen": "test",
+            "script": Object {
+              "exec": Array [
+                "pm.test(\\"response code should be 2xx\\", function() {",
+                "pm.response.to.be.success;",
+                "});",
+              ],
+              "id": "q1cfqt",
+              "type": "text/javascript",
+            },
+          },
+          Object {
+            "id": "lk4mhm",
+            "listen": "test",
+            "script": Object {
+              "exec": Array [
+                "",
+                "const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\");",
+                "if (pollingUrl) {",
+                "    pm.collectionVariables.set(\\"x_polling_url\\", pollingUrl);",
+                "}",
+              ],
+              "id": "vm8psu",
+              "type": "text/javascript",
+            },
+          },
+        ],
+        "id": "dm09uw",
+        "name": "deleteResourceGroup",
+        "request": Object {
+          "header": Array [
+            Object {
+              "key": "Content-Type",
+              "value": "application/json",
+            },
+          ],
+          "method": "DELETE",
+          "url": Object {
+            "host": Array [
+              "https://management",
+              "azure",
+              "com",
+            ],
+            "path": Array [
+              "subscriptions",
+              ":subscriptionId",
+              "resourcegroups",
+              ":resourceGroupName",
+            ],
+            "query": Array [
+              Object {
+                "key": "api-version",
+                "value": "2020-06-01",
+              },
+            ],
+            "variable": Array [
+              Object {
+                "key": "subscriptionId",
+                "type": "any",
+                "value": "{{subscriptionId}}",
+              },
+              Object {
+                "key": "resourceGroupName",
+                "type": "any",
+                "value": "{{resourceGroupName}}",
+              },
+            ],
+          },
+        },
+        "response": Array [],
+      },
+      Object {
+        "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"deleteResourceGroup\\"}",
+        "event": Array [
+          Object {
+            "id": "kqos97",
+            "listen": "test",
+            "script": Object {
+              "exec": Array [
+                "",
+                "try {",
+                "    if (pm.response.code === 202) {",
+                "        postman.setNextRequest('_deleteResourceGroup_poller_mock_delay');",
+                "    } else if (pm.response.code === 204) {",
+                "        postman.setNextRequest(null);",
+                "    } else {",
+                "        const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"];",
+                "        if (pm.response.json().status !== undefined && terminalStatus.indexOf(pm.response.json().status) === -1) {",
+                "            postman.setNextRequest('_deleteResourceGroup_poller_mock_delay')",
+                "        } else {",
+                "            postman.setNextRequest(null)",
+                "        }",
+                "    }",
+                "} catch(err) {",
+                "    postman.setNextRequest(null)",
+                "}",
+              ],
+              "id": "a7lkxi",
+              "type": "text/javascript",
+            },
+          },
+        ],
+        "id": "ivu9xy",
+        "name": "_deleteResourceGroup_poller",
+        "request": Object {
+          "method": "GET",
+          "url": Object {
+            "host": Array [
+              "{{x_polling_url}}",
+            ],
+            "query": Array [],
+            "variable": Array [],
+          },
+        },
+        "response": Array [],
+      },
+      Object {
+        "description": "{\\"type\\":\\"mock\\",\\"lro_item_name\\":\\"deleteResourceGroup\\"}",
+        "event": Array [
+          Object {
+            "id": "qh9z16",
+            "listen": "prerequest",
+            "script": Object {
+              "exec": Array [
+                "postman.setNextRequest('_deleteResourceGroup_poller')",
+              ],
+              "id": "spylrr",
+              "type": "text/javascript",
+            },
+          },
+        ],
+        "id": "mge3qz",
+        "name": "_deleteResourceGroup_poller_mock_delay",
+        "request": Object {
+          "method": "GET",
+          "url": Object {
+            "host": Array [
+              "postman-echo",
+              "com",
+            ],
+            "path": Array [
+              "delay",
+              "{{x_retry_after}}",
+            ],
+            "protocol": "https",
+            "query": Array [],
+            "variable": Array [],
           },
         },
         "response": Array [],

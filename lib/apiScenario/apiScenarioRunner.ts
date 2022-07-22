@@ -80,6 +80,10 @@ export class ApiScenarioRunner {
   private resolveVariables: boolean;
   private skipCleanUp: boolean;
 
+  public setSkipCleanUp(skipCleanUp: boolean) {
+    this.skipCleanUp = skipCleanUp;
+  }
+
   private doProvisionScope = getLazyBuilder("provisioned", async (scope: Scope) => {
     if (scope.type === "ResourceGroup") {
       await this.client.createResourceGroup(
@@ -252,6 +256,10 @@ export class ApiScenarioRunner {
     }
 
     await this.client.sendRestCallRequest(req, step, env);
+
+    if (this.resolveVariables && !step._resolvedParameters) {
+      step._resolvedParameters = env.resolveObjectValues(step.parameters);
+    }
   }
 
   private async executeArmTemplateStep(step: StepArmTemplate, env: VariableEnv, scope: Scope) {

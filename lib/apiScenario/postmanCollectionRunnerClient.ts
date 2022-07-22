@@ -22,11 +22,8 @@ import * as PostmanHelper from "./postmanHelper";
 import { VariableEnv } from "./variableEnv";
 
 export interface PostmanCollectionRunnerClientOption {
-  apiScenarioFileName: string;
-  apiScenarioFilePath?: string;
   apiScenarioName?: string;
   runId: string;
-  swaggerFilePaths?: string[];
   baseUrl: string;
   testProxy?: string;
   verbose?: boolean;
@@ -53,7 +50,6 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
 
   public async prepareScenario(scenario: Scenario, env: VariableEnv): Promise<void> {
     this.opts.apiScenarioName = scenario.scenario;
-    this.opts.apiScenarioFileName = scenario._scenarioDef._filePath;
 
     this.collection = new Collection({
       info: {
@@ -63,9 +59,9 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     });
     this.collection.describe(
       JSON.stringify({
-        apiScenarioFilePath: this.opts.apiScenarioFilePath,
-        apiScenarioName: this.opts.apiScenarioName,
-        swaggerFilePaths: this.opts.swaggerFilePaths,
+        apiScenarioFilePath: scenario._scenarioDef._filePath,
+        apiScenarioName: scenario.scenario,
+        swaggerFilePaths: scenario._scenarioDef._swaggerFilePaths,
       })
     );
     this.collection.auth = new RequestAuth({
@@ -299,6 +295,7 @@ pm.test("Stopped TestProxy recording", function() {
       )
     );
 
+    this.collection.items.add(item);
     this.addAsLongRunningOperationItem(item);
   }
 
@@ -342,16 +339,20 @@ pm.test("Stopped TestProxy recording", function() {
 
     env.resolve();
 
+    step._resolvedParameters = env.resolveObjectValues(step.parameters);
+
     if (Object.keys(step.variables).length > 0) {
-      PostmanHelper.createEvent(
-        "prerequest",
-        PostmanHelper.createScript(
-          Object.entries(step.variables)
-            .map(
-              ([key, value]) =>
-                `pm.variables.set("${key}", "${env.resolveObjectValues(value.value)}");`
-            )
-            .join("\n")
+      item.events.add(
+        PostmanHelper.createEvent(
+          "prerequest",
+          PostmanHelper.createScript(
+            Object.entries(step.variables)
+              .map(
+                ([key, value]) =>
+                  `pm.variables.set("${key}", "${env.resolveObjectValues(value.value)}");`
+              )
+              .join("\n")
+          )
         )
       );
     }

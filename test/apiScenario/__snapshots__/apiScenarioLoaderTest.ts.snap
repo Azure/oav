@@ -3,6 +3,9 @@
 exports[`ApiScenarioLoader load valid example based scenario - storage 1`] = `
 Object {
   "_filePath": "Microsoft.Storage/stable/2021-08-01/scenarios/storageBasicExample.yaml",
+  "_swaggerFilePaths": Array [
+    "Microsoft.Storage/stable/2021-08-01/storage.json",
+  ],
   "cleanUpSteps": Array [],
   "prepareSteps": Array [],
   "requiredVariables": Array [
@@ -523,6 +526,9 @@ Object {
 exports[`ApiScenarioLoader load valid scenario - storage 1`] = `
 Object {
   "_filePath": "Microsoft.Storage/stable/2021-08-01/scenarios/storageQuickStart.yaml",
+  "_swaggerFilePaths": Array [
+    "Microsoft.Storage/stable/2021-08-01/storage.json",
+  ],
   "cleanUpSteps": Array [],
   "prepareSteps": Array [],
   "requiredVariables": Array [
@@ -733,6 +739,30 @@ Object {
           "type": "restCall",
           "variables": Object {},
         },
+        Object {
+          "description": undefined,
+          "operation": Object {},
+          "operationId": "DeletedAccounts_Get",
+          "outputVariables": Object {},
+          "parameters": Object {
+            "api-version": "2021-08-01",
+            "deletedAccountName": "$(deletedAccountName)",
+            "location": "$(location)",
+            "subscriptionId": "$(subscriptionId)",
+            "test": 1,
+          },
+          "requiredVariables": Array [],
+          "responses": Object {},
+          "secretVariables": Array [],
+          "step": "DeletedAccounts_Get",
+          "type": "restCall",
+          "variables": Object {
+            "deletedAccountName": Object {
+              "prefix": "foobar",
+              "type": "string",
+            },
+          },
+        },
       ],
       "variables": Object {
         "accountName": Object {
@@ -756,6 +786,9 @@ Object {
 exports[`ApiScenarioLoader load valid scenario from uri 1`] = `
 Object {
   "_filePath": "Microsoft.SignalRService/preview/2021-06-01-preview/scenarios/signalR.yaml",
+  "_swaggerFilePaths": Array [
+    "Microsoft.SignalRService/preview/2021-06-01-preview/signalr.json",
+  ],
   "cleanUpSteps": Array [],
   "prepareSteps": Array [],
   "requiredVariables": Array [

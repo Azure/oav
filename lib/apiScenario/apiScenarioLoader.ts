@@ -238,6 +238,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       prepareSteps: [],
       scenarios: [],
       _filePath: this.fileLoader.relativePath(filePath),
+      _swaggerFilePaths: this.opts.swaggerFilePaths!,
       cleanUpSteps: [],
       ...convertVariables(rawDef.variables),
     };
@@ -423,6 +424,9 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
         : this.operationsMap.get(step.operationId);
       if (operation === undefined) {
         throw new Error(`Operation not found for ${step.operationId} in step ${step.step}`);
+      }
+      if (rawStep.readmeTag) {
+        step.externalReference = true;
       }
       if (this.opts.includeOperation) {
         step.operation = operation;

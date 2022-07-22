@@ -12,10 +12,10 @@ import {
 } from "../apiScenario/postmanCollectionGenerator";
 import { cliSuppressExceptions } from "../cliSuppressExceptions";
 import { inversifyGetInstance } from "../inversifyUtils";
-import { getInputFiles, printWarning } from "../util/utils";
+import { getApiScenarioFiles, getDefaultTag, getInputFiles, printWarning } from "../util/utils";
 import { EnvironmentVariables } from "../apiScenario/variableEnv";
 
-export const command = "run-api-scenario <api-scenario>";
+export const command = "run-api-scenario [<api-scenario>]";
 
 export const aliases = ["run"];
 
@@ -37,6 +37,10 @@ export const builder: yargs.CommandBuilder = {
     describe: "Path to readme.md file",
     string: true,
   },
+  flag: {
+    describe: "readme.test.md flag",
+    string: true,
+  },
   specs: {
     describe: "One or more spec file paths. type: array",
     type: "array",
@@ -47,19 +51,12 @@ export const builder: yargs.CommandBuilder = {
     string: true,
     default: ".apitest",
   },
-  markdown: {
-    alias: "markdownReportPath",
-    describe: "Markdown report output path.",
-    string: true,
+  report: {
+    describe: "Generate report type. Supported types: html, markdown, junit",
+    type: "array",
   },
-  junit: {
-    alias: "junitReportPath",
-    describe: "Junit report output path.",
-    string: true,
-  },
-  html: {
-    alias: "htmlReportPath",
-    describe: "Html report output path.",
+  specPathPrefix: {
+    describe: "The prefix of spec path in reports.",
     string: true,
   },
   level: {
@@ -99,6 +96,11 @@ export const builder: yargs.CommandBuilder = {
     boolean: true,
     default: false,
   },
+  generateExample: {
+    describe: "Generate examples after API Test",
+    boolean: true,
+    default: false,
+  },
   testProxy: {
     describe: "TestProxy endpoint, e.g., http://localhost:5000. If not set, no proxy will be used.",
     string: true,
@@ -117,10 +119,15 @@ export const builder: yargs.CommandBuilder = {
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
   await cliSuppressExceptions(async () => {
-    const scenarioFilePath = pathResolve(argv.apiScenario);
-    const readmePath = argv.readme
-      ? pathResolve(argv.readme)
-      : await findReadMe(pathDirName(scenarioFilePath));
+    const scenarioFiles = [];
+    let readmePath = argv.readme ? pathResolve(argv.readme) : undefined;
+    if (argv.apiScenario) {
+      const scenarioFilePath = pathResolve(argv.apiScenario);
+      scenarioFiles.push(scenarioFilePath);
+      if (!readmePath) {
+        readmePath = await findReadMe(pathDirName(scenarioFilePath));
+      }
+    }
 
     const fileRoot = readmePath ? pathDirName(readmePath) : process.cwd();
     console.log(`fileRoot: ${fileRoot}`);
@@ -132,70 +139,90 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
         swaggerFilePaths.push(specFile);
       }
     }
-    if (readmePath && argv.tag !== undefined) {
+    if (readmePath) {
       const inputFile = await getInputFiles(readmePath, argv.tag);
       for (const it of inputFile ?? []) {
         if (swaggerFilePaths.indexOf(it) < 0) {
           swaggerFilePaths.push(pathJoin(fileRoot, it));
         }
       }
+
+      if (!argv.apiScenario) {
+        const tag = argv.tag ?? (await getDefaultTag(readmePath));
+        scenarioFiles.push(
+          ...(
+            await getApiScenarioFiles(
+              pathJoin(pathDirName(readmePath), "readme.test.md"),
+              tag,
+              argv.flag
+            )
+          ).map((it) => pathJoin(fileRoot, it))
+        );
+      }
     }
 
     console.log("input-file:");
     console.log(swaggerFilePaths);
+    console.log("scenario-file:");
+    console.log(scenarioFiles);
 
-    let env: EnvironmentVariables = {};
-    if (argv.envFile !== undefined) {
-      env = JSON.parse(fs.readFileSync(argv.envFile).toString());
-    }
-    if (process.env[apiScenarioEnvKey]) {
-      const envFromVariable = JSON.parse(process.env[apiScenarioEnvKey] as string);
-      for (const key of Object.keys(envFromVariable)) {
-        if (env[key] !== undefined && envFromVariable[key] !== env[key]) {
-          printWarning(
-            `Notice: the variable '${key}' in '${argv.e}' is overwritten by the variable in the environment '${apiScenarioEnvKey}'.`
-          );
-        }
+    for (const scenarioFilePath of scenarioFiles) {
+      let env: EnvironmentVariables = {};
+      if (argv.envFile !== undefined) {
+        env = JSON.parse(fs.readFileSync(argv.envFile).toString());
       }
-      env = { ...env, ...envFromVariable };
+      if (process.env[apiScenarioEnvKey]) {
+        const envFromVariable = JSON.parse(process.env[apiScenarioEnvKey] as string);
+        for (const key of Object.keys(envFromVariable)) {
+          if (env[key] !== undefined && envFromVariable[key] !== env[key]) {
+            printWarning(
+              `Notice: the variable '${key}' in '${argv.e}' is overwritten by the variable in the environment '${apiScenarioEnvKey}'.`
+            );
+          }
+        }
+        env = { ...env, ...envFromVariable };
+      }
+
+      if (argv.location !== undefined) {
+        env.location = argv.location;
+      }
+      if (argv.subscriptionId !== undefined) {
+        env.subscriptionId = argv.subscriptionId;
+      }
+      if (argv.resourceGroup !== undefined) {
+        env.resourceGroupName = argv.resourceGroup;
+      }
+
+      const opt: PostmanCollectionGeneratorOption = {
+        name: path.basename(scenarioFilePath),
+        scenarioDef: scenarioFilePath,
+        fileRoot: fileRoot,
+        checkUnderFileRoot: false,
+        generateCollection: true,
+        useJsonParser: false,
+        runCollection: !argv.dryRun,
+        env,
+        outputFolder: argv.output,
+        markdown: (argv.report ?? []).includes("markdown"),
+        junit: (argv.report ?? []).includes("junit"),
+        html: (argv.report ?? []).includes("html"),
+        specPathPrefix: argv.specPathPrefix,
+        eraseXmsExamples: false,
+        eraseDescription: false,
+        baseUrl: argv.armEndpoint,
+        testProxy: argv.testProxy,
+        validationLevel: argv.level,
+        savePayload: argv.savePayload,
+        generateExample: argv.generateExample,
+        skipCleanUp: argv.skipCleanUp,
+        verbose: argv.verbose,
+        swaggerFilePaths: swaggerFilePaths,
+        devMode: argv.devMode,
+      };
+      const generator = inversifyGetInstance(PostmanCollectionGenerator, opt);
+      await generator.run();
     }
 
-    if (argv.location !== undefined) {
-      env.location = argv.location;
-    }
-    if (argv.subscriptionId !== undefined) {
-      env.subscriptionId = argv.subscriptionId;
-    }
-    if (argv.resourceGroup !== undefined) {
-      env.resourceGroupName = argv.resourceGroup;
-    }
-
-    const opt: PostmanCollectionGeneratorOption = {
-      name: path.basename(scenarioFilePath),
-      scenarioDef: scenarioFilePath,
-      fileRoot: fileRoot,
-      checkUnderFileRoot: false,
-      generateCollection: true,
-      useJsonParser: false,
-      runCollection: !argv.dryRun,
-      env,
-      outputFolder: argv.output,
-      markdownReportPath: argv.markdownReportPath,
-      junitReportPath: argv.junitReportPath,
-      htmlReportPath: argv.htmlReportPath,
-      eraseXmsExamples: false,
-      eraseDescription: false,
-      baseUrl: argv.armEndpoint,
-      testProxy: argv.testProxy,
-      validationLevel: argv.level,
-      skipCleanUp: argv.skipCleanUp,
-      verbose: argv.verbose,
-      swaggerFilePaths: swaggerFilePaths,
-      devMode: argv.devMode,
-      savePayload: argv.savePayload,
-    };
-    const generator = inversifyGetInstance(PostmanCollectionGenerator, opt);
-    await generator.run();
     return 0;
   });
 }

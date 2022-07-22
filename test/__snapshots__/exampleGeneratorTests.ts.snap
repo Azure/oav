@@ -518,7 +518,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 1981,
+      "line": 2016,
     },
     "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
     "severity": 0,
@@ -536,7 +536,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 1981,
+        "line": 2016,
       },
       "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
       "severity": 0,
@@ -1474,7 +1474,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 2029,
+      "line": 2070,
     },
     "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
     "severity": 0,
@@ -1492,7 +1492,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 2029,
+        "line": 2070,
       },
       "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
       "severity": 0,
@@ -1509,7 +1509,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 2580,
+      "line": 2621,
     },
     "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
     "severity": 0,
@@ -1527,7 +1527,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 2580,
+        "line": 2621,
       },
       "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
       "severity": 0,
@@ -2042,7 +2042,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 1981,
+      "line": 2016,
     },
     "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
     "severity": 0,
@@ -2060,7 +2060,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 1981,
+        "line": 2016,
       },
       "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
       "severity": 0,
@@ -3295,7 +3295,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 1981,
+      "line": 2016,
     },
     "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
     "severity": 0,
@@ -3313,7 +3313,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 1981,
+        "line": 2016,
       },
       "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
       "severity": 0,
@@ -4548,7 +4548,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 1981,
+      "line": 2016,
     },
     "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
     "severity": 0,
@@ -4566,7 +4566,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 1981,
+        "line": 2016,
       },
       "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
       "severity": 0,
