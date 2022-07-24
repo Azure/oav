@@ -41,6 +41,7 @@ export interface TrafficValidationIssue {
 export interface RuntimeException {
   code: string;
   message: string;
+  spec?: string[];
 }
 
 export interface OperationCoverageInfo {

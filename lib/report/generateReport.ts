@@ -18,6 +18,13 @@ export interface TrafficValidationIssueForRendering extends TrafficValidationIss
   errorCodeLen: number;
 }
 
+export interface runtimeExceptionList {
+  payloadFilePath?: string;
+  code: string;
+  message: string;
+  specList: Array<{ specLabel: string; specLink: string }>;
+}
+
 export interface TrafficValidationIssueForRenderingInner {
   generalErrorsInner: TrafficValidationIssueForRendering[];
   errorCodeLen: number;
@@ -332,12 +339,35 @@ export class CoverageView {
     return this.getGeneralErrors().length;
   }
 
-  public getRunTimeErrors(): TrafficValidationIssue[] {
+  public getRunTimeErrors(): runtimeExceptionList[] {
     if (this.outputExceptionInReport) {
       const res = this.validationResults.filter((x) => {
         return x.runtimeExceptions && x.runtimeExceptions.length > 0;
       });
-      return res;
+      const resFormat: runtimeExceptionList[] = [];
+      res.forEach((element) => {
+        element.runtimeExceptions &&
+          element.runtimeExceptions.forEach((i) => {
+            const specList = i.spec;
+            const specListFormat: Array<{ specLabel: string; specLink: string }> = [];
+            specList &&
+              specList.forEach((k: string) => {
+                const specLink = this.overrideLinkInReport
+                  ? `${this.specLinkPrefix}/${k?.substring(k?.indexOf("specification"))}`
+                  : k;
+                const specLabel = k?.substring(k?.lastIndexOf("/") + 1);
+                specListFormat.push({ specLabel, specLink });
+              });
+
+            resFormat.push({
+              code: i.code,
+              message: i.message,
+              payloadFilePath: element.payloadFilePath,
+              specList: specListFormat,
+            });
+          });
+      });
+      return resFormat;
     } else {
       return [];
     }

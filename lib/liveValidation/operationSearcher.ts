@@ -48,7 +48,7 @@ export class OperationSearcher {
     ) => void
   ) {}
 
-  public addSpecToCache(spec: SwaggerSpec) {
+  public addSpecToCache(spec: SwaggerSpec, swaggerPath: string) {
     traverseSwagger(spec, {
       onOperation: (operation, path, method) => {
         const httpMethod = method.toLowerCase() as LowerHttpMethods;
@@ -76,7 +76,7 @@ export class OperationSearcher {
             allMethods.set(httpMethod, operationsForHttpMethod);
           }
 
-          operationsForHttpMethod.push(operation);
+          operationsForHttpMethod.push({ ...operation, swaggerPath });
         };
 
         this.logging(
@@ -240,9 +240,11 @@ export class OperationSearcher {
     };
 
     if (requestInfo.pathStr === "") {
+      const specList = this.getErrorSpecProviderName();
       ret.reason = new LiveValidationError(
         ErrorCodes.PathNotFoundInRequestUrl.name,
-        `Could not find path from requestUrl: "${requestInfo.requestUrl}".`
+        `Could not find path from requestUrl: "${requestInfo.requestUrl}".`,
+        specList
       );
       return ret;
     }
@@ -251,35 +253,47 @@ export class OperationSearcher {
     const allApiVersions = this.cache.get(requestInfo.providerNamespace);
     let meta;
     if (allApiVersions === undefined) {
+      const specList = this.getErrorSpecProviderName();
       // provider does not exist in cache
       meta = getOavErrorMeta(ErrorCodes.OperationNotFoundInCacheWithProvider.name as any, {
         providerNamespace: requestInfo.providerNamespace,
       });
       ret.reason = new LiveValidationError(
         ErrorCodes.OperationNotFoundInCacheWithProvider.name,
-        meta.message
+        meta.message,
+        specList
       );
       return ret;
     }
 
     // Search using api-version found in the requestUrl
     if (!requestInfo.apiVersion) {
+      const specList = this.getErrorSpecProviderName();
       ret.reason = new LiveValidationError(
         ErrorCodes.OperationNotFoundInCacheWithApi.name,
-        `Could not find api-version in requestUrl "${requestInfo.requestUrl}".`
+        `Could not find api-version in requestUrl "${requestInfo.requestUrl}".`,
+        specList
       );
       return ret;
     }
 
     const allMethods = allApiVersions.get(requestInfo.apiVersion);
     if (allMethods === undefined) {
+      const specList: string[] = [];
+      allApiVersions.forEach((apiVersionMap) => {
+        apiVersionMap.forEach((methodMap) => {
+          const spec = methodMap[0]["swaggerPath"];
+          if (spec) specList.push(spec);
+        });
+      });
       meta = getOavErrorMeta(ErrorCodes.OperationNotFoundInCacheWithApi.name as any, {
         apiVersion: requestInfo.apiVersion,
         providerNamespace: requestInfo.providerNamespace,
       });
       ret.reason = new LiveValidationError(
         ErrorCodes.OperationNotFoundInCacheWithApi.name,
-        meta.message
+        meta.message,
+        Array.from(new Set(specList))
       );
       return ret;
     }
@@ -287,6 +301,11 @@ export class OperationSearcher {
     const operationsForHttpMethod = allMethods?.get(requestInfo.requestMethod!);
     // Search using requestMethod provided by user
     if (operationsForHttpMethod === undefined) {
+      const specList: string[] = [];
+      allMethods.forEach((methodMap) => {
+        const spec = methodMap[0]["swaggerPath"];
+        if (spec) specList.push(spec);
+      });
       meta = getOavErrorMeta(ErrorCodes.OperationNotFoundInCacheWithVerb.name as any, {
         requestMethod: requestInfo.requestMethod,
         apiVersion: requestInfo.apiVersion,
@@ -294,7 +313,8 @@ export class OperationSearcher {
       });
       ret.reason = new LiveValidationError(
         ErrorCodes.OperationNotFoundInCacheWithVerb.name,
-        meta.message
+        meta.message,
+        Array.from(new Set(specList))
       );
       return ret;
     }
@@ -307,15 +327,33 @@ export class OperationSearcher {
       requestInfo.query
     );
     if (ret.matches.length === 0 && ret.reason === undefined) {
+      const specList = this.getErrorSpecProviderName();
       meta = getOavErrorMeta(ErrorCodes.OperationNotFoundInCache.name as any, {
         requestMethod: requestInfo.requestMethod,
         apiVersion: requestInfo.apiVersion,
         providerNamespace: requestInfo.providerNamespace,
       });
-      ret.reason = new LiveValidationError(ErrorCodes.OperationNotFoundInCache.name, meta.message);
+      ret.reason = new LiveValidationError(
+        ErrorCodes.OperationNotFoundInCache.name,
+        meta.message,
+        specList
+      );
     }
 
     return ret;
+  }
+
+  public getErrorSpecProviderName() {
+    const specList: string[] = [];
+    this.cache.forEach((providerNameMap) => {
+      providerNameMap.forEach((apiVersionMap) => {
+        apiVersionMap.forEach((methodMap) => {
+          const spec = methodMap[0]["swaggerPath"];
+          if (spec) specList.push(spec);
+        });
+      });
+    });
+    return Array.from(new Set(specList));
   }
 }
 

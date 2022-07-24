@@ -774,7 +774,7 @@ export class LiveValidator {
       );
 
       const startTimeAddSpecToCache = Date.now();
-      this.operationSearcher.addSpecToCache(spec);
+      this.operationSearcher.addSpecToCache(spec, swaggerPath);
       // TODO: add data-plane RP to cache.
       this.logging(
         `Add spec to cache ${swaggerPath}`,
