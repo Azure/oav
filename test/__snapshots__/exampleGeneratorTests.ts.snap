@@ -25,7 +25,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 802,
+      "line": 748,
     },
     "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/Databases.json",
     "severity": 0,
@@ -41,7 +41,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 802,
+      "line": 748,
     },
     "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/Databases.json",
     "severity": 0,
@@ -59,7 +59,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 802,
+        "line": 748,
       },
       "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/Databases.json",
       "severity": 0,
@@ -75,7 +75,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 802,
+        "line": 748,
       },
       "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/Databases.json",
       "severity": 0,
@@ -133,7 +133,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 217,
+      "line": 214,
     },
     "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
     "severity": 0,
@@ -151,7 +151,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 217,
+        "line": 214,
       },
       "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
       "severity": 0,
@@ -168,7 +168,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 273,
+      "line": 270,
     },
     "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
     "severity": 0,
@@ -184,7 +184,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 273,
+      "line": 270,
     },
     "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
     "severity": 0,
@@ -202,7 +202,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 273,
+        "line": 270,
       },
       "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
       "severity": 0,
@@ -218,7 +218,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 273,
+        "line": 270,
       },
       "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
       "severity": 0,
@@ -352,7 +352,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 678,
+      "line": 666,
     },
     "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
     "severity": 0,
@@ -370,7 +370,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 678,
+        "line": 666,
       },
       "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
       "severity": 0,
@@ -387,7 +387,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 946,
+      "line": 934,
     },
     "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
     "severity": 0,
@@ -403,7 +403,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 946,
+      "line": 934,
     },
     "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
     "severity": 0,
@@ -419,7 +419,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 946,
+      "line": 934,
     },
     "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
     "severity": 0,
@@ -435,7 +435,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 946,
+      "line": 934,
     },
     "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
     "severity": 0,
@@ -453,7 +453,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 946,
+        "line": 934,
       },
       "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
       "severity": 0,
@@ -469,7 +469,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 946,
+        "line": 934,
       },
       "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
       "severity": 0,
@@ -485,7 +485,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 946,
+        "line": 934,
       },
       "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
       "severity": 0,
@@ -501,7 +501,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 946,
+        "line": 934,
       },
       "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
       "severity": 0,
@@ -518,7 +518,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 2070,
+      "line": 2016,
     },
     "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
     "severity": 0,
@@ -536,7 +536,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 2070,
+        "line": 2016,
       },
       "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
       "severity": 0,
@@ -1549,7 +1549,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 802,
+      "line": 748,
     },
     "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/Databases.json",
     "severity": 0,
@@ -1565,7 +1565,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 802,
+      "line": 748,
     },
     "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/Databases.json",
     "severity": 0,
@@ -1583,7 +1583,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 802,
+        "line": 748,
       },
       "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/Databases.json",
       "severity": 0,
@@ -1599,7 +1599,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 802,
+        "line": 748,
       },
       "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/Databases.json",
       "severity": 0,
@@ -1657,7 +1657,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 217,
+      "line": 214,
     },
     "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
     "severity": 0,
@@ -1675,7 +1675,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 217,
+        "line": 214,
       },
       "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
       "severity": 0,
@@ -1692,7 +1692,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 273,
+      "line": 270,
     },
     "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
     "severity": 0,
@@ -1708,7 +1708,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 273,
+      "line": 270,
     },
     "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
     "severity": 0,
@@ -1726,7 +1726,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 273,
+        "line": 270,
       },
       "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
       "severity": 0,
@@ -1742,7 +1742,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 273,
+        "line": 270,
       },
       "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
       "severity": 0,
@@ -1876,7 +1876,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 678,
+      "line": 666,
     },
     "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
     "severity": 0,
@@ -1894,7 +1894,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 678,
+        "line": 666,
       },
       "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
       "severity": 0,
@@ -1911,7 +1911,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 946,
+      "line": 934,
     },
     "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
     "severity": 0,
@@ -1927,7 +1927,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 946,
+      "line": 934,
     },
     "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
     "severity": 0,
@@ -1943,7 +1943,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 946,
+      "line": 934,
     },
     "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
     "severity": 0,
@@ -1959,7 +1959,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 946,
+      "line": 934,
     },
     "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
     "severity": 0,
@@ -1977,7 +1977,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 946,
+        "line": 934,
       },
       "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
       "severity": 0,
@@ -1993,7 +1993,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 946,
+        "line": 934,
       },
       "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
       "severity": 0,
@@ -2009,7 +2009,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 946,
+        "line": 934,
       },
       "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
       "severity": 0,
@@ -2025,7 +2025,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 946,
+        "line": 934,
       },
       "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
       "severity": 0,
@@ -2042,7 +2042,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 2070,
+      "line": 2016,
     },
     "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
     "severity": 0,
@@ -2060,7 +2060,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 2070,
+        "line": 2016,
       },
       "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
       "severity": 0,
@@ -2802,7 +2802,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 802,
+      "line": 748,
     },
     "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/Databases.json",
     "severity": 0,
@@ -2818,7 +2818,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 802,
+      "line": 748,
     },
     "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/Databases.json",
     "severity": 0,
@@ -2836,7 +2836,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 802,
+        "line": 748,
       },
       "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/Databases.json",
       "severity": 0,
@@ -2852,7 +2852,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 802,
+        "line": 748,
       },
       "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/Databases.json",
       "severity": 0,
@@ -2910,7 +2910,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 217,
+      "line": 214,
     },
     "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
     "severity": 0,
@@ -2928,7 +2928,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 217,
+        "line": 214,
       },
       "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
       "severity": 0,
@@ -2945,7 +2945,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 273,
+      "line": 270,
     },
     "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
     "severity": 0,
@@ -2961,7 +2961,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 273,
+      "line": 270,
     },
     "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
     "severity": 0,
@@ -2979,7 +2979,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 273,
+        "line": 270,
       },
       "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
       "severity": 0,
@@ -2995,7 +2995,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 273,
+        "line": 270,
       },
       "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
       "severity": 0,
@@ -3129,7 +3129,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 678,
+      "line": 666,
     },
     "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
     "severity": 0,
@@ -3147,7 +3147,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 678,
+        "line": 666,
       },
       "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
       "severity": 0,
@@ -3164,7 +3164,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 946,
+      "line": 934,
     },
     "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
     "severity": 0,
@@ -3180,7 +3180,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 946,
+      "line": 934,
     },
     "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
     "severity": 0,
@@ -3196,7 +3196,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 946,
+      "line": 934,
     },
     "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
     "severity": 0,
@@ -3212,7 +3212,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 946,
+      "line": 934,
     },
     "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
     "severity": 0,
@@ -3230,7 +3230,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 946,
+        "line": 934,
       },
       "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
       "severity": 0,
@@ -3246,7 +3246,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 946,
+        "line": 934,
       },
       "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
       "severity": 0,
@@ -3262,7 +3262,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 946,
+        "line": 934,
       },
       "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
       "severity": 0,
@@ -3278,7 +3278,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 946,
+        "line": 934,
       },
       "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
       "severity": 0,
@@ -3295,7 +3295,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 2070,
+      "line": 2016,
     },
     "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
     "severity": 0,
@@ -3313,7 +3313,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 2070,
+        "line": 2016,
       },
       "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
       "severity": 0,
@@ -4055,7 +4055,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 802,
+      "line": 748,
     },
     "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/Databases.json",
     "severity": 0,
@@ -4071,7 +4071,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 802,
+      "line": 748,
     },
     "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/Databases.json",
     "severity": 0,
@@ -4089,7 +4089,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 802,
+        "line": 748,
       },
       "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/Databases.json",
       "severity": 0,
@@ -4105,7 +4105,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 802,
+        "line": 748,
       },
       "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/Databases.json",
       "severity": 0,
@@ -4163,7 +4163,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 217,
+      "line": 214,
     },
     "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
     "severity": 0,
@@ -4181,7 +4181,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 217,
+        "line": 214,
       },
       "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
       "severity": 0,
@@ -4198,7 +4198,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 273,
+      "line": 270,
     },
     "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
     "severity": 0,
@@ -4214,7 +4214,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 273,
+      "line": 270,
     },
     "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
     "severity": 0,
@@ -4232,7 +4232,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 273,
+        "line": 270,
       },
       "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
       "severity": 0,
@@ -4248,7 +4248,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 273,
+        "line": 270,
       },
       "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
       "severity": 0,
@@ -4382,7 +4382,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 678,
+      "line": 666,
     },
     "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
     "severity": 0,
@@ -4400,7 +4400,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 678,
+        "line": 666,
       },
       "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
       "severity": 0,
@@ -4417,7 +4417,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 946,
+      "line": 934,
     },
     "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
     "severity": 0,
@@ -4433,7 +4433,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 946,
+      "line": 934,
     },
     "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
     "severity": 0,
@@ -4449,7 +4449,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 946,
+      "line": 934,
     },
     "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
     "severity": 0,
@@ -4465,7 +4465,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 946,
+      "line": 934,
     },
     "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
     "severity": 0,
@@ -4483,7 +4483,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 946,
+        "line": 934,
       },
       "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
       "severity": 0,
@@ -4499,7 +4499,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 946,
+        "line": 934,
       },
       "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
       "severity": 0,
@@ -4515,7 +4515,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 946,
+        "line": 934,
       },
       "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
       "severity": 0,
@@ -4531,7 +4531,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 946,
+        "line": 934,
       },
       "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
       "severity": 0,
@@ -4548,7 +4548,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 2070,
+      "line": 2016,
     },
     "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
     "severity": 0,
@@ -4566,7 +4566,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 2070,
+        "line": 2016,
       },
       "schemaUrl": "test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/EventGrid.json",
       "severity": 0,
@@ -4588,7 +4588,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 802,
+      "line": 748,
     },
     "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/Databases.json",
     "severity": 0,
@@ -4604,7 +4604,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 802,
+      "line": 748,
     },
     "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/Databases.json",
     "severity": 0,
@@ -4622,7 +4622,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 802,
+        "line": 748,
       },
       "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/Databases.json",
       "severity": 0,
@@ -4638,7 +4638,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 802,
+        "line": 748,
       },
       "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/Databases.json",
       "severity": 0,
@@ -4696,7 +4696,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 217,
+      "line": 214,
     },
     "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
     "severity": 0,
@@ -4714,7 +4714,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 217,
+        "line": 214,
       },
       "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
       "severity": 0,
@@ -4731,7 +4731,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 273,
+      "line": 270,
     },
     "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
     "severity": 0,
@@ -4747,7 +4747,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 273,
+      "line": 270,
     },
     "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
     "severity": 0,
@@ -4765,7 +4765,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 273,
+        "line": 270,
       },
       "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
       "severity": 0,
@@ -4781,7 +4781,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 273,
+        "line": 270,
       },
       "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
       "severity": 0,
@@ -4885,7 +4885,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 802,
+      "line": 748,
     },
     "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/Databases.json",
     "severity": 0,
@@ -4901,7 +4901,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 802,
+      "line": 748,
     },
     "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/Databases.json",
     "severity": 0,
@@ -4919,7 +4919,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 802,
+        "line": 748,
       },
       "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/Databases.json",
       "severity": 0,
@@ -4935,7 +4935,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 802,
+        "line": 748,
       },
       "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/Databases.json",
       "severity": 0,
@@ -4993,7 +4993,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 217,
+      "line": 214,
     },
     "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
     "severity": 0,
@@ -5011,7 +5011,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 217,
+        "line": 214,
       },
       "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
       "severity": 0,
@@ -5028,7 +5028,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 273,
+      "line": 270,
     },
     "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
     "severity": 0,
@@ -5044,7 +5044,7 @@ Array [
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
       "column": 22,
-      "line": 273,
+      "line": 270,
     },
     "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
     "severity": 0,
@@ -5062,7 +5062,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 273,
+        "line": 270,
       },
       "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
       "severity": 0,
@@ -5078,7 +5078,7 @@ Array [
       "schemaJsonPath": undefined,
       "schemaPosition": Object {
         "column": 22,
-        "line": 273,
+        "line": 270,
       },
       "schemaUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/ManagedDatabases.json",
       "severity": 0,
