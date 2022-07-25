@@ -55,10 +55,6 @@ export const builder: yargs.CommandBuilder = {
     describe: "Generate report type. Supported types: html, markdown, junit",
     type: "array",
   },
-  specPathPrefix: {
-    describe: "The prefix of spec path in reports.",
-    string: true,
-  },
   level: {
     describe:
       "Validation level. oav runner validate request and response with different strict level. 'validate-request' validates requests should be successful. 'validate-request-response' validate both request and response.",
@@ -206,7 +202,6 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
         markdown: (argv.report ?? []).includes("markdown"),
         junit: (argv.report ?? []).includes("junit"),
         html: (argv.report ?? []).includes("html"),
-        specPathPrefix: argv.specPathPrefix,
         eraseXmsExamples: false,
         eraseDescription: false,
         baseUrl: argv.armEndpoint,

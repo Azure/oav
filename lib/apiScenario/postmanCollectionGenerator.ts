@@ -49,7 +49,6 @@ export interface PostmanCollectionGeneratorOption
   markdown?: boolean;
   junit?: boolean;
   html?: boolean;
-  specPathPrefix: string;
   runCollection: boolean;
   generateCollection: boolean;
   baseUrl: string;
@@ -248,7 +247,13 @@ export class PostmanCollectionGenerator {
 
     const operationCoverageResult: OperationCoverageInfo[] = [];
     operationIdCoverageResult.forEach((result, key) => {
-      const specPath = this.fileLoader.resolvePath(key);
+      let specPath = this.fileLoader.resolvePath(key);
+      if (process.env.REPORT_SPEC_PATH_PREFIX) {
+        specPath = path.join(
+          process.env.REPORT_SPEC_PATH_PREFIX,
+          specPath.substring(specPath.indexOf("specification"))
+        );
+      }
       operationCoverageResult.push({
         totalOperations: result.totalOperationNumber,
         spec: specPath,
@@ -283,8 +288,7 @@ export class PostmanCollectionGenerator {
 
     const options: TrafficValidationOptions = {
       reportPath: path.resolve(reportExportPath, "report.html"),
-      overrideLinkInReport: this.opt.specPathPrefix !== undefined,
-      specLinkPrefix: this.opt.specPathPrefix,
+      overrideLinkInReport: false,
       sdkPackage: providerNamespace,
     };
 
@@ -440,7 +444,6 @@ export class PostmanCollectionGenerator {
       markdown: this.opt.markdown,
       junit: this.opt.junit,
       html: this.opt.html,
-      specPathPrefix: this.opt.specPathPrefix,
       baseUrl: this.opt.baseUrl,
       runId: this.opt.runId,
       validationLevel: this.opt.validationLevel,
