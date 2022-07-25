@@ -278,12 +278,15 @@ export class TrafficValidator {
     let validationFailOperations: number;
     let unCoveredOperationsList: unCoveredOperationsFormatInner[];
     this.operationSpecMapper.forEach((value: string[], key: string) => {
+      // identify the spec has been match traffic file
+      let isMatch: boolean = true;
       const unCoveredOperationsListFormat: unCoveredOperationsFormat[] = [];
       unCoveredOperationsList = [];
       if (this.trafficOperation.get(key) === undefined) {
         coveredOperaions = 0;
         coverageRate = 0;
         this.coverageData.set(key, 0);
+        isMatch = false;
       } else if (value !== undefined && value.length !== 0) {
         const validatedOperations = this.trafficOperation.get(key);
         coveredOperaions = validatedOperations!.length;
@@ -316,6 +319,7 @@ export class TrafficValidator {
           });
         });
       } else {
+        isMatch = false;
         coveredOperaions = 0;
         coverageRate = 0;
         this.coverageData.set(key, 0);
@@ -358,17 +362,18 @@ export class TrafficValidator {
         []
       );
 
-      this.operationCoverageResult.push({
-        spec: key,
-        apiVersion: getApiVersionFromFilePath(key),
-        coveredOperaions: coveredOperaions,
-        coverageRate: coverageRate,
-        unCoveredOperations: value.length - coveredOperaions,
-        totalOperations: value.length,
-        validationFailOperations: validationFailOperations,
-        unCoveredOperationsList: sortedUnCoveredOperationsList,
-        unCoveredOperationsListGen: sortedUnCoveredOperationsListGen,
-      });
+      isMatch &&
+        this.operationCoverageResult.push({
+          spec: key,
+          apiVersion: getApiVersionFromFilePath(key),
+          coveredOperaions: coveredOperaions,
+          coverageRate: coverageRate,
+          unCoveredOperations: value.length - coveredOperaions,
+          totalOperations: value.length,
+          validationFailOperations: validationFailOperations,
+          unCoveredOperationsList: sortedUnCoveredOperationsList,
+          unCoveredOperationsListGen: sortedUnCoveredOperationsListGen,
+        });
     });
     return this.trafficValidationResult;
   }

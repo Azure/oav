@@ -93,7 +93,7 @@ export class TestRecordingApiScenarioGenerator {
     for (const swaggerPath of swaggerFilePaths) {
       const swaggerSpec = await this.swaggerLoader.load(swaggerPath);
       applySpecTransformers(swaggerSpec, transformCtx);
-      this.operationSearcher.addSpecToCache(swaggerSpec, swaggerPath);
+      this.operationSearcher.addSpecToCache(swaggerSpec);
     }
     applyGlobalTransformers(transformCtx);
   }
