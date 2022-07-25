@@ -92,7 +92,6 @@ export interface NewmanReportValidatorOption extends ApiScenarioLoaderOption {
   markdown?: boolean;
   junit?: boolean;
   html?: boolean;
-  specPathPrefix?: string;
   baseUrl?: string;
   runId?: string;
   validationLevel?: ValidationLevel;
