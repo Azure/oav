@@ -341,26 +341,20 @@ export class TrafficValidator {
         }
         return 0;
       });
-      const sortedUnCoveredOperationsListGen = unCoveredOperationsListFormat.reduce(
-        (res: unCoveredOperationsFormat[], item) => {
-          item.operationIdList.sort(function (op1, op2) {
-            const opId1 = op1.operationId;
-            const opId2 = op2.operationId;
-            if (opId1 < opId2) {
-              return -1;
-            }
-            if (opId1 > opId2) {
-              return 1;
-            }
-            return 0;
-          });
-          res.push({
-            operationIdList: item.operationIdList,
-          });
-          return res;
-        },
-        []
-      );
+
+      for (let i = 0; i < unCoveredOperationsListFormat.length - 1; i++) {
+        for (let j = 0; j < unCoveredOperationsListFormat.length - 1 - i; j++) {
+          if (
+            unCoveredOperationsListFormat[j].operationIdList[0].key.localeCompare(
+              unCoveredOperationsListFormat[j + 1].operationIdList[0].key
+            ) > 0
+          ) {
+            var temp = unCoveredOperationsListFormat[j];
+            unCoveredOperationsListFormat[j] = unCoveredOperationsListFormat[j + 1];
+            unCoveredOperationsListFormat[j + 1] = temp;
+          }
+        }
+      }
 
       isMatch &&
         this.operationCoverageResult.push({
@@ -372,7 +366,7 @@ export class TrafficValidator {
           totalOperations: value.length,
           validationFailOperations: validationFailOperations,
           unCoveredOperationsList: sortedUnCoveredOperationsList,
-          unCoveredOperationsListGen: sortedUnCoveredOperationsListGen,
+          unCoveredOperationsListGen: unCoveredOperationsListFormat,
         });
     });
     return this.trafficValidationResult;
