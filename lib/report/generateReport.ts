@@ -222,9 +222,9 @@ export class CoverageView {
         generalErrorsInnerOrigin.reduce(
           (res: { [key: string]: TrafficValidationIssueForRendering[] }, item) => {
             /* eslint-disable no-unused-expressions */
-            res[item!.operationInfo!.operationId]
-              ? res[item!.operationInfo!.operationId].push(item)
-              : (res[item!.operationInfo!.operationId] = [item]);
+            res[item!.operationInfo!.operationId + item!.specFilePath]
+              ? res[item!.operationInfo!.operationId + item!.specFilePath].push(item)
+              : (res[item!.operationInfo!.operationId + item!.specFilePath] = [item]);
             /* eslint-enable no-unused-expressions */
             return res;
           },
