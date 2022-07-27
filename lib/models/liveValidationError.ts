@@ -18,7 +18,7 @@
  *
  */
 export class LiveValidationError {
-  public constructor(public code?: string, public message?: string, public spec?: string[]) {}
+  public constructor(public code?: string, public message?: string) {}
 
   /**
    * Defines the metadata of LiveValidationError

@@ -183,41 +183,6 @@ export class TrafficValidator {
           correlationId,
           activityId
         );
-        let swaggerFile;
-        if (liveRequest.url.includes("provider")) {
-          // This is for validation of resource-manager
-          swaggerFile = this.findSwaggerByOperationInfo(opInfo.info);
-        } else {
-          // This is for validation of data-plane
-          swaggerFile = this.findSwaggerByOperationId(opInfo.info);
-        }
-        if (swaggerFile !== undefined) {
-          if (this.trafficOperation.get(swaggerFile) === undefined) {
-            this.trafficOperation.set(swaggerFile, []);
-          }
-          if (!this.trafficOperation.get(swaggerFile)?.includes(opInfo.info.operationId)) {
-            this.trafficOperation.get(swaggerFile)?.push(opInfo.info.operationId);
-          }
-          if (
-            validationResult.requestValidationResult.isSuccessful === false ||
-            validationResult.requestValidationResult.isSuccessful === undefined ||
-            validationResult.responseValidationResult.isSuccessful === false ||
-            validationResult.responseValidationResult.isSuccessful === undefined ||
-            validationResult.runtimeException !== undefined
-          ) {
-            if (this.validationFailOperations.get(swaggerFile) === undefined) {
-              this.validationFailOperations.set(swaggerFile, []);
-            }
-            if (
-              !this.validationFailOperations.get(swaggerFile)?.includes(opInfo.info.operationId)
-            ) {
-              this.validationFailOperations.get(swaggerFile)?.push(opInfo.info.operationId);
-            }
-          }
-        } else {
-          console.log(`Error: Undefined operation ${JSON.stringify(opInfo.info)}`);
-          this.operationUndefinedResult = this.operationUndefinedResult + 1;
-        }
 
         const errorResult: LiveValidationIssue[] = [];
         const runtimeExceptions: RuntimeException[] = [];
@@ -245,19 +210,58 @@ export class TrafficValidator {
             liveRequestResponseList[0]
           );
 
-          const spec = swaggerFile && (await this.swaggerLoader.load(swaggerFile));
-          const operationIdList = findPathsToKey({ key: "operationId", obj: spec });
-          const operationId = findPathToValue(operationIdList, spec, operationInfo.operationId);
-          const operationIdPosition = getFilePositionFromJsonPath(spec, operationId[0]);
-          operationInfo = Object.assign(operationInfo, { position: operationIdPosition });
-          this.trafficValidationResult.push({
-            specFilePath: swaggerFile,
-            payloadFilePath,
-            payloadFilePathPosition: liveRequestResponsePosition,
-            errors: errorResult,
-            runtimeExceptions,
-            operationInfo,
-          });
+          let swaggerFiles: string[] = [];
+          if (liveRequest.url.includes("provider")) {
+            // This is for validation of resource-manager
+            swaggerFiles = this.findSwaggerByOperationInfo(opInfo.info);
+          } else {
+            // This is for validation of data-plane
+            swaggerFiles = this.findSwaggerByOperationId(opInfo.info);
+          }
+
+          if (swaggerFiles.length !== 0) {
+            for (const swaggerFile of swaggerFiles) {
+              if (this.trafficOperation.get(swaggerFile) === undefined) {
+                this.trafficOperation.set(swaggerFile, []);
+              }
+              if (!this.trafficOperation.get(swaggerFile)?.includes(opInfo.info.operationId)) {
+                this.trafficOperation.get(swaggerFile)?.push(opInfo.info.operationId);
+              }
+              if (
+                validationResult.requestValidationResult.isSuccessful === false ||
+                validationResult.requestValidationResult.isSuccessful === undefined ||
+                validationResult.responseValidationResult.isSuccessful === false ||
+                validationResult.responseValidationResult.isSuccessful === undefined ||
+                validationResult.runtimeException !== undefined
+              ) {
+                if (this.validationFailOperations.get(swaggerFile) === undefined) {
+                  this.validationFailOperations.set(swaggerFile, []);
+                }
+                if (
+                  !this.validationFailOperations.get(swaggerFile)?.includes(opInfo.info.operationId)
+                ) {
+                  this.validationFailOperations.get(swaggerFile)?.push(opInfo.info.operationId);
+                }
+              }
+
+              const spec = swaggerFile && (await this.swaggerLoader.load(swaggerFile));
+              const operationIdList = findPathsToKey({ key: "operationId", obj: spec });
+              const operationId = findPathToValue(operationIdList, spec, operationInfo.operationId);
+              const operationIdPosition = getFilePositionFromJsonPath(spec, operationId[0]);
+              operationInfo = Object.assign(operationInfo, { position: operationIdPosition });
+              this.trafficValidationResult.push({
+                specFilePath: swaggerFile,
+                payloadFilePath,
+                payloadFilePathPosition: liveRequestResponsePosition,
+                errors: errorResult,
+                runtimeExceptions,
+                operationInfo,
+              });
+            }
+          } else {
+            console.log(`Error: Undefined operation ${JSON.stringify(opInfo.info)}`);
+            this.operationUndefinedResult = this.operationUndefinedResult + 1;
+          }
         }
       }
     } catch (err) {
@@ -372,8 +376,8 @@ export class TrafficValidator {
     return this.trafficValidationResult;
   }
 
-  private findSwaggerByOperationInfo(operationInfo: OperationContext) {
-    let result = undefined;
+  private findSwaggerByOperationInfo(operationInfo: OperationContext): string[] {
+    let result: string[] = [];
     if (operationInfo.validationRequest === undefined) {
       return result;
     }
@@ -385,16 +389,15 @@ export class TrafficValidator {
           key.toLowerCase().includes(operationInfo.apiVersion))
       ) {
         if (value!.includes(operationInfo.operationId)) {
-          result = key;
-          return result;
+          result.push(key);
         }
       }
     }
     return result;
   }
 
-  private findSwaggerByOperationId(operationInfo: OperationContext) {
-    let result = undefined;
+  private findSwaggerByOperationId(operationInfo: OperationContext): string[] {
+    let result: string[] = [];
     for (const key of this.operationSpecMapper.keys()) {
       const value = this.operationSpecMapper.get(key);
       if (
@@ -402,8 +405,7 @@ export class TrafficValidator {
         (key.includes(operationInfo.apiVersion) ||
           key.toLowerCase().includes(operationInfo.apiVersion))
       ) {
-        result = key;
-        return result;
+        result.push(key);
       }
     }
     return result;
