@@ -1,6 +1,7 @@
 # Change Log - oav
 
 ## 07/20/2022 3.0.4
+
 - GenerateExamples - Support data generation in byte format
 - ModelValidator - Support data validation in byte format
 - API Scenario
@@ -8,8 +9,10 @@
   - Fix step variable unresolved in newman collection
   - Fix bugs about html report
   - Aggregate reports into one per scenario file
+  - Fix bug of object variables and patches
 
 ## 07/06/2022 3.0.3
+
 - Generate high quality examples from API Scenario tests
 
 ## 06/30/2022 3.0.2
