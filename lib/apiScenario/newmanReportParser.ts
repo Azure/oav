@@ -67,6 +67,7 @@ function parseResponse(resp: Response): NewmanResponse {
     headers: [],
     statusCode: resp.code,
     body: "",
+    responseTime: resp.responseTime,
   };
   ret.headers = parseHeader(resp.headers.toJSON());
 

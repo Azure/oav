@@ -10,6 +10,7 @@
   - Fix bugs about html report
   - Aggregate reports into one per scenario file
   - Fix bug of object variables and patches
+  - Improve markdown report
 
 ## 07/06/2022 3.0.3
 
