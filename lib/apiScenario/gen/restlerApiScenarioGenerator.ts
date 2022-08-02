@@ -181,7 +181,11 @@ export class RestlerApiScenarioGenerator {
         onOperation: (operation) => {
           for (let parameter of operation.parameters ?? []) {
             parameter = this.jsonLoader.resolveRefObj(parameter);
-            if (!parameter.required || envVariables.includes(parameter.name)) {
+            if (
+              !parameter.required ||
+              envVariables.includes(parameter.name) ||
+              (parameter.in === "path" && parameter["x-ms-skip-url-encoding"])
+            ) {
               continue;
             }
 
