@@ -771,6 +771,111 @@ Object {
         },
       },
     },
+    Object {
+      "_scenarioDef": [Circular],
+      "description": "",
+      "requiredVariables": Array [
+        "subscriptionId",
+        "location",
+      ],
+      "scenario": "patchVariables",
+      "secretVariables": Array [],
+      "shareScope": true,
+      "steps": Array [
+        Object {
+          "description": undefined,
+          "operation": Object {},
+          "operationId": "StorageAccounts_Create",
+          "outputVariables": Object {},
+          "parameters": Object {
+            "accountName": "$(accountName)",
+            "api-version": "2021-08-01",
+            "parameters": Object {
+              "properties": Object {
+                "kind": "StorageV2",
+                "location": "$(location)",
+                "patches": Array [
+                  Object {
+                    "add": "/properties/kind",
+                    "value": "StorageV2",
+                  },
+                ],
+                "properties": Object {
+                  "encryption": Object {
+                    "keySource": "Microsoft.Storage",
+                    "services": Object {
+                      "blob": Object {},
+                    },
+                  },
+                },
+                "sku": "Standard",
+              },
+            },
+            "resourceGroupName": "$(resourceGroupName)",
+            "subscriptionId": "$(subscriptionId)",
+          },
+          "requiredVariables": Array [],
+          "responses": Object {},
+          "secretVariables": Array [],
+          "step": "createStorageAccount",
+          "type": "restCall",
+          "variables": Object {
+            "parameters": Object {
+              "type": "object",
+              "value": Object {
+                "properties": Object {
+                  "kind": "StorageV2",
+                  "location": "$(location)",
+                  "patches": Array [
+                    Object {
+                      "add": "/properties/kind",
+                      "value": "StorageV2",
+                    },
+                  ],
+                  "properties": Object {
+                    "encryption": Object {
+                      "keySource": "Microsoft.Storage",
+                      "services": Object {
+                        "blob": Object {},
+                      },
+                    },
+                  },
+                  "sku": "Standard",
+                },
+              },
+            },
+          },
+        },
+      ],
+      "variables": Object {
+        "parameters": Object {
+          "type": "object",
+          "value": Object {
+            "properties": Object {
+              "kind": "StorageV2",
+              "location": "$(location)",
+              "patches": Array [
+                Object {
+                  "add": "/properties/kind",
+                  "value": "StorageV2",
+                },
+              ],
+              "properties": Object {
+                "encryption": Object {
+                  "keySource": "Microsoft.Storage",
+                  "services": Object {
+                    "blob": Object {},
+                  },
+                },
+              },
+              "sku": Object {
+                "name": "Standard_LRS",
+              },
+            },
+          },
+        },
+      },
+    },
   ],
   "scope": "ResourceGroup",
   "secretVariables": Array [],
