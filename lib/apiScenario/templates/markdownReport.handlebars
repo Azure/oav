@@ -47,12 +47,12 @@
 </li>
 <ul>
     <li>
-      Duration:
-      {{renderResponseTime s.responseTime}}
-    </li>
-    <li>
       StatusCode:
       {{renderPlain s.statusCode}}
+    </li>
+    <li>
+      Duration:
+      {{renderResponseTime s.responseTime}}
     </li>
     {{#if (shouldReportPayload s.payloadPath)}}
     <li>
