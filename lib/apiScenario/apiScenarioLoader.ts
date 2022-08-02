@@ -336,7 +336,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
         throw new Error("Invalid step");
       }
     } catch (error) {
-      throw new Error(`Failed to load step ${rawStep.step}: ${(error as any).message}`);
+      throw new Error(`Failed to load step ${JSON.stringify(rawStep)}: ${(error as any).message}`);
     }
 
     if (step.outputVariables) {
@@ -381,28 +381,40 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
 
     ctx.stepTracking.set(step.step, step);
 
-    const getVariable = (name: string): Variable => {
-      const variable =
-        step.variables[name] ?? ctx.scenario?.variables[name] ?? ctx.scenarioDef.variables[name];
-      if (variable === undefined) {
-        const requiredVariables =
-          ctx.scenario?.requiredVariables ?? ctx.scenarioDef.requiredVariables;
-        if (
-          requiredVariables.includes(name) ||
-          (ctx.scenarioDef.scope === "ResourceGroup" &&
-            ["subscriptionId", "resourceGroupName", "location"].indexOf(name) >= 0)
-        ) {
+    const getVariable = (
+      name: string,
+      ...scopes: Array<VariableScope | undefined>
+    ): Variable | undefined => {
+      if (!scopes || scopes.length === 0) {
+        scopes = [step, ctx.scenario, ctx.scenarioDef];
+      }
+      for (const scope of scopes) {
+        if (scope && scope.variables[name]) {
+          return scope.variables[name];
+        }
+      }
+      for (const scope of scopes) {
+        if (scope && scope.requiredVariables.includes(name)) {
           return {
             type: "string",
             value: `$(${name})`,
           };
         }
       }
-      return variable;
+      if (
+        ctx.scenarioDef.scope === "ResourceGroup" &&
+        ["subscriptionId", "resourceGroupName", "location"].includes(name)
+      ) {
+        return {
+          type: "string",
+          value: `$(${name})`,
+        };
+      }
+      return undefined;
     };
 
     const requireVariable = (name: string) => {
-      if (["resourceGroupName"].includes(name)) {
+      if (ctx.scenarioDef.scope === "ResourceGroup" && ["resourceGroupName"].includes(name)) {
         return;
       }
       const requiredVariables =
@@ -441,7 +453,13 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
 
           if (value.type === "object" || value.type === "secureObject" || value.type === "array") {
             if (value.patches) {
-              const obj = cloneDeep(getVariable(name));
+              const variable = ctx.scenario
+                ? getVariable(name, ctx.scenario, ctx.scenarioDef)
+                : getVariable(name, ctx.scenarioDef);
+              if (!variable) {
+                throw new Error(`Variable ${name} not found in step ${step.step}`);
+              }
+              const obj = cloneDeep(variable);
               if (typeof obj !== "object") {
                 // TODO dynamic json patch
                 throw new Error(`Can not Json Patch on ${name}, type of ${typeof obj}`);
@@ -737,6 +755,11 @@ const convertVariables = (rawVariables: RawVariableScope["variables"]) => {
           if (val.value === undefined && val.prefix === undefined) {
             result.requiredVariables.push(key);
           }
+        } else if (
+          (val.type === "object" || val.type === "secureObject" || val.type === "array") &&
+          val.patches !== undefined
+        ) {
+          // ok
         } else {
           throw new Error(
             `Only string and secureString type is supported in environment variables, please specify value for: ${key}`
