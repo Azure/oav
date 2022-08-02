@@ -37,7 +37,7 @@ export class TemplateGenerator {
 
   public exampleParameterConvention(
     step: Pick<StepRestCall, "parameters" | "responses" | "operation">,
-    variables: (name: string) => any,
+    getVariable: (name: string) => any,
     operation: Operation
   ) {
     const toMatch: string[] = [];
@@ -45,7 +45,7 @@ export class TemplateGenerator {
 
     const parameters = cloneDeep(step.parameters);
     for (const paramName of Object.keys(parameters)) {
-      if (variables(paramName) === undefined) {
+      if (getVariable(paramName) === undefined) {
         continue;
       }
 
