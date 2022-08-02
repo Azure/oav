@@ -39,6 +39,8 @@ import {
   validateSwaggerLiveResponse,
   ValidationRequest,
 } from "./operationValidator";
+import { OperationLoader } from "../armValidator/operationLoader";
+import { Json } from "@azure-tools/openapi-tools-common";
 
 const glob = require("glob");
 
@@ -124,6 +126,8 @@ export class LiveValidator {
 
   public operationSearcher: OperationSearcher;
 
+  private operatorLoader: OperationLoader;
+
   public swaggerList: string[] = [];
 
   private logFunction?: (message: string, level: string, meta?: Meta) => void;
@@ -176,6 +180,7 @@ export class LiveValidator {
     this.options = ops as LiveValidatorOptions;
     this.logging(`Creating livevalidator with options:${JSON.stringify(this.options)}`);
     this.operationSearcher = new OperationSearcher(this.logging);
+    this.operatorLoader = new OperationLoader();
   }
 
   /**
@@ -731,6 +736,92 @@ export class LiveValidator {
     );
     return matchedPaths;
   }
+
+  public async validateRoundtrip(
+    requestResponseObj: RequestResponsePair
+  ): Promise<RequestResponseLiveValidationResult> {
+    const validationResult = {
+      requestValidationResult: {
+        errors: [],
+        operationInfo: { apiVersion: C.unknownApiVersion, operationId: C.unknownOperationId },
+      },
+      responseValidationResult: {
+        errors: [],
+        operationInfo: { apiVersion: C.unknownApiVersion, operationId: C.unknownOperationId },
+      },
+    };
+    if (!requestResponseObj) {
+      const message =
+        'requestResponseObj cannot be null or undefined and must be of type "object".';
+      return {
+        ...validationResult,
+        runtimeException: {
+          code: C.ErrorCodes.IncorrectInput.name,
+          message,
+        },
+      };
+    }
+
+    const liveRequest = requestResponseObj.liveRequest;
+    const liveResponse = requestResponseObj.liveResponse;
+    const correlationId = liveRequest.headers?.["x-ms-correlation-request-id"] || "";
+    const activityId = liveRequest.headers?.["x-ms-request-id"] || "";
+    const { info, error } = this.getOperationInfo(
+      liveRequest,
+      correlationId,
+      activityId
+    );
+    const result = this.operationSearcher.search(info.validationRequest!);
+    //Check
+    const operationId = result.operationMatch.operation.operationId;
+    //TODO
+    const errors: any[] = [];
+    const diffs = this.diffObject(liveRequest.body, liveResponse.body);
+    if (operationId !== undefined) {
+      for (const diff of diffs) {
+        if (this.operatorLoader.attrChecker(diff, ["readOnly"], "", "", operationId)){
+          errors.push({});
+        }
+      }
+    }
+
+    if (errors.length > 0) {
+      const error = errors[0];
+      const message =
+        `Found errors "${error.message}" in the provided input in path ${error.jsonPathsInPayload[0]}:\n` +
+        `${util.inspect(requestResponseObj, { depth: null })}.`;
+      return {
+        ...validationResult,
+        runtimeException: {
+          code: C.ErrorCodes.IncorrectInput.name,
+          message,
+        },
+      };
+    }
+
+    return validationResult;
+  }
+
+  private diffObject(a: any, b: any) {
+    const notMatchedProperties: string[] = [];
+    function diffSchemaInternal(a: any, b: any, paths: string[]) {
+      if (!(a || b)) {
+        return;
+      }
+      if (a && b) {
+        Object.keys(a).forEach((p) => {
+          if (b[p]) {
+            diffSchemaInternal(a[p], b[p], [...paths, p]);
+          }
+          else {
+            notMatchedProperties.push([...paths, p].join("."));
+          }
+        });
+      }
+    }
+    diffSchemaInternal(a, b, []);
+    return notMatchedProperties;
+}
 
   private async getSwaggerPaths(): Promise<string[]> {
     if (this.options.swaggerPaths.length !== 0) {

@@ -21,11 +21,13 @@ import {
   StringMap,
   parseMarkdown,
   readFile,
+  Json,
 } from "@azure-tools/openapi-tools-common";
 import * as amd from "@azure/openapi-markdown";
 import { DataType, ParameterObject, SchemaObject } from "yasway";
 import * as commonmark from "commonmark";
 import { getSchemaObjectInfo, setSchemaInfo } from "../validators/specTransformer";
+import { Schema } from "../swagger/swaggerTypes";
 import { log } from "./logging";
 
 /*
@@ -975,3 +977,9 @@ export const getRandomString = (length?: number) => {
     .value.toString(36)
     .slice(0 - (length ?? 6));
 };
+
+export function isObject(definitionSpec: any) {
+  return (
+    definitionSpec.type === "object" || "properties" in definitionSpec || "allOf" in definitionSpec
+  );
+}
