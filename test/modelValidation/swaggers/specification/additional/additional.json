@@ -1,0 +1,98 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Additional",
+    "description": "Tests for additional"
+  },
+  "host": "management.azure.com",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [],
+  "produces": [],
+  "paths": {
+    "/parameter/parameter": {
+      "post": {
+        "tags": [
+          "Parameter"
+        ],
+        "operationId": "AdditionalParameter",
+        "description": "The parameter is a additional and includes '.'",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/AdditionalParameter"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "additional": {
+            "$ref": "./examples/additionalParameter.json"
+          }
+        }
+      }
+    },
+    "/parameter/properties": {
+      "post": {
+        "tags": [
+          "Properties"
+        ],
+        "operationId": "AdditionalProperties",
+        "description": "The different cases of AdditionalProperties",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/AdditionalProperties"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "additional": {
+            "$ref": "./examples/additionalProperties.json"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "AdditionalParameter": {
+      "type": "object",
+      "properties": {
+        "@result.first": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "AdditionalProperties": {
+      "type": "object",
+      "properties": {
+        "result1": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object"
+          }
+        },
+        "result2": {
+          "type": "object",
+          "additionalProperties": {}
+        },
+        "result3": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "result4": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer"
+          }
+        }
+      }
+    }
+  },
+  "parameters": {}
+}

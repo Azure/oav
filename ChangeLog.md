@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 08/2/2022 3.0.5
+
+- ModelValidator - Add type validation for additionalProperties whose type is specified as an object
+
 ## 07/20/2022 3.0.4
 - GenerateExamples - Support data generation in byte format
 - ModelValidator - Support data validation in byte format

@@ -267,6 +267,9 @@ export interface Schema extends BaseSchema {
 
   // x-ms-discriminator-value exists but discriminator missing
   _missingDiscriminator?: boolean;
+
+  // Additional property support
+  additionalObjectTypeProperties?: boolean;
 }
 
 export interface XML {
