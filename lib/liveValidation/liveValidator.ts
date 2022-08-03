@@ -29,6 +29,7 @@ import {
   getProviderFromPathTemplate,
   getProviderFromSpecPath,
 } from "../util/utils";
+import { OperationLoader } from "../armValidator/operationLoader";
 import { LiveValidatorLoader, LiveValidatorLoaderOption } from "./liveValidatorLoader";
 import { OperationSearcher } from "./operationSearcher";
 import {
@@ -39,8 +40,6 @@ import {
   validateSwaggerLiveResponse,
   ValidationRequest,
 } from "./operationValidator";
-import { OperationLoader } from "../armValidator/operationLoader";
-import { Json } from "@azure-tools/openapi-tools-common";
 
 const glob = require("glob");
 
@@ -180,7 +179,7 @@ export class LiveValidator {
     this.options = ops as LiveValidatorOptions;
     this.logging(`Creating livevalidator with options:${JSON.stringify(this.options)}`);
     this.operationSearcher = new OperationSearcher(this.logging);
-    this.operatorLoader = new OperationLoader();
+    //this.operatorLoader = new OperationLoader();
   }
 
   /**
@@ -766,11 +765,8 @@ export class LiveValidator {
     const liveResponse = requestResponseObj.liveResponse;
     const correlationId = liveRequest.headers?.["x-ms-correlation-request-id"] || "";
     const activityId = liveRequest.headers?.["x-ms-request-id"] || "";
-    const { info, error } = this.getOperationInfo(
-      liveRequest,
-      correlationId,
-      activityId
-    );
+    const { info, error } = this.getOperationInfo(liveRequest, correlationId, activityId);
+    console.log(error);
     const result = this.operationSearcher.search(info.validationRequest!);
     //Check
     const operationId = result.operationMatch.operation.operationId;
@@ -779,7 +775,7 @@ export class LiveValidator {
     const diffs = this.diffObject(liveRequest.body, liveResponse.body);
     if (operationId !== undefined) {
       for (const diff of diffs) {
-        if (this.operatorLoader.attrChecker(diff, ["readOnly"], "", "", operationId)){
+        if (this.operatorLoader.attrChecker(diff, ["readOnly"], "", "", operationId)) {
           errors.push({});
         }
       }
@@ -812,8 +808,7 @@ export class LiveValidator {
         Object.keys(a).forEach((p) => {
           if (b[p]) {
             diffSchemaInternal(a[p], b[p], [...paths, p]);
-          }
-          else {
+          } else {
             notMatchedProperties.push([...paths, p].join("."));
           }
         });
@@ -821,7 +816,7 @@ export class LiveValidator {
     }
     diffSchemaInternal(a, b, []);
     return notMatchedProperties;
-}
+  }
 
   private async getSwaggerPaths(): Promise<string[]> {
     if (this.options.swaggerPaths.length !== 0) {

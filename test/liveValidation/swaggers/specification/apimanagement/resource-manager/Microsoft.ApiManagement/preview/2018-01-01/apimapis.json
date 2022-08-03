@@ -58,6 +58,7 @@
           },
           {
             "name": "$filter",
+            "x-ms-secret": true,
             "in": "query",
             "required": false,
             "type": "string",
@@ -79,6 +80,7 @@
             "name": "expandApiVersionSet",
             "in": "query",
             "type": "boolean",
+            "x-ms-secret": true,
             "required": false,
             "default": false,
             "description": "Include full ApiVersionSet resource in response"
@@ -138,6 +140,7 @@
             "description": "Specified API entity exists and current entity state version is present in the ETag header.",
             "headers": {
               "ETag": {
+                "x-ms-secret": true,
                 "description": "Current entity state version. Should be treated as opaque and used to make conditional HTTP requests.",
                 "type": "string"
               }
