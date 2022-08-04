@@ -376,8 +376,34 @@ Object {
 exports[`Live validator snapshot validation should match for one of missing 1`] = `
 Object {
   "requestValidationResult": Object {
-    "errors": Array [],
-    "isSuccessful": true,
+    "errors": Array [
+      Object {
+        "code": "INVALID_FORMAT",
+        "documentationUrl": "",
+        "jsonPathsInPayload": Array [
+          "$.properties.options[0].restriction.primaryVerificationKey.keyValue",
+        ],
+        "message": "Object didn't pass validation for format byte: aaaaaaaaaaaaaaaaaaaaaaaa",
+        "params": Array [
+          "byte",
+          "aaaaaaaaaaaaaaaaaaaaaaaa",
+        ],
+        "pathsInPayload": Array [
+          "/properties/options/0/restriction/primaryVerificationKey/keyValue",
+        ],
+        "schemaPath": "#/discriminatorMap",
+        "severity": 0,
+        "source": Object {
+          "jsonRef": "#/definitions/ContentKeyPolicySymmetricTokenKey/properties/keyValue",
+          "position": Object {
+            "column": 21,
+            "line": 388,
+          },
+          "url": "specification/mediaservices/resource-manager/Microsoft.Media/2018-07-01/ContentKeyPolicies.json",
+        },
+      },
+    ],
+    "isSuccessful": false,
     "operationInfo": Object {
       "apiVersion": "2018-07-01",
       "operationId": "ContentKeyPolicies_CreateOrUpdate",
@@ -456,6 +482,31 @@ Object {
           "position": Object {
             "column": 41,
             "line": 446,
+          },
+          "url": "specification/mediaservices/resource-manager/Microsoft.Media/2018-07-01/ContentKeyPolicies.json",
+        },
+      },
+      Object {
+        "code": "INVALID_FORMAT",
+        "documentationUrl": "",
+        "jsonPathsInPayload": Array [
+          "$.properties.options[0].restriction.primaryVerificationKey.keyValue",
+        ],
+        "message": "Object didn't pass validation for format byte: aaaaaaaaaaaaaaaaaaaaaaaa",
+        "params": Array [
+          "byte",
+          "aaaaaaaaaaaaaaaaaaaaaaaa",
+        ],
+        "pathsInPayload": Array [
+          "/properties/options/0/restriction/primaryVerificationKey/keyValue",
+        ],
+        "schemaPath": "#/discriminatorMap",
+        "severity": 0,
+        "source": Object {
+          "jsonRef": "#/definitions/ContentKeyPolicySymmetricTokenKey/properties/keyValue",
+          "position": Object {
+            "column": 21,
+            "line": 388,
           },
           "url": "specification/mediaservices/resource-manager/Microsoft.Media/2018-07-01/ContentKeyPolicies.json",
         },

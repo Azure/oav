@@ -110,6 +110,15 @@ describe("Model Validation", () => {
         assert.strictEqual(err.innerErrors[0].code, "DOUBLE_FORWARD_SLASHES_IN_URL");
       }
     });
+
+    it("should report real exampleJsonPath when additional parameter includes '.'", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/additionalParameter/additionalParameter.json`;
+      const result = await validate.validateExamples(specPath2, undefined);
+      assert.strictEqual(result.length, 1);
+      assert.strictEqual(result[0].code, "OBJECT_ADDITIONAL_PROPERTIES");
+      assert.strictEqual(result[0].message, "Additional properties not allowed: @result.second");
+      assert.strictEqual(result[0].exampleJsonPath, "$responses.200.body['@result.second']");
+    });
   });
 
   describe("Polymorphic models - ", () => {
@@ -711,7 +720,17 @@ describe("Model Validation", () => {
   describe("Long running operation response validation", () => {
     it("should fail when long running operation missing return some headers in header", async () => {
       const specPath2 = `${testPath}/modelValidation/swaggers/specification/LRO-response/LRO-responseHeader/test.json`;
-      const result = await validate.validateExamples(specPath2, undefined);
+      const result = await validate.validateExamples(specPath2, "SupportPlanTypes_Delete");
+      assert.strictEqual(result.length, 1);
+      assert.strictEqual(result[0].code, "LRO_RESPONSE_HEADER");
+    });
+
+    it("should validate when long running operation response doesn't have schema", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/LRO-response/LRO-responseHeader/test.json`;
+      const result = await validate.validateExamples(
+        specPath2,
+        "SupportPlanTypes_Delete_noResponseSchema"
+      );
       assert.strictEqual(result.length, 1);
       assert.strictEqual(result[0].code, "LRO_RESPONSE_HEADER");
     });
@@ -798,5 +817,18 @@ describe("Model Validation", () => {
       assert.strictEqual(result.length, 1);
       assert.strictEqual(result[0].code, "XMS_EXAMPLE_NOTFOUND_ERROR");
     }, 10000);
+  });
+
+  describe("format validation", () => {
+    it("should fail when value is not in base64 format", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/formatValidation/format.json`;
+      const result = await validate.validateExamples(specPath2, "Byte");
+      assert.strictEqual(result.length, 1);
+      assert.strictEqual(result[0].code, "INVALID_FORMAT");
+      assert.strictEqual(
+        result[0].message,
+        "Object didn't pass validation for format byte: credentialValue1"
+      );
+    });
   });
 });

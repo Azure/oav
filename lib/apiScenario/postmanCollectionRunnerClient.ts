@@ -24,19 +24,18 @@ import {
   StepRestCall,
 } from "./apiScenarioTypes";
 import { generatedGet, generatedPostmanItem } from "./defaultNaming";
-import { typeToDescription } from "./postmanItemTypes";
 import * as PostmanHelper from "./postmanHelper";
 import { VariableEnv } from "./variableEnv";
 
 export interface PostmanCollectionRunnerClientOption {
-  apiScenarioFileName: string;
-  apiScenarioFilePath?: string;
   apiScenarioName?: string;
   runId: string;
-  swaggerFilePaths?: string[];
   baseUrl: string;
   testProxy?: string;
   verbose?: boolean;
+  skipAuth?: boolean;
+  skipArmCall?: boolean;
+  skipLroPoll?: boolean;
 }
 
 const ARM_ENDPOINT = "https://management.azure.com";
@@ -57,7 +56,6 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
 
   public async prepareScenario(scenario: Scenario, env: VariableEnv): Promise<void> {
     this.opts.apiScenarioName = scenario.scenario;
-    this.opts.apiScenarioFileName = scenario._scenarioDef._filePath;
 
     this.collection = new Collection({
       info: {
@@ -67,9 +65,9 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     });
     this.collection.describe(
       JSON.stringify({
-        apiScenarioFilePath: this.opts.apiScenarioFilePath,
-        apiScenarioName: this.opts.apiScenarioName,
-        swaggerFilePaths: this.opts.swaggerFilePaths,
+        apiScenarioFilePath: scenario._scenarioDef._filePath,
+        apiScenarioName: scenario.scenario,
+        swaggerFilePaths: scenario._scenarioDef._swaggerFilePaths,
       })
     );
     this.collection.auth = new RequestAuth({
@@ -114,7 +112,16 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
 
     PostmanHelper.reservedCollectionVariables.forEach((variable) => {
       if (!this.collection.variables.has(variable.key)) {
-        this.collection.variables.add(new Variable(variable));
+        if (this.opts.skipAuth && variable.key === "x_enable_auth") {
+          this.collection.variables.add(
+            new Variable({
+              key: variable.key,
+              value: "false",
+            })
+          );
+        } else {
+          this.collection.variables.add(new Variable(variable));
+        }
       }
     });
 
@@ -148,12 +155,14 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     item.events.add(
       PostmanHelper.createEvent(
         "test",
-        PostmanHelper.createScript(`pm.test("Started TestProxy recording", function(){
+        PostmanHelper.createScript(
+          `
+pm.test("Started TestProxy recording", function() {
     pm.response.to.be.success;
-    pm.response.to.have.header('x-recording-id');
-    pm.collectionVariables.set('x_recording_id', pm.response.headers.get('x-recording-id'));
-});
-`)
+    pm.response.to.have.header("x-recording-id");
+    pm.collectionVariables.set("x_recording_id", pm.response.headers.get("x-recording-id"));
+});`
+        )
       )
     );
     this.collection.items.add(item);
@@ -178,7 +187,8 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       PostmanHelper.createEvent(
         "test",
         PostmanHelper.createScript(
-          `pm.test("Stopped TestProxy recording", function(){
+          `
+pm.test("Stopped TestProxy recording", function() {
     pm.response.to.be.success;
 });
 `
@@ -203,6 +213,8 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     resourceGroupName: string,
     location: string
   ): Promise<void> {
+    if (this.opts.skipArmCall) return;
+
     const item = this.newItem({
       name: "createResourceGroup",
     });
@@ -233,7 +245,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       raw: '{"location":"{{location}}"}',
     });
 
-    item.description = typeToDescription({ type: "prepare" });
+    item.description = JSON.stringify({ type: "prepare" });
 
     item.request.addHeader({ key: "Content-Type", value: "application/json" });
 
@@ -250,6 +262,8 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     _subscriptionId: string,
     _resourceGroupName: string
   ): Promise<void> {
+    if (this.opts.skipArmCall) return;
+
     const item = this.newItem({
       name: "deleteResourceGroup",
     });
@@ -287,6 +301,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       )
     );
 
+    this.collection.items.add(item);
     this.addAsLongRunningOperationItem(item);
   }
 
@@ -317,29 +332,33 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       })),
       query: Object.entries(clientRequest.query).map(([key, value]) => ({
         key,
-        value: covertToPostmanVariable(value),
+        value: convertPostmanFormat(value),
       })),
     });
 
     item.request.addHeader({ key: "Content-Type", value: "application/json" });
     Object.entries(clientRequest.headers).forEach(([key, value]) => {
-      item.request.addHeader({ key, value: covertToPostmanVariable(value) });
+      item.request.addHeader({ key, value: convertPostmanFormat(value) });
     });
 
     this.collection.items.add(item);
 
     env.resolve();
 
+    step._resolvedParameters = env.resolveObjectValues(step.parameters);
+
     if (Object.keys(step.variables).length > 0) {
-      PostmanHelper.createEvent(
-        "prerequest",
-        PostmanHelper.createScript(
-          Object.entries(step.variables)
-            .map(
-              ([key, value]) =>
-                `pm.variables.set("${key}", "${env.resolveObjectValues(value.value)}");`
-            )
-            .join("\n")
+      item.events.add(
+        PostmanHelper.createEvent(
+          "prerequest",
+          PostmanHelper.createScript(
+            Object.entries(step.variables)
+              .map(
+                ([key, value]) =>
+                  `pm.variables.set("${key}", "${env.resolveObjectValues(value.value)}");`
+              )
+              .join("\n")
+          )
         )
       );
     }
@@ -376,7 +395,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     );
 
     if (step.operation["x-ms-long-running-operation"]) {
-      item.description = typeToDescription({
+      item.description = JSON.stringify({
         type: "LRO",
         poller_item_name: `${item.name}_poller`,
         operationId: step.operation.operationId || "",
@@ -386,14 +405,13 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       });
       this.addAsLongRunningOperationItem(item, false, step.responseAssertion);
     } else {
-      item.description = typeToDescription({
+      item.description = JSON.stringify({
         type: "simple",
         operationId: step.operation.operationId || "",
         exampleName: step.exampleFile!,
         itemName: item.name,
         step: item.name,
       });
-      this.collection.items.add(item);
     }
     // generate get
     if (step.operation._method === "put" || step.operation._method === "delete") {
@@ -413,24 +431,26 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     checkStatus: boolean = false,
     responseAssertion?: StepResponseAssertion
   ) {
+    if (this.opts.skipLroPoll) return;
+
     const longRunningEvent = PostmanHelper.createEvent(
       "test",
       PostmanHelper.createScript(
-        `const pollingUrl = pm.response.headers.get('Location') || pm.response.headers.get('Azure-AsyncOperation');
-        if (pollingUrl) {
-          pm.collectionVariables.set("x_polling_url", ${
-            this.opts.testProxy
-              ? `pollingUrl.replace("${this.opts.baseUrl}","${this.opts.testProxy}")`
-              : "pollingUrl"
-          });
-        }
         `
+const pollingUrl = pm.response.headers.get("Location") || pm.response.headers.get("Azure-AsyncOperation");
+if (pollingUrl) {
+    pm.collectionVariables.set("x_polling_url", ${
+      this.opts.testProxy
+        ? `pollingUrl.replace("${this.opts.baseUrl}","${this.opts.testProxy}")`
+        : "pollingUrl"
+    });
+}`
       )
     );
     item.events.add(longRunningEvent);
     this.collection.items.add(item);
     for (const it of this.longRunningOperationItem(item, checkStatus, responseAssertion)) {
-      this.collection.items.append(it);
+      this.collection.items.add(it);
     }
   }
 
@@ -451,18 +471,20 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     if (item.request.method === "POST") {
       types = types.filter((it) => it !== "DetailResponseLog");
     }
-    const testEvent = PostmanHelper.createEvent(
-      "test",
-      // generate assertion from example
-      PostmanHelper.generateScript({
-        name: "response status code assertion.",
-        types: types,
-        variables: overwriteVariables,
-        armTemplate,
-        responseAssertion,
-      })
-    );
-    item.events.add(testEvent);
+    if (types.length > 0) {
+      const testEvent = PostmanHelper.createEvent(
+        "test",
+        // generate assertion from example
+        PostmanHelper.generateScript({
+          name: "response status code assertion.",
+          types: types,
+          variables: overwriteVariables,
+          armTemplate,
+          responseAssertion,
+        })
+      );
+      item.events.add(testEvent);
+    }
   }
 
   public async sendArmTemplateDeployment(
@@ -471,6 +493,8 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     step: StepArmTemplate,
     env: VariableEnv
   ): Promise<void> {
+    if (this.opts.skipArmCall) return;
+
     const item = this.newItem({
       name: step.step,
     });
@@ -493,7 +517,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     });
     const body = {
       properties: {
-        mode: "Complete",
+        mode: "Incremental",
         template: convertPostmanFormat(env.resolveObjectValues(armTemplate)),
       },
     };
@@ -522,6 +546,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       )
     );
     this.collection.items.add(item);
+
     this.addAsLongRunningOperationItem(item, true);
     const generatedGetScriptTypes: PostmanHelper.TestScriptType[] = this.opts.verbose
       ? ["DetailResponseLog", "ExtractARMTemplateOutput"]
@@ -553,7 +578,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       },
     });
     item.request.url = url;
-    item.description = typeToDescription({
+    item.description = JSON.stringify({
       type: "generated-get",
       lro_item_name: name,
       step: step,
@@ -580,29 +605,31 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
         method: "GET",
       },
     });
-    pollerItem.description = typeToDescription({ type: "poller", lro_item_name: initialItem.name });
+    pollerItem.description = JSON.stringify({ type: "poller", lro_item_name: initialItem.name });
 
     const delay = this.mockDelayItem(pollerItem.name, initialItem.name);
 
     const event = PostmanHelper.createEvent(
       "test",
-      PostmanHelper.createScript(`try{
-  if(pm.response.code === 202){
-    postman.setNextRequest('${delay.name}')
-  }else if(pm.response.code === 204){
-    postman.setNextRequest($(nextRequest))
-  }
-  else{
-    const terminalStatus = ["Succeeded", "Failed", "Canceled"]
-    if(pm.response.json().status !== undefined && terminalStatus.indexOf(pm.response.json().status) === -1){
-      postman.setNextRequest('${delay.name}')
-    }else{
-      postman.setNextRequest($(nextRequest))
+      PostmanHelper.createScript(
+        `
+try {
+    if (pm.response.code === 202) {
+        postman.setNextRequest('${delay.name}');
+    } else if (pm.response.code === 204) {
+        postman.setNextRequest($(nextRequest));
+    } else {
+        const terminalStatus = ["Succeeded", "Failed", "Canceled"];
+        if (pm.response.json().status !== undefined && terminalStatus.indexOf(pm.response.json().status) === -1) {
+            postman.setNextRequest('${delay.name}')
+        } else {
+            postman.setNextRequest($(nextRequest))
+        }
     }
-  }
-}catch(err){
-  postman.setNextRequest($(nextRequest))
-}`)
+} catch(err) {
+    postman.setNextRequest($(nextRequest))
+}`
+      )
     );
     pollerItem.events.add(event);
 
@@ -645,7 +672,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       },
       false
     );
-    ret.description = typeToDescription({ type: "mock", lro_item_name: LROItemName });
+    ret.description = JSON.stringify({ type: "mock", lro_item_name: LROItemName });
 
     const event = PostmanHelper.createEvent(
       "prerequest",
@@ -678,5 +705,5 @@ const convertPostmanFormat = <T>(obj: T): T => {
 };
 
 const covertToPostmanVariable = (value: string, isPath: boolean = false): string => {
-  return value.replace(/\$\(([a-z0-9_]+)\)/gi, (_, p1) => (isPath ? `:${p1}` : `{{${p1}}}`));
+  return value.replace(/\$\(([a-z0-9_$]+)\)/gi, (_, p1) => (isPath ? `:${p1}` : `{{${p1}}}`));
 };

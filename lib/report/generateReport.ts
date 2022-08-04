@@ -123,7 +123,7 @@ export class CoverageView {
         element.errors?.forEach((error) => {
           const errorDef = errorDefinitions.get(error.code);
           errorsForRendering.push({
-            friendlyName: errorDef?.friendlyName,
+            friendlyName: errorDef?.friendlyName ?? error.code,
             link: errorDef?.link,
             code: error.code,
             message: error.message,
@@ -324,7 +324,7 @@ export class ReportGenerator {
   }
 
   public async generateHtmlReport() {
-    const templatePath = path.resolve(process.cwd(), "dist/lib/templates/baseLayout.mustache");
+    const templatePath = path.join(__dirname, "../templates/baseLayout.mustache");
     const template = fs.readFileSync(templatePath, "utf-8");
     const view = new CoverageView(
       this.validationResults,

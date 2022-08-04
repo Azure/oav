@@ -3,80 +3,80 @@
 
 /* eslint-disable id-blacklist */
 
-import { dirname, relative as pathRelative, resolve as pathResolve } from "path";
+import * as fs from "fs";
+import * as path from "path";
 import * as yargs from "yargs";
+import { glob } from "glob";
+import { urlParse } from "@azure-tools/openapi-tools-common";
 import { inversifyGetInstance } from "../../inversifyUtils";
 import { TestRecordingLoader } from "../../apiScenario/gen/testRecordingLoader";
-import {
-  RequestTracking,
-  TestScenarioGenerator,
-} from "../../apiScenario/gen/testScenarioGenerator";
-import { getInputFiles } from "../../util/utils";
+import { TestRecordingApiScenarioGenerator } from "../../apiScenario/gen/testRecordingApiScenarioGenerator";
 
 export const command = "recording";
-export const describe = "Generate spec examples from real payload records.";
-
-const glob = require("glob");
+export const describe = "Generate api scenario from test proxy records.";
 
 export const builder: yargs.CommandBuilder = {
-  tag: {
-    describe: "the readme tag name.",
-    string: true,
-  },
-  recording: {
-    describe:
-      "path glob pattern for recording files. Supported format: DotNet recording, Azure Powershell recording, Azure Cli recording",
-    string: true,
+  recordingPaths: {
+    describe: "directory or path of recordings",
     demandOption: true,
+    type: "array",
   },
-  readme: {
-    describe: "path to readme.md file",
-    string: true,
+  specsFolders: {
+    describe: "spec folders.",
     demandOption: true,
+    type: "array",
   },
   output: {
     describe: "path to output test scenario",
     string: true,
     demandOption: true,
+    default: "test.yaml",
+  },
+  includeARM: {
+    describe: "include ARM specs",
+    boolean: true,
+    default: true,
   },
 };
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
-  const readmeMd: string = argv.readme;
   let output: string = argv.output;
-  const recording: string = argv.recording;
-  argv["try-require"] = "readme.test.md";
+  const recordingPaths = [];
+  for (const filePath of argv.recordingPaths) {
+    const url = urlParse(filePath);
+    if (url) {
+      recordingPaths.push(filePath);
+    } else {
+      const pathStats = fs.statSync(filePath);
+      if (pathStats.isDirectory()) {
+        const searchPattern = path.join(filePath, "**/*.json");
+        const matchedPaths = glob.sync(searchPattern, {
+          nodir: true,
+        });
+        recordingPaths.push(...matchedPaths);
+      } else {
+        recordingPaths.push(filePath);
+      }
+    }
+  }
 
-  const recordingFilePaths = glob.sync(recording);
-  recordingFilePaths.sort();
-  const swaggerFilePaths = await getInputFiles(readmeMd, argv.tag);
-  const fileRoot = dirname(readmeMd);
-  output = pathResolve(fileRoot, output);
-  output = pathRelative(fileRoot, output);
-
-  console.log("input-file:");
-  console.log(swaggerFilePaths);
   console.log("recording-file:");
-  console.log(recordingFilePaths);
+  console.log(recordingPaths);
   console.log("output-file:");
   console.log(`\t${output}\n`);
+  const trackingList = [];
+  const recordingLoader = inversifyGetInstance(TestRecordingLoader, {});
+  for (const recording of recordingPaths) {
+    trackingList.push(await recordingLoader.load(recording));
+  }
 
-  const generator = TestScenarioGenerator.create({
-    useJsonParser: false,
-    checkUnderFileRoot: false,
-    fileRoot,
-    swaggerFilePaths,
+  const generator = TestRecordingApiScenarioGenerator.create({
+    specFolders: argv.specsFolders,
+    includeARM: argv.includeARM,
   });
 
   await generator.initialize();
 
-  const recordingLoader = inversifyGetInstance(TestRecordingLoader, {});
-  const trackingList: RequestTracking[] = [];
-  for (const filePath of recordingFilePaths) {
-    console.log(`Transforming:\t${filePath}`);
-    const tracking = await recordingLoader.load(filePath);
-    trackingList.push(tracking);
-  }
   await generator.generateTestDefinition(trackingList, output);
 
   await generator.writeGeneratedFiles();

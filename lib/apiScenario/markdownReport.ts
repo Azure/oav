@@ -7,7 +7,12 @@ import {
   LiveValidationIssue,
   RequestResponseLiveValidationResult,
 } from "../liveValidation/liveValidator";
-import { ResponseDiffItem, RuntimeError, StepResult, TestScenarioResult } from "./reportGenerator";
+import {
+  ResponseDiffItem,
+  RuntimeError,
+  StepResult,
+  ApiScenarioTestResult,
+} from "./newmanReportValidator";
 
 const spaceReg = /(\n|\t|\r)/gi;
 
@@ -66,6 +71,7 @@ const commonHelper = (opts: HelperOpts) => ({
   },
   renderDuration: (start: Date, end: Date) =>
     `${hd.default(moment.duration(moment(end).diff(moment(start))).asMilliseconds())}`,
+  renderResponseTime: (responseTime: number) => `${hd.default(responseTime)}`,
   shouldReportError: (sr: TestScenarioMarkdownStepResult) =>
     sr.failedErrorsCount + sr.fatalErrorsCount > 0,
   renderFatalErrorCode: (e: RuntimeError) => `[${e.code}](${getErrorCodeDocLink(e.code)})`,
@@ -76,7 +82,7 @@ const commonHelper = (opts: HelperOpts) => ({
     `[${e.code}](${getOavErrorCodeDocLink(e.code)})`,
   renderLiveValidationErrorDetail: (e: LiveValidationIssue) =>
     `${e.message.replace(spaceReg, " ")}`,
-  shouldReportExample: (e: string) => e !== undefined && e !== "",
+  shouldReportPayload: (e: string) => e !== undefined && e !== "",
 });
 
 type ResultState = keyof typeof ResultStateStrings;
@@ -99,8 +105,11 @@ interface TestScenarioMarkdownStepResult {
   stepName: string;
   result: ResultState;
   exampleFilePath?: string;
+  payloadPath?: string;
   correlationId?: string;
   operationId: string;
+  responseTime?: number;
+  statusCode?: number;
   fatalErrorsCount: number;
   failedErrorsCount: number;
   warningErrorsCount: number;
@@ -151,7 +160,6 @@ const generateJUnitCaseReportView = compileHandlebarsTemplate<TestScenarioMarkdo
 
 const stepIsFatal = (sr: StepResult) => sr.runtimeError && sr.runtimeError.length > 0;
 const stepIsFailed = (sr: StepResult) =>
-  (sr.responseDiffResult && sr.responseDiffResult.length > 0) ||
   (sr.liveValidationResult && sr.liveValidationResult.requestValidationResult.errors.length > 0) ||
   (sr.liveValidationResult && sr.liveValidationResult.responseValidationResult.errors.length > 0);
 
@@ -164,7 +172,6 @@ const asMarkdownStepResult = (sr: StepResult): TestScenarioMarkdownStepResult =>
   }
 
   const failedErrorsCount =
-    (sr.responseDiffResult ? sr.responseDiffResult.length : 0) +
     (sr.liveValidationResult ? sr.liveValidationResult.requestValidationResult.errors.length : 0) +
     (sr.liveValidationResult ? sr.liveValidationResult.responseValidationResult.errors.length : 0);
 
@@ -178,7 +185,7 @@ const asMarkdownStepResult = (sr: StepResult): TestScenarioMarkdownStepResult =>
   return r;
 };
 
-const asMarkdownResult = (tsr: TestScenarioResult): TestScenarioMarkdownResult => {
+const asMarkdownResult = (tsr: ApiScenarioTestResult): TestScenarioMarkdownResult => {
   const fatalCount = tsr.stepResult.filter(
     (sr) => sr.runtimeError && sr.runtimeError.length > 0
   ).length;
@@ -193,7 +200,7 @@ const asMarkdownResult = (tsr: TestScenarioResult): TestScenarioMarkdownResult =
   }
 
   const r: TestScenarioMarkdownResult = {
-    testScenarioName: tsr.testScenarioName!,
+    testScenarioName: tsr.apiScenarioName!,
     result: resultState,
     swaggerFilePaths: tsr.swaggerFilePaths,
     startTime: new Date(tsr.startTime!),
@@ -209,7 +216,7 @@ const asMarkdownResult = (tsr: TestScenarioResult): TestScenarioMarkdownResult =
 };
 
 export const generateMarkdownReportHeader = (): string => "<h3>Azure API Test Report</h3>";
-export const generateMarkdownReport = (testScenarioResult: TestScenarioResult): string => {
+export const generateMarkdownReport = (testScenarioResult: ApiScenarioTestResult): string => {
   const result = asMarkdownResult(testScenarioResult);
   const body = generateMarkdownReportView(result);
   return body;

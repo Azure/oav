@@ -15,7 +15,7 @@ import { traverseSwagger } from "../transform/traverseSwagger";
 import { Operation, Path, LowerHttpMethods } from "../swagger/swaggerTypes";
 import { LiveValidatorLoader } from "../liveValidation/liveValidatorLoader";
 import { inversifyGetContainer, inversifyGetInstance } from "../inversifyUtils";
-import { getApiVersionFromSwaggerPath } from "../util/utils";
+import { getApiVersionFromFilePath } from "../util/utils";
 
 export interface TrafficValidationOptions extends Options {
   sdkPackage?: string;
@@ -166,7 +166,12 @@ export class TrafficValidator {
         const operationInfo = validationResult.requestValidationResult?.operationInfo;
         const liveRequest = payload.liveRequest;
         const correlationId = liveRequest.headers?.["x-ms-correlation-request-id"] || "";
-        const opInfo = await this.liveValidator.getOperationInfo(liveRequest, correlationId);
+        const activityId = liveRequest.headers?.["x-ms-request-id"] || "";
+        const opInfo = await this.liveValidator.getOperationInfo(
+          liveRequest,
+          correlationId,
+          activityId
+        );
         let swaggerFile;
         if (liveRequest.url.includes("provider")) {
           // This is for validation of resource-manager
@@ -324,7 +329,7 @@ export class TrafficValidator {
 
       this.operationCoverageResult.push({
         spec: key,
-        apiVersion: getApiVersionFromSwaggerPath(key),
+        apiVersion: getApiVersionFromFilePath(key),
         coveredOperaions: coveredOperaions,
         coverageRate: coverageRate,
         unCoveredOperations: value.length - coveredOperaions,

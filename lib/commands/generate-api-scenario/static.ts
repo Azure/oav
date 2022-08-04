@@ -3,10 +3,10 @@
 
 /* eslint-disable id-blacklist */
 
-import { resolve as pathResolve } from "path";
+import { resolve as pathResolve, dirname, join as pathJoin } from "path";
 import * as yargs from "yargs";
 import { StaticApiScenarioGenerator } from "../../apiScenario/gen/staticApiScenarioGenerator";
-import { ApiScenarioGenerator } from "../../apiScenario/gen/apiScenarioGenerator";
+import { RestlerApiScenarioGenerator } from "../../apiScenario/gen/restlerApiScenarioGenerator";
 import { cliSuppressExceptions } from "../../cliSuppressExceptions";
 import { getInputFiles } from "../../util/utils";
 
@@ -37,10 +37,14 @@ export const builder: yargs.CommandBuilder = {
     type: "array",
   },
   rules: {
-    describe:
-      "generate api scenarios file rules split by comma. supported: operations-list , put-delete.",
+    describe: "generate api scenarios file rules split by comma. supported: operations-list.",
     string: true,
-    default: "resource-put-delete",
+    default: "operations-list",
+  },
+  useExample: {
+    describe: "use example in the spec file.",
+    boolean: true,
+    default: false,
   },
 };
 
@@ -48,9 +52,14 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
   await cliSuppressExceptions(async () => {
     const swaggerFilePaths: string[] = (argv.specs || []).map((it: string) => pathResolve(it));
     let tag = "default";
+    let fileRoot = process.cwd();
+
     if (argv.readme !== undefined) {
       const readmeMd: string = pathResolve(argv.readme);
-      const inputSwaggerFile = await getInputFiles(readmeMd, argv.tag);
+      fileRoot = dirname(readmeMd);
+      const inputSwaggerFile = (await getInputFiles(readmeMd, argv.tag)).map((it: string) =>
+        pathJoin(fileRoot, it)
+      );
       console.log(`input swagger files: ${inputSwaggerFile}`);
       for (const it of inputSwaggerFile) {
         if (swaggerFilePaths.indexOf(it) === -1) {
@@ -59,18 +68,23 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       }
     }
 
+    console.log(`fileRoot: ${fileRoot}`);
     console.log("input-file:");
     console.log(swaggerFilePaths);
 
     if (argv.dependency) {
-      const generator = ApiScenarioGenerator.create({
+      const generator = RestlerApiScenarioGenerator.create({
+        fileRoot: fileRoot,
+        checkUnderFileRoot: false,
         swaggerFilePaths: swaggerFilePaths,
-        outputDir: argv.outputDir,
-        dependencyPath: argv.dependency,
+        outputDir: pathResolve(argv.outputDir),
+        dependencyPath: pathResolve(argv.dependency),
+        useExample: argv.useExample,
       });
 
       await generator.initialize();
-      await generator.generate();
+      const def = await generator.generate();
+      await generator.writeFile(def);
     } else {
       const generator = StaticApiScenarioGenerator.create({
         swaggerFilePaths: swaggerFilePaths,

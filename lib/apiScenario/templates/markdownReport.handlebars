@@ -20,7 +20,7 @@
         <ul>
           {{#each ts.swaggerFilePaths}}
             <li>
-              <a href="{{renderPlain this}}">
+              <a target="_blank" href="{{renderPlain this}}">
                 {{renderPlain this}}
               </a>
             </li>
@@ -46,22 +46,22 @@
 </b>
 </li>
 <ul>
-  <li>
-      Duration:
-      {{renderDuration s.startTime s.endTime}}
-    </li>
-    {{#if (shouldReportExample s.exampleFilePath)}}
     <li>
-      Example:
-      <a href="">
-        {{renderPlain s.exampleFilePath}}
+      StatusCode:
+      {{renderPlain s.statusCode}}
+    </li>
+    <li>
+      Duration:
+      {{renderResponseTime s.responseTime}}
+    </li>
+    {{#if (shouldReportPayload s.payloadPath)}}
+    <li>
+      Payload:
+      <a target="_blank" href="{{renderPlain s.payloadPath}}">
+        {{renderPlain s.payloadPath}}
       </a>
     </li>
     {{/if}}
-    <li>
-      Correlation Id:
-      {{renderPlain s.correlationId}}
-    </li>
   </ul>
 
 {{#if (shouldReportError s)}}
@@ -71,11 +71,6 @@
             {{#each s.runtimeError}}
               {{#with this as |re|}}
 | <code> {{renderSymbol "fatal"}} </code> {{renderFatalErrorCode re}} | {{renderFatalErrorDetail re}} |
-              {{/with}}
-            {{/each}}
-            {{#each s.responseDiffResult}}
-            {{#with this as |rd|}}
-| <code> {{renderSymbol "failed"}} </code> {{renderDiffErrorCode rd}} | {{renderDiffErrorDetail rd}} |
               {{/with}}
             {{/each}}
             {{#each s.liveValidationResult.requestValidationResult.errors}}

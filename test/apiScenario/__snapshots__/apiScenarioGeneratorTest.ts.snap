@@ -1,0 +1,1864 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ApiScenarioGenerator generate api scenario from recording - storage 1`] = `
+Object {
+  "scenarios": Array [
+    Object {
+      "scenario": "AddRemoveTag",
+      "steps": Array [
+        Object {
+          "operationId": "Subscriptions_Get",
+          "step": "Subscriptions_Get",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_CheckNameAvailability",
+          "parameters": Object {
+            "accountName": Object {
+              "name": "$(accountName)",
+              "type": "Microsoft.Storage/storageAccounts",
+            },
+          },
+          "step": "StorageAccounts_CheckNameAvailability",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_Create",
+          "step": "StorageAccounts_Create",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "Tags_GetAtScope",
+          "step": "Tags_GetAtScope",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "Tags_CreateOrUpdateAtScope",
+          "parameters": Object {
+            "parameters": Object {
+              "properties": Object {
+                "tags": Object {
+                  "key": "value",
+                  "key1": "value1",
+                  "key2": "value2",
+                },
+              },
+            },
+          },
+          "step": "Tags_CreateOrUpdateAtScope",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_GetProperties",
+          "step": "StorageAccounts_GetProperties",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "Tags_CreateOrUpdateAtScope",
+          "parameters": Object {
+            "parameters": Object {
+              "properties": Object {
+                "tags": Object {
+                  "key1": "value1",
+                  "key2": "value2",
+                },
+              },
+            },
+          },
+          "step": "Tags_CreateOrUpdateAtScope_1",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_GetProperties",
+          "step": "StorageAccounts_GetProperties_1",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_ListByResourceGroup",
+          "step": "StorageAccounts_ListByResourceGroup",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_Delete",
+          "step": "StorageAccounts_Delete",
+          "variables": undefined,
+        },
+      ],
+      "variables": Object {
+        "accountName": Object {
+          "type": "string",
+          "value": "teststoragemgmt9233",
+        },
+        "parameters": Object {
+          "type": "object",
+          "value": Object {
+            "kind": "Storage",
+            "location": "$(location)",
+            "properties": Object {},
+            "sku": Object {
+              "name": "Standard_GRS",
+            },
+            "tags": Object {
+              "key1": "value1",
+              "key2": "value2",
+            },
+          },
+        },
+        "scope": Object {
+          "type": "string",
+          "value": "subscriptions/db1ab6f0-4769-4b27-930e-01e2ef9c123c/resourceGroups/teststorageRG-8814/providers/Microsoft.Storage/storageAccounts/$(accountName)",
+        },
+      },
+    },
+    Object {
+      "scenario": "CreateStandardAccount",
+      "steps": Array [
+        Object {
+          "operationId": "Subscriptions_Get",
+          "step": "Subscriptions_Get",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_CheckNameAvailability",
+          "step": "StorageAccounts_CheckNameAvailability",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_Create",
+          "parameters": Object {
+            "accountName": "$(accountName1)",
+          },
+          "step": "StorageAccounts_Create",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_CheckNameAvailability",
+          "step": "StorageAccounts_CheckNameAvailability_1",
+          "variables": Object {
+            "accountName": Object {
+              "patches": Array [
+                Object {
+                  "replace": "/name",
+                  "value": "$(accountName2)",
+                },
+              ],
+              "type": "object",
+              "value": undefined,
+            },
+          },
+        },
+        Object {
+          "operationId": "StorageAccounts_Create",
+          "parameters": Object {
+            "accountName": "$(accountName2)",
+          },
+          "step": "StorageAccounts_Create_1",
+          "variables": Object {
+            "parameters": Object {
+              "patches": Array [
+                Object {
+                  "replace": "/sku/name",
+                  "value": "Standard_GRS",
+                },
+              ],
+              "type": "object",
+              "value": undefined,
+            },
+          },
+        },
+        Object {
+          "operationId": "StorageAccounts_CheckNameAvailability",
+          "step": "StorageAccounts_CheckNameAvailability_2",
+          "variables": Object {
+            "accountName": Object {
+              "patches": Array [
+                Object {
+                  "replace": "/name",
+                  "value": "$(accountName3)",
+                },
+              ],
+              "type": "object",
+              "value": undefined,
+            },
+          },
+        },
+        Object {
+          "operationId": "StorageAccounts_Create",
+          "parameters": Object {
+            "accountName": "$(accountName3)",
+          },
+          "step": "StorageAccounts_Create_2",
+          "variables": Object {
+            "parameters": Object {
+              "patches": Array [
+                Object {
+                  "replace": "/sku/name",
+                  "value": "Standard_RAGRS",
+                },
+              ],
+              "type": "object",
+              "value": undefined,
+            },
+          },
+        },
+        Object {
+          "operationId": "StorageAccounts_CheckNameAvailability",
+          "step": "StorageAccounts_CheckNameAvailability_3",
+          "variables": Object {
+            "accountName": Object {
+              "patches": Array [
+                Object {
+                  "replace": "/name",
+                  "value": "$(accountName4)",
+                },
+              ],
+              "type": "object",
+              "value": undefined,
+            },
+          },
+        },
+        Object {
+          "operationId": "StorageAccounts_Create",
+          "parameters": Object {
+            "accountName": "$(accountName4)",
+          },
+          "step": "StorageAccounts_Create_3",
+          "variables": Object {
+            "parameters": Object {
+              "patches": Array [
+                Object {
+                  "replace": "/sku/name",
+                  "value": "Standard_ZRS",
+                },
+              ],
+              "type": "object",
+              "value": undefined,
+            },
+          },
+        },
+        Object {
+          "operationId": "StorageAccounts_ListByResourceGroup",
+          "step": "StorageAccounts_ListByResourceGroup",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_Delete",
+          "parameters": Object {
+            "accountName": "$(accountName1)",
+          },
+          "step": "StorageAccounts_Delete",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_Delete",
+          "parameters": Object {
+            "accountName": "$(accountName4)",
+          },
+          "step": "StorageAccounts_Delete_1",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_Delete",
+          "parameters": Object {
+            "accountName": "$(accountName3)",
+          },
+          "step": "StorageAccounts_Delete_2",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_Delete",
+          "parameters": Object {
+            "accountName": "$(accountName2)",
+          },
+          "step": "StorageAccounts_Delete_3",
+          "variables": undefined,
+        },
+      ],
+      "variables": Object {
+        "accountName": Object {
+          "type": "object",
+          "value": Object {
+            "name": "teststoragemgmt3148",
+            "type": "Microsoft.Storage/storageAccounts",
+          },
+        },
+        "accountName1": Object {
+          "type": "string",
+          "value": "teststoragemgmt3148",
+        },
+        "accountName2": Object {
+          "type": "string",
+          "value": "teststoragemgmt9231",
+        },
+        "accountName3": Object {
+          "type": "string",
+          "value": "teststoragemgmt5066",
+        },
+        "accountName4": Object {
+          "type": "string",
+          "value": "teststoragemgmt405",
+        },
+        "parameters": Object {
+          "type": "object",
+          "value": Object {
+            "kind": "Storage",
+            "location": "$(location)",
+            "properties": Object {},
+            "sku": Object {
+              "name": "Standard_LRS",
+            },
+            "tags": Object {
+              "key1": "value1",
+              "key2": "value2",
+            },
+          },
+        },
+      },
+    },
+    Object {
+      "scenario": "CreateUpdateGetDeleteBlobInventoryPolicy",
+      "steps": Array [
+        Object {
+          "operationId": "Subscriptions_Get",
+          "step": "Subscriptions_Get",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_CheckNameAvailability",
+          "parameters": Object {
+            "accountName": Object {
+              "name": "$(accountName)",
+              "type": "Microsoft.Storage/storageAccounts",
+            },
+          },
+          "step": "StorageAccounts_CheckNameAvailability",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_Create",
+          "parameters": Object {
+            "parameters": Object {
+              "kind": "StorageV2",
+              "location": "$(location)",
+              "properties": Object {},
+              "sku": Object {
+                "name": "Standard_GRS",
+              },
+              "tags": Object {
+                "key1": "value1",
+                "key2": "value2",
+              },
+            },
+          },
+          "step": "StorageAccounts_Create",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "BlobServices_GetServiceProperties",
+          "parameters": Object {
+            "BlobServicesName": "default",
+          },
+          "step": "BlobServices_GetServiceProperties",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "BlobContainers_Create",
+          "parameters": Object {
+            "blobContainer": Object {
+              "properties": Object {},
+            },
+            "containerName": "testblob7262",
+          },
+          "step": "BlobContainers_Create",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "BlobInventoryPolicies_CreateOrUpdate",
+          "parameters": Object {
+            "blobInventoryPolicyName": "default",
+          },
+          "step": "BlobInventoryPolicies_CreateOrUpdate",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "BlobInventoryPolicies_CreateOrUpdate",
+          "parameters": Object {
+            "blobInventoryPolicyName": "default",
+          },
+          "step": "BlobInventoryPolicies_CreateOrUpdate_1",
+          "variables": Object {
+            "properties": Object {
+              "patches": Array [
+                Object {
+                  "add": "/properties/policy/rules/2",
+                  "value": Object {
+                    "definition": Object {
+                      "format": "Parquet",
+                      "objectType": "Container",
+                      "schedule": "Weekly",
+                      "schemaFields": Array [
+                        "Name",
+                      ],
+                    },
+                    "destination": "testblob7262",
+                    "enabled": true,
+                    "name": "rule3",
+                  },
+                },
+              ],
+              "type": "object",
+              "value": undefined,
+            },
+          },
+        },
+        Object {
+          "operationId": "BlobInventoryPolicies_Delete",
+          "parameters": Object {
+            "blobInventoryPolicyName": "default",
+          },
+          "step": "BlobInventoryPolicies_Delete",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_ListByResourceGroup",
+          "step": "StorageAccounts_ListByResourceGroup",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_Delete",
+          "step": "StorageAccounts_Delete",
+          "variables": undefined,
+        },
+      ],
+      "variables": Object {
+        "accountName": Object {
+          "type": "string",
+          "value": "teststoragemgmt1421",
+        },
+        "properties": Object {
+          "type": "object",
+          "value": Object {
+            "properties": Object {
+              "policy": Object {
+                "enabled": true,
+                "rules": Array [
+                  Object {
+                    "definition": Object {
+                      "filters": Object {
+                        "blobTypes": Array [
+                          "blockBlob",
+                        ],
+                        "includeBlobVersions": true,
+                        "includeSnapshots": true,
+                        "prefixMatch": Array [
+                          "prefix1",
+                          "prefix2",
+                        ],
+                      },
+                      "format": "Csv",
+                      "objectType": "Blob",
+                      "schedule": "Weekly",
+                      "schemaFields": Array [
+                        "Name",
+                        "Creation-Time",
+                        "Last-Modified",
+                        "Content-Length",
+                        "Content-MD5",
+                        "BlobType",
+                        "AccessTier",
+                        "AccessTierChangeTime",
+                        "Snapshot",
+                        "VersionId",
+                        "IsCurrentVersion",
+                        "Metadata",
+                        "LastAccessTime",
+                      ],
+                    },
+                    "destination": "testblob7262",
+                    "enabled": true,
+                    "name": "rule1",
+                  },
+                  Object {
+                    "definition": Object {
+                      "format": "Csv",
+                      "objectType": "Container",
+                      "schedule": "Daily",
+                      "schemaFields": Array [
+                        "Name",
+                        "Last-Modified",
+                        "Metadata",
+                        "LeaseStatus",
+                        "LeaseState",
+                        "LeaseDuration",
+                        "PublicAccess",
+                        "HasImmutabilityPolicy",
+                        "HasLegalHold",
+                      ],
+                    },
+                    "destination": "testblob7262",
+                    "enabled": true,
+                    "name": "rule2",
+                  },
+                ],
+                "type": "Inventory",
+              },
+            },
+          },
+        },
+      },
+    },
+    Object {
+      "scenario": "SetGetDeleteManagementPolicy",
+      "steps": Array [
+        Object {
+          "operationId": "Subscriptions_Get",
+          "step": "Subscriptions_Get",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_CheckNameAvailability",
+          "parameters": Object {
+            "accountName": Object {
+              "name": "$(accountName)",
+              "type": "Microsoft.Storage/storageAccounts",
+            },
+          },
+          "step": "StorageAccounts_CheckNameAvailability",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_Create",
+          "step": "StorageAccounts_Create",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "BlobServices_GetServiceProperties",
+          "parameters": Object {
+            "BlobServicesName": "default",
+          },
+          "step": "BlobServices_GetServiceProperties",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "BlobServices_SetServiceProperties",
+          "parameters": Object {
+            "BlobServicesName": "default",
+            "parameters": Object {
+              "properties": Object {
+                "cors": Object {
+                  "corsRules": Array [],
+                },
+                "deleteRetentionPolicy": Object {
+                  "enabled": false,
+                },
+                "lastAccessTimeTrackingPolicy": Object {
+                  "enable": true,
+                },
+              },
+            },
+          },
+          "step": "BlobServices_SetServiceProperties",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "ManagementPolicies_CreateOrUpdate",
+          "parameters": Object {
+            "managementPolicyName": "default",
+            "properties": Object {
+              "properties": Object {
+                "policy": Object {
+                  "rules": Array [
+                    Object {
+                      "definition": Object {
+                        "actions": Object {
+                          "baseBlob": Object {
+                            "delete": Object {
+                              "daysAfterModificationGreaterThan": 1000,
+                            },
+                          },
+                        },
+                        "filters": Object {
+                          "blobTypes": Array [
+                            "blockBlob",
+                            "appendBlob",
+                          ],
+                        },
+                      },
+                      "name": "rule1",
+                      "type": "Lifecycle",
+                    },
+                    Object {
+                      "definition": Object {
+                        "actions": Object {
+                          "baseBlob": Object {
+                            "delete": Object {
+                              "daysAfterModificationGreaterThan": 1000,
+                            },
+                          },
+                        },
+                        "filters": Object {
+                          "blobTypes": Array [
+                            "appendBlob",
+                          ],
+                        },
+                      },
+                      "name": "rule2",
+                      "type": "Lifecycle",
+                    },
+                    Object {
+                      "definition": Object {
+                        "actions": Object {
+                          "baseBlob": Object {
+                            "delete": Object {
+                              "daysAfterModificationGreaterThan": 1000,
+                            },
+                          },
+                        },
+                        "filters": Object {
+                          "blobTypes": Array [
+                            "blockBlob",
+                          ],
+                        },
+                      },
+                      "name": "rule3",
+                      "type": "Lifecycle",
+                    },
+                  ],
+                },
+              },
+            },
+          },
+          "step": "ManagementPolicies_CreateOrUpdate",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "ManagementPolicies_Delete",
+          "parameters": Object {
+            "managementPolicyName": "default",
+          },
+          "step": "ManagementPolicies_Delete",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_ListByResourceGroup",
+          "step": "StorageAccounts_ListByResourceGroup",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_Delete",
+          "step": "StorageAccounts_Delete",
+          "variables": undefined,
+        },
+      ],
+      "variables": Object {
+        "accountName": Object {
+          "type": "string",
+          "value": "teststoragemgmt7320",
+        },
+        "parameters": Object {
+          "type": "object",
+          "value": Object {
+            "kind": "StorageV2",
+            "location": "$(location)",
+            "properties": Object {},
+            "sku": Object {
+              "name": "Standard_GRS",
+            },
+            "tags": Object {
+              "key1": "value1",
+              "key2": "value2",
+            },
+          },
+        },
+      },
+    },
+    Object {
+      "scenario": "UpdateStorageAccount",
+      "steps": Array [
+        Object {
+          "operationId": "Subscriptions_Get",
+          "step": "Subscriptions_Get",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_CheckNameAvailability",
+          "parameters": Object {
+            "accountName": Object {
+              "name": "$(accountName)",
+              "type": "Microsoft.Storage/storageAccounts",
+            },
+          },
+          "step": "StorageAccounts_CheckNameAvailability",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_Create",
+          "step": "StorageAccounts_Create",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_Update",
+          "parameters": Object {
+            "parameters": Object {
+              "properties": Object {},
+              "sku": Object {
+                "name": "Standard_LRS",
+              },
+            },
+          },
+          "step": "StorageAccounts_Update",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_Update",
+          "parameters": Object {
+            "parameters": Object {
+              "properties": Object {},
+              "sku": Object {
+                "name": "Standard_LRS",
+              },
+              "tags": Object {
+                "key3": "value3",
+                "key4": "value4",
+                "key5": "value5",
+              },
+            },
+          },
+          "step": "StorageAccounts_Update_1",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_Update",
+          "parameters": Object {
+            "parameters": Object {
+              "properties": Object {
+                "encryption": Object {
+                  "keySource": "Microsoft.Storage",
+                  "services": Object {
+                    "blob": Object {
+                      "enabled": true,
+                    },
+                    "file": Object {
+                      "enabled": true,
+                    },
+                  },
+                },
+              },
+              "sku": Object {
+                "name": "Standard_LRS",
+              },
+              "tags": Object {
+                "key3": "value3",
+                "key4": "value4",
+                "key5": "value5",
+              },
+            },
+          },
+          "step": "StorageAccounts_Update_2",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_Update",
+          "parameters": Object {
+            "parameters": Object {
+              "properties": Object {
+                "supportsHttpsTrafficOnly": false,
+              },
+            },
+          },
+          "step": "StorageAccounts_Update_3",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_Update",
+          "parameters": Object {
+            "parameters": Object {
+              "properties": Object {
+                "supportsHttpsTrafficOnly": true,
+              },
+            },
+          },
+          "step": "StorageAccounts_Update_4",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_ListByResourceGroup",
+          "step": "StorageAccounts_ListByResourceGroup",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "StorageAccounts_Delete",
+          "step": "StorageAccounts_Delete",
+          "variables": undefined,
+        },
+      ],
+      "variables": Object {
+        "accountName": Object {
+          "type": "string",
+          "value": "teststoragemgmt7986",
+        },
+        "parameters": Object {
+          "type": "object",
+          "value": Object {
+            "kind": "Storage",
+            "location": "$(location)",
+            "properties": Object {},
+            "sku": Object {
+              "name": "Standard_GRS",
+            },
+            "tags": Object {
+              "key1": "value1",
+              "key2": "value2",
+            },
+          },
+        },
+      },
+    },
+  ],
+  "scope": "ResourceGroup",
+}
+`;
+
+exports[`ApiScenarioGenerator generate api scenario from swagger - storage 1`] = `
+Object {
+  "scenarios": Array [
+    Object {
+      "steps": Array [
+        Object {
+          "operationId": "StorageAccounts_CheckNameAvailability",
+          "variables": Object {
+            "accountName": Object {
+              "type": "object",
+              "value": Object {
+                "name": "test",
+                "type": "Microsoft.Storage/storageAccounts",
+              },
+            },
+          },
+        },
+        Object {
+          "operationId": "StorageAccounts_Create",
+          "variables": Object {
+            "parameters": Object {
+              "type": "object",
+              "value": Object {
+                "kind": "Storage",
+                "location": "$(location)",
+                "sku": Object {
+                  "name": "Standard_LRS",
+                },
+              },
+            },
+          },
+        },
+        Object {
+          "operationId": "StorageAccounts_List",
+        },
+        Object {
+          "operationId": "StorageAccounts_ListByResourceGroup",
+        },
+        Object {
+          "operationId": "StorageAccounts_GetProperties",
+        },
+        Object {
+          "operationId": "StorageAccounts_Update",
+          "variables": Object {
+            "parameters": Object {
+              "type": "object",
+              "value": Object {},
+            },
+          },
+        },
+        Object {
+          "operationId": "StorageAccounts_RestoreBlobRanges",
+          "variables": Object {
+            "parameters": Object {
+              "type": "object",
+              "value": Object {
+                "blobRanges": Array [],
+                "timeToRestore": "test",
+              },
+            },
+          },
+        },
+        Object {
+          "operationId": "StorageAccounts_RevokeUserDelegationKeys",
+        },
+        Object {
+          "operationId": "StorageAccounts_AbortHierarchicalNamespaceMigration",
+        },
+        Object {
+          "operationId": "StorageAccounts_ListServiceSAS",
+          "variables": Object {
+            "parameters": Object {
+              "type": "object",
+              "value": Object {
+                "canonicalizedResource": "test",
+              },
+            },
+          },
+        },
+        Object {
+          "operationId": "StorageAccounts_ListKeys",
+        },
+        Object {
+          "operationId": "StorageAccounts_RegenerateKey",
+          "variables": Object {
+            "regenerateKey": Object {
+              "type": "object",
+              "value": Object {
+                "keyName": "test",
+              },
+            },
+          },
+        },
+        Object {
+          "operationId": "StorageAccounts_Failover",
+        },
+        Object {
+          "operationId": "StorageAccounts_ListAccountSAS",
+          "variables": Object {
+            "parameters": Object {
+              "type": "object",
+              "value": Object {
+                "signedExpiry": "test",
+                "signedPermission": "r",
+                "signedResourceTypes": "s",
+                "signedServices": "b",
+              },
+            },
+          },
+        },
+        Object {
+          "operationId": "StorageAccounts_HierarchicalNamespaceMigration",
+          "variables": Object {
+            "requestType": "test",
+          },
+        },
+        Object {
+          "operationId": "BlobContainers_Create",
+        },
+        Object {
+          "operationId": "BlobContainers_List",
+        },
+        Object {
+          "operationId": "BlobContainers_Get",
+        },
+        Object {
+          "operationId": "BlobContainers_Update",
+        },
+        Object {
+          "operationId": "BlobContainers_LockImmutabilityPolicy",
+        },
+        Object {
+          "operationId": "BlobContainers_ObjectLevelWorm",
+        },
+        Object {
+          "operationId": "BlobContainers_Lease",
+        },
+        Object {
+          "operationId": "BlobContainers_ClearLegalHold",
+        },
+        Object {
+          "operationId": "BlobContainers_ExtendImmutabilityPolicy",
+        },
+        Object {
+          "operationId": "BlobContainers_SetLegalHold",
+        },
+        Object {
+          "operationId": "FileShares_Create",
+        },
+        Object {
+          "operationId": "FileShares_List",
+        },
+        Object {
+          "operationId": "FileShares_Get",
+        },
+        Object {
+          "operationId": "FileShares_Update",
+        },
+        Object {
+          "operationId": "FileShares_Lease",
+        },
+        Object {
+          "operationId": "FileShares_Restore",
+          "variables": Object {
+            "deletedShare": Object {
+              "type": "object",
+              "value": Object {
+                "deletedShareName": "test",
+                "deletedShareVersion": "test",
+              },
+            },
+          },
+        },
+        Object {
+          "operationId": "LocalUsers_CreateOrUpdate",
+          "variables": Object {
+            "properties": Object {
+              "type": "object",
+              "value": Object {},
+            },
+          },
+        },
+        Object {
+          "operationId": "LocalUsers_List",
+        },
+        Object {
+          "operationId": "LocalUsers_Get",
+        },
+        Object {
+          "operationId": "LocalUsers_ListKeys",
+        },
+        Object {
+          "operationId": "LocalUsers_RegeneratePassword",
+        },
+        Object {
+          "operationId": "Table_Create",
+        },
+        Object {
+          "operationId": "Table_List",
+        },
+        Object {
+          "operationId": "Table_Get",
+        },
+        Object {
+          "operationId": "Table_Update",
+        },
+        Object {
+          "operationId": "Queue_Create",
+        },
+        Object {
+          "operationId": "Queue_List",
+        },
+        Object {
+          "operationId": "Queue_Get",
+        },
+        Object {
+          "operationId": "Queue_Update",
+        },
+        Object {
+          "operationId": "BlobContainers_CreateOrUpdateImmutabilityPolicy",
+        },
+        Object {
+          "operationId": "BlobContainers_GetImmutabilityPolicy",
+        },
+        Object {
+          "operationId": "EncryptionScopes_Put",
+        },
+        Object {
+          "operationId": "EncryptionScopes_List",
+        },
+        Object {
+          "operationId": "EncryptionScopes_Get",
+        },
+        Object {
+          "operationId": "EncryptionScopes_Patch",
+        },
+        Object {
+          "operationId": "PrivateEndpointConnections_Put",
+          "variables": Object {
+            "properties": Object {
+              "type": "object",
+              "value": Object {},
+            },
+          },
+        },
+        Object {
+          "operationId": "PrivateEndpointConnections_List",
+        },
+        Object {
+          "operationId": "PrivateEndpointConnections_Get",
+        },
+        Object {
+          "operationId": "BlobInventoryPolicies_CreateOrUpdate",
+          "variables": Object {
+            "properties": Object {
+              "type": "object",
+              "value": Object {},
+            },
+          },
+        },
+        Object {
+          "operationId": "BlobInventoryPolicies_List",
+        },
+        Object {
+          "operationId": "BlobInventoryPolicies_Get",
+        },
+        Object {
+          "operationId": "ObjectReplicationPolicies_CreateOrUpdate",
+          "variables": Object {
+            "properties": Object {
+              "type": "object",
+              "value": Object {},
+            },
+          },
+        },
+        Object {
+          "operationId": "ObjectReplicationPolicies_List",
+        },
+        Object {
+          "operationId": "ObjectReplicationPolicies_Get",
+        },
+        Object {
+          "operationId": "ManagementPolicies_CreateOrUpdate",
+          "variables": Object {
+            "properties": Object {
+              "type": "object",
+              "value": Object {},
+            },
+          },
+        },
+        Object {
+          "operationId": "ManagementPolicies_Get",
+        },
+        Object {
+          "operationId": "TableServices_SetServiceProperties",
+          "variables": Object {
+            "parameters": Object {
+              "type": "object",
+              "value": Object {},
+            },
+          },
+        },
+        Object {
+          "operationId": "TableServices_List",
+        },
+        Object {
+          "operationId": "TableServices_GetServiceProperties",
+        },
+        Object {
+          "operationId": "BlobServices_SetServiceProperties",
+          "variables": Object {
+            "parameters": Object {
+              "type": "object",
+              "value": Object {},
+            },
+          },
+        },
+        Object {
+          "operationId": "BlobServices_List",
+        },
+        Object {
+          "operationId": "BlobServices_GetServiceProperties",
+        },
+        Object {
+          "operationId": "QueueServices_SetServiceProperties",
+          "variables": Object {
+            "parameters": Object {
+              "type": "object",
+              "value": Object {},
+            },
+          },
+        },
+        Object {
+          "operationId": "QueueServices_List",
+        },
+        Object {
+          "operationId": "QueueServices_GetServiceProperties",
+        },
+        Object {
+          "operationId": "FileServices_SetServiceProperties",
+          "variables": Object {
+            "parameters": Object {
+              "type": "object",
+              "value": Object {},
+            },
+          },
+        },
+        Object {
+          "operationId": "FileServices_List",
+        },
+        Object {
+          "operationId": "FileServices_GetServiceProperties",
+        },
+        Object {
+          "operationId": "Operations_List",
+        },
+        Object {
+          "operationId": "DeletedAccounts_List",
+        },
+        Object {
+          "operationId": "DeletedAccounts_Get",
+          "variables": Object {
+            "deletedAccountName": Object {
+              "prefix": "deletedacc",
+              "type": "string",
+            },
+            "test": Object {
+              "type": "int",
+              "value": 1,
+            },
+          },
+        },
+        Object {
+          "operationId": "Usages_ListByLocation",
+        },
+        Object {
+          "operationId": "Skus_List",
+        },
+        Object {
+          "operationId": "PrivateLinkResources_ListByStorageAccount",
+        },
+        Object {
+          "operationId": "ManagementPolicies_Delete",
+        },
+        Object {
+          "operationId": "ObjectReplicationPolicies_Delete",
+        },
+        Object {
+          "operationId": "BlobInventoryPolicies_Delete",
+        },
+        Object {
+          "operationId": "PrivateEndpointConnections_Delete",
+        },
+        Object {
+          "operationId": "BlobContainers_DeleteImmutabilityPolicy",
+        },
+        Object {
+          "operationId": "Queue_Delete",
+        },
+        Object {
+          "operationId": "Table_Delete",
+        },
+        Object {
+          "operationId": "LocalUsers_Delete",
+        },
+        Object {
+          "operationId": "FileShares_Delete",
+        },
+        Object {
+          "operationId": "BlobContainers_Delete",
+        },
+        Object {
+          "operationId": "StorageAccounts_Delete",
+        },
+      ],
+    },
+  ],
+  "scope": "ResourceGroup",
+  "variables": Object {
+    "BlobServicesName": Object {
+      "prefix": "blobservic",
+      "type": "string",
+    },
+    "FileServicesName": Object {
+      "prefix": "fileservic",
+      "type": "string",
+    },
+    "If-Match": "test",
+    "LegalHold": Object {
+      "type": "object",
+      "value": Object {
+        "tags": Array [],
+      },
+    },
+    "accountName": Object {
+      "prefix": "accountnam",
+      "type": "string",
+    },
+    "blobContainer": Object {
+      "type": "object",
+      "value": Object {},
+    },
+    "blobInventoryPolicyName": Object {
+      "prefix": "blobinvent",
+      "type": "string",
+    },
+    "containerName": Object {
+      "prefix": "containern",
+      "type": "string",
+    },
+    "encryptionScope": Object {
+      "type": "object",
+      "value": Object {},
+    },
+    "encryptionScopeName": Object {
+      "prefix": "encryption",
+      "type": "string",
+    },
+    "fileShare": Object {
+      "type": "object",
+      "value": Object {},
+    },
+    "immutabilityPolicyName": Object {
+      "prefix": "immutabili",
+      "type": "string",
+    },
+    "managementPolicyName": Object {
+      "prefix": "management",
+      "type": "string",
+    },
+    "objectReplicationPolicyId": Object {
+      "prefix": "objectrepl",
+      "type": "string",
+    },
+    "privateEndpointConnectionName": Object {
+      "prefix": "privateend",
+      "type": "string",
+    },
+    "queue": Object {
+      "type": "object",
+      "value": Object {},
+    },
+    "queueName": Object {
+      "prefix": "queuename",
+      "type": "string",
+    },
+    "queueServiceName": Object {
+      "prefix": "queueservi",
+      "type": "string",
+    },
+    "shareName": Object {
+      "prefix": "sharename",
+      "type": "string",
+    },
+    "tableName": Object {
+      "prefix": "tablename",
+      "type": "string",
+    },
+    "tableServiceName": Object {
+      "prefix": "tableservi",
+      "type": "string",
+    },
+    "username": Object {
+      "prefix": "username",
+      "type": "string",
+    },
+  },
+}
+`;
+
+exports[`ApiScenarioGenerator generate api scenario from swagger and example - storage 1`] = `
+Object {
+  "scenarios": Array [
+    Object {
+      "steps": Array [
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/StorageAccountCheckNameAvailability.json",
+          "operationId": undefined,
+          "step": "StorageAccounts_CheckNameAvailability",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/StorageAccountCreate.json",
+          "operationId": undefined,
+          "step": "StorageAccounts_Create",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/StorageAccountList.json",
+          "operationId": undefined,
+          "step": "StorageAccounts_List",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/StorageAccountListByResourceGroup.json",
+          "operationId": undefined,
+          "step": "StorageAccounts_ListByResourceGroup",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/StorageAccountGetProperties.json",
+          "operationId": undefined,
+          "step": "StorageAccounts_GetProperties",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/StorageAccountUpdate.json",
+          "operationId": undefined,
+          "step": "StorageAccounts_Update",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/BlobRangesRestore.json",
+          "operationId": undefined,
+          "step": "StorageAccounts_RestoreBlobRanges",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/StorageAccountRevokeUserDelegationKeys.json",
+          "operationId": undefined,
+          "step": "StorageAccounts_RevokeUserDelegationKeys",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/StorageAccountAbortHierarchicalNamespaceMigration.json",
+          "operationId": undefined,
+          "step": "StorageAccounts_AbortHierarchicalNamespaceMigration",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/StorageAccountListServiceSAS.json",
+          "operationId": undefined,
+          "step": "StorageAccounts_ListServiceSAS",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/StorageAccountListKeys.json",
+          "operationId": undefined,
+          "step": "StorageAccounts_ListKeys",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/StorageAccountRegenerateKey.json",
+          "operationId": undefined,
+          "step": "StorageAccounts_RegenerateKey",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/StorageAccountFailover.json",
+          "operationId": undefined,
+          "step": "StorageAccounts_Failover",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/StorageAccountListAccountSAS.json",
+          "operationId": undefined,
+          "step": "StorageAccounts_ListAccountSAS",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/StorageAccountHierarchicalNamespaceMigration.json",
+          "operationId": undefined,
+          "step": "StorageAccounts_HierarchicalNamespaceMigration",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/BlobContainersPut.json",
+          "operationId": undefined,
+          "step": "BlobContainers_Create",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/BlobContainersList.json",
+          "operationId": undefined,
+          "step": "BlobContainers_List",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/BlobContainersGet.json",
+          "operationId": undefined,
+          "step": "BlobContainers_Get",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/BlobContainersPatch.json",
+          "operationId": undefined,
+          "step": "BlobContainers_Update",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/BlobContainersLockImmutabilityPolicy.json",
+          "operationId": undefined,
+          "step": "BlobContainers_LockImmutabilityPolicy",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/ObjectLevelWormContainerMigration.json",
+          "operationId": undefined,
+          "step": "BlobContainers_ObjectLevelWorm",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/BlobContainersLease_Acquire.json",
+          "operationId": undefined,
+          "step": "BlobContainers_Lease",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/BlobContainersClearLegalHold.json",
+          "operationId": undefined,
+          "step": "BlobContainers_ClearLegalHold",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/BlobContainersExtendImmutabilityPolicy.json",
+          "operationId": undefined,
+          "step": "BlobContainers_ExtendImmutabilityPolicy",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/BlobContainersSetLegalHold.json",
+          "operationId": undefined,
+          "step": "BlobContainers_SetLegalHold",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/FileSharesPut.json",
+          "operationId": undefined,
+          "step": "FileShares_Create",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/FileSharesList.json",
+          "operationId": undefined,
+          "step": "FileShares_List",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/FileSharesGet.json",
+          "operationId": undefined,
+          "step": "FileShares_Get",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/FileSharesPatch.json",
+          "operationId": undefined,
+          "step": "FileShares_Update",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/FileSharesLease_Acquire.json",
+          "operationId": undefined,
+          "step": "FileShares_Lease",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/FileSharesRestore.json",
+          "operationId": undefined,
+          "step": "FileShares_Restore",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/LocalUserCreate.json",
+          "operationId": undefined,
+          "step": "LocalUsers_CreateOrUpdate",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/LocalUsersList.json",
+          "operationId": undefined,
+          "step": "LocalUsers_List",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/LocalUserGet.json",
+          "operationId": undefined,
+          "step": "LocalUsers_Get",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/LocalUserListKeys.json",
+          "operationId": undefined,
+          "step": "LocalUsers_ListKeys",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/LocalUserRegeneratePassword.json",
+          "operationId": undefined,
+          "step": "LocalUsers_RegeneratePassword",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/TableOperationPut.json",
+          "operationId": undefined,
+          "step": "Table_Create",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/TableOperationList.json",
+          "operationId": undefined,
+          "step": "Table_List",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/TableOperationGet.json",
+          "operationId": undefined,
+          "step": "Table_Get",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/TableOperationPatch.json",
+          "operationId": undefined,
+          "step": "Table_Update",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/QueueOperationPut.json",
+          "operationId": undefined,
+          "step": "Queue_Create",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/QueueOperationList.json",
+          "operationId": undefined,
+          "step": "Queue_List",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/QueueOperationGet.json",
+          "operationId": undefined,
+          "step": "Queue_Get",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/QueueOperationPatch.json",
+          "operationId": undefined,
+          "step": "Queue_Update",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/BlobContainersPutImmutabilityPolicy.json",
+          "operationId": undefined,
+          "step": "BlobContainers_CreateOrUpdateImmutabilityPolicy",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/BlobContainersGetImmutabilityPolicy.json",
+          "operationId": undefined,
+          "step": "BlobContainers_GetImmutabilityPolicy",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/StorageAccountPutEncryptionScope.json",
+          "operationId": undefined,
+          "step": "EncryptionScopes_Put",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/StorageAccountEncryptionScopeList.json",
+          "operationId": undefined,
+          "step": "EncryptionScopes_List",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/StorageAccountGetEncryptionScope.json",
+          "operationId": undefined,
+          "step": "EncryptionScopes_Get",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/StorageAccountPatchEncryptionScope.json",
+          "operationId": undefined,
+          "step": "EncryptionScopes_Patch",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/StorageAccountPutPrivateEndpointConnection.json",
+          "operationId": undefined,
+          "step": "PrivateEndpointConnections_Put",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/StorageAccountListPrivateEndpointConnections.json",
+          "operationId": undefined,
+          "step": "PrivateEndpointConnections_List",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/StorageAccountGetPrivateEndpointConnection.json",
+          "operationId": undefined,
+          "step": "PrivateEndpointConnections_Get",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/StorageAccountSetBlobInventoryPolicy.json",
+          "operationId": undefined,
+          "step": "BlobInventoryPolicies_CreateOrUpdate",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/StorageAccountListBlobInventoryPolicy.json",
+          "operationId": undefined,
+          "step": "BlobInventoryPolicies_List",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/StorageAccountGetBlobInventoryPolicy.json",
+          "operationId": undefined,
+          "step": "BlobInventoryPolicies_Get",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/StorageAccountCreateObjectReplicationPolicyOnDestination.json",
+          "operationId": undefined,
+          "step": "ObjectReplicationPolicies_CreateOrUpdate",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/StorageAccountListObjectReplicationPolicies.json",
+          "operationId": undefined,
+          "step": "ObjectReplicationPolicies_List",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/StorageAccountGetObjectReplicationPolicy.json",
+          "operationId": undefined,
+          "step": "ObjectReplicationPolicies_Get",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/StorageAccountSetManagementPolicy.json",
+          "operationId": undefined,
+          "step": "ManagementPolicies_CreateOrUpdate",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/StorageAccountGetManagementPolicy.json",
+          "operationId": undefined,
+          "step": "ManagementPolicies_Get",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/TableServicesPut.json",
+          "operationId": undefined,
+          "step": "TableServices_SetServiceProperties",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/TableServicesList.json",
+          "operationId": undefined,
+          "step": "TableServices_List",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/TableServicesGet.json",
+          "operationId": undefined,
+          "step": "TableServices_GetServiceProperties",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/BlobServicesPut.json",
+          "operationId": undefined,
+          "step": "BlobServices_SetServiceProperties",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/BlobServicesList.json",
+          "operationId": undefined,
+          "step": "BlobServices_List",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/BlobServicesGet.json",
+          "operationId": undefined,
+          "step": "BlobServices_GetServiceProperties",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/QueueServicesPut.json",
+          "operationId": undefined,
+          "step": "QueueServices_SetServiceProperties",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/QueueServicesList.json",
+          "operationId": undefined,
+          "step": "QueueServices_List",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/QueueServicesGet.json",
+          "operationId": undefined,
+          "step": "QueueServices_GetServiceProperties",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/FileServicesPut.json",
+          "operationId": undefined,
+          "step": "FileServices_SetServiceProperties",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/FileServicesList.json",
+          "operationId": undefined,
+          "step": "FileServices_List",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/FileServicesGet.json",
+          "operationId": undefined,
+          "step": "FileServices_GetServiceProperties",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/OperationsList.json",
+          "operationId": undefined,
+          "step": "Operations_List",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/DeletedAccountList.json",
+          "operationId": undefined,
+          "step": "DeletedAccounts_List",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/DeletedAccountGet.json",
+          "operationId": undefined,
+          "step": "DeletedAccounts_Get",
+          "variables": Object {
+            "deletedAccountName": Object {
+              "prefix": "deletedacc",
+              "type": "string",
+            },
+          },
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/StorageAccountListLocationUsage.json",
+          "operationId": undefined,
+          "step": "Usages_ListByLocation",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/SKUList.json",
+          "operationId": undefined,
+          "step": "Skus_List",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/StorageAccountListPrivateLinkResources.json",
+          "operationId": undefined,
+          "step": "PrivateLinkResources_ListByStorageAccount",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/StorageAccountDeleteManagementPolicy.json",
+          "operationId": undefined,
+          "step": "ManagementPolicies_Delete",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/StorageAccountDeleteObjectReplicationPolicy.json",
+          "operationId": undefined,
+          "step": "ObjectReplicationPolicies_Delete",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/StorageAccountDeleteBlobInventoryPolicy.json",
+          "operationId": undefined,
+          "step": "BlobInventoryPolicies_Delete",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/StorageAccountDeletePrivateEndpointConnection.json",
+          "operationId": undefined,
+          "step": "PrivateEndpointConnections_Delete",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/BlobContainersDeleteImmutabilityPolicy.json",
+          "operationId": undefined,
+          "step": "BlobContainers_DeleteImmutabilityPolicy",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/QueueOperationDelete.json",
+          "operationId": undefined,
+          "step": "Queue_Delete",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/TableOperationDelete.json",
+          "operationId": undefined,
+          "step": "Table_Delete",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/LocalUserDelete.json",
+          "operationId": undefined,
+          "step": "LocalUsers_Delete",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/FileSharesDelete.json",
+          "operationId": undefined,
+          "step": "FileShares_Delete",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/BlobContainersDelete.json",
+          "operationId": undefined,
+          "step": "BlobContainers_Delete",
+        },
+        Object {
+          "exampleFile": "test/apiScenario/fixtures/specification/storage/resource-manager/Microsoft.Storage/stable/2021-08-01/examples/StorageAccountDelete.json",
+          "operationId": undefined,
+          "step": "StorageAccounts_Delete",
+        },
+      ],
+    },
+  ],
+  "scope": "ResourceGroup",
+  "variables": Object {
+    "BlobServicesName": Object {
+      "prefix": "blobservic",
+      "type": "string",
+    },
+    "FileServicesName": Object {
+      "prefix": "fileservic",
+      "type": "string",
+    },
+    "accountName": Object {
+      "prefix": "accountnam",
+      "type": "string",
+    },
+    "blobInventoryPolicyName": Object {
+      "prefix": "blobinvent",
+      "type": "string",
+    },
+    "containerName": Object {
+      "prefix": "containern",
+      "type": "string",
+    },
+    "encryptionScopeName": Object {
+      "prefix": "encryption",
+      "type": "string",
+    },
+    "immutabilityPolicyName": Object {
+      "prefix": "immutabili",
+      "type": "string",
+    },
+    "managementPolicyName": Object {
+      "prefix": "management",
+      "type": "string",
+    },
+    "objectReplicationPolicyId": Object {
+      "prefix": "objectrepl",
+      "type": "string",
+    },
+    "privateEndpointConnectionName": Object {
+      "prefix": "privateend",
+      "type": "string",
+    },
+    "queueName": Object {
+      "prefix": "queuename",
+      "type": "string",
+    },
+    "queueServiceName": Object {
+      "prefix": "queueservi",
+      "type": "string",
+    },
+    "shareName": Object {
+      "prefix": "sharename",
+      "type": "string",
+    },
+    "tableName": Object {
+      "prefix": "tablename",
+      "type": "string",
+    },
+    "tableServiceName": Object {
+      "prefix": "tableservi",
+      "type": "string",
+    },
+    "username": Object {
+      "prefix": "username",
+      "type": "string",
+    },
+  },
+}
+`;

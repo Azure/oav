@@ -1,0 +1,113 @@
+# yaml-language-server: $schema=/home/leni/workspace/azure-rest-api-specs/documentation/api-scenario/references/v1.2/schema.json
+scope: ResourceGroup
+
+variables:
+  accountName:
+    type: string
+    prefix: sta
+
+scenarios:
+  - scenario: basic
+    steps:
+      - step: checkName
+        operationId: StorageAccounts_CheckNameAvailability
+        parameters:
+          accountName:
+            name: $(accountName)
+            type: Microsoft.Storage/storageAccounts
+        responses:
+          200:
+            body:
+              nameAvailable: true
+      - step: createStorageAccount
+        operationId: StorageAccounts_Create
+        parameters:
+          parameters:
+            sku:
+              name: Standard_LRS
+            kind: StorageV2
+            location: $(location)
+            properties:
+              encryption: { "services": { "blob": {} }, "keySource": "Microsoft.Storage" }
+  - scenario: overrideVariable
+    variables:
+      accountName: $(accountName)2
+    steps:
+      - step: checkName
+        operationId: StorageAccounts_CheckNameAvailability
+        parameters:
+          accountName:
+            name: $(accountName)
+            type: Microsoft.Storage/storageAccounts
+        responses:
+          200:
+            body:
+              nameAvailable: true
+      - step: createStorageAccount
+        operationId: StorageAccounts_Create
+        parameters:
+          parameters:
+            sku:
+              name: Standard_LRS
+            kind: StorageV2
+            location: $(location)
+            properties:
+              encryption: { "services": { "blob": {} }, "keySource": "Microsoft.Storage" }
+  - scenario: primitiveParameter
+    variables:
+      accountName:
+        type: string
+        prefix: foobar
+    steps:
+      - step: checkName
+        operationId: StorageAccounts_CheckNameAvailability
+        parameters:
+          accountName:
+            name: $(accountName)
+            type: Microsoft.Storage/storageAccounts
+        responses:
+          200:
+            body:
+              nameAvailable: true
+      - step: createStorageAccount
+        operationId: StorageAccounts_Create
+        parameters:
+          parameters:
+            sku:
+              name: Standard_LRS
+            kind: StorageV2
+            location: $(location)
+            properties:
+              encryption: { "services": { "blob": {} }, "keySource": "Microsoft.Storage" }
+      - step: DeletedAccounts_Get
+        operationId: DeletedAccounts_Get
+        parameters:
+          test: 1
+        variables:
+          deletedAccountName:
+            type: string
+            prefix: foobar
+  - scenario: patchVariables
+    variables:
+      parameters:
+        type: object
+        value:
+          properties:
+            sku:
+              name: Standard_LRS
+            kind: StorageV2
+            location: $(location)
+            properties:
+              encryption: { "services": { "blob": {} }, "keySource": "Microsoft.Storage" }
+            patches:
+              - add: /properties/kind
+                value: StorageV2
+    steps:
+      - step: createStorageAccount
+        operationId: StorageAccounts_Create
+        variables:
+          parameters:
+            type: object
+            patches:
+              - replace: /properties/sku
+                value: Standard

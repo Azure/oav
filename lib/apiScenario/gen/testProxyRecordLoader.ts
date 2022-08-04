@@ -3,7 +3,7 @@ import { URL } from "url";
 import { HttpMethods } from "@azure/core-http";
 import { injectable } from "inversify";
 import { Loader } from "../../swagger/loader";
-import { RequestTracking, SingleRequestTracking } from "./testScenarioGenerator";
+import { RequestTracking, SingleRequestTracking } from "./testRecordingApiScenarioGenerator";
 
 interface RecordingFile {
   Names: { [testName: string]: string[] };
@@ -40,10 +40,10 @@ export class TestProxyRecordingLoader implements Loader<RequestTracking, [Record
         url: url.href,
         headers: entry.RequestHeaders,
         query,
-        body: parseRecordingBodyJson(entry.RequestBody) ?? {},
+        body: entry.RequestBody ?? {},
         responseCode: entry.StatusCode,
         responseHeaders: entry.ResponseHeaders,
-        responseBody: parseRecordingBodyJson(entry.ResponseBody),
+        responseBody: entry.ResponseBody,
       };
 
       result.requests.push(request);

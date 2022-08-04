@@ -9,12 +9,31 @@ describe("ApiScenarioLoader", () => {
       useJsonParser: false,
       checkUnderFileRoot: false,
       fileRoot,
-      swaggerFilePaths: ["Microsoft.Storage/stable/2021-09-01/storage.json"],
+      swaggerFilePaths: ["Microsoft.Storage/stable/2021-08-01/storage.json"],
       includeOperation: false,
     });
 
     const testDef = await loader.load(
-      "Microsoft.Storage/stable/2021-09-01/scenarios/storageQuickStart.yaml"
+      "Microsoft.Storage/stable/2021-08-01/scenarios/storageQuickStart.yaml"
+    );
+
+    expect(testDef).toMatchSnapshot();
+  });
+
+  it("load valid example based scenario - storage", async () => {
+    const fileRoot = "test/apiScenario/fixtures/specification/storage/resource-manager/";
+
+    const loader = ApiScenarioLoader.create({
+      useJsonParser: false,
+      eraseXmsExamples: false,
+      checkUnderFileRoot: false,
+      fileRoot,
+      swaggerFilePaths: ["Microsoft.Storage/stable/2021-08-01/storage.json"],
+      includeOperation: false,
+    });
+
+    const testDef = await loader.load(
+      "Microsoft.Storage/stable/2021-08-01/scenarios/storageBasicExample.yaml"
     );
 
     expect(testDef).toMatchSnapshot();
@@ -76,7 +95,7 @@ describe("ApiScenarioLoader", () => {
 
   it("load valid scenario from uri", async () => {
     const readmeMd: string =
-      "https://github.com/Azure/azure-rest-api-specs/blob/apiscenario/specification/signalr/resource-manager/readme.md";
+      "https://github.com/Azure/azure-rest-api-specs/blob/23117e9/specification/signalr/resource-manager/readme.md";
     const fileRoot = pathDirName(readmeMd);
 
     const loader = ApiScenarioLoader.create({

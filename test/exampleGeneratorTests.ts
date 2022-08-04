@@ -94,6 +94,15 @@ describe("test generate example", () => {
     },
     1000000
   );
+
+  it("from mocker,LRO header", () => {
+    const fileContent = fs.readFileSync(
+      `test/exampleGenerator/specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2020-06-01/examples/Domains_CreateOrUpdate_MinimumSet_Gen.json`,
+      "utf-8"
+    );
+    const responses = JSON.parse(fileContent).responses;
+    expect(responses).toMatchSnapshot(`,readme:eventgrid,tag:package-2020-06`);
+  });
 });
 
 export function getSpecFilePaths(repoDir: string) {

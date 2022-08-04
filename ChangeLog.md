@@ -1,5 +1,35 @@
 # Change Log - oav
 
+## 07/20/2022 3.0.4
+
+- GenerateExamples - Support data generation in byte format
+- ModelValidator - Support data validation in byte format
+- API Scenario
+  - Support readme.test.md run API test
+  - Fix step variable unresolved in newman collection
+  - Fix bugs about html report
+  - Aggregate reports into one per scenario file
+  - Fix bug of object variables and patches
+  - Improve markdown report
+
+## 07/06/2022 3.0.3
+
+- Generate high quality examples from API Scenario tests
+
+## 06/30/2022 3.0.2
+
+- traffic-converter
+    - Implement [oav-traffic-converter](https://github.com/Azure/azure-sdk-tools/tree/main/tools/oav-traffic-converter)
+- Add activity parsed from request header to logs
+
+## 06/10/2022 3.0.1
+
+- GenerateExamples - Change the domain of LRO header
+- ModelValidator - Still validate LRO operation when response doesn't have schema
+- ModelValidator - Report real exampleJsonPath when additional parameter includes "."
+- Support duration format when generating examples
+- SemanticValidator - Fix bug about multipart/form-data
+
 ## 06/10/2022 3.0.0
 
 - API Scenario runner
@@ -11,6 +41,8 @@
   - Improve API Scenario generation from RESTler dependencies
   - Support running API Scenario against localhost endpoint
   - Refactor Postman based runner client
+  - Support API Scenario generation from testProxy recording
+  - Support local devMode where AAD auth, ARM call and LRO polling will be disabled
 
 ## 05/27/2022 2.12.2
 

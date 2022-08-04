@@ -404,7 +404,13 @@ export class LiveValidator {
   ): Promise<LiveValidationResult> {
     const startTime = Date.now();
     const correlationId = liveRequest.headers?.["x-ms-correlation-request-id"] || "";
-    const { info, error } = this.getOperationInfo(liveRequest, correlationId, operationInfo);
+    const activityId = liveRequest.headers?.["x-ms-request-id"] || "";
+    const { info, error } = this.getOperationInfo(
+      liveRequest,
+      correlationId,
+      activityId,
+      operationInfo
+    );
     if (error !== undefined) {
       this.logging(
         `ErrorMessage:${error.message}.ErrorStack:${error.stack}`,
@@ -483,7 +489,13 @@ export class LiveValidator {
   ): Promise<LiveValidationResult> {
     const startTime = Date.now();
     const correlationId = liveResponse.headers?.["x-ms-correlation-request-id"] || "";
-    const { info, error } = this.getOperationInfo(specOperation, correlationId, operationInfo);
+    const activityId = liveResponse.headers?.["x-ms-request-id"] || "";
+    const { info, error } = this.getOperationInfo(
+      specOperation,
+      correlationId,
+      activityId,
+      operationInfo
+    );
     if (error !== undefined) {
       this.logging(
         `ErrorMessage:${error.message}.ErrorStack:${error.stack}`,
@@ -639,6 +651,7 @@ export class LiveValidator {
   public getOperationInfo(
     request: { url: string; method: string },
     correlationId: string,
+    activityId: string,
     operationInfo?: OperationContext
   ): {
     info: OperationContext;
@@ -653,7 +666,8 @@ export class LiveValidator {
         info.validationRequest = this.parseValidationRequest(
           request.url,
           request.method,
-          correlationId
+          correlationId,
+          activityId
         );
       }
       if (info.operationMatch === undefined) {
@@ -671,9 +685,10 @@ export class LiveValidator {
   public parseValidationRequest(
     requestUrl: string,
     requestMethod: string | undefined | null,
-    correlationId: string
+    correlationId: string,
+    activityId: string
   ): ValidationRequest {
-    return parseValidationRequest(requestUrl, requestMethod, correlationId);
+    return parseValidationRequest(requestUrl, requestMethod, correlationId, activityId);
   }
 
   private async getMatchedPaths(jsonsPattern: string | string[]): Promise<string[]> {
@@ -825,6 +840,7 @@ export class LiveValidator {
       if (validationRequest !== undefined && validationRequest !== null) {
         this.logFunction(message, level, {
           CorrelationId: validationRequest.correlationId,
+          ActivityId: validationRequest.activityId,
           ProviderNamespace: validationRequest.providerNamespace,
           ResourceType: validationRequest.resourceType,
           ApiVersion: validationRequest.apiVersion,
@@ -863,12 +879,15 @@ export function formatUrlToExpectedFormat(requestUrl: string): string {
  *
  * @param correlationId The id to correlate the api calls.
  *
+ * @param activityId The id maps to request id, used by RPaaS.
+ *
  * @returns parsed ValidationRequest info.
  */
 export const parseValidationRequest = (
   requestUrl: string,
   requestMethod: string | undefined | null,
-  correlationId: string
+  correlationId: string,
+  activityId: string
 ): ValidationRequest => {
   if (
     requestUrl === undefined ||
@@ -932,6 +951,7 @@ export const parseValidationRequest = (
     pathStr,
     query: queryStr,
     correlationId,
+    activityId,
     requestUrl,
   };
 };

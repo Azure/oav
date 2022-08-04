@@ -1,0 +1,53 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "FormatValidation",
+    "description": "Tests for Format Validation"
+  },
+  "host": "management.azure.com",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [],
+  "produces": [],
+  "paths": {
+    "/format/byte": {
+      "post": {
+        "operationId": "Byte",
+        "description": "The value is in base64 format",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ByteResult"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Byte": {
+            "$ref": "./examples/byte.json"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "ByteResult": {
+      "type": "object",
+      "properties": {
+        "NotByteValue": {
+          "type": "string",
+          "format": "byte",
+          "description": "Base64-encoded data."
+        },
+        "ByteValue": {
+          "type": "string",
+          "format": "byte",
+          "description": "Base64-encoded data."
+        }
+      }
+    }
+  },
+  "parameters": {}
+}

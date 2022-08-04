@@ -1665,6 +1665,79 @@
         }
       }
     },
+    "/providers/Microsoft.EventGrid/duration": {
+      "get": {
+        "tags": [
+          "Duration"
+        ],
+        "summary": "List event duration.",
+        "description": "List duration of each event.",
+        "operationId": "Duration_List",
+        "consumes": [],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/parameters/ApiVersionParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/DurationListResult"
+            }
+          },
+          "default": {
+            "description": "*** Error Responses: ***\n\n * 400 Bad Request.\n\n * 500 Internal Server Error."
+          }
+        },
+        "x-ms-pageable": {
+          "nextLinkName": null
+        },
+        "x-ms-examples": {
+          "Operations_List": {
+            "$ref": "./examples/Duration_List.json"
+          }
+        }
+      }
+    },
+    "/providers/Microsoft.EventGrid/byte": {
+      "get": {
+        "tags": [
+          "Byte"
+        ],
+        "summary": "List event data in base64 format.",
+        "description": "List event data in base64 format.",
+        "operationId": "Byte_List",
+        "consumes": [],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/parameters/ApiVersionParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ByteListResult"
+            }
+          },
+          "default": {
+            "description": "*** Error Responses: ***\n\n * 400 Bad Request.\n\n * 500 Internal Server Error."
+          }
+        },
+        "x-ms-examples": {
+          "Operations_List": {
+            "$ref": "./examples/Byte_List.json"
+          }
+        }
+      }
+    },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/topics/{topicName}": {
       "get": {
         "tags": [
@@ -4013,6 +4086,30 @@
         }
       }
     },
+    "DurationListResult": {
+      "description": "Result of the List duration",
+      "type": "object",
+      "properties": {
+        "value": {
+          "description": "A collection of duration",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Duration"
+          }
+        }
+      }
+    },
+    "ByteListResult": {
+      "description": "Result of the List byte",
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string",
+          "format": "byte",
+          "description": "Base64-encoded data."
+        }
+      }
+    },
     "Operation": {
       "description": "Represents an operation returned by the GetOperations request",
       "type": "object",
@@ -4033,6 +4130,21 @@
           "description": "Properties of the operation",
           "type": "object",
           "x-ms-client-flatten": true
+        }
+      }
+    },
+    "Duration": {
+      "description": "Represents duration returned by the GetDuration request",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Name of the event",
+          "type": "string"
+        },
+        "durationOfEvent": {
+          "format": "duration",
+          "description": "Duration time of the event.",
+          "type": "string"
         }
       }
     },

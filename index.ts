@@ -69,14 +69,6 @@ export {
 export { VariableEnv } from "./lib/apiScenario/variableEnv";
 export { ApiScenarioRunner, ApiScenarioRunnerClient } from "./lib/apiScenario/apiScenarioRunner";
 
-export {
-  SwaggerAnalyzer,
-  SwaggerAnalyzerOption,
-  ExampleDependency,
-  DependencyResult,
-  normalizeDependency,
-} from "./lib/apiScenario/swaggerAnalyzer";
-
 export { FileLoaderOption, FileLoader } from "./lib/swagger/fileLoader";
 
 export { SwaggerLoaderOption, SwaggerLoader } from "./lib/swagger/swaggerLoader";

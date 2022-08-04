@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=/home/leni/workspace/azure-rest-api-specs/documentation/api-scenario/references/v1.2/schema.json
+scope: ResourceGroup
+
+variables:
+  accountName:
+    type: string
+    prefix: sta
+
+scenarios:
+  - scenario: StorageBasicExample
+    steps:
+      - step: checkName
+        exampleFile: ../examples/StorageAccountCheckNameAvailability.json
+        requestUpdate:
+          - replace: /accountName/name
+            value: $(accountName)
+
+      - step: createStorageAccount
+        exampleFile: ../examples/StorageAccountCreate.json
+
+      - step: updateStorageAccount
+        exampleFile: ../examples/StorageAccountUpdate.json
+
+      - step: getStorageAccount
+        exampleFile: ../examples/StorageAccountGetProperties.json
+
+      - step: deleteStorageAccount
+        exampleFile: ../examples/StorageAccountDelete.json
