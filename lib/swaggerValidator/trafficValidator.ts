@@ -346,6 +346,12 @@ export class TrafficValidator {
         return 0;
       });
 
+      /**
+       * Sort untested operationId by bubble sort
+       * Controlling the results of localeCompare can set the sorting method
+       * X.localeCompare(Y) > 0 descending sort
+       * X.localeCompare(Y) < 0 ascending sort
+       */
       for (let i = 0; i < unCoveredOperationsListFormat.length - 1; i++) {
         for (let j = 0; j < unCoveredOperationsListFormat.length - 1 - i; j++) {
           if (
