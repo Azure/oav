@@ -60,9 +60,11 @@ export interface StepResult {
   specFilePath?: string;
   exampleFilePath?: string;
   example?: SwaggerExample;
+  payloadPath?: string;
   operationId: string;
   runtimeError?: RuntimeError[];
   responseDiffResult?: ResponseDiffItem[];
+  responseTime?: number;
   liveValidationResult?: RequestResponseLiveValidationResult;
   stepValidationResult?: any;
   correlationId?: string;
@@ -131,7 +133,15 @@ export class NewmanReportValidator {
 
     this.testResult = {
       apiScenarioFilePath: path.relative(this.fileRoot, this.opts.apiScenarioFilePath),
-      swaggerFilePaths: this.opts.swaggerFilePaths!,
+      swaggerFilePaths: this.opts.swaggerFilePaths!.map((specPath) => {
+        if (process.env.REPORT_SPEC_PATH_PREFIX) {
+          specPath = path.join(
+            process.env.REPORT_SPEC_PATH_PREFIX,
+            specPath.substring(specPath.indexOf("specification"))
+          );
+        }
+        return specPath;
+      }),
       providerNamespace: getProviderFromFilePath(this.opts.apiScenarioFilePath),
       apiVersion: getApiVersionFromFilePath(this.opts.apiScenarioFilePath),
       runId: this.opts.runId,
@@ -232,8 +242,9 @@ export class NewmanReportValidator {
 
         // Schema validation
         const correlationId = it.response.headers["x-ms-correlation-request-id"];
+        let payloadFilePath;
         if (this.opts.savePayload) {
-          const payloadFilePath = `./payloads/${matchedStep.step}_${correlationId}.json`;
+          payloadFilePath = `./payloads/${matchedStep.step}_${correlationId}.json`;
           await this.fileLoader.writeFile(
             path.resolve(path.dirname(this.opts.reportOutputFilePath), payloadFilePath),
             JSON.stringify(payload, null, 2)
@@ -243,9 +254,15 @@ export class NewmanReportValidator {
 
         this.testResult.stepResult.push({
           specFilePath: matchedStep.operation._path._spec._filePath,
-          exampleFilePath: exampleFilePath,
           operationId: it.annotation.operationId,
+          payloadPath: payloadFilePath
+            ? path.join(
+                path.basename(path.dirname(this.opts.reportOutputFilePath)),
+                payloadFilePath
+              )
+            : undefined,
           runtimeError,
+          responseTime: it.response.responseTime,
           responseDiffResult: responseDiffResult,
           correlationId: correlationId,
           statusCode: it.response.statusCode,

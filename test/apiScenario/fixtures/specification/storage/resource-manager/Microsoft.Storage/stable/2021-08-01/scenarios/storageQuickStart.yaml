@@ -28,7 +28,7 @@ scenarios:
             kind: StorageV2
             location: $(location)
             properties:
-              encryption: {"services": {"blob": {}}, "keySource": "Microsoft.Storage"}
+              encryption: { "services": { "blob": {} }, "keySource": "Microsoft.Storage" }
   - scenario: overrideVariable
     variables:
       accountName: $(accountName)2
@@ -52,7 +52,7 @@ scenarios:
             kind: StorageV2
             location: $(location)
             properties:
-              encryption: {"services": {"blob": {}}, "keySource": "Microsoft.Storage"}
+              encryption: { "services": { "blob": {} }, "keySource": "Microsoft.Storage" }
   - scenario: primitiveParameter
     variables:
       accountName:
@@ -78,7 +78,7 @@ scenarios:
             kind: StorageV2
             location: $(location)
             properties:
-              encryption: {"services": {"blob": {}}, "keySource": "Microsoft.Storage"}
+              encryption: { "services": { "blob": {} }, "keySource": "Microsoft.Storage" }
       - step: DeletedAccounts_Get
         operationId: DeletedAccounts_Get
         parameters:
@@ -87,3 +87,27 @@ scenarios:
           deletedAccountName:
             type: string
             prefix: foobar
+  - scenario: patchVariables
+    variables:
+      parameters:
+        type: object
+        value:
+          properties:
+            sku:
+              name: Standard_LRS
+            kind: StorageV2
+            location: $(location)
+            properties:
+              encryption: { "services": { "blob": {} }, "keySource": "Microsoft.Storage" }
+            patches:
+              - add: /properties/kind
+                value: StorageV2
+    steps:
+      - step: createStorageAccount
+        operationId: StorageAccounts_Create
+        variables:
+          parameters:
+            type: object
+            patches:
+              - replace: /properties/sku
+                value: Standard

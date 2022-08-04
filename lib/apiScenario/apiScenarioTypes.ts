@@ -336,6 +336,7 @@ export interface NewmanResponse {
   statusCode: number;
   headers: { [key: string]: any };
   body: string;
+  responseTime: number;
 }
 
 export interface TestResources {
