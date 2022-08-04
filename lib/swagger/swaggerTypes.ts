@@ -137,6 +137,7 @@ export type Path = {
 
 // ----------------------------- Operation -----------------------------------
 export interface Operation {
+  swaggerPath?: string;
   responses: { [responseName: string]: Response };
   summary?: string;
   description?: string;

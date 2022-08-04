@@ -975,3 +975,51 @@ export const getRandomString = (length?: number) => {
     .value.toString(36)
     .slice(0 - (length ?? 6));
 };
+
+export const findPathsToKey = (options: {
+  key: string;
+  obj: any;
+  pathToKey?: string;
+}): string[] => {
+  const results = [];
+  (function findKey({ key, obj, pathToKey }) {
+    const oldPath = `${pathToKey ? pathToKey : ""}`;
+    if (obj && obj.hasOwnProperty(key)) {
+      results.push(`${oldPath}.${key}`);
+      return;
+    }
+    if (obj !== null && typeof obj === "object" && !Array.isArray(obj)) {
+      for (const k in obj) {
+        if (obj.hasOwnProperty(k)) {
+          if (Array.isArray(obj[k])) {
+            for (let j = 0; j < obj[k].length; j++) {
+              findKey({
+                obj: obj[k][j],
+                key,
+                pathToKey: `${oldPath}${k}['${j}']`,
+              });
+            }
+          }
+          if (obj[k] !== null && typeof obj[k] === "object") {
+            findKey({
+              obj: obj[k],
+              key,
+              pathToKey: /[\*|\{|\[|\}|\}|\,|\.]/.test(k)
+                ? `${oldPath}['${k}']`
+                : `${oldPath}.${k}`,
+            });
+          }
+        }
+      }
+    }
+  })(options);
+
+  return results;
+};
+
+export const findPathToValue = (arr: string[], obj: any, value: string) => {
+  return arr.reduce((pre: string[], cur: string) => {
+    lodash.get(obj, cur.substr(1)) === value && pre.push(cur);
+    return pre;
+  }, []);
+};
