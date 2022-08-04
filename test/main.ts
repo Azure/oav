@@ -2,6 +2,8 @@ import { FileLoader } from "../lib/swagger/fileLoader";
 import { OperationLoader } from "../lib/armValidator/operationLoader";
 import { assert } from "console";
 
+jest.setTimeout(999999);
+
 describe("Live Validator", () => {
   describe("Initialization", () => {
     it("should initialize with defaults", async () => {

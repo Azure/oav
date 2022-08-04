@@ -1,6 +1,7 @@
 import { injectable } from "inversify";
-import { Json } from "@azure-tools/openapi-tools-common";
+import { Json, readFile as vfsReadFile } from "@azure-tools/openapi-tools-common";
 import { JSONPath } from "jsonpath-plus";
+import $RefParser, { FileInfo } from "@apidevtools/json-schema-ref-parser";
 import { FileLoader, FileLoaderOption } from "../swagger/fileLoader";
 import { xmsExamples } from "../util/constants";
 
@@ -40,63 +41,63 @@ export class OperationLoader {
   }
 
   public async init(inputFilePath: string): Promise<Json> {
-    const spec = await this.load(inputFilePath);
-    console.log(`Loaded spec: ${JSON.stringify(spec)}`);
-
-    let exampels = await this.getAllTargetKey(this.ruleMap.get("example")!, spec);
-    console.log("Example:");
-    exampels.forEach((a) => console.log(a));
-    this.removeProperty(spec);
-    exampels = await this.getAllTargetKey(this.ruleMap.get("example")!, spec);
-    console.log("Example:");
-    exampels.forEach((a) => console.log(a));
-
-    let attrs = await this.getAllTargetKey(this.ruleMap.get("secret")!, spec);
-    console.log("secret:");
-    attrs.forEach((a) => console.log(a));
-    attrs = await this.getAllTargetKey(this.ruleMap.get("readOnly")!, spec);
-    console.log("readOnly:");
-    attrs.forEach((a) => console.log(a));
-    return spec;
-  }
-
-  private async load(inputFilePath: string): Promise<Json> {
     const providerName = this.parseProviderName(inputFilePath);
     if (providerName === undefined) {
       console.log(`Illegal file path, unable to extract provider name ${inputFilePath}`);
       return {};
     }
     console.log(`Provider Name: ${providerName}`);
-    //Read content from swagger file and
-    const fileString = await this.fileLoader.load(inputFilePath);
+    const spec = await this.load(inputFilePath);
+    //console.log(`Loaded spec: ${JSON.stringify(spec)}`);
+    const apiVersion = JSON.parse(JSON.stringify(spec))["info"]["version"];
+    console.log(`Api version ${apiVersion}`);
 
-    let fileContent = JSON.parse(fileString);
-    /*console.log("1");
-    let allXmsSecretKeys = JSONPath({
-      path: '$..[?(@["x-ms-secret"])]~',
-      json: fileContent,
-      resultType: "all",
+    const allOperations = await this.getAllTargetKey("$..[?(@.operationId)]~", spec);
+    allOperations.forEach((op) => {
+      const path = op.path;
+      const parent = op.parent;
+      const operation = parent[op.value];
+      const operationId = operation["operationId"];
+      console.log(`operationId: ${operationId}, path: ${path}`);
+      this.ruleMap.forEach(async (value: string, key: string) => {
+        const attrs = await this.getAllTargetKey(value, operation);
+        console.log(`${key}: ${attrs.length}`);
+      });
     });
-    for (const a in allXmsSecretKeys) {
-      console.log(a);
-    }*/
-    const apiVersion = fileContent["info"]["version"];
-    console.log(`api version ${apiVersion}`);
-    //this.removeProperty(fileContent);
-    /*console.log("2");
-    allXmsSecretKeys = JSONPath({
-      path: '$..[?(@["x-ms-secret"])]~',
-      json: fileContent,
-      resultType: "all",
-    });
-    for (const a in allXmsSecretKeys) {
-      console.log(a);
-    }
-    console.log("3");*/
+
+    return spec;
+  }
+
+  private async load(inputFilePath: string): Promise<Json> {
+    //Read content from swagger file and
+    let fileContent = JSON.parse(await this.fileLoader.load(inputFilePath));
+
     //remove unnecessary properties
+    this.removeProperty(fileContent);
+    //console.log(JSON.stringify(fileContent));
 
     //resolve all refs using lib: https://github.com/APIDevTools/json-schema-ref-parser
-    //return resolved swagger
+    const resolveOption: $RefParser.Options = {
+      resolve: {
+        file: {
+          canRead: true,
+          read(file: FileInfo) {
+            if (isExample(file.url)) {
+              return {};
+            }
+            return loadSingleFile(file.url);
+          },
+        },
+      },
+    };
+    try {
+      const parser = new $RefParser();
+      const deDoc = await parser.dereference(inputFilePath, fileContent, resolveOption);
+      console.log(`Deferenced: ${JSON.stringify(deDoc.definitions!.ApiCollection)}`);
+    } catch (err) {
+      console.error(err);
+      return {};
+    }
 
     return fileContent;
   }
@@ -170,40 +171,23 @@ export class OperationLoader {
     }
   }
 
-  private async getAllTargetKey(allXmsPath: string, swagger: any): Promise<string[]> {
-    console.log(`Get paths of ${allXmsPath}`);
+  private async getAllTargetKey(allXmsPath: string, swagger: any): Promise<any[]> {
+    //console.log(`Get paths of ${allXmsPath}`);
     const ret = JSONPath({
       path: allXmsPath,
       json: swagger,
-    });
-    console.log(`Get xmsKey: ${ret.length}. ${ret.join("\n")}\n`);
-
-    /*
-    let allXmsSecretKeys = JSONPath({
-      path: "$..[?(@['x-ms-examples'])]~",
-      json: swagger,
       resultType: "all",
     });
-    for (const a in allXmsSecretKeys) {
-      console.log(a);
-    }
-    allXmsSecretKeys = JSONPath({
-      path: '$..[?(@["x-ms-examples"])]~',
-      json: swagger,
-      resultType: "all",
-    });
-    for (const a in allXmsSecretKeys) {
-      console.log(a);
-    }*/
-    /*
-    const allXmsSecretKeys = JSONPath({
-      path: '$..[?(@["x-ms-secret"])]~',
-      json: swagger,
-      resultType: "all",
-    });
-    for (const a in allXmsSecretKeys) {
-      console.log(a);
-    }*/
+    //console.log(`Get xmsKey: ${ret.length}.`);
     return ret;
   }
+}
+
+export function isExample(path: string) {
+  return path.split(/\\|\//g).includes("examples");
+}
+
+export async function loadSingleFile(filePath: string) {
+  const fileString = await vfsReadFile(filePath);
+  return JSON.parse(fileString);
 }
