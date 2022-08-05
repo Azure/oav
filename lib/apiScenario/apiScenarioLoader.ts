@@ -243,10 +243,12 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       ...convertVariables(rawDef.variables),
     };
 
-    if (scenarioDef.scope === "ResourceGroup") {
+    if (scenarioDef.scope in ["ResourceGroup", "Subscription"]) {
       const requiredVariables = new Set(scenarioDef.requiredVariables);
       requiredVariables.add("subscriptionId");
-      requiredVariables.add("location");
+      if (scenarioDef.scope === "ResourceGroup") {
+        requiredVariables.add("location");
+      }
       scenarioDef.requiredVariables = [...requiredVariables];
     }
 
@@ -402,8 +404,9 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
         }
       }
       if (
-        ctx.scenarioDef.scope === "ResourceGroup" &&
-        ["subscriptionId", "resourceGroupName", "location"].includes(name)
+        (ctx.scenarioDef.scope === "ResourceGroup" &&
+          ["subscriptionId", "resourceGroupName", "location"].includes(name)) ||
+        (ctx.scenarioDef.scope === "Subscription" && ["subscriptionId"].includes(name))
       ) {
         return {
           type: "string",
