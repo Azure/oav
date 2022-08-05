@@ -243,7 +243,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       ...convertVariables(rawDef.variables),
     };
 
-    if (scenarioDef.scope in ["ResourceGroup", "Subscription"]) {
+    if (["ResourceGroup", "Subscription"].indexOf(scenarioDef.scope) >= 0) {
       const requiredVariables = new Set(scenarioDef.requiredVariables);
       requiredVariables.add("subscriptionId");
       if (scenarioDef.scope === "ResourceGroup") {
