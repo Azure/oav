@@ -8,6 +8,8 @@
   - add detailed position info on schema link
   - change report UI
   - support multi swaggers on report
+- API Scenario
+  - Support Subscription and Tenant scope
 
 ## 07/20/2022 3.0.4
 
