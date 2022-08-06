@@ -258,6 +258,7 @@
             "name": "parameters",
             "in": "body",
             "required": true,
+            "readOnly": true,
             "schema": {
               "$ref": "#/definitions/ApiCreateOrUpdateParameter"
             },
@@ -3669,6 +3670,7 @@
     "ApiCreateOrUpdateProperties": {
       "properties": {
         "contentValue": {
+          "readOnly": true,
           "type": "string",
           "description": "Content value when Importing an API."
         },
@@ -4701,6 +4703,7 @@
     },
     "ApiIdRevParameter": {
       "name": "apiId",
+      "readOnly": true,
       "in": "path",
       "required": true,
       "type": "string",

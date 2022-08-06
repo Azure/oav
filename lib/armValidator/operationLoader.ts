@@ -12,11 +12,15 @@ export interface OperationLoaderOption extends FileLoaderOption {
 }
 
 //readOnly: [RestorePointCollection.properties.provisioningState]
+//'parameters/schema/properties/properties/allOf/0/allOf/0/properties/isCurrent'
+//'parameters/schema/properties/properties/allOf/0/allOf/0/properties/isCurrent'
 type Operation = Map<string, string[]>;
 //RestorePointCollections_CreateOrUpdate
 type ApiVersion = Map<string, Operation>;
 //2021-11-01
 type Provider = Map<string, ApiVersion>;
+
+var pointer = require("json-pointer");
 
 @injectable()
 export class OperationLoader {
@@ -41,30 +45,58 @@ export class OperationLoader {
   }
 
   public async init(inputFilePath: string): Promise<Json> {
-    const providerName = this.parseProviderName(inputFilePath);
+    const providerName = this.parseProviderName(inputFilePath)?.toLowerCase();
     if (providerName === undefined) {
       console.log(`Illegal file path, unable to extract provider name ${inputFilePath}`);
       return {};
     }
-    console.log(`Provider Name: ${providerName}`);
+    //console.log(`Provider Name: ${providerName}`);
     const spec = await this.load(inputFilePath);
     //console.log(`Loaded spec: ${JSON.stringify(spec)}`);
-    const apiVersion = JSON.parse(JSON.stringify(spec))["info"]["version"];
-    console.log(`Api version ${apiVersion}`);
+    const apiVersion = JSON.parse(JSON.stringify(spec))["info"]["version"].toLowerCase();
+    //console.log(`Api version ${apiVersion}`);
 
     const allOperations = await this.getAllTargetKey("$..[?(@.operationId)]~", spec);
-    allOperations.forEach((op) => {
-      const path = op.path;
+    allOperations.forEach((op: { path: any; parent: any; value: string | number }) => {
+      //const path = op.path;
       const parent = op.parent;
       const operation = parent[op.value];
       const operationId = operation["operationId"];
-      console.log(`operationId: ${operationId}, path: ${path}`);
-      this.ruleMap.forEach(async (value: string, key: string) => {
-        const attrs = await this.getAllTargetKey(value, operation);
-        console.log(`${key}: ${attrs.length}`);
+      //console.log(`operationId: ${operationId}, path: ${path}`);
+      this.ruleMap.forEach((value: string, key: string) => {
+        const attrs = this.getAllTargetKey(value, operation);
+        //console.log(`${key}: ${attrs.length}`);
+        let apiVersions = this.cache.get(providerName);
+        if (apiVersions === undefined) {
+          apiVersions = new Map();
+          this.cache.set(providerName!, apiVersions);
+        }
+        let allOperations = apiVersions.get(apiVersion);
+        if (allOperations === undefined) {
+          allOperations = new Map();
+          apiVersions.set(apiVersion, allOperations);
+        }
+        let allRules = allOperations.get(operationId);
+        if (allRules === undefined) {
+          allRules = new Map();
+          allOperations.set(operationId, allRules);
+        }
+        let allAttrs = allRules.get(key);
+        if (allAttrs === undefined) {
+          allAttrs = [];
+          allRules.set(key, allAttrs);
+        }
+        for (const attr of attrs) {
+          //TODO: parameter as a list, get the name of the element
+          const attrPath = this.getAttrPath(operation as any, attr.pointer);
+          if (attrPath !== undefined) {
+            allAttrs.push(attrPath);
+          }
+          //console.log(`Get attrPath ${attrPath}`);
+        }
       });
     });
-
+    console.log("Finish building cache.");
     return spec;
   }
 
@@ -92,8 +124,8 @@ export class OperationLoader {
     };
     try {
       const parser = new $RefParser();
-      const deDoc = await parser.dereference(inputFilePath, fileContent, resolveOption);
-      console.log(`Deferenced: ${JSON.stringify(deDoc.definitions!.ApiCollection)}`);
+      fileContent = await parser.dereference(inputFilePath, fileContent, resolveOption);
+      console.log(`Deferenced: ${JSON.stringify(fileContent.definitions!.ApiCollection)}`);
     } catch (err) {
       console.error(err);
       return {};
@@ -171,7 +203,7 @@ export class OperationLoader {
     }
   }
 
-  private async getAllTargetKey(allXmsPath: string, swagger: any): Promise<any[]> {
+  private getAllTargetKey(allXmsPath: string, swagger: any) {
     //console.log(`Get paths of ${allXmsPath}`);
     const ret = JSONPath({
       path: allXmsPath,
@@ -180,6 +212,25 @@ export class OperationLoader {
     });
     //console.log(`Get xmsKey: ${ret.length}.`);
     return ret;
+  }
+
+  private getAttrPath(obj: any, path: string) {
+    //'/parameters/3/schema/properties/properties/properties/contentValue';
+    const regex = /(\/parameters\/[\d])/g;
+    const found = path.match(regex);
+    const resRegex = new RegExp("^/responses", "g");
+    let name, attrPath;
+    if (found !== null) {
+      const reObj = pointer.get(obj, found[0]);
+      name = reObj.name;
+      attrPath = path.replace(regex, name);
+      //console.log(`Get json by pointer: ${name}\n${attrPath}\n${JSON.stringify(reObj)}`);
+    } else if (resRegex.test(path)) {
+      attrPath = path.replace(resRegex, "");
+    } else {
+      console.log(`Check invalid path: ${JSON.stringify(obj)} ${path}`);
+    }
+    return attrPath;
   }
 }
 

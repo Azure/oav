@@ -13,8 +13,7 @@ describe("Live Validator", () => {
 
       });
       const ruleMap = new Map<string, string>([
-        ["readOnly", "$..[?(@.readOnly)]~"],
-        ["description", '$..[?(@["description"])]~']
+        ["readOnly", "$..[?(@.readOnly)]~"]
       ]);
 
       const operationLoader = new OperationLoader(fileLoader, ruleMap);
