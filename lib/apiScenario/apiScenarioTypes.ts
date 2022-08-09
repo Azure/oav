@@ -306,7 +306,7 @@ export type Scenario = TransformRaw<
 
 //#region ScenarioDefinitionFile
 export type RawScenarioDefinition = RawVariableScope & {
-  scope?: "ResourceGroup";
+  scope?: "ResourceGroup" | "Subscription" | "Tenant" | "None";
   prepareSteps?: RawStep[];
   scenarios: RawScenario[];
   cleanUpSteps?: RawStep[];

@@ -7,8 +7,8 @@ export const ApiScenarioDefinition: Schema & {
   properties: {
     scope: {
       type: "string",
-      enum: ["ResourceGroup", "None"],
-      default: "None",
+      enum: ["ResourceGroup", "Subscription", "Tenant", "None"],
+      default: "ResourceGroup",
     },
     variables: {
       $ref: "#/definitions/Variables",

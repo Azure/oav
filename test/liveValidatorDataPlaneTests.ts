@@ -54,10 +54,10 @@ describe("LiveValidator for data-plane", () => {
       expect(validator.operationCoverageResult.length).toEqual(1);
       for (let i of validator.operationCoverageResult) {
         if (i.spec === keyPath) {
-          expect(i.coveredOperaions).toEqual(2);
+          expect(i.coveredOperaions).toEqual(1);
           expect(i.totalOperations).toEqual(14);
           expect(i.validationFailOperations).toEqual(1);
-          expect(i.coverageRate).toEqual(2.0/14.0);
+          expect(i.coverageRate).toEqual(1.0/14.0);
         }
       }
       expect(validator.operationUndefinedResult).toEqual(1);

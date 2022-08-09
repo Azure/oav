@@ -1,5 +1,16 @@
 # Change Log - oav
 
+## 08/04/2022 3.0.5
+
+- validate-traffic
+  - add detailed operationId on swagger link
+  - add detailed position info on pathInpayload link
+  - add detailed position info on schema link
+  - change report UI
+  - support multi swaggers on report
+- API Scenario
+  - Support Subscription and Tenant scope
+
 ## 07/20/2022 3.0.4
 
 - GenerateExamples - Support data generation in byte format
