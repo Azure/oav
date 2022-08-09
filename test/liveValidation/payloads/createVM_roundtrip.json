@@ -1,0 +1,134 @@
+{
+  "liveRequest": {
+    "url": "https://management.azure.com/subscriptions/db5eb68e-73e2-4fa8-b18a-46cd1be4cce5/resourceGroups/apiTest-g33qhq/providers/Microsoft.Compute/virtualMachines/testlzc6bl?api-version=2021-11-01",
+    "method": "put",
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "<bearer token>",
+      "User-Agent": "PostmanRuntime/7.29.0",
+      "Accept": "*/*",
+      "Cache-Control": "no-cache",
+      "Postman-Token": "e33cff1a-0be8-4475-a9f6-5ff8e9f0e31d",
+      "Host": "management.azure.com",
+      "Accept-Encoding": "gzip, deflate, br",
+      "Connection": "keep-alive",
+      "Content-Length": "845"
+    },
+    "body": {
+      "location": "westcentralus",
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "Standard_A2_v2"
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "/subscriptions/db5eb68e-73e2-4fa8-b18a-46cd1be4cce5/resourceGroups/apiTest-g33qhq/providers/Microsoft.Network/networkInterfaces/testlzc6bl-VMNic"
+            }
+          ]
+        },
+        "storageProfile": {
+          "osDisk": {
+            "createOption": "fromImage",
+            "caching": "ReadWrite"
+          },
+          "imageReference": {
+            "publisher": "MicrosoftWindowsServer",
+            "offer": "WindowsServer",
+            "sku": "2019-Datacenter",
+            "version": "latest"
+          }
+        },
+        "osProfile": {
+          "computerName": "testlzc6bl",
+          "adminUsername": "azureuser",
+          "adminPassword": "0asdFq341Zcva"
+        },
+        "additionalCapabilities": {}
+      }
+    }
+  },
+  "liveResponse": {
+    "statusCode": "201",
+    "headers": {
+      "Cache-Control": "no-cache",
+      "Pragma": "no-cache",
+      "Content-Length": "1897",
+      "Content-Type": "application/json; charset=utf-8",
+      "Expires": "-1",
+      "Retry-After": "10",
+      "Azure-AsyncOperation": "https://management.azure.com/subscriptions/db5eb68e-73e2-4fa8-b18a-46cd1be4cce5/providers/Microsoft.Compute/locations/westcentralus/operations/34fe1ee8-a992-4dd7-a7f9-9f93285c9a27?p=4b64f336-781a-44f3-ad93-6eb43466cf1c&api-version=2021-11-01",
+      "Azure-AsyncNotification": "Enabled",
+      "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/PutVM3Min;239,Microsoft.Compute/PutVM30Min;1199",
+      "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+      "x-ms-request-id": "34fe1ee8-a992-4dd7-a7f9-9f93285c9a27",
+      "Server": "Microsoft-HTTPAPI/2.0",
+      "x-ms-ratelimit-remaining-subscription-writes": "1194",
+      "x-ms-correlation-request-id": "2c9f7754-58dd-4fcc-959a-4e3260e54f00",
+      "x-ms-routing-request-id": "SOUTHEASTASIA:20220706T023614Z:2c9f7754-58dd-4fcc-959a-4e3260e54f00",
+      "X-Content-Type-Options": "nosniff",
+      "Date": "Wed, 06 Jul 2022 02:36:14 GMT"
+    },
+    "body": {
+      "name": "testlzc6bl",
+      "id": "/subscriptions/db5eb68e-73e2-4fa8-b18a-46cd1be4cce5/resourceGroups/apiTest-g33qhq/providers/Microsoft.Compute/virtualMachines/testlzc6bl",
+      "type": "Microsoft.Compute/virtualMachines",
+      "location": "westcentralus",
+      "tags": {
+        "azsecpack": "nonprod",
+        "platformsettings.host_environment.service.platform_optedin_for_rootcerts": "true"
+      },
+      "properties": {
+        "vmId": "282e03eb-647f-4dd3-a54c-a6fe0ca9cb92",
+        "hardwareProfile": {
+          "vmSize": "Standard_A2_v2"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "MicrosoftWindowsServer",
+            "offer": "WindowsServer",
+            "sku": "2019-Datacenter",
+            "version": "latest",
+            "exactVersion": "17763.3132.220610"
+          },
+          "osDisk": {
+            "osType": "Windows",
+            "createOption": "FromImage",
+            "caching": "ReadWrite",
+            "managedDisk": {
+              "storageAccountType": "Standard_LRS"
+            },
+            "deleteOption": "Detach",
+            "diskSizeGB": 127
+          },
+          "dataDisks": []
+        },
+        "osProfile": {
+          "computerName": "testlzc6bl",
+          "adminUsername": "azureuser",
+          "windowsConfiguration": {
+            "provisionVMAgent": true,
+            "enableAutomaticUpdates": true,
+            "patchSettings": {
+              "patchMode": "AutomaticByOS",
+              "assessmentMode": "ImageDefault"
+            },
+            "enableVMAgentPlatformUpdates": false
+          },
+          "secrets": [],
+          "allowExtensionOperations": true,
+          "requireGuestProvisionSignal": true
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "/subscriptions/db5eb68e-73e2-4fa8-b18a-46cd1be4cce5/resourceGroups/apiTest-g33qhq/providers/Microsoft.Network/networkInterfaces/testlzc6bl-VMNic"
+            }
+          ]
+        },
+        "provisioningState": "Creating",
+        "timeCreated": "2022-07-06T02:36:12.430132+00:00"
+      }
+    }
+  }
+}

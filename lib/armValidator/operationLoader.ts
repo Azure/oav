@@ -3,12 +3,18 @@ import { Json, readFile as vfsReadFile } from "@azure-tools/openapi-tools-common
 import { JSONPath } from "jsonpath-plus";
 import $RefParser, { FileInfo } from "@apidevtools/json-schema-ref-parser";
 import { FileLoader, FileLoaderOption } from "../swagger/fileLoader";
+import { SwaggerSpec } from "../swagger/swaggerTypes";
 import { xmsExamples } from "../util/constants";
 
 export interface OperationLoaderOption extends FileLoaderOption {
   //Rules will be applied to swagger: readonly: readOnly=true
   supportYaml?: boolean;
   useJsonParser?: boolean;
+}
+
+export enum CompareType {
+  isConsistent,
+  isMissing,
 }
 
 //readOnly: [RestorePointCollection.properties.provisioningState]
@@ -37,77 +43,106 @@ export class OperationLoader {
   ]);
   private fileLoader: FileLoader;
 
-  public constructor(fileLoader: FileLoader, ruleMap: Map<string, string>) {
-    ruleMap.forEach((value: string, key: string) => {
-      this.ruleMap.set(key, value);
-    });
-    this.fileLoader = fileLoader;
+  public constructor(fileLoader: FileLoader, ruleMap?: Map<string, string>) {
+    if (ruleMap !== undefined) {
+      ruleMap.forEach((value: string, key: string) => {
+        this.ruleMap.set(key, value);
+      });
+      this.fileLoader = fileLoader;
+    }
   }
 
-  public async init(inputFilePath: string): Promise<Json> {
-    const providerName = this.parseProviderName(inputFilePath)?.toLowerCase();
-    if (providerName === undefined) {
-      console.log(`Illegal file path, unable to extract provider name ${inputFilePath}`);
-      return {};
-    }
-    //console.log(`Provider Name: ${providerName}`);
-    const spec = await this.load(inputFilePath);
-    //console.log(`Loaded spec: ${JSON.stringify(spec)}`);
-    const apiVersion = JSON.parse(JSON.stringify(spec))["info"]["version"].toLowerCase();
-    //console.log(`Api version ${apiVersion}`);
+  public async init(inputFilePaths: string[]) {
+    for (const inputFilePath of inputFilePaths) {
+      console.log(`${inputFilePath}`);
+      const startTime = Date.now();
+      const loadStartTime = Date.now();
+      const providerName = this.parseProviderName(inputFilePath)?.toLowerCase();
+      if (providerName === undefined) {
+        console.log(`Illegal file path, unable to extract provider name ${inputFilePath}`);
+        return;
+      }
+      //console.log(`Provider Name: ${providerName}`);
+      const spec = (await this.load(inputFilePath)) as SwaggerSpec;
+      let elapsedTime = Date.now() - loadStartTime;
+      console.log(`Time ${elapsedTime} to deference ${inputFilePath}`);
+      //console.log(`Loaded spec: ${JSON.stringify(spec)}`);
+      const apiVersion = JSON.parse(JSON.stringify(spec))["info"]["version"].toLowerCase();
+      //console.log(`Api version ${apiVersion}`);
 
-    const allOperations = await this.getAllTargetKey("$..[?(@.operationId)]~", spec);
-    allOperations.forEach((op: { path: any; parent: any; value: string | number }) => {
-      //const path = op.path;
-      const parent = op.parent;
-      const operation = parent[op.value];
-      const operationId = operation["operationId"];
-      //console.log(`operationId: ${operationId}, path: ${path}`);
-      this.ruleMap.forEach((value: string, key: string) => {
-        const attrs = this.getAllTargetKey(value, operation);
-        //console.log(`${key}: ${attrs.length}`);
-        let apiVersions = this.cache.get(providerName);
-        if (apiVersions === undefined) {
-          apiVersions = new Map();
-          this.cache.set(providerName!, apiVersions);
+      const getTagStartTime = Date.now();
+      const allOperations = await this.getAllTargetKey("$..[?(@.operationId)]~", spec);
+      elapsedTime = Date.now() - getTagStartTime;
+      console.log(`Time ${elapsedTime} to get all operations ${inputFilePath}`);
+      const buildCacheStartTime = Date.now();
+      for (const op of allOperations) {
+        //const path = op.path;
+        const parent = op.parent;
+        const operation = parent[op.value];
+        const operationId = operation["operationId"];
+        if (typeof operationId === "object") {
+          continue;
         }
-        let allOperations = apiVersions.get(apiVersion);
-        if (allOperations === undefined) {
-          allOperations = new Map();
-          apiVersions.set(apiVersion, allOperations);
-        }
-        let allRules = allOperations.get(operationId);
-        if (allRules === undefined) {
-          allRules = new Map();
-          allOperations.set(operationId, allRules);
-        }
-        let allAttrs = allRules.get(key);
-        if (allAttrs === undefined) {
-          allAttrs = [];
-          allRules.set(key, allAttrs);
-        }
-        for (const attr of attrs) {
-          //TODO: parameter as a list, get the name of the element
-          const attrPath = this.getAttrPath(operation as any, attr.pointer);
-          if (attrPath !== undefined) {
-            allAttrs.push(attrPath);
+        //console.log(`operationId: ${operationId}, path: ${path}`);
+        this.ruleMap.forEach((value: string, key: string) => {
+          const attrs = this.getAllTargetKey(value, operation);
+          //console.log(`${key}: ${attrs.length}`);
+          let apiVersions = this.cache.get(providerName);
+          if (apiVersions === undefined) {
+            apiVersions = new Map();
+            this.cache.set(providerName!, apiVersions);
           }
-          //console.log(`Get attrPath ${attrPath}`);
-        }
-      });
-    });
+          let allOperations = apiVersions.get(apiVersion);
+          if (allOperations === undefined) {
+            allOperations = new Map();
+            apiVersions.set(apiVersion, allOperations);
+          }
+          let allRules = allOperations.get(operationId);
+          if (allRules === undefined) {
+            allRules = new Map();
+            allOperations.set(operationId, allRules);
+          }
+          let allAttrs = allRules.get(key);
+          if (allAttrs === undefined) {
+            allAttrs = [];
+            allRules.set(key, allAttrs);
+          }
+          for (const attr of attrs) {
+            //TODO: parameter as a list, get the name of the element
+            const attrPath = this.getAttrPath(operation as any, attr.pointer);
+            if (attrPath !== undefined) {
+              allAttrs.push(attrPath);
+            }
+            //console.log(`Get attrPath ${attrPath}`);
+          }
+        });
+      }
+      elapsedTime = Date.now() - buildCacheStartTime;
+      console.log(`Time ${elapsedTime} to build cache ${inputFilePath}`);
+      elapsedTime = Date.now() - startTime;
+      console.log(`Time ${elapsedTime} to process ${inputFilePath}`);
+    }
     console.log("Finish building cache.");
-    return spec;
   }
 
   private async load(inputFilePath: string): Promise<Json> {
     //Read content from swagger file and
+    const loadStartTime = Date.now();
     let fileContent = JSON.parse(await this.fileLoader.load(inputFilePath));
+    if (typeof fileContent !== "object" || fileContent === null) {
+      return {};
+    }
+    let elapsedTime = Date.now() - loadStartTime;
+    console.log(`Time ${elapsedTime} to load ${inputFilePath}`);
 
     //remove unnecessary properties
+    const removeStartTime = Date.now();
     this.removeProperty(fileContent);
+    elapsedTime = Date.now() - removeStartTime;
+    console.log(`Time ${elapsedTime} remove property ${inputFilePath}`);
     //console.log(JSON.stringify(fileContent));
 
+    const derefStartTime = Date.now();
     //resolve all refs using lib: https://github.com/APIDevTools/json-schema-ref-parser
     const resolveOption: $RefParser.Options = {
       resolve: {
@@ -125,7 +160,9 @@ export class OperationLoader {
     try {
       const parser = new $RefParser();
       fileContent = await parser.dereference(inputFilePath, fileContent, resolveOption);
-      console.log(`Deferenced: ${JSON.stringify(fileContent.definitions!.ApiCollection)}`);
+      //console.log(`Deferenced: ${JSON.stringify(fileContent.definitions!.ApiCollection)}`);
+      elapsedTime = Date.now() - derefStartTime;
+      console.log(`Time ${elapsedTime} deference ${inputFilePath}`);
     } catch (err) {
       console.error(err);
       return {};
@@ -159,7 +196,7 @@ export class OperationLoader {
     return tag;
   }
 
-  private getAttrs(providerName: string, apiVersion: string, operationId: string) {
+  public getAttrs(providerName: string, apiVersion: string, operationId: string) {
     return this.cache.get(providerName)?.get(apiVersion)?.get(operationId);
   }
 
