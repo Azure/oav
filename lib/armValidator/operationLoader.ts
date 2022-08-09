@@ -17,12 +17,13 @@ export enum CompareType {
   isMissing,
 }
 
+type Op = any[];
 //readOnly: [RestorePointCollection.properties.provisioningState]
 //'parameters/schema/properties/properties/allOf/0/allOf/0/properties/isCurrent'
 //'parameters/schema/properties/properties/allOf/0/allOf/0/properties/isCurrent'
 type Operation = Map<string, string[]>;
 //RestorePointCollections_CreateOrUpdate
-type ApiVersion = Map<string, Operation>;
+type ApiVersion = Map<string, Operation | any[]>;
 //2021-11-01
 type Provider = Map<string, ApiVersion>;
 
@@ -52,7 +53,7 @@ export class OperationLoader {
     }
   }
 
-  public async init(inputFilePaths: string[]) {
+  public async init(inputFilePaths: string[], isLazyBuild?: boolean) {
     for (const inputFilePath of inputFilePaths) {
       console.log(`${inputFilePath}`);
       const startTime = Date.now();
@@ -71,11 +72,34 @@ export class OperationLoader {
       //console.log(`Api version ${apiVersion}`);
 
       const getTagStartTime = Date.now();
-      const allOperations = await this.getAllTargetKey("$..[?(@.operationId)]~", spec);
+      const operations = await this.getAllTargetKey("$..[?(@.operationId)]~", spec);
       elapsedTime = Date.now() - getTagStartTime;
-      console.log(`Time ${elapsedTime} to get all operations ${inputFilePath}`);
+      console.log(`Time ${elapsedTime} to get all  operations ${inputFilePath}`);
+      let apiVersions = this.cache.get(providerName);
+      if (apiVersions === undefined) {
+        apiVersions = new Map();
+        this.cache.set(providerName!, apiVersions);
+      }
+      let allOperations = apiVersions.get(apiVersion);
+      if (allOperations === undefined) {
+        allOperations = new Map();
+        apiVersions.set(apiVersion, allOperations);
+      }
+      let items = allOperations.get("spec") as Op;
+      if (items === undefined) {
+        items = [];
+        allOperations.set("spec", items);
+      }
+      items = allOperations.get("spec") as Op;
+      items = items.concat(operations);
+      allOperations.set("spec", items);
+      elapsedTime = Date.now() - getTagStartTime;
+      console.log(`Time ${elapsedTime} to get all ${items.length} operations ${inputFilePath}`);
       const buildCacheStartTime = Date.now();
-      for (const op of allOperations) {
+      if (isLazyBuild) {
+        return;
+      }
+      for (const op of operations) {
         //const path = op.path;
         const parent = op.parent;
         const operation = parent[op.value];
@@ -97,7 +121,7 @@ export class OperationLoader {
             allOperations = new Map();
             apiVersions.set(apiVersion, allOperations);
           }
-          let allRules = allOperations.get(operationId);
+          let allRules = allOperations.get(operationId) as Operation;
           if (allRules === undefined) {
             allRules = new Map();
             allOperations.set(operationId, allRules);
@@ -197,16 +221,82 @@ export class OperationLoader {
   public getAttrs(
     providerName: string,
     apiVersion: string,
-    operationId: string,
+    inputOperation: string,
     xmsPaths: string[]
   ) {
+    const startTime = Date.now();
     let res: string[] = [];
     for (const xms of xmsPaths) {
-      const attrs = this.cache.get(providerName)?.get(apiVersion)?.get(operationId)?.get(xms);
-      if (attrs !== undefined) {
-        res = res.concat(attrs);
+      const items = this.cache.get(providerName)?.get(apiVersion)?.get(inputOperation) as Operation;
+      if (items !== undefined) {
+        const attrs = items.get(xms);
+        if (attrs !== undefined) {
+          res = res.concat(attrs);
+        }
+      } else {
+        const allOps = this.cache.get(providerName)?.get(apiVersion)?.get("spec");
+        if (allOps === undefined) {
+          console.log(`Spec cache should not be empty ${inputOperation}`);
+          return res;
+        }
+        for (const op of allOps) {
+          //const path = op.path;
+          const parent = op.parent;
+          const operation = parent[op.value];
+          const operationId = operation["operationId"];
+          if (typeof operationId === "object") {
+            continue;
+          }
+          if (typeof operationId === "string" && operationId === inputOperation) {
+            //console.log(`operationId: ${operationId}, path: ${path}`);
+            this.ruleMap.forEach((value: string, key: string) => {
+              const attrs = this.getAllTargetKey(value, operation);
+              //console.log(`${key}: ${attrs.length}`);
+              let apiVersions = this.cache.get(providerName);
+              if (apiVersions === undefined) {
+                apiVersions = new Map();
+                this.cache.set(providerName!, apiVersions);
+              }
+              let allOperations = apiVersions.get(apiVersion);
+              if (allOperations === undefined) {
+                allOperations = new Map();
+                apiVersions.set(apiVersion, allOperations);
+              }
+              let allRules = allOperations.get(operationId) as Operation;
+              if (allRules === undefined) {
+                allRules = new Map();
+                allOperations.set(operationId, allRules);
+              }
+              let allAttrs = allRules.get(key);
+              if (allAttrs === undefined) {
+                allAttrs = [];
+                allRules.set(key, allAttrs);
+              }
+              for (const attr of attrs) {
+                //TODO: parameter as a list, get the name of the element
+                const attrPath = this.getAttrPath(operation as any, attr.pointer);
+                if (attrPath !== undefined) {
+                  allAttrs.push(attrPath);
+                }
+                //console.log(`Get attrPath ${attrPath}`);
+              }
+            });
+            const duration = Date.now() - startTime;
+            console.log(`Time lazy build ${duration} for ${inputOperation}`);
+          }
+        }
       }
     }
+    for (const xms of xmsPaths) {
+      const items = this.cache.get(providerName)?.get(apiVersion)?.get(inputOperation) as Operation;
+      if (items !== undefined) {
+        const attrs = items.get(xms);
+        if (attrs !== undefined) {
+          res = res.concat(attrs);
+        }
+      }
+    }
+
     return res;
   }
 

@@ -28,7 +28,7 @@ describe("Live Validator", () => {
         ignore: DefaultConfig.ExcludedExamplesAndCommonFiles,
         nodir: true,
       }); //["/home/adqi/oav/test/liveValidation/swaggers/specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimapis.json"];
-      await operationLoader.init(filePaths);
+      await operationLoader.init(filePaths, true);
       assert(operationLoader.cache.size > 0);
       //end of init operationLoader
 
@@ -58,9 +58,8 @@ describe("Live Validator", () => {
       const providerName = info.validationRequest?.providerNamespace;
       console.log(`${operationId}, ${apiversion} ${providerName}`);
       const attrs = operationLoader.getAttrs(providerName!, apiversion, operationId, ["readOnly"]);
-      console.log(attrs?.length);
       const diffs = diffRequestResponse(payload.liveRequest.body, payload.liveResponse.body);
-      diffs.map((it: any) => {
+      const rest = diffs.map((it: any) => {
         const ret: ResponseDiffItem = {
             code: "",
             jsonPath: "",
@@ -77,12 +76,14 @@ describe("Live Validator", () => {
           if (!isReplace) {
             ret.code = "ROUNDTRIP_INCONSISTENT_PROPERTY";
             ret.jsonPath = jsonPath;
+            return ret;
           }
         } else if (it.add !== undefined) {
           const isReadOnly = operationLoader.attrChecker(path, providerName!, apiversion, operationId, ["readOnly", "default"]);
           if (!isReadOnly) {
             ret.code = "ROUNDTRIP_ADDITIONAL_PROPERTY";
             ret.jsonPath = jsonPath;
+            return ret;
           }
         } else if (it.remove !== undefined) {
           //TODO: x-ms-mutability
@@ -90,12 +91,14 @@ describe("Live Validator", () => {
           if (!isRemove) {
             ret.code = "ROUNDTRIP_MISSING_PROPERTY";
             ret.jsonPath = jsonPath;
+            return ret;
           }
         }
-        return ret;
-      });
-      console.log("Finish validation");
+        return undefined;
+      }).filter((a) => a !== undefined);
+      console.log(`Finish validation ${rest.length}`);
       assert(diffs.length === 3);
+      assert(rest.length === 3);
       assert(attrs !== undefined);
       //end of roundtrip validation
     });
