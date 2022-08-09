@@ -39,7 +39,7 @@ export class OperationLoader {
   private ruleMap = new Map<string, string>([
     ["readOnly", "$..[?(@.readOnly)]~"],
     ["secret", "$..[?(@['x-ms-secret'])]~"],
-    ["example", "$..[?(@['x-ms-examples'])]~"],
+    ["default", "$..[?(@.default)]~"],
   ]);
   private fileLoader: FileLoader;
 
@@ -173,31 +173,41 @@ export class OperationLoader {
 
   public attrChecker(
     jsonPath: string,
-    attrs: string[],
     providerName: string,
     apiVersion: string,
-    operationId: string
+    operationId: string,
+    xmsPaths: string[]
   ) {
-    let tag: boolean = false;
-    const attrMap = this.getAttrs(providerName, apiVersion, operationId);
-    if (attrMap === undefined) {
+    if (jsonPath.includes("vmSize")) {
+      console.log("vmSize");
+    }
+    const attrs = this.getAttrs(providerName, apiVersion, operationId, xmsPaths);
+    if (attrs === undefined || attrs.length <= 0) {
       return false;
     }
+    const resRegex = new RegExp(jsonPath, "g");
     for (const attr of attrs) {
-      const paths = attrMap.get(attr);
-      if (paths === undefined) {
-        continue;
-      }
-      if (paths.includes(jsonPath)) {
-        tag = true;
-        return tag;
+      if (resRegex.test(attr)) {
+        return true;
       }
     }
-    return tag;
+    return false;
   }
 
-  public getAttrs(providerName: string, apiVersion: string, operationId: string) {
-    return this.cache.get(providerName)?.get(apiVersion)?.get(operationId);
+  public getAttrs(
+    providerName: string,
+    apiVersion: string,
+    operationId: string,
+    xmsPaths: string[]
+  ) {
+    let res: string[] = [];
+    for (const xms of xmsPaths) {
+      const attrs = this.cache.get(providerName)?.get(apiVersion)?.get(operationId)?.get(xms);
+      if (attrs !== undefined) {
+        res = res.concat(attrs);
+      }
+    }
+    return res;
   }
 
   /*private parseFileContent(filePath: string, fileString: string): any {
@@ -241,13 +251,15 @@ export class OperationLoader {
   }
 
   private getAllTargetKey(allXmsPath: string, swagger: any) {
+    //const startTime = Date.now();
     //console.log(`Get paths of ${allXmsPath}`);
     const ret = JSONPath({
       path: allXmsPath,
       json: swagger,
       resultType: "all",
     });
-    //console.log(`Get xmsKey: ${ret.length}.`);
+    //const timeDuration = Date.now() - startTime;
+    //console.log(`Get xmsKey ${timeDuration}: ${ret.length}.`);
     return ret;
   }
 
