@@ -96,7 +96,7 @@ export interface NewmanReportValidatorOption extends ApiScenarioLoaderOption {
   html?: boolean;
   baseUrl?: string;
   runId?: string;
-  validationLevel?: ValidationLevel;
+  skipValidation?: boolean;
   savePayload?: boolean;
   generateExample?: boolean;
   verbose?: boolean;
@@ -117,7 +117,7 @@ export class NewmanReportValidator {
     private junitReporter: JUnitReporter
   ) {
     setDefaultOpts(this.opts, {
-      validationLevel: "validate-request-response",
+      skipValidation: false,
       savePayload: false,
       generateExample: false,
       verbose: false,
@@ -161,7 +161,9 @@ export class NewmanReportValidator {
       fileRoot: "/",
       swaggerPaths: [...this.opts.swaggerFilePaths!],
     });
-    await this.liveValidator.initialize();
+    if (!this.opts.skipValidation) {
+      await this.liveValidator.initialize();
+    }
   }
 
   public async generateReport(rawReport: NewmanReport) {
@@ -197,6 +199,15 @@ export class NewmanReportValidator {
           continue;
         }
 
+        it.assertions.forEach((assertion) => {
+          runtimeError.push({
+            code: "RUNTIME_ERROR",
+            message: `errorCode: ${assertion.name}, errorMessage: ${assertion.message}`,
+            severity: "Error",
+            detail: this.dataMasker.jsonStringify(assertion.stack),
+          });
+        });
+
         const payload = this.convertToLiveValidationPayload(it);
 
         let responseDiffResult: ResponseDiffItem[] | undefined = undefined;
@@ -225,18 +236,17 @@ export class NewmanReportValidator {
           }
           if (it.annotation.exampleName) {
             // validate real payload.
-            responseDiffResult =
-              this.opts.validationLevel === "validate-request-response"
-                ? await this.exampleResponseDiff(
-                    {
-                      step: matchedStep.step,
-                      operationId: matchedStep.operationId,
-                      example: generatedExample,
-                    },
-                    matchedStep,
-                    newmanReport
-                  )
-                : [];
+            responseDiffResult = !this.opts.skipValidation
+              ? await this.exampleResponseDiff(
+                  {
+                    step: matchedStep.step,
+                    operationId: matchedStep.operationId,
+                    example: generatedExample,
+                  },
+                  matchedStep,
+                  newmanReport
+                )
+              : [];
           }
         }
 
@@ -250,7 +260,6 @@ export class NewmanReportValidator {
             JSON.stringify(payload, null, 2)
           );
         }
-        const liveValidationResult = await this.liveValidator.validateLiveRequestResponse(payload);
 
         this.testResult.stepResult.push({
           specFilePath: matchedStep.operation._path._spec._filePath,
@@ -267,7 +276,9 @@ export class NewmanReportValidator {
           correlationId: correlationId,
           statusCode: it.response.statusCode,
           stepName: it.annotation.step,
-          liveValidationResult: liveValidationResult,
+          liveValidationResult: !this.opts.skipValidation
+            ? await this.liveValidator.validateLiveRequestResponse(payload)
+            : undefined,
         });
       }
     }

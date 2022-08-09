@@ -357,7 +357,7 @@ export const ApiScenarioDefinition: Schema & {
                 {
                   type: "array",
                   items: {
-                    $ref: "#/definitions/JsonPatchOpTest",
+                    $ref: "#/definitions/JsonTestOp",
                   },
                 },
               ],
@@ -543,7 +543,7 @@ export const ApiScenarioDefinition: Schema & {
       },
       additionalProperties: false,
     },
-    JsonPatchOpTest: {
+    JsonTestOp: {
       type: "object",
       required: ["test"],
       properties: {

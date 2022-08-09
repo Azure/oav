@@ -23,7 +23,6 @@ import {
   ApiScenarioTestResult,
   NewmanReportValidator,
   NewmanReportValidatorOption,
-  ValidationLevel,
 } from "./newmanReportValidator";
 import { SwaggerAnalyzer, SwaggerAnalyzerOption } from "./swaggerAnalyzer";
 import { EnvironmentVariables, VariableEnv } from "./variableEnv";
@@ -53,7 +52,7 @@ export interface PostmanCollectionGeneratorOption
   generateCollection: boolean;
   baseUrl: string;
   testProxy?: string;
-  validationLevel?: ValidationLevel;
+  skipValidation?: boolean;
   savePayload?: boolean;
   generateExample?: boolean;
   skipCleanUp?: boolean;
@@ -201,11 +200,11 @@ export class PostmanCollectionGenerator {
         for (const step of report.stepResult) {
           const trafficValidationIssue: TrafficValidationIssue = {
             errors: [
-              ...step.liveValidationResult!.requestValidationResult.errors,
-              ...step.liveValidationResult!.responseValidationResult.errors,
+              ...(step.liveValidationResult?.requestValidationResult.errors ?? []),
+              ...(step.liveValidationResult?.responseValidationResult.errors ?? []),
             ],
             specFilePath: step.specFilePath,
-            operationInfo: step.liveValidationResult!.requestValidationResult.operationInfo,
+            operationInfo: step.liveValidationResult?.requestValidationResult.operationInfo,
           };
 
           if (this.opt.savePayload) {
@@ -221,7 +220,7 @@ export class PostmanCollectionGenerator {
             trafficValidationIssue.errors?.push(this.convertRuntimeException(runtimeError));
           }
 
-          if (step.liveValidationResult!.requestValidationResult.runtimeException) {
+          if (step.liveValidationResult?.requestValidationResult.runtimeException) {
             trafficValidationIssue.errors?.push(
               this.convertRuntimeException(
                 step.liveValidationResult!.requestValidationResult.runtimeException
@@ -229,7 +228,7 @@ export class PostmanCollectionGenerator {
             );
           }
 
-          if (step.liveValidationResult!.responseValidationResult.runtimeException) {
+          if (step.liveValidationResult?.responseValidationResult.runtimeException) {
             trafficValidationIssue.errors?.push(
               this.convertRuntimeException(
                 step.liveValidationResult!.responseValidationResult.runtimeException
@@ -446,7 +445,7 @@ export class PostmanCollectionGenerator {
       html: this.opt.html,
       baseUrl: this.opt.baseUrl,
       runId: this.opt.runId,
-      validationLevel: this.opt.validationLevel,
+      skipValidation: this.opt.skipValidation,
       generateExample: this.opt.generateExample,
       savePayload: this.opt.savePayload,
       verbose: this.opt.verbose,

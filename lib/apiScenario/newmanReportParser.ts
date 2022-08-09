@@ -6,7 +6,13 @@ import {
   Response,
   DescriptionDefinition,
 } from "postman-collection";
-import { NewmanExecution, NewmanReport, NewmanRequest, NewmanResponse } from "./apiScenarioTypes";
+import {
+  NewmanAssertion,
+  NewmanExecution,
+  NewmanReport,
+  NewmanRequest,
+  NewmanResponse,
+} from "./apiScenarioTypes";
 
 export interface RawNewmanReport {
   run: Run;
@@ -19,10 +25,15 @@ interface Run {
   timings: { started: number; completed: number; responseAverage: number };
 }
 
+interface Assertion {
+  error?: NewmanAssertion;
+}
+
 interface RawNewmanExecution {
   item: ItemDefinition;
   request: RequestDefinition;
   response: ResponseDefinition;
+  assertions?: Assertion[];
 }
 
 export function parseNewmanReport(newmanReport: RawNewmanReport): NewmanReport {
@@ -45,6 +56,7 @@ function generateExampleItem(it: RawNewmanExecution): NewmanExecution {
     request: rawReq,
     response: rawResp,
     annotation: annotation,
+    assertions: it.assertions?.map((it) => it.error!).filter((it) => it !== undefined) || [],
   };
 }
 

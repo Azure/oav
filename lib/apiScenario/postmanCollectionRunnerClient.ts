@@ -384,6 +384,7 @@ pm.test("Stopped TestProxy recording", function() {
       : ["StatusCodeAssertion"];
 
     if (step.responseAssertion) {
+      step.responseAssertion = env.resolveObjectValues(step.responseAssertion);
       scriptTypes.push("ResponseDataAssertion");
     }
     this.addTestScript(

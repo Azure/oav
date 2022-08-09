@@ -335,6 +335,14 @@ export interface NewmanExecution {
   request: NewmanRequest;
   response: NewmanResponse;
   annotation?: any;
+  assertions: NewmanAssertion[];
+}
+
+export interface NewmanAssertion {
+  name: string;
+  test: string;
+  message: string;
+  stack: string;
 }
 export interface NewmanRequest {
   url: string;
