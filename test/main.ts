@@ -28,7 +28,7 @@ describe("Live Validator", () => {
         ignore: DefaultConfig.ExcludedExamplesAndCommonFiles,
         nodir: true,
       }); //["/home/adqi/oav/test/liveValidation/swaggers/specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimapis.json"];
-      await operationLoader.init(filePaths, true);
+      await operationLoader.init(filePaths);
       assert(operationLoader.cache.size > 0);
       //end of init operationLoader
 
@@ -68,7 +68,7 @@ describe("Live Validator", () => {
             detail: "",
         };
         const jsonPath: string = it.remove || it.add || it.replace;
-        const path = jsonPath.split("/").join("(.*)");
+        const path = jsonPath.split("/").join("(.*)").concat("$");
         console.log(JSON.stringify(it));
         if (it.replace !== undefined) {
           //TODO: x-ms-mutability

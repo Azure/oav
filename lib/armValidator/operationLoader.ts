@@ -17,13 +17,12 @@ export enum CompareType {
   isMissing,
 }
 
-type Op = any[];
 //readOnly: [RestorePointCollection.properties.provisioningState]
 //'parameters/schema/properties/properties/allOf/0/allOf/0/properties/isCurrent'
 //'parameters/schema/properties/properties/allOf/0/allOf/0/properties/isCurrent'
 type Operation = Map<string, string[]>;
 //RestorePointCollections_CreateOrUpdate
-type ApiVersion = Map<string, Operation | any[]>;
+type ApiVersion = Map<string, Operation>;
 //2021-11-01
 type Provider = Map<string, ApiVersion>;
 
@@ -53,9 +52,9 @@ export class OperationLoader {
     }
   }
 
-  public async init(inputFilePaths: string[], isLazyBuild?: boolean) {
+  public async init(inputFilePaths: string[]) {
     for (const inputFilePath of inputFilePaths) {
-      console.log(`${inputFilePath}`);
+      console.log(`Start to process ${inputFilePath}`);
       const startTime = Date.now();
       const loadStartTime = Date.now();
       const providerName = this.parseProviderName(inputFilePath)?.toLowerCase();
@@ -66,7 +65,7 @@ export class OperationLoader {
       //console.log(`Provider Name: ${providerName}`);
       const spec = (await this.load(inputFilePath)) as SwaggerSpec;
       let elapsedTime = Date.now() - loadStartTime;
-      console.log(`Time ${elapsedTime} to deference ${inputFilePath}`);
+      console.log(`Time ${elapsedTime} to load and deference ${inputFilePath}`);
       //console.log(`Loaded spec: ${JSON.stringify(spec)}`);
       const apiVersion = JSON.parse(JSON.stringify(spec))["info"]["version"].toLowerCase();
       //console.log(`Api version ${apiVersion}`);
@@ -83,34 +82,11 @@ export class OperationLoader {
       }
       console.log(`All operation length: ${operations.length}`);
       elapsedTime = Date.now() - getTagStartTime;
-      console.log(`Time 1 ${elapsedTime} to get all operations ${inputFilePath}`);
+      console.log(`Time ${elapsedTime} to get all operations ${inputFilePath}`);
       //const operations = await this.getAllTargetKey("$..[?(@.operationId)]~", spec);
-      elapsedTime = Date.now() - getTagStartTime;
-      console.log(`Time 2 ${elapsedTime} to get all operations ${inputFilePath}`);
-      let apiVersions = this.cache.get(providerName);
-      if (apiVersions === undefined) {
-        apiVersions = new Map();
-        this.cache.set(providerName!, apiVersions);
-      }
-      let allOperations = apiVersions.get(apiVersion);
-      if (allOperations === undefined) {
-        allOperations = new Map();
-        apiVersions.set(apiVersion, allOperations);
-      }
-      let items = allOperations.get("spec") as Op;
-      if (items === undefined) {
-        items = [];
-        allOperations.set("spec", items);
-      }
-      items = allOperations.get("spec") as Op;
-      items = items.concat(operations);
-      allOperations.set("spec", items);
-      elapsedTime = Date.now() - getTagStartTime;
-      console.log(`Time ${elapsedTime} to get all ${items.length} operations ${inputFilePath}`);
-      const buildCacheStartTime = Date.now();
-      if (isLazyBuild) {
-        return;
-      }
+      //elapsedTime = Date.now() - getTagStartTime;
+      //console.log(`Time 2 ${elapsedTime} to get all operations ${inputFilePath}`);
+
       for (const operation of operations) {
         //const path = op.path;
         //const parent = op.parent;
@@ -153,8 +129,6 @@ export class OperationLoader {
           }
         });
       }
-      elapsedTime = Date.now() - buildCacheStartTime;
-      console.log(`Time ${elapsedTime} to build cache ${inputFilePath}`);
       elapsedTime = Date.now() - startTime;
       console.log(`Time ${elapsedTime} to process ${inputFilePath}`);
     }
@@ -239,76 +213,11 @@ export class OperationLoader {
     inputOperation: string,
     xmsPaths: string[]
   ) {
-    const startTime = Date.now();
     let res: string[] = [];
     for (const xms of xmsPaths) {
-      const items = this.cache.get(providerName)?.get(apiVersion)?.get(inputOperation) as Operation;
-      if (items !== undefined) {
-        const attrs = items.get(xms);
-        if (attrs !== undefined) {
-          res = res.concat(attrs);
-        }
-      } else {
-        const allOps = this.cache.get(providerName)?.get(apiVersion)?.get("spec");
-        if (allOps === undefined) {
-          console.log(`Spec cache should not be empty ${inputOperation}`);
-          return res;
-        }
-        for (const operation of allOps) {
-          //const path = op.path;
-          //const parent = op.parent;
-          //const operation = parent[op.value];
-          const operationId = operation["operationId"];
-          if (typeof operationId === "object") {
-            continue;
-          }
-          if (typeof operationId === "string" && operationId === inputOperation) {
-            //console.log(`operationId: ${operationId}, path: ${path}`);
-            this.ruleMap.forEach((value: string, key: string) => {
-              const attrs = this.getAllTargetKey(value, operation);
-              //console.log(`${key}: ${attrs.length}`);
-              let apiVersions = this.cache.get(providerName);
-              if (apiVersions === undefined) {
-                apiVersions = new Map();
-                this.cache.set(providerName!, apiVersions);
-              }
-              let allOperations = apiVersions.get(apiVersion);
-              if (allOperations === undefined) {
-                allOperations = new Map();
-                apiVersions.set(apiVersion, allOperations);
-              }
-              let allRules = allOperations.get(operationId) as Operation;
-              if (allRules === undefined) {
-                allRules = new Map();
-                allOperations.set(operationId, allRules);
-              }
-              let allAttrs = allRules.get(key);
-              if (allAttrs === undefined) {
-                allAttrs = [];
-                allRules.set(key, allAttrs);
-              }
-              for (const attr of attrs) {
-                //TODO: parameter as a list, get the name of the element
-                const attrPath = this.getAttrPath(operation as any, attr.pointer);
-                if (attrPath !== undefined) {
-                  allAttrs.push(attrPath);
-                }
-                //console.log(`Get attrPath ${attrPath}`);
-              }
-            });
-            const duration = Date.now() - startTime;
-            console.log(`Time lazy build ${duration} for ${inputOperation}`);
-          }
-        }
-      }
-    }
-    for (const xms of xmsPaths) {
-      const items = this.cache.get(providerName)?.get(apiVersion)?.get(inputOperation) as Operation;
-      if (items !== undefined) {
-        const attrs = items.get(xms);
-        if (attrs !== undefined) {
-          res = res.concat(attrs);
-        }
+      const attrs = this.cache.get(providerName)?.get(apiVersion)?.get(inputOperation)?.get(xms);
+      if (attrs !== undefined) {
+        res = res.concat(attrs);
       }
     }
 
