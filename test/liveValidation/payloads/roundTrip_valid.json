@@ -90,14 +90,13 @@
           "imageReference": {
             "publisher": "MicrosoftWindowsServer",
             "offer": "WindowsServer",
-            "sku": "2019-Datacenter",
+            "sku": "2019-Datacenter1",
             "version": "latest"
           }
         },
         "osProfile": {
           "computerName": "testlzc6bl",
-          "adminUsername": "azureuser",
-          "adminPassword": "0asdFq341Zcva"
+          "customData": "test"
         },
         "additionalCapabilities": {}
       }
