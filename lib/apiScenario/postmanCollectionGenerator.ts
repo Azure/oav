@@ -204,7 +204,16 @@ export class PostmanCollectionGenerator {
               ...(step.liveValidationResult?.responseValidationResult.errors ?? []),
             ],
             specFilePath: step.specFilePath,
-            operationInfo: step.liveValidationResult?.requestValidationResult.operationInfo,
+            operationInfo: step.liveValidationResult?.requestValidationResult.operationInfo ?? {
+              operationId: "unknown",
+              apiVersion: "unknown",
+            },
+          };
+
+          // mock
+          trafficValidationIssue.operationInfo!.position = {
+            line: 0,
+            column: 0,
           };
 
           if (this.opt.savePayload) {
