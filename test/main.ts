@@ -41,7 +41,7 @@ describe("Live Validator", () => {
       assert.equal(muts.length, 0);
     });*/
 
-    it("readonly properties should not cause error: ROUNDTRIP_INCONSISTENT_PROPERTY", async () => {
+    it("readonly properties should not cause error", async () => {
       //init operationLoader
       const fileLoader = new FileLoader({
       });
@@ -82,7 +82,7 @@ describe("Live Validator", () => {
       //end of roundtrip validation
     });
 
-    it("Faile: ROUNDTRIP_ADDITIONAL_PROPERTY", async () => {
+    it("Round trip validation fail", async () => {
       //init operationLoader
       const fileLoader = new FileLoader({
       });
@@ -122,5 +122,148 @@ describe("Live Validator", () => {
       assert.equal(rest.length, 5);
       //end of roundtrip validation
     });
+
+    it("OperationLoader should not be initialized", async () => {
+      const swaggerPattern = "/home/adqi/oav/test/liveValidation/swaggers/specification/compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json";
+      const glob = require("glob");
+      const filePaths: string[] = glob.sync(swaggerPattern, {
+        ignore: DefaultConfig.ExcludedExamplesAndCommonFiles,
+        nodir: true,
+      });
+      const options = {
+        directory: "./test/liveValidation/swaggers/specification",
+        swaggerPathsPattern: [
+          "compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json"
+        ],
+        swaggerPaths: filePaths,
+      };
+      const validator = new LiveValidator(options);
+      await validator.initialize();
+
+      assert.equal(validator.operationLoader, undefined);
+    });
+
+    it("OperationLoader should be completely initialized", async () => {
+      const swaggerPattern = "/home/adqi/oav/test/liveValidation/swaggers/specification/compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json";
+      const glob = require("glob");
+      const filePaths: string[] = glob.sync(swaggerPattern, {
+        ignore: DefaultConfig.ExcludedExamplesAndCommonFiles,
+        nodir: true,
+      });
+      const options = {
+        directory: "./test/liveValidation/swaggers/specification",
+        swaggerPathsPattern: [
+          "compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json"
+        ],
+        swaggerPaths: filePaths,
+        enableRoundTripValidator: true
+      };
+      const validator = new LiveValidator(options);
+      await validator.initialize();
+
+      assert.strictEqual(true, validator.operationLoader.cache.size > 0);
+      const readOnlys = validator.operationLoader.getAttrs("microsoft.compute", "2021-11-01", "AvailabilitySets_CreateOrUpdate", "readOnly");
+      assert.equal(readOnlys.length, 8);
+      assert.equal(readOnlys.includes("parameters/schema/properties/properties/properties/statuses"), true);
+      assert.equal(readOnlys.filter((a) => a.includes("parameters")).length, 4);
+        
+    });
+
+    it("OperationLoader should be initialized only with spec", async () => {
+      const swaggerPattern = "/home/adqi/oav/test/liveValidation/swaggers/specification/compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json";
+      const glob = require("glob");
+      const filePaths: string[] = glob.sync(swaggerPattern, {
+        ignore: DefaultConfig.ExcludedExamplesAndCommonFiles,
+        nodir: true,
+      });
+      const options = {
+        directory: "./test/liveValidation/swaggers/specification",
+        swaggerPathsPattern: [
+          "compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json"
+        ],
+        swaggerPaths: filePaths,
+        enableRoundTripValidator: true,
+        enableRoundTripLazyBuild: true
+      };
+      const validator = new LiveValidator(options);
+      await validator.initialize();
+
+      assert.strictEqual(true, validator.operationLoader.cache.size > 0);
+      let op = validator.operationLoader.cache.get("microsoft.compute")?.get("2021-11-01")?.get("AvailabilitySets_CreateOrUpdate");
+      assert.equal(op, undefined);
+      const readOnlys = validator.operationLoader.getAttrs("microsoft.compute", "2021-11-01", "AvailabilitySets_CreateOrUpdate", "readOnly");
+      assert.equal(readOnlys.length, 8);
+      const spec = validator.operationLoader.cache.get("microsoft.compute")?.get("2021-11-01")?.get("spec");
+      assert.notStrictEqual(spec, undefined);
+      op = validator.operationLoader.cache.get("microsoft.compute")?.get("2021-11-01")?.get("AvailabilitySets_CreateOrUpdate");
+      assert.notStrictEqual(op, undefined);
+    });
+
+    it("readonly properties should not cause error", async () => {
+      const swaggerPattern = "/home/adqi/oav/test/liveValidation/swaggers/specification/compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json";
+      const glob = require("glob");
+      const filePaths: string[] = glob.sync(swaggerPattern, {
+        ignore: DefaultConfig.ExcludedExamplesAndCommonFiles,
+        nodir: true,
+      });
+      const options = {
+        directory: "./test/liveValidation/swaggers/specification",
+        swaggerPathsPattern: [
+          "compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json"
+        ],
+        swaggerPaths: filePaths,
+        enableRoundTripValidator: true,
+        enableRoundTripLazyBuild: true
+      };
+      const validator = new LiveValidator(options);
+      await validator.initialize();
+
+      assert.strictEqual(true, validator.operationLoader.cache.size > 0);
+      const readOnlys = validator.operationLoader.getAttrs("microsoft.compute", "2021-11-01", "AvailabilitySets_CreateOrUpdate", "readOnly");
+      assert.equal(readOnlys.length, 8);
+      assert.equal(readOnlys.includes("parameters/schema/properties/properties/properties/statuses"), true);
+      assert.equal(readOnlys.filter((a) => a.includes("parameters")).length, 4);
+
+      //roundtrip validation
+      const payload: RequestResponsePair = require(`${__dirname}/liveValidation/payloads/roundTrip_valid.json`);
+      const rest = await validator.validateRoundTrip(payload);
+      assert.equal(rest.errors, 0);
+      assert.equal(rest.isSuccessful, true);
+      //end of roundtrip validation
+    });
+
+    it("Round trip validation fail", async () => {
+      const swaggerPattern = "/home/adqi/oav/test/liveValidation/swaggers/specification/compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json";
+      const glob = require("glob");
+      const filePaths: string[] = glob.sync(swaggerPattern, {
+        ignore: DefaultConfig.ExcludedExamplesAndCommonFiles,
+        nodir: true,
+      });
+      const options = {
+        directory: "./test/liveValidation/swaggers/specification",
+        swaggerPathsPattern: [
+          "compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json"
+        ],
+        swaggerPaths: filePaths,
+        enableRoundTripValidator: true,
+        enableRoundTripLazyBuild: true
+      };
+      const validator = new LiveValidator(options);
+      await validator.initialize();
+
+      assert.strictEqual(true, validator.operationLoader.cache.size > 0);
+      const readOnlys = validator.operationLoader.getAttrs("microsoft.compute", "2021-11-01", "AvailabilitySets_CreateOrUpdate", "readOnly");
+      assert.equal(readOnlys.length, 8);
+      assert.equal(readOnlys.includes("parameters/schema/properties/properties/properties/statuses"), true);
+      assert.equal(readOnlys.filter((a) => a.includes("parameters")).length, 4);
+
+      //roundtrip validation
+      const payload: RequestResponsePair = require(`${__dirname}/liveValidation/payloads/roundTrip_invalid.json`);
+      const rest = await validator.validateRoundTrip(payload);
+      assert.equal(rest.errors.length, 5);
+      assert.equal(rest.isSuccessful, false);
+      //end of roundtrip validation
+    });
+
   });
 });
