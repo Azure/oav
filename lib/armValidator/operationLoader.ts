@@ -3,7 +3,7 @@ import { Json, readFile as vfsReadFile } from "@azure-tools/openapi-tools-common
 import { JSONPath } from "jsonpath-plus";
 import $RefParser, { FileInfo } from "@apidevtools/json-schema-ref-parser";
 import { FileLoader, FileLoaderOption } from "../swagger/fileLoader";
-import { SwaggerSpec } from "../swagger/swaggerTypes";
+import { SwaggerSpec, Operation as SwaggerOperation } from "../swagger/swaggerTypes";
 import { xmsExamples } from "../util/constants";
 
 export interface OperationLoaderOption extends FileLoaderOption {
@@ -72,9 +72,21 @@ export class OperationLoader {
       //console.log(`Api version ${apiVersion}`);
 
       const getTagStartTime = Date.now();
-      const operations = await this.getAllTargetKey("$..[?(@.operationId)]~", spec);
+      //const values = Object.values(spec.paths).map((a) => Object.values(a).filter((b) => (<SwaggerOperation>b).operationId !== undefined));
+      let operations: SwaggerOperation[] = [];
+      const values = Object.values(spec.paths);
+      for (const value of values) {
+        const ops = Object.values(value).filter(
+          (b) => (b as SwaggerOperation).operationId !== undefined
+        ) as SwaggerOperation[];
+        operations = operations.concat(ops);
+      }
+      console.log(`All operation length: ${operations.length}`);
       elapsedTime = Date.now() - getTagStartTime;
-      console.log(`Time ${elapsedTime} to get all  operations ${inputFilePath}`);
+      console.log(`Time 1 ${elapsedTime} to get all operations ${inputFilePath}`);
+      //const operations = await this.getAllTargetKey("$..[?(@.operationId)]~", spec);
+      elapsedTime = Date.now() - getTagStartTime;
+      console.log(`Time 2 ${elapsedTime} to get all operations ${inputFilePath}`);
       let apiVersions = this.cache.get(providerName);
       if (apiVersions === undefined) {
         apiVersions = new Map();
@@ -99,11 +111,11 @@ export class OperationLoader {
       if (isLazyBuild) {
         return;
       }
-      for (const op of operations) {
+      for (const operation of operations) {
         //const path = op.path;
-        const parent = op.parent;
-        const operation = parent[op.value];
-        const operationId = operation["operationId"];
+        //const parent = op.parent;
+        //const operation = parent[op.value];
+        const operationId = operation["operationId"]!;
         if (typeof operationId === "object") {
           continue;
         }
@@ -205,6 +217,9 @@ export class OperationLoader {
     if (jsonPath.includes("vmSize")) {
       console.log("vmSize");
     }
+    if (jsonPath.includes("osPro")) {
+      console.log("osProfile");
+    }
     const attrs = this.getAttrs(providerName, apiVersion, operationId, xmsPaths);
     if (attrs === undefined || attrs.length <= 0) {
       return false;
@@ -239,10 +254,10 @@ export class OperationLoader {
           console.log(`Spec cache should not be empty ${inputOperation}`);
           return res;
         }
-        for (const op of allOps) {
+        for (const operation of allOps) {
           //const path = op.path;
-          const parent = op.parent;
-          const operation = parent[op.value];
+          //const parent = op.parent;
+          //const operation = parent[op.value];
           const operationId = operation["operationId"];
           if (typeof operationId === "object") {
             continue;
