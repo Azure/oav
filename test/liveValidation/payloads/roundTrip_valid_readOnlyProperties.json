@@ -43,7 +43,8 @@
           "computerName": "testlzc6bl",
           "adminUsername": "azureuser",
           "adminPassword": "0asdFq341Zcva"
-        }
+        },
+        "additionalCapabilities": {}
       }
     }
   },
@@ -92,6 +93,11 @@
             "sku": "2019-Datacenter",
             "version": "latest"
           }
+        },
+        "osProfile": {
+          "computerName": "testlzc6bl",
+          "adminUsername": "azureuser",
+          "adminPassword": "0asdFq341Zcva"
         },
         "additionalCapabilities": {}
       }

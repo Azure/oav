@@ -775,7 +775,7 @@ export class LiveValidator {
     const diffs = this.diffObject(liveRequest.body, liveResponse.body);
     if (operationId !== undefined) {
       for (const diff of diffs) {
-        if (this.operatorLoader.attrChecker(diff, "", "", operationId, ["readOnly"])) {
+        if (this.operatorLoader.attrChecker(diff, "", "", operationId, "readOnly")) {
           errors.push({});
         }
       }

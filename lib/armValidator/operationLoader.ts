@@ -17,10 +17,10 @@ export enum CompareType {
   isMissing,
 }
 
+type Attr = Map<string, string[]>;
 //readOnly: [RestorePointCollection.properties.provisioningState]
 //'parameters/schema/properties/properties/allOf/0/allOf/0/properties/isCurrent'
-//'parameters/schema/properties/properties/allOf/0/allOf/0/properties/isCurrent'
-type Operation = Map<string, string[]>;
+type Operation = Map<string, Attr>;
 //RestorePointCollections_CreateOrUpdate
 type ApiVersion = Map<string, Operation>;
 //2021-11-01
@@ -39,7 +39,8 @@ export class OperationLoader {
   private ruleMap = new Map<string, string>([
     ["readOnly", "$..[?(@.readOnly)]~"],
     ["secret", "$..[?(@['x-ms-secret'])]~"],
-    ["default", "$..[?(@.default)]~"],
+    ["default", "$..[?(@['default'])]~"],
+    ["mutability", "$..[?(@['x-ms-mutability'])]~"],
   ]);
   private fileLoader: FileLoader;
 
@@ -48,29 +49,22 @@ export class OperationLoader {
       ruleMap.forEach((value: string, key: string) => {
         this.ruleMap.set(key, value);
       });
-      this.fileLoader = fileLoader;
     }
+    this.fileLoader = fileLoader;
   }
 
   public async init(inputFilePaths: string[]) {
     for (const inputFilePath of inputFilePaths) {
-      console.log(`Start to process ${inputFilePath}`);
       const startTime = Date.now();
-      const loadStartTime = Date.now();
       const providerName = this.parseProviderName(inputFilePath)?.toLowerCase();
       if (providerName === undefined) {
         console.log(`Illegal file path, unable to extract provider name ${inputFilePath}`);
         return;
       }
-      //console.log(`Provider Name: ${providerName}`);
       const spec = (await this.load(inputFilePath)) as SwaggerSpec;
-      let elapsedTime = Date.now() - loadStartTime;
-      console.log(`Time ${elapsedTime} to load and deference ${inputFilePath}`);
-      //console.log(`Loaded spec: ${JSON.stringify(spec)}`);
+      let elapsedTime = Date.now();
       const apiVersion = JSON.parse(JSON.stringify(spec))["info"]["version"].toLowerCase();
-      //console.log(`Api version ${apiVersion}`);
 
-      const getTagStartTime = Date.now();
       //const values = Object.values(spec.paths).map((a) => Object.values(a).filter((b) => (<SwaggerOperation>b).operationId !== undefined));
       let operations: SwaggerOperation[] = [];
       const values = Object.values(spec.paths);
@@ -80,13 +74,7 @@ export class OperationLoader {
         ) as SwaggerOperation[];
         operations = operations.concat(ops);
       }
-      console.log(`All operation length: ${operations.length}`);
-      elapsedTime = Date.now() - getTagStartTime;
-      console.log(`Time ${elapsedTime} to get all operations ${inputFilePath}`);
       //const operations = await this.getAllTargetKey("$..[?(@.operationId)]~", spec);
-      //elapsedTime = Date.now() - getTagStartTime;
-      //console.log(`Time 2 ${elapsedTime} to get all operations ${inputFilePath}`);
-
       for (const operation of operations) {
         //const path = op.path;
         //const parent = op.parent;
@@ -96,7 +84,9 @@ export class OperationLoader {
           continue;
         }
         //console.log(`operationId: ${operationId}, path: ${path}`);
-        this.ruleMap.forEach((value: string, key: string) => {
+        for (const rule of this.ruleMap) {
+          const value = rule[1];
+          const key = rule[0];
           const attrs = this.getAllTargetKey(value, operation);
           //console.log(`${key}: ${attrs.length}`);
           let apiVersions = this.cache.get(providerName);
@@ -116,18 +106,23 @@ export class OperationLoader {
           }
           let allAttrs = allRules.get(key);
           if (allAttrs === undefined) {
-            allAttrs = [];
+            allAttrs = new Map();
             allRules.set(key, allAttrs);
           }
+          allAttrs = allRules.get(key);
           for (const attr of attrs) {
             //TODO: parameter as a list, get the name of the element
             const attrPath = this.getAttrPath(operation as any, attr.pointer);
             if (attrPath !== undefined) {
-              allAttrs.push(attrPath);
+              let xmsValue: string[] = [];
+              if (key === "mutability") {
+                xmsValue = attr.parent[attr.value]["x-ms-mutability"] as string[];
+              }
+              allAttrs?.set(attrPath, xmsValue);
             }
             //console.log(`Get attrPath ${attrPath}`);
           }
-        });
+        }
       }
       elapsedTime = Date.now() - startTime;
       console.log(`Time ${elapsedTime} to process ${inputFilePath}`);
@@ -137,22 +132,15 @@ export class OperationLoader {
 
   private async load(inputFilePath: string): Promise<Json> {
     //Read content from swagger file and
-    const loadStartTime = Date.now();
     let fileContent = JSON.parse(await this.fileLoader.load(inputFilePath));
     if (typeof fileContent !== "object" || fileContent === null) {
       return {};
     }
-    let elapsedTime = Date.now() - loadStartTime;
-    console.log(`Time ${elapsedTime} to load ${inputFilePath}`);
 
     //remove unnecessary properties
-    const removeStartTime = Date.now();
     this.removeProperty(fileContent);
-    elapsedTime = Date.now() - removeStartTime;
-    console.log(`Time ${elapsedTime} remove property ${inputFilePath}`);
     //console.log(JSON.stringify(fileContent));
 
-    const derefStartTime = Date.now();
     //resolve all refs using lib: https://github.com/APIDevTools/json-schema-ref-parser
     const resolveOption: $RefParser.Options = {
       resolve: {
@@ -171,8 +159,6 @@ export class OperationLoader {
       const parser = new $RefParser();
       fileContent = await parser.dereference(inputFilePath, fileContent, resolveOption);
       //console.log(`Deferenced: ${JSON.stringify(fileContent.definitions!.ApiCollection)}`);
-      elapsedTime = Date.now() - derefStartTime;
-      console.log(`Time ${elapsedTime} deference ${inputFilePath}`);
     } catch (err) {
       console.error(err);
       return {};
@@ -186,15 +172,10 @@ export class OperationLoader {
     providerName: string,
     apiVersion: string,
     operationId: string,
-    xmsPaths: string[]
+    xmsPath: string,
+    xmsValues?: string[]
   ) {
-    if (jsonPath.includes("vmSize")) {
-      console.log("vmSize");
-    }
-    if (jsonPath.includes("osPro")) {
-      console.log("osProfile");
-    }
-    const attrs = this.getAttrs(providerName, apiVersion, operationId, xmsPaths);
+    const attrs = this.getAttrs(providerName, apiVersion, operationId, xmsPath, xmsValues);
     if (attrs === undefined || attrs.length <= 0) {
       return false;
     }
@@ -211,16 +192,24 @@ export class OperationLoader {
     providerName: string,
     apiVersion: string,
     inputOperation: string,
-    xmsPaths: string[]
+    xmsPath: string,
+    xmsValues?: string[]
   ) {
     let res: string[] = [];
-    for (const xms of xmsPaths) {
-      const attrs = this.cache.get(providerName)?.get(apiVersion)?.get(inputOperation)?.get(xms);
-      if (attrs !== undefined) {
-        res = res.concat(attrs);
+    const attrs = this.cache.get(providerName)?.get(apiVersion)?.get(inputOperation)?.get(xmsPath);
+    if (attrs !== undefined) {
+      if (xmsPath === "mutability" && xmsValues !== undefined) {
+        for (const attr of attrs) {
+          if (isSubset(attr[1], xmsValues)) {
+            res.push(attr[0]);
+          }
+        }
+      } else {
+        for (const attr of attrs) {
+          res.push(attr[0]);
+        }
       }
     }
-
     return res;
   }
 
@@ -304,4 +293,19 @@ export function isExample(path: string) {
 export async function loadSingleFile(filePath: string) {
   const fileString = await vfsReadFile(filePath);
   return JSON.parse(fileString);
+}
+
+export function isSubset(ele: string | string[], set: string[]) {
+  if (typeof ele === "string") {
+    if (set.includes(ele)) {
+      return true;
+    }
+    return false;
+  }
+  for (const e of ele) {
+    if (!set.includes(e)) {
+      return false;
+    }
+  }
+  return true;
 }

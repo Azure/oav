@@ -1,35 +1,58 @@
+import * as assert from "assert";
 import { FileLoader } from "../lib/swagger/fileLoader";
 import { OperationLoader } from "../lib/armValidator/operationLoader";
-import { assert } from "console";
 import { DefaultConfig } from "../lib/util/constants";
 import { diffRequestResponse } from "../lib/armValidator/roundTripValidator";
 import { RequestResponsePair } from "../lib/liveValidation/liveValidator";
 import { LiveValidator } from "../lib/liveValidation/liveValidator";
-import { ResponseDiffItem } from "../lib/apiScenario/newmanReportValidator";
 
 jest.setTimeout(999999);
 
 describe("Live Validator", () => {
   describe("Initialization", () => {
     it("should initialize with defaults", async () => {
-      console.log("Hello world");
       //init operationLoader
       const fileLoader = new FileLoader({
-
       });
-      const ruleMap = new Map<string, string>([
-        ["readOnly", "$..[?(@.readOnly)]~"]
-      ]);
-      const operationLoader = new OperationLoader(fileLoader, ruleMap);
-
+      const operationLoader = new OperationLoader(fileLoader);
       const swaggerPattern = "/home/adqi/oav/test/liveValidation/swaggers/specification/compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json";
       const glob = require("glob");
       const filePaths: string[] = glob.sync(swaggerPattern, {
         ignore: DefaultConfig.ExcludedExamplesAndCommonFiles,
         nodir: true,
-      }); //["/home/adqi/oav/test/liveValidation/swaggers/specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-01-01/apimapis.json"];
+      });
       await operationLoader.init(filePaths);
-      assert(operationLoader.cache.size > 0);
+
+      //readOnly
+      const readOnlys = operationLoader.getAttrs("microsoft.compute", "2021-11-01", "AvailabilitySets_CreateOrUpdate", "readOnly");
+      assert.equal(readOnlys.length, 8);
+      assert.equal(readOnlys.includes("parameters/schema/properties/properties/properties/statuses"), true);
+      assert.equal(readOnlys.filter((a) => a.includes("parameters")).length, 4);
+      //secret
+      const secrets = operationLoader.getAttrs("microsoft.compute", "2021-11-01", "VirtualMachines_CreateOrUpdate", "secret");
+      assert.equal(secrets.length, 3);
+      //default
+      const defaults = operationLoader.getAttrs("microsoft.compute", "2021-11-01", "VirtualMachineScaleSetVMs_PowerOff", "default");
+      assert.equal(defaults.length, 3);
+      //mutability
+      let muts = operationLoader.getAttrs("microsoft.compute", "2021-11-01", "AvailabilitySets_CreateOrUpdate", "mutability", ["read", "create"]);
+      assert.equal(muts.length, 2);
+      muts = operationLoader.getAttrs("microsoft.compute", "2021-11-01", "AvailabilitySets_CreateOrUpdate", "mutability", ["update"]);
+      assert.equal(muts.length, 0);
+    });
+
+    it("readonly properties should not cause error: ROUNDTRIP_INCONSISTENT_PROPERTY", async () => {
+      //init operationLoader
+      const fileLoader = new FileLoader({
+      });
+      const operationLoader = new OperationLoader(fileLoader);
+      const swaggerPattern = "/home/adqi/oav/test/liveValidation/swaggers/specification/compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json";
+      const glob = require("glob");
+      const filePaths: string[] = glob.sync(swaggerPattern, {
+        ignore: DefaultConfig.ExcludedExamplesAndCommonFiles,
+        nodir: true,
+      });
+      await operationLoader.init(filePaths);
       //end of init operationLoader
 
       const options = {
@@ -40,11 +63,9 @@ describe("Live Validator", () => {
       };
       const validator = new LiveValidator(options);
       await validator.initialize();
-      const cache = validator.operationSearcher.cache;
-      assert(cache.size > 0);
 
       //roundtrip validation
-      const payload: RequestResponsePair = require(`${__dirname}/liveValidation/payloads/roundTrip_invalid_VMCreate.json`);
+      const payload: RequestResponsePair = require(`${__dirname}/liveValidation/payloads/roundTrip_valid_readOnlyProperties.json`);
       const { info, error } = validator.getOperationInfo(
         payload.liveRequest,
         "correlationId",
@@ -56,50 +77,8 @@ describe("Live Validator", () => {
       const operationId = info.operationId;
       const apiversion = info.apiVersion;
       const providerName = info.validationRequest?.providerNamespace;
-      console.log(`${operationId}, ${apiversion} ${providerName}`);
-      const attrs = operationLoader.getAttrs(providerName!, apiversion, operationId, ["readOnly"]);
-      const diffs = diffRequestResponse(payload.liveRequest.body, payload.liveResponse.body);
-      const rest = diffs.map((it: any) => {
-        const ret: ResponseDiffItem = {
-            code: "",
-            jsonPath: "",
-            severity: "Error",
-            message: "",
-            detail: "",
-        };
-        const jsonPath: string = it.remove || it.add || it.replace;
-        const path = jsonPath.split("/").join("(.*)").concat("$");
-        console.log(JSON.stringify(it));
-        if (it.replace !== undefined) {
-          //TODO: x-ms-mutability
-          const isReplace = operationLoader.attrChecker(path, providerName!, apiversion, operationId, ["readOnly", "default"]);
-          if (!isReplace) {
-            ret.code = "ROUNDTRIP_INCONSISTENT_PROPERTY";
-            ret.jsonPath = jsonPath;
-            return ret;
-          }
-        } else if (it.add !== undefined) {
-          const isReadOnly = operationLoader.attrChecker(path, providerName!, apiversion, operationId, ["readOnly", "default"]);
-          if (!isReadOnly) {
-            ret.code = "ROUNDTRIP_ADDITIONAL_PROPERTY";
-            ret.jsonPath = jsonPath;
-            return ret;
-          }
-        } else if (it.remove !== undefined) {
-          //TODO: x-ms-mutability
-          const isRemove = operationLoader.attrChecker(path, providerName!, apiversion, operationId, ["secret"]);
-          if (!isRemove) {
-            ret.code = "ROUNDTRIP_MISSING_PROPERTY";
-            ret.jsonPath = jsonPath;
-            return ret;
-          }
-        }
-        return undefined;
-      }).filter((a) => a !== undefined);
-      console.log(`Finish validation ${rest.length}`);
-      assert(diffs.length === 3);
-      assert(rest.length === 3);
-      assert(attrs !== undefined);
+      const rest = diffRequestResponse(payload, providerName!, apiversion, operationId, operationLoader);
+      assert.equal(rest.length, 0);
       //end of roundtrip validation
     });
   });

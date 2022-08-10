@@ -9113,6 +9113,7 @@
             "in": "path",
             "required": true,
             "type": "string",
+            "default": "default",
             "description": "The instance ID of the virtual machine."
           },
           {
@@ -9120,7 +9121,8 @@
             "in": "query",
             "required": false,
             "type": "boolean",
-            "default": false,
+            "default": true,
+            "readOnly": true,
             "description": "The parameter to request non-graceful VM shutdown. True value for this flag indicates non-graceful shutdown whereas false indicates otherwise. Default value for this flag is false if not specified"
           },
           {
@@ -10231,6 +10233,9 @@
           "$ref": "#/definitions/AvailabilitySetProperties"
         },
         "sku": {
+          "x-ms-mutability": [
+            "read"
+          ],
           "$ref": "#/definitions/Sku",
           "description": "Sku of the availability set, only name is required to be set. See AvailabilitySetSkuTypes for possible set of values. Use 'Aligned' for virtual machines with managed disks and 'Classic' for virtual machines with unmanaged disks. Default value is 'Classic'."
         }
