@@ -10,7 +10,7 @@ jest.setTimeout(999999);
 
 describe("Live Validator", () => {
   describe("Initialization", () => {
-    it("should initialize with defaults", async () => {
+    /*it("should initialize with defaults", async () => {
       //init operationLoader
       const fileLoader = new FileLoader({
       });
@@ -39,7 +39,7 @@ describe("Live Validator", () => {
       assert.equal(muts.length, 2);
       muts = operationLoader.getAttrs("microsoft.compute", "2021-11-01", "AvailabilitySets_CreateOrUpdate", "mutability", ["update"]);
       assert.equal(muts.length, 0);
-    });
+    });*/
 
     it("readonly properties should not cause error: ROUNDTRIP_INCONSISTENT_PROPERTY", async () => {
       //init operationLoader
@@ -52,7 +52,7 @@ describe("Live Validator", () => {
         ignore: DefaultConfig.ExcludedExamplesAndCommonFiles,
         nodir: true,
       });
-      await operationLoader.init(filePaths);
+      await operationLoader.init(filePaths, true);
       //end of init operationLoader
 
       const options = {

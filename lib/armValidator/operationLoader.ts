@@ -17,12 +17,13 @@ export enum CompareType {
   isMissing,
 }
 
+type Specs = any[];
 type Attr = Map<string, string[]>;
 //readOnly: [RestorePointCollection.properties.provisioningState]
 //'parameters/schema/properties/properties/allOf/0/allOf/0/properties/isCurrent'
 type Operation = Map<string, Attr>;
 //RestorePointCollections_CreateOrUpdate
-type ApiVersion = Map<string, Operation>;
+type ApiVersion = Map<string, Operation | Specs>;
 //2021-11-01
 type Provider = Map<string, ApiVersion>;
 
@@ -53,7 +54,7 @@ export class OperationLoader {
     this.fileLoader = fileLoader;
   }
 
-  public async init(inputFilePaths: string[]) {
+  public async init(inputFilePaths: string[], isLazyBuild?: boolean) {
     for (const inputFilePath of inputFilePaths) {
       const startTime = Date.now();
       const providerName = this.parseProviderName(inputFilePath)?.toLowerCase();
@@ -73,6 +74,27 @@ export class OperationLoader {
           (b) => (b as SwaggerOperation).operationId !== undefined
         ) as SwaggerOperation[];
         operations = operations.concat(ops);
+      }
+      let apiVersions = this.cache.get(providerName);
+      if (apiVersions === undefined) {
+        apiVersions = new Map();
+        this.cache.set(providerName!, apiVersions);
+      }
+      let allOperations = apiVersions.get(apiVersion);
+      if (allOperations === undefined) {
+        allOperations = new Map();
+        apiVersions.set(apiVersion, allOperations);
+      }
+      let items = allOperations.get("spec") as Specs;
+      if (items === undefined) {
+        items = [];
+        allOperations.set("spec", items);
+      }
+      items = allOperations.get("spec") as Specs;
+      items = items.concat(operations);
+      allOperations.set("spec", items);
+      if (isLazyBuild) {
+        return;
       }
       //const operations = await this.getAllTargetKey("$..[?(@.operationId)]~", spec);
       for (const operation of operations) {
@@ -196,17 +218,101 @@ export class OperationLoader {
     xmsValues?: string[]
   ) {
     let res: string[] = [];
-    const attrs = this.cache.get(providerName)?.get(apiVersion)?.get(inputOperation)?.get(xmsPath);
-    if (attrs !== undefined) {
-      if (xmsPath === "mutability" && xmsValues !== undefined) {
-        for (const attr of attrs) {
-          if (isSubset(attr[1], xmsValues)) {
+    let items = this.cache.get(providerName)?.get(apiVersion)?.get(inputOperation) as Operation;
+    //const attrs = this.cache.get(providerName)?.get(apiVersion)?.get(inputOperation)?.get(xmsPath);
+    if (items !== undefined) {
+      const attrs = items.get(xmsPath);
+      if (attrs !== undefined) {
+        if (xmsPath === "mutability" && xmsValues !== undefined) {
+          for (const attr of attrs) {
+            if (isSubset(attr[1], xmsValues)) {
+              res.push(attr[0]);
+            }
+          }
+        } else {
+          for (const attr of attrs) {
             res.push(attr[0]);
           }
         }
-      } else {
-        for (const attr of attrs) {
-          res.push(attr[0]);
+      }
+      return res;
+    } else {
+      const allOps = this.cache.get(providerName)?.get(apiVersion)?.get("spec");
+      if (allOps === undefined) {
+        console.log(`Spec cache should not be empty ${inputOperation}`);
+        return res;
+      }
+      const startTime = Date.now();
+      for (const operation of allOps) {
+        //const path = op.path;
+        //const parent = op.parent;
+        //const operation = parent[op.value];
+        const operationId = operation["operationId"];
+        if (typeof operationId === "object") {
+          continue;
+        }
+        if (typeof operationId === "string" && operationId === inputOperation) {
+          //console.log(`operationId: ${operationId}, path: ${path}`);
+          for (const rule of this.ruleMap) {
+            const value = rule[1];
+            const key = rule[0];
+            const attrs = this.getAllTargetKey(value, operation);
+            //console.log(`${key}: ${attrs.length}`);
+            let apiVersions = this.cache.get(providerName);
+            if (apiVersions === undefined) {
+              apiVersions = new Map();
+              this.cache.set(providerName!, apiVersions);
+            }
+            let allOperations = apiVersions.get(apiVersion);
+            if (allOperations === undefined) {
+              allOperations = new Map();
+              apiVersions.set(apiVersion, allOperations);
+            }
+            let allRules = allOperations.get(operationId) as Operation;
+            if (allRules === undefined) {
+              allRules = new Map();
+              allOperations.set(operationId, allRules);
+            }
+            let allAttrs = allRules.get(key);
+            if (allAttrs === undefined) {
+              allAttrs = new Map();
+              allRules.set(key, allAttrs);
+            }
+            allAttrs = allRules.get(key);
+            for (const attr of attrs) {
+              //TODO: parameter as a list, get the name of the element
+              const attrPath = this.getAttrPath(operation as any, attr.pointer);
+              if (attrPath === undefined) {
+                continue;
+              }
+              let xmsValue: string[] = [];
+              if (key === "mutability") {
+                xmsValue = attr.parent[attr.value]["x-ms-mutability"] as string[];
+              }
+              allAttrs?.set(attrPath, xmsValue);
+              //console.log(`Get attrPath ${attrPath}`);
+            }
+          }
+        }
+      }
+      const duration = Date.now() - startTime;
+      console.log(`Time ${duration} to init ${inputOperation}`);
+    }
+    items = this.cache.get(providerName)?.get(apiVersion)?.get(inputOperation) as Operation;
+    //const attrs = this.cache.get(providerName)?.get(apiVersion)?.get(inputOperation)?.get(xmsPath);
+    if (items !== undefined) {
+      const attrs = items.get(xmsPath);
+      if (attrs !== undefined) {
+        if (xmsPath === "mutability" && xmsValues !== undefined) {
+          for (const attr of attrs) {
+            if (isSubset(attr[1], xmsValues)) {
+              res.push(attr[0]);
+            }
+          }
+        } else {
+          for (const attr of attrs) {
+            res.push(attr[0]);
+          }
         }
       }
     }
