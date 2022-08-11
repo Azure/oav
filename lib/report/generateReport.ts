@@ -208,7 +208,9 @@ export class CoverageView {
       });
 
       this.resultsForRendering = this.coverageResultsForRendering.map((item) => {
-        const data = this.validationResultsForRendering.find((i) => item.spec === i.specFilePath);
+        const data = this.validationResultsForRendering.find(
+          (i) => i.specFilePath && item.spec.includes(i.specFilePath)
+        );
         return {
           ...item,
           ...data,
