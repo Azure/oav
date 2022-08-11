@@ -830,6 +830,7 @@ export class LiveValidator {
       elapsedTime,
       info.validationRequest
     );
+    console.log(`TIme ${elapsedTime} to validate ${operationId}`);
     return {
       isSuccessful: runtimeException ? undefined : errors.length === 0,
       operationInfo: info,
