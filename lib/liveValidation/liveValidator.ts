@@ -234,18 +234,12 @@ export class LiveValidator {
     while (swaggerPaths.length > 0) {
       const swaggerPath = swaggerPaths.shift()!;
       this.swaggerList.push(swaggerPath);
-      const startSwaggerInit = Date.now();
       const spec = await this.getSwaggerInitializer(this.loader!, swaggerPath);
-      const endSwaggerInit = Date.now() - startSwaggerInit;
-      console.log(`Time ${endSwaggerInit} to  init swagger`);
       if (spec !== undefined) {
         allSpecs.push(spec);
         if (this.options.enableRoundTripValidator) {
           //TODO: how about get SwaggerSpec as parameter to line: 242
-          const startInitloader = Date.now();
           this.operationLoader.init(swaggerPath, spec, this.options.enableRoundTripLazyBuild);
-          const endInitLoader = Date.now() - startInitloader;
-          console.log(`Time ${endInitLoader} to init loader for file ${swaggerPath}`);
         }
       }
     }
@@ -274,7 +268,6 @@ export class LiveValidator {
           const loadStart = Date.now();
           await this.loader.buildAjvValidator(spec);
           const durationInMs = Date.now() - loadStart;
-          console.log(`Time ${durationInMs} ro init ajv`);
           this.logging(
             `Complete building validator for ${spec._filePath} in initialization time`,
             LiveValidatorLoggingLevels.info,

@@ -94,11 +94,16 @@ export class OperationLoader {
       if (typeof operationId === "object") {
         continue;
       }
+      const litOp = {
+        parameters: operation.parameters,
+        responses: operation.responses,
+        operationId: operation.operationId,
+      };
       //console.log(`operationId: ${operationId}, path: ${path}`);
       for (const rule of this.ruleMap) {
         const value = rule[1];
         const key = rule[0];
-        const attrs = this.getAllTargetKey(value, operation);
+        const attrs = this.getAllTargetKey(value, litOp);
         //console.log(`${key}: ${attrs.length}`);
         let apiVersions = this.cache.get(providerName);
         if (apiVersions === undefined) {
@@ -198,6 +203,11 @@ export class OperationLoader {
         //const parent = op.parent;
         //const operation = parent[op.value];
         const operationId = operation["operationId"];
+        const litOp = {
+          parameters: operation.parameters,
+          responses: operation.responses,
+          operationId: operation.operationId,
+        };
         if (typeof operationId === "object") {
           continue;
         }
@@ -206,7 +216,7 @@ export class OperationLoader {
           for (const rule of this.ruleMap) {
             const value = rule[1];
             const key = rule[0];
-            const attrs = this.getAllTargetKey(value, operation);
+            const attrs = this.getAllTargetKey(value, litOp);
             //console.log(`${key}: ${attrs.length}`);
             let apiVersions = this.cache.get(providerName);
             if (apiVersions === undefined) {
@@ -243,6 +253,7 @@ export class OperationLoader {
               //console.log(`Get attrPath ${attrPath}`);
             }
           }
+          break;
         }
       }
       const duration = Date.now() - startTime;

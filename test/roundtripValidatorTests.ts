@@ -29,7 +29,7 @@ describe("Live Validator", () => {
       assert.equal(validator.operationLoader, undefined);
     });
 
-    /*it("OperationLoader should be completely initialized", async () => {
+    it("OperationLoader should be completely initialized", async () => {
       console.log("OperationLoader should be completely initialized");
       const swaggerPattern = "specification/compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json";
       const glob = require("glob");
@@ -167,7 +167,7 @@ describe("Live Validator", () => {
       }
       assert.equal(rest.isSuccessful, false);
       //end of roundtrip validation
-    });*/
+    });
 
     it("Round trip multiple payload validation fail", async () => {
       console.log("Round trip multiple payload validation fail");
