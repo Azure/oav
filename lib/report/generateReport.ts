@@ -13,13 +13,23 @@ import { OperationContext } from "../liveValidation/operationValidator";
 
 export interface TrafficValidationIssueForRendering extends TrafficValidationIssue {
   payloadFileLinkLabel?: string;
+  payloadFilePathWithPosition?: string;
   errorsForRendering?: LiveValidationIssueForRendering[];
   errorCodeLen: number;
+}
+
+export interface runtimeExceptionList {
+  payloadFilePath?: string;
+  code: string;
+  message: string;
+  specList: Array<{ specLabel: string; specLink: string }>;
 }
 
 export interface TrafficValidationIssueForRenderingInner {
   generalErrorsInner: TrafficValidationIssueForRendering[];
   errorCodeLen: number;
+  specFilePath?: string;
+  specFilePathWithPosition?: string;
   operationInfo: OperationContext;
   errorsForRendering: LiveValidationIssueForRendering[];
 }
@@ -28,6 +38,8 @@ export interface LiveValidationIssueForRendering extends LiveValidationIssue {
   friendlyName?: string;
   link?: string;
   payloadFilePath?: string | undefined;
+  payloadFilePathWithPosition?: string;
+  schemaPathWithPosition?: string;
   payloadFileLinkLabel?: string | undefined;
 }
 
@@ -44,7 +56,12 @@ export interface ErrorDefinition {
 export interface OperationCoverageInfoForRendering extends OperationCoverageInfo {
   specLinkLabel?: string;
   validationPassOperations?: number;
+  generalErrorsInnerList: TrafficValidationIssueForRenderingInner[];
 }
+
+export interface resultForRendering
+  extends OperationCoverageInfoForRendering,
+    TrafficValidationIssueForRendering {}
 
 // used to pass data to the template rendering engine
 export class CoverageView {
@@ -61,6 +78,7 @@ export class CoverageView {
 
   public validationResultsForRendering: TrafficValidationIssueForRendering[] = [];
   public coverageResultsForRendering: OperationCoverageInfoForRendering[] = [];
+  public resultsForRendering: resultForRendering[] = [];
 
   private validationResults: TrafficValidationIssue[];
   private sortedValidationResults: TrafficValidationIssue[];
@@ -128,6 +146,11 @@ export class CoverageView {
             code: error.code,
             message: error.message,
             schemaPath: error.schemaPath,
+            schemaPathWithPosition: this.overrideLinkInReport
+              ? `${this.specLinkPrefix}/${element.specFilePath?.substring(
+                  element.specFilePath?.indexOf("specification")
+                )}#L${error.source.position.line}`
+              : `${element.specFilePath}#L${error.source.position.line}`,
             pathsInPayload: error.pathsInPayload,
             jsonPathsInPayload: error.jsonPathsInPayload,
             severity: error.severity,
@@ -136,6 +159,9 @@ export class CoverageView {
             payloadFilePath: this.overrideLinkInReport
               ? `${this.payloadLinkPrefix}/${payloadFile}`
               : element.payloadFilePath,
+            payloadFilePathWithPosition: this.overrideLinkInReport
+              ? `${this.payloadLinkPrefix}/${payloadFile}#L${element.payloadFilePathPosition?.line}`
+              : `${element.payloadFilePath}#L${element.payloadFilePathPosition?.line}`,
             payloadFileLinkLabel: payloadFile,
           });
         });
@@ -144,7 +170,15 @@ export class CoverageView {
             ? `${this.payloadLinkPrefix}/${payloadFile}`
             : element.payloadFilePath,
           payloadFileLinkLabel: payloadFile,
+          payloadFilePathWithPosition: this.overrideLinkInReport
+            ? `${this.payloadLinkPrefix}/${payloadFile}#L${element.payloadFilePathPosition?.line}`
+            : `${element.payloadFilePath}#L${element.payloadFilePathPosition?.line}`,
           errors: element.errors,
+          specFilePath: this.overrideLinkInReport
+            ? `${this.specLinkPrefix}/${element.specFilePath?.substring(
+                element.specFilePath?.indexOf("specification")
+              )}`
+            : element.specFilePath,
           errorsForRendering: errorsForRendering,
           errorCodeLen: errorsForRendering.length,
           operationInfo: element.operationInfo,
@@ -169,8 +203,71 @@ export class CoverageView {
           unCoveredOperationsListGen: element.unCoveredOperationsListGen,
           totalOperations: element.totalOperations,
           coverageRate: element.coverageRate,
+          generalErrorsInnerList: [],
         });
       });
+
+      this.resultsForRendering = this.coverageResultsForRendering.map((item) => {
+        const data = this.validationResultsForRendering.find(
+          (i) => i.specFilePath && item.spec.includes(i.specFilePath)
+        );
+        return {
+          ...item,
+          ...data,
+        } as any;
+      });
+
+      const generalErrorsInnerOrigin = this.validationResultsForRendering.filter((x) => {
+        return x.errors && x.errors.length > 0;
+      });
+      const generalErrorsInnerFormat: TrafficValidationIssueForRendering[][] = Object.values(
+        generalErrorsInnerOrigin.reduce(
+          (res: { [key: string]: TrafficValidationIssueForRendering[] }, item) => {
+            /* eslint-disable no-unused-expressions */
+            res[item!.operationInfo!.operationId + item!.specFilePath]
+              ? res[item!.operationInfo!.operationId + item!.specFilePath].push(item)
+              : (res[item!.operationInfo!.operationId + item!.specFilePath] = [item]);
+            /* eslint-enable no-unused-expressions */
+            return res;
+          },
+          {}
+        )
+      );
+      const generalErrorsInnerList: TrafficValidationIssueForRenderingInner[] = [];
+      generalErrorsInnerFormat.forEach((element) => {
+        let errorCodeLen: number = 0;
+        element.forEach((item) => {
+          errorCodeLen = errorCodeLen + item.errorCodeLen;
+        });
+        let errorsForRendering: LiveValidationIssueForRendering[] = [];
+        element.forEach((item) => {
+          errorsForRendering = errorsForRendering.concat(item.errorsForRendering!);
+        });
+        generalErrorsInnerList.push({
+          generalErrorsInner: element,
+          errorCodeLen: errorCodeLen,
+          errorsForRendering: errorsForRendering,
+          operationInfo: element[0]!.operationInfo!,
+          specFilePath: this.overrideLinkInReport
+            ? `${this.specLinkPrefix}/${element[0].specFilePath?.substring(
+                element[0].specFilePath?.indexOf("specification")
+              )}`
+            : element[0].specFilePath,
+          specFilePathWithPosition: this.overrideLinkInReport
+            ? `${this.specLinkPrefix}/${element[0].specFilePath?.substring(
+                element[0].specFilePath?.indexOf("specification")
+              )}#L${element[0]!.operationInfo!.position!.line}`
+            : `${element[0].specFilePath}#L${element[0]!.operationInfo!.position!.line}`,
+        });
+      });
+
+      for (const e of this.resultsForRendering) {
+        for (const i of generalErrorsInnerList) {
+          if (e.specFilePath === i.specFilePath && i) {
+            e.generalErrorsInnerList.push(i);
+          }
+        }
+      }
     } catch (e) {
       console.error(`Failed in prepareDataForRendering with err:${e?.stack};message:${e?.message}`);
     }
@@ -202,6 +299,7 @@ export class CoverageView {
       return 0;
     });
   }
+
   private setMetrics() {
     if (this.coverageResults?.length > 0) {
       this.apiVersion = this.coverageResults[0].apiVersion;
@@ -239,50 +337,39 @@ export class CoverageView {
     });
   }
 
-  public getGeneralErrorsGen(): TrafficValidationIssueForRenderingInner[] {
-    const generalErrorsInnerOrigin = this.getGeneralErrors();
-    const generalErrorsInnerFormat: TrafficValidationIssueForRendering[][] = Object.values(
-      generalErrorsInnerOrigin.reduce(
-        (res: { [key: string]: TrafficValidationIssueForRendering[] }, item) => {
-          /* eslint-disable no-unused-expressions */
-          res[item!.operationInfo!.operationId]
-            ? res[item!.operationInfo!.operationId].push(item)
-            : (res[item!.operationInfo!.operationId] = [item]);
-          /* eslint-enable no-unused-expressions */
-          return res;
-        },
-        {}
-      )
-    );
-    const generalErrorsInnerList: TrafficValidationIssueForRenderingInner[] = [];
-    generalErrorsInnerFormat.forEach((element) => {
-      let errorCodeLen: number = 0;
-      element.forEach((item) => {
-        errorCodeLen = errorCodeLen + item.errorCodeLen;
-      });
-      let errorsForRendering: LiveValidationIssueForRendering[] = [];
-      element.forEach((item) => {
-        errorsForRendering = errorsForRendering.concat(item.errorsForRendering!);
-      });
-      generalErrorsInnerList.push({
-        generalErrorsInner: element,
-        errorCodeLen: errorCodeLen,
-        errorsForRendering: errorsForRendering,
-        operationInfo: element[0]!.operationInfo!,
-      });
-    });
-    return generalErrorsInnerList;
-  }
-
   public getTotalGeneralErrors(): number {
     return this.getGeneralErrors().length;
   }
 
-  public getRunTimeErrors(): TrafficValidationIssue[] {
+  public getRunTimeErrors(): runtimeExceptionList[] {
     if (this.outputExceptionInReport) {
-      return this.validationResults.filter((x) => {
+      const res = this.validationResults.filter((x) => {
         return x.runtimeExceptions && x.runtimeExceptions.length > 0;
       });
+      const resFormat: runtimeExceptionList[] = [];
+      res.forEach((element) => {
+        element.runtimeExceptions &&
+          element.runtimeExceptions.forEach((i) => {
+            const specList = i.spec;
+            const specListFormat: Array<{ specLabel: string; specLink: string }> = [];
+            specList &&
+              specList.forEach((k: string) => {
+                const specLink = this.overrideLinkInReport
+                  ? `${this.specLinkPrefix}/${k?.substring(k?.indexOf("specification"))}`
+                  : k;
+                const specLabel = k?.substring(k?.lastIndexOf("/") + 1);
+                specListFormat.push({ specLabel, specLink });
+              });
+
+            resFormat.push({
+              code: i.code,
+              message: i.message,
+              payloadFilePath: element.payloadFilePath,
+              specList: specListFormat,
+            });
+          });
+      });
+      return resFormat;
     } else {
       return [];
     }
@@ -341,11 +428,9 @@ export class ReportGenerator {
 
     const general_errors = view.getGeneralErrors();
     const runtime_errors = view.getRunTimeErrors();
-    const general_errors_gen = view.getGeneralErrorsGen();
 
     console.log(general_errors);
     console.log(runtime_errors);
-    console.log(general_errors_gen);
 
     const text = Mustache.render(template, view);
     fs.writeFileSync(this.reportPath, text, "utf-8");

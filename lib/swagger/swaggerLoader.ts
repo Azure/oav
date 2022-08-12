@@ -27,7 +27,7 @@ export interface ExampleUpdateEntry {
 
 @injectable()
 export class SwaggerLoader implements Loader<SwaggerSpec> {
-  private constructor(
+  public constructor(
     @inject(TYPES.opts) private opts: SwaggerLoaderOption,
     private suppressionLoader: SuppressionLoader,
     private jsonLoader: JsonLoader,

@@ -55,11 +55,11 @@ export const builder: yargs.CommandBuilder = {
     describe: "Generate report type. Supported types: html, markdown, junit",
     type: "array",
   },
-  level: {
+  skipValidation: {
     describe:
-      "Validation level. oav runner validate request and response with different strict level. 'validate-request' validates requests should be successful. 'validate-request-response' validate both request and response.",
-    string: true,
-    default: "validate-request-response",
+      "Skip all validations include schema validation, ARM rules validation. Default: false",
+    boolean: true,
+    default: false,
   },
   armEndpoint: {
     describe: "ARM endpoint",
@@ -206,7 +206,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
         eraseDescription: false,
         baseUrl: argv.armEndpoint,
         testProxy: argv.testProxy,
-        validationLevel: argv.level,
+        skipValidation: argv.skipValidation,
         savePayload: argv.savePayload,
         generateExample: argv.generateExample,
         skipCleanUp: argv.skipCleanUp,

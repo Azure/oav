@@ -16,7 +16,13 @@ import {
   ApiScenarioRunnerClient,
   ArmDeployment,
 } from "./apiScenarioRunner";
-import { ArmTemplate, Scenario, StepArmTemplate, StepRestCall } from "./apiScenarioTypes";
+import {
+  ArmTemplate,
+  Scenario,
+  StepArmTemplate,
+  StepResponseAssertion,
+  StepRestCall,
+} from "./apiScenarioTypes";
 import { generatedGet, generatedPostmanItem } from "./defaultNaming";
 import * as PostmanHelper from "./postmanHelper";
 import { VariableEnv } from "./variableEnv";
@@ -376,7 +382,18 @@ pm.test("Stopped TestProxy recording", function() {
     const scriptTypes: PostmanHelper.TestScriptType[] = this.opts.verbose
       ? ["DetailResponseLog", "StatusCodeAssertion"]
       : ["StatusCodeAssertion"];
-    this.addTestScript(item, scriptTypes, getOverwriteVariables());
+
+    if (step.responseAssertion) {
+      step.responseAssertion = env.resolveObjectValues(step.responseAssertion);
+      scriptTypes.push("ResponseDataAssertion");
+    }
+    this.addTestScript(
+      item,
+      scriptTypes,
+      getOverwriteVariables(),
+      undefined,
+      step.responseAssertion
+    );
 
     if (step.operation["x-ms-long-running-operation"]) {
       item.description = JSON.stringify({
@@ -387,7 +404,7 @@ pm.test("Stopped TestProxy recording", function() {
         itemName: item.name,
         step: item.name,
       });
-      this.addAsLongRunningOperationItem(item);
+      this.addAsLongRunningOperationItem(item, false, step.responseAssertion);
     } else {
       item.description = JSON.stringify({
         type: "simple",
@@ -410,7 +427,11 @@ pm.test("Stopped TestProxy recording", function() {
     }
   }
 
-  private addAsLongRunningOperationItem(item: Item, checkStatus: boolean = false) {
+  private addAsLongRunningOperationItem(
+    item: Item,
+    checkStatus: boolean = false,
+    responseAssertion?: StepResponseAssertion
+  ) {
     if (this.opts.skipLroPoll) return;
 
     const longRunningEvent = PostmanHelper.createEvent(
@@ -428,8 +449,8 @@ if (pollingUrl) {
       )
     );
     item.events.add(longRunningEvent);
-
-    for (const it of this.longRunningOperationItem(item, checkStatus)) {
+    this.collection.items.add(item);
+    for (const it of this.longRunningOperationItem(item, checkStatus, responseAssertion)) {
       this.collection.items.add(it);
     }
   }
@@ -438,7 +459,8 @@ if (pollingUrl) {
     item: Item,
     types: PostmanHelper.TestScriptType[] = ["StatusCodeAssertion"],
     overwriteVariables?: Map<string, string>,
-    armTemplate?: ArmTemplate
+    armTemplate?: ArmTemplate,
+    responseAssertion?: StepResponseAssertion
   ) {
     if (this.opts.verbose) {
       types.push("DetailResponseLog");
@@ -459,6 +481,7 @@ if (pollingUrl) {
           types: types,
           variables: overwriteVariables,
           armTemplate,
+          responseAssertion,
         })
       );
       item.events.add(testEvent);
@@ -569,7 +592,11 @@ if (pollingUrl) {
     return item;
   }
 
-  public longRunningOperationItem(initialItem: Item, checkStatus: boolean = false): Item[] {
+  public longRunningOperationItem(
+    initialItem: Item,
+    checkStatus: boolean = false,
+    responseAssertion?: StepResponseAssertion
+  ): Item[] {
     const ret: Item[] = [];
 
     const pollerItem = this.newItem({
@@ -616,6 +643,18 @@ try {
         })
       );
       pollerItem.events.add(checkStatusEvent);
+    }
+
+    if (responseAssertion) {
+      const responseAssertionEvent = PostmanHelper.createEvent(
+        "test",
+        PostmanHelper.generateScript({
+          name: "LRO response assertion",
+          types: ["ResponseDataAssertion"],
+          responseAssertion: responseAssertion,
+        })
+      );
+      pollerItem.events.add(responseAssertionEvent);
     }
 
     ret.push(pollerItem);

@@ -18,6 +18,6 @@ module.exports = {
     },
   },
   setupFilesAfterEnv: ["<rootDir>/jest.setup-file.js"],
-  testMatch: ["**/test/**/liveValidatorTests.ts", "**/test/**/roundtripValidatorTests.ts"],
+  testMatch: ["**/test/**/*.ts", "!**/test/**/*.d.ts", "!**/test/sample.ts"],
   verbose: true,
 };

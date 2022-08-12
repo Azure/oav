@@ -1,6 +1,19 @@
 # Change Log - oav
 
+## 08/04/2022 3.0.5
+
+- validate-traffic
+  - add detailed operationId on swagger link
+  - add detailed position info on pathInpayload link
+  - add detailed position info on schema link
+  - change report UI
+  - support multi swaggers on report
+- API Scenario
+  - Support Subscription and Tenant scope
+  - Support assertion in response
+
 ## 07/20/2022 3.0.4
+
 - GenerateExamples - Support data generation in byte format
 - ModelValidator - Support data validation in byte format
 - API Scenario
@@ -8,8 +21,11 @@
   - Fix step variable unresolved in newman collection
   - Fix bugs about html report
   - Aggregate reports into one per scenario file
+  - Fix bug of object variables and patches
+  - Improve markdown report
 
 ## 07/06/2022 3.0.3
+
 - Generate high quality examples from API Scenario tests
 
 ## 06/30/2022 3.0.2
