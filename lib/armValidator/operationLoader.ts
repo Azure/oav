@@ -137,8 +137,6 @@ export class OperationLoader {
     }
     elapsedTime = Date.now() - startTime;
     console.log(`Time ${elapsedTime} to process ${inputFilePath}`);
-
-    console.log("Finish building cache.");
   }
 
   public attrChecker(

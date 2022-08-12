@@ -7,7 +7,7 @@ jest.setTimeout(999999);
 
 describe("Live Validator", () => {
   describe("Initialization", () => {
-    /*it("OperationLoader should not be initialized", async () => {
+    it("OperationLoader should not be initialized", async () => {
       console.log("OperationLoader should not be initialized");
       const swaggerPattern = "specification/compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json";
       const glob = require("glob");
@@ -21,6 +21,7 @@ describe("Live Validator", () => {
           "compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json"
         ],
         swaggerPaths: filePaths,
+        loadValidatorInInitialize: true,
       };
       const validator = new LiveValidator(options);
       await validator.initialize();
@@ -28,7 +29,7 @@ describe("Live Validator", () => {
       assert.equal(validator.operationLoader, undefined);
     });
 
-    it("OperationLoader should be completely initialized", async () => {
+    /*it("OperationLoader should be completely initialized", async () => {
       console.log("OperationLoader should be completely initialized");
       const swaggerPattern = "specification/compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json";
       const glob = require("glob");
@@ -183,7 +184,8 @@ describe("Live Validator", () => {
         ],
         swaggerPaths: filePaths,
         enableRoundTripValidator: true,
-        enableRoundTripLazyBuild: true
+        enableRoundTripLazyBuild: true,
+        loadValidatorInInitialize: true,
       };
       const validator = new LiveValidator(options);
       await validator.initialize();
