@@ -31,7 +31,6 @@ import {
   getProviderFromSpecPath,
 } from "../util/utils";
 import { OperationLoader } from "../armValidator/operationLoader";
-import { FileLoader } from "../swagger/fileLoader";
 import { LiveValidatorLoader, LiveValidatorLoaderOption } from "./liveValidatorLoader";
 import { OperationSearcher } from "./operationSearcher";
 import {
@@ -165,6 +164,7 @@ export class LiveValidator {
       loadValidatorInBackground: true,
       loadValidatorInInitialize: false,
       isArmCall: false,
+      enableRoundTripLazyBuild: true,
     });
 
     if (!ops.git) {
@@ -186,8 +186,7 @@ export class LiveValidator {
     this.operationSearcher = new OperationSearcher(this.logging);
 
     if (ops.enableRoundTripValidator) {
-      const fileLoader = new FileLoader({});
-      this.operationLoader = new OperationLoader(fileLoader, ruleMap);
+      this.operationLoader = new OperationLoader(ruleMap);
     }
   }
 
@@ -215,10 +214,6 @@ export class LiveValidator {
     // Construct array of swagger paths to be used for building a cache
     this.logging("Get swagger path.");
     const swaggerPaths = await this.getSwaggerPaths();
-    if (this.options.enableRoundTripValidator) {
-      //TODO: how about get SwaggerSpec as parameter to line: 242
-      this.operationLoader.init(swaggerPaths, this.options.enableRoundTripLazyBuild);
-    }
     const container = inversifyGetContainer();
     this.loader = inversifyGetInstance(LiveValidatorLoader, {
       container,
@@ -239,9 +234,16 @@ export class LiveValidator {
     while (swaggerPaths.length > 0) {
       const swaggerPath = swaggerPaths.shift()!;
       this.swaggerList.push(swaggerPath);
+      const startSwaggerInit = Date.now();
       const spec = await this.getSwaggerInitializer(this.loader!, swaggerPath);
+      const endSwaggerInit = Date.now() - startSwaggerInit;
+      console.log(`Time ${endSwaggerInit} to  init swagger`);
       if (spec !== undefined) {
         allSpecs.push(spec);
+        if (this.options.enableRoundTripValidator) {
+          //TODO: how about get SwaggerSpec as parameter to line: 242
+          this.operationLoader.init(swaggerPath, spec, this.options.enableRoundTripLazyBuild);
+        }
       }
     }
 
@@ -871,7 +873,7 @@ export class LiveValidator {
     this.logging(`Building cache from:${swaggerPath}`, LiveValidatorLoggingLevels.debug);
     let spec;
     try {
-      spec = await loader.load(pathResolve(swaggerPath));
+      spec = await loader.load(pathResolve(swaggerPath), this.options.enableRoundTripValidator);
       const elapsedTimeLoadSpec = Date.now() - startTime;
       this.logging(
         `Load spec ${swaggerPath}`,

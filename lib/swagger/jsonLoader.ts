@@ -6,7 +6,9 @@ import {
   Json,
   parseJson,
   pathJoin,
+  readFile as vfsReadFile,
 } from "@azure-tools/openapi-tools-common";
+import $RefParser, { FileInfo } from "@apidevtools/json-schema-ref-parser";
 import { load as parseYaml } from "js-yaml";
 import { default as jsonPointer } from "json-pointer";
 import { inject, injectable } from "inversify";
@@ -32,6 +34,7 @@ interface FileCache {
   originalContent?: string;
   skipResolveRef?: boolean;
   mockName: string;
+  shouldResolve?: boolean;
 }
 
 export const $id = "$id";
@@ -64,7 +67,7 @@ export class JsonLoader implements Loader<Json> {
   private fileCache = new Map<string, FileCache>();
   private loadFile = getLazyBuilder("resolved", async (cache: FileCache) => {
     const fileString = await this.fileLoader.load(cache.filePath);
-    if (this.opts.keepOriginalContent) {
+    if (this.opts.keepOriginalContent || cache.shouldResolve) {
       // eslint-disable-next-line require-atomic-updates
       cache.originalContent = fileString;
     }
@@ -109,7 +112,11 @@ export class JsonLoader implements Loader<Json> {
     // throw new Error(`Unknown file format while loading file ${cache.filePath}`);
   }
 
-  public async load(inputFilePath: string, skipResolveRef?: boolean): Promise<Json> {
+  public async load(
+    inputFilePath: string,
+    skipResolveRef?: boolean,
+    shouldDeference?: boolean
+  ): Promise<Json> {
     const filePath = this.fileLoader.relativePath(inputFilePath);
     let cache = this.fileCache.get(filePath);
     if (cache === undefined) {
@@ -122,12 +129,44 @@ export class JsonLoader implements Loader<Json> {
     if (skipResolveRef !== undefined) {
       cache.skipResolveRef = skipResolveRef;
     }
-    //TODO use loadDeferencedFile() to add deference.
-    /*
-    if (this.opts.keepOriginalContent) {
-      // eslint-disable-next-line require-atomic-updates
-      cache.originalContent = fileString;
-    }*/
+
+    if (shouldDeference) {
+      cache.shouldResolve = shouldDeference;
+      await this.loadFile(cache);
+      //get unresolved content from cache.originalContent
+      const fileContent = JSON.parse(cache.originalContent!);
+      //remove unnecessary properties
+      removeProperty(fileContent);
+      //console.log(JSON.stringify(fileContent));
+
+      //resolve all refs using lib: https://github.com/APIDevTools/json-schema-ref-parser
+      const resolveOption: $RefParser.Options = {
+        resolve: {
+          file: {
+            canRead: true,
+            read(file: FileInfo) {
+              if (isExample(file.url)) {
+                return {};
+              }
+              return loadSingleFile(file.url);
+            },
+          },
+        },
+      };
+      try {
+        const parser = new $RefParser();
+        const spec = await parser.dereference(
+          this.fileLoader.resolvePath(filePath),
+          fileContent,
+          resolveOption
+        );
+        //console.log(`Deferenced: ${JSON.stringify(fileContent.definitions!.ApiCollection)}`);
+        return spec;
+      } catch (err) {
+        console.error(err);
+        return {};
+      }
+    }
     return this.loadFile(cache);
   }
 
@@ -290,3 +329,29 @@ export class JsonLoader implements Loader<Json> {
 }
 
 export const isRefLike = (obj: any): obj is { $ref: string } => typeof obj.$ref === "string";
+
+export function isExample(path: string) {
+  return path.split(/\\|\//g).includes("examples");
+}
+
+export async function loadSingleFile(filePath: string) {
+  const fileString = await vfsReadFile(filePath);
+  return JSON.parse(fileString);
+}
+
+export function removeProperty(object: any) {
+  if (typeof object === "object" && object !== null) {
+    const obj = object as any;
+    if (typeof obj.description === "string") {
+      delete obj.description;
+    }
+    if (obj[xmsExamples] !== undefined) {
+      //console.log(`Before removal: ${JSON.stringify(obj)}`);
+      delete obj[xmsExamples];
+      //console.log(`After removal: ${JSON.stringify(obj)}`);
+    }
+    Object.keys(object).forEach((o) => {
+      removeProperty(object[o]);
+    });
+  }
+}
