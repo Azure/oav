@@ -10,6 +10,7 @@
   - support multi swaggers on report
 - API Scenario
   - Support Subscription and Tenant scope
+  - Support assertion in response
 
 ## 07/20/2022 3.0.4
 

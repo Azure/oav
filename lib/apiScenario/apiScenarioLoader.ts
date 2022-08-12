@@ -498,6 +498,8 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
           }
         }
       });
+
+      step.responseAssertion = rawStep.responses;
     } else {
       // load example step
       step.exampleFile = rawStep.exampleFile;

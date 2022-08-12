@@ -561,6 +561,13 @@ Object {
             "subscriptionId": "$(subscriptionId)",
           },
           "requiredVariables": Array [],
+          "responseAssertion": Object {
+            "200": Object {
+              "body": Object {
+                "nameAvailable": true,
+              },
+            },
+          },
           "responses": Object {},
           "secretVariables": Array [],
           "step": "checkName",
@@ -594,6 +601,7 @@ Object {
             "subscriptionId": "$(subscriptionId)",
           },
           "requiredVariables": Array [],
+          "responseAssertion": undefined,
           "responses": Object {},
           "secretVariables": Array [],
           "step": "createStorageAccount",
@@ -628,6 +636,13 @@ Object {
             "subscriptionId": "$(subscriptionId)",
           },
           "requiredVariables": Array [],
+          "responseAssertion": Object {
+            "200": Object {
+              "body": Object {
+                "nameAvailable": true,
+              },
+            },
+          },
           "responses": Object {},
           "secretVariables": Array [],
           "step": "checkName",
@@ -661,6 +676,7 @@ Object {
             "subscriptionId": "$(subscriptionId)",
           },
           "requiredVariables": Array [],
+          "responseAssertion": undefined,
           "responses": Object {},
           "secretVariables": Array [],
           "step": "createStorageAccount",
@@ -700,6 +716,13 @@ Object {
             "subscriptionId": "$(subscriptionId)",
           },
           "requiredVariables": Array [],
+          "responseAssertion": Object {
+            "200": Object {
+              "body": Object {
+                "nameAvailable": true,
+              },
+            },
+          },
           "responses": Object {},
           "secretVariables": Array [],
           "step": "checkName",
@@ -733,6 +756,7 @@ Object {
             "subscriptionId": "$(subscriptionId)",
           },
           "requiredVariables": Array [],
+          "responseAssertion": undefined,
           "responses": Object {},
           "secretVariables": Array [],
           "step": "createStorageAccount",
@@ -752,6 +776,7 @@ Object {
             "test": 1,
           },
           "requiredVariables": Array [],
+          "responseAssertion": undefined,
           "responses": Object {},
           "secretVariables": Array [],
           "step": "DeletedAccounts_Get",
@@ -815,6 +840,7 @@ Object {
             "subscriptionId": "$(subscriptionId)",
           },
           "requiredVariables": Array [],
+          "responseAssertion": undefined,
           "responses": Object {},
           "secretVariables": Array [],
           "step": "createStorageAccount",
