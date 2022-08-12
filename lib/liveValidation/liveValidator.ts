@@ -215,7 +215,8 @@ export class LiveValidator {
     // Construct array of swagger paths to be used for building a cache
     this.logging("Get swagger path.");
     const swaggerPaths = await this.getSwaggerPaths();
-    if (this.options.enableRoundTripValidator === true) {
+    if (this.options.enableRoundTripValidator) {
+      //TODO: how about get SwaggerSpec as parameter to line: 242
       this.operationLoader.init(swaggerPaths, this.options.enableRoundTripLazyBuild);
     }
     const container = inversifyGetContainer();

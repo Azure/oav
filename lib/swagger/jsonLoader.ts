@@ -122,6 +122,12 @@ export class JsonLoader implements Loader<Json> {
     if (skipResolveRef !== undefined) {
       cache.skipResolveRef = skipResolveRef;
     }
+    //TODO use loadDeferencedFile() to add deference.
+    /*
+    if (this.opts.keepOriginalContent) {
+      // eslint-disable-next-line require-atomic-updates
+      cache.originalContent = fileString;
+    }*/
     return this.loadFile(cache);
   }
 

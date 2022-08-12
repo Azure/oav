@@ -61,6 +61,7 @@ export class OperationLoader {
         console.log(`Illegal file path, unable to extract provider name ${inputFilePath}`);
         return;
       }
+      //TODO: use swaggerLoader to load swagger
       const spec = (await this.load(inputFilePath)) as SwaggerSpec;
       let elapsedTime = Date.now();
       const apiVersion = spec.info.version.toLowerCase();
