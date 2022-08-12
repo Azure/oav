@@ -1,8 +1,14 @@
 import { injectable } from "inversify";
 import { readFile as vfsReadFile } from "@azure-tools/openapi-tools-common";
 import { JSONPath } from "jsonpath-plus";
-import { SwaggerSpec, Operation as SwaggerOperation } from "../swagger/swaggerTypes";
+import {
+  SwaggerSpec,
+  Operation as SwaggerOperation,
+  Path,
+  LowerHttpMethods,
+} from "../swagger/swaggerTypes";
 import { xmsExamples } from "../util/constants";
+import { traverseSwagger } from "../transform/traverseSwagger";
 
 export enum CompareType {
   isConsistent,
@@ -57,13 +63,11 @@ export class OperationLoader {
 
     //const values = Object.values(spec.paths).map((a) => Object.values(a).filter((b) => (<SwaggerOperation>b).operationId !== undefined));
     let operations: SwaggerOperation[] = [];
-    const values = Object.values(spec.paths);
-    for (const value of values) {
-      const ops = Object.values(value).filter(
-        (b) => (b as SwaggerOperation).operationId !== undefined
-      ) as SwaggerOperation[];
-      operations = operations.concat(ops);
-    }
+    traverseSwagger(spec, {
+      onOperation: (operation: SwaggerOperation, _path: Path, _method: LowerHttpMethods) => {
+        operations.push(operation);
+      },
+    });
     let apiVersions = this.cache.get(providerName);
     if (apiVersions === undefined) {
       apiVersions = new Map();
