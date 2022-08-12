@@ -185,7 +185,7 @@ export class LiveValidator {
     this.logging(`Creating livevalidator with options:${JSON.stringify(this.options)}`);
     this.operationSearcher = new OperationSearcher(this.logging);
 
-    if (ops.enableRoundTripValidator === true) {
+    if (ops.enableRoundTripValidator) {
       const fileLoader = new FileLoader({});
       this.operationLoader = new OperationLoader(fileLoader, ruleMap);
     }

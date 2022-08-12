@@ -15,7 +15,7 @@ describe("Live Validator", () => {
       const fileLoader = new FileLoader({
       });
       const operationLoader = new OperationLoader(fileLoader);
-      const swaggerPattern = "/home/adqi/oav/test/liveValidation/swaggers/specification/compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json";
+      const swaggerPattern = "specification/compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json";
       const glob = require("glob");
       const filePaths: string[] = glob.sync(swaggerPattern, {
         ignore: DefaultConfig.ExcludedExamplesAndCommonFiles,
@@ -47,7 +47,7 @@ describe("Live Validator", () => {
       const fileLoader = new FileLoader({
       });
       const operationLoader = new OperationLoader(fileLoader);
-      const swaggerPattern = "/home/adqi/oav/test/liveValidation/swaggers/specification/compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json";
+      const swaggerPattern = "./test/liveValidation/swaggers/specification/compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json";
       const glob = require("glob");
       const filePaths: string[] = glob.sync(swaggerPattern, {
         ignore: DefaultConfig.ExcludedExamplesAndCommonFiles,
@@ -89,7 +89,7 @@ describe("Live Validator", () => {
       const fileLoader = new FileLoader({
       });
       const operationLoader = new OperationLoader(fileLoader);
-      const swaggerPattern = "/home/adqi/oav/test/liveValidation/swaggers/specification/compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json";
+      const swaggerPattern = "./test/liveValidation/swaggers/specification/compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json";
       const glob = require("glob");
       const filePaths: string[] = glob.sync(swaggerPattern, {
         ignore: DefaultConfig.ExcludedExamplesAndCommonFiles,
@@ -127,7 +127,7 @@ describe("Live Validator", () => {
 
     it("OperationLoader should not be initialized", async () => {
       console.log("OperationLoader should not be initialized");
-      const swaggerPattern = "/home/adqi/oav/test/liveValidation/swaggers/specification/compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json";
+      const swaggerPattern = "specification/compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json";
       const glob = require("glob");
       const filePaths: string[] = glob.sync(swaggerPattern, {
         ignore: DefaultConfig.ExcludedExamplesAndCommonFiles,
@@ -148,7 +148,7 @@ describe("Live Validator", () => {
 
     it("OperationLoader should be completely initialized", async () => {
       console.log("OperationLoader should be completely initialized");
-      const swaggerPattern = "/home/adqi/oav/test/liveValidation/swaggers/specification/compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json";
+      const swaggerPattern = "specification/compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json";
       const glob = require("glob");
       const filePaths: string[] = glob.sync(swaggerPattern, {
         ignore: DefaultConfig.ExcludedExamplesAndCommonFiles,
@@ -175,7 +175,7 @@ describe("Live Validator", () => {
 
     it("OperationLoader should be initialized only with spec", async () => {
       console.log("OperationLoader should be initialized only with spec");
-      const swaggerPattern = "/home/adqi/oav/test/liveValidation/swaggers/specification/compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json";
+      const swaggerPattern = "specification/compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json";
       const glob = require("glob");
       const filePaths: string[] = glob.sync(swaggerPattern, {
         ignore: DefaultConfig.ExcludedExamplesAndCommonFiles,
@@ -206,7 +206,7 @@ describe("Live Validator", () => {
 
     it("readonly properties should not cause error", async () => {
       console.log("readonly properties should not cause error");
-      const swaggerPattern = "/home/adqi/oav/test/liveValidation/swaggers/specification/compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json";
+      const swaggerPattern = "specification/compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json";
       const glob = require("glob");
       const filePaths: string[] = glob.sync(swaggerPattern, {
         ignore: DefaultConfig.ExcludedExamplesAndCommonFiles,
@@ -240,7 +240,7 @@ describe("Live Validator", () => {
 
     it("Round trip validation fail", async () => {
       console.log("Round trip validation fail");
-      const swaggerPattern = "/home/adqi/oav/test/liveValidation/swaggers/specification/compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json";
+      const swaggerPattern = "specification/compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json";
       const glob = require("glob");
       const filePaths: string[] = glob.sync(swaggerPattern, {
         ignore: DefaultConfig.ExcludedExamplesAndCommonFiles,
@@ -287,7 +287,7 @@ describe("Live Validator", () => {
 
     it("Round trip multiple payload validation fail", async () => {
       console.log("Round trip multiple payload validation fail");
-      const swaggerPattern = "/home/adqi/oav/test/liveValidation/swaggers/specification/compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json";
+      const swaggerPattern = "specification/compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json";
       const glob = require("glob");
       const filePaths: string[] = glob.sync(swaggerPattern, {
         ignore: DefaultConfig.ExcludedExamplesAndCommonFiles,

@@ -7,7 +7,6 @@ import { SwaggerSpec, Operation as SwaggerOperation } from "../swagger/swaggerTy
 import { xmsExamples } from "../util/constants";
 
 export interface OperationLoaderOption extends FileLoaderOption {
-  //Rules will be applied to swagger: readonly: readOnly=true
   supportYaml?: boolean;
   useJsonParser?: boolean;
 }
@@ -64,7 +63,7 @@ export class OperationLoader {
       }
       const spec = (await this.load(inputFilePath)) as SwaggerSpec;
       let elapsedTime = Date.now();
-      const apiVersion = JSON.parse(JSON.stringify(spec))["info"]["version"].toLowerCase();
+      const apiVersion = spec.info.version.toLowerCase();
 
       //const values = Object.values(spec.paths).map((a) => Object.values(a).filter((b) => (<SwaggerOperation>b).operationId !== undefined));
       let operations: SwaggerOperation[] = [];

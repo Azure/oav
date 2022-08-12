@@ -326,7 +326,7 @@ export const apiValidationRuntimeErrors = {
 export const roundTripValidationErrors = {
   ROUNDTRIP_INCONSISTENT_PROPERTY: {
     severity: Severity.Critical,
-    message: strTemplate`The property’s value in the GET response is different from what was set in the preceding PUT request.`,
+    message: strTemplate`The property's value in the GET response is different from what was set in the preceding PUT request.`,
   },
   ROUNDTRIP_MISSING_PROPERTY: {
     severity: Severity.Critical,
