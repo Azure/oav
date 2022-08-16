@@ -132,6 +132,19 @@ export const ajvEnableByteFormat = (ajv: Ajv) => {
   });
 };
 
+// TODO: This could be more advanced, looking at the allowedResources field (see https://github.com/Azure/autorest/tree/main/docs/extensions#schema) and ensuring that only the allowed resources are referenced, but
+// TODO: for now a generic ARM ID check is better than nothing.
+export const ajvEnableArmIdFormat = (ajv: Ajv) => {
+  ajv.addFormat("arm-id", {
+    type: "string",
+    // Note that this regex isn't perfect but it does an OK job. See https://regex101.com/r/96g3K5/1
+    validate: 
+      new RegExp("(^(\/subscriptions\/([^/]+)(\/resourcegroups\/([^/]+))?)?\/providers\/([^/]+)\/([^/]+\/[^/]+)(\/([^/]+\/[^/]+))*$|^\/subscriptions\/([^/]+)(\/resourcegroups\/([^/]+))?$)",
+      "i"
+    ),
+  });
+};
+
 // for (const keyword of [
 //   "name",
 //   "in",
@@ -168,6 +181,7 @@ export const ajvEnableAll = (ajv: Ajv, jsonLoader: JsonLoader) => {
   ajvEnableUnixTimeFormat(ajv);
   ajvEnableInt32AndInt64Format(ajv);
   ajvEnableDurationFormat(ajv);
+  ajvEnableArmIdFormat(ajv);
   ajvEnableDateTimeRfc1123Format(ajv);
   ajvEnableByteFormat(ajv);
   ajvAddFormatsDefaultValidation(ajv, "string", [
@@ -178,7 +192,6 @@ export const ajvEnableAll = (ajv: Ajv, jsonLoader: JsonLoader) => {
     "binary",
     "non-iso-duration",
     "char",
-    "arm-id",
   ]);
   ajvAddFormatsDefaultValidation(ajv, "number", ["double", "float", "decimal"]);
 };
