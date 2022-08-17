@@ -157,6 +157,9 @@ export const getFilePositionFromJsonPath = (
   obj: any,
   jsonPath: string
 ): FilePosition | undefined => {
+  if (!jsonPath) {
+    return undefined;
+  }
   const pathArr = jsonPathToArray(jsonPath.substr(1));
   /*
    * when jsonPath='/providers/Microsoft.Provider/resource',

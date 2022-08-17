@@ -24,7 +24,7 @@ export interface ArmDeployment {
   deploymentName: string;
   step: StepArmTemplate;
   details: {
-    scope: "ResourceGroup";
+    scope: string;
     subscriptionId: string;
     resourceGroupName: string;
   };
@@ -126,7 +126,7 @@ export class ApiScenarioRunner {
         env: scopeEnv,
       };
 
-      if (scope.type !== "ResourceGroup") {
+      if (scope.type === "None") {
         throw new Error(`Scope is not supported yet: ${scope.type}`);
       }
 
@@ -149,9 +149,11 @@ export class ApiScenarioRunner {
     for (const step of scope.cleanUpSteps) {
       await this.executeStep(step, scope.env, scope);
     }
-    const subscriptionId = scope.env.getRequiredString("subscriptionId");
-    const resourceGroupName = scope.env.getRequiredString("resourceGroupName");
-    await this.client.deleteResourceGroup(subscriptionId, resourceGroupName);
+    if (scope.type === "ResourceGroup") {
+      const subscriptionId = scope.env.getRequiredString("subscriptionId");
+      const resourceGroupName = scope.env.getRequiredString("resourceGroupName");
+      await this.client.deleteResourceGroup(subscriptionId, resourceGroupName);
+    }
   }
 
   private generateValueFromPrefix(env: VariableEnv) {

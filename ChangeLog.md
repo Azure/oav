@@ -1,8 +1,17 @@
 # Change Log - oav
 
-## 08/2/2022 3.0.5
+## 08/04/2022 3.0.5
 
 - ModelValidator - Add type validation for additionalProperties whose type is specified as an object
+- validate-traffic
+  - add detailed operationId on swagger link
+  - add detailed position info on pathInpayload link
+  - add detailed position info on schema link
+  - change report UI
+  - support multi swaggers on report
+- API Scenario
+  - Support Subscription and Tenant scope
+  - Support assertion in response
 
 ## 07/20/2022 3.0.4
 
@@ -14,6 +23,7 @@
   - Fix bugs about html report
   - Aggregate reports into one per scenario file
   - Fix bug of object variables and patches
+  - Improve markdown report
 
 ## 07/06/2022 3.0.3
 
