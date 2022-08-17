@@ -440,6 +440,39 @@
             top: 30px;
             transform: rotate(225deg);
         }
+        /* radio */
+        .switch-button{
+            display: none;
+        }
+        .switch-button+label{
+            display: inline-block;
+            position: relative;
+            transition: all .3s;
+            width: 60px;
+            height: 30px;
+            border-radius: 15px;
+            background-color: #ccc;
+        }
+        .switch-button:checked+label{
+            background-color: lightgreen;
+        }
+        .switch-button+label::before{
+            content: '';
+            display: block;
+            height: 25px;
+            width: 25px;
+            position: absolute;
+            border-radius: 25px;
+            left: 2px;
+            top: 2px;
+            background-color: #fff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, .4);
+            transition: all .3s;
+        }
+        .switch-button:checked+label::before{
+            left: 32px;
+            transition:  all .2s linear;
+        }
     </style>
 </head>
 
@@ -492,6 +525,15 @@
         </section>
         </div>
         <div style="padding: 0px 15px 20px; display:none;" class="content-collapse">
+
+        <div id="markdownTmp" style="display: none;">
+            {{markdown}}
+        </div>
+        <input type="checkbox" id="reportRenderMethod" class="switch-button" name="reportRenderMethod" value="reportRenderMethod">
+        <label for="reportRenderMethod"></label>
+        <span style="vertical-align: super;">Switch To Api Test Report</span>
+        <div id="markdownCont" style="padding-top: 18px;display: none;"></div>
+
         <section class="notTested">
             <h2 class="title" id="MissingTest">Untested Operations ( {{unCoveredOperations}} )</h2>
             <article>
@@ -643,6 +685,8 @@
         console.log('Hello AZSDK. Document.Ready available here.');
         addFailedEachClick();
         addContentClick();
+        document.getElementById('markdownCont').innerHTML = document.getElementById('markdownTmp').innerText;
+        switchClick();
     });
 
     function addFailedEachClick() {
@@ -655,18 +699,29 @@
             });
         });
     }
-
     
     function addContentClick() {
         $('div.content-label').each(function (index) {
             $(this).click(function (event) {
-                console.log($(this))
                 var disableCon = $(this).next().next();
-                console.log(disableCon)
                 disableCon.toggle();
                 var arrow = $(this).find(".arrow")[0];
                 $(arrow).toggleClass("collapse");
             });
+        });
+    }
+
+    function switchClick(){
+        console.log($('input[type=checkbox][name=reportRenderMethod]'))
+        $('input[type=checkbox][name=reportRenderMethod]').change(function() {
+            const span= $(this).next();
+            const label= $(span).next();
+            const mark = $(label).next();
+            const notTested = $(mark).next();
+            const testFailed = $(notTested).next();
+            mark.toggle();
+            notTested.toggle();
+            testFailed.toggle();
         });
     }
 </script>

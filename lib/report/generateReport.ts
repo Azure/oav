@@ -10,6 +10,7 @@ import { LiveValidationIssue } from "../liveValidation/liveValidator";
 import { FileLoader } from "../swagger/fileLoader";
 import { checkAndResolveGithubUrl } from "../util/utils";
 import { OperationContext } from "../liveValidation/operationValidator";
+import { generateMarkdownReportHeader } from "../apiScenario/markdownReport";
 
 export interface TrafficValidationIssueForRendering extends TrafficValidationIssue {
   payloadFileLinkLabel?: string;
@@ -69,6 +70,8 @@ export class CoverageView {
   public language: string;
   public apiVersion: string = "unknown";
   public generatedDate: Date;
+  public markdownPath: string;
+  public markdown: string;
 
   public undefinedOperationCount: number = 0;
   public operationValidated: number = 0;
@@ -95,12 +98,14 @@ export class CoverageView {
     undefinedOperationCount: number = 0,
     packageName: string = "",
     language: string = "",
+    markdownPath: string = "",
     overrideLinkInReport: boolean = false,
     outputExceptionInReport: boolean = false,
     specLinkPrefix: string = "",
     payloadLinkPrefix: string = ""
   ) {
     this.package = packageName;
+    this.markdownPath = markdownPath;
     this.validationResults = validationResults;
     this.coverageResults = coverageResults;
     this.undefinedOperationCount = undefinedOperationCount;
@@ -131,6 +136,7 @@ export class CoverageView {
 
   public async prepareDataForRendering() {
     try {
+      this.markdown = await this.readMarkdown();
       const errorDefinitions = await this.loadErrorDefinitions();
       let errorsForRendering: LiveValidationIssueForRendering[];
       this.sortedValidationResults.forEach((element) => {
@@ -273,6 +279,12 @@ export class CoverageView {
     }
   }
 
+  private async readMarkdown() {
+    const loader = new FileLoader({});
+    const res = await loader.load(this.markdownPath);
+    return res.replace(generateMarkdownReportHeader(), "");
+  }
+
   private async loadErrorDefinitions(): Promise<Map<string, ErrorDefinition>> {
     const loader = new FileLoader({});
     const errorDefinitionsDoc =
@@ -391,6 +403,7 @@ export class ReportGenerator {
   private outputExceptionInReport: boolean;
   private specLinkPrefix: string;
   private payloadLinkPrefix: string;
+  private markdownPath: string;
 
   public constructor(
     validationResults: TrafficValidationIssue[],
@@ -404,6 +417,7 @@ export class ReportGenerator {
     this.reportPath = path.resolve(process.cwd(), options.reportPath!);
     this.sdkLanguage = options.sdkLanguage!;
     this.sdkPackage = options.sdkPackage!;
+    this.markdownPath = options.markdownPath!;
     this.overrideLinkInReport = options.overrideLinkInReport!;
     this.outputExceptionInReport = options.outputExceptionInReport!;
     this.specLinkPrefix = options.specLinkPrefix!;
@@ -419,6 +433,7 @@ export class ReportGenerator {
       this.undefinedOperationsCount,
       this.sdkPackage,
       this.sdkLanguage,
+      this.markdownPath,
       this.overrideLinkInReport,
       this.outputExceptionInReport,
       this.specLinkPrefix,
