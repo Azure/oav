@@ -10,7 +10,6 @@ import { LiveValidationIssue } from "../liveValidation/liveValidator";
 import { FileLoader } from "../swagger/fileLoader";
 import { checkAndResolveGithubUrl } from "../util/utils";
 import { OperationContext } from "../liveValidation/operationValidator";
-import { generateMarkdownReportHeader } from "../apiScenario/markdownReport";
 
 export interface TrafficValidationIssueForRendering extends TrafficValidationIssue {
   payloadFileLinkLabel?: string;
@@ -282,7 +281,7 @@ export class CoverageView {
   private async readMarkdown() {
     const loader = new FileLoader({});
     const res = await loader.load(this.markdownPath);
-    return res.replace(generateMarkdownReportHeader(), "");
+    return res;
   }
 
   private async loadErrorDefinitions(): Promise<Map<string, ErrorDefinition>> {

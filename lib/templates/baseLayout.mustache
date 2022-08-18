@@ -8,6 +8,8 @@
     <meta name="keywords" content="Coverage, Swagger, Report, Tools">
     <meta name="description" content="Swagger Accuracy Report">
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/pixelbrackets/gfm-stylesheet/dist/gfm.min.css" /> -->
     <style>
         :root {
             --report-bg-green: #91cc74;
@@ -473,6 +475,29 @@
             left: 32px;
             transition:  all .2s linear;
         }
+        
+        /* markdown table */
+        #markdownCont table{
+            border-left: none;
+        }
+
+        #markdownCont table>thead>tr>th {
+            border-left: 1px solid var(--border-color);
+        }
+
+        #markdownCont table>tbody>tr>td {
+            border-left: 1px solid var(--border-color);
+        }
+
+        #markdownCont table>thead>tr>th:last-child,
+        #markdownCont table>tbody>tr>td:last-child {
+            border-left: none;
+        }
+        
+        #markdownCont table>tbody>tr:last-child td{
+            border: none;
+            border-top: 1px solid var(--border-color);
+        }
     </style>
 </head>
 
@@ -484,6 +509,15 @@
             <h3 class="timeStamp">Generated {{ formatGeneratedDate }}.</h3>
         </section>
 
+        <div id="markdownTmp" style="display: none;">
+            {{markdown}}
+        </div>
+        <input type="checkbox" id="reportRenderMethod" class="switch-button" name="reportRenderMethod" value="reportRenderMethod">
+        <label for="reportRenderMethod"></label>
+        <h3 style="vertical-align: super;display: inline;">Switch To Api Test Report</h3>
+        <div id="markdownCont" style="padding-top: 18px;display: none;"></div>
+
+        <div id="swaggerCont">
         {{#resultsForRendering}}
         <div class="content-label"><button class="btnMore"><h2 style="color: var(--report-base-color);">{{specLinkLabel}}/{{apiVersion}}<i class="arrow collapse"></i></h2></button></div>
         <div style="padding: 0px 15px 0px;">
@@ -525,14 +559,6 @@
         </section>
         </div>
         <div style="padding: 0px 15px 20px; display:none;" class="content-collapse">
-
-        <div id="markdownTmp" style="display: none;">
-            {{markdown}}
-        </div>
-        <input type="checkbox" id="reportRenderMethod" class="switch-button" name="reportRenderMethod" value="reportRenderMethod">
-        <label for="reportRenderMethod"></label>
-        <span style="vertical-align: super;">Switch To Api Test Report</span>
-        <div id="markdownCont" style="padding-top: 18px;display: none;"></div>
 
         <section class="notTested">
             <h2 class="title" id="MissingTest">Untested Operations ( {{unCoveredOperations}} )</h2>
@@ -631,6 +657,7 @@
         </section>
         </div>
         {{/resultsForRendering}}
+        </div>
 
         {{#outputExceptionInReport}}
         <section class="runtimeExceptions">
@@ -685,7 +712,7 @@
         console.log('Hello AZSDK. Document.Ready available here.');
         addFailedEachClick();
         addContentClick();
-        document.getElementById('markdownCont').innerHTML = document.getElementById('markdownTmp').innerText;
+        document.getElementById('markdownCont').innerHTML = marked.parse(`<div>${document.getElementById('markdownTmp').innerText}`);
         switchClick();
     });
 
@@ -714,14 +741,10 @@
     function switchClick(){
         console.log($('input[type=checkbox][name=reportRenderMethod]'))
         $('input[type=checkbox][name=reportRenderMethod]').change(function() {
-            const span= $(this).next();
-            const label= $(span).next();
-            const mark = $(label).next();
-            const notTested = $(mark).next();
-            const testFailed = $(notTested).next();
-            mark.toggle();
-            notTested.toggle();
-            testFailed.toggle();
+            const markdownCont = $("#markdownCont");
+            markdownCont.toggle();
+            const swaggerCont = $("#swaggerCont");
+            swaggerCont.toggle();
         });
     }
 </script>
