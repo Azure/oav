@@ -2,6 +2,7 @@
 
 ## 08/04/2022 3.0.5
 
+- ModelValidator - Support api-version validation
 - validate-traffic
   - add detailed operationId on swagger link
   - add detailed position info on pathInpayload link

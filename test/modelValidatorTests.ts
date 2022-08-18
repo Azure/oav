@@ -768,12 +768,23 @@ describe("Model Validation", () => {
     });
   });
 
-  describe("parameter required validation", () => {
+  describe("parameter validation", () => {
     it("should fail when missing write required parameters in example", async () => {
-      const specPath2 = `${testPath}/modelValidation/swaggers/specification/parameterRequiredValidation/test.json`;
-      const result = await validate.validateExamples(specPath2, undefined);
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/parameterValidation/test.json`;
+      const result = await validate.validateExamples(specPath2, "SqlServers_Get");
       assert.strictEqual(result.length, 1);
       assert.strictEqual(result[0].code, "REQUIRED_PARAMETER_EXAMPLE_NOT_FOUND");
+    });
+
+    it("should fail when missing write required parameters in example", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/parameterValidation/test.json`;
+      const result = await validate.validateExamples(specPath2, "SqlServers_Get_apiVersion");
+      assert.strictEqual(result.length, 1);
+      assert.strictEqual(result[0].code, "INVALID_REQUEST_PARAMETER");
+      assert.strictEqual(
+        result[0].message,
+        "api-version 2017-03-01 is not equal to swagger version"
+      );
     });
   });
 
