@@ -138,8 +138,8 @@ export const ajvEnableArmIdFormat = (ajv: Ajv) => {
   ajv.addFormat("arm-id", {
     type: "string",
     // Note that this regex isn't perfect but it does an OK job. See https://regex101.com/r/96g3K5/1
-    validate: 
-      new RegExp("(^(\/subscriptions\/([^/]+)(\/resourcegroups\/([^/]+))?)?\/providers\/([^/]+)\/([^/]+\/[^/]+)(\/([^/]+\/[^/]+))*$|^\/subscriptions\/([^/]+)(\/resourcegroups\/([^/]+))?$)",
+    validate: new RegExp(
+      "(^(/subscriptions/([^/]+)(/resourcegroups/([^/]+))?)?/providers/([^/]+)/([^/]+/[^/]+)(/([^/]+/[^/]+))*$|^/subscriptions/([^/]+)(/resourcegroups/([^/]+))?$)",
       "i"
     ),
   });
