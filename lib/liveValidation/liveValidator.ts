@@ -231,16 +231,21 @@ export class LiveValidator {
     );
 
     const allSpecs: SwaggerSpec[] = [];
+    let specMap: Map<string, SwaggerSpec> = new Map();
     while (swaggerPaths.length > 0) {
       const swaggerPath = swaggerPaths.shift()!;
       this.swaggerList.push(swaggerPath);
       const spec = await this.getSwaggerInitializer(this.loader!, swaggerPath);
       if (spec !== undefined) {
         allSpecs.push(spec);
-        if (this.options.enableRoundTripValidator) {
-          //TODO: how about get SwaggerSpec as parameter to line: 242
-          this.operationLoader.init(swaggerPath, spec, this.options.enableRoundTripLazyBuild);
-        }
+        specMap.set(swaggerPath, spec);
+      }
+    }
+
+    if (this.options.enableRoundTripValidator) {
+      for (const entry of specMap) {
+        this.operationLoader.init(entry[0], entry[1], this.options.enableRoundTripLazyBuild);
+        specMap.delete(entry[0]);
       }
     }
 

@@ -52,6 +52,7 @@
           {
             "name": "location",
             "in": "path",
+            "readOnly": true,
             "required": true,
             "type": "string",
             "description": "The location upon which run commands is queried.",
@@ -1008,6 +1009,7 @@
         },
         "osType": {
           "type": "string",
+          "readOnly": true,
           "description": "The Operating System type.",
           "enum": [
             "Windows",
@@ -1078,6 +1080,7 @@
         },
         "nextLink": {
           "type": "string",
+          "readOnly": true,
           "description": "The uri to fetch the next page of run commands. Call ListNext() with this to fetch the next page of run commands."
         }
       },

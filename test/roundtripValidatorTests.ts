@@ -31,7 +31,7 @@ describe("Live Validator", () => {
 
     it("OperationLoader should be completely initialized", async () => {
       console.log("OperationLoader should be completely initialized");
-      const swaggerPattern = "specification/compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json";
+      const swaggerPattern = "specification/compute/resource-manager/Microsoft.Compute/stable/2021-11-01/runCommands.json";
       const glob = require("glob");
       const filePaths: string[] = glob.sync(swaggerPattern, {
         ignore: DefaultConfig.ExcludedExamplesAndCommonFiles,
@@ -40,7 +40,7 @@ describe("Live Validator", () => {
       const options = {
         directory: "./test/liveValidation/swaggers/specification",
         swaggerPathsPattern: [
-          "compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json"
+          "compute/resource-manager/Microsoft.Compute/stable/2021-11-01/runCommands.json"
         ],
         swaggerPaths: filePaths,
         enableRoundTripValidator: true,
@@ -50,10 +50,12 @@ describe("Live Validator", () => {
       await validator.initialize();
 
       assert.strictEqual(true, validator.operationLoader.cache.size > 0);
-      const readOnlys = validator.operationLoader.getAttrs("microsoft.compute", "2021-11-01", "AvailabilitySets_CreateOrUpdate", "readOnly");
-      assert.equal(readOnlys.length, 8);
-      assert.equal(readOnlys.includes("parameters/schema/properties/properties/properties/statuses"), true);
-      assert.equal(readOnlys.filter((a) => a.includes("parameters")).length, 4);
+      const readOnlys = validator.operationLoader.getAttrs("microsoft.compute", "2021-11-01", "VirtualMachineRunCommands_List", "readOnly");
+      expect(readOnlys).toMatchSnapshot();
+      assert.equal(readOnlys.length, 3);
+      assert.equal(readOnlys.includes("/200/schema/properties/nextLink"), true);
+      assert.equal(readOnlys.filter((a) => a.includes("schema")).length, 2);
+      
         
     });
 
@@ -81,10 +83,12 @@ describe("Live Validator", () => {
       let op = validator.operationLoader.cache.get("microsoft.compute")?.get("2021-11-01")?.get("AvailabilitySets_CreateOrUpdate");
       assert.equal(op, undefined);
       const readOnlys = validator.operationLoader.getAttrs("microsoft.compute", "2021-11-01", "AvailabilitySets_CreateOrUpdate", "readOnly");
+      expect(readOnlys).toMatchSnapshot();
       assert.equal(readOnlys.length, 8);
       const spec = validator.operationLoader.cache.get("microsoft.compute")?.get("2021-11-01")?.get("spec");
       assert.notStrictEqual(spec, undefined);
       op = validator.operationLoader.cache.get("microsoft.compute")?.get("2021-11-01")?.get("AvailabilitySets_CreateOrUpdate");
+      expect(op).toMatchSnapshot();
       assert.notStrictEqual(op, undefined);
     });
 
@@ -110,6 +114,7 @@ describe("Live Validator", () => {
 
       assert.strictEqual(true, validator.operationLoader.cache.size > 0);
       const readOnlys = validator.operationLoader.getAttrs("microsoft.compute", "2021-11-01", "AvailabilitySets_CreateOrUpdate", "readOnly");
+      expect(readOnlys).toMatchSnapshot();
       assert.equal(readOnlys.length, 8);
       assert.equal(readOnlys.includes("parameters/schema/properties/properties/properties/statuses"), true);
       assert.equal(readOnlys.filter((a) => a.includes("parameters")).length, 4);
@@ -144,6 +149,7 @@ describe("Live Validator", () => {
 
       assert.strictEqual(true, validator.operationLoader.cache.size > 0);
       const readOnlys = validator.operationLoader.getAttrs("microsoft.compute", "2021-11-01", "AvailabilitySets_CreateOrUpdate", "readOnly");
+      expect(readOnlys).toMatchSnapshot();
       assert.equal(readOnlys.length, 8);
       assert.equal(readOnlys.includes("parameters/schema/properties/properties/properties/statuses"), true);
       assert.equal(readOnlys.filter((a) => a.includes("parameters")).length, 4);
@@ -151,6 +157,7 @@ describe("Live Validator", () => {
       //roundtrip validation
       const payload: RequestResponsePair = require(`${__dirname}/liveValidation/payloads/roundTrip_invalid.json`);
       const rest = await validator.validateRoundTrip(payload);
+      expect(rest).toMatchSnapshot();
       assert.equal(rest.errors.length, 5);
       for (const re of rest.errors) {
         if (re.pathsInPayload[0].includes("location")) {
@@ -192,6 +199,7 @@ describe("Live Validator", () => {
 
       assert.strictEqual(true, validator.operationLoader.cache.size > 0);
       const readOnlys = validator.operationLoader.getAttrs("microsoft.compute", "2021-11-01", "AvailabilitySets_CreateOrUpdate", "readOnly");
+      expect(readOnlys).toMatchSnapshot();
       assert.equal(readOnlys.length, 8);
       assert.equal(readOnlys.includes("parameters/schema/properties/properties/properties/statuses"), true);
       assert.equal(readOnlys.filter((a) => a.includes("parameters")).length, 4);
