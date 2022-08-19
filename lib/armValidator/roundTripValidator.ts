@@ -19,9 +19,7 @@ export function diffRequestResponse(
     .map((it: any) => {
       const jsonPath: string = it.remove || it.add || it.replace;
       const path = jsonPath.split("/").join("(.*)").concat("$");
-      //console.log(`jsonPath regex pattern: ${JSON.stringify(it)}`);
       if (it.replace !== undefined) {
-        //TODO: x-ms-mutability
         const isReplace =
           operationLoader.attrChecker(path, providerName!, apiversion, operationId, "readOnly") ||
           operationLoader.attrChecker(path, providerName!, apiversion, operationId, "default") ||
@@ -40,7 +38,6 @@ export function diffRequestResponse(
           return buildLiveValidationIssue("ROUNDTRIP_ADDITIONAL_PROPERTY", jsonPath);
         }
       } else if (it.remove !== undefined) {
-        //TODO: x-ms-mutability
         const isRemove =
           operationLoader.attrChecker(path, providerName!, apiversion, operationId, "secret") ||
           operationLoader.attrChecker(path, providerName!, apiversion, operationId, "mutability", [

@@ -61,7 +61,6 @@ export class OperationLoader {
     let elapsedTime = Date.now();
     const apiVersion = spec.info.version.toLowerCase();
 
-    //const values = Object.values(spec.paths).map((a) => Object.values(a).filter((b) => (<SwaggerOperation>b).operationId !== undefined));
     let operations: SwaggerOperation[] = [];
     traverseSwagger(spec, {
       onOperation: (operation: SwaggerOperation, _path: Path, _method: LowerHttpMethods) => {
@@ -89,11 +88,7 @@ export class OperationLoader {
     if (isLazyBuild) {
       return;
     }
-    //const operations = await this.getAllTargetKey("$..[?(@.operationId)]~", spec);
     for (const operation of operations) {
-      //const path = op.path;
-      //const parent = op.parent;
-      //const operation = parent[op.value];
       const operationId = operation["operationId"]!;
       if (typeof operationId === "object") {
         continue;
@@ -103,12 +98,10 @@ export class OperationLoader {
         responses: operation.responses,
         operationId: operation.operationId,
       };
-      //console.log(`operationId: ${operationId}, path: ${path}`);
       for (const rule of this.ruleMap) {
         const value = rule[1];
         const key = rule[0];
         const attrs = this.getAllTargetKey(value, litOp);
-        //console.log(`${key}: ${attrs.length}`);
         let apiVersions = this.cache.get(providerName);
         if (apiVersions === undefined) {
           apiVersions = new Map();
@@ -131,7 +124,6 @@ export class OperationLoader {
         }
         allAttrs = allRules.get(key);
         for (const attr of attrs) {
-          //TODO: parameter as a list, get the name of the element
           const attrPath = this.getAttrPath(operation as any, attr.pointer);
           if (attrPath !== undefined) {
             let xmsValue: string[] = [];
@@ -140,7 +132,6 @@ export class OperationLoader {
             }
             allAttrs?.set(attrPath, xmsValue);
           }
-          //console.log(`Get attrPath ${attrPath}`);
         }
       }
     }
@@ -178,7 +169,6 @@ export class OperationLoader {
   ) {
     let res: string[] = [];
     let items = this.cache.get(providerName)?.get(apiVersion)?.get(inputOperation) as Operation;
-    //const attrs = this.cache.get(providerName)?.get(apiVersion)?.get(inputOperation)?.get(xmsPath);
     if (items !== undefined) {
       const attrs = items.get(xmsPath);
       if (attrs !== undefined) {
@@ -203,9 +193,6 @@ export class OperationLoader {
       }
       const startTime = Date.now();
       for (const operation of allOps) {
-        //const path = op.path;
-        //const parent = op.parent;
-        //const operation = parent[op.value];
         const operationId = operation["operationId"];
         const litOp = {
           parameters: operation.parameters,
@@ -216,12 +203,10 @@ export class OperationLoader {
           continue;
         }
         if (typeof operationId === "string" && operationId === inputOperation) {
-          //console.log(`operationId: ${operationId}, path: ${path}`);
           for (const rule of this.ruleMap) {
             const value = rule[1];
             const key = rule[0];
             const attrs = this.getAllTargetKey(value, litOp);
-            //console.log(`${key}: ${attrs.length}`);
             let apiVersions = this.cache.get(providerName);
             if (apiVersions === undefined) {
               apiVersions = new Map();
@@ -244,7 +229,6 @@ export class OperationLoader {
             }
             allAttrs = allRules.get(key);
             for (const attr of attrs) {
-              //TODO: parameter as a list, get the name of the element
               const attrPath = this.getAttrPath(operation as any, attr.pointer);
               if (attrPath === undefined) {
                 continue;
@@ -254,7 +238,6 @@ export class OperationLoader {
                 xmsValue = attr.parent[attr.value]["x-ms-mutability"] as string[];
               }
               allAttrs?.set(attrPath, xmsValue);
-              //console.log(`Get attrPath ${attrPath}`);
             }
           }
           break;
@@ -264,7 +247,6 @@ export class OperationLoader {
       console.log(`Time ${duration} to init ${inputOperation}`);
     }
     items = this.cache.get(providerName)?.get(apiVersion)?.get(inputOperation) as Operation;
-    //const attrs = this.cache.get(providerName)?.get(apiVersion)?.get(inputOperation)?.get(xmsPath);
     if (items !== undefined) {
       const attrs = items.get(xmsPath);
       if (attrs !== undefined) {
@@ -284,22 +266,8 @@ export class OperationLoader {
     return res;
   }
 
-  /*private parseFileContent(filePath: string, fileString: string): any {
-    if (this.opts.supportYaml && (filePath.endsWith(".yaml") || filePath.endsWith(".yml"))) {
-      return parseYaml(fileString, {
-        filename: filePath,
-        json: true,
-      });
-    }
-
-    return this.opts.useJsonParser ? parseJson(filePath, fileString) : JSON.parse(fileString);
-
-    // throw new Error(`Unknown file format while loading file ${cache.filePath}`);
-  }*/
-
   private parseProviderName(filePath: string) {
     const rpReg = new RegExp(`\/resource-manager\/(.*?)\/`, "i");
-    //let testStr = "https://github.com/Azure/azure-rest-api-specs/blob/main/specification/securityinsights/resource-manager/Microsoft.SecurityInsights/preview/2019-01-01-preview/Aggregations.json"
     const result = filePath.match(rpReg);
     if (result) {
       return result[1];
@@ -314,9 +282,7 @@ export class OperationLoader {
         delete obj.description;
       }
       if (obj[xmsExamples] !== undefined) {
-        //console.log(`Before removal: ${JSON.stringify(obj)}`);
         delete obj[xmsExamples];
-        //console.log(`After removal: ${JSON.stringify(obj)}`);
       }
       Object.keys(object).forEach((o) => {
         this.removeProperty(object[o]);
@@ -325,15 +291,11 @@ export class OperationLoader {
   }
 
   private getAllTargetKey(allXmsPath: string, swagger: any) {
-    //const startTime = Date.now();
-    //console.log(`Get paths of ${allXmsPath}`);
     const ret = JSONPath({
       path: allXmsPath,
       json: swagger,
       resultType: "all",
     });
-    //const timeDuration = Date.now() - startTime;
-    //console.log(`Get xmsKey ${timeDuration}: ${ret.length}.`);
     return ret;
   }
 
@@ -347,7 +309,6 @@ export class OperationLoader {
       const reObj = pointer.get(obj, found[0]);
       name = reObj.name;
       attrPath = path.replace(regex, name);
-      //console.log(`Get json by pointer: ${name}\n${attrPath}\n${JSON.stringify(reObj)}`);
     } else if (resRegex.test(path)) {
       attrPath = path.replace(resRegex, "");
     } else {

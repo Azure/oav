@@ -974,12 +974,6 @@ export const getRandomString = (length?: number) => {
     .slice(0 - (length ?? 6));
 };
 
-export function isObject(definitionSpec: any) {
-  return (
-    definitionSpec.type === "object" || "properties" in definitionSpec || "allOf" in definitionSpec
-  );
-}
-
 export const findPathsToKey = (options: {
   key: string;
   obj: any;
