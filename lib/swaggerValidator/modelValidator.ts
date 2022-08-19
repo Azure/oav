@@ -420,7 +420,7 @@ export class SwaggerExampleValidator {
       ajvValidatorErrors,
       exampleFileUrl,
       exampleContent,
-      parameters
+      parameters !== undefined ? parameters : publicParameters
     );
   }
   private async loadSwagger(swaggerFilePath: string, skipResolveRef: boolean) {
