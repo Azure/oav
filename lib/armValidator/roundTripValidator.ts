@@ -75,9 +75,6 @@ export function buildLiveValidationIssue(errorCode: string, path: string): LiveV
       message = roundTripValidationErrors.ROUNDTRIP_MISSING_PROPERTY.message({});
       break;
     }
-    default: {
-      break;
-    }
   }
   const ret = {
     code: errorCode,

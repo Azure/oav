@@ -34,7 +34,7 @@ interface FileCache {
   originalContent?: string;
   skipResolveRef?: boolean;
   mockName: string;
-  shouldResolve?: boolean;
+  resolveRef?: boolean;
 }
 
 export const $id = "$id";
@@ -67,7 +67,7 @@ export class JsonLoader implements Loader<Json> {
   private fileCache = new Map<string, FileCache>();
   private loadFile = getLazyBuilder("resolved", async (cache: FileCache) => {
     const fileString = await this.fileLoader.load(cache.filePath);
-    if (this.opts.keepOriginalContent || cache.shouldResolve) {
+    if (this.opts.keepOriginalContent || cache.resolveRef) {
       // eslint-disable-next-line require-atomic-updates
       cache.originalContent = fileString;
     }
@@ -115,7 +115,7 @@ export class JsonLoader implements Loader<Json> {
   public async load(
     inputFilePath: string,
     skipResolveRef?: boolean,
-    shouldDeference?: boolean
+    shouldResolveRef?: boolean
   ): Promise<Json> {
     const filePath = this.fileLoader.relativePath(inputFilePath);
     let cache = this.fileCache.get(filePath);
@@ -130,14 +130,13 @@ export class JsonLoader implements Loader<Json> {
       cache.skipResolveRef = skipResolveRef;
     }
 
-    if (shouldDeference) {
-      cache.shouldResolve = shouldDeference;
+    if (shouldResolveRef) {
+      cache.resolveRef = shouldResolveRef;
       await this.loadFile(cache);
       //get unresolved content from cache.originalContent
       const fileContent = JSON.parse(cache.originalContent!);
       //remove unnecessary properties
       removeProperty(fileContent);
-      //console.log(JSON.stringify(fileContent));
 
       //resolve all refs using lib: https://github.com/APIDevTools/json-schema-ref-parser
       const resolveOption: $RefParser.Options = {
@@ -160,7 +159,6 @@ export class JsonLoader implements Loader<Json> {
           fileContent,
           resolveOption
         );
-        //console.log(`Deferenced: ${JSON.stringify(fileContent.definitions!.ApiCollection)}`);
         return spec;
       } catch (err) {
         console.error(err);
@@ -340,15 +338,17 @@ export async function loadSingleFile(filePath: string) {
 }
 
 export function removeProperty(object: any) {
+  // opt: eraseXmsExamples: true can be used to remove examples or other properties in schema,
+  // however, this is implemented in function resolveRef, which cannot be reused, since it does not
+  // completely resolve all the reference in swagger.
+  // Only description and example are positive to be removed, other properties are kept for further use.
   if (typeof object === "object" && object !== null) {
     const obj = object as any;
     if (typeof obj.description === "string") {
       delete obj.description;
     }
     if (obj[xmsExamples] !== undefined) {
-      //console.log(`Before removal: ${JSON.stringify(obj)}`);
       delete obj[xmsExamples];
-      //console.log(`After removal: ${JSON.stringify(obj)}`);
     }
     Object.keys(object).forEach((o) => {
       removeProperty(object[o]);

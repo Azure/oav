@@ -753,7 +753,9 @@ export class LiveValidator {
   ): Promise<LiveValidationResult> {
     const startTime = Date.now();
     if (this.operationLoader === undefined) {
-      console.log("OperationLoader should be initialized before this call.");
+      const msg = "OperationLoader should be initialized before this call.";
+      const runtimeException = { code: C.ErrorCodes.RoundtripValidationError.name, message: msg };
+      console.log(msg);
       return {
         isSuccessful: undefined,
         errors: [],
@@ -761,6 +763,7 @@ export class LiveValidator {
           operationId: "",
           apiVersion: "",
         },
+        runtimeException: runtimeException,
       };
     }
     const correlationId =
@@ -811,7 +814,7 @@ export class LiveValidator {
         `An error occurred while validating the live request for operation ` +
         `"${info.operationId}". The error is:\n ` +
         `${util.inspect(validationErr, { depth: null })}`;
-      runtimeException = { code: C.ErrorCodes.RequestValidationError.name, message: msg };
+      runtimeException = { code: C.ErrorCodes.RoundtripValidationError.name, message: msg };
       this.logging(
         msg,
         LiveValidatorLoggingLevels.error,
@@ -820,6 +823,12 @@ export class LiveValidator {
         undefined,
         info.validationRequest
       );
+      return {
+        isSuccessful: undefined,
+        operationInfo: info,
+        errors,
+        runtimeException,
+      };
     }
     const elapsedTime = Date.now() - startTime;
     this.logging(
