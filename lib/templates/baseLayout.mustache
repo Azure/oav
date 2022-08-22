@@ -512,12 +512,15 @@
         <div id="markdownTmp" style="display: none;">
             {{markdown}}
         </div>
+
+        {{#markdown}}
         <input type="checkbox" id="reportRenderMethod" class="switch-button" name="reportRenderMethod" value="reportRenderMethod">
         <label for="reportRenderMethod"></label>
         <h3 style="vertical-align: super;display: inline;">Switch To Api Test Report</h3>
         <div id="markdownCont" style="padding-top: 18px;display: none;"></div>
-
         <div id="swaggerCont">
+        {{/markdown}}
+        
         {{#resultsForRendering}}
         <div class="content-label"><button class="btnMore"><h2 style="color: var(--report-base-color);">{{specLinkLabel}}/{{apiVersion}}<i class="arrow collapse"></i></h2></button></div>
         <div style="padding: 0px 15px 0px;">

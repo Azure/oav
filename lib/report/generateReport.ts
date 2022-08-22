@@ -279,9 +279,14 @@ export class CoverageView {
   }
 
   private async readMarkdown() {
-    const loader = new FileLoader({});
-    const res = await loader.load(this.markdownPath);
-    return res;
+    try {
+      const loader = new FileLoader({});
+      const res = await loader.load(this.markdownPath);
+      return res;
+    } catch (e) {
+      console.error(`Failed in read report.md file`);
+      return "";
+    }
   }
 
   private async loadErrorDefinitions(): Promise<Map<string, ErrorDefinition>> {
