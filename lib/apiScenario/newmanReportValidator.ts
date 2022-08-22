@@ -178,11 +178,16 @@ export class NewmanReportValidator {
     this.testResult.startTime = new Date(newmanReport.timings.started).toISOString();
     this.testResult.endTime = new Date(newmanReport.timings.completed).toISOString();
     this.testResult.subscriptionId = variables.subscriptionId.value as string;
+    const visitedIds = new Set<string>();
     for (const it of newmanReport.executions) {
       if (it.annotation === undefined) {
         continue;
       }
       if (it.annotation.type === "simple" || it.annotation.type === "LRO") {
+        if (visitedIds.has(it.id)) {
+          continue;
+        }
+        visitedIds.add(it.id);
         const runtimeError: RuntimeError[] = [];
         const matchedStep = this.getMatchedStep(it.annotation.step) as StepRestCall;
 
@@ -201,8 +206,8 @@ export class NewmanReportValidator {
 
         it.assertions.forEach((assertion) => {
           runtimeError.push({
-            code: "RUNTIME_ERROR",
-            message: `errorCode: ${assertion.name}, errorMessage: ${assertion.message}`,
+            code: "ASSERTION_ERROR",
+            message: `${assertion.message}`,
             severity: "Error",
             detail: this.dataMasker.jsonStringify(assertion.stack),
           });
@@ -291,17 +296,27 @@ export class NewmanReportValidator {
       url: request.url.toString(),
       method: request.method.toLowerCase(),
       headers: request.headers,
-      body: request.body ? JSON.parse(request.body) : undefined,
+      body: this.parseBody(request.body),
     };
     const liveResponse: LiveResponse = {
       statusCode: response.statusCode.toString(),
       headers: response.headers,
-      body: response.body ? JSON.parse(response.body) : undefined,
+      body: this.parseBody(response.body),
     };
     return {
       liveRequest,
       liveResponse,
     };
+  }
+
+  // body may not be json string
+  private parseBody(body: string): any {
+    try {
+      return JSON.parse(body);
+    } catch (e) {
+      console.error(`Failed to parse body: ${body}`);
+      return body ? body : undefined;
+    }
   }
 
   private convertPostmanFormat<T>(obj: T, convertString: (s: string) => string): T {
@@ -451,7 +466,7 @@ export class NewmanReportValidator {
   private getRuntimeError(it: NewmanExecution): RuntimeError {
     const responseObj = this.dataMasker.jsonParse(it.response.body);
     return {
-      code: "RUNTIME_ERROR",
+      code: `${it.response.statusCode >= 500 ? "SERVER_ERROR" : "CLIENT_ERROR"}`,
       message: `statusCode: ${it.response.statusCode}, errorCode: ${responseObj?.error?.code}, errorMessage: ${responseObj?.error?.message}`,
       severity: "Error",
       detail: this.dataMasker.jsonStringify(it.response.body),

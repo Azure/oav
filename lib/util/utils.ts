@@ -323,7 +323,7 @@ const parse = (pointer: string) => {
 };
 
 export function getProviderFromFilePath(pathStr: string): string | undefined {
-  const resourceProviderPattern: RegExp = /[A-Z][a-z0-9]+(\.([A-Z]{1,3}[a-z0-9]+)+[A-Z]{0,2})+/g;
+  const resourceProviderPattern: RegExp = /[A-Z][a-z0-9]+(\.([A-Z]{1,5}[a-z0-9]+)+[A-Z]{0,5})+/g;
   const words = pathStr.split(/\\|\//gi);
   for (const it of words) {
     if (resourceProviderPattern.test(it)) {
