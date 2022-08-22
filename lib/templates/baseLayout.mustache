@@ -8,6 +8,8 @@
     <meta name="keywords" content="Coverage, Swagger, Report, Tools">
     <meta name="description" content="Swagger Accuracy Report">
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/pixelbrackets/gfm-stylesheet/dist/gfm.min.css" /> -->
     <style>
         :root {
             --report-bg-green: #91cc74;
@@ -440,6 +442,62 @@
             top: 30px;
             transform: rotate(225deg);
         }
+        /* radio */
+        .switch-button{
+            display: none;
+        }
+        .switch-button+label{
+            display: inline-block;
+            position: relative;
+            transition: all .3s;
+            width: 60px;
+            height: 30px;
+            border-radius: 15px;
+            background-color: #ccc;
+        }
+        .switch-button:checked+label{
+            background-color: lightgreen;
+        }
+        .switch-button+label::before{
+            content: '';
+            display: block;
+            height: 25px;
+            width: 25px;
+            position: absolute;
+            border-radius: 25px;
+            left: 2px;
+            top: 2px;
+            background-color: #fff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, .4);
+            transition: all .3s;
+        }
+        .switch-button:checked+label::before{
+            left: 32px;
+            transition:  all .2s linear;
+        }
+        
+        /* markdown table */
+        #markdownCont table{
+            border-left: none;
+        }
+
+        #markdownCont table>thead>tr>th {
+            border-left: 1px solid var(--border-color);
+        }
+
+        #markdownCont table>tbody>tr>td {
+            border-left: 1px solid var(--border-color);
+        }
+
+        #markdownCont table>thead>tr>th:last-child,
+        #markdownCont table>tbody>tr>td:last-child {
+            border-left: none;
+        }
+        
+        #markdownCont table>tbody>tr:last-child td{
+            border: none;
+            border-top: 1px solid var(--border-color);
+        }
     </style>
 </head>
 
@@ -451,6 +509,18 @@
             <h3 class="timeStamp">Generated {{ formatGeneratedDate }}.</h3>
         </section>
 
+        <div id="markdownTmp" style="display: none;">
+            {{markdown}}
+        </div>
+
+        {{#markdown}}
+        <input type="checkbox" id="reportRenderMethod" class="switch-button" name="reportRenderMethod" value="reportRenderMethod">
+        <label for="reportRenderMethod"></label>
+        <h3 style="vertical-align: super;display: inline;">Switch To API Test Report</h3>
+        <div id="markdownCont" style="padding-top: 18px;display: none;"></div>
+        <div id="swaggerCont">
+        {{/markdown}}
+        
         {{#resultsForRendering}}
         <div class="content-label"><button class="btnMore"><h2 style="color: var(--report-base-color);">{{specLinkLabel}}/{{apiVersion}}<i class="arrow collapse"></i></h2></button></div>
         <div style="padding: 0px 15px 0px;">
@@ -492,32 +562,6 @@
         </section>
         </div>
         <div style="padding: 0px 15px 20px; display:none;" class="content-collapse">
-        <section class="notTested">
-            <h2 class="title" id="MissingTest">Untested Operations ( {{unCoveredOperations}} )</h2>
-            <article>
-                <div class="table-body">
-                    <table summary="Operations Not Tested" cellspacing="0" cellpadding="0">
-                        <colgroup>
-                            <col style="width: 15%" />
-                            <col style="width: 85%" />
-                        </colgroup>
-                        <tbody>
-                            {{#unCoveredOperationsListGen}}
-                            <tr>
-                                <td colspan="2">
-                                    <div class="operationTag">
-                                        {{#operationIdList}}
-                                        <span class="tag">{{operationId}}<a target="_blank" href="{{spec}}"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2048 2048" class="svg_dd790ee3 x-hidden-focus" focusable="false" width="25" height="15" style="vertical-align: middle;"><path d="M1707 715q76 27 139 75t108 111 69 138 25 156q0 106-40 199t-110 162-163 110-199 41h-512q-106 0-199-40t-162-110-110-163-41-199q0-106 40-199t110-162 163-110 199-41h171q0 35-13 66t-37 54-55 36-66 14q-71 0-133 27t-108 73-73 109-27 133q0 71 27 133t73 108 108 73 133 27h512q70 0 132-27t109-73 73-108 27-133q0-92-46-168t-124-123V715zM171 683q0 91 46 167t124 124v189q-76-27-139-75T94 977 25 839 0 683q0-106 40-199t110-162 163-110 199-41h512q106 0 199 40t162 110 110 163 41 199q0 106-40 199t-110 162-163 110-199 41H853q0-35 13-66t37-54 54-37 67-14q70 0 132-27t109-73 73-108 27-133q0-70-26-132t-73-109-109-74-133-27H512q-71 0-133 27t-108 73-73 109-27 133z" class="x-hidden-focus"></path></svg></a></span>
-                                        {{/operationIdList}}
-                                    </div>
-                                </td>
-                            </tr>
-                            {{/unCoveredOperationsListGen}}
-                        </tbody>
-                    </table>
-                </div>
-            </article>
-        </section>
 
         <section class="testFailed">
             <h2 class="title" id="testFailed">Failed Operations ( {{validationFailOperations}} )</h2>
@@ -587,8 +631,37 @@
                 </div>
             </article>
         </section>
+
+        <section class="notTested">
+            <h2 class="title" id="MissingTest">Untested Operations ( {{unCoveredOperations}} )</h2>
+            <article>
+                <div class="table-body">
+                    <table summary="Operations Not Tested" cellspacing="0" cellpadding="0">
+                        <colgroup>
+                            <col style="width: 15%" />
+                            <col style="width: 85%" />
+                        </colgroup>
+                        <tbody>
+                            {{#unCoveredOperationsListGen}}
+                            <tr>
+                                <td colspan="2">
+                                    <div class="operationTag">
+                                        {{#operationIdList}}
+                                        <span class="tag">{{operationId}}<a target="_blank" href="{{spec}}"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2048 2048" class="svg_dd790ee3 x-hidden-focus" focusable="false" width="25" height="15" style="vertical-align: middle;"><path d="M1707 715q76 27 139 75t108 111 69 138 25 156q0 106-40 199t-110 162-163 110-199 41h-512q-106 0-199-40t-162-110-110-163-41-199q0-106 40-199t110-162 163-110 199-41h171q0 35-13 66t-37 54-55 36-66 14q-71 0-133 27t-108 73-73 109-27 133q0 71 27 133t73 108 108 73 133 27h512q70 0 132-27t109-73 73-108 27-133q0-92-46-168t-124-123V715zM171 683q0 91 46 167t124 124v189q-76-27-139-75T94 977 25 839 0 683q0-106 40-199t110-162 163-110 199-41h512q106 0 199 40t162 110 110 163 41 199q0 106-40 199t-110 162-163 110-199 41H853q0-35 13-66t37-54 54-37 67-14q70 0 132-27t109-73 73-108 27-133q0-70-26-132t-73-109-109-74-133-27H512q-71 0-133 27t-108 73-73 109-27 133z" class="x-hidden-focus"></path></svg></a></span>
+                                        {{/operationIdList}}
+                                    </div>
+                                </td>
+                            </tr>
+                            {{/unCoveredOperationsListGen}}
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+        </section>
+
         </div>
         {{/resultsForRendering}}
+        </div>
 
         {{#outputExceptionInReport}}
         <section class="runtimeExceptions">
@@ -643,6 +716,8 @@
         console.log('Hello AZSDK. Document.Ready available here.');
         addFailedEachClick();
         addContentClick();
+        document.getElementById('markdownCont').innerHTML = marked.parse(`<div>${document.getElementById('markdownTmp').innerText}`);
+        switchClick();
     });
 
     function addFailedEachClick() {
@@ -655,18 +730,24 @@
             });
         });
     }
-
     
     function addContentClick() {
         $('div.content-label').each(function (index) {
             $(this).click(function (event) {
-                console.log($(this))
                 var disableCon = $(this).next().next();
-                console.log(disableCon)
                 disableCon.toggle();
                 var arrow = $(this).find(".arrow")[0];
                 $(arrow).toggleClass("collapse");
             });
+        });
+    }
+
+    function switchClick(){
+        $('input[type=checkbox][name=reportRenderMethod]').change(function() {
+            const markdownCont = $("#markdownCont");
+            markdownCont.toggle();
+            const swaggerCont = $("#swaggerCont");
+            swaggerCont.toggle();
         });
     }
 </script>
