@@ -187,6 +187,7 @@ export class LiveValidator {
 
     if (ops.enableRoundTripValidator) {
       this.operationLoader = new OperationLoader(ruleMap);
+      this.options.setFilePath = true;
     }
   }
 
@@ -231,21 +232,18 @@ export class LiveValidator {
     );
 
     const allSpecs: SwaggerSpec[] = [];
-    let specMap: Map<string, SwaggerSpec> = new Map();
     while (swaggerPaths.length > 0) {
       const swaggerPath = swaggerPaths.shift()!;
       this.swaggerList.push(swaggerPath);
       const spec = await this.getSwaggerInitializer(this.loader!, swaggerPath);
       if (spec !== undefined) {
         allSpecs.push(spec);
-        specMap.set(swaggerPath, spec);
       }
     }
 
     if (this.options.enableRoundTripValidator) {
-      for (const entry of specMap) {
-        this.operationLoader.init(entry[0], entry[1], this.options.enableRoundTripLazyBuild);
-        specMap.delete(entry[0]);
+      for (const entry of allSpecs) {
+        this.operationLoader.init(entry, this.options.enableRoundTripLazyBuild);
       }
     }
 

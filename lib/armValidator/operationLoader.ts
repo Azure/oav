@@ -50,13 +50,9 @@ export class OperationLoader {
     }
   }
 
-  public async init(inputFilePath: string, spec: SwaggerSpec, isLazyBuild?: boolean) {
+  public async init(spec: SwaggerSpec, isLazyBuild?: boolean) {
     const startTime = Date.now();
-    const providerName = this.parseProviderName(inputFilePath)?.toLowerCase();
-    if (providerName === undefined) {
-      console.log(`Illegal file path, unable to extract provider name ${inputFilePath}`);
-      return;
-    }
+    const providerName = spec._providerNamespace!.toLowerCase();
     //TODO: use swaggerLoader to load swagger
     let elapsedTime = Date.now();
     const apiVersion = spec.info.version.toLowerCase();
@@ -136,7 +132,7 @@ export class OperationLoader {
       }
     }
     elapsedTime = Date.now() - startTime;
-    console.log(`Time ${elapsedTime} to process ${inputFilePath}`);
+    console.log(`Time ${elapsedTime} to process ${spec._filePath}`);
   }
 
   public attrChecker(
@@ -264,15 +260,6 @@ export class OperationLoader {
       }
     }
     return res;
-  }
-
-  private parseProviderName(filePath: string) {
-    const rpReg = new RegExp(`\/resource-manager\/(.*?)\/`, "i");
-    const result = filePath.match(rpReg);
-    if (result) {
-      return result[1];
-    }
-    return;
   }
 
   private removeProperty(object: any) {
