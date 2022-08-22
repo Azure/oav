@@ -30,6 +30,7 @@ interface Assertion {
 }
 
 interface RawNewmanExecution {
+  id: string;
   item: ItemDefinition;
   request: RequestDefinition;
   response: ResponseDefinition;
@@ -53,6 +54,7 @@ function generateExampleItem(it: RawNewmanExecution): NewmanExecution {
   const rawResp = parseResponse(resp);
   const annotation = JSON.parse((it.item.description as DescriptionDefinition)?.content || "{}");
   return {
+    id: it.id,
     request: rawReq,
     response: rawResp,
     annotation: annotation,
