@@ -784,7 +784,8 @@ describe("Model Validation", () => {
       assert.strictEqual(
         result[0].message,
         "api-version 2017-03-01 is not equal to swagger version"
-    );
+      );
+    });
 
     it("should report error when operation has no own parameters", async () => {
       const specPath2 = `${testPath}/modelValidation/swaggers/specification/parameterValidation/test.json`;
