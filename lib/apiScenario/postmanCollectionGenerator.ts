@@ -298,6 +298,7 @@ export class PostmanCollectionGenerator {
       reportPath: path.resolve(reportExportPath, "report.html"),
       overrideLinkInReport: false,
       sdkPackage: providerNamespace,
+      markdownPath: this.opt.markdown ? path.resolve(reportExportPath, "report.md") : undefined,
     };
 
     const generator = new HtmlReportGenerator(
