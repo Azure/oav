@@ -1,11 +1,4 @@
-import {
-  RequestDefinition,
-  ResponseDefinition,
-  ItemDefinition,
-  Request,
-  Response,
-  DescriptionDefinition,
-} from "postman-collection";
+import { ItemDefinition, Request, Response, DescriptionDefinition } from "postman-collection";
 import {
   NewmanAssertion,
   NewmanExecution,
@@ -32,8 +25,8 @@ interface Assertion {
 interface RawNewmanExecution {
   id: string;
   item: ItemDefinition;
-  request: RequestDefinition;
-  response: ResponseDefinition;
+  request: Request;
+  response: Response;
   assertions?: Assertion[];
 }
 
@@ -48,8 +41,8 @@ export function parseNewmanReport(newmanReport: RawNewmanReport): NewmanReport {
 }
 
 function generateExampleItem(it: RawNewmanExecution): NewmanExecution {
-  const resp = new Response(it.response);
-  const req = new Request(it.request);
+  const resp = it.response;
+  const req = it.request;
   const rawReq = parseRequest(req);
   const rawResp = parseResponse(resp);
   const annotation = JSON.parse((it.item.description as DescriptionDefinition)?.content || "{}");
