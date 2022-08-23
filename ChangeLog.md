@@ -3,6 +3,7 @@
 ## 08/04/2022 3.0.5
 
 - ModelValidator - Support api-version validation
+- ModelValidator - Fix bug when operation has no own parameters
 - validate-traffic
   - add detailed operationId on swagger link
   - add detailed position info on pathInpayload link
@@ -11,6 +12,7 @@
   - support multi swaggers on report
 - API Scenario
   - Support Subscription and Tenant scope
+  - Support assertion in response
 
 ## 07/20/2022 3.0.4
 

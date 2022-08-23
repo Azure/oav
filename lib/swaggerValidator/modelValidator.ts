@@ -436,7 +436,7 @@ export class SwaggerExampleValidator {
       ajvValidatorErrors,
       exampleFileUrl,
       exampleContent,
-      parameters
+      mergedParameters
     );
   }
   private async loadSwagger(swaggerFilePath: string, skipResolveRef: boolean) {

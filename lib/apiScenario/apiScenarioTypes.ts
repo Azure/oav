@@ -121,7 +121,7 @@ export type RawStepOperation = RawStepBase & {
   operationId: string;
   readmeTag?: string;
   parameters?: { [parameterName: string]: VarValue };
-  responses?: SwaggerExample["responses"];
+  responses?: StepResponseAssertion;
 };
 
 export type StepRestCallExample = StepBase & {};
@@ -135,9 +135,19 @@ export type StepRestCall = StepBase & {
   exampleFile?: string;
   parameters: SwaggerExample["parameters"];
   responses: SwaggerExample["responses"];
+  responseAssertion?: StepResponseAssertion;
   outputVariables?: OutputVariables;
   externalReference?: boolean;
   _resolvedParameters?: SwaggerExample["parameters"];
+};
+
+export type StepResponseAssertion = {
+  [statusCode: number]:
+    | {
+        headers?: { [headerName: string]: string };
+        body?: any;
+      }
+    | JsonPatchOpTest[];
 };
 
 //#endregion
@@ -261,7 +271,8 @@ export interface JsonPatchOpMove {
 
 export interface JsonPatchOpTest {
   test: string;
-  value: any;
+  value?: any;
+  expression?: string;
 }
 
 export type JsonPatchOp =
@@ -321,9 +332,18 @@ export interface NewmanReport {
 }
 
 export interface NewmanExecution {
+  id: string;
   request: NewmanRequest;
   response: NewmanResponse;
   annotation?: any;
+  assertions: NewmanAssertion[];
+}
+
+export interface NewmanAssertion {
+  name: string;
+  test: string;
+  message: string;
+  stack: string;
 }
 export interface NewmanRequest {
   url: string;

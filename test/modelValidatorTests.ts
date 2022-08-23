@@ -784,7 +784,15 @@ describe("Model Validation", () => {
       assert.strictEqual(
         result[0].message,
         "api-version 2017-03-01 is not equal to swagger version"
-      );
+    );
+
+    it("should report error when operation has no own parameters", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/parameterValidation/test.json`;
+      const result = await validate.validateExamples(specPath2, "SqlServers_Get_noOwnParameter");
+      assert.strictEqual(result.length, 1);
+      assert.strictEqual(result[0].code, "MAX_LENGTH");
+      assert.strictEqual(result[0].message, "String is too long (8 chars), maximum 4");
+      assert.strictEqual(result[0].exampleJsonPath, "$parameters.shortSubscriptionId");
     });
   });
 

@@ -1,6 +1,7 @@
+import * as jsonPointer from "json-pointer";
 import { Event, EventDefinition, Item, ItemDefinition, ScriptDefinition } from "postman-collection";
 import { getRandomString } from "../util/utils";
-import { ArmTemplate } from "./apiScenarioTypes";
+import { ArmTemplate, StepResponseAssertion } from "./apiScenarioTypes";
 
 function parseJsonPointer(jsonPointer: string): string[] {
   if (jsonPointer === "") {
@@ -17,6 +18,7 @@ interface TestScriptParameter {
   types: TestScriptType[];
   variables?: Map<string, string>;
   armTemplate?: ArmTemplate;
+  responseAssertion?: StepResponseAssertion;
 }
 
 export type TestScriptType =
@@ -55,6 +57,49 @@ export function createScript(script: string): ScriptDefinition {
   };
 }
 
+function generateResponseDataAssertionScript(responseAssertion: StepResponseAssertion): string {
+  let ret = "";
+  const addBodyAssertion = (segments: string[], exp: string) => {
+    ret += `pm.expect(_.get(pm.response.json(), ${JSON.stringify(segments)})).${exp};\n`;
+  };
+
+  const addHeaderAssertion = (key: string, exp: string) => {
+    ret += `pm.expect(pm.response.headers.get("${key}")).${exp};\n`;
+  };
+
+  for (const [statusCode, v] of Object.entries(responseAssertion)) {
+    ret += `if (pm.response.code === ${statusCode}) {\n`;
+    if (Array.isArray(v)) {
+      for (const assertion of v) {
+        const exp = assertion.value
+          ? `to.deep.eql(${JSON.stringify(assertion.value)})`
+          : assertion.expression!;
+
+        const pathSegments = jsonPointer.parse(assertion.test);
+        const type = pathSegments.shift();
+
+        if (type === "body") {
+          addBodyAssertion(pathSegments, exp);
+        } else {
+          addHeaderAssertion(pathSegments[0], exp);
+        }
+      }
+    } else {
+      Object.entries(v.headers || {}).forEach(([k, v]) => {
+        addHeaderAssertion(k, `to.eql(${JSON.stringify(v)})`);
+      });
+
+      if (v.body) {
+        jsonPointer.walk(v.body, (value, path) => {
+          addBodyAssertion(jsonPointer.parse(path), `to.eql(${JSON.stringify(value)})`);
+        });
+      }
+    }
+    ret += "}\n";
+  }
+  return ret;
+}
+
 export function generateScript(parameter: TestScriptParameter): ScriptDefinition {
   const script: string[] = [];
   script.push(`pm.test("${parameter.name}", function() {`);
@@ -87,6 +132,9 @@ export function generateScript(parameter: TestScriptParameter): ScriptDefinition
         `pm.environment.set("${key}", pm.response.json().properties.outputs.${key}.value);`
       );
     }
+  }
+  if (parameter.types.includes("ResponseDataAssertion") && parameter.responseAssertion) {
+    script.push(generateResponseDataAssertionScript(parameter.responseAssertion));
   }
   script.push("});");
   return createScript(script.join("\n"));
