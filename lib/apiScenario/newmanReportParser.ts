@@ -41,7 +41,7 @@ export function parseNewmanReport(newmanReport: RawNewmanReport): NewmanReport {
 }
 
 function generateExampleItem(it: RawNewmanExecution): NewmanExecution {
-  const resp = it.response ? it.response : new Response(undefined as any);
+  const resp = it.response ?? new Response(undefined as any);
   const req = it.request;
   const rawReq = parseRequest(req);
   const rawResp = parseResponse(resp);
