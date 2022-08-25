@@ -51,6 +51,9 @@ describe("Live Validator", () => {
 
       const readOnlys = validator.operationLoader.getAttrs("microsoft.compute", "2021-11-01", "VirtualMachineRunCommands_List", "readOnly");
       expect(readOnlys).toMatchSnapshot();
+      assert.equal(readOnlys.length, 3);
+      assert.equal(readOnlys.includes("/200/schema/properties/nextLink"), true);
+      assert.equal(readOnlys.filter((a) => a.includes("schema")).length, 2);
     });
 
     it("OperationLoader should be initialized only with spec", async () => {
@@ -112,6 +115,9 @@ describe("Live Validator", () => {
       assert.equal(rest.errors, 0);
       assert.equal(rest.isSuccessful, true);
       expect(rest).toMatchSnapshot();
+      assert.equal(readOnlys.length, 8);
+      assert.equal(readOnlys.includes("parameters/schema/properties/properties/properties/statuses"), true);
+      assert.equal(readOnlys.filter((a) => a.includes("parameters")).length, 4);
       //end of roundtrip validation
     });
 
@@ -144,6 +150,19 @@ describe("Live Validator", () => {
       expect(rest).toMatchSnapshot();
       assert.equal(rest.errors.length, 5);
       assert.equal(rest.isSuccessful, false);
+      for (const re of rest.errors) {
+        if (re.pathsInPayload[0].includes("location")) {
+          assert.equal(re.code, "ROUNDTRIP_INCONSISTENT_PROPERTY");
+        } else if (re.pathsInPayload[0].includes("createOption")) {
+          assert.equal(re.code, "ROUNDTRIP_MISSING_PROPERTY");
+        } else if (re.pathsInPayload[0].includes("caching")) {
+          assert.equal(re.code, "ROUNDTRIP_ADDITIONAL_PROPERTY");
+        } else if (re.pathsInPayload[0].includes("offer")) {
+          assert.equal(re.code, "ROUNDTRIP_MISSING_PROPERTY");
+        } else if (re.pathsInPayload[0].includes("computerName")) {
+          assert.equal(re.code, "ROUNDTRIP_MISSING_PROPERTY");
+        }
+      }
       //end of roundtrip validation
     });
 
