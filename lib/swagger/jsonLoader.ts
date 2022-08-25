@@ -26,6 +26,7 @@ export interface JsonLoaderOption extends FileLoaderOption {
   transformRef?: boolean; // TODO implement transformRef: false
   skipResolveRefKeys?: string[];
   supportYaml?: boolean;
+  shouldResolveRef?: boolean;
 }
 
 interface FileCache {
@@ -112,11 +113,7 @@ export class JsonLoader implements Loader<Json> {
     // throw new Error(`Unknown file format while loading file ${cache.filePath}`);
   }
 
-  public async load(
-    inputFilePath: string,
-    skipResolveRef?: boolean,
-    shouldResolveRef?: boolean
-  ): Promise<Json> {
+  public async load(inputFilePath: string, skipResolveRef?: boolean): Promise<Json> {
     const filePath = this.fileLoader.relativePath(inputFilePath);
     let cache = this.fileCache.get(filePath);
     if (cache === undefined) {
@@ -130,8 +127,8 @@ export class JsonLoader implements Loader<Json> {
       cache.skipResolveRef = skipResolveRef;
     }
 
-    if (shouldResolveRef) {
-      cache.resolveRef = shouldResolveRef;
+    if (this.opts.shouldResolveRef) {
+      cache.resolveRef = this.opts.shouldResolveRef;
       await this.loadFile(cache);
       //get unresolved content from cache.originalContent
       const fileContent = JSON.parse(cache.originalContent!);

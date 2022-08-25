@@ -124,8 +124,8 @@ export class LiveValidatorLoader implements Loader<SwaggerSpec> {
     );
   }
 
-  public async load(specFilePath: string, shouldResolveRef?: boolean): Promise<SwaggerSpec> {
-    const spec = await this.swaggerLoader.load(specFilePath, shouldResolveRef);
+  public async load(specFilePath: string): Promise<SwaggerSpec> {
+    const spec = await this.swaggerLoader.load(specFilePath);
 
     applySpecTransformers(spec, this.transformContext);
 

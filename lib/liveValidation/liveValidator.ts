@@ -188,6 +188,7 @@ export class LiveValidator {
     if (ops.enableRoundTripValidator) {
       this.operationLoader = new OperationLoader(ruleMap);
       this.options.setFilePath = true;
+      ops.shouldResolveRef = true;
     }
   }
 
@@ -882,7 +883,7 @@ export class LiveValidator {
     this.logging(`Building cache from:${swaggerPath}`, LiveValidatorLoggingLevels.debug);
     let spec;
     try {
-      spec = await loader.load(pathResolve(swaggerPath), this.options.enableRoundTripValidator);
+      spec = await loader.load(pathResolve(swaggerPath));
       const elapsedTimeLoadSpec = Date.now() - startTime;
       this.logging(
         `Load spec ${swaggerPath}`,

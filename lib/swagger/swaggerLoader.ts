@@ -39,12 +39,8 @@ export class SwaggerLoader implements Loader<SwaggerSpec> {
   }
 
   // TODO reportError
-  public async load(specFilePath: string, shouldResolveRef?: boolean): Promise<SwaggerSpec> {
-    const swaggerSpec = (await (this.jsonLoader.load(
-      specFilePath,
-      undefined,
-      shouldResolveRef
-    ) as unknown)) as SwaggerSpec;
+  public async load(specFilePath: string): Promise<SwaggerSpec> {
+    const swaggerSpec = (await (this.jsonLoader.load(specFilePath) as unknown)) as SwaggerSpec;
 
     if (this.opts.setFilePath) {
       const pathProvider = getProviderFromSpecPath(this.fileLoader.resolvePath(specFilePath));
