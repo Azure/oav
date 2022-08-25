@@ -136,7 +136,7 @@ const prettyPrintInfo = <T>(
 
 export const validateSpec = async (specPath: string, options: Options | undefined) =>
   validate(options, async (o) => {
-    const validator = new SemanticValidator(specPath, null, o);
+    const validator = new SemanticValidator(specPath, null);
     try {
       await validator.initialize();
       log.info(`Semantically validating  ${specPath}:\n`);
