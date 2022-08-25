@@ -19,7 +19,6 @@ import {
   SpecValidator,
 } from "./validators/specValidator";
 
-import { ModelValidationError } from "./util/modelValidationError";
 import { NewModelValidator as ModelValidator, SwaggerExampleErrorDetail} from "./swaggerValidator/modelValidator";
 import { NodeError } from "./util/validationError";
 import { WireFormatGenerator } from "./wireFormatGenerator";
@@ -244,24 +243,6 @@ export async function validateExamples(
       };
       return [error];
     }
-  });
-}
-
-export async function validateExamplesInCompositeSpec(
-  compositeSpecPath: string,
-  options: Options
-): Promise<ReadonlyArray<readonly ModelValidationError[]>> {
-  return validate(options, async (o) => {
-    o.consoleLogLevel = log.consoleLogLevel;
-    o.logFilepath = log.filepath;
-    const suppression = await getSuppressions(compositeSpecPath);
-    const docs = await getDocumentsFromCompositeSwagger(
-      suppression,
-      compositeSpecPath,
-      openapiToolsCommon.defaultErrorReport
-    );
-    const promiseFactories = docs.map((doc) => async () => validateExamples(doc, undefined, o));
-    return utils.executePromisesSequentially(promiseFactories);
   });
 }
 

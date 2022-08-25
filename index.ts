@@ -9,7 +9,6 @@ export {
   validateSpec,
   validateCompositeSpec,
   validateExamples,
-  validateExamplesInCompositeSpec,
   resolveSpec,
   resolveCompositeSpec,
   validateTrafficAgainstSpec,

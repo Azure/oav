@@ -3,7 +3,6 @@
 
 import * as yargs from "yargs";
 
-import { flat } from "@azure-tools/openapi-tools-common";
 import { cliSuppressExceptions } from "../cliSuppressExceptions";
 import { log } from "../util/logging";
 import * as validate from "../validate";
@@ -34,12 +33,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       logFilepath: argv.f,
       pretty: argv.p,
     };
-    if (specPath.match(/.*composite.*/gi) !== null) {
-      const result = await validate.validateExamplesInCompositeSpec(specPath, vOptions);
-      return flat(result).some(() => true) ? 1 : 0;
-    } else {
-      const result = await validate.validateExamples(specPath, operationIds, vOptions);
-      return result.length > 0 ? 1 : 0;
-    }
+    const result = await validate.validateExamples(specPath, operationIds, vOptions);
+    return result.length > 0 ? 1 : 0;
   });
 }
