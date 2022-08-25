@@ -1,5 +1,13 @@
 # Change Log - oav
 
+## 08/26/2022 3.1.0
+
+- Retire some features
+  - Retire commands "generate-uml"
+  - Retire commands "generate-wireformat"
+  - Retire commands "resolve-spec"
+  - Retire Autorest plugin
+
 ## 08/04/2022 3.0.5
 
 - ModelValidator - Fix bug when operation has no own parameters
