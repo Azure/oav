@@ -41,7 +41,7 @@
         "osProfile": {
           "computerName": "testlzc6bl",
           "adminUsername": "azureuser",
-          "adminPassword": "0asdFq341Zcva"
+          "adminPassword": "password"
         },
         "additionalCapabilities": {}
       }
