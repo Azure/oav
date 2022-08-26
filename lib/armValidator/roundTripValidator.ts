@@ -10,7 +10,7 @@ export function diffRequestResponse(
   operationId: string,
   operationLoader: OperationLoader
 ) {
-  const diffs = getJsonPatchDiff(payload.liveRequest.body, payload.liveResponse.body, {
+  const diffs = getJsonPatchDiff(payload.liveRequest.body ?? {}, payload.liveResponse.body ?? {}, {
     includeOldValue: true,
     minimizeDiff: false,
   });
@@ -21,29 +21,81 @@ export function diffRequestResponse(
       const path = jsonPath.split("/").join("(.*)").concat("$");
       if (it.replace !== undefined) {
         const isReplace =
-          operationLoader.attrChecker(path, providerName!, apiversion, operationId, "readOnly") ||
-          operationLoader.attrChecker(path, providerName!, apiversion, operationId, "default") ||
-          operationLoader.attrChecker(path, providerName!, apiversion, operationId, "mutability", [
-            "create",
-            "read",
-          ]);
+          operationLoader.attrChecker(
+            path,
+            providerName!,
+            apiversion,
+            operationId,
+            payload.liveResponse.statusCode,
+            true,
+            "readOnly"
+          ) ||
+          operationLoader.attrChecker(
+            path,
+            providerName!,
+            apiversion,
+            operationId,
+            payload.liveResponse.statusCode,
+            true,
+            "default"
+          ) ||
+          operationLoader.attrChecker(
+            path,
+            providerName!,
+            apiversion,
+            operationId,
+            payload.liveResponse.statusCode,
+            true,
+            "mutability",
+            ["create", "read"]
+          );
         if (!isReplace) {
           return buildLiveValidationIssue("ROUNDTRIP_INCONSISTENT_PROPERTY", jsonPath);
         }
       } else if (it.add !== undefined) {
         const isReadOnly =
-          operationLoader.attrChecker(path, providerName!, apiversion, operationId, "readOnly") ||
-          operationLoader.attrChecker(path, providerName!, apiversion, operationId, "default");
+          operationLoader.attrChecker(
+            path,
+            providerName!,
+            apiversion,
+            operationId,
+            payload.liveResponse.statusCode,
+            false,
+            "readOnly"
+          ) ||
+          operationLoader.attrChecker(
+            path,
+            providerName!,
+            apiversion,
+            operationId,
+            payload.liveResponse.statusCode,
+            false,
+            "default"
+          );
         if (!isReadOnly) {
           return buildLiveValidationIssue("ROUNDTRIP_ADDITIONAL_PROPERTY", jsonPath);
         }
       } else if (it.remove !== undefined) {
         const isRemove =
-          operationLoader.attrChecker(path, providerName!, apiversion, operationId, "secret") ||
-          operationLoader.attrChecker(path, providerName!, apiversion, operationId, "mutability", [
-            "create",
-            "update",
-          ]);
+          operationLoader.attrChecker(
+            path,
+            providerName!,
+            apiversion,
+            operationId,
+            payload.liveResponse.statusCode,
+            true,
+            "secret"
+          ) ||
+          operationLoader.attrChecker(
+            path,
+            providerName!,
+            apiversion,
+            operationId,
+            payload.liveResponse.statusCode,
+            true,
+            "mutability",
+            ["create", "update"]
+          );
         if (!isRemove) {
           return buildLiveValidationIssue("ROUNDTRIP_MISSING_PROPERTY", jsonPath);
         }

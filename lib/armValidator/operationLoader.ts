@@ -42,6 +42,8 @@ export class OperationLoader {
     ["mutability", "$..[?(@['x-ms-mutability'])]~"],
   ]);
 
+  private statusCodeReg = new RegExp("^/([0-9]*)", "i");
+
   public constructor(ruleMap?: Map<string, string>) {
     if (ruleMap !== undefined) {
       ruleMap.forEach((value: string, key: string) => {
@@ -140,6 +142,8 @@ export class OperationLoader {
     providerName: string,
     apiVersion: string,
     operationId: string,
+    statusCode: string,
+    inParam: boolean,
     xmsPath: string,
     xmsValues?: string[]
   ) {
@@ -150,7 +154,13 @@ export class OperationLoader {
     const resRegex = new RegExp(jsonPath, "g");
     for (const attr of attrs) {
       if (resRegex.test(attr)) {
-        return true;
+        const status = attr.match(this.statusCodeReg);
+        if (inParam && status === null) {
+          return true;
+        }
+        if (!inParam && status !== null && status[1] === statusCode) {
+          return true;
+        }
       }
     }
     return false;
@@ -225,6 +235,9 @@ export class OperationLoader {
             }
             allAttrs = allRules.get(key);
             for (const attr of attrs) {
+              if (attr.pointer === "/responses") {
+                continue;
+              }
               const attrPath = this.getAttrPath(operation as any, attr.pointer);
               if (attrPath === undefined) {
                 continue;
