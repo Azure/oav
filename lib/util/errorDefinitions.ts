@@ -323,9 +323,25 @@ export const apiValidationRuntimeErrors = {
   },
 } as const;
 
+export const roundTripValidationErrors = {
+  ROUNDTRIP_INCONSISTENT_PROPERTY: {
+    severity: Severity.Critical,
+    message: strTemplate`The property's value in the GET response is different from what was set in the preceding PUT request.`,
+  },
+  ROUNDTRIP_MISSING_PROPERTY: {
+    severity: Severity.Critical,
+    message: strTemplate`The property is present in the PUT request but is either never returned in the GET response or is returned with a null value.`,
+  },
+  ROUNDTRIP_ADDITIONAL_PROPERTY: {
+    severity: Severity.Critical,
+    message: strTemplate`The property is returned in the GET response, but it is not declared in the PUT request.`,
+  },
+};
+
 export const apiValidationErrors = {
   ...trafficValidationErrors,
   ...apiValidationRuntimeErrors,
+  ...roundTripValidationErrors,
 
   MULTIPLE_OPERATIONS_FOUND: {
     severity: Severity.Critical,
