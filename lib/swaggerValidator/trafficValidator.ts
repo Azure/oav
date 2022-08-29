@@ -28,6 +28,7 @@ export interface TrafficValidationOptions extends Options {
   outputExceptionInReport?: boolean;
   specLinkPrefix?: string;
   payloadLinkPrefix?: string;
+  markdownPath?: string;
 }
 export interface TrafficValidationIssue {
   payloadFilePath?: string;
