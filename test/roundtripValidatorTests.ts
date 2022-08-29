@@ -202,7 +202,7 @@ describe("Live Validator", () => {
       payload = require(`${__dirname}/liveValidation/payloads/roundTrip_test.json`);
       rest = await validator.validateRoundTrip(payload);
       expect(rest).toMatchSnapshot();
-      assert.equal(rest.isSuccessful, true);
+      assert.equal(rest.isSuccessful, false);
       //end of roundtrip validation
     });
 
