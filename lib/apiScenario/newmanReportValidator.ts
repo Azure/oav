@@ -314,7 +314,6 @@ export class NewmanReportValidator {
     try {
       return JSON.parse(body);
     } catch (e) {
-      console.error(`Failed to parse body: ${body}`);
       return body ? body : undefined;
     }
   }

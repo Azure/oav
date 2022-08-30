@@ -26,7 +26,7 @@ import {
 } from "./newmanReportValidator";
 import { SwaggerAnalyzer, SwaggerAnalyzerOption } from "./swaggerAnalyzer";
 import { EnvironmentVariables, VariableEnv } from "./variableEnv";
-import { parseNewmanReport, RawNewmanReport } from "./newmanReportParser";
+import { parseNewmanReport } from "./newmanReportParser";
 import {
   defaultCollectionFileName,
   defaultEnvFileName,
@@ -399,8 +399,7 @@ export class PostmanCollectionGenerator {
             {
               collection: collection,
               environment: runtimeEnv,
-              reporters: ["cli", "json"],
-              reporter: { json: { export: reportExportPath } },
+              reporters: ["cli"],
             },
             function (err, summary) {
               if (summary.run.failures.length > 0) {
@@ -413,7 +412,13 @@ export class PostmanCollectionGenerator {
             }
           )
           .on("done", async (_err, _summary) => {
-            await this.postRun(scenario, reportExportPath, runtimeEnv);
+            const summary = {
+              environment: {
+                values: _summary.environment.values.members,
+              },
+              run: _summary.run,
+            };
+            await this.postRun(scenario, reportExportPath, runtimeEnv, summary);
             resolve(_summary);
           });
       });
@@ -421,7 +426,12 @@ export class PostmanCollectionGenerator {
     await newmanRun();
   }
 
-  private async postRun(scenario: Scenario, reportExportPath: string, runtimeEnv: VariableScope) {
+  private async postRun(
+    scenario: Scenario,
+    reportExportPath: string,
+    runtimeEnv: VariableScope,
+    summary: any
+  ) {
     const keys = await this.swaggerAnalyzer.getAllSecretKey();
     const values: string[] = [];
     for (const [k, v] of Object.entries(runtimeEnv.syncVariablesTo())) {
@@ -431,17 +441,15 @@ export class PostmanCollectionGenerator {
     }
     this.dataMasker.addMaskedValues(values);
     this.dataMasker.addMaskedKeys(keys);
-    // read content and upload. mask newman report.
-    const rawReport = JSON.parse(await this.fileLoader.load(reportExportPath)) as RawNewmanReport;
 
     // add mask environment secret value
-    for (const item of rawReport.environment.values) {
+    for (const item of summary.environment.values) {
       if (this.dataMasker.maybeSecretKey(item.key)) {
         this.dataMasker.addMaskedValues([item.value]);
       }
     }
 
-    const newmanReport = parseNewmanReport(rawReport);
+    const newmanReport = parseNewmanReport(summary);
 
     const newmanReportValidatorOption: NewmanReportValidatorOption = {
       apiScenarioFilePath: scenario._scenarioDef._filePath,

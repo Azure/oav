@@ -13,7 +13,7 @@ import * as Constants from "../lib/util/constants";
 // eslint-disable-next-line no-var
 var glob = require("glob").glob;
 
-const numberOfSpecs = 17;
+const numberOfSpecs = 18;
 jest.setTimeout(999999);
 
 describe("Live Validator", () => {
@@ -31,6 +31,7 @@ describe("Live Validator", () => {
         isPathCaseSensitive: false,
         loadValidatorInBackground: true,
         loadValidatorInInitialize: false,
+        enableRoundTripLazyBuild: true,
       };
       const validator = new LiveValidator();
       assert.equal(0, validator.operationSearcher.cache.size);
@@ -80,6 +81,7 @@ describe("Live Validator", () => {
         directory: path.resolve(os.homedir(), "repo"),
         loadValidatorInBackground: true,
         loadValidatorInInitialize: false,
+        enableRoundTripLazyBuild: true,
       };
       const validator = new LiveValidator({ swaggerPaths });
       assert.equal(0, validator.operationSearcher.cache.size);
@@ -100,6 +102,7 @@ describe("Live Validator", () => {
         directory,
         loadValidatorInBackground: true,
         loadValidatorInInitialize: false,
+        enableRoundTripLazyBuild: true,
       };
       const validator = new LiveValidator({ swaggerPaths, directory });
       assert.equal(0, validator.operationSearcher.cache.size);
@@ -124,6 +127,7 @@ describe("Live Validator", () => {
         directory,
         loadValidatorInBackground: true,
         loadValidatorInInitialize: false,
+        enableRoundTripLazyBuild: true,
       };
       const validator = new LiveValidator({
         swaggerPaths,
@@ -150,6 +154,7 @@ describe("Live Validator", () => {
         isPathCaseSensitive: false,
         loadValidatorInBackground: true,
         loadValidatorInInitialize: false,
+        enableRoundTripLazyBuild: true,
       };
       const validator = new LiveValidator({
         swaggerPaths,
