@@ -104,8 +104,7 @@ export class PostmanCollectionGenerator {
     }
     this.opt.runId = this.opt.runId || generateRunId();
     const oldSkipCleanUp = this.opt.skipCleanUp;
-    this.opt.skipCleanUp =
-      this.opt.skipCleanUp || scenarioDef.scenarios.filter((s) => s.shareScope).length > 1;
+    this.opt.skipCleanUp = this.opt.skipCleanUp || scenarioDef.scenarios.length > 1;
 
     if (this.opt.markdown) {
       const reportExportPath = path.resolve(

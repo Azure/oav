@@ -76,9 +76,9 @@ export class ApiScenarioRunner {
   private jsonLoader: JsonLoader;
   private client: ApiScenarioRunnerClient;
   private env: EnvironmentVariables;
-  private scopeTracking: { [scopeName: string]: Scope };
   private resolveVariables: boolean;
   private skipCleanUp: boolean;
+  private scope: Scope;
 
   public setSkipCleanUp(skipCleanUp: boolean) {
     this.skipCleanUp = skipCleanUp;
@@ -104,54 +104,43 @@ export class ApiScenarioRunner {
     this.jsonLoader = opts.jsonLoader;
     this.resolveVariables = opts.resolveVariables ?? true;
     this.skipCleanUp = opts.skipCleanUp ?? false;
-    this.scopeTracking = {};
   }
 
-  private async prepareScope(scenario: Scenario): Promise<Scope> {
-    const scopeName = scenario.shareScope ? "_defaultScope" : `_randomScope_${getRandomString()}`;
-    let scope = this.scopeTracking[scopeName];
-    if (scope === undefined) {
-      const scenarioDef = scenario._scenarioDef;
-      // Variable scope: ScenarioDef <= RuntimeScope <= Scenario <= Step
-      const scopeEnv =
-        // RuntimeScope
-        new VariableEnv(
-          // ScenarioDef
-          new VariableEnv().setBatch(scenarioDef.variables)
-        ).setBatchEnv(this.env);
-      scope = {
-        type: scenarioDef.scope,
-        prepareSteps: scenarioDef.prepareSteps,
-        cleanUpSteps: scenarioDef.cleanUpSteps,
-        env: scopeEnv,
-      };
+  private prepareScope(scenarioDef: ScenarioDefinition) {
+    // Variable scope: ScenarioDef <= RuntimeScope <= Scenario <= Step
+    const scopeEnv =
+      // RuntimeScope
+      new VariableEnv(
+        // ScenarioDef
+        new VariableEnv().setBatch(scenarioDef.variables)
+      ).setBatchEnv(this.env);
+    this.scope = {
+      type: scenarioDef.scope,
+      prepareSteps: scenarioDef.prepareSteps,
+      cleanUpSteps: scenarioDef.cleanUpSteps,
+      env: scopeEnv,
+    };
 
-      if (scope.type === "None") {
-        throw new Error(`Scope is not supported yet: ${scope.type}`);
-      }
-
-      if (scope.env.get("resourceGroupName") === undefined) {
-        scope.env.set("resourceGroupName", {
-          type: "string",
-          prefix: "apiTest-",
-        });
-      }
-
-      this.generateValueFromPrefix(scope.env);
-
-      this.scopeTracking[scopeName] = scope;
+    if (
+      scenarioDef.scope === "ResourceGroup" &&
+      this.scope.env.get("resourceGroupName") === undefined
+    ) {
+      this.scope.env.set("resourceGroupName", {
+        type: "string",
+        prefix: "apiTest-",
+      });
     }
 
-    return scope;
+    this.generateValueFromPrefix(this.scope.env);
   }
 
-  private async cleanUpScope(scope: Scope): Promise<void> {
-    for (const step of scope.cleanUpSteps) {
-      await this.executeStep(step, scope.env, scope);
+  private async cleanUpScope(): Promise<void> {
+    for (const step of this.scope.cleanUpSteps) {
+      await this.executeStep(step, this.scope.env, this.scope);
     }
-    if (scope.type === "ResourceGroup") {
-      const subscriptionId = scope.env.getRequiredString("subscriptionId");
-      const resourceGroupName = scope.env.getRequiredString("resourceGroupName");
+    if (this.scope.type === "ResourceGroup") {
+      const subscriptionId = this.scope.env.getRequiredString("subscriptionId");
+      const resourceGroupName = this.scope.env.getRequiredString("resourceGroupName");
       await this.client.deleteResourceGroup(subscriptionId, resourceGroupName);
     }
   }
@@ -167,24 +156,27 @@ export class ApiScenarioRunner {
   }
 
   public async executeScenario(scenario: Scenario) {
-    const scope = await this.prepareScope(scenario);
-    const scenarioEnv = new VariableEnv(scope.env).setBatch(scenario.variables);
+    if (this.scope === undefined) {
+      this.prepareScope(scenario._scenarioDef);
+    }
+
+    const scenarioEnv = new VariableEnv(this.scope.env).setBatch(scenario.variables);
 
     this.generateValueFromPrefix(scenarioEnv);
 
     await this.client.prepareScenario(scenario, scenarioEnv);
 
-    await this.doProvisionScope(scope);
+    await this.doProvisionScope(this.scope);
 
     try {
       for (const step of scenario.steps) {
-        await this.executeStep(step, scenarioEnv, scope);
+        await this.executeStep(step, scenarioEnv, this.scope);
       }
     } catch (e) {
       throw new Error(`Failed to execute scenario: ${scenario.scenario}: ${e.message}`);
     } finally {
       if (!this.skipCleanUp) {
-        await this.cleanUpScope(scope);
+        await this.cleanUpScope();
       }
     }
   }

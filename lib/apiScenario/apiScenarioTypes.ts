@@ -297,7 +297,6 @@ export type JsonPatchOp =
 
 export type RawScenario = RawVariableScope & {
   scenario?: string;
-  shareScope?: boolean;
   description?: string;
   steps: RawStep[];
   authentication?: Authentication;

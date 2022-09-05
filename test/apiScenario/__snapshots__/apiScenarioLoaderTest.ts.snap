@@ -126,7 +126,6 @@ Object {
       ],
       "scenario": "appConfig_data_plane_crud",
       "secretVariables": Array [],
-      "shareScope": true,
       "steps": Array [
         Object {
           "authentication": Object {
@@ -290,7 +289,6 @@ Object {
       ],
       "scenario": "StorageBasicExample",
       "secretVariables": Array [],
-      "shareScope": true,
       "steps": Array [
         Object {
           "authentication": Object {
@@ -841,7 +839,6 @@ Object {
       ],
       "scenario": "basic",
       "secretVariables": Array [],
-      "shareScope": true,
       "steps": Array [
         Object {
           "authentication": Object {
@@ -928,7 +925,6 @@ Object {
       ],
       "scenario": "overrideVariable",
       "secretVariables": Array [],
-      "shareScope": true,
       "steps": Array [
         Object {
           "authentication": Object {
@@ -1020,7 +1016,6 @@ Object {
       ],
       "scenario": "primitiveParameter",
       "secretVariables": Array [],
-      "shareScope": true,
       "steps": Array [
         Object {
           "authentication": Object {
@@ -1141,7 +1136,6 @@ Object {
       ],
       "scenario": "patchVariables",
       "secretVariables": Array [],
-      "shareScope": true,
       "steps": Array [
         Object {
           "authentication": Object {
@@ -1284,7 +1278,6 @@ Object {
       ],
       "scenario": "SignalR",
       "secretVariables": Array [],
-      "shareScope": true,
       "steps": Array [
         Object {
           "armTemplate": "./peArmTemplate/Generate_Unique_name_template.json",
