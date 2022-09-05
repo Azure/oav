@@ -161,7 +161,9 @@ export class RestlerApiScenarioGenerator {
   }
 
   public async writeFile(definition: RawScenarioDefinition) {
-    const fileContent = dump(definition);
+    const fileContent =
+      "# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/documentation/api-scenario/references/v1.2/schema.json\n" +
+      dump(definition);
     const filePath = pathJoin(this.opts.outputDir, "basic.yaml");
     await this.fileLoader.writeFile(filePath, fileContent);
     console.log(`${filePath} is generated.`);
@@ -321,6 +323,7 @@ export class RestlerApiScenarioGenerator {
 
   private generateSteps() {
     const scenario: RawScenario = {
+      scenario: "GeneratedScenario",
       steps: [],
     };
 
