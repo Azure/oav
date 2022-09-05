@@ -147,7 +147,6 @@ export class RestlerApiScenarioGenerator {
         if (operation?.["x-ms-examples"] && Object.values(operation["x-ms-examples"])[0]) {
           const example = Object.values(operation["x-ms-examples"])[0];
           step.step = (step as any).operationId;
-          (step as any).operationId = undefined;
           (step as RawStepExample).exampleFile = path.relative(
             this.opts.outputDir,
             this.fileLoader.resolvePath(this.jsonLoader.getRealPath(example.$ref!))
@@ -156,10 +155,6 @@ export class RestlerApiScenarioGenerator {
           console.warn(`${operationId} has no example.`);
         }
       });
-
-      definition.scenarios[0].steps = definition.scenarios[0].steps.filter(
-        (s) => (s as RawStepExample).exampleFile
-      );
     }
 
     return definition;
@@ -224,7 +219,11 @@ export class RestlerApiScenarioGenerator {
           if (p) {
             p = this.jsonLoader.resolveRefObj(p);
           }
-          if (p?.in !== "path") {
+          if (
+            p?.in !== "path" &&
+            operation?.["x-ms-examples"] &&
+            Object.values(operation["x-ms-examples"])[0]
+          ) {
             return;
           }
         }
