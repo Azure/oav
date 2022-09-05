@@ -10,6 +10,9 @@ export const ApiScenarioDefinition: Schema & {
       enum: ["ResourceGroup", "Subscription", "Tenant", "None"],
       default: "ResourceGroup",
     },
+    authentication: {
+      $ref: "#/definitions/Authentication",
+    },
     variables: {
       $ref: "#/definitions/Variables",
     },
@@ -42,6 +45,46 @@ export const ApiScenarioDefinition: Schema & {
     Name: {
       type: "string",
       pattern: "^[A-Za-z_$][A-Za-z0-9_-]*$",
+    },
+    Authentication: {
+      type: "object",
+      properties: {
+        type: {
+          type: "string",
+          enum: ["AzureAD", "None"],
+          default: "AzureAD",
+        },
+      },
+      required: ["type"],
+      allOf: [
+        {
+          if: {
+            properties: {
+              type: {
+                const: "AzureAD",
+              },
+            },
+          },
+          then: {
+            properties: {
+              type: {},
+              audience: {
+                type: "string",
+                description:
+                  "The resource identifier (application ID URI) of the resource you want, a.k.a., the audience of the token.",
+              },
+            },
+            required: ["audience"],
+            additionalProperties: false,
+          },
+          else: {
+            properties: {
+              type: {},
+            },
+            additionalProperties: false,
+          },
+        },
+      ],
     },
     JsonPointer: {
       type: "string",
@@ -234,6 +277,10 @@ export const ApiScenarioDefinition: Schema & {
           type: "string",
           description: "A long description of the scenario",
         },
+        authentication: {
+          $ref: "#/definitions/Authentication",
+          description: "Authentication method to use for the scenario",
+        },
         variables: {
           $ref: "#/definitions/Variables",
         },
@@ -292,6 +339,9 @@ export const ApiScenarioDefinition: Schema & {
         },
       ],
       properties: {
+        authentication: {
+          $ref: "#/definitions/Authentication",
+        },
         outputVariables: {
           type: "object",
           propertyNames: {
@@ -366,6 +416,7 @@ export const ApiScenarioDefinition: Schema & {
         },
         step: {},
         description: {},
+        authentication: {},
         variables: {},
         outputVariables: {},
       },
@@ -402,6 +453,7 @@ export const ApiScenarioDefinition: Schema & {
         },
         step: {},
         description: {},
+        authentication: {},
         variables: {},
         outputVariables: {},
       },

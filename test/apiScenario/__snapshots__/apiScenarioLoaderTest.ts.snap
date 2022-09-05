@@ -6,6 +6,10 @@ Object {
   "_swaggerFilePaths": Array [
     "Microsoft.Storage/stable/2021-08-01/storage.json",
   ],
+  "authentication": Object {
+    "audience": "https://management.azure.com/",
+    "type": "AzureAD",
+  },
   "cleanUpSteps": Array [],
   "prepareSteps": Array [],
   "requiredVariables": Array [
@@ -15,6 +19,10 @@ Object {
   "scenarios": Array [
     Object {
       "_scenarioDef": [Circular],
+      "authentication": Object {
+        "audience": "https://management.azure.com/",
+        "type": "AzureAD",
+      },
       "description": "",
       "requiredVariables": Array [
         "subscriptionId",
@@ -25,6 +33,10 @@ Object {
       "shareScope": true,
       "steps": Array [
         Object {
+          "authentication": Object {
+            "audience": "https://management.azure.com/",
+            "type": "AzureAD",
+          },
           "description": "StorageAccountCheckNameAvailability",
           "exampleFile": "../examples/StorageAccountCheckNameAvailability.json",
           "operation": Object {},
@@ -52,6 +64,10 @@ Object {
           "variables": Object {},
         },
         Object {
+          "authentication": Object {
+            "audience": "https://management.azure.com/",
+            "type": "AzureAD",
+          },
           "description": "StorageAccountCreate",
           "exampleFile": "../examples/StorageAccountCreate.json",
           "operation": Object {},
@@ -211,6 +227,10 @@ Object {
           "variables": Object {},
         },
         Object {
+          "authentication": Object {
+            "audience": "https://management.azure.com/",
+            "type": "AzureAD",
+          },
           "description": "StorageAccountUpdate",
           "exampleFile": "../examples/StorageAccountUpdate.json",
           "operation": Object {},
@@ -373,6 +393,10 @@ Object {
           "variables": Object {},
         },
         Object {
+          "authentication": Object {
+            "audience": "https://management.azure.com/",
+            "type": "AzureAD",
+          },
           "description": "StorageAccountGetProperties",
           "exampleFile": "../examples/StorageAccountGetProperties.json",
           "operation": Object {},
@@ -484,6 +508,10 @@ Object {
           "variables": Object {},
         },
         Object {
+          "authentication": Object {
+            "audience": "https://management.azure.com/",
+            "type": "AzureAD",
+          },
           "description": "StorageAccountDelete",
           "exampleFile": "../examples/StorageAccountDelete.json",
           "operation": Object {},
@@ -529,6 +557,10 @@ Object {
   "_swaggerFilePaths": Array [
     "Microsoft.Storage/stable/2021-08-01/storage.json",
   ],
+  "authentication": Object {
+    "audience": "https://management.azure.com/",
+    "type": "AzureAD",
+  },
   "cleanUpSteps": Array [],
   "prepareSteps": Array [],
   "requiredVariables": Array [
@@ -538,6 +570,10 @@ Object {
   "scenarios": Array [
     Object {
       "_scenarioDef": [Circular],
+      "authentication": Object {
+        "audience": "https://management.azure.com/",
+        "type": "AzureAD",
+      },
       "description": "",
       "requiredVariables": Array [
         "subscriptionId",
@@ -548,6 +584,10 @@ Object {
       "shareScope": true,
       "steps": Array [
         Object {
+          "authentication": Object {
+            "audience": "https://management.azure.com/",
+            "type": "AzureAD",
+          },
           "description": undefined,
           "operation": Object {},
           "operationId": "StorageAccounts_CheckNameAvailability",
@@ -575,6 +615,10 @@ Object {
           "variables": Object {},
         },
         Object {
+          "authentication": Object {
+            "audience": "https://management.azure.com/",
+            "type": "AzureAD",
+          },
           "description": undefined,
           "operation": Object {},
           "operationId": "StorageAccounts_Create",
@@ -613,6 +657,10 @@ Object {
     },
     Object {
       "_scenarioDef": [Circular],
+      "authentication": Object {
+        "audience": "https://management.azure.com/",
+        "type": "AzureAD",
+      },
       "description": "",
       "requiredVariables": Array [
         "subscriptionId",
@@ -623,6 +671,10 @@ Object {
       "shareScope": true,
       "steps": Array [
         Object {
+          "authentication": Object {
+            "audience": "https://management.azure.com/",
+            "type": "AzureAD",
+          },
           "description": undefined,
           "operation": Object {},
           "operationId": "StorageAccounts_CheckNameAvailability",
@@ -650,6 +702,10 @@ Object {
           "variables": Object {},
         },
         Object {
+          "authentication": Object {
+            "audience": "https://management.azure.com/",
+            "type": "AzureAD",
+          },
           "description": undefined,
           "operation": Object {},
           "operationId": "StorageAccounts_Create",
@@ -693,6 +749,10 @@ Object {
     },
     Object {
       "_scenarioDef": [Circular],
+      "authentication": Object {
+        "audience": "https://management.azure.com/",
+        "type": "AzureAD",
+      },
       "description": "",
       "requiredVariables": Array [
         "subscriptionId",
@@ -703,6 +763,10 @@ Object {
       "shareScope": true,
       "steps": Array [
         Object {
+          "authentication": Object {
+            "audience": "https://management.azure.com/",
+            "type": "AzureAD",
+          },
           "description": undefined,
           "operation": Object {},
           "operationId": "StorageAccounts_CheckNameAvailability",
@@ -730,6 +794,10 @@ Object {
           "variables": Object {},
         },
         Object {
+          "authentication": Object {
+            "audience": "https://management.azure.com/",
+            "type": "AzureAD",
+          },
           "description": undefined,
           "operation": Object {},
           "operationId": "StorageAccounts_Create",
@@ -764,6 +832,10 @@ Object {
           "variables": Object {},
         },
         Object {
+          "authentication": Object {
+            "audience": "https://management.azure.com/",
+            "type": "AzureAD",
+          },
           "description": undefined,
           "operation": Object {},
           "operationId": "DeletedAccounts_Get",
@@ -798,6 +870,10 @@ Object {
     },
     Object {
       "_scenarioDef": [Circular],
+      "authentication": Object {
+        "audience": "https://management.azure.com/",
+        "type": "AzureAD",
+      },
       "description": "",
       "requiredVariables": Array [
         "subscriptionId",
@@ -808,6 +884,10 @@ Object {
       "shareScope": true,
       "steps": Array [
         Object {
+          "authentication": Object {
+            "audience": "https://management.azure.com/",
+            "type": "AzureAD",
+          },
           "description": undefined,
           "operation": Object {},
           "operationId": "StorageAccounts_Create",
@@ -920,6 +1000,10 @@ Object {
   "_swaggerFilePaths": Array [
     "Microsoft.SignalRService/preview/2021-06-01-preview/signalr.json",
   ],
+  "authentication": Object {
+    "audience": "https://management.azure.com/",
+    "type": "AzureAD",
+  },
   "cleanUpSteps": Array [],
   "prepareSteps": Array [],
   "requiredVariables": Array [
@@ -929,6 +1013,10 @@ Object {
   "scenarios": Array [
     Object {
       "_scenarioDef": [Circular],
+      "authentication": Object {
+        "audience": "https://management.azure.com/",
+        "type": "AzureAD",
+      },
       "description": "Microsoft.SignalRService/Basic_CRUD",
       "requiredVariables": Array [
         "subscriptionId",
@@ -968,6 +1056,10 @@ Object {
           "variables": Object {},
         },
         Object {
+          "authentication": Object {
+            "audience": "https://management.azure.com/",
+            "type": "AzureAD",
+          },
           "description": "SignalR_CheckNameAvailability",
           "exampleFile": "../examples/SignalR_CheckNameAvailability.json",
           "operation": Object {},
@@ -998,6 +1090,10 @@ Object {
           "variables": Object {},
         },
         Object {
+          "authentication": Object {
+            "audience": "https://management.azure.com/",
+            "type": "AzureAD",
+          },
           "description": "SignalR_CreateOrUpdate",
           "exampleFile": "../examples/SignalR_CreateOrUpdate.json",
           "operation": Object {},
@@ -1353,6 +1449,10 @@ Object {
           "variables": Object {},
         },
         Object {
+          "authentication": Object {
+            "audience": "https://management.azure.com/",
+            "type": "AzureAD",
+          },
           "description": "SignalR_Get",
           "exampleFile": "../examples/SignalR_Get.json",
           "operation": Object {},
@@ -1494,6 +1594,10 @@ Object {
           "variables": Object {},
         },
         Object {
+          "authentication": Object {
+            "audience": "https://management.azure.com/",
+            "type": "AzureAD",
+          },
           "description": "SignalR_Update",
           "exampleFile": "../examples/SignalR_Update.json",
           "operation": Object {},
@@ -1724,6 +1828,10 @@ Object {
           "variables": Object {},
         },
         Object {
+          "authentication": Object {
+            "audience": "https://management.azure.com/",
+            "type": "AzureAD",
+          },
           "description": "SignalR_ListKeys",
           "exampleFile": "../examples/SignalR_ListKeys.json",
           "operation": Object {},
@@ -1747,6 +1855,10 @@ Object {
           "variables": Object {},
         },
         Object {
+          "authentication": Object {
+            "audience": "https://management.azure.com/",
+            "type": "AzureAD",
+          },
           "description": "SignalR_RegenerateKey",
           "exampleFile": "../examples/SignalR_RegenerateKey.json",
           "operation": Object {},
@@ -1777,6 +1889,10 @@ Object {
           "variables": Object {},
         },
         Object {
+          "authentication": Object {
+            "audience": "https://management.azure.com/",
+            "type": "AzureAD",
+          },
           "description": "SignalR_Restart",
           "exampleFile": "../examples/SignalR_Restart.json",
           "operation": Object {},
@@ -1805,6 +1921,10 @@ Object {
           "variables": Object {},
         },
         Object {
+          "authentication": Object {
+            "audience": "https://management.azure.com/",
+            "type": "AzureAD",
+          },
           "description": "Usages_List",
           "exampleFile": "../examples/Usages_List.json",
           "operation": Object {},
@@ -1851,6 +1971,10 @@ Object {
           "variables": Object {},
         },
         Object {
+          "authentication": Object {
+            "audience": "https://management.azure.com/",
+            "type": "AzureAD",
+          },
           "description": "SignalR_ListByResourceGroup",
           "exampleFile": "../examples/SignalR_ListByResourceGroup.json",
           "operation": Object {},
@@ -1995,6 +2119,10 @@ Object {
           "variables": Object {},
         },
         Object {
+          "authentication": Object {
+            "audience": "https://management.azure.com/",
+            "type": "AzureAD",
+          },
           "description": "SignalR_ListBySubscription",
           "exampleFile": "../examples/SignalR_ListBySubscription.json",
           "operation": Object {},
@@ -2138,6 +2266,10 @@ Object {
           "variables": Object {},
         },
         Object {
+          "authentication": Object {
+            "audience": "https://management.azure.com/",
+            "type": "AzureAD",
+          },
           "description": "Operations_List",
           "exampleFile": "../examples/Operations_List.json",
           "operation": Object {},
@@ -2173,6 +2305,10 @@ Object {
           "variables": Object {},
         },
         Object {
+          "authentication": Object {
+            "audience": "https://management.azure.com/",
+            "type": "AzureAD",
+          },
           "description": "SignalR_Delete",
           "exampleFile": "../examples/SignalR_Delete.json",
           "operation": Object {},

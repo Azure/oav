@@ -83,6 +83,11 @@ export interface OutputVariables {
   };
 }
 
+export interface Authentication {
+  type: "None" | "AzureAD";
+  audience?: string;
+}
+
 export interface ReadmeTag {
   name: string;
   filePath: string;
@@ -115,6 +120,7 @@ export type RawStepExample = RawStepBase & {
   exampleFile: string;
   requestUpdate?: JsonPatchOp[];
   responseUpdate?: JsonPatchOp[];
+  authentication?: Authentication;
 };
 
 export type RawStepOperation = RawStepBase & {
@@ -122,6 +128,7 @@ export type RawStepOperation = RawStepBase & {
   readmeTag?: string;
   parameters?: { [parameterName: string]: VarValue };
   responses?: StepResponseAssertion;
+  authentication?: Authentication;
 };
 
 export type StepRestCallExample = StepBase & {};
@@ -139,6 +146,7 @@ export type StepRestCall = StepBase & {
   outputVariables?: OutputVariables;
   externalReference?: boolean;
   _resolvedParameters?: SwaggerExample["parameters"];
+  authentication?: Authentication;
 };
 
 export type StepResponseAssertion = {
@@ -292,6 +300,7 @@ export type RawScenario = RawVariableScope & {
   shareScope?: boolean;
   description?: string;
   steps: RawStep[];
+  authentication?: Authentication;
 };
 
 export type Scenario = TransformRaw<
@@ -310,6 +319,7 @@ export type RawScenarioDefinition = RawVariableScope & {
   prepareSteps?: RawStep[];
   scenarios: RawScenario[];
   cleanUpSteps?: RawStep[];
+  authentication?: Authentication;
 };
 
 export type ScenarioDefinition = TransformRaw<

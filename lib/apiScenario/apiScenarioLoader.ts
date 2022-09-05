@@ -233,14 +233,21 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
 
     await this.initialize(this.opts.swaggerFilePaths, readmeTags);
 
+    rawDef.scope = rawDef.scope ?? "ResourceGroup";
+    const isArmScope = rawDef.scope !== "None";
+
     const scenarioDef: ScenarioDefinition = {
-      scope: rawDef.scope ?? "ResourceGroup",
+      scope: rawDef.scope,
       prepareSteps: [],
       scenarios: [],
       _filePath: this.fileLoader.relativePath(filePath),
       _swaggerFilePaths: this.opts.swaggerFilePaths!,
       cleanUpSteps: [],
       ...convertVariables(rawDef.variables),
+      authentication: rawDef.authentication ?? {
+        type: isArmScope ? "AzureAD" : "None",
+        audience: isArmScope ? "https://management.azure.com/" : undefined,
+      },
     };
 
     if (["ResourceGroup", "Subscription"].indexOf(scenarioDef.scope) >= 0) {
@@ -311,6 +318,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       steps,
       _scenarioDef: scenarioDef,
       ...variableScope,
+      authentication: rawScenario.authentication ?? scenarioDef.authentication,
     };
 
     ctx.scenario = scenario;
@@ -379,6 +387,8 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       responses: {} as SwaggerExample["responses"],
       outputVariables: rawStep.outputVariables ?? {},
       ...convertVariables(rawStep.variables),
+      authentication:
+        rawStep.authentication ?? ctx.scenario?.authentication ?? ctx.scenarioDef.authentication,
     };
 
     ctx.stepTracking.set(step.step, step);
