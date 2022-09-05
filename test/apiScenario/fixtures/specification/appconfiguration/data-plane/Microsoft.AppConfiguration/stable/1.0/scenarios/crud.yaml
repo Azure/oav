@@ -1,0 +1,62 @@
+# yaml-language-server: $schema=/home/me/workspace/azure-rest-api-specs/documentation/api-scenario/references/v1.2/schema.json
+
+scope: ResourceGroup
+
+variables:
+  configStoreName:
+    type: string
+    prefix: configstor
+
+prepareSteps:
+  - step: Operations_CheckNameAvailability
+    operationId: Operations_CheckNameAvailability
+    readmeTag: ../../../../../resource-manager/readme.md
+    parameters:
+      checkNameAvailabilityParameters:
+        name: $(configStoreName)
+        type: Microsoft.AppConfiguration/configurationStores
+  - step: ConfigurationStores_Create
+    operationId: ConfigurationStores_Create
+    readmeTag: ../../../../../resource-manager/readme.md
+    parameters:
+      configStoreCreationParameters:
+        location: $(location)
+        sku:
+          name: Standard
+        tags:
+          myTag: myTagValue
+  - step: ConfigurationStores_Get
+    operationId: ConfigurationStores_Get
+    readmeTag: ../../../../../resource-manager/readme.md
+    outputVariables:
+      Endpoint:
+        type: string
+        fromResponse: /properties/endpoint
+      configStoreId:
+        type: string
+        fromResponse: /id
+
+scenarios:
+  - scenario: appConfig_data_plane_crud
+    authentication:
+      type: AzureAD
+      audience: https://azconfig.io
+    steps:
+      - operationId: PutKeyValue
+        parameters:
+          key: foo
+          label: hello
+          entity:
+            key: foo
+            label: hello
+            value: bar
+      - operationId: CheckKeyValue
+        parameters:
+          key: foo
+          label: hello
+      - operationId: GetKeyValue
+        parameters:
+          key: foo
+          label: hello
+      - operationId: CheckKeys
+      - operationId: GetKeys

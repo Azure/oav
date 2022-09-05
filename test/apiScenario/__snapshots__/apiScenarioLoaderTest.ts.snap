@@ -1,5 +1,265 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`ApiScenarioLoader load valid data-plane scenario - appconfig 1`] = `
+Object {
+  "_filePath": "Microsoft.AppConfiguration/stable/1.0/scenarios/crud.yaml",
+  "_swaggerFilePaths": Array [
+    "Microsoft.AppConfiguration/stable/1.0/appconfiguration.json",
+  ],
+  "authentication": Object {
+    "audience": "https://management.azure.com/",
+    "type": "AzureAD",
+  },
+  "cleanUpSteps": Array [],
+  "prepareSteps": Array [
+    Object {
+      "authentication": Object {
+        "audience": "https://management.azure.com/",
+        "type": "AzureAD",
+      },
+      "description": undefined,
+      "externalReference": true,
+      "isPrepareStep": true,
+      "operation": Object {},
+      "operationId": "Operations_CheckNameAvailability",
+      "outputVariables": Object {},
+      "parameters": Object {
+        "api-version": "2022-05-01",
+        "checkNameAvailabilityParameters": Object {
+          "name": "$(configStoreName)",
+          "type": "Microsoft.AppConfiguration/configurationStores",
+        },
+        "subscriptionId": "$(subscriptionId)",
+      },
+      "requiredVariables": Array [],
+      "responseAssertion": undefined,
+      "responses": Object {},
+      "secretVariables": Array [],
+      "step": "Operations_CheckNameAvailability",
+      "type": "restCall",
+      "variables": Object {},
+    },
+    Object {
+      "authentication": Object {
+        "audience": "https://management.azure.com/",
+        "type": "AzureAD",
+      },
+      "description": undefined,
+      "externalReference": true,
+      "isPrepareStep": true,
+      "operation": Object {},
+      "operationId": "ConfigurationStores_Create",
+      "outputVariables": Object {},
+      "parameters": Object {
+        "api-version": "2022-05-01",
+        "configStoreCreationParameters": Object {
+          "location": "$(location)",
+          "sku": Object {
+            "name": "Standard",
+          },
+          "tags": Object {
+            "myTag": "myTagValue",
+          },
+        },
+        "configStoreName": "$(configStoreName)",
+        "resourceGroupName": "$(resourceGroupName)",
+        "subscriptionId": "$(subscriptionId)",
+      },
+      "requiredVariables": Array [],
+      "responseAssertion": undefined,
+      "responses": Object {},
+      "secretVariables": Array [],
+      "step": "ConfigurationStores_Create",
+      "type": "restCall",
+      "variables": Object {},
+    },
+    Object {
+      "authentication": Object {
+        "audience": "https://management.azure.com/",
+        "type": "AzureAD",
+      },
+      "description": undefined,
+      "externalReference": true,
+      "isPrepareStep": true,
+      "operation": Object {},
+      "operationId": "ConfigurationStores_Get",
+      "outputVariables": Object {
+        "Endpoint": Object {
+          "fromResponse": "/properties/endpoint",
+          "type": "string",
+        },
+        "configStoreId": Object {
+          "fromResponse": "/id",
+          "type": "string",
+        },
+      },
+      "parameters": Object {
+        "api-version": "2022-05-01",
+        "configStoreName": "$(configStoreName)",
+        "resourceGroupName": "$(resourceGroupName)",
+        "subscriptionId": "$(subscriptionId)",
+      },
+      "requiredVariables": Array [],
+      "responseAssertion": undefined,
+      "responses": Object {},
+      "secretVariables": Array [],
+      "step": "ConfigurationStores_Get",
+      "type": "restCall",
+      "variables": Object {},
+    },
+  ],
+  "requiredVariables": Array [
+    "subscriptionId",
+    "location",
+  ],
+  "scenarios": Array [
+    Object {
+      "_scenarioDef": [Circular],
+      "authentication": Object {
+        "audience": "https://azconfig.io",
+        "type": "AzureAD",
+      },
+      "description": "",
+      "requiredVariables": Array [
+        "subscriptionId",
+        "location",
+      ],
+      "scenario": "appConfig_data_plane_crud",
+      "secretVariables": Array [],
+      "shareScope": true,
+      "steps": Array [
+        Object {
+          "authentication": Object {
+            "audience": "https://azconfig.io",
+            "type": "AzureAD",
+          },
+          "description": undefined,
+          "operation": Object {},
+          "operationId": "PutKeyValue",
+          "outputVariables": Object {},
+          "parameters": Object {
+            "api-version": "1.0",
+            "entity": Object {
+              "key": "foo",
+              "label": "hello",
+              "value": "bar",
+            },
+            "key": "foo",
+            "label": "hello",
+          },
+          "requiredVariables": Array [],
+          "responseAssertion": undefined,
+          "responses": Object {},
+          "secretVariables": Array [],
+          "step": "0_0_PutKeyValue",
+          "type": "restCall",
+          "variables": Object {},
+        },
+        Object {
+          "authentication": Object {
+            "audience": "https://azconfig.io",
+            "type": "AzureAD",
+          },
+          "description": undefined,
+          "operation": Object {},
+          "operationId": "CheckKeyValue",
+          "outputVariables": Object {},
+          "parameters": Object {
+            "api-version": "1.0",
+            "key": "foo",
+            "label": "hello",
+          },
+          "requiredVariables": Array [],
+          "responseAssertion": undefined,
+          "responses": Object {},
+          "secretVariables": Array [],
+          "step": "0_1_CheckKeyValue",
+          "type": "restCall",
+          "variables": Object {},
+        },
+        Object {
+          "authentication": Object {
+            "audience": "https://azconfig.io",
+            "type": "AzureAD",
+          },
+          "description": undefined,
+          "operation": Object {},
+          "operationId": "GetKeyValue",
+          "outputVariables": Object {},
+          "parameters": Object {
+            "api-version": "1.0",
+            "key": "foo",
+            "label": "hello",
+          },
+          "requiredVariables": Array [],
+          "responseAssertion": undefined,
+          "responses": Object {},
+          "secretVariables": Array [],
+          "step": "0_2_GetKeyValue",
+          "type": "restCall",
+          "variables": Object {},
+        },
+        Object {
+          "authentication": Object {
+            "audience": "https://azconfig.io",
+            "type": "AzureAD",
+          },
+          "description": undefined,
+          "operation": Object {},
+          "operationId": "CheckKeys",
+          "outputVariables": Object {},
+          "parameters": Object {
+            "api-version": "1.0",
+          },
+          "requiredVariables": Array [],
+          "responseAssertion": undefined,
+          "responses": Object {},
+          "secretVariables": Array [],
+          "step": "0_3_CheckKeys",
+          "type": "restCall",
+          "variables": Object {},
+        },
+        Object {
+          "authentication": Object {
+            "audience": "https://azconfig.io",
+            "type": "AzureAD",
+          },
+          "description": undefined,
+          "operation": Object {},
+          "operationId": "GetKeys",
+          "outputVariables": Object {},
+          "parameters": Object {
+            "api-version": "1.0",
+          },
+          "requiredVariables": Array [],
+          "responseAssertion": undefined,
+          "responses": Object {},
+          "secretVariables": Array [],
+          "step": "0_4_GetKeys",
+          "type": "restCall",
+          "variables": Object {},
+        },
+      ],
+      "variables": Object {},
+    },
+  ],
+  "scope": "ResourceGroup",
+  "secretVariables": Array [],
+  "variables": Object {
+    "Endpoint": Object {
+      "type": "string",
+    },
+    "configStoreId": Object {
+      "type": "string",
+    },
+    "configStoreName": Object {
+      "prefix": "configstor",
+      "type": "string",
+    },
+  },
+}
+`;
+
 exports[`ApiScenarioLoader load valid example based scenario - storage 1`] = `
 Object {
   "_filePath": "Microsoft.Storage/stable/2021-08-01/scenarios/storageBasicExample.yaml",

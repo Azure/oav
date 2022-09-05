@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/documentation/api-scenario/references/v1.2/schema.json
+
+scope: ResourceGroup
+variables:
+  configStoreName:
+    type: string
+    prefix: configstor
+
+scenarios:
+  - scenario: quickStart
+    description: Quick start with AppConfiguration ConfigurationStores
+    steps:
+      - step: Operations_CheckNameAvailability
+        operationId: Operations_CheckNameAvailability
+        parameters:
+          checkNameAvailabilityParameters:
+            name: $(configStoreName)
+            type: Microsoft.AppConfiguration/configurationStores
+      - step: ConfigurationStores_Create
+        operationId: ConfigurationStores_Create
+        parameters:
+          configStoreCreationParameters:
+            location: $(location)
+            sku:
+              name: Standard
+            tags:
+              myTag: myTagValue
+      - step: ConfigurationStores_Get
+        operationId: ConfigurationStores_Get
