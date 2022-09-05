@@ -63,6 +63,7 @@ export interface ApiScenarioLoaderOption
     SwaggerLoaderOption {
   swaggerFilePaths?: string[];
   includeOperation?: boolean;
+  armEndpoint?: string;
 }
 
 interface ApiScenarioContext {
@@ -103,6 +104,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       skipResolveRefKeys: ["x-ms-examples"],
       swaggerFilePaths: [],
       includeOperation: true,
+      armEndpoint: "https://management.azure.com",
     });
     this.transformContext = getTransformContext(this.jsonLoader, this.schemaValidator, [
       xmsPathsTransformer,
@@ -246,7 +248,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       ...convertVariables(rawDef.variables),
       authentication: rawDef.authentication ?? {
         type: isArmScope ? "AzureAD" : "None",
-        audience: isArmScope ? "https://management.azure.com/" : undefined,
+        audience: isArmScope ? this.opts.armEndpoint : undefined,
       },
     };
 
@@ -452,6 +454,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       if (rawStep.readmeTag) {
         step.externalReference = true;
       }
+      step.isManagementPlane = this.isManagementPlane(operation);
       if (this.opts.includeOperation) {
         step.operation = operation;
       }
@@ -529,6 +532,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
         if (operation === undefined) {
           throw new Error(`Operation not found for ${step.operationId} in step ${step.step}`);
         }
+        step.isManagementPlane = this.isManagementPlane(operation);
         if (this.opts.includeOperation) {
           step.operation = operation;
         }
@@ -551,6 +555,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
         if (operation === undefined) {
           throw new Error(`Operation not found for ${step.operationId} in step ${step.step}`);
         }
+        step.isManagementPlane = this.isManagementPlane(operation);
         if (this.opts.includeOperation) {
           step.operation = operation;
         }
@@ -570,6 +575,17 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       this.templateGenerator.exampleParameterConvention(step, getVariable, operation);
     }
     return step;
+  }
+
+  private isManagementPlane(operation: Operation): boolean {
+    const spec = operation._path._spec;
+    if (spec.host === "management.azure.com") {
+      return true;
+    }
+    if (spec._filePath.indexOf("/resource-manager/") >= 0) {
+      return true;
+    }
+    return false;
   }
 
   private async applyPatches(step: StepRestCall, rawStep: RawStepExample, operation: Operation) {

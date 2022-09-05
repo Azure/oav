@@ -145,8 +145,9 @@ export type StepRestCall = StepBase & {
   responseAssertion?: StepResponseAssertion;
   outputVariables?: OutputVariables;
   externalReference?: boolean;
-  _resolvedParameters?: SwaggerExample["parameters"];
+  isManagementPlane?: boolean;
   authentication?: Authentication;
+  _resolvedParameters?: SwaggerExample["parameters"];
 };
 
 export type StepResponseAssertion = {

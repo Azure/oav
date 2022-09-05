@@ -50,7 +50,6 @@ export interface PostmanCollectionGeneratorOption
   html?: boolean;
   runCollection: boolean;
   generateCollection: boolean;
-  baseUrl: string;
   testProxy?: string;
   skipValidation?: boolean;
   savePayload?: boolean;
@@ -121,7 +120,7 @@ export class PostmanCollectionGenerator {
 
     const client = new PostmanCollectionRunnerClient({
       runId: this.opt.runId,
-      baseUrl: this.opt.baseUrl,
+      armEndpoint: this.opt.armEndpoint!,
       testProxy: this.opt.testProxy,
       verbose: this.opt.verbose,
       skipAuth: this.opt.devMode,
@@ -460,7 +459,7 @@ export class PostmanCollectionGenerator {
       markdown: this.opt.markdown,
       junit: this.opt.junit,
       html: this.opt.html,
-      baseUrl: this.opt.baseUrl,
+      armEndpoint: this.opt.armEndpoint,
       runId: this.opt.runId,
       skipValidation: this.opt.skipValidation,
       generateExample: this.opt.generateExample,

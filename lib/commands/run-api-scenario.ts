@@ -204,7 +204,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
         html: (argv.report ?? []).includes("html"),
         eraseXmsExamples: false,
         eraseDescription: false,
-        baseUrl: argv.armEndpoint,
+        armEndpoint: argv.armEndpoint,
         testProxy: argv.testProxy,
         skipValidation: argv.skipValidation,
         savePayload: argv.savePayload,

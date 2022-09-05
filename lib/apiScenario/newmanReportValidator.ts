@@ -50,7 +50,7 @@ export interface ApiScenarioTestResult {
   repository?: string;
   branch?: string;
   commitHash?: string;
-  baseUrl?: string;
+  armEndpoint?: string;
   apiScenarioName?: string;
   stepResult: StepResult[];
 }
@@ -94,7 +94,6 @@ export interface NewmanReportValidatorOption extends ApiScenarioLoaderOption {
   markdown?: boolean;
   junit?: boolean;
   html?: boolean;
-  baseUrl?: string;
   runId?: string;
   skipValidation?: boolean;
   savePayload?: boolean;
@@ -151,7 +150,7 @@ export class NewmanReportValidator {
       commitHash: process.env.COMMIT_HASH,
       environment: process.env.ENVIRONMENT || "test",
       apiScenarioName: this.scenario.scenario,
-      baseUrl: this.opts.baseUrl,
+      armEndpoint: this.opts.armEndpoint,
       stepResult: [],
     };
 

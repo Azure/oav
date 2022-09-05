@@ -10,7 +10,6 @@ import {
   Variable,
   VariableScope,
 } from "postman-collection";
-import { setDefaultOpts } from "../swagger/loader";
 import {
   ApiScenarioClientRequest,
   ApiScenarioRunnerClient,
@@ -18,6 +17,7 @@ import {
 } from "./apiScenarioRunner";
 import {
   ArmTemplate,
+  Authentication,
   Scenario,
   StepArmTemplate,
   StepResponseAssertion,
@@ -30,7 +30,7 @@ import { VariableEnv } from "./variableEnv";
 export interface PostmanCollectionRunnerClientOption {
   apiScenarioName?: string;
   runId: string;
-  baseUrl: string;
+  armEndpoint: string;
   testProxy?: string;
   verbose?: boolean;
   skipAuth?: boolean;
@@ -38,24 +38,31 @@ export interface PostmanCollectionRunnerClientOption {
   skipLroPoll?: boolean;
 }
 
-const ARM_ENDPOINT = "https://management.azure.com";
 const ARM_API_VERSION = "2020-06-01";
 
 export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
   private opts: PostmanCollectionRunnerClientOption;
   private collection: Collection;
   private runtimeEnv: VariableScope;
+  private aadTokenMap = new Map<string, string>();
 
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
   constructor(opts: PostmanCollectionRunnerClientOption) {
     this.opts = opts;
-    setDefaultOpts(this.opts, {
-      baseUrl: ARM_ENDPOINT,
-    } as PostmanCollectionRunnerClientOption);
+  }
+
+  private checkTokenMap(auth: Authentication): string | undefined {
+    if (auth.type === "AzureAD" && auth.audience && !this.aadTokenMap.has(auth.audience)) {
+      this.aadTokenMap.set(auth.audience, `x_bearer_token_${this.aadTokenMap.size}`);
+      return this.aadTokenMap.get(auth.audience);
+    }
+    return undefined;
   }
 
   public async prepareScenario(scenario: Scenario, env: VariableEnv): Promise<void> {
     this.opts.apiScenarioName = scenario.scenario;
+
+    const tokenName = this.checkTokenMap(scenario.authentication);
 
     this.collection = new Collection({
       info: {
@@ -70,19 +77,25 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
         swaggerFilePaths: scenario._scenarioDef._swaggerFilePaths,
       })
     );
-    this.collection.auth = new RequestAuth({
-      type: "bearer",
-      bearer: [
-        {
-          key: "token",
-          value: "{{x_bearer_token}}",
-          type: "string",
-        },
-      ],
-    });
-    this.collection.events.add(
-      PostmanHelper.createEvent("prerequest", PostmanHelper.generateAuthScript(this.opts.baseUrl))
-    );
+
+    if (tokenName) {
+      this.collection.auth = new RequestAuth({
+        type: "bearer",
+        bearer: [
+          {
+            key: "token",
+            value: `{{${tokenName}}}`,
+            type: "string",
+          },
+        ],
+      });
+      this.collection.events.add(
+        PostmanHelper.createEvent(
+          "prerequest",
+          PostmanHelper.generateAuthScript(scenario.authentication.audience!, tokenName)
+        )
+      );
+    }
 
     env.resolve();
 
@@ -201,7 +214,10 @@ pm.test("Stopped TestProxy recording", function() {
   private newItem(definition?: ItemDefinition, checkTestProxy: boolean = true): Item {
     const item = PostmanHelper.createItem(definition);
     if (checkTestProxy && this.opts.testProxy) {
-      item.request.addHeader({ key: "x-recording-upstream-base-uri", value: this.opts.baseUrl });
+      item.request.addHeader({
+        key: "x-recording-upstream-base-uri",
+        value: this.opts.armEndpoint,
+      });
       item.request.addHeader({ key: "x-recording-id", value: "{{x_recording_id}}" });
       item.request.addHeader({ key: "x-recording-mode", value: "record" });
     }
@@ -221,7 +237,7 @@ pm.test("Stopped TestProxy recording", function() {
 
     item.request.method = "PUT";
     item.request.url = new Url({
-      host: this.opts.testProxy ?? this.opts.baseUrl,
+      host: this.opts.testProxy ?? this.opts.armEndpoint,
       path: "/subscriptions/:subscriptionId/resourcegroups/:resourceGroupName",
       variable: [
         {
@@ -269,7 +285,7 @@ pm.test("Stopped TestProxy recording", function() {
     });
     item.request.method = "DELETE";
     item.request.url = new Url({
-      host: this.opts.testProxy ?? this.opts.baseUrl,
+      host: this.opts.testProxy ?? this.opts.armEndpoint,
       path: "/subscriptions/:subscriptionId/resourcegroups/:resourceGroupName",
       variable: [
         {
@@ -324,7 +340,7 @@ pm.test("Stopped TestProxy recording", function() {
     item.description = step.operation.operationId;
 
     item.request.url = new Url({
-      host: this.opts.testProxy ?? this.opts.baseUrl,
+      host: this.opts.testProxy ?? this.opts.armEndpoint,
       path: covertToPostmanVariable(clientRequest.path, true),
       variable: Object.entries(clientRequest.pathVariables ?? {}).map(([key, value]) => ({
         key,
@@ -442,7 +458,7 @@ const pollingUrl = pm.response.headers.get("Location") || pm.response.headers.ge
 if (pollingUrl) {
     pm.collectionVariables.set("x_polling_url", ${
       this.opts.testProxy
-        ? `pollingUrl.replace("${this.opts.baseUrl}","${this.opts.testProxy}")`
+        ? `pollingUrl.replace("${this.opts.armEndpoint}","${this.opts.testProxy}")`
         : "pollingUrl"
     });
 }`
@@ -507,7 +523,7 @@ if (pollingUrl) {
       body: { mode: "raw" } as RequestBodyDefinition,
     });
     item.request.url = new Url({
-      host: this.opts.testProxy ?? this.opts.baseUrl,
+      host: this.opts.testProxy ?? this.opts.armEndpoint,
       path: `/subscriptions/:subscriptionId/resourcegroups/:resourceGroupName/providers/Microsoft.Resources/deployments/:deploymentName`,
       variable: [
         { key: "subscriptionId", value: `{{subscriptionId}}` },

@@ -165,13 +165,6 @@ export const reservedCollectionVariables = [
     value: "true",
   },
   {
-    key: "x_bearer_token",
-    type: "secret",
-  },
-  {
-    key: "x_bearer_token_expires_on",
-  },
-  {
     key: "x_polling_url",
   },
   {
@@ -180,30 +173,30 @@ export const reservedCollectionVariables = [
   },
 ];
 
-export function generateAuthScript(baseUrl: string): ScriptDefinition {
+export function generateAuthScript(audience: string, tokenName: string): ScriptDefinition {
   const script = `
 if (pm.variables.get("x_enable_auth") !== "true") {
     return;
 }
-let vars = ["client_id", "client_secret", "tenantId", "subscriptionId"];
-vars.forEach(function (item, index, array) {
-    pm.expect(
-        pm.variables.get(item),
-        item + " variable not set"
-    ).to.not.be.undefined;
-    pm.expect(pm.variables.get(item), item + " variable not set").to.not.be.empty;
-});
 if (
-    !pm.collectionVariables.get("x_bearer_token") ||
+    !pm.variables.get("${tokenName}") ||
     Date.now() >
-    new Date(pm.collectionVariables.get("x_bearer_token_expires_on") * 1000)
+    new Date(pm.variables.get("${tokenName}_expires_on") * 1000)
 ) {
+    let vars = ["client_id", "client_secret", "tenantId"];
+    vars.forEach(function (item, index, array) {
+        pm.expect(
+            pm.variables.get(item),
+            item + " variable not set"
+        ).to.not.be.undefined;
+        pm.expect(pm.variables.get(item), item + " variable not set").to.not.be.empty;
+    });
     pm.sendRequest(
         {
             url:
                 "https://login.microsoftonline.com/" +
                 pm.variables.get("tenantId") +
-                "/oauth2/token",
+                "/oauth2/v2.0/token",
             method: "POST",
             header: "Content-Type: application/x-www-form-urlencoded",
             body: {
@@ -220,7 +213,7 @@ if (
                         value: pm.variables.get("client_secret"),
                         disabled: false,
                     },
-                    { key: "resource", value: "${baseUrl}", disabled: false },
+                    { key: "scope", value: "${audience}/.default", disabled: false },
                 ],
             },
         },
@@ -229,11 +222,11 @@ if (
                 console.log(err);
             } else {
                 let resJson = res.json();
-                pm.collectionVariables.set(
-                    "x_bearer_token_expires_on",
+                pm.environment.set(
+                    "${tokenName}_expires_on",
                     resJson.expires_on
                 );
-                pm.collectionVariables.set("x_bearer_token", resJson.access_token);
+                pm.environment.set("${tokenName}", resJson.access_token);
             }
         }
     );
