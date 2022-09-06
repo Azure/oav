@@ -80,8 +80,12 @@ export class ApiScenarioRunner {
   private skipCleanUp: boolean;
   private scope: Scope;
 
-  public setSkipCleanUp(skipCleanUp: boolean) {
-    this.skipCleanUp = skipCleanUp;
+  public constructor(opts: ApiScenarioRunnerOption) {
+    this.env = opts.env;
+    this.client = opts.client;
+    this.jsonLoader = opts.jsonLoader;
+    this.resolveVariables = opts.resolveVariables ?? true;
+    this.skipCleanUp = opts.skipCleanUp ?? false;
   }
 
   private doProvisionScope = getLazyBuilder("provisioned", async (scope: Scope) => {
@@ -98,15 +102,7 @@ export class ApiScenarioRunner {
     return true;
   });
 
-  public constructor(opts: ApiScenarioRunnerOption) {
-    this.env = opts.env;
-    this.client = opts.client;
-    this.jsonLoader = opts.jsonLoader;
-    this.resolveVariables = opts.resolveVariables ?? true;
-    this.skipCleanUp = opts.skipCleanUp ?? false;
-  }
-
-  private prepareScope(scenarioDef: ScenarioDefinition) {
+  private async prepareScope(scenarioDef: ScenarioDefinition) {
     // Variable scope: ScenarioDef <= RuntimeScope <= Scenario <= Step
     const scopeEnv =
       // RuntimeScope
@@ -132,6 +128,8 @@ export class ApiScenarioRunner {
     }
 
     this.generateValueFromPrefix(this.scope.env);
+
+    await this.doProvisionScope(this.scope);
   }
 
   private async cleanUpScope(): Promise<void> {
@@ -155,33 +153,35 @@ export class ApiScenarioRunner {
     }
   }
 
-  public async executeScenario(scenario: Scenario) {
+  public async execute(scenarioDef: ScenarioDefinition) {
     if (this.scope === undefined) {
-      this.prepareScope(scenario._scenarioDef);
+      this.prepareScope(scenarioDef);
     }
 
-    const scenarioEnv = new VariableEnv(this.scope.env).setBatch(scenario.variables);
+    for (const scenario of scenarioDef.scenarios) {
+      try {
+        const scenarioEnv = new VariableEnv(this.scope.env).setBatch(scenario.variables);
 
-    this.generateValueFromPrefix(scenarioEnv);
+        this.generateValueFromPrefix(scenarioEnv);
 
-    await this.client.prepareScenario(scenario, scenarioEnv);
+        await this.client.prepareScenario(scenario, scenarioEnv);
 
-    await this.doProvisionScope(this.scope);
-
-    try {
-      for (const step of scenario.steps) {
-        await this.executeStep(step, scenarioEnv, this.scope);
+        for (const step of scenario.steps) {
+          await this.executeStep(step, scenarioEnv, this.scope);
+        }
+      } catch (e) {
+        throw new Error(
+          `Failed to execute scenario: ${scenario.scenario}: ${e.message} \n${e.stack}`
+        );
       }
-    } catch (e) {
-      throw new Error(`Failed to execute scenario: ${scenario.scenario}: ${e.message}`);
-    } finally {
-      if (!this.skipCleanUp) {
-        await this.cleanUpScope();
-      }
+    }
+
+    if (!this.skipCleanUp) {
+      await this.cleanUpScope();
     }
   }
 
-  public async executeStep(step: Step, env: VariableEnv, scope: Scope) {
+  private async executeStep(step: Step, env: VariableEnv, scope: Scope) {
     const stepEnv = new VariableEnv(env).setBatch(step.variables);
 
     this.generateValueFromPrefix(stepEnv);
@@ -199,10 +199,8 @@ export class ApiScenarioRunner {
           await this.executeArmTemplateStep(step, stepEnv, scope);
           break;
       }
-    } catch (error) {
-      throw new Error(
-        `Failed to execute step ${step.step}: ${(error as any).message} \n${error.stack}`
-      );
+    } catch (e) {
+      throw new Error(`Failed to execute step ${step.step}: ${e.message} \n${e.stack}`);
     }
   }
 

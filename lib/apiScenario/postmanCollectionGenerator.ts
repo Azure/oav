@@ -90,7 +90,7 @@ export class PostmanCollectionGenerator {
     private swaggerAnalyzer: SwaggerAnalyzer
   ) {}
 
-  public async run(): Promise<Collection[]> {
+  public async run(): Promise<Collection> {
     const scenarioDef = await this.apiScenarioLoader.load(this.opt.scenarioDef);
 
     await this.swaggerAnalyzer.initialize();
@@ -102,8 +102,6 @@ export class PostmanCollectionGenerator {
       }
     }
     this.opt.runId = this.opt.runId || generateRunId();
-    const oldSkipCleanUp = this.opt.skipCleanUp;
-    this.opt.skipCleanUp = this.opt.skipCleanUp || scenarioDef.scenarios.length > 1;
 
     if (this.opt.markdown) {
       const reportExportPath = path.resolve(
@@ -115,8 +113,6 @@ export class PostmanCollectionGenerator {
         generateMarkdownReportHeader()
       );
     }
-
-    const result: Collection[] = [];
 
     const client = new PostmanCollectionRunnerClient({
       runId: this.opt.runId,
@@ -135,30 +131,25 @@ export class PostmanCollectionGenerator {
       skipCleanUp: this.opt.skipCleanUp,
     });
 
-    for (let i = 0; i < scenarioDef.scenarios.length; i++) {
-      const scenario = scenarioDef.scenarios[i];
-      if (i === scenarioDef.scenarios.length - 1 && !oldSkipCleanUp) {
-        this.opt.skipCleanUp = oldSkipCleanUp;
-        runner.setSkipCleanUp(false);
-      }
-      await runner.executeScenario(scenario);
+    await runner.execute(scenarioDef);
 
-      const [collection, runtimeEnv] = client.outputCollection();
+    const [collection, runtimeEnv] = client.outputCollection();
 
-      for (let i = 0; i < collection.items.count(); i++) {
-        this.longRunningOperationOrderUpdate(collection, i);
-      }
+    for (let i = 0; i < collection.items.count(); i++) {
+      this.longRunningOperationOrderUpdate(collection, i);
+    }
 
-      if (this.opt.generateCollection) {
-        await this.writeCollectionToJson(scenario, collection, runtimeEnv);
-      }
+    if (this.opt.generateCollection) {
+      await this.writeCollectionToJson(path.basename(this.opt.scenarioDef), collection, runtimeEnv);
+    }
 
-      if (this.opt.runCollection) {
+    if (this.opt.runCollection) {
+      // TODO
+      for (const scenario of scenarioDef.scenarios) {
         await this.runCollection(scenario, collection, runtimeEnv);
       }
-
-      result.push(collection);
     }
+
     const operationIdCoverageResult = this.swaggerAnalyzer.calculateOperationCoverage(scenarioDef);
     console.log(
       `Operation coverage ${(operationIdCoverageResult.coverage * 100).toFixed(2) + "%"} (${
@@ -176,7 +167,7 @@ export class PostmanCollectionGenerator {
       await this.generateHtmlReport(scenarioDef);
     }
 
-    return result;
+    return collection;
   }
 
   private async generateHtmlReport(scenarioDef: ScenarioDefinition) {
@@ -349,21 +340,20 @@ export class PostmanCollectionGenerator {
   }
 
   private async writeCollectionToJson(
-    scenario: Scenario,
+    collectionName: string,
     collection: Collection,
     runtimeEnv: VariableScope
   ) {
-    const scenarioName = scenario.scenario;
     const collectionPath = path.resolve(
       this.opt.outputFolder,
-      `${defaultCollectionFileName(this.opt.name, this.opt.runId!, scenarioName)}`
+      `${defaultCollectionFileName(this.opt.name, this.opt.runId!, collectionName)}`
     );
     const envPath = path.resolve(
       this.opt.outputFolder,
-      `${defaultEnvFileName(this.opt.name, this.opt.runId!, scenarioName)}`
+      `${defaultEnvFileName(this.opt.name, this.opt.runId!, collectionName)}`
     );
     const env = runtimeEnv.toJSON();
-    env.name = scenarioName + ".env";
+    env.name = collectionName + ".env";
     env._postman_variable_scope = "environment";
     await this.fileLoader.writeFile(envPath, JSON.stringify(env, null, 2));
     await this.fileLoader.writeFile(collectionPath, JSON.stringify(collection.toJSON(), null, 2));

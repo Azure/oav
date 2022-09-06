@@ -2,6 +2,7 @@ import {
   Collection,
   Item,
   ItemDefinition,
+  ItemGroup,
   Request,
   RequestAuth,
   RequestBody,
@@ -43,6 +44,7 @@ const ARM_API_VERSION = "2020-06-01";
 export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
   private opts: PostmanCollectionRunnerClientOption;
   private collection: Collection;
+  private itemGroup: ItemGroup<Item>;
   private runtimeEnv: VariableScope;
   private aadTokenMap = new Map<string, string>();
 
@@ -64,19 +66,29 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
 
     const tokenName = this.checkTokenMap(scenario.authentication);
 
-    this.collection = new Collection({
-      info: {
-        id: this.opts.runId,
-        name: this.opts.apiScenarioName,
-      },
+    if (this.collection === undefined) {
+      this.collection = new Collection({
+        info: {
+          id: this.opts.runId,
+          name: this.opts.apiScenarioName,
+        },
+      });
+      // TODO: figure out what's this for
+      this.collection.describe(
+        JSON.stringify({
+          apiScenarioFilePath: scenario._scenarioDef._filePath,
+          apiScenarioName: scenario.scenario,
+          swaggerFilePaths: scenario._scenarioDef._swaggerFilePaths,
+        })
+      );
+    }
+
+    this.itemGroup = PostmanHelper.createItemGroup({
+      name: scenario.scenario,
+      description: scenario.description,
     });
-    this.collection.describe(
-      JSON.stringify({
-        apiScenarioFilePath: scenario._scenarioDef._filePath,
-        apiScenarioName: scenario.scenario,
-        swaggerFilePaths: scenario._scenarioDef._swaggerFilePaths,
-      })
-    );
+
+    this.collection.items.add(this.itemGroup);
 
     if (tokenName) {
       this.collection.auth = new RequestAuth({
@@ -357,7 +369,7 @@ pm.test("Stopped TestProxy recording", function() {
       item.request.addHeader({ key, value: convertPostmanFormat(value) });
     });
 
-    this.collection.items.add(item);
+    this.itemGroup.items.add(item);
 
     env.resolve();
 
@@ -432,7 +444,7 @@ pm.test("Stopped TestProxy recording", function() {
     }
     // generate get
     if (step.operation._method === "put" || step.operation._method === "delete") {
-      this.collection.items.add(
+      this.itemGroup.items.add(
         this.generatedGetOperationItem(
           item.name,
           item.request.url,
@@ -465,9 +477,9 @@ if (pollingUrl) {
       )
     );
     item.events.add(longRunningEvent);
-    this.collection.items.add(item);
+    this.itemGroup.items.add(item);
     for (const it of this.longRunningOperationItem(item, checkStatus, responseAssertion)) {
-      this.collection.items.add(it);
+      this.itemGroup.items.add(it);
     }
   }
 
@@ -562,7 +574,7 @@ if (pollingUrl) {
         })
       )
     );
-    this.collection.items.add(item);
+    this.itemGroup.items.add(item);
 
     this.addAsLongRunningOperationItem(item, true);
     const generatedGetScriptTypes: PostmanHelper.TestScriptType[] = this.opts.verbose
@@ -576,7 +588,7 @@ if (pollingUrl) {
       generatedGetScriptTypes,
       armTemplate
     );
-    this.collection.items.add(generatedGetOperationItem);
+    this.itemGroup.items.add(generatedGetOperationItem);
   }
 
   private generatedGetOperationItem(

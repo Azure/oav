@@ -1,5 +1,13 @@
 import * as jsonPointer from "json-pointer";
-import { Event, EventDefinition, Item, ItemDefinition, ScriptDefinition } from "postman-collection";
+import {
+  Event,
+  EventDefinition,
+  Item,
+  ItemDefinition,
+  ItemGroup,
+  ItemGroupDefinition,
+  ScriptDefinition,
+} from "postman-collection";
 import { getRandomString } from "../util/utils";
 import { ArmTemplate, StepResponseAssertion } from "./apiScenarioTypes";
 
@@ -31,6 +39,13 @@ export type TestScriptType =
 
 export function createItem(definition?: ItemDefinition): Item {
   return new Item({
+    id: getRandomString(),
+    ...definition,
+  });
+}
+
+export function createItemGroup(definition?: ItemGroupDefinition): ItemGroup<Item> {
+  return new ItemGroup({
     id: getRandomString(),
     ...definition,
   });
