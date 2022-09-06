@@ -184,7 +184,7 @@ export const reservedCollectionVariables = [
   },
   {
     key: "x_retry_after",
-    value: "10",
+    value: "3",
   },
 ];
 

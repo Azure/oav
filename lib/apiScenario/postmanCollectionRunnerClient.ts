@@ -11,7 +11,6 @@ import {
   Variable,
   VariableScope,
 } from "postman-collection";
-import { getRandomString } from "../util/utils";
 import {
   ApiScenarioClientRequest,
   ApiScenarioRunnerClient,
@@ -27,7 +26,6 @@ import {
   StepResponseAssertion,
   StepRestCall,
 } from "./apiScenarioTypes";
-import { generatedGet, generatedPostmanItem } from "./defaultNaming";
 import * as PostmanHelper from "./postmanHelper";
 import { VariableEnv } from "./variableEnv";
 
@@ -164,27 +162,6 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     if (this.opts.testProxy) {
       this.stopTestProxyRecording();
     }
-    this.collection.forEachItemGroup((itemGroup) => {
-      const c = itemGroup.items.count();
-      for (let i = 0; i < c; i++) {
-        const item = itemGroup.items.idx(i);
-        if (item.name.endsWith("_poller")) {
-          const event = item.events.idx(0);
-          const source = event.script.toSource();
-          if (source) {
-            const env = new VariableEnv();
-            env.setBatchEnv({ nextRequest: i + 2 < c ? itemGroup.items.idx(i + 2).id : "null" });
-            event.update({
-              script: {
-                id: event.script.id,
-                type: "text/javascript",
-                exec: env.resolveString(source),
-              },
-            });
-          }
-        }
-      }
-    });
 
     return [this.collection, this.runtimeEnv];
   }
@@ -495,7 +472,7 @@ pm.test("Stopped TestProxy recording", function() {
     if (step.operation["x-ms-long-running-operation"]) {
       item.description = JSON.stringify({
         type: "LRO",
-        poller_item_name: `${item.name}_poller`,
+        poller_item_name: `_${item.name}_poller`,
         operationId: step.operation.operationId || "",
         exampleName: step.exampleFile!,
         itemName: item.name,
@@ -543,14 +520,14 @@ if (pollingUrl) {
         ? `pollingUrl.replace("${this.opts.armEndpoint}","${this.opts.testProxy}")`
         : "pollingUrl"
     });
+    pm.collectionVariables.set("x_retry_after", "3");
 }`
       )
     );
     item.events.add(longRunningEvent);
     itemGroup.items.add(item);
-    for (const it of this.longRunningOperationItem(item, checkStatus, responseAssertion)) {
-      itemGroup.items.add(it);
-    }
+
+    this.appendPollerItems(itemGroup, item, checkStatus, responseAssertion);
   }
 
   private addTestScript(
@@ -678,7 +655,7 @@ if (pollingUrl) {
     armTemplate?: ArmTemplate
   ): Item {
     const item = this.addNewItem("Blank", {
-      name: `${generatedPostmanItem(generatedGet(name))}`,
+      name: `_${name}_final_get`,
       request: {
         method: "GET",
         url: "",
@@ -686,7 +663,7 @@ if (pollingUrl) {
     });
     item.request.url = url;
     item.description = JSON.stringify({
-      type: "generated-get",
+      type: "final-get",
       lro_item_name: name,
       step: step,
     });
@@ -698,15 +675,27 @@ if (pollingUrl) {
     return item;
   }
 
-  public longRunningOperationItem(
+  private appendPollerItems(
+    itemGroup: ItemGroup<Item>,
     initialItem: Item,
     checkStatus: boolean = false,
     responseAssertion?: StepResponseAssertion
-  ): Item[] {
-    const ret: Item[] = [];
+  ): void {
+    const delayItem = this.addNewItem(
+      "Blank",
+      {
+        name: `_${initialItem.name}_delay`,
+        request: {
+          url: "https://postman-echo.com/delay/{{x_retry_after}}",
+          method: "GET",
+        },
+      },
+      false
+    );
+    delayItem.description = JSON.stringify({ type: "delay", lro_item_name: initialItem.name });
 
     const pollerItem = this.addNewItem("Blank", {
-      name: generatedPostmanItem(initialItem.name + "_poller"),
+      name: `_${initialItem.name}_poller`,
       request: {
         url: `{{x_polling_url}}`,
         method: "GET",
@@ -714,28 +703,27 @@ if (pollingUrl) {
     });
     pollerItem.description = JSON.stringify({ type: "poller", lro_item_name: initialItem.name });
 
-    const delay = this.mockDelayItem(pollerItem.name, initialItem.name);
-
     const event = PostmanHelper.createEvent(
       "test",
       PostmanHelper.createScript(
         `
-try {
     if (pm.response.code === 202) {
-        postman.setNextRequest("${delay.name}");
-    } else if (pm.response.code === 204) {
-        postman.setNextRequest("$(nextRequest)");
-    } else {
+        postman.setNextRequest("${delayItem.name}");
+        if (pm.response.headers.has("Retry-After")) {
+            pm.collectionVariables.set("x_retry_after", pm.response.headers.get("Retry-After"));
+        }
+    } else if (pm.response.body) {
+        pm.response.to.be.json();
         const terminalStatus = ["Succeeded", "Failed", "Canceled"];
-        if (pm.response.json().status !== undefined && terminalStatus.indexOf(pm.response.json().status) === -1) {
-            postman.setNextRequest("${delay.name}")
-        } else {
-            postman.setNextRequest("$(nextRequest)")
+        const json = pm.response.json();
+        if (json.status !== undefined && terminalStatus.indexOf(json.status) === -1) {
+            postman.setNextRequest("${delayItem.name}")
+            if (pm.response.headers.has("Retry-After")) {
+                pm.collectionVariables.set("x_retry_after", pm.response.headers.get("Retry-After"));
+            }
         }
     }
-} catch(err) {
-    postman.setNextRequest("$(nextRequest)")
-}`
+`
       )
     );
     pollerItem.events.add(event);
@@ -763,31 +751,8 @@ try {
       pollerItem.events.add(responseAssertionEvent);
     }
 
-    ret.push(pollerItem);
-    ret.push(delay);
-    return ret;
-  }
-
-  public mockDelayItem(nextRequestName: string, LROItemName: string): Item {
-    const ret = this.addNewItem(
-      "Blank",
-      {
-        name: `${nextRequestName}_mock_delay`,
-        request: {
-          url: "https://postman-echo.com/delay/{{x_retry_after}}",
-          method: "GET",
-        },
-      },
-      false
-    );
-    ret.description = JSON.stringify({ type: "mock", lro_item_name: LROItemName });
-
-    const event = PostmanHelper.createEvent(
-      "prerequest",
-      PostmanHelper.createScript(`postman.setNextRequest('${nextRequestName}')`)
-    );
-    ret.events.add(event);
-    return ret;
+    itemGroup.items.add(delayItem);
+    itemGroup.items.add(pollerItem);
   }
 }
 

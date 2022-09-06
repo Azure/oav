@@ -1,10 +1,3 @@
-export const generatedPostmanItem = (name: string): string => {
-  return `_${name}`;
-};
-export const generatedGet = (name: string): string => {
-  return `${name}_generated_get`;
-};
-
 export const defaultQualityReportFilePath = (newmanReportFilePath: string): string => {
   return newmanReportFilePath.replace(".json", "/report.json");
 };
