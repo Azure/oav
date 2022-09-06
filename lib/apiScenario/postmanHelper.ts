@@ -239,7 +239,7 @@ if (
                 let resJson = res.json();
                 pm.environment.set(
                     "${tokenName}_expires_on",
-                    resJson.expires_on
+                    resJson.expires_in + Math.floor(Date.now() / 1000)
                 );
                 pm.environment.set("${tokenName}", resJson.access_token);
             }

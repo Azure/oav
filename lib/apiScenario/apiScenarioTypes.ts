@@ -325,6 +325,7 @@ export type RawScenarioDefinition = RawVariableScope & {
 export type ScenarioDefinition = TransformRaw<
   RawScenarioDefinition,
   VariableScope & {
+    name: string;
     prepareSteps: Step[];
     scenarios: Scenario[];
     cleanUpSteps: Step[];

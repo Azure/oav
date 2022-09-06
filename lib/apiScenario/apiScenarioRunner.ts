@@ -1,6 +1,5 @@
 import { HttpMethods } from "@azure/core-http";
 import { JsonLoader } from "../swagger/jsonLoader";
-import { getLazyBuilder } from "../util/lazyBuilder";
 import { getRandomString } from "../util/utils";
 import {
   ArmTemplate,
@@ -48,6 +47,8 @@ export interface ApiScenarioClientRequest {
 }
 
 export interface ApiScenarioRunnerClient {
+  provisionScope(scenarioDef: ScenarioDefinition, scope: Scope): Promise<void>;
+
   prepareScenario(scenario: Scenario, env: VariableEnv): Promise<void>;
 
   createResourceGroup(
@@ -88,20 +89,6 @@ export class ApiScenarioRunner {
     this.skipCleanUp = opts.skipCleanUp ?? false;
   }
 
-  private doProvisionScope = getLazyBuilder("provisioned", async (scope: Scope) => {
-    if (scope.type === "ResourceGroup") {
-      await this.client.createResourceGroup(
-        scope.env.getRequiredString("subscriptionId"),
-        scope.env.getRequiredString("resourceGroupName"),
-        scope.env.getRequiredString("location")
-      );
-    }
-    for (const step of scope.prepareSteps) {
-      await this.executeStep(step, scope.env, scope);
-    }
-    return true;
-  });
-
   private async prepareScope(scenarioDef: ScenarioDefinition) {
     // Variable scope: ScenarioDef <= RuntimeScope <= Scenario <= Step
     const scopeEnv =
@@ -129,7 +116,18 @@ export class ApiScenarioRunner {
 
     this.generateValueFromPrefix(this.scope.env);
 
-    await this.doProvisionScope(this.scope);
+    await this.client.provisionScope(scenarioDef, this.scope);
+
+    if (this.scope.type === "ResourceGroup") {
+      await this.client.createResourceGroup(
+        this.scope.env.getRequiredString("subscriptionId"),
+        this.scope.env.getRequiredString("resourceGroupName"),
+        this.scope.env.getRequiredString("location")
+      );
+    }
+    for (const step of this.scope.prepareSteps) {
+      await this.executeStep(step, this.scope.env, this.scope);
+    }
   }
 
   private async cleanUpScope(): Promise<void> {
@@ -155,7 +153,7 @@ export class ApiScenarioRunner {
 
   public async execute(scenarioDef: ScenarioDefinition) {
     if (this.scope === undefined) {
-      this.prepareScope(scenarioDef);
+      await this.prepareScope(scenarioDef);
     }
 
     for (const scenario of scenarioDef.scenarios) {

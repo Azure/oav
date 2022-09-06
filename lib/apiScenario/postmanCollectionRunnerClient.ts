@@ -15,11 +15,13 @@ import {
   ApiScenarioClientRequest,
   ApiScenarioRunnerClient,
   ArmDeployment,
+  Scope,
 } from "./apiScenarioRunner";
 import {
   ArmTemplate,
   Authentication,
   Scenario,
+  ScenarioDefinition,
   StepArmTemplate,
   StepResponseAssertion,
   StepRestCall,
@@ -29,7 +31,7 @@ import * as PostmanHelper from "./postmanHelper";
 import { VariableEnv } from "./variableEnv";
 
 export interface PostmanCollectionRunnerClientOption {
-  apiScenarioName?: string;
+  collectionName?: string;
   runId: string;
   armEndpoint: string;
   testProxy?: string;
@@ -44,7 +46,9 @@ const ARM_API_VERSION = "2020-06-01";
 export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
   private opts: PostmanCollectionRunnerClientOption;
   private collection: Collection;
-  private itemGroup: ItemGroup<Item>;
+  private prepareStepsFolder: ItemGroup<Item>;
+  private cleanUpStepsFolder: ItemGroup<Item>;
+  private scenarioFolder: ItemGroup<Item>;
   private runtimeEnv: VariableScope;
   private aadTokenMap = new Map<string, string>();
 
@@ -61,34 +65,42 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     return undefined;
   }
 
-  public async prepareScenario(scenario: Scenario, env: VariableEnv): Promise<void> {
-    this.opts.apiScenarioName = scenario.scenario;
+  public async provisionScope(scenarioDef: ScenarioDefinition, scope: Scope): Promise<void> {
+    this.collection = new Collection({
+      info: {
+        id: this.opts.runId,
+        name: this.opts.collectionName,
+      },
+    });
+    // TODO: figure out what's this for
+    this.collection.describe(
+      JSON.stringify({
+        apiScenarioFilePath: scenarioDef._filePath,
+        // apiScenarioName: scenario.scenario,
+        swaggerFilePaths: scenarioDef._swaggerFilePaths,
+      })
+    );
 
+    scope.env.resolve();
+
+    this.runtimeEnv = new VariableScope({});
+    this.runtimeEnv.set("tenantId", scope.env.get("tenantId")?.value, "string");
+    this.runtimeEnv.set("client_id", scope.env.get("client_id")?.value, "string");
+    this.runtimeEnv.set("client_secret", scope.env.get("client_secret")?.value, "string");
+    this.runtimeEnv.set("subscriptionId", scope.env.get("subscriptionId")?.value, "string");
+    this.runtimeEnv.set("resourceGroupName", scope.env.get("resourceGroupName")?.value, "string");
+    this.runtimeEnv.set("location", scope.env.get("location")?.value, "string");
+  }
+
+  public async prepareScenario(scenario: Scenario, env: VariableEnv): Promise<void> {
     const tokenName = this.checkTokenMap(scenario.authentication);
 
-    if (this.collection === undefined) {
-      this.collection = new Collection({
-        info: {
-          id: this.opts.runId,
-          name: this.opts.apiScenarioName,
-        },
-      });
-      // TODO: figure out what's this for
-      this.collection.describe(
-        JSON.stringify({
-          apiScenarioFilePath: scenario._scenarioDef._filePath,
-          apiScenarioName: scenario.scenario,
-          swaggerFilePaths: scenario._scenarioDef._swaggerFilePaths,
-        })
-      );
-    }
-
-    this.itemGroup = PostmanHelper.createItemGroup({
+    this.scenarioFolder = PostmanHelper.createItemGroup({
       name: scenario.scenario,
       description: scenario.description,
     });
 
-    this.collection.items.add(this.itemGroup);
+    this.collection.items.add(this.scenarioFolder);
 
     if (tokenName) {
       this.collection.auth = new RequestAuth({
@@ -110,14 +122,6 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     }
 
     env.resolve();
-
-    this.runtimeEnv = new VariableScope({});
-    this.runtimeEnv.set("tenantId", env.get("tenantId")?.value, "string");
-    this.runtimeEnv.set("client_id", env.get("client_id")?.value, "string");
-    this.runtimeEnv.set("client_secret", env.get("client_secret")?.value, "string");
-    this.runtimeEnv.set("subscriptionId", env.get("subscriptionId")?.value, "string");
-    this.runtimeEnv.set("resourceGroupName", env.get("resourceGroupName")?.value, "string");
-    this.runtimeEnv.set("location", env.get("location")?.value, "string");
 
     for (const [name, variable] of env.getVariables()) {
       if (!this.runtimeEnv.has(name) && !this.collection.variables.has(name)) {
@@ -163,7 +167,8 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
   }
 
   private startTestProxyRecording() {
-    const item = this.newItem(
+    const item = this.addNewItem(
+      "Prepare",
       {
         name: "startTestProxyRecording",
         request: {
@@ -171,7 +176,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
           method: "POST",
           body: {
             mode: "raw",
-            raw: `{"x-recording-file": "./recordings/${this.opts.apiScenarioName}_${this.opts.runId}.json"}`,
+            raw: `{"x-recording-file": "./recordings/${this.opts.collectionName}_${this.opts.runId}.json"}`,
           },
         },
       },
@@ -190,11 +195,12 @@ pm.test("Started TestProxy recording", function() {
         )
       )
     );
-    this.collection.items.add(item);
+    this.prepareStepsFolder.items.add(item);
   }
 
   private stopTestProxyRecording() {
-    const item = this.newItem(
+    const item = this.addNewItem(
+      "CleanUp",
       {
         name: "stopTestProxyRecording",
         request: {
@@ -220,10 +226,13 @@ pm.test("Stopped TestProxy recording", function() {
         )
       )
     );
-    this.collection.items.add(item);
   }
 
-  private newItem(definition?: ItemDefinition, checkTestProxy: boolean = true): Item {
+  private addNewItem(
+    itemType: "Prepare" | "CleanUp" | "Scenario" | "Blank",
+    definition?: ItemDefinition,
+    checkTestProxy: boolean = true
+  ): Item {
     const item = PostmanHelper.createItem(definition);
     if (checkTestProxy && this.opts.testProxy) {
       item.request.addHeader({
@@ -233,6 +242,36 @@ pm.test("Stopped TestProxy recording", function() {
       item.request.addHeader({ key: "x-recording-id", value: "{{x_recording_id}}" });
       item.request.addHeader({ key: "x-recording-mode", value: "record" });
     }
+
+    switch (itemType) {
+      case "Prepare":
+        if (this.prepareStepsFolder === undefined) {
+          this.prepareStepsFolder = PostmanHelper.createItemGroup({
+            name: "__Prepare__",
+          });
+          this.collection.items.add(this.prepareStepsFolder);
+        }
+        this.prepareStepsFolder.items.add(item);
+        break;
+      case "CleanUp":
+        if (this.cleanUpStepsFolder === undefined) {
+          this.cleanUpStepsFolder = PostmanHelper.createItemGroup({
+            name: "__CleanUp__",
+          });
+          this.collection.items.add(this.cleanUpStepsFolder);
+        }
+        this.cleanUpStepsFolder.items.add(item);
+        break;
+      case "Scenario":
+        if (this.scenarioFolder === undefined) {
+          throw new Error("Scenario folder is not initialized");
+        }
+        this.scenarioFolder.items.add(item);
+        break;
+      case "Blank":
+        break;
+    }
+
     return item;
   }
 
@@ -243,7 +282,7 @@ pm.test("Stopped TestProxy recording", function() {
   ): Promise<void> {
     if (this.opts.skipArmCall) return;
 
-    const item = this.newItem({
+    const item = this.addNewItem("Prepare", {
       name: "createResourceGroup",
     });
 
@@ -282,8 +321,6 @@ pm.test("Stopped TestProxy recording", function() {
     this.runtimeEnv.set("subscriptionId", subscriptionId, "string");
     this.runtimeEnv.set("resourceGroupName", resourceGroupName, "string");
     this.runtimeEnv.set("location", location, "string");
-
-    this.collection.items.add(item);
   }
 
   public async deleteResourceGroup(
@@ -292,7 +329,7 @@ pm.test("Stopped TestProxy recording", function() {
   ): Promise<void> {
     if (this.opts.skipArmCall) return;
 
-    const item = this.newItem({
+    const item = this.addNewItem("CleanUp", {
       name: "deleteResourceGroup",
     });
     item.request.method = "DELETE";
@@ -329,8 +366,7 @@ pm.test("Stopped TestProxy recording", function() {
       )
     );
 
-    this.collection.items.add(item);
-    this.addAsLongRunningOperationItem(item);
+    this.addAsLongRunningOperationItem(this.cleanUpStepsFolder, item);
   }
 
   public async sendRestCallRequest(
@@ -338,16 +374,28 @@ pm.test("Stopped TestProxy recording", function() {
     step: StepRestCall,
     env: VariableEnv
   ): Promise<void> {
-    const item = this.newItem({
-      name: step.step,
-      request: {
-        method: clientRequest.method,
-        url: clientRequest.path,
-        body: clientRequest.body
-          ? { mode: "raw", raw: JSON.stringify(convertPostmanFormat(clientRequest.body), null, 2) }
-          : undefined,
-      },
-    });
+    const item = this.addNewItem(
+      step.isPrepareStep ? "Prepare" : step.isCleanUpStep ? "CleanUp" : "Scenario",
+      {
+        name: step.step,
+        request: {
+          method: clientRequest.method,
+          url: clientRequest.path,
+          body: clientRequest.body
+            ? {
+                mode: "raw",
+                raw: JSON.stringify(convertPostmanFormat(clientRequest.body), null, 2),
+              }
+            : undefined,
+        },
+      }
+    );
+
+    const itemGroup = step.isPrepareStep
+      ? this.prepareStepsFolder
+      : step.isCleanUpStep
+      ? this.cleanUpStepsFolder
+      : this.scenarioFolder;
 
     item.description = step.operation.operationId;
 
@@ -368,8 +416,6 @@ pm.test("Stopped TestProxy recording", function() {
     Object.entries(clientRequest.headers).forEach(([key, value]) => {
       item.request.addHeader({ key, value: convertPostmanFormat(value) });
     });
-
-    this.itemGroup.items.add(item);
 
     env.resolve();
 
@@ -432,7 +478,7 @@ pm.test("Stopped TestProxy recording", function() {
         itemName: item.name,
         step: item.name,
       });
-      this.addAsLongRunningOperationItem(item, false, step.responseAssertion);
+      this.addAsLongRunningOperationItem(itemGroup, item, false, step.responseAssertion);
     } else {
       item.description = JSON.stringify({
         type: "simple",
@@ -444,7 +490,7 @@ pm.test("Stopped TestProxy recording", function() {
     }
     // generate get
     if (step.operation._method === "put" || step.operation._method === "delete") {
-      this.itemGroup.items.add(
+      itemGroup.items.add(
         this.generatedGetOperationItem(
           item.name,
           item.request.url,
@@ -456,6 +502,7 @@ pm.test("Stopped TestProxy recording", function() {
   }
 
   private addAsLongRunningOperationItem(
+    itemGroup: ItemGroup<Item>,
     item: Item,
     checkStatus: boolean = false,
     responseAssertion?: StepResponseAssertion
@@ -477,9 +524,9 @@ if (pollingUrl) {
       )
     );
     item.events.add(longRunningEvent);
-    this.itemGroup.items.add(item);
+    itemGroup.items.add(item);
     for (const it of this.longRunningOperationItem(item, checkStatus, responseAssertion)) {
-      this.itemGroup.items.add(it);
+      itemGroup.items.add(it);
     }
   }
 
@@ -524,9 +571,18 @@ if (pollingUrl) {
   ): Promise<void> {
     if (this.opts.skipArmCall) return;
 
-    const item = this.newItem({
-      name: step.step,
-    });
+    const item = this.addNewItem(
+      step.isPrepareStep ? "Prepare" : step.isCleanUpStep ? "CleanUp" : "Scenario",
+      {
+        name: step.step,
+      }
+    );
+
+    const itemGroup = step.isPrepareStep
+      ? this.prepareStepsFolder
+      : step.isCleanUpStep
+      ? this.cleanUpStepsFolder
+      : this.scenarioFolder;
 
     item.request = new Request({
       name: step.step,
@@ -574,9 +630,8 @@ if (pollingUrl) {
         })
       )
     );
-    this.itemGroup.items.add(item);
 
-    this.addAsLongRunningOperationItem(item, true);
+    this.addAsLongRunningOperationItem(itemGroup, item, true);
     const generatedGetScriptTypes: PostmanHelper.TestScriptType[] = this.opts.verbose
       ? ["DetailResponseLog", "ExtractARMTemplateOutput"]
       : ["ExtractARMTemplateOutput"];
@@ -588,7 +643,7 @@ if (pollingUrl) {
       generatedGetScriptTypes,
       armTemplate
     );
-    this.itemGroup.items.add(generatedGetOperationItem);
+    itemGroup.items.add(generatedGetOperationItem);
   }
 
   private generatedGetOperationItem(
@@ -599,7 +654,7 @@ if (pollingUrl) {
     scriptTypes: PostmanHelper.TestScriptType[] = [],
     armTemplate?: ArmTemplate
   ): Item {
-    const item = this.newItem({
+    const item = this.addNewItem("Blank", {
       name: `${generatedPostmanItem(generatedGet(name))}`,
       request: {
         method: "GET",
@@ -627,7 +682,7 @@ if (pollingUrl) {
   ): Item[] {
     const ret: Item[] = [];
 
-    const pollerItem = this.newItem({
+    const pollerItem = this.addNewItem("Blank", {
       name: generatedPostmanItem(initialItem.name + "_poller"),
       request: {
         url: `{{x_polling_url}}`,
@@ -691,7 +746,8 @@ try {
   }
 
   public mockDelayItem(nextRequestName: string, LROItemName: string): Item {
-    const ret = this.newItem(
+    const ret = this.addNewItem(
+      "Blank",
       {
         name: `${nextRequestName}_mock_delay`,
         request: {

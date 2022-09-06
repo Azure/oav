@@ -15,11 +15,18 @@ import { TokenCredentials as MsRestTokenCredential } from "@azure/ms-rest-js";
 import { ResourceManagementClient } from "@azure/arm-resources";
 import { LROPoller as MsLROPoller } from "@azure/ms-rest-azure-js";
 import { setDefaultOpts } from "../swagger/loader";
-import { ArmTemplate, Scenario, StepArmTemplate, StepRestCall } from "./apiScenarioTypes";
+import {
+  ArmTemplate,
+  Scenario,
+  ScenarioDefinition,
+  StepArmTemplate,
+  StepRestCall,
+} from "./apiScenarioTypes";
 import {
   ArmDeployment,
   ApiScenarioClientRequest,
   ApiScenarioRunnerClient,
+  Scope,
 } from "./apiScenarioRunner";
 import { LROPoller, BaseResult, lroPolicy } from "./lro";
 import { VariableEnv } from "./variableEnv";
@@ -56,6 +63,10 @@ export class ApiScenarioRestClient extends ServiceClient implements ApiScenarioR
     this.baseUri = opts.endpoint;
     this.opts = opts;
     this.credential = credential;
+  }
+
+  public async provisionScope(_scenarioDef: ScenarioDefinition, _scope: Scope): Promise<void> {
+    throw new Error("Method not implemented.");
   }
 
   public async prepareScenario(_scenario: Scenario, _env: VariableEnv): Promise<void> {

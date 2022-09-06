@@ -1,5 +1,6 @@
 /* eslint-disable require-atomic-updates */
 
+import { basename } from "path";
 import { cloneDeep, pathDirName, pathJoin } from "@azure-tools/openapi-tools-common";
 import { inject, injectable } from "inversify";
 import { dump as yamlDump } from "js-yaml";
@@ -239,6 +240,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     const isArmScope = rawDef.scope !== "None";
 
     const scenarioDef: ScenarioDefinition = {
+      name: basename(filePath).substring(0, basename(filePath).lastIndexOf(".")),
       scope: rawDef.scope,
       prepareSteps: [],
       scenarios: [],

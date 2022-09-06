@@ -115,6 +115,7 @@ export class PostmanCollectionGenerator {
     }
 
     const client = new PostmanCollectionRunnerClient({
+      collectionName: scenarioDef.name,
       runId: this.opt.runId,
       armEndpoint: this.opt.armEndpoint!,
       testProxy: this.opt.testProxy,
@@ -140,7 +141,7 @@ export class PostmanCollectionGenerator {
     }
 
     if (this.opt.generateCollection) {
-      await this.writeCollectionToJson(path.basename(this.opt.scenarioDef), collection, runtimeEnv);
+      await this.writeCollectionToJson(scenarioDef.name, collection, runtimeEnv);
     }
 
     if (this.opt.runCollection) {
