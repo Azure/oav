@@ -7,6 +7,7 @@
 
 ## 08/04/2022 3.0.5
 
+- ModelValidator - Fix bug when operation has no own parameters
 - validate-traffic
   - add detailed operationId on swagger link
   - add detailed position info on pathInpayload link

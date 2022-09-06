@@ -52,6 +52,7 @@ export const ErrorCodes = {
   },
   ResponseValidationError: { name: "RESPONSE_VALIDATION_ERROR", id: "OAV108" },
   RequestValidationError: { name: "REQUEST_VALIDATION_ERROR", id: "OAV109" },
+  RoundtripValidationError: { name: "ROUNDTRIP_VALIDATION_ERROR", id: "OAV135" },
   ResponseBodyValidationError: {
     name: "RESPONSE_BODY_VALIDATION_ERROR",
     id: "OAV110",

@@ -332,6 +332,7 @@ export interface NewmanReport {
 }
 
 export interface NewmanExecution {
+  id: string;
   request: NewmanRequest;
   response: NewmanResponse;
   annotation?: any;
