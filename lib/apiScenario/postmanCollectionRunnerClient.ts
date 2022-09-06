@@ -11,6 +11,7 @@ import {
   Variable,
   VariableScope,
 } from "postman-collection";
+import { getRandomString } from "../util/utils";
 import {
   ApiScenarioClientRequest,
   ApiScenarioRunnerClient,
@@ -163,6 +164,28 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     if (this.opts.testProxy) {
       this.stopTestProxyRecording();
     }
+    this.collection.forEachItemGroup((itemGroup) => {
+      const c = itemGroup.items.count();
+      for (let i = 0; i < c; i++) {
+        const item = itemGroup.items.idx(i);
+        if (item.name.endsWith("_poller")) {
+          const event = item.events.idx(0);
+          const source = event.script.toSource();
+          if (source) {
+            const env = new VariableEnv();
+            env.setBatchEnv({ nextRequest: i + 2 < c ? itemGroup.items.idx(i + 2).id : "null" });
+            event.update({
+              script: {
+                id: event.script.id,
+                type: "text/javascript",
+                exec: env.resolveString(source),
+              },
+            });
+          }
+        }
+      }
+    });
+
     return [this.collection, this.runtimeEnv];
   }
 
@@ -699,19 +722,19 @@ if (pollingUrl) {
         `
 try {
     if (pm.response.code === 202) {
-        postman.setNextRequest('${delay.name}');
+        postman.setNextRequest("${delay.name}");
     } else if (pm.response.code === 204) {
-        postman.setNextRequest($(nextRequest));
+        postman.setNextRequest("$(nextRequest)");
     } else {
         const terminalStatus = ["Succeeded", "Failed", "Canceled"];
         if (pm.response.json().status !== undefined && terminalStatus.indexOf(pm.response.json().status) === -1) {
-            postman.setNextRequest('${delay.name}')
+            postman.setNextRequest("${delay.name}")
         } else {
-            postman.setNextRequest($(nextRequest))
+            postman.setNextRequest("$(nextRequest)")
         }
     }
 } catch(err) {
-    postman.setNextRequest($(nextRequest))
+    postman.setNextRequest("$(nextRequest)")
 }`
       )
     );

@@ -25,7 +25,7 @@ import {
   NewmanReportValidatorOption,
 } from "./newmanReportValidator";
 import { SwaggerAnalyzer, SwaggerAnalyzerOption } from "./swaggerAnalyzer";
-import { EnvironmentVariables, VariableEnv } from "./variableEnv";
+import { EnvironmentVariables } from "./variableEnv";
 import { parseNewmanReport } from "./newmanReportParser";
 import {
   defaultCollectionFileName,
@@ -135,10 +135,6 @@ export class PostmanCollectionGenerator {
     await runner.execute(scenarioDef);
 
     const [collection, runtimeEnv] = client.outputCollection();
-
-    for (let i = 0; i < collection.items.count(); i++) {
-      this.longRunningOperationOrderUpdate(collection, i);
-    }
 
     if (this.opt.generateCollection) {
       await this.writeCollectionToJson(scenarioDef.name, collection, runtimeEnv);
@@ -318,26 +314,6 @@ export class PostmanCollectionGenerator {
     };
 
     return ret as LiveValidationIssue;
-  }
-
-  private longRunningOperationOrderUpdate(collection: Collection, i: number) {
-    if (collection.items.idx(i).name.search("poller$") !== -1) {
-      const env = new VariableEnv();
-      const nextRequestName =
-        i + 2 < collection.items.count() ? `'${collection.items.idx(i + 2).name}'` : "null";
-      env.setBatchEnv({ nextRequest: nextRequestName });
-      const exec = collection.items.idx(i).events.idx(0).script.toSource() as string;
-      collection.items
-        .idx(i)
-        .events.idx(0)
-        .update({
-          script: {
-            id: getRandomString(),
-            type: "text/javascript",
-            exec: env.resolveString(exec),
-          },
-        });
-    }
   }
 
   private async writeCollectionToJson(
