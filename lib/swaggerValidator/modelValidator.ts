@@ -924,11 +924,13 @@ for (const errorCode of Object.keys(modelValidationErrors)) {
   loadSuppression.push(errorCode);
 }
 
+// Set 'isArmCall flag to true so that the special ARM rules can be applied to examples validation too'
 const defaultOpts: ExampleValidationOption = {
   eraseDescription: false,
   eraseXmsExamples: false,
   useJsonParser: true,
   loadSuppression,
+  isArmCall: true,
 };
 
 // Compatible wrapper for old ModelValidator

@@ -181,7 +181,6 @@ export const ajvEnableAll = (ajv: Ajv, jsonLoader: JsonLoader) => {
   ajvEnableUnixTimeFormat(ajv);
   ajvEnableInt32AndInt64Format(ajv);
   ajvEnableDurationFormat(ajv);
-  ajvEnableArmIdFormat(ajv);
   ajvEnableDateTimeRfc1123Format(ajv);
   ajvEnableByteFormat(ajv);
   ajvAddFormatsDefaultValidation(ajv, "string", [
@@ -198,4 +197,5 @@ export const ajvEnableAll = (ajv: Ajv, jsonLoader: JsonLoader) => {
 
 export const ajvEnableArmRule = (ajv: Ajv) => {
   ajvEnableXmsAzureResource(ajv);
+  ajvEnableArmIdFormat(ajv);
 };
