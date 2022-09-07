@@ -15,6 +15,12 @@ export enum CompareType {
   isMissing,
 }
 
+const statusCodeMap = new Map([
+  ["OK", "200"],
+  ["CREATED", "201"],
+  ["ACCEPTED", "202"],
+]);
+
 type Specs = any[];
 type Attr = Map<string, string[]>;
 //readOnly: [RestorePointCollection.properties.provisioningState]
@@ -158,7 +164,11 @@ export class OperationLoader {
         if (inParam && status === null) {
           return true;
         }
-        if (!inParam && status !== null && status[1] === statusCode) {
+        if (
+          !inParam &&
+          status !== null &&
+          (status[1] === statusCode || statusCodeMap.get(statusCode.toUpperCase()) === status[1])
+        ) {
           return true;
         }
       }
