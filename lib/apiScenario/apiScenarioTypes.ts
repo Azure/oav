@@ -146,7 +146,7 @@ export type StepRestCall = StepBase & {
   outputVariables?: OutputVariables;
   externalReference?: boolean;
   isManagementPlane?: boolean;
-  authentication?: Authentication;
+  authentication: Authentication;
   _resolvedParameters?: SwaggerExample["parameters"];
 };
 

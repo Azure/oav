@@ -40,6 +40,11 @@ export interface PostmanCollectionRunnerClientOption {
   skipLroPoll?: boolean;
 }
 
+interface PostmanAuthOption {
+  tokenName: string;
+  scriptLocation: "Collection" | "Folder" | "Request";
+}
+
 const ARM_API_VERSION = "2020-06-01";
 
 export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
@@ -49,18 +54,27 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
   private cleanUpStepsFolder: ItemGroup<Item>;
   private scenarioFolder: ItemGroup<Item>;
   private runtimeEnv: VariableScope;
-  private aadTokenMap = new Map<string, string>();
+  private authOptionMap = new Map<string, PostmanAuthOption>();
 
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
   constructor(opts: PostmanCollectionRunnerClientOption) {
     this.opts = opts;
   }
 
-  private checkTokenMap(auth: Authentication): string | undefined {
-    if (auth.type === "AzureAD" && auth.audience && !this.aadTokenMap.has(auth.audience)) {
-      this.aadTokenMap.set(auth.audience, `x_bearer_token_${this.aadTokenMap.size}`);
-      return this.aadTokenMap.get(auth.audience);
+  private checkAuthOption(
+    auth: Authentication,
+    location: PostmanAuthOption["scriptLocation"]
+  ): PostmanAuthOption | undefined {
+    if (auth.type === "AzureAD" && auth.audience) {
+      if (!this.authOptionMap.has(auth.audience)) {
+        this.authOptionMap.set(auth.audience, {
+          tokenName: `x_bearer_token_${this.authOptionMap.size}`,
+          scriptLocation: location,
+        });
+      }
+      return this.authOptionMap.get(auth.audience);
     }
+
     return undefined;
   }
 
@@ -80,6 +94,30 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       })
     );
 
+    const authOption = this.checkAuthOption(scenarioDef.authentication, "Collection");
+
+    if (authOption) {
+      this.collection.auth = new RequestAuth({
+        type: "bearer",
+        bearer: [
+          {
+            key: "token",
+            value: `{{${authOption.tokenName}}}`,
+            type: "string",
+          },
+        ],
+      });
+      this.collection.events.add(
+        PostmanHelper.createEvent(
+          "prerequest",
+          PostmanHelper.generateAuthScript(
+            scenarioDef.authentication.audience!,
+            authOption.tokenName
+          )
+        )
+      );
+    }
+
     scope.env.resolve();
 
     this.runtimeEnv = new VariableScope({});
@@ -92,8 +130,6 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
   }
 
   public async prepareScenario(scenario: Scenario, env: VariableEnv): Promise<void> {
-    const tokenName = this.checkTokenMap(scenario.authentication);
-
     this.scenarioFolder = PostmanHelper.createItemGroup({
       name: scenario.scenario,
       description: scenario.description,
@@ -101,21 +137,23 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
 
     this.collection.items.add(this.scenarioFolder);
 
-    if (tokenName) {
-      this.collection.auth = new RequestAuth({
+    const authOption = this.checkAuthOption(scenario.authentication, "Folder");
+
+    if (authOption && authOption.scriptLocation === "Folder") {
+      this.scenarioFolder.auth = new RequestAuth({
         type: "bearer",
         bearer: [
           {
             key: "token",
-            value: `{{${tokenName}}}`,
+            value: `{{${authOption.tokenName}}}`,
             type: "string",
           },
         ],
       });
-      this.collection.events.add(
+      this.scenarioFolder.events.add(
         PostmanHelper.createEvent(
           "prerequest",
-          PostmanHelper.generateAuthScript(scenario.authentication.audience!, tokenName)
+          PostmanHelper.generateAuthScript(scenario.authentication.audience!, authOption.tokenName)
         )
       );
     }
@@ -390,6 +428,27 @@ pm.test("Stopped TestProxy recording", function() {
         },
       }
     );
+
+    const authOption = this.checkAuthOption(step.authentication, "Request");
+
+    if (authOption && authOption.scriptLocation === "Request") {
+      item.request.auth = new RequestAuth({
+        type: "bearer",
+        bearer: [
+          {
+            key: "token",
+            value: `{{${authOption.tokenName}}}`,
+            type: "string",
+          },
+        ],
+      });
+      item.events.add(
+        PostmanHelper.createEvent(
+          "prerequest",
+          PostmanHelper.generateAuthScript(step.authentication.audience!, authOption.tokenName)
+        )
+      );
+    }
 
     const itemGroup = step.isPrepareStep
       ? this.prepareStepsFolder
