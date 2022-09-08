@@ -38,9 +38,11 @@ export interface Scope {
 }
 
 export interface ApiScenarioClientRequest {
+  host: string;
+  hostParameters?: { [paramName: string]: string };
   method: HttpMethods;
   path: string;
-  pathVariables?: { [variableName: string]: string };
+  pathParameters?: { [paramName: string]: string };
   headers: { [headerName: string]: string };
   query: { [key: string]: string };
   body?: any;
@@ -204,9 +206,10 @@ export class ApiScenarioRunner {
 
   private async executeRestCallStep(step: StepRestCall, env: VariableEnv) {
     let req: ApiScenarioClientRequest = {
+      host: "",
       method: step.operation._method.toUpperCase() as HttpMethods,
       path: step.operation._path._pathTemplate.replace(/{([a-z0-9_$]+)}/gi, (_, p1) => `$(${p1})`),
-      pathVariables: {},
+      pathParameters: {},
       headers: {},
       query: {},
     };
@@ -225,7 +228,7 @@ export class ApiScenarioRunner {
 
       switch (param.in) {
         case "path":
-          req.pathVariables![param.name] = paramVal;
+          req.pathParameters![param.name] = paramVal;
           break;
         case "query":
           req.query[param.name] = paramVal;
@@ -238,6 +241,30 @@ export class ApiScenarioRunner {
           break;
         default:
           throw new Error(`Parameter "in" not supported: ${param.in}`);
+      }
+    }
+
+    if (step.isManagementPlane) {
+      req.host = env.getRequiredString("armEndpoint");
+    } else {
+      const spec = step.operation._path._spec;
+      if (spec.host) {
+        req.host = `https://${spec.host}`;
+      } else {
+        const xHost = spec["x-ms-parameterized-host"];
+        if (xHost) {
+          req.host = xHost.hostTemplate.replace(/{([a-z0-9_$]+)}/gi, (_, p1) => `$(${p1})`);
+          if (xHost.useSchemePrefix === undefined || xHost.useSchemePrefix) {
+            req.host = `https://${req.host}`;
+          }
+          req.hostParameters = {};
+          for (const p of xHost.parameters) {
+            const param = this.jsonLoader.resolveRefObj(p);
+            req.hostParameters[param.name] = `$(${param.name})`;
+          }
+        } else {
+          throw new Error("Unknown host");
+        }
       }
     }
 

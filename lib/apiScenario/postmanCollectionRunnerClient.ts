@@ -32,7 +32,8 @@ import { VariableEnv } from "./variableEnv";
 export interface PostmanCollectionRunnerClientOption {
   collectionName?: string;
   runId: string;
-  armEndpoint: string;
+  // TODO remove this
+  armEndpoint?: string;
   testProxy?: string;
   verbose?: boolean;
   skipAuth?: boolean;
@@ -94,6 +95,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       })
     );
 
+    scenarioDef.authentication = scope.env.resolveObjectValues(scenarioDef.authentication);
     const authOption = this.checkAuthOption(scenarioDef.authentication, "Collection");
 
     if (authOption) {
@@ -137,6 +139,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
 
     this.collection.items.add(this.scenarioFolder);
 
+    scenario.authentication = env.resolveObjectValues(scenario.authentication);
     const authOption = this.checkAuthOption(scenario.authentication, "Folder");
 
     if (authOption && authOption.scriptLocation === "Folder") {
@@ -429,6 +432,7 @@ pm.test("Stopped TestProxy recording", function() {
       }
     );
 
+    step.authentication = env.resolveObjectValues(step.authentication);
     const authOption = this.checkAuthOption(step.authentication, "Request");
 
     if (authOption && authOption.scriptLocation === "Request") {
@@ -461,7 +465,7 @@ pm.test("Stopped TestProxy recording", function() {
     item.request.url = new Url({
       host: this.opts.testProxy ?? this.opts.armEndpoint,
       path: covertToPostmanVariable(clientRequest.path, true),
-      variable: Object.entries(clientRequest.pathVariables ?? {}).map(([key, value]) => ({
+      variable: Object.entries(clientRequest.pathParameters ?? {}).map(([key, value]) => ({
         key,
         value: convertPostmanFormat(value),
       })),

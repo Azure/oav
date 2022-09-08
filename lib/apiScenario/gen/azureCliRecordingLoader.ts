@@ -5,6 +5,7 @@ import { injectable } from "inversify";
 import { Loader } from "../../swagger/loader";
 import { RequestTracking, SingleRequestTracking } from "./testRecordingApiScenarioGenerator";
 import { parseRecordingBodyJson, transformRecordingHeaders } from "./dotnetRecordingLoader";
+import { DEFAULT_ARM_ENDPOINT } from "../constants";
 
 interface RecordingFile {
   interactions: RecordingEntry[];
@@ -38,12 +39,13 @@ export class AzureCliRecordingLoader implements Loader<RequestTracking, [Recordi
     };
 
     for (const entry of content.interactions) {
-      const url = new URL(entry.request.uri, "https://management.azure.com");
+      const url = new URL(entry.request.uri, DEFAULT_ARM_ENDPOINT);
       const query: { [key: string]: string } = {};
       url.searchParams.forEach((val, key) => (query[key] = val));
 
       const responseHeaders = transformRecordingHeaders(entry.response.headers);
       const request: SingleRequestTracking = {
+        host: DEFAULT_ARM_ENDPOINT,
         method: entry.request.method,
         path: url.pathname,
         url: url.href,

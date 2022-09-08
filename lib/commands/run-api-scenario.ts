@@ -14,6 +14,7 @@ import { cliSuppressExceptions } from "../cliSuppressExceptions";
 import { inversifyGetInstance } from "../inversifyUtils";
 import { getApiScenarioFiles, getDefaultTag, getInputFiles, printWarning } from "../util/utils";
 import { EnvironmentVariables } from "../apiScenario/variableEnv";
+import { DEFAULT_ARM_ENDPOINT } from "../apiScenario/constants";
 
 export const command = "run-api-scenario [<api-scenario>]";
 
@@ -64,7 +65,7 @@ export const builder: yargs.CommandBuilder = {
   armEndpoint: {
     describe: "ARM endpoint",
     string: true,
-    default: "https://management.azure.com",
+    default: DEFAULT_ARM_ENDPOINT,
   },
   location: {
     describe: "Resource provision location parameter",
@@ -179,6 +180,9 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
         env = { ...env, ...envFromVariable };
       }
 
+      if (argv.armEndpoint !== undefined) {
+        env.armEndpoint = argv.armEndpoint;
+      }
       if (argv.location !== undefined) {
         env.location = argv.location;
       }
@@ -204,7 +208,6 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
         html: (argv.report ?? []).includes("html"),
         eraseXmsExamples: false,
         eraseDescription: false,
-        armEndpoint: argv.armEndpoint,
         testProxy: argv.testProxy,
         skipValidation: argv.skipValidation,
         savePayload: argv.savePayload,

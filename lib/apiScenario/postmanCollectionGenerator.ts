@@ -117,7 +117,6 @@ export class PostmanCollectionGenerator {
     const client = new PostmanCollectionRunnerClient({
       collectionName: scenarioDef.name,
       runId: this.opt.runId,
-      armEndpoint: this.opt.armEndpoint!,
       testProxy: this.opt.testProxy,
       verbose: this.opt.verbose,
       skipAuth: this.opt.devMode,
@@ -426,7 +425,7 @@ export class PostmanCollectionGenerator {
       markdown: this.opt.markdown,
       junit: this.opt.junit,
       html: this.opt.html,
-      armEndpoint: this.opt.armEndpoint,
+      armEndpoint: this.opt.env.armEndpoint,
       runId: this.opt.runId,
       skipValidation: this.opt.skipValidation,
       generateExample: this.opt.generateExample,

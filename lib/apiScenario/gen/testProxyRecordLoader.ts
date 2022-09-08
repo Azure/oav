@@ -35,6 +35,7 @@ export class TestProxyRecordingLoader implements Loader<RequestTracking, [Record
       url.searchParams.forEach((val, key) => (query[key] = val));
 
       const request: SingleRequestTracking = {
+        host: url.host,
         method: entry.RequestMethod,
         path: url.pathname,
         url: url.href,

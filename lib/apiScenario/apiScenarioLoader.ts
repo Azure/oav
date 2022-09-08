@@ -52,7 +52,7 @@ import {
 } from "./apiScenarioTypes";
 import { ApiScenarioYamlLoader } from "./apiScenarioYamlLoader";
 import { BodyTransformer } from "./bodyTransformer";
-import { armDeploymentScriptTemplate } from "./constants";
+import { armDeploymentScriptTemplate, DEFAULT_ARM_ENDPOINT } from "./constants";
 import { jsonPatchApply } from "./diffUtils";
 import { TemplateGenerator } from "./templateGenerator";
 
@@ -64,7 +64,6 @@ export interface ApiScenarioLoaderOption
     SwaggerLoaderOption {
   swaggerFilePaths?: string[];
   includeOperation?: boolean;
-  armEndpoint?: string;
 }
 
 interface ApiScenarioContext {
@@ -105,7 +104,6 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       skipResolveRefKeys: ["x-ms-examples"],
       swaggerFilePaths: [],
       includeOperation: true,
-      armEndpoint: "https://management.azure.com",
     });
     this.transformContext = getTransformContext(this.jsonLoader, this.schemaValidator, [
       xmsPathsTransformer,
@@ -250,15 +248,23 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       ...convertVariables(rawDef.variables),
       authentication: rawDef.authentication ?? {
         type: isArmScope ? "AzureAD" : "None",
-        audience: isArmScope ? this.opts.armEndpoint : undefined,
+        audience: isArmScope ? "$(armEndpoint)" : undefined,
       },
     };
 
-    if (["ResourceGroup", "Subscription"].indexOf(scenarioDef.scope) >= 0) {
+    if (isArmScope) {
+      if (!scenarioDef.variables.armEndpoint) {
+        scenarioDef.variables.armEndpoint = {
+          type: "string",
+          value: DEFAULT_ARM_ENDPOINT,
+        };
+      }
       const requiredVariables = new Set(scenarioDef.requiredVariables);
-      requiredVariables.add("subscriptionId");
-      if (scenarioDef.scope === "ResourceGroup") {
-        requiredVariables.add("location");
+      if (["ResourceGroup", "Subscription"].indexOf(scenarioDef.scope) >= 0) {
+        requiredVariables.add("subscriptionId");
+        if (scenarioDef.scope === "ResourceGroup") {
+          requiredVariables.add("location");
+        }
       }
       scenarioDef.requiredVariables = [...requiredVariables];
     }
@@ -382,7 +388,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
 
     const step: StepRestCall = {
       type: "restCall",
-      step: rawStep.step ?? `${ctx.scenarioIndex ?? ctx.stage}_${ctx.stepIndex}`,
+      step: rawStep.step ?? `_${ctx.stepIndex}`,
       description: rawStep.description,
       operationId: "",
       operation: {} as Operation,
@@ -444,7 +450,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       // load operation step
       step.operationId = rawStep.operationId;
       if (!rawStep.step) {
-        step.step += `_${rawStep.operationId}`;
+        step.step = `${rawStep.operationId}_${ctx.stepIndex}`;
       }
 
       const operation = rawStep.readmeTag
@@ -628,8 +634,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
   ): Promise<StepArmTemplate> {
     const step: StepArmTemplate = {
       type: "armTemplateDeployment",
-      step:
-        rawStep.step ?? `${ctx.scenarioIndex ?? ctx.stage}_${ctx.stepIndex}_ArmDeploymentScript`,
+      step: rawStep.step ?? `ArmDeploymentScript_${ctx.stepIndex}`,
       outputVariables: rawStep.outputVariables ?? {},
       armTemplate: "",
       armTemplatePayload: {},
