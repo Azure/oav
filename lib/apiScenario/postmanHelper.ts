@@ -1,12 +1,13 @@
 import * as jsonPointer from "json-pointer";
 import {
+  Collection,
   Event,
   EventDefinition,
+  EventList,
   Item,
   ItemDefinition,
   ItemGroup,
   ItemGroupDefinition,
-  ScriptDefinition,
 } from "postman-collection";
 import { getRandomString } from "../util/utils";
 import { ArmTemplate, StepResponseAssertion } from "./apiScenarioTypes";
@@ -44,32 +45,36 @@ export function createItem(definition?: ItemDefinition): Item {
   });
 }
 
-export function createItemGroup(definition?: ItemGroupDefinition): ItemGroup<Item> {
-  return new ItemGroup({
+export function addItemGroup(
+  target: Collection,
+  definition?: ItemGroupDefinition
+): ItemGroup<Item> {
+  const itemGroup = new ItemGroup<Item>({
     id: getRandomString(),
     ...definition,
   });
+  target.items.add(itemGroup);
+  return itemGroup;
 }
 
-export function createEvent(
+export function addEvent(
+  target: EventList,
   listen: "prerequest" | "test",
-  script: ScriptDefinition,
+  script: string | string[],
   additionalDefinition?: EventDefinition
-): Event {
-  return new Event({
-    id: getRandomString(),
-    listen,
-    script,
-    ...additionalDefinition,
-  });
-}
-
-export function createScript(script: string | string[]): ScriptDefinition {
-  return {
-    id: getRandomString(),
-    type: "text/javascript",
-    exec: script,
-  };
+) {
+  target.add(
+    new Event({
+      id: getRandomString(),
+      listen,
+      script: {
+        id: getRandomString(),
+        type: "text/javascript",
+        exec: script,
+      },
+      ...additionalDefinition,
+    })
+  );
 }
 
 function generateResponseDataAssertionScript(responseAssertion: StepResponseAssertion): string {
@@ -128,10 +133,12 @@ export function generateScript(parameter: TestScriptParameter): string[] {
     for (const [k, v] of parameter.variables) {
       const segments = parseJsonPointer(v);
       if (segments.length === 0) {
-        script.push(`pm.environment.set("${k}", pm.response.json());`);
+        script.push(`pm.environment.variables.set("${k}", pm.response.json());`);
       } else {
         script.push(
-          `pm.environment.set("${k}", _.get(pm.response.json(), ${JSON.stringify(segments)}));`
+          `pm.environment.variables.set("${k}", _.get(pm.response.json(), ${JSON.stringify(
+            segments
+          )}));`
         );
       }
     }
@@ -144,7 +151,7 @@ export function generateScript(parameter: TestScriptParameter): string[] {
   if (parameter.types.includes("ExtractARMTemplateOutput") && parameter.armTemplate?.outputs) {
     for (const key of Object.keys(parameter.armTemplate.outputs)) {
       script.push(
-        `pm.environment.set("${key}", pm.response.json().properties.outputs.${key}.value);`
+        `pm.environment.variables.set("${key}", pm.response.json().properties.outputs.${key}.value);`
       );
     }
   }

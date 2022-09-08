@@ -33,8 +33,6 @@ import { VariableEnv } from "./variableEnv";
 export interface PostmanCollectionRunnerClientOption {
   collectionName?: string;
   runId: string;
-  // TODO remove this
-  armEndpoint?: string;
   testProxy?: string;
   verbose?: boolean;
   skipAuth?: boolean;
@@ -116,9 +114,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     }
 
     if (preScripts.length > 0) {
-      this.collection.events.add(
-        PostmanHelper.createEvent("prerequest", PostmanHelper.createScript(preScripts))
-      );
+      PostmanHelper.addEvent(this.collection.events, "prerequest", preScripts);
     }
 
     scope.env.resolve();
@@ -169,12 +165,10 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
   }
 
   public async prepareScenario(scenario: Scenario, env: VariableEnv): Promise<void> {
-    this.scenarioFolder = PostmanHelper.createItemGroup({
+    this.scenarioFolder = PostmanHelper.addItemGroup(this.collection, {
       name: scenario.scenario,
       description: scenario.description,
     });
-
-    this.collection.items.add(this.scenarioFolder);
 
     const preScripts: string[] = [];
 
@@ -197,15 +191,21 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       );
     }
 
-    if (preScripts.length > 0) {
-      this.collection.events.add(
-        PostmanHelper.createEvent("prerequest", PostmanHelper.createScript(preScripts))
-      );
-    }
-
     env.resolve();
 
-    // TODO
+    if (Object.keys(scenario.variables).length > 0) {
+      Object.entries(scenario.variables).forEach(([key, value]) => {
+        if (value.value) {
+          preScripts.push(`pm.variables.set("${key}", "${env.resolveObjectValues(value.value)}");`);
+        }
+      });
+    }
+
+    if (preScripts.length > 0) {
+      PostmanHelper.addEvent(this.scenarioFolder.events, "prerequest", preScripts);
+    }
+
+    // TODO output variables
   }
 
   public outputCollection(): [Collection, VariableScope] {
@@ -232,18 +232,15 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
       },
       false
     );
-    item.events.add(
-      PostmanHelper.createEvent(
-        "test",
-        PostmanHelper.createScript(
-          `
+    PostmanHelper.addEvent(
+      item.events,
+      "test",
+      `
 pm.test("Started TestProxy recording", function() {
     pm.response.to.be.success;
     pm.response.to.have.header("x-recording-id");
     pm.collectionVariables.set("x_recording_id", pm.response.headers.get("x-recording-id"));
 });`
-        )
-      )
     );
   }
 
@@ -263,32 +260,30 @@ pm.test("Started TestProxy recording", function() {
       key: "x-recording-id",
       value: "{{x_recording_id}}",
     });
-    item.events.add(
-      PostmanHelper.createEvent(
-        "test",
-        PostmanHelper.createScript(
-          `
+    PostmanHelper.addEvent(
+      item.events,
+      "test",
+      `
 pm.test("Stopped TestProxy recording", function() {
     pm.response.to.be.success;
 });
 `
-        )
-      )
     );
   }
 
   private addNewItem(
     itemType: "Prepare" | "CleanUp" | "Scenario" | "Blank",
     definition?: ItemDefinition,
-    checkTestProxy: boolean = true
+    checkTestProxy: boolean = true,
+    baseUri?: string
   ): { item: Item; itemGroup?: ItemGroup<Item> } {
     const item = PostmanHelper.createItem(definition);
     let itemGroup: ItemGroup<Item> | undefined;
 
-    if (checkTestProxy && this.opts.testProxy) {
+    if (checkTestProxy && this.opts.testProxy && baseUri) {
       item.request.addHeader({
         key: "x-recording-upstream-base-uri",
-        value: this.opts.armEndpoint,
+        value: baseUri,
       });
       item.request.addHeader({ key: "x-recording-id", value: "{{x_recording_id}}" });
       item.request.addHeader({ key: "x-recording-mode", value: "record" });
@@ -297,19 +292,17 @@ pm.test("Stopped TestProxy recording", function() {
     switch (itemType) {
       case "Prepare":
         if (this.prepareStepsFolder === undefined) {
-          this.prepareStepsFolder = PostmanHelper.createItemGroup({
+          this.prepareStepsFolder = PostmanHelper.addItemGroup(this.collection, {
             name: "__Prepare__",
           });
-          this.collection.items.add(this.prepareStepsFolder);
         }
         itemGroup = this.prepareStepsFolder;
         break;
       case "CleanUp":
         if (this.cleanUpStepsFolder === undefined) {
-          this.cleanUpStepsFolder = PostmanHelper.createItemGroup({
+          this.cleanUpStepsFolder = PostmanHelper.addItemGroup(this.collection, {
             name: "__CleanUp__",
           });
-          this.collection.items.add(this.cleanUpStepsFolder);
         }
         itemGroup = this.cleanUpStepsFolder;
         break;
@@ -334,6 +327,7 @@ pm.test("Stopped TestProxy recording", function() {
   }
 
   public async createResourceGroup(
+    armEndpoint: string,
     subscriptionId: string,
     resourceGroupName: string,
     location: string
@@ -346,7 +340,7 @@ pm.test("Stopped TestProxy recording", function() {
 
     item.request.method = "PUT";
     item.request.url = new Url({
-      host: this.opts.testProxy ?? this.opts.armEndpoint,
+      host: this.opts.testProxy ?? armEndpoint,
       path: "/subscriptions/:subscriptionId/resourcegroups/:resourceGroupName",
       variable: [
         {
@@ -376,7 +370,7 @@ pm.test("Stopped TestProxy recording", function() {
 
     const postScripts = this.generatePostScripts();
     if (postScripts.length > 0) {
-      item.events.add(PostmanHelper.createEvent("test", PostmanHelper.createScript(postScripts)));
+      PostmanHelper.addEvent(item.events, "test", postScripts);
     }
 
     this.runtimeEnv.set("subscriptionId", subscriptionId, "string");
@@ -385,6 +379,7 @@ pm.test("Stopped TestProxy recording", function() {
   }
 
   public async deleteResourceGroup(
+    armEndpoint: string,
     _subscriptionId: string,
     _resourceGroupName: string
   ): Promise<void> {
@@ -395,7 +390,7 @@ pm.test("Stopped TestProxy recording", function() {
     });
     item.request.method = "DELETE";
     item.request.url = new Url({
-      host: this.opts.testProxy ?? this.opts.armEndpoint,
+      host: this.opts.testProxy ?? armEndpoint,
       path: "/subscriptions/:subscriptionId/resourcegroups/:resourceGroupName",
       variable: [
         {
@@ -424,10 +419,10 @@ pm.test("Stopped TestProxy recording", function() {
       types: ["StatusCodeAssertion"],
     }).forEach((s) => postScripts.push(s));
 
-    this.lroPoll(this.cleanUpStepsFolder, item, postScripts);
+    this.lroPoll(this.cleanUpStepsFolder, item, armEndpoint, postScripts);
 
     if (postScripts.length > 0) {
-      item.events.add(PostmanHelper.createEvent("test", PostmanHelper.createScript(postScripts)));
+      PostmanHelper.addEvent(item.events, "test", postScripts);
     }
   }
 
@@ -478,7 +473,7 @@ pm.test("Stopped TestProxy recording", function() {
     item.description = step.operation.operationId;
 
     item.request.url = new Url({
-      host: this.opts.testProxy ?? this.opts.armEndpoint,
+      host: this.opts.testProxy ?? clientRequest.host,
       path: covertToPostmanVariable(clientRequest.path, true),
       variable: Object.entries(clientRequest.pathParameters ?? {}).map(([key, value]) => ({
         key,
@@ -506,9 +501,7 @@ pm.test("Stopped TestProxy recording", function() {
     }
 
     if (preScripts.length > 0) {
-      item.events.add(
-        PostmanHelper.createEvent("prerequest", PostmanHelper.createScript(preScripts))
-      );
+      PostmanHelper.addEvent(item.events, "prerequest", preScripts);
     }
 
     // post scripts
@@ -554,7 +547,14 @@ pm.test("Stopped TestProxy recording", function() {
         itemName: item.name,
         step: item.name,
       });
-      this.lroPoll(itemGroup!, item, postScripts, false, step.responseAssertion);
+      this.lroPoll(
+        itemGroup!,
+        item,
+        clientRequest.host,
+        postScripts,
+        false,
+        step.responseAssertion
+      );
     } else {
       item.description = JSON.stringify({
         type: "simple",
@@ -566,7 +566,7 @@ pm.test("Stopped TestProxy recording", function() {
     }
 
     if (postScripts.length > 0) {
-      item.events.add(PostmanHelper.createEvent("test", PostmanHelper.createScript(postScripts)));
+      PostmanHelper.addEvent(item.events, "test", postScripts);
     }
 
     // generate get
@@ -580,6 +580,7 @@ pm.test("Stopped TestProxy recording", function() {
   private lroPoll(
     itemGroup: ItemGroup<Item>,
     item: Item,
+    baseUri: string,
     postScripts: string[],
     checkStatus: boolean = false,
     responseAssertion?: StepResponseAssertion
@@ -592,7 +593,7 @@ const pollingUrl = pm.response.headers.get("Location") || pm.response.headers.ge
 if (pollingUrl) {
     pm.collectionVariables.set("x_polling_url", ${
       this.opts.testProxy
-        ? `pollingUrl.replace("${this.opts.armEndpoint}","${this.opts.testProxy}")`
+        ? `pollingUrl.replace("${baseUri}","${this.opts.testProxy}")`
         : "pollingUrl"
     });
     pm.collectionVariables.set("x_retry_after", "3");
@@ -653,7 +654,7 @@ if (pollingUrl) {
       body: { mode: "raw" } as RequestBodyDefinition,
     });
     item.request.url = new Url({
-      host: this.opts.testProxy ?? this.opts.armEndpoint,
+      host: this.opts.testProxy ?? env.getRequiredString("armEndpoint"),
       path: `/subscriptions/:subscriptionId/resourcegroups/:resourceGroupName/providers/Microsoft.Resources/deployments/:deploymentName`,
       variable: [
         { key: "subscriptionId", value: `{{subscriptionId}}` },
@@ -689,10 +690,10 @@ if (pollingUrl) {
       variables: undefined,
     });
 
-    this.lroPoll(itemGroup!, item, postScripts, true);
+    this.lroPoll(itemGroup!, item, env.getRequiredString("armEndpoint"), postScripts, true);
 
     if (postScripts.length > 0) {
-      item.events.add(PostmanHelper.createEvent("test", PostmanHelper.createScript(postScripts)));
+      PostmanHelper.addEvent(item.events, "test", postScripts);
     }
 
     const generatedGetScriptTypes: PostmanHelper.TestScriptType[] = this.opts.verbose
@@ -736,7 +737,7 @@ if (pollingUrl) {
     }
     const postScripts = this.generatePostScripts(scriptTypes, undefined, armTemplate);
     if (postScripts.length > 0) {
-      item.events.add(PostmanHelper.createEvent("test", PostmanHelper.createScript(postScripts)));
+      PostmanHelper.addEvent(item.events, "test", postScripts);
     }
     return item;
   }
@@ -809,9 +810,7 @@ if (pollingUrl) {
     }
 
     if (postScripts.length > 0) {
-      pollerItem.events.add(
-        PostmanHelper.createEvent("test", PostmanHelper.createScript(postScripts))
-      );
+      PostmanHelper.addEvent(pollerItem.events, "test", postScripts);
     }
 
     itemGroup.items.add(pollerItem);

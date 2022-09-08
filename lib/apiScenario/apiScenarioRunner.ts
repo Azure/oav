@@ -54,12 +54,17 @@ export interface ApiScenarioRunnerClient {
   prepareScenario(scenario: Scenario, env: VariableEnv): Promise<void>;
 
   createResourceGroup(
+    armEndpoint: string,
     subscriptionId: string,
     resourceGroupName: string,
     location: string
   ): Promise<void>;
 
-  deleteResourceGroup(subscriptionId: string, resourceGroupName: string): Promise<void>;
+  deleteResourceGroup(
+    armEndpoint: string,
+    subscriptionId: string,
+    resourceGroupName: string
+  ): Promise<void>;
 
   sendRestCallRequest(
     request: ApiScenarioClientRequest,
@@ -122,6 +127,7 @@ export class ApiScenarioRunner {
 
     if (this.scope.type === "ResourceGroup") {
       await this.client.createResourceGroup(
+        this.scope.env.getRequiredString("armEndpoint"),
         this.scope.env.getRequiredString("subscriptionId"),
         this.scope.env.getRequiredString("resourceGroupName"),
         this.scope.env.getRequiredString("location")
@@ -137,9 +143,11 @@ export class ApiScenarioRunner {
       await this.executeStep(step, this.scope.env, this.scope);
     }
     if (this.scope.type === "ResourceGroup") {
-      const subscriptionId = this.scope.env.getRequiredString("subscriptionId");
-      const resourceGroupName = this.scope.env.getRequiredString("resourceGroupName");
-      await this.client.deleteResourceGroup(subscriptionId, resourceGroupName);
+      await this.client.deleteResourceGroup(
+        this.scope.env.getRequiredString("armEndpoint"),
+        this.scope.env.getRequiredString("subscriptionId"),
+        this.scope.env.getRequiredString("resourceGroupName")
+      );
     }
   }
 
