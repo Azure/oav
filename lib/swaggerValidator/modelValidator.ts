@@ -573,6 +573,16 @@ export class SwaggerExampleValidator {
             }
           }
         }
+
+        if (
+          (err.code as any) === "MISSING_RESOURCE_ID" &&
+          exampleContent.responses[`${statusCode}`].body &&
+          Object.keys(exampleContent.responses[`${statusCode}`].body).length === 0
+        ) {
+          // ignore this error when whole body of response is empty
+          continue;
+        }
+
         const node = this.getNotSuppressedErrorPath(err);
         if (node === undefined) {
           continue;
