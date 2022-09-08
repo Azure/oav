@@ -117,6 +117,7 @@ export type RawStep = RawStepOperation | RawStepExample | RawStepArmTemplate | R
 //#region Step RestCall
 
 export type RawStepExample = RawStepBase & {
+  operationId?: string;
   exampleFile: string;
   requestUpdate?: JsonPatchOp[];
   responseUpdate?: JsonPatchOp[];

@@ -159,7 +159,7 @@ export class PostmanCollectionGenerator {
       }
     }
 
-    if (this.opt.html) {
+    if (this.opt.html && this.opt.runCollection) {
       await this.generateHtmlReport(scenarioDef);
     }
 

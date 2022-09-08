@@ -430,6 +430,9 @@ export const ApiScenarioDefinition: Schema & {
           type: "string",
           format: "uri-reference",
         },
+        operationId: {
+          type: "string",
+        },
         requestUpdate: {
           type: "array",
           description: "Update request parameters",

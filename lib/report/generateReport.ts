@@ -61,7 +61,9 @@ export interface OperationCoverageInfoForRendering extends OperationCoverageInfo
 
 export interface resultForRendering
   extends OperationCoverageInfoForRendering,
-    TrafficValidationIssueForRendering {}
+    TrafficValidationIssueForRendering {
+  index?: number;
+}
 
 // used to pass data to the template rendering engine
 export class CoverageView {
@@ -266,7 +268,8 @@ export class CoverageView {
         });
       });
 
-      for (const e of this.resultsForRendering) {
+      for (const [index, e] of this.resultsForRendering.entries()) {
+        e.index = index;
         for (const i of generalErrorsInnerList) {
           if (e.specFilePath === i.specFilePath && i) {
             e.generalErrorsInnerList.push(i);
