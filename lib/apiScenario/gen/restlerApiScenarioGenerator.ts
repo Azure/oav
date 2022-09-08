@@ -147,7 +147,6 @@ export class RestlerApiScenarioGenerator {
         if (operation?.["x-ms-examples"] && Object.values(operation["x-ms-examples"])[0]) {
           const example = Object.values(operation["x-ms-examples"])[0];
           step.step = (step as any).operationId;
-          (step as any).operationId = undefined;
           (step as RawStepExample).exampleFile = path.relative(
             this.opts.outputDir,
             this.fileLoader.resolvePath(this.jsonLoader.getRealPath(example.$ref!))
@@ -156,17 +155,15 @@ export class RestlerApiScenarioGenerator {
           console.warn(`${operationId} has no example.`);
         }
       });
-
-      definition.scenarios[0].steps = definition.scenarios[0].steps.filter(
-        (s) => (s as RawStepExample).exampleFile
-      );
     }
 
     return definition;
   }
 
   public async writeFile(definition: RawScenarioDefinition) {
-    const fileContent = dump(definition);
+    const fileContent =
+      "# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/documentation/api-scenario/references/v1.2/schema.json\n" +
+      dump(definition);
     const filePath = pathJoin(this.opts.outputDir, "basic.yaml");
     await this.fileLoader.writeFile(filePath, fileContent);
     console.log(`${filePath} is generated.`);
@@ -224,7 +221,11 @@ export class RestlerApiScenarioGenerator {
           if (p) {
             p = this.jsonLoader.resolveRefObj(p);
           }
-          if (p?.in !== "path") {
+          if (
+            p?.in !== "path" &&
+            operation?.["x-ms-examples"] &&
+            Object.values(operation["x-ms-examples"])[0]
+          ) {
             return;
           }
         }
@@ -322,6 +323,7 @@ export class RestlerApiScenarioGenerator {
 
   private generateSteps() {
     const scenario: RawScenario = {
+      scenario: "GeneratedScenario",
       steps: [],
     };
 
