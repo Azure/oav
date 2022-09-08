@@ -64,7 +64,7 @@ export function createEvent(
   });
 }
 
-export function createScript(script: string): ScriptDefinition {
+export function createScript(script: string | string[]): ScriptDefinition {
   return {
     id: getRandomString(),
     type: "text/javascript",
@@ -115,7 +115,7 @@ function generateResponseDataAssertionScript(responseAssertion: StepResponseAsse
   return ret;
 }
 
-export function generateScript(parameter: TestScriptParameter): ScriptDefinition {
+export function generateScript(parameter: TestScriptParameter): string[] {
   const script: string[] = [];
   script.push(`pm.test("${parameter.name}", function() {`);
   if (parameter.types.includes("DetailResponseLog")) {
@@ -152,7 +152,7 @@ export function generateScript(parameter: TestScriptParameter): ScriptDefinition
     script.push(generateResponseDataAssertionScript(parameter.responseAssertion));
   }
   script.push("});");
-  return createScript(script.join("\n"));
+  return script;
 }
 
 export const reservedCollectionVariables = [
@@ -188,7 +188,7 @@ export const reservedCollectionVariables = [
   },
 ];
 
-export function generateAuthScript(audience: string, tokenName: string): ScriptDefinition {
+export function generateAuthScript(audience: string, tokenName: string): string {
   const script = `
 if (pm.variables.get("x_enable_auth") !== "true") {
     return;
@@ -246,5 +246,5 @@ if (
         }
     );
 }`;
-  return createScript(script);
+  return script;
 }
