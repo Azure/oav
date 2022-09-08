@@ -427,66 +427,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       }
     };
 
-    if ("exampleFile" in rawStep) {
-      // load example step
-      step.exampleFile = rawStep.exampleFile;
-
-      const exampleFilePath = pathJoin(pathDirName(ctx.scenarioDef._filePath), step.exampleFile!);
-
-      // Load example file
-      const fileContent = await this.fileLoader.load(exampleFilePath);
-      const exampleFileContent = JSON.parse(fileContent) as SwaggerExample;
-
-      let operation: Operation | undefined;
-
-      // Load Operation
-      if (exampleFileContent.operationId) {
-        step.operationId = exampleFileContent.operationId;
-
-        operation = this.operationsMap.get(step.operationId);
-        if (operation === undefined) {
-          throw new Error(`Operation not found for ${step.operationId} in step ${step.step}`);
-        }
-        if (this.opts.includeOperation) {
-          step.operation = operation;
-        }
-      } else {
-        const opMap = this.exampleToOperation.get(exampleFilePath);
-        if (opMap === undefined) {
-          throw new Error(`Example file is not referenced by any operation: ${step.exampleFile}`);
-        }
-        const ops = Object.keys(opMap);
-        if (ops.length > 1 && rawStep.operationId === undefined) {
-          throw new Error(
-            `Example file is referenced by multiple operation: ${Object.keys(opMap)} ${
-              step.exampleFile
-            }, please specify operationId`
-          );
-        }
-        step.operationId = rawStep.operationId ?? ops[0];
-        const exampleName = opMap[step.operationId];
-        operation = this.operationsMap.get(step.operationId);
-        if (operation === undefined) {
-          throw new Error(`Operation not found for ${step.operationId} in step ${step.step}`);
-        }
-        if (this.opts.includeOperation) {
-          step.operation = operation;
-        }
-        step.description = step.description ?? exampleName;
-      }
-      step.parameters = exampleFileContent.parameters;
-
-      // force update api-version
-      if (step.parameters["api-version"]) {
-        step.parameters["api-version"] = this.apiVersionsMap.get(step.operationId)!;
-      }
-
-      step.responses = exampleFileContent.responses;
-
-      await this.applyPatches(step, rawStep, operation);
-
-      this.templateGenerator.exampleParameterConvention(step, getVariable, operation);
-    } else {
+    if (!("exampleFile" in rawStep)) {
       // load operation step
       step.operationId = rawStep.operationId;
       if (!rawStep.step) {
@@ -559,6 +500,65 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       });
 
       step.responseAssertion = rawStep.responses;
+    } else {
+      // load example step
+      step.exampleFile = rawStep.exampleFile;
+
+      const exampleFilePath = pathJoin(pathDirName(ctx.scenarioDef._filePath), step.exampleFile!);
+
+      // Load example file
+      const fileContent = await this.fileLoader.load(exampleFilePath);
+      const exampleFileContent = JSON.parse(fileContent) as SwaggerExample;
+
+      let operation: Operation | undefined;
+
+      // Load Operation
+      if (rawStep.operationId || exampleFileContent.operationId) {
+        step.operationId = (rawStep.operationId ?? exampleFileContent.operationId)!;
+
+        operation = this.operationsMap.get(step.operationId);
+        if (operation === undefined) {
+          throw new Error(`Operation not found for ${step.operationId} in step ${step.step}`);
+        }
+        if (this.opts.includeOperation) {
+          step.operation = operation;
+        }
+      } else {
+        const opMap = this.exampleToOperation.get(exampleFilePath);
+        if (opMap === undefined) {
+          throw new Error(`Example file is not referenced by any operation: ${step.exampleFile}`);
+        }
+        const ops = Object.keys(opMap);
+        if (ops.length > 1) {
+          throw new Error(
+            `Example file is referenced by multiple operation: ${Object.keys(opMap)} ${
+              step.exampleFile
+            }`
+          );
+        }
+        step.operationId = ops[0];
+        const exampleName = opMap[step.operationId];
+        operation = this.operationsMap.get(step.operationId);
+        if (operation === undefined) {
+          throw new Error(`Operation not found for ${step.operationId} in step ${step.step}`);
+        }
+        if (this.opts.includeOperation) {
+          step.operation = operation;
+        }
+        step.description = step.description ?? exampleName;
+      }
+      step.parameters = exampleFileContent.parameters;
+
+      // force update api-version
+      if (step.parameters["api-version"]) {
+        step.parameters["api-version"] = this.apiVersionsMap.get(step.operationId)!;
+      }
+
+      step.responses = exampleFileContent.responses;
+
+      await this.applyPatches(step, rawStep, operation);
+
+      this.templateGenerator.exampleParameterConvention(step, getVariable, operation);
     }
     return step;
   }
