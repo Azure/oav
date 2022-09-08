@@ -107,7 +107,6 @@ describe("Live Validator", () => {
       await validator.initialize();
 
       const readOnlys = validator.operationLoader.getAttrs("microsoft.compute", "2021-11-01", "AvailabilitySets_CreateOrUpdate", "readOnly");
-      expect(readOnlys).toMatchSnapshot();
 
       //roundtrip validation
       const payload: RequestResponsePair = require(`${__dirname}/liveValidation/payloads/roundTrip_valid.json`);
@@ -140,9 +139,6 @@ describe("Live Validator", () => {
       };
       const validator = new LiveValidator(options);
       await validator.initialize();
-
-      const readOnlys = validator.operationLoader.getAttrs("microsoft.compute", "2021-11-01", "AvailabilitySets_CreateOrUpdate", "readOnly");
-      expect(readOnlys).toMatchSnapshot();
 
       //roundtrip validation
       const payload: RequestResponsePair = require(`${__dirname}/liveValidation/payloads/roundTrip_invalid.json`);
