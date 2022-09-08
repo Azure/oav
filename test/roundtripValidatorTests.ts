@@ -162,9 +162,9 @@ describe("Live Validator", () => {
       //end of roundtrip validation
     });
 
-    it("Round trip multiple payload validation fail", async () => {
-      console.log("Round trip multiple payload validation fail");
-      const swaggerPattern = "specification/compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json";
+    it("Round trip validation of circular spec", async () => {
+      console.log("Round trip validation fail");
+      const swaggerPattern = "specification/containerservice/resource-manager/Microsoft.ContainerService/stable/2019-08-01/*.json";
       const glob = require("glob");
       const filePaths: string[] = glob.sync(swaggerPattern, {
         ignore: DefaultConfig.ExcludedExamplesAndCommonFiles,
@@ -173,32 +173,31 @@ describe("Live Validator", () => {
       const options = {
         directory: "./test/liveValidation/swaggers/specification",
         swaggerPathsPattern: [
-          "compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json"
+          "containerservice/resource-manager/Microsoft.ContainerService/stable/2019-08-01/*.json"
         ],
         swaggerPaths: filePaths,
         enableRoundTripValidator: true,
-        enableRoundTripLazyBuild: true,
-        loadValidatorInInitialize: true,
+        enableRoundTripLazyBuild: true
       };
       const validator = new LiveValidator(options);
       await validator.initialize();
 
-      const readOnlys = validator.operationLoader.getAttrs("microsoft.compute", "2021-11-01", "AvailabilitySets_CreateOrUpdate", "readOnly");
-      expect(readOnlys).toMatchSnapshot();
-
       //roundtrip validation
-      let payload: RequestResponsePair = require(`${__dirname}/liveValidation/payloads/roundTrip_invalid.json`);
-      console.log("need init first");
-      let rest = await validator.validateRoundTrip(payload);
+      const payload: RequestResponsePair = require(`${__dirname}/liveValidation/payloads/roundtrip_failure_circularspec.json`);
+      const rest = await validator.validateRoundTrip(payload);
+      const readOnlys = validator.operationLoader.getAttrs("microsoft.containerservice", "2019-08-01", "ManagedClusters_Get", "readOnly");
+      expect(readOnlys).toMatchSnapshot();
+      assert.equal(rest.errors.length, 3);
       assert.equal(rest.isSuccessful, false);
-      expect(rest).toMatchSnapshot();
-      console.log("need no init");
-      rest = await validator.validateRoundTrip(payload);
-      expect(rest).toMatchSnapshot();
-      payload = require(`${__dirname}/liveValidation/payloads/roundTrip_test.json`);
-      rest = await validator.validateRoundTrip(payload);
-      expect(rest).toMatchSnapshot();
-      assert.equal(rest.isSuccessful, false);
+      for (const re of rest.errors) {
+        if (re.pathsInPayload[0].includes("location")) {
+          assert.equal(re.code, "ROUNDTRIP_ADDITIONAL_PROPERTY");
+        } else if (re.pathsInPayload[0].includes("properties")) {
+          assert.equal(re.code, "ROUNDTRIP_ADDITIONAL_PROPERTY");
+        } else if (re.pathsInPayload[0].includes("identity")) {
+          assert.equal(re.code, "ROUNDTRIP_ADDITIONAL_PROPERTY");
+        }
+      }
       //end of roundtrip validation
     });
 
