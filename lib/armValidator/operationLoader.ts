@@ -19,6 +19,8 @@ const statusCodeMap = new Map([
   ["OK", "200"],
   ["CREATED", "201"],
   ["ACCEPTED", "202"],
+  ["NO CONTENT", "204"],
+  ["INTERNAL SERVER ERROR", "500"]
 ]);
 
 type Specs = any[];
