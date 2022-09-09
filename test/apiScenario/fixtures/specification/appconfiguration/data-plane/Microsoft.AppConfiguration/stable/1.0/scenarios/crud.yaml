@@ -29,12 +29,25 @@ prepareSteps:
     operationId: ConfigurationStores_Get
     readmeTag: ../../../../../resource-manager/readme.md
     outputVariables:
-      Endpoint:
+      endpoint:
         type: string
         fromResponse: /properties/endpoint
       configStoreId:
         type: string
         fromResponse: /id
+  - step: RoleAssignments_Create
+    operationId: RoleAssignments_Create
+    readmeTag: ../../../../../../authorization/resource-manager/readme.md
+    parameters:
+      scope: $(configStoreId)
+      roleAssignmentName: 611c2e81-2ccb-42d8-9ddc-2d0bfa65c1b4
+      parameters:
+        properties:
+          roleDefinitionId: /subscriptions/$(subscriptionId)/providers/Microsoft.Authorization/roleDefinitions/$(roleDefinitionId)
+          principalId: $(client_id)
+          principalType: ServicePrincipal
+    variables:
+      roleDefinitionId: 5ae67dd6-50cb-40e7-96ff-dc2bfa4b606b
 
 scenarios:
   - scenario: appConfig_data_plane_crud
