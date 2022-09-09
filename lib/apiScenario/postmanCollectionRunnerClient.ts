@@ -414,12 +414,13 @@ pm.test("Stopped TestProxy recording", function() {
 
     const postScripts: string[] = [];
 
-    PostmanHelper.generateScript({
+    PostmanHelper.appendScripts(postScripts, {
       name: "response code should be 2xx",
       types: ["StatusCodeAssertion"],
-    }).forEach((s) => postScripts.push(s));
+    });
 
-    this.lroPoll(this.cleanUpStepsFolder, item, armEndpoint, postScripts);
+    // Do not poll deleteResourceGroup
+    // this.lroPoll(this.cleanUpStepsFolder, item, armEndpoint, postScripts);
 
     if (postScripts.length > 0) {
       PostmanHelper.addEvent(item.events, "test", postScripts);
@@ -609,6 +610,7 @@ if (pollingUrl) {
     armTemplate?: ArmTemplate,
     responseAssertion?: StepResponseAssertion
   ): string[] {
+    const scripts: string[] = [];
     if (this.opts.verbose) {
       types.push("DetailResponseLog");
     }
@@ -621,7 +623,7 @@ if (pollingUrl) {
     // }
     if (types.length > 0) {
       // generate assertion from example
-      return PostmanHelper.generateScript({
+      PostmanHelper.appendScripts(scripts, {
         name: "response status code assertion.",
         types: types,
         variables: overwriteVariables,
@@ -629,7 +631,7 @@ if (pollingUrl) {
         responseAssertion,
       });
     }
-    return [];
+    return scripts;
   }
 
   public async sendArmTemplateDeployment(
@@ -684,7 +686,8 @@ if (pollingUrl) {
       ? ["StatusCodeAssertion", "DetailResponseLog"]
       : ["StatusCodeAssertion"];
 
-    const postScripts = PostmanHelper.generateScript({
+    const postScripts: string[] = [];
+    PostmanHelper.appendScripts(postScripts, {
       name: "response status code assertion.",
       types: scriptTypes,
       variables: undefined,
@@ -775,13 +778,13 @@ if (pollingUrl) {
     const postScripts: string[] = [];
     postScripts.push(
       `
+try {
     if (pm.response.code === 202) {
         postman.setNextRequest("${delayItem.name}");
         if (pm.response.headers.has("Retry-After")) {
             pm.collectionVariables.set("x_retry_after", pm.response.headers.get("Retry-After"));
         }
-    } else if (pm.response.body) {
-        pm.response.to.be.json();
+    } else if (pm.response.size().body > 0) {
         const terminalStatus = ["Succeeded", "Failed", "Canceled"];
         const json = pm.response.json();
         if (json.status !== undefined && terminalStatus.indexOf(json.status) === -1) {
@@ -791,22 +794,25 @@ if (pollingUrl) {
             }
         }
     }
+} catch (err) {
+  console.error(err);
+}
 `
     );
 
     if (checkStatus) {
-      PostmanHelper.generateScript({
+      PostmanHelper.appendScripts(postScripts, {
         name: "armTemplate deployment status check",
         types: ["StatusCodeAssertion", "ARMDeploymentStatusAssertion"],
-      }).forEach((s) => postScripts.push(s));
+      });
     }
 
     if (responseAssertion) {
-      PostmanHelper.generateScript({
+      PostmanHelper.appendScripts(postScripts, {
         name: "LRO response assertion",
         types: ["ResponseDataAssertion"],
         responseAssertion: responseAssertion,
-      }).forEach((s) => postScripts.push(s));
+      });
     }
 
     if (postScripts.length > 0) {

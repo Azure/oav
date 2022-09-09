@@ -120,46 +120,42 @@ function generateResponseDataAssertionScript(responseAssertion: StepResponseAsse
   return ret;
 }
 
-export function generateScript(parameter: TestScriptParameter): string[] {
-  const script: string[] = [];
-  script.push(`pm.test("${parameter.name}", function() {`);
+export function appendScripts(scripts: string[], parameter: TestScriptParameter) {
+  scripts.push(`pm.test("${parameter.name}", function() {`);
   if (parameter.types.includes("DetailResponseLog")) {
-    script.push("console.log(pm.response.text());");
+    scripts.push("console.log(pm.response.text());");
   }
   if (parameter.types.includes("StatusCodeAssertion")) {
-    script.push("pm.response.to.be.success;");
+    scripts.push("pm.response.to.be.success;");
   }
   if (parameter.types.includes("OverwriteVariables") && parameter.variables) {
     for (const [k, v] of parameter.variables) {
       const segments = parseJsonPointer(v);
       if (segments.length === 0) {
-        script.push(`pm.environment.variables.set("${k}", pm.response.json());`);
+        scripts.push(`pm.environment.set("${k}", pm.response.json());`);
       } else {
-        script.push(
-          `pm.environment.variables.set("${k}", _.get(pm.response.json(), ${JSON.stringify(
-            segments
-          )}));`
+        scripts.push(
+          `pm.environment.set("${k}", _.get(pm.response.json(), ${JSON.stringify(segments)}));`
         );
       }
     }
   }
   if (parameter.types.includes("ARMDeploymentStatusAssertion")) {
-    script.push(
+    scripts.push(
       'pm.expect(pm.response.json().status).to.be.oneOf(["Succeeded", "Accepted", "Running", "Ready", "Creating", "Created", "Deleting", "Deleted", "Canceled", "Updating"]);'
     );
   }
   if (parameter.types.includes("ExtractARMTemplateOutput") && parameter.armTemplate?.outputs) {
     for (const key of Object.keys(parameter.armTemplate.outputs)) {
-      script.push(
-        `pm.environment.variables.set("${key}", pm.response.json().properties.outputs.${key}.value);`
+      scripts.push(
+        `pm.environment.set("${key}", pm.response.json().properties.outputs.${key}.value);`
       );
     }
   }
   if (parameter.types.includes("ResponseDataAssertion") && parameter.responseAssertion) {
-    script.push(generateResponseDataAssertionScript(parameter.responseAssertion));
+    scripts.push(generateResponseDataAssertionScript(parameter.responseAssertion));
   }
-  script.push("});");
-  return script;
+  scripts.push("});");
 }
 
 export const reservedCollectionVariables = [
