@@ -240,11 +240,11 @@ if (
                 console.log(err);
             } else {
                 let resJson = res.json();
-                pm.environment.set(
+                pm.variables.set(
                     "${tokenName}_expires_on",
                     resJson.expires_in + Math.floor(Date.now() / 1000)
                 );
-                pm.environment.set("${tokenName}", resJson.access_token);
+                pm.variables.set("${tokenName}", resJson.access_token);
             }
         }
     );

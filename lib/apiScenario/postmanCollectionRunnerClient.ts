@@ -432,6 +432,8 @@ pm.test("Stopped TestProxy recording", function() {
     step: StepRestCall,
     env: VariableEnv
   ): Promise<void> {
+    env.resolve();
+
     const { item, itemGroup } = this.addNewItem(
       step.isPrepareStep ? "Prepare" : step.isCleanUpStep ? "CleanUp" : "Scenario",
       {
@@ -474,7 +476,7 @@ pm.test("Stopped TestProxy recording", function() {
     item.description = step.operation.operationId;
 
     item.request.url = new Url({
-      host: this.opts.testProxy ?? clientRequest.host,
+      host: this.opts.testProxy ?? covertToPostmanVariable(clientRequest.host),
       path: covertToPostmanVariable(clientRequest.path, true),
       variable: Object.entries(clientRequest.pathParameters ?? {}).map(([key, value]) => ({
         key,
@@ -490,8 +492,6 @@ pm.test("Stopped TestProxy recording", function() {
     Object.entries(clientRequest.headers).forEach(([key, value]) => {
       item.request.addHeader({ key, value: convertPostmanFormat(value) });
     });
-
-    env.resolve();
 
     step._resolvedParameters = env.resolveObjectValues(step.parameters);
 

@@ -15,7 +15,6 @@ export interface ApiScenarioRunnerOption {
   env: EnvironmentVariables;
   client: ApiScenarioRunnerClient;
   jsonLoader: JsonLoader;
-  resolveVariables?: boolean;
   skipCleanUp?: boolean;
 }
 
@@ -39,7 +38,6 @@ export interface Scope {
 
 export interface ApiScenarioClientRequest {
   host: string;
-  hostParameters?: { [paramName: string]: string };
   method: HttpMethods;
   path: string;
   pathParameters?: { [paramName: string]: string };
@@ -84,7 +82,6 @@ export class ApiScenarioRunner {
   private jsonLoader: JsonLoader;
   private client: ApiScenarioRunnerClient;
   private env: EnvironmentVariables;
-  private resolveVariables: boolean;
   private skipCleanUp: boolean;
   private scope: Scope;
 
@@ -92,7 +89,6 @@ export class ApiScenarioRunner {
     this.env = opts.env;
     this.client = opts.client;
     this.jsonLoader = opts.jsonLoader;
-    this.resolveVariables = opts.resolveVariables ?? true;
     this.skipCleanUp = opts.skipCleanUp ?? false;
   }
 
@@ -194,10 +190,6 @@ export class ApiScenarioRunner {
 
     this.generateValueFromPrefix(stepEnv);
 
-    if (this.resolveVariables) {
-      stepEnv.resolve();
-    }
-
     try {
       switch (step.type) {
         case "restCall":
@@ -265,26 +257,13 @@ export class ApiScenarioRunner {
           if (xHost.useSchemePrefix === undefined || xHost.useSchemePrefix) {
             req.host = `https://${req.host}`;
           }
-          req.hostParameters = {};
-          for (const p of xHost.parameters) {
-            const param = this.jsonLoader.resolveRefObj(p);
-            req.hostParameters[param.name] = `$(${param.name})`;
-          }
         } else {
           throw new Error("Unknown host");
         }
       }
     }
 
-    if (this.resolveVariables) {
-      req = env.resolveObjectValues(req);
-    }
-
     await this.client.sendRestCallRequest(req, step, env);
-
-    if (this.resolveVariables && !step._resolvedParameters) {
-      step._resolvedParameters = env.resolveObjectValues(step.parameters);
-    }
   }
 
   private async executeArmTemplateStep(step: StepArmTemplate, env: VariableEnv, scope: Scope) {
@@ -300,10 +279,6 @@ export class ApiScenarioRunner {
         resourceGroupName,
       },
     };
-
-    if (this.resolveVariables) {
-      step.armTemplatePayload = env.resolveObjectValues(step.armTemplatePayload);
-    }
 
     await this.client.sendArmTemplateDeployment(step.armTemplatePayload, armDeployment, step, env);
   }

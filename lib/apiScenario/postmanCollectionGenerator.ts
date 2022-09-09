@@ -127,7 +127,6 @@ export class PostmanCollectionGenerator {
       jsonLoader: this.apiScenarioLoader.jsonLoader,
       env: this.opt.env,
       client: client,
-      resolveVariables: false,
       skipCleanUp: this.opt.skipCleanUp,
     });
 
