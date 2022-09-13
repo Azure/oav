@@ -87,7 +87,7 @@ export class OperationSearcher {
         if (!apiVersion) {
           this.logging(
             `Unable to find apiVersion for path : "${pathObject._pathTemplate}".`,
-            LiveValidatorLoggingLevels.error,
+            LiveValidatorLoggingLevels.info,
             LiveValidatorLoggingTypes.specTrace,
             "Oav.OperationSearcher.addSpecToCache",
             undefined,
@@ -115,7 +115,7 @@ export class OperationSearcher {
           this.logging(
             `Unable to find provider for path : "${pathObject._pathTemplate}". ` +
               `Bucketizing into provider: "${provider}"`,
-            LiveValidatorLoggingLevels.warn,
+            LiveValidatorLoggingLevels.info,
             LiveValidatorLoggingTypes.specTrace,
             "Oav.OperationSearcher.addSpecToCache",
             undefined,

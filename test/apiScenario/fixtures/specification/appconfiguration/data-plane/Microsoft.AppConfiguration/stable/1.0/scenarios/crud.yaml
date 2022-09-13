@@ -1,59 +1,20 @@
 # yaml-language-server: $schema=/home/me/workspace/azure-rest-api-specs/documentation/api-scenario/references/v1.2/schema.json
 
-scope: ResourceGroup
+scope: None
 
 variables:
-  configStoreName:
-    type: string
-    prefix: configstor
-
-prepareSteps:
-  - step: Operations_CheckNameAvailability
-    operationId: Operations_CheckNameAvailability
-    readmeTag: ../../../../../resource-manager/readme.md
-    parameters:
-      checkNameAvailabilityParameters:
-        name: $(configStoreName)
-        type: Microsoft.AppConfiguration/configurationStores
-  - step: ConfigurationStores_Create
-    operationId: ConfigurationStores_Create
-    readmeTag: ../../../../../resource-manager/readme.md
-    parameters:
-      configStoreCreationParameters:
-        location: $(location)
-        sku:
-          name: Standard
-        tags:
-          myTag: myTagValue
-  - step: ConfigurationStores_Get
-    operationId: ConfigurationStores_Get
-    readmeTag: ../../../../../resource-manager/readme.md
-    outputVariables:
-      endpoint:
-        type: string
-        fromResponse: /properties/endpoint
-      configStoreId:
-        type: string
-        fromResponse: /id
-  - step: RoleAssignments_Create
-    operationId: RoleAssignments_Create
-    readmeTag: ../../../../../../authorization/resource-manager/readme.md
-    parameters:
-      scope: $(configStoreId)
-      roleAssignmentName: 611c2e81-2ccb-42d8-9ddc-2d0bfa65c1b4
-      parameters:
-        properties:
-          roleDefinitionId: /subscriptions/$(subscriptionId)/providers/Microsoft.Authorization/roleDefinitions/$(roleDefinitionId)
-          principalId: $(client_id)
-          principalType: ServicePrincipal
-    variables:
-      roleDefinitionId: 5ae67dd6-50cb-40e7-96ff-dc2bfa4b606b
+  configStoreName: configstorcng2je
+  endpoint: https://$(configStoreName).azconfig.io
+authentication:
+  type: AzureAD
+  audience: https://azconfig.io
 
 scenarios:
+  - scenario: simplyListKeys
+    steps:
+      - operationId: CheckKeys
+      - operationId: GetKeys
   - scenario: appConfig_data_plane_crud
-    authentication:
-      type: AzureAD
-      audience: https://azconfig.io
     steps:
       - operationId: PutKeyValue
         parameters:
