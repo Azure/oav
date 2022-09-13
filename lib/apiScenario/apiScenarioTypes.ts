@@ -109,8 +109,13 @@ type StepBase = VariableScope & {
   isCleanUpStep?: boolean;
 };
 
-export type Step = StepRestCall | StepArmTemplate;
-export type RawStep = RawStepOperation | RawStepExample | RawStepArmTemplate | RawStepArmScript;
+export type Step = StepRestCall | StepArmTemplate | StepRoleAssignment;
+export type RawStep =
+  | RawStepOperation
+  | RawStepExample
+  | RawStepArmTemplate
+  | RawStepArmScript
+  | RawStepRoleAssignment;
 
 //#endregion
 
@@ -162,7 +167,7 @@ export type StepResponseAssertion = {
 
 //#endregion
 
-//#region Step Arm Deployment Script
+//#region ARM Steps
 export type RawStepArmScript = RawStepBase & {
   armDeploymentScript: string;
   arguments?: string;
@@ -171,9 +176,6 @@ export type RawStepArmScript = RawStepBase & {
     value: string;
   }>;
 };
-//#endregion
-
-//#region Step Arm Template
 
 export type ArmTemplateVariableType =
   | "string"
@@ -247,6 +249,26 @@ export interface ArmTemplate {
     };
   };
   resources?: ArmResource[];
+}
+
+export type RawStepRoleAssignment = RawStepBase & {
+  roleAssignment: RoleAssignment;
+};
+
+export type StepRoleAssignment = TransformRaw<
+  RawStepRoleAssignment,
+  StepBase & {
+    type: "armRoleAssignment";
+  },
+  "description"
+>;
+
+export interface RoleAssignment {
+  scope: string;
+  roleDefinitionId?: string;
+  roleName?: string;
+  principalId: string;
+  principalType?: "User" | "Group" | "ServicePrincipal" | "ForeignGroup" | "Device";
 }
 
 //#endregion
