@@ -1,6 +1,6 @@
 import * as path from "path";
 import * as fs from "fs";
-import newman, { NewmanRunSummary } from "newman";
+import newman, { NewmanRunOptions, NewmanRunSummary } from "newman";
 import { inject, injectable } from "inversify";
 import { Collection, VariableScope } from "postman-collection";
 import { inversifyGetInstance, TYPES } from "../inversifyUtils";
@@ -132,27 +132,44 @@ export class PostmanCollectionGenerator {
 
     await runner.execute(scenarioDef);
 
-    const [collection, runtimeEnv] = client.outputCollection();
+    let [collection, environment] = client.outputCollection();
 
     if (this.opt.generateCollection) {
-      await this.writeCollectionToJson(scenarioDef.name, collection, runtimeEnv);
+      await this.writeCollectionToJson(scenarioDef.name, collection, environment);
     }
 
     if (this.opt.runCollection) {
       if (collection.items.find((item) => item.name === PREPARE_FOLDER, collection)) {
-        await this.runCollection(PREPARE_FOLDER, collection, runtimeEnv);
+        const summary = await this.runCollection({
+          collection,
+          environment,
+          folder: PREPARE_FOLDER,
+          reporters: "cli",
+        });
+        environment = summary.environment;
       }
       for (const scenario of scenarioDef.scenarios) {
         const reportExportPath = path.resolve(
           this.opt.outputFolder,
           `${defaultNewmanReport(this.opt.name, this.opt.runId!, scenario.scenario)}`
         );
-        const summary = await this.runCollection(scenario.scenario, collection, runtimeEnv);
+        const summary = await this.runCollection({
+          collection,
+          environment,
+          folder: scenario.scenario,
+          reporters: "cli",
+        });
         await this.postRun(scenario, reportExportPath, summary.environment, summary);
+        environment = summary.environment;
       }
       if (collection.items.find((item) => item.name === CLEANUP_FOLDER, collection)) {
         if (!this.opt.skipCleanUp) {
-          await this.runCollection(CLEANUP_FOLDER, collection, runtimeEnv);
+          await this.runCollection({
+            collection,
+            environment,
+            folder: CLEANUP_FOLDER,
+            reporters: "cli",
+          });
         }
       }
     }
@@ -357,33 +374,21 @@ export class PostmanCollectionGenerator {
     console.log(`Postman collection: ${collectionPath}\nPostman env: ${envPath}`);
   }
 
-  private async runCollection(
-    scenarioName: string,
-    collection: Collection,
-    runtimeEnv: VariableScope
-  ) {
+  private async runCollection(runOptions: NewmanRunOptions) {
     const newmanRun = async () =>
       new Promise<NewmanRunSummary>((resolve, reject) => {
-        newman.run(
-          {
-            collection: collection,
-            environment: runtimeEnv,
-            reporters: ["cli"],
-            folder: scenarioName,
-          },
-          function (err, summary) {
-            if (summary.run.failures.length > 0) {
-              process.exitCode = 1;
-            }
-            if (err) {
-              console.error(`collection run failed. ${err}`);
-              reject(err);
-            } else {
-              console.log("collection run complete!");
-              resolve(summary);
-            }
+        newman.run(runOptions, function (err, summary) {
+          if (summary.run.failures.length > 0) {
+            process.exitCode = 1;
           }
-        );
+          if (err) {
+            console.error(`collection run failed. ${err}`);
+            reject(err);
+          } else {
+            console.log("collection run complete!");
+            resolve(summary);
+          }
+        });
       });
     return await newmanRun();
   }
