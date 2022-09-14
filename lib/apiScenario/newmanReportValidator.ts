@@ -86,8 +86,6 @@ export interface ResponseDiffItem {
   detail: string;
 }
 
-export type ValidationLevel = "validate-request" | "validate-request-response";
-
 export interface NewmanReportValidatorOption extends ApiScenarioLoaderOption {
   apiScenarioFilePath: string;
   reportOutputFilePath: string;

@@ -293,7 +293,7 @@ pm.test("Stopped TestProxy recording", function() {
       case "Prepare":
         if (this.prepareStepsFolder === undefined) {
           this.prepareStepsFolder = PostmanHelper.addItemGroup(this.collection, {
-            name: "__Prepare__",
+            name: PostmanHelper.PREPARE_FOLDER,
           });
         }
         itemGroup = this.prepareStepsFolder;
@@ -301,7 +301,7 @@ pm.test("Stopped TestProxy recording", function() {
       case "CleanUp":
         if (this.cleanUpStepsFolder === undefined) {
           this.cleanUpStepsFolder = PostmanHelper.addItemGroup(this.collection, {
-            name: "__CleanUp__",
+            name: PostmanHelper.CLEANUP_FOLDER,
           });
         }
         itemGroup = this.cleanUpStepsFolder;

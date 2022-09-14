@@ -15,7 +15,6 @@ export interface ApiScenarioRunnerOption {
   env: EnvironmentVariables;
   client: ApiScenarioRunnerClient;
   jsonLoader: JsonLoader;
-  skipCleanUp?: boolean;
 }
 
 export interface ArmDeployment {
@@ -82,14 +81,12 @@ export class ApiScenarioRunner {
   private jsonLoader: JsonLoader;
   private client: ApiScenarioRunnerClient;
   private env: EnvironmentVariables;
-  private skipCleanUp: boolean;
   private scope: Scope;
 
   public constructor(opts: ApiScenarioRunnerOption) {
     this.env = opts.env;
     this.client = opts.client;
     this.jsonLoader = opts.jsonLoader;
-    this.skipCleanUp = opts.skipCleanUp ?? false;
   }
 
   private async prepareScope(scenarioDef: ScenarioDefinition) {
@@ -180,9 +177,7 @@ export class ApiScenarioRunner {
       }
     }
 
-    if (!this.skipCleanUp) {
-      await this.cleanUpScope();
-    }
+    await this.cleanUpScope();
   }
 
   private async executeStep(step: Step, env: VariableEnv, scope: Scope) {

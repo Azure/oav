@@ -12,6 +12,9 @@ import {
 import { getRandomString } from "../util/utils";
 import { ArmTemplate, StepResponseAssertion } from "./apiScenarioTypes";
 
+export const PREPARE_FOLDER = "__Prepare__";
+export const CLEANUP_FOLDER = "__CleanUp__";
+
 function parseJsonPointer(jsonPointer: string): string[] {
   if (jsonPointer === "") {
     return [];
