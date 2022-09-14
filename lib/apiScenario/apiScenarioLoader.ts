@@ -40,6 +40,7 @@ import {
   RawStepArmTemplate,
   RawStepExample,
   RawStepOperation,
+  RawStepRoleAssignment,
   RawVariableScope,
   ReadmeTag,
   Scenario,
@@ -47,6 +48,7 @@ import {
   Step,
   StepArmTemplate,
   StepRestCall,
+  StepRoleAssignment,
   Variable,
   VariableScope,
 } from "./apiScenarioTypes";
@@ -351,6 +353,8 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
         step = await this.loadStepArmTemplate(rawStep, ctx);
       } else if ("armDeploymentScript" in rawStep) {
         step = await this.loadStepArmDeploymentScript(rawStep, ctx);
+      } else if ("roleAssignment" in rawStep) {
+        step = await this.loadStepRoleAssignment(rawStep, ctx);
       } else {
         throw new Error("Invalid step");
       }
@@ -680,6 +684,21 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       this.getVariableFunction(step, ctx)
     );
 
+    return step;
+  }
+
+  private async loadStepRoleAssignment(
+    rawStep: RawStepRoleAssignment,
+    ctx: ApiScenarioContext
+  ): Promise<StepRoleAssignment> {
+    const step: StepRoleAssignment = {
+      type: "armRoleAssignment",
+      step: rawStep.step ?? `RoleAssignment_${ctx.stepIndex}`,
+      outputVariables: rawStep.outputVariables ?? {},
+      roleAssignment: rawStep.roleAssignment,
+      ...convertVariables(rawStep.variables),
+    };
+    // TODO
     return step;
   }
 
