@@ -3,11 +3,23 @@
 scope: None
 
 variables:
-  configStoreName: configstorcng2je
+  configStoreName: configstor7q4oy9
   endpoint: https://$(configStoreName).azconfig.io
 authentication:
   type: AzureAD
   audience: https://azconfig.io
+
+prepareSteps:
+  - operationId: CheckKeys
+  - operationId: PutKeyValue
+    parameters:
+      key: hello
+      entity:
+        value: world
+    outputVariables:
+      lastModified:
+        type: string
+        fromResponse: /last_modified
 
 scenarios:
   - scenario: simplyListKeys
