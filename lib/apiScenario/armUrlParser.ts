@@ -2,6 +2,7 @@ import { HttpMethods } from "@azure/core-http";
 import { injectable } from "inversify";
 import { JsonLoader } from "../swagger/jsonLoader";
 import { Operation, Parameter } from "../swagger/swaggerTypes";
+import { logger } from "./logger";
 
 export type ArmScopeType =
   | "Subscription"
@@ -152,7 +153,7 @@ export class ArmUrlParser {
         // throw new Error(
         //   `Invalid ARM action part, should contains odd path segments: ${resourcePart}`
         // );
-        console.log(`Invalid ARM action part, should contains odd path segments: ${path}`);
+        logger.warn(`Invalid ARM action part, should contains odd path segments: ${path}`);
       }
       actionName = resourceTypeArr.pop();
       resourceUri = path.slice(0, path.lastIndexOf("/"));

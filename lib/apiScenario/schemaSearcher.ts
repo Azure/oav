@@ -5,6 +5,7 @@
 
 import { Schema } from "../swagger/swaggerTypes";
 import { JsonLoader, isRefLike } from "../swagger/jsonLoader";
+import { logger } from "./logger";
 import { getObjValueFromPointer } from "./diffUtils";
 
 export class SchemaSearcher {
@@ -60,7 +61,7 @@ export class SchemaSearcher {
       }
       return this.getProperties(curSchema, jsonLoader);
     } catch (err) {
-      console.log(err);
+      logger.error(err);
     }
   }
 

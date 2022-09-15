@@ -6,13 +6,15 @@ import * as path from "path";
 import { pathDirName, pathJoin, pathResolve } from "@azure-tools/openapi-tools-common";
 import { findReadMe } from "@azure/openapi-markdown";
 import * as yargs from "yargs";
+import winston from "winston";
 import {
   PostmanCollectionGenerator,
   PostmanCollectionGeneratorOption,
 } from "../apiScenario/postmanCollectionGenerator";
 import { cliSuppressExceptions } from "../cliSuppressExceptions";
 import { inversifyGetInstance } from "../inversifyUtils";
-import { getApiScenarioFiles, getDefaultTag, getInputFiles, printWarning } from "../util/utils";
+import { logger } from "../apiScenario/logger";
+import { getApiScenarioFiles, getDefaultTag, getInputFiles } from "../util/utils";
 import { EnvironmentVariables } from "../apiScenario/variableEnv";
 import { DEFAULT_ARM_ENDPOINT } from "../apiScenario/constants";
 
@@ -116,6 +118,13 @@ export const builder: yargs.CommandBuilder = {
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
   await cliSuppressExceptions(async () => {
+    if (argv.logLevel) {
+      const transport = logger.transports.find((t) => t instanceof winston.transports.Console);
+      if (transport !== undefined) {
+        transport.level = argv.logLevel;
+      }
+    }
+
     const scenarioFiles = [];
     let readmePath = argv.readme ? pathResolve(argv.readme) : undefined;
     if (argv.apiScenario) {
@@ -127,7 +136,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     }
 
     const fileRoot = readmePath ? pathDirName(readmePath) : process.cwd();
-    console.log(`fileRoot: ${fileRoot}`);
+    logger.verbose(`fileRoot: ${fileRoot}`);
 
     const swaggerFilePaths: string[] = [];
     for (const spec of argv.specs ?? []) {
@@ -158,10 +167,10 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       }
     }
 
-    console.log("input-file:");
-    console.log(swaggerFilePaths);
-    console.log("scenario-file:");
-    console.log(scenarioFiles);
+    logger.info("input-file:");
+    logger.info(swaggerFilePaths);
+    logger.info("scenario-file:");
+    logger.info(scenarioFiles);
 
     for (const scenarioFilePath of scenarioFiles) {
       let env: EnvironmentVariables = {};
@@ -172,7 +181,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
         const envFromVariable = JSON.parse(process.env[apiScenarioEnvKey] as string);
         for (const key of Object.keys(envFromVariable)) {
           if (env[key] !== undefined && envFromVariable[key] !== env[key]) {
-            printWarning(
+            logger.warn(
               `Notice: the variable '${key}' in '${argv.e}' is overwritten by the variable in the environment '${apiScenarioEnvKey}'.`
             );
           }
@@ -213,7 +222,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
         savePayload: argv.savePayload,
         generateExample: argv.generateExample,
         skipCleanUp: argv.skipCleanUp,
-        verbose: argv.verbose,
+        verbose: argv.logLevel === "verbose",
         swaggerFilePaths: swaggerFilePaths,
         devMode: argv.devMode,
       };

@@ -3,8 +3,9 @@ import { URL } from "url";
 import { HttpMethods } from "@azure/core-http";
 import { injectable } from "inversify";
 import { Loader } from "../../swagger/loader";
-import { RequestTracking, SingleRequestTracking } from "./testRecordingApiScenarioGenerator";
 import { DEFAULT_ARM_ENDPOINT } from "../constants";
+import { logger } from ".././logger";
+import { RequestTracking, SingleRequestTracking } from "./testRecordingApiScenarioGenerator";
 
 interface RecordingFile {
   Names: { [testName: string]: string[] };
@@ -79,7 +80,7 @@ export const parseRecordingBodyJson = (content: string | undefined | null) => {
   try {
     return JSON.parse(content);
   } catch (e) {
-    console.log(`Failed to parse json body. Use string instead: ${JSON.stringify(content)}`);
+    logger.error(`Failed to parse json body. Use string instead: ${JSON.stringify(content)}`);
     return content;
   }
 };

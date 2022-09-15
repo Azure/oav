@@ -30,6 +30,7 @@ import { applyGlobalTransformers, applySpecTransformers } from "../transform/tra
 import { traverseSwagger } from "../transform/traverseSwagger";
 import { xmsPathsTransformer } from "../transform/xmsPathsTransformer";
 import { getInputFiles } from "../util/utils";
+import { logger } from "./logger";
 import {
   ArmDeploymentScriptResource,
   ArmTemplate,
@@ -139,8 +140,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
 
     if (readmeTags) {
       for (const e of readmeTags) {
-        // console.log("Additional readme tag:");
-        // console.log(readmeTags);
+        logger.verbose(`Additional readme tag: ${e.filePath}`);
 
         const inputFiles = await getInputFiles(e.filePath, e.tag);
         if (inputFiles) {
@@ -154,8 +154,8 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
             additionalSwaggerFiles.push(pathJoin(pathDirName(e.filePath), f));
           });
 
-          // console.log("Additional input-file:");
-          // console.log(additionalSwaggerFiles);
+          logger.verbose("Additional input-file:");
+          logger.verbose(additionalSwaggerFiles);
 
           await this.loadSwaggers(
             additionalSwaggerFiles,

@@ -13,6 +13,7 @@ import { setDefaultOpts } from "../swagger/loader";
 import { SwaggerExample } from "../swagger/swaggerTypes";
 import { SeverityString } from "../util/severity";
 import { getApiVersionFromFilePath, getProviderFromFilePath } from "../util/utils";
+import { logger } from "./logger";
 import { ApiScenarioLoaderOption } from "./apiScenarioLoader";
 import { NewmanExecution, NewmanReport, Scenario, Step, StepRestCall } from "./apiScenarioTypes";
 import { DataMasker } from "./dataMasker";
@@ -472,7 +473,7 @@ export class NewmanReportValidator {
 
   private async outputReport(): Promise<void> {
     if (this.opts.reportOutputFilePath !== undefined) {
-      console.log(`Write generated report file: ${this.opts.reportOutputFilePath}`);
+      logger.info(`Write generated report file: ${this.opts.reportOutputFilePath}`);
       await this.fileLoader.writeFile(
         this.opts.reportOutputFilePath,
         JSON.stringify(this.testResult, null, 2)

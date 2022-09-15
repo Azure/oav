@@ -6,7 +6,7 @@ import { Collection, VariableScope } from "postman-collection";
 import { inversifyGetInstance, TYPES } from "../inversifyUtils";
 import { ReportGenerator as HtmlReportGenerator } from "../report/generateReport";
 import { FileLoader } from "../swagger/fileLoader";
-import { getApiVersionFromFilePath, getRandomString, printWarning } from "../util/utils";
+import { getApiVersionFromFilePath, getRandomString } from "../util/utils";
 import {
   OperationCoverageInfo,
   RuntimeException,
@@ -15,6 +15,7 @@ import {
   unCoveredOperationsFormat,
 } from "../swaggerValidator/trafficValidator";
 import { LiveValidationIssue } from "../liveValidation/liveValidator";
+import { logger } from "./logger";
 import { ApiScenarioLoader, ApiScenarioLoaderOption } from "./apiScenarioLoader";
 import { ApiScenarioRunner } from "./apiScenarioRunner";
 import { generateMarkdownReportHeader } from "./markdownReport";
@@ -175,16 +176,14 @@ export class PostmanCollectionGenerator {
     }
 
     const operationIdCoverageResult = this.swaggerAnalyzer.calculateOperationCoverage(scenarioDef);
-    console.log(
+    logger.info(
       `Operation coverage ${(operationIdCoverageResult.coverage * 100).toFixed(2) + "%"} (${
         operationIdCoverageResult.coveredOperationNumber
       }/${operationIdCoverageResult.totalOperationNumber})`
     );
-    if (this.opt.verbose) {
-      if (operationIdCoverageResult.uncoveredOperationIds.length > 0) {
-        console.log("Uncovered operationIds: ");
-        console.log(operationIdCoverageResult.uncoveredOperationIds);
-      }
+    if (operationIdCoverageResult.uncoveredOperationIds.length > 0) {
+      logger.verbose("Uncovered operationIds: ");
+      logger.verbose(operationIdCoverageResult.uncoveredOperationIds);
     }
 
     if (this.opt.html && this.opt.runCollection) {
@@ -370,8 +369,9 @@ export class PostmanCollectionGenerator {
     }
     this.dataMasker.addMaskedValues(values);
 
-    console.log(`\ngenerate collection successfully!`);
-    console.log(`Postman collection: ${collectionPath}\nPostman env: ${envPath}`);
+    logger.info(`generate collection successfully!`);
+    logger.info(`Postman collection: ${collectionPath}`);
+    logger.info(`Postman env: ${envPath}`);
   }
 
   private async runCollection(runOptions: NewmanRunOptions) {
@@ -382,10 +382,10 @@ export class PostmanCollectionGenerator {
             process.exitCode = 1;
           }
           if (err) {
-            console.error(`collection run failed. ${err}`);
+            logger.error(`collection run failed. ${err}`);
             reject(err);
           } else {
-            console.log("collection run complete!");
+            logger.info("collection run complete!");
             resolve(summary);
           }
         });
@@ -446,7 +446,7 @@ export class PostmanCollectionGenerator {
     await reportValidator.generateReport(newmanReport);
 
     if (this.opt.skipCleanUp) {
-      printWarning(
+      logger.warn(
         `Notice:the resource group '${runtimeEnv.get("resourceGroupName")}' was not cleaned up.`
       );
     }
