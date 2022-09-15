@@ -148,6 +148,9 @@ export class JsonLoader implements Loader<Json> {
             },
           },
         },
+        dereference: {
+          circular: "ignore",
+        },
       };
       try {
         const parser = new $RefParser();
@@ -156,7 +159,9 @@ export class JsonLoader implements Loader<Json> {
           fileContent,
           resolveOption
         );
-        return spec;
+        (spec as any)[$id] = cache.mockName;
+        const reslovedSpec = await this.resolveRef(spec, ["$"], spec, cache.filePath, false);
+        return reslovedSpec;
       } catch (err) {
         console.error(err);
         return {};
