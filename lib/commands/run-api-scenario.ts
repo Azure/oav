@@ -109,11 +109,6 @@ export const builder: yargs.CommandBuilder = {
     boolean: true,
     default: false,
   },
-  verbose: {
-    describe: "Log verbose",
-    default: false,
-    boolean: true,
-  },
 };
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
@@ -222,7 +217,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
         savePayload: argv.savePayload,
         generateExample: argv.generateExample,
         skipCleanUp: argv.skipCleanUp,
-        verbose: argv.logLevel === "verbose",
+        verbose: ["verbose", "debug", "silly"].indexOf(argv.logLevel) >= 0,
         swaggerFilePaths: swaggerFilePaths,
         devMode: argv.devMode,
       };

@@ -98,7 +98,6 @@ export interface NewmanReportValidatorOption extends ApiScenarioLoaderOption {
   skipValidation?: boolean;
   savePayload?: boolean;
   generateExample?: boolean;
-  verbose?: boolean;
 }
 
 @injectable()
@@ -119,7 +118,6 @@ export class NewmanReportValidator {
       skipValidation: false,
       savePayload: false,
       generateExample: false,
-      verbose: false,
     } as NewmanReportValidatorOption);
   }
 

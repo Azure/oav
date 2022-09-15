@@ -140,37 +140,48 @@ export class PostmanCollectionGenerator {
     }
 
     if (this.opt.runCollection) {
-      if (collection.items.find((item) => item.name === PREPARE_FOLDER, collection)) {
-        const summary = await this.runCollection({
-          collection,
-          environment,
-          folder: PREPARE_FOLDER,
-          reporters: "cli",
-        });
-        environment = summary.environment;
-      }
-      for (const scenario of scenarioDef.scenarios) {
-        const reportExportPath = path.resolve(
-          this.opt.outputFolder,
-          `${defaultNewmanReport(this.opt.name, this.opt.runId!, scenario.scenario)}`
-        );
-        const summary = await this.runCollection({
-          collection,
-          environment,
-          folder: scenario.scenario,
-          reporters: "cli",
-        });
-        await this.postRun(scenario, reportExportPath, summary.environment, summary);
-        environment = summary.environment;
-      }
-      if (collection.items.find((item) => item.name === CLEANUP_FOLDER, collection)) {
-        if (!this.opt.skipCleanUp) {
-          await this.runCollection({
+      try {
+        if (collection.items.find((item) => item.name === PREPARE_FOLDER, collection)) {
+          const summary = await this.doRun({
             collection,
             environment,
-            folder: CLEANUP_FOLDER,
+            folder: PREPARE_FOLDER,
             reporters: "cli",
           });
+          environment = summary.environment;
+        }
+        for (const scenario of scenarioDef.scenarios) {
+          const reportExportPath = path.resolve(
+            this.opt.outputFolder,
+            `${defaultNewmanReport(this.opt.name, this.opt.runId!, scenario.scenario)}`
+          );
+          const summary = await this.doRun({
+            collection,
+            environment,
+            folder: scenario.scenario,
+            reporters: "cli",
+          });
+          await this.postRun(scenario, reportExportPath, summary.environment, summary);
+          environment = summary.environment;
+        }
+      } catch (err) {
+        logger.error(`Error in running collection: ${err}`);
+      } finally {
+        if (collection.items.find((item) => item.name === CLEANUP_FOLDER, collection)) {
+          if (!this.opt.skipCleanUp) {
+            await this.doRun({
+              collection,
+              environment,
+              folder: CLEANUP_FOLDER,
+              reporters: "cli",
+            });
+          } else if (scenarioDef.scope === "ResourceGroup") {
+            logger.warn(
+              `Notice: the resource group '${environment.get(
+                "resourceGroupName"
+              )}' was not cleaned up.`
+            );
+          }
         }
       }
     }
@@ -374,7 +385,7 @@ export class PostmanCollectionGenerator {
     logger.info(`Postman env: ${envPath}`);
   }
 
-  private async runCollection(runOptions: NewmanRunOptions) {
+  private async doRun(runOptions: NewmanRunOptions) {
     const newmanRun = async () =>
       new Promise<NewmanRunSummary>((resolve, reject) => {
         newman.run(runOptions, function (err, summary) {
@@ -433,7 +444,6 @@ export class PostmanCollectionGenerator {
       skipValidation: this.opt.skipValidation,
       generateExample: this.opt.generateExample,
       savePayload: this.opt.savePayload,
-      verbose: this.opt.verbose,
     };
 
     const reportValidator = inversifyGetInstance(
@@ -444,11 +454,5 @@ export class PostmanCollectionGenerator {
     await reportValidator.initialize(scenario);
 
     await reportValidator.generateReport(newmanReport);
-
-    if (this.opt.skipCleanUp) {
-      logger.warn(
-        `Notice:the resource group '${runtimeEnv.get("resourceGroupName")}' was not cleaned up.`
-      );
-    }
   }
 }
