@@ -220,6 +220,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
         verbose: ["verbose", "debug", "silly"].indexOf(argv.logLevel) >= 0,
         swaggerFilePaths: swaggerFilePaths,
         devMode: argv.devMode,
+        skipRoundtripValidation: argv.skipRoundtripValidation,
       };
       const generator = inversifyGetInstance(PostmanCollectionGenerator, opt);
       await generator.run();
