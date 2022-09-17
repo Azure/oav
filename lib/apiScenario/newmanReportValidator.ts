@@ -3,6 +3,7 @@ import { findReadMe } from "@azure/openapi-markdown";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../inversifyUtils";
 import {
+  LiveValidationResult,
   LiveValidator,
   RequestResponseLiveValidationResult,
   RequestResponsePair,
@@ -70,6 +71,7 @@ export interface StepResult {
   stepValidationResult?: any;
   correlationId?: string;
   stepName: string;
+  roundtripValidationResult?: LiveValidationResult;
 }
 
 export interface RuntimeError {
@@ -98,6 +100,7 @@ export interface NewmanReportValidatorOption extends ApiScenarioLoaderOption {
   skipValidation?: boolean;
   savePayload?: boolean;
   generateExample?: boolean;
+  skipRoundTripValidation?: boolean;
 }
 
 @injectable()
@@ -118,6 +121,7 @@ export class NewmanReportValidator {
       skipValidation: false,
       savePayload: false,
       generateExample: false,
+      skipRoundTripValidation: false,
     } as NewmanReportValidatorOption);
   }
 
@@ -157,6 +161,7 @@ export class NewmanReportValidator {
     this.liveValidator = new LiveValidator({
       fileRoot: "/",
       swaggerPaths: [...this.opts.swaggerFilePaths!],
+      enableRoundTripValidator: !this.opts.skipRoundTripValidation,
     });
     if (!this.opts.skipValidation) {
       await this.liveValidator.initialize();
@@ -211,6 +216,24 @@ export class NewmanReportValidator {
         });
 
         const payload = this.convertToLiveValidationPayload(it);
+        let roundtripError = undefined;
+
+        console.log(`(1)enable roundtrip validation ${this.opts.skipRoundTripValidation}?`);
+        if (it.annotation.type === "LRO") {
+          const lroFinal = this.getLROFinalResponse(newmanReport.executions, it);
+          if (lroFinal !== undefined) {
+            const lroPayload = this.convertToLROLiveValidationPayload(it, lroFinal);
+            roundtripError = !this.opts.skipRoundTripValidation
+              ? await this.liveValidator.validateRoundTrip(lroPayload)
+              : undefined;
+            console.log(`(2)RD for LRO Result: ${JSON.stringify(roundtripError)}`);
+          }
+        } else if (it.annotation.type === "simple") {
+          roundtripError = !this.opts.skipRoundTripValidation
+            ? await this.liveValidator.validateRoundTrip(payload)
+            : undefined;
+          console.log(`(2)RD for simple Result: ${JSON.stringify(roundtripError)}`);
+        }
 
         let responseDiffResult: ResponseDiffItem[] | undefined = undefined;
         const statusCode = `${it.response.statusCode}`;
@@ -281,6 +304,7 @@ export class NewmanReportValidator {
           liveValidationResult: !this.opts.skipValidation
             ? await this.liveValidator.validateLiveRequestResponse(payload)
             : undefined,
+          roundtripValidationResult: roundtripError,
         });
       }
     }
@@ -289,6 +313,29 @@ export class NewmanReportValidator {
   private convertToLiveValidationPayload(execution: NewmanExecution): RequestResponsePair {
     const request = execution.request;
     const response = execution.response;
+    const liveRequest: LiveRequest = {
+      url: request.url.toString(),
+      method: request.method.toLowerCase(),
+      headers: request.headers,
+      body: this.parseBody(request.body),
+    };
+    const liveResponse: LiveResponse = {
+      statusCode: response.statusCode.toString(),
+      headers: response.headers,
+      body: this.parseBody(response.body),
+    };
+    return {
+      liveRequest,
+      liveResponse,
+    };
+  }
+
+  private convertToLROLiveValidationPayload(
+    req: NewmanExecution,
+    resp: NewmanExecution
+  ): RequestResponsePair {
+    const request = req.request;
+    const response = resp.response;
     const liveRequest: LiveRequest = {
       url: request.url.toString(),
       method: request.method.toLowerCase(),
@@ -362,6 +409,21 @@ export class NewmanReportValidator {
       }
     }
     return res;
+  }
+
+  private getLROFinalResponse(executions: NewmanExecution[], lroIt: NewmanExecution) {
+    for (const it of executions) {
+      if (it.annotation === undefined) {
+        continue;
+      }
+      if (
+        it.annotation.type === "final-get" &&
+        it.annotation.step.toString() === lroIt.annotation.step.toString()
+      ) {
+        return it;
+      }
+    }
+    return undefined;
   }
 
   private async responseDiff(
