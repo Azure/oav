@@ -163,7 +163,7 @@ export class NewmanReportValidator {
       swaggerPaths: [...this.opts.swaggerFilePaths!],
       enableRoundTripValidator: !this.opts.skipRoundTripValidation,
     });
-    if (!this.opts.skipValidation) {
+    if (!this.opts.skipValidation || !this.opts.skipRoundTripValidation) {
       await this.liveValidator.initialize();
     }
   }
@@ -216,23 +216,20 @@ export class NewmanReportValidator {
         });
 
         const payload = this.convertToLiveValidationPayload(it);
-        let roundtripError = undefined;
 
-        console.log(`(1)enable roundtrip validation ${this.opts.skipRoundTripValidation}?`);
-        if (it.annotation.type === "LRO") {
-          const lroFinal = this.getLROFinalResponse(newmanReport.executions, it);
-          if (lroFinal !== undefined) {
-            const lroPayload = this.convertToLROLiveValidationPayload(it, lroFinal);
-            roundtripError = !this.opts.skipRoundTripValidation
-              ? await this.liveValidator.validateRoundTrip(lroPayload)
-              : undefined;
-            console.log(`(2)RD for LRO Result: ${JSON.stringify(roundtripError)}`);
+        // Start roundtrip validation
+        let roundtripError = undefined;
+        if (!this.opts.skipRoundTripValidation) {
+          if (it.annotation.type === "LRO") {
+            // For LRO, get the final response to compose payload
+            const lroFinal = this.getLROFinalResponse(newmanReport.executions, it);
+            if (lroFinal !== undefined) {
+              const lroPayload = this.convertToLROLiveValidationPayload(it, lroFinal);
+              roundtripError = await this.liveValidator.validateRoundTrip(lroPayload);
+            }
+          } else if (it.annotation.type === "simple") {
+            roundtripError = await this.liveValidator.validateRoundTrip(payload);
           }
-        } else if (it.annotation.type === "simple") {
-          roundtripError = !this.opts.skipRoundTripValidation
-            ? await this.liveValidator.validateRoundTrip(payload)
-            : undefined;
-          console.log(`(2)RD for simple Result: ${JSON.stringify(roundtripError)}`);
         }
 
         let responseDiffResult: ResponseDiffItem[] | undefined = undefined;

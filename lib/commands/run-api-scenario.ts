@@ -64,6 +64,11 @@ export const builder: yargs.CommandBuilder = {
     boolean: true,
     default: false,
   },
+  skipRoundtripValidation: {
+    describe: "Skip roundtrip validations. Default: false",
+    boolean: true,
+    default: false,
+  },
   armEndpoint: {
     describe: "ARM endpoint",
     string: true,
