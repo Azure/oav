@@ -239,7 +239,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
 pm.test("Started TestProxy recording", function() {
     pm.response.to.be.success;
     pm.response.to.have.header("x-recording-id");
-    pm.collectionVariables.set("x_recording_id", pm.response.headers.get("x-recording-id"));
+    pm.variables.set("x_recording_id", pm.response.headers.get("x-recording-id"));
 });`
     );
   }
@@ -592,12 +592,12 @@ pm.test("Stopped TestProxy recording", function() {
       `
 const pollingUrl = pm.response.headers.get("Location") || pm.response.headers.get("Azure-AsyncOperation");
 if (pollingUrl) {
-    pm.collectionVariables.set("x_polling_url", ${
+    pm.variables.set("x_polling_url", ${
       this.opts.testProxy
         ? `pollingUrl.replace("${baseUri}","${this.opts.testProxy}")`
         : "pollingUrl"
     });
-    pm.collectionVariables.set("x_retry_after", "3");
+    pm.variables.set("x_retry_after", "3");
 }`
     );
 
@@ -782,7 +782,7 @@ try {
     if (pm.response.code === 202) {
         postman.setNextRequest("${delayItem.name}");
         if (pm.response.headers.has("Retry-After")) {
-            pm.collectionVariables.set("x_retry_after", pm.response.headers.get("Retry-After"));
+            pm.variables.set("x_retry_after", pm.response.headers.get("Retry-After"));
         }
     } else if (pm.response.size().body > 0) {
         const terminalStatus = ["Succeeded", "Failed", "Canceled"];
@@ -790,7 +790,7 @@ try {
         if (json.status !== undefined && terminalStatus.indexOf(json.status) === -1) {
             postman.setNextRequest("${delayItem.name}")
             if (pm.response.headers.has("Retry-After")) {
-                pm.collectionVariables.set("x_retry_after", pm.response.headers.get("Retry-After"));
+                pm.variables.set("x_retry_after", pm.response.headers.get("Retry-After"));
             }
         }
     }

@@ -107,7 +107,7 @@ if (
                   "pm.test(\\"Started TestProxy recording\\", function() {",
                   "    pm.response.to.be.success;",
                   "    pm.response.to.have.header(\\"x-recording-id\\");",
-                  "    pm.collectionVariables.set(\\"x_recording_id\\", pm.response.headers.get(\\"x-recording-id\\"));",
+                  "    pm.variables.set(\\"x_recording_id\\", pm.response.headers.get(\\"x-recording-id\\"));",
                   "});",
                 ],
                 "id": "3747vc",
@@ -293,8 +293,8 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
                   "
 const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\");
 if (pollingUrl) {
-    pm.collectionVariables.set(\\"x_polling_url\\", pollingUrl.replace(\\"https://management.azure.com\\",\\"http://localhost:5000\\"));
-    pm.collectionVariables.set(\\"x_retry_after\\", \\"3\\");
+    pm.variables.set(\\"x_polling_url\\", pollingUrl.replace(\\"https://management.azure.com\\",\\"http://localhost:5000\\"));
+    pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
                 "id": "7wi32c",
@@ -407,7 +407,7 @@ try {
     if (pm.response.code === 202) {
         postman.setNextRequest(\\"_createStorageAccount_delay\\");
         if (pm.response.headers.has(\\"Retry-After\\")) {
-            pm.collectionVariables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
+            pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
         }
     } else if (pm.response.size().body > 0) {
         const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"];
@@ -415,7 +415,7 @@ try {
         if (json.status !== undefined && terminalStatus.indexOf(json.status) === -1) {
             postman.setNextRequest(\\"_createStorageAccount_delay\\")
             if (pm.response.headers.has(\\"Retry-After\\")) {
-                pm.collectionVariables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
+                pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
             }
         }
     }
@@ -614,8 +614,8 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
                   "
 const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\");
 if (pollingUrl) {
-    pm.collectionVariables.set(\\"x_polling_url\\", pollingUrl.replace(\\"https://management.azure.com\\",\\"http://localhost:5000\\"));
-    pm.collectionVariables.set(\\"x_retry_after\\", \\"3\\");
+    pm.variables.set(\\"x_polling_url\\", pollingUrl.replace(\\"https://management.azure.com\\",\\"http://localhost:5000\\"));
+    pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
                 "id": "h1l4hw",
@@ -728,7 +728,7 @@ try {
     if (pm.response.code === 202) {
         postman.setNextRequest(\\"_createStorageAccount_delay\\");
         if (pm.response.headers.has(\\"Retry-After\\")) {
-            pm.collectionVariables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
+            pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
         }
     } else if (pm.response.size().body > 0) {
         const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"];
@@ -736,7 +736,7 @@ try {
         if (json.status !== undefined && terminalStatus.indexOf(json.status) === -1) {
             postman.setNextRequest(\\"_createStorageAccount_delay\\")
             if (pm.response.headers.has(\\"Retry-After\\")) {
-                pm.collectionVariables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
+                pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
             }
         }
     }
@@ -935,8 +935,8 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
                   "
 const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\");
 if (pollingUrl) {
-    pm.collectionVariables.set(\\"x_polling_url\\", pollingUrl.replace(\\"https://management.azure.com\\",\\"http://localhost:5000\\"));
-    pm.collectionVariables.set(\\"x_retry_after\\", \\"3\\");
+    pm.variables.set(\\"x_polling_url\\", pollingUrl.replace(\\"https://management.azure.com\\",\\"http://localhost:5000\\"));
+    pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
                 "id": "8ew1jk",
@@ -1049,7 +1049,7 @@ try {
     if (pm.response.code === 202) {
         postman.setNextRequest(\\"_createStorageAccount_delay\\");
         if (pm.response.headers.has(\\"Retry-After\\")) {
-            pm.collectionVariables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
+            pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
         }
     } else if (pm.response.size().body > 0) {
         const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"];
@@ -1057,7 +1057,7 @@ try {
         if (json.status !== undefined && terminalStatus.indexOf(json.status) === -1) {
             postman.setNextRequest(\\"_createStorageAccount_delay\\")
             if (pm.response.headers.has(\\"Retry-After\\")) {
-                pm.collectionVariables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
+                pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
             }
         }
     }
@@ -1285,8 +1285,8 @@ try {
                   "
 const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\");
 if (pollingUrl) {
-    pm.collectionVariables.set(\\"x_polling_url\\", pollingUrl.replace(\\"https://management.azure.com\\",\\"http://localhost:5000\\"));
-    pm.collectionVariables.set(\\"x_retry_after\\", \\"3\\");
+    pm.variables.set(\\"x_polling_url\\", pollingUrl.replace(\\"https://management.azure.com\\",\\"http://localhost:5000\\"));
+    pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
                 "id": "lk4mhm",
@@ -1405,7 +1405,7 @@ try {
     if (pm.response.code === 202) {
         postman.setNextRequest(\\"_createStorageAccount_delay\\");
         if (pm.response.headers.has(\\"Retry-After\\")) {
-            pm.collectionVariables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
+            pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
         }
     } else if (pm.response.size().body > 0) {
         const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"];
@@ -1413,7 +1413,7 @@ try {
         if (json.status !== undefined && terminalStatus.indexOf(json.status) === -1) {
             postman.setNextRequest(\\"_createStorageAccount_delay\\")
             if (pm.response.headers.has(\\"Retry-After\\")) {
-                pm.collectionVariables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
+                pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
             }
         }
     }
@@ -1656,15 +1656,6 @@ try {
       "key": "x_enable_auth",
       "type": "any",
       "value": "true",
-    },
-    Object {
-      "key": "x_polling_url",
-      "type": "any",
-    },
-    Object {
-      "key": "x_retry_after",
-      "type": "any",
-      "value": "3",
     },
   ],
 }
@@ -1920,8 +1911,8 @@ if (
                   "
 const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\");
 if (pollingUrl) {
-    pm.collectionVariables.set(\\"x_polling_url\\", pollingUrl);
-    pm.collectionVariables.set(\\"x_retry_after\\", \\"3\\");
+    pm.variables.set(\\"x_polling_url\\", pollingUrl);
+    pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
                 "id": "j55iye",
@@ -2070,7 +2061,7 @@ try {
     if (pm.response.code === 202) {
         postman.setNextRequest(\\"_createStorageAccount_delay\\");
         if (pm.response.headers.has(\\"Retry-After\\")) {
-            pm.collectionVariables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
+            pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
         }
     } else if (pm.response.size().body > 0) {
         const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"];
@@ -2078,7 +2069,7 @@ try {
         if (json.status !== undefined && terminalStatus.indexOf(json.status) === -1) {
             postman.setNextRequest(\\"_createStorageAccount_delay\\")
             if (pm.response.headers.has(\\"Retry-After\\")) {
-                pm.collectionVariables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
+                pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
             }
         }
     }
@@ -2597,15 +2588,6 @@ try {
       "type": "any",
       "value": "true",
     },
-    Object {
-      "key": "x_polling_url",
-      "type": "any",
-    },
-    Object {
-      "key": "x_retry_after",
-      "type": "any",
-      "value": "3",
-    },
   ],
 }
 `;
@@ -2864,8 +2846,8 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
                   "
 const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\");
 if (pollingUrl) {
-    pm.collectionVariables.set(\\"x_polling_url\\", pollingUrl);
-    pm.collectionVariables.set(\\"x_retry_after\\", \\"3\\");
+    pm.variables.set(\\"x_polling_url\\", pollingUrl);
+    pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
                 "id": "j55iye",
@@ -2980,7 +2962,7 @@ try {
     if (pm.response.code === 202) {
         postman.setNextRequest(\\"_createStorageAccount_delay\\");
         if (pm.response.headers.has(\\"Retry-After\\")) {
-            pm.collectionVariables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
+            pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
         }
     } else if (pm.response.size().body > 0) {
         const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"];
@@ -2988,7 +2970,7 @@ try {
         if (json.status !== undefined && terminalStatus.indexOf(json.status) === -1) {
             postman.setNextRequest(\\"_createStorageAccount_delay\\")
             if (pm.response.headers.has(\\"Retry-After\\")) {
-                pm.collectionVariables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
+                pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
             }
         }
     }
@@ -3191,8 +3173,8 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
                   "
 const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\");
 if (pollingUrl) {
-    pm.collectionVariables.set(\\"x_polling_url\\", pollingUrl);
-    pm.collectionVariables.set(\\"x_retry_after\\", \\"3\\");
+    pm.variables.set(\\"x_polling_url\\", pollingUrl);
+    pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
                 "id": "igg58r",
@@ -3307,7 +3289,7 @@ try {
     if (pm.response.code === 202) {
         postman.setNextRequest(\\"_createStorageAccount_delay\\");
         if (pm.response.headers.has(\\"Retry-After\\")) {
-            pm.collectionVariables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
+            pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
         }
     } else if (pm.response.size().body > 0) {
         const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"];
@@ -3315,7 +3297,7 @@ try {
         if (json.status !== undefined && terminalStatus.indexOf(json.status) === -1) {
             postman.setNextRequest(\\"_createStorageAccount_delay\\")
             if (pm.response.headers.has(\\"Retry-After\\")) {
-                pm.collectionVariables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
+                pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
             }
         }
     }
@@ -3518,8 +3500,8 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
                   "
 const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\");
 if (pollingUrl) {
-    pm.collectionVariables.set(\\"x_polling_url\\", pollingUrl);
-    pm.collectionVariables.set(\\"x_retry_after\\", \\"3\\");
+    pm.variables.set(\\"x_polling_url\\", pollingUrl);
+    pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
                 "id": "cdpopn",
@@ -3634,7 +3616,7 @@ try {
     if (pm.response.code === 202) {
         postman.setNextRequest(\\"_createStorageAccount_delay\\");
         if (pm.response.headers.has(\\"Retry-After\\")) {
-            pm.collectionVariables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
+            pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
         }
     } else if (pm.response.size().body > 0) {
         const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"];
@@ -3642,7 +3624,7 @@ try {
         if (json.status !== undefined && terminalStatus.indexOf(json.status) === -1) {
             postman.setNextRequest(\\"_createStorageAccount_delay\\")
             if (pm.response.headers.has(\\"Retry-After\\")) {
-                pm.collectionVariables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
+                pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
             }
         }
     }
@@ -3874,8 +3856,8 @@ try {
                   "
 const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\");
 if (pollingUrl) {
-    pm.collectionVariables.set(\\"x_polling_url\\", pollingUrl);
-    pm.collectionVariables.set(\\"x_retry_after\\", \\"3\\");
+    pm.variables.set(\\"x_polling_url\\", pollingUrl);
+    pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
                 "id": "q1cfqt",
@@ -3996,7 +3978,7 @@ try {
     if (pm.response.code === 202) {
         postman.setNextRequest(\\"_createStorageAccount_delay\\");
         if (pm.response.headers.has(\\"Retry-After\\")) {
-            pm.collectionVariables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
+            pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
         }
     } else if (pm.response.size().body > 0) {
         const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"];
@@ -4004,7 +3986,7 @@ try {
         if (json.status !== undefined && terminalStatus.indexOf(json.status) === -1) {
             postman.setNextRequest(\\"_createStorageAccount_delay\\")
             if (pm.response.headers.has(\\"Retry-After\\")) {
-                pm.collectionVariables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
+                pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
             }
         }
     }
@@ -4207,15 +4189,6 @@ try {
       "key": "x_enable_auth",
       "type": "any",
       "value": "true",
-    },
-    Object {
-      "key": "x_polling_url",
-      "type": "any",
-    },
-    Object {
-      "key": "x_retry_after",
-      "type": "any",
-      "value": "3",
     },
   ],
 }

@@ -185,13 +185,6 @@ export const reservedCollectionVariables = [
     key: "x_enable_auth",
     value: "true",
   },
-  {
-    key: "x_polling_url",
-  },
-  {
-    key: "x_retry_after",
-    value: "3",
-  },
 ];
 
 export function generateAuthScript(audience: string, tokenName: string): string {
