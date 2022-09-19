@@ -60,7 +60,6 @@ export interface PostmanCollectionGeneratorOption
   runId?: string;
   verbose?: boolean;
   devMode?: boolean;
-  skipRoundtripValidation?: boolean;
 }
 
 export const generateRunId = (): string => {
@@ -445,7 +444,6 @@ export class PostmanCollectionGenerator {
       skipValidation: this.opt.skipValidation,
       generateExample: this.opt.generateExample,
       savePayload: this.opt.savePayload,
-      skipRoundTripValidation: this.opt.skipRoundtripValidation,
     };
 
     const reportValidator = inversifyGetInstance(

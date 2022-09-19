@@ -100,7 +100,6 @@ export interface NewmanReportValidatorOption extends ApiScenarioLoaderOption {
   skipValidation?: boolean;
   savePayload?: boolean;
   generateExample?: boolean;
-  skipRoundTripValidation?: boolean;
 }
 
 @injectable()
@@ -121,7 +120,6 @@ export class NewmanReportValidator {
       skipValidation: false,
       savePayload: false,
       generateExample: false,
-      skipRoundTripValidation: false,
     } as NewmanReportValidatorOption);
   }
 
@@ -161,9 +159,9 @@ export class NewmanReportValidator {
     this.liveValidator = new LiveValidator({
       fileRoot: "/",
       swaggerPaths: [...this.opts.swaggerFilePaths!],
-      enableRoundTripValidator: !this.opts.skipRoundTripValidation,
+      enableRoundTripValidator: !this.opts.skipValidation,
     });
-    if (!this.opts.skipValidation || !this.opts.skipRoundTripValidation) {
+    if (!this.opts.skipValidation) {
       await this.liveValidator.initialize();
     }
   }
@@ -219,7 +217,7 @@ export class NewmanReportValidator {
 
         // Start roundtrip validation
         let roundtripError = undefined;
-        if (!this.opts.skipRoundTripValidation) {
+        if (!this.opts.skipValidation && matchedStep.isManagementPlane) {
           if (it.annotation.type === "LRO") {
             // For LRO, get the final response to compose payload
             const lroFinal = this.getLROFinalResponse(newmanReport.executions, it);
