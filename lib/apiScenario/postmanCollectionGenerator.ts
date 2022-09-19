@@ -141,16 +141,22 @@ export class PostmanCollectionGenerator {
 
     if (this.opt.runCollection) {
       try {
-        if (collection.items.find((item) => item.name === PREPARE_FOLDER, collection)) {
-          const summary = await this.doRun({
-            collection,
-            environment,
-            folder: PREPARE_FOLDER,
-            reporters: "cli",
-          });
-          environment = summary.environment;
-        }
-        for (const scenario of scenarioDef.scenarios) {
+        for (let i = 0; i < scenarioDef.scenarios.length; i++) {
+          const scenario = scenarioDef.scenarios[i];
+
+          const foldersToRun = [];
+          if (i == 0 && collection.items.find((item) => item.name === PREPARE_FOLDER, collection)) {
+            foldersToRun.push(PREPARE_FOLDER);
+          }
+          foldersToRun.push(scenario.scenario);
+          if (
+            i == scenarioDef.scenarios.length - 1 &&
+            !this.opt.skipCleanUp &&
+            collection.items.find((item) => item.name === CLEANUP_FOLDER, collection)
+          ) {
+            foldersToRun.push(CLEANUP_FOLDER);
+          }
+
           const reportExportPath = path.resolve(
             this.opt.outputFolder,
             `${defaultNewmanReport(this.opt.name, this.opt.runId!, scenario.scenario)}`
@@ -158,30 +164,22 @@ export class PostmanCollectionGenerator {
           const summary = await this.doRun({
             collection,
             environment,
-            folder: scenario.scenario,
+            folder: foldersToRun,
             reporters: "cli",
           });
           await this.postRun(scenario, reportExportPath, summary.environment, summary);
+
           environment = summary.environment;
         }
       } catch (err) {
         logger.error(`Error in running collection: ${err}`);
       } finally {
-        if (collection.items.find((item) => item.name === CLEANUP_FOLDER, collection)) {
-          if (!this.opt.skipCleanUp) {
-            await this.doRun({
-              collection,
-              environment,
-              folder: CLEANUP_FOLDER,
-              reporters: "cli",
-            });
-          } else if (scenarioDef.scope === "ResourceGroup") {
-            logger.warn(
-              `Notice: the resource group '${environment.get(
-                "resourceGroupName"
-              )}' was not cleaned up.`
-            );
-          }
+        if (this.opt.skipCleanUp && scenarioDef.scope === "ResourceGroup") {
+          logger.warn(
+            `Notice: the resource group '${environment.get(
+              "resourceGroupName"
+            )}' was not cleaned up.`
+          );
         }
       }
     }
