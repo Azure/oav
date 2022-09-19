@@ -165,6 +165,18 @@ if (
             },
             "header": Array [
               Object {
+                "key": "x-recording-upstream-base-uri",
+                "value": "https://management.azure.com",
+              },
+              Object {
+                "key": "x-recording-id",
+                "value": "{{x_recording_id}}",
+              },
+              Object {
+                "key": "x-recording-mode",
+                "value": "record",
+              },
+              Object {
                 "key": "Content-Type",
                 "value": "application/json",
               },
@@ -246,6 +258,18 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
             },
             "header": Array [
               Object {
+                "key": "x-recording-upstream-base-uri",
+                "value": "https://management.azure.com",
+              },
+              Object {
+                "key": "x-recording-id",
+                "value": "{{x_recording_id}}",
+              },
+              Object {
+                "key": "x-recording-mode",
+                "value": "record",
+              },
+              Object {
                 "key": "Content-Type",
                 "value": "application/json",
               },
@@ -324,6 +348,18 @@ if (pollingUrl) {
 }",
             },
             "header": Array [
+              Object {
+                "key": "x-recording-upstream-base-uri",
+                "value": "https://management.azure.com",
+              },
+              Object {
+                "key": "x-recording-id",
+                "value": "{{x_recording_id}}",
+              },
+              Object {
+                "key": "x-recording-mode",
+                "value": "record",
+              },
               Object {
                 "key": "Content-Type",
                 "value": "application/json",
@@ -432,6 +468,20 @@ try {
           "id": "1gju0k",
           "name": "_createStorageAccount_poller",
           "request": Object {
+            "header": Array [
+              Object {
+                "key": "x-recording-upstream-base-uri",
+                "value": "https://management.azure.com",
+              },
+              Object {
+                "key": "x-recording-id",
+                "value": "{{x_recording_id}}",
+              },
+              Object {
+                "key": "x-recording-mode",
+                "value": "record",
+              },
+            ],
             "method": "GET",
             "url": Object {
               "host": Array [
@@ -464,6 +514,18 @@ try {
           "name": "_createStorageAccount_final_get",
           "request": Object {
             "header": Array [
+              Object {
+                "key": "x-recording-upstream-base-uri",
+                "value": "https://management.azure.com",
+              },
+              Object {
+                "key": "x-recording-id",
+                "value": "{{x_recording_id}}",
+              },
+              Object {
+                "key": "x-recording-mode",
+                "value": "record",
+              },
               Object {
                 "key": "Content-Type",
                 "value": "application/json",
@@ -567,6 +629,18 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
             },
             "header": Array [
               Object {
+                "key": "x-recording-upstream-base-uri",
+                "value": "https://management.azure.com",
+              },
+              Object {
+                "key": "x-recording-id",
+                "value": "{{x_recording_id}}",
+              },
+              Object {
+                "key": "x-recording-mode",
+                "value": "record",
+              },
+              Object {
                 "key": "Content-Type",
                 "value": "application/json",
               },
@@ -645,6 +719,18 @@ if (pollingUrl) {
 }",
             },
             "header": Array [
+              Object {
+                "key": "x-recording-upstream-base-uri",
+                "value": "https://management.azure.com",
+              },
+              Object {
+                "key": "x-recording-id",
+                "value": "{{x_recording_id}}",
+              },
+              Object {
+                "key": "x-recording-mode",
+                "value": "record",
+              },
               Object {
                 "key": "Content-Type",
                 "value": "application/json",
@@ -753,6 +839,20 @@ try {
           "id": "un6yyw",
           "name": "_createStorageAccount_poller",
           "request": Object {
+            "header": Array [
+              Object {
+                "key": "x-recording-upstream-base-uri",
+                "value": "https://management.azure.com",
+              },
+              Object {
+                "key": "x-recording-id",
+                "value": "{{x_recording_id}}",
+              },
+              Object {
+                "key": "x-recording-mode",
+                "value": "record",
+              },
+            ],
             "method": "GET",
             "url": Object {
               "host": Array [
@@ -785,6 +885,18 @@ try {
           "name": "_createStorageAccount_final_get",
           "request": Object {
             "header": Array [
+              Object {
+                "key": "x-recording-upstream-base-uri",
+                "value": "https://management.azure.com",
+              },
+              Object {
+                "key": "x-recording-id",
+                "value": "{{x_recording_id}}",
+              },
+              Object {
+                "key": "x-recording-mode",
+                "value": "record",
+              },
               Object {
                 "key": "Content-Type",
                 "value": "application/json",
@@ -888,6 +1000,18 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
             },
             "header": Array [
               Object {
+                "key": "x-recording-upstream-base-uri",
+                "value": "https://management.azure.com",
+              },
+              Object {
+                "key": "x-recording-id",
+                "value": "{{x_recording_id}}",
+              },
+              Object {
+                "key": "x-recording-mode",
+                "value": "record",
+              },
+              Object {
                 "key": "Content-Type",
                 "value": "application/json",
               },
@@ -966,6 +1090,18 @@ if (pollingUrl) {
 }",
             },
             "header": Array [
+              Object {
+                "key": "x-recording-upstream-base-uri",
+                "value": "https://management.azure.com",
+              },
+              Object {
+                "key": "x-recording-id",
+                "value": "{{x_recording_id}}",
+              },
+              Object {
+                "key": "x-recording-mode",
+                "value": "record",
+              },
               Object {
                 "key": "Content-Type",
                 "value": "application/json",
@@ -1074,6 +1210,20 @@ try {
           "id": "ssi2a8",
           "name": "_createStorageAccount_poller",
           "request": Object {
+            "header": Array [
+              Object {
+                "key": "x-recording-upstream-base-uri",
+                "value": "https://management.azure.com",
+              },
+              Object {
+                "key": "x-recording-id",
+                "value": "{{x_recording_id}}",
+              },
+              Object {
+                "key": "x-recording-mode",
+                "value": "record",
+              },
+            ],
             "method": "GET",
             "url": Object {
               "host": Array [
@@ -1106,6 +1256,18 @@ try {
           "name": "_createStorageAccount_final_get",
           "request": Object {
             "header": Array [
+              Object {
+                "key": "x-recording-upstream-base-uri",
+                "value": "https://management.azure.com",
+              },
+              Object {
+                "key": "x-recording-id",
+                "value": "{{x_recording_id}}",
+              },
+              Object {
+                "key": "x-recording-mode",
+                "value": "record",
+              },
               Object {
                 "key": "Content-Type",
                 "value": "application/json",
@@ -1186,6 +1348,18 @@ try {
           "request": Object {
             "body": Object {},
             "header": Array [
+              Object {
+                "key": "x-recording-upstream-base-uri",
+                "value": "https://management.azure.com",
+              },
+              Object {
+                "key": "x-recording-id",
+                "value": "{{x_recording_id}}",
+              },
+              Object {
+                "key": "x-recording-mode",
+                "value": "record",
+              },
               Object {
                 "key": "Content-Type",
                 "value": "application/json",
@@ -1323,6 +1497,18 @@ if (pollingUrl) {
             },
             "header": Array [
               Object {
+                "key": "x-recording-upstream-base-uri",
+                "value": "https://management.azure.com",
+              },
+              Object {
+                "key": "x-recording-id",
+                "value": "{{x_recording_id}}",
+              },
+              Object {
+                "key": "x-recording-mode",
+                "value": "record",
+              },
+              Object {
                 "key": "Content-Type",
                 "value": "application/json",
               },
@@ -1430,6 +1616,20 @@ try {
           "id": "dm09uw",
           "name": "_createStorageAccount_poller",
           "request": Object {
+            "header": Array [
+              Object {
+                "key": "x-recording-upstream-base-uri",
+                "value": "https://management.azure.com",
+              },
+              Object {
+                "key": "x-recording-id",
+                "value": "{{x_recording_id}}",
+              },
+              Object {
+                "key": "x-recording-mode",
+                "value": "record",
+              },
+            ],
             "method": "GET",
             "url": Object {
               "host": Array [
@@ -1462,6 +1662,18 @@ try {
           "name": "_createStorageAccount_final_get",
           "request": Object {
             "header": Array [
+              Object {
+                "key": "x-recording-upstream-base-uri",
+                "value": "https://management.azure.com",
+              },
+              Object {
+                "key": "x-recording-id",
+                "value": "{{x_recording_id}}",
+              },
+              Object {
+                "key": "x-recording-mode",
+                "value": "record",
+              },
               Object {
                 "key": "Content-Type",
                 "value": "application/json",
@@ -1536,6 +1748,18 @@ try {
           "name": "deleteResourceGroup",
           "request": Object {
             "header": Array [
+              Object {
+                "key": "x-recording-upstream-base-uri",
+                "value": "https://management.azure.com",
+              },
+              Object {
+                "key": "x-recording-id",
+                "value": "{{x_recording_id}}",
+              },
+              Object {
+                "key": "x-recording-mode",
+                "value": "record",
+              },
               Object {
                 "key": "Content-Type",
                 "value": "application/json",
