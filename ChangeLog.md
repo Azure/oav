@@ -1,6 +1,6 @@
 # Change Log - oav
 
-## 09/19/200 3.1.0
+## 09/19/2022 3.1.0
 
 - API Scenario
   - Support parameterized host and AzureAD authentication option
