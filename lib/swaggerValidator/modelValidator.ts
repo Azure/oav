@@ -390,6 +390,23 @@ export class SwaggerExampleValidator {
         // todo skip url encoding
         pathParameters[parameter.name] = parameterValue;
       } else if (location === "query") {
+        // validate the api version value
+        if (parameter.name === "api-version" && parameterValue !== this.swagger.info.version) {
+          const meta = getOavErrorMeta("INVALID_REQUEST_PARAMETER", {
+            parameterName: "api-version",
+            apiVersion: parameterValue,
+          });
+          this.addErrorsFromErrorCode(
+            operation.operationId!,
+            exampleFileUrl,
+            meta,
+            operation,
+            undefined,
+            exampleContent?.parameters,
+            `$parameters["api-version"]`
+          );
+          continue;
+        }
         queryParameters[parameter.name] = parameterValue;
       } else if (location === "body") {
         if ((parameter as BodyParameter).schema?.format === "file") {

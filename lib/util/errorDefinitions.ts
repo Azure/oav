@@ -39,7 +39,11 @@ export const getOavErrorMeta = <T extends OavAllErrorCode>(code: T, param: Recor
     throw new Error(`Error code "${code}" is not defined!`);
   }
 
-  const message = errorInfo.message(param);
+  // change INVALID_REQUEST_PARAMETER message for error about api-version
+  const message =
+    param.parameterName === "api-version"
+      ? `api-version ${param.apiVersion} is not equal to swagger version`
+      : errorInfo.message(param);
 
   const result: {
     code: T;
