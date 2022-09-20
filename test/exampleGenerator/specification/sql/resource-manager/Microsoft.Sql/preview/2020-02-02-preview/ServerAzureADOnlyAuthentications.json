@@ -65,6 +65,12 @@
         "x-ms-examples": {
           "Gets a Azure Active Directory only authentication property.": {
             "$ref": "./examples/AzureADOnlyAuthGet.json"
+          },
+          "ServerAzureADOnlyAuthentications_Get_MaximumSet_Gen": {
+            "$ref": "./examples/ServerAzureADOnlyAuthentications_Get_MaximumSet_Gen.json"
+          },
+          "ServerAzureADOnlyAuthentications_Get_MinimumSet_Gen": {
+            "$ref": "./examples/ServerAzureADOnlyAuthentications_Get_MinimumSet_Gen.json"
           }
         }
       },
@@ -118,23 +124,29 @@
               "$ref": "#/definitions/ServerAzureADOnlyAuthentication"
             }
           },
-          "default": {
-            "description": "*** Error Responses: ***\n\n * 404 SubscriptionDoesNotHaveServer - The requested server was not found\n\n * 404 ServerNotInSubscriptionResourceGroup - Specified server does not exist in the specified resource group and subscription.\n\n * 404 OperationIdNotFound - The operation with Id does not exist.\n\n * 409 OperationCancelled - The operation has been cancelled by user.\n\n * 409 OperationInterrupted - The operation on the resource could not be completed because it was interrupted by another operation on the same resource.\n\n * 500 OperationTimedOut - The operation timed out and automatically rolled back. Please retry the operation."
-          },
-          "202": {
-            "description": "Accepted"
-          },
           "201": {
             "description": "Successfully updated Azure Active Directory only authentication property.",
             "schema": {
               "$ref": "#/definitions/ServerAzureADOnlyAuthentication"
             }
+          },
+          "202": {
+            "description": "Accepted"
+          },
+          "default": {
+            "description": "*** Error Responses: ***\n\n * 404 SubscriptionDoesNotHaveServer - The requested server was not found\n\n * 404 ServerNotInSubscriptionResourceGroup - Specified server does not exist in the specified resource group and subscription.\n\n * 404 OperationIdNotFound - The operation with Id does not exist.\n\n * 409 OperationCancelled - The operation has been cancelled by user.\n\n * 409 OperationInterrupted - The operation on the resource could not be completed because it was interrupted by another operation on the same resource.\n\n * 500 OperationTimedOut - The operation timed out and automatically rolled back. Please retry the operation."
           }
         },
         "x-ms-long-running-operation": true,
         "x-ms-examples": {
           "Creates or updates Azure Active Directory only authentication object.": {
             "$ref": "./examples/AzureADOnlyAuthCreateOrUpdate.json"
+          },
+          "ServerAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen": {
+            "$ref": "./examples/ServerAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json"
+          },
+          "ServerAzureADOnlyAuthentications_CreateOrUpdate_MinimumSet_Gen": {
+            "$ref": "./examples/ServerAzureADOnlyAuthentications_CreateOrUpdate_MinimumSet_Gen.json"
           }
         }
       },
@@ -176,20 +188,23 @@
           "200": {
             "description": "Successfully deleted the Azure Active Directory only property."
           },
-          "default": {
-            "description": "*** Error Responses: ***\n\n * 404 SubscriptionDoesNotHaveServer - The requested server was not found\n\n * 404 ServerNotInSubscriptionResourceGroup - Specified server does not exist in the specified resource group and subscription.\n\n * 404 OperationIdNotFound - The operation with Id does not exist.\n\n * 409 OperationCancelled - The operation has been cancelled by user.\n\n * 409 OperationInterrupted - The operation on the resource could not be completed because it was interrupted by another operation on the same resource.\n\n * 500 OperationTimedOut - The operation timed out and automatically rolled back. Please retry the operation."
-          },
           "202": {
             "description": "Accepted"
           },
           "204": {
             "description": "The specified Azure Active Directory only property does not exist."
+          },
+          "default": {
+            "description": "*** Error Responses: ***\n\n * 404 SubscriptionDoesNotHaveServer - The requested server was not found\n\n * 404 ServerNotInSubscriptionResourceGroup - Specified server does not exist in the specified resource group and subscription.\n\n * 404 OperationIdNotFound - The operation with Id does not exist.\n\n * 409 OperationCancelled - The operation has been cancelled by user.\n\n * 409 OperationInterrupted - The operation on the resource could not be completed because it was interrupted by another operation on the same resource.\n\n * 500 OperationTimedOut - The operation timed out and automatically rolled back. Please retry the operation."
           }
         },
         "x-ms-long-running-operation": true,
         "x-ms-examples": {
           "Deletes Azure Active Directory only authentication object.": {
             "$ref": "./examples/AzureADOnlyAuthDelete.json"
+          },
+          "ServerAzureADOnlyAuthentications_Delete_MaximumSet_Gen": {
+            "$ref": "./examples/ServerAzureADOnlyAuthentications_Delete_MaximumSet_Gen.json"
           }
         }
       }
@@ -232,6 +247,12 @@
         "x-ms-examples": {
           "Gets a list of Azure Active Directory only authentication object.": {
             "$ref": "./examples/AzureADOnlyAuthList.json"
+          },
+          "ServerAzureADOnlyAuthentications_ListByServer_MaximumSet_Gen": {
+            "$ref": "./examples/ServerAzureADOnlyAuthentications_ListByServer_MaximumSet_Gen.json"
+          },
+          "ServerAzureADOnlyAuthentications_ListByServer_MinimumSet_Gen": {
+            "$ref": "./examples/ServerAzureADOnlyAuthentications_ListByServer_MinimumSet_Gen.json"
           }
         }
       }
