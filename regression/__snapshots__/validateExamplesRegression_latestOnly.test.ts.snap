@@ -3205,8 +3205,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 17,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/containerinstance/resource-manager/Microsoft.ContainerInstance/stable/2018-10-01/examples/ServiceAssociationLink_Delete.json",
     "message": "api-version 2018-09-01 is not equal to swagger version",
     "operationId": "ServiceAssociationLink_Delete",
@@ -3629,8 +3632,11 @@ exports[`validateExamples should not regress for file '/home/vsts/work/1/s/regre
 Array [
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 17,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/containerservice/resource-manager/Microsoft.ContainerService/stable/2019-04-30/examples/OpenShiftManagedClustersListByResourceGroup.json",
     "message": "api-version 2018-09-30-preview is not equal to swagger version",
     "operationId": "OpenShiftManagedClusters_ListByResourceGroup",
@@ -3922,8 +3928,11 @@ exports[`validateExamples should not regress for file '/home/vsts/work/1/s/regre
 Array [
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 17,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/DCIOperations_List.json",
     "message": "api-version 2016-07-01 is not equal to swagger version",
     "operationId": "Operations_List",
@@ -4527,8 +4536,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/HubsCreateOrUpdate.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "Hubs_CreateOrUpdate",
@@ -4543,8 +4555,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/HubsUpdate.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "Hubs_Update",
@@ -4559,8 +4574,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/HubsDelete.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "Hubs_Delete",
@@ -4591,8 +4609,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/HubsGet.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "Hubs_Get",
@@ -4607,8 +4628,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/HubsListByResourceGroup.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "Hubs_ListByResourceGroup",
@@ -4623,8 +4647,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/HubsList.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "Hubs_List",
@@ -4639,8 +4666,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/ProfilesCreateOrUpdate.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "Profiles_CreateOrUpdate",
@@ -4655,8 +4685,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/ProfilesGet.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "Profiles_Get",
@@ -4671,8 +4704,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/ProfilesDelete.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "Profiles_Delete",
@@ -4703,8 +4739,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/ProfilesListByHub.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "Profiles_ListByHub",
@@ -4719,8 +4758,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/ProfileGetEnrichingKpis.json",
     "message": "api-version 2017-01-01 is not equal to swagger version",
     "operationId": "Profiles_GetEnrichingKpis",
@@ -4735,8 +4777,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/InteractionsCreateOrUpdate.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "Interactions_CreateOrUpdate",
@@ -4751,8 +4796,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/InteractionsGet.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "Interactions_Get",
@@ -4767,8 +4815,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/InteractionsListByHub.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "Interactions_ListByHub",
@@ -4783,8 +4834,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/InteractionsSuggestRelationshipLinks.json",
     "message": "api-version 2017-01-01 is not equal to swagger version",
     "operationId": "Interactions_SuggestRelationshipLinks",
@@ -4799,8 +4853,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/RelationshipsCreateOrUpdate.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "Relationships_CreateOrUpdate",
@@ -4815,8 +4872,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/RelationshipsGet.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "Relationships_Get",
@@ -4831,8 +4891,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/RelationshipsDelete.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "Relationships_Delete",
@@ -4863,8 +4926,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/RelationshipsListByHub.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "Relationships_ListByHub",
@@ -4879,8 +4945,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/RelationshipLinksCreateOrUpdate.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "RelationshipLinks_CreateOrUpdate",
@@ -4914,8 +4983,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/RelationshipLinksGet.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "RelationshipLinks_Get",
@@ -4930,8 +5002,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/RelationshipLinksDelete.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "RelationshipLinks_Delete",
@@ -4962,8 +5037,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/RelationshipLinksListByHub.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "RelationshipLinks_ListByHub",
@@ -4978,8 +5056,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 17,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/AuthorizationPoliciesCreateOrUpdate.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "AuthorizationPolicies_CreateOrUpdate",
@@ -4994,8 +5075,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/AuthorizationPoliciesGet.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "AuthorizationPolicies_Get",
@@ -5010,8 +5094,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/AuthorizationPoliciesListByHub.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "AuthorizationPolicies_ListByHub",
@@ -5026,8 +5113,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/AuthorizationPoliciesRegeneratePrimaryKey.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "AuthorizationPolicies_RegeneratePrimaryKey",
@@ -5042,8 +5132,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/AuthorizationPoliciesRegenerateSecondaryKey.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "AuthorizationPolicies_RegenerateSecondaryKey",
@@ -5058,8 +5151,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/ConnectorsCreateOrUpdate.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "Connectors_CreateOrUpdate",
@@ -5074,8 +5170,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/ConnectorsGet.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "Connectors_Get",
@@ -5090,8 +5189,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/ConnectorsDelete.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "Connectors_Delete",
@@ -5122,8 +5224,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/ConnectorsListByHub.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "Connectors_ListByHub",
@@ -5138,8 +5243,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/ConnectorMappingsCreateOrUpdate.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "ConnectorMappings_CreateOrUpdate",
@@ -5154,8 +5262,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/ConnectorMappingsGet.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "ConnectorMappings_Get",
@@ -5170,8 +5281,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/ConnectorMappingsDelete.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "ConnectorMappings_Delete",
@@ -5186,8 +5300,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/ConnectorMappingsListByConnector.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "ConnectorMappings_ListByConnector",
@@ -5202,8 +5319,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/KpiCreateOrUpdate.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "Kpi_CreateOrUpdate",
@@ -5218,8 +5338,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/KpiGet.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "Kpi_Get",
@@ -5234,8 +5357,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/KpiDelete.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "Kpi_Delete",
@@ -5266,8 +5392,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/KpiReprocess.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "Kpi_Reprocess",
@@ -5282,8 +5411,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/KpiListByHub.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "Kpi_ListByHub",
@@ -5298,8 +5430,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/WidgetTypesListByHub.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "WidgetTypes_ListByHub",
@@ -5314,8 +5449,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/WidgetTypesGet.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "WidgetTypes_Get",
@@ -5330,8 +5468,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/ViewsListByHub.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "Views_ListByHub",
@@ -5346,8 +5487,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/ViewsCreateOrUpdate.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "Views_CreateOrUpdate",
@@ -5362,8 +5506,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/ViewsGet.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "Views_Get",
@@ -5378,8 +5525,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/ViewsDelete.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "Views_Delete",
@@ -5413,8 +5563,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/LinksGet.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "Links_Get",
@@ -5429,8 +5582,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/LinksDelete.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "Links_Delete",
@@ -5445,8 +5601,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/LinksListByHub.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "Links_ListByHub",
@@ -5461,8 +5620,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/RolesListByHub.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "Roles_ListByHub",
@@ -5477,8 +5639,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/RoleAssignmentsListByHub.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "RoleAssignments_ListByHub",
@@ -5493,8 +5658,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/RoleAssignmentsCreateOrUpdate.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "RoleAssignments_CreateOrUpdate",
@@ -5509,8 +5677,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/RoleAssignmentsGet.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "RoleAssignments_Get",
@@ -5525,8 +5696,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/RoleAssignmentsDelete.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "RoleAssignments_Delete",
@@ -5541,8 +5715,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/ImagesGetUploadUrlForEntityType.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "Images_GetUploadUrlForEntityType",
@@ -5557,8 +5734,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/customer-insights/resource-manager/Microsoft.CustomerInsights/stable/2017-04-26/examples/ImagesGetUploadUrlForData.json",
     "message": "api-version 2016-01-01 is not equal to swagger version",
     "operationId": "Images_GetUploadUrlForData",
@@ -13147,8 +13327,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 19,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/iothub/resource-manager/Microsoft.Devices/stable/2018-04-01/examples/iothub_listbysubscription.json",
     "message": "api-version 2018-01-22 is not equal to swagger version",
     "operationId": "IotHubResource_ListBySubscription",
@@ -13303,10 +13486,10 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
     "examplePosition": Object {
-      "column": 11,
-      "line": 586,
+      "column": 18,
+      "line": 2,
     },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/keyvault/resource-manager/Microsoft.KeyVault/stable/2018-02-14/examples/listVault.json",
     "message": "api-version 2015-11-01 is not equal to swagger version",
@@ -14854,8 +15037,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 17,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/logic/resource-manager/Microsoft.Logic/stable/2016-06-01/examples/WorkflowRunActionRepetitionsRequestHistories_List.json",
     "message": "api-version 2018-07-01-preview is not equal to swagger version",
     "operationId": "WorkflowRunActionRepetitionsRequestHistories_List",
@@ -14870,8 +15056,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 17,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/logic/resource-manager/Microsoft.Logic/stable/2016-06-01/examples/WorkflowRunActionRepetitionsRequestHistories_Get.json",
     "message": "api-version 2018-07-01-preview is not equal to swagger version",
     "operationId": "WorkflowRunActionRepetitionsRequestHistories_Get",
@@ -14886,8 +15075,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 17,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/logic/resource-manager/Microsoft.Logic/stable/2016-06-01/examples/WorkflowRunActionRequestHistories_List.json",
     "message": "api-version 2018-07-01-preview is not equal to swagger version",
     "operationId": "WorkflowRunActionRequestHistories_List",
@@ -14902,8 +15094,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 17,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/logic/resource-manager/Microsoft.Logic/stable/2016-06-01/examples/WorkflowRunActionRequestHistories_Get.json",
     "message": "api-version 2018-07-01-preview is not equal to swagger version",
     "operationId": "WorkflowRunActionRequestHistories_Get",
@@ -15762,8 +15957,11 @@ exports[`validateExamples should not regress for file '/home/vsts/work/1/s/regre
 Array [
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 17,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/marketplaceordering/resource-manager/Microsoft.MarketplaceOrdering/stable/2015-06-01/examples/GetMarketplaceTerms.json",
     "message": "api-version 2016-04-01 is not equal to swagger version",
     "operationId": "MarketplaceAgreements_Get",
@@ -15778,8 +15976,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 17,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/marketplaceordering/resource-manager/Microsoft.MarketplaceOrdering/stable/2015-06-01/examples/SetMarketplaceTerms.json",
     "message": "api-version 2016-04-01 is not equal to swagger version",
     "operationId": "MarketplaceAgreements_Create",
@@ -15867,8 +16068,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 17,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/marketplaceordering/resource-manager/Microsoft.MarketplaceOrdering/stable/2015-06-01/examples/SignMarketplaceTerms.json",
     "message": "api-version 2016-04-01 is not equal to swagger version",
     "operationId": "MarketplaceAgreements_Sign",
@@ -15883,8 +16087,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 17,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/marketplaceordering/resource-manager/Microsoft.MarketplaceOrdering/stable/2015-06-01/examples/CancelMarketplaceTerms.json",
     "message": "api-version 2016-04-01 is not equal to swagger version",
     "operationId": "MarketplaceAgreements_Cancel",
@@ -15899,8 +16106,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 17,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/marketplaceordering/resource-manager/Microsoft.MarketplaceOrdering/stable/2015-06-01/examples/GetAgreementMarketplaceTerms.json",
     "message": "api-version 2016-04-01 is not equal to swagger version",
     "operationId": "MarketplaceAgreements_GetAgreement",
@@ -15915,8 +16125,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 17,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/marketplaceordering/resource-manager/Microsoft.MarketplaceOrdering/stable/2015-06-01/examples/ListMarketplaceTerms.json",
     "message": "api-version 2016-04-01 is not equal to swagger version",
     "operationId": "MarketplaceAgreements_List",
@@ -17770,8 +17983,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 19,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/mysql/resource-manager/Microsoft.DBforMySQL/stable/2017-12-01/examples/ServerSecurityAlertsGet.json",
     "message": "api-version 2017-03-01-preview is not equal to swagger version",
     "operationId": "ServerSecurityAlertPolicies_Get",
@@ -18397,8 +18613,11 @@ exports[`validateExamples should not regress for file '/home/vsts/work/1/s/regre
 Array [
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 17,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/operationalinsights/resource-manager/Microsoft.OperationalInsights/stable/2015-03-20/examples/StorageInsightsCreateOrUpdate.json",
     "message": "api-version 2015-03-02 is not equal to swagger version",
     "operationId": "StorageInsights_CreateOrUpdate",
@@ -18413,8 +18632,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 17,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/operationalinsights/resource-manager/Microsoft.OperationalInsights/stable/2015-03-20/examples/StorageInsightsGet.json",
     "message": "api-version 2015-03-02 is not equal to swagger version",
     "operationId": "StorageInsights_Get",
@@ -18429,8 +18651,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 17,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/operationalinsights/resource-manager/Microsoft.OperationalInsights/stable/2015-03-20/examples/StorageInsightsDelete.json",
     "message": "api-version 2015-03-02 is not equal to swagger version",
     "operationId": "StorageInsights_Delete",
@@ -18445,8 +18670,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 17,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/operationalinsights/resource-manager/Microsoft.OperationalInsights/stable/2015-03-20/examples/StorageInsightsListByWorkspace.json",
     "message": "api-version 2015-03-02 is not equal to swagger version",
     "operationId": "StorageInsights_ListByWorkspace",
@@ -18461,8 +18689,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 17,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/operationalinsights/resource-manager/Microsoft.OperationalInsights/stable/2015-03-20/examples/WorkspacesListLinkTargets.json",
     "message": "api-version 2015-03-02 is not equal to swagger version",
     "operationId": "Workspaces_ListLinkTargets",
@@ -18553,8 +18784,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 17,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/operationalinsights/resource-manager/Microsoft.OperationalInsights/stable/2015-03-20/examples/SavedSearchesListByWorkspace.json",
     "message": "api-version 2015-03-02 is not equal to swagger version",
     "operationId": "SavedSearches_ListByWorkspace",
@@ -18588,8 +18822,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 17,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/operationalinsights/resource-manager/Microsoft.OperationalInsights/stable/2015-03-20/examples/SavedSearchesGetSchema.json",
     "message": "api-version 2015-03-02 is not equal to swagger version",
     "operationId": "Workspaces_GetSchema",
@@ -18604,8 +18841,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 17,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/operationalinsights/resource-manager/Microsoft.OperationalInsights/stable/2015-03-20/examples/WorkspacesGetSearchResults.json",
     "message": "api-version 2015-03-02 is not equal to swagger version",
     "operationId": "Workspaces_GetSearchResults",
@@ -18636,8 +18876,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 17,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/operationalinsights/resource-manager/Microsoft.OperationalInsights/stable/2015-03-20/examples/WorkspacesUpdateSearchResults.json",
     "message": "api-version 2015-03-02 is not equal to swagger version",
     "operationId": "Workspaces_UpdateSearchResults",
@@ -18671,8 +18914,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 17,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/operationalinsights/resource-manager/Microsoft.OperationalInsights/stable/2015-03-20/examples/WorkspacesGatewaysDelete.json",
     "message": "api-version 2015-03-02 is not equal to swagger version",
     "operationId": "Workspaces_DeleteGateways",
@@ -18687,8 +18933,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 17,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/operationalinsights/resource-manager/Microsoft.OperationalInsights/stable/2015-03-20/examples/OperationsList.json",
     "message": "api-version 2015-03-02 is not equal to swagger version",
     "operationId": "Operations_List",
@@ -18734,8 +18983,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 17,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2017-12-01/examples/ServerDelete.json",
     "message": "api-version 2017-12-01-preview is not equal to swagger version",
     "operationId": "Servers_Delete",
@@ -18871,8 +19123,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 19,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2017-12-01/examples/ServerSecurityAlertsGet.json",
     "message": "api-version 2017-03-01-preview is not equal to swagger version",
     "operationId": "ServerSecurityAlertPolicies_Get",
@@ -20998,8 +21253,11 @@ exports[`validateExamples should not regress for file '/home/vsts/work/1/s/regre
 Array [
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/resourcehealth/resource-manager/Microsoft.ResourceHealth/stable/2017-07-01/examples/AvailabilityStatuses_ListBySubscriptionId.json",
     "message": "api-version 2015-01-01 is not equal to swagger version",
     "operationId": "AvailabilityStatuses_ListBySubscriptionId",
@@ -21071,8 +21329,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/resourcehealth/resource-manager/Microsoft.ResourceHealth/stable/2017-07-01/examples/AvailabilityStatuses_ListByResourceGroup.json",
     "message": "api-version 2015-01-01 is not equal to swagger version",
     "operationId": "AvailabilityStatuses_ListByResourceGroup",
@@ -21144,8 +21405,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/resourcehealth/resource-manager/Microsoft.ResourceHealth/stable/2017-07-01/examples/AvailabilityStatus_GetByResource.json",
     "message": "api-version 2015-01-01 is not equal to swagger version",
     "operationId": "AvailabilityStatuses_GetByResource",
@@ -21179,8 +21443,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 17,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/resourcehealth/resource-manager/Microsoft.ResourceHealth/stable/2017-07-01/examples/AvailabilityStatuses_List.json",
     "message": "api-version 2015-01-01 is not equal to swagger version",
     "operationId": "AvailabilityStatuses_List",
@@ -21195,8 +21462,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 16,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/resourcehealth/resource-manager/Microsoft.ResourceHealth/stable/2017-07-01/examples/ChildAvailabilityStatus_GetByResource.json",
     "message": "api-version 2015-01-01 is not equal to swagger version",
     "operationId": "ChildAvailabilityStatuses_GetByResource",
@@ -21230,8 +21500,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 17,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/resourcehealth/resource-manager/Microsoft.ResourceHealth/stable/2017-07-01/examples/ChildAvailabilityStatuses_List.json",
     "message": "api-version 2015-01-01 is not equal to swagger version",
     "operationId": "ChildAvailabilityStatuses_List",
@@ -21246,8 +21519,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 17,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/resourcehealth/resource-manager/Microsoft.ResourceHealth/stable/2017-07-01/examples/ChildResources_List.json",
     "message": "api-version 2015-01-01 is not equal to swagger version",
     "operationId": "ChildResources_List",
@@ -23175,8 +23451,11 @@ exports[`validateExamples should not regress for file '/home/vsts/work/1/s/regre
 Array [
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 19,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/search/data-plane/Microsoft.Azure.Search.Data/stable/2019-05-06/examples/SearchIndexCountDocuments.json",
     "message": "api-version 2017-11-11-Preview is not equal to swagger version",
     "operationId": "Documents_Count",
@@ -23210,8 +23489,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 19,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/search/data-plane/Microsoft.Azure.Search.Data/stable/2019-05-06/examples/SearchIndexAutocompleteDocumentsPost.json",
     "message": "api-version 2017-11-11-Preview is not equal to swagger version",
     "operationId": "Documents_AutocompletePost",
@@ -26063,8 +26345,11 @@ exports[`validateExamples should not regress for file '/home/vsts/work/1/s/regre
 Array [
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 17,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/timeseriesinsights/resource-manager/Microsoft.TimeSeriesInsights/stable/2017-11-15/examples/Operation_List.json",
     "message": "api-version 2016-03-01 is not equal to swagger version",
     "operationId": "Operations_List",
@@ -26922,8 +27207,11 @@ exports[`validateExamples should not regress for file '/home/vsts/work/1/s/regre
 Array [
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 19,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/web/resource-manager/Microsoft.Web/stable/2018-11-01/examples/ListCertificates.json",
     "message": "api-version 2018-02-01 is not equal to swagger version",
     "operationId": "Certificates_List",
@@ -26976,8 +27264,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 19,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/web/resource-manager/Microsoft.Web/stable/2018-11-01/examples/ListCertificatesByResourceGroup.json",
     "message": "api-version 2018-02-01 is not equal to swagger version",
     "operationId": "Certificates_ListByResourceGroup",
@@ -27030,8 +27321,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 19,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/web/resource-manager/Microsoft.Web/stable/2018-11-01/examples/GetCertificate.json",
     "message": "api-version 2018-02-01 is not equal to swagger version",
     "operationId": "Certificates_Get",
@@ -27065,8 +27359,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 19,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/web/resource-manager/Microsoft.Web/stable/2018-11-01/examples/CreateOrUpdateCertificate.json",
     "message": "api-version 2018-02-01 is not equal to swagger version",
     "operationId": "Certificates_CreateOrUpdate",
@@ -27271,8 +27568,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 19,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/web/resource-manager/Microsoft.Web/stable/2018-11-01/examples/DeleteCertificate.json",
     "message": "api-version 2018-02-01 is not equal to swagger version",
     "operationId": "Certificates_Delete",
@@ -27287,8 +27587,11 @@ Array [
   },
   Object {
     "code": "INVALID_REQUEST_PARAMETER",
-    "exampleJsonPath": undefined,
-    "examplePosition": undefined,
+    "exampleJsonPath": "$parameters[\\"api-version\\"]",
+    "examplePosition": Object {
+      "column": 19,
+      "line": 2,
+    },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/web/resource-manager/Microsoft.Web/stable/2018-11-01/examples/PatchCertificate.json",
     "message": "api-version 2018-02-01 is not equal to swagger version",
     "operationId": "Certificates_Update",
