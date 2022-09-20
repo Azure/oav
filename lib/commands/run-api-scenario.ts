@@ -17,6 +17,8 @@ import { logger } from "../apiScenario/logger";
 import { getApiScenarioFiles, getDefaultTag, getInputFiles } from "../util/utils";
 import { EnvironmentVariables } from "../apiScenario/variableEnv";
 import { DEFAULT_ARM_ENDPOINT } from "../apiScenario/constants";
+import { log } from "../util/logging";
+import { LiveValidatorLoggingLevels } from "../liveValidation/liveValidator";
 
 export const command = "run-api-scenario [<api-scenario>]";
 
@@ -113,6 +115,9 @@ export const builder: yargs.CommandBuilder = {
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
   await cliSuppressExceptions(async () => {
+    // suppress warning log in live validator
+    log.consoleLogLevel = LiveValidatorLoggingLevels.error;
+
     if (argv.logLevel) {
       const transport = logger.transports.find((t) => t instanceof winston.transports.Console);
       if (transport !== undefined) {
