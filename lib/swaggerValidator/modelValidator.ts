@@ -404,7 +404,7 @@ export class SwaggerExampleValidator {
             undefined,
             p
           );
-          break;
+          continue;
         }
         queryParameters[parameter.name] = parameterValue;
       } else if (location === "body") {
