@@ -402,7 +402,8 @@ export class SwaggerExampleValidator {
             meta,
             operation,
             undefined,
-            p
+            exampleContent?.parameters,
+            `$parameters["api-version"]`
           );
           continue;
         }

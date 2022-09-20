@@ -776,7 +776,7 @@ describe("Model Validation", () => {
       assert.strictEqual(result[0].code, "REQUIRED_PARAMETER_EXAMPLE_NOT_FOUND");
     });
 
-    it("should fail when missing write required parameters in example", async () => {
+    it("should fail when api version in example is not equal to swagger version", async () => {
       const specPath2 = `${testPath}/modelValidation/swaggers/specification/parameterValidation/test.json`;
       const result = await validate.validateExamples(specPath2, "SqlServers_Get_apiVersion");
       assert.strictEqual(result.length, 1);
@@ -785,6 +785,9 @@ describe("Model Validation", () => {
         result[0].message,
         "api-version 2017-03-01 is not equal to swagger version"
       );
+      assert.strictEqual(result[0].examplePosition?.line, 2);
+      assert.strictEqual(result[0].examplePosition?.column, 17);
+      assert.strictEqual(result[0].exampleJsonPath, `$parameters["api-version"]`);
     });
 
     it("should report error when operation has no own parameters", async () => {
