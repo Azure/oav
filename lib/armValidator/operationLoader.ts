@@ -209,7 +209,6 @@ export class OperationLoader {
         console.log(`Spec cache should not be empty ${inputOperation}`);
         return res;
       }
-      const startTime = Date.now();
       for (const operation of allOps) {
         const operationId = operation["operationId"];
         const litOp = {
@@ -264,8 +263,6 @@ export class OperationLoader {
           break;
         }
       }
-      const duration = Date.now() - startTime;
-      console.log(`Time ${duration} to init ${inputOperation}`);
     }
     items = this.cache.get(providerName)?.get(apiVersion)?.get(inputOperation) as Operation;
     if (items !== undefined) {
