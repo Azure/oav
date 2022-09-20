@@ -7,111 +7,67 @@ Object {
     "Microsoft.AppConfiguration/stable/1.0/appconfiguration.json",
   ],
   "authentication": Object {
-    "audience": "https://management.azure.com/",
+    "audience": "https://azconfig.io",
     "type": "AzureAD",
   },
   "cleanUpSteps": Array [],
+  "name": "crud",
   "prepareSteps": Array [
     Object {
       "authentication": Object {
-        "audience": "https://management.azure.com/",
+        "audience": "https://azconfig.io",
         "type": "AzureAD",
       },
       "description": undefined,
-      "externalReference": true,
+      "isManagementPlane": false,
       "isPrepareStep": true,
       "operation": Object {},
-      "operationId": "Operations_CheckNameAvailability",
+      "operationId": "CheckKeys",
       "outputVariables": Object {},
       "parameters": Object {
-        "api-version": "2022-05-01",
-        "checkNameAvailabilityParameters": Object {
-          "name": "$(configStoreName)",
-          "type": "Microsoft.AppConfiguration/configurationStores",
-        },
-        "subscriptionId": "$(subscriptionId)",
+        "api-version": "1.0",
       },
       "requiredVariables": Array [],
       "responseAssertion": undefined,
       "responses": Object {},
       "secretVariables": Array [],
-      "step": "Operations_CheckNameAvailability",
+      "step": "CheckKeys_0",
       "type": "restCall",
       "variables": Object {},
     },
     Object {
       "authentication": Object {
-        "audience": "https://management.azure.com/",
+        "audience": "https://azconfig.io",
         "type": "AzureAD",
       },
       "description": undefined,
-      "externalReference": true,
+      "isManagementPlane": false,
       "isPrepareStep": true,
       "operation": Object {},
-      "operationId": "ConfigurationStores_Create",
-      "outputVariables": Object {},
-      "parameters": Object {
-        "api-version": "2022-05-01",
-        "configStoreCreationParameters": Object {
-          "location": "$(location)",
-          "sku": Object {
-            "name": "Standard",
-          },
-          "tags": Object {
-            "myTag": "myTagValue",
-          },
-        },
-        "configStoreName": "$(configStoreName)",
-        "resourceGroupName": "$(resourceGroupName)",
-        "subscriptionId": "$(subscriptionId)",
-      },
-      "requiredVariables": Array [],
-      "responseAssertion": undefined,
-      "responses": Object {},
-      "secretVariables": Array [],
-      "step": "ConfigurationStores_Create",
-      "type": "restCall",
-      "variables": Object {},
-    },
-    Object {
-      "authentication": Object {
-        "audience": "https://management.azure.com/",
-        "type": "AzureAD",
-      },
-      "description": undefined,
-      "externalReference": true,
-      "isPrepareStep": true,
-      "operation": Object {},
-      "operationId": "ConfigurationStores_Get",
+      "operationId": "PutKeyValue",
       "outputVariables": Object {
-        "Endpoint": Object {
-          "fromResponse": "/properties/endpoint",
-          "type": "string",
-        },
-        "configStoreId": Object {
-          "fromResponse": "/id",
+        "lastModified": Object {
+          "fromResponse": "/last_modified",
           "type": "string",
         },
       },
       "parameters": Object {
-        "api-version": "2022-05-01",
-        "configStoreName": "$(configStoreName)",
-        "resourceGroupName": "$(resourceGroupName)",
-        "subscriptionId": "$(subscriptionId)",
+        "api-version": "1.0",
+        "entity": Object {
+          "value": "world",
+        },
+        "key": "hello",
       },
       "requiredVariables": Array [],
       "responseAssertion": undefined,
       "responses": Object {},
       "secretVariables": Array [],
-      "step": "ConfigurationStores_Get",
+      "step": "PutKeyValue_1",
       "type": "restCall",
       "variables": Object {},
     },
   ],
-  "requiredVariables": Array [
-    "subscriptionId",
-    "location",
-  ],
+  "requiredVariables": Array [],
   "scenarios": Array [
     Object {
       "_scenarioDef": [Circular],
@@ -120,10 +76,63 @@ Object {
         "type": "AzureAD",
       },
       "description": "",
-      "requiredVariables": Array [
-        "subscriptionId",
-        "location",
+      "requiredVariables": Array [],
+      "scenario": "simplyListKeys",
+      "secretVariables": Array [],
+      "steps": Array [
+        Object {
+          "authentication": Object {
+            "audience": "https://azconfig.io",
+            "type": "AzureAD",
+          },
+          "description": undefined,
+          "isManagementPlane": false,
+          "operation": Object {},
+          "operationId": "CheckKeys",
+          "outputVariables": Object {},
+          "parameters": Object {
+            "api-version": "1.0",
+          },
+          "requiredVariables": Array [],
+          "responseAssertion": undefined,
+          "responses": Object {},
+          "secretVariables": Array [],
+          "step": "CheckKeys_0",
+          "type": "restCall",
+          "variables": Object {},
+        },
+        Object {
+          "authentication": Object {
+            "audience": "https://azconfig.io",
+            "type": "AzureAD",
+          },
+          "description": undefined,
+          "isManagementPlane": false,
+          "operation": Object {},
+          "operationId": "GetKeys",
+          "outputVariables": Object {},
+          "parameters": Object {
+            "api-version": "1.0",
+          },
+          "requiredVariables": Array [],
+          "responseAssertion": undefined,
+          "responses": Object {},
+          "secretVariables": Array [],
+          "step": "GetKeys_1",
+          "type": "restCall",
+          "variables": Object {},
+        },
       ],
+      "variables": Object {},
+    },
+    Object {
+      "_scenarioDef": [Circular],
+      "authentication": Object {
+        "audience": "https://azconfig.io",
+        "type": "AzureAD",
+      },
+      "description": "",
+      "requiredVariables": Array [],
       "scenario": "appConfig_data_plane_crud",
       "secretVariables": Array [],
       "steps": Array [
@@ -133,6 +142,7 @@ Object {
             "type": "AzureAD",
           },
           "description": undefined,
+          "isManagementPlane": false,
           "operation": Object {},
           "operationId": "PutKeyValue",
           "outputVariables": Object {},
@@ -150,7 +160,7 @@ Object {
           "responseAssertion": undefined,
           "responses": Object {},
           "secretVariables": Array [],
-          "step": "0_0_PutKeyValue",
+          "step": "PutKeyValue_0",
           "type": "restCall",
           "variables": Object {},
         },
@@ -160,6 +170,7 @@ Object {
             "type": "AzureAD",
           },
           "description": undefined,
+          "isManagementPlane": false,
           "operation": Object {},
           "operationId": "CheckKeyValue",
           "outputVariables": Object {},
@@ -172,7 +183,7 @@ Object {
           "responseAssertion": undefined,
           "responses": Object {},
           "secretVariables": Array [],
-          "step": "0_1_CheckKeyValue",
+          "step": "CheckKeyValue_1",
           "type": "restCall",
           "variables": Object {},
         },
@@ -182,6 +193,7 @@ Object {
             "type": "AzureAD",
           },
           "description": undefined,
+          "isManagementPlane": false,
           "operation": Object {},
           "operationId": "GetKeyValue",
           "outputVariables": Object {},
@@ -194,7 +206,7 @@ Object {
           "responseAssertion": undefined,
           "responses": Object {},
           "secretVariables": Array [],
-          "step": "0_2_GetKeyValue",
+          "step": "GetKeyValue_2",
           "type": "restCall",
           "variables": Object {},
         },
@@ -204,6 +216,7 @@ Object {
             "type": "AzureAD",
           },
           "description": undefined,
+          "isManagementPlane": false,
           "operation": Object {},
           "operationId": "CheckKeys",
           "outputVariables": Object {},
@@ -214,7 +227,7 @@ Object {
           "responseAssertion": undefined,
           "responses": Object {},
           "secretVariables": Array [],
-          "step": "0_3_CheckKeys",
+          "step": "CheckKeys_3",
           "type": "restCall",
           "variables": Object {},
         },
@@ -224,6 +237,7 @@ Object {
             "type": "AzureAD",
           },
           "description": undefined,
+          "isManagementPlane": false,
           "operation": Object {},
           "operationId": "GetKeys",
           "outputVariables": Object {},
@@ -234,7 +248,7 @@ Object {
           "responseAssertion": undefined,
           "responses": Object {},
           "secretVariables": Array [],
-          "step": "0_4_GetKeys",
+          "step": "GetKeys_4",
           "type": "restCall",
           "variables": Object {},
         },
@@ -242,17 +256,18 @@ Object {
       "variables": Object {},
     },
   ],
-  "scope": "ResourceGroup",
+  "scope": "None",
   "secretVariables": Array [],
   "variables": Object {
-    "Endpoint": Object {
-      "type": "string",
-    },
-    "configStoreId": Object {
-      "type": "string",
-    },
     "configStoreName": Object {
-      "prefix": "configstor",
+      "type": "string",
+      "value": "configstor7q4oy9",
+    },
+    "endpoint": Object {
+      "type": "string",
+      "value": "https://$(configStoreName).azconfig.io",
+    },
+    "lastModified": Object {
       "type": "string",
     },
   },
@@ -266,10 +281,11 @@ Object {
     "Microsoft.Storage/stable/2021-08-01/storage.json",
   ],
   "authentication": Object {
-    "audience": "https://management.azure.com/",
+    "audience": "$(armEndpoint)",
     "type": "AzureAD",
   },
   "cleanUpSteps": Array [],
+  "name": "storageBasicExample",
   "prepareSteps": Array [],
   "requiredVariables": Array [
     "subscriptionId",
@@ -279,7 +295,7 @@ Object {
     Object {
       "_scenarioDef": [Circular],
       "authentication": Object {
-        "audience": "https://management.azure.com/",
+        "audience": "$(armEndpoint)",
         "type": "AzureAD",
       },
       "description": "",
@@ -292,11 +308,12 @@ Object {
       "steps": Array [
         Object {
           "authentication": Object {
-            "audience": "https://management.azure.com/",
+            "audience": "$(armEndpoint)",
             "type": "AzureAD",
           },
           "description": "StorageAccountCheckNameAvailability",
           "exampleFile": "../examples/StorageAccountCheckNameAvailability.json",
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "StorageAccounts_CheckNameAvailability",
           "outputVariables": Object {},
@@ -323,11 +340,12 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "https://management.azure.com/",
+            "audience": "$(armEndpoint)",
             "type": "AzureAD",
           },
           "description": "StorageAccountCreate",
           "exampleFile": "../examples/StorageAccountCreate.json",
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "StorageAccounts_Create",
           "outputVariables": Object {},
@@ -486,11 +504,12 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "https://management.azure.com/",
+            "audience": "$(armEndpoint)",
             "type": "AzureAD",
           },
           "description": "StorageAccountUpdate",
           "exampleFile": "../examples/StorageAccountUpdate.json",
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "StorageAccounts_Update",
           "outputVariables": Object {},
@@ -652,11 +671,12 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "https://management.azure.com/",
+            "audience": "$(armEndpoint)",
             "type": "AzureAD",
           },
           "description": "StorageAccountGetProperties",
           "exampleFile": "../examples/StorageAccountGetProperties.json",
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "StorageAccounts_GetProperties",
           "outputVariables": Object {},
@@ -767,11 +787,12 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "https://management.azure.com/",
+            "audience": "$(armEndpoint)",
             "type": "AzureAD",
           },
           "description": "StorageAccountDelete",
           "exampleFile": "../examples/StorageAccountDelete.json",
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "StorageAccounts_Delete",
           "outputVariables": Object {},
@@ -805,6 +826,10 @@ Object {
       "prefix": "sta",
       "type": "string",
     },
+    "armEndpoint": Object {
+      "type": "string",
+      "value": "https://management.azure.com",
+    },
   },
 }
 `;
@@ -816,10 +841,11 @@ Object {
     "Microsoft.Storage/stable/2021-08-01/storage.json",
   ],
   "authentication": Object {
-    "audience": "https://management.azure.com/",
+    "audience": "$(armEndpoint)",
     "type": "AzureAD",
   },
   "cleanUpSteps": Array [],
+  "name": "storageQuickStart",
   "prepareSteps": Array [],
   "requiredVariables": Array [
     "subscriptionId",
@@ -829,7 +855,7 @@ Object {
     Object {
       "_scenarioDef": [Circular],
       "authentication": Object {
-        "audience": "https://management.azure.com/",
+        "audience": "$(armEndpoint)",
         "type": "AzureAD",
       },
       "description": "",
@@ -842,10 +868,11 @@ Object {
       "steps": Array [
         Object {
           "authentication": Object {
-            "audience": "https://management.azure.com/",
+            "audience": "$(armEndpoint)",
             "type": "AzureAD",
           },
           "description": undefined,
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "StorageAccounts_CheckNameAvailability",
           "outputVariables": Object {},
@@ -873,10 +900,11 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "https://management.azure.com/",
+            "audience": "$(armEndpoint)",
             "type": "AzureAD",
           },
           "description": undefined,
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "StorageAccounts_Create",
           "outputVariables": Object {},
@@ -915,7 +943,7 @@ Object {
     Object {
       "_scenarioDef": [Circular],
       "authentication": Object {
-        "audience": "https://management.azure.com/",
+        "audience": "$(armEndpoint)",
         "type": "AzureAD",
       },
       "description": "",
@@ -928,10 +956,11 @@ Object {
       "steps": Array [
         Object {
           "authentication": Object {
-            "audience": "https://management.azure.com/",
+            "audience": "$(armEndpoint)",
             "type": "AzureAD",
           },
           "description": undefined,
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "StorageAccounts_CheckNameAvailability",
           "outputVariables": Object {},
@@ -959,10 +988,11 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "https://management.azure.com/",
+            "audience": "$(armEndpoint)",
             "type": "AzureAD",
           },
           "description": undefined,
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "StorageAccounts_Create",
           "outputVariables": Object {},
@@ -1006,7 +1036,7 @@ Object {
     Object {
       "_scenarioDef": [Circular],
       "authentication": Object {
-        "audience": "https://management.azure.com/",
+        "audience": "$(armEndpoint)",
         "type": "AzureAD",
       },
       "description": "",
@@ -1019,10 +1049,11 @@ Object {
       "steps": Array [
         Object {
           "authentication": Object {
-            "audience": "https://management.azure.com/",
+            "audience": "$(armEndpoint)",
             "type": "AzureAD",
           },
           "description": undefined,
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "StorageAccounts_CheckNameAvailability",
           "outputVariables": Object {},
@@ -1050,10 +1081,11 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "https://management.azure.com/",
+            "audience": "$(armEndpoint)",
             "type": "AzureAD",
           },
           "description": undefined,
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "StorageAccounts_Create",
           "outputVariables": Object {},
@@ -1088,10 +1120,11 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "https://management.azure.com/",
+            "audience": "$(armEndpoint)",
             "type": "AzureAD",
           },
           "description": undefined,
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "DeletedAccounts_Get",
           "outputVariables": Object {},
@@ -1126,7 +1159,7 @@ Object {
     Object {
       "_scenarioDef": [Circular],
       "authentication": Object {
-        "audience": "https://management.azure.com/",
+        "audience": "$(armEndpoint)",
         "type": "AzureAD",
       },
       "description": "",
@@ -1139,10 +1172,11 @@ Object {
       "steps": Array [
         Object {
           "authentication": Object {
-            "audience": "https://management.azure.com/",
+            "audience": "$(armEndpoint)",
             "type": "AzureAD",
           },
           "description": undefined,
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "StorageAccounts_Create",
           "outputVariables": Object {},
@@ -1244,6 +1278,10 @@ Object {
       "prefix": "sta",
       "type": "string",
     },
+    "armEndpoint": Object {
+      "type": "string",
+      "value": "https://management.azure.com",
+    },
   },
 }
 `;
@@ -1255,10 +1293,11 @@ Object {
     "Microsoft.SignalRService/preview/2021-06-01-preview/signalr.json",
   ],
   "authentication": Object {
-    "audience": "https://management.azure.com/",
+    "audience": "$(armEndpoint)",
     "type": "AzureAD",
   },
   "cleanUpSteps": Array [],
+  "name": "signalR",
   "prepareSteps": Array [],
   "requiredVariables": Array [
     "subscriptionId",
@@ -1268,7 +1307,7 @@ Object {
     Object {
       "_scenarioDef": [Circular],
       "authentication": Object {
-        "audience": "https://management.azure.com/",
+        "audience": "$(armEndpoint)",
         "type": "AzureAD",
       },
       "description": "Microsoft.SignalRService/Basic_CRUD",
@@ -1310,11 +1349,12 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "https://management.azure.com/",
+            "audience": "$(armEndpoint)",
             "type": "AzureAD",
           },
           "description": "SignalR_CheckNameAvailability",
           "exampleFile": "../examples/SignalR_CheckNameAvailability.json",
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "SignalR_CheckNameAvailability",
           "outputVariables": Object {},
@@ -1344,11 +1384,12 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "https://management.azure.com/",
+            "audience": "$(armEndpoint)",
             "type": "AzureAD",
           },
           "description": "SignalR_CreateOrUpdate",
           "exampleFile": "../examples/SignalR_CreateOrUpdate.json",
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "SignalR_CreateOrUpdate",
           "outputVariables": Object {},
@@ -1703,11 +1744,12 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "https://management.azure.com/",
+            "audience": "$(armEndpoint)",
             "type": "AzureAD",
           },
           "description": "SignalR_Get",
           "exampleFile": "../examples/SignalR_Get.json",
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "SignalR_Get",
           "outputVariables": Object {},
@@ -1848,11 +1890,12 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "https://management.azure.com/",
+            "audience": "$(armEndpoint)",
             "type": "AzureAD",
           },
           "description": "SignalR_Update",
           "exampleFile": "../examples/SignalR_Update.json",
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "SignalR_Update",
           "outputVariables": Object {},
@@ -2082,11 +2125,12 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "https://management.azure.com/",
+            "audience": "$(armEndpoint)",
             "type": "AzureAD",
           },
           "description": "SignalR_ListKeys",
           "exampleFile": "../examples/SignalR_ListKeys.json",
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "SignalR_ListKeys",
           "outputVariables": Object {},
@@ -2109,11 +2153,12 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "https://management.azure.com/",
+            "audience": "$(armEndpoint)",
             "type": "AzureAD",
           },
           "description": "SignalR_RegenerateKey",
           "exampleFile": "../examples/SignalR_RegenerateKey.json",
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "SignalR_RegenerateKey",
           "outputVariables": Object {},
@@ -2143,11 +2188,12 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "https://management.azure.com/",
+            "audience": "$(armEndpoint)",
             "type": "AzureAD",
           },
           "description": "SignalR_Restart",
           "exampleFile": "../examples/SignalR_Restart.json",
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "SignalR_Restart",
           "outputVariables": Object {},
@@ -2175,11 +2221,12 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "https://management.azure.com/",
+            "audience": "$(armEndpoint)",
             "type": "AzureAD",
           },
           "description": "Usages_List",
           "exampleFile": "../examples/Usages_List.json",
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "Usages_List",
           "outputVariables": Object {},
@@ -2225,11 +2272,12 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "https://management.azure.com/",
+            "audience": "$(armEndpoint)",
             "type": "AzureAD",
           },
           "description": "SignalR_ListByResourceGroup",
           "exampleFile": "../examples/SignalR_ListByResourceGroup.json",
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "SignalR_ListByResourceGroup",
           "outputVariables": Object {},
@@ -2373,11 +2421,12 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "https://management.azure.com/",
+            "audience": "$(armEndpoint)",
             "type": "AzureAD",
           },
           "description": "SignalR_ListBySubscription",
           "exampleFile": "../examples/SignalR_ListBySubscription.json",
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "SignalR_ListBySubscription",
           "outputVariables": Object {},
@@ -2520,11 +2569,12 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "https://management.azure.com/",
+            "audience": "$(armEndpoint)",
             "type": "AzureAD",
           },
           "description": "Operations_List",
           "exampleFile": "../examples/Operations_List.json",
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "Operations_List",
           "outputVariables": Object {},
@@ -2559,11 +2609,12 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "https://management.azure.com/",
+            "audience": "$(armEndpoint)",
             "type": "AzureAD",
           },
           "description": "SignalR_Delete",
           "exampleFile": "../examples/SignalR_Delete.json",
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "SignalR_Delete",
           "outputVariables": Object {},
@@ -2601,6 +2652,11 @@ Object {
   ],
   "scope": "ResourceGroup",
   "secretVariables": Array [],
-  "variables": Object {},
+  "variables": Object {
+    "armEndpoint": Object {
+      "type": "string",
+      "value": "https://management.azure.com",
+    },
+  },
 }
 `;

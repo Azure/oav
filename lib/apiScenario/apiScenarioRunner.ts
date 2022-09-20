@@ -70,6 +70,7 @@ export interface ApiScenarioRunnerClient {
   ): Promise<void>;
 
   sendArmTemplateDeployment(
+    armEndpoint: string,
     armTemplate: ArmTemplate,
     armDeployment: ArmDeployment,
     step: StepArmTemplate,
@@ -275,6 +276,12 @@ export class ApiScenarioRunner {
       },
     };
 
-    await this.client.sendArmTemplateDeployment(step.armTemplatePayload, armDeployment, step, env);
+    await this.client.sendArmTemplateDeployment(
+      scope.env.getRequiredString("armEndpoint"),
+      step.armTemplatePayload,
+      armDeployment,
+      step,
+      env
+    );
   }
 }

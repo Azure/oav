@@ -217,21 +217,17 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
   }
 
   private startTestProxyRecording() {
-    const { item } = this.addNewItem(
-      "Prepare",
-      {
-        name: "startTestProxyRecording",
-        request: {
-          url: `${this.opts.testProxy}/record/start`,
-          method: "POST",
-          body: {
-            mode: "raw",
-            raw: `{"x-recording-file": "./recordings/${this.opts.collectionName}_${this.opts.runId}.json"}`,
-          },
+    const { item } = this.addNewItem("Prepare", {
+      name: "startTestProxyRecording",
+      request: {
+        url: `${this.opts.testProxy}/record/start`,
+        method: "POST",
+        body: {
+          mode: "raw",
+          raw: `{"x-recording-file": "./recordings/${this.opts.collectionName}_${this.opts.runId}.json"}`,
         },
       },
-      false
-    );
+    });
     PostmanHelper.addEvent(
       item.events,
       "test",
@@ -239,23 +235,19 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
 pm.test("Started TestProxy recording", function() {
     pm.response.to.be.success;
     pm.response.to.have.header("x-recording-id");
-    pm.collectionVariables.set("x_recording_id", pm.response.headers.get("x-recording-id"));
+    pm.variables.set("x_recording_id", pm.response.headers.get("x-recording-id"));
 });`
     );
   }
 
   private stopTestProxyRecording() {
-    const { item } = this.addNewItem(
-      "CleanUp",
-      {
-        name: "stopTestProxyRecording",
-        request: {
-          url: `${this.opts.testProxy}/record/stop`,
-          method: "POST",
-        },
+    const { item } = this.addNewItem("CleanUp", {
+      name: "stopTestProxyRecording",
+      request: {
+        url: `${this.opts.testProxy}/record/stop`,
+        method: "POST",
       },
-      false
-    );
+    });
     item.request.addHeader({
       key: "x-recording-id",
       value: "{{x_recording_id}}",
@@ -274,16 +266,15 @@ pm.test("Stopped TestProxy recording", function() {
   private addNewItem(
     itemType: "Prepare" | "CleanUp" | "Scenario" | "Blank",
     definition?: ItemDefinition,
-    checkTestProxy: boolean = true,
-    baseUri?: string
+    baseUriForTestProxy?: string
   ): { item: Item; itemGroup?: ItemGroup<Item> } {
     const item = PostmanHelper.createItem(definition);
     let itemGroup: ItemGroup<Item> | undefined;
 
-    if (checkTestProxy && this.opts.testProxy && baseUri) {
+    if (this.opts.testProxy && baseUriForTestProxy) {
       item.request.addHeader({
         key: "x-recording-upstream-base-uri",
-        value: baseUri,
+        value: baseUriForTestProxy,
       });
       item.request.addHeader({ key: "x-recording-id", value: "{{x_recording_id}}" });
       item.request.addHeader({ key: "x-recording-mode", value: "record" });
@@ -334,9 +325,13 @@ pm.test("Stopped TestProxy recording", function() {
   ): Promise<void> {
     if (this.opts.skipArmCall) return;
 
-    const { item } = this.addNewItem("Prepare", {
-      name: "createResourceGroup",
-    });
+    const { item } = this.addNewItem(
+      "Prepare",
+      {
+        name: "createResourceGroup",
+      },
+      armEndpoint
+    );
 
     item.request.method = "PUT";
     item.request.url = new Url({
@@ -385,9 +380,13 @@ pm.test("Stopped TestProxy recording", function() {
   ): Promise<void> {
     if (this.opts.skipArmCall) return;
 
-    const { item } = this.addNewItem("CleanUp", {
-      name: "deleteResourceGroup",
-    });
+    const { item } = this.addNewItem(
+      "CleanUp",
+      {
+        name: "deleteResourceGroup",
+      },
+      armEndpoint
+    );
     item.request.method = "DELETE";
     item.request.url = new Url({
       host: this.opts.testProxy ?? armEndpoint,
@@ -434,6 +433,8 @@ pm.test("Stopped TestProxy recording", function() {
   ): Promise<void> {
     env.resolve();
 
+    const baseUri = env.resolveString(clientRequest.host);
+
     const { item, itemGroup } = this.addNewItem(
       step.isPrepareStep ? "Prepare" : step.isCleanUpStep ? "CleanUp" : "Scenario",
       {
@@ -448,7 +449,8 @@ pm.test("Stopped TestProxy recording", function() {
               }
             : undefined,
         },
-      }
+      },
+      baseUri
     );
 
     // pre scripts
@@ -476,7 +478,7 @@ pm.test("Stopped TestProxy recording", function() {
     item.description = step.operation.operationId;
 
     item.request.url = new Url({
-      host: this.opts.testProxy ?? covertToPostmanVariable(clientRequest.host),
+      host: this.opts.testProxy ?? baseUri,
       path: covertToPostmanVariable(clientRequest.path, true),
       variable: Object.entries(clientRequest.pathParameters ?? {}).map(([key, value]) => ({
         key,
@@ -573,7 +575,13 @@ pm.test("Stopped TestProxy recording", function() {
     // generate get
     if (step.operation._method === "put" || step.operation._method === "delete") {
       itemGroup!.items.add(
-        this.generateFinalGetItem(item.name, item.request.url, item.name, step.operation._method)
+        this.generateFinalGetItem(
+          item.name,
+          baseUri,
+          item.request.url,
+          item.name,
+          step.operation._method
+        )
       );
     }
   }
@@ -592,16 +600,84 @@ pm.test("Stopped TestProxy recording", function() {
       `
 const pollingUrl = pm.response.headers.get("Location") || pm.response.headers.get("Azure-AsyncOperation");
 if (pollingUrl) {
-    pm.collectionVariables.set("x_polling_url", ${
+    pm.variables.set("x_polling_url", ${
       this.opts.testProxy
         ? `pollingUrl.replace("${baseUri}","${this.opts.testProxy}")`
         : "pollingUrl"
     });
-    pm.collectionVariables.set("x_retry_after", "3");
+    pm.variables.set("x_retry_after", "3");
 }`
     );
 
-    this.appendPollerItems(itemGroup, item, checkStatus, responseAssertion);
+    const { item: delayItem } = this.addNewItem("Blank", {
+      name: `_${item.name}_delay`,
+      request: {
+        url: "https://postman-echo.com/delay/{{x_retry_after}}",
+        method: "GET",
+      },
+    });
+    delayItem.description = JSON.stringify({ type: "delay", lro_item_name: item.name });
+
+    itemGroup.items.add(delayItem);
+
+    const { item: pollerItem } = this.addNewItem(
+      "Blank",
+      {
+        name: `_${item.name}_poller`,
+        request: {
+          url: `{{x_polling_url}}`,
+          method: "GET",
+        },
+      },
+      baseUri
+    );
+    pollerItem.description = JSON.stringify({ type: "poller", lro_item_name: item.name });
+
+    const pollerPostScripts: string[] = [];
+    pollerPostScripts.push(
+      `
+try {
+    if (pm.response.code === 202) {
+        postman.setNextRequest("${delayItem.name}");
+        if (pm.response.headers.has("Retry-After")) {
+            pm.variables.set("x_retry_after", pm.response.headers.get("Retry-After"));
+        }
+    } else if (pm.response.size().body > 0) {
+        const terminalStatus = ["Succeeded", "Failed", "Canceled"];
+        const json = pm.response.json();
+        if (json.status !== undefined && terminalStatus.indexOf(json.status) === -1) {
+            postman.setNextRequest("${delayItem.name}")
+            if (pm.response.headers.has("Retry-After")) {
+                pm.variables.set("x_retry_after", pm.response.headers.get("Retry-After"));
+            }
+        }
+    }
+} catch (err) {
+  console.error(err);
+}
+`
+    );
+
+    if (checkStatus) {
+      PostmanHelper.appendScripts(pollerPostScripts, {
+        name: "armTemplate deployment status check",
+        types: ["StatusCodeAssertion", "ARMDeploymentStatusAssertion"],
+      });
+    }
+
+    if (responseAssertion) {
+      PostmanHelper.appendScripts(pollerPostScripts, {
+        name: "LRO response assertion",
+        types: ["ResponseDataAssertion"],
+        responseAssertion: responseAssertion,
+      });
+    }
+
+    if (postScripts.length > 0) {
+      PostmanHelper.addEvent(pollerItem.events, "test", pollerPostScripts);
+    }
+
+    itemGroup.items.add(pollerItem);
   }
 
   private generatePostScripts(
@@ -635,6 +711,7 @@ if (pollingUrl) {
   }
 
   public async sendArmTemplateDeployment(
+    armEndpoint: string,
     armTemplate: ArmTemplate,
     _armDeployment: ArmDeployment,
     step: StepArmTemplate,
@@ -646,7 +723,8 @@ if (pollingUrl) {
       step.isPrepareStep ? "Prepare" : step.isCleanUpStep ? "CleanUp" : "Scenario",
       {
         name: step.step,
-      }
+      },
+      armEndpoint
     );
 
     item.request = new Request({
@@ -656,7 +734,7 @@ if (pollingUrl) {
       body: { mode: "raw" } as RequestBodyDefinition,
     });
     item.request.url = new Url({
-      host: this.opts.testProxy ?? env.getRequiredString("armEndpoint"),
+      host: this.opts.testProxy ?? armEndpoint,
       path: `/subscriptions/:subscriptionId/resourcegroups/:resourceGroupName/providers/Microsoft.Resources/deployments/:deploymentName`,
       variable: [
         { key: "subscriptionId", value: `{{subscriptionId}}` },
@@ -693,7 +771,7 @@ if (pollingUrl) {
       variables: undefined,
     });
 
-    this.lroPoll(itemGroup!, item, env.getRequiredString("armEndpoint"), postScripts, true);
+    this.lroPoll(itemGroup!, item, armEndpoint, postScripts, true);
 
     if (postScripts.length > 0) {
       PostmanHelper.addEvent(item.events, "test", postScripts);
@@ -704,6 +782,7 @@ if (pollingUrl) {
       : ["ExtractARMTemplateOutput"];
     const generatedGetOperationItem = this.generateFinalGetItem(
       item.name,
+      armEndpoint,
       item.request.url,
       step.step,
       "put",
@@ -715,19 +794,24 @@ if (pollingUrl) {
 
   private generateFinalGetItem(
     name: string,
+    baseUri: string,
     url: Url,
     step: string,
     prevMethod: string = "put",
     scriptTypes: PostmanHelper.TestScriptType[] = [],
     armTemplate?: ArmTemplate
   ): Item {
-    const { item } = this.addNewItem("Blank", {
-      name: `_${name}_final_get`,
-      request: {
-        method: "GET",
-        url: "",
+    const { item } = this.addNewItem(
+      "Blank",
+      {
+        name: `_${name}_final_get`,
+        request: {
+          method: "GET",
+          url: "",
+        },
       },
-    });
+      baseUri
+    );
     item.request.url = url;
     item.description = JSON.stringify({
       type: "final-get",
@@ -743,83 +827,6 @@ if (pollingUrl) {
       PostmanHelper.addEvent(item.events, "test", postScripts);
     }
     return item;
-  }
-
-  private appendPollerItems(
-    itemGroup: ItemGroup<Item>,
-    initialItem: Item,
-    checkStatus: boolean = false,
-    responseAssertion?: StepResponseAssertion
-  ): void {
-    const { item: delayItem } = this.addNewItem(
-      "Blank",
-      {
-        name: `_${initialItem.name}_delay`,
-        request: {
-          url: "https://postman-echo.com/delay/{{x_retry_after}}",
-          method: "GET",
-        },
-      },
-      false
-    );
-    delayItem.description = JSON.stringify({ type: "delay", lro_item_name: initialItem.name });
-
-    itemGroup.items.add(delayItem);
-
-    const { item: pollerItem } = this.addNewItem("Blank", {
-      name: `_${initialItem.name}_poller`,
-      request: {
-        url: `{{x_polling_url}}`,
-        method: "GET",
-      },
-    });
-    pollerItem.description = JSON.stringify({ type: "poller", lro_item_name: initialItem.name });
-
-    const postScripts: string[] = [];
-    postScripts.push(
-      `
-try {
-    if (pm.response.code === 202) {
-        postman.setNextRequest("${delayItem.name}");
-        if (pm.response.headers.has("Retry-After")) {
-            pm.collectionVariables.set("x_retry_after", pm.response.headers.get("Retry-After"));
-        }
-    } else if (pm.response.size().body > 0) {
-        const terminalStatus = ["Succeeded", "Failed", "Canceled"];
-        const json = pm.response.json();
-        if (json.status !== undefined && terminalStatus.indexOf(json.status) === -1) {
-            postman.setNextRequest("${delayItem.name}")
-            if (pm.response.headers.has("Retry-After")) {
-                pm.collectionVariables.set("x_retry_after", pm.response.headers.get("Retry-After"));
-            }
-        }
-    }
-} catch (err) {
-  console.error(err);
-}
-`
-    );
-
-    if (checkStatus) {
-      PostmanHelper.appendScripts(postScripts, {
-        name: "armTemplate deployment status check",
-        types: ["StatusCodeAssertion", "ARMDeploymentStatusAssertion"],
-      });
-    }
-
-    if (responseAssertion) {
-      PostmanHelper.appendScripts(postScripts, {
-        name: "LRO response assertion",
-        types: ["ResponseDataAssertion"],
-        responseAssertion: responseAssertion,
-      });
-    }
-
-    if (postScripts.length > 0) {
-      PostmanHelper.addEvent(pollerItem.events, "test", postScripts);
-    }
-
-    itemGroup.items.add(pollerItem);
   }
 }
 
