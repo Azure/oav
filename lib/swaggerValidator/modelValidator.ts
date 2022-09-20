@@ -576,8 +576,8 @@ export class SwaggerExampleValidator {
 
         if (
           (err.code as any) === "MISSING_RESOURCE_ID" &&
-          exampleContent.responses[`${statusCode}`].body &&
-          Object.keys(exampleContent.responses[`${statusCode}`].body).length === 0
+          exampleContent.responses[statusCode!].body &&
+          Object.keys(exampleContent.responses[statusCode!].body).length === 0
         ) {
           // ignore this error when whole body of response is empty
           continue;
