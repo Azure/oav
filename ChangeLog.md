@@ -2,6 +2,7 @@
 
 ## 08/04/2022 3.0.5
 
+- ModelValidator - Support api-version validation
 - ModelValidator - Fix bug when operation has no own parameters
 - validate-traffic
   - add detailed operationId on swagger link
