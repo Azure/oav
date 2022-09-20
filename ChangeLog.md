@@ -1,5 +1,10 @@
 # Change Log - oav
 
+## 09/20/2022 3.0.6
+
+- Support Roundtrip validation in live validation
+- Integrate roundtrip validation into API scenario
+
 ## 08/04/2022 3.0.5
 
 - ModelValidator - Fix bug when operation has no own parameters
