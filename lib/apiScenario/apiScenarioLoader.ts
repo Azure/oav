@@ -427,7 +427,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       }
     };
 
-    if ("operationId" in rawStep) {
+    if (!("exampleFile" in rawStep)) {
       // load operation step
       step.operationId = rawStep.operationId;
       if (!rawStep.step) {
@@ -513,8 +513,8 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       let operation: Operation | undefined;
 
       // Load Operation
-      if (exampleFileContent.operationId) {
-        step.operationId = exampleFileContent.operationId;
+      if (rawStep.operationId || exampleFileContent.operationId) {
+        step.operationId = (rawStep.operationId ?? exampleFileContent.operationId)!;
 
         operation = this.operationsMap.get(step.operationId);
         if (operation === undefined) {
