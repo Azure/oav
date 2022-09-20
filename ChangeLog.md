@@ -1,9 +1,16 @@
 # Change Log - oav
 
-## 09/20/2022 3.0.6
+## 09/19/2022 3.1.0
 
-- Support Roundtrip validation in live validation
-- Integrate roundtrip validation into API scenario
+- API Scenario
+  - Support parameterized host and AzureAD authentication option
+  - Remove support for `shareScope`
+  - Refactor postman collection generation with folders
+  - Improve LRO poller and use retry-after header in delay
+  - Improve logging level to reuse the `-l` option
+  - Clean some unused dependencies
+  - Support Roundtrip validation in validation
+  - Integrate Roundtrip validation into API Scenario
 
 ## 08/04/2022 3.0.5
 
