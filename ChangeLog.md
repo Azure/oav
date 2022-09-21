@@ -12,8 +12,14 @@
   - Support Roundtrip validation in validation
   - Integrate Roundtrip validation into API Scenario
 
+## 09/06/2022 3.0.6
+
+- AJV validator - Support arm-id format validation
+- ModelValidator - Only enable arm-id validation for both of model validator and live validation(rpaas api validation is excluded)
+
 ## 08/04/2022 3.0.5
 
+- ModelValidator - Support api-version validation
 - ModelValidator - Fix bug when operation has no own parameters
 - validate-traffic
   - add detailed operationId on swagger link

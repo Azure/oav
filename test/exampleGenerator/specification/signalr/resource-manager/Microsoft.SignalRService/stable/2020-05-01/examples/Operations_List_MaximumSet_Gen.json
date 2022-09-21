@@ -1,0 +1,54 @@
+{
+  "parameters": {
+    "api-version": "2020-05-01"
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "value": [
+          {
+            "name": "Microsoft.SignalRService/SignalR/read",
+            "isDataAction": true,
+            "display": {
+              "provider": "Microsoft.SignalRService",
+              "resource": "SignalR",
+              "operation": "Manage SignalR (read-only)",
+              "description": "ggqwwaqxhybmeuhf"
+            },
+            "properties": {
+              "serviceSpecification": {
+                "metricSpecifications": [
+                  {
+                    "name": "cilxymqzbdlqjgvfaieapqucdkrcrh",
+                    "displayName": "juuundygdjsmnhue",
+                    "displayDescription": "wiqiqeuqseibemjdmazlmcneqh",
+                    "unit": "cv",
+                    "aggregationType": "twwnpvdr",
+                    "fillGapWithZero": "ypdak",
+                    "category": "mooarjxkloxqgcmfiukuqppfgevcz",
+                    "dimensions": [
+                      {
+                        "name": "crhffsynywmuaklrxuaipmkg",
+                        "displayName": "mlrmv",
+                        "internalName": "onmometlzbymlrjxuamvuembm",
+                        "toBeExportedForShoebox": true
+                      }
+                    ]
+                  }
+                ],
+                "logSpecifications": [
+                  {
+                    "name": "exvbifwpdwqfrfpymnvtcqaamywlnb",
+                    "displayName": "vr"
+                  }
+                ]
+              }
+            },
+            "origin": "o"
+          }
+        ],
+        "nextLink": "providers/Microsoft.SignalRService?$skipToken={opaqueString}"
+      }
+    }
+  }
+}
