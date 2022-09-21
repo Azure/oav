@@ -30,6 +30,26 @@
           }
         }
       }
+    },
+    "/format/armid": {
+      "post": {
+        "operationId": "ARMID",
+        "description": "The value is an ARM ID",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ARMIDResult"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Byte": {
+            "$ref": "./examples/armid.json"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -45,6 +65,21 @@
           "type": "string",
           "format": "byte",
           "description": "Base64-encoded data."
+        }
+      }
+    },
+    "ARMIDResult": {
+      "type": "object",
+      "properties": {
+        "NotARMIDValue": {
+          "type": "string",
+          "format": "arm-id",
+          "description": "An ARM ID"
+        },
+        "ARMIDValue": {
+          "type": "string",
+          "format": "arm-id",
+          "description": "An ARM ID"
         }
       }
     }

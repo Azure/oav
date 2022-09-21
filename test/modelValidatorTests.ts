@@ -853,5 +853,15 @@ describe("Model Validation", () => {
         "Object didn't pass validation for format byte: credentialValue1"
       );
     });
+    it("should fail when value is not in arm-id format", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/formatValidation/format.json`;
+      const result = await validate.validateExamples(specPath2, "ARMID");
+      assert.strictEqual(result.length, 1);
+      assert.strictEqual(result[0].code, "INVALID_FORMAT");
+      assert.strictEqual(
+        result[0].message,
+        "Object didn't pass validation for format arm-id: test123"
+      );
+    });
   });
 });

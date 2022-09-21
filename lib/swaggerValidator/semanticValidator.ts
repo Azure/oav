@@ -70,11 +70,14 @@ for (const errorCode of Object.keys(semanticValidationErrors)) {
     loadSuppression.push(meta.id);
   }
 }
+
+// Set isArmCall flag to true so that the ARM rules schema will be applied to swaggers too
 const defaultOpts: SemanticValidationOption = {
   eraseDescription: false,
   eraseXmsExamples: false,
   useJsonParser: true,
   loadSuppression,
+  isArmCall: true,
 };
 
 @injectable()

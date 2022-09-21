@@ -590,6 +590,16 @@ export class SwaggerExampleValidator {
             }
           }
         }
+
+        if (
+          (err.code as any) === "MISSING_RESOURCE_ID" &&
+          exampleContent.responses[statusCode!].body &&
+          Object.keys(exampleContent.responses[statusCode!].body).length === 0
+        ) {
+          // ignore this error when whole body of response is empty
+          continue;
+        }
+
         const node = this.getNotSuppressedErrorPath(err);
         if (node === undefined) {
           continue;
@@ -941,11 +951,13 @@ for (const errorCode of Object.keys(modelValidationErrors)) {
   loadSuppression.push(errorCode);
 }
 
+// Set 'isArmCall flag to true so that the special ARM rules can be applied to examples validation too'
 const defaultOpts: ExampleValidationOption = {
   eraseDescription: false,
   eraseXmsExamples: false,
   useJsonParser: true,
   loadSuppression,
+  isArmCall: true,
 };
 
 // Compatible wrapper for old ModelValidator

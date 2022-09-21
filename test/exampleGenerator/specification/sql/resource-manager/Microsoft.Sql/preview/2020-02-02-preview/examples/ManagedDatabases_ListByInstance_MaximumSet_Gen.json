@@ -1,0 +1,53 @@
+{
+  "parameters": {
+    "resourceGroupName": "rgManagedDatabases",
+    "managedInstanceName": "managedInstance",
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "api-version": "2020-02-02-preview"
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "value": [
+          {
+            "id": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/testrg/providers/Microsoft.Sql/managedInstances/testcl/databases/testdb1",
+            "location": "southeastasia",
+            "name": "testdb1",
+            "properties": {
+              "collation": "SQL_Latin1_General_CP1_CI_AS",
+              "creationDate": "2017-08-04T15:00:17.73Z",
+              "defaultSecondaryLocation": "North Europe",
+              "status": "Online",
+              "earliestRestorePoint": "2022-09-20T06:14:34.699Z",
+              "catalogCollation": "DATABASE_DEFAULT",
+              "failoverGroupId": "vnsyexxvncrunrhlleafytg"
+            },
+            "type": "Microsoft.Sql/managedInstances/databases",
+            "tags": {
+              "key4672": "ko"
+            }
+          },
+          {
+            "id": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/testrg/providers/Microsoft.Sql/managedInstances/testcl/databases/testdb2",
+            "location": "southeastasia",
+            "name": "testdb2",
+            "properties": {
+              "collation": "SQL_Latin1_General_CP1_CI_AS",
+              "creationDate": "2017-08-04T15:00:17.73Z",
+              "defaultSecondaryLocation": "North Europe",
+              "status": "Online",
+              "earliestRestorePoint": "2022-09-20T06:14:34.699Z",
+              "catalogCollation": "DATABASE_DEFAULT",
+              "failoverGroupId": "sleazdroxqtzfryvxeua"
+            },
+            "type": "Microsoft.Sql/managedInstances/databases",
+            "tags": {
+              "key1886": "brmgppjorpbcrcymwlfplhes"
+            }
+          }
+        ],
+        "nextLink": "hutodmybierbkxnibqkyaknhtb"
+      }
+    }
+  }
+}
