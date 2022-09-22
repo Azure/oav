@@ -453,9 +453,6 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     if (!("exampleFile" in rawStep)) {
       // load operation step
       step.operationId = rawStep.operationId;
-      if (!rawStep.step) {
-        step.step = `${rawStep.operationId}_${ctx.stepIndex}`;
-      }
 
       const operation = rawStep.readmeTag
         ? this.additionalMap.get(rawStep.readmeTag)?.operationsMap.get(step.operationId)
@@ -573,6 +570,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
         }
         step.description = step.description ?? exampleName;
       }
+
       step.parameters = exampleFileContent.parameters;
 
       // force update api-version
@@ -585,6 +583,10 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       await this.applyPatches(step, rawStep, operation);
 
       this.templateGenerator.exampleParameterConvention(step, getVariable, operation);
+    }
+
+    if (!rawStep.step) {
+      step.step = `${step.operationId}_${ctx.stepIndex}`;
     }
     return step;
   }
