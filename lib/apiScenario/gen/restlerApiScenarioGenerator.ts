@@ -411,7 +411,8 @@ export class RestlerApiScenarioGenerator {
         continue;
       }
       for (const method of Object.keys(dependencies[path])) {
-        const operationId = this.getOperationId(path, method);
+        const operationId =
+          this.getOperationId(path, method) || this.getOperationId(path + "/", method);
         if (!operationId) {
           console.warn(`can't find operationId, ${path} ${method}`);
           continue;

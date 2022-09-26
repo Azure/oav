@@ -5904,3 +5904,644 @@ Array [
   },
 ]
 `;
+
+exports[`postmanCollectionGenerator should generate PostmanCollection - testKeyReplace 1`] = `
+Array [
+  Object {
+    "auth": Object {
+      "bearer": Array [
+        Object {
+          "key": "token",
+          "type": "string",
+          "value": "{{x_bearer_token}}",
+        },
+      ],
+      "type": "bearer",
+    },
+    "event": Array [
+      Object {
+        "id": "nprcrj",
+        "listen": "prerequest",
+        "script": Object {
+          "exec": Array [
+            "",
+            "if (pm.variables.get(\\"x_enable_auth\\") !== \\"true\\") {",
+            "    return;",
+            "}",
+            "let vars = [\\"client_id\\", \\"client_secret\\", \\"tenantId\\", \\"subscriptionId\\"];",
+            "vars.forEach(function (item, index, array) {",
+            "    pm.expect(",
+            "        pm.variables.get(item),",
+            "        item + \\" variable not set\\"",
+            "    ).to.not.be.undefined;",
+            "    pm.expect(pm.variables.get(item), item + \\" variable not set\\").to.not.be.empty;",
+            "});",
+            "if (",
+            "    !pm.collectionVariables.get(\\"x_bearer_token\\") ||",
+            "    Date.now() >",
+            "    new Date(pm.collectionVariables.get(\\"x_bearer_token_expires_on\\") * 1000)",
+            ") {",
+            "    pm.sendRequest(",
+            "        {",
+            "            url:",
+            "                \\"https://login.microsoftonline.com/\\" +",
+            "                pm.variables.get(\\"tenantId\\") +",
+            "                \\"/oauth2/token\\",",
+            "            method: \\"POST\\",",
+            "            header: \\"Content-Type: application/x-www-form-urlencoded\\",",
+            "            body: {",
+            "                mode: \\"urlencoded\\",",
+            "                urlencoded: [",
+            "                    { key: \\"grant_type\\", value: \\"client_credentials\\", disabled: false },",
+            "                    {",
+            "                        key: \\"client_id\\",",
+            "                        value: pm.variables.get(\\"client_id\\"),",
+            "                        disabled: false,",
+            "                    },",
+            "                    {",
+            "                        key: \\"client_secret\\",",
+            "                        value: pm.variables.get(\\"client_secret\\"),",
+            "                        disabled: false,",
+            "                    },",
+            "                    { key: \\"resource\\", value: \\"https://management.azure.com\\", disabled: false },",
+            "                ],",
+            "            },",
+            "        },",
+            "        function (err, res) {",
+            "            if (err) {",
+            "                console.log(err);",
+            "            } else {",
+            "                let resJson = res.json();",
+            "                pm.collectionVariables.set(",
+            "                    \\"x_bearer_token_expires_on\\",",
+            "                    resJson.expires_on",
+            "                );",
+            "                pm.collectionVariables.set(\\"x_bearer_token\\", resJson.access_token);",
+            "            }",
+            "        }",
+            "    );",
+            "}",
+          ],
+          "id": "r4of8l",
+          "type": "text/javascript",
+        },
+      },
+    ],
+    "info": Object {
+      "_postman_id": "jestRunId",
+      "description": Object {
+        "content": "{\\"apiScenarioFilePath\\":\\"Microsoft.Storage/stable/2021-08-01/scenarios/testKeyReplace.yaml\\",\\"apiScenarioName\\":\\"StorageBasicExample\\",\\"swaggerFilePaths\\":[\\"Microsoft.Storage/stable/2021-08-01/storage.json\\"]}",
+        "type": "text/plain",
+      },
+      "name": "StorageBasicExample",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+      "version": undefined,
+    },
+    "item": Array [
+      Object {
+        "description": "{\\"type\\":\\"prepare\\"}",
+        "event": Array [
+          Object {
+            "id": "zq9w6n",
+            "listen": "test",
+            "script": Object {
+              "exec": Array [
+                "pm.test(\\"response status code assertion.\\", function() {",
+                "pm.response.to.be.success;",
+                "});",
+              ],
+              "id": "gzre88",
+              "type": "text/javascript",
+            },
+          },
+        ],
+        "id": "tgp8uv",
+        "name": "createResourceGroup",
+        "request": Object {
+          "body": Object {
+            "mode": "raw",
+            "raw": "{\\"location\\":\\"{{location}}\\"}",
+          },
+          "header": Array [
+            Object {
+              "key": "Content-Type",
+              "value": "application/json",
+            },
+          ],
+          "method": "PUT",
+          "url": Object {
+            "host": Array [
+              "https://management",
+              "azure",
+              "com",
+            ],
+            "path": Array [
+              "subscriptions",
+              ":subscriptionId",
+              "resourcegroups",
+              ":resourceGroupName",
+            ],
+            "query": Array [
+              Object {
+                "key": "api-version",
+                "value": "2020-06-01",
+              },
+            ],
+            "variable": Array [
+              Object {
+                "key": "subscriptionId",
+                "type": "any",
+                "value": "{{subscriptionId}}",
+              },
+              Object {
+                "key": "resourceGroupName",
+                "type": "any",
+                "value": "{{resourceGroupName}}",
+              },
+            ],
+          },
+        },
+        "response": Array [],
+      },
+      Object {
+        "description": "{\\"type\\":\\"LRO\\",\\"poller_item_name\\":\\"createStorageAccount_poller\\",\\"operationId\\":\\"StorageAccounts_Create\\",\\"exampleName\\":\\"../examples/StorageAccountCreateUserAssignedIdentityWithFederatedIdentityClientId.json\\",\\"itemName\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
+        "event": Array [
+          Object {
+            "id": "clnzjc",
+            "listen": "test",
+            "script": Object {
+              "exec": Array [
+                "pm.test(\\"response status code assertion.\\", function() {",
+                "pm.response.to.be.success;",
+                "});",
+              ],
+              "id": "3747vc",
+              "type": "text/javascript",
+            },
+          },
+          Object {
+            "id": "oipyp5",
+            "listen": "test",
+            "script": Object {
+              "exec": Array [
+                "",
+                "const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\");",
+                "if (pollingUrl) {",
+                "    pm.collectionVariables.set(\\"x_polling_url\\", pollingUrl);",
+                "}",
+              ],
+              "id": "9120qs",
+              "type": "text/javascript",
+            },
+          },
+        ],
+        "id": "8gypdh",
+        "name": "createStorageAccount",
+        "request": Object {
+          "body": Object {
+            "mode": "raw",
+            "raw": "{
+  \\"identity\\": {
+    \\"type\\": \\"UserAssigned\\",
+    \\"userAssignedIdentities\\": {
+      \\"/subscriptions/{{subscriptionId}}/resourceGroups/{{resourceGroupName}}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{managed-identity-name}\\": {}
+    }
+  },
+  \\"sku\\": {
+    \\"name\\": \\"Standard_LRS\\"
+  },
+  \\"kind\\": \\"Storage\\",
+  \\"location\\": \\"{{location}}\\",
+  \\"properties\\": {
+    \\"encryption\\": {
+      \\"services\\": {
+        \\"file\\": {
+          \\"keyType\\": \\"Account\\",
+          \\"enabled\\": true
+        },
+        \\"blob\\": {
+          \\"keyType\\": \\"Account\\",
+          \\"enabled\\": true
+        }
+      },
+      \\"keyvaultproperties\\": {
+        \\"keyvaulturi\\": \\"https://myvault8569.vault.azure.net\\",
+        \\"keyname\\": \\"wrappingKey\\",
+        \\"keyversion\\": \\"\\"
+      },
+      \\"keySource\\": \\"Microsoft.Keyvault\\",
+      \\"identity\\": {
+        \\"userAssignedIdentity\\": \\"/subscriptions/{{subscriptionId}}/resourceGroups/res9101/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{managed-identity-name}\\",
+        \\"federatedIdentityClientId\\": \\"f83c6b1b-4d34-47e4-bb34-9d83df58b540\\"
+      }
+    }
+  }
+}",
+          },
+          "header": Array [
+            Object {
+              "key": "Content-Type",
+              "value": "application/json",
+            },
+          ],
+          "method": "PUT",
+          "url": Object {
+            "host": Array [
+              "https://management",
+              "azure",
+              "com",
+            ],
+            "path": Array [
+              "subscriptions",
+              ":subscriptionId",
+              "resourceGroups",
+              ":resourceGroupName",
+              "providers",
+              "Microsoft.Storage",
+              "storageAccounts",
+              ":accountName",
+            ],
+            "query": Array [
+              Object {
+                "key": "api-version",
+                "value": "2021-08-01",
+              },
+            ],
+            "variable": Array [
+              Object {
+                "key": "resourceGroupName",
+                "type": "any",
+                "value": "{{resourceGroupName}}",
+              },
+              Object {
+                "key": "accountName",
+                "type": "any",
+                "value": "sto131918",
+              },
+              Object {
+                "key": "subscriptionId",
+                "type": "any",
+                "value": "{{subscriptionId}}",
+              },
+            ],
+          },
+        },
+        "response": Array [],
+      },
+      Object {
+        "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
+        "event": Array [
+          Object {
+            "id": "gbupa4",
+            "listen": "test",
+            "script": Object {
+              "exec": Array [
+                "",
+                "try {",
+                "    if (pm.response.code === 202) {",
+                "        postman.setNextRequest('_createStorageAccount_poller_mock_delay');",
+                "    } else if (pm.response.code === 204) {",
+                "        postman.setNextRequest('_createStorageAccount_generated_get');",
+                "    } else {",
+                "        const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"];",
+                "        if (pm.response.json().status !== undefined && terminalStatus.indexOf(pm.response.json().status) === -1) {",
+                "            postman.setNextRequest('_createStorageAccount_poller_mock_delay')",
+                "        } else {",
+                "            postman.setNextRequest('_createStorageAccount_generated_get')",
+                "        }",
+                "    }",
+                "} catch(err) {",
+                "    postman.setNextRequest('_createStorageAccount_generated_get')",
+                "}",
+              ],
+              "id": "j917fd",
+              "type": "text/javascript",
+            },
+          },
+        ],
+        "id": "k8hcud",
+        "name": "_createStorageAccount_poller",
+        "request": Object {
+          "method": "GET",
+          "url": Object {
+            "host": Array [
+              "{{x_polling_url}}",
+            ],
+            "query": Array [],
+            "variable": Array [],
+          },
+        },
+        "response": Array [],
+      },
+      Object {
+        "description": "{\\"type\\":\\"mock\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
+        "event": Array [
+          Object {
+            "id": "mcbyik",
+            "listen": "prerequest",
+            "script": Object {
+              "exec": Array [
+                "postman.setNextRequest('_createStorageAccount_poller')",
+              ],
+              "id": "g4l6nv",
+              "type": "text/javascript",
+            },
+          },
+        ],
+        "id": "39l4a3",
+        "name": "_createStorageAccount_poller_mock_delay",
+        "request": Object {
+          "method": "GET",
+          "url": Object {
+            "host": Array [
+              "postman-echo",
+              "com",
+            ],
+            "path": Array [
+              "delay",
+              "{{x_retry_after}}",
+            ],
+            "protocol": "https",
+            "query": Array [],
+            "variable": Array [],
+          },
+        },
+        "response": Array [],
+      },
+      Object {
+        "description": "{\\"type\\":\\"generated-get\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
+        "event": Array [
+          Object {
+            "id": "hfy1hi",
+            "listen": "test",
+            "script": Object {
+              "exec": Array [
+                "pm.test(\\"response status code assertion.\\", function() {",
+                "pm.response.to.be.success;",
+                "});",
+              ],
+              "id": "j55iye",
+              "type": "text/javascript",
+            },
+          },
+        ],
+        "id": "1gju0k",
+        "name": "_createStorageAccount_generated_get",
+        "request": Object {
+          "header": Array [
+            Object {
+              "key": "Content-Type",
+              "value": "application/json",
+            },
+          ],
+          "method": "GET",
+          "url": Object {
+            "host": Array [
+              "https://management",
+              "azure",
+              "com",
+            ],
+            "path": Array [
+              "subscriptions",
+              ":subscriptionId",
+              "resourceGroups",
+              ":resourceGroupName",
+              "providers",
+              "Microsoft.Storage",
+              "storageAccounts",
+              ":accountName",
+            ],
+            "query": Array [
+              Object {
+                "key": "api-version",
+                "value": "2021-08-01",
+              },
+            ],
+            "variable": Array [
+              Object {
+                "key": "resourceGroupName",
+                "type": "any",
+                "value": "{{resourceGroupName}}",
+              },
+              Object {
+                "key": "accountName",
+                "type": "any",
+                "value": "sto131918",
+              },
+              Object {
+                "key": "subscriptionId",
+                "type": "any",
+                "value": "{{subscriptionId}}",
+              },
+            ],
+          },
+        },
+        "response": Array [],
+      },
+      Object {
+        "event": Array [
+          Object {
+            "id": "1rcvet",
+            "listen": "test",
+            "script": Object {
+              "exec": Array [
+                "pm.test(\\"response code should be 2xx\\", function() {",
+                "pm.response.to.be.success;",
+                "});",
+              ],
+              "id": "7wi32c",
+              "type": "text/javascript",
+            },
+          },
+          Object {
+            "id": "vov58h",
+            "listen": "test",
+            "script": Object {
+              "exec": Array [
+                "",
+                "const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\");",
+                "if (pollingUrl) {",
+                "    pm.collectionVariables.set(\\"x_polling_url\\", pollingUrl);",
+                "}",
+              ],
+              "id": "4fy274",
+              "type": "text/javascript",
+            },
+          },
+        ],
+        "id": "hlqn5m",
+        "name": "deleteResourceGroup",
+        "request": Object {
+          "header": Array [
+            Object {
+              "key": "Content-Type",
+              "value": "application/json",
+            },
+          ],
+          "method": "DELETE",
+          "url": Object {
+            "host": Array [
+              "https://management",
+              "azure",
+              "com",
+            ],
+            "path": Array [
+              "subscriptions",
+              ":subscriptionId",
+              "resourcegroups",
+              ":resourceGroupName",
+            ],
+            "query": Array [
+              Object {
+                "key": "api-version",
+                "value": "2020-06-01",
+              },
+            ],
+            "variable": Array [
+              Object {
+                "key": "subscriptionId",
+                "type": "any",
+                "value": "{{subscriptionId}}",
+              },
+              Object {
+                "key": "resourceGroupName",
+                "type": "any",
+                "value": "{{resourceGroupName}}",
+              },
+            ],
+          },
+        },
+        "response": Array [],
+      },
+      Object {
+        "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"deleteResourceGroup\\"}",
+        "event": Array [
+          Object {
+            "id": "qq5z84",
+            "listen": "test",
+            "script": Object {
+              "exec": Array [
+                "",
+                "try {",
+                "    if (pm.response.code === 202) {",
+                "        postman.setNextRequest('_deleteResourceGroup_poller_mock_delay');",
+                "    } else if (pm.response.code === 204) {",
+                "        postman.setNextRequest(null);",
+                "    } else {",
+                "        const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"];",
+                "        if (pm.response.json().status !== undefined && terminalStatus.indexOf(pm.response.json().status) === -1) {",
+                "            postman.setNextRequest('_deleteResourceGroup_poller_mock_delay')",
+                "        } else {",
+                "            postman.setNextRequest(null)",
+                "        }",
+                "    }",
+                "} catch(err) {",
+                "    postman.setNextRequest(null)",
+                "}",
+              ],
+              "id": "rxgyxc",
+              "type": "text/javascript",
+            },
+          },
+        ],
+        "id": "3l45xk",
+        "name": "_deleteResourceGroup_poller",
+        "request": Object {
+          "method": "GET",
+          "url": Object {
+            "host": Array [
+              "{{x_polling_url}}",
+            ],
+            "query": Array [],
+            "variable": Array [],
+          },
+        },
+        "response": Array [],
+      },
+      Object {
+        "description": "{\\"type\\":\\"mock\\",\\"lro_item_name\\":\\"deleteResourceGroup\\"}",
+        "event": Array [
+          Object {
+            "id": "6w00ic",
+            "listen": "prerequest",
+            "script": Object {
+              "exec": Array [
+                "postman.setNextRequest('_deleteResourceGroup_poller')",
+              ],
+              "id": "3q0yb6",
+              "type": "text/javascript",
+            },
+          },
+        ],
+        "id": "1ueh28",
+        "name": "_deleteResourceGroup_poller_mock_delay",
+        "request": Object {
+          "method": "GET",
+          "url": Object {
+            "host": Array [
+              "postman-echo",
+              "com",
+            ],
+            "path": Array [
+              "delay",
+              "{{x_retry_after}}",
+            ],
+            "protocol": "https",
+            "query": Array [],
+            "variable": Array [],
+          },
+        },
+        "response": Array [],
+      },
+    ],
+    "variable": Array [
+      Object {
+        "key": "subscriptionId",
+        "type": "any",
+      },
+      Object {
+        "key": "resourceGroupName",
+        "type": "any",
+      },
+      Object {
+        "key": "location",
+        "type": "any",
+      },
+      Object {
+        "key": "client_id",
+        "type": "any",
+      },
+      Object {
+        "key": "client_secret",
+        "type": "any",
+      },
+      Object {
+        "key": "tenantId",
+        "type": "any",
+      },
+      Object {
+        "key": "x_enable_auth",
+        "type": "any",
+        "value": "true",
+      },
+      Object {
+        "key": "x_bearer_token",
+        "type": "any",
+      },
+      Object {
+        "key": "x_bearer_token_expires_on",
+        "type": "any",
+      },
+      Object {
+        "key": "x_polling_url",
+        "type": "any",
+      },
+      Object {
+        "key": "x_retry_after",
+        "type": "any",
+        "value": "10",
+      },
+    ],
+  },
+]
+`;

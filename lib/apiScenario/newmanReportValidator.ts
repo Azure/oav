@@ -205,6 +205,9 @@ export class NewmanReportValidator {
         }
 
         it.assertions.forEach((assertion) => {
+          if (assertion.test.includes("response status code assertion")) {
+            return;
+          }
           runtimeError.push({
             code: "ASSERTION_ERROR",
             message: `${assertion.message}`,
