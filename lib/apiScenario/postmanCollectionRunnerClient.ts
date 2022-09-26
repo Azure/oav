@@ -18,6 +18,7 @@ import {
   Scope,
 } from "./apiScenarioRunner";
 import {
+  AADTokenAuthentication,
   ArmTemplate,
   Authentication,
   Scenario,
@@ -41,6 +42,7 @@ export interface PostmanCollectionRunnerClientOption {
 }
 
 interface PostmanAuthOption {
+  type: Authentication["type"];
   tokenName: string;
   scriptLocation: "Collection" | "Folder" | "Request";
 }
@@ -63,14 +65,19 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     auth: Authentication,
     location: PostmanAuthOption["scriptLocation"]
   ): PostmanAuthOption | undefined {
-    if (auth.type === "AzureAD" && auth.audience) {
-      if (!this.authOptionMap.has(auth.audience)) {
-        this.authOptionMap.set(auth.audience, {
+    if (auth.type === "AADToken" && auth.scope) {
+      if (!this.authOptionMap.has(auth.scope)) {
+        this.authOptionMap.set(auth.scope, {
+          type: auth.type,
           tokenName: `x_bearer_token_${this.authOptionMap.size}`,
           scriptLocation: location,
         });
       }
-      return this.authOptionMap.get(auth.audience);
+      return this.authOptionMap.get(auth.scope);
+    } else if (auth.type === "AzureKey") {
+      // TODO
+    } else if (auth.type === "None") {
+      // TODO
     }
 
     return undefined;
@@ -109,7 +116,10 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
         ],
       });
       preScripts.push(
-        PostmanHelper.generateAuthScript(scenarioDef.authentication.audience!, authOption.tokenName)
+        PostmanHelper.generateAuthScript(
+          (scenarioDef.authentication as AADTokenAuthentication).scope!,
+          authOption.tokenName
+        )
       );
     }
 
@@ -187,7 +197,10 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
         ],
       });
       preScripts.push(
-        PostmanHelper.generateAuthScript(scenario.authentication.audience!, authOption.tokenName)
+        PostmanHelper.generateAuthScript(
+          (scenario.authentication as AADTokenAuthentication).scope!,
+          authOption.tokenName
+        )
       );
     }
 
@@ -471,7 +484,10 @@ pm.test("Stopped TestProxy recording", function() {
         ],
       });
       preScripts.push(
-        PostmanHelper.generateAuthScript(step.authentication.audience!, authOption.tokenName)
+        PostmanHelper.generateAuthScript(
+          (step.authentication as AADTokenAuthentication).scope!,
+          authOption.tokenName
+        )
       );
     }
 

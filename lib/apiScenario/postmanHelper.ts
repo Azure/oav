@@ -187,7 +187,7 @@ export const reservedCollectionVariables = [
   },
 ];
 
-export function generateAuthScript(audience: string, tokenName: string): string {
+export function generateAuthScript(scope: string, tokenName: string): string {
   const script = `
 if (pm.variables.get("x_enable_auth") !== "true") {
     return;
@@ -227,7 +227,7 @@ if (
                         value: pm.variables.get("client_secret"),
                         disabled: false,
                     },
-                    { key: "scope", value: "${audience}/.default", disabled: false },
+                    { key: "scope", value: "${scope}", disabled: false },
                 ],
             },
         },

@@ -6,8 +6,8 @@ variables:
   configStoreName: configstor7q4oy9
   endpoint: https://$(configStoreName).azconfig.io
 authentication:
-  type: AzureAD
-  audience: https://azconfig.io
+  type: AADToken
+  scope: https://azconfig.io/.default
 
 prepareSteps:
   - operationId: CheckKeys

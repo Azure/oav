@@ -7,16 +7,16 @@ Object {
     "Microsoft.AppConfiguration/stable/1.0/appconfiguration.json",
   ],
   "authentication": Object {
-    "audience": "https://azconfig.io",
-    "type": "AzureAD",
+    "scope": "https://azconfig.io/.default",
+    "type": "AADToken",
   },
   "cleanUpSteps": Array [],
   "name": "crud",
   "prepareSteps": Array [
     Object {
       "authentication": Object {
-        "audience": "https://azconfig.io",
-        "type": "AzureAD",
+        "scope": "https://azconfig.io/.default",
+        "type": "AADToken",
       },
       "description": undefined,
       "isManagementPlane": false,
@@ -37,8 +37,8 @@ Object {
     },
     Object {
       "authentication": Object {
-        "audience": "https://azconfig.io",
-        "type": "AzureAD",
+        "scope": "https://azconfig.io/.default",
+        "type": "AADToken",
       },
       "description": undefined,
       "isManagementPlane": false,
@@ -72,8 +72,8 @@ Object {
     Object {
       "_scenarioDef": [Circular],
       "authentication": Object {
-        "audience": "https://azconfig.io",
-        "type": "AzureAD",
+        "scope": "https://azconfig.io/.default",
+        "type": "AADToken",
       },
       "description": "",
       "requiredVariables": Array [],
@@ -82,8 +82,8 @@ Object {
       "steps": Array [
         Object {
           "authentication": Object {
-            "audience": "https://azconfig.io",
-            "type": "AzureAD",
+            "scope": "https://azconfig.io/.default",
+            "type": "AADToken",
           },
           "description": undefined,
           "isManagementPlane": false,
@@ -103,8 +103,8 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "https://azconfig.io",
-            "type": "AzureAD",
+            "scope": "https://azconfig.io/.default",
+            "type": "AADToken",
           },
           "description": undefined,
           "isManagementPlane": false,
@@ -128,8 +128,8 @@ Object {
     Object {
       "_scenarioDef": [Circular],
       "authentication": Object {
-        "audience": "https://azconfig.io",
-        "type": "AzureAD",
+        "scope": "https://azconfig.io/.default",
+        "type": "AADToken",
       },
       "description": "",
       "requiredVariables": Array [],
@@ -138,8 +138,8 @@ Object {
       "steps": Array [
         Object {
           "authentication": Object {
-            "audience": "https://azconfig.io",
-            "type": "AzureAD",
+            "scope": "https://azconfig.io/.default",
+            "type": "AADToken",
           },
           "description": undefined,
           "isManagementPlane": false,
@@ -166,8 +166,8 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "https://azconfig.io",
-            "type": "AzureAD",
+            "scope": "https://azconfig.io/.default",
+            "type": "AADToken",
           },
           "description": undefined,
           "isManagementPlane": false,
@@ -189,8 +189,8 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "https://azconfig.io",
-            "type": "AzureAD",
+            "scope": "https://azconfig.io/.default",
+            "type": "AADToken",
           },
           "description": undefined,
           "isManagementPlane": false,
@@ -212,8 +212,8 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "https://azconfig.io",
-            "type": "AzureAD",
+            "scope": "https://azconfig.io/.default",
+            "type": "AADToken",
           },
           "description": undefined,
           "isManagementPlane": false,
@@ -233,8 +233,8 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "https://azconfig.io",
-            "type": "AzureAD",
+            "scope": "https://azconfig.io/.default",
+            "type": "AADToken",
           },
           "description": undefined,
           "isManagementPlane": false,
@@ -281,8 +281,8 @@ Object {
     "Microsoft.Storage/stable/2021-08-01/storage.json",
   ],
   "authentication": Object {
-    "audience": "$(armEndpoint)",
-    "type": "AzureAD",
+    "scope": "$(armEndpoint)/.default",
+    "type": "AADToken",
   },
   "cleanUpSteps": Array [],
   "name": "storageBasicExample",
@@ -295,8 +295,8 @@ Object {
     Object {
       "_scenarioDef": [Circular],
       "authentication": Object {
-        "audience": "$(armEndpoint)",
-        "type": "AzureAD",
+        "scope": "$(armEndpoint)/.default",
+        "type": "AADToken",
       },
       "description": "",
       "requiredVariables": Array [
@@ -308,8 +308,8 @@ Object {
       "steps": Array [
         Object {
           "authentication": Object {
-            "audience": "$(armEndpoint)",
-            "type": "AzureAD",
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
           },
           "description": "StorageAccountCheckNameAvailability",
           "exampleFile": "../examples/StorageAccountCheckNameAvailability.json",
@@ -340,8 +340,8 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "$(armEndpoint)",
-            "type": "AzureAD",
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
           },
           "description": "StorageAccountCreate",
           "exampleFile": "../examples/StorageAccountCreate.json",
@@ -504,8 +504,8 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "$(armEndpoint)",
-            "type": "AzureAD",
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
           },
           "description": "StorageAccountUpdate",
           "exampleFile": "../examples/StorageAccountUpdate.json",
@@ -671,8 +671,8 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "$(armEndpoint)",
-            "type": "AzureAD",
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
           },
           "description": "StorageAccountGetProperties",
           "exampleFile": "../examples/StorageAccountGetProperties.json",
@@ -787,8 +787,8 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "$(armEndpoint)",
-            "type": "AzureAD",
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
           },
           "description": "StorageAccountDelete",
           "exampleFile": "../examples/StorageAccountDelete.json",
@@ -841,8 +841,8 @@ Object {
     "Microsoft.Storage/stable/2021-08-01/storage.json",
   ],
   "authentication": Object {
-    "audience": "$(armEndpoint)",
-    "type": "AzureAD",
+    "scope": "$(armEndpoint)/.default",
+    "type": "AADToken",
   },
   "cleanUpSteps": Array [],
   "name": "storageQuickStart",
@@ -855,8 +855,8 @@ Object {
     Object {
       "_scenarioDef": [Circular],
       "authentication": Object {
-        "audience": "$(armEndpoint)",
-        "type": "AzureAD",
+        "scope": "$(armEndpoint)/.default",
+        "type": "AADToken",
       },
       "description": "",
       "requiredVariables": Array [
@@ -868,8 +868,8 @@ Object {
       "steps": Array [
         Object {
           "authentication": Object {
-            "audience": "$(armEndpoint)",
-            "type": "AzureAD",
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
           },
           "description": undefined,
           "isManagementPlane": true,
@@ -900,8 +900,8 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "$(armEndpoint)",
-            "type": "AzureAD",
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
           },
           "description": undefined,
           "isManagementPlane": true,
@@ -943,8 +943,8 @@ Object {
     Object {
       "_scenarioDef": [Circular],
       "authentication": Object {
-        "audience": "$(armEndpoint)",
-        "type": "AzureAD",
+        "scope": "$(armEndpoint)/.default",
+        "type": "AADToken",
       },
       "description": "",
       "requiredVariables": Array [
@@ -956,8 +956,8 @@ Object {
       "steps": Array [
         Object {
           "authentication": Object {
-            "audience": "$(armEndpoint)",
-            "type": "AzureAD",
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
           },
           "description": undefined,
           "isManagementPlane": true,
@@ -988,8 +988,8 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "$(armEndpoint)",
-            "type": "AzureAD",
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
           },
           "description": undefined,
           "isManagementPlane": true,
@@ -1036,8 +1036,8 @@ Object {
     Object {
       "_scenarioDef": [Circular],
       "authentication": Object {
-        "audience": "$(armEndpoint)",
-        "type": "AzureAD",
+        "scope": "$(armEndpoint)/.default",
+        "type": "AADToken",
       },
       "description": "",
       "requiredVariables": Array [
@@ -1049,8 +1049,8 @@ Object {
       "steps": Array [
         Object {
           "authentication": Object {
-            "audience": "$(armEndpoint)",
-            "type": "AzureAD",
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
           },
           "description": undefined,
           "isManagementPlane": true,
@@ -1081,8 +1081,8 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "$(armEndpoint)",
-            "type": "AzureAD",
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
           },
           "description": undefined,
           "isManagementPlane": true,
@@ -1120,8 +1120,8 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "$(armEndpoint)",
-            "type": "AzureAD",
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
           },
           "description": undefined,
           "isManagementPlane": true,
@@ -1159,8 +1159,8 @@ Object {
     Object {
       "_scenarioDef": [Circular],
       "authentication": Object {
-        "audience": "$(armEndpoint)",
-        "type": "AzureAD",
+        "scope": "$(armEndpoint)/.default",
+        "type": "AADToken",
       },
       "description": "",
       "requiredVariables": Array [
@@ -1172,8 +1172,8 @@ Object {
       "steps": Array [
         Object {
           "authentication": Object {
-            "audience": "$(armEndpoint)",
-            "type": "AzureAD",
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
           },
           "description": undefined,
           "isManagementPlane": true,
@@ -1293,8 +1293,8 @@ Object {
     "Microsoft.SignalRService/preview/2021-06-01-preview/signalr.json",
   ],
   "authentication": Object {
-    "audience": "$(armEndpoint)",
-    "type": "AzureAD",
+    "scope": "$(armEndpoint)/.default",
+    "type": "AADToken",
   },
   "cleanUpSteps": Array [],
   "name": "signalR",
@@ -1307,8 +1307,8 @@ Object {
     Object {
       "_scenarioDef": [Circular],
       "authentication": Object {
-        "audience": "$(armEndpoint)",
-        "type": "AzureAD",
+        "scope": "$(armEndpoint)/.default",
+        "type": "AADToken",
       },
       "description": "Microsoft.SignalRService/Basic_CRUD",
       "requiredVariables": Array [
@@ -1349,8 +1349,8 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "$(armEndpoint)",
-            "type": "AzureAD",
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
           },
           "description": "SignalR_CheckNameAvailability",
           "exampleFile": "../examples/SignalR_CheckNameAvailability.json",
@@ -1384,8 +1384,8 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "$(armEndpoint)",
-            "type": "AzureAD",
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
           },
           "description": "SignalR_CreateOrUpdate",
           "exampleFile": "../examples/SignalR_CreateOrUpdate.json",
@@ -1744,8 +1744,8 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "$(armEndpoint)",
-            "type": "AzureAD",
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
           },
           "description": "SignalR_Get",
           "exampleFile": "../examples/SignalR_Get.json",
@@ -1890,8 +1890,8 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "$(armEndpoint)",
-            "type": "AzureAD",
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
           },
           "description": "SignalR_Update",
           "exampleFile": "../examples/SignalR_Update.json",
@@ -2125,8 +2125,8 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "$(armEndpoint)",
-            "type": "AzureAD",
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
           },
           "description": "SignalR_ListKeys",
           "exampleFile": "../examples/SignalR_ListKeys.json",
@@ -2153,8 +2153,8 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "$(armEndpoint)",
-            "type": "AzureAD",
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
           },
           "description": "SignalR_RegenerateKey",
           "exampleFile": "../examples/SignalR_RegenerateKey.json",
@@ -2188,8 +2188,8 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "$(armEndpoint)",
-            "type": "AzureAD",
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
           },
           "description": "SignalR_Restart",
           "exampleFile": "../examples/SignalR_Restart.json",
@@ -2221,8 +2221,8 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "$(armEndpoint)",
-            "type": "AzureAD",
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
           },
           "description": "Usages_List",
           "exampleFile": "../examples/Usages_List.json",
@@ -2272,8 +2272,8 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "$(armEndpoint)",
-            "type": "AzureAD",
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
           },
           "description": "SignalR_ListByResourceGroup",
           "exampleFile": "../examples/SignalR_ListByResourceGroup.json",
@@ -2421,8 +2421,8 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "$(armEndpoint)",
-            "type": "AzureAD",
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
           },
           "description": "SignalR_ListBySubscription",
           "exampleFile": "../examples/SignalR_ListBySubscription.json",
@@ -2569,8 +2569,8 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "$(armEndpoint)",
-            "type": "AzureAD",
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
           },
           "description": "Operations_List",
           "exampleFile": "../examples/Operations_List.json",
@@ -2609,8 +2609,8 @@ Object {
         },
         Object {
           "authentication": Object {
-            "audience": "$(armEndpoint)",
-            "type": "AzureAD",
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
           },
           "description": "SignalR_Delete",
           "exampleFile": "../examples/SignalR_Delete.json",

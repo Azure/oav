@@ -83,10 +83,22 @@ export interface OutputVariables {
   };
 }
 
-export interface Authentication {
-  type: "None" | "AzureAD";
-  audience?: string;
+export interface NoneAuthentication {
+  type: "None";
 }
+
+export interface AADTokenAuthentication {
+  type: "AADToken";
+  scope?: string;
+}
+
+export interface AzureKeyAuthentication {
+  type: "AzureKey";
+  headerName?: string;
+  key: string;
+}
+
+export type Authentication = NoneAuthentication | AADTokenAuthentication | AzureKeyAuthentication;
 
 export interface ReadmeTag {
   name: string;

@@ -51,8 +51,8 @@ export const ApiScenarioDefinition: Schema & {
       properties: {
         type: {
           type: "string",
-          enum: ["AzureAD", "None"],
-          default: "AzureAD",
+          enum: ["AADToken", "AzureKey", "None"],
+          default: "AADToken",
         },
       },
       required: ["type"],
@@ -61,27 +61,49 @@ export const ApiScenarioDefinition: Schema & {
           if: {
             properties: {
               type: {
-                const: "AzureAD",
+                const: "AADToken",
               },
             },
           },
           then: {
             properties: {
               type: {},
-              audience: {
+              scope: {
                 type: "string",
                 description:
-                  "The resource identifier (application ID URI) of the resource you want, a.k.a., the audience of the token.",
+                  "The resource identifier (application ID URI) of the resource you want, affixed with the .default suffix",
               },
             },
-            required: ["audience"],
+            required: ["scope"],
             additionalProperties: false,
           },
           else: {
-            properties: {
-              type: {},
+            if: {
+              properties: {
+                type: {
+                  const: "AzureKey",
+                },
+              },
             },
-            additionalProperties: false,
+            then: {
+              properties: {
+                type: {},
+                headerName: {
+                  type: "string",
+                  default: "Authorization",
+                },
+                key: {
+                  type: "string",
+                },
+              },
+              additionalProperties: false,
+            },
+            else: {
+              properties: {
+                type: {},
+              },
+              additionalProperties: false,
+            },
           },
         },
       ],
@@ -308,9 +330,6 @@ export const ApiScenarioDefinition: Schema & {
         {
           $ref: "#/definitions/StepArmDeploymentScript",
         },
-        {
-          $ref: "#/definitions/StepRoleAssignment",
-        },
       ],
     },
     StepBase: {
@@ -436,6 +455,10 @@ export const ApiScenarioDefinition: Schema & {
         operationId: {
           type: "string",
         },
+        readmeTag: {
+          type: "string",
+          format: "uri-reference",
+        },
         requestUpdate: {
           type: "array",
           description: "Update request parameters",
@@ -515,51 +538,6 @@ export const ApiScenarioDefinition: Schema & {
         variables: {},
       },
       required: ["armDeploymentScript"],
-      additionalProperties: false,
-    },
-    StepRoleAssignment: {
-      type: "object",
-      allOf: [
-        {
-          $ref: "#/definitions/StepBase",
-        },
-      ],
-      properties: {
-        roleAssignment: {
-          type: "object",
-          properties: {
-            roleName: {
-              type: "string",
-            },
-            roleDefinitionId: {
-              type: "string",
-            },
-            principalId: {
-              type: "string",
-            },
-            scope: {
-              type: "string",
-            },
-            principalType: {
-              type: "string",
-              enum: ["User", "Group", "ServicePrincipal", "ForeignGroup", "Device"],
-              default: "ServicePrincipal",
-            },
-          },
-          oneOf: [
-            {
-              required: ["roleName", "principalId", "scope"],
-            },
-            {
-              required: ["roleDefinitionId", "principalId", "scope"],
-            },
-          ],
-        },
-        step: {},
-        description: {},
-        variables: {},
-      },
-      required: ["roleAssignment"],
       additionalProperties: false,
     },
     JsonPatchOp: {

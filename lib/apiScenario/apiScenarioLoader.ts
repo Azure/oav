@@ -248,10 +248,16 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       _swaggerFilePaths: this.opts.swaggerFilePaths!,
       cleanUpSteps: [],
       ...convertVariables(rawDef.variables),
-      authentication: rawDef.authentication ?? {
-        type: isArmScope ? "AzureAD" : "None",
-        audience: isArmScope ? "$(armEndpoint)" : undefined,
-      },
+      authentication:
+        rawDef.authentication ??
+        (isArmScope
+          ? {
+              type: "AADToken",
+              scope: "$(armEndpoint)/.default",
+            }
+          : {
+              type: "None",
+            }),
     };
 
     if (isArmScope) {
