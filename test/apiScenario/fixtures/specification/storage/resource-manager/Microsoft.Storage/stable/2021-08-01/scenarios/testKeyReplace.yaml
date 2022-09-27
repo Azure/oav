@@ -9,3 +9,9 @@ scenarios:
         requestUpdate:
           - move: /parameters/identity/userAssignedIdentities/~1subscriptions~1$(subscriptionId)~1resourceGroups~1$(resourceGroupName)~1providers~1Microsoft.ManagedIdentity~1userAssignedIdentities~1{managed-identity-name}
             from: /parameters/identity/userAssignedIdentities/~1subscriptions~1{subscription-id}~1resourceGroups~1res9101~1providers~1Microsoft.ManagedIdentity~1userAssignedIdentities~1{managed-identity-name}
+      - step: createStorageAccount1
+        exampleFile: ../examples/StorageAccountCreateUserAssignedIdentityWithFederatedIdentityClientId.json
+        requestUpdate:
+          - replace: /parameters/identity/userAssignedIdentities
+            value: 
+              /subscriptions/$(subscriptionId)/resourceGroups/$(resourceGroupName)/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{managed-identity-name}: {}
