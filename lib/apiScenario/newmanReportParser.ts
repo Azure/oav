@@ -7,7 +7,7 @@ import {
   NewmanResponse,
 } from "./apiScenarioTypes";
 
-export interface RawNewmanReport {
+export interface RawNewmanSummary {
   run: Run;
   environment: any;
   collection: any;
@@ -30,13 +30,13 @@ interface RawNewmanExecution {
   assertions?: Assertion[];
 }
 
-export function parseNewmanReport(newmanReport: RawNewmanReport): NewmanReport {
+export function parseNewmanSummary(rawReport: RawNewmanSummary): NewmanReport {
   const ret: NewmanReport = { variables: {}, executions: [], timings: {} };
-  for (const it of newmanReport.run.executions) {
+  for (const it of rawReport.run.executions) {
     ret.executions.push(generateExampleItem(it));
   }
-  ret.timings = newmanReport.run.timings;
-  ret.variables = parseVariables(newmanReport.environment.values);
+  ret.timings = rawReport.run.timings;
+  ret.variables = parseVariables(rawReport.environment.values.members);
   return ret;
 }
 

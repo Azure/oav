@@ -10,6 +10,9 @@ export const ApiScenarioDefinition: Schema & {
       enum: ["ResourceGroup", "Subscription", "Tenant", "None"],
       default: "ResourceGroup",
     },
+    authentication: {
+      $ref: "#/definitions/Authentication",
+    },
     variables: {
       $ref: "#/definitions/Variables",
     },
@@ -42,6 +45,68 @@ export const ApiScenarioDefinition: Schema & {
     Name: {
       type: "string",
       pattern: "^[A-Za-z_$][A-Za-z0-9_-]*$",
+    },
+    Authentication: {
+      type: "object",
+      properties: {
+        type: {
+          type: "string",
+          enum: ["AADToken", "AzureKey", "None"],
+          default: "AADToken",
+        },
+      },
+      required: ["type"],
+      allOf: [
+        {
+          if: {
+            properties: {
+              type: {
+                const: "AADToken",
+              },
+            },
+          },
+          then: {
+            properties: {
+              type: {},
+              scope: {
+                type: "string",
+                description:
+                  "The resource identifier (application ID URI) of the resource you want, affixed with the .default suffix",
+              },
+            },
+            required: ["scope"],
+            additionalProperties: false,
+          },
+          else: {
+            if: {
+              properties: {
+                type: {
+                  const: "AzureKey",
+                },
+              },
+            },
+            then: {
+              properties: {
+                type: {},
+                headerName: {
+                  type: "string",
+                  default: "Authorization",
+                },
+                key: {
+                  type: "string",
+                },
+              },
+              additionalProperties: false,
+            },
+            else: {
+              properties: {
+                type: {},
+              },
+              additionalProperties: false,
+            },
+          },
+        },
+      ],
     },
     JsonPointer: {
       type: "string",
@@ -234,13 +299,12 @@ export const ApiScenarioDefinition: Schema & {
           type: "string",
           description: "A long description of the scenario",
         },
+        authentication: {
+          $ref: "#/definitions/Authentication",
+          description: "Authentication method to use for the scenario",
+        },
         variables: {
           $ref: "#/definitions/Variables",
-        },
-        shareScope: {
-          type: "boolean",
-          description: "Whether to share the scope and prepareSteps with other scenarios",
-          default: true,
         },
         steps: {
           type: "array",
@@ -292,6 +356,9 @@ export const ApiScenarioDefinition: Schema & {
         },
       ],
       properties: {
+        authentication: {
+          $ref: "#/definitions/Authentication",
+        },
         outputVariables: {
           type: "object",
           propertyNames: {
@@ -366,6 +433,7 @@ export const ApiScenarioDefinition: Schema & {
         },
         step: {},
         description: {},
+        authentication: {},
         variables: {},
         outputVariables: {},
       },
@@ -387,6 +455,10 @@ export const ApiScenarioDefinition: Schema & {
         operationId: {
           type: "string",
         },
+        readmeTag: {
+          type: "string",
+          format: "uri-reference",
+        },
         requestUpdate: {
           type: "array",
           description: "Update request parameters",
@@ -405,6 +477,7 @@ export const ApiScenarioDefinition: Schema & {
         },
         step: {},
         description: {},
+        authentication: {},
         variables: {},
         outputVariables: {},
       },
