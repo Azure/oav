@@ -239,11 +239,7 @@ export class PostmanCollectionGenerator {
           };
 
           if (this.opt.savePayload) {
-            const payloadFilePath = path.join(
-              ".",
-              dir.name,
-              `payloads/${step.stepName}_${step.correlationId}.json`
-            );
+            const payloadFilePath = path.join(".", dir.name, `payloads/${step.stepName}.json`);
             trafficValidationIssue.payloadFilePath = payloadFilePath;
           }
 
