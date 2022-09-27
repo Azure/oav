@@ -218,15 +218,15 @@ export class PostmanCollectionGenerator {
         ) as ApiScenarioTestResult;
 
         providerNamespace = report.providerNamespace;
-        for (const step of report.stepResult) {
+        for (const r of report.stepResult) {
           const trafficValidationIssue: TrafficValidationIssue = {
             errors: [
-              ...(step.liveValidationResult?.requestValidationResult.errors ?? []),
-              ...(step.liveValidationResult?.responseValidationResult.errors ?? []),
-              ...(step.roundtripValidationResult?.errors ?? []),
+              ...(r.liveValidationResult?.requestValidationResult.errors ?? []),
+              ...(r.liveValidationResult?.responseValidationResult.errors ?? []),
+              ...(r.roundtripValidationResult?.errors ?? []),
             ],
-            specFilePath: step.specFilePath,
-            operationInfo: step.liveValidationResult?.requestValidationResult.operationInfo ?? {
+            specFilePath: r.specFilePath,
+            operationInfo: r.liveValidationResult?.requestValidationResult.operationInfo ?? {
               operationId: "unknown",
               apiVersion: "unknown",
             },
@@ -239,26 +239,25 @@ export class PostmanCollectionGenerator {
           };
 
           if (this.opt.savePayload) {
-            const payloadFilePath = path.join(".", dir.name, `payloads/${step.stepName}.json`);
-            trafficValidationIssue.payloadFilePath = payloadFilePath;
+            trafficValidationIssue.payloadFilePath = r.payloadPath;
           }
 
-          for (const runtimeError of step.runtimeError ?? []) {
+          for (const runtimeError of r.runtimeError ?? []) {
             trafficValidationIssue.errors?.push(this.convertRuntimeException(runtimeError));
           }
 
-          if (step.liveValidationResult?.requestValidationResult.runtimeException) {
+          if (r.liveValidationResult?.requestValidationResult.runtimeException) {
             trafficValidationIssue.errors?.push(
               this.convertRuntimeException(
-                step.liveValidationResult!.requestValidationResult.runtimeException
+                r.liveValidationResult!.requestValidationResult.runtimeException
               )
             );
           }
 
-          if (step.liveValidationResult?.responseValidationResult.runtimeException) {
+          if (r.liveValidationResult?.responseValidationResult.runtimeException) {
             trafficValidationIssue.errors?.push(
               this.convertRuntimeException(
-                step.liveValidationResult!.responseValidationResult.runtimeException
+                r.liveValidationResult!.responseValidationResult.runtimeException
               )
             );
           }

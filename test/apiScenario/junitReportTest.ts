@@ -21,7 +21,6 @@ describe("junitTestReport", () => {
             '{\r\n  "error": {\r\n    "code": "BadRequest",\r\n    "message": "Subscription \'db5eb68e-73e2-4fa8-b18a-46cd1be4cce5\' is not registered with the feature Microsoft.Compute/SIGSharing. Please register the subscription before retrying the call."\r\n  }\r\n}',
         },
       ],
-      correlationId: "cb309eda-ffb6-41f7-8a5e-42fc2a25aa5e",
       statusCode: 400,
       stepName: "Create or update a simple gallery with sharing profile.",
     } as StepResult;
