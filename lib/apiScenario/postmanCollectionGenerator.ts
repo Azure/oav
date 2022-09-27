@@ -223,6 +223,7 @@ export class PostmanCollectionGenerator {
             errors: [
               ...(step.liveValidationResult?.requestValidationResult.errors ?? []),
               ...(step.liveValidationResult?.responseValidationResult.errors ?? []),
+              ...(step.roundtripValidationResult?.errors ?? []),
             ],
             specFilePath: step.specFilePath,
             operationInfo: step.liveValidationResult?.requestValidationResult.operationInfo ?? {

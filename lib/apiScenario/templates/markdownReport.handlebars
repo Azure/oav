@@ -83,6 +83,11 @@
 | <code> {{renderSymbol "failed"}} </code> {{renderLiveValidationErrorCode rd}} | {{renderLiveValidationErrorDetail rd}} |
               {{/with}}
             {{/each}}
+            {{#each s.roundtripValidationResult.errors}}
+            {{#with this as |rd|}}
+| <code> {{renderSymbol "failed"}} </code> {{renderLiveValidationErrorCode rd}} | {{renderLiveValidationErrorDetail rd}} |
+              {{/with}}
+            {{/each}}
           {{/with}}
 <br />
 {{/each}}

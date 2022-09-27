@@ -18,17 +18,9 @@ import { logger } from "./logger";
 import { ApiScenarioLoaderOption } from "./apiScenarioLoader";
 import { NewmanExecution, NewmanReport, Scenario, Step, StepRestCall } from "./apiScenarioTypes";
 import { DataMasker } from "./dataMasker";
-import { getJsonPatchDiff } from "./diffUtils";
 import { JUnitReporter } from "./junitReport";
 import { generateMarkdownReport } from "./markdownReport";
 import { SwaggerAnalyzer } from "./swaggerAnalyzer";
-import { VariableEnv } from "./variableEnv";
-
-interface GeneratedExample {
-  step: string;
-  operationId: string;
-  example: SwaggerExample;
-}
 
 export interface ApiScenarioTestResult {
   apiScenarioFilePath: string;
@@ -64,13 +56,11 @@ export interface StepResult {
   example?: SwaggerExample;
   payloadPath?: string;
   operationId: string;
-  runtimeError?: RuntimeError[];
-  responseDiffResult?: ResponseDiffItem[];
   responseTime?: number;
-  liveValidationResult?: RequestResponseLiveValidationResult;
-  stepValidationResult?: any;
   correlationId?: string;
   stepName: string;
+  runtimeError?: RuntimeError[];
+  liveValidationResult?: RequestResponseLiveValidationResult;
   roundtripValidationResult?: LiveValidationResult;
 }
 
@@ -79,14 +69,6 @@ export interface RuntimeError {
   message: string;
   detail: string;
   severity: SeverityString;
-}
-
-export interface ResponseDiffItem {
-  code: string;
-  jsonPath: string;
-  severity: SeverityString;
-  message: string;
-  detail: string;
 }
 
 export interface NewmanReportValidatorOption extends ApiScenarioLoaderOption {
@@ -215,10 +197,17 @@ export class NewmanReportValidator {
 
         const payload = this.convertToLiveValidationPayload(it);
 
-        let responseDiffResult: ResponseDiffItem[] | undefined = undefined;
-        const statusCode = `${it.response.statusCode}`;
-        const exampleFilePath = `./examples/${matchedStep.operationId}_${statusCode}.json`;
-        if (this.opts.generateExample || it.annotation.exampleName) {
+        let payloadFilePath;
+        if (this.opts.savePayload) {
+          payloadFilePath = `./payloads/${matchedStep.step}.json`;
+          await this.fileLoader.writeFile(
+            path.resolve(path.dirname(this.opts.reportOutputFilePath), payloadFilePath),
+            JSON.stringify(payload, null, 2)
+          );
+        }
+
+        if (this.opts.generateExample) {
+          const statusCode = `${it.response.statusCode}`;
           const generatedExample: SwaggerExample = {
             operationId: matchedStep.operationId,
             title: matchedStep.step,
@@ -232,35 +221,10 @@ export class NewmanReportValidator {
             },
           };
 
-          // Example validation
-          if (this.opts.generateExample) {
-            await this.fileLoader.writeFile(
-              path.resolve(path.dirname(this.opts.reportOutputFilePath), exampleFilePath),
-              JSON.stringify(generatedExample, null, 2)
-            );
-          }
-          if (it.annotation.exampleName) {
-            // validate real payload.
-            responseDiffResult = !this.opts.skipValidation
-              ? await this.exampleResponseDiff(
-                  {
-                    step: matchedStep.step,
-                    operationId: matchedStep.operationId,
-                    example: generatedExample,
-                  },
-                  matchedStep,
-                  newmanReport
-                )
-              : [];
-          }
-        }
-
-        let payloadFilePath;
-        if (this.opts.savePayload) {
-          payloadFilePath = `./payloads/${matchedStep.step}.json`;
+          const exampleFilePath = `./examples/${matchedStep.operationId}_${statusCode}.json`;
           await this.fileLoader.writeFile(
-            path.resolve(path.dirname(this.opts.reportOutputFilePath), payloadFilePath),
-            JSON.stringify(payload, null, 2)
+            path.resolve(path.dirname(this.opts.reportOutputFilePath), exampleFilePath),
+            JSON.stringify(generatedExample, null, 2)
           );
         }
 
@@ -299,7 +263,6 @@ export class NewmanReportValidator {
             : undefined,
           runtimeError,
           responseTime: it.response.responseTime,
-          responseDiffResult: responseDiffResult,
           correlationId: it.response.headers["x-ms-correlation-request-id"],
           statusCode: it.response.statusCode,
           stepName: it.annotation.step,
@@ -383,124 +346,10 @@ export class NewmanReportValidator {
     return result;
   }
 
-  private async exampleResponseDiff(
-    example: GeneratedExample,
-    matchedStep: Step,
-    rawReport: NewmanReport
-  ): Promise<ResponseDiffItem[]> {
-    let res: ResponseDiffItem[] = [];
-    if (matchedStep?.type === "restCall") {
-      if (example.example.responses["200"] !== undefined) {
-        Object.keys(matchedStep.variables).forEach((key) => {
-          const paramName = `${matchedStep.step}_${key}`;
-          matchedStep.responses = this.convertPostmanFormat(matchedStep.responses, (s) =>
-            s.replace(`$(${key})`, `$(${paramName})`)
-          );
-        });
-        res = res.concat(
-          await this.responseDiff(
-            example.example.responses["200"]?.body || {},
-            matchedStep.responses["200"]?.body || {},
-            rawReport.variables,
-            `/200/body`,
-            matchedStep.operation.responses["200"].schema
-          )
-        );
-      }
-    }
-    return res;
-  }
-
   private getLROFinalResponse(executions: NewmanExecution[], initialStep: string) {
     return executions.find(
       (it) => it.annotation?.type === "final-get" && it.annotation?.step === initialStep
     );
-  }
-
-  private async responseDiff(
-    resp: any,
-    expectedResp: any,
-    variables: any,
-    jsonPathPrefix: string,
-    schema: any
-  ): Promise<ResponseDiffItem[]> {
-    const env = new VariableEnv(variables);
-    try {
-      const ignoredKeys = [/\/body\/id/, /\/body\/location/, /date/i];
-      const ignoreValuePattern = [/\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d(?:\.\d+)?Z?/];
-      const expected = env.resolveObjectValues(expectedResp);
-      const delta: ResponseDiffItem[] = getJsonPatchDiff(expected, resp, {
-        includeOldValue: true,
-        minimizeDiff: false,
-      })
-        .map((it: any) => {
-          const ret: ResponseDiffItem = {
-            code: "",
-            jsonPath: "",
-            severity: "Error",
-            message: "",
-            detail: "",
-          };
-          const jsonPath: string = it.remove || it.add || it.replace;
-          const propertySchema = this.swaggerAnalyzer.findSchemaByJsonPointer(
-            jsonPath,
-            schema,
-            resp
-          );
-          if (propertySchema["x-ms-secret"] === true) {
-            return undefined;
-          }
-          if (it.remove !== undefined) {
-            ret.code = "RESPONSE_MISSING_VALUE";
-            ret.jsonPath = jsonPathPrefix + it.remove;
-            ret.severity = "Error";
-            ret.message = `The response value is missing. Path: ${
-              ret.jsonPath
-            }. Expected: ${this.dataMasker.jsonStringify(it.oldValue)}. Actual: undefined`;
-          } else if (it.add !== undefined) {
-            ret.code = "RESPONSE_ADDITIONAL_VALUE";
-            ret.jsonPath = jsonPathPrefix + it.add;
-            ret.severity = "Error";
-            ret.message = `Return additional response value. Path: ${
-              ret.jsonPath
-            }. Expected: undefined. Actual: ${this.dataMasker.jsonStringify(it.value)}`;
-          } else if (it.replace !== undefined) {
-            ret.code = "RESPONSE_INCONSISTENT_VALUE";
-            ret.jsonPath = jsonPathPrefix + it.replace;
-
-            const paths = it.replace.split("/");
-            while (paths.length > 1) {
-              const path = paths.join("/");
-              const sch = this.swaggerAnalyzer.findSchemaByJsonPointer(path, schema, resp);
-              // Ignore diff when propertySchema readonly is true. When property is readonly, it's probably a random generated value which updated dynamically per request.
-              if (sch.readOnly === true) {
-                return undefined;
-              }
-              paths.pop();
-            }
-            ret.severity = "Error";
-            ret.message = `The actual response value is different from example. Path: ${
-              ret.jsonPath
-            }. Expected: ${this.dataMasker.jsonStringify(
-              it.oldValue
-            )}. Actual: ${this.dataMasker.jsonStringify(it.value)}`;
-          }
-          ret.detail = this.dataMasker.jsonStringify(it);
-          if (
-            ignoredKeys.some((key) => ret.jsonPath.search(key) !== -1) ||
-            (ret.code === "RESPONSE_INCONSISTENT_VALUE" &&
-              typeof it.value === "string" &&
-              ignoreValuePattern.some((valuePattern) => it.value.search(valuePattern) !== -1))
-          ) {
-            return undefined;
-          }
-          return ret;
-        })
-        .filter((it) => it !== undefined) as ResponseDiffItem[];
-      return delta;
-      // eslint-disable-next-line no-empty
-    } catch (err) {}
-    return [];
   }
 
   private getMatchedStep(stepName: string): Step | undefined {

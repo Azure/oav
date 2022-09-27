@@ -759,7 +759,6 @@ export class LiveValidator {
     if (this.operationLoader === undefined) {
       const msg = "OperationLoader should be initialized before this call.";
       const runtimeException = { code: C.ErrorCodes.RoundtripValidationError.name, message: msg };
-      console.log(msg);
       return {
         isSuccessful: undefined,
         errors: [],
