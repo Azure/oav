@@ -49,7 +49,7 @@
     "winston": "^3.3.4",
     "yargs": "^15.4.1",
     "yasway": "^1.10.7",
-    "yuml2svg": "^4.2.2",
+    "yuml2svg": "^5.0.1",
     "z-schema": "^5.0.3"
   },
   "devDependencies": {
