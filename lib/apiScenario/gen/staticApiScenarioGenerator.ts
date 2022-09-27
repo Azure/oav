@@ -8,6 +8,7 @@ import { FileLoader } from "../../swagger/fileLoader";
 import { RawScenarioDefinition, RawStep } from "../apiScenarioTypes";
 import { ApiScenarioLoaderOption } from "../apiScenarioLoader";
 import { inversifyGetInstance, TYPES } from "../../inversifyUtils";
+import { logger } from ".././logger";
 
 type GenerationRule = "operations-list";
 export interface StaticApiScenarioGeneratorOption
@@ -80,14 +81,14 @@ export class StaticApiScenarioGenerator {
 
   public async writeGeneratedFiles() {
     for (const { scenarioDef: scenarioDef, filePath } of this.scenarioDefToWrite) {
-      console.log(`write generated file ${filePath}`);
+      logger.info(`write generated file ${filePath}`);
       await this.writeScenarioDefinitionFile(filePath, scenarioDef);
     }
   }
 
   public async generateTestDefFiles() {
     if (this.opts.rules?.includes("operations-list")) {
-      console.log("generate operations list");
+      logger.info("generate operations list");
       await this.generateListOperationTestScenario();
     }
   }

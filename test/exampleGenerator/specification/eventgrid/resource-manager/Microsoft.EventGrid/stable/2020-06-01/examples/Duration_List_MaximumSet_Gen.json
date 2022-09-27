@@ -1,0 +1,17 @@
+{
+  "parameters": {
+    "api-version": "2020-06-01"
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "value": [
+          {
+            "name": "Microsoft.EventGrid/register/action",
+            "durationOfEvent": "PT20M"
+          }
+        ]
+      }
+    }
+  }
+}

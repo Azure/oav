@@ -1,5 +1,6 @@
 /* eslint-disable require-atomic-updates */
 
+import { basename } from "path";
 import { cloneDeep, pathDirName, pathJoin } from "@azure-tools/openapi-tools-common";
 import { inject, injectable } from "inversify";
 import { dump as yamlDump } from "js-yaml";
@@ -29,6 +30,7 @@ import { applyGlobalTransformers, applySpecTransformers } from "../transform/tra
 import { traverseSwagger } from "../transform/traverseSwagger";
 import { xmsPathsTransformer } from "../transform/xmsPathsTransformer";
 import { getInputFiles } from "../util/utils";
+import { logger } from "./logger";
 import {
   ArmDeploymentScriptResource,
   ArmTemplate,
@@ -39,6 +41,7 @@ import {
   RawStepArmTemplate,
   RawStepExample,
   RawStepOperation,
+  RawStepRoleAssignment,
   RawVariableScope,
   ReadmeTag,
   Scenario,
@@ -46,12 +49,13 @@ import {
   Step,
   StepArmTemplate,
   StepRestCall,
+  StepRoleAssignment,
   Variable,
   VariableScope,
 } from "./apiScenarioTypes";
 import { ApiScenarioYamlLoader } from "./apiScenarioYamlLoader";
 import { BodyTransformer } from "./bodyTransformer";
-import { armDeploymentScriptTemplate } from "./constants";
+import { armDeploymentScriptTemplate, DEFAULT_ARM_ENDPOINT } from "./constants";
 import { jsonPatchApply } from "./diffUtils";
 import { TemplateGenerator } from "./templateGenerator";
 
@@ -136,8 +140,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
 
     if (readmeTags) {
       for (const e of readmeTags) {
-        // console.log("Additional readme tag:");
-        // console.log(readmeTags);
+        logger.verbose(`Additional readme tag: ${e.filePath}`);
 
         const inputFiles = await getInputFiles(e.filePath, e.tag);
         if (inputFiles) {
@@ -151,8 +154,8 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
             additionalSwaggerFiles.push(pathJoin(pathDirName(e.filePath), f));
           });
 
-          // console.log("Additional input-file:");
-          // console.log(additionalSwaggerFiles);
+          logger.verbose("Additional input-file:");
+          logger.verbose(additionalSwaggerFiles);
 
           await this.loadSwaggers(
             additionalSwaggerFiles,
@@ -233,21 +236,43 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
 
     await this.initialize(this.opts.swaggerFilePaths, readmeTags);
 
+    rawDef.scope = rawDef.scope ?? "ResourceGroup";
+    const isArmScope = rawDef.scope !== "None";
+
     const scenarioDef: ScenarioDefinition = {
-      scope: rawDef.scope ?? "ResourceGroup",
+      name: basename(filePath).substring(0, basename(filePath).lastIndexOf(".")),
+      scope: rawDef.scope,
       prepareSteps: [],
       scenarios: [],
       _filePath: this.fileLoader.relativePath(filePath),
       _swaggerFilePaths: this.opts.swaggerFilePaths!,
       cleanUpSteps: [],
       ...convertVariables(rawDef.variables),
+      authentication:
+        rawDef.authentication ??
+        (isArmScope
+          ? {
+              type: "AADToken",
+              scope: "$(armEndpoint)/.default",
+            }
+          : {
+              type: "None",
+            }),
     };
 
-    if (["ResourceGroup", "Subscription"].indexOf(scenarioDef.scope) >= 0) {
+    if (isArmScope) {
+      if (!scenarioDef.variables.armEndpoint) {
+        scenarioDef.variables.armEndpoint = {
+          type: "string",
+          value: DEFAULT_ARM_ENDPOINT,
+        };
+      }
       const requiredVariables = new Set(scenarioDef.requiredVariables);
-      requiredVariables.add("subscriptionId");
-      if (scenarioDef.scope === "ResourceGroup") {
-        requiredVariables.add("location");
+      if (["ResourceGroup", "Subscription"].indexOf(scenarioDef.scope) >= 0) {
+        requiredVariables.add("subscriptionId");
+        if (scenarioDef.scope === "ResourceGroup") {
+          requiredVariables.add("location");
+        }
       }
       scenarioDef.requiredVariables = [...requiredVariables];
     }
@@ -307,10 +332,10 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     const scenario: Scenario = {
       scenario: rawScenario.scenario ?? `scenario_${ctx.scenarioIndex}`,
       description: rawScenario.description ?? "",
-      shareScope: rawScenario.shareScope ?? true,
       steps,
       _scenarioDef: scenarioDef,
       ...variableScope,
+      authentication: rawScenario.authentication ?? scenarioDef.authentication,
     };
 
     ctx.scenario = scenario;
@@ -334,6 +359,8 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
         step = await this.loadStepArmTemplate(rawStep, ctx);
       } else if ("armDeploymentScript" in rawStep) {
         step = await this.loadStepArmDeploymentScript(rawStep, ctx);
+      } else if ("roleAssignment" in rawStep) {
+        step = await this.loadStepRoleAssignment(rawStep, ctx);
       } else {
         throw new Error("Invalid step");
       }
@@ -371,7 +398,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
 
     const step: StepRestCall = {
       type: "restCall",
-      step: rawStep.step ?? `${ctx.scenarioIndex ?? ctx.stage}_${ctx.stepIndex}`,
+      step: rawStep.step ?? `_${ctx.stepIndex}`,
       description: rawStep.description,
       operationId: "",
       operation: {} as Operation,
@@ -379,6 +406,8 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       responses: {} as SwaggerExample["responses"],
       outputVariables: rawStep.outputVariables ?? {},
       ...convertVariables(rawStep.variables),
+      authentication:
+        rawStep.authentication ?? ctx.scenario?.authentication ?? ctx.scenarioDef.authentication,
     };
 
     ctx.stepTracking.set(step.step, step);
@@ -430,9 +459,6 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     if (!("exampleFile" in rawStep)) {
       // load operation step
       step.operationId = rawStep.operationId;
-      if (!rawStep.step) {
-        step.step += `_${rawStep.operationId}`;
-      }
 
       const operation = rawStep.readmeTag
         ? this.additionalMap.get(rawStep.readmeTag)?.operationsMap.get(step.operationId)
@@ -443,6 +469,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       if (rawStep.readmeTag) {
         step.externalReference = true;
       }
+      step.isManagementPlane = this.isManagementPlane(operation);
       if (this.opts.includeOperation) {
         step.operation = operation;
       }
@@ -520,6 +547,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
         if (operation === undefined) {
           throw new Error(`Operation not found for ${step.operationId} in step ${step.step}`);
         }
+        step.isManagementPlane = this.isManagementPlane(operation);
         if (this.opts.includeOperation) {
           step.operation = operation;
         }
@@ -542,11 +570,13 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
         if (operation === undefined) {
           throw new Error(`Operation not found for ${step.operationId} in step ${step.step}`);
         }
+        step.isManagementPlane = this.isManagementPlane(operation);
         if (this.opts.includeOperation) {
           step.operation = operation;
         }
         step.description = step.description ?? exampleName;
       }
+
       step.parameters = exampleFileContent.parameters;
 
       // force update api-version
@@ -560,7 +590,22 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
 
       this.templateGenerator.exampleParameterConvention(step, getVariable, operation);
     }
+
+    if (!rawStep.step) {
+      step.step = `${step.operationId}_${ctx.stepIndex}`;
+    }
     return step;
+  }
+
+  private isManagementPlane(operation: Operation): boolean {
+    const spec = operation._path._spec;
+    if (spec.host === "management.azure.com") {
+      return true;
+    }
+    if (spec._filePath.indexOf("/resource-manager/") >= 0) {
+      return true;
+    }
+    return false;
   }
 
   private async applyPatches(step: StepRestCall, rawStep: RawStepExample, operation: Operation) {
@@ -601,8 +646,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
   ): Promise<StepArmTemplate> {
     const step: StepArmTemplate = {
       type: "armTemplateDeployment",
-      step:
-        rawStep.step ?? `${ctx.scenarioIndex ?? ctx.stage}_${ctx.stepIndex}_ArmDeploymentScript`,
+      step: rawStep.step ?? `ArmDeploymentScript_${ctx.stepIndex}`,
       outputVariables: rawStep.outputVariables ?? {},
       armTemplate: "",
       armTemplatePayload: {},
@@ -648,6 +692,21 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       this.getVariableFunction(step, ctx)
     );
 
+    return step;
+  }
+
+  private async loadStepRoleAssignment(
+    rawStep: RawStepRoleAssignment,
+    ctx: ApiScenarioContext
+  ): Promise<StepRoleAssignment> {
+    const step: StepRoleAssignment = {
+      type: "armRoleAssignment",
+      step: rawStep.step ?? `RoleAssignment_${ctx.stepIndex}`,
+      outputVariables: rawStep.outputVariables ?? {},
+      roleAssignment: rawStep.roleAssignment,
+      ...convertVariables(rawStep.variables),
+    };
+    // TODO
     return step;
   }
 

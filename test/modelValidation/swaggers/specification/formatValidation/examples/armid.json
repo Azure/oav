@@ -1,0 +1,13 @@
+{
+  "parameters": {
+    "name": "armidFormat"
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "NotARMIDValue": "test123",
+        "ARMIDValue": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/abcd/providers/Microsoft.Compute/snapshots/snapshot"
+      }
+    }
+  }
+}

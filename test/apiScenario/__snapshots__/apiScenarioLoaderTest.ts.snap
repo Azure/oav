@@ -1,12 +1,291 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`ApiScenarioLoader load valid data-plane scenario - appconfig 1`] = `
+Object {
+  "_filePath": "Microsoft.AppConfiguration/stable/1.0/scenarios/crud.yaml",
+  "_swaggerFilePaths": Array [
+    "Microsoft.AppConfiguration/stable/1.0/appconfiguration.json",
+  ],
+  "authentication": Object {
+    "scope": "https://azconfig.io/.default",
+    "type": "AADToken",
+  },
+  "cleanUpSteps": Array [],
+  "name": "crud",
+  "prepareSteps": Array [
+    Object {
+      "authentication": Object {
+        "scope": "https://azconfig.io/.default",
+        "type": "AADToken",
+      },
+      "description": undefined,
+      "isManagementPlane": false,
+      "isPrepareStep": true,
+      "operation": Object {},
+      "operationId": "CheckKeys",
+      "outputVariables": Object {},
+      "parameters": Object {
+        "api-version": "1.0",
+      },
+      "requiredVariables": Array [],
+      "responseAssertion": undefined,
+      "responses": Object {},
+      "secretVariables": Array [],
+      "step": "CheckKeys_0",
+      "type": "restCall",
+      "variables": Object {},
+    },
+    Object {
+      "authentication": Object {
+        "scope": "https://azconfig.io/.default",
+        "type": "AADToken",
+      },
+      "description": undefined,
+      "isManagementPlane": false,
+      "isPrepareStep": true,
+      "operation": Object {},
+      "operationId": "PutKeyValue",
+      "outputVariables": Object {
+        "lastModified": Object {
+          "fromResponse": "/last_modified",
+          "type": "string",
+        },
+      },
+      "parameters": Object {
+        "api-version": "1.0",
+        "entity": Object {
+          "value": "world",
+        },
+        "key": "hello",
+      },
+      "requiredVariables": Array [],
+      "responseAssertion": undefined,
+      "responses": Object {},
+      "secretVariables": Array [],
+      "step": "PutKeyValue_1",
+      "type": "restCall",
+      "variables": Object {},
+    },
+  ],
+  "requiredVariables": Array [],
+  "scenarios": Array [
+    Object {
+      "_scenarioDef": [Circular],
+      "authentication": Object {
+        "scope": "https://azconfig.io/.default",
+        "type": "AADToken",
+      },
+      "description": "",
+      "requiredVariables": Array [],
+      "scenario": "simplyListKeys",
+      "secretVariables": Array [],
+      "steps": Array [
+        Object {
+          "authentication": Object {
+            "scope": "https://azconfig.io/.default",
+            "type": "AADToken",
+          },
+          "description": undefined,
+          "isManagementPlane": false,
+          "operation": Object {},
+          "operationId": "CheckKeys",
+          "outputVariables": Object {},
+          "parameters": Object {
+            "api-version": "1.0",
+          },
+          "requiredVariables": Array [],
+          "responseAssertion": undefined,
+          "responses": Object {},
+          "secretVariables": Array [],
+          "step": "CheckKeys_0",
+          "type": "restCall",
+          "variables": Object {},
+        },
+        Object {
+          "authentication": Object {
+            "scope": "https://azconfig.io/.default",
+            "type": "AADToken",
+          },
+          "description": undefined,
+          "isManagementPlane": false,
+          "operation": Object {},
+          "operationId": "GetKeys",
+          "outputVariables": Object {},
+          "parameters": Object {
+            "api-version": "1.0",
+          },
+          "requiredVariables": Array [],
+          "responseAssertion": undefined,
+          "responses": Object {},
+          "secretVariables": Array [],
+          "step": "GetKeys_1",
+          "type": "restCall",
+          "variables": Object {},
+        },
+      ],
+      "variables": Object {},
+    },
+    Object {
+      "_scenarioDef": [Circular],
+      "authentication": Object {
+        "scope": "https://azconfig.io/.default",
+        "type": "AADToken",
+      },
+      "description": "",
+      "requiredVariables": Array [],
+      "scenario": "appConfig_data_plane_crud",
+      "secretVariables": Array [],
+      "steps": Array [
+        Object {
+          "authentication": Object {
+            "scope": "https://azconfig.io/.default",
+            "type": "AADToken",
+          },
+          "description": undefined,
+          "isManagementPlane": false,
+          "operation": Object {},
+          "operationId": "PutKeyValue",
+          "outputVariables": Object {},
+          "parameters": Object {
+            "api-version": "1.0",
+            "entity": Object {
+              "key": "foo",
+              "label": "hello",
+              "value": "bar",
+            },
+            "key": "foo",
+            "label": "hello",
+          },
+          "requiredVariables": Array [],
+          "responseAssertion": undefined,
+          "responses": Object {},
+          "secretVariables": Array [],
+          "step": "PutKeyValue_0",
+          "type": "restCall",
+          "variables": Object {},
+        },
+        Object {
+          "authentication": Object {
+            "scope": "https://azconfig.io/.default",
+            "type": "AADToken",
+          },
+          "description": undefined,
+          "isManagementPlane": false,
+          "operation": Object {},
+          "operationId": "CheckKeyValue",
+          "outputVariables": Object {},
+          "parameters": Object {
+            "api-version": "1.0",
+            "key": "foo",
+            "label": "hello",
+          },
+          "requiredVariables": Array [],
+          "responseAssertion": undefined,
+          "responses": Object {},
+          "secretVariables": Array [],
+          "step": "CheckKeyValue_1",
+          "type": "restCall",
+          "variables": Object {},
+        },
+        Object {
+          "authentication": Object {
+            "scope": "https://azconfig.io/.default",
+            "type": "AADToken",
+          },
+          "description": undefined,
+          "isManagementPlane": false,
+          "operation": Object {},
+          "operationId": "GetKeyValue",
+          "outputVariables": Object {},
+          "parameters": Object {
+            "api-version": "1.0",
+            "key": "foo",
+            "label": "hello",
+          },
+          "requiredVariables": Array [],
+          "responseAssertion": undefined,
+          "responses": Object {},
+          "secretVariables": Array [],
+          "step": "GetKeyValue_2",
+          "type": "restCall",
+          "variables": Object {},
+        },
+        Object {
+          "authentication": Object {
+            "scope": "https://azconfig.io/.default",
+            "type": "AADToken",
+          },
+          "description": undefined,
+          "isManagementPlane": false,
+          "operation": Object {},
+          "operationId": "CheckKeys",
+          "outputVariables": Object {},
+          "parameters": Object {
+            "api-version": "1.0",
+          },
+          "requiredVariables": Array [],
+          "responseAssertion": undefined,
+          "responses": Object {},
+          "secretVariables": Array [],
+          "step": "CheckKeys_3",
+          "type": "restCall",
+          "variables": Object {},
+        },
+        Object {
+          "authentication": Object {
+            "scope": "https://azconfig.io/.default",
+            "type": "AADToken",
+          },
+          "description": undefined,
+          "isManagementPlane": false,
+          "operation": Object {},
+          "operationId": "GetKeys",
+          "outputVariables": Object {},
+          "parameters": Object {
+            "api-version": "1.0",
+          },
+          "requiredVariables": Array [],
+          "responseAssertion": undefined,
+          "responses": Object {},
+          "secretVariables": Array [],
+          "step": "GetKeys_4",
+          "type": "restCall",
+          "variables": Object {},
+        },
+      ],
+      "variables": Object {},
+    },
+  ],
+  "scope": "None",
+  "secretVariables": Array [],
+  "variables": Object {
+    "configStoreName": Object {
+      "type": "string",
+      "value": "configstor7q4oy9",
+    },
+    "endpoint": Object {
+      "type": "string",
+      "value": "https://$(configStoreName).azconfig.io",
+    },
+    "lastModified": Object {
+      "type": "string",
+    },
+  },
+}
+`;
+
 exports[`ApiScenarioLoader load valid example based scenario - storage 1`] = `
 Object {
   "_filePath": "Microsoft.Storage/stable/2021-08-01/scenarios/storageBasicExample.yaml",
   "_swaggerFilePaths": Array [
     "Microsoft.Storage/stable/2021-08-01/storage.json",
   ],
+  "authentication": Object {
+    "scope": "$(armEndpoint)/.default",
+    "type": "AADToken",
+  },
   "cleanUpSteps": Array [],
+  "name": "storageBasicExample",
   "prepareSteps": Array [],
   "requiredVariables": Array [
     "subscriptionId",
@@ -15,6 +294,10 @@ Object {
   "scenarios": Array [
     Object {
       "_scenarioDef": [Circular],
+      "authentication": Object {
+        "scope": "$(armEndpoint)/.default",
+        "type": "AADToken",
+      },
       "description": "",
       "requiredVariables": Array [
         "subscriptionId",
@@ -22,11 +305,15 @@ Object {
       ],
       "scenario": "StorageBasicExample",
       "secretVariables": Array [],
-      "shareScope": true,
       "steps": Array [
         Object {
+          "authentication": Object {
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
+          },
           "description": "StorageAccountCheckNameAvailability",
           "exampleFile": "../examples/StorageAccountCheckNameAvailability.json",
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "StorageAccounts_CheckNameAvailability",
           "outputVariables": Object {},
@@ -52,8 +339,13 @@ Object {
           "variables": Object {},
         },
         Object {
+          "authentication": Object {
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
+          },
           "description": "StorageAccountCreate",
           "exampleFile": "../examples/StorageAccountCreate.json",
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "StorageAccounts_Create",
           "outputVariables": Object {},
@@ -211,8 +503,13 @@ Object {
           "variables": Object {},
         },
         Object {
+          "authentication": Object {
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
+          },
           "description": "StorageAccountUpdate",
           "exampleFile": "../examples/StorageAccountUpdate.json",
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "StorageAccounts_Update",
           "outputVariables": Object {},
@@ -373,8 +670,13 @@ Object {
           "variables": Object {},
         },
         Object {
+          "authentication": Object {
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
+          },
           "description": "StorageAccountGetProperties",
           "exampleFile": "../examples/StorageAccountGetProperties.json",
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "StorageAccounts_GetProperties",
           "outputVariables": Object {},
@@ -484,8 +786,13 @@ Object {
           "variables": Object {},
         },
         Object {
+          "authentication": Object {
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
+          },
           "description": "StorageAccountDelete",
           "exampleFile": "../examples/StorageAccountDelete.json",
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "StorageAccounts_Delete",
           "outputVariables": Object {},
@@ -519,6 +826,10 @@ Object {
       "prefix": "sta",
       "type": "string",
     },
+    "armEndpoint": Object {
+      "type": "string",
+      "value": "https://management.azure.com",
+    },
   },
 }
 `;
@@ -529,7 +840,12 @@ Object {
   "_swaggerFilePaths": Array [
     "Microsoft.Storage/stable/2021-08-01/storage.json",
   ],
+  "authentication": Object {
+    "scope": "$(armEndpoint)/.default",
+    "type": "AADToken",
+  },
   "cleanUpSteps": Array [],
+  "name": "storageQuickStart",
   "prepareSteps": Array [],
   "requiredVariables": Array [
     "subscriptionId",
@@ -538,6 +854,10 @@ Object {
   "scenarios": Array [
     Object {
       "_scenarioDef": [Circular],
+      "authentication": Object {
+        "scope": "$(armEndpoint)/.default",
+        "type": "AADToken",
+      },
       "description": "",
       "requiredVariables": Array [
         "subscriptionId",
@@ -545,10 +865,14 @@ Object {
       ],
       "scenario": "basic",
       "secretVariables": Array [],
-      "shareScope": true,
       "steps": Array [
         Object {
+          "authentication": Object {
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
+          },
           "description": undefined,
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "StorageAccounts_CheckNameAvailability",
           "outputVariables": Object {},
@@ -575,7 +899,12 @@ Object {
           "variables": Object {},
         },
         Object {
+          "authentication": Object {
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
+          },
           "description": undefined,
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "StorageAccounts_Create",
           "outputVariables": Object {},
@@ -613,6 +942,10 @@ Object {
     },
     Object {
       "_scenarioDef": [Circular],
+      "authentication": Object {
+        "scope": "$(armEndpoint)/.default",
+        "type": "AADToken",
+      },
       "description": "",
       "requiredVariables": Array [
         "subscriptionId",
@@ -620,10 +953,14 @@ Object {
       ],
       "scenario": "overrideVariable",
       "secretVariables": Array [],
-      "shareScope": true,
       "steps": Array [
         Object {
+          "authentication": Object {
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
+          },
           "description": undefined,
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "StorageAccounts_CheckNameAvailability",
           "outputVariables": Object {},
@@ -650,7 +987,12 @@ Object {
           "variables": Object {},
         },
         Object {
+          "authentication": Object {
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
+          },
           "description": undefined,
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "StorageAccounts_Create",
           "outputVariables": Object {},
@@ -693,6 +1035,10 @@ Object {
     },
     Object {
       "_scenarioDef": [Circular],
+      "authentication": Object {
+        "scope": "$(armEndpoint)/.default",
+        "type": "AADToken",
+      },
       "description": "",
       "requiredVariables": Array [
         "subscriptionId",
@@ -700,10 +1046,14 @@ Object {
       ],
       "scenario": "primitiveParameter",
       "secretVariables": Array [],
-      "shareScope": true,
       "steps": Array [
         Object {
+          "authentication": Object {
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
+          },
           "description": undefined,
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "StorageAccounts_CheckNameAvailability",
           "outputVariables": Object {},
@@ -730,7 +1080,12 @@ Object {
           "variables": Object {},
         },
         Object {
+          "authentication": Object {
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
+          },
           "description": undefined,
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "StorageAccounts_Create",
           "outputVariables": Object {},
@@ -764,7 +1119,12 @@ Object {
           "variables": Object {},
         },
         Object {
+          "authentication": Object {
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
+          },
           "description": undefined,
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "DeletedAccounts_Get",
           "outputVariables": Object {},
@@ -798,6 +1158,10 @@ Object {
     },
     Object {
       "_scenarioDef": [Circular],
+      "authentication": Object {
+        "scope": "$(armEndpoint)/.default",
+        "type": "AADToken",
+      },
       "description": "",
       "requiredVariables": Array [
         "subscriptionId",
@@ -805,10 +1169,14 @@ Object {
       ],
       "scenario": "patchVariables",
       "secretVariables": Array [],
-      "shareScope": true,
       "steps": Array [
         Object {
+          "authentication": Object {
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
+          },
           "description": undefined,
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "StorageAccounts_Create",
           "outputVariables": Object {},
@@ -910,6 +1278,10 @@ Object {
       "prefix": "sta",
       "type": "string",
     },
+    "armEndpoint": Object {
+      "type": "string",
+      "value": "https://management.azure.com",
+    },
   },
 }
 `;
@@ -920,7 +1292,12 @@ Object {
   "_swaggerFilePaths": Array [
     "Microsoft.SignalRService/preview/2021-06-01-preview/signalr.json",
   ],
+  "authentication": Object {
+    "scope": "$(armEndpoint)/.default",
+    "type": "AADToken",
+  },
   "cleanUpSteps": Array [],
+  "name": "signalR",
   "prepareSteps": Array [],
   "requiredVariables": Array [
     "subscriptionId",
@@ -929,6 +1306,10 @@ Object {
   "scenarios": Array [
     Object {
       "_scenarioDef": [Circular],
+      "authentication": Object {
+        "scope": "$(armEndpoint)/.default",
+        "type": "AADToken",
+      },
       "description": "Microsoft.SignalRService/Basic_CRUD",
       "requiredVariables": Array [
         "subscriptionId",
@@ -936,7 +1317,6 @@ Object {
       ],
       "scenario": "SignalR",
       "secretVariables": Array [],
-      "shareScope": true,
       "steps": Array [
         Object {
           "armTemplate": "./peArmTemplate/Generate_Unique_name_template.json",
@@ -968,8 +1348,13 @@ Object {
           "variables": Object {},
         },
         Object {
+          "authentication": Object {
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
+          },
           "description": "SignalR_CheckNameAvailability",
           "exampleFile": "../examples/SignalR_CheckNameAvailability.json",
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "SignalR_CheckNameAvailability",
           "outputVariables": Object {},
@@ -998,8 +1383,13 @@ Object {
           "variables": Object {},
         },
         Object {
+          "authentication": Object {
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
+          },
           "description": "SignalR_CreateOrUpdate",
           "exampleFile": "../examples/SignalR_CreateOrUpdate.json",
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "SignalR_CreateOrUpdate",
           "outputVariables": Object {},
@@ -1353,8 +1743,13 @@ Object {
           "variables": Object {},
         },
         Object {
+          "authentication": Object {
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
+          },
           "description": "SignalR_Get",
           "exampleFile": "../examples/SignalR_Get.json",
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "SignalR_Get",
           "outputVariables": Object {},
@@ -1494,8 +1889,13 @@ Object {
           "variables": Object {},
         },
         Object {
+          "authentication": Object {
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
+          },
           "description": "SignalR_Update",
           "exampleFile": "../examples/SignalR_Update.json",
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "SignalR_Update",
           "outputVariables": Object {},
@@ -1724,8 +2124,13 @@ Object {
           "variables": Object {},
         },
         Object {
+          "authentication": Object {
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
+          },
           "description": "SignalR_ListKeys",
           "exampleFile": "../examples/SignalR_ListKeys.json",
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "SignalR_ListKeys",
           "outputVariables": Object {},
@@ -1747,8 +2152,13 @@ Object {
           "variables": Object {},
         },
         Object {
+          "authentication": Object {
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
+          },
           "description": "SignalR_RegenerateKey",
           "exampleFile": "../examples/SignalR_RegenerateKey.json",
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "SignalR_RegenerateKey",
           "outputVariables": Object {},
@@ -1777,8 +2187,13 @@ Object {
           "variables": Object {},
         },
         Object {
+          "authentication": Object {
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
+          },
           "description": "SignalR_Restart",
           "exampleFile": "../examples/SignalR_Restart.json",
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "SignalR_Restart",
           "outputVariables": Object {},
@@ -1805,8 +2220,13 @@ Object {
           "variables": Object {},
         },
         Object {
+          "authentication": Object {
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
+          },
           "description": "Usages_List",
           "exampleFile": "../examples/Usages_List.json",
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "Usages_List",
           "outputVariables": Object {},
@@ -1851,8 +2271,13 @@ Object {
           "variables": Object {},
         },
         Object {
+          "authentication": Object {
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
+          },
           "description": "SignalR_ListByResourceGroup",
           "exampleFile": "../examples/SignalR_ListByResourceGroup.json",
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "SignalR_ListByResourceGroup",
           "outputVariables": Object {},
@@ -1995,8 +2420,13 @@ Object {
           "variables": Object {},
         },
         Object {
+          "authentication": Object {
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
+          },
           "description": "SignalR_ListBySubscription",
           "exampleFile": "../examples/SignalR_ListBySubscription.json",
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "SignalR_ListBySubscription",
           "outputVariables": Object {},
@@ -2138,8 +2568,13 @@ Object {
           "variables": Object {},
         },
         Object {
+          "authentication": Object {
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
+          },
           "description": "Operations_List",
           "exampleFile": "../examples/Operations_List.json",
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "Operations_List",
           "outputVariables": Object {},
@@ -2173,8 +2608,13 @@ Object {
           "variables": Object {},
         },
         Object {
+          "authentication": Object {
+            "scope": "$(armEndpoint)/.default",
+            "type": "AADToken",
+          },
           "description": "SignalR_Delete",
           "exampleFile": "../examples/SignalR_Delete.json",
+          "isManagementPlane": true,
           "operation": Object {},
           "operationId": "SignalR_Delete",
           "outputVariables": Object {},
@@ -2212,6 +2652,11 @@ Object {
   ],
   "scope": "ResourceGroup",
   "secretVariables": Array [],
-  "variables": Object {},
+  "variables": Object {
+    "armEndpoint": Object {
+      "type": "string",
+      "value": "https://management.azure.com",
+    },
+  },
 }
 `;

@@ -1,0 +1,57 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/documentation/api-scenario/references/v1.2/schema.json
+
+scope: ResourceGroup
+variables:
+  configStoreName:
+    type: string
+    prefix: configstor
+
+scenarios:
+  - scenario: quickStart
+    description: Quick start with AppConfiguration ConfigurationStores
+    steps:
+      - step: Operations_CheckNameAvailability
+        operationId: Operations_CheckNameAvailability
+        parameters:
+          checkNameAvailabilityParameters:
+            name: $(configStoreName)
+            type: Microsoft.AppConfiguration/configurationStores
+      - step: ConfigurationStores_Create
+        operationId: ConfigurationStores_Create
+        parameters:
+          configStoreCreationParameters:
+            location: $(location)
+            sku:
+              name: Standard
+            tags:
+              myTag: myTagValue
+      - step: ConfigurationStores_Get
+        operationId: ConfigurationStores_Get
+        outputVariables:
+          endpoint:
+            type: string
+            fromResponse: /properties/endpoint
+          configStoreId:
+            type: string
+            fromResponse: /id
+      # - step: AssignDataOwnerRole
+      #   roleAssignment:
+      #     scope: $(configStoreId)
+      #     principalId: $(targetObjectId)
+      #     roleName: App Configuration Data Owner
+      #   variables:
+      #     targetObjectId: 48f6cf37-24cb-4143-8663-b9fad7c24025
+      - step: RoleAssignments_Create
+        operationId: RoleAssignments_Create
+        readmeTag: ../../../../../../authorization/resource-manager/readme.md
+        parameters:
+          scope: $(configStoreId)
+          roleAssignmentName: 611c2e81-2ccb-42d8-9ddc-2d0bfa65c1b7
+          parameters:
+            properties:
+              roleDefinitionId: /subscriptions/$(subscriptionId)/providers/Microsoft.Authorization/roleDefinitions/$(roleDefinitionId)
+              principalId: $(principalId)
+              principalType: ServicePrincipal
+        variables:
+          roleDefinitionId: 5ae67dd6-50cb-40e7-96ff-dc2bfa4b606b
+          principalId: 48f6cf37-24cb-4143-8663-b9fad7c24025

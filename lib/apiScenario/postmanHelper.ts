@@ -1,7 +1,19 @@
 import * as jsonPointer from "json-pointer";
-import { Event, EventDefinition, Item, ItemDefinition, ScriptDefinition } from "postman-collection";
+import {
+  Collection,
+  Event,
+  EventDefinition,
+  EventList,
+  Item,
+  ItemDefinition,
+  ItemGroup,
+  ItemGroupDefinition,
+} from "postman-collection";
 import { getRandomString } from "../util/utils";
 import { ArmTemplate, StepResponseAssertion } from "./apiScenarioTypes";
+
+export const PREPARE_FOLDER = "__Prepare__";
+export const CLEANUP_FOLDER = "__CleanUp__";
 
 function parseJsonPointer(jsonPointer: string): string[] {
   if (jsonPointer === "") {
@@ -36,25 +48,36 @@ export function createItem(definition?: ItemDefinition): Item {
   });
 }
 
-export function createEvent(
-  listen: "prerequest" | "test",
-  script: ScriptDefinition,
-  additionalDefinition?: EventDefinition
-): Event {
-  return new Event({
+export function addItemGroup(
+  target: Collection,
+  definition?: ItemGroupDefinition
+): ItemGroup<Item> {
+  const itemGroup = new ItemGroup<Item>({
     id: getRandomString(),
-    listen,
-    script,
-    ...additionalDefinition,
+    ...definition,
   });
+  target.items.add(itemGroup);
+  return itemGroup;
 }
 
-export function createScript(script: string): ScriptDefinition {
-  return {
-    id: getRandomString(),
-    type: "text/javascript",
-    exec: script,
-  };
+export function addEvent(
+  target: EventList,
+  listen: "prerequest" | "test",
+  script: string | string[],
+  additionalDefinition?: EventDefinition
+) {
+  target.add(
+    new Event({
+      id: getRandomString(),
+      listen,
+      script: {
+        id: getRandomString(),
+        type: "text/javascript",
+        exec: script,
+      },
+      ...additionalDefinition,
+    })
+  );
 }
 
 function generateResponseDataAssertionScript(responseAssertion: StepResponseAssertion): string {
@@ -100,44 +123,42 @@ function generateResponseDataAssertionScript(responseAssertion: StepResponseAsse
   return ret;
 }
 
-export function generateScript(parameter: TestScriptParameter): ScriptDefinition {
-  const script: string[] = [];
-  script.push(`pm.test("${parameter.name}", function() {`);
+export function appendScripts(scripts: string[], parameter: TestScriptParameter) {
+  scripts.push(`pm.test("${parameter.name}", function() {`);
   if (parameter.types.includes("DetailResponseLog")) {
-    script.push("console.log(pm.response.text());");
+    scripts.push("console.log(pm.response.text());");
   }
   if (parameter.types.includes("StatusCodeAssertion")) {
-    script.push("pm.response.to.be.success;");
+    scripts.push("pm.response.to.be.success;");
   }
   if (parameter.types.includes("OverwriteVariables") && parameter.variables) {
     for (const [k, v] of parameter.variables) {
       const segments = parseJsonPointer(v);
       if (segments.length === 0) {
-        script.push(`pm.environment.set("${k}", pm.response.json());`);
+        scripts.push(`pm.environment.set("${k}", pm.response.json());`);
       } else {
-        script.push(
+        scripts.push(
           `pm.environment.set("${k}", _.get(pm.response.json(), ${JSON.stringify(segments)}));`
         );
       }
     }
   }
   if (parameter.types.includes("ARMDeploymentStatusAssertion")) {
-    script.push(
+    scripts.push(
       'pm.expect(pm.response.json().status).to.be.oneOf(["Succeeded", "Accepted", "Running", "Ready", "Creating", "Created", "Deleting", "Deleted", "Canceled", "Updating"]);'
     );
   }
   if (parameter.types.includes("ExtractARMTemplateOutput") && parameter.armTemplate?.outputs) {
     for (const key of Object.keys(parameter.armTemplate.outputs)) {
-      script.push(
+      scripts.push(
         `pm.environment.set("${key}", pm.response.json().properties.outputs.${key}.value);`
       );
     }
   }
   if (parameter.types.includes("ResponseDataAssertion") && parameter.responseAssertion) {
-    script.push(generateResponseDataAssertionScript(parameter.responseAssertion));
+    scripts.push(generateResponseDataAssertionScript(parameter.responseAssertion));
   }
-  script.push("});");
-  return createScript(script.join("\n"));
+  scripts.push("});");
 }
 
 export const reservedCollectionVariables = [
@@ -164,46 +185,32 @@ export const reservedCollectionVariables = [
     key: "x_enable_auth",
     value: "true",
   },
-  {
-    key: "x_bearer_token",
-    type: "secret",
-  },
-  {
-    key: "x_bearer_token_expires_on",
-  },
-  {
-    key: "x_polling_url",
-  },
-  {
-    key: "x_retry_after",
-    value: "10",
-  },
 ];
 
-export function generateAuthScript(baseUrl: string): ScriptDefinition {
+export function generateAuthScript(scope: string, tokenName: string): string {
   const script = `
 if (pm.variables.get("x_enable_auth") !== "true") {
     return;
 }
-let vars = ["client_id", "client_secret", "tenantId", "subscriptionId"];
-vars.forEach(function (item, index, array) {
-    pm.expect(
-        pm.variables.get(item),
-        item + " variable not set"
-    ).to.not.be.undefined;
-    pm.expect(pm.variables.get(item), item + " variable not set").to.not.be.empty;
-});
 if (
-    !pm.collectionVariables.get("x_bearer_token") ||
+    !pm.variables.get("${tokenName}") ||
     Date.now() >
-    new Date(pm.collectionVariables.get("x_bearer_token_expires_on") * 1000)
+    new Date(pm.variables.get("${tokenName}_expires_on") * 1000)
 ) {
+    let vars = ["client_id", "client_secret", "tenantId"];
+    vars.forEach(function (item, index, array) {
+        pm.expect(
+            pm.variables.get(item),
+            item + " variable not set"
+        ).to.not.be.undefined;
+        pm.expect(pm.variables.get(item), item + " variable not set").to.not.be.empty;
+    });
     pm.sendRequest(
         {
             url:
                 "https://login.microsoftonline.com/" +
                 pm.variables.get("tenantId") +
-                "/oauth2/token",
+                "/oauth2/v2.0/token",
             method: "POST",
             header: "Content-Type: application/x-www-form-urlencoded",
             body: {
@@ -220,7 +227,7 @@ if (
                         value: pm.variables.get("client_secret"),
                         disabled: false,
                     },
-                    { key: "resource", value: "${baseUrl}", disabled: false },
+                    { key: "scope", value: "${scope}", disabled: false },
                 ],
             },
         },
@@ -229,14 +236,14 @@ if (
                 console.log(err);
             } else {
                 let resJson = res.json();
-                pm.collectionVariables.set(
-                    "x_bearer_token_expires_on",
-                    resJson.expires_on
+                pm.variables.set(
+                    "${tokenName}_expires_on",
+                    resJson.expires_in + Math.floor(Date.now() / 1000)
                 );
-                pm.collectionVariables.set("x_bearer_token", resJson.access_token);
+                pm.variables.set("${tokenName}", resJson.access_token);
             }
         }
     );
 }`;
-  return createScript(script);
+  return script;
 }
