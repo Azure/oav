@@ -28,6 +28,7 @@ import * as util from "../../generator/util";
 import { setDefaultOpts } from "../../swagger/loader";
 import Mocker from "../../generator/mocker";
 import { cloneDeep } from "lodash";
+import { ArmResourceManipulator } from "./ApiTestRuleBasedGenerator";
 
 export interface ApiScenarioGeneratorOption extends ApiScenarioLoaderOption {
   swaggerFilePaths: string[];
@@ -129,6 +130,42 @@ export class RestlerApiScenarioGenerator {
       });
     }
     await this.generateGraph();
+  }
+
+  public async generateResourceDependency(res: ArmResourceManipulator) {
+    const putOperation = res.getOperation("CreateOrUpdate")[0];
+    const definition: RawScenarioDefinition = {
+      scope: "ResourceGroup",
+      variables: undefined,
+      scenarios: [],
+    };
+    if (!putOperation) {
+      return definition;
+    }
+    definition.scenarios.push(this.generateDependencySteps(res));
+    this.getVariables(definition);
+    if (this.opts.useExample) {
+      definition.scenarios[0].steps.forEach((step) => {
+        const operationId = (step as any).operationId;
+        const operation = this.operations.get(operationId);
+        if (operation?.["x-ms-examples"] && Object.values(operation["x-ms-examples"])[0]) {
+          const example = Object.values(operation["x-ms-examples"])[0];
+          step.step = (step as any).operationId;
+          (step as any).operationId = undefined;
+          (step as RawStepExample).exampleFile = path.relative(
+            path.resolve(this.opts.outputDir, "rule"),
+            this.fileLoader.resolvePath(this.jsonLoader.getRealPath(example.$ref!))
+          );
+        } else {
+          console.warn(`${operationId} has no example.`);
+        }
+      });
+
+      definition.scenarios[0].steps = definition.scenarios[0].steps.filter(
+        (s) => (s as RawStepExample).exampleFile
+      );
+    }
+    return definition;
   }
 
   public async generate() {
@@ -237,8 +274,11 @@ export class RestlerApiScenarioGenerator {
           variables[v.name] = v.value;
           return;
         }
+        if (!step) {
+          return;
+        }
 
-        if (!step.variables) {
+        if (!step?.variables) {
           step.variables = {};
         }
 
@@ -318,6 +358,64 @@ export class RestlerApiScenarioGenerator {
       default:
         throw new Error(`Unknown parameter type: ${parameter.type}`);
     }
+  }
+  private generateDependencySteps(res?: ArmResourceManipulator) {
+    const scenario: RawScenario = {
+      steps: [],
+    };
+    function isTargetOperationId(operationId: string) {
+      const targetPutOperationId = res?.getOperation("CreateOrUpdate")?.[0]?.operationId;
+      return !targetPutOperationId || targetPutOperationId === operationId;
+    }
+
+    function generateStepsForHeap() {
+      while (!heap.empty()) {
+        const node = heap.pop()!;
+        scenario.steps.push({ operationId: node.operationId });
+      }
+    }
+
+    const heap = new Heap<Node>((a, b) => {
+      const priority = b.priority - a.priority;
+      if (priority) {
+        return priority;
+      }
+
+      const degree = b.outDegree - a.outDegree;
+      if (degree) {
+        return degree;
+      }
+      return methodOrder.indexOf(a.method) - methodOrder.indexOf(b.method);
+    });
+    function deep(node: Node) {
+      if (isTargetOperationId(node.operationId)) {
+        return true;
+      }
+      for (const n of node.children.values()) {
+        if (n.method === "put") {
+          heap.push(n);
+          if (deep(n)) {
+            break;
+          }
+        }
+      }
+      heap.pop();
+      return false;
+    }
+    for (const node of this.graph.values()) {
+      if (node.visited) {
+        continue;
+      }
+      if (node.inDegree === 0 && node.method === "put") {
+        heap.push(node);
+        if (deep(node)) {
+          break;
+        }
+        node.visited = true;
+      }
+    }
+    generateStepsForHeap();
+    return scenario;
   }
 
   private generateSteps() {

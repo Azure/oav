@@ -9,6 +9,7 @@ import { StaticApiScenarioGenerator } from "../../apiScenario/gen/staticApiScena
 import { RestlerApiScenarioGenerator } from "../../apiScenario/gen/restlerApiScenarioGenerator";
 import { cliSuppressExceptions } from "../../cliSuppressExceptions";
 import { getInputFiles } from "../../util/utils";
+import { generateApiTestBasedOnRules } from "../../apiScenario/gen/ApiTestRuleBasedGenerator";
 
 export const command = "static";
 export const describe = "Generate api-scenario from specs.";
@@ -46,6 +47,11 @@ export const builder: yargs.CommandBuilder = {
     boolean: true,
     default: false,
   },
+  enableArmRule: {
+    describe: "generate arm rule based api test",
+    boolean: true,
+    default: false,
+  },
 };
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
@@ -72,7 +78,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     console.log("input-file:");
     console.log(swaggerFilePaths);
 
-    if (argv.dependency) {
+    if (argv.dependency && !argv.enableArmRule) {
       const generator = RestlerApiScenarioGenerator.create({
         fileRoot: fileRoot,
         checkUnderFileRoot: false,
@@ -85,6 +91,9 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       await generator.initialize();
       const def = await generator.generate();
       await generator.writeFile(def);
+    } else if (argv.enableArmRule) {
+     
+      generateApiTestBasedOnRules(swaggerFilePaths, argv.dependency,argv.outputDir);
     } else {
       const generator = StaticApiScenarioGenerator.create({
         swaggerFilePaths: swaggerFilePaths,
