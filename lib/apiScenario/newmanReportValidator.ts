@@ -57,7 +57,6 @@ export interface StepResult {
   payloadPath?: string;
   operationId: string;
   responseTime?: number;
-  correlationId?: string;
   stepName: string;
   runtimeError?: RuntimeError[];
   liveValidationResult?: RequestResponseLiveValidationResult;
@@ -241,12 +240,14 @@ export class NewmanReportValidator {
         if (
           !this.opts.skipValidation &&
           matchedStep.isManagementPlane &&
-          matchedStep.operation._method === "put"
+          matchedStep.operation._method === "put" &&
+          it.response.statusCode >= 200 &&
+          it.response.statusCode <= 202
         ) {
           if (it.annotation.type === "LRO") {
             // For LRO, get the final response to compose payload
             const lroFinal = this.getLROFinalResponse(newmanReport.executions, it.annotation.step);
-            if (lroFinal !== undefined) {
+            if (lroFinal !== undefined && lroFinal.response.statusCode === 200) {
               const lroPayload = this.convertToLROLiveValidationPayload(it, lroFinal);
               roundtripValidationResult = await this.liveValidator.validateRoundTrip(lroPayload);
             }
@@ -266,7 +267,6 @@ export class NewmanReportValidator {
             : undefined,
           runtimeError,
           responseTime: it.response.responseTime,
-          correlationId: it.response.headers["x-ms-correlation-request-id"],
           statusCode: it.response.statusCode,
           stepName: it.annotation.step,
           liveValidationResult,
