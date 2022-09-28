@@ -21,8 +21,13 @@ import {
   AADTokenAuthentication,
   ArmTemplate,
   Authentication,
+  DelayItemMetadata,
+  FinalGetItemMetadata,
+  LroItemMetadata,
+  PollerItemMetadata,
   Scenario,
   ScenarioDefinition,
+  SimpleItemMetadata,
   StepArmTemplate,
   StepResponseAssertion,
   StepRestCall,
@@ -372,8 +377,6 @@ pm.test("Stopped TestProxy recording", function() {
       raw: '{"location":"{{location}}"}',
     });
 
-    item.description = JSON.stringify({ type: "prepare" });
-
     item.request.addHeader({ key: "Content-Type", value: "application/json" });
 
     const postScripts = this.generatePostScripts();
@@ -558,14 +561,15 @@ pm.test("Stopped TestProxy recording", function() {
     ).forEach((s) => postScripts.push(s));
 
     if (step.operation["x-ms-long-running-operation"]) {
-      item.description = JSON.stringify({
+      const metadata: LroItemMetadata = {
         type: "LRO",
         poller_item_name: `_${item.name}_poller`,
         operationId: step.operation.operationId || "",
         exampleName: step.exampleFile!,
         itemName: item.name,
         step: item.name,
-      });
+      };
+      item.description = JSON.stringify(metadata);
       this.lroPoll(
         itemGroup!,
         item,
@@ -575,13 +579,14 @@ pm.test("Stopped TestProxy recording", function() {
         step.responseAssertion
       );
     } else {
-      item.description = JSON.stringify({
+      const metadata: SimpleItemMetadata = {
         type: "simple",
         operationId: step.operation.operationId || "",
         exampleName: step.exampleFile!,
         itemName: item.name,
         step: item.name,
-      });
+      };
+      item.description = JSON.stringify(metadata);
     }
 
     if (postScripts.length > 0) {
@@ -632,7 +637,11 @@ if (pollingUrl) {
         method: "GET",
       },
     });
-    delayItem.description = JSON.stringify({ type: "delay", lro_item_name: item.name });
+    const delayItemMetadata: DelayItemMetadata = {
+      type: "delay",
+      lro_item_name: item.name,
+    };
+    delayItem.description = JSON.stringify(delayItemMetadata);
 
     itemGroup.items.add(delayItem);
 
@@ -647,7 +656,12 @@ if (pollingUrl) {
       },
       baseUri
     );
-    pollerItem.description = JSON.stringify({ type: "poller", lro_item_name: item.name });
+    const pollerItemMetadata: PollerItemMetadata = {
+      type: "poller",
+      lro_item_name: item.name,
+    };
+
+    pollerItem.description = JSON.stringify(pollerItemMetadata);
 
     const pollerPostScripts: string[] = [];
     pollerPostScripts.push(
@@ -829,11 +843,12 @@ try {
       baseUri
     );
     item.request.url = url;
-    item.description = JSON.stringify({
-      type: "final-get",
+    const metadata: FinalGetItemMetadata = {
+      type: "finalGet",
       lro_item_name: name,
-      step: step,
-    });
+      step,
+    };
+    item.description = JSON.stringify(metadata);
     item.request.addHeader({ key: "Content-Type", value: "application/json" });
     if (prevMethod !== "delete") {
       scriptTypes.push("StatusCodeAssertion");
