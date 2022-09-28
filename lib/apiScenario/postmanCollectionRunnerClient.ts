@@ -883,5 +883,5 @@ const convertPostmanFormat = <T>(obj: T): T => {
 };
 
 const covertToPostmanVariable = (value: string, isPath: boolean = false): string => {
-  return value.replace(/\$\(([a-z0-9_$]+)\)/gi, (_, p1) => (isPath ? `:${p1}` : `{{${p1}}}`));
+  return value.replace(/\$\(([a-z0-9-_$]+)\)/gi, (_, p1) => (isPath ? `:${p1}` : `{{${p1}}}`));
 };
