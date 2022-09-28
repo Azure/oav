@@ -1,5 +1,6 @@
 import { ItemDefinition, Request, Response, DescriptionDefinition } from "postman-collection";
 import {
+  ItemMetadata,
   NewmanAssertion,
   NewmanExecution,
   NewmanReport,
@@ -33,24 +34,21 @@ interface RawNewmanExecution {
 export function parseNewmanSummary(rawReport: RawNewmanSummary): NewmanReport {
   const ret: NewmanReport = { variables: {}, executions: [], timings: {} };
   for (const it of rawReport.run.executions) {
-    ret.executions.push(generateExampleItem(it));
+    ret.executions.push(parseNewmanExecution(it));
   }
   ret.timings = rawReport.run.timings;
   ret.variables = parseVariables(rawReport.environment.values.members);
   return ret;
 }
 
-function generateExampleItem(it: RawNewmanExecution): NewmanExecution {
-  const resp = it.response ?? new Response(undefined as any);
-  const req = it.request;
-  const rawReq = parseRequest(req);
-  const rawResp = parseResponse(resp);
-  const annotation = JSON.parse((it.item.description as DescriptionDefinition)?.content || "{}");
+function parseNewmanExecution(it: RawNewmanExecution): NewmanExecution {
   return {
     id: it.id,
-    request: rawReq,
-    response: rawResp,
-    annotation: annotation,
+    request: parseRequest(it.request),
+    response: parseResponse(it.response ?? new Response(undefined as any)),
+    annotation: it.item.description
+      ? (JSON.parse((it.item.description as DescriptionDefinition).content) as ItemMetadata)
+      : undefined,
     assertions: it.assertions?.map((it) => it.error!).filter((it) => it !== undefined) || [],
   };
 }
