@@ -199,6 +199,10 @@ export class NewmanReportValidator {
       }
 
       it.assertions.forEach((assertion) => {
+        if (assertion.message.includes("expected response code to be 2XX")) {
+          return;
+        }
+
         runtimeError.push({
           code: "ASSERTION_ERROR",
           message: `${assertion.message}`,
