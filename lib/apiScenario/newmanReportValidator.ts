@@ -34,7 +34,6 @@ export interface ApiScenarioTestResult {
   // New added fields
   environment?: string;
   armEnv?: string;
-  subscriptionId?: string;
   rootPath?: string;
   providerNamespace?: string;
   apiVersion?: string;
@@ -154,125 +153,121 @@ export class NewmanReportValidator {
   }
 
   private async generateApiScenarioTestResult(newmanReport: NewmanReport) {
-    const variables = newmanReport.variables;
     this.testResult.operationIds = this.swaggerAnalyzer.getOperations();
     this.testResult.startTime = new Date(newmanReport.timings.started).toISOString();
     this.testResult.endTime = new Date(newmanReport.timings.completed).toISOString();
-    this.testResult.subscriptionId = variables.subscriptionId.value as string;
     const visitedIds = new Set<string>();
     for (const it of newmanReport.executions) {
-      if (it.annotation === undefined) {
+      if (!it.annotation) {
         continue;
       }
-      if (it.annotation.type === "simple" || it.annotation.type === "LRO") {
-        if (visitedIds.has(it.id)) {
-          continue;
-        }
-        visitedIds.add(it.id);
-        const runtimeError: RuntimeError[] = [];
-        const matchedStep = this.getMatchedStep(it.annotation.step) as StepRestCall;
-
-        // Runtime errors
-        if (it.response.statusCode >= 400) {
-          const error = this.getRuntimeError(it);
-          runtimeError.push(error);
-        }
-        if (matchedStep === undefined) {
-          continue;
-        }
-
-        if (matchedStep.externalReference) {
-          continue;
-        }
-
-        it.assertions.forEach((assertion) => {
-          if (assertion.message.includes("expected response code to be 2XX")) {
-            return;
-          }
-          runtimeError.push({
-            code: "ASSERTION_ERROR",
-            message: `${assertion.message}`,
-            severity: "Error",
-            detail: this.dataMasker.jsonStringify(assertion.stack),
-          });
-        });
-
-        const payload = this.convertToLiveValidationPayload(it);
-
-        let payloadFilePath;
-        if (this.opts.savePayload) {
-          payloadFilePath = `./payloads/${matchedStep.step}.json`;
-          await this.fileLoader.writeFile(
-            path.resolve(path.dirname(this.opts.reportOutputFilePath), payloadFilePath),
-            JSON.stringify(payload, null, 2)
-          );
-        }
-
-        if (this.opts.generateExample) {
-          const statusCode = `${it.response.statusCode}`;
-          const generatedExample: SwaggerExample = {
-            operationId: matchedStep.operationId,
-            title: matchedStep.step,
-            description: matchedStep.description,
-            parameters: matchedStep._resolvedParameters!,
-            responses: {
-              [statusCode]: {
-                headers: payload.liveResponse.headers,
-                body: payload.liveResponse.body,
-              },
-            },
-          };
-
-          const exampleFilePath = `./examples/${matchedStep.operationId}_${statusCode}.json`;
-          await this.fileLoader.writeFile(
-            path.resolve(path.dirname(this.opts.reportOutputFilePath), exampleFilePath),
-            JSON.stringify(generatedExample, null, 2)
-          );
-        }
-
-        // Schema validation
-        const liveValidationResult = !this.opts.skipValidation
-          ? await this.liveValidator.validateLiveRequestResponse(payload)
-          : undefined;
-
-        // Roundtrip validation
-        let roundtripValidationResult = undefined;
-        if (
-          !this.opts.skipValidation &&
-          matchedStep.isManagementPlane &&
-          matchedStep.operation._method === "put" &&
-          it.response.statusCode >= 200 &&
-          it.response.statusCode <= 202
-        ) {
-          if (it.annotation.type === "LRO") {
-            // For LRO, get the final response to compose payload
-            const lroFinal = this.getLROFinalResponse(newmanReport.executions, it.annotation.step);
-            if (lroFinal !== undefined && lroFinal.response.statusCode === 200) {
-              const lroPayload = this.convertToLROLiveValidationPayload(it, lroFinal);
-              roundtripValidationResult = await this.liveValidator.validateRoundTrip(lroPayload);
-            }
-          } else if (it.annotation.type === "simple") {
-            roundtripValidationResult = await this.liveValidator.validateRoundTrip(payload);
-          }
-        }
-
-        this.testResult.stepResult.push({
-          specFilePath: matchedStep.operation._path._spec._filePath,
-          operationId: it.annotation.operationId,
-          payloadPath: payloadFilePath
-            ? path.join(
-                path.basename(path.dirname(this.opts.reportOutputFilePath)),
-                payloadFilePath
-              )
-            : undefined,
-          runtimeError,
-          responseTime: it.response.responseTime,
-          statusCode: it.response.statusCode,
-          stepName: it.annotation.step,
-          liveValidationResult,
-          roundtripValidationResult,
-        });
+      if (visitedIds.has(it.id)) {
+        continue;
       }
+      visitedIds.add(it.id);
+
+      if (it.annotation.type !== "simple" && it.annotation.type !== "LRO") {
+        continue;
+      }
+
+      const payload = this.convertToLiveValidationPayload(it);
+
+      let payloadFilePath;
+      if (this.opts.savePayload) {
+        payloadFilePath = `./payloads/${it.annotation.itemName}.json`;
+        await this.fileLoader.writeFile(
+          path.resolve(path.dirname(this.opts.reportOutputFilePath), payloadFilePath),
+          JSON.stringify(payload, null, 2)
+        );
+      }
+
+      const matchedStep = this.getMatchedStep(it.annotation.step) as StepRestCall;
+      if (matchedStep === undefined) {
+        continue;
+      }
+
+      if (matchedStep.externalReference) {
+        continue;
+      }
+
+      const runtimeError: RuntimeError[] = [];
+
+      // Runtime errors
+      if (it.response.statusCode >= 400) {
+        const error = this.getRuntimeError(it);
+        runtimeError.push(error);
+      }
+
+      it.assertions.forEach((assertion) => {
+        runtimeError.push({
+          code: "ASSERTION_ERROR",
+          message: `${assertion.message}`,
+          severity: "Error",
+          detail: this.dataMasker.jsonStringify(assertion.stack),
+        });
+      });
+
+      if (this.opts.generateExample) {
+        const statusCode = `${it.response.statusCode}`;
+        const generatedExample: SwaggerExample = {
+          operationId: matchedStep.operationId,
+          title: matchedStep.step,
+          description: matchedStep.description,
+          parameters: matchedStep._resolvedParameters!,
+          responses: {
+            [statusCode]: {
+              headers: payload.liveResponse.headers,
+              body: payload.liveResponse.body,
+            },
+          },
+        };
+
+        const exampleFilePath = `./examples/${matchedStep.operationId}_${statusCode}.json`;
+        await this.fileLoader.writeFile(
+          path.resolve(path.dirname(this.opts.reportOutputFilePath), exampleFilePath),
+          JSON.stringify(generatedExample, null, 2)
+        );
+      }
+
+      // Schema validation
+      const liveValidationResult = !this.opts.skipValidation
+        ? await this.liveValidator.validateLiveRequestResponse(payload)
+        : undefined;
+
+      // Roundtrip validation
+      let roundtripValidationResult = undefined;
+      if (
+        !this.opts.skipValidation &&
+        matchedStep.isManagementPlane &&
+        matchedStep.operation._method === "put" &&
+        it.response.statusCode >= 200 &&
+        it.response.statusCode <= 202
+      ) {
+        if (it.annotation.type === "LRO") {
+          // For LRO, get the final response to compose payload
+          const lroFinal = this.getLROFinalResponse(newmanReport.executions, it.annotation.step);
+          if (lroFinal !== undefined && lroFinal.response.statusCode === 200) {
+            const lroPayload = this.convertToLROLiveValidationPayload(it, lroFinal);
+            roundtripValidationResult = await this.liveValidator.validateRoundTrip(lroPayload);
+          }
+        } else if (it.annotation.type === "simple") {
+          roundtripValidationResult = await this.liveValidator.validateRoundTrip(payload);
+        }
+      }
+
+      this.testResult.stepResult.push({
+        specFilePath: matchedStep.operation._path._spec._filePath,
+        operationId: it.annotation.operationId,
+        payloadPath: payloadFilePath
+          ? path.join(path.basename(path.dirname(this.opts.reportOutputFilePath)), payloadFilePath)
+          : undefined,
+        runtimeError,
+        responseTime: it.response.responseTime,
+        statusCode: it.response.statusCode,
+        stepName: it.annotation.step,
+        liveValidationResult,
+        roundtripValidationResult,
+      });
     }
   }
 
@@ -351,7 +346,7 @@ export class NewmanReportValidator {
 
   private getLROFinalResponse(executions: NewmanExecution[], initialStep: string) {
     return executions.find(
-      (it) => it.annotation?.type === "final-get" && it.annotation?.step === initialStep
+      (it) => it.annotation?.type === "finalGet" && it.annotation.step === initialStep
     );
   }
 

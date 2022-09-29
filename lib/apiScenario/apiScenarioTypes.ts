@@ -377,11 +377,51 @@ export interface NewmanReport {
   variables: { [variableName: string]: Variable };
 }
 
+export interface SimpleItemMetadata {
+  type: "simple";
+  operationId: string;
+  exampleName?: string;
+  itemName: string;
+  step: string;
+}
+
+export interface LroItemMetadata {
+  type: "LRO";
+  poller_item_name: string;
+  operationId: string;
+  exampleName?: string;
+  itemName: string;
+  step: string;
+}
+
+export interface DelayItemMetadata {
+  type: "delay";
+  lro_item_name: string;
+}
+
+export interface PollerItemMetadata {
+  type: "poller";
+  lro_item_name: string;
+}
+
+export interface FinalGetItemMetadata {
+  type: "finalGet";
+  lro_item_name: string;
+  step: string;
+}
+
+export type ItemMetadata =
+  | SimpleItemMetadata
+  | LroItemMetadata
+  | DelayItemMetadata
+  | PollerItemMetadata
+  | FinalGetItemMetadata;
+
 export interface NewmanExecution {
   id: string;
   request: NewmanRequest;
   response: NewmanResponse;
-  annotation?: any;
+  annotation?: ItemMetadata;
   assertions: NewmanAssertion[];
 }
 

@@ -49,7 +49,6 @@ describe("markdownReport", () => {
       ],
       startTime: "2021-06-01T06:56:46.835Z",
       endTime: "2021-06-01T06:58:07.066Z",
-      subscriptionId: "db5eb68e-73e2-4fa8-b18a-46cd1be4cce5",
     } as ApiScenarioTestResult;
     const header = generateMarkdownReportHeader();
     const body = generateMarkdownReport(ts);

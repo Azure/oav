@@ -140,7 +140,6 @@ if (
           "response": Array [],
         },
         Object {
-          "description": "{\\"type\\":\\"prepare\\"}",
           "event": Array [
             Object {
               "id": "9120qs",
@@ -494,7 +493,7 @@ try {
           "response": Array [],
         },
         Object {
-          "description": "{\\"type\\":\\"final-get\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
+          "description": "{\\"type\\":\\"finalGet\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
               "id": "4fy274",
@@ -865,7 +864,7 @@ try {
           "response": Array [],
         },
         Object {
-          "description": "{\\"type\\":\\"final-get\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
+          "description": "{\\"type\\":\\"finalGet\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
               "id": "cb8v3t",
@@ -1236,7 +1235,7 @@ try {
           "response": Array [],
         },
         Object {
-          "description": "{\\"type\\":\\"final-get\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
+          "description": "{\\"type\\":\\"finalGet\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
               "id": "i544h5",
@@ -1642,7 +1641,7 @@ try {
           "response": Array [],
         },
         Object {
-          "description": "{\\"type\\":\\"final-get\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
+          "description": "{\\"type\\":\\"finalGet\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
               "id": "mge3qz",
@@ -1982,7 +1981,6 @@ if (
       "id": "zq9w6n",
       "item": Array [
         Object {
-          "description": "{\\"type\\":\\"prepare\\"}",
           "event": Array [
             Object {
               "id": "8gypdh",
@@ -2322,7 +2320,7 @@ try {
           "response": Array [],
         },
         Object {
-          "description": "{\\"type\\":\\"final-get\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
+          "description": "{\\"type\\":\\"finalGet\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
               "id": "hlqn5m",
@@ -2651,7 +2649,7 @@ try {
           "response": Array [],
         },
         Object {
-          "description": "{\\"type\\":\\"final-get\\",\\"lro_item_name\\":\\"deleteStorageAccount\\",\\"step\\":\\"deleteStorageAccount\\"}",
+          "description": "{\\"type\\":\\"finalGet\\",\\"lro_item_name\\":\\"deleteStorageAccount\\",\\"step\\":\\"deleteStorageAccount\\"}",
           "event": Array [],
           "id": "j917fd",
           "name": "_deleteStorageAccount_final_get",
@@ -2913,7 +2911,6 @@ if (
       "id": "zq9w6n",
       "item": Array [
         Object {
-          "description": "{\\"type\\":\\"prepare\\"}",
           "event": Array [
             Object {
               "id": "8gypdh",
@@ -3223,7 +3220,7 @@ try {
           "response": Array [],
         },
         Object {
-          "description": "{\\"type\\":\\"final-get\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
+          "description": "{\\"type\\":\\"finalGet\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
               "id": "hlqn5m",
@@ -3550,7 +3547,7 @@ try {
           "response": Array [],
         },
         Object {
-          "description": "{\\"type\\":\\"final-get\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
+          "description": "{\\"type\\":\\"finalGet\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
               "id": "9e4snq",
@@ -3877,7 +3874,7 @@ try {
           "response": Array [],
         },
         Object {
-          "description": "{\\"type\\":\\"final-get\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
+          "description": "{\\"type\\":\\"finalGet\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
               "id": "49cuyt",
@@ -4239,7 +4236,7 @@ try {
           "response": Array [],
         },
         Object {
-          "description": "{\\"type\\":\\"final-get\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
+          "description": "{\\"type\\":\\"finalGet\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
               "id": "vm8psu",
