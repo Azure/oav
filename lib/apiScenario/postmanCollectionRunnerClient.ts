@@ -877,7 +877,8 @@ const convertPostmanFormat = <T>(obj: T): T => {
 
   const result: any = {};
   for (const key of Object.keys(obj)) {
-    result[key] = convertPostmanFormat((obj as any)[key]);
+    const newKey = covertToPostmanVariable(key);
+    result[newKey] = convertPostmanFormat((obj as any)[key]);
   }
   return result;
 };

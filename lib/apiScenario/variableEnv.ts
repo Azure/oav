@@ -324,10 +324,11 @@ export class VariableEnv {
 
     const result: any = {};
     for (const key of Object.keys(obj)) {
+      const newKey = this.resolveStringWithRegex(key, false).toString();
       if (typeof (obj as any)[key] === "string") {
-        result[key] = this.resolveStringWithRegex((obj as any)[key], false);
+        result[newKey] = this.resolveStringWithRegex((obj as any)[key], false);
       } else {
-        result[key] = this.resolveObjectValuesWithRegex((obj as any)[key]);
+        result[newKey] = this.resolveObjectValuesWithRegex((obj as any)[key]);
       }
     }
     return result;
