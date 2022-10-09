@@ -1,6 +1,7 @@
 import * as path from "path";
 import { inject, injectable } from "inversify";
 import { HttpHeaders } from "@azure/core-http";
+import { cloneDeep } from "lodash";
 import { inversifyGetInstance, TYPES } from "../../inversifyUtils";
 import { parseValidationRequest } from "../../liveValidation/liveValidator";
 import { OperationSearcher } from "../../liveValidation/operationSearcher";
@@ -28,8 +29,8 @@ import { unknownApiVersion, xmsLongRunningOperation } from "../../util/constants
 import { ArmApiInfo, ArmUrlParser } from "../armUrlParser";
 import { SchemaValidator } from "../../swaggerValidator/schemaValidator";
 import { getJsonPatchDiff } from "../diffUtils";
-import { cloneDeep } from "lodash";
 import { replaceAllInObject } from "../variableUtils";
+import { logger } from ".././logger";
 
 const glob = require("glob");
 
@@ -165,7 +166,7 @@ export class TestRecordingApiScenarioGenerator {
     requestTracking: RequestTracking,
     _: string // testDefFilePath
   ): Promise<RawScenario> {
-    console.log(`\nGenerating ${requestTracking.description}`);
+    logger.info(`\nGenerating ${requestTracking.description}`);
     const testScenario: RawScenario = {
       scenario: requestTracking.description,
       variables: {},
@@ -543,4 +544,3 @@ const replaceAllString = (toMatch: string, key: string, scopes: RawVariableScope
     });
   });
 };
-

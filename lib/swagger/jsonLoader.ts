@@ -6,7 +6,9 @@ import {
   Json,
   parseJson,
   pathJoin,
+  readFile as vfsReadFile,
 } from "@azure-tools/openapi-tools-common";
+import $RefParser, { FileInfo } from "@apidevtools/json-schema-ref-parser";
 import { load as parseYaml } from "js-yaml";
 import { default as jsonPointer } from "json-pointer";
 import { inject, injectable } from "inversify";
@@ -24,6 +26,7 @@ export interface JsonLoaderOption extends FileLoaderOption {
   transformRef?: boolean; // TODO implement transformRef: false
   skipResolveRefKeys?: string[];
   supportYaml?: boolean;
+  shouldResolveRef?: boolean;
 }
 
 interface FileCache {
@@ -32,6 +35,7 @@ interface FileCache {
   originalContent?: string;
   skipResolveRef?: boolean;
   mockName: string;
+  resolveRef?: boolean;
 }
 
 export const $id = "$id";
@@ -64,7 +68,7 @@ export class JsonLoader implements Loader<Json> {
   private fileCache = new Map<string, FileCache>();
   private loadFile = getLazyBuilder("resolved", async (cache: FileCache) => {
     const fileString = await this.fileLoader.load(cache.filePath);
-    if (this.opts.keepOriginalContent) {
+    if (this.opts.keepOriginalContent || cache.resolveRef) {
       // eslint-disable-next-line require-atomic-updates
       cache.originalContent = fileString;
     }
@@ -121,6 +125,47 @@ export class JsonLoader implements Loader<Json> {
     }
     if (skipResolveRef !== undefined) {
       cache.skipResolveRef = skipResolveRef;
+    }
+
+    if (this.opts.shouldResolveRef) {
+      cache.resolveRef = this.opts.shouldResolveRef;
+      await this.loadFile(cache);
+      //get unresolved content from cache.originalContent
+      const fileContent = JSON.parse(cache.originalContent!);
+      //remove unnecessary properties
+      removeProperty(fileContent);
+
+      //resolve all refs using lib: https://github.com/APIDevTools/json-schema-ref-parser
+      const resolveOption: $RefParser.Options = {
+        resolve: {
+          file: {
+            canRead: true,
+            read(file: FileInfo) {
+              if (isExample(file.url)) {
+                return {};
+              }
+              return loadSingleFile(file.url);
+            },
+          },
+        },
+        dereference: {
+          circular: "ignore",
+        },
+      };
+      try {
+        const parser = new $RefParser();
+        const spec = await parser.dereference(
+          this.fileLoader.resolvePath(filePath),
+          fileContent,
+          resolveOption
+        );
+        (spec as any)[$id] = cache.mockName;
+        const reslovedSpec = await this.resolveRef(spec, ["$"], spec, cache.filePath, false);
+        return reslovedSpec;
+      } catch (err) {
+        console.error(err);
+        return {};
+      }
     }
     return this.loadFile(cache);
   }
@@ -284,3 +329,31 @@ export class JsonLoader implements Loader<Json> {
 }
 
 export const isRefLike = (obj: any): obj is { $ref: string } => typeof obj.$ref === "string";
+
+export function isExample(path: string) {
+  return path.split(/\\|\//g).includes("examples");
+}
+
+export async function loadSingleFile(filePath: string) {
+  const fileString = await vfsReadFile(filePath);
+  return JSON.parse(fileString);
+}
+
+export function removeProperty(object: any) {
+  // opt: eraseXmsExamples: true can be used to remove examples or other properties in schema,
+  // however, this is implemented in function resolveRef, which cannot be reused, since it does not
+  // completely resolve all the reference in swagger.
+  // Only description and example are positive to be removed, other properties are kept for further use.
+  if (typeof object === "object" && object !== null) {
+    const obj = object as any;
+    if (typeof obj.description === "string") {
+      delete obj.description;
+    }
+    if (obj[xmsExamples] !== undefined) {
+      delete obj[xmsExamples];
+    }
+    Object.keys(object).forEach((o) => {
+      removeProperty(object[o]);
+    });
+  }
+}

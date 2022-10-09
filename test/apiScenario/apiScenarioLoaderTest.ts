@@ -39,6 +39,22 @@ describe("ApiScenarioLoader", () => {
     expect(testDef).toMatchSnapshot();
   });
 
+  it("load valid data-plane scenario - appconfig", async () => {
+    const fileRoot = "test/apiScenario/fixtures/specification/appconfiguration/data-plane/";
+
+    const loader = ApiScenarioLoader.create({
+      useJsonParser: false,
+      checkUnderFileRoot: false,
+      fileRoot,
+      swaggerFilePaths: ["Microsoft.AppConfiguration/stable/1.0/appconfiguration.json"],
+      includeOperation: false,
+    });
+
+    const testDef = await loader.load("Microsoft.AppConfiguration/stable/1.0/scenarios/crud.yaml");
+
+    expect(testDef).toMatchSnapshot();
+  });
+
   it.skip("load valid cross-RP scenario - compute", async () => {
     const fileRoot = "test/apiScenario/fixtures/specification/compute/resource-manager/";
 

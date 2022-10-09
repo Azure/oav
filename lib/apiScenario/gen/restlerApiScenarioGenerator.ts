@@ -1,8 +1,9 @@
-import Heap from "heap";
 import * as path from "path";
+import Heap from "heap";
 import { inject, injectable } from "inversify";
 import { dump } from "js-yaml";
 import { pathJoin, pathResolve } from "@azure-tools/openapi-tools-common";
+import { cloneDeep } from "lodash";
 import { inversifyGetInstance, TYPES } from "../../inversifyUtils";
 import { FileLoader } from "../../swagger/fileLoader";
 import { JsonLoader } from "../../swagger/jsonLoader";
@@ -27,7 +28,7 @@ import {
 import * as util from "../../generator/util";
 import { setDefaultOpts } from "../../swagger/loader";
 import Mocker from "../../generator/mocker";
-import { cloneDeep } from "lodash";
+import { logger } from ".././logger";
 
 export interface ApiScenarioGeneratorOption extends ApiScenarioLoaderOption {
   swaggerFilePaths: string[];
@@ -147,7 +148,6 @@ export class RestlerApiScenarioGenerator {
         if (operation?.["x-ms-examples"] && Object.values(operation["x-ms-examples"])[0]) {
           const example = Object.values(operation["x-ms-examples"])[0];
           step.step = (step as any).operationId;
-          (step as any).operationId = undefined;
           (step as RawStepExample).exampleFile = path.relative(
             this.opts.outputDir,
             this.fileLoader.resolvePath(this.jsonLoader.getRealPath(example.$ref!))
@@ -156,20 +156,18 @@ export class RestlerApiScenarioGenerator {
           console.warn(`${operationId} has no example.`);
         }
       });
-
-      definition.scenarios[0].steps = definition.scenarios[0].steps.filter(
-        (s) => (s as RawStepExample).exampleFile
-      );
     }
 
     return definition;
   }
 
   public async writeFile(definition: RawScenarioDefinition) {
-    const fileContent = dump(definition);
+    const fileContent =
+      "# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/documentation/api-scenario/references/v1.2/schema.json\n" +
+      dump(definition);
     const filePath = pathJoin(this.opts.outputDir, "basic.yaml");
     await this.fileLoader.writeFile(filePath, fileContent);
-    console.log(`${filePath} is generated.`);
+    logger.info(`${filePath} is generated.`);
   }
 
   private getVariables(definition: RawScenarioDefinition) {
@@ -224,7 +222,11 @@ export class RestlerApiScenarioGenerator {
           if (p) {
             p = this.jsonLoader.resolveRefObj(p);
           }
-          if (p?.in !== "path") {
+          if (
+            p?.in !== "path" &&
+            operation?.["x-ms-examples"] &&
+            Object.values(operation["x-ms-examples"])[0]
+          ) {
             return;
           }
         }
@@ -322,6 +324,7 @@ export class RestlerApiScenarioGenerator {
 
   private generateSteps() {
     const scenario: RawScenario = {
+      scenario: "GeneratedScenario",
       steps: [],
     };
 
@@ -409,7 +412,8 @@ export class RestlerApiScenarioGenerator {
         continue;
       }
       for (const method of Object.keys(dependencies[path])) {
-        const operationId = this.getOperationId(path, method);
+        const operationId =
+          this.getOperationId(path, method) || this.getOperationId(path + "/", method);
         if (!operationId) {
           console.warn(`can't find operationId, ${path} ${method}`);
           continue;

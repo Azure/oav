@@ -22,9 +22,6 @@ export class JUnitReporter {
           if (sr.runtimeError && sr.runtimeError.length > 0) {
             const detail = generateJUnitCaseReport(sr);
             tc.failure(detail, "RunTimeError");
-          } else if (sr.responseDiffResult && sr.responseDiffResult.length > 0) {
-            const detail = generateJUnitCaseReport(sr);
-            tc.failure(detail, "ValidationError").errorAttachment(sr.exampleFilePath);
           } else {
             tc.standardOutput("This step is completed successfully");
           }

@@ -3,6 +3,8 @@ import { URL } from "url";
 import { HttpMethods } from "@azure/core-http";
 import { injectable } from "inversify";
 import { Loader } from "../../swagger/loader";
+import { DEFAULT_ARM_ENDPOINT } from "../constants";
+import { logger } from ".././logger";
 import { RequestTracking, SingleRequestTracking } from "./testRecordingApiScenarioGenerator";
 
 interface RecordingFile {
@@ -31,11 +33,12 @@ export class DotnetRecordingLoader implements Loader<RequestTracking, [Recording
     };
 
     for (const entry of content.Entries) {
-      const url = new URL(entry.RequestUri, "https://management.azure.com");
+      const url = new URL(entry.RequestUri, DEFAULT_ARM_ENDPOINT);
       const query: { [key: string]: string } = {};
       url.searchParams.forEach((val, key) => (query[key] = val));
 
       const request: SingleRequestTracking = {
+        host: DEFAULT_ARM_ENDPOINT,
         method: entry.RequestMethod,
         path: url.pathname,
         url: url.href,
@@ -77,7 +80,7 @@ export const parseRecordingBodyJson = (content: string | undefined | null) => {
   try {
     return JSON.parse(content);
   } catch (e) {
-    console.log(`Failed to parse json body. Use string instead: ${JSON.stringify(content)}`);
+    logger.error(`Failed to parse json body. Use string instead: ${JSON.stringify(content)}`);
     return content;
   }
 };

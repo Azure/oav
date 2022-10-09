@@ -1,0 +1,103 @@
+{
+  "parameters": {
+    "subscriptionId": "5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
+    "resourceGroupName": "rgEventGrid",
+    "domainName": "fiojbywcuaoufsxcz",
+    "domainUpdateParameters": {
+      "tags": {},
+      "properties": {
+        "publicNetworkAccess": "Enabled",
+        "inboundIpRules": [
+          {
+            "ipMask": "12.18.30.15",
+            "action": "Allow"
+          },
+          {
+            "ipMask": "12.18.176.1",
+            "action": "Allow"
+          }
+        ]
+      }
+    },
+    "api-version": "2020-06-01"
+  },
+  "responses": {
+    "200": {},
+    "201": {
+      "headers": {
+        "location": "https://contoso.com/operationstatus"
+      },
+      "body": {
+        "location": "westus2",
+        "tags": {},
+        "properties": {
+          "publicNetworkAccess": "Enabled",
+          "inboundIpRules": [
+            {
+              "ipMask": "12.18.30.15",
+              "action": "Allow"
+            },
+            {
+              "ipMask": "12.18.176.1",
+              "action": "Allow"
+            }
+          ],
+          "privateEndpointConnections": [
+            {
+              "properties": {
+                "privateEndpoint": {
+                  "id": "/subscriptions/5b4b650e-28b9-4790-b3ab-ddbd88d727c4/resourceGroups/examplerg/providers/Microsoft.Network/privateEndpoints/bmtpe5"
+                },
+                "groupIds": [
+                  "lxkefqnfqkqlzwrlolcf"
+                ],
+                "privateLinkServiceConnectionState": {
+                  "status": "Pending",
+                  "description": "faaywjbhcslmnedbfndv",
+                  "actionsRequired": "msufgrhmncsqqmpb"
+                },
+                "provisioningState": "Creating"
+              },
+              "id": "jxqhkrauyqiufxydkiepe",
+              "name": "nljkzamxc",
+              "type": "woreybyfg"
+            }
+          ],
+          "provisioningState": "Succeeded",
+          "endpoint": "https://exampledomain2.westcentralus-1.eventgrid.azure.net/api/events",
+          "inputSchema": "EventGridSchema",
+          "inputSchemaMapping": {
+            "properties": {
+              "id": {
+                "sourceField": "edctjqelnacrjywtlcjac"
+              },
+              "topic": {
+                "sourceField": "edctjqelnacrjywtlcjac"
+              },
+              "eventTime": {
+                "sourceField": "edctjqelnacrjywtlcjac"
+              },
+              "eventType": {
+                "sourceField": "kocfusi",
+                "defaultValue": "zqdrfshpdujolgrj"
+              },
+              "subject": {
+                "sourceField": "kocfusi",
+                "defaultValue": "zqdrfshpdujolgrj"
+              },
+              "dataVersion": {
+                "sourceField": "kocfusi",
+                "defaultValue": "zqdrfshpdujolgrj"
+              }
+            },
+            "inputSchemaMappingType": "Json"
+          },
+          "metricResourceId": "iufvxropawurcoansrjycfnzgeezf"
+        },
+        "id": "/subscriptions/5b4b650e-28b9-4790-b3ab-ddbd88d727c4/resourceGroups/examplerg/providers/Microsoft.EventGrid/domains/exampledomain2",
+        "name": "exampledomain2",
+        "type": "Microsoft.EventGrid/domains"
+      }
+    }
+  }
+}
