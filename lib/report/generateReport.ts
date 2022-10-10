@@ -451,8 +451,8 @@ export class ReportGenerator {
     const general_errors = view.getGeneralErrors();
     const runtime_errors = view.getRunTimeErrors();
 
-    console.log(general_errors);
-    console.log(runtime_errors);
+    console.log(JSON.stringify(general_errors, null, 2));
+    console.log(JSON.stringify(runtime_errors, null, 2));
 
     const text = Mustache.render(template, view);
     fs.writeFileSync(this.reportPath, text, "utf-8");
