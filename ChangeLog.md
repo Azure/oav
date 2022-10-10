@@ -1,12 +1,15 @@
 # Change Log - oav
 
-## 09/19/2022 3.1.0
+## 10/10/2022 3.1.1
 
 - Retire some features
   - Retire commands "generate-uml"
   - Retire commands "generate-wireformat"
   - Retire commands "resolve-spec"
   - Retire Autorest plugin
+
+## 09/19/2022 3.1.0
+
 - API Scenario
   - Support parameterized host and AzureAD authentication option
   - Remove support for `shareScope`
