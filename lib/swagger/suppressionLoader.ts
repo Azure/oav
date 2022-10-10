@@ -65,10 +65,16 @@ export class SuppressionLoader implements Loader<void, SwaggerSpec> {
   }
 
   private async getSuppression(readmePath: string): Promise<SuppressionItem[]> {
-    if (!this.fileLoader.isUnderFileRoot(readmePath)) {
-      return [];
+    // FileLoader.isUnderFileRoot() is broken for absolute paths, so we'll just catch and suppress the error
+    let fileContent;
+    try {
+      fileContent = await this.fileLoader.load(readmePath);
+    } catch (e) {
+      if (e.message.includes("outside of root folder")) {
+        return [];
+      }
+      throw e;
     }
-    const fileContent = await this.fileLoader.load(readmePath);
 
     const cmd = parseMarkdown(fileContent);
     const suppressionCodeBlock = getCodeBlocksAndHeadings(cmd.markDown).Suppression;
