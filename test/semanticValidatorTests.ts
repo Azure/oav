@@ -8,6 +8,25 @@ import * as validate from "../lib/validate";
 const testPath = __dirname;
 
 describe("Semantic validation", () => {
+  describe("simple validation", () => {
+    it("a valid minimal swagger should pass semantic validation", async () => {
+      const specPath = `${testPath}/semanticValidation/specification/simple/minimalSwagger.json`;
+      const result = await validate.validateSpec(specPath, undefined);
+      assert(
+        result.validityStatus === true,
+        `swagger "${specPath}" contains semantic validation errors.`
+      );
+    });
+    it("a valid minimal method should pass semantic validation", async () => {
+      const specPath = `${testPath}/semanticValidation/specification/simple/minimalMethod.json`;
+      const result = await validate.validateSpec(specPath, undefined);
+      assert(
+        result.validityStatus === true,
+        `swagger "${specPath}" contains semantic validation errors.`
+      );
+    });
+  });
+
   describe("loadSwagger", () => {
     // JSON_PARSING_ERROR
     it("should fail when validating a JSON file which cannot be parsed successfully", async () => {
