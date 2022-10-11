@@ -330,15 +330,15 @@ export const apiValidationRuntimeErrors = {
 export const roundTripValidationErrors = {
   ROUNDTRIP_INCONSISTENT_PROPERTY: {
     severity: Severity.Critical,
-    message: strTemplate`The property's value "${"getValue"}" in the GET response is different from what was set "${"putValue"}" in the preceding PUT request.`,
+    message: strTemplate`The property's value '${"getValue"}' in the GET response is different from what was set '${"putValue"}' in the preceding PUT request.`,
   },
   ROUNDTRIP_MISSING_PROPERTY: {
     severity: Severity.Critical,
-    message: strTemplate`The property "${"property"}" is present in the PUT request but is either never returned in the GET response or is returned with a null value.`,
+    message: strTemplate`The property '${"property"}' is present in the PUT request but is either never returned in the GET response or is returned with a null value.`,
   },
   ROUNDTRIP_ADDITIONAL_PROPERTY: {
     severity: Severity.Critical,
-    message: strTemplate`The property "${"property"}" is returned in the GET response, but it is not declared in the PUT request.`,
+    message: strTemplate`The property '${"property"}' is returned in the GET response, but it is not declared in the PUT request.`,
   },
 };
 
