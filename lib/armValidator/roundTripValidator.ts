@@ -112,29 +112,28 @@ export function buildLiveValidationIssue(
   it: any
 ): LiveValidationIssue {
   let severity, message;
+  const property = path.split("/").pop();
   switch (errorCode) {
     case "ROUNDTRIP_INCONSISTENT_PROPERTY": {
-      const details = ` Value in request: "${it.oldValue}", Value in response: "${it.value}", path: "${path}".`;
       severity = roundTripValidationErrors.ROUNDTRIP_INCONSISTENT_PROPERTY.severity;
-      message = roundTripValidationErrors.ROUNDTRIP_INCONSISTENT_PROPERTY.message({}) + details;
+      message = roundTripValidationErrors.ROUNDTRIP_INCONSISTENT_PROPERTY.message({
+        getValue: it.value,
+        putValue: it.oldValue,
+      });
       break;
     }
     case "ROUNDTRIP_ADDITIONAL_PROPERTY": {
-      let details = " Type of additional value is object.";
-      if (it.value !== Object(it.value)) {
-        details = ` Additional value is "${it.value}", path: "${path}".`;
-      }
       severity = roundTripValidationErrors.ROUNDTRIP_ADDITIONAL_PROPERTY.severity;
-      message = roundTripValidationErrors.ROUNDTRIP_ADDITIONAL_PROPERTY.message({}) + details;
+      message = roundTripValidationErrors.ROUNDTRIP_ADDITIONAL_PROPERTY.message({
+        property: property,
+      });
       break;
     }
     case "ROUNDTRIP_MISSING_PROPERTY": {
-      let details = " Type of missing value is object.";
-      if (it.oldValue !== Object(it.oldValue)) {
-        details = ` Missing value is "${it.oldValue}", path: "${path}".`;
-      }
       severity = roundTripValidationErrors.ROUNDTRIP_MISSING_PROPERTY.severity;
-      message = roundTripValidationErrors.ROUNDTRIP_MISSING_PROPERTY.message({}) + details;
+      message = roundTripValidationErrors.ROUNDTRIP_MISSING_PROPERTY.message({
+        property: property,
+      });
       break;
     }
   }
