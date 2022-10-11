@@ -4,26 +4,12 @@ import "reflect-metadata";
 import * as C from "./lib/util/constants";
 
 // Easy to use methods from validate.ts
-export {
-  getDocumentsFromCompositeSwagger,
-  validateSpec,
-  validateCompositeSpec,
-  validateExamples,
-  validateExamplesInCompositeSpec,
-  resolveSpec,
-  resolveCompositeSpec,
-  validateTrafficAgainstSpec,
-} from "./lib/validate";
+export { validateSpec, validateExamples, validateTrafficAgainstSpec } from "./lib/validate";
 
 export { BaseValidationError } from "./lib/util/baseValidationError";
 export { Severity } from "./lib/util/severity";
 export { ModelValidationError } from "./lib/util/modelValidationError";
 export { ValidationResultSource } from "./lib/util/validationResultSource";
-export { getErrorsFromModelValidation } from "./lib/util/getErrorsFromModelValidation";
-export {
-  getErrorsFromSemanticValidation,
-  SemanticValidationError,
-} from "./lib/util/getErrorsFromSemanticValidation";
 export {
   NodeError,
   ValidationErrorMetadata,
@@ -39,7 +25,6 @@ export {
 export { getResourceType, getProvider } from "./lib/util/utils";
 
 // Classes
-export { SpecValidator } from "./lib/validators/specValidator";
 export {
   LiveValidator,
   RequestResponsePair,
@@ -56,7 +41,6 @@ export {
   LiveResponse,
   ValidationRequest,
 } from "./lib/liveValidation/operationValidator";
-export { SpecResolver } from "./lib/validators/specResolver";
 
 export { ApiScenarioLoader } from "./lib/apiScenario/apiScenarioLoader";
 export {

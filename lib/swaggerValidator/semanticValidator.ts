@@ -26,7 +26,6 @@ import { resolveNestedDefinitionTransformer } from "../transform/resolveNestedDe
 import { xmsPathsTransformer } from "../transform/xmsPathsTransformer";
 import { applyGlobalTransformers, applySpecTransformers } from "../transform/transformer";
 import { traverseSwagger, traverseSwaggerAsync } from "../transform/traverseSwagger";
-import { CommonValidationResult, SpecValidator } from "../validators/specValidator";
 import { FileLoader } from "../swagger/fileLoader";
 import { getFilePositionFromJsonPath, jsonPathToPointer } from "../util/jsonUtils";
 import { pathRegexTransformer } from "../transform/pathRegexTransformer";
@@ -552,7 +551,7 @@ export class SwaggerSemanticValidator {
 }
 
 // Compatible wrapper for old SemanticValidator
-export class SemanticValidator extends SpecValidator<CommonValidationResult> {
+export class SemanticValidator {
   public validator: SwaggerSemanticValidator;
   public specValidationResult: {
     validateSpec?: {
@@ -569,8 +568,7 @@ export class SemanticValidator extends SpecValidator<CommonValidationResult> {
     initialize?: unknown;
   } = { validityStatus: true, operations: {} };
 
-  public constructor(public specPath: string, specInJson?: any, options?: any) {
-    super(specPath, specInJson, options);
+  public constructor(public specPath: string, specInJson?: any) {
     const container = inversifyGetContainer();
     this.validator = inversifyGetInstance(SwaggerSemanticValidator, {
       ...defaultOpts,

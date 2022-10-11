@@ -6,73 +6,31 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as openapiToolsCommon from "@azure-tools/openapi-tools-common";
-import { Suppression } from "@azure/openapi-markdown";
 import jsYaml from "js-yaml";
-import * as jsonUtils from "./util/jsonUtils";
-import * as specResolver from "./validators/specResolver";
-import * as umlGeneratorLib from "./umlGenerator";
 import * as utils from "./util/utils";
 
 import {
-  CommonValidationResult,
-  SpecValidationResult,
-  SpecValidator,
-} from "./validators/specValidator";
-
-import { ModelValidationError } from "./util/modelValidationError";
-import { NewModelValidator as ModelValidator, SwaggerExampleErrorDetail} from "./swaggerValidator/modelValidator";
+  NewModelValidator as ModelValidator,
+  SwaggerExampleErrorDetail,
+} from "./swaggerValidator/modelValidator";
 import { NodeError } from "./util/validationError";
-import { WireFormatGenerator } from "./wireFormatGenerator";
-import { XMsExampleExtractor } from "./xMsExampleExtractor";
+import * as XMsExampleExtractor from "./xMsExampleExtractor";
 import ExampleGenerator from "./generator/exampleGenerator";
-import { getSuppressions } from "./validators/suppressions";
 import { log } from "./util/logging";
 import { SemanticValidator } from "./swaggerValidator/semanticValidator";
-import { ErrorCodeConstants} from "./util/errorDefinitions";
-import { TrafficValidationIssue, TrafficValidationOptions, TrafficValidator} from "./swaggerValidator/trafficValidator";
+import { ErrorCodeConstants } from "./util/errorDefinitions";
+import {
+  TrafficValidationIssue,
+  TrafficValidationOptions,
+  TrafficValidator,
+} from "./swaggerValidator/trafficValidator";
 import { ReportGenerator } from "./report/generateReport";
 
-export interface Options extends specResolver.Options, umlGeneratorLib.Options {
+export interface Options extends XMsExampleExtractor.Options {
   consoleLogLevel?: unknown;
   logFilepath?: unknown;
   pretty?: boolean;
 }
-
-export const getDocumentsFromCompositeSwagger = async (
-  suppression: Suppression | undefined,
-  compositeSpecPath: string,
-  reportError: openapiToolsCommon.ReportError
-): Promise<string[]> => {
-  try {
-    const compositeSwagger = await jsonUtils.parseJson(suppression, compositeSpecPath, reportError);
-    if (
-      !(
-        compositeSwagger.documents &&
-        Array.isArray(compositeSwagger.documents) &&
-        compositeSwagger.documents.length > 0
-      )
-    ) {
-      throw new Error(
-        `CompositeSwagger - ${compositeSpecPath} must contain a documents property and it must ` +
-          `be of type array and it must be a non empty array.`
-      );
-    }
-    const docs = compositeSwagger.documents;
-    const basePath = path.dirname(compositeSpecPath);
-    const finalDocs: string[] = [];
-    for (let i = 0; i < docs.length; i++) {
-      if (docs[i].startsWith(".")) {
-        docs[i] = docs[i].substring(1);
-      }
-      const individualPath = docs[i].startsWith("http") ? docs[i] : basePath + docs[i];
-      finalDocs.push(individualPath);
-    }
-    return finalDocs;
-  } catch (err) {
-    log.error(err);
-    throw err;
-  }
-};
 
 const vsoLogIssueWrapper = (issueType: string, message: string) => {
   if (issueType === "error" || issueType === "warning") {
@@ -117,10 +75,7 @@ const prettyPrint = <T extends NodeError<T>>(
   }
 };
 
-const prettyPrintInfo = <T>(
-  errors: readonly T[] | undefined,
-  errorType: ErrorType
-) => {
+const prettyPrintInfo = <T>(errors: readonly T[] | undefined, errorType: ErrorType) => {
   if (errors !== undefined) {
     for (const error of errors) {
       const yaml = jsYaml.dump(error);
@@ -137,7 +92,7 @@ const prettyPrintInfo = <T>(
 
 export const validateSpec = async (specPath: string, options: Options | undefined) =>
   validate(options, async (o) => {
-    const validator = new SemanticValidator(specPath, null, o);
+    const validator = new SemanticValidator(specPath, null);
     try {
       await validator.initialize();
       log.info(`Semantically validating  ${specPath}:\n`);
@@ -180,24 +135,6 @@ export const validateSpec = async (specPath: string, options: Options | undefine
     }
   });
 
-export async function validateCompositeSpec(
-  compositeSpecPath: string,
-  options: Options
-): Promise<readonly SpecValidationResult[]> {
-  return validate(options, async (o) => {
-    const suppression = await getSuppressions(compositeSpecPath);
-    const docs = await getDocumentsFromCompositeSwagger(
-      suppression,
-      compositeSpecPath,
-      openapiToolsCommon.defaultErrorReport
-    );
-    o.consoleLogLevel = log.consoleLogLevel;
-    o.logFilepath = log.filepath;
-    const promiseFactories = docs.map((doc) => async () => validateSpec(doc, o));
-    return utils.executePromisesSequentially(promiseFactories);
-  });
-}
-
 export async function validateExamples(
   specPath: string,
   operationIds: string | undefined,
@@ -237,31 +174,13 @@ export async function validateExamples(
       } else {
         log.error(`Detail error:${e?.message}.ErrorStack:${e?.stack}`);
       }
-      const error: SwaggerExampleErrorDetail = { 
+      const error: SwaggerExampleErrorDetail = {
         inner: e,
         message: "Unexpected internal error",
-        code: ErrorCodeConstants.INTERNAL_ERROR as any
+        code: ErrorCodeConstants.INTERNAL_ERROR as any,
       };
       return [error];
     }
-  });
-}
-
-export async function validateExamplesInCompositeSpec(
-  compositeSpecPath: string,
-  options: Options
-): Promise<ReadonlyArray<readonly ModelValidationError[]>> {
-  return validate(options, async (o) => {
-    o.consoleLogLevel = log.consoleLogLevel;
-    o.logFilepath = log.filepath;
-    const suppression = await getSuppressions(compositeSpecPath);
-    const docs = await getDocumentsFromCompositeSwagger(
-      suppression,
-      compositeSpecPath,
-      openapiToolsCommon.defaultErrorReport
-    );
-    const promiseFactories = docs.map((doc) => async () => validateExamples(doc, undefined, o));
-    return utils.executePromisesSequentially(promiseFactories);
   });
 }
 
@@ -269,17 +188,21 @@ export async function validateTrafficAgainstSpec(
   specPath: string,
   trafficPath: string,
   options: TrafficValidationOptions
-): Promise<Array<TrafficValidationIssue>>{
+): Promise<TrafficValidationIssue[]> {
   specPath = path.resolve(process.cwd(), specPath);
   trafficPath = path.resolve(process.cwd(), trafficPath);
   if (!fs.existsSync(specPath)) {
-    const error = new Error(`Can not find specPath:${specPath}, please check your specPath parameter.`);
+    const error = new Error(
+      `Can not find specPath:${specPath}, please check your specPath parameter.`
+    );
     log.error(JSON.stringify(error));
     throw error;
   }
 
   if (!fs.existsSync(trafficPath)) {
-    const error = new Error(`Can not find trafficPath:${trafficPath}, please check your trafficPath parameter.`);
+    const error = new Error(
+      `Can not find trafficPath:${trafficPath}, please check your trafficPath parameter.`
+    );
     log.error(JSON.stringify(error));
     throw error;
   }
@@ -294,7 +217,7 @@ export async function validateTrafficAgainstSpec(
       const result = await validator.validate();
       trafficValidationResult.push(...result);
     } catch (err) {
-      const msg = `Detail error message:${err?.message}. ErrorStack:${err?.Stack}`
+      const msg = `Detail error message:${err?.message}. ErrorStack:${err?.Stack}`;
       log.error(msg);
       trafficValidationResult.push({
         payloadFilePath: specPath,
@@ -302,15 +225,19 @@ export async function validateTrafficAgainstSpec(
           {
             code: ErrorCodeConstants.RUNTIME_ERROR,
             message: msg,
-          }
+          },
         ],
       });
     }
     if (options.reportPath) {
-      const generator = new ReportGenerator(trafficValidationResult, validator!.operationCoverageResult, validator!.operationUndefinedResult, options);
+      const generator = new ReportGenerator(
+        trafficValidationResult,
+        validator!.operationCoverageResult,
+        validator!.operationUndefinedResult,
+        options
+      );
       await generator.generateHtmlReport();
-    }
-    else if (trafficValidationResult.length > 0) {
+    } else if (trafficValidationResult.length > 0) {
       if (o.pretty) {
         prettyPrintInfo(trafficValidationResult, "error");
       } else {
@@ -326,200 +253,6 @@ export async function validateTrafficAgainstSpec(
   });
 }
 
-export async function resolveSpec(
-  specPath: string,
-  outputDir: string,
-  options: Options,
-  reportError: openapiToolsCommon.ReportError
-): Promise<void> {
-  if (!options) {
-    options = {};
-  }
-  log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel;
-  log.filepath = options.logFilepath || log.filepath;
-  const specFileName = path.basename(specPath);
-  try {
-    const suppression = await getSuppressions(specPath);
-    const result = await jsonUtils.parseJson(suppression, specPath, reportError);
-    const resolver = new specResolver.SpecResolver(specPath, result, options, reportError);
-    await resolver.resolve(suppression);
-    const resolvedSwagger = JSON.stringify(resolver.specInJson, null, 2);
-    if (outputDir !== "./" && !fs.existsSync(outputDir)) {
-      fs.mkdirSync(outputDir);
-    }
-    const outputFilepath = `${path.join(outputDir, specFileName)}`;
-    fs.writeFileSync(`${path.join(outputDir, specFileName)}`, resolvedSwagger, {
-      encoding: "utf8",
-    });
-    console.log(`Saved the resolved spec at "${outputFilepath}".`);
-  } catch (err) {
-    log.error(err);
-    throw err;
-  }
-}
-
-export async function resolveCompositeSpec(
-  specPath: string,
-  outputDir: string,
-  options: Options
-): Promise<void> {
-  if (!options) {
-    options = {};
-  }
-  log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel;
-  log.filepath = options.logFilepath || log.filepath;
-  try {
-    const suppression = await getSuppressions(specPath);
-    const docs = await getDocumentsFromCompositeSwagger(
-      suppression,
-      specPath,
-      openapiToolsCommon.defaultErrorReport
-    );
-    // eslint-disable-next-line require-atomic-updates
-    options.consoleLogLevel = log.consoleLogLevel;
-    // eslint-disable-next-line require-atomic-updates
-    options.logFilepath = log.filepath;
-    const promiseFactories = docs.map(
-      (doc) => async () =>
-        resolveSpec(doc, outputDir, options, openapiToolsCommon.defaultErrorReport)
-    );
-    await utils.executePromisesSequentially(promiseFactories);
-  } catch (err) {
-    log.error(err);
-    throw err;
-  }
-}
-
-export async function generateWireFormat(
-  specPath: string,
-  outDir: string,
-  emitYaml: unknown,
-  operationIds: string | null,
-  options: Options
-): Promise<void> {
-  if (!options) {
-    options = {};
-  }
-  log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel;
-  log.filepath = options.logFilepath || log.filepath;
-  const wfGenerator = new WireFormatGenerator(specPath, null, outDir, emitYaml);
-  try {
-    await wfGenerator.initialize();
-    log.info(`Generating wire format request and responses for swagger spec: "${specPath}":\n`);
-    wfGenerator.processOperations(operationIds);
-  } catch (err) {
-    log.error(err);
-    throw err;
-  }
-}
-
-export async function generateWireFormatInCompositeSpec(
-  compositeSpecPath: string,
-  outDir: string,
-  emitYaml: unknown,
-  options: Options
-): Promise<void> {
-  if (!options) {
-    options = {};
-  }
-  log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel;
-  log.filepath = options.logFilepath || log.filepath;
-  try {
-    const suppression = await getSuppressions(compositeSpecPath);
-    const docs = await getDocumentsFromCompositeSwagger(
-      suppression,
-      compositeSpecPath,
-      openapiToolsCommon.defaultErrorReport
-    );
-    // eslint-disable-next-line require-atomic-updates
-    options.consoleLogLevel = log.consoleLogLevel;
-    // eslint-disable-next-line require-atomic-updates
-    options.logFilepath = log.filepath;
-    const promiseFactories = docs.map(
-      (doc) => async () => generateWireFormat(doc, outDir, emitYaml, null, options)
-    );
-    await utils.executePromisesSequentially(promiseFactories);
-  } catch (err) {
-    log.error(err);
-    throw err;
-  }
-}
-
-export async function generateUml(
-  specPath: string,
-  outputDir: string,
-  options?: Options
-): Promise<void> {
-  if (!options) {
-    options = {};
-  }
-  log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel;
-  log.filepath = options.logFilepath || log.filepath;
-  const specFileName = path.basename(specPath);
-  const resolverOptions = {
-    shouldResolveRelativePaths: true,
-    shouldResolveXmsExamples: false,
-    shouldResolveAllOf: false,
-    shouldSetAdditionalPropertiesFalse: false,
-    shouldResolvePureObjects: false,
-    shouldResolveDiscriminator: false,
-    shouldResolveParameterizedHost: false,
-    shouldResolveNullableTypes: false,
-  };
-  try {
-    const suppression = await getSuppressions(specPath);
-    const result = await jsonUtils.parseJson(
-      suppression,
-      specPath,
-      openapiToolsCommon.defaultErrorReport
-    );
-    const resolver = new specResolver.SpecResolver(
-      specPath,
-      result,
-      resolverOptions,
-      openapiToolsCommon.defaultErrorReport
-    );
-    const umlGenerator = new umlGeneratorLib.UmlGenerator(resolver.specInJson, options);
-    const svgGraph = await umlGenerator.generateDiagramFromGraph();
-    if (outputDir !== "./" && !fs.existsSync(outputDir)) {
-      fs.mkdirSync(outputDir);
-    }
-    const svgFile = specFileName.replace(path.extname(specFileName), ".svg");
-    const outputFilepath = `${path.join(outputDir, svgFile)}`;
-    fs.writeFileSync(`${path.join(outputDir, svgFile)}`, svgGraph, {
-      encoding: "utf8",
-    });
-    console.log(`Saved the uml at "${outputFilepath}". Please open the file in a browser.`);
-  } catch (err) {
-    log.error(err);
-    throw err;
-  }
-}
-
-export function updateEndResultOfSingleValidation<T extends CommonValidationResult>(
-  validator: SpecValidator<T>
-): void {
-  if (validator.specValidationResult.validityStatus) {
-    if (!(log.consoleLogLevel === "json" || log.consoleLogLevel === "off")) {
-      log.info("No Errors were found.");
-    }
-  }
-  if (!validator.specValidationResult.validityStatus) {
-    process.exitCode = 1;
-  }
-}
-
-export function logDetailedInfo<T extends CommonValidationResult>(
-  validator: SpecValidator<T>
-): void {
-  if (log.consoleLogLevel === "json") {
-    console.dir(validator.specValidationResult, { depth: null, colors: true });
-  }
-  log.silly("############################");
-  log.silly(validator.specValidationResult.toString());
-  log.silly("----------------------------");
-}
-
 export async function extractXMsExamples(
   specPath: string,
   recordings: string,
@@ -530,7 +263,11 @@ export async function extractXMsExamples(
   }
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel;
   log.filepath = options.logFilepath || log.filepath;
-  const xMsExampleExtractor = new XMsExampleExtractor(specPath, recordings, options);
+  const xMsExampleExtractor = new XMsExampleExtractor.XMsExampleExtractor(
+    specPath,
+    recordings,
+    options
+  );
   return xMsExampleExtractor.extract();
 }
 
