@@ -52,7 +52,7 @@ Object {
     Object {
       "code": "ROUNDTRIP_INCONSISTENT_PROPERTY",
       "jsonPathsInPayload": Array [],
-      "message": "The property's value in the GET response is different from what was set in the preceding PUT request. Value in request: \\"westcentralus\\", Value in response: \\"westcentralus1\\", path: \\"/location\\".",
+      "message": "The property's value \\"westcentralus1\\" in the GET response is different from what was set \\"westcentralus\\" in the preceding PUT request.",
       "pathsInPayload": Array [
         "/location",
       ],
@@ -69,7 +69,7 @@ Object {
     Object {
       "code": "ROUNDTRIP_MISSING_PROPERTY",
       "jsonPathsInPayload": Array [],
-      "message": "The property is present in the PUT request but is either never returned in the GET response or is returned with a null value. Missing value is \\"fromImage\\", path: \\"/properties/storageProfile/osDisk/createOption\\".",
+      "message": "The property \\"createOption\\" is present in the PUT request but is either never returned in the GET response or is returned with a null value.",
       "pathsInPayload": Array [
         "/properties/storageProfile/osDisk/createOption",
       ],
@@ -86,7 +86,7 @@ Object {
     Object {
       "code": "ROUNDTRIP_ADDITIONAL_PROPERTY",
       "jsonPathsInPayload": Array [],
-      "message": "The property is returned in the GET response, but it is not declared in the PUT request. Additional value is \\"ReadWrite\\", path: \\"/properties/storageProfile/osDisk/caching\\".",
+      "message": "The property \\"caching\\" is returned in the GET response, but it is not declared in the PUT request.",
       "pathsInPayload": Array [
         "/properties/storageProfile/osDisk/caching",
       ],
@@ -103,7 +103,7 @@ Object {
     Object {
       "code": "ROUNDTRIP_MISSING_PROPERTY",
       "jsonPathsInPayload": Array [],
-      "message": "The property is present in the PUT request but is either never returned in the GET response or is returned with a null value. Missing value is \\"WindowsServer\\", path: \\"/properties/storageProfile/imageReference/offer\\".",
+      "message": "The property \\"offer\\" is present in the PUT request but is either never returned in the GET response or is returned with a null value.",
       "pathsInPayload": Array [
         "/properties/storageProfile/imageReference/offer",
       ],
@@ -120,7 +120,7 @@ Object {
     Object {
       "code": "ROUNDTRIP_MISSING_PROPERTY",
       "jsonPathsInPayload": Array [],
-      "message": "The property is present in the PUT request but is either never returned in the GET response or is returned with a null value. Missing value is \\"testlzc6bl\\", path: \\"/properties/osProfile/computerName\\".",
+      "message": "The property \\"computerName\\" is present in the PUT request but is either never returned in the GET response or is returned with a null value.",
       "pathsInPayload": Array [
         "/properties/osProfile/computerName",
       ],
@@ -137,7 +137,7 @@ Object {
     Object {
       "code": "ROUNDTRIP_ADDITIONAL_PROPERTY",
       "jsonPathsInPayload": Array [],
-      "message": "The property is returned in the GET response, but it is not declared in the PUT request. Type of additional value is object.",
+      "message": "The property \\"hardwareProfile\\" is returned in the GET response, but it is not declared in the PUT request.",
       "pathsInPayload": Array [
         "/hardwareProfile",
       ],
