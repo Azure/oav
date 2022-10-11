@@ -1,6 +1,6 @@
 # Change Log - oav
 
-## 10/10/2022 3.1.1
+## 10/10/2022 3.2.0
 
 - Retire some features
   - Retire commands "generate-uml"
