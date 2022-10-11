@@ -4,7 +4,6 @@ import { FilePosition, flatMap, fold, JsonRef, StringMap } from "@azure-tools/op
 import { JSONPath } from "jsonpath-plus";
 import _ from "lodash";
 import { jsonSymbol, schemaSymbol } from "z-schema";
-import { processErrors } from "./processErrors";
 import { Severity } from "./severity";
 
 /**
@@ -187,28 +186,6 @@ export interface NodeError<T extends NodeError<T>> {
 export interface ValidationResult<T extends NodeError<T>> {
   readonly requestValidationResult: T;
   readonly responseValidationResult: T;
-}
-
-/**
- * Serializes validation results into a flat array.
- */
-export function processValidationResult<V extends ValidationResult<T>, T extends NodeError<T>>(
-  rawValidation: V
-): V {
-  rawValidation.requestValidationResult.errors = processValidationErrors(
-    rawValidation.requestValidationResult
-  );
-
-  rawValidation.responseValidationResult.errors = processValidationErrors(
-    rawValidation.responseValidationResult
-  );
-
-  return rawValidation;
-}
-
-export function processValidationErrors<T extends NodeError<T>>(errorsNode: T): T[] | undefined {
-  const requestSerializedErrors: T[] = serializeErrors(errorsNode, []);
-  return processErrors(requestSerializedErrors);
 }
 
 /**

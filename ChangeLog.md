@@ -1,5 +1,13 @@
 # Change Log - oav
 
+## 10/10/2022 3.2.0
+
+- Retire some features
+  - Retire commands "generate-uml"
+  - Retire commands "generate-wireformat"
+  - Retire commands "resolve-spec"
+  - Retire Autorest plugin
+
 ## 09/19/2022 3.1.0
 
 - API Scenario

@@ -20,12 +20,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       logFilepath: argv.f,
       pretty: argv.p ?? true,
     };
-    // if (specPath.match(/.*composite.*/gi) !== null) {
-    //   const result = await validate.validateCompositeSpec(specPath, vOptions);
-    //   return some(result, (v) => !v.validityStatus) ? 1 : 0;
-    // } else {
     const result = await validate.validateSpec(specPath, vOptions);
     return result.validityStatus ? 0 : 1;
-    // }
   });
 }

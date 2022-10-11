@@ -43,16 +43,6 @@ $ oav -h    Commands:
   generate-api-scenario                     Generate swagger examples from real
                                             payload records.
   generate-static-api-scenario              Generate API-scenario from swagger.
-  generate-uml <spec-path>                  Generates a class diagram of the
-                                            model definitions in the given
-                                            swagger spec.
-  generate-wireformat <spec-path>           Transforms the x-ms-examples for a
-                                            given operation into raw
-                                            request/response format and saves
-                                            them in a markdown file.
-  resolve-spec <spec-path>                  Resolves the swagger spec based on
-                                            the selected options like allOfs,
-                                            relativePaths, examples etc.
   run-api-scenario <api-scenario>           newman runner run API scenario
                                             file.                 [aliases: run]
   validate-example <spec-path>              Performs validation of x-ms-examples
@@ -118,17 +108,6 @@ In the context of “azure-rest-api-specs” repo:
 - #2 and #3 are performed by the tool currently in openapi-validation-tools repo and by AutoRest linter. We’re working towards integrating them into CI for “azure-rest-api-specs” repo.
 - #4 is not available yet, though we’re starting to work on it.
 - #5 will be done by the approvers of PRs in “azure-rest-api-specs”, as this won’t be automated.
-
-### Autorest plugin configuration
-
-- Please don't edit this section unless you're re-configuring how oav plugs in to AutoRest
-  AutoRest needs the below config to pick this up as a plug-in - see [Autorest extensions](https://github.com/Azure/autorest/blob/master/docs/developer/architecture/AutoRest-extension.md).
-
-```yaml $(model-validator)
-pipeline:
-  swagger-document/model-validator:
-    input: swagger-document/identity
-```
 
 ### Run API test
 
