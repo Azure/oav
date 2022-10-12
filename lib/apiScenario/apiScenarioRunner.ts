@@ -306,7 +306,7 @@ export class ApiScenarioRunner {
       } else {
         const xHost = spec["x-ms-parameterized-host"];
         if (xHost) {
-          req.host = xHost.hostTemplate.replace(/{([a-z0-9_$]+)}/gi, (_, p1) => `$(${p1})`);
+          req.host = xHost.hostTemplate.replace(/{([a-z0-9-_$]+)}/gi, (_, p1) => `$(${p1})`);
           if (xHost.useSchemePrefix === undefined || xHost.useSchemePrefix) {
             req.host = `https://${req.host}`;
           }

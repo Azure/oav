@@ -1,6 +1,6 @@
 {
   "name": "oav",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "author": {
     "name": "Microsoft Corporation",
     "email": "azsdkteam@microsoft.com",
@@ -13,7 +13,6 @@
     "@azure-tools/openapi-tools-common": "^1.2.2",
     "@azure/core-http": "^2.2.7",
     "@azure/openapi-markdown": "^0.9.4",
-    "@microsoft.azure/autorest-extension-base": "1.0.13",
     "@ts-common/commonmark-to-markdown": "^2.0.2",
     "ajv": "^6.12.6",
     "commonmark": "^0.29.3",
@@ -27,11 +26,9 @@
     "js-yaml": "^4.1.0",
     "json-merge-patch": "^1.0.2",
     "json-pointer": "^0.6.2",
-    "json-refs": "^3.0.15",
     "json-schema-traverse": "^0.4.1",
     "jsonpath-plus": "^4.0.0",
     "junit-report-builder": "^3.0.0",
-    "linq": "^3.2.4",
     "lodash": "^4.17.21",
     "md5-file": "^5.0.0",
     "mkdirp": "^1.0.4",
@@ -48,8 +45,6 @@
     "uuid": "^3.4.0",
     "winston": "^3.3.4",
     "yargs": "^15.4.1",
-    "yasway": "^1.10.7",
-    "yuml2svg": "^4.2.2",
     "z-schema": "^5.0.3"
   },
   "devDependencies": {

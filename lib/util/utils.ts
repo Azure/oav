@@ -12,10 +12,7 @@ import * as YAML from "js-yaml";
 import * as lodash from "lodash";
 import {
   cloneDeep,
-  copyInfo,
   Data,
-  isEmpty,
-  JsonObject,
   mapEntries,
   MutableStringMap,
   StringMap,
@@ -23,9 +20,7 @@ import {
   readFile,
 } from "@azure-tools/openapi-tools-common";
 import * as amd from "@azure/openapi-markdown";
-import { DataType, ParameterObject, SchemaObject } from "yasway";
 import * as commonmark from "commonmark";
-import { getSchemaObjectInfo, setSchemaInfo } from "../validators/specTransformer";
 import { log } from "./logging";
 
 /*
@@ -635,247 +630,6 @@ export function kvPairsToObject(entries: any) {
 }
 
 /**
- * Determines whether the given model is a pure (free-form) object candidate (i.e. equivalent of the
- * C# Object type).
- * @param {object} model - The model to be verified
- * @returns {boolean} result - true if model is a pure object; false otherwise.
- */
-export function isPureObject(model: SchemaObject): boolean {
-  if (!model) {
-    throw new Error(`model cannot be null or undefined and must be of type "object"`);
-  }
-  if (
-    model.type &&
-    typeof model.type.valueOf() === "string" &&
-    model.type === "object" &&
-    model.properties &&
-    isEmpty(mapEntries(model.properties))
-  ) {
-    return true;
-  } else if (!model.type && model.properties && isEmpty(mapEntries(model.properties))) {
-    return true;
-  } else if (
-    model.type &&
-    typeof model.type.valueOf() === "string" &&
-    model.type === "object" &&
-    !model.properties &&
-    !model.additionalProperties
-  ) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
-type Entity = {
-  in?: string;
-  type?: DataType;
-  additionalProperties?: SchemaObject | boolean;
-  items?: SchemaObject;
-  "x-nullable"?: boolean;
-  oneOf?: readonly SchemaObject[];
-  $ref?: string;
-  anyOf?: readonly SchemaObject[];
-} & JsonObject;
-
-/**
- * Relaxes/Transforms the given entities type from a specific JSON schema primitive type
- * (http://json-schema.org/latest/json-schema-core.html#rfc.section.4.2)
- * to an array of JSON schema primitive types
- * (http://json-schema.org/latest/json-schema-validation.html#rfc.section.5.21).
- *
- * @param {object} entity - The entity to be relaxed.
- * @param {boolean|undefined} [isRequired] - A boolean value that indicates whether the entity is
- *                                           required or not.
- * If the entity is required then the primitive type "null" is not added.
- * @returns {object} entity - The transformed entity if it is a pure object else the same entity is
- * returned as-is.
- */
-export function relaxEntityType<T extends Entity>(entity: T, _?: unknown): T {
-  if (isPureObject(entity) && entity.type) {
-    delete entity.type;
-  }
-  if (
-    typeof entity.additionalProperties === "object" &&
-    isPureObject(entity.additionalProperties) &&
-    entity.additionalProperties.type
-  ) {
-    delete entity.additionalProperties.type;
-  }
-  return entity;
-}
-
-/**
- * Relaxes/Transforms model definition like entities recursively
- */
-export function relaxModelLikeEntities(model: SchemaObject): SchemaObject {
-  model = relaxEntityType(model);
-  if (model.properties) {
-    const modelProperties = model.properties;
-
-    for (const prop of mapEntries(modelProperties)) {
-      const propName = prop[0];
-      const property = prop[1];
-      modelProperties[propName] = property.properties
-        ? relaxModelLikeEntities(property)
-        : relaxEntityType(property, isPropertyRequired(propName, model));
-    }
-  }
-  return model;
-}
-
-/**
- * Relaxes the entity to be a anyOf: [the current type OR null type] if the condition is satisfied
- * @param {object} entity - The entity to be relaxed
- * @param {Boolean|undefined} isPropRequired - states whether the property is required.
- * If true then it is required. If false or undefined then it is not required.
- * @returns {object} entity - The processed entity
- */
-export function allowNullType<T extends Entity>(
-  entity: T,
-  isPropRequired?: boolean | StringMap<unknown>
-): T {
-  const info = getSchemaObjectInfo(entity);
-
-  const nullable = () => {
-    const typeNull: SchemaObject = setSchemaInfo({ type: "null" }, info);
-    const typeArray = copyInfo(entity, [entity, typeNull]);
-    const newEntity: SchemaObject = setSchemaInfo({ anyOf: typeArray }, info);
-    entity = newEntity as T;
-  };
-
-  // if entity has a type
-  if (entity && entity.type) {
-    // if type is an array
-    if (entity.type === "array") {
-      if (entity.items) {
-        // if items object contains inline properties
-        entity.items = entity.items.properties
-          ? allowNullableTypes(entity.items)
-          : allowNullType(entity.items);
-      }
-    }
-
-    // takes care of string 'false' and 'true'
-    const xNullable = entity["x-nullable"] as string | boolean;
-    if (typeof xNullable === "string") {
-      switch (xNullable.toLowerCase()) {
-        case "false":
-          entity["x-nullable"] = false;
-          break;
-        case "true":
-          entity["x-nullable"] = true;
-          break;
-      }
-    }
-
-    if (shouldAcceptNullValue(entity["x-nullable"], isPropRequired)) {
-      const savedEntity = entity;
-      // handling nullable parameters
-      if (savedEntity.in) {
-        const typeNull: SchemaObject = setSchemaInfo({ type: "null" }, info);
-        const typeEntity: SchemaObject = setSchemaInfo({ type: entity.type }, info);
-        const typeArray: readonly SchemaObject[] = copyInfo(entity, [typeEntity, typeNull]);
-        entity.anyOf = typeArray;
-        delete entity.type;
-      } else {
-        nullable();
-      }
-    }
-  }
-
-  // if there's a $ref
-  if (entity && entity.$ref && shouldAcceptNullValue(entity["x-nullable"], isPropRequired)) {
-    nullable();
-  }
-  return entity;
-}
-
-/** logic table to determine when to use anyOf to accept null values
- * required \ x-nullable | True               | False | Undefined
- * ===============================================================
- * Yes                   | convert to anyOf[] |       |
- * No                    | convert to anyOf[] |       | convert to anyOf[]
- */
-export function shouldAcceptNullValue(xnullable: unknown, isPropRequired: unknown): unknown {
-  const isPropNullable = xnullable && typeof xnullable === "boolean";
-  return (isPropNullable === undefined && !isPropRequired) || isPropNullable;
-}
-/**
- * Relaxes/Transforms model definition to allow null values
- */
-export function allowNullableTypes(model: SchemaObject): SchemaObject {
-  // process additionalProperties if present
-  if (model && typeof model.additionalProperties === "object") {
-    model.additionalProperties =
-      model.additionalProperties.properties || model.additionalProperties.additionalProperties
-        ? allowNullableTypes(model.additionalProperties)
-        : // there shouldn't be more properties nesting at this point
-          allowNullType(model.additionalProperties);
-  }
-  if (model && model.properties) {
-    const modelProperties = model.properties;
-    for (const propEntry of mapEntries(modelProperties)) {
-      const propName = propEntry[0];
-      const prop = propEntry[1];
-      // process properties if present
-      modelProperties[propName] =
-        prop.properties || prop.additionalProperties
-          ? allowNullableTypes(prop)
-          : allowNullType(prop, isPropertyRequired(propName, model));
-    }
-  }
-
-  if (model && model.type) {
-    if (model.type === "array") {
-      if (model.items) {
-        // if items object contains additional properties
-        if (
-          model.items.additionalProperties &&
-          typeof model.items.additionalProperties === "object"
-        ) {
-          model.items.additionalProperties =
-            model.items.additionalProperties.properties ||
-            model.items.additionalProperties.additionalProperties
-              ? allowNullableTypes(model.items.additionalProperties)
-              : // there shouldn't be more properties nesting at this point
-                allowNullType(model.items.additionalProperties);
-        }
-        // if items object contains inline properties
-        model.items = model.items.properties
-          ? allowNullableTypes(model.items)
-          : allowNullType(model.items);
-      }
-    }
-    // if we have a top level entity with x-nullable set, we need to relax the model at that level
-    if (model["x-nullable"]) {
-      model = allowNullType(model);
-    }
-  }
-
-  // if model is a parameter (contains "in" property") we want to relax the parameter
-  if (model && model.in && model["x-nullable"]) {
-    model = allowNullType(model, model.required as boolean);
-  }
-
-  return model;
-}
-
-/**
- * Relaxes/Transforms parameter definition to allow null values for non-path parameters
- */
-export function allowNullableParams(parameter: ParameterObject): ParameterObject {
-  if (parameter.in && parameter.in === "body" && parameter.schema) {
-    parameter.schema = allowNullableTypes(parameter.schema);
-  } else {
-    if (parameter.in && parameter.in !== "path" && parameter.type === "string") {
-      parameter = allowNullType(parameter, parameter.required);
-    }
-  }
-  return parameter;
-}
-
-/**
  * Sanitizes the file name by replacing special characters with
  * empty string and by replacing space(s) with _.
  * @param {string} str - The string to be sanitized.
@@ -884,12 +638,6 @@ export function allowNullableParams(parameter: ParameterObject): ParameterObject
 export const sanitizeFileName = (str: string): string =>
   // eslint-disable-next-line no-useless-escape
   str ? str.replace(/[{}[\]'";(\)#@~`!%&\^\$\+=,\/\\?<>\|\*:]/gi, "").replace(/(\s+)/gi, "_") : str;
-
-/**
- * Checks if the property is required in the model.
- */
-const isPropertyRequired = (propName: unknown, model: SchemaObject) =>
-  model.required ? model.required.some((p) => p === propName) : false;
 
 /**
  * Contains the reverse mapping of http.STATUS_CODES

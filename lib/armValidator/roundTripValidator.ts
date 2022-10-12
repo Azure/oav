@@ -50,7 +50,7 @@ export function diffRequestResponse(
             ["create", "read"]
           );
         if (!isReplace) {
-          return buildLiveValidationIssue("ROUNDTRIP_INCONSISTENT_PROPERTY", jsonPath);
+          return buildLiveValidationIssue("ROUNDTRIP_INCONSISTENT_PROPERTY", jsonPath, it);
         }
       } else if (it.add !== undefined) {
         const isReadOnly =
@@ -73,7 +73,7 @@ export function diffRequestResponse(
             "default"
           );
         if (!isReadOnly) {
-          return buildLiveValidationIssue("ROUNDTRIP_ADDITIONAL_PROPERTY", jsonPath);
+          return buildLiveValidationIssue("ROUNDTRIP_ADDITIONAL_PROPERTY", jsonPath, it);
         }
       } else if (it.remove !== undefined) {
         const isRemove =
@@ -97,7 +97,7 @@ export function diffRequestResponse(
             ["create", "update"]
           );
         if (!isRemove) {
-          return buildLiveValidationIssue("ROUNDTRIP_MISSING_PROPERTY", jsonPath);
+          return buildLiveValidationIssue("ROUNDTRIP_MISSING_PROPERTY", jsonPath, it);
         }
       }
       return undefined;
@@ -106,22 +106,34 @@ export function diffRequestResponse(
   return rest;
 }
 
-export function buildLiveValidationIssue(errorCode: string, path: string): LiveValidationIssue {
+export function buildLiveValidationIssue(
+  errorCode: string,
+  path: string,
+  it: any
+): LiveValidationIssue {
   let severity, message;
+  const property = path.split("/").pop();
   switch (errorCode) {
     case "ROUNDTRIP_INCONSISTENT_PROPERTY": {
       severity = roundTripValidationErrors.ROUNDTRIP_INCONSISTENT_PROPERTY.severity;
-      message = roundTripValidationErrors.ROUNDTRIP_INCONSISTENT_PROPERTY.message({});
+      message = roundTripValidationErrors.ROUNDTRIP_INCONSISTENT_PROPERTY.message({
+        getValue: it.value,
+        putValue: it.oldValue,
+      });
       break;
     }
     case "ROUNDTRIP_ADDITIONAL_PROPERTY": {
       severity = roundTripValidationErrors.ROUNDTRIP_ADDITIONAL_PROPERTY.severity;
-      message = roundTripValidationErrors.ROUNDTRIP_ADDITIONAL_PROPERTY.message({});
+      message = roundTripValidationErrors.ROUNDTRIP_ADDITIONAL_PROPERTY.message({
+        property: property,
+      });
       break;
     }
     case "ROUNDTRIP_MISSING_PROPERTY": {
       severity = roundTripValidationErrors.ROUNDTRIP_MISSING_PROPERTY.severity;
-      message = roundTripValidationErrors.ROUNDTRIP_MISSING_PROPERTY.message({});
+      message = roundTripValidationErrors.ROUNDTRIP_MISSING_PROPERTY.message({
+        property: property,
+      });
       break;
     }
   }
