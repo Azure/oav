@@ -494,7 +494,7 @@ pm.test("Stopped TestProxy recording", function() {
       );
     }
 
-    item.description = step.operation.operationId;
+    item.description = step.operationId;
 
     item.request.url = new Url({
       host: this.opts.testProxy ?? baseUri,
@@ -560,7 +560,7 @@ pm.test("Stopped TestProxy recording", function() {
       step.responseAssertion
     ).forEach((s) => postScripts.push(s));
 
-    if (step.operation["x-ms-long-running-operation"]) {
+    if (step.operation && step.operation["x-ms-long-running-operation"]) {
       const metadata: LroItemMetadata = {
         type: "LRO",
         poller_item_name: `_${item.name}_poller`,
@@ -581,7 +581,7 @@ pm.test("Stopped TestProxy recording", function() {
     } else {
       const metadata: SimpleItemMetadata = {
         type: "simple",
-        operationId: step.operation.operationId || "",
+        operationId: step.operation?.operationId || "",
         exampleName: step.exampleFile!,
         itemName: item.name,
         step: item.name,
@@ -594,7 +594,7 @@ pm.test("Stopped TestProxy recording", function() {
     }
 
     // generate get
-    if (step.operation._method === "put" || step.operation._method === "delete") {
+    if (step.operation?._method === "put" || step.operation?._method === "delete") {
       itemGroup!.items.add(
         this.generateFinalGetItem(
           item.name,

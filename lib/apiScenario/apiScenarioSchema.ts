@@ -330,6 +330,9 @@ export const ApiScenarioDefinition: Schema & {
         {
           $ref: "#/definitions/StepArmDeploymentScript",
         },
+        {
+          $ref: "#/definitions/StepRoleAssignment",
+        },
       ],
     },
     StepBase: {
@@ -538,6 +541,51 @@ export const ApiScenarioDefinition: Schema & {
         variables: {},
       },
       required: ["armDeploymentScript"],
+      additionalProperties: false,
+    },
+    StepRoleAssignment: {
+      type: "object",
+      allOf: [
+        {
+          $ref: "#/definitions/StepBase",
+        },
+      ],
+      properties: {
+        roleAssignment: {
+          type: "object",
+          properties: {
+            roleName: {
+              type: "string",
+            },
+            roleDefinitionId: {
+              type: "string",
+            },
+            principalId: {
+              type: "string",
+            },
+            scope: {
+              type: "string",
+            },
+            principalType: {
+              type: "string",
+              enum: ["User", "Group", "ServicePrincipal", "ForeignGroup", "Device"],
+              default: "ServicePrincipal",
+            },
+          },
+          oneOf: [
+            {
+              required: ["roleName", "principalId", "scope"],
+            },
+            {
+              required: ["roleDefinitionId", "principalId", "scope"],
+            },
+          ],
+        },
+        step: {},
+        description: {},
+        variables: {},
+      },
+      required: ["roleAssignment"],
       additionalProperties: false,
     },
     JsonPatchOp: {
