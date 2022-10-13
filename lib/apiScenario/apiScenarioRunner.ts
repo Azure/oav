@@ -11,7 +11,7 @@ import {
   StepRoleAssignment,
 } from "./apiScenarioTypes";
 import { AzureBuiltInRoles } from "./azureBuiltInRoles";
-import { DEFAULT_ARM_ENDPOINT } from "./constants";
+import { DEFAULT_ARM_ENDPOINT, DEFAULT_ROLE_ASSIGNMENT_API_VERSION } from "./constants";
 import { EnvironmentVariables, VariableEnv } from "./variableEnv";
 
 export interface ApiScenarioRunnerOption {
@@ -210,14 +210,14 @@ export class ApiScenarioRunner {
     const parameters = {
       scope: step.roleAssignment.scope,
       roleAssignmentName: "{{$guid}}",
-      "api-version": "2022-04-01",
+      "api-version": DEFAULT_ROLE_ASSIGNMENT_API_VERSION,
     };
 
-    const roleId =
+    const roleDefinitionId =
       step.roleAssignment.roleDefinitionId ??
       AzureBuiltInRoles.find((r) => r.roleName === step.roleAssignment.roleName)?.roleDefinitionId;
 
-    if (roleId === undefined) {
+    if (roleDefinitionId === undefined) {
       throw new Error(
         `Cannot find role definition id for role name ${step.roleAssignment.roleName}`
       );
@@ -229,10 +229,10 @@ export class ApiScenarioRunner {
       path: "/$(scope)/providers/Microsoft.Authorization/roleAssignments/$(roleAssignmentName)",
       pathParameters: parameters,
       headers: {},
-      query: { "api-version": "2022-04-01" },
+      query: { "api-version": DEFAULT_ROLE_ASSIGNMENT_API_VERSION },
       body: {
         properties: {
-          roleDefinitionId: `/subscriptions/$(subscriptionId)/providers/Microsoft.Authorization/roleDefinitions/${roleId}`,
+          roleDefinitionId: `/subscriptions/$(subscriptionId)/providers/Microsoft.Authorization/roleDefinitions/${roleDefinitionId}`,
           principalId: step.roleAssignment.principalId,
           principalType: step.roleAssignment.principalType ?? "ServicePrincipal",
         },
@@ -261,7 +261,10 @@ export class ApiScenarioRunner {
     let req: ApiScenarioClientRequest = {
       host: "",
       method: step.operation!._method.toUpperCase() as HttpMethods,
-      path: step.operation!._path._pathTemplate.replace(/{([a-z0-9_$]+)}/gi, (_, p1) => `$(${p1})`),
+      path: step.operation!._path._pathTemplate.replace(
+        /{([a-z0-9-_$]+)}/gi,
+        (_, p1) => `$(${p1})`
+      ),
       pathParameters: {},
       headers: {},
       query: {},

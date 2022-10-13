@@ -707,7 +707,6 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       ...convertVariables(rawStep.variables),
       authentication: ctx.scenario?.authentication ?? ctx.scenarioDef.authentication,
     };
-    // TODO
     return step;
   }
 
