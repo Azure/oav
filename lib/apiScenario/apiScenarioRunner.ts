@@ -11,7 +11,7 @@ import {
   StepRoleAssignment,
 } from "./apiScenarioTypes";
 import { AzureBuiltInRoles } from "./azureBuiltInRoles";
-import { DEFAULT_ARM_ENDPOINT, DEFAULT_ROLE_ASSIGNMENT_API_VERSION } from "./constants";
+import { DEFAULT_ROLE_ASSIGNMENT_API_VERSION } from "./constants";
 import { EnvironmentVariables, VariableEnv } from "./variableEnv";
 
 export interface ApiScenarioRunnerOption {
@@ -224,7 +224,7 @@ export class ApiScenarioRunner {
     }
 
     const req: ApiScenarioClientRequest = {
-      host: DEFAULT_ARM_ENDPOINT,
+      host: env.getRequiredString("armEndpoint"),
       method: "PUT",
       path: "/$(scope)/providers/Microsoft.Authorization/roleAssignments/$(roleAssignmentName)",
       pathParameters: parameters,
