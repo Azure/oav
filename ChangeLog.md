@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 10/20/2022 3.2.1
+- API Scenario
+  - Add roleAssignment step
+
 ## 10/10/2022 3.2.0
 
 - Retire some features
