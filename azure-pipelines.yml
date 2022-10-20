@@ -7,6 +7,8 @@ trigger:
   - develop
 
 steps:
+  - checkout: self
+    submodules: true
   - task: Npm@1
     displayName: "npm ci"
     inputs:
