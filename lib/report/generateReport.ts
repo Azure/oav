@@ -61,7 +61,9 @@ export interface OperationCoverageInfoForRendering extends OperationCoverageInfo
 
 export interface resultForRendering
   extends OperationCoverageInfoForRendering,
-    TrafficValidationIssueForRendering {}
+    TrafficValidationIssueForRendering {
+  index?: number;
+}
 
 // used to pass data to the template rendering engine
 export class CoverageView {
@@ -266,7 +268,8 @@ export class CoverageView {
         });
       });
 
-      for (const e of this.resultsForRendering) {
+      for (const [index, e] of this.resultsForRendering.entries()) {
+        e.index = index;
         for (const i of generalErrorsInnerList) {
           if (e.specFilePath === i.specFilePath && i) {
             e.generalErrorsInnerList.push(i);
@@ -448,8 +451,8 @@ export class ReportGenerator {
     const general_errors = view.getGeneralErrors();
     const runtime_errors = view.getRunTimeErrors();
 
-    console.log(general_errors);
-    console.log(runtime_errors);
+    console.log(JSON.stringify(general_errors, null, 2));
+    console.log(JSON.stringify(runtime_errors, null, 2));
 
     const text = Mustache.render(template, view);
     fs.writeFileSync(this.reportPath, text, "utf-8");

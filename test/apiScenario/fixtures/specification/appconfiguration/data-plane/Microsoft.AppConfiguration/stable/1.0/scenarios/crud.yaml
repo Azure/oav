@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/documentation/api-scenario/references/v1.2/schema.json
+
+scope: None
+
+variables:
+  configStoreName: configstor7q4oy9
+  endpoint: https://$(configStoreName).azconfig.io
+authentication:
+  type: AADToken
+  scope: https://azconfig.io/.default
+
+prepareSteps:
+  - operationId: CheckKeys
+  - operationId: PutKeyValue
+    parameters:
+      key: hello
+      entity:
+        value: world
+    outputVariables:
+      lastModified:
+        type: string
+        fromResponse: /last_modified
+
+scenarios:
+  - scenario: simplyListKeys
+    steps:
+      - operationId: CheckKeys
+      - operationId: GetKeys
+  - scenario: appConfig_data_plane_crud
+    steps:
+      - operationId: PutKeyValue
+        parameters:
+          key: foo
+          label: hello
+          entity:
+            key: foo
+            label: hello
+            value: bar
+      - operationId: CheckKeyValue
+        parameters:
+          key: foo
+          label: hello
+      - operationId: GetKeyValue
+        parameters:
+          key: foo
+          label: hello
+      - operationId: CheckKeys
+      - operationId: GetKeys

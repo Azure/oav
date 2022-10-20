@@ -3,6 +3,7 @@ import { findReadMe } from "@azure/openapi-markdown";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../inversifyUtils";
 import {
+  LiveValidationResult,
   LiveValidator,
   RequestResponseLiveValidationResult,
   RequestResponsePair,
@@ -13,20 +14,13 @@ import { setDefaultOpts } from "../swagger/loader";
 import { SwaggerExample } from "../swagger/swaggerTypes";
 import { SeverityString } from "../util/severity";
 import { getApiVersionFromFilePath, getProviderFromFilePath } from "../util/utils";
+import { logger } from "./logger";
 import { ApiScenarioLoaderOption } from "./apiScenarioLoader";
-import { NewmanExecution, NewmanReport, Scenario, Step, StepRestCall } from "./apiScenarioTypes";
+import { NewmanExecution, NewmanReport, Scenario, Step } from "./apiScenarioTypes";
 import { DataMasker } from "./dataMasker";
-import { getJsonPatchDiff } from "./diffUtils";
 import { JUnitReporter } from "./junitReport";
 import { generateMarkdownReport } from "./markdownReport";
 import { SwaggerAnalyzer } from "./swaggerAnalyzer";
-import { VariableEnv } from "./variableEnv";
-
-interface GeneratedExample {
-  step: string;
-  operationId: string;
-  example: SwaggerExample;
-}
 
 export interface ApiScenarioTestResult {
   apiScenarioFilePath: string;
@@ -40,7 +34,6 @@ export interface ApiScenarioTestResult {
   // New added fields
   environment?: string;
   armEnv?: string;
-  subscriptionId?: string;
   rootPath?: string;
   providerNamespace?: string;
   apiVersion?: string;
@@ -50,7 +43,7 @@ export interface ApiScenarioTestResult {
   repository?: string;
   branch?: string;
   commitHash?: string;
-  baseUrl?: string;
+  armEndpoint?: string;
   apiScenarioName?: string;
   stepResult: StepResult[];
 }
@@ -62,13 +55,11 @@ export interface StepResult {
   example?: SwaggerExample;
   payloadPath?: string;
   operationId: string;
-  runtimeError?: RuntimeError[];
-  responseDiffResult?: ResponseDiffItem[];
   responseTime?: number;
-  liveValidationResult?: RequestResponseLiveValidationResult;
-  stepValidationResult?: any;
-  correlationId?: string;
   stepName: string;
+  runtimeError?: RuntimeError[];
+  liveValidationResult?: RequestResponseLiveValidationResult;
+  roundtripValidationResult?: LiveValidationResult;
 }
 
 export interface RuntimeError {
@@ -78,28 +69,17 @@ export interface RuntimeError {
   severity: SeverityString;
 }
 
-export interface ResponseDiffItem {
-  code: string;
-  jsonPath: string;
-  severity: SeverityString;
-  message: string;
-  detail: string;
-}
-
-export type ValidationLevel = "validate-request" | "validate-request-response";
-
 export interface NewmanReportValidatorOption extends ApiScenarioLoaderOption {
   apiScenarioFilePath: string;
   reportOutputFilePath: string;
   markdown?: boolean;
   junit?: boolean;
   html?: boolean;
-  baseUrl?: string;
+  armEndpoint?: string;
   runId?: string;
   skipValidation?: boolean;
   savePayload?: boolean;
   generateExample?: boolean;
-  verbose?: boolean;
 }
 
 @injectable()
@@ -120,7 +100,6 @@ export class NewmanReportValidator {
       skipValidation: false,
       savePayload: false,
       generateExample: false,
-      verbose: false,
     } as NewmanReportValidatorOption);
   }
 
@@ -151,7 +130,7 @@ export class NewmanReportValidator {
       commitHash: process.env.COMMIT_HASH,
       environment: process.env.ENVIRONMENT || "test",
       apiScenarioName: this.scenario.scenario,
-      baseUrl: this.opts.baseUrl,
+      armEndpoint: this.opts.armEndpoint,
       stepResult: [],
     };
 
@@ -160,6 +139,7 @@ export class NewmanReportValidator {
     this.liveValidator = new LiveValidator({
       fileRoot: "/",
       swaggerPaths: [...this.opts.swaggerFilePaths!],
+      enableRoundTripValidator: !this.opts.skipValidation,
     });
     if (!this.opts.skipValidation) {
       await this.liveValidator.initialize();
@@ -173,52 +153,66 @@ export class NewmanReportValidator {
   }
 
   private async generateApiScenarioTestResult(newmanReport: NewmanReport) {
-    const variables = newmanReport.variables;
     this.testResult.operationIds = this.swaggerAnalyzer.getOperations();
     this.testResult.startTime = new Date(newmanReport.timings.started).toISOString();
     this.testResult.endTime = new Date(newmanReport.timings.completed).toISOString();
-    this.testResult.subscriptionId = variables.subscriptionId.value as string;
     const visitedIds = new Set<string>();
     for (const it of newmanReport.executions) {
-      if (it.annotation === undefined) {
+      if (!it.annotation) {
         continue;
       }
-      if (it.annotation.type === "simple" || it.annotation.type === "LRO") {
-        if (visitedIds.has(it.id)) {
-          continue;
-        }
-        visitedIds.add(it.id);
-        const runtimeError: RuntimeError[] = [];
-        const matchedStep = this.getMatchedStep(it.annotation.step) as StepRestCall;
+      if (visitedIds.has(it.id)) {
+        continue;
+      }
+      visitedIds.add(it.id);
 
-        // Runtime errors
-        if (it.response.statusCode >= 400) {
-          const error = this.getRuntimeError(it);
-          runtimeError.push(error);
-        }
-        if (matchedStep === undefined) {
-          continue;
+      if (it.annotation.type !== "simple" && it.annotation.type !== "LRO") {
+        continue;
+      }
+
+      const payload = this.convertToLiveValidationPayload(it);
+
+      let payloadFilePath;
+      if (this.opts.savePayload) {
+        payloadFilePath = `./payloads/${it.annotation.itemName}.json`;
+        await this.fileLoader.writeFile(
+          path.resolve(path.dirname(this.opts.reportOutputFilePath), payloadFilePath),
+          JSON.stringify(payload, null, 2)
+        );
+      }
+
+      const matchedStep = this.getMatchedStep(it.annotation.step);
+      if (matchedStep === undefined) {
+        continue;
+      }
+
+      const runtimeError: RuntimeError[] = [];
+
+      // Runtime errors
+      if (it.response.statusCode >= 400) {
+        const error = this.getRuntimeError(it);
+        runtimeError.push(error);
+      }
+
+      it.assertions.forEach((assertion) => {
+        if (assertion.message.includes("expected response code to be 2XX")) {
+          return;
         }
 
-        if (matchedStep.externalReference) {
-          continue;
-        }
-
-        it.assertions.forEach((assertion) => {
-          runtimeError.push({
-            code: "ASSERTION_ERROR",
-            message: `${assertion.message}`,
-            severity: "Error",
-            detail: this.dataMasker.jsonStringify(assertion.stack),
-          });
+        runtimeError.push({
+          code: "ASSERTION_ERROR",
+          message: `${assertion.message}`,
+          severity: "Error",
+          detail: this.dataMasker.jsonStringify(assertion.stack),
         });
+      });
 
-        const payload = this.convertToLiveValidationPayload(it);
-
-        let responseDiffResult: ResponseDiffItem[] | undefined = undefined;
-        const statusCode = `${it.response.statusCode}`;
-        const exampleFilePath = `./examples/${matchedStep.operationId}_${statusCode}.json`;
-        if (this.opts.generateExample || it.annotation.exampleName) {
+      let liveValidationResult = undefined;
+      let roundtripValidationResult = undefined;
+      let specFilePath = undefined;
+      if (matchedStep.type === "restCall" && !matchedStep.externalReference) {
+        if (this.opts.generateExample) {
+          const statusCode = `${it.response.statusCode}`;
           const generatedExample: SwaggerExample = {
             operationId: matchedStep.operationId,
             title: matchedStep.step,
@@ -232,60 +226,54 @@ export class NewmanReportValidator {
             },
           };
 
-          // Example validation
-          if (this.opts.generateExample) {
-            await this.fileLoader.writeFile(
-              path.resolve(path.dirname(this.opts.reportOutputFilePath), exampleFilePath),
-              JSON.stringify(generatedExample, null, 2)
-            );
-          }
-          if (it.annotation.exampleName) {
-            // validate real payload.
-            responseDiffResult = !this.opts.skipValidation
-              ? await this.exampleResponseDiff(
-                  {
-                    step: matchedStep.step,
-                    operationId: matchedStep.operationId,
-                    example: generatedExample,
-                  },
-                  matchedStep,
-                  newmanReport
-                )
-              : [];
-          }
-        }
-
-        // Schema validation
-        const correlationId = it.response.headers["x-ms-correlation-request-id"];
-        let payloadFilePath;
-        if (this.opts.savePayload) {
-          payloadFilePath = `./payloads/${matchedStep.step}_${correlationId}.json`;
+          const exampleFilePath = `./examples/${matchedStep.operationId}_${statusCode}.json`;
           await this.fileLoader.writeFile(
-            path.resolve(path.dirname(this.opts.reportOutputFilePath), payloadFilePath),
-            JSON.stringify(payload, null, 2)
+            path.resolve(path.dirname(this.opts.reportOutputFilePath), exampleFilePath),
+            JSON.stringify(generatedExample, null, 2)
           );
         }
 
-        this.testResult.stepResult.push({
-          specFilePath: matchedStep.operation._path._spec._filePath,
-          operationId: it.annotation.operationId,
-          payloadPath: payloadFilePath
-            ? path.join(
-                path.basename(path.dirname(this.opts.reportOutputFilePath)),
-                payloadFilePath
-              )
-            : undefined,
-          runtimeError,
-          responseTime: it.response.responseTime,
-          responseDiffResult: responseDiffResult,
-          correlationId: correlationId,
-          statusCode: it.response.statusCode,
-          stepName: it.annotation.step,
-          liveValidationResult: !this.opts.skipValidation
-            ? await this.liveValidator.validateLiveRequestResponse(payload)
-            : undefined,
-        });
+        // Schema validation
+        liveValidationResult = !this.opts.skipValidation
+          ? await this.liveValidator.validateLiveRequestResponse(payload)
+          : undefined;
+
+        // Roundtrip validation
+        if (
+          !this.opts.skipValidation &&
+          matchedStep.isManagementPlane &&
+          matchedStep.operation?._method === "put" &&
+          it.response.statusCode >= 200 &&
+          it.response.statusCode <= 202
+        ) {
+          if (it.annotation.type === "LRO") {
+            // For LRO, get the final response to compose payload
+            const lroFinal = this.getLROFinalResponse(newmanReport.executions, it.annotation.step);
+            if (lroFinal !== undefined && lroFinal.response.statusCode === 200) {
+              const lroPayload = this.convertToLROLiveValidationPayload(it, lroFinal);
+              roundtripValidationResult = await this.liveValidator.validateRoundTrip(lroPayload);
+            }
+          } else if (it.annotation.type === "simple") {
+            roundtripValidationResult = await this.liveValidator.validateRoundTrip(payload);
+          }
+        }
+
+        specFilePath = matchedStep.operation?._path._spec._filePath;
       }
+
+      this.testResult.stepResult.push({
+        specFilePath,
+        operationId: it.annotation.operationId,
+        payloadPath: payloadFilePath
+          ? path.join(path.basename(path.dirname(this.opts.reportOutputFilePath)), payloadFilePath)
+          : undefined,
+        runtimeError,
+        responseTime: it.response.responseTime,
+        statusCode: it.response.statusCode,
+        stepName: it.annotation.step,
+        liveValidationResult,
+        roundtripValidationResult,
+      });
     }
   }
 
@@ -293,7 +281,30 @@ export class NewmanReportValidator {
     const request = execution.request;
     const response = execution.response;
     const liveRequest: LiveRequest = {
-      url: request.url.toString(),
+      url: request.url,
+      method: request.method.toLowerCase(),
+      headers: request.headers,
+      body: this.parseBody(request.body),
+    };
+    const liveResponse: LiveResponse = {
+      statusCode: response.statusCode.toString(),
+      headers: response.headers,
+      body: this.parseBody(response.body),
+    };
+    return {
+      liveRequest,
+      liveResponse,
+    };
+  }
+
+  private convertToLROLiveValidationPayload(
+    putReq: NewmanExecution,
+    getReq: NewmanExecution
+  ): RequestResponsePair {
+    const request = putReq.request;
+    const response = getReq.response;
+    const liveRequest: LiveRequest = {
+      url: request.url,
       method: request.method.toLowerCase(),
       headers: request.headers,
       body: this.parseBody(request.body),
@@ -339,127 +350,14 @@ export class NewmanReportValidator {
     return result;
   }
 
-  private async exampleResponseDiff(
-    example: GeneratedExample,
-    matchedStep: Step,
-    rawReport: NewmanReport
-  ): Promise<ResponseDiffItem[]> {
-    let res: ResponseDiffItem[] = [];
-    if (matchedStep?.type === "restCall") {
-      if (example.example.responses["200"] !== undefined) {
-        Object.keys(matchedStep.variables).forEach((key) => {
-          const paramName = `${matchedStep.step}_${key}`;
-          matchedStep.responses = this.convertPostmanFormat(matchedStep.responses, (s) =>
-            s.replace(`$(${key})`, `$(${paramName})`)
-          );
-        });
-        res = res.concat(
-          await this.responseDiff(
-            example.example.responses["200"]?.body || {},
-            matchedStep.responses["200"]?.body || {},
-            rawReport.variables,
-            `/200/body`,
-            matchedStep.operation.responses["200"].schema
-          )
-        );
-      }
-    }
-    return res;
-  }
-
-  private async responseDiff(
-    resp: any,
-    expectedResp: any,
-    variables: any,
-    jsonPathPrefix: string,
-    schema: any
-  ): Promise<ResponseDiffItem[]> {
-    const env = new VariableEnv(variables);
-    try {
-      const ignoredKeys = [/\/body\/id/, /\/body\/location/, /date/i];
-      const ignoreValuePattern = [/\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d(?:\.\d+)?Z?/];
-      const expected = env.resolveObjectValues(expectedResp);
-      const delta: ResponseDiffItem[] = getJsonPatchDiff(expected, resp, {
-        includeOldValue: true,
-        minimizeDiff: false,
-      })
-        .map((it: any) => {
-          const ret: ResponseDiffItem = {
-            code: "",
-            jsonPath: "",
-            severity: "Error",
-            message: "",
-            detail: "",
-          };
-          const jsonPath: string = it.remove || it.add || it.replace;
-          const propertySchema = this.swaggerAnalyzer.findSchemaByJsonPointer(
-            jsonPath,
-            schema,
-            resp
-          );
-          if (propertySchema["x-ms-secret"] === true) {
-            return undefined;
-          }
-          if (it.remove !== undefined) {
-            ret.code = "RESPONSE_MISSING_VALUE";
-            ret.jsonPath = jsonPathPrefix + it.remove;
-            ret.severity = "Error";
-            ret.message = `The response value is missing. Path: ${
-              ret.jsonPath
-            }. Expected: ${this.dataMasker.jsonStringify(it.oldValue)}. Actual: undefined`;
-          } else if (it.add !== undefined) {
-            ret.code = "RESPONSE_ADDITIONAL_VALUE";
-            ret.jsonPath = jsonPathPrefix + it.add;
-            ret.severity = "Error";
-            ret.message = `Return additional response value. Path: ${
-              ret.jsonPath
-            }. Expected: undefined. Actual: ${this.dataMasker.jsonStringify(it.value)}`;
-          } else if (it.replace !== undefined) {
-            ret.code = "RESPONSE_INCONSISTENT_VALUE";
-            ret.jsonPath = jsonPathPrefix + it.replace;
-
-            const paths = it.replace.split("/");
-            while (paths.length > 1) {
-              const path = paths.join("/");
-              const sch = this.swaggerAnalyzer.findSchemaByJsonPointer(path, schema, resp);
-              // Ignore diff when propertySchema readonly is true. When property is readonly, it's probably a random generated value which updated dynamically per request.
-              if (sch.readOnly === true) {
-                return undefined;
-              }
-              paths.pop();
-            }
-            ret.severity = "Error";
-            ret.message = `The actual response value is different from example. Path: ${
-              ret.jsonPath
-            }. Expected: ${this.dataMasker.jsonStringify(
-              it.oldValue
-            )}. Actual: ${this.dataMasker.jsonStringify(it.value)}`;
-          }
-          ret.detail = this.dataMasker.jsonStringify(it);
-          if (
-            ignoredKeys.some((key) => ret.jsonPath.search(key) !== -1) ||
-            (ret.code === "RESPONSE_INCONSISTENT_VALUE" &&
-              typeof it.value === "string" &&
-              ignoreValuePattern.some((valuePattern) => it.value.search(valuePattern) !== -1))
-          ) {
-            return undefined;
-          }
-          return ret;
-        })
-        .filter((it) => it !== undefined) as ResponseDiffItem[];
-      return delta;
-      // eslint-disable-next-line no-empty
-    } catch (err) {}
-    return [];
+  private getLROFinalResponse(executions: NewmanExecution[], initialStep: string) {
+    return executions.find(
+      (it) => it.annotation?.type === "finalGet" && it.annotation.step === initialStep
+    );
   }
 
   private getMatchedStep(stepName: string): Step | undefined {
-    for (const it of this.scenario.steps ?? []) {
-      if (stepName === it.step) {
-        return it;
-      }
-    }
-    return undefined;
+    return this.scenario.steps?.find((s) => s.step === stepName);
   }
 
   private getRuntimeError(it: NewmanExecution): RuntimeError {
@@ -474,7 +372,7 @@ export class NewmanReportValidator {
 
   private async outputReport(): Promise<void> {
     if (this.opts.reportOutputFilePath !== undefined) {
-      console.log(`Write generated report file: ${this.opts.reportOutputFilePath}`);
+      logger.info(`Write generated report file: ${this.opts.reportOutputFilePath}`);
       await this.fileLoader.writeFile(
         this.opts.reportOutputFilePath,
         JSON.stringify(this.testResult, null, 2)

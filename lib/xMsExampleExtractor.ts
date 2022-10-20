@@ -16,7 +16,7 @@ import swaggerParser from "@apidevtools/swagger-parser";
 import { log } from "./util/logging";
 import { kvPairsToObject } from "./util/utils";
 
-interface Options {
+export interface Options {
   output?: string;
   shouldResolveXmsExamples?: unknown;
   matchApiVersion?: unknown;

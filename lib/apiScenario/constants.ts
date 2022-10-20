@@ -1,5 +1,9 @@
 import { ArmDeploymentScriptResource, ArmTemplate } from "./apiScenarioTypes";
 
+export const DEFAULT_ARM_ENDPOINT = "https://management.azure.com";
+export const DEFAULT_ARM_API_VERSION = "2020-06-01";
+export const DEFAULT_ROLE_ASSIGNMENT_API_VERSION = "2022-04-01";
+
 const armDeploymentScript: ArmDeploymentScriptResource = {
   type: "Microsoft.Resources/deploymentScripts",
   apiVersion: "2020-10-01",

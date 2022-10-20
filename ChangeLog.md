@@ -1,7 +1,37 @@
 # Change Log - oav
 
+## 10/20/2022 3.2.1
+- API Scenario
+  - Add roleAssignment step
+
+## 10/10/2022 3.2.0
+
+- Retire some features
+  - Retire commands "generate-uml"
+  - Retire commands "generate-wireformat"
+  - Retire commands "resolve-spec"
+  - Retire Autorest plugin
+
+## 09/19/2022 3.1.0
+
+- API Scenario
+  - Support parameterized host and AzureAD authentication option
+  - Remove support for `shareScope`
+  - Refactor postman collection generation with folders
+  - Improve LRO poller and use retry-after header in delay
+  - Improve logging level to reuse the `-l` option
+  - Clean some unused dependencies
+  - Support Roundtrip validation in validation
+  - Integrate Roundtrip validation into API Scenario
+
+## 09/06/2022 3.0.6
+
+- AJV validator - Support arm-id format validation
+- ModelValidator - Only enable arm-id validation for both of model validator and live validation(rpaas api validation is excluded)
+
 ## 08/04/2022 3.0.5
 
+- ModelValidator - Support api-version validation
 - ModelValidator - Fix bug when operation has no own parameters
 - validate-traffic
   - add detailed operationId on swagger link

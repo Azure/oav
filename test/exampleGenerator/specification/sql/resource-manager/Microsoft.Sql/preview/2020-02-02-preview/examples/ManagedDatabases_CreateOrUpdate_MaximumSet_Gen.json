@@ -1,0 +1,82 @@
+{
+  "parameters": {
+    "resourceGroupName": "rgManagedDatabases",
+    "managedInstanceName": "managedInstance",
+    "databaseName": "managedDatabase",
+    "parameters": {
+      "location": "southeastasia",
+      "properties": {
+        "collation": "SQL_Latin1_General_CP1_CI_AS",
+        "restorePointInTime": "2022-09-20T06:14:34.700Z",
+        "catalogCollation": "DATABASE_DEFAULT",
+        "createMode": "Default",
+        "storageContainerUri": "meqahyjmvqhrmcb",
+        "sourceDatabaseId": "dgadwuobspskce",
+        "restorableDroppedDatabaseId": "zcxchlhyigbj",
+        "storageContainerSasToken": "lbypprrrhmwaremf",
+        "recoverableDatabaseId": "ncnvaiugakyumroksnmcwaalfl",
+        "longTermRetentionBackupResourceId": "uqimcplltrg",
+        "autoCompleteRestore": true,
+        "lastBackupName": "kuywpclb"
+      },
+      "tags": {
+        "key2974": "quv",
+        "key4672": "ko"
+      }
+    },
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "api-version": "2020-02-02-preview"
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "location": "southeastasia",
+        "properties": {
+          "collation": "SQL_Latin1_General_CP1_CI_AS",
+          "status": "Online",
+          "creationDate": "2017-08-04T15:00:17.73Z",
+          "earliestRestorePoint": "2022-09-20T06:14:34.700Z",
+          "defaultSecondaryLocation": "North Europe",
+          "catalogCollation": "DATABASE_DEFAULT",
+          "failoverGroupId": "hyjwdmzsdqd"
+        },
+        "tags": {
+          "key2974": "quv",
+          "key4672": "ko"
+        },
+        "id": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/testrg/providers/Microsoft.Sql/managedInstances/testcl/databases/testdb1",
+        "name": "testdb1",
+        "type": "Microsoft.Sql/managedInstances/databases"
+      }
+    },
+    "201": {
+      "headers": {
+        "location": "https://contoso.com/operationstatus"
+      },
+      "body": {
+        "location": "southeastasia",
+        "properties": {
+          "collation": "SQL_Latin1_General_CP1_CI_AS",
+          "status": "Online",
+          "creationDate": "2017-08-04T15:00:17.73Z",
+          "earliestRestorePoint": "2022-09-20T06:14:34.700Z",
+          "defaultSecondaryLocation": "North Europe",
+          "catalogCollation": "DATABASE_DEFAULT",
+          "failoverGroupId": "hyjwdmzsdqd"
+        },
+        "tags": {
+          "key2974": "quv",
+          "key4672": "ko"
+        },
+        "id": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/testrg/providers/Microsoft.Sql/managedInstances/testcl/databases/testdb1",
+        "name": "testdb1",
+        "type": "Microsoft.Sql/managedInstances/databases"
+      }
+    },
+    "202": {
+      "headers": {
+        "location": "https://contoso.com/operationstatus"
+      }
+    }
+  }
+}
