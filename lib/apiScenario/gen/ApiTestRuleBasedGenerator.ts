@@ -32,7 +32,7 @@ export type ApiTestGeneratorRule = {
   generator: ApiTestGenerator;
 };
 
-type ApiTestGenerator = (resource:ArmResourceManipulator,base: RawScenarioDefinition)=> RawScenarioDefinition
+type ApiTestGenerator = (resource:ArmResourceManipulator,base: RawScenarioDefinition)=> RawScenarioDefinition | null
 
 type ResourceOperation = {
   path: string;
@@ -50,6 +50,8 @@ export interface ArmResourceManipulatorInterface {
   getResourceActions(): ResourceOperation[];
   getProperty(propName: string): any;
   getProperties(): any[];
+  getParentResource(): ArmResourceManipulatorInterface[];
+  getChildResource(): ArmResourceManipulatorInterface[];
 }
 
 /*
@@ -83,14 +85,14 @@ export class ArmResourceManipulator implements ArmResourceManipulatorInterface {
       .getResourceActions()
       .filter((res) => res.getResourceType() === this.getResourceType() && res.isListResource())
       .map((res) => res.getOperation("List"))
-      .reduce((pre, cur) => pre.concat(cur));
+      .reduce((pre, cur) => pre.concat(cur),[]) || [];
   }
   getResourceActions(): ResourceOperation[] {
     return this.resAnalyzer
       .getResourceActions()
       .filter((res) => res.getResourceType() === this.getResourceType() && res.isListResource())
       .map((res) => res.getOperation("Action"))
-      .reduce((pre, cur) => pre.concat(cur));
+      .reduce((pre, cur) => pre.concat(cur),[]);
   }
   getResourceOperation(kind: ResourceBasicOperationKind): ResourceOperation {
     return this.getOperation(kind)?.[0];
@@ -125,7 +127,7 @@ export class ArmResourceManipulator implements ArmResourceManipulatorInterface {
               responses: this.jsonLoader.resolveRefObj(rawOperation.responses!),
               path: pathTemplate!,
               kind,
-              examples: Object.values(rawOperation["x-ms-examples"]).map((e) =>
+              examples: Object.values(rawOperation["x-ms-examples"]|| {})?.map((e) =>
                 this.jsonLoader.getRealPath((e as any).$ref)
               ),
             };
@@ -174,7 +176,7 @@ export class ArmResourceManipulator implements ArmResourceManipulatorInterface {
       return Object.entries(putOp.responses || [])
         .filter((entry) => entry[0] !== "default")
         .map((entry) => (entry[1] as any).schema)
-        .some((schema) => this.getPropertyInternal(schema, "location"));
+        .some((schema) => schema && this.getPropertyInternal(schema, "location"));
     }
     return false;
   }
@@ -186,7 +188,7 @@ export class ArmResourceManipulator implements ArmResourceManipulatorInterface {
 
   public isListResource() {
     const regex = /.*_list.*/gi;
-    const matches = this.getOperation("Get")?.[0].operationId.match(regex);
+    const matches = this.getOperation("Get")?.[0]?.operationId?.match(regex);
     return !!matches;
   }
 
@@ -220,7 +222,8 @@ class ArmResourceDependencyGenerator {
   constructor(
     private _swagger: string,
     private _dependencyFile: string,
-    private _outPutDir: string
+    private _outPutDir: string,
+    private _basicScenarioFile?:string
   ) {}
   async generate(resoure: ArmResourceManipulator,useExample?:boolean) {
     const restlerGenerator = RestlerApiScenarioGenerator.create({
@@ -230,7 +233,13 @@ class ArmResourceDependencyGenerator {
       useExample:useExample
     });
     await restlerGenerator.initialize();
-    return restlerGenerator.generateResourceDependency(resoure);
+    if (!this._basicScenarioFile) {
+      return restlerGenerator.generateResourceDependency(resoure);
+    }
+    else {
+      //TBD
+      return null
+    }
   }
 }
 
@@ -324,31 +333,44 @@ class ArmResourceAnalyzer {
 }
 
 @injectable()
-class ApiTestRuleBasedGenerator {
-  constructor(private swaggerLoader: SwaggerLoader, private jsonLoader:JsonLoader,private rules: ApiTestGeneratorRule[], private swaggerFile: string,private dependencyFile?:string) {}
+export class ApiTestRuleBasedGenerator {
+  constructor(private swaggerLoader: SwaggerLoader, private jsonLoader:JsonLoader,private rules: ApiTestGeneratorRule[], private swaggerFile: string,private dependencyFile?:string,private basicScenarioFile?:string) {}
 
   async run(outputDir:string,platFormType:PlatFormType) {
     const swaggerSpec = await this.swaggerLoader.load(this.swaggerFile);
     const analyzer = new ArmResourceAnalyzer(swaggerSpec,this.jsonLoader);
     const trackedResources = analyzer.getTrackedResource();
-    //const proxyResources = helper.getProxyResource()
+    const proxyResources = analyzer.getProxyResource();
+    const extensionResources = analyzer.getExtensionResource();
     const scenariosResult :{[index:string]:RawScenarioDefinition} = {}
-    for (const trackedResource of trackedResources) {
-      for ( const rule of this.rules
-        .filter((rule) => rule.resourceKinds?.includes("Tracked") && rule.appliesTo.includes(platFormType))) {
-          // what if without dependency ??
-          if (this.dependencyFile) {
-            const dependency = new ArmResourceDependencyGenerator(
-              this.swaggerFile,this.dependencyFile,
-              outputDir,
-            );
-            const base = await dependency.generate(trackedResource,rule.useExample);
-            const apiSenarios = rule.generator(trackedResource, base);
-            scenariosResult[rule.name] = apiSenarios
-            this.writeFile(rule.name,trackedResource.getResourceType(),apiSenarios,outputDir);
-          }
-        }
+    const  generateForResources = async (resources: ArmResourceManipulator[],kind:ArmResourceKind) => {
+       for (const resource of resources) {
+         for (const rule of this.rules.filter(
+           (rule) => rule.resourceKinds?.includes(kind) && rule.appliesTo.includes(platFormType)
+         )) {
+           // what if without dependency ??
+           if (this.dependencyFile) {
+             const dependency = new ArmResourceDependencyGenerator(
+               this.swaggerFile,
+               this.dependencyFile,
+               outputDir,this.basicScenarioFile
+             );
+             const base = await dependency.generate(resource, rule.useExample);
+             if (base) {
+               const apiSenarios = rule.generator(resource, base);
+               if (apiSenarios) {
+                 scenariosResult[rule.name] = apiSenarios;
+                 this.writeFile(rule.name, resource.getResourceType(), apiSenarios, outputDir);
+               }
+             }
+
+           }
+         }
+       }
     }
+    await generateForResources(trackedResources,"Tracked")
+    await generateForResources(proxyResources,"Proxy")
+    await generateForResources(extensionResources,"Extension")
    
   }
 
@@ -373,7 +395,7 @@ export const generateApiTestBasedOnRules = async (swaggers:string[],dependencyFi
   const jsonLoader = inversifyGetInstance(JsonLoader, opts);
   const rules:ApiTestGeneratorRule[] = [ResourceNameCaseInsensitive, SystemDataExistsInResponse];
   for (const swagger of swaggers) {
-    const generator =   new ApiTestRuleBasedGenerator(swaggerLoader,jsonLoader ,rules,swagger,dependencyFile)
+    const generator =   new ApiTestRuleBasedGenerator(swaggerLoader,jsonLoader,rules,swagger,dependencyFile)
     await generator.run(outputDir,isRPaaS?"RPaaS":"ARM")
   }
 }

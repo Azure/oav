@@ -5,7 +5,7 @@ export const SystemDataExistsInResponse: ApiTestGeneratorRule = {
   name: "SystemDataExistsInResponse",
   armRpcCodes: ["RPC-V1-Common-1"],
   description: "Check if the systemData exists in the response.",
-  resourceKinds: ["Tracked"],
+  resourceKinds: ["Tracked","Proxy","Extension"],
   appliesTo: ["ARM"],
   useExample: true,
   generator: (resource: ArmResourceManipulatorInterface, base: RawScenarioDefinition) => {
@@ -16,6 +16,9 @@ export const SystemDataExistsInResponse: ApiTestGeneratorRule = {
     if (resource.getProperty( "systemData")) {
       responses["200"] = [{ test: "/body/systemData", expression: "to.not.be.undefined" }];
       step.responses = responses
+    }
+    else {
+      return null
     }
     base.scenarios[0].steps.push(step as any);
     return base;

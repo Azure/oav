@@ -27,13 +27,13 @@ export const ResourceNameCaseInsensitive: ApiTestGeneratorRule = {
       // generate a mocked value
       const mocker = new Mocker();
       const randomValue = mocker.mock({ type: "string", minLength: 5, maxLength: 10 }, "value");
-      base.variables.mockedRandom = { type: "string", value: randomValue };
+      base.variables._mockedRandom = { type: "string", value: randomValue };
       // set the operation variable
       const oldPrefix = (resourceNameVar as any).prefix;
-      (resourceNameVar as any).value = `${toUpper(oldPrefix)}$(mockedRandom)`;
+      (resourceNameVar as any).value = `${toUpper(oldPrefix)}$(_mockedRandom)`;
       delete (resourceNameVar as any).prefix;
       // modify the global variable
-      base.variables[resourceName] = { value: `${oldPrefix}$(mockedRandom)`, type: "string" };
+      base.variables[resourceName] = { value: `${oldPrefix}$(_mockedRandom)`, type: "string" };
     }
     const step = { operationId: getOp.operationId } as any;
     const variables = {} as any;
