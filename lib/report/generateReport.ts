@@ -61,7 +61,9 @@ export interface OperationCoverageInfoForRendering extends OperationCoverageInfo
 
 export interface resultForRendering
   extends OperationCoverageInfoForRendering,
-    TrafficValidationIssueForRendering {}
+    TrafficValidationIssueForRendering {
+  index?: number;
+}
 
 // used to pass data to the template rendering engine
 export class CoverageView {
@@ -69,6 +71,8 @@ export class CoverageView {
   public language: string;
   public apiVersion: string = "unknown";
   public generatedDate: Date;
+  public markdownPath: string;
+  public markdown: string;
 
   public undefinedOperationCount: number = 0;
   public operationValidated: number = 0;
@@ -95,12 +99,14 @@ export class CoverageView {
     undefinedOperationCount: number = 0,
     packageName: string = "",
     language: string = "",
+    markdownPath: string = "",
     overrideLinkInReport: boolean = false,
     outputExceptionInReport: boolean = false,
     specLinkPrefix: string = "",
     payloadLinkPrefix: string = ""
   ) {
     this.package = packageName;
+    this.markdownPath = markdownPath;
     this.validationResults = validationResults;
     this.coverageResults = coverageResults;
     this.undefinedOperationCount = undefinedOperationCount;
@@ -131,6 +137,7 @@ export class CoverageView {
 
   public async prepareDataForRendering() {
     try {
+      this.markdown = await this.readMarkdown();
       const errorDefinitions = await this.loadErrorDefinitions();
       let errorsForRendering: LiveValidationIssueForRendering[];
       this.sortedValidationResults.forEach((element) => {
@@ -261,7 +268,8 @@ export class CoverageView {
         });
       });
 
-      for (const e of this.resultsForRendering) {
+      for (const [index, e] of this.resultsForRendering.entries()) {
+        e.index = index;
         for (const i of generalErrorsInnerList) {
           if (e.specFilePath === i.specFilePath && i) {
             e.generalErrorsInnerList.push(i);
@@ -270,6 +278,17 @@ export class CoverageView {
       }
     } catch (e) {
       console.error(`Failed in prepareDataForRendering with err:${e?.stack};message:${e?.message}`);
+    }
+  }
+
+  private async readMarkdown() {
+    try {
+      const loader = new FileLoader({});
+      const res = await loader.load(this.markdownPath);
+      return res;
+    } catch (e) {
+      console.error(`Failed in read report.md file`);
+      return "";
     }
   }
 
@@ -391,6 +410,7 @@ export class ReportGenerator {
   private outputExceptionInReport: boolean;
   private specLinkPrefix: string;
   private payloadLinkPrefix: string;
+  private markdownPath: string;
 
   public constructor(
     validationResults: TrafficValidationIssue[],
@@ -404,6 +424,7 @@ export class ReportGenerator {
     this.reportPath = path.resolve(process.cwd(), options.reportPath!);
     this.sdkLanguage = options.sdkLanguage!;
     this.sdkPackage = options.sdkPackage!;
+    this.markdownPath = options.markdownPath!;
     this.overrideLinkInReport = options.overrideLinkInReport!;
     this.outputExceptionInReport = options.outputExceptionInReport!;
     this.specLinkPrefix = options.specLinkPrefix!;
@@ -419,6 +440,7 @@ export class ReportGenerator {
       this.undefinedOperationsCount,
       this.sdkPackage,
       this.sdkLanguage,
+      this.markdownPath,
       this.overrideLinkInReport,
       this.outputExceptionInReport,
       this.specLinkPrefix,
@@ -429,8 +451,8 @@ export class ReportGenerator {
     const general_errors = view.getGeneralErrors();
     const runtime_errors = view.getRunTimeErrors();
 
-    console.log(general_errors);
-    console.log(runtime_errors);
+    console.log(JSON.stringify(general_errors, null, 2));
+    console.log(JSON.stringify(runtime_errors, null, 2));
 
     const text = Mustache.render(template, view);
     fs.writeFileSync(this.reportPath, text, "utf-8");

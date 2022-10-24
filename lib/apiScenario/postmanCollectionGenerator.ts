@@ -1,12 +1,12 @@
 import * as path from "path";
 import * as fs from "fs";
-import newman from "newman";
+import newman, { NewmanRunOptions, NewmanRunSummary } from "newman";
 import { inject, injectable } from "inversify";
 import { Collection, VariableScope } from "postman-collection";
 import { inversifyGetInstance, TYPES } from "../inversifyUtils";
 import { ReportGenerator as HtmlReportGenerator } from "../report/generateReport";
 import { FileLoader } from "../swagger/fileLoader";
-import { getApiVersionFromFilePath, getRandomString, printWarning } from "../util/utils";
+import { getApiVersionFromFilePath, getRandomString } from "../util/utils";
 import {
   OperationCoverageInfo,
   RuntimeException,
@@ -15,6 +15,7 @@ import {
   unCoveredOperationsFormat,
 } from "../swaggerValidator/trafficValidator";
 import { LiveValidationIssue } from "../liveValidation/liveValidator";
+import { logger } from "./logger";
 import { ApiScenarioLoader, ApiScenarioLoaderOption } from "./apiScenarioLoader";
 import { ApiScenarioRunner } from "./apiScenarioRunner";
 import { generateMarkdownReportHeader } from "./markdownReport";
@@ -25,8 +26,8 @@ import {
   NewmanReportValidatorOption,
 } from "./newmanReportValidator";
 import { SwaggerAnalyzer, SwaggerAnalyzerOption } from "./swaggerAnalyzer";
-import { EnvironmentVariables, VariableEnv } from "./variableEnv";
-import { parseNewmanReport, RawNewmanReport } from "./newmanReportParser";
+import { EnvironmentVariables } from "./variableEnv";
+import { parseNewmanSummary } from "./newmanReportParser";
 import {
   defaultCollectionFileName,
   defaultEnvFileName,
@@ -36,6 +37,7 @@ import {
 } from "./defaultNaming";
 import { DataMasker } from "./dataMasker";
 import { Scenario, ScenarioDefinition } from "./apiScenarioTypes";
+import { CLEANUP_FOLDER, PREPARE_FOLDER } from "./postmanHelper";
 
 export interface PostmanCollectionGeneratorOption
   extends ApiScenarioLoaderOption,
@@ -50,7 +52,6 @@ export interface PostmanCollectionGeneratorOption
   html?: boolean;
   runCollection: boolean;
   generateCollection: boolean;
-  baseUrl: string;
   testProxy?: string;
   skipValidation?: boolean;
   savePayload?: boolean;
@@ -91,7 +92,7 @@ export class PostmanCollectionGenerator {
     private swaggerAnalyzer: SwaggerAnalyzer
   ) {}
 
-  public async run(): Promise<Collection[]> {
+  public async run(): Promise<Collection> {
     const scenarioDef = await this.apiScenarioLoader.load(this.opt.scenarioDef);
 
     await this.swaggerAnalyzer.initialize();
@@ -103,9 +104,6 @@ export class PostmanCollectionGenerator {
       }
     }
     this.opt.runId = this.opt.runId || generateRunId();
-    const oldSkipCleanUp = this.opt.skipCleanUp;
-    this.opt.skipCleanUp =
-      this.opt.skipCleanUp || scenarioDef.scenarios.filter((s) => s.shareScope).length > 1;
 
     if (this.opt.markdown) {
       const reportExportPath = path.resolve(
@@ -118,11 +116,9 @@ export class PostmanCollectionGenerator {
       );
     }
 
-    const result: Collection[] = [];
-
     const client = new PostmanCollectionRunnerClient({
+      collectionName: scenarioDef.name,
       runId: this.opt.runId,
-      baseUrl: this.opt.baseUrl,
       testProxy: this.opt.testProxy,
       verbose: this.opt.verbose,
       skipAuth: this.opt.devMode,
@@ -133,52 +129,77 @@ export class PostmanCollectionGenerator {
       jsonLoader: this.apiScenarioLoader.jsonLoader,
       env: this.opt.env,
       client: client,
-      resolveVariables: false,
-      skipCleanUp: this.opt.skipCleanUp,
     });
 
-    for (let i = 0; i < scenarioDef.scenarios.length; i++) {
-      const scenario = scenarioDef.scenarios[i];
-      if (i === scenarioDef.scenarios.length - 1 && !oldSkipCleanUp) {
-        this.opt.skipCleanUp = oldSkipCleanUp;
-        runner.setSkipCleanUp(false);
-      }
-      await runner.executeScenario(scenario);
+    await runner.execute(scenarioDef);
 
-      const [collection, runtimeEnv] = client.outputCollection();
+    let [collection, environment] = client.outputCollection();
 
-      for (let i = 0; i < collection.items.count(); i++) {
-        this.longRunningOperationOrderUpdate(collection, i);
-      }
-
-      if (this.opt.generateCollection) {
-        await this.writeCollectionToJson(scenario, collection, runtimeEnv);
-      }
-
-      if (this.opt.runCollection) {
-        await this.runCollection(scenario, collection, runtimeEnv);
-      }
-
-      result.push(collection);
+    if (this.opt.generateCollection) {
+      await this.writeCollectionToJson(scenarioDef.name, collection, environment);
     }
+
+    if (this.opt.runCollection) {
+      try {
+        for (let i = 0; i < scenarioDef.scenarios.length; i++) {
+          const scenario = scenarioDef.scenarios[i];
+
+          const foldersToRun = [];
+          if (i == 0 && collection.items.find((item) => item.name === PREPARE_FOLDER, collection)) {
+            foldersToRun.push(PREPARE_FOLDER);
+          }
+          foldersToRun.push(scenario.scenario);
+          if (
+            i == scenarioDef.scenarios.length - 1 &&
+            !this.opt.skipCleanUp &&
+            collection.items.find((item) => item.name === CLEANUP_FOLDER, collection)
+          ) {
+            foldersToRun.push(CLEANUP_FOLDER);
+          }
+
+          const reportExportPath = path.resolve(
+            this.opt.outputFolder,
+            `${defaultNewmanReport(this.opt.name, this.opt.runId!, scenario.scenario)}`
+          );
+          const summary = await this.doRun({
+            collection,
+            environment,
+            folder: foldersToRun,
+            reporters: "cli",
+          });
+          await this.postRun(scenario, reportExportPath, summary.environment, summary);
+
+          environment = summary.environment;
+        }
+      } catch (err) {
+        logger.error(`Error in running collection: ${err}`);
+      } finally {
+        if (this.opt.skipCleanUp && scenarioDef.scope === "ResourceGroup") {
+          logger.warn(
+            `Notice: the resource group '${environment.get(
+              "resourceGroupName"
+            )}' was not cleaned up.`
+          );
+        }
+      }
+    }
+
     const operationIdCoverageResult = this.swaggerAnalyzer.calculateOperationCoverage(scenarioDef);
-    console.log(
+    logger.info(
       `Operation coverage ${(operationIdCoverageResult.coverage * 100).toFixed(2) + "%"} (${
         operationIdCoverageResult.coveredOperationNumber
       }/${operationIdCoverageResult.totalOperationNumber})`
     );
-    if (this.opt.verbose) {
-      if (operationIdCoverageResult.uncoveredOperationIds.length > 0) {
-        console.log("Uncovered operationIds: ");
-        console.log(operationIdCoverageResult.uncoveredOperationIds);
-      }
+    if (operationIdCoverageResult.uncoveredOperationIds.length > 0) {
+      logger.verbose("Uncovered operationIds: ");
+      logger.verbose(operationIdCoverageResult.uncoveredOperationIds);
     }
 
-    if (this.opt.html) {
+    if (this.opt.html && this.opt.runCollection) {
       await this.generateHtmlReport(scenarioDef);
     }
 
-    return result;
+    return collection;
   }
 
   private async generateHtmlReport(scenarioDef: ScenarioDefinition) {
@@ -197,14 +218,15 @@ export class PostmanCollectionGenerator {
         ) as ApiScenarioTestResult;
 
         providerNamespace = report.providerNamespace;
-        for (const step of report.stepResult) {
+        for (const r of report.stepResult) {
           const trafficValidationIssue: TrafficValidationIssue = {
             errors: [
-              ...(step.liveValidationResult?.requestValidationResult.errors ?? []),
-              ...(step.liveValidationResult?.responseValidationResult.errors ?? []),
+              ...(r.liveValidationResult?.requestValidationResult.errors ?? []),
+              ...(r.liveValidationResult?.responseValidationResult.errors ?? []),
+              ...(r.roundtripValidationResult?.errors ?? []),
             ],
-            specFilePath: step.specFilePath,
-            operationInfo: step.liveValidationResult?.requestValidationResult.operationInfo ?? {
+            specFilePath: r.specFilePath,
+            operationInfo: r.liveValidationResult?.requestValidationResult.operationInfo ?? {
               operationId: "unknown",
               apiVersion: "unknown",
             },
@@ -217,30 +239,25 @@ export class PostmanCollectionGenerator {
           };
 
           if (this.opt.savePayload) {
-            const payloadFilePath = path.join(
-              ".",
-              dir.name,
-              `payloads/${step.stepName}_${step.correlationId}.json`
-            );
-            trafficValidationIssue.payloadFilePath = payloadFilePath;
+            trafficValidationIssue.payloadFilePath = r.payloadPath;
           }
 
-          for (const runtimeError of step.runtimeError ?? []) {
+          for (const runtimeError of r.runtimeError ?? []) {
             trafficValidationIssue.errors?.push(this.convertRuntimeException(runtimeError));
           }
 
-          if (step.liveValidationResult?.requestValidationResult.runtimeException) {
+          if (r.liveValidationResult?.requestValidationResult.runtimeException) {
             trafficValidationIssue.errors?.push(
               this.convertRuntimeException(
-                step.liveValidationResult!.requestValidationResult.runtimeException
+                r.liveValidationResult!.requestValidationResult.runtimeException
               )
             );
           }
 
-          if (step.liveValidationResult?.responseValidationResult.runtimeException) {
+          if (r.liveValidationResult?.responseValidationResult.runtimeException) {
             trafficValidationIssue.errors?.push(
               this.convertRuntimeException(
-                step.liveValidationResult!.responseValidationResult.runtimeException
+                r.liveValidationResult!.responseValidationResult.runtimeException
               )
             );
           }
@@ -298,6 +315,7 @@ export class PostmanCollectionGenerator {
       reportPath: path.resolve(reportExportPath, "report.html"),
       overrideLinkInReport: false,
       sdkPackage: providerNamespace,
+      markdownPath: this.opt.markdown ? path.resolve(reportExportPath, "report.md") : undefined,
     };
 
     const generator = new HtmlReportGenerator(
@@ -329,42 +347,21 @@ export class PostmanCollectionGenerator {
     return ret as LiveValidationIssue;
   }
 
-  private longRunningOperationOrderUpdate(collection: Collection, i: number) {
-    if (collection.items.idx(i).name.search("poller$") !== -1) {
-      const env = new VariableEnv();
-      const nextRequestName =
-        i + 2 < collection.items.count() ? `'${collection.items.idx(i + 2).name}'` : "null";
-      env.setBatchEnv({ nextRequest: nextRequestName });
-      const exec = collection.items.idx(i).events.idx(0).script.toSource() as string;
-      collection.items
-        .idx(i)
-        .events.idx(0)
-        .update({
-          script: {
-            id: getRandomString(),
-            type: "text/javascript",
-            exec: env.resolveString(exec),
-          },
-        });
-    }
-  }
-
   private async writeCollectionToJson(
-    scenario: Scenario,
+    collectionName: string,
     collection: Collection,
     runtimeEnv: VariableScope
   ) {
-    const scenarioName = scenario.scenario;
     const collectionPath = path.resolve(
       this.opt.outputFolder,
-      `${defaultCollectionFileName(this.opt.name, this.opt.runId!, scenarioName)}`
+      `${defaultCollectionFileName(this.opt.name, this.opt.runId!)}`
     );
     const envPath = path.resolve(
       this.opt.outputFolder,
-      `${defaultEnvFileName(this.opt.name, this.opt.runId!, scenarioName)}`
+      `${defaultEnvFileName(this.opt.name, this.opt.runId!)}`
     );
     const env = runtimeEnv.toJSON();
-    env.name = scenarioName + ".env";
+    env.name = collectionName + ".env";
     env._postman_variable_scope = "environment";
     await this.fileLoader.writeFile(envPath, JSON.stringify(env, null, 2));
     await this.fileLoader.writeFile(collectionPath, JSON.stringify(collection.toJSON(), null, 2));
@@ -377,50 +374,36 @@ export class PostmanCollectionGenerator {
     }
     this.dataMasker.addMaskedValues(values);
 
-    console.log(`\ngenerate collection successfully!`);
-    console.log(`Postman collection: ${collectionPath}\nPostman env: ${envPath}`);
+    logger.info(`generate collection successfully!`);
+    logger.info(`Postman collection: ${collectionPath}`);
+    logger.info(`Postman env: ${envPath}`);
   }
 
-  private async runCollection(
-    scenario: Scenario,
-    collection: Collection,
-    runtimeEnv: VariableScope
-  ) {
-    const scenarioName = scenario.scenario;
-    const reportExportPath = path.resolve(
-      this.opt.outputFolder,
-      `${defaultNewmanReport(this.opt.name, this.opt.runId!, scenarioName)}`
-    );
-    const newmanRun = async () => {
-      return new Promise((resolve) => {
-        newman
-          .run(
-            {
-              collection: collection,
-              environment: runtimeEnv,
-              reporters: ["cli", "json"],
-              reporter: { json: { export: reportExportPath } },
-            },
-            function (err, summary) {
-              if (summary.run.failures.length > 0) {
-                process.exitCode = 1;
-              }
-              if (err) {
-                console.log(`collection run failed. ${err}`);
-              }
-              console.log("collection run complete!");
-            }
-          )
-          .on("done", async (_err, _summary) => {
-            await this.postRun(scenario, reportExportPath, runtimeEnv);
-            resolve(_summary);
-          });
+  private async doRun(runOptions: NewmanRunOptions) {
+    const newmanRun = async () =>
+      new Promise<NewmanRunSummary>((resolve, reject) => {
+        newman.run(runOptions, function (err, summary) {
+          if (summary.run.failures.length > 0) {
+            process.exitCode = 1;
+          }
+          if (err) {
+            logger.error(`collection run failed. ${err}`);
+            reject(err);
+          } else {
+            logger.info("collection run complete!");
+            resolve(summary);
+          }
+        });
       });
-    };
-    await newmanRun();
+    return await newmanRun();
   }
 
-  private async postRun(scenario: Scenario, reportExportPath: string, runtimeEnv: VariableScope) {
+  private async postRun(
+    scenario: Scenario,
+    reportExportPath: string,
+    runtimeEnv: VariableScope,
+    summary: NewmanRunSummary
+  ) {
     const keys = await this.swaggerAnalyzer.getAllSecretKey();
     const values: string[] = [];
     for (const [k, v] of Object.entries(runtimeEnv.syncVariablesTo())) {
@@ -430,17 +413,15 @@ export class PostmanCollectionGenerator {
     }
     this.dataMasker.addMaskedValues(values);
     this.dataMasker.addMaskedKeys(keys);
-    // read content and upload. mask newman report.
-    const rawReport = JSON.parse(await this.fileLoader.load(reportExportPath)) as RawNewmanReport;
 
     // add mask environment secret value
-    for (const item of rawReport.environment.values) {
+    for (const item of summary.environment.values.members) {
       if (this.dataMasker.maybeSecretKey(item.key)) {
         this.dataMasker.addMaskedValues([item.value]);
       }
     }
 
-    const newmanReport = parseNewmanReport(rawReport);
+    const newmanReport = parseNewmanSummary(summary as any);
 
     const newmanReportValidatorOption: NewmanReportValidatorOption = {
       apiScenarioFilePath: scenario._scenarioDef._filePath,
@@ -452,12 +433,11 @@ export class PostmanCollectionGenerator {
       markdown: this.opt.markdown,
       junit: this.opt.junit,
       html: this.opt.html,
-      baseUrl: this.opt.baseUrl,
+      armEndpoint: this.opt.env.armEndpoint,
       runId: this.opt.runId,
       skipValidation: this.opt.skipValidation,
       generateExample: this.opt.generateExample,
       savePayload: this.opt.savePayload,
-      verbose: this.opt.verbose,
     };
 
     const reportValidator = inversifyGetInstance(
@@ -468,11 +448,5 @@ export class PostmanCollectionGenerator {
     await reportValidator.initialize(scenario);
 
     await reportValidator.generateReport(newmanReport);
-
-    if (this.opt.skipCleanUp) {
-      printWarning(
-        `Notice:the resource group '${runtimeEnv.get("resourceGroupName")}' was not cleaned up.`
-      );
-    }
   }
 }

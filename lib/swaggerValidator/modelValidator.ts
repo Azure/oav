@@ -390,6 +390,23 @@ export class SwaggerExampleValidator {
         // todo skip url encoding
         pathParameters[parameter.name] = parameterValue;
       } else if (location === "query") {
+        // validate the api version value
+        if (parameter.name === "api-version" && parameterValue !== this.swagger.info.version) {
+          const meta = getOavErrorMeta("INVALID_REQUEST_PARAMETER", {
+            parameterName: "api-version",
+            apiVersion: parameterValue,
+          });
+          this.addErrorsFromErrorCode(
+            operation.operationId!,
+            exampleFileUrl,
+            meta,
+            operation,
+            undefined,
+            exampleContent?.parameters,
+            `$parameters["api-version"]`
+          );
+          continue;
+        }
         queryParameters[parameter.name] = parameterValue;
       } else if (location === "body") {
         if ((parameter as BodyParameter).schema?.format === "file") {
@@ -420,7 +437,7 @@ export class SwaggerExampleValidator {
       ajvValidatorErrors,
       exampleFileUrl,
       exampleContent,
-      parameters
+      mergedParameters
     );
   }
   private async loadSwagger(swaggerFilePath: string, skipResolveRef: boolean) {
@@ -573,6 +590,16 @@ export class SwaggerExampleValidator {
             }
           }
         }
+
+        if (
+          (err.code as any) === "MISSING_RESOURCE_ID" &&
+          exampleContent.responses[statusCode!].body &&
+          Object.keys(exampleContent.responses[statusCode!].body).length === 0
+        ) {
+          // ignore this error when whole body of response is empty
+          continue;
+        }
+
         const node = this.getNotSuppressedErrorPath(err);
         if (node === undefined) {
           continue;
@@ -924,11 +951,13 @@ for (const errorCode of Object.keys(modelValidationErrors)) {
   loadSuppression.push(errorCode);
 }
 
+// Set 'isArmCall flag to true so that the special ARM rules can be applied to examples validation too'
 const defaultOpts: ExampleValidationOption = {
   eraseDescription: false,
   eraseXmsExamples: false,
   useJsonParser: true,
   loadSuppression,
+  isArmCall: true,
 };
 
 // Compatible wrapper for old ModelValidator

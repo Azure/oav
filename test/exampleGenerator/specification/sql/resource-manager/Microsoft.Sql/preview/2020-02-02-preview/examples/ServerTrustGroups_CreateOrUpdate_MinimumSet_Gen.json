@@ -1,0 +1,26 @@
+{
+  "parameters": {
+    "resourceGroupName": "rgServerTrustGroups",
+    "locationName": "wofsczzoxzliaifdeklglusnb",
+    "serverTrustGroupName": "mdewttxmtvruxicqjbes",
+    "parameters": {},
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "api-version": "2020-02-02-preview"
+  },
+  "responses": {
+    "200": {
+      "body": {}
+    },
+    "201": {
+      "headers": {
+        "location": "https://contoso.com/operationstatus"
+      },
+      "body": {}
+    },
+    "202": {
+      "headers": {
+        "location": "https://contoso.com/operationstatus"
+      }
+    }
+  }
+}

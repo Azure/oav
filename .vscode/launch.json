@@ -91,19 +91,6 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Resolve Spec",
-      "program": "${workspaceRoot}/dist/cli.js",
-      "cwd": "${workspaceRoot}",
-      "args": [
-        "resolve-spec",
-        "-r",
-        "../azure-rest-api-specs/specification/network/resource-manager/Microsoft.Network/stable/2018-08-01/applicationGateway.json"
-      ],
-      "env": {}
-    },
-    {
-      "type": "node",
-      "request": "launch",
       "name": "Model Validation",
       "program": "${workspaceRoot}/dist/cli.js",
       "cwd": "${workspaceRoot}",
@@ -111,27 +98,6 @@
         "validate-example",
         "../azure-rest-api-specs/specification/apimanagement/resource-manager/Microsoft.ApiManagement/preview/2018-06-01-preview/apimversionsets.json"
       ],
-      "env": {}
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "generate uml",
-      "program": "${workspaceRoot}/cli.js",
-      "cwd": "${workspaceRoot}",
-      "args": [
-        "generate-uml",
-        "D:/sdk/azure-rest-api-specs-pr/specification/datamigration/resource-manager/Microsoft.DataMigration/2017-11-15-preview/datamigration.json"
-      ],
-      "env": {}
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "generate wireformat",
-      "program": "${workspaceRoot}/cli.js",
-      "cwd": "${workspaceRoot}",
-      "args": ["generate-wireformat", "test/swaggers/arm-storage/2016-01-01/swagger/storage.json"],
       "env": {}
     },
     {

@@ -1,0 +1,15 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-0000-0000-0000-000000000000",
+    "resourceGroupName": "AzureEventGridRunnerRGKoreaSouth",
+    "domainName": "egcrudrunnerdomain2151d5baKoreaSouth",
+    "api-version": "2020-06-01"
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "location": "aaaaaaaaaaa"
+      }
+    }
+  }
+}

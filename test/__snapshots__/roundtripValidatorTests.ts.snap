@@ -1,0 +1,188 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Live Validator Initialization OperationLoader should be completely initialized 1`] = `
+Array [
+  "location",
+  "/200/schema/properties/nextLink",
+  "/200/schema/properties/value/items/properties/osType",
+]
+`;
+
+exports[`Live Validator Initialization OperationLoader should be initialized only with spec 1`] = `
+Array [
+  "parameters/schema/properties/id",
+  "parameters/schema/properties/name",
+  "parameters/schema/properties/type",
+  "parameters/schema/properties/properties/properties/statuses",
+  "/200/schema/properties/id",
+  "/200/schema/properties/name",
+  "/200/schema/properties/type",
+  "/200/schema/properties/properties/properties/statuses",
+]
+`;
+
+exports[`Live Validator Initialization OperationLoader should be initialized only with spec 2`] = `
+Map {
+  "readOnly" => Map {
+    "parameters/schema/properties/id" => Array [],
+    "parameters/schema/properties/name" => Array [],
+    "parameters/schema/properties/type" => Array [],
+    "parameters/schema/properties/properties/properties/statuses" => Array [],
+    "/200/schema/properties/id" => Array [],
+    "/200/schema/properties/name" => Array [],
+    "/200/schema/properties/type" => Array [],
+    "/200/schema/properties/properties/properties/statuses" => Array [],
+  },
+  "secret" => Map {},
+  "default" => Map {},
+  "mutability" => Map {
+    "parameters/schema/properties/sku" => Array [
+      "read",
+    ],
+    "/200/schema/properties/sku" => Array [
+      "read",
+    ],
+  },
+}
+`;
+
+exports[`Live Validator Initialization Round trip validation fail 1`] = `
+Object {
+  "errors": Array [
+    Object {
+      "code": "ROUNDTRIP_INCONSISTENT_PROPERTY",
+      "jsonPathsInPayload": Array [],
+      "message": "The property's value 'westcentralus1' in the GET response is different from what was set 'westcentralus' in the preceding PUT request.",
+      "pathsInPayload": Array [
+        "/location",
+      ],
+      "schemaPath": "",
+      "severity": 0,
+      "source": Object {
+        "position": Object {
+          "column": 0,
+          "line": 0,
+        },
+        "url": "",
+      },
+    },
+    Object {
+      "code": "ROUNDTRIP_MISSING_PROPERTY",
+      "jsonPathsInPayload": Array [],
+      "message": "The property 'createOption' is present in the PUT request but is either never returned in the GET response or is returned with a null value.",
+      "pathsInPayload": Array [
+        "/properties/storageProfile/osDisk/createOption",
+      ],
+      "schemaPath": "",
+      "severity": 0,
+      "source": Object {
+        "position": Object {
+          "column": 0,
+          "line": 0,
+        },
+        "url": "",
+      },
+    },
+    Object {
+      "code": "ROUNDTRIP_ADDITIONAL_PROPERTY",
+      "jsonPathsInPayload": Array [],
+      "message": "The property 'caching' is returned in the GET response, but it is not declared in the PUT request.",
+      "pathsInPayload": Array [
+        "/properties/storageProfile/osDisk/caching",
+      ],
+      "schemaPath": "",
+      "severity": 0,
+      "source": Object {
+        "position": Object {
+          "column": 0,
+          "line": 0,
+        },
+        "url": "",
+      },
+    },
+    Object {
+      "code": "ROUNDTRIP_MISSING_PROPERTY",
+      "jsonPathsInPayload": Array [],
+      "message": "The property 'offer' is present in the PUT request but is either never returned in the GET response or is returned with a null value.",
+      "pathsInPayload": Array [
+        "/properties/storageProfile/imageReference/offer",
+      ],
+      "schemaPath": "",
+      "severity": 0,
+      "source": Object {
+        "position": Object {
+          "column": 0,
+          "line": 0,
+        },
+        "url": "",
+      },
+    },
+    Object {
+      "code": "ROUNDTRIP_MISSING_PROPERTY",
+      "jsonPathsInPayload": Array [],
+      "message": "The property 'computerName' is present in the PUT request but is either never returned in the GET response or is returned with a null value.",
+      "pathsInPayload": Array [
+        "/properties/osProfile/computerName",
+      ],
+      "schemaPath": "",
+      "severity": 0,
+      "source": Object {
+        "position": Object {
+          "column": 0,
+          "line": 0,
+        },
+        "url": "",
+      },
+    },
+    Object {
+      "code": "ROUNDTRIP_ADDITIONAL_PROPERTY",
+      "jsonPathsInPayload": Array [],
+      "message": "The property 'hardwareProfile' is returned in the GET response, but it is not declared in the PUT request.",
+      "pathsInPayload": Array [
+        "/hardwareProfile",
+      ],
+      "schemaPath": "",
+      "severity": 0,
+      "source": Object {
+        "position": Object {
+          "column": 0,
+          "line": 0,
+        },
+        "url": "",
+      },
+    },
+  ],
+  "isSuccessful": false,
+  "operationInfo": Object {
+    "apiVersion": "2021-11-01",
+    "operationId": "VirtualMachines_CreateOrUpdate",
+  },
+  "runtimeException": undefined,
+}
+`;
+
+exports[`Live Validator Initialization Round trip validation of circular spec 1`] = `
+Array [
+  "/200/schema/properties/id",
+  "/200/schema/properties/name",
+  "/200/schema/properties/type",
+  "/200/schema/properties/properties/properties/provisioningState",
+  "/200/schema/properties/properties/properties/maxAgentPools",
+  "/200/schema/properties/properties/properties/fqdn",
+  "/200/schema/properties/properties/properties/agentPoolProfiles/items/properties/provisioningState",
+  "/200/schema/properties/identity/properties/principalId",
+  "/200/schema/properties/identity/properties/tenantId",
+]
+`;
+
+exports[`Live Validator Initialization readonly properties should not cause error 1`] = `
+Object {
+  "errors": Array [],
+  "isSuccessful": true,
+  "operationInfo": Object {
+    "apiVersion": "2021-11-01",
+    "operationId": "VirtualMachines_CreateOrUpdate",
+  },
+  "runtimeException": undefined,
+}
+`;

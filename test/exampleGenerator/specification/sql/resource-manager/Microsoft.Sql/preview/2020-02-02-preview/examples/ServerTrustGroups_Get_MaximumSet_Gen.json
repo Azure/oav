@@ -1,0 +1,31 @@
+{
+  "parameters": {
+    "resourceGroupName": "rgServerTrustGroups",
+    "locationName": "kxkfoyhrvjdbcyftitdwv",
+    "serverTrustGroupName": "doipobnfllzwoetwitchlxtms",
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "api-version": "2020-02-02-preview"
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "properties": {
+          "groupMembers": [
+            {
+              "serverId": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/Default/providers/Microsoft.Sql/managedInstances/managedInstance-1"
+            },
+            {
+              "serverId": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/Default/providers/Microsoft.Sql/managedInstances/managedInstance-2"
+            }
+          ],
+          "trustScopes": [
+            "GlobalTransactions"
+          ]
+        },
+        "id": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/Default/providers/Microsoft.Sql/locations/Japan East/serverTrustGroups/server-trust-group-test",
+        "name": "server-trust-group-test",
+        "type": "Microsoft.Sql/locations/serverTrustGroups"
+      }
+    }
+  }
+}

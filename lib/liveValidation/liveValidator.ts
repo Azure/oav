@@ -9,6 +9,7 @@ import { ParsedUrlQuery } from "querystring";
 import * as util from "util";
 import { URL } from "url";
 import * as _ from "lodash";
+import { diffRequestResponse } from "../armValidator/roundTripValidator";
 import * as models from "../models";
 import { requestResponseDefinition } from "../models/requestResponse";
 import { LowerHttpMethods, SwaggerSpec } from "../swagger/swaggerTypes";
@@ -29,6 +30,7 @@ import {
   getProviderFromPathTemplate,
   getProviderFromSpecPath,
 } from "../util/utils";
+import { OperationLoader } from "../armValidator/operationLoader";
 import { LiveValidatorLoader, LiveValidatorLoaderOption } from "./liveValidatorLoader";
 import { OperationSearcher } from "./operationSearcher";
 import {
@@ -56,6 +58,8 @@ export interface LiveValidatorOptions extends LiveValidatorLoaderOption {
   isPathCaseSensitive: boolean;
   loadValidatorInBackground: boolean;
   loadValidatorInInitialize: boolean;
+  enableRoundTripValidator?: boolean;
+  enableRoundTripLazyBuild?: boolean;
 }
 
 export interface RequestResponsePair {
@@ -124,6 +128,8 @@ export class LiveValidator {
 
   public operationSearcher: OperationSearcher;
 
+  public operationLoader: OperationLoader;
+
   public swaggerList: string[] = [];
 
   private logFunction?: (message: string, level: string, meta?: Meta) => void;
@@ -144,7 +150,8 @@ export class LiveValidator {
    */
   public constructor(
     options?: Partial<LiveValidatorOptions>,
-    logCallback?: (message: string, level: string, meta?: Meta) => void
+    logCallback?: (message: string, level: string, meta?: Meta) => void,
+    ruleMap?: Map<string, string>
   ) {
     const ops: Partial<LiveValidatorOptions> = options || {};
     this.logFunction = logCallback;
@@ -157,6 +164,7 @@ export class LiveValidator {
       loadValidatorInBackground: true,
       loadValidatorInInitialize: false,
       isArmCall: false,
+      enableRoundTripLazyBuild: true,
     });
 
     if (!ops.git) {
@@ -176,6 +184,12 @@ export class LiveValidator {
     this.options = ops as LiveValidatorOptions;
     this.logging(`Creating livevalidator with options:${JSON.stringify(this.options)}`);
     this.operationSearcher = new OperationSearcher(this.logging);
+
+    if (ops.enableRoundTripValidator) {
+      this.operationLoader = new OperationLoader(ruleMap);
+      this.options.setFilePath = true;
+      ops.shouldResolveRef = true;
+    }
   }
 
   /**
@@ -225,6 +239,12 @@ export class LiveValidator {
       const spec = await this.getSwaggerInitializer(this.loader!, swaggerPath);
       if (spec !== undefined) {
         allSpecs.push(spec);
+      }
+    }
+
+    if (this.options.enableRoundTripValidator) {
+      for (const entry of allSpecs) {
+        this.operationLoader.init(entry, this.options.enableRoundTripLazyBuild);
       }
     }
 
@@ -730,6 +750,106 @@ export class LiveValidator {
       Date.now() - startTime
     );
     return matchedPaths;
+  }
+
+  public async validateRoundTrip(
+    requestResponseObj: RequestResponsePair
+  ): Promise<LiveValidationResult> {
+    const startTime = Date.now();
+    if (this.operationLoader === undefined) {
+      const msg = "OperationLoader should be initialized before this call.";
+      const runtimeException = { code: C.ErrorCodes.RoundtripValidationError.name, message: msg };
+      return {
+        isSuccessful: undefined,
+        errors: [],
+        operationInfo: {
+          operationId: "",
+          apiVersion: "",
+        },
+        runtimeException: runtimeException,
+      };
+    }
+    const correlationId =
+      requestResponseObj.liveRequest.headers?.["x-ms-correlation-request-id"] || "";
+    const activityId = requestResponseObj.liveRequest.headers?.["x-ms-request-id"] || "";
+    const { info, error } = this.getOperationInfo(
+      requestResponseObj.liveRequest,
+      correlationId,
+      activityId
+    );
+    if (error !== undefined) {
+      this.logging(
+        `ErrorMessage:${error.message}.ErrorStack:${error.stack}`,
+        LiveValidatorLoggingLevels.error,
+        LiveValidatorLoggingTypes.error,
+        "Oav.liveValidator.validateRoundTrip",
+        undefined,
+        info.validationRequest
+      );
+      return {
+        isSuccessful: undefined,
+        errors: [],
+        runtimeException: error,
+        operationInfo: info,
+      };
+    }
+
+    const operationId = info.operationId;
+    const apiversion = info.apiVersion;
+    const providerName = info.validationRequest?.providerNamespace;
+    let errors: LiveValidationIssue[] = [];
+    let runtimeException;
+    try {
+      const res = diffRequestResponse(
+        requestResponseObj,
+        providerName!,
+        apiversion,
+        operationId,
+        this.operationLoader
+      );
+      for (const re of res) {
+        if (re !== undefined) {
+          errors.push(re);
+        }
+      }
+    } catch (validationErr) {
+      const msg =
+        `An error occurred while validating the live request for operation ` +
+        `"${info.operationId}". The error is:\n ` +
+        `${util.inspect(validationErr, { depth: null })}`;
+      runtimeException = { code: C.ErrorCodes.RoundtripValidationError.name, message: msg };
+      this.logging(
+        msg,
+        LiveValidatorLoggingLevels.error,
+        LiveValidatorLoggingTypes.error,
+        "Oav.liveValidator.validateRoundTrip",
+        undefined,
+        info.validationRequest
+      );
+      return {
+        isSuccessful: undefined,
+        operationInfo: info,
+        errors,
+        runtimeException,
+      };
+    }
+    const elapsedTime = Date.now() - startTime;
+    this.logging(
+      `Complete roundtrip validation`,
+      LiveValidatorLoggingLevels.info,
+      LiveValidatorLoggingTypes.perfTrace,
+      "Oav.liveValidator.validateRoundTrip",
+      elapsedTime,
+      info.validationRequest
+    );
+    delete info.validationRequest;
+    delete info.operationMatch;
+    return {
+      isSuccessful: runtimeException ? undefined : errors.length === 0,
+      operationInfo: info,
+      errors,
+      runtimeException,
+    };
   }
 
   private async getSwaggerPaths(): Promise<string[]> {

@@ -7,12 +7,7 @@ import {
   LiveValidationIssue,
   RequestResponseLiveValidationResult,
 } from "../liveValidation/liveValidator";
-import {
-  ResponseDiffItem,
-  RuntimeError,
-  StepResult,
-  ApiScenarioTestResult,
-} from "./newmanReportValidator";
+import { RuntimeError, StepResult, ApiScenarioTestResult } from "./newmanReportValidator";
 
 const spaceReg = /(\n|\t|\r)/gi;
 
@@ -29,7 +24,7 @@ const commonHelper = (opts: HelperOpts) => ({
   renderWhitespace: (n: number) => "&nbsp;".repeat(n),
   renderUri: (s: string) => `${path.join(opts.swaggerRootDir, s)}`,
   renderSymbol: (result: ResultState) => `${resultStateSymbol[result]}`,
-  renderScenarioTitle: (ts: TestScenarioMarkdownResult) => {
+  renderScenarioTitle: (ts: ApiScenarioMarkdownResult) => {
     let s = `${ts.testScenarioName}`;
     if (ts.failedStepsCount <= 0 && ts.fatalStepsCount <= 0) {
       return s;
@@ -49,7 +44,7 @@ const commonHelper = (opts: HelperOpts) => ({
 
     return s;
   },
-  renderStepTitle: (ts: TestScenarioMarkdownStepResult) => {
+  renderStepTitle: (ts: ApiScenarioMarkdownStepResult) => {
     let s = `${ts.stepName}`;
     if (ts.failedErrorsCount <= 0 && ts.fatalErrorsCount <= 0) {
       return s;
@@ -72,12 +67,10 @@ const commonHelper = (opts: HelperOpts) => ({
   renderDuration: (start: Date, end: Date) =>
     `${hd.default(moment.duration(moment(end).diff(moment(start))).asMilliseconds())}`,
   renderResponseTime: (responseTime: number) => `${hd.default(responseTime)}`,
-  shouldReportError: (sr: TestScenarioMarkdownStepResult) =>
+  shouldReportError: (sr: ApiScenarioMarkdownStepResult) =>
     sr.failedErrorsCount + sr.fatalErrorsCount > 0,
   renderFatalErrorCode: (e: RuntimeError) => `[${e.code}](${getErrorCodeDocLink(e.code)})`,
   renderFatalErrorDetail: (e: RuntimeError) => `${e.message.replace(spaceReg, " ")}`,
-  renderDiffErrorCode: (e: ResponseDiffItem) => `[${e.code}](${getErrorCodeDocLink(e.code)})`,
-  renderDiffErrorDetail: (e: ResponseDiffItem) => `${e.message.replace(spaceReg, " ")}`,
   renderLiveValidationErrorCode: (e: LiveValidationIssue) =>
     `[${e.code}](${getOavErrorCodeDocLink(e.code)})`,
   renderLiveValidationErrorDetail: (e: LiveValidationIssue) =>
@@ -101,7 +94,7 @@ export const resultStateSymbol: { [key in ResultState]: string } = {
   warning: "⚠️",
 };
 
-interface TestScenarioMarkdownStepResult {
+interface ApiScenarioMarkdownStepResult {
   stepName: string;
   result: ResultState;
   exampleFilePath?: string;
@@ -114,11 +107,10 @@ interface TestScenarioMarkdownStepResult {
   failedErrorsCount: number;
   warningErrorsCount: number;
   runtimeError?: RuntimeError[];
-  responseDiffResult?: ResponseDiffItem[];
   liveValidationResult?: RequestResponseLiveValidationResult;
 }
 
-interface TestScenarioMarkdownResult {
+interface ApiScenarioMarkdownResult {
   testScenarioName: string;
   result: ResultState;
   swaggerFilePaths: string[];
@@ -128,7 +120,7 @@ interface TestScenarioMarkdownResult {
   fatalStepsCount: number;
   failedStepsCount: number;
   warningStepsCount: number;
-  steps: TestScenarioMarkdownStepResult[];
+  steps: ApiScenarioMarkdownStepResult[];
 }
 
 interface HelperOpts {
@@ -144,14 +136,14 @@ export const compileHandlebarsTemplate = <T>(fileName: string, opts: HelperOpts)
   return (data: T) => templateDelegate(data, { helpers });
 };
 
-const generateMarkdownReportView = compileHandlebarsTemplate<TestScenarioMarkdownResult>(
+const generateMarkdownReportView = compileHandlebarsTemplate<ApiScenarioMarkdownResult>(
   "markdownReport.handlebars",
   {
     swaggerRootDir: "root",
   }
 );
 
-const generateJUnitCaseReportView = compileHandlebarsTemplate<TestScenarioMarkdownStepResult>(
+const generateJUnitCaseReportView = compileHandlebarsTemplate<ApiScenarioMarkdownStepResult>(
   "junitCaseReport.handlebars",
   {
     swaggerRootDir: "root",
@@ -161,9 +153,10 @@ const generateJUnitCaseReportView = compileHandlebarsTemplate<TestScenarioMarkdo
 const stepIsFatal = (sr: StepResult) => sr.runtimeError && sr.runtimeError.length > 0;
 const stepIsFailed = (sr: StepResult) =>
   (sr.liveValidationResult && sr.liveValidationResult.requestValidationResult.errors.length > 0) ||
-  (sr.liveValidationResult && sr.liveValidationResult.responseValidationResult.errors.length > 0);
+  (sr.liveValidationResult && sr.liveValidationResult.responseValidationResult.errors.length > 0) ||
+  (sr.roundtripValidationResult && sr.roundtripValidationResult.errors.length > 0);
 
-const asMarkdownStepResult = (sr: StepResult): TestScenarioMarkdownStepResult => {
+const asMarkdownStepResult = (sr: StepResult): ApiScenarioMarkdownStepResult => {
   let result: ResultState = "succeeded";
   if (stepIsFatal(sr)) {
     result = "fatal";
@@ -173,9 +166,10 @@ const asMarkdownStepResult = (sr: StepResult): TestScenarioMarkdownStepResult =>
 
   const failedErrorsCount =
     (sr.liveValidationResult ? sr.liveValidationResult.requestValidationResult.errors.length : 0) +
-    (sr.liveValidationResult ? sr.liveValidationResult.responseValidationResult.errors.length : 0);
+    (sr.liveValidationResult ? sr.liveValidationResult.responseValidationResult.errors.length : 0) +
+    (sr.roundtripValidationResult ? sr.roundtripValidationResult.errors.length : 0);
 
-  const r: TestScenarioMarkdownStepResult = {
+  const r: ApiScenarioMarkdownStepResult = {
     result,
     fatalErrorsCount: sr.runtimeError ? sr.runtimeError.length : 0,
     failedErrorsCount: failedErrorsCount,
@@ -185,7 +179,7 @@ const asMarkdownStepResult = (sr: StepResult): TestScenarioMarkdownStepResult =>
   return r;
 };
 
-const asMarkdownResult = (tsr: ApiScenarioTestResult): TestScenarioMarkdownResult => {
+const asMarkdownResult = (tsr: ApiScenarioTestResult): ApiScenarioMarkdownResult => {
   const fatalCount = tsr.stepResult.filter(
     (sr) => sr.runtimeError && sr.runtimeError.length > 0
   ).length;
@@ -199,7 +193,7 @@ const asMarkdownResult = (tsr: ApiScenarioTestResult): TestScenarioMarkdownResul
     resultState = "succeeded";
   }
 
-  const r: TestScenarioMarkdownResult = {
+  const r: ApiScenarioMarkdownResult = {
     testScenarioName: tsr.apiScenarioName!,
     result: resultState,
     swaggerFilePaths: tsr.swaggerFilePaths,

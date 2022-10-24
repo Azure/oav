@@ -72,4 +72,25 @@ describe("postmanCollectionGenerator", () => {
     const collection = await generator.run();
     expect(collection).toMatchSnapshot();
   });
+
+  it("should generate PostmanCollection - testKeyReplace", async () => {
+    const generator = inversifyGetInstance(PostmanCollectionGenerator, {
+      name: "testKeyReplace",
+      scenarioDef: "Microsoft.Storage/stable/2021-08-01/scenarios/testKeyReplace.yaml",
+      fileRoot: "test/apiScenario/fixtures/specification/storage/resource-manager/",
+      eraseXmsExamples: false,
+      checkUnderFileRoot: false,
+      generateCollection: true,
+      runCollection: false,
+      env: {
+        subscriptionId: "00000000-0000-0000-0000-000000000000",
+        location: "westus",
+      },
+      swaggerFilePaths: ["Microsoft.Storage/stable/2021-08-01/storage.json"],
+      outputFolder: "generated",
+      runId: "jestRunId",
+    });
+    const collection = await generator.run();
+    expect(collection).toMatchSnapshot();
+  });
 });

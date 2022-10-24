@@ -5,7 +5,6 @@ import * as assert from "assert";
 import * as os from "os";
 import * as path from "path";
 import * as lodash from "lodash";
-import { ResponsesObject } from "yasway";
 import { LiveValidator } from "../lib/liveValidation/liveValidator";
 import { OperationSearcher } from "../lib/liveValidation/operationSearcher";
 import * as Constants from "../lib/util/constants";
@@ -13,7 +12,7 @@ import * as Constants from "../lib/util/constants";
 // eslint-disable-next-line no-var
 var glob = require("glob").glob;
 
-const numberOfSpecs = 17;
+const numberOfSpecs = 19;
 jest.setTimeout(999999);
 
 describe("Live Validator", () => {
@@ -31,6 +30,7 @@ describe("Live Validator", () => {
         isPathCaseSensitive: false,
         loadValidatorInBackground: true,
         loadValidatorInInitialize: false,
+        enableRoundTripLazyBuild: true,
       };
       const validator = new LiveValidator();
       assert.equal(0, validator.operationSearcher.cache.size);
@@ -80,6 +80,7 @@ describe("Live Validator", () => {
         directory: path.resolve(os.homedir(), "repo"),
         loadValidatorInBackground: true,
         loadValidatorInInitialize: false,
+        enableRoundTripLazyBuild: true,
       };
       const validator = new LiveValidator({ swaggerPaths });
       assert.equal(0, validator.operationSearcher.cache.size);
@@ -100,6 +101,7 @@ describe("Live Validator", () => {
         directory,
         loadValidatorInBackground: true,
         loadValidatorInInitialize: false,
+        enableRoundTripLazyBuild: true,
       };
       const validator = new LiveValidator({ swaggerPaths, directory });
       assert.equal(0, validator.operationSearcher.cache.size);
@@ -124,6 +126,7 @@ describe("Live Validator", () => {
         directory,
         loadValidatorInBackground: true,
         loadValidatorInInitialize: false,
+        enableRoundTripLazyBuild: true,
       };
       const validator = new LiveValidator({
         swaggerPaths,
@@ -150,6 +153,7 @@ describe("Live Validator", () => {
         isPathCaseSensitive: false,
         loadValidatorInBackground: true,
         loadValidatorInInitialize: false,
+        enableRoundTripLazyBuild: true,
       };
       const validator = new LiveValidator({
         swaggerPaths,
@@ -523,7 +527,12 @@ describe("Live Validator", () => {
 
       // Operations to match is StorageAccounts_CheckNameAvailability with provider "Hello.World"
       // [non cached provider]
-      validationInfo = validator.parseValidationRequest(nonCachedProviderUrl, "PoSt", "randomId", "");
+      validationInfo = validator.parseValidationRequest(
+        nonCachedProviderUrl,
+        "PoSt",
+        "randomId",
+        ""
+      );
       result = validator.operationSearcher.getPotentialOperations(validationInfo);
       operations = result.matches;
       reason = result.reason;
@@ -577,7 +586,7 @@ describe("Live Validator", () => {
       const operations = microsoftTest.get("2016-01-01")?.get("post")!;
 
       for (const operation of operations) {
-        const responses = operation.responses as ResponsesObject;
+        const responses = operation.responses;
         assert.strictEqual(responses.default, undefined);
       }
     });
@@ -711,7 +720,9 @@ describe("Live Validator", () => {
     it(`should pass response header tests`, async () => {
       const options = {
         directory: `./test/liveValidation/swaggers/`,
-        swaggerPathsPattern: ["specification/apimanagement/resource-manager/Microsoft.ApiManagement/**/*.json"],
+        swaggerPathsPattern: [
+          "specification/apimanagement/resource-manager/Microsoft.ApiManagement/**/*.json",
+        ],
       };
       const validator = new LiveValidator(options);
       await validator.initialize();
@@ -836,16 +847,17 @@ describe("Live Validator", () => {
           const payload = require(`${__dirname}/liveValidation/payloads/xmsSecretAndPOST/xmsSecretButGet_${payloadVersion}.json`);
           const result = await liveValidator.validateLiveRequestResponse(payload);
           assert.equal(result.responseValidationResult.isSuccessful, false);
-					const errors = result.responseValidationResult.errors;
-					for (const error of errors) {
-						assert.equal(
-							(error.schemaPath.indexOf("x-ms-secret") !== -1 && error.code === "SECRET_PROPERTY") ||
-								(error.schemaPath.indexOf("x-ms-mutability") !== -1 &&
-									error.code === "WRITEONLY_PROPERTY_NOT_ALLOWED_IN_RESPONSE"),
-							true
-						);
-					}
-				}
+          const errors = result.responseValidationResult.errors;
+          for (const error of errors) {
+            assert.equal(
+              (error.schemaPath.indexOf("x-ms-secret") !== -1 &&
+                error.code === "SECRET_PROPERTY") ||
+                (error.schemaPath.indexOf("x-ms-mutability") !== -1 &&
+                  error.code === "WRITEONLY_PROPERTY_NOT_ALLOWED_IN_RESPONSE"),
+              true
+            );
+          }
+        }
       });
     });
 

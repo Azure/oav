@@ -768,12 +768,35 @@ describe("Model Validation", () => {
     });
   });
 
-  describe("parameter required validation", () => {
+  describe("parameter validation", () => {
     it("should fail when missing write required parameters in example", async () => {
-      const specPath2 = `${testPath}/modelValidation/swaggers/specification/parameterRequiredValidation/test.json`;
-      const result = await validate.validateExamples(specPath2, undefined);
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/parameterValidation/test.json`;
+      const result = await validate.validateExamples(specPath2, "SqlServers_Get");
       assert.strictEqual(result.length, 1);
       assert.strictEqual(result[0].code, "REQUIRED_PARAMETER_EXAMPLE_NOT_FOUND");
+    });
+
+    it("should fail when api version in example is not equal to swagger version", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/parameterValidation/test.json`;
+      const result = await validate.validateExamples(specPath2, "SqlServers_Get_apiVersion");
+      assert.strictEqual(result.length, 1);
+      assert.strictEqual(result[0].code, "INVALID_REQUEST_PARAMETER");
+      assert.strictEqual(
+        result[0].message,
+        "api-version 2017-03-01 is not equal to swagger version"
+      );
+      assert.strictEqual(result[0].examplePosition?.line, 2);
+      assert.strictEqual(result[0].examplePosition?.column, 17);
+      assert.strictEqual(result[0].exampleJsonPath, `$parameters["api-version"]`);
+    });
+
+    it("should report error when operation has no own parameters", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/parameterValidation/test.json`;
+      const result = await validate.validateExamples(specPath2, "SqlServers_Get_noOwnParameter");
+      assert.strictEqual(result.length, 1);
+      assert.strictEqual(result[0].code, "MAX_LENGTH");
+      assert.strictEqual(result[0].message, "String is too long (8 chars), maximum 4");
+      assert.strictEqual(result[0].exampleJsonPath, "$parameters.shortSubscriptionId");
     });
   });
 
@@ -828,6 +851,16 @@ describe("Model Validation", () => {
       assert.strictEqual(
         result[0].message,
         "Object didn't pass validation for format byte: credentialValue1"
+      );
+    });
+    it("should fail when value is not in arm-id format", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/formatValidation/format.json`;
+      const result = await validate.validateExamples(specPath2, "ARMID");
+      assert.strictEqual(result.length, 1);
+      assert.strictEqual(result[0].code, "INVALID_FORMAT");
+      assert.strictEqual(
+        result[0].message,
+        "Object didn't pass validation for format arm-id: test123"
       );
     });
   });

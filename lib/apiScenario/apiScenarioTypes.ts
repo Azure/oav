@@ -83,6 +83,23 @@ export interface OutputVariables {
   };
 }
 
+export interface NoneAuthentication {
+  type: "None";
+}
+
+export interface AADTokenAuthentication {
+  type: "AADToken";
+  scope?: string;
+}
+
+export interface AzureKeyAuthentication {
+  type: "AzureKey";
+  headerName?: string;
+  key: string;
+}
+
+export type Authentication = NoneAuthentication | AADTokenAuthentication | AzureKeyAuthentication;
+
 export interface ReadmeTag {
   name: string;
   filePath: string;
@@ -104,17 +121,24 @@ type StepBase = VariableScope & {
   isCleanUpStep?: boolean;
 };
 
-export type Step = StepRestCall | StepArmTemplate;
-export type RawStep = RawStepOperation | RawStepExample | RawStepArmTemplate | RawStepArmScript;
+export type Step = StepRestCall | StepArmTemplate | StepRoleAssignment;
+export type RawStep =
+  | RawStepOperation
+  | RawStepExample
+  | RawStepArmTemplate
+  | RawStepArmScript
+  | RawStepRoleAssignment;
 
 //#endregion
 
 //#region Step RestCall
 
 export type RawStepExample = RawStepBase & {
+  operationId?: string;
   exampleFile: string;
   requestUpdate?: JsonPatchOp[];
   responseUpdate?: JsonPatchOp[];
+  authentication?: Authentication;
 };
 
 export type RawStepOperation = RawStepBase & {
@@ -122,6 +146,7 @@ export type RawStepOperation = RawStepBase & {
   readmeTag?: string;
   parameters?: { [parameterName: string]: VarValue };
   responses?: StepResponseAssertion;
+  authentication?: Authentication;
 };
 
 export type StepRestCallExample = StepBase & {};
@@ -131,13 +156,15 @@ export type StepRestCall = StepBase & {
   step: string;
   description?: string;
   operationId: string;
-  operation: Operation;
+  operation?: Operation;
   exampleFile?: string;
   parameters: SwaggerExample["parameters"];
   responses: SwaggerExample["responses"];
   responseAssertion?: StepResponseAssertion;
   outputVariables?: OutputVariables;
   externalReference?: boolean;
+  isManagementPlane?: boolean;
+  authentication: Authentication;
   _resolvedParameters?: SwaggerExample["parameters"];
 };
 
@@ -152,7 +179,7 @@ export type StepResponseAssertion = {
 
 //#endregion
 
-//#region Step Arm Deployment Script
+//#region ARM Steps
 export type RawStepArmScript = RawStepBase & {
   armDeploymentScript: string;
   arguments?: string;
@@ -161,9 +188,6 @@ export type RawStepArmScript = RawStepBase & {
     value: string;
   }>;
 };
-//#endregion
-
-//#region Step Arm Template
 
 export type ArmTemplateVariableType =
   | "string"
@@ -239,6 +263,27 @@ export interface ArmTemplate {
   resources?: ArmResource[];
 }
 
+export type RawStepRoleAssignment = RawStepBase & {
+  roleAssignment: RoleAssignment;
+};
+
+export type StepRoleAssignment = TransformRaw<
+  RawStepRoleAssignment,
+  StepBase & {
+    type: "armRoleAssignment";
+    authentication: Authentication;
+  },
+  "description"
+>;
+
+export interface RoleAssignment {
+  scope: string;
+  roleDefinitionId?: string;
+  roleName?: string;
+  principalId: string;
+  principalType?: "User" | "Group" | "ServicePrincipal" | "ForeignGroup" | "Device";
+}
+
 //#endregion
 
 //#region JsonPatchOp
@@ -289,9 +334,9 @@ export type JsonPatchOp =
 
 export type RawScenario = RawVariableScope & {
   scenario?: string;
-  shareScope?: boolean;
   description?: string;
   steps: RawStep[];
+  authentication?: Authentication;
 };
 
 export type Scenario = TransformRaw<
@@ -310,11 +355,13 @@ export type RawScenarioDefinition = RawVariableScope & {
   prepareSteps?: RawStep[];
   scenarios: RawScenario[];
   cleanUpSteps?: RawStep[];
+  authentication?: Authentication;
 };
 
 export type ScenarioDefinition = TransformRaw<
   RawScenarioDefinition,
   VariableScope & {
+    name: string;
     prepareSteps: Step[];
     scenarios: Scenario[];
     cleanUpSteps: Step[];
@@ -331,10 +378,51 @@ export interface NewmanReport {
   variables: { [variableName: string]: Variable };
 }
 
+export interface SimpleItemMetadata {
+  type: "simple";
+  operationId: string;
+  exampleName?: string;
+  itemName: string;
+  step: string;
+}
+
+export interface LroItemMetadata {
+  type: "LRO";
+  poller_item_name: string;
+  operationId: string;
+  exampleName?: string;
+  itemName: string;
+  step: string;
+}
+
+export interface DelayItemMetadata {
+  type: "delay";
+  lro_item_name: string;
+}
+
+export interface PollerItemMetadata {
+  type: "poller";
+  lro_item_name: string;
+}
+
+export interface FinalGetItemMetadata {
+  type: "finalGet";
+  lro_item_name: string;
+  step: string;
+}
+
+export type ItemMetadata =
+  | SimpleItemMetadata
+  | LroItemMetadata
+  | DelayItemMetadata
+  | PollerItemMetadata
+  | FinalGetItemMetadata;
+
 export interface NewmanExecution {
+  id: string;
   request: NewmanRequest;
   response: NewmanResponse;
-  annotation?: any;
+  annotation?: ItemMetadata;
   assertions: NewmanAssertion[];
 }
 

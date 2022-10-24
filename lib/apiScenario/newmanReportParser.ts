@@ -1,12 +1,6 @@
+import { ItemDefinition, Request, Response, DescriptionDefinition } from "postman-collection";
 import {
-  RequestDefinition,
-  ResponseDefinition,
-  ItemDefinition,
-  Request,
-  Response,
-  DescriptionDefinition,
-} from "postman-collection";
-import {
+  ItemMetadata,
   NewmanAssertion,
   NewmanExecution,
   NewmanReport,
@@ -14,7 +8,7 @@ import {
   NewmanResponse,
 } from "./apiScenarioTypes";
 
-export interface RawNewmanReport {
+export interface RawNewmanSummary {
   run: Run;
   environment: any;
   collection: any;
@@ -30,32 +24,31 @@ interface Assertion {
 }
 
 interface RawNewmanExecution {
+  id: string;
   item: ItemDefinition;
-  request: RequestDefinition;
-  response: ResponseDefinition;
+  request: Request;
+  response: Response;
   assertions?: Assertion[];
 }
 
-export function parseNewmanReport(newmanReport: RawNewmanReport): NewmanReport {
+export function parseNewmanSummary(rawReport: RawNewmanSummary): NewmanReport {
   const ret: NewmanReport = { variables: {}, executions: [], timings: {} };
-  for (const it of newmanReport.run.executions) {
-    ret.executions.push(generateExampleItem(it));
+  for (const it of rawReport.run.executions) {
+    ret.executions.push(parseNewmanExecution(it));
   }
-  ret.timings = newmanReport.run.timings;
-  ret.variables = parseVariables(newmanReport.environment.values);
+  ret.timings = rawReport.run.timings;
+  ret.variables = parseVariables(rawReport.environment.values.members);
   return ret;
 }
 
-function generateExampleItem(it: RawNewmanExecution): NewmanExecution {
-  const resp = new Response(it.response);
-  const req = new Request(it.request);
-  const rawReq = parseRequest(req);
-  const rawResp = parseResponse(resp);
-  const annotation = JSON.parse((it.item.description as DescriptionDefinition)?.content || "{}");
+function parseNewmanExecution(it: RawNewmanExecution): NewmanExecution {
   return {
-    request: rawReq,
-    response: rawResp,
-    annotation: annotation,
+    id: it.id,
+    request: parseRequest(it.request),
+    response: parseResponse(it.response ?? new Response(undefined as any)),
+    annotation: it.item.description
+      ? (JSON.parse((it.item.description as DescriptionDefinition).content) as ItemMetadata)
+      : undefined,
     assertions: it.assertions?.map((it) => it.error!).filter((it) => it !== undefined) || [],
   };
 }
