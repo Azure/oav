@@ -271,19 +271,16 @@ export class RestlerApiScenarioGenerator {
         const step = definition.scenarios[0].steps.find(
           (s) => (s as RawStepOperation).operationId === v.operationId
         )!;
-
-        if (!variables[v.name] && v.count > 1) {
-          variables[v.name] = v.value;
-          return;
-        }
         if (!step) {
           return;
         }
-
+        if (!variables[v.name] && v.count > 1) {
+          variables[v.name] = v.value;
+          return
+        }
         if (!step?.variables) {
           step.variables = {};
         }
-
         step.variables[v.name] = v.value;
       });
 
@@ -365,58 +362,36 @@ export class RestlerApiScenarioGenerator {
     const scenario: RawScenario = {
       steps: [],
     };
-    function isTargetOperationId(operationId: string) {
-      const targetPutOperationId = res?.getOperation("CreateOrUpdate")?.[0]?.operationId;
-      return !targetPutOperationId || targetPutOperationId === operationId;
+    function getPutOperationId() {
+      return  res?.getOperation("CreateOrUpdate")?.[0]?.operationId || "";
     }
-
-    function generateStepsForHeap() {
-      while (!heap.empty()) {
-        const node = heap.pop()!;
-        scenario.steps.push({ operationId: node.operationId });
-      }
-    }
-
-    const heap = new Heap<Node>((a, b) => {
-      const priority = b.priority - a.priority;
-      if (priority) {
-        return priority;
-      }
-
-      const degree = b.outDegree - a.outDegree;
+    const sortedNodes:Node[] = []
+    const cmp = (a:Node, b:Node) => {
+      const degree = b.inDegree - a.inDegree;
       if (degree) {
         return degree;
       }
-      return methodOrder.indexOf(a.method) - methodOrder.indexOf(b.method);
-    });
-    function deep(node: Node) {
-      if (isTargetOperationId(node.operationId)) {
-        return true;
-      }
-      for (const n of node.children.values()) {
-        if (n.method === "put") {
+      return 0;
+    };
+    const graph = this.graph
+    function widthFirst(node: Node) {
+      const heap = new Heap<Node>(cmp);
+      for (const n of graph.values()) {
+        if (n.method === "put" && n.children.get(node.operationId)) {
           heap.push(n);
-          if (deep(n)) {
-            break;
-          }
         }
-      }
-      heap.pop();
-      return false;
-    }
-    for (const node of this.graph.values()) {
-      if (node.visited) {
-        continue;
-      }
-      if (node.inDegree === 0 && node.method === "put") {
-        heap.push(node);
-        if (deep(node)) {
-          break;
-        }
-        node.visited = true;
+        sortedNodes.push(...heap.toArray());
+        heap.toArray().forEach((n) => widthFirst(n));
       }
     }
-    generateStepsForHeap();
+    const node = this.getNode(getPutOperationId());
+    sortedNodes.push(node)
+    widthFirst(node);
+    const uniqNodes = sortedNodes.reverse().reduce(function (a:Node[], b:Node) {
+      if (a.indexOf(b) < 0) a.push(b);
+      return a;
+    }, []);
+    uniqNodes.forEach((node) => scenario.steps.push({ operationId: node.operationId }));
     return scenario;
   }
 

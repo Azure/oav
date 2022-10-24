@@ -9,9 +9,10 @@ import { JsonLoader } from "../../swagger/jsonLoader";
 import { setDefaultOpts } from "../../swagger/loader";
 import { SwaggerLoader, SwaggerLoaderOption } from "../../swagger/swaggerLoader";
 import { Path, SwaggerSpec } from "../../swagger/swaggerTypes";
-import { traverseSwagger } from "../../transform/traverseSwagger";
+import { traverseSwagger, traverseSwaggers } from "../../transform/traverseSwagger";
 import { xmsLongRunningOperation } from "../../util/constants";
 import { RawScenarioDefinition} from "../apiScenarioTypes";
+import { ApiScenarioYamlLoader } from "../apiScenarioYamlLoader";
 import { RestlerApiScenarioGenerator } from "./restlerApiScenarioGenerator";
 import { ResourceNameCaseInsensitive } from "./rules/resourceNameCaseInsensitive";
 import { SystemDataExistsInResponse } from "./rules/systemDataExistsInResponse";
@@ -54,6 +55,7 @@ export interface ArmResourceManipulatorInterface {
   getChildResource(): ArmResourceManipulatorInterface[];
 }
 
+
 /*
 const ResourceBasicApiTestGenerator = {
   genResourceDependency: (resource: ArmResourceManipulator) => {
@@ -74,68 +76,71 @@ const ResourceBasicApiTestGenerator = {
 //  get CRUD, list, actions operations 
 export class ArmResourceManipulator implements ArmResourceManipulatorInterface {
   constructor(
-    private swagger: SwaggerSpec,
+    private swaggers: SwaggerSpec[],
     private jsonLoader: JsonLoader,
     private resAnalyzer: ArmResourceAnalyzer,
-    private resourceType: string,
+    private _resourceType: string,
     private path: string
   ) {}
   getListOperations(): ResourceOperation[] {
     return this.resAnalyzer
       .getResourceActions()
-      .filter((res) => res.getResourceType() === this.getResourceType() && res.isListResource())
+      .filter((res) => res.resourceType === this.resourceType && res.isListResource())
       .map((res) => res.getOperation("List"))
       .reduce((pre, cur) => pre.concat(cur),[]) || [];
   }
   getResourceActions(): ResourceOperation[] {
     return this.resAnalyzer
       .getResourceActions()
-      .filter((res) => res.getResourceType() === this.getResourceType() && res.isListResource())
+      .filter((res) => res.resourceType === this.resourceType && res.isListResource())
       .map((res) => res.getOperation("Action"))
       .reduce((pre, cur) => pre.concat(cur),[]);
   }
   getResourceOperation(kind: ResourceBasicOperationKind): ResourceOperation {
     return this.getOperation(kind)?.[0];
   }
-  getResourceType() {
-    return this.resourceType;
+  get resourceType() {
+    return this._resourceType;
   }
   public getOperation(kind: ResourceOperationKind): ResourceOperation[] {
     const ops: ResourceOperation[] = [];
-    traverseSwagger(this.swagger, {
-      onPath: (path: Path, pathTemplate: string) => {
-        if (pathTemplate === this.path) {
-          function getHttpVerb(kind: ResourceOperationKind) {
-            const map: { [index in ResourceOperationKind]: string } = {
-              CreateOrUpdate: "put",
-              Get: "get",
-              Update: "patch",
-              Delete: "delete",
-              List: "get",
-              Action: "post",
-            };
-            return map[kind] as string;
-          }
-          function getRawOperation(kind: ResourceOperationKind) {
-            return (path as any)[getHttpVerb(kind)];
-          }
-          const rawOperation = getRawOperation(kind);
-          if (rawOperation && rawOperation.operationId) {
-            const operation = {
-              operationId: rawOperation.operationId!,
-              parameters: this.jsonLoader.resolveRefObj(rawOperation.parameters! as any),
-              responses: this.jsonLoader.resolveRefObj(rawOperation.responses!),
-              path: pathTemplate!,
-              kind,
-              examples: Object.values(rawOperation["x-ms-examples"]|| {})?.map((e) =>
-                this.jsonLoader.getRealPath((e as any).$ref)
-              ),
-            };
-            ops.push(operation);
-          }
-        }
-      },
-    });
+    for (const swagger of this.swaggers) {
+       traverseSwagger(swagger, {
+         onPath: (path: Path, pathTemplate: string) => {
+           if (pathTemplate === this.path) {
+             function getHttpVerb(kind: ResourceOperationKind) {
+               const map: { [index in ResourceOperationKind]: string } = {
+                 CreateOrUpdate: "put",
+                 Get: "get",
+                 Update: "patch",
+                 Delete: "delete",
+                 List: "get",
+                 Action: "post",
+               };
+               return map[kind] as string;
+             }
+             function getRawOperation(kind: ResourceOperationKind) {
+               return (path as any)[getHttpVerb(kind)];
+             }
+             const rawOperation = getRawOperation(kind);
+             if (rawOperation && rawOperation.operationId) {
+               const operation = {
+                 operationId: rawOperation.operationId!,
+                 parameters: this.jsonLoader.resolveRefObj(rawOperation.parameters! as any),
+                 responses: this.jsonLoader.resolveRefObj(rawOperation.responses!),
+                 path: pathTemplate!,
+                 kind,
+                 examples: Object.values(rawOperation["x-ms-examples"] || {})?.map((e) =>
+                   this.jsonLoader.getRealPath((e as any).$ref)
+                 ),
+               };
+               ops.push(operation);
+             }
+           }
+         },
+       });
+    }
+   
     return ops;
   }
   private getPropertyInternal(schema: any, propName: string): any {
@@ -220,7 +225,7 @@ export class ArmResourceManipulator implements ArmResourceManipulatorInterface {
 
 class ArmResourceDependencyGenerator {
   constructor(
-    private _swagger: string,
+    private _swaggers: string[],
     private _dependencyFile: string,
     private _outPutDir: string,
     private _basicScenarioFile?:string
@@ -229,7 +234,7 @@ class ArmResourceDependencyGenerator {
     const restlerGenerator = RestlerApiScenarioGenerator.create({
       outputDir: this._outPutDir,
       dependencyPath: this._dependencyFile,
-      swaggerFilePaths: [this._swagger],
+      swaggerFilePaths: this._swaggers,
       useExample:useExample
     });
     await restlerGenerator.initialize();
@@ -237,6 +242,9 @@ class ArmResourceDependencyGenerator {
       return restlerGenerator.generateResourceDependency(resoure);
     }
     else {
+      const loader = inversifyGetInstance(ApiScenarioYamlLoader, {});
+      const [scenarios] = await loader.load(this._basicScenarioFile)
+      delete scenarios.prepareSteps
       //TBD
       return null
     }
@@ -246,8 +254,16 @@ class ArmResourceDependencyGenerator {
 class ArmResourceAnalyzer {
   private _resources: ArmResourceManipulator[] | undefined;
   private _actions: ArmResourceManipulator[] | undefined;
-  constructor(private _swagger: SwaggerSpec, private _jsonLoader: JsonLoader) {
+  constructor(private _swaggers: SwaggerSpec[], private _jsonLoader: JsonLoader) {
     this.getResources();
+  }
+
+  public getResourceType(path:string) {
+    const index = path.lastIndexOf("/providers")
+    if (index !== -1) {
+      return path.substring(index + 1).split("/").slice(2).filter((v,i) => v && !(i % 2)).join("/")
+    }
+    return ""
   }
 
   public getResources() {
@@ -259,16 +275,12 @@ class ArmResourceAnalyzer {
       "/providers/[^/]+(?:/\\w+/default|/\\w+/{[^/]+})+$",
       "gi"
     );
-    const getResourceType = (path: string) => {
-      const segments = path.split("/");
-      return segments.length > 2 ? segments[segments.length - 2] : "";
-    };
-    traverseSwagger(this._swagger, {
+    traverseSwaggers(this._swaggers, {
       onPath: (path: Path, pathTemplate: string) => {
-        const resType = getResourceType(pathTemplate);
+        const resType = this.getResourceType(pathTemplate);
         if (specificResourcePathRegEx.test(pathTemplate) && path.put && resType) {
           const resource = new ArmResourceManipulator(
-            this._swagger,
+            this._swaggers,
             this._jsonLoader,
             this,
             resType,
@@ -278,35 +290,25 @@ class ArmResourceAnalyzer {
         }
       },
     });
+    
     return this._resources;
   }
 
   public getResourceActions() {
     if (this._actions) {
-      return this._actions
+      return this._actions;
     }
-    const resources = this.getResources();
     const resourceActionRegEx = new RegExp(
       "/providers/[^/]+(?:/\\w+/\\w+|/\\w+/{[^/]+})*/\\w+$",
       "gi"
     );
-    const getResourceType = (path: string) => {
-      const segments = path.split("/");
-      // check if list operations, the last segment is the resource types
-      let type = segments[segments.length - 1];
-      if (resources.find(res => res.getResourceType() === type)) {
-        return type
-      }
-      // it's resource actions
-      return segments.length > 3 ? segments[segments.length - 3] : "";
-    };
-    this._actions = []
-    traverseSwagger(this._swagger, {
+    this._actions = [];
+    traverseSwaggers(this._swaggers, {
       onPath: (_path: Path, pathTemplate: string) => {
-        const resType = getResourceType(pathTemplate);
+        const resType = this.getResourceType(pathTemplate);
         if (resourceActionRegEx.test(pathTemplate) && resType) {
           const resourceMani = new ArmResourceManipulator(
-            this._swagger,
+            this._swaggers,
             this._jsonLoader,
             this,
             resType,
@@ -316,8 +318,22 @@ class ArmResourceAnalyzer {
         }
       },
     });
-    return this._actions
+    return this._actions;
   }
+
+  /**
+   * /providers
+   * /providers/NS/operations
+   * /providers/Microsoft.Resources/checkResourceName
+   * /subscription/{}
+   * /subscription/{}/locations
+   * /subscriptions
+   * /{links}
+   * /{applicationId}
+   * subscription wide reads and actions
+   * /subscriptions/{subscriptionId}/providers/Microsoft.Relay/checkNameAvailability
+   */
+  public getTalentAction() {}
 
   public getTrackedResource(): ArmResourceManipulator[] {
     return this.getResources().filter((res) => res.isTrackedResource());
@@ -334,11 +350,11 @@ class ArmResourceAnalyzer {
 
 @injectable()
 export class ApiTestRuleBasedGenerator {
-  constructor(private swaggerLoader: SwaggerLoader, private jsonLoader:JsonLoader,private rules: ApiTestGeneratorRule[], private swaggerFile: string,private dependencyFile?:string,private basicScenarioFile?:string) {}
+  constructor(private swaggerLoader: SwaggerLoader, private jsonLoader:JsonLoader,private rules: ApiTestGeneratorRule[], private swaggerFiles: string[],private dependencyFile?:string,private basicScenarioFile?:string) {}
 
   async run(outputDir:string,platFormType:PlatFormType) {
-    const swaggerSpec = await this.swaggerLoader.load(this.swaggerFile);
-    const analyzer = new ArmResourceAnalyzer(swaggerSpec,this.jsonLoader);
+    const swaggerSpecs = await Promise.all(this.swaggerFiles.map(f => this.swaggerLoader.load(f)));
+    const analyzer = new ArmResourceAnalyzer(swaggerSpecs, this.jsonLoader);
     const trackedResources = analyzer.getTrackedResource();
     const proxyResources = analyzer.getProxyResource();
     const extensionResources = analyzer.getExtensionResource();
@@ -351,7 +367,7 @@ export class ApiTestRuleBasedGenerator {
            // what if without dependency ??
            if (this.dependencyFile) {
              const dependency = new ArmResourceDependencyGenerator(
-               this.swaggerFile,
+               this.swaggerFiles,
                this.dependencyFile,
                outputDir,this.basicScenarioFile
              );
@@ -360,7 +376,7 @@ export class ApiTestRuleBasedGenerator {
                const apiSenarios = rule.generator(resource, base);
                if (apiSenarios) {
                  scenariosResult[rule.name] = apiSenarios;
-                 this.writeFile(rule.name, resource.getResourceType(), apiSenarios, outputDir);
+                 this.writeFile(rule.name, resource.resourceType, apiSenarios, outputDir);
                }
              }
 
@@ -394,8 +410,12 @@ export const generateApiTestBasedOnRules = async (swaggers:string[],dependencyFi
   const swaggerLoader = inversifyGetInstance(SwaggerLoader, opts);
   const jsonLoader = inversifyGetInstance(JsonLoader, opts);
   const rules:ApiTestGeneratorRule[] = [ResourceNameCaseInsensitive, SystemDataExistsInResponse];
-  for (const swagger of swaggers) {
-    const generator =   new ApiTestRuleBasedGenerator(swaggerLoader,jsonLoader,rules,swagger,dependencyFile)
-    await generator.run(outputDir,isRPaaS?"RPaaS":"ARM")
-  }
+  const generator = new ApiTestRuleBasedGenerator(
+    swaggerLoader,
+    jsonLoader,
+    rules,
+    swaggers,
+    dependencyFile
+  );
+  await generator.run(outputDir,isRPaaS?"RPaaS":"ARM")
 }
