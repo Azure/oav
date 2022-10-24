@@ -144,7 +144,7 @@ describe("Live Validator", () => {
       const payload: RequestResponsePair = require(`${__dirname}/liveValidation/payloads/roundTrip_invalid.json`);
       const rest = await validator.validateRoundTrip(payload);
       expect(rest).toMatchSnapshot();
-      assert.equal(rest.errors.length, 6);
+      assert.equal(rest.errors.length, 7);
       assert.equal(rest.isSuccessful, false);
       for (const re of rest.errors) {
         if (re.pathsInPayload[0].includes("location")) {
