@@ -67,6 +67,23 @@ Object {
       },
     },
     Object {
+      "code": "ROUNDTRIP_ADDITIONAL_PROPERTY",
+      "jsonPathsInPayload": Array [],
+      "message": "The property 'versionlist/1' is returned in the GET response, but it is not declared in the PUT request.",
+      "pathsInPayload": Array [
+        "/versionlist/1",
+      ],
+      "schemaPath": "",
+      "severity": 0,
+      "source": Object {
+        "position": Object {
+          "column": 0,
+          "line": 0,
+        },
+        "url": "",
+      },
+    },
+    Object {
       "code": "ROUNDTRIP_MISSING_PROPERTY",
       "jsonPathsInPayload": Array [],
       "message": "The property 'createOption' is present in the PUT request but is either never returned in the GET response or is returned with a null value.",
