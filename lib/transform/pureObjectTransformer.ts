@@ -8,7 +8,7 @@ export const pureObjectTransformer: GlobalTransformer = {
         sch.type === "object" &&
         (sch.properties === undefined || Object.keys(sch.properties).length === 0) &&
         sch.additionalProperties === undefined &&
-        sch.additionalObjectTypeProperties !== true
+        sch.additionalPropertiesWithObjectType !== true
       ) {
         delete sch.type;
       }

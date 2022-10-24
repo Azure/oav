@@ -270,7 +270,7 @@ export interface Schema extends BaseSchema {
   _missingDiscriminator?: boolean;
 
   // Additional property support
-  additionalObjectTypeProperties?: boolean;
+  additionalPropertiesWithObjectType?: boolean;
 }
 
 export interface XML {

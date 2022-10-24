@@ -79,7 +79,7 @@ const transformNullable = (
   s: Schema,
   jsonLoader: JsonLoader,
   defaultNullable?: boolean,
-  additionalObjectTypeProperties?: boolean
+  additionalPropertiesWithObjectType?: boolean
 ) => {
   const sch = jsonLoader.resolveRefObj(s);
   const nullable = sch[xNullable] ?? sch.nullable;
@@ -105,8 +105,8 @@ const transformNullable = (
     if (typeof sch === "object") {
       sch.nullable = true;
     }
-    if (additionalObjectTypeProperties) {
-      sch.additionalObjectTypeProperties = true;
+    if (additionalPropertiesWithObjectType) {
+      sch.additionalPropertiesWithObjectType = true;
     }
     return sch;
   }
