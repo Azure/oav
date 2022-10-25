@@ -198,7 +198,6 @@ export class RestlerApiScenarioGenerator {
         const operation = this.operations.get(operationId);
         if (operation?.["x-ms-examples"] && Object.values(operation["x-ms-examples"])[0]) {
           const example = Object.values(operation["x-ms-examples"])[0];
-          step.step = (step as any).operationId;
           (step as RawStepExample).exampleFile = path.relative(
             this.opts.outputDir,
             this.fileLoader.resolvePath(this.jsonLoader.getRealPath(example.$ref!))
@@ -306,7 +305,7 @@ export class RestlerApiScenarioGenerator {
     definition.variables = variables;
   }
 
-  private generateVariable(parameter: Parameter): Variable | string {
+  private generateVariable(parameter: Parameter): Variable | string | undefined {
     const genValue = (name: string, schema: Schema): VarValue => {
       if (util.isObject(schema)) {
         const ret: VarValue = {};
@@ -374,7 +373,8 @@ export class RestlerApiScenarioGenerator {
       case "array":
         return { type: "array", value: this.mocker.mock(parameter, parameter.name) };
       default:
-        throw new Error(`Unknown parameter type: ${parameter.type}`);
+        logger.warn(`Unsupported type ${parameter.type} of parameter ${parameter.name}`);
+        return undefined;
     }
   }
   private generateDependencySteps(res?: ArmResourceManipulator) {
