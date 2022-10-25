@@ -1,4 +1,4 @@
-import { RawScenarioDefinition } from "../../apiScenarioTypes";
+import { RawScenario, RawStep } from "../../apiScenarioTypes";
 import { ApiTestGeneratorRule, ArmResourceManipulatorInterface } from "../ApiTestRuleBasedGenerator";
 
 export const SystemDataExistsInResponse: ApiTestGeneratorRule = {
@@ -8,9 +8,9 @@ export const SystemDataExistsInResponse: ApiTestGeneratorRule = {
   resourceKinds: ["Tracked","Proxy","Extension"],
   appliesTo: ["ARM"],
   useExample: true,
-  generator: (resource: ArmResourceManipulatorInterface, base: RawScenarioDefinition) => {
+  generator: (resource: ArmResourceManipulatorInterface, base: RawScenario) => {
     const getOp = resource.getResourceOperation("Get");
-    const step = { operationId: getOp.operationId } as any;
+    const step:RawStep = { operationId: getOp.operationId };
     const responses = {} as any;
 
     if (resource.getProperty( "systemData")) {
@@ -20,7 +20,7 @@ export const SystemDataExistsInResponse: ApiTestGeneratorRule = {
     else {
       return null
     }
-    base.scenarios[0].steps.push(step as any);
+    base.steps.push(step);
     return base;
   },
 };

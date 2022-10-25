@@ -19,7 +19,7 @@ jest.setTimeout(9999999);
 export const testApiTestRuleBase = async (
   swaggers: string[],
   specFolder:string,
-  rule: ApiTestGeneratorRule,
+  rules: ApiTestGeneratorRule[],
   isRPaaS?: string
 ) => {
   const opts: SwaggerLoaderOption = {};
@@ -59,7 +59,6 @@ export const testApiTestRuleBase = async (
   }
   const dependencyFile = await generateDependencyFile(swaggers, specFolder);
   const outputDir = `${join(specFolder,dirname(swaggers[0]))}/generatedScenarios`;
-  const rules: ApiTestGeneratorRule[] = [rule];
   assert.ok(dependencyFile)
   const generator = new ApiTestRuleBasedGenerator(
     swaggerLoader,
@@ -69,7 +68,7 @@ export const testApiTestRuleBase = async (
     dependencyFile!
   );
   await generator.run(outputDir, isRPaaS ? "RPaaS" : "ARM");
-  const pathPattern = resolve(outputDir,rule.name,"*.yaml")
+  const pathPattern = resolve(outputDir,"*.yaml")
   return glob.sync(pathPattern, {
     ignore: ["**/examples/**/*.json", "**/quickstart-templates/*.json", "**/schema/*.json"],
   });
@@ -78,7 +77,7 @@ export const testApiTestRuleBase = async (
 async function testApiTestRuleBaseForReadme(
   readmeMd: string,
   specFolder: string,
-  rule: ApiTestGeneratorRule,
+  rules: ApiTestGeneratorRule[],
   isRPaaS?: string
 ) {
   const inputs = (await getInputFiles(join(specFolder, readmeMd))).map((it: string) =>
@@ -87,7 +86,7 @@ async function testApiTestRuleBaseForReadme(
   return  await testApiTestRuleBase(
     inputs.filter((spec) => !isCommonSpec(join(specFolder, spec))),
     specFolder,
-    rule,isRPaaS
+    rules,isRPaaS
   );
 }
 
@@ -104,7 +103,7 @@ describe("Api Test rule based generator test", () => {
       ignore: ["**/examples/**/*.json", "**/quickstart-templates/*.json", "**/schema/*.json"],
     }
   );
-  const selectedRps = ["compute",/* "monitor", "sql", "hdinsight", "resource", "storage"*/];
+  const selectedRps = ["appconfiguration",/* "monitor", "sql", "hdinsight", "resource", "storage"*/];
   const allSpecs = specPaths
     .filter(
       (p: string) => selectedRps.some((rp: string) => p.includes(`specification/${rp}/`))
@@ -116,29 +115,29 @@ describe("Api Test rule based generator test", () => {
       const scenarioFiles = await testApiTestRuleBaseForReadme(
         readmeMd,
         specFolder,
-        NoChildResourceCreated
+        [NoChildResourceCreated,ResourceNameCaseInsensitive,SystemDataExistsInResponse]
       );
       assert.ok(scenarioFiles);
     }
   });
 
- it("test  ResourceNameCaseInsensitive",async ()=> {
+ it.skip("test  ResourceNameCaseInsensitive",async ()=> {
   for(const readmeMd of allSpecs) {
       const scenarioFiles = await testApiTestRuleBaseForReadme(
         readmeMd,
         specFolder,
-        ResourceNameCaseInsensitive
+        [ResourceNameCaseInsensitive]
       );
       assert.ok(scenarioFiles);
   }
  });
 
- it("test SystemDataExistsInResponse", async () => {
+ it.skip("test SystemDataExistsInResponse", async () => {
    for (const readmeMd of allSpecs) {
     const scenarioFiles = await await testApiTestRuleBaseForReadme(
       readmeMd,
       specFolder,
-      SystemDataExistsInResponse
+      [SystemDataExistsInResponse]
     );
     assert.ok(scenarioFiles);
    }

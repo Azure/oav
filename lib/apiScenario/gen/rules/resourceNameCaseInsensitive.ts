@@ -1,6 +1,5 @@
 import { cloneDeep, toUpper } from "lodash";
-import Mocker from "../../../generator/mocker";
-import { RawScenarioDefinition } from "../../apiScenarioTypes";
+import { RawScenario, RawStep } from "../../apiScenarioTypes";
 import { ApiTestGeneratorRule, ArmResourceManipulatorInterface } from "../ApiTestRuleBasedGenerator";
 
 function getResourceNameParameter(path: string) {
@@ -19,16 +18,14 @@ export const ResourceNameCaseInsensitive: ApiTestGeneratorRule = {
   resourceKinds: ["Tracked"],
   appliesTo: ["ARM"],
   useExample: true,
-  generator: (resource: ArmResourceManipulatorInterface, base: RawScenarioDefinition) => {
+  generator: (resource: ArmResourceManipulatorInterface, base: RawScenario) => {
     const getOp = resource.getResourceOperation("Get");
     const resourceName = getResourceNameParameter(getOp?.path);
     const resourceNameVar = resourceName ? cloneDeep(base.variables?.[resourceName]) || {} : {};
     const variables = {} as any;
     if (base.variables && resourceName) {
       // generate a mocked value
-      const mocker = new Mocker();
-      const randomValue = mocker.mock({ type: "string", minLength: 5, maxLength: 10 }, "value");
-      base.variables._mockedRandom = { type: "string", value: randomValue };
+      base.variables._mockedRandom = { type: "string", prefix: "r" };
       // set the operation variable
       const oldPrefix = (resourceNameVar as any).prefix ||  `${resourceName.toLocaleLowerCase().substring(0, 10)}`;
       (resourceNameVar as any).value = `${toUpper(oldPrefix)}$(_mockedRandom)`;
@@ -37,8 +34,8 @@ export const ResourceNameCaseInsensitive: ApiTestGeneratorRule = {
       base.variables[resourceName] = { value: `${oldPrefix}$(_mockedRandom)`, type: "string" };
       variables[resourceName] = resourceNameVar;
     }
-    const step = { operationId: getOp.operationId ,variables} as any;
-    base.scenarios[0].steps.push(step as any);
+    const step:RawStep = { operationId: getOp.operationId ,variables};
+    base.steps.push(step);
     return base;
   },
 };

@@ -1,9 +1,9 @@
 import { existsSync, writeFileSync } from "fs";
-import { mkdirpSync} from "fs-extra";
+import { mkdirpSync } from "fs-extra";
 import { injectable } from "inversify";
 import { dump } from "js-yaml";
 import _ from "lodash";
-import { dirname, join, resolve } from "path";
+import { dirname, join, relative, resolve } from "path";
 import { inversifyGetInstance } from "../../inversifyUtils";
 import { JsonLoader } from "../../swagger/jsonLoader";
 import { setDefaultOpts } from "../../swagger/loader";
@@ -11,7 +11,13 @@ import { SwaggerLoader, SwaggerLoaderOption } from "../../swagger/swaggerLoader"
 import { Path, SwaggerSpec } from "../../swagger/swaggerTypes";
 import { traverseSwagger, traverseSwaggers } from "../../transform/traverseSwagger";
 import { xmsLongRunningOperation } from "../../util/constants";
-import { RawScenarioDefinition, RawStepExample, RawStepOperation} from "../apiScenarioTypes";
+import {
+  RawScenario,
+  RawScenarioDefinition,
+  RawStep,
+  RawStepExample,
+  RawStepOperation,
+} from "../apiScenarioTypes";
 import { ApiScenarioYamlLoader } from "../apiScenarioYamlLoader";
 import { RestlerApiScenarioGenerator } from "./restlerApiScenarioGenerator";
 import { NoChildResourceCreated } from "./rules/noChildResourceCreated";
@@ -20,27 +26,27 @@ import { SystemDataExistsInResponse } from "./rules/systemDataExistsInResponse";
 
 export type HttpVerb = "get" | "put" | "post" | "patch" | "delete" | "head";
 export type ArmResourceKind = "Tracked" | "Proxy" | "Extension" | "None";
-export type ResourceBasicOperationKind = "Get" | "CreateOrUpdate" | "Update" | "Delete"
-export type ResourceOperationKind = ResourceBasicOperationKind | "Action" | "List"
+export type ResourceBasicOperationKind = "Get" | "CreateOrUpdate" | "Update" | "Delete";
+export type ResourceOperationKind = ResourceBasicOperationKind | "Action" | "List";
 export type PlatFormType = "RPaaS" | "ARM";
 
 export type ApiTestGeneratorRule = {
   name: string;
   description: string;
-  armRpcCodes?: string[]
+  armRpcCodes?: string[];
   resourceKinds?: ArmResourceKind[];
   appliesTo: PlatFormType[];
-  useExample?:boolean,
+  useExample?: boolean;
   generator: ApiTestGenerator;
 };
 
-type ApiTestGenerator = (resource:ArmResourceManipulator,base: RawScenarioDefinition)=> RawScenarioDefinition | null
+type ApiTestGenerator = (resource: ArmResourceManipulator, base: RawScenario) => RawScenario | null;
 
 type ResourceOperation = {
   path: string;
   operationId: string;
   parameters?: [];
-  responses?: {[index:string]:any};
+  responses?: { [index: string]: any };
   examples: string[];
   [xmsLongRunningOperation]?: boolean;
   kind: ResourceOperationKind;
@@ -55,7 +61,6 @@ export interface ArmResourceManipulatorInterface {
   getParentResource(): ArmResourceManipulatorInterface[];
   getChildResource(): ArmResourceManipulatorInterface[];
 }
-
 
 /*
 const ResourceBasicApiTestGenerator = {
@@ -73,8 +78,8 @@ const ResourceBasicApiTestGenerator = {
   genResourceDelete: (resource: ArmResourceManipulator) => {},
 };*/
 
-// the class for manipulate the resource , includeing 
-//  get CRUD, list, actions operations 
+// the class for manipulate the resource , includeing
+//  get CRUD, list, actions operations
 export class ArmResourceManipulator implements ArmResourceManipulatorInterface {
   constructor(
     private swaggers: SwaggerSpec[],
@@ -84,18 +89,20 @@ export class ArmResourceManipulator implements ArmResourceManipulatorInterface {
     private path: string
   ) {}
   getListOperations(): ResourceOperation[] {
-    return this.resAnalyzer
-      .getResourceActions()
-      .filter((res) => res.resourceType === this.resourceType && res.isListResource())
-      .map((res) => res.getOperation("List"))
-      .reduce((pre, cur) => pre.concat(cur),[]) || [];
+    return (
+      this.resAnalyzer
+        .getResourceActions()
+        .filter((res) => res.resourceType === this.resourceType && res.isListResource())
+        .map((res) => res.getOperation("List"))
+        .reduce((pre, cur) => pre.concat(cur), []) || []
+    );
   }
   getResourceActions(): ResourceOperation[] {
     return this.resAnalyzer
       .getResourceActions()
       .filter((res) => res.resourceType === this.resourceType && res.isListResource())
       .map((res) => res.getOperation("Action"))
-      .reduce((pre, cur) => pre.concat(cur),[]);
+      .reduce((pre, cur) => pre.concat(cur), []);
   }
   getResourceOperation(kind: ResourceBasicOperationKind): ResourceOperation {
     return this.getOperation(kind)?.[0];
@@ -106,42 +113,42 @@ export class ArmResourceManipulator implements ArmResourceManipulatorInterface {
   public getOperation(kind: ResourceOperationKind): ResourceOperation[] {
     const ops: ResourceOperation[] = [];
     for (const swagger of this.swaggers) {
-       traverseSwagger(swagger, {
-         onPath: (path: Path, pathTemplate: string) => {
-           if (pathTemplate === this.path) {
-             function getHttpVerb(kind: ResourceOperationKind) {
-               const map: { [index in ResourceOperationKind]: string } = {
-                 CreateOrUpdate: "put",
-                 Get: "get",
-                 Update: "patch",
-                 Delete: "delete",
-                 List: "get",
-                 Action: "post",
-               };
-               return map[kind] as string;
-             }
-             function getRawOperation(kind: ResourceOperationKind) {
-               return (path as any)[getHttpVerb(kind)];
-             }
-             const rawOperation = getRawOperation(kind);
-             if (rawOperation && rawOperation.operationId) {
-               const operation = {
-                 operationId: rawOperation.operationId!,
-                 parameters: this.jsonLoader.resolveRefObj(rawOperation.parameters! as any),
-                 responses: this.jsonLoader.resolveRefObj(rawOperation.responses!),
-                 path: pathTemplate!,
-                 kind,
-                 examples: Object.values(rawOperation["x-ms-examples"] || {})?.map((e) =>
-                   this.jsonLoader.getRealPath((e as any).$ref)
-                 ),
-               };
-               ops.push(operation);
-             }
-           }
-         },
-       });
+      traverseSwagger(swagger, {
+        onPath: (path: Path, pathTemplate: string) => {
+          if (pathTemplate === this.path) {
+            function getHttpVerb(kind: ResourceOperationKind) {
+              const map: { [index in ResourceOperationKind]: string } = {
+                CreateOrUpdate: "put",
+                Get: "get",
+                Update: "patch",
+                Delete: "delete",
+                List: "get",
+                Action: "post",
+              };
+              return map[kind] as string;
+            }
+            function getRawOperation(kind: ResourceOperationKind) {
+              return (path as any)[getHttpVerb(kind)];
+            }
+            const rawOperation = getRawOperation(kind);
+            if (rawOperation && rawOperation.operationId) {
+              const operation = {
+                operationId: rawOperation.operationId!,
+                parameters: this.jsonLoader.resolveRefObj(rawOperation.parameters! as any),
+                responses: this.jsonLoader.resolveRefObj(rawOperation.responses!),
+                path: pathTemplate!,
+                kind,
+                examples: Object.values(rawOperation["x-ms-examples"] || {})?.map((e) =>
+                  this.jsonLoader.getRealPath((e as any).$ref)
+                ),
+              };
+              ops.push(operation);
+            }
+          }
+        },
+      });
     }
-   
+
     return ops;
   }
   private getPropertyInternal(schema: any, propName: string): any {
@@ -164,16 +171,16 @@ export class ArmResourceManipulator implements ArmResourceManipulatorInterface {
 
   getProperty(propName: string): any {
     const response =
-    this.getResourceOperation("CreateOrUpdate")?.responses?.["200"] ||
-    this.getResourceOperation("CreateOrUpdate")?.responses?.["201"] ||
-    this.getResourceOperation("Get")?.responses?.["200"];
+      this.getResourceOperation("CreateOrUpdate")?.responses?.["200"] ||
+      this.getResourceOperation("CreateOrUpdate")?.responses?.["201"] ||
+      this.getResourceOperation("Get")?.responses?.["200"];
     if (response?.schema) {
-      return this.getPropertyInternal(response?.schema,propName);
+      return this.getPropertyInternal(response?.schema, propName);
     }
     return undefined;
   }
   getProperties(): any[] {
-   return []
+    return [];
   }
 
   public isTrackedResource() {
@@ -225,7 +232,7 @@ export class ArmResourceManipulator implements ArmResourceManipulatorInterface {
 }
 
 class ArmResourceDependencyGenerator {
-  private _restlerApiScenarioGenerator: RestlerApiScenarioGenerator;
+  private _basicScenario: RawScenarioDefinition | undefined;
   constructor(
     private _swaggers: string[],
     private _dependencyFile: string,
@@ -240,27 +247,26 @@ class ArmResourceDependencyGenerator {
       useExample: useExample,
     });
     await restlerGenerator.initialize();
-    this._restlerApiScenarioGenerator = restlerGenerator;
     const baseScenario = await restlerGenerator.generateResourceDependency(resoure);
     if (this._basicScenarioFile) {
       const loader = inversifyGetInstance(ApiScenarioYamlLoader, {});
-      const [scenarios] = await loader.load(this._basicScenarioFile);
-
+      const [scenario] = await loader.load(this._basicScenarioFile);
+      this._basicScenario = scenario;
       // extract varaibles
       if (baseScenario.variables) {
-        Object.keys(baseScenario.variables).forEach((v:string) => {
-          if (scenarios.variables?.[v]) {
-            baseScenario.variables![v] = scenarios.variables[v]
+        Object.keys(baseScenario.variables).forEach((v: string) => {
+          if (scenario.variables?.[v]) {
+            baseScenario.variables![v] = scenario.variables[v];
           }
-        })
+        });
       }
-      function resolveExampleFile(scenarioFile:string, exampleFile:string) {
-        return resolve(dirname(scenarioFile),exampleFile)
+      function resolveExampleFile(scenarioFile: string, exampleFile: string) {
+        return resolve(dirname(scenarioFile), exampleFile);
       }
-      const steps = baseScenario.scenarios[0].steps as RawStepOperation[]
-      const basicScenarioSteps = scenarios.scenarios[0].steps as RawStepOperation[]
+      const steps = baseScenario.steps as RawStepOperation[];
+      const basicScenarioSteps = scenario.scenarios[0].steps as RawStepOperation[];
       // extract steps
-      baseScenario.scenarios[0].steps = steps.map((s) => {
+      baseScenario.steps = steps.map((s) => {
         const found = basicScenarioSteps.find((basic) => s.operationId === basic.operationId);
         const exampleFile = (found as RawStepExample)?.exampleFile;
         return found
@@ -270,10 +276,40 @@ class ArmResourceDependencyGenerator {
           : s;
       });
     }
-    return baseScenario
+    return baseScenario;
   }
-  updateExampleFile(resoure: ArmResourceManipulator,scenarioFile:RawScenarioDefinition) {
-    this._restlerApiScenarioGenerator.updateStepExample(scenarioFile, resoure);
+  updateExampleFile(res: ArmResourceManipulator, scenario: RawScenario) {
+    scenario.steps.forEach((s) => {
+      if ("exampleFile" in s) {
+        s.exampleFile = relative(resolve(this._outPutDir, res.resourceType, ".."), s.exampleFile);
+      }
+    });
+  }
+
+  getPrepareAndCleanUp(res: ArmResourceManipulator) {
+    const updateStepFile = (res: ArmResourceManipulator, steps: RawStep[], baseFile: string) => {
+      return steps.map((s) => {
+        if ("armTemplate" in s) {
+          s.armTemplate = relative(
+            resolve(this._outPutDir, res.resourceType, ".."),
+            resolve(dirname(baseFile), s.armTemplate)
+          );
+        }
+        if ("armDeploymentScript" in s) {
+          s.armDeploymentScript = relative(
+            resolve(this._outPutDir, res.resourceType, ".."),
+            resolve(dirname(baseFile), s.armDeploymentScript)
+          );
+        }
+      });
+    };
+    if (!!this._basicScenarioFile) {
+      [
+        updateStepFile(res, this._basicScenario?.prepareSteps || [], this._basicScenarioFile),
+        updateStepFile(res, this._basicScenario?.cleanUpSteps || [], this._basicScenarioFile),
+      ];
+    }
+    return [this._basicScenario?.prepareSteps, this._basicScenario?.cleanUpSteps];
   }
 }
 
@@ -284,12 +320,17 @@ class ArmResourceAnalyzer {
     this.getResources();
   }
 
-  public getResourceType(path:string) {
-    const index = path.lastIndexOf("/providers")
+  public getResourceType(path: string) {
+    const index = path.lastIndexOf("/providers");
     if (index !== -1) {
-      return path.substring(index + 1).split("/").slice(2).filter((v,i) => v && !(i % 2)).join("/")
+      return path
+        .substring(index + 1)
+        .split("/")
+        .slice(2)
+        .filter((v, i) => v && !(i % 2))
+        .join("/");
     }
-    return ""
+    return "";
   }
 
   public getResources() {
@@ -316,7 +357,7 @@ class ArmResourceAnalyzer {
         }
       },
     });
-    
+
     return this._resources;
   }
 
@@ -376,55 +417,86 @@ class ArmResourceAnalyzer {
 
 @injectable()
 export class ApiTestRuleBasedGenerator {
-  constructor(private swaggerLoader: SwaggerLoader, private jsonLoader:JsonLoader,private rules: ApiTestGeneratorRule[], private swaggerFiles: string[],private dependencyFile?:string,private basicScenarioFile?:string) {}
+  constructor(
+    private swaggerLoader: SwaggerLoader,
+    private jsonLoader: JsonLoader,
+    private rules: ApiTestGeneratorRule[],
+    private swaggerFiles: string[],
+    private dependencyFile?: string,
+    private basicScenarioFile?: string
+  ) {}
 
-  async run(outputDir:string,platFormType:PlatFormType) {
-    const swaggerSpecs = await Promise.all(this.swaggerFiles.map(f => this.swaggerLoader.load(f)));
+  async run(outputDir: string, platFormType: PlatFormType) {
+    const swaggerSpecs = await Promise.all(
+      this.swaggerFiles.map((f) => this.swaggerLoader.load(f))
+    );
     const analyzer = new ArmResourceAnalyzer(swaggerSpecs, this.jsonLoader);
     const trackedResources = analyzer.getTrackedResource();
     const proxyResources = analyzer.getProxyResource();
     const extensionResources = analyzer.getExtensionResource();
-    const scenariosResult :{[index:string]:RawScenarioDefinition} = {}
-    const  generateForResources = async (resources: ArmResourceManipulator[],kind:ArmResourceKind) => {
-       for (const resource of resources) {
-         for (const rule of this.rules.filter(
-           (rule) => rule.resourceKinds?.includes(kind) && rule.appliesTo.includes(platFormType)
-         )) {
-           // what if without dependency ??
-           if (this.dependencyFile) {
-             const dependency = new ArmResourceDependencyGenerator(
-               this.swaggerFiles,
-               this.dependencyFile,
-               outputDir,this.basicScenarioFile
-             );
-             const base = await dependency.generate(resource, rule.useExample);
-             if (base) {
-               const apiSenarios = rule.generator(resource, base);
-               if (apiSenarios) {
-                 dependency.updateExampleFile(resource,apiSenarios);
-                 scenariosResult[rule.name] = apiSenarios;
-                 this.writeFile(rule.name, resource.resourceType, apiSenarios, outputDir);
-               }
-             }
+    const scenariosResult: { [index: string]: RawScenario } = {};
+    const generateForResources = async (
+      resources: ArmResourceManipulator[],
+      kind: ArmResourceKind
+    ) => {
+      let base: RawScenario = { steps: [] };
+      let dependency = this.dependencyFile
+        ? new ArmResourceDependencyGenerator(
+            this.swaggerFiles,
+            this.dependencyFile,
+            outputDir,
+            this.basicScenarioFile
+          )
+        : undefined;
 
-           }
-         }
-       }
-    }
-    await generateForResources(trackedResources,"Tracked")
-    await generateForResources(proxyResources,"Proxy")
-    await generateForResources(extensionResources,"Extension")
-   
+      for (const resource of resources) {
+        const definition: RawScenarioDefinition = {
+          scope: "ResourceGroup",
+          variables: undefined,
+          prepareSteps: undefined,
+          scenarios: [],
+          cleanUpSteps: undefined,
+        };
+        for (const rule of this.rules.filter(
+          (rule) => rule.resourceKinds?.includes(kind) && rule.appliesTo.includes(platFormType)
+        )) {
+          // what if without dependency ??
+          base = (await dependency?.generate(resource, rule.useExample)) || base;
+          if (base) {
+            const apiSenarios = rule.generator(resource, base);
+            if (apiSenarios) {
+              dependency?.updateExampleFile(resource, apiSenarios);
+              scenariosResult[rule.name] = apiSenarios;
+              definition.scenarios.push({ scenario: rule.name, ...apiSenarios });
+            }
+          }
+        }
+        if (definition.scenarios.length > 0) {
+          const [prepare, cleanup] = dependency?.getPrepareAndCleanUp(resource) || [
+            undefined,
+            undefined,
+          ];
+          definition.prepareSteps = prepare;
+          definition.cleanUpSteps = cleanup;
+          this.writeFile(resource.resourceType, definition, outputDir);
+        }
+      }
+    };
+    await generateForResources(trackedResources, "Tracked");
+    await generateForResources(proxyResources, "Proxy");
+    await generateForResources(extensionResources, "Extension");
   }
 
-  writeFile(ruleName:string,resourType:string,scenario:RawScenarioDefinition,outputDir:string) {
-     const fileContent = dump(scenario);
-     const filePath = join(outputDir, ruleName,`${resourType}.yaml`);
-     if (!existsSync(dirname(filePath))) {
-      mkdirpSync(dirname(filePath))
-     }
-     writeFileSync(filePath, fileContent);
-     console.log(`${filePath} is generated.`);
+  writeFile(resourType: string, definition: RawScenarioDefinition, outputDir: string) {
+    const filePath = join(outputDir, `${resourType}.yaml`);
+    if (!existsSync(dirname(filePath))) {
+      mkdirpSync(dirname(filePath));
+    }
+    const fileContent =
+      "# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/documentation/api-scenario/references/v1.2/schema.json\n" +
+      dump(definition);
+    writeFileSync(filePath, fileContent);
+    console.log(`${filePath} is generated.`);
   }
 }
 

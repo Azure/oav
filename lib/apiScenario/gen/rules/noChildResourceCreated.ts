@@ -1,4 +1,4 @@
-import { RawScenarioDefinition } from "../../apiScenarioTypes";
+import { RawScenario, RawStep } from "../../apiScenarioTypes";
 import { ApiTestGeneratorRule, ArmResourceManipulatorInterface } from "../ApiTestRuleBasedGenerator";
 
 export const NoChildResourceCreated: ApiTestGeneratorRule = {
@@ -8,7 +8,7 @@ export const NoChildResourceCreated: ApiTestGeneratorRule = {
   resourceKinds: ["Tracked", "Extension"],
   appliesTo: ["ARM"],
   useExample: true,
-  generator: (resource: ArmResourceManipulatorInterface, base: RawScenarioDefinition) => {
+  generator: (resource: ArmResourceManipulatorInterface, base: RawScenario) => {
     const childResources = resource.getChildResource();
     if (childResources.length === 0) {
       return null;
@@ -17,11 +17,11 @@ export const NoChildResourceCreated: ApiTestGeneratorRule = {
     for (resource of childResources) {
       const listOperation = resource.getListOperations()[0]
       if (listOperation && listOperation.examples[0]) {
-        const step = {
+        const step:RawStep = {
           operationId: listOperation.operationId,
-          exampleFile: listOperation.examples[0],
-        } as any;
-        step.exampleFile = base.scenarios[0].steps.push(step as any);
+          responses: {200: {body:{ value:[]}}}
+        };
+        base.steps.push(step);
         hit = true;
       }
     }
