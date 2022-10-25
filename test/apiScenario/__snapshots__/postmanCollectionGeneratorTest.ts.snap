@@ -306,7 +306,7 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
           "description": "{\\"type\\":\\"LRO\\",\\"poller_item_name\\":\\"_createStorageAccount_poller\\",\\"operationId\\":\\"StorageAccounts_Create\\",\\"itemName\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "hlqn5m",
+              "id": "4fy274",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -320,7 +320,7 @@ if (pollingUrl) {
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
-                "id": "7wi32c",
+                "id": "vov58h",
                 "type": "text/javascript",
               },
             },
@@ -496,7 +496,7 @@ try {
           "description": "{\\"type\\":\\"finalGet\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "4fy274",
+              "id": "7wi32c",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -504,12 +504,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "vov58h",
+                "id": "1rcvet",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "1rcvet",
+          "id": "hlqn5m",
           "name": "_createStorageAccount_final_get",
           "request": Object {
             "header": Array [
@@ -677,7 +677,7 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
           "description": "{\\"type\\":\\"LRO\\",\\"poller_item_name\\":\\"_createStorageAccount_poller\\",\\"operationId\\":\\"StorageAccounts_Create\\",\\"itemName\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "9e4snq",
+              "id": "cb8v3t",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -691,7 +691,7 @@ if (pollingUrl) {
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
-                "id": "h1l4hw",
+                "id": "x7qdfp",
                 "type": "text/javascript",
               },
             },
@@ -867,7 +867,7 @@ try {
           "description": "{\\"type\\":\\"finalGet\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "cb8v3t",
+              "id": "h1l4hw",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -875,12 +875,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "x7qdfp",
+                "id": "ezqs5q",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "ezqs5q",
+          "id": "9e4snq",
           "name": "_createStorageAccount_final_get",
           "request": Object {
             "header": Array [
@@ -1048,7 +1048,7 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
           "description": "{\\"type\\":\\"LRO\\",\\"poller_item_name\\":\\"_createStorageAccount_poller\\",\\"operationId\\":\\"StorageAccounts_Create\\",\\"itemName\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "49cuyt",
+              "id": "i544h5",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -1062,7 +1062,7 @@ if (pollingUrl) {
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
-                "id": "8ew1jk",
+                "id": "db187u",
                 "type": "text/javascript",
               },
             },
@@ -1238,7 +1238,7 @@ try {
           "description": "{\\"type\\":\\"finalGet\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "i544h5",
+              "id": "8ew1jk",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -1246,12 +1246,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "db187u",
+                "id": "x6oaag",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "x6oaag",
+          "id": "49cuyt",
           "name": "_createStorageAccount_final_get",
           "request": Object {
             "header": Array [
@@ -1448,7 +1448,7 @@ try {
               },
             },
             Object {
-              "id": "vm8psu",
+              "id": "mge3qz",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -1462,7 +1462,7 @@ if (pollingUrl) {
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
-                "id": "lk4mhm",
+                "id": "spylrr",
                 "type": "text/javascript",
               },
             },
@@ -1644,7 +1644,7 @@ try {
           "description": "{\\"type\\":\\"finalGet\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "mge3qz",
+              "id": "lk4mhm",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -1652,12 +1652,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "spylrr",
+                "id": "ivu9xy",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "ivu9xy",
+          "id": "vm8psu",
           "name": "_createStorageAccount_final_get",
           "request": Object {
             "header": Array [
@@ -2123,7 +2123,7 @@ if (
           "description": "{\\"type\\":\\"LRO\\",\\"poller_item_name\\":\\"_createStorageAccount_poller\\",\\"operationId\\":\\"StorageAccounts_Create\\",\\"exampleName\\":\\"../examples/StorageAccountCreate.json\\",\\"itemName\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "1gju0k",
+              "id": "hlqn5m",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -2137,7 +2137,7 @@ if (pollingUrl) {
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
-                "id": "j55iye",
+                "id": "7wi32c",
                 "type": "text/javascript",
               },
             },
@@ -2323,7 +2323,7 @@ try {
           "description": "{\\"type\\":\\"finalGet\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "hlqn5m",
+              "id": "j55iye",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -2331,12 +2331,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "7wi32c",
+                "id": "hfy1hi",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "hfy1hi",
+          "id": "1gju0k",
           "name": "_createStorageAccount_final_get",
           "request": Object {
             "header": Array [
@@ -2648,73 +2648,17 @@ try {
           },
           "response": Array [],
         },
-        Object {
-          "description": "{\\"type\\":\\"finalGet\\",\\"lro_item_name\\":\\"deleteStorageAccount\\",\\"step\\":\\"deleteStorageAccount\\"}",
-          "event": Array [],
-          "id": "j917fd",
-          "name": "_deleteStorageAccount_final_get",
-          "request": Object {
-            "header": Array [
-              Object {
-                "key": "Content-Type",
-                "value": "application/json",
-              },
-            ],
-            "method": "GET",
-            "url": Object {
-              "host": Array [
-                "https://management",
-                "azure",
-                "com",
-              ],
-              "path": Array [
-                "subscriptions",
-                ":subscriptionId",
-                "resourceGroups",
-                ":resourceGroupName",
-                "providers",
-                "Microsoft.Storage",
-                "storageAccounts",
-                ":accountName",
-              ],
-              "query": Array [
-                Object {
-                  "key": "api-version",
-                  "value": "2021-08-01",
-                },
-              ],
-              "variable": Array [
-                Object {
-                  "key": "resourceGroupName",
-                  "type": "any",
-                  "value": "{{resourceGroupName}}",
-                },
-                Object {
-                  "key": "accountName",
-                  "type": "any",
-                  "value": "{{accountName}}",
-                },
-                Object {
-                  "key": "subscriptionId",
-                  "type": "any",
-                  "value": "{{subscriptionId}}",
-                },
-              ],
-            },
-          },
-          "response": Array [],
-        },
       ],
       "name": "StorageBasicExample",
     },
     Object {
       "event": Array [],
-      "id": "un6yyw",
+      "id": "rxgyxc",
       "item": Array [
         Object {
           "event": Array [
             Object {
-              "id": "igg58r",
+              "id": "un6yyw",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -2722,12 +2666,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "zfkej6",
+                "id": "igg58r",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "rxgyxc",
+          "id": "j917fd",
           "name": "deleteResourceGroup",
           "request": Object {
             "header": Array [
@@ -3057,7 +3001,7 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
           "description": "{\\"type\\":\\"LRO\\",\\"poller_item_name\\":\\"_createStorageAccount_poller\\",\\"operationId\\":\\"StorageAccounts_Create\\",\\"itemName\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "1gju0k",
+              "id": "hlqn5m",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -3071,7 +3015,7 @@ if (pollingUrl) {
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
-                "id": "j55iye",
+                "id": "7wi32c",
                 "type": "text/javascript",
               },
             },
@@ -3223,7 +3167,7 @@ try {
           "description": "{\\"type\\":\\"finalGet\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "hlqn5m",
+              "id": "j55iye",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -3231,12 +3175,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "7wi32c",
+                "id": "hfy1hi",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "hfy1hi",
+          "id": "1gju0k",
           "name": "_createStorageAccount_final_get",
           "request": Object {
             "header": Array [
@@ -3384,7 +3328,7 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
           "description": "{\\"type\\":\\"LRO\\",\\"poller_item_name\\":\\"_createStorageAccount_poller\\",\\"operationId\\":\\"StorageAccounts_Create\\",\\"itemName\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "un6yyw",
+              "id": "9e4snq",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -3398,7 +3342,7 @@ if (pollingUrl) {
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
-                "id": "igg58r",
+                "id": "h1l4hw",
                 "type": "text/javascript",
               },
             },
@@ -3550,7 +3494,7 @@ try {
           "description": "{\\"type\\":\\"finalGet\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "9e4snq",
+              "id": "igg58r",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -3558,12 +3502,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "h1l4hw",
+                "id": "zfkej6",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "zfkej6",
+          "id": "un6yyw",
           "name": "_createStorageAccount_final_get",
           "request": Object {
             "header": Array [
@@ -3711,7 +3655,7 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
           "description": "{\\"type\\":\\"LRO\\",\\"poller_item_name\\":\\"_createStorageAccount_poller\\",\\"operationId\\":\\"StorageAccounts_Create\\",\\"itemName\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "ssi2a8",
+              "id": "49cuyt",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -3725,7 +3669,7 @@ if (pollingUrl) {
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
-                "id": "cdpopn",
+                "id": "8ew1jk",
                 "type": "text/javascript",
               },
             },
@@ -3877,7 +3821,7 @@ try {
           "description": "{\\"type\\":\\"finalGet\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "49cuyt",
+              "id": "cdpopn",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -3885,12 +3829,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "8ew1jk",
+                "id": "5sx5dw",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "5sx5dw",
+          "id": "ssi2a8",
           "name": "_createStorageAccount_final_get",
           "request": Object {
             "header": Array [
@@ -4067,7 +4011,7 @@ try {
               },
             },
             Object {
-              "id": "dm09uw",
+              "id": "vm8psu",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -4081,7 +4025,7 @@ if (pollingUrl) {
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
-                "id": "q1cfqt",
+                "id": "lk4mhm",
                 "type": "text/javascript",
               },
             },
@@ -4239,7 +4183,7 @@ try {
           "description": "{\\"type\\":\\"finalGet\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "vm8psu",
+              "id": "q1cfqt",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -4247,12 +4191,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "lk4mhm",
+                "id": "9ezdsu",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "9ezdsu",
+          "id": "dm09uw",
           "name": "_createStorageAccount_final_get",
           "request": Object {
             "header": Array [
@@ -4590,7 +4534,7 @@ if (
           "description": "{\\"type\\":\\"LRO\\",\\"poller_item_name\\":\\"_createStorageAccount_poller\\",\\"operationId\\":\\"StorageAccounts_Create\\",\\"exampleName\\":\\"../examples/StorageAccountCreateUserAssignedIdentityWithFederatedIdentityClientId.json\\",\\"itemName\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "g4l6nv",
+              "id": "gbupa4",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -4604,7 +4548,7 @@ if (pollingUrl) {
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
-                "id": "mcbyik",
+                "id": "1gju0k",
                 "type": "text/javascript",
               },
             },
@@ -4778,7 +4722,7 @@ try {
           "description": "{\\"type\\":\\"finalGet\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "gbupa4",
+              "id": "mcbyik",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -4786,12 +4730,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "1gju0k",
+                "id": "zvuzjs",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "zvuzjs",
+          "id": "g4l6nv",
           "name": "_createStorageAccount_final_get",
           "request": Object {
             "header": Array [
@@ -4848,7 +4792,7 @@ try {
           "description": "{\\"type\\":\\"LRO\\",\\"poller_item_name\\":\\"_createStorageAccount1_poller\\",\\"operationId\\":\\"StorageAccounts_Create\\",\\"exampleName\\":\\"../examples/StorageAccountCreateUserAssignedIdentityWithFederatedIdentityClientId.json\\",\\"itemName\\":\\"createStorageAccount1\\",\\"step\\":\\"createStorageAccount1\\"}",
           "event": Array [
             Object {
-              "id": "4fy274",
+              "id": "1ueh28",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -4862,7 +4806,7 @@ if (pollingUrl) {
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
-                "id": "vov58h",
+                "id": "3q0yb6",
                 "type": "text/javascript",
               },
             },
@@ -5036,7 +4980,7 @@ try {
           "description": "{\\"type\\":\\"finalGet\\",\\"lro_item_name\\":\\"createStorageAccount1\\",\\"step\\":\\"createStorageAccount1\\"}",
           "event": Array [
             Object {
-              "id": "1ueh28",
+              "id": "vov58h",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -5044,12 +4988,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "3q0yb6",
+                "id": "3l45xk",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "3l45xk",
+          "id": "4fy274",
           "name": "_createStorageAccount1_final_get",
           "request": Object {
             "header": Array [
