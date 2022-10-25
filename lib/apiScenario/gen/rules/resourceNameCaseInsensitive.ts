@@ -22,25 +22,22 @@ export const ResourceNameCaseInsensitive: ApiTestGeneratorRule = {
   generator: (resource: ArmResourceManipulatorInterface, base: RawScenarioDefinition) => {
     const getOp = resource.getResourceOperation("Get");
     const resourceName = getResourceNameParameter(getOp?.path);
-    const resourceNameVar = resourceName ? cloneDeep(base.variables?.[resourceName]) : null;
-    if (base.variables && resourceName && resourceNameVar && (resourceNameVar as any).prefix) {
+    const resourceNameVar = resourceName ? cloneDeep(base.variables?.[resourceName]) || {} : {};
+    const variables = {} as any;
+    if (base.variables && resourceName) {
       // generate a mocked value
       const mocker = new Mocker();
       const randomValue = mocker.mock({ type: "string", minLength: 5, maxLength: 10 }, "value");
       base.variables._mockedRandom = { type: "string", value: randomValue };
       // set the operation variable
-      const oldPrefix = (resourceNameVar as any).prefix;
+      const oldPrefix = (resourceNameVar as any).prefix ||  `${resourceName.toLocaleLowerCase().substring(0, 10)}`;
       (resourceNameVar as any).value = `${toUpper(oldPrefix)}$(_mockedRandom)`;
       delete (resourceNameVar as any).prefix;
       // modify the global variable
       base.variables[resourceName] = { value: `${oldPrefix}$(_mockedRandom)`, type: "string" };
-    }
-    const step = { operationId: getOp.operationId } as any;
-    const variables = {} as any;
-    if (resourceName) {
       variables[resourceName] = resourceNameVar;
     }
-    step.variables = variables;
+    const step = { operationId: getOp.operationId ,variables} as any;
     base.scenarios[0].steps.push(step as any);
     return base;
   },

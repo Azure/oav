@@ -64,6 +64,13 @@ interface Node {
   priority: number;
 }
 
+type ParameterNode = {
+  operationIds: Set<string>,
+  count: number,
+  name:string,
+  value: any
+}
+
 const methodOrder: LowerHttpMethods[] = ["put", "get", "patch", "post", "delete"];
 
 const envVariables = ["api-version", "subscriptionId", "resourceGroupName", "location"];
@@ -76,6 +83,7 @@ export const useRandom = {
 export class RestlerApiScenarioGenerator {
   private swaggers: SwaggerSpec[];
   private graph: Map<string, Node>;
+  private parameters: Map<string, ParameterNode>;
   private mocker: any;
   private operations: Map<string, Operation>;
 
@@ -145,28 +153,34 @@ export class RestlerApiScenarioGenerator {
     }
     definition.scenarios.push(this.generateDependencySteps(res));
     this.getVariables(definition);
+    return definition;
+  }
+
+  public updateStepExample(definition: RawScenarioDefinition, res: ArmResourceManipulator) {
     if (this.opts.useExample) {
       definition.scenarios[0].steps.forEach((step) => {
         const operationId = (step as any).operationId;
         const operation = this.operations.get(operationId);
-        if (operation?.["x-ms-examples"] && Object.values(operation["x-ms-examples"])[0]) {
-          const example = Object.values(operation["x-ms-examples"])[0];
+        const exampleObj = Object.values(operation?.["x-ms-examples"] || {})?.[0];
+        const exampleFile =
+          (step as RawStepExample).exampleFile || exampleObj?.$ref
+            ? this.fileLoader.resolvePath(this.jsonLoader.getRealPath(exampleObj.$ref!))
+            : null;
+        if (exampleFile) {
           step.step = (step as any).operationId;
           (step as any).operationId = undefined;
           (step as RawStepExample).exampleFile = path.relative(
-            path.resolve(this.opts.outputDir, "rule"),
-            this.fileLoader.resolvePath(this.jsonLoader.getRealPath(example.$ref!))
+            path.resolve(this.opts.outputDir, res.resourceType),
+            exampleFile
           );
         } else {
           console.warn(`${operationId} has no example.`);
         }
       });
-
       definition.scenarios[0].steps = definition.scenarios[0].steps.filter(
         (s) => (s as RawStepExample).exampleFile
       );
     }
-    return definition;
   }
 
   public async generate() {
@@ -209,48 +223,51 @@ export class RestlerApiScenarioGenerator {
 
   private getVariables(definition: RawScenarioDefinition) {
     const variables: { [name: string]: string | Variable } = {};
-    const map = new Map();
+    if (!this.parameters) {
+      const map = new Map();
+      for (const swagger of this.swaggers) {
+        traverseSwagger(swagger, {
+          onOperation: (operation) => {
+            for (let parameter of operation.parameters ?? []) {
+              parameter = this.jsonLoader.resolveRefObj(parameter);
+              if (
+                !parameter.required ||
+                envVariables.includes(parameter.name) ||
+                (parameter.in === "path" && parameter["x-ms-skip-url-encoding"])
+              ) {
+                continue;
+              }
 
-    for (const swagger of this.swaggers) {
-      traverseSwagger(swagger, {
-        onOperation: (operation) => {
-          for (let parameter of operation.parameters ?? []) {
-            parameter = this.jsonLoader.resolveRefObj(parameter);
-            if (
-              !parameter.required ||
-              envVariables.includes(parameter.name) ||
-              (parameter.in === "path" && parameter["x-ms-skip-url-encoding"])
-            ) {
-              continue;
+              let key: any = parameter.name;
+
+              if (parameter.in === "body") {
+                key = this.jsonLoader.resolveRefObj(parameter.schema!);
+              }
+
+              const value = map.get(key);
+
+              if (value) {
+                value.count++;
+                value.operationIds.add(operation.operationId);
+              } else {
+                map.set(key, {
+                  operationIds: new Set<string>([operation.operationId!]),
+                  name: parameter.name,
+                  count: 1,
+                  value: this.generateVariable(parameter),
+                });
+              }
             }
-
-            let key: any = parameter.name;
-
-            if (parameter.in === "body") {
-              key = this.jsonLoader.resolveRefObj(parameter.schema!);
-            }
-
-            const value = map.get(key);
-
-            if (value) {
-              value.count++;
-            } else {
-              map.set(key, {
-                operationId: operation.operationId,
-                name: parameter.name,
-                count: 1,
-                value: this.generateVariable(parameter),
-              });
-            }
-          }
-        },
-      });
+          },
+        });
+      }
+      this.parameters = map;
     }
 
-    [...map.values()]
+    [...this.parameters.values()]
       .sort((a, b) => b.count - a.count)
       .forEach((v) => {
-        const operation = this.operations.get(v.operationId);
+        const operation = this.operations.get([...v.operationIds.values()][0]);
         if (this.opts.useExample) {
           let p = operation?.parameters?.find((p) => {
             p = this.jsonLoader.resolveRefObj(p);
@@ -259,6 +276,7 @@ export class RestlerApiScenarioGenerator {
           if (p) {
             p = this.jsonLoader.resolveRefObj(p);
           }
+          // for body,query parameter
           if (
             p?.in !== "path" &&
             operation?.["x-ms-examples"] &&
@@ -267,16 +285,17 @@ export class RestlerApiScenarioGenerator {
             return;
           }
         }
-
         const step = definition.scenarios[0].steps.find(
-          (s) => (s as RawStepOperation).operationId === v.operationId
-        )!;
+          (s) =>
+            (s as RawStepOperation).operationId &&
+            v.operationIds.has((s as RawStepOperation).operationId)
+        );
         if (!step) {
           return;
         }
         if (!variables[v.name] && v.count > 1) {
           variables[v.name] = v.value;
-          return
+          return;
         }
         if (!step?.variables) {
           step.variables = {};
@@ -363,17 +382,17 @@ export class RestlerApiScenarioGenerator {
       steps: [],
     };
     function getPutOperationId() {
-      return  res?.getOperation("CreateOrUpdate")?.[0]?.operationId || "";
+      return res?.getOperation("CreateOrUpdate")?.[0]?.operationId || "";
     }
-    const sortedNodes:Node[] = []
-    const cmp = (a:Node, b:Node) => {
+    const sortedNodes: Node[] = [];
+    const cmp = (a: Node, b: Node) => {
       const degree = b.inDegree - a.inDegree;
       if (degree) {
         return degree;
       }
       return 0;
     };
-    const graph = this.graph
+    const graph = this.graph;
     function widthFirst(node: Node) {
       const heap = new Heap<Node>(cmp);
       for (const n of graph.values()) {
@@ -385,9 +404,9 @@ export class RestlerApiScenarioGenerator {
       }
     }
     const node = this.getNode(getPutOperationId());
-    sortedNodes.push(node)
+    sortedNodes.push(node);
     widthFirst(node);
-    const uniqNodes = sortedNodes.reverse().reduce(function (a:Node[], b:Node) {
+    const uniqNodes = sortedNodes.reverse().reduce(function (a: Node[], b: Node) {
       if (a.indexOf(b) < 0) a.push(b);
       return a;
     }, []);

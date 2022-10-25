@@ -9,19 +9,20 @@ export const NoChildResourceCreated: ApiTestGeneratorRule = {
   appliesTo: ["ARM"],
   useExample: true,
   generator: (resource: ArmResourceManipulatorInterface, base: RawScenarioDefinition) => {
-    const responses = {} as any;
     const childResources = resource.getChildResource();
     if (childResources.length === 0) {
       return null;
     }
     let hit = false
     for (resource of childResources) {
-      if (resource.getListOperations()[0]) {
-        const step = { operationId: resource.getListOperations()[0].operationId } as any;
-        responses["200"] = {body:{ value: [] }};
-        step.responses = responses;
-        base.scenarios[0].steps.push(step as any);
-        hit = true
+      const listOperation = resource.getListOperations()[0]
+      if (listOperation && listOperation.examples[0]) {
+        const step = {
+          operationId: listOperation.operationId,
+          exampleFile: listOperation.examples[0],
+        } as any;
+        step.exampleFile = base.scenarios[0].steps.push(step as any);
+        hit = true;
       }
     }
     return hit ? base : null

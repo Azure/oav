@@ -3,7 +3,7 @@ import { mkdirpSync} from "fs-extra";
 import { injectable } from "inversify";
 import { dump } from "js-yaml";
 import _ from "lodash";
-import { dirname, join } from "path";
+import { dirname, join, resolve } from "path";
 import { inversifyGetInstance } from "../../inversifyUtils";
 import { JsonLoader } from "../../swagger/jsonLoader";
 import { setDefaultOpts } from "../../swagger/loader";
@@ -11,9 +11,10 @@ import { SwaggerLoader, SwaggerLoaderOption } from "../../swagger/swaggerLoader"
 import { Path, SwaggerSpec } from "../../swagger/swaggerTypes";
 import { traverseSwagger, traverseSwaggers } from "../../transform/traverseSwagger";
 import { xmsLongRunningOperation } from "../../util/constants";
-import { RawScenarioDefinition} from "../apiScenarioTypes";
+import { RawScenarioDefinition, RawStepExample, RawStepOperation} from "../apiScenarioTypes";
 import { ApiScenarioYamlLoader } from "../apiScenarioYamlLoader";
 import { RestlerApiScenarioGenerator } from "./restlerApiScenarioGenerator";
+import { NoChildResourceCreated } from "./rules/noChildResourceCreated";
 import { ResourceNameCaseInsensitive } from "./rules/resourceNameCaseInsensitive";
 import { SystemDataExistsInResponse } from "./rules/systemDataExistsInResponse";
 
@@ -224,30 +225,55 @@ export class ArmResourceManipulator implements ArmResourceManipulatorInterface {
 }
 
 class ArmResourceDependencyGenerator {
+  private _restlerApiScenarioGenerator: RestlerApiScenarioGenerator;
   constructor(
     private _swaggers: string[],
     private _dependencyFile: string,
     private _outPutDir: string,
-    private _basicScenarioFile?:string
+    private _basicScenarioFile?: string
   ) {}
-  async generate(resoure: ArmResourceManipulator,useExample?:boolean) {
+  async generate(resoure: ArmResourceManipulator, useExample?: boolean) {
     const restlerGenerator = RestlerApiScenarioGenerator.create({
       outputDir: this._outPutDir,
       dependencyPath: this._dependencyFile,
       swaggerFilePaths: this._swaggers,
-      useExample:useExample
+      useExample: useExample,
     });
     await restlerGenerator.initialize();
-    if (!this._basicScenarioFile) {
-      return restlerGenerator.generateResourceDependency(resoure);
-    }
-    else {
+    this._restlerApiScenarioGenerator = restlerGenerator;
+    const baseScenario = await restlerGenerator.generateResourceDependency(resoure);
+    if (this._basicScenarioFile) {
       const loader = inversifyGetInstance(ApiScenarioYamlLoader, {});
-      const [scenarios] = await loader.load(this._basicScenarioFile)
-      delete scenarios.prepareSteps
-      //TBD
-      return null
+      const [scenarios] = await loader.load(this._basicScenarioFile);
+
+      // extract varaibles
+      if (baseScenario.variables) {
+        Object.keys(baseScenario.variables).forEach((v:string) => {
+          if (scenarios.variables?.[v]) {
+            baseScenario.variables![v] = scenarios.variables[v]
+          }
+        })
+      }
+      function resolveExampleFile(scenarioFile:string, exampleFile:string) {
+        return resolve(dirname(scenarioFile),exampleFile)
+      }
+      const steps = baseScenario.scenarios[0].steps as RawStepOperation[]
+      const basicScenarioSteps = scenarios.scenarios[0].steps as RawStepOperation[]
+      // extract steps
+      baseScenario.scenarios[0].steps = steps.map((s) => {
+        const found = basicScenarioSteps.find((basic) => s.operationId === basic.operationId);
+        const exampleFile = (found as RawStepExample)?.exampleFile;
+        return found
+          ? exampleFile
+            ? { ...found, exampleFile: resolveExampleFile(this._basicScenarioFile!, exampleFile) }
+            : found
+          : s;
+      });
     }
+    return baseScenario
+  }
+  updateExampleFile(resoure: ArmResourceManipulator,scenarioFile:RawScenarioDefinition) {
+    this._restlerApiScenarioGenerator.updateStepExample(scenarioFile, resoure);
   }
 }
 
@@ -375,6 +401,7 @@ export class ApiTestRuleBasedGenerator {
              if (base) {
                const apiSenarios = rule.generator(resource, base);
                if (apiSenarios) {
+                 dependency.updateExampleFile(resource,apiSenarios);
                  scenariosResult[rule.name] = apiSenarios;
                  this.writeFile(rule.name, resource.resourceType, apiSenarios, outputDir);
                }
@@ -401,7 +428,13 @@ export class ApiTestRuleBasedGenerator {
   }
 }
 
-export const generateApiTestBasedOnRules = async (swaggers:string[],dependencyFile:string,outputDir:string,isRPaaS?:string) =>{
+export const generateApiTestBasedOnRules = async (
+  swaggers: string[],
+  dependencyFile: string,
+  outputDir: string,
+  basicScenarioFile?: string,
+  isRPaaS?: string
+) => {
   const opts: SwaggerLoaderOption = {};
   setDefaultOpts(opts, {
     eraseXmsExamples: false,
@@ -409,13 +442,18 @@ export const generateApiTestBasedOnRules = async (swaggers:string[],dependencyFi
   });
   const swaggerLoader = inversifyGetInstance(SwaggerLoader, opts);
   const jsonLoader = inversifyGetInstance(JsonLoader, opts);
-  const rules:ApiTestGeneratorRule[] = [ResourceNameCaseInsensitive, SystemDataExistsInResponse];
+  const rules: ApiTestGeneratorRule[] = [
+    ResourceNameCaseInsensitive,
+    SystemDataExistsInResponse,
+    NoChildResourceCreated,
+  ];
   const generator = new ApiTestRuleBasedGenerator(
     swaggerLoader,
     jsonLoader,
     rules,
     swaggers,
-    dependencyFile
+    dependencyFile,
+    basicScenarioFile
   );
-  await generator.run(outputDir,isRPaaS?"RPaaS":"ARM")
-}
+  await generator.run(outputDir, isRPaaS ? "RPaaS" : "ARM");
+};
