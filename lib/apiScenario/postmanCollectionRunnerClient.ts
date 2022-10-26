@@ -578,6 +578,19 @@ pm.test("Stopped TestProxy recording", function() {
         false,
         step.responseAssertion
       );
+
+      // generate final get
+      if (step.operation?._method !== "post") {
+        itemGroup!.items.add(
+          this.generateFinalGetItem(
+            item.name,
+            baseUri,
+            item.request.url,
+            item.name,
+            step.operation._method
+          )
+        );
+      }
     } else {
       const metadata: SimpleItemMetadata = {
         type: "simple",
@@ -591,19 +604,6 @@ pm.test("Stopped TestProxy recording", function() {
 
     if (postScripts.length > 0) {
       PostmanHelper.addEvent(item.events, "test", postScripts);
-    }
-
-    // generate get
-    if (step.operation?._method === "put" || step.operation?._method === "delete") {
-      itemGroup!.items.add(
-        this.generateFinalGetItem(
-          item.name,
-          baseUri,
-          item.request.url,
-          item.name,
-          step.operation._method
-        )
-      );
     }
   }
 

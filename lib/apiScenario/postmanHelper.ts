@@ -124,41 +124,45 @@ function generateResponseDataAssertionScript(responseAssertion: StepResponseAsse
 }
 
 export function appendScripts(scripts: string[], parameter: TestScriptParameter) {
-  scripts.push(`pm.test("${parameter.name}", function() {`);
   if (parameter.types.includes("DetailResponseLog")) {
     scripts.push("console.log(pm.response.text());");
   }
+  const assertions = [];
   if (parameter.types.includes("StatusCodeAssertion")) {
-    scripts.push("pm.response.to.be.success;");
+    assertions.push("pm.response.to.be.success;");
   }
   if (parameter.types.includes("OverwriteVariables") && parameter.variables) {
     for (const [k, v] of parameter.variables) {
       const segments = parseJsonPointer(v);
       if (segments.length === 0) {
-        scripts.push(`pm.environment.set("${k}", pm.response.json());`);
+        assertions.push(`pm.environment.set("${k}", pm.response.json());`);
       } else {
-        scripts.push(
+        assertions.push(
           `pm.environment.set("${k}", _.get(pm.response.json(), ${JSON.stringify(segments)}));`
         );
       }
     }
   }
   if (parameter.types.includes("ARMDeploymentStatusAssertion")) {
-    scripts.push(
+    assertions.push(
       'pm.expect(pm.response.json().status).to.be.oneOf(["Succeeded", "Accepted", "Running", "Ready", "Creating", "Created", "Deleting", "Deleted", "Canceled", "Updating"]);'
     );
   }
   if (parameter.types.includes("ExtractARMTemplateOutput") && parameter.armTemplate?.outputs) {
     for (const key of Object.keys(parameter.armTemplate.outputs)) {
-      scripts.push(
+      assertions.push(
         `pm.environment.set("${key}", pm.response.json().properties.outputs.${key}.value);`
       );
     }
   }
   if (parameter.types.includes("ResponseDataAssertion") && parameter.responseAssertion) {
-    scripts.push(generateResponseDataAssertionScript(parameter.responseAssertion));
+    assertions.push(generateResponseDataAssertionScript(parameter.responseAssertion));
   }
-  scripts.push("});");
+  if (assertions.length > 0) {
+    scripts.push(`pm.test("${parameter.name}", function() {`);
+    assertions.forEach((s) => scripts.push(s));
+    scripts.push("});");
+  }
 }
 
 export const reservedCollectionVariables = [

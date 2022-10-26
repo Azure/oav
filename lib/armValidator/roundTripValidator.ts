@@ -52,7 +52,8 @@ export function diffRequestResponse(
         if (!isReplace) {
           return buildLiveValidationIssue("ROUNDTRIP_INCONSISTENT_PROPERTY", jsonPath, it);
         }
-      } else if (it.add !== undefined) {
+      } else if (it.add !== undefined && it.value !== null) {
+        // IF a property is not in request but returned in response as null, ignore.
         const isReadOnly =
           operationLoader.attrChecker(
             path,
@@ -112,7 +113,11 @@ export function buildLiveValidationIssue(
   it: any
 ): LiveValidationIssue {
   let severity, message;
-  const property = path.split("/").pop();
+  const properties = path.split("/");
+  let property = properties.pop();
+  if (!isNaN(Number(property)) && properties.length > 0) {
+    property = `${properties.pop()}/${property}`;
+  }
   switch (errorCode) {
     case "ROUNDTRIP_INCONSISTENT_PROPERTY": {
       severity = roundTripValidationErrors.ROUNDTRIP_INCONSISTENT_PROPERTY.severity;

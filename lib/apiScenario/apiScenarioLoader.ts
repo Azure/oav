@@ -410,8 +410,6 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
         rawStep.authentication ?? ctx.scenario?.authentication ?? ctx.scenarioDef.authentication,
     };
 
-    ctx.stepTracking.set(step.step, step);
-
     const getVariable = (
       name: string,
       ...scopes: Array<VariableScope | undefined>
@@ -601,8 +599,14 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     }
 
     if (!rawStep.step) {
-      step.step = `${step.operationId}_${ctx.stepIndex}`;
+      step.step = step.operationId;
+      let i = 1;
+      while (ctx.stepTracking.has(step.step)) {
+        step.step += `_${i++}`;
+      }
     }
+    ctx.stepTracking.set(step.step, step);
+
     return step;
   }
 
