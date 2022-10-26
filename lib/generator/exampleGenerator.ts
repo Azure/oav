@@ -174,6 +174,12 @@ export default class Generator {
       }
     } else {
       example = {
+        title: specItem.content.summary
+          ? specItem.content.summary
+          : specItem.content.description
+          ? specItem.content.description
+          : operationId,
+        operationId: operationId,
         parameters: {},
         responses: this.extractResponse(specItem, {}),
       };
@@ -360,6 +366,12 @@ export default class Generator {
       this.validatePayload(specItem, payload, operationId);
       this.cachePayload(specItem, payload);
       const example = {
+        title: specItem.content.summary
+          ? specItem.content.summary
+          : specItem.content.description
+          ? specItem.content.description
+          : operationId,
+        operationId: operationId,
         parameters: this.extractRequest(specItem, payload),
         responses: this.extractResponse(specItem, payload),
       };
