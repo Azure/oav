@@ -449,7 +449,7 @@ pm.test("Stopped TestProxy recording", function() {
   ): Promise<void> {
     env.resolve();
 
-    const baseUri = env.resolveString(clientRequest.host);
+    const baseUri = convertPostmanFormat(env.tryResolveString(clientRequest.host));
 
     const { item, itemGroup } = this.addNewItem(
       step.isPrepareStep ? "Prepare" : step.isCleanUpStep ? "CleanUp" : "Scenario",

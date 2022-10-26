@@ -68,6 +68,7 @@ export class TestRecordingApiScenarioGenerator {
   private operationSearcher: OperationSearcher;
   private lroPollingUrls = new Set<string>();
   private operationIdx = new Map<string, number>();
+  private scope: RawScenarioDefinition["scope"] = "ResourceGroup";
 
   public constructor(
     @inject(TYPES.opts) private opts: TestRecordingApiScenarioGeneratorOption,
@@ -157,6 +158,8 @@ export class TestRecordingApiScenarioGenerator {
       testDef.scenarios.push(testScenario);
     }
 
+    testDef.scope = this.scope;
+
     this.testDefToWrite.push({ testDef, filePath: testScenarioFilePath });
 
     return testDef;
@@ -168,7 +171,7 @@ export class TestRecordingApiScenarioGenerator {
   ): Promise<RawScenario> {
     logger.info(`\nGenerating ${requestTracking.description}`);
     const testScenario: RawScenario = {
-      scenario: requestTracking.description,
+      scenario: requestTracking.description.replace(/\(/g, "_").replace(/\)/g, "_"),
       variables: {},
       steps: [],
     };
@@ -382,6 +385,20 @@ export class TestRecordingApiScenarioGenerator {
     }
 
     const { operation } = operationMatch;
+
+    const xHost = operation._path._spec["x-ms-parameterized-host"];
+
+    // if useSchemePrefix is false, the value should add scheme
+    if (xHost && xHost.useSchemePrefix === false && operationMatch.pathMatch[1]) {
+      operationMatch.pathMatch[1] = record.url.substring(
+        0,
+        record.url.indexOf(operationMatch.pathMatch[1]) + operationMatch.pathMatch[1].length
+      );
+    }
+
+    if (operation._path._spec._filePath.includes("data-plane")) {
+      this.scope = "None";
+    }
 
     const pathParamValue = extractPathParamValue(operationMatch);
     const requestParameters: SwaggerExample["parameters"] = {

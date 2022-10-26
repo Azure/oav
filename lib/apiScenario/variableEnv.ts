@@ -262,6 +262,31 @@ export class VariableEnv {
     }
   }
 
+  public tryResolveString(source: string): string {
+    const regex = variableRegex;
+    if (regex.test(source)) {
+      const globalRegex = new RegExp(regex, "g");
+      const replaceArray: Array<[number, number, string]> = [];
+      let match;
+      while ((match = globalRegex.exec(source))) {
+        const variable = this.get(match[1]);
+        if (variable === undefined) {
+          continue;
+        }
+
+        if (variable.type !== "string" && variable.type !== "secureString") {
+          throw new Error(`Variable type is not string: ${match[1]}`);
+        }
+        replaceArray.push([match.index, match.index + match[0].length, variable.value!.toString()]);
+      }
+      let r;
+      while ((r = replaceArray.pop())) {
+        source = source.substring(0, r[0]) + r[2] + source.substring(r[1]);
+      }
+    }
+    return source;
+  }
+
   public resolveString(source: string, isPathVariable?: boolean): string {
     return this.resolveStringWithRegex(source, isPathVariable || false) as string;
   }
