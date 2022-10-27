@@ -263,9 +263,8 @@ export class VariableEnv {
   }
 
   public tryResolveString(source: string): string {
-    const regex = variableRegex;
-    if (regex.test(source)) {
-      const globalRegex = new RegExp(regex, "g");
+    if (variableRegex.test(source)) {
+      const globalRegex = new RegExp(variableRegex, "g");
       const replaceArray: Array<[number, number, string]> = [];
       let match;
       while ((match = globalRegex.exec(source))) {
