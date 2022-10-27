@@ -524,6 +524,15 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
         }
       });
 
+      const xHost = operation._path._spec["x-ms-parameterized-host"];
+      if (xHost) {
+        xHost.parameters.forEach((param) => {
+          if (rawStep.parameters?.[param.name]) {
+            step.parameters[param.name] = rawStep.parameters[param.name];
+          }
+        });
+      }
+
       step.responseAssertion = rawStep.responses;
     } else {
       // load example step
