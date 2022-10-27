@@ -509,7 +509,13 @@ pm.test("Stopped TestProxy recording", function() {
       })),
     });
 
-    item.request.addHeader({ key: "Content-Type", value: "application/json" });
+    item.request.addHeader({
+      key: "Content-Type",
+      value:
+        step.operation?.consumes?.[0] ??
+        step.operation?._path._spec.consumes?.[0] ??
+        "application/json",
+    });
     Object.entries(clientRequest.headers).forEach(([key, value]) => {
       item.request.addHeader({ key, value: convertPostmanFormat(value) });
     });
