@@ -505,7 +505,7 @@ pm.test("Stopped TestProxy recording", function() {
       })),
       query: Object.entries(clientRequest.query).map(([key, value]) => ({
         key,
-        value: convertPostmanFormat(value),
+        value: convertPostmanFormat(value)?.toString(),
       })),
     });
 
