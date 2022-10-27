@@ -1,4 +1,6 @@
 {
+  "title": "ManagedDatabases_ListByInstance",
+  "operationId": "ManagedDatabases_ListByInstance",
   "parameters": {
     "resourceGroupName": "rgManagedDatabases",
     "managedInstanceName": "managedInstance",

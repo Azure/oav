@@ -1,4 +1,6 @@
 {
+  "title": "BackupShortTermRetentionPolicies_CreateOrUpdate",
+  "operationId": "BackupShortTermRetentionPolicies_CreateOrUpdate",
   "parameters": {
     "resourceGroupName": "rgBackupShortTermRetentionPolicies",
     "serverName": "testsvr",

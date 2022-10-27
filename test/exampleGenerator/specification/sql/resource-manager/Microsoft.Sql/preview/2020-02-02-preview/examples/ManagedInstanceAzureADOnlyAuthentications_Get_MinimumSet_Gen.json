@@ -1,4 +1,6 @@
 {
+  "title": "ManagedInstanceAzureADOnlyAuthentications_Get",
+  "operationId": "ManagedInstanceAzureADOnlyAuthentications_Get",
   "parameters": {
     "resourceGroupName": "rgManagedInstanceAzureADOnlyAuthentications",
     "managedInstanceName": "managedInstance",

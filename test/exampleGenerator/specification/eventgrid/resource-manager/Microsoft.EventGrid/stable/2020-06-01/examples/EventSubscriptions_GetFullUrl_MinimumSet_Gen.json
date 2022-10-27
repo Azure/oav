@@ -1,7 +1,9 @@
 {
+  "title": "Get full URL of an event subscription.",
+  "operationId": "EventSubscriptions_GetFullUrl",
   "parameters": {
-    "scope": "kdmabs",
-    "eventSubscriptionName": "wgb",
+    "scope": "amsixzdfdntbleudnewaodzgszyh",
+    "eventSubscriptionName": "mobuxzgdfefrtq",
     "api-version": "2020-06-01"
   },
   "responses": {

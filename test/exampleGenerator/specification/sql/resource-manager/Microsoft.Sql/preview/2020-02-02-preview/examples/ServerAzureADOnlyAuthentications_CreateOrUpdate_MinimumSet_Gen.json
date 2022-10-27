@@ -1,4 +1,6 @@
 {
+  "title": "ServerAzureADOnlyAuthentications_CreateOrUpdate",
+  "operationId": "ServerAzureADOnlyAuthentications_CreateOrUpdate",
   "parameters": {
     "resourceGroupName": "rgServerAzureADOnlyAuthentications",
     "serverName": "sqlcrudtest-6440",

@@ -1,9 +1,11 @@
 {
+  "title": "Create or update a domain topic.",
+  "operationId": "DomainTopics_CreateOrUpdate",
   "parameters": {
     "subscriptionId": "5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
     "resourceGroupName": "rgEventGrid",
-    "domainName": "xzns",
-    "domainTopicName": "uafyfjcvtibqilbty",
+    "domainName": "ntdralr",
+    "domainTopicName": "xqv",
     "api-version": "2020-06-01"
   },
   "responses": {

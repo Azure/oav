@@ -1,9 +1,11 @@
 {
+  "title": "Delete a domain topic.",
+  "operationId": "DomainTopics_Delete",
   "parameters": {
     "subscriptionId": "5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
     "resourceGroupName": "rgEventGrid",
-    "domainName": "cyqbnexo",
-    "domainTopicName": "vpwxjtvrguwpfoiijrnvaj",
+    "domainName": "ptlsswsgxgyjiijabzgky",
+    "domainTopicName": "oiglhbrbqrkouksf",
     "api-version": "2020-06-01"
   },
   "responses": {

@@ -1,10 +1,12 @@
 {
+  "title": "List topic event types.",
+  "operationId": "Topics_ListEventTypes",
   "parameters": {
     "subscriptionId": "5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
     "resourceGroupName": "rgEventGrid",
-    "providerNamespace": "cqqgninxwocquw",
-    "resourceTypeName": "yee",
-    "resourceName": "yosjmhyrshbrmsxhdyowketdnq",
+    "providerNamespace": "lygrqpwwojpe",
+    "resourceTypeName": "nylmvs",
+    "resourceName": "qvmc",
     "api-version": "2020-06-01"
   },
   "responses": {
@@ -15,7 +17,7 @@
             "properties": {
               "schemaUrl": "tbd",
               "displayName": "Blob Created",
-              "description": "vrsfvhhrlrencysdgpdhobzexo",
+              "description": "kkewqrjhwjaozaycnatugne",
               "isInDefaultSet": true
             },
             "id": "providers/Microsoft.EventGrid/topicTypes/Microsoft.Storage.StorageAccounts/eventTypes/Microsoft.Storage.BlobCreated",
@@ -26,7 +28,7 @@
             "properties": {
               "schemaUrl": "tbd",
               "displayName": "Blob Deleted",
-              "description": "uoe",
+              "description": "yciciuilmgwoywu",
               "isInDefaultSet": true
             },
             "id": "providers/Microsoft.EventGrid/topicTypes/Microsoft.Storage.StorageAccounts/eventTypes/Microsoft.Storage.BlobDeleted",

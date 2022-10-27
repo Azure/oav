@@ -1,8 +1,10 @@
 {
+  "title": "Regenerate key for a domain.",
+  "operationId": "Domains_RegenerateKey",
   "parameters": {
     "subscriptionId": "5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
     "resourceGroupName": "rgEventGrid",
-    "domainName": "oelty",
+    "domainName": "efmpgyrljltrlswicjrmuiwij",
     "regenerateKeyRequest": {
       "keyName": "key1"
     },

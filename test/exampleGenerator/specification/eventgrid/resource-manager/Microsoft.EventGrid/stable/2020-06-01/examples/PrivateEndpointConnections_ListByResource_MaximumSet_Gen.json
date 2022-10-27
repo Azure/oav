@@ -1,12 +1,14 @@
 {
+  "title": "Lists all private endpoint connections under a resource.",
+  "operationId": "PrivateEndpointConnections_ListByResource",
   "parameters": {
     "subscriptionId": "5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
     "resourceGroupName": "rgEventGrid",
     "parentType": "topics",
-    "parentName": "sfipcdnylhzpjfbmrytrvm",
+    "parentName": "uymhevqecipzhqvvtjggrl",
     "api-version": "2020-06-01",
-    "$filter": "neprnbocvaszwsiasosrijyn",
-    "$top": 22
+    "$filter": "wztunkoyyjagemzmrznsep",
+    "$top": 20
   },
   "responses": {
     "200": {
@@ -23,7 +25,7 @@
               "privateLinkServiceConnectionState": {
                 "status": "Pending",
                 "actionsRequired": "None",
-                "description": "llvfcjqtzebhiatgvwzcaivu"
+                "description": "yazktwrwntorotsowmfwehaxfgg"
               },
               "provisioningState": "Succeeded"
             },
@@ -32,7 +34,7 @@
             "type": "Microsoft.EventGrid/topics/privateEndpointConnections"
           }
         ],
-        "nextLink": "fmmvitpcqhch"
+        "nextLink": "gsbsstjujgnnymveczqkpv"
       }
     }
   }

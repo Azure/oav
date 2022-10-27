@@ -1,4 +1,6 @@
 {
+  "title": "Databases_Delete",
+  "operationId": "Databases_Delete",
   "parameters": {
     "resourceGroupName": "rgDatabases",
     "serverName": "testsvr",

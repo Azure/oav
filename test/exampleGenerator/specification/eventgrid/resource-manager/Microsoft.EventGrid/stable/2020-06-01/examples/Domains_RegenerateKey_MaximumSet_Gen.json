@@ -1,8 +1,10 @@
 {
+  "title": "Regenerate key for a domain.",
+  "operationId": "Domains_RegenerateKey",
   "parameters": {
     "subscriptionId": "5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
     "resourceGroupName": "rgEventGrid",
-    "domainName": "vhqzg",
+    "domainName": "lbgpjffz",
     "regenerateKeyRequest": {
       "keyName": "key1"
     },
@@ -13,7 +15,7 @@
       "body": {
         "key1": "<key1>",
         "key2": "<key2>",
-        "urlFormatKey": "https://microsoft.com/aifas"
+        "urlFormatKey": "https://microsoft.com/a"
       }
     }
   }

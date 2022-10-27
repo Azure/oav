@@ -1,4 +1,6 @@
 {
+  "title": "Databases_ListInaccessibleByServer",
+  "operationId": "Databases_ListInaccessibleByServer",
   "parameters": {
     "resourceGroupName": "rgDatabases",
     "serverName": "testsvr",

@@ -1,7 +1,9 @@
 {
+  "title": "Update an event subscription.",
+  "operationId": "EventSubscriptions_Update",
   "parameters": {
-    "scope": "jrqlzhkeqqyfxrmfdswgua",
-    "eventSubscriptionName": "ingh",
+    "scope": "dpufkvkm",
+    "eventSubscriptionName": "wbeoaxqtl",
     "eventSubscriptionUpdateParameters": {},
     "api-version": "2020-06-01"
   },

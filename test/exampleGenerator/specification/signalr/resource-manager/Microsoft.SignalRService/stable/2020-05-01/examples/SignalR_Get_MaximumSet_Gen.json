@@ -1,4 +1,6 @@
 {
+  "title": "SignalR_Get",
+  "operationId": "SignalR_Get",
   "parameters": {
     "api-version": "2020-05-01",
     "subscriptionId": "00000000-0000-0000-0000-000000000000",
@@ -13,7 +15,7 @@
           "tier": "Standard",
           "capacity": 1,
           "size": "S1",
-          "family": "qmtpy"
+          "family": "qriapjkr"
         },
         "properties": {
           "hostNamePrefix": "mysignalrservice",
@@ -87,7 +89,7 @@
                 },
                 "privateLinkServiceConnectionState": {
                   "status": "Approved",
-                  "description": "owxssswdkflwsajo",
+                  "description": "ujumarknkysezhdtzul",
                   "actionsRequired": "None"
                 }
               },

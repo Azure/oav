@@ -1,11 +1,13 @@
 {
+  "title": "List domain topics.",
+  "operationId": "DomainTopics_ListByDomain",
   "parameters": {
     "subscriptionId": "5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
     "resourceGroupName": "rgEventGrid",
-    "domainName": "xvnqlgafxjenoungelzmnrnkgvhgj",
+    "domainName": "sr",
     "api-version": "2020-06-01",
-    "$filter": "neprnbocvaszwsiasosrijyn",
-    "$top": 22
+    "$filter": "wztunkoyyjagemzmrznsep",
+    "$top": 20
   },
   "responses": {
     "200": {
@@ -28,7 +30,7 @@
             "type": "Microsoft.EventGrid/domains/topics"
           }
         ],
-        "nextLink": "cehcbokrvj"
+        "nextLink": "vevmksatmmbcqhtqsb"
       }
     }
   }

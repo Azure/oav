@@ -1,4 +1,6 @@
 {
+  "title": "Databases_ListByServer",
+  "operationId": "Databases_ListByServer",
   "parameters": {
     "resourceGroupName": "rgDatabases",
     "serverName": "testsvr",

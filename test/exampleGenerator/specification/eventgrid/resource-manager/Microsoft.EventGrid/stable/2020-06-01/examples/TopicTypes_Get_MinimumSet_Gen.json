@@ -1,6 +1,8 @@
 {
+  "title": "Get a topic type.",
+  "operationId": "TopicTypes_Get",
   "parameters": {
-    "topicTypeName": "iwwvephhlpnsauknzvmtly",
+    "topicTypeName": "rdtkexbpq",
     "api-version": "2020-06-01"
   },
   "responses": {

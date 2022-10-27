@@ -1,7 +1,9 @@
 {
+  "title": "Get full URL of an event subscription.",
+  "operationId": "EventSubscriptions_GetFullUrl",
   "parameters": {
-    "scope": "dlypwpjbfuz",
-    "eventSubscriptionName": "naagf",
+    "scope": "iyxdvuxmvvsjmx",
+    "eventSubscriptionName": "oatm",
     "api-version": "2020-06-01"
   },
   "responses": {

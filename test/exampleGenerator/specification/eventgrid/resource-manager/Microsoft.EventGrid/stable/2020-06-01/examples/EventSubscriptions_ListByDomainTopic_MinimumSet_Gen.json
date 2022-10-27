@@ -1,9 +1,11 @@
 {
+  "title": "List all event subscriptions for a specific domain topic.",
+  "operationId": "EventSubscriptions_ListByDomainTopic",
   "parameters": {
     "subscriptionId": "5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
     "resourceGroupName": "rgEventGrid",
-    "domainName": "nvhlhjfrmadygxl",
-    "topicName": "erbvyqptjp",
+    "domainName": "ddafnmshpjkcggnpsicoucwp",
+    "topicName": "alznynigenxmkcctsc",
     "api-version": "2020-06-01"
   },
   "responses": {

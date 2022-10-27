@@ -1,4 +1,6 @@
 {
+  "title": "List all global event subscriptions under an Azure subscription and resource group.",
+  "operationId": "EventSubscriptions_ListGlobalByResourceGroup",
   "parameters": {
     "subscriptionId": "5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
     "resourceGroupName": "rgEventGrid",

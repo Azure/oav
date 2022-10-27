@@ -1,9 +1,11 @@
 {
+  "title": "List private link resources under specific topic or domain.",
+  "operationId": "PrivateLinkResources_ListByResource",
   "parameters": {
     "subscriptionId": "5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
     "resourceGroupName": "rgEventGrid",
-    "parentType": "ranioncxlrfivjrlrsrefe",
-    "parentName": "bwr",
+    "parentType": "cebbjicfatqurg",
+    "parentName": "giwsxrgwbrwxdqjbfmgsxbce",
     "api-version": "2020-06-01"
   },
   "responses": {

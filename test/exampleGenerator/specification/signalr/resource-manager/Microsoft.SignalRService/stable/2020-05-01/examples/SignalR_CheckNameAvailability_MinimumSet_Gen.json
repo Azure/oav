@@ -1,6 +1,8 @@
 {
+  "title": "SignalR_CheckNameAvailability",
+  "operationId": "SignalR_CheckNameAvailability",
   "parameters": {
-    "location": "edmvozgg",
+    "location": "smivtzgs",
     "api-version": "2020-05-01",
     "subscriptionId": "00000000-0000-0000-0000-000000000000"
   },

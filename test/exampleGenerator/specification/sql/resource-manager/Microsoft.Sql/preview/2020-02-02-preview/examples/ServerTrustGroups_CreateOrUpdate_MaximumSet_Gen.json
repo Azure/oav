@@ -1,8 +1,10 @@
 {
+  "title": "ServerTrustGroups_CreateOrUpdate",
+  "operationId": "ServerTrustGroups_CreateOrUpdate",
   "parameters": {
     "resourceGroupName": "rgServerTrustGroups",
-    "locationName": "hfyaxwg",
-    "serverTrustGroupName": "ikaxeqmxsjzi",
+    "locationName": "dwtmatzistnzv",
+    "serverTrustGroupName": "gjqolhmjrkvjyuzt",
     "parameters": {
       "properties": {
         "groupMembers": [

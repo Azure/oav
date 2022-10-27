@@ -1,8 +1,10 @@
 {
+  "title": "Update a topic.",
+  "operationId": "Topics_Update",
   "parameters": {
     "subscriptionId": "5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
     "resourceGroupName": "rgEventGrid",
-    "topicName": "cwzzcdjbiaapyozletxhkjmd",
+    "topicName": "wlrmvh",
     "topicUpdateParameters": {
       "tags": {},
       "properties": {
@@ -49,18 +51,18 @@
                   "id": "/subscriptions/5b4b650e-28b9-4790-b3ab-ddbd88d727c4/resourceGroups/examplerg/providers/Microsoft.Network/privateEndpoints/bmtpe5"
                 },
                 "groupIds": [
-                  "lxkefqnfqkqlzwrlolcf"
+                  "nrvtbuwjflfallcawjiuwddlzz"
                 ],
                 "privateLinkServiceConnectionState": {
                   "status": "Pending",
-                  "description": "faaywjbhcslmnedbfndv",
-                  "actionsRequired": "msufgrhmncsqqmpb"
+                  "description": "gtauopuiuymovjcdefokwbwlg",
+                  "actionsRequired": "wbxseku"
                 },
                 "provisioningState": "Creating"
               },
-              "id": "jxqhkrauyqiufxydkiepe",
-              "name": "nljkzamxc",
-              "type": "woreybyfg"
+              "id": "ugfnipwhybwmasaidxfrftbbt",
+              "name": "s",
+              "type": "eqkczhvostbup"
             }
           ],
           "provisioningState": "Succeeded",
@@ -69,30 +71,30 @@
           "inputSchemaMapping": {
             "properties": {
               "id": {
-                "sourceField": "edctjqelnacrjywtlcjac"
+                "sourceField": "vzrudt"
               },
               "topic": {
-                "sourceField": "edctjqelnacrjywtlcjac"
+                "sourceField": "vzrudt"
               },
               "eventTime": {
-                "sourceField": "edctjqelnacrjywtlcjac"
+                "sourceField": "vzrudt"
               },
               "eventType": {
-                "sourceField": "kocfusi",
-                "defaultValue": "zqdrfshpdujolgrj"
+                "sourceField": "hbxgmhvgr",
+                "defaultValue": "qjqaibuzoyttqqxegrkl"
               },
               "subject": {
-                "sourceField": "kocfusi",
-                "defaultValue": "zqdrfshpdujolgrj"
+                "sourceField": "hbxgmhvgr",
+                "defaultValue": "qjqaibuzoyttqqxegrkl"
               },
               "dataVersion": {
-                "sourceField": "kocfusi",
-                "defaultValue": "zqdrfshpdujolgrj"
+                "sourceField": "hbxgmhvgr",
+                "defaultValue": "qjqaibuzoyttqqxegrkl"
               }
             },
             "inputSchemaMappingType": "Json"
           },
-          "metricResourceId": "cjvje"
+          "metricResourceId": "ooatudxlszrfmj"
         },
         "id": "/subscriptions/5b4b650e-28b9-4790-b3ab-ddbd88d727c4/resourceGroups/examplerg/providers/Microsoft.EventGrid/topics/exampletopic2",
         "name": "exampletopic2",

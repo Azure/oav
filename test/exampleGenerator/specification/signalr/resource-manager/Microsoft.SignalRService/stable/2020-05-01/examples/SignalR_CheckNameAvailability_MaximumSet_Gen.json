@@ -1,6 +1,8 @@
 {
+  "title": "SignalR_CheckNameAvailability",
+  "operationId": "SignalR_CheckNameAvailability",
   "parameters": {
-    "location": "toavcxucgycttionvgpejnny",
+    "location": "cngpstfyegkfipszyptntvktehhpe",
     "parameters": {
       "type": "Microsoft.SignalRService/SignalR",
       "name": "my-signalr-service"

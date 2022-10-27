@@ -1,6 +1,8 @@
 {
+  "title": "List event types.",
+  "operationId": "TopicTypes_ListEventTypes",
   "parameters": {
-    "topicTypeName": "pwyyrxsboeryiaobbzlgzstlzmndon",
+    "topicTypeName": "jblsjseoppuranqbvgdmbazj",
     "api-version": "2020-06-01"
   },
   "responses": {

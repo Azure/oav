@@ -1,4 +1,6 @@
 {
+  "title": "ServerAzureADOnlyAuthentications_Delete",
+  "operationId": "ServerAzureADOnlyAuthentications_Delete",
   "parameters": {
     "resourceGroupName": "rgServerAzureADOnlyAuthentications",
     "serverName": "sqlcrudtest-6440",

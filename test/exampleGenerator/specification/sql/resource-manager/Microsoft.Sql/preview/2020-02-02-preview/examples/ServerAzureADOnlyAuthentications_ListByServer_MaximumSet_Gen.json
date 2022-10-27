@@ -1,4 +1,6 @@
 {
+  "title": "ServerAzureADOnlyAuthentications_ListByServer",
+  "operationId": "ServerAzureADOnlyAuthentications_ListByServer",
   "parameters": {
     "resourceGroupName": "rgServerAzureADOnlyAuthentications",
     "serverName": "sqlcrudtest-6440",
@@ -18,7 +20,7 @@
             }
           }
         ],
-        "nextLink": "olmlifacbjgemhebkaiwicktmlze"
+        "nextLink": "abnza"
       }
     }
   }

@@ -1,10 +1,12 @@
 {
+  "title": "List all event subscriptions for a specific topic.",
+  "operationId": "EventSubscriptions_ListByResource",
   "parameters": {
     "subscriptionId": "5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
     "resourceGroupName": "rgEventGrid",
-    "providerNamespace": "wqpfnycgvwhpnidsfnroaisurxp",
-    "resourceTypeName": "odenjkfmkdaamvmncjtegsukonzhcf",
-    "resourceName": "sguzdeoljnelsxlyuxvnod",
+    "providerNamespace": "ehtckcdymtq",
+    "resourceTypeName": "nqigbm",
+    "resourceName": "yobrxfuuyukjy",
     "api-version": "2020-06-01"
   },
   "responses": {

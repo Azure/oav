@@ -1,7 +1,9 @@
 {
+  "title": "Create or update an event subscription.",
+  "operationId": "EventSubscriptions_CreateOrUpdate",
   "parameters": {
-    "scope": "adwtvsndomxphdhszfwckau",
-    "eventSubscriptionName": "phmvhgwehdy",
+    "scope": "dxehjrrub",
+    "eventSubscriptionName": "sqfrioplnhe",
     "eventSubscriptionInfo": {},
     "api-version": "2020-06-01"
   },

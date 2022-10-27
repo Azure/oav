@@ -1,4 +1,6 @@
 {
+  "title": "SignalR_RegenerateKey",
+  "operationId": "SignalR_RegenerateKey",
   "parameters": {
     "parameters": {
       "keyType": "Primary"

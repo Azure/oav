@@ -1,8 +1,10 @@
 {
+  "title": "DatabaseSecurityAlertPolicies_CreateOrUpdate",
+  "operationId": "DatabaseSecurityAlertPolicies_CreateOrUpdate",
   "parameters": {
     "resourceGroupName": "rgDatabaseSecurityAlertPolicies",
-    "serverName": "zohbyydo",
-    "databaseName": "bddwrjhkwtltlehkni",
+    "serverName": "izboyraydldnyjwonaalfyamq",
+    "databaseName": "onvhiqrgar",
     "securityAlertPolicyName": "default",
     "parameters": {
       "properties": {

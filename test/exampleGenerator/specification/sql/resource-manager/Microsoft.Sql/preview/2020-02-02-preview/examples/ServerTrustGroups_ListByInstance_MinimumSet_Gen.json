@@ -1,4 +1,6 @@
 {
+  "title": "ServerTrustGroups_ListByInstance",
+  "operationId": "ServerTrustGroups_ListByInstance",
   "parameters": {
     "resourceGroupName": "rgServerTrustGroups",
     "managedInstanceName": "managedInstance-1",

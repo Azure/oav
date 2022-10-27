@@ -1,12 +1,14 @@
 {
+  "title": "List private link resources under specific topic or domain.",
+  "operationId": "PrivateLinkResources_ListByResource",
   "parameters": {
     "subscriptionId": "5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
     "resourceGroupName": "rgEventGrid",
-    "parentType": "zenryvsgoepmjgh",
-    "parentName": "tifybokpaowkao",
+    "parentType": "hbvavaayeahxyzvwjjfiigrg",
+    "parentName": "elmhcfbtwxhlq",
     "api-version": "2020-06-01",
-    "$filter": "neprnbocvaszwsiasosrijyn",
-    "$top": 22
+    "$filter": "wztunkoyyjagemzmrznsep",
+    "$top": 20
   },
   "responses": {
     "200": {
@@ -28,7 +30,7 @@
             "type": "Microsoft.EventGrid/topics/privateLinkResources"
           }
         ],
-        "nextLink": "gycuj"
+        "nextLink": "xwejwmzqvfkwvnqkrziqtvek"
       }
     }
   }

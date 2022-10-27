@@ -1,4 +1,6 @@
 {
+  "title": "ManagedServerSecurityAlertPolicies_CreateOrUpdate",
+  "operationId": "ManagedServerSecurityAlertPolicies_CreateOrUpdate",
   "parameters": {
     "resourceGroupName": "rgManagedServerSecurityAlertPolicies",
     "managedInstanceName": "securityalert-6440",

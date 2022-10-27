@@ -1,8 +1,10 @@
 {
+  "title": "List all global event subscriptions under a resource group for a topic type.",
+  "operationId": "EventSubscriptions_ListGlobalByResourceGroupForTopicType",
   "parameters": {
     "subscriptionId": "5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
     "resourceGroupName": "rgEventGrid",
-    "topicTypeName": "vhiudtikdjwgsxdnfrzg",
+    "topicTypeName": "edowixwudwjmsbr",
     "api-version": "2020-06-01"
   },
   "responses": {

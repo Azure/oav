@@ -1,7 +1,9 @@
 {
+  "title": "Delete an event subscription.",
+  "operationId": "EventSubscriptions_Delete",
   "parameters": {
-    "scope": "bbnochmls",
-    "eventSubscriptionName": "g",
+    "scope": "avq",
+    "eventSubscriptionName": "ujjoy",
     "api-version": "2020-06-01"
   },
   "responses": {

@@ -1,4 +1,6 @@
 {
+  "title": "ManagedDatabases_CompleteRestore",
+  "operationId": "ManagedDatabases_CompleteRestore",
   "parameters": {
     "resourceGroupName": "rgManagedDatabases",
     "managedInstanceName": "managedInstance",

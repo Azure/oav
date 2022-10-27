@@ -1,6 +1,8 @@
 {
+  "title": "Get a topic type.",
+  "operationId": "TopicTypes_Get",
   "parameters": {
-    "topicTypeName": "llrzycemjdogkglvilcmtolq",
+    "topicTypeName": "elowmnxhpre",
     "api-version": "2020-06-01"
   },
   "responses": {
@@ -11,11 +13,11 @@
           "provider": "Microsoft.Eventhub",
           "provisioningState": "Succeeded",
           "resourceRegionType": "RegionalResource",
-          "description": "nelmg",
+          "description": "pmrzqb",
           "supportedLocations": [
-            "ztddboqhvdstacvkzwgjixxksz"
+            "fckcawkvunafa"
           ],
-          "sourceResourceFormat": "ojxweykazwky"
+          "sourceResourceFormat": "iuogiaycpwvos"
         },
         "id": "providers/Microsoft.EventGrid/topicTypes/Microsoft.Eventhub.Namespaces",
         "name": "Microsoft.Eventhub.Namespaces",

@@ -1,4 +1,6 @@
 {
+  "title": "List event data in base64 format.",
+  "operationId": "Byte_List",
   "parameters": {
     "api-version": "2020-06-01"
   },

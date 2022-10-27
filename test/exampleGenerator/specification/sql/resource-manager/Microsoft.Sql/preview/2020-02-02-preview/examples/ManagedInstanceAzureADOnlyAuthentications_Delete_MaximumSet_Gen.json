@@ -1,4 +1,6 @@
 {
+  "title": "ManagedInstanceAzureADOnlyAuthentications_Delete",
+  "operationId": "ManagedInstanceAzureADOnlyAuthentications_Delete",
   "parameters": {
     "resourceGroupName": "rgManagedInstanceAzureADOnlyAuthentications",
     "managedInstanceName": "managedInstance",

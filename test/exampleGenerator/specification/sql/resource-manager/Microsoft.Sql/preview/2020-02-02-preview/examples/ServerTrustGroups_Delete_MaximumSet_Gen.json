@@ -1,8 +1,10 @@
 {
+  "title": "ServerTrustGroups_Delete",
+  "operationId": "ServerTrustGroups_Delete",
   "parameters": {
     "resourceGroupName": "rgServerTrustGroups",
-    "locationName": "adrh",
-    "serverTrustGroupName": "gikcsvtmizmwvzmcttvpiww",
+    "locationName": "eex",
+    "serverTrustGroupName": "hdhrlrsdmdyque",
     "subscriptionId": "00000000-1111-2222-3333-444444444444",
     "api-version": "2020-02-02-preview"
   },

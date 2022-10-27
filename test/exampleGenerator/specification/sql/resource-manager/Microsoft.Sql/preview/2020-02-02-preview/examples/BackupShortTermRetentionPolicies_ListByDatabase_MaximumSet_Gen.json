@@ -1,4 +1,6 @@
 {
+  "title": "BackupShortTermRetentionPolicies_ListByDatabase",
+  "operationId": "BackupShortTermRetentionPolicies_ListByDatabase",
   "parameters": {
     "resourceGroupName": "rgBackupShortTermRetentionPolicies",
     "serverName": "testsvr",
@@ -19,7 +21,7 @@
             }
           }
         ],
-        "nextLink": "xkacjquekyboeuohempxbwcspbu"
+        "nextLink": "sjwepgjdcrcyjogyd"
       }
     }
   }

@@ -1,6 +1,8 @@
 {
+  "title": "Usages_List",
+  "operationId": "Usages_List",
   "parameters": {
-    "location": "sof",
+    "location": "vnqqfcguoc",
     "api-version": "2020-05-01",
     "subscriptionId": "00000000-0000-0000-0000-000000000000"
   },
@@ -10,7 +12,7 @@
         "value": [
           {
             "id": "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.SignalRService/locations/eastus/usages/Usage1",
-            "currentValue": 11,
+            "currentValue": 28,
             "limit": 100,
             "name": {
               "value": "Usage1",
@@ -20,7 +22,7 @@
           },
           {
             "id": "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.SignalRService/locations/eastus/usages/Usage2",
-            "currentValue": 22,
+            "currentValue": 6,
             "limit": 100,
             "name": {
               "value": "Usage2",
