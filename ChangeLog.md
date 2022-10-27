@@ -1,8 +1,11 @@
 # Change Log - oav
 
 ## 10/20/2022 3.2.1
+
 - API Scenario
   - Add roleAssignment step
+  - Bugfix: Use content-type specified in swagger
+  - Bugfix: fix query parameter value type
 
 ## 10/10/2022 3.2.0
 
