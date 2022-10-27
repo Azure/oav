@@ -1,5 +1,272 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`ApiScenarioGenerator generate api scenario from data plane recording - appconfiguration 1`] = `
+Object {
+  "scenarios": Array [
+    Object {
+      "scenario": "AddExistingSetting",
+      "steps": Array [
+        Object {
+          "operationId": "PutKeyValue",
+          "step": "PutKeyValue",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "PutKeyValue",
+          "step": "PutKeyValue_1",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "DeleteKeyValue",
+          "step": "DeleteKeyValue",
+          "variables": undefined,
+        },
+      ],
+      "variables": Object {
+        "If-None-Match": Object {
+          "type": "string",
+          "value": "*",
+        },
+        "Sync-Token": Object {
+          "type": "string",
+          "value": "zAJw6V16=MjoxNyM5MjA3Nzgy",
+        },
+        "endpoint": Object {
+          "type": "string",
+          "value": "https://t-dnnwaokochaappconfig-azconfig-net.azconfig.io",
+        },
+        "entity": Object {
+          "type": "object",
+          "value": Object {
+            "content_type": "test_content_type",
+            "tags": Object {
+              "tag1": "value1",
+              "tag2": "value2",
+            },
+            "value": "test_value",
+          },
+        },
+        "key": Object {
+          "type": "string",
+          "value": "key-1954625347",
+        },
+        "label": Object {
+          "type": "string",
+          "value": "test_label",
+        },
+      },
+    },
+    Object {
+      "scenario": "ClearReadOnlySettingNotFound",
+      "steps": Array [],
+      "variables": undefined,
+    },
+    Object {
+      "scenario": "ConfigurationClient_SetReadOnly_OnlyIfUnchanged_Modified_False_",
+      "steps": Array [
+        Object {
+          "operationId": "PutKeyValue",
+          "parameters": Object {
+            "If-None-Match": "*",
+          },
+          "step": "PutKeyValue",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "PutKeyValue",
+          "parameters": Object {
+            "Sync-Token": "zAJw6V16=MjoxNyM5MjA3OTY0",
+          },
+          "step": "PutKeyValue_1",
+          "variables": Object {
+            "entity": Object {
+              "patches": Array [
+                Object {
+                  "replace": "/value",
+                  "value": "new_value",
+                },
+              ],
+              "type": "object",
+              "value": undefined,
+            },
+          },
+        },
+        Object {
+          "operationId": "DeleteLock",
+          "parameters": Object {
+            "If-Match": "\\"LgZO1vXg1qh1tBjyRitcoYSFTRUkXB8XdxsHMM1AzrI\\"",
+          },
+          "step": "DeleteLock",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "DeleteKeyValue",
+          "step": "DeleteKeyValue",
+          "variables": undefined,
+        },
+      ],
+      "variables": Object {
+        "Sync-Token": Object {
+          "type": "string",
+          "value": "zAJw6V16=MjoxNyM5MjA3OTY1",
+        },
+        "endpoint": Object {
+          "type": "string",
+          "value": "https://t-dnnwaokochaappconfig-azconfig-net.azconfig.io",
+        },
+        "entity": Object {
+          "type": "object",
+          "value": Object {
+            "content_type": "test_content_type",
+            "tags": Object {
+              "tag1": "value1",
+              "tag2": "value2",
+            },
+            "value": "test_value",
+          },
+        },
+        "key": Object {
+          "type": "string",
+          "value": "key-2141872649",
+        },
+        "label": Object {
+          "type": "string",
+          "value": "test_label",
+        },
+      },
+    },
+    Object {
+      "scenario": "DeleteIfUnchangedSettingModified",
+      "steps": Array [
+        Object {
+          "operationId": "PutKeyValue",
+          "parameters": Object {
+            "If-None-Match": "*",
+          },
+          "step": "PutKeyValue",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "PutKeyValue",
+          "parameters": Object {
+            "Sync-Token": "zAJw6V16=MjoxNyM5MjA3ODMw",
+          },
+          "step": "PutKeyValue_1",
+          "variables": Object {
+            "entity": Object {
+              "patches": Array [
+                Object {
+                  "replace": "/value",
+                  "value": "new_value",
+                },
+              ],
+              "type": "object",
+              "value": undefined,
+            },
+          },
+        },
+        Object {
+          "operationId": "DeleteKeyValue",
+          "parameters": Object {
+            "If-Match": "\\"kcfjab4MYd1eDj2XrZ6aCxYLdFVmVmY5eKoLO5VmG70\\"",
+          },
+          "step": "DeleteKeyValue",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "DeleteKeyValue",
+          "step": "DeleteKeyValue_1",
+          "variables": undefined,
+        },
+      ],
+      "variables": Object {
+        "Sync-Token": Object {
+          "type": "string",
+          "value": "zAJw6V16=MjoxNyM5MjA3ODMx",
+        },
+        "endpoint": Object {
+          "type": "string",
+          "value": "https://t-dnnwaokochaappconfig-azconfig-net.azconfig.io",
+        },
+        "entity": Object {
+          "type": "object",
+          "value": Object {
+            "content_type": "test_content_type",
+            "tags": Object {
+              "tag1": "value1",
+              "tag2": "value2",
+            },
+            "value": "test_value",
+          },
+        },
+        "key": Object {
+          "type": "string",
+          "value": "key-1505928816",
+        },
+        "label": Object {
+          "type": "string",
+          "value": "test_label",
+        },
+      },
+    },
+    Object {
+      "scenario": "GetBatchSettingAny",
+      "steps": Array [
+        Object {
+          "operationId": "PutKeyValue",
+          "parameters": Object {
+            "entity": Object {
+              "content_type": "test_content_type",
+              "tags": Object {
+                "tag1": "value1",
+                "tag2": "value2",
+              },
+              "value": "test_value",
+            },
+          },
+          "step": "PutKeyValue",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "GetKeyValues",
+          "step": "GetKeyValues",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "DeleteKeyValue",
+          "step": "DeleteKeyValue",
+          "variables": undefined,
+        },
+      ],
+      "variables": Object {
+        "Sync-Token": Object {
+          "type": "string",
+          "value": "zAJw6V16=MjoxNyM5MjE2MDIy",
+        },
+        "endpoint": Object {
+          "type": "string",
+          "value": "https://t-dnnwaokochaappconfig-azconfig-net.azconfig.io",
+        },
+        "key": Object {
+          "type": "string",
+          "value": "key-2094909004",
+        },
+        "label": Object {
+          "type": "string",
+          "value": "test_label",
+        },
+      },
+    },
+    Object {
+      "scenario": "SetReadOnlySettingNotFound",
+      "steps": Array [],
+      "variables": undefined,
+    },
+  ],
+  "scope": "None",
+}
+`;
+
 exports[`ApiScenarioGenerator generate api scenario from recording - storage 1`] = `
 Object {
   "scenarios": Array [
