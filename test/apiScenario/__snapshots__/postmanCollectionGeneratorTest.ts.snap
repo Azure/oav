@@ -1382,7 +1382,7 @@ try {
               "query": Array [
                 Object {
                   "key": "test",
-                  "value": 1,
+                  "value": "1",
                 },
                 Object {
                   "key": "api-version",
@@ -3945,7 +3945,7 @@ try {
               "query": Array [
                 Object {
                   "key": "test",
-                  "value": 1,
+                  "value": "1",
                 },
                 Object {
                   "key": "api-version",
