@@ -173,12 +173,18 @@ export default class Generator {
         return [];
       }
     } else {
+      const xMsExamples = specItem?.content?.["x-ms-examples"] || {};
+      const xMsExampleKeys = Object.getOwnPropertyNames(xMsExamples);
+      const title = xMsExampleKeys.length > 0 ? xMsExampleKeys[0] : "";
       example = {
-        title: specItem.content.summary
-          ? specItem.content.summary
-          : specItem.content.description
-          ? specItem.content.description
-          : operationId,
+        title:
+          title.length > 0
+            ? title
+            : specItem.content.summary
+            ? specItem.content.summary
+            : specItem.content.description
+            ? specItem.content.description
+            : operationId,
         operationId: operationId,
         parameters: {},
         responses: this.extractResponse(specItem, {}),
