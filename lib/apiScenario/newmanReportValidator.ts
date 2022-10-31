@@ -287,7 +287,7 @@ export class NewmanReportValidator {
       body: this.parseBody(request.body),
     };
     const liveResponse: LiveResponse = {
-      statusCode: response.statusCode.toString(),
+      statusCode: `${response.statusCode}`,
       headers: response.headers,
       body: this.parseBody(response.body),
     };
@@ -310,7 +310,7 @@ export class NewmanReportValidator {
       body: this.parseBody(request.body),
     };
     const liveResponse: LiveResponse = {
-      statusCode: response.statusCode.toString(),
+      statusCode: `${response.statusCode}`,
       headers: response.headers,
       body: this.parseBody(response.body),
     };

@@ -449,7 +449,7 @@ pm.test("Stopped TestProxy recording", function() {
   ): Promise<void> {
     env.resolve();
 
-    const baseUri = env.resolveString(clientRequest.host);
+    const baseUri = convertPostmanFormat(env.tryResolveString(clientRequest.host));
 
     const { item, itemGroup } = this.addNewItem(
       step.isPrepareStep ? "Prepare" : step.isCleanUpStep ? "CleanUp" : "Scenario",
@@ -505,11 +505,17 @@ pm.test("Stopped TestProxy recording", function() {
       })),
       query: Object.entries(clientRequest.query).map(([key, value]) => ({
         key,
-        value: convertPostmanFormat(value),
+        value: convertPostmanFormat(value)?.toString(),
       })),
     });
 
-    item.request.addHeader({ key: "Content-Type", value: "application/json" });
+    item.request.addHeader({
+      key: "Content-Type",
+      value:
+        step.operation?.consumes?.[0] ??
+        step.operation?._path._spec.consumes?.[0] ??
+        "application/json",
+    });
     Object.entries(clientRequest.headers).forEach(([key, value]) => {
       item.request.addHeader({ key, value: convertPostmanFormat(value) });
     });
@@ -578,6 +584,19 @@ pm.test("Stopped TestProxy recording", function() {
         false,
         step.responseAssertion
       );
+
+      // generate final get
+      if (step.operation?._method !== "post") {
+        itemGroup!.items.add(
+          this.generateFinalGetItem(
+            item.name,
+            baseUri,
+            item.request.url,
+            item.name,
+            step.operation._method
+          )
+        );
+      }
     } else {
       const metadata: SimpleItemMetadata = {
         type: "simple",
@@ -591,19 +610,6 @@ pm.test("Stopped TestProxy recording", function() {
 
     if (postScripts.length > 0) {
       PostmanHelper.addEvent(item.events, "test", postScripts);
-    }
-
-    // generate get
-    if (step.operation?._method === "put" || step.operation?._method === "delete") {
-      itemGroup!.items.add(
-        this.generateFinalGetItem(
-          item.name,
-          baseUri,
-          item.request.url,
-          item.name,
-          step.operation._method
-        )
-      );
     }
   }
 
