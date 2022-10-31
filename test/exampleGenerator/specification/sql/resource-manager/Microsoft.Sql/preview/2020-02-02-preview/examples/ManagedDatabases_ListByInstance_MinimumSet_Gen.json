@@ -1,5 +1,5 @@
 {
-  "title": "ManagedDatabases_ListByInstance",
+  "title": "List databases by managed instances",
   "operationId": "ManagedDatabases_ListByInstance",
   "parameters": {
     "resourceGroupName": "rgManagedDatabases",

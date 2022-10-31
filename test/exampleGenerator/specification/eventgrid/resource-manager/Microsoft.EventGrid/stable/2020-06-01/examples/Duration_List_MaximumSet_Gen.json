@@ -1,5 +1,5 @@
 {
-  "title": "List event duration.",
+  "title": "Operations_List",
   "operationId": "Duration_List",
   "parameters": {
     "api-version": "2020-06-01"

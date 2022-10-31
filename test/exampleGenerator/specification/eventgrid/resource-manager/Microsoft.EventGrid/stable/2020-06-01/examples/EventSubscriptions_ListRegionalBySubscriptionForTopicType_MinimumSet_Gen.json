@@ -1,10 +1,10 @@
 {
-  "title": "List all regional event subscriptions under an Azure subscription for a topic type.",
+  "title": "EventSubscriptions_ListRegionalBySubscriptionForTopicType",
   "operationId": "EventSubscriptions_ListRegionalBySubscriptionForTopicType",
   "parameters": {
     "subscriptionId": "5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
-    "location": "p",
-    "topicTypeName": "ci",
+    "location": "hvgaohhvtbnsxyiq",
+    "topicTypeName": "iyneiqbzzfianizffujgtiguucpgjd",
     "api-version": "2020-06-01"
   },
   "responses": {

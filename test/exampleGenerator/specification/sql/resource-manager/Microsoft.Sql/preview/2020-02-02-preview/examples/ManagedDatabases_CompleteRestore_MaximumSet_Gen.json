@@ -1,5 +1,5 @@
 {
-  "title": "ManagedDatabases_CompleteRestore",
+  "title": "Completes a managed database external backup restore.",
   "operationId": "ManagedDatabases_CompleteRestore",
   "parameters": {
     "resourceGroupName": "rgManagedDatabases",

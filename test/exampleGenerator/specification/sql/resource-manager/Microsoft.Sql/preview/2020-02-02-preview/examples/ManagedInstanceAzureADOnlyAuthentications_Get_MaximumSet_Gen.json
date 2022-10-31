@@ -1,5 +1,5 @@
 {
-  "title": "ManagedInstanceAzureADOnlyAuthentications_Get",
+  "title": "Gets a Azure Active Directory only authentication property.",
   "operationId": "ManagedInstanceAzureADOnlyAuthentications_Get",
   "parameters": {
     "resourceGroupName": "rgManagedInstanceAzureADOnlyAuthentications",

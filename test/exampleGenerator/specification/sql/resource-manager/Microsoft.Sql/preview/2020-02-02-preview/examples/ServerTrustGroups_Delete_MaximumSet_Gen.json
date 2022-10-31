@@ -1,10 +1,10 @@
 {
-  "title": "ServerTrustGroups_Delete",
+  "title": "Drop server trust group",
   "operationId": "ServerTrustGroups_Delete",
   "parameters": {
     "resourceGroupName": "rgServerTrustGroups",
-    "locationName": "eex",
-    "serverTrustGroupName": "hdhrlrsdmdyque",
+    "locationName": "jduurtviqwzwcmk",
+    "serverTrustGroupName": "augrsvsducrocuskwpscijvbya",
     "subscriptionId": "00000000-1111-2222-3333-444444444444",
     "api-version": "2020-02-02-preview"
   },

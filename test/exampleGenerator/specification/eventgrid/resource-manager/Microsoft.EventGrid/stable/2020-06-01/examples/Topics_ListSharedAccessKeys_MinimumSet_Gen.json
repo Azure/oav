@@ -1,10 +1,10 @@
 {
-  "title": "List keys for a topic.",
+  "title": "Topics_ListSharedAccessKeys",
   "operationId": "Topics_ListSharedAccessKeys",
   "parameters": {
     "subscriptionId": "5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
     "resourceGroupName": "rgEventGrid",
-    "topicName": "ntwn",
+    "topicName": "fbrwhoqocwwcwwmfynfrljlwqmp",
     "api-version": "2020-06-01"
   },
   "responses": {

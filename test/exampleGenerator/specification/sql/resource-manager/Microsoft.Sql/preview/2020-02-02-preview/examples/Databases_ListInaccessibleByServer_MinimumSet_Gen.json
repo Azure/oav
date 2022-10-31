@@ -1,5 +1,5 @@
 {
-  "title": "Databases_ListInaccessibleByServer",
+  "title": "Gets a list of inaccessible databases in a logical server",
   "operationId": "Databases_ListInaccessibleByServer",
   "parameters": {
     "resourceGroupName": "rgDatabases",

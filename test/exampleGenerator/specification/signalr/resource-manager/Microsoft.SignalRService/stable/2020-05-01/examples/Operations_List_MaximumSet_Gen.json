@@ -15,24 +15,24 @@
               "provider": "Microsoft.SignalRService",
               "resource": "SignalR",
               "operation": "Manage SignalR (read-only)",
-              "description": "rcelrdrbush"
+              "description": "txryyrafmcfqpytxepv"
             },
             "properties": {
               "serviceSpecification": {
                 "metricSpecifications": [
                   {
-                    "name": "xhpiqmzn",
-                    "displayName": "gmdokyy",
-                    "displayDescription": "gnhagfffbuvv",
-                    "unit": "pr",
-                    "aggregationType": "hgwczyhz",
-                    "fillGapWithZero": "uxpsezbguuvlc",
-                    "category": "dqvjtnrgg",
+                    "name": "frc",
+                    "displayName": "uhvyllxfarrngjsszik",
+                    "displayDescription": "mnkikvzuoygqlzlhngeqzljroywmf",
+                    "unit": "levunquiqhhjflmutr",
+                    "aggregationType": "ajfhknr",
+                    "fillGapWithZero": "ctcmkmxwyqfjtuxc",
+                    "category": "glzuqsdz",
                     "dimensions": [
                       {
-                        "name": "kgjxviitsqdcikmaet",
-                        "displayName": "qllartqniyjztozbbaukvvugl",
-                        "internalName": "hhjndwcfkvkpf",
+                        "name": "tbcahmkj",
+                        "displayName": "ujvkphlxdessawgpegxlxgj",
+                        "internalName": "dqfcnosnjwlw",
                         "toBeExportedForShoebox": true
                       }
                     ]
@@ -40,13 +40,13 @@
                 ],
                 "logSpecifications": [
                   {
-                    "name": "sihhhjwsihlpvkhpqdvffwwke",
-                    "displayName": "shoggfxwctzkllr"
+                    "name": "r",
+                    "displayName": "qqvxtribddxafqxfotq"
                   }
                 ]
               }
             },
-            "origin": "ajvnbh"
+            "origin": "odphpnopojlzxa"
           }
         ],
         "nextLink": "providers/Microsoft.SignalRService?$skipToken={opaqueString}"

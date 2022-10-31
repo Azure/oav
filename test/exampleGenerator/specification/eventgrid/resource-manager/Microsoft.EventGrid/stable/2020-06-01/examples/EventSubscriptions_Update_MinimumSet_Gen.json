@@ -1,9 +1,9 @@
 {
-  "title": "Update an event subscription.",
+  "title": "EventSubscriptions_UpdateForSubscription",
   "operationId": "EventSubscriptions_Update",
   "parameters": {
-    "scope": "dpufkvkm",
-    "eventSubscriptionName": "wbeoaxqtl",
+    "scope": "t",
+    "eventSubscriptionName": "wdoagzucgwzbsfylqmqslhkknqkkvt",
     "eventSubscriptionUpdateParameters": {},
     "api-version": "2020-06-01"
   },

@@ -1,10 +1,10 @@
 {
-  "title": "ServerTrustGroups_Get",
+  "title": "Get server trust group",
   "operationId": "ServerTrustGroups_Get",
   "parameters": {
     "resourceGroupName": "rgServerTrustGroups",
-    "locationName": "daqgloebpdkispfjiwyitlqwsyqe",
-    "serverTrustGroupName": "mgnsshgompmhfvwbqzardiwx",
+    "locationName": "qomyxgf",
+    "serverTrustGroupName": "bfxcoykcjhmftswymlwgm",
     "subscriptionId": "00000000-1111-2222-3333-444444444444",
     "api-version": "2020-02-02-preview"
   },

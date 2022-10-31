@@ -1,11 +1,11 @@
 {
-  "title": "List all regional event subscriptions under an Azure subscription and resource group for a topic type.",
+  "title": "EventSubscriptions_ListRegionalByResourceGroupForTopicType",
   "operationId": "EventSubscriptions_ListRegionalByResourceGroupForTopicType",
   "parameters": {
     "subscriptionId": "5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
     "resourceGroupName": "rgEventGrid",
-    "location": "yf",
-    "topicTypeName": "yvjgfeoaxvnqibldcwrpgbhx",
+    "location": "bbfcpmthrkvroxriqmwi",
+    "topicTypeName": "pxiqmmvfvbq",
     "api-version": "2020-06-01"
   },
   "responses": {

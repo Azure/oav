@@ -1,18 +1,18 @@
 {
-  "title": "Update a specific private endpoint connection.",
+  "title": "PrivateEndpointConnections_Update",
   "operationId": "PrivateEndpointConnections_Update",
   "parameters": {
     "subscriptionId": "5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
     "resourceGroupName": "rgEventGrid",
     "parentType": "topics",
-    "parentName": "nipxlkunkxjcysjrmbstsalpmgd",
-    "privateEndpointConnectionName": "ikzjdgudyjnnydvehiqrbvperuka",
+    "parentName": "o",
+    "privateEndpointConnectionName": "kxfcevptoxppsusopvr",
     "privateEndpointConnection": {
       "properties": {
         "privateLinkServiceConnectionState": {
           "status": "Approved",
           "actionsRequired": "None",
-          "description": "juvqb"
+          "description": "fnewlwcwrvsstkgubdpygodk"
         },
         "privateEndpoint": {
           "id": "/subscriptions/5b4b650e-28b9-4790-b3ab-ddbd88d727c4/resourceGroups/examplerg/providers/Microsoft.Network/privateEndpoints/bmtpe5"
@@ -32,7 +32,7 @@
           "privateLinkServiceConnectionState": {
             "status": "Approved",
             "actionsRequired": "None",
-            "description": "juvqb"
+            "description": "fnewlwcwrvsstkgubdpygodk"
           },
           "privateEndpoint": {
             "id": "/subscriptions/5b4b650e-28b9-4790-b3ab-ddbd88d727c4/resourceGroups/examplerg/providers/Microsoft.Network/privateEndpoints/bmtpe5"
@@ -56,7 +56,7 @@
           "privateLinkServiceConnectionState": {
             "status": "Approved",
             "actionsRequired": "None",
-            "description": "juvqb"
+            "description": "fnewlwcwrvsstkgubdpygodk"
           },
           "privateEndpoint": {
             "id": "/subscriptions/5b4b650e-28b9-4790-b3ab-ddbd88d727c4/resourceGroups/examplerg/providers/Microsoft.Network/privateEndpoints/bmtpe5"

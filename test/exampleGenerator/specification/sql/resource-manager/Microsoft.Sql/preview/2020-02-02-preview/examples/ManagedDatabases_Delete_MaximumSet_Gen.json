@@ -1,5 +1,5 @@
 {
-  "title": "ManagedDatabases_Delete",
+  "title": "Delete managed database",
   "operationId": "ManagedDatabases_Delete",
   "parameters": {
     "resourceGroupName": "rgManagedDatabases",

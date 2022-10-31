@@ -1,5 +1,5 @@
 {
-  "title": "BackupShortTermRetentionPolicies_ListByDatabase",
+  "title": "Get the short term retention policy for the database.",
   "operationId": "BackupShortTermRetentionPolicies_ListByDatabase",
   "parameters": {
     "resourceGroupName": "rgBackupShortTermRetentionPolicies",
@@ -21,7 +21,7 @@
             }
           }
         ],
-        "nextLink": "sjwepgjdcrcyjogyd"
+        "nextLink": "hiznpgcierefnd"
       }
     }
   }

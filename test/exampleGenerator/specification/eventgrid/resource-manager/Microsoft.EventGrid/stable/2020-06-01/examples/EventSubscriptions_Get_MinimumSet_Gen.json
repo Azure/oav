@@ -1,9 +1,9 @@
 {
-  "title": "Get an event subscription.",
+  "title": "EventSubscriptions_GetForSubscription",
   "operationId": "EventSubscriptions_Get",
   "parameters": {
-    "scope": "qcfueytnyhxehornp",
-    "eventSubscriptionName": "dqjbpbamqwui",
+    "scope": "ddnhtsqcefvpoqcskan",
+    "eventSubscriptionName": "nrngefmepdklllffdbb",
     "api-version": "2020-06-01"
   },
   "responses": {

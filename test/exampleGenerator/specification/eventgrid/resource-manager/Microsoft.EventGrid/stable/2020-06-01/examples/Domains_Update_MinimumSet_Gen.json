@@ -1,10 +1,10 @@
 {
-  "title": "Update a domain.",
+  "title": "Domains_Update",
   "operationId": "Domains_Update",
   "parameters": {
     "subscriptionId": "5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
     "resourceGroupName": "rgEventGrid",
-    "domainName": "atiy",
+    "domainName": "fqkfdparqggtqtuvkrcebpse",
     "domainUpdateParameters": {},
     "api-version": "2020-06-01"
   },

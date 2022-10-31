@@ -2,7 +2,7 @@
   "title": "SignalRPrivateEndpointConnections_Update",
   "operationId": "SignalRPrivateEndpointConnections_Update",
   "parameters": {
-    "privateEndpointConnectionName": "efbwevh",
+    "privateEndpointConnectionName": "xjcmdodxoytrjesqlrxpeqfyn",
     "parameters": {
       "properties": {
         "privateEndpoint": {
@@ -10,7 +10,7 @@
         },
         "privateLinkServiceConnectionState": {
           "status": "Approved",
-          "description": "yucfohdbenwpca",
+          "description": "glouvfukakuwkfvqpbnvlrlubbuazg",
           "actionsRequired": "None"
         },
         "provisioningState": "Succeeded"
@@ -30,7 +30,7 @@
           },
           "privateLinkServiceConnectionState": {
             "status": "Approved",
-            "description": "yucfohdbenwpca",
+            "description": "glouvfukakuwkfvqpbnvlrlubbuazg",
             "actionsRequired": "None"
           },
           "provisioningState": "Succeeded"

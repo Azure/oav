@@ -1,5 +1,5 @@
 {
-  "title": "Databases_ImportDatabase",
+  "title": "Imports to a new database.",
   "operationId": "Databases_ImportDatabase",
   "parameters": {
     "resourceGroupName": "rgDatabases",
@@ -12,12 +12,12 @@
       "administratorLogin": "login",
       "administratorLoginPassword": "password",
       "authenticationType": "Sql",
-      "edition": "yummyhithu",
-      "serviceObjectiveName": "sjckkpviaxrenkmvumrqdiwwphnsv",
-      "maxSizeBytes": "ei",
+      "edition": "zogcn",
+      "serviceObjectiveName": "kavvzxaqeb",
+      "maxSizeBytes": "fixccbr",
       "networkIsolation": {
-        "storageAccountResourceId": "dzmugyjiaifdmxcxxdoog",
-        "sqlServerResourceId": "kyvxnypibbnykrwa"
+        "storageAccountResourceId": "btabimrtvozvhukjmk",
+        "sqlServerResourceId": "adszcximppx"
       }
     },
     "subscriptionId": "00000000-1111-2222-3333-444444444444",
@@ -35,12 +35,12 @@
           "serverName": "testsvr.database.windows.net",
           "databaseName": "testdb",
           "status": "Completed",
-          "errorMessage": "buavusq",
+          "errorMessage": "osmunrmlxbexybudauqnafg",
           "privateEndpointConnections": [
             {
-              "privateLinkServiceId": "tnqzysxfjquyetqjjkdijsxgzcvvt",
-              "privateEndpointConnectionName": "kviwmraenvkzssnbhkgjqbg",
-              "status": "aheixljrnvtletzuwlwa"
+              "privateLinkServiceId": "rngrcugmtwlrdderjlgpyco",
+              "privateEndpointConnectionName": "cmcddik",
+              "status": "heidfafsnhgomivlvlonirkpvgirks"
             }
           ]
         },

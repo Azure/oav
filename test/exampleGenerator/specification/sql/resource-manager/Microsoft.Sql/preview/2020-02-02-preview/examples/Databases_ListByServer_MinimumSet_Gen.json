@@ -1,5 +1,5 @@
 {
-  "title": "Databases_ListByServer",
+  "title": "Gets a list of databases.",
   "operationId": "Databases_ListByServer",
   "parameters": {
     "resourceGroupName": "rgDatabases",

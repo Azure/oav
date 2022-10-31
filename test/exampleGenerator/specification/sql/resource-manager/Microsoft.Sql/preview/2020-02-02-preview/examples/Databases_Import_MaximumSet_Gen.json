@@ -1,5 +1,5 @@
 {
-  "title": "Databases_Import",
+  "title": "Imports to an existing empty database.",
   "operationId": "Databases_Import",
   "parameters": {
     "resourceGroupName": "rgDatabases",
@@ -13,8 +13,8 @@
       "administratorLoginPassword": "password",
       "authenticationType": "Sql",
       "networkIsolation": {
-        "storageAccountResourceId": "dzmugyjiaifdmxcxxdoog",
-        "sqlServerResourceId": "kyvxnypibbnykrwa"
+        "storageAccountResourceId": "btabimrtvozvhukjmk",
+        "sqlServerResourceId": "adszcximppx"
       }
     },
     "subscriptionId": "00000000-1111-2222-3333-444444444444",
@@ -32,12 +32,12 @@
           "serverName": "testsvr.database.windows.net",
           "databaseName": "testdb",
           "status": "Completed",
-          "errorMessage": "buavusq",
+          "errorMessage": "osmunrmlxbexybudauqnafg",
           "privateEndpointConnections": [
             {
-              "privateLinkServiceId": "tnqzysxfjquyetqjjkdijsxgzcvvt",
-              "privateEndpointConnectionName": "kviwmraenvkzssnbhkgjqbg",
-              "status": "aheixljrnvtletzuwlwa"
+              "privateLinkServiceId": "rngrcugmtwlrdderjlgpyco",
+              "privateEndpointConnectionName": "cmcddik",
+              "status": "heidfafsnhgomivlvlonirkpvgirks"
             }
           ]
         },

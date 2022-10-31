@@ -1,5 +1,5 @@
 {
-  "title": "ServerTrustGroups_ListByInstance",
+  "title": "List server trust groups by managed instance",
   "operationId": "ServerTrustGroups_ListByInstance",
   "parameters": {
     "resourceGroupName": "rgServerTrustGroups",

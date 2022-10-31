@@ -1,5 +1,5 @@
 {
-  "title": "ManagedDatabases_ListInaccessibleByInstance",
+  "title": "List inaccessible managed databases by managed instances",
   "operationId": "ManagedDatabases_ListInaccessibleByInstance",
   "parameters": {
     "resourceGroupName": "rgManagedDatabases",

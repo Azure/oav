@@ -1,12 +1,12 @@
 {
-  "title": "Get a specific private endpoint connection.",
+  "title": "PrivateEndpointConnections_Get",
   "operationId": "PrivateEndpointConnections_Get",
   "parameters": {
     "subscriptionId": "5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
     "resourceGroupName": "rgEventGrid",
     "parentType": "topics",
-    "parentName": "pcbkjqyttboocnojrnnduhbzepyxcj",
-    "privateEndpointConnectionName": "rcobwpqcyhbzbphylxjxisii",
+    "parentName": "ysxl",
+    "privateEndpointConnectionName": "iypgw",
     "api-version": "2020-06-01"
   },
   "responses": {
@@ -16,7 +16,7 @@
           "privateLinkServiceConnectionState": {
             "status": "Approved",
             "actionsRequired": "None",
-            "description": "juvqb"
+            "description": "fnewlwcwrvsstkgubdpygodk"
           },
           "privateEndpoint": {
             "id": "/subscriptions/5b4b650e-28b9-4790-b3ab-ddbd88d727c4/resourceGroups/examplerg/providers/Microsoft.Network/privateEndpoints/bmtpe5"

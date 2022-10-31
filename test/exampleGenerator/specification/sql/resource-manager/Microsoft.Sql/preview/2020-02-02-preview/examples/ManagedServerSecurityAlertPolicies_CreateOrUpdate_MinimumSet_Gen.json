@@ -1,5 +1,5 @@
 {
-  "title": "ManagedServerSecurityAlertPolicies_CreateOrUpdate",
+  "title": "Update a server's threat detection policy with all parameters",
   "operationId": "ManagedServerSecurityAlertPolicies_CreateOrUpdate",
   "parameters": {
     "resourceGroupName": "rgManagedServerSecurityAlertPolicies",

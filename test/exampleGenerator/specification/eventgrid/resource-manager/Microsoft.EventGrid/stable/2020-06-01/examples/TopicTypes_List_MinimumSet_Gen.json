@@ -1,5 +1,5 @@
 {
-  "title": "List topic types.",
+  "title": "TopicTypes_List",
   "operationId": "TopicTypes_List",
   "parameters": {
     "api-version": "2020-06-01"

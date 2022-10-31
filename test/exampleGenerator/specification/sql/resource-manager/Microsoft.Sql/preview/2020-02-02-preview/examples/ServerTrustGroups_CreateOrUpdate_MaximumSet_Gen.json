@@ -1,10 +1,10 @@
 {
-  "title": "ServerTrustGroups_CreateOrUpdate",
+  "title": "Create server trust group",
   "operationId": "ServerTrustGroups_CreateOrUpdate",
   "parameters": {
     "resourceGroupName": "rgServerTrustGroups",
-    "locationName": "dwtmatzistnzv",
-    "serverTrustGroupName": "gjqolhmjrkvjyuzt",
+    "locationName": "imgumexexozrjafwbajexu",
+    "serverTrustGroupName": "hpxfcqutkpmu",
     "parameters": {
       "properties": {
         "groupMembers": [

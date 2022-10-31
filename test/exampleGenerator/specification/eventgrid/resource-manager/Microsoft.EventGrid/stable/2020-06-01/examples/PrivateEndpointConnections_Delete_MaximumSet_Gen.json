@@ -1,12 +1,12 @@
 {
-  "title": "Delete a specific private endpoint connection.",
+  "title": "PrivateEndpointConnections_Delete",
   "operationId": "PrivateEndpointConnections_Delete",
   "parameters": {
     "subscriptionId": "5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
     "resourceGroupName": "rgEventGrid",
     "parentType": "topics",
-    "parentName": "qsuwwwmmdjjgmlvaazqzmylp",
-    "privateEndpointConnectionName": "rericzxzqdflddsumgqx",
+    "parentName": "zyvpdvqumfkxbwkx",
+    "privateEndpointConnectionName": "ufllbhtmjcjuexahqtqrh",
     "api-version": "2020-06-01"
   },
   "responses": {

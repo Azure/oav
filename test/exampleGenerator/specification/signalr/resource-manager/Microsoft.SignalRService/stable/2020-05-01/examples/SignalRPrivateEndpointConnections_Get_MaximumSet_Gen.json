@@ -2,7 +2,7 @@
   "title": "SignalRPrivateEndpointConnections_Get",
   "operationId": "SignalRPrivateEndpointConnections_Get",
   "parameters": {
-    "privateEndpointConnectionName": "ucnhwuvkwiauhpbxxked",
+    "privateEndpointConnectionName": "yoiyqquqdzaddwe",
     "api-version": "2020-05-01",
     "subscriptionId": "00000000-0000-0000-0000-000000000000",
     "resourceGroupName": "rgsignalr",
@@ -17,7 +17,7 @@
           },
           "privateLinkServiceConnectionState": {
             "status": "Approved",
-            "description": "yucfohdbenwpca",
+            "description": "glouvfukakuwkfvqpbnvlrlubbuazg",
             "actionsRequired": "None"
           },
           "provisioningState": "Succeeded"

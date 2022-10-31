@@ -1,10 +1,10 @@
 {
-  "title": "Databases_ListByElasticPool",
+  "title": "Gets a list of databases in an elastic pool.",
   "operationId": "Databases_ListByElasticPool",
   "parameters": {
     "resourceGroupName": "rgDatabases",
     "serverName": "testsvr",
-    "elasticPoolName": "oaxtmidhwmvyboepmryxmr",
+    "elasticPoolName": "jafbcslrwar",
     "subscriptionId": "00000000-1111-2222-3333-444444444444",
     "api-version": "2020-02-02-preview"
   },

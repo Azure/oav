@@ -1,5 +1,5 @@
 {
-  "title": "ManagedServerSecurityAlertPolicies_Get",
+  "title": "Get a managed server's threat detection policy",
   "operationId": "ManagedServerSecurityAlertPolicies_Get",
   "parameters": {
     "resourceGroupName": "rgManagedServerSecurityAlertPolicies",

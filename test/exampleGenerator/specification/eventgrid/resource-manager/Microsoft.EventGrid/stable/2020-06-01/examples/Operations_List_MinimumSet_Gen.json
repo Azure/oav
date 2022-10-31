@@ -1,5 +1,5 @@
 {
-  "title": "List available operations.",
+  "title": "Operations_List",
   "operationId": "Operations_List",
   "parameters": {
     "api-version": "2020-06-01"

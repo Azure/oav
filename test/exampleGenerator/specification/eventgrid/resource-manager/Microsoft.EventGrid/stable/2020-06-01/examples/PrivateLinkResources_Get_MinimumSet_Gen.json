@@ -1,12 +1,12 @@
 {
-  "title": "Get a private link resource.",
+  "title": "PrivateLinkResources_Get",
   "operationId": "PrivateLinkResources_Get",
   "parameters": {
     "subscriptionId": "5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
     "resourceGroupName": "rgEventGrid",
-    "parentType": "ewozantyftubgfpd",
-    "parentName": "qxjektpaijvhwrbuavu",
-    "privateLinkResourceName": "lupfxjvxcjyf",
+    "parentType": "tiscb",
+    "parentName": "bmtgdlviuyibm",
+    "privateLinkResourceName": "xrrnvtabttbpgeusddrdzoqhbfjydj",
     "api-version": "2020-06-01"
   },
   "responses": {

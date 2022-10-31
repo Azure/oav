@@ -1,5 +1,5 @@
 {
-  "title": "List topic types.",
+  "title": "TopicTypes_List",
   "operationId": "TopicTypes_List",
   "parameters": {
     "api-version": "2020-06-01"
@@ -14,11 +14,11 @@
               "provider": "Microsoft.Eventhub",
               "provisioningState": "Succeeded",
               "resourceRegionType": "RegionalResource",
-              "description": "pmrzqb",
+              "description": "owdtqzn",
               "supportedLocations": [
-                "fckcawkvunafa"
+                "yyjacpmzohkgwnb"
               ],
-              "sourceResourceFormat": "iuogiaycpwvos"
+              "sourceResourceFormat": "sgkliwpehkazecmwoqypwwhgin"
             },
             "id": "providers/Microsoft.EventGrid/topicTypes/Microsoft.Eventhub.Namespaces",
             "name": "Microsoft.Eventhub.Namespaces",
@@ -30,11 +30,11 @@
               "provider": "Microsoft.Storage",
               "provisioningState": "Succeeded",
               "resourceRegionType": "RegionalResource",
-              "description": "apnsmzsoksdyqqhbapwntcbnifqv",
+              "description": "cyzohacmmyrve",
               "supportedLocations": [
-                "prbxxnroqacmcs"
+                "hhcudduhsirgrizoutgvuwbid"
               ],
-              "sourceResourceFormat": "qk"
+              "sourceResourceFormat": "cothibrlofbriynmhitzbmy"
             },
             "id": "providers/Microsoft.EventGrid/topicTypes/Microsoft.Storage.StorageAccounts",
             "name": "Microsoft.Storage.StorageAccounts",

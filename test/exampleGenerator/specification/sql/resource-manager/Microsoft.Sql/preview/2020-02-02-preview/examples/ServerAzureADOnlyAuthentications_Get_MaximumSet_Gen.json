@@ -1,5 +1,5 @@
 {
-  "title": "ServerAzureADOnlyAuthentications_Get",
+  "title": "Gets a Azure Active Directory only authentication property.",
   "operationId": "ServerAzureADOnlyAuthentications_Get",
   "parameters": {
     "resourceGroupName": "rgServerAzureADOnlyAuthentications",

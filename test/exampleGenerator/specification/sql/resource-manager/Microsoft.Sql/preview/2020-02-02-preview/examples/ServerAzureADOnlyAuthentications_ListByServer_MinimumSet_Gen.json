@@ -1,5 +1,5 @@
 {
-  "title": "ServerAzureADOnlyAuthentications_ListByServer",
+  "title": "Gets a list of Azure Active Directory only authentication object.",
   "operationId": "ServerAzureADOnlyAuthentications_ListByServer",
   "parameters": {
     "resourceGroupName": "rgServerAzureADOnlyAuthentications",

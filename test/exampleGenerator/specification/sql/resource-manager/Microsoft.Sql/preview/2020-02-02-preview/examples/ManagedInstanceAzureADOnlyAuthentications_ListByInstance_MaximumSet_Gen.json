@@ -1,5 +1,5 @@
 {
-  "title": "ManagedInstanceAzureADOnlyAuthentications_ListByInstance",
+  "title": "Gets a list of Azure Active Directory only authentication object.",
   "operationId": "ManagedInstanceAzureADOnlyAuthentications_ListByInstance",
   "parameters": {
     "resourceGroupName": "rgManagedInstanceAzureADOnlyAuthentications",
@@ -20,7 +20,7 @@
             }
           }
         ],
-        "nextLink": "mutuzslvwluxyjjpyr"
+        "nextLink": "etvhojpivl"
       }
     }
   }
