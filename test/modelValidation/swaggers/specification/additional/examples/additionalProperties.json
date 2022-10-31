@@ -1,0 +1,23 @@
+{
+  "parameters": {
+    "name": "additionalProperties"
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "result1": {
+          "id": 2
+        },
+        "result2": {
+          "id": 2
+        },
+        "result3": {
+          "id": 2
+        },
+        "result4": {
+          "id": 2
+        }
+      }
+    }
+  }
+}

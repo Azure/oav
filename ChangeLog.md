@@ -1,7 +1,7 @@
 # Change Log - oav
 
 ## 10/20/2022 3.2.1
-
+- ModelValidator - Add type validation for additionalProperties whose type is specified as an object
 - API Scenario
   - Add roleAssignment step
   - Bugfix: Use content-type specified in swagger
