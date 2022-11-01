@@ -3,8 +3,11 @@
 ## 10/20/2022 3.2.1
 - GenerateExamples - Add title and operationId to example
 - GenerateExamples - Generate subscriptionId in guid format
+- ModelValidator - Add type validation for additionalProperties whose type is specified as an object
 - API Scenario
   - Add roleAssignment step
+  - Bugfix: Use content-type specified in swagger
+  - Bugfix: fix query parameter value type
 
 ## 10/10/2022 3.2.0
 
