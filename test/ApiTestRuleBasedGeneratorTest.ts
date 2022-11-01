@@ -103,7 +103,7 @@ describe("Api Test rule based generator test", () => {
       ignore: ["**/examples/**/*.json", "**/quickstart-templates/*.json", "**/schema/*.json"],
     }
   );
-  const selectedRps = ["appconfiguration",/* "monitor", "sql", "hdinsight", "resource", "storage"*/];
+  const selectedRps = ["appconfiguration","monitor","sql","hdinsight", "resource","storage"];
   const allSpecs = specPaths
     .filter(
       (p: string) => selectedRps.some((rp: string) => p.includes(`specification/${rp}/`))

@@ -37,6 +37,8 @@ export type ApiTestGeneratorRule = {
   resourceKinds?: ArmResourceKind[];
   appliesTo: PlatFormType[];
   useExample?: boolean;
+  noCleanUp?: boolean;
+
   generator: ApiTestGenerator;
 };
 
@@ -52,14 +54,14 @@ type ResourceOperation = {
   kind: ResourceOperationKind;
 };
 
-export interface ArmResourceManipulatorInterface {
+export interface ResourceManipulatorInterface {
   getResourceOperation(kind: ResourceBasicOperationKind): ResourceOperation;
   getListOperations(): ResourceOperation[];
   getResourceActions(): ResourceOperation[];
   getProperty(propName: string): any;
   getProperties(): any[];
-  getParentResource(): ArmResourceManipulatorInterface[];
-  getChildResource(): ArmResourceManipulatorInterface[];
+  getParentResource(): ResourceManipulatorInterface[];
+  getChildResource(): ResourceManipulatorInterface[];
 }
 
 /*
@@ -80,7 +82,7 @@ const ResourceBasicApiTestGenerator = {
 
 // the class for manipulate the resource , includeing
 //  get CRUD, list, actions operations
-export class ArmResourceManipulator implements ArmResourceManipulatorInterface {
+export class ArmResourceManipulator implements ResourceManipulatorInterface {
   constructor(
     private swaggers: SwaggerSpec[],
     private jsonLoader: JsonLoader,
@@ -233,6 +235,7 @@ export class ArmResourceManipulator implements ArmResourceManipulatorInterface {
 
 class ArmResourceDependencyGenerator {
   private _basicScenario: RawScenarioDefinition | undefined;
+  private _restlerGenerator: RestlerApiScenarioGenerator | undefined;
   constructor(
     private _swaggers: string[],
     private _dependencyFile: string,
@@ -247,6 +250,7 @@ class ArmResourceDependencyGenerator {
       useExample: useExample,
     });
     await restlerGenerator.initialize();
+    this._restlerGenerator = restlerGenerator;
     const baseScenario = await restlerGenerator.generateResourceDependency(resoure);
     if (this._basicScenarioFile) {
       const loader = inversifyGetInstance(ApiScenarioYamlLoader, {});
@@ -310,6 +314,9 @@ class ArmResourceDependencyGenerator {
       ];
     }
     return [this._basicScenario?.prepareSteps, this._basicScenario?.cleanUpSteps];
+  }
+  generateResourceCleanup(resource: ArmResourceManipulator, scenario: RawScenario) {
+    this._restlerGenerator?.addCleanupSteps(resource,scenario);
   }
 }
 
@@ -400,7 +407,27 @@ class ArmResourceAnalyzer {
    * subscription wide reads and actions
    * /subscriptions/{subscriptionId}/providers/Microsoft.Relay/checkNameAvailability
    */
-  public getTalentAction() {}
+  public getTalentOrSubscriptionAction() {
+    const resourceActionRegEx = new RegExp(
+      "/providers/[^/]+/[operations|checkNameAvarilability]$",
+      "gi"
+    );
+    this._actions = [];
+    traverseSwaggers(this._swaggers, {
+      onPath: (_path: Path, pathTemplate: string) => {
+        if (resourceActionRegEx.test(pathTemplate)) {
+          const resourceMani = new ArmResourceManipulator(
+            this._swaggers,
+            this._jsonLoader,
+            this,
+            "None",
+            pathTemplate
+          );
+          this._actions?.push(resourceMani);
+        }
+      },
+    });
+  }
 
   public getTrackedResource(): ArmResourceManipulator[] {
     return this.getResources().filter((res) => res.isTrackedResource());
@@ -434,7 +461,6 @@ export class ApiTestRuleBasedGenerator {
     const trackedResources = analyzer.getTrackedResource();
     const proxyResources = analyzer.getProxyResource();
     const extensionResources = analyzer.getExtensionResource();
-    const scenariosResult: { [index: string]: RawScenario } = {};
     const generateForResources = async (
       resources: ArmResourceManipulator[],
       kind: ArmResourceKind
@@ -460,13 +486,14 @@ export class ApiTestRuleBasedGenerator {
         for (const rule of this.rules.filter(
           (rule) => rule.resourceKinds?.includes(kind) && rule.appliesTo.includes(platFormType)
         )) {
-          // what if without dependency ??
+          // what if no dependency ??
           base = (await dependency?.generate(resource, rule.useExample)) || base;
           if (base) {
             const apiSenarios = rule.generator(resource, base);
             if (apiSenarios) {
+              apiSenarios.description = "[This scenario is auto-generated]" + rule.description;
               dependency?.updateExampleFile(resource, apiSenarios);
-              scenariosResult[rule.name] = apiSenarios;
+              dependency?.generateResourceCleanup(resource,apiSenarios);
               definition.scenarios.push({ scenario: rule.name, ...apiSenarios });
             }
           }

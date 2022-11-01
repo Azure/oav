@@ -1,6 +1,6 @@
 import { cloneDeep, toUpper } from "lodash";
 import { RawScenario, RawStep } from "../../apiScenarioTypes";
-import { ApiTestGeneratorRule, ArmResourceManipulatorInterface } from "../ApiTestRuleBasedGenerator";
+import { ApiTestGeneratorRule, ResourceManipulatorInterface } from "../ApiTestRuleBasedGenerator";
 
 function getResourceNameParameter(path: string) {
   const regex = /.+\{(?<name>\w+)\}$/;
@@ -18,7 +18,7 @@ export const ResourceNameCaseInsensitive: ApiTestGeneratorRule = {
   resourceKinds: ["Tracked"],
   appliesTo: ["ARM"],
   useExample: true,
-  generator: (resource: ArmResourceManipulatorInterface, base: RawScenario) => {
+  generator: (resource: ResourceManipulatorInterface, base: RawScenario) => {
     const getOp = resource.getResourceOperation("Get");
     const resourceName = getResourceNameParameter(getOp?.path);
     const resourceNameVar = resourceName ? cloneDeep(base.variables?.[resourceName]) || {} : {};

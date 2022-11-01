@@ -1,5 +1,5 @@
 import { RawScenario, RawStep } from "../../apiScenarioTypes";
-import { ApiTestGeneratorRule, ArmResourceManipulatorInterface } from "../ApiTestRuleBasedGenerator";
+import { ApiTestGeneratorRule, ResourceManipulatorInterface } from "../ApiTestRuleBasedGenerator";
 
 export const NoChildResourceCreated: ApiTestGeneratorRule = {
   name: "NoChildResourceCreated",
@@ -8,7 +8,7 @@ export const NoChildResourceCreated: ApiTestGeneratorRule = {
   resourceKinds: ["Tracked", "Extension"],
   appliesTo: ["ARM"],
   useExample: true,
-  generator: (resource: ArmResourceManipulatorInterface, base: RawScenario) => {
+  generator: (resource: ResourceManipulatorInterface, base: RawScenario) => {
     const childResources = resource.getChildResource();
     if (childResources.length === 0) {
       return null;

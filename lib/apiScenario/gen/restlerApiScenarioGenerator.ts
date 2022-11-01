@@ -147,7 +147,7 @@ export class RestlerApiScenarioGenerator {
       return { steps: [] };
     }
     const scenario = this.generateDependencySteps(res);
-    this.updateStepExample(scenario)
+    this.updateStepExample(scenario);
     scenario.variables = this.getVariables(scenario);
     return scenario;
   }
@@ -163,7 +163,7 @@ export class RestlerApiScenarioGenerator {
             ? this.fileLoader.resolvePath(this.jsonLoader.getRealPath(exampleObj.$ref!))
             : null;
         if (exampleFile) {
-          (step as RawStepExample).exampleFile = exampleFile
+          (step as RawStepExample).exampleFile = exampleFile;
         }
       });
     }
@@ -363,13 +363,13 @@ export class RestlerApiScenarioGenerator {
         return undefined;
     }
   }
-  private generateDependencySteps(res?: ArmResourceManipulator) {
+  private generateDependencySteps(res: ArmResourceManipulator) {
     const scenario: RawScenario = {
       variables: undefined,
       steps: [],
     };
     function getPutOperationId() {
-      return res?.getOperation("CreateOrUpdate")?.[0]?.operationId || "";
+      return res.getOperation("CreateOrUpdate")?.[0]?.operationId || "";
     }
     const sortedNodes: Node[] = [];
     const cmp = (a: Node, b: Node) => {
@@ -387,8 +387,8 @@ export class RestlerApiScenarioGenerator {
           heap.push(n);
         }
         sortedNodes.push(...heap.toArray());
-        heap.toArray().forEach((n) => widthFirst(n));
       }
+      heap.toArray().forEach((n) => widthFirst(n));
     }
     const node = this.getNode(getPutOperationId());
     sortedNodes.push(node);
@@ -398,6 +398,22 @@ export class RestlerApiScenarioGenerator {
       return a;
     }, []);
     uniqNodes.forEach((node) => scenario.steps.push({ operationId: node.operationId }));
+    return scenario;
+  }
+
+  public addCleanupSteps(res: ArmResourceManipulator,scenario:RawScenario) {
+    const dependencyPutOperations = this.generateDependencySteps(res)?.steps.reverse()
+    const sortedNodes: Node[] = [];
+    for (const dependency of dependencyPutOperations) {
+      const node = this.getNode((dependency as RawStepOperation).operationId)
+      if (node) {
+        const deleteOperation = [...node.children.values()].find((n) => n.method === "delete")
+        if (deleteOperation) {
+          sortedNodes.push(deleteOperation)
+        }
+      }
+    }
+    sortedNodes.forEach((node) => scenario.steps.push({ operationId: node.operationId }));
     return scenario;
   }
 

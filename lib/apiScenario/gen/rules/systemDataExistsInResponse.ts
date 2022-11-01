@@ -1,5 +1,5 @@
 import { RawScenario, RawStep } from "../../apiScenarioTypes";
-import { ApiTestGeneratorRule, ArmResourceManipulatorInterface } from "../ApiTestRuleBasedGenerator";
+import { ApiTestGeneratorRule, ResourceManipulatorInterface } from "../ApiTestRuleBasedGenerator";
 
 export const SystemDataExistsInResponse: ApiTestGeneratorRule = {
   name: "SystemDataExistsInResponse",
@@ -8,7 +8,7 @@ export const SystemDataExistsInResponse: ApiTestGeneratorRule = {
   resourceKinds: ["Tracked","Proxy","Extension"],
   appliesTo: ["ARM"],
   useExample: true,
-  generator: (resource: ArmResourceManipulatorInterface, base: RawScenario) => {
+  generator: (resource: ResourceManipulatorInterface, base: RawScenario) => {
     const getOp = resource.getResourceOperation("Get");
     const step:RawStep = { operationId: getOp.operationId };
     const responses = {} as any;
