@@ -1,5 +1,5 @@
 {
-  "title": "Deletes a database.",
+  "title": "Deletes a database._MaximumSet",
   "operationId": "Databases_Delete",
   "parameters": {
     "resourceGroupName": "rgDatabases",

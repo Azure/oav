@@ -1,9 +1,9 @@
 {
-  "title": "EventSubscriptions_UpdateForSubscription",
+  "title": "EventSubscriptions_UpdateForSubscription_MinimumSet",
   "operationId": "EventSubscriptions_Update",
   "parameters": {
-    "scope": "t",
-    "eventSubscriptionName": "wdoagzucgwzbsfylqmqslhkknqkkvt",
+    "scope": "tvd",
+    "eventSubscriptionName": "vp",
     "eventSubscriptionUpdateParameters": {},
     "api-version": "2020-06-01"
   },

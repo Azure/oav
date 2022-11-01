@@ -1,8 +1,8 @@
 {
-  "title": "Usages_List",
+  "title": "Usages_List_MaximumSet",
   "operationId": "Usages_List",
   "parameters": {
-    "location": "klqaahuyjexlgnxykig",
+    "location": "fsbffxzqrtvuarjb",
     "api-version": "2020-05-01",
     "subscriptionId": "00000000-0000-0000-0000-000000000000"
   },
@@ -12,7 +12,7 @@
         "value": [
           {
             "id": "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.SignalRService/locations/eastus/usages/Usage1",
-            "currentValue": 26,
+            "currentValue": 15,
             "limit": 100,
             "name": {
               "value": "Usage1",
@@ -22,7 +22,7 @@
           },
           {
             "id": "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.SignalRService/locations/eastus/usages/Usage2",
-            "currentValue": 18,
+            "currentValue": 16,
             "limit": 100,
             "name": {
               "value": "Usage2",

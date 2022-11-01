@@ -179,7 +179,7 @@ export default class Generator {
       example = {
         title:
           title.length > 0
-            ? title
+            ? title.concat("_", rule.ruleName!)
             : specItem.content.summary
             ? specItem.content.summary
             : specItem.content.description

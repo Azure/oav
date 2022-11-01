@@ -1,12 +1,12 @@
 {
-  "title": "PrivateEndpointConnections_Get",
+  "title": "PrivateEndpointConnections_Get_MinimumSet",
   "operationId": "PrivateEndpointConnections_Get",
   "parameters": {
     "subscriptionId": "5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
     "resourceGroupName": "rgEventGrid",
     "parentType": "topics",
-    "parentName": "pmtt",
-    "privateEndpointConnectionName": "tcedruxvrmyxdosdbsw",
+    "parentName": "uutnhatotuhnbjtrahokijri",
+    "privateEndpointConnectionName": "sohpijxitjwizpzk",
     "api-version": "2020-06-01"
   },
   "responses": {

@@ -1,8 +1,8 @@
 {
-  "title": "SignalRPrivateEndpointConnections_Update",
+  "title": "SignalRPrivateEndpointConnections_Update_MaximumSet",
   "operationId": "SignalRPrivateEndpointConnections_Update",
   "parameters": {
-    "privateEndpointConnectionName": "xjcmdodxoytrjesqlrxpeqfyn",
+    "privateEndpointConnectionName": "dagnqapsgusqkrqcpuzgspfv",
     "parameters": {
       "properties": {
         "privateEndpoint": {
@@ -10,7 +10,7 @@
         },
         "privateLinkServiceConnectionState": {
           "status": "Approved",
-          "description": "glouvfukakuwkfvqpbnvlrlubbuazg",
+          "description": "thuasguezwuurgxbx",
           "actionsRequired": "None"
         },
         "provisioningState": "Succeeded"
@@ -30,7 +30,7 @@
           },
           "privateLinkServiceConnectionState": {
             "status": "Approved",
-            "description": "glouvfukakuwkfvqpbnvlrlubbuazg",
+            "description": "thuasguezwuurgxbx",
             "actionsRequired": "None"
           },
           "provisioningState": "Succeeded"

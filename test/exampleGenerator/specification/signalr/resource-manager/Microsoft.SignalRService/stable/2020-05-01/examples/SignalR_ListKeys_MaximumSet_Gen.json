@@ -1,5 +1,5 @@
 {
-  "title": "SignalR_ListKeys",
+  "title": "SignalR_ListKeys_MaximumSet",
   "operationId": "SignalR_ListKeys",
   "parameters": {
     "api-version": "2020-05-01",

@@ -1,9 +1,9 @@
 {
-  "title": "EventSubscriptions_DeleteForSubscription",
+  "title": "EventSubscriptions_DeleteForSubscription_MaximumSet",
   "operationId": "EventSubscriptions_Delete",
   "parameters": {
-    "scope": "dfhuvqfhkhxnguhobkyaneeajsuixm",
-    "eventSubscriptionName": "m",
+    "scope": "hssonnwnmpcfflsw",
+    "eventSubscriptionName": "pgryrlbfnmmivk",
     "api-version": "2020-06-01"
   },
   "responses": {

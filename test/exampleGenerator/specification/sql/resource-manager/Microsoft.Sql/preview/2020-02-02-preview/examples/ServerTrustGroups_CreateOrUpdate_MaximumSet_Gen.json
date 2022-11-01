@@ -1,10 +1,10 @@
 {
-  "title": "Create server trust group",
+  "title": "Create server trust group_MaximumSet",
   "operationId": "ServerTrustGroups_CreateOrUpdate",
   "parameters": {
     "resourceGroupName": "rgServerTrustGroups",
-    "locationName": "imgumexexozrjafwbajexu",
-    "serverTrustGroupName": "hpxfcqutkpmu",
+    "locationName": "spi",
+    "serverTrustGroupName": "egcvfcujreyvkkoquoqam",
     "parameters": {
       "properties": {
         "groupMembers": [

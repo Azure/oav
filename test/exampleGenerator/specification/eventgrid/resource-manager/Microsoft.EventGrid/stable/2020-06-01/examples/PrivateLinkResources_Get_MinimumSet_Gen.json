@@ -1,12 +1,12 @@
 {
-  "title": "PrivateLinkResources_Get",
+  "title": "PrivateLinkResources_Get_MinimumSet",
   "operationId": "PrivateLinkResources_Get",
   "parameters": {
     "subscriptionId": "5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
     "resourceGroupName": "rgEventGrid",
-    "parentType": "tiscb",
-    "parentName": "bmtgdlviuyibm",
-    "privateLinkResourceName": "xrrnvtabttbpgeusddrdzoqhbfjydj",
+    "parentType": "wfbd",
+    "parentName": "ust",
+    "privateLinkResourceName": "ipqaglbzzozystyzrktox",
     "api-version": "2020-06-01"
   },
   "responses": {

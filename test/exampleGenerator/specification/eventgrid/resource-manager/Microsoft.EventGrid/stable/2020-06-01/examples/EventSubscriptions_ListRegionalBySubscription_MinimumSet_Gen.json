@@ -1,9 +1,9 @@
 {
-  "title": "EventSubscriptions_ListRegionalBySubscription",
+  "title": "EventSubscriptions_ListRegionalBySubscription_MinimumSet",
   "operationId": "EventSubscriptions_ListRegionalBySubscription",
   "parameters": {
     "subscriptionId": "5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
-    "location": "p",
+    "location": "gofjkxbjxyghbzqzgmbznwljsxblsn",
     "api-version": "2020-06-01"
   },
   "responses": {

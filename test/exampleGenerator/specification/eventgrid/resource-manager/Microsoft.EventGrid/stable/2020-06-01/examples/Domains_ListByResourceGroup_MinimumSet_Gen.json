@@ -1,5 +1,5 @@
 {
-  "title": "Domains_ListByResourceGroup",
+  "title": "Domains_ListByResourceGroup_MinimumSet",
   "operationId": "Domains_ListByResourceGroup",
   "parameters": {
     "subscriptionId": "5b4b650e-28b9-4790-b3ab-ddbd88d727c4",

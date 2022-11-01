@@ -1,10 +1,10 @@
 {
-  "title": "Update a database's threat detection policy with minimal parameters",
+  "title": "Update a database's threat detection policy with minimal parameters_MinimumSet",
   "operationId": "DatabaseSecurityAlertPolicies_CreateOrUpdate",
   "parameters": {
     "resourceGroupName": "rgDatabaseSecurityAlertPolicies",
-    "serverName": "bcxjzh",
-    "databaseName": "kjnmohycymuhpupwohbslbg",
+    "serverName": "bbwdfvdmyfuwmn",
+    "databaseName": "idshxllkzubajwwreouovkwoj",
     "securityAlertPolicyName": "default",
     "parameters": {},
     "subscriptionId": "00000000-1111-2222-3333-444444444444",

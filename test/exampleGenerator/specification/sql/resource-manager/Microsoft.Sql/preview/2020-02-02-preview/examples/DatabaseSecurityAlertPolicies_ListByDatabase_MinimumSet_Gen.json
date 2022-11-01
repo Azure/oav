@@ -1,10 +1,10 @@
 {
-  "title": "Get the database's threat detection policies",
+  "title": "Get the database's threat detection policies_MinimumSet",
   "operationId": "DatabaseSecurityAlertPolicies_ListByDatabase",
   "parameters": {
     "resourceGroupName": "rgDatabaseSecurityAlertPolicies",
-    "serverName": "avnjephqnix",
-    "databaseName": "kwncias",
+    "serverName": "ksioakvbaputt",
+    "databaseName": "alrhwpuwrrikzoegpfpuuce",
     "subscriptionId": "00000000-1111-2222-3333-444444444444",
     "api-version": "2020-02-02-preview"
   },

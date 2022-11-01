@@ -1,5 +1,5 @@
 {
-  "title": "TopicTypes_List",
+  "title": "TopicTypes_List_MinimumSet",
   "operationId": "TopicTypes_List",
   "parameters": {
     "api-version": "2020-06-01"

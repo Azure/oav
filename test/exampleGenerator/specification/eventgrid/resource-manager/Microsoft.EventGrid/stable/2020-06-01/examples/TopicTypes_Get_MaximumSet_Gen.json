@@ -1,8 +1,8 @@
 {
-  "title": "TopicTypes_Get",
+  "title": "TopicTypes_Get_MaximumSet",
   "operationId": "TopicTypes_Get",
   "parameters": {
-    "topicTypeName": "ktlydyqxjhbmuhbfkm",
+    "topicTypeName": "dhnnddpuodle",
     "api-version": "2020-06-01"
   },
   "responses": {
@@ -13,11 +13,11 @@
           "provider": "Microsoft.Eventhub",
           "provisioningState": "Succeeded",
           "resourceRegionType": "RegionalResource",
-          "description": "owdtqzn",
+          "description": "ahlzmohjsvdfflsjhkphyuvfiwsn",
           "supportedLocations": [
-            "yyjacpmzohkgwnb"
+            "pxzpowyzckqeuqsqv"
           ],
-          "sourceResourceFormat": "sgkliwpehkazecmwoqypwwhgin"
+          "sourceResourceFormat": "ibmwwfbemdnzaccqzeojozpwfzxw"
         },
         "id": "providers/Microsoft.EventGrid/topicTypes/Microsoft.Eventhub.Namespaces",
         "name": "Microsoft.Eventhub.Namespaces",

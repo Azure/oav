@@ -1,9 +1,9 @@
 {
-  "title": "List server trust groups",
+  "title": "List server trust groups_MinimumSet",
   "operationId": "ServerTrustGroups_ListByLocation",
   "parameters": {
     "resourceGroupName": "rgServerTrustGroups",
-    "locationName": "njjtxaykeujrtirzmvdrdowxylhve",
+    "locationName": "zzybaqizabvbseopoqvi",
     "subscriptionId": "00000000-1111-2222-3333-444444444444",
     "api-version": "2020-02-02-preview"
   },

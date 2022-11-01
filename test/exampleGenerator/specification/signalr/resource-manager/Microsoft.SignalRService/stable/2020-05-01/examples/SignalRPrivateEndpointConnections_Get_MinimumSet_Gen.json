@@ -1,8 +1,8 @@
 {
-  "title": "SignalRPrivateEndpointConnections_Get",
+  "title": "SignalRPrivateEndpointConnections_Get_MinimumSet",
   "operationId": "SignalRPrivateEndpointConnections_Get",
   "parameters": {
-    "privateEndpointConnectionName": "tttaia",
+    "privateEndpointConnectionName": "nyr",
     "api-version": "2020-05-01",
     "subscriptionId": "00000000-0000-0000-0000-000000000000",
     "resourceGroupName": "rgsignalr",

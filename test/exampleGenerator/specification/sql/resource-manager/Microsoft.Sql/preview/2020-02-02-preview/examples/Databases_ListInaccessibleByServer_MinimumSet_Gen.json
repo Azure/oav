@@ -1,5 +1,5 @@
 {
-  "title": "Gets a list of inaccessible databases in a logical server",
+  "title": "Gets a list of inaccessible databases in a logical server_MinimumSet",
   "operationId": "Databases_ListInaccessibleByServer",
   "parameters": {
     "resourceGroupName": "rgDatabases",

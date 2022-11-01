@@ -1,8 +1,8 @@
 {
-  "title": "SignalR_CheckNameAvailability",
+  "title": "SignalR_CheckNameAvailability_MaximumSet",
   "operationId": "SignalR_CheckNameAvailability",
   "parameters": {
-    "location": "dqvgzcgrimhshwshdwelkhspf",
+    "location": "xqbeptzbbe",
     "parameters": {
       "type": "Microsoft.SignalRService/SignalR",
       "name": "my-signalr-service"

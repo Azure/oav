@@ -1,10 +1,10 @@
 {
-  "title": "EventSubscriptions_ListRegionalBySubscriptionForTopicType",
+  "title": "EventSubscriptions_ListRegionalBySubscriptionForTopicType_MinimumSet",
   "operationId": "EventSubscriptions_ListRegionalBySubscriptionForTopicType",
   "parameters": {
     "subscriptionId": "5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
-    "location": "hvgaohhvtbnsxyiq",
-    "topicTypeName": "iyneiqbzzfianizffujgtiguucpgjd",
+    "location": "sbscwfp",
+    "topicTypeName": "jqqfpknichwflcnywv",
     "api-version": "2020-06-01"
   },
   "responses": {

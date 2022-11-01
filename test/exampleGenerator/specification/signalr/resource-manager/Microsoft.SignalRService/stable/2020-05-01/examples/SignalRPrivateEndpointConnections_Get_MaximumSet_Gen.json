@@ -1,8 +1,8 @@
 {
-  "title": "SignalRPrivateEndpointConnections_Get",
+  "title": "SignalRPrivateEndpointConnections_Get_MaximumSet",
   "operationId": "SignalRPrivateEndpointConnections_Get",
   "parameters": {
-    "privateEndpointConnectionName": "yoiyqquqdzaddwe",
+    "privateEndpointConnectionName": "sdzicdx",
     "api-version": "2020-05-01",
     "subscriptionId": "00000000-0000-0000-0000-000000000000",
     "resourceGroupName": "rgsignalr",
@@ -17,7 +17,7 @@
           },
           "privateLinkServiceConnectionState": {
             "status": "Approved",
-            "description": "glouvfukakuwkfvqpbnvlrlubbuazg",
+            "description": "thuasguezwuurgxbx",
             "actionsRequired": "None"
           },
           "provisioningState": "Succeeded"

@@ -1,5 +1,5 @@
 {
-  "title": "Deletes Azure Active Directory only authentication object.",
+  "title": "Deletes Azure Active Directory only authentication object._MaximumSet",
   "operationId": "ManagedInstanceAzureADOnlyAuthentications_Delete",
   "parameters": {
     "resourceGroupName": "rgManagedInstanceAzureADOnlyAuthentications",

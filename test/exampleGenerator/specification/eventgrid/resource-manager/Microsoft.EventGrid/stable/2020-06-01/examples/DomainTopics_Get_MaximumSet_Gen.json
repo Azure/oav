@@ -1,11 +1,11 @@
 {
-  "title": "DomainTopics_Get",
+  "title": "DomainTopics_Get_MaximumSet",
   "operationId": "DomainTopics_Get",
   "parameters": {
     "subscriptionId": "5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
     "resourceGroupName": "rgEventGrid",
-    "domainName": "sndckhbctlvicuwnan",
-    "domainTopicName": "lwtyuccilkhfxpwpfzqh",
+    "domainName": "eyvijfytziaqydbahkmmeyfkyymfm",
+    "domainTopicName": "ijzeqenysugba",
     "api-version": "2020-06-01"
   },
   "responses": {

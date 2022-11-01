@@ -1,10 +1,10 @@
 {
-  "title": "Gets a list of databases in an elastic pool.",
+  "title": "Gets a list of databases in an elastic pool._MinimumSet",
   "operationId": "Databases_ListByElasticPool",
   "parameters": {
     "resourceGroupName": "rgDatabases",
     "serverName": "testsvr",
-    "elasticPoolName": "jafbcslrwar",
+    "elasticPoolName": "tvitycuxiaotqqlman",
     "subscriptionId": "00000000-1111-2222-3333-444444444444",
     "api-version": "2020-02-02-preview"
   },

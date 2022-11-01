@@ -1,5 +1,5 @@
 {
-  "title": "Gets a list of Azure Active Directory only authentication object.",
+  "title": "Gets a list of Azure Active Directory only authentication object._MinimumSet",
   "operationId": "ManagedInstanceAzureADOnlyAuthentications_ListByInstance",
   "parameters": {
     "resourceGroupName": "rgManagedInstanceAzureADOnlyAuthentications",

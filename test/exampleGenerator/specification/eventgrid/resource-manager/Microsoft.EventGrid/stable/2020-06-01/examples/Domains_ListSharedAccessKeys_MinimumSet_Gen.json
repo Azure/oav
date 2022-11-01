@@ -1,10 +1,10 @@
 {
-  "title": "Domains_ListSharedAccessKeys",
+  "title": "Domains_ListSharedAccessKeys_MinimumSet",
   "operationId": "Domains_ListSharedAccessKeys",
   "parameters": {
     "subscriptionId": "5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
     "resourceGroupName": "rgEventGrid",
-    "domainName": "egwyux",
+    "domainName": "wdaejrqgjlgnakjhdwisorffnpqps",
     "api-version": "2020-06-01"
   },
   "responses": {

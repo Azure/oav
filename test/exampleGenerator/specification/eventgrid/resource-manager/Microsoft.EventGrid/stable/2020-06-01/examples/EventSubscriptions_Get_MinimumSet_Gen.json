@@ -1,9 +1,9 @@
 {
-  "title": "EventSubscriptions_GetForSubscription",
+  "title": "EventSubscriptions_GetForSubscription_MinimumSet",
   "operationId": "EventSubscriptions_Get",
   "parameters": {
-    "scope": "ddnhtsqcefvpoqcskan",
-    "eventSubscriptionName": "nrngefmepdklllffdbb",
+    "scope": "kqkywabjxlafqzfffeax",
+    "eventSubscriptionName": "wuxjzxvohoxdrhg",
     "api-version": "2020-06-01"
   },
   "responses": {

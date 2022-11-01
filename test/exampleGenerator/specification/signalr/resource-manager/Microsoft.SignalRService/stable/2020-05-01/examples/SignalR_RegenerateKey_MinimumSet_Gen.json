@@ -1,5 +1,5 @@
 {
-  "title": "SignalR_RegenerateKey",
+  "title": "SignalR_RegenerateKey_MinimumSet",
   "operationId": "SignalR_RegenerateKey",
   "parameters": {
     "api-version": "2020-05-01",

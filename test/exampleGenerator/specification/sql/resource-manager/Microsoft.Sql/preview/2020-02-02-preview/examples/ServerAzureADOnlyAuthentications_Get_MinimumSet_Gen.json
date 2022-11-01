@@ -1,5 +1,5 @@
 {
-  "title": "Gets a Azure Active Directory only authentication property.",
+  "title": "Gets a Azure Active Directory only authentication property._MinimumSet",
   "operationId": "ServerAzureADOnlyAuthentications_Get",
   "parameters": {
     "resourceGroupName": "rgServerAzureADOnlyAuthentications",

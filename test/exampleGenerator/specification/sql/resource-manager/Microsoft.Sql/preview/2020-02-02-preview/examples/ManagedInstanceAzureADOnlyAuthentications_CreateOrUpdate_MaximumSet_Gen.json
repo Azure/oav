@@ -1,5 +1,5 @@
 {
-  "title": "Creates or updates Azure Active Directory only authentication object.",
+  "title": "Creates or updates Azure Active Directory only authentication object._MaximumSet",
   "operationId": "ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate",
   "parameters": {
     "resourceGroupName": "rgManagedInstanceAzureADOnlyAuthentications",

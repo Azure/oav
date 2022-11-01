@@ -1,12 +1,12 @@
 {
-  "title": "PrivateEndpointConnections_Update",
+  "title": "PrivateEndpointConnections_Update_MinimumSet",
   "operationId": "PrivateEndpointConnections_Update",
   "parameters": {
     "subscriptionId": "5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
     "resourceGroupName": "rgEventGrid",
     "parentType": "topics",
-    "parentName": "hxwkwcjxah",
-    "privateEndpointConnectionName": "cgfsdvqdclagjwbkzrikslnd",
+    "parentName": "osmlfgokp",
+    "privateEndpointConnectionName": "wndbbwrb",
     "privateEndpointConnection": {},
     "api-version": "2020-06-01"
   },

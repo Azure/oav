@@ -1,5 +1,5 @@
 {
-  "title": "Operations_List",
+  "title": "Operations_List_MaximumSet",
   "operationId": "Operations_List",
   "parameters": {
     "api-version": "2020-05-01"
@@ -15,24 +15,24 @@
               "provider": "Microsoft.SignalRService",
               "resource": "SignalR",
               "operation": "Manage SignalR (read-only)",
-              "description": "txryyrafmcfqpytxepv"
+              "description": "aqlxlzmnukrfn"
             },
             "properties": {
               "serviceSpecification": {
                 "metricSpecifications": [
                   {
-                    "name": "frc",
-                    "displayName": "uhvyllxfarrngjsszik",
-                    "displayDescription": "mnkikvzuoygqlzlhngeqzljroywmf",
-                    "unit": "levunquiqhhjflmutr",
-                    "aggregationType": "ajfhknr",
-                    "fillGapWithZero": "ctcmkmxwyqfjtuxc",
-                    "category": "glzuqsdz",
+                    "name": "kfjefgrtbeplpfhwrdx",
+                    "displayName": "ugnts",
+                    "displayDescription": "jpocbmhzajjkbtbgryeoqsggw",
+                    "unit": "jquizcbgbafozyr",
+                    "aggregationType": "yhvkfuidajbhhsotruivvrwohy",
+                    "fillGapWithZero": "syouiqbpvqcvnexafaiyhaygtgcsbl",
+                    "category": "ostnutjympizrzhzfulcfm",
                     "dimensions": [
                       {
-                        "name": "tbcahmkj",
-                        "displayName": "ujvkphlxdessawgpegxlxgj",
-                        "internalName": "dqfcnosnjwlw",
+                        "name": "pbbobyffbiqvnjqgqo",
+                        "displayName": "uqzaopnrjkrnjmqdzyawjxn",
+                        "internalName": "jolukybewntpnqdgqdccfcehqd",
                         "toBeExportedForShoebox": true
                       }
                     ]
@@ -40,13 +40,13 @@
                 ],
                 "logSpecifications": [
                   {
-                    "name": "r",
-                    "displayName": "qqvxtribddxafqxfotq"
+                    "name": "olhajxuekowakdmggnkrdzhgip",
+                    "displayName": "hsvkakazdildfx"
                   }
                 ]
               }
             },
-            "origin": "odphpnopojlzxa"
+            "origin": "jhdnzntidivyko"
           }
         ],
         "nextLink": "providers/Microsoft.SignalRService?$skipToken={opaqueString}"

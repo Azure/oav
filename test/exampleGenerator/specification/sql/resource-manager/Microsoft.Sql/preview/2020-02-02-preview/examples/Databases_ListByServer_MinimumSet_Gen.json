@@ -1,5 +1,5 @@
 {
-  "title": "Gets a list of databases.",
+  "title": "Gets a list of databases._MinimumSet",
   "operationId": "Databases_ListByServer",
   "parameters": {
     "resourceGroupName": "rgDatabases",

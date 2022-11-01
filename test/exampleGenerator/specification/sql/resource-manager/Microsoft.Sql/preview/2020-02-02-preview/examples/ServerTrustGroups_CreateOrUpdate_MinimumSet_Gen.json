@@ -1,10 +1,10 @@
 {
-  "title": "Create server trust group",
+  "title": "Create server trust group_MinimumSet",
   "operationId": "ServerTrustGroups_CreateOrUpdate",
   "parameters": {
     "resourceGroupName": "rgServerTrustGroups",
-    "locationName": "fdrnrfoxlanuwlfovwnwnli",
-    "serverTrustGroupName": "gokxlorqiqpipsjbswghjcfxxreffs",
+    "locationName": "swbpgkgqqlfmebnyma",
+    "serverTrustGroupName": "carkwuzuwssgfnyikuoaisc",
     "parameters": {},
     "subscriptionId": "00000000-1111-2222-3333-444444444444",
     "api-version": "2020-02-02-preview"

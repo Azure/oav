@@ -1,10 +1,10 @@
 {
-  "title": "Topics_Update",
+  "title": "Topics_Update_MinimumSet",
   "operationId": "Topics_Update",
   "parameters": {
     "subscriptionId": "5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
     "resourceGroupName": "rgEventGrid",
-    "topicName": "papixizvnkqmfqznw",
+    "topicName": "lftkfxqbzagqzepxvchf",
     "topicUpdateParameters": {},
     "api-version": "2020-06-01"
   },

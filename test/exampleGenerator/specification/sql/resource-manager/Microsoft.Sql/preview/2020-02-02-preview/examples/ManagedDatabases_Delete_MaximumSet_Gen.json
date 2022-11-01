@@ -1,5 +1,5 @@
 {
-  "title": "Delete managed database",
+  "title": "Delete managed database_MaximumSet",
   "operationId": "ManagedDatabases_Delete",
   "parameters": {
     "resourceGroupName": "rgManagedDatabases",

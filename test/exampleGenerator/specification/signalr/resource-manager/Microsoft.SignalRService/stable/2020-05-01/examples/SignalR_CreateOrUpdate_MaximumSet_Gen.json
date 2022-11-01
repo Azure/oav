@@ -1,5 +1,5 @@
 {
-  "title": "SignalR_CreateOrUpdate",
+  "title": "SignalR_CreateOrUpdate_MaximumSet",
   "operationId": "SignalR_CreateOrUpdate",
   "parameters": {
     "parameters": {
@@ -8,7 +8,7 @@
         "tier": "Standard",
         "capacity": 1,
         "size": "S1",
-        "family": "kxovbcbodnbqbplgyhfafndkzickc"
+        "family": "usephkvgdnoqfdwbw"
       },
       "properties": {
         "hostNamePrefix": "mysignalrservice",
@@ -86,7 +86,7 @@
           "tier": "Standard",
           "capacity": 1,
           "size": "S1",
-          "family": "kxovbcbodnbqbplgyhfafndkzickc"
+          "family": "usephkvgdnoqfdwbw"
         },
         "properties": {
           "hostNamePrefix": "mysignalrservice",
@@ -160,7 +160,7 @@
                 },
                 "privateLinkServiceConnectionState": {
                   "status": "Approved",
-                  "description": "urzxwkqocallmevlhs",
+                  "description": "clzenbwj",
                   "actionsRequired": "None"
                 }
               },
@@ -188,7 +188,7 @@
           "tier": "Standard",
           "capacity": 1,
           "size": "S1",
-          "family": "kxovbcbodnbqbplgyhfafndkzickc"
+          "family": "usephkvgdnoqfdwbw"
         },
         "properties": {
           "hostNamePrefix": "mysignalrservice",
@@ -262,7 +262,7 @@
                 },
                 "privateLinkServiceConnectionState": {
                   "status": "Approved",
-                  "description": "urzxwkqocallmevlhs",
+                  "description": "clzenbwj",
                   "actionsRequired": "None"
                 }
               },

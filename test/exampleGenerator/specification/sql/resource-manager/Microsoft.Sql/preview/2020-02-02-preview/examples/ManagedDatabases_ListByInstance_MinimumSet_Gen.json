@@ -1,5 +1,5 @@
 {
-  "title": "List databases by managed instances",
+  "title": "List databases by managed instances_MinimumSet",
   "operationId": "ManagedDatabases_ListByInstance",
   "parameters": {
     "resourceGroupName": "rgManagedDatabases",

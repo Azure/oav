@@ -1,8 +1,8 @@
 {
-  "title": "TopicTypes_Get",
+  "title": "TopicTypes_Get_MinimumSet",
   "operationId": "TopicTypes_Get",
   "parameters": {
-    "topicTypeName": "apmvolcqtkegpyqyuzkeitobwa",
+    "topicTypeName": "y",
     "api-version": "2020-06-01"
   },
   "responses": {

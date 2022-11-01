@@ -1,5 +1,5 @@
 {
-  "title": "Gets a list of Azure Active Directory only authentication object.",
+  "title": "Gets a list of Azure Active Directory only authentication object._MaximumSet",
   "operationId": "ServerAzureADOnlyAuthentications_ListByServer",
   "parameters": {
     "resourceGroupName": "rgServerAzureADOnlyAuthentications",
@@ -20,7 +20,7 @@
             }
           }
         ],
-        "nextLink": "srqlomzxagtmquphdp"
+        "nextLink": "gepbweumlcamhlfzhw"
       }
     }
   }

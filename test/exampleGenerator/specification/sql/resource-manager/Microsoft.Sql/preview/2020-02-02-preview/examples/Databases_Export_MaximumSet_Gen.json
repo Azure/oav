@@ -1,5 +1,5 @@
 {
-  "title": "Exports a database.",
+  "title": "Exports a database._MaximumSet",
   "operationId": "Databases_Export",
   "parameters": {
     "resourceGroupName": "rgDatabases",
@@ -13,8 +13,8 @@
       "administratorLoginPassword": "password",
       "authenticationType": "Sql",
       "networkIsolation": {
-        "storageAccountResourceId": "btabimrtvozvhukjmk",
-        "sqlServerResourceId": "adszcximppx"
+        "storageAccountResourceId": "euedvhszubq",
+        "sqlServerResourceId": "urjeejktlblsw"
       }
     },
     "subscriptionId": "00000000-1111-2222-3333-444444444444",
@@ -32,12 +32,12 @@
           "serverName": "testsvr.database.windows.net",
           "databaseName": "testdb",
           "status": "Completed",
-          "errorMessage": "osmunrmlxbexybudauqnafg",
+          "errorMessage": "ovfjjgagwdnlsvxisfzvjrngfha",
           "privateEndpointConnections": [
             {
-              "privateLinkServiceId": "rngrcugmtwlrdderjlgpyco",
-              "privateEndpointConnectionName": "cmcddik",
-              "status": "heidfafsnhgomivlvlonirkpvgirks"
+              "privateLinkServiceId": "qqhppnusqcpjs",
+              "privateEndpointConnectionName": "qnlcxhnsz",
+              "status": "ckknyy"
             }
           ]
         },

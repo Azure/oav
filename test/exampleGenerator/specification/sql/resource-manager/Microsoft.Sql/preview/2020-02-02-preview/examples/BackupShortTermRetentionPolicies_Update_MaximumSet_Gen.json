@@ -1,5 +1,5 @@
 {
-  "title": "Update the short term retention policy for the database.",
+  "title": "Update the short term retention policy for the database._MaximumSet",
   "operationId": "BackupShortTermRetentionPolicies_Update",
   "parameters": {
     "resourceGroupName": "rgBackupShortTermRetentionPolicies",

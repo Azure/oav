@@ -1,9 +1,9 @@
 {
-  "title": "EventSubscriptions_GetFullUrlForSubscription",
+  "title": "EventSubscriptions_GetFullUrlForSubscription_MinimumSet",
   "operationId": "EventSubscriptions_GetFullUrl",
   "parameters": {
-    "scope": "gthndwgtagrwrdazhx",
-    "eventSubscriptionName": "xrqvhdsqyddzldthfcqx",
+    "scope": "kkxqzchrxuhhlcf",
+    "eventSubscriptionName": "doiguaoojfatdrucpgdtkmznaxvoua",
     "api-version": "2020-06-01"
   },
   "responses": {

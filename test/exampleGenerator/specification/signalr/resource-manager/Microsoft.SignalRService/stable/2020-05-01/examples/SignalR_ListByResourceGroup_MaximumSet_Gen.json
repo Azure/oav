@@ -1,5 +1,5 @@
 {
-  "title": "SignalR_ListByResourceGroup",
+  "title": "SignalR_ListByResourceGroup_MaximumSet",
   "operationId": "SignalR_ListByResourceGroup",
   "parameters": {
     "api-version": "2020-05-01",
@@ -16,7 +16,7 @@
               "tier": "Standard",
               "size": "S1",
               "capacity": 1,
-              "family": "ogfbpsn"
+              "family": "utieljlarjeirt"
             },
             "properties": {
               "provisioningState": "Succeeded",
@@ -34,7 +34,7 @@
                     },
                     "privateLinkServiceConnectionState": {
                       "status": "Approved",
-                      "description": "urzxwkqocallmevlhs",
+                      "description": "clzenbwj",
                       "actionsRequired": "None"
                     }
                   },
@@ -70,9 +70,9 @@
               "upstream": {
                 "templates": [
                   {
-                    "hubPattern": "udifubuapeyuhujimwpwlcl",
-                    "eventPattern": "ubex",
-                    "categoryPattern": "cfhyboplehwfriutvwtturq",
+                    "hubPattern": "xkhqoekx",
+                    "eventPattern": "pmya",
+                    "categoryPattern": "hflygptwsawls",
                     "urlTemplate": "http://foo.com"
                   }
                 ]
@@ -108,7 +108,7 @@
             "type": "Microsoft.SignalRService/SignalR"
           }
         ],
-        "nextLink": "a"
+        "nextLink": "oanupxl"
       }
     }
   }

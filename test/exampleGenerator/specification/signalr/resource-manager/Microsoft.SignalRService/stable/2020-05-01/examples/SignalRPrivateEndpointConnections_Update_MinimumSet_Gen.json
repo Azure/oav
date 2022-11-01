@@ -1,8 +1,8 @@
 {
-  "title": "SignalRPrivateEndpointConnections_Update",
+  "title": "SignalRPrivateEndpointConnections_Update_MinimumSet",
   "operationId": "SignalRPrivateEndpointConnections_Update",
   "parameters": {
-    "privateEndpointConnectionName": "yzpldi",
+    "privateEndpointConnectionName": "afalwf",
     "api-version": "2020-05-01",
     "subscriptionId": "00000000-0000-0000-0000-000000000000",
     "resourceGroupName": "rgsignalr",

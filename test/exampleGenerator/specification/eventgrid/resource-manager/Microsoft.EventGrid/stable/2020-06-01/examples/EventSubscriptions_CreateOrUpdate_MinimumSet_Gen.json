@@ -1,9 +1,9 @@
 {
-  "title": "EventSubscriptions_CreateOrUpdateForSubscription",
+  "title": "EventSubscriptions_CreateOrUpdateForSubscription_MinimumSet",
   "operationId": "EventSubscriptions_CreateOrUpdate",
   "parameters": {
-    "scope": "qlvybt",
-    "eventSubscriptionName": "nbwiapdenpvslhtjgc",
+    "scope": "fijjscepglgibppyrakgxzbz",
+    "eventSubscriptionName": "dzmdgufbgyibfqhenfytrv",
     "eventSubscriptionInfo": {},
     "api-version": "2020-06-01"
   },

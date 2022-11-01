@@ -1,5 +1,5 @@
 {
-  "title": "Get the short term retention policy for the database.",
+  "title": "Get the short term retention policy for the database._MaximumSet",
   "operationId": "BackupShortTermRetentionPolicies_Get",
   "parameters": {
     "resourceGroupName": "rgBackupShortTermRetentionPolicies",

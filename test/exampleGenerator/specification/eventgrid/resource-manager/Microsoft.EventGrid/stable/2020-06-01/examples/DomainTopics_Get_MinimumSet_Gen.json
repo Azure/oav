@@ -1,11 +1,11 @@
 {
-  "title": "DomainTopics_Get",
+  "title": "DomainTopics_Get_MinimumSet",
   "operationId": "DomainTopics_Get",
   "parameters": {
     "subscriptionId": "5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
     "resourceGroupName": "rgEventGrid",
-    "domainName": "kswjxuhtlekjai",
-    "domainTopicName": "fpasywkijbvwcvdrpsvcrj",
+    "domainName": "uo",
+    "domainTopicName": "hpzuyzyqsacjbekp",
     "api-version": "2020-06-01"
   },
   "responses": {
