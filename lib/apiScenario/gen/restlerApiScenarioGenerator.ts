@@ -144,7 +144,7 @@ export class RestlerApiScenarioGenerator {
   public async generateResourceDependency(res: ArmResourceManipulator): Promise<RawScenario> {
     const putOperation = res.getOperation("CreateOrUpdate")[0];
     if (!putOperation) {
-      return { steps: [] };
+      return { description:undefined, steps: [] };
     }
     const scenario = this.generateDependencySteps(res);
     this.updateStepExample(scenario);
@@ -365,6 +365,7 @@ export class RestlerApiScenarioGenerator {
   }
   private generateDependencySteps(res: ArmResourceManipulator) {
     const scenario: RawScenario = {
+      description: undefined,
       variables: undefined,
       steps: [],
     };
