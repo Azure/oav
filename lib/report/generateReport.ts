@@ -292,7 +292,8 @@ export class CoverageView {
   }
 
   private async loadErrorDefinitions(): Promise<Map<string, ErrorDefinition>> {
-    const errorDefinitionDoc = require("../error-definitions.json") as ErrorDefinitionDoc;
+    const errorDefinitionDoc =
+      require("../../../documentation/error-definitions.json") as ErrorDefinitionDoc;
     const errorsMap: Map<string, ErrorDefinition> = new Map();
     errorDefinitionDoc.ErrorDefinitions.forEach((def) => {
       errorsMap.set(def.code, def);
