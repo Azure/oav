@@ -718,15 +718,21 @@ describe("Model Validation", () => {
   });
 
   describe("Long running operation response validation", () => {
-    it("should fail when long running operation missing return some headers in header", async () => {
-      const specPath2 = `${testPath}/modelValidation/swaggers/specification/LRO-response/LRO-responseHeader/test.json`;
+    it("[resource-manager] should fail when long running operation missing return some headers in header", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/LRO-response/LRO-responseHeader/resource-manager/2017-05-15/test.json`;
       const result = await validate.validateExamples(specPath2, "SupportPlanTypes_Delete");
+      assert.strictEqual(result.length, 1);
+      assert.strictEqual(result[0].code, "LRO_RESPONSE_HEADER");
+    });
+    it("[data-plane] should fail when long running operation missing return some headers in header", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/LRO-response/LRO-responseHeader/data-plane/2022-09-01-preview/test.json`;
+      const result = await validate.validateExamples(specPath2, "Dataset_Create");
       assert.strictEqual(result.length, 1);
       assert.strictEqual(result[0].code, "LRO_RESPONSE_HEADER");
     });
 
     it("should validate when long running operation response doesn't have schema", async () => {
-      const specPath2 = `${testPath}/modelValidation/swaggers/specification/LRO-response/LRO-responseHeader/test.json`;
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/LRO-response/LRO-responseHeader/resource-manager/2017-05-15/test.json`;
       const result = await validate.validateExamples(
         specPath2,
         "SupportPlanTypes_Delete_noResponseSchema"

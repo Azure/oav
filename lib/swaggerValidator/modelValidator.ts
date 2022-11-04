@@ -45,7 +45,7 @@ import {
 } from "../liveValidation/operationValidator";
 import { log } from "../util/logging";
 import { getFilePositionFromJsonPath } from "../util/jsonUtils";
-import { checkAndResolveGithubUrl } from "../util/utils";
+import { checkAndResolveGithubUrl, getProviderFromSpecPath } from "../util/utils";
 import { Severity } from "../util/severity";
 import { ValidationResultSource } from "../util/validationResultSource";
 import { SchemaValidateIssue, SchemaValidator, SchemaValidatorOption } from "./schemaValidator";
@@ -917,8 +917,11 @@ export class SwaggerExampleValidator {
       return;
     }
 
+    const provider = getProviderFromSpecPath(this.specPath);
     if (
+      provider?.type === "resource-manager" &&
       (headers.location === undefined || headers.location === "") &&
+      (headers.Location === undefined || headers.Location === "") &&
       (headers["azure-AsyncOperation"] === undefined || headers["azure-AsyncOperation"] === "") &&
       (headers["azure-asyncoperation"] === undefined || headers["azure-asyncoperation"] === "")
     ) {
@@ -937,6 +940,34 @@ export class SwaggerExampleValidator {
           ValidationResultSource.RESPONSE
         )
       );
+    }
+    if (
+      provider?.type === "data-plane" &&
+      (headers["Operation-Id"] === undefined || headers["Operation-Id"] === "") &&
+      (headers["operation-id"] === undefined || headers["operation-id"] === "") &&
+      (headers["Operation-Location"] === undefined || headers["Operation-Location"] === "") &&
+      (headers["operation-location"] === undefined || headers["operation-location"] === "")
+    ) {
+      if (
+        (headers["azure-AsyncOperation"] === undefined || headers["azure-AsyncOperation"] === "") &&
+        (headers["azure-asyncoperation"] === undefined || headers["azure-asyncoperation"] === "")
+      ) {
+        this.errors.push(
+          this.issueFromErrorCode(
+            operation.operationId!,
+            examplePath,
+            "LRO_RESPONSE_HEADER",
+            {
+              header: "Operation-Id or Operation-Location",
+            },
+            operation.responses,
+            undefined,
+            exampleObj,
+            `responses/${statusCode}/headers`,
+            ValidationResultSource.RESPONSE
+          )
+        );
+      }
     }
   };
 }
