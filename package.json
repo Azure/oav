@@ -108,6 +108,7 @@
     "dist/lib/**/*.handlebars",
     "dist/lib/**/*.mustache",
     "dist/lib/swaggerValidator/*.json",
+    "documentation/error-definitions.json",
     "types/**/*.d.ts",
     "*.ts",
     "lib/**/*.ts"
