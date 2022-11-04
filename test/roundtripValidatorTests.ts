@@ -5,7 +5,7 @@ import { LiveValidator } from "../lib/liveValidation/liveValidator";
 
 jest.setTimeout(999999);
 
-describe("Live Validator", () => {
+describe.skip("Live Validator", () => {
   describe("Initialization", () => {
     it("OperationLoader should not be initialized", async () => {
       console.log("OperationLoader should not be initialized");
