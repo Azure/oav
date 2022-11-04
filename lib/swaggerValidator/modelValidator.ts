@@ -958,7 +958,7 @@ export class SwaggerExampleValidator {
             examplePath,
             "LRO_RESPONSE_HEADER",
             {
-              header: "Operation-Id or Operation-Location",
+              header: "Operation-Id or Operation-Location or azure-AsyncOperation",
             },
             operation.responses,
             undefined,
