@@ -677,7 +677,7 @@ pm.test("Stopped TestProxy recording", function() {
 
     postScripts.push(
       `
-const pollingUrl = pm.response.headers.get("Location") || pm.response.headers.get("Azure-AsyncOperation");
+const pollingUrl = pm.response.headers.get("Location") || pm.response.headers.get("Azure-AsyncOperation") || pm.response.headers.get("Operation-Location");
 if (pollingUrl) {
     pm.variables.set("x_polling_url", ${
       this.opts.testProxy
@@ -731,9 +731,9 @@ try {
             pm.variables.set("x_retry_after", pm.response.headers.get("Retry-After"));
         }
     } else if (pm.response.size().body > 0) {
-        const terminalStatus = ["Succeeded", "Failed", "Canceled"];
+        const terminalStatus = ["succeeded", "failed", "canceled", "cancelled", "aborted", "deleted", "completed"];
         const json = pm.response.json();
-        if (json.status !== undefined && terminalStatus.indexOf(json.status) === -1) {
+        if (json.status !== undefined && terminalStatus.indexOf(json.status.toLowerCase()) === -1) {
             postman.setNextRequest("${delayItem.name}")
             if (pm.response.headers.has("Retry-After")) {
                 pm.variables.set("x_retry_after", pm.response.headers.get("Retry-After"));
