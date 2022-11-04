@@ -234,25 +234,25 @@ export class NewmanReportValidator {
           ? await this.liveValidator.validateLiveRequestResponse(payload)
           : undefined;
 
-        // Roundtrip validation
-        if (
-          !this.opts.skipValidation &&
-          matchedStep.isManagementPlane &&
-          matchedStep.operation?._method === "put" &&
-          it.response.statusCode >= 200 &&
-          it.response.statusCode <= 202
-        ) {
-          if (it.annotation.type === "LRO") {
-            // For LRO, get the final response to compose payload
-            const lroFinal = this.getLROFinalResponse(newmanReport.executions, it.annotation.step);
-            if (lroFinal !== undefined && lroFinal.response.statusCode === 200) {
-              const lroPayload = this.convertToLROLiveValidationPayload(it, lroFinal);
-              roundtripValidationResult = await this.liveValidator.validateRoundTrip(lroPayload);
-            }
-          } else if (it.annotation.type === "simple") {
-            roundtripValidationResult = await this.liveValidator.validateRoundTrip(payload);
-          }
-        }
+        // // Roundtrip validation
+        // if (
+        //   !this.opts.skipValidation &&
+        //   matchedStep.isManagementPlane &&
+        //   matchedStep.operation?._method === "put" &&
+        //   it.response.statusCode >= 200 &&
+        //   it.response.statusCode <= 202
+        // ) {
+        //   if (it.annotation.type === "LRO") {
+        //     // For LRO, get the final response to compose payload
+        //     const lroFinal = this.getLROFinalResponse(newmanReport.executions, it.annotation.step);
+        //     if (lroFinal !== undefined && lroFinal.response.statusCode === 200) {
+        //       const lroPayload = this.convertToLROLiveValidationPayload(it, lroFinal);
+        //       roundtripValidationResult = await this.liveValidator.validateRoundTrip(lroPayload);
+        //     }
+        //   } else if (it.annotation.type === "simple") {
+        //     roundtripValidationResult = await this.liveValidator.validateRoundTrip(payload);
+        //   }
+        // }
 
         specFilePath = matchedStep.operation?._path._spec._filePath;
       }
@@ -293,28 +293,28 @@ export class NewmanReportValidator {
     };
   }
 
-  private convertToLROLiveValidationPayload(
-    putReq: NewmanExecution,
-    getReq: NewmanExecution
-  ): RequestResponsePair {
-    const request = putReq.request;
-    const response = getReq.response;
-    const liveRequest: LiveRequest = {
-      url: request.url,
-      method: request.method.toLowerCase(),
-      headers: request.headers,
-      body: this.parseBody(request.body),
-    };
-    const liveResponse: LiveResponse = {
-      statusCode: `${response.statusCode}`,
-      headers: response.headers,
-      body: this.parseBody(response.body),
-    };
-    return {
-      liveRequest,
-      liveResponse,
-    };
-  }
+  // private convertToLROLiveValidationPayload(
+  //   putReq: NewmanExecution,
+  //   getReq: NewmanExecution
+  // ): RequestResponsePair {
+  //   const request = putReq.request;
+  //   const response = getReq.response;
+  //   const liveRequest: LiveRequest = {
+  //     url: request.url,
+  //     method: request.method.toLowerCase(),
+  //     headers: request.headers,
+  //     body: this.parseBody(request.body),
+  //   };
+  //   const liveResponse: LiveResponse = {
+  //     statusCode: `${response.statusCode}`,
+  //     headers: response.headers,
+  //     body: this.parseBody(response.body),
+  //   };
+  //   return {
+  //     liveRequest,
+  //     liveResponse,
+  //   };
+  // }
 
   // body may not be json string
   private parseBody(body: string): any {
@@ -346,11 +346,11 @@ export class NewmanReportValidator {
     return result;
   }
 
-  private getLROFinalResponse(executions: NewmanExecution[], initialStep: string) {
-    return executions.find(
-      (it) => it.annotation?.type === "finalGet" && it.annotation.step === initialStep
-    );
-  }
+  // private getLROFinalResponse(executions: NewmanExecution[], initialStep: string) {
+  //   return executions.find(
+  //     (it) => it.annotation?.type === "finalGet" && it.annotation.step === initialStep
+  //   );
+  // }
 
   private getMatchedStep(stepName: string): Step | undefined {
     return this.scenario.steps?.find((s) => s.step === stepName);
