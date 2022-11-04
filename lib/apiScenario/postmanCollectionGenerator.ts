@@ -124,6 +124,7 @@ export class PostmanCollectionGenerator {
       skipAuth: this.opt.devMode,
       skipArmCall: this.opt.devMode,
       skipLroPoll: this.opt.devMode,
+      jsonLoader: this.apiScenarioLoader.jsonLoader,
     });
     const runner = new ApiScenarioRunner({
       jsonLoader: this.apiScenarioLoader.jsonLoader,
@@ -227,8 +228,8 @@ export class PostmanCollectionGenerator {
             ],
             specFilePath: r.specFilePath,
             operationInfo: r.liveValidationResult?.requestValidationResult.operationInfo ?? {
-              operationId: "unknown",
-              apiVersion: "unknown",
+              operationId: r.operationId,
+              apiVersion: report.apiVersion ?? "unknown",
             },
           };
 
@@ -286,9 +287,11 @@ export class PostmanCollectionGenerator {
         apiVersion: getApiVersionFromFilePath(specPath),
         unCoveredOperations: result.uncoveredOperationIds.length,
         coveredOperaions: result.totalOperationNumber - result.uncoveredOperationIds.length,
-        validationFailOperations: trafficValidationResult.filter(
-          (it) => key.indexOf(it.specFilePath!) !== -1 && it.errors!.length > 0
-        ).length,
+        validationFailOperations: new Set(
+          trafficValidationResult
+            .filter((it) => key.indexOf(it.specFilePath!) !== -1 && it.errors!.length > 0)
+            .map((t) => t.operationInfo?.operationId)
+        ).size,
         unCoveredOperationsList: result.uncoveredOperationIds.map((id) => {
           return { operationId: id };
         }),

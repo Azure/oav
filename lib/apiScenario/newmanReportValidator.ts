@@ -188,14 +188,10 @@ export class NewmanReportValidator {
 
       const runtimeError: RuntimeError[] = [];
 
-      // Runtime errors
-      if (it.response.statusCode >= 400) {
-        const error = this.getRuntimeError(it);
-        runtimeError.push(error);
-      }
-
       it.assertions.forEach((assertion) => {
         if (assertion.message.includes("expected response code to be 2XX")) {
+          const error = this.getRuntimeError(it);
+          runtimeError.push(error);
           return;
         }
 

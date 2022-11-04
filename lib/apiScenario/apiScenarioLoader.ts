@@ -527,8 +527,12 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       const xHost = operation._path._spec["x-ms-parameterized-host"];
       if (xHost) {
         xHost.parameters.forEach((param) => {
+          param = this.jsonLoader.resolveRefObj(param);
           if (rawStep.parameters?.[param.name]) {
-            step.parameters[param.name] = rawStep.parameters[param.name];
+            step.variables[param.name] = {
+              type: "string",
+              value: rawStep.parameters[param.name] as string,
+            };
           }
         });
       }

@@ -22,6 +22,7 @@ import {
   Variable,
   RawStepOperation,
   RawVariableScope,
+  StepResponseAssertion,
 } from "../apiScenarioTypes";
 import { ApiScenarioClientRequest } from "../apiScenarioRunner";
 import { Operation, Parameter, SwaggerExample } from "../../swagger/swaggerTypes";
@@ -185,6 +186,7 @@ export class TestRecordingApiScenarioGenerator {
 
     const records = [...requestTracking.requests];
     let lastOperation: Operation | undefined = undefined;
+    const steps = [];
     while (records.length > 0) {
       // const record = records[0];
       const testStep = await this.generateTestStepRestCall(records, ctx);
@@ -192,17 +194,18 @@ export class TestRecordingApiScenarioGenerator {
         continue;
       }
 
-      const { step, operation } = testStep;
+      const { operation } = testStep;
       if (lastOperation === operation && lastOperation?._method === "get") {
         // Skip same get operation
         continue;
       }
 
       lastOperation = operation;
-      testScenario.steps.push(step);
+      steps.push(testStep);
     }
 
-    convertVariables(ctx.variables, testScenario.steps);
+    this.convertVariables(ctx.variables, steps);
+    testScenario.steps = steps;
     testScenario.steps.forEach((step) => {
       Object.keys(step.variables ?? {}).forEach((key) => {
         const variable = step.variables![key] as Variable;
@@ -273,10 +276,9 @@ export class TestRecordingApiScenarioGenerator {
       return undefined;
     }
 
-    // TODO do not skip 404
-    if (record.responseCode === 404) {
-      console.info(`Skip 404 request:\t${record.method}\t${record.url}`);
-      return undefined;
+    const responseAssertion = {} as StepResponseAssertion;
+    if (record.responseCode >= 400) {
+      responseAssertion[record.responseCode] = {};
     }
 
     const parseResult = this.parseRecord(record);
@@ -327,10 +329,12 @@ export class TestRecordingApiScenarioGenerator {
     }
     this.operationIdx.set(operation.operationId!, ++idx);
 
-    const step: RawStepOperation = {
+    const step = {
       step: stepName,
       operationId: operation.operationId!,
       variables: Object.keys(variables).length > 0 ? variables : undefined,
+      responses: Object.keys(responseAssertion).length > 0 ? responseAssertion : undefined,
+      operation,
     };
 
     await this.skipLroPoll(records, operation, record, armInfo);
@@ -340,7 +344,7 @@ export class TestRecordingApiScenarioGenerator {
       ctx.lastUpdatedResource = armInfo.resourceUri;
     }
 
-    return { step, operation };
+    return step;
   }
 
   private async skipLroPoll(
@@ -416,6 +420,93 @@ export class TestRecordingApiScenarioGenerator {
 
     return { requestParameters, operation, pathParamValue };
   }
+
+  private convertVariables(
+    root: Scenario["variables"],
+    scopes: (RawVariableScope & { operation?: Operation })[]
+  ) {
+    const keyToVariables = new Map<string, Array<Variable>>();
+    const unusedVariables = new Set<string>();
+    scopes.forEach((v) => {
+      Object.entries(v.variables ?? {}).forEach(([key, value]) => {
+        value = value as Variable;
+        key = `${key}_${typeMap[value.type]}`;
+        if (value.type === "string") {
+          key = `${key}_${value.value}`;
+        }
+        const vars = keyToVariables.get(key) ?? [];
+        vars.push(value);
+        keyToVariables.set(key, vars);
+      });
+      v.operation?.parameters?.forEach((p) => {
+        const param = this.jsonLoader.resolveRefObj(p);
+        if (v.variables?.[param.name] === undefined) {
+          unusedVariables.add(`${param.name}`);
+        }
+      });
+      delete v.operation;
+    });
+
+    keyToVariables.forEach((vars, key) => {
+      if (vars.length === 1 || unusedVariables.has(key.split("_")[0])) {
+        return;
+      }
+      const old = cloneDeep(vars[0]);
+      const [keyName] = key.split("_");
+      if (old.type === "string") {
+        if (unreplaceWords.includes(old.value!)) {
+          return;
+        }
+        if (root[keyName] !== undefined) {
+          for (let i = 1; ; i++) {
+            key = `${keyName}${i}`;
+            if (root[key] === undefined) {
+              break;
+            }
+          }
+        } else {
+          key = keyName;
+        }
+        root[key] = old;
+        replaceAllString(old.value!, key, scopes);
+      }
+      if (root[keyName] !== undefined) {
+        return;
+      }
+      root[keyName] = old;
+
+      if (old.type === "object" || old.type === "array") {
+        for (const newValue of vars) {
+          const diff = getJsonPatchDiff(old.value!, newValue.value!);
+          if (
+            diff.length > 0 &&
+            newValue.type == old.type &&
+            diff.filter((d) => Object.keys(d).includes("remove")).length <= 2
+          ) {
+            newValue.patches = diff;
+            newValue.value = undefined;
+          }
+
+          if (diff.length === 0) {
+            newValue.value = undefined;
+          }
+        }
+      }
+    });
+
+    scopes.forEach((v) => {
+      Object.keys(v.variables ?? {}).forEach((key) => {
+        const variable = v.variables![key] as Variable;
+        if (variable.type === "array" || variable.type === "object") {
+          if (variable.patches === undefined && variable.value === undefined) {
+            delete v.variables![key];
+          }
+        } else if (root[key] && root[key].value === variable.value) {
+          delete v.variables![key];
+        }
+      });
+    });
+  }
 }
 
 const unwantedParams = new Set(["resourceGroupName", "api-version", "subscriptionId"]);
@@ -472,82 +563,6 @@ const typeMap = {
 };
 
 const unreplaceWords = ["default"];
-
-const convertVariables = (root: Scenario["variables"], scopes: RawVariableScope[]) => {
-  const keyToVariables = new Map<string, Array<Variable>>();
-  scopes.forEach((v) => {
-    Object.entries(v.variables ?? {}).forEach(([key, value]) => {
-      value = value as Variable;
-      key = `${key}_${typeMap[value.type]}`;
-      if (value.type === "string") {
-        key = `${key}_${value.value}`;
-      }
-      const vars = keyToVariables.get(key) ?? [];
-      vars.push(value);
-      keyToVariables.set(key, vars);
-    });
-  });
-
-  keyToVariables.forEach((vars, key) => {
-    if (vars.length === 1) {
-      return;
-    }
-    const old = cloneDeep(vars[0]);
-    const [keyName] = key.split("_");
-    if (old.type === "string") {
-      if (unreplaceWords.includes(old.value!)) {
-        return;
-      }
-      if (root[keyName] !== undefined) {
-        for (let i = 1; ; i++) {
-          key = `${keyName}${i}`;
-          if (root[key] === undefined) {
-            break;
-          }
-        }
-      } else {
-        key = keyName;
-      }
-      root[key] = old;
-      replaceAllString(old.value!, key, scopes);
-    }
-    if (root[keyName] !== undefined) {
-      return;
-    }
-    root[keyName] = old;
-
-    if (old.type === "object" || old.type === "array") {
-      for (const newValue of vars) {
-        const diff = getJsonPatchDiff(old.value!, newValue.value!);
-        if (
-          diff.length > 0 &&
-          newValue.type == old.type &&
-          diff.filter((d) => Object.keys(d).includes("remove")).length <= 2
-        ) {
-          newValue.patches = diff;
-          newValue.value = undefined;
-        }
-
-        if (diff.length === 0) {
-          newValue.value = undefined;
-        }
-      }
-    }
-  });
-
-  scopes.forEach((v) => {
-    Object.keys(v.variables ?? {}).forEach((key) => {
-      const variable = v.variables![key] as Variable;
-      if (variable.type === "array" || variable.type === "object") {
-        if (variable.patches === undefined && variable.value === undefined) {
-          delete v.variables![key];
-        }
-      } else if (root[key] && root[key].value === variable.value) {
-        delete v.variables![key];
-      }
-    });
-  });
-};
 
 const replaceAllString = (toMatch: string, key: string, scopes: RawVariableScope[]) => {
   toMatch = toMatch.toLowerCase();
