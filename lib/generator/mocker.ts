@@ -1,3 +1,4 @@
+import * as uuid from "uuid";
 import { log } from "../util/logging";
 
 function randomString(length: number): string {
@@ -28,6 +29,10 @@ export default class Mocker {
   }
 
   private generateString(paramSpec: any, paramName: string) {
+    if (paramSpec.name === "subscriptionId") {
+      return uuid.v4().toUpperCase();
+    }
+
     if (paramSpec.format === "date") {
       return new Date().toISOString().split("T")[0];
     }

@@ -16,6 +16,7 @@
     },
     "body": {
       "location": "westcentralus",
+      "versionlist":["v1"],
       "properties": {
         "hardwareProfile": {
           "vmSize": "Standard_A2_v3"
@@ -73,6 +74,11 @@
       "hardwareProfile": {
         "vmSize": "Standard_A2_v2"
       },
+      "osversion": null,
+      "versionlist": [
+        "v1",
+        "v2"
+      ],
       "properties": {
         "hardwareProfile": {
           "vmSize": "Standard_A2_v2"

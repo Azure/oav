@@ -23,7 +23,12 @@ export const nullableTransformer: GlobalTransformer = {
 
         const aProperty = sch.additionalProperties;
         if (typeof aProperty === "object" && aProperty !== null) {
-          sch.additionalProperties = transformNullable(aProperty, jsonLoader);
+          sch.additionalProperties = transformNullable(
+            aProperty,
+            jsonLoader,
+            undefined,
+            aProperty.type === "object"
+          );
         }
       } catch (e) {
         if (logging) {
@@ -70,7 +75,12 @@ export const nullableTransformer: GlobalTransformer = {
   },
 };
 
-const transformNullable = (s: Schema, jsonLoader: JsonLoader, defaultNullable?: boolean) => {
+const transformNullable = (
+  s: Schema,
+  jsonLoader: JsonLoader,
+  defaultNullable?: boolean,
+  additionalPropertiesWithObjectType?: boolean
+) => {
   const sch = jsonLoader.resolveRefObj(s);
   const nullable = sch[xNullable] ?? sch.nullable;
 
@@ -94,6 +104,9 @@ const transformNullable = (s: Schema, jsonLoader: JsonLoader, defaultNullable?: 
   } else {
     if (typeof sch === "object") {
       sch.nullable = true;
+    }
+    if (additionalPropertiesWithObjectType) {
+      sch.additionalPropertiesWithObjectType = true;
     }
     return sch;
   }

@@ -128,7 +128,7 @@ Array [
     "exampleJsonPath": "$response.201",
     "examplePosition": Object {
       "column": 16,
-      "line": 16,
+      "line": 18,
     },
     "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedDatabases_CreateOrUpdate_MaximumSet_Gen.json",
     "message": "Response statusCode 201 for operation ManagedDatabases_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
@@ -187,7 +187,7 @@ Array [
       "exampleJsonPath": "$response.201",
       "examplePosition": Object {
         "column": 16,
-        "line": 16,
+        "line": 18,
       },
       "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedDatabases_CreateOrUpdate_MaximumSet_Gen.json",
       "message": "Response statusCode 201 for operation ManagedDatabases_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
@@ -347,7 +347,7 @@ Array [
     "exampleJsonPath": "$response.201",
     "examplePosition": Object {
       "column": 16,
-      "line": 14,
+      "line": 16,
     },
     "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
     "message": "Response statusCode 201 for operation ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
@@ -368,7 +368,7 @@ Array [
       "exampleJsonPath": "$response.201",
       "examplePosition": Object {
         "column": 16,
-        "line": 14,
+        "line": 16,
       },
       "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
       "message": "Response statusCode 201 for operation ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
@@ -388,7 +388,7 @@ Array [
     "exampleJsonPath": "$response.201",
     "examplePosition": Object {
       "column": 16,
-      "line": 14,
+      "line": 16,
     },
     "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ServerAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
     "message": "Response statusCode 201 for operation ServerAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
@@ -409,7 +409,7 @@ Array [
       "exampleJsonPath": "$response.201",
       "examplePosition": Object {
         "column": 16,
-        "line": 14,
+        "line": 16,
       },
       "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ServerAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
       "message": "Response statusCode 201 for operation ServerAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
@@ -2337,7 +2337,7 @@ Array [
     "exampleJsonPath": "$response.201",
     "examplePosition": Object {
       "column": 16,
-      "line": 16,
+      "line": 18,
     },
     "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedDatabases_CreateOrUpdate_MaximumSet_Gen.json",
     "message": "Response statusCode 201 for operation ManagedDatabases_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
@@ -2396,7 +2396,7 @@ Array [
       "exampleJsonPath": "$response.201",
       "examplePosition": Object {
         "column": 16,
-        "line": 16,
+        "line": 18,
       },
       "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedDatabases_CreateOrUpdate_MaximumSet_Gen.json",
       "message": "Response statusCode 201 for operation ManagedDatabases_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
@@ -2556,7 +2556,7 @@ Array [
     "exampleJsonPath": "$response.201",
     "examplePosition": Object {
       "column": 16,
-      "line": 14,
+      "line": 16,
     },
     "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
     "message": "Response statusCode 201 for operation ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
@@ -2577,7 +2577,7 @@ Array [
       "exampleJsonPath": "$response.201",
       "examplePosition": Object {
         "column": 16,
-        "line": 14,
+        "line": 16,
       },
       "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
       "message": "Response statusCode 201 for operation ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
@@ -2597,7 +2597,7 @@ Array [
     "exampleJsonPath": "$response.201",
     "examplePosition": Object {
       "column": 16,
-      "line": 14,
+      "line": 16,
     },
     "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ServerAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
     "message": "Response statusCode 201 for operation ServerAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
@@ -2618,7 +2618,7 @@ Array [
       "exampleJsonPath": "$response.201",
       "examplePosition": Object {
         "column": 16,
-        "line": 14,
+        "line": 16,
       },
       "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ServerAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
       "message": "Response statusCode 201 for operation ServerAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
@@ -4111,7 +4111,7 @@ Array [
     "exampleJsonPath": "$response.201",
     "examplePosition": Object {
       "column": 16,
-      "line": 16,
+      "line": 18,
     },
     "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedDatabases_CreateOrUpdate_MaximumSet_Gen.json",
     "message": "Response statusCode 201 for operation ManagedDatabases_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
@@ -4170,7 +4170,7 @@ Array [
       "exampleJsonPath": "$response.201",
       "examplePosition": Object {
         "column": 16,
-        "line": 16,
+        "line": 18,
       },
       "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedDatabases_CreateOrUpdate_MaximumSet_Gen.json",
       "message": "Response statusCode 201 for operation ManagedDatabases_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
@@ -4330,7 +4330,7 @@ Array [
     "exampleJsonPath": "$response.201",
     "examplePosition": Object {
       "column": 16,
-      "line": 14,
+      "line": 16,
     },
     "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
     "message": "Response statusCode 201 for operation ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
@@ -4351,7 +4351,7 @@ Array [
       "exampleJsonPath": "$response.201",
       "examplePosition": Object {
         "column": 16,
-        "line": 14,
+        "line": 16,
       },
       "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
       "message": "Response statusCode 201 for operation ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
@@ -4371,7 +4371,7 @@ Array [
     "exampleJsonPath": "$response.201",
     "examplePosition": Object {
       "column": 16,
-      "line": 14,
+      "line": 16,
     },
     "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ServerAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
     "message": "Response statusCode 201 for operation ServerAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
@@ -4392,7 +4392,7 @@ Array [
       "exampleJsonPath": "$response.201",
       "examplePosition": Object {
         "column": 16,
-        "line": 14,
+        "line": 16,
       },
       "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ServerAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
       "message": "Response statusCode 201 for operation ServerAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
@@ -5885,7 +5885,7 @@ Array [
     "exampleJsonPath": "$response.201",
     "examplePosition": Object {
       "column": 16,
-      "line": 16,
+      "line": 18,
     },
     "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedDatabases_CreateOrUpdate_MaximumSet_Gen.json",
     "message": "Response statusCode 201 for operation ManagedDatabases_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
@@ -5944,7 +5944,7 @@ Array [
       "exampleJsonPath": "$response.201",
       "examplePosition": Object {
         "column": 16,
-        "line": 16,
+        "line": 18,
       },
       "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedDatabases_CreateOrUpdate_MaximumSet_Gen.json",
       "message": "Response statusCode 201 for operation ManagedDatabases_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
@@ -6104,7 +6104,7 @@ Array [
     "exampleJsonPath": "$response.201",
     "examplePosition": Object {
       "column": 16,
-      "line": 14,
+      "line": 16,
     },
     "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
     "message": "Response statusCode 201 for operation ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
@@ -6125,7 +6125,7 @@ Array [
       "exampleJsonPath": "$response.201",
       "examplePosition": Object {
         "column": 16,
-        "line": 14,
+        "line": 16,
       },
       "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
       "message": "Response statusCode 201 for operation ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
@@ -6145,7 +6145,7 @@ Array [
     "exampleJsonPath": "$response.201",
     "examplePosition": Object {
       "column": 16,
-      "line": 14,
+      "line": 16,
     },
     "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ServerAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
     "message": "Response statusCode 201 for operation ServerAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
@@ -6166,7 +6166,7 @@ Array [
       "exampleJsonPath": "$response.201",
       "examplePosition": Object {
         "column": 16,
-        "line": 14,
+        "line": 16,
       },
       "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ServerAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
       "message": "Response statusCode 201 for operation ServerAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
@@ -6699,7 +6699,7 @@ Array [
     "exampleJsonPath": "$response.201",
     "examplePosition": Object {
       "column": 16,
-      "line": 16,
+      "line": 18,
     },
     "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedDatabases_CreateOrUpdate_MaximumSet_Gen.json",
     "message": "Response statusCode 201 for operation ManagedDatabases_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
@@ -6758,7 +6758,7 @@ Array [
       "exampleJsonPath": "$response.201",
       "examplePosition": Object {
         "column": 16,
-        "line": 16,
+        "line": 18,
       },
       "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedDatabases_CreateOrUpdate_MaximumSet_Gen.json",
       "message": "Response statusCode 201 for operation ManagedDatabases_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
@@ -6918,7 +6918,7 @@ Array [
     "exampleJsonPath": "$response.201",
     "examplePosition": Object {
       "column": 16,
-      "line": 14,
+      "line": 16,
     },
     "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
     "message": "Response statusCode 201 for operation ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
@@ -6939,7 +6939,7 @@ Array [
       "exampleJsonPath": "$response.201",
       "examplePosition": Object {
         "column": 16,
-        "line": 14,
+        "line": 16,
       },
       "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
       "message": "Response statusCode 201 for operation ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
@@ -6959,7 +6959,7 @@ Array [
     "exampleJsonPath": "$response.201",
     "examplePosition": Object {
       "column": 16,
-      "line": 14,
+      "line": 16,
     },
     "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ServerAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
     "message": "Response statusCode 201 for operation ServerAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
@@ -6980,7 +6980,7 @@ Array [
       "exampleJsonPath": "$response.201",
       "examplePosition": Object {
         "column": 16,
-        "line": 14,
+        "line": 16,
       },
       "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ServerAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
       "message": "Response statusCode 201 for operation ServerAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
@@ -7113,7 +7113,7 @@ Array [
     "exampleJsonPath": "$response.201",
     "examplePosition": Object {
       "column": 16,
-      "line": 16,
+      "line": 18,
     },
     "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedDatabases_CreateOrUpdate_MaximumSet_Gen.json",
     "message": "Response statusCode 201 for operation ManagedDatabases_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
@@ -7172,7 +7172,7 @@ Array [
       "exampleJsonPath": "$response.201",
       "examplePosition": Object {
         "column": 16,
-        "line": 16,
+        "line": 18,
       },
       "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedDatabases_CreateOrUpdate_MaximumSet_Gen.json",
       "message": "Response statusCode 201 for operation ManagedDatabases_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
@@ -7332,7 +7332,7 @@ Array [
     "exampleJsonPath": "$response.201",
     "examplePosition": Object {
       "column": 16,
-      "line": 14,
+      "line": 16,
     },
     "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
     "message": "Response statusCode 201 for operation ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
@@ -7353,7 +7353,7 @@ Array [
       "exampleJsonPath": "$response.201",
       "examplePosition": Object {
         "column": 16,
-        "line": 14,
+        "line": 16,
       },
       "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
       "message": "Response statusCode 201 for operation ManagedInstanceAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
@@ -7373,7 +7373,7 @@ Array [
     "exampleJsonPath": "$response.201",
     "examplePosition": Object {
       "column": 16,
-      "line": 14,
+      "line": 16,
     },
     "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ServerAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
     "message": "Response statusCode 201 for operation ServerAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",
@@ -7394,7 +7394,7 @@ Array [
       "exampleJsonPath": "$response.201",
       "examplePosition": Object {
         "column": 16,
-        "line": 14,
+        "line": 16,
       },
       "exampleUrl": "test/exampleGenerator/specification/sql/resource-manager/Microsoft.Sql/preview/2020-02-02-preview/examples/ServerAzureADOnlyAuthentications_CreateOrUpdate_MaximumSet_Gen.json",
       "message": "Response statusCode 201 for operation ServerAzureADOnlyAuthentications_CreateOrUpdate has no response body provided in the example, however the response does have a \\"schema\\" defined in the swagger spec.",

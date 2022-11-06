@@ -156,7 +156,7 @@ export type StepRestCall = StepBase & {
   step: string;
   description?: string;
   operationId: string;
-  operation: Operation;
+  operation?: Operation;
   exampleFile?: string;
   parameters: SwaggerExample["parameters"];
   responses: SwaggerExample["responses"];
@@ -271,6 +271,7 @@ export type StepRoleAssignment = TransformRaw<
   RawStepRoleAssignment,
   StepBase & {
     type: "armRoleAssignment";
+    authentication: Authentication;
   },
   "description"
 >;

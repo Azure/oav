@@ -16,7 +16,7 @@ import { SeverityString } from "../util/severity";
 import { getApiVersionFromFilePath, getProviderFromFilePath } from "../util/utils";
 import { logger } from "./logger";
 import { ApiScenarioLoaderOption } from "./apiScenarioLoader";
-import { NewmanExecution, NewmanReport, Scenario, Step, StepRestCall } from "./apiScenarioTypes";
+import { NewmanExecution, NewmanReport, Scenario, Step } from "./apiScenarioTypes";
 import { DataMasker } from "./dataMasker";
 import { JUnitReporter } from "./junitReport";
 import { generateMarkdownReport } from "./markdownReport";
@@ -181,12 +181,8 @@ export class NewmanReportValidator {
         );
       }
 
-      const matchedStep = this.getMatchedStep(it.annotation.step) as StepRestCall;
+      const matchedStep = this.getMatchedStep(it.annotation.step);
       if (matchedStep === undefined) {
-        continue;
-      }
-
-      if (matchedStep.externalReference) {
         continue;
       }
 
@@ -211,56 +207,62 @@ export class NewmanReportValidator {
         });
       });
 
-      if (this.opts.generateExample) {
-        const statusCode = `${it.response.statusCode}`;
-        const generatedExample: SwaggerExample = {
-          operationId: matchedStep.operationId,
-          title: matchedStep.step,
-          description: matchedStep.description,
-          parameters: matchedStep._resolvedParameters!,
-          responses: {
-            [statusCode]: {
-              headers: payload.liveResponse.headers,
-              body: payload.liveResponse.body,
-            },
-          },
-        };
-
-        const exampleFilePath = `./examples/${matchedStep.operationId}_${statusCode}.json`;
-        await this.fileLoader.writeFile(
-          path.resolve(path.dirname(this.opts.reportOutputFilePath), exampleFilePath),
-          JSON.stringify(generatedExample, null, 2)
-        );
-      }
-
-      // Schema validation
-      const liveValidationResult = !this.opts.skipValidation
-        ? await this.liveValidator.validateLiveRequestResponse(payload)
-        : undefined;
-
-      // Roundtrip validation
+      let liveValidationResult = undefined;
       let roundtripValidationResult = undefined;
-      if (
-        !this.opts.skipValidation &&
-        matchedStep.isManagementPlane &&
-        matchedStep.operation._method === "put" &&
-        it.response.statusCode >= 200 &&
-        it.response.statusCode <= 202
-      ) {
-        if (it.annotation.type === "LRO") {
-          // For LRO, get the final response to compose payload
-          const lroFinal = this.getLROFinalResponse(newmanReport.executions, it.annotation.step);
-          if (lroFinal !== undefined && lroFinal.response.statusCode === 200) {
-            const lroPayload = this.convertToLROLiveValidationPayload(it, lroFinal);
-            roundtripValidationResult = await this.liveValidator.validateRoundTrip(lroPayload);
-          }
-        } else if (it.annotation.type === "simple") {
-          roundtripValidationResult = await this.liveValidator.validateRoundTrip(payload);
+      let specFilePath = undefined;
+      if (matchedStep.type === "restCall" && !matchedStep.externalReference) {
+        if (this.opts.generateExample) {
+          const statusCode = `${it.response.statusCode}`;
+          const generatedExample: SwaggerExample = {
+            operationId: matchedStep.operationId,
+            title: matchedStep.step,
+            description: matchedStep.description,
+            parameters: matchedStep._resolvedParameters!,
+            responses: {
+              [statusCode]: {
+                headers: payload.liveResponse.headers,
+                body: payload.liveResponse.body,
+              },
+            },
+          };
+
+          const exampleFilePath = `./examples/${matchedStep.operationId}_${statusCode}.json`;
+          await this.fileLoader.writeFile(
+            path.resolve(path.dirname(this.opts.reportOutputFilePath), exampleFilePath),
+            JSON.stringify(generatedExample, null, 2)
+          );
         }
+
+        // Schema validation
+        liveValidationResult = !this.opts.skipValidation
+          ? await this.liveValidator.validateLiveRequestResponse(payload)
+          : undefined;
+
+        // Roundtrip validation
+        if (
+          !this.opts.skipValidation &&
+          matchedStep.isManagementPlane &&
+          matchedStep.operation?._method === "put" &&
+          it.response.statusCode >= 200 &&
+          it.response.statusCode <= 202
+        ) {
+          if (it.annotation.type === "LRO") {
+            // For LRO, get the final response to compose payload
+            const lroFinal = this.getLROFinalResponse(newmanReport.executions, it.annotation.step);
+            if (lroFinal !== undefined && lroFinal.response.statusCode === 200) {
+              const lroPayload = this.convertToLROLiveValidationPayload(it, lroFinal);
+              roundtripValidationResult = await this.liveValidator.validateRoundTrip(lroPayload);
+            }
+          } else if (it.annotation.type === "simple") {
+            roundtripValidationResult = await this.liveValidator.validateRoundTrip(payload);
+          }
+        }
+
+        specFilePath = matchedStep.operation?._path._spec._filePath;
       }
 
       this.testResult.stepResult.push({
-        specFilePath: matchedStep.operation._path._spec._filePath,
+        specFilePath,
         operationId: it.annotation.operationId,
         payloadPath: payloadFilePath
           ? path.join(path.basename(path.dirname(this.opts.reportOutputFilePath)), payloadFilePath)
@@ -285,7 +287,7 @@ export class NewmanReportValidator {
       body: this.parseBody(request.body),
     };
     const liveResponse: LiveResponse = {
-      statusCode: response.statusCode.toString(),
+      statusCode: `${response.statusCode}`,
       headers: response.headers,
       body: this.parseBody(response.body),
     };
@@ -308,7 +310,7 @@ export class NewmanReportValidator {
       body: this.parseBody(request.body),
     };
     const liveResponse: LiveResponse = {
-      statusCode: response.statusCode.toString(),
+      statusCode: `${response.statusCode}`,
       headers: response.headers,
       body: this.parseBody(response.body),
     };

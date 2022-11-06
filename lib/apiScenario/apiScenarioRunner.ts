@@ -8,7 +8,10 @@ import {
   Step,
   StepArmTemplate,
   StepRestCall,
+  StepRoleAssignment,
 } from "./apiScenarioTypes";
+import { AzureBuiltInRoles } from "./azureBuiltInRoles";
+import { DEFAULT_ROLE_ASSIGNMENT_API_VERSION } from "./constants";
 import { EnvironmentVariables, VariableEnv } from "./variableEnv";
 
 export interface ApiScenarioRunnerOption {
@@ -194,23 +197,80 @@ export class ApiScenarioRunner {
         case "armTemplateDeployment":
           await this.executeArmTemplateStep(step, stepEnv, scope);
           break;
+        case "armRoleAssignment":
+          await this.executeArmRoleAssignmentStep(step, stepEnv);
+          break;
       }
     } catch (e) {
       throw new Error(`Failed to execute step ${step.step}: ${e.message} \n${e.stack}`);
     }
   }
 
+  private async executeArmRoleAssignmentStep(step: StepRoleAssignment, env: VariableEnv) {
+    const parameters = {
+      scope: step.roleAssignment.scope,
+      roleAssignmentName: "{{$guid}}",
+      "api-version": DEFAULT_ROLE_ASSIGNMENT_API_VERSION,
+    };
+
+    const roleDefinitionId =
+      step.roleAssignment.roleDefinitionId ??
+      AzureBuiltInRoles.find((r) => r.roleName === step.roleAssignment.roleName)?.roleDefinitionId;
+
+    if (roleDefinitionId === undefined) {
+      throw new Error(
+        `Cannot find role definition id for role name ${step.roleAssignment.roleName}`
+      );
+    }
+
+    const req: ApiScenarioClientRequest = {
+      host: env.getRequiredString("armEndpoint"),
+      method: "PUT",
+      path: "/$(scope)/providers/Microsoft.Authorization/roleAssignments/$(roleAssignmentName)",
+      pathParameters: parameters,
+      headers: {},
+      query: { "api-version": DEFAULT_ROLE_ASSIGNMENT_API_VERSION },
+      body: {
+        properties: {
+          roleDefinitionId: `/subscriptions/$(subscriptionId)/providers/Microsoft.Authorization/roleDefinitions/${roleDefinitionId}`,
+          principalId: step.roleAssignment.principalId,
+          principalType: step.roleAssignment.principalType ?? "ServicePrincipal",
+        },
+      },
+    };
+
+    const newStep: StepRestCall = {
+      isPrepareStep: step.isPrepareStep,
+      isCleanUpStep: step.isCleanUpStep,
+      step: step.step,
+      variables: step.variables,
+      secretVariables: step.secretVariables,
+      requiredVariables: step.requiredVariables,
+      type: "restCall",
+      operationId: "RoleAssignments_Create",
+      responses: {},
+      parameters: parameters,
+      authentication: step.authentication,
+      externalReference: true,
+    };
+
+    await this.client.sendRestCallRequest(req, newStep, env);
+  }
+
   private async executeRestCallStep(step: StepRestCall, env: VariableEnv) {
     let req: ApiScenarioClientRequest = {
       host: "",
-      method: step.operation._method.toUpperCase() as HttpMethods,
-      path: step.operation._path._pathTemplate.replace(/{([a-z0-9-_$]+)}/gi, (_, p1) => `$(${p1})`),
+      method: step.operation!._method.toUpperCase() as HttpMethods,
+      path: step.operation!._path._pathTemplate.replace(
+        /{([a-z0-9-_$]+)}/gi,
+        (_, p1) => `$(${p1})`
+      ),
       pathParameters: {},
       headers: {},
       query: {},
     };
 
-    for (const p of step.operation.parameters ?? []) {
+    for (const p of step.operation!.parameters ?? []) {
       const param = this.jsonLoader.resolveRefObj(p);
 
       const paramVal = step.parameters[param.name];
@@ -243,7 +303,7 @@ export class ApiScenarioRunner {
     if (step.isManagementPlane) {
       req.host = env.getRequiredString("armEndpoint");
     } else {
-      const spec = step.operation._path._spec;
+      const spec = step.operation!._path._spec;
       if (spec.host) {
         req.host = `https://${spec.host}`;
       } else {

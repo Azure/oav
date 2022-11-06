@@ -112,8 +112,8 @@ describe("Model Validation", () => {
     });
 
     it("should report real exampleJsonPath when additional parameter includes '.'", async () => {
-      const specPath2 = `${testPath}/modelValidation/swaggers/specification/additionalParameter/additionalParameter.json`;
-      const result = await validate.validateExamples(specPath2, undefined);
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/additional/additional.json`;
+      const result = await validate.validateExamples(specPath2, "AdditionalParameter");
       assert.strictEqual(result.length, 1);
       assert.strictEqual(result[0].code, "OBJECT_ADDITIONAL_PROPERTIES");
       assert.strictEqual(result[0].message, "Additional properties not allowed: @result.second");
@@ -862,6 +862,17 @@ describe("Model Validation", () => {
         result[0].message,
         "Object didn't pass validation for format arm-id: test123"
       );
+    });
+  });
+
+  describe("additional properties validation", () => {
+    it("should validate type when additionalProperties has 'type: object'", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/additional/additional.json`;
+      const result = await validate.validateExamples(specPath2, "AdditionalProperties");
+      assert.strictEqual(result.length, 1);
+      assert.strictEqual(result[0].code, "INVALID_TYPE");
+      assert.strictEqual(result[0].message, "Expected type object but found type integer");
+      assert.strictEqual(result[0].exampleJsonPath, "$responses.200.body.result1['id']");
     });
   });
 });
