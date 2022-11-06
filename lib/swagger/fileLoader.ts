@@ -79,11 +79,15 @@ export class FileLoader implements Loader<string> {
   }
 
   public isUnderFileRoot(filePath: string) {
-    if (this.opts.fileRoot === undefined || this.opts.fileRoot === null) {
-      return false;
+    if (!this.opts.fileRoot) {
+      return true;
     }
-      filePath = pathJoin(this.opts.fileRoot, filePath);
-      return filePath.startsWith(this.opts.fileRoot);
+    if (path.isAbsolute(filePath) && !filePath.startsWith(this.opts.fileRoot)){
+      return false
+    }
+   
+    filePath = pathJoin(this.opts.fileRoot, filePath);
+    return filePath.startsWith(this.opts.fileRoot);
   }
 
   public async writeFile(filePath: string, content: string) {

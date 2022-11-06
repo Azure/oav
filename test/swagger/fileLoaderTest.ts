@@ -1,3 +1,4 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import assert from "assert";
@@ -8,10 +9,10 @@ describe("FileLoader functions", () => {
     it("should check absolute paths correctly", () => {
       const options: FileLoaderOption = {
         fileRoot:
-          "/home/tianenx/github/azure/azure-rest-api-specs/specification",
+          `${__dirname}/Azure/oav/test/liveValidation/swaggers/specification`,
       };
       const loader = new FileLoader(options);
-      const received = loader.isUnderFileRoot("/home/tianenx/github/jacktn/oav/readme.md");
+      const received = loader.isUnderFileRoot(`${__dirname}/Azure/oav/readme.md`);
       assert.strictEqual(received, false);
     });
   });
