@@ -407,7 +407,7 @@ export const ApiScenarioDefinition: Schema & {
           minProperties: 1,
           additionalProperties: false,
           patternProperties: {
-            "^([0-9][0-9x]{2})$": {
+            "^([2-5][0-9]{2})|([245]xx)$": {
               oneOf: [
                 {
                   type: "object",
