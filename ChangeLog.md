@@ -6,6 +6,8 @@
 - ModelValidator - Add type validation for additionalProperties whose type is specified as an object
 - API Scenario
   - Add roleAssignment step
+  - Support LRO polling with operation-location header
+  - Support AzureKey based authentication
   - Bugfix: Use content-type specified in swagger
   - Bugfix: fix query parameter value type
 
