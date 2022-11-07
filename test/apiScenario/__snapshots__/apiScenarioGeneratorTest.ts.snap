@@ -9,7 +9,6 @@ Object {
         Object {
           "operationId": "PutKeyValue",
           "responses": undefined,
-          "step": "PutKeyValue",
           "variables": undefined,
         },
         Object {
@@ -20,7 +19,6 @@ Object {
           "responses": Object {
             "412": Object {},
           },
-          "step": "PutKeyValue_1",
           "variables": undefined,
         },
         Object {
@@ -29,7 +27,6 @@ Object {
             "Sync-Token": "zAJw6V16=MjoxNyM5MjA3Nzgy",
           },
           "responses": undefined,
-          "step": "DeleteKeyValue",
           "variables": undefined,
         },
       ],
@@ -72,7 +69,6 @@ Object {
             "If-None-Match": "*",
           },
           "responses": undefined,
-          "step": "PutKeyValue",
           "variables": undefined,
         },
         Object {
@@ -81,7 +77,6 @@ Object {
             "Sync-Token": "zAJw6V16=MjoxNyM5MjA3ODE2",
           },
           "responses": undefined,
-          "step": "PutKeyValue_1",
           "variables": Object {
             "entity": Object {
               "patches": Array [
@@ -105,7 +100,6 @@ Object {
             "Sync-Token": "zAJw6V16=MjoxNyM5MjA3ODE4",
           },
           "responses": undefined,
-          "step": "DeleteKeyValue",
           "variables": undefined,
         },
       ],
@@ -140,7 +134,6 @@ Object {
           "responses": Object {
             "404": Object {},
           },
-          "step": "PutLock",
           "variables": undefined,
         },
       ],
@@ -155,7 +148,6 @@ Object {
             "If-None-Match": "*",
           },
           "responses": undefined,
-          "step": "PutKeyValue",
           "variables": undefined,
         },
         Object {
@@ -164,7 +156,6 @@ Object {
             "Sync-Token": "zAJw6V16=MjoxNyM5MjA3OTY0",
           },
           "responses": undefined,
-          "step": "PutKeyValue_1",
           "variables": Object {
             "entity": Object {
               "patches": Array [
@@ -187,7 +178,6 @@ Object {
           "responses": Object {
             "412": Object {},
           },
-          "step": "DeleteLock",
           "variables": undefined,
         },
         Object {
@@ -196,7 +186,6 @@ Object {
             "Sync-Token": "zAJw6V16=MjoxNyM5MjA3OTY1",
           },
           "responses": undefined,
-          "step": "DeleteKeyValue",
           "variables": undefined,
         },
       ],
@@ -235,7 +224,6 @@ Object {
             "If-None-Match": "*",
           },
           "responses": undefined,
-          "step": "PutKeyValue",
           "variables": undefined,
         },
         Object {
@@ -244,7 +232,6 @@ Object {
             "Sync-Token": "zAJw6V16=MjoxNyM5MjA3ODMw",
           },
           "responses": undefined,
-          "step": "PutKeyValue_1",
           "variables": Object {
             "entity": Object {
               "patches": Array [
@@ -267,7 +254,6 @@ Object {
           "responses": Object {
             "412": Object {},
           },
-          "step": "DeleteKeyValue",
           "variables": undefined,
         },
         Object {
@@ -276,7 +262,6 @@ Object {
             "Sync-Token": "zAJw6V16=MjoxNyM5MjA3ODMx",
           },
           "responses": undefined,
-          "step": "DeleteKeyValue_1",
           "variables": undefined,
         },
       ],
@@ -324,7 +309,6 @@ Object {
             "label": "test_label",
           },
           "responses": undefined,
-          "step": "PutKeyValue",
           "variables": undefined,
         },
         Object {
@@ -333,7 +317,6 @@ Object {
             "Sync-Token": "zAJw6V16=MjoxNyM5MjE2MDIy",
           },
           "responses": undefined,
-          "step": "GetKeyValues",
           "variables": undefined,
         },
         Object {
@@ -344,7 +327,6 @@ Object {
             "label": "test_label",
           },
           "responses": undefined,
-          "step": "DeleteKeyValue",
           "variables": undefined,
         },
       ],
@@ -370,7 +352,6 @@ Object {
             "label": "my_label",
           },
           "responses": undefined,
-          "step": "PutKeyValue",
           "variables": undefined,
         },
         Object {
@@ -380,7 +361,6 @@ Object {
             "Sync-Token": "zAJw6V16=MjoxNyM5MjA3ODg4",
           },
           "responses": undefined,
-          "step": "GetKeyValues",
           "variables": undefined,
         },
         Object {
@@ -390,7 +370,6 @@ Object {
             "label": "my_label",
           },
           "responses": undefined,
-          "step": "DeleteKeyValue",
           "variables": undefined,
         },
       ],
@@ -418,7 +397,6 @@ Object {
             },
           },
           "responses": undefined,
-          "step": "PutKeyValue",
           "variables": undefined,
         },
         Object {
@@ -427,7 +405,6 @@ Object {
             "Sync-Token": "zAJw6V16=MjoxNyM5MjA3OTEy",
           },
           "responses": undefined,
-          "step": "DeleteKeyValue",
           "variables": undefined,
         },
       ],
@@ -454,7 +431,6 @@ Object {
           "responses": Object {
             "404": Object {},
           },
-          "step": "PutLock",
           "variables": undefined,
         },
       ],
@@ -474,7 +450,6 @@ Object {
         Object {
           "operationId": "Subscriptions_Get",
           "responses": undefined,
-          "step": "Subscriptions_Get",
           "variables": undefined,
         },
         Object {
@@ -486,19 +461,16 @@ Object {
             },
           },
           "responses": undefined,
-          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
           "responses": undefined,
-          "step": "StorageAccounts_Create",
           "variables": undefined,
         },
         Object {
           "operationId": "Tags_GetAtScope",
           "responses": undefined,
-          "step": "Tags_GetAtScope",
           "variables": undefined,
         },
         Object {
@@ -515,13 +487,11 @@ Object {
             },
           },
           "responses": undefined,
-          "step": "Tags_CreateOrUpdateAtScope",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_GetProperties",
           "responses": undefined,
-          "step": "StorageAccounts_GetProperties",
           "variables": undefined,
         },
         Object {
@@ -537,25 +507,21 @@ Object {
             },
           },
           "responses": undefined,
-          "step": "Tags_CreateOrUpdateAtScope_1",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_GetProperties",
           "responses": undefined,
-          "step": "StorageAccounts_GetProperties_1",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
           "responses": undefined,
-          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
           "responses": undefined,
-          "step": "StorageAccounts_Delete",
           "variables": undefined,
         },
       ],
@@ -591,13 +557,11 @@ Object {
         Object {
           "operationId": "Subscriptions_Get",
           "responses": undefined,
-          "step": "Subscriptions_Get",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
           "responses": undefined,
-          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
@@ -606,13 +570,11 @@ Object {
             "accountName": "$(accountName1)",
           },
           "responses": undefined,
-          "step": "StorageAccounts_Create",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
           "responses": undefined,
-          "step": "StorageAccounts_CheckNameAvailability_1",
           "variables": Object {
             "accountName": Object {
               "patches": Array [
@@ -632,7 +594,6 @@ Object {
             "accountName": "$(accountName2)",
           },
           "responses": undefined,
-          "step": "StorageAccounts_Create_1",
           "variables": Object {
             "parameters": Object {
               "patches": Array [
@@ -649,7 +610,6 @@ Object {
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
           "responses": undefined,
-          "step": "StorageAccounts_CheckNameAvailability_2",
           "variables": Object {
             "accountName": Object {
               "patches": Array [
@@ -669,7 +629,6 @@ Object {
             "accountName": "$(accountName3)",
           },
           "responses": undefined,
-          "step": "StorageAccounts_Create_2",
           "variables": Object {
             "parameters": Object {
               "patches": Array [
@@ -686,7 +645,6 @@ Object {
         Object {
           "operationId": "StorageAccounts_CheckNameAvailability",
           "responses": undefined,
-          "step": "StorageAccounts_CheckNameAvailability_3",
           "variables": Object {
             "accountName": Object {
               "patches": Array [
@@ -706,7 +664,6 @@ Object {
             "accountName": "$(accountName4)",
           },
           "responses": undefined,
-          "step": "StorageAccounts_Create_3",
           "variables": Object {
             "parameters": Object {
               "patches": Array [
@@ -723,7 +680,6 @@ Object {
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
           "responses": undefined,
-          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
@@ -732,7 +688,6 @@ Object {
             "accountName": "$(accountName1)",
           },
           "responses": undefined,
-          "step": "StorageAccounts_Delete",
           "variables": undefined,
         },
         Object {
@@ -741,7 +696,6 @@ Object {
             "accountName": "$(accountName4)",
           },
           "responses": undefined,
-          "step": "StorageAccounts_Delete_1",
           "variables": undefined,
         },
         Object {
@@ -750,7 +704,6 @@ Object {
             "accountName": "$(accountName3)",
           },
           "responses": undefined,
-          "step": "StorageAccounts_Delete_2",
           "variables": undefined,
         },
         Object {
@@ -759,7 +712,6 @@ Object {
             "accountName": "$(accountName2)",
           },
           "responses": undefined,
-          "step": "StorageAccounts_Delete_3",
           "variables": undefined,
         },
       ],
@@ -810,7 +762,6 @@ Object {
         Object {
           "operationId": "Subscriptions_Get",
           "responses": undefined,
-          "step": "Subscriptions_Get",
           "variables": undefined,
         },
         Object {
@@ -822,7 +773,6 @@ Object {
             },
           },
           "responses": undefined,
-          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
@@ -842,7 +792,6 @@ Object {
             },
           },
           "responses": undefined,
-          "step": "StorageAccounts_Create",
           "variables": undefined,
         },
         Object {
@@ -851,7 +800,6 @@ Object {
             "BlobServicesName": "default",
           },
           "responses": undefined,
-          "step": "BlobServices_GetServiceProperties",
           "variables": undefined,
         },
         Object {
@@ -863,7 +811,6 @@ Object {
             "containerName": "testblob7262",
           },
           "responses": undefined,
-          "step": "BlobContainers_Create",
           "variables": undefined,
         },
         Object {
@@ -872,7 +819,6 @@ Object {
             "blobInventoryPolicyName": "default",
           },
           "responses": undefined,
-          "step": "BlobInventoryPolicies_CreateOrUpdate",
           "variables": undefined,
         },
         Object {
@@ -881,7 +827,6 @@ Object {
             "blobInventoryPolicyName": "default",
           },
           "responses": undefined,
-          "step": "BlobInventoryPolicies_CreateOrUpdate_1",
           "variables": Object {
             "properties": Object {
               "patches": Array [
@@ -913,19 +858,16 @@ Object {
             "blobInventoryPolicyName": "default",
           },
           "responses": undefined,
-          "step": "BlobInventoryPolicies_Delete",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
           "responses": undefined,
-          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
           "responses": undefined,
-          "step": "StorageAccounts_Delete",
           "variables": undefined,
         },
       ],
@@ -1012,7 +954,6 @@ Object {
         Object {
           "operationId": "Subscriptions_Get",
           "responses": undefined,
-          "step": "Subscriptions_Get",
           "variables": undefined,
         },
         Object {
@@ -1024,13 +965,11 @@ Object {
             },
           },
           "responses": undefined,
-          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
           "responses": undefined,
-          "step": "StorageAccounts_Create",
           "variables": undefined,
         },
         Object {
@@ -1039,7 +978,6 @@ Object {
             "BlobServicesName": "default",
           },
           "responses": undefined,
-          "step": "BlobServices_GetServiceProperties",
           "variables": undefined,
         },
         Object {
@@ -1061,7 +999,6 @@ Object {
             },
           },
           "responses": undefined,
-          "step": "BlobServices_SetServiceProperties",
           "variables": undefined,
         },
         Object {
@@ -1133,7 +1070,6 @@ Object {
             },
           },
           "responses": undefined,
-          "step": "ManagementPolicies_CreateOrUpdate",
           "variables": undefined,
         },
         Object {
@@ -1142,19 +1078,16 @@ Object {
             "managementPolicyName": "default",
           },
           "responses": undefined,
-          "step": "ManagementPolicies_Delete",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
           "responses": undefined,
-          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
           "responses": undefined,
-          "step": "StorageAccounts_Delete",
           "variables": undefined,
         },
       ],
@@ -1186,7 +1119,6 @@ Object {
         Object {
           "operationId": "Subscriptions_Get",
           "responses": undefined,
-          "step": "Subscriptions_Get",
           "variables": undefined,
         },
         Object {
@@ -1198,13 +1130,11 @@ Object {
             },
           },
           "responses": undefined,
-          "step": "StorageAccounts_CheckNameAvailability",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Create",
           "responses": undefined,
-          "step": "StorageAccounts_Create",
           "variables": undefined,
         },
         Object {
@@ -1218,7 +1148,6 @@ Object {
             },
           },
           "responses": undefined,
-          "step": "StorageAccounts_Update",
           "variables": undefined,
         },
         Object {
@@ -1237,7 +1166,6 @@ Object {
             },
           },
           "responses": undefined,
-          "step": "StorageAccounts_Update_1",
           "variables": undefined,
         },
         Object {
@@ -1268,7 +1196,6 @@ Object {
             },
           },
           "responses": undefined,
-          "step": "StorageAccounts_Update_2",
           "variables": undefined,
         },
         Object {
@@ -1281,7 +1208,6 @@ Object {
             },
           },
           "responses": undefined,
-          "step": "StorageAccounts_Update_3",
           "variables": undefined,
         },
         Object {
@@ -1294,19 +1220,16 @@ Object {
             },
           },
           "responses": undefined,
-          "step": "StorageAccounts_Update_4",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_ListByResourceGroup",
           "responses": undefined,
-          "step": "StorageAccounts_ListByResourceGroup",
           "variables": undefined,
         },
         Object {
           "operationId": "StorageAccounts_Delete",
           "responses": undefined,
-          "step": "StorageAccounts_Delete",
           "variables": undefined,
         },
       ],
