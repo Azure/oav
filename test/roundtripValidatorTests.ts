@@ -162,7 +162,7 @@ describe("Live Validator", () => {
       //end of roundtrip validation
     });
 
-    it("Round trip validation of circular spec", async () => {
+    it("Round trip validation of outer circular spec", async () => {
       console.log("Round trip validation fail");
       const swaggerPattern = "specification/containerservice/resource-manager/Microsoft.ContainerService/stable/2019-08-01/*.json";
       const glob = require("glob");
@@ -201,6 +201,31 @@ describe("Live Validator", () => {
         }
       }
       //end of roundtrip validation
+    });
+
+    it("OperationLoader should be completely initialized for outer circular ref", async () => {
+      console.log("OperationLoader should be completely initialized for outer circular ref");
+      const swaggerPattern = "specification/cognitiveservices/data-plane/Language/preview/2022-10-01-preview/*.json";
+      const glob = require("glob");
+      const filePaths: string[] = glob.sync(swaggerPattern, {
+        nodir: true,
+        ignore: []
+      });
+      const options = {
+        directory: "./test/liveValidation/swaggers/specification",
+        swaggerPathsPattern: [
+          "cognitiveservices/data-plane/Language/preview/2022-10-01-preview/*.json"
+        ],
+        swaggerPaths: filePaths,
+        enableRoundTripValidator: true,
+        enableRoundTripLazyBuild: false,
+        excludedSwaggerPathsPattern: []
+      };
+      const validator = new LiveValidator(options);
+      await validator.initialize();
+
+      const response = validator.operationLoader.getOperation("language", "2022-10-01-preview", "AnalyzeText");
+      expect(response).toMatchSnapshot();
     });
 
   });

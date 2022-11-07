@@ -152,8 +152,12 @@ export class JsonLoader implements Loader<Json> {
           circular: "ignore",
         },
       };
+      
       try {
         const parser = new $RefParser();
+        if (inputFilePath.includes("analyz")) {
+          console.log(filePath);
+        }
         let spec = await parser.bundle(
           this.fileLoader.resolvePath(filePath),
           fileContent,
@@ -161,7 +165,7 @@ export class JsonLoader implements Loader<Json> {
         );
         spec = await parser.dereference(
           this.fileLoader.resolvePath(filePath),
-          fileContent,
+          spec,
           resolveOption
         );
         (spec as any)[$id] = cache.mockName;
