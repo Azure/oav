@@ -381,7 +381,7 @@ Object {
                 Object {
                   "key": "key",
                   "type": "any",
-                  "value": "{{key_encoded}}",
+                  "value": "rr{{key_encoded}}_%23%24%25{{key_encoded}}",
                 },
               ],
             },

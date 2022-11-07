@@ -63,6 +63,7 @@ scenarios:
         operationId: PutKeyValue
         parameters:
           If-None-Match: '*'
+          key: rr$(key)_#$%$(key)asdsfg
       - step: PutKeyValue_1
         operationId: PutKeyValue
         variables:
