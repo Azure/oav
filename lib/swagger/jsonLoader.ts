@@ -154,7 +154,12 @@ export class JsonLoader implements Loader<Json> {
       };
       try {
         const parser = new $RefParser();
-        const spec = await parser.dereference(
+        let spec = await parser.bundle(
+          this.fileLoader.resolvePath(filePath),
+          fileContent,
+          resolveOption
+        );
+        spec = await parser.dereference(
           this.fileLoader.resolvePath(filePath),
           fileContent,
           resolveOption

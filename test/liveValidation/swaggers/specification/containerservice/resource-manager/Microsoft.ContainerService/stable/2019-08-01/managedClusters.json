@@ -2292,7 +2292,7 @@
         "details": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/CloudErrorBody"
+            "$ref": "common.json#/definitions/InnerCloudErrorBody"
           },
           "description": "A list of additional details about the error."
         }
