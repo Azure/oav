@@ -27,16 +27,13 @@ scenarios:
         type: string
         value: '*'
     steps:
-      - step: PutKeyValue
-        operationId: PutKeyValue
-      - step: PutKeyValue_1
-        operationId: PutKeyValue
+      - operationId: PutKeyValue
+      - operationId: PutKeyValue
         responses:
           '412': {}
         parameters:
           Sync-Token: zAJw6V16=MjoxNyM5MjA3Nzgy
-      - step: DeleteKeyValue
-        operationId: DeleteKeyValue
+      - operationId: DeleteKeyValue
         parameters:
           Sync-Token: zAJw6V16=MjoxNyM5MjA3Nzgy
   - scenario: CanAddAndUpdateFeatureFlag
@@ -59,13 +56,11 @@ scenarios:
           content_type: application/vnd.microsoft.appconfig.ff+json;charset=utf-8
           tags: {}
     steps:
-      - step: PutKeyValue
-        operationId: PutKeyValue
+      - operationId: PutKeyValue
         parameters:
           If-None-Match: '*'
           key: rr$(key)_#$%$(key)asdsfg
-      - step: PutKeyValue_1
-        operationId: PutKeyValue
+      - operationId: PutKeyValue
         variables:
           entity:
             type: object
@@ -81,14 +76,12 @@ scenarios:
                 value: Xw8kFsc-oaEk_nXNPXOWkAaCE6de_zAgyLgPiI0k-AY
         parameters:
           Sync-Token: zAJw6V16=MjoxNyM5MjA3ODE2
-      - step: DeleteKeyValue
-        operationId: DeleteKeyValue
+      - operationId: DeleteKeyValue
         parameters:
           Sync-Token: zAJw6V16=MjoxNyM5MjA3ODE4
   - scenario: ClearReadOnlySettingNotFound
     steps:
-      - step: PutLock
-        operationId: PutLock
+      - operationId: PutLock
         responses:
           '404': {}
         parameters:
@@ -114,12 +107,10 @@ scenarios:
             tag1: value1
             tag2: value2
     steps:
-      - step: PutKeyValue
-        operationId: PutKeyValue
+      - operationId: PutKeyValue
         parameters:
           If-None-Match: '*'
-      - step: PutKeyValue_1
-        operationId: PutKeyValue
+      - operationId: PutKeyValue
         variables:
           entity:
             type: object
@@ -128,15 +119,13 @@ scenarios:
                 value: new_value
         parameters:
           Sync-Token: zAJw6V16=MjoxNyM5MjA3OTY0
-      - step: DeleteLock
-        operationId: DeleteLock
+      - operationId: DeleteLock
         responses:
           '412': {}
         parameters:
           Sync-Token: zAJw6V16=MjoxNyM5MjA3OTY1
           If-Match: '"LgZO1vXg1qh1tBjyRitcoYSFTRUkXB8XdxsHMM1AzrI"'
-      - step: DeleteKeyValue
-        operationId: DeleteKeyValue
+      - operationId: DeleteKeyValue
         parameters:
           Sync-Token: zAJw6V16=MjoxNyM5MjA3OTY1
   - scenario: DeleteIfUnchangedSettingModified
@@ -159,12 +148,10 @@ scenarios:
             tag1: value1
             tag2: value2
     steps:
-      - step: PutKeyValue
-        operationId: PutKeyValue
+      - operationId: PutKeyValue
         parameters:
           If-None-Match: '*'
-      - step: PutKeyValue_1
-        operationId: PutKeyValue
+      - operationId: PutKeyValue
         variables:
           entity:
             type: object
@@ -173,15 +160,13 @@ scenarios:
                 value: new_value
         parameters:
           Sync-Token: zAJw6V16=MjoxNyM5MjA3ODMw
-      - step: DeleteKeyValue
-        operationId: DeleteKeyValue
+      - operationId: DeleteKeyValue
         responses:
           '412': {}
         parameters:
           Sync-Token: zAJw6V16=MjoxNyM5MjA3ODMx
           If-Match: '"kcfjab4MYd1eDj2XrZ6aCxYLdFVmVmY5eKoLO5VmG70"'
-      - step: DeleteKeyValue_1
-        operationId: DeleteKeyValue
+      - operationId: DeleteKeyValue
         parameters:
           Sync-Token: zAJw6V16=MjoxNyM5MjA3ODMx
   - scenario: GetBatchSettingAny
@@ -190,8 +175,7 @@ scenarios:
         type: string
         value: https://t-dnnwaokochaappconfig-azconfig-net.azconfig.io
     steps:
-      - step: PutKeyValue
-        operationId: PutKeyValue
+      - operationId: PutKeyValue
         parameters:
           key: key-2094909004
           label: test_label
@@ -201,12 +185,10 @@ scenarios:
             tags:
               tag1: value1
               tag2: value2
-      - step: GetKeyValues
-        operationId: GetKeyValues
+      - operationId: GetKeyValues
         parameters:
           Sync-Token: zAJw6V16=MjoxNyM5MjE2MDIy
-      - step: DeleteKeyValue
-        operationId: DeleteKeyValue
+      - operationId: DeleteKeyValue
         parameters:
           key: key-2094909004
           label: test_label
@@ -220,8 +202,7 @@ scenarios:
         type: string
         value: keyFields-194380201
     steps:
-      - step: PutKeyValue
-        operationId: PutKeyValue
+      - operationId: PutKeyValue
         parameters:
           label: my_label
           entity:
@@ -229,13 +210,11 @@ scenarios:
             content_type: null
             tags: {}
           If-None-Match: '*'
-      - step: GetKeyValues
-        operationId: GetKeyValues
+      - operationId: GetKeyValues
         parameters:
           Sync-Token: zAJw6V16=MjoxNyM5MjA3ODg4
           $Select: key, label, etag
-      - step: DeleteKeyValue
-        operationId: DeleteKeyValue
+      - operationId: DeleteKeyValue
         parameters:
           label: my_label
           Sync-Token: zAJw6V16=MjoxNyM5MjA3ODg4
@@ -248,21 +227,18 @@ scenarios:
         type: string
         value: ~`!@#$^&()_+=[]{}|;"'<>./--996999594
     steps:
-      - step: PutKeyValue
-        operationId: PutKeyValue
+      - operationId: PutKeyValue
         parameters:
           entity:
             value: value-~`!@#$^&()_+=[]{}|;"'<>./-
             content_type: null
             tags: {}
-      - step: DeleteKeyValue
-        operationId: DeleteKeyValue
+      - operationId: DeleteKeyValue
         parameters:
           Sync-Token: zAJw6V16=MjoxNyM5MjA3OTEy
   - scenario: SetReadOnlySettingNotFound
     steps:
-      - step: PutLock
-        operationId: PutLock
+      - operationId: PutLock
         responses:
           '404': {}
         parameters:

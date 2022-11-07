@@ -70,7 +70,6 @@ export class TestRecordingApiScenarioGenerator {
   private testDefToWrite: Array<{ testDef: RawScenarioDefinition; filePath: string }> = [];
   private operationSearcher: OperationSearcher;
   private lroPollingUrls = new Set<string>();
-  private operationIdx = new Map<string, number>();
   private scope: RawScenarioDefinition["scope"] = "ResourceGroup";
 
   public constructor(
@@ -166,7 +165,6 @@ export class TestRecordingApiScenarioGenerator {
     };
 
     for (const track of requestTracking) {
-      this.operationIdx.clear();
       const testScenario = await this.generateTestScenario(track, testScenarioFilePath);
       testDef.scenarios.push(testScenario);
     }
@@ -333,16 +331,7 @@ export class TestRecordingApiScenarioGenerator {
       variables[paramKey] = v;
     }
 
-    let idx = this.operationIdx.get(operation.operationId!);
-    let stepName = `${operation.operationId}_${idx}`;
-    if (idx === undefined) {
-      stepName = operation.operationId!;
-      idx = 0;
-    }
-    this.operationIdx.set(operation.operationId!, ++idx);
-
     const step = {
-      step: stepName,
       operationId: operation.operationId!,
       variables: Object.keys(variables).length > 0 ? variables : undefined,
       responses: Object.keys(responseAssertion).length > 0 ? responseAssertion : undefined,
