@@ -1,5 +1,2020 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`postmanCollectionGenerator should generate PostmanCollection - appconfig data plane 1`] = `
+Object {
+  "event": Array [],
+  "info": Object {
+    "_postman_id": "jestRunId",
+    "description": Object {
+      "content": "{\\"apiScenarioFilePath\\":\\"Microsoft.AppConfiguration/stable/1.0/scenarios/test.yaml\\",\\"swaggerFilePaths\\":[\\"Microsoft.AppConfiguration/stable/1.0/appconfiguration.json\\"]}",
+      "type": "text/plain",
+    },
+    "name": "test",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": undefined,
+  },
+  "item": Array [
+    Object {
+      "description": Object {
+        "content": "",
+        "type": "text/plain",
+      },
+      "event": Array [
+        Object {
+          "id": "r4of8l",
+          "listen": "prerequest",
+          "script": Object {
+            "exec": Array [
+              "pm.variables.set(\\"endpoint\\", \\"https://t-dnnwaokochaappconfig-azconfig-net.azconfig.io\\");",
+              "pm.variables.set(\\"key\\", \\"key-1954625347\\");",
+              "pm.variables.set(\\"label\\", \\"test_label\\");",
+              "pm.variables.set(\\"entity\\", {\\"value\\":\\"test_value\\",\\"content_type\\":\\"test_content_type\\",\\"tags\\":{\\"tag1\\":\\"value1\\",\\"tag2\\":\\"value2\\"}});",
+              "pm.variables.set(\\"If-None-Match\\", \\"*\\");",
+            ],
+            "id": "nprcrj",
+            "type": "text/javascript",
+          },
+        },
+      ],
+      "id": "rf9c3s",
+      "item": Array [
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"PutKeyValue\\",\\"itemName\\":\\"PutKeyValue\\",\\"step\\":\\"PutKeyValue\\"}",
+          "event": Array [
+            Object {
+              "id": "gzre88",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"key_encoded\\", encodeURIComponent(pm.variables.get(\\"key\\")));",
+                  "pm.variables.set(\\"label_encoded\\", encodeURIComponent(pm.variables.get(\\"label\\")));",
+                ],
+                "id": "zq9w6n",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "8gypdh",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "3747vc",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "tgp8uv",
+          "name": "PutKeyValue",
+          "request": Object {
+            "body": Object {
+              "mode": "raw",
+              "raw": "{
+  \\"value\\": \\"test_value\\",
+  \\"content_type\\": \\"test_content_type\\",
+  \\"tags\\": {
+    \\"tag1\\": \\"value1\\",
+    \\"tag2\\": \\"value2\\"
+  }
+}",
+            },
+            "header": Array [
+              Object {
+                "key": "Content-Type",
+                "value": "application/vnd.microsoft.appconfig.kv+json",
+              },
+              Object {
+                "key": "If-None-Match",
+                "value": "{{If-None-Match}}",
+              },
+            ],
+            "method": "PUT",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "kv",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "label",
+                  "value": "{{label_encoded}}",
+                },
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "{{key_encoded}}",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"PutKeyValue\\",\\"itemName\\":\\"PutKeyValue_1\\",\\"step\\":\\"PutKeyValue_1\\"}",
+          "event": Array [
+            Object {
+              "id": "9120qs",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"key_encoded\\", encodeURIComponent(pm.variables.get(\\"key\\")));",
+                  "pm.variables.set(\\"label_encoded\\", encodeURIComponent(pm.variables.get(\\"label\\")));",
+                ],
+                "id": "oipyp5",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "k8hcud",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.expect(pm.response.code).to.be.oneOf([412]);",
+                  "if (pm.response.code === 412) {
+}
+",
+                  "});",
+                ],
+                "id": "39l4a3",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "clnzjc",
+          "name": "PutKeyValue_1",
+          "request": Object {
+            "body": Object {
+              "mode": "raw",
+              "raw": "{
+  \\"value\\": \\"test_value\\",
+  \\"content_type\\": \\"test_content_type\\",
+  \\"tags\\": {
+    \\"tag1\\": \\"value1\\",
+    \\"tag2\\": \\"value2\\"
+  }
+}",
+            },
+            "header": Array [
+              Object {
+                "key": "Content-Type",
+                "value": "application/vnd.microsoft.appconfig.kv+json",
+              },
+              Object {
+                "key": "Sync-Token",
+                "value": "zAJw6V16=MjoxNyM5MjA3Nzgy",
+              },
+              Object {
+                "key": "If-None-Match",
+                "value": "{{If-None-Match}}",
+              },
+            ],
+            "method": "PUT",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "kv",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "label",
+                  "value": "{{label_encoded}}",
+                },
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "{{key_encoded}}",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"DeleteKeyValue\\",\\"itemName\\":\\"DeleteKeyValue\\",\\"step\\":\\"DeleteKeyValue\\"}",
+          "event": Array [
+            Object {
+              "id": "mcbyik",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"key_encoded\\", encodeURIComponent(pm.variables.get(\\"key\\")));",
+                  "pm.variables.set(\\"label_encoded\\", encodeURIComponent(pm.variables.get(\\"label\\")));",
+                ],
+                "id": "zvuzjs",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "gbupa4",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "1gju0k",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "g4l6nv",
+          "name": "DeleteKeyValue",
+          "request": Object {
+            "body": Object {},
+            "header": Array [
+              Object {
+                "key": "Sync-Token",
+                "value": "zAJw6V16=MjoxNyM5MjA3Nzgy",
+              },
+            ],
+            "method": "DELETE",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "kv",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "label",
+                  "value": "{{label_encoded}}",
+                },
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "{{key_encoded}}",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+      ],
+      "name": "AddExistingSetting",
+    },
+    Object {
+      "description": Object {
+        "content": "",
+        "type": "text/plain",
+      },
+      "event": Array [
+        Object {
+          "id": "hfy1hi",
+          "listen": "prerequest",
+          "script": Object {
+            "exec": Array [
+              "pm.variables.set(\\"endpoint\\", \\"https://t-dnnwaokochaappconfig-azconfig-net.azconfig.io\\");",
+              "pm.variables.set(\\"key\\", \\".appconfig.featureflag/feature 1306740339\\");",
+              "pm.variables.set(\\"entity\\", {\\"value\\":\\"{\\\\\\"id\\\\\\":\\\\\\"feature 1306740339\\\\\\",\\\\\\"description\\\\\\":\\\\\\"Feature description\\\\\\",\\\\\\"display_name\\\\\\":\\\\\\"Feature display name\\\\\\",\\\\\\"enabled\\\\\\":true,\\\\\\"conditions\\\\\\":{\\\\\\"client_filters\\\\\\":[{\\\\\\"name\\\\\\":\\\\\\"FilterA\\\\\\",\\\\\\"parameters\\\\\\":{}},{\\\\\\"name\\\\\\":\\\\\\"Microsoft.TimeWindow\\\\\\",\\\\\\"parameters\\\\\\":{\\\\\\"Start\\\\\\":\\\\\\"Wed, 01 May 2019 13:59:59 GMT\\\\\\",\\\\\\"End\\\\\\":\\\\\\"Mon, 01 July 2019 00:00:00 GMT\\\\\\"}}]}}\\",\\"content_type\\":\\"application/vnd.microsoft.appconfig.ff+json;charset=utf-8\\",\\"tags\\":{}});",
+            ],
+            "id": "hlqn5m",
+            "type": "text/javascript",
+          },
+        },
+      ],
+      "id": "j55iye",
+      "item": Array [
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"PutKeyValue\\",\\"itemName\\":\\"PutKeyValue\\",\\"step\\":\\"PutKeyValue\\"}",
+          "event": Array [
+            Object {
+              "id": "1rcvet",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"key_encoded\\", encodeURIComponent(pm.variables.get(\\"key\\")));",
+                ],
+                "id": "4fy274",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "vov58h",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "3l45xk",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "7wi32c",
+          "name": "PutKeyValue",
+          "request": Object {
+            "body": Object {
+              "mode": "raw",
+              "raw": "{
+  \\"value\\": \\"{\\\\\\"id\\\\\\":\\\\\\"feature 1306740339\\\\\\",\\\\\\"description\\\\\\":\\\\\\"Feature description\\\\\\",\\\\\\"display_name\\\\\\":\\\\\\"Feature display name\\\\\\",\\\\\\"enabled\\\\\\":true,\\\\\\"conditions\\\\\\":{\\\\\\"client_filters\\\\\\":[{\\\\\\"name\\\\\\":\\\\\\"FilterA\\\\\\",\\\\\\"parameters\\\\\\":{}},{\\\\\\"name\\\\\\":\\\\\\"Microsoft.TimeWindow\\\\\\",\\\\\\"parameters\\\\\\":{\\\\\\"Start\\\\\\":\\\\\\"Wed, 01 May 2019 13:59:59 GMT\\\\\\",\\\\\\"End\\\\\\":\\\\\\"Mon, 01 July 2019 00:00:00 GMT\\\\\\"}}]}}\\",
+  \\"content_type\\": \\"application/vnd.microsoft.appconfig.ff+json;charset=utf-8\\",
+  \\"tags\\": {}
+}",
+            },
+            "header": Array [
+              Object {
+                "key": "Content-Type",
+                "value": "application/vnd.microsoft.appconfig.kv+json",
+              },
+              Object {
+                "key": "If-None-Match",
+                "value": "*",
+              },
+            ],
+            "method": "PUT",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "kv",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "{{key_encoded}}",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"PutKeyValue\\",\\"itemName\\":\\"PutKeyValue_1\\",\\"step\\":\\"PutKeyValue_1\\"}",
+          "event": Array [
+            Object {
+              "id": "3q0yb6",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"entity\\", {\\"value\\":\\"{\\\\\\"id\\\\\\":\\\\\\"feature 1306740339\\\\\\",\\\\\\"description\\\\\\":\\\\\\"Feature description\\\\\\",\\\\\\"display_name\\\\\\":\\\\\\"Feature display name\\\\\\",\\\\\\"enabled\\\\\\":false,\\\\\\"conditions\\\\\\":{\\\\\\"client_filters\\\\\\":[{\\\\\\"name\\\\\\":\\\\\\"FilterA\\\\\\",\\\\\\"parameters\\\\\\":{}},{\\\\\\"name\\\\\\":\\\\\\"Microsoft.TimeWindow\\\\\\",\\\\\\"parameters\\\\\\":{\\\\\\"Start\\\\\\":\\\\\\"Wed, 01 May 2019 13:59:59 GMT\\\\\\",\\\\\\"End\\\\\\":\\\\\\"Mon, 01 July 2019 00:00:00 GMT\\\\\\"}}]}}\\",\\"content_type\\":\\"application/vnd.microsoft.appconfig.ff+json;charset=utf-8\\",\\"tags\\":{},\\"etag\\":\\"Xw8kFsc-oaEk_nXNPXOWkAaCE6de_zAgyLgPiI0k-AY\\"});",
+                  "pm.variables.set(\\"key_encoded\\", encodeURIComponent(pm.variables.get(\\"key\\")));",
+                ],
+                "id": "6w00ic",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "m388ep",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "qq5z84",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "1ueh28",
+          "name": "PutKeyValue_1",
+          "request": Object {
+            "body": Object {
+              "mode": "raw",
+              "raw": "{
+  \\"value\\": \\"{\\\\\\"id\\\\\\":\\\\\\"feature 1306740339\\\\\\",\\\\\\"description\\\\\\":\\\\\\"Feature description\\\\\\",\\\\\\"display_name\\\\\\":\\\\\\"Feature display name\\\\\\",\\\\\\"enabled\\\\\\":false,\\\\\\"conditions\\\\\\":{\\\\\\"client_filters\\\\\\":[{\\\\\\"name\\\\\\":\\\\\\"FilterA\\\\\\",\\\\\\"parameters\\\\\\":{}},{\\\\\\"name\\\\\\":\\\\\\"Microsoft.TimeWindow\\\\\\",\\\\\\"parameters\\\\\\":{\\\\\\"Start\\\\\\":\\\\\\"Wed, 01 May 2019 13:59:59 GMT\\\\\\",\\\\\\"End\\\\\\":\\\\\\"Mon, 01 July 2019 00:00:00 GMT\\\\\\"}}]}}\\",
+  \\"content_type\\": \\"application/vnd.microsoft.appconfig.ff+json;charset=utf-8\\",
+  \\"tags\\": {},
+  \\"etag\\": \\"Xw8kFsc-oaEk_nXNPXOWkAaCE6de_zAgyLgPiI0k-AY\\"
+}",
+            },
+            "header": Array [
+              Object {
+                "key": "Content-Type",
+                "value": "application/vnd.microsoft.appconfig.kv+json",
+              },
+              Object {
+                "key": "Sync-Token",
+                "value": "zAJw6V16=MjoxNyM5MjA3ODE2",
+              },
+            ],
+            "method": "PUT",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "kv",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "{{key_encoded}}",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"DeleteKeyValue\\",\\"itemName\\":\\"DeleteKeyValue\\",\\"step\\":\\"DeleteKeyValue\\"}",
+          "event": Array [
+            Object {
+              "id": "rxgyxc",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"key_encoded\\", encodeURIComponent(pm.variables.get(\\"key\\")));",
+                ],
+                "id": "un6yyw",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "igg58r",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "zfkej6",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "j917fd",
+          "name": "DeleteKeyValue",
+          "request": Object {
+            "body": Object {},
+            "header": Array [
+              Object {
+                "key": "Sync-Token",
+                "value": "zAJw6V16=MjoxNyM5MjA3ODE4",
+              },
+            ],
+            "method": "DELETE",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "kv",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "{{key_encoded}}",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+      ],
+      "name": "CanAddAndUpdateFeatureFlag",
+    },
+    Object {
+      "description": Object {
+        "content": "",
+        "type": "text/plain",
+      },
+      "event": Array [],
+      "id": "9e4snq",
+      "item": Array [
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"PutLock\\",\\"itemName\\":\\"PutLock\\",\\"step\\":\\"PutLock\\"}",
+          "event": Array [
+            Object {
+              "id": "ezqs5q",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"endpoint\\", \\"https://t-dnnwaokochaappconfig-azconfig-net.azconfig.io\\");",
+                ],
+                "id": "cb8v3t",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "x7qdfp",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.expect(pm.response.code).to.be.oneOf([404]);",
+                  "if (pm.response.code === 404) {
+}
+",
+                  "});",
+                ],
+                "id": "9vqoea",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "h1l4hw",
+          "name": "PutLock",
+          "request": Object {
+            "body": Object {},
+            "method": "PUT",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "locks",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "key-199017029",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+      ],
+      "name": "ClearReadOnlySettingNotFound",
+    },
+    Object {
+      "description": Object {
+        "content": "",
+        "type": "text/plain",
+      },
+      "event": Array [
+        Object {
+          "id": "d39qgw",
+          "listen": "prerequest",
+          "script": Object {
+            "exec": Array [
+              "pm.variables.set(\\"endpoint\\", \\"https://t-dnnwaokochaappconfig-azconfig-net.azconfig.io\\");",
+              "pm.variables.set(\\"key\\", \\"key-2141872649\\");",
+              "pm.variables.set(\\"label\\", \\"test_label\\");",
+              "pm.variables.set(\\"entity\\", {\\"value\\":\\"test_value\\",\\"content_type\\":\\"test_content_type\\",\\"tags\\":{\\"tag1\\":\\"value1\\",\\"tag2\\":\\"value2\\"}});",
+            ],
+            "id": "jhzmpv",
+            "type": "text/javascript",
+          },
+        },
+      ],
+      "id": "9atymt",
+      "item": Array [
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"PutKeyValue\\",\\"itemName\\":\\"PutKeyValue\\",\\"step\\":\\"PutKeyValue\\"}",
+          "event": Array [
+            Object {
+              "id": "6qbw4d",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"key_encoded\\", encodeURIComponent(pm.variables.get(\\"key\\")));",
+                  "pm.variables.set(\\"label_encoded\\", encodeURIComponent(pm.variables.get(\\"label\\")));",
+                ],
+                "id": "bhuvqx",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "le21m4",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "7oxzx1",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "x6exws",
+          "name": "PutKeyValue",
+          "request": Object {
+            "body": Object {
+              "mode": "raw",
+              "raw": "{
+  \\"value\\": \\"test_value\\",
+  \\"content_type\\": \\"test_content_type\\",
+  \\"tags\\": {
+    \\"tag1\\": \\"value1\\",
+    \\"tag2\\": \\"value2\\"
+  }
+}",
+            },
+            "header": Array [
+              Object {
+                "key": "Content-Type",
+                "value": "application/vnd.microsoft.appconfig.kv+json",
+              },
+              Object {
+                "key": "If-None-Match",
+                "value": "*",
+              },
+            ],
+            "method": "PUT",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "kv",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "label",
+                  "value": "{{label_encoded}}",
+                },
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "{{key_encoded}}",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"PutKeyValue\\",\\"itemName\\":\\"PutKeyValue_1\\",\\"step\\":\\"PutKeyValue_1\\"}",
+          "event": Array [
+            Object {
+              "id": "cdpopn",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"entity\\", {\\"value\\":\\"new_value\\",\\"content_type\\":\\"test_content_type\\",\\"tags\\":{\\"tag1\\":\\"value1\\",\\"tag2\\":\\"value2\\"}});",
+                  "pm.variables.set(\\"key_encoded\\", encodeURIComponent(pm.variables.get(\\"key\\")));",
+                  "pm.variables.set(\\"label_encoded\\", encodeURIComponent(pm.variables.get(\\"label\\")));",
+                ],
+                "id": "5sx5dw",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "49cuyt",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "8ew1jk",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "ssi2a8",
+          "name": "PutKeyValue_1",
+          "request": Object {
+            "body": Object {
+              "mode": "raw",
+              "raw": "{
+  \\"value\\": \\"new_value\\",
+  \\"content_type\\": \\"test_content_type\\",
+  \\"tags\\": {
+    \\"tag1\\": \\"value1\\",
+    \\"tag2\\": \\"value2\\"
+  }
+}",
+            },
+            "header": Array [
+              Object {
+                "key": "Content-Type",
+                "value": "application/vnd.microsoft.appconfig.kv+json",
+              },
+              Object {
+                "key": "Sync-Token",
+                "value": "zAJw6V16=MjoxNyM5MjA3OTY0",
+              },
+            ],
+            "method": "PUT",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "kv",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "label",
+                  "value": "{{label_encoded}}",
+                },
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "{{key_encoded}}",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"DeleteLock\\",\\"itemName\\":\\"DeleteLock\\",\\"step\\":\\"DeleteLock\\"}",
+          "event": Array [
+            Object {
+              "id": "i544h5",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"key_encoded\\", encodeURIComponent(pm.variables.get(\\"key\\")));",
+                  "pm.variables.set(\\"label_encoded\\", encodeURIComponent(pm.variables.get(\\"label\\")));",
+                ],
+                "id": "db187u",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "2tccjb",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.expect(pm.response.code).to.be.oneOf([412]);",
+                  "if (pm.response.code === 412) {
+}
+",
+                  "});",
+                ],
+                "id": "b9q1ra",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "x6oaag",
+          "name": "DeleteLock",
+          "request": Object {
+            "body": Object {},
+            "header": Array [
+              Object {
+                "key": "Sync-Token",
+                "value": "zAJw6V16=MjoxNyM5MjA3OTY1",
+              },
+              Object {
+                "key": "If-Match",
+                "value": "\\"LgZO1vXg1qh1tBjyRitcoYSFTRUkXB8XdxsHMM1AzrI\\"",
+              },
+            ],
+            "method": "DELETE",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "locks",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "label",
+                  "value": "{{label_encoded}}",
+                },
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "{{key_encoded}}",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"DeleteKeyValue\\",\\"itemName\\":\\"DeleteKeyValue\\",\\"step\\":\\"DeleteKeyValue\\"}",
+          "event": Array [
+            Object {
+              "id": "wpbvc4",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"key_encoded\\", encodeURIComponent(pm.variables.get(\\"key\\")));",
+                  "pm.variables.set(\\"label_encoded\\", encodeURIComponent(pm.variables.get(\\"label\\")));",
+                ],
+                "id": "6rfjty",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "hvl7jw",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "odc2fc",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "3zgew6",
+          "name": "DeleteKeyValue",
+          "request": Object {
+            "body": Object {},
+            "header": Array [
+              Object {
+                "key": "Sync-Token",
+                "value": "zAJw6V16=MjoxNyM5MjA3OTY1",
+              },
+            ],
+            "method": "DELETE",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "kv",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "label",
+                  "value": "{{label_encoded}}",
+                },
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "{{key_encoded}}",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+      ],
+      "name": "ConfigurationClient_SetReadOnly_OnlyIfUnchanged_Modified_False_",
+    },
+    Object {
+      "description": Object {
+        "content": "",
+        "type": "text/plain",
+      },
+      "event": Array [
+        Object {
+          "id": "yh0zn8",
+          "listen": "prerequest",
+          "script": Object {
+            "exec": Array [
+              "pm.variables.set(\\"endpoint\\", \\"https://t-dnnwaokochaappconfig-azconfig-net.azconfig.io\\");",
+              "pm.variables.set(\\"key\\", \\"key-1505928816\\");",
+              "pm.variables.set(\\"label\\", \\"test_label\\");",
+              "pm.variables.set(\\"entity\\", {\\"value\\":\\"test_value\\",\\"content_type\\":\\"test_content_type\\",\\"tags\\":{\\"tag1\\":\\"value1\\",\\"tag2\\":\\"value2\\"}});",
+            ],
+            "id": "h0fgel",
+            "type": "text/javascript",
+          },
+        },
+      ],
+      "id": "iqxxs7",
+      "item": Array [
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"PutKeyValue\\",\\"itemName\\":\\"PutKeyValue\\",\\"step\\":\\"PutKeyValue\\"}",
+          "event": Array [
+            Object {
+              "id": "k97wbk",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"key_encoded\\", encodeURIComponent(pm.variables.get(\\"key\\")));",
+                  "pm.variables.set(\\"label_encoded\\", encodeURIComponent(pm.variables.get(\\"label\\")));",
+                ],
+                "id": "j58bgv",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "dm09uw",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "q1cfqt",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "p03jp7",
+          "name": "PutKeyValue",
+          "request": Object {
+            "body": Object {
+              "mode": "raw",
+              "raw": "{
+  \\"value\\": \\"test_value\\",
+  \\"content_type\\": \\"test_content_type\\",
+  \\"tags\\": {
+    \\"tag1\\": \\"value1\\",
+    \\"tag2\\": \\"value2\\"
+  }
+}",
+            },
+            "header": Array [
+              Object {
+                "key": "Content-Type",
+                "value": "application/vnd.microsoft.appconfig.kv+json",
+              },
+              Object {
+                "key": "If-None-Match",
+                "value": "*",
+              },
+            ],
+            "method": "PUT",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "kv",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "label",
+                  "value": "{{label_encoded}}",
+                },
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "{{key_encoded}}",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"PutKeyValue\\",\\"itemName\\":\\"PutKeyValue_1\\",\\"step\\":\\"PutKeyValue_1\\"}",
+          "event": Array [
+            Object {
+              "id": "vm8psu",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"entity\\", {\\"value\\":\\"new_value\\",\\"content_type\\":\\"test_content_type\\",\\"tags\\":{\\"tag1\\":\\"value1\\",\\"tag2\\":\\"value2\\"}});",
+                  "pm.variables.set(\\"key_encoded\\", encodeURIComponent(pm.variables.get(\\"key\\")));",
+                  "pm.variables.set(\\"label_encoded\\", encodeURIComponent(pm.variables.get(\\"label\\")));",
+                ],
+                "id": "lk4mhm",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "ivu9xy",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "mge3qz",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "9ezdsu",
+          "name": "PutKeyValue_1",
+          "request": Object {
+            "body": Object {
+              "mode": "raw",
+              "raw": "{
+  \\"value\\": \\"new_value\\",
+  \\"content_type\\": \\"test_content_type\\",
+  \\"tags\\": {
+    \\"tag1\\": \\"value1\\",
+    \\"tag2\\": \\"value2\\"
+  }
+}",
+            },
+            "header": Array [
+              Object {
+                "key": "Content-Type",
+                "value": "application/vnd.microsoft.appconfig.kv+json",
+              },
+              Object {
+                "key": "Sync-Token",
+                "value": "zAJw6V16=MjoxNyM5MjA3ODMw",
+              },
+            ],
+            "method": "PUT",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "kv",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "label",
+                  "value": "{{label_encoded}}",
+                },
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "{{key_encoded}}",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"DeleteKeyValue\\",\\"itemName\\":\\"DeleteKeyValue\\",\\"step\\":\\"DeleteKeyValue\\"}",
+          "event": Array [
+            Object {
+              "id": "qh9z16",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"key_encoded\\", encodeURIComponent(pm.variables.get(\\"key\\")));",
+                  "pm.variables.set(\\"label_encoded\\", encodeURIComponent(pm.variables.get(\\"label\\")));",
+                ],
+                "id": "eq5yyi",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "kqos97",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.expect(pm.response.code).to.be.oneOf([412]);",
+                  "if (pm.response.code === 412) {
+}
+",
+                  "});",
+                ],
+                "id": "bsqg1o",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "spylrr",
+          "name": "DeleteKeyValue",
+          "request": Object {
+            "body": Object {},
+            "header": Array [
+              Object {
+                "key": "Sync-Token",
+                "value": "zAJw6V16=MjoxNyM5MjA3ODMx",
+              },
+              Object {
+                "key": "If-Match",
+                "value": "\\"kcfjab4MYd1eDj2XrZ6aCxYLdFVmVmY5eKoLO5VmG70\\"",
+              },
+            ],
+            "method": "DELETE",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "kv",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "label",
+                  "value": "{{label_encoded}}",
+                },
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "{{key_encoded}}",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"DeleteKeyValue\\",\\"itemName\\":\\"DeleteKeyValue_1\\",\\"step\\":\\"DeleteKeyValue_1\\"}",
+          "event": Array [
+            Object {
+              "id": "65xm09",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"key_encoded\\", encodeURIComponent(pm.variables.get(\\"key\\")));",
+                  "pm.variables.set(\\"label_encoded\\", encodeURIComponent(pm.variables.get(\\"label\\")));",
+                ],
+                "id": "tyolxx",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "c9wzyn",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "gsyqal",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "a7lkxi",
+          "name": "DeleteKeyValue_1",
+          "request": Object {
+            "body": Object {},
+            "header": Array [
+              Object {
+                "key": "Sync-Token",
+                "value": "zAJw6V16=MjoxNyM5MjA3ODMx",
+              },
+            ],
+            "method": "DELETE",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "kv",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "label",
+                  "value": "{{label_encoded}}",
+                },
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "{{key_encoded}}",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+      ],
+      "name": "DeleteIfUnchangedSettingModified",
+    },
+    Object {
+      "description": Object {
+        "content": "",
+        "type": "text/plain",
+      },
+      "event": Array [
+        Object {
+          "id": "d9yng9",
+          "listen": "prerequest",
+          "script": Object {
+            "exec": Array [
+              "pm.variables.set(\\"endpoint\\", \\"https://t-dnnwaokochaappconfig-azconfig-net.azconfig.io\\");",
+            ],
+            "id": "sp8ib7",
+            "type": "text/javascript",
+          },
+        },
+      ],
+      "id": "wlgh2r",
+      "item": Array [
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"PutKeyValue\\",\\"itemName\\":\\"PutKeyValue\\",\\"step\\":\\"PutKeyValue\\"}",
+          "event": Array [
+            Object {
+              "id": "2vc31r",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "bw1q38",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "ew9nh8",
+          "name": "PutKeyValue",
+          "request": Object {
+            "body": Object {
+              "mode": "raw",
+              "raw": "{
+  \\"value\\": \\"test_value\\",
+  \\"content_type\\": \\"test_content_type\\",
+  \\"tags\\": {
+    \\"tag1\\": \\"value1\\",
+    \\"tag2\\": \\"value2\\"
+  }
+}",
+            },
+            "header": Array [
+              Object {
+                "key": "Content-Type",
+                "value": "application/vnd.microsoft.appconfig.kv+json",
+              },
+            ],
+            "method": "PUT",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "kv",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "label",
+                  "value": "test_label",
+                },
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "key-2094909004",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"GetKeyValues\\",\\"itemName\\":\\"GetKeyValues\\",\\"step\\":\\"GetKeyValues\\"}",
+          "event": Array [
+            Object {
+              "id": "l0fzps",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "ehebqq",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "yzy1ec",
+          "name": "GetKeyValues",
+          "request": Object {
+            "body": Object {},
+            "header": Array [
+              Object {
+                "key": "Sync-Token",
+                "value": "zAJw6V16=MjoxNyM5MjE2MDIy",
+              },
+            ],
+            "method": "GET",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "kv",
+              ],
+              "query": Array [
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [],
+            },
+          },
+          "response": Array [],
+        },
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"DeleteKeyValue\\",\\"itemName\\":\\"DeleteKeyValue\\",\\"step\\":\\"DeleteKeyValue\\"}",
+          "event": Array [
+            Object {
+              "id": "9quvnq",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "odehko",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "zo75y7",
+          "name": "DeleteKeyValue",
+          "request": Object {
+            "body": Object {},
+            "header": Array [
+              Object {
+                "key": "Sync-Token",
+                "value": "zAJw6V16=MjoxNyM5MjE2MDIy",
+              },
+            ],
+            "method": "DELETE",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "kv",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "label",
+                  "value": "test_label",
+                },
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "key-2094909004",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+      ],
+      "name": "GetBatchSettingAny",
+    },
+    Object {
+      "description": Object {
+        "content": "",
+        "type": "text/plain",
+      },
+      "event": Array [
+        Object {
+          "id": "f9zxy5",
+          "listen": "prerequest",
+          "script": Object {
+            "exec": Array [
+              "pm.variables.set(\\"endpoint\\", \\"https://t-dnnwaokochaappconfig-azconfig-net.azconfig.io\\");",
+              "pm.variables.set(\\"key\\", \\"keyFields-194380201\\");",
+            ],
+            "id": "76ivhq",
+            "type": "text/javascript",
+          },
+        },
+      ],
+      "id": "col7eq",
+      "item": Array [
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"PutKeyValue\\",\\"itemName\\":\\"PutKeyValue\\",\\"step\\":\\"PutKeyValue\\"}",
+          "event": Array [
+            Object {
+              "id": "8ef99f",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"key_encoded\\", encodeURIComponent(pm.variables.get(\\"key\\")));",
+                ],
+                "id": "86w5gc",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "fujl6i",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "wa7yg9",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "b3xozx",
+          "name": "PutKeyValue",
+          "request": Object {
+            "body": Object {
+              "mode": "raw",
+              "raw": "{
+  \\"value\\": \\"my_value\\",
+  \\"content_type\\": null,
+  \\"tags\\": {}
+}",
+            },
+            "header": Array [
+              Object {
+                "key": "Content-Type",
+                "value": "application/vnd.microsoft.appconfig.kv+json",
+              },
+              Object {
+                "key": "If-None-Match",
+                "value": "*",
+              },
+            ],
+            "method": "PUT",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "kv",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "label",
+                  "value": "my_label",
+                },
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "{{key_encoded}}",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"GetKeyValues\\",\\"itemName\\":\\"GetKeyValues\\",\\"step\\":\\"GetKeyValues\\"}",
+          "event": Array [
+            Object {
+              "id": "20gl49",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"key_encoded\\", encodeURIComponent(pm.variables.get(\\"key\\")));",
+                ],
+                "id": "hty0qz",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "qbyj9c",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "56m9l3",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "ugk6h2",
+          "name": "GetKeyValues",
+          "request": Object {
+            "body": Object {},
+            "header": Array [
+              Object {
+                "key": "Sync-Token",
+                "value": "zAJw6V16=MjoxNyM5MjA3ODg4",
+              },
+            ],
+            "method": "GET",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "kv",
+              ],
+              "query": Array [
+                Object {
+                  "key": "key",
+                  "value": "{{key_encoded}}",
+                },
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+                Object {
+                  "key": "$Select",
+                  "value": "key%2C%20label%2C%20etag",
+                },
+              ],
+              "variable": Array [],
+            },
+          },
+          "response": Array [],
+        },
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"DeleteKeyValue\\",\\"itemName\\":\\"DeleteKeyValue\\",\\"step\\":\\"DeleteKeyValue\\"}",
+          "event": Array [
+            Object {
+              "id": "hakk8a",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"key_encoded\\", encodeURIComponent(pm.variables.get(\\"key\\")));",
+                ],
+                "id": "182s89",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "jy1tzu",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "x0t20h",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "2r0mc4",
+          "name": "DeleteKeyValue",
+          "request": Object {
+            "body": Object {},
+            "header": Array [
+              Object {
+                "key": "Sync-Token",
+                "value": "zAJw6V16=MjoxNyM5MjA3ODg4",
+              },
+            ],
+            "method": "DELETE",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "kv",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "label",
+                  "value": "my_label",
+                },
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "{{key_encoded}}",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+      ],
+      "name": "GetBatchSettingWithFields",
+    },
+    Object {
+      "description": Object {
+        "content": "",
+        "type": "text/plain",
+      },
+      "event": Array [
+        Object {
+          "id": "tdrxs5",
+          "listen": "prerequest",
+          "script": Object {
+            "exec": Array [
+              "pm.variables.set(\\"endpoint\\", \\"https://t-dnnwaokochaappconfig-azconfig-net.azconfig.io\\");",
+              "pm.variables.set(\\"key\\", \\"~\`!@#$^&()_+=[]{}|;\\\\\\"'<>./--996999594\\");",
+            ],
+            "id": "v9jgfn",
+            "type": "text/javascript",
+          },
+        },
+      ],
+      "id": "y8jsuq",
+      "item": Array [
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"PutKeyValue\\",\\"itemName\\":\\"PutKeyValue\\",\\"step\\":\\"PutKeyValue\\"}",
+          "event": Array [
+            Object {
+              "id": "c6vfm3",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"key_encoded\\", encodeURIComponent(pm.variables.get(\\"key\\")));",
+                ],
+                "id": "r3ps8d",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "jt84jj",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "i2mz21",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "vwghxn",
+          "name": "PutKeyValue",
+          "request": Object {
+            "body": Object {
+              "mode": "raw",
+              "raw": "{
+  \\"value\\": \\"value-~\`!@#$^&()_+=[]{}|;\\\\\\"'<>./-\\",
+  \\"content_type\\": null,
+  \\"tags\\": {}
+}",
+            },
+            "header": Array [
+              Object {
+                "key": "Content-Type",
+                "value": "application/vnd.microsoft.appconfig.kv+json",
+              },
+            ],
+            "method": "PUT",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "kv",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "{{key_encoded}}",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"DeleteKeyValue\\",\\"itemName\\":\\"DeleteKeyValue\\",\\"step\\":\\"DeleteKeyValue\\"}",
+          "event": Array [
+            Object {
+              "id": "9sf2c9",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"key_encoded\\", encodeURIComponent(pm.variables.get(\\"key\\")));",
+                ],
+                "id": "f0r418",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "mibqod",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "kiosgn",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "fmkiq3",
+          "name": "DeleteKeyValue",
+          "request": Object {
+            "body": Object {},
+            "header": Array [
+              Object {
+                "key": "Sync-Token",
+                "value": "zAJw6V16=MjoxNyM5MjA3OTEy",
+              },
+            ],
+            "method": "DELETE",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "kv",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "{{key_encoded}}",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+      ],
+      "name": "GetSettingSpecialCharacters",
+    },
+    Object {
+      "description": Object {
+        "content": "",
+        "type": "text/plain",
+      },
+      "event": Array [],
+      "id": "1ghyu8",
+      "item": Array [
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"PutLock\\",\\"itemName\\":\\"PutLock\\",\\"step\\":\\"PutLock\\"}",
+          "event": Array [
+            Object {
+              "id": "btr6ql",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"endpoint\\", \\"https://t-dnnwaokochaappconfig-azconfig-net.azconfig.io\\");",
+                ],
+                "id": "abct7z",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "rqqhvq",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.expect(pm.response.code).to.be.oneOf([404]);",
+                  "if (pm.response.code === 404) {
+}
+",
+                  "});",
+                ],
+                "id": "kia3ys",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "ikm5qg",
+          "name": "PutLock",
+          "request": Object {
+            "body": Object {},
+            "method": "PUT",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "locks",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "key-1514776256",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+      ],
+      "name": "SetReadOnlySettingNotFound",
+    },
+  ],
+  "variable": Array [
+    Object {
+      "key": "subscriptionId",
+      "type": "any",
+    },
+    Object {
+      "key": "resourceGroupName",
+      "type": "any",
+    },
+    Object {
+      "key": "location",
+      "type": "any",
+    },
+    Object {
+      "key": "client_id",
+      "type": "any",
+    },
+    Object {
+      "key": "client_secret",
+      "type": "any",
+    },
+    Object {
+      "key": "tenantId",
+      "type": "any",
+    },
+    Object {
+      "key": "x_enable_auth",
+      "type": "any",
+      "value": "true",
+    },
+  ],
+}
+`;
+
 exports[`postmanCollectionGenerator should generate PostmanCollection - enableTestProxy 1`] = `
 Object {
   "auth": Object {

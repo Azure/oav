@@ -64,6 +64,71 @@ Object {
       },
     },
     Object {
+      "scenario": "CanAddAndUpdateFeatureFlag",
+      "steps": Array [
+        Object {
+          "operationId": "PutKeyValue",
+          "parameters": Object {
+            "If-None-Match": "*",
+          },
+          "responses": undefined,
+          "step": "PutKeyValue",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "PutKeyValue",
+          "parameters": Object {
+            "Sync-Token": "zAJw6V16=MjoxNyM5MjA3ODE2",
+          },
+          "responses": undefined,
+          "step": "PutKeyValue_1",
+          "variables": Object {
+            "entity": Object {
+              "patches": Array [
+                Object {
+                  "replace": "/value",
+                  "value": "{\\"id\\":\\"feature 1306740339\\",\\"description\\":\\"Feature description\\",\\"display_name\\":\\"Feature display name\\",\\"enabled\\":false,\\"conditions\\":{\\"client_filters\\":[{\\"name\\":\\"FilterA\\",\\"parameters\\":{}},{\\"name\\":\\"Microsoft.TimeWindow\\",\\"parameters\\":{\\"Start\\":\\"Wed, 01 May 2019 13:59:59 GMT\\",\\"End\\":\\"Mon, 01 July 2019 00:00:00 GMT\\"}}]}}",
+                },
+                Object {
+                  "add": "/etag",
+                  "value": "Xw8kFsc-oaEk_nXNPXOWkAaCE6de_zAgyLgPiI0k-AY",
+                },
+              ],
+              "type": "object",
+              "value": undefined,
+            },
+          },
+        },
+        Object {
+          "operationId": "DeleteKeyValue",
+          "parameters": Object {
+            "Sync-Token": "zAJw6V16=MjoxNyM5MjA3ODE4",
+          },
+          "responses": undefined,
+          "step": "DeleteKeyValue",
+          "variables": undefined,
+        },
+      ],
+      "variables": Object {
+        "endpoint": Object {
+          "type": "string",
+          "value": "https://t-dnnwaokochaappconfig-azconfig-net.azconfig.io",
+        },
+        "entity": Object {
+          "type": "object",
+          "value": Object {
+            "content_type": "application/vnd.microsoft.appconfig.ff+json;charset=utf-8",
+            "tags": Object {},
+            "value": "{\\"id\\":\\"feature 1306740339\\",\\"description\\":\\"Feature description\\",\\"display_name\\":\\"Feature display name\\",\\"enabled\\":true,\\"conditions\\":{\\"client_filters\\":[{\\"name\\":\\"FilterA\\",\\"parameters\\":{}},{\\"name\\":\\"Microsoft.TimeWindow\\",\\"parameters\\":{\\"Start\\":\\"Wed, 01 May 2019 13:59:59 GMT\\",\\"End\\":\\"Mon, 01 July 2019 00:00:00 GMT\\"}}]}}",
+          },
+        },
+        "key": Object {
+          "type": "string",
+          "value": ".appconfig.featureflag/feature 1306740339",
+        },
+      },
+    },
+    Object {
       "scenario": "ClearReadOnlySettingNotFound",
       "steps": Array [
         Object {
@@ -287,6 +352,93 @@ Object {
         "endpoint": Object {
           "type": "string",
           "value": "https://t-dnnwaokochaappconfig-azconfig-net.azconfig.io",
+        },
+      },
+    },
+    Object {
+      "scenario": "GetBatchSettingWithFields",
+      "steps": Array [
+        Object {
+          "operationId": "PutKeyValue",
+          "parameters": Object {
+            "If-None-Match": "*",
+            "entity": Object {
+              "content_type": null,
+              "tags": Object {},
+              "value": "my_value",
+            },
+            "label": "my_label",
+          },
+          "responses": undefined,
+          "step": "PutKeyValue",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "GetKeyValues",
+          "parameters": Object {
+            "$Select": "key, label, etag",
+            "Sync-Token": "zAJw6V16=MjoxNyM5MjA3ODg4",
+          },
+          "responses": undefined,
+          "step": "GetKeyValues",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "DeleteKeyValue",
+          "parameters": Object {
+            "Sync-Token": "zAJw6V16=MjoxNyM5MjA3ODg4",
+            "label": "my_label",
+          },
+          "responses": undefined,
+          "step": "DeleteKeyValue",
+          "variables": undefined,
+        },
+      ],
+      "variables": Object {
+        "endpoint": Object {
+          "type": "string",
+          "value": "https://t-dnnwaokochaappconfig-azconfig-net.azconfig.io",
+        },
+        "key": Object {
+          "type": "string",
+          "value": "keyFields-194380201",
+        },
+      },
+    },
+    Object {
+      "scenario": "GetSettingSpecialCharacters",
+      "steps": Array [
+        Object {
+          "operationId": "PutKeyValue",
+          "parameters": Object {
+            "entity": Object {
+              "content_type": null,
+              "tags": Object {},
+              "value": "value-~\`!@#$^&()_+=[]{}|;\\"'<>./-",
+            },
+          },
+          "responses": undefined,
+          "step": "PutKeyValue",
+          "variables": undefined,
+        },
+        Object {
+          "operationId": "DeleteKeyValue",
+          "parameters": Object {
+            "Sync-Token": "zAJw6V16=MjoxNyM5MjA3OTEy",
+          },
+          "responses": undefined,
+          "step": "DeleteKeyValue",
+          "variables": undefined,
+        },
+      ],
+      "variables": Object {
+        "endpoint": Object {
+          "type": "string",
+          "value": "https://t-dnnwaokochaappconfig-azconfig-net.azconfig.io",
+        },
+        "key": Object {
+          "type": "string",
+          "value": "~\`!@#$^&()_+=[]{}|;\\"'<>./--996999594",
         },
       },
     },

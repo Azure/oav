@@ -1,0 +1,269 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/documentation/api-scenario/references/v1.2/schema.json
+
+# Generated from test-proxy recording in:
+# test/apiScenario/fixtures/recording/appconfiguration/SessionRecords/ConfigurationLiveTests
+scope: None
+scenarios:
+  - scenario: AddExistingSetting
+    variables:
+      endpoint:
+        type: string
+        value: https://t-dnnwaokochaappconfig-azconfig-net.azconfig.io
+      key:
+        type: string
+        value: key-1954625347
+      label:
+        type: string
+        value: test_label
+      entity:
+        type: object
+        value:
+          value: test_value
+          content_type: test_content_type
+          tags:
+            tag1: value1
+            tag2: value2
+      If-None-Match:
+        type: string
+        value: '*'
+    steps:
+      - step: PutKeyValue
+        operationId: PutKeyValue
+      - step: PutKeyValue_1
+        operationId: PutKeyValue
+        responses:
+          '412': {}
+        parameters:
+          Sync-Token: zAJw6V16=MjoxNyM5MjA3Nzgy
+      - step: DeleteKeyValue
+        operationId: DeleteKeyValue
+        parameters:
+          Sync-Token: zAJw6V16=MjoxNyM5MjA3Nzgy
+  - scenario: CanAddAndUpdateFeatureFlag
+    variables:
+      endpoint:
+        type: string
+        value: https://t-dnnwaokochaappconfig-azconfig-net.azconfig.io
+      key:
+        type: string
+        value: .appconfig.featureflag/feature 1306740339
+      entity:
+        type: object
+        value:
+          value: >-
+            {"id":"feature 1306740339","description":"Feature
+            description","display_name":"Feature display
+            name","enabled":true,"conditions":{"client_filters":[{"name":"FilterA","parameters":{}},{"name":"Microsoft.TimeWindow","parameters":{"Start":"Wed,
+            01 May 2019 13:59:59 GMT","End":"Mon, 01 July 2019 00:00:00
+            GMT"}}]}}
+          content_type: application/vnd.microsoft.appconfig.ff+json;charset=utf-8
+          tags: {}
+    steps:
+      - step: PutKeyValue
+        operationId: PutKeyValue
+        parameters:
+          If-None-Match: '*'
+      - step: PutKeyValue_1
+        operationId: PutKeyValue
+        variables:
+          entity:
+            type: object
+            patches:
+              - replace: /value
+                value: >-
+                  {"id":"feature 1306740339","description":"Feature
+                  description","display_name":"Feature display
+                  name","enabled":false,"conditions":{"client_filters":[{"name":"FilterA","parameters":{}},{"name":"Microsoft.TimeWindow","parameters":{"Start":"Wed,
+                  01 May 2019 13:59:59 GMT","End":"Mon, 01 July 2019 00:00:00
+                  GMT"}}]}}
+              - add: /etag
+                value: Xw8kFsc-oaEk_nXNPXOWkAaCE6de_zAgyLgPiI0k-AY
+        parameters:
+          Sync-Token: zAJw6V16=MjoxNyM5MjA3ODE2
+      - step: DeleteKeyValue
+        operationId: DeleteKeyValue
+        parameters:
+          Sync-Token: zAJw6V16=MjoxNyM5MjA3ODE4
+  - scenario: ClearReadOnlySettingNotFound
+    steps:
+      - step: PutLock
+        operationId: PutLock
+        responses:
+          '404': {}
+        parameters:
+          endpoint: https://t-dnnwaokochaappconfig-azconfig-net.azconfig.io
+          key: key-199017029
+  - scenario: ConfigurationClient_SetReadOnly_OnlyIfUnchanged_Modified_False_
+    variables:
+      endpoint:
+        type: string
+        value: https://t-dnnwaokochaappconfig-azconfig-net.azconfig.io
+      key:
+        type: string
+        value: key-2141872649
+      label:
+        type: string
+        value: test_label
+      entity:
+        type: object
+        value:
+          value: test_value
+          content_type: test_content_type
+          tags:
+            tag1: value1
+            tag2: value2
+    steps:
+      - step: PutKeyValue
+        operationId: PutKeyValue
+        parameters:
+          If-None-Match: '*'
+      - step: PutKeyValue_1
+        operationId: PutKeyValue
+        variables:
+          entity:
+            type: object
+            patches:
+              - replace: /value
+                value: new_value
+        parameters:
+          Sync-Token: zAJw6V16=MjoxNyM5MjA3OTY0
+      - step: DeleteLock
+        operationId: DeleteLock
+        responses:
+          '412': {}
+        parameters:
+          Sync-Token: zAJw6V16=MjoxNyM5MjA3OTY1
+          If-Match: '"LgZO1vXg1qh1tBjyRitcoYSFTRUkXB8XdxsHMM1AzrI"'
+      - step: DeleteKeyValue
+        operationId: DeleteKeyValue
+        parameters:
+          Sync-Token: zAJw6V16=MjoxNyM5MjA3OTY1
+  - scenario: DeleteIfUnchangedSettingModified
+    variables:
+      endpoint:
+        type: string
+        value: https://t-dnnwaokochaappconfig-azconfig-net.azconfig.io
+      key:
+        type: string
+        value: key-1505928816
+      label:
+        type: string
+        value: test_label
+      entity:
+        type: object
+        value:
+          value: test_value
+          content_type: test_content_type
+          tags:
+            tag1: value1
+            tag2: value2
+    steps:
+      - step: PutKeyValue
+        operationId: PutKeyValue
+        parameters:
+          If-None-Match: '*'
+      - step: PutKeyValue_1
+        operationId: PutKeyValue
+        variables:
+          entity:
+            type: object
+            patches:
+              - replace: /value
+                value: new_value
+        parameters:
+          Sync-Token: zAJw6V16=MjoxNyM5MjA3ODMw
+      - step: DeleteKeyValue
+        operationId: DeleteKeyValue
+        responses:
+          '412': {}
+        parameters:
+          Sync-Token: zAJw6V16=MjoxNyM5MjA3ODMx
+          If-Match: '"kcfjab4MYd1eDj2XrZ6aCxYLdFVmVmY5eKoLO5VmG70"'
+      - step: DeleteKeyValue_1
+        operationId: DeleteKeyValue
+        parameters:
+          Sync-Token: zAJw6V16=MjoxNyM5MjA3ODMx
+  - scenario: GetBatchSettingAny
+    variables:
+      endpoint:
+        type: string
+        value: https://t-dnnwaokochaappconfig-azconfig-net.azconfig.io
+    steps:
+      - step: PutKeyValue
+        operationId: PutKeyValue
+        parameters:
+          key: key-2094909004
+          label: test_label
+          entity:
+            value: test_value
+            content_type: test_content_type
+            tags:
+              tag1: value1
+              tag2: value2
+      - step: GetKeyValues
+        operationId: GetKeyValues
+        parameters:
+          Sync-Token: zAJw6V16=MjoxNyM5MjE2MDIy
+      - step: DeleteKeyValue
+        operationId: DeleteKeyValue
+        parameters:
+          key: key-2094909004
+          label: test_label
+          Sync-Token: zAJw6V16=MjoxNyM5MjE2MDIy
+  - scenario: GetBatchSettingWithFields
+    variables:
+      endpoint:
+        type: string
+        value: https://t-dnnwaokochaappconfig-azconfig-net.azconfig.io
+      key:
+        type: string
+        value: keyFields-194380201
+    steps:
+      - step: PutKeyValue
+        operationId: PutKeyValue
+        parameters:
+          label: my_label
+          entity:
+            value: my_value
+            content_type: null
+            tags: {}
+          If-None-Match: '*'
+      - step: GetKeyValues
+        operationId: GetKeyValues
+        parameters:
+          Sync-Token: zAJw6V16=MjoxNyM5MjA3ODg4
+          $Select: key, label, etag
+      - step: DeleteKeyValue
+        operationId: DeleteKeyValue
+        parameters:
+          label: my_label
+          Sync-Token: zAJw6V16=MjoxNyM5MjA3ODg4
+  - scenario: GetSettingSpecialCharacters
+    variables:
+      endpoint:
+        type: string
+        value: https://t-dnnwaokochaappconfig-azconfig-net.azconfig.io
+      key:
+        type: string
+        value: ~`!@#$^&()_+=[]{}|;"'<>./--996999594
+    steps:
+      - step: PutKeyValue
+        operationId: PutKeyValue
+        parameters:
+          entity:
+            value: value-~`!@#$^&()_+=[]{}|;"'<>./-
+            content_type: null
+            tags: {}
+      - step: DeleteKeyValue
+        operationId: DeleteKeyValue
+        parameters:
+          Sync-Token: zAJw6V16=MjoxNyM5MjA3OTEy
+  - scenario: SetReadOnlySettingNotFound
+    steps:
+      - step: PutLock
+        operationId: PutLock
+        responses:
+          '404': {}
+        parameters:
+          endpoint: https://t-dnnwaokochaappconfig-azconfig-net.azconfig.io
+          key: key-1514776256
