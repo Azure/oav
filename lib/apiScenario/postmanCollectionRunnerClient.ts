@@ -20,7 +20,6 @@ import {
   Scope,
 } from "./apiScenarioRunner";
 import {
-  AADTokenAuthentication,
   ArmTemplate,
   Authentication,
   DelayItemMetadata,
@@ -49,11 +48,17 @@ export interface PostmanCollectionRunnerClientOption {
   jsonLoader: JsonLoader;
 }
 
-interface PostmanAuthOption {
-  type: Authentication["type"];
+interface PostmanAADTokenAuthOption {
+  type: "AADToken";
   tokenName: string;
-  scriptLocation: "Collection" | "Folder" | "Request";
 }
+
+interface PostmanAzureKeyAuthOption {
+  type: "AzureKey";
+  keyName: string;
+}
+
+type PostmanAuthOption = PostmanAADTokenAuthOption | PostmanAzureKeyAuthOption;
 
 export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
   private opts: PostmanCollectionRunnerClientOption;
@@ -70,24 +75,56 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
   }
 
   private checkAuthOption(
-    auth: Authentication,
-    location: PostmanAuthOption["scriptLocation"]
-  ): PostmanAuthOption | undefined {
-    if (auth.type === "AADToken" && auth.scope) {
-      if (!this.authOptionMap.has(auth.scope)) {
-        this.authOptionMap.set(auth.scope, {
-          type: auth.type,
+    authentication: Authentication,
+    preScripts: string[],
+    env: VariableEnv
+  ): RequestAuth | undefined {
+    if (authentication.type === "AADToken") {
+      authentication.scope = env.resolveString(authentication.scope);
+      let option: PostmanAADTokenAuthOption;
+      if (!this.authOptionMap.has(authentication.scope)) {
+        option = {
+          type: authentication.type,
           tokenName: `x_bearer_token_${this.authOptionMap.size}`,
-          scriptLocation: location,
-        });
-      }
-      return this.authOptionMap.get(auth.scope);
-    } else if (auth.type === "AzureKey") {
-      // TODO
-    } else if (auth.type === "None") {
-      // TODO
-    }
+        };
+        this.authOptionMap.set(authentication.scope, option);
 
+        preScripts.push(PostmanHelper.generateAuthScript(authentication.scope, option.tokenName));
+      } else {
+        option = this.authOptionMap.get(authentication.scope)! as PostmanAADTokenAuthOption;
+      }
+      return new RequestAuth({
+        type: "bearer",
+        bearer: [
+          {
+            key: "token",
+            value: `{{${option.tokenName}}}`,
+            type: "string",
+          },
+        ],
+      });
+    } else if (authentication.type === "AzureKey") {
+      return new RequestAuth({
+        type: "apikey",
+        apikey: [
+          {
+            key: "in",
+            value: authentication.in,
+            type: "string",
+          },
+          {
+            key: "key",
+            value: authentication.name,
+            type: "string",
+          },
+          {
+            key: "value",
+            value: covertToPostmanVariable(authentication.key),
+            type: "string",
+          },
+        ],
+      });
+    }
     return undefined;
   }
 
@@ -109,25 +146,11 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
 
     const preScripts: string[] = [];
 
-    scenarioDef.authentication = scope.env.resolveObjectValues(scenarioDef.authentication);
-    const authOption = this.checkAuthOption(scenarioDef.authentication, "Collection");
-
-    if (authOption) {
-      this.collection.auth = new RequestAuth({
-        type: "bearer",
-        bearer: [
-          {
-            key: "token",
-            value: `{{${authOption.tokenName}}}`,
-            type: "string",
-          },
-        ],
-      });
-      preScripts.push(
-        PostmanHelper.generateAuthScript(
-          (scenarioDef.authentication as AADTokenAuthentication).scope!,
-          authOption.tokenName
-        )
+    if (scenarioDef.authentication) {
+      this.collection.auth = this.checkAuthOption(
+        scenarioDef.authentication,
+        preScripts,
+        scope.env
       );
     }
 
@@ -190,26 +213,8 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
 
     const preScripts: string[] = [];
 
-    scenario.authentication = env.resolveObjectValues(scenario.authentication);
-    const authOption = this.checkAuthOption(scenario.authentication, "Folder");
-
-    if (authOption && authOption.scriptLocation === "Folder") {
-      this.scenarioFolder.auth = new RequestAuth({
-        type: "bearer",
-        bearer: [
-          {
-            key: "token",
-            value: `{{${authOption.tokenName}}}`,
-            type: "string",
-          },
-        ],
-      });
-      preScripts.push(
-        PostmanHelper.generateAuthScript(
-          (scenario.authentication as AADTokenAuthentication).scope!,
-          authOption.tokenName
-        )
-      );
+    if (scenario.authentication) {
+      this.scenarioFolder.auth = this.checkAuthOption(scenario.authentication, preScripts, env);
     }
 
     env.resolve();
@@ -477,26 +482,8 @@ pm.test("Stopped TestProxy recording", function() {
     // pre scripts
     const preScripts: string[] = [];
 
-    step.authentication = env.resolveObjectValues(step.authentication);
-    const authOption = this.checkAuthOption(step.authentication, "Request");
-
-    if (authOption && authOption.scriptLocation === "Request") {
-      item.request.auth = new RequestAuth({
-        type: "bearer",
-        bearer: [
-          {
-            key: "token",
-            value: `{{${authOption.tokenName}}}`,
-            type: "string",
-          },
-        ],
-      });
-      preScripts.push(
-        PostmanHelper.generateAuthScript(
-          (step.authentication as AADTokenAuthentication).scope!,
-          authOption.tokenName
-        )
-      );
+    if (step.authentication) {
+      item.request.auth = this.checkAuthOption(step.authentication, preScripts, env);
     }
 
     item.description = step.operationId;

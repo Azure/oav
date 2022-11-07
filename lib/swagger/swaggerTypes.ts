@@ -148,7 +148,7 @@ export interface Operation {
   parameters?: Parameter[];
   schemes?: string[];
   deprecated?: boolean;
-  security?: Security[];
+  security?: Array<{ [securityDefinitionName: string]: string[] }>;
   tags?: string[];
   [xmsLongRunningOperation]?: boolean;
   [xmsLongRunningOperationOptions]?: { [xmsLongRunningOperationOptionsField]: string };
@@ -294,25 +294,25 @@ export interface ApiKeySecurity extends BaseSecurity {
   in: string;
 }
 
-interface BaseOAuthSecuirty extends BaseSecurity {
+interface BaseOAuthSecurity extends BaseSecurity {
   flow: string;
 }
 
-export interface OAuth2ImplicitSecurity extends BaseOAuthSecuirty {
+export interface OAuth2ImplicitSecurity extends BaseOAuthSecurity {
   authorizationUrl: string;
 }
 
-export interface OAuth2PasswordSecurity extends BaseOAuthSecuirty {
+export interface OAuth2PasswordSecurity extends BaseOAuthSecurity {
   tokenUrl: string;
   scopes?: OAuthScope[];
 }
 
-export interface OAuth2ApplicationSecurity extends BaseOAuthSecuirty {
+export interface OAuth2ApplicationSecurity extends BaseOAuthSecurity {
   tokenUrl: string;
   scopes?: OAuthScope[];
 }
 
-export interface OAuth2AccessCodeSecurity extends BaseOAuthSecuirty {
+export interface OAuth2AccessCodeSecurity extends BaseOAuthSecurity {
   tokenUrl: string;
   authorizationUrl: string;
   scopes?: OAuthScope[];
@@ -373,7 +373,7 @@ export interface SwaggerSpec {
   definitions?: { [definitionsName: string]: Schema };
   parameters?: { [parameterName: string]: BodyParameter | QueryParameter | FormDataParameter };
   responses?: { [responseName: string]: Response };
-  security?: Security[];
+  security?: Array<{ [securityDefinitionName: string]: string[] }>;
   securityDefinitions?: { [securityDefinitionName: string]: Security };
   tags?: [Tag];
 
