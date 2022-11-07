@@ -79,6 +79,6 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
 
   await generator.generateTestDefinition(trackingList, output);
 
-  await generator.writeGeneratedFiles();
+  await generator.writeGeneratedFiles(argv.recordingPaths);
   process.exit(0);
 }

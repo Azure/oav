@@ -91,7 +91,11 @@ function generateResponseDataAssertionScript(responseAssertion: StepResponseAsse
   };
 
   for (const [statusCode, v] of Object.entries(responseAssertion)) {
-    ret += `if (pm.response.code === ${statusCode}) {\n`;
+    if (statusCode.includes("x")) {
+      ret += `if (pm.response.code.toString().startsWith("${statusCode.substring(0, 1)}")) {\n`;
+    } else {
+      ret += `if (pm.response.code === ${statusCode}) {\n`;
+    }
     if (Array.isArray(v)) {
       for (const assertion of v) {
         const exp = assertion.value
@@ -129,7 +133,24 @@ export function appendScripts(scripts: string[], parameter: TestScriptParameter)
   }
   const assertions = [];
   if (parameter.types.includes("StatusCodeAssertion")) {
-    assertions.push("pm.response.to.be.success;");
+    if (parameter.responseAssertion === undefined) {
+      assertions.push("pm.response.to.be.success;");
+    } else {
+      const statusCodes = Object.keys(parameter.responseAssertion);
+      switch (statusCodes[0]) {
+        case "2xx":
+          assertions.push("pm.response.to.be.success;");
+          break;
+        case "4xx":
+          assertions.push("pm.response.to.be.clientError;");
+          break;
+        case "5xx":
+          assertions.push("pm.response.to.be.serverError;");
+          break;
+        default:
+          assertions.push(`pm.expect(pm.response.code).to.be.oneOf([${statusCodes.join(", ")}]);`);
+      }
+    }
   }
   if (parameter.types.includes("OverwriteVariables") && parameter.variables) {
     for (const [k, v] of parameter.variables) {
