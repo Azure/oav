@@ -187,6 +187,8 @@ describe("Live Validator", () => {
       const rest = await validator.validateRoundTrip(payload);
       const readOnlys = validator.operationLoader.getAttrs("microsoft.containerservice", "2019-08-01", "ManagedClusters_Get", "readOnly");
       expect(readOnlys).toMatchSnapshot();
+      const response = validator.operationLoader.getOperation("microsoft.containerservice", "2019-08-01", "ManagedClusters_Get");
+      expect(response).toMatchSnapshot();
       assert.equal(rest.errors.length, 3);
       assert.equal(rest.isSuccessful, false);
       for (const re of rest.errors) {
