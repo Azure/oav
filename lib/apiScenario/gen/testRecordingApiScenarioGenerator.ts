@@ -1,5 +1,6 @@
 import * as path from "path";
 import { inject, injectable } from "inversify";
+import { dump as yamlDump } from "js-yaml";
 import { HttpHeaders } from "@azure/core-http";
 import { cloneDeep } from "lodash";
 import { inversifyGetInstance, TYPES } from "../../inversifyUtils";
@@ -13,7 +14,7 @@ import { extractPathParamValue, pathRegexTransformer } from "../../transform/pat
 import { referenceFieldsTransformer } from "../../transform/referenceFieldsTransformer";
 import { applyGlobalTransformers, applySpecTransformers } from "../../transform/transformer";
 import { xmsPathsTransformer } from "../../transform/xmsPathsTransformer";
-import { ApiScenarioLoader, ApiScenarioLoaderOption } from "../apiScenarioLoader";
+import { ApiScenarioLoaderOption } from "../apiScenarioLoader";
 import {
   RawScenarioDefinition,
   RawScenario,
@@ -32,6 +33,7 @@ import { SchemaValidator } from "../../swaggerValidator/schemaValidator";
 import { getJsonPatchDiff } from "../diffUtils";
 import { replaceAllInObject } from "../variableUtils";
 import { logger } from ".././logger";
+import { FileLoader } from "../../swagger/fileLoader";
 
 const glob = require("glob");
 
@@ -73,9 +75,9 @@ export class TestRecordingApiScenarioGenerator {
 
   public constructor(
     @inject(TYPES.opts) private opts: TestRecordingApiScenarioGeneratorOption,
-    private testResourceLoader: ApiScenarioLoader,
     private swaggerLoader: SwaggerLoader,
     private jsonLoader: JsonLoader,
+    private fileLoader: FileLoader,
     private armUrlParser: ArmUrlParser,
     @inject(TYPES.schemaValidator) private schemaValidator: SchemaValidator
   ) {
@@ -135,12 +137,22 @@ export class TestRecordingApiScenarioGenerator {
     return matchedPaths;
   }
 
-  public async writeGeneratedFiles() {
+  public async writeGeneratedFiles(recordingPaths: string[]) {
     const testDefToWrite = this.testDefToWrite;
     this.testDefToWrite = [];
 
+    let path = "";
+    for (const p of recordingPaths) {
+      path += `# ${p}\n`;
+    }
+
     for (const { testDef, filePath } of testDefToWrite) {
-      await this.testResourceLoader.writeTestDefinitionFile(filePath, testDef);
+      const fileContent =
+        "# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/documentation/api-scenario/references/v1.2/schema.json\n\n" +
+        "# Generated from test-proxy recording in:\n" +
+        `${path}` +
+        yamlDump(testDef);
+      return this.fileLoader.writeFile(filePath, fileContent);
     }
   }
 

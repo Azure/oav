@@ -3,7 +3,6 @@
 import { basename } from "path";
 import { cloneDeep, pathDirName, pathJoin } from "@azure-tools/openapi-tools-common";
 import { inject, injectable } from "inversify";
-import { dump as yamlDump } from "js-yaml";
 import { apply as jsonMergeApply, generate as jsonMergePatchGenerate } from "json-merge-patch";
 import { inversifyGetInstance, TYPES } from "../inversifyUtils";
 import { FileLoader, FileLoaderOption } from "../swagger/fileLoader";
@@ -224,11 +223,6 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
         },
       });
     }
-  }
-
-  public async writeTestDefinitionFile(filePath: string, testDef: RawScenarioDefinition) {
-    const fileContent = yamlDump(testDef);
-    return this.fileLoader.writeFile(filePath, fileContent);
   }
 
   public async load(filePath: string): Promise<ScenarioDefinition> {
