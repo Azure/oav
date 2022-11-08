@@ -82,10 +82,11 @@ export class FileLoader implements Loader<string> {
     if (!this.opts.fileRoot) {
       return true;
     }
-    if (path.isAbsolute(filePath) && !filePath.startsWith(this.opts.fileRoot)){
-      return false
+
+    if (path.isAbsolute(filePath) && !filePath.startsWith(this.opts.fileRoot)) {
+      return false;
     }
-   
+
     filePath = pathJoin(this.opts.fileRoot, filePath);
     return filePath.startsWith(this.opts.fileRoot);
   }

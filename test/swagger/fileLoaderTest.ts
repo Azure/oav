@@ -8,8 +8,7 @@ describe("FileLoader functions", () => {
   describe("isUnderFileRoot", () => {
     it("should check absolute paths correctly", () => {
       const options: FileLoaderOption = {
-        fileRoot:
-          `${__dirname}/Azure/oav/test/liveValidation/swaggers/specification`,
+        fileRoot: `${__dirname}/Azure/oav/test/liveValidation/swaggers/specification`,
       };
       const loader = new FileLoader(options);
       const received = loader.isUnderFileRoot(`${__dirname}/Azure/oav/readme.md`);
