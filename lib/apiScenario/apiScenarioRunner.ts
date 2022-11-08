@@ -1,5 +1,6 @@
 import { HttpMethods } from "@azure/core-http";
 import { JsonLoader } from "../swagger/jsonLoader";
+import { xmsSkipUrlEncoding } from "../util/constants";
 import { getRandomString } from "../util/utils";
 import {
   ArmTemplate,
@@ -240,6 +241,12 @@ export class ApiScenarioRunner {
     };
 
     const newStep: StepRestCall = {
+      operation: {
+        parameters: [
+          { name: "scope", [xmsSkipUrlEncoding]: true, in: "path" },
+          { name: "roleAssignmentName", [xmsSkipUrlEncoding]: true, in: "path" },
+        ],
+      } as any,
       isPrepareStep: step.isPrepareStep,
       isCleanUpStep: step.isCleanUpStep,
       step: step.step,
