@@ -5,7 +5,7 @@ import assert from "assert";
 import { FileLoader, FileLoaderOption } from "../../lib/swagger/fileLoader";
 
 describe("FileLoader functions", () => {
-  describe("isFileUnderRoot", () => {
+  describe("isUnderFileRoot", () => {
     it("should check absolute paths correctly", () => {
       const options: FileLoaderOption = {
         fileRoot:
