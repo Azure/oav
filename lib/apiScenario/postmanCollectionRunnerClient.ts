@@ -11,7 +11,7 @@ import {
   Variable,
   VariableScope,
 } from "postman-collection";
-import { xmsSkipUrlEncoding } from "../util/constants";
+import { xmsLongRunningOperation, xmsSkipUrlEncoding } from "../util/constants";
 import { JsonLoader } from "../swagger/jsonLoader";
 import {
   ApiScenarioClientRequest,
@@ -263,7 +263,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
 pm.test("Started TestProxy recording", function() {
     pm.response.to.be.success;
     pm.response.to.have.header("x-recording-id");
-    pm.variables.set("x_recording_id", pm.response.headers.get("x-recording-id"));
+    pm.environment.set("x_recording_id", pm.response.headers.get("x-recording-id"));
 });`
     );
   }
@@ -605,7 +605,7 @@ pm.test("Stopped TestProxy recording", function() {
       step.responseAssertion
     ).forEach((s) => postScripts.push(s));
 
-    if (step.operation && step.operation["x-ms-long-running-operation"]) {
+    if (step.operation && step.operation[xmsLongRunningOperation]) {
       const metadata: LroItemMetadata = {
         type: "LRO",
         poller_item_name: `_${item.name}_poller`,

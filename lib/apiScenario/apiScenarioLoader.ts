@@ -30,6 +30,7 @@ import { applyGlobalTransformers, applySpecTransformers } from "../transform/tra
 import { traverseSwagger } from "../transform/traverseSwagger";
 import { xmsPathsTransformer } from "../transform/xmsPathsTransformer";
 import { getInputFiles } from "../util/utils";
+import { xmsExamples } from "../util/constants";
 import { logger } from "./logger";
 import {
   ArmDeploymentScriptResource,
@@ -106,7 +107,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     @inject(TYPES.schemaValidator) private schemaValidator: SchemaValidator
   ) {
     setDefaultOpts(opts, {
-      skipResolveRefKeys: ["x-ms-examples"],
+      skipResolveRefKeys: [xmsExamples],
       swaggerFilePaths: [],
       includeOperation: true,
     });
@@ -206,7 +207,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
           verMap.set(operation.operationId, spec.info.version);
 
           if (egOpMap) {
-            const xMsExamples = operation["x-ms-examples"] ?? {};
+            const xMsExamples = operation[xmsExamples] ?? {};
             for (const exampleName of Object.keys(xMsExamples)) {
               const example = xMsExamples[exampleName];
               if (typeof example.$ref !== "string") {
