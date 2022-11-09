@@ -918,20 +918,18 @@ export class SwaggerExampleValidator {
     }
 
     const provider = getProviderFromSpecPath(this.specPath);
-    if (
-      provider?.type === "resource-manager" &&
-      (headers.location === undefined || headers.location === "") &&
-      (headers.Location === undefined || headers.Location === "") &&
-      (headers["azure-AsyncOperation"] === undefined || headers["azure-AsyncOperation"] === "") &&
-      (headers["azure-asyncoperation"] === undefined || headers["azure-asyncoperation"] === "")
-    ) {
+    const providerType = provider?.type;
+    if (providerType !== undefined && this.isMissingHeader(providerType, headers)) {
       this.errors.push(
         this.issueFromErrorCode(
           operation.operationId!,
           examplePath,
           "LRO_RESPONSE_HEADER",
           {
-            header: "location or azure-AsyncOperation",
+            header:
+              providerType === "resource-manager"
+                ? "location or azure-AsyncOperation"
+                : "Operation-Id or Operation-Location or azure-AsyncOperation", // providerType === "data-plane"
           },
           operation.responses,
           undefined,
@@ -941,34 +939,38 @@ export class SwaggerExampleValidator {
         )
       );
     }
-    if (
-      provider?.type === "data-plane" &&
-      (headers["Operation-Id"] === undefined || headers["Operation-Id"] === "") &&
-      (headers["operation-id"] === undefined || headers["operation-id"] === "") &&
-      (headers["Operation-Location"] === undefined || headers["Operation-Location"] === "") &&
-      (headers["operation-location"] === undefined || headers["operation-location"] === "")
-    ) {
-      if (
-        (headers["azure-AsyncOperation"] === undefined || headers["azure-AsyncOperation"] === "") &&
-        (headers["azure-asyncoperation"] === undefined || headers["azure-asyncoperation"] === "")
-      ) {
-        this.errors.push(
-          this.issueFromErrorCode(
-            operation.operationId!,
-            examplePath,
-            "LRO_RESPONSE_HEADER",
-            {
-              header: "Operation-Id or Operation-Location or azure-AsyncOperation",
-            },
-            operation.responses,
-            undefined,
-            exampleObj,
-            `responses/${statusCode}/headers`,
-            ValidationResultSource.RESPONSE
-          )
-        );
+  };
+
+  private isMissingHeader = (
+    providerType: "resource-manager" | "data-plane",
+    header: StringMap<string>
+  ) => {
+    const headerConfig = {
+      "resource-manager": {
+        checkFirst: ["Location", "location", "azure-AsyncOperation", "azure-asyncoperation"],
+        checkSecond: [],
+      },
+      "data-plane": {
+        checkFirst: ["Operation-Id", "operation-id", "Operation-Location", "operation-location"],
+        checkSecond: ["azure-AsyncOperation", "azure-asyncoperation"],
+      },
+    };
+
+    const config = headerConfig[providerType];
+    for (const checkFirst of config.checkFirst) {
+      const value = header[checkFirst];
+      if (typeof value === "string" && value !== "") {
+        return false;
       }
     }
+    for (const checkSecond of config.checkSecond) {
+      const value = header[checkSecond];
+      if (typeof value === "string" && value !== "") {
+        return false;
+      }
+    }
+
+    return true;
   };
 }
 
