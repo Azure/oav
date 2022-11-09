@@ -2122,7 +2122,7 @@ if (
                   "pm.test(\\"Started TestProxy recording\\", function() {",
                   "    pm.response.to.be.success;",
                   "    pm.response.to.have.header(\\"x-recording-id\\");",
-                  "    pm.variables.set(\\"x_recording_id\\", pm.response.headers.get(\\"x-recording-id\\"));",
+                  "    pm.environment.set(\\"x_recording_id\\", pm.response.headers.get(\\"x-recording-id\\"));",
                   "});",
                 ],
                 "id": "3747vc",
