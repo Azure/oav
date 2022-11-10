@@ -169,7 +169,7 @@ export type StepRestCall = StepBase & {
 };
 
 export type StepResponseAssertion = {
-  [statusCode: number]:
+  [statusCode: string]:
     | {
         headers?: { [headerName: string]: string };
         body?: any;

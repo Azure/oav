@@ -11,6 +11,8 @@ import {
   Variable,
   VariableScope,
 } from "postman-collection";
+import { xmsSkipUrlEncoding } from "../util/constants";
+import { JsonLoader } from "../swagger/jsonLoader";
 import {
   ApiScenarioClientRequest,
   ApiScenarioRunnerClient,
@@ -44,6 +46,7 @@ export interface PostmanCollectionRunnerClientOption {
   skipAuth?: boolean;
   skipArmCall?: boolean;
   skipLroPoll?: boolean;
+  jsonLoader: JsonLoader;
 }
 
 interface PostmanAuthOption {
@@ -214,7 +217,9 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     if (Object.keys(scenario.variables).length > 0) {
       Object.entries(scenario.variables).forEach(([key, value]) => {
         if (value.value) {
-          preScripts.push(`pm.variables.set("${key}", "${env.resolveObjectValues(value.value)}");`);
+          preScripts.push(
+            `pm.variables.set("${key}", ${JSON.stringify(env.resolveObjectValues(value.value))});`
+          );
         }
       });
     }
@@ -509,13 +514,15 @@ pm.test("Stopped TestProxy recording", function() {
       })),
     });
 
-    item.request.addHeader({
-      key: "Content-Type",
-      value:
-        step.operation?.consumes?.[0] ??
-        step.operation?._path._spec.consumes?.[0] ??
-        "application/json",
-    });
+    if (clientRequest.body) {
+      item.request.addHeader({
+        key: "Content-Type",
+        value:
+          step.operation?.consumes?.[0] ??
+          step.operation?._path?._spec?.consumes?.[0] ??
+          "application/json",
+      });
+    }
     Object.entries(clientRequest.headers).forEach(([key, value]) => {
       item.request.addHeader({ key, value: convertPostmanFormat(value) });
     });
@@ -524,9 +531,54 @@ pm.test("Stopped TestProxy recording", function() {
 
     if (Object.keys(step.variables).length > 0) {
       Object.entries(step.variables).forEach(([key, value]) =>
-        preScripts.push(`pm.variables.set("${key}", "${env.resolveObjectValues(value.value)}");`)
+        preScripts.push(
+          `pm.variables.set("${key}", ${JSON.stringify(env.resolveObjectValues(value.value))});`
+        )
       );
     }
+
+    const replaceKey = new Set<string>();
+    const jsonLoader = this.opts.jsonLoader;
+
+    const encodeVariable = function (variable: { key?: string | null; value: string | null }) {
+      let skipEncode = false;
+      step.operation?.parameters?.forEach((p) => {
+        p = jsonLoader.resolveRefObj(p);
+        if (p.name === variable.key && p.in === "path" && p[xmsSkipUrlEncoding]) {
+          skipEncode = true;
+        }
+      });
+      if (skipEncode) {
+        return;
+      }
+      const regex = /\{\{([A-Za-z_$][A-Za-z0-9_]*)\}\}/g;
+      const replaceArray: Array<[number, number, string]> = [];
+      let match,
+        index = variable.value!.length;
+      while ((match = regex.exec(variable.value!))) {
+        replaceKey.add(match[1]);
+        replaceArray.push([match.index, match.index + match[0].length, `{{${match[1]}_encoded}}`]);
+        index = match.index + match[0].length;
+      }
+      replaceArray.push([index, variable.value!.length, ""]);
+      let r,
+        value = "";
+      index = 0;
+      while ((r = replaceArray.shift())) {
+        value += encodeURIComponent(variable.value!.substring(index, r[0])) + r[2];
+        index = r[1];
+      }
+      variable.value = value;
+    };
+
+    item.request.url.variables.each(encodeVariable);
+    item.request.url.query.each(encodeVariable);
+
+    replaceKey.forEach((key) => {
+      preScripts.push(
+        `pm.variables.set("${key}_encoded", encodeURIComponent(pm.variables.get("${key}")));`
+      );
+    });
 
     if (preScripts.length > 0) {
       PostmanHelper.addEvent(item.events, "prerequest", preScripts);
