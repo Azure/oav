@@ -1,6 +1,7 @@
 # Change Log - oav
 
 ## 10/20/2022 3.2.1
+- ModelValidator - Add LRO header validation for data-planes swagger
 - GenerateExamples - Add title and operationId to example
 - GenerateExamples - Generate subscriptionId in guid format
 - ModelValidator - Add type validation for additionalProperties whose type is specified as an object
