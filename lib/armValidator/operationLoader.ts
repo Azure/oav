@@ -178,6 +178,36 @@ export class OperationLoader {
     return false;
   }
 
+  public getOperation(
+    providerName: string,
+    apiVersion: string,
+    inputOperation: string
+  ) {
+    let res: string[] = [];
+    
+      const allOps = this.cache.get(providerName)?.get(apiVersion)?.get("spec");
+      if (allOps === undefined) {
+        console.log(`Spec cache should not be empty ${inputOperation}`);
+        return res;
+      }
+      for (const operation of allOps) {
+        const operationId = operation["operationId"];
+        const litOp = {
+          parameters: operation.parameters,
+          responses: operation.responses,
+          operationId: operation.operationId,
+        };
+        if (typeof operationId === "object") {
+          continue;
+        }
+        if (typeof operationId === "string" && operationId === inputOperation) {
+          return litOp;
+        }
+      }
+      return {};
+    
+  }
+
   public getAttrs(
     providerName: string,
     apiVersion: string,
