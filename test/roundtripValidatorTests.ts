@@ -7,6 +7,31 @@ jest.setTimeout(999999);
 
 describe("Live Validator", () => {
   describe("Initialization", () => {
+    it("OperationLoader should be completely initialized for outer circular ref", async () => {
+      console.log("OperationLoader should be completely initialized for outer circular ref");
+      const swaggerPattern = "specification/cognitiveservices/data-plane/Language/preview/2022-10-01-preview/*.json";
+      const glob = require("glob");
+      const filePaths: string[] = glob.sync(swaggerPattern, {
+        nodir: true,
+        ignore: []
+      });
+      const options = {
+        directory: "./test/liveValidation/swaggers/specification",
+        swaggerPathsPattern: [
+          "cognitiveservices/data-plane/Language/preview/2022-10-01-preview/*.json"
+        ],
+        swaggerPaths: filePaths,
+        enableRoundTripValidator: true,
+        enableRoundTripLazyBuild: false,
+        excludedSwaggerPathsPattern: []
+      };
+      const validator = new LiveValidator(options);
+      await validator.initialize();
+
+      const response = validator.operationLoader.getOperation("language", "2022-10-01-preview", "AnalyzeText");
+      expect(response).toMatchSnapshot();
+    });
+
     it("OperationLoader should not be initialized", async () => {
       console.log("OperationLoader should not be initialized");
       const swaggerPattern = "specification/compute/resource-manager/Microsoft.Compute/stable/2021-11-01/*.json";
