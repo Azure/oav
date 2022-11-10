@@ -5,11 +5,11 @@
 - GenerateExamples - Add title and operationId to example
 - GenerateExamples - Generate subscriptionId in guid format
 - ModelValidator - Add type validation for additionalProperties whose type is specified as an object
+- Bugfix: FileLoader - isUnderFileRoot function supports validation for absolute path
 - API Scenario
   - Add roleAssignment step
   - Bugfix: Use content-type specified in swagger
   - Bugfix: fix query parameter value type
-  - Bugfix: isUnderFileRoot function add validation to absolute path
 
 ## 10/10/2022 3.2.0
 
