@@ -8,6 +8,7 @@
   - Add roleAssignment step
   - Bugfix: Use content-type specified in swagger
   - Bugfix: fix query parameter value type
+  - Bugfix: isUnderFileRoot function add validation to absolute path
 
 ## 10/10/2022 3.2.0
 
