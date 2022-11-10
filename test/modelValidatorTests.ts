@@ -114,10 +114,13 @@ describe("Model Validation", () => {
     it("should report real exampleJsonPath when additional parameter includes '.'", async () => {
       const specPath2 = `${testPath}/modelValidation/swaggers/specification/additional/additional.json`;
       const result = await validate.validateExamples(specPath2, "AdditionalParameter");
-      assert.strictEqual(result.length, 1);
+      assert.strictEqual(result.length, 2);
       assert.strictEqual(result[0].code, "OBJECT_ADDITIONAL_PROPERTIES");
       assert.strictEqual(result[0].message, "Additional properties not allowed: @result.second");
       assert.strictEqual(result[0].exampleJsonPath, "$responses.200.body['@result.second']");
+      assert.strictEqual(result[1].code, "MINIMUM");
+      assert.strictEqual(result[1].message, "Value -1 is less than minimum 0");
+      assert.strictEqual(result[1].exampleJsonPath, "$responses.200.body['@result.first']");
     });
   });
 

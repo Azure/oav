@@ -614,7 +614,11 @@ export class SwaggerExampleValidator {
           // If parameter name includes ".", path should use "[]" for better understand.
           for (const parameter of err.params) {
             const parameterPosition = path.indexOf(parameter);
-            if (parameterPosition !== -1 && parameter.includes(".")) {
+            if (
+              parameterPosition !== -1 &&
+              typeof parameter === "string" &&
+              parameter.includes(".")
+            ) {
               path = path.substring(0, parameterPosition - 1) + `['${parameter}']`;
             }
           }
