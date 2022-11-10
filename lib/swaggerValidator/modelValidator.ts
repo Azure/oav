@@ -45,7 +45,7 @@ import {
 } from "../liveValidation/operationValidator";
 import { log } from "../util/logging";
 import { getFilePositionFromJsonPath } from "../util/jsonUtils";
-import { checkAndResolveGithubUrl } from "../util/utils";
+import { checkAndResolveGithubUrl, getProviderFromSpecPath } from "../util/utils";
 import { Severity } from "../util/severity";
 import { ValidationResultSource } from "../util/validationResultSource";
 import { SchemaValidateIssue, SchemaValidator, SchemaValidatorOption } from "./schemaValidator";
@@ -917,18 +917,19 @@ export class SwaggerExampleValidator {
       return;
     }
 
-    if (
-      (headers.location === undefined || headers.location === "") &&
-      (headers["azure-AsyncOperation"] === undefined || headers["azure-AsyncOperation"] === "") &&
-      (headers["azure-asyncoperation"] === undefined || headers["azure-asyncoperation"] === "")
-    ) {
+    const provider = getProviderFromSpecPath(this.specPath);
+    const providerType = provider?.type;
+    if (providerType !== undefined && this.isMissingHeader(providerType, headers)) {
       this.errors.push(
         this.issueFromErrorCode(
           operation.operationId!,
           examplePath,
           "LRO_RESPONSE_HEADER",
           {
-            header: "location or azure-AsyncOperation",
+            header:
+              providerType === "resource-manager"
+                ? "location or azure-AsyncOperation"
+                : "Operation-Id or Operation-Location or azure-AsyncOperation", // providerType === "data-plane"
           },
           operation.responses,
           undefined,
@@ -938,6 +939,38 @@ export class SwaggerExampleValidator {
         )
       );
     }
+  };
+
+  private isMissingHeader = (
+    providerType: "resource-manager" | "data-plane",
+    header: StringMap<string>
+  ) => {
+    const headerConfig = {
+      "resource-manager": {
+        checkFirst: ["Location", "location", "azure-AsyncOperation", "azure-asyncoperation"],
+        checkSecond: [],
+      },
+      "data-plane": {
+        checkFirst: ["Operation-Id", "operation-id", "Operation-Location", "operation-location"],
+        checkSecond: ["azure-AsyncOperation", "azure-asyncoperation"],
+      },
+    };
+
+    const config = headerConfig[providerType];
+    for (const checkFirst of config.checkFirst) {
+      const value = header[checkFirst];
+      if (typeof value === "string" && value !== "") {
+        return false;
+      }
+    }
+    for (const checkSecond of config.checkSecond) {
+      const value = header[checkSecond];
+      if (typeof value === "string" && value !== "") {
+        return false;
+      }
+    }
+
+    return true;
   };
 }
 
