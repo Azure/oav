@@ -613,13 +613,8 @@ export class SwaggerExampleValidator {
         for (let path of err.jsonPathsInPayload) {
           // If parameter name includes ".", path should use "[]" for better understand.
           for (const parameter of err.params) {
-            const parameterPosition = path.indexOf(parameter);
-            if (
-              parameterPosition !== -1 &&
-              typeof parameter === "string" &&
-              parameter.includes(".")
-            ) {
-              path = path.substring(0, parameterPosition - 1) + `['${parameter}']`;
+            if (typeof parameter === "string" && path.includes(`.${parameter}`) && parameter.includes(".")) {
+              path = path.substring(0, path.indexOf(`.${parameter}`)) + `['${parameter}']`;
             }
           }
           exampleJsonPaths.push(`$responses.${statusCode}${path}`);
