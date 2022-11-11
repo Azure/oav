@@ -64,7 +64,8 @@
       "properties": {
         "@result.first": {
           "type": "integer",
-          "format": "int32"
+          "format": "int32",
+          "minimum": 0
         }
       }
     },
