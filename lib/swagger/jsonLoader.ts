@@ -256,18 +256,67 @@ export class JsonLoader implements Loader<Json> {
     return this.mockNameMap[mockName];
   }
 
-  private resolveInnerRef(object: Json, refObjPath: string): string | undefined {
-    const refSegs = refObjPath.split("/");
-    const pathSegs = [];
-    while (refSegs.length > 0) {
-      pathSegs.push(refSegs.pop());
-      const refPath = refSegs.join("/");
-      if (!jsonPointer.has(object as {}, refPath)) {
-        continue;
-      }
-      // DO SOMETHING HERE!!!!
+  private resolveInnerRef(object: Json, refObjPath: string, rootObject: Json): string | undefined {
+    const refObjPathSegs = refObjPath.split("/");
+    const refSegs = [];
+    let refPath = refObjPath;
+    if (typeof rootObject !== "object" || rootObject === null) {
+      return undefined;
     }
-    return undefined;
+    if (isRefLike(object)) {
+      // should find subObject with the Ref_Json_Path
+      while (refObjPathSegs.length > 0) {
+        if (!jsonPointer.has(object as {}, refPath)) {
+          refSegs.push(refObjPathSegs.pop());
+          refPath = refObjPathSegs.join("/");
+          continue;
+        }
+        // find refPath in object and try to find path_b in subObject
+        const path_b = refSegs.reverse().join("/");
+        const innerPath = this.resolveInnerRef(jsonPointer.get(object, refPath), path_b, rootObject);
+        if (innerPath !== undefined) {
+          if (innerPath.startsWith("#")) {
+            return innerPath
+          }
+          return `${refObjPath}/${innerPath}`;
+        } else {
+          throw new Error(`Invalid sub jsonPath in Reflike sub Obj ${path_b}`);
+        }
+      }
+      const path_b = refSegs.reverse().join("/");
+      const innerPath = this.resolveInnerRef(jsonPointer.get(rootObject, object.$ref), path_b, rootObject);
+      if (innerPath !== undefined) {
+        if (innerPath.startsWith("#")) {
+          return innerPath
+        }
+        return `${refObjPath}/${innerPath}`;
+      } else {
+        throw new Error(`Invalid sub jsonPath in Reflike ${path_b}`);
+      }
+    } else if (typeof object === "object" && object !== null) {
+      // json object without ref
+      if (!jsonPointer.has(object as {}, refObjPath)) {
+        throw new Error(`Invalid jsonPath in obj ${refObjPath}`);
+      } else {
+        return refObjPath;
+      }
+    } else if (Array.isArray(object)) {
+      // DO SOMETHING HERE!!!!
+      for (let idx = 0; idx < object.length; ++idx) {
+        const item = object[idx];
+        if (typeof item === "object" && item !== null) {
+          const newRef = await this.resolveInnerRef(
+            item,
+            refObjPath,
+            rootObject
+          );
+          if (newRef !== undefined) {
+            return ??//DO SOMETHING HERE!!!
+          }
+        }
+      }
+      throw new Error(`Invalid jsonPath in array ${refObjPath}`);
+    }
   }
 
   private async resolveBundledRef(
@@ -290,7 +339,7 @@ export class JsonLoader implements Loader<Json> {
         // Local reference
         if (!jsonPointer.has(rootObject as {}, refObjPath)) {
           //DO SOMETHING HERE!!!!!!!! UPDATE refObjPath
-          newRefPath = this.resolveInnerRef(rootObject, refObjPath);
+          newRefPath = this.resolveInnerRef(rootObject, refObjPath, rootObject);
           if (newRefPath === undefined) {
             throw new JsonLoaderRefError(object);
           }
