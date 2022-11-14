@@ -1,5 +1,11 @@
 # Change Log - oav
 
+## 11/07/2022 3.2.2
+
+- API Scenario
+  - Support LRO polling with operation-location header
+  - Support AzureKey based authentication
+
 ## 10/20/2022 3.2.1
 
 - ModelValidator - Fix bug during reporting real exampleJsonPath

@@ -261,11 +261,11 @@ if (
                 console.log(err);
             } else {
                 let resJson = res.json();
-                pm.variables.set(
+                pm.environment.set(
                     "${tokenName}_expires_on",
                     resJson.expires_in + Math.floor(Date.now() / 1000)
                 );
-                pm.variables.set("${tokenName}", resJson.access_token);
+                pm.environment.set("${tokenName}", resJson.access_token);
             }
         }
     );

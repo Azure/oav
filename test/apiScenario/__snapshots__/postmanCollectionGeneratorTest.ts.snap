@@ -2081,11 +2081,11 @@ if (
                 console.log(err);
             } else {
                 let resJson = res.json();
-                pm.variables.set(
+                pm.environment.set(
                     \\"x_bearer_token_0_expires_on\\",
                     resJson.expires_in + Math.floor(Date.now() / 1000)
                 );
-                pm.variables.set(\\"x_bearer_token_0\\", resJson.access_token);
+                pm.environment.set(\\"x_bearer_token_0\\", resJson.access_token);
             }
         }
     );
@@ -2122,7 +2122,7 @@ if (
                   "pm.test(\\"Started TestProxy recording\\", function() {",
                   "    pm.response.to.be.success;",
                   "    pm.response.to.have.header(\\"x-recording-id\\");",
-                  "    pm.variables.set(\\"x_recording_id\\", pm.response.headers.get(\\"x-recording-id\\"));",
+                  "    pm.environment.set(\\"x_recording_id\\", pm.response.headers.get(\\"x-recording-id\\"));",
                   "});",
                 ],
                 "id": "3747vc",
@@ -2232,6 +2232,16 @@ if (
       "name": "__Prepare__",
     },
     Object {
+      "auth": Object {
+        "bearer": Array [
+          Object {
+            "key": "token",
+            "type": "string",
+            "value": "{{x_bearer_token_0}}",
+          },
+        ],
+        "type": "bearer",
+      },
       "description": Object {
         "content": "",
         "type": "text/plain",
@@ -2274,6 +2284,16 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
           "id": "39l4a3",
           "name": "checkName",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {
               "mode": "raw",
               "raw": "{
@@ -2353,7 +2373,7 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
                   "pm.response.to.be.success;",
                   "});",
                   "
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\");
+const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\");
 if (pollingUrl) {
     pm.variables.set(\\"x_polling_url\\", pollingUrl.replace(\\"https://management.azure.com\\",\\"http://localhost:5000\\"));
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
@@ -2367,6 +2387,16 @@ if (pollingUrl) {
           "id": "1gju0k",
           "name": "createStorageAccount",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {
               "mode": "raw",
               "raw": "{
@@ -2484,9 +2514,9 @@ try {
             pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
         }
     } else if (pm.response.size().body > 0) {
-        const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"];
+        const terminalStatus = [\\"succeeded\\", \\"failed\\", \\"canceled\\", \\"cancelled\\", \\"aborted\\", \\"deleted\\", \\"completed\\"];
         const json = pm.response.json();
-        if (json.status !== undefined && terminalStatus.indexOf(json.status) === -1) {
+        if (json.status !== undefined && terminalStatus.indexOf(json.status.toLowerCase()) === -1) {
             postman.setNextRequest(\\"_createStorageAccount_delay\\")
             if (pm.response.headers.has(\\"Retry-After\\")) {
                 pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
@@ -2615,6 +2645,16 @@ try {
       "name": "basic",
     },
     Object {
+      "auth": Object {
+        "bearer": Array [
+          Object {
+            "key": "token",
+            "type": "string",
+            "value": "{{x_bearer_token_0}}",
+          },
+        ],
+        "type": "bearer",
+      },
       "description": Object {
         "content": "",
         "type": "text/plain",
@@ -2669,6 +2709,16 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
           "id": "rxgyxc",
           "name": "checkName",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {
               "mode": "raw",
               "raw": "{
@@ -2748,7 +2798,7 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
                   "pm.response.to.be.success;",
                   "});",
                   "
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\");
+const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\");
 if (pollingUrl) {
     pm.variables.set(\\"x_polling_url\\", pollingUrl.replace(\\"https://management.azure.com\\",\\"http://localhost:5000\\"));
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
@@ -2762,6 +2812,16 @@ if (pollingUrl) {
           "id": "h1l4hw",
           "name": "createStorageAccount",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {
               "mode": "raw",
               "raw": "{
@@ -2879,9 +2939,9 @@ try {
             pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
         }
     } else if (pm.response.size().body > 0) {
-        const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"];
+        const terminalStatus = [\\"succeeded\\", \\"failed\\", \\"canceled\\", \\"cancelled\\", \\"aborted\\", \\"deleted\\", \\"completed\\"];
         const json = pm.response.json();
-        if (json.status !== undefined && terminalStatus.indexOf(json.status) === -1) {
+        if (json.status !== undefined && terminalStatus.indexOf(json.status.toLowerCase()) === -1) {
             postman.setNextRequest(\\"_createStorageAccount_delay\\")
             if (pm.response.headers.has(\\"Retry-After\\")) {
                 pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
@@ -3010,6 +3070,16 @@ try {
       "name": "overrideVariable",
     },
     Object {
+      "auth": Object {
+        "bearer": Array [
+          Object {
+            "key": "token",
+            "type": "string",
+            "value": "{{x_bearer_token_0}}",
+          },
+        ],
+        "type": "bearer",
+      },
       "description": Object {
         "content": "",
         "type": "text/plain",
@@ -3064,6 +3134,16 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
           "id": "49cuyt",
           "name": "checkName",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {
               "mode": "raw",
               "raw": "{
@@ -3143,7 +3223,7 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
                   "pm.response.to.be.success;",
                   "});",
                   "
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\");
+const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\");
 if (pollingUrl) {
     pm.variables.set(\\"x_polling_url\\", pollingUrl.replace(\\"https://management.azure.com\\",\\"http://localhost:5000\\"));
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
@@ -3157,6 +3237,16 @@ if (pollingUrl) {
           "id": "2tccjb",
           "name": "createStorageAccount",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {
               "mode": "raw",
               "raw": "{
@@ -3274,9 +3364,9 @@ try {
             pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
         }
     } else if (pm.response.size().body > 0) {
-        const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"];
+        const terminalStatus = [\\"succeeded\\", \\"failed\\", \\"canceled\\", \\"cancelled\\", \\"aborted\\", \\"deleted\\", \\"completed\\"];
         const json = pm.response.json();
-        if (json.status !== undefined && terminalStatus.indexOf(json.status) === -1) {
+        if (json.status !== undefined && terminalStatus.indexOf(json.status.toLowerCase()) === -1) {
             postman.setNextRequest(\\"_createStorageAccount_delay\\")
             if (pm.response.headers.has(\\"Retry-After\\")) {
                 pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
@@ -3435,6 +3525,16 @@ try {
           "id": "dm09uw",
           "name": "DeletedAccounts_Get",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {},
             "header": Array [
               Object {
@@ -3500,6 +3600,16 @@ try {
       "name": "primitiveParameter",
     },
     Object {
+      "auth": Object {
+        "bearer": Array [
+          Object {
+            "key": "token",
+            "type": "string",
+            "value": "{{x_bearer_token_0}}",
+          },
+        ],
+        "type": "bearer",
+      },
       "description": Object {
         "content": "",
         "type": "text/plain",
@@ -3545,7 +3655,7 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                   "
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\");
+const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\");
 if (pollingUrl) {
     pm.variables.set(\\"x_polling_url\\", pollingUrl.replace(\\"https://management.azure.com\\",\\"http://localhost:5000\\"));
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
@@ -3559,6 +3669,16 @@ if (pollingUrl) {
           "id": "qh9z16",
           "name": "createStorageAccount",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {
               "mode": "raw",
               "raw": "{
@@ -3682,9 +3802,9 @@ try {
             pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
         }
     } else if (pm.response.size().body > 0) {
-        const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"];
+        const terminalStatus = [\\"succeeded\\", \\"failed\\", \\"canceled\\", \\"cancelled\\", \\"aborted\\", \\"deleted\\", \\"completed\\"];
         const json = pm.response.json();
-        if (json.status !== undefined && terminalStatus.indexOf(json.status) === -1) {
+        if (json.status !== undefined && terminalStatus.indexOf(json.status.toLowerCase()) === -1) {
             postman.setNextRequest(\\"_createStorageAccount_delay\\")
             if (pm.response.headers.has(\\"Retry-After\\")) {
                 pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
@@ -4039,11 +4159,11 @@ if (
                 console.log(err);
             } else {
                 let resJson = res.json();
-                pm.variables.set(
+                pm.environment.set(
                     \\"x_bearer_token_0_expires_on\\",
                     resJson.expires_in + Math.floor(Date.now() / 1000)
                 );
-                pm.variables.set(\\"x_bearer_token_0\\", resJson.access_token);
+                pm.environment.set(\\"x_bearer_token_0\\", resJson.access_token);
             }
         }
     );
@@ -4137,6 +4257,16 @@ if (
       "name": "__Prepare__",
     },
     Object {
+      "auth": Object {
+        "bearer": Array [
+          Object {
+            "key": "token",
+            "type": "string",
+            "value": "{{x_bearer_token_0}}",
+          },
+        ],
+        "type": "bearer",
+      },
       "description": Object {
         "content": "",
         "type": "text/plain",
@@ -4175,6 +4305,16 @@ if (
           "id": "9120qs",
           "name": "checkName",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {
               "mode": "raw",
               "raw": "{
@@ -4244,7 +4384,7 @@ if (
                   "pm.response.to.be.success;",
                   "});",
                   "
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\");
+const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\");
 if (pollingUrl) {
     pm.variables.set(\\"x_polling_url\\", pollingUrl);
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
@@ -4258,6 +4398,16 @@ if (pollingUrl) {
           "id": "mcbyik",
           "name": "createStorageAccount",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {
               "mode": "raw",
               "raw": "{
@@ -4399,9 +4549,9 @@ try {
             pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
         }
     } else if (pm.response.size().body > 0) {
-        const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"];
+        const terminalStatus = [\\"succeeded\\", \\"failed\\", \\"canceled\\", \\"cancelled\\", \\"aborted\\", \\"deleted\\", \\"completed\\"];
         const json = pm.response.json();
-        if (json.status !== undefined && terminalStatus.indexOf(json.status) === -1) {
+        if (json.status !== undefined && terminalStatus.indexOf(json.status.toLowerCase()) === -1) {
             postman.setNextRequest(\\"_createStorageAccount_delay\\")
             if (pm.response.headers.has(\\"Retry-After\\")) {
                 pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
@@ -4535,6 +4685,16 @@ try {
           "id": "1ueh28",
           "name": "updateStorageAccount",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {
               "mode": "raw",
               "raw": "{
@@ -4665,6 +4825,16 @@ try {
           "id": "j917fd",
           "name": "getStorageAccount",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {},
             "method": "GET",
             "url": Object {
@@ -4743,6 +4913,16 @@ try {
           "id": "9e4snq",
           "name": "deleteStorageAccount",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {},
             "method": "DELETE",
             "url": Object {
@@ -4964,11 +5144,11 @@ if (
                 console.log(err);
             } else {
                 let resJson = res.json();
-                pm.variables.set(
+                pm.environment.set(
                     \\"x_bearer_token_0_expires_on\\",
                     resJson.expires_in + Math.floor(Date.now() / 1000)
                 );
-                pm.variables.set(\\"x_bearer_token_0\\", resJson.access_token);
+                pm.environment.set(\\"x_bearer_token_0\\", resJson.access_token);
             }
         }
     );
@@ -5062,6 +5242,16 @@ if (
       "name": "__Prepare__",
     },
     Object {
+      "auth": Object {
+        "bearer": Array [
+          Object {
+            "key": "token",
+            "type": "string",
+            "value": "{{x_bearer_token_0}}",
+          },
+        ],
+        "type": "bearer",
+      },
       "description": Object {
         "content": "",
         "type": "text/plain",
@@ -5104,6 +5294,16 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
           "id": "9120qs",
           "name": "checkName",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {
               "mode": "raw",
               "raw": "{
@@ -5173,7 +5373,7 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
                   "pm.response.to.be.success;",
                   "});",
                   "
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\");
+const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\");
 if (pollingUrl) {
     pm.variables.set(\\"x_polling_url\\", pollingUrl);
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
@@ -5187,6 +5387,16 @@ if (pollingUrl) {
           "id": "mcbyik",
           "name": "createStorageAccount",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {
               "mode": "raw",
               "raw": "{
@@ -5294,9 +5504,9 @@ try {
             pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
         }
     } else if (pm.response.size().body > 0) {
-        const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"];
+        const terminalStatus = [\\"succeeded\\", \\"failed\\", \\"canceled\\", \\"cancelled\\", \\"aborted\\", \\"deleted\\", \\"completed\\"];
         const json = pm.response.json();
-        if (json.status !== undefined && terminalStatus.indexOf(json.status) === -1) {
+        if (json.status !== undefined && terminalStatus.indexOf(json.status.toLowerCase()) === -1) {
             postman.setNextRequest(\\"_createStorageAccount_delay\\")
             if (pm.response.headers.has(\\"Retry-After\\")) {
                 pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
@@ -5401,6 +5611,16 @@ try {
       "name": "basic",
     },
     Object {
+      "auth": Object {
+        "bearer": Array [
+          Object {
+            "key": "token",
+            "type": "string",
+            "value": "{{x_bearer_token_0}}",
+          },
+        ],
+        "type": "bearer",
+      },
       "description": Object {
         "content": "",
         "type": "text/plain",
@@ -5455,6 +5675,16 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
           "id": "m388ep",
           "name": "checkName",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {
               "mode": "raw",
               "raw": "{
@@ -5524,7 +5754,7 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
                   "pm.response.to.be.success;",
                   "});",
                   "
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\");
+const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\");
 if (pollingUrl) {
     pm.variables.set(\\"x_polling_url\\", pollingUrl);
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
@@ -5538,6 +5768,16 @@ if (pollingUrl) {
           "id": "igg58r",
           "name": "createStorageAccount",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {
               "mode": "raw",
               "raw": "{
@@ -5645,9 +5885,9 @@ try {
             pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
         }
     } else if (pm.response.size().body > 0) {
-        const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"];
+        const terminalStatus = [\\"succeeded\\", \\"failed\\", \\"canceled\\", \\"cancelled\\", \\"aborted\\", \\"deleted\\", \\"completed\\"];
         const json = pm.response.json();
-        if (json.status !== undefined && terminalStatus.indexOf(json.status) === -1) {
+        if (json.status !== undefined && terminalStatus.indexOf(json.status.toLowerCase()) === -1) {
             postman.setNextRequest(\\"_createStorageAccount_delay\\")
             if (pm.response.headers.has(\\"Retry-After\\")) {
                 pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
@@ -5752,6 +5992,16 @@ try {
       "name": "overrideVariable",
     },
     Object {
+      "auth": Object {
+        "bearer": Array [
+          Object {
+            "key": "token",
+            "type": "string",
+            "value": "{{x_bearer_token_0}}",
+          },
+        ],
+        "type": "bearer",
+      },
       "description": Object {
         "content": "",
         "type": "text/plain",
@@ -5806,6 +6056,16 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
           "id": "ssi2a8",
           "name": "checkName",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {
               "mode": "raw",
               "raw": "{
@@ -5875,7 +6135,7 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
                   "pm.response.to.be.success;",
                   "});",
                   "
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\");
+const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\");
 if (pollingUrl) {
     pm.variables.set(\\"x_polling_url\\", pollingUrl);
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
@@ -5889,6 +6149,16 @@ if (pollingUrl) {
           "id": "x6oaag",
           "name": "createStorageAccount",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {
               "mode": "raw",
               "raw": "{
@@ -5996,9 +6266,9 @@ try {
             pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
         }
     } else if (pm.response.size().body > 0) {
-        const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"];
+        const terminalStatus = [\\"succeeded\\", \\"failed\\", \\"canceled\\", \\"cancelled\\", \\"aborted\\", \\"deleted\\", \\"completed\\"];
         const json = pm.response.json();
-        if (json.status !== undefined && terminalStatus.indexOf(json.status) === -1) {
+        if (json.status !== undefined && terminalStatus.indexOf(json.status.toLowerCase()) === -1) {
             postman.setNextRequest(\\"_createStorageAccount_delay\\")
             if (pm.response.headers.has(\\"Retry-After\\")) {
                 pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
@@ -6133,6 +6403,16 @@ try {
           "id": "p03jp7",
           "name": "DeletedAccounts_Get",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {},
             "method": "GET",
             "url": Object {
@@ -6186,6 +6466,16 @@ try {
       "name": "primitiveParameter",
     },
     Object {
+      "auth": Object {
+        "bearer": Array [
+          Object {
+            "key": "token",
+            "type": "string",
+            "value": "{{x_bearer_token_0}}",
+          },
+        ],
+        "type": "bearer",
+      },
       "description": Object {
         "content": "",
         "type": "text/plain",
@@ -6231,7 +6521,7 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                   "
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\");
+const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\");
 if (pollingUrl) {
     pm.variables.set(\\"x_polling_url\\", pollingUrl);
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
@@ -6245,6 +6535,16 @@ if (pollingUrl) {
           "id": "ivu9xy",
           "name": "createStorageAccount",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {
               "mode": "raw",
               "raw": "{
@@ -6358,9 +6658,9 @@ try {
             pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
         }
     } else if (pm.response.size().body > 0) {
-        const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"];
+        const terminalStatus = [\\"succeeded\\", \\"failed\\", \\"canceled\\", \\"cancelled\\", \\"aborted\\", \\"deleted\\", \\"completed\\"];
         const json = pm.response.json();
-        if (json.status !== undefined && terminalStatus.indexOf(json.status) === -1) {
+        if (json.status !== undefined && terminalStatus.indexOf(json.status.toLowerCase()) === -1) {
             postman.setNextRequest(\\"_createStorageAccount_delay\\")
             if (pm.response.headers.has(\\"Retry-After\\")) {
                 pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
@@ -6637,11 +6937,11 @@ if (
                 console.log(err);
             } else {
                 let resJson = res.json();
-                pm.variables.set(
+                pm.environment.set(
                     \\"x_bearer_token_0_expires_on\\",
                     resJson.expires_in + Math.floor(Date.now() / 1000)
                 );
-                pm.variables.set(\\"x_bearer_token_0\\", resJson.access_token);
+                pm.environment.set(\\"x_bearer_token_0\\", resJson.access_token);
             }
         }
     );
@@ -6735,6 +7035,16 @@ if (
       "name": "__Prepare__",
     },
     Object {
+      "auth": Object {
+        "bearer": Array [
+          Object {
+            "key": "token",
+            "type": "string",
+            "value": "{{x_bearer_token_0}}",
+          },
+        ],
+        "type": "bearer",
+      },
       "description": Object {
         "content": "",
         "type": "text/plain",
@@ -6766,7 +7076,7 @@ if (
                   "pm.response.to.be.success;",
                   "});",
                   "
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\");
+const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\");
 if (pollingUrl) {
     pm.variables.set(\\"x_polling_url\\", pollingUrl);
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
@@ -6780,6 +7090,16 @@ if (pollingUrl) {
           "id": "clnzjc",
           "name": "createStorageAccount",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {
               "mode": "raw",
               "raw": "{
@@ -6909,9 +7229,9 @@ try {
             pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
         }
     } else if (pm.response.size().body > 0) {
-        const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"];
+        const terminalStatus = [\\"succeeded\\", \\"failed\\", \\"canceled\\", \\"cancelled\\", \\"aborted\\", \\"deleted\\", \\"completed\\"];
         const json = pm.response.json();
-        if (json.status !== undefined && terminalStatus.indexOf(json.status) === -1) {
+        if (json.status !== undefined && terminalStatus.indexOf(json.status.toLowerCase()) === -1) {
             postman.setNextRequest(\\"_createStorageAccount_delay\\")
             if (pm.response.headers.has(\\"Retry-After\\")) {
                 pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
@@ -7036,7 +7356,7 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                   "
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\");
+const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\");
 if (pollingUrl) {
     pm.variables.set(\\"x_polling_url\\", pollingUrl);
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
@@ -7050,6 +7370,16 @@ if (pollingUrl) {
           "id": "hlqn5m",
           "name": "createStorageAccount1",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {
               "mode": "raw",
               "raw": "{
@@ -7179,9 +7509,9 @@ try {
             pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
         }
     } else if (pm.response.size().body > 0) {
-        const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"];
+        const terminalStatus = [\\"succeeded\\", \\"failed\\", \\"canceled\\", \\"cancelled\\", \\"aborted\\", \\"deleted\\", \\"completed\\"];
         const json = pm.response.json();
-        if (json.status !== undefined && terminalStatus.indexOf(json.status) === -1) {
+        if (json.status !== undefined && terminalStatus.indexOf(json.status.toLowerCase()) === -1) {
             postman.setNextRequest(\\"_createStorageAccount1_delay\\")
             if (pm.response.headers.has(\\"Retry-After\\")) {
                 pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
