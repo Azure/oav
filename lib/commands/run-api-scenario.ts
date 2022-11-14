@@ -2,7 +2,6 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import * as fs from "fs";
-import * as path from "path";
 import { pathDirName, pathJoin, pathResolve } from "@azure-tools/openapi-tools-common";
 import { findReadMe } from "@azure/openapi-markdown";
 import * as yargs from "yargs";
@@ -172,63 +171,60 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     logger.info("scenario-file:");
     logger.info(scenarioFiles);
 
-    for (const scenarioFilePath of scenarioFiles) {
-      let env: EnvironmentVariables = {};
-      if (argv.envFile !== undefined) {
-        env = JSON.parse(fs.readFileSync(argv.envFile).toString());
-      }
-      if (process.env[apiScenarioEnvKey]) {
-        const envFromVariable = JSON.parse(process.env[apiScenarioEnvKey] as string);
-        for (const key of Object.keys(envFromVariable)) {
-          if (env[key] !== undefined && envFromVariable[key] !== env[key]) {
-            logger.warn(
-              `Notice: the variable '${key}' in '${argv.e}' is overwritten by the variable in the environment '${apiScenarioEnvKey}'.`
-            );
-          }
-        }
-        env = { ...env, ...envFromVariable };
-      }
-
-      if (argv.armEndpoint !== undefined) {
-        env.armEndpoint = argv.armEndpoint;
-      }
-      if (argv.location !== undefined) {
-        env.location = argv.location;
-      }
-      if (argv.subscriptionId !== undefined) {
-        env.subscriptionId = argv.subscriptionId;
-      }
-      if (argv.resourceGroup !== undefined) {
-        env.resourceGroupName = argv.resourceGroup;
-      }
-
-      const opt: PostmanCollectionGeneratorOption = {
-        name: path.basename(scenarioFilePath),
-        scenarioDef: scenarioFilePath,
-        fileRoot: fileRoot,
-        checkUnderFileRoot: false,
-        generateCollection: true,
-        useJsonParser: false,
-        runCollection: !argv.dryRun,
-        env,
-        outputFolder: argv.output,
-        markdown: (argv.report ?? []).includes("markdown"),
-        junit: (argv.report ?? []).includes("junit"),
-        html: (argv.report ?? []).includes("html"),
-        eraseXmsExamples: false,
-        eraseDescription: false,
-        testProxy: argv.testProxy,
-        skipValidation: argv.skipValidation,
-        savePayload: argv.savePayload,
-        generateExample: argv.generateExample,
-        skipCleanUp: argv.skipCleanUp,
-        verbose: ["verbose", "debug", "silly"].indexOf(argv.logLevel) >= 0,
-        swaggerFilePaths: swaggerFilePaths,
-        devMode: argv.devMode,
-      };
-      const generator = inversifyGetInstance(PostmanCollectionGenerator, opt);
-      await generator.run();
+    let env: EnvironmentVariables = {};
+    if (argv.envFile !== undefined) {
+      env = JSON.parse(fs.readFileSync(argv.envFile).toString());
     }
+    if (process.env[apiScenarioEnvKey]) {
+      const envFromVariable = JSON.parse(process.env[apiScenarioEnvKey] as string);
+      for (const key of Object.keys(envFromVariable)) {
+        if (env[key] !== undefined && envFromVariable[key] !== env[key]) {
+          logger.warn(
+            `Notice: the variable '${key}' in '${argv.e}' is overwritten by the variable in the environment '${apiScenarioEnvKey}'.`
+          );
+        }
+      }
+      env = { ...env, ...envFromVariable };
+    }
+
+    if (argv.armEndpoint !== undefined) {
+      env.armEndpoint = argv.armEndpoint;
+    }
+    if (argv.location !== undefined) {
+      env.location = argv.location;
+    }
+    if (argv.subscriptionId !== undefined) {
+      env.subscriptionId = argv.subscriptionId;
+    }
+    if (argv.resourceGroup !== undefined) {
+      env.resourceGroupName = argv.resourceGroup;
+    }
+
+    const opt: PostmanCollectionGeneratorOption = {
+      fileRoot: fileRoot,
+      scenarioFiles,
+      checkUnderFileRoot: false,
+      generateCollection: true,
+      useJsonParser: false,
+      runCollection: !argv.dryRun,
+      env,
+      outputFolder: argv.output,
+      markdown: (argv.report ?? []).includes("markdown"),
+      junit: (argv.report ?? []).includes("junit"),
+      html: (argv.report ?? []).includes("html"),
+      eraseXmsExamples: false,
+      eraseDescription: false,
+      testProxy: argv.testProxy,
+      skipValidation: argv.skipValidation,
+      savePayload: argv.savePayload,
+      generateExample: argv.generateExample,
+      skipCleanUp: argv.skipCleanUp,
+      verbose: ["verbose", "debug", "silly"].indexOf(argv.logLevel) >= 0,
+      swaggerFilePaths: swaggerFilePaths,
+      devMode: argv.devMode,
+    };
+    const generator = inversifyGetInstance(PostmanCollectionGenerator, opt);
+    await generator.run();
 
     return 0;
   });

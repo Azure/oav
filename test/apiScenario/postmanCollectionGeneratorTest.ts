@@ -13,8 +13,7 @@ describe("postmanCollectionGenerator", () => {
 
   it("should generate PostmanCollection - storageQuickStart", async () => {
     const generator = inversifyGetInstance(PostmanCollectionGenerator, {
-      name: "storageQuickStart",
-      scenarioDef: "Microsoft.Storage/stable/2021-08-01/scenarios/storageQuickStart.yaml",
+      scenarioFiles: ["Microsoft.Storage/stable/2021-08-01/scenarios/storageQuickStart.yaml"],
       fileRoot: "test/apiScenario/fixtures/specification/storage/resource-manager/",
       checkUnderFileRoot: false,
       generateCollection: true,
@@ -27,14 +26,13 @@ describe("postmanCollectionGenerator", () => {
       outputFolder: "generated",
       runId: "jestRunId",
     });
-    const collection = await generator.run();
-    expect(collection).toMatchSnapshot();
+    const collections = await generator.run();
+    expect(collections[0]).toMatchSnapshot();
   });
 
   it("should generate PostmanCollection - enableTestProxy", async () => {
     const generator = inversifyGetInstance(PostmanCollectionGenerator, {
-      name: "storageQuickStart",
-      scenarioDef: "Microsoft.Storage/stable/2021-08-01/scenarios/storageQuickStart.yaml",
+      scenarioFiles: ["Microsoft.Storage/stable/2021-08-01/scenarios/storageQuickStart.yaml"],
       fileRoot: "test/apiScenario/fixtures/specification/storage/resource-manager/",
       checkUnderFileRoot: false,
       generateCollection: true,
@@ -48,14 +46,13 @@ describe("postmanCollectionGenerator", () => {
       runId: "jestRunIdTestProxy",
       testProxy: "http://localhost:5000",
     });
-    const collection = await generator.run();
-    expect(collection).toMatchSnapshot();
+    const collections = await generator.run();
+    expect(collections[0]).toMatchSnapshot();
   });
 
   it("should generate PostmanCollection - storageBasicExample", async () => {
     const generator = inversifyGetInstance(PostmanCollectionGenerator, {
-      name: "storageBasicExample",
-      scenarioDef: "Microsoft.Storage/stable/2021-08-01/scenarios/storageBasicExample.yaml",
+      scenarioFiles: ["Microsoft.Storage/stable/2021-08-01/scenarios/storageBasicExample.yaml"],
       fileRoot: "test/apiScenario/fixtures/specification/storage/resource-manager/",
       eraseXmsExamples: false,
       checkUnderFileRoot: false,
@@ -69,14 +66,13 @@ describe("postmanCollectionGenerator", () => {
       outputFolder: "generated",
       runId: "jestRunId",
     });
-    const collection = await generator.run();
-    expect(collection).toMatchSnapshot();
+    const collections = await generator.run();
+    expect(collections[0]).toMatchSnapshot();
   });
 
   it("should generate PostmanCollection - testKeyReplace", async () => {
     const generator = inversifyGetInstance(PostmanCollectionGenerator, {
-      name: "testKeyReplace",
-      scenarioDef: "Microsoft.Storage/stable/2021-08-01/scenarios/testKeyReplace.yaml",
+      scenarioFiles: ["Microsoft.Storage/stable/2021-08-01/scenarios/testKeyReplace.yaml"],
       fileRoot: "test/apiScenario/fixtures/specification/storage/resource-manager/",
       eraseXmsExamples: false,
       checkUnderFileRoot: false,
@@ -90,14 +86,13 @@ describe("postmanCollectionGenerator", () => {
       outputFolder: "generated",
       runId: "jestRunId",
     });
-    const collection = await generator.run();
-    expect(collection).toMatchSnapshot();
+    const collections = await generator.run();
+    expect(collections[0]).toMatchSnapshot();
   });
 
   it("should generate PostmanCollection - appconfig data plane", async () => {
     const generator = inversifyGetInstance(PostmanCollectionGenerator, {
-      name: "appconfig",
-      scenarioDef: "Microsoft.AppConfiguration/stable/1.0/scenarios/test.yaml",
+      scenarioFiles: ["Microsoft.AppConfiguration/stable/1.0/scenarios/test.yaml"],
       fileRoot: "test/apiScenario/fixtures/specification/appconfiguration/data-plane/",
       checkUnderFileRoot: false,
       generateCollection: true,
@@ -110,7 +105,7 @@ describe("postmanCollectionGenerator", () => {
       outputFolder: "generated",
       runId: "jestRunId",
     });
-    const collection = await generator.run();
-    expect(collection).toMatchSnapshot();
+    const collections = await generator.run();
+    expect(collections[0]).toMatchSnapshot();
   });
 });
