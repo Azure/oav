@@ -1,0 +1,163 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Azure Maps Dataset Service",
+    "version": "2022-09-01-preview",
+    "description": "APIs for managing datasets from uploaded data in Azure Maps."
+  },
+  "schemes": [
+    "https"
+  ],
+  "consumes": [],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/datasets/miss-header": {
+      "post": {
+        "description": "Create dataset",
+        "operationId": "Dataset_Create",
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "location"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/ApiVersion"
+          },
+          {
+            "$ref": "#/parameters/ConversionIdQuery"
+          },
+          {
+            "$ref": "#/parameters/DatasetDescription"
+          }
+        ],
+        "responses": {
+          "202": {
+            "$ref": "#/responses/202AsyncV2"
+          },
+          "default": {
+            "$ref": "#/responses/default"
+          }
+        },
+        "x-ms-examples": {
+          "Create dataset by conversionId": {
+            "$ref": "./examples/Dataset_Create_ConversionId.json"
+          }
+        }
+      }
+    }
+  },
+  "responses": {
+    "202AsyncV2": {
+      "description": "Request Accepted: The request has been accepted for processing. Please use the URL in the Operation-Location Header to obtain status.",
+      "headers": {
+        "Operation-Location": {
+          "type": "string",
+          "description": "New URL to check for the results of the long running process."
+        }
+      }
+    },
+    "default": {
+      "description": "An unexpected error occurred.",
+      "schema": {
+        "$ref": "#/definitions/ErrorResponse"
+      },
+      "x-ms-error-response": true
+    }
+  },
+  "definitions": {
+    "ErrorDetail": {
+      "type": "object",
+      "description": "The error detail.",
+      "properties": {
+        "code": {
+          "readOnly": true,
+          "type": "string",
+          "description": "The error code."
+        },
+        "message": {
+          "readOnly": true,
+          "type": "string",
+          "description": "The error message."
+        },
+        "target": {
+          "readOnly": true,
+          "type": "string",
+          "description": "The error target."
+        },
+        "details": {
+          "readOnly": true,
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ErrorDetail"
+          },
+          "x-ms-identifiers": [],
+          "description": "The error details."
+        },
+        "additionalInfo": {
+          "readOnly": true,
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ErrorAdditionalInfo"
+          },
+          "x-ms-identifiers": [],
+          "description": "The error additional info."
+        }
+      }
+    },
+    "ErrorResponse": {
+      "type": "object",
+      "title": "Error response",
+      "description": "Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).",
+      "properties": {
+        "error": {
+          "description": "The error object.",
+          "$ref": "#/definitions/ErrorDetail"
+        }
+      }
+    },
+    "ErrorAdditionalInfo": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "readOnly": true,
+          "type": "string",
+          "description": "The additional info type."
+        },
+        "info": {
+          "readOnly": true,
+          "type": "object",
+          "description": "The additional info."
+        }
+      },
+      "description": "The resource management error additional info."
+    }
+  },
+  "parameters": {
+    "ApiVersion": {
+      "name": "api-version",
+      "description": "Version number of Azure Maps API.",
+      "type": "string",
+      "in": "query",
+      "required": true,
+      "default": "2022-09-01-preview",
+      "x-ms-parameter-location": "client"
+    },
+    "ConversionIdQuery": {
+      "name": "conversionId",
+      "description": "ID to create the dataset. The `conversionId` must be obtained from a successful call to the Conversion Service [Convert API](https://docs.microsoft.com/en-us/rest/api/maps/v2/conversion/convert). Only one conversionId can be provided per API call. **conversionId and udid are mutually exclusive parameters.**",
+      "type": "string",
+      "in": "query",
+      "required": false,
+      "x-ms-parameter-location": "method"
+    },
+    "DatasetDescription": {
+      "name": "description",
+      "description": "The description to be given to the dataset.",
+      "type": "string",
+      "in": "query",
+      "x-ms-parameter-location": "method"
+    }
+  }
+}
