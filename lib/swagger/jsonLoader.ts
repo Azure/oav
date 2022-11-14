@@ -124,7 +124,7 @@ export class JsonLoader implements Loader<Json> {
       );
       spec = await parser.dereference(
         this.fileLoader.resolvePath(cache.filePath),
-        fileContent,
+        spec,
         resolveOption
       );
       fileContent = spec;
@@ -186,8 +186,7 @@ export class JsonLoader implements Loader<Json> {
 
     if (this.opts.shouldResolveRef) {
       cache.resolveRef = this.opts.shouldResolveRef;
-      await this.loadFile(cache);
-      
+      return await this.loadAndResolveFile(cache);
     }
     return this.loadFile(cache);
   }
@@ -256,14 +255,16 @@ export class JsonLoader implements Loader<Json> {
     return this.mockNameMap[mockName];
   }
 
-  private resolveInnerRef(object: Json, refObjPath: string, rootObject: Json): string | undefined {
-    const refObjPathSegs = refObjPath.split("/");
+  private resolveInnerRef(object: Json, refObjPath: string, rootObject: Json, rootPath: string): string | undefined {
+    const rawRefObjPath = refObjPath.substring(refObjPath.indexOf("#"));
+    const rawRootPath = rootPath.substring(rootPath.indexOf("#"));
+    const refObjPathSegs = rawRefObjPath.split("/");
     const refSegs = [];
-    let refPath = refObjPath;
+    let refPath = rawRefObjPath;
     if (typeof rootObject !== "object" || rootObject === null) {
       return undefined;
     }
-    if (isRefLike(object)) {
+    if (typeof object === "object" && object !== null) {
       // should find subObject with the Ref_Json_Path
       while (refObjPathSegs.length > 0) {
         if (!jsonPointer.has(object as {}, refPath)) {
@@ -271,52 +272,23 @@ export class JsonLoader implements Loader<Json> {
           refPath = refObjPathSegs.join("/");
           continue;
         }
+        if (refSegs.length === 0) {
+          return `${rawRootPath}${rawRefObjPath}`;
+        }
         // find refPath in object and try to find path_b in subObject
         const path_b = refSegs.reverse().join("/");
-        const innerPath = this.resolveInnerRef(jsonPointer.get(object, refPath), path_b, rootObject);
-        if (innerPath !== undefined) {
-          if (innerPath.startsWith("#")) {
-            return innerPath
+        const newPath = this.resolveInnerRef(jsonPointer.get(object, refPath), path_b, rootObject, refPath);
+        return newPath;
           }
-          return `${refObjPath}/${innerPath}`;
-        } else {
-          throw new Error(`Invalid sub jsonPath in Reflike sub Obj ${path_b}`);
-        }
-      }
+      if (isRefLike(object)) {
+        refSegs.push("");
       const path_b = refSegs.reverse().join("/");
-      const innerPath = this.resolveInnerRef(jsonPointer.get(rootObject, object.$ref), path_b, rootObject);
-      if (innerPath !== undefined) {
-        if (innerPath.startsWith("#")) {
-          return innerPath
-        }
-        return `${refObjPath}/${innerPath}`;
-      } else {
-        throw new Error(`Invalid sub jsonPath in Reflike ${path_b}`);
+        const rawRefPath = object.$ref.substring(object.$ref.indexOf("/"));
+        const newPath = this.resolveInnerRef(jsonPointer.get(rootObject, rawRefPath), path_b, rootObject, rawRefPath);
+        return newPath;
       }
-    } else if (typeof object === "object" && object !== null) {
-      // json object without ref
-      if (!jsonPointer.has(object as {}, refObjPath)) {
-        throw new Error(`Invalid jsonPath in obj ${refObjPath}`);
-      } else {
-        return refObjPath;
-      }
-    } else if (Array.isArray(object)) {
-      // DO SOMETHING HERE!!!!
-      for (let idx = 0; idx < object.length; ++idx) {
-        const item = object[idx];
-        if (typeof item === "object" && item !== null) {
-          const newRef = await this.resolveInnerRef(
-            item,
-            refObjPath,
-            rootObject
-          );
-          if (newRef !== undefined) {
-            return ??//DO SOMETHING HERE!!!
-          }
-        }
-      }
-      throw new Error(`Invalid jsonPath in array ${refObjPath}`);
     }
+    throw new Error(`Invalid jsonPath in invalid obj ${rawRefObjPath}`);
   }
 
   private async resolveBundledRef(
@@ -339,7 +311,7 @@ export class JsonLoader implements Loader<Json> {
         // Local reference
         if (!jsonPointer.has(rootObject as {}, refObjPath)) {
           //DO SOMETHING HERE!!!!!!!! UPDATE refObjPath
-          newRefPath = this.resolveInnerRef(rootObject, refObjPath, rootObject);
+          newRefPath = this.resolveInnerRef(rootObject, refObjPath, rootObject, refObjPath);
           if (newRefPath === undefined) {
             throw new JsonLoaderRefError(object);
           }
