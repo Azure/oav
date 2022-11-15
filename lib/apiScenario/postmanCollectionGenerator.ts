@@ -43,7 +43,6 @@ export interface PostmanCollectionGeneratorOption
   extends ApiScenarioLoaderOption,
     SwaggerAnalyzerOption {
   fileRoot: string;
-  scenarioFiles: string[];
   env: EnvironmentVariables;
   outputFolder: string;
   markdown?: boolean;
@@ -94,17 +93,13 @@ export class PostmanCollectionGenerator {
     private swaggerAnalyzer: SwaggerAnalyzer
   ) {}
 
-  public async run(): Promise<Collection[]> {
-    const result: Collection[] = [];
+  public async run(scenarioFile: string): Promise<Collection> {
+    const scenarioDef = await this.apiScenarioLoader.load(scenarioFile);
+    const [collection, environment] = await this.doRun(scenarioDef);
 
-    for (const scenarioFile of this.opt.scenarioFiles) {
-      const scenarioDef = await this.apiScenarioLoader.load(scenarioFile);
-      const [collection, environment] = await this.doRun(scenarioDef);
-      this.environmentMap.set(scenarioFile, environment);
-
-      result.push(collection);
-    }
-    return result;
+    // cache environment
+    this.environmentMap.set(scenarioFile, environment);
+    return collection;
   }
 
   async doRun(scenarioDef: ScenarioDefinition): Promise<[Collection, VariableScope]> {

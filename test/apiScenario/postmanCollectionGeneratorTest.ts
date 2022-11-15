@@ -13,7 +13,6 @@ describe("postmanCollectionGenerator", () => {
 
   it("should generate PostmanCollection - storageQuickStart", async () => {
     const generator = inversifyGetInstance(PostmanCollectionGenerator, {
-      scenarioFiles: ["Microsoft.Storage/stable/2021-08-01/scenarios/storageQuickStart.yaml"],
       fileRoot: "test/apiScenario/fixtures/specification/storage/resource-manager/",
       checkUnderFileRoot: false,
       generateCollection: true,
@@ -26,13 +25,14 @@ describe("postmanCollectionGenerator", () => {
       outputFolder: "generated",
       runId: "jestRunId",
     });
-    const collections = await generator.run();
-    expect(collections[0]).toMatchSnapshot();
+    const collection = await generator.run(
+      "Microsoft.Storage/stable/2021-08-01/scenarios/storageQuickStart.yaml"
+    );
+    expect(collection).toMatchSnapshot();
   });
 
   it("should generate PostmanCollection - enableTestProxy", async () => {
     const generator = inversifyGetInstance(PostmanCollectionGenerator, {
-      scenarioFiles: ["Microsoft.Storage/stable/2021-08-01/scenarios/storageQuickStart.yaml"],
       fileRoot: "test/apiScenario/fixtures/specification/storage/resource-manager/",
       checkUnderFileRoot: false,
       generateCollection: true,
@@ -46,13 +46,14 @@ describe("postmanCollectionGenerator", () => {
       runId: "jestRunIdTestProxy",
       testProxy: "http://localhost:5000",
     });
-    const collections = await generator.run();
-    expect(collections[0]).toMatchSnapshot();
+    const collection = await generator.run(
+      "Microsoft.Storage/stable/2021-08-01/scenarios/storageQuickStart.yaml"
+    );
+    expect(collection).toMatchSnapshot();
   });
 
   it("should generate PostmanCollection - storageBasicExample", async () => {
     const generator = inversifyGetInstance(PostmanCollectionGenerator, {
-      scenarioFiles: ["Microsoft.Storage/stable/2021-08-01/scenarios/storageBasicExample.yaml"],
       fileRoot: "test/apiScenario/fixtures/specification/storage/resource-manager/",
       eraseXmsExamples: false,
       checkUnderFileRoot: false,
@@ -66,13 +67,14 @@ describe("postmanCollectionGenerator", () => {
       outputFolder: "generated",
       runId: "jestRunId",
     });
-    const collections = await generator.run();
-    expect(collections[0]).toMatchSnapshot();
+    const collection = await generator.run(
+      "Microsoft.Storage/stable/2021-08-01/scenarios/storageQuickStart.yaml"
+    );
+    expect(collection).toMatchSnapshot();
   });
 
   it("should generate PostmanCollection - testKeyReplace", async () => {
     const generator = inversifyGetInstance(PostmanCollectionGenerator, {
-      scenarioFiles: ["Microsoft.Storage/stable/2021-08-01/scenarios/testKeyReplace.yaml"],
       fileRoot: "test/apiScenario/fixtures/specification/storage/resource-manager/",
       eraseXmsExamples: false,
       checkUnderFileRoot: false,
@@ -86,13 +88,14 @@ describe("postmanCollectionGenerator", () => {
       outputFolder: "generated",
       runId: "jestRunId",
     });
-    const collections = await generator.run();
-    expect(collections[0]).toMatchSnapshot();
+    const collection = await generator.run(
+      "Microsoft.Storage/stable/2021-08-01/scenarios/testKeyReplace.yaml"
+    );
+    expect(collection).toMatchSnapshot();
   });
 
   it("should generate PostmanCollection - appconfig data plane", async () => {
     const generator = inversifyGetInstance(PostmanCollectionGenerator, {
-      scenarioFiles: ["Microsoft.AppConfiguration/stable/1.0/scenarios/test.yaml"],
       fileRoot: "test/apiScenario/fixtures/specification/appconfiguration/data-plane/",
       checkUnderFileRoot: false,
       generateCollection: true,
@@ -105,7 +108,9 @@ describe("postmanCollectionGenerator", () => {
       outputFolder: "generated",
       runId: "jestRunId",
     });
-    const collections = await generator.run();
-    expect(collections[0]).toMatchSnapshot();
+    const collection = await generator.run(
+      "Microsoft.AppConfiguration/stable/1.0/scenarios/test.yaml"
+    );
+    expect(collection).toMatchSnapshot();
   });
 });

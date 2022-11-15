@@ -202,7 +202,6 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
 
     const opt: PostmanCollectionGeneratorOption = {
       fileRoot: fileRoot,
-      scenarioFiles,
       checkUnderFileRoot: false,
       generateCollection: true,
       useJsonParser: false,
@@ -224,7 +223,10 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       devMode: argv.devMode,
     };
     const generator = inversifyGetInstance(PostmanCollectionGenerator, opt);
-    await generator.run();
+
+    for (const scenarioFile of scenarioFiles) {
+      await generator.run(scenarioFile);
+    }
 
     return 0;
   });

@@ -127,7 +127,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     return inversifyGetInstance(ApiScenarioLoader, opts);
   }
 
-  private async initialize(swaggerFilePaths?: string[], readmeTags?: ReadmeTag[]) {
+  private async initialize(swaggerFilePaths?: string[], additionalTags?: ReadmeTag[]) {
     if (this.initialized) {
       throw new Error("Already initialized");
     }
@@ -141,8 +141,8 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       );
     }
 
-    if (readmeTags) {
-      for (const e of readmeTags) {
+    if (additionalTags) {
+      for (const e of additionalTags) {
         logger.verbose(`Additional readme tag: ${e.filePath}`);
 
         const inputFiles = await getInputFiles(e.filePath, e.tag);
@@ -230,9 +230,9 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
   }
 
   public async load(filePath: string): Promise<ScenarioDefinition> {
-    const [rawDef, readmeTags] = await this.apiScenarioYamlLoader.load(filePath);
+    const [rawDef, additionalTags] = await this.apiScenarioYamlLoader.load(filePath);
 
-    await this.initialize(this.opts.swaggerFilePaths, readmeTags);
+    await this.initialize(this.opts.swaggerFilePaths, additionalTags);
 
     rawDef.scope = rawDef.scope ?? "ResourceGroup";
     const isArmScope = rawDef.scope !== "None";
