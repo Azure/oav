@@ -83,19 +83,60 @@ export class JsonLoader implements Loader<Json> {
     return fileContent;
   });
 
-  private loadAndResolveFile = getLazyBuilder("resolved", async (cache: FileCache) => {
-    const fileString = await this.fileLoader.load(cache.filePath);
-    if (this.opts.keepOriginalContent || cache.resolveRef) {
-      // eslint-disable-next-line require-atomic-updates
-      cache.originalContent = fileString;
+  public constructor(
+    @inject(TYPES.opts) private opts: JsonLoaderOption,
+    private fileLoader: FileLoader
+  ) {
+    setDefaultOpts(opts, {
+      useJsonParser: true,
+      eraseDescription: true,
+      eraseXmsExamples: true,
+      transformRef: true,
+      supportYaml: false,
+    });
+    this.skipResolveRefKeys = new Set(opts.skipResolveRefKeys);
     }
-    //get unresolved content from cache.originalContent
-    let fileContent = this.parseFileContent(cache, fileString);
+
+  private parseFileContent(cache: FileCache, fileString: string): any {
+    if (
+      this.opts.supportYaml &&
+      (cache.filePath.endsWith(".yaml") || cache.filePath.endsWith(".yml"))
+    ) {
+      return parseYaml(fileString, {
+        filename: cache.filePath,
+        json: true,
+      });
+    }
+
+    return this.opts.useJsonParser ? parseJson(cache.filePath, fileString) : JSON.parse(fileString);
+
+    // throw new Error(`Unknown file format while loading file ${cache.filePath}`);
+  }
+
+  private getFileContent(filePath: string, fileString: string): any {
+    if (
+      this.opts.supportYaml &&
+      (filePath.endsWith(".yaml") || filePath.endsWith(".yml"))
+    ) {
+      return parseYaml(fileString, {
+        filename: filePath,
+        json: true,
+      });
+    }
+
+    return this.opts.useJsonParser ? parseJson(filePath, fileString) : JSON.parse(fileString);
+
+    // throw new Error(`Unknown file format while loading file ${cache.filePath}`);
+  }
+
+  private async loadResolvedFile(filePath: string) {
+    const fileString = await this.fileLoader.load(filePath);
+    let fileContent = this.getFileContent(filePath, fileString);
     // try to bundle and deference swagger, but ignore circular defination
     // remove unnecessary properties
     removeProperty(fileContent);
     // eslint-disable-next-line require-atomic-updates
-    //resolve all refs using lib: https://github.com/APIDevTools/json-schema-ref-parser
+      // resolve all refs using lib: https://github.com/APIDevTools/json-schema-ref-parser
     const resolveOption: $RefParser.Options = {
       resolve: {
         file: {
@@ -114,60 +155,21 @@ export class JsonLoader implements Loader<Json> {
     };
     try {
       const parser = new $RefParser();
-      if (cache.filePath.includes("analyz")) {
-        console.log(cache.filePath);
-      }
       let spec = await parser.bundle(
-        this.fileLoader.resolvePath(cache.filePath),
+          this.fileLoader.resolvePath(filePath),
         fileContent,
         resolveOption
       );
       spec = await parser.dereference(
-        this.fileLoader.resolvePath(cache.filePath),
+          this.fileLoader.resolvePath(filePath),
         spec,
         resolveOption
       );
-      fileContent = spec;
+      removeProperty(spec);
+        return spec;
     } catch (err) {
-      throw `Failed to dereference swagger ${cache.filePath} err: ${JSON.stringify(err)}`; 
+        throw `Failed to dereference swagger ${filePath} err: ${JSON.stringify(err)}`; 
     }
-    cache.resolved = fileContent;
-    (fileContent as any)[$id] = cache.mockName;
-    if (cache.skipResolveRef !== true) {
-      fileContent = await this.resolveBundledRef(fileContent, ["$"], fileContent, cache.filePath, false);
-    }
-    this.loadedFiles.push(fileContent);
-    return fileContent;
-  });
-
-  public constructor(
-    @inject(TYPES.opts) private opts: JsonLoaderOption,
-    private fileLoader: FileLoader
-  ) {
-    setDefaultOpts(opts, {
-      useJsonParser: true,
-      eraseDescription: true,
-      eraseXmsExamples: true,
-      transformRef: true,
-      supportYaml: false,
-    });
-    this.skipResolveRefKeys = new Set(opts.skipResolveRefKeys);
-  }
-
-  private parseFileContent(cache: FileCache, fileString: string): any {
-    if (
-      this.opts.supportYaml &&
-      (cache.filePath.endsWith(".yaml") || cache.filePath.endsWith(".yml"))
-    ) {
-      return parseYaml(fileString, {
-        filename: cache.filePath,
-        json: true,
-      });
-    }
-
-    return this.opts.useJsonParser ? parseJson(cache.filePath, fileString) : JSON.parse(fileString);
-
-    // throw new Error(`Unknown file format while loading file ${cache.filePath}`);
   }
 
   public async load(inputFilePath: string, skipResolveRef?: boolean): Promise<Json> {
@@ -185,10 +187,13 @@ export class JsonLoader implements Loader<Json> {
     }
 
     if (this.opts.shouldResolveRef) {
-      cache.resolveRef = this.opts.shouldResolveRef;
-      return await this.loadAndResolveFile(cache);
+      return await this.loadResolvedFile(filePath);
     }
     return this.loadFile(cache);
+  }
+
+  public resetShouldResolveRef() {
+    this.opts.shouldResolveRef = false;
   }
 
   public getFileContentFromCache(filePath: string): Json | undefined {
@@ -253,124 +258,6 @@ export class JsonLoader implements Loader<Json> {
 
   public getRealPath(mockName: string): string {
     return this.mockNameMap[mockName];
-  }
-
-  private resolveInnerRef(object: Json, refObjPath: string, rootObject: Json, rootPath: string): string | undefined {
-    const rawRefObjPath = refObjPath.substring(refObjPath.indexOf("#"));
-    const rawRootPath = rootPath.substring(rootPath.indexOf("#"));
-    const refObjPathSegs = rawRefObjPath.split("/");
-    const refSegs = [];
-    let refPath = rawRefObjPath;
-    if (typeof rootObject !== "object" || rootObject === null) {
-      return undefined;
-    }
-    if (typeof object === "object" && object !== null) {
-      // should find subObject with the Ref_Json_Path
-      while (refObjPathSegs.length > 0) {
-        if (!jsonPointer.has(object as {}, refPath)) {
-          refSegs.push(refObjPathSegs.pop());
-          refPath = refObjPathSegs.join("/");
-          continue;
-        }
-        if (refSegs.length === 0) {
-          return `${rawRootPath}${rawRefObjPath}`;
-        }
-        // find refPath in object and try to find path_b in subObject
-        const path_b = refSegs.reverse().join("/");
-        const newPath = this.resolveInnerRef(jsonPointer.get(object, refPath), path_b, rootObject, refPath);
-        return newPath;
-          }
-      if (isRefLike(object)) {
-        refSegs.push("");
-      const path_b = refSegs.reverse().join("/");
-        const rawRefPath = object.$ref.substring(object.$ref.indexOf("/"));
-        const newPath = this.resolveInnerRef(jsonPointer.get(rootObject, rawRefPath), path_b, rootObject, rawRefPath);
-        return newPath;
-      }
-    }
-    throw new Error(`Invalid jsonPath in invalid obj ${rawRefObjPath}`);
-  }
-
-  private async resolveBundledRef(
-    object: Json,
-    pathArr: string[],
-    rootObject: Json,
-    relativeFilePath: string,
-    skipResolveChildRef: boolean
-  ): Promise<Json> {
-    if (isRefLike(object)) {
-      const ref = object.$ref;
-      const sp = ref.split("#");
-      if (sp.length > 2) {
-        throw new Error("ref format error multiple #");
-      }
-
-      const [refFilePath, refObjPath] = sp;
-      let newRefPath = undefined;
-      if (refFilePath === "") {
-        // Local reference
-        if (!jsonPointer.has(rootObject as {}, refObjPath)) {
-          //DO SOMETHING HERE!!!!!!!! UPDATE refObjPath
-          newRefPath = this.resolveInnerRef(rootObject, refObjPath, rootObject, refObjPath);
-          if (newRefPath === undefined) {
-            throw new JsonLoaderRefError(object);
-          }
-          const mockName = (rootObject as any)[$id];
-          return { $ref: `${mockName}#${newRefPath}` };
-        }
-        const mockName = (rootObject as any)[$id];
-        return { $ref: `${mockName}#${refObjPath}` };
-      } else {
-        throw new Error(`Encounter outer ref when resolve bundled spec: ${refFilePath}`);
-      }
-    }
-
-    if (Array.isArray(object)) {
-      for (let idx = 0; idx < object.length; ++idx) {
-        const item = object[idx];
-        if (typeof item === "object" && item !== null) {
-          const newRef = await this.resolveBundledRef(
-            item,
-            pathArr.concat([idx.toString()]),
-            rootObject,
-            relativeFilePath,
-            skipResolveChildRef
-          );
-          if (newRef !== item) {
-            // eslint-disable-next-line require-atomic-updates
-            (object as any)[idx] = newRef;
-          }
-        }
-      }
-    } else if (typeof object === "object" && object !== null) {
-      const obj = object as any;
-      if (this.opts.eraseDescription && typeof obj.description === "string") {
-        delete obj.description;
-      }
-      if (this.opts.eraseXmsExamples && obj[xmsExamples] !== undefined) {
-        delete obj[xmsExamples];
-      }
-
-      for (const key of Object.keys(obj)) {
-        const item = obj[key];
-        if (typeof item === "object" && item !== null) {
-          const newRef = await this.resolveBundledRef(
-            item,
-            pathArr.concat([key]),
-            rootObject,
-            relativeFilePath,
-            skipResolveChildRef || this.skipResolveRefKeys.has(key)
-          );
-          if (newRef !== item) {
-            obj[key] = newRef;
-          }
-        }
-      }
-    } else {
-      throw new Error("Invalid json");
-    }
-
-    return object;
   }
 
   private async resolveRef(

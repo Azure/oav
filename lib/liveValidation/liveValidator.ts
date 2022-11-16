@@ -233,18 +233,26 @@ export class LiveValidator {
     );
 
     const allSpecs: SwaggerSpec[] = [];
+    const resolvedSpecs: SwaggerSpec[] = [];
+    if (this.options.enableRoundTripValidator) {
+      for (const swaggerPath of swaggerPaths) {
+        const spec = await this.getSwaggerInitializer(this.loader!, swaggerPath);
+        if (spec !== undefined) {
+          resolvedSpecs.push(spec);
+        }
+      }
+      for (const entry of resolvedSpecs) {
+        this.operationLoader.init(entry, this.options.enableRoundTripLazyBuild);
+      }
+      this.resetShouldResolveRef();
+    }
+
     while (swaggerPaths.length > 0) {
       const swaggerPath = swaggerPaths.shift()!;
       this.swaggerList.push(swaggerPath);
       const spec = await this.getSwaggerInitializer(this.loader!, swaggerPath);
       if (spec !== undefined) {
         allSpecs.push(spec);
-      }
-    }
-
-    if (this.options.enableRoundTripValidator) {
-      for (const entry of allSpecs) {
-        this.operationLoader.init(entry, this.options.enableRoundTripLazyBuild);
       }
     }
 
@@ -852,6 +860,11 @@ export class LiveValidator {
     };
   }
 
+  private resetShouldResolveRef() {
+    this.loader!.resetShouldResolveRef();
+    this.options.shouldResolveRef = false;
+  }
+
   private async getSwaggerPaths(): Promise<string[]> {
     if (this.options.swaggerPaths.length !== 0) {
       this.logging(
@@ -892,6 +905,9 @@ export class LiveValidator {
         "Oav.liveValidator.getSwaggerInitializer.loader.load",
         elapsedTimeLoadSpec
       );
+      if (this.options.shouldResolveRef) {
+        return spec;
+      }
 
       const startTimeAddSpecToCache = Date.now();
       this.operationSearcher.addSpecToCache(spec);

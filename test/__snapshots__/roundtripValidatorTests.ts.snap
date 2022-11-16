@@ -99,7 +99,7 @@ Object {
         "additionalProperties": false,
         "properties": Object {
           "error": Object {
-            "$ref": "_0#/definitions/AnalyzeTextJobState/allOf/0/properties/errors/items",
+            "$ref": "#/definitions/AnalyzeTextJobState/allOf/0/properties/errors/items",
           },
         },
         "required": Array [
@@ -116,28 +116,28 @@ Object {
 
 exports[`Live Validator Initialization OperationLoader should be initialized only with spec 1`] = `
 Array [
-  "parameters/schema/properties/id",
-  "parameters/schema/properties/name",
-  "parameters/schema/properties/type",
   "parameters/schema/properties/properties/properties/statuses",
-  "/200/schema/properties/id",
-  "/200/schema/properties/name",
-  "/200/schema/properties/type",
+  "parameters/schema/allOf/0/properties/id",
+  "parameters/schema/allOf/0/properties/name",
+  "parameters/schema/allOf/0/properties/type",
   "/200/schema/properties/properties/properties/statuses",
+  "/200/schema/allOf/0/properties/id",
+  "/200/schema/allOf/0/properties/name",
+  "/200/schema/allOf/0/properties/type",
 ]
 `;
 
 exports[`Live Validator Initialization OperationLoader should be initialized only with spec 2`] = `
 Map {
   "readOnly" => Map {
-    "parameters/schema/properties/id" => Array [],
-    "parameters/schema/properties/name" => Array [],
-    "parameters/schema/properties/type" => Array [],
     "parameters/schema/properties/properties/properties/statuses" => Array [],
-    "/200/schema/properties/id" => Array [],
-    "/200/schema/properties/name" => Array [],
-    "/200/schema/properties/type" => Array [],
+    "parameters/schema/allOf/0/properties/id" => Array [],
+    "parameters/schema/allOf/0/properties/name" => Array [],
+    "parameters/schema/allOf/0/properties/type" => Array [],
     "/200/schema/properties/properties/properties/statuses" => Array [],
+    "/200/schema/allOf/0/properties/id" => Array [],
+    "/200/schema/allOf/0/properties/name" => Array [],
+    "/200/schema/allOf/0/properties/type" => Array [],
   },
   "secret" => Map {},
   "default" => Map {},
@@ -151,8 +151,6 @@ Map {
   },
 }
 `;
-
-exports[`Live Validator Initialization OperationLoader should not be initialized 1`] = `Object {}`;
 
 exports[`Live Validator Initialization Round trip validation fail 1`] = `
 Object {
@@ -288,15 +286,15 @@ Object {
 
 exports[`Live Validator Initialization Round trip validation of circular spec 1`] = `
 Array [
-  "/200/schema/properties/id",
-  "/200/schema/properties/name",
-  "/200/schema/properties/type",
-  "/200/schema/properties/properties/properties/provisioningState",
-  "/200/schema/properties/properties/properties/maxAgentPools",
-  "/200/schema/properties/properties/properties/fqdn",
-  "/200/schema/properties/properties/properties/agentPoolProfiles/items/properties/provisioningState",
-  "/200/schema/properties/identity/properties/principalId",
-  "/200/schema/properties/identity/properties/tenantId",
+  "/200/schema/allOf/0/properties/id",
+  "/200/schema/allOf/0/properties/name",
+  "/200/schema/allOf/0/properties/type",
+  "/200/schema/allOf/1/properties/properties/properties/provisioningState",
+  "/200/schema/allOf/1/properties/properties/properties/maxAgentPools",
+  "/200/schema/allOf/1/properties/properties/properties/fqdn",
+  "/200/schema/allOf/1/properties/properties/properties/agentPoolProfiles/items/allOf/0/properties/provisioningState",
+  "/200/schema/allOf/1/properties/identity/properties/principalId",
+  "/200/schema/allOf/1/properties/identity/properties/tenantId",
 ]
 `;
 
