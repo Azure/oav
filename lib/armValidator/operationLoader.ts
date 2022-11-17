@@ -183,12 +183,10 @@ export class OperationLoader {
     apiVersion: string,
     inputOperation: string
   ) {
-    let res: string[] = [];
-    
-      const allOps = this.cache.get(providerName)?.get(apiVersion)?.get("spec");
+    const allOps = this.cache.get(providerName)?.get(apiVersion)?.get("spec");
       if (allOps === undefined) {
         console.log(`Spec cache should not be empty ${inputOperation}`);
-        return res;
+        return {};
       }
       for (const operation of allOps) {
         const operationId = operation["operationId"];

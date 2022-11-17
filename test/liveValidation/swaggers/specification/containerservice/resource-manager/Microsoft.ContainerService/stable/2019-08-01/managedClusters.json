@@ -2270,6 +2270,9 @@
         "error": {
           "$ref": "#/definitions/CloudErrorBody",
           "description": "Details about the error."
+        },
+        "innerError": {
+          "$ref": "common.json#/definitions/InnerErrorModel"
         }
       },
       "description": "An error response from the Container service."

@@ -298,6 +298,226 @@ Array [
 ]
 `;
 
+exports[`Live Validator Initialization Round trip validation of circular spec 2`] = `
+Object {
+  "requestValidationResult": Object {
+    "errors": Array [],
+    "isSuccessful": true,
+    "operationInfo": Object {
+      "apiVersion": "2019-08-01",
+      "operationId": "ManagedClusters_Get",
+    },
+    "runtimeException": undefined,
+  },
+  "responseValidationResult": Object {
+    "errors": Array [
+      Object {
+        "code": "INVALID_CONTENT_TYPE",
+        "documentationUrl": "",
+        "jsonPathsInPayload": Array [],
+        "message": "Invalid Content-Type (application/octet-stream).  These are supported: application/json",
+        "pathsInPayload": Array [],
+        "schemaPath": "",
+        "severity": 1,
+        "source": Object {
+          "position": Object {
+            "column": -1,
+            "line": -1,
+          },
+          "url": "",
+        },
+      },
+      Object {
+        "code": "OBJECT_MISSING_REQUIRED_PROPERTY",
+        "documentationUrl": "",
+        "jsonPathsInPayload": Array [
+          "$.properties.linuxProfile.ssh",
+        ],
+        "message": "Missing required property: ssh",
+        "params": Array [
+          "ssh",
+        ],
+        "pathsInPayload": Array [
+          "/properties/linuxProfile/ssh",
+        ],
+        "schemaPath": "#/required",
+        "severity": 0,
+        "source": Object {
+          "jsonRef": "#/definitions/ContainerServiceLinuxProfile",
+          "position": Object {
+            "column": 37,
+            "line": 1547,
+          },
+          "url": "containerservice/resource-manager/Microsoft.ContainerService/stable/2019-08-01/managedClusters.json",
+        },
+      },
+      Object {
+        "code": "PATTERN",
+        "documentationUrl": "",
+        "jsonPathsInPayload": Array [
+          "$.properties.networkProfile.podCidr",
+        ],
+        "message": "String does not match pattern ^([0-9]{1,3}\\\\.){3}[0-9]{1,3}(\\\\/([0-9]|[1-2][0-9]|3[0-2]))?$: aaaaaaaaaaaaa",
+        "params": Array [
+          "^([0-9]{1,3}\\\\.){3}[0-9]{1,3}(\\\\/([0-9]|[1-2][0-9]|3[0-2]))?$",
+          "aaaaaaaaaaaaa",
+        ],
+        "pathsInPayload": Array [
+          "/properties/networkProfile/podCidr",
+        ],
+        "schemaPath": "#/properties/podCidr/pattern",
+        "severity": 0,
+        "source": Object {
+          "jsonRef": "#/definitions/ContainerServiceNetworkProfile/properties/podCidr",
+          "position": Object {
+            "column": 20,
+            "line": 1592,
+          },
+          "url": "containerservice/resource-manager/Microsoft.ContainerService/stable/2019-08-01/managedClusters.json",
+        },
+      },
+      Object {
+        "code": "PATTERN",
+        "documentationUrl": "",
+        "jsonPathsInPayload": Array [
+          "$.properties.networkProfile.serviceCidr",
+        ],
+        "message": "String does not match pattern ^([0-9]{1,3}\\\\.){3}[0-9]{1,3}(\\\\/([0-9]|[1-2][0-9]|3[0-2]))?$: aaaaaaaaaaa",
+        "params": Array [
+          "^([0-9]{1,3}\\\\.){3}[0-9]{1,3}(\\\\/([0-9]|[1-2][0-9]|3[0-2]))?$",
+          "aaaaaaaaaaa",
+        ],
+        "pathsInPayload": Array [
+          "/properties/networkProfile/serviceCidr",
+        ],
+        "schemaPath": "#/properties/serviceCidr/pattern",
+        "severity": 0,
+        "source": Object {
+          "jsonRef": "#/definitions/ContainerServiceNetworkProfile/properties/serviceCidr",
+          "position": Object {
+            "column": 24,
+            "line": 1598,
+          },
+          "url": "containerservice/resource-manager/Microsoft.ContainerService/stable/2019-08-01/managedClusters.json",
+        },
+      },
+      Object {
+        "code": "PATTERN",
+        "documentationUrl": "",
+        "jsonPathsInPayload": Array [
+          "$.properties.networkProfile.dnsServiceIP",
+        ],
+        "message": "String does not match pattern ^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$: aaaaaaaaa",
+        "params": Array [
+          "^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$",
+          "aaaaaaaaa",
+        ],
+        "pathsInPayload": Array [
+          "/properties/networkProfile/dnsServiceIP",
+        ],
+        "schemaPath": "#/properties/dnsServiceIP/pattern",
+        "severity": 0,
+        "source": Object {
+          "jsonRef": "#/definitions/ContainerServiceNetworkProfile/properties/dnsServiceIP",
+          "position": Object {
+            "column": 25,
+            "line": 1604,
+          },
+          "url": "containerservice/resource-manager/Microsoft.ContainerService/stable/2019-08-01/managedClusters.json",
+        },
+      },
+      Object {
+        "code": "PATTERN",
+        "documentationUrl": "",
+        "jsonPathsInPayload": Array [
+          "$.properties.networkProfile.dockerBridgeCidr",
+        ],
+        "message": "String does not match pattern ^([0-9]{1,3}\\\\.){3}[0-9]{1,3}(\\\\/([0-9]|[1-2][0-9]|3[0-2]))?$: aaaaaaaaaaaaa",
+        "params": Array [
+          "^([0-9]{1,3}\\\\.){3}[0-9]{1,3}(\\\\/([0-9]|[1-2][0-9]|3[0-2]))?$",
+          "aaaaaaaaaaaaa",
+        ],
+        "pathsInPayload": Array [
+          "/properties/networkProfile/dockerBridgeCidr",
+        ],
+        "schemaPath": "#/properties/dockerBridgeCidr/pattern",
+        "severity": 0,
+        "source": Object {
+          "jsonRef": "#/definitions/ContainerServiceNetworkProfile/properties/dockerBridgeCidr",
+          "position": Object {
+            "column": 29,
+            "line": 1610,
+          },
+          "url": "containerservice/resource-manager/Microsoft.ContainerService/stable/2019-08-01/managedClusters.json",
+        },
+      },
+      Object {
+        "code": "ENUM_CASE_MISMATCH",
+        "documentationUrl": "",
+        "jsonPathsInPayload": Array [
+          "$.properties.networkProfile.loadBalancerSku",
+        ],
+        "message": "Enum does not match case for: Standard",
+        "params": Array [
+          "Standard",
+          Array [
+            "standard",
+            "basic",
+          ],
+        ],
+        "pathsInPayload": Array [
+          "/properties/networkProfile/loadBalancerSku",
+        ],
+        "schemaPath": "#/properties/loadBalancerSku/enum",
+        "severity": 0,
+        "source": Object {
+          "jsonRef": "#/definitions/ContainerServiceNetworkProfile/properties/loadBalancerSku",
+          "position": Object {
+            "column": 28,
+            "line": 1616,
+          },
+          "url": "containerservice/resource-manager/Microsoft.ContainerService/stable/2019-08-01/managedClusters.json",
+        },
+      },
+      Object {
+        "code": "ENUM_MISMATCH",
+        "documentationUrl": "",
+        "jsonPathsInPayload": Array [
+          "$.identity.type",
+        ],
+        "message": "No enum match for: UserAssigned",
+        "params": Array [
+          "UserAssigned",
+          Array [
+            "SystemAssigned",
+            "None",
+          ],
+        ],
+        "pathsInPayload": Array [
+          "/identity/type",
+        ],
+        "schemaPath": "#/properties/type/enum",
+        "severity": 0,
+        "source": Object {
+          "jsonRef": "#/definitions/ManagedClusterIdentity/properties/type",
+          "position": Object {
+            "column": 17,
+            "line": 1893,
+          },
+          "url": "containerservice/resource-manager/Microsoft.ContainerService/stable/2019-08-01/managedClusters.json",
+        },
+      },
+    ],
+    "isSuccessful": false,
+    "operationInfo": Object {
+      "apiVersion": "2019-08-01",
+      "operationId": "ManagedClusters_Get",
+    },
+    "runtimeException": undefined,
+  },
+}
+`;
+
 exports[`Live Validator Initialization readonly properties should not cause error 1`] = `
 Object {
   "errors": Array [],

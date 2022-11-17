@@ -223,6 +223,8 @@ describe("Live Validator", () => {
           assert.equal(re.code, "ROUNDTRIP_ADDITIONAL_PROPERTY");
         }
       }
+      const validationRes = await validator.validateLiveRequestResponse(payload);
+      expect(validationRes).toMatchSnapshot();
       //end of roundtrip validation
     });
 
