@@ -3,7 +3,6 @@
 import { basename } from "path";
 import { cloneDeep, pathDirName, pathJoin } from "@azure-tools/openapi-tools-common";
 import { inject, injectable } from "inversify";
-import { dump as yamlDump } from "js-yaml";
 import { apply as jsonMergeApply, generate as jsonMergePatchGenerate } from "json-merge-patch";
 import { inversifyGetInstance, TYPES } from "../inversifyUtils";
 import { FileLoader, FileLoaderOption } from "../swagger/fileLoader";
@@ -11,6 +10,7 @@ import { JsonLoader, JsonLoaderOption } from "../swagger/jsonLoader";
 import { Loader, setDefaultOpts } from "../swagger/loader";
 import { SwaggerLoader, SwaggerLoaderOption } from "../swagger/swaggerLoader";
 import {
+  ApiKeySecurity,
   BodyParameter,
   Operation,
   Parameter,
@@ -30,10 +30,13 @@ import { applyGlobalTransformers, applySpecTransformers } from "../transform/tra
 import { traverseSwagger } from "../transform/traverseSwagger";
 import { xmsPathsTransformer } from "../transform/xmsPathsTransformer";
 import { getInputFiles } from "../util/utils";
+import { xmsExamples } from "../util/constants";
 import { logger } from "./logger";
 import {
   ArmDeploymentScriptResource,
   ArmTemplate,
+  Authentication,
+  RawAuthentication,
   RawScenario,
   RawScenarioDefinition,
   RawStep,
@@ -104,7 +107,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     @inject(TYPES.schemaValidator) private schemaValidator: SchemaValidator
   ) {
     setDefaultOpts(opts, {
-      skipResolveRefKeys: ["x-ms-examples"],
+      skipResolveRefKeys: [xmsExamples],
       swaggerFilePaths: [],
       includeOperation: true,
     });
@@ -204,7 +207,7 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
           verMap.set(operation.operationId, spec.info.version);
 
           if (egOpMap) {
-            const xMsExamples = operation["x-ms-examples"] ?? {};
+            const xMsExamples = operation[xmsExamples] ?? {};
             for (const exampleName of Object.keys(xMsExamples)) {
               const example = xMsExamples[exampleName];
               if (typeof example.$ref !== "string") {
@@ -226,11 +229,6 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     }
   }
 
-  public async writeTestDefinitionFile(filePath: string, testDef: RawScenarioDefinition) {
-    const fileContent = yamlDump(testDef);
-    return this.fileLoader.writeFile(filePath, fileContent);
-  }
-
   public async load(filePath: string): Promise<ScenarioDefinition> {
     const [rawDef, readmeTags] = await this.apiScenarioYamlLoader.load(filePath);
 
@@ -248,19 +246,16 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       _swaggerFilePaths: this.opts.swaggerFilePaths!,
       cleanUpSteps: [],
       ...convertVariables(rawDef.variables),
-      authentication:
-        rawDef.authentication ??
-        (isArmScope
-          ? {
-              type: "AADToken",
-              scope: "$(armEndpoint)/.default",
-            }
-          : {
-              type: "None",
-            }),
+      authentication: this.loadAuthentication(rawDef.authentication),
     };
 
     if (isArmScope) {
+      if (!scenarioDef.authentication) {
+        scenarioDef.authentication = {
+          type: "AADToken",
+          scope: "$(armEndpoint)/.default",
+        };
+      }
       if (!scenarioDef.variables.armEndpoint) {
         scenarioDef.variables.armEndpoint = {
           type: "string",
@@ -299,6 +294,25 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     return scenarioDef;
   }
 
+  private loadAuthentication(
+    rawAuthentication: RawAuthentication | undefined
+  ): Authentication | undefined {
+    const authentication = rawAuthentication as Authentication | undefined;
+    switch (authentication?.type) {
+      case "AADToken":
+        authentication.scope = authentication.scope ?? "$(armEndpoint)/.default";
+        break;
+      case "AzureKey":
+        authentication.name = authentication.name ?? "Authorization";
+        authentication.in = authentication.in ?? "header";
+        break;
+      case "None":
+      default:
+        break;
+    }
+    return authentication;
+  }
+
   private async loadPrepareSteps(rawDef: RawScenarioDefinition, ctx: ApiScenarioContext) {
     ctx.stage = "prepare";
     ctx.stepIndex = 0;
@@ -335,7 +349,8 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       steps,
       _scenarioDef: scenarioDef,
       ...variableScope,
-      authentication: rawScenario.authentication ?? scenarioDef.authentication,
+      authentication:
+        this.loadAuthentication(rawScenario.authentication) ?? scenarioDef.authentication,
     };
 
     ctx.scenario = scenario;
@@ -407,7 +422,9 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       outputVariables: rawStep.outputVariables ?? {},
       ...convertVariables(rawStep.variables),
       authentication:
-        rawStep.authentication ?? ctx.scenario?.authentication ?? ctx.scenarioDef.authentication,
+        this.loadAuthentication(rawStep.authentication) ??
+        ctx.scenario?.authentication ??
+        ctx.scenarioDef.authentication,
     };
 
     const getVariable = (
@@ -454,11 +471,13 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       }
     };
 
+    let operation: Operation | undefined;
+
     if (!("exampleFile" in rawStep)) {
       // load operation step
       step.operationId = rawStep.operationId;
 
-      const operation = rawStep.readmeTag
+      operation = rawStep.readmeTag
         ? this.additionalMap.get(rawStep.readmeTag)?.operationsMap.get(step.operationId)
         : this.operationsMap.get(step.operationId);
       if (operation === undefined) {
@@ -527,8 +546,12 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       const xHost = operation._path._spec["x-ms-parameterized-host"];
       if (xHost) {
         xHost.parameters.forEach((param) => {
+          param = this.jsonLoader.resolveRefObj(param);
           if (rawStep.parameters?.[param.name]) {
-            step.parameters[param.name] = rawStep.parameters[param.name];
+            step.variables[param.name] = {
+              type: "string",
+              value: rawStep.parameters[param.name] as string,
+            };
           }
         });
       }
@@ -543,8 +566,6 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       // Load example file
       const fileContent = await this.fileLoader.load(exampleFilePath);
       const exampleFileContent = JSON.parse(fileContent) as SwaggerExample;
-
-      let operation: Operation | undefined;
 
       // Load Operation
       if (rawStep.operationId || exampleFileContent.operationId) {
@@ -596,6 +617,38 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
       await this.applyPatches(step, rawStep, operation);
 
       this.templateGenerator.exampleParameterConvention(step, getVariable, operation);
+    }
+
+    const security = operation?.security || operation?._path._spec.security;
+    if (!step.authentication && security) {
+      if (security.length > 1) {
+        logger.warn("Multiple security definitions found, only the first one will be used");
+      }
+      const security0 = security[0];
+      const key = Object.keys(security0)[0];
+      const securityDefinition = operation?._path._spec.securityDefinitions?.[key];
+      if (!securityDefinition) {
+        throw new Error(`Security definition not found for ${key}`);
+      }
+      if (securityDefinition.type === "oauth2") {
+        const value = security0[key];
+        if (value.length > 1) {
+          throw new Error(`Multiple scopes are not supported yet: ${JSON.stringify(value)}`);
+        }
+        const scope = value[0];
+        step.authentication = {
+          type: "AADToken",
+          scope: scope,
+        };
+      } else if (securityDefinition.type === "apiKey") {
+        const def = securityDefinition as ApiKeySecurity;
+        step.authentication = {
+          type: "AzureKey",
+          key: `$(${key})`,
+          in: def.in === "query" ? "query" : "header",
+          name: def.name ?? "Authorization",
+        };
+      }
     }
 
     if (!rawStep.step) {

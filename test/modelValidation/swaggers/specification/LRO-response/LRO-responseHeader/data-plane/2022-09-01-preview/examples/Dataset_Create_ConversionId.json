@@ -1,0 +1,15 @@
+{
+  "parameters": {
+    "geography": "us",
+    "api-version": "2022-09-01-preview",
+    "conversionId": "{conversionId}"
+  },
+  "responses": {
+    "202": {
+      "headers": {
+        "Operation-Location": "",
+        "Access-Control-Expose-Headers": "Operation-Location"
+      }
+    }
+  }
+}

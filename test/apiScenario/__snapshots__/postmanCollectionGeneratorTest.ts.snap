@@ -1,5 +1,2020 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`postmanCollectionGenerator should generate PostmanCollection - appconfig data plane 1`] = `
+Object {
+  "event": Array [],
+  "info": Object {
+    "_postman_id": "jestRunId",
+    "description": Object {
+      "content": "{\\"apiScenarioFilePath\\":\\"Microsoft.AppConfiguration/stable/1.0/scenarios/test.yaml\\",\\"swaggerFilePaths\\":[\\"Microsoft.AppConfiguration/stable/1.0/appconfiguration.json\\"]}",
+      "type": "text/plain",
+    },
+    "name": "test",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": undefined,
+  },
+  "item": Array [
+    Object {
+      "description": Object {
+        "content": "",
+        "type": "text/plain",
+      },
+      "event": Array [
+        Object {
+          "id": "r4of8l",
+          "listen": "prerequest",
+          "script": Object {
+            "exec": Array [
+              "pm.variables.set(\\"endpoint\\", \\"https://t-dnnwaokochaappconfig-azconfig-net.azconfig.io\\");",
+              "pm.variables.set(\\"key\\", \\"key-1954625347\\");",
+              "pm.variables.set(\\"label\\", \\"test_label\\");",
+              "pm.variables.set(\\"entity\\", {\\"value\\":\\"test_value\\",\\"content_type\\":\\"test_content_type\\",\\"tags\\":{\\"tag1\\":\\"value1\\",\\"tag2\\":\\"value2\\"}});",
+              "pm.variables.set(\\"If-None-Match\\", \\"*\\");",
+            ],
+            "id": "nprcrj",
+            "type": "text/javascript",
+          },
+        },
+      ],
+      "id": "rf9c3s",
+      "item": Array [
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"PutKeyValue\\",\\"itemName\\":\\"PutKeyValue\\",\\"step\\":\\"PutKeyValue\\"}",
+          "event": Array [
+            Object {
+              "id": "gzre88",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"key_encoded\\", encodeURIComponent(pm.variables.get(\\"key\\")));",
+                  "pm.variables.set(\\"label_encoded\\", encodeURIComponent(pm.variables.get(\\"label\\")));",
+                ],
+                "id": "zq9w6n",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "8gypdh",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "3747vc",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "tgp8uv",
+          "name": "PutKeyValue",
+          "request": Object {
+            "body": Object {
+              "mode": "raw",
+              "raw": "{
+  \\"value\\": \\"test_value\\",
+  \\"content_type\\": \\"test_content_type\\",
+  \\"tags\\": {
+    \\"tag1\\": \\"value1\\",
+    \\"tag2\\": \\"value2\\"
+  }
+}",
+            },
+            "header": Array [
+              Object {
+                "key": "Content-Type",
+                "value": "application/vnd.microsoft.appconfig.kv+json",
+              },
+              Object {
+                "key": "If-None-Match",
+                "value": "{{If-None-Match}}",
+              },
+            ],
+            "method": "PUT",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "kv",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "label",
+                  "value": "{{label_encoded}}",
+                },
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "{{key_encoded}}",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"PutKeyValue\\",\\"itemName\\":\\"PutKeyValue_1\\",\\"step\\":\\"PutKeyValue_1\\"}",
+          "event": Array [
+            Object {
+              "id": "9120qs",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"key_encoded\\", encodeURIComponent(pm.variables.get(\\"key\\")));",
+                  "pm.variables.set(\\"label_encoded\\", encodeURIComponent(pm.variables.get(\\"label\\")));",
+                ],
+                "id": "oipyp5",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "k8hcud",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.expect(pm.response.code).to.be.oneOf([412]);",
+                  "if (pm.response.code === 412) {
+}
+",
+                  "});",
+                ],
+                "id": "39l4a3",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "clnzjc",
+          "name": "PutKeyValue_1",
+          "request": Object {
+            "body": Object {
+              "mode": "raw",
+              "raw": "{
+  \\"value\\": \\"test_value\\",
+  \\"content_type\\": \\"test_content_type\\",
+  \\"tags\\": {
+    \\"tag1\\": \\"value1\\",
+    \\"tag2\\": \\"value2\\"
+  }
+}",
+            },
+            "header": Array [
+              Object {
+                "key": "Content-Type",
+                "value": "application/vnd.microsoft.appconfig.kv+json",
+              },
+              Object {
+                "key": "Sync-Token",
+                "value": "zAJw6V16=MjoxNyM5MjA3Nzgy",
+              },
+              Object {
+                "key": "If-None-Match",
+                "value": "{{If-None-Match}}",
+              },
+            ],
+            "method": "PUT",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "kv",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "label",
+                  "value": "{{label_encoded}}",
+                },
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "{{key_encoded}}",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"DeleteKeyValue\\",\\"itemName\\":\\"DeleteKeyValue\\",\\"step\\":\\"DeleteKeyValue\\"}",
+          "event": Array [
+            Object {
+              "id": "mcbyik",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"key_encoded\\", encodeURIComponent(pm.variables.get(\\"key\\")));",
+                  "pm.variables.set(\\"label_encoded\\", encodeURIComponent(pm.variables.get(\\"label\\")));",
+                ],
+                "id": "zvuzjs",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "gbupa4",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "1gju0k",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "g4l6nv",
+          "name": "DeleteKeyValue",
+          "request": Object {
+            "body": Object {},
+            "header": Array [
+              Object {
+                "key": "Sync-Token",
+                "value": "zAJw6V16=MjoxNyM5MjA3Nzgy",
+              },
+            ],
+            "method": "DELETE",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "kv",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "label",
+                  "value": "{{label_encoded}}",
+                },
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "{{key_encoded}}",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+      ],
+      "name": "AddExistingSetting",
+    },
+    Object {
+      "description": Object {
+        "content": "",
+        "type": "text/plain",
+      },
+      "event": Array [
+        Object {
+          "id": "hfy1hi",
+          "listen": "prerequest",
+          "script": Object {
+            "exec": Array [
+              "pm.variables.set(\\"endpoint\\", \\"https://t-dnnwaokochaappconfig-azconfig-net.azconfig.io\\");",
+              "pm.variables.set(\\"key\\", \\".appconfig.featureflag/feature 1306740339\\");",
+              "pm.variables.set(\\"entity\\", {\\"value\\":\\"{\\\\\\"id\\\\\\":\\\\\\"feature 1306740339\\\\\\",\\\\\\"description\\\\\\":\\\\\\"Feature description\\\\\\",\\\\\\"display_name\\\\\\":\\\\\\"Feature display name\\\\\\",\\\\\\"enabled\\\\\\":true,\\\\\\"conditions\\\\\\":{\\\\\\"client_filters\\\\\\":[{\\\\\\"name\\\\\\":\\\\\\"FilterA\\\\\\",\\\\\\"parameters\\\\\\":{}},{\\\\\\"name\\\\\\":\\\\\\"Microsoft.TimeWindow\\\\\\",\\\\\\"parameters\\\\\\":{\\\\\\"Start\\\\\\":\\\\\\"Wed, 01 May 2019 13:59:59 GMT\\\\\\",\\\\\\"End\\\\\\":\\\\\\"Mon, 01 July 2019 00:00:00 GMT\\\\\\"}}]}}\\",\\"content_type\\":\\"application/vnd.microsoft.appconfig.ff+json;charset=utf-8\\",\\"tags\\":{}});",
+            ],
+            "id": "hlqn5m",
+            "type": "text/javascript",
+          },
+        },
+      ],
+      "id": "j55iye",
+      "item": Array [
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"PutKeyValue\\",\\"itemName\\":\\"PutKeyValue\\",\\"step\\":\\"PutKeyValue\\"}",
+          "event": Array [
+            Object {
+              "id": "1rcvet",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"key_encoded\\", encodeURIComponent(pm.variables.get(\\"key\\")));",
+                ],
+                "id": "4fy274",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "vov58h",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "3l45xk",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "7wi32c",
+          "name": "PutKeyValue",
+          "request": Object {
+            "body": Object {
+              "mode": "raw",
+              "raw": "{
+  \\"value\\": \\"{\\\\\\"id\\\\\\":\\\\\\"feature 1306740339\\\\\\",\\\\\\"description\\\\\\":\\\\\\"Feature description\\\\\\",\\\\\\"display_name\\\\\\":\\\\\\"Feature display name\\\\\\",\\\\\\"enabled\\\\\\":true,\\\\\\"conditions\\\\\\":{\\\\\\"client_filters\\\\\\":[{\\\\\\"name\\\\\\":\\\\\\"FilterA\\\\\\",\\\\\\"parameters\\\\\\":{}},{\\\\\\"name\\\\\\":\\\\\\"Microsoft.TimeWindow\\\\\\",\\\\\\"parameters\\\\\\":{\\\\\\"Start\\\\\\":\\\\\\"Wed, 01 May 2019 13:59:59 GMT\\\\\\",\\\\\\"End\\\\\\":\\\\\\"Mon, 01 July 2019 00:00:00 GMT\\\\\\"}}]}}\\",
+  \\"content_type\\": \\"application/vnd.microsoft.appconfig.ff+json;charset=utf-8\\",
+  \\"tags\\": {}
+}",
+            },
+            "header": Array [
+              Object {
+                "key": "Content-Type",
+                "value": "application/vnd.microsoft.appconfig.kv+json",
+              },
+              Object {
+                "key": "If-None-Match",
+                "value": "*",
+              },
+            ],
+            "method": "PUT",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "kv",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "rr{{key_encoded}}_%23%24%25{{key_encoded}}",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"PutKeyValue\\",\\"itemName\\":\\"PutKeyValue_1\\",\\"step\\":\\"PutKeyValue_1\\"}",
+          "event": Array [
+            Object {
+              "id": "3q0yb6",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"entity\\", {\\"value\\":\\"{\\\\\\"id\\\\\\":\\\\\\"feature 1306740339\\\\\\",\\\\\\"description\\\\\\":\\\\\\"Feature description\\\\\\",\\\\\\"display_name\\\\\\":\\\\\\"Feature display name\\\\\\",\\\\\\"enabled\\\\\\":false,\\\\\\"conditions\\\\\\":{\\\\\\"client_filters\\\\\\":[{\\\\\\"name\\\\\\":\\\\\\"FilterA\\\\\\",\\\\\\"parameters\\\\\\":{}},{\\\\\\"name\\\\\\":\\\\\\"Microsoft.TimeWindow\\\\\\",\\\\\\"parameters\\\\\\":{\\\\\\"Start\\\\\\":\\\\\\"Wed, 01 May 2019 13:59:59 GMT\\\\\\",\\\\\\"End\\\\\\":\\\\\\"Mon, 01 July 2019 00:00:00 GMT\\\\\\"}}]}}\\",\\"content_type\\":\\"application/vnd.microsoft.appconfig.ff+json;charset=utf-8\\",\\"tags\\":{},\\"etag\\":\\"Xw8kFsc-oaEk_nXNPXOWkAaCE6de_zAgyLgPiI0k-AY\\"});",
+                  "pm.variables.set(\\"key_encoded\\", encodeURIComponent(pm.variables.get(\\"key\\")));",
+                ],
+                "id": "6w00ic",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "m388ep",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "qq5z84",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "1ueh28",
+          "name": "PutKeyValue_1",
+          "request": Object {
+            "body": Object {
+              "mode": "raw",
+              "raw": "{
+  \\"value\\": \\"{\\\\\\"id\\\\\\":\\\\\\"feature 1306740339\\\\\\",\\\\\\"description\\\\\\":\\\\\\"Feature description\\\\\\",\\\\\\"display_name\\\\\\":\\\\\\"Feature display name\\\\\\",\\\\\\"enabled\\\\\\":false,\\\\\\"conditions\\\\\\":{\\\\\\"client_filters\\\\\\":[{\\\\\\"name\\\\\\":\\\\\\"FilterA\\\\\\",\\\\\\"parameters\\\\\\":{}},{\\\\\\"name\\\\\\":\\\\\\"Microsoft.TimeWindow\\\\\\",\\\\\\"parameters\\\\\\":{\\\\\\"Start\\\\\\":\\\\\\"Wed, 01 May 2019 13:59:59 GMT\\\\\\",\\\\\\"End\\\\\\":\\\\\\"Mon, 01 July 2019 00:00:00 GMT\\\\\\"}}]}}\\",
+  \\"content_type\\": \\"application/vnd.microsoft.appconfig.ff+json;charset=utf-8\\",
+  \\"tags\\": {},
+  \\"etag\\": \\"Xw8kFsc-oaEk_nXNPXOWkAaCE6de_zAgyLgPiI0k-AY\\"
+}",
+            },
+            "header": Array [
+              Object {
+                "key": "Content-Type",
+                "value": "application/vnd.microsoft.appconfig.kv+json",
+              },
+              Object {
+                "key": "Sync-Token",
+                "value": "zAJw6V16=MjoxNyM5MjA3ODE2",
+              },
+            ],
+            "method": "PUT",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "kv",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "{{key_encoded}}",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"DeleteKeyValue\\",\\"itemName\\":\\"DeleteKeyValue\\",\\"step\\":\\"DeleteKeyValue\\"}",
+          "event": Array [
+            Object {
+              "id": "rxgyxc",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"key_encoded\\", encodeURIComponent(pm.variables.get(\\"key\\")));",
+                ],
+                "id": "un6yyw",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "igg58r",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "zfkej6",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "j917fd",
+          "name": "DeleteKeyValue",
+          "request": Object {
+            "body": Object {},
+            "header": Array [
+              Object {
+                "key": "Sync-Token",
+                "value": "zAJw6V16=MjoxNyM5MjA3ODE4",
+              },
+            ],
+            "method": "DELETE",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "kv",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "{{key_encoded}}",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+      ],
+      "name": "CanAddAndUpdateFeatureFlag",
+    },
+    Object {
+      "description": Object {
+        "content": "",
+        "type": "text/plain",
+      },
+      "event": Array [],
+      "id": "9e4snq",
+      "item": Array [
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"PutLock\\",\\"itemName\\":\\"PutLock\\",\\"step\\":\\"PutLock\\"}",
+          "event": Array [
+            Object {
+              "id": "ezqs5q",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"endpoint\\", \\"https://t-dnnwaokochaappconfig-azconfig-net.azconfig.io\\");",
+                ],
+                "id": "cb8v3t",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "x7qdfp",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.expect(pm.response.code).to.be.oneOf([404]);",
+                  "if (pm.response.code === 404) {
+}
+",
+                  "});",
+                ],
+                "id": "9vqoea",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "h1l4hw",
+          "name": "PutLock",
+          "request": Object {
+            "body": Object {},
+            "method": "PUT",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "locks",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "key-199017029",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+      ],
+      "name": "ClearReadOnlySettingNotFound",
+    },
+    Object {
+      "description": Object {
+        "content": "",
+        "type": "text/plain",
+      },
+      "event": Array [
+        Object {
+          "id": "d39qgw",
+          "listen": "prerequest",
+          "script": Object {
+            "exec": Array [
+              "pm.variables.set(\\"endpoint\\", \\"https://t-dnnwaokochaappconfig-azconfig-net.azconfig.io\\");",
+              "pm.variables.set(\\"key\\", \\"key-2141872649\\");",
+              "pm.variables.set(\\"label\\", \\"test_label\\");",
+              "pm.variables.set(\\"entity\\", {\\"value\\":\\"test_value\\",\\"content_type\\":\\"test_content_type\\",\\"tags\\":{\\"tag1\\":\\"value1\\",\\"tag2\\":\\"value2\\"}});",
+            ],
+            "id": "jhzmpv",
+            "type": "text/javascript",
+          },
+        },
+      ],
+      "id": "9atymt",
+      "item": Array [
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"PutKeyValue\\",\\"itemName\\":\\"PutKeyValue\\",\\"step\\":\\"PutKeyValue\\"}",
+          "event": Array [
+            Object {
+              "id": "6qbw4d",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"key_encoded\\", encodeURIComponent(pm.variables.get(\\"key\\")));",
+                  "pm.variables.set(\\"label_encoded\\", encodeURIComponent(pm.variables.get(\\"label\\")));",
+                ],
+                "id": "bhuvqx",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "le21m4",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "7oxzx1",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "x6exws",
+          "name": "PutKeyValue",
+          "request": Object {
+            "body": Object {
+              "mode": "raw",
+              "raw": "{
+  \\"value\\": \\"test_value\\",
+  \\"content_type\\": \\"test_content_type\\",
+  \\"tags\\": {
+    \\"tag1\\": \\"value1\\",
+    \\"tag2\\": \\"value2\\"
+  }
+}",
+            },
+            "header": Array [
+              Object {
+                "key": "Content-Type",
+                "value": "application/vnd.microsoft.appconfig.kv+json",
+              },
+              Object {
+                "key": "If-None-Match",
+                "value": "*",
+              },
+            ],
+            "method": "PUT",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "kv",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "label",
+                  "value": "{{label_encoded}}",
+                },
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "{{key_encoded}}",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"PutKeyValue\\",\\"itemName\\":\\"PutKeyValue_1\\",\\"step\\":\\"PutKeyValue_1\\"}",
+          "event": Array [
+            Object {
+              "id": "cdpopn",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"entity\\", {\\"value\\":\\"new_value\\",\\"content_type\\":\\"test_content_type\\",\\"tags\\":{\\"tag1\\":\\"value1\\",\\"tag2\\":\\"value2\\"}});",
+                  "pm.variables.set(\\"key_encoded\\", encodeURIComponent(pm.variables.get(\\"key\\")));",
+                  "pm.variables.set(\\"label_encoded\\", encodeURIComponent(pm.variables.get(\\"label\\")));",
+                ],
+                "id": "5sx5dw",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "49cuyt",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "8ew1jk",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "ssi2a8",
+          "name": "PutKeyValue_1",
+          "request": Object {
+            "body": Object {
+              "mode": "raw",
+              "raw": "{
+  \\"value\\": \\"new_value\\",
+  \\"content_type\\": \\"test_content_type\\",
+  \\"tags\\": {
+    \\"tag1\\": \\"value1\\",
+    \\"tag2\\": \\"value2\\"
+  }
+}",
+            },
+            "header": Array [
+              Object {
+                "key": "Content-Type",
+                "value": "application/vnd.microsoft.appconfig.kv+json",
+              },
+              Object {
+                "key": "Sync-Token",
+                "value": "zAJw6V16=MjoxNyM5MjA3OTY0",
+              },
+            ],
+            "method": "PUT",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "kv",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "label",
+                  "value": "{{label_encoded}}",
+                },
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "{{key_encoded}}",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"DeleteLock\\",\\"itemName\\":\\"DeleteLock\\",\\"step\\":\\"DeleteLock\\"}",
+          "event": Array [
+            Object {
+              "id": "i544h5",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"key_encoded\\", encodeURIComponent(pm.variables.get(\\"key\\")));",
+                  "pm.variables.set(\\"label_encoded\\", encodeURIComponent(pm.variables.get(\\"label\\")));",
+                ],
+                "id": "db187u",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "2tccjb",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.expect(pm.response.code).to.be.oneOf([412]);",
+                  "if (pm.response.code === 412) {
+}
+",
+                  "});",
+                ],
+                "id": "b9q1ra",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "x6oaag",
+          "name": "DeleteLock",
+          "request": Object {
+            "body": Object {},
+            "header": Array [
+              Object {
+                "key": "Sync-Token",
+                "value": "zAJw6V16=MjoxNyM5MjA3OTY1",
+              },
+              Object {
+                "key": "If-Match",
+                "value": "\\"LgZO1vXg1qh1tBjyRitcoYSFTRUkXB8XdxsHMM1AzrI\\"",
+              },
+            ],
+            "method": "DELETE",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "locks",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "label",
+                  "value": "{{label_encoded}}",
+                },
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "{{key_encoded}}",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"DeleteKeyValue\\",\\"itemName\\":\\"DeleteKeyValue\\",\\"step\\":\\"DeleteKeyValue\\"}",
+          "event": Array [
+            Object {
+              "id": "wpbvc4",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"key_encoded\\", encodeURIComponent(pm.variables.get(\\"key\\")));",
+                  "pm.variables.set(\\"label_encoded\\", encodeURIComponent(pm.variables.get(\\"label\\")));",
+                ],
+                "id": "6rfjty",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "hvl7jw",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "odc2fc",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "3zgew6",
+          "name": "DeleteKeyValue",
+          "request": Object {
+            "body": Object {},
+            "header": Array [
+              Object {
+                "key": "Sync-Token",
+                "value": "zAJw6V16=MjoxNyM5MjA3OTY1",
+              },
+            ],
+            "method": "DELETE",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "kv",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "label",
+                  "value": "{{label_encoded}}",
+                },
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "{{key_encoded}}",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+      ],
+      "name": "ConfigurationClient_SetReadOnly_OnlyIfUnchanged_Modified_False_",
+    },
+    Object {
+      "description": Object {
+        "content": "",
+        "type": "text/plain",
+      },
+      "event": Array [
+        Object {
+          "id": "yh0zn8",
+          "listen": "prerequest",
+          "script": Object {
+            "exec": Array [
+              "pm.variables.set(\\"endpoint\\", \\"https://t-dnnwaokochaappconfig-azconfig-net.azconfig.io\\");",
+              "pm.variables.set(\\"key\\", \\"key-1505928816\\");",
+              "pm.variables.set(\\"label\\", \\"test_label\\");",
+              "pm.variables.set(\\"entity\\", {\\"value\\":\\"test_value\\",\\"content_type\\":\\"test_content_type\\",\\"tags\\":{\\"tag1\\":\\"value1\\",\\"tag2\\":\\"value2\\"}});",
+            ],
+            "id": "h0fgel",
+            "type": "text/javascript",
+          },
+        },
+      ],
+      "id": "iqxxs7",
+      "item": Array [
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"PutKeyValue\\",\\"itemName\\":\\"PutKeyValue\\",\\"step\\":\\"PutKeyValue\\"}",
+          "event": Array [
+            Object {
+              "id": "k97wbk",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"key_encoded\\", encodeURIComponent(pm.variables.get(\\"key\\")));",
+                  "pm.variables.set(\\"label_encoded\\", encodeURIComponent(pm.variables.get(\\"label\\")));",
+                ],
+                "id": "j58bgv",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "dm09uw",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "q1cfqt",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "p03jp7",
+          "name": "PutKeyValue",
+          "request": Object {
+            "body": Object {
+              "mode": "raw",
+              "raw": "{
+  \\"value\\": \\"test_value\\",
+  \\"content_type\\": \\"test_content_type\\",
+  \\"tags\\": {
+    \\"tag1\\": \\"value1\\",
+    \\"tag2\\": \\"value2\\"
+  }
+}",
+            },
+            "header": Array [
+              Object {
+                "key": "Content-Type",
+                "value": "application/vnd.microsoft.appconfig.kv+json",
+              },
+              Object {
+                "key": "If-None-Match",
+                "value": "*",
+              },
+            ],
+            "method": "PUT",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "kv",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "label",
+                  "value": "{{label_encoded}}",
+                },
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "{{key_encoded}}",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"PutKeyValue\\",\\"itemName\\":\\"PutKeyValue_1\\",\\"step\\":\\"PutKeyValue_1\\"}",
+          "event": Array [
+            Object {
+              "id": "vm8psu",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"entity\\", {\\"value\\":\\"new_value\\",\\"content_type\\":\\"test_content_type\\",\\"tags\\":{\\"tag1\\":\\"value1\\",\\"tag2\\":\\"value2\\"}});",
+                  "pm.variables.set(\\"key_encoded\\", encodeURIComponent(pm.variables.get(\\"key\\")));",
+                  "pm.variables.set(\\"label_encoded\\", encodeURIComponent(pm.variables.get(\\"label\\")));",
+                ],
+                "id": "lk4mhm",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "ivu9xy",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "mge3qz",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "9ezdsu",
+          "name": "PutKeyValue_1",
+          "request": Object {
+            "body": Object {
+              "mode": "raw",
+              "raw": "{
+  \\"value\\": \\"new_value\\",
+  \\"content_type\\": \\"test_content_type\\",
+  \\"tags\\": {
+    \\"tag1\\": \\"value1\\",
+    \\"tag2\\": \\"value2\\"
+  }
+}",
+            },
+            "header": Array [
+              Object {
+                "key": "Content-Type",
+                "value": "application/vnd.microsoft.appconfig.kv+json",
+              },
+              Object {
+                "key": "Sync-Token",
+                "value": "zAJw6V16=MjoxNyM5MjA3ODMw",
+              },
+            ],
+            "method": "PUT",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "kv",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "label",
+                  "value": "{{label_encoded}}",
+                },
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "{{key_encoded}}",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"DeleteKeyValue\\",\\"itemName\\":\\"DeleteKeyValue\\",\\"step\\":\\"DeleteKeyValue\\"}",
+          "event": Array [
+            Object {
+              "id": "qh9z16",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"key_encoded\\", encodeURIComponent(pm.variables.get(\\"key\\")));",
+                  "pm.variables.set(\\"label_encoded\\", encodeURIComponent(pm.variables.get(\\"label\\")));",
+                ],
+                "id": "eq5yyi",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "kqos97",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.expect(pm.response.code).to.be.oneOf([412]);",
+                  "if (pm.response.code === 412) {
+}
+",
+                  "});",
+                ],
+                "id": "bsqg1o",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "spylrr",
+          "name": "DeleteKeyValue",
+          "request": Object {
+            "body": Object {},
+            "header": Array [
+              Object {
+                "key": "Sync-Token",
+                "value": "zAJw6V16=MjoxNyM5MjA3ODMx",
+              },
+              Object {
+                "key": "If-Match",
+                "value": "\\"kcfjab4MYd1eDj2XrZ6aCxYLdFVmVmY5eKoLO5VmG70\\"",
+              },
+            ],
+            "method": "DELETE",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "kv",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "label",
+                  "value": "{{label_encoded}}",
+                },
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "{{key_encoded}}",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"DeleteKeyValue\\",\\"itemName\\":\\"DeleteKeyValue_1\\",\\"step\\":\\"DeleteKeyValue_1\\"}",
+          "event": Array [
+            Object {
+              "id": "65xm09",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"key_encoded\\", encodeURIComponent(pm.variables.get(\\"key\\")));",
+                  "pm.variables.set(\\"label_encoded\\", encodeURIComponent(pm.variables.get(\\"label\\")));",
+                ],
+                "id": "tyolxx",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "c9wzyn",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "gsyqal",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "a7lkxi",
+          "name": "DeleteKeyValue_1",
+          "request": Object {
+            "body": Object {},
+            "header": Array [
+              Object {
+                "key": "Sync-Token",
+                "value": "zAJw6V16=MjoxNyM5MjA3ODMx",
+              },
+            ],
+            "method": "DELETE",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "kv",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "label",
+                  "value": "{{label_encoded}}",
+                },
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "{{key_encoded}}",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+      ],
+      "name": "DeleteIfUnchangedSettingModified",
+    },
+    Object {
+      "description": Object {
+        "content": "",
+        "type": "text/plain",
+      },
+      "event": Array [
+        Object {
+          "id": "d9yng9",
+          "listen": "prerequest",
+          "script": Object {
+            "exec": Array [
+              "pm.variables.set(\\"endpoint\\", \\"https://t-dnnwaokochaappconfig-azconfig-net.azconfig.io\\");",
+            ],
+            "id": "sp8ib7",
+            "type": "text/javascript",
+          },
+        },
+      ],
+      "id": "wlgh2r",
+      "item": Array [
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"PutKeyValue\\",\\"itemName\\":\\"PutKeyValue\\",\\"step\\":\\"PutKeyValue\\"}",
+          "event": Array [
+            Object {
+              "id": "2vc31r",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "bw1q38",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "ew9nh8",
+          "name": "PutKeyValue",
+          "request": Object {
+            "body": Object {
+              "mode": "raw",
+              "raw": "{
+  \\"value\\": \\"test_value\\",
+  \\"content_type\\": \\"test_content_type\\",
+  \\"tags\\": {
+    \\"tag1\\": \\"value1\\",
+    \\"tag2\\": \\"value2\\"
+  }
+}",
+            },
+            "header": Array [
+              Object {
+                "key": "Content-Type",
+                "value": "application/vnd.microsoft.appconfig.kv+json",
+              },
+            ],
+            "method": "PUT",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "kv",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "label",
+                  "value": "test_label",
+                },
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "key-2094909004",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"GetKeyValues\\",\\"itemName\\":\\"GetKeyValues\\",\\"step\\":\\"GetKeyValues\\"}",
+          "event": Array [
+            Object {
+              "id": "l0fzps",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "ehebqq",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "yzy1ec",
+          "name": "GetKeyValues",
+          "request": Object {
+            "body": Object {},
+            "header": Array [
+              Object {
+                "key": "Sync-Token",
+                "value": "zAJw6V16=MjoxNyM5MjE2MDIy",
+              },
+            ],
+            "method": "GET",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "kv",
+              ],
+              "query": Array [
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [],
+            },
+          },
+          "response": Array [],
+        },
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"DeleteKeyValue\\",\\"itemName\\":\\"DeleteKeyValue\\",\\"step\\":\\"DeleteKeyValue\\"}",
+          "event": Array [
+            Object {
+              "id": "9quvnq",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "odehko",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "zo75y7",
+          "name": "DeleteKeyValue",
+          "request": Object {
+            "body": Object {},
+            "header": Array [
+              Object {
+                "key": "Sync-Token",
+                "value": "zAJw6V16=MjoxNyM5MjE2MDIy",
+              },
+            ],
+            "method": "DELETE",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "kv",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "label",
+                  "value": "test_label",
+                },
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "key-2094909004",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+      ],
+      "name": "GetBatchSettingAny",
+    },
+    Object {
+      "description": Object {
+        "content": "",
+        "type": "text/plain",
+      },
+      "event": Array [
+        Object {
+          "id": "f9zxy5",
+          "listen": "prerequest",
+          "script": Object {
+            "exec": Array [
+              "pm.variables.set(\\"endpoint\\", \\"https://t-dnnwaokochaappconfig-azconfig-net.azconfig.io\\");",
+              "pm.variables.set(\\"key\\", \\"keyFields-194380201\\");",
+            ],
+            "id": "76ivhq",
+            "type": "text/javascript",
+          },
+        },
+      ],
+      "id": "col7eq",
+      "item": Array [
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"PutKeyValue\\",\\"itemName\\":\\"PutKeyValue\\",\\"step\\":\\"PutKeyValue\\"}",
+          "event": Array [
+            Object {
+              "id": "8ef99f",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"key_encoded\\", encodeURIComponent(pm.variables.get(\\"key\\")));",
+                ],
+                "id": "86w5gc",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "fujl6i",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "wa7yg9",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "b3xozx",
+          "name": "PutKeyValue",
+          "request": Object {
+            "body": Object {
+              "mode": "raw",
+              "raw": "{
+  \\"value\\": \\"my_value\\",
+  \\"content_type\\": null,
+  \\"tags\\": {}
+}",
+            },
+            "header": Array [
+              Object {
+                "key": "Content-Type",
+                "value": "application/vnd.microsoft.appconfig.kv+json",
+              },
+              Object {
+                "key": "If-None-Match",
+                "value": "*",
+              },
+            ],
+            "method": "PUT",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "kv",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "label",
+                  "value": "my_label",
+                },
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "{{key_encoded}}",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"GetKeyValues\\",\\"itemName\\":\\"GetKeyValues\\",\\"step\\":\\"GetKeyValues\\"}",
+          "event": Array [
+            Object {
+              "id": "20gl49",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"key_encoded\\", encodeURIComponent(pm.variables.get(\\"key\\")));",
+                ],
+                "id": "hty0qz",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "qbyj9c",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "56m9l3",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "ugk6h2",
+          "name": "GetKeyValues",
+          "request": Object {
+            "body": Object {},
+            "header": Array [
+              Object {
+                "key": "Sync-Token",
+                "value": "zAJw6V16=MjoxNyM5MjA3ODg4",
+              },
+            ],
+            "method": "GET",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "kv",
+              ],
+              "query": Array [
+                Object {
+                  "key": "key",
+                  "value": "{{key_encoded}}",
+                },
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+                Object {
+                  "key": "$Select",
+                  "value": "key%2C%20label%2C%20etag",
+                },
+              ],
+              "variable": Array [],
+            },
+          },
+          "response": Array [],
+        },
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"DeleteKeyValue\\",\\"itemName\\":\\"DeleteKeyValue\\",\\"step\\":\\"DeleteKeyValue\\"}",
+          "event": Array [
+            Object {
+              "id": "hakk8a",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"key_encoded\\", encodeURIComponent(pm.variables.get(\\"key\\")));",
+                ],
+                "id": "182s89",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "jy1tzu",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "x0t20h",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "2r0mc4",
+          "name": "DeleteKeyValue",
+          "request": Object {
+            "body": Object {},
+            "header": Array [
+              Object {
+                "key": "Sync-Token",
+                "value": "zAJw6V16=MjoxNyM5MjA3ODg4",
+              },
+            ],
+            "method": "DELETE",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "kv",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "label",
+                  "value": "my_label",
+                },
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "{{key_encoded}}",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+      ],
+      "name": "GetBatchSettingWithFields",
+    },
+    Object {
+      "description": Object {
+        "content": "",
+        "type": "text/plain",
+      },
+      "event": Array [
+        Object {
+          "id": "tdrxs5",
+          "listen": "prerequest",
+          "script": Object {
+            "exec": Array [
+              "pm.variables.set(\\"endpoint\\", \\"https://t-dnnwaokochaappconfig-azconfig-net.azconfig.io\\");",
+              "pm.variables.set(\\"key\\", \\"~\`!@#$^&()_+=[]{}|;\\\\\\"'<>./--996999594\\");",
+            ],
+            "id": "v9jgfn",
+            "type": "text/javascript",
+          },
+        },
+      ],
+      "id": "y8jsuq",
+      "item": Array [
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"PutKeyValue\\",\\"itemName\\":\\"PutKeyValue\\",\\"step\\":\\"PutKeyValue\\"}",
+          "event": Array [
+            Object {
+              "id": "c6vfm3",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"key_encoded\\", encodeURIComponent(pm.variables.get(\\"key\\")));",
+                ],
+                "id": "r3ps8d",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "jt84jj",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "i2mz21",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "vwghxn",
+          "name": "PutKeyValue",
+          "request": Object {
+            "body": Object {
+              "mode": "raw",
+              "raw": "{
+  \\"value\\": \\"value-~\`!@#$^&()_+=[]{}|;\\\\\\"'<>./-\\",
+  \\"content_type\\": null,
+  \\"tags\\": {}
+}",
+            },
+            "header": Array [
+              Object {
+                "key": "Content-Type",
+                "value": "application/vnd.microsoft.appconfig.kv+json",
+              },
+            ],
+            "method": "PUT",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "kv",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "{{key_encoded}}",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"DeleteKeyValue\\",\\"itemName\\":\\"DeleteKeyValue\\",\\"step\\":\\"DeleteKeyValue\\"}",
+          "event": Array [
+            Object {
+              "id": "9sf2c9",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"key_encoded\\", encodeURIComponent(pm.variables.get(\\"key\\")));",
+                ],
+                "id": "f0r418",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "mibqod",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "kiosgn",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "fmkiq3",
+          "name": "DeleteKeyValue",
+          "request": Object {
+            "body": Object {},
+            "header": Array [
+              Object {
+                "key": "Sync-Token",
+                "value": "zAJw6V16=MjoxNyM5MjA3OTEy",
+              },
+            ],
+            "method": "DELETE",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "kv",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "{{key_encoded}}",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+      ],
+      "name": "GetSettingSpecialCharacters",
+    },
+    Object {
+      "description": Object {
+        "content": "",
+        "type": "text/plain",
+      },
+      "event": Array [],
+      "id": "1ghyu8",
+      "item": Array [
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"PutLock\\",\\"itemName\\":\\"PutLock\\",\\"step\\":\\"PutLock\\"}",
+          "event": Array [
+            Object {
+              "id": "btr6ql",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"endpoint\\", \\"https://t-dnnwaokochaappconfig-azconfig-net.azconfig.io\\");",
+                ],
+                "id": "abct7z",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "rqqhvq",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.expect(pm.response.code).to.be.oneOf([404]);",
+                  "if (pm.response.code === 404) {
+}
+",
+                  "});",
+                ],
+                "id": "kia3ys",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "ikm5qg",
+          "name": "PutLock",
+          "request": Object {
+            "body": Object {},
+            "method": "PUT",
+            "url": Object {
+              "host": Array [
+                "https://t-dnnwaokochaappconfig-azconfig-net",
+                "azconfig",
+                "io",
+              ],
+              "path": Array [
+                "locks",
+                ":key",
+              ],
+              "query": Array [
+                Object {
+                  "key": "api-version",
+                  "value": "1.0",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "key",
+                  "type": "any",
+                  "value": "key-1514776256",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+      ],
+      "name": "SetReadOnlySettingNotFound",
+    },
+  ],
+  "variable": Array [
+    Object {
+      "key": "subscriptionId",
+      "type": "any",
+    },
+    Object {
+      "key": "resourceGroupName",
+      "type": "any",
+    },
+    Object {
+      "key": "location",
+      "type": "any",
+    },
+    Object {
+      "key": "client_id",
+      "type": "any",
+    },
+    Object {
+      "key": "client_secret",
+      "type": "any",
+    },
+    Object {
+      "key": "tenantId",
+      "type": "any",
+    },
+    Object {
+      "key": "x_enable_auth",
+      "type": "any",
+      "value": "true",
+    },
+  ],
+}
+`;
+
 exports[`postmanCollectionGenerator should generate PostmanCollection - enableTestProxy 1`] = `
 Object {
   "auth": Object {
@@ -66,11 +2081,11 @@ if (
                 console.log(err);
             } else {
                 let resJson = res.json();
-                pm.variables.set(
+                pm.environment.set(
                     \\"x_bearer_token_0_expires_on\\",
                     resJson.expires_in + Math.floor(Date.now() / 1000)
                 );
-                pm.variables.set(\\"x_bearer_token_0\\", resJson.access_token);
+                pm.environment.set(\\"x_bearer_token_0\\", resJson.access_token);
             }
         }
     );
@@ -107,7 +2122,7 @@ if (
                   "pm.test(\\"Started TestProxy recording\\", function() {",
                   "    pm.response.to.be.success;",
                   "    pm.response.to.have.header(\\"x-recording-id\\");",
-                  "    pm.variables.set(\\"x_recording_id\\", pm.response.headers.get(\\"x-recording-id\\"));",
+                  "    pm.environment.set(\\"x_recording_id\\", pm.response.headers.get(\\"x-recording-id\\"));",
                   "});",
                 ],
                 "id": "3747vc",
@@ -217,6 +2232,16 @@ if (
       "name": "__Prepare__",
     },
     Object {
+      "auth": Object {
+        "bearer": Array [
+          Object {
+            "key": "token",
+            "type": "string",
+            "value": "{{x_bearer_token_0}}",
+          },
+        ],
+        "type": "bearer",
+      },
       "description": Object {
         "content": "",
         "type": "text/plain",
@@ -229,18 +2254,29 @@ if (
           "event": Array [
             Object {
               "id": "g4l6nv",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"subscriptionId_encoded\\", encodeURIComponent(pm.variables.get(\\"subscriptionId\\")));",
+                ],
+                "id": "mcbyik",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "zvuzjs",
               "listen": "test",
               "script": Object {
                 "exec": Array [
                   "pm.test(\\"response status code assertion.\\", function() {",
-                  "pm.response.to.be.success;",
+                  "pm.expect(pm.response.code).to.be.oneOf([200]);",
                   "if (pm.response.code === 200) {
 pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
 }
 ",
                   "});",
                 ],
-                "id": "mcbyik",
+                "id": "gbupa4",
                 "type": "text/javascript",
               },
             },
@@ -248,6 +2284,16 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
           "id": "39l4a3",
           "name": "checkName",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {
               "mode": "raw",
               "raw": "{
@@ -295,7 +2341,7 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
                 Object {
                   "key": "subscriptionId",
                   "type": "any",
-                  "value": "{{subscriptionId}}",
+                  "value": "{{subscriptionId_encoded}}",
                 },
               ],
             },
@@ -306,7 +2352,20 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
           "description": "{\\"type\\":\\"LRO\\",\\"poller_item_name\\":\\"_createStorageAccount_poller\\",\\"operationId\\":\\"StorageAccounts_Create\\",\\"itemName\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "4fy274",
+              "id": "j55iye",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"resourceGroupName_encoded\\", encodeURIComponent(pm.variables.get(\\"resourceGroupName\\")));",
+                  "pm.variables.set(\\"accountName_encoded\\", encodeURIComponent(pm.variables.get(\\"accountName\\")));",
+                  "pm.variables.set(\\"subscriptionId_encoded\\", encodeURIComponent(pm.variables.get(\\"subscriptionId\\")));",
+                ],
+                "id": "hfy1hi",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "3q0yb6",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -314,20 +2373,30 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
                   "pm.response.to.be.success;",
                   "});",
                   "
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\");
+const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\");
 if (pollingUrl) {
     pm.variables.set(\\"x_polling_url\\", pollingUrl.replace(\\"https://management.azure.com\\",\\"http://localhost:5000\\"));
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
-                "id": "vov58h",
+                "id": "6w00ic",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "zvuzjs",
+          "id": "1gju0k",
           "name": "createStorageAccount",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {
               "mode": "raw",
               "raw": "{
@@ -389,17 +2458,17 @@ if (pollingUrl) {
                 Object {
                   "key": "resourceGroupName",
                   "type": "any",
-                  "value": "{{resourceGroupName}}",
+                  "value": "{{resourceGroupName_encoded}}",
                 },
                 Object {
                   "key": "accountName",
                   "type": "any",
-                  "value": "{{accountName}}",
+                  "value": "{{accountName_encoded}}",
                 },
                 Object {
                   "key": "subscriptionId",
                   "type": "any",
-                  "value": "{{subscriptionId}}",
+                  "value": "{{subscriptionId_encoded}}",
                 },
               ],
             },
@@ -409,7 +2478,7 @@ if (pollingUrl) {
         Object {
           "description": "{\\"type\\":\\"delay\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
           "event": Array [],
-          "id": "gbupa4",
+          "id": "hlqn5m",
           "name": "_createStorageAccount_delay",
           "request": Object {
             "method": "GET",
@@ -433,7 +2502,7 @@ if (pollingUrl) {
           "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "j55iye",
+              "id": "1rcvet",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -445,9 +2514,9 @@ try {
             pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
         }
     } else if (pm.response.size().body > 0) {
-        const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"];
+        const terminalStatus = [\\"succeeded\\", \\"failed\\", \\"canceled\\", \\"cancelled\\", \\"aborted\\", \\"deleted\\", \\"completed\\"];
         const json = pm.response.json();
-        if (json.status !== undefined && terminalStatus.indexOf(json.status) === -1) {
+        if (json.status !== undefined && terminalStatus.indexOf(json.status.toLowerCase()) === -1) {
             postman.setNextRequest(\\"_createStorageAccount_delay\\")
             if (pm.response.headers.has(\\"Retry-After\\")) {
                 pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
@@ -459,12 +2528,12 @@ try {
 }
 ",
                 ],
-                "id": "hfy1hi",
+                "id": "4fy274",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "1gju0k",
+          "id": "7wi32c",
           "name": "_createStorageAccount_poller",
           "request": Object {
             "header": Array [
@@ -496,7 +2565,7 @@ try {
           "description": "{\\"type\\":\\"finalGet\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "7wi32c",
+              "id": "3l45xk",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -504,12 +2573,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "1rcvet",
+                "id": "1ueh28",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "hlqn5m",
+          "id": "vov58h",
           "name": "_createStorageAccount_final_get",
           "request": Object {
             "header": Array [
@@ -555,17 +2624,17 @@ try {
                 Object {
                   "key": "resourceGroupName",
                   "type": "any",
-                  "value": "{{resourceGroupName}}",
+                  "value": "{{resourceGroupName_encoded}}",
                 },
                 Object {
                   "key": "accountName",
                   "type": "any",
-                  "value": "{{accountName}}",
+                  "value": "{{accountName_encoded}}",
                 },
                 Object {
                   "key": "subscriptionId",
                   "type": "any",
-                  "value": "{{subscriptionId}}",
+                  "value": "{{subscriptionId_encoded}}",
                 },
               ],
             },
@@ -576,49 +2645,80 @@ try {
       "name": "basic",
     },
     Object {
+      "auth": Object {
+        "bearer": Array [
+          Object {
+            "key": "token",
+            "type": "string",
+            "value": "{{x_bearer_token_0}}",
+          },
+        ],
+        "type": "bearer",
+      },
       "description": Object {
         "content": "",
         "type": "text/plain",
       },
       "event": Array [
         Object {
-          "id": "1ueh28",
+          "id": "qq5z84",
           "listen": "prerequest",
           "script": Object {
             "exec": Array [
               "pm.variables.set(\\"accountName\\", \\"star4of8l2\\");",
             ],
-            "id": "3q0yb6",
+            "id": "j917fd",
             "type": "text/javascript",
           },
         },
       ],
-      "id": "3l45xk",
+      "id": "m388ep",
       "item": Array [
         Object {
           "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"StorageAccounts_CheckNameAvailability\\",\\"itemName\\":\\"checkName\\",\\"step\\":\\"checkName\\"}",
           "event": Array [
             Object {
-              "id": "m388ep",
+              "id": "un6yyw",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"subscriptionId_encoded\\", encodeURIComponent(pm.variables.get(\\"subscriptionId\\")));",
+                ],
+                "id": "igg58r",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "zfkej6",
               "listen": "test",
               "script": Object {
                 "exec": Array [
                   "pm.test(\\"response status code assertion.\\", function() {",
-                  "pm.response.to.be.success;",
+                  "pm.expect(pm.response.code).to.be.oneOf([200]);",
                   "if (pm.response.code === 200) {
 pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
 }
 ",
                   "});",
                 ],
-                "id": "qq5z84",
+                "id": "9e4snq",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "6w00ic",
+          "id": "rxgyxc",
           "name": "checkName",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {
               "mode": "raw",
               "raw": "{
@@ -666,7 +2766,7 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
                 Object {
                   "key": "subscriptionId",
                   "type": "any",
-                  "value": "{{subscriptionId}}",
+                  "value": "{{subscriptionId_encoded}}",
                 },
               ],
             },
@@ -677,7 +2777,20 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
           "description": "{\\"type\\":\\"LRO\\",\\"poller_item_name\\":\\"_createStorageAccount_poller\\",\\"operationId\\":\\"StorageAccounts_Create\\",\\"itemName\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "cb8v3t",
+              "id": "ezqs5q",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"resourceGroupName_encoded\\", encodeURIComponent(pm.variables.get(\\"resourceGroupName\\")));",
+                  "pm.variables.set(\\"accountName_encoded\\", encodeURIComponent(pm.variables.get(\\"accountName\\")));",
+                  "pm.variables.set(\\"subscriptionId_encoded\\", encodeURIComponent(pm.variables.get(\\"subscriptionId\\")));",
+                ],
+                "id": "cb8v3t",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "bhuvqx",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -685,20 +2798,30 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
                   "pm.response.to.be.success;",
                   "});",
                   "
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\");
+const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\");
 if (pollingUrl) {
     pm.variables.set(\\"x_polling_url\\", pollingUrl.replace(\\"https://management.azure.com\\",\\"http://localhost:5000\\"));
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
-                "id": "x7qdfp",
+                "id": "le21m4",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "j917fd",
+          "id": "h1l4hw",
           "name": "createStorageAccount",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {
               "mode": "raw",
               "raw": "{
@@ -760,17 +2883,17 @@ if (pollingUrl) {
                 Object {
                   "key": "resourceGroupName",
                   "type": "any",
-                  "value": "{{resourceGroupName}}",
+                  "value": "{{resourceGroupName_encoded}}",
                 },
                 Object {
                   "key": "accountName",
                   "type": "any",
-                  "value": "{{accountName}}",
+                  "value": "{{accountName_encoded}}",
                 },
                 Object {
                   "key": "subscriptionId",
                   "type": "any",
-                  "value": "{{subscriptionId}}",
+                  "value": "{{subscriptionId_encoded}}",
                 },
               ],
             },
@@ -780,7 +2903,7 @@ if (pollingUrl) {
         Object {
           "description": "{\\"type\\":\\"delay\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
           "event": Array [],
-          "id": "rxgyxc",
+          "id": "x7qdfp",
           "name": "_createStorageAccount_delay",
           "request": Object {
             "method": "GET",
@@ -804,7 +2927,7 @@ if (pollingUrl) {
           "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "igg58r",
+              "id": "9atymt",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -816,9 +2939,9 @@ try {
             pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
         }
     } else if (pm.response.size().body > 0) {
-        const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"];
+        const terminalStatus = [\\"succeeded\\", \\"failed\\", \\"canceled\\", \\"cancelled\\", \\"aborted\\", \\"deleted\\", \\"completed\\"];
         const json = pm.response.json();
-        if (json.status !== undefined && terminalStatus.indexOf(json.status) === -1) {
+        if (json.status !== undefined && terminalStatus.indexOf(json.status.toLowerCase()) === -1) {
             postman.setNextRequest(\\"_createStorageAccount_delay\\")
             if (pm.response.headers.has(\\"Retry-After\\")) {
                 pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
@@ -830,12 +2953,12 @@ try {
 }
 ",
                 ],
-                "id": "zfkej6",
+                "id": "d39qgw",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "un6yyw",
+          "id": "9vqoea",
           "name": "_createStorageAccount_poller",
           "request": Object {
             "header": Array [
@@ -867,7 +2990,7 @@ try {
           "description": "{\\"type\\":\\"finalGet\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "h1l4hw",
+              "id": "x6exws",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -875,12 +2998,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "ezqs5q",
+                "id": "6qbw4d",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "9e4snq",
+          "id": "jhzmpv",
           "name": "_createStorageAccount_final_get",
           "request": Object {
             "header": Array [
@@ -926,17 +3049,17 @@ try {
                 Object {
                   "key": "resourceGroupName",
                   "type": "any",
-                  "value": "{{resourceGroupName}}",
+                  "value": "{{resourceGroupName_encoded}}",
                 },
                 Object {
                   "key": "accountName",
                   "type": "any",
-                  "value": "{{accountName}}",
+                  "value": "{{accountName_encoded}}",
                 },
                 Object {
                   "key": "subscriptionId",
                   "type": "any",
-                  "value": "{{subscriptionId}}",
+                  "value": "{{subscriptionId_encoded}}",
                 },
               ],
             },
@@ -947,49 +3070,80 @@ try {
       "name": "overrideVariable",
     },
     Object {
+      "auth": Object {
+        "bearer": Array [
+          Object {
+            "key": "token",
+            "type": "string",
+            "value": "{{x_bearer_token_0}}",
+          },
+        ],
+        "type": "bearer",
+      },
       "description": Object {
         "content": "",
         "type": "text/plain",
       },
       "event": Array [
         Object {
-          "id": "d39qgw",
+          "id": "cdpopn",
           "listen": "prerequest",
           "script": Object {
             "exec": Array [
-              "pm.variables.set(\\"accountName\\", \\"foobar9vqoea\\");",
+              "pm.variables.set(\\"accountName\\", \\"foobar7oxzx1\\");",
             ],
-            "id": "jhzmpv",
+            "id": "5sx5dw",
             "type": "text/javascript",
           },
         },
       ],
-      "id": "9atymt",
+      "id": "ssi2a8",
       "item": Array [
         Object {
           "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"StorageAccounts_CheckNameAvailability\\",\\"itemName\\":\\"checkName\\",\\"step\\":\\"checkName\\"}",
           "event": Array [
             Object {
-              "id": "6qbw4d",
+              "id": "8ew1jk",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"subscriptionId_encoded\\", encodeURIComponent(pm.variables.get(\\"subscriptionId\\")));",
+                ],
+                "id": "x6oaag",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "i544h5",
               "listen": "test",
               "script": Object {
                 "exec": Array [
                   "pm.test(\\"response status code assertion.\\", function() {",
-                  "pm.response.to.be.success;",
+                  "pm.expect(pm.response.code).to.be.oneOf([200]);",
                   "if (pm.response.code === 200) {
 pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
 }
 ",
                   "});",
                 ],
-                "id": "bhuvqx",
+                "id": "db187u",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "x6exws",
+          "id": "49cuyt",
           "name": "checkName",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {
               "mode": "raw",
               "raw": "{
@@ -1037,7 +3191,7 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
                 Object {
                   "key": "subscriptionId",
                   "type": "any",
-                  "value": "{{subscriptionId}}",
+                  "value": "{{subscriptionId_encoded}}",
                 },
               ],
             },
@@ -1048,7 +3202,20 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
           "description": "{\\"type\\":\\"LRO\\",\\"poller_item_name\\":\\"_createStorageAccount_poller\\",\\"operationId\\":\\"StorageAccounts_Create\\",\\"itemName\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "i544h5",
+              "id": "b9q1ra",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"resourceGroupName_encoded\\", encodeURIComponent(pm.variables.get(\\"resourceGroupName\\")));",
+                  "pm.variables.set(\\"accountName_encoded\\", encodeURIComponent(pm.variables.get(\\"accountName\\")));",
+                  "pm.variables.set(\\"subscriptionId_encoded\\", encodeURIComponent(pm.variables.get(\\"subscriptionId\\")));",
+                ],
+                "id": "3zgew6",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "p03jp7",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -1056,20 +3223,30 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
                   "pm.response.to.be.success;",
                   "});",
                   "
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\");
+const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\");
 if (pollingUrl) {
     pm.variables.set(\\"x_polling_url\\", pollingUrl.replace(\\"https://management.azure.com\\",\\"http://localhost:5000\\"));
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
-                "id": "db187u",
+                "id": "k97wbk",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "le21m4",
+          "id": "2tccjb",
           "name": "createStorageAccount",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {
               "mode": "raw",
               "raw": "{
@@ -1131,17 +3308,17 @@ if (pollingUrl) {
                 Object {
                   "key": "resourceGroupName",
                   "type": "any",
-                  "value": "{{resourceGroupName}}",
+                  "value": "{{resourceGroupName_encoded}}",
                 },
                 Object {
                   "key": "accountName",
                   "type": "any",
-                  "value": "{{accountName}}",
+                  "value": "{{accountName_encoded}}",
                 },
                 Object {
                   "key": "subscriptionId",
                   "type": "any",
-                  "value": "{{subscriptionId}}",
+                  "value": "{{subscriptionId_encoded}}",
                 },
               ],
             },
@@ -1151,7 +3328,7 @@ if (pollingUrl) {
         Object {
           "description": "{\\"type\\":\\"delay\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
           "event": Array [],
-          "id": "7oxzx1",
+          "id": "wpbvc4",
           "name": "_createStorageAccount_delay",
           "request": Object {
             "method": "GET",
@@ -1175,7 +3352,7 @@ if (pollingUrl) {
           "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "cdpopn",
+              "id": "hvl7jw",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -1187,9 +3364,9 @@ try {
             pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
         }
     } else if (pm.response.size().body > 0) {
-        const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"];
+        const terminalStatus = [\\"succeeded\\", \\"failed\\", \\"canceled\\", \\"cancelled\\", \\"aborted\\", \\"deleted\\", \\"completed\\"];
         const json = pm.response.json();
-        if (json.status !== undefined && terminalStatus.indexOf(json.status) === -1) {
+        if (json.status !== undefined && terminalStatus.indexOf(json.status.toLowerCase()) === -1) {
             postman.setNextRequest(\\"_createStorageAccount_delay\\")
             if (pm.response.headers.has(\\"Retry-After\\")) {
                 pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
@@ -1201,12 +3378,12 @@ try {
 }
 ",
                 ],
-                "id": "5sx5dw",
+                "id": "odc2fc",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "ssi2a8",
+          "id": "6rfjty",
           "name": "_createStorageAccount_poller",
           "request": Object {
             "header": Array [
@@ -1238,7 +3415,7 @@ try {
           "description": "{\\"type\\":\\"finalGet\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "8ew1jk",
+              "id": "yh0zn8",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -1246,12 +3423,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "x6oaag",
+                "id": "h0fgel",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "49cuyt",
+          "id": "iqxxs7",
           "name": "_createStorageAccount_final_get",
           "request": Object {
             "header": Array [
@@ -1297,17 +3474,17 @@ try {
                 Object {
                   "key": "resourceGroupName",
                   "type": "any",
-                  "value": "{{resourceGroupName}}",
+                  "value": "{{resourceGroupName_encoded}}",
                 },
                 Object {
                   "key": "accountName",
                   "type": "any",
-                  "value": "{{accountName}}",
+                  "value": "{{accountName_encoded}}",
                 },
                 Object {
                   "key": "subscriptionId",
                   "type": "any",
-                  "value": "{{subscriptionId}}",
+                  "value": "{{subscriptionId_encoded}}",
                 },
               ],
             },
@@ -1318,18 +3495,21 @@ try {
           "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"DeletedAccounts_Get\\",\\"itemName\\":\\"DeletedAccounts_Get\\",\\"step\\":\\"DeletedAccounts_Get\\"}",
           "event": Array [
             Object {
-              "id": "3zgew6",
+              "id": "q1cfqt",
               "listen": "prerequest",
               "script": Object {
                 "exec": Array [
-                  "pm.variables.set(\\"deletedAccountName\\", \\"foobar2tccjb\\");",
+                  "pm.variables.set(\\"deletedAccountName\\", \\"foobarj58bgv\\");",
+                  "pm.variables.set(\\"deletedAccountName_encoded\\", encodeURIComponent(pm.variables.get(\\"deletedAccountName\\")));",
+                  "pm.variables.set(\\"location_encoded\\", encodeURIComponent(pm.variables.get(\\"location\\")));",
+                  "pm.variables.set(\\"subscriptionId_encoded\\", encodeURIComponent(pm.variables.get(\\"subscriptionId\\")));",
                 ],
-                "id": "wpbvc4",
+                "id": "9ezdsu",
                 "type": "text/javascript",
               },
             },
             Object {
-              "id": "6rfjty",
+              "id": "vm8psu",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -1337,14 +3517,24 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "hvl7jw",
+                "id": "lk4mhm",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "b9q1ra",
+          "id": "dm09uw",
           "name": "DeletedAccounts_Get",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {},
             "header": Array [
               Object {
@@ -1358,10 +3548,6 @@ try {
               Object {
                 "key": "x-recording-mode",
                 "value": "record",
-              },
-              Object {
-                "key": "Content-Type",
-                "value": "application/json",
               },
             ],
             "method": "GET",
@@ -1382,7 +3568,7 @@ try {
               "query": Array [
                 Object {
                   "key": "test",
-                  "value": 1,
+                  "value": "1",
                 },
                 Object {
                   "key": "api-version",
@@ -1393,17 +3579,17 @@ try {
                 Object {
                   "key": "deletedAccountName",
                   "type": "any",
-                  "value": "{{deletedAccountName}}",
+                  "value": "{{deletedAccountName_encoded}}",
                 },
                 Object {
                   "key": "location",
                   "type": "any",
-                  "value": "{{location}}",
+                  "value": "{{location_encoded}}",
                 },
                 Object {
                   "key": "subscriptionId",
                   "type": "any",
-                  "value": "{{subscriptionId}}",
+                  "value": "{{subscriptionId_encoded}}",
                 },
               ],
             },
@@ -1414,41 +3600,54 @@ try {
       "name": "primitiveParameter",
     },
     Object {
+      "auth": Object {
+        "bearer": Array [
+          Object {
+            "key": "token",
+            "type": "string",
+            "value": "{{x_bearer_token_0}}",
+          },
+        ],
+        "type": "bearer",
+      },
       "description": Object {
         "content": "",
         "type": "text/plain",
       },
       "event": Array [
         Object {
-          "id": "iqxxs7",
+          "id": "mge3qz",
           "listen": "prerequest",
           "script": Object {
             "exec": Array [
-              "pm.variables.set(\\"parameters\\", \\"[object Object]\\");",
+              "pm.variables.set(\\"parameters\\", {\\"properties\\":{\\"sku\\":{\\"name\\":\\"Standard_LRS\\"},\\"kind\\":\\"StorageV2\\",\\"location\\":\\"westus\\",\\"properties\\":{\\"encryption\\":{\\"services\\":{\\"blob\\":{}},\\"keySource\\":\\"Microsoft.Storage\\"}},\\"patches\\":[{\\"add\\":\\"/properties/kind\\",\\"value\\":\\"StorageV2\\"}]}});",
             ],
-            "id": "yh0zn8",
+            "id": "spylrr",
             "type": "text/javascript",
           },
         },
       ],
-      "id": "odc2fc",
+      "id": "ivu9xy",
       "item": Array [
         Object {
           "description": "{\\"type\\":\\"LRO\\",\\"poller_item_name\\":\\"_createStorageAccount_poller\\",\\"operationId\\":\\"StorageAccounts_Create\\",\\"itemName\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "p03jp7",
+              "id": "eq5yyi",
               "listen": "prerequest",
               "script": Object {
                 "exec": Array [
-                  "pm.variables.set(\\"parameters\\", \\"[object Object]\\");",
+                  "pm.variables.set(\\"parameters\\", {\\"properties\\":{\\"sku\\":\\"Standard\\",\\"kind\\":\\"StorageV2\\",\\"location\\":\\"westus\\",\\"properties\\":{\\"encryption\\":{\\"services\\":{\\"blob\\":{}},\\"keySource\\":\\"Microsoft.Storage\\"}},\\"patches\\":[{\\"add\\":\\"/properties/kind\\",\\"value\\":\\"StorageV2\\"}]}});",
+                  "pm.variables.set(\\"resourceGroupName_encoded\\", encodeURIComponent(pm.variables.get(\\"resourceGroupName\\")));",
+                  "pm.variables.set(\\"accountName_encoded\\", encodeURIComponent(pm.variables.get(\\"accountName\\")));",
+                  "pm.variables.set(\\"subscriptionId_encoded\\", encodeURIComponent(pm.variables.get(\\"subscriptionId\\")));",
                 ],
-                "id": "k97wbk",
+                "id": "kqos97",
                 "type": "text/javascript",
               },
             },
             Object {
-              "id": "mge3qz",
+              "id": "d9yng9",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -1456,20 +3655,30 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                   "
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\");
+const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\");
 if (pollingUrl) {
     pm.variables.set(\\"x_polling_url\\", pollingUrl.replace(\\"https://management.azure.com\\",\\"http://localhost:5000\\"));
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
-                "id": "spylrr",
+                "id": "sp8ib7",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "h0fgel",
+          "id": "qh9z16",
           "name": "createStorageAccount",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {
               "mode": "raw",
               "raw": "{
@@ -1537,17 +3746,17 @@ if (pollingUrl) {
                 Object {
                   "key": "resourceGroupName",
                   "type": "any",
-                  "value": "{{resourceGroupName}}",
+                  "value": "{{resourceGroupName_encoded}}",
                 },
                 Object {
                   "key": "accountName",
                   "type": "any",
-                  "value": "{{accountName}}",
+                  "value": "{{accountName_encoded}}",
                 },
                 Object {
                   "key": "subscriptionId",
                   "type": "any",
-                  "value": "{{subscriptionId}}",
+                  "value": "{{subscriptionId_encoded}}",
                 },
               ],
             },
@@ -1557,7 +3766,7 @@ if (pollingUrl) {
         Object {
           "description": "{\\"type\\":\\"delay\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
           "event": Array [],
-          "id": "j58bgv",
+          "id": "bsqg1o",
           "name": "_createStorageAccount_delay",
           "request": Object {
             "method": "GET",
@@ -1581,7 +3790,7 @@ if (pollingUrl) {
           "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "q1cfqt",
+              "id": "65xm09",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -1593,9 +3802,9 @@ try {
             pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
         }
     } else if (pm.response.size().body > 0) {
-        const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"];
+        const terminalStatus = [\\"succeeded\\", \\"failed\\", \\"canceled\\", \\"cancelled\\", \\"aborted\\", \\"deleted\\", \\"completed\\"];
         const json = pm.response.json();
-        if (json.status !== undefined && terminalStatus.indexOf(json.status) === -1) {
+        if (json.status !== undefined && terminalStatus.indexOf(json.status.toLowerCase()) === -1) {
             postman.setNextRequest(\\"_createStorageAccount_delay\\")
             if (pm.response.headers.has(\\"Retry-After\\")) {
                 pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
@@ -1607,12 +3816,12 @@ try {
 }
 ",
                 ],
-                "id": "9ezdsu",
+                "id": "tyolxx",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "dm09uw",
+          "id": "a7lkxi",
           "name": "_createStorageAccount_poller",
           "request": Object {
             "header": Array [
@@ -1644,7 +3853,7 @@ try {
           "description": "{\\"type\\":\\"finalGet\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "lk4mhm",
+              "id": "gsyqal",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -1652,12 +3861,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "ivu9xy",
+                "id": "wlgh2r",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "vm8psu",
+          "id": "c9wzyn",
           "name": "_createStorageAccount_final_get",
           "request": Object {
             "header": Array [
@@ -1703,17 +3912,17 @@ try {
                 Object {
                   "key": "resourceGroupName",
                   "type": "any",
-                  "value": "{{resourceGroupName}}",
+                  "value": "{{resourceGroupName_encoded}}",
                 },
                 Object {
                   "key": "accountName",
                   "type": "any",
-                  "value": "{{accountName}}",
+                  "value": "{{accountName_encoded}}",
                 },
                 Object {
                   "key": "subscriptionId",
                   "type": "any",
-                  "value": "{{subscriptionId}}",
+                  "value": "{{subscriptionId_encoded}}",
                 },
               ],
             },
@@ -1725,12 +3934,12 @@ try {
     },
     Object {
       "event": Array [],
-      "id": "eq5yyi",
+      "id": "2vc31r",
       "item": Array [
         Object {
           "event": Array [
             Object {
-              "id": "kqos97",
+              "id": "bw1q38",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -1738,12 +3947,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "bsqg1o",
+                "id": "yzy1ec",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "qh9z16",
+          "id": "ew9nh8",
           "name": "deleteResourceGroup",
           "request": Object {
             "header": Array [
@@ -1800,7 +4009,7 @@ try {
         Object {
           "event": Array [
             Object {
-              "id": "65xm09",
+              "id": "ehebqq",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -1810,12 +4019,12 @@ try {
                   "});",
                   "",
                 ],
-                "id": "tyolxx",
+                "id": "zo75y7",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "a7lkxi",
+          "id": "l0fzps",
           "name": "stopTestProxyRecording",
           "request": Object {
             "header": Array [
@@ -1950,11 +4159,11 @@ if (
                 console.log(err);
             } else {
                 let resJson = res.json();
-                pm.variables.set(
+                pm.environment.set(
                     \\"x_bearer_token_0_expires_on\\",
                     resJson.expires_in + Math.floor(Date.now() / 1000)
                 );
-                pm.variables.set(\\"x_bearer_token_0\\", resJson.access_token);
+                pm.environment.set(\\"x_bearer_token_0\\", resJson.access_token);
             }
         }
     );
@@ -2048,6 +4257,16 @@ if (
       "name": "__Prepare__",
     },
     Object {
+      "auth": Object {
+        "bearer": Array [
+          Object {
+            "key": "token",
+            "type": "string",
+            "value": "{{x_bearer_token_0}}",
+          },
+        ],
+        "type": "bearer",
+      },
       "description": Object {
         "content": "",
         "type": "text/plain",
@@ -2060,6 +4279,17 @@ if (
           "event": Array [
             Object {
               "id": "oipyp5",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"subscriptionId_encoded\\", encodeURIComponent(pm.variables.get(\\"subscriptionId\\")));",
+                ],
+                "id": "k8hcud",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "39l4a3",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -2067,7 +4297,7 @@ if (
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "k8hcud",
+                "id": "g4l6nv",
                 "type": "text/javascript",
               },
             },
@@ -2075,6 +4305,16 @@ if (
           "id": "9120qs",
           "name": "checkName",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {
               "mode": "raw",
               "raw": "{
@@ -2112,7 +4352,7 @@ if (
                 Object {
                   "key": "subscriptionId",
                   "type": "any",
-                  "value": "{{subscriptionId}}",
+                  "value": "{{subscriptionId_encoded}}",
                 },
               ],
             },
@@ -2123,7 +4363,20 @@ if (
           "description": "{\\"type\\":\\"LRO\\",\\"poller_item_name\\":\\"_createStorageAccount_poller\\",\\"operationId\\":\\"StorageAccounts_Create\\",\\"exampleName\\":\\"../examples/StorageAccountCreate.json\\",\\"itemName\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "hlqn5m",
+              "id": "zvuzjs",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"resourceGroupName_encoded\\", encodeURIComponent(pm.variables.get(\\"resourceGroupName\\")));",
+                  "pm.variables.set(\\"accountName_encoded\\", encodeURIComponent(pm.variables.get(\\"accountName\\")));",
+                  "pm.variables.set(\\"subscriptionId_encoded\\", encodeURIComponent(pm.variables.get(\\"subscriptionId\\")));",
+                ],
+                "id": "gbupa4",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "vov58h",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -2131,20 +4384,30 @@ if (
                   "pm.response.to.be.success;",
                   "});",
                   "
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\");
+const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\");
 if (pollingUrl) {
     pm.variables.set(\\"x_polling_url\\", pollingUrl);
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
-                "id": "7wi32c",
+                "id": "3l45xk",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "39l4a3",
+          "id": "mcbyik",
           "name": "createStorageAccount",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {
               "mode": "raw",
               "raw": "{
@@ -2230,17 +4493,17 @@ if (pollingUrl) {
                 Object {
                   "key": "resourceGroupName",
                   "type": "any",
-                  "value": "{{resourceGroupName}}",
+                  "value": "{{resourceGroupName_encoded}}",
                 },
                 Object {
                   "key": "accountName",
                   "type": "any",
-                  "value": "{{accountName}}",
+                  "value": "{{accountName_encoded}}",
                 },
                 Object {
                   "key": "subscriptionId",
                   "type": "any",
-                  "value": "{{subscriptionId}}",
+                  "value": "{{subscriptionId_encoded}}",
                 },
               ],
             },
@@ -2250,7 +4513,7 @@ if (pollingUrl) {
         Object {
           "description": "{\\"type\\":\\"delay\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
           "event": Array [],
-          "id": "g4l6nv",
+          "id": "1gju0k",
           "name": "_createStorageAccount_delay",
           "request": Object {
             "method": "GET",
@@ -2274,7 +4537,7 @@ if (pollingUrl) {
           "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "zvuzjs",
+              "id": "hfy1hi",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -2286,9 +4549,9 @@ try {
             pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
         }
     } else if (pm.response.size().body > 0) {
-        const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"];
+        const terminalStatus = [\\"succeeded\\", \\"failed\\", \\"canceled\\", \\"cancelled\\", \\"aborted\\", \\"deleted\\", \\"completed\\"];
         const json = pm.response.json();
-        if (json.status !== undefined && terminalStatus.indexOf(json.status) === -1) {
+        if (json.status !== undefined && terminalStatus.indexOf(json.status.toLowerCase()) === -1) {
             postman.setNextRequest(\\"_createStorageAccount_delay\\")
             if (pm.response.headers.has(\\"Retry-After\\")) {
                 pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
@@ -2300,12 +4563,12 @@ try {
 }
 ",
                 ],
-                "id": "gbupa4",
+                "id": "hlqn5m",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "mcbyik",
+          "id": "j55iye",
           "name": "_createStorageAccount_poller",
           "request": Object {
             "method": "GET",
@@ -2323,7 +4586,7 @@ try {
           "description": "{\\"type\\":\\"finalGet\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "j55iye",
+              "id": "1rcvet",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -2331,12 +4594,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "hfy1hi",
+                "id": "4fy274",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "1gju0k",
+          "id": "7wi32c",
           "name": "_createStorageAccount_final_get",
           "request": Object {
             "header": Array [
@@ -2372,17 +4635,17 @@ try {
                 Object {
                   "key": "resourceGroupName",
                   "type": "any",
-                  "value": "{{resourceGroupName}}",
+                  "value": "{{resourceGroupName_encoded}}",
                 },
                 Object {
                   "key": "accountName",
                   "type": "any",
-                  "value": "{{accountName}}",
+                  "value": "{{accountName_encoded}}",
                 },
                 Object {
                   "key": "subscriptionId",
                   "type": "any",
-                  "value": "{{subscriptionId}}",
+                  "value": "{{subscriptionId_encoded}}",
                 },
               ],
             },
@@ -2393,7 +4656,20 @@ try {
           "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"StorageAccounts_Update\\",\\"exampleName\\":\\"../examples/StorageAccountUpdate.json\\",\\"itemName\\":\\"updateStorageAccount\\",\\"step\\":\\"updateStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "4fy274",
+              "id": "3q0yb6",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"resourceGroupName_encoded\\", encodeURIComponent(pm.variables.get(\\"resourceGroupName\\")));",
+                  "pm.variables.set(\\"accountName_encoded\\", encodeURIComponent(pm.variables.get(\\"accountName\\")));",
+                  "pm.variables.set(\\"subscriptionId_encoded\\", encodeURIComponent(pm.variables.get(\\"subscriptionId\\")));",
+                ],
+                "id": "6w00ic",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "m388ep",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -2401,14 +4677,24 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "vov58h",
+                "id": "qq5z84",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "1rcvet",
+          "id": "1ueh28",
           "name": "updateStorageAccount",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {
               "mode": "raw",
               "raw": "{
@@ -2489,17 +4775,17 @@ try {
                 Object {
                   "key": "resourceGroupName",
                   "type": "any",
-                  "value": "{{resourceGroupName}}",
+                  "value": "{{resourceGroupName_encoded}}",
                 },
                 Object {
                   "key": "accountName",
                   "type": "any",
-                  "value": "{{accountName}}",
+                  "value": "{{accountName_encoded}}",
                 },
                 Object {
                   "key": "subscriptionId",
                   "type": "any",
-                  "value": "{{subscriptionId}}",
+                  "value": "{{subscriptionId_encoded}}",
                 },
               ],
             },
@@ -2510,7 +4796,20 @@ try {
           "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"StorageAccounts_GetProperties\\",\\"exampleName\\":\\"../examples/StorageAccountGetProperties.json\\",\\"itemName\\":\\"getStorageAccount\\",\\"step\\":\\"getStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "1ueh28",
+              "id": "rxgyxc",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"resourceGroupName_encoded\\", encodeURIComponent(pm.variables.get(\\"resourceGroupName\\")));",
+                  "pm.variables.set(\\"accountName_encoded\\", encodeURIComponent(pm.variables.get(\\"accountName\\")));",
+                  "pm.variables.set(\\"subscriptionId_encoded\\", encodeURIComponent(pm.variables.get(\\"subscriptionId\\")));",
+                ],
+                "id": "un6yyw",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "igg58r",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -2518,21 +4817,25 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "3q0yb6",
+                "id": "zfkej6",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "3l45xk",
+          "id": "j917fd",
           "name": "getStorageAccount",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {},
-            "header": Array [
-              Object {
-                "key": "Content-Type",
-                "value": "application/json",
-              },
-            ],
             "method": "GET",
             "url": Object {
               "host": Array [
@@ -2560,17 +4863,17 @@ try {
                 Object {
                   "key": "resourceGroupName",
                   "type": "any",
-                  "value": "{{resourceGroupName}}",
+                  "value": "{{resourceGroupName_encoded}}",
                 },
                 Object {
                   "key": "accountName",
                   "type": "any",
-                  "value": "{{accountName}}",
+                  "value": "{{accountName_encoded}}",
                 },
                 Object {
                   "key": "subscriptionId",
                   "type": "any",
-                  "value": "{{subscriptionId}}",
+                  "value": "{{subscriptionId_encoded}}",
                 },
               ],
             },
@@ -2581,7 +4884,20 @@ try {
           "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"StorageAccounts_Delete\\",\\"exampleName\\":\\"../examples/StorageAccountDelete.json\\",\\"itemName\\":\\"deleteStorageAccount\\",\\"step\\":\\"deleteStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "m388ep",
+              "id": "h1l4hw",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"resourceGroupName_encoded\\", encodeURIComponent(pm.variables.get(\\"resourceGroupName\\")));",
+                  "pm.variables.set(\\"accountName_encoded\\", encodeURIComponent(pm.variables.get(\\"accountName\\")));",
+                  "pm.variables.set(\\"subscriptionId_encoded\\", encodeURIComponent(pm.variables.get(\\"subscriptionId\\")));",
+                ],
+                "id": "ezqs5q",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "cb8v3t",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -2589,21 +4905,25 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "qq5z84",
+                "id": "x7qdfp",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "6w00ic",
+          "id": "9e4snq",
           "name": "deleteStorageAccount",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {},
-            "header": Array [
-              Object {
-                "key": "Content-Type",
-                "value": "application/json",
-              },
-            ],
             "method": "DELETE",
             "url": Object {
               "host": Array [
@@ -2631,17 +4951,17 @@ try {
                 Object {
                   "key": "resourceGroupName",
                   "type": "any",
-                  "value": "{{resourceGroupName}}",
+                  "value": "{{resourceGroupName_encoded}}",
                 },
                 Object {
                   "key": "accountName",
                   "type": "any",
-                  "value": "{{accountName}}",
+                  "value": "{{accountName_encoded}}",
                 },
                 Object {
                   "key": "subscriptionId",
                   "type": "any",
-                  "value": "{{subscriptionId}}",
+                  "value": "{{subscriptionId_encoded}}",
                 },
               ],
             },
@@ -2653,12 +4973,12 @@ try {
     },
     Object {
       "event": Array [],
-      "id": "rxgyxc",
+      "id": "9atymt",
       "item": Array [
         Object {
           "event": Array [
             Object {
-              "id": "un6yyw",
+              "id": "d39qgw",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -2666,12 +4986,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "igg58r",
+                "id": "jhzmpv",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "j917fd",
+          "id": "9vqoea",
           "name": "deleteResourceGroup",
           "request": Object {
             "header": Array [
@@ -2824,11 +5144,11 @@ if (
                 console.log(err);
             } else {
                 let resJson = res.json();
-                pm.variables.set(
+                pm.environment.set(
                     \\"x_bearer_token_0_expires_on\\",
                     resJson.expires_in + Math.floor(Date.now() / 1000)
                 );
-                pm.variables.set(\\"x_bearer_token_0\\", resJson.access_token);
+                pm.environment.set(\\"x_bearer_token_0\\", resJson.access_token);
             }
         }
     );
@@ -2922,6 +5242,16 @@ if (
       "name": "__Prepare__",
     },
     Object {
+      "auth": Object {
+        "bearer": Array [
+          Object {
+            "key": "token",
+            "type": "string",
+            "value": "{{x_bearer_token_0}}",
+          },
+        ],
+        "type": "bearer",
+      },
       "description": Object {
         "content": "",
         "type": "text/plain",
@@ -2934,18 +5264,29 @@ if (
           "event": Array [
             Object {
               "id": "oipyp5",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"subscriptionId_encoded\\", encodeURIComponent(pm.variables.get(\\"subscriptionId\\")));",
+                ],
+                "id": "k8hcud",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "39l4a3",
               "listen": "test",
               "script": Object {
                 "exec": Array [
                   "pm.test(\\"response status code assertion.\\", function() {",
-                  "pm.response.to.be.success;",
+                  "pm.expect(pm.response.code).to.be.oneOf([200]);",
                   "if (pm.response.code === 200) {
 pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
 }
 ",
                   "});",
                 ],
-                "id": "k8hcud",
+                "id": "g4l6nv",
                 "type": "text/javascript",
               },
             },
@@ -2953,6 +5294,16 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
           "id": "9120qs",
           "name": "checkName",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {
               "mode": "raw",
               "raw": "{
@@ -2990,7 +5341,7 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
                 Object {
                   "key": "subscriptionId",
                   "type": "any",
-                  "value": "{{subscriptionId}}",
+                  "value": "{{subscriptionId_encoded}}",
                 },
               ],
             },
@@ -3001,7 +5352,20 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
           "description": "{\\"type\\":\\"LRO\\",\\"poller_item_name\\":\\"_createStorageAccount_poller\\",\\"operationId\\":\\"StorageAccounts_Create\\",\\"itemName\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "hlqn5m",
+              "id": "zvuzjs",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"resourceGroupName_encoded\\", encodeURIComponent(pm.variables.get(\\"resourceGroupName\\")));",
+                  "pm.variables.set(\\"accountName_encoded\\", encodeURIComponent(pm.variables.get(\\"accountName\\")));",
+                  "pm.variables.set(\\"subscriptionId_encoded\\", encodeURIComponent(pm.variables.get(\\"subscriptionId\\")));",
+                ],
+                "id": "gbupa4",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "vov58h",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -3009,20 +5373,30 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
                   "pm.response.to.be.success;",
                   "});",
                   "
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\");
+const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\");
 if (pollingUrl) {
     pm.variables.set(\\"x_polling_url\\", pollingUrl);
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
-                "id": "7wi32c",
+                "id": "3l45xk",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "39l4a3",
+          "id": "mcbyik",
           "name": "createStorageAccount",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {
               "mode": "raw",
               "raw": "{
@@ -3074,17 +5448,17 @@ if (pollingUrl) {
                 Object {
                   "key": "resourceGroupName",
                   "type": "any",
-                  "value": "{{resourceGroupName}}",
+                  "value": "{{resourceGroupName_encoded}}",
                 },
                 Object {
                   "key": "accountName",
                   "type": "any",
-                  "value": "{{accountName}}",
+                  "value": "{{accountName_encoded}}",
                 },
                 Object {
                   "key": "subscriptionId",
                   "type": "any",
-                  "value": "{{subscriptionId}}",
+                  "value": "{{subscriptionId_encoded}}",
                 },
               ],
             },
@@ -3094,7 +5468,7 @@ if (pollingUrl) {
         Object {
           "description": "{\\"type\\":\\"delay\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
           "event": Array [],
-          "id": "g4l6nv",
+          "id": "1gju0k",
           "name": "_createStorageAccount_delay",
           "request": Object {
             "method": "GET",
@@ -3118,7 +5492,7 @@ if (pollingUrl) {
           "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "zvuzjs",
+              "id": "hfy1hi",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -3130,9 +5504,9 @@ try {
             pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
         }
     } else if (pm.response.size().body > 0) {
-        const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"];
+        const terminalStatus = [\\"succeeded\\", \\"failed\\", \\"canceled\\", \\"cancelled\\", \\"aborted\\", \\"deleted\\", \\"completed\\"];
         const json = pm.response.json();
-        if (json.status !== undefined && terminalStatus.indexOf(json.status) === -1) {
+        if (json.status !== undefined && terminalStatus.indexOf(json.status.toLowerCase()) === -1) {
             postman.setNextRequest(\\"_createStorageAccount_delay\\")
             if (pm.response.headers.has(\\"Retry-After\\")) {
                 pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
@@ -3144,12 +5518,12 @@ try {
 }
 ",
                 ],
-                "id": "gbupa4",
+                "id": "hlqn5m",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "mcbyik",
+          "id": "j55iye",
           "name": "_createStorageAccount_poller",
           "request": Object {
             "method": "GET",
@@ -3167,7 +5541,7 @@ try {
           "description": "{\\"type\\":\\"finalGet\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "j55iye",
+              "id": "1rcvet",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -3175,12 +5549,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "hfy1hi",
+                "id": "4fy274",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "1gju0k",
+          "id": "7wi32c",
           "name": "_createStorageAccount_final_get",
           "request": Object {
             "header": Array [
@@ -3216,17 +5590,17 @@ try {
                 Object {
                   "key": "resourceGroupName",
                   "type": "any",
-                  "value": "{{resourceGroupName}}",
+                  "value": "{{resourceGroupName_encoded}}",
                 },
                 Object {
                   "key": "accountName",
                   "type": "any",
-                  "value": "{{accountName}}",
+                  "value": "{{accountName_encoded}}",
                 },
                 Object {
                   "key": "subscriptionId",
                   "type": "any",
-                  "value": "{{subscriptionId}}",
+                  "value": "{{subscriptionId_encoded}}",
                 },
               ],
             },
@@ -3237,49 +5611,80 @@ try {
       "name": "basic",
     },
     Object {
+      "auth": Object {
+        "bearer": Array [
+          Object {
+            "key": "token",
+            "type": "string",
+            "value": "{{x_bearer_token_0}}",
+          },
+        ],
+        "type": "bearer",
+      },
       "description": Object {
         "content": "",
         "type": "text/plain",
       },
       "event": Array [
         Object {
-          "id": "4fy274",
+          "id": "3q0yb6",
           "listen": "prerequest",
           "script": Object {
             "exec": Array [
               "pm.variables.set(\\"accountName\\", \\"star4of8l2\\");",
             ],
-            "id": "vov58h",
+            "id": "6w00ic",
             "type": "text/javascript",
           },
         },
       ],
-      "id": "1rcvet",
+      "id": "1ueh28",
       "item": Array [
         Object {
           "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"StorageAccounts_CheckNameAvailability\\",\\"itemName\\":\\"checkName\\",\\"step\\":\\"checkName\\"}",
           "event": Array [
             Object {
-              "id": "1ueh28",
+              "id": "qq5z84",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"subscriptionId_encoded\\", encodeURIComponent(pm.variables.get(\\"subscriptionId\\")));",
+                ],
+                "id": "j917fd",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "rxgyxc",
               "listen": "test",
               "script": Object {
                 "exec": Array [
                   "pm.test(\\"response status code assertion.\\", function() {",
-                  "pm.response.to.be.success;",
+                  "pm.expect(pm.response.code).to.be.oneOf([200]);",
                   "if (pm.response.code === 200) {
 pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
 }
 ",
                   "});",
                 ],
-                "id": "3q0yb6",
+                "id": "un6yyw",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "3l45xk",
+          "id": "m388ep",
           "name": "checkName",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {
               "mode": "raw",
               "raw": "{
@@ -3317,7 +5722,7 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
                 Object {
                   "key": "subscriptionId",
                   "type": "any",
-                  "value": "{{subscriptionId}}",
+                  "value": "{{subscriptionId_encoded}}",
                 },
               ],
             },
@@ -3328,7 +5733,20 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
           "description": "{\\"type\\":\\"LRO\\",\\"poller_item_name\\":\\"_createStorageAccount_poller\\",\\"operationId\\":\\"StorageAccounts_Create\\",\\"itemName\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "9e4snq",
+              "id": "zfkej6",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"resourceGroupName_encoded\\", encodeURIComponent(pm.variables.get(\\"resourceGroupName\\")));",
+                  "pm.variables.set(\\"accountName_encoded\\", encodeURIComponent(pm.variables.get(\\"accountName\\")));",
+                  "pm.variables.set(\\"subscriptionId_encoded\\", encodeURIComponent(pm.variables.get(\\"subscriptionId\\")));",
+                ],
+                "id": "9e4snq",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "jhzmpv",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -3336,20 +5754,30 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
                   "pm.response.to.be.success;",
                   "});",
                   "
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\");
+const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\");
 if (pollingUrl) {
     pm.variables.set(\\"x_polling_url\\", pollingUrl);
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
-                "id": "h1l4hw",
+                "id": "x6exws",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "6w00ic",
+          "id": "igg58r",
           "name": "createStorageAccount",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {
               "mode": "raw",
               "raw": "{
@@ -3401,17 +5829,17 @@ if (pollingUrl) {
                 Object {
                   "key": "resourceGroupName",
                   "type": "any",
-                  "value": "{{resourceGroupName}}",
+                  "value": "{{resourceGroupName_encoded}}",
                 },
                 Object {
                   "key": "accountName",
                   "type": "any",
-                  "value": "{{accountName}}",
+                  "value": "{{accountName_encoded}}",
                 },
                 Object {
                   "key": "subscriptionId",
                   "type": "any",
-                  "value": "{{subscriptionId}}",
+                  "value": "{{subscriptionId_encoded}}",
                 },
               ],
             },
@@ -3421,7 +5849,7 @@ if (pollingUrl) {
         Object {
           "description": "{\\"type\\":\\"delay\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
           "event": Array [],
-          "id": "m388ep",
+          "id": "h1l4hw",
           "name": "_createStorageAccount_delay",
           "request": Object {
             "method": "GET",
@@ -3445,7 +5873,7 @@ if (pollingUrl) {
           "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "j917fd",
+              "id": "cb8v3t",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -3457,9 +5885,9 @@ try {
             pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
         }
     } else if (pm.response.size().body > 0) {
-        const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"];
+        const terminalStatus = [\\"succeeded\\", \\"failed\\", \\"canceled\\", \\"cancelled\\", \\"aborted\\", \\"deleted\\", \\"completed\\"];
         const json = pm.response.json();
-        if (json.status !== undefined && terminalStatus.indexOf(json.status) === -1) {
+        if (json.status !== undefined && terminalStatus.indexOf(json.status.toLowerCase()) === -1) {
             postman.setNextRequest(\\"_createStorageAccount_delay\\")
             if (pm.response.headers.has(\\"Retry-After\\")) {
                 pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
@@ -3471,12 +5899,12 @@ try {
 }
 ",
                 ],
-                "id": "rxgyxc",
+                "id": "x7qdfp",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "qq5z84",
+          "id": "ezqs5q",
           "name": "_createStorageAccount_poller",
           "request": Object {
             "method": "GET",
@@ -3494,7 +5922,7 @@ try {
           "description": "{\\"type\\":\\"finalGet\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "igg58r",
+              "id": "9atymt",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -3502,12 +5930,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "zfkej6",
+                "id": "d39qgw",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "un6yyw",
+          "id": "9vqoea",
           "name": "_createStorageAccount_final_get",
           "request": Object {
             "header": Array [
@@ -3543,17 +5971,17 @@ try {
                 Object {
                   "key": "resourceGroupName",
                   "type": "any",
-                  "value": "{{resourceGroupName}}",
+                  "value": "{{resourceGroupName_encoded}}",
                 },
                 Object {
                   "key": "accountName",
                   "type": "any",
-                  "value": "{{accountName}}",
+                  "value": "{{accountName_encoded}}",
                 },
                 Object {
                   "key": "subscriptionId",
                   "type": "any",
-                  "value": "{{subscriptionId}}",
+                  "value": "{{subscriptionId_encoded}}",
                 },
               ],
             },
@@ -3564,49 +5992,80 @@ try {
       "name": "overrideVariable",
     },
     Object {
+      "auth": Object {
+        "bearer": Array [
+          Object {
+            "key": "token",
+            "type": "string",
+            "value": "{{x_bearer_token_0}}",
+          },
+        ],
+        "type": "bearer",
+      },
       "description": Object {
         "content": "",
         "type": "text/plain",
       },
       "event": Array [
         Object {
-          "id": "x7qdfp",
+          "id": "le21m4",
           "listen": "prerequest",
           "script": Object {
             "exec": Array [
-              "pm.variables.set(\\"accountName\\", \\"foobarezqs5q\\");",
+              "pm.variables.set(\\"accountName\\", \\"foobar6qbw4d\\");",
             ],
-            "id": "9vqoea",
+            "id": "7oxzx1",
             "type": "text/javascript",
           },
         },
       ],
-      "id": "cb8v3t",
+      "id": "bhuvqx",
       "item": Array [
         Object {
           "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"StorageAccounts_CheckNameAvailability\\",\\"itemName\\":\\"checkName\\",\\"step\\":\\"checkName\\"}",
           "event": Array [
             Object {
-              "id": "d39qgw",
+              "id": "cdpopn",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"subscriptionId_encoded\\", encodeURIComponent(pm.variables.get(\\"subscriptionId\\")));",
+                ],
+                "id": "5sx5dw",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "49cuyt",
               "listen": "test",
               "script": Object {
                 "exec": Array [
                   "pm.test(\\"response status code assertion.\\", function() {",
-                  "pm.response.to.be.success;",
+                  "pm.expect(pm.response.code).to.be.oneOf([200]);",
                   "if (pm.response.code === 200) {
 pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
 }
 ",
                   "});",
                 ],
-                "id": "jhzmpv",
+                "id": "8ew1jk",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "9atymt",
+          "id": "ssi2a8",
           "name": "checkName",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {
               "mode": "raw",
               "raw": "{
@@ -3644,7 +6103,7 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
                 Object {
                   "key": "subscriptionId",
                   "type": "any",
-                  "value": "{{subscriptionId}}",
+                  "value": "{{subscriptionId_encoded}}",
                 },
               ],
             },
@@ -3655,7 +6114,20 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
           "description": "{\\"type\\":\\"LRO\\",\\"poller_item_name\\":\\"_createStorageAccount_poller\\",\\"operationId\\":\\"StorageAccounts_Create\\",\\"itemName\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "49cuyt",
+              "id": "i544h5",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"resourceGroupName_encoded\\", encodeURIComponent(pm.variables.get(\\"resourceGroupName\\")));",
+                  "pm.variables.set(\\"accountName_encoded\\", encodeURIComponent(pm.variables.get(\\"accountName\\")));",
+                  "pm.variables.set(\\"subscriptionId_encoded\\", encodeURIComponent(pm.variables.get(\\"subscriptionId\\")));",
+                ],
+                "id": "db187u",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "iqxxs7",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -3663,20 +6135,30 @@ pm.expect(_.get(pm.response.json(), [\\"nameAvailable\\"])).to.eql(true);
                   "pm.response.to.be.success;",
                   "});",
                   "
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\");
+const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\");
 if (pollingUrl) {
     pm.variables.set(\\"x_polling_url\\", pollingUrl);
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
-                "id": "8ew1jk",
+                "id": "yh0zn8",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "x6exws",
+          "id": "x6oaag",
           "name": "createStorageAccount",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {
               "mode": "raw",
               "raw": "{
@@ -3728,17 +6210,17 @@ if (pollingUrl) {
                 Object {
                   "key": "resourceGroupName",
                   "type": "any",
-                  "value": "{{resourceGroupName}}",
+                  "value": "{{resourceGroupName_encoded}}",
                 },
                 Object {
                   "key": "accountName",
                   "type": "any",
-                  "value": "{{accountName}}",
+                  "value": "{{accountName_encoded}}",
                 },
                 Object {
                   "key": "subscriptionId",
                   "type": "any",
-                  "value": "{{subscriptionId}}",
+                  "value": "{{subscriptionId_encoded}}",
                 },
               ],
             },
@@ -3748,7 +6230,7 @@ if (pollingUrl) {
         Object {
           "description": "{\\"type\\":\\"delay\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
           "event": Array [],
-          "id": "6qbw4d",
+          "id": "2tccjb",
           "name": "_createStorageAccount_delay",
           "request": Object {
             "method": "GET",
@@ -3772,7 +6254,7 @@ if (pollingUrl) {
           "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "le21m4",
+              "id": "3zgew6",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -3784,9 +6266,9 @@ try {
             pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
         }
     } else if (pm.response.size().body > 0) {
-        const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"];
+        const terminalStatus = [\\"succeeded\\", \\"failed\\", \\"canceled\\", \\"cancelled\\", \\"aborted\\", \\"deleted\\", \\"completed\\"];
         const json = pm.response.json();
-        if (json.status !== undefined && terminalStatus.indexOf(json.status) === -1) {
+        if (json.status !== undefined && terminalStatus.indexOf(json.status.toLowerCase()) === -1) {
             postman.setNextRequest(\\"_createStorageAccount_delay\\")
             if (pm.response.headers.has(\\"Retry-After\\")) {
                 pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
@@ -3798,12 +6280,12 @@ try {
 }
 ",
                 ],
-                "id": "7oxzx1",
+                "id": "wpbvc4",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "bhuvqx",
+          "id": "b9q1ra",
           "name": "_createStorageAccount_poller",
           "request": Object {
             "method": "GET",
@@ -3821,7 +6303,7 @@ try {
           "description": "{\\"type\\":\\"finalGet\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "cdpopn",
+              "id": "hvl7jw",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -3829,12 +6311,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "5sx5dw",
+                "id": "odc2fc",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "ssi2a8",
+          "id": "6rfjty",
           "name": "_createStorageAccount_final_get",
           "request": Object {
             "header": Array [
@@ -3870,17 +6352,17 @@ try {
                 Object {
                   "key": "resourceGroupName",
                   "type": "any",
-                  "value": "{{resourceGroupName}}",
+                  "value": "{{resourceGroupName_encoded}}",
                 },
                 Object {
                   "key": "accountName",
                   "type": "any",
-                  "value": "{{accountName}}",
+                  "value": "{{accountName_encoded}}",
                 },
                 Object {
                   "key": "subscriptionId",
                   "type": "any",
-                  "value": "{{subscriptionId}}",
+                  "value": "{{subscriptionId_encoded}}",
                 },
               ],
             },
@@ -3891,18 +6373,21 @@ try {
           "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"DeletedAccounts_Get\\",\\"itemName\\":\\"DeletedAccounts_Get\\",\\"step\\":\\"DeletedAccounts_Get\\"}",
           "event": Array [
             Object {
-              "id": "db187u",
+              "id": "k97wbk",
               "listen": "prerequest",
               "script": Object {
                 "exec": Array [
-                  "pm.variables.set(\\"deletedAccountName\\", \\"foobarx6oaag\\");",
+                  "pm.variables.set(\\"deletedAccountName\\", \\"foobarh0fgel\\");",
+                  "pm.variables.set(\\"deletedAccountName_encoded\\", encodeURIComponent(pm.variables.get(\\"deletedAccountName\\")));",
+                  "pm.variables.set(\\"location_encoded\\", encodeURIComponent(pm.variables.get(\\"location\\")));",
+                  "pm.variables.set(\\"subscriptionId_encoded\\", encodeURIComponent(pm.variables.get(\\"subscriptionId\\")));",
                 ],
-                "id": "2tccjb",
+                "id": "j58bgv",
                 "type": "text/javascript",
               },
             },
             Object {
-              "id": "b9q1ra",
+              "id": "dm09uw",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -3910,21 +6395,25 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "3zgew6",
+                "id": "q1cfqt",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "i544h5",
+          "id": "p03jp7",
           "name": "DeletedAccounts_Get",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {},
-            "header": Array [
-              Object {
-                "key": "Content-Type",
-                "value": "application/json",
-              },
-            ],
             "method": "GET",
             "url": Object {
               "host": Array [
@@ -3945,7 +6434,7 @@ try {
               "query": Array [
                 Object {
                   "key": "test",
-                  "value": 1,
+                  "value": "1",
                 },
                 Object {
                   "key": "api-version",
@@ -3956,17 +6445,17 @@ try {
                 Object {
                   "key": "deletedAccountName",
                   "type": "any",
-                  "value": "{{deletedAccountName}}",
+                  "value": "{{deletedAccountName_encoded}}",
                 },
                 Object {
                   "key": "location",
                   "type": "any",
-                  "value": "{{location}}",
+                  "value": "{{location_encoded}}",
                 },
                 Object {
                   "key": "subscriptionId",
                   "type": "any",
-                  "value": "{{subscriptionId}}",
+                  "value": "{{subscriptionId_encoded}}",
                 },
               ],
             },
@@ -3977,41 +6466,54 @@ try {
       "name": "primitiveParameter",
     },
     Object {
+      "auth": Object {
+        "bearer": Array [
+          Object {
+            "key": "token",
+            "type": "string",
+            "value": "{{x_bearer_token_0}}",
+          },
+        ],
+        "type": "bearer",
+      },
       "description": Object {
         "content": "",
         "type": "text/plain",
       },
       "event": Array [
         Object {
-          "id": "6rfjty",
+          "id": "vm8psu",
           "listen": "prerequest",
           "script": Object {
             "exec": Array [
-              "pm.variables.set(\\"parameters\\", \\"[object Object]\\");",
+              "pm.variables.set(\\"parameters\\", {\\"properties\\":{\\"sku\\":{\\"name\\":\\"Standard_LRS\\"},\\"kind\\":\\"StorageV2\\",\\"location\\":\\"westus\\",\\"properties\\":{\\"encryption\\":{\\"services\\":{\\"blob\\":{}},\\"keySource\\":\\"Microsoft.Storage\\"}},\\"patches\\":[{\\"add\\":\\"/properties/kind\\",\\"value\\":\\"StorageV2\\"}]}});",
             ],
-            "id": "hvl7jw",
+            "id": "lk4mhm",
             "type": "text/javascript",
           },
         },
       ],
-      "id": "wpbvc4",
+      "id": "9ezdsu",
       "item": Array [
         Object {
           "description": "{\\"type\\":\\"LRO\\",\\"poller_item_name\\":\\"_createStorageAccount_poller\\",\\"operationId\\":\\"StorageAccounts_Create\\",\\"itemName\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "iqxxs7",
+              "id": "mge3qz",
               "listen": "prerequest",
               "script": Object {
                 "exec": Array [
-                  "pm.variables.set(\\"parameters\\", \\"[object Object]\\");",
+                  "pm.variables.set(\\"parameters\\", {\\"properties\\":{\\"sku\\":\\"Standard\\",\\"kind\\":\\"StorageV2\\",\\"location\\":\\"westus\\",\\"properties\\":{\\"encryption\\":{\\"services\\":{\\"blob\\":{}},\\"keySource\\":\\"Microsoft.Storage\\"}},\\"patches\\":[{\\"add\\":\\"/properties/kind\\",\\"value\\":\\"StorageV2\\"}]}});",
+                  "pm.variables.set(\\"resourceGroupName_encoded\\", encodeURIComponent(pm.variables.get(\\"resourceGroupName\\")));",
+                  "pm.variables.set(\\"accountName_encoded\\", encodeURIComponent(pm.variables.get(\\"accountName\\")));",
+                  "pm.variables.set(\\"subscriptionId_encoded\\", encodeURIComponent(pm.variables.get(\\"subscriptionId\\")));",
                 ],
-                "id": "yh0zn8",
+                "id": "spylrr",
                 "type": "text/javascript",
               },
             },
             Object {
-              "id": "vm8psu",
+              "id": "c9wzyn",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -4019,20 +6521,30 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                   "
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\");
+const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\");
 if (pollingUrl) {
     pm.variables.set(\\"x_polling_url\\", pollingUrl);
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
-                "id": "lk4mhm",
+                "id": "gsyqal",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "odc2fc",
+          "id": "ivu9xy",
           "name": "createStorageAccount",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {
               "mode": "raw",
               "raw": "{
@@ -4090,17 +6602,17 @@ if (pollingUrl) {
                 Object {
                   "key": "resourceGroupName",
                   "type": "any",
-                  "value": "{{resourceGroupName}}",
+                  "value": "{{resourceGroupName_encoded}}",
                 },
                 Object {
                   "key": "accountName",
                   "type": "any",
-                  "value": "{{accountName}}",
+                  "value": "{{accountName_encoded}}",
                 },
                 Object {
                   "key": "subscriptionId",
                   "type": "any",
-                  "value": "{{subscriptionId}}",
+                  "value": "{{subscriptionId_encoded}}",
                 },
               ],
             },
@@ -4110,7 +6622,7 @@ if (pollingUrl) {
         Object {
           "description": "{\\"type\\":\\"delay\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
           "event": Array [],
-          "id": "h0fgel",
+          "id": "qh9z16",
           "name": "_createStorageAccount_delay",
           "request": Object {
             "method": "GET",
@@ -4134,7 +6646,7 @@ if (pollingUrl) {
           "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "k97wbk",
+              "id": "kqos97",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -4146,9 +6658,9 @@ try {
             pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
         }
     } else if (pm.response.size().body > 0) {
-        const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"];
+        const terminalStatus = [\\"succeeded\\", \\"failed\\", \\"canceled\\", \\"cancelled\\", \\"aborted\\", \\"deleted\\", \\"completed\\"];
         const json = pm.response.json();
-        if (json.status !== undefined && terminalStatus.indexOf(json.status) === -1) {
+        if (json.status !== undefined && terminalStatus.indexOf(json.status.toLowerCase()) === -1) {
             postman.setNextRequest(\\"_createStorageAccount_delay\\")
             if (pm.response.headers.has(\\"Retry-After\\")) {
                 pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
@@ -4160,12 +6672,12 @@ try {
 }
 ",
                 ],
-                "id": "j58bgv",
+                "id": "bsqg1o",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "p03jp7",
+          "id": "eq5yyi",
           "name": "_createStorageAccount_poller",
           "request": Object {
             "method": "GET",
@@ -4183,7 +6695,7 @@ try {
           "description": "{\\"type\\":\\"finalGet\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "q1cfqt",
+              "id": "65xm09",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -4191,12 +6703,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "9ezdsu",
+                "id": "tyolxx",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "dm09uw",
+          "id": "a7lkxi",
           "name": "_createStorageAccount_final_get",
           "request": Object {
             "header": Array [
@@ -4232,17 +6744,17 @@ try {
                 Object {
                   "key": "resourceGroupName",
                   "type": "any",
-                  "value": "{{resourceGroupName}}",
+                  "value": "{{resourceGroupName_encoded}}",
                 },
                 Object {
                   "key": "accountName",
                   "type": "any",
-                  "value": "{{accountName}}",
+                  "value": "{{accountName_encoded}}",
                 },
                 Object {
                   "key": "subscriptionId",
                   "type": "any",
-                  "value": "{{subscriptionId}}",
+                  "value": "{{subscriptionId_encoded}}",
                 },
               ],
             },
@@ -4254,12 +6766,12 @@ try {
     },
     Object {
       "event": Array [],
-      "id": "mge3qz",
+      "id": "d9yng9",
       "item": Array [
         Object {
           "event": Array [
             Object {
-              "id": "spylrr",
+              "id": "sp8ib7",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -4267,12 +6779,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "qh9z16",
+                "id": "ew9nh8",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "ivu9xy",
+          "id": "wlgh2r",
           "name": "deleteResourceGroup",
           "request": Object {
             "header": Array [
@@ -4425,11 +6937,11 @@ if (
                 console.log(err);
             } else {
                 let resJson = res.json();
-                pm.variables.set(
+                pm.environment.set(
                     \\"x_bearer_token_0_expires_on\\",
                     resJson.expires_in + Math.floor(Date.now() / 1000)
                 );
-                pm.variables.set(\\"x_bearer_token_0\\", resJson.access_token);
+                pm.environment.set(\\"x_bearer_token_0\\", resJson.access_token);
             }
         }
     );
@@ -4523,6 +7035,16 @@ if (
       "name": "__Prepare__",
     },
     Object {
+      "auth": Object {
+        "bearer": Array [
+          Object {
+            "key": "token",
+            "type": "string",
+            "value": "{{x_bearer_token_0}}",
+          },
+        ],
+        "type": "bearer",
+      },
       "description": Object {
         "content": "",
         "type": "text/plain",
@@ -4534,7 +7056,19 @@ if (
           "description": "{\\"type\\":\\"LRO\\",\\"poller_item_name\\":\\"_createStorageAccount_poller\\",\\"operationId\\":\\"StorageAccounts_Create\\",\\"exampleName\\":\\"../examples/StorageAccountCreateUserAssignedIdentityWithFederatedIdentityClientId.json\\",\\"itemName\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "gbupa4",
+              "id": "9120qs",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"resourceGroupName_encoded\\", encodeURIComponent(pm.variables.get(\\"resourceGroupName\\")));",
+                  "pm.variables.set(\\"subscriptionId_encoded\\", encodeURIComponent(pm.variables.get(\\"subscriptionId\\")));",
+                ],
+                "id": "oipyp5",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "j55iye",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -4542,13 +7076,13 @@ if (
                   "pm.response.to.be.success;",
                   "});",
                   "
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\");
+const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\");
 if (pollingUrl) {
     pm.variables.set(\\"x_polling_url\\", pollingUrl);
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
-                "id": "1gju0k",
+                "id": "hfy1hi",
                 "type": "text/javascript",
               },
             },
@@ -4556,6 +7090,16 @@ if (pollingUrl) {
           "id": "clnzjc",
           "name": "createStorageAccount",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {
               "mode": "raw",
               "raw": "{
@@ -4629,7 +7173,7 @@ if (pollingUrl) {
                 Object {
                   "key": "resourceGroupName",
                   "type": "any",
-                  "value": "{{resourceGroupName}}",
+                  "value": "{{resourceGroupName_encoded}}",
                 },
                 Object {
                   "key": "accountName",
@@ -4639,7 +7183,7 @@ if (pollingUrl) {
                 Object {
                   "key": "subscriptionId",
                   "type": "any",
-                  "value": "{{subscriptionId}}",
+                  "value": "{{subscriptionId_encoded}}",
                 },
               ],
             },
@@ -4649,7 +7193,7 @@ if (pollingUrl) {
         Object {
           "description": "{\\"type\\":\\"delay\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
           "event": Array [],
-          "id": "9120qs",
+          "id": "k8hcud",
           "name": "_createStorageAccount_delay",
           "request": Object {
             "method": "GET",
@@ -4673,7 +7217,7 @@ if (pollingUrl) {
           "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "k8hcud",
+              "id": "g4l6nv",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -4685,9 +7229,9 @@ try {
             pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
         }
     } else if (pm.response.size().body > 0) {
-        const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"];
+        const terminalStatus = [\\"succeeded\\", \\"failed\\", \\"canceled\\", \\"cancelled\\", \\"aborted\\", \\"deleted\\", \\"completed\\"];
         const json = pm.response.json();
-        if (json.status !== undefined && terminalStatus.indexOf(json.status) === -1) {
+        if (json.status !== undefined && terminalStatus.indexOf(json.status.toLowerCase()) === -1) {
             postman.setNextRequest(\\"_createStorageAccount_delay\\")
             if (pm.response.headers.has(\\"Retry-After\\")) {
                 pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
@@ -4699,12 +7243,12 @@ try {
 }
 ",
                 ],
-                "id": "39l4a3",
+                "id": "mcbyik",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "oipyp5",
+          "id": "39l4a3",
           "name": "_createStorageAccount_poller",
           "request": Object {
             "method": "GET",
@@ -4722,7 +7266,7 @@ try {
           "description": "{\\"type\\":\\"finalGet\\",\\"lro_item_name\\":\\"createStorageAccount\\",\\"step\\":\\"createStorageAccount\\"}",
           "event": Array [
             Object {
-              "id": "mcbyik",
+              "id": "gbupa4",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -4730,12 +7274,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "zvuzjs",
+                "id": "1gju0k",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "g4l6nv",
+          "id": "zvuzjs",
           "name": "_createStorageAccount_final_get",
           "request": Object {
             "header": Array [
@@ -4771,7 +7315,7 @@ try {
                 Object {
                   "key": "resourceGroupName",
                   "type": "any",
-                  "value": "{{resourceGroupName}}",
+                  "value": "{{resourceGroupName_encoded}}",
                 },
                 Object {
                   "key": "accountName",
@@ -4781,7 +7325,7 @@ try {
                 Object {
                   "key": "subscriptionId",
                   "type": "any",
-                  "value": "{{subscriptionId}}",
+                  "value": "{{subscriptionId_encoded}}",
                 },
               ],
             },
@@ -4792,7 +7336,19 @@ try {
           "description": "{\\"type\\":\\"LRO\\",\\"poller_item_name\\":\\"_createStorageAccount1_poller\\",\\"operationId\\":\\"StorageAccounts_Create\\",\\"exampleName\\":\\"../examples/StorageAccountCreateUserAssignedIdentityWithFederatedIdentityClientId.json\\",\\"itemName\\":\\"createStorageAccount1\\",\\"step\\":\\"createStorageAccount1\\"}",
           "event": Array [
             Object {
-              "id": "1ueh28",
+              "id": "7wi32c",
+              "listen": "prerequest",
+              "script": Object {
+                "exec": Array [
+                  "pm.variables.set(\\"resourceGroupName_encoded\\", encodeURIComponent(pm.variables.get(\\"resourceGroupName\\")));",
+                  "pm.variables.set(\\"subscriptionId_encoded\\", encodeURIComponent(pm.variables.get(\\"subscriptionId\\")));",
+                ],
+                "id": "1rcvet",
+                "type": "text/javascript",
+              },
+            },
+            Object {
+              "id": "qq5z84",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -4800,20 +7356,30 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                   "
-const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\");
+const pollingUrl = pm.response.headers.get(\\"Location\\") || pm.response.headers.get(\\"Azure-AsyncOperation\\") || pm.response.headers.get(\\"Operation-Location\\");
 if (pollingUrl) {
     pm.variables.set(\\"x_polling_url\\", pollingUrl);
     pm.variables.set(\\"x_retry_after\\", \\"3\\");
 }",
                 ],
-                "id": "3q0yb6",
+                "id": "j917fd",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "j55iye",
+          "id": "hlqn5m",
           "name": "createStorageAccount1",
           "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
             "body": Object {
               "mode": "raw",
               "raw": "{
@@ -4887,7 +7453,7 @@ if (pollingUrl) {
                 Object {
                   "key": "resourceGroupName",
                   "type": "any",
-                  "value": "{{resourceGroupName}}",
+                  "value": "{{resourceGroupName_encoded}}",
                 },
                 Object {
                   "key": "accountName",
@@ -4897,7 +7463,7 @@ if (pollingUrl) {
                 Object {
                   "key": "subscriptionId",
                   "type": "any",
-                  "value": "{{subscriptionId}}",
+                  "value": "{{subscriptionId_encoded}}",
                 },
               ],
             },
@@ -4907,7 +7473,7 @@ if (pollingUrl) {
         Object {
           "description": "{\\"type\\":\\"delay\\",\\"lro_item_name\\":\\"createStorageAccount1\\"}",
           "event": Array [],
-          "id": "hfy1hi",
+          "id": "4fy274",
           "name": "_createStorageAccount1_delay",
           "request": Object {
             "method": "GET",
@@ -4931,7 +7497,7 @@ if (pollingUrl) {
           "description": "{\\"type\\":\\"poller\\",\\"lro_item_name\\":\\"createStorageAccount1\\"}",
           "event": Array [
             Object {
-              "id": "7wi32c",
+              "id": "3l45xk",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -4943,9 +7509,9 @@ try {
             pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
         }
     } else if (pm.response.size().body > 0) {
-        const terminalStatus = [\\"Succeeded\\", \\"Failed\\", \\"Canceled\\"];
+        const terminalStatus = [\\"succeeded\\", \\"failed\\", \\"canceled\\", \\"cancelled\\", \\"aborted\\", \\"deleted\\", \\"completed\\"];
         const json = pm.response.json();
-        if (json.status !== undefined && terminalStatus.indexOf(json.status) === -1) {
+        if (json.status !== undefined && terminalStatus.indexOf(json.status.toLowerCase()) === -1) {
             postman.setNextRequest(\\"_createStorageAccount1_delay\\")
             if (pm.response.headers.has(\\"Retry-After\\")) {
                 pm.variables.set(\\"x_retry_after\\", pm.response.headers.get(\\"Retry-After\\"));
@@ -4957,12 +7523,12 @@ try {
 }
 ",
                 ],
-                "id": "1rcvet",
+                "id": "1ueh28",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "hlqn5m",
+          "id": "vov58h",
           "name": "_createStorageAccount1_poller",
           "request": Object {
             "method": "GET",
@@ -4980,7 +7546,7 @@ try {
           "description": "{\\"type\\":\\"finalGet\\",\\"lro_item_name\\":\\"createStorageAccount1\\",\\"step\\":\\"createStorageAccount1\\"}",
           "event": Array [
             Object {
-              "id": "vov58h",
+              "id": "6w00ic",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -4988,12 +7554,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "3l45xk",
+                "id": "m388ep",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "4fy274",
+          "id": "3q0yb6",
           "name": "_createStorageAccount1_final_get",
           "request": Object {
             "header": Array [
@@ -5029,7 +7595,7 @@ try {
                 Object {
                   "key": "resourceGroupName",
                   "type": "any",
-                  "value": "{{resourceGroupName}}",
+                  "value": "{{resourceGroupName_encoded}}",
                 },
                 Object {
                   "key": "accountName",
@@ -5039,7 +7605,7 @@ try {
                 Object {
                   "key": "subscriptionId",
                   "type": "any",
-                  "value": "{{subscriptionId}}",
+                  "value": "{{subscriptionId_encoded}}",
                 },
               ],
             },
@@ -5051,12 +7617,12 @@ try {
     },
     Object {
       "event": Array [],
-      "id": "m388ep",
+      "id": "un6yyw",
       "item": Array [
         Object {
           "event": Array [
             Object {
-              "id": "qq5z84",
+              "id": "igg58r",
               "listen": "test",
               "script": Object {
                 "exec": Array [
@@ -5064,12 +7630,12 @@ try {
                   "pm.response.to.be.success;",
                   "});",
                 ],
-                "id": "j917fd",
+                "id": "zfkej6",
                 "type": "text/javascript",
               },
             },
           ],
-          "id": "6w00ic",
+          "id": "rxgyxc",
           "name": "deleteResourceGroup",
           "request": Object {
             "header": Array [

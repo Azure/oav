@@ -6,9 +6,7 @@ import {
   Json,
   parseJson,
   pathJoin,
-  readFile as vfsReadFile,
 } from "@azure-tools/openapi-tools-common";
-import $RefParser, { FileInfo } from "@apidevtools/json-schema-ref-parser";
 import { load as parseYaml } from "js-yaml";
 import { default as jsonPointer } from "json-pointer";
 import { inject, injectable } from "inversify";
@@ -355,31 +353,3 @@ export class JsonLoader implements Loader<Json> {
 }
 
 export const isRefLike = (obj: any): obj is { $ref: string } => typeof obj.$ref === "string";
-
-export function isExample(path: string) {
-  return path.split(/\\|\//g).includes("examples");
-}
-
-export async function loadSingleFile(filePath: string) {
-  const fileString = await vfsReadFile(filePath);
-  return JSON.parse(fileString);
-}
-
-export function removeProperty(object: any) {
-  // opt: eraseXmsExamples: true can be used to remove examples or other properties in schema,
-  // however, this is implemented in function resolveRef, which cannot be reused, since it does not
-  // completely resolve all the reference in swagger.
-  // Only description and example are positive to be removed, other properties are kept for further use.
-  if (typeof object === "object" && object !== null) {
-    const obj = object as any;
-    if (typeof obj.description === "string") {
-      delete obj.description;
-    }
-    if (obj[xmsExamples] !== undefined) {
-      delete obj[xmsExamples];
-    }
-    Object.keys(object).forEach((o) => {
-      removeProperty(object[o]);
-    });
-  }
-}

@@ -5,7 +5,7 @@ import { LiveValidator } from "../lib/liveValidation/liveValidator";
 
 jest.setTimeout(999999);
 
-describe("Live Validator", () => {
+describe.skip("Live Validator", () => {
   describe("Initialization", () => {
     it("OperationLoader should be completely initialized for outer circular ref", async () => {
       console.log("OperationLoader should be completely initialized for outer circular ref");

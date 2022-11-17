@@ -29,6 +29,7 @@ import * as util from "../../generator/util";
 import { setDefaultOpts } from "../../swagger/loader";
 import Mocker from "../../generator/mocker";
 import { logger } from ".././logger";
+import { xmsExamples, xmsSkipUrlEncoding } from "../../util/constants";
 
 export interface ApiScenarioGeneratorOption extends ApiScenarioLoaderOption {
   swaggerFilePaths: string[];
@@ -111,7 +112,7 @@ export class RestlerApiScenarioGenerator {
       outputDir: ".",
       dependencyPath: "",
       eraseXmsExamples: false,
-      skipResolveRefKeys: ["x-ms-examples"],
+      skipResolveRefKeys: [xmsExamples],
     });
     return inversifyGetInstance(RestlerApiScenarioGenerator, opts);
   }
@@ -145,8 +146,9 @@ export class RestlerApiScenarioGenerator {
       definition.scenarios[0].steps.forEach((step) => {
         const operationId = (step as any).operationId;
         const operation = this.operations.get(operationId);
-        if (operation?.["x-ms-examples"] && Object.values(operation["x-ms-examples"])[0]) {
-          const example = Object.values(operation["x-ms-examples"])[0];
+        const examples = operation?.[xmsExamples];
+        if (examples) {
+          const example = Object.values(examples)[0];
           (step as RawStepExample).exampleFile = path.relative(
             this.opts.outputDir,
             this.fileLoader.resolvePath(this.jsonLoader.getRealPath(example.$ref!))
@@ -181,7 +183,7 @@ export class RestlerApiScenarioGenerator {
             if (
               !parameter.required ||
               envVariables.includes(parameter.name) ||
-              (parameter.in === "path" && parameter["x-ms-skip-url-encoding"])
+              (parameter.in === "path" && parameter[xmsSkipUrlEncoding])
             ) {
               continue;
             }
@@ -221,11 +223,7 @@ export class RestlerApiScenarioGenerator {
           if (p) {
             p = this.jsonLoader.resolveRefObj(p);
           }
-          if (
-            p?.in !== "path" &&
-            operation?.["x-ms-examples"] &&
-            Object.values(operation["x-ms-examples"])[0]
-          ) {
+          if (p?.in !== "path" && operation?.[xmsExamples]) {
             return;
           }
         }

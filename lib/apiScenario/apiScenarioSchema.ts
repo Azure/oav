@@ -88,14 +88,20 @@ export const ApiScenarioDefinition: Schema & {
             then: {
               properties: {
                 type: {},
-                headerName: {
-                  type: "string",
-                  default: "Authorization",
-                },
                 key: {
                   type: "string",
                 },
+                name: {
+                  type: "string",
+                  default: "Authorization",
+                },
+                in: {
+                  type: "string",
+                  enum: ["header", "query"],
+                  default: "header",
+                },
               },
+              required: ["key"],
               additionalProperties: false,
             },
             else: {
@@ -407,7 +413,7 @@ export const ApiScenarioDefinition: Schema & {
           minProperties: 1,
           additionalProperties: false,
           patternProperties: {
-            "^([0-9]{3})$": {
+            "^([2-5][0-9]{2})|([245]xx)$": {
               oneOf: [
                 {
                   type: "object",

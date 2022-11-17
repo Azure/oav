@@ -93,4 +93,24 @@ describe("postmanCollectionGenerator", () => {
     const collection = await generator.run();
     expect(collection).toMatchSnapshot();
   });
+
+  it("should generate PostmanCollection - appconfig data plane", async () => {
+    const generator = inversifyGetInstance(PostmanCollectionGenerator, {
+      name: "appconfig",
+      scenarioDef: "Microsoft.AppConfiguration/stable/1.0/scenarios/test.yaml",
+      fileRoot: "test/apiScenario/fixtures/specification/appconfiguration/data-plane/",
+      checkUnderFileRoot: false,
+      generateCollection: true,
+      runCollection: false,
+      env: {
+        subscriptionId: "00000000-0000-0000-0000-000000000000",
+        location: "westus",
+      },
+      swaggerFilePaths: ["Microsoft.AppConfiguration/stable/1.0/appconfiguration.json"],
+      outputFolder: "generated",
+      runId: "jestRunId",
+    });
+    const collection = await generator.run();
+    expect(collection).toMatchSnapshot();
+  });
 });
