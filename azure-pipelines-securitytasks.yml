@@ -3,6 +3,8 @@ trigger:
 
 jobs:
   - job: Build
+    variables:
+      Codeql.Enabled: true
     pool:
       vmImage: "Ubuntu 20.04"
     steps:
@@ -48,6 +50,8 @@ jobs:
           pathtoPublish: $(Build.SourcesDirectory)/drop
 
   - job: Windows
+    variables:
+      Codeql.Enabled: true
     pool:
       vmImage: "windows-2019"
     steps:
