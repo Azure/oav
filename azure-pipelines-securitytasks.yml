@@ -3,8 +3,6 @@ trigger:
 
 jobs:
   - job: Build
-    variables:
-      Codeql.Enabled: true
     pool:
       vmImage: "Ubuntu 20.04"
     steps:
