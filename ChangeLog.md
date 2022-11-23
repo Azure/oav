@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 11/23/2022 3.2.3
+
+- AjvSchemaValidator - Ignore unknown format when compile schema
+
 ## 11/07/2022 3.2.2
 
 - API Scenario
