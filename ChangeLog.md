@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 11/23/2022 3.2.3
+
+- SemanticValidator - Support path validation
+
 ## 11/07/2022 3.2.2
 
 - API Scenario
