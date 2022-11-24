@@ -129,7 +129,7 @@
         }
       }
     },
-    "/subscriptions/{scope}/providers/Microsoft.Test/duplicateforwardslashes": {
+    "/subscriptions/{scopeBackup}/providers/Microsoft.Test/duplicateforwardslashes": {
       "post": {
         "tags": [
           "StorageAccounts"
@@ -139,6 +139,49 @@
         "x-ms-examples": {
           "storageAccountduplicateforwardslashes": {
             "$ref": "./examples/storageAccountduplicateforwardslashes.json"
+          }
+        },
+        "parameters": [
+          {
+            "name": "accountName",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/StorageAccountCheckNameAvailabilityParameters"
+            },
+            "description": "The name of the storage account within the specified resource group. Storage account names must be between 3 and 24 characters in length and use numbers and lower-case letters only."
+          },
+          {
+            "$ref": "#/parameters/ApiVersionParameter"
+          },
+          {
+            "name": "scopeBackup",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "The scope. Can be \"/foo/foo1/foo2\""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK -- Operation to check the storage account name availability was successful.",
+            "schema": {
+              "$ref": "#/definitions/CheckNameAvailabilityResult"
+            }
+          }
+        }
+      }
+    },
+    "/subscriptions/{scope}/providers/Microsoft.Test/duplicateforwardslashes-scope": {
+      "post": {
+        "tags": [
+          "StorageAccounts"
+        ],
+        "operationId": "StorageAccounts_duplicateforwardslashes_scope",
+        "description": "Checks that the storage account name is valid and is not already in use.",
+        "x-ms-examples": {
+          "storageAccountduplicateforwardslashes": {
+            "$ref": "./examples/storageAccountduplicateforwardslashesscope.json"
           }
         },
         "parameters": [

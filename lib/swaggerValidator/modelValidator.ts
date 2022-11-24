@@ -359,7 +359,8 @@ export class SwaggerExampleValidator {
           // where there will be duplicate forward slashes in the url.
           if (
             pathTemplate.charAt(pathTemplate.indexOf(`${parameter.name}`) - 2) === "/" &&
-            parameterValue.startsWith("/")
+            parameterValue.startsWith("/") &&
+            parameter.name !== "scope"
           ) {
             const meta = getOavErrorMeta(ErrorCodeConstants.DOUBLE_FORWARD_SLASHES_IN_URL as any, {
               operationId: operation.operationId,
@@ -379,7 +380,9 @@ export class SwaggerExampleValidator {
           }
           // replacing characters that may cause validator failed  with empty string because this messes up Sways regex
           // validation of path segment.
-          parameterValue = parameterValue.replace(/\//gi, "");
+          if (parameter.name !== "scope") {
+            parameterValue = parameterValue.replace(/\//gi, "");
+          }
 
           // replacing scheme that may cause validator failed when x-ms-parameterized-host enbaled & useSchemePrefix enabled
           // because if useSchemePrefix enabled ,the parameter value in x-ms-parameterized-host should not has the scheme (http://|https://)

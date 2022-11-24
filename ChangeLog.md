@@ -2,6 +2,7 @@
 
 ## 11/23/2022 3.2.3
 
+- ModelValidator - Ignore leading slash for scope parameter
 - SemanticValidator - Support path validation
 
 ## 11/07/2022 3.2.2
