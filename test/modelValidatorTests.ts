@@ -400,6 +400,20 @@ describe("Model Validation", () => {
       // console.log(result)
     });
 
+    it("should failed when object type schema does not define a reference", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/nullableTypes/invalid_type_noRef.json`;
+      const operationIds = "DigitalTwins_GetById";
+      const result = await validate.validateExamples(specPath2, operationIds, {
+        consoleLogLevel: "off",
+      });
+      assert.strictEqual(result.length, 1);
+      assert.strictEqual(result[0].code, "INVALID_TYPE");
+      assert.strictEqual(
+        result[0].message,
+        "Schema definition needs reference, please check out semantic validation results"
+      );
+    });
+
     it("should pass for definitionWithReferenceNull_Get", async () => {
       const specPath2 = `${testPath}/modelValidation/swaggers/specification/nullableTypes/invalid_type_test.json`;
       const operationIds = "definitionWithReferenceNull_Get";

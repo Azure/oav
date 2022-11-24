@@ -271,6 +271,9 @@ export interface Schema extends BaseSchema {
 
   // Additional property support
   additionalPropertiesWithObjectType?: boolean;
+
+  // Type object exists but reference missing
+  noRefWithTypeObject?: boolean;
 }
 
 export interface XML {

@@ -2,6 +2,7 @@
 
 ## 11/23/2022 3.2.3
 
+- SemanticValidator&ModelValidator - Clear INVALID_TYPE to user in a specific case
 - ModelValidator - Ignore leading slash for scope parameter
 - SemanticValidator - Support path validation
 

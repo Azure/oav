@@ -546,6 +546,16 @@ export class SwaggerSemanticValidator {
           this.addErrorsFromErrorCode(errors, url, meta, operation);
         }
       },
+      onResponse: (response) => {
+        if (response.schema !== undefined) {
+          if (response.schema.noRefWithTypeObject === true) {
+            const meta = getOavErrorMeta("OBJECT_MISSING_REQUIRED_PROPERTY_DEFINITION", {
+              property: "$ref",
+            });
+            this.addErrorsFromErrorCode(errors, url, meta, response.schema);
+          }
+        }
+      },
     });
   }
 }

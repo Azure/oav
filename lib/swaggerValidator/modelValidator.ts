@@ -768,10 +768,14 @@ export class SwaggerExampleValidator {
     }
 
     if (invalidTypeError) {
-      const meta = getOavErrorMeta(ErrorCodeConstants.INVALID_TYPE as any, {
+      let meta = getOavErrorMeta(ErrorCodeConstants.INVALID_TYPE as any, {
         type: expectedType,
         data: actualType,
       });
+      if (bodySchema.noRefWithTypeObject === true) {
+        meta.message =
+          "Schema definition needs reference, please check out semantic validation results";
+      }
       this.addErrorsFromErrorCode(
         operationId,
         exampleFileUrl,

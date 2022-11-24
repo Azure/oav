@@ -25,6 +25,9 @@ export const resolveNestedDefinitionTransformer: SpecTransformer = {
       if (refSelf !== undefined) {
         schema[refSelfSymbol] = refSelf;
       }
+      if (schema.type === "object" && schema.properties === undefined) {
+        s.noRefWithTypeObject = true;
+      }
       if (schema.type === undefined || schema.type === "object") {
         objSchemas.push(schema);
         if (schema.discriminator !== undefined && schema[refSelfSymbol] !== undefined) {
