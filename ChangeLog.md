@@ -5,6 +5,7 @@
 - SemanticValidator&ModelValidator - Clear INVALID_TYPE to user in a specific case
 - ModelValidator - Ignore leading slash for scope parameter
 - SemanticValidator - Support path validation
+- AjvSchemaValidator - Ignore unknown format when compile schema
 
 ## 11/07/2022 3.2.2
 

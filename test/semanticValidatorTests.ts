@@ -157,6 +157,11 @@ describe("Semantic validation", () => {
         "Failed to compile validator on operation"
       );
     });
+    it("should ignore unknown format when compile schema", async () => {
+      const specPath = `${testPath}/semanticValidation/specification/validateCompile/Swagger-with-unknown-format.json`;
+      const result = await validate.validateSpec(specPath, undefined);
+      assert(result.validityStatus === true);
+    });
   });
 
   describe("validateDiscriminator", () => {
