@@ -25148,7 +25148,7 @@ Array [
       "line": 10,
     },
     "exampleUrl": "/home/vsts/work/1/s/regression/azure-rest-api-specs/specification/search/data-plane/Microsoft.Azure.Search.Data/stable/2019-05-06/examples/SearchIndexGetDocument.json",
-    "message": "Expected type  but found type object",
+    "message": "Schema definition needs reference, please check out semantic validation results",
     "operationId": "Documents_Get",
     "schemaJsonPath": undefined,
     "schemaPosition": Object {
