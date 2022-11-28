@@ -1,3 +1,4 @@
+import * as path from "path";
 import {
   Collection,
   Item,
@@ -46,6 +47,7 @@ export interface PostmanCollectionRunnerClientOption {
   skipArmCall?: boolean;
   skipLroPoll?: boolean;
   jsonLoader: JsonLoader;
+  scenarioFolder: string;
 }
 
 interface PostmanAADTokenAuthOption {
@@ -472,6 +474,30 @@ pm.test("Stopped TestProxy recording", function() {
             ? {
                 mode: "raw",
                 raw: JSON.stringify(convertPostmanFormat(clientRequest.body), null, 2),
+              }
+            : clientRequest.formData
+            ? {
+                mode: "formdata",
+                formdata: Object.entries(clientRequest.formData).map(([key, value]) => {
+                  if (value.type === "file") {
+                    return {
+                      key,
+                      type: "file",
+                      src: path.resolve(this.opts.scenarioFolder, value.value),
+                    };
+                  } else {
+                    return {
+                      key,
+                      type: value.type,
+                      value: value.value,
+                    };
+                  }
+                }),
+              }
+            : clientRequest.file
+            ? {
+                mode: "file",
+                file: { src: path.resolve(this.opts.scenarioFolder, clientRequest.file) },
               }
             : undefined,
         },
