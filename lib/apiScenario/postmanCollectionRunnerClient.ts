@@ -1,3 +1,4 @@
+import * as path from "path";
 import {
   Collection,
   Item,
@@ -11,6 +12,7 @@ import {
   Variable,
   VariableScope,
 } from "postman-collection";
+import { urlParse } from "@azure-tools/openapi-tools-common";
 import { xmsLongRunningOperation, xmsSkipUrlEncoding } from "../util/constants";
 import { JsonLoader } from "../swagger/jsonLoader";
 import {
@@ -46,6 +48,7 @@ export interface PostmanCollectionRunnerClientOption {
   skipArmCall?: boolean;
   skipLroPoll?: boolean;
   jsonLoader: JsonLoader;
+  scenarioFolder: string;
 }
 
 interface PostmanAADTokenAuthOption {
@@ -452,6 +455,14 @@ pm.test("Stopped TestProxy recording", function() {
     }
   }
 
+  private resolveFilePath(filePath: string): string {
+    const url = urlParse(filePath);
+    if (url) {
+      throw new Error(`File path should be a local file path but got ${filePath}`);
+    }
+    return path.resolve(this.opts.scenarioFolder, filePath);
+  }
+
   public async sendRestCallRequest(
     clientRequest: ApiScenarioClientRequest,
     step: StepRestCall,
@@ -472,6 +483,30 @@ pm.test("Stopped TestProxy recording", function() {
             ? {
                 mode: "raw",
                 raw: JSON.stringify(convertPostmanFormat(clientRequest.body), null, 2),
+              }
+            : clientRequest.formData
+            ? {
+                mode: "formdata",
+                formdata: Object.entries(clientRequest.formData).map(([key, value]) => {
+                  if (value.type === "file") {
+                    return {
+                      key,
+                      type: "file",
+                      src: this.resolveFilePath(value.value),
+                    };
+                  } else {
+                    return {
+                      key,
+                      type: value.type,
+                      value: value.value,
+                    };
+                  }
+                }),
+              }
+            : clientRequest.file
+            ? {
+                mode: "file",
+                file: { src: this.resolveFilePath(clientRequest.file) },
               }
             : undefined,
         },
