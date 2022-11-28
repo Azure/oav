@@ -112,7 +112,7 @@ export class NewmanReportValidator {
 
     this.testResult = {
       apiScenarioFilePath: path.relative(this.fileRoot, this.opts.apiScenarioFilePath),
-      swaggerFilePaths: this.opts.swaggerFilePaths!.map((specPath) => {
+      swaggerFilePaths: scenario._scenarioDef._swaggerFilePaths.map((specPath) => {
         if (process.env.REPORT_SPEC_PATH_PREFIX) {
           specPath = path.join(
             process.env.REPORT_SPEC_PATH_PREFIX,
@@ -138,7 +138,7 @@ export class NewmanReportValidator {
 
     this.liveValidator = new LiveValidator({
       fileRoot: "/",
-      swaggerPaths: [...this.opts.swaggerFilePaths!],
+      swaggerPaths: [...scenario._scenarioDef._swaggerFilePaths],
       enableRoundTripValidator: !this.opts.skipValidation,
     });
     if (!this.opts.skipValidation) {

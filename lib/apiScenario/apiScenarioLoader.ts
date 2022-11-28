@@ -4,6 +4,7 @@ import { basename } from "path";
 import { cloneDeep, pathDirName, pathJoin } from "@azure-tools/openapi-tools-common";
 import { inject, injectable } from "inversify";
 import { apply as jsonMergeApply, generate as jsonMergePatchGenerate } from "json-merge-patch";
+import { findReadMe } from "@azure/openapi-markdown";
 import { inversifyGetInstance, TYPES } from "../inversifyUtils";
 import { FileLoader, FileLoaderOption } from "../swagger/fileLoader";
 import { JsonLoader, JsonLoaderOption } from "../swagger/jsonLoader";
@@ -68,7 +69,6 @@ export interface ApiScenarioLoaderOption
   extends FileLoaderOption,
     JsonLoaderOption,
     SwaggerLoaderOption {
-  swaggerFilePaths?: string[];
   includeOperation?: boolean;
 }
 
@@ -108,7 +108,6 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
   ) {
     setDefaultOpts(opts, {
       skipResolveRefKeys: [xmsExamples],
-      swaggerFilePaths: [],
       includeOperation: true,
     });
     this.transformContext = getTransformContext(this.jsonLoader, this.schemaValidator, [
@@ -127,19 +126,17 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     return inversifyGetInstance(ApiScenarioLoader, opts);
   }
 
-  private async initialize(swaggerFilePaths?: string[], additionalTags?: ReadmeTag[]) {
+  private async initialize(swaggerFilePaths: string[], additionalTags?: ReadmeTag[]) {
     if (this.initialized) {
       throw new Error("Already initialized");
     }
 
-    if (swaggerFilePaths) {
-      await this.loadSwaggers(
-        swaggerFilePaths,
-        this.operationsMap,
-        this.apiVersionsMap,
-        this.exampleToOperation
-      );
-    }
+    await this.loadSwaggers(
+      swaggerFilePaths,
+      this.operationsMap,
+      this.apiVersionsMap,
+      this.exampleToOperation
+    );
 
     if (additionalTags) {
       for (const e of additionalTags) {
@@ -229,21 +226,40 @@ export class ApiScenarioLoader implements Loader<ScenarioDefinition> {
     }
   }
 
-  public async load(filePath: string): Promise<ScenarioDefinition> {
-    const [rawDef, additionalTags] = await this.apiScenarioYamlLoader.load(filePath);
+  public async load(
+    scenarioFilePath: string,
+    swaggerFilePaths?: string[],
+    readmePath?: string
+  ): Promise<ScenarioDefinition> {
+    const [rawDef, additionalTags] = await this.apiScenarioYamlLoader.load(scenarioFilePath);
 
-    await this.initialize(this.opts.swaggerFilePaths, additionalTags);
+    if (!swaggerFilePaths || swaggerFilePaths.length === 0) {
+      swaggerFilePaths = [];
+      if (!readmePath) {
+        readmePath = await findReadMe(pathDirName(scenarioFilePath));
+      }
+      if (readmePath) {
+        const inputFile = await getInputFiles(readmePath);
+        for (const it of inputFile ?? []) {
+          if (swaggerFilePaths.indexOf(it) < 0) {
+            swaggerFilePaths.push(this.fileLoader.resolvePath(it));
+          }
+        }
+      }
+    }
+
+    await this.initialize(swaggerFilePaths, additionalTags);
 
     rawDef.scope = rawDef.scope ?? "ResourceGroup";
     const isArmScope = rawDef.scope !== "None";
 
     const scenarioDef: ScenarioDefinition = {
-      name: basename(filePath).substring(0, basename(filePath).lastIndexOf(".")),
+      name: basename(scenarioFilePath).substring(0, basename(scenarioFilePath).lastIndexOf(".")),
       scope: rawDef.scope,
       prepareSteps: [],
       scenarios: [],
-      _filePath: this.fileLoader.relativePath(filePath),
-      _swaggerFilePaths: this.opts.swaggerFilePaths!,
+      _filePath: this.fileLoader.relativePath(scenarioFilePath),
+      _swaggerFilePaths: swaggerFilePaths!,
       cleanUpSteps: [],
       ...convertVariables(rawDef.variables),
       authentication: this.loadAuthentication(rawDef.authentication),

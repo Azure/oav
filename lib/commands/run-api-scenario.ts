@@ -203,6 +203,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
     const opt: PostmanCollectionGeneratorOption = {
       fileRoot: fileRoot,
       checkUnderFileRoot: false,
+      swaggerFilePaths: swaggerFilePaths,
       generateCollection: true,
       useJsonParser: false,
       runCollection: !argv.dryRun,
@@ -217,15 +218,13 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       skipValidation: argv.skipValidation,
       savePayload: argv.savePayload,
       generateExample: argv.generateExample,
-      skipCleanUp: argv.skipCleanUp,
       verbose: ["verbose", "debug", "silly"].indexOf(argv.logLevel) >= 0,
-      swaggerFilePaths: swaggerFilePaths,
       devMode: argv.devMode,
     };
     const generator = inversifyGetInstance(PostmanCollectionGenerator, opt);
 
     for (const scenarioFile of scenarioFiles) {
-      await generator.run(scenarioFile);
+      await generator.run(scenarioFile, argv.skipCleanUp);
     }
 
     return 0;

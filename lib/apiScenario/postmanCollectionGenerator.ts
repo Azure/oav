@@ -55,7 +55,6 @@ export interface PostmanCollectionGeneratorOption
   skipValidation?: boolean;
   savePayload?: boolean;
   generateExample?: boolean;
-  skipCleanUp?: boolean;
   runId?: string;
   verbose?: boolean;
   devMode?: boolean;
@@ -93,16 +92,29 @@ export class PostmanCollectionGenerator {
     private swaggerAnalyzer: SwaggerAnalyzer
   ) {}
 
-  public async run(scenarioFile: string): Promise<Collection> {
-    const scenarioDef = await this.apiScenarioLoader.load(scenarioFile);
-    const [collection, environment] = await this.doRun(scenarioDef);
+  public async run(scenarioFile: string, skipCleanUp: boolean): Promise<Collection> {
+    const scenarioDef = await this.apiScenarioLoader.load(scenarioFile, this.opt.swaggerFilePaths);
+
+    if (scenarioDef.scope.endsWith(".yaml") || scenarioDef.scope.endsWith(".yml")) {
+      const parentScenarioFile = this.fileLoader.resolvePath(scenarioDef.scope);
+      if (this.environmentMap.has(parentScenarioFile)) {
+      } else {
+        await this.run(parentScenarioFile, true);
+      }
+    }
+
+    const [collection, environment] = await this.doRun(scenarioDef, skipCleanUp);
+    environment.toJSON();
 
     // cache environment
     this.environmentMap.set(scenarioFile, environment);
     return collection;
   }
 
-  async doRun(scenarioDef: ScenarioDefinition): Promise<[Collection, VariableScope]> {
+  async doRun(
+    scenarioDef: ScenarioDefinition,
+    skipCleanUp: boolean
+  ): Promise<[Collection, VariableScope]> {
     await this.swaggerAnalyzer.initialize();
     for (const it of scenarioDef.requiredVariables) {
       if (this.opt.env[it] === undefined) {
@@ -142,7 +154,7 @@ export class PostmanCollectionGenerator {
           foldersToRun.push(scenario.scenario);
           if (
             i == scenarioDef.scenarios.length - 1 &&
-            !this.opt.skipCleanUp &&
+            !skipCleanUp &&
             collection.items.find((item) => item.name === CLEANUP_FOLDER, collection)
           ) {
             foldersToRun.push(CLEANUP_FOLDER);
@@ -165,7 +177,7 @@ export class PostmanCollectionGenerator {
       } catch (err) {
         logger.error(`Error in running collection: ${err}`);
       } finally {
-        if (this.opt.skipCleanUp && scenarioDef.scope === "ResourceGroup") {
+        if (skipCleanUp && scenarioDef.scope === "ResourceGroup") {
           logger.warn(
             `Notice: the resource group '${environment.get(
               "resourceGroupName"
@@ -445,7 +457,6 @@ export class PostmanCollectionGenerator {
 
     const newmanReportValidatorOption: NewmanReportValidatorOption = {
       apiScenarioFilePath: scenario._scenarioDef._filePath,
-      swaggerFilePaths: scenario._scenarioDef._swaggerFilePaths,
       reportOutputFilePath: defaultQualityReportFilePath(reportExportPath),
       checkUnderFileRoot: false,
       eraseXmsExamples: false,
