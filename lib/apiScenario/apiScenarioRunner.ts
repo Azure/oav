@@ -344,7 +344,7 @@ export class ApiScenarioRunner {
           req.formData[param.name] = { type: param.type, value: paramVal };
           break;
         default:
-          throw new Error(`Unknow parameter: ${param}`);
+          throw new Error(`Unknown parameter: ${param}`);
       }
     }
 

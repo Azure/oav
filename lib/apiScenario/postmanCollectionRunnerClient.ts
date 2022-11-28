@@ -12,6 +12,7 @@ import {
   Variable,
   VariableScope,
 } from "postman-collection";
+import { urlParse } from "@azure-tools/openapi-tools-common";
 import { xmsLongRunningOperation, xmsSkipUrlEncoding } from "../util/constants";
 import { JsonLoader } from "../swagger/jsonLoader";
 import {
@@ -454,6 +455,14 @@ pm.test("Stopped TestProxy recording", function() {
     }
   }
 
+  private resolveFilePath(filePath: string): string {
+    const url = urlParse(filePath);
+    if (url) {
+      throw new Error(`File path should be a local file path but got ${filePath}`);
+    }
+    return path.resolve(this.opts.scenarioFolder, filePath);
+  }
+
   public async sendRestCallRequest(
     clientRequest: ApiScenarioClientRequest,
     step: StepRestCall,
@@ -483,7 +492,7 @@ pm.test("Stopped TestProxy recording", function() {
                     return {
                       key,
                       type: "file",
-                      src: path.resolve(this.opts.scenarioFolder, value.value),
+                      src: this.resolveFilePath(value.value),
                     };
                   } else {
                     return {
@@ -497,7 +506,7 @@ pm.test("Stopped TestProxy recording", function() {
             : clientRequest.file
             ? {
                 mode: "file",
-                file: { src: path.resolve(this.opts.scenarioFolder, clientRequest.file) },
+                file: { src: this.resolveFilePath(clientRequest.file) },
               }
             : undefined,
         },
