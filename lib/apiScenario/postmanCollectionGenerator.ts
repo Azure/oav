@@ -220,6 +220,7 @@ export class PostmanCollectionGenerator {
       skipArmCall: this.opt.devMode,
       skipLroPoll: this.opt.devMode,
       jsonLoader: this.apiScenarioLoader.jsonLoader,
+      scenarioFolder: path.dirname(scenarioDef._filePath),
     });
     const runner = new ApiScenarioRunner({
       jsonLoader: this.apiScenarioLoader.jsonLoader,

@@ -192,7 +192,8 @@
       "properties": {
         "firstName": {
           "type": "string",
-          "description": "First name."
+          "description": "First name.",
+          "format": "unknown format"
         },
         "password": {
           "type": "string",

@@ -1,6 +1,6 @@
 {
   "name": "oav",
-  "version": "3.2.2",
+  "version": "3.2.4",
   "author": {
     "name": "Microsoft Corporation",
     "email": "azsdkteam@microsoft.com",
@@ -131,7 +131,7 @@
     "li": "npm install @ts-common/local-install --no-save && local-install"
   },
   "engines": {
-    "node": ">=10.11.0"
+    "node": ">=16.18.1"
   },
   "jest-junit": {
     "output": "test-results.xml"

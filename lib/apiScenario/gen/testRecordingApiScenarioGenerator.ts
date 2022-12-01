@@ -182,7 +182,7 @@ export class TestRecordingApiScenarioGenerator {
   ): Promise<RawScenario> {
     logger.info(`\nGenerating ${requestTracking.description}`);
     const testScenario: RawScenario = {
-      scenario: requestTracking.description.replace(/[\(\)]/g, "_").replace(/ /g, ""),
+      scenario: requestTracking.description.replace(/[^a-zA-Z0-9_]/g, "_"),
       variables: {},
       steps: [],
     };

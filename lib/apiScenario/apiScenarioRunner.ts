@@ -49,6 +49,8 @@ export interface ApiScenarioClientRequest {
   headers: { [headerName: string]: string };
   query: { [key: string]: string };
   body?: any;
+  formData?: { [key: string]: { type: string; value: string } };
+  file?: string;
 }
 
 export interface ApiScenarioRunnerClient {
@@ -329,10 +331,20 @@ export class ApiScenarioRunner {
           req.headers[param.name] = paramVal;
           break;
         case "body":
-          req.body = paramVal;
+          if (param.schema?.format === "binary") {
+            req.file = paramVal;
+          } else {
+            req.body = paramVal;
+          }
+          break;
+        case "formData":
+          if (req.formData === undefined) {
+            req.formData = {};
+          }
+          req.formData[param.name] = { type: param.type, value: paramVal };
           break;
         default:
-          throw new Error(`Parameter "in" not supported: ${param.in}`);
+          throw new Error(`Unknown parameter: ${param}`);
       }
     }
 

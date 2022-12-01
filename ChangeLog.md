@@ -1,5 +1,13 @@
 # Change Log - oav
 
+## 12/01/2022 3.2.4
+- API Scenario
+  - Support file type in formdata and body
+
+## 11/23/2022 3.2.3
+
+- AjvSchemaValidator - Ignore unknown format when compile schema
+
 ## 11/07/2022 3.2.2
 
 - API Scenario

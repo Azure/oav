@@ -51,6 +51,7 @@ export class AjvSchemaValidator implements SchemaValidator {
       inlineRefs: false,
       passContext: true,
       loopRequired: 2,
+      unknownFormats: "ignore",
       loadSchema: async (uri) => {
         const spec: SwaggerSpec = await loader.resolveFile(uri);
         return { [$id]: spec[$id], definitions: spec.definitions, parameters: spec.parameters };
