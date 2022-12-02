@@ -202,7 +202,8 @@
             "in": "path",
             "required": true,
             "type": "string",
-            "description": "The scope. Can be \"/foo/foo1/foo2\""
+            "description": "The scope. Can be \"/foo/foo1/foo2\"",
+            "x-ms-skip-url-encoding": true
           }
         ],
         "responses": {
