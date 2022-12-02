@@ -112,7 +112,7 @@ export const pathRegexTransformer: SpecTransformer = {
       onPath: (path, pathTemplate) => {
         let pathStr = pathTemplate;
         if ([...pathStr.matchAll(/\{/g)].length !== [...pathStr.matchAll(/\}/g)].length) {
-          throw new Error(`Brackets should be deployed in symmetric pairs`);
+          throw new Error(`Brackets should be deployed in symmetric pairs.\nPath: ${pathStr}`);
         }
         const queryIdx = pathTemplate.indexOf("?");
         if (queryIdx !== -1) {

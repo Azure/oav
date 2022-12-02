@@ -101,7 +101,7 @@ describe("Model Validation", () => {
       });
       assert(
         result.length === 1,
-        `swagger "${specPath}" with operation "${operationIds}" contains passed incorrectly.`
+        `swagger "${specPath}" with operation "${operationIds}" contains validation errors.`
       );
       assert(result[0].code === "DOUBLE_FORWARD_SLASHES_IN_URL");
     });

@@ -15,6 +15,9 @@ export const resolveNestedDefinitionTransformer: SpecTransformer = {
       if (s === undefined || s === null || typeof s !== "object") {
         return;
       }
+      if (s.type === "object" && s.properties === undefined) {
+        s.noRefWithTypeObject = true;
+      }
       const schema = jsonLoader.resolveRefObj(s);
       if (visited.has(schema)) {
         return;
@@ -24,9 +27,6 @@ export const resolveNestedDefinitionTransformer: SpecTransformer = {
       const refSelf = schema === s ? ref : (s as any).$ref;
       if (refSelf !== undefined) {
         schema[refSelfSymbol] = refSelf;
-      }
-      if (schema.type === "object" && schema.properties === undefined) {
-        s.noRefWithTypeObject = true;
       }
       if (schema.type === undefined || schema.type === "object") {
         objSchemas.push(schema);

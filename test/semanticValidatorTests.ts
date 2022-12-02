@@ -107,7 +107,7 @@ describe("Semantic validation", () => {
       assert(result.validityStatus === false);
       assert.strictEqual(
         result.validateSpec?.errors?.[0].code,
-        constants.ErrorCodes.InternalError.name
+        "MISSING_PATH_PARAMETER_DECLARATION"
       );
     });
   });
@@ -311,7 +311,7 @@ describe("Semantic validation", () => {
       );
       assert.strictEqual(
         result.validateSpec?.errors?.[0].message,
-        "Missing required property definition: $ref"
+        "Missing required property definition: $ref when schema type is 'object'"
       );
     });
   });
