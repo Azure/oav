@@ -1624,7 +1624,7 @@ Object {
           "operationId": "DeletedAccounts_Get",
           "variables": Object {
             "deletedAccountName": Object {
-              "prefix": "deletedacc",
+              "prefix": "deleteda",
               "type": "string",
             },
             "test": Object {
@@ -1681,11 +1681,11 @@ Object {
   "scope": "ResourceGroup",
   "variables": Object {
     "BlobServicesName": Object {
-      "prefix": "blobservic",
+      "prefix": "blobserv",
       "type": "string",
     },
     "FileServicesName": Object {
-      "prefix": "fileservic",
+      "prefix": "fileserv",
       "type": "string",
     },
     "If-Match": "test",
@@ -1696,7 +1696,7 @@ Object {
       },
     },
     "accountName": Object {
-      "prefix": "accountnam",
+      "prefix": "accountn",
       "type": "string",
     },
     "blobContainer": Object {
@@ -1704,11 +1704,11 @@ Object {
       "value": Object {},
     },
     "blobInventoryPolicyName": Object {
-      "prefix": "blobinvent",
+      "prefix": "blobinve",
       "type": "string",
     },
     "containerName": Object {
-      "prefix": "containern",
+      "prefix": "containe",
       "type": "string",
     },
     "encryptionScope": Object {
@@ -1716,7 +1716,7 @@ Object {
       "value": Object {},
     },
     "encryptionScopeName": Object {
-      "prefix": "encryption",
+      "prefix": "encrypti",
       "type": "string",
     },
     "fileShare": Object {
@@ -1724,19 +1724,19 @@ Object {
       "value": Object {},
     },
     "immutabilityPolicyName": Object {
-      "prefix": "immutabili",
+      "prefix": "immutabi",
       "type": "string",
     },
     "managementPolicyName": Object {
-      "prefix": "management",
+      "prefix": "manageme",
       "type": "string",
     },
     "objectReplicationPolicyId": Object {
-      "prefix": "objectrepl",
+      "prefix": "objectre",
       "type": "string",
     },
     "privateEndpointConnectionName": Object {
-      "prefix": "privateend",
+      "prefix": "privatee",
       "type": "string",
     },
     "queue": Object {
@@ -1744,23 +1744,23 @@ Object {
       "value": Object {},
     },
     "queueName": Object {
-      "prefix": "queuename",
+      "prefix": "queuenam",
       "type": "string",
     },
     "queueServiceName": Object {
-      "prefix": "queueservi",
+      "prefix": "queueser",
       "type": "string",
     },
     "shareName": Object {
-      "prefix": "sharename",
+      "prefix": "sharenam",
       "type": "string",
     },
     "tableName": Object {
-      "prefix": "tablename",
+      "prefix": "tablenam",
       "type": "string",
     },
     "tableServiceName": Object {
-      "prefix": "tableservi",
+      "prefix": "tableser",
       "type": "string",
     },
     "username": Object {
@@ -2082,7 +2082,7 @@ Object {
           "operationId": "DeletedAccounts_Get",
           "variables": Object {
             "deletedAccountName": Object {
-              "prefix": "deletedacc",
+              "prefix": "deleteda",
               "type": "string",
             },
           },
@@ -2149,63 +2149,63 @@ Object {
   "scope": "ResourceGroup",
   "variables": Object {
     "BlobServicesName": Object {
-      "prefix": "blobservic",
+      "prefix": "blobserv",
       "type": "string",
     },
     "FileServicesName": Object {
-      "prefix": "fileservic",
+      "prefix": "fileserv",
       "type": "string",
     },
     "accountName": Object {
-      "prefix": "accountnam",
+      "prefix": "accountn",
       "type": "string",
     },
     "blobInventoryPolicyName": Object {
-      "prefix": "blobinvent",
+      "prefix": "blobinve",
       "type": "string",
     },
     "containerName": Object {
-      "prefix": "containern",
+      "prefix": "containe",
       "type": "string",
     },
     "encryptionScopeName": Object {
-      "prefix": "encryption",
+      "prefix": "encrypti",
       "type": "string",
     },
     "immutabilityPolicyName": Object {
-      "prefix": "immutabili",
+      "prefix": "immutabi",
       "type": "string",
     },
     "managementPolicyName": Object {
-      "prefix": "management",
+      "prefix": "manageme",
       "type": "string",
     },
     "objectReplicationPolicyId": Object {
-      "prefix": "objectrepl",
+      "prefix": "objectre",
       "type": "string",
     },
     "privateEndpointConnectionName": Object {
-      "prefix": "privateend",
+      "prefix": "privatee",
       "type": "string",
     },
     "queueName": Object {
-      "prefix": "queuename",
+      "prefix": "queuenam",
       "type": "string",
     },
     "queueServiceName": Object {
-      "prefix": "queueservi",
+      "prefix": "queueser",
       "type": "string",
     },
     "shareName": Object {
-      "prefix": "sharename",
+      "prefix": "sharenam",
       "type": "string",
     },
     "tableName": Object {
-      "prefix": "tablename",
+      "prefix": "tablenam",
       "type": "string",
     },
     "tableServiceName": Object {
-      "prefix": "tableservi",
+      "prefix": "tableser",
       "type": "string",
     },
     "username": Object {
