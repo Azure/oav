@@ -11,11 +11,15 @@ export const resolveNestedDefinitionTransformer: SpecTransformer = {
   transform(spec, { jsonLoader, objSchemas, arrSchemas, primSchemas, allParams }) {
     const queue = new Array<string>();
 
-    const visitNestedDefinitions = (s: Schema | undefined, ref?: string) => {
+    const visitNestedDefinitions = (
+      s: Schema | undefined,
+      ref?: string,
+      isResponseSchema?: boolean
+    ) => {
       if (s === undefined || s === null || typeof s !== "object") {
         return;
       }
-      if (s.type === "object" && s.properties === undefined) {
+      if (isResponseSchema && s.type === "object" && s.properties === undefined) {
         s.noRefWithTypeObject = true;
       }
       const schema = jsonLoader.resolveRefObj(s);
@@ -76,7 +80,7 @@ export const resolveNestedDefinitionTransformer: SpecTransformer = {
       onPath: visitParameters,
       onOperation: visitParameters,
       onResponse: (response) => {
-        visitNestedDefinitions(response.schema);
+        visitNestedDefinitions(response.schema, undefined, true);
       },
     });
 
