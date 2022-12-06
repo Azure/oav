@@ -34,10 +34,11 @@ export default class Generator {
   private shouldMock: boolean;
   private mockerCache: MockerCache;
   private payloadCache: PayloadCache;
+  private generateRule?: "Max" | "Min";
   public readonly transformContext: TransformContext;
-  public generateRule: "Max" | "Min";
 
-  public constructor(specFilePath: string, payloadDir?: string) {
+  public constructor(specFilePath: string, payloadDir?: string, generateRule?: "Max" | "Min") {
+    this.generateRule = generateRule;
     this.shouldMock = payloadDir ? false : true;
     this.specFilePath = specFilePath;
     this.payloadDir = payloadDir;

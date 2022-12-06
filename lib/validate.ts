@@ -305,10 +305,7 @@ export async function generateExamples(
   log.consoleLogLevel = options.consoleLogLevel || log.consoleLogLevel;
   log.filepath = options.logFilepath || log.filepath;
   for (const file of wholeInputFiles) {
-    const generator = new ExampleGenerator(file, payloadDir);
-    if (generateRule) {
-      generator.generateRule = generateRule;
-    }
+    const generator = new ExampleGenerator(file, payloadDir, generateRule);
     if (operationIds) {
       const operationIdArray = operationIds.trim().split(",");
       for (const operationId of operationIdArray) {
