@@ -277,6 +277,7 @@ export async function generateExamples(
   operationIds?: string,
   readme?: string,
   tag?: string,
+  generateRule?: "Max" | "Min",
   options?: Options
 ): Promise<any> {
   if (!options) {
@@ -305,6 +306,9 @@ export async function generateExamples(
   log.filepath = options.logFilepath || log.filepath;
   for (const file of wholeInputFiles) {
     const generator = new ExampleGenerator(file, payloadDir);
+    if (generateRule) {
+      generator.generateRule = generateRule;
+    }
     if (operationIds) {
       const operationIdArray = operationIds.trim().split(",");
       for (const operationId of operationIdArray) {

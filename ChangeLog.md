@@ -2,6 +2,7 @@
 
 ## 12/01/2022 3.2.4
 
+- GenerateExamples - Support single generation rule
 - API Scenario
   - Support file type in formdata and body
   - Change the prefix length to 8 from 10 in generated API Scenario
