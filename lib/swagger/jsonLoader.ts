@@ -148,6 +148,7 @@ export class JsonLoader implements Loader<Json> {
         fileContent,
         resolveOption
       );
+      removeProperty(spec);
       spec = await parser.dereference(this.fileLoader.resolvePath(filePath), spec, resolveOption);
       removeProperty(spec);
       return spec;
@@ -361,6 +362,9 @@ export function removeProperty(object: any) {
     }
     if (obj[xmsExamples] !== undefined) {
       delete obj[xmsExamples];
+    }
+    if (obj.$ref !== undefined && obj.$ref.startsWith("#/paths/")) {
+      delete obj["$ref"];
     }
     Object.keys(object).forEach((o) => {
       removeProperty(object[o]);
