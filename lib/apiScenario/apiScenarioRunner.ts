@@ -1,4 +1,5 @@
 import { HttpMethods } from "@azure/core-http";
+import { VariableList } from "postman-collection";
 import { JsonLoader } from "../swagger/jsonLoader";
 import { xmsParameterizedHost, xmsSkipUrlEncoding } from "../util/constants";
 import { getRandomString } from "../util/utils";
@@ -39,6 +40,7 @@ export interface Scope {
   prepareSteps: Step[];
   cleanUpSteps: Step[];
   env: VariableEnv;
+  baseEnv?: VariableList;
 }
 
 export interface ApiScenarioClientRequest {
@@ -98,7 +100,7 @@ export class ApiScenarioRunner {
     this.jsonLoader = opts.jsonLoader;
   }
 
-  private async prepareScope(scenarioDef: ScenarioDefinition) {
+  private async prepareScope(scenarioDef: ScenarioDefinition, baseEnv?: VariableList) {
     // Variable scope: ScenarioDef <= RuntimeScope <= Scenario <= Step
     const scopeEnv =
       // RuntimeScope
@@ -111,6 +113,7 @@ export class ApiScenarioRunner {
       prepareSteps: scenarioDef.prepareSteps,
       cleanUpSteps: scenarioDef.cleanUpSteps,
       env: scopeEnv,
+      baseEnv,
     };
 
     if (
@@ -163,9 +166,9 @@ export class ApiScenarioRunner {
     }
   }
 
-  public async execute(scenarioDef: ScenarioDefinition) {
+  public async execute(scenarioDef: ScenarioDefinition, baseEnv?: VariableList) {
     if (this.scope === undefined) {
-      await this.prepareScope(scenarioDef);
+      await this.prepareScope(scenarioDef, baseEnv);
     }
 
     for (const scenario of scenarioDef.scenarios) {

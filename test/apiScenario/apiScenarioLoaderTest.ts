@@ -9,12 +9,12 @@ describe("ApiScenarioLoader", () => {
       useJsonParser: false,
       checkUnderFileRoot: false,
       fileRoot,
-      swaggerFilePaths: ["Microsoft.Storage/stable/2021-08-01/storage.json"],
       includeOperation: false,
     });
 
     const testDef = await loader.load(
-      "Microsoft.Storage/stable/2021-08-01/scenarios/storageQuickStart.yaml"
+      "Microsoft.Storage/stable/2021-08-01/scenarios/storageQuickStart.yaml",
+      ["Microsoft.Storage/stable/2021-08-01/storage.json"]
     );
 
     expect(testDef).toMatchSnapshot();
@@ -28,12 +28,12 @@ describe("ApiScenarioLoader", () => {
       eraseXmsExamples: false,
       checkUnderFileRoot: false,
       fileRoot,
-      swaggerFilePaths: ["Microsoft.Storage/stable/2021-08-01/storage.json"],
       includeOperation: false,
     });
 
     const testDef = await loader.load(
-      "Microsoft.Storage/stable/2021-08-01/scenarios/storageBasicExample.yaml"
+      "Microsoft.Storage/stable/2021-08-01/scenarios/storageBasicExample.yaml",
+      ["Microsoft.Storage/stable/2021-08-01/storage.json"]
     );
 
     expect(testDef).toMatchSnapshot();
@@ -46,11 +46,12 @@ describe("ApiScenarioLoader", () => {
       useJsonParser: false,
       checkUnderFileRoot: false,
       fileRoot,
-      swaggerFilePaths: ["Microsoft.AppConfiguration/stable/1.0/appconfiguration.json"],
       includeOperation: false,
     });
 
-    const testDef = await loader.load("Microsoft.AppConfiguration/stable/1.0/scenarios/crud.yaml");
+    const testDef = await loader.load("Microsoft.AppConfiguration/stable/1.0/scenarios/crud.yaml", [
+      "Microsoft.AppConfiguration/stable/1.0/appconfiguration.json",
+    ]);
 
     expect(testDef).toMatchSnapshot();
   });
@@ -62,12 +63,12 @@ describe("ApiScenarioLoader", () => {
       useJsonParser: false,
       checkUnderFileRoot: false,
       fileRoot,
-      swaggerFilePaths: ["Microsoft.Compute/stable/2021-11-01/compute.json"],
       includeOperation: false,
     });
 
     const testDef = await loader.load(
-      "Microsoft.Compute/stable/2021-11-01/scenarios/quickstart.yaml"
+      "Microsoft.Compute/stable/2021-11-01/scenarios/quickstart.yaml",
+      ["Microsoft.Compute/stable/2021-11-01/compute.json"]
     );
 
     expect(testDef).toMatchSnapshot();
@@ -80,12 +81,12 @@ describe("ApiScenarioLoader", () => {
       useJsonParser: false,
       checkUnderFileRoot: false,
       fileRoot,
-      swaggerFilePaths: ["Microsoft.Compute/stable/2021-11-01/compute.json"],
       includeOperation: false,
     });
 
     const testDef = await loader.load(
-      "Microsoft.Compute/stable/2021-11-01/scenarios/quickstart_deps.yaml"
+      "Microsoft.Compute/stable/2021-11-01/scenarios/quickstart_deps.yaml",
+      ["Microsoft.Compute/stable/2021-11-01/compute.json"]
     );
 
     expect(testDef).toMatchSnapshot();
@@ -98,12 +99,12 @@ describe("ApiScenarioLoader", () => {
       useJsonParser: false,
       checkUnderFileRoot: false,
       fileRoot,
-      swaggerFilePaths: ["Microsoft.AppPlatform/preview/2020-11-01-preview/appplatform.json"],
       includeOperation: false,
     });
 
     const testDef = await loader.load(
-      "Microsoft.AppPlatform/preview/2020-11-01-preview/scenarios/Spring.yaml"
+      "Microsoft.AppPlatform/preview/2020-11-01-preview/scenarios/Spring.yaml",
+      ["Microsoft.AppPlatform/preview/2020-11-01-preview/appplatform.json"]
     );
 
     expect(testDef).toMatchSnapshot();
@@ -119,12 +120,12 @@ describe("ApiScenarioLoader", () => {
       eraseXmsExamples: false,
       checkUnderFileRoot: false,
       fileRoot,
-      swaggerFilePaths: ["Microsoft.SignalRService/preview/2021-06-01-preview/signalr.json"],
       includeOperation: false,
     });
 
     const testDef = await loader.load(
-      "Microsoft.SignalRService/preview/2021-06-01-preview/scenarios/signalR.yaml"
+      "Microsoft.SignalRService/preview/2021-06-01-preview/scenarios/signalR.yaml",
+      ["Microsoft.SignalRService/preview/2021-06-01-preview/signalr.json"]
     );
     expect(testDef).toMatchSnapshot();
   }, 20000);

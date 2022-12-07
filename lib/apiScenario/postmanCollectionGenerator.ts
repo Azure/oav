@@ -79,117 +79,105 @@ function pad(number: number, length: number) {
   return str;
 }
 
-@injectable()
-export class PostmanCollectionGenerator {
-  private environmentMap = new Map<string, VariableScope>();
+interface PostmanCollectionRunnerOption extends PostmanCollectionGeneratorOption {
+  scenarioFile: string;
+  generator: PostmanCollectionGenerator;
+}
 
-  // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
+@injectable()
+class PostmanCollectionRunner {
+  private scenarioBaseFileLoader: FileLoader;
+  public environment: VariableScope;
+  private collection: Collection;
+  private baseEnvironment?: VariableScope;
+  private scenarioDef: ScenarioDefinition;
+
   constructor(
-    @inject(TYPES.opts) private opt: PostmanCollectionGeneratorOption,
+    @inject(TYPES.opts) private opt: PostmanCollectionRunnerOption,
     private apiScenarioLoader: ApiScenarioLoader,
     private fileLoader: FileLoader,
     private dataMasker: DataMasker,
     private swaggerAnalyzer: SwaggerAnalyzer
-  ) {}
-
-  public async run(scenarioFile: string, skipCleanUp: boolean): Promise<Collection> {
-    const scenarioDef = await this.apiScenarioLoader.load(scenarioFile, this.opt.swaggerFilePaths);
-
-    if (scenarioDef.scope.endsWith(".yaml") || scenarioDef.scope.endsWith(".yml")) {
-      const parentScenarioFile = this.fileLoader.resolvePath(scenarioDef.scope);
-      if (this.environmentMap.has(parentScenarioFile)) {
-      } else {
-        await this.run(parentScenarioFile, true);
-      }
-    }
-
-    const [collection, environment] = await this.doRun(scenarioDef, skipCleanUp);
-    environment.toJSON();
-
-    // cache environment
-    this.environmentMap.set(scenarioFile, environment);
-    return collection;
+  ) {
+    this.scenarioBaseFileLoader = new FileLoader({
+      fileRoot: path.dirname(this.opt.scenarioFile),
+      checkUnderFileRoot: false,
+    });
   }
 
-  async doRun(
-    scenarioDef: ScenarioDefinition,
-    skipCleanUp: boolean
-  ): Promise<[Collection, VariableScope]> {
-    await this.swaggerAnalyzer.initialize();
-    for (const it of scenarioDef.requiredVariables) {
-      if (this.opt.env[it] === undefined) {
-        throw new Error(
-          `Missing required variable '${it}', please set variable values in env.json.`
-        );
+  public static create(opt: PostmanCollectionRunnerOption) {
+    (opt as any).container = undefined;
+    return inversifyGetInstance(PostmanCollectionRunner, opt);
+  }
+
+  public async run(): Promise<Collection> {
+    this.scenarioDef = await this.apiScenarioLoader.load(
+      this.opt.scenarioFile,
+      this.opt.swaggerFilePaths
+    );
+
+    if (this.scenarioDef.scope.endsWith(".yaml") || this.scenarioDef.scope.endsWith(".yml")) {
+      const parentScenarioFile = this.scenarioBaseFileLoader.resolvePath(this.scenarioDef.scope);
+      if (!this.opt.generator.runnerMap.has(parentScenarioFile)) {
+        const runner = PostmanCollectionRunner.create({
+          ...this.opt,
+          scenarioFile: parentScenarioFile,
+        });
+
+        await runner.run();
+        this.opt.generator.runnerMap.set(parentScenarioFile, runner);
       }
-    }
-    this.opt.runId = this.opt.runId || generateRunId();
-
-    if (this.opt.markdown) {
-      const reportExportPath = path.resolve(
-        this.opt.outputFolder,
-        `${defaultNewmanDir(scenarioDef.name, this.opt.runId!)}`
-      );
-      await this.fileLoader.writeFile(
-        path.join(reportExportPath, "report.md"),
-        generateMarkdownReportHeader()
-      );
+      this.baseEnvironment = this.opt.generator.runnerMap.get(parentScenarioFile)?.environment;
     }
 
-    let [collection, environment] = await this.generateCollection(scenarioDef);
+    await this.doRun();
+    return this.collection;
+  }
 
-    if (this.opt.generateCollection) {
-      await this.writeCollectionToJson(scenarioDef.name, collection, environment);
-    }
-
+  public async cleanUp(skipCleanUp: boolean) {
     if (this.opt.runCollection) {
       try {
-        for (let i = 0; i < scenarioDef.scenarios.length; i++) {
-          const scenario = scenarioDef.scenarios[i];
-
-          const foldersToRun = [];
-          if (i == 0 && collection.items.find((item) => item.name === PREPARE_FOLDER, collection)) {
-            foldersToRun.push(PREPARE_FOLDER);
-          }
-          foldersToRun.push(scenario.scenario);
-          if (
-            i == scenarioDef.scenarios.length - 1 &&
-            !skipCleanUp &&
-            collection.items.find((item) => item.name === CLEANUP_FOLDER, collection)
-          ) {
-            foldersToRun.push(CLEANUP_FOLDER);
-          }
-
-          const reportExportPath = path.resolve(
-            this.opt.outputFolder,
-            `${defaultNewmanReport(scenarioDef.name, this.opt.runId!, scenario.scenario)}`
-          );
-          const summary = await this.doRunCollection({
-            collection,
-            environment,
-            folder: foldersToRun,
-            reporters: "cli",
-          });
-          await this.postRun(scenario, reportExportPath, summary.environment, summary);
-
-          environment = summary.environment;
+        const foldersToRun = [];
+        if (
+          !skipCleanUp &&
+          this.collection.items.find((item) => item.name === CLEANUP_FOLDER, this.collection)
+        ) {
+          foldersToRun.push(CLEANUP_FOLDER);
         }
+
+        if (foldersToRun.length === 0) {
+          return;
+        }
+
+        const summary = await this.doRunCollection({
+          collection: this.collection,
+          environment: this.environment,
+          folder: foldersToRun,
+          reporters: "cli",
+        });
+
+        // todo add report
+
+        this.environment = summary.environment;
       } catch (err) {
         logger.error(`Error in running collection: ${err}`);
       } finally {
-        if (skipCleanUp && scenarioDef.scope === "ResourceGroup") {
+        if (skipCleanUp && this.scenarioDef.scope === "ResourceGroup") {
           logger.warn(
-            `Notice: the resource group '${environment.get(
+            `Notice: the resource group '${this.environment.get(
               "resourceGroupName"
             )}' was not cleaned up.`
           );
         }
       }
     }
+  }
 
+  public async generateReport() {
     if (this.opt.calculateCoverage) {
-      const operationIdCoverageResult =
-        this.swaggerAnalyzer.calculateOperationCoverage(scenarioDef);
+      const operationIdCoverageResult = this.swaggerAnalyzer.calculateOperationCoverage(
+        this.scenarioDef
+      );
       logger.info(
         `Operation coverage ${(operationIdCoverageResult.coverage * 100).toFixed(2) + "%"} (${
           operationIdCoverageResult.coveredOperationNumber
@@ -202,17 +190,75 @@ export class PostmanCollectionGenerator {
     }
 
     if (this.opt.html && this.opt.runCollection) {
-      await this.generateHtmlReport(scenarioDef);
+      await this.generateHtmlReport();
     }
-
-    return [collection, environment];
   }
 
-  private async generateCollection(
-    scenarioDef: ScenarioDefinition
-  ): Promise<[Collection, VariableScope]> {
+  private async doRun() {
+    await this.swaggerAnalyzer.initialize();
+    for (const it of this.scenarioDef.requiredVariables) {
+      if (this.opt.env[it] === undefined) {
+        throw new Error(
+          `Missing required variable '${it}', please set variable values in env.json.`
+        );
+      }
+    }
+    this.opt.runId = this.opt.runId || generateRunId();
+
+    if (this.opt.markdown) {
+      const reportExportPath = path.resolve(
+        this.opt.outputFolder,
+        `${defaultNewmanDir(this.scenarioDef.name, this.opt.runId!)}`
+      );
+      await this.fileLoader.writeFile(
+        path.join(reportExportPath, "report.md"),
+        generateMarkdownReportHeader()
+      );
+    }
+
+    await this.generateCollection();
+
+    if (this.opt.generateCollection) {
+      await this.writeCollectionToJson(this.scenarioDef.name, this.collection, this.environment);
+    }
+
+    if (this.opt.runCollection) {
+      try {
+        for (let i = 0; i < this.scenarioDef.scenarios.length; i++) {
+          const scenario = this.scenarioDef.scenarios[i];
+
+          const foldersToRun = [];
+          if (
+            i == 0 &&
+            this.collection.items.find((item) => item.name === PREPARE_FOLDER, this.collection)
+          ) {
+            foldersToRun.push(PREPARE_FOLDER);
+          }
+          foldersToRun.push(scenario.scenario);
+
+          const reportExportPath = path.resolve(
+            this.opt.outputFolder,
+            `${defaultNewmanReport(this.scenarioDef.name, this.opt.runId!, scenario.scenario)}`
+          );
+          const summary = await this.doRunCollection({
+            collection: this.collection,
+            environment: this.environment,
+            folder: foldersToRun,
+            reporters: "cli",
+          });
+          await this.postRun(scenario, reportExportPath, summary.environment, summary);
+
+          this.environment = summary.environment;
+        }
+      } catch (err) {
+        logger.error(`Error in running collection: ${err}`);
+      }
+    }
+  }
+
+  private async generateCollection() {
     const client = new PostmanCollectionRunnerClient({
-      collectionName: scenarioDef.name,
+      collectionName: this.scenarioDef.name,
       runId: this.opt.runId!,
       testProxy: this.opt.testProxy,
       verbose: this.opt.verbose,
@@ -220,7 +266,7 @@ export class PostmanCollectionGenerator {
       skipArmCall: this.opt.devMode,
       skipLroPoll: this.opt.devMode,
       jsonLoader: this.apiScenarioLoader.jsonLoader,
-      scenarioFolder: path.dirname(scenarioDef._filePath),
+      scenarioFolder: path.dirname(this.scenarioDef._filePath),
     });
     const runner = new ApiScenarioRunner({
       jsonLoader: this.apiScenarioLoader.jsonLoader,
@@ -228,16 +274,18 @@ export class PostmanCollectionGenerator {
       client: client,
     });
 
-    await runner.execute(scenarioDef);
+    await runner.execute(this.scenarioDef, this.baseEnvironment?.values as any);
 
-    return client.outputCollection();
+    const [collection, environment] = client.outputCollection();
+    this.environment = environment;
+    this.collection = collection;
   }
 
-  private async generateHtmlReport(scenarioDef: ScenarioDefinition) {
+  private async generateHtmlReport() {
     const trafficValidationResult = new Array<TrafficValidationIssue>();
     const reportExportPath = path.resolve(
       this.opt.outputFolder,
-      `${defaultNewmanDir(scenarioDef.name, this.opt.runId!)}`
+      `${defaultNewmanDir(this.scenarioDef.name, this.opt.runId!)}`
     );
 
     let providerNamespace;
@@ -298,8 +346,9 @@ export class PostmanCollectionGenerator {
       }
     }
 
-    const operationIdCoverageResult =
-      this.swaggerAnalyzer.calculateOperationCoverageBySpec(scenarioDef);
+    const operationIdCoverageResult = this.swaggerAnalyzer.calculateOperationCoverageBySpec(
+      this.scenarioDef
+    );
 
     const operationCoverageResult: OperationCoverageInfo[] = [];
     operationIdCoverageResult.forEach((result, key) => {
@@ -480,5 +529,37 @@ export class PostmanCollectionGenerator {
     await reportValidator.initialize(scenario);
 
     await reportValidator.generateReport(newmanReport);
+  }
+}
+
+@injectable()
+export class PostmanCollectionGenerator {
+  public runnerMap = new Map<string, PostmanCollectionRunner>();
+
+  // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
+  constructor(@inject(TYPES.opts) private opt: PostmanCollectionGeneratorOption) {}
+
+  public async run(scenarioFile: string, skipCleanUp: boolean = false): Promise<Collection> {
+    const runner = PostmanCollectionRunner.create({
+      scenarioFile: scenarioFile,
+      generator: this,
+      ...this.opt,
+    });
+
+    const collection = await runner.run();
+
+    await runner.cleanUp(skipCleanUp);
+
+    await runner.generateReport();
+
+    return collection;
+  }
+
+  public async cleanUpAll(skipCleanUp: boolean = false): Promise<void> {
+    for (const runner of this.runnerMap.values()) {
+      await runner.cleanUp(skipCleanUp);
+      await runner.generateReport();
+    }
+    this.runnerMap.clear();
   }
 }

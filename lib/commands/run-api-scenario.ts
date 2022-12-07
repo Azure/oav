@@ -227,6 +227,8 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       await generator.run(scenarioFile, argv.skipCleanUp);
     }
 
+    await generator.cleanUpAll();
+
     return 0;
   });
 }
