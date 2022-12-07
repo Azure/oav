@@ -114,16 +114,7 @@ export class JsonLoader implements Loader<Json> {
   }
 
   private getFileContent(filePath: string, fileString: string): any {
-    if (this.opts.supportYaml && (filePath.endsWith(".yaml") || filePath.endsWith(".yml"))) {
-      return parseYaml(fileString, {
-        filename: filePath,
-        json: true,
-      });
-    }
-
     return this.opts.useJsonParser ? parseJson(filePath, fileString) : JSON.parse(fileString);
-
-    // throw new Error(`Unknown file format while loading file ${cache.filePath}`);
   }
 
   private async loadResolvedFile(filePath: string) {
