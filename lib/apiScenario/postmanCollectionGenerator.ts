@@ -274,7 +274,7 @@ class PostmanCollectionRunner {
       client: client,
     });
 
-    await runner.execute(this.scenarioDef, this.baseEnvironment?.values as any);
+    await runner.execute(this.scenarioDef, this.baseEnvironment);
 
     const [collection, environment] = client.outputCollection();
     this.environment = environment;
