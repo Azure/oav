@@ -68,7 +68,7 @@ describe("postmanCollectionGenerator", () => {
       runId: "jestRunId",
     });
     const collection = await generator.run(
-      "Microsoft.Storage/stable/2021-08-01/scenarios/storageQuickStart.yaml"
+      "Microsoft.Storage/stable/2021-08-01/scenarios/storageBasicExample.yaml"
     );
     expect(collection).toMatchSnapshot();
   });
