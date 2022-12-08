@@ -301,7 +301,8 @@ export class RestlerApiScenarioGenerator {
     }
 
     if (parameter.in === "path" && parameter.type === "string") {
-      return { type: "string", prefix: `${parameter.name.toLocaleLowerCase().substring(0, 10)}` };
+      // set prefix length to 8, thus 8+6<15, which is the minimum max length of resource name
+      return { type: "string", prefix: `${parameter.name.toLocaleLowerCase().substring(0, 8)}` };
     }
 
     switch (parameter.type) {
