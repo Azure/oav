@@ -39,7 +39,8 @@ export type TestScriptType =
   | "DetailResponseLog"
   | "OverwriteVariables"
   | "ARMDeploymentStatusAssertion"
-  | "ExtractARMTemplateOutput";
+  | "ExtractARMTemplateOutput"
+  | "LROFinalResult";
 
 export function createItem(definition?: ItemDefinition): Item {
   return new Item({
@@ -179,6 +180,7 @@ export function appendScripts(scripts: string[], parameter: TestScriptParameter)
   if (parameter.types.includes("ResponseDataAssertion") && parameter.responseAssertion) {
     assertions.push(generateResponseDataAssertionScript(parameter.responseAssertion));
   }
+
   if (assertions.length > 0) {
     scripts.push(`pm.test("${parameter.name}", function() {`);
     assertions.forEach((s) => scripts.push(s));

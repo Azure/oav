@@ -13,7 +13,12 @@ import {
   VariableScope,
 } from "postman-collection";
 import { urlParse } from "@azure-tools/openapi-tools-common";
-import { xmsLongRunningOperation, xmsSkipUrlEncoding } from "../util/constants";
+import {
+  xmsLongRunningOperation,
+  xmsLongRunningOperationOptions,
+  xmsLongRunningOperationOptionsField,
+  xmsSkipUrlEncoding,
+} from "../util/constants";
 import { JsonLoader } from "../swagger/jsonLoader";
 import {
   ApiScenarioClientRequest,
@@ -650,13 +655,16 @@ pm.test("Stopped TestProxy recording", function() {
         step: item.name,
       };
       item.description = JSON.stringify(metadata);
+      const finalStateVia =
+        step?.operation?.[xmsLongRunningOperationOptions]?.[xmsLongRunningOperationOptionsField];
       this.lroPoll(
         itemGroup!,
         item,
         clientRequest.host,
         postScripts,
         false,
-        step.responseAssertion
+        step.responseAssertion,
+        finalStateVia
       );
 
       // generate final get
@@ -667,7 +675,10 @@ pm.test("Stopped TestProxy recording", function() {
             baseUri,
             item.request.url,
             item.name,
-            step.operation._method
+            step.operation._method,
+            undefined,
+            undefined,
+            finalStateVia
           )
         );
       }
@@ -693,12 +704,41 @@ pm.test("Stopped TestProxy recording", function() {
     baseUri: string,
     postScripts: string[],
     checkStatus: boolean = false,
-    responseAssertion?: StepResponseAssertion
+    responseAssertion?: StepResponseAssertion,
+    finalStateVia?: string
   ) {
     if (this.opts.skipLroPoll) return;
-
+    const url = item.request.url;
+    const urlStr = `${baseUri}${url.getPathWithQuery()}`;
     postScripts.push(
       `
+ function getLroFinalGetUrl(finalStateVia) {
+  if (!finalStateVia) {
+    if ("${item.request.method}" === "put" && pm.response.code === '201') {
+      return "${urlStr}"
+    }
+    else {
+      return pm.response.headers.get("Location") || pm.response.headers.get("Operation-Location") // by default is Location for ARM, Operation-Location for dataplane
+    }
+  }
+  switch (finalStateVia) {
+    case "location": {
+      return pm.response.headers.get("Location");
+    }
+    case "azure-async-operation": {
+      return pm.response.headers.get("Azure-AsyncOperation");
+    }
+    case "original-uri": {
+      return "${urlStr}";
+    }
+    case "operation-location": {
+      return pm.response.headers.get("Operation-Location");
+    }
+    default:
+      return "";
+  }
+}
+     
 const pollingUrl = pm.response.headers.get("Location") || pm.response.headers.get("Azure-AsyncOperation") || pm.response.headers.get("Operation-Location");
 if (pollingUrl) {
     pm.variables.set("x_polling_url", ${
@@ -706,6 +746,7 @@ if (pollingUrl) {
         ? `pollingUrl.replace("${baseUri}","${this.opts.testProxy}")`
         : "pollingUrl"
     });
+    pm.variables.set("x_final_get_url",getLroFinalGetUrl(${finalStateVia}))
     pm.variables.set("x_retry_after", "3");
 }`
     );
@@ -794,7 +835,8 @@ try {
     types: PostmanHelper.TestScriptType[] = ["StatusCodeAssertion"],
     overwriteVariables?: Map<string, string>,
     armTemplate?: ArmTemplate,
-    responseAssertion?: StepResponseAssertion
+    responseAssertion?: StepResponseAssertion,
+    name?: string
   ): string[] {
     const scripts: string[] = [];
     if (this.opts.verbose) {
@@ -810,7 +852,7 @@ try {
     if (types.length > 0) {
       // generate assertion from example
       PostmanHelper.appendScripts(scripts, {
-        name: "response status code assertion.",
+        name: name || "response status code assertion.",
         types: types,
         variables: overwriteVariables,
         armTemplate,
@@ -909,7 +951,8 @@ try {
     step: string,
     prevMethod: string = "put",
     scriptTypes: PostmanHelper.TestScriptType[] = [],
-    armTemplate?: ArmTemplate
+    armTemplate?: ArmTemplate,
+    finalStateVia?: string
   ): Item {
     const { item } = this.addNewItem(
       "Blank",
@@ -917,12 +960,18 @@ try {
         name: `_${name}_final_get`,
         request: {
           method: "GET",
-          url: "",
+          url: `{{x_final_get_url}}`,
         },
       },
       baseUri
     );
-    item.request.url = url;
+
+    /**
+     * set for original uri
+     */
+    if (finalStateVia === "original-uri" || (prevMethod === "put" && !finalStateVia)) {
+      item.request.url = url;
+    }
     const metadata: FinalGetItemMetadata = {
       type: "finalGet",
       lro_item_name: name,
@@ -933,10 +982,31 @@ try {
     if (prevMethod !== "delete") {
       scriptTypes.push("StatusCodeAssertion");
     }
-    const postScripts = this.generatePostScripts(scriptTypes, undefined, armTemplate);
-    if (postScripts.length > 0) {
-      PostmanHelper.addEvent(item.events, "test", postScripts);
+    let responseAssertion: any;
+    if (finalStateVia === "azure-async-operation") {
+      scriptTypes.push("ResponseDataAssertion");
+      responseAssertion = [{ test: "/properties", expression: "to.be.not.undefined" }];
+      const postScripts = this.generatePostScripts(
+        scriptTypes,
+        undefined,
+        armTemplate,
+        responseAssertion,
+        `validate final result for ${finalStateVia}.`
+      );
+      if (postScripts.length > 0) {
+        PostmanHelper.addEvent(item.events, "test", postScripts);
+      }
     }
+    if (finalStateVia && finalStateVia !== "original-uri") {
+      PostmanHelper.addEvent(item.events, "prerequest", [
+        `console.log(pm.variables.get("x_final_get_url"));`,
+        `pm.test("LRO final-state-via is valid", () => 
+        {
+          pm.expect(pm.variables.get("x_final_get_url")).to.be.not.undefined;
+        })`,
+      ]);
+    }
+
     return item;
   }
 }
