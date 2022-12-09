@@ -18,6 +18,8 @@ import { TYPES } from "../inversifyUtils";
 import { FileLoader, FileLoaderOption } from "./fileLoader";
 import { Loader, setDefaultOpts } from "./loader";
 
+var decode = require("urldecode");
+
 export interface JsonLoaderOption extends FileLoaderOption {
   useJsonParser?: boolean;
   eraseDescription?: boolean;
@@ -148,7 +150,7 @@ export class JsonLoader implements Loader<Json> {
         fileContent,
         resolveOption
       );
-      removeProperty(spec);
+      removeSelfReference(spec, []);
       spec = await parser.dereference(this.fileLoader.resolvePath(filePath), spec, resolveOption);
       removeProperty(spec);
       return spec;
@@ -350,6 +352,22 @@ export async function loadSingleFile(filePath: string) {
   return JSON.parse(fileString);
 }
 
+export function removeSelfReference(object: any, path: string[]) {
+  if (typeof object === "object" && object !== null) {
+    if (object.$ref !== undefined) {
+      const jsonPath: string = "(.*)".concat(path.join("/").concat("(.*)"));
+      const refPath: string = decode(object.$ref.replace(/~1/gi, "/"));
+      const resRegex = new RegExp(jsonPath, "g");
+      if (resRegex.test(refPath)) {
+        delete object["$ref"];
+      }
+    }
+    Object.keys(object).forEach((p) => {
+      removeSelfReference(object[p], [...path, p]);
+    });
+  }
+}
+
 export function removeProperty(object: any) {
   // opt: eraseXmsExamples: true can be used to remove examples or other properties in schema,
   // however, this is implemented in function resolveRef, which cannot be reused, since it does not
@@ -362,9 +380,6 @@ export function removeProperty(object: any) {
     }
     if (obj[xmsExamples] !== undefined) {
       delete obj[xmsExamples];
-    }
-    if (obj.$ref !== undefined && obj.$ref.startsWith("#/paths/")) {
-      delete obj["$ref"];
     }
     Object.keys(object).forEach((o) => {
       removeProperty(object[o]);
