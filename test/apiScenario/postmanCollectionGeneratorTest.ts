@@ -1,3 +1,4 @@
+import { DEFAULT_ARM_ENDPOINT } from "../../lib/apiScenario/constants";
 import { PostmanCollectionGenerator } from "../../lib/apiScenario/postmanCollectionGenerator";
 import { inversifyGetInstance } from "../../lib/inversifyUtils";
 import { resetPsuedoRandomSeed, usePsudorandom } from "../../lib/util/utils";
@@ -110,6 +111,30 @@ describe("postmanCollectionGenerator", () => {
     });
     const collection = await generator.run(
       "Microsoft.AppConfiguration/stable/1.0/scenarios/test.yaml"
+    );
+    expect(collection).toMatchSnapshot();
+  });
+
+  it("should generate PostmanCollection - cognitiveservices language data plane", async () => {
+    const generator = inversifyGetInstance(PostmanCollectionGenerator, {
+      fileRoot: "test/apiScenario/fixtures/specification/cognitiveservices/data-plane/",
+      checkUnderFileRoot: false,
+      generateCollection: true,
+      runCollection: false,
+      env: {
+        subscriptionId: "00000000-0000-0000-0000-000000000000",
+        location: "westus",
+        armEndpoint: DEFAULT_ARM_ENDPOINT,
+      },
+      swaggerFilePaths: [
+        "Language/preview/2022-10-01-preview/analyzeconversations-authoring.json",
+        "Language/preview/2022-10-01-preview/analyzetext.json",
+      ],
+      outputFolder: "generated",
+      runId: "jestRunId",
+    });
+    const collection = await generator.run(
+      "Language/preview/2022-10-01-preview/scenarios/ConversationAuthoring.yaml"
     );
     expect(collection).toMatchSnapshot();
   });

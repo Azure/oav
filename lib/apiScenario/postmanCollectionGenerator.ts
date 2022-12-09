@@ -99,6 +99,7 @@ class PostmanCollectionRunner {
     private dataMasker: DataMasker,
     private swaggerAnalyzer: SwaggerAnalyzer
   ) {
+    this.opt.scenarioFile = this.fileLoader.resolvePath(this.opt.scenarioFile);
     this.scenarioBaseFileLoader = new FileLoader({
       fileRoot: path.dirname(this.opt.scenarioFile),
       checkUnderFileRoot: false,

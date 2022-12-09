@@ -2015,6 +2015,921 @@ Object {
 }
 `;
 
+exports[`postmanCollectionGenerator should generate PostmanCollection - cognitiveservices language data plane 1`] = `
+Object {
+  "auth": Object {
+    "bearer": Array [
+      Object {
+        "key": "token",
+        "type": "string",
+        "value": "{{x_bearer_token_0}}",
+      },
+    ],
+    "type": "bearer",
+  },
+  "event": Array [
+    Object {
+      "id": "7wi32c",
+      "listen": "prerequest",
+      "script": Object {
+        "exec": Array [
+          "
+if (pm.variables.get(\\"x_enable_auth\\") !== \\"true\\") {
+    return;
+}
+if (
+    !pm.variables.get(\\"x_bearer_token_0\\") ||
+    Date.now() >
+    new Date(pm.variables.get(\\"x_bearer_token_0_expires_on\\") * 1000)
+) {
+    let vars = [\\"client_id\\", \\"client_secret\\", \\"tenantId\\"];
+    vars.forEach(function (item, index, array) {
+        pm.expect(
+            pm.variables.get(item),
+            item + \\" variable not set\\"
+        ).to.not.be.undefined;
+        pm.expect(pm.variables.get(item), item + \\" variable not set\\").to.not.be.empty;
+    });
+    pm.sendRequest(
+        {
+            url:
+                \\"https://login.microsoftonline.com/\\" +
+                pm.variables.get(\\"tenantId\\") +
+                \\"/oauth2/v2.0/token\\",
+            method: \\"POST\\",
+            header: \\"Content-Type: application/x-www-form-urlencoded\\",
+            body: {
+                mode: \\"urlencoded\\",
+                urlencoded: [
+                    { key: \\"grant_type\\", value: \\"client_credentials\\", disabled: false },
+                    {
+                        key: \\"client_id\\",
+                        value: pm.variables.get(\\"client_id\\"),
+                        disabled: false,
+                    },
+                    {
+                        key: \\"client_secret\\",
+                        value: pm.variables.get(\\"client_secret\\"),
+                        disabled: false,
+                    },
+                    { key: \\"scope\\", value: \\"https://cognitiveservices.azure.com/.default\\", disabled: false },
+                ],
+            },
+        },
+        function (err, res) {
+            if (err) {
+                console.log(err);
+            } else {
+                let resJson = res.json();
+                pm.environment.set(
+                    \\"x_bearer_token_0_expires_on\\",
+                    resJson.expires_in + Math.floor(Date.now() / 1000)
+                );
+                pm.environment.set(\\"x_bearer_token_0\\", resJson.access_token);
+            }
+        }
+    );
+}",
+        ],
+        "id": "1rcvet",
+        "type": "text/javascript",
+      },
+    },
+  ],
+  "info": Object {
+    "_postman_id": "jestRunId",
+    "description": Object {
+      "content": "{\\"apiScenarioFilePath\\":\\"Language/preview/2022-10-01-preview/scenarios/ConversationAuthoring.yaml\\",\\"swaggerFilePaths\\":[\\"Language/preview/2022-10-01-preview/analyzeconversations-authoring.json\\",\\"Language/preview/2022-10-01-preview/analyzetext.json\\"]}",
+      "type": "text/plain",
+    },
+    "name": "ConversationAuthoring",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": undefined,
+  },
+  "item": Array [
+    Object {
+      "auth": Object {
+        "bearer": Array [
+          Object {
+            "key": "token",
+            "type": "string",
+            "value": "{{x_bearer_token_0}}",
+          },
+        ],
+        "type": "bearer",
+      },
+      "description": Object {
+        "content": "",
+        "type": "text/plain",
+      },
+      "event": Array [],
+      "id": "4fy274",
+      "item": Array [
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"ConversationalAnalysisAuthoring_ListProjects\\",\\"itemName\\":\\"ConversationalAnalysisAuthoring_ListProjects\\",\\"step\\":\\"ConversationalAnalysisAuthoring_ListProjects\\"}",
+          "event": Array [
+            Object {
+              "id": "3l45xk",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "1ueh28",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "vov58h",
+          "name": "ConversationalAnalysisAuthoring_ListProjects",
+          "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
+            "body": Object {},
+            "method": "GET",
+            "url": Object {
+              "host": Array [
+                "{{Endpoint}}",
+              ],
+              "path": Array [
+                "language",
+                "authoring",
+                "analyze-conversations",
+                "projects",
+              ],
+              "query": Array [
+                Object {
+                  "key": "api-version",
+                  "value": "2022-10-01-preview",
+                },
+              ],
+              "variable": Array [],
+            },
+          },
+          "response": Array [],
+        },
+      ],
+      "name": "GetProjects",
+    },
+    Object {
+      "auth": Object {
+        "bearer": Array [
+          Object {
+            "key": "token",
+            "type": "string",
+            "value": "{{x_bearer_token_0}}",
+          },
+        ],
+        "type": "bearer",
+      },
+      "description": Object {
+        "content": "",
+        "type": "text/plain",
+      },
+      "event": Array [],
+      "id": "3q0yb6",
+      "item": Array [
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"ConversationalAnalysisAuthoring_ListProjects\\",\\"itemName\\":\\"ConversationalAnalysisAuthoring_ListProjects\\",\\"step\\":\\"ConversationalAnalysisAuthoring_ListProjects\\"}",
+          "event": Array [
+            Object {
+              "id": "m388ep",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "qq5z84",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "6w00ic",
+          "name": "ConversationalAnalysisAuthoring_ListProjects",
+          "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
+            "body": Object {},
+            "method": "GET",
+            "url": Object {
+              "host": Array [
+                "{{Endpoint}}",
+              ],
+              "path": Array [
+                "language",
+                "authoring",
+                "analyze-conversations",
+                "projects",
+              ],
+              "query": Array [
+                Object {
+                  "key": "api-version",
+                  "value": "2022-10-01-preview",
+                },
+              ],
+              "variable": Array [],
+            },
+          },
+          "response": Array [],
+        },
+      ],
+      "name": "GetProjectsAsync",
+    },
+    Object {
+      "auth": Object {
+        "bearer": Array [
+          Object {
+            "key": "token",
+            "type": "string",
+            "value": "{{x_bearer_token_0}}",
+          },
+        ],
+        "type": "bearer",
+      },
+      "description": Object {
+        "content": "",
+        "type": "text/plain",
+      },
+      "event": Array [],
+      "id": "j917fd",
+      "item": Array [
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"ConversationalAnalysisAuthoring_GetSupportedPrebuiltEntities\\",\\"itemName\\":\\"ConversationalAnalysisAuthoring_GetSupportedPrebuiltEntities\\",\\"step\\":\\"ConversationalAnalysisAuthoring_GetSupportedPrebuiltEntities\\"}",
+          "event": Array [
+            Object {
+              "id": "un6yyw",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "igg58r",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "rxgyxc",
+          "name": "ConversationalAnalysisAuthoring_GetSupportedPrebuiltEntities",
+          "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
+            "body": Object {},
+            "method": "GET",
+            "url": Object {
+              "host": Array [
+                "{{Endpoint}}",
+              ],
+              "path": Array [
+                "language",
+                "authoring",
+                "analyze-conversations",
+                "projects",
+                "global",
+                "prebuilt-entities",
+              ],
+              "query": Array [
+                Object {
+                  "key": "language",
+                  "value": "es",
+                },
+                Object {
+                  "key": "multilingual",
+                  "value": "false",
+                },
+                Object {
+                  "key": "api-version",
+                  "value": "2022-10-01-preview",
+                },
+              ],
+              "variable": Array [],
+            },
+          },
+          "response": Array [],
+        },
+      ],
+      "name": "GetSupportedLanguageSpecificPrebuiltEntities",
+    },
+    Object {
+      "auth": Object {
+        "bearer": Array [
+          Object {
+            "key": "token",
+            "type": "string",
+            "value": "{{x_bearer_token_0}}",
+          },
+        ],
+        "type": "bearer",
+      },
+      "description": Object {
+        "content": "",
+        "type": "text/plain",
+      },
+      "event": Array [],
+      "id": "zfkej6",
+      "item": Array [
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"ConversationalAnalysisAuthoring_GetSupportedPrebuiltEntities\\",\\"itemName\\":\\"ConversationalAnalysisAuthoring_GetSupportedPrebuiltEntities\\",\\"step\\":\\"ConversationalAnalysisAuthoring_GetSupportedPrebuiltEntities\\"}",
+          "event": Array [
+            Object {
+              "id": "h1l4hw",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "ezqs5q",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "9e4snq",
+          "name": "ConversationalAnalysisAuthoring_GetSupportedPrebuiltEntities",
+          "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
+            "body": Object {},
+            "method": "GET",
+            "url": Object {
+              "host": Array [
+                "{{Endpoint}}",
+              ],
+              "path": Array [
+                "language",
+                "authoring",
+                "analyze-conversations",
+                "projects",
+                "global",
+                "prebuilt-entities",
+              ],
+              "query": Array [
+                Object {
+                  "key": "language",
+                  "value": "es",
+                },
+                Object {
+                  "key": "multilingual",
+                  "value": "false",
+                },
+                Object {
+                  "key": "api-version",
+                  "value": "2022-10-01-preview",
+                },
+              ],
+              "variable": Array [],
+            },
+          },
+          "response": Array [],
+        },
+      ],
+      "name": "GetSupportedLanguageSpecificPrebuiltEntitiesAsync",
+    },
+    Object {
+      "auth": Object {
+        "bearer": Array [
+          Object {
+            "key": "token",
+            "type": "string",
+            "value": "{{x_bearer_token_0}}",
+          },
+        ],
+        "type": "bearer",
+      },
+      "description": Object {
+        "content": "",
+        "type": "text/plain",
+      },
+      "event": Array [],
+      "id": "cb8v3t",
+      "item": Array [
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"ConversationalAnalysisAuthoring_GetSupportedPrebuiltEntities\\",\\"itemName\\":\\"ConversationalAnalysisAuthoring_GetSupportedPrebuiltEntities\\",\\"step\\":\\"ConversationalAnalysisAuthoring_GetSupportedPrebuiltEntities\\"}",
+          "event": Array [
+            Object {
+              "id": "9vqoea",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "9atymt",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "x7qdfp",
+          "name": "ConversationalAnalysisAuthoring_GetSupportedPrebuiltEntities",
+          "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
+            "body": Object {},
+            "method": "GET",
+            "url": Object {
+              "host": Array [
+                "{{Endpoint}}",
+              ],
+              "path": Array [
+                "language",
+                "authoring",
+                "analyze-conversations",
+                "projects",
+                "global",
+                "prebuilt-entities",
+              ],
+              "query": Array [
+                Object {
+                  "key": "multilingual",
+                  "value": "true",
+                },
+                Object {
+                  "key": "api-version",
+                  "value": "2022-10-01-preview",
+                },
+              ],
+              "variable": Array [],
+            },
+          },
+          "response": Array [],
+        },
+      ],
+      "name": "GetSupportedMultilingualPrebuiltEntities",
+    },
+    Object {
+      "auth": Object {
+        "bearer": Array [
+          Object {
+            "key": "token",
+            "type": "string",
+            "value": "{{x_bearer_token_0}}",
+          },
+        ],
+        "type": "bearer",
+      },
+      "description": Object {
+        "content": "",
+        "type": "text/plain",
+      },
+      "event": Array [],
+      "id": "d39qgw",
+      "item": Array [
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"ConversationalAnalysisAuthoring_GetSupportedPrebuiltEntities\\",\\"itemName\\":\\"ConversationalAnalysisAuthoring_GetSupportedPrebuiltEntities\\",\\"step\\":\\"ConversationalAnalysisAuthoring_GetSupportedPrebuiltEntities\\"}",
+          "event": Array [
+            Object {
+              "id": "x6exws",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "6qbw4d",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "jhzmpv",
+          "name": "ConversationalAnalysisAuthoring_GetSupportedPrebuiltEntities",
+          "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
+            "body": Object {},
+            "method": "GET",
+            "url": Object {
+              "host": Array [
+                "{{Endpoint}}",
+              ],
+              "path": Array [
+                "language",
+                "authoring",
+                "analyze-conversations",
+                "projects",
+                "global",
+                "prebuilt-entities",
+              ],
+              "query": Array [
+                Object {
+                  "key": "multilingual",
+                  "value": "true",
+                },
+                Object {
+                  "key": "api-version",
+                  "value": "2022-10-01-preview",
+                },
+              ],
+              "variable": Array [],
+            },
+          },
+          "response": Array [],
+        },
+      ],
+      "name": "GetSupportedMultilingualPrebuiltEntitiesAsync",
+    },
+    Object {
+      "auth": Object {
+        "bearer": Array [
+          Object {
+            "key": "token",
+            "type": "string",
+            "value": "{{x_bearer_token_0}}",
+          },
+        ],
+        "type": "bearer",
+      },
+      "description": Object {
+        "content": "",
+        "type": "text/plain",
+      },
+      "event": Array [],
+      "id": "bhuvqx",
+      "item": Array [
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"ConversationalAnalysisAuthoring_ListTrainedModels\\",\\"itemName\\":\\"ConversationalAnalysisAuthoring_ListTrainedModels\\",\\"step\\":\\"ConversationalAnalysisAuthoring_ListTrainedModels\\"}",
+          "event": Array [
+            Object {
+              "id": "7oxzx1",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "ssi2a8",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "le21m4",
+          "name": "ConversationalAnalysisAuthoring_ListTrainedModels",
+          "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
+            "body": Object {},
+            "method": "GET",
+            "url": Object {
+              "host": Array [
+                "{{Endpoint}}",
+              ],
+              "path": Array [
+                "language",
+                "authoring",
+                "analyze-conversations",
+                "projects",
+                ":projectName",
+                "models",
+              ],
+              "query": Array [
+                Object {
+                  "key": "api-version",
+                  "value": "2022-10-01-preview",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "projectName",
+                  "type": "any",
+                  "value": "CLUScriptDeployed",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+      ],
+      "name": "GetTrainedModels",
+    },
+    Object {
+      "auth": Object {
+        "bearer": Array [
+          Object {
+            "key": "token",
+            "type": "string",
+            "value": "{{x_bearer_token_0}}",
+          },
+        ],
+        "type": "bearer",
+      },
+      "description": Object {
+        "content": "",
+        "type": "text/plain",
+      },
+      "event": Array [],
+      "id": "cdpopn",
+      "item": Array [
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"ConversationalAnalysisAuthoring_ListTrainedModels\\",\\"itemName\\":\\"ConversationalAnalysisAuthoring_ListTrainedModels\\",\\"step\\":\\"ConversationalAnalysisAuthoring_ListTrainedModels\\"}",
+          "event": Array [
+            Object {
+              "id": "49cuyt",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "8ew1jk",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "5sx5dw",
+          "name": "ConversationalAnalysisAuthoring_ListTrainedModels",
+          "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
+            "body": Object {},
+            "method": "GET",
+            "url": Object {
+              "host": Array [
+                "{{Endpoint}}",
+              ],
+              "path": Array [
+                "language",
+                "authoring",
+                "analyze-conversations",
+                "projects",
+                ":projectName",
+                "models",
+              ],
+              "query": Array [
+                Object {
+                  "key": "api-version",
+                  "value": "2022-10-01-preview",
+                },
+              ],
+              "variable": Array [
+                Object {
+                  "key": "projectName",
+                  "type": "any",
+                  "value": "CLUScriptDeployed",
+                },
+              ],
+            },
+          },
+          "response": Array [],
+        },
+      ],
+      "name": "GetTrainedModelsAsync",
+    },
+    Object {
+      "auth": Object {
+        "bearer": Array [
+          Object {
+            "key": "token",
+            "type": "string",
+            "value": "{{x_bearer_token_0}}",
+          },
+        ],
+        "type": "bearer",
+      },
+      "description": Object {
+        "content": "",
+        "type": "text/plain",
+      },
+      "event": Array [],
+      "id": "x6oaag",
+      "item": Array [
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"ConversationalAnalysisAuthoring_ListProjects\\",\\"itemName\\":\\"ConversationalAnalysisAuthoring_ListProjects\\",\\"step\\":\\"ConversationalAnalysisAuthoring_ListProjects\\"}",
+          "event": Array [
+            Object {
+              "id": "db187u",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "2tccjb",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "i544h5",
+          "name": "ConversationalAnalysisAuthoring_ListProjects",
+          "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
+            "body": Object {},
+            "method": "GET",
+            "url": Object {
+              "host": Array [
+                "{{Endpoint}}",
+              ],
+              "path": Array [
+                "language",
+                "authoring",
+                "analyze-conversations",
+                "projects",
+              ],
+              "query": Array [
+                Object {
+                  "key": "api-version",
+                  "value": "2022-10-01-preview",
+                },
+              ],
+              "variable": Array [],
+            },
+          },
+          "response": Array [],
+        },
+      ],
+      "name": "SupportsAadAuthentication",
+    },
+    Object {
+      "auth": Object {
+        "bearer": Array [
+          Object {
+            "key": "token",
+            "type": "string",
+            "value": "{{x_bearer_token_0}}",
+          },
+        ],
+        "type": "bearer",
+      },
+      "description": Object {
+        "content": "",
+        "type": "text/plain",
+      },
+      "event": Array [],
+      "id": "b9q1ra",
+      "item": Array [
+        Object {
+          "description": "{\\"type\\":\\"simple\\",\\"operationId\\":\\"ConversationalAnalysisAuthoring_ListProjects\\",\\"itemName\\":\\"ConversationalAnalysisAuthoring_ListProjects\\",\\"step\\":\\"ConversationalAnalysisAuthoring_ListProjects\\"}",
+          "event": Array [
+            Object {
+              "id": "wpbvc4",
+              "listen": "test",
+              "script": Object {
+                "exec": Array [
+                  "pm.test(\\"response status code assertion.\\", function() {",
+                  "pm.response.to.be.success;",
+                  "});",
+                ],
+                "id": "6rfjty",
+                "type": "text/javascript",
+              },
+            },
+          ],
+          "id": "3zgew6",
+          "name": "ConversationalAnalysisAuthoring_ListProjects",
+          "request": Object {
+            "auth": Object {
+              "bearer": Array [
+                Object {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{x_bearer_token_0}}",
+                },
+              ],
+              "type": "bearer",
+            },
+            "body": Object {},
+            "method": "GET",
+            "url": Object {
+              "host": Array [
+                "{{Endpoint}}",
+              ],
+              "path": Array [
+                "language",
+                "authoring",
+                "analyze-conversations",
+                "projects",
+              ],
+              "query": Array [
+                Object {
+                  "key": "api-version",
+                  "value": "2022-10-01-preview",
+                },
+              ],
+              "variable": Array [],
+            },
+          },
+          "response": Array [],
+        },
+      ],
+      "name": "SupportsAadAuthenticationAsync",
+    },
+  ],
+  "variable": Array [
+    Object {
+      "key": "subscriptionId",
+      "type": "any",
+    },
+    Object {
+      "key": "resourceGroupName",
+      "type": "any",
+    },
+    Object {
+      "key": "location",
+      "type": "any",
+    },
+    Object {
+      "key": "client_id",
+      "type": "any",
+    },
+    Object {
+      "key": "client_secret",
+      "type": "any",
+    },
+    Object {
+      "key": "tenantId",
+      "type": "any",
+    },
+    Object {
+      "key": "x_enable_auth",
+      "type": "any",
+      "value": "true",
+    },
+  ],
+}
+`;
+
 exports[`postmanCollectionGenerator should generate PostmanCollection - enableTestProxy 1`] = `
 Object {
   "auth": Object {
