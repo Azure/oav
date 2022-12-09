@@ -270,11 +270,17 @@ class PostmanCollectionRunner {
     });
     const runner = new ApiScenarioRunner({
       jsonLoader: this.apiScenarioLoader.jsonLoader,
-      env: this.opt.env,
+      env: Object.assign(
+        {},
+        this.opt.env,
+        ...(this.baseEnvironment?.values
+          ?.filter((v) => !v.key?.startsWith("x_"))
+          .map((v) => ({ [v.key!]: v.value })) || [])
+      ),
       client: client,
     });
 
-    await runner.execute(this.scenarioDef, this.baseEnvironment);
+    await runner.execute(this.scenarioDef);
 
     const [collection, environment] = client.outputCollection();
     this.environment = environment;

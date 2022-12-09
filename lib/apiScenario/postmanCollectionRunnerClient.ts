@@ -163,9 +163,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
 
     scope.env.resolve();
 
-    this.runtimeEnv = new VariableScope(
-      scope.baseEnv?.values?.filter((item) => !item.key?.startsWith("x_")) ?? {}
-    );
+    this.runtimeEnv = new VariableScope({});
     this.runtimeEnv.set("tenantId", scope.env.get("tenantId")?.value, "string");
     this.runtimeEnv.set("client_id", scope.env.get("client_id")?.value, "string");
     this.runtimeEnv.set("client_secret", scope.env.get("client_secret")?.value, "string");
