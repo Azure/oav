@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 12/12/2022 3.3.0
+- API Scenario
+  - Support scenario file as scope
+
 ## 12/01/2022 3.2.4
 
 - API Scenario
