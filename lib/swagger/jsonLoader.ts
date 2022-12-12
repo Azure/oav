@@ -119,6 +119,8 @@ export class JsonLoader implements Loader<Json> {
     return this.opts.useJsonParser ? parseJson(filePath, fileString) : JSON.parse(fileString);
   }
 
+  // To fully resolve the reference and remove all the self reference, ignore the circular reference.
+  // Currently used by roundtrip only
   private async loadResolvedFile(filePath: string) {
     const fileString = await this.fileLoader.load(filePath);
     let fileContent = this.getFileContent(filePath, fileString);
@@ -161,6 +163,12 @@ export class JsonLoader implements Loader<Json> {
 
   public async load(inputFilePath: string, skipResolveRef?: boolean): Promise<Json> {
     const filePath = this.fileLoader.relativePath(inputFilePath);
+    if (this.opts.shouldResolveRef) {
+      // To get fully resolved swagger, used for roundtrip only
+      // Here we do not touch cache used for validation
+      return await this.loadResolvedFile(filePath);
+    }
+
     let cache = this.fileCache.get(filePath);
     if (cache === undefined) {
       cache = {
@@ -171,10 +179,6 @@ export class JsonLoader implements Loader<Json> {
     }
     if (skipResolveRef !== undefined) {
       cache.skipResolveRef = skipResolveRef;
-    }
-
-    if (this.opts.shouldResolveRef) {
-      return await this.loadResolvedFile(filePath);
     }
     return this.loadFile(cache);
   }
