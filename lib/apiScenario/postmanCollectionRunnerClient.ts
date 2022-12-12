@@ -985,7 +985,9 @@ try {
     let responseAssertion: any;
     if (finalStateVia === "azure-async-operation") {
       scriptTypes.push("ResponseDataAssertion");
-      responseAssertion = [{ test: "/properties", expression: "to.be.not.undefined" }];
+      responseAssertion = {
+        "200": [{ test: "/body/properties", expression: "to.be.not.undefined" }],
+      };
       const postScripts = this.generatePostScripts(
         scriptTypes,
         undefined,
