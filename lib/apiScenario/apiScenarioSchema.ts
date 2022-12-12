@@ -6,9 +6,7 @@ export const ApiScenarioDefinition: Schema & {
   type: "object",
   properties: {
     scope: {
-      type: "string",
-      enum: ["ResourceGroup", "Subscription", "Tenant", "None"],
-      default: "ResourceGroup",
+      $ref: "#/definitions/Scope",
     },
     authentication: {
       $ref: "#/definitions/Authentication",
@@ -45,6 +43,19 @@ export const ApiScenarioDefinition: Schema & {
     Name: {
       type: "string",
       pattern: "^[A-Za-z_$][A-Za-z0-9_-]*$",
+    },
+    Scope: {
+      type: "string",
+      oneOf: [
+        {
+          enum: ["ResourceGroup", "Subscription", "Tenant", "None"],
+          default: "ResourceGroup",
+        },
+        {
+          format: "uri-reference",
+          pattern: "^.+\\.(yaml|yml)$",
+        },
+      ],
     },
     Authentication: {
       type: "object",
