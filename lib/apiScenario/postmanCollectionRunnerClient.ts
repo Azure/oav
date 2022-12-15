@@ -678,7 +678,8 @@ pm.test("Stopped TestProxy recording", function() {
             step.operation._method,
             undefined,
             undefined,
-            finalStateVia
+            finalStateVia,
+            step.isManagementPlane
           )
         );
       }
@@ -746,7 +747,9 @@ if (pollingUrl) {
         ? `pollingUrl.replace("${baseUri}","${this.opts.testProxy}")`
         : "pollingUrl"
     });
-    pm.variables.set("x_final_get_url",getLroFinalGetUrl(${finalStateVia}))
+    pm.variables.set("x_final_get_url",getLroFinalGetUrl(${finalStateVia}).replace("${baseUri}","${
+        this.opts.testProxy
+      }"))
     pm.variables.set("x_retry_after", "3");
 }`
     );
@@ -952,7 +955,8 @@ try {
     prevMethod: string = "put",
     scriptTypes: PostmanHelper.TestScriptType[] = [],
     armTemplate?: ArmTemplate,
-    finalStateVia?: string
+    finalStateVia?: string,
+    isManagementPlane?: boolean
   ): Item {
     const { item } = this.addNewItem(
       "Blank",
@@ -969,7 +973,10 @@ try {
     /**
      * set for original uri
      */
-    if (finalStateVia === "original-uri" || (prevMethod === "put" && !finalStateVia)) {
+    if (
+      finalStateVia === "original-uri" ||
+      (isManagementPlane && prevMethod === "put" && !finalStateVia)
+    ) {
       item.request.url = url;
     }
     const metadata: FinalGetItemMetadata = {
