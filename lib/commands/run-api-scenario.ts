@@ -194,7 +194,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       env = { ...env, ...envFromVariable };
     }
 
-    ["armEndpoint", "location", "subscriptionId", "resourceGroup"]
+    ["armEndpoint", "location", "subscriptionId", "resourceGroupName"]
       .filter((k) => argv[k] !== undefined)
       .forEach((k) => (env[k] = argv[k]));
 
