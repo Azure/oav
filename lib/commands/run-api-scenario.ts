@@ -47,7 +47,7 @@ export const builder: yargs.CommandBuilder = {
     string: true,
   },
   specs: {
-    describe: "One or more spec file paths. type: array",
+    describe: "One or more spec file paths.",
     type: "array",
   },
   output: {
@@ -61,8 +61,7 @@ export const builder: yargs.CommandBuilder = {
     type: "array",
   },
   skipValidation: {
-    describe:
-      "Skip all validations include schema validation, ARM rules validation. Default: false",
+    describe: "Skip all validations include schema validation, ARM rules validation.",
     boolean: true,
     default: false,
   },
@@ -76,11 +75,13 @@ export const builder: yargs.CommandBuilder = {
     string: true,
   },
   subscriptionId: {
+    alias: "subscription",
     describe: "SubscriptionId to run API test",
     string: true,
   },
-  resourceGroup: {
-    describe: "Resource group",
+  resourceGroupName: {
+    alias: "resourceGroup",
+    describe: "Resource group name",
     string: true,
   },
   skipCleanUp: {
