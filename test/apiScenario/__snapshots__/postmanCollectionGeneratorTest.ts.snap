@@ -3050,8 +3050,16 @@ if (
           "request": Object {
             "body": Object {
               "mode": "raw",
-              "raw": "{\\"x-recording-file\\": \\"./recordings/storageQuickStart_jestRunIdTestProxy.json\\"}",
+              "raw": "{
+  \\"x-recording-file\\": \\"Microsoft.Storage/stable/2021-08-01/scenarios/recordings/storageQuickStart.json\\"
+}",
             },
+            "header": Array [
+              Object {
+                "key": "Content-Type",
+                "value": "application/json",
+              },
+            ],
             "method": "POST",
             "url": Object {
               "host": Array [
@@ -4942,7 +4950,23 @@ try {
           "id": "l0fzps",
           "name": "stopTestProxyRecording",
           "request": Object {
+            "body": Object {
+              "mode": "raw",
+              "raw": "{
+  \\"TIMESTAMP\\": \\"{{$isoTimestamp}}\\",
+  \\"scenarioFile\\": \\"Microsoft.Storage/stable/2021-08-01/scenarios/storageQuickStart.yaml\\",
+  \\"armEndpoint\\": \\"https://management.azure.com\\",
+  \\"subscriptionId\\": \\"00000000-0000-0000-0000-000000000000\\",
+  \\"resourceGroup\\": \\"apiTest-rf9c3s\\",
+  \\"location\\": \\"westus\\",
+  \\"runId\\": \\"jestRunIdTestProxy\\"
+}",
+            },
             "header": Array [
+              Object {
+                "key": "Content-Type",
+                "value": "application/json",
+              },
               Object {
                 "key": "x-recording-id",
                 "value": "{{x_recording_id}}",
