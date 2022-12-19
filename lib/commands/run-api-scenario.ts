@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import * as fs from "fs";
+import * as path from "path";
 import { pathDirName, pathJoin, pathResolve } from "@azure-tools/openapi-tools-common";
 import { findReadMe } from "@azure/openapi-markdown";
 import * as yargs from "yargs";
@@ -102,7 +103,13 @@ export const builder: yargs.CommandBuilder = {
     default: false,
   },
   testProxy: {
-    describe: "TestProxy endpoint, e.g., http://localhost:5000. If not set, no proxy will be used.",
+    describe:
+      "Test-proxy endpoint, e.g., http://localhost:5000. If not set, no proxy will be used.",
+    string: true,
+  },
+  testProxyAssets: {
+    describe:
+      "Test-proxy assets file to push and restore recordings. Only used when test-proxy is set.",
     string: true,
   },
   devMode: {
@@ -148,25 +155,24 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       const inputFile = await getInputFiles(readmePath, argv.tag);
       for (const it of inputFile ?? []) {
         if (swaggerFilePaths.indexOf(it) < 0) {
-          swaggerFilePaths.push(pathJoin(fileRoot, it));
+          swaggerFilePaths.push(pathJoin(pathDirName(readmePath), it));
         }
       }
 
       if (!argv.apiScenario) {
         const tag = argv.tag ?? (await getDefaultTag(readmePath));
-        scenarioFiles.push(
-          ...(
-            await getApiScenarioFiles(
-              pathJoin(pathDirName(readmePath), "readme.test.md"),
-              tag,
-              argv.flag
-            )
-          ).map((it) => pathJoin(fileRoot, it))
+        const testResources = await getApiScenarioFiles(
+          pathJoin(pathDirName(readmePath), "readme.test.md"),
+          tag,
+          argv.flag
         );
+        for (const it of testResources ?? []) {
+          scenarioFiles.push(pathJoin(pathDirName(readmePath), it));
+        }
       }
     }
 
-    logger.info("input-file:");
+    logger.info("swagger-file:");
     logger.info(swaggerFilePaths);
     logger.info("scenario-file:");
     logger.info(scenarioFiles);
@@ -187,18 +193,9 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       env = { ...env, ...envFromVariable };
     }
 
-    if (argv.armEndpoint !== undefined) {
-      env.armEndpoint = argv.armEndpoint;
-    }
-    if (argv.location !== undefined) {
-      env.location = argv.location;
-    }
-    if (argv.subscriptionId !== undefined) {
-      env.subscriptionId = argv.subscriptionId;
-    }
-    if (argv.resourceGroup !== undefined) {
-      env.resourceGroupName = argv.resourceGroup;
-    }
+    ["armEndpoint", "location", "subscriptionId", "resourceGroup"]
+      .filter((k) => argv[k] !== undefined)
+      .forEach((k) => (env[k] = argv[k]));
 
     const opt: PostmanCollectionGeneratorOption = {
       fileRoot: fileRoot,
@@ -215,12 +212,17 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       eraseXmsExamples: false,
       eraseDescription: false,
       testProxy: argv.testProxy,
+      testProxyAssets: argv.testProxy ? path.resolve(argv.testProxyAssets) : undefined,
       skipValidation: argv.skipValidation,
       savePayload: argv.savePayload,
       generateExample: argv.generateExample,
       verbose: ["verbose", "debug", "silly"].indexOf(argv.logLevel) >= 0,
       devMode: argv.devMode,
     };
+
+    logger.debug("options:");
+    logger.debug(opt);
+
     const generator = inversifyGetInstance(PostmanCollectionGenerator, opt);
 
     for (const scenarioFile of scenarioFiles) {

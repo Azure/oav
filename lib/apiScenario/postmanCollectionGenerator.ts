@@ -51,6 +51,7 @@ export interface PostmanCollectionGeneratorOption
   runCollection: boolean;
   generateCollection: boolean;
   testProxy?: string;
+  testProxyAssets?: string;
   calculateCoverage?: boolean;
   skipValidation?: boolean;
   savePayload?: boolean;
@@ -259,15 +260,16 @@ class PostmanCollectionRunner {
 
   private async generateCollection() {
     const client = new PostmanCollectionRunnerClient({
+      scenarioFile: this.scenarioDef._filePath,
       collectionName: this.scenarioDef.name,
       runId: this.opt.runId!,
       testProxy: this.opt.testProxy,
+      testProxyAssets: this.opt.testProxyAssets,
       verbose: this.opt.verbose,
       skipAuth: this.opt.devMode,
       skipArmCall: this.opt.devMode,
       skipLroPoll: this.opt.devMode,
       jsonLoader: this.apiScenarioLoader.jsonLoader,
-      scenarioFolder: path.dirname(this.scenarioDef._filePath),
     });
     const runner = new ApiScenarioRunner({
       jsonLoader: this.apiScenarioLoader.jsonLoader,
