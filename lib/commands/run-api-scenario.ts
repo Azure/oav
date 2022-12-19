@@ -212,7 +212,8 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       eraseXmsExamples: false,
       eraseDescription: false,
       testProxy: argv.testProxy,
-      testProxyAssets: argv.testProxy ? path.resolve(argv.testProxyAssets) : undefined,
+      testProxyAssets:
+        argv.testProxy && argv.testProxyAssets ? path.resolve(argv.testProxyAssets) : undefined,
       skipValidation: argv.skipValidation,
       savePayload: argv.savePayload,
       generateExample: argv.generateExample,
