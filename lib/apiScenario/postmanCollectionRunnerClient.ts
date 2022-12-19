@@ -15,6 +15,7 @@ import {
 import { urlParse } from "@azure-tools/openapi-tools-common";
 import { xmsLongRunningOperation, xmsSkipUrlEncoding } from "../util/constants";
 import { JsonLoader } from "../swagger/jsonLoader";
+import { usePseudoRandom } from "../util/utils";
 import {
   ApiScenarioClientRequest,
   ApiScenarioRunnerClient,
@@ -300,6 +301,7 @@ pm.test("Started TestProxy recording", function() {
               resourceGroup: this.runtimeEnv.get("resourceGroupName"),
               location: this.runtimeEnv.get("location"),
               runId: this.opts.runId,
+              randomSeed: usePseudoRandom.seed.toString(),
             },
             null,
             2

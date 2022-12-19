@@ -680,10 +680,8 @@ export const shuffleArray = (a: any[]) => {
   return a;
 };
 
-// eslint-disable-next-line prefer-const
-export let usePsudorandom = {
-  flag: false,
-  seed: 0,
+export const usePseudoRandom = {
+  seed: Math.floor(Math.random() * 10000000000),
 };
 
 /**
@@ -700,17 +698,14 @@ function* mulberry32(seed: number) {
 
 let generator: any = undefined;
 
-export const resetPsuedoRandomSeed = (seed?: number) => {
-  usePsudorandom.seed = seed ?? 0;
+export const resetPseudoRandomSeed = (seed?: number) => {
+  usePseudoRandom.seed = seed ?? Math.floor(Math.random() * 10000000000);
   generator = undefined;
 };
 
 export const getRandomString = (length?: number) => {
   if (generator === undefined) {
-    if (!usePsudorandom.flag) {
-      usePsudorandom.seed = Math.floor(Math.random() * 100000);
-    }
-    generator = mulberry32(usePsudorandom.seed);
+    generator = mulberry32(usePseudoRandom.seed);
   }
   return generator
     .next()

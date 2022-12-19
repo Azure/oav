@@ -14,7 +14,12 @@ import {
 import { cliSuppressExceptions } from "../cliSuppressExceptions";
 import { inversifyGetInstance } from "../inversifyUtils";
 import { logger } from "../apiScenario/logger";
-import { getApiScenarioFiles, getDefaultTag, getInputFiles } from "../util/utils";
+import {
+  getApiScenarioFiles,
+  getDefaultTag,
+  getInputFiles,
+  resetPseudoRandomSeed,
+} from "../util/utils";
 import { EnvironmentVariables } from "../apiScenario/variableEnv";
 import { DEFAULT_ARM_ENDPOINT } from "../apiScenario/constants";
 import { log } from "../util/logging";
@@ -118,12 +123,20 @@ export const builder: yargs.CommandBuilder = {
     boolean: true,
     default: false,
   },
+  randomSeed: {
+    describe: "Random seed for random number generator",
+    number: true,
+  },
 };
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
   await cliSuppressExceptions(async () => {
     // suppress warning log in live validator
     log.consoleLogLevel = LiveValidatorLoggingLevels.error;
+
+    if (argv.randomSeed !== undefined) {
+      resetPseudoRandomSeed(argv.randomSeed);
+    }
 
     if (argv.logLevel) {
       const transport = logger.transports.find((t) => t instanceof winston.transports.Console);

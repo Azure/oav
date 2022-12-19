@@ -4959,7 +4959,8 @@ try {
   \\"subscriptionId\\": \\"00000000-0000-0000-0000-000000000000\\",
   \\"resourceGroup\\": \\"apiTest-rf9c3s\\",
   \\"location\\": \\"westus\\",
-  \\"runId\\": \\"jestRunIdTestProxy\\"
+  \\"runId\\": \\"jestRunIdTestProxy\\",
+  \\"randomSeed\\": \\"0\\"
 }",
             },
             "header": Array [
