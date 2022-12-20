@@ -15,6 +15,7 @@ import {
   unCoveredOperationsFormat,
 } from "../swaggerValidator/trafficValidator";
 import { LiveValidationIssue } from "../liveValidation/liveValidator";
+import { setDefaultOpts } from "../swagger/loader";
 import { logger } from "./logger";
 import { ApiScenarioLoader, ApiScenarioLoaderOption } from "./apiScenarioLoader";
 import { ApiScenarioRunner } from "./apiScenarioRunner";
@@ -546,7 +547,11 @@ export class PostmanCollectionGenerator {
   public runnerMap = new Map<string, PostmanCollectionRunner>();
 
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
-  constructor(@inject(TYPES.opts) private opt: PostmanCollectionGeneratorOption) {}
+  constructor(@inject(TYPES.opts) private opt: PostmanCollectionGeneratorOption) {
+    setDefaultOpts(opt, {
+      runId: generateRunId(),
+    });
+  }
 
   public async run(scenarioFile: string, skipCleanUp: boolean = false): Promise<Collection> {
     const runner = PostmanCollectionRunner.create({
