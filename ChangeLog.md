@@ -1,8 +1,11 @@
 # Change Log - oav
 
-## 12/12/2022 3.3.0
+## 12/19/2022 3.3.0
+
 - API Scenario
   - Support scenario file as scope
+  - Support test-proxy recording externalization with `--testProxyAssets` option
+  - Support `--randomSeed` option
 
 ## 12/01/2022 3.2.4
 
