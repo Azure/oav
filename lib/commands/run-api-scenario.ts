@@ -15,6 +15,7 @@ import { cliSuppressExceptions } from "../cliSuppressExceptions";
 import { inversifyGetInstance } from "../inversifyUtils";
 import { logger } from "../apiScenario/logger";
 import {
+  findGitRootDirectory,
   getApiScenarioFiles,
   getDefaultTag,
   getInputFiles,
@@ -155,9 +156,6 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       }
     }
 
-    const fileRoot = readmePath ? pathDirName(readmePath) : process.cwd();
-    logger.verbose(`fileRoot: ${fileRoot}`);
-
     const swaggerFilePaths: string[] = [];
     for (const spec of argv.specs ?? []) {
       const specFile = pathResolve(spec);
@@ -211,8 +209,13 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       .filter((k) => argv[k] !== undefined)
       .forEach((k) => (env[k] = argv[k]));
 
+    const fileRoot = readmePath
+      ? findGitRootDirectory(readmePath) ?? pathDirName(readmePath)
+      : process.cwd();
+    logger.verbose(`fileRoot: ${fileRoot}`);
+
     const opt: PostmanCollectionGeneratorOption = {
-      fileRoot: fileRoot,
+      fileRoot,
       checkUnderFileRoot: false,
       swaggerFilePaths: swaggerFilePaths,
       generateCollection: true,

@@ -140,6 +140,23 @@ export function checkAndResolveGithubUrl(inputPath: string): string {
   return inputPath;
 }
 
+/**
+ * Finds the git root directory for the given directory.
+ */
+export function findGitRootDirectory(dir: string): string | undefined {
+  while (true) {
+    const gitDir = path.join(dir, ".git");
+    if (fs.existsSync(gitDir)) {
+      return dir;
+    }
+    const newDIr = path.dirname(dir);
+    if (newDIr === dir) {
+      return undefined;
+    }
+    dir = newDIr;
+  }
+}
+
 /*
  * Merges source object into the target object
  * @param {object} source The object that needs to be merged
