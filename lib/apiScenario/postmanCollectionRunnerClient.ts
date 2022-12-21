@@ -711,17 +711,20 @@ pm.test("Stopped TestProxy recording", function() {
     if (this.opts.skipLroPoll) return;
     const url = item.request.url;
     const urlStr = `${baseUri}${url.getPathWithQuery()}`;
+
+    // For ARM put or patch operations , by default the final get is original url.
+    const isArmResourceCreate =
+      isManagementPlane && ["put", "patch"].includes(item.request.method.toLowerCase());
     postScripts.push(
       `
- const isArmResourceCreate = "${
-   isManagementPlane ?? false
- }" === "true" && "${item.request.method.toLowerCase()}" === "put" && (pm.response.code === 201 || pm.response.code === 200)
- 
  function getLroFinalGetUrl(finalStateVia) {
   if (!finalStateVia) {
-    // by default, the final url header is Location for ARM, Operation-Location for dataplane
-    const resultHeader = pm.response.headers.get("Location") || pm.response.headers.get("Operation-Location")
-    return resultHeader || isArmResourceCreate ? "${urlStr}" : ""
+    // by default, the final url header is Location for ARM, Operation-Location for dataplane.
+    return ${
+      isArmResourceCreate
+        ? `'${urlStr}'`
+        : `pm.response.headers.get("Location") || pm.response.headers.get("Operation-Location")`
+    }
   }
   switch (finalStateVia) {
     case "location": {
@@ -745,7 +748,9 @@ function getProxyUrl(url) {
         this.opts.testProxy ?? ""
       }") : url
 }
-const pollingUrl = pm.response.headers.get("Location") || pm.response.headers.get("Azure-AsyncOperation") || pm.response.headers.get("Operation-Location") || (isArmResourceCreate ? "${urlStr}" : "")
+const pollingUrl = pm.response.headers.get("Location") || pm.response.headers.get("Azure-AsyncOperation") || pm.response.headers.get("Operation-Location") || ${
+        isArmResourceCreate ? `'${urlStr}'` : "''"
+      }
 if (pollingUrl) {
     pm.variables.set("x_polling_url",getProxyUrl(pollingUrl));
     pm.variables.set("x_final_get_url",getProxyUrl(getLroFinalGetUrl("${finalStateVia ?? ""}")))
@@ -825,12 +830,6 @@ try {
         responseAssertion: responseAssertion,
       });
     }
-
-    PostmanHelper.addEvent(pollerItem.events, "prerequest", [
-      `
-    console.log(pm.variables.get("x_polling_url"))
-    `,
-    ]);
 
     if (postScripts.length > 0) {
       PostmanHelper.addEvent(pollerItem.events, "test", pollerPostScripts);
