@@ -1,8 +1,17 @@
 # Change Log - oav
 
+## 12/19/2022 3.3.0
+
+- API Scenario
+  - Support scenario file as scope
+  - Support test-proxy recording externalization with `--testProxyAssets` option
+  - Support `--randomSeed` option
+
 ## 12/01/2022 3.2.4
+
 - API Scenario
   - Support file type in formdata and body
+  - Change the prefix length to 8 from 10 in generated API Scenario
 
 ## 11/23/2022 3.2.3
 

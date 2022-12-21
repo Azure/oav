@@ -20,6 +20,7 @@ import {
   xmsSkipUrlEncoding,
 } from "../util/constants";
 import { JsonLoader } from "../swagger/jsonLoader";
+import { usePseudoRandom } from "../util/utils";
 import {
   ApiScenarioClientRequest,
   ApiScenarioRunnerClient,
@@ -45,15 +46,16 @@ import * as PostmanHelper from "./postmanHelper";
 import { VariableEnv } from "./variableEnv";
 
 export interface PostmanCollectionRunnerClientOption {
+  scenarioFile: string;
   collectionName?: string;
   runId: string;
   testProxy?: string;
+  testProxyAssets?: string;
   verbose?: boolean;
   skipAuth?: boolean;
   skipArmCall?: boolean;
   skipLroPoll?: boolean;
   jsonLoader: JsonLoader;
-  scenarioFolder: string;
 }
 
 interface PostmanAADTokenAuthOption {
@@ -253,6 +255,14 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
   }
 
   private startTestProxyRecording() {
+    const startRecordRequest: any = {
+      "x-recording-file": `${path.dirname(this.opts.scenarioFile)}/recordings/${
+        this.opts.collectionName
+      }.json`,
+    };
+    if (this.opts.testProxyAssets) {
+      startRecordRequest["x-recording-assets-file"] = this.opts.testProxyAssets;
+    }
     const { item } = this.addNewItem("Prepare", {
       name: "startTestProxyRecording",
       request: {
@@ -260,10 +270,13 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
         method: "POST",
         body: {
           mode: "raw",
-          raw: `{"x-recording-file": "./recordings/${this.opts.collectionName}_${this.opts.runId}.json"}`,
+          raw: `${JSON.stringify(startRecordRequest, null, 2)}`,
         },
       },
     });
+
+    item.request.addHeader({ key: "Content-Type", value: "application/json" });
+
     PostmanHelper.addEvent(
       item.events,
       "test",
@@ -282,8 +295,26 @@ pm.test("Started TestProxy recording", function() {
       request: {
         url: `${this.opts.testProxy}/record/stop`,
         method: "POST",
+        body: {
+          mode: "raw",
+          raw: `${JSON.stringify(
+            {
+              TIMESTAMP: "{{$isoTimestamp}}",
+              scenarioFile: this.opts.scenarioFile,
+              armEndpoint: this.runtimeEnv.get("armEndpoint"),
+              subscriptionId: this.runtimeEnv.get("subscriptionId"),
+              resourceGroup: this.runtimeEnv.get("resourceGroupName"),
+              location: this.runtimeEnv.get("location"),
+              runId: this.opts.runId,
+              randomSeed: usePseudoRandom.seed.toString(),
+            },
+            null,
+            2
+          )}`,
+        },
       },
     });
+    item.request.addHeader({ key: "Content-Type", value: "application/json" });
     item.request.addHeader({
       key: "x-recording-id",
       value: "{{x_recording_id}}",
@@ -465,7 +496,7 @@ pm.test("Stopped TestProxy recording", function() {
     if (url) {
       throw new Error(`File path should be a local file path but got ${filePath}`);
     }
-    return path.resolve(this.opts.scenarioFolder, filePath);
+    return path.resolve(this.opts.scenarioFile, "..", filePath);
   }
 
   public async sendRestCallRequest(
