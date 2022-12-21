@@ -1,5 +1,6 @@
 import { HttpMethods } from "@azure/core-http";
 import { JsonLoader } from "../swagger/jsonLoader";
+import { xmsParameterizedHost, xmsSkipUrlEncoding } from "../util/constants";
 import { getRandomString } from "../util/utils";
 import {
   ArmTemplate,
@@ -13,6 +14,8 @@ import {
 import { AzureBuiltInRoles } from "./azureBuiltInRoles";
 import { DEFAULT_ROLE_ASSIGNMENT_API_VERSION } from "./constants";
 import { EnvironmentVariables, VariableEnv } from "./variableEnv";
+
+const pathVariableRegex = /{([^}]+)}/g;
 
 export interface ApiScenarioRunnerOption {
   env: EnvironmentVariables;
@@ -46,6 +49,8 @@ export interface ApiScenarioClientRequest {
   headers: { [headerName: string]: string };
   query: { [key: string]: string };
   body?: any;
+  formData?: { [key: string]: { type: string; value: string } };
+  file?: string;
 }
 
 export interface ApiScenarioRunnerClient {
@@ -240,6 +245,12 @@ export class ApiScenarioRunner {
     };
 
     const newStep: StepRestCall = {
+      operation: {
+        parameters: [
+          { name: "scope", [xmsSkipUrlEncoding]: true, in: "path" },
+          { name: "roleAssignmentName", [xmsSkipUrlEncoding]: true, in: "path" },
+        ],
+      } as any,
       isPrepareStep: step.isPrepareStep,
       isCleanUpStep: step.isCleanUpStep,
       step: step.step,
@@ -258,13 +269,40 @@ export class ApiScenarioRunner {
   }
 
   private async executeRestCallStep(step: StepRestCall, env: VariableEnv) {
+    let host: string | undefined;
+    let pathPrefix = "";
+    if (step.isManagementPlane) {
+      host = env.getRequiredString("armEndpoint");
+    } else {
+      const spec = step.operation!._path._spec;
+      if (spec.host) {
+        host = `https://${spec.host}`;
+      } else {
+        const xHost = spec[xmsParameterizedHost];
+        if (xHost) {
+          host = xHost.hostTemplate.replace(pathVariableRegex, (_, p1) => `$(${p1})`);
+          if (xHost.useSchemePrefix === undefined || xHost.useSchemePrefix) {
+            host = `https://${host}`;
+          }
+
+          // for cases where there're path prefix after host, e.g., "{Endpoint}/language"
+          const pathPrefixIndex = host.search(/[^\/](\/[^\/].*)/g);
+          if (pathPrefixIndex >= 0) {
+            pathPrefix = host.substring(pathPrefixIndex + 1);
+            host = host.substring(0, pathPrefixIndex + 1);
+          }
+        } else {
+          throw new Error("Unknown host");
+        }
+      }
+    }
+
     let req: ApiScenarioClientRequest = {
-      host: "",
+      host,
       method: step.operation!._method.toUpperCase() as HttpMethods,
-      path: step.operation!._path._pathTemplate.replace(
-        /{([a-z0-9-_$]+)}/gi,
-        (_, p1) => `$(${p1})`
-      ),
+      path:
+        pathPrefix +
+        step.operation!._path._pathTemplate.replace(pathVariableRegex, (_, p1) => `$(${p1})`),
       pathParameters: {},
       headers: {},
       query: {},
@@ -293,29 +331,20 @@ export class ApiScenarioRunner {
           req.headers[param.name] = paramVal;
           break;
         case "body":
-          req.body = paramVal;
+          if (param.schema?.format === "binary") {
+            req.file = paramVal;
+          } else {
+            req.body = paramVal;
+          }
+          break;
+        case "formData":
+          if (req.formData === undefined) {
+            req.formData = {};
+          }
+          req.formData[param.name] = { type: param.type, value: paramVal };
           break;
         default:
-          throw new Error(`Parameter "in" not supported: ${param.in}`);
-      }
-    }
-
-    if (step.isManagementPlane) {
-      req.host = env.getRequiredString("armEndpoint");
-    } else {
-      const spec = step.operation!._path._spec;
-      if (spec.host) {
-        req.host = `https://${spec.host}`;
-      } else {
-        const xHost = spec["x-ms-parameterized-host"];
-        if (xHost) {
-          req.host = xHost.hostTemplate.replace(/{([a-z0-9-_$]+)}/gi, (_, p1) => `$(${p1})`);
-          if (xHost.useSchemePrefix === undefined || xHost.useSchemePrefix) {
-            req.host = `https://${req.host}`;
-          }
-        } else {
-          throw new Error("Unknown host");
-        }
+          throw new Error(`Unknown parameter: ${param}`);
       }
     }
 

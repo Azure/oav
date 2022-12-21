@@ -112,12 +112,15 @@ describe("Model Validation", () => {
     });
 
     it("should report real exampleJsonPath when additional parameter includes '.'", async () => {
-      const specPath2 = `${testPath}/modelValidation/swaggers/specification/additionalParameter/additionalParameter.json`;
-      const result = await validate.validateExamples(specPath2, undefined);
-      assert.strictEqual(result.length, 1);
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/additional/additional.json`;
+      const result = await validate.validateExamples(specPath2, "AdditionalParameter");
+      assert.strictEqual(result.length, 2);
       assert.strictEqual(result[0].code, "OBJECT_ADDITIONAL_PROPERTIES");
       assert.strictEqual(result[0].message, "Additional properties not allowed: @result.second");
       assert.strictEqual(result[0].exampleJsonPath, "$responses.200.body['@result.second']");
+      assert.strictEqual(result[1].code, "MINIMUM");
+      assert.strictEqual(result[1].message, "Value -1 is less than minimum 0");
+      assert.strictEqual(result[1].exampleJsonPath, "$responses.200.body['@result.first']");
     });
   });
 
@@ -718,15 +721,21 @@ describe("Model Validation", () => {
   });
 
   describe("Long running operation response validation", () => {
-    it("should fail when long running operation missing return some headers in header", async () => {
-      const specPath2 = `${testPath}/modelValidation/swaggers/specification/LRO-response/LRO-responseHeader/test.json`;
+    it("[resource-manager] should fail when long running operation missing return some headers in header", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/LRO-response/LRO-responseHeader/resource-manager/2017-05-15/test.json`;
       const result = await validate.validateExamples(specPath2, "SupportPlanTypes_Delete");
+      assert.strictEqual(result.length, 1);
+      assert.strictEqual(result[0].code, "LRO_RESPONSE_HEADER");
+    });
+    it("[data-plane] should fail when long running operation missing return some headers in header", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/LRO-response/LRO-responseHeader/data-plane/2022-09-01-preview/test.json`;
+      const result = await validate.validateExamples(specPath2, "Dataset_Create");
       assert.strictEqual(result.length, 1);
       assert.strictEqual(result[0].code, "LRO_RESPONSE_HEADER");
     });
 
     it("should validate when long running operation response doesn't have schema", async () => {
-      const specPath2 = `${testPath}/modelValidation/swaggers/specification/LRO-response/LRO-responseHeader/test.json`;
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/LRO-response/LRO-responseHeader/resource-manager/2017-05-15/test.json`;
       const result = await validate.validateExamples(
         specPath2,
         "SupportPlanTypes_Delete_noResponseSchema"
@@ -862,6 +871,17 @@ describe("Model Validation", () => {
         result[0].message,
         "Object didn't pass validation for format arm-id: test123"
       );
+    });
+  });
+
+  describe("additional properties validation", () => {
+    it("should validate type when additionalProperties has 'type: object'", async () => {
+      const specPath2 = `${testPath}/modelValidation/swaggers/specification/additional/additional.json`;
+      const result = await validate.validateExamples(specPath2, "AdditionalProperties");
+      assert.strictEqual(result.length, 1);
+      assert.strictEqual(result[0].code, "INVALID_TYPE");
+      assert.strictEqual(result[0].message, "Expected type object but found type integer");
+      assert.strictEqual(result[0].exampleJsonPath, "$responses.200.body.result1['id']");
     });
   });
 });

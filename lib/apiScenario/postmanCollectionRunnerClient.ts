@@ -1,3 +1,4 @@
+import * as path from "path";
 import {
   Collection,
   Item,
@@ -11,6 +12,10 @@ import {
   Variable,
   VariableScope,
 } from "postman-collection";
+import { urlParse } from "@azure-tools/openapi-tools-common";
+import { xmsLongRunningOperation, xmsSkipUrlEncoding } from "../util/constants";
+import { JsonLoader } from "../swagger/jsonLoader";
+import { usePseudoRandom } from "../util/utils";
 import {
   ApiScenarioClientRequest,
   ApiScenarioRunnerClient,
@@ -18,7 +23,6 @@ import {
   Scope,
 } from "./apiScenarioRunner";
 import {
-  AADTokenAuthentication,
   ArmTemplate,
   Authentication,
   DelayItemMetadata,
@@ -37,20 +41,29 @@ import * as PostmanHelper from "./postmanHelper";
 import { VariableEnv } from "./variableEnv";
 
 export interface PostmanCollectionRunnerClientOption {
+  scenarioFile: string;
   collectionName?: string;
   runId: string;
   testProxy?: string;
+  testProxyAssets?: string;
   verbose?: boolean;
   skipAuth?: boolean;
   skipArmCall?: boolean;
   skipLroPoll?: boolean;
+  jsonLoader: JsonLoader;
 }
 
-interface PostmanAuthOption {
-  type: Authentication["type"];
+interface PostmanAADTokenAuthOption {
+  type: "AADToken";
   tokenName: string;
-  scriptLocation: "Collection" | "Folder" | "Request";
 }
+
+interface PostmanAzureKeyAuthOption {
+  type: "AzureKey";
+  keyName: string;
+}
+
+type PostmanAuthOption = PostmanAADTokenAuthOption | PostmanAzureKeyAuthOption;
 
 export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
   private opts: PostmanCollectionRunnerClientOption;
@@ -67,24 +80,56 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
   }
 
   private checkAuthOption(
-    auth: Authentication,
-    location: PostmanAuthOption["scriptLocation"]
-  ): PostmanAuthOption | undefined {
-    if (auth.type === "AADToken" && auth.scope) {
-      if (!this.authOptionMap.has(auth.scope)) {
-        this.authOptionMap.set(auth.scope, {
-          type: auth.type,
+    authentication: Authentication,
+    preScripts: string[],
+    env: VariableEnv
+  ): RequestAuth | undefined {
+    if (authentication.type === "AADToken") {
+      authentication.scope = env.resolveString(authentication.scope);
+      let option: PostmanAADTokenAuthOption;
+      if (!this.authOptionMap.has(authentication.scope)) {
+        option = {
+          type: authentication.type,
           tokenName: `x_bearer_token_${this.authOptionMap.size}`,
-          scriptLocation: location,
-        });
-      }
-      return this.authOptionMap.get(auth.scope);
-    } else if (auth.type === "AzureKey") {
-      // TODO
-    } else if (auth.type === "None") {
-      // TODO
-    }
+        };
+        this.authOptionMap.set(authentication.scope, option);
 
+        preScripts.push(PostmanHelper.generateAuthScript(authentication.scope, option.tokenName));
+      } else {
+        option = this.authOptionMap.get(authentication.scope)! as PostmanAADTokenAuthOption;
+      }
+      return new RequestAuth({
+        type: "bearer",
+        bearer: [
+          {
+            key: "token",
+            value: `{{${option.tokenName}}}`,
+            type: "string",
+          },
+        ],
+      });
+    } else if (authentication.type === "AzureKey") {
+      return new RequestAuth({
+        type: "apikey",
+        apikey: [
+          {
+            key: "in",
+            value: authentication.in,
+            type: "string",
+          },
+          {
+            key: "key",
+            value: authentication.name,
+            type: "string",
+          },
+          {
+            key: "value",
+            value: covertToPostmanVariable(authentication.key),
+            type: "string",
+          },
+        ],
+      });
+    }
     return undefined;
   }
 
@@ -106,25 +151,11 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
 
     const preScripts: string[] = [];
 
-    scenarioDef.authentication = scope.env.resolveObjectValues(scenarioDef.authentication);
-    const authOption = this.checkAuthOption(scenarioDef.authentication, "Collection");
-
-    if (authOption) {
-      this.collection.auth = new RequestAuth({
-        type: "bearer",
-        bearer: [
-          {
-            key: "token",
-            value: `{{${authOption.tokenName}}}`,
-            type: "string",
-          },
-        ],
-      });
-      preScripts.push(
-        PostmanHelper.generateAuthScript(
-          (scenarioDef.authentication as AADTokenAuthentication).scope!,
-          authOption.tokenName
-        )
+    if (scenarioDef.authentication) {
+      this.collection.auth = this.checkAuthOption(
+        scenarioDef.authentication,
+        preScripts,
+        scope.env
       );
     }
 
@@ -187,26 +218,8 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
 
     const preScripts: string[] = [];
 
-    scenario.authentication = env.resolveObjectValues(scenario.authentication);
-    const authOption = this.checkAuthOption(scenario.authentication, "Folder");
-
-    if (authOption && authOption.scriptLocation === "Folder") {
-      this.scenarioFolder.auth = new RequestAuth({
-        type: "bearer",
-        bearer: [
-          {
-            key: "token",
-            value: `{{${authOption.tokenName}}}`,
-            type: "string",
-          },
-        ],
-      });
-      preScripts.push(
-        PostmanHelper.generateAuthScript(
-          (scenario.authentication as AADTokenAuthentication).scope!,
-          authOption.tokenName
-        )
-      );
+    if (scenario.authentication) {
+      this.scenarioFolder.auth = this.checkAuthOption(scenario.authentication, preScripts, env);
     }
 
     env.resolve();
@@ -214,7 +227,9 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
     if (Object.keys(scenario.variables).length > 0) {
       Object.entries(scenario.variables).forEach(([key, value]) => {
         if (value.value) {
-          preScripts.push(`pm.variables.set("${key}", "${env.resolveObjectValues(value.value)}");`);
+          preScripts.push(
+            `pm.variables.set("${key}", ${JSON.stringify(env.resolveObjectValues(value.value))});`
+          );
         }
       });
     }
@@ -235,6 +250,14 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
   }
 
   private startTestProxyRecording() {
+    const startRecordRequest: any = {
+      "x-recording-file": `${path.dirname(this.opts.scenarioFile)}/recordings/${
+        this.opts.collectionName
+      }.json`,
+    };
+    if (this.opts.testProxyAssets) {
+      startRecordRequest["x-recording-assets-file"] = this.opts.testProxyAssets;
+    }
     const { item } = this.addNewItem("Prepare", {
       name: "startTestProxyRecording",
       request: {
@@ -242,10 +265,13 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
         method: "POST",
         body: {
           mode: "raw",
-          raw: `{"x-recording-file": "./recordings/${this.opts.collectionName}_${this.opts.runId}.json"}`,
+          raw: `${JSON.stringify(startRecordRequest, null, 2)}`,
         },
       },
     });
+
+    item.request.addHeader({ key: "Content-Type", value: "application/json" });
+
     PostmanHelper.addEvent(
       item.events,
       "test",
@@ -253,7 +279,7 @@ export class PostmanCollectionRunnerClient implements ApiScenarioRunnerClient {
 pm.test("Started TestProxy recording", function() {
     pm.response.to.be.success;
     pm.response.to.have.header("x-recording-id");
-    pm.variables.set("x_recording_id", pm.response.headers.get("x-recording-id"));
+    pm.environment.set("x_recording_id", pm.response.headers.get("x-recording-id"));
 });`
     );
   }
@@ -264,8 +290,26 @@ pm.test("Started TestProxy recording", function() {
       request: {
         url: `${this.opts.testProxy}/record/stop`,
         method: "POST",
+        body: {
+          mode: "raw",
+          raw: `${JSON.stringify(
+            {
+              TIMESTAMP: "{{$isoTimestamp}}",
+              scenarioFile: this.opts.scenarioFile,
+              armEndpoint: this.runtimeEnv.get("armEndpoint"),
+              subscriptionId: this.runtimeEnv.get("subscriptionId"),
+              resourceGroup: this.runtimeEnv.get("resourceGroupName"),
+              location: this.runtimeEnv.get("location"),
+              runId: this.opts.runId,
+              randomSeed: usePseudoRandom.seed.toString(),
+            },
+            null,
+            2
+          )}`,
+        },
       },
     });
+    item.request.addHeader({ key: "Content-Type", value: "application/json" });
     item.request.addHeader({
       key: "x-recording-id",
       value: "{{x_recording_id}}",
@@ -442,6 +486,14 @@ pm.test("Stopped TestProxy recording", function() {
     }
   }
 
+  private resolveFilePath(filePath: string): string {
+    const url = urlParse(filePath);
+    if (url) {
+      throw new Error(`File path should be a local file path but got ${filePath}`);
+    }
+    return path.resolve(this.opts.scenarioFile, "..", filePath);
+  }
+
   public async sendRestCallRequest(
     clientRequest: ApiScenarioClientRequest,
     step: StepRestCall,
@@ -449,7 +501,7 @@ pm.test("Stopped TestProxy recording", function() {
   ): Promise<void> {
     env.resolve();
 
-    const baseUri = env.resolveString(clientRequest.host);
+    const baseUri = convertPostmanFormat(env.tryResolveString(clientRequest.host));
 
     const { item, itemGroup } = this.addNewItem(
       step.isPrepareStep ? "Prepare" : step.isCleanUpStep ? "CleanUp" : "Scenario",
@@ -463,6 +515,30 @@ pm.test("Stopped TestProxy recording", function() {
                 mode: "raw",
                 raw: JSON.stringify(convertPostmanFormat(clientRequest.body), null, 2),
               }
+            : clientRequest.formData
+            ? {
+                mode: "formdata",
+                formdata: Object.entries(clientRequest.formData).map(([key, value]) => {
+                  if (value.type === "file") {
+                    return {
+                      key,
+                      type: "file",
+                      src: this.resolveFilePath(value.value),
+                    };
+                  } else {
+                    return {
+                      key,
+                      type: value.type,
+                      value: value.value,
+                    };
+                  }
+                }),
+              }
+            : clientRequest.file
+            ? {
+                mode: "file",
+                file: { src: this.resolveFilePath(clientRequest.file) },
+              }
             : undefined,
         },
       },
@@ -472,26 +548,8 @@ pm.test("Stopped TestProxy recording", function() {
     // pre scripts
     const preScripts: string[] = [];
 
-    step.authentication = env.resolveObjectValues(step.authentication);
-    const authOption = this.checkAuthOption(step.authentication, "Request");
-
-    if (authOption && authOption.scriptLocation === "Request") {
-      item.request.auth = new RequestAuth({
-        type: "bearer",
-        bearer: [
-          {
-            key: "token",
-            value: `{{${authOption.tokenName}}}`,
-            type: "string",
-          },
-        ],
-      });
-      preScripts.push(
-        PostmanHelper.generateAuthScript(
-          (step.authentication as AADTokenAuthentication).scope!,
-          authOption.tokenName
-        )
-      );
+    if (step.authentication) {
+      item.request.auth = this.checkAuthOption(step.authentication, preScripts, env);
     }
 
     item.description = step.operationId;
@@ -505,11 +563,19 @@ pm.test("Stopped TestProxy recording", function() {
       })),
       query: Object.entries(clientRequest.query).map(([key, value]) => ({
         key,
-        value: convertPostmanFormat(value),
+        value: convertPostmanFormat(value)?.toString(),
       })),
     });
 
-    item.request.addHeader({ key: "Content-Type", value: "application/json" });
+    if (clientRequest.body) {
+      item.request.addHeader({
+        key: "Content-Type",
+        value:
+          step.operation?.consumes?.[0] ??
+          step.operation?._path?._spec?.consumes?.[0] ??
+          "application/json",
+      });
+    }
     Object.entries(clientRequest.headers).forEach(([key, value]) => {
       item.request.addHeader({ key, value: convertPostmanFormat(value) });
     });
@@ -518,9 +584,54 @@ pm.test("Stopped TestProxy recording", function() {
 
     if (Object.keys(step.variables).length > 0) {
       Object.entries(step.variables).forEach(([key, value]) =>
-        preScripts.push(`pm.variables.set("${key}", "${env.resolveObjectValues(value.value)}");`)
+        preScripts.push(
+          `pm.variables.set("${key}", ${JSON.stringify(env.resolveObjectValues(value.value))});`
+        )
       );
     }
+
+    const replaceKey = new Set<string>();
+    const jsonLoader = this.opts.jsonLoader;
+
+    const encodeVariable = function (variable: { key?: string | null; value: string | null }) {
+      let skipEncode = false;
+      step.operation?.parameters?.forEach((p) => {
+        p = jsonLoader.resolveRefObj(p);
+        if (p.name === variable.key && p.in === "path" && p[xmsSkipUrlEncoding]) {
+          skipEncode = true;
+        }
+      });
+      if (skipEncode) {
+        return;
+      }
+      const regex = /\{\{([A-Za-z_$][A-Za-z0-9_]*)\}\}/g;
+      const replaceArray: Array<[number, number, string]> = [];
+      let match,
+        index = variable.value!.length;
+      while ((match = regex.exec(variable.value!))) {
+        replaceKey.add(match[1]);
+        replaceArray.push([match.index, match.index + match[0].length, `{{${match[1]}_encoded}}`]);
+        index = match.index + match[0].length;
+      }
+      replaceArray.push([index, variable.value!.length, ""]);
+      let r,
+        value = "";
+      index = 0;
+      while ((r = replaceArray.shift())) {
+        value += encodeURIComponent(variable.value!.substring(index, r[0])) + r[2];
+        index = r[1];
+      }
+      variable.value = value;
+    };
+
+    item.request.url.variables.each(encodeVariable);
+    item.request.url.query.each(encodeVariable);
+
+    replaceKey.forEach((key) => {
+      preScripts.push(
+        `pm.variables.set("${key}_encoded", encodeURIComponent(pm.variables.get("${key}")));`
+      );
+    });
 
     if (preScripts.length > 0) {
       PostmanHelper.addEvent(item.events, "prerequest", preScripts);
@@ -560,7 +671,7 @@ pm.test("Stopped TestProxy recording", function() {
       step.responseAssertion
     ).forEach((s) => postScripts.push(s));
 
-    if (step.operation && step.operation["x-ms-long-running-operation"]) {
+    if (step.operation && step.operation[xmsLongRunningOperation]) {
       const metadata: LroItemMetadata = {
         type: "LRO",
         poller_item_name: `_${item.name}_poller`,
@@ -619,7 +730,7 @@ pm.test("Stopped TestProxy recording", function() {
 
     postScripts.push(
       `
-const pollingUrl = pm.response.headers.get("Location") || pm.response.headers.get("Azure-AsyncOperation");
+const pollingUrl = pm.response.headers.get("Location") || pm.response.headers.get("Azure-AsyncOperation") || pm.response.headers.get("Operation-Location");
 if (pollingUrl) {
     pm.variables.set("x_polling_url", ${
       this.opts.testProxy
@@ -673,9 +784,9 @@ try {
             pm.variables.set("x_retry_after", pm.response.headers.get("Retry-After"));
         }
     } else if (pm.response.size().body > 0) {
-        const terminalStatus = ["Succeeded", "Failed", "Canceled"];
+        const terminalStatus = ["succeeded", "failed", "canceled", "cancelled", "aborted", "deleted", "completed"];
         const json = pm.response.json();
-        if (json.status !== undefined && terminalStatus.indexOf(json.status) === -1) {
+        if (json.status !== undefined && terminalStatus.indexOf(json.status.toLowerCase()) === -1) {
             postman.setNextRequest("${delayItem.name}")
             if (pm.response.headers.has("Retry-After")) {
                 pm.variables.set("x_retry_after", pm.response.headers.get("Retry-After"));

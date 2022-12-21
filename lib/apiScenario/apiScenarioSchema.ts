@@ -6,9 +6,7 @@ export const ApiScenarioDefinition: Schema & {
   type: "object",
   properties: {
     scope: {
-      type: "string",
-      enum: ["ResourceGroup", "Subscription", "Tenant", "None"],
-      default: "ResourceGroup",
+      $ref: "#/definitions/Scope",
     },
     authentication: {
       $ref: "#/definitions/Authentication",
@@ -45,6 +43,19 @@ export const ApiScenarioDefinition: Schema & {
     Name: {
       type: "string",
       pattern: "^[A-Za-z_$][A-Za-z0-9_-]*$",
+    },
+    Scope: {
+      type: "string",
+      oneOf: [
+        {
+          enum: ["ResourceGroup", "Subscription", "Tenant", "None"],
+          default: "ResourceGroup",
+        },
+        {
+          format: "uri-reference",
+          pattern: "^.+\\.(yaml|yml)$",
+        },
+      ],
     },
     Authentication: {
       type: "object",
@@ -88,14 +99,20 @@ export const ApiScenarioDefinition: Schema & {
             then: {
               properties: {
                 type: {},
-                headerName: {
-                  type: "string",
-                  default: "Authorization",
-                },
                 key: {
                   type: "string",
                 },
+                name: {
+                  type: "string",
+                  default: "Authorization",
+                },
+                in: {
+                  type: "string",
+                  enum: ["header", "query"],
+                  default: "header",
+                },
               },
+              required: ["key"],
               additionalProperties: false,
             },
             else: {
@@ -407,7 +424,7 @@ export const ApiScenarioDefinition: Schema & {
           minProperties: 1,
           additionalProperties: false,
           patternProperties: {
-            "^([0-9]{3})$": {
+            "^([2-5][0-9]{2})|([245]xx)$": {
               oneOf: [
                 {
                   type: "object",

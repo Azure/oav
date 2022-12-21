@@ -112,7 +112,7 @@ export class NewmanReportValidator {
 
     this.testResult = {
       apiScenarioFilePath: path.relative(this.fileRoot, this.opts.apiScenarioFilePath),
-      swaggerFilePaths: this.opts.swaggerFilePaths!.map((specPath) => {
+      swaggerFilePaths: scenario._scenarioDef._swaggerFilePaths.map((specPath) => {
         if (process.env.REPORT_SPEC_PATH_PREFIX) {
           specPath = path.join(
             process.env.REPORT_SPEC_PATH_PREFIX,
@@ -138,7 +138,7 @@ export class NewmanReportValidator {
 
     this.liveValidator = new LiveValidator({
       fileRoot: "/",
-      swaggerPaths: [...this.opts.swaggerFilePaths!],
+      swaggerPaths: [...scenario._scenarioDef._swaggerFilePaths],
       enableRoundTripValidator: !this.opts.skipValidation,
     });
     if (!this.opts.skipValidation) {
@@ -188,14 +188,10 @@ export class NewmanReportValidator {
 
       const runtimeError: RuntimeError[] = [];
 
-      // Runtime errors
-      if (it.response.statusCode >= 400) {
-        const error = this.getRuntimeError(it);
-        runtimeError.push(error);
-      }
-
       it.assertions.forEach((assertion) => {
         if (assertion.message.includes("expected response code to be 2XX")) {
+          const error = this.getRuntimeError(it);
+          runtimeError.push(error);
           return;
         }
 
@@ -238,25 +234,25 @@ export class NewmanReportValidator {
           ? await this.liveValidator.validateLiveRequestResponse(payload)
           : undefined;
 
-        // Roundtrip validation
-        if (
-          !this.opts.skipValidation &&
-          matchedStep.isManagementPlane &&
-          matchedStep.operation?._method === "put" &&
-          it.response.statusCode >= 200 &&
-          it.response.statusCode <= 202
-        ) {
-          if (it.annotation.type === "LRO") {
-            // For LRO, get the final response to compose payload
-            const lroFinal = this.getLROFinalResponse(newmanReport.executions, it.annotation.step);
-            if (lroFinal !== undefined && lroFinal.response.statusCode === 200) {
-              const lroPayload = this.convertToLROLiveValidationPayload(it, lroFinal);
-              roundtripValidationResult = await this.liveValidator.validateRoundTrip(lroPayload);
-            }
-          } else if (it.annotation.type === "simple") {
-            roundtripValidationResult = await this.liveValidator.validateRoundTrip(payload);
-          }
-        }
+        // // Roundtrip validation
+        // if (
+        //   !this.opts.skipValidation &&
+        //   matchedStep.isManagementPlane &&
+        //   matchedStep.operation?._method === "put" &&
+        //   it.response.statusCode >= 200 &&
+        //   it.response.statusCode <= 202
+        // ) {
+        //   if (it.annotation.type === "LRO") {
+        //     // For LRO, get the final response to compose payload
+        //     const lroFinal = this.getLROFinalResponse(newmanReport.executions, it.annotation.step);
+        //     if (lroFinal !== undefined && lroFinal.response.statusCode === 200) {
+        //       const lroPayload = this.convertToLROLiveValidationPayload(it, lroFinal);
+        //       roundtripValidationResult = await this.liveValidator.validateRoundTrip(lroPayload);
+        //     }
+        //   } else if (it.annotation.type === "simple") {
+        //     roundtripValidationResult = await this.liveValidator.validateRoundTrip(payload);
+        //   }
+        // }
 
         specFilePath = matchedStep.operation?._path._spec._filePath;
       }
@@ -287,7 +283,7 @@ export class NewmanReportValidator {
       body: this.parseBody(request.body),
     };
     const liveResponse: LiveResponse = {
-      statusCode: response.statusCode.toString(),
+      statusCode: `${response.statusCode}`,
       headers: response.headers,
       body: this.parseBody(response.body),
     };
@@ -297,28 +293,28 @@ export class NewmanReportValidator {
     };
   }
 
-  private convertToLROLiveValidationPayload(
-    putReq: NewmanExecution,
-    getReq: NewmanExecution
-  ): RequestResponsePair {
-    const request = putReq.request;
-    const response = getReq.response;
-    const liveRequest: LiveRequest = {
-      url: request.url,
-      method: request.method.toLowerCase(),
-      headers: request.headers,
-      body: this.parseBody(request.body),
-    };
-    const liveResponse: LiveResponse = {
-      statusCode: response.statusCode.toString(),
-      headers: response.headers,
-      body: this.parseBody(response.body),
-    };
-    return {
-      liveRequest,
-      liveResponse,
-    };
-  }
+  // private convertToLROLiveValidationPayload(
+  //   putReq: NewmanExecution,
+  //   getReq: NewmanExecution
+  // ): RequestResponsePair {
+  //   const request = putReq.request;
+  //   const response = getReq.response;
+  //   const liveRequest: LiveRequest = {
+  //     url: request.url,
+  //     method: request.method.toLowerCase(),
+  //     headers: request.headers,
+  //     body: this.parseBody(request.body),
+  //   };
+  //   const liveResponse: LiveResponse = {
+  //     statusCode: `${response.statusCode}`,
+  //     headers: response.headers,
+  //     body: this.parseBody(response.body),
+  //   };
+  //   return {
+  //     liveRequest,
+  //     liveResponse,
+  //   };
+  // }
 
   // body may not be json string
   private parseBody(body: string): any {
@@ -350,11 +346,11 @@ export class NewmanReportValidator {
     return result;
   }
 
-  private getLROFinalResponse(executions: NewmanExecution[], initialStep: string) {
-    return executions.find(
-      (it) => it.annotation?.type === "finalGet" && it.annotation.step === initialStep
-    );
-  }
+  // private getLROFinalResponse(executions: NewmanExecution[], initialStep: string) {
+  //   return executions.find(
+  //     (it) => it.annotation?.type === "finalGet" && it.annotation.step === initialStep
+  //   );
+  // }
 
   private getMatchedStep(stepName: string): Step | undefined {
     return this.scenario.steps?.find((s) => s.step === stepName);

@@ -83,20 +83,32 @@ export interface OutputVariables {
   };
 }
 
-export interface NoneAuthentication {
+export interface RawNoneAuthentication {
   type: "None";
 }
 
-export interface AADTokenAuthentication {
+export type NoneAuthentication = TransformRaw<RawNoneAuthentication>;
+
+export interface RawAADTokenAuthentication {
   type: "AADToken";
   scope?: string;
 }
 
-export interface AzureKeyAuthentication {
+export type AADTokenAuthentication = TransformRaw<RawAADTokenAuthentication>;
+
+export interface RawAzureKeyAuthentication {
   type: "AzureKey";
-  headerName?: string;
   key: string;
+  name?: string;
+  in?: "header" | "query";
 }
+
+export type AzureKeyAuthentication = TransformRaw<RawAzureKeyAuthentication>;
+
+export type RawAuthentication =
+  | RawNoneAuthentication
+  | RawAADTokenAuthentication
+  | RawAzureKeyAuthentication;
 
 export type Authentication = NoneAuthentication | AADTokenAuthentication | AzureKeyAuthentication;
 
@@ -138,7 +150,7 @@ export type RawStepExample = RawStepBase & {
   exampleFile: string;
   requestUpdate?: JsonPatchOp[];
   responseUpdate?: JsonPatchOp[];
-  authentication?: Authentication;
+  authentication?: RawAuthentication;
 };
 
 export type RawStepOperation = RawStepBase & {
@@ -146,7 +158,7 @@ export type RawStepOperation = RawStepBase & {
   readmeTag?: string;
   parameters?: { [parameterName: string]: VarValue };
   responses?: StepResponseAssertion;
-  authentication?: Authentication;
+  authentication?: RawAuthentication;
 };
 
 export type StepRestCallExample = StepBase & {};
@@ -164,12 +176,12 @@ export type StepRestCall = StepBase & {
   outputVariables?: OutputVariables;
   externalReference?: boolean;
   isManagementPlane?: boolean;
-  authentication: Authentication;
+  authentication?: Authentication;
   _resolvedParameters?: SwaggerExample["parameters"];
 };
 
 export type StepResponseAssertion = {
-  [statusCode: number]:
+  [statusCode: string]:
     | {
         headers?: { [headerName: string]: string };
         body?: any;
@@ -271,7 +283,7 @@ export type StepRoleAssignment = TransformRaw<
   RawStepRoleAssignment,
   StepBase & {
     type: "armRoleAssignment";
-    authentication: Authentication;
+    authentication?: Authentication;
   },
   "description"
 >;
@@ -336,13 +348,14 @@ export type RawScenario = RawVariableScope & {
   scenario?: string;
   description?: string;
   steps: RawStep[];
-  authentication?: Authentication;
+  authentication?: RawAuthentication;
 };
 
 export type Scenario = TransformRaw<
   RawScenario,
   {
     steps: Step[];
+    authentication?: Authentication;
     _scenarioDef: ScenarioDefinition;
   } & VariableScope
 >;
@@ -350,12 +363,15 @@ export type Scenario = TransformRaw<
 //#endregion
 
 //#region ScenarioDefinitionFile
+
+export type ArmScope = "ResourceGroup" | "Subscription" | "Tenant" | "None";
+
 export type RawScenarioDefinition = RawVariableScope & {
-  scope?: "ResourceGroup" | "Subscription" | "Tenant" | "None";
+  scope?: ArmScope | string;
   prepareSteps?: RawStep[];
   scenarios: RawScenario[];
   cleanUpSteps?: RawStep[];
-  authentication?: Authentication;
+  authentication?: RawAuthentication;
 };
 
 export type ScenarioDefinition = TransformRaw<
@@ -365,6 +381,7 @@ export type ScenarioDefinition = TransformRaw<
     prepareSteps: Step[];
     scenarios: Scenario[];
     cleanUpSteps: Step[];
+    authentication?: Authentication;
     _filePath: string;
     _swaggerFilePaths: string[];
   }

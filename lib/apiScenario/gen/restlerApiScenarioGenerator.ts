@@ -30,6 +30,7 @@ import { setDefaultOpts } from "../../swagger/loader";
 import Mocker from "../../generator/mocker";
 import { ArmResourceManipulator } from "./ApiTestRuleBasedGenerator";
 import { logger } from ".././logger";
+import { xmsExamples, xmsSkipUrlEncoding } from "../../util/constants";
 
 export interface ApiScenarioGeneratorOption extends ApiScenarioLoaderOption {
   swaggerFilePaths: string[];
@@ -120,7 +121,7 @@ export class RestlerApiScenarioGenerator {
       outputDir: ".",
       dependencyPath: "",
       eraseXmsExamples: false,
-      skipResolveRefKeys: ["x-ms-examples"],
+      skipResolveRefKeys: [xmsExamples],
     });
     return inversifyGetInstance(RestlerApiScenarioGenerator, opts);
   }
@@ -182,8 +183,9 @@ export class RestlerApiScenarioGenerator {
       definition.scenarios[0].steps.forEach((step) => {
         const operationId = (step as any).operationId;
         const operation = this.operations.get(operationId);
-        if (operation?.["x-ms-examples"] && Object.values(operation["x-ms-examples"])[0]) {
-          const example = Object.values(operation["x-ms-examples"])[0];
+        const examples = operation?.[xmsExamples];
+        if (examples) {
+          const example = Object.values(examples)[0];
           (step as RawStepExample).exampleFile = path.relative(
             this.opts.outputDir,
             this.fileLoader.resolvePath(this.jsonLoader.getRealPath(example.$ref!))
@@ -264,8 +266,8 @@ export class RestlerApiScenarioGenerator {
           // for body,query parameter
           if (
             p?.in !== "path" &&
-            operation?.["x-ms-examples"] &&
-            Object.values(operation["x-ms-examples"])[0]
+            operation?.[xmsExamples] &&
+            Object.values(operation[xmsExamples])[0]
           ) {
             return;
           }
@@ -345,7 +347,8 @@ export class RestlerApiScenarioGenerator {
     }
 
     if (parameter.in === "path" && parameter.type === "string") {
-      return { type: "string", prefix: `${parameter.name.toLocaleLowerCase().substring(0, 10)}` };
+      // set prefix length to 8, thus 8+6<15, which is the minimum max length of resource name
+      return { type: "string", prefix: `${parameter.name.toLocaleLowerCase().substring(0, 8)}` };
     }
 
     switch (parameter.type) {

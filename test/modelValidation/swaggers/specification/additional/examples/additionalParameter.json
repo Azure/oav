@@ -5,7 +5,7 @@
   "responses": {
     "200": {
       "body": {
-        "@result.first": 2,
+        "@result.first": -1,
         "@result.second": 2
       }
     }

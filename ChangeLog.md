@@ -1,8 +1,40 @@
 # Change Log - oav
 
+## 12/19/2022 3.3.0
+
+- API Scenario
+  - Support scenario file as scope
+  - Support test-proxy recording externalization with `--testProxyAssets` option
+  - Support `--randomSeed` option
+
+## 12/01/2022 3.2.4
+
+- API Scenario
+  - Support file type in formdata and body
+  - Change the prefix length to 8 from 10 in generated API Scenario
+
+## 11/23/2022 3.2.3
+
+- AjvSchemaValidator - Ignore unknown format when compile schema
+
+## 11/07/2022 3.2.2
+
+- API Scenario
+  - Support LRO polling with operation-location header
+  - Support AzureKey based authentication
+
 ## 10/20/2022 3.2.1
+
+- ModelValidator - Fix bug during reporting real exampleJsonPath
+- ModelValidator - Add LRO header validation for data-planes swagger
+- GenerateExamples - Add title and operationId to example
+- GenerateExamples - Generate subscriptionId in guid format
+- ModelValidator - Add type validation for additionalProperties whose type is specified as an object
+- Bugfix: FileLoader - isUnderFileRoot function supports validation for absolute path
 - API Scenario
   - Add roleAssignment step
+  - Bugfix: Use content-type specified in swagger
+  - Bugfix: fix query parameter value type
 
 ## 10/10/2022 3.2.0
 
