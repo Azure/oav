@@ -257,7 +257,7 @@ export class NewmanReportValidator {
           : undefined;
 
         liveValidationForLroFinalGetResult =
-          !this.opts.skipValidation && lroFinalPayLoad
+          !this.opts.skipValidation && lroFinalPayLoad && matchedStep.isManagementPlane
             ? await this.liveValidator.validateLiveRequestResponse(lroFinalPayLoad)
             : undefined;
 
