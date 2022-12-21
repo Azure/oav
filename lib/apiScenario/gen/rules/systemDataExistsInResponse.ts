@@ -3,7 +3,7 @@ import { ApiTestGeneratorRule, ResourceManipulatorInterface } from "../ApiTestRu
 
 export const SystemDataExistsInResponse: ApiTestGeneratorRule = {
   name: "SystemDataExistsInResponse",
-  armRpcCodes: ["RPC-V1-Common-1"],
+  armRpcCodes: ["RPC-SystemData-V1-01"],
   description: "Check if the systemData exists in the response.",
   resourceKinds: ["Tracked","Proxy","Extension"],
   appliesTo: ["ARM"],
