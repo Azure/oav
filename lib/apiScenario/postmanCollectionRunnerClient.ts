@@ -664,7 +664,8 @@ pm.test("Stopped TestProxy recording", function() {
         postScripts,
         false,
         step.responseAssertion,
-        finalStateVia
+        finalStateVia,
+        step.isManagementPlane
       );
 
       // generate final get
@@ -673,13 +674,11 @@ pm.test("Stopped TestProxy recording", function() {
           this.generateFinalGetItem(
             item.name,
             baseUri,
-            item.request.url,
             item.name,
             step.operation._method,
             undefined,
             undefined,
-            finalStateVia,
-            step.isManagementPlane
+            finalStateVia
           )
         );
       }
@@ -706,21 +705,23 @@ pm.test("Stopped TestProxy recording", function() {
     postScripts: string[],
     checkStatus: boolean = false,
     responseAssertion?: StepResponseAssertion,
-    finalStateVia?: string
+    finalStateVia?: string,
+    isManagementPlane?: boolean
   ) {
     if (this.opts.skipLroPoll) return;
     const url = item.request.url;
     const urlStr = `${baseUri}${url.getPathWithQuery()}`;
     postScripts.push(
       `
+ const isArmResourceCreate = "${
+   isManagementPlane ?? false
+ }" === "true" && "${item.request.method.toLowerCase()}" === "put" && (pm.response.code === 201 || pm.response.code === 200)
+ 
  function getLroFinalGetUrl(finalStateVia) {
   if (!finalStateVia) {
-    if ("${item.request.method}" === "put" && pm.response.code === '201') {
-      return "${urlStr}"
-    }
-    else {
-      return pm.response.headers.get("Location") || pm.response.headers.get("Operation-Location") // by default is Location for ARM, Operation-Location for dataplane
-    }
+    // by default, the final url header is Location for ARM, Operation-Location for dataplane
+    const resultHeader = pm.response.headers.get("Location") || pm.response.headers.get("Operation-Location")
+    return resultHeader || isArmResourceCreate ? "${urlStr}" : ""
   }
   switch (finalStateVia) {
     case "location": {
@@ -739,17 +740,15 @@ pm.test("Stopped TestProxy recording", function() {
       return "";
   }
 }
-     
-const pollingUrl = pm.response.headers.get("Location") || pm.response.headers.get("Azure-AsyncOperation") || pm.response.headers.get("Operation-Location");
+function getProxyUrl(url) {
+  return  "${this.opts.testProxy ?? ""}" ? url.replace("${baseUri}","${
+        this.opts.testProxy ?? ""
+      }") : url
+}
+const pollingUrl = pm.response.headers.get("Location") || pm.response.headers.get("Azure-AsyncOperation") || pm.response.headers.get("Operation-Location") || (isArmResourceCreate ? "${urlStr}" : "")
 if (pollingUrl) {
-    pm.variables.set("x_polling_url", ${
-      this.opts.testProxy
-        ? `pollingUrl.replace("${baseUri}","${this.opts.testProxy}")`
-        : "pollingUrl"
-    });
-    pm.variables.set("x_final_get_url",getLroFinalGetUrl(${finalStateVia}).replace("${baseUri}","${
-        this.opts.testProxy
-      }"))
+    pm.variables.set("x_polling_url",getProxyUrl(pollingUrl));
+    pm.variables.set("x_final_get_url",getProxyUrl(getLroFinalGetUrl("${finalStateVia ?? ""}")))
     pm.variables.set("x_retry_after", "3");
 }`
     );
@@ -826,6 +825,12 @@ try {
         responseAssertion: responseAssertion,
       });
     }
+
+    PostmanHelper.addEvent(pollerItem.events, "prerequest", [
+      `
+    console.log(pm.variables.get("x_polling_url"))
+    `,
+    ]);
 
     if (postScripts.length > 0) {
       PostmanHelper.addEvent(pollerItem.events, "test", pollerPostScripts);
@@ -938,7 +943,6 @@ try {
     const generatedGetOperationItem = this.generateFinalGetItem(
       item.name,
       armEndpoint,
-      item.request.url,
       step.step,
       "put",
       generatedGetScriptTypes,
@@ -950,13 +954,11 @@ try {
   private generateFinalGetItem(
     name: string,
     baseUri: string,
-    url: Url,
     step: string,
     prevMethod: string = "put",
     scriptTypes: PostmanHelper.TestScriptType[] = [],
     armTemplate?: ArmTemplate,
-    finalStateVia?: string,
-    isManagementPlane?: boolean
+    finalStateVia?: string
   ): Item {
     const { item } = this.addNewItem(
       "Blank",
@@ -970,15 +972,6 @@ try {
       baseUri
     );
 
-    /**
-     * set for original uri
-     */
-    if (
-      finalStateVia === "original-uri" ||
-      (isManagementPlane && prevMethod === "put" && !finalStateVia)
-    ) {
-      item.request.url = url;
-    }
     const metadata: FinalGetItemMetadata = {
       type: "finalGet",
       lro_item_name: name,
@@ -1008,7 +1001,6 @@ try {
     }
     if (finalStateVia && finalStateVia !== "original-uri") {
       PostmanHelper.addEvent(item.events, "prerequest", [
-        `console.log(pm.variables.get("x_final_get_url"));`,
         `pm.test("LRO final-state-via is valid", () => 
         {
           pm.expect(pm.variables.get("x_final_get_url")).to.be.not.undefined;
