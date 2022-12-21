@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import * as fs from "fs";
+import * as path from "path";
 import { pathDirName, pathJoin, pathResolve } from "@azure-tools/openapi-tools-common";
 import { findReadMe } from "@azure/openapi-markdown";
 import * as yargs from "yargs";
@@ -13,7 +14,13 @@ import {
 import { cliSuppressExceptions } from "../cliSuppressExceptions";
 import { inversifyGetInstance } from "../inversifyUtils";
 import { logger } from "../apiScenario/logger";
-import { getApiScenarioFiles, getDefaultTag, getInputFiles } from "../util/utils";
+import {
+  findGitRootDirectory,
+  getApiScenarioFiles,
+  getDefaultTag,
+  getInputFiles,
+  resetPseudoRandomSeed,
+} from "../util/utils";
 import { EnvironmentVariables } from "../apiScenario/variableEnv";
 import { DEFAULT_ARM_ENDPOINT } from "../apiScenario/constants";
 import { log } from "../util/logging";
@@ -46,7 +53,7 @@ export const builder: yargs.CommandBuilder = {
     string: true,
   },
   specs: {
-    describe: "One or more spec file paths. type: array",
+    describe: "One or more spec file paths.",
     type: "array",
   },
   output: {
@@ -60,8 +67,7 @@ export const builder: yargs.CommandBuilder = {
     type: "array",
   },
   skipValidation: {
-    describe:
-      "Skip all validations include schema validation, ARM rules validation. Default: false",
+    describe: "Skip all validations include schema validation, ARM rules validation.",
     boolean: true,
     default: false,
   },
@@ -75,11 +81,13 @@ export const builder: yargs.CommandBuilder = {
     string: true,
   },
   subscriptionId: {
+    alias: "subscription",
     describe: "SubscriptionId to run API test",
     string: true,
   },
-  resourceGroup: {
-    describe: "Resource group",
+  resourceGroupName: {
+    alias: "resourceGroup",
+    describe: "Resource group name",
     string: true,
   },
   skipCleanUp: {
@@ -102,7 +110,13 @@ export const builder: yargs.CommandBuilder = {
     default: false,
   },
   testProxy: {
-    describe: "TestProxy endpoint, e.g., http://localhost:5000. If not set, no proxy will be used.",
+    describe:
+      "Test-proxy endpoint, e.g., http://localhost:5000. If not set, no proxy will be used.",
+    string: true,
+  },
+  testProxyAssets: {
+    describe:
+      "Test-proxy assets file to push and restore recordings. Only used when test-proxy is set.",
     string: true,
   },
   devMode: {
@@ -110,12 +124,20 @@ export const builder: yargs.CommandBuilder = {
     boolean: true,
     default: false,
   },
+  randomSeed: {
+    describe: "Random seed for random number generator",
+    number: true,
+  },
 };
 
 export async function handler(argv: yargs.Arguments): Promise<void> {
   await cliSuppressExceptions(async () => {
     // suppress warning log in live validator
     log.consoleLogLevel = LiveValidatorLoggingLevels.error;
+
+    if (argv.randomSeed !== undefined) {
+      resetPseudoRandomSeed(argv.randomSeed);
+    }
 
     if (argv.logLevel) {
       const transport = logger.transports.find((t) => t instanceof winston.transports.Console);
@@ -134,9 +156,6 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       }
     }
 
-    const fileRoot = readmePath ? pathDirName(readmePath) : process.cwd();
-    logger.verbose(`fileRoot: ${fileRoot}`);
-
     const swaggerFilePaths: string[] = [];
     for (const spec of argv.specs ?? []) {
       const specFile = pathResolve(spec);
@@ -148,25 +167,24 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       const inputFile = await getInputFiles(readmePath, argv.tag);
       for (const it of inputFile ?? []) {
         if (swaggerFilePaths.indexOf(it) < 0) {
-          swaggerFilePaths.push(pathJoin(fileRoot, it));
+          swaggerFilePaths.push(pathJoin(pathDirName(readmePath), it));
         }
       }
 
       if (!argv.apiScenario) {
         const tag = argv.tag ?? (await getDefaultTag(readmePath));
-        scenarioFiles.push(
-          ...(
-            await getApiScenarioFiles(
-              pathJoin(pathDirName(readmePath), "readme.test.md"),
-              tag,
-              argv.flag
-            )
-          ).map((it) => pathJoin(fileRoot, it))
+        const testResources = await getApiScenarioFiles(
+          pathJoin(pathDirName(readmePath), "readme.test.md"),
+          tag,
+          argv.flag
         );
+        for (const it of testResources ?? []) {
+          scenarioFiles.push(pathJoin(pathDirName(readmePath), it));
+        }
       }
     }
 
-    logger.info("input-file:");
+    logger.info("swagger-file:");
     logger.info(swaggerFilePaths);
     logger.info("scenario-file:");
     logger.info(scenarioFiles);
@@ -187,21 +205,17 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       env = { ...env, ...envFromVariable };
     }
 
-    if (argv.armEndpoint !== undefined) {
-      env.armEndpoint = argv.armEndpoint;
-    }
-    if (argv.location !== undefined) {
-      env.location = argv.location;
-    }
-    if (argv.subscriptionId !== undefined) {
-      env.subscriptionId = argv.subscriptionId;
-    }
-    if (argv.resourceGroup !== undefined) {
-      env.resourceGroupName = argv.resourceGroup;
-    }
+    ["armEndpoint", "location", "subscriptionId", "resourceGroupName"]
+      .filter((k) => argv[k] !== undefined)
+      .forEach((k) => (env[k] = argv[k]));
+
+    const fileRoot = readmePath
+      ? findGitRootDirectory(readmePath) ?? pathDirName(readmePath)
+      : process.cwd();
+    logger.verbose(`fileRoot: ${fileRoot}`);
 
     const opt: PostmanCollectionGeneratorOption = {
-      fileRoot: fileRoot,
+      fileRoot,
       checkUnderFileRoot: false,
       swaggerFilePaths: swaggerFilePaths,
       generateCollection: true,
@@ -215,12 +229,18 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       eraseXmsExamples: false,
       eraseDescription: false,
       testProxy: argv.testProxy,
+      testProxyAssets:
+        argv.testProxy && argv.testProxyAssets ? path.resolve(argv.testProxyAssets) : undefined,
       skipValidation: argv.skipValidation,
       savePayload: argv.savePayload,
       generateExample: argv.generateExample,
       verbose: ["verbose", "debug", "silly"].indexOf(argv.logLevel) >= 0,
       devMode: argv.devMode,
     };
+
+    logger.debug("options:");
+    logger.debug(opt);
+
     const generator = inversifyGetInstance(PostmanCollectionGenerator, opt);
 
     for (const scenarioFile of scenarioFiles) {

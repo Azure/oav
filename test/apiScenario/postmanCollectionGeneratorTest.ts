@@ -1,15 +1,11 @@
 import { DEFAULT_ARM_ENDPOINT } from "../../lib/apiScenario/constants";
 import { PostmanCollectionGenerator } from "../../lib/apiScenario/postmanCollectionGenerator";
 import { inversifyGetInstance } from "../../lib/inversifyUtils";
-import { resetPsuedoRandomSeed, usePsudorandom } from "../../lib/util/utils";
+import { resetPseudoRandomSeed } from "../../lib/util/utils";
 
 describe("postmanCollectionGenerator", () => {
-  beforeAll(() => {
-    usePsudorandom.flag = true;
-  });
-
   beforeEach(() => {
-    resetPsuedoRandomSeed();
+    resetPseudoRandomSeed(0);
   });
 
   it("should generate PostmanCollection - storageQuickStart", async () => {

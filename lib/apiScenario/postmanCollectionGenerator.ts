@@ -15,6 +15,7 @@ import {
   unCoveredOperationsFormat,
 } from "../swaggerValidator/trafficValidator";
 import { LiveValidationIssue } from "../liveValidation/liveValidator";
+import { setDefaultOpts } from "../swagger/loader";
 import { logger } from "./logger";
 import { ApiScenarioLoader, ApiScenarioLoaderOption } from "./apiScenarioLoader";
 import { ApiScenarioRunner } from "./apiScenarioRunner";
@@ -51,6 +52,7 @@ export interface PostmanCollectionGeneratorOption
   runCollection: boolean;
   generateCollection: boolean;
   testProxy?: string;
+  testProxyAssets?: string;
   calculateCoverage?: boolean;
   skipValidation?: boolean;
   savePayload?: boolean;
@@ -259,15 +261,16 @@ class PostmanCollectionRunner {
 
   private async generateCollection() {
     const client = new PostmanCollectionRunnerClient({
+      scenarioFile: this.scenarioDef._filePath,
       collectionName: this.scenarioDef.name,
       runId: this.opt.runId!,
       testProxy: this.opt.testProxy,
+      testProxyAssets: this.opt.testProxyAssets,
       verbose: this.opt.verbose,
       skipAuth: this.opt.devMode,
       skipArmCall: this.opt.devMode,
       skipLroPoll: this.opt.devMode,
       jsonLoader: this.apiScenarioLoader.jsonLoader,
-      scenarioFolder: path.dirname(this.scenarioDef._filePath),
     });
     const runner = new ApiScenarioRunner({
       jsonLoader: this.apiScenarioLoader.jsonLoader,
@@ -544,7 +547,11 @@ export class PostmanCollectionGenerator {
   public runnerMap = new Map<string, PostmanCollectionRunner>();
 
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
-  constructor(@inject(TYPES.opts) private opt: PostmanCollectionGeneratorOption) {}
+  constructor(@inject(TYPES.opts) private opt: PostmanCollectionGeneratorOption) {
+    setDefaultOpts(opt, {
+      runId: generateRunId(),
+    });
+  }
 
   public async run(scenarioFile: string, skipCleanUp: boolean = false): Promise<Collection> {
     const runner = PostmanCollectionRunner.create({
