@@ -267,7 +267,7 @@ export class RestlerApiScenarioGenerator {
           if (
             p?.in !== "path" &&
             operation?.[xmsExamples] &&
-            Object.values(operation[xmsExamples])[0]
+            Object.keys(operation?.[xmsExamples] ?? {}).length
           ) {
             return;
           }
