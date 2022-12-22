@@ -110,7 +110,7 @@ describe("Api Test rule based generator test", () => {
     )
     .map((f) => f.substring(specFolder.length + 1));
   
-  it("test NoChildResourceCreated", async () => {
+  it("test rules", async () => {
     for (const readmeMd of allSpecs) {
       const scenarioFiles = await testApiTestRuleBaseForReadme(
         readmeMd,
@@ -119,27 +119,5 @@ describe("Api Test rule based generator test", () => {
       );
       assert.ok(scenarioFiles);
     }
-  });
-
- it.skip("test  ResourceNameCaseInsensitive",async ()=> {
-  for(const readmeMd of allSpecs) {
-      const scenarioFiles = await testApiTestRuleBaseForReadme(
-        readmeMd,
-        specFolder,
-        [ResourceNameCaseInsensitive]
-      );
-      assert.ok(scenarioFiles);
-  }
- });
-
- it.skip("test SystemDataExistsInResponse", async () => {
-   for (const readmeMd of allSpecs) {
-    const scenarioFiles = await await testApiTestRuleBaseForReadme(
-      readmeMd,
-      specFolder,
-      [SystemDataExistsInResponse]
-    );
-    assert.ok(scenarioFiles);
-   }
- });
+  })
 })
