@@ -220,7 +220,7 @@ export class RestlerApiScenarioGenerator {
               if (
                 !parameter.required ||
                 envVariables.includes(parameter.name) ||
-                (parameter.in === "path" && parameter["x-ms-skip-url-encoding"])
+                (parameter.in === "path" && parameter[xmsSkipUrlEncoding])
               ) {
                 continue;
               }
