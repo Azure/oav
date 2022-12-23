@@ -49,12 +49,14 @@ export const testApiTestRuleBase = async (
         )
       )) as any;
      if (err || stderr) {
+      console.log(err || stderr)
       return null
      }
      const dependencyFile = resolve(specFolder,outputDir,"Compile/dependencies.json")
      if (existsSync(dependencyFile)) {
        return dependencyFile
      }
+     console.log(`Could not find dependency file:${dependencyFile}.`)
      return null
   }
   const dependencyFile = await generateDependencyFile(swaggers, specFolder);
