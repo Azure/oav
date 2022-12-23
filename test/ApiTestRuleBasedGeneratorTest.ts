@@ -50,7 +50,6 @@ export const testApiTestRuleBase = async (
       )) as any;
      if (err || stderr) {
       console.log(err || stderr)
-      return null
      }
      const dependencyFile = resolve(specFolder,outputDir,"Compile/dependencies.json")
      if (existsSync(dependencyFile)) {
