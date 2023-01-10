@@ -2,7 +2,7 @@ import * as path from "path";
 import Heap from "heap";
 import { inject, injectable } from "inversify";
 import { dump } from "js-yaml";
-import { pathJoin, pathResolve } from "@azure-tools/openapi-tools-common";
+import { pathJoin, pathResolve, urlParse } from "@azure-tools/openapi-tools-common";
 import { cloneDeep } from "lodash";
 import { inversifyGetInstance, TYPES } from "../../inversifyUtils";
 import { FileLoader } from "../../swagger/fileLoader";
@@ -31,12 +31,14 @@ import Mocker from "../../generator/mocker";
 import { ArmResourceManipulator } from "./ApiTestRuleBasedGenerator";
 import { logger } from ".././logger";
 import { xmsExamples, xmsSkipUrlEncoding } from "../../util/constants";
+import { ApiScenarioYamlLoader } from "../apiScenarioYamlLoader";
 
 export interface ApiScenarioGeneratorOption extends ApiScenarioLoaderOption {
   swaggerFilePaths: string[];
   dependencyPath: string;
   outputDir: string;
   useExample?: boolean;
+  scope?: string;
 }
 
 interface Dependency {
@@ -92,7 +94,8 @@ export class RestlerApiScenarioGenerator {
     @inject(TYPES.opts) private opts: ApiScenarioGeneratorOption,
     private swaggerLoader: SwaggerLoader,
     private fileLoader: FileLoader,
-    private jsonLoader: JsonLoader
+    private jsonLoader: JsonLoader,
+    private apiScenarioYamlLoader: ApiScenarioYamlLoader
   ) {
     this.swaggers = [];
     this.mocker = useRandom.flag
@@ -145,7 +148,7 @@ export class RestlerApiScenarioGenerator {
   public async generateResourceDependency(res: ArmResourceManipulator): Promise<RawScenario> {
     const putOperation = res.getOperation("CreateOrUpdate")[0];
     if (!putOperation) {
-      return { description:undefined, steps: [] };
+      return { description: undefined, steps: [] };
     }
     const scenario = this.generateDependencySteps(res);
     this.updateStepExample(scenario);
@@ -172,10 +175,25 @@ export class RestlerApiScenarioGenerator {
 
   public async generate() {
     const definition: RawScenarioDefinition = {
-      scope: "ResourceGroup",
+      scope: this.opts.fileRoot?.includes("data-plane") ? "None" : "ResourceGroup",
+      authentication: undefined,
       variables: undefined,
       scenarios: [],
     };
+
+    if (this.opts.scope) {
+      let scope;
+      if (urlParse(this.opts.scope)) {
+        definition.scope = this.opts.scope;
+        scope = this.opts.scope;
+      } else {
+        definition.scope = path.relative(this.opts.outputDir, this.opts.scope);
+        scope = path.resolve(process.cwd(), this.opts.scope);
+      }
+      const [scopeDef] = await this.apiScenarioYamlLoader.load(scope);
+      definition.authentication = scopeDef.scenarios[0].authentication;
+    }
+
     definition.scenarios.push(this.generateSteps());
     definition.variables = this.getVariables(definition.scenarios[0]);
 
@@ -405,15 +423,15 @@ export class RestlerApiScenarioGenerator {
     return scenario;
   }
 
-  public addCleanupSteps(res: ArmResourceManipulator,scenario:RawScenario) {
-    const dependencyPutOperations = this.generateDependencySteps(res)?.steps.reverse()
+  public addCleanupSteps(res: ArmResourceManipulator, scenario: RawScenario) {
+    const dependencyPutOperations = this.generateDependencySteps(res)?.steps.reverse();
     const sortedNodes: Node[] = [];
     for (const dependency of dependencyPutOperations) {
-      const node = this.getNode((dependency as RawStepOperation).operationId)
+      const node = this.getNode((dependency as RawStepOperation).operationId);
       if (node) {
-        const deleteOperation = [...node.children.values()].find((n) => n.method === "delete")
+        const deleteOperation = [...node.children.values()].find((n) => n.method === "delete");
         if (deleteOperation) {
-          sortedNodes.push(deleteOperation)
+          sortedNodes.push(deleteOperation);
         }
       }
     }

@@ -47,6 +47,10 @@ export const builder: yargs.CommandBuilder = {
     boolean: true,
     default: false,
   },
+  scope: {
+    describe: "path of a scenario file to be scope of generated scenario file",
+    string: true,
+  },
   armRule: {
     describe: "generate arm rule based api test",
     boolean: true,
@@ -90,6 +94,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
         outputDir: pathResolve(argv.outputDir),
         dependencyPath: pathResolve(argv.dependency),
         useExample: argv.useExample,
+        scope: argv.scope,
       });
 
       await generator.initialize();
@@ -97,10 +102,15 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       await generator.writeFile(def);
     } else if (argv.armRule) {
       if (!argv.dependency) {
-        console.log('Missing dependency file');
+        console.log("Missing dependency file");
         return 1;
       }
-      generateApiTestBasedOnRules(swaggerFilePaths, argv.dependency,argv.outputDir,argv.basicScenario);
+      generateApiTestBasedOnRules(
+        swaggerFilePaths,
+        argv.dependency,
+        argv.outputDir,
+        argv.basicScenario
+      );
     } else {
       const generator = StaticApiScenarioGenerator.create({
         swaggerFilePaths: swaggerFilePaths,
