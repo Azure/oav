@@ -52,6 +52,18 @@ export const traverseSwagger = (
   }
 };
 
+export const traverseSwaggers = (
+  specs: SwaggerSpec[],
+  visitors: {
+    // return false to skip following level
+    onPath?: (path: Path, pathTemplate: string) => boolean | void;
+    onOperation?: (operation: Operation, path: Path, method: LowerHttpMethods) => boolean | void;
+    onResponse?: (response: Response, operation: Operation, path: Path, statusCode: string) => void;
+  }
+) => {
+  specs.forEach((spec) => traverseSwagger(spec, visitors));
+};
+
 export const traverseSwaggerAsync = async (
   spec: SwaggerSpec,
   visitors: {
