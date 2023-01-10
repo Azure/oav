@@ -488,7 +488,7 @@
 
 ## 02/13/2020 0.20.9
 
-- Fall back to match child resouce in live validator
+- Fall back to match child resource in live validator
 
 ## 02/13/2020 0.20.8
 
