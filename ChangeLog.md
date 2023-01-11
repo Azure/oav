@@ -9,6 +9,7 @@
 
 ## 12/01/2022 3.2.4
 
+- Generate Examples - Support specified generation rule
 - API Scenario
   - Support file type in formdata and body
   - Change the prefix length to 8 from 10 in generated API Scenario
@@ -488,7 +489,7 @@
 
 ## 02/13/2020 0.20.9
 
-- Fall back to match child resouce in live validator
+- Fall back to match child resource in live validator
 
 ## 02/13/2020 0.20.8
 

@@ -34,9 +34,11 @@ export default class Generator {
   private shouldMock: boolean;
   private mockerCache: MockerCache;
   private payloadCache: PayloadCache;
+  private generationRule?: "Max" | "Min";
   public readonly transformContext: TransformContext;
 
-  public constructor(specFilePath: string, payloadDir?: string) {
+  public constructor(specFilePath: string, payloadDir?: string, generationRule?: "Max" | "Min") {
+    this.generationRule = generationRule;
     this.shouldMock = payloadDir ? false : true;
     this.specFilePath = specFilePath;
     this.payloadDir = payloadDir;
@@ -240,14 +242,23 @@ export default class Generator {
       }
     }
     const ruleSet: RuleSet = [];
-    ruleSet.push({
-      exampleNamePostfix: "MaximumSet",
-      ruleName: "MaximumSet",
-    });
-    ruleSet.push({
-      exampleNamePostfix: "MinimumSet",
-      ruleName: "MinimumSet",
-    });
+    if (this.generationRule) {
+      ruleSet.push({
+        exampleNamePostfix: `${this.generationRule}imumSet`,
+        ruleName: `${this.generationRule}imumSet`,
+      });
+    } else {
+      ruleSet.push(
+        {
+          exampleNamePostfix: "MaximumSet",
+          ruleName: "MaximumSet",
+        },
+        {
+          exampleNamePostfix: "MinimumSet",
+          ruleName: "MinimumSet",
+        }
+      );
+    }
     for (const rule of ruleSet) {
       const error = await this.generateExample(operationId, specItem, rule);
       if (error.length) {
