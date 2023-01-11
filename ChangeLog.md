@@ -1,5 +1,12 @@
 # Change Log - oav
 
+## 12/19/2022 3.3.0
+
+- API Scenario
+  - Support scenario file as scope
+  - Support test-proxy recording externalization with `--testProxyAssets` option
+  - Support `--randomSeed` option
+
 ## 12/01/2022 3.2.4
 
 - Generate Examples - Support specified generation rule
@@ -482,7 +489,7 @@
 
 ## 02/13/2020 0.20.9
 
-- Fall back to match child resouce in live validator
+- Fall back to match child resource in live validator
 
 ## 02/13/2020 0.20.8
 
