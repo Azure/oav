@@ -1,5 +1,9 @@
 # Change Log - oav
 
+## 01/15/2023 3.3.1
+
+- Add json report parameter in command `validate-traffic`
+
 ## 12/19/2022 3.3.0
 
 - API Scenario

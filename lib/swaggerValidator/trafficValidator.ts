@@ -29,15 +29,20 @@ export interface TrafficValidationOptions extends Options {
   specLinkPrefix?: string;
   payloadLinkPrefix?: string;
   markdownPath?: string;
+  jsonReportPath?: string;
 }
 export interface TrafficValidationIssue {
   payloadFilePath?: string;
   payloadFilePathPosition?: FilePosition | undefined;
   specFilePath?: string;
-  errors?: LiveValidationIssue[];
+  errors?: LiveValidationIssueWithSource[];
   runtimeExceptions?: RuntimeException[];
   operationInfo?: OperationContext;
 }
+
+type LiveValidationIssueWithSource = LiveValidationIssue & {
+  issueSource?: "request" | "response";
+};
 
 export interface RuntimeException {
   code: string;
@@ -185,18 +190,28 @@ export class TrafficValidator {
           activityId
         );
 
-        const errorResult: LiveValidationIssue[] = [];
+        const errorResult: LiveValidationIssueWithSource[] = [];
         const runtimeExceptions: RuntimeException[] = [];
         if (validationResult.requestValidationResult.isSuccessful === undefined) {
           runtimeExceptions.push(validationResult.requestValidationResult.runtimeException!);
         } else if (validationResult.requestValidationResult.isSuccessful === false) {
-          errorResult.push(...validationResult.requestValidationResult.errors);
+          errorResult.push(
+            ...validationResult.requestValidationResult.errors.map((e) => {
+              (e as LiveValidationIssueWithSource).issueSource = "request";
+              return e as LiveValidationIssueWithSource;
+            })
+          );
         }
 
         if (validationResult.responseValidationResult.isSuccessful === undefined) {
           runtimeExceptions.push(validationResult.responseValidationResult.runtimeException!);
         } else if (validationResult.responseValidationResult.isSuccessful === false) {
-          errorResult.push(...validationResult.responseValidationResult.errors);
+          errorResult.push(
+            ...validationResult.responseValidationResult.errors.map((e) => {
+              (e as LiveValidationIssueWithSource).issueSource = "response";
+              return e as LiveValidationIssueWithSource;
+            })
+          );
         }
         if (errorResult.length > 0 || runtimeExceptions.length > 0) {
           const trafficSpec = await this.swaggerLoader.load(payloadFilePath);
