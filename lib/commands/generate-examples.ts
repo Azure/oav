@@ -36,13 +36,13 @@ export const builder: yargs.CommandBuilder = {
   },
   max: {
     alias: "maximumSet",
-    describe: "generate examples by rule MaximumSet.",
+    describe: "generate examples by rule of MaximumSet.",
     boolean: true,
     default: false,
   },
   min: {
     alias: "minimumSet",
-    describe: "generate examples by rule MinimumSet.",
+    describe: "generate examples by rule of MinimumSet.",
     boolean: true,
     default: false,
   },
@@ -56,11 +56,11 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       consoleLogLevel: argv.logLevel,
       logFilepath: argv.f,
     };
-    let generateRule: "Max" | "Min" | undefined;
+    let generationRule: "Max" | "Min" | undefined;
     if (argv.max && argv.min) {
-      generateRule = undefined;
+      generationRule = undefined;
     } else {
-      generateRule = argv.max ? "Max" : argv.min ? "Min" : undefined;
+      generationRule = argv.max ? "Max" : argv.min ? "Min" : undefined;
     }
     await validate.generateExamples(
       specPath,
@@ -68,7 +68,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       argv.o,
       argv.config,
       argv.tag,
-      generateRule,
+      generationRule,
       vOptions
     );
     return 0;
