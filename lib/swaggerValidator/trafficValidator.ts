@@ -89,8 +89,8 @@ export class TrafficValidator {
   public operationUndefinedResult: number = 0;
 
   public constructor(specPath: string, trafficPath: string) {
-    this.specPath = specPath;
-    this.trafficPath = trafficPath;
+    this.specPath = pathResolve(specPath);
+    this.trafficPath = pathResolve(trafficPath);
   }
 
   public async initialize() {

@@ -85,7 +85,7 @@ export async function handler(argv: yargs.Arguments): Promise<void> {
       payloadLinkPrefix: argv.payloadLinkPrefix,
       jsonReportPath: argv.jsonReport,
     };
-    const errors = await validate.validateTrafficAgainstSpec(specPath, trafficPath, vOptions);
+    const errors = await validate.validateTraffic(specPath, trafficPath, vOptions);
     return errors.length > 0 ? 1 : 0;
   });
 }

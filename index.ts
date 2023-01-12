@@ -4,7 +4,11 @@ import "reflect-metadata";
 import * as C from "./lib/util/constants";
 
 // Easy to use methods from validate.ts
-export { validateSpec, validateExamples, validateTrafficAgainstSpec } from "./lib/validate";
+export {
+  validateSpec,
+  validateExamples,
+  validateTraffic as validateTrafficAgainstSpec,
+} from "./lib/validate";
 
 export { BaseValidationError } from "./lib/util/baseValidationError";
 export { Severity } from "./lib/util/severity";
