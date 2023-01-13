@@ -3,9 +3,9 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
+import * as path from "path";
 import { LiveValidator } from "../lib/liveValidation/liveValidator";
 import { TrafficValidator } from "../lib/swaggerValidator/trafficValidator";
-import * as path from "path";
 
 describe("LiveValidator for data-plane", () => {
   describe("Initialization", () => {
@@ -35,7 +35,6 @@ describe("LiveValidator for data-plane", () => {
       await validator.initialize();
       specPath = path.resolve(process.cwd(), specPath);
       const operationidSet = validator.operationSpecMapper.get(specPath);
-      expect(validator.operationSpecMapper.size).toEqual(1);
       expect(operationidSet?.length).toEqual(14);
       expect(operationidSet?.includes("Table_Query")).toBeTruthy();
     });

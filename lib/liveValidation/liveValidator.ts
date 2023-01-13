@@ -130,8 +130,6 @@ export class LiveValidator {
 
   public operationLoader: OperationLoader;
 
-  public swaggerList: string[] = [];
-
   private logFunction?: (message: string, level: string, meta?: Meta) => void;
 
   private loader?: LiveValidatorLoader;
@@ -235,7 +233,6 @@ export class LiveValidator {
     const allSpecs: SwaggerSpec[] = [];
     while (swaggerPaths.length > 0) {
       const swaggerPath = swaggerPaths.shift()!;
-      this.swaggerList.push(swaggerPath);
       const spec = await this.getSwaggerInitializer(this.loader!, swaggerPath);
       if (spec !== undefined) {
         allSpecs.push(spec);
@@ -254,7 +251,9 @@ export class LiveValidator {
     } catch (e) {
       // keeps building validator if it fails to tranform specs coz global transformers catches the exceptions and continue other schema transformings;
       // this error will be reported in validator building or validation runtime.
-      const errMsg = `Failed to transform loaded specs, detail error message:${e?.message}.ErrorStack:${e?.stack}`;
+      const errMsg = `Failed to transform loaded specs, detail error message:${
+        (e as any)?.message
+      }.\nError stack:${(e as any)?.stack}`;
       this.logging(
         errMsg,
         LiveValidatorLoggingLevels.error,
@@ -292,9 +291,10 @@ export class LiveValidator {
             }
           );
         } catch (e) {
-          const errMsg = `ErrorMessage:${e?.message}.ErrorStack:${e?.stack}`;
           this.logging(
-            `Failed to build validator for spec ${spec?._filePath}. ${errMsg}`,
+            `Failed to build validator for spec ${spec?._filePath}.\nErrorMessage:${
+              (e as any)?.message
+            }.\nErrorStack:${(e as any)?.stack}`,
             LiveValidatorLoggingLevels.error,
             LiveValidatorLoggingTypes.specTrace,
             "Oav.liveValidator.initialize.loader.buildAjvValidator",
@@ -380,9 +380,10 @@ export class LiveValidator {
           }
         );
       } catch (e) {
-        const errMsg = `ErrorMessage:${e?.message}.ErrorStack:${e?.stack}`;
         this.logging(
-          `Failed to build validator for spec ${spec?._filePath}. ${errMsg}`,
+          `Failed to build validator for spec ${spec?._filePath}.\nErrorMessage:${
+            (e as any)?.message
+          }.\nErrorStack:${(e as any)?.stack}`,
           LiveValidatorLoggingLevels.error,
           LiveValidatorLoggingTypes.specTrace,
           "Oav.liveValidator.loadAllSpecValidatorInBackground",
@@ -423,14 +424,7 @@ export class LiveValidator {
     operationInfo?: OperationContext
   ): Promise<LiveValidationResult> {
     const startTime = Date.now();
-    const correlationId = liveRequest.headers?.["x-ms-correlation-request-id"] || "";
-    const activityId = liveRequest.headers?.["x-ms-request-id"] || "";
-    const { info, error } = this.getOperationInfo(
-      liveRequest,
-      correlationId,
-      activityId,
-      operationInfo
-    );
+    const { info, error } = this.getOperationInfo(liveRequest, operationInfo);
     if (error !== undefined) {
       this.logging(
         `ErrorMessage:${error.message}.ErrorStack:${error.stack}`,
@@ -508,14 +502,7 @@ export class LiveValidator {
     operationInfo?: OperationContext
   ): Promise<LiveValidationResult> {
     const startTime = Date.now();
-    const correlationId = liveResponse.headers?.["x-ms-correlation-request-id"] || "";
-    const activityId = liveResponse.headers?.["x-ms-request-id"] || "";
-    const { info, error } = this.getOperationInfo(
-      specOperation,
-      correlationId,
-      activityId,
-      operationInfo
-    );
+    const { info, error } = this.getOperationInfo(specOperation, operationInfo);
     if (error !== undefined) {
       this.logging(
         `ErrorMessage:${error.message}.ErrorStack:${error.stack}`,
@@ -669,9 +656,7 @@ export class LiveValidator {
   }
 
   public getOperationInfo(
-    request: { url: string; method: string },
-    correlationId: string,
-    activityId: string,
+    request: { url: string; method: string; headers?: { [propertyName: string]: string } },
     operationInfo?: OperationContext
   ): {
     info: OperationContext;
@@ -683,11 +668,10 @@ export class LiveValidator {
     };
     try {
       if (info.validationRequest === undefined) {
-        info.validationRequest = this.parseValidationRequest(
+        info.validationRequest = parseValidationRequest(
           request.url,
           request.method,
-          correlationId,
-          activityId
+          request.headers
         );
       }
       if (info.operationMatch === undefined) {
@@ -700,15 +684,6 @@ export class LiveValidator {
     } catch (error) {
       return { info, error };
     }
-  }
-
-  public parseValidationRequest(
-    requestUrl: string,
-    requestMethod: string | undefined | null,
-    correlationId: string,
-    activityId: string
-  ): ValidationRequest {
-    return parseValidationRequest(requestUrl, requestMethod, correlationId, activityId);
   }
 
   private async getMatchedPaths(jsonsPattern: string | string[]): Promise<string[]> {
@@ -769,14 +744,7 @@ export class LiveValidator {
         runtimeException: runtimeException,
       };
     }
-    const correlationId =
-      requestResponseObj.liveRequest.headers?.["x-ms-correlation-request-id"] || "";
-    const activityId = requestResponseObj.liveRequest.headers?.["x-ms-request-id"] || "";
-    const { info, error } = this.getOperationInfo(
-      requestResponseObj.liveRequest,
-      correlationId,
-      activityId
-    );
+    const { info, error } = this.getOperationInfo(requestResponseObj.liveRequest);
     if (error !== undefined) {
       this.logging(
         `ErrorMessage:${error.message}.ErrorStack:${error.stack}`,
@@ -922,7 +890,9 @@ export class LiveValidator {
     } catch (err) {
       this.logging(
         `Unable to initialize "${swaggerPath}" file from SpecValidator. We are ` +
-          `ignoring this swagger file and continuing to build cache for other valid specs. ErrorMessage: ${err?.message};ErrorStack: ${err?.stack}`,
+          `ignoring this swagger file and continuing to build cache for other valid specs.\nErrorMessage: ${
+            (err as any)?.message
+          };\nErrorStack: ${(err as any)?.stack}`,
         LiveValidatorLoggingLevels.warn,
         LiveValidatorLoggingTypes.error
       );
@@ -993,21 +963,18 @@ export function formatUrlToExpectedFormat(requestUrl: string): string {
 /**
  * Parse the validation request information.
  *
- * @param  requestUrl The url of service api call.
+ * @param requestUrl The url of service api call.
  *
  * @param requestMethod The http verb for the method to be used for lookup.
  *
- * @param correlationId The id to correlate the api calls.
- *
- * @param activityId The id maps to request id, used by RPaaS.
+ * @param headers Optional headers
  *
  * @returns parsed ValidationRequest info.
  */
 export const parseValidationRequest = (
   requestUrl: string,
-  requestMethod: string | undefined | null,
-  correlationId: string,
-  activityId: string
+  requestMethod: string,
+  headers?: { [propertyName: string]: string }
 ): ValidationRequest => {
   if (
     requestUrl === undefined ||
@@ -1070,8 +1037,8 @@ export const parseValidationRequest = (
     host: parsedUrl.host!,
     pathStr,
     query: queryStr,
-    correlationId,
-    activityId,
-    requestUrl,
+    requestUrl: requestUrl,
+    correlationId: headers?.["x-ms-correlation-request-id"] || "",
+    activityId: headers?.["x-ms-request-id"] || "",
   };
 };
