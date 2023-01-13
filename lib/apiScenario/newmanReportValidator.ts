@@ -20,7 +20,7 @@ import { NewmanExecution, NewmanReport, Scenario, Step } from "./apiScenarioType
 import { DataMasker } from "./dataMasker";
 import { JUnitReporter } from "./junitReport";
 import { generateMarkdownReport } from "./markdownReport";
-import { SwaggerAnalyzer } from "./swaggerAnalyzer";
+import { SwaggerAnalyzer, SwaggerAnalyzerOption } from "./swaggerAnalyzer";
 
 export interface ApiScenarioTestResult {
   apiScenarioFilePath: string;
@@ -69,7 +69,9 @@ export interface RuntimeError {
   severity: SeverityString;
 }
 
-export interface NewmanReportValidatorOption extends ApiScenarioLoaderOption {
+export interface NewmanReportValidatorOption
+  extends ApiScenarioLoaderOption,
+    SwaggerAnalyzerOption {
   apiScenarioFilePath: string;
   reportOutputFilePath: string;
   markdown?: boolean;
