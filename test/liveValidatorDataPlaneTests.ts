@@ -33,7 +33,7 @@ describe("LiveValidator for data-plane", () => {
       trafficPath = path.resolve(process.cwd(), trafficPath);
       const validator = new TrafficValidator(specPath, trafficPath);
       await validator.initialize();
-      specPath = path.resolve(process.cwd(),specPath);
+      specPath = path.resolve(process.cwd(), specPath);
       const operationidSet = validator.operationSpecMapper.get(specPath);
       expect(validator.operationSpecMapper.size).toEqual(1);
       expect(operationidSet?.length).toEqual(14);
@@ -46,7 +46,10 @@ describe("LiveValidator for data-plane", () => {
       let trafficPath = "test/liveValidation/payloads/dataplane/";
       specPath = path.resolve(process.cwd(), specPath);
       trafficPath = path.resolve(process.cwd(), trafficPath);
-      const keyPath = path.resolve(process.cwd(), "test/liveValidation/swaggers/specification/cosmos-db/data-plane/Microsoft.Tables/preview/2019-02-02/table.json");
+      const keyPath = path.resolve(
+        process.cwd(),
+        "test/liveValidation/swaggers/specification/cosmos-db/data-plane/Microsoft.Tables/preview/2019-02-02/table.json"
+      );
       const validator = new TrafficValidator(specPath, trafficPath);
       await validator.initialize();
       await validator.validate();
@@ -54,10 +57,10 @@ describe("LiveValidator for data-plane", () => {
       expect(validator.operationCoverageResult.length).toEqual(1);
       for (let i of validator.operationCoverageResult) {
         if (i.spec === keyPath) {
-          expect(i.coveredOperaions).toEqual(1);
+          expect(i.coveredOperations).toEqual(1);
           expect(i.totalOperations).toEqual(14);
           expect(i.validationFailOperations).toEqual(1);
-          expect(i.coverageRate).toEqual(1.0/14.0);
+          expect(i.coverageRate).toEqual(1.0 / 14.0);
         }
       }
       expect(validator.operationUndefinedResult).toEqual(1);

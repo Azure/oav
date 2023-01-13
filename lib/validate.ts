@@ -5,8 +5,8 @@
 
 import * as path from "path";
 import * as fs from "fs";
-import * as openapiToolsCommon from "@azure-tools/openapi-tools-common";
 import jsYaml from "js-yaml";
+import { flatMap, StringMap } from "@azure-tools/openapi-tools-common";
 import * as utils from "./util/utils";
 
 import {
@@ -190,12 +190,11 @@ export async function validateTraffic(
   options: TrafficValidationOptions
 ): Promise<TrafficValidationIssue[]> {
   return validate(options, async (o) => {
-    let validator: TrafficValidator;
     o.consoleLogLevel = log.consoleLogLevel;
     o.logFilepath = log.filepath;
+    const validator = new TrafficValidator(specPath, trafficPath);
     const trafficValidationResult: TrafficValidationIssue[] = [];
     try {
-      validator = new TrafficValidator(specPath, trafficPath);
       await validator.initialize();
       const result = await validator.validate();
       trafficValidationResult.push(...result);
@@ -216,17 +215,17 @@ export async function validateTraffic(
     }
     if (options.jsonReportPath) {
       const report = {
-        allOperations: validator!.operationCoverageResult
+        allOperations: validator.operationCoverageResult
           .map((item) => item.totalOperations)
           .reduce((a, b) => a + b, 0),
-        coveredOperations: validator!.operationCoverageResult
-          .map((item) => item.coveredOperaions)
+        coveredOperations: validator.operationCoverageResult
+          .map((item) => item.coveredOperations)
           .reduce((a, b) => a + b, 0),
-        failedOperations: validator!.operationCoverageResult
+        failedOperations: validator.operationCoverageResult
           .map((item) => item.validationFailOperations)
           .reduce((a, b) => a + b, 0),
         requestErrors: Array.from(
-          openapiToolsCommon.flatMap(
+          flatMap(
             trafficValidationResult,
             (item) =>
               item.errors
@@ -237,7 +236,7 @@ export async function validateTraffic(
           )
         ),
         responseErrors: Array.from(
-          openapiToolsCommon.flatMap(
+          flatMap(
             trafficValidationResult,
             (item) =>
               item.errors
@@ -253,8 +252,8 @@ export async function validateTraffic(
     if (options.reportPath) {
       const generator = new ReportGenerator(
         trafficValidationResult,
-        validator!.operationCoverageResult,
-        validator!.operationUndefinedResult,
+        validator.operationCoverageResult,
+        validator.operationUndefinedResult,
         options
       );
       await generator.generateHtmlReport();
@@ -278,7 +277,7 @@ export async function extractXMsExamples(
   specPath: string,
   recordings: string,
   options: Options
-): Promise<openapiToolsCommon.StringMap<unknown>> {
+): Promise<StringMap<unknown>> {
   if (!options) {
     options = {};
   }

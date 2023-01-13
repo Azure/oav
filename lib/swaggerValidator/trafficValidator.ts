@@ -53,7 +53,7 @@ export interface RuntimeException {
 export interface OperationCoverageInfo {
   readonly spec: string;
   readonly apiVersion: string;
-  readonly coveredOperaions: number;
+  readonly coveredOperations: number;
   readonly validationFailOperations: number;
   readonly unCoveredOperations: number;
   readonly unCoveredOperationsList: OperationMeta[];
@@ -146,7 +146,9 @@ export class TrafficValidator {
         spec = await this.loader.load(pathResolve(swaggerPath));
       } catch (e) {
         console.log(
-          `Exception when loading spec, ErrorMessage: ${e?.message}; ErrorStack: ${e?.stack}.`
+          `Exception when loading spec, ErrorMessage: ${(e as any)?.message}; ErrorStack: ${
+            (e as any)?.stack
+          }.`
         );
       }
       if (spec !== undefined) {
@@ -281,7 +283,9 @@ export class TrafficValidator {
         }
       }
     } catch (err) {
-      const msg = `Detail error message:${err?.message}. ErrorStack:${err?.Stack}`;
+      const msg = `Detail error message:${(err as any)?.message}. ErrorStack:${
+        (err as any)?.Stack
+      }`;
       this.trafficValidationResult.push({
         payloadFilePath,
         runtimeExceptions: [
@@ -293,7 +297,7 @@ export class TrafficValidator {
       });
     }
 
-    let coveredOperaions: number;
+    let coveredOperations: number;
     let coverageRate: number;
     let validationFailOperations: number;
     let unCoveredOperationsList: unCoveredOperationsFormatInner[];
@@ -303,14 +307,14 @@ export class TrafficValidator {
       const unCoveredOperationsListFormat: unCoveredOperationsFormat[] = [];
       unCoveredOperationsList = [];
       if (this.trafficOperation.get(key) === undefined) {
-        coveredOperaions = 0;
+        coveredOperations = 0;
         coverageRate = 0;
         this.coverageData.set(key, 0);
         isMatch = false;
       } else if (value !== undefined && value.length !== 0) {
         const validatedOperations = this.trafficOperation.get(key);
-        coveredOperaions = validatedOperations!.length;
-        coverageRate = coveredOperaions / value.length;
+        coveredOperations = validatedOperations!.length;
+        coverageRate = coveredOperations / value.length;
         this.coverageData.set(key, coverageRate);
         const unValidatedOperations = [...value];
         validatedOperations!.forEach((element) => {
@@ -340,7 +344,7 @@ export class TrafficValidator {
         });
       } else {
         isMatch = false;
-        coveredOperaions = 0;
+        coveredOperations = 0;
         coverageRate = 0;
         this.coverageData.set(key, 0);
       }
@@ -386,9 +390,9 @@ export class TrafficValidator {
         this.operationCoverageResult.push({
           spec: key,
           apiVersion: getApiVersionFromFilePath(key),
-          coveredOperaions: coveredOperaions,
-          coverageRate: coverageRate,
-          unCoveredOperations: value.length - coveredOperaions,
+          coveredOperations,
+          coverageRate,
+          unCoveredOperations: value.length - coveredOperations,
           totalOperations: value.length,
           validationFailOperations: validationFailOperations,
           unCoveredOperationsList: sortedUnCoveredOperationsList,
