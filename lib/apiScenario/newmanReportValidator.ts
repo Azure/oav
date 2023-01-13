@@ -360,7 +360,7 @@ export class NewmanReportValidator {
     const responseObj = this.dataMasker.jsonParse(it.response.body);
     return {
       code: `${it.response.statusCode >= 500 ? "SERVER_ERROR" : "CLIENT_ERROR"}`,
-      message: `statusCode: ${it.response.statusCode}, errorCode: ${responseObj?.error?.code}, errorMessage: ${responseObj?.error?.message}`,
+      message: `statusCode: ${it.response.statusCode},\nerrorCode: ${responseObj?.error?.code},\nerrorMessage: ${responseObj?.error?.message}`,
       severity: "Error",
       detail: this.dataMasker.jsonStringify(it.response.body),
     };

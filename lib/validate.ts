@@ -241,26 +241,18 @@ export async function validateTrafficAgainstSpec(
         failedOperations: validator!.operationCoverageResult
           .map((item) => item.validationFailOperations)
           .reduce((a, b) => a + b, 0),
-        requestErrors: Array.from(
+        errors: Array.from(
           flatMap(
             trafficValidationResult,
             (item) =>
-              item.errors
-                ?.filter((it) => it.issueSource === "request")
-                .map((it) => {
-                  return { errorCode: it.code, errorMessage: it.message };
-                }) ?? []
-          )
-        ),
-        responseErrors: Array.from(
-          flatMap(
-            trafficValidationResult,
-            (item) =>
-              item.errors
-                ?.filter((it) => it.issueSource === "response")
-                .map((it) => {
-                  return { errorCode: it.code, errorMessage: it.message };
-                }) ?? []
+              item.errors?.map((it) => {
+                return {
+                  errorCode: it.code,
+                  errorMessage: it.message,
+                  issueSource: it.issueSource,
+                  operationId: item.operationInfo?.operationId,
+                };
+              }) ?? []
           )
         ),
       };
