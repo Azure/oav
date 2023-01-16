@@ -516,6 +516,7 @@ class PostmanCollectionRunner {
     const newmanReport = parseNewmanSummary(summary as any);
 
     const newmanReportValidatorOption: NewmanReportValidatorOption = {
+      swaggerFilePaths: scenario._scenarioDef._swaggerFilePaths,
       apiScenarioFilePath: scenario._scenarioDef._filePath,
       reportOutputFilePath: defaultQualityReportFilePath(reportExportPath),
       checkUnderFileRoot: false,
