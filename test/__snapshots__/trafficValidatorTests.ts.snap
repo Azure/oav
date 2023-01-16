@@ -6,8 +6,7 @@ Object {
     Object {
       "apiVersion": "2019-02-02",
       "coverageRate": 0.07142857142857142,
-      "coveredOperaions": 1,
-      "spec": "/home/me/workspace/oav/test/liveValidation/swaggers/specification/cosmos-db/data-plane/Microsoft.Tables/preview/2019-02-02/table.json",
+      "coveredOperations": 1,
       "totalOperations": 14,
       "unCoveredOperations": 13,
       "unCoveredOperationsList": Array [
@@ -183,13 +182,11 @@ Object {
           "line": 43,
         },
       },
-      "payloadFilePath": "/home/me/workspace/oav/test/liveValidation/payloads/dataplane/getCosmosTable_input.json",
       "payloadFilePathPosition": Object {
         "column": 17,
         "line": 2,
       },
       "runtimeExceptions": Array [],
-      "specFilePath": "/home/me/workspace/oav/test/liveValidation/swaggers/specification/cosmos-db/data-plane/Microsoft.Tables/preview/2019-02-02/table.json",
     },
   ],
 }
