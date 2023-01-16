@@ -44,10 +44,10 @@ describe("TrafficValidator", () => {
     expect(validator.operationCoverageResult.length).toEqual(1);
     for (let i of validator.operationCoverageResult) {
       if (i.spec === keyPath) {
-        expect(i.coveredOperations).toEqual(1);
+        expect(i.coveredOperations).toEqual(2);
         expect(i.totalOperations).toEqual(14);
         expect(i.validationFailOperations).toEqual(1);
-        expect(i.coverageRate).toEqual(1.0 / 14.0);
+        expect(i.coverageRate).toEqual(2.0 / 14.0);
       }
     }
     expect(validator.operationUndefinedResult).toEqual(1);
@@ -64,8 +64,10 @@ describe("TrafficValidator", () => {
     result.operationCoverage = validator.operationCoverageResult;
 
     delete result.operationCoverage[0].spec;
-    delete result.validationIssues[0].specFilePath;
-    delete result.validationIssues[0].payloadFilePath;
+    for (let e of result.validationIssues) {
+      delete e.specFilePath;
+      delete e.payloadFilePath;
+    }
     expect(result).toMatchSnapshot();
   });
 });
